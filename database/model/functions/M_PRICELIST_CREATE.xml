@@ -147,8 +147,7 @@
           LOOP
             FETCH Cur_Vendors INTO Product_ID,
             BPartner_ID; -- Get Record ID
-            EXIT
-          WHEN Cur_Vendors%NOTFOUND;
+            EXIT WHEN Cur_Vendors%NOTFOUND;
             --
             DBMS_OUTPUT.PUT_LINE('  Record: ' || Product_ID || ' / ' || BPartner_ID) ;
             UPDATE M_Product_PO

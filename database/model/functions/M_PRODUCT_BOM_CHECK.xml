@@ -85,8 +85,7 @@
         -- How many do we have?
         SELECT COUNT(*) INTO v_CountNo  FROM T_Selection;
         -- Nothing to do
-        EXIT
-      WHEN(v_CountNo=0) ;
+        EXIT WHEN(v_CountNo=0) ;
         -- Insert BOM Nodes into "All" table
         INSERT
         INTO T_Selection2

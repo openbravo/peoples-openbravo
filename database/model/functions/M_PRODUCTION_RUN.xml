@@ -270,8 +270,7 @@
                     v_QtyStorage:=0;
                     v_ResultStr:='FetchingData';
                     FETCH CUR_STOCK INTO v_storage;
-                    EXIT
-                  WHEN CUR_STOCK%NOTFOUND;
+                    EXIT WHEN CUR_STOCK%NOTFOUND;
                     v_QtyStorage:=v_storage.Qty;
                   END LOOP;
                 END IF; --NEXT_PRODUCT

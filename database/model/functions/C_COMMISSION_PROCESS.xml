@@ -305,8 +305,7 @@
           v_C_InvoiceLine_ID,
           v_Reference,
           v_Info;
-          EXIT
-        WHEN v_rc%NOTFOUND;
+          EXIT WHEN v_rc%NOTFOUND;
           --
           v_ResultStr:='InsertingDetail';
           AD_Sequence_Next('C_CommissionDetail', v_AD_Client_ID, v_NextNo) ;

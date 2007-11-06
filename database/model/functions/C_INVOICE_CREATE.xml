@@ -512,8 +512,7 @@
                   Next_O_Line:=FALSE;
                   v_ResultStr:='Fetching_OrderLine(*)';
                   FETCH Cur_OrderLine INTO ptr_ol;
-                  EXIT
-                WHEN Cur_OrderLine%NOTFOUND;
+                  EXIT WHEN Cur_OrderLine%NOTFOUND;
                 END LOOP; -- Invoice Line from Order Lines
                 -- After (D)elivery  -- Check M_InOut for invoice quantity
               ELSIF(Cur_Order.InvoiceRule IN('D', 'O')) THEN
@@ -561,8 +560,7 @@
                   Next_S_Line:=FALSE;
                   v_ResultStr:='Fetching_ShipmentLine(*)';
                   FETCH Cur_InOutLine INTO ptr_sl;
-                  EXIT
-                WHEN Cur_InOutLine%NOTFOUND;
+                  EXIT WHEN Cur_InOutLine%NOTFOUND;
                 END LOOP;
               END IF;
               -- Post it

@@ -617,8 +617,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
         )
         ;
       -- Nothing to do?
-      EXIT
-    WHEN CountNo=0;
+      EXIT WHEN CountNo=0;
       DBMS_OUTPUT.PUT_LINE('  BOMs to resolve=' || CountNo) ;
       DECLARE
         Cur_MPriceListVersion RECORD;

@@ -773,8 +773,7 @@
               )
               ;
             -- Nothing to do?
-            EXIT
-          WHEN CountNo=0;
+            EXIT WHEN CountNo=0;
             DBMS_OUTPUT.PUT_LINE('  BOMs to resolve=' || CountNo) ;
             -- Get Price List Version
             FOR CUR_PriceList_Version IN

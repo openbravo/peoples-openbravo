@@ -332,8 +332,7 @@
       OPEN v_rc FOR v_dynamic_select;
       LOOP
         FETCH v_rc INTO v_oldId;
-        EXIT
-      WHEN v_rc%NOTFOUND;
+        EXIT WHEN v_rc%NOTFOUND;
         v_strSql:='UPDATE '||v_tableActual||' A SET AD_CLIENT_ID = '|| v_NextNo || ' ';
         v_translatedId:=AD_Translate_ID(v_oldId, Cur_TranslateDataSelfDep."OFFSET", Cur_TranslateDataSelfDep.DEPENDS_ON_TABLENAME, Cur_TranslateDataSelfDep.DEPENDS_ON_COLUMNNAME, p_AD_Client_ID) ;
         v_strSql:=v_strSql || ', '||Cur_TranslateDataSelfDep.COLUMNNAME||' = ' || v_translatedId ;
