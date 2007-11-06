@@ -73,7 +73,7 @@ public class FunctionWithOutputTranslation extends ReplacePatTranslation {
         strReplace.append(strInto);
         strReplace.append(" FROM {1}(");
         strReplace.append(strParams);
-        strReplace.append(");");        
+        strReplace.append(")"); 
         _replaceStr = strReplace.toString();
     }
     
