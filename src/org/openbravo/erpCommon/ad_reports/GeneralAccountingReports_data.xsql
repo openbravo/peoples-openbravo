@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="GeneralAccountingReportsData" package="org.openbravo.erpCommon.ad_reports">
+  <SqlMethod name="selectCombo" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME, '' as pagebreak 
+        FROM AD_ORG A_O, AD_ROLE_ORGACCESS A_R_O, AD_ROLE R
+        WHERE A_R_O.AD_ORG_ID = A_O.AD_ORG_ID 
+        AND A_R_O.ISACTIVE = 'Y' 
+        AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
+        AND R.ISACTIVE = 'Y' 
+        AND A_R_O.AD_ROLE_ID = ? 
+        ORDER BY A_O.NAME
+      ]]></Sql>
+        <Parameter name="rol"/>
+   </SqlMethod>
+   
+    <SqlMethod name="selectGroups" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT C_ACCT_RPT_GROUP_ID AS ID, name, 'page' as pagebreak
+        FROM C_ACCT_RPT_GROUP
+        WHERE C_ACCT_RPT_ID = ?
+        ORDER BY LINE
+      ]]></Sql>
+        <Parameter name="rpt"/>
+   </SqlMethod> 
+   
+   <SqlMethod name="selectElements" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT c_elementvalue_id AS ID
+        FROM C_ACCT_RPT_NODE
+        WHERE C_ACCT_RPT_GROUP_ID = ?
+        ORDER BY LINE
+      ]]></Sql>
+        <Parameter name="grp"/>
+   </SqlMethod>
+   
+   <SqlMethod name="groupTitle" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT name
+        FROM C_ACCT_RPT_GROUP
+        WHERE C_ACCT_RPT_GROUP_ID = ?
+      ]]></Sql>
+        <Parameter name="grp"/>
+   </SqlMethod>
+   
+   <SqlMethod name="rptTitle" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT name
+        FROM C_ACCT_RPT
+        WHERE C_ACCT_RPT_ID = ?
+      ]]></Sql>
+        <Parameter name="rpt"/>
+   </SqlMethod>
+   
+   
+   
+   
+  <SqlMethod name="fieldtitle" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT m.Name 
+        FROM C_ElementValue m
+        WHERE m.C_ElementValue_ID = ?
+      ]]></Sql>
+        <Parameter name="cElementvalueId"/>
+  </SqlMethod>
+  <SqlMethod name="fieldtitleTrl" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT COALESCE(mt.Name, m.Name) AS NAME 
+        FROM C_ElementValue m left join C_ElementValue_Trl mt on m.C_ElementValue_ID = mt.C_ElementValue_ID 
+                                                             AND mt.AD_Language  = ?
+        WHERE m.C_ElementValue_ID = ? 
+      ]]></Sql>
+        <Parameter name="adLanguage"/>
+        <Parameter name="cElementvalueId"/>     
+  </SqlMethod>
+  <SqlMethod name="selectElement" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT m.AccountType 
+        FROM C_ElementValue m
+        WHERE m.C_ElementValue_ID = ?
+      ]]></Sql>
+        <Parameter name="cElementvalueId"/>
+  </SqlMethod>
+  <SqlMethod name="treeOrg" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+        SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
+        WHERE AD_CLIENT_ID = ?
+    </Sql>
+    <Parameter name="client"/>
+  </SqlMethod>
+  <SqlMethod name="companyName" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+        SELECT NAME FROM AD_CLIENT
+        WHERE AD_CLIENT_ID = ?
+    </Sql>
+    <Parameter name="client"/>
+  </SqlMethod>
+
+  <SqlMethod name="date" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT (CASE TO_NUMBER(TO_CHAR(now(), 'YYYY')) WHEN TO_NUMBER(?) THEN TO_CHAR(now(), to_char(?)) ELSE '31/12/'||? END) AS DATETO
+      FROM DUAL
+    </Sql>
+    <Parameter name="agno"/>
+    <Parameter name="dateFormat"/>
+    <Parameter name="agno"/>
+  </SqlMethod>
+
+  <SqlMethod name="incomesummary" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT C_VALIDCOMBINATION.ACCOUNT_ID AS ID
+      FROM C_ACCTSCHEMA_GL, C_VALIDCOMBINATION, C_ELEMENTVALUE
+      WHERE C_ACCTSCHEMA_GL.INCOMESUMMARY_ACCT = C_VALIDCOMBINATION.C_VALIDCOMBINATION_ID
+      AND C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
+      AND C_ACCTSCHEMA_GL.C_ACCTSCHEMA_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="cAcctschemaId"/>
+  </SqlMethod>
+  <SqlMethod name="selectPyG" type="preparedStatement" return="String" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+      SELECT COALESCE(SUM(AMTACCTCR-AMTACCTDR), 0) AS NAME
+      FROM FACT_ACCT, C_PERIOD, C_YEAR
+      WHERE FACT_ACCT.C_PERIOD_ID = C_PERIOD.C_PERIOD_ID
+      AND C_PERIOD.C_YEAR_ID = C_YEAR.C_YEAR_ID   
+      AND ACCOUNT_ID IN (SELECT ACCOUNT_ID 
+              FROM C_ELEMENTVALUE, C_VALIDCOMBINATION
+              WHERE C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
+              AND C_ELEMENTVALUE.ACCOUNTTYPE = ?)
+      AND FACT_ACCT.FACTACCTTYPE <> 'R' 
+      AND 1=1
+      AND C_YEAR.YEAR = ?
+      AND FACT_ACCT.AD_ORG_ID IN ('1')
+      ]]></Sql>
+        <Parameter name="accountType"/>
+        <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
+        <Parameter name="year"/>
+        <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
+   </SqlMethod>
+</SqlClass>

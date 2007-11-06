@@ -1,0 +1,171 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Create from.. (massive)</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META> 
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://openbravo/web/";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+arrTeclas = new Array(
+new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null"), 
+new Teclas("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null")
+);
+activarControlTeclas();
+
+function displayLogic() {
+	if (inputValue(document.frmMain.inphasseconduom) == 1) {
+		displayLogicElement('paramUOMOrder', true);
+	} else {
+		displayLogicElement('paramUOMOrder', false);
+	}
+}
+
+function marcarTodosDatos(chk, bolMarcar)
+{
+  if (bolMarcar==null) bolMarcar = false;
+  if (!chk) return false;
+  else if (!chk.length) {
+    chk.checked = bolMarcar;
+    cargarDatos(chk.value, bolMarcar);
+  } else {
+    var total = chk.length;
+    for (var i=0;i<total;i++) {
+      chk[i].checked = bolMarcar;
+      cargarDatos(chk[i].value, bolMarcar);
+    }
+  }
+  return true;
+}
+
+function cargarDatos(value, enable) {
+  if (enable == null) enable = false;
+  document.frmMain.elements["inpmovementqty" + value].disabled = !enable;
+  document.frmMain.elements["inpquantityorder" + value].disabled = !enable;
+  return true;
+}
+
+function depurar(action) {
+  var frm=document.frmMain;
+  
+  return true;
+}
+
+function onloadFunctions() {
+	new TypeAheadCombo("inpmWarehouseId");
+  new TypeAheadCombo("inpmInoutlineTypeId");
+}
+</SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="focoPrimerControl();onloadFunctions();">
+<FORM id="form" method="POST" action="../ad_actionButton/CreateFromMultiple_F1.html" name="frmMain">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <INPUT type="hidden" name="inpLastFieldChanged"></INPUT>
+  <INPUT type="hidden" name="inphasseconduom" value="0"></INPUT>
+  <INPUT type="hidden" name="inpmInoutId" value="" id="paramKey"></INPUT>
+  <INPUT type="hidden" name="inpWindowId" value="" id="paramWindowId"></INPUT> 
+  <INPUT type="hidden" name="inpTabId" value="" id="paramTabId"></INPUT>
+  <INPUT type="hidden" name="inpissotrx" value="" id="paramisSOTrx"></INPUT>
+  <BR></BR>
+  <TABLE border="0" cellspacing="0" cellpadding="0">
+    <TR> 
+      <TD > <SPAN >Business Partner</SPAN></TD>
+      <TD colspan="3" > <INPUT type="hidden" name="inpcBpartnerId" value="" id="fieldBPartnerID"></INPUT> 
+        <TABLE border="0" cellspacing="0" cellpadding="0" summary="">
+          <TR> 
+            <TD > <INPUT type="text" name="inpcBpartnerId_DES" size="40" value="" id="fieldBPartnerID_DES"></INPUT>
+            </TD>
+            <TD > <A href="#" onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
+              <img width="16" height="16"  alt="Business Partner" title="Business Partner" border="0" src="../../../../../web/images/BPartner.jpg"></IMG></A></TD>
+          </TR>
+        </TABLE></TD>
+      <TD > <SPAN >Product:</SPAN></TD>
+      <TD colspan="3" > <INPUT type="hidden" name="inpmProductId" value="" id="fieldProductID"></INPUT> 
+        <TABLE border="0" cellspacing="0" cellpadding="0" summary="">
+          <TR> 
+            <TD > <INPUT type="text" name="inpmProductId_DES" size="40" value="" id="fieldProductID_DES"></INPUT>
+            </TD>
+            <TD > <A href="#" onclick="openSearch(null, null, '../info/ProductComplete_FS.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
+              <img width="16" height="16"  alt="Product" title="Product" border="0" src="../../../../../web/images/Product.jpg" id="buttonProduct"></IMG></A></TD>
+          </TR>
+        </TABLE></TD>
+      <TD rowspan="2" > <A href="#" onclick="submitCommandForm('FIND', true);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
+        <img width="16" height="16"  alt="Search" title="Search" border="0" src="../../../../../web/images/Find.jpg" id="buttonResults"></IMG></A></TD>
+    </TR>
+  </TABLE>
+  <BR></BR>
+  <TABLE width="55%" border="0" cellpadding="0" cellspacing="0">
+    <TR> 
+      <TD width="74" > <SPAN >Warehouse:</SPAN></TD>
+      <TD width="52" > <SELECT name="inpmWarehouseId" id="inpmWarehouseId">
+          <OPTION value=""></OPTION><DIV id="reportM_WAREHOUSE_ID"></DIV>
+        </SELECT></TD>
+      <TD width="119" > <SPAN >Out comming 
+        type:</SPAN></TD>
+      <TD width="133" > <SELECT name="inpmInoutlineTypeId" id="inpmInoutlineTypeId">
+          <OPTION value=""></OPTION><DIV id="reportM_INOUTLINETYPE_ID"></DIV>
+        </SELECT></TD>
+        <TD width="68" > <SPAN >Corridor</SPAN></TD>
+      <TD width="54" > <INPUT name="inpx" type="text" id="fieldx" size="5" maxlength="10" value=""></INPUT>
+      </TD>
+      <TD width="76" > <SPAN >Height:</SPAN></TD>
+      <TD width="64" > <INPUT name="inpy" type="text" id="fieldy" size="5" maxlength="10" value=""></INPUT>
+      </TD>
+      <TD width="73" > <SPAN >Location:</SPAN></TD>
+      <TD width="49" > <INPUT name="inpz" type="text" id="fieldz" size="5" maxlength="10" value=""></INPUT>
+      </TD>
+    </TR>
+  </TABLE>
+  <HR></HR>
+  <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" >
+    <TR> 
+      <TH width="2%" > <INPUT type="checkbox" name="inpTodos" onclick="marcarTodosDatos(document.frmMain.inpmStorageDetailId, this.checked);return true;"></INPUT>
+      </TH>
+      <TH width="35%">Product</TH>
+      <TH width="5%">Locator</th>
+      <TH width="19%">Attribute</TH>
+      <TH width="12%">Quantity</TH>
+      <TH width="8%">Unit</TH>
+      <TH width="11%">Quant. of order</TH>
+      <TH width="8%">Order No.</TH>
+    </TR>
+    <DIV id="sectionDetail"> 
+      <TR> 
+        <TD > <INPUT type="checkbox" name="inpmStorageDetailId" value="" id="fieldmStorageDetailId" onclick="cargarDatos(this.value, this.checked);return true;"></INPUT>
+        </TD>
+        <TD  id="fieldProduct">xx</TD>
+    <td  id="fieldLocator">xx</td>
+        <TD  id="fieldAttribute">xx</TD>
+        <TD > <INPUT name="inpmovementqtyxx" type="text" id="fieldMovementQty" size="8" value="0" onkeyup="auto_completar_numero(this, true, true);return true;" disabled="" ></INPUT>
+        </TD>
+        <TD  id="fieldUOM">xx</TD>
+        <TD > <INPUT name="inpquantityorderxx" type="text" id="fieldQuantityOrder" size="8" value="0" onkeyup="auto_completar_numero(this, true, true);return true;" disabled="" ></INPUT>
+        </TD>
+        <TD  id="fieldProductUOM">xx</TD>
+      </TR>
+    </DIV>
+  </TABLE>
+</FORM>
+</BODY>
+</HTML>

@@ -1,0 +1,737 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="ReportTaxInvoice"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<style 
+		name="default"
+		isDefault="false"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+	<style 
+		name="Report_Title"
+		isDefault="false"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="18"
+	/>
+	<style 
+		name="Report_Subtitle"
+		isDefault="false"
+		forecolor="#555555"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="14"
+	/>
+	<style 
+		name="Total_Field"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+		vAlign="Middle"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Detail_Header"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#5D5D5D"
+		vAlign="Middle"
+		leftBorder="1Point"
+		leftBorderColor="#FFFFFF"
+		leftPadding="5"
+		rightBorder="1Point"
+		rightBorderColor="#FFFFFF"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="GroupHeader_DarkGray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#555555"
+		vAlign="Middle"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="18"
+		isBold="true"
+	/>
+	<style 
+		name="GroupHeader_Gray"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#999999"
+	/>
+	<style 
+		name="Detail_Line"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
+			<style 
+				name="Detail_Line"
+				isDefault="false"
+				mode="Opaque"
+				backcolor="#CCCCCC"
+			/>
+		</conditionalStyle>
+	</style>
+	<style 
+		name="Total_Gray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+	/>
+	<style 
+		name="Report_Data_Label"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Report_Data_Field"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="false"
+	/>
+	<style 
+		name="Report_Footer"
+		isDefault="true"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+	<style 
+		name="Group_Data_Label"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="14"
+		isBold="true"
+	/>
+	<style 
+		name="Group_Data_Field"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="14"
+	/>
+	<style 
+		name="Detail_Data_Label"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#CCCCCC"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Detail_Data_Field"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#CCCCCC"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+	<style 
+		name="Group_Footer"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+
+	<parameter name="ATTACH" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="BASE_DESIGN" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["/usr/local/src/AppsOpenbravo/src/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LANGUAGE" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["en_US"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USER_CLIENT" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["(1000000)"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["(0, 1000000)"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_TITLE" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["REPORT TITLE"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Report Subtitle"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpCommon/ad_reports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cCountryId" isForPrompting="true" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(100)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="parDateFrom" isForPrompting="true" class="java.util.Date"/>
+	<parameter name="parDateTo" isForPrompting="true" class="java.util.Date"/>
+	<parameter name="SALE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="PURCHASE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="SR_SALE" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="SR_SALEFOREIGN" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="SR_PURCHASE" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="SR_PURCHASEFOREIGN" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="DETAIL" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PARAM_ORG" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
+	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<queryString><![CDATA[select dummy from dual]]></queryString>
+
+	<field name="DUMMY" class="java.lang.String"/>
+
+	<variable name="DetailFieldTotal" class="java.lang.String" resetType="Report" calculation="Nothing">
+	</variable>
+
+		<group  name="Sales" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="40"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(!$P{SALE}.equals(""))]]></printWhenExpression>
+				<subreport  isUsingCache="true">
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="0"
+						width="535"
+						height="40"
+						key="subreport-2"/>
+					<subreportParameter  name="ATTACH">
+						<subreportParameterExpression><![CDATA[$P{ATTACH}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="BASE_WEB">
+						<subreportParameterExpression><![CDATA[$P{BASE_WEB}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="BASE_DESIGN">
+						<subreportParameterExpression><![CDATA[$P{BASE_DESIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LANGUAGE">
+						<subreportParameterExpression><![CDATA[$P{LANGUAGE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_CLIENT">
+						<subreportParameterExpression><![CDATA[$P{USER_CLIENT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_ORG">
+						<subreportParameterExpression><![CDATA[$P{PARAM_ORG}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="REPORT_TITLE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_TITLE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="REPORT_SUBTITLE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_SUBTITLE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="cCountryId">
+						<subreportParameterExpression><![CDATA[$P{cCountryId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="parDateFrom">
+						<subreportParameterExpression><![CDATA[$P{parDateFrom}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="parDateTo">
+						<subreportParameterExpression><![CDATA[$P{parDateTo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SALE">
+						<subreportParameterExpression><![CDATA[$P{SALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="PURCHASE">
+						<subreportParameterExpression><![CDATA[$P{PURCHASE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_SALE">
+						<subreportParameterExpression><![CDATA[$P{SR_SALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_SALEFOREIGN">
+						<subreportParameterExpression><![CDATA[$P{SR_SALEFOREIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_PURCHASE">
+						<subreportParameterExpression><![CDATA[$P{SR_PURCHASE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_PURCHASEFOREIGN">
+						<subreportParameterExpression><![CDATA[$P{SR_PURCHASEFOREIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="DETAIL">
+						<subreportParameterExpression><![CDATA[$P{DETAIL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="NUMBERFORMAT">
+						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LOCALE">
+						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_SALE}]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="SalesFor" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="40"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(!$P{SALE}.equals(""))]]></printWhenExpression>
+				<subreport  isUsingCache="true">
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="0"
+						width="535"
+						height="40"
+						key="subreport-3"/>
+					<subreportParameter  name="ATTACH">
+						<subreportParameterExpression><![CDATA[$P{ATTACH}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="BASE_WEB">
+						<subreportParameterExpression><![CDATA[$P{BASE_WEB}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="BASE_DESIGN">
+						<subreportParameterExpression><![CDATA[$P{BASE_DESIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LANGUAGE">
+						<subreportParameterExpression><![CDATA[$P{LANGUAGE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_CLIENT">
+						<subreportParameterExpression><![CDATA[$P{USER_CLIENT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_ORG">
+						<subreportParameterExpression><![CDATA[$P{PARAM_ORG}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="REPORT_TITLE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_TITLE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="REPORT_SUBTITLE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_SUBTITLE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="cCountryId">
+						<subreportParameterExpression><![CDATA[$P{cCountryId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="parDateFrom">
+						<subreportParameterExpression><![CDATA[$P{parDateFrom}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="parDateTo">
+						<subreportParameterExpression><![CDATA[$P{parDateTo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SALE">
+						<subreportParameterExpression><![CDATA[$P{SALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="PURCHASE">
+						<subreportParameterExpression><![CDATA[$P{PURCHASE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_SALE">
+						<subreportParameterExpression><![CDATA[$P{SR_SALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_SALEFOREIGN">
+						<subreportParameterExpression><![CDATA[$P{SR_SALEFOREIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_PURCHASE">
+						<subreportParameterExpression><![CDATA[$P{SR_PURCHASE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_PURCHASEFOREIGN">
+						<subreportParameterExpression><![CDATA[$P{SR_PURCHASEFOREIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="DETAIL">
+						<subreportParameterExpression><![CDATA[$P{DETAIL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="NUMBERFORMAT">
+						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LOCALE">
+						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_SALEFOREIGN}]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="Purchase" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="40"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(!$P{PURCHASE}.equals(""))]]></printWhenExpression>
+				<subreport  isUsingCache="true">
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="0"
+						width="535"
+						height="40"
+						key="subreport-1"/>
+					<subreportParameter  name="ATTACH">
+						<subreportParameterExpression><![CDATA[$P{ATTACH}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="BASE_WEB">
+						<subreportParameterExpression><![CDATA[$P{BASE_WEB}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="BASE_DESIGN">
+						<subreportParameterExpression><![CDATA[$P{BASE_DESIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LANGUAGE">
+						<subreportParameterExpression><![CDATA[$P{LANGUAGE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_CLIENT">
+						<subreportParameterExpression><![CDATA[$P{USER_CLIENT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_ORG">
+						<subreportParameterExpression><![CDATA[$P{PARAM_ORG}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="REPORT_TITLE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_TITLE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="REPORT_SUBTITLE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_SUBTITLE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="cCountryId">
+						<subreportParameterExpression><![CDATA[$P{cCountryId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="parDateFrom">
+						<subreportParameterExpression><![CDATA[$P{parDateFrom}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="parDateTo">
+						<subreportParameterExpression><![CDATA[$P{parDateTo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SALE">
+						<subreportParameterExpression><![CDATA[$P{SALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="PURCHASE">
+						<subreportParameterExpression><![CDATA[$P{PURCHASE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_SALE">
+						<subreportParameterExpression><![CDATA[$P{SR_SALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_SALEFOREIGN">
+						<subreportParameterExpression><![CDATA[$P{SR_SALEFOREIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_PURCHASE">
+						<subreportParameterExpression><![CDATA[$P{SR_PURCHASE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_PURCHASEFOREIGN">
+						<subreportParameterExpression><![CDATA[$P{SR_PURCHASEFOREIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="DETAIL">
+						<subreportParameterExpression><![CDATA[$P{DETAIL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="NUMBERFORMAT">
+						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LOCALE">
+						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_PURCHASE}]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="PurchaseFor" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="40"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(!$P{PURCHASE}.equals(""))]]></printWhenExpression>
+				<subreport  isUsingCache="true">
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="0"
+						width="535"
+						height="40"
+						key="subreport-4"/>
+					<subreportParameter  name="ATTACH">
+						<subreportParameterExpression><![CDATA[$P{ATTACH}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="BASE_WEB">
+						<subreportParameterExpression><![CDATA[$P{BASE_WEB}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="BASE_DESIGN">
+						<subreportParameterExpression><![CDATA[$P{BASE_DESIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LANGUAGE">
+						<subreportParameterExpression><![CDATA[$P{LANGUAGE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_CLIENT">
+						<subreportParameterExpression><![CDATA[$P{USER_CLIENT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="USER_ORG">
+						<subreportParameterExpression><![CDATA[$P{PARAM_ORG}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="REPORT_TITLE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_TITLE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="REPORT_SUBTITLE">
+						<subreportParameterExpression><![CDATA[$P{REPORT_SUBTITLE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="cCountryId">
+						<subreportParameterExpression><![CDATA[$P{cCountryId}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="parDateFrom">
+						<subreportParameterExpression><![CDATA[$P{parDateFrom}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="parDateTo">
+						<subreportParameterExpression><![CDATA[$P{parDateTo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SALE">
+						<subreportParameterExpression><![CDATA[$P{SALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="PURCHASE">
+						<subreportParameterExpression><![CDATA[$P{PURCHASE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_SALE">
+						<subreportParameterExpression><![CDATA[$P{SR_SALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_SALEFOREIGN">
+						<subreportParameterExpression><![CDATA[$P{SR_SALEFOREIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_PURCHASE">
+						<subreportParameterExpression><![CDATA[$P{SR_PURCHASE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SR_PURCHASEFOREIGN">
+						<subreportParameterExpression><![CDATA[$P{SR_PURCHASEFOREIGN}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="DETAIL">
+						<subreportParameterExpression><![CDATA[$P{DETAIL}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="NUMBERFORMAT">
+						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LOCALE">
+						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_PURCHASEFOREIGN}]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="20"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="59"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Title"
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="535"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="20"
+						width="535"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
+				</line>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Subtitle"
+						x="0"
+						y="20"
+						width="535"
+						height="20"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{REPORT_SUBTITLE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="Report_Data_Label"
+						x="400"
+						y="40"
+						width="44"
+						height="15"
+						key="staticText-2">
+							<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()==1)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[Total:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Total_Field"
+						x="444"
+						y="40"
+						width="89"
+						height="16"
+						key="textField-1">
+							<printWhenExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()==1)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{DetailFieldTotal}!=null)?$P{NUMBERFORMAT}.format($V{DetailFieldTotal}):new String(" ")]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="20"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="402"
+						y="4"
+						width="95"
+						height="16"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Helvetica" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="499"
+						y="4"
+						width="36"
+						height="16"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Helvetica" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="1"
+						width="535"
+						height="0"
+						forecolor="#000000"
+						key="line"/>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
+				</line>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="277"
+						y="4"
+						width="69"
+						height="16"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Times-Roman" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="198"
+						y="4"
+						width="76"
+						height="16"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[Printed on]]></text>
+				</staticText>
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

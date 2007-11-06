@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="ReportGeneralLedgerJournal"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<style 
+		name="default"
+		isDefault="false"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+	<style 
+		name="Report_Title"
+		isDefault="false"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="18"
+	/>
+	<style 
+		name="Report_Subtitle"
+		isDefault="false"
+		forecolor="#555555"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="14"
+	/>
+	<style 
+		name="Total_Field"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+		vAlign="Middle"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Detail_Header"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#5D5D5D"
+		vAlign="Middle"
+		leftBorder="1Point"
+		leftBorderColor="#FFFFFF"
+		leftPadding="5"
+		rightBorder="1Point"
+		rightBorderColor="#FFFFFF"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="GroupHeader_DarkGray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#555555"
+		vAlign="Middle"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="18"
+		isBold="true"
+	/>
+	<style 
+		name="GroupHeader_Gray"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#999999"
+	/>
+	<style 
+		name="Detail_Line"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
+			<style 
+				name="Detail_Line"
+				isDefault="false"
+				mode="Opaque"
+				backcolor="#CCCCCC"
+			/>
+		</conditionalStyle>
+	</style>
+	<style 
+		name="Total_Gray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+	/>
+	<style 
+		name="Report_Data_Label"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Report_Data_Field"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="false"
+	/>
+	<style 
+		name="Report_Footer"
+		isDefault="true"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+	<style 
+		name="Group_Data_Label"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="14"
+		isBold="true"
+	/>
+	<style 
+		name="Group_Data_Field"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="14"
+	/>
+	<style 
+		name="Detail_Data_Label"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#CCCCCC"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Detail_Data_Field"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#CCCCCC"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+	<style 
+		name="Group_Footer"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+
+	<parameter name="Title" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="Subtitle" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
+	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<queryString><![CDATA[SELECT IDENTIFIER, DATEACCT, VALUE, NAME, ID, AD_TABLE_ID, DOCBASETYPE, '' AS TOTAL, '' AS DESCRIPTION,
+(CASE AMTACCTDR WHEN 0 THEN NULL ELSE AMTACCTDR END) AS AMTACCTDR, (CASE AMTACCTCR WHEN 0 THEN NULL ELSE AMTACCTCR END) AS AMTACCTCR
+FROM 
+(SELECT F.FACT_ACCT_GROUP_ID AS IDENTIFIER, F.DATEACCT,
+F.ACCTVALUE AS VALUE, F.ACCTDESCRIPTION AS NAME,F.RECORD_ID AS ID, F.AD_TABLE_ID, F.DOCBASETYPE,
+sum(F.AMTACCTDR) AS AMTACCTDR, sum(F.AMTACCTCR) AS AMTACCTCR
+FROM FACT_ACCT F 
+WHERE F.AD_CLIENT_ID IN (1000000)
+  AND F.AD_ORG_ID IN(0,1000000,1000001)
+  AND 1=1
+  AND f.dateacct >= TO_DATE('01/01/2007', 'DD/MM/YYYY')
+  AND f.dateacct < TO_DATE('01/01/2008', 'DD/MM/YYYY')
+GROUP BY F.AD_TABLE_ID, F.DATEACCT, F.ACCTDESCRIPTION, F.ACCTVALUE, F.DOCBASETYPE, F.RECORD_ID, 
+  F.FACT_ACCT_GROUP_ID, F.ACCOUNT_ID,
+  (CASE F.AMTACCTDR WHEN 0 THEN (CASE SIGN(F.AMTACCTCR) WHEN -1 THEN 1 ELSE 2 END) ELSE (CASE SIGN(F.AMTACCTDR) WHEN -1 THEN 3 ELSE 4 END) END)) AA
+ORDER BY DATEACCT, IDENTIFIER]]></queryString>
+
+	<field name="IDENTIFIER" class="java.math.BigDecimal"/>
+	<field name="DATEACCT" class="java.util.Date"/>
+	<field name="VALUE" class="java.lang.String"/>
+	<field name="NAME" class="java.lang.String"/>
+	<field name="ID" class="java.math.BigDecimal"/>
+	<field name="AD_TABLE_ID" class="java.math.BigDecimal"/>
+	<field name="DOCBASETYPE" class="java.lang.String"/>
+	<field name="TOTAL" class="java.lang.String"/>
+	<field name="DESCRIPTION" class="java.lang.String"/>
+	<field name="AMTACCTDR" class="java.math.BigDecimal"/>
+	<field name="AMTACCTCR" class="java.math.BigDecimal"/>
+
+	<variable name="entry" class="java.math.BigDecimal" resetType="Report" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{IDENTIFIER}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+
+		<group  name="JournalEntry" >
+			<groupExpression><![CDATA[$F{IDENTIFIER}]]></groupExpression>
+			<groupHeader>
+			<band height="45"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="GroupHeader_Gray"
+						x="0"
+						y="27"
+						width="100"
+						height="18"
+						key="staticText-3"/>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="Thin" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[Account No]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="GroupHeader_Gray"
+						x="100"
+						y="27"
+						width="235"
+						height="18"
+						key="staticText-4"/>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="Thin" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[NAME]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="GroupHeader_Gray"
+						x="335"
+						y="27"
+						width="100"
+						height="18"
+						key="staticText-6"/>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="Thin" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[DEBIT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="GroupHeader_Gray"
+						x="435"
+						y="27"
+						width="100"
+						height="18"
+						key="staticText-7"/>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="Thin" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[CREDIT]]></text>
+				</staticText>
+				<frame>					<reportElement
+						style="GroupHeader_DarkGray"
+						x="0"
+						y="5"
+						width="535"
+						height="22"
+						key="frame-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="0"
+						y="0"
+						width="100"
+						height="22"
+						key="staticText-9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Entry:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="GroupHeader_DarkGray"
+						mode="Opaque"
+						x="100"
+						y="0"
+						width="100"
+						height="22"
+						key="textField-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[($V{entry}.add(new BigDecimal(1))!=null)?$V{entry}.add(new BigDecimal(1)): new BigDecimal("0")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="271"
+						y="0"
+						width="63"
+						height="22"
+						key="staticText-10"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Date:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="GroupHeader_DarkGray"
+						mode="Opaque"
+						x="334"
+						y="0"
+						width="193"
+						height="22"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{DATEACCT}]]></textFieldExpression>
+				</textField>
+				</frame>			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="48"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Title"
+						mode="Transparent"
+						x="0"
+						y="8"
+						width="535"
+						height="20"
+						key="textField-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{Title}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="28"
+						width="535"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
+				</line>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Subtitle"
+						x="0"
+						y="28"
+						width="535"
+						height="20"
+						key="textField-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font size="14"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{Subtitle}]]></textFieldExpression>
+				</textField>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="16"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="16"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="100"
+						y="0"
+						width="235"
+						height="16"
+						key="textField"/>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="Thin" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="335"
+						y="0"
+						width="100"
+						height="16"
+						key="textField"/>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="Thin" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMTACCTDR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTDR}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="435"
+						y="0"
+						width="100"
+						height="16"
+						key="textField"/>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="Thin" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMTACCTCR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTCR}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="100"
+						height="16"
+						key="textField"/>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="Thin" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{VALUE}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

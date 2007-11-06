@@ -1,0 +1,101 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">	var baseDirection = "localhost";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+function depurar() {
+	seleccionarListCompleto(document.frmMain.inpSelectedField);
+	return true;
+}
+
+arrTeclas = new Array(
+new Teclas("B", "submitCommandForm('ORDERBY', true, null, null, '_top');", null, "ctrlKey")
+);
+activarControlTeclas();
+</SCRIPT>
+<TITLE>Filter</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META>
+</HEAD>
+<BODY bottommargin="0" leftmargin="0" marginheight="0" marginwidth="0" rightmargin="0" topmargin="0" onload="focoPrimerControl();" >
+<FORM name="frmMain" method="post" action="TabFilter.html">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <INPUT type="hidden" name="inpTabId" value="xx" id="paramTabId"></INPUT>
+  <INPUT type="hidden" name="inpwindowId" value="xx" id="paramWindowId"></INPUT> 
+  <H2>Select field order on the tab</H2>
+  <table width="100%">
+    <tr>
+      <td>&nbsp;</td>
+      <td align="center"> <TABLE border="0" cellspacing="0" cellpadding="0">
+          <TR> 
+            <TD rowspan="6" > <SELECT name="inpFieldList" size="7" multiple="" id="sectionDetailList1">
+                <OPTION value="0" id="fieldList1">test</OPTION>
+              </SELECT></TD>
+            <TD>&nbsp;</TD>
+            <TD rowspan="6" > <SELECT name="inpSelectedField" size="7" multiple="" id="sectionDetailList2" ondblclick="changeOrderBy(this);return false;">
+                <OPTION value="0" id="fieldList2">test</OPTION>
+              </SELECT></TD>
+            <TD >&nbsp;</TD>
+          </TR>
+          <TR> 
+            <TD> <SPAN > <A href="#" onclick="addListOrderBy(document.frmMain.inpFieldList, document.frmMain.inpSelectedField, false, true);return false;" onmouseover="window.status='Include all';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/IncluirTodos.jpg" alt="Include all" title="Include all" border="0" id="buttonLast"></IMG></A></SPAN></TD>
+            <TD >&nbsp;</TD>
+          </TR>
+          <TR> 
+            <TD> <SPAN > <A href="#" onclick="addListOrderBy(document.frmMain.inpFieldList, document.frmMain.inpSelectedField, false);return false;" onmouseover="window.status='Include';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Incluir.jpg" alt="Include" title="Include" border="0" id="buttonNext"></IMG></A></SPAN></TD>
+            <TD > <SPAN > <A href="#" onclick="moveElementInList(document.frmMain.inpSelectedField, -1);return false;" onmouseover="window.status='Go up';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Up.jpg" alt="Go up" title="Go up" border="0" id="buttonUp"></IMG></A></SPAN></TD>
+          </TR>
+          <TR> 
+            <TD> <SPAN > <A href="#" onclick="addListOrderBy(document.frmMain.inpSelectedField, document.frmMain.inpFieldList, true);return false;" onmouseover="window.status='Exclude';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Excluir.jpg" alt="Exclude" title="Exclude" border="0" id="buttonPrevious"></IMG></A></SPAN></TD>
+            <TD > <SPAN > <A href="#" onclick="moveElementInList(document.frmMain.inpSelectedField, 1);return false;" onmouseover="window.status='Go down';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Down.jpg" alt="Go down" title="Go down" border="0" id="buttonDown"></IMG></A></SPAN></TD>
+          </TR>
+          <TR> 
+            <TD> <SPAN > <A href="#" onclick="addListOrderBy(document.frmMain.inpSelectedField, document.frmMain.inpFieldList, true, true);return false;" onmouseover="window.status='Exclude all';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/ExcluirTodos.jpg" alt="Exclude all" title="Exclude all" border="0" id="buttonFirst"></IMG></A></SPAN></TD>
+            <TD >&nbsp;</TD>
+          </TR>
+          <TR> 
+            <TD>&nbsp;</TD>
+            <TD >&nbsp;</TD>
+          </TR>
+        </TABLE>
+      <td>&nbsp;</td></td>
+    </tr>
+  </table>
+  <TABLE border="0" cellspacing="0" cellpadding="0" width="100%">
+    <TR> 
+      <td>&nbsp;</td>
+      <TD  width="30px"> <A href="#" onclick="submitCommandForm('ORDERBY_CLEAR', true, null, null, '_top');return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
+        <img src="../../../../../web/images/Cancel.jpg" border="0" alt="Cancel" title="Cancel" id="buttonCancel"></IMG></A></td>
+      <td width="30px"><A href="#" onclick="submitCommandForm('ORDERBY', true, null, null, '_top');return false;" onmouseover="window.status='Search';return true;" onmouseout="window.status='';return true;" > 
+        <img src="../../../../../web/images/Aceptar.jpg" border="0" alt="Search" title="Search" id="buttonSearch"></IMG></A></TD>
+      <td>&nbsp;</td>
+    </TR>
+  </TABLE>
+</FORM>
+</BODY>
+</HTML>

@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<database name="TABLE AD_FIELD">
+    <table name="AD_FIELD" primaryKey="AD_FIELD_KEY">
+      <column name="AD_FIELD_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="HELP" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="ISCENTRALLYMAINTAINED" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="AD_TAB_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_COLUMN_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_FIELDGROUP_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISDISPLAYED" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="DISPLAYLOGIC" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="DISPLAYLENGTH" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISREADONLY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="SEQNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="SORTNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISSAMELINE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ISHEADING" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ISFIELDONLY" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ISENCRYPTED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" default="D" autoIncrement="false"/>
+      <column name="SHOWINRELATION" primaryKey="false" required="false" type="VARCHAR" size="1" default="Y" autoIncrement="false"/>
+      <check name="ADFIELD_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <check name="ADFIELD_ISCENMAINT_CHECK" condition="IsCentrallyMaintained in ('Y','N')"/> 
+      <check name="ADFIELD_ISDISPLAYED_CHECK" condition="IsDisplayed in ('Y','N')"/> 
+      <check name="ADFIELD_ISREADONLY_CHECK" condition="IsReadOnly in ('Y','N')"/> 
+      <check name="ADFIELD_ISSAMELINE_CHECK" condition="IsSameLine in ('Y','N')"/> 
+      <check name="ADFIELD_ISHEADING_CHECK" condition="IsHeading in ('Y','N')"/> 
+      <check name="ADFIELD_ISFIELDONLY_CHECK" condition="IsFieldOnly in ('Y','N')"/> 
+      <check name="ADFIELD_ISENCRYPTED_CHECK" condition="IsEncrypted in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="FIELDCLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_FIELD">
+        <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_FIELDGROUP" name="ADFIELDGROUP_ADFIELD">
+        <reference local="AD_FIELDGROUP_ID" foreign="AD_FIELDGROUP_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="FIELDORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TAB" name="AD_TAB_FIELD"   onDelete="cascade">
+        <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
+      </foreign-key>
+      <index name="AD_FIELD_COLUMN">
+        <index-column name="AD_COLUMN_ID"/>
+      </index>
+      <index name="AD_FIELD_TAB">
+        <index-column name="AD_TAB_ID"/>
+      </index>
+    </table>
+</database>

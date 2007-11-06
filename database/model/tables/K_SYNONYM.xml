@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<database name="TABLE K_SYNONYM">
+    <table name="K_SYNONYM" primaryKey="K_SYNONYM_KEY">
+      <column name="K_SYNONYM_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="SYNONYMNAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <check name="K_SYNONYM_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_KSYNONYM">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_KSYNONYM">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+    </table>
+</database>

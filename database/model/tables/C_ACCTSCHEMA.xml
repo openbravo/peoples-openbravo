@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<database name="TABLE C_ACCTSCHEMA">
+    <table name="C_ACCTSCHEMA" primaryKey="C_ACCTSCHEMA_KEY">
+      <column name="C_ACCTSCHEMA_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="GAAP" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false"/>
+      <column name="ISACCRUAL" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="COSTINGMETHOD" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="C_CURRENCY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AUTOPERIODCONTROL" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="C_PERIOD_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="PERIOD_OPENHISTORY" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="PERIOD_OPENFUTURE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="SEPARATOR" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="HASALIAS" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="HASCOMBINATION" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="ISTRADEDISCOUNTPOSTED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ISDISCOUNTCORRECTSTAX" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <check name="CACCTSCHEMA_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <check name="CACCTSCHEMA_ISACCRUAL_CHECK" condition="IsAccrual in ('Y','N')"/> 
+      <check name="CACCTSCHEMA_AUTOPERCONT_CHECK" condition="AutoPeriodControl in ('Y','N')"/> 
+      <check name="CACCTSCHEMA_HASALIAS_CHECK" condition="HasAlias in ('Y','N')"/> 
+      <check name="CACCTSCHEMA_HASCOMBINAT_CHECK" condition="HasCombination in ('Y','N')"/> 
+      <check name="CACCTSCHEMA_ISTRADPOSTED_CHECK" condition="IsTradeDiscountPosted in ('Y','N')"/> 
+      <check name="CACCTSCHEMA_ISDISCCORTAX_CHECK" condition="IsDiscountCorrectsTax in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_C_ACCTSCHEMA">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_C_ACCTSCHEMA">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCY_C_ACCTSCHEMA">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PERIOD" name="CPERIOD_CACCTSCHEMA">
+        <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
+      </foreign-key>
+      <unique name="C_ACCTSCHEMA_NAME">
+        <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="NAME"/>
+      </unique>
+    </table>
+</database>

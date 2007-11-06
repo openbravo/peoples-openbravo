@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<database name="FUNCTION DBA_REPLACE_CHANGEDCHARSET">
+<function name="DBA_REPLACE_CHANGEDCHARSET" type="VARCHAR">
+<parameter name="p_str" type="VARCHAR"/>
+<body><![CDATA[
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  v_str VARCHAR2(4000) ;
+BEGIN
+  IF p_str IS NULL THEN
+    RETURN p_str;
+  END IF;
+  v_str:=p_str;
+  --Replace modified characters . Set the appropiate values:
+  v_str := REPLACE(v_str, 'Ã?Â¿n', 'Ín') ;
+  v_str := REPLACE(v_str, 'Ã?Â¿l', 'Úl') ;
+  v_str := REPLACE(v_str, 'Ã?Â¿', 'Á') ;
+  v_str := REPLACE(v_str, 'Ã?Â¡', 'á') ;
+  v_str := REPLACE(v_str, 'Ã¡', 'á') ;
+  v_str := REPLACE(v_str, 'Ã?Â©', 'é') ;
+  v_str := REPLACE(v_str, 'Ã©', 'é') ;
+  v_str := REPLACE(v_str, 'Ã?Â­', 'í') ;
+  v_str := REPLACE(v_str, 'Ã­', 'í') ;
+  v_str := REPLACE(v_str, 'Ã?Â³', 'ó') ;
+  v_str := REPLACE(v_str, 'Ã³', 'ó') ;
+  v_str := REPLACE(v_str, 'Ã?Âº', 'ú') ;
+  v_str := REPLACE(v_str, 'Ãº', 'ú') ;
+  v_str := REPLACE(v_str, 'Ã?Â±', 'ñ') ;
+  v_str := REPLACE(v_str, 'Ã±', 'ñ') ;
+  v_str := REPLACE(v_str, 'Ã?Â ', ' ') ;
+  v_str := REPLACE(v_str, 'Âº', 'º') ;
+  v_str := REPLACE(v_str, 'Ã?', 'Ó') ;
+  RETURN(v_str) ;
+END Dba_Replace_Changedcharset]]></body>
+</function> 
+</database>

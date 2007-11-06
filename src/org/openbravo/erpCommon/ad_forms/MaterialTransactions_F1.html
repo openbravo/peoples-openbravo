@@ -1,0 +1,120 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Locator selector</TITLE>
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/calculator.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
+<SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+arrTeclas = new Array(
+new Teclas("M", "mostrarMenu();", null, "ctrlKey")
+,
+new Teclas("ENTER", "openSearch(null, null, '../info/Locator_FS.html', null, false, 'frmMain', 'inpmLocatorId', 'inpmLocatorId_DES', document.frmMain.inpmLocatorId_DES.value, 'Command', 'KEY', 'WindowID', '168');", "inpmLocatorId_DES", "null"), 
+new Teclas("ENTER", "openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY', 'WindowID', '168');", "inpmProductId_DES", "null")
+);
+activarControlTeclas();
+
+function depurarSelector(action) {
+	var clave = radioValue(parent.medio.document.frmSelector.inpMTransactionId);
+	
+	parent.medio.submitCommandForm(action);
+}
+
+function depurar() {
+	var frm = document.frmMain;
+	if (frm.inpDesde.value==null || frm.inpDesde.value=="") {
+		frm.inpDesde.focus();
+		mensaje(7);
+		return false;
+	} else if (frm.inpHasta.value==null || frm.inpHasta.value=="") {
+		frm.inpHasta.focus();
+		mensaje(7);
+		return false;
+	}
+	return true;
+}
+
+function onloadFunctions() {
+	new TypeAheadCombo("inpadOrgId");
+  new TypeAheadCombo("inpmovementType");
+}
+</SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();focoPrimerControl();porDefecto('submitCommandForm(\'FIND\', true, null, null, \'medio\')');">
+<span id="paramToolBar">toolbar</span> <BR></BR>
+<FORM name="frmMain" method="POST" action="MaterialTransactions_F2.html" target="medio">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
+    <TR> 
+      <TD width="14%" > <SPAN >Organization</SPAN>&nbsp;</TD>
+      <TD width="15%"> <SELECT name="inpadOrgId" id="inpadOrgId">
+          <OPTION value=""></OPTION><DIV id="reportOrganization_M"></DIV>
+        </SELECT></TD>
+      <TD width="14%" > <SPAN >Movement type</SPAN>&nbsp;</TD>
+      <TD width="20%"> <SELECT  name="inpmovementType" id="inpmovementType">
+          <OPTION value=""></OPTION><DIV id="reportMovementType_M"></DIV>
+        </SELECT></TD>
+      <TD width="10%" > <SPAN >From</SPAN></TD>
+      <TD  width="13%"> <INPUT type="text" name="inpDesde" id="paramDesde" size="10" maxlength="10" value=""  onkeup="auto_complete_date(this);return true;"></INPUT> 
+        <A href="#" onclick="showCalendar('frmMain.inpDesde', document.frmMain.inpDesde.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
+        <img width="16" height="16"  alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
+      <TD width="14%"> <A href="#" onclick="submitCommandForm('FIND', true, null, null, 'medio');return false;" onmouseover="window.status='Results';return true;" onmouseout="window.status='';return true;" > 
+        <img width="16" height="16" src="../../../../../web/images/Find.jpg"  alt="Results" title="Results" border="0" id="buttonResults"></IMG></A></TD>
+    </TR><TR>
+    <TD width="14%" > <SPAN >Warehouse position</SPAN>&nbsp;</TD><td>
+    <table border="0" cellspacing="0" cellpadding="0" summary="">
+      <tr> 
+        <td > 
+          <!-- <TD width="15%" > -->
+          <INPUT type="hidden" name="inpmLocatorId" id="paramM_Locator_ID" value=""></INPUT> 
+          <INPUT type="text"  size="20" maxlength="22" name="inpmLocatorId_DES" id="paramM_Locator_ID_DES" value=""></INPUT> 
+          <A href="#" onclick="openSearch(null, null, '../info/Locator_FS.html', null, false, 'frmMain', 'inpmLocatorId', 'inpmLocatorId_DES', document.frmMain.inpmLocatorId_DES.value, 'WindowID', 'CreateFrom_Shipment');return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Locator';return true;" > 
+          <img width="16" height="16"  alt="Locator" title="Locator"  border="0" src="../../../../../web/images/Locator.jpg" id="LocationSelection"></IMG></A></TD></td></tr>
+    </table></TD>
+    <TD  width="14%"> <SPAN >Product</SPAN></TD>
+    <TD> <TABLE border="0" cellspacing="0" cellpadding="0" summary="">
+        <TR> 
+          <TD > <INPUT type="hidden"  name="inpmProductId" id="M_Product_ID" value=""></INPUT> 
+            <INPUT type="text"  size="26" maxlength="22" name="inpmProductId_DES" id="M_Product_ID_DES" value=""></INPUT>
+          </TD>
+          <TD > <A href="#" onclick="openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId',         'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'WindowID', '235');return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
+            <img width="16" height="16"  alt="Product" title="Product"  border="0" src="../../../../../web/images/Product.jpg" id="buttonProduct"></IMG></A></TD>
+        </TR>
+      </TABLE></TD>
+    <TD width="10%" > <SPAN >To</SPAN></TD>
+    <TD width="13%" > <INPUT type="text" name="inpHasta" id="paramHasta" value="" size="10" maxlength="10"  onkeup="auto_complete_date(this);return true;"></INPUT> 
+      <A href="#" onclick="showCalendar('frmMain.inpHasta', document.frmMain.inpHasta.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
+      <img width="16" height="16"  alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
+    <TD width="14%"> <A href="#" onclick="depurarSelector('GO');return false;" onmouseover="window.status='Go to results';return true;" onmouseout="window.status='';return true;" > 
+      <img width="16" height="16" src="../../../../../web/images/detalle.jpg"  alt="Go to results" title="Go to results" border="0" id="buttonDetail"></IMG></A></TD>
+    </TR>
+  </TABLE>
+  <HR></HR>
+</FORM>
+</BODY>
+</HTML>

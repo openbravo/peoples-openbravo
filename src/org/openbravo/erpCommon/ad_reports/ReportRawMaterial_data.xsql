@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="ReportRawMaterialData" package="org.openbravo.erpCommon.ad_reports">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT p.name as pname, wpp.MOVEMENTQTY*sp.DECREASE*sp.REJECTED*wp.QUANTITY as expectedconsume,
+      pl.MOVEMENTQTY as realconsume, wpp.MOVEMENTQTY*(sp.DECREASE*sp.REJECTED-1)*wp.QUANTITY as expecteddecrease
+      FROM M_ProductionPlan pp, M_ProductionLine pl, M_Product p, MA_WRPhase wp, MA_WRPhaseProduct wpp,
+          MA_SequenceProduct sp
+      WHERE pp.M_ProductionPlan_ID = pl.M_ProductionPlan_ID
+        AND pp.MA_WRPhase_ID = wp.MA_WRPhase_ID
+        AND wp.MA_WRPhase_ID = wpp.MA_WRPhase_ID
+        AND wpp.M_Product_ID = pl.M_Product_ID
+        AND pl.M_Product_ID = p.M_Product_ID
+        AND wp.MA_Sequence_ID = sp.MA_Sequence_ID
+        AND sp.M_Product_ID = wpp.M_Product_ID
+        AND pp.M_ProductionPlan_ID = ?
+        AND pl.Productiontype = '-'
+        AND sp.DecreaseInd = 'N'
+    ]]></Sql>
+    <Parameter name="productionplan"/>
+  </SqlMethod>
+  <SqlMethod name="set" type="constant" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql></Sql>
+  </SqlMethod>
+</SqlClass>

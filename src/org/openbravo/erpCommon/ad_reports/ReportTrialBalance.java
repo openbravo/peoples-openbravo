@@ -1,0 +1,414 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+package org.openbravo.erpCommon.ad_reports;
+
+import org.openbravo.erpCommon.utility.*;
+import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.xmlEngine.XmlDocument;
+import java.io.*;
+import java.util.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
+import java.util.Vector;
+
+import org.openbravo.erpCommon.utility.DateTimeData;
+
+
+import org.openbravo.erpCommon.utility.ToolBar;
+
+public class ReportTrialBalance extends HttpSecureAppServlet {
+  private static final long serialVersionUID = 1L;
+
+  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (!Utility.hasProcessAccess(this, vars, "", "ReportTrialBalance")) {
+      bdError(response, "AccessTableNoView", vars.getLanguage());
+      return;
+    }
+
+    if (vars.commandIn("DEFAULT")) {
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportTrialBalance|DateFrom", "");
+      String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo", "");
+      String strOnly = vars.getGlobalVariable("inpOnly", "ReportTrialBalance|Only", "-1");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalance|Org", "");
+      String strLevel = vars.getGlobalVariable("inpLevel", "ReportTrialBalance|Level", "");
+      String strAccountFrom = vars.getGlobalVariable("inpAccountFrom", "ReportTrialBalance|AccountFrom", "");
+      String strAccountTo = vars.getGlobalVariable("inpAccountTo", "ReportTrialBalance|AccountTo", ReportTrialBalanceData.selectLastAccount(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account")));
+
+      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportTrialBalance|cBpartnerId");
+      String strAll = vars.getStringParameter("inpAll");
+
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly, strAccountFrom, strAccountTo, strAll, strcBpartnerId);
+    } else if (vars.commandIn("FIND")) {
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportTrialBalance|DateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo");
+      String strOnly = vars.getRequestGlobalVariable("inpOnly", "ReportTrialBalance|Only");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTrialBalance|Org");
+      String strLevel = vars.getRequestGlobalVariable("inpLevel", "ReportTrialBalance|Level");
+      String strAccountFrom = vars.getRequestGlobalVariable("inpAccountFrom", "ReportTrialBalance|AccountFrom");
+      String strAccountTo = vars.getRequestGlobalVariable("inpAccountTo", "ReportTrialBalance|AccountTo");
+
+      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportTrialBalance|cBpartnerId");
+      String strAll = vars.getStringParameter("inpAll");
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly, strAccountFrom, strAccountTo, strAll, strcBpartnerId);
+    } else if (vars.commandIn("PDF")){
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportTrialBalance|DateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo");
+      String strOnly = vars.getRequestGlobalVariable("inpOnly", "ReportTrialBalance|Only");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTrialBalance|Org");
+      String strLevel = vars.getRequestGlobalVariable("inpLevel", "ReportTrialBalance|Level");
+      String strAccountFrom = vars.getRequestGlobalVariable("inpAccountFrom", "ReportTrialBalance|AccountFrom");
+      String strAccountTo = vars.getRequestGlobalVariable("inpAccountTo", "ReportTrialBalance|AccountTo");
+
+      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportTrialBalance|cBpartnerId");
+      String strAll = vars.getStringParameter("inpAll");
+      printPageDataPDF(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly, strAccountFrom, strAccountTo, strAll, strcBpartnerId);
+    }else pageError(response);
+  }
+
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg, String strLevel, String strOnly, String strAccountFrom, String strAccountTo, String strAll, String strcBpartnerId)
+    throws IOException, ServletException {
+    String strMessage="";    
+    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
+    if (log4j.isDebugEnabled()) log4j.debug("strAll:"+strAll+" - strLevel:"+strLevel+" - strOnly:"+strOnly);
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    String discard[]={"sectionDiscard","sectionBP"};
+    XmlDocument xmlDocument=null;
+    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strOrgFamily = getFamily(strTreeOrg, strOrg);
+    String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
+    String strcBpartnerIdAux = strcBpartnerId;
+
+    ReportTrialBalanceData [] data = null;
+
+    if (strDateFrom.equals("") && strDateTo.equals("")) {
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTrialBalance", discard).createXmlDocument();
+      data = ReportTrialBalanceData.set();
+      if (vars.commandIn("FIND")) {
+        strMessage=Utility.messageBD(this, "BothDatesCannotBeBlank", vars.getLanguage()); 
+        log4j.warn("Both dates are blank");
+      }
+    } else {
+      if (!strLevel.equals("S")) discard[0] = "selEliminarField";
+      else discard[0] = "discard";
+
+      if (log4j.isDebugEnabled()) log4j.debug("printPageDataSheet - strOrgFamily = " + strOrgFamily);
+
+      if(strLevel.equals("S") && strOnly.equals("-1") ){
+
+        if (log4j.isDebugEnabled()) log4j.debug("strcBpartnerId:"+strcBpartnerId+" - strAll:"+strAll);
+        if (!(strAll.equals("")&&(strcBpartnerId.equals("")))) {
+          if (log4j.isDebugEnabled()) log4j.debug("Select BP, strcBpartnerId:"+strcBpartnerId+" - strAll:"+strAll);
+          if (!strAll.equals("")) strcBpartnerId="";
+          discard[1] = "sectionNoBP";
+          data = ReportTrialBalanceData.selectBP(this, strDateFrom, strDateTo, strOrg, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo,strcBpartnerId);
+        } else {
+          data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo);
+        }
+      }else{
+        data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"),"","");
+      }
+
+      if (log4j.isDebugEnabled()) log4j.debug("Calculating tree...");
+      data = calculateTree(data, null, new Vector<Object>());
+      data = levelFilter(data, null, false, strLevel);
+      data = dataFilter(data);
+      if (log4j.isDebugEnabled()) log4j.debug("Tree calculated");
+    }
+    ReportTrialBalanceData [] new_data = null;
+    if (strOnly.equals("-1") && data!=null && data.length>0)new_data = filterTree(data, strLevel);
+    else new_data = data;
+    if (log4j.isDebugEnabled()) log4j.debug("Creating xmlengine");
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTrialBalance", discard).createXmlDocument();
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "C_ElementValue level", "", Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportTrialBalance", "");
+      xmlDocument.setData("reportLevel","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTrialBalance", false, "", "", "imprimir();return false;",false, "ad_reports",  strReplaceWith, false,  true);
+    toolbar.prepareSimpleToolBarTemplate();
+
+    xmlDocument.setParameter("toolbar", toolbar.toString());
+
+    try {
+      KeyMap key = new KeyMap(this, vars, "ReportTrialBalance.html");
+      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    try {
+      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportTrialBalance");
+      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+      xmlDocument.setParameter("theme", vars.getTheme());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportTrialBalance.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      xmlDocument.setParameter("navigationBar", nav.toString());
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportTrialBalance.html", strReplaceWith);
+      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    {
+      OBError myMessage = vars.getMessage("ReportTrialBalance");
+      vars.removeMessage("ReportTrialBalance");
+      if (myMessage!=null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
+    } 
+
+    xmlDocument.setData("reportAccountFrom_ID","liststructure", ReportTrialBalanceData.selectAccount(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), ""));
+    xmlDocument.setData("reportAccountTo_ID","liststructure", ReportTrialBalanceData.selectAccount(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), ""));
+    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
+    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
+    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("dateFrom", strDateFrom);
+    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTo", strDateTo);
+    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("Only", strOnly);
+    xmlDocument.setParameter("adOrgId", strOrg);
+    xmlDocument.setParameter("Level", strLevel);
+    xmlDocument.setParameter("accountFrom", strAccountFrom);
+    xmlDocument.setParameter("accountTo", strAccountTo);
+    xmlDocument.setParameter("paramMessage", (strMessage.equals("")?"":"alert('" + strMessage + "');"));
+    xmlDocument.setParameter("paramAll0", strAll.equals("")?"0":"1");
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerIdAux));
+
+    if (log4j.isDebugEnabled()) log4j.debug("filling structure, data.length:"+new_data.length);
+    if (discard[1].equals("sectionNoBP")) { 
+      if (log4j.isDebugEnabled()) log4j.debug("without BPs");
+      xmlDocument.setData("structure2", new_data);
+    } else {
+      if (log4j.isDebugEnabled()) log4j.debug("with BPs");
+      if(strOnly.equals("-1")) Arrays.sort(new_data, new ReportTrialBalanceDataComparator());
+      for (int i = 0; i < new_data.length; i++) {
+        new_data[i].rownum = ""+i;
+      }
+      if (log4j.isDebugEnabled()) log4j.debug("Rownum calculated");
+      xmlDocument.setData("structure1", new_data);
+      
+    }
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg, String strLevel, String strOnly, String strAccountFrom, String strAccountTo, String strAll, String strcBpartnerId)
+    throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
+    /*response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();*/
+    String discard[]={"selEliminar","sectionBP"};
+
+    XmlDocument xmlDocument=null;
+    String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
+    String strOrgFamily = getFamily(strTreeOrg, strOrg);
+    String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
+    ReportTrialBalanceData [] data = null;
+    if (strDateFrom.equals("") && strDateTo.equals("")) {
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTrialBalancePDF", discard).createXmlDocument();
+      data = ReportTrialBalanceData.set();
+    } else {
+      if (!strLevel.equals("S")) discard[0] = "selEliminarField";
+      else discard[0] = "discard";
+
+
+      if(strLevel.equals("S") && strOnly.equals("-1") ){
+
+        if (!(strAll.equals("")&&(strcBpartnerId.equals("")))) {
+          if (log4j.isDebugEnabled()) log4j.debug("Select BP, strcBpartnerId:"+strcBpartnerId+" - strAll:"+strAll);
+          if (!strAll.equals("")) strcBpartnerId="";
+          discard[1] = "sectionNoBP";
+          data = ReportTrialBalanceData.selectBP(this, strDateFrom, strDateTo, strOrg, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo,strcBpartnerId);
+        } else {        
+          data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo);
+        }
+      }else{
+        data = ReportTrialBalanceData.select(this, strDateFrom,  strDateTo, strOrg, strTreeAccount, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"),"","");
+      }
+
+
+      data = calculateTree(data, null, new Vector<Object>());
+      data = levelFilter(data, null, false, strLevel);
+      data = dataFilter(data);
+    }
+    ReportTrialBalanceData [] new_data = null;
+    if (strOnly.equals("-1") && data!=null && data.length>0)new_data = filterTree(data, strLevel);
+    else new_data = data;
+
+
+
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTrialBalancePDF", discard).createXmlDocument();
+    xmlDocument.setParameter("companyName", ReportTrialBalanceData.selectCompany(this, vars.getClient()));
+    xmlDocument.setParameter("date", DateTimeData.today(this));
+    xmlDocument.setParameter("period", strDateFrom + " - " + strDateTo);
+    if (strLevel.equals("S")) xmlDocument.setParameter("accounting", "Cuenta inicio: "+ReportTrialBalanceData.selectAccountingName(this, strAccountFrom)+" - Cuenta fin: "+ReportTrialBalanceData.selectAccountingName(this, strAccountTo));
+    else xmlDocument.setParameter("accounting", "");
+
+    if (log4j.isDebugEnabled()) log4j.debug("filling structure, data.length:"+new_data.length);
+    if (log4j.isDebugEnabled()) log4j.debug("discard:"+discard[0]+","+discard[1]);
+
+    if (discard[1].equals("sectionNoBP"))
+      xmlDocument.setData("structure2", new_data);
+    else {
+      if(strOnly.equals("-1")) Arrays.sort(new_data, new ReportTrialBalanceDataComparator());
+      xmlDocument.setData("structure1", new_data);
+    }
+
+
+    String strResult = xmlDocument.print();
+    renderFO(strResult, response);
+    /*out.println(xmlDocument.print());
+      out.close();*/
+  }
+
+  private ReportTrialBalanceData [] filterTree(ReportTrialBalanceData [] data, String strLevel){
+    ArrayList<Object> arrayList = new ArrayList<Object>();
+    for (int i=0;data!=null && i<data.length;i++){
+      if (data[i].elementlevel.equals(strLevel)) arrayList.add(data[i]);
+    }
+    ReportTrialBalanceData[] new_data = new ReportTrialBalanceData [arrayList.size()];
+    arrayList.toArray(new_data);
+    return new_data;
+  }
+
+  private ReportTrialBalanceData[] calculateTree(ReportTrialBalanceData[] data, String indice, Vector<Object> vecTotal) {
+    if (data==null || data.length==0) return data;
+    if (indice == null) indice="0";
+    ReportTrialBalanceData[] result = null;
+    Vector<Object> vec = new Vector<Object>();
+    //  if (log4j.isDebugEnabled()) log4j.debug("ReportTrialBalanceData.calculateTree() - data: " + data.length);
+    if (vecTotal==null) vecTotal = new Vector<Object>();
+    if (vecTotal.size()==0) {
+      vecTotal.addElement("0");
+      vecTotal.addElement("0");
+      vecTotal.addElement("0");
+      vecTotal.addElement("0");
+    }
+    double totalDR = Double.valueOf((String) vecTotal.elementAt(0)).doubleValue();
+    double totalCR = Double.valueOf((String) vecTotal.elementAt(1)).doubleValue();
+    double totalInicial = Double.valueOf((String) vecTotal.elementAt(2)).doubleValue();
+    double totalFinal = Double.valueOf((String) vecTotal.elementAt(3)).doubleValue();
+    boolean encontrado = false;
+    for (int i=0;i<data.length;i++) {
+      if (data[i].parentId.equals(indice)) {
+        encontrado = true;
+        Vector<Object> vecParcial = new Vector<Object>();
+        vecParcial.addElement("0");
+        vecParcial.addElement("0");
+        vecParcial.addElement("0");
+        vecParcial.addElement("0");
+        ReportTrialBalanceData[] dataChilds = calculateTree(data, data[i].id, vecParcial);
+        double parcialDR = Double.valueOf((String) vecParcial.elementAt(0)).doubleValue();
+        double parcialCR = Double.valueOf((String) vecParcial.elementAt(1)).doubleValue();
+        double parcialInicial = Double.valueOf((String) vecParcial.elementAt(2)).doubleValue();
+        double parcialFinal = Double.valueOf((String) vecParcial.elementAt(3)).doubleValue();
+        data[i].amtacctdr = Double.toString(Double.valueOf(data[i].amtacctdr).doubleValue() + parcialDR);
+        data[i].amtacctcr = Double.toString(Double.valueOf(data[i].amtacctcr).doubleValue() + parcialCR);
+        data[i].saldoInicial = Double.toString(Double.valueOf(data[i].saldoInicial).doubleValue() + parcialInicial);
+        data[i].saldoFinal = Double.toString(Double.valueOf(data[i].saldoFinal).doubleValue() + parcialFinal);
+
+        totalDR += Double.valueOf(data[i].amtacctdr).doubleValue();
+        totalCR += Double.valueOf(data[i].amtacctcr).doubleValue();
+        totalInicial += Double.valueOf(data[i].saldoInicial).doubleValue();
+        totalFinal += Double.valueOf(data[i].saldoFinal).doubleValue();
+
+        vec.addElement(data[i]);
+        if (dataChilds!=null && dataChilds.length>0) {
+          for (int j=0;j<dataChilds.length;j++) vec.addElement(dataChilds[j]);
+        }
+      }else if(encontrado)break;
+    }
+    vecTotal.set(0, Double.toString(totalDR));
+    vecTotal.set(1, Double.toString(totalCR));
+    vecTotal.set(2, Double.toString(totalInicial));
+    vecTotal.set(3, Double.toString(totalFinal));
+    result = new ReportTrialBalanceData[vec.size()];
+    vec.copyInto(result);
+    return result;
+  }
+
+  private ReportTrialBalanceData[] dataFilter(ReportTrialBalanceData[] data){
+    if(data==null || data.length==0) return data;
+    Vector<Object> dataFiltered = new Vector<Object>();
+    for (int i=0;i<data.length;i++){
+      if (Double.valueOf(data[i].amtacctdr).doubleValue()!=0.0 || Double.valueOf(data[i].amtacctcr).doubleValue()!=0.0 || Double.valueOf(data[i].saldoInicial).doubleValue()!=0.0 || Double.valueOf(data[i].saldoFinal).doubleValue()!=0.0) {
+        dataFiltered.addElement(data[i]);
+      }
+    }
+    ReportTrialBalanceData[] result = new ReportTrialBalanceData[dataFiltered.size()];
+    dataFiltered.copyInto(result);
+    return result;
+  }
+
+  private ReportTrialBalanceData[] levelFilter(ReportTrialBalanceData[] data, String indice, boolean found, String strLevel) {
+    if (data==null || data.length==0 || strLevel==null || strLevel.equals("")) return data;
+    ReportTrialBalanceData[] result = null;
+    Vector<Object> vec = new Vector<Object>();
+    // if (log4j.isDebugEnabled()) log4j.debug("ReportTrialBalanceData.levelFilter() - data: " + data.length);
+
+    if (indice == null) indice="0";
+    for (int i=0;i<data.length;i++) {
+      if (data[i].parentId.equals(indice) && (!found || data[i].elementlevel.equalsIgnoreCase(strLevel))) {
+        ReportTrialBalanceData[] dataChilds = levelFilter(data, data[i].id, (found || data[i].elementlevel.equals(strLevel)), strLevel);
+        vec.addElement(data[i]);
+        if (dataChilds!=null && dataChilds.length>0) for (int j=0;j<dataChilds.length;j++) vec.addElement(dataChilds[j]);
+      }
+    }
+    result = new ReportTrialBalanceData[vec.size()];
+    vec.copyInto(result);
+    vec.clear();
+    return result;
+  }
+
+  public String getFamily(String strTree, String strChild) throws IOException, ServletException {
+    return Tree.getMembers(this, strTree, strChild);
+    /*    ReportGeneralLedgerData [] data = ReportGeneralLedgerData.selectChildren(this, strTree, strChild);
+          String strFamily = "";
+          if(data!=null && data.length>0) {
+          for (int i = 0;i<data.length;i++){
+          if (i>0) strFamily = strFamily + ",";
+          strFamily = strFamily + data[i].id;
+          }
+          return strFamily;
+          }else return "'1'";*/
+  }
+
+  public String getServletInfo() {
+    return "Servlet ReportTrialBalance. This Servlet was made by Eduardo Argal";
+  } // end of getServletInfo() method
+}
+

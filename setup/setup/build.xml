@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the OpenBravo Public License 
+ * Version 1.1 (the "License"), being the Mozilla Public License 
+ * version 1.1  with a permitted attribution clause ; you may not use 
+ * this file except in compliance with the License. 
+ * You may obtain a copy of the License at  
+ * http://www.openbravo.com/legal/license.txt 
+ * Software distributed under the License is distributed on an 
+ * "AS IS" basis, WITHOUT WARRANTY OF  ANY KIND, either express or 
+ * implied. See the License for the specific language governing rights 
+ * and  limitations under the License. 
+ * The Original Code is OpenBravo ERP. 
+ * The Initial Developer of the Original Code is [Autores] and OpenBravo SL 
+ * All portions are Copyright (C) 2005-2006 OpenBravo SL 
+ * All Rights Reserved. 
+ * Contributor(s): Openbravo S.L.
+ ************************************************************************
+ -->
+
+<project name="tecnicia" default="setup" basedir=".">
+
+  
+  <property environment="env"/>
+  <property name="bbdd.host" value="localhost"></property>
+  <property name="bbdd.user" value="TAD"></property>
+  <property name="bbdd.password" value="TAD"></property>
+  <property name="bbdd.sid" value="orcl"></property>
+  <property name="bbdd.port" value="1521"></property>
+  <property name="font.base" value="C:/AppsOpenBravo/lib/fop"></property>
+
+  <condition property="temp.folder" value="C:\Temp" else="/tmp">
+    <and>
+      <os family="windows"/>
+    </and>
+  </condition>
+
+  <target name="default">
+    <unzip src="${antinstaller.jar}" dest=".">
+      <patternset>
+        <include name="*.class"/>
+      </patternset>
+    </unzip>
+    <!--chmod file="${installDir}/bin/*.sh" perm="774"/-->
+  </target>
+
+  <target name="setup" depends="default">
+    <java classname="Setup" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="200M">
+      <arg line="'${base.app}' '${base.source}' '${base.temp}' '${attach.path}' '${font.base}' '${web.url}' '${bbdd.host}' '${bbdd.user}' '${bbdd.password}' '${bbdd.sid}' '${bbdd.port}' '${jakarta.context.name}' '${systemPassword}' '${bbdd.tns}' '${temp.folder}'"/>
+    </java>
+  </target>
+</project>

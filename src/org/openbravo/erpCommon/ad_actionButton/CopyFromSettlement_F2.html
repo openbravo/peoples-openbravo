@@ -1,0 +1,47 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+<FORM name="frmSelector" method="POST" action="CopyFromSettlement_F1.html">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <INPUT type="hidden" name="inpcSettlementId" id="paramSettlement" value=""></INPUT> 
+  <INPUT type="hidden" name="inpcSettlementFromFrame4" id="paramSettlement" value=""></INPUT> 
+<table cellspacing="0" cellpadding="0" width="100%" style="text-align:-moz-center;_text-align:center;">
+  <tr><td>
+  <div class="Popup_ContentPane_Client" style="overflow: auto;">
+    <TABLE cellspacing="0" cellpadding="0" class="DataGrid_Header_Table DataGrid_Body_Table">
+      <TR class="Popup_Client_Selector_DataGrid_HeaderRow"> 
+        <TD width="24px" class="DataGrid_Body_LineNoCell"> </TD>
+        <TH width="16%" class="DataGrid_Header_Cell">Document No.</TH>
+        <TH width="58%" class="DataGrid_Header_Cell">Description</TH>
+        <TH width="22%" class="DataGrid_Header_Cell">MovementDate</TH>
+      </TR>
+      <DIV id="sectionDetail"> 
+        <TR class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="inpRecord10000003">
+          <TD width="24px"><INPUT type="radio" name="inpcSettlementFromId" value="xx" class="CheckBox" id="fieldcSettlementFromId" onclick="submitCommandFormParameter('FRAME4',document.frmSelector.inpcSettlementFromFrame4, 'xx', false, null, null, 'medioInferior');"></INPUT>
+          </TD>
+          <TD width="16%" class="cell" id="fieldDocumentNo">&nbsp;</TD>
+          <TD width="58%" class="cell" id="fieldDescription">&nbsp;</TD>
+          <TD width="22%" class="cell" id="fieldDate">&nbsp;</TD>
+        </TR>
+      </DIV>
+    </TABLE>
+  </div>
+  </td></td>
+</TABLE>
+</FORM>

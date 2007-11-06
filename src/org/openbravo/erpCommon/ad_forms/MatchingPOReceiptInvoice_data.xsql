@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="MatchingPOReceiptInvoiceData" package="org.openbravo.erpCommon.ad_forms">
+	<SqlClassComment></SqlClassComment>
+	<SqlMethod name="select" type="preparedStatement" return="multiple">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql><![CDATA[
+      SELECT hdr.C_Order_ID AS PADRE,hdr.DocumentNo, hdr.DateOrdered as CurDate, bp.Name as bpartner_name,hdr.C_BPartner_ID, 
+      lin.Line,lin.C_OrderLine_ID as ID, p.Name as product_name,lin.M_Product_ID, lin.QtyOrdered as Qty,SUM(COALESCE(mo.Qty,0)) as QTY_Matched
+      FROM C_OrderLine lin left join M_MatchPO mo on lin.C_OrderLine_ID=mo.C_OrderLine_ID, 
+      C_Order hdr, C_BPartner bp,  M_Product p, C_DocType dt
+      WHERE hdr.C_BPartner_ID=bp.C_BPartner_ID 
+      AND hdr.C_Order_ID=lin.C_Order_ID 
+      AND lin.M_Product_ID=p.M_Product_ID 
+      AND hdr.C_DocType_ID=dt.C_DocType_ID 
+      AND hdr.AD_Org_ID IN ('1') 
+      AND hdr.AD_Client_ID IN ('1') 
+      AND dt.DocBaseType IN ('POO') 
+      AND mo.M_INOUTLINE_ID IS NOT NULL 
+      GROUP BY hdr.C_Order_ID,hdr.DocumentNo, hdr.DateOrdered, bp.Name,hdr.C_BPartner_ID, 
+      lin.Line,lin.C_OrderLine_ID, p.Name,lin.M_Product_ID, lin.QtyOrdered
+      HAVING 0 <>SUM(COALESCE(mo.Qty, 0)) 
+      ]]></Sql>
+		<Parameter name="parProduct" optional="true" after="WHERE " text=" lin.M_Product_ID = ? AND "/>
+		<Parameter name="parBpartner" optional="true" after="WHERE " text=" hdr.C_BPartner_ID = ? AND "/>
+		<Parameter name="parQty" optional="true" after="WHERE "><![CDATA[ lin.QtyOrdered = ? AND ]]></Parameter>
+		<Parameter name="parDesde" optional="true" after="WHERE "><![CDATA[ hdr.DateOrdered >= TO_DATE(?) AND ]]></Parameter>
+		<Parameter name="parHasta" optional="true" after="WHERE "><![CDATA[ hdr.DateOrdered <= TO_DATE(?) AND ]]></Parameter>
+		<Parameter name="parOrgList" optional="true" type="replace" after="AND hdr.AD_Org_ID IN (" text="'1'"/>
+		<Parameter name="parClientList" optional="true" type="replace" after="AND hdr.AD_Client_ID IN (" text="'1'"/>
+    <Parameter name="parLines" optional="true" type="argument" after=" AND mo.M_INOUTLINE_ID IS NOT NULL " text=" AND lin.C_OrderLine_ID IN "/>
+		<Parameter name="parMatching" optional="true" type="replace" after="HAVING " text="0"/>
+	</SqlMethod>
+	<SqlMethod name="selectFactura" type="preparedStatement" return="multiple">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql><![CDATA[
+      SELECT hdr.C_Invoice_ID AS PADRE,hdr.DocumentNo, hdr.DateInvoiced as CurDate, bp.Name as bpartner_name,hdr.C_BPartner_ID, 
+      lin.Line,lin.C_InvoiceLine_ID as ID, p.Name as product_name,lin.M_Product_ID, lin.QtyInvoiced as Qty,SUM(COALESCE(mi.Qty,0)) as QTY_Matched
+      FROM C_InvoiceLine lin left join  M_MatchInv mi on lin.C_InvoiceLine_ID=mi.C_InvoiceLine_ID,
+      C_Invoice hdr, C_BPartner bp,  M_Product p, C_DocType dt
+      WHERE hdr.C_BPartner_ID=bp.C_BPartner_ID 
+      AND hdr.C_Invoice_ID=lin.C_Invoice_ID 
+      AND lin.M_Product_ID=p.M_Product_ID 
+      AND hdr.C_DocType_ID=dt.C_DocType_ID 
+      AND hdr.AD_Org_ID IN ('1') 
+      AND hdr.AD_Client_ID IN ('1') 
+      AND dt.DocBaseType IN ('API','APC') 
+      GROUP BY hdr.C_Invoice_ID,hdr.DocumentNo, hdr.DateInvoiced, bp.Name,hdr.C_BPartner_ID, 
+      lin.Line,lin.C_InvoiceLine_ID, p.Name,lin.M_Product_ID, lin.QtyInvoiced 
+      HAVING 0 <>SUM(COALESCE(mi.Qty, 0)) 
+      ]]></Sql>
+		<Parameter name="parProduct" optional="true" after="WHERE " text=" lin.M_Product_ID = ? AND "/>
+		<Parameter name="parBpartner" optional="true" after="WHERE " text=" hdr.C_BPartner_ID = ? AND "/>
+		<Parameter name="parQty" optional="true" after="WHERE " text=" lin.QtyInvoiced = ? AND "/>
+		<Parameter name="parDesde" optional="true" after="WHERE "><![CDATA[ hdr.DateInvoiced >= TO_DATE(?) AND ]]></Parameter>
+		<Parameter name="parHasta" optional="true" after="WHERE "><![CDATA[ hdr.DateInvoiced <= TO_DATE(?) AND ]]></Parameter>
+		<Parameter name="parOrgList" optional="true" type="replace" after="AND hdr.AD_Org_ID IN (" text="'1'"/>
+		<Parameter name="parClientList" optional="true" type="replace" after="AND hdr.AD_Client_ID IN (" text="'1'"/>
+    <Parameter name="parLines" optional="true" type="argument" after="AND dt.DocBaseType IN ('API','APC')" text=" AND lin.C_InvoiceLine_ID IN "/>
+		<Parameter name="parMatching" optional="true" type="replace" after="HAVING " text="0"/>
+	</SqlMethod>
+	<SqlMethod name="selectAlbaran" type="preparedStatement" return="multiple">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql><![CDATA[
+      SELECT hdr.M_InOut_ID AS PADRE,hdr.DocumentNo, hdr.MovementDate as CurDate, bp.Name as bpartner_name,hdr.C_BPartner_ID, 
+      lin.Line,lin.M_InOutLine_ID as ID, p.Name as product_name,lin.M_Product_ID, lin.MovementQty as Qty,SUM(COALESCE(m.Qty,0)) as QTY_Matched
+      FROM M_InOutLine lin left join M_MatchPO m on lin.M_InOutLine_ID=m.M_InOutLine_ID,
+      M_InOut hdr, C_BPartner bp,   C_DocType dt ,M_Product p
+      WHERE hdr.C_BPartner_ID=bp.C_BPartner_ID 
+      AND hdr.M_InOut_ID=lin.M_InOut_ID 
+      AND lin.M_Product_ID=p.M_Product_ID 
+      AND hdr.C_DocType_ID = dt.C_DocType_ID 
+      AND hdr.AD_Org_ID IN ('1') 
+      AND hdr.AD_Client_ID IN ('1') 
+      AND dt.DocBaseType='MMR' 
+      GROUP BY hdr.M_InOut_ID,hdr.DocumentNo, hdr.MovementDate, bp.Name,hdr.C_BPartner_ID, 
+      lin.Line,lin.M_InOutLine_ID, p.Name,lin.M_Product_ID, lin.MovementQty
+      HAVING 0 <>SUM(COALESCE(m.Qty, 0)) 
+      ]]></Sql>
+		<Parameter name="parFinalDoc" optional="true" type="replace" after="C_DocType dt, " text="M_MatchPO"/>
+		<Parameter name="parProduct" optional="true" after="WHERE " text=" lin.M_Product_ID = ? AND "/>
+		<Parameter name="parBpartner" optional="true" after="WHERE " text=" hdr.C_BPartner_ID = ? AND "/>
+		<Parameter name="parQty" optional="true" after="WHERE " text=" lin.MovementQty = ? AND "/>
+		<Parameter name="parDesde" optional="true" after="WHERE "><![CDATA[ hdr.MovementDate >= TO_DATE(?) AND ]]></Parameter>
+		<Parameter name="parHasta" optional="true" after="WHERE "><![CDATA[ hdr.MovementDate <= TO_DATE(?) AND ]]></Parameter>
+		<Parameter name="parOrgList" optional="true" type="replace" after="AND hdr.AD_Org_ID IN (" text="'1'"/>
+		<Parameter name="parClientList" optional="true" type="replace" after="AND hdr.AD_Client_ID IN (" text="'1'"/>
+    <Parameter name="parLines" optional="true" type="argument" after="AND dt.DocBaseType='MMR' " text=" AND lin.M_InOutLine_ID IN "/>
+		<Parameter name="parMatching" optional="true" type="replace" after="HAVING " text="0"/>
+	</SqlMethod>
+	<SqlMethod name="set" type="constant" return="multiple">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql/>
+	</SqlMethod>
+	<SqlMethod name="selectLine" type="preparedStatement" return="multiple">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql><![CDATA[
+      SELECT hdr.C_BPartner_ID, lin.M_Product_ID, lin.QtyOrdered as Qty
+      FROM C_Order hdr, C_OrderLine lin
+      WHERE lin.C_OrderLine_ID = ? 
+      AND hdr.C_Order_ID=lin.C_Order_ID 
+      ]]></Sql>
+		<Parameter name="clave"/>
+	</SqlMethod>
+	<SqlMethod name="selectLineFactura" type="preparedStatement" return="multiple">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql><![CDATA[
+      SELECT hdr.C_BPartner_ID, lin.M_Product_ID, lin.QtyInvoiced as Qty
+      FROM C_Invoice hdr, C_InvoiceLine lin
+      WHERE lin.C_InvoiceLine_ID = ? 
+      AND hdr.C_Invoice_ID=lin.C_Invoice_ID 
+      ]]></Sql>
+		<Parameter name="clave"/>
+	</SqlMethod>
+	<SqlMethod name="selectLineAlbaran" type="preparedStatement" return="multiple">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql><![CDATA[
+      SELECT hdr.C_BPartner_ID, lin.M_Product_ID, lin.MovementQty as Qty
+      FROM M_InOut hdr, M_InOutLine lin
+      WHERE lin.M_InoutLine_ID = ? 
+      AND hdr.M_InOut_ID=lin.M_InOut_ID 
+      ]]></Sql>
+		<Parameter name="clave"/>
+	</SqlMethod>
+	<SqlMethod name="bpartner" type="preparedStatement" return="String" default="">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql><![CDATA[
+      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID=?
+      ]]></Sql>
+		<Parameter name="cBpartnerId"/>
+	</SqlMethod>
+	<SqlMethod name="product" type="preparedStatement" return="String" default="">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql><![CDATA[
+      SELECT NAME FROM M_PRODUCT WHERE M_PRODUCT_ID=?
+      ]]></Sql>
+		<Parameter name="cProductId"/>
+	</SqlMethod>
+  <SqlMethod name="insertInvoice" type="preparedStatement" connection="true" return="rowCount">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql><![CDATA[
+      INSERT INTO M_MatchInv (M_MatchInv_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated,
+      UpdatedBy, M_InOutLine_ID, C_InvoiceLine_ID, M_Product_ID, DateTrx, Qty, Processing, Processed, Posted) 
+      VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), now(), TO_NUMBER(?),'N','Y','N')
+      ]]></Sql>
+		<Parameter name="id"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="mInoutlineId"/>
+    <Parameter name="lineId"/>
+    <Parameter name="mProductId"/>
+    <Parameter name="qty"/>
+	</SqlMethod>
+  <SqlMethod name="insert" type="preparedStatement" connection="true" return="rowCount">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql><![CDATA[
+      INSERT INTO M_MatchPO (M_MatchPO_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated,
+      UpdatedBy, M_InOutLine_ID, C_OrderLine_ID, M_Product_ID, DateTrx, Qty, Processing, Processed, Posted) 
+      VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), now(), TO_NUMBER(?),'N','Y','N')
+      ]]></Sql>
+		<Parameter name="id"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="mInoutlineId"/>
+    <Parameter name="lineId"/>
+    <Parameter name="mProductId"/>
+    <Parameter name="qty"/>
+	</SqlMethod>
+  <!--SqlMethod name="update" type="preparedStatement" connection="true" return="rowCount">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql><![CDATA[
+      UPDATE M_Storage_Pending SET QtyOrdered = QtyOrdered-TO_NUMBER(?) 
+      WHERE M_Product_ID = ? 
+      AND M_Warehouse_ID = (SELECT MAX(M_Warehouse_ID) FROM M_Locator WHERE M_Locator_ID = (SELECT M_Locator_ID FROM M_InOutLine WHERE M_InOutLine_ID=?))
+      ]]></Sql>
+		<Parameter name="qty"/>
+    <Parameter name="mProductId"/>
+    <Parameter name="mInoutlineId"/>
+	</SqlMethod-->
+</SqlClass>

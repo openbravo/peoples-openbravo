@@ -1,0 +1,142 @@
+.MessageBoxError{
+  width:90%; 
+  margin-left:5%; 
+  margin-right:5%;
+  background-color: #D21717;
+  color: #FFFFFF;  
+}
+
+.MessageBoxWarning {
+  width:90%; 
+  margin-left:5%; 
+  margin-right:5%;
+  background-color: #EAD632;
+  color: #000000;  
+}
+
+.MessageBoxInfo {
+	width: 90%;
+	margin-left: 5%;
+	margin-right: 5%; 
+/*background-color: #47AF1E;
+  color: #FFFFFF;*/
+	color: #47AF1E;
+	background-color: #FFFFDF;
+}
+
+.MessageBoxHidden {
+	height: 0px;
+	display:none;
+	visibility: collapse;
+}
+
+.MessageBoxTitle {
+  font-size: x-large;
+  vertical-align: top;
+  text-align: left;
+}
+
+.MessageBoxContent {
+  font-size: small;
+  text-align: left;
+}
+
+.MessageBoxError .MessageBoxImage {
+	background: no-repeat;
+ background-image: url(error.png);
+ vertical-align: middle;
+}
+
+.MessageBoxWarning .MessageBoxImage {
+	background: no-repeat;
+ background-image: url(warning.png);
+ vertical-align: middle; 
+}
+
+.MessageBoxInfo .MessageBoxImage {
+	background: no-repeat;
+	background-image: url(info.png);
+ vertical-align: middle;	
+}
+
+.MessageBoxError .MessageBoxCorner1 {
+	background: no-repeat;
+ background-image: url(rounded_corner1_error.png);
+  background-color: Window !important; 
+}
+
+.MessageBoxWarning .MessageBoxCorner1 {
+
+	background: no-repeat;
+ background-image: url(rounded_corner1_warning.png);
+  background-color: Window !important; 
+}
+
+/*.MessageBoxInfo .MessageBoxCorner1 {
+
+	background: no-repeat;
+	background-image: url(rounded_corner1_info.png);
+  background-color: Window !important;	
+}*/
+
+.MessageBoxError .MessageBoxCorner2 {
+
+	background: no-repeat;
+ background-image: url(rounded_corner2_error.png);
+  background-color: Window !important; 
+}
+
+.MessageBoxWarning .MessageBoxCorner2 {
+
+	background: no-repeat;
+ background-image: url(rounded_corner2_warning.png);
+  background-color: Window !important; 
+}
+
+/*.MessageBoxInfo .MessageBoxCorner2 {
+
+	background: no-repeat;
+	background-image: url(rounded_corner2_info.png);
+  background-color: Window !important;	
+}*/
+
+.MessageBoxError .MessageBoxCorner3 {
+
+	background: no-repeat;
+ background-image: url(rounded_corner3_error.png);
+  background-color: Window !important; 
+}
+
+.MessageBoxWarning .MessageBoxCorner3 {
+
+	background: no-repeat;
+ background-image: url(rounded_corner3_warning.png);
+  background-color: Window !important; 
+}
+
+/*.MessageBoxInfo .MessageBoxCorner3 { {
+
+	background: no-repeat;
+	background-image: url(rounded_corner3_info.png);
+  background-color: Window !important;	
+}*/
+
+.MessageBoxError .MessageBoxCorner4 {
+
+	background: no-repeat;
+ background-image: url(rounded_corner4_error.png);
+  background-color: Window !important; 
+}
+
+.MessageBoxWarning .MessageBoxCorner4 {
+
+	background: no-repeat;
+ background-image: url(rounded_corner4_warning.png);
+  background-color: Window !important; 
+}
+
+/*.MessageBoxInfo .MessageBoxCorner4 {
+	background: no-repeat;
+	background-image: url(rounded_corner4_info.png);
+  background-color: Window !important;	
+}*/

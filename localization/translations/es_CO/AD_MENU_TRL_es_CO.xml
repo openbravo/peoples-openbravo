@@ -1,0 +1,1887 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="es_CO" table="AD_MENU">
+  <row id="101" trl="N">
+    <value column="Name" original="Task">Tarea</value>
+    <value column="Description" original="Define tasks to be used in the application for selected roles.">Define las tareas de los roles seleccionados en la aplicación.</value>
+  </row>
+  <row id="102" trl="N">
+    <value column="Name" original="Currency">Moneda</value>
+    <value column="Description" original="Define currencies and conversion rates to be used in the application.">Define las monedas y los rangos de conversión para usar en la aplicación.</value>
+  </row>
+  <row id="103" trl="N">
+    <value column="Name" original="Conversion Rates">Rangos de conversión</value>
+    <value column="Description" original="Define conversion rates to be used for currencies defined in the application.">Define los rangos de conversión para las monedas mencionadas en la aplicación.</value>
+  </row>
+  <row id="104" trl="N">
+    <value column="Name" original="Fiscal Calendar">Calendario anual y periodos</value>
+    <value column="Description" original="Create multiple fiscal calendars and periods for accounting purposes.">Crea múltiples calendarios y períodos fiscales con fines contables.</value>
+  </row>
+  <row id="105" trl="N">
+    <value column="Name" original="Account Tree">Elemento de la cuenta</value>
+    <value column="Description" original="Create and edit account elements and add them to your defined chart of accounts or account trees. ">Crea y edita los elementos de la cuenta y añádalos a su diagrama de cuentas o árbol de cuentas.</value>
+  </row>
+  <row id="106" trl="N">
+    <value column="Name" original="Account Combination">Combinación de cuentas</value>
+    <value column="Description" original="Create accounting combinations to be used in Openbravo's accounting process.">Crea combinaciones de cuentas para utilizar en los procesos contables de Openbravo.</value>
+  </row>
+  <row id="107" trl="N">
+    <value column="Name" original="Unit of Measure">Unidad de medida</value>
+    <value column="Description" original="Create units of measure and conversions rates to be applied to products.">Crea unidades de medida y rangos de conversión aplicables a los productos.</value>
+  </row>
+  <row id="108" trl="N">
+    <value column="Name" original="Location">Domicilio</value>
+    <value column="Description" original="Define addresses or service points of your organizations. ">Define las direcciones o puntos de servicio de sus organizaciones.</value>
+  </row>
+  <row id="109" trl="N">
+    <value column="Name" original="Country Region and City">Pais, departamento y ciudad</value>
+    <value column="Description" original="Define countries with regions and cities to be used in the application.">Define los países, con sus regiones y ciudades, para utilizar en la aplicación.</value>
+  </row>
+  <row id="110" trl="N">
+    <value column="Name" original="Business Partner">Terceros</value>
+    <value column="Description" original="Create and edit business partner information, templates, and bank accounts.">Crea y edita la información, las plantillas y las cuentas bancarias de terceros.</value>
+  </row>
+  <row id="111" trl="N">
+    <value column="Name" original="Accounting Schema">Esquema contable</value>
+    <value column="Description" original="Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ">Crea y edita múltiples esquemas contables y asígneles los elementos de la cuenta; defina las tablas BD para los procesos contables y defina las cuentas de LM que se usan por default.</value>
+  </row>
+  <row id="113" trl="N">
+    <value column="Name" original="Test">Test</value>
+    <value column="Description" original="View an example of a window that shows fields with all possible references or data types. ">Muestra un ejemplo de ventana en la que aparezcan los campos con todos los tipos de datos y referencias posibles.</value>
+  </row>
+  <row id="114" trl="N">
+    <value column="Name" original="Attachment">Adjunto</value>
+    <value column="Description" original="Maintain Attachments">Mantenimiento de adjuntos</value>
+  </row>
+  <row id="115" trl="N">
+    <value column="Name" original="Preference">Preferencias</value>
+    <value column="Description" original="Create and edit extremely restrictive values for a specified user, window, or for the entire application.">Crea y edita valores extremadamente restrictivos para un usuario o ventana específicos o para toda la aplicación.</value>
+  </row>
+  <row id="116" trl="N">
+    <value column="Name" original="Multiphase Project">Proyecto fases</value>
+    <value column="Description" original="Create and edit projects and tasks potentially requiring sales invoicing.">Crea y edita proyectos y tareas que puedan requerir facturas de venta.</value>
+  </row>
+  <row id="117" trl="N">
+    <value column="Name" original="G/L Category">Categoría de LM</value>
+    <value column="Description" original="Define G/L Categories to be used in the General Ledger.">Define las categorías de LM para utilizar en el Libro Mayor.</value>
+  </row>
+  <row id="118" trl="N">
+    <value column="Name" original="G/L Journal">Asientos manuales</value>
+    <value column="Description" original="Create and edit manual G/L journal entries.">Crea y edita las entradas del diario de asientos manuales del LM.</value>
+  </row>
+  <row id="120" trl="N">
+    <value column="Name" original="ABC Activity">Actividad (ABC)</value>
+    <value column="Description" original="Define activities for which you are interested in managing costs.">Define las actividades para las que le interesa la gestión de costos.</value>
+  </row>
+  <row id="121" trl="N">
+    <value column="Name" original="Document Type">Tipo de documento</value>
+    <value column="Description" original="Create and manage document types to be used for all application transactions. ">Crea y gestiona los tipos de documento para utilizar en todas las transacciones de la aplicación.</value>
+  </row>
+  <row id="122" trl="N">
+    <value column="Name" original="Approval">Autorización</value>
+    <value column="Description" original="Maintain Approvals">Mantenimiento de autorizaciones</value>
+  </row>
+  <row id="123" trl="N">
+    <value column="Name" original="Tax Rate">Rango impuesto</value>
+    <value column="Description" original="Create tax rates to be used in application transactions.">Crea rangos de impuestos para utilizar en las transacciones de la aplicación.</value>
+  </row>
+  <row id="124" trl="N">
+    <value column="Name" original="Tax Category">Categoria de Impuesto</value>
+    <value column="Description" original="Create tax categories to manage tax rates with similar characteristics or attributes.">Crea categorías impositivas para gesionar rangos de impuestos con atributos y características similares.</value>
+  </row>
+  <row id="125" trl="N">
+    <value column="Name" original="Warehouse and Storage Bins">Almacén y ubicaciones</value>
+    <value column="Description" original="Create warehouses and organize them using storage bins. ">Crea los almacenes y organícelos utilizando ubicaciones.</value>
+  </row>
+  <row id="126" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="Create products and manage the related costing, purchasing, and pricing setup.">Crea productos y gestiona las reglas de costos, compras y tarifas.</value>
+  </row>
+  <row id="127" trl="N">
+    <value column="Name" original="Payment Term">Condiciones de pago</value>
+    <value column="Description" original="Define payment terms to be used for business partners taking part in transactions.">Define las condiciones de pago para los terceros involucrados en las transacciones. </value>
+  </row>
+  <row id="128" trl="N">
+    <value column="Name" original="Shipping Company">Transportista</value>
+    <value column="Description" original="Create shipping companies and define freight costs to be used in products logistics. ">Crea compañías de transporte y define los costos de portes para utilizar en la logística de los productos.</value>
+  </row>
+  <row id="129" trl="N">
+    <value column="Name" original="Sales Order">Pedido de venta</value>
+    <value column="Description" original="Create orders tracking product sales to customers.">Crea peticiones para rastrear las ventas de productos a los clientes. </value>
+  </row>
+  <row id="130" trl="N">
+    <value column="Name" original="Product Category">Categoría del producto</value>
+    <value column="Description" original="Create product categories to better organize your products and create more powerful reports.">Crea categorías de productos para organizar mejor sus productos y elaborar informes más eficientes.</value>
+  </row>
+  <row id="132" trl="N">
+    <value column="Name" original="Price List">Tarifa</value>
+    <value column="Description" original="Create and edit price lists and versions to optionally apply specified product prices to individual business partners.  ">Crea y edita las tarifas y versiones para aplicar opcionalmente los precios de los productos a un tercero particular</value>
+  </row>
+  <row id="133" trl="N">
+    <value column="Name" original="Invoice Schedule">Calendario de facturación</value>
+    <value column="Description" original="Define invoice schedules to be used for business partners. ">Define los calendarios de facturación para uso de los terceros.</value>
+  </row>
+  <row id="134" trl="N">
+    <value column="Name" original="Sales Campaign">Campaña de Marketing</value>
+    <value column="Description" original="Create specific sales campaigns to be used in sales operations.">Crea campañas específicas de ventas para las operaciones de ventas.</value>
+  </row>
+  <row id="135" trl="N">
+    <value column="Name" original="GL Budget">LM de presupuestos</value>
+    <value column="Description" original="Maintain General Ledger Budgets">Mantenimiento del libro mayor de presupuestos</value>
+  </row>
+  <row id="136" trl="N">
+    <value column="Name" original="Sales Channel">Canal de marketing</value>
+    <value column="Description" original="Create specific sales channels to be used in sales operations.">Crea canales específicos de ventas para las operaciones de ventas.</value>
+  </row>
+  <row id="137" trl="N">
+    <value column="Name" original="Sales Region">Zona de venta</value>
+    <value column="Description" original="Create sales regions to be used in sales operations.">Crea regiones de venta para las operaciones de venta.</value>
+  </row>
+  <row id="138" trl="N">
+    <value column="Name" original="Element">Elemento </value>
+    <value column="Description" original="Edit the central repository of application elements to update field name descriptions and help/comments.">Edita el repositorio central de los elementos de la aplicación para actualizar la descripción del nombre de los campos y los comentarios de ayuda.</value>
+  </row>
+  <row id="139" trl="N">
+    <value column="Name" original="Tables and Columns">Tablas y columnas</value>
+    <value column="Description" original="Edit tables and columns so that Openbravo can access the database, as well as control the role access. ">Edita tablas y columnas para que Openbravo pueda acceder a la base de datos y controlar los permisos de rol.</value>
+  </row>
+  <row id="140" trl="N">
+    <value column="Name" original="Reference">Referencia</value>
+    <value column="Description" original="Edit standard data types such as strings, integers, lists as well as custom data types.">Edita tipos de datos estándares, tales como cadenas, números enteros y listas, así como tipos de datos personalizados.</value>
+  </row>
+  <row id="141" trl="N">
+    <value column="Name" original="Windows, Tabs, and Fields">Ventanas, solapas y campos</value>
+    <value column="Description" original="Create and edit windows, tabs, and fields according to your business preferences.">Crea y edita ventanas, solapas y campos de acuerdo con sus preferencias de negocios.</value>
+  </row>
+  <row id="142" trl="N">
+    <value column="Name" original="Validation Setup">Reglas de validación</value>
+    <value column="Description" original="Create and edit the validation setup to be used for columns of tables.">Crea y edita reglas de validación para utilizar en las columnas de las tablas.</value>
+  </row>
+  <row id="143" trl="N">
+    <value column="Name" original="Message">Mensaje</value>
+    <value column="Description" original="Create and edit application initiated information and error messages.">Crea y edita la información de inicio y los mensajes de error de la aplicación.</value>
+  </row>
+  <row id="144" trl="N">
+    <value column="Name" original="Menu">Menú</value>
+    <value column="Description" original="Edit the application menu tree structure according to your business necessities.">Edita la estructura de árbol del menú de la aplicación de acuerdo con sus necesidades de negocios.</value>
+  </row>
+  <row id="145" trl="N">
+    <value column="Name" original="Language">Idioma</value>
+    <value column="Description" original="Define multiple languages to be used in the application.">Define los idiomas de trabajo de la aplicación.</value>
+  </row>
+  <row id="147" trl="N">
+    <value column="Name" original="User">Usuario</value>
+    <value column="Description" original="Create users and manage user roles to give access permissions. ">Crea usuarios y gestiona los roles de usuario para otorgar permisos de acceso.</value>
+  </row>
+  <row id="148" trl="N">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Define client characteristics, additional information, and defaults.">Define las características, la información adicional y los incumplimientos de los clientes.</value>
+  </row>
+  <row id="149" trl="N">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Create organizations and manage the organizational structure according to your business necessities. ">Crea las organizaciones y gestiona la estructura organizacional de acuerdo con sus necesidades de negocios.</value>
+  </row>
+  <row id="150" trl="N">
+    <value column="Name" original="Role">Rol</value>
+    <value column="Description" original="Create roles with assigned users, and edit roles access to organizations, windows, processes, etc.">Crea roles para los usuarios asignados y edita el permiso de los roles a las organizaciones, ventanas, procesos, etc.</value>
+  </row>
+  <row id="151" trl="N">
+    <value column="Name" original="Document Sequence">Secuencia de documento (numeración)</value>
+    <value column="Description" original="Define an auto numbering system to uniquely identify document types.">Define un sistema de numeración automática para identificar unívocamente los tipos de documentos.</value>
+  </row>
+  <row id="152" trl="N">
+    <value column="Name" original="Workflow">Flujo de trabajo</value>
+    <value column="Description" original="Define workflows that guide users through steps required to complete a specified task.">Define los flujos de trabajo para guiar al usuario a través de los pasos requeridos para completar una tarea específica.</value>
+  </row>
+  <row id="153" trl="N">
+    <value column="Name" original="Application Dictionary">Diccionario de Aplicación</value>
+    <value column="Description" original="Open a folder where you can customize, modify, and adapt the application to your needs.">Abre una carpeta en la que puede personalizar, modificar y adaptar la aplicación a sus necesidades.</value>
+  </row>
+  <row id="155" trl="N">
+    <value column="Name" original="General Setup">Configuración General</value>
+    <value column="Description" original="Open a folder where you can edit basic settings such as languages, currencies, menus, workflows, alerts, clients, roles, users, organizations, banks, and importing data.">Crea una carpeta en la que puede editar las configuraciones básicas, tales como los idiomas, las monedas, los menús, los flujos de trabajo, las alertas, los clientes, los roles, los usuarios, las organizaciones, los bancos y la importación de datos.</value>
+  </row>
+  <row id="156" trl="N">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Open a folder where you can create and edit clients, roles, and users.">Abre una carpeta en la que puede crear y editar los clientes, los roles y los usuarios.</value>
+  </row>
+  <row id="157" trl="N">
+    <value column="Name" original="Data">Datos</value>
+    <value column="Description" original="Open a folder where you can import data and edit functionalities.">Abre una carpeta en la que puede importar los datos y editar las funcionalidades.</value>
+  </row>
+  <row id="158" trl="N">
+    <value column="Name" original="Performance Measurement">Medición de rendimiento</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="159" trl="N">
+    <value column="Name" original="Utility">Común</value>
+    <value column="Description" original="Open a folder where you can edit some additional application features.">Abre una carpeta en la que puede editar algunas características adicionales de la aplicación.</value>
+  </row>
+  <row id="160" trl="N">
+    <value column="Name" original="Project &amp; Service Management">Gestión de Proyectos y Servicios</value>
+    <value column="Description" original="Open a folder where you can create and edit services, projects, analyze reports, and add employee expenses.">Abre una carpeta en la que puede crear y editar los servicios y proyectos, analizar los informes y añadir los gastos de los empleados.</value>
+  </row>
+  <row id="161" trl="N">
+    <value column="Name" original="Application">Aplicación</value>
+    <value column="Description" original="Open a folder where you can define information related to menu, address, language.">Abre una carpeta en la que puede definir la información relacionada con el menú, las direcciones y los idiomas.</value>
+  </row>
+  <row id="163" trl="N">
+    <value column="Name" original="Import Data">Importar datos</value>
+    <value column="Description" original="Open a folder where you can import data.">Abre una carpeta en la que puede importar datos.</value>
+  </row>
+  <row id="164" trl="N">
+    <value column="Name" original="Setup">Configuración</value>
+    <value column="Description" original="Open a folder where you can define all information to be used in this module.">Abre una carpeta en la que puede definir toda la información necesaria para este módulo.</value>
+  </row>
+  <row id="165" trl="N">
+    <value column="Name" original="Business Partner Rules">Reglas para terceros</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="166" trl="N">
+    <value column="Name" original="Sales Management">Gestión de Ventas</value>
+    <value column="Description" original="Open a folder where you can create and edit sales orders, goods shipments, invoices, commissions, and analyze reports.">Abre una carpeta en la que puede crear y editar los pedidos de venta, los remisiones, las facturas y las comisiones así como analizar los informes.</value>
+  </row>
+  <row id="167" trl="N">
+    <value column="Name" original="Setup">Configuración de productos</value>
+    <value column="Description" original="Open a folder where you can define all information to be used in this module.">Abre una carpeta en la que puede definir toda la información necesaria para este módulo.</value>
+  </row>
+  <row id="169" trl="N">
+    <value column="Name" original="Accounting Transaction Details">Datos de contabilidad</value>
+    <value column="Description" original="View detailed general ledger entries for a specified time period. ">Muestra las entradas detalladas en el Libro Mayor de un período específico de tiempo.</value>
+  </row>
+  <row id="170" trl="N">
+    <value column="Name" original="Tree and Node Image">Imagen de los árboles y nodos</value>
+    <value column="Description" original="Defines the descriptions and images that will be used when a tree is displayed.">Define las descripciones e imágenes que se usan cuando se despliega un árbol.</value>
+  </row>
+  <row id="171" trl="N">
+    <value column="Name" original="Bank">Banco-Sucursal</value>
+    <value column="Description" original="Define banks and the related accounts. ">Define los bancos y las cuentas respectivas.</value>
+  </row>
+  <row id="172" trl="N">
+    <value column="Name" original="Dunning">Apremio</value>
+    <value column="Description" original="Maintain Dunning Levels">Mantenimiento de los niveles de apremio</value>
+  </row>
+  <row id="173" trl="N">
+    <value column="Name" original="Withholding (1099)">Retención (1099)</value>
+    <value column="Description" original="Maintain Withholding Certificates">Mantenimiento de documentos de retención</value>
+  </row>
+  <row id="174" trl="N">
+    <value column="Name" original="Charge">Cobros</value>
+    <value column="Description" original="Maintain Charges">Mantenimiento de los cobros</value>
+  </row>
+  <row id="175" trl="N">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Open a folder where you can create and edit organizations, banks, and cashbooks.">Abre una carpeta en la que puede crear y editar las organizaciones, los bancos y los libros de caja.</value>
+  </row>
+  <row id="176" trl="N">
+    <value column="Name" original="Report and Process">Informes y procesos</value>
+    <value column="Description" original="Define and edit reports and processes (database or Java).">Define y edita informes y procesos (base de datos o Java).</value>
+  </row>
+  <row id="178" trl="N">
+    <value column="Name" original="Sales Invoice">Factura(Cliente)</value>
+    <value column="Description" original="Create and edit sales invoices for your customers. ">Crea y edita las facturas de venta de sus clientes.</value>
+  </row>
+  <row id="179" trl="N">
+    <value column="Name" original="Physical Inventory">Inventario físico</value>
+    <value column="Description" original="Create and edit inventory counts and update your stock quantities.">Crea y edita contadores de inventario y actualice las cantidades de su stock.</value>
+  </row>
+  <row id="180" trl="N">
+    <value column="Name" original="Goods Shipment">Remisión (Cliente)</value>
+    <value column="Description" original="Create and manage goods shipments to your customers.">Crea y gestiona las remisiones para sus clientes.</value>
+  </row>
+  <row id="181" trl="N">
+    <value column="Name" original="Goods Movements">Movimiento entre almacenes</value>
+    <value column="Description" original="Create and edit internal inventory movements among warehouses and storage bins. ">Crea y edita los movimientos internos de inventario entre los almacenes y las ubicaciones.</value>
+  </row>
+  <row id="183" trl="Y">
+    <value column="Name" original="Product Management">Gestión de Productos</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="185" trl="N">
+    <value column="Name" original="Import Business Partner">Importar terceros</value>
+    <value column="Description" original="Import business partners in .csv format from previously used databases/applications and past business operations.">Importa los datos de terceros en formato .csv desde bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+  </row>
+  <row id="186" trl="N">
+    <value column="Name" original="Revenue Recognition">Periodificación de ingresos</value>
+    <value column="Description" original="Revenue Recognition Rules">Reglas de periodificación de ingresos</value>
+  </row>
+  <row id="187" trl="N">
+    <value column="Name" original="Perpetual Inventory">Reglas de almacén</value>
+    <value column="Description" original="Maintain Perpetual Inventory Rules">Mantenimiento de las reglas de los almacenes tipo</value>
+  </row>
+  <row id="188" trl="N">
+    <value column="Name" original="Vendor Details">Datos del proveedor</value>
+    <value column="Description" original="Edit available product information grouped by the vendors who sell them.">Edita la información de productos disponible, agrupada por el proveedor que los vende.</value>
+  </row>
+  <row id="190" trl="N">
+    <value column="Name" original="Title">Tratamientos</value>
+    <value column="Description" original="Define titles to be used to address a business partner.">Define el tratamiento de cortesía para dirigirse a  terceros.</value>
+  </row>
+  <row id="192" trl="N">
+    <value column="Name" original="Generate Invoices">Facturar</value>
+    <value column="Description" original="Generate and print Invoices ">Realiza la facturación e imprime las facturas.</value>
+  </row>
+  <row id="193" trl="N">
+    <value column="Name" original="Generate Shipments">Crear remisiones</value>
+    <value column="Description" original="Generate shipment">Crear remisiones</value>
+  </row>
+  <row id="194" trl="N">
+    <value column="Name" original="Order Transactions">Transacciones</value>
+    <value column="Description" original="Sales Order Transaction Report ">Informe de transacciones de venta</value>
+  </row>
+  <row id="195" trl="N">
+    <value column="Name" original="Open Orders">Pedidos abiertos</value>
+    <value column="Description" original="Open Orders"></value>
+  </row>
+  <row id="196" trl="N">
+    <value column="Name" original="Replenish Report">Replenish Report</value>
+    <value column="Description" original="Inventory Replenish Report">Inventory Replenish Report</value>
+  </row>
+  <row id="197" trl="N">
+    <value column="Name" original="Product Transaction Summary">Product Transaction Summary</value>
+    <value column="Description" original="Product Transaction Summary">Product Transaction Summary</value>
+  </row>
+  <row id="199" trl="N">
+    <value column="Name" original="Order Drilldown">Detalle pedidos</value>
+    <value column="Description" original="Order Drilldown"></value>
+  </row>
+  <row id="200" trl="N">
+    <value column="Name" original="Request Processor">Procesador de peticiones</value>
+    <value column="Description" original="Define Request Processors">Definir los procesadores de peticiones</value>
+  </row>
+  <row id="201" trl="N">
+    <value column="Name" original="Report View">Vista del Informe</value>
+    <value column="Description" original="Maintain Report Views">Mantenimiento de las vistas de los informes</value>
+  </row>
+  <row id="202" trl="N">
+    <value column="Name" original="Invoice Transactions">Invoice Transactions</value>
+    <value column="Description" original="Invoice Transactions"></value>
+  </row>
+  <row id="203" trl="N">
+    <value column="Name" original="Procurement Management">Gestión de Compras</value>
+    <value column="Description" original="Open a folder where you can manage purchases, goods receipts, invoices, and analyze reports.">Abre una carpeta en la que puede gestionar las compras, las remisiones y las facturas así como analizar los informes.</value>
+  </row>
+  <row id="204" trl="N">
+    <value column="Name" original="Goods Receipt">Remisión (Proveedor)</value>
+    <value column="Description" original="Create and edit goods receipts from your vendors and create invoices from these receipts. ">Crea y edita las remisiones de sus proveedores y cree las facturas correspondientes. </value>
+  </row>
+  <row id="205" trl="N">
+    <value column="Name" original="Purchase Order">Pedido de compra</value>
+    <value column="Description" original="Create and edit orders to buy products from suppliers.">Crea y edita los pedidos para comprar los productos de los distribuidores. </value>
+  </row>
+  <row id="206" trl="N">
+    <value column="Name" original="Purchase Invoice">Factura (Proveedor)</value>
+    <value column="Description" original="Create and edit invoices received from your vendors and generate related goods receipts.">Crea y edita las facturas recibidas de sus proveedores y genere las remisiones respectivos. </value>
+  </row>
+  <row id="208" trl="N">
+    <value column="Name" original="EDI Definition">Definición EDI</value>
+    <value column="Description" original="Maintain EDI Definition">Mantenimiento de las definiciones EDI</value>
+  </row>
+  <row id="209" trl="N">
+    <value column="Name" original="EDI Transaction">Operación EDI</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="210" trl="N">
+    <value column="Name" original="Daily Invoice">Daily Invoice</value>
+    <value column="Description" original="Daily Invoice"></value>
+  </row>
+  <row id="211" trl="N">
+    <value column="Name" original="Monthly Invoice">Monthly Invoice</value>
+    <value column="Description" original="Monthly Invoice"></value>
+  </row>
+  <row id="212" trl="N">
+    <value column="Name" original="Monthly Product Invoice">Monthly Invoice Product</value>
+    <value column="Description" original="Monthly Product Invoice"></value>
+  </row>
+  <row id="213" trl="N">
+    <value column="Name" original="Weekly Product Invoice">Weekly Invoice Product</value>
+    <value column="Description" original="Weekly Product Invoice"></value>
+  </row>
+  <row id="214" trl="N">
+    <value column="Name" original="Monthly Vendor Invoice Report">Monthly Invoice Vendor</value>
+    <value column="Description" original="Monthly Vendor Invoice Report"></value>
+  </row>
+  <row id="215" trl="N">
+    <value column="Name" original="Weekly Invoice">Weekly Invoice</value>
+    <value column="Description" original="Weekly Invoice"></value>
+  </row>
+  <row id="216" trl="N">
+    <value column="Name" original="Form">Formulario</value>
+    <value column="Description" original="Create and edit forms (manual windows) to be used in the application. ">Crea y edita los formularios (manual windows) para utilizar en la aplicación. </value>
+  </row>
+  <row id="217" trl="N">
+    <value column="Name" original="Create Invoices from Orders">Generar facturas(manualmente)</value>
+    <value column="Description" original="Create invoices for all processed sales orders/goods shipments that have not been invoiced.">Crea las facturas correspondientes a todos los pedidos de venta y remisiones procesados que no hayan sido facturados.</value>
+  </row>
+  <row id="218" trl="N">
+    <value column="Name" original="System Admin">Prueba</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="219" trl="N">
+    <value column="Name" original="Project Setup and Use">Configuración del Proyecto y Uso</value>
+    <value column="Description" original="Setup of projects and project reporting">Configuración de proyectos e Informes de Proyectos</value>
+  </row>
+  <row id="220" trl="Y">
+    <value column="Name" original="Java Version">Versión de java</value>
+    <value column="Description" original="Displays the version of the default Java VM">Muestra la versión de la java VM por defecto</value>
+  </row>
+  <row id="221" trl="N">
+    <value column="Name" original="Error Message">Mensaje de error</value>
+    <value column="Description" original="Display Error Messages">Muestra los mensajes de error</value>
+  </row>
+  <row id="222" trl="N">
+    <value column="Name" original="Import Loader Format">Formatos de importación</value>
+    <value column="Description" original="Define the file layout for product information which will be imported."></value>
+  </row>
+  <row id="223" trl="N">
+    <value column="Name" original="Import File Loader">Importar fichero de carga</value>
+    <value column="Description" original="Import .csv data files into temporary tables according to the parameters and selected format.">Importa los ficheros de datos .csv a las tablas temporales, de acuerdo con los parámetros y el formato seleccionado. </value>
+  </row>
+  <row id="224" trl="N">
+    <value column="Name" original="Language Setup">Configuración de lenguaje</value>
+    <value column="Description" original="Setup a new Language of the system and translate elements">Configura un nuevo lenguaje del sistema y traduce elementos.</value>
+  </row>
+  <row id="225" trl="N">
+    <value column="Name" original="Initial Client Setup">Crear entidad</value>
+    <value column="Description" original="Create a new empty client from scratch.">Crea un nuevo cliente desde el principio.</value>
+  </row>
+  <row id="226" trl="N">
+    <value column="Name" original="Tire Storage">*</value>
+    <value column="Description" original="Maintain storage of tires">Maintain storage of tires</value>
+  </row>
+  <row id="227" trl="N">
+    <value column="Name" original="Vendor Selection">Vendor Selection</value>
+    <value column="Description" original="Products with more than one vendor">Products with more than one vendor</value>
+  </row>
+  <row id="228" trl="N">
+    <value column="Name" original="Bill of Materials Production">Producción BOM</value>
+    <value column="Description" original="Create and run production processes using the previously defined bills of materials. ">Crea y ejecuta procesos de producción utilizando la lista de materiales definida con anterioridad.</value>
+  </row>
+  <row id="229" trl="N">
+    <value column="Name" original="Material Transaction">Movimientos de material</value>
+    <value column="Description" original="Material Transactions">Movimientos de material</value>
+  </row>
+  <row id="230" trl="N">
+    <value column="Name" original="Quarterly Customer Invoice by Product">Quarterly Invoice Customer by Product</value>
+    <value column="Description" original="Quarterly Customer Invoice by Product"></value>
+  </row>
+  <row id="231" trl="N">
+    <value column="Name" original="Quarterly Customer Invoice by Vendor">Quarterly Invoice Customer by Vendor</value>
+    <value column="Description" original="Quarterly Customer Invoice by Vendor"></value>
+  </row>
+  <row id="232" trl="N">
+    <value column="Name" original="Business Partner Category">Grupos de Terceros</value>
+    <value column="Description" original="Create and edit information related to similar business partners at one time by grouping them.">Crea y edita la información de terceros con características similares, agrupándolos de una sola vez.</value>
+  </row>
+  <row id="233" trl="N">
+    <value column="Name" original="Notice">Aviso</value>
+    <value column="Description" original="Create and edit messages to appear while performing processes.">Crea y edita los mensajes que aparecen mientras ejecuta los procesos.</value>
+  </row>
+  <row id="234" trl="N">
+    <value column="Name" original="Bank Statement">Extracto bancario</value>
+    <value column="Description" original="View your bank statements against transactions created and edited in the application. ">Muestra sus extractos bancarios y contrólelos con las transacciones creadas y editadas en la aplicación.</value>
+  </row>
+  <row id="236" trl="N">
+    <value column="Name" original="Receivables &amp; Payables">Gestión Cobros y Pagos</value>
+    <value column="Description" original="Open a folder where you can create and edit settlements, debt payments, bank operations, remittances, and analyze reports.">Abre una carpeta en la que puede crear y editar las liquidaciones, los pagos de deudas, las operaciones bancarias y las remesas así como analizar los informes.</value>
+  </row>
+  <row id="237" trl="N">
+    <value column="Name" original="Request">CRM</value>
+    <value column="Description" original="Work on your requests">Trabajar sobre su petición</value>
+  </row>
+  <row id="238" trl="N">
+    <value column="Name" original="Mail Template">Plantilla de correo</value>
+    <value column="Description" original="Maintain Mail Template">Mantenenimiento de la plantilla de correo</value>
+  </row>
+  <row id="239" trl="N">
+    <value column="Name" original="Custom Attribute">Atributos del cliente</value>
+    <value column="Description" original="Maintain custom entity attributes">Mantenimiento de los atributos de la entidad del cliente</value>
+  </row>
+  <row id="240" trl="N">
+    <value column="Name" original="Cashbook">Caja</value>
+    <value column="Description" original="Create cashbooks to manage all cash movements which occur in the cash journal.">Crea los libros de caja para gestionar todos los movimientos de caja que se producen en el Diario de caja.</value>
+  </row>
+  <row id="241" trl="N">
+    <value column="Name" original="Cash Journal">Diario de caja</value>
+    <value column="Description" original="Add individual cash transactions to be managed and viewed in the cashbook.">Añade las transacciones individuales de caja para gestionarlas y mostrarlas en el libro de caja.</value>
+  </row>
+  <row id="249" trl="N">
+    <value column="Name" original="Field Category">Tipo agrupación campos</value>
+    <value column="Description" original="Edit the subsection field group properties of tabs.">...</value>
+  </row>
+  <row id="252" trl="N">
+    <value column="Name" original="Invoice Summary">Invoice Summary</value>
+    <value column="Description" original="Invoice Summary"></value>
+  </row>
+  <row id="253" trl="N">
+    <value column="Name" original="Invoice Detail">Detalle facturas</value>
+    <value column="Description" original="Invoice Detail"></value>
+  </row>
+  <row id="254" trl="N">
+    <value column="Name" original="Create Charges">Generar cargos</value>
+    <value column="Description" original="Generate Charges from natural accounts">Generar cargos de cuentas naturales</value>
+  </row>
+  <row id="256" trl="N">
+    <value column="Name" original="Product Transaction Value">Product Transaction Value</value>
+    <value column="Description" original="Product Transaction Value">Product Transaction Value</value>
+  </row>
+  <row id="257" trl="N">
+    <value column="Name" original="Commission">Comisión</value>
+    <value column="Description" original="Define how and when you want commissions to be calculated and to whom they are to be paid.">Define cómo y cuándo desea que se calculen las comisiones y a quién deben abonarse.</value>
+  </row>
+  <row id="258" trl="N">
+    <value column="Name" original="Project Reporting">Información del proyecto</value>
+    <value column="Description" original="Maintain Project Reporting Cycles">Mantenimiento de los ciclos de reporting de proyectos</value>
+  </row>
+  <row id="260" trl="N">
+    <value column="Name" original="Project Status Summary">Project Status Summary</value>
+    <value column="Description" original="Project Status of Project Cycle">Project Status of Project Cycle</value>
+  </row>
+  <row id="261" trl="N">
+    <value column="Name" original="Initial Client Setup Review">Revisión de la Configuración Inicial de Cliente</value>
+    <value column="Description" original="Review of system level setup of a new  Client">Revisión  del nivel de sistema de la configuración de un nuevo Cliente</value>
+  </row>
+  <row id="263" trl="N">
+    <value column="Name" original="Partner Relations">Gestión de terceros</value>
+    <value column="Description" original="Customer Relations and Partner Management">Gestión y relación con el cliente.</value>
+  </row>
+  <row id="264" trl="N">
+    <value column="Name" original="Commission Payment">Procesar comisión</value>
+    <value column="Description" original="Create commissions and create corresponding invoices.">Crea las comisiones y las facturas correspondientes.</value>
+  </row>
+  <row id="265" trl="N">
+    <value column="Name" original="Accounting Setup">Configuración Contable</value>
+    <value column="Description" original="Review and change Accounting Setup">Revisión y cambio de la Configuració Contable</value>
+  </row>
+  <row id="266" trl="N">
+    <value column="Name" original="Business Partner Setup">Configuración de Terceros</value>
+    <value column="Description" original="Setup Business Partner Rules">Reglas de configuración de Terceros.</value>
+  </row>
+  <row id="267" trl="N">
+    <value column="Name" original="Price List Setup">Configuración de Lista de Precios (Tarifas)</value>
+    <value column="Description" original="Define your Price Lists and Discounts">Define tus Listas de Precios (Tarifas) y Descuentos.</value>
+  </row>
+  <row id="268" trl="N">
+    <value column="Name" original="Product Setup">Configuración de productos</value>
+    <value column="Description" original="Set up Products">Configuración de productos</value>
+  </row>
+  <row id="269" trl="N">
+    <value column="Name" original="Sales Setup">Configuración de Ventas</value>
+    <value column="Description" original="Setup Sales">Configuración de Ventas</value>
+  </row>
+  <row id="270" trl="N">
+    <value column="Name" original="Tax Setup">Configuración de Impuestos</value>
+    <value column="Description" original="Setup tax calculation">Configuración de Cálculo de Impuestos</value>
+  </row>
+  <row id="271" trl="N">
+    <value column="Name" original="Service">Servicios</value>
+    <value column="Description" original="Service Management">Gestión de servicios</value>
+  </row>
+  <row id="272" trl="N">
+    <value column="Name" original="Setup">Configuración</value>
+    <value column="Description" original="Open a folder where you can define all information to be used in this module.">Abre una carpeta en la que puede definir toda la información necesaria para este módulo.</value>
+  </row>
+  <row id="273" trl="N">
+    <value column="Name" original="Performance Achievement">Resultado realización</value>
+    <value column="Description" original="Define Performance Achievements">Define los rendimientos de exito</value>
+  </row>
+  <row id="274" trl="N">
+    <value column="Name" original="Performance Color">Color según rendimiento</value>
+    <value column="Description" original="Color used for Performance Analysis">Colores asociados según un rendimiento para el análisis</value>
+  </row>
+  <row id="275" trl="N">
+    <value column="Name" original="Performance Goal">Rendimiento objetivo</value>
+    <value column="Description" original="Define Performance Goals">Define los rendimientos objetivos</value>
+  </row>
+  <row id="276" trl="N">
+    <value column="Name" original="Performance Measure Calculation">Cálculo de medidas de rendimiento</value>
+    <value column="Description" original="Define how you calculate your performance measures">Define como calcular las medidas de rendimiento</value>
+  </row>
+  <row id="277" trl="N">
+    <value column="Name" original="Performance Measurement Setup">Configuración de Realizaciónde Medidas</value>
+    <value column="Description" original="Setup your Performance Measurement">Configura tu Realización de Medidas</value>
+  </row>
+  <row id="278" trl="N">
+    <value column="Name" original="Financial Management">Gestión Financiera</value>
+    <value column="Description" original="Open a folder where you can create and edit all accounting, assets, and receivables and payables.">Abre una carpeta en la que puede crear y editar toda la contabilidad, los activos y la gestión de pagos y cobros.</value>
+  </row>
+  <row id="279" trl="N">
+    <value column="Name" original="Performance Measure">Medida de rendimiento</value>
+    <value column="Description" original="Define your Performance Measures">Define las medidas de rendimiento</value>
+  </row>
+  <row id="280" trl="N">
+    <value column="Name" original="Analysis Tools">Herramientas de análisis</value>
+    <value column="Description" original="Open a folder where you can find reports and tools to analyze data. ">Abre una carpeta en la que puede encontrar los informes y herramientas necesarios para analizar los datos.</value>
+  </row>
+  <row id="281" trl="N">
+    <value column="Name" original="Financial Report">Informe financiero</value>
+    <value column="Description" original="Maintain Financial Reports">Mantenimiento de los informes financieros</value>
+  </row>
+  <row id="282" trl="N">
+    <value column="Name" original="Report Column Set">Conjunto de  Columnas del  Informe</value>
+    <value column="Description" original="Maintain Financial Report Column Sets">Mantenimiento de las columnas de los informes financieros</value>
+  </row>
+  <row id="283" trl="N">
+    <value column="Name" original="Report Line Set">Conjunto de Lineas del Informe</value>
+    <value column="Description" original="Maintain Financial Report Line Sets">Mantenimiento de las líneas de los informes financieros</value>
+  </row>
+  <row id="284" trl="N">
+    <value column="Name" original="Service Level">Nivel de Sevicio</value>
+    <value column="Description" original="Maintain Service Levels">Mantenimiento de los niveles de los servicios</value>
+  </row>
+  <row id="286" trl="N">
+    <value column="Name" original="Payment Selection (manual)">Selección pagos (manualmente)</value>
+    <value column="Description" original="Manual Payment Selection">Selección manual de pagos</value>
+  </row>
+  <row id="287" trl="N">
+    <value column="Name" original="Payment Print/Export">Imprimir/exportar pagos</value>
+    <value column="Description" original="Print or export your payments">Imprime o exporta sus pagos</value>
+  </row>
+  <row id="288" trl="N">
+    <value column="Name" original="Cash Journal Detail">Detalle asientos</value>
+    <value column="Description" original="Detail Cash Journal Information">Detail Cash Journal Information</value>
+  </row>
+  <row id="289" trl="N">
+    <value column="Name" original="Database Export">Exportar BD</value>
+    <value column="Description" original="Export (save) the database">Exportar (guardar) la base de datos</value>
+  </row>
+  <row id="290" trl="N">
+    <value column="Name" original="Find (indirect use)">Encontrar(uso indirecto)</value>
+    <value column="Description" original="Find Dialog (indirect use)">Encontrar dialogo(uso indirecto)</value>
+  </row>
+  <row id="292" trl="N">
+    <value column="Name" original="Goods Transaction">Operaciones de material (uso indirecto)</value>
+    <value column="Description" original="View all goods transactions carried out  in the application. ">Muestra todas las transacciones de materiales consignadas en la aplicación.</value>
+  </row>
+  <row id="293" trl="N">
+    <value column="Name" original="Print Form">Imprimir el formulario</value>
+    <value column="Description" original="Maintain Print Forms (Invoices, Checks, ..) used">Mantenimiento de impresión de formularios</value>
+  </row>
+  <row id="294" trl="N">
+    <value column="Name" original="System Color">Color del sistema</value>
+    <value column="Description" original="Maintain System Colors">Mantenimiento de los colores del sistema</value>
+  </row>
+  <row id="295" trl="N">
+    <value column="Name" original="Desktop">Escritorio</value>
+    <value column="Description" original="Maintain Desktop">Mantenimiento del escritorio</value>
+  </row>
+  <row id="296" trl="N">
+    <value column="Name" original="Application Image">Imagen del sistema</value>
+    <value column="Description" original="Create and edit images that later will be used in other windows.">Crea y edita imágenes para usar más tarde en otras ventanas.</value>
+  </row>
+  <row id="298" trl="N">
+    <value column="Name" original="User Window">Ventana usuario</value>
+    <value column="Description" original="Define User Window Customization">Se define una ventana personalizada</value>
+  </row>
+  <row id="300" trl="N">
+    <value column="Name" original="Workbench">Banco de trabajo</value>
+    <value column="Description" original="Maintain Workbench">Mantenimiento del banco de trabajo</value>
+  </row>
+  <row id="301" trl="N">
+    <value column="Name" original="Sales">Ventas</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="302" trl="N">
+    <value column="Name" original="Database Transfer">Traspaso BD</value>
+    <value column="Description" original="Transfer the database">Traspaso de la base de datos</value>
+  </row>
+  <row id="303" trl="N">
+    <value column="Name" original="Synchronize Terminology">Sincronizar términos</value>
+    <value column="Description" original="Synchronize the terminology within the system.">Sincrónizar la terminología del sistema</value>
+  </row>
+  <row id="305" trl="N">
+    <value column="Name" original="Revenue Recognition Run">Procesar periodificación de ingresos</value>
+    <value column="Description" original="Start Revenue Recognition">Empezar la periodificación de ingresos</value>
+  </row>
+  <row id="306" trl="N">
+    <value column="Name" original="Resubmit Posting">Resubmit Posting</value>
+    <value column="Description" original="Resubmit posting of documents with posting errors">Resubmit posting of documents with posting errors</value>
+  </row>
+  <row id="307" trl="N">
+    <value column="Name" original="Reset Accounting">Reinicializar cuentas</value>
+    <value column="Description" original="Reset Accounting Entries">Reinicializar cuentas</value>
+  </row>
+  <row id="308" trl="N">
+    <value column="Name" original="Request All">Todas las peticiones</value>
+    <value column="Description" original="View and work on all requests">Ver y trabajar sobre todas las peticiones</value>
+  </row>
+  <row id="309" trl="N">
+    <value column="Name" original="Request Setup">Configuración de Pedidos</value>
+    <value column="Description" original="Set up the client to process requests">Configuración del cliente para que procese pedidos</value>
+  </row>
+  <row id="310" trl="N">
+    <value column="Name" original="Price List Schema">Esquema de tarificación</value>
+    <value column="Description" original="Define a Price List Schema to be assigned to business partners.">Define el esquema tarifario para asignar a los terceros.</value>
+  </row>
+  <row id="311" trl="N">
+    <value column="Name" original="Inventory Valuation Report">Inventory Valuation Report</value>
+    <value column="Description" original="Inventory Valuation Report">Inventory Valuation Report</value>
+  </row>
+  <row id="312" trl="N">
+    <value column="Name" original="Matching PO-Receipt-Invoice">Cuadrar PC-Recibos-Facturas</value>
+    <value column="Description" original="Match Purchase Orders, Receipts, Vendor Invoices">Cuadrar pedidos de compra, recibos, facturas de proveedores</value>
+  </row>
+  <row id="313" trl="N">
+    <value column="Name" original="Product Cost Update">Actualizar costo producto</value>
+    <value column="Description" original="Sets future cost price and standard cost price">Establecer para un futuro el precio de costo y el precio medio</value>
+  </row>
+  <row id="314" trl="N">
+    <value column="Name" original="Product Costing Report">Product Costing Report</value>
+    <value column="Description" original="Product Cost Report">Product Cost Report</value>
+  </row>
+  <row id="315" trl="N">
+    <value column="Name" original="Matched Invoices">Facturas cuadradas</value>
+    <value column="Description" original="Edit and process purchase orders by assigning them to a corresponding shipment/receipt, invoice, or both.">Edita y procesa los pedidos de compra asignándoles el correspondiente remisión, la factura, o ambos. </value>
+  </row>
+  <row id="316" trl="N">
+    <value column="Name" original="Matched Purchase Orders">Pedidos de compra cuadrados</value>
+    <value column="Description" original="Edit and process invoices by assigning them to a corresponding shipment/receipt, invoice, or both.">Edita y procesa las facturas asignándoles el correspondiente remisión,  la factura, o ambos. </value>
+  </row>
+  <row id="317" trl="N">
+    <value column="Name" original="Expense Type">Tipo de gasto</value>
+    <value column="Description" original="Maintain Expense Report Types">Mantenimiento de los informes de los tipos</value>
+  </row>
+  <row id="318" trl="N">
+    <value column="Name" original="Expense Sheet">Informe de gasto</value>
+    <value column="Description" original="Create a time or expense sheet in order to submit employee or invoicable expenses.">Crea una hoja de horarios o gastos a fin de  presentar los gastos de empleados o los gastos con factura.</value>
+  </row>
+  <row id="319" trl="N">
+    <value column="Name" original="Resource">Recurso</value>
+    <value column="Description" original="Maintain Resources">Mantenimiento de recursos</value>
+  </row>
+  <row id="320" trl="N">
+    <value column="Name" original="Resource Type">Tipo de Recurso</value>
+    <value column="Description" original="Maintain Resource Types">Mantenimiento de los tipos de recurso</value>
+  </row>
+  <row id="321" trl="N">
+    <value column="Name" original="Recompile DB Objects">Recompilar objetos BD</value>
+    <value column="Description" original="Recompile Database Objects">Recompilar los objetos de la base de datos</value>
+  </row>
+  <row id="322" trl="N">
+    <value column="Name" original="Print Format">Formato de impresión</value>
+    <value column="Description" original="Maintain Print Format">Mantenimiento de los formatos de impresión</value>
+  </row>
+  <row id="323" trl="N">
+    <value column="Name" original="Print Font">Fuentes de impresión</value>
+    <value column="Description" original="Maintain Print Font">Mantenimiento de las fuentes de impresión</value>
+  </row>
+  <row id="324" trl="N">
+    <value column="Name" original="Print Color">Colores de impresión</value>
+    <value column="Description" original="Maintain Print Color">Mantenimiento de los colores de impresión</value>
+  </row>
+  <row id="325" trl="N">
+    <value column="Name" original="Print Paper">Papel de impresión</value>
+    <value column="Description" original="Maintain Print Paper">Mantenimiento del papel de impresión</value>
+  </row>
+  <row id="326" trl="N">
+    <value column="Name" original="Printing Options">Impresión</value>
+    <value column="Description" original="Open a folder where you can define printing formats . ">Abre una carpeta en la que puede definir los formatos de impresión.</value>
+  </row>
+  <row id="327" trl="N">
+    <value column="Name" original="Invoiceable Expenses">Gastos para facturar</value>
+    <value column="Description" original="View expenses before invoicing them to customers.">Muestra los gastos antes de facturarlos a los clientes.</value>
+  </row>
+  <row id="328" trl="N">
+    <value column="Name" original="Create Sales Orders from Expenses">Crear pedidos de venta según gastos</value>
+    <value column="Description" original="Create Sales Orders for Customers from Expense Reports">Crear pedidos de venta para clientes según informes de gastos</value>
+  </row>
+  <row id="329" trl="N">
+    <value column="Name" original="Create AP Expense Invoices">Crear facturas de gastos AP </value>
+    <value column="Description" original="Create AP Invoices from Expenses to be paid to employees">Crear AP facturas de gastos para pagar a los empleados </value>
+  </row>
+  <row id="331" trl="N">
+    <value column="Name" original="Print Table Format">Formato de las tablas de impresión</value>
+    <value column="Description" original="Define Report Table Format">Definir el formato de las tablas de impresión</value>
+  </row>
+  <row id="332" trl="N">
+    <value column="Name" original="Request Type">Tipo de acción CRM</value>
+    <value column="Description" original="Maintain Request Types">Mantenimiento de tipos de peticiones</value>
+  </row>
+  <row id="333" trl="N">
+    <value column="Name" original="Interest Area">Area de interés</value>
+    <value column="Description" original="Create and edit interest areas to track the potential needs and wants of your business partners.">Crea y edita áreas de interés para rastrear las necesidades y los deseos potenciales de sus terceros.</value>
+  </row>
+  <row id="334" trl="N">
+    <value column="Name" original="System">Sistema</value>
+    <value column="Description" original="System Definition">Definición del sistema</value>
+  </row>
+  <row id="335" trl="N">
+    <value column="Name" original="Generate PO from Sales Order">Crear PC a partir de PV</value>
+    <value column="Description" original="Create Purchase Order from Sales Orders">Crear compra a partir de pedido venta</value>
+  </row>
+  <row id="337" trl="N">
+    <value column="Name" original="Reopen Request">Reabrir petición</value>
+    <value column="Description" original="Reopen closed requests">Reabrir peticiones cerradas</value>
+  </row>
+  <row id="338" trl="N">
+    <value column="Name" original="Import Report Line Set">Importar línea de informe</value>
+    <value column="Description" original="Import report line sets in .csv format from previously used databases/applications and past business operations.">Importa los conjuntos de líneas de los informes en formato .csv desde bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+  </row>
+  <row id="339" trl="N">
+    <value column="Name" original="Import Account">Importar cuentas</value>
+    <value column="Description" original="Import accounts in .csv format from previously used databases/applications and past business operations.">Importa las cuentas en formato .csv desde las bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+  </row>
+  <row id="340" trl="N">
+    <value column="Name" original="Import Products">Importar productos</value>
+    <value column="Description" original="Import products in .csv format from previously used databases/applications and past business operations.">Importa los productos en formato .csv desde bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+  </row>
+  <row id="341" trl="N">
+    <value column="Name" original="Application Translation Check">Comprobar traducciones del sistema</value>
+    <value column="Description" original="Create and edit translations for a selected application language.">Crea y edita traducciones para un idioma de aplicación seleccionado.</value>
+  </row>
+  <row id="342" trl="N">
+    <value column="Name" original="Asset">Activo</value>
+    <value column="Description" original="Asset used internally or by customers">Activo usado internamente o por el cliente</value>
+  </row>
+  <row id="343" trl="N">
+    <value column="Name" original="Asset Group">Categoria de Activos</value>
+    <value column="Description" original="Create and edit categories to group assets with similar characteristics together.">Crea y edita categorías para agrupar los activos de características similares.</value>
+  </row>
+  <row id="344" trl="N">
+    <value column="Name" original="Training">Formación</value>
+    <value column="Description" original="Repeated Training">Repetir formación</value>
+  </row>
+  <row id="345" trl="N">
+    <value column="Name" original="Assets">Activos</value>
+    <value column="Description" original="Open a folder where you can create and edit the value and accounting of items and property.">Abre una carpeta en la que puede crear y editar el valor y la contabilidad de los ítems y propiedades.</value>
+  </row>
+  <row id="346" trl="N">
+    <value column="Name" original="Create Shipments from Orders">Generar remisiones (manualmente)</value>
+    <value column="Description" original="Create shipments for all processed sales orders that fit the criteria and the parameters specified.">Crea las remisiones correspondientes a todos los pedidos de venta procesados que cumplan con los criterios y parámetros especificados. </value>
+  </row>
+  <row id="347" trl="N">
+    <value column="Name" original="Print Invoices">Imprimir facturas</value>
+    <value column="Description" original="Print Invoices to paper or send PDF">Imprimir facturas a papel o a pdf</value>
+  </row>
+  <row id="349" trl="N">
+    <value column="Name" original="Employee Expenses">Gastos no reembolsados</value>
+    <value column="Description" original="View internal employee expenses before processing them.">Muestra los gastos internos de los empleados antes de procesarlos.</value>
+  </row>
+  <row id="350" trl="N">
+    <value column="Name" original="Statement of Accounts">Statement of Accounts</value>
+    <value column="Description" original="Report Account Statement Beginning Balance and Transactions">Informe de cuentas del balance inicial y transacciones.</value>
+  </row>
+  <row id="351" trl="N">
+    <value column="Name" original="Password Maintenance">Mantenimiento de contraseñas</value>
+    <value column="Description" original="Maintain Passwords">Mantenimiento de contraseñas</value>
+  </row>
+  <row id="352" trl="N">
+    <value column="Name" original="Accounting Fact Balances">Balances de contabilidad</value>
+    <value column="Description" original="Query Accounting Daily Balances">Consulta diaria de los balances activos</value>
+  </row>
+  <row id="353" trl="N">
+    <value column="Name" original="Attribute Set">Conjunto atributos</value>
+    <value column="Description" original="Define a group of attributes to apply to specific products.">Define un grupo de atributos para aplicarlos a productos específicos.</value>
+  </row>
+  <row id="354" trl="N">
+    <value column="Name" original="Serial Number Sequence ">Control nº serie</value>
+    <value column="Description" original="Define a serial number sequence to assign serial numbers to products.">Define una secuencia seriada de números para asignar números en serie a los productos.</value>
+  </row>
+  <row id="355" trl="N">
+    <value column="Name" original="Lot Number Sequence">Control lote</value>
+    <value column="Description" original="Define a number sequence to assign lot numbers to products.">Define una secuencia de números para asignar un número a cada lote de productos.</value>
+  </row>
+  <row id="356" trl="N">
+    <value column="Name" original="Lot">Lote</value>
+    <value column="Description" original="Create and edit lots for your products.">Crea y edita lotes para sus productos.</value>
+  </row>
+  <row id="357" trl="N">
+    <value column="Name" original="Product Attributes">Atributos producto</value>
+    <value column="Description" original="Open a folder where you can define product attributes, and create and edit products lots and serial numbers.">Abre una carpeta en la que puede definir los atributos de los productos y crear y editar los lotes de productos y los números de serie.</value>
+  </row>
+  <row id="358" trl="N">
+    <value column="Name" original="Attribute Search">Buscar atributo</value>
+    <value column="Description" original="Common Search Attribute ">Busqueda común de atributos</value>
+  </row>
+  <row id="359" trl="N">
+    <value column="Name" original="Attribute">Atributo</value>
+    <value column="Description" original="Create and edit attributes to be combined into attribute sets and subsequently added to products.">Crea y edita atributos, que luego se combinen en grupos de atributos y se añaden a los productos.</value>
+  </row>
+  <row id="360" trl="N">
+    <value column="Name" original="Vendor Expense Invoice ">Factura gastos (Proveedor)</value>
+    <value column="Description" original="Create and edit vendor invoices.">Edita los gastos separándolos y asignándolos entre las múltiples organizaciones, proyectos, etc.</value>
+  </row>
+  <row id="362" trl="N">
+    <value column="Name" original="Role Access">Rol permisos</value>
+    <value column="Description" original="Define access to DB tables and columns for selected roles.">Define el acceso a las tablas y columnas de BD para los roles seleccionados.</value>
+  </row>
+  <row id="363" trl="N">
+    <value column="Name" original="Import Inventory">Importar inventario</value>
+    <value column="Description" original="Import inventories in .csv format from previously used databases/applications and past business operations.">Importa los inventarios en formato .csv desde bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+  </row>
+  <row id="364" trl="N">
+    <value column="Name" original="Project Type">Tipo de proyecto</value>
+    <value column="Description" original="Define projects types with typical phases and tasks to be used in projects.">Define los tipos de proyectos así como sus fases y tareas específicas para utilizar en los proyectos.</value>
+  </row>
+  <row id="365" trl="N">
+    <value column="Name" original="Print Label">Imprimir etiqueta</value>
+    <value column="Description" original="Print Label Format">Formato de impresión de la etiqueta</value>
+  </row>
+  <row id="366" trl="N">
+    <value column="Name" original="Session">Sesión</value>
+    <value column="Description" original="View all login's made in the application.">Muestra todos los login realizados en la aplicación.</value>
+  </row>
+  <row id="367" trl="N">
+    <value column="Name" original="Security">Seguridad</value>
+    <value column="Description" original="Open a folder where you can see session logs and monitor modifications made by each user. ">Abre una carpeta en la que puede ver los registros de la sesión y monitorear las modificaciones hechas por cada usuario.</value>
+  </row>
+  <row id="368" trl="N">
+    <value column="Name" original="Change Log">Registro de cambios</value>
+    <value column="Description" original="Log of data changes">Registro de cambios en la base de datos</value>
+  </row>
+  <row id="369" trl="N">
+    <value column="Name" original="Time Type">Tipo tiempo</value>
+    <value column="Description" original="Define types of time intervals to be applied your expenses and expense sheets.">Define los tipos de intervalos de tiempo aplicables a sus gastos y hojas de gastos.</value>
+  </row>
+  <row id="370" trl="N">
+    <value column="Name" original="Cost Type">Tipo costo</value>
+    <value column="Description" original="Maintain Cost Types">Tipo costo</value>
+  </row>
+  <row id="371" trl="N">
+    <value column="Name" original="Advertisement">Anuncio</value>
+    <value column="Description" original="Web Advertisement">Anuncios web</value>
+  </row>
+  <row id="372" trl="N">
+    <value column="Name" original="Web">Web</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="373" trl="N">
+    <value column="Name" original="Import Bank Statement">Import Bank Statement</value>
+    <value column="Description" original="Import Bank Statements">Import Bank Statements</value>
+  </row>
+  <row id="375" trl="N">
+    <value column="Name" original="Click">Clic</value>
+    <value column="Description" original="Maintain Web Click">Mantenimiento de la web al hacer clic</value>
+  </row>
+  <row id="376" trl="N">
+    <value column="Name" original="Import Orders">Importar pedidos</value>
+    <value column="Description" original="Import orders in .csv format from previously used databases/applications and past business operations.">Importa los pedidos en formato .csv desde bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+  </row>
+  <row id="377" trl="N">
+    <value column="Name" original="Invoice Payment Schedule">Calendario de pago de facturas</value>
+    <value column="Description" original="Maintain Invoice Payment Schedule">Mantenimiento del pago de facturas</value>
+  </row>
+  <row id="378" trl="N">
+    <value column="Name" original="Import G/L Journal">Importar libro mayor de asientos</value>
+    <value column="Description" original="Import G/L jounals in .csv format from previously used databases/applications and past business operations.">Importa el LM de asientos en formato .csv desde bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+  </row>
+  <row id="380" trl="N">
+    <value column="Name" original="Counter">Contador</value>
+    <value column="Description" original="Web Counter">Contador web</value>
+  </row>
+  <row id="381" trl="N">
+    <value column="Name" original="Freight Category">Categoría portes</value>
+    <value column="Description" original="Define freight categories to be used by shippers.">Define las categorías de portes para ser utilizadas por los transportistas.</value>
+  </row>
+  <row id="382" trl="N">
+    <value column="Name" original="Import Invoices">Importar facturas</value>
+    <value column="Description" original="Import invoices in .csv format from previously used databases/applications and past business operations.">Importa las facturas en formato .csv desde bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+  </row>
+  <row id="383" trl="N">
+    <value column="Name" original="Cache Reset">Limpiar cache</value>
+    <value column="Description" original="Reset Cache of the System ** Close all Windows before proceeding **">Limpiar el cache del sistema**Cerrar todas las ventanas antes proceder**</value>
+  </row>
+  <row id="384" trl="N">
+    <value column="Name" original="Accounting Dimension">Dimensiones de contabilidad</value>
+    <value column="Description" original="Create and edit accounting dimensions to be used in dimensional reports. ">Crea y edita las dimensiones de contabilidad para usar en los informes dimensionales.</value>
+  </row>
+  <row id="385" trl="N">
+    <value column="Name" original="Replication">Replicación</value>
+    <value column="Description" original="Maintain Data Replication Targets">Mantenimiento de los datos objetivo de la replicación</value>
+  </row>
+  <row id="386" trl="N">
+    <value column="Name" original="Replication Strategy">Estrategia de replicación</value>
+    <value column="Description" original="Maintain Data Replication Strategy">Mantenimiento de la estrategia de replicación</value>
+  </row>
+  <row id="387" trl="N">
+    <value column="Name" original="Service Project">Proyecto servicio</value>
+    <value column="Description" original="Create and edit projects and tasks potentially requiring purchase and sales invoicing.">Crea y edita proyectos y tareas que puedan requerir facturas de compra y venta.</value>
+  </row>
+  <row id="388" trl="N">
+    <value column="Name" original="Knowledge Base">Base conocimientos</value>
+    <value column="Description" original="Maintain Knowledge Base">Mantenimiento de los conocimientos base</value>
+  </row>
+  <row id="389" trl="N">
+    <value column="Name" original="Knowledge Category">Categoría conocimientos</value>
+    <value column="Description" original="Maintain Knoweledge Categories and Values">Mantenimiento de las categorías y valores de conocimiento</value>
+  </row>
+  <row id="390" trl="N">
+    <value column="Name" original="Knowledge Synonym">Conocimientos sinónimos</value>
+    <value column="Description" original="Knowlege Keyword Synonym">Knowlege Keyword Synonym</value>
+  </row>
+  <row id="391" trl="N">
+    <value column="Name" original="Knowledge Source">Origen conocimientos</value>
+    <value column="Description" original="Source of Knowledge Entries">Origen de las entradas de los conocimientos</value>
+  </row>
+  <row id="392" trl="N">
+    <value column="Name" original="Knowledge">Conocimientos</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="393" trl="N">
+    <value column="Name" original="Update Accounting Balance">Actualizar balance de contabilidad</value>
+    <value column="Description" original="Update Daily Accounting Balances">Actualizar diariamente el balance de contabilidad</value>
+  </row>
+  <row id="394" trl="N">
+    <value column="Name" original="Business Partner Info">Información de terceros</value>
+    <value column="Description" original="View information related to business partner orders, receipts/shipments, invoices, and assets.">Muestra la información relacionada con los pedidos, remisiones, facturas y activos de terceros.</value>
+  </row>
+  <row id="395" trl="N">
+    <value column="Name" original="Replication Setup">Configuración Copia</value>
+    <value column="Description" original="Setup of data replication">Configuración de Copia de datos</value>
+  </row>
+  <row id="396" trl="N">
+    <value column="Name" original="Send Mail Text">Enviar texto de correo</value>
+    <value column="Description" original="Send EMails to active subscribers of an Interest Area or Business Partner Group">Envia e-mails a todos aquellos contactos asignados a un área de interés o a un grupo de terceros</value>
+  </row>
+  <row id="397" trl="N">
+    <value column="Name" original="Merge Entities">Unir terceros</value>
+    <value column="Description" original="Merge From Entity to To Entity - Delete From">Une todos los datos de un tercero origen a un tercero destino - Borra todo del origen</value>
+  </row>
+  <row id="398" trl="N">
+    <value column="Name" original="Project Cycle Report">Ciclo del proyecto</value>
+    <value column="Description" original="Report Projects based on Project Cycle">Informes del proyecto basados en el ciclo del mismo</value>
+  </row>
+  <row id="399" trl="N">
+    <value column="Name" original="Customer Assets">Activos cliente</value>
+    <value column="Description" original="Report Customer Assets with Delivery Count">Informe de activos del cliente con control de entrega</value>
+  </row>
+  <row id="400" trl="N">
+    <value column="Name" original="Asset Delivery">Entrega activos</value>
+    <value column="Description" original="Report Asset Deliveries">Informe de entrega de activos</value>
+  </row>
+  <row id="401" trl="N">
+    <value column="Name" original="Issue to Project">Suministro para el proyecto</value>
+    <value column="Description" original="Issue Material to Project from Receipt or manual Inventory Location">Suministro de material para el proyecto desde una recepción o desde inventario</value>
+  </row>
+  <row id="402" trl="N">
+    <value column="Name" original="Generate PO from Project">Generar PC de un proyecto</value>
+    <value column="Description" original="Generate PO from Project Line(s)">Generar PC de las líneas de un proyecto</value>
+  </row>
+  <row id="403" trl="N">
+    <value column="Name" original="Project Detail Accounting Report">Contabilidad detalles proyecto</value>
+    <value column="Description" original="Project Detail Accounting Report"></value>
+  </row>
+  <row id="404" trl="N">
+    <value column="Name" original="Project Lines not Issued">Proyecto líneas no incluidas</value>
+    <value column="Description" original="Lists Project Lines of a Work Order or Asset Project, which are not issued to the Project">Listado de las líneas de un pedido de trabajo o activos del proyecto no incluidos en el proyecto</value>
+  </row>
+  <row id="405" trl="N">
+    <value column="Name" original="Project POs not Issued">Proyecto líneas pedidos compra no incluidas</value>
+    <value column="Description" original="Lists Project Lines with generated Purchase Orders of a Work Order or Asset Project, which are not issued to the Project">Listado de las líneas de un proyecto con pedidos de compra generados de un pedido de trabajo o activos del pedido no incluidas en el trabajo</value>
+  </row>
+  <row id="800000" trl="N">
+    <value column="Name" original="In-Out Report">InformeInOut</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="800001" trl="N">
+    <value column="Name" original="Session Information">Variables sesión</value>
+    <value column="Description" original="View session information and variables and set certain system settings.">Muestra la información y las variables de la sesión y establezca ciertos parámetros del sistema.</value>
+  </row>
+  <row id="800002" trl="N">
+    <value column="Name" original="Auxiliary Input">Inputs auxiliares</value>
+    <value column="Description" original="Define values of a selected field, depending on the tab that is being edited.">Define los valores de un campo seleccionado, de acuerdo con la solapa que se está editando.</value>
+  </row>
+  <row id="800005" trl="N">
+    <value column="Name" original="General Ledger Journal">Diario asientos</value>
+    <value column="Description" original="General ledger journal">Diario de asientos</value>
+  </row>
+  <row id="800006" trl="N">
+    <value column="Name" original="General Ledger Report">Libro mayor</value>
+    <value column="Description" original="Report general ledger">Libro mayor</value>
+  </row>
+  <row id="800007" trl="N">
+    <value column="Name" original="Construction Project">Proyecto obras</value>
+    <value column="Description" original="Create and edit potential projects which your business partner's are bidding on.  Create plans to purchase and proposals to your products if a business partner bid is won.">Crea y edita los proyectos potenciales que sus terceros están licitando. Crea planes de compra y propuestas para sus productos si el tercero gana la licitación.</value>
+  </row>
+  <row id="800008" trl="N">
+    <value column="Name" original="Incoterm">Incoterms</value>
+    <value column="Description" original="Define international commercial terms (Incoterms) to be used in sales transactions.">Define los términos del comercio internacional (Incoterms) para utilizar en las operaciones de ventas.</value>
+  </row>
+  <row id="800009" trl="N">
+    <value column="Name" original="Stock Report">Inventario</value>
+    <value column="Description" original="Report inventory">Informe inventario</value>
+  </row>
+  <row id="800010" trl="N">
+    <value column="Name" original="Bank Report ">Banco </value>
+    <value column="Description" original="Report bank ">Informe banco </value>
+  </row>
+  <row id="800011" trl="N">
+    <value column="Name" original="Cash Report ">Caja </value>
+    <value column="Description" original="Report cash ">Informe caja </value>
+  </row>
+  <row id="800015" trl="N">
+    <value column="Name" original="Shipment Report ">Remisiones </value>
+    <value column="Description" original="Shipment Report "></value>
+  </row>
+  <row id="800018" trl="N">
+    <value column="Name" original="Invoice Customer Report">Facturas</value>
+    <value column="Description" original="Report Invoice Customer">Informe facturas cliente</value>
+  </row>
+  <row id="800020" trl="N">
+    <value column="Name" original="Material Transaction Report">Movimientos almacén</value>
+    <value column="Description" original="Report Material Transaction">Informe de movimientos de almacén</value>
+  </row>
+  <row id="800023" trl="N">
+    <value column="Name" original="Total Product Template Report">Totalizado plantillas</value>
+    <value column="Description" original="Report Total Product Template">Totalizado de plantillas</value>
+  </row>
+  <row id="800024" trl="N">
+    <value column="Name" original="Volume Discount">Rappels</value>
+    <value column="Description" original="Create volume discounts related to products and product categories to be assigned to selected business partners.">Crea descuentos por volumen relacionados con productos y categorías de productos para asignar a terceros seleccionados.</value>
+  </row>
+  <row id="800025" trl="N">
+    <value column="Name" original="General Accounting Report">Cuadros plan general contable</value>
+    <value column="Description" original="General Accounting Report">Cuadros del plan general contable</value>
+  </row>
+  <row id="800026" trl="N">
+    <value column="Name" original="Simple Sales Order">Pedido venta simple</value>
+    <value column="Description" original="Create sales orders quickly using predefined product templates.  ">Crea pedidos de venta rápidamente utilizando plantillas de productos predefinidas.</value>
+  </row>
+  <row id="800027" trl="N">
+    <value column="Name" original="Settlement">Liquidación</value>
+    <value column="Description" original="Edit payments by summing one or many into one or by dividing one into many.  Here you manage payments that come from invoices generated in the application. ">Edita los pagos sumándolos todos en uno o dividiendo uno en varios. En este caso, debe gestionar los pagos correspondientes a las facturas generadas en la aplicación.</value>
+  </row>
+  <row id="800028" trl="N">
+    <value column="Name" original="Invoice Taxes Report">Impuestos</value>
+    <value column="Description" original="Report Tax Invoice">Informe de impuestos</value>
+  </row>
+  <row id="800029" trl="N">
+    <value column="Name" original="Payment Report">Efectos</value>
+    <value column="Description" original="Report debt payment">Informe efectos</value>
+  </row>
+  <row id="800030" trl="N">
+    <value column="Name" original="Change Order Organization">Movimiento de pedidos entre organizaciones</value>
+    <value column="Description" original="Change Order Organization"></value>
+  </row>
+  <row id="800031" trl="N">
+    <value column="Name" original="Delivered Sales Order Report ">Pedidos suministrados </value>
+    <value column="Description" original="Delivered Sales Order Report "></value>
+  </row>
+  <row id="800032" trl="N">
+    <value column="Name" original="Project Building Site Report">Obras</value>
+    <value column="Description" original="Report project building site">Informe obras</value>
+  </row>
+  <row id="800033" trl="N">
+    <value column="Name" original="Manual Settlement">Liquidación manual</value>
+    <value column="Description" original="Create and edit payments with no corresponding document/transaction in the application.">Crea y edita los pagos que no correspondan a documentos o transacciones de la aplicación.</value>
+  </row>
+  <row id="800034" trl="N">
+    <value column="Name" original="G/L Item">Concepto contable</value>
+    <value column="Description" original="Create and edit accounting items to be used in manual settlements.">Crea y edita los ítems contables para utilizar en la liquidación manual.</value>
+  </row>
+  <row id="800037" trl="N">
+    <value column="Name" original="Project Proposal Tracker">Informe presupuesto</value>
+    <value column="Description" original="View all proposals made to you during a Budget Project.">Muestra todas las propuestas que reciba durante un proyecto de presupuesto.</value>
+  </row>
+  <row id="800038" trl="N">
+    <value column="Name" original="GL Posting by DB Tables">Proceso contable</value>
+    <value column="Description" original="Recreate accounting information and add transactions for the General Ledger, grouped by defined database tables.">Vuelve a crear la información contable y añada las transacciones del libro mayor, agrupadas en las tablas predefinidas de la base de datos. </value>
+  </row>
+  <row id="800039" trl="N">
+    <value column="Name" original="Warehouse Control Report">Números de referencia</value>
+    <value column="Description" original="Report Warehouse Control">Informe seguimiento de almacen</value>
+  </row>
+  <row id="800040" trl="N">
+    <value column="Name" original="Invoice Consignment Report">Facturacion consigna</value>
+    <value column="Description" original="Report To Invoice Consignment">Informe de facturacion consigna</value>
+  </row>
+  <row id="800042" trl="N">
+    <value column="Name" original="Balance Sheet">Balance sumas y saldos</value>
+    <value column="Description" original="Balance Sheet"></value>
+  </row>
+  <row id="800043" trl="N">
+    <value column="Name" original="Create All Price Lists">Actualizar tarifas</value>
+    <value column="Description" original="Create price list version for a price list">Crea todos las versiones de tarifa para una tarifa determinada</value>
+  </row>
+  <row id="800046" trl="N">
+    <value column="Name" original="Merge Script">Script de diferencias</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="800047" trl="Y">
+    <value column="Name" original="Preinstall">Preinstalación</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="800048" trl="Y">
+    <value column="Name" original="Version">Versión</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="800052" trl="N">
+    <value column="Name" original="Product Movements Report">Detalle movimientos artículo</value>
+    <value column="Description" original="Report product movement">Informe de los distintos movimientos de un artículo</value>
+  </row>
+  <row id="800054" trl="N">
+    <value column="Name" original="Warehouse Schedule">Calendarios de almacén</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="800057" trl="N">
+    <value column="Name" original="Rpt Labels">Rpt Etiquetas</value>
+    <value column="Description" original="Rpt Labels"></value>
+  </row>
+  <row id="800060" trl="N">
+    <value column="Name" original="Invoice (customer) Dimensional Report ">Análisis dimensional facturas </value>
+    <value column="Description" original="Invoice customer dimensional analyses ">Análisis dimensional de factura venta </value>
+  </row>
+  <row id="800062" trl="N">
+    <value column="Name" original="Incoming Shipment">Remisión logística entrada</value>
+    <value column="Description" original="Create and manage goods shipments from our vendors">Crea y gestiona los envíos de bienes de nuestros proveedores.</value>
+  </row>
+  <row id="800063" trl="N">
+    <value column="Name" original="Outgoing Shipment">Remisión logística salida</value>
+    <value column="Description" original="Create and manage goods shipments to your customers.">Crea y gestiona las remisiones para sus clientes.</value>
+  </row>
+  <row id="800064" trl="N">
+    <value column="Name" original="Storage Bin Type">Tipo ubicación</value>
+    <value column="Description" original="Define storage bin types to better organize your warehouse and inventory.">Define los tipos de ubicación para mejorar la organización de su almacén y su inventario.</value>
+  </row>
+  <row id="800065" trl="N">
+    <value column="Name" original="In-Out Line Type">Tipo entrada/salida remisión</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="800067" trl="N">
+    <value column="Name" original="Shipments Dimensional Report ">Análisis dimensional remisiones </value>
+    <value column="Description" original="Shipment dimensional analyze ">Análisis dimensional de albaran venta </value>
+  </row>
+  <row id="800069" trl="N">
+    <value column="Name" original="Invoiced Sales Order Report ">Pedidos facturados </value>
+    <value column="Description" original="Invoiced Sales Order Report "></value>
+  </row>
+  <row id="800070" trl="N">
+    <value column="Name" original="Expense Report">Servicios</value>
+    <value column="Description" original="Report expense">Servicios</value>
+  </row>
+  <row id="800071" trl="N">
+    <value column="Name" original="Data File Type">Tipos de datos de ficheros</value>
+    <value column="Description" original="Create and edit formats for attached files (.pdf, .html)">Crea y edita los formatos para los archivos adjuntados (.pdf; .html).</value>
+  </row>
+  <row id="800072" trl="N">
+    <value column="Name" original="Process Scheduling">Planificador de procesos</value>
+    <value column="Description" original="Define background processes to be automatically performed by the application.">Define los procesos en background que deben ser ejecutados automáticamente por la aplicación. </value>
+  </row>
+  <row id="800073" trl="N">
+    <value column="Name" original="Background Process">Listado de procesos en background</value>
+    <value column="Description" original="Edit predefined processes made by the user.">Edita los procesos predefinidos por el usuario.</value>
+  </row>
+  <row id="800074" trl="N">
+    <value column="Name" original="Price List Report">Tarifas</value>
+    <value column="Description" original="Price List Report"></value>
+  </row>
+  <row id="800075" trl="N">
+    <value column="Name" original="Analysis Tools">Herramientas de análisis</value>
+    <value column="Description" original="Open a folder where you can find reports and tools to analyze data. ">Abre una carpeta en la que puede encontrar los informes y herramientas necesarios para analizar los datos.</value>
+  </row>
+  <row id="800076" trl="N">
+    <value column="Name" original="Analysis Tools">Herramientas de análisis</value>
+    <value column="Description" original="Open a folder where you can find reports and tools to analyze data. ">Abre una carpeta en la que puede encontrar los informes y herramientas necesarios para analizar los datos.</value>
+  </row>
+  <row id="800077" trl="N">
+    <value column="Name" original="Analysis Tools">Herramientas de análisis</value>
+    <value column="Description" original="Open a folder where you can find reports and tools to analyze data. ">Abre una carpeta en la que puede encontrar los informes y herramientas necesarios para analizar los datos.</value>
+  </row>
+  <row id="800078" trl="N">
+    <value column="Name" original="Analysis Tools">Herramientas de análisis</value>
+    <value column="Description" original="Open a folder where you can find reports and tools to analyze data. ">Abre una carpeta en la que puede encontrar los informes y herramientas necesarios para analizar los datos.</value>
+  </row>
+  <row id="800079" trl="N">
+    <value column="Name" original="Analysis Tools">Herramientas de análisis</value>
+    <value column="Description" original="Open a folder where you can find reports and tools to analyze data. ">Abre una carpeta en la que puede encontrar los informes y herramientas necesarios para analizar los datos.</value>
+  </row>
+  <row id="800080" trl="N">
+    <value column="Name" original="Reports">Informes</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="800081" trl="N">
+    <value column="Name" original="Analysis Tools">Herramientas de análisis</value>
+    <value column="Description" original="Open a folder where you can find reports and tools to analyze data. ">Abre una carpeta en la que puede encontrar los informes y herramientas necesarios para analizar los datos.</value>
+  </row>
+  <row id="800082" trl="N">
+    <value column="Name" original="Generate Help">Generador de ayuda</value>
+    <value column="Description" original="Generate help windows in html format">Genera las ventanas de ayuda en formato html</value>
+  </row>
+  <row id="800083" trl="N">
+    <value column="Name" original="Invoiced Returns Dimensional Report">Análisis dimensional de devoluciones en factura venta</value>
+    <value column="Description" original="Refund invoice customer dimensional analyze">Análisis dimensional de devoluciones en factura venta</value>
+  </row>
+  <row id="800084" trl="N">
+    <value column="Name" original="Sales Rep Pricelist">Tarifas comerciales</value>
+    <value column="Description" original="Sales Rep Pricelist"></value>
+  </row>
+  <row id="800085" trl="N">
+    <value column="Name" original="Sales Order Returns Dimensional Report">Informe de devoluciones para pedido venta</value>
+    <value column="Description" original="Report refund sales order dimensional analyses">Informe de devoluciones para pedido venta</value>
+  </row>
+  <row id="800086" trl="N">
+    <value column="Name" original="Create Purchase Invoices from Deliveries">Creación de facturas de compra desde consigna</value>
+    <value column="Description" original="Create purchase invoices from deliveries">Creación de facturas de compra desde consigna</value>
+  </row>
+  <row id="800087" trl="N">
+    <value column="Name" original="Payment Tracker">Seguimiento cobros-pagos</value>
+    <value column="Description" original="Payment Tracker"></value>
+  </row>
+  <row id="800088" trl="N">
+    <value column="Name" original="Update Price List from Orders">Actualizar tarifas de pedidos</value>
+    <value column="Description" original="Update pricelist from orders">Actualizar tarifas de pedidos</value>
+  </row>
+  <row id="800089" trl="N">
+    <value column="Name" original="Traceability Report">Informe de trazabilidad</value>
+    <value column="Description" original="Traceability Report"></value>
+  </row>
+  <row id="800090" trl="N">
+    <value column="Name" original="Generate 347 Model">Generacion modelo 347</value>
+    <value column="Description" original="Generate model 347">Generacion modelo 347</value>
+  </row>
+  <row id="800091" trl="N">
+    <value column="Name" original="Cashflow Forecast">Previsión de tesorería</value>
+    <value column="Description" original="Cashflow Forecast"></value>
+  </row>
+  <row id="800092" trl="N">
+    <value column="Name" original="Change Payment Status">Desaplicar efectos</value>
+    <value column="Description" original="Edit a previously completed payment changing the status from paid to unpaid.">Edita un pago previamente completado cambiando el estado de pago a impago.</value>
+  </row>
+  <row id="800093" trl="N">
+    <value column="Name" original="Funds Transfer">Movimientos caja-banco</value>
+    <value column="Description" original="Make transfers between cash and bank">Movimientos entre caja y banco</value>
+  </row>
+  <row id="800095" trl="N">
+    <value column="Name" original="Generate Average Costs">Generar costo medio</value>
+    <value column="Description" original="Generates raw materials average costs.">Genera costo medio de materias primas</value>
+  </row>
+  <row id="800096" trl="N">
+    <value column="Name" original="Discount">Descuentos</value>
+    <value column="Description" original="Create and edit product price percentage discounts. ">Crea y edita los porcentajes de descuento para aplicar al precio de los productos.</value>
+  </row>
+  <row id="800097" trl="N">
+    <value column="Name" original="Remittance Type">Tipo remesas</value>
+    <value column="Description" original="Create and edit remittance types with corresponding parameters according to your business needs.">Crea y edita tipos de remesas y los parámetros correspondientes, de acuerdo con sus necesidades de negocios.</value>
+  </row>
+  <row id="800099" trl="N">
+    <value column="Name" original="Pending Goods Receipts">Pedidos de compra pendientes de recibir</value>
+    <value column="Description" original="Edit existing goods receipts as requests are carried out.">Edita las remisiones existentes a medida que se cumplan los pedidos.</value>
+  </row>
+  <row id="800100" trl="N">
+    <value column="Name" original="Update Table Identifiers">Actualiza Identificadores tablas</value>
+    <value column="Description" original="Update all the table identifiers SQL">Actualiza todas las SQL de los identificadores de tabla</value>
+  </row>
+  <row id="800101" trl="N">
+    <value column="Name" original="Valued Stock Report">Valoración de stock</value>
+    <value column="Description" original="Valued Stock Report"></value>
+  </row>
+  <row id="800103" trl="N">
+    <value column="Name" original="Proposal Report">Consulta de presupuestos</value>
+    <value column="Description" original="Report proposal query">Consulta de presupuestos</value>
+  </row>
+  <row id="800104" trl="N">
+    <value column="Name" original="Account Dimensional Report">Análisis dimensional de cuenta contable</value>
+    <value column="Description" original="Accounting count dimensional analyses">Análisis dimensional de cuenta contable</value>
+  </row>
+  <row id="800105" trl="N">
+    <value column="Name" original="Month">Mes</value>
+    <value column="Description" original="Create and edit names of the month, assigning them to your quarterly and yearly calendar.">Crea y edita los nombres de los meses y asígnelos a su calendario trimestral y anual.</value>
+  </row>
+  <row id="800106" trl="N">
+    <value column="Name" original="Dimension">Dimensiones</value>
+    <value column="Description" original="Define parameters to be used in making reports."></value>
+  </row>
+  <row id="800108" trl="N">
+    <value column="Name" original="Automated Test">Test Automático</value>
+    <value column="Description" original="Open a folder where you can define information related to business partners, prices, and products.">Abre una carpeta en la que puede definir la información relacionada con los terceros, los precios y los productos.</value>
+  </row>
+  <row id="800109" trl="N">
+    <value column="Name" original="Document">Documentos</value>
+    <value column="Description" original="Create and edit documents to be used in automated tests.">Crea y edita los documentos que se utilizan en las pruebas automáticas.</value>
+  </row>
+  <row id="800110" trl="N">
+    <value column="Name" original="Role Login">TestLogin</value>
+    <value column="Description" original="Create a means of logging in to the application to complete a test."></value>
+  </row>
+  <row id="800111" trl="N">
+    <value column="Name" original="Instructions">Instrucciones</value>
+    <value column="Description" original="Create and edit instructions for being used in automated tests.">Crea y edita las instrucciones correspondientes a las pruebas automáticas.</value>
+  </row>
+  <row id="800112" trl="N">
+    <value column="Name" original="Command">Comandos</value>
+    <value column="Description" original="Create and edit commands in order to configure the automated test.">Crea y edita los comandos para configurar las pruebas automáticas.</value>
+  </row>
+  <row id="800113" trl="N">
+    <value column="Name" original="Create Document">Crear documento de test</value>
+    <value column="Description" original="Creates a apliccation test.">Crea un test para la aplicación</value>
+  </row>
+  <row id="800114" trl="N">
+    <value column="Name" original="Assets">Activos</value>
+    <value column="Description" original="Define assets owned by your company their amortization characteristics.">Define los activos de propiedad de su empresa y sus características de amortización.</value>
+  </row>
+  <row id="800115" trl="N">
+    <value column="Name" original="Amortization">Amortización</value>
+    <value column="Description" original="Create and edit amortization for a selected year. ">Crea y edita la amortización para el año seleccionado.</value>
+  </row>
+  <row id="800117" trl="N">
+    <value column="Name" original="Price Adjustments">Modificación de precios</value>
+    <value column="Description" original="Create and edit price adjustments to be applied to business partners, products, or price lists.  ">Crea y edita ofertas aplicables a terceros, productos o tarifas.</value>
+  </row>
+  <row id="800118" trl="N">
+    <value column="Name" original="Business Partner Contract">Contrato de Tercero</value>
+    <value column="Description" original="Creates business partner contract">Crea el contrato del tercero</value>
+  </row>
+  <row id="800119" trl="N">
+    <value column="Name" original="SQL Query">Consulta SQL</value>
+    <value column="Description" original="Execute SQL query and view results within the Openbravo application.">Ejecuta la consulta SQL y muestre los resultados dentro de la aplicación de Openbravo.</value>
+  </row>
+  <row id="800121" trl="N">
+    <value column="Name" original="Production Management">Gestión de Producción</value>
+    <value column="Description" original="Open a folder where you can create and edit your production process, production control, and analyze data.">Abre una carpeta en la que puede crear y editar su proceso de producción y el control de la producción así como analizar los datos.</value>
+  </row>
+  <row id="800123" trl="N">
+    <value column="Name" original="Section">Area</value>
+    <value column="Description" original="Edit the production area by dividing them into multiple sections.">Edita el área de producción dividiéndola en múltiples secciones.</value>
+  </row>
+  <row id="800124" trl="N">
+    <value column="Name" original="Cost Center">Centro de Costos</value>
+    <value column="Description" original="Create and edit cost centers related to production to sum up charges associated with a specific transaction.">Crea y edita centros de costos relacionados con la producción para calcular los gastos asociados a una transacción específica.</value>
+  </row>
+  <row id="800125" trl="N">
+    <value column="Name" original="Machine">Máquina</value>
+    <value column="Description" original="Create machines to be used in production.">Crea las máquinas para utilizar en la producción.</value>
+  </row>
+  <row id="800126" trl="N">
+    <value column="Name" original="Work Center">Puesto Trabajo</value>
+    <value column="Description" original="Create and add machines to be used in a work center.">Crea y añade las máquinas que se usan en un centro de trabajo.</value>
+  </row>
+  <row id="800128" trl="N">
+    <value column="Name" original="Toolset">Utillajes</value>
+    <value column="Description" original="Define tools and groups of tools to be used in the production process.">Define las herramientas y grupos de herramientas para utilizar en el proceso de producción.</value>
+  </row>
+  <row id="800133" trl="N">
+    <value column="Name" original="Work Incidence">Incidencia de Trabajo</value>
+    <value column="Description" original="Define types of work incidences that may occur during production.">Define los tipos de incidencias de trabajo que pueden ocurrir durante la producción.</value>
+  </row>
+  <row id="800137" trl="N">
+    <value column="Name" original="Process Plan">Plan de Producción</value>
+    <value column="Description" original="Define the steps and processes to be completed for an intermediate or finished good, taking in account available resources.">Define los pasos y procesos a completar para un bien terminado o en estado intermedio, tomando en cuenta los recursos disponibles.</value>
+  </row>
+  <row id="800138" trl="N">
+    <value column="Name" original="Work Requirement">Orden de Fabricación</value>
+    <value column="Description" original="Create an order to execute the selected process plan.">Crea una orden para ejecutar el plan de proceso seleccionado.</value>
+  </row>
+  <row id="800139" trl="N">
+    <value column="Name" original="Work Effort">Parte de Trabajo</value>
+    <value column="Description" original="Edit precisely what has been produced from a selected product order.">Edita con exactitud lo que se ha producido de un determinado pedido de producto.</value>
+  </row>
+  <row id="800141" trl="N">
+    <value column="Name" original="Analysis Tools">Herramientas de análisis</value>
+    <value column="Description" original="Open a folder where you can find reports and tools to analyze data. ">Abre una carpeta en la que puede encontrar los informes y herramientas necesarios para analizar los datos.</value>
+  </row>
+  <row id="800158" trl="N">
+    <value column="Name" original="Product Type">Tipo Producto</value>
+    <value column="Description" original="Product type">Tipo producto</value>
+  </row>
+  <row id="800159" trl="N">
+    <value column="Name" original="Activity">Proceso</value>
+    <value column="Description" original="Define activities (processes) to be performed as part of a process plan and their characteristics .">Define las actividades (procesos) que deben ejecutarse como parte del plan de procesos y sus características.</value>
+  </row>
+  <row id="800160" trl="N">
+    <value column="Name" original="Calculate Standard Costs">Calcular costo estándar</value>
+    <value column="Description" original="Calculates the standard cost of manufactured products.">Calcula el costo estándar de los productos fabricados.</value>
+  </row>
+  <row id="800167" trl="N">
+    <value column="Name" original="Production Setup">Configuración de producción</value>
+    <value column="Description" original="Set up Production module.">Define los pasos para la configuración del módulo de producción.</value>
+  </row>
+  <row id="800168" trl="N">
+    <value column="Name" original="Quality Control Point">Punto Crítico de Control </value>
+    <value column="Description" original="Define quality control check points to be used for testing the product quality at any point in the production process.">Define los checkpoints de control de calidad para testear la calidad de los productos en cualquier momento del proceso de producción.</value>
+  </row>
+  <row id="800169" trl="N">
+    <value column="Name" original="Quality Control Report">Toma de Datos de PCC</value>
+    <value column="Description" original="Create and edit measurements and report findings at predefined checkpoints.  The goal is to ensure output quality during production.">Crea y edita las mediciones e informe los hallazgos en los checkpoints predefinidos. El objetivo es garantizar la calidad de los resultados durante la producción.</value>
+  </row>
+  <row id="800171" trl="N">
+    <value column="Name" original="Product Consumption">Producto de Consumo</value>
+    <value column="Description" original="Define checkpoints and their frequencies to be used in the Quality Control Report.">Define los checkpoints y sus frecuencias para usar en el Informe de Control de Calidad.</value>
+  </row>
+  <row id="800172" trl="N">
+    <value column="Name" original="Periodic Quality Control">Control Periódico</value>
+    <value column="Description" original="Define checkpoints to be used for quality control of a produced product.">Define los checkpoints para efectuar el control de calidad de un producto terminado.</value>
+  </row>
+  <row id="800173" trl="N">
+    <value column="Name" original="Periodic Quality Control Data">Toma de Datos Control Periódico</value>
+    <value column="Description" original="Create and edit data collection and measurements related to quality control.  This is done at predefined checkpoints for a produced product.">Crea y edita informes basados en la recopilación de datos y las mediciones. Esto se realiza enlos checkpoints predefinidos para cada producto terminado.</value>
+  </row>
+  <row id="800176" trl="N">
+    <value column="Name" original="Import EDI File">Importación de fichero EDI</value>
+    <value column="Description" original="Import an EDI (Electronic Data Interchange) file.">Importa un fichero EDI (Intercambio electrónico de datos).</value>
+  </row>
+  <row id="800177" trl="N">
+    <value column="Name" original="G/L Items Report">Conceptos contables</value>
+    <value column="Description" original="G/L Items Report"></value>
+  </row>
+  <row id="800178" trl="N">
+    <value column="Name" original="Performance Scorecard">Visión general de la empresa</value>
+    <value column="Description" original="Performance Scorecard"></value>
+  </row>
+  <row id="800179" trl="N">
+    <value column="Name" original="Text Interfaces">Texto interfaces</value>
+    <value column="Description" original="Edit translations of forms and reports.">Edita las traducciones de los formularios e informes.</value>
+  </row>
+  <row id="800180" trl="N">
+    <value column="Name" original="Callout">Callout</value>
+    <value column="Description" original="Define callouts of  the application, their classes, and their mapping plan.">Define los callouts de la aplicación, sus clases y mapeo.</value>
+  </row>
+  <row id="800181" trl="N">
+    <value column="Name" original="Promissory Note Format">Formato pagaré</value>
+    <value column="Description" original="Create and edit the structure of how of to print a promissory note.">Crea y edita una estructura para imprimir un formato de pagaré.</value>
+  </row>
+  <row id="800182" trl="N">
+    <value column="Name" original="Machine Category">Tipo de Máquina</value>
+    <value column="Description" original="Create machine categories based on your desired characteristics.">Crea categorías de máquinas basadas en las características de su preferencia.</value>
+  </row>
+  <row id="800183" trl="N">
+    <value column="Name" original="Maintenance Task">Operación de Mantenimiento</value>
+    <value column="Description" original="Define a scheduled maintenance task to be completed during the production process.">Define una tarea de mantenimiento programada que deba completarse durante el proceso de producción.</value>
+  </row>
+  <row id="800184" trl="N">
+    <value column="Name" original="Maintenance Plan">Mantenimiento Programado</value>
+    <value column="Description" original="Add and edit predefined maintenance plans.">Añade y edita planes de mantenimiento predefinidos.</value>
+  </row>
+  <row id="800185" trl="N">
+    <value column="Name" original="Maintenance Order">Parte de Mantenimiento</value>
+    <value column="Description" original="Create and edit the results of a scheduled maintenance order.">Crea y edita los resultados de la orden de mantenimiento programada.</value>
+  </row>
+  <row id="800186" trl="N">
+    <value column="Name" original="Insert Maintenances">Insertar Mantenimientos</value>
+    <value column="Description" original="Insert Maintenances"></value>
+  </row>
+  <row id="800188" trl="N">
+    <value column="Name" original="Internal Consumption">Consumo interno</value>
+    <value column="Description" original="Define products which are only to be used inside the enterprise.">Define los productos para uso interno exclusivo de la compañía.</value>
+  </row>
+  <row id="800189" trl="N">
+    <value column="Name" original="Setup">Configuración</value>
+    <value column="Description" original="Open a folder where you can define all information to be used in this module.">Abre una carpeta en la que puede definir toda la información necesaria para este módulo.</value>
+  </row>
+  <row id="800190" trl="N">
+    <value column="Name" original="Budget">Presupuesto</value>
+    <value column="Description" original="Create and edit budgets to be used for informative purposes. ">Crea y edita los presupuestos para utilizarlos con fines informativos.</value>
+  </row>
+  <row id="800191" trl="N">
+    <value column="Name" original="Create Budget Reports in Excel">Generador excel de presupuestos</value>
+    <value column="Description" original="Create Budget Reports in Excel"></value>
+  </row>
+  <row id="800192" trl="N">
+    <value column="Name" original="Import Budget">Importar Presupuesto</value>
+    <value column="Description" original="Import budgets in .csv format from previously used databases/applications and past business operations.">Importa los presupuestos en formato .csv desde bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+  </row>
+  <row id="800193" trl="N">
+    <value column="Name" original="Payment Status Management">Gestión estado efectos</value>
+    <value column="Description" original="Edit the status of payments for the accounting purposes.">Edita el estado de los efectos con fines contables.</value>
+  </row>
+  <row id="800194" trl="N">
+    <value column="Name" original="Accounting Report">Configuración Informes contables</value>
+    <value column="Description" original="Define parameters and methods of showing reports.">Define parámetros y métodos para mostrar informes.</value>
+  </row>
+  <row id="800195" trl="N">
+    <value column="Name" original="Remittance">Remesas</value>
+    <value column="Description" original="Edit payments by using remittances to cancel or return them.">Edita los pagos utilizando remesas para cancelarlos o devolverlos.</value>
+  </row>
+  <row id="800196" trl="N">
+    <value column="Name" original="Remittance Cancellation/Return ">Cancelación de Remesas</value>
+    <value column="Description" original="Edit pending remittances by cancelling or returning them. ">Edita las remesas pendientes, cancelándolas o devolviéndolas.</value>
+  </row>
+  <row id="800197" trl="N">
+    <value column="Name" original="Shipper Report">Informe transportista</value>
+    <value column="Description" original="Shipper Report"></value>
+  </row>
+  <row id="800198" trl="N">
+    <value column="Name" original="Create Accounting Report">Creación de informes contables</value>
+    <value column="Description" original="Selects an accounting model to obtain its report.">Seleccionar un modelo contable para la creación de sus informes.</value>
+  </row>
+  <row id="800199" trl="N">
+    <value column="Name" original="External Point of Sales">Punto de Venta Externo</value>
+    <value column="Description" original="Define and synchonize Openbravo to your points of sales and their respective attributes.">Define y sincronice Openbravo con sus puntos de venta y los atributos respectivos.</value>
+  </row>
+  <row id="800200" trl="N">
+    <value column="Name" original="Import/Export Translations">Import/Export Translations</value>
+    <value column="Description" original="Import or export localizations.">Importa o exporte las localizaciones.</value>
+  </row>
+  <row id="800201" trl="Y">
+    <value column="Name" original="Delete Client">Delete Client</value>
+    <value column="Description" original="This process deletes a client">Elimina una entidad.</value>
+  </row>
+  <row id="800202" trl="N">
+    <value column="Name" original="Offers Report">Informe ofertas</value>
+    <value column="Description" original="Offers Report"></value>
+  </row>
+  <row id="800203" trl="N">
+    <value column="Name" original="Salary Catagory">Categoría Salarial</value>
+    <value column="Description" original="Create salary categories to be applied to your employees/workers.">Crea categorías de salarios para aplicar a sus empleados/trabajadores.</value>
+  </row>
+  <row id="800204" trl="N">
+    <value column="Name" original="Indirect Cost">Costo Indirecto</value>
+    <value column="Description" original="Create and edit indirect costs to be used in production.">Crea y edita los costos indirectos correspondientes a la producción.</value>
+  </row>
+  <row id="800205" trl="N">
+    <value column="Name" original="Create Production Costs">Generar costos de producción</value>
+    <value column="Description" original="Create Production Costs"></value>
+  </row>
+  <row id="800206" trl="N">
+    <value column="Name" original="Business Partner Tax Category">Categoría de Impuestos de Terceros</value>
+    <value column="Description" original="Create a tax category to be added to each business partner.">Crea una categoría impositiva para cada tercero.</value>
+  </row>
+  <row id="800207" trl="N">
+    <value column="Name" original="Cashflow Forecast">Previsión de Tesorería</value>
+    <value column="Description" original="Cashflow Forecast"></value>
+  </row>
+  <row id="800208" trl="N">
+    <value column="Name" original="Project Profitability ">Rentabilidad de Proyectos </value>
+    <value column="Description" original="Project Profitability "></value>
+  </row>
+  <row id="800209" trl="N">
+    <value column="Name" original="Expense Invoice">Factura de gasto</value>
+    <value column="Description" original="Edit expenses by breaking and then allocating them across multiple organizations, projects, etc.">Edita los gastos separándolos y asignándolos entre las múltiples organizaciones, proyectos, etc.</value>
+  </row>
+  <row id="800210" trl="N">
+    <value column="Name" original="Production Cost Report">Costo de producción</value>
+    <value column="Description" original="Production Cost Report"></value>
+  </row>
+  <row id="800211" trl="Y">
+    <value column="Name" original="Copy Client">Copiar Entidad</value>
+    <value column="Description" original="Copy Client">Copiar Entidad</value>
+  </row>
+  <row id="800212" trl="N">
+    <value column="Name" original="Material Requirement Planning (MRP)">Gestión de MRP</value>
+    <value column="Description" original="Open a folder where you can edit your production planning, inventory control, and purchasing activities.">Abre una carpeta en la que puede editar sus planes de producción, su control de inventario y sus actividades de compra.</value>
+  </row>
+  <row id="800213" trl="N">
+    <value column="Name" original="Planner">Planificador</value>
+    <value column="Description" original="Define the entity in charge of managing the purchase or production of specific products.">Define la entidad a cargo de la compra o producción de determinados productos.</value>
+  </row>
+  <row id="800214" trl="N">
+    <value column="Name" original="Sales Forecast">Previsión de ventas</value>
+    <value column="Description" original="Create and edit sales forecasts over a specified time period in order to help plan necessary purchases.">Crea y edita las previsiones de venta para un período específico de tiempo, a fin de ayudar a planear las compras necesarias.</value>
+  </row>
+  <row id="800216" trl="N">
+    <value column="Name" original="Requisition">Necesidad de material</value>
+    <value column="Description" original="Create requests for the procurement department to buy necessities items based on your defined plan.">Crea las peticiones para el Departamento de Compras a fin de comprar los ítems definidos en su plan.</value>
+  </row>
+  <row id="800218" trl="N">
+    <value column="Name" original="Planning Method">Método de planificación</value>
+    <value column="Description" original="Define how transaction types will be dealt with in the application.">Define cómo van a registrarse los distintos tipos de transacción en la aplicación.</value>
+  </row>
+  <row id="800220" trl="N">
+    <value column="Name" original="Manufacturing Plan">Planificación de la producción</value>
+    <value column="Description" original="Create a comprehensive work requirement in order to request materials over a specified time period.">Crea una orden integral de fabricación a fin de requerir los materiales en un período específico de tiempo.</value>
+  </row>
+  <row id="800221" trl="N">
+    <value column="Name" original="Purchasing Plan">Planificación de compras</value>
+    <value column="Description" original="Create a comprehensive and organized plan to request purchases over a specified time period.">Crea un plan organizado e integral para efectuar pedidos de compra durante un período específico de tiempo.</value>
+  </row>
+  <row id="800223" trl="N">
+    <value column="Name" original="Import Taxes">Importar Impuestos</value>
+    <value column="Description" original="Import taxes in .csv format from previously used databases/applications and past business operations.">Importa los impuestos en formato .csv desde bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales pasadas.</value>
+  </row>
+  <row id="800224" trl="N">
+    <value column="Name" original="General Account Report Setup">Configuracion de informes contables</value>
+    <value column="Description" original="Create a report showing profits and losses as well as the balance sheet.">Crea un informe de pérdidas y beneficios así como el balance de sumas y saldos.</value>
+  </row>
+  <row id="800225" trl="N">
+    <value column="Name" original="Report Not Posted">Documentnos no contabilizados</value>
+    <value column="Description" original="Report Not Posted"></value>
+  </row>
+  <row id="800226" trl="N">
+    <value column="Name" original="Tax Report">Configuración informes de impuestos</value>
+    <value column="Description" original="Define parameters and methods of showing reports.">Define parámetros y métodos para mostrar los informes.</value>
+  </row>
+  <row id="800227" trl="N">
+    <value column="Name" original="Create Tax Report">Creacion de informes de impuestos</value>
+    <value column="Description" original="Create Tax Report"></value>
+  </row>
+  <row id="800228" trl="N">
+    <value column="Name" original="Alert">Alertas</value>
+    <value column="Description" original="Create and edit alerts that will inform you about any critical or important situation in the application.">Crea y edita las alertas que informan sobre situaciones críticas o importantes que ocurren en la aplicación.</value>
+  </row>
+  <row id="800229" trl="N">
+    <value column="Name" original="Purchase Order Report ">Informe pedidos de compra </value>
+    <value column="Description" original="Purchase Order Report "></value>
+  </row>
+  <row id="800230" trl="N">
+    <value column="Name" original="Alert Management">Gestión de Alertas</value>
+    <value column="Description" original="Edit predefined alerts made by the user.">Edita las alertas predefinidas por el usuario.</value>
+  </row>
+  <row id="800231" trl="N">
+    <value column="Name" original="Sales Report by Partner and Product">Ventas por tercero y producto JR</value>
+    <value column="Description" original="Report Sales by partner and Product">Report Sales by partner and Product</value>
+  </row>
+  <row id="800233" trl="N">
+    <value column="Name" original="Setup">Configuración</value>
+    <value column="Description" original="Open a folder where you can define all information to be used in this module.">Abre una carpeta en la que puede definir toda la información necesaria para este módulo.</value>
+  </row>
+  <row id="800234" trl="Y">
+    <value column="Name" original="Maintenance">Mantenimiento</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="800237" trl="N">
+    <value column="Name" original="Master Data Management">Gestión de datos maestros</value>
+    <value column="Description" original="Open a folder where you can define information related to business partners, prices, and products.">Abre una carpeta en la que puede definir la información relacionada con los terceros, los precios y los productos.</value>
+  </row>
+  <row id="800238" trl="N">
+    <value column="Name" original="Business Partner Setup">Configuración de terceros</value>
+    <value column="Description" original="Open a folder where you can define all information to be used in this module.">Abre una carpeta en la que puede definir toda la información necesaria para este módulo.</value>
+  </row>
+  <row id="800239" trl="Y">
+    <value column="Name" original="Product Setup">Configuración de productos</value>
+    <value column="Description" original=""></value>
+  </row>
+  <row id="800240" trl="N">
+    <value column="Name" original="Pricing">Tarifas</value>
+    <value column="Description" original="Open a folder where you can edit prices related to your products.">Abre una carpeta en la que puede editar los precios relacionados con sus productos.</value>
+  </row>
+  <row id="800242" trl="N">
+    <value column="Name" original="Transactions">Transacciones</value>
+    <value column="Description" original="Open a folder where you can create, edit, and add data to be used to complete a given transaction.">Abre una carpeta en la que puede crear, editar y añadir los datos necesarios para completar una transacción determinada.</value>
+  </row>
+  <row id="800243" trl="N">
+    <value column="Name" original="Warehouse Management">Gestión de Almacén</value>
+    <value column="Description" original="Open a folder where you can create and edit warehouses, and manage inventory..">Abre una carpeta en la que puede crear y editar los almacenes y gestionar el inventario.</value>
+  </row>
+  <row id="800244" trl="N">
+    <value column="Name" original="Transactions">Transacciones</value>
+    <value column="Description" original="Open a folder where you can create, edit, and add data to be used to complete a given transaction.">Abre una carpeta en la que puede crear, editar y añadir los datos necesarios para completar una transacción determinada.</value>
+  </row>
+  <row id="800245" trl="N">
+    <value column="Name" original="Transactions">Transacciones</value>
+    <value column="Description" original="Open a folder where you can create, edit, and add data to be used to complete a given transaction.">Abre una carpeta en la que puede crear, editar y añadir los datos necesarios para completar una transacción determinada.</value>
+  </row>
+  <row id="800247" trl="N">
+    <value column="Name" original="Transactions">Transacciones</value>
+    <value column="Description" original="Open a folder where you can create, edit, and add data to be used to complete a given transaction.">Abre una carpeta en la que puede crear, editar y añadir los datos necesarios para completar una transacción determinada.</value>
+  </row>
+  <row id="800248" trl="N">
+    <value column="Name" original="Setup">Configuración</value>
+    <value column="Description" original="Open a folder where you can define all information to be used in this module.">Abre una carpeta en la que puede definir toda la información necesaria para este módulo.</value>
+  </row>
+  <row id="800249" trl="N">
+    <value column="Name" original="Transactions">Transacciones</value>
+    <value column="Description" original="Open a folder where you can create, edit, and add data to be used to complete a given transaction.">Abre una carpeta en la que puede crear, editar y añadir los datos necesarios para completar una transacción determinada.</value>
+  </row>
+  <row id="800250" trl="N">
+    <value column="Name" original="Transactions">Transacciones</value>
+    <value column="Description" original="Open a folder where you can create, edit, and add data to be used to complete a given transaction.">Abre una carpeta en la que puede crear, editar y añadir los datos necesarios para completar una transacción determinada.</value>
+  </row>
+  <row id="800251" trl="N">
+    <value column="Name" original="Setup">Configuración</value>
+    <value column="Description" original="Open a folder where you can define all information to be used in this module.">Abre una carpeta en la que puede definir toda la información necesaria para este módulo.</value>
+  </row>
+  <row id="800252" trl="N">
+    <value column="Name" original="Accounting">Contabilidad</value>
+    <value column="Description" original="Open a folder where you can define accounting settings such as the fiscal calendar, account elements, accounting schemas, and document types.  ">Abre una carpeta en la que puede definir los parámetros de la contabilidad, tales como el calendario fiscal, los elementos contables, los esquemas contables y los tipos de documentos.</value>
+  </row>
+  <row id="800253" trl="N">
+    <value column="Name" original="Transactions">Transacciones</value>
+    <value column="Description" original="Open a folder where you can create, edit, and add data to be used to complete a given transaction.">Abre una carpeta en la que puede crear, editar y añadir los datos necesarios para completar una transacción determinada.</value>
+  </row>
+  <row id="800254" trl="N">
+    <value column="Name" original="Transactions">Transacciones</value>
+    <value column="Description" original="Open a folder where you can create, edit, and add data to be used to complete a given transaction.">Abre una carpeta en la que puede crear, editar y añadir los datos necesarios para completar una transacción determinada.</value>
+  </row>
+  <row id="800255" trl="N">
+    <value column="Name" original="Setup">Configuración</value>
+    <value column="Description" original="Open a folder where you can define all information to be used in this module.">Abre una carpeta en la que puede definir toda la información necesaria para este módulo.</value>
+  </row>
+  <row id="800256" trl="N">
+    <value column="Name" original="Setup">Configuración</value>
+    <value column="Description" original="Open a folder where you can define all information to be used in this module.">Abre una carpeta en la que puede definir toda la información necesaria para este módulo.</value>
+  </row>
+  <row id="800257" trl="N">
+    <value column="Name" original="Deprecated">Deprecados</value>
+    <value column="Description" original="Open a folder where you can find reports , windows, forma that are goign to be deprecated ">Abre una carpeta en la que puede encontrar los informes, las ventanas y los formularios que fueron deprecados.</value>
+  </row>
+  <row id="800258" trl="N">
+    <value column="Name" original="Production Run Status Report ">Informe Partes de Fabricación </value>
+    <value column="Description" original="Production Run Status Report "></value>
+  </row>
+  <row id="800259" trl="N">
+    <value column="Name" original="Production Report">Producción </value>
+    <value column="Description" original="Report Production">Report Production</value>
+  </row>
+  <row id="800260" trl="N">
+    <value column="Name" original="Invoice Customer Report ">Facturas </value>
+    <value column="Description" original="Invoice Customer Report "></value>
+  </row>
+  <row id="800261" trl="N">
+    <value column="Name" original="Sales Order Report ">Pedidos </value>
+    <value column="Description" original="Sales Order Report "></value>
+  </row>
+  <row id="800262" trl="N">
+    <value column="Name" original="Pending Work Requirement ">Fases de OF a realizar </value>
+    <value column="Description" original="In this report are all the open work requirement phases and the quantities done and that left to do.">En este informe se presentan las fases de orden de fabricación que están abiertas y las cantidades que están realizadas y faltan por completar.</value>
+  </row>
+  <row id="800263" trl="N">
+    <value column="Name" original="Orders Awaiting Invoice Report ">Pedidos no facturados </value>
+    <value column="Description" original="Orders Awaiting Invoice Report "></value>
+  </row>
+  <row id="800264" trl="N">
+    <value column="Name" original="Expiration Date Report ">Caducidades </value>
+    <value column="Description" original="Expiration Date Report "></value>
+  </row>
+  <row id="800265" trl="N">
+    <value column="Name" original="Vendor Invoice Report ">Facturas </value>
+    <value column="Description" original="Report Invoice Vendor ">Report Invoice Vendor </value>
+  </row>
+  <row id="800266" trl="N">
+    <value column="Name" original="Purchase Dimensional Report ">Análisis dimensional pedidos </value>
+    <value column="Description" original="Purchase dimensional analyses ">Análisis dimensional de pedido compra </value>
+  </row>
+  <row id="800267" trl="N">
+    <value column="Name" original="Material Receipts Dimensional Report ">Análisis dimensional remisiones </value>
+    <value column="Description" original="Material receipt dimensional analyses ">Análisis dimensional de pedido compra </value>
+  </row>
+  <row id="800268" trl="N">
+    <value column="Name" original="Purchase Invoice Dimensional Report ">Análisis dimensional facturas </value>
+    <value column="Description" original="Invoice vendor dimensional analyses ">Análisis dimensional de factura compra </value>
+  </row>
+  <row id="800269" trl="N">
+    <value column="Name" original="Sales Dimensional Report ">Análisis dimensional pedidos </value>
+    <value column="Description" original="Sales dimensional analyze ">Análisis dimensional de pedido venta </value>
+  </row>
+  <row id="800270" trl="N">
+    <value column="Name" original="Customer Stock Report ">Stock </value>
+    <value column="Description" original="Customer Stock Report "></value>
+  </row>
+  <row id="800275" trl="N">
+    <value column="Name" original="Cash Report ">Caja </value>
+    <value column="Description" original="Report cash ">Informe caja </value>
+  </row>
+  <row id="800277" trl="N">
+    <value column="Name" original="Detailed Warehouse Inventory ">Detalle inventario </value>
+    <value column="Description" original="Detailed Warehouse Inventory "></value>
+  </row>
+  <row id="800279" trl="N">
+    <value column="Name" original="Discount Invoice Report ">Descuentos </value>
+    <value column="Description" original="ReportInvoiceDiscount">ReportInvoiceDiscount</value>
+  </row>
+  <row id="800281" trl="N">
+    <value column="Name" original="Daily Work Requirements Report">Órdenes de fabricación del día. JR</value>
+    <value column="Description" original="In this report are showed the work requirements of type ramp. By default only from actual date.">En este informe se muestran las ordenes de fabricación de tipo rampa. Por defecto las del día actual.</value>
+  </row>
+  <row id="800282" trl="N">
+    <value column="Name" original="Pending Production ">Informe pedidos pendientes y stock </value>
+    <value column="Description" original="Show the lines of the pending orders with the actual stock of each product.">Muestra las líneas de los  pedidos pendientes de servir con el stock actual de cada uno de los productos.</value>
+  </row>
+  <row id="800284" trl="N">
+    <value column="Name" original="Bank Report ">Banco </value>
+    <value column="Description" original="Report bank ">Informe banco </value>
+  </row>
+  <row id="800285" trl="N">
+    <value column="Name" original="Invoice Detail ">Detalle facturas </value>
+    <value column="Description" original="Invoice Detail "></value>
+  </row>
+  <row id="800287" trl="N">
+    <value column="Name" original="Standard Costs Report ">Costo estandar </value>
+    <value column="Description" original="Manufacturing Standard Cost">Informe de los costos estándar de producción.</value>
+  </row>
+  <row id="800288" trl="N">
+    <value column="Name" original="Sales Order Open Item">Pedidos de venta pendientes de pago </value>
+    <value column="Description" original="SalesOrderOpenItem">SalesOrderOpenItem</value>
+  </row>
+  <row id="1000001" trl="Y">
+    <value column="Name" original="Openbravo ERP">Openbravo página oficial</value>
+    <value column="Description" original="Openbravo Homepage">Openbravo página oficial</value>
+  </row>
+</compiereTrl>

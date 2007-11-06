@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ******************************************************************************
+ * The contents of this file are subject to the   Compiere License  Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * You may obtain a copy of the License at http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an  "AS IS"  basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * The Original Code is                  Compiere  ERP & CRM  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
+ * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
+ * Contributor(s): Openbravo SL
+ * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ ******************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="DocDPManagementData" package="org.openbravo.erpCommon.ad_forms">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT AD_CLIENT_ID, AD_ORG_ID, C_CURRENCY_ID, DESCRIPTION, POSTED, DATEACCT,
+      C_PROJECT_ID, C_CAMPAIGN_ID, C_ACTIVITY_ID, USER1_ID, USER2_ID, '' AS ACCT
+      FROM c_DP_Management
+      WHERE c_DP_management_ID = ?
+     ]]>
+     </Sql>
+     <Parameter name="c_DP_management_ID"/>
+   </SqlMethod>
+  <SqlMethod name="selectRegistro" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+       SELECT AD_CLIENT_ID, AD_ORG_ID, C_CURRENCY_ID, DESCRIPTION, POSTED, DATEACCT,
+      C_PROJECT_ID, C_CAMPAIGN_ID, C_ACTIVITY_ID, USER1_ID, USER2_ID
+      FROM c_DP_Management
+      WHERE AD_Client_ID=? 
+        and c_DP_management_ID = ?
+     ]]>
+     </Sql>
+     <Parameter name="client"/>
+     <Parameter name="id"/>
+   </SqlMethod>
+
+  <SqlMethod name="selectReceiptAcct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select coalesce(
+          (SELECT C_RECEIVABLE_ACCT 
+          FROM c_bp_customer_acct
+          WHERE C_BPARTNER_ID = ?
+          AND C_AcctSchema_ID = ?
+          AND STATUS = ?),
+          (SELECT C_RECEIVABLE_ACCT 
+          FROM c_bp_customer_acct
+          WHERE C_BPARTNER_ID = ?
+          AND C_AcctSchema_ID = ?
+          AND STATUS is null)) as ACCT from dual
+     ]]>
+     </Sql>
+     <Parameter name="partnerID"/>
+     <Parameter name="AcctSchema"/>
+     <Parameter name="Status"/>
+     <Parameter name="partnerID"/>
+     <Parameter name="AcctSchema"/>
+   </SqlMethod>
+
+   <SqlMethod name="selectNoReceiptAcct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select coalesce (
+          (SELECT V_LIABILITY_ACCT 
+          FROM c_bp_vendor_acct
+          WHERE C_BPARTNER_ID = ?
+          AND C_AcctSchema_ID = ?
+          AND STATUS = ?),
+          (SELECT V_LIABILITY_ACCT
+          FROM c_bp_vendor_acct
+          WHERE C_BPARTNER_ID = ?
+          AND C_AcctSchema_ID = ?
+          AND STATUS is null)) as ACCT from dual
+     ]]>
+     </Sql>
+     <Parameter name="partnerID"/>
+     <Parameter name="AcctSchema"/>
+     <Parameter name="Status"/>
+     <Parameter name="partnerID"/>
+     <Parameter name="AcctSchema"/>
+   </SqlMethod>
+ </SqlClass>

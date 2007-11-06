@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<database name="TABLE AD_PRINTFORMAT">
+    <table name="AD_PRINTFORMAT" primaryKey="AD_PRINTFORMAT_KEY">
+      <column name="AD_PRINTFORMAT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="ISTABLEBASED" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="ISFORM" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="AD_TABLE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_PRINTPAPER_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_PRINTCOLOR_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_PRINTFONT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISSTANDARDHEADERFOOTER" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="HEADERMARGIN" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="FOOTERMARGIN" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="CREATECOPY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="AD_REPORTVIEW_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_PRINTTABLEFORMAT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="PRINTERNAME" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
+      <check name="ADPRINTFORM_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <check name="ADPRINTFORM_ISTABBAS_CHECK" condition="IsTableBased in ('Y','N')"/> 
+      <check name="ADPRINTFORM_ISFORM_CHECK" condition="IsForm in ('Y','N')"/> 
+      <check name="ADPRINTFORM_ISSTFOOTER_CHECK" condition="IsStandardHeaderFooter in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPRINTFORMAT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_ADPRINTFORMAT">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_PRINTCOLOR" name="ADPRINTCOLOR_ADPRINTFORMAT">
+        <reference local="AD_PRINTCOLOR_ID" foreign="AD_PRINTCOLOR_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_PRINTFONT" name="AD_PRINTFONT_ADPRINTFORMAT">
+        <reference local="AD_PRINTFONT_ID" foreign="AD_PRINTFONT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_PRINTPAPER" name="ADPRINTPAPER_ADPRINTFORMAT">
+        <reference local="AD_PRINTPAPER_ID" foreign="AD_PRINTPAPER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_PRINTTABLEFORMAT" name="ADPRINTFORMATTABLE_FORMAT">
+        <reference local="AD_PRINTTABLEFORMAT_ID" foreign="AD_PRINTTABLEFORMAT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_REPORTVIEW" name="ADPRINTVIEW_ADPRINTFORMAT">
+        <reference local="AD_REPORTVIEW_ID" foreign="AD_REPORTVIEW_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADPRINTFORMAT">
+        <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
+      </foreign-key>
+      <index name="AD_PRINTFORMAT_TABLE">
+        <index-column name="AD_TABLE_ID"/>
+      </index>
+      <unique name="AD_PRINTFORMAT_NAME">
+        <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="AD_TABLE_ID"/>
+        <unique-column name="NAME"/>
+      </unique>
+    </table>
+</database>

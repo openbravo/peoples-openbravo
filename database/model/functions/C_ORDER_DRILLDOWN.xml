@@ -1,0 +1,264 @@
+<?xml version="1.0"?>
+<database name="FUNCTION C_ORDER_DRILLDOWN">
+<function name="C_ORDER_DRILLDOWN">
+<parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+<body><![CDATA[
+  /*************************************************************************
+  * The contents of this file are subject to the Compiere License
+  * Version 2.5.0 ("License"); You may not use this file except in
+  * compliance with the License. You may obtain a copy of the License at
+  * http://www.compiere.org/license.html
+  * Software distributed under the License is distributed on an
+  * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  * implied. See the License for the specific language governing rights
+  * and limitations under the License.
+  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
+  Inc.
+  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+  * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+  * All Rights Reserved.
+  * Contributor(s): Openbravo SL
+  * Contributions are Copyright ? 1999-2005 Openbravo, S.L
+  *************************************************************************
+  * List Orders with their Shipments and Invoices
+  * Spool to T_Spool
+  */
+  v_ResultStr VARCHAR2(2000):='';
+  v_Message VARCHAR2(2000):='';
+  v_Record_ID NUMBER;
+  TYPE RECORD IS REF CURSOR;
+    Cur_Parameter RECORD;
+    -- Parameter
+    C_Order_ID NUMBER;
+    --
+    Cur_Order RECORD;
+  BEGIN
+    -- No locking or Updating
+    -- Get Parameters
+    v_ResultStr:='ReadingParameters';
+    FOR Cur_Parameter IN
+      (SELECT i.Record_ID,
+        p.ParameterName,
+        p.P_String,
+        p.P_Number,
+        p.P_Date
+      FROM AD_PInstance i
+      LEFT JOIN AD_PInstance_Para p
+        ON i.AD_PInstance_ID=p.AD_PInstance_ID
+      WHERE i.AD_PInstance_ID=PInstance_ID
+      ORDER BY p.SeqNo
+      )
+    LOOP
+      v_Record_ID:=Cur_Parameter.Record_ID;
+      IF(Cur_Parameter.ParameterName='C_Order_ID') THEN
+        C_Order_ID:=Cur_Parameter.P_Number;
+        DBMS_OUTPUT.PUT_LINE('  C_Order_ID=' || C_Order_ID) ;
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
+      END IF;
+    END LOOP; -- Get Parameter
+    DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
+    IF(C_Order_ID IS NULL) THEN
+      C_Order_ID:=v_Record_ID;
+    END IF;
+    -- Should be nothing there
+    DELETE FROM T_SPOOL  WHERE AD_PInstance_ID=PInstance_ID;
+    -- Order Info
+    FOR Cur_Order IN
+      (SELECT o.C_Order_ID, d.NAME,
+        o.DocumentNo, o.DocStatus,
+        o.DocAction, o.Processed
+      FROM C_ORDER o,
+        C_DOCTYPE d
+      WHERE o.C_Order_ID=C_Order_ID
+        AND o.C_DocType_ID=d.C_DocType_ID
+      ORDER BY o.DocumentNo DESC
+      )
+    LOOP
+      INSERT
+      INTO T_SPOOL
+        (
+          AD_PInstance_ID,
+          SeqNo,
+          MsgText
+        )
+        VALUES
+        (
+          PInstance_ID,
+          T_Spool_Seq.NEXTVAL,
+          Cur_Order.NAME || ' ' || Cur_Order.DocumentNo || ':  @DocStatus@=' || Cur_Order.DocStatus  || ', @DocAction@=' || Cur_Order.DocAction || ', @Processed@=' || Cur_Order.Processed
+        )
+        ;
+      -- Order Lines
+      DECLARE
+        Cur_OrderLine RECORD;
+      BEGIN
+        FOR Cur_OrderLine IN
+          (SELECT *
+          FROM C_ORDERLINE
+          WHERE C_Order_ID=Cur_Order.C_Order_ID
+          ORDER BY Line
+          )
+        LOOP
+          INSERT
+          INTO T_SPOOL
+            (
+              AD_PInstance_ID,
+              SeqNo,
+              MsgText
+            )
+            VALUES
+            (
+              PInstance_ID,
+              T_Spool_Seq.NEXTVAL,
+              '   @QtyOrdered@=' || Cur_OrderLine.QtyOrdered || ', @QtyReserved@=' || Cur_OrderLine.QtyReserved  || ', @QtyDelivered@=' || Cur_OrderLine.QtyDelivered || ', @QtyInvoiced@=' || Cur_OrderLine.QtyInvoiced  --MODIFIED BY F.IRIAZABAL
+              || ', @QuantityOrder@=' || Cur_OrderLine.QuantityOrder  || ' - Wh=' || Cur_OrderLine.M_Warehouse_ID || ', Dir=' || Cur_OrderLine.DirectShip  || ', Prd=' || Cur_OrderLine.M_Product_ID
+            )
+            ;
+        END LOOP;
+      END;
+      -- Shipment
+      DECLARE
+        Cur_InOut RECORD;
+      BEGIN
+        FOR Cur_InOut IN
+          (SELECT s.M_InOut_ID,
+            d.NAME,
+            s.DocumentNo,
+            s.DocStatus,
+            s.Processed,
+            s.M_Warehouse_ID
+          FROM M_INOUT s,
+            C_DOCTYPE d
+          WHERE s.C_Order_ID=Cur_Order.C_Order_ID
+            AND s.C_DocType_ID=d.C_DocType_ID
+          )
+        LOOP
+          INSERT
+          INTO T_SPOOL
+            (
+              AD_PInstance_ID,
+              SeqNo,
+              MsgText
+            )
+            VALUES
+            (
+              PInstance_ID,
+              T_Spool_Seq.NEXTVAL,
+              '> ' || Cur_InOut.NAME || ' ' || Cur_InOut.DocumentNo || ':  @DocStatus@=' || Cur_InOut.DocStatus  || ', @Processed@=' || Cur_InOut.Processed || ', Wh=' || Cur_InOut.M_Warehouse_ID
+            )
+            ;
+          -- Shipment Lines
+          DECLARE
+            Cur_InOutLine RECORD;
+          BEGIN
+            FOR Cur_InOutLine IN
+              (SELECT *
+              FROM M_INOUTLINE
+              WHERE M_InOut_ID=Cur_InOut.M_InOut_ID
+              ORDER BY Line
+              )
+            LOOP
+              INSERT
+              INTO T_SPOOL
+                (
+                  AD_PInstance_ID,
+                  SeqNo,
+                  MsgText
+                )
+                VALUES
+                (
+                  PInstance_ID,
+                  T_Spool_Seq.NEXTVAL,
+                  '   @QtyDelivered@=' || Cur_InOutLine.MovementQty || ', Prd=' || Cur_InOutLine.M_Product_ID  --MODIFIED BY F.IRIAZABAL
+                  || ', @QuantityOrder@=' || Cur_InOutLine.QUANTITYORDER
+                )
+                ;
+            END LOOP;
+          END; --  Shipment Lines
+        END LOOP; -- Shipments
+      END; -- Shipment
+      -- Invoice
+      DECLARE
+        Cur_Invoice RECORD;
+      BEGIN
+        FOR Cur_Invoice IN
+          (SELECT i.C_Invoice_ID,
+            d.NAME,
+            i.DocumentNo,
+            i.DocStatus,
+            i.Processed
+          FROM C_INVOICE i,
+            C_DOCTYPE d
+          WHERE i.C_DocType_ID=d.C_DocType_ID
+            AND EXISTS
+            (SELECT *
+            FROM C_INVOICELINE l,
+              C_ORDERLINE ol
+            WHERE i.C_Invoice_ID=l.C_Invoice_ID
+              AND l.C_OrderLine_ID=ol.C_OrderLine_ID
+              AND ol.C_Order_ID=Cur_Order.C_Order_ID
+            )
+          )
+        LOOP
+          INSERT
+          INTO T_SPOOL
+            (
+              AD_PInstance_ID,
+              SeqNo,
+              MsgText
+            )
+            VALUES
+            (
+              PInstance_ID,
+              T_Spool_Seq.NEXTVAL,
+              '> ' || Cur_Invoice.NAME || ' ' || Cur_Invoice.DocumentNo || ':  @DocStatus@=' || Cur_Invoice.DocStatus  || ', @Processed@=' || Cur_Invoice.Processed
+            )
+            ;
+          -- Invoice Lines
+          DECLARE
+            Cur_InvoiceLine RECORD;
+          BEGIN
+            FOR Cur_InvoiceLine IN
+              (SELECT *
+              FROM C_INVOICELINE
+              WHERE C_Invoice_ID=Cur_Invoice.C_Invoice_ID
+              ORDER BY Line
+              )
+            LOOP
+              INSERT
+              INTO T_SPOOL
+                (
+                  AD_PInstance_ID,
+                  SeqNo,
+                  MsgText
+                )
+                VALUES
+                (
+                  PInstance_ID,
+                  T_Spool_Seq.NEXTVAL,
+                  '   @QtyInvoiced@=' || Cur_InvoiceLine.QtyInvoiced || ', Prd=' || Cur_InvoiceLine.M_Product_ID  --MODIFIED BY F.IRIAZABAL
+                  || ', @QuantityOrder@=' || Cur_InvoiceLine.QuantityOrder
+                )
+                ;
+            END LOOP;
+          END; --  Invoice Lines
+        END LOOP; -- Invoices
+      END; -- Invoice
+    END LOOP; -- Order
+    --<<FINISH_PROCESS>>
+    --  Update AD_PInstance
+    DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
+    AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 1, v_Message) ;
+    RETURN;
+EXCEPTION
+  WHEN OTHERS THEN
+    v_ResultStr:= '@ERROR=' || SQLERRM;
+    DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
+    AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+    RETURN;
+END C_ORDER_DRILLDOWN]]>
+</body>
+</function>
+</database>

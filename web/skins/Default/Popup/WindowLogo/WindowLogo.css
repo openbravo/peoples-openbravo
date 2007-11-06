@@ -1,0 +1,155 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+.Popup_WindowLogo {
+  vertical-align: middle;
+  width: 70px;
+  height: 70px;
+  background: url(background.png) no-repeat;
+}
+
+.Popup_WindowLogo_Icon {
+  width: 70px;
+  height: 70px;
+}
+
+.Popup_WindowLogo_Icon_process {
+  background: url(iconProcess.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_searchFiltered {
+  background: url(iconSearchFilter.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_info {
+  background: url(iconInfo.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_password {
+  background: url(iconPassword.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_debtPayment {
+  background: url(iconDebtPayment.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_relatedInfo {
+  background: url(iconRelatedInfo.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_help {
+  background: url(iconHelp.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_account {
+  background: url(iconAccount.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_attachment {
+  background: url(iconAttachment.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_attribute {
+  background: url(iconAttribute.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_businessPartner {
+  background: url(iconBusinessPartner.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_cashJornal {
+  background: url(iconCashJornal.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_image {
+  background: url(iconImage.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_invoice {
+  background: url(iconInvoice.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_invoiceLine {
+  background: url(iconInvoiceLine.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_location {
+  background: url(iconLocation.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_locator {
+  background: url(iconLocator.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_okCancel {
+  background: url(iconOkCancel.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_product {
+  background: url(iconProduct.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_productComplete {
+  background: url(iconProductComplete.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_project {
+  background: url(iconProject.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_request {
+  background: url(iconRequest.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_salesOrder {
+  background: url(iconSalesOrder.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_salesOrderLine {
+  background: url(iconSalesOrderLine.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_shipment {
+  background: url(iconShipment.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_shipmentReceipt {
+  background: url(iconShipmentReceipt.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_task {
+  background: url(iconTask.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_userContact {
+  background: url(iconUserContact.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_workflow {
+  background: url(iconWorkflow.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_organizeMenu {
+  background: url(iconOrganizeMenu.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_error {
+  background: url(iconError.png) no-repeat center center;
+}

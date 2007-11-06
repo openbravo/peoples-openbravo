@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<database name="FUNCTION AD_COLUMN_FORMAT">
+<function name="AD_COLUMN_FORMAT" type="VARCHAR">
+<parameter name="p_ColumnName" type="VARCHAR" mode="in"/>
+<parameter name="p_Reference_ID" type="NUMERIC" mode="in"/>
+<parameter name="p_IsData" type="CHAR" mode="in"/>
+<body><![CDATA[
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+    v_Display VARCHAR2(4000) ;
+    v_Column  VARCHAR2(2000) ;
+  BEGIN
+    v_Column:=p_ColumnName;
+    IF p_IsData='Y' THEN
+      v_Column:='''' || v_Column || '''';
+    END IF;
+    IF p_Reference_ID=11 THEN -- INTEGERS
+      v_Display:='TRIM(TO_CHAR(' || v_Column || ', ''9999999990''))';
+    ELSIF p_Reference_ID IN(12, 22, 29, 800008, 800019) THEN -- NUMBER
+      v_Display:='TRIM(TO_CHAR(ROUND(' || v_Column || ', 2), ''9999999990.09''))';
+    ELSIF p_Reference_ID=15 THEN -- DATE
+      v_Display:='TO_CHAR(' || v_Column || ', ''DD-MM-YYYY'')';
+    ELSIF p_Reference_ID=24 THEN -- TIME
+      v_Display:='TO_CHAR(' || v_Column || ', ''HH24:MI:SS'')';
+    ELSIF p_Reference_ID=16 THEN -- DATETIME
+      v_Display:='TO_CHAR(' || v_Column || ', ''DD-MM-YYYY HH24:MI:SS'')';
+    ELSE
+      v_Display:=v_Column;
+    END IF;
+    RETURN v_Display;
+EXCEPTION
+  WHEN OTHERS THEN
+    RETURN v_Column;
+END AD_COLUMN_FORMAT]]></body>
+</function> 
+</database>

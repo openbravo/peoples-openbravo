@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<database name="TABLE S_TIMEEXPENSELINE">
+    <table name="S_TIMEEXPENSELINE" primaryKey="S_TIMEEXPENSELINE_KEY">
+      <column name="S_TIMEEXPENSELINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="S_TIMEEXPENSE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="LINE" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISTIMEREPORT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="DATEEXPENSE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="M_PRODUCT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="QTY" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
+      <column name="EXPENSEAMT" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
+      <column name="C_CURRENCY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="CONVERTEDAMT" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
+      <column name="S_RESOURCEASSIGNMENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="NOTE" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="ISINVOICED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_PROJECT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_ACTIVITY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_CAMPAIGN_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_INVOICELINE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="INVOICEPRICE" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
+      <column name="C_UOM_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_ORDERLINE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_PROJECTPHASE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_PROJECTTASK_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="S_TIMETYPE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <check name="STIMEEXLN_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <check name="STIMEEXLN_ISTIMEREPORT_CHECK" condition="IsTimeReport in ('Y','N')"/> 
+      <check name="STIMEEXLN_ISINVOICED_CHECK" condition="IsInvoiced in ('Y','N')"/>
+      <check name="S_TIMEEXPENSELINE_CHECK1" condition="ISINVOICED='N' OR C_BPARTNER_ID IS NOT NULL"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_STIMEEXPENSELINE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_STIMEEXPENSELINE">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_STIMEEXPENSELINE">
+        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_STIMEEXPENSELINE">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_STIMEEXPENSELINE">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_STIMEEXPENSELINE">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_INVOICELINE" name="CINVOICELINE_STIMEEXPENSELINE">
+        <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDERLINE" name="CORDERLINE_STIMEEXPENSELINE">
+        <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_STIMEEXPENSELINE">
+        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECTPHASE" name="CPROJECTPHASE_STIMEEXPENSELINE">
+        <reference local="C_PROJECTPHASE_ID" foreign="C_PROJECTPHASE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECTTASK" name="CPROJECTTASK_STIMEEXPENSELINE">
+        <reference local="C_PROJECTTASK_ID" foreign="C_PROJECTTASK_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="CUOM_STIMEEXPENSELINE">
+        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_STIMEEXPENSELINE">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="SRESOURCEASSIGN_STELINE">
+        <reference local="S_RESOURCEASSIGNMENT_ID" foreign="S_RESOURCEASSIGNMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="S_TIMEEXPENSE" name="STIMEEXPENSE_LINE">
+        <reference local="S_TIMEEXPENSE_ID" foreign="S_TIMEEXPENSE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="S_TIMETYPE" name="STIMETYPE_STIMEEXPENSELINE">
+        <reference local="S_TIMETYPE_ID" foreign="S_TIMETYPE_ID"/>
+      </foreign-key>
+    </table>
+</database>

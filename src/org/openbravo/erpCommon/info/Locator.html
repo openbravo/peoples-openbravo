@@ -1,0 +1,92 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Location selector</TITLE>
+<LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></LINK> 
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+function onloadFunctions() {
+	new TypeAheadCombo("inpWarehouse");
+}
+</SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();focoPrimerControl();" >
+<FORM name="frmLocalizador" method="POST" action="">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <BR></BR>
+  <TABLE width="50%" border="0" cellspacing="0" cellpadding="0">
+    <TR> 
+      <TD  width="47%"> <SPAN >Localizator</SPAN></TD>
+      <TD width="53%"> <SELECT name="inpWarehouse" id="inpWarehouse">
+          <OPTION value="">Standard</OPTION>
+        </SELECT></TD>
+    </TR>
+    <TR> 
+      <TD  width="47%"> <SPAN >Warehouse / 
+        Point of service</SPAN></TD>
+      <TD width="53%"> <INPUT type="text" name="inpKey" value="Standard"></INPUT>
+      </TD>
+    </TR>
+    <TR> 
+      <TD width="47%" > <SPAN >Create new record</SPAN></TD>
+      <TD width="53%"> <INPUT type="checkbox" name="checkbox" value="checkbox"></INPUT>
+      </TD>
+    </TR>
+    <TR> 
+      <TD  width="47%"> <SPAN >Corridor(X)</SPAN></TD>
+      <TD width="53%"> <INPUT type="text" name="inpKey"></INPUT>
+      </TD>
+    </TR>
+    <TR> 
+      <TD  width="47%"> <SPAN >Containing(Y)</SPAN></TD>
+      <TD width="53%"> <INPUT type="text" name="inpKey"></INPUT>
+      </TD>
+    </TR>
+    <TR> 
+      <TD  width="47%"> <SPAN >Level(Z)</SPAN></TD>
+      <TD width="53%"> <INPUT type="text" name="inpKey"></INPUT>
+      </TD>
+    </TR>
+    <TR> 
+      <TD  width="47%"> <SPAN >Key</SPAN></TD>
+      <TD width="53%"> <INPUT type="text" name="inpKey" value="Standard"></INPUT>
+      </TD>
+    </TR>
+  </TABLE>
+  <BR></BR>
+  <table width="100%">
+    <tr>
+      <td>&nbsp;</td>
+      <td width="30px" align="center" valign="top"> <A href="#" height="20" valign="top" onclick="depurarSelector('CLEAR');return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
+        <img width="16" height="16" id="buttonCancel" src="../../../../../web/images/Cancel.jpg" alt="Cancel" title="Cancel" border="0"></IMG></A> 
+      </td>
+      <td width="30px"> <A href="#" onclick="depurarSelector('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
+        <img width="16" height="16" id="buttonOk" src="../../../../../web/images/Ok.jpg" alt="Accept" title="Accept" border="0"></IMG></A> 
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+</FORM>
+</BODY>
+</HTML>

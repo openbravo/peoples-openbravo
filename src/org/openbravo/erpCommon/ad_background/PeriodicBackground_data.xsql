@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="PeriodicBackgroundData" package="org.openbravo.erpCommon.ad_background">
+   <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+      SELECT AD_CLIENT_ID, '' AS AD_USER_ID, '' as AD_ORG_ID
+      FROM AD_CLIENT WHERE ISACTIVE='Y'
+      ]]></Sql>
+      <Parameter name="adClientId" optional="true" after="WHERE " text=" AD_CLIENT_ID = ? AND "/>
+   </SqlMethod>
+   <SqlMethod name="checkPlannedRange" type="preparedStatement" return="Boolean" default="false">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        select count(*) AS TOTAL
+        from ad_process_scheduling 
+        where (weekday is null 
+        or weekday = to_char(now(), 'D')) 
+        AND to_char(timefrom, 'HH24:MI:SS')<= to_char(now(), 'HH24:MI:SS') 
+        AND (timeto is null OR
+        to_char(timeto, 'HH24:MI:SS') > to_char(now(), 'HH24:MI:SS'))
+        AND AD_Client_ID = ? 
+        AND AD_Process_ID = ? 
+      ]]></Sql>
+      <Parameter name="adClientId"/>
+      <Parameter name="adProcessId"/>
+   </SqlMethod>
+   <SqlMethod name="getFullTime" type="preparedStatement" return="Boolean" default="false">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        select (CASE MAX(ISFULLTIME) WHEN 'Y' THEN 1 ELSE 0 END) AS TOTAL
+        from ad_process_scheduling 
+        where (weekday is null 
+        or weekday = to_char(now(), 'D')) 
+        AND to_char(timefrom, 'HH24:MI:SS')<= to_char(now(), 'HH24:MI:SS') 
+        AND (timeto is null OR
+        to_char(timeto, 'HH24:MI:SS') > to_char(now(), 'HH24:MI:SS'))
+        AND AD_Client_ID = ?
+      ]]></Sql>
+      <Parameter name="adClientId"/>
+   </SqlMethod>
+   <SqlMethod name="selectClientId" type="preparedStatement" return="String" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+      SELECT AD_CLIENT_ID FROM AD_PINSTANCE WHERE AD_PINSTANCE_ID=?
+      ]]></Sql>
+      <Parameter name="adPinstanceId"/>
+   </SqlMethod>
+   <SqlMethod name="insert" type="preparedStatement" return="rowCount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        INSERT INTO AD_NOTE (AD_NOTE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
+        AD_MESSAGE_ID, TEXT) 
+        VALUES (TO_NUMBER(?), TO_NUMBER(?), 0, 'Y', now(), 0, now(), 0, (SELECT MIN(AD_MESSAGE_ID) FROM AD_MESSAGE), ?)
+      </Sql>
+      <Parameter name="adNoteId"/>
+      <Parameter name="adClientId"/>
+      <Parameter name="text"/>
+   </SqlMethod>
+   <SqlMethod name="update" type="preparedStatement" return="rowCount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        UPDATE AD_NOTE SET UPDATED=now(), UPDATEDBY=0, TEXT=? 
+        WHERE AD_NOTE_ID = ?
+      </Sql>
+      <Parameter name="text"/>
+      <Parameter name="adNoteId"/>
+   </SqlMethod>
+</SqlClass>

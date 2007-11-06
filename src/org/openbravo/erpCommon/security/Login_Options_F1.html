@@ -1,0 +1,241 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Log in</TITLE>
+<LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></LINK> 
+<link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Login/Login.css" id="paramCSS"/>
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramArrayClientes">
+var arrClientes=null;
+</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramArrayOrganizaciones">
+var arrOrgs=null;
+</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramArrayWarehouse">
+var arrWare=null;
+</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+function actualizarDatos(combo) {
+	var cmbEntidad = document.frmIdentificacion.client;
+	cambiarListaCombo(document.frmIdentificacion.client, arrClientes, combo.options[combo.selectedIndex].value, false);
+	cambiarListaCombo(document.frmIdentificacion.organization, arrOrgs, combo.options[combo.selectedIndex].value, false);
+	cambiarListaCombo(document.frmIdentificacion.warehouse, arrWare, (combo.options[combo.selectedIndex].value + "-" + cmbEntidad.options[cmbEntidad.selectedIndex].value), false);
+}
+
+function onloadFunctions() {
+	new TypeAheadCombo("sectionRol", null, null, true);
+  new TypeAheadCombo("sectionCliente", null, null, true);
+  new TypeAheadCombo("sectionOrganizacion", null, null, true);
+  new TypeAheadCombo("sectionAlmacen", null, null, true);
+}
+</SCRIPT>
+
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();onloadFunctions();limpiar();focoPrimerControl();porDefecto('submitCommandForm(\'OPTIONS\',false,null,\'../secureApp/LoginHandler.html\',\'_top\',true)');" onresize="resizeArea();">
+
+
+
+<FORM method="POST" action="../secureApp/LoginHandler.html" name="frmIdentificacion" id="frmFormulario">
+  <INPUT type="hidden" name="Command"></INPUT>
+
+
+  <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
+    <tr>
+      <td valign="top">
+        <div class="Main_ContentPane_NavBar" id="tdtopButtons">
+          <TABLE cellpadding="0" cellspacing="0" class="Main_ContentPane_NavBar" id="tdtopNavButtons">
+            <TR class="Main_NavBar_bg">
+              <TD width="100%"></TD>
+              <TD><div class="Main_NavBar_bg_logo_left" /></TD>
+              <TD class="Main_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><div class="Main_NavBar_logo" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" /></TD>
+              <TD><div class="Main_NavBar_bg_logo_right" /></TD>
+            </TR>
+          </TABLE>
+        </div>
+        <div class="Login_ContentPane_ToolBar" id="paramToolBar">
+        
+          <table class="Login_ContentPane_ToolBar Login_ToolBar_bg" id="tdToolBar">
+            <tr>
+              <td width="100%"></td>
+            </tr>
+          </table>
+        
+        </div>
+
+
+
+      <div class="Login_ContentPane" style="overflow: auto;" id="client">
+
+        <table>
+
+          <tr class="Login_Block_Separator_Top"><td></td></tr>
+
+          <tr>
+
+            <td class="Login_ContentCell">
+
+              <table cellspacing="0" cellpadding="0" class="Login_TableEdition">
+
+                <tr>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                </tr>
+
+                <tr>
+                  <td rowspan="2"><div class="Login_UserPicture"></div>
+                  </td>
+                  <td colspan="2" class="Login_Logo_Company_Container_Cell">
+                    <div class="Login_Logo_Company_Container">
+                      <div class="Login_Logo_Company"></div>
+                    </div>
+                  </td>
+                </tr>
+
+
+                <tr><td height="25px"></td></tr>
+
+                <tr>
+                  <td class="TitleCell"><SPAN class="LabelText">Role</SPAN></td>
+                  <td class="Combo_ContentCell" colspan="2">
+                    <select class="Combo Combo_TwoCells_width" name="role" id="sectionRol" onchange="actualizarDatos(document.frmIdentificacion.role);return true;">
+                      <option value="es" id="fieldClaveRol">xxrol1</option>
+                    </select>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="TitleCell"><SPAN class="LabelText">Entity</SPAN></td>
+                  <td class="Combo_ContentCell" colspan="2">
+                    <select class="Combo Combo_TwoCells_width" name="client" id="sectionCliente" onchange="cambiarListaCombo(document.frmIdentificacion.warehouse, arrWare, document.frmIdentificacion.role.options[document.frmIdentificacion.role.selectedIndex].value + '-' + document.frmIdentificacion.client.options[document.frmIdentificacion.client.selectedIndex].value, false);return true;">
+                      <option value="es" id="fieldClaveCliente">xxCustomer1</option>
+                    </select>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="TitleCell"><SPAN class="LabelText">Organization</SPAN></td>
+                  <td class="Combo_ContentCell" colspan="2">
+                    <select class="Combo Combo_TwoCells_width" name="organization" id="sectionOrganizacion">
+                      <option value="es" id="fieldClaveOrganizacion">xxOrganization1</option>
+                    </select>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="TitleCell"><SPAN class="LabelText">Warehouse</SPAN></td>
+                  <td class="Combo_ContentCell" colspan="2">
+                    <select class="Combo Combo_TwoCells_width" name="warehouse" id="sectionAlmacen">
+                      <option value="es" id="fieldClaveAlmacen">xxWarehouse1</option>
+                    </select>
+                  </td>
+                </tr>
+
+                <tr><td height="20px"></td></tr>
+
+                <tr>
+                  <td></td>
+                  <td class="Button_CenterAlign_ContentCell">
+                    <div>
+                      <a class="ButtonLink" href="#"
+                        onfocus="this.className='ButtonLink_hover'; window.status='Login'; return true;"
+                        onblur="this.className='ButtonLink'; window.status=''; return true;"
+                        onkeypress="this.className='ButtonLink_active'; return true;"
+                        onkeyup="this.className='ButtonLink_hover'; return true;"
+                        onclick="submitCommandForm('OPTIONS',false,null,'../secureApp/LoginHandler.html','_top',true);return false;">
+                        <table class="Button"
+                          onmousedown="this.className='Button_active'; return true;"
+                          onmouseup="this.className='Button'; return true;"
+                          onmouseover="this.className='Button_hover'; window.status='Login'; return true;"
+                          onmouseout="this.className='Button'; window.status=''; return true;">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Login" title="Login" src="../../../../../web/images/blank.gif" border=0/></td>
+                            <td class="Button_text Button_width">Login</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                      </a>
+                    </div>
+                  </td>
+                  <td class="Button_CenterAlign_ContentCell">
+                    <div>
+                      <a class="ButtonLink" href="#"
+                        onfocus="this.className='ButtonLink_hover'; window.status='Back'; return true;"
+                        onblur="this.className='ButtonLink'; window.status=''; return true;"
+                        onkeypress="this.className='ButtonLink_active'; return true;"
+                        onkeyup="this.className='ButtonLink_hover'; return true;"
+                        onclick="submitCommandForm('CLOSE_SESSION',false,null,'Login_FS.html', '_top');return false;">
+                        <table class="Button"
+                          onmousedown="this.className='Button_active'; return true;"
+                          onmouseup="this.className='Button'; return true;"
+                          onmouseover="this.className='Button_hover'; window.status='Back'; return true;"
+                          onmouseout="this.className='Button'; window.status=''; return true;">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_back" alt="Back" title="Back" src="../../../../../web/images/blank.gif" border=0/></td>
+                            <td class="Button_text Button_width">Back</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+
+              </table>
+            </div>
+
+
+            
+            
+            </td>
+            <td></td>
+
+          </tr>
+
+        </table>
+
+      </div>
+
+        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Bottom" id="tdbottomSeparator">
+          <TR>
+            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>
+          </TR>
+        </TABLE></td>
+      <td valign="top">
+        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <TR><TD class="Main_NavBar_bg_right"></TD></TR>
+          <TR><TD class="Main_ToolBar_bg_right" valign="top"></TD></TR>
+          <TR><TD class="Main_Client_bg_right"></TD></TR>
+          <TR><TD class="Main_Bottom_bg_right"></TD></TR>
+        </TABLE>
+      </td>
+    </tr>
+  </table>
+
+
+
+</FORM>
+</BODY>
+</HTML>

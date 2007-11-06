@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<database name="VIEW RV_ASSET_DELIVERY">
+<view name="RV_ASSET_DELIVERY"><![CDATA[
+SELECT ad.A_Asset_Delivery_ID, ad.AD_Client_ID, ad.AD_Org_ID, ad.IsActive, ad.Created, ad.CreatedBy, ad.Updated, ad.UpdatedBy,
+  a.A_ASSET_ID, a.A_Asset_Group_ID, a.M_Product_ID,
+  a.GUARANTEEDATE, a.ASSETSERVICEDATE,
+  a.C_BPARTNER_ID, ad.AD_USER_ID,
+  ad.MOVEMENTDATE, ad.SERNO, ad.LOT, ad.VERSIONNO,
+  ad.M_INOUTLINE_ID,
+  ad.EMAIL, ad.MESSAGEID, ad.DELIVERYCONFIRMATION,
+  ad.URL, ad.REMOTE_ADDR, ad.REMOTE_HOST, ad.REFERRER,
+  ad.DESCRIPTION
+FROM A_Asset_Delivery ad
+ INNER JOIN A_Asset a ON (a.A_Asset_ID=ad.A_Asset_ID)
+]]></view>
+</database>

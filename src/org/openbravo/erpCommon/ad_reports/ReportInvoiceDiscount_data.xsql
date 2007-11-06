@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="ReportInvoiceDiscountData" package="org.openbravo.erpCommon.ad_reports">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+	SELECT C_BPARTNER_ID as ID, NAME, PRODUCTNAME, QTY,UOM, ROUND(DIVIDE(TOTALLINE,QTY),3) AS PRICEACTUAL, TOTALLINE, ROUND(DIVIDE(TOTALLINEDISCOUNT,QTY),3) AS REALPRICE, TOTALLINEDISCOUNT,
+        (ROUND(DIVIDE((ROUND(DIVIDE(TOTALLINE,QTY),3)-ROUND(DIVIDE(TOTALLINEDISCOUNT,QTY),3)),ROUND(DIVIDE(TOTALLINE,QTY),3)),2))*100 AS DISCOUNT,
+        (CASE (ROUND(DIVIDE((ROUND(DIVIDE(TOTALLINE,QTY),3)-ROUND(DIVIDE(TOTALLINEDISCOUNT,QTY),3)),ROUND(DIVIDE(TOTALLINE,QTY),3)),2))*100 WHEN 0 THEN 'DerechaMedio' ELSE 'BordesRojoClaro' END)  AS CLASS_DESIGN,
+        WEIGHT
+        FROM (
+        SELECT C_BPARTNER.C_BPARTNER_ID, C_BPARTNER.NAME, M_PRODUCT.NAME AS PRODUCTNAME, C_UOM.UOMSYMBOL AS UOM, SUM(C_INVOICELINE.QTYINVOICED) AS QTY, ROUND(SUM(LINENETAMT),2) AS TOTALLINE, 
+        ROUND(SUM(LINENETAMT*(1-COALESCE(DISCOUNTPERUNIT,0))),2) AS TOTALLINEDISCOUNT, SUM(C_INVOICELINE.QTYINVOICED)*COALESCE(M_PRODUCT.WEIGHT,0) AS WEIGHT
+        FROM C_INVOICELINE left join
+          (SELECT C_INVOICE_ID, DISCOUNTLINES/(TOTALLINES+DISCOUNTLINES) AS DISCOUNTPERUNIT 
+          FROM (SELECT I.C_INVOICE_ID, I.TOTALLINES, -SUM(LINENETAMT) AS DISCOUNTLINES FROM C_INVOICE I, C_INVOICELINE IL 
+          WHERE I.C_INVOICE_ID = IL.C_INVOICE_ID 
+          AND IL.C_INVOICE_DISCOUNT_ID IS NOT NULL 
+          GROUP BY I.C_INVOICE_ID, I.TOTALLINES) BB) A on C_INVOICELINE.C_INVOICE_ID = A.C_INVOICE_ID
+          left join C_INVOICE on C_INVOICELINE.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID,
+        M_PRODUCT, C_BPARTNER,  C_UOM
+        WHERE  C_INVOICELINE.C_INVOICE_DISCOUNT_ID IS NULL
+        AND C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+        AND M_PRODUCT.C_UOM_ID = C_UOM.C_UOM_ID
+        AND C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+        AND C_INVOICE.ISSOTRX='Y'
+        AND C_INVOICE.AD_CLIENT_ID IN ('1')
+        AND C_INVOICE.AD_ORG_ID IN ('1')
+        AND PRICEACTUAL<>0
+        AND C_INVOICE.DATEINVOICED >= to_date(?)
+        AND C_INVOICE.DATEINVOICED < to_date(?)
+        AND 1=1
+        GROUP BY C_BPARTNER.C_BPARTNER_ID, C_BPARTNER.NAME, M_PRODUCT.NAME, C_UOM.UOMSYMBOL, M_PRODUCT.WEIGHT) AA
+        WHERE QTY<>0
+        AND 2=2
+        ORDER BY NAME
+      ]]></Sql>
+    <Parameter name="adUserClient" type="replace" optional="true" after="C_INVOICE.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="C_INVOICE.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="datefrom"/>
+    <Parameter name="dateto"/>
+    <Parameter name="parBPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="discount" optional="true" type="none" after="AND 2=2"><![CDATA[ AND (ROUND((ROUND(TOTALLINE/QTY,3)-ROUND(TOTALLINEDISCOUNT/QTY,3))/ROUND(TOTALLINE/QTY,3),2))*100 <>0]]></Parameter>
+  </SqlMethod>
+  <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql></Sql>
+  </SqlMethod>
+   <SqlMethod name="selectBpartner" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT C_BPARTNER_ID AS ID, C_BPARTNER.NAME
+      FROM C_BPARTNER
+      WHERE AD_ORG_ID IN ('1') 
+      AND AD_CLIENT_ID IN ('1') 
+      AND (1=2 )
+     ]]></Sql>
+    <Parameter name="adOrgClient" type="replace" optional="true" after="AD_ORG_ID IN (" text="'1'"/>
+     <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
+     <Parameter name="cBpartnerId" optional="true" type="argument" after="(1=2" text=" OR C_BPARTNER_ID IN"/>
+  </SqlMethod>
+</SqlClass>

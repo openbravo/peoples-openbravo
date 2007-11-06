@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<database name="VIEW M_INOUT_CANDIDATE_V">
+<view name="M_INOUT_CANDIDATE_V"><![CDATA[
+SELECT 
+  o.AD_Client_ID, o.AD_Org_ID, o.C_BPartner_ID, o.C_Order_ID, 
+  o.DocumentNo, o.DateOrdered, o.C_DocType_ID, o.TOTALLINES as Amountlines, 
+  SUM((l.QtyOrdered-l.QtyDelivered)*l.PriceActual) AS TotalLines 
+FROM  C_Order o 
+  INNER JOIN C_OrderLine l ON (o.C_Order_ID=l.C_Order_ID) 
+WHERE (o.DocStatus = 'CO' AND o.IsDelivered='N') 
+  --  not Offers and open Walkin-Receipts 
+  AND o.C_DocType_ID IN (SELECT C_DocType_ID FROM C_DocType 
+    WHERE DocBaseType='SOO' AND DocSubTypeSO NOT IN ('ON','OB','WR')) 
+  --  we need to ship 
+  AND l.QtyOrdered <> l.QtyDelivered 
+  AND   l.DirectShip='N' AND l.M_Product_ID IS NOT NULL 
+  -- 
+GROUP BY o.AD_Client_ID, o.AD_Org_ID, o.C_BPartner_ID, o.C_Order_ID, 
+  o.DocumentNo, o.DateOrdered, o.TOTALLINES, o.C_DocType_ID
+]]></view>
+</database>

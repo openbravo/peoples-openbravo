@@ -1,0 +1,36 @@
+.dojoValidateEmpty{
+	background-color: Window !important;
+}
+.dojoValidateValid{
+   background-color: Window !important;
+}
+.dojoValidateInvalid{
+    background-color: Window !important;
+	color: Red;
+}
+.dojoValidateRange{
+   background-color: Window !important;
+}
+
+.required{
+	background-color: #FAFAD2 !important;
+}
+
+.disabled{
+	background-color: ThreedLightShadow !important;
+}
+
+.readonly{
+	COLOR: ActiveCaption;
+	background-color: InactiveCaptionText !important;
+}
+
+.invalid{
+	color: Red;
+}
+
+.missing{
+	color: Red;
+}
+
+

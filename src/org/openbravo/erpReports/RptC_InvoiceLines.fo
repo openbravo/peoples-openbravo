@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<DIVFO xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<DIVFO id="sectionOrder">
+		<fo:table border-style="solid" border-width="0.4pt" border-color="black" table-layout="fixed">
+			<fo:table-column column-width="8cm"/>
+			<fo:table-column column-width="4cm"/>
+			<fo:table-column column-width="3cm"/>
+			<fo:table-column column-width="3cm"/>
+			<fo:table-body>
+				<fo:table-row>
+					<fo:table-cell number-columns-spanned="4">
+						<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px">&#160;<fo:inline font-weight="bold">Order no:<fo:inline>&#160;<fo:inline font-weight="none" id="fieldOrderno">
+										<fo:inline>&#160;<fo:inline>&#160;<fo:inline font-weight="bold">Shipment no<fo:inline>&#160;<fo:inline font-weight="none" id="fieldInoutno"/>
+													</fo:inline>
+												</fo:inline>
+											</fo:inline>
+										</fo:inline>
+									</fo:inline>
+								</fo:inline>
+							</fo:inline>
+						</fo:block>
+					</fo:table-cell>
+				</fo:table-row>
+				<DIVFO id="sectionDetailLines">
+					<fo:table-row>
+						<fo:table-cell>
+							<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" start-indent="5pt" id="fieldNameProduct">xxFortrack xnmsjknf20x34</fo:block>
+						</fo:table-cell>
+						<fo:table-cell>
+							<fo:block font-size="9pt" font-family="Helvetica" padding-top="1mm" text-indent="2px" end-indent="3px" text-align="end" id="fieldQtyinvoiced">xxFortrack xnmsjknf20x34<fo:inline>&#160;<fo:inline>(<fo:inline id="fieldUomname">xxm2<fo:inline>)</fo:inline>
+										</fo:inline>
+									</fo:inline>
+								</fo:inline>
+							</fo:block>
+						</fo:table-cell>
+						<fo:table-cell>
+							<fo:block font-size="9pt" font-family="Helvetica" padding-top="1mm" text-indent="2px" end-indent="3px" text-align="end" id="fieldPriceactual">xx34.45</fo:block>
+						</fo:table-cell>
+						<fo:table-cell>
+							<fo:block font-size="9pt" font-family="Helvetica" padding-top="1mm" text-indent="2px" end-indent="3px" text-align="end" id="fieldLinenetamt">xx2345</fo:block>
+						</fo:table-cell>
+					</fo:table-row>
+				</DIVFO>
+			</fo:table-body>
+		</fo:table>
+	</DIVFO>
+	<fo:table table-layout="fixed">
+		<fo:table-column column-width="8cm"/>
+		<fo:table-column column-width="4cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px">&#160;</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px">&#160;</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" padding-top="1mm" text-indent="2px" end-indent="3px" text-align="end" font-weight="bold">TOTAL:</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" padding-top="1mm" text-indent="2px" end-indent="3px" text-align="end" id="fieldTotalNetAmount">xx2345</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+	<fo:table table-layout="fixed">
+		<fo:table-column column-width="35mm"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block>&#160;</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+	<fo:table table-layout="fixed">
+		<fo:table-column column-width="35mm"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block>&#160;</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+	<fo:table table-layout="fixed">
+		<fo:table-column column-width="35mm"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block>&#160;</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+	<fo:table table-layout="fixed">
+		<fo:table-column column-width="12cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px" font-weight="bold">Concept</fo:block>
+				</fo:table-cell>
+				<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" font-weight="bold">Base</fo:block>
+				</fo:table-cell>
+				<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" font-weight="bold">Amount</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+	<fo:table border-style="solid" border-width="0.4pt" border-color="black" table-layout="fixed">
+		<fo:table-column column-width="12cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-body>
+			<DIVFO id="sectionDetailLinesTaxes">
+				<fo:table-row>
+					<fo:table-cell>
+						<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px" id="fieldNameTax">xxFortrack xnmsjknf20x34</fo:block>
+					</fo:table-cell>
+					<fo:table-cell>
+						<fo:block font-size="9pt" font-family="Helvetica" padding-top="1mm" text-indent="2px" end-indent="3px" text-align="end" id="fieldNetAmount">xx34.45</fo:block>
+					</fo:table-cell>
+					<fo:table-cell>
+						<fo:block font-size="9pt" font-family="Helvetica" padding-top="1mm" text-indent="2px" end-indent="3px" text-align="end" id="fieldTaxAmount">xx2345</fo:block>
+					</fo:table-cell>
+				</fo:table-row>
+			</DIVFO>
+		</fo:table-body>
+	</fo:table>
+	<fo:table table-layout="fixed">
+		<fo:table-column column-width="12cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px" font-weight="bold">&#160;</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" end-indent="3px" text-indent="2px" text-align="end" font-weight="bold">TOTAL:</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" end-indent="3px" text-indent="2px" text-align="end" font-weight="bold" id="fieldTotalTaxInvoiceAmount">XXImporte</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+	<fo:table table-layout="fixed">
+		<fo:table-column column-width="35mm"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block>&#160;</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+	<fo:table table-layout="fixed">
+		<fo:table-column column-width="35mm"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block>&#160;</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+	<fo:table table-layout="fixed">
+		<fo:table-column column-width="35mm"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block>&#160;</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+	<fo:table table-layout="fixed">
+		<fo:table-column column-width="8cm"/>
+		<fo:table-column column-width="4cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px">&#160;</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px">&#160;</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" padding-top="1mm" text-indent="2px" end-indent="3px" text-align="end" font-weight="bold">TOTAL INVOICE:</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" padding-top="1mm" text-indent="2px" end-indent="3px" text-align="end" id="fieldTotalInvoiceAmount">xx2345</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+</DIVFO>

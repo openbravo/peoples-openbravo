@@ -1,0 +1,230 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Payment selector</TITLE>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+function cargarDatos() {
+	var uno = parent.uno;
+	var frm = document.frmMain;
+	var tres = parent.tres;
+	if (uno && uno.document.frmMain) {
+		frm.inpType.value=uno.document.frmMain.inpfinaldoc.options[uno.document.frmMain.inpfinaldoc.selectedIndex].value;
+		frm.inpsourcedoc.value=uno.document.frmMain.inpsourcedoc.options[uno.document.frmMain.inpsourcedoc.selectedIndex].value;
+		frm.inpsearchmode.value=uno.document.frmMain.inpsearchmode.options[uno.document.frmMain.inpsearchmode.selectedIndex].value;
+		frm.inpDesde.value=uno.document.frmMain.inpDesde.value;
+		frm.inpHasta.value=uno.document.frmMain.inpHasta.value;
+	}
+	if (tres && tres.document.frmMain) {
+		var aux;
+		aux=radioValue(tres.document.frmMain.inpSameBpartner);
+		if (aux==null) frm.inpSameBpartner.value="";
+		else frm.inpSameBpartner.value=aux;
+		aux=radioValue(tres.document.frmMain.inpSameProduct);
+		if (aux==null) frm.inpSameProduct.value="";
+		else frm.inpSameProduct.value=aux;
+		aux=radioValue(tres.document.frmMain.inpSameQty);
+		if (aux==null) frm.inpSameQty.value="";
+		else frm.inpSameQty.value=aux;
+	}
+	if (radioValue(frm.inpClave)!="") {
+		var cinco=parent.cinco;
+		if (cinco && cinco.document.frmMain) {
+			var total=0, totalMatched=0;
+			if (radioValue(frm.inpClave)!=null && radioValue(frm.inpClave)!="") {
+				total = eval("document.frmMain.inpTotal" + radioValue(frm.inpClave) + ".value");
+				totalMatched = eval("document.frmMain.inpMatched" + radioValue(frm.inpClave) + ".value");
+			}
+			cinco.setMatch(parseFloat(total) - parseFloat(totalMatched));
+		}
+		submitCommandForm("FIND_SECONDARY");
+	}
+	return true;
+}
+</SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="focoPrimerControl();">
+<FORM name="frmMain" method="POST" action="MatchingPO-Receipt-Invoice_F4.html" target="cuatro">
+  <INPUT type="hidden" name="Command">
+  <INPUT type="hidden" name="inpType">
+  <INPUT type="hidden" name="inpSameBpartner">
+  <INPUT type="hidden" name="inpSameProduct">
+  <INPUT type="hidden" name="inpSameQty">
+  <INPUT type="hidden" name="inpsourcedoc">
+  <INPUT type="hidden" name="inpsearchmode">
+  <INPUT type="hidden" name="inpDesde">
+  <INPUT type="hidden" name="inpHasta">
+  <TABLE width="100%" border="1" cellspacing="0" cellpadding="0" >
+    <TR> 
+      <td width="2%">&nbsp;</td>
+      <td width="13%">Doc. No.</td>
+      <td width="10%">Date</td>
+      <td width="29%">Business Partner</td>
+      <td width="9%">Line No.</td>
+      <td width="21%">Product</td>
+      <td width="7%">Quantity</td>
+      <td width="9%">Conformed</td>
+    </TR>
+    <DIV id="sectionDetail"> 
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpClave" value="xx" onclick="cargarDatos();return true;"  id="fieldClave"> 
+          <INPUT type="hidden" name="inpTotalxx" value="xx" id="fieldTotalImporte"> 
+          <INPUT type="hidden" name="inpMatchedxx" value="xx" id="fieldMatchedImporte">
+        </TD>
+        <TD width="13%" id="fieldDocumentNo" >xx12345</TD>
+        <TD width="10%" id="fieldDate" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldBpartnerDes">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldLineNo">xx10</TD>
+        <TD width="21%" id="fieldProductDes">xxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldQty" >xx45</TD>
+        <TD width="9%" id="fieldMatched" >xx45</TD>
+      </TR>
+    </DIV>
+    <DIV class="discard"> 
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        </TD>
+        <TD width="13%" id="fieldOrganization" >xx12345</TD>
+        <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldMovementdate">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldProduct">xx10</TD>
+        <TD width="21%" id="fieldMovementType">xxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldMovementqty" >xx45</TD>
+        <TD width="9%" id="fieldSRLine" >xx45</TD>
+      </TR>
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        </TD>
+        <TD width="13%" id="fieldOrganization" >xx12345</TD>
+        <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldMovementdate">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldProduct">xx10</TD>
+        <TD width="21%" id="fieldMovementType">xxxxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldMovementqty" >xx45</TD>
+        <TD width="9%" id="fieldSRLine" >xx45</TD>
+      </TR>
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        </TD>
+        <TD width="13%" id="fieldOrganization" >xx12345</TD>
+        <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldMovementdate">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldProduct">xx10</TD>
+        <TD width="21%" id="fieldMovementType">xxxxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldMovementqty" >xx45</TD>
+        <TD width="9%" id="fieldSRLine" >xx45</TD>
+      </TR>
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        </TD>
+        <TD width="13%" id="fieldOrganization" >xx12345</TD>
+        <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldMovementdate">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldProduct">xx10</TD>
+        <TD width="21%" id="fieldMovementType">xxxxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldMovementqty" >xx45</TD>
+        <TD width="9%" id="fieldSRLine" >xx45</TD>
+      </TR>
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        </TD>
+        <TD width="13%" id="fieldOrganization" >xx12345</TD>
+        <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldMovementdate">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldProduct">xx10</TD>
+        <TD width="21%" id="fieldMovementType">xxxxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldMovementqty" >xx45</TD>
+        <TD width="9%" id="fieldSRLine" >xx45</TD>
+      </TR>
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        </TD>
+        <TD width="13%" id="fieldOrganization" >xx12345</TD>
+        <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldMovementdate">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldProduct">xx10</TD>
+        <TD width="21%" id="fieldMovementType">xxxxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldMovementqty" >xx45</TD>
+        <TD width="9%" id="fieldSRLine" >xx45</TD>
+      </TR>
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        </TD>
+        <TD width="13%" id="fieldOrganization" >xx12345</TD>
+        <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldMovementdate">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldProduct">xx10</TD>
+        <TD width="21%" id="fieldMovementType">xxxxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldMovementqty" >xx45</TD>
+        <TD width="9%" id="fieldSRLine" >xx45</TD>
+      </TR>
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        </TD>
+        <TD width="13%" id="fieldOrganization" >xx12345</TD>
+        <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldMovementdate">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldProduct">xx10</TD>
+        <TD width="21%" id="fieldMovementType">xxxxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldMovementqty" >xx45</TD>
+        <TD width="9%" id="fieldSRLine" >xx45</TD>
+      </TR>
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        </TD>
+        <TD width="13%" id="fieldOrganization" >xx12345</TD>
+        <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldMovementdate">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldProduct">xx10</TD>
+        <TD width="21%" id="fieldMovementType">xxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldMovementqty" >xx45</TD>
+        <TD width="9%" id="fieldSRLine" >xx45</TD>
+      </TR>
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        </TD>
+        <TD width="13%" id="fieldOrganization" >xx12345</TD>
+        <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldMovementdate">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldProduct">xx10</TD>
+        <TD width="21%" id="fieldMovementType">xxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldMovementqty" >xx45</TD>
+        <TD width="9%" id="fieldSRLine" >xx45</TD>
+      </TR>
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        </TD>
+        <TD width="13%" id="fieldOrganization" >xx12345</TD>
+        <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
+        <TD width="29%" id="fieldMovementdate">xxCementos Sarobe enterprise</TD>
+        <TD width="9%" id="fieldProduct">xx10</TD>
+        <TD width="21%" id="fieldMovementType">xxFortac 10-200-104 30x40</TD>
+        <TD width="7%" id="fieldMovementqty" >xx45</TD>
+        <TD width="9%" id="fieldSRLine" >xx45</TD>
+      </TR>
+    </DIV>
+  </TABLE>
+</FORM>
+</BODY>
+</HTML>

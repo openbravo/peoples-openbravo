@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+   <div align="right"> 
+     <table width="99%" >
+      <TR class="TableHeaderLevel2"> 
+		      <TD width="10%">Date planned</TD>
+		      <TD width="10%">Date Invoiced</TD>
+          <TD width="10%">Invoice No.</TD>
+          <TD width="30%">B.Partner</TD>
+          <TD width="30%">Debt Payment</TD>
+          <TD width="10%">Amount</TD>
+        </TR>		
+        <DIV id="sectionTypePayment"> <!--ROTURA SI SON INGRESO O BIEN SI SON PAGOS/-->
+		    <tr>
+          <td colspan="6"  id="fieldClassType"><span  id="fieldTypePayment">xxINGRESOS</span></td>
+		    </tr>
+		    <DIV id="sectionDetail">
+          <TR class="Border TableDetailRowEven"> 
+            <TD  id="fieldDatePlanned">xx23/10/1900</TD>
+			      <TD id="fieldDateInvoiced" >xx23/10/1900</TD>
+            <TD id="fieldInvoiceNo" >xx5555</TD>
+            <TD ><SPAN  id="fieldBP">xxCONSTRUCCIONES GANCEDO-GONZALEZ, S.A </SPAN></TD>
+            <TD id="fieldDescription" >xxFACTURA</TD>
+          <TD class="Border TableDetailRowEven"> 
+              <A href="#" onClick="submitCommandFormParameter('DIRECT', document.frmMain.inpcDebtPaymentId, xx, false, document.frmMain, '../yy', null, false, true);return false;" onmouseover="window.status='DebtPayment';return true;" onmouseout="window.status='';return true;" class="Link" id="fieldCDebtPaymentId">
+                <SPAN id="fieldAmountLine" class="NumeroNegativoxx">xx3456</SPAN>
+              </A>
+            </TD>
+          </TR>
+		    </DIV> <!--sectionDetail/-->
+	     </DIV> <!--sectionTypePayment/-->	  	
+	   </table>
+   </div>

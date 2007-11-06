@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<database name="TABLE C_PROJECTPROPOSAL">
+    <table name="C_PROJECTPROPOSAL" primaryKey="C_PROJECTPROPOSAL_KEY">
+      <column name="C_PROJECTPROPOSAL_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_PROJECT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="DATESEND" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="C_BPARTNER_LOCATION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_USER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="COPYFROM" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="HEADERNOTE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="FOOTNOTE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="ISSOTRX" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="C_PAYMENTTERM_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="PAYMENTRULE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="PROJECTWON" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <check name="C_PROJECTPROPOSAL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_C_PROJECTPROPOSAL">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_C_PROJECTPROPOSAL">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="ADUSER_C_PROJECTPROPOSAL"   onDelete="setnull">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_C_PROJECTPROPOSAL">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPLOCATION_C_PROJECTPROPOSAL">
+        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PAYMENTTERM" name="C_PAYMENTTERM_C_PPROPOSAL">
+        <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_C_PROJECTPROPOSAL">
+        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+    </table>
+</database>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<fo:layout-master-set>
+		<fo:simple-page-master master-name="first" page-height="29.7cm" page-width="21cm" margin-top="1.5cm" margin-bottom="0.25cm" margin-left="2cm" margin-right="1cm">
+			<fo:region-before extent="6cm"/>
+			<fo:region-after extent="1cm"/>
+			<fo:region-body margin-top="4cm" margin-bottom="1.25cm"/>
+		</fo:simple-page-master>
+		<fo:simple-page-master master-name="rest" page-height="29.7cm" page-width="21cm" margin-top="1.5cm" margin-bottom="0.25cm" margin-left="2cm" margin-right="1cm">
+			<fo:region-before extent="6cm"/>
+			<fo:region-after extent="1cm"/>
+			<fo:region-body margin-top="4cm" margin-bottom="1.25cm"/>
+		</fo:simple-page-master>
+		<fo:page-sequence-master master-name="basicPSM">
+			<fo:repeatable-page-master-alternatives>
+				<fo:conditional-page-master-reference master-reference="first" page-position="first"/>
+				<fo:conditional-page-master-reference master-reference="rest" page-position="rest"/>
+				<fo:conditional-page-master-reference master-reference="rest"/>
+			</fo:repeatable-page-master-alternatives>
+		</fo:page-sequence-master>
+	</fo:layout-master-set>
+	<DIVFO id="sectionDetail">
+		<fo:page-sequence master-reference="basicPSM">
+			<fo:static-content flow-name="xsl-region-before">
+				<fo:block font-size="10pt">
+					<fo:table table-layout="fixed">
+						<fo:table-column column-width="9cm"/>
+						<fo:table-column column-width="9cm"/>
+						<fo:table-body>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block text-align="center">&#160;</fo:block>
+								</fo:table-cell>
+								<fo:table-cell>
+									<fo:block vertical-align="middle" text-align="end">
+										<fo:external-graphic src="../../../../../web/images/Openbravo_replace_report.gif"/>
+									</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block id="fieldEntityDescription">XXHUESKER geosinteticos S.A.</fo:block>
+								</fo:table-cell>
+								<fo:table-cell>
+									<fo:block text-align="center">&#160;</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block id="fieldOrganizationLocation">xxknbògnòsng</fo:block>
+								</fo:table-cell>
+								<fo:table-cell>
+									<fo:block text-align="center">&#160;</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+						</fo:table-body>
+					</fo:table>
+				</fo:block>
+			</fo:static-content>
+			<fo:flow flow-name="xsl-region-body">
+				<fo:block font-size="10pt">
+					<fo:table table-layout="fixed">
+						<fo:table-column column-width="35mm"/>
+						<fo:table-body>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block>&#160;</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+						</fo:table-body>
+					</fo:table>
+					<fo:table table-layout="fixed">
+						<fo:table-column column-width="160mm"/>
+						<fo:table-body>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block font-weight="bold" padding-top="0.1cm" id="fieldName">xxCompany name</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block font-weight="bold" padding-top="0.1cm" id="fieldAddress1">xxHos Imaz n.,1 6°D</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block font-weight="bold" padding-top="0.1cm" id="fieldPlace">xxPamplona (Navarra)</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+						</fo:table-body>
+					</fo:table>
+					<fo:table table-layout="fixed">
+						<fo:table-column column-width="95mm"/>
+						<fo:table-column column-width="80mm"/>
+						<fo:table-body>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block font-weight="bold" padding-top="0.4cm">Tax ID:<fo:inline>&#160;<fo:inline id="fieldCif">xx44626572</fo:inline>
+										</fo:inline>
+									</fo:block>
+								</fo:table-cell>
+								<fo:table-cell>
+									<fo:block text-align="center" font-weight="bold" padding-top="0.4cm" font-size="16pt">INVOICE</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+						</fo:table-body>
+					</fo:table>
+					<fo:table>
+						<fo:table-column column-width="35mm"/>
+						<fo:table-body>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block>&#160;</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+						</fo:table-body>
+					</fo:table>
+					<fo:table table-layout="fixed">
+						<fo:table-column column-width="9cm"/>
+						<fo:table-column column-width="9cm"/>
+						<fo:table-body>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block text-align="center">&#160;</fo:block>
+								</fo:table-cell>
+								<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+									<fo:table>
+										<fo:table-column column-width="3cm"/>
+										<fo:table-column column-width="3cm"/>
+										<fo:table-column column-width="3cm"/>
+										<fo:table-body>
+											<fo:table-row>
+												<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+													<fo:block text-align="center" font-size="10pt" padding-top="0.1cm" font-weight="bold">Invoice no:</fo:block>
+												</fo:table-cell>
+												<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+													<fo:block text-align="center" font-size="10pt" padding-top="0.1cm" font-weight="bold">Customer code:</fo:block>
+												</fo:table-cell>
+												<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+													<fo:block text-align="center" font-size="10pt" padding-top="0.1cm" font-weight="bold">Invoice date</fo:block>
+												</fo:table-cell>
+											</fo:table-row>
+										</fo:table-body>
+									</fo:table>
+								</fo:table-cell>
+							</fo:table-row>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block text-align="center">&#160;</fo:block>
+								</fo:table-cell>
+								<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+									<fo:table table-layout="fixed">
+										<fo:table-column column-width="3cm"/>
+										<fo:table-column column-width="3cm"/>
+										<fo:table-column column-width="3cm"/>
+										<fo:table-body>
+											<fo:table-row>
+												<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+													<fo:block text-align="center" font-size="10pt" padding-top="0.1cm" id="fieldDocumentno">xx</fo:block>
+												</fo:table-cell>
+												<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+													<fo:block text-align="center" font-size="10pt" padding-top="0.1cm" id="fieldCodeBpartner">xx</fo:block>
+												</fo:table-cell>
+												<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+													<fo:block text-align="center" font-size="10pt" padding-top="0.1cm" id="fieldDateinvoiced">xx</fo:block>
+												</fo:table-cell>
+											</fo:table-row>
+										</fo:table-body>
+									</fo:table>
+								</fo:table-cell>
+							</fo:table-row>
+						</fo:table-body>
+					</fo:table>
+					<fo:table table-layout="fixed">
+						<fo:table-column column-width="35mm"/>
+						<fo:table-body>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block>&#160;</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+						</fo:table-body>
+					</fo:table>
+					<fo:table table-layout="fixed">
+						<fo:table-column column-width="8cm"/>
+						<fo:table-column column-width="4cm"/>
+						<fo:table-column column-width="3cm"/>
+						<fo:table-column column-width="3cm"/>
+						<fo:table-body>
+							<fo:table-row>
+								<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+									<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px" font-weight="bold">Concept</fo:block>
+								</fo:table-cell>
+								<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+									<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" font-weight="bold">Quantity</fo:block>
+								</fo:table-cell>
+								<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+									<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" font-weight="bold">Price</fo:block>
+								</fo:table-cell>
+								<fo:table-cell border-style="solid" border-width="0.4pt" border-color="black">
+									<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" font-weight="bold">Amount</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+						</fo:table-body>
+					</fo:table>
+					<DIVFO id="reportInvoiceLines"/>
+				</fo:block>
+			</fo:flow>
+		</fo:page-sequence>
+	</DIVFO>
+</fo:root>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="ReportProjectBuildingSiteData" package="org.openbravo.erpCommon.ad_reports">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT C_PROJECT.VALUE||'-'||C_PROJECT.NAME AS PROJECTNAME, (CASE WHEN C_BPARTNER.NAME IS NULL THEN 'SIN ADJUDICAR' ELSE REPLACE(TO_CHAR(C_BPARTNER.NAME), '&', '') END) AS BPARTNERNAME, M_PRODUCT.NAME AS PRODUCTNAME, 
+      SUM(C_PROJECTLINE.PLANNEDQTY) AS PLANNEDQTY, C_PROJECTLINE.PLANNEDPRICE AS PLANNEDPRICE, 
+      (SUM(C_PROJECTLINE.PLANNEDQTY) *C_PROJECTLINE.PLANNEDPRICE)  AS PLANNEDPOPRICE, (CASE WHEN C_BPARTNER.NAME IS NULL THEN '&#x00A0;' ELSE '' END) AS BLANK_SPACE, '1' AS NUMBER_PROJECT, '' AS NAME, '' AS ID
+      FROM C_PROJECT left join C_BPARTNER on C_PROJECT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+                     left join C_PROJECTLINE on C_PROJECT.C_PROJECT_ID = C_PROJECTLINE.C_PROJECT_ID 
+                     left join C_LOCATION on C_PROJECT.C_LOCATION_ID = C_LOCATION.C_LOCATION_ID
+                     left join M_PRODUCT on C_PROJECTLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+      WHERE C_PROJECT.ISACTIVE = 'Y'
+      AND C_PROJECT.AD_CLIENT_ID IN ('1')
+      AND C_PROJECT.AD_ORG_ID IN ('1')
+      AND 1=1
+      GROUP BY C_BPARTNER.NAME, C_PROJECT.NAME, M_PRODUCT.NAME, C_PROJECTLINE.PLANNEDQTY, C_PROJECTLINE.PLANNEDPRICE, C_PROJECT.VALUE
+      ORDER BY C_BPARTNER.NAME, C_PROJECT.VALUE
+     ]]></Sql>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_PROJECT.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_PROJECT.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.CREATED >= to_date(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.CREATED < to_date(?)]]></Parameter>
+    <Parameter name="cbPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProductCategoryId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
+    <Parameter name="cProjectKind" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.PROJECTKIND IN]]></Parameter>
+    <Parameter name="cProjectPhase" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.PROJECTPHASE IN]]></Parameter>
+    <Parameter name="cProjectStatus" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.PROJECTSTATUS IN]]></Parameter>
+    <Parameter name="cProjectPublic" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.PUBLICPRIVATE = ?]]></Parameter>
+    <Parameter name="cRegionId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_LOCATION.C_REGION_ID IN]]></Parameter>
+    <Parameter name="salesRep" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.SALESREP_ID = ?]]></Parameter>
+    <Parameter name="productId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
+  </SqlMethod>
+  <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql></Sql>
+  </SqlMethod>
+  <SqlMethod name="bPartnerDescription" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    SELECT NAME FROM C_BPARTNER 
+    WHERE C_BPARTNER_ID = ?
+    </Sql>
+    <Parameter name="cBpartnerId"/>
+  </SqlMethod>
+  <SqlMethod name="selectProject" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    SELECT VALUE || ' - ' ||NAME FROM C_PROJECT 
+    WHERE C_PROJECT_ID = ?
+    </Sql>
+    <Parameter name="cProjectId"/>
+  </SqlMethod>
+  <SqlMethod name="selectRegionId" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    SELECT INITCAP(NAME) AS NAME FROM C_REGION 
+    WHERE C_REGION_ID = ?
+    </Sql>
+    <Parameter name="cRegionId"/>
+  </SqlMethod>
+  <SqlMethod name="selectProjectkind" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    SELECT (CASE WHEN arl_t.NAME IS NULL THEN arl.NAME ELSE arl_t.NAME END) AS NAME 
+    FROM AD_REF_LIST arl left join AD_REF_LIST_TRL arl_t on arl.ad_ref_list_id = arl_t.ad_ref_list_id
+                                                         AND arl_t.AD_LANGUAGE = ?
+    WHERE arl.ad_reference_id = 800004 
+    AND arl.isActive = 'Y' 
+    AND 1=1
+    </Sql>
+    <Parameter name="adLanguage"/>
+    <Parameter name="projectkind" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND arl.VALUE IN]]></Parameter>
+  </SqlMethod>
+  <SqlMethod name="selectProjectphase" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    SELECT (CASE WHEN arl_t.NAME IS NULL THEN arl.NAME ELSE arl_t.NAME END) AS NAME 
+    FROM AD_REF_LIST arl left join AD_REF_LIST_TRL arl_t  on arl.ad_ref_list_id = arl_t.ad_ref_list_id 
+                                                        AND arl_t.AD_LANGUAGE = ?
+    WHERE arl.ad_reference_id = 800003 
+    AND arl.isActive = 'Y' 
+    AND 1=1
+    </Sql>
+    <Parameter name="adLanguage"/>
+    <Parameter name="projectphase" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND arl.VALUE IN]]></Parameter>
+  </SqlMethod>
+  <SqlMethod name="selectProjectstatus" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    SELECT (CASE WHEN arl_t.NAME IS NULL THEN arl.NAME ELSE arl_t.NAME END) AS NAME 
+    FROM AD_REF_LIST arl left join AD_REF_LIST_TRL arl_t on  arl.ad_ref_list_id = arl_t.ad_ref_list_id
+                                                        AND arl_t.AD_LANGUAGE = ?
+    WHERE arl.ad_reference_id = 800002 
+    AND arl.isActive = 'Y' 
+    AND 1=1
+    </Sql>
+    <Parameter name="adLanguage"/>
+    <Parameter name="projectstatus" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND arl.VALUE IN]]></Parameter>
+  </SqlMethod>
+  <SqlMethod name="selectProjectpublic" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    SELECT (CASE WHEN arl_t.NAME IS NULL THEN arl.NAME ELSE arl_t.NAME END) AS NAME 
+    FROM AD_REF_LIST arl left join AD_REF_LIST_TRL arl_t on arl.ad_ref_list_id = arl_t.ad_ref_list_id 
+                                                        AND arl_t.AD_LANGUAGE = ?
+    WHERE arl.ad_reference_id = 800005 
+    AND arl.isActive = 'Y' 
+    AND arl.VALUE = ?
+    </Sql>
+    <Parameter name="adLanguage"/>
+    <Parameter name="projectpublic"/>
+  </SqlMethod>
+  <SqlMethod name="selectSalesRep" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT (AD_User.Firstname||' '||AD_USER.LASTNAME) as name 
+      FROM AD_User
+      WHERE AD_User.AD_Org_ID IN('1') 
+      AND AD_User.AD_Client_ID IN('1')  
+      AND EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND bp.IsSalesRep='Y')
+      AND AD_USER.AD_USER_ID = ?
+      AND AD_User.isActive = 'Y' 
+    ]]></Sql>
+    <Parameter name="adOrgClient" type="replace" optional="true" after="AD_User.AD_Org_ID IN(" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AD_User.AD_Client_ID IN(" text="'1'"/>
+    <Parameter name="adUserId"/>
+  </SqlMethod>
+  <SqlMethod name="selectProduct" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    SELECT M_PRODUCT.NAME AS NAME 
+    FROM M_PRODUCT
+    WHERE M_PRODUCT.M_PRODUCT_ID = ?
+    </Sql>
+    <Parameter name="productId"/>
+  </SqlMethod>
+  <SqlMethod name="selectMproduct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT M_PRODUCT.M_PRODUCT_ID AS ID,M_PRODUCT.NAME
+      FROM M_PRODUCT
+      WHERE AD_ORG_ID IN ('1') 
+      AND AD_CLIENT_ID IN ('1') 
+      AND (1=2 )
+     ]]></Sql>
+     <Parameter name="adOrgClient" type="replace" optional="true" after="AD_ORG_ID IN (" text="'1'"/>
+     <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
+     <Parameter name="mProductId" optional="true" type="argument" after="(1=2" text=" OR M_PRODUCT_ID IN"/>
+  </SqlMethod>
+  <SqlMethod name="selectBpartner" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT C_BPARTNER_ID AS ID, C_BPARTNER.NAME
+      FROM C_BPARTNER
+      WHERE AD_ORG_ID IN ('1') 
+      AND AD_CLIENT_ID IN ('1') 
+      AND (1=2 )
+     ]]></Sql>
+     <Parameter name="adOrgClient" type="replace" optional="true" after="AD_ORG_ID IN (" text="'1'"/>
+     <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
+     <Parameter name="cBpartnerId" optional="true" type="argument" after="(1=2" text=" OR C_BPARTNER_ID IN"/>
+  </SqlMethod>
+  <SqlMethod name="selectCategoryId" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    SELECT NAME FROM M_PRODUCT_CATEGORY 
+    WHERE 1=1
+    </Sql>
+    <Parameter name="category" optional="true" type="argument" after="WHERE 1=1"><![CDATA[ AND M_PRODUCT_CATEGORY_ID IN]]></Parameter>
+  </SqlMethod>
+</SqlClass>

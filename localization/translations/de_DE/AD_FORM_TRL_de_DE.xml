@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<compiereTrl language="de_DE" table="AD_FORM">
+   <row id="100" trl="Y">
+      <value column="Name" original="Generate Invoices (manual)">Rechnungen manuell anlegen</value>
+      <value column="Description" original="Select and generate invoices">Rechnungen manuell auswählen und erzeugen.</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="101" trl="Y">
+      <value column="Name" original="Import File Loader">Import Datei</value>
+      <value column="Description" original="Load flat Files into import tables">Datei(en) in Import-Tabellen laden.</value>
+      <value column="Help" original="The Import File Loader parses the content of a flat file and loads it into import tables. Comments start with a '[' and end with a ']' and are ignored; example: [Some Heading].">Der Importprozess analysiert die Syntax des Dateiinhalts und lädt diesen in Import-Tabellen. Kommentare beginnen mit einem "[" und werden ignoriert - z.B.: [Hier Überschrift]</value>
+   </row>
+   <row id="102" trl="Y">
+      <value column="Name" original="Initial Client Setup">Mandant einrichten</value>
+      <value column="Description" original="Initial Client Setup">Mandant einrichten.</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="103" trl="Y">
+      <value column="Name" original="Material Transactions">Materialtransaktionen</value>
+      <value column="Description" original="Material Transactions">Materialtransaktionen.</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="104" trl="Y">
+      <value column="Name" original="Payment Allocation">Zahlung zuordnen</value>
+      <value column="Description" original="Allocate invoices and payments">Zahlungen zu Rechnungen zuordnen.</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="105" trl="Y">
+      <value column="Name" original="Generate Charges">Gebühren generieren</value>
+      <value column="Description" original="Generate Charges from natural accounts">Gebühren von natürlichen Konten generieren.</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="106" trl="Y">
+      <value column="Name" original="Payment Print/Export">Zahlungen drucken/exportieren</value>
+      <value column="Description" original="Print or export your payments">Ducken oder Exportieren der Zahlungen.</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="107" trl="Y">
+      <value column="Name" original="Payment Selection (manual)">Zahlungen auswählen (manuell)</value>
+      <value column="Description" original="Manual Payment Selection">Manuelle Zahlungsauswahl.</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="108" trl="Y">
+      <value column="Name" original="Matching PO-Receipt-Invoice">Zuordnen: Einkauf-Lieferung-Rechnung</value>
+      <value column="Description" original="Match Purchase Orders, Receipts, Vendor Invoices">Einkauf, Lieferungen und Rechnungen einander zuordnen.</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="110" trl="Y">
+      <value column="Name" original="Generate Shipments (manual)">Versand manuell anstoßen</value>
+      <value column="Description" original="Select and generate shipments">Versandrechnungen manuell auswählen und erzeugen.</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="111" trl="Y">
+      <value column="Name" original="Password Maintenance">Passwortverwaltung</value>
+      <value column="Description" original="Maintain Passwords">Passworte verwalten.</value>
+      <value column="Help" original="Maintain Passwords for Users and Business Partners">Passworte von Nutzern und Geschäftspartnern verwalten.</value>
+   </row>
+   <row id="112" trl="Y">
+      <value column="Name" original="Merge Entities">Objekte zusammenführen</value>
+      <value column="Description" original="Merge From Entity to To Entity - Delete From">"von"-Objekte den "nach"-Objekten hinzufügen - "von" löschen.</value>
+      <value column="Help" original="&lt;i&gt;Dangerous - Please are aware of what you are doing!&lt;/i&gt;|All instances of the From entity (e.g. Customer A) are changed to the To entity (e.g. Customer B). |The From entity (e.g. Customer A) is deleted. |&lt;p&gt;&lt;b&gt;There is NO undo nor trace !  Please do a b">&lt;i&gt;Achtung - Bitte führen Sie diese Aktion nur aus, wenn Sie sich Ihrer Sache sicher sind!&lt;/i&gt;|Alle Instanzen des "von"-Objektes (z.B. Kunde A) werden zum "nach"-Objekt (z.B. Kunde B) transferiert. |Das "von"-Objekt (z.B. Kunde A) ist dann gelöscht. |&lt;p&gt;&lt;b&gt;Es gibt KEINE Möglichkeit, die Aktion rückgängig zu machen oder zurück zu verfolgen !</value>
+   </row>
+   <row id="800000" trl="Y">
+      <value column="Name" original="In-Out Report">Ein-/Ausgangsanalyse</value>
+      <value column="Description" original=""/>
+      <value column="Help" original=""/>
+   </row>
+   <row id="800001" trl="Y">
+      <value column="Name" original="Session Info">Sitzungsinfo</value>
+      <value column="Description" original=""/>
+      <value column="Help" original=""/>
+   </row>
+   <row id="800002" trl="Y">
+      <value column="Name" original="Payments Selection (Bank)">Zahlungen auswählen (Bank)</value>
+      <value column="Description" original=""/>
+      <value column="Help" original=""/>
+   </row>
+   <row id="800003" trl="Y">
+      <value column="Name" original="Call Acct-Server">Anwendungsserver aufrufen</value>
+      <value column="Description" original=""/>
+      <value column="Help" original=""/>
+   </row>
+   <row id="800007" trl="Y">
+      <value column="Name" original="Background Process">Hintergrundprozesse</value>
+      <value column="Description" original=""/>
+      <value column="Help" original=""/>
+   </row>
+   <row id="800008" trl="Y">
+      <value column="Name" original="Undo Debt-Payment">Verbindlichkeiten zurücksetzen</value>
+      <value column="Description" original=""/>
+      <value column="Help" original=""/>
+   </row>
+   <row id="800009" trl="Y">
+      <value column="Name" original="Material Receipt Pending">Offene Bestellungen</value>
+      <value column="Description" original="Select and receipt pending material">Selektiert und belegt ausstehendes Material.</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="800010" trl="Y">
+      <value column="Name" original="InvoiceVendorMultiline">Lieferantenrechnung mehrzeilig</value>
+      <value column="Description" original="Expense Invoice multiline edition">Ausgabenrechnung in einer mehrzeiligen Edition.</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="800011" trl="Y">
+      <value column="Name" original="SQL Query">SQL-Abfrage</value>
+      <value column="Description" original=""/>
+      <value column="Help" original=""/>
+   </row>
+   <row id="800012" trl="Y">
+      <value column="Name" original="Import EDI File">Import EDI-Datei</value>
+      <value column="Description" original="Imports EDI data from file.">Importiert EDI_Daten aus einer Datei.</value>
+      <value column="Help" original="Imports EDI data from file.">Importiert EDI_Daten aus einer Datei.</value>
+   </row>
+   <row id="800013" trl="Y">
+      <value column="Name" original="Remittance Cancel">Überweisungsstorno</value>
+      <value column="Description" original=""/>
+      <value column="Help" original=""/>
+   </row>
+   <row id="800014" trl="Y">
+      <value column="Name" original="Import/Export Translations">Import/Export Übersetzungen</value>
+      <value column="Description" original="Import/Export translation">Import/Export Übersetzung</value>
+      <value column="Help" original=""/>
+   </row>
+</compiereTrl>

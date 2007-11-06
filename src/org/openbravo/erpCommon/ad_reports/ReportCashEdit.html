@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD Xhtml 1.0 Transitional//EN" "http://www.w3.org/tr/xhtml1/Dtd/xhtml1-transitional.dtd">
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<TITLE>Generate Invoices manual</TITLE>
+
+<link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Report.css" id="paramCSS" />
+    <script language="JavaScript" type="text/javascript" id="paramDirection">
+      var baseDirection = "../../../../../web/";
+      </script>
+      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
+      </script>
+      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" type="text/javascript" id="paramLanguage">
+        var LNG_POR_DEFECTO = "en_US";
+      </script>
+      <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
+      <script language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+      <script language="JavaScript" type="text/javascript" id="keyMap"></script>
+      <script type="text/javascript">
+        dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+      </script>
+<SCRIPT language="JavaScript" type="text/javascript">
+
+
+
+</SCRIPT>
+</HEAD>
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" >
+  <FORM method="POST" action="ReportCash.html" name="frmMain" id="form">
+    <INPUT type="hidden" name="Command"></INPUT>
+    <INPUT type="hidden" name="inpAuxd" value="" id="functionSumAux1"></INPUT>
+   </FORM>
+
+  
+
+  <DIV id="sectionCashbook"> 
+    <TABLE class="Border" border="1" cellspacing="0" cellpadding="0" width="80%">
+      <TR class="TableHeaderLevel1"> 
+        <TD colspan="5" id="fieldNamecashbook">xx70000</TD>
+      </TR>
+    </TABLE>
+    <DIV id="sectionCash"> 
+      <TABLE width="80%" border="1">
+        <TR class="TableHeaderLevel2"> 
+          <TD width="25%" >Cash<SPAN id="fieldStatementdate">xx22/12/2003</SPAN></TD>
+          <TD width="20%" >Initial balance<SPAN id="fieldSumBeginning">xx12345,3</SPAN></TD>
+          <TD width="21%" >Final balance<SPAN id="functionSumEnding">xx12345</SPAN></TD>
+          <TD width="21%" >Total cash<SPAN id="functionSumSectionAux">xxx2324</SPAN></TD>
+          <TD width="13%" >Currency<SPAN id="fieldCurrency">xxUSD</SPAN></TD>
+        </TR>
+      </TABLE>
+      <TABLE width="80%" border="1">
+        <TR class="Border TableDetailHeader"> 
+          <TD width="7%" >Line</TD>
+          <TD width="27%" >Cash type</TD>
+          <TD width="11%" >Amount</TD>
+          <TD width="42%" >Description</TD>
+          <TD width="13%" >Accumulated</TD>
+        </TR>
+        <DIV id="sectionDetail"> 
+          <TR class="Border TableDetailRowEven"> 
+            <TD width="7%"  id="fieldLine">xx10</TD>
+            <TD width="27%" id="fieldName">xxTransferencia bancaria</TD>
+            <TD width="11%" > <SPAN id="fieldAmount">xx14500.34</SPAN></TD>
+            <TD width="42%" id="fieldDescription">xx14500.34</TD>
+            <TD width="13%"  id="functionSumLine">xx14500.34</TD>
+          </TR>
+        </DIV>
+      </TABLE>
+    </DIV>
+  </DIV>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+<SqlClass name="ExternalSalesData" package="org.openbravo.erpCommon.ws.externalSales">
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT C_EXTERNALPOS_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, VALUE, NAME, DESCRIPTION, 
+        M_WAREHOUSE_ID, C_DOCTYPE_ID, C_BPARTNER_ID, M_PRICELIST_ID, SALESREP_ID, M_SHIPPER_ID, INCLUDE_PRODUCT, INCLUDE_PRODUCT_CATEGORY, PERFORM_POST, WH.C_BPARTNER_LOCATION_ID, WH.BILLTO_ID
+        FROM C_EXTERNALPOS, (SELECT MIN(BPL.C_BPARTNER_LOCATION_ID) AS C_BPARTNER_LOCATION_ID, MIN(BPL1.C_BPARTNER_LOCATION_ID) AS BILLTO_ID
+                             FROM C_BPARTNER_LOCATION BPL, C_BPARTNER_LOCATION BPL1
+                             WHERE BPL.AD_CLIENT_ID = ?
+                             AND BPL.istaxlocation = 'N'
+                             AND BPL1.AD_CLIENT_ID = BPL.AD_CLIENT_ID
+                             AND BPL1.istaxlocation = 'Y'
+                            ) WH
+        WHERE AD_CLIENT_ID = ?
+        AND AD_ORG_ID = ?
+        AND VALUE = ?
+
+      ]]>
+    </Sql>
+    <Parameter name="client"/>
+    <Parameter name="client"/>
+    <Parameter name="org"/>
+    <Parameter name="salesChannel"/>
+  </SqlMethod>
+</SqlClass>

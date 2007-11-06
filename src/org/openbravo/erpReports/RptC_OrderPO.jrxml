@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="RptC_OrderPO"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="483"
+		 columnSpacing="0"
+		 leftMargin="56"
+		 rightMargin="56"
+		 topMargin="56"
+		 bottomMargin="56"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<style 
+		name="default"
+		isDefault="false"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+	/>
+	<style 
+		name="Report_Title"
+		isDefault="false"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="18"
+	/>
+	<style 
+		name="Report_Subtitle"
+		isDefault="false"
+		forecolor="#555555"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="14"
+	/>
+	<style 
+		name="Report_Data_Label"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Report_Data_Field"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="false"
+	/>
+	<style 
+		name="Total_Field"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+		vAlign="Middle"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="GroupHeader_DarkGray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#555555"
+		vAlign="Middle"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="12"
+		isBold="true"
+	/>
+	<style 
+		name="Group_Data_Label"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Group_Data_Field"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+	<style 
+		name="Detail_Header"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#5D5D5D"
+		vAlign="Middle"
+		leftBorder="1Point"
+		leftBorderColor="#FFFFFF"
+		leftPadding="5"
+		rightBorder="1Point"
+		rightBorderColor="#FFFFFF"
+		fontName="Bitstream Vera Sans"
+		fontSize="10"
+		isBold="true"
+	/>
+	<style 
+		name="Detail_Line"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
+			<style 
+				name="Detail_Line"
+				isDefault="false"
+				mode="Opaque"
+				backcolor="#CCCCCC"
+			/>
+		</conditionalStyle>
+	</style>
+	<style 
+		name="Total_Gray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+	/>
+	<style 
+		name="Detail_Data_Label"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#CCCCCC"
+		fontName="Bitstream Vera Sans"
+		fontSize="10"
+		isBold="true"
+	/>
+	<style 
+		name="Detail_Data_Field"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#CCCCCC"
+		fontName="Bitstream Vera Sans"
+		fontSize="10"
+	/>
+	<style 
+		name="Group_Footer"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Report_Footer"
+		isDefault="true"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+
+	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["/usr/local/src/AppsOpenbravo/web"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ORDER_ID" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["(1000012,1000029)"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["/usr/local/src/AppsOpenbravo/src/erpReports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="BASE_DESIGN" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="SR_LINES" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="DATEPATTERN" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["dd-MM-yyyy"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
+	<queryString><![CDATA[SELECT C_ORDER.C_ORDER_ID, C_ORDER.DATEORDERED, C_ORDER.DOCUMENTNO, C_BPARTNER.NAME, 
+       C_BPARTNER_LOCATION.FAX, C_BPARTNER_LOCATION.PHONE,
+REPLACE(C_ORDER.DESCRIPTION, CHR(10), '') AS DESCRIPTION, 
+REPLACE(C_ORDER.DELIVERYNOTES, CHR(10), '') AS DELIVERYNOTES
+FROM C_ORDER left join C_BPARTNER_LOCATION on C_ORDER.BILLTO_ID = C_BPARTNER_LOCATION.C_BPARTNER_ID, C_BPARTNER
+WHERE C_ORDER.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+AND C_ORDER.ISSOTRX = 'N'
+AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
+
+	<field name="C_ORDER_ID" class="java.math.BigDecimal"/>
+	<field name="DATEORDERED" class="java.util.Date"/>
+	<field name="DOCUMENTNO" class="java.lang.String"/>
+	<field name="NAME" class="java.lang.String"/>
+	<field name="FAX" class="java.lang.String"/>
+	<field name="PHONE" class="java.lang.String"/>
+	<field name="DESCRIPTION" class="java.lang.String"/>
+	<field name="DELIVERYNOTES" class="java.lang.String"/>
+
+
+		<group  name="C_ORDER_ID" isStartNewPage="true" isResetPageNumber="true" isReprintHeaderOnEachPage="true" >
+			<groupExpression><![CDATA[$F{C_ORDER_ID}]]></groupExpression>
+			<groupHeader>
+			<band height="208"  isSplitAllowed="true" >
+				<image  isLazy="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="286"
+						y="0"
+						width="197"
+						height="55"
+						key="image-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.lang.String"><![CDATA[$P{BASE_WEB}+"/images/CompanyLogo_big.png"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement
+						style="default"
+						mode="Transparent"
+						x="15"
+						y="88"
+						width="181"
+						height="50"
+						key="staticText-15"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[FAX no.: xx(948) 326 581 
+Phone no.: xx(948) 326 580
+xxYour Address
+xx1111 Your Town (Country)]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="default"
+						x="357"
+						y="79"
+						width="125"
+						height="18"
+						key="textField-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NAME}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="default"
+						x="357"
+						y="100"
+						width="125"
+						height="18"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{FAX}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="default"
+						x="280"
+						y="80"
+						width="75"
+						height="18"
+						forecolor="#999999"
+						key="staticText-16"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans"/>
+					</textElement>
+				<text><![CDATA[Fax Order to:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="280"
+						y="100"
+						width="75"
+						height="18"
+						forecolor="#999999"
+						key="staticText-17"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[Fax No.:]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="1"
+						y="168"
+						width="482"
+						height="0"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Data_Field"
+						x="0"
+						y="170"
+						width="152"
+						height="18"
+						key="textField-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Bitstream Vera Sans"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DOCUMENTNO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="Report_Title"
+						x="14"
+						y="1"
+						width="152"
+						height="46"
+						forecolor="#666666"
+						key="staticText-29"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Bitstream Vera Sans" size="36"/>
+					</textElement>
+				<text><![CDATA[ORDER]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Group_Data_Label"
+						x="1"
+						y="147"
+						width="149"
+						height="18"
+						forecolor="#999999"
+						key="staticText-30"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[Order Number]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Group_Data_Label"
+						x="396"
+						y="147"
+						width="81"
+						height="18"
+						forecolor="#999999"
+						key="staticText-31"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[Date]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Group_Data_Field"
+						x="396"
+						y="170"
+						width="81"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{DATEORDERED}]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="80"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="3"
+						y="4"
+						width="480"
+						height="76"
+						key="subreport-1"/>
+					<subreportParameter  name="ORDER_ID">
+						<subreportParameterExpression><![CDATA[$F{C_ORDER_ID}.toPlainString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LOCALE">
+						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="NUMBERFORMAT">
+						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES}]]></subreportExpression>
+				</subreport>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="36"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Group_Data_Field"
+						x="57"
+						y="0"
+						width="369"
+						height="18"
+						key="textField-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="24" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Group_Data_Field"
+						x="57"
+						y="18"
+						width="369"
+						height="18"
+						key="textField-8"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DELIVERYNOTES}]]></textFieldExpression>
+				</textField>
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="160"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="default"
+						x="359"
+						y="138"
+						width="100"
+						height="18"
+						key="textField-6"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["PAGE: " + $V{PAGE_NUMBER} + "/"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="C_ORDER_ID"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="default"
+						x="461"
+						y="138"
+						width="18"
+						height="18"
+						key="textField-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER} + ""]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="default"
+						x="134"
+						y="138"
+						width="69"
+						height="18"
+						key="staticText-28"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[printed on]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="dd-MM-yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="default"
+						x="205"
+						y="138"
+						width="100"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="default"
+						x="1"
+						y="79"
+						width="482"
+						height="18"
+						forecolor="#000000"
+						key="staticText-18"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[If there is no reply within 48 hours the order will be considered as accepted.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="90"
+						y="30"
+						width="106"
+						height="18"
+						forecolor="#000000"
+						key="staticText-23"
+						stretchType="RelativeToBandHeight"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[from 9:00 to 13:00]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="1"
+						y="97"
+						width="482"
+						height="18"
+						forecolor="#000000"
+						key="staticText-25"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Include order No. in shipment and invoice]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="1"
+						y="7"
+						width="79"
+						height="18"
+						forecolor="#999999"
+						key="staticText-32"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Delivery Term]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="1"
+						y="26"
+						width="482"
+						height="0"
+						key="line-3"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						style="default"
+						x="90"
+						y="7"
+						width="106"
+						height="18"
+						forecolor="#999999"
+						key="staticText-33"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Delivery]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="204"
+						y="7"
+						width="96"
+						height="18"
+						forecolor="#999999"
+						key="staticText-34"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Delivery Expense]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="312"
+						y="7"
+						width="89"
+						height="18"
+						forecolor="#999999"
+						key="staticText-35"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Payment Terms]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="1"
+						y="30"
+						width="79"
+						height="18"
+						forecolor="#000000"
+						key="staticText-36"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[Immediate]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="204"
+						y="30"
+						width="96"
+						height="18"
+						forecolor="#000000"
+						key="staticText-37"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[Included]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="312"
+						y="30"
+						width="89"
+						height="18"
+						forecolor="#000000"
+						key="staticText-38"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[90 days]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="1"
+						y="55"
+						width="79"
+						height="18"
+						forecolor="#999999"
+						key="staticText-39"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Notes]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="1"
+						y="74"
+						width="482"
+						height="0"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="1"
+						y="133"
+						width="482"
+						height="0"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

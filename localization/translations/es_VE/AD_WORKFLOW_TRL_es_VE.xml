@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language = "es_VE" table = "AD_WORKFLOW">
+    <row id = "101" trl = "N">
+        <value column = "Name" original = "Project Setup and Use">Configuraci&#243;n y Uso del Proyecto</value>
+        <value column = "Description" original = "Setup of projects and project reporting">Configuraci&#243;n de proyectos e Informes de Proyectos</value>
+        <value column = "Help" original = "Projects allow to monitor the status and progress of sales opportunities, service projects and investment projects. A Project is a process that is undertaken which can involve multiple steps or phases and require resources from more than one area.">"Proyectos" permite monitorear el estado y progreso de las oportunidades de venta, proyectos de servicio y proyectos de inversi&#243;n.Un Proyecto es un proceso "acometido" el cual puede englobar m&#250;ltiples pasos o fases y requiere recursos de m&#225;s de un &#225;rea.</value>
+    </row>
+    <row id = "103" trl = "N">
+        <value column = "Name" original = "Language Setup">Configuraci&#243;n de lenguaje</value>
+        <value column = "Description" original = "Setup a new Language of the system and translate elements">Configura un nuevo lenguaje del sistema y traduce elementos.</value>
+        <value column = "Help" original = "Define a new language as a system language.">Define un nuevo lenguaje como un lenguaje del sistema</value>
+    </row>
+    <row id = "104" trl = "N">
+        <value column = "Name" original = "Initial Client Setup Review">Revisi&#243;n de la Configuraci&#243;n Inicial de Entidad</value>
+        <value column = "Description" original = "Review of system level setup of a new  Client">Revisi&#243;n de la configuraci&#243;n a nivel de sistema de una nueva Entidad</value>
+        <value column = "Help" original = "This workflow reviews the system setup of a new client as performed by the automatic Initial Client Setup.|You may want to check also the following Workflows:|- Accounting Setup|- Business Partner Setup|- Product Setup|- Price list Setup|- Warehouse Setup|- Tax Setup|">Este flujo de trabajo revisa la configuraci&#243;n del sistema de una nueva entidad, como ha sido realizada por la Configuraci&#243;n Inicial de Entidad autom&#225;tica.ITambi&#233;n, puede que quiera revisar los siguientes flujos de trabajo:I-Configuraci&#243;n ContableI-Configuraci&#243;n de RelacionadosI-Configuraci&#243;n de ProductoI-Configuraci&#243;n de Lista de PreciosI-Configuraci&#243;n de Almac&#233;nI-Configuraci&#243;n de ImpuestosI</value>
+    </row>
+    <row id = "105" trl = "N">
+        <value column = "Name" original = "Accounting Setup">Configuraci&#243;n Contable</value>
+        <value column = "Description" original = "Review and change Accounting Setup">Revisi&#243;n y cambio de la Configuraci&#243;n; Contable</value>
+        <value column = "Help" original = "This workflow allows you to review and change your Accounting Rules. ">Este Flujo de Trabajo te permite revisar y cambiar tus Reglas de Contabilidad.</value>
+    </row>
+    <row id = "106" trl = "N">
+        <value column = "Name" original = "Business Partner Setup">Configuraci&#243;n de Relacionados</value>
+        <value column = "Description" original = "Setup Business Partner Rules">Reglas de configuraci&#243;n de Relacionados.</value>
+        <value column = "Help" original = "This workflow defines the Business Partners and the supporting rules.">Este flujo de trabajo define a los Relacionados y sus reglas de soporte.</value>
+    </row>
+    <row id = "107" trl = "N">
+        <value column = "Name" original = "Product Setup">Configuraci&#243;n de productos</value>
+        <value column = "Description" original = "Set up Products">Configuraci&#243;n de productos</value>
+        <value column = "Help" original = "Define your products manually. You should verify the settings especially if you import your products.">Define los productos manualmente. Se debe verificar la configuraci&#243;n, especialmente si importas los productos.</value>
+    </row>
+    <row id = "108" trl = "N">
+        <value column = "Name" original = "Price List Setup">Configuraci&#243;n de Lista de Precios</value>
+        <value column = "Description" original = "Define your Price Lists and Discounts">Define tus Listas de Precios y Descuentos.</value>
+        <value column = "Help" original = "You define your price lists after entering or importing your products">Defines tus Listas de Precios despu&#233;s de introducir o importar tus productos</value>
+    </row>
+    <row id = "109" trl = "N">
+        <value column = "Name" original = "Replication Setup">Configuraci&#243;n de Replicaci&#243;n</value>
+        <value column = "Description" original = "Setup of data replication">Configuraci&#243;n de replicaci&#243;n de datos</value>
+        <value column = "Help" original = "Data Replication allows you to synchronize data of remote instances with a central office.  All actions are initialized from the central office.&lt;p&gt;|&lt;b&gt;Central System:&lt;/b&gt;&lt;BR&gt;|- setup system with all organizations, roles, etc.&lt;BR&gt;|- run the migration to make sure that it is up-to-date&lt;BR&gt;|- export the central system|&lt;p&gt;|&lt;b&gt;Remote System:&lt;/b&gt;|- install the exact version as Central System&lt;BR&gt;|- import data from Central System in the remote locations|&lt;p&gt;|&lt;b&gt;Central System:&lt;/b&gt;|- Define Replication per Remote&lt;BR&gt;|- Make sure that the ID range is unique per remote - otherwise you will loose transactions!&lt;BR&gt;|- Initially Start the Replication Run to setup Remote|&lt;p&gt;|** Enter Transactions **|&lt;p&gt;|&lt;b&gt;Central System:&lt;/b&gt;&lt;BR&gt;|- Start the Replication Run when required|">La Replicaci&#243;n de Datos te permite sincronizar datos de instancias remotas con una oficina central. Todas las acciones son iniciadas desde la oficina central.&lt;p&gt;|&lt;b&gt;Sistema Central:&lt;/b&gt;&lt;BR&gt;|- configurar el sistema con todas las organizaciones, roles, etc.&lt;BR&gt;|- ejecutar la migraci&#243;n para asegurarse de que est&#225; actualizada&lt;BR&gt;|- exportar el sistema central|&lt;p&gt;|&lt;b&gt;Sistema Remoto:&lt;/b&gt;|- instalar la Versi&#243;n "exacta" como la de Sistema Central&lt;BR&gt;|- importar datos del Sistema Central en las localizaciones remotas|&lt;p&gt;|&lt;b&gt;Sistema Central:&lt;/b&gt;|- Definir Replicaci&#243;n "por" Remoto&lt;BR&gt;|- Asegurarse de que el rango de ID es &#250;nico "por" remoto - de lo contrario perder&#225; transacciones!&lt;BR&gt;|- Previamente Iniciar la Ejecuci&#243;n de Replicaci&#243;n para configurar Remoto.|&lt;p&gt;|** Introducir las transacciones **|&lt;p&gt;|&lt;b&gt;Sistema Central:&lt;/b&gt;&lt;BR&gt;|- Iniciar la Ejecuci&#243;n de Replicaci&#243;n cuando sea requerido|</value>
+    </row>
+    <row id = "110" trl = "N">
+        <value column = "Name" original = "Tax Setup">Configuraci&#243;n de Impuestos</value>
+        <value column = "Description" original = "Setup tax calculation">Configuraci&#243;n de C&#225;lculo de Impuestos</value>
+        <value column = "Help" original = "Setup the tax calculation for products, services and charges">Configuraci&#243;n del c&#225;lculo de impuestos para productos,servicios y cargos.</value>
+    </row>
+    <row id = "111" trl = "N">
+        <value column = "Name" original = "Sales Setup">Configuraci&#243;n de Ventas</value>
+        <value column = "Description" original = "Setup Sales">Configuraci&#243;n de Ventas</value>
+        <value column = "Help" original = "Setting up Sales Representatives, Commissions as well as Marketing Channels and Campaigns.">Configuraci&#243;n de Representantes de Ventas, Comisiones as&#237; como Canales de Mercadeo y Campa&#241;as</value>
+    </row>
+    <row id = "112" trl = "N">
+        <value column = "Name" original = "Performance Measurement Setup">Configuraci&#243;n de Medici&#243;n de Desempe&#241;o</value>
+        <value column = "Description" original = "Setup your Performance Measurement">Configura tu Medici&#243;n de Desempe&#241;o</value>
+        <value column = "Help" original = "This workflow guides you through setting up your performance measurement based on Key Performance Indicators, Balanced Scorecard, etc.||Most important: Do your analysis first!|- What are your goals and how do you measure it?||When you are setting up the system, you do it in reverse:|First you define how you measure it and last you define the goals for the measurements.|You have three ways measuring performance:|- via quantifiable measures (e.g. sales of $3 million in Q1)|- via manual measures|- via achievements (tasks)||The system converts the measures into percentages (based on the target and achieved measure - or number of total and reached achievements)">Este flujo de trabajo te gu&#237;a a trav&#233;s de la configuraci&#243;n de tu medici&#243;n de desempe&#241;o basado en Indicadores Clave de Desempe&#241;o, Tablero de Mando, etc.IIMuy importante: Haz primero tu an&#225;lisis!I-Cu&#225;les son tus objetivos y c&#243;mo lo mides?IICuando est&#225;s configurando el sistema, lo haces al rev&#233;s:IPrimero define c&#243;mo lo mides y despu&#233;s define los objetivos para las mediciones.ITienes tres formas de medir desempe&#241;o:I-v&#237;a medidas cuantificables(ej.ventas de 3 millones de $ en Q1)I-v&#237;a medidas manualesI-v&#237;a logros (tareas)IIIEl sistema convierte las medidas en porcentajes (basado en la medida fijada y la alcanzada - o n&#250;mero del total de logros y de logros alcanzados)</value>
+    </row>
+    <row id = "113" trl = "N">
+        <value column = "Name" original = "Request Setup">Configuraci&#243;n de Pedidos</value>
+        <value column = "Description" original = "Set up the client to process requests">Configuraci&#243;n de la entidad para que procese pedidos</value>
+        <value column = "Help" original = ""></value>
+    </row>
+    <row id = "800000" trl = "N">
+        <value column = "Name" original = "Production Setup">Configuraci&#243;n de producci&#243;n</value>
+        <value column = "Description" original = "Set up Production module.">Define los pasos para la configuraci&#243;n del m&#243;dulo de producci&#243;n.</value>
+        <value column = "Help" original = "Set up Production module.">Define los pasos para la configuraci&#243;n del m&#243;dulo de producci&#243;n.</value>
+    </row>
+</compiereTrl>

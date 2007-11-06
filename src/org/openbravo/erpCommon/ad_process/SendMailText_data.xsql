@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ******************************************************************************
+ * The contents of this file are subject to the   Compiere License  Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * You may obtain a copy of the License at http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an  "AS IS"  basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * The Original Code is                  Compiere  ERP & CRM  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
+ * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
+ * Contributor(s): Openbravo SL
+ * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ ******************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="SendMailTextData" package="org.openbravo.erpCommon.ad_process">
+  <SqlMethod name="select" type="preparedStatement" connection="true" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT u.Name, u.EMail, u.AD_User_ID, '' as mailheader, '' as mailtext 
+        FROM R_ContactInterest ci, AD_User u 
+        WHERE ci.AD_User_ID=u.AD_User_ID 
+        AND ci.IsActive='Y' 
+        AND u.IsActive='Y' 
+        AND ci.OptOutDate IS NULL 
+        AND u.EMail IS NOT NULL 
+        AND ci.R_InterestArea_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="rInterestareaId"/>
+  </SqlMethod>
+  <SqlMethod name="selectBPGroup" type="preparedStatement" connection="true" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT u.Name, u.EMail, u.AD_User_ID 
+        FROM AD_User u, C_BPartner bp
+        WHERE u.C_BPartner_ID=bp.C_BPartner_ID 
+        AND u.IsActive='Y' 
+        AND bp.IsActive='Y' 
+        AND u.EMail IS NOT NULL 
+        AND bp.C_BP_Group_ID = ? 
+      ]]>
+    </Sql>
+    <Parameter name="cBpGroupId"/>
+  </SqlMethod>
+  <SqlMethod name="selectMailData" type="preparedStatement" connection="true" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT mailheader, mailtext
+        FROM R_MailText
+        WHERE IsActive='Y' 
+        AND R_MailText_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="rMailtextId"/>
+  </SqlMethod>
+  <SqlMethod name="update" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE AD_User SET IsActive='N', Help=Help||' - Invalid User EMail' WHERE AD_User_ID=?
+      ]]>
+    </Sql>
+    <Parameter name="adUserId"/>
+  </SqlMethod>
+</SqlClass>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="es_CL" table="AD_WORKFLOW">
+  <row id="101" trl="N">
+    <value column="Name" original="Project Setup and Use">Configuración del Proyecto y Uso</value>
+    <value column="Description" original="Setup of projects and project reporting">Configuración de proyectos e Informes de Proyectos</value>
+    <value column="Help" original="Projects allow to monitor the status and progress of sales opportunities, service projects and investment projects. A Project is a process that is undertaken which can involve multiple steps or phases and require resources from more than one area.">&quot;Proyectos&quot; permite &quot;monitorizar&quot;(visualizar) el estado y progreso de las oportunidades de venta,proyectos de servicio y proyectos de inversión.Un Proyecto es un proceso &quot;acometido&quot; el cual puede englobar múltiples pasos o fases y requiere recursos de más de un área.</value>
+  </row>
+  <row id="103" trl="N">
+    <value column="Name" original="Language Setup">Configuración de lenguaje</value>
+    <value column="Description" original="Setup a new Language of the system and translate elements">Configura un nuevo lenguaje del sistema y traduce elementos.</value>
+    <value column="Help" original="Define a new language as a system language.">Define un nuevo lenguaje como un sistema de lenguaje</value>
+  </row>
+  <row id="104" trl="N">
+    <value column="Name" original="Initial Client Setup Review">Revisión de la Configuración Inicial de Cliente</value>
+    <value column="Description" original="Review of system level setup of a new  Client">Revisión  del nivel de sistema de la configuración de un nuevo Cliente</value>
+    <value column="Help" original="This workflow reviews the system setup of a new client as performed by the automatic Initial Client Setup.|You may want to check also the following Workflows:|- Accounting Setup|- Business Partner Setup|- Product Setup|- Price list Setup|- Warehouse Setup|- Tax Setup|">Este flujo de trabajo revisa la configuración del sistema de un nuevo cliente &quot;como creado&quot; por la Configuración de Cliente Inicial automática.ITambién, puede que quiera revisar los siguientes flujos de trabajo:I-Configuración ContableI-Configuración de TercerosI-Configuración de ProductoI-Configuración de Lista de Precios(tarifas)I-Configuración de AlmacénI-Configuración de ImpuestosI</value>
+  </row>
+  <row id="105" trl="N">
+    <value column="Name" original="Accounting Setup">Configuración Contable</value>
+    <value column="Description" original="Review and change Accounting Setup">Revisión y cambio de la Configuració Contable</value>
+    <value column="Help" original="This workflow allows you to review and change your Accounting Rules. ">Este Flujo de Trabajo te permite revisar y cambiar tus Reglas de Contabilidad.</value>
+  </row>
+  <row id="106" trl="N">
+    <value column="Name" original="Business Partner Setup">Configuración de Terceros</value>
+    <value column="Description" original="Setup Business Partner Rules">Reglas de configuración de Terceros.</value>
+    <value column="Help" original="This workflow defines the Business Partners and the supporting rules.">Este flujo de trabajo define a los Terceros y sus reglas.</value>
+  </row>
+  <row id="107" trl="N">
+    <value column="Name" original="Product Setup">Configuración de productos</value>
+    <value column="Description" original="Set up Products">Configuración de productos</value>
+    <value column="Help" original="Define your products manually. You should verify the settings especially if you import your products.">Define los productos manualmente. Se debe verificar la configuración, especialmente si importas los productos.</value>
+  </row>
+  <row id="108" trl="N">
+    <value column="Name" original="Price List Setup">Configuración de Lista de Precios (Tarifas)</value>
+    <value column="Description" original="Define your Price Lists and Discounts">Define tus Listas de Precios (Tarifas) y Descuentos.</value>
+    <value column="Help" original="You define your price lists after entering or importing your products">Defines tus Listas de Precios (Tarifas) después de introducir o importar tus productos</value>
+  </row>
+  <row id="109" trl="N">
+    <value column="Name" original="Replication Setup">Configuración Copia</value>
+    <value column="Description" original="Setup of data replication">Configuración de Copia de datos</value>
+    <value column="Help" original="Data Replication allows you to synchronize data of remote instances with a central office.  All actions are initialized from the central office.&lt;p>|&lt;b>Central System:&lt;/b>&lt;BR>|- setup system with all organizations, roles, etc.&lt;BR>|- run the migration to make sure that it is up-to-date&lt;BR>|- export the central system|&lt;p>|&lt;b>Remote System:&lt;/b>|- install the exact version as Central System&lt;BR>|- import data from Central System in the remote locations|&lt;p>|&lt;b>Central System:&lt;/b>|- Define Replication per Remote&lt;BR>|- Make sure that the ID range is unique per remote - otherwise you will loose transactions!&lt;BR>|- Initially Start the Replication Run to setup Remote|&lt;p>|** Enter Transactions **|&lt;p>|&lt;b>Central System:&lt;/b>&lt;BR>|- Start the Replication Run when required|">La Copia de Datos te permite sincronizar datos de instancias remotas con una oficina central. Todas las acciones son iniciadas desde la oficina central. Sistema Central: configuración del sistema con todas las organizaciones, roles, etc. Ejecutar la migración para asegurarse de que está actualizada exportar el sistema central. Sitema Remoto: Instalar la Versión &quot;exacta&quot; como Sistema Central. Importar datos del Sistema Central en las localizaciones remotas. Sistema Central: Definir Copia &quot;por&quot; Remoto. Asegurarse de que el rengo ID es único &quot;por&quot; remoto-de lo contrario perderá transacciones. Previamente Lanzar la Ejecución de Copia Remota.</value>
+  </row>
+  <row id="110" trl="N">
+    <value column="Name" original="Tax Setup">Configuración de Impuestos</value>
+    <value column="Description" original="Setup tax calculation">Configuración de Cálculo de Impuestos</value>
+    <value column="Help" original="Setup the tax calculation for products, services and charges">Configuración del cálculo de impuestos para productos,servicios y costes.</value>
+  </row>
+  <row id="111" trl="N">
+    <value column="Name" original="Sales Setup">Configuración de Ventas</value>
+    <value column="Description" original="Setup Sales">Configuración de Ventas</value>
+    <value column="Help" original="Setting up Sales Representatives, Commissions as well as Marketing Channels and Campaigns.">Configuración Representantes de Ventas,Comisiones así como Canales de Marketing y Campañas</value>
+  </row>
+  <row id="112" trl="N">
+    <value column="Name" original="Performance Measurement Setup">Configuración de Realizaciónde Medidas</value>
+    <value column="Description" original="Setup your Performance Measurement">Configura tu Realización de Medidas</value>
+    <value column="Help" original="This workflow guides you through setting up your performance measurement based on Key Performance Indicators, Balanced Scorecard, etc.||Most important: Do your analysis first!|- What are your goals and how do you measure it?||When you are setting up the system, you do it in reverse:|First you define how you measure it and last you define the goals for the measurements.|You have three ways measuring performance:|- via quantifiable measures (e.g. sales of $3 million in Q1)|- via manual measures|- via achievements (tasks)||The system converts the measures into percentages (based on the target and achieved measure - or number of total and reached achievements)">Este flujo de trabajo te guía mediante la configuración de tu realización de medidas basada en la la Realización de Indicadores Clave,&quot;Tanteador Equilibrado&quot;,etc.IIMuy importante:Haz primero tu análisis!I-Cuáles son tus objetivos y cómo lo mides?IICuando estás configurando el sistema, haces lo contrario:IPrimero define cómo lo mides y después define los objetivos para las mediciones.ITienes tres formas de realizar medidas:I-vía medidas cuantificables(ej.ventas de 3 millones de $ en Q1)I-vía medidas manualI-vía &quot;realizaciones/logros&quot;(Taréas)IIIEl sistema convierte las medidas en porcentajes(basados en medida fijada y &quot;relizada/lograda&quot;- o número del total de &quot;realizaciones/logros&quot; y alcanzados) </value>
+  </row>
+  <row id="113" trl="N">
+    <value column="Name" original="Request Setup">Configuración de Pedidos</value>
+    <value column="Description" original="Set up the client to process requests">Configuración del cliente para que procese pedidos</value>
+    <value column="Help" original=""/>
+  </row>
+  <row id="800000" trl="N">
+    <value column="Name" original="Production Setup">Configuración de producción</value>
+    <value column="Description" original="Set up Production module.">Define los pasos para la configuración del módulo de producción.</value>
+    <value column="Help" original="Set up Production module.">Define los pasos para la configuración del módulo de producción.</value>
+  </row>
+</compiereTrl>

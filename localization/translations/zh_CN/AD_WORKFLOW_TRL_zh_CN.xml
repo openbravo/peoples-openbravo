@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="zh_CN" table="AD_WORKFLOW">
+    <row id="101" trl="N">
+        <value column="Name" original="Project Setup and Use">项目建立及使用</value>
+        <value column="Description" original="Setup of projects and project reporting">设置项目和项目报表</value>
+        <value column="Help" original="Projects allow to monitor the status and progress of sales opportunities, service projects and investment projects. A Project is a process that is undertaken which can involve multiple steps or phases and require resources from more than one area.">项目适用于监控销售,机会,服务项目和投资项目的的状态和进度.每一个项目是一个需要不止一个区域的资源,包括多个步骤和阶段的的承载进程.</value>
+    </row>
+    <row id="103" trl="N">
+        <value column="Name" original="Language Setup">语言设置</value>
+        <value column="Description"
+            original="Setup a new Language of the system and translate elements">    设置系统的新语言并翻译元素</value>
+        <value column="Help" original="Define a new language as a system language.">将一个新语言定义为系统语言</value>
+    </row>
+    <row id="104" trl="N">
+        <value column="Name" original="Initial Client Setup Review">初始化实体设置检查</value>
+        <value column="Description" original="Review of system level setup of a new  Client">新客户端系统级别的检查</value>
+        <value column="Help"
+            original="This workflow reviews the system setup of a new client as performed by the automatic Initial Client Setup.|You may want to check also the following Workflows:|- Accounting Setup|- Business Partner Setup|- Product Setup|- Price list Setup|- Warehouse Setup|- Tax Setup|">这个工作流程检查因为建立自动初始化客户端时运行的系统设置.|你可能也向检查以下工作流程:|-
+            建立帐目|- 建立商业伙伴|- 建立产品|- 建立价格表|- 建立仓库|- 税务设置|</value>
+    </row>
+    <row id="105" trl="N">
+        <value column="Name" original="Accounting Setup">建立帐目</value>
+        <value column="Description" original="Review and change Accounting Setup">检查和修改帐目建立</value>
+        <value column="Help"
+            original="This workflow allows you to review and change your Accounting Rules. ">这个工作流程允许你修改和检查你的帐目规则. </value>
+    </row>
+    <row id="106" trl="N">
+        <value column="Name" original="Business Partner Setup">建立商业伙伴</value>
+        <value column="Description"
+            original="Setup Business Partner Rules">    设置业务伙伴规则</value>
+        <value column="Help" original="This workflow defines the Business Partners and the supporting rules.">这个工作流程定义商业伙伴和支持规则.</value>
+    </row>
+    <row id="107" trl="N">
+        <value column="Name" original="Product Setup">建立产品</value>
+        <value column="Description" original="Set up Products">建立产品</value>
+        <value column="Help" original="Define your products manually. You should verify the settings especially if you import your products.">手动定义你的产品.如果你批量导入产品,你应该确认你的设置.</value>
+    </row>
+    <row id="108" trl="N">
+        <value column="Name" original="Price List Setup">价格表设置</value>
+        <value column="Description" original="Define your Price Lists and Discounts">定义价目表及折扣</value>
+        <value column="Help" original="You define your price lists after entering or importing your products">你应该在输入或者导入你的产品后定义价格表.</value>
+    </row>
+    <row id="109" trl="N">
+        <value column="Name" original="Replication Setup">备份设置</value>
+        <value column="Description"
+            original="Setup of data replication">    数据复制的设置</value>
+        <value column="Help"
+            original="Data Replication allows you to synchronize data of remote instances with a central office.  All actions are initialized from the central office.&lt;p>|&lt;b>Central System:&lt;/b>&lt;BR>|- setup system with all organizations, roles, etc.&lt;BR>|- run the migration to make sure that it is up-to-date&lt;BR>|- export the central system|&lt;p>|&lt;b>Remote System:&lt;/b>|- install the exact version as Central System&lt;BR>|- import data from Central System in the remote locations|&lt;p>|&lt;b>Central System:&lt;/b>|- Define Replication per Remote&lt;BR>|- Make sure that the ID range is unique per remote - otherwise you will loose transactions!&lt;BR>|- Initially Start the Replication Run to setup Remote|&lt;p>|** Enter Transactions **|&lt;p>|&lt;b>Central System:&lt;/b>&lt;BR>|- Start the Replication Run when required|">数据复制使你可以将所有远程实例的数据与一个控制中心同步.
+            所有的操作都会通过控制中心进行初始化.&lt;p>|&lt;b>中央系统:&lt;/b>&lt;BR>|-
+            使用所有组织,规则,等建立系统&lt;BR>|- 运行移植已确认它是最新的lt;BR>|-
+            导出中央系统|&lt;p>|&lt;b>远程系统:&lt;/b>|- 安装特定版本作为中央系统&lt;BR>|-
+            远程从中央系统导出数据|&lt;p>|&lt;b>中央系统:&lt;/b>|- 定义每个远程的复制&lt;BR>|-
+            确认对于每个远程ID范围是唯一的 - 否则你会丢失连接!&lt;BR>|- 从头运行复制来建立远程|&lt;p>|**
+            进入 连接 **|&lt;p>|&lt;b>中央系统:&lt;/b>&lt;BR>|- 当被要求时,开始运行复制|</value>
+    </row>
+    <row id="110" trl="N">
+        <value column="Name" original="Tax Setup">税设置</value>
+        <value column="Description" original="Setup tax calculation">建立税费计算</value>
+        <value column="Help" original="Setup the tax calculation for products, services and charges">建立产品,服务和消费的税费计算</value>
+    </row>
+    <row id="111" trl="N">
+        <value column="Name" original="Sales Setup">销售设置</value>
+        <value column="Description" original="Setup Sales">设置销售</value>
+        <value column="Help" original="Setting up Sales Representatives, Commissions as well as Marketing Channels and Campaigns.">建立销售代表,委托人还有市场渠道和活动.</value>
+    </row>
+    <row id="112" trl="N">
+        <value column="Name" original="Performance Measurement Setup">绩效设置</value>
+        <value column="Description" original="Setup your Performance Measurement">建立你的业绩度量</value>
+        <value column="Help"
+            original="This workflow guides you through setting up your performance measurement based on Key Performance Indicators, Balanced Scorecard, etc.||Most important: Do your analysis first!|- What are your goals and how do you measure it?||When you are setting up the system, you do it in reverse:|First you define how you measure it and last you define the goals for the measurements.|You have three ways measuring performance:|- via quantifiable measures (e.g. sales of $3 million in Q1)|- via manual measures|- via achievements (tasks)||The system converts the measures into percentages (based on the target and achieved measure - or number of total and reached achievements)">这个工作流程基于关键业绩指示器,平衡分数卡等,指导你建立你的业绩度量.||非常重要:
+            首先进行针对自己的分析!|-
+            你的目标是什么,你怎么衡量它?||当你正在建立系统,请你按相反顺序进行:|首先你定义你如何衡量它,最后定义衡量的目的是什么.|你有三种方法衡量业绩:|-
+            通过数量度量 (例 第一季度销售300万美元)|- 过手动衡量|- 通过成就(任务)||系统会对衡量进行百分比转化 (基于目标和实现的衡量,或者总数中的部分和达到的成就)</value>
+    </row>
+    <row id="113" trl="N">
+        <value column="Name" original="Request Setup">请求设置</value>
+        <value column="Description" original="Set up the client to process requests">建立客户端来处理请求</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800000" trl="N">
+        <value column="Name" original="Production Setup">生产设置</value>
+        <value column="Description" original="Set up Production module.">建立生产模型.</value>
+        <value column="Help" original="Set up Production module.">建立生产模型.</value>
+    </row>
+</compiereTrl>

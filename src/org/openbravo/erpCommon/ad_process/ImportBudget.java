@@ -1,0 +1,234 @@
+/*
+ ******************************************************************************
+ * The contents of this file are subject to the   Compiere License  Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * You may obtain a copy of the License at http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an  "AS IS"  basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * The Original Code is                  Compiere  ERP & CRM  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
+ * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
+ * Contributor(s): Openbravo SL
+ * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ ******************************************************************************
+*/
+package org.openbravo.erpCommon.ad_process;
+
+import org.openbravo.erpCommon.utility.*;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import javax.servlet.*;
+import org.apache.log4j.Logger ;
+
+// imports for transactions
+import org.openbravo.database.ConnectionProvider;
+import java.sql.Connection;
+
+
+public class ImportBudget extends ImportProcess {
+  static Logger log4j = Logger.getLogger(ImportBudget.class);
+
+  private String m_AD_Process_ID = "";
+  private String m_Record_ID = "";
+  private String m_Budget_ID = "";
+  private boolean m_deleteOldImported;
+
+  public ImportBudget(ConnectionProvider conn, String AD_Process_ID, String recordId, String strBudget, boolean deleteOld) {
+    super(conn);
+    m_AD_Process_ID = AD_Process_ID;
+    m_Record_ID = recordId;
+    m_deleteOldImported = deleteOld;
+    m_Budget_ID = strBudget;
+  }
+
+  protected String getAD_Process_ID() {
+    return m_AD_Process_ID;
+  }
+
+  protected String getRecord_ID() {
+    return m_Record_ID;
+  }
+
+  protected void createInstanceParams(VariablesSecureApp vars) throws ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Creating parameters");
+    addParameterString("DeleteOldImported", "20", m_deleteOldImported?"Y":"N");
+    addParameterNumber("C_Budget_ID", "10", m_Budget_ID);
+  }
+
+  protected boolean doIt(VariablesSecureApp vars) throws ServletException {
+    int no = 0;
+    ConnectionProvider conn = null;
+    Connection con = null;
+    try {
+      conn = getConnection();
+      con = conn.getTransactionConnection();
+      if(m_deleteOldImported) {
+        no = ImportBudgetData.deleteOld(con, conn, getAD_Client_ID());
+        if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
+      }
+      //  Set Client, Org, IaActive, Created/Updated, ProductType
+      no = ImportBudgetData.updateRecords(con, conn, getAD_Client_ID(), m_Budget_ID);
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Reset = " + no);
+
+      //  BPartner
+      no = ImportBudgetData.updateBPartnerId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget BPartnerId = " + no);
+      no = ImportBudgetData.updatePartnerError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid Partner = " + no);
+
+      //  Set BPGroup
+      no = ImportBudgetData.updateBPGroupId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget BPGroupId = " + no);
+      no = ImportBudgetData.updateGroupError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid BPartner group = " + no);
+
+      //  Product
+      no = ImportBudgetData.updateProductId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      ImportBudgetData.updateUomId(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget ProductId = " + no);
+      no = ImportBudgetData.updateProductError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid Product = " + no);
+
+      //  Product Category
+      no = ImportBudgetData.updateProdCatId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Product Category = " + no);
+      no = ImportBudgetData.updateProdCatError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid Product Category= " + no);
+
+      //  Trx Organization
+      no = ImportBudgetData.updateTrxOrgId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Trx Organization = " + no);
+      no = ImportBudgetData.updateTrxOrgError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid Trx Organization = " + no);
+
+      //  Sales Region
+      no = ImportBudgetData.updateSalesRegionId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Sales Region = " + no);
+      no = ImportBudgetData.updateSalesRegionError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid Sales Region = " + no);
+
+      //  Project
+      no = ImportBudgetData.updateProjectId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Project = " + no);
+      no = ImportBudgetData.updateProjectError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid Project = " + no);
+
+      //  Campaign
+      no = ImportBudgetData.updateCampaignId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Campaign = " + no);
+      no = ImportBudgetData.updateCampaignError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid Campaign = " + no);
+
+      //  Activity
+      no = ImportBudgetData.updateActivityId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Activity = " + no);
+      no = ImportBudgetData.updateActivityError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid Activity = " + no);
+
+      //  Valid Combination
+      no = ImportBudgetData.updateValidCombinationId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Valid Combination = " + no);
+      no = ImportBudgetData.updateValidCombinationError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid ValidCombination = " + no);
+
+      //  Period
+      no = ImportBudgetData.updatePeriodId(con, conn, m_Budget_ID, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Period = " + no);
+      no = ImportBudgetData.updatePeriodError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid Period = " + no);
+
+      //  Currency
+      no = ImportBudgetData.updateCurrencyId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Currency = " + no);
+      no = ImportBudgetData.updateCurrencyError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid Currency = " + no);
+
+      //  Budget Line ¿Exist?
+      no = ImportBudgetData.updateBudgetLineId(con, conn, m_Budget_ID, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget BudgetLine = " + no);
+
+      conn.releaseCommitConnection(con);
+    } catch (Exception se) {
+      try {
+        conn.releaseRollbackConnection(con);
+      } catch (Exception ignored) {}
+      se.printStackTrace();
+      addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+      return false;
+    }
+
+    // till here, the edition of the I_ImportBudget table
+    // now, the insertion from I_ImportBudget table in C_BPartner...
+
+    int noInsert = 0;
+    int noUpdate = 0;
+    int seqNo = 0;
+
+    try {
+      //  Go through Records
+      ImportBudgetData[] data = ImportBudgetData.select(conn, getAD_Client_ID());
+      seqNo = Integer.parseInt(ImportBudgetData.selectSeqNo(conn, m_Budget_ID));
+      if (log4j.isDebugEnabled()) log4j.debug("Going through " + data.length + " records");
+      for(int i=0;i<data.length;i++){
+        String I_BudgetLine_ID = data[i].iBudgetlineId;
+        String C_BudgetLine_ID = data[i].cBudgetlineId;
+        boolean newBudgetLine = C_BudgetLine_ID == "";
+
+
+        con = conn.getTransactionConnection();
+
+        //  create/update Budget
+        if (newBudgetLine) {  //  Insert new BPartner
+          C_BudgetLine_ID = SequenceIdData.getSequence(conn, "C_BudgetLine", vars.getClient());
+          try {
+            no = ImportBudgetData.insertBudgetLine(con, conn, C_BudgetLine_ID, Integer.toString(seqNo), I_BudgetLine_ID);
+            if (log4j.isDebugEnabled()) log4j.debug("Insert BudgetLine = " + no);
+            noInsert++;
+            seqNo = seqNo + 10;
+          } catch (ServletException ex)  {
+            if (log4j.isDebugEnabled()) log4j.debug("Insert BudgetLine - " + ex.toString());
+            no = ImportBudgetData.insertBudgetLineError(con, conn, I_BudgetLine_ID);
+            conn.releaseRollbackConnection(con);
+            continue;
+          }
+        } else {      //  Update existing BudgetLine
+          try  {
+            no = ImportBudgetData.updateBudgetLine(con, conn, I_BudgetLine_ID, C_BudgetLine_ID);
+            if (log4j.isDebugEnabled()) log4j.debug("Update BudgetLine = " + no);
+            noUpdate++;
+          }  catch (ServletException ex)  {
+            if (log4j.isDebugEnabled()) log4j.debug("Update BudgetLine - " + ex.toString());
+            no = ImportBudgetData.updateBudgetLineError(con, conn, I_BudgetLine_ID);
+            conn.releaseRollbackConnection(con);
+            continue;
+          }
+        }
+
+        //  Update I_BudgetLine
+        try {
+          no = ImportBudgetData.setImported(con, conn, C_BudgetLine_ID, I_BudgetLine_ID);
+          conn.releaseCommitConnection(con);
+        } catch (ServletException ex) {
+          if (log4j.isDebugEnabled()) log4j.debug("Update Imported - " + ex.toString());
+          noInsert--;
+          no = ImportBudgetData.updateSetImportedError(con, conn, I_BudgetLine_ID);
+          conn.releaseRollbackConnection(con);
+          continue;
+        }
+      }
+
+      //  Set Error to indicator to not imported
+      no=ImportBudgetData.updateNotImported(conn, getAD_Client_ID());
+    } catch (Exception se) {
+      se.printStackTrace();
+      addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+      return false;
+    }
+    addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + no + "; ");
+    addLog("BudgetLine inserted: " + noInsert + "; ");
+    addLog("BudgetLine updated: " + noUpdate);
+    return true;
+
+  } // doIt
+}

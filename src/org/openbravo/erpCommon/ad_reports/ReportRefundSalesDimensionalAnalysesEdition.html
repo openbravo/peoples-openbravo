@@ -1,0 +1,506 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Refunded sales orders report</TITLE>
+    <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Report.css" id="paramCSS" /> 
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">
+LNG_POR_DEFECTO="en_US";
+
+</SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="background-color: #FFFFFF;">
+<FORM method="POST" action="ReportRefundInvoiceCustomerDimensionalAnalyzeEdition.html" name="frmMain" >
+  <BR></BR>
+
+  <TABLE border="0" cellpadding="0" cellspacing="0" width="90%" align="center">
+    <TR><TD width="4%"></TD><TD class="ReportTitle">Refunded Sales Orders Report<hr width="100%" align="center"></TD><TR>
+    <TR><TD width="4%"></TD><TD id="paramTitle" class="ReportSubTitle">xxdesde hasta<hr width="100%" align="center"></TD><TR>
+  </TABLE>
+
+  <DIV id="selEliminarBody1"> 
+
+    <TABLE border="0" cellpadding="0" cellspacing="0" width="90%" align="center">
+      <TR>
+        <TD width="4%"> </TD>
+        <TD class="Total_Field_Title">Sales total</TD>
+        <TD class="Total_Field" id="fieldTotal"></TD>
+        <TD class="Total_Field_Title">Total devol.</TD>
+        <TD class="Total_Field" id="fieldTotalRefund">xx3455.45</TD>
+        <TD class="Total_Field_Title">Total % ratio</TD> 
+        <TD class="Total_Field" id="fieldTotalAvg">xx3455.45</TD>
+        <TD class="Total_Field_Title">Sal. Ref total</TD>
+        <TD class="Total_Field" id="fieldTotalRef">xx3455.45</TD>
+        <TD class="Total_Field_Title">Total dev. ref</TD> 
+        <TD class="Total_Field" id="fieldTotalRefundRef">xx3455.45</TD>
+        <TD class="Total_Field_Title">Total %rat ref</TD>
+        <TD class="Total_Field" id="fieldTotalAvgRef">xx3455.45</TD>
+        <TD class="Total_Field_Title">Dif.ratio</TD> 
+        <TD class="Total_Field" id="fieldDifRatio">xx34.34</TD>
+      </TR>
+    </TABLE>
+
+    <BR></BR>
+    <DIV id="sectionNivel1"> 
+      <TABLE border="0" cellpadding="0" cellspacing="0" width="90%" align="center" id="selEliminar1">
+        <TR> 
+          <TD width="2%">&nbsp;</TD>
+          <TD width="2%">&nbsp;</TD>
+          <TD width="2%">&nbsp;</TD>
+          <TD width="2%">&nbsp;</TD>
+          <TD width="2%">&nbsp;</TD>
+          <TD width="2%">&nbsp;</TD>
+          <TD width="15%" align="right">&nbsp;</TD>
+          <TD width="6%" align="right">&nbsp;</TD>
+          <TD width="7%" align="right">&nbsp;</TD>
+          <TD width="5%" align="right">&nbsp;</TD>
+          <TD width="6%" align="right">&nbsp;</TD>
+          <TD width="6%" align="right">&nbsp;</TD>
+          <TD width="6%" align="right">&nbsp;</TD>
+          <TD width="5%" align="right">&nbsp;</TD>
+          <TD width="5%" align="right">&nbsp;</TD>
+          <TD width="3%" align="right">&nbsp;</TD>
+          <TD width="5%" align="right">&nbsp;</TD>
+          <TD width="3%" align="right">&nbsp;</TD>
+          <TD width="5%" align="right">&nbsp;</TD>
+          <TD width="3%" align="right">&nbsp;</TD>
+          <TD width="5%" align="right">&nbsp;</TD>
+          <TD width="3%" align="right">&nbsp;</TD>
+        </TR>
+        <TR>
+
+          <TD colspan="7" height="16" class="Bold"></TD>
+          <TD width="6%" align="right" class="TableDetailHeader"> <SPAN class="Bold">Sales</SPAN></TD>
+          <TD width="7%" align="right" class="TableDetailHeader"> <SPAN class="Bold">Devolutions</SPAN></TD>
+          <TD width="5%" align="right" class="TableDetailHeader"> <SPAN class="Bold">% ratio</SPAN></TD>
+          <TD width="6%" align="right" class="TableDetailHeader"> <SPAN class="Bold">Sales ref</SPAN></TD>
+          <TD width="6%" align="right" class="TableDetailHeader"> <SPAN class="Bold">Devol. Ref</SPAN></TD>
+          <TD width="6%" align="right" class="TableDetailHeader"> <SPAN class="Bold">% ratio ref.</SPAN></TD>
+          <TD width="5%" align="right" class="TableDetailHeader"> <SPAN class="Bold">dif. Ratio</SPAN></TD>
+          <TD colspan="2" width="2" align="right" class="TableDetailHeader"> <SPAN class="Bold">Quantity</SPAN></TD>
+          <TD colspan="2" width="2" align="right" class="TableDetailHeader"> <SPAN class="Bold">Quantity retur.</SPAN></TD>
+          <TD colspan="2" width="2" align="right" class="TableDetailHeader"> <SPAN class="Bold">Quantity Ref..</SPAN></TD>
+          <TD colspan="2" width="2" align="right" class="TableDetailHeader"> <SPAN class="Bold">Quantity retur. Ref.</SPAN></TD>
+
+        </TR>
+        <TR> 
+          <TD colspan="7"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+              <TR> 
+                <TD width="50%" class="TableHeaderLevel1" id="fieldNivel1">xxTercero</TD>
+              </TR>
+            </TABLE></TD>
+          <TD width="6%" align="right" class="TableHeaderLevel1" id="fieldTotalNivel1">xx56.34</TD>
+          <TD width="7%" align="right" class="TableHeaderLevel1" id="fieldTotalRefundNivel1">xx56.34</TD>
+          <TD width="5%" align="right" class="TableHeaderLevel1" id="fieldTotal1">xx</TD>
+          <TD width="6%" align="right" class="TableHeaderLevel1" id="fieldTotalRefNivel1">xx56.34</TD>
+          <TD width="6%" align="right" class="TableHeaderLevel1" id="fieldTotalRefRefundNivel1">xx56.34</TD>
+          <TD width="6%" align="right" class="TableHeaderLevel1" id="fieldTotalRef1">xx</TD>
+          <TD width="5%" align="right" class="TableHeaderLevel1" id="fieldDifRatio1">xx</TD>
+          <TD width="5%" align="right" class="TableHeaderLevel1" id="fieldTotalQtyNivel1">xx</TD>
+          <TD width="3%" align="right" class="TableHeaderLevel1" id="fieldUomsymbol1">xx</TD>
+          <TD width="5%" align="right" class="TableHeaderLevel1" id="fieldTotalRefundQtyNivel1">xx</TD>
+          <TD width="3%" align="right" class="TableHeaderLevel1" id="fieldUomsymbol1">xx</TD>
+          <TD width="5%" align="right" class="TableHeaderLevel1" id="fieldTotalRefQtyNivel1">xx</TD>
+          <TD width="3%" align="right" class="TableHeaderLevel1" id="fieldUomsymbol1">xx</TD>
+          <TD width="5%" align="right" class="TableHeaderLevel1" id="fieldTotalRefRefundQtyNivel1">xx</TD>
+          <TD width="3%" align="right" class="TableHeaderLevel1" id="fieldUomsymbol1">xx</TD>
+          <INPUT type="hidden" name="inpAux1" value="" id="fieldAuxTotalQtyNivel1"></INPUT>
+          <INPUT type="hidden" name="inpAuxQty1" value="" id="fieldAuxTotalRefQtyNivel1"></INPUT>
+        </TR>
+        <DIV id="sectionNivel2"> 
+          <TR id="paramEliminar2" style=""> 
+            <TD width="2%"></TD>
+            <TD colspan="6"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                <TR > 
+                  <TD width="50%" class="TableHeaderLevel2" id="fieldNivel2">xxCategoria 
+                    tercero</TD>
+                </TR>
+              </TABLE></TD>
+            <TD width="6%" align="right" class="TableHeaderLevel2" id="fieldTotalNivel2">xx2344</TD>
+            <TD width="7%" align="right" class="TableHeaderLevel2" id="fieldTotalRefundNivel2">xx34</TD>
+            <TD width="5%" align="right" class="TableHeaderLevel2" id="fieldTotal2">xx</TD>
+            <TD width="6%" align="right" class="TableHeaderLevel2" id="fieldTotalRefNivel2">xx2344</TD>
+            <TD width="6%" align="right" class="TableHeaderLevel2" id="fieldTotalRefRefundNivel2">xx34</TD>
+            <TD width="6%" align="right" class="TableHeaderLevel2" id="fieldTotalRef2">xx</TD>
+            <TD width="5%" align="right" class="TableHeaderLevel2" id="fieldDifRatio2">xx</TD>
+            <TD width="5%" align="right" class="TableHeaderLevel2" id="fieldTotalQtyNivel2">xx</TD>
+            <TD width="3%" align="right" class="TableHeaderLevel2" id="fieldUomsymbol2">xx</TD>
+            <TD width="5%" align="right" class="TableHeaderLevel2" id="fieldTotalRefundQtyNivel2">xx</TD>
+            <TD width="3%" align="right" class="TableHeaderLevel2" id="fieldUomsymbol2">xx</TD>
+            <TD width="5%" align="right" class="TableHeaderLevel2" id="fieldTotalRefQtyNivel2">xx</TD>
+            <TD width="3%" align="right" class="TableHeaderLevel2" id="fieldUomsymbol2">xx</TD>
+            <TD width="5%" align="right" class="TableHeaderLevel2" id="fieldTotalRefRefundQtyNivel2">xx</TD>
+            <TD width="3%" align="right" class="TableHeaderLevel2" id="fieldUomsymbol2">xx</TD>
+            <INPUT type="hidden" name="inpAux2" value="" id="fieldAuxTotalQtyNivel2"></INPUT>
+            <INPUT type="hidden" name="inpAuxQty2" value="" id="fieldAuxTotalRefQtyNivel2"></INPUT>
+          </TR>
+          <DIV id="sectionNivel3"> 
+            <TR id="paramEliminar3" style=""> 
+              <TD width="2%"></TD>
+              <TD width="2%"></TD>
+              <TD colspan="5"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                  <TR > 
+                    <TD width="50%" class="TableHeaderLevel3" id="fieldNivel3">xxProducto</TD>
+                  </TR>
+                </TABLE></TD>
+              <TD width="6%" align="right" class="TableHeaderLevel3" id="fieldTotalNivel3">xx2344</TD>
+              <TD width="7%" align="right" class="TableHeaderLevel3" id="fieldTotalRefundNivel3">xx34</TD>
+              <TD width="5%" align="right" class="TableHeaderLevel3" id="fieldTotal3">xx</TD>
+              <TD width="6%" align="right" class="TableHeaderLevel3" id="fieldTotalRefNivel3">xx2344</TD>
+              <TD width="6%" align="right" class="TableHeaderLevel3" id="fieldTotalRefRefundNivel3">xx34</TD>
+              <TD width="6%" align="right" class="TableHeaderLevel3" id="fieldTotalRef3">xx</TD>
+              <TD width="5%" align="right" class="TableHeaderLevel3" id="fieldDifRatio3">xx</TD>
+              <TD width="5%" align="right" class="TableHeaderLevel3" id="fieldTotalQtyNivel3">xx</TD>
+              <TD width="3%" align="right" class="TableHeaderLevel3" id="fieldUomsymbol3">xx</TD>
+              <TD width="5%" align="right" class="TableHeaderLevel3" id="fieldTotalRefundQtyNivel3">xx</TD>
+              <TD width="3%" align="right" class="TableHeaderLevel3" id="fieldUomsymbol3">xx</TD>
+              <TD width="5%" align="right" class="TableHeaderLevel3" id="fieldTotalRefQtyNivel3">xx</TD>
+              <TD width="3%" align="right" class="TableHeaderLevel3" id="fieldUomsymbol3">xx</TD>
+              <TD width="5%" align="right" class="TableHeaderLevel3" id="fieldTotalRefRefundQtyNivel3">xx</TD>
+              <TD width="3%" align="right" class="TableHeaderLevel3" id="fieldUomsymbol3">xx</TD>
+              <INPUT type="hidden" name="inpAux3" value="" id="fieldAuxTotalQtyNivel3"></INPUT>
+              <INPUT type="hidden" name="inpAuxQty3" value="" id="fieldAuxTotalRefQtyNivel3"></INPUT>
+            </TR>
+            <DIV id="sectionNivel4"> 
+              <TR id="paramEliminar4" style=""> 
+                <TD width="2%"></TD>
+                <TD width="2%"></TD>
+                <TD width="2%"></TD>
+                <TD colspan="4"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                    <TR > 
+                      <TD width="50%" class="TableHeaderLevel4" id="fieldNivel4">xxCategoria 
+                        producto</TD>
+                    </TR>
+                  </TABLE></TD>
+                <TD width="6%" align="right" class="TableHeaderLevel4" id="fieldTotalNivel4">xx2344</TD>
+                <TD width="7%" align="right" class="TableHeaderLevel4" id="fieldTotalRefundNivel4">xx34</TD>
+                <TD width="5%" align="right" class="TableHeaderLevel4" id="fieldTotal4">xx</TD>
+                <TD width="6%" align="right" class="TableHeaderLevel4" id="fieldTotalRefNivel4">xx2344</TD>
+                <TD width="6%" align="right" class="TableHeaderLevel4" id="fieldTotalRefRefundNivel4">xx34</TD>
+                <TD width="6%" align="right" class="TableHeaderLevel4" id="fieldTotalRef4">xx</TD>
+                <TD width="5%" align="right" class="TableHeaderLevel4" id="fieldDifRatio4">xx</TD>
+                <TD width="5%" align="right" class="TableHeaderLevel4" id="fieldTotalQtyNivel4">xx</TD>
+                <TD width="3%" align="right" class="TableHeaderLevel4" id="fieldUomsymbol4">xx</TD>
+                <TD width="5%" align="right" class="TableHeaderLevel4" id="fieldTotalRefundQtyNivel4">xx</TD>
+                <TD width="3%" align="right" class="TableHeaderLevel4" id="fieldUomsymbol4">xx</TD>
+                <TD width="5%" align="right" class="TableHeaderLevel4" id="fieldTotalRefQtyNivel4">xx</TD>
+                <TD width="3%" align="right" class="TableHeaderLevel4" id="fieldUomsymbol4">xx</TD>
+                <TD width="5%" align="right" class="TableHeaderLevel4" id="fieldTotalRefRefundQtyNivel4">xx</TD>
+                <TD width="3%" align="right" class="TableHeaderLevel4" id="fieldUomsymbol4">xx</TD>
+                <INPUT type="hidden" name="inpAux4" value="" id="fieldAuxTotalQtyNivel4"></INPUT>
+                <INPUT type="hidden" name="inpAuxQty4" value="" id="fieldAuxTotalRefQtyNivel4"></INPUT>
+              </TR>
+              <DIV id="sectionNivel5"> 
+                <TR id="paramEliminar5" style=""> 
+                  <TD width="2%"></TD>
+                  <TD width="2%"></TD>
+                  <TD width="2%"></TD>
+                  <TD width="2%"></TD>
+                  <TD colspan="3"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                      <TR > 
+                        <TD width="50%" class="TableHeaderLevel5" id="fieldNivel5">xxAlmacen</TD>
+                      </TR>
+                    </TABLE></TD>
+                  <TD width="6%" align="right" class="TableHeaderLevel5" id="fieldTotalNivel5">xx2344</TD>
+                  <TD width="7%" align="right" class="TableHeaderLevel5" id="fieldTotalRefundNivel5">xx34</TD>
+                  <TD width="5%" align="right" class="TableHeaderLevel5" id="fieldTotal5">xx</TD>
+                  <TD width="6%" align="right" class="TableHeaderLevel5" id="fieldTotalRefNivel5">xx2344</TD>
+                  <TD width="6%" align="right" class="TableHeaderLevel5" id="fieldTotalRefRefundNivel5">xx34</TD>
+                  <TD width="6%" align="right" class="TableHeaderLevel5" id="fieldTotalRef5">xx</TD>
+                  <TD width="5%" align="right" class="TableHeaderLevel5" id="fieldDifRatio5">xx</TD>
+                  <TD width="5%" align="right" class="TableHeaderLevel5" id="fieldTotalQtyNivel5">xx</TD>
+                  <TD width="3%" align="right" class="TableHeaderLevel5" id="fieldUomsymbol5">xx</TD>
+                  <TD width="5%" align="right" class="TableHeaderLevel5" id="fieldTotalRefundQtyNivel5">xx</TD>
+                  <TD width="3%" align="right" class="TableHeaderLevel5" id="fieldUomsymbol5">xx</TD>
+                  <TD width="5%" align="right" class="TableHeaderLevel5" id="fieldTotalRefQtyNivel5">xx</TD>
+                  <TD width="3%" align="right" class="TableHeaderLevel5" id="fieldUomsymbol5">xx</TD>
+                  <TD width="5%" align="right" class="TableHeaderLevel5" id="fieldTotalRefRefundQtyNivel5">xx</TD>
+                  <TD width="3%" align="right" class="TableHeaderLevel5" id="fieldUomsymbol5">xx</TD>
+                  <INPUT type="hidden" name="inpAux5" value="" id="fieldAuxTotalQtyNivel5"></INPUT>
+                  <INPUT type="hidden" name="inpAuxQty5" value="" id="fieldAuxTotalRefQtyNivel5"></INPUT>
+                </TR>
+                <DIV id="sectionNivel6"> 
+                  <TR id="paramEliminar6" style=""> 
+                    <TD width="2%"></TD>
+                    <TD width="2%"></TD>
+                    <TD width="2%"></TD>
+                    <TD width="2%"></TD>
+                    <TD width="2%"></TD>
+                    <TD colspan="2"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                        <TR > 
+                          <TD width="50%" class="TableHeaderLevel6" id="fieldNivel6">xxComercial</TD>
+                        </TR>
+                      </TABLE></TD>
+                    <TD width="6%" align="right" class="TableHeaderLevel6" id="fieldTotalNivel6">xx2344</TD>
+                    <TD width="7%" align="right" class="TableHeaderLevel6" id="fieldTotalRefundNivel6">xx34</TD>
+                    <TD width="5%" align="right" class="TableHeaderLevel6" id="fieldTotal6">xx</TD>
+                    <TD width="6%" align="right" class="TableHeaderLevel6" id="fieldTotalRefNivel6">xx2344</TD>
+                    <TD width="6%" align="right" class="TableHeaderLevel6" id="fieldTotalRefRefundNivel6">xx34</TD>
+                    <TD width="6%" align="right" class="TableHeaderLevel6" id="fieldTotalRef6">xx</TD>
+                    <TD width="5%" align="right" class="TableHeaderLevel6" id="fieldDifRatio6">xx</TD>
+                    <TD width="5%" align="right" class="TableHeaderLevel6" id="fieldTotalQtyNivel6">xx</TD>
+                    <TD width="3%" align="right" class="TableHeaderLevel6" id="fieldUomsymbol6">xx</TD>
+                    <TD width="5%" align="right" class="TableHeaderLevel6" id="fieldTotalRefundQtyNivel6">xx</TD>
+                    <TD width="3%" align="right" class="TableHeaderLevel6" id="fieldUomsymbol6">xx</TD>
+                    <TD width="5%" align="right" class="TableHeaderLevel6" id="fieldTotalRefQtyNivel6">xx</TD>
+                    <TD width="3%" align="right" class="TableHeaderLevel6" id="fieldUomsymbol6">xx</TD>
+                    <TD width="5%" align="right" class="TableHeaderLevel6" id="fieldTotalRefRefundQtyNivel6">xx</TD>
+                    <TD width="3%" align="right" class="TableHeaderLevel6" id="fieldUomsymbol6">xx</TD>
+                    <INPUT type="hidden" name="inpAux6" value="" id="fieldAuxTotalQtyNivel6"></INPUT>
+                    <INPUT type="hidden" name="inpAuxQty6" value="" id="fieldAuxTotalRefQtyNivel6"></INPUT>
+                  </TR>
+                  <DIV id="sectionNivel7"> 
+                    <TR id="paramEliminar7" style=""> 
+                      <TD width="2%"></TD>
+                      <TD width="2%"></TD>
+                      <TD width="2%"></TD>
+                      <TD width="2%"></TD>
+                      <TD width="2%"></TD>
+                      <TD width="2%"></TD>
+                      <TD> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                          <DIV id="sectionDetail"> 
+                            <TR > 
+                              <TD width="50%" class="TableDetailRow1" id="fieldNivel7">xxComercial</TD>
+                            </TR>
+                          </DIV>
+                        </TABLE></TD>
+                      <TD width="6%" align="right" class="TableDetailRow1" id="fieldTotalNivel7">xx2344</TD>
+                      <TD width="7%" align="right" class="TableDetailRow1" id="fieldTotalRefundNivel7">xx34</TD>
+                      <TD width="5%" align="right" class="TableDetailRow1" id="fieldTotal7">xx</TD>
+                      <TD width="6%" align="right" class="TableDetailRow1" id="fieldTotalRefNivel7">xx2344</TD>
+                      <TD width="6%" align="right" class="TableDetailRow1" id="fieldTotalRefRefundNivel7">xx34</TD>
+                      <TD width="6%" align="right" class="TableDetailRow1" id="fieldTotalRef7">xx</TD>
+                      <TD width="5%" align="right" class="TableDetailRow1" id="fieldDifRatio7">xx</TD>
+                      <TD width="5%" align="right" class="TableDetailRow1" id="fieldTotalQtyNivel7">xx</TD>
+                      <TD width="3%" align="right" class="TableDetailRow1" id="fieldUomsymbol7">xx</TD>
+                      <TD width="5%" align="right" class="TableDetailRow1" id="fieldTotalRefundQtyNivel7">xx</TD>
+                      <TD width="3%" align="right" class="TableDetailRow1" id="fieldUomsymbol7">xx</TD>
+                      <TD width="5%" align="right" class="TableDetailRow1" id="fieldTotalRefQtyNivel7">xx</TD>
+                      <TD width="3%" align="right" class="TableDetailRow1" id="fieldUomsymbol7">xx</TD>
+                      <TD width="5%" align="right" class="TableDetailRow1" id="fieldTotalRefRefundQtyNivel7">xx</TD>
+                      <TD width="3%" align="right" class="TableDetailRow1" id="fieldUomsymbol7">xx</TD>
+                      <INPUT type="hidden" name="inpAux6" value="" id="fieldAuxTotalQtyNivel7"></INPUT>
+                      <INPUT type="hidden" name="inpAuxQty6" value="" id="fieldAuxTotalRefQtyNivel7"></INPUT>
+                    </TR>
+                  </DIV>
+                </DIV>
+              </DIV>
+            </DIV>
+          </DIV>
+        </DIV>
+      </TABLE>
+    </DIV>
+  </DIV>
+  <BR></BR>
+  <BR></BR>
+  <DIV id="selEliminarBody2"> 
+    <TABLE width="90%" align="center" border="0" cellspacing="0" cellpadding="0">
+      <TR>
+        <TD width="4%"> </TD>
+        <TD class="Total_Field_Title">Sales total</TD> 
+        <TD class="Total_Field" id="fieldNoncomparativeTotal"></TD>
+        <TD class="Total_Field_Title">Total devol.</TD> 
+        <TD class="Total_Field" id="fieldNoncomparativeTotalRefund">xx3455.45</TD>
+        <TD class="Total_Field_Title">Total % ratio</TD> 
+        <TD class="Total_Field" id="fieldNoncomparativeTotalAvg">xx3455.45</TD>
+      </TR>
+
+    </TABLE>
+
+    <BR></BR>
+    <DIV id="sectionNoncomparativeNivel1"> 
+      <TABLE border="0" cellpadding="0" cellspacing="0" width="90%" align="center" id="selEliminar2">
+        <TR> 
+          <TD width="5%">&nbsp;</TD>
+          <TD width="5%">&nbsp;</TD>
+          <TD width="5%">&nbsp;</TD>
+          <TD width="5%">&nbsp;</TD>
+          <TD width="5%">&nbsp;</TD>
+          <TD width="5%">&nbsp;</TD>
+          <TD width="22%" align="right">&nbsp;</TD>
+          <TD width="8%" align="right">&nbsp;</TD>
+          <TD width="9%" align="right">&nbsp;</TD>
+          <TD width="7%" align="right">&nbsp;</TD>
+          <TD width="7%" align="right">&nbsp;</TD>
+          <TD width="5%" align="right">&nbsp;</TD>
+          <TD width="7%" align="right">&nbsp;</TD>
+          <TD width="5%" align="right">&nbsp;</TD>
+        </TR>
+        <TR> 
+          <TD colspan="7" height="16" class="Bold"></TD>
+          <TD width="6%" align="right" class="TableDetailHeader"> <SPAN class="Bold">Sales</SPAN></TD>
+          <TD width="7%" align="right" class="TableDetailHeader"> <SPAN class="Bold">Devolutions</SPAN></TD>
+          <TD width="5%" align="right" class="TableDetailHeader"> <SPAN class="Bold">% ratio</SPAN></TD>
+          <TD colspan="2" width="2" align="right" class="TableDetailHeader"> <SPAN class="Bold">Quantity</SPAN></TD>
+          <TD colspan="2" width="2" align="right" class="TableDetailHeader"> <SPAN class="Bold">Quantity retur.</SPAN></TD>
+        </TR>
+        <TR> 
+          <TD colspan="7"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+              <TR> 
+                <TD width="50%" class="TableHeaderLevel1" id="fieldNoncomparativeNivel1">xxTercero</TD>
+              </TR>
+            </TABLE></TD>
+          <TD width="8%" align="right" class="TableHeaderLevel1" id="fieldNoncomparativeTotalNivel1">xx56.34</TD>
+          <TD width="9%" align="right" class="TableHeaderLevel1" id="fieldNoncomparativeTotalRefundNivel1">xx56.34</TD>
+          <TD width="7%" align="right" class="TableHeaderLevel1" id="fieldNoncomparativeTotal1">xx</TD>
+          <TD width="7%" align="right" class="TableHeaderLevel1" id="fieldNoncomparativeTotalQtyNivel1">xx</TD>
+          <TD width="5%" align="right" class="TableHeaderLevel1" id="fieldNoncomparativeUomsymbol1">xx</TD>
+          <TD width="7%" align="right" class="TableHeaderLevel1" id="fieldNoncomparativeTotalRefundQtyNivel1">xx</TD>
+          <TD width="5%" align="right" class="TableHeaderLevel1" id="fieldNoncomparativeUomsymbol1">xx</TD>
+          <INPUT type="hidden" name="inpAux1" value="" id="fieldNoncomparativeAuxTotalQtyNivel1"></INPUT>
+        </TR>
+        <DIV id="sectionNoncomparativeNivel2"> 
+          <TR id="paramEliminar2" style=""> 
+            <TD width="5%"></TD>
+            <TD colspan="6"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                <TR > 
+                  <TD width="50%" class="TableHeaderLevel2" id="fieldNoncomparativeNivel2">xxCategoria 
+                    tercero</TD>
+                </TR>
+              </TABLE></TD>
+            <TD width="8%" align="right" class="TableHeaderLevel2" id="fieldNoncomparativeTotalNivel2">xx2344</TD>
+            <TD width="9%" align="right" class="TableHeaderLevel2" id="fieldNoncomparativeTotalRefundNivel2">xx34</TD>
+            <TD width="7%" align="right" class="TableHeaderLevel2" id="fieldNoncomparativeTotal2">xx</TD>
+            <TD width="7%" align="right" class="TableHeaderLevel2" id="fieldNoncomparativeTotalQtyNivel2">xx</TD>
+            <TD width="5%" align="right" class="TableHeaderLevel2" id="fieldNoncomparativeUomsymbol2">xx</TD>
+            <TD width="7%" align="right" class="TableHeaderLevel2" id="fieldNoncomparativeTotalRefundQtyNivel2">xx</TD>
+            <TD width="5%" align="right" class="TableHeaderLevel2" id="fieldNoncomparativeUomsymbol2">xx</TD>
+            <INPUT type="hidden" name="inpAux2" value="" id="fieldNoncomparativeAuxTotalQtyNivel2"></INPUT>
+          </TR>
+          <DIV id="sectionNoncomparativeNivel3"> 
+            <TR id="paramEliminar3" style=""> 
+              <TD width="5%"></TD>
+              <TD width="5%"></TD>
+              <TD colspan="5"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                  <TR > 
+                    <TD width="50%" class="TableHeaderLevel3" id="fieldNoncomparativeNivel3">xxProducto</TD>
+                  </TR>
+                </TABLE></TD>
+              <TD width="8%" align="right" class="TableHeaderLevel3" id="fieldNoncomparativeTotalNivel3">xx2344</TD>
+              <TD width="9%" align="right" class="TableHeaderLevel3" id="fieldNoncomparativeTotalRefundNivel3">xx34</TD>
+              <TD width="7%" align="right" class="TableHeaderLevel3" id="fieldNoncomparativeTotal3">xx</TD>
+              <TD width="7%" align="right" class="TableHeaderLevel3" id="fieldNoncomparativeTotalQtyNivel3">xx</TD>
+              <TD width="5%" align="right" class="TableHeaderLevel3" id="fieldNoncomparativeUomsymbol3">xx</TD>
+              <TD width="7%" align="right" class="TableHeaderLevel3" id="fieldNoncomparativeTotalRefundQtyNivel3">xx</TD>
+              <TD width="5%" align="right" class="TableHeaderLevel3" id="fieldNoncomparativeUomsymbol3">xx</TD>
+              <INPUT type="hidden" name="inpAux3" value="" id="fieldNoncomparativeAuxTotalQtyNivel3"></INPUT>
+            </TR>
+            <DIV id="sectionNoncomparativeNivel4"> 
+              <TR id="paramEliminar4" style=""> 
+                <TD width="5%"></TD>
+                <TD width="5%"></TD>
+                <TD width="5%"></TD>
+                <TD colspan="4"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                    <TR > 
+                      <TD width="50%" class="TableHeaderLevel4" id="fieldNoncomparativeNivel4">xxCategoria 
+                        producto</TD>
+                    </TR>
+                  </TABLE></TD>
+                <TD width="8%" align="right" class="TableHeaderLevel4" id="fieldNoncomparativeTotalNivel4">xx2344</TD>
+                <TD width="9%" align="right" class="TableHeaderLevel4" id="fieldNoncomparativeTotalRefundNivel4">xx34</TD>
+                <TD width="7%" align="right" class="TableHeaderLevel4" id="fieldNoncomparativeTotal4">xx</TD>
+                <TD width="7%" align="right" class="TableHeaderLevel4" id="fieldNoncomparativeTotalQtyNivel4">xx</TD>
+                <TD width="5%" align="right" class="TableHeaderLevel4" id="fieldNoncomparativeUomsymbol4">xx</TD>
+                <TD width="7%" align="right" class="TableHeaderLevel4" id="fieldNoncomparativeTotalRefundQtyNivel4">xx</TD>
+                <TD width="5%" align="right" class="TableHeaderLevel4" id="fieldNoncomparativeUomsymbol4">xx</TD>
+                <INPUT type="hidden" name="inpAux4" value="" id="fieldNoncomparativeAuxTotalQtyNivel4"></INPUT>
+              </TR>
+              <DIV id="sectionNoncomparativeNivel5"> 
+                <TR id="paramEliminar5" style=""> 
+                  <TD width="5%"></TD>
+                  <TD width="5%"></TD>
+                  <TD width="5%"></TD>
+                  <TD width="5%"></TD>
+                  <TD colspan="3"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                      <TR > 
+                        <TD width="50%" class="TableHeaderLevel5" id="fieldNoncomparativeNivel5">xxAlmacen</TD>
+                      </TR>
+                    </TABLE></TD>
+                  <TD width="8%" align="right" class="TableHeaderLevel5" id="fieldNoncomparativeTotalNivel5">xx2344</TD>
+                  <TD width="9%" align="right" class="TableHeaderLevel5" id="fieldNoncomparativeTotalRefundNivel5">xx34</TD>
+                  <TD width="7%" align="right" class="TableHeaderLevel5" id="fieldNoncomparativeTotal5">xx</TD>
+                  <TD width="7%" align="right" class="TableHeaderLevel5" id="fieldNoncomparativeTotalQtyNivel5">xx</TD>
+                  <TD width="5%" align="right" class="TableHeaderLevel5" id="fieldNoncomparativeUomsymbol5">xx</TD>
+                  <TD width="7%" align="right" class="TableHeaderLevel5" id="fieldNoncomparativeTotalRefundQtyNivel5">xx</TD>
+                  <TD width="5%" align="right" class="TableHeaderLevel5" id="fieldNoncomparativeUomsymbol5">xx</TD>
+                  <INPUT type="hidden" name="inpAux5" value="" id="fieldNoncomparativeAuxTotalQtyNivel5"></INPUT>
+                </TR>
+                <DIV id="sectionNoncomparativeNivel6"> 
+                  <TR id="paramEliminar6" style=""> 
+                    <TD width="5%"></TD>
+                    <TD width="5%"></TD>
+                    <TD width="5%"></TD>
+                    <TD width="5%"></TD>
+                    <TD width="5%"></TD>
+                    <TD colspan="2"> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                        <TR > 
+                          <TD width="50%" class="TableHeaderLevel6" id="fieldNoncomparativeNivel6">xxComercial</TD>
+                        </TR>
+                      </TABLE></TD>
+                    <TD width="8%" align="right" class="TableHeaderLevel6" id="fieldNoncomparativeTotalNivel6">xx2344</TD>
+                    <TD width="9%" align="right" class="TableHeaderLevel6" id="fieldNoncomparativeTotalRefundNivel6">xx34</TD>
+                    <TD width="7%" align="right" class="TableHeaderLevel6" id="fieldNoncomparativeTotal6">xx</TD>
+                    <TD width="7%" align="right" class="TableHeaderLevel6" id="fieldNoncomparativeTotalQtyNivel6">xx</TD>
+                    <TD width="5%" align="right" class="TableHeaderLevel6" id="fieldNoncomparativeUomsymbol6">xx</TD>
+                    <TD width="7%" align="right" class="TableHeaderLevel6" id="fieldNoncomparativeTotalRefundQtyNivel6">xx</TD>
+                    <TD width="5%" align="right" class="TableHeaderLevel6" id="fieldNoncomparativeUomsymbol6">xx</TD>
+                    <INPUT type="hidden" name="inpAux6" value="" id="fieldNoncomparativeAuxTotalQtyNivel6"></INPUT>
+                  </TR>
+                  <DIV id="sectionNoncomparativeNivel7"> 
+                    <TR id="paramEliminar7" style=""> 
+                      <TD width="5%"></TD>
+                      <TD width="5%"></TD>
+                      <TD width="5%"></TD>
+                      <TD width="5%"></TD>
+                      <TD width="5%"></TD>
+                      <TD width="5%"></TD>
+                      <TD> <TABLE width="100%" align="center" border="0" cellspacing="0" cellpadding="0">
+                          <DIV id="sectionNoncomparativeDetail"> 
+                            <TR > 
+                              <TD width="50%" class="TableDetailRow1" id="fieldNoncomparativeNivel7">xxComercial</TD>
+                            </TR>
+                          </DIV>
+                        </TABLE></TD>
+                      <TD width="8%" align="right" class="TableDetailRow1" id="fieldNoncomparativeTotalNivel7">xx2344</TD>
+                      <TD width="9%" align="right" class="TableDetailRow1" id="fieldNoncomparativeTotalRefundNivel7">xx34</TD>
+                      <TD width="7%" align="right" class="TableDetailRow1" id="fieldNoncomparativeTotal7">xx</TD>
+                      <TD width="7%" align="right" class="TableDetailRow1" id="fieldNoncomparativeTotalQtyNivel7">xx</TD>
+                      <TD width="5%" align="right" class="TableDetailRow1" id="fieldNoncomparativeUomsymbol7">xx</TD>
+                      <TD width="7%" align="right" class="TableDetailRow1" id="fieldNoncomparativeTotalRefundQtyNivel7">xx</TD>
+                      <TD width="5%" align="right" class="TableDetailRow1" id="fieldNoncomparativeUomsymbol7">xx</TD>
+                      <INPUT type="hidden" name="inpAux6" value="" id="fieldNoncomparativeAuxTotalQtyNivel7"></INPUT>
+                    </TR>
+                  </DIV>
+                </DIV>
+              </DIV>
+            </DIV>
+          </DIV>
+        </DIV>
+      </TABLE>
+    </DIV>
+  </DIV>
+  <BR></BR>
+  <BR></BR>
+</FORM>
+</BODY>
+</HTML>

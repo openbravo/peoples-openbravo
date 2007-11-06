@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<database name="TABLE W_CLICK">
+    <table name="W_CLICK" primaryKey="W_CLICK_KEY">
+      <column name="W_CLICK_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="TARGETURL" primaryKey="false" required="false" type="NVARCHAR" size="120" autoIncrement="false"/>
+      <column name="REFERRER" primaryKey="false" required="false" type="NVARCHAR" size="120" autoIncrement="false"/>
+      <column name="REMOTE_HOST" primaryKey="false" required="false" type="NVARCHAR" size="120" autoIncrement="false"/>
+      <column name="REMOTE_ADDR" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="USERAGENT" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="ACCEPTLANGUAGE" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="PROCESSED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="W_CLICKCOUNT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_USER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="EMAIL" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
+      <check name="WCLICK_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <check name="WCLICK_PROCESSED_CHECK" condition="Processed in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_WCLICK">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_WCLICK">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="ADUSER_WCLICK">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="W_CLICKCOUNT" name="WCLICKCOUNT_WCLICK"   onDelete="cascade">
+        <reference local="W_CLICKCOUNT_ID" foreign="W_CLICKCOUNT_ID"/>
+      </foreign-key>
+    </table>
+</database>

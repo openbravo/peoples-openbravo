@@ -1,0 +1,156 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+package org.openbravo.wad.controls;
+
+import java.util.*;
+import org.openbravo.xmlEngine.XmlDocument;
+
+public class WADString extends WADControl {
+  private WADControl button;
+
+  public WADString() {
+  }
+
+  public WADString(Properties prop) {
+    setInfo(prop);
+    initialize();
+  }
+
+  public void initialize() {
+    generateJSCode();
+    this.button = new WADFieldButton("Password", getData("ColumnName"), getData("ColumnNameInp"), getData("Name"), "openServletNewWindow('BUTTON" + getData("ColumnName") + "', false, '" + getData("TabName") + "_Edition.html', 'BUTTON', null, true, 300, 600);");
+  }
+
+  private void generateJSCode() {
+    addImport("ValidationTextBox", "../../../../../web/js/default/ValidationTextBox.js");
+    generateMessages();
+    StringBuffer validation = new StringBuffer();
+    if (getData("IsMandatory").equals("Y")) {
+      validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==\"\") {\n");
+      if (getData("IsDisplayed").equals("Y")) validation.append("    frm.inp").append(getData("ColumnNameInp")).append(".focus();\n");
+      validation.append("    mensaje(1);\n");
+      validation.append("    return false;\n");
+      validation.append("  }\n");
+    }
+    setValidation(validation.toString());
+    setCalloutJS();
+  }
+
+  public String getType() {
+    return "TextBox_btn";
+  }
+
+  public String editMode() {
+    XmlDocument xmlDocument = null;
+    String textButton = "";
+    String buttonClass = "";
+    boolean isDisabled = false;
+    if (getData("IsEncrypted").equals("Y")) {
+      if (getData("IsReadOnly").equals("N") && getData("IsReadOnlyTab").equals("N") && getData("IsUpdateable").equals("Y")) {
+        this.button.setReportEngine(getReportEngine());
+        textButton = this.button.toString();
+        buttonClass = this.button.getType();
+      }
+      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADStringEncrypted").createXmlDocument();
+      xmlDocument.setParameter("hasButton", (textButton.equals("")?"TextButton_ContentCell":""));
+      xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
+      xmlDocument.setParameter("button", textButton);
+      isDisabled = true;
+    } else {
+      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADString").createXmlDocument();
+    }
+
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+    xmlDocument.setParameter("size", (textButton.equals("")?"":"btn_") + getData("CssSize"));
+    xmlDocument.setParameter("maxlength", getData("FieldLength"));
+    xmlDocument.setParameter("invalid", this.invalid);
+    xmlDocument.setParameter("missing", this.missing);
+    xmlDocument.setParameter("range", this.range);
+
+    if (!isDisabled) isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
+    xmlDocument.setParameter("disabled", (isDisabled?"Y":"N"));
+    if (isDisabled) {
+      xmlDocument.setParameter("required", "false");
+      xmlDocument.setParameter("requiredClass", " readonly");
+    } else if (getData("IsMandatory").equals("Y")) {
+      xmlDocument.setParameter("required", "true");
+      xmlDocument.setParameter("requiredClass", " required");
+    } else {
+      xmlDocument.setParameter("required", "false");
+      xmlDocument.setParameter("requiredClass", "");
+    }
+    xmlDocument.setParameter("textBoxCSS", (isDisabled?"_ReadOnly":""));
+
+    xmlDocument.setParameter("callout", getOnChangeCode());
+
+    return replaceHTML(xmlDocument.print());
+  }
+
+  public String newMode() {
+    XmlDocument xmlDocument = null;
+    String textButton = "";
+    String buttonClass = "";
+    boolean isDisabled = false;
+    if (getData("IsEncrypted").equals("Y")) {
+      if (getData("IsReadOnly").equals("N") && getData("IsReadOnlyTab").equals("N")) {
+        this.button.setReportEngine(getReportEngine());
+        textButton = this.button.toString();
+        buttonClass = this.button.getType();
+      }
+      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADStringEncrypted").createXmlDocument();
+      xmlDocument.setParameter("hasButton", (textButton.equals("")?"TextButton_ContentCell":""));
+      xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
+      xmlDocument.setParameter("button", textButton);
+      isDisabled = true;
+    } else {
+      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADString").createXmlDocument();
+    }
+
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+    xmlDocument.setParameter("size", (textButton.equals("")?"":"btn_") + getData("CssSize"));
+    xmlDocument.setParameter("maxlength", getData("FieldLength"));
+    xmlDocument.setParameter("invalid", this.invalid);
+    xmlDocument.setParameter("missing", this.missing);
+    xmlDocument.setParameter("range", this.range);
+
+    if (!isDisabled) isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
+    xmlDocument.setParameter("disabled", (isDisabled?"Y":"N"));
+    if (isDisabled) {
+      xmlDocument.setParameter("required", "false");
+      xmlDocument.setParameter("requiredClass", " readonly");
+    } else if (getData("IsMandatory").equals("Y")) {
+      xmlDocument.setParameter("required", "true");
+      xmlDocument.setParameter("requiredClass", " required");
+    } else {
+      xmlDocument.setParameter("required", "false");
+      xmlDocument.setParameter("requiredClass", "");
+    }
+    xmlDocument.setParameter("textBoxCSS", (isDisabled?"_ReadOnly":""));
+
+    xmlDocument.setParameter("callout", getOnChangeCode());
+
+    return replaceHTML(xmlDocument.print());
+  }
+
+  public String toJava() {
+    return "";
+  }
+}

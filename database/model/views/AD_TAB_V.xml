@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<database name="VIEW AD_TAB_V">
+<view name="AD_TAB_V"><![CDATA[
+SELECT t.AD_Tab_ID, t.AD_Window_ID, t.AD_Table_ID, t.Name, t.Description,
+t.Help, t.SeqNo, t.IsSingleRow, t.HasTree, t.IsInfoTab, tbl.ReplicationType,
+tbl.TableName, tbl.AccessLevel, tbl.IsSecurityEnabled, tbl.IsDeleteable,
+tbl.IsHighVolume, tbl.IsView, TO_CHAR('N') AS HasAssociation,
+t.IsTranslationTab, t.IsReadOnly, t.AD_Image_ID, t.TabLevel,
+t.WhereClause, t.OrderByClause, t.CommitWarning,
+t.AD_Column_ID, t.AD_Process_ID, t.IsSortTab,
+t.AD_ColumnSortOrder_ID, t.AD_ColumnSortYesNo_ID, t.Included_Tab_ID
+FROM AD_Tab t
+  INNER JOIN AD_Table tbl ON (t.AD_Table_ID = tbl.AD_Table_ID)
+WHERE t.IsActive='Y'
+  AND tbl.IsActive='Y'
+]]></view>
+</database>

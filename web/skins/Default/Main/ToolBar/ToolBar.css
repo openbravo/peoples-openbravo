@@ -1,0 +1,380 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+.Main_ToolBar_bg {
+  background: url(backgroundCenter.png) repeat-x top center;
+  background-color: #505050;
+}
+
+.Main_ToolBar_bg_left {
+  width: 8px;
+  height: 48px;
+  background: url(backgroundLeft.png) no-repeat top center;
+}
+
+.Main_ToolBar_bg_right {
+  width: 8px;
+  height: 48px;
+  background: url(backgroundRight.png) repeat-x top center;
+}
+
+
+
+.Main_ToolBar_textlabel_bg_left {
+  height: 26px;
+  width: 9px;
+  background: url(labelLeft.png) no-repeat center right;
+}
+
+.Main_ToolBar_textlabel_bg_body {
+  background: url(labelBody.png) repeat-x center center;
+}
+
+.Main_ToolBar_textlabel_bg_right {
+  height: 26px;
+  width: 9px;
+  background: url(labelRight.png) no-repeat center left;
+}
+
+a.Main_ToolBar_text_relatedinfo {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  COLOR: #B4B4B4;
+  margin: 0px 5px 0px 5px;
+  text-indent: 5px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+a.Main_ToolBar_text_relatedinfo:hover {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  COLOR: #C8C8C8;
+  margin: 0px 5px 0px 5px;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+
+
+.Main_ToolBar_text_bookmark {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  COLOR: #B4B4B4;
+}
+
+
+
+
+.Main_ToolBar_Space {
+  width: 100%;
+}
+
+.Main_ToolBar_Separator_cell {
+	width: 26px;
+}
+
+.Main_ToolBar_Separator {
+  height: 26px;
+  width: 16px;
+  background: url(separator.png) no-repeat center center;
+}
+
+
+
+
+.Main_ToolBar_Bookmark{
+  color: navy;
+  font-size: 8pt;
+  font-weight: bold;
+}
+
+.Main_ToolBar TD {
+  BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none
+}
+
+
+/* Buttons definition for ToolBar */
+a.Main_ToolBar_Button {
+  display:block;
+  margin-left:0px;
+  margin-right:0px;
+  width:26px;
+  height:26px;
+  border:0px;
+  vertical-align: middle;
+  -moz-outline-style: none;
+}
+
+a.Main_ToolBar_Button:visited { 
+}
+
+a.Main_ToolBar_Button:hover {
+  background: url(button.rollover.png) no-repeat center center;
+}
+
+a.Main_ToolBar_Button:active {
+  background: url(button.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+
+
+
+
+.ToolBar_DropDown_Menu_span_VISIBLE {
+  position: absolute;
+  z-index: 99;
+}
+
+.ToolBar_DropDown_Menu_span_HIDDEN {
+  height: 0px;
+  display:none;
+  visibility: collapse;
+}
+
+table.ToolBar_DropDown_Menu_table {
+  border: 0px;
+  border-bottom: 1px solid #101010;
+  border-collapse: collapse;
+  margin-left: 5px;
+}
+
+tr.ToolBar_DropDown_Menu_tr {
+  height:5px;
+  font-size:0pt;
+}
+
+td.ToolBar_DropDown_Menu_td1 {
+  width:8px;
+  height:5px;
+  border: 0px;
+  border-bottom: 1px solid #101010;
+}
+
+td.ToolBar_DropDown_Menu_td2 {
+  border: 0px;
+  border-bottom: 1px solid #101010;
+}
+
+.ToolBar_DropDown_Menu_div {
+  position: relative;
+  margin-bottom: -2px;
+  width:8px;
+  height:5px;
+  background: url(dropdown_arrow.gif) no-repeat top;
+}
+
+.ToolBar_DropDown_Menu_div2{
+  vertical-align: middle;
+  height: 18px;
+  _height: 22px;
+  border-left: 1px solid #101010;
+  border-right: 1px solid #101010;
+  padding-top: 1px;
+  _padding-top: 1px;
+  padding-bottom: 1px;
+  _padding-bottom: 0px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+table.ToolBar_DropDown_MenuVt_table {
+  border:0px;
+  border-collapse:collapse;
+}
+
+td.ToolBar_DropDown_MenuVt_td {
+  height:23px;
+}
+
+
+td.ToolBar_DropDown_Menu_bg {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 10pt;
+  white-space: nowrap;
+  color: white;
+  font-weight: normal;
+  background-color: #3A9011;
+  cursor: pointer;
+}
+
+td.ToolBar_DropDown_Menu_bg_hover {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 10pt;
+  white-space: nowrap;
+  color: white;
+  font-weight: normal;
+  background-color: #808080;
+  cursor: pointer;
+}
+
+td.ToolBar_DropDown_Menu_bg_active {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 10pt;
+  white-space: nowrap;
+  color: white;
+  font-weight: normal;
+  background-color: #959595;
+  cursor: pointer;
+}
+
+
+
+
+
+.ToolBar_DropDown_Menu_Icon {
+  border: 0px none;
+  width: 14px;
+  height: 13px;
+  margin: 0px;
+  vertical-align: middle;
+  margin-bottom: 3px;
+  _margin-bottom: 0px;
+}
+
+.ToolBar_DropDown_Menu_Icon_Excel {
+  background: url(miniconExcel.png) no-repeat center center;
+}
+
+.ToolBar_DropDown_Menu_Icon_Pdf {
+  background: url(miniconPdf.png) no-repeat center center;
+}
+
+.ToolBar_DropDown_Menu_Icon_Csv {
+  background: url(miniconCsv.png) no-repeat center center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Icons definition for ToolBar */
+.Main_ToolBar_Button_Icon {
+  border: 0px none;
+  width: 26px;
+  height: 26px;
+  margin: 0px;
+  vertical-align: middle;
+}
+
+.Main_ToolBar_Button_Icon_New {
+  background: url(iconNew.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Find {
+  background: url(iconSearch.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Save_Relation {
+  background: url(iconSaveAndRelation.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Save_New {
+  background: url(iconSaveAndNew.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Save {
+  background: url(iconSave.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Save_Next {
+  background: url(iconSaveAndNext.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Delete {
+  background: url(iconErase.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Undo {
+  background: url(iconUndo.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Tree {
+  background: url(iconOrganzieMenu.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Attachment {
+  background: url(iconAttach.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Excel {
+  background: url(iconExportExcel.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_ExportExcel {
+  background: url(iconExportExcel.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_ExportForm {
+  background: url(iconExport.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_ExportCsv {
+  background: url(iconExport.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_ExportPDF {
+  background: url(iconExportPdf.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Print {
+  background: url(iconPrint.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Search {
+  background: url(iconSearch.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_SearchFiltered {
+  background: url(iconSearchFilter.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_First {
+  background: url(iconFirst.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Previous {
+  background: url(iconPrevious.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Next {
+  background: url(iconNext.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Last {
+  background: url(iconLast.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_RelatedInfo {
+  background: url(iconRelatedInfo.png) no-repeat center center;
+}

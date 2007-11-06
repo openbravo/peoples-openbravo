@@ -1,0 +1,1355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="es_CO" table="AD_PROCESS_PARA">
+  <row id="123" trl="N">
+    <value column="Name" original="Search Key">Identificador</value>
+    <value column="Description" original="A fast method for finding a particular record.">Método rápido para hallar un registro particular.</value>
+    <value column="Help" original="A search key allows you a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number.  The document sequence used for this fallback number is defined in the &quot;Maintain Sequence&quot; window with the name &quot;DocumentNo_TableName&quot;, where TableName is the actual name of the table (e.g. C_Order).">Una llave de búsqueda, o identificador, le permite un método rápido de encontrar un registro particular. Si usted deja el identificador vacío, el sistema automáticamente genera un número. La secuencia de documento usada para este número de vuelta atrás es definida en el "Mantain la Secuence" la ventana con el nombre "DocumentNo_&lt;TABLENAME&gt;", donde TableName es el nombre real de la tabla (p.ej. C_Order). </value>
+  </row>
+  <row id="124" trl="Y">
+    <value column="Name" original="Inventory Quantity">Cant.almacén</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="125" trl="N">
+    <value column="Name" original="Storage Bin">Ubicación</value>
+    <value column="Description" original="A set of coordinates (x, y, z) which help locate an item in a warehouse.">Grupo de coordenadas (x, y, z) que ayudan a ubicar un ítem en el almacén.</value>
+    <value column="Help" original="The Locator ID indicates where in a Warehouse a product is located.">Indica la ubicación del almacén en que está localizado el producto. </value>
+  </row>
+  <row id="131" trl="N">
+    <value column="Name" original="Order Date">Fecha de pedido</value>
+    <value column="Description" original="The time listed on the order.">Fecha de factura del pedido.</value>
+    <value column="Help" original="Indicates the Date an item was ordered.">Fecha en la que se hizo el pedido.</value>
+  </row>
+  <row id="132" trl="N">
+    <value column="Name" original="Movement Date">Fecha del movimiento</value>
+    <value column="Description" original="The date that a certain item is moved from one location to another.">Fecha en que un ítem determinado se mueve de una ubicación a otra.</value>
+    <value column="Help" original="The Movement Date indicates the date that a product moved in or out of inventory.  This is the result of a shipment, receipt or inventory movement.">Indica la fecha en que un producto generó una incidencia en el inventario bien 
+&#13;por una entrada o una salida o un movimiento interno. </value>
+  </row>
+  <row id="133" trl="N">
+    <value column="Name" original="Service Point">Almacén</value>
+    <value column="Description" original="The location where products arrive to or are sent from.">Ubicación a la que se envían, o de donde proceden, los productos.</value>
+    <value column="Help" original="&#13;&#10;The Warehouse identifies a unique Warehouse where products are stored or Services are provided.">Identifica un único almacén donde los productos son almacenados o los servicios facilitados.</value>
+  </row>
+  <row id="134" trl="N">
+    <value column="Name" original="Movement Type">Tipo de movimiento</value>
+    <value column="Description" original="The type of a certain item being moved from one location to another.">Tipo de ítem que se mueve de una ubicación a otra.</value>
+    <value column="Help" original="The Movement Type indicates the type of movement (in, out, to production, etc)">Indica el tipo de movimiento (entrada, salida, a producción, etc).</value>
+  </row>
+  <row id="135" trl="N">
+    <value column="Name" original="Service Point">Almacén</value>
+    <value column="Description" original="The location where products arrive to or are sent from.">Ubicación a la que se envían, o de donde proceden, los productos.</value>
+    <value column="Help" original="&#13;&#10;The Warehouse identifies a unique Warehouse where products are stored or Services are provided.">Identifica un único almacén donde los productos son almacenados o los servicios facilitados.</value>
+  </row>
+  <row id="136" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="137" trl="N">
+    <value column="Name" original="Sales Order">Pedido de venta</value>
+    <value column="Description" original="A unique and often automatically generated identifier for a sales order.">Identificador único, a menudo generado automáticamente, para un pedido de venta.</value>
+    <value column="Help" original="The Sales Order ID is a unique identifier of a Sales Order.  This is controlled by the document sequence for this document type.">Es el identificador único del pedido de venta.&amp;nbsp;Está formado por el número de documento, la fecha de pedido y el importe del pedido.</value>
+  </row>
+  <row id="138" trl="N">
+    <value column="Name" original="Accounting Date">Fecha contable</value>
+    <value column="Description" original="The date this transaction is recorded in the general ledger.">Fecha de registro de esta transacción en el libro mayor.</value>
+    <value column="Help" original="The Accounting Date indicates the date to be used on the General Ledger account entries generated from this document">Es la fecha de la operación para contabilidad</value>
+  </row>
+  <row id="139" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="An item produced by a process.">Ítem producido mediante un proceso.</value>
+    <value column="Help" original="Identifies an item which is either purchased or sold in this organization.">Identifica un artículo que se ha comprado, vendido, producido, agregado a una plantilla de pedido,... </value>
+  </row>
+  <row id="140" trl="N">
+    <value column="Name" original="Tab">Solapa</value>
+    <value column="Description" original="An indication that a tab is displayed within a window.">Indicación de que una solapa aparece en una ventana.</value>
+    <value column="Help" original="The Tab indicates a tab that displays within a window.">Son las distintas pantallas que componen una ventana. Una ventana puede estar formada por una o varias solapas. Una solapa puede estar colgada de una ventana o de otra solapa de la misma ventana, siguiendo una jerarquía de tipo árbol.
+&#13;</value>
+  </row>
+  <row id="141" trl="N">
+    <value column="Name" original="Window">Ventana</value>
+    <value column="Description" original="A work area which can be used to create, view, edit, and process a record.">Área de trabajo que puede utilizarse para crear, mostrar, editar y procesar un registro.</value>
+    <value column="Help" original="The Window field identifies a unique Window in the system.">Mediante el campo Ventana se relaciona la tabla con una única ventana en la aplicación. Esto permite establecer un vinculo desde otras ventanas en las que se hace referencia a la ventana que estamos configurando.</value>
+  </row>
+  <row id="142" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="143" trl="N">
+    <value column="Name" original="Sales Order">Pedido de venta</value>
+    <value column="Description" original="A unique and often automatically generated identifier for a sales order.">Identificador único, a menudo generado automáticamente, para un pedido de venta.</value>
+    <value column="Help" original="The Sales Order ID is a unique identifier of a Sales Order.  This is controlled by the document sequence for this document type.">Es el identificador único del pedido de venta.&amp;nbsp;Está formado por el número de documento, la fecha de pedido y el importe del pedido.</value>
+  </row>
+  <row id="144" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="145" trl="N">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Organizational entity within client">Organización dentro del cliente</value>
+    <value column="Help" original="An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.">Una organización es una unidad del cliente o de la entidad, un ejemplo son los 
+&#13;departamentos, almacenes, tiendas. Se puede compartir la información entre las 
+&#13;organizaciones. </value>
+  </row>
+  <row id="146" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="147" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="148" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="149" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="150" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="151" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="152" trl="N">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Organizational entity within client">Organización dentro del cliente</value>
+    <value column="Help" original="An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.">Una organización es una unidad del cliente o de la entidad, un ejemplo son los 
+&#13;departamentos, almacenes, tiendas. Se puede compartir la información entre las 
+&#13;organizaciones. </value>
+  </row>
+  <row id="153" trl="N">
+    <value column="Name" original="Import Format">Formatos importados</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original="The ID identifies a unique import format"></value>
+  </row>
+  <row id="155" trl="Y">
+    <value column="Name" original="Delete old/existing records">Borrar registros viejos existentes</value>
+    <value column="Description" original="Otherwise records will be added">De todas maneras añadir registros </value>
+    <value column="Help" original="Otherwise records will be added">De todas maneras añadir registros </value>
+  </row>
+  <row id="156" trl="Y">
+    <value column="Name" original="Product quantity must be on stock">Cant.producto exigida en stock</value>
+    <value column="Description" original="If not sufficient on stock in the warehouse, the BOM is not produced">Si no hay suficiente stock en el almacén la lista de materiales no se produce</value>
+    <value column="Help" original="If not sufficient on stock in the warehouse, the BOM is not produced">Si no hay suficiente stock en el almacén la lista de materiales no se produce</value>
+  </row>
+  <row id="157" trl="N">
+    <value column="Name" original="Product Category">Categoría del producto</value>
+    <value column="Description" original="A classification of items based on similar characteristics or attributes.">Clasificación de los ítems en base a atributos o características similares.</value>
+    <value column="Help" original="Identifies the category which this product belongs to.  Product categories are used for pricing.">La categoria del producto identifica a que categoría pertenece cada producto. Las categorias de producto se utilizan, entre otras cosas, para establecer los precios. </value>
+  </row>
+  <row id="158" trl="N">
+    <value column="Name" original="Service Point">Almacén</value>
+    <value column="Description" original="The location where products arrive to or are sent from.">Ubicación a la que se envían, o de donde proceden, los productos.</value>
+    <value column="Help" original="&#13;&#10;The Warehouse identifies a unique Warehouse where products are stored or Services are provided.">Identifica un único almacén donde los productos son almacenados o los servicios facilitados.</value>
+  </row>
+  <row id="160" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="161" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="162" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="163" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="164" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="165" trl="N">
+    <value column="Name" original="Business Partner Category">Grupos de Terceros</value>
+    <value column="Description" original="A classification of business partners based on defined similarities.">Clasificación de terceros basada en similitudes definidas.</value>
+    <value column="Help" original="The Business Partner Group ID provides a method of defining defaults to be used for individual Business Partners.">Permite aplicar&amp;nbsp;unas características a los terceros que se correspondan con el grupo seleccionado.</value>
+  </row>
+  <row id="166" trl="N">
+    <value column="Name" original="Product Category">Categoría del producto</value>
+    <value column="Description" original="A classification of items based on similar characteristics or attributes.">Clasificación de los ítems en base a atributos o características similares.</value>
+    <value column="Help" original="Identifies the category which this product belongs to.  Product categories are used for pricing.">La categoria del producto identifica a que categoría pertenece cada producto. Las categorias de producto se utilizan, entre otras cosas, para establecer los precios. </value>
+  </row>
+  <row id="169" trl="N">
+    <value column="Name" original="Storage Bin">Ubicación</value>
+    <value column="Description" original="A set of coordinates (x, y, z) which help locate an item in a warehouse.">Grupo de coordenadas (x, y, z) que ayudan a ubicar un ítem en el almacén.</value>
+    <value column="Help" original="The Locator ID indicates where in a Warehouse a product is located.">Indica la ubicación del almacén en que está localizado el producto. </value>
+  </row>
+  <row id="175" trl="N">
+    <value column="Name" original="Business Partner Category">Grupos de Terceros</value>
+    <value column="Description" original="A classification of business partners based on defined similarities.">Clasificación de terceros basada en similitudes definidas.</value>
+    <value column="Help" original="The Business Partner Group ID provides a method of defining defaults to be used for individual Business Partners.">Permite aplicar&amp;nbsp;unas características a los terceros que se correspondan con el grupo seleccionado.</value>
+  </row>
+  <row id="176" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="177" trl="N">
+    <value column="Name" original="Business Partner Category">Grupos de Terceros</value>
+    <value column="Description" original="A classification of business partners based on defined similarities.">Clasificación de terceros basada en similitudes definidas.</value>
+    <value column="Help" original="The Business Partner Group ID provides a method of defining defaults to be used for individual Business Partners.">Permite aplicar&amp;nbsp;unas características a los terceros que se correspondan con el grupo seleccionado.</value>
+  </row>
+  <row id="178" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="179" trl="N">
+    <value column="Name" original="Product Category">Categoría del producto</value>
+    <value column="Description" original="A classification of items based on similar characteristics or attributes.">Clasificación de los ítems en base a atributos o características similares.</value>
+    <value column="Help" original="Identifies the category which this product belongs to.  Product categories are used for pricing.">La categoria del producto identifica a que categoría pertenece cada producto. Las categorias de producto se utilizan, entre otras cosas, para establecer los precios. </value>
+  </row>
+  <row id="180" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="An item produced by a process.">Ítem producido mediante un proceso.</value>
+    <value column="Help" original="Identifies an item which is either purchased or sold in this organization.">Identifica un artículo que se ha comprado, vendido, producido, agregado a una plantilla de pedido,... </value>
+  </row>
+  <row id="181" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="182" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="183" trl="N">
+    <value column="Name" original="Price List Version">Versión de tarifa</value>
+    <value column="Description" original="A price list with a specified validity range.">Tarifa que tiene un período de validez específico.</value>
+    <value column="Help" original="Each Price List can have multiple versions.  The most common use is to indicate the dates that a Price List is valid for.">Inidica la&amp;nbsp;versión de una tarifa se quiere aplicar al producto. Las versiones de cada tarifa normalmente se diferencian por la fecha de validez. </value>
+  </row>
+  <row id="188" trl="N">
+    <value column="Name" original="Movement Date">Fecha del movimiento</value>
+    <value column="Description" original="The date that a certain item is moved from one location to another.">Fecha en que un ítem determinado se mueve de una ubicación a otra.</value>
+    <value column="Help" original="The Movement Date indicates the date that a product moved in or out of inventory.  This is the result of a shipment, receipt or inventory movement.">Indica la fecha en que un producto generó una incidencia en el inventario bien 
+&#13;por una entrada o una salida o un movimiento interno. </value>
+  </row>
+  <row id="189" trl="N">
+    <value column="Name" original="Product Category">Categoría del producto</value>
+    <value column="Description" original="A classification of items based on similar characteristics or attributes.">Clasificación de los ítems en base a atributos o características similares.</value>
+    <value column="Help" original="Identifies the category which this product belongs to.  Product categories are used for pricing.">La categoria del producto identifica a que categoría pertenece cada producto. Las categorias de producto se utilizan, entre otras cosas, para establecer los precios. </value>
+  </row>
+  <row id="190" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="191" trl="N">
+    <value column="Name" original="Search Key">Identificador</value>
+    <value column="Description" original="A fast method for finding a particular record.">Método rápido para hallar un registro particular.</value>
+    <value column="Help" original="A search key allows you a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number.  The document sequence used for this fallback number is defined in the &quot;Maintain Sequence&quot; window with the name &quot;DocumentNo_TableName&quot;, where TableName is the actual name of the table (e.g. C_Order).">Una llave de búsqueda, o identificador, le permite un método rápido de encontrar un registro particular. Si usted deja el identificador vacío, el sistema automáticamente genera un número. La secuencia de documento usada para este número de vuelta atrás es definida en el "Mantain la Secuence" la ventana con el nombre "DocumentNo_&lt;TABLENAME&gt;", donde TableName es el nombre real de la tabla (p.ej. C_Order). </value>
+  </row>
+  <row id="192" trl="Y">
+    <value column="Name" original="Project Cycle">Ciclo del proyecto</value>
+    <value column="Description" original="Identifier for this Project Reporting Cycle">Identificador para este ciclo del proyecto</value>
+    <value column="Help" original="Identifies a Project Cycle which can be made up of one or more cycle steps and cycle phases.">Identifica un ciclo de proyecto que puede estar compuesto de uno o más pasos de ciclo y fases de ciclo.</value>
+  </row>
+  <row id="193" trl="N">
+    <value column="Name" original="User/Contact">Usuario/Contacto</value>
+    <value column="Description" original="An acquaintance to reach for information related to the business partner. ">Referente que puede aportar información sobre un tercero.</value>
+    <value column="Help" original="The User identifies a unique user in the system. This could be an internal user or a business partner contact">Es el contacto que tiene asociado el tercero</value>
+  </row>
+  <row id="194" trl="N">
+    <value column="Name" original="Business Partner Category">Grupos de Terceros</value>
+    <value column="Description" original="A classification of business partners based on defined similarities.">Clasificación de terceros basada en similitudes definidas.</value>
+    <value column="Help" original="The Business Partner Group ID provides a method of defining defaults to be used for individual Business Partners.">Permite aplicar&amp;nbsp;unas características a los terceros que se correspondan con el grupo seleccionado.</value>
+  </row>
+  <row id="195" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="196" trl="N">
+    <value column="Name" original="Product Category">Categoría del producto</value>
+    <value column="Description" original="A classification of items based on similar characteristics or attributes.">Clasificación de los ítems en base a atributos o características similares.</value>
+    <value column="Help" original="Identifies the category which this product belongs to.  Product categories are used for pricing.">La categoria del producto identifica a que categoría pertenece cada producto. Las categorias de producto se utilizan, entre otras cosas, para establecer los precios. </value>
+  </row>
+  <row id="197" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="An item produced by a process.">Ítem producido mediante un proceso.</value>
+    <value column="Help" original="Identifies an item which is either purchased or sold in this organization.">Identifica un artículo que se ha comprado, vendido, producido, agregado a una plantilla de pedido,... </value>
+  </row>
+  <row id="198" trl="N">
+    <value column="Name" original="Contract Date">Fecha del contrato</value>
+    <value column="Description" original="The date a contract is registered into the application.">Fecha de registro de un contrato en la aplicación.</value>
+    <value column="Help" original="The contract date is used to determine when the document becomes effective. This is usually the contract date.  The contract date is used in reports and report parameters.">Indica la fecha en la que se va hacer efectiva la firma del contrato. </value>
+  </row>
+  <row id="199" trl="N">
+    <value column="Name" original="Ending Date">Fecha de finalización</value>
+    <value column="Description" original="The date that a task, process, or action is to be completed or delivered by.">Período en que debe completarse o enviarse una tarea, proceso o acción.</value>
+    <value column="Help" original="&#13;&#10;The finish date is used to indicate when the project is expected to be completed or has been completed.">La fecha de finalización se usa para indicar la fecha en la que se espera que el proyecto esté completado o ha sido completado definitivamente.</value>
+  </row>
+  <row id="200" trl="Y">
+    <value column="Name" original="Print Detail Transactions">Imprimir los detalles de las operaciones</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="201" trl="Y">
+    <value column="Name" original="Show Planned Amount">Mostrar imp.previsto</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="202" trl="Y">
+    <value column="Name" original="Show Planned Quantity">Mostrar cant.prevista</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="203" trl="Y">
+    <value column="Name" original="Show Planned Margin Amount">Mostrar margen imp.previsto</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="204" trl="Y">
+    <value column="Name" original="Show Committed Amount">Mostrar imp.asignado</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="205" trl="Y">
+    <value column="Name" original="Show Actual Amount">Mostrar Imp.Actual</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="208" trl="Y">
+    <value column="Name" original="Commission">Comisión</value>
+    <value column="Description" original="Commission Identifier">El identificador de la comisión</value>
+    <value column="Help" original="The Commission ID is a unique identifier of a set of commission rules.">Identificador único de un grupo de reglas de comisión.&amp;nbsp;</value>
+  </row>
+  <row id="209" trl="N">
+    <value column="Name" original="Starting Date">Fecha de inicio</value>
+    <value column="Description" original="A parameter stating when a specified request will begin.">Parámetro que indica cuándo comienza una petición específica.</value>
+    <value column="Help" original="The Start Date indicates the first or starting date of a range.">&lt;P&gt;Indica el primer día de un rango de fechas.&lt;/P&gt;</value>
+  </row>
+  <row id="210" trl="Y">
+    <value column="Name" original="Period Action">Periodo de actuación</value>
+    <value column="Description" original="Action taken for this period">Actuación para este periodo</value>
+    <value column="Help" original="The Period Action indicates the action to be taken for this period.  For example 'Close Period' or 'Open Period'.">El Periodo de Actuación indica la acción que tendrá lugar este periodo. Por ejemplo: 'cerrar periodo' o 'abrir periodo'</value>
+  </row>
+  <row id="213" trl="N">
+    <value column="Name" original="Accounting Date">Fecha contable</value>
+    <value column="Description" original="The date this transaction is recorded in the general ledger.">Fecha de registro de esta transacción en el libro mayor.</value>
+    <value column="Help" original="The Accounting Date indicates the date to be used on the General Ledger account entries generated from this document">Es la fecha de la operación para contabilidad</value>
+  </row>
+  <row id="214" trl="N">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Organizational entity within client">Organización dentro del cliente</value>
+    <value column="Help" original="An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.">Una organización es una unidad del cliente o de la entidad, un ejemplo son los 
+&#13;departamentos, almacenes, tiendas. Se puede compartir la información entre las 
+&#13;organizaciones. </value>
+  </row>
+  <row id="215" trl="N">
+    <value column="Name" original="Cashbook">Caja</value>
+    <value column="Description" original="A document used to manage all cash transactions.">Documento utilizado para administrar todas las transacciones de caja.</value>
+    <value column="Help" original="The Cash Book identifies a unique cash book.  The cash book is used to record cash transactions.">Identificador único del libro de caja. Se utiliza para registrar todas las operaciones que se hagan de esa caja.</value>
+  </row>
+  <row id="223" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="224" trl="N">
+    <value column="Name" original="Table">Tabla</value>
+    <value column="Description" original="A dictionary table used for this tab that points to the database table.">Tabla del diccionario utilizada para esta solapa que apunta a la tabla de la base de datos.</value>
+    <value column="Help" original="The Table indicates the table in which a field or fields reside.">Indica la tabla a la que pertence el campo.</value>
+  </row>
+  <row id="225" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="226" trl="N">
+    <value column="Name" original="Table">Tabla</value>
+    <value column="Description" original="A dictionary table used for this tab that points to the database table.">Tabla del diccionario utilizada para esta solapa que apunta a la tabla de la base de datos.</value>
+    <value column="Help" original="The Table indicates the table in which a field or fields reside.">Indica la tabla a la que pertence el campo.</value>
+  </row>
+  <row id="227" trl="Y">
+    <value column="Name" original="Delete existing Accounting Entries">Eliminar registros de contabilidad existentes</value>
+    <value column="Description" original="The selected accounting entries will be deleted!  DANGEROUS !!!">Las asientos contables seleccionados serán eliminados. PELIGRO!!!</value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="228" trl="N">
+    <value column="Name" original="Price List Version">Versión de tarifa</value>
+    <value column="Description" original="A price list with a specified validity range.">Tarifa que tiene un período de validez específico.</value>
+    <value column="Help" original="Each Price List can have multiple versions.  The most common use is to indicate the dates that a Price List is valid for.">Inidica la&amp;nbsp;versión de una tarifa se quiere aplicar al producto. Las versiones de cada tarifa normalmente se diferencian por la fecha de validez. </value>
+  </row>
+  <row id="229" trl="Y">
+    <value column="Name" original="Valuation Date">F.valor</value>
+    <value column="Description" original="Date of valuation">Fecha de evaluación</value>
+    <value column="Help" original="Date of valuation">Fecha de evaluación</value>
+  </row>
+  <row id="230" trl="N">
+    <value column="Name" original="Service Point">Almacén</value>
+    <value column="Description" original="The location where products arrive to or are sent from.">Ubicación a la que se envían, o de donde proceden, los productos.</value>
+    <value column="Help" original="&#13;&#10;The Warehouse identifies a unique Warehouse where products are stored or Services are provided.">Identifica un único almacén donde los productos son almacenados o los servicios facilitados.</value>
+  </row>
+  <row id="231" trl="N">
+    <value column="Name" original="Currency">Moneda</value>
+    <value column="Description" original="An accepted medium of monetary exchange that may vary across countries.">Medio aceptado de intercambio de moneda que varía según el país.</value>
+    <value column="Help" original="Indicates the Currency to be used when processing or reporting on this record">Indica la moneda que se va a utilizar cuando se procese o se informe de ese registro.</value>
+  </row>
+  <row id="232" trl="Y">
+    <value column="Name" original="Set Future Costs to">Establecer Costos Futuros</value>
+    <value column="Description" original="Set the Future costs to the selection">Establecer los costos futuros a seleccionar</value>
+    <value column="Help" original="Set the Future costs to the selection">Establecer los costos futuros a seleccionar</value>
+  </row>
+  <row id="233" trl="Y">
+    <value column="Name" original="Pricelist Version">Versión tarifa</value>
+    <value column="Description" original="Only used if Price List is used to set future cost price">La utilización de este parámetro es válido sólo si la lista de precios se usa para fijar el futuro precio de costo.</value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="234" trl="Y">
+    <value column="Name" original="Set Standard Cost">Establecer costo estandar</value>
+    <value column="Description" original="Set new Standard Costs from Future Costs">Establecer costos estandar de futuros costos</value>
+    <value column="Help" original="Set new Standard Costs from Future Costs">Establecer costos estandar de futuros costos</value>
+  </row>
+  <row id="235" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="236" trl="N">
+    <value column="Name" original="Product Category">Categoría del producto</value>
+    <value column="Description" original="A classification of items based on similar characteristics or attributes.">Clasificación de los ítems en base a atributos o características similares.</value>
+    <value column="Help" original="Identifies the category which this product belongs to.  Product categories are used for pricing.">La categoria del producto identifica a que categoría pertenece cada producto. Las categorias de producto se utilizan, entre otras cosas, para establecer los precios. </value>
+  </row>
+  <row id="237" trl="N">
+    <value column="Name" original="Accounting Schema">Esquema contable</value>
+    <value column="Description" original="The structure used in accounting including costing methods, currencies, and the calendar.">Estructura de contabilidad, incluidos métodos de costo, monedas y calendario.</value>
+    <value column="Help" original="An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar">El esquema contable define las reglas de contabilidad, la moneda y el calendario.</value>
+  </row>
+  <row id="238" trl="N">
+    <value column="Name" original="Product Category">Categoría del producto</value>
+    <value column="Description" original="A classification of items based on similar characteristics or attributes.">Clasificación de los ítems en base a atributos o características similares.</value>
+    <value column="Help" original="Identifies the category which this product belongs to.  Product categories are used for pricing.">La categoria del producto identifica a que categoría pertenece cada producto. Las categorias de producto se utilizan, entre otras cosas, para establecer los precios. </value>
+  </row>
+  <row id="239" trl="N">
+    <value column="Name" original="Search Key">Identificador</value>
+    <value column="Description" original="A fast method for finding a particular record.">Método rápido para hallar un registro particular.</value>
+    <value column="Help" original="A search key allows you a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number.  The document sequence used for this fallback number is defined in the &quot;Maintain Sequence&quot; window with the name &quot;DocumentNo_TableName&quot;, where TableName is the actual name of the table (e.g. C_Order).">Una llave de búsqueda, o identificador, le permite un método rápido de encontrar un registro particular. Si usted deja el identificador vacío, el sistema automáticamente genera un número. La secuencia de documento usada para este número de vuelta atrás es definida en el "Mantain la Secuence" la ventana con el nombre "DocumentNo_&lt;TABLENAME&gt;", donde TableName es el nombre real de la tabla (p.ej. C_Order). </value>
+  </row>
+  <row id="240" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="241" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="An item produced by a process.">Ítem producido mediante un proceso.</value>
+    <value column="Help" original="Identifies an item which is either purchased or sold in this organization.">Identifica un artículo que se ha comprado, vendido, producido, agregado a una plantilla de pedido,... </value>
+  </row>
+  <row id="242" trl="N">
+    <value column="Name" original="Sales Transaction">Operación de venta</value>
+    <value column="Description" original="An indication that a transfer of goods and money between business partners is occurring.">Indicación de que se están transfiriendo bienes o dinero entre terceros.</value>
+    <value column="Help" original="The Sales Transaction checkbox indicates if this item is a Sales Transaction.">Mediante esta opción de selección se indica si se trata de una operación de venta.</value>
+  </row>
+  <row id="244" trl="N">
+    <value column="Name" original="Sales Transaction">Operación de venta</value>
+    <value column="Description" original="An indication that a transfer of goods and money between business partners is occurring.">Indicación de que se están transfiriendo bienes o dinero entre terceros.</value>
+    <value column="Help" original="The Sales Transaction checkbox indicates if this item is a Sales Transaction.">Mediante esta opción de selección se indica si se trata de una operación de venta.</value>
+  </row>
+  <row id="245" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="246" trl="Y">
+    <value column="Name" original="Expense Date">F.gasto</value>
+    <value column="Description" original="Date of expense">Fecha de gastos</value>
+    <value column="Help" original="Date of expense">Fecha de gastos</value>
+  </row>
+  <row id="247" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="248" trl="Y">
+    <value column="Name" original="Report Date">Informe diario</value>
+    <value column="Description" original="Expense/Time Report Date">Informe de fechas de gastos y tiempo</value>
+    <value column="Help" original="Date of Expense/Time Report">Fecha del informe de gastos/tiempo.</value>
+  </row>
+  <row id="249" trl="Y">
+    <value column="Name" original="Report Column Set">Conjunto de  Columnas del  Informe</value>
+    <value column="Description" original="Collection of Columns for Report">Conjunto de  Columnas del  Informe</value>
+    <value column="Help" original="The Report Column Set identifies the columns used in a Report.">Indica qué columnas se usan en el informe.</value>
+  </row>
+  <row id="250" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="252" trl="N">
+    <value column="Name" original="Table">Tabla</value>
+    <value column="Description" original="A dictionary table used for this tab that points to the database table.">Tabla del diccionario utilizada para esta solapa que apunta a la tabla de la base de datos.</value>
+    <value column="Help" original="The Table indicates the table in which a field or fields reside.">Indica la tabla a la que pertence el campo.</value>
+  </row>
+  <row id="253" trl="N">
+    <value column="Name" original="Print Format">Formato impresión</value>
+    <value column="Description" original="The structure in which a document will be printed.">Estructura en la que se imprime un documento.</value>
+    <value column="Help" original="The print format determines how data is rendered for print.">El formato de impresión determina como será renderizada la información para la impresión. Existen para ello unas plantillas prediseñadas o la posibilidad de crear otras nuevas. </value>
+  </row>
+  <row id="254" trl="N">
+    <value column="Name" original="Order Date">Fecha de pedido</value>
+    <value column="Description" original="The time listed on the order.">Fecha de factura del pedido.</value>
+    <value column="Help" original="Indicates the Date an item was ordered.">Fecha en la que se hizo el pedido.</value>
+  </row>
+  <row id="255" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="256" trl="Y">
+    <value column="Name" original="Vendor">Proveedor</value>
+    <value column="Description" original="A business partner who sells products or services.">Tercero que vende productos o servicios.</value>
+    <value column="Help" original="Identifies a business partner that is a vendor."></value>
+  </row>
+  <row id="257" trl="N">
+    <value column="Name" original="Sales Order">Pedido de venta</value>
+    <value column="Description" original="A unique and often automatically generated identifier for a sales order.">Identificador único, a menudo generado automáticamente, para un pedido de venta.</value>
+    <value column="Help" original="The Sales Order ID is a unique identifier of a Sales Order.  This is controlled by the document sequence for this document type.">Es el identificador único del pedido de venta.&amp;nbsp;Está formado por el número de documento, la fecha de pedido y el importe del pedido.</value>
+  </row>
+  <row id="258" trl="N">
+    <value column="Name" original="Request">Petición</value>
+    <value column="Description" original="x not implemented">x not implemented</value>
+    <value column="Help" original="The Request identifies a unique request from a Business Partner or Prospect.">Este campo identifica una única petición a la que pertenece esta acción. </value>
+  </row>
+  <row id="259" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="260" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="261" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="262" trl="N">
+    <value column="Name" original="Accounting Element">Elemento </value>
+    <value column="Description" original="A unique identifier for an account type.">Identificador característico de un tipo de cuenta.</value>
+    <value column="Help" original="The Account Element uniquely identifies an Account Type.  These are commonly known as a Chart of Accounts.">Un Elemento de Cuenta identifica de manera única un tipo de cuenta. Son conocidos como tabla de cuentas.</value>
+  </row>
+  <row id="263" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="264" trl="Y">
+    <value column="Name" original="Report Line Set">Conjunto de líneas del informe</value>
+    <value column="Description" original="x not implemented">x not implemented</value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="265" trl="Y">
+    <value column="Name" original="Delete old imported records">Eliminar los registro antiguos importados</value>
+    <value column="Description" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+    <value column="Help" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+  </row>
+  <row id="266" trl="Y">
+    <value column="Name" original="Delete old imported records">Eliminar los registro antiguos importados</value>
+    <value column="Description" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+    <value column="Help" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+  </row>
+  <row id="267" trl="Y">
+    <value column="Name" original="Delete old imported records">Eliminar los registro antiguos importados</value>
+    <value column="Description" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+    <value column="Help" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+  </row>
+  <row id="268" trl="Y">
+    <value column="Name" original="Delete old imported records">Eliminar los registro antiguos importados</value>
+    <value column="Description" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+    <value column="Help" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+  </row>
+  <row id="269" trl="Y">
+    <value column="Name" original="Update Default Accounts">Actualizar las cuentas por defecto</value>
+    <value column="Description" original="Update Default Accounts">Actualizar las cuentas por defecto</value>
+    <value column="Help" original="Update Default Accounts">Actualizar las cuentas por defecto</value>
+  </row>
+  <row id="270" trl="Y">
+    <value column="Name" original="Create New Combination">Crear nuevo conjunto</value>
+    <value column="Description" original="Create New Account Combination">Crear un nuevo conjunto de cuentas</value>
+    <value column="Help" original="Create New Account Combination">Crear un nuevo conjunto de cuentas</value>
+  </row>
+  <row id="275" trl="Y">
+    <value column="Name" original="Email PDF">PDF email</value>
+    <value column="Description" original="Email Invoice PDF files to customer">Ficheros PDF de las facturas para enviar por email a los clientes</value>
+    <value column="Help" original="Email Invoice PDF files to customer">Ficheros PDF de las facturas para enviar por email a los clientes</value>
+  </row>
+  <row id="276" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="277" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="278" trl="N">
+    <value column="Name" original="Invoice">Factura</value>
+    <value column="Description" original="A document listing products, quantities and prices, payment terms, etc.">Documento que enumera productos, importes y precios, plazos de pago, etc.</value>
+    <value column="Help" original="The Invoice ID uniquely identifies an Invoice Document.">Es el identificador único de la factura. Permite hacer referencia a esta referencia desde cualquier ventana de la aplicación.</value>
+  </row>
+  <row id="279" trl="N">
+    <value column="Name" original="Mail Template">Plantilla de correo</value>
+    <value column="Description" original="A template used to organize and send mail using a standard format.">Plantilla de formato estándar utilizada para organizar y enviar un correo.</value>
+    <value column="Help" original="The Mail Template indicates the mail template for return messages.">&lt;P&gt;Plantilla en la que nos basaremos para realizar el envio de correo electrónico.&lt;/P&gt;</value>
+  </row>
+  <row id="280" trl="N">
+    <value column="Name" original="Period">Periodo</value>
+    <value column="Description" original="A specified time period.">Período específico de tiempo.</value>
+    <value column="Help" original="The Period indicates an exclusive range of dates for a calendar.">El Periodo indica una rango exclusivo de fechas para un calendario.</value>
+  </row>
+  <row id="283" trl="N">
+    <value column="Name" original="Accounting Schema">Esquema contable</value>
+    <value column="Description" original="The structure used in accounting including costing methods, currencies, and the calendar.">Estructura de contabilidad, incluidos métodos de costo, monedas y calendario.</value>
+    <value column="Help" original="An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar">El esquema contable define las reglas de contabilidad, la moneda y el calendario.</value>
+  </row>
+  <row id="285" trl="Y">
+    <value column="Name" original="IsRecreate">Recrear</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="286" trl="Y">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Organizational entity within client">Organización dentro del cliente</value>
+    <value column="Help" original="An organization is a unit of your client or legal entity - examples are store, department.">Una organización es una unidad del cliente o de la entidad, un ejemplo son los departamentos, almacenes, tiendas. Se puede compartir la información entre las organizaciones. </value>
+  </row>
+  <row id="287" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="288" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="An item produced by a process.">Ítem producido mediante un proceso.</value>
+    <value column="Help" original="Identifies an item which is either purchased or sold in this organization.">Identifica un artículo que se ha comprado, vendido, producido, agregado a una plantilla de pedido,... </value>
+  </row>
+  <row id="289" trl="N">
+    <value column="Name" original="Project">Proyecto</value>
+    <value column="Description" original="A defined task or undertaking">Tarea o emprendimiento definido.</value>
+    <value column="Help" original="Project ID is a user defined identifier for a Project">Identificador&amp;nbsp;del proyecto definido por el usuario. </value>
+  </row>
+  <row id="290" trl="N">
+    <value column="Name" original="Activity">Actividad</value>
+    <value column="Description" original="A distinct activity defined and used in activity based management."></value>
+    <value column="Help" original="Activities indicate tasks that are performed and used to utilize Activity based Costing">Indica las tareas que son ejecutadas y usadas en las actividades basadas en costos.</value>
+  </row>
+  <row id="291" trl="N">
+    <value column="Name" original="Sales Region">Región de venta</value>
+    <value column="Description" original="A defined section of the world where sales efforts will be focused.">Sección definida del mundo donde deben concentrarse las campañas de venta. </value>
+    <value column="Help" original="The Sales Region indicates a specific area of sales coverage.">Mediante este desplegable se puede configurar una dirección para una región determinada.</value>
+  </row>
+  <row id="292" trl="N">
+    <value column="Name" original="Sales Campaign">Campaña</value>
+    <value column="Description" original="An advertising effort aimed at increasing sales.">Campaña publicitaria destinada a aumentar las ventas.</value>
+    <value column="Help" original="The Campaign defines a unique marketing program.  Projects can be associated with a pre defined Marketing Campaign.  You can then report based on a specific Campaign.">Define una única campaña de marketing. Los proyectos se pueden asociar con una campaña predefinida. Asi luego se pueden hacer informes del proyecto según la campaña de marketing elegida </value>
+  </row>
+  <row id="293" trl="N">
+    <value column="Name" original="Sales Transaction">Operación de venta</value>
+    <value column="Description" original="An indication that a transfer of goods and money between business partners is occurring.">Indicación de que se están transfiriendo bienes o dinero entre terceros.</value>
+    <value column="Help" original="The Sales Transaction checkbox indicates if this item is a Sales Transaction.">Mediante esta opción de selección se indica si se trata de una operación de venta.</value>
+  </row>
+  <row id="294" trl="N">
+    <value column="Name" original="Period">Periodo</value>
+    <value column="Description" original="A specified time period.">Período específico de tiempo.</value>
+    <value column="Help" original="The Period indicates an exclusive range of dates for a calendar.">El Periodo indica una rango exclusivo de fechas para un calendario.</value>
+  </row>
+  <row id="295" trl="N">
+    <value column="Name" original="Account">Cuenta</value>
+    <value column="Description" original="The identification code used for accounting.">Código de identificación utilizado en la contabilidad.</value>
+    <value column="Help" original="The (natural) account used">La cuenta (natural) usada.</value>
+  </row>
+  <row id="296" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="297" trl="N">
+    <value column="Name" original="Accounting Date">Fecha contable</value>
+    <value column="Description" original="The date this transaction is recorded in the general ledger.">Fecha de registro de esta transacción en el libro mayor.</value>
+    <value column="Help" original="The Accounting Date indicates the date to be used on the General Ledger account entries generated from this document">Es la fecha de la operación para contabilidad</value>
+  </row>
+  <row id="298" trl="N">
+    <value column="Name" original="Accounting Schema">Esquema contable</value>
+    <value column="Description" original="The structure used in accounting including costing methods, currencies, and the calendar.">Estructura de contabilidad, incluidos métodos de costo, monedas y calendario.</value>
+    <value column="Help" original="An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar">El esquema contable define las reglas de contabilidad, la moneda y el calendario.</value>
+  </row>
+  <row id="299" trl="N">
+    <value column="Name" original="Project">Proyecto</value>
+    <value column="Description" original="A defined task or undertaking">Tarea o emprendimiento definido.</value>
+    <value column="Help" original="Project ID is a user defined identifier for a Project">Identificador&amp;nbsp;del proyecto definido por el usuario. </value>
+  </row>
+  <row id="300" trl="Y">
+    <value column="Name" original="Report Line Set">Conjunto de líneas del informe</value>
+    <value column="Description" original="x not implemented">x not implemented</value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="301" trl="N">
+    <value column="Name" original="Document No.">Nº documento</value>
+    <value column="Description" original="An often automatically generated identifier for all documents. ">Identificador de documentos que puede generarse automáticamente.</value>
+    <value column="Help" original="The document number is usually automatically generated by the system and determined by the document type of the document. If the document is not saved, the preliminary number is displayed in &quot;&lt;&gt;&quot;.If the document type of your document has no automatic document sequence defined, the field is empty if you create a new document. This is for documents which usually have an external number (like vendor invoice).  If you leave the field empty, the system will generate a document number for you. The document sequence used for this fallback number is defined in the &quot;Maintain Sequence&quot; window with the name &quot;DocumentNo_&lt;TableName&gt;&quot;, where TableName is the actual name of the table (e.g. C_Order).">El número del documento suele ser generado automáticamente por el sistema y está determinado por el tipo de documento del propio documento. Si no se guarda el documento, el número preliminar se muestra con "&lt;&gt;". Si el tipo de documento no tiene definido la generación automática del número éste quedará vacio al crear el nuevo documento. Puede ocurrir para aquellos documentos que tienen números externos(factura de venta). Si se deja vacio el sistema le generará un número. La secuencia de números utilizada en los documentos está definida en la ventana "Mantenimiento de la secuencia" con el nombre "Númerodocumento_NombreTabla", donde el nombre de la tabla es en nombre actual de la misma (p.ej C_Orde).</value>
+  </row>
+  <row id="302" trl="Y">
+    <value column="Name" original="Target Payment Rule">Modo pago</value>
+    <value column="Description" original="How you pay the invoice">Forma de pago de la factura</value>
+    <value column="Help" original="The Payment Rule indicates the method of invoice payment.">La forma de pago establece el modo en que realizará los pagos dicho cliente.</value>
+  </row>
+  <row id="303" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="304" trl="Y">
+    <value column="Name" original="Delete old imported records">Eliminar los registro antiguos importados</value>
+    <value column="Description" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+    <value column="Help" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+  </row>
+  <row id="305" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="306" trl="Y">
+    <value column="Name" original="Delete old imported records">Eliminar los registro antiguos importados</value>
+    <value column="Description" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+    <value column="Help" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+  </row>
+  <row id="307" trl="N">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Organizational entity within client">Organización dentro del cliente</value>
+    <value column="Help" original="An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.">Una organización es una unidad del cliente o de la entidad, un ejemplo son los 
+&#13;departamentos, almacenes, tiendas. Se puede compartir la información entre las 
+&#13;organizaciones. </value>
+  </row>
+  <row id="308" trl="N">
+    <value column="Name" original="Document Action">Acción doc.</value>
+    <value column="Description" original="A means of changing the transaction status of the document.">Forma de cambiar el estado de la transacción de un documento.</value>
+    <value column="Help" original="You find the current status in the Document Status field. The options are listed in a popup">***El actual estado del documento se puede ver en el campo estado del documento. Las opciones aparecen en una ventana popup. </value>
+  </row>
+  <row id="309" trl="N">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Organizational entity within client">Organización dentro del cliente</value>
+    <value column="Help" original="An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.">Una organización es una unidad del cliente o de la entidad, un ejemplo son los 
+&#13;departamentos, almacenes, tiendas. Se puede compartir la información entre las 
+&#13;organizaciones. </value>
+  </row>
+  <row id="310" trl="N">
+    <value column="Name" original="Document Action">Acción doc.</value>
+    <value column="Description" original="A means of changing the transaction status of the document.">Forma de cambiar el estado de la transacción de un documento.</value>
+    <value column="Help" original="You find the current status in the Document Status field. The options are listed in a popup">***El actual estado del documento se puede ver en el campo estado del documento. Las opciones aparecen en una ventana popup. </value>
+  </row>
+  <row id="312" trl="N">
+    <value column="Name" original="Test">Test</value>
+    <value column="Description" original="Execute in Test Mode">Ejecutar en modo test</value>
+    <value column="Help" original="Execute in Test Mode">Ejecutar en modo test</value>
+  </row>
+  <row id="313" trl="Y">
+    <value column="Name" original="Interest Area">Area de interes</value>
+    <value column="Description" original="Interest Area or Topic">Tema o area de interés</value>
+    <value column="Help" original="Interest Areas reflect interest in a topic by a contact. Interest areas can be used for marketing campaigns.">Las áreas de interés reflejan el&amp;nbsp;especial interes que un contacto&amp;nbsp;puede mostrar por un&amp;nbsp;tema. Las áreas de interés pueden resultar utiles para realizar campañas de marketing selectivas.</value>
+  </row>
+  <row id="314" trl="N">
+    <value column="Name" original="Mail Template">Plantilla de correo</value>
+    <value column="Description" original="A template used to organize and send mail using a standard format.">Plantilla de formato estándar utilizada para organizar y enviar un correo.</value>
+    <value column="Help" original="The Mail Template indicates the mail template for return messages.">&lt;P&gt;Plantilla en la que nos basaremos para realizar el envio de correo electrónico.&lt;/P&gt;</value>
+  </row>
+  <row id="315" trl="N">
+    <value column="Name" original="User/Contact">Usuario/Contacto</value>
+    <value column="Description" original="An acquaintance to reach for information related to the business partner. ">Referente que puede aportar información sobre un tercero.</value>
+    <value column="Help" original="The User identifies a unique user in the system. This could be an internal user or a business partner contact">Es el contacto que tiene asociado el tercero</value>
+  </row>
+  <row id="316" trl="N">
+    <value column="Name" original="Business Partner Category">Grupos de Terceros</value>
+    <value column="Description" original="A classification of business partners based on defined similarities.">Clasificación de terceros basada en similitudes definidas.</value>
+    <value column="Help" original="The Business Partner Group ID provides a method of defining defaults to be used for individual Business Partners.">Permite aplicar&amp;nbsp;unas características a los terceros que se correspondan con el grupo seleccionado.</value>
+  </row>
+  <row id="317" trl="N">
+    <value column="Name" original="Invoice">Factura</value>
+    <value column="Description" original="A document listing products, quantities and prices, payment terms, etc.">Documento que enumera productos, importes y precios, plazos de pago, etc.</value>
+    <value column="Help" original="The Invoice ID uniquely identifies an Invoice Document.">Es el identificador único de la factura. Permite hacer referencia a esta referencia desde cualquier ventana de la aplicación.</value>
+  </row>
+  <row id="318" trl="N">
+    <value column="Name" original="Sales Order">Pedido de venta</value>
+    <value column="Description" original="A unique and often automatically generated identifier for a sales order.">Identificador único, a menudo generado automáticamente, para un pedido de venta.</value>
+    <value column="Help" original="The Sales Order ID is a unique identifier of a Sales Order.  This is controlled by the document sequence for this document type.">Es el identificador único del pedido de venta.&amp;nbsp;Está formado por el número de documento, la fecha de pedido y el importe del pedido.</value>
+  </row>
+  <row id="319" trl="N">
+    <value column="Name" original="Project">Proyecto</value>
+    <value column="Description" original="A defined task or undertaking">Tarea o emprendimiento definido.</value>
+    <value column="Help" original="Project ID is a user defined identifier for a Project">Identificador&amp;nbsp;del proyecto definido por el usuario. </value>
+  </row>
+  <row id="320" trl="Y">
+    <value column="Name" original="Journal Batch">Serie de asientos</value>
+    <value column="Description" original="General Ledger Journal Batch">Serie de asientos</value>
+    <value column="Help" original="The General Ledger Journal Batch identifies a group of journals to be processed as a group.">Identifica un conjunto de diarios que se procesarán como grupo.</value>
+  </row>
+  <row id="321" trl="N">
+    <value column="Name" original="Project Type">Tipo de proyecto</value>
+    <value column="Description" original="A distinct project characteristic used for processes and sometimes grouped within a category.">Característica única del proyecto utilizada en los procesos y a veces agrupada dentro de una categoría.</value>
+    <value column="Help" original="Type of the project with optional phases of the project with standard performance information">Tipo de proyecto con fases opcionales con información estándar de rendimiento.</value>
+  </row>
+  <row id="323" trl="Y">
+    <value column="Name" original="Project Cycle">Ciclo del proyecto</value>
+    <value column="Description" original="Identifier for this Project Reporting Cycle">Identificador para este ciclo del proyecto</value>
+    <value column="Help" original="Identifies a Project Cycle which can be made up of one or more cycle steps and cycle phases.">Identifica un ciclo de proyecto que puede estar compuesto de uno o más pasos de ciclo y fases de ciclo.</value>
+  </row>
+  <row id="324" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="325" trl="N">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Organizational entity within client">Organización dentro del cliente</value>
+    <value column="Help" original="An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.">Una organización es una unidad del cliente o de la entidad, un ejemplo son los 
+&#13;departamentos, almacenes, tiendas. Se puede compartir la información entre las 
+&#13;organizaciones. </value>
+  </row>
+  <row id="326" trl="N">
+    <value column="Name" original="Storage Bin">Ubicación</value>
+    <value column="Description" original="A set of coordinates (x, y, z) which help locate an item in a warehouse.">Grupo de coordenadas (x, y, z) que ayudan a ubicar un ítem en el almacén.</value>
+    <value column="Help" original="The Locator ID indicates where in a Warehouse a product is located.">Indica la ubicación del almacén en que está localizado el producto. </value>
+  </row>
+  <row id="327" trl="Y">
+    <value column="Name" original="Delete old imported records">Eliminar los registro antiguos importados</value>
+    <value column="Description" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+    <value column="Help" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+  </row>
+  <row id="328" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="329" trl="N">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Organizational entity within client">Organización dentro del cliente</value>
+    <value column="Help" original="An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.">Una organización es una unidad del cliente o de la entidad, un ejemplo son los 
+&#13;departamentos, almacenes, tiendas. Se puede compartir la información entre las 
+&#13;organizaciones. </value>
+  </row>
+  <row id="330" trl="N">
+    <value column="Name" original="Accounting Schema">Esquema contable</value>
+    <value column="Description" original="The structure used in accounting including costing methods, currencies, and the calendar.">Estructura de contabilidad, incluidos métodos de costo, monedas y calendario.</value>
+    <value column="Help" original="An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar">El esquema contable define las reglas de contabilidad, la moneda y el calendario.</value>
+  </row>
+  <row id="331" trl="N">
+    <value column="Name" original="Accounting Date">Fecha contable</value>
+    <value column="Description" original="The date this transaction is recorded in the general ledger.">Fecha de registro de esta transacción en el libro mayor.</value>
+    <value column="Help" original="The Accounting Date indicates the date to be used on the General Ledger account entries generated from this document">Es la fecha de la operación para contabilidad</value>
+  </row>
+  <row id="332" trl="Y">
+    <value column="Name" original="Delete old imported records">Eliminar los registro antiguos importados</value>
+    <value column="Description" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+    <value column="Help" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+  </row>
+  <row id="333" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="334" trl="N">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Organizational entity within client">Organización dentro del cliente</value>
+    <value column="Help" original="An organization is a unit of your client or legal entity - examples are store, department. You can share data between organizations.">Una organización es una unidad del cliente o de la entidad, un ejemplo son los 
+&#13;departamentos, almacenes, tiendas. Se puede compartir la información entre las 
+&#13;organizaciones. </value>
+  </row>
+  <row id="335" trl="N">
+    <value column="Name" original="Bank Account">Cuenta bancaria</value>
+    <value column="Description" original="A monetary account of funds held in a recognized banking institution. ">Cuenta bancaria de una institución bancara reconocida.</value>
+    <value column="Help" original="The Bank Account identifies an account at this Bank.">Identificador único de la cuenta del banco.</value>
+  </row>
+  <row id="336" trl="Y">
+    <value column="Name" original="Delete old imported records">Eliminar los registro antiguos importados</value>
+    <value column="Description" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+    <value column="Help" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+  </row>
+  <row id="337" trl="N">
+    <value column="Name" original="Movement Date">Fecha del movimiento</value>
+    <value column="Description" original="The date that a certain item is moved from one location to another.">Fecha en que un ítem determinado se mueve de una ubicación a otra.</value>
+    <value column="Help" original="The Movement Date indicates the date that a product moved in or out of inventory.  This is the result of a shipment, receipt or inventory movement.">Indica la fecha en que un producto generó una incidencia en el inventario bien 
+&#13;por una entrada o una salida o un movimiento interno. </value>
+  </row>
+  <row id="338" trl="N">
+    <value column="Name" original="Only Validate Data">Sólo validar datos</value>
+    <value column="Description" original="Validate the date and do not process">ValidarValidar los datos pero no procesarlos</value>
+    <value column="Help" original="Validate the date and do not process">ValidarValidar los datos pero no procesarlos</value>
+  </row>
+  <row id="339" trl="N">
+    <value column="Name" original="Import only if No Errors">Importar si no hay errores</value>
+    <value column="Description" original="Only start the import, if there are no validation Errors">Sólo comenzar la importación, si no hay errores de validación</value>
+    <value column="Help" original="Only start the import, if there are no validation Errors">Sólo comenzar la importación, si no hay errores de validación</value>
+  </row>
+  <row id="341" trl="N">
+    <value column="Name" original="Asset Category">Grupo activo</value>
+    <value column="Description" original="A classification of assets based on similar characteristics.">Clasificación de los activos basada en características similares.</value>
+    <value column="Help" original="The group of assets determines default accounts.  If an asset group is selected in the product category, assets are created when delivering the asset.">El Grupo de Activos determina las cuentas por defecto. Si se selecciona un grupo de activos en la categoría de producto, los activos se crean cuando se envían los activos.</value>
+  </row>
+  <row id="342" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="343" trl="N">
+    <value column="Name" original="User/Contact">Usuario/Contacto</value>
+    <value column="Description" original="An acquaintance to reach for information related to the business partner. ">Referente que puede aportar información sobre un tercero.</value>
+    <value column="Help" original="The User identifies a unique user in the system. This could be an internal user or a business partner contact">Es el contacto que tiene asociado el tercero</value>
+  </row>
+  <row id="344" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="An item produced by a process.">Ítem producido mediante un proceso.</value>
+    <value column="Help" original="Identifies an item which is either purchased or sold in this organization.">Identifica un artículo que se ha comprado, vendido, producido, agregado a una plantilla de pedido,... </value>
+  </row>
+  <row id="345" trl="Y">
+    <value column="Name" original="In Service Date">F.servicio</value>
+    <value column="Description" original="Date when Asset was put into service">Fecha en la que el activo se pudo en marcha</value>
+    <value column="Help" original="The date when the asset was put into service - usually used as start date for depreciation.">&lt;P&gt;Fecha en la que un activo fue puesta en marcha.&lt;/P&gt;</value>
+  </row>
+  <row id="346" trl="N">
+    <value column="Name" original="Expiration Date">F. caducidad</value>
+    <value column="Description" original="The date upon which an item is guaranteed to be of good quality.">Fecha de vencimiento de la garantía de calidad de un producto.</value>
+    <value column="Help" original="Date when the normal guarantee or availability expires">&lt;P&gt;Fecha en la que finaliza la garantia de este activo.&lt;/P&gt;</value>
+  </row>
+  <row id="347" trl="N">
+    <value column="Name" original="Asset Category">Grupo activo</value>
+    <value column="Description" original="A classification of assets based on similar characteristics.">Clasificación de los activos basada en características similares.</value>
+    <value column="Help" original="The group of assets determines default accounts.  If an asset group is selected in the product category, assets are created when delivering the asset.">El Grupo de Activos determina las cuentas por defecto. Si se selecciona un grupo de activos en la categoría de producto, los activos se crean cuando se envían los activos.</value>
+  </row>
+  <row id="348" trl="N">
+    <value column="Name" original="Asset">Activos</value>
+    <value column="Description" original="An item which is owned and exchangeable for cash.">Item adquirible e intercambiable por efectivo.</value>
+    <value column="Help" original="Any item of economic value owned by the corporation, especially that which could be converted to cash.&#13;&#10;&#13;&#10;&#13;&#10;">Un activo se crea automáticamente a partir de una entrega del producto. Un activo puede ser usado de forma interna o ser una activo del cliente</value>
+  </row>
+  <row id="349" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="350" trl="N">
+    <value column="Name" original="User/Contact">Usuario/Contacto</value>
+    <value column="Description" original="An acquaintance to reach for information related to the business partner. ">Referente que puede aportar información sobre un tercero.</value>
+    <value column="Help" original="The User identifies a unique user in the system. This could be an internal user or a business partner contact">Es el contacto que tiene asociado el tercero</value>
+  </row>
+  <row id="351" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="An item produced by a process.">Ítem producido mediante un proceso.</value>
+    <value column="Help" original="Identifies an item which is either purchased or sold in this organization.">Identifica un artículo que se ha comprado, vendido, producido, agregado a una plantilla de pedido,... </value>
+  </row>
+  <row id="352" trl="N">
+    <value column="Name" original="Movement Date">Fecha del movimiento</value>
+    <value column="Description" original="The date that a certain item is moved from one location to another.">Fecha en que un ítem determinado se mueve de una ubicación a otra.</value>
+    <value column="Help" original="The Movement Date indicates the date that a product moved in or out of inventory.  This is the result of a shipment, receipt or inventory movement.">Indica la fecha en que un producto generó una incidencia en el inventario bien 
+&#13;por una entrada o una salida o un movimiento interno. </value>
+  </row>
+  <row id="353" trl="N">
+    <value column="Name" original="Project">Proyecto</value>
+    <value column="Description" original="A defined task or undertaking">Tarea o emprendimiento definido.</value>
+    <value column="Help" original="Project ID is a user defined identifier for a Project">Identificador&amp;nbsp;del proyecto definido por el usuario. </value>
+  </row>
+  <row id="354" trl="Y">
+    <value column="Name" original="Project Line">Línea del proyecto</value>
+    <value column="Description" original="Task or step in a project">Tarea o fase de un proyecto</value>
+    <value column="Help" original="The Project Line indicates a unique project line.">Línea del proyecto</value>
+  </row>
+  <row id="355" trl="N">
+    <value column="Name" original="Shipment/Receipt">Remisón</value>
+    <value column="Description" original="The document number for identifying an act of sending or receiving goods.">Número de documento que identifica el envío o la recepción de bienes.</value>
+    <value column="Help" original="The Shipment / Receipt ID indicates the unique document for this shipment or receipt.">Crea un único documento por cada remisión.</value>
+  </row>
+  <row id="356" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="An item produced by a process.">Ítem producido mediante un proceso.</value>
+    <value column="Help" original="Identifies an item which is either purchased or sold in this organization.">Identifica un artículo que se ha comprado, vendido, producido, agregado a una plantilla de pedido,... </value>
+  </row>
+  <row id="357" trl="N">
+    <value column="Name" original="Attribute Set Value">Valor atributos</value>
+    <value column="Description" original="An attribute associated with a product as part of an attribute set.">Atributo asociado a un producto como parte de un grupo de atributos.</value>
+    <value column="Help" original="The values of the actual Product Attributes">El valor de los atributos del artículo actual. </value>
+  </row>
+  <row id="358" trl="N">
+    <value column="Name" original="Storage Bin">Ubicación</value>
+    <value column="Description" original="A set of coordinates (x, y, z) which help locate an item in a warehouse.">Grupo de coordenadas (x, y, z) que ayudan a ubicar un ítem en el almacén.</value>
+    <value column="Help" original="The Locator ID indicates where in a Warehouse a product is located.">Indica la ubicación del almacén en que está localizado el producto. </value>
+  </row>
+  <row id="359" trl="N">
+    <value column="Name" original="Movement Quantity">Cant. movida</value>
+    <value column="Description" original="The number of items being moved from one location to another.">Cantidad de ítems que se mueven de una ubicación a otra.</value>
+    <value column="Help" original="The Movement Quantity indicates the quantity of a product that has been moved.">Indica la cantidad que ha sido movida de un producto.</value>
+  </row>
+  <row id="360" trl="N">
+    <value column="Name" original="Movement Date">Fecha del movimiento</value>
+    <value column="Description" original="The date that a certain item is moved from one location to another.">Fecha en que un ítem determinado se mueve de una ubicación a otra.</value>
+    <value column="Help" original="The Movement Date indicates the date that a product moved in or out of inventory.  This is the result of a shipment, receipt or inventory movement.">Indica la fecha en que un producto generó una incidencia en el inventario bien 
+&#13;por una entrada o una salida o un movimiento interno. </value>
+  </row>
+  <row id="361" trl="N">
+    <value column="Name" original="Project">Proyecto</value>
+    <value column="Description" original="A defined task or undertaking">Tarea o emprendimiento definido.</value>
+    <value column="Help" original="Project ID is a user defined identifier for a Project">Identificador&amp;nbsp;del proyecto definido por el usuario. </value>
+  </row>
+  <row id="362" trl="N">
+    <value column="Name" original="Description">Descripción</value>
+    <value column="Description" original="A space to write additional related information.">Espacio para escribir información adicional relacionada.</value>
+    <value column="Help" original="A description is limited to 255 characters.">La descripción está limitada a 255 caracteres</value>
+  </row>
+  <row id="363" trl="N">
+    <value column="Name" original="Project">Proyecto</value>
+    <value column="Description" original="A defined task or undertaking">Tarea o emprendimiento definido.</value>
+    <value column="Help" original="Project ID is a user defined identifier for a Project">Identificador&amp;nbsp;del proyecto definido por el usuario. </value>
+  </row>
+  <row id="364" trl="N">
+    <value column="Name" original="Accounting Schema">Esquema contable</value>
+    <value column="Description" original="The structure used in accounting including costing methods, currencies, and the calendar.">Estructura de contabilidad, incluidos métodos de costo, monedas y calendario.</value>
+    <value column="Help" original="An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar">El esquema contable define las reglas de contabilidad, la moneda y el calendario.</value>
+  </row>
+  <row id="365" trl="Y">
+    <value column="Name" original="Project Line">Línea del proyecto</value>
+    <value column="Description" original="Task or step in a project">Tarea o fase de un proyecto</value>
+    <value column="Help" original="The Project Line indicates a unique project line.">Línea del proyecto</value>
+  </row>
+  <row id="366" trl="N">
+    <value column="Name" original="Expense Sheet">Informe de gasto</value>
+    <value column="Description" original="A list of billable expenses related to time, travel, and basis business conduct.">Lista de gastos a facturar, en concepto de tiempo, viajes y </value>
+    <value column="Help" original="The ID identifies a unique record for the expense report"></value>
+  </row>
+  <row id="367" trl="N">
+    <value column="Name" original="Consolidate to one Document">Consolidar a un documento</value>
+    <value column="Description" original="Consilidate Lines into one Document">Consolidar líneas a un documento</value>
+    <value column="Help" original="Consilidate Lines into one Document">Consolidar líneas a un documento</value>
+  </row>
+  <row id="368" trl="N">
+    <value column="Name" original="Project">Proyecto</value>
+    <value column="Description" original="A defined task or undertaking">Tarea o emprendimiento definido.</value>
+    <value column="Help" original="Project ID is a user defined identifier for a Project">Identificador&amp;nbsp;del proyecto definido por el usuario. </value>
+  </row>
+  <row id="369" trl="N">
+    <value column="Name" original="Project">Proyecto</value>
+    <value column="Description" original="A defined task or undertaking">Tarea o emprendimiento definido.</value>
+    <value column="Help" original="Project ID is a user defined identifier for a Project">Identificador&amp;nbsp;del proyecto definido por el usuario. </value>
+  </row>
+  <row id="800000" trl="N">
+    <value column="Name" original="Shipment/Receipt">Remisión</value>
+    <value column="Description" original="The document number for identifying an act of sending or receiving goods.">Número de documento que identifica el envío o la recepción de bienes.</value>
+    <value column="Help" original="The Shipment / Receipt ID indicates the unique document for this shipment or receipt.">Crea un único documento por cada remisión.</value>
+  </row>
+  <row id="800004" trl="Y">
+    <value column="Name" original="Get out from Settlement">Quitar de la liquidación</value>
+    <value column="Description" original="Get out from Settlement">Quitar de la liquidación</value>
+    <value column="Help" original="Get out from Settlement">Quitar de la liquidación</value>
+  </row>
+  <row id="800005" trl="N">
+    <value column="Name" original="Payment Complete">Aplicado</value>
+    <value column="Description" original="A confirmation stating whether the request has been closed through a monetary transaction.">Confirmación de que la petición se cierra mediante una transacción monetaria.</value>
+    <value column="Help" original="The document is paid">Indica si el efecto ya ha sido aplicado. </value>
+  </row>
+  <row id="800006" trl="N">
+    <value column="Name" original="Write-off Amount">Importe descontado</value>
+    <value column="Description" original="A monetary sum that can be deducted from tax obligations.">Suma que puede deducirse de las obligaciones impositivas.</value>
+    <value column="Help" original="The Write Off Amount indicates the amount to be written off as uncollectible.">Indica el importe que se descuenta porque no se va a cobrar o percibir nunca.</value>
+  </row>
+  <row id="800007" trl="N">
+    <value column="Name" original="Locator from">Locator from</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800008" trl="N">
+    <value column="Name" original="Locator to">Locator to</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800009" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="800010" trl="N">
+    <value column="Name" original="Warehouse Calendar">Calendario de almacén</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original="The warehouse schedule ID identifies a unique schedule for renting locators."></value>
+  </row>
+  <row id="800011" trl="N">
+    <value column="Name" original="Warehouse Period">Periodo almacén</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original="The ID identifies a unique period for the warehouse schedule"></value>
+  </row>
+  <row id="800012" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="800013" trl="Y">
+    <value column="Name" original="Regularization">Regularización</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800014" trl="Y">
+    <value column="Name" original="Date Invoice To">Fecha limite para facturar</value>
+    <value column="Description" original="Order date limit to invoice">Fecha limite para facturar</value>
+    <value column="Help" original="Order date limit to invoice">Fecha limite para facturar</value>
+  </row>
+  <row id="800015" trl="N">
+    <value column="Name" original="Starting Date">Desde la fecha</value>
+    <value column="Description" original="A parameter stating the starting time range related to a specified request.">Parámetro que establece el intervalo de inicio de una petición específica.</value>
+    <value column="Help" original="The Date From indicates the starting date of a range.">&lt;P&gt;Indica la fecha de comienzo de aplicación de la oferta.&lt;/P&gt;</value>
+  </row>
+  <row id="800016" trl="N">
+    <value column="Name" original="Ending Date">Hasta la fecha</value>
+    <value column="Description" original="A parameter stating the ending time range related for a specified request, query, etc. ">Parámetro que establece el intervalo de finalización de una petición, consulta, etc. específicas.</value>
+    <value column="Help" original="The Date To indicates the end date of a range (inclusive)">&lt;P&gt;Indica la fecha de finalización de la oferta.&lt;/P&gt;</value>
+  </row>
+  <row id="800017" trl="N">
+    <value column="Name" original="Starting Date">Desde la fecha</value>
+    <value column="Description" original="A parameter stating the starting time range related to a specified request.">Parámetro que establece el intervalo de inicio de una petición específica.</value>
+    <value column="Help" original="The Date From indicates the starting date of a range.">&lt;P&gt;Indica la fecha de comienzo de aplicación de la oferta.&lt;/P&gt;</value>
+  </row>
+  <row id="800018" trl="N">
+    <value column="Name" original="Ending Date">Hasta la fecha</value>
+    <value column="Description" original="A parameter stating the ending time range related for a specified request, query, etc. ">Parámetro que establece el intervalo de finalización de una petición, consulta, etc. específicas.</value>
+    <value column="Help" original="The Date To indicates the end date of a range (inclusive)">&lt;P&gt;Indica la fecha de finalización de la oferta.&lt;/P&gt;</value>
+  </row>
+  <row id="800019" trl="N">
+    <value column="Name" original="Activate periods">Activar periodos</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original="A button that activates/deactivates periods depending on two dates"></value>
+  </row>
+  <row id="800021" trl="N">
+    <value column="Name" original="Price list version source">Price list version source</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800022" trl="N">
+    <value column="Name" original="Starting Date">Desde la fecha</value>
+    <value column="Description" original="A parameter stating the starting time range related to a specified request.">Parámetro que establece el intervalo de inicio de una petición específica.</value>
+    <value column="Help" original="The Date From indicates the starting date of a range.">&lt;P&gt;Indica la fecha de comienzo de aplicación de la oferta.&lt;/P&gt;</value>
+  </row>
+  <row id="800023" trl="N">
+    <value column="Name" original="Ending Date">Hasta la fecha</value>
+    <value column="Description" original="A parameter stating the ending time range related for a specified request, query, etc. ">Parámetro que establece el intervalo de finalización de una petición, consulta, etc. específicas.</value>
+    <value column="Help" original="The Date To indicates the end date of a range (inclusive)">&lt;P&gt;Indica la fecha de finalización de la oferta.&lt;/P&gt;</value>
+  </row>
+  <row id="800024" trl="N">
+    <value column="Name" original="Service Point">Almacén</value>
+    <value column="Description" original="The location where products arrive to or are sent from.">Ubicación a la que se envían, o de donde proceden, los productos.</value>
+    <value column="Help" original="&#13;&#10;The Warehouse identifies a unique Warehouse where products are stored or Services are provided.">Identifica un único almacén donde los productos son almacenados o los servicios facilitados.</value>
+  </row>
+  <row id="800025" trl="Y">
+    <value column="Name" original="Vendor">Proveedor</value>
+    <value column="Description" original="A business partner who sells products or services.">Tercero que vende productos o servicios.</value>
+    <value column="Help" original="Identifies a business partner that is a vendor."></value>
+  </row>
+  <row id="800026" trl="N">
+    <value column="Name" original="Order Reference">Nº de referencia</value>
+    <value column="Description" original="A reference or document order number as listed in business partner application.">Número de referencia o de documento, según consta en la aplicación de un tercero</value>
+    <value column="Help" original="The business partner order reference is the order reference for this specific transaction; Often Purchase Order numbers are given to print on Invoices for easier reference.  A standard number can be defined in the Business Partner (Customer) window.">El número de referencia de terceros es la referencia de un pedido para esta operación específica. A menudo los números de los pedidos de compra son dados de forma concreta para ser imprimidos en las facturas para facilitar la referencia. Un número de referencia estandar para un tercero se puede definir en la ventana Terceros(cliente).</value>
+  </row>
+  <row id="800027" trl="N">
+    <value column="Name" original="Invoice Date">Fecha de la factura</value>
+    <value column="Description" original="The time listed on the invoice.">Fecha de la factura.</value>
+    <value column="Help" original="The Date Invoice indicates the date printed on the invoice.">Indica la fecha que se imprimió en la factura.</value>
+  </row>
+  <row id="800028" trl="N">
+    <value column="Name" original="Starting Date">Desde la fecha</value>
+    <value column="Description" original="A parameter stating the starting time range related to a specified request.">Parámetro que establece el intervalo de inicio de una petición específica.</value>
+    <value column="Help" original="The Date From indicates the starting date of a range.">&lt;P&gt;Indica la fecha de comienzo de aplicación de la oferta.&lt;/P&gt;</value>
+  </row>
+  <row id="800029" trl="N">
+    <value column="Name" original="Ending Date">Hasta la fecha</value>
+    <value column="Description" original="A parameter stating the ending time range related for a specified request, query, etc. ">Parámetro que establece el intervalo de finalización de una petición, consulta, etc. específicas.</value>
+    <value column="Help" original="The Date To indicates the end date of a range (inclusive)">&lt;P&gt;Indica la fecha de finalización de la oferta.&lt;/P&gt;</value>
+  </row>
+  <row id="800030" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="800031" trl="N">
+    <value column="Name" original="Process Plan Version">Versión de plan de producción</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original="Indicates a process plan version.">Identifica una única versión de plan de producción a la que pertenece está secuencia.</value>
+  </row>
+  <row id="800032" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="800033" trl="N">
+    <value column="Name" original="Amount">Importe</value>
+    <value column="Description" original="A monetary total.">Importe total.</value>
+    <value column="Help" original="The Amount indicates the amount for this document line.">Indica el importe para este documento. </value>
+  </row>
+  <row id="800034" trl="N">
+    <value column="Name" original="Currency">Moneda</value>
+    <value column="Description" original="An accepted medium of monetary exchange that may vary across countries.">Medio aceptado de intercambio de moneda que varía según el país.</value>
+    <value column="Help" original="Indicates the Currency to be used when processing or reporting on this record">Indica la moneda que se va a utilizar cuando se procese o se informe de ese registro.</value>
+  </row>
+  <row id="800035" trl="N">
+    <value column="Name" original="Form of Payment">Forma de pago</value>
+    <value column="Description" original="The method used to pay the request.">Método utilizado para pagar la petición.</value>
+    <value column="Help" original="The Payment Rule indicates the method of invoice payment.">Indica la forma en la que se realizará el pago de la factura: &lt;BR&gt;&lt;STRONG&gt;(1)-A la vista:&lt;/STRONG&gt; *** &lt;BR&gt;&lt;STRONG&gt;(2)-Cheque:&lt;/STRONG&gt; El pago se realizará mediante un cheque. &lt;BR&gt;&lt;STRONG&gt;(3)-Contado remisión:&lt;/STRONG&gt; El pago se realiza en efectivo al entregar el pedido y la remisión. &lt;BR&gt;&lt;STRONG&gt;(4)-Efectivo:&lt;/STRONG&gt; El pago se realiza en efectivo en el momento de realizar el pedido. &lt;BR&gt;&lt;STRONG&gt;(5)-Giro bancario:&lt;/STRONG&gt; Dinero o pago que se remite por medio de un banco, que cobra por el servicio prestado. &lt;BR&gt;&lt;STRONG&gt;(6)-Ingreso por banco:&lt;/STRONG&gt; Se realiza un ingreso a una cuenta bancaria como forma de pago. &lt;BR&gt;&lt;STRONG&gt;(7)-Pagaré:&lt;/STRONG&gt; El Pagaré es un documento de crédito que contiene la promesa incondicional del deudor de pagar un monto establecido en fecha determinada. Al girar un pagaré pueden establecerse intereses. &lt;BR&gt;&lt;STRONG&gt;(8)-Remesa bancaria:&lt;/STRONG&gt; Es una forma de pago agrupada de giros bancarios. &lt;BR&gt;&lt;STRONG&gt;(9)-Tarjeta de credito:&lt;/STRONG&gt; Se realiza el pago</value>
+  </row>
+  <row id="800036" trl="N">
+    <value column="Name" original="Due Date">Fecha prevista</value>
+    <value column="Description" original="The date when a specified request must be carried out by.">Período en que debe satisfacerse una petición específica.</value>
+    <value column="Help" original="Refers to the due date in which payment must be done.">Fecha prevista de cobro/pago del efecto</value>
+  </row>
+  <row id="800037" trl="N">
+    <value column="Name" original="Receipt">Cobro</value>
+    <value column="Description" original="A confirmation stating whether the request has been closed through receipt of a monetary transaction.">Confirmación de si la petición se ha cerrado mediante el cobro de una transacción monetaria.</value>
+    <value column="Help" original="This is a sales transaction (receipt)">Indica si es un cobro o un pago.</value>
+  </row>
+  <row id="800038" trl="N">
+    <value column="Name" original="Description">Descripción</value>
+    <value column="Description" original="A space to write additional related information.">Espacio para escribir información adicional relacionada.</value>
+    <value column="Help" original="A description is limited to 255 characters.">La descripción está limitada a 255 caracteres</value>
+  </row>
+  <row id="800039" trl="N">
+    <value column="Name" original="Limit Date">Fecha límite</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800040" trl="N">
+    <value column="Name" original="Starting Day">Fecha Inicio</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original="Initial date."></value>
+  </row>
+  <row id="800041" trl="N">
+    <value column="Name" original="Ending Date">Fecha final</value>
+    <value column="Description" original="A parameter stating when a specified request will end.">Parámetro que indica el momento en que finaliza una petición.</value>
+    <value column="Help" original="The End Date indicates the last date in this range.">Indica el último día de un rango de fechas.</value>
+  </row>
+  <row id="800042" trl="N">
+    <value column="Name" original="Budget">Presupuesto</value>
+    <value column="Description" original="A group of planned expenses for a task.">Grupo de gastos esperados para una tarea.</value>
+    <value column="Help" original="Used to define the anticipated costs of doing business"></value>
+  </row>
+  <row id="800043" trl="N">
+    <value column="Name" original="Asset Category">Grupo activo</value>
+    <value column="Description" original="A classification of assets based on similar characteristics.">Clasificación de los activos basada en características similares.</value>
+    <value column="Help" original="The group of assets determines default accounts.  If an asset group is selected in the product category, assets are created when delivering the asset.">El Grupo de Activos determina las cuentas por defecto. Si se selecciona un grupo de activos en la categoría de producto, los activos se crean cuando se envían los activos.</value>
+  </row>
+  <row id="800044" trl="Y">
+    <value column="Name" original="Delete old imported records">Eliminar los registro antiguos importados</value>
+    <value column="Description" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+    <value column="Help" original="Before processing delete old imported records in the import table">Antes de procesar eliminar registros antiguos importados</value>
+  </row>
+  <row id="800045" trl="N">
+    <value column="Name" original="Budget">Presupuesto</value>
+    <value column="Description" original="A group of planned expenses for a task.">Grupo de gastos esperados para una tarea.</value>
+    <value column="Help" original="Used to define the anticipated costs of doing business"></value>
+  </row>
+  <row id="800046" trl="N">
+    <value column="Name" original="cheaper shipper">cheaper shipper</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800047" trl="N">
+    <value column="Name" original="Calculate quantity">Calculate quantity</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800048" trl="N">
+    <value column="Name" original="Budget">Presupuesto</value>
+    <value column="Description" original="A group of planned expenses for a task.">Grupo de gastos esperados para una tarea.</value>
+    <value column="Help" original="Used to define the anticipated costs of doing business"></value>
+  </row>
+  <row id="800049" trl="N">
+    <value column="Name" original="Process Plan">Plan de producción</value>
+    <value column="Description" original="A guide stating how a certain item must move through the transformation process.">Guía para mover un ítem determinado a través de un proceso de transformación.</value>
+    <value column="Help" original="Indicates a process plan.">Identifica a un conjunto de secuencias para la fabricación de uno o varios productos. </value>
+  </row>
+  <row id="800050" trl="N">
+    <value column="Name" original="Reference Date">Reference Date</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800051" trl="Y">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Client for this installation.">Entidad para esta instalación</value>
+    <value column="Help" original="A Client is a company or a legal entity. You cannot share data between Clients.">Un cliente es una empresa o entidad legal. No se puede compartir información 
+&#13;entre empresas. Permite compartir la misma instalación a varias empresas. </value>
+  </row>
+  <row id="800052" trl="Y">
+    <value column="Name" original="New Client Identifier">Identificador nueva entidad</value>
+    <value column="Description" original="New Client Identifier">Identificador nueva entidad</value>
+    <value column="Help" original="New Client Identifier">Identificador nueva entidad</value>
+  </row>
+  <row id="800053" trl="N">
+    <value column="Name" original="Service Point">Almacén</value>
+    <value column="Description" original="The location where products arrive to or are sent from.">Ubicación a la que se envían, o de donde proceden, los productos.</value>
+    <value column="Help" original="&#13;&#10;The Warehouse identifies a unique Warehouse where products are stored or Services are provided.">Identifica un único almacén donde los productos son almacenados o los servicios facilitados.</value>
+  </row>
+  <row id="800054" trl="N">
+    <value column="Name" original="Business Partner ">Tercero</value>
+    <value column="Description" original="Anyone who takes part in daily business operations by acting as a customer, employee, etc.">Persona que participa en operaciones diarias de negocios, como cliente, empleado, etc.</value>
+    <value column="Help" original="A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson">Un tercero es cualquier entidad, organización o particular&amp;nbsp;con&amp;nbsp;quien se realizan operaciones y&amp;nbsp;transacciones. Esto incluye proveedores, clientes y empleados. </value>
+  </row>
+  <row id="800055" trl="N">
+    <value column="Name" original="Starting Date">Desde la fecha</value>
+    <value column="Description" original="A parameter stating the starting time range related to a specified request.">Parámetro que establece el intervalo de inicio de una petición específica.</value>
+    <value column="Help" original="The Date From indicates the starting date of a range.">&lt;P&gt;Indica la fecha de comienzo de aplicación de la oferta.&lt;/P&gt;</value>
+  </row>
+  <row id="800056" trl="Y">
+    <value column="Name" original="Output type">Formato de salida</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original="Defines the output format type from the available list.">Define el formato de salida deseado de la lista.</value>
+  </row>
+  <row id="800057" trl="Y">
+    <value column="Name" original="Output type">Formato de salida</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original="Defines the output format type from the available list.">Define el formato de salida deseado de la lista.</value>
+  </row>
+  <row id="800058" trl="N">
+    <value column="Name" original="Ending Date">Hasta la fecha</value>
+    <value column="Description" original="A parameter stating the ending time range related for a specified request, query, etc. ">Parámetro que establece el intervalo de finalización de una petición, consulta, etc. específicas.</value>
+    <value column="Help" original="The Date To indicates the end date of a range (inclusive)">&lt;P&gt;Indica la fecha de finalización de la oferta.&lt;/P&gt;</value>
+  </row>
+  <row id="800059" trl="N">
+    <value column="Name" original="Project">Proyecto</value>
+    <value column="Description" original="A defined task or undertaking">Tarea o emprendimiento definido.</value>
+    <value column="Help" original="Project ID is a user defined identifier for a Project">Identificador&amp;nbsp;del proyecto definido por el usuario. </value>
+  </row>
+  <row id="800060" trl="N">
+    <value column="Name" original="Service Point">Almacén</value>
+    <value column="Description" original="The location where products arrive to or are sent from.">Ubicación a la que se envían, o de donde proceden, los productos.</value>
+    <value column="Help" original="The Warehouse identifies a unique Warehouse where products are stored or Services are provided.">Identifica un único almacén donde los productos son almacenados o los servicios facilitados.</value>
+  </row>
+</compiereTrl>

@@ -1,0 +1,82 @@
+Mithilfe und Kommentare
+=======================
+
+Änderungsvorschläge - auch minimaler Natur - werden gerne aufgenommen
+und eingearbeitet; schließlich kann man sich ja nicht in allen
+Themengebieten gut auskennen und treffende Formulierungen finden.
+
+Feedback bitte an folgende Mailadresse senden:
+
+  openbravo-german-translation AT headissue DOT com
+
+Einsenden von Änderungsvorschlägen
+==================================
+
+Folgende Vorgehensweise bitten wir zu beachten:
+
+### Mit Installation des annotierten Sprachpaketes:
+
+Zur Arbeitserleichterung gibt es ein spezielles Sprachpaket, das jede
+Textphrase in der Applikation mit einer eindeutigen ID kennzeichnet.
+Die ID wird hinter dem jeweiligen Text angezeigt (z.B. "#Fd4711").
+
+Form der Änderungsmeldung:
+  <ID>: <neuer Text>
+
+### Ohne Installation des annotierten Sprachpaketes:
+
+Form der Änderungsmeldung:
+Wenn möglich: 
+  - Text im englischen Original
+Auf jeden Fall:
+  - Angabe des vollständigen Menupfades
+  - Angabe des Titels des aufgerufenen GUIs
+  - aktueller deutscher Text
+  - gewünschter neuer Text
+  
+### Geändertes Sprachpaket:
+Sollten Sie selbst Änderungen an den XML-Files lang/de_DE vorgenommen haben
+oder via GUI und Export die xml-files geändert haben schicken Sie uns bitte:
+- die geänderten XML-Files
+- Version/Datum der aus SourceForge heruntergeladenen Ursprungsdateien
+
+Installation des annotierten Sprachpaketes
+==========================================
+
+Das Paket lässt sich problemlos parallel zum deutschen Interface
+installieren und wird regelmäßig aktualisiert. 
+
+Die aktuelle Version kann man hier herunter laden:
+
+http://www.headissue.com/pub/ob/de_XX-latest.tgz
+
+Das aktuellste Archiv des annotierten Sprachpaketes herunterladen.
+
+Installation bei (Mit Englisch als ausgewählter Sprache):
+- Unter "General Rules -> System Rules -> Language" eine neue Sprache
+  anlegen (2. Button von links)
+- Felder wie folgt ausfüllen: 
+  Language: "de_XX", 
+  Name: "German (Annotated)",
+  ISO Language Code: "de", 
+  ISO Country: "XX", 
+  Active: "x", 
+  Base Language: "-", 
+  System Language: "x"
+- Datensatz abspeichern (6. Button von links)
+- "Verify Languages" anwählen, dadurch werden die Sprachdatensätze aus der
+  Originalsprache kopiert
+- Sprache 'de_XX' exportieren (unter General Rules -> System
+  Rules -> Import/Export Languages)
+- Es sollten nun die Verzeichnisse 'lang/de_XX' in Ihrem 'attachment'
+  Verzeichnis angelegt sein
+- Die exportierten files im Directory de_XX löschen und stattdessen die XML Files
+  des annotierten Sprachpaketes dort ablegen
+- unter "General Rules -> System Rules -> Import/Export Languages" die Sprache
+  'de_XX' importieren
+- Tomcat beenden
+- 'ant compile.complete' im Openbravo Verzeichnis aufrufen
+- 'ant war' im Openbravo Verzeichnis aufrufen
+- Environment Variable JAKARTA_HOME auf Tomcat Verzeichnis setzen
+- 'ant deploy'
+- Tomcat wieder starten

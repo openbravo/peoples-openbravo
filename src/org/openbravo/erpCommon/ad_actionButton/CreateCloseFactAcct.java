@@ -1,0 +1,162 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+package org.openbravo.erpCommon.ad_actionButton;
+
+//import com.sun.mail.smtp.SMTPMessage;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.utils.FormatUtilities;
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.xmlEngine.XmlDocument;
+import java.io.*;
+import java.math.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class CreateCloseFactAcct extends HttpSecureAppServlet {
+  private static final long serialVersionUID = 1L;
+
+  public void init (ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (vars.commandIn("DEFAULT")) {
+      String strProcessId = vars.getStringParameter("inpProcessId");
+      String strWindow = vars.getStringParameter("inpwindowId");
+      String strTab = vars.getStringParameter("inpTabId");
+      String strPediodId = vars.getStringParameter("inpcPeriodId", "");
+      String strKey = vars.getRequiredGlobalVariable("inpcYearId", strWindow + "|C_Year_ID");
+      printPage(response, vars, strKey, strPediodId, strWindow, strTab, strProcessId);
+    } else if (vars.commandIn("SAVE")) {
+      String strWindow = vars.getStringParameter("inpwindowId");
+      String strPediodId = vars.getStringParameter("inpcPeriodId", "");
+      String strKey = vars.getRequiredGlobalVariable("inpcYearId", strWindow + "|C_Year_ID");
+      String strTab = vars.getStringParameter("inpTabId");
+      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
+      String strWindowPath="", strTabName="";
+      if (tab!=null && tab.length!=0) {
+        strTabName = FormatUtilities.replace(tab[0].name);
+        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
+      } else strWindowPath = strDefaultServlet;
+      String messageResult = processButton(vars, strKey, strPediodId, strWindow);
+      vars.setSessionValue(strWindow + "|" + strTabName + ".message", messageResult);
+      printPageClosePopUp(response, vars, strWindowPath);
+    } else pageErrorPopUp(response);
+  }
+
+
+  String processButton(VariablesSecureApp vars, String strKey, String strPediodId, String windowId) {
+    try {
+      CreateCloseFactAcctData[] asset = CreateCloseFactAcctData.getAmounts(this, strKey, strPediodId, "A");
+      CreateCloseFactAcctData[] liability = CreateCloseFactAcctData.getAmounts(this, strKey, strPediodId, "L");
+      BigDecimal assetAmtCr = new BigDecimal("0");
+      BigDecimal liabilityAmtDr = new BigDecimal("0");
+      BigDecimal liabilityAmtCr = new BigDecimal("0");
+      String strAcctSchema = Utility.getContext(this, vars, "$C_ACCTSCHEMA_ID", windowId);;
+      String Fact_Acct_ID = "";
+      String Fact_Acct_Group_ID = "";
+      String newPeriod = "";
+      if(CreateCloseFactAcctData.getNextPeriod(this, strPediodId, strKey).equals(""))
+        if (CreateCloseFactAcctData.getNextYear(this, strKey).equals(""))return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+        else if (CreateCloseFactAcctData.getFirstPeriod(this, CreateCloseFactAcctData.getNextYear(this, strKey)).equals(""))
+          return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+        else newPeriod = CreateCloseFactAcctData.getFirstPeriod(this, CreateCloseFactAcctData.getNextYear(this, strKey));
+      else newPeriod = CreateCloseFactAcctData.getNextPeriod(this, strPediodId, strKey);
+      Fact_Acct_Group_ID = SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient());
+      int i;
+      for (i=0;i<asset.length;i++){
+        assetAmtCr = assetAmtCr.add(new BigDecimal(asset[i].totalamtcr));
+        Fact_Acct_ID = SequenceIdData.getSequence(this, "Fact_Acct", vars.getClient());
+        CreateCloseFactAcctData.insert(this, Fact_Acct_ID, vars.getClient(), vars.getOrg(), vars.getUser(), strAcctSchema, asset[i].accountId, CreateCloseFactAcctData.getEndDate(this, strPediodId), strPediodId, CreateCloseFactAcctData.adTableId(this), "A", CreateCloseFactAcctData.cCurrencyId(this, strAcctSchema),asset[i].totalamtdr,asset[i].totalamtcr,asset[i].totalamtdr,asset[i].totalamtcr , Fact_Acct_Group_ID, Integer.toString((i+3)*10), "C");
+      }
+      for (int j=0;j<liability.length;j++){
+        liabilityAmtDr = liabilityAmtDr.add(new BigDecimal(liability[j].totalamtdr));
+        liabilityAmtCr = liabilityAmtCr.add(new BigDecimal(liability[j].totalamtcr));
+        Fact_Acct_ID = SequenceIdData.getSequence(this, "Fact_Acct", vars.getClient());
+        CreateCloseFactAcctData.insert(this, Fact_Acct_ID, vars.getClient(), vars.getOrg(), vars.getUser(), strAcctSchema, liability[j].accountId, CreateCloseFactAcctData.getEndDate(this, strPediodId), strPediodId, CreateCloseFactAcctData.adTableId(this), "A", CreateCloseFactAcctData.cCurrencyId(this, strAcctSchema),liability[j].totalamtdr,liability[j].totalamtcr,liability[j].totalamtdr,liability[j].totalamtcr , Fact_Acct_Group_ID, Integer.toString((i+j+3)*10), "C");
+      }
+      String Fact_Acct_Group_ID2 = SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient());
+      i = 0;
+      for (i=0;i<asset.length;i++){
+        assetAmtCr = assetAmtCr.add(new BigDecimal(asset[i].totalamtcr));
+        Fact_Acct_ID = SequenceIdData.getSequence(this, "Fact_Acct", vars.getClient());
+        CreateCloseFactAcctData.insert(this, Fact_Acct_ID, vars.getClient(), vars.getOrg(), vars.getUser(), strAcctSchema, asset[i].accountId, CreateCloseFactAcctData.getStartDate(this, newPeriod), newPeriod, CreateCloseFactAcctData.adTableId(this), "A", CreateCloseFactAcctData.cCurrencyId(this, strAcctSchema),asset[i].totalamtcr,asset[i].totalamtdr,asset[i].totalamtcr,asset[i].totalamtdr , Fact_Acct_Group_ID2, Integer.toString((i+3)*10), "O");
+      }
+      for (int j=0;j<liability.length;j++){
+        liabilityAmtDr = liabilityAmtDr.add(new BigDecimal(liability[j].totalamtdr));
+        liabilityAmtCr = liabilityAmtCr.add(new BigDecimal(liability[j].totalamtcr));
+        Fact_Acct_ID = SequenceIdData.getSequence(this, "Fact_Acct", vars.getClient());
+        CreateCloseFactAcctData.insert(this, Fact_Acct_ID, vars.getClient(), vars.getOrg(), vars.getUser(), strAcctSchema, liability[j].accountId, CreateCloseFactAcctData.getStartDate(this, newPeriod), newPeriod, CreateCloseFactAcctData.adTableId(this), "A", CreateCloseFactAcctData.cCurrencyId(this, strAcctSchema),liability[j].totalamtcr,liability[j].totalamtdr,liability[j].totalamtcr,liability[j].totalamtdr, Fact_Acct_Group_ID2, Integer.toString((i+j+3)*10), "O");
+      }
+      if(CreateCloseFactAcctData.updatePeriods(this, Fact_Acct_Group_ID, strKey, strPediodId)!=0)
+        return Utility.messageBD(this, "ProcessOK", vars.getLanguage());
+      else return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+    } catch (ServletException e) {
+      log4j.warn(e);
+      return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+    }
+  }
+
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String strTab, String strProcessId) throws IOException, ServletException {
+      if (log4j.isDebugEnabled()) log4j.debug("Output: Button process Create Close Fact Acct");
+
+      ActionButtonDefaultData[] data = null;
+      String strHelp="", strDescription="";
+      if (vars.getLanguage().equals("en_US")) data = ActionButtonDefaultData.select(this, strProcessId);
+      else data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+
+      if (data!=null && data.length!=0) {
+        strDescription = data[0].description;
+        strHelp = data[0].help;
+      }
+      String[] discard = {""};
+      if (strHelp.equals("")) discard[0] = new String("helpDiscard");
+      XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateCloseFactAcct", discard).createXmlDocument();
+      xmlDocument.setParameter("key", strKey);
+      xmlDocument.setParameter("window", windowId);
+      xmlDocument.setParameter("tab", strTab);
+      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
+      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("description", strDescription);
+      xmlDocument.setParameter("help", strHelp);
+
+
+      xmlDocument.setData("reportcPeriodId", "liststructure", CreateCloseFactAcctData.select(this,strKey));
+
+      xmlDocument.setParameter("cPeriodId", strPediodId);
+
+
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    }
+
+  public String getServletInfo() {
+    return "Servlet Project close fact acct";
+  } // end of getServletInfo() method
+}
+

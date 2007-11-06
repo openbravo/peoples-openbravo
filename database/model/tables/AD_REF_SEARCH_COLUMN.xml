@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<database name="TABLE AD_REF_SEARCH_COLUMN">
+    <table name="AD_REF_SEARCH_COLUMN" primaryKey="AD_REF_SEARCH_COLUMN_KEY">
+      <column name="AD_REF_SEARCH_COLUMN_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_REF_SEARCH_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false"/>
+      <column name="COLUMNNAME" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false"/>
+      <column name="COLUMNTYPE" primaryKey="false" required="true" type="CHAR" size="1" default="I" autoIncrement="false"/>
+      <column name="COLUMN_SUFFIX" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false"/>
+      <check name="AD_REF_SEARCH_COLUMN_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="REFSEARCHCOLUMN_FK_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="REFSEARCHCOLUMN_FK_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_REF_SEARCH" name="ADREFSEARCH_ADREFSEARCHCOLUMN">
+        <reference local="AD_REF_SEARCH_ID" foreign="AD_REF_SEARCH_ID"/>
+      </foreign-key>
+    </table>
+</database>

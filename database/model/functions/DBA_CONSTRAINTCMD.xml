@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<database name="FUNCTION DBA_CONSTRAINTCMD">
+<function name="DBA_CONSTRAINTCMD" type="VARCHAR">
+<parameter name="p_ConstraintName" type="VARCHAR" mode="in"/>
+<body><![CDATA[
+/*************************************************************************
+* The contents of this file are subject to the Compiere License
+* Version 2.5.0 ("License"); You may not use this file except in
+* compliance with the License. You may obtain a copy of the License at
+* http://www.compiere.org/license.html
+* Software distributed under the License is distributed on an
+* "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+* implied. See the License for the specific language governing rights
+* and limitations under the License.
+* The Original Code is  Compiere  ERP &  Business Solution
+* The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
+Inc.
+* Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+* parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+* All Rights Reserved.
+* Contributor(s): Openbravo SL
+* Contributions are Copyright(C) 1999-2005 Openbravo, S.L
+*************************************************************************
+* $Id: DBA_ConstraintCmd.sql,v 1.3 2002/10/21 04:49:45 jjanke Exp $
+* $Source: /cvsroot/compiere/db/database/Functions/DBA_ConstraintCmd.sql,v $
+***
+* Title:  Create DML command for given constraint
+* Description:
+*  SELECT DBA_ConstraintCmd(Constraint_Name) FROM User_Constraints WHERE CONSTRAINT_TYPE='R'
+************************************************************************/
+  v_Result         VARCHAR2(2000) ;
+  v_TableName      VARCHAR2(256) ;
+  v_ColumnName     VARCHAR2(256) ;
+  v_ConstraintName VARCHAR2(256) ;
+  v_DeleteRule     VARCHAR2(256) ;
+BEGIN
+  -- Get First Part
+  SELECT c.Table_Name,
+    cc.Column_name,
+    c.R_Constraint_Name,
+    c.Delete_Rule
+  INTO v_TableName,
+    v_ColumnName,
+    v_ConstraintName,
+    v_DeleteRule
+  FROM USER_Constraints c,
+    USER_Cons_Columns cc
+  WHERE c.Constraint_Name = cc.Constraint_Name
+    AND cc.Constraint_Name = p_ConstraintName;
+  -- Create First Part
+  v_Result := 'ALTER TABLE ' || v_TableName || ' ADD CONSTRAINT ' || p_ConstraintName  || ' FOREIGN KEY (' || v_ColumnName || ') ';
+  -- Not a valid FK Reference
+  IF(v_ConstraintName IS NULL) THEN
+    RETURN NULL;
+  END IF;
+  -- Get Second Part
+  SELECT c.Table_Name,
+    cc.Column_name
+  INTO v_TableName,
+    v_ColumnName
+  FROM USER_Constraints c,
+    USER_Cons_Columns cc
+  WHERE c.Constraint_Name = cc.Constraint_Name
+    AND cc.Constraint_Name = v_ConstraintName;
+  -- Create Second Part
+  v_Result := v_Result || 'REFERENCES ' || v_TableName || '(' || v_ColumnName || ')';
+  IF(v_DeleteRule = 'CASCADE') THEN
+    v_Result := v_Result || ' ON DELETE CASCADE';
+  END IF;
+  -- DBMS_OUTPUT.PUT_LINE(v_Result);
+  RETURN v_Result;
+END DBA_ConstraintCmd]]></body>
+</function> 
+</database>

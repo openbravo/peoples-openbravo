@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<database name="TABLE S_RESOURCEUNAVAILABLE">
+    <table name="S_RESOURCEUNAVAILABLE" primaryKey="S_RESOURCEUNAVAILABLE_KEY">
+      <column name="S_RESOURCEUNAVAILABLE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="S_RESOURCE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="DATEFROM" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="DATETO" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <check name="S_RESOURCEUNAVAILABLE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_SRESOURCEUNAVAILABLE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_SRESOURCEUNAVAILABLE">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="S_RESOURCE" name="SRESOURCE_SRESUNAVAILABLE"   onDelete="cascade">
+        <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
+      </foreign-key>
+    </table>
+</database>

@@ -1,0 +1,95 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+.PlainText_normal {
+  font-size:8pt;
+  font-weight:normal;
+  color: #404040;
+}
+
+.LabelText {
+  font-size:8pt;
+  font-weight:normal;
+  color: #404040;
+}
+
+.Label_ReadOnly_Text {
+  font-size:8pt;
+  font-weight:bold;
+  color: #606060;
+}
+
+.Regular_Paragraph {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size:8pt;
+  text-indent:0px;
+  margin-top:1px;
+  margin-bottom:5px;
+}
+
+.Wide_Paragraph {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size:8pt;
+  text-indent:0px;
+  margin-top:15px;
+  margin-bottom:15px;
+}
+
+a.LabelLink {
+  background: url(link.png) no-repeat;
+  padding-left: 9px;
+  color: #2985BA;
+  text-decoration: none;
+}
+
+a.LabelLink:active {
+  color: #1d5e84;
+  text-decoration: none;
+  -moz-outline-style: none;
+}
+
+a.LabelLink:visited {
+  color: #2985BA;
+  text-decoration: none;
+}
+
+a.LabelLink:hover {
+  text-decoration: underline;
+}
+
+a.LabelLink_noicon {
+  color: #2985BA;
+  text-decoration: none;
+}
+
+a.LabelLink_noicon:active {
+  color: #1d5e84;
+  text-decoration: none;
+  -moz-outline-style: none;
+}
+
+a.LabelLink_noicon:visited {
+  color: #2985BA;
+  text-decoration: none;
+}
+
+a.LabelLink_noicon:hover {
+  text-decoration: underline;
+}

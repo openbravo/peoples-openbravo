@@ -1,0 +1,276 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+.Dimension_LeftSelect_width {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  width: 280px;
+}
+
+.Dimension_LeftSelect_height {
+  height: 70px;
+  _height: 71px;
+}
+
+.Dimension_RightSelect_width {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  width: 255px;
+}
+
+.Dimension_RightSelect_height {
+  height: 70px;
+  _height: 71px;
+}
+
+td.Dimension_LeftRight_Button_Separator {
+  height: 2px;
+  width: 28px;
+  background: url(dimensionButtonLRSeparator.png) no-repeat center center;
+}
+
+td.Dimension_UpDown_Button_Separator {
+  height: 2px;
+  width: 26px;
+  background: url(dimensionButtonUDSeparator.png) repeat center center;
+}
+
+
+
+
+a.Dimension_LeftRight_Button_TopLink, a.Dimension_LeftRight_Button_TopLink:active, a.Dimension_LeftRight_Button_TopLink:hover, a.Dimension_LeftRight_Button_TopLink:visited, a.Dimension_LeftRight_Button_TopLink:link {
+  text-decoration: none;
+}
+
+a.Dimension_LeftRight_Button_TopLink_hover, a.Dimension_LeftRight_Button_TopLink_hover:active, a.Dimension_LeftRight_Button_TopLink_hover:hover, a.Dimension_LeftRight_Button_TopLink_hover:visited, a.Dimension_LeftRight_Button_TopLink_hover:link {
+  text-decoration: none;
+}
+
+a.Dimension_LeftRight_Button_TopLink_active, a.Dimension_LeftRight_Button_TopLink_active:active, a.Dimension_LeftRight_Button_TopLink_active:hover, a.Dimension_LeftRight_Button_TopLink_active:visited, a.Dimension_LeftRight_Button_TopLink_active:link {
+  text-decoration: none;
+}
+
+a.Dimension_LeftRight_Button_TopLink .Dimension_LeftRight_Button_Top, .Dimension_LeftRight_Button_Top {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_LeftRight_Button_TopLink .Dimension_LeftRight_Button_Top_bg, .Dimension_LeftRight_Button_Top_bg {
+  width:28px;
+  height:22px;
+  background: url(dimensionButtonLRTop.normal.png) no-repeat center center;
+}
+
+a.Dimension_LeftRight_Button_TopLink_hover .Dimension_LeftRight_Button_Top, .Dimension_LeftRight_Button_Top_hover {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_LeftRight_Button_TopLink_hover table.Dimension_LeftRight_Button_Top .Dimension_LeftRight_Button_Top_bg, table.Dimension_LeftRight_Button_Top_hover .Dimension_LeftRight_Button_Top_bg {
+  background: url(dimensionButtonLRTop.rollover.png) no-repeat center center;
+}
+
+a.Dimension_LeftRight_Button_TopLink_active .Dimension_LeftRight_Button_Top, .Dimension_LeftRight_Button_Top_active {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_LeftRight_Button_TopLink_active table.Dimension_LeftRight_Button_Top .Dimension_LeftRight_Button_Top_bg, table.Dimension_LeftRight_Button_Top_active .Dimension_LeftRight_Button_Top_bg {
+  background: url(dimensionButtonLRTop.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+
+
+
+a.Dimension_LeftRight_Button_BottomLink, a.Dimension_LeftRight_Button_BottomLink:active, a.Dimension_LeftRight_Button_BottomLink:hover, a.Dimension_LeftRight_Button_BottomLink:visited, a.Dimension_LeftRight_Button_BottomLink:link {
+  text-decoration: none;
+}
+
+a.Dimension_LeftRight_Button_BottomLink_hover, a.Dimension_LeftRight_Button_BottomLink_hover:active, a.Dimension_LeftRight_Button_BottomLink_hover:hover, a.Dimension_LeftRight_Button_BottomLink_hover:visited, a.Dimension_LeftRight_Button_BottomLink_hover:link {
+  text-decoration: none;
+}
+
+a.Dimension_LeftRight_Button_BottomLink_active, a.Dimension_LeftRight_Button_BottomLink_active:active, a.Dimension_LeftRight_Button_BottomLink_active:hover, a.Dimension_LeftRight_Button_BottomLink_active:visited, a.Dimension_LeftRight_Button_BottomLink_active:link {
+  text-decoration: none;
+}
+
+a.Dimension_LeftRight_Button_BottomLink .Dimension_LeftRight_Button_Bottom, .Dimension_LeftRight_Button_Bottom {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_LeftRight_Button_BottomLink .Dimension_LeftRight_Button_Bottom_bg, .Dimension_LeftRight_Button_Bottom_bg {
+  width:28px;
+  height:22px;
+  background: url(dimensionButtonLRBottom.normal.png) no-repeat center center;
+}
+
+a.Dimension_LeftRight_Button_BottomLink_hover .Dimension_LeftRight_Button_Bottom, .Dimension_LeftRight_Button_Bottom_hover {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_LeftRight_Button_BottomLink_hover table.Dimension_LeftRight_Button_Bottom .Dimension_LeftRight_Button_Bottom_bg, table.Dimension_LeftRight_Button_Bottom_hover .Dimension_LeftRight_Button_Bottom_bg {
+  background: url(dimensionButtonLRBottom.rollover.png) no-repeat center center;
+}
+
+a.Dimension_LeftRight_Button_BottomLink_active .Dimension_LeftRight_Button_Bottom, .Dimension_LeftRight_Button_Bottom_active {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_LeftRight_Button_BottomLink_active table.Dimension_LeftRight_Button_Bottom .Dimension_LeftRight_Button_Bottom_bg, table.Dimension_LeftRight_Button_Bottom_active .Dimension_LeftRight_Button_Bottom_bg {
+  background: url(dimensionButtonLRBottom.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+
+
+
+/* Icons definition for Dimension */
+.Dimension_LeftRight_Button_Icon {
+  border: 0px none;
+  width: 28px;
+  height: 22px;
+  margin: 0px;
+  vertical-align: middle;
+}
+
+.Dimension_LeftRight_Button_Icon_Include {
+  background: url(iconInclude.png) no-repeat center center;
+}
+
+.Dimension_LeftRight_Button_Icon_Exclude {
+  background: url(iconExclude.png) no-repeat center center;
+}
+
+
+
+/* Up and Down Buttons definition for Dimension */
+
+
+
+a.Dimension_UpDown_Button_TopLink, a.Dimension_UpDown_Button_TopLink:active, a.Dimension_UpDown_Button_TopLink:hover, a.Dimension_UpDown_Button_TopLink:visited, a.Dimension_UpDown_Button_TopLink:link {
+  text-decoration: none;
+}
+
+a.Dimension_UpDown_Button_TopLink_hover, a.Dimension_UpDown_Button_TopLink_hover:active, a.Dimension_UpDown_Button_TopLink_hover:hover, a.Dimension_UpDown_Button_TopLink_hover:visited, a.Dimension_UpDown_Button_TopLink_hover:link {
+  text-decoration: none;
+}
+
+a.Dimension_UpDown_Button_TopLink_active, a.Dimension_UpDown_Button_TopLink_active:active, a.Dimension_UpDown_Button_TopLink_active:hover, a.Dimension_UpDown_Button_TopLink_active:visited, a.Dimension_UpDown_Button_TopLink_active:link {
+  text-decoration: none;
+}
+
+a.Dimension_UpDown_Button_TopLink .Dimension_UpDown_Button_Top, .Dimension_UpDown_Button_Top {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_UpDown_Button_TopLink .Dimension_UpDown_Button_Top_bg, .Dimension_UpDown_Button_Top_bg {
+  width:26px;
+  height:34px;
+  background: url(dimensionButtonUDTop.normal.png) no-repeat center center;
+}
+
+a.Dimension_UpDown_Button_TopLink_hover .Dimension_UpDown_Button_Top, .Dimension_UpDown_Button_Top_hover {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_UpDown_Button_TopLink_hover table.Dimension_UpDown_Button_Top .Dimension_UpDown_Button_Top_bg, table.Dimension_UpDown_Button_Top_hover .Dimension_UpDown_Button_Top_bg {
+  background: url(dimensionButtonUDTop.rollover.png) no-repeat center center;
+}
+
+a.Dimension_UpDown_Button_TopLink_active .Dimension_UpDown_Button_Top, .Dimension_UpDown_Button_Top_active {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_UpDown_Button_TopLink_active table.Dimension_UpDown_Button_Top .Dimension_UpDown_Button_Top_bg, table.Dimension_UpDown_Button_Top_active .Dimension_UpDown_Button_Top_bg {
+  background: url(dimensionButtonUDTop.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+
+
+
+a.Dimension_UpDown_Button_BottomLink, a.Dimension_UpDown_Button_BottomLink:active, a.Dimension_UpDown_Button_BottomLink:hover, a.Dimension_UpDown_Button_BottomLink:visited, a.Dimension_UpDown_Button_BottomLink:link {
+  text-decoration: none;
+}
+
+a.Dimension_UpDown_Button_BottomLink_hover, a.Dimension_UpDown_Button_BottomLink_hover:active, a.Dimension_UpDown_Button_BottomLink_hover:hover, a.Dimension_UpDown_Button_BottomLink_hover:visited, a.Dimension_UpDown_Button_BottomLink_hover:link {
+  text-decoration: none;
+}
+
+a.Dimension_UpDown_Button_BottomLink_active, a.Dimension_UpDown_Button_BottomLink_active:active, a.Dimension_UpDown_Button_BottomLink_active:hover, a.Dimension_UpDown_Button_BottomLink_active:visited, a.Dimension_UpDown_Button_BottomLink_active:link {
+  text-decoration: none;
+}
+
+a.Dimension_UpDown_Button_BottomLink .Dimension_UpDown_Button_Bottom, .Dimension_UpDown_Button_Bottom {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_UpDown_Button_BottomLink .Dimension_UpDown_Button_Bottom_bg, .Dimension_UpDown_Button_Bottom_bg {
+  width:26px;
+  height:34px;
+  background: url(dimensionButtonUDBottom.normal.png) no-repeat center center;
+}
+
+a.Dimension_UpDown_Button_BottomLink_hover .Dimension_UpDown_Button_Bottom, .Dimension_UpDown_Button_Bottom_hover {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_UpDown_Button_BottomLink_hover table.Dimension_UpDown_Button_Bottom .Dimension_UpDown_Button_Bottom_bg, table.Dimension_UpDown_Button_Bottom_hover .Dimension_UpDown_Button_Bottom_bg {
+  background: url(dimensionButtonUDBottom.rollover.png) no-repeat center center;
+}
+
+a.Dimension_UpDown_Button_BottomLink_active .Dimension_UpDown_Button_Bottom, .Dimension_UpDown_Button_Bottom_active {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_UpDown_Button_BottomLink_active table.Dimension_UpDown_Button_Bottom .Dimension_UpDown_Button_Bottom_bg, table.Dimension_UpDown_Button_Bottom_active .Dimension_UpDown_Button_Bottom_bg {
+  background: url(dimensionButtonUDBottom.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+
+
+
+/* Icons definition for Dimension */
+.Dimension_UpDown_Button_Icon {
+  border: 0px none;
+  width: 26px;
+  height: 34px;
+  margin: 0px;
+  vertical-align: middle;
+}
+
+.Dimension_UpDown_Button_Icon_Up {
+  background: url(iconUp.png) no-repeat center center;
+}
+
+.Dimension_UpDown_Button_Icon_Down {
+  background: url(iconDown.png) no-repeat center center;
+}

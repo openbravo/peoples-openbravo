@@ -1,0 +1,89 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Sales invoice</TITLE>
+<link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Report.css" id="paramCSS" />
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">
+LNG_POR_DEFECTO="en_US";
+
+</SCRIPT></HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<DIV class="ReportTitle">Client invoices report<span  id="paramTitle"> xxde tipo tal, en la provincia tal, 
+  en situaci&oacute;n tal, fase cual, con tipo de iniciativa tal, para la categor&iacute;a 
+  de producto cual, con fechas desde tal hasta cual.</span></DIV>
+<DIV id="sectionClientName">
+<TABLE width="90%" align="center" class="Border" border="1" cellspacing="0" cellpadding="0">
+<TR class="TableHeaderLevel1">
+<TD colspan="5">Client<SPAN id="fieldClientName">xxacs</SPAN></TD></TR>
+<DIV id="sectionInvoiced">
+<TR class="TableHeaderLevel2" border="1" cellspacing="0" cellpadding="0">
+<TD colspan="2">
+<SPAN >Invoice No.</SPAN>
+<SPAN id="fieldDocumentno">XX</SPAN></TD>
+<TD colspan="4">
+<SPAN >Invoice date</SPAN>
+<SPAN id="fieldDateinvoiced">XX</SPAN></TD></TR>
+<TR class="Border TableDetailHeader">
+<TD width="30%" align="justify">
+<SPAN >Article</SPAN></TD>
+<TD width="30%" align="right">
+<SPAN >Quantity;</SPAN></TD>
+<!--TD width="15%" align="center">
+<SPAN >Unit</SPAN></TD-->
+<TD width="20%" align="right">
+<SPAN >Price</SPAN></TD>
+<TD width="20%" align="right">
+<SPAN >Total</SPAN></TD></TR>
+<DIV id="sectionDetail">
+<TR class="Border TableDetailRowEven">
+<TD width="30%" align="justify" id="fieldProductName">xxFortrac&nbsp;</TD>
+<TD width="30%" align="right" id="fieldQuantityorder">xx3484&nbsp;</TD>
+<!--TD width="15%" align="center" id="fieldUomname">xxm2</TD-->
+<TD width="20%" align="right" id="fieldPriceactual">xx23.45&nbsp;</TD>
+<TD width="20%" align="right" id="fieldPricelist">xx34982.34&nbsp;</TD></TR>
+</DIV></DIV>
+<TR class="TableFooterLevel2">
+<TD width="60%" align="right" colspan="2">
+  <SPAN >Partner Total</SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN id="fieldTotalPartialQty" >xx87243.5434</SPAN></TD>
+<TD width="40%" align="right" colspan="3">
+  <SPAN id="fieldTotalPartialNetAmount" >xx87243.5434</SPAN>&nbsp;</TD>
+</TR>
+
+
+</TABLE>
+<TABLE width="90%" align="center">
+<TR>
+<TD>&nbsp;</TD></TR></TABLE></DIV>
+<TABLE width="90%" align="center">
+<TR>
+<TD width="60%">&nbsp;</TD>
+<TD width="40%">&nbsp;</TD></TR>
+<TR class="ReportSumarize">
+<TD width="60%" align="right">
+<SPAN >QTY TOTAL</SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN id="fieldTotalQty" >xx87243.5434</SPAN>
+&nbsp;</TD>
+<TD width="40%" align="right">
+<SPAN >AMT TOTAL</SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN id="fieldTotalNetAmount" >xx87243.5434</SPAN>&nbsp;</TD></TR></TABLE>
+<BR></BR>
+<BR></BR></BODY></HTML>

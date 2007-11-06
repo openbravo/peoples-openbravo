@@ -1,0 +1,2339 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="SimpleDimensionalComparative"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="842"
+		 pageHeight="595"
+		 columnWidth="730"
+		 columnSpacing="0"
+		 leftMargin="56"
+		 rightMargin="56"
+		 topMargin="56"
+		 bottomMargin="56"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<style 
+		name="default"
+		isDefault="true"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+	<style 
+		name="Report_Title"
+		isDefault="false"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="18"
+	/>
+	<style 
+		name="Report_Subtitle"
+		isDefault="false"
+		forecolor="#555555"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="14"
+	/>
+	<style 
+		name="Report_Data_Label"
+		isDefault="false"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Report_Data_Field"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="false"
+	/>
+	<style 
+		name="Total_Field"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+		vAlign="Middle"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="10"
+		isBold="true"
+	/>
+	<style 
+		name="Detail_Header"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#5D5D5D"
+		vAlign="Middle"
+		leftBorder="1Point"
+		leftBorderColor="#FFFFFF"
+		leftPadding="5"
+		rightBorder="1Point"
+		rightBorderColor="#FFFFFF"
+		fontName="Bitstream Vera Sans"
+		fontSize="10"
+		isBold="true"
+	/>
+	<style 
+		name="Detail_Line"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+		isBold="true"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
+			<style 
+				name="Detail_Line"
+				isDefault="false"
+				mode="Opaque"
+				backcolor="#CCCCCC"
+			/>
+		</conditionalStyle>
+	</style>
+	<style 
+		name="Level1_Line"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#E5E5E5"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+		isBold="true"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==1)&&($V{NIVEL1_COUNT}.intValue()%2==1))]]></conditionExpression>
+			<style 
+				name="Level1_Line"
+				isDefault="false"
+				mode="Opaque"
+				backcolor="#FFFFFF"
+				vAlign="Middle"
+				fontName="Bitstream Vera Sans"
+				fontSize="8"
+				isBold="false"
+			/>
+		</conditionalStyle>
+			<conditionalStyle>
+				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==1)&&($V{NIVEL1_COUNT}.intValue()%2==0))]]></conditionExpression>
+				<style 
+					name="Level1_Line"
+					isDefault="false"
+					mode="Opaque"
+					backcolor="#E5E5E5"
+					vAlign="Middle"
+					fontName="Bitstream Vera Sans"
+					fontSize="8"
+					isBold="false"
+				/>
+			</conditionalStyle>
+	</style>
+	<style 
+		name="Level2_Line"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#CCCCCC"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+		isBold="true"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==2)&&($V{NIVEL1_COUNT}.intValue()%2==0))]]></conditionExpression>
+			<style 
+				name="Level2_Line"
+				isDefault="false"
+				mode="Opaque"
+				backcolor="#FFFFFF"
+				vAlign="Middle"
+				fontName="Bitstream Vera Sans"
+				fontSize="8"
+				isBold="false"
+			/>
+		</conditionalStyle>
+			<conditionalStyle>
+				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==2)&&($V{NIVEL1_COUNT}.intValue()%2==1))]]></conditionExpression>
+				<style 
+					name="Level2_Line"
+					isDefault="false"
+					mode="Opaque"
+					backcolor="#E5E5E5"
+					vAlign="Middle"
+					fontName="Bitstream Vera Sans"
+					fontSize="8"
+					isBold="false"
+				/>
+			</conditionalStyle>
+	</style>
+	<style 
+		name="Level3_Line"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#E5E5E5"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+		isBold="true"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==3)&&($V{NIVEL2_COUNT}.intValue()%2==0))]]></conditionExpression>
+			<style 
+				name="Level3_Line"
+				isDefault="false"
+				mode="Opaque"
+				backcolor="#FFFFFF"
+				vAlign="Middle"
+				fontName="Bitstream Vera Sans"
+				fontSize="8"
+				isBold="false"
+			/>
+		</conditionalStyle>
+			<conditionalStyle>
+				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==3)&&($V{NIVEL2_COUNT}.intValue()%2==1))]]></conditionExpression>
+				<style 
+					name="Level3_Line"
+					isDefault="false"
+					mode="Opaque"
+					backcolor="#E5E5E5"
+					vAlign="Middle"
+					fontName="Bitstream Vera Sans"
+					fontSize="8"
+					isBold="false"
+				/>
+			</conditionalStyle>
+	</style>
+	<style 
+		name="Level4_Line"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#CCCCCC"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+		isBold="true"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==4)&&($V{NIVEL3_COUNT}.intValue()%2==0))]]></conditionExpression>
+			<style 
+				name="Level4_Line"
+				isDefault="false"
+				backcolor="#FFFFFF"
+				vAlign="Middle"
+				fontName="Bitstream Vera Sans"
+				fontSize="8"
+				isBold="false"
+			/>
+		</conditionalStyle>
+			<conditionalStyle>
+				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==4)&&($V{NIVEL3_COUNT}.intValue()%2==1))]]></conditionExpression>
+				<style 
+					name="Level4_Line"
+					isDefault="false"
+					mode="Opaque"
+					backcolor="#E5E5E5"
+					vAlign="Middle"
+					fontName="Bitstream Vera Sans"
+					fontSize="8"
+					isBold="false"
+				/>
+			</conditionalStyle>
+	</style>
+	<style 
+		name="Level5_Line"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#E5E5E5"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+		isBold="true"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==5)&&($V{NIVEL4_COUNT}.intValue()%2==0))]]></conditionExpression>
+			<style 
+				name="Level5_Line"
+				isDefault="false"
+				mode="Opaque"
+				backcolor="#FFFFFF"
+				vAlign="Middle"
+				fontName="Bitstream Vera Sans"
+				fontSize="8"
+				isBold="false"
+			/>
+		</conditionalStyle>
+			<conditionalStyle>
+				<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==5)&&($V{NIVEL4_COUNT}.intValue()%2==1))]]></conditionExpression>
+				<style 
+					name="Level5_Line"
+					isDefault="false"
+					mode="Opaque"
+					backcolor="#E5E5E5"
+					vAlign="Middle"
+					fontName="Bitstream Vera Sans"
+					fontSize="8"
+					isBold="false"
+				/>
+			</conditionalStyle>
+	</style>
+	<style 
+		name="Level6_Line"
+		isDefault="false"
+		backcolor="#CCCCCC"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+		isBold="true"
+	/>
+	<style 
+		name="Level7_Line"
+		isDefault="false"
+		backcolor="#E5E5E5"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+		isBold="true"
+	/>
+	<style 
+		name="Level8_Line"
+		isDefault="false"
+		backcolor="#CCCCCC"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+		isBold="true"
+	/>
+	<style 
+		name="Level9_Line"
+		isDefault="false"
+		backcolor="#E5E5E5"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+		isBold="true"
+	/>
+	<style 
+		name="Report_Footer"
+		isDefault="false"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+	<style 
+		name="Detail_Border"
+		isDefault="false"
+		forecolor="#8A8A8A"
+		pen="Thin"
+	/>
+
+	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["0,1000000"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USER_CLIENT" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["0,1000000"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATEFROM" isForPrompting="false" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).parse("01-01-1900")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATETO" isForPrompting="false" class="java.util.Date">
+		<defaultValueExpression ><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).parse("31-12-3000")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cBpGroupId" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cBpGroupId_Aux" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{cBpGroupId}.equals("") ? " " : (" AND C_BP_Group.C_BP_Group_ID = " + $P{cBpGroupId})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cBpartnerId" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cBpartnerId_Aux" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[($P{cBpartnerId}.equals(""))?"  ":" AND C_BPartner.C_BPartner_ID IN " + $P{cBpartnerId}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="mProductCategoryId" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="mProductCategoryId_Aux" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[($P{mProductCategoryId}.equals(""))?"  ":" AND M_Product_Category.M_Product_Category_Id = " + $P{mProductCategoryId}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="mProductId" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="mProductId_Aux" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[($P{mProductId}.equals(""))?" ":" AND M_Product.M_Product_ID IN " + $P{mProductId}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="orderBy" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[" ORDER BY 1 "]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_TITLE" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Purchase Orders Report"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRODUCT_LEVEL" isForPrompting="false" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(3)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="THEME" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Default"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["/var/lib/tomcat-5.5/webapps/alerts/web"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LEVEL1_LABEL" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Partner Group"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LEVEL2_LABEL" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Product Category"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LEVEL3_LABEL" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Product"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LEVEL4_LABEL" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Partner"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LEVEL5_LABEL" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LEVEL6_LABEL" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LEVEL7_LABEL" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LEVEL8_LABEL" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="LEVEL9_LABEL" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="DIMENSIONS" isForPrompting="false" class="java.lang.Integer">
+		<defaultValueExpression ><![CDATA[new Integer(2)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="GROUP_LEVEL" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["1.- Group1, 2.- Group2, 3.- Group3"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LEVEL_LABEL" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["1.- "+$P{LEVEL1_LABEL}
++($P{LEVEL2_LABEL}==""?"":", 2.- "+$P{LEVEL2_LABEL})
++($P{LEVEL3_LABEL}==""?"":", 3.- "+$P{LEVEL3_LABEL})
++($P{LEVEL4_LABEL}==""?"":", 4.- "+$P{LEVEL4_LABEL})
++($P{LEVEL5_LABEL}==""?"":", 5.- "+$P{LEVEL5_LABEL})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
+	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<queryString><![CDATA[SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, SUM(LINENETAMT) AS AMOUNT, SUM(QTYORDERED) AS QTY, SUM(LINENETREF) AS AMOUNTREF, SUM(QTYORDEREDREF) AS QTYREF, '' AS ID, '' AS NAME, UOMSYMBOL
+FROM (SELECT to_char(M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID) AS NIVEL1, to_char(C_BP_GROUP.C_BP_GROUP_ID) AS NIVEL2, to_char('4') AS NIVEL3, to_char('5') AS NIVEL4, to_char('5') AS NIVEL5, 
+C_ORDERLINE.LINENETAMT, C_ORDERLINE.QTYORDERED, 0 AS LINENETREF, 0 AS QTYORDEREDREF, C_UOM.UOMSYMBOL
+FROM M_PRODUCT left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID 
+                right join C_ORDERLINE on C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+                right join C_ORDER on C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID,
+C_BPARTNER, C_BP_GROUP, C_UOM
+WHERE C_ORDER.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+AND C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
+AND C_ORDERLINE.C_UOM_ID = C_UOM.C_UOM_ID
+AND C_ORDER.ISSOTRX = 'N'
+AND C_ORDER.PROCESSED = 'Y'
+AND C_ORDER.DATEORDERED >= to_date('01-01-2006', 'DD-MM-YYYY')
+AND C_ORDER.DATEORDERED < to_date('01-01-2007', 'DD-MM-YYYY')
+AND 1=1
+UNION ALL SELECT to_char('1') AS NIVEL1 , to_char('2') AS NIVEL2 , to_char('3') AS NIVEL3 , to_char('4') AS NIVEL4 , to_char('5') AS NIVEL5, 
+0 AS LINENETAMT, 0 AS QTYORDERED, C_ORDERLINE.LINENETAMT AS LINENETREF, C_ORDERLINE.QTYORDERED AS QTYORDEREDREF, C_UOM.UOMSYMBOL
+FROM M_PRODUCT left join M_PRODUCT_CATEGORY on M_PRODUCT.M_PRODUCT_CATEGORY_ID = M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID 
+                right join C_ORDERLINE on C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+                right join C_ORDER on C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID,
+        C_BPARTNER, C_BP_GROUP, C_UOM
+WHERE C_ORDER.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+AND C_BPARTNER.C_BP_GROUP_ID = C_BP_GROUP.C_BP_GROUP_ID
+AND C_ORDERLINE.C_UOM_ID = C_UOM.C_UOM_ID
+AND C_ORDER.ISSOTRX = 'N'
+AND C_ORDER.PROCESSED = 'Y'
+AND C_ORDER.DATEORDERED >= to_date('01-01-2007', 'DD-MM-YYYY')
+AND C_ORDER.DATEORDERED < to_date('01-01-2008', 'DD-MM-YYYY')
+AND 2=2) AA
+GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, UOMSYMBOL, 1
+ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, UOMSYMBOL, 1]]></queryString>
+
+	<field name="NIVEL1" class="java.lang.String"/>
+	<field name="NIVEL2" class="java.lang.String"/>
+	<field name="NIVEL3" class="java.lang.String"/>
+	<field name="NIVEL4" class="java.lang.String"/>
+	<field name="NIVEL5" class="java.lang.String"/>
+	<field name="AMOUNT" class="java.math.BigDecimal"/>
+	<field name="QTY" class="java.math.BigDecimal"/>
+	<field name="AMOUNTREF" class="java.math.BigDecimal"/>
+	<field name="QTYREF" class="java.math.BigDecimal"/>
+	<field name="ID" class="java.lang.String"/>
+	<field name="NAME" class="java.lang.String"/>
+	<field name="UOMSYMBOL" class="java.lang.String"/>
+
+	<variable name="QTY_SUM5" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL5" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTY}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="QTY_SUM4" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL4" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTY}]]></variableExpression>
+	</variable>
+	<variable name="QTY_SUM3" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL3" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTY}]]></variableExpression>
+	</variable>
+	<variable name="QTY_SUM2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTY}]]></variableExpression>
+	</variable>
+	<variable name="QTY_SUM1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTY}]]></variableExpression>
+	</variable>
+	<variable name="QTYREF_SUM5" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL5" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTYREF}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="QTYREF_SUM4" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL4" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTYREF}]]></variableExpression>
+	</variable>
+	<variable name="QTYREF_SUM3" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL3" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTYREF}]]></variableExpression>
+	</variable>
+	<variable name="QTYREF_SUM2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTYREF}]]></variableExpression>
+	</variable>
+	<variable name="QTYREF_SUM1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1" calculation="Sum">
+		<variableExpression><![CDATA[$F{QTYREF}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNT_TOTAL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNT_SUM1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNT_SUM2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNT_SUM3" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL3" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNT_SUM4" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL4" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNT_SUM5" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL5" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNTREF_TOTAL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNTREF}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNTREF_SUM1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNTREF}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNTREF_SUM2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNTREF}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNTREF_SUM3" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL3" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNTREF}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNTREF_SUM4" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL4" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNTREF}]]></variableExpression>
+	</variable>
+	<variable name="AMOUNTREF_SUM5" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL5" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNTREF}]]></variableExpression>
+	</variable>
+	<variable name="AMT_PCT_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1" calculation="Nothing">
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM1}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM1}.subtract( $V{AMOUNTREF_SUM1} ).divide( $V{AMOUNTREF_SUM1}, 4)]]></variableExpression>
+	</variable>
+	<variable name="AMT_PCT_2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2" calculation="Nothing">
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM2}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM2}.subtract( $V{AMOUNTREF_SUM2} ).divide( $V{AMOUNTREF_SUM2}, 0)]]></variableExpression>
+	</variable>
+	<variable name="AMT_PCT_3" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL3" calculation="Nothing">
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM3}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM3}.subtract( $V{AMOUNTREF_SUM3} ).divide( $V{AMOUNTREF_SUM3}, 4)]]></variableExpression>
+	</variable>
+	<variable name="AMT_PCT_4" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL4" calculation="Nothing">
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM4}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM4}.subtract( $V{AMOUNTREF_SUM4} ).divide( $V{AMOUNTREF_SUM4}, 4)]]></variableExpression>
+	</variable>
+	<variable name="AMT_PCT_5" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL5" calculation="Nothing">
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM5}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM5}.subtract( $V{AMOUNTREF_SUM5} ).divide( $V{AMOUNTREF_SUM5}, 4)]]></variableExpression>
+	</variable>
+	<variable name="AMT_PCT_T" class="java.math.BigDecimal" resetType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[($V{AMOUNTREF_TOTAL}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_TOTAL}.subtract( $V{AMOUNTREF_TOTAL} ).divide( $V{AMOUNTREF_TOTAL}, 6)]]></variableExpression>
+	</variable>
+	<variable name="QTY_PCT_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1" calculation="Nothing">
+		<variableExpression><![CDATA[($V{QTYREF_SUM1}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM1}.subtract( $V{QTYREF_SUM1} ).divide( $V{QTYREF_SUM1}, 4)]]></variableExpression>
+	</variable>
+	<variable name="QTY_PCT_2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2" calculation="Nothing">
+		<variableExpression><![CDATA[($V{QTYREF_SUM2}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM2}.subtract( $V{QTYREF_SUM2} ).divide( $V{QTYREF_SUM2}, 0)]]></variableExpression>
+	</variable>
+	<variable name="QTY_PCT_3" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL3" calculation="Nothing">
+		<variableExpression><![CDATA[($V{QTYREF_SUM3}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM3}.subtract( $V{QTYREF_SUM3} ).divide( $V{QTYREF_SUM3}, 4)]]></variableExpression>
+	</variable>
+	<variable name="QTY_PCT_4" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL4" calculation="Nothing">
+		<variableExpression><![CDATA[($V{QTYREF_SUM4}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM4}.subtract( $V{QTYREF_SUM4} ).divide( $V{QTYREF_SUM4}, 4)]]></variableExpression>
+	</variable>
+	<variable name="QTY_PCT_5" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL5" calculation="Nothing">
+		<variableExpression><![CDATA[($V{QTYREF_SUM5}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM5}.subtract( $V{QTYREF_SUM5} ).divide( $V{QTYREF_SUM5}, 4)]]></variableExpression>
+	</variable>
+
+		<group  name="TOTALIZE" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="20"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Total_Field"
+						x="307"
+						y="1"
+						width="83"
+						height="18"
+						key="textField-36"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNT_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNT_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="Report_Data_Label"
+						x="255"
+						y="1"
+						width="52"
+						height="18"
+						key="staticText-18"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[Total:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Total_Field"
+						x="390"
+						y="1"
+						width="80"
+						height="18"
+						key="textField-37"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNTREF_TOTAL}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNTREF_TOTAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Total_Field"
+						x="470"
+						y="1"
+						width="50"
+						height="18"
+						key="textField-38"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMT_PCT_T}!=null)?$P{NUMBERFORMAT}.format($V{AMT_PCT_T}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="0"
+						width="730"
+						height="0"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="15"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-39">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=2)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(2))>=0)?"2":"")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="0"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-40">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=1)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(1))>=0)?"1":"")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="30"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-41">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=3)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(3))>=0)?"3":"")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="45"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-42">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=4)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(4))>=0)?"4":"")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="60"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-43">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=5)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(5))>=0)?"5":" ")]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="NIVEL1" >
+			<groupExpression><![CDATA[$F{NIVEL1}]]></groupExpression>
+			<groupHeader>
+			<band height="18"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=1)]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="0"
+						y="0"
+						width="307"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="580"
+						y="0"
+						width="20"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=1)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="520"
+						y="0"
+						width="60"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=1)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM1}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM1}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="307"
+						y="0"
+						width="83"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNT_SUM1}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNT_SUM1}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="660"
+						y="0"
+						width="20"
+						height="18"
+						key="textField-2"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=1)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="390"
+						y="0"
+						width="80"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNTREF_SUM1}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNTREF_SUM1}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="600"
+						y="0"
+						width="60"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=1)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTYREF_SUM1}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM1}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="470"
+						y="0"
+						width="50"
+						height="18"
+						key="textField-9"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMT_PCT_1}!=null)?$P{NUMBERFORMAT}.format($V{AMT_PCT_1}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="680"
+						y="0"
+						width="50"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=1)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_PCT_1}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_1}):new String(" ")]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="5"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()==2)]]></printWhenExpression>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						mode="Opaque"
+						x="0"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-60"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=2)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						style="Detail_Border"
+						x="15"
+						y="0"
+						width="715"
+						height="0"
+						key="line-6">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()==2)]]></printWhenExpression>
+						</reportElement>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="NIVEL2" >
+			<groupExpression><![CDATA[$F{NIVEL2}]]></groupExpression>
+			<groupHeader>
+			<band height="18"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=2)]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="15"
+						y="0"
+						width="292"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="580"
+						y="0"
+						width="20"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=2)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="520"
+						y="0"
+						width="60"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=2)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM2}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM2}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="307"
+						y="0"
+						width="83"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNT_SUM2}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNT_SUM2}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="660"
+						y="0"
+						width="20"
+						height="18"
+						key="textField-3"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=2)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="390"
+						y="0"
+						width="80"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNTREF_SUM2}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNTREF_SUM2}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="600"
+						y="0"
+						width="60"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=2)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTYREF_SUM2}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM2}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="470"
+						y="0"
+						width="50"
+						height="18"
+						key="textField-8"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMT_PCT_2}!=null)?$P{NUMBERFORMAT}.format($V{AMT_PCT_2}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="680"
+						y="0"
+						width="50"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=2)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_PCT_2}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_2}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="0"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-26"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="5"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()==3)]]></printWhenExpression>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						mode="Opaque"
+						x="0"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-56"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=2)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						mode="Opaque"
+						x="15"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-58"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=3)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						style="Detail_Border"
+						x="30"
+						y="0"
+						width="700"
+						height="0"
+						key="line-7">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()==3)]]></printWhenExpression>
+						</reportElement>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="NIVEL3" >
+			<groupExpression><![CDATA[$F{NIVEL3}]]></groupExpression>
+			<groupHeader>
+			<band height="18"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=3)]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						x="30"
+						y="0"
+						width="277"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL3}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						x="580"
+						y="0"
+						width="20"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=3)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						x="520"
+						y="0"
+						width="60"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=3)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM3}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM3}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						x="307"
+						y="0"
+						width="83"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNT_SUM3}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNT_SUM3}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						x="660"
+						y="0"
+						width="20"
+						height="18"
+						key="textField-4"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=3)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						x="390"
+						y="0"
+						width="80"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNTREF_SUM3}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNTREF_SUM3}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						x="600"
+						y="0"
+						width="60"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=3)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTYREF_SUM3}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM3}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						x="470"
+						y="0"
+						width="50"
+						height="18"
+						key="textField-7"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMT_PCT_3}!=null)?$P{NUMBERFORMAT}.format($V{AMT_PCT_3}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						x="680"
+						y="0"
+						width="50"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=3)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_PCT_3}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_3}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="0"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-27"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="15"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-32"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="5"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()==4)]]></printWhenExpression>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						mode="Opaque"
+						x="0"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-52"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=2)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						mode="Opaque"
+						x="30"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-53"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=4)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						mode="Opaque"
+						x="15"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-54"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=3)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						style="Detail_Border"
+						x="45"
+						y="0"
+						width="685"
+						height="0"
+						key="line-8">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()==4)]]></printWhenExpression>
+						</reportElement>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="NIVEL4" >
+			<groupExpression><![CDATA[$F{NIVEL4}]]></groupExpression>
+			<groupHeader>
+			<band height="18"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=4)]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						x="45"
+						y="0"
+						width="262"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL4}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						x="580"
+						y="0"
+						width="20"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=4)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						x="520"
+						y="0"
+						width="60"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=4)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM4}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM4}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						x="307"
+						y="0"
+						width="83"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNT_SUM4}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNT_SUM4}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						x="660"
+						y="0"
+						width="20"
+						height="18"
+						key="textField-5"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=4)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						x="390"
+						y="0"
+						width="80"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNTREF_SUM4}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNTREF_SUM4}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						x="600"
+						y="0"
+						width="60"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=4)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTYREF_SUM4}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM4}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						x="470"
+						y="0"
+						width="50"
+						height="18"
+						key="textField-10"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMT_PCT_4}!=null)?$P{NUMBERFORMAT}.format($V{AMT_PCT_4}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						x="680"
+						y="0"
+						width="50"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=4)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_PCT_4}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_4}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="0"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-28"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						x="30"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-30"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="15"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-33"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="5"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()==5)]]></printWhenExpression>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						mode="Opaque"
+						x="0"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-48"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=2)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						mode="Opaque"
+						x="30"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-49"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=4)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						mode="Opaque"
+						x="15"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-50"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=3)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						mode="Opaque"
+						x="45"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-51"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=5)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						style="Detail_Border"
+						x="60"
+						y="0"
+						width="670"
+						height="0"
+						key="line-9">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()==4)]]></printWhenExpression>
+						</reportElement>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="LEVEL5" >
+			<groupExpression><![CDATA[$F{NIVEL5}]]></groupExpression>
+			<groupHeader>
+			<band height="18"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=5)]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level5_Line"
+						x="60"
+						y="0"
+						width="247"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL5}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level5_Line"
+						x="580"
+						y="0"
+						width="20"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level5_Line"
+						x="520"
+						y="0"
+						width="60"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM5}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM5}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level5_Line"
+						x="307"
+						y="0"
+						width="83"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNT_SUM5}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNT_SUM5}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level5_Line"
+						x="660"
+						y="0"
+						width="20"
+						height="18"
+						key="textField-6"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level5_Line"
+						x="390"
+						y="0"
+						width="80"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMOUNTREF_SUM5}!=null)?$P{NUMBERFORMAT}.format($V{AMOUNTREF_SUM5}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level5_Line"
+						x="600"
+						y="0"
+						width="60"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTYREF_SUM5}!=null)?$P{NUMBERFORMAT}.format($V{QTYREF_SUM5}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level5_Line"
+						x="470"
+						y="0"
+						width="50"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{AMT_PCT_5}!=null)?$P{NUMBERFORMAT}.format($V{AMT_PCT_5}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level5_Line"
+						x="680"
+						y="0"
+						width="50"
+						height="18"
+						key="textField"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_PCT_5}!=null)?$P{NUMBERFORMAT}.format($V{QTY_PCT_5}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						x="0"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-29"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						x="30"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-31"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						x="15"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-34"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						x="45"
+						y="0"
+						width="15"
+						height="18"
+						key="textField-35"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="5"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()==6)]]></printWhenExpression>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level1_Line"
+						mode="Opaque"
+						x="0"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-44"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=2)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level3_Line"
+						mode="Opaque"
+						x="30"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-45"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=4)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level2_Line"
+						mode="Opaque"
+						x="15"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-46"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=3)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Level4_Line"
+						mode="Opaque"
+						x="45"
+						y="0"
+						width="15"
+						height="5"
+						key="textField-47"
+						stretchType="RelativeToBandHeight">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=5)]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						style="Detail_Border"
+						x="75"
+						y="0"
+						width="655"
+						height="0"
+						key="line-10">
+							<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()==4)]]></printWhenExpression>
+						</reportElement>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="11"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="109"  isSplitAllowed="true" >
+				<frame>					<reportElement
+						mode="Opaque"
+						x="0"
+						y="90"
+						width="730"
+						height="19"
+						backcolor="#5D5D5D"
+						key="frame-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="15"
+						height="19"
+						key="textField-18"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(1))>=0)?"1":"")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						mode="Transparent"
+						x="15"
+						y="0"
+						width="15"
+						height="19"
+						key="textField-19"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(2))>=0)?"2":"")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						mode="Transparent"
+						x="30"
+						y="0"
+						width="15"
+						height="19"
+						key="textField-20"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(3))>=0)?"3":"")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						mode="Transparent"
+						x="45"
+						y="0"
+						width="15"
+						height="19"
+						key="textField-21"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(4))>=0)?"4":"")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						mode="Transparent"
+						x="60"
+						y="0"
+						width="15"
+						height="19"
+						key="textField-22"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement rotation="None">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(5))>=0)?"5":"")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="307"
+						y="0"
+						width="83"
+						height="19"
+						key="staticText-10"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+				<text><![CDATA[Amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="390"
+						y="0"
+						width="80"
+						height="19"
+						key="staticText-11"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+				<text><![CDATA[Amt. Ref.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="470"
+						y="0"
+						width="50"
+						height="19"
+						key="staticText-12"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+				<text><![CDATA[A %]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="520"
+						y="0"
+						width="80"
+						height="19"
+						key="staticText-13"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+				<text><![CDATA[Quantity]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="600"
+						y="0"
+						width="80"
+						height="19"
+						key="staticText-14"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+				<text><![CDATA[Qty. Ref.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						mode="Opaque"
+						x="680"
+						y="0"
+						width="50"
+						height="19"
+						key="staticText-15"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+				<text><![CDATA[Q %]]></text>
+				</staticText>
+				</frame>				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Title"
+						x="0"
+						y="0"
+						width="730"
+						height="26"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Subtitle"
+						x="0"
+						y="31"
+						width="730"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{REPORT_SUBTITLE}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="26"
+						width="730"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="49"
+						width="730"
+						height="0"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						style="Report_Data_Label"
+						x="0"
+						y="54"
+						width="114"
+						height="16"
+						key="staticText-9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Grouping Levels:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Data_Field"
+						x="114"
+						y="54"
+						width="616"
+						height="16"
+						key="textField-12"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{LEVEL_LABEL}]]></textFieldExpression>
+				</textField>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="1"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="20"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="295"
+						y="3"
+						width="76"
+						height="16"
+						key="staticText-17"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[Printed on ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="597"
+						y="4"
+						width="95"
+						height="16"
+						key="textField-23"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Helvetica" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="694"
+						y="4"
+						width="36"
+						height="16"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-24"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Helvetica" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="371"
+						y="3"
+						width="90"
+						height="16"
+						key="textField-25"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="1"
+						width="730"
+						height="0"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

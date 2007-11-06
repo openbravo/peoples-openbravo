@@ -1,0 +1,194 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+.List_width {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  border: 1px solid #888888;
+  width: 255px;
+}
+
+.List_height {
+  height: 70px;
+  _height: 71px;
+}
+
+td.List_Button_Separator {
+  height: 2px;
+  width: 26px;
+  background: url(listButtonSeparator.png) no-repeat center center;
+}
+
+
+
+
+a.List_Button_TopLink, a.List_Button_TopLink:active, a.List_Button_TopLink:hover, a.List_Button_TopLink:visited, a.List_Button_TopLink:link {
+  text-decoration: none;
+}
+
+a.List_Button_TopLink_hover, a.List_Button_TopLink_hover:active, a.List_Button_TopLink_hover:hover, a.List_Button_TopLink_hover:visited, a.List_Button_TopLink_hover:link {
+  text-decoration: none;
+}
+
+a.List_Button_TopLink_active, a.List_Button_TopLink_active:active, a.List_Button_TopLink_active:hover, a.List_Button_TopLink_active:visited, a.List_Button_TopLink_active:link {
+  text-decoration: none;
+}
+
+a.List_Button_TopLink .List_Button_Top, .List_Button_Top {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.List_Button_TopLink .List_Button_Top_bg, .List_Button_Top_bg {
+  width:26px;
+  height:22px;
+  background: url(listButtonTop.normal.png) no-repeat center center;
+}
+
+a.List_Button_TopLink_hover .List_Button_Top, .List_Button_Top_hover {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.List_Button_TopLink_hover table.List_Button_Top .List_Button_Top_bg, table.List_Button_Top_hover .List_Button_Top_bg {
+  background: url(listButtonTop.rollover.png) no-repeat center center;
+}
+
+a.List_Button_TopLink_active .List_Button_Top, .List_Button_Top_active {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.List_Button_TopLink_active table.List_Button_Top .List_Button_Top_bg, table.List_Button_Top_active .List_Button_Top_bg {
+  background: url(listButtonTop.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+
+
+
+a.List_Button_MiddleLink, a.List_Button_MiddleLink:active, a.List_Button_MiddleLink:hover, a.List_Button_MiddleLink:visited, a.List_Button_MiddleLink:link {
+  text-decoration: none;
+}
+
+a.List_Button_MiddleLink_hover, a.List_Button_MiddleLink_hover:active, a.List_Button_MiddleLink_hover:hover, a.List_Button_MiddleLink_hover:visited, a.List_Button_MiddleLink_hover:link {
+  text-decoration: none;
+}
+
+a.List_Button_MiddleLink_active, a.List_Button_MiddleLink_active:active, a.List_Button_MiddleLink_active:hover, a.List_Button_MiddleLink_active:visited, a.List_Button_MiddleLink_active:link {
+  text-decoration: none;
+}
+
+a.List_Button_MiddleLink .List_Button_Middle, .List_Button_Middle {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.List_Button_MiddleLink .List_Button_Middle_bg, .List_Button_Middle_bg {
+  width:26px;
+  height:22px;
+  background: url(listButtonMiddle.normal.png) repeat-y center center;
+}
+
+a.List_Button_MiddleLink_hover .List_Button_Middle, .List_Button_Middle_hover {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.List_Button_MiddleLink_hover table.List_Button_Middle .List_Button_Middle_bg, table.List_Button_Middle_hover .List_Button_Middle_bg {
+  background: url(listButtonMiddle.rollover.png) repeat-y center center;
+}
+
+a.List_Button_MiddleLink_active .List_Button_Middle, .List_Button_Middle_active {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.List_Button_MiddleLink_active table.List_Button_Middle .List_Button_Middle_bg, table.List_Button_Middle_active .List_Button_Middle_bg {
+  background: url(listButtonMiddle.pressed.png) repeat-y center center;
+  -moz-outline-style: none;
+}
+
+
+
+
+a.List_Button_BottomLink, a.List_Button_BottomLink:active, a.List_Button_BottomLink:hover, a.List_Button_BottomLink:visited, a.List_Button_BottomLink:link {
+  text-decoration: none;
+}
+
+a.List_Button_BottomLink_hover, a.List_Button_BottomLink_hover:active, a.List_Button_BottomLink_hover:hover, a.List_Button_BottomLink_hover:visited, a.List_Button_BottomLink_hover:link {
+  text-decoration: none;
+}
+
+a.List_Button_BottomLink_active, a.List_Button_BottomLink_active:active, a.List_Button_BottomLink_active:hover, a.List_Button_BottomLink_active:visited, a.List_Button_BottomLink_active:link {
+  text-decoration: none;
+}
+
+a.List_Button_BottomLink .List_Button_Bottom, .List_Button_Bottom {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.List_Button_BottomLink .List_Button_Bottom_bg, .List_Button_Bottom_bg {
+  width:26px;
+  height:22px;
+  background: url(listButtonBottom.normal.png) no-repeat center center;
+}
+
+a.List_Button_BottomLink_hover .List_Button_Bottom, .List_Button_Bottom_hover {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.List_Button_BottomLink_hover table.List_Button_Bottom .List_Button_Bottom_bg, table.List_Button_Bottom_hover .List_Button_Bottom_bg {
+  background: url(listButtonBottom.rollover.png) no-repeat center center;
+}
+
+a.List_Button_BottomLink_active .List_Button_Bottom, .List_Button_Bottom_active {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.List_Button_BottomLink_active table.List_Button_Bottom .List_Button_Bottom_bg, table.List_Button_Bottom_active .List_Button_Bottom_bg {
+  background: url(listButtonBottom.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+
+/* Icons definition for ToolBar */
+.List_Button_Icon {
+  border: 0px none;
+  width: 26px;
+  height: 22px;
+  margin: 0px;
+  vertical-align: middle;
+}
+
+.List_Button_Icon_Add {
+  background: url(iconAdd.png) no-repeat center center;
+}
+
+.List_Button_Icon_Delete {
+  background: url(iconDelete.png) no-repeat center center;
+}
+
+.List_Button_Icon_DeleteAll {
+  background: url(iconDeleteAll.png) no-repeat center center;
+}

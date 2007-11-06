@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<REPORT>
+	<template file="RptC_InvoiceLines.fo"/>
+	<structure name="structureInvoiceLines">
+		<FIELD id="fieldInvoice" replaceCharacters="fo">cInvoiceId</FIELD>
+		<FIELD id="fieldNameProduct" replaceCharacters="fo">nameProduct</FIELD>
+		<FIELD id="fieldQtyinvoiced" replaceCharacters="fo">qtyinvoiced</FIELD>
+		<FIELD id="fieldUomname" replaceCharacters="fo">uomname</FIELD>
+		<FIELD id="fieldLinenetamt" replaceCharacters="fo">linenetamt</FIELD>
+		<FIELD id="fieldPriceactual" replaceCharacters="fo">priceactual</FIELD>
+		<FIELD id="fieldInoutno" replaceCharacters="fo">inoutno</FIELD>
+		<FIELD id="fieldOrderno" replaceCharacters="fo">orderno</FIELD>
+		<FUNCTION id="fieldTotalNetAmount" name="SUM" format="euroInform">linenetamt</FUNCTION>
+		<SECTION id="sectionOrder" field="orderno"/>
+		<SECTION id="sectionDetailLines"/>
+	</structure>
+	<structure name="structureInvoiceTaxes">
+		<FIELD id="fieldNameTax" replaceCharacters="fo">name</FIELD>
+		<FIELD id="fieldNetAmount" replaceCharacters="fo">taxbaseamt</FIELD>
+		<FIELD id="fieldTaxAmount" replaceCharacters="fo">taxamt</FIELD>
+		<FUNCTION id="fieldTotalNetAmountTax" name="SUM" format="euroInform">taxbaseamt</FUNCTION>
+		<FUNCTION id="fieldTotalTaxInvoiceAmount" name="SUM" format="euroInform">taxamt</FUNCTION>
+		<SECTION id="sectionDetailLinesTaxes"/>
+	</structure>
+	<FUNCTION id="fieldTotalInvoiceAmount" name="ADD" arg1="fieldTotalNetAmount" arg2="fieldTotalTaxInvoiceAmount" format="euroInform"/>
+	<DISCARD id="discard"/>
+</REPORT>

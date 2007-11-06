@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<DIVFO xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<fo:table space-before.optimum="15pt" text-align="center" table-layout="fixed">
+		<fo:table-column column-width="11cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-column column-width="3cm"/>
+		<fo:table-body>
+			<fo:table-row font-weight="bold">
+				<fo:table-cell border-bottom-width="0.5pt" border-bottom-style="solid" text-align="justify">
+					<fo:block padding-top="2pt" font-family="Helvetica" font-size="9pt">&#160;Product</fo:block>
+				</fo:table-cell>
+				<fo:table-cell border-bottom-width="0.5pt" border-bottom-style="solid">
+					<fo:block padding-top="2pt" font-family="Helvetica" font-size="9pt">Quantity&#160;(m2)</fo:block>
+				</fo:table-cell>
+				<fo:table-cell text-align="center" border-bottom-style="solid" border-bottom-width="0.5pt">
+					<fo:block padding-top="2pt" font-family="Helvetica" font-size="9pt">Price&#160;(&#x20AC;/m2)</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block>&#160;</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+			<DIVFO id="sectionDetailLines">
+				<fo:table-row>
+					<fo:table-cell text-align="justify" border-style="solid" border-width="0pt" border-bottom="0.5pt">
+						<fo:block padding-top="2pt" font-family="Helvetica" padding-bottom="2pt" font-size="9pt" id="fieldMProductIDD">xxFortrac 110/30-20 (5x200M.)</fo:block>
+						<fo:block font-family="Helvetica" padding-bottom="2pt" font-size="9pt" id="fieldDescription">xxFortrac 110/30-20 (5x200M.)</fo:block>
+						<fo:block font-family="Helvetica" padding-bottom="2pt" font-size="9pt" text-align="left" white-space-collapse="false" id="fieldLineDesc">xxFortrac 110/30-20 (5x200M.)</fo:block>
+					</fo:table-cell>
+					<fo:table-cell border-style="solid" border-width="0pt" border-bottom="0.5pt">
+						<fo:block padding-top="2pt" padding-bottom="2pt" font-family="Helvetica" font-size="9pt" id="fieldQuantity">4534</fo:block>
+					</fo:table-cell>
+					<fo:table-cell text-align="center" border-style="solid" border-width="0pt" border-bottom="0.5pt">
+						<fo:block padding-top="2pt" padding-bottom="2pt" font-family="Helvetica" font-size="9pt" id="fieldPrice">393.5<fo:inline>&#160;</fo:inline>
+						</fo:block>
+					</fo:table-cell>
+				</fo:table-row>
+				<fo:table-row>
+					<fo:table-cell>
+						<fo:block>&#160;</fo:block>
+					</fo:table-cell>
+				</fo:table-row>
+			</DIVFO>
+		</fo:table-body>
+	</fo:table>
+</DIVFO>

@@ -1,0 +1,1727 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<compiereTrl table="AD_MENU" language="ru_RU" >
+  <row trl="N" id="101" >
+    <value original="Task" column="Name" >Задача</value>
+    <value original="Maintain Tasks" column="Description" >Изменить задачи</value>
+  </row>
+  <row trl="N" id="102" >
+    <value original="Currency" column="Name" >Валюта</value>
+    <value original="Maintain Currencies" column="Description" >Изменить валюты</value>
+  </row>
+  <row trl="N" id="103" >
+    <value original="Conversion Rates" column="Name" >Курсы валют</value>
+    <value original="Maintain Currency Conversion Rates" column="Description" >Изменить курсы валют</value>
+  </row>
+  <row trl="N" id="104" >
+    <value original="Calendar Year and Period" column="Name" >Календарный год и период</value>
+    <value original="Maintain Calendars Years Periods" column="Description" >Изменить календарные года и периоды</value>
+  </row>
+  <row trl="N" id="105" >
+    <value original="Account Element" column="Name" >Элемент счета</value>
+    <value original="Maintain Account Elements" column="Description" >Изменить элементы счета</value>
+  </row>
+  <row trl="N" id="106" >
+    <value original="Account Combination" column="Name" >Комбинация счетов</value>
+    <value original="Maintain Valid Account Combinations " column="Description" >Изменить разрешенные комбинации счетов</value>
+  </row>
+  <row trl="N" id="107" >
+    <value original="Unit of Measure" column="Name" >Единицы измерения</value>
+    <value original="Maintain Unit of Measure " column="Description" >Изменить единицы измерения</value>
+  </row>
+  <row trl="N" id="108" >
+    <value original="Location" column="Name" >Расположение</value>
+    <value original="Maintain Location Address" column="Description" >Изменить расположение</value>
+  </row>
+  <row trl="N" id="109" >
+    <value original="Country Region and City" column="Name" >Страны, регионы, города</value>
+    <value original="Maintain Countries Regions and Cities" column="Description" >Изменить страны, регионы, города</value>
+  </row>
+  <row trl="N" id="110" >
+    <value original="Business Partner" column="Name" >Деловой партнер</value>
+    <value original="Maintain Business Partners" column="Description" >Изменить деловых партнеров</value>
+  </row>
+  <row trl="N" id="111" >
+    <value original="Accounting Schema" column="Name" >Схема учета</value>
+    <value original="Maintain Accounting Schema - For changes to become effective you must re-login" column="Description" >Изменить схему учета - Изменения вступят в силу только после повторного входа в систему</value>
+  </row>
+  <row trl="N" id="113" >
+    <value original="Test" column="Name" >Тест</value>
+    <value original="Test Screen" column="Description" >Тестовая страница</value>
+  </row>
+  <row trl="N" id="114" >
+    <value original="Attachment" column="Name" >Вложения</value>
+    <value original="Maintain Attachments" column="Description" >Изменить вложения</value>
+  </row>
+  <row trl="N" id="115" >
+    <value original="Preference" column="Name" >Настройка</value>
+    <value original="Maintain System Client Org and User Preferences" column="Description" >Maintain System Client Org and User Preferences</value>
+  </row>
+  <row trl="N" id="116" >
+    <value original="Project (Service)" column="Name" >Проект (Сервис)</value>
+    <value original="Maintain Service Projects" column="Description" >Изменить сервисные проекты</value>
+  </row>
+  <row trl="N" id="117" >
+    <value original="GL Category" column="Name" >Категории главной книги</value>
+    <value original="Maintain General Ledger Categories" column="Description" >Изменить категории главной книги</value>
+  </row>
+  <row trl="N" id="118" >
+    <value original="GL Journal" column="Name" >Журнал Главной Книги</value>
+    <value original="Enter and change Manual Journal Entries" column="Description" >Изменить записи журнала вручную</value>
+  </row>
+  <row trl="N" id="120" >
+    <value original="Activity (ABC)" column="Name" >Функции (ABC)</value>
+    <value original="Maintain Activities for Activity Based Costing" column="Description" >Изменить функции функционально-стоимостного учета</value>
+  </row>
+  <row trl="N" id="121" >
+    <value original="Document Type" column="Name" >Тип документа</value>
+    <value original="Maintain Document Types" column="Description" >Изменить типы документов</value>
+  </row>
+  <row trl="N" id="122" >
+    <value original="Approval" column="Name" >Утверждение</value>
+    <value original="Maintain Approvals" column="Description" >Изменить утверждения</value>
+  </row>
+  <row trl="N" id="123" >
+    <value original="Tax Rate" column="Name" >Ставка налога</value>
+    <value original="Maintain Taxes and their Rates" column="Description" >Изменить налоги и ставки</value>
+  </row>
+  <row trl="N" id="124" >
+    <value original="Tax Category" column="Name" >Налоговая категория</value>
+    <value original="Maintain Tax Categories" column="Description" >Изменить налоговые категории</value>
+  </row>
+  <row trl="N" id="125" >
+    <value original="Warehouse &amp; Locator" column="Name" >Склад и указатель</value>
+    <value original="Maintain Warehouses and Locators" column="Description" >Изменить Склады и указатели</value>
+  </row>
+  <row trl="N" id="126" >
+    <value original="Product" column="Name" >Продукт</value>
+    <value original="Maintain Products" column="Description" >Изменить продукты</value>
+  </row>
+  <row trl="N" id="127" >
+    <value original="Payment Term" column="Name" >Условия оплаты</value>
+    <value original="Maintain Payment Terms" column="Description" >Изменить условия оплаты</value>
+  </row>
+  <row trl="N" id="128" >
+    <value original="Shipper" column="Name" >Грузоотправитель</value>
+    <value original="Maintain Shippers" column="Description" >Изменить грузоотправителей</value>
+  </row>
+  <row trl="N" id="129" >
+    <value original="Sales Order" column="Name" >Заказ клиента</value>
+    <value original="Enter and change sales orders" column="Description" >Добавить и изменить заказы клиентов</value>
+  </row>
+  <row trl="N" id="130" >
+    <value original="Product Category" column="Name" >Тип продукта</value>
+    <value original="Maintain Product Categories" column="Description" >Изменить типы продуктов</value>
+  </row>
+  <row trl="N" id="132" >
+    <value original="Price List" column="Name" >Прайс-лист</value>
+    <value original="Maintain Product Price Lists" column="Description" >Изменить прайс-листы продуктов</value>
+  </row>
+  <row trl="N" id="133" >
+    <value original="Invoice Schedule" column="Name" >График счетов</value>
+    <value original="Maintain Invoicing Schedule" column="Description" >Изменить график выставления счетов</value>
+  </row>
+  <row trl="N" id="134" >
+    <value original="Marketing Campaign" column="Name" >Маркетинговая кампания</value>
+    <value original="Maintain Marketing Campaigns" column="Description" >Изменить маркетинговые кампании</value>
+  </row>
+  <row trl="N" id="135" >
+    <value original="GL Budget" column="Name" >Бюджеты главной книги</value>
+    <value original="Maintain General Ledger Budgets" column="Description" >Maintain General Ledger Budgets</value>
+  </row>
+  <row trl="N" id="136" >
+    <value original="Marketing Channel" column="Name" >Канал сбыта</value>
+    <value original="Maintain Marketing  Channels" column="Description" >Изменить каналы сбыта</value>
+  </row>
+  <row trl="N" id="137" >
+    <value original="Sales Region" column="Name" >Регион продаж</value>
+    <value original="Maintain Sales Regions" column="Description" >Изменить регионы продаж</value>
+  </row>
+  <row trl="N" id="138" >
+    <value original="Element" column="Name" >Элементы</value>
+    <value original="Maintain Field Elements" column="Description" >Maintain Field Elements</value>
+  </row>
+  <row trl="N" id="139" >
+    <value original="Table and Column" column="Name" >Таблица и столбец</value>
+    <value original="Maintain Tables and Columns" column="Description" >Изменить таблицы и столбцы</value>
+  </row>
+  <row trl="N" id="140" >
+    <value original="Reference" column="Name" >Ссылка</value>
+    <value original="Maintain System References" column="Description" >Изменить системные ссылки</value>
+  </row>
+  <row trl="N" id="141" >
+    <value original="Window, Tab &amp; Field" column="Name" >Окно, закладка и поле</value>
+    <value original="Maintain Windows, Tabs &amp; Fields" column="Description" >Изменить окна, закладки и поля</value>
+  </row>
+  <row trl="N" id="142" >
+    <value original="Validation Rule" column="Name" >Правила проверки</value>
+    <value original="Maintain dynamic Validation Rules for columns and fields" column="Description" >Изменить динамические правила проверки для столбцов и полей</value>
+  </row>
+  <row trl="N" id="143" >
+    <value original="Message" column="Name" >Сообщение</value>
+    <value original="Maintain Information and Error Messages" column="Description" >Изменить информационные сообщения и сообщения об ошибках</value>
+  </row>
+  <row trl="N" id="144" >
+    <value original="Menu" column="Name" >Меню</value>
+    <value original="Maintain Menu" column="Description" >Изменить меню</value>
+  </row>
+  <row trl="N" id="145" >
+    <value original="Language" column="Name" >Язык</value>
+    <value original="Maintain Languages" column="Description" >Изменить языки</value>
+  </row>
+  <row trl="N" id="147" >
+    <value original="User" column="Name" >Пользователь</value>
+    <value original="Maintain Users of the system" column="Description" >Изменить пользователей системы</value>
+  </row>
+  <row trl="N" id="148" >
+    <value original="Client" column="Name" >Клиент</value>
+    <value original="Maintain Clients" column="Description" >Изменить клиентов</value>
+  </row>
+  <row trl="N" id="149" >
+    <value original="Organization" column="Name" >Подразделение</value>
+    <value original="Maintain Organizations" column="Description" >Изменить подразделения</value>
+  </row>
+  <row trl="N" id="150" >
+    <value original="Role" column="Name" >Роли</value>
+    <value original="Maintain User Responsibilities" column="Description" >Изменить права пользователей</value>
+  </row>
+  <row trl="N" id="151" >
+    <value original="Document Sequence" column="Name" >Последовательность документов</value>
+    <value original="Maintain System and Document Sequences" column="Description" >Изменить последовательности документов</value>
+  </row>
+  <row trl="N" id="152" >
+    <value original="Workflow" column="Name" >Поток операций</value>
+    <value original="Maintain Workflow" column="Description" >Изменить поток операций</value>
+  </row>
+  <row trl="N" id="153" >
+    <value original="Application Dictionary" column="Name" >Словать приложения</value>
+    <value original="Maintain Application Dictionary" column="Description" >Maintain Application Dictionary</value>
+  </row>
+  <row trl="N" id="155" >
+    <value original="General Rules" column="Name" >Основные настройки</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="156" >
+    <value original="Client Rules" column="Name" >Клиентские настройки</value>
+    <value original="Maintain Client Rules" column="Description" >Изменить настройки клиента</value>
+  </row>
+  <row trl="N" id="157" >
+    <value original="Data" column="Name" >Данные</value>
+    <value original="Maintain Data" column="Description" >Изменить данные</value>
+  </row>
+  <row trl="N" id="158" >
+    <value original="Performance Measurement" column="Name" >Измерение показателей</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="159" >
+    <value original="Utility" column="Name" >Utility</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="160" >
+    <value original="Project Management" column="Name" >Управление проектами</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="161" >
+    <value original="System Rules" column="Name" >Системные настройки</value>
+    <value original="General System Rules" column="Description" >Основные системные настройки</value>
+  </row>
+  <row trl="N" id="163" >
+    <value original="Data Import" column="Name" >Импорт данных</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="164" >
+    <value original="Accounting Rules" column="Name" >Настройки учета</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="165" >
+    <value original="Business Partner Rules" column="Name" >Настройки деловых партнеров</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="166" >
+    <value original="Sales Management" column="Name" >Управление продажами</value>
+    <value original="Includes sales area managing window, tasks, etc." column="Description" >Includes sales area managing window, tasks, etc.</value>
+  </row>
+  <row trl="N" id="167" >
+    <value original="Product Management Rules" column="Name" >Настройки управление продуктами</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="169" >
+    <value original="Accounting Fact Details" column="Name" >Детали учета</value>
+    <value original="Query Accounting Facts" column="Description" >Запросить детали учета</value>
+  </row>
+  <row trl="N" id="170" >
+    <value original="Tree and Node Image" column="Name" >Tree and Node Image</value>
+    <value original="Maintain Tree definition" column="Description" >Maintain Tree definition</value>
+  </row>
+  <row trl="N" id="171" >
+    <value original="Bank" column="Name" >Банк</value>
+    <value original="Maintain Bank" column="Description" >Изменить банк</value>
+  </row>
+  <row trl="N" id="172" >
+    <value original="Dunning" column="Name" >Напоминания</value>
+    <value original="Maintain Dunning Levels" column="Description" >Изменить уровни напоминаний</value>
+  </row>
+  <row trl="N" id="173" >
+    <value original="Withholding (1099)" column="Name" >Withholding (1099)</value>
+    <value original="Maintain Withholding Certificates" column="Description" >Maintain Withholding Certificates</value>
+  </row>
+  <row trl="N" id="174" >
+    <value original="Charge" column="Name" >Сборы</value>
+    <value original="Maintain Charges" column="Description" >Изменить сборы</value>
+  </row>
+  <row trl="N" id="175" >
+    <value original="Organization Rules" column="Name" >Настройки организаций</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="176" >
+    <value original="Report &amp; Process" column="Name" >Отчеты и процессы</value>
+    <value original="Maintain Reports &amp; Processes" column="Description" >Изменить отчеты и процессы</value>
+  </row>
+  <row trl="N" id="178" >
+    <value original="Invoice (Customer)" column="Name" >Счет-фактура (Покупатель)</value>
+    <value original="Customer Invoice Entry" column="Description" >Ввести счет-фактуру покупателя/value>
+  </row>
+  <row trl="N" id="179" >
+    <value original="Physical Inventory" column="Name" >Инвентаризация запасов</value>
+    <value original="Enter Physical Inventory" column="Description" >Инвентаризация запасов</value>
+  </row>
+  <row trl="N" id="180" >
+    <value original="Shipment (Customer)" column="Name" >Поставка (Покупатель)</value>
+    <value original="Customer Inventory Shipments Customer Returns" column="Description" >Customer Inventory Shipments Customer Returns</value>
+  </row>
+  <row trl="N" id="181" >
+    <value original="Inventory Move" column="Name" >Перемещение оборотных средств</value>
+    <value original="Inventory Move" column="Description" >Перемещение оборотных средств</value>
+  </row>
+  <row trl="N" id="183" >
+    <value original="Product Management" column="Name" >Управление продуктами</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="185" >
+    <value original="Import Business Partner" column="Name" >Импортировать делового партнера</value>
+    <value original="Import Business Partner" column="Description" >Импортировать делового партнера</value>
+  </row>
+  <row trl="N" id="186" >
+    <value original="Revenue Recognition" column="Name" >Revenue Recognition</value>
+    <value original="Revenue Recognition Rules" column="Description" >Revenue Recognition Rules</value>
+  </row>
+  <row trl="N" id="187" >
+    <value original="Perpetual Inventory" column="Name" >Текущая инвентаризация</value>
+    <value original="Maintain Perpetual Inventory Rules" column="Description" >Настройка текущей инвентаризации</value>
+  </row>
+  <row trl="N" id="188" >
+    <value original="Vendor Details" column="Name" >Детали поставщика</value>
+    <value original="Maintain Vendor Details" column="Description" >Детали поставщика</value>
+  </row>
+  <row trl="N" id="190" >
+    <value original="Greeting" column="Name" >Обращение</value>
+    <value original="Maintain Greetings" column="Description" >Изменить виды обращений</value>
+  </row>
+  <row trl="N" id="192" >
+    <value original="Generate Invoices" column="Name" >Генрировать счета-фактуры</value>
+    <value original="Generate and print Invoices " column="Description" >Создать и распечатать счета-фактуры </value>
+  </row>
+  <row trl="N" id="193" >
+    <value original="Generate Shipments" column="Name" >Generate Shipments</value>
+    <value original="Generate shipment" column="Description" >Generate shipment</value>
+  </row>
+  <row trl="N" id="194" >
+    <value original="Order Transactions" column="Name" >Order Transactions</value>
+    <value original="Sales Order Transaction Report " column="Description" >Sales Order Transaction Report </value>
+  </row>
+  <row trl="N" id="195" >
+    <value original="Open Orders" column="Name" >Открытые заказы</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="196" >
+    <value original="Replenish Report" column="Name" >Отчет о пополнении/value>
+    <value original="Inventory Replenish Report" column="Description" >Отчет о пополнении инвентаря</value>
+  </row>
+  <row trl="N" id="197" >
+    <value original="Product Transaction Summary" column="Name" >Product Transaction Summary</value>
+    <value original="Product Transaction Summary" column="Description" >Product Transaction Summary</value>
+  </row>
+  <row trl="N" id="199" >
+    <value original="Order Drilldown" column="Name" >Order Drilldown</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="200" >
+    <value original="Request Processor" column="Name" >Request Processor</value>
+    <value original="Define Request Processors" column="Description" >Define Request Processors</value>
+  </row>
+  <row trl="N" id="201" >
+    <value original="Report View" column="Name" >Report View</value>
+    <value original="Maintain Report Views" column="Description" >Maintain Report Views</value>
+  </row>
+  <row trl="N" id="202" >
+    <value original="Invoice Transactions" column="Name" >Invoice Transactions</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="203" >
+    <value original="Procurement" column="Name" >Procurement</value>
+    <value original="Includes purchase area managing window, tasks, etc." column="Description" >Includes purchase area managing window, tasks, etc.</value>
+  </row>
+  <row trl="N" id="204" >
+    <value original="Material Receipt" column="Name" >Material Receipt</value>
+    <value original="Vendor Shipments (Receipts)" column="Description" >Vendor Shipments (Receipts)</value>
+  </row>
+  <row trl="N" id="205" >
+    <value original="Purchase Order" column="Name" >Purchase Order</value>
+    <value original="Manage Purchase Orders" column="Description" >Manage Purchase Orders</value>
+  </row>
+  <row trl="N" id="206" >
+    <value original="Invoice (Vendor)" column="Name" >Счет-фактура (Поставщик)</value>
+    <value original="Vendor Invoice Entry" column="Description" >Ввод счета-фактуры поставщика</value>
+  </row>
+  <row trl="N" id="208" >
+    <value original="EDI Definition" column="Name" >EDI Definition</value>
+    <value original="Maintain EDI Definition" column="Description" >Maintain EDI Definition</value>
+  </row>
+  <row trl="N" id="209" >
+    <value original="EDI Transaction" column="Name" >EDI Transaction</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="210" >
+    <value original="Daily Invoice" column="Name" >Ежедневный счет</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="211" >
+    <value original="Monthly Invoice" column="Name" >Ежемесячный счет</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="212" >
+    <value original="Monthly Invoice Product" column="Name" >Monthly Invoice Product</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="213" >
+    <value original="Weekly Invoice Product" column="Name" >Weekly Invoice Product</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="214" >
+    <value original="Monthly Invoice Vendor" column="Name" >Monthly Invoice Vendor</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="215" >
+    <value original="Weekly Invoice" column="Name" >Еженедельный счет</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="216" >
+    <value original="Form" column="Name" >Form</value>
+    <value original="Special Forms" column="Description" >Special Forms</value>
+  </row>
+  <row trl="N" id="217" >
+    <value original="Generate Invoices (manual)" column="Name" >Generate Invoices (manual)</value>
+    <value original="Select and generate invoices" column="Description" >Select and generate invoices</value>
+  </row>
+  <row trl="N" id="218" >
+    <value original="System Admin" column="Name" >Системные настройки</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="219" >
+    <value original="Project Setup and Use" column="Name" >Project Setup and Use</value>
+    <value original="Setup of projects and project reporting" column="Description" >Setup of projects and project reporting</value>
+  </row>
+  <row trl="N" id="220" >
+    <value original="Java Version" column="Name" >Версия Java</value>
+    <value original="Displays the version of the default Java VM" column="Description" >Displays the version of the default Java VM</value>
+  </row>
+  <row trl="N" id="221" >
+    <value original="Error Message" column="Name" >Сообщения об ошибках</value>
+    <value original="Display Error Messages" column="Description" >Display Error Messages</value>
+  </row>
+  <row trl="N" id="222" >
+    <value original="Import Loader Format" column="Name" >Import Loader Format</value>
+    <value original="Maintain Import Loader Formats" column="Description" >Maintain Import Loader Formats</value>
+  </row>
+  <row trl="N" id="223" >
+    <value original="Import File Loader" column="Name" >Import File Loader</value>
+    <value original="Load flat Files into import tables" column="Description" >Load flat Files into import tables</value>
+  </row>
+  <row trl="N" id="224" >
+    <value original="Language Setup" column="Name" >Настройки языка</value>
+    <value original="Setup a new Language of the system and translate elements" column="Description" >Setup a new Language of the system and translate elements</value>
+  </row>
+  <row trl="N" id="225" >
+    <value original="Initial Client Setup" column="Name" >Initial Client Setup</value>
+    <value original="Initial Client Setup" column="Description" >Initial Client Setup</value>
+  </row>
+  <row trl="N" id="226" >
+    <value original="Tire Storage" column="Name" >Tire Storage</value>
+    <value original="Maintain storage of tires" column="Description" >Maintain storage of tires</value>
+  </row>
+  <row trl="N" id="227" >
+    <value original="Vendor Selection" column="Name" >Выбор поставщика</value>
+    <value original="Products with more than one vendor" column="Description" >Для продуктов с двумя и более поставщиками</value>
+  </row>
+  <row trl="N" id="228" >
+    <value original="Production" column="Name" >Производство</value>
+    <value original="Production based on Bill of Materials" column="Description" >Production based on Bill of Materials</value>
+  </row>
+  <row trl="N" id="229" >
+    <value original="Material Transactions" column="Name" >Перемещения материалов</value>
+    <value original="Material Transactions" column="Description" >Перемещения материалов</value>
+  </row>
+  <row trl="N" id="230" >
+    <value original="Quarterly Invoice Customer by Product" column="Name" >Quarterly Invoice Customer by Product</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="231" >
+    <value original="Quarterly Invoice Customer by Vendor" column="Name" >Quarterly Invoice Customer by Vendor</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="232" >
+    <value original="Business Partner Group" column="Name" >Группы деловых партнеров</value>
+    <value original="Maintain Business Partner Groups" column="Description" >Изменить группы деловых партнеров</value>
+  </row>
+  <row trl="N" id="233" >
+    <value original="Notice" column="Name" >Заметка</value>
+    <value original="View System Notices" column="Description" >Смотреть заметки системы</value>
+  </row>
+  <row trl="N" id="234" >
+    <value original="Bank Statement" column="Name" >Bank Statement</value>
+    <value original="Process Bank Statements" column="Description" >Process Bank Statements</value>
+  </row>
+  <row trl="N" id="236" >
+    <value original="Receivables &amp; Payables" column="Name" >Receivables &amp; Payables</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="237" >
+    <value original="Request" column="Name" >Request</value>
+    <value original="Work on your requests" column="Description" >Work on your requests</value>
+  </row>
+  <row trl="N" id="238" >
+    <value original="Mail Template" column="Name" >Mail Template</value>
+    <value original="Maintain Mail Template" column="Description" >Maintain Mail Template</value>
+  </row>
+  <row trl="N" id="239" >
+    <value original="Custom Attribute" column="Name" >Настраиваемые свойства</value>
+    <value original="Maintain custom entity attributes" column="Description" >Настраиваемые свойства</value>
+  </row>
+  <row trl="N" id="240" >
+    <value original="Cashbook" column="Name" >Учет наличных</value>
+    <value original="Maintain Cashbook" column="Description" >Учет наличных</value>
+  </row>
+  <row trl="N" id="241" >
+    <value original="Cash Journal" column="Name" >Cash Journal</value>
+    <value original="Cash transactions" column="Description" >Cash transactions</value>
+  </row>
+  <row trl="N" id="249" >
+    <value original="Field Group" column="Name" >Field Group</value>
+    <value original="Define Field Group" column="Description" >Define Field Group</value>
+  </row>
+  <row trl="N" id="252" >
+    <value original="Invoice Summary" column="Name" >Invoice Summary</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="253" >
+    <value original="Invoice Detail" column="Name" >Invoice Detail</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="254" >
+    <value original="Generate Charges" column="Name" >Generate Charges</value>
+    <value original="Generate Charges from natural accounts" column="Description" >Generate Charges from natural accounts</value>
+  </row>
+  <row trl="N" id="256" >
+    <value original="Product Transaction Value" column="Name" >Product Transaction Value</value>
+    <value original="Product Transaction Value" column="Description" >Product Transaction Value</value>
+  </row>
+  <row trl="N" id="257" >
+    <value original="Commission" column="Name" >Комиссии</value>
+    <value original="Maintain Commissions and Royalties" column="Description" >Maintain Commissions and Royalties</value>
+  </row>
+  <row trl="N" id="258" >
+    <value original="Project Reporting" column="Name" >Отчеты по проекту</value>
+    <value original="Maintain Project Reporting Cycles" column="Description" >Maintain Project Reporting Cycles</value>
+  </row>
+  <row trl="N" id="260" >
+    <value original="Project Status Summary" column="Name" >Project Status Summary</value>
+    <value original="Project Status of Project Cycle" column="Description" >Project Status of Project Cycle</value>
+  </row>
+  <row trl="N" id="261" >
+    <value original="Initial Client Setup Review" column="Name" >Initial Client Setup Review</value>
+    <value original="Review of system level setup of a new  Client" column="Description" >Review of system level setup of a new  Client</value>
+  </row>
+  <row trl="N" id="263" >
+    <value original="Partner Relations" column="Name" >Отношения с партнерами</value>
+    <value original="Customer Relations and Partner Management" column="Description" >Customer Relations and Partner Management</value>
+  </row>
+  <row trl="N" id="264" >
+    <value original="Commission Run" column="Name" >Commission Run</value>
+    <value original="Check and modify Commissions" column="Description" >Check and modify Commissions</value>
+  </row>
+  <row trl="N" id="265" >
+    <value original="Accounting Setup" column="Name" >Настройки учета</value>
+    <value original="Review and change Accounting Setup" column="Description" >Review and change Accounting Setup</value>
+  </row>
+  <row trl="N" id="266" >
+    <value original="Business Partner Setup" column="Name" >Настройки деловы партнеров</value>
+    <value original="Setup Business Partner Rules" column="Description" >Setup Business Partner Rules</value>
+  </row>
+  <row trl="N" id="267" >
+    <value original="Price List Setup" column="Name" >Настройки прайс-листов</value>
+    <value original="Define your Price Lists and Discounts" column="Description" >Define your Price Lists and Discounts</value>
+  </row>
+  <row trl="N" id="268" >
+    <value original="Product Setup" column="Name" >Настройка продукта</value>
+    <value original="Set up Products" column="Description" >Настроить продукты</value>
+  </row>
+  <row trl="N" id="269" >
+    <value original="Sales Setup" column="Name" >Настройка продаж</value>
+    <value original="Setup Sales" column="Description" >Настроить продажи</value>
+  </row>
+  <row trl="N" id="270" >
+    <value original="Tax Setup" column="Name" >Настройка налогов</value>
+    <value original="Setup tax calculation" column="Description" >Настроить расчет налогов</value>
+  </row>
+  <row trl="N" id="271" >
+    <value original="Service" column="Name" >Сервис</value>
+    <value original="Service Management" column="Description" >Service Management</value>
+  </row>
+  <row trl="N" id="272" >
+    <value original="Sales and Marketing Rules" column="Name" >Правила торговли и маркетинга</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="273" >
+    <value original="Performance Achievement" column="Name" >Достижение показателей</value>
+    <value original="Define Performance Achievements" column="Description" >Define Performance Achievements</value>
+  </row>
+  <row trl="N" id="274" >
+    <value original="Performance Color" column="Name" >Цвета показателей</value>
+    <value original="Color used for Performance Analysis" column="Description" >Color used for Performance Analysis</value>
+  </row>
+  <row trl="N" id="275" >
+    <value original="Performance Goal" column="Name" >Цели показателей</value>
+    <value original="Define Performance Goals" column="Description" >Define Performance Goals</value>
+  </row>
+  <row trl="N" id="276" >
+    <value original="Performance Measure Calculation" column="Name" >Пдсчет показателей</value>
+    <value original="Define how you calculate your performance measures" column="Description" >Define how you calculate your performance measures</value>
+  </row>
+  <row trl="N" id="277" >
+    <value original="Performance Measurement Setup" column="Name" >Настройка показателей</value>
+    <value original="Setup your Performance Measurement" column="Description" >Setup your Performance Measurement</value>
+  </row>
+  <row trl="N" id="278" >
+    <value original="Financial Management" column="Name" >Управление финансами</value>
+    <value original="Involves all the accounting module process, windows, tasks, etc." column="Description" >Involves all the accounting module process, windows, tasks, etc.</value>
+  </row>
+  <row trl="N" id="279" >
+    <value original="Performance Measure" column="Name" >Показетели(измерение)</value>
+    <value original="Define your Performance Measures" column="Description" >Define your Performance Measures</value>
+  </row>
+  <row trl="N" id="280" >
+    <value original="Reports" column="Name" >Отчеты</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="281" >
+    <value original="Financial Report" column="Name" >Финансовый отчет</value>
+    <value original="Maintain Financial Reports" column="Description" >Maintain Financial Reports</value>
+  </row>
+  <row trl="N" id="282" >
+    <value original="Report Column Set" column="Name" >Множества колонок отчетов</value>
+    <value original="Maintain Financial Report Column Sets" column="Description" >Maintain Financial Report Column Sets</value>
+  </row>
+  <row trl="N" id="283" >
+    <value original="Report Line Set" column="Name" >Множества строк отчетов</value>
+    <value original="Maintain Financial Report Line Sets" column="Description" >Maintain Financial Report Line Sets</value>
+  </row>
+  <row trl="N" id="284" >
+    <value original="Service Level" column="Name" >Service Level</value>
+    <value original="Maintain Service Levels" column="Description" >Maintain Service Levels</value>
+  </row>
+  <row trl="N" id="286" >
+    <value original="Payment Selection (manual)" column="Name" >Payment Selection (manual)</value>
+    <value original="Manual Payment Selection" column="Description" >Manual Payment Selection</value>
+  </row>
+  <row trl="N" id="287" >
+    <value original="Payment Print/Export" column="Name" >Payment Print/Export</value>
+    <value original="Print or export your payments" column="Description" >Print or export your payments</value>
+  </row>
+  <row trl="N" id="288" >
+    <value original="Cash Journal Detail" column="Name" >Детали журнала наличных средств</value>
+    <value original="Detail Cash Journal Information" column="Description" >Detail Cash Journal Information</value>
+  </row>
+  <row trl="N" id="289" >
+    <value original="Database Export" column="Name" >Экспорт БД</value>
+    <value original="Export (save) the database" column="Description" >Export (save) the database</value>
+  </row>
+  <row trl="N" id="290" >
+    <value original="Find (indirect use)" column="Name" >Найти (indirect use)</value>
+    <value original="Find Dialog (indirect use)" column="Description" >Find Dialog (indirect use)</value>
+  </row>
+  <row trl="N" id="292" >
+    <value original="Material Transaction (indirect use)" column="Name" >Material Transaction (indirect use)</value>
+    <value original="Material Transactions (indirect use)" column="Description" >Material Transactions (indirect use)</value>
+  </row>
+  <row trl="N" id="293" >
+    <value original="Print Form" column="Name" >Формы печати</value>
+    <value original="Maintain Print Forms (Invoices, Checks, ..) used" column="Description" >Maintain Print Forms (Invoices, Checks, ..) used</value>
+  </row>
+  <row trl="N" id="294" >
+    <value original="System Color" column="Name" >Системные цвета</value>
+    <value original="Maintain System Colors" column="Description" >Maintain System Colors</value>
+  </row>
+  <row trl="N" id="295" >
+    <value original="Desktop" column="Name" >Desktop</value>
+    <value original="Maintain Desktop" column="Description" >Maintain Desktop</value>
+  </row>
+  <row trl="N" id="296" >
+    <value original="System Image" column="Name" >Системный образ</value>
+    <value original="Maintain Images" column="Description" >Maintain Images</value>
+  </row>
+  <row trl="N" id="298" >
+    <value original="User Window" column="Name" >Окно пользователя</value>
+    <value original="Define User Window Customization" column="Description" >Define User Window Customization</value>
+  </row>
+  <row trl="N" id="300" >
+    <value original="Workbench" column="Name" >Инструменты</value>
+    <value original="Maintain Workbench" column="Description" >Maintain Workbench</value>
+  </row>
+  <row trl="N" id="301" >
+    <value original="Sales" column="Name" >Продажи</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="302" >
+    <value original="Database Transfer" column="Name" >Перемещение БД</value>
+    <value original="Transfer the database" column="Description" >Transfer the database</value>
+  </row>
+  <row trl="N" id="303" >
+    <value original="Synchronize Terminology" column="Name" >Synchronize Terminology</value>
+    <value original="Synchronize the terminology within the system." column="Description" >Synchronize the terminology within the system.</value>
+  </row>
+  <row trl="N" id="305" >
+    <value original="Revenue Recognition Run" column="Name" >Revenue Recognition Run</value>
+    <value original="Start Revenue Recognition" column="Description" >Start Revenue Recognition</value>
+  </row>
+  <row trl="N" id="306" >
+    <value original="Resubmit Posting" column="Name" >Resubmit Posting</value>
+    <value original="Resubmit posting of documents with posting errors" column="Description" >Resubmit posting of documents with posting errors</value>
+  </row>
+  <row trl="N" id="307" >
+    <value original="Reset Accounting" column="Name" >Reset Accounting</value>
+    <value original="Reset Accounting Entries" column="Description" >Reset Accounting Entries</value>
+  </row>
+  <row trl="N" id="308" >
+    <value original="Request all" column="Name" >Request all</value>
+    <value original="View and work on all requests" column="Description" >View and work on all requests</value>
+  </row>
+  <row trl="N" id="309" >
+    <value original="Request Setup" column="Name" >Request Setup</value>
+    <value original="Set up the client to process requests" column="Description" >Set up the client to process requests</value>
+  </row>
+  <row trl="N" id="310" >
+    <value original="Discount Schema" column="Name" >Discount Schema</value>
+    <value original="Maintain Trade Discount Schema" column="Description" >Maintain Trade Discount Schema</value>
+  </row>
+  <row trl="N" id="311" >
+    <value original="Inventory Valuation Report" column="Name" >Отчет по оборотному капиталу</value>
+    <value original="Inventory Valuation Report" column="Description" >Отчет по оборотному капиталу</value>
+  </row>
+  <row trl="N" id="312" >
+    <value original="Matching PO-Receipt-Invoice" column="Name" >Matching PO-Receipt-Invoice</value>
+    <value original="Match Purchase Orders, Receipts, Vendor Invoices" column="Description" >Match Purchase Orders, Receipts, Vendor Invoices</value>
+  </row>
+  <row trl="N" id="313" >
+    <value original="Product Cost Update" column="Name" >Product Cost Update</value>
+    <value original="Sets future cost price and standard cost price" column="Description" >Sets future cost price and standard cost price</value>
+  </row>
+  <row trl="N" id="314" >
+    <value original="Product Costing Report" column="Name" >Product Costing Report</value>
+    <value original="Product Cost Report" column="Description" >Product Cost Report</value>
+  </row>
+  <row trl="N" id="315" >
+    <value original="Matched Invoices" column="Name" >Matched Invoices</value>
+    <value original="View Matched Invoices" column="Description" >View Matched Invoices</value>
+  </row>
+  <row trl="N" id="316" >
+    <value original="Matched Purchase Orders" column="Name" >Matched Purchase Orders</value>
+    <value original="View Matched Purchase Orders" column="Description" >View Matched Purchase Orders</value>
+  </row>
+  <row trl="N" id="317" >
+    <value original="Expense Type" column="Name" >Expense Type</value>
+    <value original="Maintain Expense Report Types" column="Description" >Maintain Expense Report Types</value>
+  </row>
+  <row trl="N" id="318" >
+    <value original="Expense Report" column="Name" >Expense Report</value>
+    <value original="Time and Expense Report" column="Description" >Time and Expense Report</value>
+  </row>
+  <row trl="N" id="319" >
+    <value original="Resource" column="Name" >Resource</value>
+    <value original="Maintain Resources" column="Description" >Maintain Resources</value>
+  </row>
+  <row trl="N" id="320" >
+    <value original="Resource Type" column="Name" >Resource Type</value>
+    <value original="Maintain Resource Types" column="Description" >Maintain Resource Types</value>
+  </row>
+  <row trl="N" id="321" >
+    <value original="Recompile DB Objects" column="Name" >Recompile DB Objects</value>
+    <value original="Recompile Database Objects" column="Description" >Recompile Database Objects</value>
+  </row>
+  <row trl="N" id="322" >
+    <value original="Print Format" column="Name" >Print Format</value>
+    <value original="Maintain Print Format" column="Description" >Maintain Print Format</value>
+  </row>
+  <row trl="N" id="323" >
+    <value original="Print Font" column="Name" >Print Font</value>
+    <value original="Maintain Print Font" column="Description" >Maintain Print Font</value>
+  </row>
+  <row trl="N" id="324" >
+    <value original="Print Color" column="Name" >Print Color</value>
+    <value original="Maintain Print Color" column="Description" >Maintain Print Color</value>
+  </row>
+  <row trl="N" id="325" >
+    <value original="Print Paper" column="Name" >Print Paper</value>
+    <value original="Maintain Print Paper" column="Description" >Maintain Print Paper</value>
+  </row>
+  <row trl="N" id="326" >
+    <value original="Printing Options" column="Name" >Printing Options</value>
+    <value original="Print Definition" column="Description" >Print Definition</value>
+  </row>
+  <row trl="N" id="327" >
+    <value original="Expenses (to be invoiced)" column="Name" >Expenses (to be invoiced)</value>
+    <value original="View expenses and charges not invoiced to customers" column="Description" >View expenses and charges not invoiced to customers</value>
+  </row>
+  <row trl="N" id="328" >
+    <value original="Create Sales Orders from Expenses" column="Name" >Create Sales Orders from Expenses</value>
+    <value original="Create Sales Orders for Customers from Expense Reports" column="Description" >Create Sales Orders for Customers from Expense Reports</value>
+  </row>
+  <row trl="N" id="329" >
+    <value original="Create AP Expense Invoices" column="Name" >Create AP Expense Invoices</value>
+    <value original="Create AP Invoices from Expenses to be paid to employees" column="Description" >Create AP Invoices from Expenses to be paid to employees</value>
+  </row>
+  <row trl="N" id="331" >
+    <value original="Print Table Format" column="Name" >Print Table Format</value>
+    <value original="Define Report Table Format" column="Description" >Define Report Table Format</value>
+  </row>
+  <row trl="N" id="332" >
+    <value original="Request Type" column="Name" >Request Type</value>
+    <value original="Maintain Request Types" column="Description" >Maintain Request Types</value>
+  </row>
+  <row trl="N" id="333" >
+    <value original="Interest Area" column="Name" >Interest Area</value>
+    <value original="Interest Area or Topic" column="Description" >Interest Area or Topic</value>
+  </row>
+  <row trl="N" id="334" >
+    <value original="System" column="Name" >System</value>
+    <value original="System Definition" column="Description" >System Definition</value>
+  </row>
+  <row trl="N" id="335" >
+    <value original="Generate PO from Sales Order" column="Name" >Generate PO from Sales Order</value>
+    <value original="Create Purchase Order from Sales Orders" column="Description" >Create Purchase Order from Sales Orders</value>
+  </row>
+  <row trl="N" id="337" >
+    <value original="Reopen Request" column="Name" >Reopen Request</value>
+    <value original="Reopen closed requests" column="Description" >Reopen closed requests</value>
+  </row>
+  <row trl="N" id="338" >
+    <value original="Import Report Line Set" column="Name" >Import Report Line Set</value>
+    <value original="Import Report Line Sets" column="Description" >Import Report Line Sets</value>
+  </row>
+  <row trl="N" id="339" >
+    <value original="Import Account" column="Name" >Import Account</value>
+    <value original="Import Natural Account Values" column="Description" >Import Natural Account Values</value>
+  </row>
+  <row trl="N" id="340" >
+    <value original="Import Product" column="Name" >Import Product</value>
+    <value original="Import Products" column="Description" >Import Products</value>
+  </row>
+  <row trl="N" id="341" >
+    <value original="System Translation Check" column="Name" >System Translation Check</value>
+    <value original="Check System Language Translations" column="Description" >Check System Language Translations</value>
+  </row>
+  <row trl="N" id="342" >
+    <value original="Asset" column="Name" >Asset</value>
+    <value original="Asset used internally or by customers" column="Description" >Asset used internally or by customers</value>
+  </row>
+  <row trl="N" id="343" >
+    <value original="Asset Group" column="Name" >Asset Group</value>
+    <value original="Group of Assets" column="Description" >Group of Assets</value>
+  </row>
+  <row trl="N" id="344" >
+    <value original="Training" column="Name" >Training</value>
+    <value original="Repeated Training" column="Description" >Repeated Training</value>
+  </row>
+  <row trl="N" id="345" >
+    <value original="Assets" column="Name" >Assets</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="346" >
+    <value original="Generate Shipments (manual)" column="Name" >Generate Shipments (manual)</value>
+    <value original="Select and generate shipments" column="Description" >Select and generate shipments</value>
+  </row>
+  <row trl="N" id="347" >
+    <value original="Print Invoices" column="Name" >Print Invoices</value>
+    <value original="Print Invoices to paper or send PDF" column="Description" >Print Invoices to paper or send PDF</value>
+  </row>
+  <row trl="N" id="348" >
+    <value original="Deliver Assets" column="Name" >Deliver Assets</value>
+    <value original="Deliver Customer Assets electronically" column="Description" >Deliver Customer Assets electronically</value>
+  </row>
+  <row trl="N" id="349" >
+    <value original="Expenses (not reimbursed)" column="Name" >Expenses (not reimbursed)</value>
+    <value original="View expenses and charges not reimbursed" column="Description" >View expenses and charges not reimbursed</value>
+  </row>
+  <row trl="N" id="350" >
+    <value original="Statement of Accounts" column="Name" >Statement of Accounts</value>
+    <value original="Report Account Statement Beginning Balance and Transactions" column="Description" >Report Account Statement Beginning Balance and Transactions</value>
+  </row>
+  <row trl="N" id="351" >
+    <value original="Password Maintenance" column="Name" >Password Maintenance</value>
+    <value original="Maintain Passwords" column="Description" >Maintain Passwords</value>
+  </row>
+  <row trl="N" id="352" >
+    <value original="Accounting Fact Balances" column="Name" >Accounting Fact Balances</value>
+    <value original="Query Accounting Daily Balances" column="Description" >Query Accounting Daily Balances</value>
+  </row>
+  <row trl="N" id="353" >
+    <value original="Attribute Set" column="Name" >Attribute Set</value>
+    <value original="Maintain Product Attribute Set" column="Description" >Maintain Product Attribute Set</value>
+  </row>
+  <row trl="N" id="354" >
+    <value original="Serial No Control" column="Name" >Serial No Control</value>
+    <value original="Product Serial Number Control" column="Description" >Product Serial Number Control</value>
+  </row>
+  <row trl="N" id="355" >
+    <value original="Lot Control" column="Name" >Lot Control</value>
+    <value original="Product Lot Control" column="Description" >Product Lot Control</value>
+  </row>
+  <row trl="N" id="356" >
+    <value original="Lot" column="Name" >Lot</value>
+    <value original="Product Lot Definition" column="Description" >Product Lot Definition</value>
+  </row>
+  <row trl="N" id="357" >
+    <value original="Product Attributes" column="Name" >Свойства продукта</value>
+    <value original="Product attribute setting window and process group." column="Description" >Product attribute setting window and process group.</value>
+  </row>
+  <row trl="N" id="358" >
+    <value original="Attribute Search" column="Name" >Поиск по свойствам</value>
+    <value original="Common Search Attribute " column="Description" >Common Search Attribute </value>
+  </row>
+  <row trl="N" id="359" >
+    <value original="Attribute" column="Name" >Атрибут</value>
+    <value original="Product Attribute" column="Description" >Атрибут продукта</value>
+  </row>
+  <row trl="N" id="360" >
+    <value original="Expense Invoice (Alpha)" column="Name" >Expense Invoice (Alpha)</value>
+    <value original="Payables expense invoices - This is Alpha Functionality" column="Description" >Payables expense invoices - This is Alpha Functionality</value>
+  </row>
+  <row trl="N" id="362" >
+    <value original="Role Access" column="Name" >Доступ для роли</value>
+    <value original="Maintain Data Access Rules" column="Description" >Изменить правила домтупа к данным</value>
+  </row>
+  <row trl="N" id="363" >
+    <value original="Import Inventory" column="Name" >Импортировать инвентарь</value>
+    <value original="Import Inventory Transactions" column="Description" >Import Inventory Transactions</value>
+  </row>
+  <row trl="N" id="364" >
+    <value original="Project Type" column="Name" >Тип проекта</value>
+    <value original="Maintain Project Type and Phase" column="Description" >Maintain Project Type and Phase</value>
+  </row>
+  <row trl="N" id="365" >
+    <value original="Print Label" column="Name" >Print Label</value>
+    <value original="Print Label Format" column="Description" >Print Label Format</value>
+  </row>
+  <row trl="N" id="366" >
+    <value original="Session" column="Name" >Сессии</value>
+    <value original="List of User Sessions" column="Description" >Список сессий пользователей</value>
+  </row>
+  <row trl="N" id="367" >
+    <value original="Security" column="Name" >Безопасность</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="368" >
+    <value original="Change Log" column="Name" >Журнал изменений</value>
+    <value original="Log of data changes" column="Description" >Log of data changes</value>
+  </row>
+  <row trl="N" id="369" >
+    <value original="Time Type" column="Name" >Учет времени</value>
+    <value original="Maintain Time Recording Type" column="Description" >Изменить типы учета времени</value>
+  </row>
+  <row trl="N" id="370" >
+    <value original="Cost Type" column="Name" >Учет затрат</value>
+    <value original="Maintain Cost Types" column="Description" >Изменить типы учета затрат</value>
+  </row>
+  <row trl="N" id="371" >
+    <value original="Advertisement" column="Name" >Реклама</value>
+    <value original="Web Advertisement" column="Description" >Реклама в интернете</value>
+  </row>
+  <row trl="N" id="372" >
+    <value original="Web" column="Name" >Интернет</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="373" >
+    <value original="Import Bank Statement" column="Name" >Import Bank Statement</value>
+    <value original="Import Bank Statements" column="Description" >Import Bank Statements</value>
+  </row>
+  <row trl="N" id="375" >
+    <value original="Click" column="Name" >Клик</value>
+    <value original="Maintain Web Click" column="Description" >Настройка кликов</value>
+  </row>
+  <row trl="N" id="376" >
+    <value original="Import Order" column="Name" >Импортировать заказ</value>
+    <value original="Import Orders" column="Description" >Импортировать заказы</value>
+  </row>
+  <row trl="N" id="377" >
+    <value original="Invoice Payment Schedule" column="Name" >Расписание оплаты счетов</value>
+    <value original="Maintain Invoice Payment Schedule" column="Description" >Изменить расписание оплаты счетов</value>
+  </row>
+  <row trl="N" id="378" >
+    <value original="Import GL Journal" column="Name" >Импорт журнала главной книги</value>
+    <value original="Import General Ledger Journals" column="Description" >Импортировать журнал главной книги</value>
+  </row>
+  <row trl="N" id="379" >
+    <value original="Alert" column="Name" >Предупреждение</value>
+    <value original="Altert" column="Description" >Предупреждение</value>
+  </row>
+  <row trl="N" id="380" >
+    <value original="Counter" column="Name" >Счетчик</value>
+    <value original="Web Counter" column="Description" >Веб-счетчик</value>
+  </row>
+  <row trl="N" id="381" >
+    <value original="Freight Category" column="Name" >Freight Category</value>
+    <value original="Maintain Freight Categories" column="Description" >Maintain Freight Categories</value>
+  </row>
+  <row trl="N" id="382" >
+    <value original="Import Invoice" column="Name" >Импорт счета-фактуры</value>
+    <value original="Import Invoices" column="Description" >Импортировать счета-фактуры</value>
+  </row>
+  <row trl="N" id="383" >
+    <value original="Cache Reset" column="Name" >Cache Reset</value>
+    <value original="Reset Cache of the System ** Close all Windows before proceeding **" column="Description" >Reset Cache of the System ** Close all Windows before proceeding **</value>
+  </row>
+  <row trl="N" id="384" >
+    <value original="Accounting Dimension" column="Name" >Accounting Dimension</value>
+    <value original="Maintain Non-Account Dimension Trees" column="Description" >Maintain Non-Account Dimension Trees</value>
+  </row>
+  <row trl="N" id="385" >
+    <value original="Replication" column="Name" >Репликация</value>
+    <value original="Maintain Data Replication Targets" column="Description" >Maintain Data Replication Targets</value>
+  </row>
+  <row trl="N" id="386" >
+    <value original="Replication Strategy" column="Name" >Стратегия репликации</value>
+    <value original="Maintain Data Replication Strategy" column="Description" >Maintain Data Replication Strategy</value>
+  </row>
+  <row trl="N" id="387" >
+    <value original="Project (Order)" column="Name" >Проект (Заказ)</value>
+    <value original="Maintain Sales Order Projects and Work Orders" column="Description" >Maintain Sales Order Projects and Work Orders</value>
+  </row>
+  <row trl="N" id="388" >
+    <value original="Knowledge Base" column="Name" >База знаний</value>
+    <value original="Maintain Knowledge Base" column="Description" >Maintain Knowledge Base</value>
+  </row>
+  <row trl="N" id="389" >
+    <value original="Knowledge Category" column="Name" >Категория знаний</value>
+    <value original="Maintain Knoweledge Categories and Values" column="Description" >Maintain Knoweledge Categories and Values</value>
+  </row>
+  <row trl="N" id="390" >
+    <value original="Knowledge Synonym" column="Name" >Синонимы знаний</value>
+    <value original="Knowlege Keyword Synonym" column="Description" >Knowlege Keyword Synonym</value>
+  </row>
+  <row trl="N" id="391" >
+    <value original="Knowledge Source" column="Name" >Источник знаний</value>
+    <value original="Source of Knowledge Entries" column="Description" >Source of Knowledge Entries</value>
+  </row>
+  <row trl="N" id="392" >
+    <value original="Knowledge" column="Name" >Знания</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="393" >
+    <value original="Update Accounting Balance" column="Name" >Update Accounting Balance</value>
+    <value original="Update Daily Accounting Balances" column="Description" >Update Daily Accounting Balances</value>
+  </row>
+  <row trl="N" id="394" >
+    <value original="Business Partner Info" column="Name" >Информация о деловом партнере</value>
+    <value original="Document Information of Business Partners" column="Description" >Document Information of Business Partners</value>
+  </row>
+  <row trl="N" id="395" >
+    <value original="Replication Setup" column="Name" >Настройки репликации</value>
+    <value original="Setup of data replication" column="Description" >Setup of data replication</value>
+  </row>
+  <row trl="N" id="396" >
+    <value original="Send Mail Text" column="Name" >Послать текст email</value>
+    <value original="Send EMails to active subscribers of an Interest Area or Business Partner Group" column="Description" >Send EMails to active subscribers of an Interest Area or Business Partner Group</value>
+  </row>
+  <row trl="N" id="397" >
+    <value original="Merge Entities" column="Name" >Merge Entities</value>
+    <value original="Merge From Entity to To Entity - Delete From" column="Description" >Merge From Entity to To Entity - Delete From</value>
+  </row>
+  <row trl="N" id="398" >
+    <value original="Project Cycle Report" column="Name" >Отчет по проекту(цикл)</value>
+    <value original="Report Projects based on Project Cycle" column="Description" >Report Projects based on Project Cycle</value>
+  </row>
+  <row trl="N" id="399" >
+    <value original="Customer Assets" column="Name" >Customer Assets</value>
+    <value original="Report Customer Assets with Delivery Count" column="Description" >Report Customer Assets with Delivery Count</value>
+  </row>
+  <row trl="N" id="400" >
+    <value original="Asset Delivery" column="Name" >Asset Delivery</value>
+    <value original="Report Asset Deliveries" column="Description" >Report Asset Deliveries</value>
+  </row>
+  <row trl="N" id="401" >
+    <value original="Issue to Project" column="Name" >Issue to Project</value>
+    <value original="Issue Material to Project from Receipt or manual Inventory Location" column="Description" >Issue Material to Project from Receipt or manual Inventory Location</value>
+  </row>
+  <row trl="N" id="402" >
+    <value original="Generate PO from Project" column="Name" >Generate PO from Project</value>
+    <value original="Generate PO from Project Line(s)" column="Description" >Generate PO from Project Line(s)</value>
+  </row>
+  <row trl="N" id="403" >
+    <value original="Project Detail Accounting Report" column="Name" >Project Detail Accounting Report</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="404" >
+    <value original="Project Lines not Issued" column="Name" >Project Lines not Issued</value>
+    <value original="Lists Project Lines of a Work Order or Asset Project, which are not issued to the Project" column="Description" >Lists Project Lines of a Work Order or Asset Project, which are not issued to the Project</value>
+  </row>
+  <row trl="N" id="405" >
+    <value original="Project POs not Issued" column="Name" >Project POs not Issued</value>
+    <value original="Lists Project Lines with generated Purchase Orders of a Work Order or Asset Project, which are not issued to the Project" column="Description" >Lists Project Lines with generated Purchase Orders of a Work Order or Asset Project, which are not issued to the Project</value>
+  </row>
+  <row trl="N" id="800000" >
+    <value original="In-Out Report" column="Name" >In-Out Report</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800001" >
+    <value original="Session Info" column="Name" >Информация сессии</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800002" >
+    <value original="Auxiliar Input" column="Name" >Auxiliar Input</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800005" >
+    <value original="General Ledger Journal" column="Name" >Журнал главной книги</value>
+    <value original="General ledger journal" column="Description" >General ledger journal</value>
+  </row>
+  <row trl="N" id="800006" >
+    <value original="General Ledger Report" column="Name" >Отчет главной книги</value>
+    <value original="Report general ledger" column="Description" >Report general ledger</value>
+  </row>
+  <row trl="N" id="800007" >
+    <value original="Project- Budget" column="Name" >Проект - Бюджет</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800008" >
+    <value original="Incoterm" column="Name" >Incoterm</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800009" >
+    <value original="Stock Report" column="Name" >Отчет по складу</value>
+    <value original="Report inventory" column="Description" >Report inventory</value>
+  </row>
+  <row trl="N" id="800010" >
+    <value original="Bank Report" column="Name" >Банковский отчет</value>
+    <value original="Report bank" column="Description" >Report bank</value>
+  </row>
+  <row trl="N" id="800011" >
+    <value original="Cash Report" column="Name" >Отчет по наличности</value>
+    <value original="Report cash" column="Description" >Report cash</value>
+  </row>
+  <row trl="N" id="800015" >
+    <value original="Shipment Report" column="Name" >Отчет по доствке</value>
+    <value original="Report Shipment" column="Description" >Report Shipment</value>
+  </row>
+  <row trl="N" id="800016" >
+    <value original="Sales Order Report" column="Name" >Отчет по заказам</value>
+    <value original="Report Sales Order" column="Description" >Report Sales Order</value>
+  </row>
+  <row trl="N" id="800017" >
+    <value original="Invoice Vendor Report" column="Name" >Отчет по счетам(поставщик)</value>
+    <value original="Report Invoice Vendor" column="Description" >Report Invoice Vendor</value>
+  </row>
+  <row trl="N" id="800018" >
+    <value original="Invoice Customer Report" column="Name" >Отчет по счетам(закзчик)</value>
+    <value original="Report Invoice Customer" column="Description" >Report Invoice Customer</value>
+  </row>
+  <row trl="N" id="800019" >
+    <value original="Purchase Order Report" column="Name" >Отчет по покупкам</value>
+    <value original="Report Purchase Order" column="Description" >Report Purchase Order</value>
+  </row>
+  <row trl="N" id="800020" >
+    <value original="Material Transaction Report" column="Name" >Отчнет по движению материалов</value>
+    <value original="Report Material Transaction" column="Description" >Report Material Transaction</value>
+  </row>
+  <row trl="N" id="800021" >
+    <value original="Open Sales Order Report" column="Name" >Отчет по незавершенным заказам</value>
+    <value original="Report Sales Order Open Item" column="Description" >Report Sales Order Open Item</value>
+  </row>
+  <row trl="N" id="800023" >
+    <value original="Total Product Template Report" column="Name" >Total Product Template Report</value>
+    <value original="Report Total Product Template" column="Description" >Report Total Product Template</value>
+  </row>
+  <row trl="N" id="800024" >
+    <value original="Rappel" column="Name" >Rappel</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800025" >
+    <value original="General Accounting Report" column="Name" >General Accounting Report</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800026" >
+    <value original="Simple Sales Order" column="Name" >Simple Sales Order</value>
+    <value original="Simple Sales Order" column="Description" >Simple Sales Order</value>
+  </row>
+  <row trl="N" id="800027" >
+    <value original="Settlement" column="Name" >Settlement</value>
+    <value original="Settlement configuration" column="Description" >Settlement configuration</value>
+  </row>
+  <row trl="N" id="800028" >
+    <value original="Invoice Taxes Report" column="Name" >Invoice Taxes Report</value>
+    <value original="Report Tax Invoice" column="Description" >Report Tax Invoice</value>
+  </row>
+  <row trl="N" id="800029" >
+    <value original="Debt-Payment Report" column="Name" >Debt-Payment Report</value>
+    <value original="Report debt payment" column="Description" >Report debt payment</value>
+  </row>
+  <row trl="N" id="800030" >
+    <value original="Change Order Organization" column="Name" >Change Order Organization</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800031" >
+    <value original="Delivered Sales Order Report" column="Name" >Delivered Sales Order Report</value>
+    <value original="Report sales order provided" column="Description" >Report sales order provided</value>
+  </row>
+  <row trl="N" id="800032" >
+    <value original="Project Building Site Report" column="Name" >Project Building Site Report</value>
+    <value original="Report project building site" column="Description" >Report project building site</value>
+  </row>
+  <row trl="N" id="800033" >
+    <value original="Manual Settlement" column="Name" >Manual Settlement</value>
+    <value original="Manual settlement configuration" column="Description" >Manual settlement configuration</value>
+  </row>
+  <row trl="N" id="800034" >
+    <value original="GL Item" column="Name">Запись главной книги</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800036" >
+    <value original="Orders (not invoiced) Report" column="Name" >Orders (not invoiced) Report</value>
+    <value original="Report order not invoiced" column="Description" >Report order not invoiced</value>
+  </row>
+  <row trl="N" id="800037" >
+    <value original="Project Proposal Report" column="Name" >Project Proposal Report</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800038" >
+    <value original="Call Acct-Server" column="Name" >Call Acct-Server</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800039" >
+    <value original="Warehouse Control Report" column="Name" >Warehouse Control Report</value>
+    <value original="Report Warehouse Control" column="Description" >Report Warehouse Control</value>
+  </row>
+  <row trl="N" id="800040" >
+    <value original="Consignment Invoice Report" column="Name" >Consignment Invoice Report</value>
+    <value original="Report To Invoice Consignment" column="Description" >Report To Invoice Consignment</value>
+  </row>
+  <row trl="N" id="800041" >
+    <value original="Warehouse Detailed Inventory" column="Name" >Warehouse Detailed Inventory</value>
+    <value original="Report Warehouse Detail Inventory" column="Description" >Report Warehouse Detail Inventory</value>
+  </row>
+  <row trl="N" id="800042" >
+    <value original="Trial Balance Report" column="Name" >Trial Balance Report</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800043" >
+    <value original="Create All Price Lists" column="Name" >Create All Price Lists</value>
+    <value original="Create price list version for a price list" column="Description" >Create price list version for a price list</value>
+  </row>
+  <row trl="N" id="800046" >
+    <value original="Merge Script" column="Name" >Merge Script</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800047" >
+    <value original="Preinstall" column="Name" >Preinstall</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800048" >
+    <value original="Version" column="Name" >Version</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800049" >
+    <value original="Customer Stock Report" column="Name" >Customer Stock Report</value>
+    <value original="ReportWarehousePartner" column="Description" >ReportWarehousePartner</value>
+  </row>
+  <row trl="N" id="800050" >
+    <value original="In-Out Report" column="Name" >In-Out Report</value>
+    <value original="Report In Out" column="Description" >Report In Out</value>
+  </row>
+  <row trl="N" id="800051" >
+    <value original="Guarantee Date Report" column="Name" >Guarantee Date Report</value>
+    <value original="Report Guarantee Date" column="Description" >Report Guarantee Date</value>
+  </row>
+  <row trl="N" id="800052" >
+    <value original="Product Movements Report" column="Name" >Product Movements Report</value>
+    <value original="Report product movement" column="Description" >Report product movement</value>
+  </row>
+  <row trl="N" id="800054" >
+    <value original="Warehouse Schedule" column="Name" >Warehouse Schedule</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800055" >
+    <value original="Locator Renting Report" column="Name" >Locator Renting Report</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800056" >
+    <value original="Filled Daily Locator Report" column="Name" >Filled Daily Locator Report</value>
+    <value original="Report filled daily locator" column="Description" >Report filled daily locator</value>
+  </row>
+  <row trl="N" id="800057" >
+    <value original="Print Labels" column="Name" >Print Labels</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800058" >
+    <value original="Sales Dimensional Report" column="Name" >Sales Dimensional Report</value>
+    <value original="Sales dimensional analyze" column="Description" >Sales dimensional analyze</value>
+  </row>
+  <row trl="N" id="800059" >
+    <value original="Purchase Dimensional Report" column="Name" >Purchase Dimensional Report</value>
+    <value original="Purchase dimensional analyses" column="Description" >Purchase dimensional analyses</value>
+  </row>
+  <row trl="N" id="800060" >
+    <value original="Invoice (customer) Dimensional Report" column="Name" >Invoice (customer) Dimensional Report</value>
+    <value original="Invoice customer dimensional analyses" column="Description" >Invoice customer dimensional analyses</value>
+  </row>
+  <row trl="N" id="800061" >
+    <value original="Invoice (vendor) Dimensional Report" column="Name" >Invoice (vendor) Dimensional Report</value>
+    <value original="Invoice vendor dimensional analyses" column="Description" >Invoice vendor dimensional analyses</value>
+  </row>
+  <row trl="N" id="800062" >
+    <value original="Shipment (received)" column="Name" >Shipment (received)</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800063" >
+    <value original="Shipment (delivered)" column="Name" >Shipment (delivered)</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800064" >
+    <value original="Locator Type" column="Name" >Locator Type</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800065" >
+    <value original="In-Out Line Type" column="Name" >In-Out Line Type</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800066" >
+    <value original="Create Orders from Logistic Activities" column="Name" >Create Orders from Logistic Activities</value>
+    <value original="Create order from logistic activities" column="Description" >Create order from logistic activities</value>
+  </row>
+  <row trl="N" id="800067" >
+    <value original="Shipments Dimensional Report" column="Name" >Shipments Dimensional Report</value>
+    <value original="Shipment dimensional analyze" column="Description" >Shipment dimensional analyze</value>
+  </row>
+  <row trl="N" id="800068" >
+    <value original="Material Receipts Dimensional Report" column="Name" >Material Receipts Dimensional Report</value>
+    <value original="Material receipt dimensional analyses" column="Description" >Material receipt dimensional analyses</value>
+  </row>
+  <row trl="N" id="800069" >
+    <value original="Sales Order Invoiced Report" column="Name" >Sales Order Invoiced Report</value>
+    <value original="Report sales order invoiced" column="Description" >Report sales order invoiced</value>
+  </row>
+  <row trl="N" id="800070" >
+    <value original="Expenses Report" column="Name" >Expenses Report</value>
+    <value original="Report expense" column="Description" >Report expense</value>
+  </row>
+  <row trl="N" id="800071" >
+    <value original="File Data Type" column="Name" >File Data Type</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800072" >
+    <value original="Process Scheduling" column="Name" >Process Scheduling</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800073" >
+    <value original="Background Process" column="Name" >Background Process</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800074" >
+    <value original="Price List Report" column="Name" >Price List Report</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800075" >
+    <value original="Reports" column="Name" >Reports</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800076" >
+    <value original="Reports" column="Name" >Reports</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800077" >
+    <value original="Reports" column="Name" >Reports</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800078" >
+    <value original="Reports" column="Name" >Reports</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800079" >
+    <value original="Reports" column="Name" >Reports</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800080" >
+    <value original="Reports" column="Name" >Reports</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800081" >
+    <value original="Reports" column="Name" >Reports</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800082" >
+    <value original="Generate Help" column="Name" >Generate Help</value>
+    <value original="Generate help windows in html format" column="Description" >Generate help windows in html format</value>
+  </row>
+  <row trl="N" id="800083" >
+    <value original="Returns (invoice) Dimensional Report" column="Name" >Returns (invoice) Dimensional Report</value>
+    <value original="Refund invoice customer dimensional analyze" column="Description" >Refund invoice customer dimensional analyze</value>
+  </row>
+  <row trl="N" id="800084" >
+    <value original="Pricelist (sales rep.)" column="Name" >Pricelist (sales rep.)</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800085" >
+    <value original="Returns (order) Dimensional Report" column="Name" >Returns (order) Dimensional Report</value>
+    <value original="Report refund sales order dimensional analyses" column="Description" >Report refund sales order dimensional analyses</value>
+  </row>
+  <row trl="N" id="800086" >
+    <value original="Create Invoices from Consignements" column="Name" >Create Invoices from Consignements</value>
+    <value original="Create purchase invoices from outs" column="Description" >Create purchase invoices from outs</value>
+  </row>
+  <row trl="N" id="800087" >
+    <value original="Debt-Payment Tracker" column="Name" >Debt-Payment Tracker</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800088" >
+    <value original="Update Price List from Orders" column="Name" >Update Price List from Orders</value>
+    <value original="Update pricelist from orders" column="Description" >Update pricelist from orders</value>
+  </row>
+  <row trl="N" id="800089" >
+    <value original="In-Out Tracker" column="Name" >In-Out Tracker</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800090" >
+    <value original="Generate 347 Model" column="Name" >Generate 347 Model</value>
+    <value original="Generate model 347" column="Description" >Generate model 347</value>
+  </row>
+  <row trl="N" id="800091" >
+    <value original="Cashflow Forecast" column="Name" >Cashflow Forecast</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800092" >
+    <value original="Undo Debt-Payment" column="Name" >Undo Debt-Payment</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800093" >
+    <value original="Cash-Bank Operations" column="Name" >Cash-Bank Operations</value>
+    <value original="Make transfers between cash and bank" column="Description" >Make transfers between cash and bank</value>
+  </row>
+  <row trl="N" id="800094" >
+    <value original="Production Report" column="Name" >Production Report</value>
+    <value original="Report production" column="Description" >Report production</value>
+  </row>
+  <row trl="N" id="800095" >
+    <value original="Generate Average Costs" column="Name" >Generate Average Costs</value>
+    <value original="Generates raw materials average costs." column="Description" >Generates raw materials average costs.</value>
+  </row>
+  <row trl="N" id="800096" >
+    <value original="Discount" column="Name" >Discount</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800097" >
+    <value original="Remittance Type" column="Name" >Remittance Type</value>
+    <value original="Remittance Type" column="Description" >Remittance Type</value>
+  </row>
+  <row trl="N" id="800098" >
+    <value original="Filled Daily Locator Details" column="Name" >Filled Daily Locator Details</value>
+    <value original="Report filled daily locator detail" column="Description" >Report filled daily locator detail</value>
+  </row>
+  <row trl="N" id="800099" >
+    <value original="Material Receipt Pending" column="Name" >Material Receipt Pending</value>
+    <value original="Select and receipt pending material" column="Description" >Select and receipt pending material</value>
+  </row>
+  <row trl="N" id="800100" >
+    <value original="Update Table Identifiers" column="Name" >Update Table Identifiers</value>
+    <value original="Update all the table identifiers SQL" column="Description" >Update all the table identifiers SQL</value>
+  </row>
+  <row trl="N" id="800101" >
+    <value original="Valued Stock Report" column="Name" >Valued Stock Report</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800102" >
+    <value original="Total Filled Daily Locator Report" column="Name" >Total Filled Daily Locator Report</value>
+    <value original="Report total filled daily locator" column="Description" >Report total filled daily locator</value>
+  </row>
+  <row trl="N" id="800103" >
+    <value original="Proposals Report" column="Name" >Proposals Report</value>
+    <value original="Report proposal query" column="Description" >Report proposal query</value>
+  </row>
+  <row trl="N" id="800104" >
+    <value original="Acct-Account Dimensional Report" column="Name" >Acct-Account Dimensional Report</value>
+    <value original="Accounting count dimensional analyses" column="Description" >Accounting count dimensional analyses</value>
+  </row>
+  <row trl="N" id="800105" >
+    <value original="Month" column="Name" >Month</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800106" >
+    <value original="Dimension" column="Name" >Dimension</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800107" >
+    <value original="Expense Invoice" column="Name" >Expense Invoice</value>
+    <value original="Expense invoice" column="Description" >Expense invoice</value>
+  </row>
+  <row trl="N" id="800108" >
+    <value original="Instructions" column="Name" >Instructions</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800109" >
+    <value original="Document" column="Name" >Document</value>
+    <value original="This window contiains different instructions' documents. Is based on AT_Document table." column="Description" >This window contiains different instructions' documents. Is based on AT_Document table.</value>
+  </row>
+  <row trl="N" id="800110" >
+    <value original="Rol-Login" column="Name" >Rol-Login</value>
+    <value original="This window defines different ways of login in the application for tests. Is based on AT_Rollogin." column="Description" >This window defines different ways of login in the application for tests. Is based on AT_Rollogin.</value>
+  </row>
+  <row trl="N" id="800111" >
+    <value original="Instruction" column="Name" >Instruction</value>
+    <value original="This window contains all the instructions and its lines." column="Description" >This window contains all the instructions and its lines.</value>
+  </row>
+  <row trl="N" id="800112" >
+    <value original="Command" column="Name" >Command</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800113" >
+    <value original="Create Document" column="Name" >Create Document</value>
+    <value original="Creates a apliccation test." column="Description" >Creates a apliccation test.</value>
+  </row>
+  <row trl="N" id="800114" >
+    <value original="Assets" column="Name" >Assets</value>
+    <value original="Assets configuration" column="Description" >Assets configuration</value>
+  </row>
+  <row trl="N" id="800115" >
+    <value original="Amortization" column="Name" >Amortization</value>
+    <value original="Amortization configuration" column="Description" >Amortization configuration</value>
+  </row>
+  <row trl="N" id="800117" >
+    <value original="Offer" column="Name" >Offer</value>
+    <value original="This window contains the purchasing offer module." column="Description" >This window contains the purchasing offer module.</value>
+  </row>
+  <row trl="N" id="800118" >
+    <value original="Business Partner Contract" column="Name" >Business Partner Contract</value>
+    <value original="Creates business partner contract" column="Description" >Creates business partner contract</value>
+  </row>
+  <row trl="N" id="800119" >
+    <value original="SQL Query" column="Name" >SQL Query</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800120" >
+    <value original="Invoice discount" column="Name" >Invoice discount</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800121" >
+    <value original="Manufacturing" column="Name" >Manufacturing</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800123" >
+    <value original="Section" column="Name" >Section</value>
+    <value original="Section configuration" column="Description" >Section configuration</value>
+  </row>
+  <row trl="N" id="800124" >
+    <value original="Cost Center" column="Name" >Cost Center</value>
+    <value original="Cost Center configuration" column="Description" >Cost Center configuration</value>
+  </row>
+  <row trl="N" id="800125" >
+    <value original="Machine" column="Name" >Machine</value>
+    <value original="Lets the machine activation for further use." column="Description" >Lets the machine activation for further use.</value>
+  </row>
+  <row trl="N" id="800126" >
+    <value original="Workstation" column="Name" >Workstation</value>
+    <value original="WorkStation setup for production configuration." column="Description" >WorkStation setup for production configuration.</value>
+  </row>
+  <row trl="N" id="800128" >
+    <value original="Toolset" column="Name" >Toolset</value>
+    <value original="Toolset registration" column="Description" >Toolset registration</value>
+  </row>
+  <row trl="N" id="800133" >
+    <value original="Work Incidence" column="Name" >Work Incidence</value>
+    <value original="Work Incidence" column="Description" >Work Incidence</value>
+  </row>
+  <row trl="N" id="800137" >
+    <value original="Process Plan" column="Name" >Process Plan</value>
+    <value original="Process Plan" column="Description" >Process Plan</value>
+  </row>
+  <row trl="N" id="800138" >
+    <value original="Work Requirement" column="Name" >Work Requirement</value>
+    <value original="Work Requirement" column="Description" >Work Requirement</value>
+  </row>
+  <row trl="N" id="800139" >
+    <value original="Work Effort" column="Name" >Work Effort</value>
+    <value original="Work Effort" column="Description" >Work Effort</value>
+  </row>
+  <row trl="N" id="800140" >
+    <value original="Pending Work Requirement" column="Name" >Pending Work Requirement</value>
+    <value original="In this report are all the open work requirement phases and the quantities done and that left to do." column="Description" >In this report are all the open work requirement phases and the quantities done and that left to do.</value>
+  </row>
+  <row trl="N" id="800141" >
+    <value original="Reports" column="Name" >Отчеты</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800142" >
+    <value original="Production Run Status Report" column="Name" >Production Run Status Report</value>
+    <value original="In this report are all the production runs created from each work requirement." column="Description" >In this report are all the production runs created from each work requirement.</value>
+  </row>
+  <row trl="N" id="800158" >
+    <value original="Product Type" column="Name" >Тип продукта</value>
+    <value original="Product type" column="Description" >Тип продукта</value>
+  </row>
+  <row trl="N" id="800159" >
+    <value original="Process" column="Name" >Process</value>
+    <value original="Production processes setup." column="Description" >Production processes setup.</value>
+  </row>
+  <row trl="N" id="800160" >
+    <value original="Calculate Standard Costs" column="Name" >Calculate Standard Costs</value>
+    <value original="Calculates the standard cost of manufactured products." column="Description" >Calculates the standard cost of manufactured products.</value>
+  </row>
+  <row trl="N" id="800162" >
+    <value original="Cost Center UOM" column="Name" >Cost Center UOM</value>
+    <value original="Is the the Cost center Unit of measure window" column="Description" >Is the the Cost center Unit of measure window</value>
+  </row>
+  <row trl="N" id="800164" >
+    <value original="Standard Costs Report" column="Name" >Standard Costs Report</value>
+    <value original="Manufacturing Standard Cost" column="Description" >Manufacturing Standard Cost</value>
+  </row>
+  <row trl="N" id="800166" >
+    <value original="Daily Work Requirements Report" column="Name" >Daily Work Requirements Report</value>
+    <value original="In this report are showed the work requirements of type ramp. By default only from actual date." column="Description" >In this report are showed the work requirements of type ramp. By default only from actual date.</value>
+  </row>
+  <row trl="N" id="800167" >
+    <value original="Production Setup" column="Name" >Настройки производства</value>
+    <value original="Set up Production module." column="Description" >Настроить Производство.</value>
+  </row>
+  <row trl="N" id="800168" >
+    <value original="Critical Control-Point" column="Name" >Critical Control-Point</value>
+    <value original="Critical Control Points" column="Description" >Critical Control Points</value>
+  </row>
+  <row trl="N" id="800169" >
+    <value original="Control-Point Measure" column="Name" >Control-Point Measure</value>
+    <value original="Control Point Measures" column="Description" >Control Point Measures</value>
+  </row>
+  <row trl="N" id="800170" >
+    <value original="Monthly Production" column="Name" >Monthly Production</value>
+    <value original="In this inform are showed the results of the production from the selected month." column="Description" >In this inform are showed the results of the production from the selected month.</value>
+  </row>
+  <row trl="N" id="800171" >
+    <value original="Consume Product" column="Name" >Consume Product</value>
+    <value original="Consume products registration." column="Description" >Consume products registration.</value>
+  </row>
+  <row trl="N" id="800172" >
+    <value original="Periodic Control" column="Name" >Periodic Control</value>
+    <value original="Periodic control configuration for further registration." column="Description" >Periodic control configuration for further registration.</value>
+  </row>
+  <row trl="N" id="800173" >
+    <value original="Periodic Control Gathering" column="Name" >Periodic Control Gathering</value>
+    <value original="Periodic gathering control data registration" column="Description" >Periodic gathering control data registration</value>
+  </row>
+  <row trl="N" id="800174" >
+    <value original="Work Requirement Daily Packing" column="Name" >Work Requirement Daily Packing</value>
+    <value original="In this report are showed the work requirements of type packing. By default only from actual date." column="Description" >In this report are showed the work requirements of type packing. By default only from actual date.</value>
+  </row>
+  <row trl="N" id="800175" >
+    <value original="Pending Production" column="Name" >Pending Production</value>
+    <value original="Show the lines of the pending orders with the actual stock of each product." column="Description" >Show the lines of the pending orders with the actual stock of each product.</value>
+  </row>
+  <row trl="N" id="800176" >
+    <value original="Import EDI File" column="Name" >Import EDI File</value>
+    <value original="Imports EDI data from file." column="Description" >Imports EDI data from file.</value>
+  </row>
+  <row trl="N" id="800177" >
+    <value original="GL Items Report" column="Name" >GL Items Report</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800178" >
+    <value original="Performance Scorecard" column="Name" >Performance Scorecard</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800179" >
+    <value original="Text interfaces" column="Name" >Text interfaces</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800180" >
+    <value original="Callout" column="Name" >Callout</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800181" >
+    <value original="Promissory format" column="Name" >Promissory format</value>
+    <value original="Contains Promissory Notes parametrization values for each Promissory format." column="Description" >Contains Promissory Notes parametrization values for each Promissory format.</value>
+  </row>
+  <row trl="N" id="800182" >
+    <value original="Machine Type" column="Name" >Machine Type</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800183" >
+    <value original="Maintenance Operation" column="Name" >Maintenance Operation</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800184" >
+    <value original="Scheduled Maintenance" column="Name" >Scheduled Maintenance</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800185" >
+    <value original="Maintenance Part" column="Name" >Maintenance Part</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800186" >
+    <value original="Insert Maintenances" column="Name" >Insert Maintenances</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800188" >
+    <value original="Internal Consumption" column="Name" >Internal Consumption</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800189" >
+    <value original="Production Rules" column="Name" >Настройки производства</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800190" >
+    <value original="Budget" column="Name" >Бюджет</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800191" >
+    <value original="Report Budget Generate Excel" column="Name" >Report Budget Generate Excel</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800192" >
+    <value original="Import Budget" column="Name" >Import Budget</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800193" >
+    <value original="Debt Payment Management" column="Name" >Debt Payment Management</value>
+    <value original="This window manages debt payments." column="Description" >This window manages debt payments.</value>
+  </row>
+  <row trl="N" id="800194" >
+    <value original="Accounting report" column="Name" >Accounting report</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800195" >
+    <value original="Remittance" column="Name" >Перечисление</value>
+    <value original="Remittance" column="Description" >Перечисление денег</value>
+  </row>
+  <row trl="N" id="800196" >
+    <value original="Remittance Cancel" column="Name" >Отмена перечисления</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800197" >
+    <value original="Report Shipper" column="Name" >Report Shipper</value>
+    <value original="" column="Description" />
+  </row>
+  <row trl="N" id="800198" >
+    <value original="Create Accounting Report" column="Name" >Create Accounting Report</value>
+    <value original="Selects an accounting model to obtain its report." column="Description" >Selects an accounting model to obtain its report.</value>
+  </row>
+  <row trl="N" id="800199" >
+    <value original="External Point of Sales" column="Name" >Внешняя точка продаж</value>
+    <value original="External Point of Sales" column="Description" >Внешняя точка продаж</value>
+  </row>
+  <row trl="N" id="800200" >
+    <value original="Import/Export Translations" column="Name" >Import/Export Translations</value>
+    <value original="Import/Export translation" column="Description" >Import/Export translation</value>
+  </row>
+</compiereTrl>

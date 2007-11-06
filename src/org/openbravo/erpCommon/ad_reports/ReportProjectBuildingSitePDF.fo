@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<fo:layout-master-set>
+		<fo:simple-page-master master-name="first" margin-left="1cm" page-height="29.7cm" page-width="21cm" margin-top="1.5cm" margin-right="1cm" margin-bottom="0.25cm">
+			<fo:region-body margin-left="0cm" margin-right="0cm" margin-bottom="3cm" margin-top="2cm"/>
+		</fo:simple-page-master>
+	</fo:layout-master-set>
+	<fo:page-sequence master-reference="first" initial-page-number="1" force-page-count="no-force">
+		<fo:flow font-size="10pt" flow-name="xsl-region-body" font-family="Helvetica">
+			<fo:block text-align="center" font-weight="bold">WORK REPORT<fo:inline id="paramTitle">xx</fo:inline>
+			</fo:block>
+			<DIVFO id="sectionPartner">
+				<fo:table table-layout="fixed" space-before.optimum="20pt">
+					<fo:table-column column-width="0.5cm"/>
+					<fo:table-column column-width="0.5cm"/>
+					<fo:table-column column-width="6cm"/>
+					<fo:table-column column-width="4cm"/>
+					<fo:table-column column-width="3cm"/>
+					<fo:table-column column-width="4cm"/>
+					<fo:table-column column-width="0.5cm"/>
+					<fo:table-column column-width="0.5cm"/>
+					<fo:table-body>
+						<fo:table-row keep-with-next="always">
+							<fo:table-cell number-columns-spanned="8" border-style="solid" border-width="0.5pt">
+								<fo:block font-weight="bold" padding-top="2pt" padding-bottom="2pt" start-indent="2pt">Business Partner:<fo:inline id="fieldBpartnername">xx</fo:inline>
+								</fo:block>
+							</fo:table-cell>
+						</fo:table-row>
+						<DIVFO id="sectionProject">
+							<fo:table-row keep-with-next="always">
+								<fo:table-cell number-columns-spanned="8">
+									<fo:block id="fieldBlankSpace"/>
+								</fo:table-cell>
+							</fo:table-row>
+							<fo:table-row keep-with-next="always">
+								<fo:table-cell>
+									<fo:block/>
+								</fo:table-cell>
+								<fo:table-cell number-columns-spanned="6" border-style="solid" border-width="0.5pt">
+									<fo:block font-weight="bold" padding-top="2pt" padding-bottom="2pt" start-indent="2pt">Project:<fo:inline id="fieldProjectname">xx</fo:inline>
+									</fo:block>
+								</fo:table-cell>
+								<fo:table-cell>
+									<fo:block font-size="0.1pt" id="fieldMark"/>
+								</fo:table-cell>
+							</fo:table-row>
+							<fo:table-row keep-with-next="always">
+								<fo:table-cell number-columns-spanned="2">
+									<fo:block/>
+								</fo:table-cell>
+								<fo:table-cell border-style="solid" border-width="0.5pt">
+									<fo:block text-align="left" font-weight="bold" padding-top="2pt" padding-bottom="2pt" start-indent="2pt">Product</fo:block>
+								</fo:table-cell>
+								<fo:table-cell border-style="solid" border-width="0.5pt">
+									<fo:block text-align="end" font-weight="bold" padding-top="2pt" padding-bottom="2pt" end-indent="2pt">Quantity(m2)</fo:block>
+								</fo:table-cell>
+								<fo:table-cell border-style="solid" border-width="0.5pt">
+									<fo:block text-align="end" font-weight="bold" padding-top="2pt" padding-bottom="2pt" end-indent="2pt">Price(_/m2)</fo:block>
+								</fo:table-cell>
+								<fo:table-cell border-style="solid" border-width="0.5pt">
+									<fo:block text-align="end" font-weight="bold" padding-top="2pt" padding-bottom="2pt" end-indent="2pt">Amount(_)</fo:block>
+								</fo:table-cell>
+								<fo:table-cell number-columns-spanned="2">
+									<fo:block/>
+								</fo:table-cell>
+							</fo:table-row>
+							<DIVFO id="sectionDetail">
+								<fo:table-row keep-with-next="always">
+									<fo:table-cell number-columns-spanned="2">
+										<fo:block/>
+									</fo:table-cell>
+									<fo:table-cell border-style="solid" border-width="0.5pt">
+										<fo:block text-align="left" padding-top="2pt" padding-bottom="2pt" start-indent="2pt" id="fieldProductname">Product</fo:block>
+									</fo:table-cell>
+									<fo:table-cell border-style="solid" border-width="0.5pt">
+										<fo:block text-align="end" padding-top="2pt" padding-bottom="2pt" end-indent="2pt" id="fieldPlannedqty">Quantity</fo:block>
+									</fo:table-cell>
+									<fo:table-cell border-style="solid" border-width="0.5pt">
+										<fo:block text-align="end" padding-top="2pt" padding-bottom="2pt" end-indent="2pt" id="fieldPlannedprice">Price</fo:block>
+									</fo:table-cell>
+									<fo:table-cell border-style="solid" border-width="0.5pt">
+										<fo:block text-align="end" padding-top="2pt" padding-bottom="2pt" end-indent="2pt" id="fieldPlannedpoprice">Amount</fo:block>
+									</fo:table-cell>
+									<fo:table-cell number-columns-spanned="2">
+										<fo:block/>
+									</fo:table-cell>
+								</fo:table-row>
+							</DIVFO>
+						</DIVFO>
+						<fo:table-row>
+							<fo:table-cell number-columns-spanned="3">
+								<fo:block text-align="end" font-weight="bold" padding-top="2pt" padding-bottom="2pt" end-indent="2pt">Total business partner:</fo:block>
+							</fo:table-cell>
+							<fo:table-cell>
+								<fo:block text-align="end" padding-top="2pt" padding-bottom="2pt" end-indent="2pt" id="fieldSubtotalQty"/>
+							</fo:table-cell>
+							<fo:table-cell number-columns-spanned="2">
+								<fo:block text-align="end" padding-top="2pt" padding-bottom="2pt" end-indent="2pt" id="fieldSubtotalImp"/>
+							</fo:table-cell>
+							<fo:table-cell number-columns-spanned="2">
+								<fo:block/>
+							</fo:table-cell>
+						</fo:table-row>
+					</fo:table-body>
+				</fo:table>
+			</DIVFO>
+			<fo:table space-before.optimum="2cm">
+				<fo:table-column column-width="3.75cm"/>
+				<fo:table-column column-width="1.25cm"/>
+				<fo:table-column column-width="4.5cm"/>
+				<fo:table-column column-width="2.5cm"/>
+				<fo:table-column column-width="4cm"/>
+				<fo:table-column column-width="3cm"/>
+				<fo:table-body>
+					<fo:table-row>
+						<fo:table-cell>
+							<fo:block font-weight="bold" text-align="end" padding-top="2pt" padding-bottom="2pt" end-indent="2pt">TOTAL PROJETS:</fo:block>
+						</fo:table-cell>
+						<fo:table-cell>
+							<fo:block text-align="end" font-weight="bold" padding-top="2pt" padding-bottom="2pt" end-indent="2pt" id="fieldTotalProject">XXTOTAL PROYECTO:</fo:block>
+						</fo:table-cell>
+						<fo:table-cell>
+							<fo:block text-align="end" font-weight="bold" padding-top="2pt" padding-bottom="2pt" end-indent="2pt">TOTAL QUANTITY(m2):</fo:block>
+						</fo:table-cell>
+						<fo:table-cell>
+							<fo:block text-align="end" font-weight="bold" padding-top="2pt" padding-bottom="2pt" end-indent="2pt" id="fieldTotalQty">xxTOTAL PROYECTO:</fo:block>
+						</fo:table-cell>
+						<fo:table-cell>
+							<fo:block text-align="end" font-weight="bold" padding-top="2pt" padding-bottom="2pt" end-indent="2pt">TOTAL AMOUNT(_):</fo:block>
+						</fo:table-cell>
+						<fo:table-cell>
+							<fo:block text-align="end" font-weight="bold" padding-top="2pt" padding-bottom="2pt" end-indent="2pt" id="fieldTotalImp">xx</fo:block>
+						</fo:table-cell>
+					</fo:table-row>
+				</fo:table-body>
+			</fo:table>
+		</fo:flow>
+	</fo:page-sequence>
+</fo:root>

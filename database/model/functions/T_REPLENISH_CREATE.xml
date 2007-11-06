@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<database name="FUNCTION T_REPLENISH_CREATE">
+<function name="T_REPLENISH_CREATE">
+<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+<body><![CDATA[
+  /*************************************************************************
+  * The contents of this file are subject to the Compiere License
+  * Version 2.5.0 ("License"); You may not use this file except in
+  * compliance with the License. You may obtain a copy of the License at
+  * http://www.compiere.org/license.html
+  * Software distributed under the License is distributed on an
+  * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  * implied. See the License for the specific language governing rights
+  * and limitations under the License.
+  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
+  Inc.
+  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+  * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+  * All Rights Reserved.
+  * Contributor(s): Openbravo SL
+  * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+  *************************************************************************
+  * $Id: T_Replenish_Create.sql,v 1.4 2003/02/18 03:58:24 jjanke Exp $
+  ***
+  * Title: Calculate Replenishment for Report in Temporary Table
+  * Description:
+  ************************************************************************/
+  rowcount NUMBER;
+BEGIN
+  /**
+  * Clense Data
+  */
+  DBMS_OUTPUT.PUT_LINE('Replenish-Prepare - AD_PInstance_ID' || p_PInstance_ID) ;
+  UPDATE M_Replenish -- Level_Max must be >= Level_Max
+    SET Level_Max=Level_Min
+  WHERE Level_Max<Level_Min;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('  Corrected Max_Level=' || rowcount) ;
+  --
+  UPDATE M_Product_PO -- Minimum Order should be 1
+    SET Order_Min=1
+  WHERE Order_Min IS NULL
+    OR Order_Min<1;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('  Corrected Order_Min=' || rowcount) ;
+  UPDATE M_Product_PO -- Pack should be 1
+    SET Order_Pack=1
+  WHERE Order_Pack IS NULL
+    OR Order_Pack<1;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('  Corrected Order_Pack=' || rowcount) ;
+  --
+  UPDATE M_Product_PO -- Set Current Vendor where only one vendor
+    SET IsCurrentVendor='Y'
+  WHERE IsCurrentVendor<>'Y'
+    AND EXISTS
+    (SELECT * -- pp.M_Product_ID, pp.C_BPartner_ID
+    FROM M_Product_PO pp
+    WHERE M_Product_PO.M_Product_ID=pp.M_Product_ID
+      AND M_Product_PO.C_BPartner_ID=pp.C_BPartner_ID
+    GROUP BY pp.M_Product_ID,
+      pp.C_BPartner_ID
+    HAVING COUNT(*)=1
+    )
+    ;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('  Corrected CurrentVendor=' || rowcount) ;
+  /**
+  * Create Base Info
+  */
+  DELETE FROM T_Replenish WHERE AD_PInstance_ID=p_PInstance_ID; -- makes it re-runnable
+  -- Commented by cromero 19102006 COMMIT;
+  --
+  INSERT
+  INTO T_Replenish
+    (
+      AD_PInstance_ID, M_Warehouse_ID, M_Product_ID, AD_Client_ID,
+      AD_Org_ID, ReplenishType, Level_Min, Level_Max,
+      C_BPartner_ID, Order_Min, Order_Pack, QtyToOrder
+    )
+  SELECT  p_PInstance_ID,
+    r.M_Warehouse_ID, r.M_Product_ID, r.AD_Client_ID, r.AD_Org_ID,
+    -- Replenishment
+    r.ReplenishType, r.Level_Min, r.Level_Max, -- Vendor
+    po.C_BPartner_ID, po.Order_Min, po.Order_Pack, 0
+  FROM M_Replenish r
+  INNER JOIN M_Product_PO po
+    ON(r.M_Product_ID=po.M_Product_ID)
+  WHERE po.IsCurrentVendor='Y' -- Only Current Vendor
+    AND r.ReplenishType<>0 -- No Manual Replenish
+    AND po.IsActive='Y'
+    AND r.IsActive='Y';
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('Insert Replenish Records=' || rowcount) ;
+  --
+  UPDATE T_Replenish
+    SET QtyOnHand=
+    (SELECT SUM(QtyOnHand)
+    FROM M_Storage_Detail s,
+      M_Locator l
+    WHERE T_Replenish.M_Product_ID=s.M_Product_ID
+      AND l.M_Locator_ID=s.M_Locator_ID
+      AND l.M_Warehouse_ID=T_Replenish.M_Warehouse_ID
+    )
+    ,
+    QtyReserved=
+    (SELECT SUM(QtyReserved)
+    FROM M_Storage_Pending s
+    WHERE T_Replenish.M_Product_ID=s.M_Product_ID
+      AND s.M_Warehouse_ID=T_Replenish.M_Warehouse_ID
+    )
+    ,
+    QtyOrdered=
+    (SELECT SUM(QtyOrdered)
+    FROM M_Storage_Pending s
+    WHERE T_Replenish.M_Product_ID=s.M_Product_ID
+      AND s.M_Warehouse_ID=T_Replenish.M_Warehouse_ID
+    )
+    ;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('Update Replenish Records=' || rowcount) ;
+  -- Delete inactive products and replenishments
+  DELETE
+  FROM T_Replenish
+  WHERE EXISTS
+    (SELECT *
+    FROM M_Product p
+    WHERE p.M_Product_ID=T_Replenish.M_Product_ID
+      AND p.IsActive='N'
+    )
+    OR EXISTS
+    (SELECT *
+    FROM M_Replenish rr
+    WHERE rr.M_Product_ID=T_Replenish.M_Product_ID
+      AND rr.IsActive='N'
+    )
+    ;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('Delete Inactive=' || rowcount) ;
+  /**
+  * Ensure Data consistency
+  */
+  UPDATE T_Replenish SET QtyOnHand=0 WHERE QtyOnHand IS NULL;
+  UPDATE T_Replenish SET QtyReserved=0 WHERE QtyReserved IS NULL;
+  UPDATE T_Replenish SET QtyOrdered=0 WHERE QtyOrdered IS NULL;
+  -- Set Minimum / Maximum Maintain Level
+  UPDATE T_Replenish
+    SET QtyToOrder=Level_Min - QtyOnHand + QtyReserved - QtyOrdered
+  WHERE ReplenishType=1;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('Update Type-1 =' || rowcount) ;
+  UPDATE T_Replenish
+    SET QtyToOrder=Level_Max - QtyOnHand + QtyReserved - QtyOrdered
+  WHERE ReplenishType=2
+    AND Level_Min - QtyOnHand + QtyReserved - QtyOrdered>0;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('Update Type-2 =' || rowcount) ;
+  -- Delete rows where nothing to order
+  DELETE FROM T_Replenish  WHERE QtyToOrder<1;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('Delete where nothing to order=' || rowcount) ;
+  -- Minimum Order Quantity
+  UPDATE T_Replenish  SET QtyToOrder=Order_Min  WHERE QtyToOrder<Order_Min;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('Set Minimum Order Qty=' || rowcount) ;
+  -- Even dividable by Pack
+  UPDATE T_Replenish
+    SET QtyToOrder=QtyToOrder - MOD(QtyToOrder, Order_Pack) + Order_Pack
+  WHERE MOD(QtyToOrder, Order_Pack)<>0;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('Set Order Order Pack=' || rowcount) ;
+  --
+  -- Commented by cromero 19102006 COMMIT;
+END T_Replenish_Create]]>
+</body>
+</function>
+</database>

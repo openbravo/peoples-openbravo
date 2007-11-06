@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD Xhtml 1.0 Transitional//EN" "http://www.w3.org/tr/xhtml1/Dtd/xhtml1-transitional.dtd">
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<TITLE>Refunded sale invoices report</TITLE>
+    <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS" />
+     
+    <script language="JavaScript" type="text/javascript" id="paramDirection">
+      var baseDirection = "../../../../../web/";
+      </script>
+      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
+      </script>
+      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" type="text/javascript" id="paramLanguage">
+        var LNG_POR_DEFECTO = "en_US";
+      </script>
+      <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
+      <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+      <script language="JavaScript" type="text/javascript" id="keyMap"></script>
+      <script type="text/javascript">
+        dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+      </script>
+<SCRIPT language="JavaScript" type="text/javascript">
+
+function imprimir()
+{
+	if (depurar()){
+		abrirPDFFiltered("ReportRefund.pdf","PDF");
+	}
+	return true;
+}
+
+function depurar(action)
+{
+	var frm = document.frmMain;
+	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
+		frm.inpDateFrom.focus();
+		mensaje(7);
+		return false;
+	} else if (frm.inpDateTo.value == null || frm.inpDateTo.value == ""){
+		frm.inpDateTo.focus();
+		mensaje(7);
+		return false;
+	}
+	if (action == "EDIT_HTML_COMPARATIVE" || action == "EDIT_PDF_COMPARATIVE") {
+		if (frm.inpDateFromRef.value == null || frm.inpDateFromRef.value == "") {
+			frm.inpDateFromRef.focus();
+			mensaje(7);
+			return false;
+		} else if (frm.inpDateToRef.value == null || frm.inpDateToRef.value == ""){
+			frm.inpDateToRef.focus();
+			mensaje(7);
+			return false;
+		}
+	}
+	seleccionarListCompleto(frm.inpmProductId_IN);
+	seleccionarListCompleto(frm.inpcBPartnerId_IN);
+	seleccionarListCompleto(frm.inpShown);
+	return true;
+}
+
+function onloadFunctions() {
+	new TypeAheadCombo("inpPartnerGroup");
+  new TypeAheadCombo("inpOrg");
+  new TypeAheadCombo("inpProductCategory");
+  new TypeAheadCombo("inpSalesrepId");
+  new TypeAheadCombo("inpPartnerGroup2");
+  new TypeAheadCombo("inpOrg2");
+  new TypeAheadCombo("inpProductCategory2");
+  new TypeAheadCombo("inpSalesrepId2");
+}
+</SCRIPT>
+</HEAD>
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();">
+<TABLE width="100%" border="0" cellspacing="1" cellpadding="0" >
+<TR>
+          <TD  width="2%"> <A href="#" onclick="mostrarMenu();return false;" onmouseover="window.status='Menu';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
+            <img src="../../../../../web/images/Menu.jpg"  alt="Menu" title="Menu" border="0" id="buttonMenu"></IMG></A></TD>
+          <TD  width="1%">&nbsp;</TD>
+          <TD  width="2%"> <A href="#" onclick="submitCommandForm('DEFAULT',false,null,null,'frameAplicacion');return false;" onmouseover="window.status='Update';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
+            <img src="../../../../../web/images/Refresh.jpg"  alt="Update" title="Update" border="0" id="buttonRefresh"></IMG></A></TD>
+          <TD >&nbsp;</TD>
+          <TD > <A href="../secureApp/GoBack.html" onmouseover="window.status='Back';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
+            <img src="../../../../../web/images/Back.jpg"  alt="Back" title="Back" border="0" id="buttonBack"></IMG></A></TD>
+  </TR>
+</TABLE>
+<FORM method="POST" action="ReportRefundInvoiceCustomerDimensionalAnalysesEdition.html" name="frmMain" id="form">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
+    <tr>
+      <td valign="top" id="tdleftTabs"></td>
+      <td valign="top">
+        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
+          <TR><TD class="Main_NavBar_bg_left" id="tdleftSeparator"></TD></TR>
+          <TR><TD class="Main_ToolBar_bg_left" valign="top"></TD></TR>
+          <TR><TD class="Main_Client_bg_left"></TD></TR>
+          <TR><TD class="Main_Bottom_bg_left"></TD></TR>
+        </TABLE>
+      </td>
+      <td valign="top">
+        <div class="Main_ContentPane_NavBar" id="tdtopButtons"></div>
+        <div class="Main_ContentPane_ToolBar" id="paramToolBar"></div>
+        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
+          <TR id="paramParentTabContainer"></TR>
+          <TR id="paramMainTabContainer"></TR>
+          <TR id="paramChildTabContainer"></TR>
+        </TABLE>
+        <DIV class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
+                <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                  <tr>
+                    <td>
+                      <table class="dojoTabPaneWrapper" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                        <tr>
+                          <td>
+                            <!-- MessageBox -->
+
+                            <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
+                              <TBODY>
+                              <tr class="MessageBox_TopMargin">
+                                <td class="MessageBox_LeftMargin"></td>
+                                <td></td>
+                                <td class="MessageBox_RightMargin"></td>
+                              </tr>
+                              <tr>
+                                <td class="MessageBox_LeftMargin"></td>
+                                <td>
+
+                                  <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <TBODY>
+                                    <tr>
+                                      <td>
+                                        <div class="MessageBox_TopLeft"></div>
+                                        <div class="MessageBox_Left"></div>
+                                      </td>
+                                      <td class="MessageBox_bg">
+
+                                        <table class="MessageBox_Top">
+                                        <TBODY>
+                                          <tr>
+                                            <td>
+                                              <span>
+                                              <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
+                                                <TBODY>
+                                                <tr>
+                                                  <td class="MessageBox_Icon_ContentCell">
+                                                    <div class="MessageBox_Icon"></div>
+                                                  </td>
+                                                  <td style="vertical-align: top;" id="messageBoxIDContent">
+                                                    <span>
+                                                      <div class="MessageBox_TextTitle" id="messageBoxIDTitle">
+                                                        xxInfo: AccessTableWithNoView
+                                                      </div>
+                                                      <div class="MessageBox_TextDescription" id="messageBoxIDMessage">
+                                                        xxThe current information is empty.
+                                                      </div>
+                                                      <div class="MessageBox_TextSeparator"></div>
+                                                    </span>
+                                                  </td>
+                                                </tr>
+                                                </TBODY>
+                                              </table>
+                                              </span>
+                                            </td>
+                                          </tr>
+                                          </TBODY>
+                                        </table>
+
+                                      </td>
+                                      <td class="MessageBox_RightTrans">
+                                        <div class="MessageBox_TopRight"></div>
+                                        <div class="MessageBox_Right"></div>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td rowspan="2" class="MessageBox_BottomLeft">
+                                      </td>
+                                      <td class="MessageBox_BottomTrans MessageBox_bg">
+                                      </td>
+                                      <td rowspan="2" class="MessageBox_BottomRight">
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="MessageBox_Bottom">
+                                      </td>
+                                    </tr>
+                                    </TBODY>
+                                  </table>
+
+                                </td>
+                                <td class="MessageBox_RightMargin"></td>
+                              </tr>
+                              <tr class="MessageBox_BottomMargin">
+                                <td class="MessageBox_LeftMargin"></td>
+                                <td></td>
+                                <td class="MessageBox_RightMargin"></td>
+                              </tr>
+                              </TBODY>
+                            </table>
+                            <!-- USER CONTROLS -->
+  <TABLE width="100%">
+    <TR> 
+      <TD width="10%" > <SPAN >Comparative</SPAN></TD>
+      <TD width="90%" > <INPUT type="checkbox" onclick="submitCommandForm('DEFAULT_COMPARATIVE', false, null, 'ReportRefundInvoiceCustomerDimensionalAnalysesFilter.html', '_self');return false;" name="inpComparative" value="Y" id="paramComparative"></INPUT>
+      </TD>
+    </TR>
+  </TABLE>
+  <TABLE width="100%" id="selEliminarHeader1">
+    <TR> 
+      <TD  width="7%"> <SPAN >Ppal from</SPAN></TD>
+      <TD  width="6%"> <INPUT  type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      </TD>
+      <TD width="4%" > <A href="#" onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
+        <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
+      <TD  width="6%"> <SPAN >Ref from</SPAN></TD>
+      <TD  width="4%"> <INPUT  type="text" name="inpDateFromRef" id="paramDateFromRef" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      </TD>
+      <TD width="3%" > <A href="#" onclick="showCalendar('frmMain.inpDateFromRef', document.frmMain.inpDateFromRef.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
+        <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
+      <TD  width="9%"> <SPAN >Business Partner Group</SPAN></TD>
+      <TD  width="20%"> <SELECT name="inpPartnerGroup" id="inpPartnerGroup">
+          <OPTION value=""> <DIV id="reportC_BP_GROUPID"></DIV></OPTION>
+        </SELECT></TD>
+      <TD  width="7%"> <SPAN >Organization</SPAN></TD>
+      <TD  width="13%"> <SELECT name="inpOrg" id="inpOrg">
+          <OPTION value=""> <DIV id="reportAD_ORGID"></DIV></OPTION>
+        </SELECT></TD>
+      <TD  width="21%"> <A href="#" onclick="openServletNewWindow('EDIT_HTML_COMPARATIVE', true, 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition.html', 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition', null, false, '700', '1000', true);return false;" onmouseover="window.status='HTML_Report';return true;" onmouseout="window.status='';return true;" > 
+        <img src="../../../../../web/images/Find.jpg"  alt="Results" title="Results" border="0" id="buttonResults"></IMG></A></TD>
+    </TR>
+    <TR> 
+      <TD  width="7%"> <SPAN >Ppal to</SPAN></TD>
+      <TD  width="6%"> <INPUT  type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      </TD>
+      <TD width="4%" > <A href="#" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
+        <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
+      <TD  width="6%"> <SPAN >Ref to</SPAN></TD>
+      <TD  width="4%"> <INPUT  type="text" name="inpDateToRef" id="paramDateToRef" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      </TD>
+      <TD width="2%" > <A href="#" onclick="showCalendar('frmMain.inpDateToRef', document.frmMain.inpDateToRef.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
+        <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
+      <TD  width="9%"> <SPAN >Product group</SPAN></TD>
+      <TD  width="20%"> <SELECT name="inpProductCategory" id="inpProductCategory">
+          <OPTION value=""> <DIV id="reportM_PRODUCT_CATEGORYID"></DIV></OPTION>
+        </SELECT></TD>
+      <TD  width="7%"> <SPAN >Commercial</SPAN></TD>
+      <TD  width="13%"> <SELECT name="inpSalesrepId" id="inpSalesrepId">
+          <OPTION value=""> <DIV id="reportSalesRep_ID"></DIV></OPTION>
+        </SELECT></TD>
+      <TD  width="21%"> <!--A href="#" onclick="imprimir();return false;" onmouseover="window.status='PDF_Report';return true;" onmouseout="window.status='';return true;" > 
+        <img width="16" height="16" src="../../../../../web/images/pdf.jpg" alt="PDF_Report" title="PDF_Report" border="0" id="buttonPdf"></IMG></A--></TD>
+    </TR>
+    <TR> 
+      <TD colspan="3" > <SPAN >Amount higher 
+        than</SPAN></TD>
+      <TD colspan="1" > <INPUT type="text" name="inpMayor" size="10" maxlength="10" id="paramMayor" value=""></INPUT>
+      </TD>
+      <TD colspan="3" > <SPAN >Minor than</SPAN></TD>
+      <TD colspan="1" > <INPUT type="text" name="inpMenor" size="10" maxlength="10" id="paramMenor" value=""></INPUT>
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="3" > <SPAN >Ratio Higher 
+        than</SPAN></TD>
+      <TD colspan="1" > <INPUT type="text" name="inpRatioMayor" size="10" maxlength="10" id="paramRatioMayor" value=""></INPUT>
+      </TD>
+      <TD colspan="3" > <SPAN >Minor than</SPAN></TD>
+      <TD colspan="1" > <INPUT type="text" name="inpRatioMenor" size="10" maxlength="10" id="paramRatioMenor" value=""></INPUT>
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="9">&nbsp;</TD>
+    </TR>
+  </TABLE>
+  <TABLE width="100%" id="selEliminarHeader2">
+    <TR> 
+      <TD  width="7%"> <SPAN >From</SPAN></TD>
+      <TD  width="6%"> <INPUT  type="text" name="inpDateFrom2" id="inpDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      </TD>
+      <TD width="6%" > <A href="#" onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
+        <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
+      <TD  width="8%"> <SPAN >Until</SPAN></TD>
+      <TD  width="4%"> <INPUT  type="text" name="inpDateTo2" id="inpDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      </TD>
+      <TD width="10%" > <A href="#" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
+        <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
+      <TD  width="9%"> <SPAN >Business Partner Group</SPAN></TD>
+      <TD  width="17%"> <SELECT name="inpPartnerGroup" id="inpPartnerGroup2">
+          <OPTION value=""> <DIV id="reportC_BP_GROUPID"></DIV></OPTION>
+        </SELECT></TD>
+      <TD  width="33%"> <A href="#" onclick="openServletNewWindow('EDIT_HTML', true, 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition.html', 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition', null, false, '700', '1000', true);return false;" onmouseover="window.status='HTML_Report';return true;" onmouseout="window.status='';return true;" > 
+        <img src="../../../../../web/images/Find.jpg"  alt="Results" title="Results" border="0" id="buttonResults"></IMG></A></TD>
+    </TR>
+    <TR> 
+      <TD  width="7%"> <SPAN >Organization</SPAN></TD>
+      <TD  colspan="2"> <SELECT name="inpOrg" id="inpOrg2">
+          <OPTION value=""> <DIV id="reportAD_ORGID"></DIV></OPTION>
+        </SELECT></TD>
+      <TD  width="8%"> <SPAN >Commercial</SPAN></TD>
+      <TD  colspan="2"> <SELECT name="inpSalesrepId" id="inpSalesrepId2">
+          <OPTION value=""> <DIV id="reportSalesRep_ID"></DIV></OPTION>
+        </SELECT></TD>
+      <TD  width="9%"> <SPAN >Product group</SPAN></TD>
+      <TD  width="17%"> <SELECT name="inpProductCategory" id="inpProductCategory2">
+          <OPTION value=""> <DIV id="reportM_PRODUCT_CATEGORYID"></DIV></OPTION>
+        </SELECT></TD>
+      <TD  width="33%"> <!--A href="#" onclick="imprimir();return false;" onmouseover="window.status='PDF_Report';return true;" onmouseout="window.status='';return true;" > 
+        <img width="16" height="16" src="../../../../../web/images/pdf.jpg" alt="PDF_Report" title="PDF_Report" border="0" id="buttonPdf"></IMG></A--></TD>
+    </TR>
+    <TR> 
+      <TD colspan="2" > <SPAN >Amount higher 
+        than</SPAN></TD>
+      <TD colspan="1" > <INPUT type="text" name="inpMayor2" size="10" maxlength="10" id="inpMayor" value=""></INPUT>
+      </TD>
+      <TD colspan="1" > <SPAN >Minor than</SPAN></TD>
+      <TD colspan="2" > <INPUT type="text" name="inpMenor2" size="10" maxlength="10" id="inpMenor" value=""></INPUT>
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2" > <SPAN >Ratio Higher 
+        than</SPAN></TD>
+      <TD colspan="1" > <INPUT type="text" name="inpRatioMayor2" size="10" maxlength="10" id="inpRatioMayor" value=""></INPUT>
+      </TD>
+      <TD colspan="1" > <SPAN >Minor than</SPAN></TD>
+      <TD colspan="2" > <INPUT type="text" name="inpRatioMenor2" size="10" maxlength="10" id="inpRatioMenor" value=""></INPUT>
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="9">&nbsp;</TD>
+    </TR>
+  </TABLE>
+  <TABLE width="100%">
+    <TR> 
+      <TD width="6%" > <SPAN >Product</SPAN></TD>
+      <TD width="53%"> <TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
+          <TR> 
+            <TD rowspan="3" width="82%" > <SELECT name="inpmProductId_IN" size="3" multiple="" id="reportMProductId_IN">
+              </SELECT></TD>
+            <TD width="18%"> <A href="#" onclick="openMultiSearch(null, null, '../info/ProductMultiple_FS.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId_IN');return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Add';return true;" > 
+              <img src="../../../../../web/images/SelInsertar.jpg" border="0"  alt="Add" title="Add" id="buttonSelInsertar"></IMG></A></TD>
+          </TR>
+          <TR> 
+            <TD width="18%"> <A href="#" onclick="eliminarElementosList(document.frmMain.inpmProductId_IN);return false;" onmouseover="window.status='Delete selected elements';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Retirar.jpg"  alt="Delete selected elements" title="Delete selected elements" border="0" id="buttonRetirar"></IMG></A></TD>
+          </TR>
+          <TR> 
+            <TD width="18%"> <A href="#" onclick="limpiarLista(document.frmMain.inpmProductId_IN);return false;" onmouseover="window.status='Delete all elements';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Vaciar.jpg"  alt="Delete all elements" title="Delete all elements" border="0" id="buttonVaciar"></IMG></A></TD>
+          </TR>
+        </TABLE></TD>
+      <TD width="41%"> <TABLE border="0" cellspacing="0" cellpadding="0" >
+          <TR> 
+            <TD  colspan="2"></TD>
+            <TD  colspan="2" id="paramShowName"></TD>
+          </TR>
+          <TR> 
+            <TD rowspan="3" > <SELECT name="inpNotShown" size="7" multiple="" id="reportNotShown">
+                <OPTION value="1" id="paramNotShown">Test</OPTION>
+              </SELECT></TD>
+            <TD > <SPAN > <A href="#" onclick="addList(document.frmMain.inpNotShown, document.frmMain.inpShown);return false;" onmouseover="window.status='Include';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Incluir.jpg"  alt="Include" title="Include" border="0" id="buttonNext"></IMG></A></SPAN></TD>
+            <TD rowspan="3" > <SELECT name="inpShown" size="7" multiple="" id="reportShown">
+                <OPTION value="1" id="paramShown">Test</OPTION>
+              </SELECT></TD>
+            <TD > <SPAN > <A href="#" onclick="moveElementInList(document.frmMain.inpShown, -1);return false;" onmouseover="window.status='Go up';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Up.jpg"  alt="Go up" title="Go up" border="0" id="buttonUp"></IMG></A></SPAN></TD>
+          </TR>
+          <TR> 
+            <TD > <SPAN > <A href="#" onclick="addList(document.frmMain.inpShown, document.frmMain.inpNotShown);return false;" onmouseover="window.status='Exclude';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Excluir.jpg"  alt="Exclude" title="Exclude" border="0" id="buttonPrevious"></IMG></A></SPAN></TD>
+            <TD > <SPAN > <A href="#" onclick="moveElementInList(document.frmMain.inpShown, 1);return false;" onmouseover="window.status='Go down';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Down.jpg"  alt="Go down" title="Go down" border="0" id="buttonDown"></IMG></A></SPAN></TD>
+          </TR>
+          <TR> 
+            <TD ></TD>
+            <TD ></TD>
+          </TR>
+        </TABLE></TD>
+    </TR>
+    <TR> 
+      <TD width="6%" > <SPAN >Business Partner</SPAN></TD>
+      <TD width="53%"> <TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
+          <TR> 
+            <TD rowspan="3" width="82%" > <SELECT name="inpcBPartnerId_IN" size="3" multiple="" id="reportCBPartnerId_IN">
+              </SELECT></TD>
+            <TD width="18%"> <A href="#" onclick="openMultiSearch(null, null, '../info/BusinessPartnerMultiple_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId_IN');return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Add';return true;" > 
+              <img src="../../../../../web/images/SelInsertar.jpg" border="0"  alt="Insert" title="Insert" id="buttonSelInsertar"></IMG></A></TD>
+          </TR>
+          <TR> 
+            <TD width="18%"> <A href="#" onclick="eliminarElementosList(document.frmMain.inpcBPartnerId_IN);return false;" onmouseover="window.status='Delete selected elements';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Retirar.jpg"  alt="Delete selected elements" title="Delete selected elements" border="0" id="buttonRetirar"></IMG></A></TD>
+          </TR>
+          <TR> 
+            <TD width="18%"> <A href="#" onclick="limpiarLista(document.frmMain.inpcBPartnerId_IN);return false;" onmouseover="window.status='Delete all elements';return true;" onmouseout="window.status='';return true;" > 
+              <img src="../../../../../web/images/Vaciar.jpg"  alt="Delete all elements" title="Delete all elements" border="0" id="buttonVaciar"></IMG></A></TD>
+          </TR>
+        </TABLE></TD>
+      <TD width="41%"> <TABLE width="100%">
+          <TR> 
+            <TD width="20%" > <SPAN >Order</SPAN></TD>
+            <TD colspan="3" ></TD>
+          </TR>
+          <TR> 
+            <TD width="20%" > <SPAN >Normal</SPAN></TD>
+            <TD colspan="3" > <INPUT type="radio" name="inpOrder" value="Normal" checked="" id="paramNormalOrder"></INPUT>
+            </TD>
+          </TR>
+          <TR> 
+            <TD width="20%" > <SPAN >Sales 
+              asc</SPAN></TD>
+            <TD width="5%" > <INPUT type="radio" name="inpOrder" value="Amountasc" checked="" id="paramAmountascOrder"></INPUT>
+            </TD>
+            <TD width="20%" > <SPAN >Asc. Rate</SPAN></TD>
+            <TD width="55%"> <INPUT type="radio" name="inpOrder" value="Ratioasc" checked="" id="paramRatioascOrder"></INPUT>
+            </TD>
+          </TR>
+          <TR> 
+            <TD width="20%" > <SPAN >Sales 
+              desc</SPAN></TD>
+            <TD width="5%" > <INPUT type="radio" name="inpOrder" value="Amountdesc" checked="" id="paramAmountdescOrder"></INPUT>
+            </TD>
+            <TD width="20%" > <SPAN >Desc. 
+              Rate</SPAN></TD>
+            <TD width="55%"> <INPUT type="radio" name="inpOrder" value="Ratiodesc" checked="" id="paramRatiodescOrder"></INPUT>
+            </TD>
+          </TR>
+        </TABLE></TD>
+    </TR>
+  </TABLE>
+
+                      <!-- USER CONTROLS -->
+                </TD>
+              </TR>
+              </TABLE>
+              </TD>
+            </TR>
+          </TABLE>
+        </div>
+        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
+          <TR>
+            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>
+          </TR>
+        </TABLE></td>
+      <td valign="top">
+        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <TR><TD class="Main_NavBar_bg_right"></TD></TR>
+          <TR><TD class="Main_ToolBar_bg_right" valign="top"></TD></TR>
+          <TR><TD class="Main_Client_bg_right"></TD></TR>
+          <TR><TD class="Main_Bottom_bg_right"></TD></TR>
+        </TABLE>
+      </td>
+    </tr>
+  </table>
+</form>
+</body>
+</html>
+

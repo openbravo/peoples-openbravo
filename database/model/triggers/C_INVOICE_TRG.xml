@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<database name="TRIGGER C_INVOICE_TRG">
+<trigger name="C_INVOICE_TRG" table="C_INVOICE" fires="before" insert="true" update="true" delete="true" foreach="row">
+<body>
+<![CDATA[
+
+    /*************************************************************************
+    * The contents of this file are subject to the Openbravo  Public  License
+    * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+    * Version 1.1  with a permitted attribution clause; you may not  use this
+    * file except in compliance with the License. You  may  obtain  a copy of
+    * the License at http://www.openbravo.com/legal/license.html
+    * Software distributed under the License  is  distributed  on  an "AS IS"
+    * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    * License for the specific  language  governing  rights  and  limitations
+    * under the License.
+    * The Original Code is Openbravo ERP.
+    * The Initial Developer of the Original Code is Openbravo SL
+    * All portions are Copyright (C) 2001-2006 Openbravo SL
+    * All Rights Reserved.
+    * Contributor(s):  ______________________________________.
+    ************************************************************************/
+    /*************************************************************************
+    * Title: Check in deleting, invoice not processed
+    ************************************************************************/
+   v_n NUMBER;
+    BEGIN
+    -- If invoice is processed, is not allowed to change C_BPartner
+    IF UPDATING
+    THEN  IF(:OLD.Processed='Y'
+    AND ((COALESCE(:OLD.C_BPartner_ID, 0) <> COALESCE(:NEW.C_BPartner_ID, 0))
+    OR(COALESCE(:OLD.DOCUMENTNO, '.') <> COALESCE(:NEW.DOCUMENTNO, '.'))
+    OR(COALESCE(:OLD.C_DOCTYPE_ID, 0) <> COALESCE(:NEW.C_DOCTYPE_ID, 0))
+    OR(COALESCE(:OLD.C_DOCTYPETARGET_ID, 0) <> COALESCE(:NEW.C_DOCTYPETARGET_ID, 0))
+    OR(COALESCE(:OLD.DATEINVOICED, '01-01-9999') <> COALESCE(:NEW.DATEINVOICED, '01-01-9999'))
+    OR(COALESCE(:OLD.C_BPARTNER_LOCATION_ID, 0) <> COALESCE(:NEW.C_BPARTNER_LOCATION_ID, 0))
+    OR(COALESCE(:OLD.PAYMENTRULE, '.') <> COALESCE(:NEW.PAYMENTRULE, '.'))
+    OR(COALESCE(:OLD.C_PAYMENTTERM_ID, 0) <> COALESCE(:NEW.C_PAYMENTTERM_ID, 0))
+    OR(COALESCE(:OLD.C_CHARGE_ID, 0) <> COALESCE(:NEW.C_CHARGE_ID, 0))
+    OR(COALESCE(:OLD.CHARGEAMT, 0) <> COALESCE(:NEW.CHARGEAMT, 0))
+    OR(COALESCE(:OLD.M_PRICELIST_ID, 0) <> COALESCE(:NEW.M_PRICELIST_ID, 0))
+    OR(COALESCE(:OLD.AD_USER_ID, 0) <> COALESCE(:NEW.AD_USER_ID, 0))
+    OR(COALESCE(:OLD.AD_ORGTRX_ID, 0) <> COALESCE(:NEW.AD_ORGTRX_ID, 0))
+    OR(COALESCE(:OLD.USER1_ID, 0) <> COALESCE(:NEW.USER1_ID, 0))
+    OR(COALESCE(:OLD.USER2_ID, 0) <> COALESCE(:NEW.USER2_ID, 0))))
+    THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+    END IF;
+
+      IF (COALESCE(:OLD.C_BPartner_ID, 0)!=COALESCE(:NEW.C_BPartner_ID, 0)) OR (COALESCE(:OLD.M_PriceList_ID,0) != COALESCE(:NEW.M_PriceList_ID,0))  THEN
+      SELECT COUNT(*)
+        INTO v_n
+        FROM C_INVOICELINE
+       WHERE C_Invoice_ID = :NEW.C_Invoice_ID;
+
+       IF v_n>0 THEN
+         RAISE_APPLICATION_ERROR(-20502, 'Cannot change bussiness partner or price list if there are lines') ;
+       END IF;
+     END IF;
+
+
+
+   IF(:OLD.Posted='Y' AND ((COALESCE(:OLD.DATEACCT, '01-01-1386') <> COALESCE(:NEW.DATEACCT, '01-01-1386')) OR(COALESCE(:OLD.C_CAMPAIGN_ID, 0) <> COALESCE(:NEW.C_CAMPAIGN_ID, 0)) OR(COALESCE(:OLD.C_PROJECT_ID, 0) <> COALESCE(:NEW.C_PROJECT_ID, 0)) OR(COALESCE(:OLD.C_ACTIVITY_ID, 0) <> COALESCE(:NEW.C_ACTIVITY_ID, 0)))) THEN
+    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+   END IF;
+  END IF;
+  IF(INSERTING) THEN
+   IF(:NEW.PROCESSED='Y') THEN
+     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+   END IF;
+  END IF;
+  IF(DELETING) THEN
+   IF(:OLD.PROCESSED='Y') THEN
+     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+   END IF;
+  END IF;
+END C_Invoice_Trg ]]>
+</body>
+</trigger>
+</database>

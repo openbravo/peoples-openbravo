@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<database name="TRIGGER AD_MENU_TRG">
+<trigger name="AD_MENU_TRG" table="AD_MENU" fires="after" insert="true" update="true" delete="true" foreach="row">
+<body>
+<![CDATA[
+  v_xTree_ID NUMBER;
+  v_xParent_ID NUMBER;
+  v_NextNo     NUMBER;
+BEGIN
+  -- Insert AD_Menu Trigger
+  --  for Translation
+  --  and TreeNode
+  IF INSERTING THEN
+    --  Create Translation Row
+    INSERT
+    INTO AD_Menu_Trl
+      (
+        AD_Menu_ID, AD_Language, AD_Client_ID,
+        AD_Org_ID, IsActive, Created,
+        CreatedBy, Updated, UpdatedBy,
+        Name, Description, IsTranslated
+      )
+    SELECT :new.AD_Menu_ID,
+      AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
+      :new.IsActive, :new.Created, :new.CreatedBy,
+      :new.Updated, :new.UpdatedBy, :new.Name,
+      :new.Description,
+       'N'
+    FROM AD_Language
+    WHERE IsActive='Y'
+      AND IsSystemLanguage='Y';
+    --  Create TreeNode --
+    --  get AD_Tree_ID + ParentID
+    SELECT c.AD_Tree_Menu_ID,
+      n.Node_ID
+    INTO v_xTree_ID,
+      v_xParent_ID
+    FROM AD_ClientInfo c,
+      AD_TreeNode n
+      -- AD_TreeNodeMM n
+    WHERE c.AD_Tree_Menu_ID=n.AD_Tree_ID
+      AND n.Parent_ID IS NULL
+      AND c.AD_Client_ID=:new.AD_Client_ID;
+    --  DBMS_OUTPUT.PUT_LINE('Tree='||v_xTree_ID||'  Node='||:new.AD_Menu_ID||'  Parent='||v_xParent_ID);
+    --  Insert into TreeNode
+    INSERT
+    INTO AD_TreeNode
+      -- AD_TreeNodeMM
+      (
+        AD_Client_ID, AD_Org_ID, IsActive,
+        Created, CreatedBy, Updated,
+        UpdatedBy, AD_Tree_ID, Node_ID,
+        Parent_ID, SeqNo
+      )
+      VALUES
+      (
+        :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+        :new.Created, :new.CreatedBy, :new.Updated,
+        :new.UpdatedBy, v_xTree_ID, :new.AD_Menu_ID,
+        v_xParent_ID,(
+        CASE :new.IsSummary
+          WHEN 'Y'
+          THEN 100
+          ELSE 999
+        END
+        )
+      )
+      ;
+    -- Summary Nodes first
+  END IF;
+  -- Inserting
+  -- AD_Ref_List update trigger
+  --  synchronize name,...
+  IF UPDATING THEN
+    IF(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
+   OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
+   OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.'))
+  THEN
+      IF(:old.IsActive!=:new.IsActive) THEN
+        --  get AD_Tree_ID + ParentID
+        SELECT c.AD_Tree_Menu_ID,
+          n.Node_ID
+        INTO v_xTree_ID,
+          v_xParent_ID
+        FROM AD_ClientInfo c,
+          AD_TreeNode n
+          -- AD_TreeNodeMM n
+        WHERE c.AD_Tree_Menu_ID=n.AD_Tree_ID
+          AND n.Parent_ID IS NULL
+          AND c.AD_Client_ID=:new.AD_Client_ID;
+        -- Update
+        UPDATE AD_TreeNode
+          -- AD_TreeNodeMM
+          SET IsActive=:new.IsActive
+        WHERE AD_Tree_ID=v_xTree_ID
+          AND Node_ID=:new.AD_Menu_ID;
+      ELSE
+        UPDATE AD_Menu_Trl
+          SET IsTranslated='N',
+          Updated=SysDate
+        WHERE AD_Menu_ID=:new.AD_Menu_ID;
+      END IF;
+    END IF;
+  END IF;
+  -- Updating 
+  IF DELETING THEN
+    --  Delete TreeNode
+    --  get AD_Tree_ID, AD_Menu_ID    
+    SELECT c.AD_Tree_Menu_ID
+      INTO v_xTree_ID
+      FROM AD_ClientInfo c,
+        AD_TreeNode n
+      WHERE c.AD_Tree_Menu_ID=n.AD_Tree_ID
+        AND n.Parent_ID IS NULL
+        AND c.AD_Client_ID=:old.AD_Client_ID;    
+    --Assign children to principal node
+    UPDATE AD_Treenode
+      SET Parent_ID=0
+    WHERE AD_Tree_ID=v_xTree_ID
+      AND Parent_ID=:old.AD_Menu_ID;
+    --Delete node
+    DELETE
+      FROM AD_Treenode
+      WHERE AD_Client_ID=:old.AD_Client_ID
+        AND AD_Tree_ID=v_xTree_ID
+        AND Node_ID=:old.AD_Menu_ID;   
+  END IF;
+  -- Deleting
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+  RAISE_APPLICATION_ERROR(-20005, 'AD_Menu InsertTrigger Error: No ClientInfo or parent TreeNode') ;
+END AD_Menu_Trg]]>
+</body>
+</trigger>
+</database>

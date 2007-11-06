@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="TranslationData" package="org.openbravo.erpCommon.ad_forms">
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      select '1' AS C from dual 
+    </Sql>
+  </SqlMethod>
+
+  <SqlMethod name="selectContributors" type="preparedStatement" return="string">     
+      <Sql>
+        select TranslatedBy
+          from ad_language
+         where ad_language = ?
+      </Sql>
+      <Parameter name="paramLanguage"/>
+  </SqlMethod>
+  
+  <SqlMethod name="baseLanguage" type="preparedStatement" return="string">     
+      <Sql>
+        select isBaseLanguage
+          from ad_language
+         where ad_language = ?
+      </Sql>
+      <Parameter name="paramLanguage"/>
+  </SqlMethod>
+
+  <SqlMethod name="centrallyMaintained" type="preparedStatement" return="string">     
+      <Sql>
+         select count(*)
+           from AD_Table t,
+                AD_Column c
+          where c.AD_Table_ID=t.AD_Table_ID 
+            and upper(c.ColumnName)='ISCENTRALLYMAINTAINED'
+            and c.IsActive = 'Y'
+            and t.tableName = ?
+      </Sql>
+      <Parameter name="tableName"/>
+  </SqlMethod>
+
+   <SqlMethod name="trlColumns" type="preparedStatement" return="multiple">     
+      <Sql>
+         select ColumnName AS c
+           from AD_Table t,
+                AD_Column c
+          where c.AD_Table_ID=t.AD_Table_ID 
+            and upper(t.TableName)=?
+            and c.AD_Reference_ID in (10,14)
+          order by IsMandatory desc, ColumnName
+      </Sql>
+      <Parameter name="tableName"/>
+  </SqlMethod> 
+
+<SqlMethod name="trlTables" type="preparedStatement" return="multiple">     
+      <Sql>
+         select upper(tablename) AS c
+           from ad_table 
+          where upper(tablename) like '%TRL'
+      </Sql>
+  </SqlMethod> 
+  
+  <SqlMethod name="insertContrib" type="preparedStatement" return="rowCount">
+      <Sql>
+         update ad_language
+            set translatedBy = ?,
+                updatedby = 0,
+                updated = now()
+          where ad_language = ?
+      </Sql>
+      <Parameter name="contrib"/>
+      <Parameter name="lang"/>
+  </SqlMethod> 
+
+   
+</SqlClass>

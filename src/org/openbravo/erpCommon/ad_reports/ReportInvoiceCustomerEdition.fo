@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<fo:layout-master-set>
+<fo:simple-page-master master-name="first" margin-left="1cm" page-height="29.7cm" page-width="21cm" margin-top="1.5cm" margin-right="1cm" margin-bottom="0.25cm">
+<fo:region-body margin-left="0cm" margin-right="0cm" margin-bottom="3cm" margin-top="2cm"></fo:region-body></fo:simple-page-master></fo:layout-master-set>
+<fo:page-sequence master-reference="first">
+<fo:flow font-size="10pt" flow-name="xsl-region-body" font-family="Helvetica">
+<fo:block text-align="center" font-weight="bold">CUSTOMER INVOICE REPORT</fo:block>
+<fo:table space-before.optimum="20pt" text-align="center">
+<fo:table-column column-width="15mm"></fo:table-column>
+<fo:table-column column-width="47mm"></fo:table-column>
+<fo:table-column column-width="27mm"></fo:table-column>
+<fo:table-column column-width="27mm"></fo:table-column>
+<fo:table-column column-width="27mm"></fo:table-column>
+<fo:table-column column-width="32mm"></fo:table-column>
+<fo:table-column column-width="15mm"></fo:table-column>
+<fo:table-body>
+<DIVFO id="sectionClientName">
+ <fo:table-row keep-with-next="always">
+  <fo:table-cell number-columns-spanned="7" border-width="0.5pt" border-style="solid" background-color="#999999">
+   <fo:block padding-top="2pt" padding-bottom="2pt" font-weight="bold" text-align="left">&#160;Customer:&#160;<fo:inline id="fieldClientName"></fo:inline>
+   </fo:block>
+  </fo:table-cell>
+ </fo:table-row>
+<DIVFO id="sectionInvoiced">
+ <fo:table-row keep-with-next="always">
+  <fo:table-cell border-style="solid" border-width="0.5pt" number-columns-spanned="2">
+   <fo:block padding-top="2pt" padding-bottom="2pt" font-weight="bold">&#160;Invoice no:&#160;<fo:inline id="fieldDocumentno">xx</fo:inline>
+   </fo:block>
+  </fo:table-cell>
+  <fo:table-cell number-columns-spanned="5" border-style="solid" border-width="0.5pt">
+   <fo:block padding-top="2pt" padding-bottom="2pt" font-weight="bold">&#160;Order date:&#160;<fo:inline id="fieldDateinvoiced"></fo:inline>
+   </fo:block>
+  </fo:table-cell>
+ </fo:table-row>
+ <fo:table-row>
+  <fo:table-cell>
+   <fo:block>&#160;</fo:block>
+  </fo:table-cell>
+  <fo:table-cell border-style="solid" border-width="0.5pt">
+   <fo:block font-weight="bold" padding-top="2pt" text-align="left">&#160;Item</fo:block>
+  </fo:table-cell>
+  <fo:table-cell border-style="solid" border-width="0.5pt">
+   <fo:block font-weight="bold" padding-top="2pt" text-align="center">Quantity</fo:block>
+  </fo:table-cell>
+  <fo:table-cell border-style="solid" border-width="0.5pt">
+   <fo:block font-weight="bold" padding-top="2pt" text-align="center">Unit</fo:block></fo:table-cell>
+  <fo:table-cell border-style="solid" border-width="0.5pt">
+   <fo:block font-weight="bold" padding-top="2pt" text-align="end">Price&#160;</fo:block></fo:table-cell>
+  <fo:table-cell border-style="solid" border-width="0.5pt">
+   <fo:block font-weight="bold" padding-top="2pt" text-align="end">Amount&#160;</fo:block></fo:table-cell>
+  <fo:table-cell>
+<fo:block>&#160;</fo:block></fo:table-cell></fo:table-row>
+<DIVFO id="sectionDetail">
+<fo:table-row>
+<fo:table-cell>
+<fo:block>&#160;</fo:block></fo:table-cell>
+<fo:table-cell border-style="solid" border-width="0.5pt">
+<fo:block padding-top="2pt" text-align="left" id="fieldProductName">xxdskjf</fo:block></fo:table-cell>
+<fo:table-cell border-style="solid" border-width="0.5pt">
+<fo:block id="fieldQuantityorder" text-align="center" padding-top="2pt">&#160;</fo:block></fo:table-cell>
+<fo:table-cell border-style="solid" border-width="0.5pt">
+<fo:block padding-top="2pt" text-align="center" id="fieldUomname">&#160;</fo:block></fo:table-cell>
+<fo:table-cell border-style="solid" border-width="0.5pt">
+<fo:block padding-top="2pt" text-align="end" id="fieldPriceactual">&#160;</fo:block></fo:table-cell>
+<fo:table-cell border-style="solid" border-width="0.5pt">
+<fo:block padding-top="2pt" text-align="end" id="fieldPricelist">&#160;</fo:block></fo:table-cell>
+<fo:table-cell>
+<fo:block>&#160;</fo:block></fo:table-cell></fo:table-row></DIVFO></DIVFO>
+<fo:table-row>
+<fo:table-cell number-columns-spanned="7">
+<fo:block>&#160;</fo:block></fo:table-cell></fo:table-row></DIVFO>
+<fo:table-row>
+<fo:table-cell number-columns-spanned="7">
+<fo:block font-weight="bold" padding-top="2pt">&#160;</fo:block></fo:table-cell></fo:table-row>
+<fo:table-row>
+<fo:table-cell number-columns-spanned="4">
+<fo:block font-weight="bold" padding-top="2pt">&#160;</fo:block></fo:table-cell>
+<fo:table-cell border-style="solid" border-width="0.5pt">
+<fo:block padding-top="2pt">TOTAL:&#160;</fo:block></fo:table-cell>
+<fo:table-cell border-style="solid" border-width="0.5pt">
+<fo:block padding-top="2pt" text-align="end" id="fieldTotalNetAmount">&#160;</fo:block></fo:table-cell>
+<fo:table-cell>
+<fo:block>&#160;</fo:block></fo:table-cell></fo:table-row></fo:table-body></fo:table></fo:flow></fo:page-sequence></fo:root>

@@ -1,0 +1,95 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+td.Popup_Workflow_Button_ContentCell {
+  text-align: -moz-right;
+  _text-align: right;
+  padding: 5px 15px 5px 0px;
+}
+
+td.Popup_Workflow_arrow_ContentCell {
+  text-align: -moz-right;
+  _text-align: right;
+  padding: 4px 32px 2px 0px;
+}
+
+td.Popup_Workflow_text_ContentCell {
+}
+
+.Popup_Workflow_arrow {
+  width:10px;
+  height:10px;
+  background: url(arrow.png) no-repeat center center
+}
+
+.Popup_Workflow_text {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 10pt;
+  vertical-align: left;
+  color: #000000;
+  text-decoration: none;
+}
+
+a.Popup_Workflow_text:hover {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 10pt;
+  vertical-align: left;
+  color: #2985BA;
+  text-decoration: underline;
+}
+
+/* Buttons definition for ToolBar */
+a.Popup_Workflow_Button {
+  display:block;
+  margin-left:0px;
+  margin-right:0px;
+  width:44px;
+  height:44px;
+  border:0px;
+  vertical-align: middle;
+  -moz-outline-style: none;
+  background: url(button.normal.png) no-repeat center center
+}
+
+a.Popup_Workflow_Button:visited { 
+}
+
+a.Popup_Workflow_Button:hover {
+  background: url(button.rollover.png) no-repeat center center;
+}
+
+a.Popup_Workflow_Button:active {
+  background: url(button.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+
+/* Icons definition for ToolBar */
+.Popup_Workflow_Button_Icon {
+  border: 0px none;
+  width: 44px;
+  height: 44px;
+  margin: 0px;
+  vertical-align: middle;
+}
+
+.Popup_Workflow_Button_Icon_childWindows {
+  background: url(iconAutoForm.png) no-repeat center center;
+}

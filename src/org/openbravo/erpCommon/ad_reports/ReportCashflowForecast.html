@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD Xhtml 1.0 Transitional//EN" "http://www.w3.org/tr/xhtml1/Dtd/xhtml1-transitional.dtd">
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<TITLE>Cashflow Forecast Report</TITLE>
+    <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS" />
+     
+    <script language="JavaScript" type="text/javascript" id="paramDirection">
+      var baseDirection = "../../../../../web/";
+      </script>
+      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
+      </script>
+      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" type="text/javascript" id="paramLanguage">
+        var LNG_POR_DEFECTO = "en_US";
+      </script>
+      <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
+      <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+      <script language="JavaScript" type="text/javascript" id="keyMap"></script>
+      <script type="text/javascript">
+        dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+      </script>
+<SCRIPT language="JavaScript" type="text/javascript">
+
+function onloadFunctions() {
+  new TypeAheadCombo("inpCPaymentRuleId");
+}
+</SCRIPT>
+</HEAD>
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();">
+<FORM method="POST" action="ReportCashflowForecast.html" name="frmMain" id="form">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <INPUT type="hidden" name="inpcDebtPaymentId"></INPUT>
+  <INPUT type="hidden" name="inpEntry" value="1"></INPUT>
+  <INPUT type="hidden" name="inpcInvoiceId"></INPUT>
+  <input type="hidden" name="inpLastFieldChanged" value="">
+  <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
+    <tr>
+      <td valign="top" id="tdleftTabs"></td>
+      <td valign="top">
+        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
+          <TR><TD class="Main_NavBar_bg_left" id="tdleftSeparator"></TD></TR>
+          <TR><TD class="Main_ToolBar_bg_left" valign="top"></TD></TR>
+          <TR><TD class="Main_Client_bg_left"></TD></TR>
+          <TR><TD class="Main_Bottom_bg_left"></TD></TR>
+        </TABLE>
+      </td>
+      <td valign="top">
+        <div class="Main_ContentPane_NavBar" id="tdtopButtons"></div>
+        <div class="Main_ContentPane_ToolBar" id="paramToolBar"></div>
+        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
+          <TR id="paramParentTabContainer"></TR>
+          <TR id="paramMainTabContainer"></TR>
+          <TR id="paramChildTabContainer"></TR>
+        </TABLE>
+        <DIV class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
+                <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                  <tr>
+                    <td>
+                      <table class="dojoTabPaneWrapper" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                        <tr>
+                          <td>
+                            <!-- MessageBox -->
+
+                            <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
+                              <TBODY>
+                              <tr class="MessageBox_TopMargin">
+                                <td class="MessageBox_LeftMargin"></td>
+                                <td></td>
+                                <td class="MessageBox_RightMargin"></td>
+                              </tr>
+                              <tr>
+                                <td class="MessageBox_LeftMargin"></td>
+                                <td>
+
+                                  <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <TBODY>
+                                    <tr>
+                                      <td>
+                                        <div class="MessageBox_TopLeft"></div>
+                                        <div class="MessageBox_Left"></div>
+                                      </td>
+                                      <td class="MessageBox_bg">
+
+                                        <table class="MessageBox_Top">
+                                        <TBODY>
+                                          <tr>
+                                            <td>
+                                              <span>
+                                              <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
+                                                <TBODY>
+                                                <tr>
+                                                  <td class="MessageBox_Icon_ContentCell">
+                                                    <div class="MessageBox_Icon"></div>
+                                                  </td>
+                                                  <td style="vertical-align: top;" id="messageBoxIDContent">
+                                                    <span>
+                                                      <div class="MessageBox_TextTitle" id="messageBoxIDTitle">
+                                                        xxInfo: AccessTableWithNoView
+                                                      </div>
+                                                      <div class="MessageBox_TextDescription" id="messageBoxIDMessage">
+                                                        xxThe current information is empty.
+                                                      </div>
+                                                      <div class="MessageBox_TextSeparator"></div>
+                                                    </span>
+                                                  </td>
+                                                </tr>
+                                                </TBODY>
+                                              </table>
+                                              </span>
+                                            </td>
+                                          </tr>
+                                          </TBODY>
+                                        </table>
+
+                                      </td>
+                                      <td class="MessageBox_RightTrans">
+                                        <div class="MessageBox_TopRight"></div>
+                                        <div class="MessageBox_Right"></div>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td rowspan="2" class="MessageBox_BottomLeft">
+                                      </td>
+                                      <td class="MessageBox_BottomTrans MessageBox_bg">
+                                      </td>
+                                      <td rowspan="2" class="MessageBox_BottomRight">
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="MessageBox_Bottom">
+                                      </td>
+                                    </tr>
+                                    </TBODY>
+                                  </table>
+
+                                </td>
+                                <td class="MessageBox_RightMargin"></td>
+                              </tr>
+                              <tr class="MessageBox_BottomMargin">
+                                <td class="MessageBox_LeftMargin"></td>
+                                <td></td>
+                                <td class="MessageBox_RightMargin"></td>
+                              </tr>
+                              </TBODY>
+                            </table>
+                            <!-- USER CONTROLS -->
+              <TABLE class="Main_Client_TableEdition">
+                <tr>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                  <td class="TableEdition_OneCell_width"></td>
+                </tr>
+                <TR>
+                <td colspan="6">
+                  <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                  <tbody>
+                    <tr class="FieldGroup_TopMargin"/>
+                    <tr>
+                      <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                      <TD class="FieldGroupTitle">Primary Filters</TD>
+                      <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                      <td class="FieldGroupContent"/>
+                    </tr>
+                    <tr class="FieldGroup_BottomMargin"/>
+                  </tbody>
+                  </table>
+                </td>
+                </TR>
+                <TR>
+                  <TD class="TitleCell"><SPAN class="LabelText">Date planned</SPAN></TD>
+                  <TD class="TextBox_btn_ContentCell">
+                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <TR>
+                        <TD class="TextBox_ContentCell">
+                          <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFrom");</script>
+                        </TD>
+                        <TD class="FieldButton_bg">
+                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='xx'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <TR>
+                              <TD class="FieldButton_bg">
+                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+                              </TD>
+                            </TR>
+                          </TABLE>
+                          </a>
+                        </TD>
+                      </TR>
+                    </TABLE>
+                 </TD>
+                  <TD class="TitleCell"> <SPAN class="LabelText">Account No</SPAN></TD>
+                  <TD class="Combo_ContentCell" colspan="2"> <SELECT  name="inpcBankAccountId" id="inpcBankAccountId" class="Combo Combo_TwoCells_width">
+                      <OPTION value=""> <DIV id="reportC_ACCOUNTNUMBER"></DIV></OPTION>
+                    </SELECT></TD>
+                  <TD class="ContentCell"> </TD>
+                  </TR>
+                <tr>
+    <TD class="TitleCell"> <SPAN class="LabelText">Break by date</SPAN></TD>
+                <TD class="Radio_Check_ContentCell"><INPUT type="checkbox" id="breakDate" name="inpBreakDate"></INPUT></TD>
+                  <TD class="ContentCell"> </TD>
+                  <TD class="ContentCell"> </TD>
+                  <TD class="ContentCell"> </TD>
+                  <TD class="ContentCell"> </TD>
+                  <TR>
+                    <td colspan="6">
+                      <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                      <tbody>
+                        <tr class="FieldGroup_TopMargin"/>
+                        <tr>
+                          <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                          <td class="FieldGroupTitle">View Results</td>
+                          <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                          <td class="FieldGroupContent"/>
+                        </tr>
+                        <tr class="FieldGroup_BottomMargin"/>
+                      </tbody>
+                      </table>
+                    </td>
+                  </TR>
+
+                  <tr>
+                    <TD class="TitleCell"></TD>
+                    <TD class="Button_CenterAlign_ContentCell">
+                      <div>
+                        <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='View Results in a New Window'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('FIND');return false;" >
+                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                          <tr>
+                            <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
+                            <td class="Button_text">HTML Format</td>
+                            <td class="Button_right"></td>
+                          </tr>
+                        </table>
+                        </a>
+                      </div>
+                    </TD>
+                    <TD class="ContentCell"></INPUT>
+                    </TD>
+                    <TD class="TitleCell"></TD>
+                    <TD class="ContentCell"></TD>
+                    <TD class="ContentCell"></TD>
+                  </TR>
+    </TABLE>
+   <div align="center"> 
+    <TABLE  border="1" cellspacing="0" cellpadding="0" width="60%"><!--RESUMEN DE TODAS LAS CUENTAS AUNQUE ELIGAN UNA EN CONCRETO/-->
+      <TR class="TableHeaderLevel1"> 
+          <td  width="12%">&nbsp;</Td>
+      <td  width="12%">On the bank</Td>
+      <td  colspan="2" width="12%">Forecast</Td>
+      <td  width="12%">Final</Td>
+      </TR>
+        <TR class="TableHeaderLevel2"> 
+            <TD  width="12%">Account No.</TD>
+      <TD  width="12%"> <SPAN id="fieldDate">xx12/01/2000</SPAN></TD>
+      <TD  width="12%">Income</TD>
+      <TD  width="12%">Payment</TD>
+      <TD  width="12%"> <SPAN id="fieldFinalDate">XX12/01/2005</SPAN></TD>
+        </TR>
+      <div id="sectionAccountSummary">
+    <tr class="Border TableDetailRowEven">
+      <TD  id="fieldAcctSumary">xx11111111111111111</TD>
+      <TD id="fieldBalanceSumary">xx100000</TD>
+      <TD id="fieldIncomeSummary">xx3456</TD>
+      <TD id="fieldPaymentSummary">xx70000</TD>
+      <TD id="fieldFinalSummary">xx130945</SPAN></TD>
+    </tr>
+    </div>
+  </table>
+  </div>
+<br>
+
+
+<div id="sectionAccount"><!-- ROTURA POR Nº DE CUENTAS. SI NO ELIGEN UNA EN CONCRETO PUES VERAS EL DETALLE DE CADA UNA DE ELLAS/-->
+   <TABLE width="100%" border="1">
+      <TR class="TableHeaderLevel1"> 
+          <TD width="50%">Account No&nbsp;<span id="fieldAccount">xx1111111111111111</span></TD> 
+          <TD width="25%">On the bank (<span id="fieldSysdate">xx12/12/2006</span>) <span id="fieldAmountInitial" >xx12345</span></TD> 
+          <TD width="25%" >Final<span>&nbsp;</span><span id="fieldAmountfinal" >xx4567</span></TD> 
+        </TR>
+  </table>
+
+  <div id="subrpt">
+    <div id="reportAccountDate"/>
+    <div id="reportAccount"/>
+  </div>
+   
+    
+    <table width="30%"><!--UN TOTAL AL FINAL DE LOS INGRESOS MENOS LOS GASTOS/-->
+      <TR class="TableHeaderLevel2"> 
+          <TD colspan="2" > <SPAN >Total amount incoming-payments</SPAN></TD>
+          <TD colspan="2" > <SPAN id="fieldSumAmount">xx23455.56</SPAN></TD>
+        </TR>
+      </TABLE>
+      <BR>
+  </DIV><!--sectionAccount/-->
+
+                      <!-- USER CONTROLS -->
+                </TD>
+              </TR>
+              </TABLE>
+              </TD>
+            </TR>
+          </TABLE>
+        </div>
+        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
+          <TR>
+            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>
+          </TR>
+        </TABLE></td>
+      <td valign="top">
+        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <TR><TD class="Main_NavBar_bg_right"></TD></TR>
+          <TR><TD class="Main_ToolBar_bg_right" valign="top"></TD></TR>
+          <TR><TD class="Main_Client_bg_right"></TD></TR>
+          <TR><TD class="Main_Bottom_bg_right"></TD></TR>
+        </TABLE>
+      </td>
+    </tr>
+  </table>
+</form>
+</body>
+</html>

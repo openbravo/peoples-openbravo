@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<database name="TABLE MRP_PLANNINGMETHODLINE">
+    <table name="MRP_PLANNINGMETHODLINE" primaryKey="MRP_PLANNINGMETHODLINE_KEY">
+      <column name="MRP_PLANNINGMETHODLINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="MRP_PLANNINGMETHOD_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="LINE" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="INOUTTRXTYPE" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false"/>
+      <column name="WEIGHTING" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false"/>
+      <column name="DAYSFROM" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="DAYSTO" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <check name="MRPPLANLN_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_PLANNINGMETHODLINE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_MRPPLANNINGMETHODLINE">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MRP_PLANNINGMETHOD" name="MRP_PLANNINGMETHOD_PMLINE">
+        <reference local="MRP_PLANNINGMETHOD_ID" foreign="MRP_PLANNINGMETHOD_ID"/>
+      </foreign-key>
+    </table>
+</database>

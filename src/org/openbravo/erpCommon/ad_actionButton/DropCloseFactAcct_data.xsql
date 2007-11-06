@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="DropCloseFactAcctData" package="org.openbravo.erpCommon.ad_actionButton">
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT CLOSE_FACT_ACCT_GROUP_ID AS ID, GETPERIODNAME(MIN(PERIODNO), TO_NUMBER(?))|| ' - ' || GETPERIODNAME(MAX(PERIODNO),TO_NUMBER(?)) AS NAME
+        FROM C_PERIOD 
+        WHERE CLOSE_FACT_ACCT_GROUP_ID IS NOT NULL
+        AND C_YEAR_ID = ?
+        GROUP BY CLOSE_FACT_ACCT_GROUP_ID
+      ]]>
+    </Sql>
+    <Parameter name="c_year_id"/>
+    <Parameter name="c_year_id"/>
+    <Parameter name="c_year_id"/>
+  </SqlMethod>
+  <SqlMethod name="updatePeriods" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+	UPDATE C_PERIOD SET CLOSE_FACT_ACCT_GROUP_ID = NULL
+	WHERE CLOSE_FACT_ACCT_GROUP_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="CLOSE_FACT_ACCT_GROUP_ID"/>
+  </SqlMethod>
+  <SqlMethod name="deleteFactAcct" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+	DELETE FROM FACT_ACCT WHERE FACT_ACCT_GROUP_ID IN (?, ?+1)
+      ]]>
+    </Sql>
+    <Parameter name="fact_acct_group_id"/>
+    <Parameter name="fact_acct_group_id"/>
+  </SqlMethod>
+</SqlClass>

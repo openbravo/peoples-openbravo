@@ -1,0 +1,189 @@
+<!--
+*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html 
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License. 
+* The Original Code is Openbravo ERP. 
+* The Initial Developer of the Original Code is Openbravo SL 
+* All portions are Copyright (C) 2001-2006 Openbravo SL 
+* All Rights Reserved. 
+* Contributor(s):  ______________________________________.
+************************************************************************
+-->
+<HTML>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <TITLE>Request process</TITLE>
+    <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></link>
+    <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+    <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+    <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+    <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+    <script language="JavaScript" type="text/javascript" id="paramLanguage">LNG_POR_DEFECTO = "en_US";</script>
+    <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+    <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+    <script language="JavaScript" type="text/javascript" id="keyMap"></script>
+    <script type="text/javascript">
+      dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+    </script>
+    <script language="JavaScript" type="text/javascript" id="paramDirection">
+      var baseDirection="../../../../../web/";
+    </script>
+    <script language="JavaScript" type="text/javascript" id="paramArray">
+      var arrDocAction = null;
+    </script>
+    <script language="JavaScript" type="text/javascript">
+      function actualizarDescripcion() {
+        if (arrProjectAction==null) {
+          layer("descripcion", "", true);
+        } else {
+          layer("descripcion", valorArray(arrProjectAction, document.frmMain.inpchangedocstatus.options[document.frmMain.inpchangedocstatus.selectedIndex].value, 2), true);
+        }
+        return true;
+      }
+
+      function closeThisPage() {
+        window.close();
+        return true;
+      }
+
+      function onloadFunctions() {
+        new TypeAheadCombo("reportdocaction");
+      }
+
+      function submitThisPage(strCommand) {
+        submitCommandForm(strCommand, false, null, null, '_top');
+        return true;
+      }
+    </script>
+
+</head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+  <form id="form" method="POST" action="Window_Edition.html" name="frmMain">
+    <INPUT type="hidden" name="Command">
+<INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
+    <input type="hidden" name="inpLastFieldChanged"></input>
+    <input type="hidden" name="inpKey" value="" id="key"></input>
+    <input type="hidden" name="inpwindowId" value="" id="window"></input>
+    <input type="hidden" name="inpdocstatus" value="" id="docstatus"></input> 
+    <input type="hidden" name="inpprocessing" value="" id="processing"></input> 
+
+    <div class="Popup_ContentPane_CircleLogo">
+      <div class="Popup_WindowLogo">
+        <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
+      </div>
+    </div>
+
+    <table cellspacing="0" cellpadding="0" width="100%">
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
+            <tr class="Popup_NavBar_bg"><td></td>
+              <td class="Popup_NavBar_separator_cell"></td>
+              <td class="Popup_NavBar_bg_logo_left"></td>
+              <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+              <td class="Popup_NavBar_bg_logo_right"></td>
+              <td class="Popup_NavBar_Popup_title_cell"><span>Document Action</span></td>
+              <td class="Popup_NavBar_separator_cell"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar">
+            <tr>
+              <td class="Popup_SeparatorBar_bg"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
+            <tr>
+              <td class="Popup_InfoBar_Icon_cell"><IMG src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
+              <td class="Popup_InfoBar_text_table">
+                <table>
+                  <tr>
+                    <td class="Popup_InfoBar_text" id="helpDiscard"> <div id="processHelp">&nbsp;</div></TD>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="Popup_ContentPane_Client" style="overflow: auto;">
+            <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
+
+              <tr>
+                <td class="TableEdition_OneCell_width"></td>
+                <td class="TableEdition_OneCell_width"></td>
+                <td class="TableEdition_OneCell_width"></td>
+                <td class="TableEdition_OneCell_width"></td>
+              </tr>
+
+              <tr>
+                <td class="TitleCell"><SPAN class="LabelText">Action regarding document</SPAN></td>
+                <td class="Combo_ContentCell" colspan="2">
+                  <select name="inpdocaction" id="reportdocaction" onchange="actualizarDescripcion();return true;" class="Combo Combo_TwoCells_width">
+                    <option value=""></option>
+                  </select>
+                </td>
+                <td></td>
+              </tr>
+
+              <tr><td height="20px"></td></tr>
+
+              <tr>
+                <td></td>
+                <td class="Button_RightAlign_ContentCell">
+                  <div>
+                    <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='xx'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitThisPage('SAVE_BUTTONDocActionxx');return false;" id="linkButtonOk">
+            <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='xx';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;" id="tableButtonOk">
+                      <tr>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border=0 id="buttonOk"/></td>
+                        <td class="Button_text Button_width">OK</td>
+                        <td class="Button_right"></td>
+                      </tr>
+                    </table>
+                  </a>
+                  </div>
+                </td>
+                <td class="Button_LeftAlign_ContentCell">
+                  <div>
+                    <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='xx'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="closeThisPage();return false;" id="linkButtonCancel">
+            <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='xx';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;" id="tableButtonCancel">
+                      <tr>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border=0 id="buttonCancel"/></td>
+                        <td class="Button_text Button_width">Cancel</td>
+                        <td class="Button_right"></td>
+                      </tr>
+                    </table>
+                  </a>
+                  </td>
+                  <td></td>
+                </tr>
+
+              </table>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+    </body>
+  </html>

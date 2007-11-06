@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="SessionLoginData" package="org.openbravo.erpCommon.security">
+   <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        select * from ad_session
+      </Sql>
+   </SqlMethod>
+   <SqlMethod name="insert" type="preparedStatement" return="rowCount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        INSERT INTO AD_SESSION (AD_SESSION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
+        WEBSESSION, REMOTE_ADDR, REMOTE_HOST, PROCESSED) 
+        VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), ?, now(), TO_NUMBER(?), now(), TO_NUMBER(?), 
+        ?, ?, ?, ?)
+      </Sql>
+      <Parameter name="adSessionId"/>
+      <Parameter name="adClientId"/>
+      <Parameter name="adOrgId"/>
+      <Parameter name="isactive"/>
+      <Parameter name="adUserId"/>
+      <Parameter name="adUserId"/>
+      <Parameter name="websession"/>
+      <Parameter name="remoteAddr"/>
+      <Parameter name="remoteHost"/>
+      <Parameter name="processed"/>
+   </SqlMethod>
+   <SqlMethod name="update" type="preparedStatement" return="rowCount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        UPDATE AD_SESSION SET ISACTIVE = ?, UPDATED = now(), UPDATEDBY = TO_NUMBER(?), 
+        WEBSESSION = ?, REMOTE_ADDR = ?, REMOTE_HOST = ?, PROCESSED = ? 
+        WHERE AD_SESSION_ID = ?
+      </Sql>
+      <Parameter name="isactive"/>
+      <Parameter name="adUserId"/>
+      <Parameter name="websession"/>
+      <Parameter name="remoteAddr"/>
+      <Parameter name="remoteHost"/>
+      <Parameter name="processed"/>
+      <Parameter name="adSessionId"/>
+   </SqlMethod>
+   <SqlMethod name="saveProcessed" type="preparedStatement" return="rowCount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        UPDATE AD_SESSION SET UPDATED = now(), UPDATEDBY = TO_NUMBER(?), 
+        PROCESSED = 'Y' 
+        WHERE AD_SESSION_ID = ?
+      </Sql>
+      <Parameter name="adUserId"/>
+      <Parameter name="adSessionId"/>
+   </SqlMethod>
+</SqlClass>

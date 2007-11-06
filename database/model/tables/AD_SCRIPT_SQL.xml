@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<database name="TABLE AD_SCRIPT_SQL">
+    <table name="AD_SCRIPT_SQL">
+      <column name="SEQNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="STRSQL" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false"/>
+    </table>
+</database>

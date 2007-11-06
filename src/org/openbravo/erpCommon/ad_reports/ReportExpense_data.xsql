@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="ReportExpenseData" package="org.openbravo.erpCommon.ad_reports">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT C_BPARTNER.NAME, M_PRODUCT.NAME AS PRODUCTNAME, S_L.QTY, C_UOM.NAME AS UOMNAME, 
+      S_L.DATEEXPENSE, (CASE S.PROCESSED WHEN 'Y' THEN 'Si' ELSE 'No' END) AS PROCESSED, S_L.DESCRIPTION, S_L.S_TIMEEXPENSELINE_ID, S.DOCUMENTNO
+      FROM S_TIMEEXPENSE S, S_TIMEEXPENSELINE S_L, C_BPARTNER, M_PRODUCT, C_UOM
+      WHERE S.S_TIMEEXPENSE_ID = S_L.S_TIMEEXPENSE_ID
+      AND S_L.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      AND S_L.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+      AND S_L.C_UOM_ID = C_UOM.C_UOM_ID
+      AND S.AD_CLIENT_ID IN ('1')
+      AND S.AD_ORG_ID IN ('1')
+      AND 1=1
+      ORDER BY C_BPARTNER.NAME, S_L.DATEEXPENSE
+     ]]></Sql>
+    <Field name="rownum" value="count"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND S.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adOrgClient" type="replace" optional="true" after="AND S.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND S.DATEREPORT >= TO_DATE(?)]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND S.DATEREPORT < TO_DATE(?)]]></Parameter>
+    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="partner" optional="true" after="AND 1=1"><![CDATA[ AND S.C_BPARTNER_ID = ?]]></Parameter>
+  </SqlMethod>
+
+  <SqlMethod name="selectBpartner" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT C_BPARTNER.NAME
+      FROM C_BPARTNER
+      WHERE C_BPARTNER.C_BPARTNER_ID = ?
+     ]]></Sql>
+    <Parameter name="cBpartnerId"/>
+  </SqlMethod>
+
+  <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql></Sql>
+  </SqlMethod>
+</SqlClass>

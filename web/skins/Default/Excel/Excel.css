@@ -1,0 +1,108 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+body {
+	margin-top: 0px;
+	font-family: Arial, verdana;
+	font-size:	8pt;
+	font-weight: normal;
+	COLOR: #000000;
+	background-color : white;
+}
+.Middle
+{
+    VERTICAL-ALIGN: middle
+}
+.Bold
+{
+    FONT-WEIGHT: bold;
+}
+.Right
+{
+    TEXT-ALIGN: right
+}
+.Left
+{
+    TEXT-ALIGN: left
+}
+.Center
+{
+    TEXT-ALIGN: center
+}
+.CenterMiddle
+{
+    VERTICAL-ALIGN: middle;
+    TEXT-ALIGN: center
+}
+.LeftMiddle
+{
+    VERTICAL-ALIGN: middle;
+    TEXT-ALIGN: left;
+}
+.RightMiddle
+{
+    VERTICAL-ALIGN: middle;
+    TEXT-ALIGN: right;
+}
+.TopPadding
+{
+    PADDING-RIGHT: 0pt;
+    PADDING-LEFT: 3em;
+    PADDING-BOTTOM: 0pt;
+    VERTICAL-ALIGN: top;
+    PADDING-TOP: 0pt
+}
+.Bottom
+{
+    VERTICAL-ALIGN: bottom
+}
+.TopCenter
+{
+    VERTICAL-ALIGN: top;
+    TEXT-ALIGN: center
+}
+.RightBottom
+{
+    TEXT-ALIGN: right;
+    vertical-align: bottom;
+}
+.PageBreak
+{
+	page-break-after : always;
+}
+table {
+	 border : 1px solid #336699;
+	 background-color: #F2EEEE;
+    PADDING-RIGHT: 0pt;
+    PADDING-LEFT: 0pt;
+    PADDING-BOTTOM: 0pt;
+    MARGIN: 0pt;
+    PADDING-TOP: 0pt;
+	 font-size:	8pt;
+}
+.Header {
+  background : #336699;
+	border : 1px solid #336699;
+	color: White;
+	text-align: left;
+	padding: 1px 1px 1px 1px;
+}
+td {
+	border : 1px solid #336699;
+	empty-cells: show;
+}

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="PurchaseEditionData" package="org.openbravo.erpCommon.ad_reports">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT C_ORDER.DOCUMENTNO AS DOCUMENTNO, C_ORDER.DATEORDERED AS DATEORDERED, C_BPARTNER.NAME AS CLIENT_NAME, SUM(C_ORDERLINE.QTYORDERED) AS QUANTITYORDER, 
+      C_ORDERLINE.PRICEACTUAL AS PRICEACTUAL, SUM(C_ORDERLINE.LINENETAMT) AS PRICELIST, M_PRODUCT.NAME AS PRODUCT_NAME, C_UOM.NAME AS UOMNAME
+      FROM C_ORDER, C_ORDERLINE, C_BPARTNER, M_PRODUCT, C_UOM
+      WHERE C_ORDER.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      AND C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID
+      AND C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+      AND C_ORDERLINE.C_UOM_ID = C_UOM.C_UOM_ID
+      AND C_ORDER.AD_ORG_ID IN ('1')
+      AND C_ORDER.AD_CLIENT_ID IN ('1')
+      AND 1=1
+      AND C_ORDER.ISSOTRX = 'N'
+      GROUP BY C_BPARTNER.NAME, C_ORDERLINE.PRICEACTUAL, M_PRODUCT.NAME, C_UOM.NAME, C_ORDER.DOCUMENTNO, C_ORDER.DATEORDERED
+      ORDER BY C_BPARTNER.NAME, C_ORDER.DATEORDERED
+     ]]></Sql>
+    <Parameter name="adUserOrg" type="replace" optional="true" after=" AND C_ORDER.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after=" AND C_ORDER.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="dateFrom" optional="true" after="1=1"><![CDATA[ AND C_ORDER.DATEORDERED >= TO_DATE(?)]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="1=1"><![CDATA[ AND C_ORDER.DATEORDERED < TO_DATE(?)]]></Parameter>
+    <Parameter name="cbPartnerId" optional="true" after="AND 1=1"><![CDATA[ AND C_ORDER.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="1=1"><![CDATA[ AND C_ORDER.M_WAREHOUSE_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="1=1"><![CDATA[ AND C_ORDER.C_PROJECT_ID = ?]]></Parameter>
+  </SqlMethod>
+  <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql></Sql>
+  </SqlMethod>
+   <SqlMethod name="selectProject" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+        SELECT VALUE || ' - ' ||NAME FROM C_PROJECT 
+        WHERE C_PROJECT_ID = ?
+    </Sql>
+    <Parameter name="cProjectId"/>
+  </SqlMethod>
+</SqlClass>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<database name="FUNCTION SHOW_N_FIRST_CHARS">
+<function name="SHOW_N_FIRST_CHARS" type="VARCHAR">
+<parameter name="p_text" type="VARCHAR" />
+<parameter name="p_numChar" type="NUMERIC" />
+<body><![CDATA[
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  v_Auxtext VARCHAR2(3) ;
+BEGIN
+  IF(LENGTH(p_text) > p_numChar) THEN
+    v_Auxtext := '...';
+  END IF;
+  RETURN(SUBSTR(p_text, 1, p_numChar) || v_Auxtext) ;
+END SHOW_N_FIRST_CHARS]]></body>
+</function> 
+</database>

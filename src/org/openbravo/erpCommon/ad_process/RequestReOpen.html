@@ -1,0 +1,91 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Request process</TITLE>
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://yourSite/web/";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+var arrTeclas = new Array();
+function activarTeclas() {
+arrTeclas[0] = new Teclas("ENTER", "openSearch(null, null, '../info/Request_FS.html', null, false, 'frmMain', 'inprRequestId', 'inprRequestId_D', document.frmMain.inprRequestId_D.value, 'Command', 'KEY');", "inprRequestId_D", "null");
+}
+</SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="activarTeclas();xx"  id="body">
+<span id="paramToolBar">toolbar</span> <BR></BR>
+<TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
+  <TR> 
+    <TD width="119" > <TABLE border="0" cellspacing="0" cellpadding="0">
+        <TR> 
+          <TD width="119" height="46" > <A href="#" onclick="return false;" onmouseover="window.status='Reopen the request';return true;" onmouseout="window.status='';return true;">Reopen 
+            the request</A></TD>
+        </TR>
+      </TABLE></TD>
+  </TR>
+  <TR> 
+    <td> <TABLE width="100%" border="1" cellspacing="0" cellpadding="2" >
+        <TR> 
+          <TD>Reopen the request</TD>
+        </TR>
+      </TABLE></TD>
+  </TR>
+</TABLE>
+<FORM id="form" method="POST" action="RequestReOpen.html" name="frmMain">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <INPUT type="hidden" name="inprRequestId"></INPUT>
+  <TABLE width="45%" cellspacing="0" cellpadding="0" border="1" >
+    <TR> 
+      <TD  id="processDescription">&nbsp;</TD>
+    </TR>
+    <TR></TR>
+    <TR> 
+      <TD id="helpDiscard" > <div  id="processHelp">&nbsp;</div></TD>
+    </TR>
+  </TABLE>
+  <BR></BR>
+  <BR></BR>
+  <TABLE cellspacing="0" cellpadding="0" border="0" width="100%">
+    <TR> 
+      <TD colspan="2">&nbsp;</TD>
+      <TD width="44%" > <SPAN >Request</SPAN>&nbsp;</TD>
+      <TD width="41%"> <INPUT type="text" name="inprRequestId_DES" size="20" maxlength="20"></INPUT> 
+        <A href="#" onclick="openSearch(null, null, '../info/Requests_FS.html', 'SELECTOR_REQ', false, 'frmMain', 'inprRequestId', 'inprRequestId_DES', document.frmMain.inprRequestId_DES.value);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
+        <img  alt="Request" title="Request" width="16" height="16" border="0" src="../../../../../web/images/Request.jpg" id="buttonRequest"></IMG></A></TD>
+      <TD width="15%" colspan="2">&nbsp;</TD>
+    </TR>
+  </TABLE>
+  <BR></BR>
+  <TABLE cellspacing="0" cellpadding="0" border="0">
+    <TR> 
+      <TD  id="question">&nbsp;</TD>
+    </TR>
+  </TABLE>
+  <TABLE summary="" cellpadding="0" cellspacing="0" border="0">
+    <TR> 
+      <TD > <A href="#" onclick="submitCommandForm('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
+        <img width="16" height="16" src="../../../../../web/images/Ok.jpg"  alt="Accept" title="Accept" border="0" id="buttonOk"></IMG></A></TD>
+    </TR>
+  </TABLE>
+</FORM>
+</BODY>
+</HTML>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<DIVFO xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<fo:table border-collapse="separate" border-color="black" border-style="solid" border-width="0.25pt" table-layout="fixed">
+		<fo:table-column column-width="2.5cm" border-color="black" border-style="solid" border-width="0.25pt"/>
+		<fo:table-column column-width="2.5cm" border-color="black" border-style="solid" border-width="0.25pt"/>
+		<fo:table-column column-width="7.75cm" border-color="black" border-style="solid" border-width="0.25pt"/>
+		<fo:table-column column-width="2cm" border-color="black" border-style="solid" border-width="0.25pt"/>
+		<fo:table-column column-width="2cm" border-color="black" border-style="solid" border-width="0.25pt"/>
+		<fo:table-column column-width="2cm" border-color="black" border-style="solid" border-width="0.25pt"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell>
+					<fo:block text-align="end" font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px" font-weight="bold">Quantity</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" font-weight="bold">Unit</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" font-weight="bold">Product</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block text-align="end" font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px" font-weight="bold">Price</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block text-align="end" font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px" font-weight="bold">Base</fo:block>
+				</fo:table-cell>
+				<fo:table-cell>
+					<fo:block text-align="end" font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="1mm" text-indent="2px" end-indent="3px" font-weight="bold">Net</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+	<fo:table border-collapse="separate" border-color="grey" border-style="solid" border-width="0.25pt" table-layout="fixed">
+		<fo:table-column column-width="2.5cm" border-color="grey" border-style="solid" border-width="0.25pt"/>
+		<fo:table-column column-width="2.5cm" border-color="grey" border-style="solid" border-width="0.25pt"/>
+		<fo:table-column column-width="7.75cm" border-color="grey" border-style="solid" border-width="0.25pt"/>
+		<fo:table-column column-width="2cm" border-color="grey" border-style="solid" border-width="0.25pt"/>
+		<fo:table-column column-width="2cm" border-color="grey" border-style="solid" border-width="0.25pt"/>
+		<fo:table-column column-width="2cm" border-color="grey" border-style="solid" border-width="0.25pt"/>
+		<fo:table-body>
+			<DIVFO id="sectionDetailLines">
+				<fo:table-row>
+					<fo:table-cell>
+						<fo:block text-align="end" font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="0.5mm" text-indent="2px" end-indent="3px" id="fieldQuantity">1200</fo:block>
+					</fo:table-cell>
+					<fo:table-cell>
+						<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="0.5mm" text-indent="2px" id="fieldUom">Cash</fo:block>
+					</fo:table-cell>
+					<fo:table-cell>
+						<fo:block font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="0.5mm" text-indent="2px" id="fieldProductName">xxProduct name</fo:block>
+					</fo:table-cell>
+					<fo:table-cell>
+						<fo:block text-align="end" font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="0.5mm" end-indent="3px" text-indent="2px" id="fieldPriceactual">11,34</fo:block>
+					</fo:table-cell>
+					<fo:table-cell>
+						<fo:block text-align="end" font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="0.5mm" end-indent="3px" text-indent="2px" id="fieldBase">255.689,32</fo:block>
+					</fo:table-cell>
+					<fo:table-cell>
+						<fo:block text-align="end" font-size="9pt" font-family="Helvetica" space-after.optimum="3pt" padding-top="0.5mm" end-indent="3px" text-indent="2px" id="fieldLinenetamt">255.689,32</fo:block>
+					</fo:table-cell>
+				</fo:table-row>
+			</DIVFO>
+		</fo:table-body>
+	</fo:table>
+	<fo:table border-collapse="separate" height="1.5cm" width="19cm" table-layout="fixed">
+		<fo:table-column column-width="14cm"/>
+		<fo:table-column column-width="5cm"/>
+		<fo:table-body>
+			<fo:table-row>
+				<fo:table-cell/>
+				<fo:table-cell border-style="solid" border-color="black" border-width="0.5pt">
+					<fo:block font-size="12pt" font-family="Helvetica" space-after.optimum="7pt" padding-top="0.5mm" font-weight="bold" text-indent="2px">TOTAL</fo:block>
+					<fo:block text-align="end" font-size="12pt" font-family="Helvetica" space-after.optimum="1pt" padding-top="0.5mm" font-weight="bold" end-indent="5px" text-indent="2px">
+						<fo:inline id="fieldSumTotalNet">xxEUR 23.456.789,32</fo:inline>
+						<fo:inline>_</fo:inline>
+					</fo:block>
+				</fo:table-cell>
+			</fo:table-row>
+		</fo:table-body>
+	</fo:table>
+</DIVFO>

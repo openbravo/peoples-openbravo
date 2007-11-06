@@ -1,0 +1,4 @@
+<?xml version="1.0"?> 
+<database name="SEQUENCE W_BASKET_SEQ">
+	<sequence name="W_BASKET_SEQ" start="1" increment="1" />
+</database>

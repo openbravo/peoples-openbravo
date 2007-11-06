@@ -1,0 +1,123 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<compiereTrl table="AD_FORM" language="ru_RU" >
+  <row trl="N" id="100" >
+    <value original="Generate Invoices (manual)" column="Name" >Generate Invoices (manual)</value>
+    <value original="Select and generate invoices" column="Description" >Select and generate invoices</value>
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="101" >
+    <value original="Import File Loader" column="Name" >Import File Loader</value>
+    <value original="Load flat Files into import tables" column="Description" >Load flat Files into import tables</value>
+    <value original="The Import File Loader parses the content of a flat file and loads it into import tables. Comments start with a '[' and end with a ']' and are ignored; example: [Some Heading]." column="Help" >The Import File Loader parses the content of a flat file and loads it into import tables. Comments start with a '[' and end with a ']' and are ignored; example: [Some Heading].</value>
+  </row>
+  <row trl="N" id="102" >
+    <value original="Initial Client Setup" column="Name" >Initial Client Setup</value>
+    <value original="Initial Client Setup" column="Description" >Initial Client Setup</value>
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="103" >
+    <value original="Material Transactions" column="Name" >Material Transactions</value>
+    <value original="Material Transactions" column="Description" >Material Transactions</value>
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="104" >
+    <value original="Payment Allocation" column="Name" >Payment Allocation</value>
+    <value original="Allocate invoices and payments" column="Description" >Allocate invoices and payments</value>
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="105" >
+    <value original="Generate Charges" column="Name" >Generate Charges</value>
+    <value original="Generate Charges from natural accounts" column="Description" >Generate Charges from natural accounts</value>
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="106" >
+    <value original="Payment Print/Export" column="Name" >Payment Print/Export</value>
+    <value original="Print or export your payments" column="Description" >Print or export your payments</value>
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="107" >
+    <value original="Payment Selection (manual)" column="Name" >Payment Selection (manual)</value>
+    <value original="Manual Payment Selection" column="Description" >Manual Payment Selection</value>
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="108" >
+    <value original="Matching PO-Receipt-Invoice" column="Name" >Matching PO-Receipt-Invoice</value>
+    <value original="Match Purchase Orders, Receipts, Vendor Invoices" column="Description" >Match Purchase Orders, Receipts, Vendor Invoices</value>
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="110" >
+    <value original="Generate Shipments (manual)" column="Name" >Generate Shipments (manual)</value>
+    <value original="Select and generate shipments" column="Description" >Select and generate shipments</value>
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="111" >
+    <value original="Password Maintenance" column="Name" >Password Maintenance</value>
+    <value original="Maintain Passwords" column="Description" >Maintain Passwords</value>
+    <value original="Maintain Passwords for Users and Business Partners" column="Help" >Maintain Passwords for Users and Business Partners</value>
+  </row>
+  <row trl="N" id="112" >
+    <value original="Merge Entities" column="Name" >Merge Entities</value>
+    <value original="Merge From Entity to To Entity - Delete From" column="Description" >Merge From Entity to To Entity - Delete From</value>
+    <value original="&lt;i>Dangerous - Please are aware of what you are doing!&lt;/i>|All instances of the From entity (e.g. Customer A) are changed to the To entity (e.g. Customer B). |The From entity (e.g. Customer A) is deleted. |&lt;p>&lt;b>There is NO undo nor trace !  Please do a b" column="Help" >&lt;i>Dangerous - Please are aware of what you are doing!&lt;/i>|All instances of the From entity (e.g. Customer A) are changed to the To entity (e.g. Customer B). |The From entity (e.g. Customer A) is deleted. |&lt;p>&lt;b>There is NO undo nor trace !  Please do a b</value>
+  </row>
+  <row trl="N" id="800000" >
+    <value original="In-Out Report" column="Name" >In-Out Report</value>
+    <value original="" column="Description" />
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="800001" >
+    <value original="Session Info" column="Name" >Session Info</value>
+    <value original="" column="Description" />
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="800002" >
+    <value original="Payments Selection (Bank)" column="Name" >Payments Selection (Bank)</value>
+    <value original="" column="Description" />
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="800003" >
+    <value original="Call Acct-Server" column="Name" >Call Acct-Server</value>
+    <value original="" column="Description" />
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="800007" >
+    <value original="Background Process" column="Name" >Background Process</value>
+    <value original="" column="Description" />
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="800008" >
+    <value original="Undo Debt-Payment" column="Name" >Undo Debt-Payment</value>
+    <value original="" column="Description" />
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="800009" >
+    <value original="Material Receipt Pending" column="Name" >Material Receipt Pending</value>
+    <value original="Select and receipt pending material" column="Description" >Select and receipt pending material</value>
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="800010" >
+    <value original="InvoiceVendorMultiline" column="Name" >InvoiceVendorMultiline</value>
+    <value original="Expense Invoice multiline edition" column="Description" >Expense Invoice multiline edition</value>
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="800011" >
+    <value original="SQL Query" column="Name" >SQL Query</value>
+    <value original="" column="Description" />
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="800012" >
+    <value original="Import EDI File" column="Name" >Import EDI File</value>
+    <value original="Imports EDI data from file." column="Description" >Imports EDI data from file.</value>
+    <value original="Imports EDI data from file." column="Help" >Imports EDI data from file.</value>
+  </row>
+  <row trl="N" id="800013" >
+    <value original="Remittance Cancel" column="Name" >Remittance Cancel</value>
+    <value original="" column="Description" />
+    <value original="" column="Help" />
+  </row>
+  <row trl="N" id="800014" >
+    <value original="Import/Export Translations" column="Name" >Import/Export Translations</value>
+    <value original="Import/Export translation" column="Description" >Import/Export translation</value>
+    <value original="" column="Help" />
+  </row>
+</compiereTrl>

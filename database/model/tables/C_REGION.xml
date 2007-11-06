@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<database name="TABLE C_REGION">
+    <table name="C_REGION" primaryKey="C_REGION_KEY">
+      <column name="C_REGION_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="C_COUNTRY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISDEFAULT" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="C_NATION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="VALUE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false"/>
+      <check name="C_REGION_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <check name="C_REGION_ISDEFAULT_CHECK" condition="IsDefault in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="C_REGIONCLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_REGIONORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="CCOUNTRY_CREGION">
+        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_NATION" name="C_REGIONNATION">
+        <reference local="C_NATION_ID" foreign="C_NATION_ID"/>
+      </foreign-key>
+      <unique name="C_REGION_NAME">
+        <unique-column name="C_COUNTRY_ID"/>
+        <unique-column name="NAME"/>
+      </unique>
+    </table>
+</database>

@@ -1,0 +1,31 @@
+A) Openbravo Public License
+This license file applies to the Openbravo ERP software (the "Openbravo Software"), except as described below. 
+
+This product is Copyright 2001-6 Openbravo S.L.  For detailed notice, see  the "NOTICE" file with this distribution.
+
+This product is free software; you can redistribute it and/or modify it under  the terms of Openbravo Public License v.1.1 being the Mozilla Public with a permitted attribution clause (available at www.openbravo.com/legal/license.html) 
+
+This product is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A  PARTICULAR PURPOSE. See the Openbravo Public License (www.openbravo.com/legal/license.html) for more details.
+
+You should have received a copy of the Openbravo Public License along with this  product; if not, write to legal@openbravo.com. You can also find the terms of the Openbravo Public License here: http://www.openbravo.com/legal/license.html 
+
+B) Apache Software License 
+The programs contained in the following folders, which are part of the Openbravo Software, are provided by Openbravo SL under the Apache Software License 2.0. This license is available online at http://www.apache.org/licenses/LICENSE-2.0. This notice also appears in individual source files.
+表xmlEngine
+表data
+表database
+表base
+表utils
+All these files are copyright ｩ 2001-2006 Openbravo SL.
+
+C) Third party code
+Some portions of the Openbravo Software are provided by third parties and thus are not available under the Openbravo Public License, but are available under  other licensing terms. In this distribution, they are: 
+
+-Compiere metadata dictionary, available  at www.compiere.org, licensed under the terms of the Compiere Public License (license available at www.compiere.org/license.html)
+-Tigra Calculator under its own license; Copyright ｩ 2003-2004 Softcomplex Inc. (license available at http://www.softcomplex.com/)
+-Eclipse icons under the Eclipse Public License (license available at http://www.eclipse.org/legal/epl-v10.html
+-CyberNeko HTML Parser, under the CyberNeko Software License, Version 1.0 (license available at http://people.apache.org/~andyc/neko/doc/html/
+-Avalon, batik, fop, log4j, commons-X and Xerceslmpl.jar files, under Apache Software License 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+-Mail, activation and comm.jar files, under the corresponding Sun Binary Code License. This is not free software, but provided under license from Sun Microsystems.  
+
+If you have questions about the licensing terms for the Openbravo Software, please contact us at: legal@openbravo.com

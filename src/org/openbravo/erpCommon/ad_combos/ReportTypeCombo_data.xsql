@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="ReportTypeComboData" package="org.openbravo.erpCommon.ad_combos">
+  <SqlClassComment></SqlClassComment>
+    <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT MAX(NAME) || '-' || MAX(name1) AS NAME,MAX(ID1) || '-' || MAX(id2) AS ID  FROM(
+	    SELECT (CASE E.accounttype WHEN 'E' THEN 1 ELSE 2 END) AS TYPE, 0 AS ID1, '' AS NAME1, E.C_ElementValue_ID AS ID2, TO_CHAR(E.VALUE || ' - ' || COALESCE(ET.NAME, E.NAME)) AS NAME 
+      FROM C_ElementValue E left join C_ElementValue_Trl ET on E.C_ElementValue_ID = ET.C_ElementValue_ID 
+                                                            and  ET.AD_Language  = 'es_ES' , 
+      AD_TREENODE T
+      WHERE E.C_ELEMENTVALUE_ID = T.NODE_ID 
+      AND T.AD_TREE_ID = ?
+      AND (T.PARENT_ID IS NULL 
+      OR T.PARENT_ID = 0)
+      AND E.AD_Org_ID IN('1') 
+      AND E.AD_Client_ID IN('1') 
+      AND E.isActive = 'Y' 	  	  
+	    AND E.accounttype IN ('E', 'A')	  
+	    UNION	    
+      SELECT (CASE E.accounttype WHEN 'R' THEN 1 ELSE 2 END) AS TYPE, E.C_ElementValue_ID AS ID1, TO_CHAR(E.VALUE || ' - ' || COALESCE(ET.NAME, E.NAME)) AS NAME1, 0 AS ID2, '' AS NAME
+      FROM C_ElementValue E left join C_ElementValue_Trl ET on E.C_ElementValue_ID = ET.C_ElementValue_ID
+                                                            and ET.AD_Language = 'es_ES' , 
+      AD_TREENODE T
+      WHERE E.C_ELEMENTVALUE_ID = T.NODE_ID 
+      AND T.AD_TREE_ID = ?
+      AND (T.PARENT_ID IS NULL 
+      OR T.PARENT_ID = 0)  
+      AND E.AD_Org_ID IN ('2') 
+      AND E.AD_Client_ID IN ('2') 
+      AND E.isActive = 'Y' 	  	  
+	    AND E.accounttype IN ('R', 'L')) A
+	   GROUP BY TYPE
+     ]]></Sql>
+    <Parameter name="adTreeId"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND E.AD_Org_ID IN(" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AND E.AD_Client_ID IN(" text="'1'"/>
+    <Parameter name="adTreeId"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND E.AD_Org_ID IN (" text="'2'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AND E.AD_Client_ID IN (" text="'2'"/>
+  </SqlMethod>
+
+</SqlClass>

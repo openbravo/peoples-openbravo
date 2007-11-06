@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<database name="TABLE AT_TESTDOCUMENT">
+    <table name="AT_TESTDOCUMENT" primaryKey="AT_TESTDOCUMENT_KEY">
+      <column name="AT_TESTDOCUMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="EXTENSION" primaryKey="false" required="true" type="CHAR" size="4" autoIncrement="false"/>
+      <column name="HEADER1" primaryKey="false" required="true" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="SUFFIX" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="FOOTER" primaryKey="false" required="true" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="CONTENTTYPE" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="HEADER2" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="HEADER3" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="HEADER4" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="AD_LANGUAGE" primaryKey="false" required="false" type="VARCHAR" size="6" autoIncrement="false"/>
+      <column name="LINE_INTERCHANGER" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="PREFIX" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="INTRODUCTION" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <check name="ATTESTDOCUMENT_INTRODUCTION_CHECK" condition="INTRODUCTION IN ('Y','N')"/> 
+      <check name="ATTESTDOCUMENT_ISACTIVE_CHECK" condition="IsActive IN ('Y','N')"/> 
+      <check name="ATTESTDOCUMENT_LINEINTER_CHECK" condition="LINE_INTERCHANGER IN ('Y','N')"/> 
+      <check name="ATTESTDOCUMENT_PREFIX_CHECK" condition="PREFIX IN ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ATTESTDOCUMENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_AT_TESTDOCUMENT">
+        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_ATTESTDOCUMENT">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+    </table>
+</database>

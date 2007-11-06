@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="zh_CN" table="AD_FORM">
+    <row id="100" trl="N">
+        <value column="Name" original="Generate Invoices (manual)">生成发票(手工)</value>
+        <value column="Description"
+            original="Select and generate invoices">    选择并产生发票</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="101" trl="N">
+        <value column="Name" original="Import File Loader">导入文件</value>
+        <value column="Description" original="Load flat Files into import tables">向输入的表格中装入原始文件</value>
+        <value column="Help"
+            original="The Import File Loader parses the content of a flat file and loads it into import tables. Comments start with a '[' and end with a ']' and are ignored; example: [Some Heading].">输入文件加载器解析原始文件的内容并将其装入导入的表格中.
+            一个'[和'一个']'中间包含的内容作为注释被忽略; 例: [标题].</value>
+    </row>
+    <row id="102" trl="N">
+        <value column="Name" original="Initial Client Setup">初始化客户设置</value>
+        <value column="Description" original="Initial Client Setup">初始化客户设置</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="103" trl="N">
+        <value column="Name" original="Material Transactions">物料事务</value>
+        <value column="Description" original="Material Transactions">物料事务</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="104" trl="N">
+        <value column="Name" original="Payment Allocation">付款分配</value>
+        <value column="Description" original="Allocate invoices and payments">分配支票和付款</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="105" trl="N">
+        <value column="Name" original="Generate Charges">产生费用</value>
+        <value column="Description" original="Generate Charges from natural accounts">通过普通报表生成费用报告</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="106" trl="N">
+        <value column="Name" original="Payment Print/Export">付款单打印或导出</value>
+        <value column="Description"
+            original="Print or export your payments">    打印或输出你的付款单</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="107" trl="N">
+        <value column="Name" original="Payment Selection (manual)">付款单选择(手工)</value>
+        <value column="Description" original="Manual Payment Selection">    手工付款单选择</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="108" trl="N">
+        <value column="Name" original="Matching PO-Receipt-Invoice">匹配采购定单-收货-发票</value>
+        <value column="Description" original="Match Purchase Orders, Receipts, Vendor Invoices">匹配采购定单,收据,销售发票</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="110" trl="N">
+        <value column="Name" original="Generate Shipments (manual)">生成物料出货(手工)</value>
+        <value column="Description"
+            original="Select and generate shipments">    选择并且产生物料出货</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="111" trl="N">
+        <value column="Name" original="Password Maintenance">密码设置</value>
+        <value column="Description" original="Maintain Passwords">设置密码</value>
+        <value column="Help" original="Maintain Passwords for Users and Business Partners">设置用户和商业伙伴的密码</value>
+    </row>
+    <row id="112" trl="N">
+        <value column="Name" original="Merge Entities">合并实体</value>
+        <value column="Description"
+            original="Merge From Entity to To Entity - Delete From">合并一个实体到另一个实体
+            - 这个被合并的实体会被删除</value>
+        <value column="Help"
+            original="&lt;i>Dangerous - Please are aware of what you are doing!&lt;/i>|All instances of the From entity (e.g. Customer A) are changed to the To entity (e.g. Customer B). |The From entity (e.g. Customer A) is deleted. |&lt;p>&lt;b>There is NO undo nor trace !  Please do a b">&lt;i>危险
+            - 请你明白你正在做的事!&lt;/i>|被合并实体的所有实例 (例. 顾客 A) 都会被改到另一个实体 (例.
+            Customer B). | 被合并的实体 (例. 顾客 A) 会被删除. |&lt;p>&lt;b>没有撤销或者跟踪
+            !  请慎重</value>
+    </row>
+    <row id="800000" trl="N">
+        <value column="Name" original="In-Out Report">输入输出报告</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800001" trl="N">
+        <value column="Name" original="Session Info">会议信息</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800002" trl="N">
+        <value column="Name" original="Payments Selection (Bank)">付款选择 (银行)</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800003" trl="N">
+        <value column="Name" original="Call Acct-Server">呼叫帐户服务</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800007" trl="N">
+        <value column="Name" original="Background Process">后台进程</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800008" trl="N">
+        <value column="Name" original="Undo Debt-Payment">撤销债务偿还</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800009" trl="N">
+        <value column="Name" original="Material Receipt Pending">待审批材料收据</value>
+        <value column="Description" original="Select and receipt pending material">选择和接受待批材料</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800010" trl="N">
+        <value column="Name" original="InvoiceVendorMultiline">多路发表销售</value>
+        <value column="Description" original="Expense Invoice multiline edition">费用发票多线路版</value>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800011" trl="N">
+        <value column="Name" original="SQL Query">SQL查询</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800012" trl="N">
+        <value column="Name" original="Import EDI File">导入EDI文件</value>
+        <value column="Description" original="Imports EDI data from file.">导入EDI文件</value>
+        <value column="Help"
+            original="Imports EDI data from file.">由文件导入 EDI 数据.</value>
+    </row>
+    <row id="800013" trl="N">
+        <value column="Name" original="Remittance Cancel">取消汇款</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800014" trl="N">
+        <value column="Name" original="Import/Export Translations">导入/导出翻译</value>
+        <value column="Description" original="Import/Export translation">导入/导出翻译</value>
+        <value column="Help" original=""/>
+    </row>
+</compiereTrl>

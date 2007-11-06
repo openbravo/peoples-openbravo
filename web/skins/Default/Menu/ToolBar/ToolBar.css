@@ -1,0 +1,173 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+.Menu_ToolBar_bg {
+  background: url(backgroundCenter.png) repeat-x top center;
+  background-color: #505050;
+}
+
+.Menu_ToolBar_bg_left {
+  width: 8px;
+  height: 52px;
+  background: url(backgroundLeft.png) repeat-x top center;
+  background-color: #505050;
+}
+
+.Menu_ToolBar_bg_right {
+  width: 8px;
+  height: 52px;
+  background: url(backgroundRight.png) no-repeat top center;
+  background-color: #505050;
+}
+
+
+.Menu_ToolBar_textlabel_bg_left {
+  height: 26px;
+  width: 9px;
+  background: url(labelLeft.png) no-repeat center right;
+}
+
+.Menu_ToolBar_textlabel_bg_body {
+  background: url(labelBody.png) repeat-x center center;
+}
+
+.Menu_ToolBar_textlabel_bg_right {
+  height: 26px;
+  width: 9px;
+  background: url(labelRight.png) no-repeat center left;
+}
+
+
+a.Menu_ToolBar_text_username {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  margin: 0px 5px 0px 5px;
+  text-indent: 5px;
+  COLOR: #B4B4B4;
+  text-decoration: none;
+}
+
+a.Menu_ToolBar_text_username:hover {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  COLOR: #C8C8C8;
+  text-decoration: underline;
+}
+
+a.Menu_ToolBar_text_username:active {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  COLOR: #C8C8C8;
+  text-decoration: underline;
+}
+
+
+.Menu_ToolBar_text_alert_no {
+  font-weight: bold;
+}
+
+a.Menu_ToolBar_text_alert {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size:	8pt;
+  font-weight: normal;
+  margin: 0px 5px 0px 5px;
+  text-indent: 5px;
+  COLOR: #B4B4B4;
+  text-decoration: none;
+}
+
+a.Menu_ToolBar_text_alert:hover {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size:	8pt;
+  font-weight: normal;
+  COLOR: #C8C8C8;
+  text-decoration: underline;
+}
+
+a.Menu_ToolBar_text_alert:active {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size:	8pt;
+  font-weight: normal;
+  COLOR: #C8C8C8;
+  text-decoration: underline;
+}
+
+
+/* Buttons definition for Menu_ToolBar */
+
+a.Menu_ToolBar_Button:link {
+  display:block;
+  margin-left:0px;
+  margin-right:0px;
+  width:26px;
+  height:26px;
+  border:0px;
+  vertical-align:middle;
+  -moz-outline-style: none;
+}
+
+a.Menu_ToolBar_Button:visited { 
+}
+
+a.Menu_ToolBar_Button:hover {
+  background: url(button.rollover.png) no-repeat center center;
+}
+a.Menu_ToolBar_Button:active { 
+  background: url(button.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+
+/* Icons definition for Menu_ToolBar */
+
+.Menu_ToolBar_Button_Icon {
+  border: 0px none;
+  width: 26px;
+  height: 26px;
+  margin: 0px;
+  vertical-align: middle;
+}
+
+.Menu_ToolBar_Button_Icon_expand {
+  background: url(iconExpand.png) no-repeat center center;
+}
+
+.Menu_ToolBar_Button_Icon_contract {
+  background: url(iconContract.png) no-repeat center center;
+}
+
+.Menu_ToolBar_Button_Icon_user {
+  background: url(iconUser.png) no-repeat center center;
+}
+
+.Menu_ToolBar_Button_Icon_logout {
+  background: url(iconLogout.png) no-repeat center center;
+}
+
+.Menu_ToolBar_Button_Icon_alert {
+  background: url(iconAlert.png) no-repeat center center;
+}
+
+.Menu_ToolBar_Space {
+  width: 100%;
+}

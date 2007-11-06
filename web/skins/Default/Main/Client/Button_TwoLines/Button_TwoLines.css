@@ -1,0 +1,183 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+
+.Button_width {
+  width: 50px;
+}
+
+a.ButtonLink, a.ButtonLink:active, a.ButtonLink:hover, a.ButtonLink:visited, a.ButtonLink:link {
+  text-decoration: none;
+}
+
+a.ButtonLink_hover, a.ButtonLink_hover:active, a.ButtonLink_hover:hover, a.ButtonLink_hover:visited, a.ButtonLink_hover:link {
+  text-decoration: none;
+}
+
+a.ButtonLink_active, a.ButtonLink_active:active, a.ButtonLink_active:hover, a.ButtonLink_active:visited, a.ButtonLink_active:link {
+  text-decoration: none;
+}
+
+a.ButtonLink .Button, .Button {
+  border-collapse: collapse;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #1b4106;
+  font-weight: bold;
+  CURSOR: pointer;
+}
+
+a.ButtonLink table.Button .Button_left, table.Button .Button_left {
+  width: 35px;
+  height: 39px;
+  background: url(buttonLeft.normal.png) no-repeat center right;
+  text-align: right;
+  vertical-align: top;
+}
+
+a.ButtonLink table.Button .Button_text, table.Button .Button_text {
+  background: url(buttonBody.normal.png) repeat-x center center;
+  text-align: center;
+  height: 39px;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  text-align: center;
+}
+
+a.ButtonLink table.Button .Button_right, table.Button .Button_right {
+  width: 28px;
+  height: 39px;
+  background: url(buttonRight.normal.png) no-repeat center left;
+}
+
+a.ButtonLink_hover .Button, .Button_hover {
+  border-collapse: collapse;
+  text-align: center;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #1b4106;
+  font-weight: bold;
+  CURSOR: pointer;
+}
+
+a.ButtonLink_hover table.Button .Button_left, table.Button_hover .Button_left {
+  background: url(buttonLeft.rollover.png) no-repeat center right;
+  width: 35px;
+  height: 39px;
+}
+
+a.ButtonLink_hover table.Button .Button_text, table.Button_hover .Button_text {
+  background: url(buttonBody.rollover.png) repeat-x center center;
+}
+
+a.ButtonLink_hover table.Button .Button_right, table.Button_hover .Button_right {
+  background: url(buttonRight.rollover.png) no-repeat center left;
+  width: 28px;
+  height: 39px;
+}
+
+a.ButtonLink_active .Button, .Button_active {
+  border-collapse: collapse;
+  text-align: center;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #eaf7e4;
+  font-weight: bold;
+  CURSOR: pointer;
+}
+
+a.ButtonLink_active table.Button .Button_left, .Button_active .Button_left {
+  background: url(buttonLeft.pressed.png) no-repeat center right;
+  width: 35px;
+  height: 39px;
+}
+
+a.ButtonLink_active table.Button .Button_text, table.Button_active .Button_text {
+  background: url(buttonBody.pressed.png) repeat-x center center;
+}
+
+a.ButtonLink_active table.Button .Button_right, table.Button_active .Button_right {
+  background: url(buttonRight.pressed.png) no-repeat center left;
+  width: 28px;
+  height: 39px;
+}
+
+
+.Button_Icon {
+  width: 35px;
+  height: 39px;
+}
+
+.Button_Icon_process {
+  background: url(iconProcess.png) no-repeat;
+}
+
+.Button_Icon_back {
+  background: url(iconBack.png) no-repeat;
+}
+
+.Button_Icon_next {
+  background: url(iconNext.png) no-repeat;
+}
+
+.Button_Icon_ok {
+  background: url(iconOk.png) no-repeat;
+}
+
+.Button_Icon_cancel {
+  background: url(iconCancel.png) no-repeat;
+}
+
+.Button_Icon_clear {
+  background: url(iconClear.png) no-repeat;
+}
+
+.Button_Icon_pdf {
+  background: url(iconPdf.png) no-repeat;
+}
+
+.Button_Icon_html {
+  background: url(iconHtml.png) no-repeat;
+}
+
+.Button_Icon_search {
+  background: url(iconSearch.png) no-repeat;
+}
+
+.Button_Icon_save {
+  background: url(iconSave.png) no-repeat;
+}
+
+.Button_Icon_download {
+  background: url(iconDownload.png) no-repeat;
+}
+
+.Button_Icon_edit {
+  background: url(iconEdit.png) no-repeat;
+}
+
+.Button_Icon_erase {
+  background: url(iconErase.png) no-repeat;
+}
+
+.Button_Icon_password {
+  background: url(iconPassword.png) no-repeat;
+}

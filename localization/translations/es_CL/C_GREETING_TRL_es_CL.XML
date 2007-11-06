@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="es_CL" table="C_GREETING">
+  <row id="1000001" trl="N">
+    <value column="Name" original="Sr">Sr</value>
+    <value column="Greeting" original="Sr"/>
+  </row>
+  <row id="1000002" trl="N">
+    <value column="Name" original="Mr">Mr</value>
+    <value column="Greeting" original="Mr"/>
+  </row>
+  <row id="1000003" trl="N">
+    <value column="Name" original="Mrs">Mrs</value>
+    <value column="Greeting" original="Mrs"/>
+  </row>
+  <row id="1000004" trl="N">
+    <value column="Name" original="Miss">Miss</value>
+    <value column="Greeting" original="Miss"/>
+  </row>
+  <row id="1000005" trl="N">
+    <value column="Name" original="Monsieur">Monsieur</value>
+    <value column="Greeting" original="Monsieur"/>
+  </row>
+  <row id="1000006" trl="N">
+    <value column="Name" original="Herr">Herr</value>
+    <value column="Greeting" original="Herr"/>
+  </row>
+</compiereTrl>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD Xhtml 1.0 Transitional//EN" "http://www.w3.org/tr/xhtml1/Dtd/xhtml1-transitional.dtd">
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<TITLE>Taxes report</TITLE>
+    <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Report.css" id="paramCSS" />
+    <script language="JavaScript" type="text/javascript" id="paramDirection">
+      var baseDirection = "../../../../../web/";
+      </script>
+      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
+      </script>
+      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" type="text/javascript" id="paramLanguage">
+        var LNG_POR_DEFECTO = "en_US";
+      </script>
+      <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
+      <script language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+      <script language="JavaScript" type="text/javascript" id="keyMap"></script>
+      <script type="text/javascript">
+        dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+      </script>
+</HEAD>
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="xx();" onresize="resizeArea();">
+<FORM method="POST" action="ReportTaxInvoice.html" name="frmMain" id="form">
+  <INPUT type="hidden" name="Command"></INPUT>
+  
+
+  <DIV id="sectionSale"> 
+    <DIV class="ReportTitle" id="paramSale">Sale</DIV>
+    <DIV id="sectionTaxSale"> 
+      <TABLE width="90%" class="Border" border="1" cellspacing="0" cellpadding="0">
+        <TR class="TableHeaderLevel1"> 
+          <TD>Tax type<SPAN  id="fieldTaxnameSale">xxiva16%</SPAN></TD>
+        </TR>
+      </TABLE>
+      <TABLE width="80%">
+        <TR class="Border TableDetailHeader" border="1" cellspacing="0" cellpadding="0"> 
+          <TD width="16%" >Invoice</TD>
+          <TD width="10%" >Date</TD>
+          <TD width="30%" >Business Partner</TD>
+          <TD width="24%" align="center" >Taxable base</TD>
+          <TD width="20%" align="right" >Import</TD>
+        </TR>
+        <DIV id="sectionDetailSale"> 
+          <TR class="Border TableDetailRowEven" border="1" cellspacing="0" cellpadding="0" id="selEliminarSale"> 
+            <TD>&nbsp;<SPAN id="fieldDocumentnoSale">xx38383484</SPAN></TD>
+            <TD>&nbsp;<SPAN id="fieldDateinvoicedSale">xx</SPAN></TD>
+            <TD>&nbsp;<SPAN id="fieldBpartnerSale">xx</SPAN></TD>
+            <TD align="center">&nbsp;<SPAN id="fieldTaxbaseamtSale">xx2394.48</SPAN></TD>
+            <TD align="right">&nbsp;<SPAN id="fieldTaxamtSale">xx88959.44</SPAN></TD>
+          </TR>
+        </DIV>
+        <TR> 
+          <TD>&nbsp;</TD>
+        </TR>
+        <TR  border="1" cellspacing="0" cellpadding="0"> 
+          <TD>&nbsp;<SPAN  id="functionCountInvoicesSale">xx34</SPAN></TD>
+          <TD>&nbsp;</TD>
+          <TD>&nbsp;</TD>
+          <TD align="center">&nbsp;<SPAN  id="functionSumTaxbaseamtSale">xx746557.56</SPAN></TD>
+          <TD align="right">&nbsp;<SPAN  id="functionSumTaxamtSale">xx65756.87</SPAN></TD>
+        </TR>
+        <TR> 
+          <TD>&nbsp;</TD>
+        </TR>
+      </TABLE>
+    </DIV>
+    <BR></BR>
+    <DIV class="ReportTitle"  id="paramTitleSale">xxFacturas al extranjero</DIV>
+    <DIV id="sectionTaxForeignSale"> 
+      <TABLE width="90%" class="Border" border="1" cellspacing="0" cellpadding="0">
+        <TR class="TableHeaderLevel1"> 
+          <TD>Tax type<SPAN  id="fieldTaxname1Sale">xxiva16%</SPAN></TD>
+        </TR>
+      </TABLE>
+      <TABLE width="80%">
+        <TR class="Border TableDetailHeader" border="1" cellspacing="0" cellpadding="0"> 
+          <TD width="16%" >Invoice</TD>
+          <TD width="10%" >Date</TD>
+          <TD width="30%" >Business Partner</TD>
+          <TD width="24%" align="center" >Taxable base</TD>
+          <TD width="20%" align="right" >Import</TD>
+        </TR>
+        <DIV id="sectionDetail1Sale"> 
+          <TR class="Border TableDetailRowEven" border="1" cellspacing="0" cellpadding="0" id="selEliminar1Sale"> 
+            <TD>&nbsp;<SPAN id="fieldDocumentno1Sale">xx38383484</SPAN></TD>
+            <TD>&nbsp;<SPAN id="fieldDateinvoiced1Sale">xx</SPAN></TD>
+            <TD>&nbsp;<SPAN id="fieldBpartner1Sale">xx</SPAN></TD>
+            <TD align="center">&nbsp;<SPAN id="fieldTaxbaseamt1Sale">xx2394.48</SPAN></TD>
+            <TD align="right">&nbsp;<SPAN id="fieldTaxamt1Sale">xx88959.44</SPAN></TD>
+          </TR>
+        </DIV>
+        <TR> 
+          <TD>&nbsp;</TD>
+        </TR>
+        <TR  border="1" cellspacing="0" cellpadding="0"> 
+          <TD>&nbsp;<SPAN  id="functionCountInvoices1Sale">xx34</SPAN></TD>
+          <TD>&nbsp;</TD>
+          <TD>&nbsp;</TD>
+          <TD align="center">&nbsp;<SPAN  id="functionSumTaxbaseamt1Sale">xx746557.56</SPAN></TD>
+          <TD align="right">&nbsp;<SPAN  id="functionSumTaxamt1Sale">xx65756.87</SPAN></TD>
+        </TR>
+        <TR> 
+          <TD>&nbsp;</TD>
+        </TR>
+      </TABLE>
+    </DIV>
+  </DIV>
+  <DIV id="sectionPurchase"> 
+    <DIV  class="ReportTitle" id="paramPurchase">Purchase</DIV>
+    <DIV id="sectionTaxPurchase"> 
+      <TABLE width="90%" class="Border" border="1" cellspacing="0" cellpadding="0">
+        <TR class="TableHeaderLevel1"> 
+          <TD>Tax type<SPAN  id="fieldTaxnamePurchase">xxiva16%</SPAN></TD>
+        </TR>
+      </TABLE>
+      <TABLE width="80%">
+        <TR class="Border TableDetailHeader" border="1" cellspacing="0" cellpadding="0"> 
+          <TD width="16%" >Invoice</TD>
+          <TD width="10%" >Date</TD>
+          <TD width="30%" >Business Partner</TD>
+          <TD width="24%" align="center" >Taxable base</TD>
+          <TD width="20%" align="right" >Import</TD>
+        </TR>
+        <DIV id="sectionDetailPurchase"> 
+          <TR class="Border TableDetailRowEven" border="1" cellspacing="0" cellpadding="0" id="selEliminarPurchase"> 
+            <TD>&nbsp;<SPAN id="fieldDocumentnoPurchase">xx38383484</SPAN></TD>
+            <TD>&nbsp;<SPAN id="fieldDateinvoicedPurchase">xx</SPAN></TD>
+            <TD>&nbsp;<SPAN id="fieldBpartnerPurchase">xx</SPAN></TD>
+            <TD align="center">&nbsp;<SPAN id="fieldTaxbaseamtPurchase">xx2394.48</SPAN></TD>
+            <TD align="right">&nbsp;<SPAN id="fieldTaxamtPurchase">xx88959.44</SPAN></TD>
+          </TR>
+        </DIV>
+        <TR> 
+          <TD>&nbsp;</TD>
+        </TR>
+        <TR  border="1" cellspacing="0" cellpadding="0"> 
+          <TD>&nbsp;<SPAN  id="functionCountInvoicesPurchase">xx34</SPAN></TD>
+          <TD>&nbsp;</TD>
+          <TD>&nbsp;</TD>
+          <TD align="center">&nbsp;<SPAN  id="functionSumTaxbaseamtPurchase">xx746557.56</SPAN></TD>
+          <TD align="right">&nbsp;<SPAN  id="functionSumTaxamtPurchase">xx65756.87</SPAN></TD>
+        </TR>
+        <TR> 
+          <TD>&nbsp;</TD>
+        </TR>
+      </TABLE>
+    </DIV>
+    <BR></BR>
+    <DIV class="ReportTitle" id="paramTitlePurchase">xxFacturas al extranjero</DIV>
+    <DIV id="sectionTaxForeignPurchase"> 
+      <TABLE width="90%" class="Border" border="1" cellspacing="0" cellpadding="0">
+        <TR class="TableHeaderLevel1"> 
+          <TD>Tax type<SPAN  id="fieldTaxname1Purchase">xxiva16%</SPAN></TD>
+        </TR>
+      </TABLE>
+      <TABLE width="80%">
+        <TR class="Border TableDetailHeader" border="1" cellspacing="0" cellpadding="0"> 
+          <TD width="16%" >Invoice</TD>
+          <TD width="10%" >Date</TD>
+          <TD width="30%" >Business Partner</TD>
+          <TD width="24%" align="center" >Taxable base</TD>
+          <TD width="20%" align="right" >Import</TD>
+        </TR>
+        <DIV id="sectionDetail1Purchase"> 
+          <TR class="Border TableDetailRowEven" border="1" cellspacing="0" cellpadding="0" id="selEliminar1Purchase"> 
+            <TD>&nbsp;<SPAN id="fieldDocumentno1Purchase">xx38383484</SPAN></TD>
+            <TD>&nbsp;<SPAN id="fieldDateinvoiced1Purchase">xx</SPAN></TD>
+            <TD>&nbsp;<SPAN id="fieldBpartner1Purchase">xx</SPAN></TD>
+            <TD align="center">&nbsp;<SPAN id="fieldTaxbaseamt1Purchase">xx2394.48</SPAN></TD>
+            <TD align="right">&nbsp;<SPAN id="fieldTaxamt1Purchase">xx88959.44</SPAN></TD>
+          </TR>
+        </DIV>
+        <TR> 
+          <TD>&nbsp;</TD>
+        </TR>
+        <TR  border="1" cellspacing="0" cellpadding="0"> 
+          <TD>&nbsp;<SPAN  id="functionCountInvoices1Purchase">xx34</SPAN></TD>
+          <TD>&nbsp;</TD>
+          <TD>&nbsp;</TD>
+          <TD align="center">&nbsp;<SPAN  id="functionSumTaxbaseamt1Purchase">xx746557.56</SPAN></TD>
+          <TD align="right">&nbsp;<SPAN  id="functionSumTaxamt1Purchase">xx65756.87</SPAN></TD>
+        </TR>
+        <TR> 
+          <TD>&nbsp;</TD>
+        </TR>
+      </TABLE>
+    </DIV>
+  </DIV>
+               
+</form>
+</body>
+</html>

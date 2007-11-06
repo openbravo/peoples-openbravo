@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<database name="FUNCTION AD_UPDATE_SEQUENCE">
+<function name="AD_UPDATE_SEQUENCE">
+<body><![CDATA[
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+ TYPE RECORD IS REF CURSOR;
+   Cur_Script RECORD;
+   Cur_Tables RECORD;
+ v_NextNo NUMBER;
+ v_Aux NUMBER;
+ BEGIN
+   select count(*)
+    into v_aux
+      from ad_sequence
+    where name='AD_Sequence';
+    
+    if v_Aux=0 then
+      INSERT INTO AD_Sequence
+        (AD_Sequence_ID, AD_Client_ID, AD_Org_ID,
+        IsActive, Created, CreatedBy, Updated, UpdatedBy,
+        Name, Description,
+        IsAutoSequence, StartNo, IncrementNo, CurrentNextSys, CurrentNext,
+        IsAudited, IsTableID, StartNewYear)
+     VALUES
+        (1, 0, 0,
+        'Y', now(), 0, now(), 0,
+        'AD_Sequence', 'AD_Sequence',
+        'Y', 1000000, 1, 2, 0,
+        'N', 'Y', 'N');
+     
+    end if;
+    
+      FOR Cur_Tables IN (
+     SELECT AD_TABLE_ID, TABLENAME
+     FROM AD_TABLE
+     WHERE NOT EXISTS (SELECT 1
+                       FROM AD_SEQUENCE
+                       WHERE AD_SEQUENCE.NAME = AD_TABLE.TABLENAME
+                         AND AD_SEQUENCE.AD_CLIENT_ID = 0)
+     ) LOOP
+     --  Get next number
+     AD_Sequence_Next('AD_Sequence', 0, v_NextNo);
+
+     --  Insert
+     INSERT INTO AD_Sequence
+        (AD_Sequence_ID, AD_Client_ID, AD_Org_ID,
+        IsActive, Created, CreatedBy, Updated, UpdatedBy,
+        Name, Description,
+        IsAutoSequence, StartNo, IncrementNo, CurrentNextSys, CurrentNext,
+        IsAudited, IsTableID, StartNewYear)
+     VALUES
+        (v_NextNo, 0, 0,
+        'Y', now(), 0, now(), 0,
+        Cur_Tables.TABLENAME, Cur_Tables.TABLENAME,
+        'Y', 1000000, 1, 0, 0,
+        'N', 'Y', 'N');
+   END LOOP;                DELETE FROM AD_SCRIPT_SQL;
+   Ad_Update_Sequence_Generate() ;
+   FOR Cur_Script IN
+     (SELECT STRSQL FROM AD_SCRIPT_SQL)
+   LOOP
+     EXECUTE IMMEDIATE(Cur_Script.STRSQL) ;
+   END LOOP;
+END Ad_Update_Sequence]]>
+</body>
+</function>
+</database>

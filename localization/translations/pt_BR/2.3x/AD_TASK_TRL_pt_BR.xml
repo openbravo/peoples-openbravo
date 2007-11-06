@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="pt_BR" table="AD_TASK">
+  <row id="102" trl="Y">
+    <value column="Name" original="Java Version">Versão do Java</value>
+    <value column="Description" original="Displays the version of the default Java VM">Mostra a versão da Java VM por defeito</value>
+    <value column="Help" original="The java version used by the application might be different."></value>
+  </row>
+  <row id="103" trl="Y">
+    <value column="Name" original="Database Export">Exportar BD</value>
+    <value column="Description" original="Export (save) the database">Exportar (guardar) a base de dados</value>
+    <value column="Help" original="Run this command from the server">Run this command from the server</value>
+  </row>
+  <row id="104" trl="Y">
+    <value column="Name" original="Database Transfer">Transpasso BD</value>
+    <value column="Description" original="Transfer the database">Transpasse da base de dados</value>
+    <value column="Help" original="Run this command from the server">Correr este comando do servidor</value>
+  </row>
+  <row id="800000" trl="Y">
+    <value column="Name" original="Merge Script">Script de diferenças</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800001" trl="Y">
+    <value column="Name" original="Preinstall">Pré Instalação</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800002" trl="Y">
+    <value column="Name" original="Version">Versão</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800003" trl="Y">
+    <value column="Name" original="External Point of Sales">f</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+  <row id="800004" trl="Y">
+    <value column="Name" original="fdd">fdd</value>
+    <value column="Description" original=""></value>
+    <value column="Help" original=""></value>
+  </row>
+</compiereTrl>

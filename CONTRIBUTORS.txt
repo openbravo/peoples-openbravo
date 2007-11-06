@@ -1,0 +1,8 @@
+Openbravo wants to thank to the following people for their contributions to the Openbravo ERP project.
+
+Contributors
+------------
+Stefan Huehner <stefan@huehner.org> - Bug fixing, code clean up
+Mario Martinez Rodriguez <mayosoft@gmail.com> - Openbravo 2.0x to 2.2x artwork 
+Ben Sommerville <ben.sommerville@eintel.com.au> - Bug fixing
+Ville Lindfors <ville.lindfors@bonware.com> - Code clean up

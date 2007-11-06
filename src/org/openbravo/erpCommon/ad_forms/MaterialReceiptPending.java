@@ -1,0 +1,284 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+package org.openbravo.erpCommon.ad_forms;
+
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
+
+import org.openbravo.erpCommon.utility.*;
+import org.openbravo.erpCommon.reference.*;
+import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.xmlEngine.XmlDocument;
+import java.io.*;
+import javax.servlet.*;
+import java.util.*;
+import javax.servlet.http.*;
+
+import org.openbravo.utils.Replace;
+
+// imports for transactions
+import java.sql.Connection;
+
+import org.openbravo.erpCommon.utility.DateTimeData;
+
+import org.openbravo.erpCommon.utility.ComboTableData;
+
+public class MaterialReceiptPending extends HttpSecureAppServlet {
+  private static final long serialVersionUID = 1L;
+  static int total = 0;
+
+  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    
+    if (!Utility.hasFormAccess(this, vars, "", "org.openbravo.erpCommon.ad_forms.MaterialReceiptPending")) {
+      bdError(response, "AccessTableNoView", vars.getLanguage());
+      return;
+    }
+
+    if (vars.commandIn("DEFAULT")) {
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "MaterialReceiptPending|DateFrom", "");
+      String strDateTo = vars.getGlobalVariable("inpDateTo", "MaterialReceiptPending|DateTo", "");
+      String strC_BPartner_ID = vars.getGlobalVariable("inpcBpartnerId", "MaterialReceiptPending|C_BPartner_ID", "");
+      String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId", "MaterialReceiptPending|AD_Org_ID", vars.getOrg());
+      vars.setSessionValue("MaterialReceiptPending|isSOTrx", "Y");
+      printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo);
+    } else if (vars.commandIn("FIND")) {
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "MaterialReceiptPending|DateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "MaterialReceiptPending|DateTo");
+      String strC_BPartner_ID = vars.getRequestGlobalVariable("inpcBpartnerId", "MaterialReceiptPending|C_BPartner_ID");
+      String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId", "MaterialReceiptPending|AD_Org_ID");
+      printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo);
+    } else if (vars.commandIn("GENERATE")) {
+      String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder");
+      //New message system
+      OBError myMessage = processPurchaseOrder(vars, strcOrderLineId);
+      vars.setMessage("MaterialReceiptPending", myMessage);
+      //vars.setSessionValue("MaterialReceiptPending|message", strMessage);
+      
+      response.sendRedirect(strDireccion + request.getServletPath());
+  } else pageError(response);
+}
+
+
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    String discard[]={"sectionDetail"};
+    XmlDocument xmlDocument=null;
+    
+    //String strMessage = vars.getSessionValue("MaterialReceiptPending|message");
+    //vars.removeSessionValue("MaterialReceiptPending|message");
+    
+    MaterialReceiptPendingData[] data=null;
+    String strTreeOrg = MaterialReceiptPendingData.treeOrg(this, vars.getClient());
+    if (strC_BPartner_ID.equals("") && strAD_Org_ID.equals("")){
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/MaterialReceiptPending", discard).createXmlDocument();
+      data = MaterialReceiptPendingData.set();
+    } else {
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/MaterialReceiptPending").createXmlDocument();
+      String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
+      data = MaterialReceiptPendingData.selectLines(this, strDateFormat, Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strC_BPartner_ID);
+    }
+      
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "MaterialReceiptPending", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
+    toolbar.prepareSimpleToolBarTemplate();
+    xmlDocument.setParameter("toolbar", toolbar.toString()); 
+
+	  try {
+      KeyMap key = new KeyMap(this, vars, "MaterialReceiptPending.html");
+      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    try {
+      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.MaterialReceiptPending");
+      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+      xmlDocument.setParameter("theme", vars.getTheme());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "MaterialReceiptPending.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      xmlDocument.setParameter("navigationBar", nav.toString());
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "MaterialReceiptPending.html", strReplaceWith);
+      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    {
+      OBError myMessage = vars.getMessage("MaterialReceiptPending");
+      vars.removeMessage("MaterialReceiptPending");
+      if (myMessage!=null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
+    }
+      
+    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
+    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("paramBPartnerId", strC_BPartner_ID);
+    xmlDocument.setParameter("paramAdOrgId", strAD_Org_ID);
+    xmlDocument.setParameter("dateFrom", strDateFrom);
+    xmlDocument.setParameter("dateTo", strDateTo);
+    xmlDocument.setParameter("paramBPartnerDescription", MaterialReceiptPendingData.bPartnerDescription(this, strC_BPartner_ID));
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "AD_Org Security validation", Utility.getContext(this, vars, "#User_Org", "MaterialReceiptPending"), Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "MaterialReceiptPending", strAD_Org_ID);
+      xmlDocument.setData("reportAD_Org_ID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    //xmlDocument.setParameter("paramMessage", (strMessage.equals("")?"":"alert('" + strMessage + "');"));
+    
+    xmlDocument.setParameter("displayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setData("structure1", data);
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  OBError processPurchaseOrder(VariablesSecureApp vars, String strcOrderLineId)
+      throws IOException, ServletException {
+    String strMessageResult = "";
+    OBError myMessage = null;    
+    
+    myMessage = new OBError();
+    myMessage.setTitle("");
+    if (strcOrderLineId.equals("")){
+//    	New message system
+        myMessage.setType("Success");        
+        myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+        return myMessage;
+        //return "";
+    }
+     
+    Connection conn = null;
+    try{
+      conn = this.getTransactionConnection();
+      if (strcOrderLineId.startsWith("(")) strcOrderLineId = strcOrderLineId.substring(1, strcOrderLineId.length()-1);
+      if (!strcOrderLineId.equals("")) {
+        strcOrderLineId = Replace.replace(strcOrderLineId, "'", "");
+        StringTokenizer st = new StringTokenizer(strcOrderLineId, ",", false);
+        String strmInoutId = "";
+        String strDateReceipt = "";
+        String docTargetType = MaterialReceiptPendingData.cDoctypeTarget(this, Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), Utility.getContext(this, vars, "#User_Org", "MaterialReceiptPending"));
+        String strLastBpartnerId = "";
+        int line = 0;
+        while (st.hasMoreTokens()) {
+          String strOrderlineId = st.nextToken().trim();
+          MaterialReceiptPendingData[] data = MaterialReceiptPendingData.select(this, strOrderlineId);
+          if (!strLastBpartnerId.equals(data[0].cBpartnerId)){
+            if (!strmInoutId.equals("")){
+              strMessageResult = mInoutPost(conn, vars, strmInoutId);
+            }
+            line = 10;
+            strmInoutId = SequenceIdData.getSequence(this, "M_InOut", vars.getClient());
+            String strDocumentno = Utility.getDocumentNo(this, vars, "", "M_InOut", Utility.getContext(this, vars, "C_DocTypeTarget_ID", docTargetType), Utility.getContext(this, vars, "C_DocType_ID", docTargetType), false, true);
+           strDateReceipt = vars.getStringParameter("inpDateReceipt" + data[0].cBpartnerId);
+
+            if (strDateReceipt.equals("")){
+            	myMessage.setType("Success");        
+                myMessage.setMessage(Utility.messageBD(this, "DateReceipt", vars.getLanguage()) + " " + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
+                return myMessage;
+            	//return(Utility.messageBD(this, "DateReceipt", vars.getLanguage()) + " " + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
+            }
+            MaterialReceiptPendingData.insert(conn, this, strmInoutId, vars.getClient(), vars.getOrg(), "Y", vars.getUser(), vars.getUser(), "N", strDocumentno, "CO", "DR", "N", "N", "N", docTargetType, data[0].description, data[0].cOrderId, data[0].dateordered, "N", "V+", strDateReceipt, strDateReceipt, data[0].cBpartnerId, data[0].cBpartnerLocationId, data[0].mWarehouseId, data[0].poreference, data[0].deliveryrule, data[0].freightcostrule, data[0].freightamt, data[0].deliveryviarule, data[0].mShipperId, data[0].cChargeId, data[0].chargeamt, data[0].priorityrule, "N", "N", "N", vars.getUser(), data[0].salesrepId, data[0].adOrgtrxId, data[0].cProjectId, data[0].cCampaignId, data[0].cActivityId, data[0].user1Id, data[0].user2Id, "N", "N", "N");
+          }
+          strLastBpartnerId = data[0].cBpartnerId;
+          String strQtyordered = vars.getStringParameter("inpQtyordered" + strOrderlineId);
+          String strLocator = vars.getStringParameter("inpmLocatorId" + strOrderlineId);
+          String strSequenceLine = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
+          MaterialReceiptPendingLinesData[] dataLine = MaterialReceiptPendingLinesData.select(this, strOrderlineId);
+
+          MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(), vars.getOrg(), "Y", vars.getUser(), vars.getUser(), String.valueOf(line), dataLine[0].description, strmInoutId, strOrderlineId, strLocator, dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N", dataLine[0].lot, dataLine[0].serno, dataLine[0].mAttributesetinstanceId, "N", dataLine[0].quantityorder, dataLine[0].mProductUomId);
+          line += 10;
+        }
+        strMessageResult = mInoutPost(conn, vars, strmInoutId);
+      }
+      releaseCommitConnection(conn);
+    }
+    catch (Exception e){
+      try {
+        releaseRollbackConnection(conn);
+      } catch (Exception ignored) {}
+      e.printStackTrace();
+      log4j.warn("Rollback in transaction");
+  	myMessage.setType("Error");        
+    myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+    return myMessage;
+      //return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+    }
+    myMessage.setType("Success");        
+    myMessage.setMessage(strMessageResult.equals("")?Utility.messageBD(this, "Success", vars.getLanguage()):strMessageResult);
+    return myMessage;
+    //return strMessageResult.equals("")?Utility.messageBD(this, "Success", vars.getLanguage()):strMessageResult;
+  }
+
+  String mInoutPost(Connection conn, VariablesSecureApp vars, String strmInoutId)
+      throws IOException, ServletException {
+    String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+    //System.out.println("*************************"+pinstance);
+
+    PInstanceProcessData.insertPInstance(this, pinstance, "109", strmInoutId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
+    //PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y", vars.getClient(), vars.getOrg(), vars.getUser());
+    MaterialReceiptPendingData.mInoutPost0(conn, this, pinstance);
+    
+    PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
+    String messageResult="";
+    if (pinstanceData!=null && pinstanceData.length>0) {
+      if (!pinstanceData[0].errormsg.equals("")) {
+        String message = pinstanceData[0].errormsg;
+        //System.out.println("*****************1"+message);
+        if (message.startsWith("@") && message.endsWith("@")) {
+          message = message.substring(1, message.length()-1);
+          if (message.indexOf("@")==-1) messageResult = Utility.messageBD(this, message, vars.getLanguage());
+          else messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), "@" + message + "@");
+        } else {
+          messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), message);
+        }
+      } else if (!pinstanceData[0].pMsg.equals("")) {
+        //String message = pinstanceData[0].pMsg;
+        //messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), message);
+        total += 1;
+        messageResult = Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total);
+      } else if (pinstanceData[0].result.equals("1")) {
+        //messageResult = Utility.messageBD(this, "Success", vars.getLanguage());
+        total += 1;
+        messageResult = Utility.messageBD(this, "Created", vars.getLanguage() + " :" + String.valueOf(total));
+      } else {
+        messageResult = Utility.messageBD(this, "Error", vars.getLanguage());
+      }
+    }
+    return messageResult;
+  }
+
+
+  public String getServletInfo() {
+    return "Servlet MaterialReceiptPending. This Servlet was made by Jon Alegría";
+  } // end of getServletInfo() method
+}
+

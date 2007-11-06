@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="zh_CN" table="AD_FIELDGROUP">
+    <row id="101" trl="N">
+        <value column="Name" original="Status">状态</value>
+    </row>
+    <row id="102" trl="N">
+        <value column="Name" original="Quantities">数量</value>
+    </row>
+    <row id="103" trl="N">
+        <value column="Name" original="Amounts">金额</value>
+    </row>
+    <row id="104" trl="N">
+        <value column="Name" original="Reference">付款参考</value>
+    </row>
+    <row id="105" trl="N">
+        <value column="Name" original="History">动作历史</value>
+    </row>
+    <row id="106" trl="N">
+        <value column="Name" original="Product">产品</value>
+    </row>
+    <row id="107" trl="N">
+        <value column="Name" original="Business Partner">商业伙伴</value>
+    </row>
+    <row id="108" trl="N">
+        <value column="Name" original="Warehouse">仓库或服务位置</value>
+    </row>
+    <row id="109" trl="N">
+        <value column="Name" original="Bank">银行</value>
+    </row>
+    <row id="110" trl="N">
+        <value column="Name" original="Cash Book">现金薄</value>
+    </row>
+    <row id="111" trl="N">
+        <value column="Name" original="Tax">税</value>
+    </row>
+    <row id="112" trl="N">
+        <value column="Name" original="Project">项目(服务)</value>
+    </row>
+    <row id="113" trl="N">
+        <value column="Name" original="General">通用</value>
+    </row>
+    <row id="114" trl="N">
+        <value column="Name" original="Action">操作</value>
+    </row>
+    <row id="115" trl="N">
+        <value column="Name" original="Standard Cost">标准成本</value>
+    </row>
+    <row id="116" trl="N">
+        <value column="Name" original="Actual Costs">实际成本</value>
+    </row>
+    <row id="117" trl="N">
+        <value column="Name" original="Statistics">统计信息</value>
+    </row>
+    <row id="118" trl="N">
+        <value column="Name" original="Defaults">缺省帐户</value>
+    </row>
+    <row id="119" trl="N">
+        <value column="Name" original="Request Management">请求管理</value>
+    </row>
+    <row id="120" trl="N">
+        <value column="Name" original="Web Store">网上商店</value>
+    </row>
+    <row id="121" trl="N">
+        <value column="Name" original="Internal">内部的</value>
+    </row>
+    <row id="122" trl="N">
+        <value column="Name" original="External">外部</value>
+    </row>
+    <row id="123" trl="N">
+        <value column="Name" original="Common">通常的</value>
+    </row>
+    <row id="124" trl="N">
+        <value column="Name" original="Shipment">物料出货</value>
+    </row>
+    <row id="125" trl="N">
+        <value column="Name" original="Document">文件</value>
+    </row>
+    <row id="126" trl="N">
+        <value column="Name" original="Line">行号</value>
+    </row>
+    <row id="800000" trl="N">
+        <value column="Name" original="Dimensions">维度</value>
+    </row>
+</compiereTrl>

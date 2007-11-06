@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+<java_TMP>
+package org.openbravo.erpCommon.ad_callouts;
+
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.erpCommon.utility.*;
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class ComboReloads<PARAMETER_TMP id="paramTabId">xx</PARAMETER_TMP> extends CalloutHelper {
+  private static final long serialVersionUID = 1L;
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId, String windowId) throws IOException, ServletException {
+    log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    
+
+    StringBuffer resultado = new StringBuffer();
+    boolean isFirst=true;
+    ComboTableData comboTableData = null;
+    resultado.append("var calloutName='ComboReloads<PARAMETER_TMP id="paramTabId">xx</PARAMETER_TMP>';\n\n");
+    resultado.append("var respuesta = new Array(\n");
+    <FIELDS_TMP id="sectionDetail">
+    if (vars.commandIn(<FIELD_TMP id="fieldColumnsName">"xx"</FIELD_TMP>)) {
+      try {
+        if (!isFirst) resultado.append(", \n");
+        comboTableData = new ComboTableData(vars, this, "<FIELD_TMP id="fieldReference1">17</FIELD_TMP>", "<FIELD_TMP id="fieldColumnName1">name</FIELD_TMP>", "<FIELD_TMP id="fieldReferenceValue1">name</FIELD_TMP>", "<FIELD_TMP id="fieldValidation1">name</FIELD_TMP>", Utility.getContext(this, vars, "#User_Org", windowId), Utility.getContext(this, vars, "#User_Client", windowId), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, windowId, "");
+        resultado.append("new Array(\"<FIELD_TMP id="fieldColumnChange">xx</FIELD_TMP>\", ");
+        resultado.append(generateArray(comboTableData.select(false)));
+        comboTableData = null;
+        resultado.append(")");
+        isFirst=false;
+      } catch (ServletException ex) {
+        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), ex.toString());
+        bdErrorHidden(response, myError.getType(), myError.getTitle(), myError.getMessage());
+        return;
+      } catch (Exception ex1) {
+        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), ex1.toString());
+        bdErrorHidden(response, myError.getType(), myError.getTitle(), myError.getMessage());
+        return;
+      }
+    }
+    </FIELDS_TMP>
+    resultado.append("\n);");
+
+    xmlDocument.setParameter("array", resultado.toString());
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+}
+</java_TMP>

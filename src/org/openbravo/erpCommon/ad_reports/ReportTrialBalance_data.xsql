@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="ReportTrialBalanceData" package="org.openbravo.erpCommon.ad_reports">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT SUM(PARENT_ID) AS PARENT_ID, ID, NAME, ACCOUNT_ID, ELEMENTLEVEL, SUM(AMTACCTDR) AS AMTACCTDR, 
+      SUM(AMTACCTCR) AS AMTACCTCR, SUM(SALDO_INICIAL) AS SALDO_INICIAL,0 AS TOTALAMTACCTDR, 0 AS TOTALAMTACCTCR,
+      SUM(SALDO_INICIAL+AMTACCTDR-AMTACCTCR) AS SALDO_FINAL, TO_DATE(?) AS DATE_FROM, TO_DATE(?) AS DATE_TO, ? AS AD_ORG_ID,
+      '' AS BP
+      FROM
+      (SELECT AD_TREENODE.PARENT_ID, C_ELEMENTVALUE.C_ELEMENTVALUE_ID AS ID, C_ELEMENTVALUE.ELEMENTLEVEL, 
+      C_ELEMENTVALUE.NAME AS NAME, C_ELEMENTVALUE.VALUE AS ACCOUNT_ID, 0 AS SALDO_INICIAL, 0 AS AMTACCTDR, 
+      0 AS AMTACCTCR
+      FROM AD_TREENODE, C_ELEMENTVALUE
+      WHERE AD_TREENODE.NODE_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
+      AND AD_TREENODE.AD_TREE_ID = ?
+      AND AD_TREENODE.ISACTIVE = 'Y'
+      AND C_ELEMENTVALUE.ISACTIVE = 'Y'
+      UNION		
+      SELECT 0 AS PARENT_ID, F.ACCOUNT_ID AS ID, EV.ELEMENTLEVEL, EV.NAME AS NAME, EV.VALUE AS ACCOUNT_ID, 
+      SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN F.AMTACCTDR-F.AMTACCTCR ELSE 0 END)) AS SALDO_INICIAL, 
+      SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE F.AMTACCTDR END)) AS AMTACCTDR, 
+      SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE f.AMTACCTCR END)) AS AMTACCTCR 
+      FROM FACT_ACCT F, C_ELEMENTVALUE EV
+      WHERE F.ACCOUNT_ID = EV.C_ELEMENTVALUE_ID
+      AND f.AD_ORG_ID IN('2')
+      AND F.AD_CLIENT_ID IN ('1')
+      AND F.AD_ORG_ID IN('1')
+      AND 1=1
+      AND F.FACTACCTTYPE <> 'R'
+      AND F.FACTACCTTYPE <> 'C'
+      AND F.ISACTIVE = 'Y'
+      GROUP BY ACCOUNT_ID,EV.NAME, EV.VALUE, EV.ELEMENTLEVEL) A
+      GROUP BY ID, NAME, ACCOUNT_ID, ELEMENTLEVEL
+      ORDER BY PARENT_ID, ID, NAME, ACCOUNT_ID, ELEMENTLEVEL
+      ]]></Sql>
+    <Field name="rownum" value="count"/>
+    <Parameter name="dateFrom"/>
+    <Parameter name="dateTo"/>
+    <Parameter name="org"/>
+    <Parameter name="treeAcct"/>
+    <Parameter name="orgFamily" type="replace" optional="true" after="f.AD_ORG_ID IN(" text="'2'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="F.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="F.AD_ORG_ID IN(" text="'1'"/>
+    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT >= TO_DATE(?)]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT < TO_DATE(?)]]></Parameter>
+    <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= ?]]></Parameter>
+    <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= ?]]></Parameter>
+  </SqlMethod>
+  
+  
+  <SqlMethod name="selectBP" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT 0 AS PARENT_ID, bp, ID, NAME, ACCOUNT_ID, ELEMENTLEVEL, SUM(AMTACCTDR) AS AMTACCTDR, 
+      SUM(AMTACCTCR) AS AMTACCTCR, SUM(SALDO_INICIAL) AS SALDO_INICIAL,0 AS TOTALAMTACCTDR, 0 AS TOTALAMTACCTCR,
+      SUM(SALDO_INICIAL+AMTACCTDR-AMTACCTCR) AS SALDO_FINAL, TO_DATE(?) AS DATE_FROM, TO_DATE(?) AS DATE_TO, ? AS AD_ORG_ID
+      FROM
+      (SELECT f.c_bpartner_id, bp.name as bp, 0 AS PARENT_ID, F.ACCOUNT_ID AS ID, EV.ELEMENTLEVEL, EV.NAME AS NAME, EV.VALUE AS ACCOUNT_ID, 
+      SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN F.AMTACCTDR-F.AMTACCTCR ELSE 0 END)) AS SALDO_INICIAL, 
+      SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE F.AMTACCTDR END)) AS AMTACCTDR, 
+      SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE f.AMTACCTCR END)) AS AMTACCTCR 
+      FROM C_ELEMENTVALUE EV, 
+           FACT_ACCT F left join c_bpartner bp on bp.c_bpartner_id = f.c_bpartner_id
+      WHERE F.ACCOUNT_ID = EV.C_ELEMENTVALUE_ID
+      AND f.AD_ORG_ID IN('2')
+      AND F.AD_CLIENT_ID IN ('1')
+      AND F.AD_ORG_ID IN('1')
+      AND 1=1
+      AND F.FACTACCTTYPE <> 'R'
+      AND F.FACTACCTTYPE <> 'C'
+      AND F.ISACTIVE = 'Y'
+      GROUP BY f.c_bpartner_id, bp.name, ACCOUNT_ID,EV.NAME, EV.VALUE, EV.ELEMENTLEVEL) A
+      GROUP BY bp, ID, NAME, ACCOUNT_ID, ELEMENTLEVEL
+      ORDER BY bp, ID, ACCOUNT_ID
+      ]]></Sql>
+    <Field name="rownum" value="count"/>
+    <Parameter name="dateFrom"/>
+    <Parameter name="dateTo"/>
+    <Parameter name="org"/>
+    <Parameter name="orgFamily" type="replace" optional="true" after="f.AD_ORG_ID IN(" text="'2'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="F.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="F.AD_ORG_ID IN(" text="'1'"/>
+    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT >= TO_DATE(?)]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT < TO_DATE(?)]]></Parameter>
+    <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= ?]]></Parameter>
+    <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND F.C_BPARTNER_ID IN]]></Parameter>
+  </SqlMethod>
+  
+  <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql></Sql>
+  </SqlMethod>
+  <SqlMethod name="treeOrg" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+        SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
+        WHERE AD_CLIENT_ID = ?
+    </Sql>
+    <Parameter name="client"/>
+  </SqlMethod>
+  <SqlMethod name="treeAccount" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+        SELECT AD_TREE_ID FROM AD_TREE
+        WHERE AD_CLIENT_ID = ?
+        AND TREETYPE = 'EV'
+        
+    </Sql>
+    <Parameter name="client"/>
+  </SqlMethod>
+  <SqlMethod name="selectCompany" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+        SELECT NAME
+        FROM AD_CLIENT
+        WHERE AD_CLIENT_ID = ?
+    </Sql>
+    <Parameter name="client"/>
+  </SqlMethod>
+  <SqlMethod name="selectAccount" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+        SELECT C_ElementValue.value as id, 
+        ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.value || ' - ' || C_ElementValue.Name) as name 
+        FROM C_ElementValue
+        WHERE C_ElementValue.AD_Org_ID IN('1') 
+        AND C_ElementValue.AD_Client_ID IN('1')  
+        AND C_ElementValue.IsSummary='N' 
+        AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = ? ) 
+        ORDER BY C_ElementValue.Value
+    ]]></Sql>
+  <Parameter name="adOrgClient" type="replace" optional="true" after="C_ElementValue.AD_Org_ID IN(" text="'1'"/>
+  <Parameter name="adUserClient" type="replace" optional="true" after="C_ElementValue.AD_Client_ID IN(" text="'1'"/>
+  <Parameter name="cElementvalueId"/>
+  </SqlMethod>
+
+  <SqlMethod name="selectAccountingName" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+        SELECT C_ELEMENTVALUE.VALUE||'-'||C_ELEMENTVALUE.NAME
+        FROM C_ELEMENTVALUE
+        WHERE C_ELEMENTVALUE.VALUE = ?
+        AND C_ELEMENTVALUE.ISACTIVE = 'Y'
+    ]]></Sql>
+  <Parameter name="cElementvalueId"/>
+  </SqlMethod>
+  <SqlMethod name="selectLastAccount" type="preparedStatement" return="string" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+	    SELECT MAX(C_ELEMENTVALUE.VALUE) AS ID 
+        FROM C_ELEMENTVALUE
+        WHERE C_ELEMENTVALUE.AD_Org_ID IN('1') 
+       AND C_ELEMENTVALUE.AD_Client_ID IN('1')  
+       AND C_ELEMENTVALUE.IsSummary='N'
+    ]]></Sql>
+  <Parameter name="adOrgClient" type="replace" optional="true" after="C_ELEMENTVALUE.AD_Org_ID IN(" text="'1'"/>
+  <Parameter name="adUserClient" type="replace" optional="true" after="C_ELEMENTVALUE.AD_Client_ID IN(" text="'1'"/>
+  </SqlMethod>
+</SqlClass>

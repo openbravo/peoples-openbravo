@@ -1,0 +1,157 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+
+  <TITLE>Linked Items</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META> 
+  <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">
+    var baseDirection = "../../../../../web/";
+  </SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">
+    LNG_POR_DEFECTO = "en_US";
+  </SCRIPT>
+  <SCRIPT language="JavaScript" type="text/javascript" id="fieldScript">
+  function windowSelect(tabId, recordId) {
+    return true;
+  }
+  </SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></SCRIPT>
+
+  <SCRIPT type="text/javascript">
+    dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+  </SCRIPT>
+
+</HEAD>
+<BODY>
+
+<DIV class="Popup_ContentPane_CircleLogo">
+  <DIV class="Popup_WindowLogo">
+    <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_relatedInfo" src="../../../../../web/images/blank.gif" border=0/></img>
+  </DIV>
+</DIV>
+
+<TABLE cellspacing="0" cellpadding="0" width="100%">
+
+  <TR>
+    <TD>
+      <TABLE cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
+        <TR class="Popup_NavBar_bg"><TD></TD>
+          <TD class="Popup_NavBar_separator_cell"></TD>
+          <TD class="Popup_NavBar_bg_logo_left"></TD>
+          <TD class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></TD>
+          <TD class="Popup_NavBar_bg_logo_right"></TD>
+          <TD class="Popup_NavBar_Popup_title_cell"><span>Sales Setup</a></TD>
+          <TD class="Popup_NavBar_separator_cell"></TD>
+        </TR>
+      </TABLE>
+    </TD>
+  </TR>
+
+  <TR>
+    <TD>
+      <TABLE cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar">
+        <TR>
+          <TD class="Popup_SeparatorBar_bg"></TD>
+        </TR>
+      </TABLE>
+    </TD>
+  </TR>
+
+<FORM id="form" method="POST" action="UsedByLink.html" name="frmMain">
+  <INPUT type="hidden" name="Command">
+<INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
+  <INPUT type="hidden" name="inpTabId" value="" id="fieldTabId"></INPUT>
+  <INPUT type="hidden" name="inpwindowId" value="" id="fieldWindowId"></INPUT> 
+  <INPUT type="hidden" name="inpkeyColumnId" value="" id="fieldKeyColumn"></INPUT> 
+  <INPUT type="hidden" name="inpkeyId" value="" id="fieldKeyId"></INPUT>
+  <INPUT type="hidden" name="inpadTabIdKey" value="" id="fieldAD_TAB_ID"></INPUT> 
+  <INPUT type="hidden" name="inptablename" value="" id="fieldTABLENAME"></INPUT> 
+  <INPUT type="hidden" name="inpcolumnname" value="" id="fieldCOLUMNNAME"></INPUT> 
+  <INPUT type="hidden" name="inpTableId" value="" id="fieldTableId"></INPUT>
+  <PARAMS_TMP id="fieldHiddens"></PARAMS_TMP>
+  <TR>
+    <TD>
+      <DIV class="Popup_ContentPane_Client" style="overflow: auto;">
+        <TABLE cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
+
+          <TR>
+            <TD class="TableEdition_OneCell_width"></TD>
+            <TD class="TableEdition_OneCell_width"></TD>
+            <TD class="TableEdition_OneCell_width"></TD>
+            <TD class="TableEdition_OneCell_width"></TD>
+          </TR>
+
+          <TR>
+            <TD class="TitleCell"><SPAN class="LabelText">Items lineked to</SPAN></TD>
+            <TD class="ReadOnly_Text_ContentCell" colspan=3><SPAN class="Label_ReadOnly_Text" id="fieldRecordIdentifier">xxSales Order - Order - 70003 - 01-04-2006 -43.85</SPAN></TD>
+
+          </TR>
+          <TR>
+            <TD colspan=4>
+              <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                <TR class="FieldGroup_TopMargin"></TR>
+                <TR>
+                  <TD class="FieldGroupTitle_Left"><IMG class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                  <TD class="FieldGroupTitle" id="paramName">Sales Order - Order Line</TD>
+                  <TD class="FieldGroupTitle_Right"><IMG class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                  <TD class="FieldGroupContent"></TD>
+
+                </TR>
+                <TR class="FieldGroup_BottomMargin"></TR>
+              </TABLE>
+            </TD>
+          </TR>
+          <DIV id="sectionDetail">
+            <TR>
+              <TD></TD>
+              <TD class="TitleCell" colspan=3 style="text-align:left;"><SPAN class="LabelText"><a class="LabelLink" href="#" onclick="windowSelect(xx);return false;" onmouseover="window.status='xx';return true;" onmouseout="window.status='';return true;" id="fieldName">xx70003 - 01 - APR - 06 - 43.85 - 10 - 37.8</a></span></TD>
+            </TR>
+            <TR class="Popup_Client_RelatedInfo_LineSeparator"><TD colspan=4></TD></TR>
+          </DIV>
+          <TR>
+            <TD></TD>
+            <TD class="Button_LeftAlign_ContentCell">
+              <DIV>
+                <TABLE class="Button" onclick="submitCommandForm('DEFAULT', false, null, 'UsedByLink.html', '_self');return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Back';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                  <TR>
+                    <TD class="Button_left"><img class="Button_Icon Button_Icon_back" alt="Back" title="Back" src="../../../../../web/images/blank.gif" border=0/></TD>
+                    <TD class="Button_text Button_width">Back</TD>
+                    <TD class="Button_right"></TD>
+                  </TR>
+                </TABLE>
+              </DIV>
+            </TD>
+            <TD></TD>
+            <TD></TD>
+
+
+
+        </TABLE>
+      </DIV>
+    </TD>
+  </TR>
+</TABLE>
+
+</BODY>
+</HTML>

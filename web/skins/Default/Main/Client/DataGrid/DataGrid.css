@@ -1,0 +1,297 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+.datagridContainer {
+}
+
+/* Icons */
+
+.DataGrid_Header_icon_ascArrow {
+  border: 0px none;
+  width: 7px;
+  height: 5px;
+  margin: 0px;
+  vertical-align: middle;
+  background: url(iconAscArrow.png);
+}
+
+.DataGrid_Header_icon_descArrow {
+  border: 0px hidden;
+  width: 7px;
+  height: 5px;
+  margin: 0px;
+  vertical-align: middle;
+  background: url(iconDescArrow.png);
+}
+
+.DataGrid_Header_icon_delete {
+  border: 0px hidden;
+  width: 15px;
+  height: 14px;
+  margin: 0px;
+  vertical-align: middle;
+  background: url(iconDelete.png);
+}
+
+/* Table */
+
+table.DataGrid_Header_Table {
+  border-top: #505050 4px solid; 
+  border-right: #505050 4px solid; 
+  border-left: #505050 4px solid; 
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 0px; 
+  padding: 0px;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  text-indent: 2pt; 
+  z-index: 100;
+  vertical-align: middle !important;
+}
+
+table.DataGrid_Body_Table {
+  border-bottom: #505050 4px solid; 
+  border-right: #505050 4px solid; 
+  border-left: #505050 4px solid; 
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 0px; 
+  padding: 0px;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size : 8pt;
+  text-indent: 2pt; 
+  z-index : 100;
+  vertical-align: middle !important;
+}
+
+/* Rows */
+
+tr.DataGrid_Body_Row {
+  font-weight: normal;
+  height: 19px;
+  vertical-align: middle !important;
+  overflow: hidden;
+  vertical-align: 50%;
+}
+
+tr.DataGrid_Body_Row_Even, tr.DataGrid_Body_Row_1 {
+  background: none;
+  background: url(backgroundRow.even.normal.png) repeat-x;
+  background-color: #E1E1E1;
+  _background-color: #DDDDDD;
+}
+
+tr.DataGrid_Body_Row_Odd, tr.DataGrid_Body_Row_0 {
+  background: none;
+  background: url(backgroundRow.odd.normal.png) repeat-x;
+  background-color: #C0CFDC;
+  _background-color: #B9C9D8;
+}
+
+tr.DataGrid_Body_Row_selected {
+  background: none;
+  background: url(backgroundRow.selected.png) repeat-x;
+  background-color: #569633;
+  _background-color: #4A8C29;
+  color: #FFFFFF;
+}
+
+/* Cells */
+
+th {
+
+}
+
+th.DataGrid_Header_Cell {
+  font-weight: normal;
+  height: 23px;
+  _height: 20px;
+  vertical-align: middle !important;
+  overflow: hidden;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  padding: 1px 0px 1px 2px;
+  text-indent: 2px;
+  text-align: left;
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #000000;
+  border-left : 1px solid #000000;
+  background: none;
+  background: url(backgroundHeader.normal.png) repeat-x;
+  background-color: #A6A6A6;
+  _background-color: #9D9D9D;
+  color: #000000;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+th.DataGrid_Header_Cell_hover {
+  background: none;
+  background: url(backgroundHeader.rollover.png) repeat-x;
+  background-color: #BEBEBE;
+  _background-color: #B7B7B7;
+  font-weight: bold !important;
+}
+
+th.DataGrid_Header_Cell_active {
+  background: url(backgroundHeader.pressed.png);
+  color: #000000;
+  font-weight: bold;
+}
+
+th.DataGrid_Header_Cell_sorted {
+  background: url(backgroundHeader.selected.png);
+  color: #000000;
+  font-weight: bold;
+}
+
+th.DataGrid_Header_LineNoCell {
+  padding: 1px 0px 1px 2px;
+  text-align: left;
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #000000;
+  border-left: 1px solid #000000;
+  background: none !important;
+  background-color : #505050 !important;
+  color: #505050;
+}
+
+td.DataGrid_Body_Cell {
+  font-family: tahoma, arial, helvetica, sans-serif !important;
+  font-size: 8pt !important;
+  padding: 1px 0px 1px 2px;
+  text-indent: 2px;
+  text-align: left;
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  border-right: 1px solid #808080;
+  border-left: 1px solid #808080;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle !important;
+}
+
+td.DataGrid_Body_Cell span {
+  white-space: nowrap;
+}
+
+td.DataGrid_Body_Cell_selected {
+  font-weight: normal;
+  vertical-align: middle !important;
+}
+
+td.DataGrid_Body_Cell_clicked {
+  font-weight: bold;
+  vertical-align: middle !important;
+}
+
+td.DataGrid_Body_Cell_hover {
+  color: #000000 !important;
+  vertical-align: middle !important;
+  background: none;
+  background: url(backgroundRow.rollover.png) repeat-x;
+  background-color: #A3D77F;
+  _background-color: #97D070;
+}
+
+td.DataGrid_Body_Cell_RadioButton {
+  text-align: -moz-center !important;
+  _text-align: center !important;
+  margin: 0px 0px 0px 2px !important;
+  padding: 0px 0px 0px 2px !important;
+}
+
+td.DataGrid_Body_Cell_CheckBox {
+  text-align: -moz-left !important;
+  _text-align: left !important;
+  margin: 0px 0px 0px 2px !important;
+  padding: 0px 0px 0px 2px !important;
+}
+
+td.DataGrid_Body_LineNoCell {
+  padding: 1px 0px 1px 2px;
+  text-align: left;
+  border-top:  1px solid #000000;
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #000000;
+  border-left:   1px solid #000000;
+  background: none;
+  background-color: #505050;
+  color: #ffffff;
+  overflow: hidden;
+  vertical-align: middle !important;
+}
+
+/* Others */
+
+
+.DataGrid_RadioButton {
+  margin: -3px 2px -2px 10px;
+  _margin: -3px 0px -2px 5px;
+  padding: -3px 2px -2px 10px;
+  _padding: -3px 0px -2px 5px;
+}
+
+.DataGrid_CheckBox {
+  margin: -3px 2px -2px 10px;
+  _margin: -3px 0px -2px 5px;
+  padding: -3px 2px -2px 10px;
+  _padding: -3px 0px -2px 5px;
+}
+
+.first {
+  border-left: 1px solid #b8b8b8;
+}
+
+.dojoDialog {
+  border: 2px solid #1c5d79;
+  padding: 1em;
+  padding-bottom: 1.7em;
+  background: #f3f3f3;
+}
+
+td.messageDialogText {
+  font-size: 14px;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  color: #1c5d79;
+}
+
+td.messageDialogTitle {
+  font-size: 18px;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  color: #1c5d79;
+}
+
+input.dialogButton {
+  width: auto;
+  border: none;
+  background-color: #e3edfa;
+  color: #000;
+  padding: 0.1em;
+  border-bottom: 1px solid #5885b6 !important;
+  border-right: 1px solid #5885b6 !important;
+  border-top: 1px solid #92b8e2 !important;
+  border-left: 1px solid #92b8e2 !important;
+  cursor: hand;
+  cursor: pointer;
+}

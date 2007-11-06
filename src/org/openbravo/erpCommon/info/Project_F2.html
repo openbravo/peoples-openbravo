@@ -1,0 +1,147 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+<html>
+<head>
+  <title>Project list</title>
+
+  <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></link>
+  <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></link>
+  <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+  <script language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</script>
+  <script language="JavaScript" type="text/javascript" id="paramLanguage">  LNG_POR_DEFECTO = "en_US";</script>
+  <script type="text/javascript">
+    dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+  </script>
+  <script language="JavaScript" type="text/javascript">
+    function loadData(pvalue, text, position) {
+      document.frmSelector.inpLastKeySelected.value = position;
+      document.frmSelector.inpTexto.value=pvalue + " - " + text;
+      return true;
+    }
+
+    var selectedRow = "";
+    function selectActual(obj) {
+      if (selectedRow != "") {
+        selectedRow.className = selectedRow.className.replace(' DataGrid_Body_Row_selected', '');
+      }
+      selectedRow = obj;
+      selectedRow.className += " DataGrid_Body_Row_selected";
+      selectedCheck = selectedRow.id.toString().replace('funcEvenOddRow', 'CheckNum');
+      document.getElementById(selectedCheck).checked = true;
+    }
+
+    function HoverCell(cell) {
+      cell.className = cell.className + ' DataGrid_Body_Cell_hover';
+    }
+
+    function unHoverCell(cell) {
+      cell.className = cell.className.replace(' DataGrid_Body_Cell_hover', '');
+    }
+  </script>
+</head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();focoPrimerControl();window.focus();" onresize="resizeArea();">
+<form name="frmSelector" method="POST" action="">
+  <input type="hidden" name="inpTexto"></input>
+  <input type="hidden" name="inpLastKeySelected"></input>
+<INPUT type="hidden" name="IsPopUpCall" value="1">
+  <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
+    <tr>
+      <td valign="top" class="Popup_Client_Selector_DataGrid_LeftMargin">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" id="tdleftSeparator">
+          <tr><td class="Popup_Client_Selector_DataGrid_LeftMargin"></td></tr>
+        </table>
+      </td>
+      <td valign="top">
+
+        <div style="overflow: auto; display: none;" id="client">
+
+          <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
+            <tr class="DataGrid_Body_Row"> 
+              <th width="3%"  class="DataGrid_Header_LineNoCell">&nbsp;</th>
+              <th width="11%" class="DataGrid_Header_Cell">Key</th>
+              <th width="40%" class="DataGrid_Header_Cell">Name</th>
+              <th width="32%" class="DataGrid_Header_Cell">Business Partner</th>
+              <th width="15%" class="DataGrid_Header_Cell">Situation</th>
+            </tr>
+
+            <div id="sectionDetail"> 
+              <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" onclick="selectActual(this); loadData('xx', 'hh'); return true;"  ondblclick="parent.inferior.depurarSelector('SAVE'); return true;" id="funcEvenOddRowxx">
+                <td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_RadioButton">
+                  <input type="radio" name="inpClave" value="xx" id="CheckNumxx" class="DataGrid_RadioButton"></input>
+                </td>
+                <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldClaveTD">xx</td>
+                <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldNombreTD">xx</td>
+                <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldTerceroTD">xx</td>
+                <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldSituacionTD">xx</td>
+              </tr>
+            </div>
+          </table>
+          
+          <table cellspacing="0" cellpadding="0" width="100%" style="text-align:-moz-center;_text-align:center;border-collapse:collapse;">
+
+            <td align=left width=50% style="padding-left: 7px;">
+
+              <table cellspacing="0" cellpadding="0" id="hasPrevious">
+                <td class="Main_ToolBar_textlabel_bg_left">
+                  <a href="#" onClick="return false;" class="Main_ToolBar_Button" onMouseOver="window.status='Reference';return true;" onMouseOut="window.status='';return true;" onclick="this.hideFocus=true" onblur="this.hideFocus=false" id="linkButtonRelatedInfo"><img class="Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Previous" src="../../../../../web/images/blank.gif" title="Reference" border="0" id="buttonRelatedInfo"></a>
+                </td>
+                <td class="Main_ToolBar_textlabel_bg_body" width=65px align="center"><a href="#" class="Main_ToolBar_text_relatedinfo">Previous</a></td>
+                <td width="1"><img src="../../../../../web/images/blank.gif" class="Main_ToolBar_textlabel_bg_right" border="0"></img></td>
+              </table>
+
+              <span id="withoutPrevious"></span>
+
+            </td>
+
+            <td align=right width=50% style="padding-right: 7px;">
+
+              <table cellspacing="0" cellpadding="0" id="hasNext">
+                <td width="1"><img src="../../../../../web/images/blank.gif" class="Main_ToolBar_textlabel_bg_left" border="0"></img></td>
+                <td class="Main_ToolBar_textlabel_bg_body" width=65px align=center><a href="#" class="Main_ToolBar_text_relatedinfo">Next</a></td>
+                <td class="Main_ToolBar_textlabel_bg_right">
+                  <a href="#" onClick="return false;" class="Main_ToolBar_Button" onMouseOver="window.status='Reference';return true;" onMouseOut="window.status='';return true;" onclick="this.hideFocus=true" onblur="this.hideFocus=false" id="linkButtonRelatedInfo"><img class="Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Next" src="../../../../../web/images/blank.gif" title="Reference" border="0" id="buttonRelatedInfo"></a>
+                </td>
+              </table>
+
+              <span id="withoutNext"></span>
+
+            </td>
+
+          </table>
+
+        </div>
+
+      </td>
+
+      <td valign="top" class="Popup_Client_Selector_DataGrid_RightMargin">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" id="tdrightSeparator">
+          <tr><td class="Popup_Client_Selector_DataGrid_RightMargin"></td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</form>
+</body>
+</html>

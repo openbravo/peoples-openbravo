@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<REPORT>
+	<template file="RptC_ProposalHeader.fo"/>
+	<structure name="structure1">
+		<FIELD id="fieldName" replaceCharacters="fo">bpname</FIELD>
+		<FIELD id="fieldAddress1" replaceCharacters="fo">address1</FIELD>
+		<FIELD id="fieldAddress2" replaceCharacters="fo">address2</FIELD>
+		<FIELD id="fieldLocation" replaceCharacters="fo">localidad</FIELD>
+		<FIELD id="fieldPhone" replaceCharacters="fo">phone</FIELD>
+		<FIELD id="fieldFax" replaceCharacters="fo">fax</FIELD>
+		<FIELD id="fieldDate" replaceCharacters="fo">fecha</FIELD>
+		<FIELD id="fieldProposal" replaceCharacters="fo">proposal</FIELD>
+		<FIELD id="fieldCity" replaceCharacters="fo">city</FIELD>
+		<FIELD id="fieldNamecontacto" replaceCharacters="fo">namecontacto</FIELD>
+		<FIELD id="fieldContacto" replaceCharacters="fo">contacto</FIELD>
+		<FIELD id="fieldHeadernote" replaceCharacters="fo">headernote</FIELD>
+		<FIELD id="fieldReference" replaceCharacters="fo">reference</FIELD>
+		<FIELD id="fieldCursymbol" replaceCharacters="fo">cursymbol</FIELD>
+		<FIELD id="fieldGreet" replaceCharacters="fo">greet</FIELD>
+		<FIELD id="fieldGreet1" replaceCharacters="fo">greetaux</FIELD>
+		<SECTION id="sectionDetailHeader"/>
+	</structure>
+	<DISCARD id="discard"/>
+</REPORT>

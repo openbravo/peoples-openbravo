@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<REPORT>
+  <template file="CopyFromSettlement_F4.html"/>
+  <PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramLanguage" name="language" default=""/>
+	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
+  <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
+  <PARAMETER id="paramSettlementFromId" name="paramSettlementFromId" attribute="value" default=""/>
+  <PARAMETER id="paramSettlementId" name="paramSettlementId" attribute="value" default=""/>
+
+  <structure name="structure">
+    <FIELD id="fieldBpartnerId" attribute="name" replace="xx">cDebtPaymentId</FIELD>
+    <FIELD id="fieldBpartnerId" attribute="value">cBpartnerId</FIELD>
+    <FIELD id="fieldRefButtonBPartner" attribute="onclick" replace="xx">cDebtPaymentId</FIELD>
+    <FIELD id="fieldRefButtonBPartner" attribute="onclick" replace="yy">cDebtPaymentId</FIELD>
+    <FIELD id="fieldRefButtonBPartner" attribute="onclick" replace="zz">cDebtPaymentId</FIELD>
+    <FIELD id="fieldBpartnerdescription" attribute="name" replace="xx">cDebtPaymentId</FIELD>
+    <FIELD id="fieldBpartnerdescription" attribute="value">tercero</FIELD>
+    <FIELD id="fieldDate" attribute="name" replace="xx">cDebtPaymentId</FIELD>
+    <FIELD id="fieldDate" attribute="value">dateplanned</FIELD>
+    <FIELD id="fieldDate" attribute="displayformat">dateformat</FIELD>
+    <FIELD id="fieldDate" attribute="saveformat">dateformat</FIELD>
+    <FIELD id="fieldRefButtonDate" attribute="onclick" replace="xx">cDebtPaymentId</FIELD>
+    <FIELD id="fieldRefButtonDate" attribute="onclick" replace="yy">cDebtPaymentId</FIELD>
+    <FIELD id="fieldDebe" attribute="name" replace="xx">cDebtPaymentBalancingId</FIELD>
+    <FIELD id="fieldDebe" attribute="value">amountdebit</FIELD>
+    <FIELD id="fieldHaber" attribute="name" replace="xx">cDebtPaymentBalancingId</FIELD>
+    <FIELD id="fieldHaber" attribute="value">amountcredit</FIELD>
+    <FIELD id="fieldAmount" attribute="name" replace="xx">cDebtPaymentId</FIELD>
+    <FIELD id="fieldAmount" attribute="value">amount</FIELD>
+    <FIELD id="fieldEfecto">efecto</FIELD>
+    <FIELD id="fieldConcepto">concepto</FIELD>
+    <SECTION id="sectionDetail" field="cDebtPaymentId"/>
+    <SECTION id="sectionConcepto" field="cDebtPaymentBalancingId"/>
+  </structure>
+  <DISCARD id="discard"/>
+</REPORT>

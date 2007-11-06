@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<database name="TABLE C_INVOICE">
+    <table name="C_INVOICE" primaryKey="C_INVOICE_KEY">
+      <column name="C_INVOICE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISSOTRX" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="DOCUMENTNO" primaryKey="false" required="true" type="NVARCHAR" size="30" autoIncrement="false"/>
+      <column name="DOCSTATUS" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false"/>
+      <column name="DOCACTION" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false"/>
+      <column name="PROCESSING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="PROCESSED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="POSTED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="C_DOCTYPE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_DOCTYPETARGET_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_ORDER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="ISAPPROVED" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="ISTRANSFERRED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ISPRINTED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="SALESREP_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="DATEINVOICED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="DATEPRINTED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="DATEACCT" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="C_BPARTNER_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_BPARTNER_LOCATION_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="POREFERENCE" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="ISDISCOUNTPRINTED" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="DATEORDERED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="C_CURRENCY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="PAYMENTRULE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="C_PAYMENTTERM_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_CHARGE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="CHARGEAMT" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
+      <column name="TOTALLINES" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
+      <column name="GRANDTOTAL" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
+      <column name="M_PRICELIST_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISTAXINCLUDED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="C_CAMPAIGN_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_PROJECT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_ACTIVITY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISPAID" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="CREATEFROM" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="GENERATETO" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="SENDEMAIL" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="AD_USER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="COPYFROM" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="ISSELFSERVICE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="AD_ORGTRX_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="USER1_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="USER2_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <check name="C_INVOICE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <check name="C_INVOICE_ISSOTRX_CHECK" condition="IsSOTrx in ('Y','N')"/>
+      <check name="C_INVOICE_PROCESSED_CHECK" condition="Processed in ('Y','N')"/>
+      <check name="C_INVOICE_ISAPPROVED_CHECK" condition="IsApproved in ('Y','N')"/>
+      <check name="C_INVOICE_ISTRANSFERRED_CHECK" condition="IsTransferred in ('Y','N')"/>
+      <check name="C_INVOICE_ISPRINTED_CHECK" condition="IsPrinted in ('Y','N')"/>
+      <check name="CINV_ISDISCOUNTPRINT_CHECK" condition="IsDiscountPrinted in ('Y','N')"/>
+      <check name="C_INVOICE_ISTAXINCLUDED_CHECK" condition="IsTaxIncluded in ('Y','N')"/>
+      <check name="C_INVOICE_ISPAID_CHECK" condition="IsPaid in ('Y','N')"/>
+      <check name="C_INVOICE_CREATEFROM_CHECK" condition="CreateFrom in ('Y','N')"/>
+      <check name="C_INVOICE_GENERATETO_CHECK" condition="GenerateTo in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CINVOICE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_CINVOICE">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_CINVOICE">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="ADUSER_CINVOICE">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="ADUSER_SR_CINVOICE">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CINVOICE">
+        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CINVOICE">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_BPLOCATION_CINVOICE">
+        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_CINVOICE">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CHARGE" name="CCHARGE_CINVOICE">
+        <reference local="C_CHARGE_ID" foreign="C_CHARGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CINVOICE">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_CINVOICE">
+        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPETARGET_CINVOICE">
+        <reference local="C_DOCTYPETARGET_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDER" name="CORDER_CINVOICE">
+        <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PAYMENTTERM" name="CPAYMENTTERM_CINVOICE">
+        <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CINVOICE">
+        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_CINVOICE">
+        <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      </foreign-key>
+      <index name="C_INVOICE_CLIENT_ORG_DATE_DOC">
+        <index-column name="AD_CLIENT_ID"/>
+        <index-column name="AD_ORG_ID"/>
+        <index-column name="DATEINVOICED"/>
+        <index-column name="DOCUMENTNO"/>
+      </index>
+      <index name="C_INVOICE_BPARTNER">
+        <index-column name="C_BPARTNER_ID"/>
+      </index>
+      <index name="C_INVOICE_DOCNO">
+        <index-column name="DOCUMENTNO"/>
+      </index>
+      <index name="C_INVOICE_UPDATED">
+        <index-column name="UPDATED"/>
+      </index>
+    </table>
+</database>

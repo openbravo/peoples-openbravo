@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<database name="FUNCTION C_ELEMENTVALUE_COPY">
+<function name="C_ELEMENTVALUE_COPY">
+<parameter name="p_Source_Element_ID" type="NUMERIC" mode="in"/>
+<parameter name="p_Target_Element_ID" type="NUMERIC" mode="in"/>
+<body><![CDATA[
+  /*************************************************************************
+  * The contents of this file are subject to the Compiere License
+  * Version 2.5.0 ("License"); You may not use this file except in
+  * compliance with the License. You may obtain a copy of the License at
+  * http://www.compiere.org/license.html
+  * Software distributed under the License is distributed on an
+  * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  * implied. See the License for the specific language governing rights
+  * and limitations under the License.
+  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
+  Inc.
+  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+  * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+  * All Rights Reserved.
+  * Contributor(s): Openbravo SL
+  * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+  *************************************************************************
+  *  Copies CoA
+  * All element values of p_Source_Element_ID to p_Target_Element_ID
+  */
+  TYPE RECORD IS REF CURSOR;
+    Cur_ElementValue RECORD;
+    v_xAD_Client_ID NUMBER;
+    v_xAD_Org_ID NUMBER;
+    v_xUpdated DATE;
+    v_xUpdatedBy NUMBER;
+    v_NextNo NUMBER;
+  BEGIN
+    --  Get target base info
+    SELECT AD_Client_ID,
+      AD_Org_ID,
+      Updated,
+      UpdatedBy
+    INTO v_xAD_Client_ID,
+      v_xAD_Org_ID,
+      v_xUpdated,
+      v_xUpdatedBy
+    FROM C_Element
+    WHERE C_Element_ID=p_Target_Element_ID;
+    FOR Cur_ElementValue IN
+      (SELECT *
+      FROM C_ElementValue
+      WHERE C_Element_ID=p_Source_Element_ID
+        AND IsActive='Y'
+      )
+    LOOP
+      AD_Sequence_Next('C_ElementValue', p_Target_Element_ID, v_NextNo) ;
+      INSERT
+      INTO C_ElementValue
+        (
+          C_ElementValue_ID, C_Element_ID, AD_Client_ID, AD_Org_ID,
+          IsActive, Created, CreatedBy, Updated,
+          UpdatedBy, Value, Name, Description,
+          AccountType, AccountSign, IsDocControlled, IsSummary,
+          ValidFrom, ValidTo, PostActual, PostBudget,
+          PostEncumbrance, PostStatistical, IsForeignCurrency, C_Currency_ID
+        )
+        VALUES
+        (
+          v_NextNo, p_Target_Element_ID, v_xAD_Client_ID, v_xAD_Org_ID,
+           'Y', v_xUpdated, v_xUpdatedBy, v_xUpdated,
+          v_xUpdatedBy, Cur_ElementValue.Value, Cur_ElementValue.Name, Cur_ElementValue.Description,
+          Cur_ElementValue.AccountType, Cur_ElementValue.AccountSign, Cur_ElementValue.IsDocControlled, Cur_ElementValue.IsSummary,
+          Cur_ElementValue.ValidFrom, Cur_ElementValue.ValidTo, Cur_ElementValue.PostActual, Cur_ElementValue.PostBudget,
+          Cur_ElementValue.PostEncumbrance, Cur_ElementValue.PostStatistical, Cur_ElementValue.IsForeignCurrency, Cur_ElementValue.C_Currency_ID
+        )
+        ;
+    END LOOP;
+    -- Commented by cromero 19102006 COMMIT;
+END C_ElementValue_Copy]]>
+</body>
+</function>
+</database>

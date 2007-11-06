@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="pt_BR" table="C_UOM">
+  <row id="100" trl="N">
+    <value column="Name" original="UNIDADE">Unidade</value>
+    <value column="Description" original=""></value>
+    <value column="UOMSymbol" original="UN ">Ud </value>
+  </row>
+  <row id="101" trl="N">
+    <value column="Name" original="HORA">Hora</value>
+    <value column="Description" original=""></value>
+    <value column="UOMSymbol" original="HR ">h  </value>
+  </row>
+  <row id="102" trl="N">
+    <value column="Name" original="DIA">Dia</value>
+    <value column="Description" original=""></value>
+    <value column="UOMSymbol" original="D  ">d  </value>
+  </row>
+  <row id="103" trl="N">
+    <value column="Name" original="MINUTOS">Minutos</value>
+    <value column="Description" original="(a unidade mais baixa para tempo de recursos)">(lowest unit for resorce assigments)</value>
+    <value column="UOMSymbol" original="MIN">min</value>
+  </row>
+  <row id="104" trl="N">
+    <value column="Name" original="DIA TRABALHADO">Dia trabalhista</value>
+    <value column="Description" original="8 hours">8 horas</value>
+    <value column="UOMSymbol" original="WD ">D  </value>
+  </row>
+  <row id="105" trl="N">
+    <value column="Name" original="SEMANA">Semana</value>
+    <value column="Description" original=""></value>
+    <value column="UOMSymbol" original="WK ">s  </value>
+  </row>
+  <row id="106" trl="N">
+    <value column="Name" original="MÊS">Mês</value>
+    <value column="Description" original="30 Dias">30 dias</value>
+    <value column="UOMSymbol" original="MO ">m  </value>
+  </row>
+  <row id="107" trl="N">
+    <value column="Name" original="MÊS TRABALHADO">Mês trabalhista</value>
+    <value column="Description" original="20 Dias">20 dias</value>
+    <value column="UOMSymbol" original="WM ">M  </value>
+  </row>
+  <row id="108" trl="N">
+    <value column="Name" original="ANO">Ano</value>
+    <value column="Description" original=""></value>
+    <value column="UOMSymbol" original="YR ">a  </value>
+  </row>
+  <row id="109" trl="N">
+    <value column="Name" original="KILOGRAMAS">KILOGRAMAS</value>
+    <value column="Description" original=""></value>
+    <value column="UOMSymbol" original="KG ">KG </value>
+  </row>
+  <row id="110" trl="N">
+    <value column="Name" original="ROLOS">ROLOS</value>
+    <value column="Description" original=""></value>
+    <value column="UOMSymbol" original="RL ">RL </value>
+  </row>
+  <row id="111" trl="N">
+    <value column="Name" original="PEÇA">PEÇA</value>
+    <value column="Description" original=""></value>
+    <value column="UOMSymbol" original="PC ">PC </value>
+  </row>
+  <row id="112" trl="N">
+    <value column="Name" original="LITRO">LITRO</value>
+    <value column="Description" original=""></value>
+    <value column="UOMSymbol" original="LT ">LT </value>
+  </row>
+  <row id="1000002" trl="N">
+    <value column="Name" original="SACOS">Bolsa</value>
+    <value column="Description" original=""></value>
+    <value column="UOMSymbol" original="BG ">Bl </value>
+  </row>
+</compiereTrl>

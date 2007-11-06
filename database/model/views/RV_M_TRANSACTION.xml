@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<database name="VIEW RV_M_TRANSACTION">
+<view name="RV_M_TRANSACTION"><![CDATA[
+SELECT t.AD_Client_ID,t.AD_Org_ID, t.MovementDate, t.MovementQty,
+  t.M_Product_ID, t.M_Locator_ID,
+  p.M_Product_Category_ID, p.Value,
+  po.C_BPartner_ID, po.PricePO, po.PriceLastPO, po.PriceList
+FROM M_Transaction t, M_Product p, M_Product_PO po
+WHERE t.M_Product_ID=p.M_Product_ID
+AND t.M_Product_ID=po.M_Product_ID AND po.IsCurrentVendor='Y'
+]]></view>
+</database>

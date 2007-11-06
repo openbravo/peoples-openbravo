@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="fa_IR" table="C_UOM">
+	<row id="100" trl="N">
+		<value column="Name" original="Unit">واحد</value>
+		<value column="Description" original=""></value>
+		<value column="UOMSymbol" original="Ud ">Ud</value>
+	</row>
+	<row id="101" trl="N">
+		<value column="Name" original="Hora">ساعت</value>
+		<value column="Description" original=""></value>
+		<value column="UOMSymbol" original="h  ">h</value>
+	</row>
+	<row id="102" trl="N">
+		<value column="Name" original="Día">روز</value>
+		<value column="Description" original=""></value>
+		<value column="UOMSymbol" original="d  ">d</value>
+	</row>
+	<row id="103" trl="N">
+		<value column="Name" original="Minutos">دقیقه</value>
+		<value column="Description"
+			original="(lowest unit for resorce assigments)">
+			(lowest unit for resorce assigments)
+		</value>
+		<value column="UOMSymbol" original="min">min</value>
+	</row>
+	<row id="104" trl="N">
+		<value column="Name" original="Día laboral">روز کاری</value>
+		<value column="Description" original="8 horas">هشت ساعت</value>
+		<value column="UOMSymbol" original="D  ">D</value>
+	</row>
+	<row id="105" trl="N">
+		<value column="Name" original="Semana">هفته</value>
+		<value column="Description" original=""></value>
+		<value column="UOMSymbol" original="s  ">s</value>
+	</row>
+	<row id="106" trl="N">
+		<value column="Name" original="Mes">ماه</value>
+		<value column="Description" original="30 días">سی روز</value>
+		<value column="UOMSymbol" original="m  ">m</value>
+	</row>
+	<row id="107" trl="N">
+		<value column="Name" original="Mes laboral">ماه کاری</value>
+		<value column="Description" original="20 días">بیست روز</value>
+		<value column="UOMSymbol" original="M  ">M</value>
+	</row>
+	<row id="108" trl="N">
+		<value column="Name" original="Año">سال</value>
+		<value column="Description" original=""></value>
+		<value column="UOMSymbol" original="a  ">a</value>
+	</row>
+	<row id="1000000" trl="N">
+		<value column="Name" original="Kg">کیلو</value>
+		<value column="Description" original=""></value>
+		<value column="UOMSymbol" original="kg ">kg</value>
+	</row>
+	<row id="1000003" trl="N">
+		<value column="Name" original="Litre">لیتر</value>
+		<value column="Description" original=""></value>
+		<value column="UOMSymbol" original="L  ">L</value>
+	</row>
+	<row id="1000004" trl="N">
+		<value column="Name" original="KWh">کیلووات ساعت</value>
+		<value column="Description" original=""></value>
+		<value column="UOMSymbol" original="KWh">KWh</value>
+	</row>
+</compiereTrl>

@@ -1,0 +1,222 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+  <TITLE>Help</TITLE>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META> 
+  <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
+
+  <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></SCRIPT>
+
+  <SCRIPT type="text/javascript">
+    dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+  </SCRIPT>
+
+  <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">
+    var baseDirection = "../../../../../web/";
+  </SCRIPT>
+  <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+</HEAD>
+
+<BODY onload="resizeAreaHelp();" onresize="resizeAreaHelp();">
+
+<DIV class="Popup_ContentPane_CircleLogo">
+  <DIV class="Popup_WindowLogo">
+    <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_help" src="../../../../../web/images/blank.gif" border=0/></img>
+  </DIV>
+</DIV>
+
+<TABLE cellspacing="0" cellpadding="0" width="100%">
+  <TR>
+    <TD id="tdNavigation">
+      <TABLE cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
+        <TR class="Popup_NavBar_bg"><TD></TD>
+          <TD class="Popup_NavBar_separator_cell"></TD>
+          <TD class="Popup_NavBar_bg_logo_left"></TD>
+          <TD class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></TD>
+          <TD class="Popup_NavBar_bg_logo_right"></TD>
+          <TD class="Popup_NavBar_Popup_title_cell"><SPAN>Help for <SPAN id="paramWindowName">xxProduct</SPAN></SPAN></TD>
+          <TD class="Popup_NavBar_separator_cell"></TD>
+        </TR>
+      </TABLE>
+    </TD>
+  </TR>
+  <TR>
+    <TD id="tdSeparator">
+      <TABLE cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar">
+        <TR>
+          <TD class="Popup_SeparatorBar_bg"></TD>
+        </TR>
+      </TABLE>
+    </TD>
+  </TR>
+  <TR valign="top">
+    <TD>
+      <DIV class="Popup_ContentPane_Client" style="overflow: auto;" >
+        <TABLE cellspacing="0" cellpadding="0" class="Popup_Client_TableHelp">
+
+          <TR>
+            <TD class="TableEdition_OneCell_width">
+              <DIV style="overflow: auto; display: none;" id="clientIndex">
+                <TABLE class="Popup_Client_Help_SubMenu">
+                  <TR>
+                    <TD>
+                      <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                        <TR><TD height=10px></TD></TR>
+                        <TR>
+                          <TD class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                          <TD class="FieldGroupTitle">Index</TD>
+                          <TD class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></TD>
+                        </TR>
+                        <TR class="FieldGroup_BottomMargin"></TR>
+                      </TABLE>
+                    </TD>
+                  </TR>
+                  <DIV id="sectionTabsRelation">
+                    <TR>
+                      <TD class="TitleCell" style="text-align:left;"><SPAN class="LabelText"><a class="Popup_Client_Help_LabelLink" href="#Tabxx" onmouseover="window.status='xx';return true;" onmouseout="window.status='';return true;" id="fieldTabNameRelation">xxBill of Materials</a><SPAN id="sectionTabsRelationDetail"></SPAN></SPAN></TD>
+                    </TR>
+                  </DIV>
+                </TABLE>
+              </DIV>
+            </TD>
+            <TD class="Popup_Client_Help_VertSeparator"></TD>
+            <TD valign="top">
+              <DIV style="overflow: auto; display: none;" id="client">
+                <TABLE class="Popup_Client_Help_SubClient">
+                  <TR><TD height=10px width=15px></TD><TD height=10px width=30px></TD><TD height=10px></TD></TR>
+                  <TR>
+                    <TD colspan="3">
+                      <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                        <TR class="FieldGroup_TopMargin"></TR>
+                        <TR>
+                          <TD class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                          <TD class="FieldGroupTitle"><a name="WindowName" id="paramWindowName">xxProduct</a></TD>
+                          <TD class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></TD>
+                          <TD class="FieldGroupContent"></TD>
+                          <TD class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                          <TD class="FieldGroupTitle" style="padding-top:4px;" id="discardEdit">
+                            <a href="#" onclick="editHelp('DisplayHelp_Edit_FS.html', 'xx', 'paramWindowHelp', 'yy');return false;" onmouseover="window.status='Edit Help';return true;" onmouseout="window.status='';return true;" id="paramWindowId"><img class="Popup_Client_Help_Icon_edit" border="0" src="../../../../../web/images/blank.gif"></img></a>
+                            <!--a href="#"><img class="Popup_Client_Help_Icon_top" border="0" src="../../../../../web/images/blank.gif"></img></a-->
+                          </TD>
+                          <TD class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></TD>
+                        </TR>
+                        <TR class="FieldGroup_BottomMargin"></TR>
+                      </TABLE>
+                    </TD>
+                  </TR>
+                  <TR><TD colspan="3"><SPAN class="PlainText_normal" id="paramWindowHelp">xxThe Product Window defines</SPAN></TD></tr>
+                  <DIV id="sectionTabsDescription">
+                  <TR>
+                    <TD></TD>
+                    <TD colspan="2">
+                      <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                        <TR class="FieldGroup_TopMargin"></TR>
+                        <TR>
+                          <TD class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                          <TD class="FieldGroupTitle"><A name="Tabxx" id="paramTabNameDescription">xxProduct</a></TD>
+                          <TD class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></TD>
+                          <TD class="FieldGroupContent"></TD>
+                          <TD class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                          <TD class="FieldGroupTitle" style="padding-top:4px;">
+                            <SPAN id="discardEdit"><a href="#" onclick="editHelp('DisplayHelp_Edit_FS.html','TAB', 'paramTabxxHelp', 'yy');return false;" onmouseover="window.status='Edit help';return true;" onmouseout="window.status='';return true;" id="fieldTabIdDescription"><img class="Popup_Client_Help_Icon_edit" border="0" src="../../../../../web/images/blank.gif"></img></a></SPAN>
+                            <a href="#WindowName" onmouseover="window.status='Go to the top';return true;" onmouseout="window.status='';return true;"><img class="Popup_Client_Help_Icon_top" border="0" src="../../../../../web/images/blank.gif"></img></a>
+                          </TD>
+                          <TD class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></TD>
+                        </TR>
+                        <TR class="FieldGroup_BottomMargin"></TR>
+                      </TABLE>
+                    </TD>
+                  </TR>
+                  <TR>
+                    <TD></TD>
+                    <TD colspan="2"><SPAN class="PlainText_normal" id="paramTabHelpDescription">xxThe Product Tab defines</SPAN></TD>
+                  </TR>
+                  <TR>
+                    <TD width=10px></TD>
+                    <TD colspan="2" class="Popup_Client_Help_SubClient_Links"style="" id="sectionFieldsRelation">
+                      <SPAN class="LabelText"><a class="Popup_Client_Help_LabelLink" href="#Fieldxx" onmouseover="window.status='xx';return true;" onmouseout="window.status='';return true;" id="fieldTabFieldLink">[<SPAN id="fieldTabFieldDesc">xxxx</SPAN>]</a></SPAN>&nbsp;
+                    </TD>
+                  </TR>
+                  </DIV>
+                  <DIV id="sectionCabeceraFields">
+                  <TR>
+                    <TD></TD>
+                    <TD colspan="2">
+                      <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                        <TR class="FieldGroup_TopMargin"></TR>
+                        <TR>
+                          <TD class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                          <TD class="FieldGroupTitle" id="fieldTabNameCabecera">xxProduct</TD>
+                          <TD class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></TD>
+                          <TD class="FieldGroupContent"></TD>
+                          <TD class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                          <TD class="FieldGroupTitle" style="padding-top:4px;">
+                            <!--a href="#" onclick="editHelp('DisplayHelp_Edit_FS.html','TAB', 'paramTabxxHelp', 'yy');return false;" onmouseover="window.status='Edit help';return true;" onmouseout="window.status='';return true;" id="fieldTabIdDescription"><img class="Popup_Client_Help_Icon_edit" border="0" src="../../../../../web/images/blank.gif"></img></a-->
+                            <a href="#WindowName" onmouseover="window.status='Go to the top';return true;" onmouseout="window.status='';return true;"><img class="Popup_Client_Help_Icon_top" border="0" src="../../../../../web/images/blank.gif"></img></a>
+                          </TD>
+                          <TD class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></TD>
+                        </TR>
+                        <TR class="FieldGroup_BottomMargin"></TR>
+                      </TABLE>
+                    </TD>
+                  </TR>
+                  <DIV id="sectionFieldsDescription">
+                  <TR>
+                    <TD colspan="2"></TD>
+                    <TD>
+                      <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                        <TR class="FieldGroup_TopMargin"></TR>
+                        <TR>
+                          <TD class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                          <TD class="FieldGroupTitle"><a name="Fieldxx" id="paramFieldNameDesc">xxBill of Materials</a></TD>
+                          <TD class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></TD>
+                          <TD class="FieldGroupContent"></TD>
+                          <TD class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                          <TD class="FieldGroupTitle" style="padding-top:4px;">
+                            <SPAN id="discardEdit"><a href="#" onclick="editHelp('DisplayHelp_Edit_Field_FS.html', 'FIELD', 'paramFieldxx', 'yy');return false;" onmouseover="window.status='Edit help';return true;" onmouseout="window.status='';return true;" id="fieldFieldIdDesc"><img class="Popup_Client_Help_Icon_edit" border="0" src="../../../../../web/images/blank.gif"></img></a></SPAN>
+                            <a href="#Tabxx" id="fieldTabGoTo" onmouseover="window.status='Go to the top';return true;" onmouseout="window.status='';return true;"><img class="Popup_Client_Help_Icon_top" border="0" src="../../../../../web/images/blank.gif"></img></a>
+                          </TD>
+                          <TD class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></TD>
+                        </TR>
+                        <TR class="FieldGroup_BottomMargin"></TR>
+                      </TABLE>
+                    </TD>
+                  </TR>
+                  <TR>
+                    <TD colspan="2"></TD>
+                    <TD><SPAN class="PlainText_normal" id="paramFieldHelpDesc">xxThe Bill of Materials tab defines thos</SPAN></TD>
+                  </TR>
+                  </DIV>
+                  </DIV>
+                </TABLE>
+              </DIV>
+            </TD>
+          </TR>
+        </TABLE>
+      </DIV>
+    </TD>
+  </TR>
+</TABLE>
+
+</BODY>
+</HTML>

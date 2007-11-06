@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+<SqlClass name="RptEtiquetasData" package="org.openbravo.erpCommon.ad_reports">
+   <SqlClassComment>Clase RptEtiquetasData
+   autor@ Fernando Iriazabal
+   version@ 06/08/2004
+   </SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+      <SqlMethodComment>Devuelve las lineas de albaran</SqlMethodComment>
+      <Sql>
+      <![CDATA[
+        SELECT M_PRODUCT.M_PRODUCT_ID AS ID, COALESCE(M_PRODUCT_CUSTOMER.NAME, M_PRODUCT.NAME) AS NAME, 
+        COALESCE(M_PRODUCT_CUSTOMER.DESCRIPTION, M_PRODUCT.DESCRIPTION) AS DESCRIPTION, COALESCE(M_PRODUCT_CUSTOMER.UPC, M_PRODUCT.UPC) AS UPC, 
+        '' AS LOT, '' AS GUARANTEEDATE
+        FROM M_PRODUCT LEFT JOIN M_PRODUCT_CUSTOMER on M_PRODUCT.M_PRODUCT_ID = M_PRODUCT_CUSTOMER.M_PRODUCT_ID
+        WHERE M_PRODUCT.M_PRODUCT_ID = ?
+        AND M_PRODUCT_CUSTOMER.C_BPARTNER_ID = ?
+        ]]>
+        </Sql>
+        <Parameter name="mProductId"/>
+        <Parameter name="cBpartnerId"/>
+   </SqlMethod>
+   <SqlMethod name="selectProduct" type="preparedStatement" return="String" default="">
+      <SqlMethodComment>Devuelve las lineas de albaran</SqlMethodComment>
+      <Sql>
+      <![CDATA[
+        SELECT NAME
+        FROM M_PRODUCT
+        WHERE M_PRODUCT_ID = ?
+        ]]>
+        </Sql>
+        <Parameter name="mProductId"/>
+   </SqlMethod>
+   <SqlMethod name="selectBPartner" type="preparedStatement" return="String" default="">
+      <SqlMethodComment>Devuelve las lineas de albaran</SqlMethodComment>
+      <Sql>
+      <![CDATA[
+        SELECT NAME
+        FROM C_BPARTNER
+        WHERE C_BPARTNER_ID = ?
+        ]]>
+        </Sql>
+        <Parameter name="cBpartnerId"/>
+   </SqlMethod>
+   <SqlMethod name="selectAttribute" type="preparedStatement" return="String" default="">
+      <SqlMethodComment>Devuelve las lineas de albaran</SqlMethodComment>
+      <Sql>
+      <![CDATA[
+        SELECT DESCRIPTION
+        FROM M_ATTRIBUTESETINSTANCE
+        WHERE M_ATTRIBUTESETINSTANCE_ID = ?
+        ]]>
+        </Sql>
+        <Parameter name="mAttributesetinstanceId"/>
+   </SqlMethod>
+   <SqlMethod name="selectAttributeComplete" type="preparedStatement" return="multiple">
+      <SqlMethodComment>Devuelve las lineas de albaran</SqlMethodComment>
+      <Sql>
+      <![CDATA[
+        SELECT DESCRIPTION, LOT, GUARANTEEDATE
+        FROM M_ATTRIBUTESETINSTANCE
+        WHERE M_ATTRIBUTESETINSTANCE_ID = ?
+        ]]>
+        </Sql>
+        <Parameter name="mAttributesetinstanceId"/>
+   </SqlMethod>
+</SqlClass>

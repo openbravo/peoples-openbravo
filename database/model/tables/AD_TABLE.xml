@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<database name="TABLE AD_TABLE">
+    <table name="AD_TABLE" primaryKey="AD_TABLE_KEY">
+      <column name="AD_TABLE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="HELP" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="TABLENAME" primaryKey="false" required="true" type="VARCHAR" size="40" autoIncrement="false"/>
+      <column name="ISVIEW" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ACCESSLEVEL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" default="D" autoIncrement="false"/>
+      <column name="AD_WINDOW_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_VAL_RULE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="LOADSEQ" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISSECURITYENABLED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ISDELETEABLE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="ISHIGHVOLUME" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="IMPORTTABLE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="ISCHANGELOG" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="REPLICATIONTYPE" primaryKey="false" required="false" type="CHAR" size="1" default="L" autoIncrement="false"/>
+      <column name="PO_WINDOW_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISDEFAULTACCT" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="SQL_RECORD_IDENTIFIER" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false"/>
+      <column name="DEVELOPMENTSTATUS" primaryKey="false" required="false" type="VARCHAR" size="2" default="RE" autoIncrement="false"/>
+      <check name="ADTABLE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <check name="ADTABLE_ISVIEW_CHECK" condition="IsView in ('Y','N')"/> 
+      <check name="ADTABLE_ISSECURITYENABLED_CHECK" condition="IsSecurityEnabled in ('Y','N')"/> 
+      <check name="ADTABLE_ISDELETEABLE_CHECK" condition="IsDeleteable in ('Y','N')"/> 
+      <check name="ADTABLE_ISHIGHVOLUME_CHECK" condition="IsHighVolume in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="TABLECLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="TABLEORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_VAL_RULE" name="AD_VALRULE_TABLE">
+        <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TABLE"   onDelete="setnull">
+        <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
+      </foreign-key>
+      <unique name="AD_TABLE_NAME">
+        <unique-column name="NAME"/>
+      </unique>
+    </table>
+</database>

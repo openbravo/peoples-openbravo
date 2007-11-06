@@ -1,0 +1,94 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+.ComboKeyNoUpdatable {
+  color: #606060;
+  background-color: #E8E8E8;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  border: 1px solid #888888;
+}
+
+.ComboNoUpdatable {
+  color: #606060;
+  background-color: #E8E8E8;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  border: 1px solid #888888;
+}
+
+.ComboReadOnly {
+  color: #606060;
+  background-color: #E8E8E8;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  border: 1px solid #888888;
+}
+
+.ComboKeyReadOnly {
+  color: #606060;
+  background-color: #E8E8E8;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  border: 1px solid #888888;
+}
+
+.ComboKey {
+  border: 1px solid #888888;
+  color: #303030;
+  background-color: #FFF6CC !important;
+  /*background: url(required_bg.png) repeat-x top !important;*/
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+}
+
+.Combo {
+  border: 1px solid #888888;
+  color: #303030;
+  background-color: white;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+}
+
+.Combo_OneCell_width {
+  width: 135px;
+}
+
+.Combo_TwoCells_width {
+  width: 280px;
+}
+
+.Combo_ThreeCells_width {
+  width: 425px;
+}
+
+.Combo_FourCells_width {
+  width: 570px;
+}
+
+.Combo_FiveCells_width {
+  width: 715px;
+}
+
+.Combo_SixCells_width {
+  width: 860px;
+}

@@ -1,0 +1,122 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
+package org.openbravo.erpCommon.ad_reports;
+
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.utility.*;
+import org.openbravo.xmlEngine.XmlDocument;
+
+public class ReportNotPosted extends HttpSecureAppServlet {
+  private static final long serialVersionUID = 1L;
+  //static Category log4j = Category.getInstance(ReportNotPosted.class);
+
+  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (!Utility.hasProcessAccess(this, vars, "", "ReportNotPosted")) {
+      bdError(response, "AccessTableNoView", vars.getLanguage());
+      return;
+    }
+
+    if (vars.commandIn("DEFAULT")) {
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportNotPosted|DateFrom", "");
+      String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportNotPosted|DateTo", "");
+      printPageDataSheet(response, vars, strDateFrom, strDateTo);
+    } else if (vars.commandIn("FIND")) {
+      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportNotPosted|DateFrom");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportNotPosted|DateTo");
+      printPageDataSheet(response, vars, strDateFrom, strDateTo);
+    } else pageError(response);
+  }
+
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo)
+    throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
+    response.setContentType("text/html");
+    PrintWriter out = response.getWriter();
+    String discard[]={"sectionDocType"};
+    XmlDocument xmlDocument=null;
+    ReportNotPostedData[] data=null;
+    if (strDateFrom.equals("") && strDateTo.equals("")) {
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportNotPosted", discard).createXmlDocument();
+      data = ReportNotPostedData.set();
+    } else {
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportNotPosted").createXmlDocument();
+      data = ReportNotPostedData.select(this, strDateFrom,strDateTo, vars.getClient());
+    }//DateTimeData.nDaysAfter
+
+
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportNotPosted", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
+    toolbar.prepareSimpleToolBarTemplate();
+
+    xmlDocument.setParameter("toolbar", toolbar.toString());
+
+    try {
+      KeyMap key = new KeyMap(this, vars, "ReportNotPosted.html");
+      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    try {
+      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportNotPosted");
+      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+      xmlDocument.setParameter("theme", vars.getTheme());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportNotPosted.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      xmlDocument.setParameter("navigationBar", nav.toString());
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportNotPosted.html", strReplaceWith);
+      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    {
+      OBError myMessage = vars.getMessage("ReportNotPosted");
+      vars.removeMessage("ReportNotPosted");
+      if (myMessage!=null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
+    }
+
+    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
+    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("dateFrom", strDateFrom);
+    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTo", strDateTo);
+    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setData("structure1", data);
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  public String getServletInfo() {
+    return "Servlet ReportNotPosted. This Servlet was made by Juan Pablo Calvente";
+  } // end of the getServletInfo() method
+}

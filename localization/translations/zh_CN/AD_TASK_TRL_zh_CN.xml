@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="zh_CN" table="AD_TASK">
+    <row id="102" trl="N">
+        <value column="Name" original="Java Version">Java 版本</value>
+        <value column="Description" original="Displays the version of the default Java VM">显示默认Java虚拟机的版本号</value>
+        <value column="Help" original="The java version used by the application might be different.">应用程序使用的Java版本可能会不同.</value>
+    </row>
+    <row id="103" trl="N">
+        <value column="Name" original="Database Export">数据库导出</value>
+        <value column="Description"
+            original="Export (save) the database">导出 (保存) 数据库</value>
+        <value column="Help" original="Run this command from the server">在服务器端运行这个命令</value>
+    </row>
+    <row id="104" trl="N">
+        <value column="Name" original="Database Transfer">数据库转换</value>
+        <value column="Description" original="Transfer the database">转换数据库</value>
+        <value column="Help" original="Run this command from the server">在服务器端运行这个命令</value>
+    </row>
+    <row id="800000" trl="N">
+        <value column="Name" original="Merge Script">合并脚本</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800001" trl="N">
+        <value column="Name" original="Preinstall">预设</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800002" trl="N">
+        <value column="Name" original="Version">版本</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800003" trl="N">
+        <value column="Name" original="External Point of Sales">对外销售点</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+    <row id="800004" trl="N">
+        <value column="Name" original="fdd">阵线</value>
+        <value column="Description" original=""/>
+        <value column="Help" original=""/>
+    </row>
+</compiereTrl>

@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="fa_IR" table="AD_FIELDGROUP">
+	<row id="101" trl="N">
+		<value column="Name" original="Status">وضعیت</value>
+	</row>
+	<row id="102" trl="N">
+		<value column="Name" original="Quantities">کمیتها</value>
+	</row>
+	<row id="103" trl="N">
+		<value column="Name" original="Amounts">مقادیر</value>
+	</row>
+	<row id="104" trl="N">
+		<value column="Name" original="Reference">ارجاع</value>
+	</row>
+	<row id="105" trl="N">
+		<value column="Name" original="History">تاریخچه</value>
+	</row>
+	<row id="106" trl="N">
+		<value column="Name" original="Product">محصول</value>
+	</row>
+	<row id="107" trl="N">
+		<value column="Name" original="Business Partner">
+			شریک تجاری
+		</value>
+	</row>
+	<row id="108" trl="N">
+		<value column="Name" original="Warehouse">انبار</value>
+	</row>
+	<row id="109" trl="N">
+		<value column="Name" original="Bank">بانک</value>
+	</row>
+	<row id="110" trl="N">
+		<value column="Name" original="Cash Book">دفترچه حساب</value>
+	</row>
+	<row id="111" trl="N">
+		<value column="Name" original="Tax">مالیات</value>
+	</row>
+	<row id="112" trl="N">
+		<value column="Name" original="Project">پروژه</value>
+	</row>
+	<row id="113" trl="N">
+		<value column="Name" original="General">عمومی</value>
+	</row>
+	<row id="114" trl="N">
+		<value column="Name" original="Action">طرز عمل</value>
+	</row>
+	<row id="115" trl="N">
+		<value column="Name" original="Standard Cost">
+			هزینه استاندارد
+		</value>
+	</row>
+	<row id="116" trl="N">
+		<value column="Name" original="Actual Costs">
+			هزینه های واقعی
+		</value>
+	</row>
+	<row id="117" trl="N">
+		<value column="Name" original="Statistics">آمارها</value>
+	</row>
+	<row id="118" trl="N">
+		<value column="Name" original="Defaults">فرضیات</value>
+	</row>
+	<row id="119" trl="N">
+		<value column="Name" original="Request Management">
+			مدیریت درخواست
+		</value>
+	</row>
+	<row id="120" trl="N">
+		<value column="Name" original="Web Store">فروشگاه وب</value>
+	</row>
+	<row id="121" trl="N">
+		<value column="Name" original="Internal">داخلی</value>
+	</row>
+	<row id="122" trl="N">
+		<value column="Name" original="External">خارجی</value>
+	</row>
+	<row id="123" trl="N">
+		<value column="Name" original="Common">عمومی</value>
+	</row>
+	<row id="124" trl="N">
+		<value column="Name" original="Shipment">محموله</value>
+	</row>
+	<row id="125" trl="N">
+		<value column="Name" original="Document">سند</value>
+	</row>
+	<row id="126" trl="N">
+		<value column="Name" original="Line">ردیف</value>
+	</row>
+	<row id="800000" trl="N">
+		<value column="Name" original="Dimensions">ابعاد</value>
+	</row>
+</compiereTrl>

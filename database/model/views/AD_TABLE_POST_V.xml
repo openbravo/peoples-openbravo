@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<database name="VIEW AD_TABLE_POST_V">
+<view name="AD_TABLE_POST_V"><![CDATA[
+SELECT AD_Table.AD_Table_ID as ad_table_id, (w2.name || (CASE WHEN w2.name IS NULL THEN '' ELSE ' - ' END) || w1.name) as name,
+w1.AD_Language, AD_Table.AD_Client_ID, AD_Table.AD_Org_ID, AD_Table.IsActive, AD_Table.Created , AD_Table.CreatedBy,
+AD_Table.Updated, AD_Table.UpdatedBy
+FROM AD_Table left join ad_window_trl w1 on ad_table.ad_window_id = w1.ad_window_id
+        left join ad_window_trl w2 on AD_Table.po_window_id = w2.ad_window_id
+WHERE EXISTS (SELECT * FROM AD_Column c WHERE AD_Table.AD_Table_ID=c.AD_Table_ID AND c.ColumnName='Posted')
+AND w1.AD_LANGUAGE = COALESCE(w2.AD_LANGUAGE,w1.AD_LANGUAGE)
+AND AD_Table.isActive = 'Y'
+UNION
+SELECT AD_Table.AD_Table_ID as id, (w2.name || (CASE WHEN w2.name IS NULL THEN '' ELSE ' - ' END) || w1.name) as name,
+'en_US' as AD_Language, AD_Table.AD_Client_ID, AD_Table.AD_Org_ID, AD_Table.IsActive, AD_Table.Created ,
+AD_Table.CreatedBy, AD_Table.Updated, AD_Table.UpdatedBy
+FROM AD_Table left join ad_window w1 on ad_table.ad_window_id = w1.ad_window_id
+        left join ad_window w2 on AD_Table.po_window_id = w2.ad_window_id
+WHERE EXISTS (SELECT * FROM AD_Column c WHERE AD_Table.AD_Table_ID=c.AD_Table_ID AND c.ColumnName='Posted')
+AND AD_Table.isActive = 'Y'
+]]></view>
+</database>

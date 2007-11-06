@@ -1,0 +1,505 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+table.MessageBoxERROR {
+  border: 0px none;
+  margin: 0px;
+  text-align: center;
+  vertical-align: middle;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.MessageBoxINFO {
+  border: 0px none;
+  margin: 0px;
+  text-align: center;
+  vertical-align: middle;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.MessageBoxSUCCESS{
+  border: 0px none;
+  margin: 0px;
+  text-align: center;
+  vertical-align: middle;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.MessageBoxWARNING {
+  border: 0px none;
+  margin: 0px;
+  text-align: center;
+  vertical-align: middle;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.MessageBoxHIDDEN {
+	height: 0px;
+	display:none;
+	visibility: collapse;
+}
+
+tr.MessageBox_TopMargin {
+  height: 20px;
+}
+
+tr.MessageBox_BottomMargin {
+  height: 20px;
+}
+
+td.MessageBox_LeftMargin {
+  width: 20px;
+}
+
+td.MessageBox_RightMargin {
+  width: 20px;
+}
+
+
+/* Error CSS */
+
+table.MessageBoxERROR table.MessageBox_Top {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-image: url(messageErrorTop.png);
+  background-repeat: repeat-x;
+}
+
+table.MessageBoxERROR .MessageBox_TopRight {
+  height: 22px;
+  width: 9px;
+  background-image: url(messageErrorTopRight.png);
+  background-repeat: no-repeat;
+}
+
+table.MessageBoxERROR .MessageBox_Right {
+  height: 100%;
+  width: 9px;
+  background-image: url(messageErrorRight.png);
+}
+
+table.MessageBoxERROR .MessageBox_RightTrans {
+  width: 9px;
+  height: 100%;
+}
+
+table.MessageBoxERROR td.MessageBox_BottomRight {
+  width: 9px;
+  height: 9px;
+  background-image: url(messageErrorBottomRight.png);
+}
+
+table.MessageBoxERROR td.MessageBox_Bottom {
+  height: 3px;
+  background-image: url(messageErrorBottom.png);
+  line-height: 1px;
+  font-size: 1px;
+}
+
+table.MessageBoxERROR td.MessageBox_BottomTrans {
+  height: 6px;
+}
+
+table.MessageBoxERROR td.MessageBox_BottomLeft {
+  width: 9px;
+  height: 9px;
+  background-image: url(messageErrorBottomLeft.png);
+}
+
+table.MessageBoxERROR .MessageBox_Left {
+  height: 100%;
+  width: 9px;
+  background-image: url(messageErrorLeft.png);
+}
+
+table.MessageBoxERROR .MessageBox_TopLeft {
+  height: 22px;
+  width: 9px;
+  background-image: url(messageErrorTopLeft.png);
+  background-repeat: no-repeat;
+}
+
+
+table.MessageBoxERROR td.MessageBox_bg {
+  vertical-align: top;
+  background-image: url(messageErrorBg.png);
+}
+
+table.MessageBoxERROR table.MessageBox_Body_ContentCell {
+  margin-top: 10px;
+  margin-bottom: 1px;
+}
+
+table.MessageBoxERROR td.MessageBox_Icon_ContentCell {
+  width: 47px;
+  vertical-align: top;
+}
+
+table.MessageBoxERROR .MessageBox_Icon {
+  width: 35px;
+  height: 31px;
+  background-image: url(messageErrorIcon.png);
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+table.MessageBoxERROR .MessageBox_TextTitle {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  color: #ffb4b4;
+}
+
+table.MessageBoxERROR .MessageBox_TextDescription {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  color: #ffd6d6;
+}
+
+table.MessageBoxERROR .MessageBox_TextSeparator {
+  height: 3px;
+  font-size: 3px;
+}
+
+
+/* Info CSS */
+
+table.MessageBoxINFO table.MessageBox_Top {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-image: url(messageInfoTop.png);
+  background-repeat: repeat-x;
+}
+
+table.MessageBoxINFO .MessageBox_TopRight {
+  height: 22px;
+  width: 9px;
+  background-image: url(messageInfoTopRight.png);
+  background-repeat: no-repeat;
+}
+
+table.MessageBoxINFO .MessageBox_Right {
+  height: 100%;
+  width: 9px;
+  background-image: url(messageInfoRight.png);
+}
+
+table.MessageBoxINFO .MessageBox_RightTrans {
+  width: 9px;
+  height: 100%;
+}
+
+table.MessageBoxINFO td.MessageBox_BottomRight {
+  width: 9px;
+  height: 9px;
+  background-image: url(messageInfoBottomRight.png);
+}
+
+table.MessageBoxINFO td.MessageBox_Bottom {
+  height: 3px;
+  background-image: url(messageInfoBottom.png);
+  line-height: 1px;
+  font-size: 1px;
+}
+
+table.MessageBoxINFO td.MessageBox_BottomTrans {
+  height: 6px;
+}
+
+table.MessageBoxINFO td.MessageBox_BottomLeft {
+  width: 9px;
+  height: 9px;
+  background-image: url(messageInfoBottomLeft.png)
+}
+
+table.MessageBoxINFO .MessageBox_Left {
+  height: 100%;
+  width: 9px;
+  background-image: url(messageInfoLeft.png);
+}
+
+table.MessageBoxINFO .MessageBox_TopLeft {
+  height: 22px;
+  width: 9px;
+  background-image: url(messageInfoTopLeft.png);
+  background-repeat: no-repeat;
+}
+
+
+table.MessageBoxINFO td.MessageBox_bg {
+  vertical-align: top;
+  background-image: url(messageInfoBg.png);
+}
+
+table.MessageBoxINFO table.MessageBox_Body_ContentCell {
+  margin-top: 10px;
+  margin-bottom: 1px;
+}
+
+table.MessageBoxINFO td.MessageBox_Icon_ContentCell {
+  width: 47px;
+  vertical-align: top;
+}
+
+table.MessageBoxINFO .MessageBox_Icon {
+  width: 35px;
+  height: 31px;
+  background-image: url(messageInfoIcon.png);
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+table.MessageBoxINFO .MessageBox_TextTitle {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  color: #add4ec;
+}
+
+table.MessageBoxINFO .MessageBox_TextDescription {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  color: #d6efff;
+}
+
+table.MessageBoxINFO .MessageBox_TextSeparator {
+  height: 3px;
+  font-size: 3px;
+}
+
+
+/* Success CSS */
+
+table.MessageBoxSUCCESS table.MessageBox_Top {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-image: url(messageSuccessTop.png);
+  background-repeat: repeat-x;
+}
+
+table.MessageBoxSUCCESS .MessageBox_TopRight {
+  height: 22px;
+  width: 9px;
+  background-image: url(messageSuccessTopRight.png);
+  background-repeat: no-repeat;
+}
+
+table.MessageBoxSUCCESS .MessageBox_Right {
+  height: 100%;
+  width: 9px;
+  background-image: url(messageSuccessRight.png);
+}
+
+table.MessageBoxSUCCESS .MessageBox_RightTrans {
+  width: 9px;
+  height: 100%;
+}
+
+table.MessageBoxSUCCESS td.MessageBox_BottomRight {
+  width: 9px;
+  height: 9px;
+  background-image: url(messageSuccessBottomRight.png);
+}
+
+table.MessageBoxSUCCESS td.MessageBox_Bottom {
+  height: 3px;
+  background-image: url(messageSuccessBottom.png);
+  line-height: 1px;
+  font-size: 1px;
+}
+
+table.MessageBoxSUCCESS td.MessageBox_BottomTrans {
+  height: 6px;
+}
+
+table.MessageBoxSUCCESS td.MessageBox_BottomLeft {
+  width: 9px;
+  height: 9px;
+  background-image: url(messageSuccessBottomLeft.png);
+}
+
+table.MessageBoxSUCCESS .MessageBox_Left {
+  height: 100%;
+  width: 9px;
+  background-image: url(messageSuccessLeft.png);
+}
+
+table.MessageBoxSUCCESS .MessageBox_TopLeft {
+  height: 22px;
+  width: 9px;
+  background-image: url(messageSuccessTopLeft.png);
+  background-repeat: no-repeat;
+}
+
+
+table.MessageBoxSUCCESS td.MessageBox_bg {
+  vertical-align: top;
+  background-image: url(messageSuccessBg.png);
+}
+
+table.MessageBoxSUCCESS table.MessageBox_Body_ContentCell {
+  margin-top: 10px;
+  margin-bottom: 1px;
+}
+
+table.MessageBoxSUCCESS td.MessageBox_Icon_ContentCell {
+  width: 47px;
+  vertical-align: top;
+}
+
+table.MessageBoxSUCCESS .MessageBox_Icon {
+  width: 35px;
+  height: 31px;
+  background-image: url(messageSuccessIcon.png);
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+table.MessageBoxSUCCESS .MessageBox_TextTitle {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  color: #c4ecae;
+}
+
+table.MessageBoxSUCCESS .MessageBox_TextDescription {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  color: #ebffe1;
+}
+
+table.MessageBoxSUCCESS .MessageBox_TextSeparator {
+  height: 3px;
+  font-size: 3px;
+}
+
+
+/* Warning CSS */
+
+table.MessageBoxWARNING table.MessageBox_Top {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-image: url(messageWarningTop.png);
+  background-repeat: repeat-x;
+}
+
+table.MessageBoxWARNING .MessageBox_TopRight {
+  height: 22px;
+  width: 9px;
+  background-image: url(messageWarningTopRight.png);
+  background-repeat: no-repeat;
+}
+
+table.MessageBoxWARNING .MessageBox_Right {
+  height: 100%;
+  width: 9px;
+  background-image: url(messageWarningRight.png);
+}
+
+table.MessageBoxWARNING .MessageBox_RightTrans {
+  width: 9px;
+  height: 100%;
+}
+
+table.MessageBoxWARNING td.MessageBox_BottomRight {
+  width: 9px;
+  height: 9px;
+  background-image: url(messageWarningBottomRight.png);
+}
+
+table.MessageBoxWARNING td.MessageBox_Bottom {
+  height: 3px;
+  background-image: url(messageWarningBottom.png);
+  line-height: 1px;
+  font-size: 1px;
+}
+
+table.MessageBoxWARNING td.MessageBox_BottomTrans {
+  height: 6px;
+}
+
+table.MessageBoxWARNING td.MessageBox_BottomLeft {
+  width: 9px;
+  height: 9px;
+  background-image: url(messageWarningBottomLeft.png);
+}
+
+table.MessageBoxWARNING .MessageBox_Left {
+  height: 100%;
+  width: 9px;
+  background-image: url(messageWarningLeft.png);
+}
+
+table.MessageBoxWARNING .MessageBox_TopLeft {
+  height: 22px;
+  width: 9px;
+  background-image: url(messageWarningTopLeft.png);
+  background-repeat: no-repeat;
+}
+
+
+table.MessageBoxWARNING td.MessageBox_bg {
+  vertical-align: top;
+  background-image: url(messageWarningBg.png);
+}
+
+table.MessageBoxWARNING table.MessageBox_Body_ContentCell {
+  margin-top: 10px;
+  margin-bottom: 1px;
+}
+
+table.MessageBoxWARNING td.MessageBox_Icon_ContentCell {
+  width: 47px;
+  vertical-align: top;
+}
+
+table.MessageBoxWARNING .MessageBox_Icon {
+  width: 35px;
+  height: 31px;
+  background-image: url(messageWarningIcon.png);
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+table.MessageBoxWARNING .MessageBox_TextTitle {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  color: #9e880f;
+}
+
+table.MessageBoxWARNING .MessageBox_TextDescription {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 11px;
+  color: #635a0e;
+}
+
+table.MessageBoxWARNING .MessageBox_TextSeparator {
+  height: 3px;
+  font-size: 3px;
+}

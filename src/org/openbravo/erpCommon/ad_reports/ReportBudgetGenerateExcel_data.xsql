@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+<SqlClass name="ReportBudgetGenerateExcelData" package="org.openbravo.erpCommon.ad_reports">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT  ' ' AS PARTNER, ' ' AS PARTNERGROUP, ' ' AS PRODUCT, ' ' AS PRODCATEGORY, /*' ' AS USER1, ' ' AS USER2,*/ ' ' AS SALESREGION, ' ' AS CAMPAIGN, ' ' AS ACTIVITY, ' ' AS PROJECT, ' ' AS TRXORG, ' ' AS MONTH, ' ' AS VALIDCOMBINATION, ' ' AS QTY, ' ' AS PRICE, ' ' AS AMOUNT, '' AS NAME, '' AS ID, '' AS DESCRIPTION, '' AS CURRENCY
+      FROM DUAL
+     ]]></Sql>
+     <Parameter name="columns" optional="true" type="replace" after="SELECT  " text="' ' AS PARTNER, ' ' AS PARTNERGROUP, ' ' AS PRODUCT, ' ' AS PRODCATEGORY, /*' ' AS USER1, ' ' AS USER2,*/ ' ' AS SALESREGION, ' ' AS CAMPAIGN, ' ' AS ACTIVITY, ' ' AS PROJECT, ' ' AS TRXORG, ' ' AS MONTH, ' ' AS VALIDCOMBINATION"/>
+     <Parameter name="tables" optional="true" type="replace" after=" DUAL" text="DUAL"/>
+  </SqlMethod>
+  <SqlMethod name="selectLines" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment> 
+    <Sql>
+    <![CDATA[
+      SELECT QTY, PRICE, AMOUNT, DESCRIPTION, (SELECT ISO_CODE FROM C_CURRENCY WHERE C_CURRENCY_ID=C_BUDGETLINE.C_CURRENCY_ID) AS CURRENCY,
+             CASE WHEN C_BPartner_ID IS NULL THEN ' ' ELSE AD_COLUMN_IDENTIFIER('C_BPARTNER', TO_CHAR(C_BPARTNER_ID), ?) END AS PARTNER ,
+             CASE WHEN C_BP_GROUP_ID IS NULL THEN ' ' ELSE AD_COLUMN_IDENTIFIER('C_BP_GROUP', TO_CHAR(C_BP_GROUP_ID), ?) END AS PARTNERGROUP,
+             CASE WHEN M_PRODUCT_ID IS NULL THEN ' ' ELSE AD_COLUMN_IDENTIFIER('M_PRODUCT', TO_CHAR(M_PRODUCT_ID), ?) END AS PRODUCT,
+             CASE WHEN M_PRODUCT_CATEGORY_ID IS NULL THEN ' ' ELSE AD_COLUMN_IDENTIFIER('M_PRODUCT_CATEGORY', TO_CHAR(M_PRODUCT_CATEGORY_ID), ?) END AS PRODCATEGORY,
+             CASE WHEN C_SALESREGION_ID IS NULL THEN ' ' ELSE AD_COLUMN_IDENTIFIER('C_SALESREGION', TO_CHAR(C_SALESREGION_ID), ?) END AS SALESREGION,
+             CASE WHEN C_CAMPAIGN_ID IS NULL THEN ' ' ELSE AD_COLUMN_IDENTIFIER('C_CAMPAIGN', TO_CHAR(C_CAMPAIGN_ID), ?) END AS CAMPAIGN,
+             CASE WHEN C_ACTIVITY_ID IS NULL THEN ' ' ELSE AD_COLUMN_IDENTIFIER('C_ACTIVITY', TO_CHAR(C_ACTIVITY_ID), ?) END AS ACTIVITY,
+             CASE WHEN C_PROJECT_ID IS NULL THEN ' ' ELSE AD_COLUMN_IDENTIFIER('C_PROJECT', TO_CHAR(C_PROJECT_ID), ?) END AS PROJECT,
+             CASE WHEN AD_ORG_ID IS NULL THEN ' ' ELSE AD_COLUMN_IDENTIFIER('AD_ORG', TO_CHAR(AD_ORG_ID), ?) END AS TRXORG,
+             CASE WHEN C_PERIOD_ID IS NULL THEN ' ' ELSE AD_COLUMN_IDENTIFIER('AD_MONTH', (SELECT TO_CHAR(AD_MONTH_ID) FROM AD_MONTH WHERE VALUE = (SELECT PERIODNO FROM C_PERIOD WHERE C_PERIOD.C_PERIOD_ID=C_BUDGETLINE.C_PERIOD_ID)), ?) END AS MONTH,
+             CASE WHEN C_VALIDCOMBINATION_ID IS NULL THEN ' ' ELSE AD_COLUMN_IDENTIFIER('C_VALIDCOMBINATION', TO_CHAR(C_VALIDCOMBINATION_ID), ? ) END AS VALIDCOMBINATION
+      FROM C_BudgetLine
+      WHERE C_Budget_ID = ?
+     ]]></Sql>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adLanguage"/>
+     <Parameter name="cbudgetid"/>
+  </SqlMethod>
+  <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql></Sql>
+  </SqlMethod>
+  <SqlMethod name="selectMonth" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT AD_MONTH_ID AS ID, NAME
+      FROM AD_MONTH
+    ]]></Sql>
+  </SqlMethod>
+</SqlClass>

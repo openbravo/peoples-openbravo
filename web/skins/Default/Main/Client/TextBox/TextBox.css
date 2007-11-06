@@ -1,0 +1,204 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+.dojoValidateEmpty {
+  border: 1px solid #888888;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  background-color: #FFFFFF;
+  padding-left: 4px;
+}
+
+.dojoValidateValid {
+  border: 1px solid #888888;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #303030;
+  background-color: #FFFFFF;
+  padding-left: 4px;
+}
+
+.dojoValidateInvalid {
+  border: 1px solid #888888;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size:8pt;
+  background-color: #FFFFFF;
+  color: Red;
+  padding-left: 4px;
+}
+
+.dojoValidateRange {
+  border: 1px solid #888888;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size:8pt;
+  background-color: #FFFFFF;
+  padding-left: 4px;
+}
+
+.required {
+  background: url(required_bg.png) repeat-x top !important;
+  background-color: #FFFADE !important;
+}
+
+.disabled {
+  background-color: ThreedLightShadow !important;
+}
+
+.readonly {
+  color: #606060;
+  background-color: #E8E8E8 !important;
+  font-weight: bold;
+  border: 1px solid #888888;
+}
+
+.invalid {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  white-space: nowrap;
+  color: white;
+  font-weight: normal;
+  background: url(message_bg_deg.gif) repeat-x top center;
+  background-color: #FF3E1D;
+}
+
+.missing {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  white-space: nowrap;
+  color: white;
+  font-weight: normal;
+  background: url(message_bg_deg.gif) repeat-x top center;
+  background-color: #FF3E1D;
+}
+
+.range {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  white-space: nowrap;
+  color: white;
+  font-weight: normal;
+  background: url(message_bg_deg.gif) repeat-x top center;
+  background-color: #FF3E1D;
+}
+
+.number{
+	text-align: right;
+	padding-right: 4px;
+}
+
+.TextBox_MsgContainer_span {
+  position: absolute;
+  z-index: 99;
+}
+
+table.TextBox_MsgContainer_table {
+  border: 0px;
+  border-collapse: collapse;
+  margin-left: 5px;
+}
+
+tr.TextBox_MsgContainer_tr {
+  height:5px;
+  font-size=0pt;
+}
+
+td.TextBox_MsgContainer_td {
+  width:8px;
+  height:5px;
+}
+
+.TextBox_MsgContainer_div {
+  position: relative;
+  margin-bottom: -2px;
+  width:8px;
+  height:5px;
+  background: url(message_arrow.gif) no-repeat top;
+}
+
+.TextBox_MsgContainer_div2{
+  vertical-align: middle;
+  height: 14px;
+  _height: 18px;
+  border: 1px solid #4F0F03;
+  padding-top: 1px;
+  _padding-top: 1px;
+  padding-bottom: 1px;
+  _padding-bottom: 0px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+table.TextBox_MsgContainerVt_table {
+  border:0px;
+  border-collapse:collapse;
+}
+
+td.TextBox_MsgContainerVt_td {
+  height:23px;
+}
+
+
+.TextBox_btn_OneCell_width {
+  width: 110px;
+}
+
+.TextBox_btn_TwoCells_width {
+  width: 255px;
+}
+
+.TextBox_btn_ThreeCells_width {
+  width: 400px;
+}
+
+.TextBox_btn_FourCells_width {
+  width: 545px;
+}
+
+.TextBox_btn_FiveCells_width {
+  width: 690px;
+}
+
+.TextBox_btn_SixCells_width {
+  width: 835px;
+}
+
+.TextBox_OneCell_width {
+  width: 135px;
+}
+
+.TextBox_TwoCells_width {
+  width: 280px;
+}
+
+.TextBox_ThreeCells_width {
+  width: 425px;
+}
+
+.TextBox_FourCells_width {
+  width: 570px;
+}
+
+.TextBox_FiveCells_width {
+  width: 715px;
+}
+
+.TextBox_SixCells_width {
+  width: 860px;
+}

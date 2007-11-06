@@ -1,0 +1,468 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
+package org.openbravo.erpCommon.utility;
+
+import java.io.*;
+import java.util.*;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.xmlEngine.XmlDocument;
+
+
+public class DataGrid extends HttpSecureAppServlet {
+  private static final long serialVersionUID = 1L;
+  public void init (ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    String action = vars.getStringParameter("action");
+    String TabId = vars.getStringParameter("inpadTabId");
+    String WindowId = vars.getStringParameter("inpadWindowId");
+    if (log4j.isDebugEnabled()) log4j.debug("action: " + action);
+    if (log4j.isDebugEnabled()) log4j.debug("TabId: " + TabId);
+    if (log4j.isDebugEnabled()) log4j.debug("WindowId: " + WindowId);
+    TableSQLData tableSQL = null;
+    try {
+      tableSQL = new TableSQLData(vars, this, TabId, Utility.getContext(this, vars, "#User_Org", WindowId), Utility.getContext(this, vars, "#User_Client", WindowId));
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+
+    if (vars.commandIn("STRUCTURE")) {
+      printPageStructure(response, vars, tableSQL);
+    } else if (vars.commandIn("DATA")) {
+      if (log4j.isDebugEnabled()) log4j.debug(">>DATA");
+      if(action.equalsIgnoreCase("getRows")){
+        printPageData(response, vars, tableSQL);
+      } else if (action.equalsIgnoreCase("getIdsInRange")){
+        if (log4j.isDebugEnabled()) log4j.debug(">>>>getIdsInRange");
+        printPageDataId(response, vars, tableSQL);
+      } else if (action.equalsIgnoreCase("getColumnTotals")){
+        if (log4j.isDebugEnabled()) log4j.debug(">>>>getColumnTotals");
+        getColumnTotals(response, vars, tableSQL);
+      } else if (action.equalsIgnoreCase("getComboContent")) {
+        if (log4j.isDebugEnabled()) log4j.debug(">>>>getComboContent");
+        getComboContent(response, vars, TabId);
+      } else if (action.equalsIgnoreCase("getDefaultValues")) {
+        if (log4j.isDebugEnabled()) log4j.debug(">>>>getDefaultValues");
+        this.getDefaultValues(response, vars);
+      }
+    } else if (vars.commandIn("UPDATE")) {
+      if (log4j.isDebugEnabled()) log4j.debug(">>UPDATE");
+      try {
+        if (action.equalsIgnoreCase("deleteRow")) {
+          if (log4j.isDebugEnabled()) log4j.debug(">>>>deleteRow");
+          delete(response, vars, tableSQL);
+        } else {
+          save(response, vars);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    } else {
+      if (log4j.isDebugEnabled()) log4j.debug("Command " + action + " not defined");
+    }
+  }
+
+  private SQLReturnObject[] getHeaders(TableSQLData tableSQL) throws ServletException {
+    return tableSQL.getHeaders();
+  }
+
+  private String getTotalRows(TableSQLData tableSQL) {
+    if (tableSQL==null) return "0";
+    FieldProvider[] data = null;
+    try {
+      ExecuteQuery execquery = new ExecuteQuery(this, tableSQL.getTotalSQL(), tableSQL.getParameterValuesTotalSQL());
+      data = execquery.select(0,0);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    if (data==null || data.length==0) return "0";
+    else return data[0].getField("TOTAL");
+  }
+
+  private void printPageStructure(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: print page structure");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    SQLReturnObject[] data = null;
+    String type = "Hidden";
+    String title = "";
+    String description = "";
+    try {
+      data = getHeaders(tableSQL);
+    } catch (Exception ex) {
+      type = "Error";
+      title = "Error";
+      description = ex.getMessage();
+      ex.printStackTrace();
+    }
+    xmlDocument.setParameter("type", type);
+    xmlDocument.setParameter("title", title);
+    xmlDocument.setParameter("description", description);
+    xmlDocument.setData("structure1", data);
+    response.setContentType("text/xml; charset=UTF-8");
+    response.setHeader("Cache-Control", "no-cache");
+    PrintWriter out = response.getWriter();
+    if (log4j.isDebugEnabled()) log4j.debug(xmlDocument.print());
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  private void printPageData(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: print page rows");
+    int pageSize = new Integer(vars.getStringParameter("page_size")).intValue();
+    int offset = new Integer(vars.getRequestGlobalVariable("offset", tableSQL.getTabID() + "|offset")).intValue();
+    SQLReturnObject[] headers = getHeaders(tableSQL);
+    FieldProvider[] data = null;
+    String type = "Hidden";
+    String title = "";
+    String description = "";
+    if (tableSQL!=null && headers!=null) {
+      try{
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "", new Vector<String>(), new Vector<String>());
+        if (log4j.isDebugEnabled()) log4j.debug("offset: " + offset + " - SQL: " + strSQL);
+        vars.removeSessionValue(tableSQL.getTabID() + "|newOrder");
+        ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
+        data = execquery.select(offset,pageSize);
+      } catch (ServletException e) {
+        log4j.error("Error in print page data: " + e);
+        e.printStackTrace();
+        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+        if (!myError.isConnectionAvailable()) {
+          bdErrorAjax(response, "Error", "Connection Error", "No database connection");
+          return;
+        } else {
+          type = myError.getType();
+          title = myError.getTitle();
+          if (!myError.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + myError.getMessage() + "]]>";
+          else description = myError.getMessage();
+        }
+      } catch (Exception e) { 
+        if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
+        type = "Error";
+        title = "Error";
+        if (e.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + e.getMessage() + "]]>";
+        else description = e.getMessage();
+        e.printStackTrace();
+      }
+    }
+    if (!type.startsWith("<![CDATA[")) type = "<![CDATA[" + type + "]]>";
+    if (!title.startsWith("<![CDATA[")) title = "<![CDATA[" + title + "]]>";
+    if (!description.startsWith("<![CDATA[")) description = "<![CDATA[" + description + "]]>";
+    StringBuffer strRowsData = new StringBuffer();
+    strRowsData.append("<xml-data>\n");
+    strRowsData.append("  <status>\n");
+    strRowsData.append("    <type>").append(type).append("</type>\n");
+    strRowsData.append("    <title>").append(title).append("</title>\n");
+    strRowsData.append("    <description>").append(description).append("</description>\n");
+    strRowsData.append("  </status>\n");
+    strRowsData.append("  <rows numRows=\"").append(getTotalRows(tableSQL)).append("\">\n");
+    if (data!=null && data.length>0) {
+      for (int j=0;j<data.length;j++) {
+        strRowsData.append("    <tr>\n");
+        for (int k=0;k<headers.length;k++) {
+          strRowsData.append("      <td><![CDATA[");
+          String columnname = headers[k].getField("columnname");
+          
+          
+          if ((
+        	   (headers[k].getField("iskey").equals("false") 
+        	&& !headers[k].getField("gridcolumnname").equalsIgnoreCase("keyname"))
+        	 || !headers[k].getField("iskey").equals("true")) && !tableSQL.getSelectField(columnname + "_R").equals("")) {
+        	  columnname += "_R";
+          }
+          
+          if ((data[j].getField(columnname)) != null) {
+            if (headers[k].getField("adReferenceId").equals("32")) strRowsData.append(strReplaceWith).append("/images/");
+            strRowsData.append(data[j].getField(columnname));
+          } else {
+            if (headers[k].getField("adReferenceId").equals("32")) {
+              strRowsData.append(strReplaceWith).append("/images/blank.gif");
+            } else strRowsData.append("&nbsp;");
+          }
+          strRowsData.append("]]></td>\n");
+        }
+        strRowsData.append("    </tr>\n");
+      }
+    }
+    strRowsData.append("  </rows>\n");
+    strRowsData.append("</xml-data>\n");
+    response.setContentType("text/xml; charset=UTF-8");
+    response.setHeader("Cache-Control", "no-cache");
+    PrintWriter out = response.getWriter();
+    //if (log4j.isDebugEnabled()) log4j.debug(strRowsData.toString());
+    out.print(strRowsData.toString());
+    out.close();
+  }
+
+  private void printPageDataId(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: print page ids");
+    int minOffset  = new Integer(vars.getStringParameter("minOffset")).intValue();
+    int maxOffset  = new Integer(vars.getStringParameter("maxOffset")).intValue();
+    String type = "Hidden";
+    String title = "";
+    String description = "";
+    FieldProvider[] data = null;
+    if (tableSQL!=null) {
+      try{
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, tableSQL.getKeyColumn() + " AS ID", new Vector<String>(), new Vector<String>());
+        ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
+        data = execquery.select(minOffset,maxOffset-minOffset);
+      } catch (Exception e) { 
+        if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
+        e.printStackTrace();
+        type = "Error";
+        title = "Error";
+        if (!e.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + e.getMessage() + "]]>";
+      }
+    }
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/DataGridID").createXmlDocument();
+    xmlDocument.setParameter("type", type);
+    xmlDocument.setParameter("title", title);
+    xmlDocument.setParameter("description", description);
+    xmlDocument.setData("structure1", data);
+    response.setContentType("text/xml; charset=UTF-8");
+    response.setHeader("Cache-Control", "no-cache");
+    PrintWriter out = response.getWriter();
+    if (log4j.isDebugEnabled()) log4j.debug(xmlDocument.print());
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  private void getColumnTotals(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL) throws ServletException, IOException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: print page column total");
+    String rows = vars.getInStringParameter("rows");
+    String columnname = vars.getStringParameter("columnName");
+    FieldProvider[] data = null;
+    if (tableSQL!=null) {
+      try{
+        Vector<String> filter = new Vector<String>();
+        filter.addElement(tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " IN " + rows);
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "SUM(" + columnname + ") AS TOTAL", filter, new Vector<String>());
+        ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
+        data = execquery.select(0,0);
+      } catch (Exception e) { 
+        if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
+        e.printStackTrace();
+      }
+    }
+    String total = "0";
+    if (data!=null && data.length>0) total = data[0].getField("TOTAL");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/DataGridTotal").createXmlDocument();
+    xmlDocument.setParameter("total", total);
+    response.setContentType("text/xml; charset=UTF-8");
+    response.setHeader("Cache-Control", "no-cache");
+    PrintWriter out = response.getWriter();
+    if (log4j.isDebugEnabled()) log4j.debug(xmlDocument.print());
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  private void delete(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Delete record");
+    Vector<String> parametersData = null;
+    String rows = vars.getInStringParameter("rows");
+    StringBuffer SqlDataBuffer = new StringBuffer();
+    SqlDataBuffer.append("DELETE FROM ").append(tableSQL.getTableName()).append(" \n");
+    SqlDataBuffer.append("WHERE ").append(tableSQL.getKeyColumn()).append(" \n");
+    SqlDataBuffer.append("IN ").append(rows);
+    String parentKey = tableSQL.getParentColumnName();
+    if (parentKey!=null && !parentKey.equals("")) {
+      SqlDataBuffer.append(" AND ").append(tableSQL.getTableName()).append(".").append(parentKey).append(" = ?");
+      if (parametersData==null) parametersData = new Vector<String>();
+      parametersData.addElement(vars.getGlobalVariable("inpParentKey", tableSQL.getWindowID() + "|" + parentKey));
+    }
+    if (log4j.isDebugEnabled()) log4j.debug(SqlDataBuffer.toString());
+    int result = 1;
+    int total = 0;
+    String type, title, description="";
+    try{
+      ExecuteQuery execquery = new ExecuteQuery(this, SqlDataBuffer.toString(), parametersData);
+      total = execquery.executeStatement();
+      if (total == 0) {
+        result=0;
+        type="Error";
+        title="Error";
+        description="0 " + Utility.messageBD(this, "RowsDeleted", vars.getLanguage());
+      } else {
+        result=1;
+        type="Success";
+        title="Success";
+        description=total + " " + Utility.messageBD(this, "RowsDeleted", vars.getLanguage());
+      }
+    } catch (ServletException e) { 
+      log4j.error("Error in delete: " + e);
+      e.printStackTrace();
+      OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+      if (!myError.isConnectionAvailable()) {
+        bdErrorAjax(response, "Error", "Connection Error", "No database connection");
+        return;
+      } else {
+        result = 0;
+        type = myError.getType();
+        title = myError.getTitle();
+        if (!myError.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + myError.getMessage() + "]]>";
+        else description = myError.getMessage();
+      }
+    } catch (Exception e) {
+      log4j.error("Error in delete: " + e);
+      e.printStackTrace();
+      result = 0;
+      type = "ERROR";
+      title = "Error";
+      if (!e.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + e.getMessage() + "]]>";
+      else description = e.getMessage();
+    }
+
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/DataGridDelete").createXmlDocument();
+    xmlDocument.setParameter("result", Integer.toString(result));
+    xmlDocument.setParameter("type", type);
+    xmlDocument.setParameter("title", title);
+    xmlDocument.setParameter("description", description);
+    xmlDocument.setParameter("total", Integer.toString(total));
+    response.setContentType("text/xml; charset=UTF-8");
+    response.setHeader("Cache-Control", "no-cache");
+    PrintWriter out = response.getWriter();
+    if (log4j.isDebugEnabled()) log4j.debug(xmlDocument.print());
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  private void getComboContent(HttpServletResponse response, VariablesSecureApp vars, String TabId) throws ServletException, IOException {
+      /*
+      String columnname = vars.getStringParameter("subordinatedColumn");
+      if (log4j.isDebugEnabled()) log4j.debug("--------");
+      if (log4j.isDebugEnabled()) log4j.debug("");
+      if (log4j.isDebugEnabled()) log4j.debug(columnname.toString());
+      if (log4j.isDebugEnabled()) log4j.debug("");
+      if (log4j.isDebugEnabled()) log4j.debug("--------");
+      
+      //Get columname to get reference id (17, 18 or 19)
+      DataGridReferenceIdData[] refId = DataGridReferenceIdData.select(this, vars.getLanguage(), TabId, columnname.toString());
+      
+      if (log4j.isDebugEnabled()) log4j.debug(refId[0].adReferenceId);
+      
+    if (refId[0].adReferenceId.equals("17")) { 
+      if (log4j.isDebugEnabled()) log4j.debug("true");
+      
+      StringBuffer SelectClause = new StringBuffer();
+      StringBuffer FromClause = new StringBuffer();
+      StringBuffer WhereClause = new StringBuffer();
+      SelectClause.append("SELECT ");
+      FromClause.append("FROM ");
+      WhereClause.append("WHERE ");
+      SelectClause.append("Name ");
+      FromClause.append("AD_Ref_List_V ");
+      WhereClause.append("Ad_Reference_Id = ").append(refId[0].adReferenceValueId);
+      WhereClause.append(" AND ");
+      WhereClause.append("ad_language = '").append(vars.getLanguage()).append("' \n");
+    
+      //String SqlData;
+      StringBuffer SqlData = new StringBuffer();
+      SqlData.append(SelectClause).append(FromClause).append(WhereClause);
+      if (log4j.isDebugEnabled()) log4j.debug("SQL del Combo: " + SqlData.toString());
+      
+      try{
+        ExecuteQuery execquery = new ExecuteQuery(this, SqlData.toString(), null);
+        FieldProvider[] data = execquery.select(0,0);
+        
+        StringBuffer strRowsData = new StringBuffer();
+        if (log4j.isDebugEnabled()) log4j.debug("\n Ha tragado la query del SQL Combo\n");
+          strRowsData.append("    <row>\n");
+
+        for (int k=0;k<data.length;k++) {
+          if ((data[1].getField("Name")) != null) {
+            strRowsData.append("          <option>").append(data[k].getField("Name")).append("</option>\n");
+          }
+        }               
+          
+          strRowsData.append("    </row>\n");
+        response.setContentType("text/xml; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        //out.print("<response type=\"object\" id=\"structureParser\">");
+        out.print(strRowsData.toString());
+        //out.print("</response>");
+        out.close();
+          
+      } catch (Exception e) { 
+        if (log4j.isDebugEnabled()) log4j.debug("Error in printPageData");
+        e.printStackTrace();
+      }
+    } else if (refId[0].adReferenceId.equals("19")) { 
+      if (log4j.isDebugEnabled()) log4j.debug("true");
+      
+      StringBuffer SelectClause = new StringBuffer();
+      StringBuffer FromClause = new StringBuffer();
+      SelectClause.append("SELECT ");
+      FromClause.append("FROM ");
+      
+      SelectClause.append(columnname).append(", Name ");
+      FromClause.append(columnname.substring(0, columnname.length()-3));
+    
+      //String SqlData;
+      StringBuffer SqlData = new StringBuffer();
+      SqlData.append(SelectClause).append(FromClause);
+      if (log4j.isDebugEnabled()) log4j.debug("SQL del Combo: " + SqlData.toString());
+      
+      try{
+        ExecuteQuery execquery = new ExecuteQuery(this, SqlData.toString(), null);
+        FieldProvider[] data = execquery.select(0,0);
+        
+        StringBuffer strRowsData = new StringBuffer();
+        if (log4j.isDebugEnabled()) log4j.debug("\n Ha tragado la query del SQL Combo\n");
+          strRowsData.append("    <row>\n");
+
+        for (int k=0;k<data.length;k++) {
+          if ((data[1].getField("Name")) != null) {
+            strRowsData.append("          <option>").append(data[k].getField("Name")).append("</option>\n");
+          }
+        }               
+          
+          strRowsData.append("    </row>\n");
+        response.setContentType("text/xml; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        //out.print("<response type=\"object\" id=\"structureParser\">");
+        out.print(strRowsData.toString());
+        //out.print("</response>");
+        out.close();
+          
+      } catch (Exception e) { 
+        if (log4j.isDebugEnabled()) log4j.debug("Error in printPageData");
+        e.printStackTrace();
+      }
+    }*/
+  }
+    
+  private void getDefaultValues(HttpServletResponse response, VariablesSecureApp vars) throws ServletException, IOException {
+  }
+
+  private void save(HttpServletResponse response, VariablesSecureApp vars) throws ServletException, IOException {
+  }
+}

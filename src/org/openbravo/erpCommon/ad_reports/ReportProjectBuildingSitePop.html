@@ -1,0 +1,106 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Building site report</TITLE>
+<link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Report.css" id="paramCSS" />
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">
+LNG_POR_DEFECTO="en_US";
+</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+
+arrTeclas = new Array();
+arrTeclas[0] = new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
+arrTeclas[1] = new Teclas("B", "submitCommandForm('FIND', true);", null, "ctrlKey")
+activarControlTeclas();
+
+
+</SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="xx();">
+<FORM method="POST" action="ReportProjectBuildingSite.html" name="frmMain" >
+  <INPUT type="hidden" name="Command"></INPUT>
+  <DIV class="ReportTitle">Building site report<SPAN id="paramTitle">xxde tipo tal, en la provincia 
+    tal, en situación tal, fase cual, con tipo de iniciativa tal, para la categoría 
+    de producto cual, con fechas desde tal hasta cual.</SPAN></DIV>
+  <DIV id="sectionPartner"> 
+    <TABLE width="90%" class="Border" border="1" cellspacing="0" cellpadding="0">
+      <TR class="TableHeaderLevel1"> 
+        <TD colspan="4">Business Partner<SPAN id="fieldBpartnername">xxksdkkdk</SPAN></TD>
+      </TR>
+      <DIV id="sectionProject"> 
+        <TR > 
+          <TD colspan="4" id="fieldBlankSpace"></TD>
+        </TR>
+        <TR class="TableHeaderLevel2"> 
+          <TD colspan="4">Project&nbsp;<SPAN id="fieldProjectname">xxdsjslkjfls</SPAN></TD>
+          <INPUT type="hidden" name="inpOrder" value="" id="fieldMark"></INPUT>
+        </TR>
+        <TR class="Border TableDetailHeader"> 
+          <TD width="30%"> <SPAN >Product</SPAN></TD>
+          <TD width="30%" align="right"> <SPAN >Quantity (m2)</SPAN>&nbsp;</TD>
+          <TD width="20%" align="right"> <SPAN >Price (/m2)</SPAN>&nbsp;</TD>
+          <TD width="20%" align="right"> <SPAN >Amount ()</SPAN>&nbsp;</TD>
+        </TR>
+        <DIV id="sectionDetail"> 
+          <TR class="Border TableDetailRowEven"cellspacing="0" cellpadding="0"> 
+            <TD width="30%" id="fieldProductname">xxProducto</TD>
+            <TD width="30%" align="right" id="fieldPlannedqty">xxCantidad<SPAN>&nbsp;</SPAN></TD>
+            <TD width="20%" align="right" id="fieldPlannedprice">xxPrecio<SPAN>&nbsp;</SPAN></TD>
+            <TD width="20%" align="right" id="fieldPlannedpoprice">xxImporte<SPAN>&nbsp;</SPAN></TD>
+          </TR>
+        </DIV>
+      </DIV>
+      <TR > 
+        <TD colspan="4"> <TABLE width="100%">
+            <TR class="TableFooterLevel1"> 
+              <TD width="50%" > <SPAN >Total 
+                Bpartner</SPAN></TD>
+              <TD width="10%" > <SPAN  id="fieldSubtotalQty"></SPAN></TD>
+              <TD width="40%" > <SPAN  id="fieldSubtotalImp"></SPAN></TD>
+            </TR>
+          </TABLE></TD>
+      </TR>
+    </TABLE>
+    <TABLE>
+      <TR> 
+        <TD>&nbsp;</TD>
+      </TR>
+    </TABLE>
+  </DIV>
+  <TABLE width="90%" border="1" bordercolor="#000000">
+    <TR class="ReportSumarize"> 
+      <TD width="20%" > <SPAN >PROJECT TOTAL</SPAN></TD>
+      <TD width="10%" > <SPAN  id="fieldTotalProject"></SPAN></TD>
+      <TD width="20%" > <SPAN >TOTAL QUANTITY 
+        (m2)</SPAN></TD>
+      <TD width="10%" > <SPAN  id="fieldTotalQty"></SPAN></TD>
+      <TD width="30%" > <SPAN >TOTAL AMOUNT 
+        ()</SPAN></TD>
+      <TD width="10%" > <SPAN  id="fieldTotalImp"></SPAN></TD>
+    </TR>
+  </TABLE>
+</FORM>
+</BODY>
+</HTML>

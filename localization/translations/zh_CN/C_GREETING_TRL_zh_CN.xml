@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="zh_CN" table="C_GREETING">
+    <row id="1000001" trl="N">
+        <value column="Name" original="Sr">尊贵的先生</value>
+        <value column="Greeting" original="Sr">尊贵的先生</value>
+    </row>
+    <row id="1000002" trl="N">
+        <value column="Name" original="Mr">先生</value>
+        <value column="Greeting" original="Mr">先生</value>
+    </row>
+    <row id="1000003" trl="N">
+        <value column="Name" original="Mrs">女士</value>
+        <value column="Greeting" original="Mrs">女士</value>
+    </row>
+    <row id="1000004" trl="N">
+        <value column="Name" original="Miss">小姐</value>
+        <value column="Greeting" original="Miss">小姐</value>
+    </row>
+    <row id="1000005" trl="N">
+        <value column="Name" original="Monsieur">先生</value>
+        <value column="Greeting" original="Monsieur">先生</value>
+    </row>
+    <row id="1000006" trl="N">
+        <value column="Name" original="Herr">先生</value>
+        <value column="Greeting" original="Herr">先生</value>
+    </row>
+</compiereTrl>

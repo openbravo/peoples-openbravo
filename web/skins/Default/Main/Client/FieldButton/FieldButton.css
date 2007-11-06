@@ -1,0 +1,155 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+a.FieldButtonLink, a.FieldButtonLink:active, a.FieldButtonLink:hover, a.FieldButtonLink:visited, a.FieldButtonLink:link {
+  text-decoration: none;
+}
+
+a.FieldButtonLink_hover, a.FieldButtonLink_hover:active, a.FieldButtonLink_hover:hover, a.FieldButtonLink_hover:visited, a.FieldButtonLink_hover:link {
+  text-decoration: none;
+}
+
+a.FieldButtonLink_active, a.FieldButtonLink_active:active, a.FieldButtonLink_active:hover, a.FieldButtonLink_active:visited, a.FieldButtonLink_active:link {
+  text-decoration: none;
+}
+
+a.FieldButtonLink .FieldButton, .FieldButton {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+
+
+a.FieldButtonLink .FieldButton_bg, .FieldButton_bg {
+  width: 27px;
+  height: 18px;
+  background: url(fieldButton.normal.png) no-repeat center center;
+}
+
+a.FieldButtonLink_hover .FieldButton, .FieldButton_hover {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.FieldButtonLink_hover table.FieldButton .FieldButton_bg, table.FieldButton_hover .FieldButton_bg {
+  background: url(fieldButton.rollover.png) no-repeat center center;
+}
+
+a.FieldButtonLink_active .FieldButton, .FieldButton_active {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.FieldButtonLink_active table.FieldButton .FieldButton_bg, table.FieldButton_active .FieldButton_bg {
+  background: url(fieldButton.pressed.png) no-repeat center center;
+}
+
+
+
+
+.FieldButton_Icon {
+  width: 27px;
+  height: 20px;
+  margin: 0px 0px 2px 0px;
+}
+
+.FieldButton_Icon_Calc {
+  background: url(iconCalculator.png) no-repeat top center;
+}
+
+.FieldButton_Icon_BusinessPartner {
+    background: url(iconBusinessPartner.png) no-repeat top center;
+}
+
+.FieldButton_Icon_Project {
+    background: url(iconProject.png) no-repeat top center;
+}
+
+.FieldButton_Icon_SalesOrderLine {
+    background: url(iconOrderLine.png) no-repeat top center;
+}
+
+.FieldButton_Icon_ShipmentReceiptLine {
+    background: url(iconShipmentReceipt.png) no-repeat center center;
+}
+
+.FieldButton_Icon_DebtPayment {
+    background: url(iconDebtPayment.png) no-repeat center center;
+}
+
+.FieldButton_Icon_Invoice {
+    background: url(iconInvoice.png) no-repeat center center;
+}
+
+.FieldButton_Icon_InvoiceLine {
+    background: url(iconInvoiceLine.png) no-repeat center center;
+}
+
+.FieldButton_Icon_Product {
+    background: url(iconProduct.png) no-repeat center center;
+}
+
+.FieldButton_Icon_SalesOrder {
+    background: url(iconOrder.png) no-repeat center center;
+}
+
+.FieldButton_Icon_AttributeSetInstance {
+    background: url(iconAttribute.png) no-repeat center center;
+}
+
+.FieldButton_Icon_Password {
+    background: url(iconPassword.png) no-repeat center center;
+}
+
+.FieldButton_Icon_Calendar {
+    background: url(iconCalendar.png) no-repeat center center;
+}
+
+.FieldButton_Icon_Link {
+    background: url(iconUrl.png) no-repeat center center;
+}
+
+.FieldButton_Icon_Locator {
+    background: url(iconLocator.png) no-repeat center center;
+}
+
+.FieldButton_Icon_LocatorDetail {
+    background: url(iconLocator.png) no-repeat center center;
+}
+
+.FieldButton_Icon_Location {
+    background: url(iconLocation.png) no-repeat center center;
+}
+
+.FieldButton_Icon_Account {
+    background: url(iconAccount.png) no-repeat center center;
+}
+
+.FieldButton_Icon_AccountDimension {
+    background: url(iconAccountDimension.png) no-repeat center center;
+}
+
+.FieldButton_Icon_ProductComplete {
+    background: url(iconProduct.png) no-repeat center center;
+}
+
+.FieldButton_Icon_Clock {
+    background: url(iconTime.png) no-repeat center center;
+}

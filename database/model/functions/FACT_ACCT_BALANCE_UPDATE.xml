@@ -1,0 +1,271 @@
+<?xml version="1.0"?>
+<database name="FUNCTION FACT_ACCT_BALANCE_UPDATE">
+<function name="FACT_ACCT_BALANCE_UPDATE">
+<parameter name="p_DeleteFirst" type="VARCHAR" default="N" mode="in"/>
+<body><![CDATA[
+  /*************************************************************************
+  * The contents of this file are subject to the Compiere License
+  * Version 2.5.0 ("License"); You may not use this file except in
+  * compliance with the License. You may obtain a copy of the License at
+  * http://www.compiere.org/license.html
+  * Software distributed under the License is distributed on an
+  * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  * implied. See the License for the specific language governing rights
+  * and limitations under the License.
+  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
+  Inc.
+  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+  * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+  * All Rights Reserved.
+  * Contributor(s): Openbravo SL
+  * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+  *************************************************************************
+  * $Id: Fact_Acct_Balance_Update.sql,v 1.1 2003/02/11 06:36:37 jjanke Exp $
+  ***
+  * Title:  Update ALL Balances
+  * Description:
+  * - Recreates all Balances
+  ************************************************************************/
+  rowcount NUMBER;
+BEGIN
+  IF(p_DeleteFirst='Y') THEN
+    DELETE FROM Fact_Acct_Balance;
+    rowcount:=SQL%ROWCOUNT;
+    DBMS_OUTPUT.PUT_LINE('  Deletes=' || rowcount) ;
+  ELSE
+    /** Update  **/
+    UPDATE Fact_Acct_Balance
+      SET AmtAcctDr=
+      (SELECT COALESCE(SUM(AmtAcctDr), 0)
+      FROM Fact_Acct a
+      WHERE a.AD_Client_ID=Fact_Acct_Balance.AD_Client_ID
+        AND a.AD_Org_ID=Fact_Acct_Balance.AD_Org_ID
+        AND a.C_AcctSchema_ID=Fact_Acct_Balance.C_AcctSchema_ID
+        AND TRUNC(a.DateAcct)=TRUNC(Fact_Acct_Balance.DateAcct)
+        AND a.Account_ID=Fact_Acct_Balance.Account_ID
+        AND a.PostingType=Fact_Acct_Balance.PostingType
+        AND COALESCE(a.M_Product_ID, 0)=COALESCE(Fact_Acct_Balance.M_Product_ID, 0)
+        AND COALESCE(a.C_BPartner_ID, 0)=COALESCE(Fact_Acct_Balance.C_BPartner_ID, 0)
+        AND COALESCE(a.C_Project_ID, 0)=COALESCE(Fact_Acct_Balance.C_Project_ID, 0)
+        AND COALESCE(a.AD_OrgTrx_ID, 0)=COALESCE(Fact_Acct_Balance.AD_OrgTrx_ID, 0)
+        AND COALESCE(a.C_SalesRegion_ID, 0)=COALESCE(Fact_Acct_Balance.C_SalesRegion_ID, 0)
+        AND COALESCE(a.C_Activity_ID, 0)=COALESCE(Fact_Acct_Balance.C_Activity_ID, 0)
+        AND COALESCE(a.C_Campaign_ID, 0)=COALESCE(Fact_Acct_Balance.C_Campaign_ID, 0)
+        AND COALESCE(a.C_LocTo_ID, 0)=COALESCE(Fact_Acct_Balance.C_LocTo_ID, 0)
+        AND COALESCE(a.C_LocFrom_ID, 0)=COALESCE(Fact_Acct_Balance.C_LocFrom_ID, 0)
+        AND COALESCE(a.User1_ID, 0)=COALESCE(Fact_Acct_Balance.User1_ID, 0)
+        AND COALESCE(a.User2_ID, 0)=COALESCE(Fact_Acct_Balance.User2_ID, 0)
+        AND COALESCE(a.GL_Budget_ID, 0)=COALESCE(Fact_Acct_Balance.GL_Budget_ID, 0)
+      GROUP BY AD_Client_ID,
+        AD_Org_ID,
+        C_AcctSchema_ID,
+        TRUNC(DateAcct),
+        Account_ID,
+        PostingType,
+        M_Product_ID,
+        C_BPartner_ID,
+        C_Project_ID,
+        AD_OrgTrx_ID,
+        C_SalesRegion_ID,
+        C_Activity_ID,
+        C_Campaign_ID,
+        C_LocTo_ID,
+        C_LocFrom_ID,
+        User1_ID,
+        User2_ID,
+        GL_Budget_ID
+      )
+      ,
+      AmtAcctCr=
+      (SELECT COALESCE(SUM(AmtAcctCr), 0)
+      FROM Fact_Acct a
+      WHERE a.AD_Client_ID=Fact_Acct_Balance.AD_Client_ID
+        AND a.AD_Org_ID=Fact_Acct_Balance.AD_Org_ID
+        AND a.C_AcctSchema_ID=Fact_Acct_Balance.C_AcctSchema_ID
+        AND TRUNC(a.DateAcct)=TRUNC(Fact_Acct_Balance.DateAcct)
+        AND a.Account_ID=Fact_Acct_Balance.Account_ID
+        AND a.PostingType=Fact_Acct_Balance.PostingType
+        AND COALESCE(a.M_Product_ID, 0)=COALESCE(Fact_Acct_Balance.M_Product_ID, 0)
+        AND COALESCE(a.C_BPartner_ID, 0)=COALESCE(Fact_Acct_Balance.C_BPartner_ID, 0)
+        AND COALESCE(a.C_Project_ID, 0)=COALESCE(Fact_Acct_Balance.C_Project_ID, 0)
+        AND COALESCE(a.AD_OrgTrx_ID, 0)=COALESCE(Fact_Acct_Balance.AD_OrgTrx_ID, 0)
+        AND COALESCE(a.C_SalesRegion_ID, 0)=COALESCE(Fact_Acct_Balance.C_SalesRegion_ID, 0)
+        AND COALESCE(a.C_Activity_ID, 0)=COALESCE(Fact_Acct_Balance.C_Activity_ID, 0)
+        AND COALESCE(a.C_Campaign_ID, 0)=COALESCE(Fact_Acct_Balance.C_Campaign_ID, 0)
+        AND COALESCE(a.C_LocTo_ID, 0)=COALESCE(Fact_Acct_Balance.C_LocTo_ID, 0)
+        AND COALESCE(a.C_LocFrom_ID, 0)=COALESCE(Fact_Acct_Balance.C_LocFrom_ID, 0)
+        AND COALESCE(a.User1_ID, 0)=COALESCE(Fact_Acct_Balance.User1_ID, 0)
+        AND COALESCE(a.User2_ID, 0)=COALESCE(Fact_Acct_Balance.User2_ID, 0)
+        AND COALESCE(a.GL_Budget_ID, 0)=COALESCE(Fact_Acct_Balance.GL_Budget_ID, 0)
+      GROUP BY AD_Client_ID,
+        AD_Org_ID,
+        C_AcctSchema_ID,
+        TRUNC(DateAcct),
+        Account_ID,
+        PostingType,
+        M_Product_ID,
+        C_BPartner_ID,
+        C_Project_ID,
+        AD_OrgTrx_ID,
+        C_SalesRegion_ID,
+        C_Activity_ID,
+        C_Campaign_ID,
+        C_LocTo_ID,
+        C_LocFrom_ID,
+        User1_ID,
+        User2_ID,
+        GL_Budget_ID
+      )
+      ,
+      Qty=
+      (SELECT COALESCE(SUM(Qty), 0)
+      FROM Fact_Acct a
+      WHERE a.AD_Client_ID=Fact_Acct_Balance.AD_Client_ID
+        AND a.AD_Org_ID=Fact_Acct_Balance.AD_Org_ID
+        AND a.C_AcctSchema_ID=Fact_Acct_Balance.C_AcctSchema_ID
+        AND TRUNC(a.DateAcct)=TRUNC(Fact_Acct_Balance.DateAcct)
+        AND a.Account_ID=Fact_Acct_Balance.Account_ID
+        AND a.PostingType=Fact_Acct_Balance.PostingType
+        AND COALESCE(a.M_Product_ID, 0)=COALESCE(Fact_Acct_Balance.M_Product_ID, 0)
+        AND COALESCE(a.C_BPartner_ID, 0)=COALESCE(Fact_Acct_Balance.C_BPartner_ID, 0)
+        AND COALESCE(a.C_Project_ID, 0)=COALESCE(Fact_Acct_Balance.C_Project_ID, 0)
+        AND COALESCE(a.AD_OrgTrx_ID, 0)=COALESCE(Fact_Acct_Balance.AD_OrgTrx_ID, 0)
+        AND COALESCE(a.C_SalesRegion_ID, 0)=COALESCE(Fact_Acct_Balance.C_SalesRegion_ID, 0)
+        AND COALESCE(a.C_Activity_ID, 0)=COALESCE(Fact_Acct_Balance.C_Activity_ID, 0)
+        AND COALESCE(a.C_Campaign_ID, 0)=COALESCE(Fact_Acct_Balance.C_Campaign_ID, 0)
+        AND COALESCE(a.C_LocTo_ID, 0)=COALESCE(Fact_Acct_Balance.C_LocTo_ID, 0)
+        AND COALESCE(a.C_LocFrom_ID, 0)=COALESCE(Fact_Acct_Balance.C_LocFrom_ID, 0)
+        AND COALESCE(a.User1_ID, 0)=COALESCE(Fact_Acct_Balance.User1_ID, 0)
+        AND COALESCE(a.User2_ID, 0)=COALESCE(Fact_Acct_Balance.User2_ID, 0)
+        AND COALESCE(a.GL_Budget_ID, 0)=COALESCE(Fact_Acct_Balance.GL_Budget_ID, 0)
+      GROUP BY AD_Client_ID,
+        AD_Org_ID,
+        C_AcctSchema_ID,
+        TRUNC(DateAcct),
+        Account_ID,
+        PostingType,
+        M_Product_ID,
+        C_BPartner_ID,
+        C_Project_ID,
+        AD_OrgTrx_ID,
+        C_SalesRegion_ID,
+        C_Activity_ID,
+        C_Campaign_ID,
+        C_LocTo_ID,
+        C_LocFrom_ID,
+        User1_ID,
+        User2_ID,
+        GL_Budget_ID
+      )
+    WHERE EXISTS
+      (SELECT *
+      FROM Fact_Acct a
+      WHERE a.AD_Client_ID=Fact_Acct_Balance.AD_Client_ID
+        AND a.AD_Org_ID=Fact_Acct_Balance.AD_Org_ID
+        AND a.C_AcctSchema_ID=Fact_Acct_Balance.C_AcctSchema_ID
+        AND TRUNC(a.DateAcct)=TRUNC(Fact_Acct_Balance.DateAcct)
+        AND a.Account_ID=Fact_Acct_Balance.Account_ID
+        AND a.PostingType=Fact_Acct_Balance.PostingType
+        AND COALESCE(a.M_Product_ID, 0)=COALESCE(Fact_Acct_Balance.M_Product_ID, 0)
+        AND COALESCE(a.C_BPartner_ID, 0)=COALESCE(Fact_Acct_Balance.C_BPartner_ID, 0)
+        AND COALESCE(a.C_Project_ID, 0)=COALESCE(Fact_Acct_Balance.C_Project_ID, 0)
+        AND COALESCE(a.AD_OrgTrx_ID, 0)=COALESCE(Fact_Acct_Balance.AD_OrgTrx_ID, 0)
+        AND COALESCE(a.C_SalesRegion_ID, 0)=COALESCE(Fact_Acct_Balance.C_SalesRegion_ID, 0)
+        AND COALESCE(a.C_Activity_ID, 0)=COALESCE(Fact_Acct_Balance.C_Activity_ID, 0)
+        AND COALESCE(a.C_Campaign_ID, 0)=COALESCE(Fact_Acct_Balance.C_Campaign_ID, 0)
+        AND COALESCE(a.C_LocTo_ID, 0)=COALESCE(Fact_Acct_Balance.C_LocTo_ID, 0)
+        AND COALESCE(a.C_LocFrom_ID, 0)=COALESCE(Fact_Acct_Balance.C_LocFrom_ID, 0)
+        AND COALESCE(a.User1_ID, 0)=COALESCE(Fact_Acct_Balance.User1_ID, 0)
+        AND COALESCE(a.User2_ID, 0)=COALESCE(Fact_Acct_Balance.User2_ID, 0)
+        AND COALESCE(a.GL_Budget_ID, 0)=COALESCE(Fact_Acct_Balance.GL_Budget_ID, 0)
+      GROUP BY AD_Client_ID,
+        AD_Org_ID,
+        C_AcctSchema_ID,
+        TRUNC(DateAcct),
+        Account_ID,
+        PostingType,
+        M_Product_ID,
+        C_BPartner_ID,
+        C_Project_ID,
+        AD_OrgTrx_ID,
+        C_SalesRegion_ID,
+        C_Activity_ID,
+        C_Campaign_ID,
+        C_LocTo_ID,
+        C_LocFrom_ID,
+        User1_ID,
+        User2_ID,
+        GL_Budget_ID
+      )
+      ;
+    rowcount:=SQL%ROWCOUNT;
+    DBMS_OUTPUT.PUT_LINE('  Updates=' || rowcount) ;
+  END IF;
+  /** Insert  **/
+  INSERT
+  INTO Fact_Acct_Balance
+    (
+      AD_Client_ID, AD_Org_ID, C_AcctSchema_ID, DateAcct,
+      Account_ID, PostingType, M_Product_ID, C_BPartner_ID,
+      C_Project_ID, AD_OrgTrx_ID, C_SalesRegion_ID, C_Activity_ID,
+      C_Campaign_ID, C_LocTo_ID, C_LocFrom_ID, User1_ID,
+      User2_ID, GL_Budget_ID, AmtAcctDr, AmtAcctCr,
+      Qty
+    )
+    --
+  SELECT AD_Client_ID, AD_Org_ID, C_AcctSchema_ID, TRUNC(DateAcct),
+    Account_ID, PostingType, M_Product_ID, C_BPartner_ID,
+    C_Project_ID, AD_OrgTrx_ID, C_SalesRegion_ID, C_Activity_ID,
+    C_Campaign_ID, C_LocTo_ID, C_LocFrom_ID, User1_ID,
+    User2_ID, GL_Budget_ID, COALESCE(SUM(AmtAcctDr), 0), COALESCE(SUM(AmtAcctCr), 0),
+    COALESCE(SUM(Qty), 0)
+  FROM Fact_Acct a
+  WHERE NOT EXISTS
+    (SELECT *
+    FROM Fact_Acct_Balance x
+    WHERE a.AD_Client_ID=x.AD_Client_ID
+      AND a.AD_Org_ID=x.AD_Org_ID
+      AND a.C_AcctSchema_ID=x.C_AcctSchema_ID
+      AND TRUNC(a.DateAcct)=TRUNC(x.DateAcct)
+      AND a.Account_ID=x.Account_ID
+      AND a.PostingType=x.PostingType
+      AND COALESCE(a.M_Product_ID, 0)=COALESCE(x.M_Product_ID, 0)
+      AND COALESCE(a.C_BPartner_ID, 0)=COALESCE(x.C_BPartner_ID, 0)
+      AND COALESCE(a.C_Project_ID, 0)=COALESCE(x.C_Project_ID, 0)
+      AND COALESCE(a.AD_OrgTrx_ID, 0)=COALESCE(x.AD_OrgTrx_ID, 0)
+      AND COALESCE(a.C_SalesRegion_ID, 0)=COALESCE(x.C_SalesRegion_ID, 0)
+      AND COALESCE(a.C_Activity_ID, 0)=COALESCE(x.C_Activity_ID, 0)
+      AND COALESCE(a.C_Campaign_ID, 0)=COALESCE(x.C_Campaign_ID, 0)
+      AND COALESCE(a.C_LocTo_ID, 0)=COALESCE(x.C_LocTo_ID, 0)
+      AND COALESCE(a.C_LocFrom_ID, 0)=COALESCE(x.C_LocFrom_ID, 0)
+      AND COALESCE(a.User1_ID, 0)=COALESCE(x.User1_ID, 0)
+      AND COALESCE(a.User2_ID, 0)=COALESCE(x.User2_ID, 0)
+      AND COALESCE(a.GL_Budget_ID, 0)=COALESCE(x.GL_Budget_ID, 0)
+    )
+  GROUP BY AD_Client_ID,
+    AD_Org_ID,
+    C_AcctSchema_ID,
+    TRUNC(DateAcct),
+    Account_ID,
+    PostingType,
+    M_Product_ID,
+    C_BPartner_ID,
+    C_Project_ID,
+    AD_OrgTrx_ID,
+    C_SalesRegion_ID,
+    C_Activity_ID,
+    C_Campaign_ID,
+    C_LocTo_ID,
+    C_LocFrom_ID,
+    User1_ID,
+    User2_ID,
+    GL_Budget_ID;
+  rowcount:=SQL%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('  Inserts=' || rowcount) ;
+  -----------------------
+  -- Commented by cromero 19102006 COMMIT;
+END Fact_Acct_Balance_Update]]>
+</body>
+</function>
+</database>

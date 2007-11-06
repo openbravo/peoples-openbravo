@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<database name="VIEW M_INOUT_HEADER_VT">
+<view name="M_INOUT_HEADER_VT"><![CDATA[
+SELECT io.AD_Client_ID, io.AD_Org_ID, io.IsActive, io.Created, io.CreatedBy, io.Updated, io.UpdatedBy,
+  dt.AD_Language,
+  io.M_InOut_ID, io.IsSOTrx, io.DocumentNo, io.DocStatus,  io.C_DocType_ID,
+  io.C_BPartner_ID, bp.Value AS BPValue,
+  oi.C_Location_ID AS Org_Location_ID, oi.TaxID,
+  io.M_Warehouse_ID,
+  wh.C_Location_ID AS Warehouse_Location_ID,
+  dt.PrintName AS DocumentType, dt.DocumentNote AS DocumentTypeNote,
+  io.C_Order_ID,
+  io.MovementDate, io.MovementType,
+  bpg.Name AS BPGreeting,
+  bp.Name, bp.Name2,
+  bpcg.Name AS BPContactGreeting,
+  bpc.Title,
+  NULLIF (bpc.Name, bp.Name) AS ContactName,
+  bpl.C_Location_ID,
+  bp.ReferenceNo,
+  io.Description,
+  io.POReference,
+  io.DateOrdered,
+  io.M_Shipper_ID, io.DeliveryRule, io.DeliveryViaRule, io.PriorityRule
+FROM M_InOut io
+  INNER JOIN C_DocType_Trl dt ON (io.C_DocType_ID=dt.C_DocType_ID)
+  INNER JOIN C_BPartner bp ON (io.C_BPartner_ID=bp.C_BPartner_ID)
+  LEFT OUTER JOIN C_Greeting_Trl bpg ON (bp.C_Greeting_ID=bpg.C_Greeting_ID AND dt.AD_Language=bpg.AD_Language)
+  INNER JOIN C_BPartner_Location bpl ON (io.C_BPartner_Location_ID=bpl.C_BPartner_Location_ID)
+  LEFT OUTER JOIN AD_User bpc ON (io.AD_User_ID=bpc.AD_User_ID)
+  LEFT OUTER JOIN C_Greeting_Trl bpcg ON (bpc.C_Greeting_ID=bpcg.C_Greeting_ID AND dt.AD_Language=bpcg.AD_Language)
+  INNER JOIN AD_OrgInfo oi ON (io.AD_Org_ID=oi.AD_Org_ID)
+  INNER JOIN M_Warehouse wh ON (io.M_Warehouse_ID=wh.M_Warehouse_ID)
+]]></view>
+</database>

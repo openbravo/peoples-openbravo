@@ -1,0 +1,406 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+.Menu_Client_bg {
+  background-color: #505050;
+}
+
+.Menu_Client_child_bg {
+  background-color: #E8E8E8;
+}
+
+.Menu_Client_bg_left {
+  width: 8px;
+  background-color: #505050;
+}
+
+.Menu_Client_bg_right {
+  width: 8px;
+  background-color: #505050;
+}
+
+#Menu_Client {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size:	8pt;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+#Menu_Client table{
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  border: 0px none;
+  margin: 0px;
+  vertical-align: middle;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#Menu_Client table table tr.Child{
+  height: 24px;
+  color: #FFFFFF;
+  background: url(bigbutton.normal.png) repeat-x;
+  background-color: #292929;
+  font-weight: normal;
+}
+
+#Menu_Client table table tr.Child td img{
+  margin: 0px 6px 0px 4px;
+}
+
+#Menu_Client table table tr.Child_hover {
+  background: url(bigbutton.rollover.png) repeat-x;
+  background-color: #dbdbdb;
+  color: #333333;
+  font-weight: bold;
+}
+
+#Menu_Client table table tr.Child_active {
+  background: url(bigbutton.pressed.png) repeat-x;
+  background-color: #dbdbdb;
+  color: #333333;
+  font-weight: bold;
+}
+
+#Menu_Client table table tr.Opened {
+  background: url(bigbutton.selected.png) repeat-x;
+  background-color: #cecece;
+  color: #333333;
+  font-weight: bold;
+}
+
+#Menu_Client table table tr.Selected {
+  background: url(bigbutton.selected.png) repeat-x;
+  background-color: #cecece;
+  color: #333333;
+  font-weight: bold;
+}
+
+#Menu_Client table table table tr.Child {
+  height: 20px;
+  color: #404040;
+  background: none;
+  background-color: #E8E8E8;
+  font-weight: normal;
+}
+
+#Menu_Client table table table tr.Child td img{
+  margin: 0px 6px 0px 9px;
+}
+
+#Menu_Client table table table tr.Child_hover {
+  background: none;
+  background-color: #D4D4D4;
+  color: #333333;
+  font-weight: normal;
+}
+
+#Menu_Client table table table tr.Child_active {
+  background: none;
+  background-color: #9B9B9B;
+  color: #333333;
+  font-weight: normal;
+}
+
+#Menu_Client table table table tr.Opened {
+  background: none;
+  background-color: #E8E8E8;
+  color: #404040;
+  font-weight: normal;
+}
+
+#Menu_Client table table table tr.Selected {
+  background: none;
+  background-color: #BDBDBD;
+  color: #404040;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table tr.Child {
+  height: 20px;
+}
+
+#Menu_Client table table table table tr.Child td img{
+  margin: 0px 6px 0px 18px;
+}
+
+
+#Menu_Client table table table table tr.Child_hover {
+  background: none;
+  background-color: #D4D4D4;
+  color: #333333;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table tr.Child_active {
+  background: none;
+  background-color: #9B9B9B;
+  color: #333333;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table tr.Opened {
+  background: none;
+  background-color: #E8E8E8;
+  color: #404040;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table tr.Selected {
+  background: none;
+  background-color: #BDBDBD;
+  color: #404040;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table table tr.Child {
+  height: 20px;
+}
+
+#Menu_Client table table table table table tr.Child td img{
+  margin: 0px 6px 0px 28px;
+}
+
+#Menu_Client table table table table table tr.Child_hover {
+  background: none;
+  background-color: #D4D4D4;
+  color: #333333;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table table tr.Child_active {
+  background: none;
+  background-color: #9B9B9B;
+  color: #333333;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table table tr.Opened {
+  background: none;
+  background-color: #E8E8E8;
+  color: #404040;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table table tr.Selected {
+  background: none;
+  background-color: #BDBDBD;
+  color: #404040;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table table table tr.Child {
+  height: 20px;
+}
+
+#Menu_Client table table table table table table tr.Child td img{
+  margin: 0px 6px 0px 38px;
+}
+
+#Menu_Client table table table table table table tr.Child_hover {
+  background: none;
+  background-color: #D4D4D4;
+  color: #333333;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table table table tr.Child_active {
+  background: none;
+  background-color: #9B9B9B;
+  color: #333333;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table table table tr.Opened {
+  background: none;
+  background-color: #E8E8E8;
+  color: #404040;
+  font-weight: normal;
+}
+
+#Menu_Client table table table table table table tr.Selected {
+  background: none;
+  background-color: #BDBDBD;
+  color: #404040;
+  font-weight: normal;
+}
+
+
+.Menu_Client_Button_BigIcon {
+  width: 20px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+#folderCell1_153 .Menu_Client_Button_BigIcon_folder {
+  background: url(applicationManagement.png) no-repeat center center;
+}
+
+#folderCell1_153 .Menu_Client_Button_BigIcon_folderOpened {
+  background: url(applicationManagement.png) no-repeat center center;
+}
+
+#folderCell1_155 .Menu_Client_Button_BigIcon_folder {
+  background: url(generalSetup.png) no-repeat center center;
+}
+
+#folderCell1_155 .Menu_Client_Button_BigIcon_folderOpened {
+  background: url(generalSetup.png) no-repeat center center;
+}
+
+#folderCell1_800237 .Menu_Client_Button_BigIcon_folder {
+  background: url(masterDataManagement.png) no-repeat center center;
+}
+
+#folderCell1_800237 .Menu_Client_Button_BigIcon_folderOpened {
+  background: url(masterDataManagement.png) no-repeat center center;
+}
+
+#folderCell1_203 .Menu_Client_Button_BigIcon_folder {
+  background: url(procurementManagement.png) no-repeat center center;
+}
+
+#folderCell1_203 .Menu_Client_Button_BigIcon_folderOpened {
+  background: url(procurementManagement.png) no-repeat center center;
+}
+
+#folderCell1_800243 .Menu_Client_Button_BigIcon_folder {
+  background: url(warehouseManagement.png) no-repeat center center;
+}
+
+#folderCell1_800243 .Menu_Client_Button_BigIcon_folderOpened {
+  background: url(warehouseManagement.png) no-repeat center center;
+}
+
+#folderCell1_800121 .Menu_Client_Button_BigIcon_folder {
+  background: url(productionManagement.png) no-repeat center center;
+}
+
+#folderCell1_800121 .Menu_Client_Button_BigIcon_folderOpened {
+  background: url(productionManagement.png) no-repeat center center;
+}
+
+#folderCell1_800212 .Menu_Client_Button_BigIcon_folder {
+  background: url(materialResourcePlanning.png) no-repeat center center;
+}
+
+#folderCell1_800212 .Menu_Client_Button_BigIcon_folderOpened {
+  background: url(materialResourcePlanning.png) no-repeat center center;
+}
+
+#folderCell1_166 .Menu_Client_Button_BigIcon_folder {
+  background: url(salesManagement.png) no-repeat center center;
+}
+
+#folderCell1_166 .Menu_Client_Button_BigIcon_folderOpened {
+  background: url(salesManagement.png) no-repeat center center;
+}
+
+#folderCell1_160 .Menu_Client_Button_BigIcon_folder {
+  background: url(projectManagement.png) no-repeat center center;
+}
+
+#folderCell1_160 .Menu_Client_Button_BigIcon_folderOpened {
+  background: url(projectManagement.png) no-repeat center center;
+}
+
+#folderCell1_278 .Menu_Client_Button_BigIcon_folder {
+  background: url(financialManagement.png) no-repeat center center;
+}
+
+#folderCell1_278 .Menu_Client_Button_BigIcon_folderOpened {
+  background: url(financialManagement.png) no-repeat center center;
+}
+
+.Menu_Client_Button_BigIcon_folder {
+  background: url(iconPackageClosed.png) no-repeat center center;
+}
+
+.Menu_Client_Button_BigIcon_folderOpened {
+  background: url(iconPackageOpened.png) no-repeat center center;
+}
+
+.Menu_Client_Button_BigIcon_favourites {
+  background: url(iconFavourites.png) no-repeat center center;
+}
+
+
+.Menu_Client_Button_Icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.Menu_Client_Button_Icon_folder {
+  background: url(iconFolderClosed.png) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_folderOpened{
+  background: url(iconFolderOpened.png) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_folderWithoutChildren{
+  background: url(iconFolderClosed.png) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_folderOpenedWithoutChildren{
+  background: url(iconFolderOpened.png) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_child{
+  background: url(iconElement.gif) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_childProcesses {
+  background: url(iconProcess.png) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_childTasks {
+  background: url(iconTask.png) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_childReports {
+  background: url(iconReport.png) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_childWindows{
+  background: url(iconAutoForm.png) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_childForms {
+  /*background: url(iconConfigForm.png) no-repeat center center;*/
+  background: url(iconProcess.png) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_childWorkFlow {
+  background: url(iconWorkflow.png) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_childWorkBench {
+  background: url(iconWorkbench.gif) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_childInfo {
+  background: url(iconInfo.png) no-repeat center center;
+}
+
+.Menu_Client_Button_Icon_childExternalLink {
+  background: url(iconExternalLink.png) no-repeat center center;
+}

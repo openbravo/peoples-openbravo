@@ -1,0 +1,72 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+.Popup_NavBar_bg {
+  height: 34px;
+  background: url(backgroundCenter.png) repeat center center;
+}
+
+.Popup_NavBar_bg_left {
+  width: 8px;
+  height: 34px;
+  background: url(backgroundLeft.png) no-repeat center center;
+}
+
+.Popup_NavBar_bg_right {
+  width: 8px;
+  height: 34px;
+  background: url(backgroundRight.png) repeat center center;
+}
+
+.Popup_NavBar_bg_logo_left {
+  width: 10px;
+  height: 34px;
+  background: url(logoLeft.png) no-repeat center right;
+}
+
+.Popup_NavBar_bg_logo_right {
+  width: 10px;
+  height: 34px;
+  background: url(logoRight.png) no-repeat center left;
+}
+
+.Popup_NavBar_bg_logo {
+  height: 34px;
+  background-color: #FFFFFF;
+}
+
+.Popup_NavBar_logo {
+  cursor: pointer;
+  width: 122px;
+  height: 34px;
+  background: url(../../../../images/PoweredByOpenbravo.png) no-repeat center center;
+}
+
+.Popup_NavBar_Popup_title_cell {
+  color: #EDEDED;
+  font-size: 11pt;
+  font-weight: bold;
+  text-align: center;
+  padding: 0px 70px 0px 5px;
+}
+
+.Popup_NavBar_separator_cell {
+  width: 5px;
+}

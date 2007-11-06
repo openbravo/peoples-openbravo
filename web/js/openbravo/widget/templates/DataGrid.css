@@ -1,0 +1,116 @@
+.datagridContainer {
+}
+
+.datagridTable {
+	table-layout: fixed;
+	margin: 0px;
+	padding: 0px;
+	font-family: sans-serif;
+	z-index: 100;
+	vertical-align: middle;
+}
+
+tr.datagridRow {
+    height: 20px;
+   vertical-align: middle;
+}
+
+tr.datagridEvenRow {
+	background: #f3f3f3;
+   vertical-align: middle;
+}
+
+tr.datagridOddRow {
+	background: #e3edfa;
+   vertical-align: middle;
+}
+
+tr.datagridSelectedRow {
+	background: #ffff00;
+   vertical-align: middle;
+}
+
+th.datagridCell {
+   text-align       : left;
+   border-top       : 1px solid #b8b8b8;
+   border-right     : 1px solid #b8b8b8;
+   background-color : #1c5d79;
+   color			: #FFFFFF;
+   overflow 	  	: hidden;
+   vertical-align: middle;
+}
+
+th.datagridHoveredTh {
+   	background-color : #000000;
+	color 			 : #FFFFFF;
+    vertical-align: middle;
+}
+
+td.cell {
+	padding       : 1px 0px 1px 2px;
+    border-bottom : 1px solid #b8b8b8;
+    border-right  : 1px solid #b8b8b8;
+    line-height	  : 12px;
+    color		  : #1c5d79;
+    overflow 	  : hidden;
+	vertical-align: middle;
+}
+
+td.cell span {
+  white-space: nowrap;
+}
+
+td.selectedCell {
+	font-weight	: bold;
+    vertical-align: middle;
+}
+
+td.clickedCell {
+   	border-color : #000000;
+	color : red;
+	font-weight	: bold;
+	vertical-align: middle;
+}
+
+td.datagridHoveredCell{
+	background		: #FFFFFF;
+    vertical-align: middle;
+}
+
+.first {
+   border-left  : 1px solid #b8b8b8;
+}
+
+.dojoDialog {
+    border: 2px solid #1c5d79;
+    padding: 1em;
+    padding-bottom: 1.7em;
+    background: #f3f3f3;
+}
+
+td.messageDialogText {
+    font-size	: 14px;
+   	font-family	: Arial, verdana;
+    color: #1c5d79;
+}
+
+td.messageDialogTitle {
+    font-size	: 18px;
+   	font-family	: Arial, verdana;
+    color: #1c5d79;
+}
+
+input.dialogButton {
+	width: auto;
+    border: none;
+    background-color: #e3edfa;
+    color: #000;
+    padding: 0.1em;
+    border-bottom: 1px solid #5885b6 !important;
+    border-right: 1px solid #5885b6 !important;
+    border-top: 1px solid #92b8e2 !important;
+    border-left: 1px solid #92b8e2 !important;
+    cursor: hand;
+    cursor: pointer;
+
+}

@@ -1,0 +1,166 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
+package org.openbravo.erpCommon.ad_reports;
+
+import org.openbravo.erpCommon.utility.*;
+import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.xmlEngine.XmlDocument;
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+import java.util.*;
+
+public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
+  private static final long serialVersionUID = 1L;
+
+  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (!Utility.hasProcessAccess(this, vars, "", "ReportMaterialTransactionJR")) {
+      bdError(response, "AccessTableNoView", vars.getLanguage());
+      return;
+    }
+
+    if (vars.commandIn("DEFAULT")){
+      String strdateFrom = vars.getStringParameter("inpDateFrom", "");
+      String strdateTo = vars.getStringParameter("inpDateTo", "");
+      printPageDataSheet(response, vars, strdateFrom, strdateTo);
+    } else if (vars.commandIn("EDIT_HTML")) {
+      String strdateFrom = vars.getStringParameter("inpDateFrom");
+      String strdateTo = vars.getStringParameter("inpDateTo");
+      String strcBpartnetId = vars.getStringParameter("inpcBPartnerId");
+      String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
+      String strcProjectId = vars.getStringParameter("inpcProjectId");
+      String strissotrx = "N";
+      printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId ,strissotrx, "html");
+    } else if (vars.commandIn("EDIT_PDF")) {
+      if (log4j.isDebugEnabled()) log4j.debug("WE EDIT THE PDF");
+      String strdateFrom = vars.getStringParameter("inpDateFrom");
+      String strdateTo = vars.getStringParameter("inpDateTo");
+      String strcBpartnetId = vars.getStringParameter("inpcBPartnerId");
+      String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
+      String strcProjectId = vars.getStringParameter("inpcProjectId");
+      String strissotrx = "N";
+      printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId ,strissotrx, "pdf");
+    } else pageErrorPopUp(response);
+  }
+
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
+    XmlDocument xmlDocument=null;
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportMaterialTransactionEditionJR").createXmlDocument();
+
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportMaterialTransactionEditionJR", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
+    toolbar.prepareSimpleToolBarTemplate();
+    xmlDocument.setParameter("toolbar", toolbar.toString());
+    try {
+      KeyMap key = new KeyMap(this, vars, "ReportMaterialTransactionEditionJR.html");
+      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    try {
+      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportMaterialTransactionEditionJR");
+      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+      xmlDocument.setParameter("theme", vars.getTheme());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportMaterialTransactionEditionJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      xmlDocument.setParameter("navigationBar", nav.toString());
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportMaterialTransactionEditionJR.html", strReplaceWith);
+      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    {
+      OBError myMessage = vars.getMessage("ReportMaterialTransactionEditionJR");
+      vars.removeMessage("ReportMaterialTransactionEditionJR");
+      if (myMessage!=null) {
+        xmlDocument.setParameter("messageType", myMessage.getType());
+        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      }
+    }
+
+
+
+    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
+    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("dateFrom", strdateFrom);
+    xmlDocument.setParameter("dateTo", strdateTo);
+    String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
+    xmlDocument.setParameter("dateFromdisplayFormat", strDateFormat);
+    xmlDocument.setParameter("dateFromsaveFormat", strDateFormat);
+    xmlDocument.setParameter("dateTodisplayFormat", strDateFormat);
+    xmlDocument.setParameter("dateTosaveFormat", strDateFormat);
+    xmlDocument.setParameter("paramBPartnerId", "");
+    xmlDocument.setParameter("mWarehouseId", "");
+    xmlDocument.setParameter("cProjectId", "");
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportMaterialTransactionEditionJR"), Utility.getContext(this, vars, "#User_Client", "ReportMaterialTransactionEditionJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportMaterialTransactionEditionJR", "");
+      xmlDocument.setData("reportM_WAREHOUSEID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
+
+ /*   try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Project_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportMaterialTransactionEditionJR"), Utility.getContext(this, vars, "#User_Client", "ReportMaterialTransactionEditionJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportMaterialTransactionEditionJR", "");
+      xmlDocument.setData("reportC_PROJECTID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }*/
+
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnetId, String strmWarehouseId, String strcProjectId, String strissotrx, String strOutput) throws IOException, ServletException{
+    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
+    
+   
+    InoutEditionData[] data = null;
+    data = InoutEditionData.select(this, Utility.getContext(this, vars, "#User_Org", "ReportMaterialTransactionEditionJR"), Utility.getContext(this, vars, "#User_Client", "ReportMaterialTransactionEditionJR"), strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId, strissotrx);
+    if (data.length<1)
+    {
+    bdError(response, "no hay", vars.getLanguage());
+    }
+    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportMaterialTransactionEditionJR.jrxml";
+    
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("REPORT_TITLE", classInfo.name);
+    renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+  }
+
+  public String getServletInfo() {
+    return "Servlet ReportMaterialTransaction.";
+  } // end of getServletInfo() method
+}
+

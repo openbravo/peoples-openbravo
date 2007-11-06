@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+  <listener>
+      <listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>
+  </listener>
+
+  <filter>
+    <filter-name>Charset Filter</filter-name>
+    <filter-class>org.openbravo.utils.CharsetFilter</filter-class>
+      <init-param>
+        <param-name>requestEncoding</param-name>
+        <param-value>UTF-8</param-value>
+      </init-param>
+  </filter>
+
+  <filter>
+    <filter-name>Cache Filter</filter-name>
+    <filter-class>org.openbravo.utils.CacheFilter</filter-class>
+    <init-param>
+      <param-name>Expires</param-name>
+      <param-value>Sun, 17 Jan 2038 19:14:07 GMT</param-value>
+    </init-param>
+  </filter>
+
+  <context-param>
+    <param-name>AuthenticationManager</param-name>
+    <param-value>org.openbravo.authentication.basic.DefaultAuthenticationManager</param-value>
+<!--    <param-value>org.openbravo.authentication.lam.LamAuthenticationManager</param-value> -->
+  </context-param>
+  <context-param>
+    <param-name>BaseConfigPath</param-name>
+    <param-value>WEB-INF</param-value>
+  </context-param>
+  <context-param>
+    <param-name>BaseDesignPath</param-name>
+    <param-value>src-loc</param-value>
+  </context-param>
+  <context-param>
+    <param-name>DefaultDesignPath</param-name>
+    <param-value>design</param-value>
+  </context-param>
+  <context-param>
+    <param-name>Version</param-name>
+    <param-value>38.7</param-value>
+  </context-param>
+  <context-param>
+    <param-name>Parent_Version</param-name>
+    <param-value></param-value>
+  </context-param>
+  <context-param>
+    <param-name>ReplaceWhat</param-name>
+    <param-value>../../../../../web</param-value>
+  </context-param>
+  <context-param>
+    <param-name>ReplaceWith</param-name>
+    <param-value><PARAMETER_TMP id="paramWebPath">http://tecnicia14/web</PARAMETER_TMP></param-value>
+  </context-param>
+  <context-param>
+    <param-name>TextDividedByZero</param-name>
+    <param-value>.../0</param-value>
+  </context-param>
+  <context-param>
+    <param-name>log4j-init-file</param-name>
+    <param-value>log4j.lcf</param-value>
+  </context-param>
+  <context-param>
+    <param-name>PoolFile</param-name>
+    <param-value>XmlPool.xml</param-value>
+  </context-param>
+  <context-param>
+    <param-name>FormatFile</param-name>
+    <param-value>Format.xml</param-value>
+  </context-param>
+  <context-param>
+    <param-name>FOPConfig</param-name>
+    <param-value>userconfig.xml</param-value>
+  </context-param>
+  <context-param>
+    <param-name>DefaultServlet</param-name>
+    <param-value>/utility/Home.html</param-value>
+  </context-param>
+  <context-param>
+    <param-name>ServletSinIdentificar</param-name>
+    <param-value>/utility/Log.html</param-value>
+  </context-param>
+  <context-param>
+    <param-name>AttachmentDirectory</param-name>
+    <param-value><PARAMETER_TMP id="paramAttachPath">C:\\AppsAttachment</PARAMETER_TMP></param-value>
+  </context-param>
+  <context-param>
+    <param-name>GarbageCollectionTime</param-name>
+    <param-value>3600</param-value>
+  </context-param>
+  <context-param>
+    <param-name>PeriodicBackgroundTime</param-name>
+    <param-value>10</param-value>
+  </context-param>
+  <context-param>
+    <param-name>LogFileAcctServer</param-name>
+    <param-value>AcctServer.log</param-value>
+  </context-param>
+  <context-param>
+    <param-name>ServidorRenderFo</param-name>
+    <param-value></param-value>
+  </context-param>
+  <servlet>
+    <servlet-name>AxisServlet</servlet-name>
+    <display-name>Apache-Axis Servlet</display-name>
+    <servlet-class>
+        org.apache.axis.transport.http.AxisServlet
+    </servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>AdminServlet</servlet-name>
+    <display-name>Axis Admin Servlet</display-name>
+    <servlet-class>
+        org.apache.axis.transport.http.AdminServlet
+    </servlet-class>
+    <load-on-startup>100</load-on-startup>
+  </servlet>
+
+  <servlet>
+    <servlet-name>SOAPMonitorService</servlet-name>
+    <display-name>SOAPMonitorService</display-name>
+    <servlet-class>
+        org.apache.axis.monitor.SOAPMonitorService
+    </servlet-class>
+    <init-param>
+      <param-name>SOAPMonitorPort</param-name>
+      <param-value>5001</param-value>
+    </init-param>
+    <load-on-startup>100</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>HttpBaseServlet</servlet-name>
+    <display-name>Base Servlet</display-name>
+    <servlet-class>
+        org.openbravo.base.HttpBaseServlet
+    </servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet>
+    <servlet-name>
+      xmlEngine
+    </servlet-name>
+    <servlet-class>
+      org.openbravo.xmlEngine.XmlEngine
+    </servlet-class>
+    <init-param>
+      <param-name>fileConfigurationLog4j</param-name>
+      <param-value>log4j.lcf</param-value>
+    </init-param>
+    <init-param>
+      <param-name>ReplaceWhat</param-name>
+      <param-value>../../../../../../</param-value>
+    </init-param>
+    <init-param>
+      <param-name>ReplaceWith</param-name>
+      <param-value>../</param-value>
+    </init-param>
+    <init-param>
+      <param-name>TextDividedByZero</param-name>
+      <param-value>Div /0</param-value>
+    </init-param>
+  </servlet>
+  <servlet>
+    <servlet-name>
+      erpDataGrid
+    </servlet-name>
+    <display-name>
+      DataGrid
+    </display-name>
+    <servlet-class>
+      org.openbravo.erpCommon.utility.DataGrid
+    </servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>
+      erpMessageJS
+    </servlet-name>
+    <display-name>
+      MessageJS
+    </display-name>
+    <servlet-class>
+      org.openbravo.erpCommon.businessUtility.MessageJS
+    </servlet-class>
+  </servlet>
+  <FIELDS_TMP id="sectionDetail1">
+    <servlet>
+      <servlet-name>
+        <FIELD_TMP id="fieldName">codigo</FIELD_TMP>
+      </servlet-name>
+      <display-name>
+        <FIELD_TMP id="fieldDisplayName">codigo</FIELD_TMP>
+      </display-name>
+      <servlet-class>
+        <FIELD_TMP id="fieldClassName">codigo</FIELD_TMP>
+      </servlet-class>
+    </servlet>
+  </FIELDS_TMP>
+  <PARAMS_TMP id="paramWebClients"></PARAMS_TMP>
+
+  
+  <!-- MAPPING -->
+  <FIELDS_TMP id="sectionDetail2">
+    <servlet-mapping>
+      <servlet-name>
+        <FIELD_TMP id="fieldName2">codigo</FIELD_TMP>
+      </servlet-name>
+      <url-pattern>
+        <FIELD_TMP id="fieldClassName2">codigo</FIELD_TMP>
+    </url-pattern>
+    </servlet-mapping>
+  </FIELDS_TMP>
+
+  <servlet-mapping>
+    <servlet-name>AxisServlet</servlet-name>
+    <url-pattern>/servlet/AxisServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>AxisServlet</servlet-name>
+    <url-pattern>*.jws</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>AxisServlet</servlet-name>
+    <url-pattern>/services/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>SOAPMonitorService</servlet-name>
+    <url-pattern>/SOAPMonitor</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>erpDataGrid</servlet-name>
+    <url-pattern>/utility/DataGrid.html</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>erpMessageJS</servlet-name>
+    <url-pattern>/businessUtility/MessageJS.html</url-pattern>
+  </servlet-mapping>
+
+  <mime-mapping>
+    <extension>wsdl</extension>
+     <mime-type>text/xml</mime-type>
+  </mime-mapping>
+  
+
+  <mime-mapping>
+    <extension>xsd</extension>
+    <mime-type>text/xml</mime-type>
+  </mime-mapping>
+
+  <filter-mapping>
+    <filter-name>Charset Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+ <filter-mapping>
+    <filter-name>Cache Filter</filter-name>
+    <url-pattern>/web/*</url-pattern>
+ </filter-mapping>
+
+  <welcome-file-list id="WelcomeFileList">
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jws</welcome-file>
+  </welcome-file-list>
+  <session-config>
+    <session-timeout>60</session-timeout>
+  </session-config>
+</web-app>

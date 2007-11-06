@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<database name="TABLE AD_MODEL_OBJECT_MAPPING">
+    <table name="AD_MODEL_OBJECT_MAPPING" primaryKey="AD_MODEL_OBJECT_MAPPING_KEY">
+      <column name="AD_MODEL_OBJECT_MAPPING_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_MODEL_OBJECT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="MAPPINGNAME" primaryKey="false" required="true" type="VARCHAR" size="1000" autoIncrement="false"/>
+      <column name="ISDEFAULT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <check name="ADMODELOBJECTMAPPING_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
+      <check name="ADMODELOBJECTMAPPING_ISDEF_CHECK" condition="IsDefault in ('Y','N')"/> 
+      <foreign-key foreignTable="AD_CLIENT" name="MODELOBJMAP_FK_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_MODEL_OBJECT" name="MODELOBJMAP_FK_MODELOBJ">
+        <reference local="AD_MODEL_OBJECT_ID" foreign="AD_MODEL_OBJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="MODELOBJMAP_FK_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+    </table>
+</database>

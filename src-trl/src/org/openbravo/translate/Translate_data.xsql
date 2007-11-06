@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+<SqlClass name="TranslateData" package="org.openbravo.translate">
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+      select A.ad_textinterfaces_id, A.tr, '' AS NAME, A.o AS ORDEN
+        from (select tt.ad_textinterfaces_id AS ad_textinterfaces_id, trim(tt.text) AS tr, 1 AS o
+                from ad_textinterfaces_trl tt
+               where tt.ad_textinterfaces_id =  (select min(ad_textinterfaces_id)
+                                                   from ad_textinterfaces t
+                                                  where t.text     = ?
+                                                    and t.filename = ?)
+                 and tt.ad_language = ?
+               union
+              select tt.ad_textinterfaces_id AS id, trim(tt.text) AS tr, 2 AS o
+                from ad_textinterfaces_trl tt
+               where tt.ad_textinterfaces_id =  (select min(ad_textinterfaces_id)
+                                                   from ad_textinterfaces t
+                                                  where t.text =  ?
+                                                    and t.filename is null)
+                 and tt.ad_language = ?
+               order by o) A
+      group by A.ad_textinterfaces_id, A.tr, A.o
+      order by A.o
+    </Sql>
+    <Parameter name="string"/>
+    <Parameter name="filename"/>
+    <Parameter name="languajeFin"/>
+    <Parameter name="string"/>
+    <Parameter name="languajeFin"/>
+  </SqlMethod>
+
+  <SqlMethod name="existsExpresion" type="preparedStatement" return="rowCount">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+        update ad_textinterfaces
+           set updated 	 = now(),
+               updatedby = 0
+         where ad_textinterfaces_id = ( select min(A.ad_textinterfaces_id)
+                                          from (select B.*
+                                                from (select min(ad_textinterfaces_id) AS ad_textinterfaces_id, 1 AS o
+                                                          from ad_textinterfaces
+                                                         where text     = ?
+                                                           and filename = ?
+                                                        union
+                                                        select min(ad_textinterfaces_id) AS ad_textinterfaces_id, 2 AS o
+                                                          from ad_textinterfaces
+                                                         where text = ?
+                                                           and filename is null
+                                                         order by o) B
+                                                 where ad_textinterfaces_id is not null) A)
+    </Sql>
+    <Parameter name="text"/>
+    <Parameter name="filename"/>
+    <Parameter name="text"/>
+  </SqlMethod>
+
+  <SqlMethod name="insert" type="preparedStatement" return="rowCount">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+      insert into ad_textinterfaces
+        (AD_TEXTINTERFACES_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, TEXT, FILENAME)
+      values
+        (Ad_Get_Next_Sequence('AD_TextInterfaces',1),0 ,0, 'Y', now(), 0, now(), 0, ?, ?)
+    </Sql>
+    <Parameter name="text"/>
+    <Parameter name="filename"/>
+  </SqlMethod>
+
+  <SqlMethod name="update" type="preparedStatement" return="rowCount">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+      update ad_textinterfaces
+         set updated 	 = now(),
+             updatedby = 0
+       where ad_textinterfaces_id = ?
+    </Sql>
+    <Parameter name="adTextinterfacesId"/>
+  </SqlMethod>
+  <SqlMethod name="baseLanguage" type="preparedStatement" return="String" default="">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+      SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE ISACTIVE='Y' AND ISBASELANGUAGE='Y'
+    </Sql>
+  </SqlMethod>
+
+  <SqlMethod name="systemLanguage" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+      SELECT AD_LANGUAGE AS NAME FROM AD_LANGUAGE WHERE ISACTIVE='Y' AND ISSYSTEMLANGUAGE='Y' AND ISBASELANGUAGE='N'
+    </Sql>
+  </SqlMethod>
+</SqlClass>

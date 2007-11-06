@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<database name="FUNCTION FRIE_VALUE2">
+<function name="FRIE_VALUE2" type="NVARCHAR">
+<parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
+<body><![CDATA[
+/*************************************************************************
+* The contents of this file are subject to the Compiere License
+* Version 2.5.0 ("License"); You may not use this file except in
+* compliance with the License. You may obtain a copy of the License at
+* http://www.compiere.org/license.html
+* Software distributed under the License is distributed on an
+* "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+* implied. See the License for the specific language governing rights
+* and limitations under the License.
+* The Original Code is  Compiere  ERP  &  Business Solution
+* The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
+Inc.
+* Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+* parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+* All Rights Reserved.
+* Contributor(s): Openbravo SL
+* Contributions are Copyright(C) 1999-2005 Openbravo, S.L
+*************************************************************************
+* $Id: FRIE_Value2.sql,v 1.4 2002/10/21 04:49:45 jjanke Exp $
+***
+* Title: Return Product Value with Vendor indicator
+* Description:
+*   Cannot be used directly as mutating
+************************************************************************/
+  /*
+  CREATE TABLE TEMP_PROD
+  ( p_Product_ID NUMBER,
+  Value  VARCHAR2(60),
+  CONSTRAINT TEMP_Key PRIMARY KEY (p_Product_ID)
+  USING INDEX TABLESPACE INDX );
+  INSERT INTO TEMP_PROD (p_Product_ID, VALUE)
+  SELECT M_Product_ID, FRIE_Value2(M_Product_ID)
+  FROM M_Product WHERE AD_Client_ID=1000000;
+  UPDATE M_Product
+  SET Value = (SELECT Value FROM TEMP_Prod t WHERE M_Product.M_Product_ID=t.Product_ID)
+  WHERE EXISTS (SELECT * FROM TEMP_Prod t WHERE M_Product.M_Product_ID=t.Product_ID AND Value IS NOT NULL);
+  COMMIT;
+  DROP TABLE TEMP_Prod;
+  */
+  v_BPartner_ID NUMBER;
+  v_Value       M_Product.Value%TYPE;
+  v_Prefix      VARCHAR2(2) ;
+  TYPE RECORD IS REF CURSOR;
+    Cur_value RECORD;
+  BEGIN
+    -- Get Value/Partner
+    FOR Cur_Value IN
+      (SELECT p.Value,(
+        CASE po.C_BPartner_ID
+          WHEN 1001881
+          THEN 'BA' --  Barum
+          WHEN 1001725
+          THEN 'BR' -- Bridgestone
+          WHEN 1001738
+          THEN 'CO' -- Conti
+          WHEN 1001853
+          THEN 'SE' -- Semperit
+          WHEN 1001755
+          THEN 'FI' -- Firestone
+          WHEN 1001759
+          THEN 'FU' -- Fulda
+          WHEN 1001763
+          THEN 'GY' -- Goodyear
+          WHEN 1001792
+          THEN 'KE' -- Kelly
+          WHEN 1001795
+          THEN 'KL' -- Kleber
+          WHEN 1001883
+          THEN 'LE' -- Lee
+          WHEN 1001812
+          THEN 'ME' -- Metzeler
+          WHEN 1001815
+          THEN 'MI' -- Michelin
+          WHEN 1001824
+          THEN 'pi' -- Pirelli Motorrad
+          WHEN 1001868
+          THEN 'PI' -- Pirelli
+          WHEN 1001744
+          THEN 'DU' -- Dunlop
+          WHEN 1001864
+          THEN 'UN' -- Uniroyal
+          WHEN 1001872
+          THEN 'VR' -- Vredestein
+          WHEN 1001877
+          THEN 'YO' -- Yokohama
+          ELSE ''
+        END
+        ) AS Prefix -- Otherwise
+      FROM M_Product p,
+        M_Product_PO po -- will through exception, if not found
+      WHERE p.M_Product_ID = po.M_Product_ID
+        AND po.IsCurrentVendor = 'Y'
+        AND p.M_Product_ID = p_Product_ID
+      )
+    LOOP
+      v_Value := Cur_Value.Value;
+      v_Prefix := Cur_Value.Prefix;
+      EXIT;
+    END LOOP;
+    -- Are the first two characters numbers?
+    IF(SUBSTR(v_Value, 1, 1) < '0' OR SUBSTR(v_Value, 1, 1) > '9' -- not NLS compliant
+      OR SUBSTR(v_Value, 2, 1) < '0' OR SUBSTR(v_Value, 2, 1) > '9') THEN
+      -- DBMS_OUTPUT.PUT_LINE('No Number: ' || Value);
+      RETURN SUBSTR(v_Value, 1, 40) ;
+    END IF;
+    -- Return with prefix
+    IF(LENGTH(v_Prefix) = 2) THEN
+      -- DBMS_OUTPUT.PUT_LINE('Prefix');
+      RETURN SUBSTR(v_Prefix || v_Value, 1, 40) ;
+    END IF;
+    -- Otherwise
+    Return SUBSTR(v_Value, 1, 40) ;
+    -- We must catch error as otherwise the function returns null
+  EXCEPTION
+  WHEN OTHERS THEN
+    -- DBMS_OUTPUT.PUT('Error: (ID=' || p_Product_ID || ') ' || SQLERRM);
+    -- just return value of product
+    SELECT Value || N' '
+    INTO v_Value
+    FROM M_Product
+    WHERE M_Product_ID = p_Product_ID;
+    -- DBMS_OUTPUT.PUT_LINE(' - ' || Value);
+    --
+    RETURN v_Value;
+END FRIE_Value2]]></body>
+</function> 
+</database>

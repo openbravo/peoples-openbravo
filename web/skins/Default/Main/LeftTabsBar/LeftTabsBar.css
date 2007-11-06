@@ -1,0 +1,179 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+table.Main_LeftTabsBar {
+  width: 25px;
+  height: 100%;
+  border: 0px
+  solid #000; 
+}
+
+td.Main_LeftTabsBar_bg_body {
+  width: 25px;
+  height: 531px;
+  border: 0px solid #000;
+  background-image: url(backgroundBody.png);
+  background-repeat: repeat-x;
+}
+
+td.Main_LeftTabsBar_bg_separator_cell {
+  height:12px;
+  background-image: url(backgroundBorder.png);
+}
+
+td.Main_LeftTabsBar_bg_empty_cell {
+  height: 100%;
+  width: 25px;
+  border: 0px solid #000;
+  background-image: url(backgroundBorder.png);
+}
+
+.Main_LeftTabsBar_bg_top {
+  width: 25px;
+  height: 51px;
+  background-image: url(backgroundTop.png);
+}
+
+
+/* Left Buttons definition for Main_LeftTabsBar */
+
+a.Main_LeftTabsBar_ButtonLeft {
+  display:block;
+  margin-left:0px;
+  margin-right:0px;
+  width:25px;
+  height:44px;
+  border:0px;
+  vertical-align:middle;
+  -moz-outline-style: none;
+  background: url(leftbutton.normal.png) no-repeat center center;
+}
+
+a.Main_LeftTabsBar_ButtonLeft:visited { 
+}
+
+a.Main_LeftTabsBar_ButtonLeft:hover {
+  background: url(leftbutton.rollover.png) no-repeat center center;
+}
+a.Main_LeftTabsBar_ButtonLeft:active { 
+  background: url(leftbutton.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+
+/* Left Icons definition for Main_LeftTabsBar */
+
+.Main_LeftTabsBar_ButtonLeft_Icon {
+  border: 0px none;
+  width: 25px;
+  height: 44px;
+  margin: 0px;
+  vertical-align: middle;
+}
+
+.Main_LeftTabsBar_ButtonLeft_Icon_arrow_show {
+  background: url(iconShowAppMenu.normal.png) no-repeat center center;
+}
+
+a.Main_LeftTabsBar_ButtonLeft:hover .Main_LeftTabsBar_ButtonLeft_Icon_arrow_show {
+  background: url(iconShowAppMenu.rollover.png) no-repeat center center;
+}
+
+.Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide {
+  background: url(iconHideAppMenu.normal.png) no-repeat center center;
+}
+
+a.Main_LeftTabsBar_ButtonLeft:hover .Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide {
+  background: url(iconHideAppMenu.rollover.png) no-repeat center center;
+}
+
+
+/* Right Buttons definition for Main_LeftTabsBar */
+
+a.Main_LeftTabsBar_ButtonRight {
+  display:block;
+  margin-right:0px;
+  margin-right:0px;
+  width:25px;
+  height:55px;
+  border:0px;
+  vertical-align:middle;
+  -moz-outline-style: none;
+  background: url(rightbutton.normal.png) no-repeat center center;
+}
+
+a.Main_LeftTabsBar_ButtonRight:visited { 
+}
+
+a.Main_LeftTabsBar_ButtonRight:hover {
+  background: url(rightbutton.rollover.png) no-repeat center center;
+}
+a.Main_LeftTabsBar_ButtonRight:active { 
+  background: url(rightbutton.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+.Main_LeftTabsBar_ButtonRight_selected {
+  background: url(rightbutton.selected.png) no-repeat center center;
+}
+
+
+/* Left Icons definition for Main_LeftTabsBar */
+
+.Main_LeftTabsBar_ButtonRight_Icon {
+  border: 0px none;
+  width: 25px;
+  height: 55px;
+  margin: 0px;
+  vertical-align: middle;
+}
+
+.Main_LeftTabsBar_ButtonRight_Icon_edition {
+  background: url(iconEditView.normal.png) no-repeat center center;
+}
+
+a.Main_LeftTabsBar_ButtonRight:hover .Main_LeftTabsBar_ButtonRight_Icon_edition {
+  background: url(iconEditView.rollover.png) no-repeat center center;
+}
+
+a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_edition {
+  background: url(iconEditView.rollover.png) no-repeat center center;
+}
+
+.Main_LeftTabsBar_ButtonRight_Icon_edition_selected {
+  background: url(iconEditView.selected.png) no-repeat center center;
+}
+
+
+.Main_LeftTabsBar_ButtonRight_Icon_relation {
+  background: url(iconRelationalView.normal.png) no-repeat center center;
+}
+
+a.Main_LeftTabsBar_ButtonRight:hover .Main_LeftTabsBar_ButtonRight_Icon_relation {
+  background: url(iconRelationalView.rollover.png) no-repeat center center;
+}
+
+a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_relation {
+  background: url(iconRelationalView.rollover.png) no-repeat center center;
+}
+
+.Main_LeftTabsBar_ButtonRight_Icon_relation_selected {
+  background: url(iconRelationalView.selected.png) no-repeat center center;
+}

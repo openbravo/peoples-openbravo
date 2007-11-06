@@ -1,0 +1,76 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Generate Invoices manual</TITLE>
+<link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Report.css" id="paramCSS" />
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">
+LNG_POR_DEFECTO="en_US";
+</SCRIPT>
+</HEAD>
+<BODY id="paramMessage" onload="xx();"  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<DIV class="ReportTitle">Bank report</DIV>
+<FORM method="POST" action="ReportBank.html" name="frmMain" >
+  <INPUT type="hidden" name="Command"></INPUT>
+  <INPUT type="hidden" name="inpAuxd" value="" id="functionSumAux1"></INPUT>
+  
+  <DIV id="sectionAmount"> 
+    <TABLE border="1" cellspacing="0" cellpadding="0" width="80%">
+      <TR  class="TableHeaderLevel1"> 
+        <TD width="44%">Bank<SPAN id="fieldName">xxChecking Unallocated Receipts</SPAN></TD>
+        <TD width="36%">Account No.<SPAN id="fieldBankaccount">xx70000666666666666666</SPAN></TD>
+        <TD width="20%">Currency&nbsp;<SPAN id="fieldCurrency">xxeurodds</SPAN></TD>
+      </TR>
+    </TABLE>
+    <DIV id="sectionDate"> 
+      <TABLE border="1" cellspacing="0" cellpadding="0" width="80%">
+        <TR class="TableHeaderLevel2"> 
+          <TD width="54%"> <SPAN id="fieldStatementdate">xxx22/02/03</SPAN></TD>
+          <TD width="22%" > <INPUT type="hidden" name="inpAuxd" value="" id="functionSumSectionAux"></INPUT>
+            Initial balance<SPAN id="fieldSumBeginning">xxxinicio</SPAN></TD>
+          <TD width="24%" >Final balance<SPAN id="functionSumEnding">xxfinal</SPAN></TD>
+        </TR>
+      </TABLE>
+      <TABLE width="80%" border="1">
+        <TR class="Border TableDetailHeader"> 
+          <TD width="44%" >Description</TD>
+          <TD width="18%" >Amount</TD>
+          <TD width="20%" >Accumulated</TD>
+        </TR>
+        <DIV id="sectionDetail"> 
+          <TR class="Border TableDetailRowEven"> 
+            <TD width="44%"  id="fieldDescription">xx22/04/2010</TD>
+            <TD width="18%" > <SPAN id="fieldTrxamt" >xx14500.34</SPAN></TD>
+            <TD width="20%"  id="functionSumLine">xx14500.34</TD>
+          </TR>
+        </DIV>
+      </TABLE>
+    </DIV>
+  </DIV>
+</FORM>
+</BODY>
+</HTML>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<compiereTrl language="de_DE" table="AD_WORKFLOW">
+   <row id="101" trl="Y">
+      <value column="Name" original="Project Setup and Use">Projekt - Einrichtung und Nutzung</value>
+      <value column="Description" original="Setup of projects and project reporting">Projekte und Projektberichte einrichten</value>
+      <value column="Help" original="Projects allow to monitor the status and progress of sales opportunities, service projects and investment projects. A Project is a process that is undertaken which can involve multiple steps or phases and require resources from more than one area.">Projekte erlauben die Kotrolle des Status und Fortschritts von Absatzchancen, Dienstleistungsprojekten und Kapitalanlagen. Ein Projekt ist ein laufender Prozess, der mehrere Schritte oder Phasen umfassen kann und Ressourcen aus mehr als einem Bereich erfordert.</value>
+   </row>
+   <row id="103" trl="Y">
+      <value column="Name" original="Language Setup">Neue Sprache erstellen</value>
+      <value column="Description" original="Setup a new Language of the system and translate elements">Eine neue Sprache für das System erstellen und Elemente übersetzen</value>
+      <value column="Help" original="Define a new language as a system language.">Eine neue Sprache als Systemsprache definieren.</value>
+   </row>
+   <row id="104" trl="Y">
+      <value column="Name" original="Initial Client Setup Review">Mandanten-Erstkonfiguration prüfen</value>
+      <value column="Description" original="Review of system level setup of a new  Client">Prüfung der Systemeinstellungen eines neuen Mandanten</value>
+      <value column="Help" original="This workflow reviews the system setup of a new client as performed by the automatic Initial Client Setup.|You may want to check also the following Workflows:|- Accounting Setup|- Business Partner Setup|- Product Setup|- Price list Setup|- Warehouse Setup|- Tax Setup|">Dieser Durchlauf prüft die Systemeinstellungen eines neuen Mandaten, der durch die automatische Mandanten-Erstdefinition erstellt wurde.|Folgende Durchläufe können ebenfalls geprüft werden:|- Buchhaltungsstammdaten konfigurieren|- Geschäftspartner konfigurieren|- Produkt konfigurieren|- Preisliste konfigurieren|- Lager konfigurieren|- Steuern konfigurieren</value>
+   </row>
+   <row id="105" trl="Y">
+      <value column="Name" original="Accounting Setup">Buchhaltungsstammdaten definieren</value>
+      <value column="Description" original="Review and change Accounting Setup">Prüfung und Änderung der Buchhaltungsstammdaten</value>
+      <value column="Help" original="This workflow allows you to review and change your Accounting Rules. ">Dieser Durchlauf erlaubt die Prüfung und Änderung der Kontierungsregeln.</value>
+   </row>
+   <row id="106" trl="Y">
+      <value column="Name" original="Business Partner Setup">Geschäftspartner einrichten</value>
+      <value column="Description" original="Setup Business Partner Rules">Geschäftspartner Regeln einrichten</value>
+      <value column="Help" original="This workflow defines the Business Partners and the supporting rules.">Dieser Durchlauf definiert die Geschäftspartner und die unterstützenden Regularien.</value>
+   </row>
+   <row id="107" trl="Y">
+      <value column="Name" original="Product Setup">Artikel anlegen</value>
+      <value column="Description" original="Set up Products">Produkte definieren</value>
+      <value column="Help" original="Define your products manually. You should verify the settings especially if you import your products.">Produkte sind manuell zu definieren. Vor allem wenn Produkte importiert wurden, sollten die Einstellungen verifiziert werden.</value>
+   </row>
+   <row id="108" trl="Y">
+      <value column="Name" original="Price List Setup">Preisliste definieren</value>
+      <value column="Description" original="Define your Price Lists and Discounts">Preislisten und Rabatte definieren</value>
+      <value column="Help" original="You define your price lists after entering or importing your products">Die Preislisten werden nach Einfügung oder Import der Produkte festgesetzt.</value>
+   </row>
+   <row id="109" trl="Y">
+      <value column="Name" original="Replication Setup">Datenabgleich definieren</value>
+      <value column="Description" original="Setup of data replication">Die Transaktionsregeln festlegen</value>
+      <value column="Help" original="Data Replication allows you to synchronize data of remote instances with a central office.  All actions are initialized from the central office.&lt;p&gt;|&lt;b&gt;Central System:&lt;/b&gt;&lt;BR&gt;|- setup system with all organizations, roles, etc.&lt;BR&gt;|- run the migration to make sure that it is up-to-date&lt;BR&gt;|- export the central system|&lt;p&gt;|&lt;b&gt;Remote System:&lt;/b&gt;|- install the exact version as Central System&lt;BR&gt;|- import data from Central System in the remote locations|&lt;p&gt;|&lt;b&gt;Central System:&lt;/b&gt;|- Define Replication per Remote&lt;BR&gt;|- Make sure that the ID range is unique per remote - otherwise you will loose transactions!&lt;BR&gt;|- Initially Start the Replication Run to setup Remote|&lt;p&gt;|** Enter Transactions **|&lt;p&gt;|&lt;b&gt;Central System:&lt;/b&gt;&lt;BR&gt;|- Start the Replication Run when required|">Transaktionsregeln erlauben die Synchronisation von Daten aus entfernten Instanzen mit einem zentralen Dienst&lt;p&gt;|&lt;b&gt;Zentrales System:&lt;/b&gt;&lt;BR&gt;|-System konfigurieren mit allen Unternehmenen, Rollen, etc.&lt;BR&gt;|- Migration durchführen, um sicherzustellen, dass das System aktuell ist&lt;BR&gt;|- das zentrale System exportieren&lt;p&gt;|&lt;b&gt;Entferntes System:&lt;/b&gt;|- die exakt gleiche Version wie auch das zentrale System installieren&lt;BR&gt;|- Daten aus dem zentralen  System in die entfernten Standorte importieren|&lt;p&gt;|&lt;b&gt;Zentrales System:&lt;/b&gt;|- Replikation durch entfernte Systeme definieren&lt;BR&gt;|- Sicherstellen, dass der ID-Bereich für den Austausch mit entfernten Stationen einzigartig ist - ansonsten werden die Transaktionen verloren gehen!&lt;BR&gt;|- Initial den Replikationslauf starten um die Verbindung zur entfernten Station einzurichten|&lt;p&gt;|** Transaktionen eingeben **|&lt;p&gt;|&lt;b&gt;Zentrales System&lt;/b&gt;&lt;BR&gt;|- den Replikationslauf starten, wenn erforderlich|</value>
+   </row>
+   <row id="110" trl="Y">
+      <value column="Name" original="Tax Setup">Steuern definieren</value>
+      <value column="Description" original="Setup tax calculation">Die Steuerkalkulation einrichten</value>
+      <value column="Help" original="Setup the tax calculation for products, services and charges">Einrichten der Steuerkalkulation für Produkte, Dienstleistungen und Gebühren.</value>
+   </row>
+   <row id="111" trl="Y">
+      <value column="Name" original="Sales Setup">Vertrieb konfigurieren</value>
+      <value column="Description" original="Setup Sales">Das Verkaufsmodul einrichten</value>
+      <value column="Help" original="Setting up Sales Representatives, Commissions as well as Marketing Channels and Campaigns.">Einrichten der Außendienstmitarbeiter, Provisionen, Vertriebswege und Kampagnen.</value>
+   </row>
+   <row id="112" trl="Y">
+      <value column="Name" original="Performance Measurement Setup">Leistungsbewertung definieren</value>
+      <value column="Description" original="Setup your Performance Measurement">Die Leistungsanalyse einrichten</value>
+      <value column="Help" original="This workflow guides you through setting up your performance measurement based on Key Performance Indicators, Balanced Scorecard, etc.||Most important: Do your analysis first!|- What are your goals and how do you measure it?||When you are setting up the system, you do it in reverse:|First you define how you measure it and last you define the goals for the measurements.|You have three ways measuring performance:|- via quantifiable measures (e.g. sales of $3 million in Q1)|- via manual measures|- via achievements (tasks)||The system converts the measures into percentages (based on the target and achieved measure - or number of total and reached achievements)">Dieser Durchlauf führt durch die Installationsschritte der Leistungsanalyse, basierend auf Leistungsberwertungskriterien, Wertungslisten, etc.||Wichtig: Führen Sie zuerst Ihre Analyse durch!|-Was sind die Ziele und wie sollen sie bemessen werden?||Wenn Sie das System einrichten, dann erfolgt das in umgekehrter Reihenfolge:|Zuerst werden die Bemessungsgrundlagen definiert und abschließend die Ziele für die Leistungsbewertung festgelegt.|Es gibt drei Wege, die Leistung zu bewerten:|- über quantitative Maßstäbe (z.B. Verkauf von €3 Millionen in Q1)|- über manuell festzulegende Maßstäbe|- über Leistungen (Aufgaben)||Das System konvertiert die Maßstäbe in prozentuale Anteile (basierend auf den Zielvorgaben und den erfüllten Maßstäben - oder Anzahl der gesamten und erledigten Leistungen)</value>
+   </row>
+   <row id="113" trl="Y">
+      <value column="Name" original="Request Setup">Anfragenablauf konfigurieren</value>
+      <value column="Description" original="Set up the client to process requests">Erstellt alle Basisdaten für einen Anfrageprozess</value>
+      <value column="Help" original=""/>
+   </row>
+   <row id="800000" trl="Y">
+      <value column="Name" original="Production Setup">Produktion konfigurieren</value>
+      <value column="Description" original="Set up Production module.">Das Produktionsmodul einrichten</value>
+      <value column="Help" original="Set up Production module.">Das Produktionsmodul einrichten.</value>
+   </row>
+</compiereTrl>

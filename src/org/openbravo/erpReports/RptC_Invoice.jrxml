@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="RptC_Invoice"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="483"
+		 columnSpacing="0"
+		 leftMargin="56"
+		 rightMargin="56"
+		 topMargin="56"
+		 bottomMargin="56"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<style 
+		name="default"
+		isDefault="false"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+	/>
+	<style 
+		name="Report_Title"
+		isDefault="false"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="18"
+	/>
+	<style 
+		name="Report_Subtitle"
+		isDefault="false"
+		forecolor="#555555"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="14"
+	/>
+	<style 
+		name="Report_Data_Label"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Report_Data_Field"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="false"
+	/>
+	<style 
+		name="Total_Field"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+		vAlign="Middle"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="GroupHeader_DarkGray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#555555"
+		vAlign="Middle"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="12"
+		isBold="true"
+	/>
+	<style 
+		name="Group_Data_Label"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Group_Data_Field"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+	<style 
+		name="Detail_Header"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#5D5D5D"
+		vAlign="Middle"
+		leftBorder="1Point"
+		leftBorderColor="#FFFFFF"
+		leftPadding="5"
+		rightBorder="1Point"
+		rightBorderColor="#FFFFFF"
+		fontName="Bitstream Vera Sans"
+		fontSize="10"
+		isBold="true"
+	/>
+	<style 
+		name="Detail_Line"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="8"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
+			<style 
+				name="Detail_Line"
+				isDefault="false"
+				mode="Opaque"
+				backcolor="#CCCCCC"
+			/>
+		</conditionalStyle>
+	</style>
+	<style 
+		name="Total_Gray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+	/>
+	<style 
+		name="Detail_Data_Label"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#CCCCCC"
+		fontName="Bitstream Vera Sans"
+		fontSize="10"
+		isBold="true"
+	/>
+	<style 
+		name="Detail_Data_Field"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#CCCCCC"
+		fontName="Bitstream Vera Sans"
+		fontSize="10"
+	/>
+	<style 
+		name="Group_Footer"
+		isDefault="false"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+		isBold="true"
+	/>
+	<style 
+		name="Report_Footer"
+		isDefault="true"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="11"
+	/>
+
+	<parameter name="ATTACH" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="BASE_DESIGN" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["/opt/AppsOpenbravo/src"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LANGUAGE" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["en_US"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USER_CLIENT" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["(1000000)"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["(0)"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_TITLE" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["REPORT TITLE"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpReports/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
+	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<queryString><![CDATA[SELECT C_INVOICE.C_INVOICE_ID, C_BPARTNER.NAME, C_BPARTNER.TAXID AS CIF, AD_USER.NAME AS CONTACT_NAME, C_LOCATION.ADDRESS1, 
+       C_LOCATION.POSTAL, C_LOCATION.CITY, C_REGION.NAME AS REGION,
+       C_INVOICE.DATEINVOICED, C_INVOICE.DOCUMENTNO, C_BPARTNER.VALUE AS CODE_BPARTNER, 
+       AD_CLIENT.DESCRIPTION AS ENTITY, C_Location_Description(AD_ORGINFO.C_LOCATION_ID) AS LOCATION
+  FROM C_INVOICE LEFT JOIN C_BPARTNER ON C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+                 LEFT JOIN AD_USER ON C_INVOICE.AD_USER_ID = AD_USER.AD_USER_ID
+                 LEFT JOIN C_BPARTNER_LOCATION ON C_INVOICE.C_BPARTNER_LOCATION_ID = C_BPARTNER_LOCATION.C_BPARTNER_LOCATION_ID
+                 LEFT JOIN C_LOCATION ON C_BPARTNER_LOCATION.C_LOCATION_ID = C_LOCATION.C_LOCATION_ID
+                 LEFT JOIN C_REGION ON C_LOCATION.C_REGION_ID = C_REGION.C_REGION_ID,
+        AD_ORGINFO, AD_CLIENT
+  WHERE C_INVOICE.ad_org_id = AD_ORGINFO.ad_org_id
+    AND C_INVOICE.ad_client_id = AD_CLIENT.ad_client_id
+    AND C_INVOICE.C_INVOICE_ID IN (1000087,1000089,1000102)]]></queryString>
+
+	<field name="C_INVOICE_ID" class="java.math.BigDecimal"/>
+	<field name="NAME" class="java.lang.String"/>
+	<field name="CIF" class="java.lang.String"/>
+	<field name="CONTACT_NAME" class="java.lang.String"/>
+	<field name="ADDRESS1" class="java.lang.String"/>
+	<field name="POSTAL" class="java.lang.String"/>
+	<field name="CITY" class="java.lang.String"/>
+	<field name="REGION" class="java.lang.String"/>
+	<field name="DATEINVOICED" class="java.util.Date"/>
+	<field name="DOCUMENTNO" class="java.lang.String"/>
+	<field name="CODE_BPARTNER" class="java.lang.String"/>
+	<field name="ENTITY" class="java.lang.String"/>
+	<field name="LOCATION" class="java.lang.String"/>
+
+	<variable name="TOTAL_LINENETAMT" class="java.math.BigDecimal" resetType="Group" resetGroup="C_INVOICE_ID" calculation="Nothing">
+	</variable>
+	<variable name="TOTAL_TAXAMT" class="java.math.BigDecimal" resetType="Group" resetGroup="C_INVOICE_ID" calculation="Nothing">
+	</variable>
+
+		<group  name="C_INVOICE_ID" isStartNewPage="true" isResetPageNumber="true" >
+			<groupExpression><![CDATA[$F{C_INVOICE_ID}]]></groupExpression>
+			<groupHeader>
+			<band height="228"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Group_Data_Field"
+						x="1"
+						y="204"
+						width="149"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font pdfFontName="Helvetica"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DOCUMENTNO}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="default"
+						x="384"
+						y="204"
+						width="96"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font fontName="Times-Roman"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{DATEINVOICED}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="Group_Data_Label"
+						mode="Transparent"
+						x="1"
+						y="186"
+						width="149"
+						height="18"
+						forecolor="#999999"
+						backcolor="#FFFFFF"
+						key="element-90"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Invoice Number]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Report_Title"
+						x="15"
+						y="1"
+						width="182"
+						height="50"
+						forecolor="#666666"
+						key="staticText-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font fontName="Bitstream Vera Sans" size="36"/>
+					</textElement>
+				<text><![CDATA[INVOICE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						mode="Transparent"
+						x="15"
+						y="88"
+						width="181"
+						height="50"
+						key="staticText-6"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[FAX no.: xx(948) 326 581 
+Phone no.: xx(948) 326 580
+xxYour Address
+xx1111 Your Town (Country)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Group_Data_Label"
+						mode="Transparent"
+						x="384"
+						y="186"
+						width="96"
+						height="18"
+						forecolor="#999999"
+						backcolor="#FFFFFF"
+						key="element-91"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+				<text><![CDATA[Date]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						style="Detail_Data_Field"
+						x="1"
+						y="203"
+						width="482"
+						height="0"
+						key="line-35"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="18"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="C_INVOICE_ID"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Total_Gray"
+						x="400"
+						y="0"
+						width="82"
+						height="16"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{TOTAL_LINENETAMT}.add($V{TOTAL_TAXAMT})!=null)?$P{NUMBERFORMAT}.format($V{TOTAL_LINENETAMT}.add($V{TOTAL_TAXAMT})):new String(" ")
+]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="Report_Footer"
+						x="340"
+						y="0"
+						width="60"
+						height="16"
+						key="staticText-18"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[Total:]]></text>
+				</staticText>
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="34"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="0"
+						width="482"
+						height="16"
+						key="subreport-1"/>
+					<subreportParameter  name="C_INVOICE_ID">
+						<subreportParameterExpression><![CDATA[$F{C_INVOICE_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LOCALE">
+						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="NUMBERFORMAT">
+						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<returnValue subreportVariable="TOTAL_LINENETAMT" toVariable="TOTAL_LINENETAMT"/>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/RptC_Invoice_Lines.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						style="Report_Footer"
+						x="0"
+						y="18"
+						width="482"
+						height="16"
+						key="subreport-2"
+						positionType="Float"/>
+					<subreportParameter  name="C_INVOICE_ID">
+						<subreportParameterExpression><![CDATA[$F{C_INVOICE_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="NUMBERFORMAT">
+						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="LOCALE">
+						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<returnValue subreportVariable="TOTAL_TAXAMT" toVariable="TOTAL_TAXAMT"/>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/RptC_Invoice_TaxLines.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="160"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="default"
+						x="344"
+						y="136"
+						width="95"
+						height="19"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="default"
+						x="443"
+						y="136"
+						width="36"
+						height="19"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font pdfFontName="Helvetica" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="CP1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="dd-MM-yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="default"
+						x="231"
+						y="136"
+						width="69"
+						height="19"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="default"
+						x="167"
+						y="136"
+						width="60"
+						height="19"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[Printed on]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="21"
+						y="7"
+						width="79"
+						height="18"
+						forecolor="#999999"
+						key="staticText-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Delivery Term]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="21"
+						y="27"
+						width="79"
+						height="18"
+						forecolor="#000000"
+						key="staticText-8"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[Immediate]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="110"
+						y="7"
+						width="106"
+						height="18"
+						forecolor="#999999"
+						key="staticText-9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Delivery]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="110"
+						y="27"
+						width="106"
+						height="18"
+						forecolor="#000000"
+						key="staticText-10"
+						stretchType="RelativeToBandHeight"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[from 9:00 to 13:00]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="224"
+						y="7"
+						width="96"
+						height="18"
+						forecolor="#999999"
+						key="staticText-11"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Delivery Expense]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="224"
+						y="27"
+						width="96"
+						height="18"
+						forecolor="#000000"
+						key="staticText-12"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[Included]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="332"
+						y="7"
+						width="89"
+						height="18"
+						forecolor="#999999"
+						key="staticText-13"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Payment Terms]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="332"
+						y="27"
+						width="89"
+						height="18"
+						forecolor="#000000"
+						key="staticText-14"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font/>
+					</textElement>
+				<text><![CDATA[90 days]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="1"
+						y="55"
+						width="79"
+						height="18"
+						forecolor="#999999"
+						key="staticText-15"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Notes]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						style="Report_Footer"
+						x="1"
+						y="26"
+						width="482"
+						height="0"
+						key="line-36"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						style="default"
+						x="1"
+						y="76"
+						width="482"
+						height="18"
+						forecolor="#000000"
+						key="staticText-16"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[If there is no reply within 48 hours the order will be considered as accepted.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="default"
+						x="1"
+						y="94"
+						width="482"
+						height="18"
+						forecolor="#000000"
+						key="staticText-17"
+						positionType="FixRelativeToBottom"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Include order No. in shipment and invoice]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="1"
+						y="74"
+						width="482"
+						height="0"
+						key="line-37"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="136"
+						width="482"
+						height="0"
+						key="line-38"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

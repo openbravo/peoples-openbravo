@@ -1,0 +1,4502 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="es_VE" table="AD_TEXTINTERFACES">
+  <row id="100000" trl="N">
+    <value column="Text" original="&#10;">
+</value>
+  </row>
+  <row id="100001" trl="N">
+    <value column="Text" original="\n">\n</value>
+  </row>
+  <row id="100002" trl="N">
+    <value column="Text" original="Â ">Â </value>
+  </row>
+  <row id="100003" trl="N">
+    <value column="Text" original="Amount FromÂ ">Amount FromÂ </value>
+  </row>
+  <row id="100004" trl="N">
+    <value column="Text" original="Amount FromÂ ">Amount FromÂ </value>
+  </row>
+  <row id="100005" trl="N">
+    <value column="Text" original="Accounting Report">Accounting Report</value>
+  </row>
+  <row id="100006" trl="N">
+    <value column="Text" original="Tax Report">Tax Report</value>
+  </row>
+  <row id="100007" trl="N">
+    <value column="Text" original="Refunded Sales Orders Report">Refunded Sales Orders Report</value>
+  </row>
+  <row id="100008" trl="N">
+    <value column="Text" original="Â·">Â·</value>
+  </row>
+  <row id="100009" trl="N">
+    <value column="Text" original="POL. IND. DE BUÃ‘UEL S/N">POL. IND. DE BUÃ‘UEL S/N</value>
+  </row>
+  <row id="100010" trl="N">
+    <value column="Text" original="31540 BUÃ‘UEL">31540 BUÃ‘UEL</value>
+  </row>
+  <row id="100011" trl="N">
+    <value column="Text" original="BuÃ±uel,">BuÃ±uel,</value>
+  </row>
+  <row id="100012" trl="N">
+    <value column="Text" original="Nos es grato adjuntar, cheque/pagarÃ© nominativo correspondiente al pago segÃºn el desglose que se expone a continaciÃ³n:">Nos es grato adjuntar, cheque/pagarÃ© nominativo correspondiente al pago segÃºn el desglose que se expone a continaciÃ³n:</value>
+  </row>
+  <row id="100013" trl="N">
+    <value column="Text" original="Sin otro particular y aprovechando la ocasiÃ³n, reciban un saludo.">Sin otro particular y aprovechando la ocasiÃ³n, reciban un saludo.</value>
+  </row>
+  <row id="100014" trl="N">
+    <value column="Text" original="Texto estÃ¡tico">Texto estÃ¡tico</value>
+  </row>
+  <row id="800002" trl="N">
+    <value column="Text" original="Daily occupation summary report">Resumén de ocupación diaria</value>
+  </row>
+  <row id="800004" trl="N">
+    <value column="Text" original="Nat.">Nat.</value>
+  </row>
+  <row id="800007" trl="N">
+    <value column="Text" original="Frames not available">Frames no disponibles</value>
+  </row>
+  <row id="800015" trl="N">
+    <value column="Text" original="Journal entry:">Entrada asiento:</value>
+  </row>
+  <row id="800104" trl="N">
+    <value column="Text" original="Currency">Moneda</value>
+  </row>
+  <row id="800108" trl="N">
+    <value column="Text" original="Paid">Pagado</value>
+  </row>
+  <row id="800110" trl="N">
+    <value column="Text" original="Description">Descripción</value>
+  </row>
+  <row id="800113" trl="N">
+    <value column="Text" original="Cancel">Cancelar</value>
+  </row>
+  <row id="800114" trl="N">
+    <value column="Text" original="Accept">Aceptar</value>
+  </row>
+  <row id="800116" trl="N">
+    <value column="Text" original="New address entrance">Entrada de una nueva dirección</value>
+  </row>
+  <row id="800117" trl="N">
+    <value column="Text" original="1st line">Línea            1ª: </value>
+  </row>
+  <row id="800118" trl="N">
+    <value column="Text" original="2nd line">Línea            2ª: </value>
+  </row>
+  <row id="800129" trl="N">
+    <value column="Text" original="Localizator">Localizador: </value>
+  </row>
+  <row id="800132" trl="N">
+    <value column="Text" original="Create new record">Crear nuevo regitro: </value>
+  </row>
+  <row id="800134" trl="N">
+    <value column="Text" original="Containing(Y)">Contenedor(Y): </value>
+  </row>
+  <row id="800135" trl="N">
+    <value column="Text" original="Level(Z)">Nivel(Z): </value>
+  </row>
+  <row id="800136" trl="N">
+    <value column="Text" original="Key">Clave: </value>
+  </row>
+  <row id="800142" trl="N">
+    <value column="Text" original="Results">Resultados</value>
+  </row>
+  <row id="800146" trl="N">
+    <value column="Text" original="Payment selector">Selector pagos</value>
+  </row>
+  <row id="800161" trl="N">
+    <value column="Text" original="Go to previous range">Ir al anterior rango</value>
+  </row>
+  <row id="800162" trl="N">
+    <value column="Text" original="Go to next range">Ir al siguiente rango</value>
+  </row>
+  <row id="800165" trl="N">
+    <value column="Text" original="Corridor">Pasillo</value>
+  </row>
+  <row id="800166" trl="N">
+    <value column="Text" original="Shelves">Estantería</value>
+  </row>
+  <row id="800167" trl="N">
+    <value column="Text" original="Height">Altura</value>
+  </row>
+  <row id="800168" trl="N">
+    <value column="Text" original="Priority No.">Número prioridad</value>
+  </row>
+  <row id="800169" trl="N">
+    <value column="Text" original="By default">Por defecto</value>
+  </row>
+  <row id="800171" trl="N">
+    <value column="Text" original="Search">Buscar</value>
+  </row>
+  <row id="800172" trl="N">
+    <value column="Text" original="Business Partner">Relacionado</value>
+  </row>
+  <row id="800175" trl="N">
+    <value column="Text" original="Show calendar">Calendario</value>
+  </row>
+  <row id="800176" trl="N">
+    <value column="Text" original="Calendar">Calendario</value>
+  </row>
+  <row id="800178" trl="N">
+    <value column="Text" original="Pending">Pendientes</value>
+  </row>
+  <row id="800180" trl="N">
+    <value column="Text" original="Show calculator">Mostrar calculadora</value>
+  </row>
+  <row id="800181" trl="N">
+    <value column="Text" original="Calculator">Calculadora</value>
+  </row>
+  <row id="800182" trl="N">
+    <value column="Text" original="Receipt">Recibos</value>
+  </row>
+  <row id="800187" trl="N">
+    <value column="Text" original="Invoice">Factura</value>
+  </row>
+  <row id="800188" trl="N">
+    <value column="Text" original="Date">Fecha</value>
+  </row>
+  <row id="800189" trl="N">
+    <value column="Text" original="Amount">Importe</value>
+  </row>
+  <row id="800199" trl="N">
+    <value column="Text" original="Business Partner selector">Selector de relacionados</value>
+  </row>
+  <row id="800200" trl="N">
+    <value column="Text" original="Name">Nombre</value>
+  </row>
+  <row id="800208" trl="N">
+    <value column="Text" original="Image">Imagen</value>
+  </row>
+  <row id="800224" trl="N">
+    <value column="Text" original="Description:">Descripción: </value>
+  </row>
+  <row id="800240" trl="N">
+    <value column="Text" original="Key">Clave</value>
+  </row>
+  <row id="800258" trl="N">
+    <value column="Text" original="Phone no.">Telefono</value>
+  </row>
+  <row id="800259" trl="N">
+    <value column="Text" original="PC">CP</value>
+  </row>
+  <row id="800269" trl="N">
+    <value column="Text" original="Absolute Amount">Cantidad absoluta</value>
+  </row>
+  <row id="800285" trl="N">
+    <value column="Text" original="Stment Date">Fec.oper.</value>
+  </row>
+  <row id="800287" trl="N">
+    <value column="Text" original="Quantity">Cantidad</value>
+  </row>
+  <row id="800289" trl="N">
+    <value column="Text" original="Charge">Gasto</value>
+  </row>
+  <row id="800290" trl="N">
+    <value column="Text" original="Discount A.">Descuento</value>
+  </row>
+  <row id="800291" trl="N">
+    <value column="Text" original="Writte-off ...">Cancelado</value>
+  </row>
+  <row id="800301" trl="N">
+    <value column="Text" original="Go up">Subir</value>
+  </row>
+  <row id="800302" trl="N">
+    <value column="Text" original="Exclude">Excluir</value>
+  </row>
+  <row id="800303" trl="N">
+    <value column="Text" original="Go down">Bajar</value>
+  </row>
+  <row id="800304" trl="N">
+    <value column="Text" original="Exclude all">Excluir Todos</value>
+  </row>
+  <row id="800311" trl="N">
+    <value column="Text" original="Organization">Organización</value>
+  </row>
+  <row id="800313" trl="N">
+    <value column="Text" original="Product:">Producto:</value>
+  </row>
+  <row id="800318" trl="N">
+    <value column="Text" original="Accounts list">Listado de cuentas</value>
+  </row>
+  <row id="800326" trl="N">
+    <value column="Text" original="Product">Producto</value>
+  </row>
+  <row id="800328" trl="N">
+    <value column="Text" original="Project">Proyecto</value>
+  </row>
+  <row id="800359" trl="N">
+    <value column="Text" original="Sales represent">Representante ventas</value>
+  </row>
+  <row id="800365" trl="N">
+    <value column="Text" original="PRODUCT">PRODUCTO</value>
+  </row>
+  <row id="800368" trl="N">
+    <value column="Text" original="Menu">Menú</value>
+  </row>
+  <row id="800369" trl="N">
+    <value column="Text" original="Update">Actualizar</value>
+  </row>
+  <row id="800370" trl="N">
+    <value column="Text" original="Back">Atrás</value>
+  </row>
+  <row id="800383" trl="N">
+    <value column="Text" original="Workflow">Diagrama</value>
+  </row>
+  <row id="800386" trl="N">
+    <value column="Text" original="Processing workflow">Procesando el workflow</value>
+  </row>
+  <row id="800389" trl="N">
+    <value column="Text" original="Report print">Imprimir informe</value>
+  </row>
+  <row id="800390" trl="N">
+    <value column="Text" original="PRINTING...">PRINTING . . .</value>
+  </row>
+  <row id="800407" trl="N">
+    <value column="Text" original="Download">Descargar</value>
+  </row>
+  <row id="800410" trl="N">
+    <value column="Text" original="File name">Nombre archivo</value>
+  </row>
+  <row id="800411" trl="N">
+    <value column="Text" original="Text">Texto</value>
+  </row>
+  <row id="800412" trl="N">
+    <value column="Text" original="type">tipo</value>
+  </row>
+  <row id="800415" trl="N">
+    <value column="Text" original="Select field order on the tab">Indique los campos para ordenar el tab</value>
+  </row>
+  <row id="800416" trl="N">
+    <value column="Text" original="test">prueba</value>
+  </row>
+  <row id="800417" trl="N">
+    <value column="Text" original="Include all">Incluir Todos</value>
+  </row>
+  <row id="800418" trl="N">
+    <value column="Text" original="Include">Incluir</value>
+  </row>
+  <row id="800426" trl="N">
+    <value column="Text" original="Add">Añadir</value>
+  </row>
+  <row id="800427" trl="N">
+    <value column="Text" original="Delete selected elements">Eliminar los elementos seleccionados</value>
+  </row>
+  <row id="800428" trl="N">
+    <value column="Text" original="Delete all elements">Borrar todos los elementos</value>
+  </row>
+  <row id="800430" trl="N">
+    <value column="Text" original="Article">Artículo</value>
+  </row>
+  <row id="800432" trl="N">
+    <value column="Text" original="Unit">Unidad</value>
+  </row>
+  <row id="800433" trl="N">
+    <value column="Text" original="Attribute">Atributo</value>
+  </row>
+  <row id="800483" trl="N">
+    <value column="Text" original="TOTAL: ">TOTAL: </value>
+  </row>
+  <row id="800485" trl="N">
+    <value column="Text" original="QUANTITY">CANTIDAD</value>
+  </row>
+  <row id="800486" trl="N">
+    <value column="Text" original="UNIT">UNIDAD</value>
+  </row>
+  <row id="800487" trl="N">
+    <value column="Text" original="AVERAGE COST">COSTE MEDIO</value>
+  </row>
+  <row id="800488" trl="N">
+    <value column="Text" original="VALUATION">VALORACIÓN</value>
+  </row>
+  <row id="800489" trl="N">
+    <value column="Text" original="Costs">Costes</value>
+  </row>
+  <row id="800491" trl="N">
+    <value column="Text" original="Warehouse tracking report">Informe de seguimiento de almacén</value>
+  </row>
+  <row id="800496" trl="N">
+    <value column="Text" original="From:">Desde:</value>
+  </row>
+  <row id="800505" trl="N">
+    <value column="Text" original="Shipment edition">Editar nota de entrega</value>
+  </row>
+  <row id="800520" trl="N">
+    <value column="Text" original="PDF_Report">Informe_PDF</value>
+  </row>
+  <row id="800545" trl="N">
+    <value column="Text" original="Generate Invoices manual">Generar facturas manualmente</value>
+  </row>
+  <row id="800566" trl="N">
+    <value column="Text" original="Show selected level only"> Mostrar solo nivel seleccionado</value>
+  </row>
+  <row id="800570" trl="N">
+    <value column="Text" original="DESCRIPTION">DESCRIPCIÓN</value>
+  </row>
+  <row id="800571" trl="N">
+    <value column="Text" original="INITIAL BALANCE">SALDO INICIAL</value>
+  </row>
+  <row id="800572" trl="N">
+    <value column="Text" original="DEBIT PERIOD">PERIODO DEBE</value>
+  </row>
+  <row id="800573" trl="N">
+    <value column="Text" original="CREDIT PERIOD">PERIODO HABER</value>
+  </row>
+  <row id="800574" trl="N">
+    <value column="Text" original="FINAL BALANCE">SALDO FINAL</value>
+  </row>
+  <row id="800575" trl="N">
+    <value column="Text" original="DETAIL">DETALLE</value>
+  </row>
+  <row id="800579" trl="N">
+    <value column="Text" original="Anal.">Anál.</value>
+  </row>
+  <row id="800580" trl="N">
+    <value column="Text" original="ADD AND KEEP GOING...">SUMA Y SIGUE............</value>
+  </row>
+  <row id="800587" trl="N">
+    <value column="Text" original="CREDIT">HABER</value>
+  </row>
+  <row id="800601" trl="N">
+    <value column="Text" original="HTML_Report">Informe_HTML</value>
+  </row>
+  <row id="800625" trl="N">
+    <value column="Text" original="Import"> Importe</value>
+  </row>
+  <row id="800626" trl="N">
+    <value column="Text" original="Consignment invoicing report">Informe de facturación consigna</value>
+  </row>
+  <row id="800668" trl="N">
+    <value column="Text" original="Insert">Insertar</value>
+  </row>
+  <row id="800671" trl="N">
+    <value column="Text" original="Test">Prueba</value>
+  </row>
+  <row id="800678" trl="N">
+    <value column="Text" original="Normal">Normal</value>
+  </row>
+  <row id="800682" trl="N">
+    <value column="Text" original="Shipment report">Informe notas de entrega</value>
+  </row>
+  <row id="800689" trl="N">
+    <value column="Text" original="Order filter">Filtro pedido</value>
+  </row>
+  <row id="800742" trl="N">
+    <value column="Text" original="Amount ref">Importe ref</value>
+  </row>
+  <row id="800743" trl="N">
+    <value column="Text" original="% amount">% importe</value>
+  </row>
+  <row id="800745" trl="N">
+    <value column="Text" original="Quantity Ref.">Cantidad ref</value>
+  </row>
+  <row id="800747" trl="N">
+    <value column="Text" original="Weight">Peso</value>
+  </row>
+  <row id="800748" trl="N">
+    <value column="Text" original="Weight ref">Peso ref</value>
+  </row>
+  <row id="800806" trl="N">
+    <value column="Text" original="AMOUNT">IMPORTE</value>
+  </row>
+  <row id="800847" trl="N">
+    <value column="Text" original="Price">Precio</value>
+  </row>
+  <row id="800850" trl="N">
+    <value column="Text" original="TOTAL:">TOTAL:</value>
+  </row>
+  <row id="800932" trl="N">
+    <value column="Text" original="Sales asc">Ventas asc</value>
+  </row>
+  <row id="800933" trl="N">
+    <value column="Text" original="Asc. Rate">Ratio asc</value>
+  </row>
+  <row id="800934" trl="N">
+    <value column="Text" original="Sales desc">Ventas desc</value>
+  </row>
+  <row id="800935" trl="N">
+    <value column="Text" original="Desc. Rate">Ratio desc</value>
+  </row>
+  <row id="800949" trl="N">
+    <value column="Text" original="Devol. Ref">Devol. ref</value>
+  </row>
+  <row id="800982" trl="N">
+    <value column="Text" original="Devoluc. Ref">Devoluc. ref</value>
+  </row>
+  <row id="801094" trl="N">
+    <value column="Text" original="Quantity (m2)">Cantidad (m2)</value>
+  </row>
+  <row id="801096" trl="N">
+    <value column="Text" original="Amount ()">Importe ()</value>
+  </row>
+  <row id="801133" trl="N">
+    <value column="Text" original="Article movements report">Informe de movimientos de un artículo</value>
+  </row>
+  <row id="801144" trl="N">
+    <value column="Text" original="Inventory regulation">Regulación de inventario</value>
+  </row>
+  <row id="801149" trl="N">
+    <value column="Text" original="Production">Producción</value>
+  </row>
+  <row id="801150" trl="N">
+    <value column="Text" original="Entrances/Exits">Entradas/salidas</value>
+  </row>
+  <row id="801155" trl="N">
+    <value column="Text" original="Origin location">Rack origen</value>
+  </row>
+  <row id="801159" trl="N">
+    <value column="Text" original="Destiny location">Rack destino</value>
+  </row>
+  <row id="801160" trl="N">
+    <value column="Text" original="Exit">Salida</value>
+  </row>
+  <row id="801164" trl="N">
+    <value column="Text" original="yy">yy</value>
+  </row>
+  <row id="801165" trl="N">
+    <value column="Text" original="Internal movements">Movimientos          internos</value>
+  </row>
+  <row id="801166" trl="N">
+    <value column="Text" original="Inventory Move">Movimiento inventario</value>
+  </row>
+  <row id="801173" trl="N">
+    <value column="Text" original="Category">Categoría</value>
+  </row>
+  <row id="801176" trl="N">
+    <value column="Text" original="Applicable price">Precio aplicable</value>
+  </row>
+  <row id="801177" trl="N">
+    <value column="Text" original="Limit price">Precio límite</value>
+  </row>
+  <row id="801188" trl="N">
+    <value column="Text" original="Show raw material">Mostrar materia          prima</value>
+  </row>
+  <row id="801233" trl="N">
+    <value column="Text" original="No.">Nº</value>
+  </row>
+  <row id="801312" trl="N">
+    <value column="Text" original="Purchase shipment">Nota de Entrega compra</value>
+  </row>
+  <row id="801313" trl="N">
+    <value column="Text" original="Warehouse movements report">Informe de movimientos de almacén</value>
+  </row>
+  <row id="801500" trl="N">
+    <value column="Text" original="% tax">% Impuesto</value>
+  </row>
+  <row id="801531" trl="N">
+    <value column="Text" original="Client invoices report">Informe facturas entidad</value>
+  </row>
+  <row id="801576" trl="N">
+    <value column="Text" original="Prof.">Ben</value>
+  </row>
+  <row id="801577" trl="N">
+    <value column="Text" original="% marg.">%Marg</value>
+  </row>
+  <row id="801578" trl="N">
+    <value column="Text" original="Ref amt">Imp ref</value>
+  </row>
+  <row id="801580" trl="N">
+    <value column="Text" original="Prof. ref.">Ben ref</value>
+  </row>
+  <row id="801581" trl="N">
+    <value column="Text" original="% marg. ref.">%Mar ref</value>
+  </row>
+  <row id="801582" trl="N">
+    <value column="Text" original="% amt.">% imp</value>
+  </row>
+  <row id="801584" trl="N">
+    <value column="Text" original="Quant.">Cant</value>
+  </row>
+  <row id="801585" trl="N">
+    <value column="Text" original="Quant. Ref.">Cant ref</value>
+  </row>
+  <row id="801586" trl="N">
+    <value column="Text" original="% qty.">% cant</value>
+  </row>
+  <row id="801590" trl="N">
+    <value column="Text" original="% margin">%Margen</value>
+  </row>
+  <row id="801747" trl="N">
+    <value column="Text" original="Observations">Observaciones</value>
+  </row>
+  <row id="801749" trl="N">
+    <value column="Text" original="Customer balance">Saldo Cli</value>
+  </row>
+  <row id="801750" trl="N">
+    <value column="Text" original="PPA balance">Saldo PPA</value>
+  </row>
+  <row id="801839" trl="N">
+    <value column="Text" original="Charge-pay activity">Informe de acciones cobro-pago</value>
+  </row>
+  <row id="801849" trl="N">
+    <value column="Text" original="Manual settlement">Efecto manual</value>
+  </row>
+  <row id="801917" trl="N">
+    <value column="Text" original="New">Nueva</value>
+  </row>
+  <row id="801918" trl="N">
+    <value column="Text" original="Complementary">Complementaria</value>
+  </row>
+  <row id="801919" trl="N">
+    <value column="Text" original="Sustitutive">Sustitutiva</value>
+  </row>
+  <row id="801931" trl="N">
+    <value column="Text" original="Accounting account report">Informe cuenta contable </value>
+  </row>
+  <row id="801934" trl="N">
+    <value column="Text" original="Debit">Debe</value>
+  </row>
+  <row id="801940" trl="N">
+    <value column="Text" original="Incr.">Incr: </value>
+  </row>
+  <row id="801956" trl="N">
+    <value column="Text" original="Reopen the request">Reabrir petición</value>
+  </row>
+  <row id="801959" trl="N">
+    <value column="Text" original="Request">Solicitud</value>
+  </row>
+  <row id="801961" trl="N">
+    <value column="Text" original="Send mail text">Enviar mail</value>
+  </row>
+  <row id="802003" trl="N">
+    <value column="Text" original="General accounting plan statements">Cuadros del plan                    general contable</value>
+  </row>
+  <row id="802029" trl="N">
+    <value column="Text" original="GL JOURNAL selector">Selector GLJOURNAL</value>
+  </row>
+  <row id="802033" trl="N">
+    <value column="Text" original="Create from GLJournal">Crear de diario</value>
+  </row>
+  <row id="802036" trl="N">
+    <value column="Text" original="Accounting type">Tipo de contabilizado</value>
+  </row>
+  <row id="802037" trl="N">
+    <value column="Text" original="Document date">Fecha documento</value>
+  </row>
+  <row id="802039" trl="N">
+    <value column="Text" original="Control qty.">Cant. Control</value>
+  </row>
+  <row id="802040" trl="N">
+    <value column="Text" original="Deptor balance">Saldo Deudor</value>
+  </row>
+  <row id="802041" trl="N">
+    <value column="Text" original="Creditor balance">Saldo Acreedor</value>
+  </row>
+  <row id="802045" trl="N">
+    <value column="Text" original="Copy Details from GLJournal">Copiar detalle del diario</value>
+  </row>
+  <row id="802046" trl="N">
+    <value column="Text" original="Help generator">Generador de ayuda</value>
+  </row>
+  <row id="802054" trl="N">
+    <value column="Text" original="Create price list">Crear versiones de lista de precios</value>
+  </row>
+  <row id="802075" trl="N">
+    <value column="Text" original="Request process">Proceso petición</value>
+  </row>
+  <row id="802085" trl="N">
+    <value column="Text" original="Help edit">Editar ayuda</value>
+  </row>
+  <row id="802086" trl="N">
+    <value column="Text" original="You can't view frames">No puede ver frames</value>
+  </row>
+  <row id="802115" trl="N">
+    <value column="Text" original="Cash and bank transactions">Movimientos entre cajas y bancos</value>
+  </row>
+  <row id="802132" trl="N">
+    <value column="Text" original="Order movements between organizations">Movimiento de pedidos entre organizaciones</value>
+  </row>
+  <row id="802145" trl="N">
+    <value column="Text" original="Value">Valor</value>
+  </row>
+  <row id="802147" trl="N">
+    <value column="Text" original="Preference">Preferencias</value>
+  </row>
+  <row id="802148" trl="N">
+    <value column="Text" original="Global">Global</value>
+  </row>
+  <row id="802150" trl="N">
+    <value column="Text" original="Object">Objeto</value>
+  </row>
+  <row id="802158" trl="N">
+    <value column="Text" original="Show accounting tabs">Mostrar pesta&#241;as de contabilidad</value>
+  </row>
+  <row id="802159" trl="N">
+    <value column="Text" original="Show translation tabs">Mostrar pesta&#241;as de traducción</value>
+  </row>
+  <row id="802160" trl="N">
+    <value column="Text" original="Save password">Guardar contraseña</value>
+  </row>
+  <row id="802164" trl="N">
+    <value column="Text" original="Show test">Mostrar test</value>
+  </row>
+  <row id="802170" trl="N">
+    <value column="Text" original="SQL execution">Ejecución de SQL</value>
+  </row>
+  <row id="802175" trl="N">
+    <value column="Text" original="Go to the top">Ir arriba</value>
+  </row>
+  <row id="802177" trl="N">
+    <value column="Text" original="System element help">Ayuda de elemento de sistema</value>
+  </row>
+  <row id="802180" trl="N">
+    <value column="Text" original="help for the system element">Ayuda para el elemento</value>
+  </row>
+  <row id="802209" trl="N">
+    <value column="Text" original="Rol information">Información del rol</value>
+  </row>
+  <row id="802220" trl="N">
+    <value column="Text" original="is global window">es ventana global </value>
+  </row>
+  <row id="802221" trl="N">
+    <value column="Text" original="is global">es global </value>
+  </row>
+  <row id="802222" trl="N">
+    <value column="Text" original="is preference">es preference </value>
+  </row>
+  <row id="802223" trl="N">
+    <value column="Text" original="is accounting">es contabilidad </value>
+  </row>
+  <row id="802226" trl="N">
+    <value column="Text" original="Same partner">Mismo relacionado  </value>
+  </row>
+  <row id="802227" trl="N">
+    <value column="Text" original="Same product">Mismo producto  </value>
+  </row>
+  <row id="802228" trl="N">
+    <value column="Text" original="Same quantity">Misma cantidad</value>
+  </row>
+  <row id="802233" trl="N">
+    <value column="Text" original="Line No.:">Núm. de línea</value>
+  </row>
+  <row id="802241" trl="N">
+    <value column="Text" original="MatchingPO Receipt Invoice">Puntear facturas de compra</value>
+  </row>
+  <row id="802293" trl="N">
+    <value column="Text" original="Payment term">Condicion de pago</value>
+  </row>
+  <row id="802303" trl="N">
+    <value column="Text" original="Editing">Editando</value>
+  </row>
+  <row id="802306" trl="N">
+    <value column="Text" original="Acct Dimension">Dimensión contable</value>
+  </row>
+  <row id="802307" trl="N">
+    <value column="Text" original="Log information">Información del log</value>
+  </row>
+  <row id="802318" trl="N">
+    <value column="Text" original="Not balanced">Sin cuadrar</value>
+  </row>
+  <row id="802342" trl="N">
+    <value column="Text" original="Not delivery">No  servido</value>
+  </row>
+  <row id="802344" trl="N">
+    <value column="Text" original="Indirect expenses report">Informe de indirectos</value>
+  </row>
+  <row id="802345" trl="N">
+    <value column="Text" original="Excel InOut report">Informe de InOut para Excel</value>
+  </row>
+  <row id="802350" trl="N">
+    <value column="Text" original="Get indirect's report">Obtener informe de indirectos</value>
+  </row>
+  <row id="802353" trl="N">
+    <value column="Text" original="InOut report">Informe de InOut</value>
+  </row>
+  <row id="802355" trl="N">
+    <value column="Text" original="Code">Código</value>
+  </row>
+  <row id="802357" trl="N">
+    <value column="Text" original="Incoming date">Fecha Entrada</value>
+  </row>
+  <row id="802358" trl="N">
+    <value column="Text" original="Outgoing date">Fecha Salida</value>
+  </row>
+  <row id="802359" trl="N">
+    <value column="Text" original="Stay days">Días Estancia</value>
+  </row>
+  <row id="802400" trl="N">
+    <value column="Text" original="Expiration date">Fecha vencimiento</value>
+  </row>
+  <row id="802402" trl="N">
+    <value column="Text" original="Settlement cancelation">Liq. cancelacion</value>
+  </row>
+  <row id="802403" trl="N">
+    <value column="Text" original="Settlement generation">Liq. generacion</value>
+  </row>
+  <row id="802440" trl="N">
+    <value column="Text" original="Standard order">Pedido estandar</value>
+  </row>
+  <row id="802442" trl="N">
+    <value column="Text" original="Generate Shipment">Generar nota de entrega</value>
+  </row>
+  <row id="802457" trl="N">
+    <value column="Text" original="Report">Informe</value>
+  </row>
+  <row id="802458" trl="N">
+    <value column="Text" original="Form">Formulario</value>
+  </row>
+  <row id="802459" trl="N">
+    <value column="Text" original="WorkFlow">Workflow</value>
+  </row>
+  <row id="802460" trl="N">
+    <value column="Text" original="Task">Tarea</value>
+  </row>
+  <row id="802479" trl="N">
+    <value column="Text" original="Delete accounting entry">Eliminar asiento contable</value>
+  </row>
+  <row id="802495" trl="N">
+    <value column="Text" original="Import test">Importar Test</value>
+  </row>
+  <row id="802498" trl="N">
+    <value column="Text" original="Call out response page">Pagina de respuesta de callOuts</value>
+  </row>
+  <row id="802499" trl="N">
+    <value column="Text" original="Background processes list">Lista de procesos background</value>
+  </row>
+  <row id="802505" trl="N">
+    <value column="Text" original="Processing">Procesando</value>
+  </row>
+  <row id="802506" trl="N">
+    <value column="Text" original="Activate">Activar</value>
+  </row>
+  <row id="802515" trl="N">
+    <value column="Text" original="Debt Payment Unapply">Deshacer pago</value>
+  </row>
+  <row id="802537" trl="N">
+    <value column="Text" original="Include closing entry">Incluir asiento de cierre</value>
+  </row>
+  <row id="802541" trl="N">
+    <value column="Text" original="Document Action">Acción sobre el documento</value>
+  </row>
+  <row id="802564" trl="N">
+    <value column="Text" original="Organization1">Organizacion1</value>
+  </row>
+  <row id="802571" trl="N">
+    <value column="Text" original="Insert roles">Insertar Roles</value>
+  </row>
+  <row id="802586" trl="N">
+    <value column="Text" original="Proposal date">F.Propuesta</value>
+  </row>
+  <row id="802589" trl="N">
+    <value column="Text" original="Conversion">Conversión</value>
+  </row>
+  <row id="802595" trl="N">
+    <value column="Text" original="Create from invoice">Crear de factura</value>
+  </row>
+  <row id="802681" trl="N">
+    <value column="Text" original="Create from Bank">Crear de banco</value>
+  </row>
+  <row id="802702" trl="N">
+    <value column="Text" original="Processing...">Procesándose...</value>
+  </row>
+  <row id="802707" trl="N">
+    <value column="Text" original="Call out error response page">Pagina de respuesta de error de callOuts</value>
+  </row>
+  <row id="802708" trl="N">
+    <value column="Text" original="Retry">Reintentar</value>
+  </row>
+  <row id="802709" trl="N">
+    <value column="Text" original="Identification failure. Try again.">Error de Identificación. Vuelva a escribir su        Nombre y Contraseña</value>
+  </row>
+  <row id="802715" trl="N">
+    <value column="Text" original="Nothing">Nada</value>
+  </row>
+  <row id="802720" trl="N">
+    <value column="Text" original="Processing action button">Procesando el action button</value>
+  </row>
+  <row id="802721" trl="N">
+    <value column="Text" original="Action button response">Respuesta del action button</value>
+  </row>
+  <row id="802722" trl="N">
+    <value column="Text" original="Action regarding project">Acción sobre el proyecto</value>
+  </row>
+  <row id="802765" trl="N">
+    <value column="Text" original="Identification">Identificarse</value>
+  </row>
+  <row id="802766" trl="N">
+    <value column="Text" original="The login form is being loaded. If it doesn't success, press the button below.">Se está cargando la pantalla de identificación. Si no se carga      pulse el botón</value>
+  </row>
+  <row id="802767" trl="N">
+    <value column="Text" original="Pool Status">Estado pool</value>
+  </row>
+  <row id="802775" trl="N">
+    <value column="Text" original="DEBUG">DEBUG</value>
+  </row>
+  <row id="802776" trl="N">
+    <value column="Text" original="INFO">INFO</value>
+  </row>
+  <row id="802777" trl="N">
+    <value column="Text" original="WARN">WARN</value>
+  </row>
+  <row id="802778" trl="N">
+    <value column="Text" original="ERROR">ERROR</value>
+  </row>
+  <row id="802779" trl="N">
+    <value column="Text" original="FATAL">FATAL</value>
+  </row>
+  <row id="802782" trl="N">
+    <value column="Text" original="Processing task">Procesando la tarea</value>
+  </row>
+  <row id="802835" trl="N">
+    <value column="Text" original="Users list">Listado Usuarios</value>
+  </row>
+  <row id="802840" trl="N">
+    <value column="Text" original="e-mail">e-mail</value>
+  </row>
+  <row id="802841" trl="N">
+    <value column="Text" original="Post">Cargo</value>
+  </row>
+  <row id="802842" trl="N">
+    <value column="Text" original="Nac date">Fecha nac.</value>
+  </row>
+  <row id="802846" trl="N">
+    <value column="Text" original="Email user">Usuario de correo</value>
+  </row>
+  <row id="802847" trl="N">
+    <value column="Text" original="Last contact">Ultimo contacto</value>
+  </row>
+  <row id="802869" trl="N">
+    <value column="Text" original="Sale order line selector">Selector de líneas de pedido de venta</value>
+  </row>
+  <row id="802899" trl="N">
+    <value column="Text" original="Sale order selector">Selector de pedidos de venta</value>
+  </row>
+  <row id="802901" trl="N">
+    <value column="Text" original="Searching results ...">Buscando...</value>
+  </row>
+  <row id="802930" trl="N">
+    <value column="Text" original="Project list">Listado Proyectos</value>
+  </row>
+  <row id="802934" trl="N">
+    <value column="Text" original="Situation">Situación</value>
+  </row>
+  <row id="802944" trl="N">
+    <value column="Text" original="Request list">Listado Peticiones</value>
+  </row>
+  <row id="802948" trl="N">
+    <value column="Text" original="Maturity type">Tipo vencimiento</value>
+  </row>
+  <row id="802949" trl="N">
+    <value column="Text" original="Priority">Prioridad</value>
+  </row>
+  <row id="802950" trl="N">
+    <value column="Text" original="Summary">Resumen</value>
+  </row>
+  <row id="802951" trl="N">
+    <value column="Text" original="Increase">Aumento</value>
+  </row>
+  <row id="802952" trl="N">
+    <value column="Text" original="Self-Service">Autoservicio</value>
+  </row>
+  <row id="802953" trl="N">
+    <value column="Text" original="Action type">Tipo acción</value>
+  </row>
+  <row id="802956" trl="N">
+    <value column="Text" original="Next action date">F. prox accion</value>
+  </row>
+  <row id="802957" trl="N">
+    <value column="Text" original="Request amount">Petición Importe</value>
+  </row>
+  <row id="802959" trl="N">
+    <value column="Text" original="Last action date">F última acción</value>
+  </row>
+  <row id="802980" trl="N">
+    <value column="Text" original="No delivered/No received">No Servido/No Recibido: </value>
+  </row>
+  <row id="802981" trl="N">
+    <value column="Text" original="Invoiced No.">No Facturado: </value>
+  </row>
+  <row id="802992" trl="N">
+    <value column="Text" original="With stock">Con existencias </value>
+  </row>
+  <row id="803003" trl="N">
+    <value column="Text" original="Quant. of order">Cant. Pedido</value>
+  </row>
+  <row id="803005" trl="N">
+    <value column="Text" original="Quant. Served">Cant. Servida</value>
+  </row>
+  <row id="803006" trl="N">
+    <value column="Text" original="Quant. of order delivered">Cant. Ped. Servida</value>
+  </row>
+  <row id="803011" trl="N">
+    <value column="Text" original="Produt multiple selector">Selector multiple de productos</value>
+  </row>
+  <row id="803025" trl="N">
+    <value column="Text" original="Article multiple selector">Selector multiple de articulos</value>
+  </row>
+  <row id="803035" trl="N">
+    <value column="Text" original="Avail.">Disp.</value>
+  </row>
+  <row id="803037" trl="N">
+    <value column="Text" original="Applied price">Precio aplicado</value>
+  </row>
+  <row id="803038" trl="N">
+    <value column="Text" original="Warehouse quant.">Cant. Almacén</value>
+  </row>
+  <row id="803039" trl="N">
+    <value column="Text" original="Purchasing quant.">Cant. Compras</value>
+  </row>
+  <row id="803041" trl="N">
+    <value column="Text" original="Limit">Límite</value>
+  </row>
+  <row id="803044" trl="N">
+    <value column="Text" original="Expand the menu">Expandir todo el menú</value>
+  </row>
+  <row id="803046" trl="N">
+    <value column="Text" original="Contract all the menu">Contraer todo el menú</value>
+  </row>
+  <row id="803048" trl="N">
+    <value column="Text" original="Close session">Cerrar      sesión</value>
+  </row>
+  <row id="803058" trl="N">
+    <value column="Text" original="GENERAL DATA">Datos generales</value>
+  </row>
+  <row id="803062" trl="N">
+    <value column="Text" original="TIN/ID">NIF/DNI</value>
+  </row>
+  <row id="803064" trl="N">
+    <value column="Text" original="Registration date">Fecha alta</value>
+  </row>
+  <row id="803068" trl="N">
+    <value column="Text" original="As customer">Como cliente</value>
+  </row>
+  <row id="803070" trl="N">
+    <value column="Text" original="Inv. Sched.">Cal. fact</value>
+  </row>
+  <row id="803075" trl="N">
+    <value column="Text" original="As provider/creditor">Como proveedor/acreedor</value>
+  </row>
+  <row id="803080" trl="N">
+    <value column="Text" original="Shipments">Notas de Entrega</value>
+  </row>
+  <row id="803081" trl="N">
+    <value column="Text" original="Invoices to">Facturas hasta</value>
+  </row>
+  <row id="803083" trl="N">
+    <value column="Text" original="ABC PRODUCTS">ABC PRODUCTOS</value>
+  </row>
+  <row id="803092" trl="N">
+    <value column="Text" original="Delivery">Envio</value>
+  </row>
+  <row id="803094" trl="N">
+    <value column="Text" original="Tax loc.">Fiscal</value>
+  </row>
+  <row id="803103" trl="N">
+    <value column="Text" original="Discounts">Descuentos</value>
+  </row>
+  <row id="803104" trl="N">
+    <value column="Text" original="Casc.">Casc.</value>
+  </row>
+  <row id="803106" trl="N">
+    <value column="Text" original="Shipper path">Ruta</value>
+  </row>
+  <row id="803107" trl="N">
+    <value column="Text" original="Seq.">Sec.</value>
+  </row>
+  <row id="803108" trl="N">
+    <value column="Text" original="Template">Plantilla </value>
+  </row>
+  <row id="803121" trl="N">
+    <value column="Text" original="toolbar">barra herramientas</value>
+  </row>
+  <row id="803131" trl="N">
+    <value column="Text" original="About">Acerca</value>
+  </row>
+  <row id="803171" trl="N">
+    <value column="Text" original="Sales invoice report ">Informe facturas de venta </value>
+  </row>
+  <row id="803173" trl="N">
+    <value column="Text" original="Production: ">Producción: </value>
+  </row>
+  <row id="803174" trl="N">
+    <value column="Text" original="Page">Página</value>
+  </row>
+  <row id="803176" trl="N">
+    <value column="Text" original="Resp. checked">Vº Bº Resp.</value>
+  </row>
+  <row id="803177" trl="N">
+    <value column="Text" original=" Description"> Descripción</value>
+  </row>
+  <row id="803234" trl="N">
+    <value column="Text" original="Openbravo">Openbravo</value>
+  </row>
+  <row id="803265" trl="N">
+    <value column="Text" original="SHIPMENT">NOTA DE ENTREGA</value>
+  </row>
+  <row id="803266" trl="N">
+    <value column="Text" original="Delivery date:">Fecha de entrega:</value>
+  </row>
+  <row id="803267" trl="N">
+    <value column="Text" original="Shimpment No.">Núm. de nota de entrega</value>
+  </row>
+  <row id="803269" trl="N">
+    <value column="Text" original="Cust. code">Codigo cliente</value>
+  </row>
+  <row id="803270" trl="N">
+    <value column="Text" original="Tax ID">C.I.F.</value>
+  </row>
+  <row id="803273" trl="N">
+    <value column="Text" original="LOT">LOTE</value>
+  </row>
+  <row id="803275" trl="N">
+    <value column="Text" original="PACKAGES">BULTOS</value>
+  </row>
+  <row id="803276" trl="N">
+    <value column="Text" original="Delivery notes">Observaciones de entrega</value>
+  </row>
+  <row id="803277" trl="N">
+    <value column="Text" original="TEMPERATURE UPON DEPARTURE">TEMPERATURA A LA SALIDA</value>
+  </row>
+  <row id="803278" trl="N">
+    <value column="Text" original="TEMPERATURE UPON DELIVERY">TEMPERATURA A LA ENTREGA</value>
+  </row>
+  <row id="803279" trl="N">
+    <value column="Text" original="Dear customer, if you do not agree with the shipment, please respond with an explanation:">Estimado cliente, si no esta conforme con la entrega indique los motivos:</value>
+  </row>
+  <row id="803280" trl="N">
+    <value column="Text" original="SHIPPER">TRANSPORTISTA</value>
+  </row>
+  <row id="803281" trl="N">
+    <value column="Text" original="LICENSE">MATRICULA</value>
+  </row>
+  <row id="803282" trl="N">
+    <value column="Text" original="Received and conformed, customer:">Recibi y conforme, cliente:</value>
+  </row>
+  <row id="803283" trl="N">
+    <value column="Text" original="(signature and stamp)">(firma y sello)</value>
+  </row>
+  <row id="803284" trl="N">
+    <value column="Text" original="Received and conformed, shipper:">Recibi y conforme, transportista:</value>
+  </row>
+  <row id="803285" trl="N">
+    <value column="Text" original="Company name">Su empresa</value>
+  </row>
+  <row id="803287" trl="N">
+    <value column="Text" original="Your address2">Su dirección 2</value>
+  </row>
+  <row id="803288" trl="N">
+    <value column="Text" original="Your phone number">Su teléfono</value>
+  </row>
+  <row id="803289" trl="N">
+    <value column="Text" original="Your fax number">Su numero de fax</value>
+  </row>
+  <row id="803290" trl="N">
+    <value column="Text" original="Internet: your web site">Internet: su web</value>
+  </row>
+  <row id="803291" trl="N">
+    <value column="Text" original="E-mail: yourEmail">E-mail: suEmail</value>
+  </row>
+  <row id="803310" trl="N">
+    <value column="Text" original="Openbravo ERP">Openbravo ERP</value>
+  </row>
+  <row id="803377" trl="N">
+    <value column="Text" original="IN-OUT MOVEMENTS">NOTA DE ENTREGA MOVIMIENTOS</value>
+  </row>
+  <row id="803378" trl="N">
+    <value column="Text" original="MOVEMENT NO: ">Nº MOVIMIENTO: </value>
+  </row>
+  <row id="803379" trl="N">
+    <value column="Text" original="DELIVERY DATE: ">FECHA ENVIO: </value>
+  </row>
+  <row id="803380" trl="N">
+    <value column="Text" original="Units">Unidades</value>
+  </row>
+  <row id="803384" trl="N">
+    <value column="Text" original="Subtotal ">Subtotal </value>
+  </row>
+  <row id="803385" trl="N">
+    <value column="Text" original="TOTAL  ">TOTAL  </value>
+  </row>
+  <row id="803386" trl="N">
+    <value column="Text" original="SENDER:">REMITENTE:</value>
+  </row>
+  <row id="803387" trl="N">
+    <value column="Text" original="SHIPPER:">TRANSPORTISTA:</value>
+  </row>
+  <row id="803388" trl="N">
+    <value column="Text" original="CONSIGNEE:">DESTINATARIO:</value>
+  </row>
+  <row id="803390" trl="N">
+    <value column="Text" original="Ref:  ">Ref:  </value>
+  </row>
+  <row id="803391" trl="N">
+    <value column="Text" original="Pamplona">Pamplona</value>
+  </row>
+  <row id="803392" trl="N">
+    <value column="Text" original="November 19th 2003">19 de Noviembre de 2003</value>
+  </row>
+  <row id="803393" trl="N">
+    <value column="Text" original="Mr">Sr</value>
+  </row>
+  <row id="803394" trl="N">
+    <value column="Text" original=" Product"> Producto</value>
+  </row>
+  <row id="803395" trl="N">
+    <value column="Text" original="Quantity (m2)">Cantidad (m2)</value>
+  </row>
+  <row id="803396" trl="N">
+    <value column="Text" original="Price (¿/m2)">Precio (¿/m2)</value>
+  </row>
+  <row id="803397" trl="N">
+    <value column="Text" original="Statement list">Listado de remesas</value>
+  </row>
+  <row id="803398" trl="N">
+    <value column="Text" original="Settlement no:">Liquidación n°:</value>
+  </row>
+  <row id="803406" trl="N">
+    <value column="Text" original="CCC Bank">CCC Banco</value>
+  </row>
+  <row id="803407" trl="N">
+    <value column="Text" original="Invoice no/Debtpayment no">N° Fact/N° Efecto</value>
+  </row>
+  <row id="803415" trl="N">
+    <value column="Text" original="FROZEN">CONGELADO</value>
+  </row>
+  <row id="803416" trl="N">
+    <value column="Text" original="REFRIGERATED">REFRIGERADO</value>
+  </row>
+  <row id="803425" trl="N">
+    <value column="Text" original="point">puuuunto</value>
+  </row>
+  <row id="803426" trl="N">
+    <value column="Text" original="OBSERVATION">OBSERVACIONES</value>
+  </row>
+  <row id="803427" trl="N">
+    <value column="Text" original="Quality checked">VºBº Resp. Calidad</value>
+  </row>
+  <row id="803429" trl="N">
+    <value column="Text" original="R-07">R-07</value>
+  </row>
+  <row id="803431" trl="N">
+    <value column="Text" original="shift">turno</value>
+  </row>
+  <row id="803443" trl="N">
+    <value column="Text" original="OBSERVATIONS:">OBSERVACIONES:</value>
+  </row>
+  <row id="803452" trl="N">
+    <value column="Text" original="Account code">Código cuenta</value>
+  </row>
+  <row id="803455" trl="N">
+    <value column="Text" original="Debt period">Periodo debe</value>
+  </row>
+  <row id="803456" trl="N">
+    <value column="Text" original="Credit period">Periodo haber</value>
+  </row>
+  <row id="803458" trl="N">
+    <value column="Text" original="CONTINUE ........">SUMA Y SIGUE ........</value>
+  </row>
+  <row id="803476" trl="N">
+    <value column="Text" original="Invoice no:">Nº factura:</value>
+  </row>
+  <row id="803477" trl="N">
+    <value column="Text" original="Customer code:">Código cliente:</value>
+  </row>
+  <row id="803483" trl="N">
+    <value column="Text" original="Order no:">Nº Pedido:</value>
+  </row>
+  <row id="803484" trl="N">
+    <value column="Text" original="Shipment no">Nº nota de entrega</value>
+  </row>
+  <row id="803489" trl="N">
+    <value column="Text" original="TOTAL INVOICE:">TOTAL FACTURA:</value>
+  </row>
+  <row id="803490" trl="N">
+    <value column="Text" original="Order:">Pedido:</value>
+  </row>
+  <row id="803497" trl="N">
+    <value column="Text" original="Net">Neto</value>
+  </row>
+  <row id="803500" trl="N">
+    <value column="Text" original="WORK:  ">OBRA:  </value>
+  </row>
+  <row id="803501" trl="N">
+    <value column="Text" original="Dev. quantity">Cantidad dev</value>
+  </row>
+  <row id="803502" trl="N">
+    <value column="Text" original="Sales order report ">Informe pedido venta </value>
+  </row>
+  <row id="803503" trl="N">
+    <value column="Text" original="Total amount">Total importe</value>
+  </row>
+  <row id="803504" trl="N">
+    <value column="Text" original="Total amount ref">Total importe ref</value>
+  </row>
+  <row id="803510" trl="N">
+    <value column="Text" original="%amount">%importe</value>
+  </row>
+  <row id="803514" trl="N">
+    <value column="Text" original="Quantity ref">Cantidad ref</value>
+  </row>
+  <row id="803515" trl="N">
+    <value column="Text" original="%quantity">%cantidad</value>
+  </row>
+  <row id="803520" trl="N">
+    <value column="Text" original=" Item"> Artículo</value>
+  </row>
+  <row id="803548" trl="N">
+    <value column="Text" original="DEPARTURE MOVEMENTS OF CONSIGNMENT MATERIAL REPORT">INFORME DE SALIDAS DE MATERIAL EN CONSIGNA</value>
+  </row>
+  <row id="803549" trl="N">
+    <value column="Text" original="Warehouse: ">Almacen: </value>
+  </row>
+  <row id="803556" trl="N">
+    <value column="Text" original="TOTAL BPARTNER AMOUNT: ">IMPORTE TOTAL RELACIONADO: </value>
+  </row>
+  <row id="803557" trl="N">
+    <value column="Text" original="TOTAL WAREHOUSE AMUNT: ">IMPORTE TOTAL ALMACEN: </value>
+  </row>
+  <row id="803558" trl="N">
+    <value column="Text" original="REPORT TRIAL BALANCE">BALANCE DE SUMAS Y SALDOS</value>
+  </row>
+  <row id="803564" trl="N">
+    <value column="Text" original="Sale invoice refund report ">Informe devoluciones factura venta </value>
+  </row>
+  <row id="803566" trl="N">
+    <value column="Text" original="Tot refunds">Tot devol</value>
+  </row>
+  <row id="803568" trl="N">
+    <value column="Text" original="Tot sales ref">Tot ven ref</value>
+  </row>
+  <row id="803577" trl="N">
+    <value column="Text" original="%rat refund">%rat ref</value>
+  </row>
+  <row id="803580" trl="N">
+    <value column="Text" original="Qty refund">Cant dev</value>
+  </row>
+  <row id="803584" trl="N">
+    <value column="Text" original="Total refunds">Total devol</value>
+  </row>
+  <row id="803589" trl="N">
+    <value column="Text" original="Sale order refund report ">Informe devoluciones pedido venta </value>
+  </row>
+  <row id="803591" trl="N">
+    <value column="Text" original="Tot refund">Tot devol</value>
+  </row>
+  <row id="803593" trl="N">
+    <value column="Text" original="Tot sale ref">Tot ven ref</value>
+  </row>
+  <row id="803602" trl="N">
+    <value column="Text" original="%rat ref">%rat ref</value>
+  </row>
+  <row id="803609" trl="N">
+    <value column="Text" original="Total refund">Total devol</value>
+  </row>
+  <row id="803624" trl="N">
+    <value column="Text" original="WAREHOUSE MOVEMENT REPORT">INFORME MOVIMIENTOS DE ALMACEN</value>
+  </row>
+  <row id="803625" trl="N">
+    <value column="Text" original=" Vendor: "> Proveedor: </value>
+  </row>
+  <row id="803631" trl="N">
+    <value column="Text" original="SALE ORDER REPORT">INFORME PEDIDOS DE VENTA</value>
+  </row>
+  <row id="803637" trl="N">
+    <value column="Text" original="Atributte">Atributo</value>
+  </row>
+  <row id="803639" trl="N">
+    <value column="Text" original="PRODUCTION REPORT">RESUMEN DE PRODUCCION</value>
+  </row>
+  <row id="803640" trl="N">
+    <value column="Text" original="WORK REPORT">INFORME OBRAS</value>
+  </row>
+  <row id="803642" trl="N">
+    <value column="Text" original="Project:">Proyecto:</value>
+  </row>
+  <row id="803650" trl="N">
+    <value column="Text" original="Total business partner:">Total relacionado:</value>
+  </row>
+  <row id="803651" trl="N">
+    <value column="Text" original="TOTAL PROJETS:">TOTAL PROYECTOS:</value>
+  </row>
+  <row id="803652" trl="N">
+    <value column="Text" original="TOTAL QUANTITY(m2):">TOTAL CANTIDAD(m2):</value>
+  </row>
+  <row id="803678" trl="N">
+    <value column="Text" original="Amt">Imp</value>
+  </row>
+  <row id="803679" trl="N">
+    <value column="Text" original="Pro">Ben</value>
+  </row>
+  <row id="803680" trl="N">
+    <value column="Text" original="% Mar">% Mar</value>
+  </row>
+  <row id="803681" trl="N">
+    <value column="Text" original="Amt ref">Imp ref</value>
+  </row>
+  <row id="803683" trl="N">
+    <value column="Text" original="Pro ref">Ben ref</value>
+  </row>
+  <row id="803684" trl="N">
+    <value column="Text" original="%Ref.Mar.">%Mar ref</value>
+  </row>
+  <row id="803685" trl="N">
+    <value column="Text" original="%amt">%imp</value>
+  </row>
+  <row id="803691" trl="N">
+    <value column="Text" original="%qty">%cant</value>
+  </row>
+  <row id="803695" trl="N">
+    <value column="Text" original="%Margin">%Margen</value>
+  </row>
+  <row id="803697" trl="N">
+    <value column="Text" original="CUSTOMER INVOICE REPORT">INFORME FACTURAS CLIENTE</value>
+  </row>
+  <row id="803728" trl="N">
+    <value column="Text" original="OK">Aceptar</value>
+  </row>
+  <row id="803734" trl="N">
+    <value column="Text" original="GENERAL ACCOUNTING REPORTS">CUADROS DEL PLAN GENERAL CONTABLE</value>
+  </row>
+  <row id="803735" trl="N">
+    <value column="Text" original="Entreprise:  ">Empresa:  </value>
+  </row>
+  <row id="803739" trl="N">
+    <value column="Text" original="Period N-1:  ">Periodo N-1:  </value>
+  </row>
+  <row id="803740" trl="N">
+    <value column="Text" original="Enterprise N-1:  ">Empresa N-1:  </value>
+  </row>
+  <row id="803742" trl="N">
+    <value column="Text" original="Element">Elemento</value>
+  </row>
+  <row id="803744" trl="N">
+    <value column="Text" original="Ref.Year">Ejer Ref</value>
+  </row>
+  <row id="803778" trl="N">
+    <value column="Text" original="Account import process">Proceso Importar Cuentas</value>
+  </row>
+  <row id="803784" trl="N">
+    <value column="Text" original="Business Partner import process">Proceso Importar Relacionados</value>
+  </row>
+  <row id="803786" trl="N">
+    <value column="Text" original="Order import process">Proceso Importar Pedidos</value>
+  </row>
+  <row id="803919" trl="N">
+    <value column="Text" original="Price(_/m2)">Precio(Eur/m2)</value>
+  </row>
+  <row id="803920" trl="N">
+    <value column="Text" original="Amount(_)">Importe(Eur)</value>
+  </row>
+  <row id="803921" trl="N">
+    <value column="Text" original="TOTAL AMOUNT(_):">IMPORTE TOTAL(Eur):</value>
+  </row>
+  <row id="803922" trl="N">
+    <value column="Text" original="Price (_/m2)">Precio (Eur/m2)</value>
+  </row>
+  <row id="803923" trl="N">
+    <value column="Text" original="Amount (_)">Importe (_)</value>
+  </row>
+  <row id="803926" trl="N">
+    <value column="Text" original=" xxxxNotes: Contact Telephone">Nota: Teléfono de contacto</value>
+  </row>
+  <row id="803927" trl="N">
+    <value column="Text" original="ALINACO, S.L.">ALINACO, S.L.</value>
+  </row>
+  <row id="803928" trl="N">
+    <value column="Text" original="POL. IND. DE BUÑUEL S/N">POL. IND. DE BUÑUEL S/N</value>
+  </row>
+  <row id="803929" trl="N">
+    <value column="Text" original="31540 BUÑUEL">31540 BUÑUEL</value>
+  </row>
+  <row id="803930" trl="N">
+    <value column="Text" original="Buñuel,">Buñuel,</value>
+  </row>
+  <row id="803931" trl="N">
+    <value column="Text" original="Nos es grato adjuntar, cheque/pagaré nominativo correspondiente al pago según el desglose que se expone a continación:">Nos es grato adjuntar, cheque/pagaré nominativo correspondiente al pago según el desglose que se expone a continación:</value>
+  </row>
+  <row id="803932" trl="N">
+    <value column="Text" original="Sin otro particular y aprovechando la ocasión, reciban un saludo.">Sin otro particular y aprovechando la ocasión, reciban un saludo.</value>
+  </row>
+  <row id="803933" trl="N">
+    <value column="Text" original="IMPORTE: **">IMPORTE: **</value>
+  </row>
+  <row id="803934" trl="N">
+    <value column="Text" original="DPTO. ADMINISTRACION">ADMIN. DPTO</value>
+  </row>
+  <row id="803939" trl="N">
+    <value column="Text" original="Scheduled Maintenance">Mantenimiento Programado</value>
+  </row>
+  <row id="803940" trl="N">
+    <value column="Text" original="Time">Tiempo</value>
+  </row>
+  <row id="803962" trl="N">
+    <value column="Text" original="Cuenta">Cuenta</value>
+  </row>
+  <row id="803992" trl="N">
+    <value column="Text" original="Import Budget">Importar presupuesto</value>
+  </row>
+  <row id="803998" trl="N">
+    <value column="Text" original="Create from Remittance">Crear desde remesa</value>
+  </row>
+  <row id="804021" trl="N">
+    <value column="Text" original="Report shipper">Informe transportistas</value>
+  </row>
+  <row id="804023" trl="N">
+    <value column="Text" original="Shipper:">Transportistas:</value>
+  </row>
+  <row id="804027" trl="N">
+    <value column="Text" original="Freight Cat">Cat. Transportista</value>
+  </row>
+  <row id="804028" trl="N">
+    <value column="Text" original="Origin">Origen</value>
+  </row>
+  <row id="804029" trl="N">
+    <value column="Text" original="Destination">Destino</value>
+  </row>
+  <row id="804034" trl="N">
+    <value column="Text" original="Create from.. (massive)">Crear de... (masivo)</value>
+  </row>
+  <row id="804038" trl="N">
+    <value column="Text" original="Last order">Ult. Ped</value>
+  </row>
+  <row id="804040" trl="N">
+    <value column="Text" original="Invoiced ">Facturado </value>
+  </row>
+  <row id="804044" trl="N">
+    <value column="Text" original="Date ordered">Fecha Ped</value>
+  </row>
+  <row id="804046" trl="N">
+    <value column="Text" original="Ship to">Envío</value>
+  </row>
+  <row id="804047" trl="N">
+    <value column="Text" original="Products sales/purchase the last">Productos compra/venta de los últimos </value>
+  </row>
+  <row id="804048" trl="N">
+    <value column="Text" original="days"> días</value>
+  </row>
+  <row id="804050" trl="N">
+    <value column="Text" original="Last price">Ult precio</value>
+  </row>
+  <row id="804052" trl="N">
+    <value column="Text" original="UOM">Ud</value>
+  </row>
+  <row id="804055" trl="N">
+    <value column="Text" original="Copy lines from order">Copiar línea desde pedido</value>
+  </row>
+  <row id="804061" trl="N">
+    <value column="Text" original="Translation Import/Export">Importar/Exportar Traducciones</value>
+  </row>
+  <row id="804064" trl="N">
+    <value column="Text" original="Export">Exportar</value>
+  </row>
+  <row id="804066" trl="N">
+    <value column="Text" original="Remittance no:">Núm. Remesa:</value>
+  </row>
+  <row id="804078" trl="N">
+    <value column="Text" original="Complementing the operation ¿">Complementing the operation ¿</value>
+  </row>
+  <row id="804081" trl="N">
+    <value column="Text" original="N¿ Ref">N¿ Ref</value>
+  </row>
+  <row id="804082" trl="N">
+    <value column="Text" original="Complementing the operation ¿">Complementing the operation ¿</value>
+  </row>
+  <row id="804083" trl="N">
+    <value column="Text" original="POL. IND. DE BU¿UEL S/N">POL. IND. DE BU¿UEL S/N</value>
+  </row>
+  <row id="804084" trl="N">
+    <value column="Text" original="31540 BU¿UEL">31540 BU¿UEL</value>
+  </row>
+  <row id="804088" trl="N">
+    <value column="Text" original="Price (€/m2)">Price (€/m2)</value>
+  </row>
+  <row id="804089" trl="N">
+    <value column="Text" original="Informe contable para ">Informe contable para </value>
+  </row>
+  <row id="804090" trl="N">
+    <value column="Text" original="View role information">Ver información de rol</value>
+  </row>
+  <row id="804117" trl="N">
+    <value column="Text" original="  C:">  C:</value>
+  </row>
+  <row id="804121" trl="N">
+    <value column="Text" original="Delete Client">Borrar Entidad</value>
+  </row>
+  <row id="804132" trl="N">
+    <value column="Text" original="Offer report">Informe de Ofertas</value>
+  </row>
+  <row id="804137" trl="N">
+    <value column="Text" original="Addamt">Addamt</value>
+  </row>
+  <row id="804138" trl="N">
+    <value column="Text" original="Disc.%">Desc..%</value>
+  </row>
+  <row id="804167" trl="N">
+    <value column="Text" original="On the bank">En el banco</value>
+  </row>
+  <row id="804168" trl="N">
+    <value column="Text" original="Forecast">Previsión</value>
+  </row>
+  <row id="804174" trl="N">
+    <value column="Text" original="On the bank (">En el banco (</value>
+  </row>
+  <row id="804177" trl="N">
+    <value column="Text" original="Cashflow Forecast Report">Informe de Previsión de Tesorería</value>
+  </row>
+  <row id="804215" trl="N">
+    <value column="Text" original="Expense AP Invoice Process">Proceso creación facturas AP</value>
+  </row>
+  <row id="804226" trl="N">
+    <value column="Text" original="false">falso</value>
+  </row>
+  <row id="804232" trl="N">
+    <value column="Text" original="10mm">10mm</value>
+  </row>
+  <row id="804233" trl="N">
+    <value column="Text" original="0.5cm">0.5cm</value>
+  </row>
+  <row id="804235" trl="N">
+    <value column="Text" original="0.1mm">0.1mm</value>
+  </row>
+  <row id="804236" trl="N">
+    <value column="Text" original="Production Cost">Coste de producción</value>
+  </row>
+  <row id="804244" trl="N">
+    <value column="Text" original="Real cost">Coste real</value>
+  </row>
+  <row id="804263" trl="N">
+    <value column="Text" original="Print label">Imprimir etiqueta</value>
+  </row>
+  <row id="804292" trl="N">
+    <value column="Text" original="Consm. per unit">Consum. por unid</value>
+  </row>
+  <row id="804293" trl="N">
+    <value column="Text" original="Cost per unit">Coste por unid</value>
+  </row>
+  <row id="804294" trl="N">
+    <value column="Text" original="Consm. per unit Std">Consum. por unit Std</value>
+  </row>
+  <row id="804295" trl="N">
+    <value column="Text" original="Cost per unit Std">Coste por unid Std</value>
+  </row>
+  <row id="804296" trl="N">
+    <value column="Text" original="Standard cost">Coste estándar</value>
+  </row>
+  <row id="804302" trl="N">
+    <value column="Text" original="Province">Provincia</value>
+  </row>
+  <row id="804303" trl="N">
+    <value column="Text" original="Region">Regi&#243;n</value>
+  </row>
+  <row id="804307" trl="N">
+    <value column="Text" original="Inv/Debt-pay/Ord No">Inv/Debt-pay/Ord No</value>
+  </row>
+  <row id="804317" trl="N">
+    <value column="Text" original="This product has been created by Openbravo S.L. and is distributed under the">This product has been created by Openbravo S.L. and is distributed under the
+Este producto ha sido creado por Openbravo S.L. y se distribuye bajo licencia Open Source</value>
+  </row>
+  <row id="804318" trl="N">
+    <value column="Text" original="Openbravo Public License">Openbravo Public License</value>
+  </row>
+  <row id="804319" trl="N">
+    <value column="Text" original="(http://www.openbravo.com/legal/license.html)">(http://www.openbravo.com/legal/license.html)</value>
+  </row>
+  <row id="804320" trl="N">
+    <value column="Text" original="This product incorporates software created by third parties and distributed under free software licenses, including:">Este producto incorpora software creado por relacionados, distribuido bajo licencia open source, incluyendo:</value>
+  </row>
+  <row id="804325" trl="N">
+    <value column="Text" original="Openbravo and the openbravo logo are trademarks of Openbravo S.L. Names and distinctive signs of other parties are trademarks of their respective owners.">Openbravo y el logo de Openbravo son marcas registradas de Openbravo S.L. Otros Nombres y Signos distintivos son marcas registradas de sus respectivos propietarios.</value>
+  </row>
+  <row id="804326" trl="N">
+    <value column="Text" original="For more information on our licensing, please consult">Para más información sobre nuestra licencia, por favor consulte</value>
+  </row>
+  <row id="804327" trl="N">
+    <value column="Text" original="www.openbravo.com/legal/license.html">www.openbravo.com/legal/license.html</value>
+  </row>
+  <row id="804331" trl="N">
+    <value column="Text" original="Translator">Traductor</value>
+  </row>
+  <row id="804333" trl="N">
+    <value column="Text" original="A special thanks to all those who translated Openbravo ERP:">Con agradecimiento especial a todos aquellos que tradujeron Openbravo ERP:</value>
+  </row>
+  <row id="804334" trl="N">
+    <value column="Text" original="Openbravo R">Openbravo R</value>
+  </row>
+  <row id="804382" trl="N">
+    <value column="Text" original="Quantity;">Cantidad;</value>
+  </row>
+  <row id="804423" trl="N">
+    <value column="Text" original="M2">M2</value>
+  </row>
+  <row id="804448" trl="N">
+    <value column="Text" original="Business Partner:  ">Relacionado:</value>
+  </row>
+  <row id="804849" trl="N">
+    <value column="Text" original="Not Posted Documents">Documentos no Contabilizados</value>
+  </row>
+  <row id="804863" trl="N">
+    <value column="Text" original="User info">Información de usuario</value>
+  </row>
+  <row id="804876" trl="N">
+    <value column="Text" original="Connection Error">Error de conexión</value>
+  </row>
+  <row id="804877" trl="N">
+    <value column="Text" original="No connection available">No hay conexión disponible</value>
+  </row>
+  <row id="804878" trl="N">
+    <value column="Text" original="The application has lost the connection with the database">La aplicación ha perdido conexión con base de datos</value>
+  </row>
+  <row id="804879" trl="N">
+    <value column="Text" original="Reconnect">Reconectar</value>
+  </row>
+  <row id="804910" trl="N">
+    <value column="Text" original="Medio europeo">Medio europeo</value>
+  </row>
+  <row id="804911" trl="N">
+    <value column="Text" original="N q800 Q1119,24+0 S3 D8 ZT A99,1062,3,4,2,2,N,&quot;">N q800 Q1119,24+0 S3 D8 ZT A99,1062,3,4,2,2,N,"</value>
+  </row>
+  <row id="804912" trl="N">
+    <value column="Text" original="LE MOULIN DU PIVERT">LE MOULIN DU PIVERT</value>
+  </row>
+  <row id="804913" trl="N">
+    <value column="Text" original="&quot; A171,1062,3,4,4,2,N,&quot;">" A171,1062,3,4,4,2,N,"</value>
+  </row>
+  <row id="804914" trl="N">
+    <value column="Text" original="BISCOTTE A LA FARINE BLANCHE">BISCOTTE A LA FARINE BLANCHE</value>
+  </row>
+  <row id="804915" trl="N">
+    <value column="Text" original="&quot; B410,1021,3,E30,4,4,343,B,&quot;">" B410,1021,3,E30,4,4,343,B,"</value>
+  </row>
+  <row id="804916" trl="N">
+    <value column="Text" original="&quot; A558,463,3,4,3,2,N,&quot;L:">" A558,463,3,4,3,2,N,"L:</value>
+  </row>
+  <row id="804917" trl="N">
+    <value column="Text" original="Lote 20031203">Lote 20031203</value>
+  </row>
+  <row id="804918" trl="N">
+    <value column="Text" original="&quot; A264,1062,3,4,3,2,N,&quot;">" A264,1062,3,4,3,2,N,"</value>
+  </row>
+  <row id="804919" trl="N">
+    <value column="Text" original="12 BOITES DE 270 GR.">12 BOITES DE 270 GR.</value>
+  </row>
+  <row id="804920" trl="N">
+    <value column="Text" original="&quot; A339,1056,3,4,3,2,N,&quot;Cons.Pref.:">" A339,1056,3,4,3,2,N,"Cons.Pref.:</value>
+  </row>
+  <row id="804921" trl="N">
+    <value column="Text" original="Cad 20031203">Cad 20031203</value>
+  </row>
+  <row id="804922" trl="N">
+    <value column="Text" original="&quot; P">" P</value>
+  </row>
+  <row id="804924" trl="N">
+    <value column="Text" original="Date planned:">Vencimiento:</value>
+  </row>
+  <row id="804925" trl="N">
+    <value column="Text" original="Tot inc-paym:">Total Ingresos</value>
+  </row>
+  <row id="804926" trl="N">
+    <value column="Text" original="Balance:">Saldo:</value>
+  </row>
+  <row id="804944" trl="N">
+    <value column="Text" original="Edit subtab">Editar Subpestaña</value>
+  </row>
+  <row id="804984" trl="N">
+    <value column="Text" original="Alerts">Alertas</value>
+  </row>
+  <row id="805002" trl="N">
+    <value column="Text" original="Set project type">Establecer tipo de proyecto</value>
+  </row>
+  <row id="805003" trl="N">
+    <value column="Text" original="Change Project Status">Cambiar situacion Proyecto</value>
+  </row>
+  <row id="805006" trl="N">
+    <value column="Text" original="Sales Order">Pedido de Venta</value>
+  </row>
+  <row id="805010" trl="N">
+    <value column="Text" original="Edit Control Point Measures">Editar Puntos de Control</value>
+  </row>
+  <row id="805013" trl="N">
+    <value column="Text" original="Close project">Cerrar Proyecto</value>
+  </row>
+  <row id="805014" trl="N">
+    <value column="Text" original="Create Reg Fact Acct">Crear Asiento de Regularización</value>
+  </row>
+  <row id="805016" trl="N">
+    <value column="Text" original="Posted">Contabilizado</value>
+  </row>
+  <row id="805018" trl="N">
+    <value column="Text" original="Pending delivery/receipt">Notas de Entrega pendientes</value>
+  </row>
+  <row id="805019" trl="N">
+    <value column="Text" original="Pending invoice">Facturas pendientes</value>
+  </row>
+  <row id="805020" trl="N">
+    <value column="Text" original="Pending debt payment">Efectos pendientes</value>
+  </row>
+  <row id="805021" trl="N">
+    <value column="Text" original="% total">% total</value>
+  </row>
+  <row id="805023" trl="N">
+    <value column="Text" original="Reference No">Nº ref.</value>
+  </row>
+  <row id="805025" trl="N">
+    <value column="Text" original="Action regarding document">Acción relacionada con el documento</value>
+  </row>
+  <row id="805026" trl="N">
+    <value column="Text" original="Create File">Crear Archivo</value>
+  </row>
+  <row id="805027" trl="N">
+    <value column="Text" original="Update maintenance">Actualizar mantenimiento</value>
+  </row>
+  <row id="805029" trl="N">
+    <value column="Text" original="Scheduled date from">Fecha planificada desde</value>
+  </row>
+  <row id="805032" trl="N">
+    <value column="Text" original="Drop Reg Fact Acct">Eliminar Asiento de Regularización</value>
+  </row>
+  <row id="805035" trl="N">
+    <value column="Text" original="Copy From Invoice">Copiar de Factura</value>
+  </row>
+  <row id="805039" trl="N">
+    <value column="Text" original="Project Copy From">Copiar de Proyecto</value>
+  </row>
+  <row id="805047" trl="N">
+    <value column="Text" original="Sales Oredr">Pedido de Venta</value>
+  </row>
+  <row id="805051" trl="N">
+    <value column="Text" original="Completing the operation ?">Completar Operación?</value>
+  </row>
+  <row id="805057" trl="N">
+    <value column="Text" original="Serial No">Nº de serie</value>
+  </row>
+  <row id="805098" trl="N">
+    <value column="Text" original="Attribute Set Instance">Conjunto de Atributos</value>
+  </row>
+  <row id="805115" trl="N">
+    <value column="Text" original="Shipment/Receipt">Nota de Entrega</value>
+  </row>
+  <row id="805116" trl="N">
+    <value column="Text" original="Physical Inventory">Inventario físico</value>
+  </row>
+  <row id="805131" trl="N">
+    <value column="Text" original="Processed">Procesado</value>
+  </row>
+  <row id="805158" trl="N">
+    <value column="Text" original="Show all">Mostrar todos</value>
+  </row>
+  <row id="805195" trl="N">
+    <value column="Text" original="Reference Year">Año de referencia</value>
+  </row>
+  <row id="805198" trl="N">
+    <value column="Text" original="Report Options">Opciones de informe</value>
+  </row>
+  <row id="805199" trl="N">
+    <value column="Text" original="Show only accounts with value">Mostrar sólo cuentas con valor</value>
+  </row>
+  <row id="805200" trl="N">
+    <value column="Text" original="Accounting Report">Informe contable</value>
+  </row>
+  <row id="805201" trl="N">
+    <value column="Text" original="Show Account codes">Mostrar códigos de cuenta</value>
+  </row>
+  <row id="805202" trl="N">
+    <value column="Text" original="Account Level">Nivel de cuenta</value>
+  </row>
+  <row id="805211" trl="N">
+    <value column="Text" original="Public/Private">Público/Privado</value>
+  </row>
+  <row id="805212" trl="N">
+    <value column="Text" original="In charge">Responsable</value>
+  </row>
+  <row id="805216" trl="N">
+    <value column="Text" original="Work type">Tipo de trabajo</value>
+  </row>
+  <row id="805240" trl="N">
+    <value column="Text" original="Bank report">Informe de Banco</value>
+  </row>
+  <row id="805287" trl="N">
+    <value column="Text" original="Product Cat.">Cat. Producto</value>
+  </row>
+  <row id="805331" trl="N">
+    <value column="Text" original="Show details">Mostrar detalles</value>
+  </row>
+  <row id="805421" trl="N">
+    <value column="Text" original="Cash type">Tipo de efectivo</value>
+  </row>
+  <row id="805422" trl="N">
+    <value column="Text" original="Accumulated">Acumulado</value>
+  </row>
+  <row id="805430" trl="N">
+    <value column="Text" original="Situation">Situacion</value>
+  </row>
+  <row id="805443" trl="N">
+    <value column="Text" original="To amount">Importe hasta</value>
+  </row>
+  <row id="805444" trl="N">
+    <value column="Text" original="Canceled(Bill not paid)">Cancelado (efecto no pagado)</value>
+  </row>
+  <row id="805445" trl="N">
+    <value column="Text" original="Canceled(Bill paid)">Cancelado (efecto pagado)</value>
+  </row>
+  <row id="805446" trl="N">
+    <value column="Text" original="Generated(Bill not paid)">Generado (efecto no pagado)</value>
+  </row>
+  <row id="805447" trl="N">
+    <value column="Text" original="Generated(Bill paid)">Generado (efecto no pagado)</value>
+  </row>
+  <row id="805448" trl="N">
+    <value column="Text" original="Cash Journal">Diario de Caja</value>
+  </row>
+  <row id="805449" trl="N">
+    <value column="Text" original="Bank statement">Estado de Cuenta</value>
+  </row>
+  <row id="805468" trl="N">
+    <value column="Text" original="By selected period">Para el período seleccionado</value>
+  </row>
+  <row id="805469" trl="N">
+    <value column="Text" original="Without periods">Sin periodos</value>
+  </row>
+  <row id="805470" trl="N">
+    <value column="Text" original="Monthly">Mensualmente</value>
+  </row>
+  <row id="805471" trl="N">
+    <value column="Text" original="Quarterly">Trimestralmente</value>
+  </row>
+  <row id="805490" trl="N">
+    <value column="Text" original="In coming">Entradas</value>
+  </row>
+  <row id="805491" trl="N">
+    <value column="Text" original="Out going">Salidas</value>
+  </row>
+  <row id="805523" trl="N">
+    <value column="Text" original="Show Invoice info">Mostrar info. Factura</value>
+  </row>
+  <row id="805527" trl="N">
+    <value column="Text" original="Both">Ambos</value>
+  </row>
+  <row id="805551" trl="N">
+    <value column="Text" original="Product Type">Tipo Producto</value>
+  </row>
+  <row id="805565" trl="N">
+    <value column="Text" original="Amt.">Imp.</value>
+  </row>
+  <row id="805566" trl="N">
+    <value column="Text" original="Real amt">Imp. real</value>
+  </row>
+  <row id="805567" trl="N">
+    <value column="Text" original="Avg.Pr.">Pr. med.</value>
+  </row>
+  <row id="805568" trl="N">
+    <value column="Text" original="Avg.Net Pr.">Pr. neto med.</value>
+  </row>
+  <row id="805569" trl="N">
+    <value column="Text" original="Disc.">Desc.</value>
+  </row>
+  <row id="805572" trl="N">
+    <value column="Text" original="Tuesday">Martes</value>
+  </row>
+  <row id="805573" trl="N">
+    <value column="Text" original="Ramp">Ramp</value>
+  </row>
+  <row id="805645" trl="N">
+    <value column="Text" original="Comercial route">Rutero</value>
+  </row>
+  <row id="805688" trl="N">
+    <value column="Text" original="In course">En curso</value>
+  </row>
+  <row id="805697" trl="N">
+    <value column="Text" original="Substitute No">Substitute No</value>
+  </row>
+  <row id="805714" trl="N">
+    <value column="Text" original="Lot:">Lote:</value>
+  </row>
+  <row id="805802" trl="N">
+    <value column="Text" original="Group By Business Partner">Agrupar por Relacionado</value>
+  </row>
+  <row id="805803" trl="N">
+    <value column="Text" original="Bank Account">Cuenta bancaria</value>
+  </row>
+  <row id="805805" trl="N">
+    <value column="Text" original="Due Date From Date">Vencimiento desde</value>
+  </row>
+  <row id="805809" trl="N">
+    <value column="Text" original="Outstanding">Pendiente</value>
+  </row>
+  <row id="805810" trl="N">
+    <value column="Text" original="Awaiting Bank Reconciliation">Pendiente de conciliación bancaria</value>
+  </row>
+  <row id="805811" trl="N">
+    <value column="Text" original="Receivable">Cobros</value>
+  </row>
+  <row id="805812" trl="N">
+    <value column="Text" original="Payable">Pagos</value>
+  </row>
+  <row id="805861" trl="N">
+    <value column="Text" original="Date planned">Vencimiento</value>
+  </row>
+  <row id="805863" trl="N">
+    <value column="Text" original="Break by date">Romper por fecha</value>
+  </row>
+  <row id="805911" trl="N">
+    <value column="Text" original="Username">Usuario</value>
+  </row>
+  <row id="805914" trl="N">
+    <value column="Text" original="Logn">Logn</value>
+  </row>
+  <row id="805916" trl="N">
+    <value column="Text" original="For Support Contact:">Contacto de Soporte:</value>
+  </row>
+  <row id="805917" trl="N">
+    <value column="Text" original="www.your-it-service.com">www.your-it-service.com</value>
+  </row>
+  <row id="805918" trl="N">
+    <value column="Text" original="Project hosted at">Proyecto alojado en</value>
+  </row>
+  <row id="805919" trl="N">
+    <value column="Text" original="www.sourceforge.net">www.sourceforge.net</value>
+  </row>
+  <row id="805927" trl="N">
+    <value column="Text" original="About window">Acerca de</value>
+  </row>
+  <row id="805929" trl="N">
+    <value column="Text" original="        - ComPiere Inc.">        - ComPiere Inc.</value>
+  </row>
+  <row id="805930" trl="N">
+    <value column="Text" original="        - The Apache Foundation">        - The Apache Foundation</value>
+  </row>
+  <row id="805931" trl="N">
+    <value column="Text" original="        - Softcomplex">        - Softcomplex</value>
+  </row>
+  <row id="805932" trl="N">
+    <value column="Text" original="        - Enterprise Distributed Technologies">        - Enterprise Distributed Technologies</value>
+  </row>
+  <row id="805937" trl="N">
+    <value column="Text" original="Not invoiced">No facturado</value>
+  </row>
+  <row id="805941" trl="N">
+    <value column="Text" original="User options:">Opciones de Usuario:</value>
+  </row>
+  <row id="805944" trl="N">
+    <value column="Text" original="Change password">Cambiar contraseña</value>
+  </row>
+  <row id="805945" trl="N">
+    <value column="Text" original="Actual password">Contraseña actual</value>
+  </row>
+  <row id="805946" trl="N">
+    <value column="Text" original="New password">Nueva contraseña</value>
+  </row>
+  <row id="805947" trl="N">
+    <value column="Text" original="Retype new password">Nueva contraseña (repetir)</value>
+  </row>
+  <row id="805948" trl="N">
+    <value column="Text" original="Change">Cambiar</value>
+  </row>
+  <row id="805949" trl="N">
+    <value column="Text" original="Clear">Limpiar</value>
+  </row>
+  <row id="805950" trl="N">
+    <value column="Text" original="Table">Tabla</value>
+  </row>
+  <row id="805952" trl="N">
+    <value column="Text" original="Material Receipt Pending">Notas de Entrega pendientes de recibir</value>
+  </row>
+  <row id="805963" trl="N">
+    <value column="Text" original="Initial Client Setup">Configuración inicial de Entidad</value>
+  </row>
+  <row id="805965" trl="N">
+    <value column="Text" original="System Installation">Instación de Sistema</value>
+  </row>
+  <row id="805966" trl="N">
+    <value column="Text" original="Client Username">Nombre de usuario Entidad</value>
+  </row>
+  <row id="805967" trl="N">
+    <value column="Text" original="Organization Username">Nombre de usuario Organiz.</value>
+  </row>
+  <row id="805970" trl="N">
+    <value column="Text" original="Accounting Dimensions">Dimensiones contables</value>
+  </row>
+  <row id="805972" trl="N">
+    <value column="Text" original="Accounting File">Archivo de cuentas</value>
+  </row>
+  <row id="805980" trl="N">
+    <value column="Text" original="Format file">Formato de archivo</value>
+  </row>
+  <row id="805981" trl="N">
+    <value column="Text" original="Header first line">Cabecera en primera linea</value>
+  </row>
+  <row id="805991" trl="N">
+    <value column="Text" original="No files attached">No hay adjuntos</value>
+  </row>
+  <row id="805992" trl="N">
+    <value column="Text" original="Filter window">Ventana de Filtro</value>
+  </row>
+  <row id="805993" trl="N">
+    <value column="Text" original="Edit Help">Editar Ayuda</value>
+  </row>
+  <row id="805994" trl="N">
+    <value column="Text" original="Field Help">Campo Ayuda</value>
+  </row>
+  <row id="805995" trl="N">
+    <value column="Text" original="Index">Índice</value>
+  </row>
+  <row id="805996" trl="N">
+    <value column="Text" original="Import Account">Importar Cuentas</value>
+  </row>
+  <row id="806001" trl="N">
+    <value column="Text" original="Import Order">Importar Pedido</value>
+  </row>
+  <row id="806010" trl="N">
+    <value column="Text" original="Copy from GL Journal">Copiar de Diario</value>
+  </row>
+  <row id="806023" trl="N">
+    <value column="Text" original="Import Business Partner">Importar Relacionado</value>
+  </row>
+  <row id="806025" trl="N">
+    <value column="Text" original="Import Product">Importar Producto</value>
+  </row>
+  <row id="806030" trl="N">
+    <value column="Text" original="Import Tax">Importar Impuesto</value>
+  </row>
+  <row id="806038" trl="N">
+    <value column="Text" original="Ok">Ok</value>
+  </row>
+  <row id="806041" trl="N">
+    <value column="Text" original="Linked items">Elementos relacionados</value>
+  </row>
+  <row id="806042" trl="N">
+    <value column="Text" original="Items linked to">Elementos relacionados con</value>
+  </row>
+  <row id="806045" trl="N">
+    <value column="Text" original="Sales Setup">Configuración de Ventas</value>
+  </row>
+  <row id="806046" trl="N">
+    <value column="Text" original="Items lineked to">Elementos relacionados con</value>
+  </row>
+  <row id="806047" trl="N">
+    <value column="Text" original="Sales Order - Order Line">Pedido de Venta - Líneas</value>
+  </row>
+  <row id="806048" trl="N">
+    <value column="Text" original="Invoice Line Selector">Selector de Lineas de Factura</value>
+  </row>
+  <row id="806073" trl="N">
+    <value column="Text" original="Order Selector">Selector de Pedido</value>
+  </row>
+  <row id="806078" trl="N">
+    <value column="Text" original="Order Line Selector">Selector de Línea de Pedido</value>
+  </row>
+  <row id="806089" trl="N">
+    <value column="Text" original="Project Selector">Selector de Proyecto</value>
+  </row>
+  <row id="806091" trl="N">
+    <value column="Text" original="Shipment Receipt Line Selector">Selector de Línea de Nota de Entrega</value>
+  </row>
+  <row id="806096" trl="N">
+    <value column="Text" original="Debt Payment Selector">Selector de Efectos</value>
+  </row>
+  <row id="806098" trl="N">
+    <value column="Text" original="Paymant Rule">Forma de pago</value>
+  </row>
+  <row id="806115" trl="N">
+    <value column="Text" original="Account Selector">Selector de Cuenta</value>
+  </row>
+  <row id="806124" trl="N">
+    <value column="Text" original="Shipment Receipt Selector">Selector de Nota de Entrega</value>
+  </row>
+  <row id="806132" trl="N">
+    <value column="Text" original="Postal code">Código Postal</value>
+  </row>
+  <row id="806139" trl="N">
+    <value column="Text" original="Invoice Selector">Selector de Factura</value>
+  </row>
+  <row id="806148" trl="N">
+    <value column="Text" original="Cash Journal Selector">Selector de Caja</value>
+  </row>
+  <row id="806150" trl="N">
+    <value column="Text" original="Cash Book">Libro de Caja:</value>
+  </row>
+  <row id="806158" trl="N">
+    <value column="Text" original="User Selector">Selector de Usuario</value>
+  </row>
+  <row id="806160" trl="N">
+    <value column="Text" original="Business Parnter Selector">Selector de Relacionado</value>
+  </row>
+  <row id="806167" trl="N">
+    <value column="Text" original="Locator Selector">Selector de Pos.Almacén</value>
+  </row>
+  <row id="806173" trl="N">
+    <value column="Text" original="Active:">Activo:</value>
+  </row>
+  <row id="806174" trl="N">
+    <value column="Text" original="Fixed:">Corregido</value>
+  </row>
+  <row id="806179" trl="N">
+    <value column="Text" original="Sales by Partner and Product">Ventas por Relacionado y Producto</value>
+  </row>
+  <row id="806180" trl="N">
+    <value column="Text" original="PARTNER">Relacionado</value>
+  </row>
+  <row id="806181" trl="N">
+    <value column="Text" original="GRAND TOTAL">TOTAL</value>
+  </row>
+  <row id="806182" trl="N">
+    <value column="Text" original="Number of Orders">Núm. de Pedidos</value>
+  </row>
+  <row id="806200" trl="N">
+    <value column="Text" original="Record">Registro</value>
+  </row>
+  <row id="806236" trl="N">
+    <value column="Text" original="Email template">Plantilla de email</value>
+  </row>
+  <row id="806237" trl="N">
+    <value column="Text" original="Interesting area">Area de interés</value>
+  </row>
+  <row id="806239" trl="N">
+    <value column="Text" original="User/Contact">Usuario/Contacto</value>
+  </row>
+  <row id="806240" trl="N">
+    <value column="Text" original="Copy From Settlement">Copiar de Liquidación</value>
+  </row>
+  <row id="806245" trl="N">
+    <value column="Text" original="DP Management">Gestión de efectos</value>
+  </row>
+  <row id="806259" trl="N">
+    <value column="Text" original="Final status">Situación final</value>
+  </row>
+  <row id="806265" trl="N">
+    <value column="Text" original="MovementDate">Fecha movimiento</value>
+  </row>
+  <row id="806268" trl="N">
+    <value column="Text" original="Remitance selector">Selector de Remesas</value>
+  </row>
+  <row id="806269" trl="N">
+    <value column="Text" original="Remittance">Remesa</value>
+  </row>
+  <row id="806270" trl="N">
+    <value column="Text" original="Date Planed From">Vencimiento desde</value>
+  </row>
+  <row id="806273" trl="N">
+    <value column="Text" original="Due date">Vencimiento</value>
+  </row>
+  <row id="806274" trl="N">
+    <value column="Text" original="Return">Devolver</value>
+  </row>
+  <row id="806320" trl="N">
+    <value column="Text" original="Insert Access">Insertar Permisos</value>
+  </row>
+  <row id="806324" trl="N">
+    <value column="Text" original="Access To">Permisos a</value>
+  </row>
+  <row id="806339" trl="N">
+    <value column="Text" original="Only Applied">Sólo pagados</value>
+  </row>
+  <row id="806340" trl="N">
+    <value column="Text" original="Encrypted Buttons">Botones encriptados</value>
+  </row>
+  <row id="806342" trl="N">
+    <value column="Text" original="Create From Response">Crear de Respuesta</value>
+  </row>
+  <row id="806343" trl="N">
+    <value column="Text" original="Take element">Coger el elemento</value>
+  </row>
+  <row id="806344" trl="N">
+    <value column="Text" original="Assign to">Asignarlo a</value>
+  </row>
+  <row id="806345" trl="N">
+    <value column="Text" original="Inside folder">Dentro de la carpeta</value>
+  </row>
+  <row id="806346" trl="N">
+    <value column="Text" original="Same level">Al mismo nivel</value>
+  </row>
+  <row id="806347" trl="N">
+    <value column="Text" original="Create from shipment">Crear de Nota de Entrega</value>
+  </row>
+  <row id="806370" trl="N">
+    <value column="Text" original="Create From Settlement">Crear de Liquidación</value>
+  </row>
+  <row id="806385" trl="N">
+    <value column="Text" original="Autocalculated">Autocalculado</value>
+  </row>
+  <row id="806389" trl="N">
+    <value column="Text" original="Process Order">Procesar Pedido</value>
+  </row>
+  <row id="806402" trl="N">
+    <value column="Text" original="Proveedor">Proveedor</value>
+  </row>
+  <row id="806404" trl="N">
+    <value column="Text" original="Nº pedido:">Nº pedido:</value>
+  </row>
+  <row id="806406" trl="N">
+    <value column="Text" original="Fecha pedido">Fecha pedido</value>
+  </row>
+  <row id="806407" trl="N">
+    <value column="Text" original="Artículo">Artículo</value>
+  </row>
+  <row id="806408" trl="N">
+    <value column="Text" original="cantidad">Cantidad</value>
+  </row>
+  <row id="806409" trl="N">
+    <value column="Text" original="unidad">unidad</value>
+  </row>
+  <row id="806410" trl="N">
+    <value column="Text" original="precio">precio</value>
+  </row>
+  <row id="806411" trl="N">
+    <value column="Text" original="importe">importe</value>
+  </row>
+  <row id="806430" trl="N">
+    <value column="Text" original="Alert Rule">Tipo de Alerta</value>
+  </row>
+  <row id="806431" trl="N">
+    <value column="Text" original="Active">Activo</value>
+  </row>
+  <row id="806433" trl="N">
+    <value column="Text" original="SQL Executor">SQL Executor</value>
+  </row>
+  <row id="806438" trl="N">
+    <value column="Text" original="Go back">Ir atrás</value>
+  </row>
+  <row id="806439" trl="N">
+    <value column="Text" original="Close">Cerrar</value>
+  </row>
+  <row id="806441" trl="N">
+    <value column="Text" original="Identifier">Identificador</value>
+  </row>
+  <row id="806442" trl="N">
+    <value column="Text" original="Commercial name">Nombre comercial</value>
+  </row>
+  <row id="806443" trl="N">
+    <value column="Text" original="Fiscal name">Nombre Fiscal</value>
+  </row>
+  <row id="806448" trl="N">
+    <value column="Text" original="Fact type">Tipo Facturación</value>
+  </row>
+  <row id="806450" trl="N">
+    <value column="Text" original="Terms">Plazos</value>
+  </row>
+  <row id="806452" trl="N">
+    <value column="Text" original="A. Account">Cuenta Contable</value>
+  </row>
+  <row id="806453" trl="N">
+    <value column="Text" original="Orders until">Pedidos hasta</value>
+  </row>
+  <row id="806455" trl="N">
+    <value column="Text" original="Invo">Fact</value>
+  </row>
+  <row id="806456" trl="N">
+    <value column="Text" original="Measure date">Fecha medida</value>
+  </row>
+  <row id="806457" trl="N">
+    <value column="Text" original="Shift">Desplazamiento</value>
+  </row>
+  <row id="806458" trl="N">
+    <value column="Text" original="Maintenance type">Tipo mantenimiento</value>
+  </row>
+  <row id="806461" trl="N">
+    <value column="Text" original="Serial No.">Nº de serie</value>
+  </row>
+  <row id="806462" trl="N">
+    <value column="Text" original="Total balance">Saldo Total</value>
+  </row>
+  <row id="806466" trl="N">
+    <value column="Text" original="Partner Total">Total Relacionado</value>
+  </row>
+  <row id="806467" trl="N">
+    <value column="Text" original="QTY TOTAL">Cantidad Total</value>
+  </row>
+  <row id="806468" trl="N">
+    <value column="Text" original="AMT TOTAL">Importe Total</value>
+  </row>
+  <row id="806470" trl="N">
+    <value column="Text" original="Partner">Relacionado</value>
+  </row>
+  <row id="806471" trl="N">
+    <value column="Text" original="Pages">Páginas</value>
+  </row>
+  <row id="806474" trl="N">
+    <value column="Text" original="Product family">Categoría producto</value>
+  </row>
+  <row id="806478" trl="N">
+    <value column="Text" original="Total product">Total Producto</value>
+  </row>
+  <row id="806485" trl="N">
+    <value column="Text" original="Ordered Qty">Cantidad pedida</value>
+  </row>
+  <row id="806501" trl="N">
+    <value column="Text" original="Currency ">Moneda</value>
+  </row>
+  <row id="806534" trl="N">
+    <value column="Text" original="BP Group">Grupo de Relacionados</value>
+  </row>
+  <row id="806535" trl="N">
+    <value column="Text" original="Prod Category">Categoria Producto</value>
+  </row>
+  <row id="806540" trl="N">
+    <value column="Text" original="Trx Org">Trx Org</value>
+  </row>
+  <row id="806544" trl="N">
+    <value column="Text" original="Total cash">Total efectivo</value>
+  </row>
+  <row id="806546" trl="N">
+    <value column="Text" original="Transaction date">Fecha transacción</value>
+  </row>
+  <row id="806565" trl="N">
+    <value column="Text" original="Ppal from">Ppal desde</value>
+  </row>
+  <row id="806566" trl="N">
+    <value column="Text" original="Ref from">Ref desd</value>
+  </row>
+  <row id="806567" trl="N">
+    <value column="Text" original="Ppal to">Ppal hasta</value>
+  </row>
+  <row id="806568" trl="N">
+    <value column="Text" original="Ref to">Ref hasta</value>
+  </row>
+  <row id="806569" trl="N">
+    <value column="Text" original="Product group">Categoría Producto</value>
+  </row>
+  <row id="806571" trl="N">
+    <value column="Text" original="Amount higher than">Importe mayor que</value>
+  </row>
+  <row id="806572" trl="N">
+    <value column="Text" original="Minor than">Menor que</value>
+  </row>
+  <row id="806573" trl="N">
+    <value column="Text" original="Ratio Higher than">Ratio mayor que</value>
+  </row>
+  <row id="806578" trl="N">
+    <value column="Text" original="Partner Group">Grupo de Relacionados</value>
+  </row>
+  <row id="806583" trl="N">
+    <value column="Text" original="Trx organization">Org. de transacc.</value>
+  </row>
+  <row id="806584" trl="N">
+    <value column="Text" original="Month">Mes</value>
+  </row>
+  <row id="806624" trl="N">
+    <value column="Text" original="Total valoration">Valoración Total</value>
+  </row>
+  <row id="806646" trl="N">
+    <value column="Text" original="TOTAL QUANTITY (m2)">CANTIDAD TOTAL (m2)</value>
+  </row>
+  <row id="806647" trl="N">
+    <value column="Text" original="TOTAL AMOUNT ()">IMPORTE TOTAL ()</value>
+  </row>
+  <row id="806668" trl="N">
+    <value column="Text" original="Order Date">Fecha de Pedido</value>
+  </row>
+  <row id="806669" trl="N">
+    <value column="Text" original="Shipment Date">Fecha de entrega</value>
+  </row>
+  <row id="806670" trl="N">
+    <value column="Text" original="Delivery Date">Fecha de envio</value>
+  </row>
+  <row id="806674" trl="N">
+    <value column="Text" original="Boxes">Cajas</value>
+  </row>
+  <row id="806676" trl="N">
+    <value column="Text" original="P">P</value>
+  </row>
+  <row id="806677" trl="N">
+    <value column="Text" original="Account No ">Nº de cuenta</value>
+  </row>
+  <row id="806679" trl="N">
+    <value column="Text" original="Total amount incoming-payments">Importe total de pagos</value>
+  </row>
+  <row id="806686" trl="N">
+    <value column="Text" original="Shipment No.">Nº Nota de Entrega</value>
+  </row>
+  <row id="806689" trl="N">
+    <value column="Text" original="Balancing">Balancing</value>
+  </row>
+  <row id="806690" trl="N">
+    <value column="Text" original="Difference">Diferencia</value>
+  </row>
+  <row id="806695" trl="N">
+    <value column="Text" original="Doc. Origen">Doc. Origen</value>
+  </row>
+  <row id="806696" trl="N">
+    <value column="Text" original="Doc. Final">Doc. Final</value>
+  </row>
+  <row id="806697" trl="N">
+    <value column="Text" original="Search for">Buscar</value>
+  </row>
+  <row id="806700" trl="N">
+    <value column="Text" original="Variable">Variable</value>
+  </row>
+  <row id="806705" trl="N">
+    <value column="Text" original="Reference No.">Nº referencia</value>
+  </row>
+  <row id="806707" trl="N">
+    <value column="Text" original="Total Lines">Total lineas</value>
+  </row>
+  <row id="806708" trl="N">
+    <value column="Text" original="Grand Total">Importe Total</value>
+  </row>
+  <row id="806710" trl="N">
+    <value column="Text" original="Reception date">Fecha de recepción</value>
+  </row>
+  <row id="806715" trl="N">
+    <value column="Text" original="Date acct">Fecha contable</value>
+  </row>
+  <row id="806716" trl="N">
+    <value column="Text" original="Records range">Rango de registros</value>
+  </row>
+  <row id="806717" trl="N">
+    <value column="Text" original="Transaction range">Rango de transacciones</value>
+  </row>
+  <row id="806718" trl="N">
+    <value column="Text" original="Selector registry range">Selector de rango de registros</value>
+  </row>
+  <row id="806719" trl="N">
+    <value column="Text" original="Theme">Apariencia</value>
+  </row>
+  <row id="806722" trl="N">
+    <value column="Text" original="Format">Formato</value>
+  </row>
+  <row id="806724" trl="N">
+    <value column="Text" original="Centrally maintained">Mantenimiento centralizado</value>
+  </row>
+  <row id="806725" trl="N">
+    <value column="Text" original="Update default">Actualizar por defecto</value>
+  </row>
+  <row id="806726" trl="N">
+    <value column="Text" original="Create new combination ">Crear nueva combinación</value>
+  </row>
+  <row id="806728" trl="N">
+    <value column="Text" original="Account element ">Elemento contable</value>
+  </row>
+  <row id="806729" trl="N">
+    <value column="Text" original="Budget">Presupuesto</value>
+  </row>
+  <row id="806732" trl="N">
+    <value column="Text" original="From doc No.">Nº doc. desde</value>
+  </row>
+  <row id="806733" trl="N">
+    <value column="Text" original="To doc No.">Nº doc. hasta</value>
+  </row>
+  <row id="806738" trl="N">
+    <value column="Text" original="Account ">Cuenta</value>
+  </row>
+  <row id="806739" trl="N">
+    <value column="Text" original="Organization ">Organización</value>
+  </row>
+  <row id="806740" trl="N">
+    <value column="Text" original="Period ">Período</value>
+  </row>
+  <row id="806745" trl="N">
+    <value column="Text" original="Price List ">Lista de Precios</value>
+  </row>
+  <row id="806750" trl="N">
+    <value column="Text" original="Generate to folder">Generar a carpeta</value>
+  </row>
+  <row id="806773" trl="N">
+    <value column="Text" original="Invoiced">Facturado</value>
+  </row>
+  <row id="807001" trl="N">
+    <value column="Text" original="% rat ref">% rat ref</value>
+  </row>
+  <row id="807002" trl="N">
+    <value column="Text" original="% ratio">% ratio</value>
+  </row>
+  <row id="807003" trl="N">
+    <value column="Text" original="% ratio ref.">% ratio ref</value>
+  </row>
+  <row id="807004" trl="N">
+    <value column="Text" original="* The value entered is not valid.">* El valor introducido no es válido.</value>
+  </row>
+  <row id="807005" trl="N">
+    <value column="Text" original="* This value is out of range.">* Valor fuera de rango.</value>
+  </row>
+  <row id="807006" trl="N">
+    <value column="Text" original="* This value is required.">* Este campo es requerido.</value>
+  </row>
+  <row id="807007" trl="N">
+    <value column="Text" original="Account">Cuenta</value>
+  </row>
+  <row id="807008" trl="N">
+    <value column="Text" original="Account No">Nº de cuenta</value>
+  </row>
+  <row id="807009" trl="N">
+    <value column="Text" original="Account No.">Nº de cuenta</value>
+  </row>
+  <row id="807010" trl="N">
+    <value column="Text" original="Account selector">Selector de cuentas</value>
+  </row>
+  <row id="807011" trl="N">
+    <value column="Text" original="Accounted shipment">Contado nota de entrega</value>
+  </row>
+  <row id="807012" trl="N">
+    <value column="Text" original="Accounting">Contabilidad</value>
+  </row>
+  <row id="807013" trl="N">
+    <value column="Text" original="Accounting combination">Combinación contable</value>
+  </row>
+  <row id="807014" trl="N">
+    <value column="Text" original="Accounting report">Informe contable</value>
+  </row>
+  <row id="807015" trl="N">
+    <value column="Text" original="Accounts receivable - Trade">Cuentas a cobrar - Trade</value>
+  </row>
+  <row id="807016" trl="N">
+    <value column="Text" original="Activity">Actividad</value>
+  </row>
+  <row id="807017" trl="N">
+    <value column="Text" original="Address">Dirección</value>
+  </row>
+  <row id="807018" trl="N">
+    <value column="Text" original="Alert Management">Gestión de Alertas</value>
+  </row>
+  <row id="807019" trl="N">
+    <value column="Text" original="Alias">Alias:</value>
+  </row>
+  <row id="807020" trl="N">
+    <value column="Text" original="All">Todos</value>
+  </row>
+  <row id="807021" trl="N">
+    <value column="Text" original="Amount ">Importe </value>
+  </row>
+  <row id="807022" trl="N">
+    <value column="Text" original="Amount From">Importe desde</value>
+  </row>
+  <row id="807023" trl="N">
+    <value column="Text" original="Amount From ">Importe desde </value>
+  </row>
+  <row id="807025" trl="N">
+    <value column="Text" original="Amount lower than">Importe menor que</value>
+  </row>
+  <row id="807026" trl="N">
+    <value column="Text" original="Amount To">Importe hasta</value>
+  </row>
+  <row id="807027" trl="N">
+    <value column="Text" original="Amount to">Importe hasta</value>
+  </row>
+  <row id="807028" trl="N">
+    <value column="Text" original="Article selector">Selector de articulos</value>
+  </row>
+  <row id="807029" trl="N">
+    <value column="Text" original="Ask your administrator por accessing permission">Puede solicitar el permiso a su administrador.</value>
+  </row>
+  <row id="807030" trl="N">
+    <value column="Text" original="Asset">Activo</value>
+  </row>
+  <row id="807031" trl="N">
+    <value column="Text" original="Attached files">Archivos adjuntos</value>
+  </row>
+  <row id="807032" trl="N">
+    <value column="Text" original="Attached to">Adjunto a</value>
+  </row>
+  <row id="807033" trl="N">
+    <value column="Text" original="Attachment">Adjunto</value>
+  </row>
+  <row id="807034" trl="N">
+    <value column="Text" original="Attribute selector">Selector de atributos</value>
+  </row>
+  <row id="807035" trl="N">
+    <value column="Text" original="BALANCE">SALDO</value>
+  </row>
+  <row id="807036" trl="N">
+    <value column="Text" original="Balance">Saldo</value>
+  </row>
+  <row id="807037" trl="N">
+    <value column="Text" original="Balanced">Cuadradas</value>
+  </row>
+  <row id="807038" trl="N">
+    <value column="Text" original="Bank">Banco</value>
+  </row>
+  <row id="807039" trl="N">
+    <value column="Text" original="Bank:">Banco:</value>
+  </row>
+  <row id="807040" trl="N">
+    <value column="Text" original="Bank account">Cuentas bancarias</value>
+  </row>
+  <row id="807041" trl="N">
+    <value column="Text" original="Bank acct:">Cuenta ban.:</value>
+  </row>
+  <row id="807042" trl="N">
+    <value column="Text" original="Bank draft">Giro bancario</value>
+  </row>
+  <row id="807043" trl="N">
+    <value column="Text" original="Base">Base</value>
+  </row>
+  <row id="807044" trl="N">
+    <value column="Text" original="B.Partner">Relacionado</value>
+  </row>
+  <row id="807046" trl="N">
+    <value column="Text" original="Building site report">Informe de obras</value>
+  </row>
+  <row id="807048" trl="N">
+    <value column="Text" original="Business Partner Group">Grupo de Relacionados</value>
+  </row>
+  <row id="807051" trl="N">
+    <value column="Text" original="By Ascending Amount">Por importe ascendente</value>
+  </row>
+  <row id="807052" trl="N">
+    <value column="Text" original="By Descending Amount">Por importe descendente</value>
+  </row>
+  <row id="807053" trl="N">
+    <value column="Text" original="Campaign"> Campaña</value>
+  </row>
+  <row id="807054" trl="N">
+    <value column="Text" original="Canceled">Cancelado</value>
+  </row>
+  <row id="807055" trl="N">
+    <value column="Text" original="Cancelled Settlement">Liquidacion cancelada</value>
+  </row>
+  <row id="807057" trl="N">
+    <value column="Text" original="Cash">Caja</value>
+  </row>
+  <row id="807058" trl="N">
+    <value column="Text" original="Cash book">Libro de Caja</value>
+  </row>
+  <row id="807059" trl="N">
+    <value column="Text" original="Cash journal selector">Selector de Caja</value>
+  </row>
+  <row id="807060" trl="N">
+    <value column="Text" original="Charge date:">Fecha de cobro:</value>
+  </row>
+  <row id="807061" trl="N">
+    <value column="Text" original="City">Localidad</value>
+  </row>
+  <row id="807062" trl="N">
+    <value column="Text" original="Clear Session">Limpiar Sesión</value>
+  </row>
+  <row id="807063" trl="N">
+    <value column="Text" original="Client">Entidad</value>
+  </row>
+  <row id="807064" trl="N">
+    <value column="Text" original="Client stock report">Informe de stock entidad</value>
+  </row>
+  <row id="807065" trl="N">
+    <value column="Text" original="Closed">Cerrado</value>
+  </row>
+  <row id="807066" trl="N">
+    <value column="Text" original="Collection">Cobro</value>
+  </row>
+  <row id="807067" trl="N">
+    <value column="Text" original="Commercial">Comercial</value>
+  </row>
+  <row id="807069" trl="N">
+    <value column="Text" original="Commercial File">Commercial Cliente</value>
+  </row>
+  <row id="807070" trl="N">
+    <value column="Text" original="Comparative">Comparativo</value>
+  </row>
+  <row id="807071" trl="N">
+    <value column="Text" original="Comparative Report">Informe comparativo</value>
+  </row>
+  <row id="807072" trl="N">
+    <value column="Text" original="Complementing the operation ?">Completando la operación?</value>
+  </row>
+  <row id="807073" trl="N">
+    <value column="Text" original="Concept">Concepto</value>
+  </row>
+  <row id="807074" trl="N">
+    <value column="Text" original="Conditions:  ">Condiciones:  </value>
+  </row>
+  <row id="807075" trl="N">
+    <value column="Text" original="Conformed">Conformadas</value>
+  </row>
+  <row id="807076" trl="N">
+    <value column="Text" original="Contact">Contacto</value>
+  </row>
+  <row id="807077" trl="N">
+    <value column="Text" original="Converted">Convertido</value>
+  </row>
+  <row id="807078" trl="N">
+    <value column="Text" original="Copy From Order">Copiar de Pedido</value>
+  </row>
+  <row id="807080" trl="N">
+    <value column="Text" original="Cost">Coste</value>
+  </row>
+  <row id="807081" trl="N">
+    <value column="Text" original="Country">Pais</value>
+  </row>
+  <row id="807082" trl="N">
+    <value column="Text" original="Create from">Crear de</value>
+  </row>
+  <row id="807083" trl="N">
+    <value column="Text" original="Create from Settlement">Crear de Liquidación</value>
+  </row>
+  <row id="807084" trl="N">
+    <value column="Text" original="Create from Shipment">Crear de Nota de Entrega</value>
+  </row>
+  <row id="807085" trl="N">
+    <value column="Text" original="Credit">Haber</value>
+  </row>
+  <row id="807086" trl="N">
+    <value column="Text" original="Credit used">Crédito usado</value>
+  </row>
+  <row id="807087" trl="N">
+    <value column="Text" original=" Customer: "> Cliente: </value>
+  </row>
+  <row id="807088" trl="N">
+    <value column="Text" original="CUSTOMER">CLIENTE</value>
+  </row>
+  <row id="807089" trl="N">
+    <value column="Text" original="Customer">Cliente</value>
+  </row>
+  <row id="807090" trl="N">
+    <value column="Text" original="DATE">FECHA</value>
+  </row>
+  <row id="807091" trl="N">
+    <value column="Text" original="DATE:">FECHA:</value>
+  </row>
+  <row id="807092" trl="N">
+    <value column="Text" original="Date: ">Fecha: </value>
+  </row>
+  <row id="807096" trl="N">
+    <value column="Text" original="Date Invoiced">Fecha Factura</value>
+  </row>
+  <row id="807097" trl="N">
+    <value column="Text" original="Date planed from">Vencimiento desde</value>
+  </row>
+  <row id="807099" trl="N">
+    <value column="Text" original="DEBIT">DEBE</value>
+  </row>
+  <row id="807100" trl="N">
+    <value column="Text" original="Debt">Debe</value>
+  </row>
+  <row id="807101" trl="N">
+    <value column="Text" original="Debt Payment">Efecto</value>
+  </row>
+  <row id="807102" trl="N">
+    <value column="Text" original="DebtPayment">Efecto</value>
+  </row>
+  <row id="807103" trl="N">
+    <value column="Text" original="Debtpayment no:">N° efectos:</value>
+  </row>
+  <row id="807104" trl="N">
+    <value column="Text" original="Debt-payment selector">Selector de efectos</value>
+  </row>
+  <row id="807105" trl="N">
+    <value column="Text" original="Debug Console">Consola de depuración</value>
+  </row>
+  <row id="807106" trl="N">
+    <value column="Text" original="Delete">Eliminar</value>
+  </row>
+  <row id="807107" trl="N">
+    <value column="Text" original="Delete imported">Borrar importados</value>
+  </row>
+  <row id="807108" trl="N">
+    <value column="Text" original="Delete imported:">Borrar importados:</value>
+  </row>
+  <row id="807109" trl="N">
+    <value column="Text" original="Delivered sales orders report">Informe de pedido venta suministrado</value>
+  </row>
+  <row id="807110" trl="N">
+    <value column="Text" original="Detail">Detalle</value>
+  </row>
+  <row id="807111" trl="N">
+    <value column="Text" original="Devolutions">Devoluciones</value>
+  </row>
+  <row id="807112" trl="N">
+    <value column="Text" original="dif rat">dif rat</value>
+  </row>
+  <row id="807113" trl="N">
+    <value column="Text" original="Dif ratio">Dif ratio</value>
+  </row>
+  <row id="807114" trl="N">
+    <value column="Text" original="dif. Ratio">dif. ratio</value>
+  </row>
+  <row id="807115" trl="N">
+    <value column="Text" original="Dif.ratio">Dif.ratio</value>
+  </row>
+  <row id="807116" trl="N">
+    <value column="Text" original="Dimension">Dimensión</value>
+  </row>
+  <row id="807117" trl="N">
+    <value column="Text" original="Disp. Credit">Crédito disp.</value>
+  </row>
+  <row id="807118" trl="N">
+    <value column="Text" original="Doc. No.">Nº Documento</value>
+  </row>
+  <row id="807119" trl="N">
+    <value column="Text" original="Doc. No.:">Nº Documento</value>
+  </row>
+  <row id="807120" trl="N">
+    <value column="Text" original="Doc No.">Nº Documento</value>
+  </row>
+  <row id="807123" trl="N">
+    <value column="Text" original="Document">Documento</value>
+  </row>
+  <row id="807124" trl="N">
+    <value column="Text" original="Document No.">Nº Documento</value>
+  </row>
+  <row id="807125" trl="N">
+    <value column="Text" original="Document type">Tipo documento</value>
+  </row>
+  <row id="807126" trl="N">
+    <value column="Text" original="Done by:">Realizado por:</value>
+  </row>
+  <row id="807127" trl="N">
+    <value column="Text" original="Done scheduled maintenances">Mantenimientos programados</value>
+  </row>
+  <row id="807128" trl="N">
+    <value column="Text" original="Drawing up date:">Fecha confección:</value>
+  </row>
+  <row id="807129" trl="N">
+    <value column="Text" original="(each">(cada</value>
+  </row>
+  <row id="807130" trl="N">
+    <value column="Text" original="Edit">Editar</value>
+  </row>
+  <row id="807131" trl="N">
+    <value column="Text" original="Edit PCC Values">Editar valores de PCC</value>
+  </row>
+  <row id="807132" trl="N">
+    <value column="Text" original="Email">Email</value>
+  </row>
+  <row id="807133" trl="N">
+    <value column="Text" original="Employee">Empleado</value>
+  </row>
+  <row id="807134" trl="N">
+    <value column="Text" original="End From Date">Fecha fin desde</value>
+  </row>
+  <row id="807135" trl="N">
+    <value column="Text" original="Enterprise:  ">Empresa:  </value>
+  </row>
+  <row id="807136" trl="N">
+    <value column="Text" original="Entity">Entidad</value>
+  </row>
+  <row id="807137" trl="N">
+    <value column="Text" original="Error">Error</value>
+  </row>
+  <row id="807138" trl="N">
+    <value column="Text" original="Error: ">Error: </value>
+  </row>
+  <row id="807139" trl="N">
+    <value column="Text" original="Expense lines">Linea gastos</value>
+  </row>
+  <row id="807140" trl="N">
+    <value column="Text" original="Expenses invoice">Factura de gastos</value>
+  </row>
+  <row id="807141" trl="N">
+    <value column="Text" original="Export Results to PDF Format">Obtener en formato PDF</value>
+  </row>
+  <row id="807142" trl="N">
+    <value column="Text" original="Fax">Fax</value>
+  </row>
+  <row id="807143" trl="N">
+    <value column="Text" original="Fecha">Fecha</value>
+  </row>
+  <row id="807144" trl="N">
+    <value column="Text" original="File">Archivo</value>
+  </row>
+  <row id="807145" trl="N">
+    <value column="Text" original="Filter">Filtro</value>
+  </row>
+  <row id="807146" trl="N">
+    <value column="Text" original="Filters">Filtros</value>
+  </row>
+  <row id="807147" trl="N">
+    <value column="Text" original="Final">Final</value>
+  </row>
+  <row id="807148" trl="N">
+    <value column="Text" original="Final balance">Saldo final</value>
+  </row>
+  <row id="807150" trl="N">
+    <value column="Text" original="Fixed">Corregido</value>
+  </row>
+  <row id="807151" trl="N">
+    <value column="Text" original="From">desde</value>
+  </row>
+  <row id="807152" trl="N">
+    <value column="Text" original="From Account">Cuenta desde</value>
+  </row>
+  <row id="807153" trl="N">
+    <value column="Text" original="From Amount">Importe desde</value>
+  </row>
+  <row id="807154" trl="N">
+    <value column="Text" original="From Date">Desde fecha</value>
+  </row>
+  <row id="807155" trl="N">
+    <value column="Text" original="From Date planned">Vencimiento desde</value>
+  </row>
+  <row id="807156" trl="N">
+    <value column="Text" original="From Reference Date">Fecha referencia desde</value>
+  </row>
+  <row id="807157" trl="N">
+    <value column="Text" original="General Ledger">Libro mayor</value>
+  </row>
+  <row id="807158" trl="N">
+    <value column="Text" original="General Ledger Journal">Diario de asientos</value>
+  </row>
+  <row id="807159" trl="N">
+    <value column="Text" original="Generate budget excel report">Informe generador excel presupuesto</value>
+  </row>
+  <row id="807160" trl="N">
+    <value column="Text" original="Generated Settlement">Liquidacion generada</value>
+  </row>
+  <row id="807161" trl="N">
+    <value column="Text" original="Go to results">Ir a resultados</value>
+  </row>
+  <row id="807162" trl="N">
+    <value column="Text" original="Grand total">Total</value>
+  </row>
+  <row id="807163" trl="N">
+    <value column="Text" original="group">grupo</value>
+  </row>
+  <row id="807164" trl="N">
+    <value column="Text" original="Help">Ayuda</value>
+  </row>
+  <row id="807165" trl="N">
+    <value column="Text" original="help answer">respuesta de ayuda</value>
+  </row>
+  <row id="807166" trl="N">
+    <value column="Text" original="help for the tab">Ayuda para la pesta&#241;a</value>
+  </row>
+  <row id="807167" trl="N">
+    <value column="Text" original="HOUR:">HORA:</value>
+  </row>
+  <row id="807168" trl="N">
+    <value column="Text" original="hour)">horas)</value>
+  </row>
+  <row id="807169" trl="N">
+    <value column="Text" original="HTML Format">Formato HTML</value>
+  </row>
+  <row id="807170" trl="N">
+    <value column="Text" original="Image Selector">Selector de imágenes</value>
+  </row>
+  <row id="807171" trl="N">
+    <value column="Text" original="Image selector">Selector de imágenes</value>
+  </row>
+  <row id="807172" trl="N">
+    <value column="Text" original="Import file">Importar archivo</value>
+  </row>
+  <row id="807174" trl="N">
+    <value column="Text" original="Income">Ingresos</value>
+  </row>
+  <row id="807175" trl="N">
+    <value column="Text" original="Info">Info</value>
+  </row>
+  <row id="807176" trl="N">
+    <value column="Text" original="Info: AccessTableWithNoView">Info: AccessTableWithNoView</value>
+  </row>
+  <row id="807177" trl="N">
+    <value column="Text" original="Initial balance">Saldo inicial</value>
+  </row>
+  <row id="807180" trl="N">
+    <value column="Text" original="Invoice date">Fecha Factura</value>
+  </row>
+  <row id="807182" trl="N">
+    <value column="Text" original=" Invoice no: "> Nº Factura: </value>
+  </row>
+  <row id="807183" trl="N">
+    <value column="Text" original="Invoice No.">Nº Factura</value>
+  </row>
+  <row id="807184" trl="N">
+    <value column="Text" original="Invoice selector">Selector facturas</value>
+  </row>
+  <row id="807185" trl="N">
+    <value column="Text" original="Invoiced sale orders report">Informe de pedido venta facturado</value>
+  </row>
+  <row id="807187" trl="N">
+    <value column="Text" original="Item">Artículo</value>
+  </row>
+  <row id="807188" trl="N">
+    <value column="Text" original="Language">Idioma</value>
+  </row>
+  <row id="807189" trl="N">
+    <value column="Text" original="Last result">Ultimo resultado</value>
+  </row>
+  <row id="807190" trl="N">
+    <value column="Text" original="Less than">Menor que</value>
+  </row>
+  <row id="807191" trl="N">
+    <value column="Text" original="Line">Línea</value>
+  </row>
+  <row id="807192" trl="N">
+    <value column="Text" original="Line No">Nº línea</value>
+  </row>
+  <row id="807193" trl="N">
+    <value column="Text" original="Line No.">Nº línea</value>
+  </row>
+  <row id="807194" trl="N">
+    <value column="Text" original="Lines">Lineas</value>
+  </row>
+  <row id="807195" trl="N">
+    <value column="Text" original="Lines amt">Imp. líneas</value>
+  </row>
+  <row id="807196" trl="N">
+    <value column="Text" original="Linked Items">Elementos relacionados</value>
+  </row>
+  <row id="807197" trl="N">
+    <value column="Text" original="Location">Dirección</value>
+  </row>
+  <row id="807198" trl="N">
+    <value column="Text" original="Location selector">Selector de Dirección</value>
+  </row>
+  <row id="807199" trl="N">
+    <value column="Text" original="Locator">Pos.almacén</value>
+  </row>
+  <row id="807200" trl="N">
+    <value column="Text" original="Locator selector">Sel. pos. almacén</value>
+  </row>
+  <row id="807201" trl="N">
+    <value column="Text" original="Log">Log</value>
+  </row>
+  <row id="807202" trl="N">
+    <value column="Text" original="Log in">Login</value>
+  </row>
+  <row id="807203" trl="N">
+    <value column="Text" original="Login">Login</value>
+  </row>
+  <row id="807204" trl="N">
+    <value column="Text" original="LOT:">LOTE:</value>
+  </row>
+  <row id="807205" trl="N">
+    <value column="Text" original="Mar.diff.">Dif mar.</value>
+  </row>
+  <row id="807206" trl="N">
+    <value column="Text" original="Margin">Margen</value>
+  </row>
+  <row id="807207" trl="N">
+    <value column="Text" original="Maturity date">Fecha vto.</value>
+  </row>
+  <row id="807208" trl="N">
+    <value column="Text" original="MEDIUM PRICE">PRECIO MEDIO</value>
+  </row>
+  <row id="807209" trl="N">
+    <value column="Text" original="message text">texto del mensaje</value>
+  </row>
+  <row id="807210" trl="N">
+    <value column="Text" original="Module">Modulo</value>
+  </row>
+  <row id="807211" trl="N">
+    <value column="Text" original="Movement">Movimiento</value>
+  </row>
+  <row id="807212" trl="N">
+    <value column="Text" original="Movement date">Fecha movimiento</value>
+  </row>
+  <row id="807213" trl="N">
+    <value column="Text" original="Movement type">Tipo Movimiento</value>
+  </row>
+  <row id="807214" trl="N">
+    <value column="Text" original="NAME">Nombre</value>
+  </row>
+  <row id="807216" trl="N">
+    <value column="Text" original="Next">Siguiente</value>
+  </row>
+  <row id="807217" trl="N">
+    <value column="Text" original="Notes">Notas</value>
+  </row>
+  <row id="807218" trl="N">
+    <value column="Text" original="Offer">Oferta</value>
+  </row>
+  <row id="807219" trl="N">
+    <value column="Text" original="Open">Abierto</value>
+  </row>
+  <row id="807220" trl="N">
+    <value column="Text" original="Open debt payments">Efectos pendientes</value>
+  </row>
+  <row id="807221" trl="N">
+    <value column="Text" original="Order">Pedido</value>
+  </row>
+  <row id="807222" trl="N">
+    <value column="Text" original=" Order date: "> Fecha Pedido: </value>
+  </row>
+  <row id="807224" trl="N">
+    <value column="Text" original="Order line selector">Selector de líneas de pedido</value>
+  </row>
+  <row id="807226" trl="N">
+    <value column="Text" original="Order No.">Nº Pedido</value>
+  </row>
+  <row id="807227" trl="N">
+    <value column="Text" original="Order selector">Selector Pedido</value>
+  </row>
+  <row id="807228" trl="N">
+    <value column="Text" original="Other units">Otras unidades</value>
+  </row>
+  <row id="807229" trl="N">
+    <value column="Text" original="Others">Otros</value>
+  </row>
+  <row id="807231" trl="N">
+    <value column="Text" original="Palets">Palets</value>
+  </row>
+  <row id="807232" trl="N">
+    <value column="Text" original="Password">Password</value>
+  </row>
+  <row id="807233" trl="N">
+    <value column="Text" original="Payment">Pago</value>
+  </row>
+  <row id="807234" trl="N">
+    <value column="Text" original="Payment Rule">Forma de pago</value>
+  </row>
+  <row id="807235" trl="N">
+    <value column="Text" original="Payment rule">Forma de pago</value>
+  </row>
+  <row id="807236" trl="N">
+    <value column="Text" original="PDF Format">Formato PDF</value>
+  </row>
+  <row id="807237" trl="N">
+    <value column="Text" original="Period">Período</value>
+  </row>
+  <row id="807238" trl="N">
+    <value column="Text" original="Period:  ">Período:  </value>
+  </row>
+  <row id="807239" trl="N">
+    <value column="Text" original="Phone">Teléfono</value>
+  </row>
+  <row id="807240" trl="N">
+    <value column="Text" original="Phone 2">Teléfono 2</value>
+  </row>
+  <row id="807241" trl="N">
+    <value column="Text" original="Planned date">Vencimiento</value>
+  </row>
+  <row id="807242" trl="N">
+    <value column="Text" original="P.M">P.M</value>
+  </row>
+  <row id="807243" trl="N">
+    <value column="Text" original="Postal Code">C.Postal</value>
+  </row>
+  <row id="807244" trl="N">
+    <value column="Text" original="Preferences">Preferencias</value>
+  </row>
+  <row id="807245" trl="N">
+    <value column="Text" original="Previous">Anterior</value>
+  </row>
+  <row id="807246" trl="N">
+    <value column="Text" original="Price ">Precio </value>
+  </row>
+  <row id="807247" trl="N">
+    <value column="Text" original="Price list">Lista de Precios</value>
+  </row>
+  <row id="807248" trl="N">
+    <value column="Text" original="Price list version">Version lista de precios</value>
+  </row>
+  <row id="807249" trl="N">
+    <value column="Text" original="Price (/m2)">Precio (/m2)</value>
+  </row>
+  <row id="807250" trl="N">
+    <value column="Text" original="Pricelist price">Precio lista de precios</value>
+  </row>
+  <row id="807251" trl="N">
+    <value column="Text" original="Process">Procesar</value>
+  </row>
+  <row id="807253" trl="N">
+    <value column="Text" original="PRODUCT:">PRODUCTO:</value>
+  </row>
+  <row id="807254" trl="N">
+    <value column="Text" original="Product cat.">Categoria poducto</value>
+  </row>
+  <row id="807255" trl="N">
+    <value column="Text" original="Product Category">Categoria Producto</value>
+  </row>
+  <row id="807256" trl="N">
+    <value column="Text" original="Product category">Categoria Producto</value>
+  </row>
+  <row id="807257" trl="N">
+    <value column="Text" original="Product Group">Categoria Producto</value>
+  </row>
+  <row id="807258" trl="N">
+    <value column="Text" original="Product import process">Proceso de importación de Productos</value>
+  </row>
+  <row id="807259" trl="N">
+    <value column="Text" original="Product list">Listado Productos</value>
+  </row>
+  <row id="807260" trl="N">
+    <value column="Text" original="Product Selector">Selector de Producto</value>
+  </row>
+  <row id="807261" trl="N">
+    <value column="Text" original="Product selector">Selector de Producto</value>
+  </row>
+  <row id="807264" trl="N">
+    <value column="Text" original="Products">Productos</value>
+  </row>
+  <row id="807265" trl="N">
+    <value column="Text" original="Profit">Beneficio</value>
+  </row>
+  <row id="807266" trl="N">
+    <value column="Text" original="Project ">Proyecto </value>
+  </row>
+  <row id="807267" trl="N">
+    <value column="Text" original="Project Profitability Report">Informe de rentabilidad de proyectos</value>
+  </row>
+  <row id="807268" trl="N">
+    <value column="Text" original="Project selector">Selector de Proyectos</value>
+  </row>
+  <row id="807269" trl="N">
+    <value column="Text" original="PROJECT TOTAL">TOTAL PROYECTO</value>
+  </row>
+  <row id="807270" trl="N">
+    <value column="Text" original="Project type">Tipo Proyecto</value>
+  </row>
+  <row id="807271" trl="N">
+    <value column="Text" original="Provider">Proveedor</value>
+  </row>
+  <row id="807272" trl="N">
+    <value column="Text" original="Providers">Proveedores</value>
+  </row>
+  <row id="807273" trl="N">
+    <value column="Text" original="Province">Provincia</value>
+  </row>
+  <row id="807274" trl="N">
+    <value column="Text" original="Prueba">Prueba</value>
+  </row>
+  <row id="807275" trl="N">
+    <value column="Text" original="Purchase">Compra</value>
+  </row>
+  <row id="807276" trl="N">
+    <value column="Text" original="Purchase invoices report">Informe Facturas de compra</value>
+  </row>
+  <row id="807277" trl="N">
+    <value column="Text" original="Purchase order">Pedido de compra</value>
+  </row>
+  <row id="807278" trl="N">
+    <value column="Text" original="Purchase orders report">Informe pedidos de compra </value>
+  </row>
+  <row id="807279" trl="N">
+    <value column="Text" original="Purchase transaction">Transacción de compra</value>
+  </row>
+  <row id="807280" trl="N">
+    <value column="Text" original="Qty">Cant</value>
+  </row>
+  <row id="807281" trl="N">
+    <value column="Text" original="Qty dev">Cantidad dev</value>
+  </row>
+  <row id="807282" trl="N">
+    <value column="Text" original="Qty ref">Cant ref</value>
+  </row>
+  <row id="807283" trl="N">
+    <value column="Text" original="Qty refund ref">Cant dev ref</value>
+  </row>
+  <row id="807284" trl="N">
+    <value column="Text" original="QUALITY CONTROL REPORT">PARTE DE CONTROL DE CALIDAD</value>
+  </row>
+  <row id="807286" trl="N">
+    <value column="Text" original="Quantity retur.">Cantidad dev</value>
+  </row>
+  <row id="807287" trl="N">
+    <value column="Text" original="Quantity retur. Ref.">Cantidad dev ref</value>
+  </row>
+  <row id="807288" trl="N">
+    <value column="Text" original="Quantity(m2)">Cantidad(m2)</value>
+  </row>
+  <row id="807289" trl="N">
+    <value column="Text" original="%rat">%rat</value>
+  </row>
+  <row id="807290" trl="N">
+    <value column="Text" original="%ratio">%ratio</value>
+  </row>
+  <row id="807291" trl="N">
+    <value column="Text" original="Receipt type">Tipo recibo</value>
+  </row>
+  <row id="807292" trl="N">
+    <value column="Text" original="Ref cost">Cos ref</value>
+  </row>
+  <row id="807294" trl="N">
+    <value column="Text" original="REFERENCE">REFERENCIA</value>
+  </row>
+  <row id="807295" trl="N">
+    <value column="Text" original="Reference">Referencia</value>
+  </row>
+  <row id="807297" trl="N">
+    <value column="Text" original="Refund">Devol</value>
+  </row>
+  <row id="807298" trl="N">
+    <value column="Text" original="Refund ref">Devol ref</value>
+  </row>
+  <row id="807299" trl="N">
+    <value column="Text" original="Refunded sale invoices report">Informe devoluciones factura venta </value>
+  </row>
+  <row id="807300" trl="N">
+    <value column="Text" original="Refunded sales orders report">Informe de devoluciones de factura venta</value>
+  </row>
+  <row id="807301" trl="N">
+    <value column="Text" original="Refunds">Devoluciones</value>
+  </row>
+  <row id="807302" trl="N">
+    <value column="Text" original="Region">Region</value>
+  </row>
+  <row id="807303" trl="N">
+    <value column="Text" original="Report Pending Production">Informe de producción pendiente</value>
+  </row>
+  <row id="807304" trl="N">
+    <value column="Text" original="Report Production Run">Informe de Producción</value>
+  </row>
+  <row id="807305" trl="N">
+    <value column="Text" original="Report Work Requirement">Informe de requisitos de trabajo</value>
+  </row>
+  <row id="807306" trl="N">
+    <value column="Text" original="Report Work Requirement Daily">Informe de requisitos de trabajo</value>
+  </row>
+  <row id="807307" trl="N">
+    <value column="Text" original="Request selector">Selector de peticiones</value>
+  </row>
+  <row id="807308" trl="N">
+    <value column="Text" original="Required qty.">Cant. requerida</value>
+  </row>
+  <row id="807309" trl="N">
+    <value column="Text" original="Response">Respuesta</value>
+  </row>
+  <row id="807310" trl="N">
+    <value column="Text" original="Responsible">Responsable</value>
+  </row>
+  <row id="807311" trl="N">
+    <value column="Text" original="Result">Resultado</value>
+  </row>
+  <row id="807312" trl="N">
+    <value column="Text" original="Role">Rol</value>
+  </row>
+  <row id="807313" trl="N">
+    <value column="Text" original="Sal. Ref total">Sal. Ref total</value>
+  </row>
+  <row id="807314" trl="N">
+    <value column="Text" original="SALDO">SALDO</value>
+  </row>
+  <row id="807315" trl="N">
+    <value column="Text" original="Sale">Venta</value>
+  </row>
+  <row id="807316" trl="N">
+    <value column="Text" original="Sale invoices report">Informe factura de venta</value>
+  </row>
+  <row id="807317" trl="N">
+    <value column="Text" original="Sale shipment">Nota de Entrega venta</value>
+  </row>
+  <row id="807318" trl="N">
+    <value column="Text" original="Sale transaction">Operación venta</value>
+  </row>
+  <row id="807319" trl="N">
+    <value column="Text" original="Sales">Ventas</value>
+  </row>
+  <row id="807320" trl="N">
+    <value column="Text" original="Sales invoice">Factura venta</value>
+  </row>
+  <row id="807322" trl="N">
+    <value column="Text" original="Sales ref">Ventas ref</value>
+  </row>
+  <row id="807323" trl="N">
+    <value column="Text" original="Sales Region">Región de ventas</value>
+  </row>
+  <row id="807324" trl="N">
+    <value column="Text" original="Sales total">Total ventas</value>
+  </row>
+  <row id="807325" trl="N">
+    <value column="Text" original="Sales trans">Operación de venta</value>
+  </row>
+  <row id="807326" trl="N">
+    <value column="Text" original="Sales transaction">Transacción de venta</value>
+  </row>
+  <row id="807327" trl="N">
+    <value column="Text" original="Save">Guardar</value>
+  </row>
+  <row id="807328" trl="N">
+    <value column="Text" original="Sell by date report">Informe de caducidades</value>
+  </row>
+  <row id="807329" trl="N">
+    <value column="Text" original="SELL-BY DATE:">CADUCIDAD:</value>
+  </row>
+  <row id="807330" trl="N">
+    <value column="Text" original="Services">Servicios</value>
+  </row>
+  <row id="807331" trl="N">
+    <value column="Text" original="Shift:">Turno:</value>
+  </row>
+  <row id="807332" trl="N">
+    <value column="Text" original="Shipment">Nota de Entrega</value>
+  </row>
+  <row id="807333" trl="N">
+    <value column="Text" original=" Shipment date: "> Fecha nota de entrega: </value>
+  </row>
+  <row id="807334" trl="N">
+    <value column="Text" original="Shipment date">Fecha de nota de entrega</value>
+  </row>
+  <row id="807335" trl="N">
+    <value column="Text" original="Shipment line selector">Selector de líneas de nota de entrega</value>
+  </row>
+  <row id="807336" trl="N">
+    <value column="Text" original=" Shipment no: "> Nº Nota de Entrega: </value>
+  </row>
+  <row id="807337" trl="N">
+    <value column="Text" original="ShipmentReceipt selector">Selector de entrada/salida</value>
+  </row>
+  <row id="807338" trl="N">
+    <value column="Text" original="Shipper">Rutero</value>
+  </row>
+  <row id="807340" trl="N">
+    <value column="Text" original="Sort">Ordenar</value>
+  </row>
+  <row id="807341" trl="N">
+    <value column="Text" original="Standard">Estándar</value>
+  </row>
+  <row id="807342" trl="N">
+    <value column="Text" original="Start From Date">Fecha inicio desde</value>
+  </row>
+  <row id="807343" trl="N">
+    <value column="Text" original="Status">Estado</value>
+  </row>
+  <row id="807345" trl="N">
+    <value column="Text" original="StyleGrid">StyleGrid</value>
+  </row>
+  <row id="807346" trl="N">
+    <value column="Text" original="Subject">Asunto</value>
+  </row>
+  <row id="807347" trl="N">
+    <value column="Text" original="Tax">Impuesto</value>
+  </row>
+  <row id="807348" trl="N">
+    <value column="Text" original="Tax ID:">NIF:</value>
+  </row>
+  <row id="807349" trl="N">
+    <value column="Text" original="Tax report">Informe de impuestos</value>
+  </row>
+  <row id="807350" trl="N">
+    <value column="Text" original="Tax type">Tipo impuesto</value>
+  </row>
+  <row id="807351" trl="N">
+    <value column="Text" original="Taxable base">Base imponible</value>
+  </row>
+  <row id="807352" trl="N">
+    <value column="Text" original="Taxes report">Informe de impuestos</value>
+  </row>
+  <row id="807353" trl="N">
+    <value column="Text" original="The current information is empty.">La información actual está vacia.</value>
+  </row>
+  <row id="807354" trl="N">
+    <value column="Text" original="TITLE">TÍTULO</value>
+  </row>
+  <row id="807355" trl="N">
+    <value column="Text" original="To">Hasta</value>
+  </row>
+  <row id="807356" trl="N">
+    <value column="Text" original="To Account">Cuenta hasta</value>
+  </row>
+  <row id="807357" trl="N">
+    <value column="Text" original="To Amount">Importe hasta</value>
+  </row>
+  <row id="807358" trl="N">
+    <value column="Text" original="To Date">Fecha hasta</value>
+  </row>
+  <row id="807360" trl="N">
+    <value column="Text" original="To Date planned">Vencimiento hasta</value>
+  </row>
+  <row id="807361" trl="N">
+    <value column="Text" original="To Reference Date">Fecha referencia hasta</value>
+  </row>
+  <row id="807362" trl="N">
+    <value column="Text" original="Tot refund ref">Tot dev ref</value>
+  </row>
+  <row id="807363" trl="N">
+    <value column="Text" original="Tot sales">Tot vent</value>
+  </row>
+  <row id="807364" trl="N">
+    <value column="Text" original="TOTAL">TOTAL</value>
+  </row>
+  <row id="807365" trl="N">
+    <value column="Text" original="TOTAL ">TOTAL </value>
+  </row>
+  <row id="807366" trl="N">
+    <value column="Text" original="Total">Total</value>
+  </row>
+  <row id="807367" trl="N">
+    <value column="Text" original="Total:">Total:</value>
+  </row>
+  <row id="807368" trl="N">
+    <value column="Text" original="Total % amount">Importe Total%</value>
+  </row>
+  <row id="807369" trl="N">
+    <value column="Text" original="Total % ratio ">Total % ratio </value>
+  </row>
+  <row id="807371" trl="N">
+    <value column="Text" original="Total Amount From">Importe total desde</value>
+  </row>
+  <row id="807372" trl="N">
+    <value column="Text" original="Total Bpartner">Total Relacionado</value>
+  </row>
+  <row id="807373" trl="N">
+    <value column="Text" original="Total dev. ref ">Total dev. ref </value>
+  </row>
+  <row id="807374" trl="N">
+    <value column="Text" original="Total devol.">Total devol.</value>
+  </row>
+  <row id="807376" trl="N">
+    <value column="Text" original="Total %rat ref ">Total %rat ref </value>
+  </row>
+  <row id="807377" trl="N">
+    <value column="Text" original="Total sales">Total ventas</value>
+  </row>
+  <row id="807378" trl="N">
+    <value column="Text" original="Total weight">Total peso</value>
+  </row>
+  <row id="807380" trl="N">
+    <value column="Text" original="Total weight ref">Total peso ref</value>
+  </row>
+  <row id="807382" trl="N">
+    <value column="Text" original="TOTALS">TOTALES</value>
+  </row>
+  <row id="807383" trl="N">
+    <value column="Text" original="Traceability report">Informe de trazabilidad</value>
+  </row>
+  <row id="807384" trl="N">
+    <value column="Text" original="Transaction type">Tipo de transacción</value>
+  </row>
+  <row id="807385" trl="N">
+    <value column="Text" original="Type">Tipo</value>
+  </row>
+  <row id="807387" trl="N">
+    <value column="Text" original="Until">Hasta</value>
+  </row>
+  <row id="807388" trl="N">
+    <value column="Text" original="URL">URL</value>
+  </row>
+  <row id="807389" trl="N">
+    <value column="Text" original="User selector">Selector de usuarios</value>
+  </row>
+  <row id="807390" trl="N">
+    <value column="Text" original="View Results">Ver resultados</value>
+  </row>
+  <row id="807391" trl="N">
+    <value column="Text" original="View Results in a New Window">Ver resultados en ventana nueva</value>
+  </row>
+  <row id="807392" trl="N">
+    <value column="Text" original="Warehouse">Almacén</value>
+  </row>
+  <row id="807394" trl="N">
+    <value column="Text" original="Warehouse position">Posición Almacén</value>
+  </row>
+  <row id="807395" trl="N">
+    <value column="Text" original="Warning">Aviso</value>
+  </row>
+  <row id="807396" trl="N">
+    <value column="Text" original="Window">Ventana</value>
+  </row>
+  <row id="807397" trl="N">
+    <value column="Text" original="Work requirement">Orden de fabricación</value>
+  </row>
+  <row id="807398" trl="N">
+    <value column="Text" original="X">X</value>
+  </row>
+  <row id="807405" trl="N">
+    <value column="Text" original="Y">Y</value>
+  </row>
+  <row id="807406" trl="N">
+    <value column="Text" original="Year">Ejer</value>
+  </row>
+  <row id="807407" trl="N">
+    <value column="Text" original="You have not permission to access this page">No tiene permiso para acceder a la página solicitada.</value>
+  </row>
+  <row id="807408" trl="N">
+    <value column="Text" original="Your address">Su direccion</value>
+  </row>
+  <row id="807409" trl="N">
+    <value column="Text" original="Z">Z</value>
+  </row>
+  <row id="807410" trl="N">
+    <value column="Text" original="Warehouse / Point of service">Warehouse / Point of service</value>
+  </row>
+  <row id="807411" trl="N">
+    <value column="Text" original="Corridor(X)">Pasillo(X)</value>
+  </row>
+  <row id="807412" trl="N">
+    <value column="Text" original="Shelves(Y)">Estantes (Y)</value>
+  </row>
+  <row id="807413" trl="N">
+    <value column="Text" original="Height(Z)">Altura (Z)</value>
+  </row>
+  <row id="807414" trl="N">
+    <value column="Text" original="Delete old files:">Borrar archivos antiguos:</value>
+  </row>
+  <row id="807416" trl="N">
+    <value column="Text" original="Out comming type:">Tipo de Salida</value>
+  </row>
+  <row id="807418" trl="N">
+    <value column="Text" original="Height:">Altura:</value>
+  </row>
+  <row id="807422" trl="N">
+    <value column="Text" original="Product values">Productos</value>
+  </row>
+  <row id="807423" trl="N">
+    <value column="Text" original="Attribute value:">Valor Atributo:</value>
+  </row>
+  <row id="807426" trl="N">
+    <value column="Text" original="Order unit:">Unidad pedido</value>
+  </row>
+  <row id="807427" trl="N">
+    <value column="Text" original="Incomming type:">Tipo de Entrada</value>
+  </row>
+  <row id="807428" trl="N">
+    <value column="Text" original="Location values">Almacén</value>
+  </row>
+  <row id="807430" trl="N">
+    <value column="Text" original="Locator type: ">Tipo de rack</value>
+  </row>
+  <row id="807431" trl="N">
+    <value column="Text" original="No. lines: ">No. líneas: </value>
+  </row>
+  <row id="807441" trl="N">
+    <value column="Text" original="Show Session">Ver Sesión</value>
+  </row>
+  <row id="807442" trl="N">
+    <value column="Text" original="Show Session - Session Variables">Variables de Sesión</value>
+  </row>
+  <row id="807443" trl="N">
+    <value column="Text" original="Show Session - Preferences">Mostrar Preferencias de Sesión</value>
+  </row>
+  <row id="807445" trl="N">
+    <value column="Text" original="Save Preferences">Salvar Preferencias</value>
+  </row>
+  <row id="807446" trl="N">
+    <value column="Text" original="Forced organization">Organización Forzada</value>
+  </row>
+  <row id="807447" trl="N">
+    <value column="Text" original="Destiny organization">Organización Destino</value>
+  </row>
+  <row id="807449" trl="N">
+    <value column="Text" original="Set Priority">Poner Prioridad</value>
+  </row>
+  <row id="807454" trl="N">
+    <value column="Text" original="Generate Excel">Generar Excel</value>
+  </row>
+  <row id="807456" trl="N">
+    <value column="Text" original="Connections pool">Connections pool</value>
+  </row>
+  <row id="807457" trl="N">
+    <value column="Text" original="Change Logs">Change Logs</value>
+  </row>
+  <row id="807458" trl="N">
+    <value column="Text" original="Informe de impuestos para ">Informe de impuestos para </value>
+  </row>
+  <row id="807459" trl="N">
+    <value column="Text" original="General Ledger Report">Libro Mayor</value>
+  </row>
+  <row id="807470" trl="N">
+    <value column="Text" original="FAX no.: xx(948) 326 581 Phone no.: xx(948) 326 580 xxYour Address xx1111 Your Town (Country)">FAX no.: xx(948) 326 581 Phone no.: xx(948) 326 580 xxYour Address xx1111 Your Town (Country)</value>
+  </row>
+  <row id="807473" trl="N">
+    <value column="Text" original="Fax Order to:">Número de Fax:</value>
+  </row>
+  <row id="807474" trl="N">
+    <value column="Text" original="Fax No.:">Fax No.:</value>
+  </row>
+  <row id="807483" trl="N">
+    <value column="Text" original="If there is no reply within 48 hours the order will be considered as accepted.">Si no hay una respuesta en 48 la orden será considerada como aceptada.</value>
+  </row>
+  <row id="807489" trl="N">
+    <value column="Text" original="from 9:00 to 13:00">de 9:00 a 13:00</value>
+  </row>
+  <row id="807491" trl="N">
+    <value column="Text" original="Include order No. in shipment and invoice">Incluir No. de Orden en Embarque y Factura</value>
+  </row>
+  <row id="807505" trl="N">
+    <value column="Text" original="REGARDS">SALUDOS</value>
+  </row>
+  <row id="807508" trl="N">
+    <value column="Text" original="Alert">Alerta</value>
+  </row>
+  <row id="807510" trl="N">
+    <value column="Text" original="Attribute set instance">Conjunto de Atributos</value>
+  </row>
+  <row id="807511" trl="N">
+    <value column="Text" original="Medium Price">Precio Medio</value>
+  </row>
+  <row id="807512" trl="N">
+    <value column="Text" original="ACCOUNT CODE">CÓDIGO CUENTA</value>
+  </row>
+  <row id="807513" trl="N">
+    <value column="Text" original="ANAL.">ANAL.</value>
+  </row>
+  <row id="807515" trl="N">
+    <value column="Text" original="Please enter your username and password. You must also ensure that your browser accepts cookies. Press back to return.">Por favor, introduzca su usuario y contraseña. Asegúrese que su navegador acepta cookies. Pulse Atras para volver.</value>
+  </row>
+  <row id="807517" trl="N">
+    <value column="Text" original="Edit help">Editar Ayuda</value>
+  </row>
+  <row id="807524" trl="N">
+    <value column="Text" original="Date:  ">Fecha:  </value>
+  </row>
+  <row id="807532" trl="N">
+    <value column="Text" original="Business Partner list">Lista de Relacionados</value>
+  </row>
+  <row id="807537" trl="N">
+    <value column="Text" original="Business partner: ">Relacionado: </value>
+  </row>
+  <row id="807539" trl="N">
+    <value column="Text" original="Order Qty">Cantidad Pedido</value>
+  </row>
+  <row id="807543" trl="N">
+    <value column="Text" original="Primary Filters">Filtros Primarios</value>
+  </row>
+  <row id="807550" trl="N">
+    <value column="Text" original="Business Partners">Relacionados</value>
+  </row>
+  <row id="807558" trl="N">
+    <value column="Text" original="Reference Order">Pedido de Referencia</value>
+  </row>
+  <row id="807560" trl="N">
+    <value column="Text" original="Help for">Ayuda para</value>
+  </row>
+  <row id="807610" trl="N">
+    <value column="Text" original="Secondary Filters">Filtros Secundarios</value>
+  </row>
+  <row id="807611" trl="N">
+    <value column="Text" original="Dimensions">Dimensiones</value>
+  </row>
+  <row id="807738" trl="N">
+    <value column="Text" original="Hide matched Debt/Payments">Ocultar efectos cancelados</value>
+  </row>
+  <row id="807852" trl="N">
+    <value column="Text" original="Openbravo's SourceForge">Openbravo's SourceForge</value>
+  </row>
+  <row id="807853" trl="N">
+    <value column="Text" original="SourceForge.net Logo">SourceForge.net Logo</value>
+  </row>
+  <row id="807854" trl="N">
+    <value column="Text" original="Copyright Openbravo 2001-2007">Copyright Openbravo 2001-2007</value>
+  </row>
+  <row id="807855" trl="N">
+    <value column="Text" original="Options">Opciones</value>
+  </row>
+  <row id="807856" trl="N">
+    <value column="Text" original="Session options">Opciones de Sesión</value>
+  </row>
+  <row id="807857" trl="N">
+    <value column="Text" original="Set as default">Por defecto</value>
+  </row>
+  <row id="807858" trl="N">
+    <value column="Text" original="Warehouse / Point of service">Almacén/Punto de Venta</value>
+  </row>
+  <row id="807860" trl="N">
+    <value column="Text" original="Launch From Date">Fecha Lanzamiento Desde</value>
+  </row>
+  <row id="807865" trl="N">
+    <value column="Text" original="Work Requeriment">Requerimiento de Trabajo</value>
+  </row>
+  <row id="807870" trl="N">
+    <value column="Text" original="Starting Date">Fecha Inicio</value>
+  </row>
+  <row id="807871" trl="N">
+    <value column="Text" original="Initial Date">Fecha Inicial</value>
+  </row>
+  <row id="807872" trl="N">
+    <value column="Text" original="Final Date">Fecha Final</value>
+  </row>
+  <row id="807874" trl="N">
+    <value column="Text" original="Phase WR">Fase OF</value>
+  </row>
+  <row id="807882" trl="N">
+    <value column="Text" original="Q. Done">C. Hecha</value>
+  </row>
+  <row id="807883" trl="N">
+    <value column="Text" original="Q. Left">C. Pendiente</value>
+  </row>
+  <row id="807884" trl="N">
+    <value column="Text" original="Units/hour">Unidad/hora</value>
+  </row>
+  <row id="807885" trl="N">
+    <value column="Text" original="Time to prepare">Tiempo para preparar</value>
+  </row>
+  <row id="807886" trl="N">
+    <value column="Text" original="Work effort">Parte de trabajo</value>
+  </row>
+  <row id="807887" trl="N">
+    <value column="Text" original="Production Run">Parte de Fabricación</value>
+  </row>
+  <row id="807888" trl="N">
+    <value column="Text" original="Required Qty.">Cantidad Requerida</value>
+  </row>
+  <row id="807889" trl="N">
+    <value column="Text" original="Qty. Fulfill">Cant. total</value>
+  </row>
+  <row id="807890" trl="N">
+    <value column="Text" original="Refund Qty.">Cant. Reembolsada</value>
+  </row>
+  <row id="807899" trl="N">
+    <value column="Text" original="Copyright © Openbravo, S.L. 2001-2007">Copyright © Openbravo, S.L. 2001-2007</value>
+  </row>
+  <row id="807900" trl="N">
+    <value column="Text" original="        - The Dojo Foundation">        - The Dojo Foundation</value>
+  </row>
+  <row id="807901" trl="N">
+    <value column="Text" original="        - The Eclipse Foundation">        - The Eclipse Foundation</value>
+  </row>
+  <row id="807902" trl="N">
+    <value column="Text" original="        - JasperSoft">        - JasperSoft</value>
+  </row>
+  <row id="807903" trl="N">
+    <value column="Text" original="        - Dynarch">        - Dynarch</value>
+  </row>
+  <row id="807904" trl="N">
+    <value column="Text" original="Thank you to all contributors.">Gracias a todos los contribuidores</value>
+  </row>
+  <row id="807966" trl="N">
+    <value column="Text" original="Work Requirement:">Requerimiento de Trabajo:</value>
+  </row>
+  <row id="807970" trl="N">
+    <value column="Text" original="Initial Date:">Fecha Inicial:</value>
+  </row>
+  <row id="807972" trl="N">
+    <value column="Text" original="Final Date:">Fecha Final:</value>
+  </row>
+  <row id="807973" trl="N">
+    <value column="Text" original="Production Plan:">Plan de Producción:</value>
+  </row>
+  <row id="807975" trl="N">
+    <value column="Text" original="Phase:">Fase:</value>
+  </row>
+  <row id="807979" trl="N">
+    <value column="Text" original="Done:">Hecho:</value>
+  </row>
+  <row id="807980" trl="N">
+    <value column="Text" original="Available">Disponible</value>
+  </row>
+  <row id="807981" trl="N">
+    <value column="Text" original="Required">Requerido</value>
+  </row>
+  <row id="807982" trl="N">
+    <value column="Text" original="On hand">En mano</value>
+  </row>
+  <row id="807989" trl="N">
+    <value column="Text" original="Public/Private">Público/Privado</value>
+  </row>
+  <row id="807990" trl="N">
+    <value column="Text" original="In charge">Responsable</value>
+  </row>
+  <row id="807992" trl="N">
+    <value column="Text" original="Work type">Work type</value>
+  </row>
+  <row id="808001" trl="N">
+    <value column="Text" original="Total Client">Total Entidad</value>
+  </row>
+  <row id="808005" trl="N">
+    <value column="Text" original="Invoice Date:">Fecha Factura:</value>
+  </row>
+  <row id="808034" trl="N">
+    <value column="Text" original="Not invoiced orders filter">Filtro de pedidos no facturados</value>
+  </row>
+  <row id="808046" trl="N">
+    <value column="Text" original="Total Partner:">Total Relacionado:</value>
+  </row>
+  <row id="808055" trl="N">
+    <value column="Text" original="Qty.">Cant.</value>
+  </row>
+  <row id="808057" trl="N">
+    <value column="Text" original="%Tax">% Impuesto</value>
+  </row>
+  <row id="808073" trl="N">
+    <value column="Text" original="Product expires before">Fecha Caducidad</value>
+  </row>
+  <row id="808172" trl="N">
+    <value column="Text" original="WORK:">TRABAJO:</value>
+  </row>
+  <row id="808173" trl="N">
+    <value column="Text" original="Ref:">Ref:</value>
+  </row>
+  <row id="808187" trl="N">
+    <value column="Text" original="Expiration Date">Shell-by-date</value>
+  </row>
+  <row id="808188" trl="N">
+    <value column="Text" original="Article unit">Unidad</value>
+  </row>
+  <row id="808196" trl="N">
+    <value column="Text" original="Shelves (x)">Estantes (X)</value>
+  </row>
+  <row id="808197" trl="N">
+    <value column="Text" original="Column (y)">Columna(y)</value>
+  </row>
+  <row id="808198" trl="N">
+    <value column="Text" original="Height (z)">Altura (Z)</value>
+  </row>
+  <row id="808199" trl="N">
+    <value column="Text" original="Show raw material">Mostrar Materia Prima</value>
+  </row>
+  <row id="808245" trl="N">
+    <value column="Text" original="Shipment No:">No. Embarque:</value>
+  </row>
+  <row id="808256" trl="N">
+    <value column="Text" original="PRODUCTION REPORT">REPORTE DE PRODUCCION</value>
+  </row>
+  <row id="808264" trl="N">
+    <value column="Text" original="Other unit">Segunda Unidad</value>
+  </row>
+  <row id="808317" trl="N">
+    <value column="Text" original="PROJECT">PROYECTO</value>
+  </row>
+  <row id="808328" trl="N">
+    <value column="Text" original="Warehouse inventory detail report">Informe Detallado de Inventario</value>
+  </row>
+  <row id="808338" trl="N">
+    <value column="Text" original="Subtotal:">Subtotal:</value>
+  </row>
+  <row id="808341" trl="N">
+    <value column="Text" original="M2/ROLL">M2/ROLL</value>
+  </row>
+  <row id="808342" trl="N">
+    <value column="Text" original="ROLLS">ROLLOS</value>
+  </row>
+  <row id="808343" trl="N">
+    <value column="Text" original="INCOMINGS">INGRESOS</value>
+  </row>
+  <row id="808344" trl="N">
+    <value column="Text" original="OUTGOINGS">SALIDAS</value>
+  </row>
+  <row id="808345" trl="N">
+    <value column="Text" original="M2">M2</value>
+  </row>
+  <row id="808367" trl="N">
+    <value column="Text" original="Secondary Unit:">Unidad Secundaria:</value>
+  </row>
+  <row id="808368" trl="N">
+    <value column="Text" original="Conversion ratio:">Tasa de Conversión:</value>
+  </row>
+  <row id="808379" trl="N">
+    <value column="Text" original="Decrease">Mermas</value>
+  </row>
+  <row id="808380" trl="N">
+    <value column="Text" original="Rejected">Rechazado</value>
+  </row>
+  <row id="808381" trl="N">
+    <value column="Text" original="Consum M.">Consumo M.</value>
+  </row>
+  <row id="808382" trl="N">
+    <value column="Text" original="Decre.ind.">Indicador de Mermas</value>
+  </row>
+  <row id="808386" trl="N">
+    <value column="Text" original="Empty qty:">Cantidad vacía:</value>
+  </row>
+  <row id="808423" trl="N">
+    <value column="Text" original="PAGE:">PÁGINA</value>
+  </row>
+  <row id="808452" trl="N">
+    <value column="Text" original="TOTAL AMOUNT:">CANTIDAD TOTAL:</value>
+  </row>
+  <row id="808464" trl="N">
+    <value column="Text" original="of">de</value>
+  </row>
+  <row id="808467" trl="N">
+    <value column="Text" original="Real Amt.">Cantidad Real</value>
+  </row>
+  <row id="808468" trl="N">
+    <value column="Text" original="Avg. Pr.">Precio Prom.</value>
+  </row>
+  <row id="808469" trl="N">
+    <value column="Text" original="Disc.">Disc.</value>
+  </row>
+  <row id="808470" trl="N">
+    <value column="Text" original="Avg. Net Pr.">Precio Net Prom.</value>
+  </row>
+  <row id="808473" trl="N">
+    <value column="Text" original="Totals">Totales</value>
+  </row>
+  <row id="808474" trl="N">
+    <value column="Text" original="Phase">Fase</value>
+  </row>
+  <row id="808477" trl="N">
+    <value column="Text" original="Material orders report">Informe de Notas de Entrega de Entrada</value>
+  </row>
+  <row id="808478" trl="N">
+    <value column="Text" original="Quantity greater than">Cantidad Mayor que</value>
+  </row>
+  <row id="808479" trl="N">
+    <value column="Text" original="By Ascending Quantity">Por Cantidad Ascendente</value>
+  </row>
+  <row id="808480" trl="N">
+    <value column="Text" original="By Descending Quantity">Por Cantidad Descendente</value>
+  </row>
+  <row id="808481" trl="N">
+    <value column="Text" original="Explode: phases:">Explotar fases</value>
+  </row>
+  <row id="808482" trl="N">
+    <value column="Text" original="Secuence:">Secuencia:</value>
+  </row>
+  <row id="808483" trl="N">
+    <value column="Text" original="Cutomer:">Cliente:</value>
+  </row>
+  <row id="808484" trl="N">
+    <value column="Text" original="Acct. No.">Cta. No.</value>
+  </row>
+  <row id="808487" trl="N">
+    <value column="Text" original="Printed on">Impreso: </value>
+  </row>
+  <row id="808488" trl="N">
+    <value column="Text" original="other footer data">otra información</value>
+  </row>
+  <row id="808489" trl="N">
+    <value column="Text" original="Amt. Ref.">Imp. Ref.</value>
+  </row>
+  <row id="808490" trl="N">
+    <value column="Text" original="A %">A %</value>
+  </row>
+  <row id="808492" trl="N">
+    <value column="Text" original="Q %">C %</value>
+  </row>
+  <row id="808493" trl="N">
+    <value column="Text" original="Grouping Levels:">Niveles de Agrupación:</value>
+  </row>
+  <row id="808497" trl="N">
+    <value column="Text" original="Entry:">Entrada:</value>
+  </row>
+  <row id="808499" trl="N">
+    <value column="Text" original="Weight Ref.">Peso Ref.</value>
+  </row>
+  <row id="808500" trl="N">
+    <value column="Text" original="Qty. Ref.">Cant. Ref.</value>
+  </row>
+  <row id="808502" trl="N">
+    <value column="Text" original="A %">A %</value>
+  </row>
+  <row id="808582" trl="N">
+    <value column="Text" original="Init date">Fecha Inicio</value>
+  </row>
+  <row id="808583" trl="N">
+    <value column="Text" original="Org">Org</value>
+  </row>
+  <row id="808584" trl="N">
+    <value column="Text" original="Expenses">Gastos</value>
+  </row>
+  <row id="808585" trl="N">
+    <value column="Text" original="Planned">Planificado</value>
+  </row>
+  <row id="808586" trl="N">
+    <value column="Text" original="Real">Real</value>
+  </row>
+  <row id="808587" trl="N">
+    <value column="Text" original="Collected">Agrupado</value>
+  </row>
+  <row id="808588" trl="N">
+    <value column="Text" original="Revenue">Ingreso</value>
+  </row>
+  <row id="808589" trl="N">
+    <value column="Text" original="Margin %">% Margen</value>
+  </row>
+  <row id="808590" trl="N">
+    <value column="Text" original="Gross margin">Margen Bruto</value>
+  </row>
+  <row id="808601" trl="N">
+    <value column="Text" original="n">n</value>
+  </row>
+  <row id="808602" trl="N">
+    <value column="Text" original="INVOICE">FACTURA</value>
+  </row>
+  <row id="808603" trl="N">
+    <value column="Text" original="Internet:">Internet:</value>
+  </row>
+  <row id="808604" trl="N">
+    <value column="Text" original="Invoice Number">Número Factura</value>
+  </row>
+  <row id="808607" trl="N">
+    <value column="Text" original="Net">Neto</value>
+  </row>
+  <row id="808630" trl="N">
+    <value column="Text" original="Purchase Order Report">Reporte Orden de Compra</value>
+  </row>
+  <row id="808632" trl="N">
+    <value column="Text" original="Product Cat.">Categoría Producto</value>
+  </row>
+  <row id="808637" trl="N">
+    <value column="Text" original="Invoice Date:">Fecha Factura:</value>
+  </row>
+  <row id="808642" trl="N">
+    <value column="Text" original="Stock">Stock</value>
+  </row>
+  <row id="808643" trl="N">
+    <value column="Text" original="Pending Qty">Cantidad Pendiente</value>
+  </row>
+  <row id="808677" trl="N">
+    <value column="Text" original="Order Number">No. Pedido</value>
+  </row>
+  <row id="808683" trl="N">
+    <value column="Text" original="Immediate">Inmediato</value>
+  </row>
+  <row id="808685" trl="N">
+    <value column="Text" original="90 days">90 días</value>
+  </row>
+  <row id="808688" trl="N">
+    <value column="Text" original="Size">Tamaño</value>
+  </row>
+  <row id="808692" trl="N">
+    <value column="Text" original="Inv/Debt-pay/ord No">Inv/Debt-pay/ord No</value>
+  </row>
+  <row id="808693" trl="N">
+    <value column="Text" original="Texto estático">Texto estático</value>
+  </row>
+  <row id="808697" trl="N">
+    <value column="Text" original="Sale Invoices Report">Sale Invoices Report</value>
+  </row>
+  <row id="808698" trl="N">
+    <value column="Text" original="From 02-02-1082 to 10-07-3007">From 02-02-1082 to 10-07-3007</value>
+  </row>
+  <row id="808699" trl="N">
+    <value column="Text" original="Total weight ref.">Total Peso ref.</value>
+  </row>
+  <row id="808700" trl="N">
+    <value column="Text" original="Refunded Sale Orders Report">Refunded Sale Orders Report</value>
+  </row>
+  <row id="808701" trl="N">
+    <value column="Text" original="Total % ratio">Total % ratio</value>
+  </row>
+  <row id="808702" trl="N">
+    <value column="Text" original="Total dev. ref">Total dev. ref</value>
+  </row>
+  <row id="808703" trl="N">
+    <value column="Text" original="Total %rat ref">Total %rat ref</value>
+  </row>
+  <row id="808704" trl="N">
+    <value column="Text" original="Quantity Ref..">Cantidad Ref.</value>
+  </row>
+  <row id="809742" trl="N">
+    <value column="Text" original="Business Partner Card">Ficha Relacionado</value>
+  </row>
+  <row id="809744" trl="N">
+    <value column="Text" original="General Information">Información General</value>
+  </row>
+  <row id="809745" trl="N">
+    <value column="Text" original="Customer Analysis">Análisis cliente</value>
+  </row>
+  <row id="809746" trl="N">
+    <value column="Text" original="Contacts">Contactos</value>
+  </row>
+  <row id="809747" trl="N">
+    <value column="Text" original="Standard filter cost">Standard filter cost</value>
+  </row>
+  <row id="809748" trl="N">
+    <value column="Text" original="Plan">Plan</value>
+  </row>
+  <row id="809756" trl="N">
+    <value column="Text" original="Totals">Totales</value>
+  </row>
+  <row id="809757" trl="N">
+    <value column="Text" original="Ordered">Pedido</value>
+  </row>
+  <row id="809758" trl="N">
+    <value column="Text" original="Promised">Previsto</value>
+  </row>
+  <row id="809759" trl="N">
+    <value column="Text" original="On hand">Disponible</value>
+  </row>
+  <row id="809760" trl="N">
+    <value column="Text" original="Preqty">Preqty</value>
+  </row>
+  <row id="809818" trl="N">
+    <value column="Text" original="Process Plan">Plan de Producción</value>
+  </row>
+  <row id="809821" trl="N">
+    <value column="Text" original="Valid From">Válido Desde</value>
+  </row>
+  <row id="809823" trl="N">
+    <value column="Text" original="Version">Versión</value>
+  </row>
+  <row id="809828" trl="N">
+    <value column="Text" original="Sequence">Secuencia</value>
+  </row>
+  <row id="809841" trl="N">
+    <value column="Text" original="Production">Producción</value>
+  </row>
+  <row id="809847" trl="N">
+    <value column="Text" original="CONCEPT">CONCEPTO</value>
+  </row>
+  <row id="809852" trl="N">
+    <value column="Text" original="Sequence Total Cost:">Costo Total de Secuencia</value>
+  </row>
+  <row id="809860" trl="N">
+    <value column="Text" original="Produced Product">Producto Producido</value>
+  </row>
+  <row id="809865" trl="N">
+    <value column="Text" original="Cash Journal Selector">Selector de Diario de Caja</value>
+  </row>
+  <row id="809866" trl="N">
+    <value column="Text" original="Consignment invoicing report">Informe de Facturación en Consigna</value>
+  </row>
+  <row id="809867" trl="N">
+    <value column="Text" original="MovementDate">MovementDate</value>
+  </row>
+  <row id="809872" trl="N">
+    <value column="Text" original="FAX no.: xx(948) 326 581 Phone no.: xx(948) 326 580 xxYour Address xx1111 Your Town (Country)">FAX no.: xx(948) 326 581 Phone no.: xx(948) 326 580 xxYour Address xx1111 Your Town (Country)</value>
+  </row>
+  <row id="809874" trl="N">
+    <value column="Text" original="Delivery Term">Forma de Envío</value>
+  </row>
+  <row id="809877" trl="N">
+    <value column="Text" original="from 9:00 to 13:00">from 9:00 to 13:00</value>
+  </row>
+  <row id="809878" trl="N">
+    <value column="Text" original="Delivery Expense">Gastos de Env&#237;o</value>
+  </row>
+  <row id="809879" trl="N">
+    <value column="Text" original="Included">Incluido</value>
+  </row>
+  <row id="809880" trl="N">
+    <value column="Text" original="Payment Terms">Condiciones de Pago</value>
+  </row>
+  <row id="809882" trl="N">
+    <value column="Text" original="If there is no reply within 48 hours the order will be considered as accepted.">Si no hay respuesta en 48 horas el Pedido se dará por aceptado</value>
+  </row>
+  <row id="809883" trl="N">
+    <value column="Text" original="Include order No. in shipment and invoice">Incluir No. de Pedido en Nota de Entrega y Factura</value>
+  </row>
+  <row id="809884" trl="N">
+    <value column="Text" original="Product Name">Nombre Producto</value>
+  </row>
+  <row id="809886" trl="N">
+    <value column="Text" original="Total (without taxes):">Total (sin impuestos):</value>
+  </row>
+  <row id="809887" trl="N">
+    <value column="Text" original="ORGANIZATION">ORGANIZACION</value>
+  </row>
+  <row id="809888" trl="N">
+    <value column="Text" original="PARTNER NAME">NOMBRE RELACIONADO</value>
+  </row>
+  <row id="809889" trl="N">
+    <value column="Text" original="ORDER">PEDIDO</value>
+  </row>
+  <row id="809890" trl="N">
+    <value column="Text" original="ORDER DATE">FECHA PEDIDO</value>
+  </row>
+  <row id="809891" trl="N">
+    <value column="Text" original="CURRENCY">MONEDA</value>
+  </row>
+  <row id="809892" trl="N">
+    <value column="Text" original="TYPE">TIPO</value>
+  </row>
+  <row id="809894" trl="N">
+    <value column="Text" original="Conditions:">Condiciones</value>
+  </row>
+  <row id="809895" trl="N">
+    <value column="Text" original="es">es</value>
+  </row>
+  <row id="809896" trl="N">
+    <value column="Text" original="ES">ES</value>
+  </row>
+  <row id="809897" trl="N">
+    <value column="Text" original="Cash Type">Tipo de efectivo</value>
+  </row>
+  <row id="809898" trl="N">
+    <value column="Text" original="Initial Balance:">Balance Inicial</value>
+  </row>
+  <row id="809899" trl="N">
+    <value column="Text" original="Final Balance:">Balance Final</value>
+  </row>
+  <row id="809900" trl="N">
+    <value column="Text" original="Total Cash:">Total Efectivo</value>
+  </row>
+  <row id="809905" trl="N">
+    <value column="Text" original="PROJECT NAME">NOMBRE PROYECTO</value>
+  </row>
+  <row id="809907" trl="N">
+    <value column="Text" original="Close">Cerrar</value>
+  </row>
+  <row id="809908" trl="N">
+    <value column="Text" original="Total Order:">Total Pedido:</value>
+  </row>
+  <row id="809909" trl="N">
+    <value column="Text" original="M. %">M. %</value>
+  </row>
+  <row id="809910" trl="N">
+    <value column="Text" original="Amt. ref">Ctd. ref</value>
+  </row>
+  <row id="809911" trl="N">
+    <value column="Text" original="Cost ref">Coste Ref</value>
+  </row>
+  <row id="809912" trl="N">
+    <value column="Text" original="Pro. ref">Pro. ref</value>
+  </row>
+  <row id="809913" trl="N">
+    <value column="Text" original="M.r %">M.r %</value>
+  </row>
+  <row id="809914" trl="N">
+    <value column="Text" original="A. %">A. %</value>
+  </row>
+  <row id="809915" trl="N">
+    <value column="Text" original="M.dif">M.dif</value>
+  </row>
+  <row id="809916" trl="N">
+    <value column="Text" original="W. Ref">P. Ref</value>
+  </row>
+  <row id="809917" trl="N">
+    <value column="Text" original="Qty%">Ctd%</value>
+  </row>
+  <row id="809918" trl="N">
+    <value column="Text" original="Q. ref">C. ref</value>
+  </row>
+  <row id="809921" trl="N">
+    <value column="Text" original="M. %">M. %</value>
+  </row>
+  <row id="809924" trl="N">
+    <value column="Text" original="Global consume:">Consumo global:</value>
+  </row>
+  <row id="809928" trl="N">
+    <value column="Text" original="ORDER NO.">Nº Pedido</value>
+  </row>
+  <row id="809930" trl="N">
+    <value column="Text" original="% Tax">% Impuesto</value>
+  </row>
+  <row id="809938" trl="N">
+    <value column="Text" original="Movement Date">Fecha Movimiento</value>
+  </row>
+  <row id="809939" trl="N">
+    <value column="Text" original="Production Plan">Plan de Producción</value>
+  </row>
+  <row id="809943" trl="N">
+    <value column="Text" original="Cashbook">Libro de Caja</value>
+  </row>
+  <row id="809944" trl="N">
+    <value column="Text" original="Project Type">Tipo de Proyecto</value>
+  </row>
+  <row id="809945" trl="N">
+    <value column="Text" original="Include Suborganizations">Incluir Suborganizaciones</value>
+  </row>
+  <row id="809948" trl="N">
+    <value column="Text" original="Commercial Document">Documento Comercial</value>
+  </row>
+  <row id="809951" trl="N">
+    <value column="Text" original="Project Type">Tipo de Proyecto</value>
+  </row>
+  <row id="809954" trl="N">
+    <value column="Text" original="Show only Discounted">Mostrar sólo con descuento</value>
+  </row>
+  <row id="809961" trl="N">
+    <value column="Text" original="Ratio Greater Than">Ratio mayor que</value>
+  </row>
+  <row id="809964" trl="N">
+    <value column="Text" original="Cashbook">Libro de Caja</value>
+  </row>
+  <row id="809965" trl="N">
+    <value column="Text" original="Show only Discounted">Mostrar sólo con descuento</value>
+  </row>
+  <row id="809966" trl="N">
+    <value column="Text" original="Invoicing Type">Tipo Facturación</value>
+  </row>
+  <row id="809967" trl="N">
+    <value column="Text" original="Details">Con detalle</value>
+  </row>
+  <row id="809973" trl="N">
+    <value column="Text" original="Building Site Type">Tipo de Proyecto</value>
+  </row>
+  <row id="809974" trl="N">
+    <value column="Text" original="Initiative Type">Tipo Iniciativa</value>
+  </row>
+  <row id="809975" trl="N">
+    <value column="Text" original="Initiative Type">Tipo Iniciativa</value>
+  </row>
+  <row id="809976" trl="N">
+    <value column="Text" original="Building Site Type">Tipo de Proyecto</value>
+  </row>
+  <row id="809977" trl="N">
+    <value column="Text" original="Building Site Type">Tipo de Proyecto</value>
+  </row>
+  <row id="809978" trl="N">
+    <value column="Text" original="Initiative Type">Tipo Iniciativa</value>
+  </row>
+  <row id="809980" trl="N">
+    <value column="Text" original="Drawing up Date:">Fecha confección:</value>
+  </row>
+  <row id="809981" trl="N">
+    <value column="Text" original="Charge Date:">Fecha de cobro:</value>
+  </row>
+  <row id="809982" trl="N">
+    <value column="Text" original="Bank Account:">Cuenta Bancaria:</value>
+  </row>
+  <row id="809983" trl="N">
+    <value column="Text" original="Maturity Date">Fecha vto.</value>
+  </row>
+  <row id="809984" trl="N">
+    <value column="Text" original="Inv/Debt-Pay/Ord No">Factura/Efecto/Pedido</value>
+  </row>
+  <row id="809993" trl="N">
+    <value column="Text" original="Journal entry ">Asiento</value>
+  </row>
+  <row id="809994" trl="N">
+    <value column="Text" original="Date ">Fecha </value>
+  </row>
+  <row id="809995" trl="N">
+    <value column="Text" original="printed on">Impreso</value>
+  </row>
+  <row id="809998" trl="N">
+    <value column="Text" original="Total Client:">Total Entidad:</value>
+  </row>
+  <row id="810002" trl="N">
+    <value column="Text" original="Remittance No:">Núm. Remesa:</value>
+  </row>
+  <row id="810003" trl="N">
+    <value column="Text" original="Tax Type">Tipo impuesto</value>
+  </row>
+  <row id="810004" trl="N">
+    <value column="Text" original="Taxable Base">Base Imponible</value>
+  </row>
+  <row id="810008" trl="N">
+    <value column="Text" original="Account Number">Num. Cuenta</value>
+  </row>
+  <row id="810009" trl="N">
+    <value column="Text" original="Total Product">Total Producto</value>
+  </row>
+  <row id="810010" trl="N">
+    <value column="Text" original="Acct:">Cuenta:</value>
+  </row>
+  <row id="810011" trl="N">
+    <value column="Text" original="OUM">OUM</value>
+  </row>
+  <row id="810012" trl="N">
+    <value column="Text" original="Initiative type">Tipo de Iniciativa</value>
+  </row>
+  <row id="810013" trl="N">
+    <value column="Text" original="Building site type">Tipo Obra</value>
+  </row>
+  <row id="810014" trl="N">
+    <value column="Text" original="Situation">Situación</value>
+  </row>
+  <row id="810015" trl="N">
+    <value column="Text" original="Fase">Fase</value>
+  </row>
+  <row id="810016" trl="N">
+    <value column="Text" original="Price(/m2)">Precio(/m2)</value>
+  </row>
+  <row id="810017" trl="N">
+    <value column="Text" original="Amount()">Importe()</value>
+  </row>
+  <row id="810018" trl="N">
+    <value column="Text" original="Total Projects:">Total Proyectos:</value>
+  </row>
+  <row id="810019" trl="N">
+    <value column="Text" original="Amount Greater Than">Importe Mayor Que</value>
+  </row>
+  <row id="810020" trl="N">
+    <value column="Text" original="Less Than">Less Than</value>
+  </row>
+  <row id="810021" trl="N">
+    <value column="Text" original="Amount Greater Than">Importe Mayor Que</value>
+  </row>
+  <row id="810022" trl="N">
+    <value column="Text" original="Less Than">Menor que</value>
+  </row>
+  <row id="810023" trl="N">
+    <value column="Text" original="Amount Greater Than">Importe Mayor Que</value>
+  </row>
+  <row id="810024" trl="N">
+    <value column="Text" original="Less Than">Less Than</value>
+  </row>
+  <row id="810025" trl="N">
+    <value column="Text" original="Amount Greater Than">Importe Mayor Que</value>
+  </row>
+  <row id="810026" trl="N">
+    <value column="Text" original="Less Than">Less Than</value>
+  </row>
+  <row id="810027" trl="N">
+    <value column="Text" original="Amount Greater Than">Importe Mayor Que</value>
+  </row>
+  <row id="810028" trl="N">
+    <value column="Text" original="Less Than">Less Than</value>
+  </row>
+  <row id="810029" trl="N">
+    <value column="Text" original="Amount Greater Than">Importe Mayor Que</value>
+  </row>
+  <row id="810030" trl="N">
+    <value column="Text" original="Less Than">Less Than</value>
+  </row>
+  <row id="810031" trl="N">
+    <value column="Text" original="Amount Greater Than">Importe Mayor Que</value>
+  </row>
+  <row id="810032" trl="N">
+    <value column="Text" original="Less Than">Less Than</value>
+  </row>
+  <row id="810033" trl="N">
+    <value column="Text" original="Expiration Date">Fecha caducidad</value>
+  </row>
+  <row id="810034" trl="N">
+    <value column="Text" original="TOTAL  ">TOTAL  </value>
+  </row>
+  <row id="810035" trl="N">
+    <value column="Text" original="Shell-by-date">Fecha de Caducidad</value>
+  </row>
+  <row id="810036" trl="N">
+    <value column="Text" original="Final ">Final </value>
+  </row>
+  <row id="810037" trl="N">
+    <value column="Text" original="Debit Period">Imp. Débito Periodo</value>
+  </row>
+  <row id="810038" trl="N">
+    <value column="Text" original="Credit Period">Imp. Crédito Periodo</value>
+  </row>
+  <row id="810039" trl="N">
+    <value column="Text" original="Delivery date">Fecha de Entrega</value>
+  </row>
+  <row id="810040" trl="N">
+    <value column="Text" original="n">Fecha de Movimiento</value>
+  </row>
+</compiereTrl>

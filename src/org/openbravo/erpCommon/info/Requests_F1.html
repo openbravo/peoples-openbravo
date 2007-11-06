@@ -1,0 +1,64 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Request selector</TITLE>
+<LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></LINK> 
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://yourSite/web/";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+function depurar() {
+	var frm = document.frmSelector;
+	if ((frm.inpDocumentno.value==null || frm.inpDocumentno.value=="") && (frm.inpSubject.value==null || frm.inpSubject.value=="") && (frm.inpLastResult.value==null || frm.inpLastResult.value=="")) {
+		frm.inpKey.focus();
+		mensaje(7);
+		return false;
+	}
+	return true;
+}
+</SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="focoPrimerControl();porDefecto('submitCommandForm(\'FIND\', true)');" >
+<FORM name="frmSelector" method="POST" action="Requests_F2.html" target="medio">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <BR></BR>
+  <TABLE border="0" cellspacing="2" cellpadding="0">
+    <TR> 
+      <TD > <SPAN >Doc. No.</SPAN></TD>
+      <TD > <SPAN >Subject</SPAN></TD>
+      <TD > <SPAN >Last result</SPAN></TD>
+      <TD rowspan="3" > <A href="#" onclick="submitCommandForm('FIND', false, null, null, 'medio');return false;" onmouseover="window.status='Results';return true;" onmouseout="window.status='';return true;" > 
+        <img id="buttonResults" src="../../../../../web/images/Find.jpg" alt="Results" title="Results" border="0"></IMG></A></TD>
+    </TR>
+    <TR> 
+      <TD> <INPUT type="text" name="inpDocumentno" size="10" value="%"></INPUT>
+      </TD>
+      <TD> <INPUT type="text" name="inpSubject" size="30" value=""></INPUT>
+      </TD>
+      <TD> <INPUT type="text" name="inpLastResult" size="30"></INPUT>
+      </TD>
+    </TR>
+  </TABLE>
+  <HR></HR>
+</FORM>
+</BODY>
+</HTML>

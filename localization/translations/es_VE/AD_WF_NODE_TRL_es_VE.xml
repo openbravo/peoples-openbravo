@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compiereTrl language="es_VE" table="AD_WF_NODE">
+  <row id="106" trl="N">
+    <value column="Name" original="Project Reporting">Información del proyecto</value>
+    <value column="Description" original="Maintain Project Reporting Cycles">Mantenimiento de los ciclos de reporting de proyectos</value>
+    <value column="Help" original="The Project Cycle Window defines the steps associated with a specific Project.You may want to define several Project cycles to differentiate the different types of projects. Project cycles may use all or a subset of the used Project Status (e.g. Your opportunity project cycle may include the steps from prospect to contract - the service cycle may include steps from installation to customer acceptance.">La ventana de los ciclos de reporting de proyectos define los pasos asociados a un Proyecto determinado. El usuario puede definir diferentes ciclos para diferenciar tipos de proyecto diferentes.</value>
+  </row>
+  <row id="107" trl="N">
+    <value column="Name" original="Language">Idioma</value>
+    <value column="Description" original="Define multiple languages to be used in the application.">Define los idiomas de trabajo de la aplicación.</value>
+    <value column="Help" original="Define multiple languages to be used in the application.">Define los idiomas de trabajo de la aplicación.</value>
+  </row>
+  <row id="108" trl="N">
+    <value column="Name" original="Project Type">Tipo de proyecto</value>
+    <value column="Description" original="Define projects types with typical phases and tasks to be used in projects.">Define los tipos de proyectos así como sus fases y tareas específicas para utilizar en los proyectos.</value>
+    <value column="Help" original="Define projects types with typical phases and tasks to be used in projects.">Define los tipos de proyectos así como sus fases y tareas específicas para utilizar en los proyectos.</value>
+  </row>
+  <row id="110" trl="N">
+    <value column="Name" original="Client">Entidad</value>
+    <value column="Description" original="Define client characteristics, additional information, and defaults.">Define las características, la información adicional y los incumplimientos de las entidades.</value>
+    <value column="Help" original="Define client characteristics, additional information, and defaults.">Define las características, la información adicional y los incumplimientos de las entidades.</value>
+  </row>
+  <row id="111" trl="N">
+    <value column="Name" original="Role">Rol</value>
+    <value column="Description" original="Create roles with assigned users, and edit roles access to organizations, windows, processes, etc.">Crea roles para los usuarios asignados y edita el permiso de los roles a las organizaciones, ventanas, procesos, etc.</value>
+    <value column="Help" original="Create roles with assigned users, and edit roles access to organizations, windows, processes, etc.">Crea roles para los usuarios asignados y edita el permiso de los roles a las organizaciones, ventanas, procesos, etc.</value>
+  </row>
+  <row id="112" trl="N">
+    <value column="Name" original="User">Usuario</value>
+    <value column="Description" original="Create users and manage user roles to give access permissions. ">Crea usuarios y gestiona los roles de usuario para otorgar permisos de acceso.</value>
+    <value column="Help" original="Create users and manage user roles to give access permissions. ">Crea usuarios y gestiona los roles de usuario para otorgar permisos de acceso.</value>
+  </row>
+  <row id="113" trl="N">
+    <value column="Name" original="Organization">Organización</value>
+    <value column="Description" original="Create organizations and manage the organizational structure according to your business necessities. ">Crea las organizaciones y gestiona la estructura organizacional de acuerdo con sus necesidades de negocios.</value>
+    <value column="Help" original="Create organizations and manage the organizational structure according to your business necessities. ">Crea las organizaciones y gestiona la estructura organizacional de acuerdo con sus necesidades de negocios.</value>
+  </row>
+  <row id="114" trl="N">
+    <value column="Name" original="Multiphase Project">Proyecto fases</value>
+    <value column="Description" original="Create and edit projects and tasks potentially requiring sales invoicing.">Crea y edita proyectos y tareas que puedan requerir facturas de venta.</value>
+    <value column="Help" original="Create and edit projects and tasks potentially requiring sales invoicing.">Crea y edita proyectos y tareas que puedan requerir facturas de venta.</value>
+  </row>
+  <row id="115" trl="N">
+    <value column="Name" original="Project Status Report">Estado de proyecto</value>
+    <value column="Description" original="Summary and detail Project Status">Resumen y detalles del estado del proyecto.</value>
+    <value column="Help" original="To report on your projects, select the project cycle and restricting parameters.&#10;If you miss certain projects check their status and if the project status is included in your Project cycle.">Para introducir informaci&#243;n de los proyectos, seleccionar el ciclo del proyecto y los par&#225;metros restrictivos.
+</value>
+  </row>
+  <row id="116" trl="N">
+    <value column="Name" original="Accounting Schema">Esquema de contabilidad</value>
+    <value column="Description" original="Project as Account Segment">Proyecto como Segmento de Cuenta</value>
+    <value column="Help" original="To enable accounting reporting of projects, create and enable a project segment in the account elements.">Para habilitar informes contables de proyectos, debe crear y habilitar un segmento de proyecto en los elementos de cuenta.</value>
+  </row>
+  <row id="118" trl="N">
+    <value column="Name" original="System Elements">Elementos del sistema</value>
+    <value column="Description" original="Translate System Elements">Traducci&#243;n de los elementos del sistema.</value>
+    <value column="Help" original="System Elements are used to centrally define field labels, description and help. When translating an Element, the appropriate information of Fields in Windows, Parameters and Reports are translated (overwritten)">Los elementos del sistema permiten definir de manera centralizada las etiquetas de los campos, descripciones y ayudas. Al modificar un elemento del sistema, cada uno de los campos de la aplicaci&#243;n enlazado con este elemento es sobreescrito.</value>
+  </row>
+  <row id="119" trl="N">
+    <value column="Name" original="Messages">Mensajes</value>
+    <value column="Description" original="Translate Messages">Traducci&#243;n de mensajes</value>
+    <value column="Help" original="Translate the messages used in Windows, Forms and Processes">Traducci&#243;n de los mensajes utilizados en las ventanas, formularios y procesos.</value>
+  </row>
+  <row id="120" trl="N">
+    <value column="Name" original="Reference">Referencia</value>
+    <value column="Description" original="Translate References">Traducci&#243;n de referencias.</value>
+    <value column="Help" original="References are used as prefedined selection lists.  You only need to translate the List Elements !!">Las referencias se utilizan como valores por defecto para las listas de selecci&#243;n. Es suficiente con traducir los elementos de la lista.</value>
+  </row>
+  <row id="121" trl="N">
+    <value column="Name" original="Window &amp; Tab">Ventanas y Pesta&#241;as</value>
+    <value column="Description" original="Translate Windows and Tabs">Traducci&#243;n de ventanas y pesta&#241;as</value>
+    <value column="Help" original="Translate the Name, Description and Help for Windows and Tabs.  Most of the Fields are already translated, if they are centrally maintained.">Permite traducir el nombre, la descripci&#243;n y la ayuda de las ventanas y las pesta&#241;as de la aplicaci&#243;n. La mayor&#237;a de los campos de la aplicaci&#243;n se actualizan con la modificaci&#243;n de los elementos.</value>
+  </row>
+  <row id="122" trl="N">
+    <value column="Name" original="Form">Fomulario</value>
+    <value column="Description" original="Translate Forms">Traducci&#243;n de los formularios.</value>
+    <value column="Help" original="Forms are special Windows and you need to translate its name, description and Help.">Los formularios son ventanas especiales que requieren la traducci&#243;n de su nombre, descripci&#243;n y ayuda.</value>
+  </row>
+  <row id="123" trl="N">
+    <value column="Name" original="Report &amp; Process">Informes y procesos</value>
+    <value column="Description" original="Translate Reports and Processes.">Traducci&#243;n de informes y procesos.</value>
+    <value column="Help" original="Translate the Name, Description and Help for Processes and Reports. You don't need to translate the Parameters, if they are centrally maintained.">Traducir el nombre, descripci&#243;n y ayuda de los procesos y los informes. No es necesaria la traducci&#243;n los par&#225;metros centralizados.</value>
+  </row>
+  <row id="125" trl="N">
+    <value column="Name" original="Fiscal Calendar">Calendario anual y periodos</value>
+    <value column="Description" original="Create multiple fiscal calendars and periods for accounting purposes.">Crea múltiples calendarios y períodos fiscales con fines contables.</value>
+    <value column="Help" original="Create multiple fiscal calendars and periods for accounting purposes.">Crea múltiples calendarios y períodos fiscales con fines contables.</value>
+  </row>
+  <row id="126" trl="N">
+    <value column="Name" original="Account Tree">Elemento de la cuenta</value>
+    <value column="Description" original="Create and edit account elements and add them to your defined chart of accounts or account trees. ">Crea y edita los elementos de la cuenta y añádalos a su diagrama de cuentas o árbol de cuentas.</value>
+    <value column="Help" original="Create and edit account elements and add them to your defined chart of accounts or account trees. ">Crea y edita los elementos de la cuenta y añádalos a su diagrama de cuentas o árbol de cuentas.</value>
+  </row>
+  <row id="127" trl="N">
+    <value column="Name" original="Accounting Schema">Esquema contable</value>
+    <value column="Description" original="Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ">Crea y edita múltiples esquemas contables y asígneles los elementos de la cuenta; defina las tablas BD para los procesos contables y defina las cuentas de LM que se usan por default.</value>
+    <value column="Help" original="Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ">Crea y edita múltiples esquemas contables y asígneles los elementos de la cuenta; defina las tablas BD para los procesos contables y defina las cuentas de LM que se usan por default.</value>
+  </row>
+  <row id="128" trl="N">
+    <value column="Name" original="G/L Category">Categoría de LM</value>
+    <value column="Description" original="Define G/L Categories to be used in the General Ledger.">Define las categorías de LM para utilizar en el Libro Mayor.</value>
+    <value column="Help" original="Define G/L Categories to be used in the General Ledger.">Define las categorías de LM para utilizar en el Libro Mayor.</value>
+  </row>
+  <row id="129" trl="N">
+    <value column="Name" original="Document Type">Tipo de documento</value>
+    <value column="Description" original="Create and manage document types to be used for all application transactions. ">Crea y gestiona los tipos de documento para utilizar en todas las transacciones de la aplicación.</value>
+    <value column="Help" original="Create and manage document types to be used for all application transactions. ">Crea y gestiona los tipos de documento para utilizar en todas las transacciones de la aplicación.</value>
+  </row>
+  <row id="130" trl="N">
+    <value column="Name" original="Document Sequence">Secuencia de documento (numeración)</value>
+    <value column="Description" original="Define an auto numbering system to uniquely identify document types.">Define un sistema de numeración automática para identificar unívocamente los tipos de documentos.</value>
+    <value column="Help" original="Define an auto numbering system to uniquely identify document types.">Define un sistema de numeración automática para identificar unívocamente los tipos de documentos.</value>
+  </row>
+  <row id="131" trl="N">
+    <value column="Name" original="Business Partner Category">Grupos de Relacionados</value>
+    <value column="Description" original="Create and edit information related to similar business partners at one time by grouping them.">Crea y edita la información de relacionados con características similares, agrupándolos de una sola vez.</value>
+    <value column="Help" original="Create and edit information related to similar business partners at one time by grouping them.">Crea y edita la información de relacionados con características similares, agrupándolos de una sola vez.</value>
+  </row>
+  <row id="132" trl="N">
+    <value column="Name" original="Title">Tratamientos</value>
+    <value column="Description" original="Define titles to be used to address a business partner.">Define el tratamiento de cortesía para dirigirse a relacionados.</value>
+    <value column="Help" original="Define titles to be used to address a business partner.">Define el tratamiento de cortesía para dirigirse a relacionados.</value>
+  </row>
+  <row id="133" trl="N">
+    <value column="Name" original="Payment Term">Condiciones de pago</value>
+    <value column="Description" original="Define payment terms to be used for business partners taking part in transactions.">Define las condiciones de pago para los relacionados involucrados en las transacciones. </value>
+    <value column="Help" original="Define payment terms to be used for business partners taking part in transactions.">Define las condiciones de pago para los relacionados involucrados en las transacciones. </value>
+  </row>
+  <row id="134" trl="N">
+    <value column="Name" original="Invoice Schedule">Calendario de facturación</value>
+    <value column="Description" original="Define invoice schedules to be used for business partners. ">Define los calendarios de facturación para uso de los relacionados. </value>
+    <value column="Help" original="Define invoice schedules to be used for business partners. ">Define los calendarios de facturación para uso de los relacionados. </value>
+  </row>
+  <row id="135" trl="N">
+    <value column="Name" original="Withholding (1099)">Retención (1099)</value>
+    <value column="Description" original="Maintain Withholding Certificates">Mantenimiento de documentos de retención</value>
+    <value column="Help" original="The Withholding Window defines the rule used for calculating withholding amounts.">La ventana de Mantenimiento de documentos de retención define las reglas que se utilizan para calcular las cantidades retenidas</value>
+  </row>
+  <row id="136" trl="N">
+    <value column="Name" original="Dunning">Seguimiento de Cuentas Morosas</value>
+    <value column="Description" original="Maintain Dunning Levels">Mantenimiento de los niveles de seguimiento de cuentas morosas</value>
+    <value column="Help" original="The Dunning Window defines the parameters that will be used when generating Dunning Letters.  Each customer can be associated with a Dunning Code.  ">&lt;P&gt;La ventana Seguimiento de cuentas morosas define los par&#225;metros que ser&#225;n utilizados para generar las cartas de seguimiento a cuentas morosas. Cada cliente puede asociarse a un c&#243;digo de seguimiento.&lt;/P&gt;</value>
+  </row>
+  <row id="137" trl="N">
+    <value column="Name" original="Revenue Recognition">Per&#237;odo de Reconocimiento de Ingresos</value>
+    <value column="Description" original="Revenue Recognition Rules">Reglas de per&#237;odos de reconocimiento de ingresos</value>
+    <value column="Help" original="The Revenue Recognition Window defines the intervals at which revenue will be recognized. Alternatively, the revenue recognition may be linked to service levels provided.">La ventana Per&#237;odo de reconocimiento de ingresos define los intervalos que ser&#225;n utilizados para reconocer ingresos. Alternativamente, los ingresos reconocidos podr&#225;n estar relacionados con los niveles de servicio provistos.</value>
+  </row>
+  <row id="138" trl="N">
+    <value column="Name" original="Import Business Partner">Importar Relacionado</value>
+    <value column="Description" original="Import business partners in .csv format from previously used databases/applications and past business operations.">Importa los datos de relacionados en formato .csv desde bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+    <value column="Help" original="Import business partners in .csv format from previously used databases/applications and past business operations.">Importa los datos de relacionados en formato .csv desde bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+  </row>
+  <row id="139" trl="N">
+    <value column="Name" original="Business Partner">Relacionado</value>
+    <value column="Description" original="Create and edit business partner information, templates, and bank accounts.">Crea y edita la información, las plantillas y las cuentas bancarias de relacionados.</value>
+    <value column="Help" original="Create and edit business partner information, templates, and bank accounts.">Crea y edita la información, las plantillas y las cuentas bancarias de relacionados.</value>
+  </row>
+  <row id="140" trl="N">
+    <value column="Name" original="User">Usuario</value>
+    <value column="Description" original="Define Sales Representative as User">Definir los representantes de ventas como usuarios de la aplicaci&#243;n.</value>
+    <value column="Help" original="Users can log into the system and have access to functionality via one or more roles. Select the Business Partner you just set up. This enables the user to be treated as sales rep in the system.">Los usuarios pueden hacer login en la aplicación y acceder a las diferentes funcionalidades en función de los roles asignados.</value>
+  </row>
+  <row id="141" trl="N">
+    <value column="Name" original="Business Partner">Relacionado</value>
+    <value column="Description" original="Set up Sales Representative as Business Partner">Dar de alta los representantes de venta como relacionados.</value>
+    <value column="Help" original="Set up the sales representative as Employee and Sales Representative in the Employee tab.  Also set up the Vendor part, if you want to create payments.">Dar de alta los representantes de venta como relacionados. As&#237; mismo, definirlo como cliente si queremos asignarle condiciones de pago.</value>
+  </row>
+  <row id="142" trl="N">
+    <value column="Name" original="Sales Region">Zona de venta</value>
+    <value column="Description" original="Create sales regions to be used in sales operations.">Crea regiones de venta para las operaciones de venta.</value>
+    <value column="Help" original="Create sales regions to be used in sales operations.">Crea regiones de venta para las operaciones de venta.</value>
+  </row>
+  <row id="143" trl="N">
+    <value column="Name" original="Commission">Comisión</value>
+    <value column="Description" original="Define how and when you want commissions to be calculated and to whom they are to be paid.">Define cómo y cuándo desea que se calculen las comisiones y a quién deben abonarse.</value>
+    <value column="Help" original="Define how and when you want commissions to be calculated and to whom they are to be paid.">Define cómo y cuándo desea que se calculen las comisiones y a quién deben abonarse.</value>
+  </row>
+  <row id="144" trl="N">
+    <value column="Name" original="Sales Channel">Canal de ventas</value>
+    <value column="Description" original="Create specific sales channels to be used in sales operations.">Crea canales específicos de ventas para las operaciones de ventas.</value>
+    <value column="Help" original="Create specific sales channels to be used in sales operations.">Crea canales específicos de ventas para las operaciones de ventas.</value>
+  </row>
+  <row id="145" trl="N">
+    <value column="Name" original="Sales Campaign">Campaña de Ventas</value>
+    <value column="Description" original="Create specific sales campaigns to be used in sales operations.">Crea campañas específicas de ventas para las operaciones de ventas.</value>
+    <value column="Help" original="Create specific sales campaigns to be used in sales operations.">Crea campañas específicas de ventas para las operaciones de ventas.</value>
+  </row>
+  <row id="146" trl="N">
+    <value column="Name" original="Workflow">Flujo de trabajo</value>
+    <value column="Description" original="Translate Workflows">Traducción de los flujos de trabajo</value>
+    <value column="Help" original="Translate Name, Description and Help of Workflows and their Nodes.  You only need to translate the List Elements !!">Traducción de los nombres, las descripciones y las ayudas de los flujos de trabajo y sus respectivos nodos. Solamente deben de traducirse los elementos de las listas.</value>
+  </row>
+  <row id="147" trl="N">
+    <value column="Name" original="Performance Color">Color según rendimiento</value>
+    <value column="Description" original="Color used for Performance Analysis">Colores asociados según un rendimiento para el análisis</value>
+    <value column="Help" original="The Performance Color Window allows you to define the color schema to be used to indicate current performance.  The system has predefined Red (below 50%), Yellow (below 100%) and green above 100.  If you want to define your own color schema, do it here.">La ventana de Color según rendimiento permite definir el esquema de colores usado para indicar el performance actual. Por defecto el sistema utiliza el rojo (por debajo del 50%), amarillo (por debajo del 100%) y el verde por encima del 100%. Si quiere definir otro esquema de colores, hágalo aquí.</value>
+  </row>
+  <row id="148" trl="N">
+    <value column="Name" original="Performance Measure Calculation">Cálculo de medidas de rendimiento</value>
+    <value column="Description" original="Define how you calculate your performance measures">Define como calcular las medidas de rendimiento</value>
+    <value column="Help" original="Please test the statement in SQL*Plus first.The select statement needs to return a single value!Any restrictions for Date range, Organizations, Business Partners, Products should be done via the &quot;Performance Measure&quot; window.  This is the generic calculation.As this tends to be somewhat technical, the system has a few examples predefined.">Please test the statement in SQL*Plus first.The select statement needs to return a single value!Any restrictions for Date range, Organizations, Business Partners, Products should be done via the "Performance Measure" window.  This is the generic calculation.As this tends to be somewhat technical, the system has a few examples predefined.</value>
+  </row>
+  <row id="149" trl="N">
+    <value column="Name" original="Performance Measure">Medida de rendimiento</value>
+    <value column="Description" original="Define your Performance Measures">Define las medidas de rendimiento</value>
+    <value column="Help" original="The Performance Measure Window allows you to define the rules and restrictions for performance measurement.  You can, for example, restrict performance measurement to sales for a certain product category for a defined time frame.">La ventana de Medida de rendimiento permite definir las reglas y restricciones de la medida del performance. Se podrá, por ejemplo, restringir la medida del performance de ventas para una categoría de productos para un período de tiempo concreto.</value>
+  </row>
+  <row id="150" trl="N">
+    <value column="Name" original="Performance Achievement">Logro de rendimiento</value>
+    <value column="Description" original="Define Performance Achievements">Define los logros de rendimiento</value>
+    <value column="Help" original="The Performance Achievement Window allows you to define Tasks to be achieved.  The performance is measured by the percentage of reached achievements.">La ventana de Logro de rendimiento permite definir las tareas a ser realizadas. El resultado se mide según el porcentaje de avance/ logros en las tareas.</value>
+  </row>
+  <row id="151" trl="N">
+    <value column="Name" original="Performance Color">Color de rendimiento</value>
+    <value column="Description" original="Color used for Performance Analysis">Colores asociados según un rendimiento para el análisis</value>
+    <value column="Help" original="The Performance Color Window allows you to define the color schema to be used to indicate current performance.  The system has predefined Red (below 50%), Yellow (below 100%) and green above 100.  If you want to define your own color schema, do it here.">La ventana de Color según rendimiento permite definir el esquema de colores usado para indicar el performance actual. Por defecto el sistema utiliza el rojo (por debajo del 50%), amarillo (por debajo del 100%) y el verde por encima del 100%. Si quiere definir otro esquema de colores, hágalo aquí.</value>
+  </row>
+  <row id="152" trl="N">
+    <value column="Name" original="Check Client Setup">Revisar Configuraci&#243;n de Entidad</value>
+    <value column="Description" original="Check Client setup for Requests">Revisar Configuraci&#243;n de Entidad para peticiones</value>
+    <value column="Help" original="You need to have a mail server and an email address from which the requets an notifications are sent.  Optionally, if you define a mail user and password, requests are read from the mail users's folder and imported into the system.">Ud. necesita tener un servidor de correos y una direcci&#243;n de correo electr&#243;nico desde los cuales las peticiones y notificaciones son enviadas. Opcionalmente, si Ud. define un usuario y contrase&#241;a de correo, las peticiones son le&#237;das de la carpeta del usuario de correo e importadas en el sistema.</value>
+  </row>
+  <row id="153" trl="N">
+    <value column="Name" original="Check Users">Revisar Usuarios</value>
+    <value column="Description" original="Check users for Request processing">Revisar usuarios para el procesamiento de peticiones</value>
+    <value column="Help" original="Please ensure that users have a email address and supervisor assigned.">Por favor aseg&#250;rese de que los usuarios tengan una direcci&#243;n de correo electr&#243;nica y un supervisor asignado.</value>
+  </row>
+  <row id="155" trl="N">
+    <value column="Name" original="Check Business Partners">Revisar Relacionados</value>
+    <value column="Description" original="Check Business Partners for Request processing">Revisar los relacionados para el procesamiento de peticiones.</value>
+    <value column="Help" original="You can send EMails to businbess partners.  Make sure, that the business partners and/or the Contacts have email addresses.">Se pueden enviar emails a los relacionados. Aseg&#250;rese de que el relacionado y/o los contactos tienen configurada una direcci&#243;n de correo electr&#243;nico.</value>
+  </row>
+  <row id="156" trl="N">
+    <value column="Name" original="Request Processor">Procesador de peticiones</value>
+    <value column="Description" original="Define Request Processors">Definir los procesadores de peticiones</value>
+    <value column="Help" original="The Request Processor Window allows you to define different processes that you want to occur and the frequency and timing of these processes">La ventana de peticiones permite al usuario definir procesos, el tiempo y la frecuencia deseada para el seguimiento de cada petición.</value>
+  </row>
+  <row id="157" trl="N">
+    <value column="Name" original="Request">CRM</value>
+    <value column="Description" original="Work on your requests">Trabajar sobre su petición</value>
+    <value column="Help" original="The Request Window is used to define and track any request assigned to you.">&lt;P&gt;Esta ventana permite gestionar las peticiones de los terceros con el fin de mejorar la relación. Cada petición puede desencadenar una acción o no, dependiendo de la naturaleza de la petición. Todas las peticiones deben de pertenecer a un tipo de petición.&lt;/P&gt;</value>
+  </row>
+  <row id="158" trl="N">
+    <value column="Name" original="Warehouse and Storage Bins">Almacén y Racks</value>
+    <value column="Description" original="Create warehouses and organize them using storage bins. ">Crea los almacenes y organícelos utilizando racks. </value>
+    <value column="Help" original="Create warehouses and organize them using storage bins. ">Crea los almacenes y organícelos utilizando racks. </value>
+  </row>
+  <row id="159" trl="N">
+    <value column="Name" original="Unit of Measure">Unidad de medida</value>
+    <value column="Description" original="Create units of measure and conversions rates to be applied to products.">Crea unidades de medida y rangos de conversión aplicables a los productos.</value>
+    <value column="Help" original="Create units of measure and conversions rates to be applied to products.">Crea unidades de medida y rangos de conversión aplicables a los productos.</value>
+  </row>
+  <row id="160" trl="N">
+    <value column="Name" original="Product Category">Categoría del producto</value>
+    <value column="Description" original="Create product categories to better organize your products and create more powerful reports.">Crea categorías de productos para organizar mejor sus productos y elaborar informes más eficientes.</value>
+    <value column="Help" original="Create product categories to better organize your products and create more powerful reports.">Crea categorías de productos para organizar mejor sus productos y elaborar informes más eficientes.</value>
+  </row>
+  <row id="161" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="Create products and manage the related costing, purchasing, and pricing setup.">Crea productos y gestiona las reglas de costes, compras y configuraci&#243;n de precios.</value>
+    <value column="Help" original="Create products and manage the related costing, purchasing, and pricing setup.">Crea productos y gestiona las reglas de costes, compras y configuraci&#243;n de precios.</value>
+  </row>
+  <row id="162" trl="N">
+    <value column="Name" original="Price List Schema"> Esquema de Lista de Precios</value>
+    <value column="Description" original="Define a Price List Schema to be assigned to business partners.">Define el esquema de precios para asignar a los relacionados.</value>
+    <value column="Help" original="Define a Price List Schema to be assigned to business partners.">Define el esquema de precios para asignar a los  relacionados.</value>
+  </row>
+  <row id="163" trl="N">
+    <value column="Name" original="Price List">Lista de Precios</value>
+    <value column="Description" original="Create and edit price lists and versions to optionally apply specified product prices to individual business partners.  ">Crea y edita las listas de precios y versiones para aplicar opcionalmente los precios de los productos a un relacionado particular</value>
+    <value column="Help" original="Create and edit price lists and versions to optionally apply specified product prices to individual business partners.  ">Crea y edita las listas de precios y versiones para aplicar opcionalmente los precios de los productos a un  relacionado particular</value>
+  </row>
+  <row id="164" trl="N">
+    <value column="Name" original="Business Partner">Relacionado</value>
+    <value column="Description" original="Create and edit business partner information, templates, and bank accounts.">Crea y edita la información, las plantillas y las cuentas bancarias de relacionados.</value>
+    <value column="Help" original="Create and edit business partner information, templates, and bank accounts.">Crea y edita la información, las plantillas y las cuentas bancarias de relacionados.</value>
+  </row>
+  <row id="166" trl="N">
+    <value column="Name" original="Tax Category">Categoria de Impuesto</value>
+    <value column="Description" original="Create tax categories to manage tax rates with similar characteristics or attributes.">Crea categorías impositivas para gesionar rangos de impuestos con atributos y características similares.</value>
+    <value column="Help" original="Create tax categories to manage tax rates with similar characteristics or attributes.">Crea categorías impositivas para gesionar rangos de impuestos con atributos y características similares.</value>
+  </row>
+  <row id="167" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="Create products and manage the related costing, purchasing, and pricing setup.">Crea productos y gestiona las reglas de costes, compras y precios.</value>
+    <value column="Help" original="Create products and manage the related costing, purchasing, and pricing setup.">Crea productos y gestiona las reglas de costes, compras y precios .</value>
+  </row>
+  <row id="168" trl="N">
+    <value column="Name" original="Charge">Cargos</value>
+    <value column="Description" original="Maintain Charges">Mantenimiento de los cargos</value>
+    <value column="Help" original="The Charges Window defines the different charges that may be incurred.  These can include Bank Charges, Vendor Charges and Handling Charges.">La ventana Cargos define los diferentes cargos en los que se puede incurrir. Estos pueden ser cargos bancarios, cargos de un proveedor y cargos de manipulaci&#243;n.</value>
+  </row>
+  <row id="169" trl="N">
+    <value column="Name" original="Tax Rate">Tasa de Impuesto</value>
+    <value column="Description" original="Create tax rates to be used in application transactions.">Crea tasas de impuestos para utilizar en las transacciones de la aplicación.</value>
+    <value column="Help" original="Create tax rates to be used in application transactions.">Crea tasas de impuestos para utilizar en las transacciones de la aplicación.</value>
+  </row>
+  <row id="170" trl="N">
+    <value column="Name" original="Accounting Schema">Esquema contable</value>
+    <value column="Description" original="Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ">Crea y edita múltiples esquemas contables y asígneles los elementos de la cuenta; defina las tablas BD para los procesos contables y defina las cuentas de LM que se usan por defecto.</value>
+    <value column="Help" original="Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ">Crea y edita múltiples esquemas contables y asígneles los elementos de la cuenta; defina las tablas BD para los procesos contables y defina las cuentas de LM que se usan por defecto.</value>
+  </row>
+  <row id="171" trl="N">
+    <value column="Name" original="Tax Category">Categoria de Impuesto</value>
+    <value column="Description" original="Create tax categories to manage tax rates with similar characteristics or attributes.">Crea categorías impositivas para gesionar tasas de impuestos con atributos y características similares.</value>
+    <value column="Help" original="Create tax categories to manage tax rates with similar characteristics or attributes.">Crea categorías impositivas para gesionar tasas de impuestos con atributos y características similares.</value>
+  </row>
+  <row id="172" trl="N">
+    <value column="Name" original="Import File Loader">Importar archivo de carga </value>
+    <value column="Description" original="Import .csv data files into temporary tables according to the parameters and selected format.">Importa los archivos de datos .csv a las tablas temporales, de acuerdo con los parámetros y el formato seleccionado. </value>
+    <value column="Help" original="The Import File Loader parses the content of a flat file and loads it into import tables. Comments start with a '[' and end with a ']' and are ignored; example: [Some Heading].">Importar Archivo de Cargas parsea el contenido de un archivo  plano y lo carga en tablas de importación.Los comentarios empiezan con un '[' y terminan con un']' y son ignorados;ejemplo:[Algún Título]</value>
+  </row>
+  <row id="173" trl="N">
+    <value column="Name" original="Import Account">Importar cuenta</value>
+    <value column="Description" original="Import accounts in .csv format from previously used databases/applications and past business operations.">Importa las cuentas en formato .csv desde las bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+    <value column="Help" original="Import accounts in .csv format from previously used databases/applications and past business operations.">Importa las cuentas en formato .csv desde las bases de datos y aplicaciones usadas con anterioridad y las operaciones comerciales anteriores.</value>
+  </row>
+  <row id="174" trl="N">
+    <value column="Name" original="Replication Strategy">Estrategia de replicación</value>
+    <value column="Description" original="Maintain Data Replication Strategy">Mantenimiento de la estrategia de replicación de datos</value>
+    <value column="Help" original="The Data Replication Strategy determines which tables and how they are replicated. Note that the migration does not syncronize Application Dictionary items.">La ventana de Estrategia de replicación determina que tablas y como son replicadas. Nota: La migración no sincroniza los items del Diccionario de Aplicación.</value>
+  </row>
+  <row id="175" trl="N">
+    <value column="Name" original="Replication">Replicación</value>
+    <value column="Description" original="Maintain Data Replication Targets">Mantenimiento de los objetivos de la replicaci&#243;n de datos</value>
+    <value column="Help" original="Data Replication Target Details. Set up your system completely on the central system, before setting up the replication. Define the Replication target here and export the database and import it on the remote system.&lt;p&gt;Before(!) entering transactions, Start the Replication Run to set up the remote system.">Data Replication Target Details. Set up your system completely on the central system, before setting up the replication. Define the Replication target here and export the database and import it on the remote system.&lt;p&gt;Before(!) entering transactions, Start the Replication Run to set up the remote system.</value>
+  </row>
+  <row id="800000" trl="N">
+    <value column="Name" original="Activity">Actividad (Proceso)</value>
+    <value column="Description" original="Define activities (processes) to be performed as part of a process plan and their characteristics .">Define las actividades (procesos) que deben ejecutarse como parte del plan de procesos y sus características.</value>
+    <value column="Help" original="Define activities (processes) to be performed as part of a process plan and their characteristics .">Define las actividades (procesos) que deben ejecutarse como parte del plan de procesos y sus características.</value>
+  </row>
+  <row id="800001" trl="N">
+    <value column="Name" original="Cost Center">Centro de Costos</value>
+    <value column="Description" original="Create and edit cost centers related to production to sum up charges associated with a specific transaction.">Crea y edita centros de costos relacionados con la producción para calcular los gastos asociados a una transacción específica.</value>
+    <value column="Help" original="Create and edit cost centers related to production to sum up charges associated with a specific transaction.">Crea y edita centros de costos relacionados con la producción para calcular los gastos asociados a una transacción específica.</value>
+  </row>
+  <row id="800003" trl="N">
+    <value column="Name" original="Product">Producto</value>
+    <value column="Description" original="Create products and manage the related costing, purchasing, and pricing setup.">Crea productos y gestiona las reglas de costes, compras y precios .</value>
+    <value column="Help" original="Create products and manage the related costing, purchasing, and pricing setup.">Crea productos y gestiona las reglas de costes, compras y precios.</value>
+  </row>
+</compiereTrl>

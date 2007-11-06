@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ******************************************************************************
+ * The contents of this file are subject to the   Compiere License  Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * You may obtain a copy of the License at http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an  "AS IS"  basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * The Original Code is                  Compiere  ERP & CRM  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
+ * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
+ * Contributor(s): Openbravo SL
+ * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ ******************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="ProductInfoData" package="org.openbravo.erpCommon.ad_forms">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+  SELECT P.PRODUCTTYPE, PC.VALUE,P.C_REVENUERECOGNITION_ID,P.C_UOM_ID,P.AD_CLIENT_ID,P.AD_ORG_ID,
+  '' AS REVENUE, '' AS EXPENSE, '' AS ASSET, '' AS COGS, '' AS PURCHASEPRICEVARIANCE, '' AS INVOICEPRICEVARIANCE,
+  '' AS DISCOUNTREC, '' AS DISCOUNTGRANT, '' AS CONVERTED, '' AS CURRENTCOSTPRICE, '' AS COSTAVERAGE, '' AS PRICELASTPO,
+  '' AS COSTSTANDARD, '' AS C_CURRENCY_ID, '' AS PRICELIST, '' AS PRICESTD, '' AS PRICELIMIT, '' AS PRICEPO
+  FROM M_PRODUCT_CATEGORY PC, M_PRODUCT P 
+  WHERE PC.M_PRODUCT_CATEGORY_ID=P.M_PRODUCT_CATEGORY_ID
+  AND P.M_PRODUCT_ID=?
+     ]]>
+     </Sql>
+     <Parameter name="Product"/>
+   </SqlMethod>
+  <SqlMethod name="selectProductAcct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+  SELECT P_Revenue_Acct as revenue, P_Expense_Acct as expense, P_Asset_Acct as asset, P_Cogs_Acct as cogs, 
+  P_PurchasePriceVariance_Acct as purchasepricevariance, P_InvoicePriceVariance_Acct as invoicepricevariance, 
+  P_TradeDiscountRec_Acct as discountrec, P_TradeDiscountGrant_Acct as discountgrant
+  FROM M_Product_Acct
+  WHERE M_Product_ID=? 
+  AND C_AcctSchema_ID=?
+     ]]>
+     </Sql>
+     <Parameter name="Product"/>
+     <Parameter name="AcctSchema"/>
+   </SqlMethod>
+  <SqlMethod name="selectDefaultAcct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+  SELECT P_Revenue_Acct as revenue, P_Expense_Acct as expense, P_Asset_Acct as asset, P_Cogs_Acct as cogs, 
+  P_PurchasePriceVariance_Acct as purchasepricevariance, P_InvoicePriceVariance_Acct as invoicepricevariance, 
+  P_TradeDiscountRec_Acct as discountrec, P_TradeDiscountGrant_Acct as discountgrant
+  FROM M_Product_Category pc, M_Product_Category_Acct pca 
+  WHERE pc.M_Product_Category_ID=pca.M_Product_Category_ID
+  AND pca.C_AcctSchema_ID=? 
+  ORDER BY pc.IsDefault DESC, pc.Created
+     ]]>
+     </Sql>
+     <Parameter name="AcctSchema"/>
+   </SqlMethod>
+   <SqlMethod name="UOMConvert" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        select C_UOM_Convert (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?) as converted from dual
+      </Sql>
+      <Parameter name="qty"/>
+      <Parameter name="C_UOM_From_ID"/>
+      <Parameter name="C_UOM_To_ID"/>
+      <Parameter name="StdPrecision"/>
+   </SqlMethod>
+   <SqlMethod name="selectProductCost" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+  SELECT CURRENTCOSTPRICE,COSTAVERAGE,PRICELASTPO,COSTSTANDARD
+  FROM M_PRODUCT_COSTING 
+  WHERE M_PRODUCT_ID=? 
+  AND C_ACCTSCHEMA_ID=?
+      </Sql>
+      <Parameter name="M_Product_ID"/>
+      <Parameter name="C_AcctSchema_ID"/>
+   </SqlMethod>
+   <SqlMethod name="selectProductAverageCost" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT COALESCE(GET_PRODUCT_COST(TO_NUMBER(?), TO_DATE(?), TO_CHAR(NULL)),0) FROM DUAL
+      </Sql>
+      <Parameter name="M_Product_ID"/>
+      <Parameter name="date"/>
+   </SqlMethod>
+  <SqlMethod name="insertProductCosting" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+  INSERT INTO M_Product_Costing (M_Product_ID,C_AcctSchema_ID,AD_Client_ID,AD_Org_ID,IsActive,
+  Created,CreatedBy,Updated,UpdatedBy,CurrentCostPrice,CostStandard,FutureCostPrice,CostStandardPOQty,
+  CostStandardPOAmt,CostStandardCumQty,CostStandardCumAmt,CostAverage,CostAverageCumQty,
+  CostAverageCumAmt,PriceLastPO,PriceLastInv, TotalInvQty,TotalInvAmt) 
+  VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y',now(),0,
+  now(),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+     ]]>
+     </Sql>
+     <Parameter name="M_Product_ID"/>
+     <Parameter name="C_AcctSchema_ID"/>
+     <Parameter name="AD_Client_ID"/>
+     <Parameter name="AD_Org_ID"/>
+   </SqlMethod>
+   <SqlMethod name="selectPriceList" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+  SELECT pl.C_Currency_ID, pp.PriceList, pp.PriceStd, pp.PriceLimit 
+  FROM M_PriceList pl, M_PriceList_Version plv, M_ProductPrice pp 
+  WHERE pl.M_PriceList_ID = plv.M_PriceList_ID
+  AND plv.M_PriceList_Version_ID = pp.M_PriceList_Version_ID
+  AND pp.M_Product_ID=?
+  AND 1=1
+  ORDER BY pl.IsSOPriceList ASC, plv.ValidFrom DESC
+      </Sql>
+      <Parameter name="M_Product_ID"/>
+      <Parameter name="onlyPOPriceList" optional="true" type="none" after="AND 1=1" text=" AND pl.IsSOPriceList='N'"/>
+   </SqlMethod>
+  <SqlMethod name="updateProductCosting" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+  UPDATE M_Product_Costing SET CurrentCostPrice = TO_NUMBER(?)
+  WHERE M_Product_ID = ?
+  AND C_AcctSchema_ID = ?
+     ]]>
+     </Sql>
+     <Parameter name="cost"/>
+     <Parameter name="M_Product_ID"/>
+     <Parameter name="C_AcctSchema_ID"/>
+   </SqlMethod>
+   <SqlMethod name="selectPOCost" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+  SELECT C_Currency_ID, PriceList,PricePO,PriceLastPO 
+  FROM M_Product_PO 
+  WHERE M_Product_ID = ? 
+  ORDER BY IsCurrentVendor DESC
+      </Sql>
+      <Parameter name="M_Product_ID"/>
+   </SqlMethod>
+   </SqlClass>

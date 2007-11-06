@@ -1,0 +1,88 @@
+Status
+======
+
+Die Übersetzung ist noch in Arbeit.
+
+Die grobe Übersetzung der GUI Elemente ist vollständig. Es besteht noch 
+Nachbearbeitungsbedarf  bzgl. sinnvoller Begriffe in speziellen Fachgebieten. 
+Außerdem müssen knappere kürzere Formulierungen an vielen Stellen 
+gefunden werden, da der Platz nicht ausreichend ist.
+
+Die Hilfetexte sind noch nicht übersetzt.
+
+Mithilfe und Kommentare
+=======================
+
+Änderungsvorschläge - auch minimaler Natur - werden gerne aufgenommen
+und eingearbeitet; schließlich kann man sich ja nicht in allen
+Themengebieten gut auskennen und treffende Formulierungen finden.
+
+Feedback bitte an folgende Mailadresse senden:
+
+  openbravo-german-translation AT headissue DOT com
+  
+Bitte lesen sie dazu auch die Hinweise unter README-Help.
+
+Installation des Sprachpaketes
+==========================================
+
+- Unter "General Rules -> System Rules -> Language" eine Sprache
+  de_DE anwählen.
+- Felder wie folgt ausfüllen: 
+  Active: "x", 
+  Base Language: "-", 
+  System Language: "x"
+- Datensatz abspeichern (6. Button von links)
+- "Verify Languages" anwählen, dadurch werden die Sprachdatensätze aus der
+  Originalsprache kopiert
+- Sprache 'de_DE' exportieren (unter General Rules -> System
+  Rules -> Import/Export Languages)
+- Es sollten nun die Verzeichnisse 'lang/de_DE' im 'attachment'
+  Verzeichnis Ihrer Openbravo Installation angelegt sein
+- Die exportierten XML-Files unter lang/de_DE löschen und stattdessen die XML-Files
+  des Sprachpektes im Verzeichnis ablegen
+- unter "General Rules -> System Rules -> Import/Export Languages" die Sprache
+  'de_DE' importieren
+- Tomcat beenden
+- 'ant compile.complete' im Openbravo Verzeichnis aufrufen
+- 'ant war' im Openbravo Verzeichnis aufrufen
+- Environment Variable JAKARTA_HOME auf Tomcat Verzeichnis setzen
+- 'ant deploy'
+- Tomcat wieder starten
+
+Fehler & Behebung
+=================================
+
+Fehler beim Login (z.B. NullPointerException oder 404 File not found) sind
+meistens auf ein Problem beim Deployment des War-Files zurückzuführen.
+
+Tipps:
+- Das file lib/<obcontext>.war muss ins Directory <tomcat>/webapps
+  kopiert sein. Prüfen Sie Größe und Datum.
+- Stoppen Sie Tomcat. Prüfen Sie ob sich der Java-Prozess tatsächlich beendet hat und
+  beenden den Prozess ggf. per Hand.
+- Löschen Sie das Directory <tomcat>/webapps/<obcontext>
+- Starten Sie Tomcat erneut
+- Achten Sie auf die Ausgaben unter <tomcat>/logs/catalina.out
+
+Credits
+===========
+
+- Birgit Matthaei: Initiale Übersetzung und laufende Betreuung
+- Jens Wilke: Koordinierung und Tooling
+
+Links
+===========
+
+Den letzten Entwicklungsstand der Übersetzung kann man über den Webzugang des
+Versionskontrollsystems herunterladen:
+http://openbravo.svn.sourceforge.net/viewvc/openbravo/trunk/localization/translations/de_DE/
+bzw.
+http://openbravo.svn.sourceforge.net/svnroot/openbravo/trunk/localization/translations/de_DE/ 
+
+Überblick und Status der Übersetzungen:
+http://wiki.openbravo.com/wiki/index.php/Localization_Projects
+
+Mitteilungen zu Neuerungen der deutschen Übersetzung im SourceForge Forum Thread:
+http://sourceforge.net/forum/forum.php?thread_id=1672135&forum_id=597808
+

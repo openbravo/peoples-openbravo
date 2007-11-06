@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html 
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License. 
+* The Original Code is Openbravo ERP. 
+* The Initial Developer of the Original Code is Openbravo SL 
+* All portions are Copyright (C) 2001-2006 Openbravo SL 
+* All Rights Reserved. 
+* Contributor(s):  ______________________________________.
+************************************************************************
+-->
+<REPORT>
+  <template file="ReportAccountingComparativePeriod.srpt"/>
+  <PARAMETER id="paramColspan" name="constante" default="6"/>
+  <structure name="structure">
+    <FIELD id="fieldComparativePeriodParentLevel" attribute="onclick" replace="xx">level1</FIELD>
+    <FIELD id="fieldComparativePeriodParentLevel" attribute="onclick" replace="yy">level2</FIELD>
+    <FIELD id="fieldComparativePeriodParentLevel" attribute="onclick" replace="zz">level3</FIELD>
+    <FIELD id="fieldComparativePeriodParentLevel" attribute="onclick" replace="ww">level4</FIELD>
+    <FIELD id="fieldComparativePeriodParentLevel" attribute="onclick" replace="mm">levelId</FIELD>
+    <FIELD id="fieldComparativePeriodParentLevel" attribute="onclick" replace="pp">levelReport</FIELD>
+    <FIELD id="fieldComparativePeriodParentLevel" attribute="onclick" replace="aa">columnLevel</FIELD>
+    <FIELD id="buttonTreexj" attribute="class">classImage</FIELD>
+    <FIELD id="buttonTreexj" attribute="id" replace="xj">levelId</FIELD>
+    <FIELD id="fieldComparativePeriodWidthMargin" attribute="width" replace="xx">widthMargin</FIELD>
+    <FIELD id="fieldComparativePeriodWidthText" attribute="width" replace="yy">widthText</FIELD>
+    <FIELD id="fieldComparativePeriodNivel">nivel</FIELD>
+    <FIELD id="fieldComparativePeriodOrden">orden</FIELD>
+    <FIELD id="fieldComparativePeriodTotalAmt" format="euroInform">totalamt</FIELD>
+    <FIELD id="returnTextsj" attribute="id" replace="sj">levelId</FIELD>
+    <FIELD id="fieldComparativePeriodWidthText" attribute="class">classLevel</FIELD>
+    <FIELD id="fieldComparativePeriodClassLevel" attribute="class">classLevel</FIELD>
+    <FIELD id="fieldComparativePeriodTotalFinalClass" attribute="class">classLevel</FIELD>
+    <FIELD id="fieldComparativePeriodWidthTextRef" attribute="width" replace="yy">widthText</FIELD>
+    <FIELD id="fieldComparativePeriodWidthTextRef" attribute="class">classLevelRef</FIELD>
+    <FIELD id="fieldComparativePeriodClassLevelRef" attribute="class">classLevelRef</FIELD>
+    <FIELD id="fieldComparativePeriodTotalAmtRef" format="euroInform">totalamtRef</FIELD>
+    <FIELD id="fieldComparativePeriodTotalFinalRefClass" attribute="class">classLevelRef</FIELD>
+    <FUNCTION id="fieldComparativePeriodAcumulativeTotalAmt" name="SUM" format="euroInform">totalamt</FUNCTION>
+    <FUNCTION id="fieldComparativePeriodAcumulativeTotalAmtRef" name="SUM" format="euroInform">totalamtRef</FUNCTION>
+    <FUNCTION id="fieldComparativePeriodAux" name="SUBTRACT" arg1="fieldComparativePeriodAcumulativeTotalAmt" arg2="fieldComparativePeriodAcumulativeTotalAmtRef" format="euroInform"/>
+    <FUNCTION id="fieldCPAcumulativePercent" name="DIVIDE" arg1="fieldComparativePeriodAux" arg2="fieldComparativePeriodAcumulativeTotalAmt" format="euroInform"/>
+    <FUNCTION id="fieldComparativePeriodTotalFinal" name="SUM" format="euroInform">totalamt</FUNCTION>
+    <FUNCTION id="fieldComparativePeriodTotalFinalRef" name="SUM" format="euroInform">totalamtRef</FUNCTION>
+    <FUNCTION id="fieldComparativePeriodTotalAux" name="SUBTRACT" arg1="fieldComparativePeriodTotalFinal" arg2="fieldComparativePeriodTotalFinalRef" format="euroInform"/>
+    <FUNCTION id="fieldComparativePeriodTotalFinalPercent" name="DIVIDE" arg1="fieldComparativePeriodTotalAux" arg2="fieldComparativePeriodTotalFinal" format="euroInform"/>
+    <FUNCTION id="fieldComparativePeriodFinal" name="SUM" format="euroInform">totalAmt</FUNCTION>
+    <SECTION id="sectionNivelComparativePeriod" field="nivel"/>
+    <SECTION id="sectionDetailComparativePeriod"/>
+  </structure>
+  <DISCARD id="discard"/>
+</REPORT>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="SalesOrderData" package="org.openbravo.erpCommon.info">
+   <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+        SELECT o.C_Order_ID,
+        (SELECT Name FROM C_BPartner bp WHERE bp.C_BPartner_ID=o.C_BPartner_ID) AS BPartnerName,
+        o.DateOrdered, o.DocumentNo,
+        (SELECT ISO_Code FROM C_Currency c WHERE c.C_Currency_ID=o.C_Currency_ID) AS Currency,
+        o.GrandTotal,
+        C_Base_Convert(o.GrandTotal,o.C_Currency_ID,o.AD_Client_ID,o.DateAcct, 0) as Converted, o.IsSOTrx, o.Description, o.POReference
+        FROM C_Order o
+        WHERE o.AD_Client_ID IN ('1') 
+        AND o.AD_Org_ID IN ('1') 
+        AND o.IsActive='Y'
+        ORDER BY 2,3,4
+        ]]>
+        </Sql>
+        <Field name="position" value="count"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="key" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="description" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.Description) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="orderReference" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID=? ]]></Parameter>
+        <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= ? ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal <= ? ]]></Parameter>
+   </SqlMethod>
+   <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql></Sql>
+   </SqlMethod>
+   <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql> 
+      <![CDATA[
+        SELECT o.C_Order_ID,
+        (SELECT Name FROM C_BPartner bp WHERE bp.C_BPartner_ID=o.C_BPartner_ID) AS BPartnerName,
+        o.DateOrdered, o.DocumentNo,
+        (SELECT ISO_Code FROM C_Currency c WHERE c.C_Currency_ID=o.C_Currency_ID) AS Currency,
+        o.GrandTotal,
+        C_Base_Convert(o.GrandTotal,o.C_Currency_ID,o.AD_Client_ID,o.DateAcct, 0) as Converted, o.IsSOTrx, o.Description, o.POReference
+        FROM C_Order o
+        WHERE o.AD_Client_ID IN ('1') 
+        AND o.AD_Org_ID IN ('1') 
+        AND o.IsActive='Y'
+        AND UPPER(o.DocumentNo) LIKE UPPER(?)
+      ]]>
+      </Sql>
+        <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="key"/>
+   </SqlMethod>
+</SqlClass>

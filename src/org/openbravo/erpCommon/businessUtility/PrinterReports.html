@@ -1,0 +1,51 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">	var baseDirection = "localhost";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="isPrintPreview">
+function printReport(pagina) {
+  abrirPDF(pagina, 'PDF');
+	return true;
+}
+</SCRIPT>
+<TITLE>Report print</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META>
+</HEAD>
+<BODY bottommargin="0" leftmargin="0" marginheight="0" marginwidth="0" rightmargin="0" topmargin="0" onload="printReport('..xx');"  id="fieldPDFPath">
+<H1>PRINTING...</H1>
+<DIV id="isDirectPrint"> <EMBED src="..xx" id="Pdf1" name="Pdf1" hidden=""> 
+  <OBJECT classid="clsid:CA8A9780-280D-11CF-A24D-444553540000" height="100%" id="objPdf" width="100%">
+    <PARAM name="SRC" value="mainpage.pdf"></PARAM>
+  </OBJECT></EMBED>
+</DIV>
+<SCRIPT language="javascript" type="text/javascript" id="isDirectPrint">
+function printReport(pagina) {
+    Pdf1.printWithDialog();
+}
+</SCRIPT>
+<FORM name="frmMain" method="post" action="">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <INPUT type="hidden" name="inpdirectprint" value="xx" id="fieldIsDirectPrint"></INPUT>
+</FORM>
+</BODY>
+</HTML>

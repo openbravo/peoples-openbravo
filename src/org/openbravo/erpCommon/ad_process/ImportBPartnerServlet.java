@@ -1,0 +1,111 @@
+/*
+ ******************************************************************************
+ * The contents of this file are subject to the   Compiere License  Version 1.1
+ * ("License"); You may not use this file except in compliance with the License
+ * You may obtain a copy of the License at http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an  "AS IS"  basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * The Original Code is                  Compiere  ERP & CRM  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
+ * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
+ * Contributor(s): Openbravo SL
+ * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ ******************************************************************************
+*/
+package org.openbravo.erpCommon.ad_process;
+
+import org.openbravo.erpCommon.ad_actionButton.*;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.utils.FormatUtilities;
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.xmlEngine.XmlDocument;
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+
+public class ImportBPartnerServlet extends HttpSecureAppServlet {
+  private static final long serialVersionUID = 1L;
+
+  public void init (ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+
+  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    if (log4j.isDebugEnabled()) log4j.debug("role: " + vars.getRole());
+    if (!Utility.hasProcessAccess(this, vars, "", "ImportBPartnerServlet")) {
+      bdError(response, "AccessTableNoView", vars.getLanguage());
+      return;
+    }
+    String process = ImportData.processId(this, "ImportBPartnerServlet");
+    if (vars.commandIn("DEFAULT")) {
+      String strTabId = vars.getGlobalVariable("inpTabId", "ImportBPartnerServlet|tabId");
+      String strWindowId = vars.getGlobalVariable("inpwindowId", "ImportBPartnerServlet|windowId");
+      //String strKey = vars.getGlobalVariable("inpKey", "ImportBPartnerServlet|key");
+      String strKey = "00";
+      String strDeleteOld = vars.getStringParameter("inpDeleteOld", "N");
+      printPage(response, vars, process, strWindowId, strTabId, strKey, strDeleteOld);
+    } else if (vars.commandIn("SAVE")) {
+      String strDeleteOld = vars.getStringParameter("inpDeleteOld", "N");
+      String strRecord = vars.getGlobalVariable("inpKey", "ImportBPartnerServlet|key");
+      String strTabId = vars.getRequestGlobalVariable("inpTabId", "ImportBPartnerServlet|tabId");
+      String strWindowId = vars.getRequestGlobalVariable("inpwindowId", "ImportBPartnerServlet|windowId");
+
+      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
+      String strWindowPath="";
+      String strTabName="";
+      if (tab!=null && tab.length!=0) {
+        strTabName = FormatUtilities.replace(tab[0].name);
+        if (tab[0].help.equals("Y")) strWindowPath="../utility/WindowTree_FS.html?inpTabId=" + strTabId;
+        else strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
+      } else strWindowPath = strDefaultServlet;
+
+				ImportBPartner bp = new ImportBPartner(this, process, strRecord, strDeleteOld.equals("Y"));
+      bp.startProcess(vars);
+      String strMessage = bp.getLog();
+      if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
+      printPageClosePopUp(response, vars, strWindowPath);
+    } else pageErrorPopUp(response);
+  }
+
+
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProcessId, String strWindowId, String strTabId, String strRecordId, String strDeleteOld) throws IOException, ServletException {
+      if (log4j.isDebugEnabled()) log4j.debug("Output: process ImportBPartnerServlet");
+      ActionButtonDefaultData[] data = null;
+      String strHelp="", strDescription="";
+      if (vars.getLanguage().equals("en_US")) data = ActionButtonDefaultData.select(this, strProcessId);
+      else data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+      if (data!=null && data.length!=0) {
+        strDescription = data[0].description;
+        strHelp = data[0].help;
+      }
+      String[] discard = {""};
+      if (strHelp.equals("")) discard[0] = new String("helpDiscard");
+      XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/ImportBPartnerServlet").createXmlDocument();
+      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
+      xmlDocument.setParameter("description", strDescription);
+      xmlDocument.setParameter("help", strHelp);
+      xmlDocument.setParameter("windowId", strWindowId);
+      xmlDocument.setParameter("tabId", strTabId);
+      xmlDocument.setParameter("recordId", strRecordId);
+      xmlDocument.setParameter("deleteOld", strDeleteOld);
+
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    }
+
+  public String getServletInfo() {
+    return "Servlet ImportBPartnerServlet";
+  } // end of getServletInfo() method
+}

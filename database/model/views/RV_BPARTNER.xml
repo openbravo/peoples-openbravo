@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<database name="VIEW RV_BPARTNER">
+<view name="RV_BPARTNER"><![CDATA[
+SELECT p.AD_Client_ID, p.AD_Org_ID,
+ p.C_BPartner_ID, p.Value, p.Name, p.ReferenceNo,
+ p.SO_CreditLimit - p.SO_CreditUsed AS SO_CreditAvailable,
+ p.SO_CreditLimit, p.SO_CreditUsed, p.IsCustomer, p.IsVendor,
+ p.ActualLifetimeValue AS Revenue,
+ c.Name AS Contact, c.Phone,
+ a.Postal, a.City, c.EMail
+FROM C_BPartner p left join AD_User c on p.C_BPartner_ID=c.C_BPartner_ID
+         left join C_BPartner_Location l on p.C_BPartner_ID=l.C_BPartner_ID
+         left join C_Location a on l.C_Location_ID=a.C_Location_ID
+]]></view>
+</database>

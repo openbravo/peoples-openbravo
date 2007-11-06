@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/comm.jar"/>
+	<classpathentry kind="lib" path="lib/commons-dbcp.jar"/>
+	<classpathentry kind="lib" path="lib/commons-pool.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.3alpha-8.jar"/>
+	<classpathentry kind="lib" path="lib/fop.jar"/>
+	<classpathentry kind="lib" path="lib/renderFoRmi.jar"/>
+	<classpathentry kind="lib" path="lib/avalon-framework-4.1.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-fileupload.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="lib/nekohtml.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>

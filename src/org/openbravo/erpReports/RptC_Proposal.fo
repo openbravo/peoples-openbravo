@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+	<fo:layout-master-set>
+		<fo:simple-page-master master-name="first" margin-left="2cm" page-height="29.7cm" page-width="21cm" margin-top="0.5cm" margin-right="1cm" margin-bottom="0.25cm">
+			<fo:region-body margin-left="0cm" margin-right="0cm" margin-top="4cm" margin-bottom="1.5cm"/>
+			<fo:region-before extent="5cm"/>
+			<fo:region-after extent="2.5cm"/>
+		</fo:simple-page-master>
+	</fo:layout-master-set>
+	<DIVFO id="sectionDetail">
+		<fo:page-sequence master-reference="first">
+			<fo:static-content flow-name="xsl-region-before">
+				<fo:block font-size="9pt" font-family="Helvetica">
+					<fo:table table-layout="fixed">
+						<fo:table-column column-width="3cm"/>
+						<fo:table-column column-width="13cm"/>
+						<fo:table-column column-width="3cm"/>
+						<fo:table-body>
+							<fo:table-row>
+								<fo:table-cell>
+									<fo:block/>
+								</fo:table-cell>
+								<fo:table-cell>
+									<fo:block>
+										<fo:external-graphic src="../../../../../web/images/Openbravo_replace_report.gif"/>
+									</fo:block>
+								</fo:table-cell>
+							</fo:table-row>
+						</fo:table-body>
+					</fo:table>
+				</fo:block>
+			</fo:static-content>
+			<fo:flow flow-name="xsl-region-body">
+				<fo:block>
+					<DIVFO id="reportProposalHeader"/>
+					<DIVFO id="reportProposalLines"/>
+					<DIVFO id="reportProposalFootnote"/>
+					<fo:block>&#160;</fo:block>
+				</fo:block>
+			</fo:flow>
+		</fo:page-sequence>
+	</DIVFO>
+</fo:root>

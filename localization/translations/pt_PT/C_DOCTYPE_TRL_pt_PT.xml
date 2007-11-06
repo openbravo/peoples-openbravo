@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<compiereTrl language="pt_PT" table="C_DOCTYPE">
+  <row id="0" trl="Y">
+    <value column="Name" original="** New **">** Novo **</value>
+    <value column="PrintName" original="** New **">** Novo **</value>
+    <value column="DocumentNote" original="** NO INVOICE **">** SEM FACTURA **</value>
+  </row>
+</compiereTrl>

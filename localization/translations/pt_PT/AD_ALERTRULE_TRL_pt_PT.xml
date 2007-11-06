@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<compiereTrl language="pt_PT" table="AD_ALERTRULE">
+  <row id="800001" trl="Y">
+    <value column="Name" original="Not used TextInterfaces..">Interfaces de texto não Usados.</value>
+  </row>
+  <row id="800002" trl="Y">
+    <value column="Name" original="Tabs of a window with same seqno">Separadores de uma Janela com o mesmo seqno</value>
+  </row>
+  <row id="1000004" trl="Y">
+    <value column="Name" original="Field with editable parent">Campo com progenitor editável</value>
+  </row>
+  <row id="1000007" trl="Y">
+    <value column="Name" original="TableDir Columns without correspondent table">Colunas TableDir sem a tabela correspondente</value>
+  </row>
+  <row id="1000008" trl="Y">
+    <value column="Name" original="Disabled constraints">Constraints desactivados</value>
+  </row>
+  <row id="1000009" trl="Y">
+    <value column="Name" original="Disabled triggers">Triggers desactivados</value>
+  </row>
+  <row id="1000010" trl="Y">
+    <value column="Name" original="Old not processed Bank Statements">Extractos Bancários antigos não processados</value>
+  </row>
+  <row id="1000011" trl="Y">
+    <value column="Name" original="Old not processed Sales Invoices">Facturas de Vendas antigas não processadas</value>
+  </row>
+  <row id="1000012" trl="Y">
+    <value column="Name" original="Old not processed Purchases Invoices">Facturas de Compras antigas não processadas</value>
+  </row>
+  <row id="1000013" trl="Y">
+    <value column="Name" original="Products without defined price">Produtos sem preço definido</value>
+  </row>
+  <row id="1000014" trl="Y">
+    <value column="Name" original="Remittance types without defined parameters">Tipos de Remessa sem parâmetros definidos</value>
+  </row>
+  <row id="1000015" trl="Y">
+    <value column="Name" original="Production plans without assigned cost center">Planos de Produção sem centros de custo assignados</value>
+  </row>
+  <row id="1000016" trl="Y">
+    <value column="Name" original="Vendor or Customer BPs without Bill To address">BPs de Fornecedores ou Clientes sem endereço de facturação</value>
+  </row>
+  <row id="1000017" trl="Y">
+    <value column="Name" original="Customers with exceded credit">Clientes com crédito excedido</value>
+  </row>
+  <row id="1000018" trl="Y">
+    <value column="Name" original="Customers that haven't made an order in the last 30 days">Clientes que não efectuaram uma encomenda nos últimos 30 dias</value>
+  </row>
+  <row id="1000019" trl="Y">
+    <value column="Name" original="Not payed DPs that are over date planned ">DPs não pagas que passaram a data planeada </value>
+  </row>
+  <row id="1000020" trl="Y">
+    <value column="Name" original="Products under stock">Produtos abaixo de stock</value>
+  </row>
+  <row id="1000021" trl="Y">
+    <value column="Name" original="Purchase orders to be received">Pedidos de compra a receber</value>
+  </row>
+  <row id="1000022" trl="Y">
+    <value column="Name" original="Sales orders to be received">Ordens de venda a receber</value>
+  </row>
+</compiereTrl>

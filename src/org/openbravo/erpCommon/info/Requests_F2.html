@@ -1,0 +1,266 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Request list</TITLE>
+<LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></LINK> 
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+function cargarDatos(texto, position) {
+
+	document.frmSelector.inpLastKeySelected.value = position;
+	document.frmSelector.inpTexto.value=texto;
+	return true;
+}
+</SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="focoPrimerControl();window.focus();">
+<FORM name="frmSelector" method="POST" action="">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <INPUT type="hidden" name="inpTexto"></INPUT>
+  <INPUT type="hidden" name="inpLastKeySelected"></INPUT>
+<TABLE width="100%" border="0" cellspacing="1" cellpadding="0" >
+<TR> 
+            <TD  width="2%" id="withoutPrevious"> <img src="../../../../../web/images/PreviousRangeDisabled.jpg" alt="Go to previous range" title="Go to previous range" border="0"></IMG></TD>
+            <TD  width="2%" id="hasPrevious"> <A href="#" onclick="parent.superior.submitCommandForm('PREVIOUS');return false;" onmouseover="window.status='Go to previous range';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
+              <img id="buttonPreviousRange" src="../../../../../web/images/PreviousRange.jpg" alt="Go to previous range" title="Go to previous range" border="0"></IMG></A></TD>
+            <TD  width="2%" id="hasNext"> <A href="#" onclick="parent.superior.submitCommandForm('NEXT');return false;" onmouseover="window.status='Go to next range';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
+              <img id="buttonNextRange" src="../../../../../web/images/NextRange.jpg" alt="Go to next range" title="Go to next range" border="0"></IMG></A></TD>
+            <TD  width="2%" id="withoutNext"> <img src="../../../../../web/images/NextRangeDisabled.jpg" alt="Go to next range" title="Go to next range" border="0"></IMG></TD>
+            <TD > <HR></HR>
+            </TD>
+            <TD  width="100"> <A HREF="#" onClick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/TB_Openbravo.gif" alt="Openbravo" title="Openbravo" border="0"></IMG></A></TD>
+            <TD > <HR></HR>
+            </TD>
+    </TR>
+  </TABLE>
+  <TABLE border="1" cellspacing="0" cellpadding="0" >
+    <TR> 
+      <TH width="3%">&nbsp;</TH>
+      <TH width="4%">Doc. No.</TH>
+      <TH width="8%">Maturity type</TH>
+      <TH width="6%">Priority</TH>
+      <TH width="6%">Summary</TH>
+      <TH width="6%">Increase</TH>
+      <TH width="5%">Self-Service</TH>
+      <TH width="10%">Action type</TH>
+      <TH width="10%">Subject</TH>
+      <TH width="8%">Result</TH>
+      <TH width="8%">Next action date</TH>
+      <TH width="7%">Request amount</TH>
+      <TH width="8%">Last result</TH>
+      <TH width="11%">Last action date</TH>
+    </TR>
+    <DIV id="sectionDetail"> 
+      <TR  id="inpRecordxx"> 
+        <TD width="3%" > <INPUT type="radio" name="inpClave" value="yy" onclick="cargarDatos('xx', 'hh');return true;" ondblclick="parent.inferior.depurarSelector('SAVE');return true;" id="fieldClave" class="CheckBox"></INPUT>
+        </TD>
+        <TD width="4%"  id="fieldDocumentno">xx</TD>
+        <TD width="8%"  id="fieldDuetype">xx</TD>
+        <TD width="6%"  id="fieldPriority">xx</TD>
+        <TD width="6%"  id="fieldSummary">xx</TD>
+        <TD width="6%"  id="fieldIsescalated">xx</TD>
+        <TD width="5%"  id="fieldIsselfservice">xx</TD>
+        <TD width="10%"  id="fieldActiontype">xx</TD>
+        <TD width="10%"  id="fieldMailsubject">xx</TD>
+        <TD width="8%"  id="fieldResult">xx</TD>
+        <TD width="8%"  id="fieldDatenextaction">xx</TD>
+        <TD width="7%"  id="fieldRequestamt">xx</TD>
+        <TD width="8%"  id="fieldLastresult">xx</TD>
+        <TD width="11%"  id="fieldDatelastaction">xx</TD>
+      </TR>
+    </DIV>
+    <DIV class="discard"> 
+      <TR > 
+        <TD width="3%"> <INPUT type="radio" name="radiobutton" value="radiobutton"></INPUT>
+        </TD>
+        <TD width="4%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="5%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="7%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="11%" >&nbsp;</TD>
+      </TR>
+      <TR > 
+        <TD width="3%"> <INPUT type="radio" name="radiobutton" value="radiobutton"></INPUT>
+        </TD>
+        <TD width="4%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="5%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="7%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="11%" >&nbsp;</TD>
+      </TR>
+      <TR > 
+        <TD width="3%"> <INPUT type="radio" name="radiobutton" value="radiobutton"></INPUT>
+        </TD>
+        <TD width="4%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="5%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="7%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="11%" >&nbsp;</TD>
+      </TR>
+      <TR > 
+        <TD width="3%"> <INPUT type="radio" name="radiobutton" value="radiobutton"></INPUT>
+        </TD>
+        <TD width="4%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="5%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="7%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="11%" >&nbsp;</TD>
+      </TR>
+      <TR > 
+        <TD width="3%"> <INPUT type="radio" name="radiobutton" value="radiobutton"></INPUT>
+        </TD>
+        <TD width="4%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="5%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="7%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="11%" >&nbsp;</TD>
+      </TR>
+      <TR > 
+        <TD width="3%"> <INPUT type="radio" name="radiobutton" value="radiobutton"></INPUT>
+        </TD>
+        <TD width="4%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="5%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="7%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="11%" >&nbsp;</TD>
+      </TR>
+      <TR > 
+        <TD width="3%"> <INPUT type="radio" name="radiobutton" value="radiobutton"></INPUT>
+        </TD>
+        <TD width="4%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="5%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="7%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="11%" >&nbsp;</TD>
+      </TR>
+      <TR > 
+        <TD width="3%"> <INPUT type="radio" name="radiobutton" value="radiobutton"></INPUT>
+        </TD>
+        <TD width="4%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="5%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="7%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="11%" >&nbsp;</TD>
+      </TR>
+      <TR > 
+        <TD width="3%"> <INPUT type="radio" name="radiobutton" value="radiobutton"></INPUT>
+        </TD>
+        <TD width="4%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="5%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="7%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="11%" >&nbsp;</TD>
+      </TR>
+      <TR > 
+        <TD width="3%"> <INPUT type="radio" name="radiobutton" value="radiobutton"></INPUT>
+        </TD>
+        <TD width="4%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="6%" >&nbsp;</TD>
+        <TD width="5%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="10%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="7%" >&nbsp;</TD>
+        <TD width="8%" >&nbsp;</TD>
+        <TD width="11%" >&nbsp;</TD>
+      </TR>
+    </DIV>
+  </TABLE>
+</FORM>
+</BODY>
+</HTML>

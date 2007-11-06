@@ -1,0 +1,64 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Payment selector</TITLE>
+<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+function cargarDatos(text) {
+	document.frmSelector.inpTexto.value=text;
+	return true;
+}
+</SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="focoPrimerControl();">
+<FORM name="frmSelector" method="POST" action="MaterialTransactions_F2.html" target="frameAplicacion">
+  <INPUT type="hidden" name="Command"></INPUT>
+  <INPUT type="hidden" name="inpTexto"></INPUT>
+  <TABLE width="100%" border="1" cellspacing="0" cellpadding="0" >
+    <TR> 
+      <td width="2%">&nbsp;</td>
+      <td width="13%">Organization</td>
+      <td width="13%">Warehouse position</td>
+      <td width="13%">Movement date</td>
+      <td width="22%">Product</td>
+      <td width="13%">Movement type</td>
+      <td width="8%">Quantity</td>
+      <td width="8%">Line No.</td>
+    </TR>
+    <DIV id="sectionDetail"> 
+      <TR > 
+        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT>
+        </TD>
+        <TD width="13%" id="fieldOrganization">&nbsp;</TD>
+        <TD width="13%" id="fieldLocator">&nbsp;</TD>
+        <TD width="13%" id="fieldMovementdate">&nbsp;</TD>
+        <TD width="22%" id="fieldProduct">&nbsp;</TD>
+        <TD width="13%" id="fieldMovementType">&nbsp;</TD>
+        <TD width="8%" id="fieldMovementqty">&nbsp;</TD>
+        <TD width="8%" id="fieldMMovementlineId">&nbsp;</TD>
+      </TR>
+    </DIV>
+  </TABLE>
+  <BR></BR>
+</FORM>
+</BODY>
+</HTML>

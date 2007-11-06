@@ -1,0 +1,4 @@
+<?xml version="1.0"?> 
+<database name="SEQUENCE AD_PINSTANCE_SEQ">
+	<sequence name="AD_PINSTANCE_SEQ" start="5562" increment="1" />
+</database>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="BusinessPartnerData" package="org.openbravo.erpCommon.info">
+   <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql> <![CDATA[
+        SELECT DISTINCT bp.C_BPartner_ID, bp.value, bp.name as name, replace(AD_COLUMN_IDENTIFIER(TO_CHAR('C_BPartner'), TO_CHAR(bp.C_BPartner_ID), 
+        TO_CHAR(?)), '''', CHR(92) || '''') as name_hidden, 
+        (bp.SO_CreditLimit-bp.SO_CreditUsed) AS SO_CreditAvailable, bp.SO_CreditUsed, 
+        COALESCE(c.name,u.name) AS Contact, COALESCE(c.ad_user_id,u.ad_user_id) as C_BPartner_Contact_ID, bpl.Phone, l.Postal, 
+        bpl.c_bpartner_location_id as C_BPartner_Location_ID,
+        l.City, bp.ActualLifetimeValue
+        FROM C_BPARTNER bp left join C_BPARTNER_LOCATION bpl on bp.c_bpartner_id = bpl.c_bpartner_id
+                                                             and bpl.IsActive = 'Y'
+                           left join AD_USER c on bpl.c_bpartner_location_id = c.C_BPartner_Location_ID
+                                                             and c.IsActive ='Y'
+                           left join C_LOCATION l on bpl.c_location_id=l.C_Location_ID 
+                           left join  C_REGION r on l.c_region_id = r.c_region_id 
+                           left join
+                (SELECT c_bpartner_id, ad_user_id, name from ad_user where c_bpartner_id is not null 
+                and c_bpartner_location_id is null and isactive='Y') u on bp.c_bpartner_id = u.c_bpartner_id
+        WHERE bp.AD_Client_ID IN ('1') 
+        AND bp.AD_Org_ID IN ('1') 
+        AND bp.IsSummary='N' 
+        AND bp.IsActive='Y'
+        ORDER BY bp.name, contact
+      ]]></Sql>
+        <Field name="position" value="count"/>
+        <Parameter name="language"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="bp.AD_Client_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="bp.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="key" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(bp.Value) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="name" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(bp.Name) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="contact" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(c.Name) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="codigoPostal" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.Postal) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="provincia" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(r.NAME) LIKE UPPER(?)]]></Parameter>
+        <Parameter name="clients" optional="true" type="none" after="AND bp.IsActive='Y'"><![CDATA[AND ISCUSTOMER = 'Y' ]]></Parameter>
+        <Parameter name="vendors" optional="true" type="none" after="AND bp.IsActive='Y'"><![CDATA[AND ISVENDOR ='Y']]></Parameter>
+        <Parameter name="ciudad" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.City) LIKE UPPER(?) ]]></Parameter>
+   </SqlMethod>
+   <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql></Sql>
+   </SqlMethod>
+   <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql> <![CDATA[
+        SELECT DISTINCT bp.C_BPartner_ID, bp.value, bp.name as name, COALESCE(c.ad_user_id,u.ad_user_id) as C_BPartner_Contact_ID,
+        bpl.c_bpartner_location_id as C_BPartner_Location_ID
+        FROM C_BPARTNER bp left join C_BPARTNER_LOCATION bpl on bp.c_bpartner_id = bpl.c_bpartner_id
+                                                             and bpl.IsActive = 'Y'
+                           left join AD_USER c on bpl.c_bpartner_location_id = c.C_BPartner_Location_ID
+                                               and c.IsActive ='Y'
+                           left join C_LOCATION l on bpl.c_location_id=l.C_Location_ID
+                           left join  C_REGION r on  l.c_region_id = r.c_region_id
+                           left join
+                (SELECT c_bpartner_id, ad_user_id, name from ad_user where c_bpartner_id is not null 
+                and c_bpartner_location_id is null and isactive='Y') u on bp.c_bpartner_id = u.c_bpartner_id 
+        WHERE  bp.AD_Client_ID IN ('1') 
+        AND bp.AD_Org_ID IN ('1') 
+        AND bp.IsSummary='N' 
+        AND bp.IsActive='Y'
+        AND UPPER(bp.VALUE) LIKE UPPER(?)
+        ORDER BY bp.name
+      ]]></Sql>
+        <Parameter name="adUserClient" type="replace" optional="true" after="bp.AD_Client_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="bp.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="clients" optional="true" type="none" after="AND bp.IsActive='Y'"><![CDATA[AND ISCUSTOMER = 'Y' ]]></Parameter>
+        <Parameter name="vendors" optional="true" type="none" after="AND bp.IsActive='Y'"><![CDATA[AND ISVENDOR ='Y']]></Parameter>
+        <Parameter name="key"/>
+   </SqlMethod>
+   <SqlMethod name="existsActual" type="preparedStatement" return="String" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql> <![CDATA[
+        SELECT bp.name as name
+        FROM C_BPARTNER bp 
+        WHERE UPPER(AD_COLUMN_IDENTIFIER(TO_CHAR('C_BPartner'), TO_CHAR(bp.C_BPartner_ID), TO_CHAR(?))) = UPPER(?)
+        AND bp.C_BPartner_ID = ? 
+        ORDER BY bp.name
+      ]]></Sql>
+        <Parameter name="language"/>
+        <Parameter name="description"/>
+        <Parameter name="cBpartnerId"/>
+   </SqlMethod>
+   <SqlMethod name="existsActualValue" type="preparedStatement" return="String" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql> <![CDATA[
+        SELECT bp.value as value
+        FROM C_BPARTNER bp 
+        WHERE UPPER(AD_COLUMN_IDENTIFIER(TO_CHAR('C_BPartner'), TO_CHAR(bp.C_BPartner_ID), TO_CHAR(?))) = UPPER(?)
+        AND bp.C_BPartner_ID = ? 
+        ORDER BY bp.value
+      ]]></Sql>
+        <Parameter name="language"/>
+        <Parameter name="description"/>
+        <Parameter name="cBpartnerId"/>
+   </SqlMethod>
+</SqlClass>

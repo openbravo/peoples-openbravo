@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+<SqlClass name="CopyFromPOOrderData" package="org.openbravo.erpCommon.ad_actionButton">
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Principal select</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT O.C_BPARTNER_ID, O.C_BPARTNER_LOCATION_ID, O.M_WAREHOUSE_ID, O.C_CURRENCY_ID, O.C_PROJECT_ID,
+        O.M_PRICELIST_ID, COALESCE(MAX(OL.LINE),0) AS LINE, O.AD_ORG_ID, O.AD_CLIENT_ID, '' AS C_UOM_ID, '' AS M_PRODUCT_ID,
+        '' AS QTYORDERED, '' AS QUANTITYORDER, '' AS M_PRODUCT_UOM_ID,
+        '' AS DESCRIPTION, '' AS PRICESTD, '' AS M_OFFER_ID, '' as orderline
+        FROM C_ORDER O LEFT JOIN C_ORDERLINE OL ON O.C_ORDER_ID = OL.C_ORDER_ID
+        WHERE O.C_ORDER_ID = ?
+        GROUP BY O.C_BPARTNER_ID, O.C_BPARTNER_LOCATION_ID, O.M_WAREHOUSE_ID, O.C_CURRENCY_ID, O.C_PROJECT_ID,
+        O.M_PRICELIST_ID, O.AD_ORG_ID, O.AD_CLIENT_ID
+      ]]>
+    </Sql>
+    <Parameter name="cOrderId"/>
+  </SqlMethod>
+  <SqlMethod name="selectLines" type="preparedStatement" return="multiple">
+    <SqlMethodComment>select de las lineas</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT C_ORDERLINE_ID as orderline, C_UOM_ID, M_PRODUCT_ID, QTYORDERED, QUANTITYORDER,
+        M_PRODUCT_UOM_ID, DESCRIPTION, C_CURRENCY_ID
+        FROM C_ORDERLINE
+        WHERE C_ORDER_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="cOrderLineId"/>
+  </SqlMethod>
+  <SqlMethod name="insertCOrderline" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment>Principal select</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        INSERT INTO C_ORDERLINE (C_ORDERLINE_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+        C_ORDER_ID, LINE, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID, DATEORDERED, DATEPROMISED, DESCRIPTION, M_PRODUCT_ID, 
+        M_WAREHOUSE_ID, C_UOM_ID, QTYORDERED, QUANTITYORDER, QTYINVOICED, QTYDELIVERED, QTYRESERVED, C_CURRENCY_ID, PRICELIST, PRICEACTUAL, 
+	PRICELIMIT, C_TAX_ID, DISCOUNT, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID, REF_ORDERLINE_ID) 
+        VALUES (?,?,?,SYSDATE,?,SYSDATE,?,?,?,?,?,?,?,?,?,?,?,?,?,0,0,0,?,?,M_GET_OFFER_PRICE(M_GET_OFFER(SYSDATE, ?, ?), ?),?,?,?,?,?,M_GET_OFFER(SYSDATE, ?, ?),?)
+      ]]>
+    </Sql>
+    <Parameter name="cOrderlineId"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="user"/>
+    <Parameter name="user"/>
+    <Parameter name="cOrderId"/>
+    <Parameter name="line"/>
+    <Parameter name="cBpartnerId"/>
+    <Parameter name="cBpartnerLocationId"/>
+    <Parameter name="dateordered"/>
+    <Parameter name="datepromised"/>
+    <Parameter name="description"/>
+    <Parameter name="mProductId"/>
+    <Parameter name="mWarehouseId"/>
+    <Parameter name="cUomId"/>
+    <Parameter name="qtyordered"/>
+    <Parameter name="quantityorder"/>
+    <Parameter name="cCurrencyId"/>
+    <Parameter name="pricelist"/>
+    <Parameter name="cBpartnerId"/>
+    <Parameter name="mProductId"/>
+    <Parameter name="priceactual"/>
+    <Parameter name="pricelimit"/>
+    <Parameter name="cTaxId"/>
+    <Parameter name="discount"/>
+    <Parameter name="mProductUomId"/>
+    <Parameter name="priceactual"/>
+    <Parameter name="cBpartnerId"/>
+    <Parameter name="mProductId"/>
+    <Parameter name="refOrdeline"/>
+  </SqlMethod>
+  <SqlMethod name="cBPartnerLocationId" type="preparedStatement" return="string">
+    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT MAX(C_BPARTNER_LOCATION_ID) FROM C_BPARTNER_LOCATION
+        WHERE C_BPARTNER_ID = ?
+        AND C_BPartner_Location.IsActive='Y'
+      ]]>
+    </Sql>
+    <Parameter name="cBpartnerId"/>
+  </SqlMethod>
+  <SqlMethod name="defaultPriceList" type="preparedStatement" return="string">
+    <SqlMethodComment>priceList por defecto</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT M_PRICELIST_ID FROM M_PRICELIST
+        WHERE ISDEFAULT = 'Y'
+        AND ISSOPRICELIST = 'N'
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>
