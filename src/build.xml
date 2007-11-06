@@ -258,7 +258,7 @@
 
   <target name="uninstallWebService" depends="init">
     <java classname="org.apache.axis.client.AdminClient" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}">
-      <arg line="-l${context.url}/servlet/AxisServlet ${src}undeploy.wsdd"/>
+      <arg line="-l${context.url}/servlet/AxisServlet ${src}/undeploy.wsdd"/>
       <classpath refid="project.class.path"/>
     </java>
   </target>
