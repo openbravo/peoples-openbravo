@@ -44,6 +44,10 @@ dojo.widget.defineWidget(
 		//		Can be true or false, default is false.
 		disabled: false,
 		listenOnKeyPress:false,
+    // Id of the other member of the comparison.
+    greaterThan:"",
+    lowerThan:"",
+    isWrong:false,
 		// override html
 		templatePath: dojo.uri.dojoUri("../openbravo/widget/templates/ValidationTextbox.html"),
 		// override css
@@ -71,13 +75,99 @@ dojo.widget.defineWidget(
 			this.rangeSpan.style.display="none";
 		},
 
+		isInRange: function(){
+      if ((this.greaterThan == "" || this.greaterThan == null) && (this.lowerThan == "" || this.lowerThan == null)) {
+        return true;
+      }
+      if (this.greaterThan != "") {
+        if (document.getElementById(this.greaterThan).value == null || document.getElementById(this.greaterThan).value == "") {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return true;
+        } else if (this.textbox.value == "" || this.textbox.value == null) {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return true;
+        } else if (parseFloat(this.textbox.value) < parseFloat(document.getElementById(this.greaterThan).value)) {
+          if (this.isWrong == false) {
+            this.isWrong = true;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return false;
+        } else {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return true;
+        }
+      }
+      if (this.lowerThan != "") {
+        if (document.getElementById(this.lowerThan).value == null || document.getElementById(this.lowerThan).value == "") {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.lowerThan).update();
+          }
+          return true;
+        } else if (parseFloat(this.textbox.value) > parseFloat(document.getElementById(this.lowerThan).value)) {
+          if (this.isWrong == false) {
+            this.isWrong = true;
+            dojo.widget.byId(this.lowerThan).update();
+          }
+          return false;
+        } else {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.lowerThan).update();
+          }
+          return true;
+        }
+      }
+
+
+		},
+
 		onkeydown: function(){ 
+
 		},
 
 		onclick: function() {
 		},
 
 		onchange: function() {
+		},
+
+		update: function() {
+			// summary:
+			//		Called by oninit, onblur, and onkeypress.
+			// description:
+			//		Show missing or invalid messages if appropriate, and highlight textbox field.
+			this.lastCheckedValue = this.textbox.value;
+			this.missingSpan.style.display = "none";
+			this.invalidSpan.style.display = "none";
+			this.rangeSpan.style.display = "none";
+	
+			var empty = this.isEmpty();
+			var valid = true;
+			if(this.promptMessage != this.textbox.value){ 
+				valid = this.isValid(); 
+			}
+			var missing = this.isMissing();
+	
+			// Display at most one error message
+			if(missing){
+				this.missingSpan.style.display = "";
+			}else if( !empty && !valid ){
+				this.invalidSpan.style.display = "";
+			}else if( !this.isInRange() ){
+				this.rangeSpan.style.display = "";
+			}
+			this.highlight();
 		}
+
 	}
 );

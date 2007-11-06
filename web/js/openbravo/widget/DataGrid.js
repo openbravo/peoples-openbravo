@@ -33,6 +33,34 @@ dojo.require("dojo.widget.Dialog");
 dojo.require("openbravo.html");
 dojo.require("openbravo.io");
 
+function createTextCellElement(colMetadata) {
+  var hoverCell = function(evt) {
+    if (dojo && !dojo.html.hasClass(this, 'DataGrid_Body_Cell_hover')
+        && !dojo.html.hasClass(this, 'DataGrid_Body_Cell_clicked'))
+      dojo.html.prependClass(this, 'DataGrid_Body_Cell_hover');
+  };
+  
+  var plainCell = function(evt) {
+    if (dojo && dojo.html.hasClass(this, 'DataGrid_Body_Cell_hover'))
+      dojo.html.removeClass(this, 'DataGrid_Body_Cell_hover', false);
+  };
+  
+  var text = document.createElement("nobr");
+  text.className = openbravo.widget.DataGrid.Column.prototype.DEFAULT_CLASS;
+  dojo.html.prependClass(text, colMetadata.className);
+  text.onmouseover = hoverCell;
+  text.onmouseout = plainCell;
+  dojo.html.disableSelection(text);
+  
+  var emptyText = document.createTextNode("");
+  text.appendChild(emptyText);
+  if (colMetadata.visible)
+    text.style.width = colMetadata.width;
+  else 
+    text.style.display = "none";
+  return text;
+};
+
 dojo.widget.defineWidget(
 	"openbravo.widget.DataGrid",
 	dojo.widget.HtmlWidget,

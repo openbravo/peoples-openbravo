@@ -44,6 +44,11 @@ dojo.widget.defineWidget(
 		//	optional pattern used format date.  Uses locale-specific format by default.  See dojo.date.format.
 		saveFormat: "",
 		listenOnKeyPress:false,
+    // Id of the other member of the comparison.
+    greaterThan:"",
+    lowerThan:"",
+    isWrong:false,
+    inputDate:new Date(0,0,0),
 		// override css
 		templatePath: dojo.uri.dojoUri("../openbravo/widget/templates/DateTextbox.html"),
 		templateCssPath: null, // Defined in the skin --- ValidationTextbox.css
@@ -69,11 +74,18 @@ dojo.widget.defineWidget(
 		},
 
     isValid: function(){ 
-      str_datetime = this.textbox.value;
-      str_dateFormat = this.displayFormat;
-      if (str_datetime.length == 0) return true;
+      if (this.getDate(this.textbox.value,this.displayFormat)){
+        return true
+      } else {
+        return false;
+      }
+    },
+
+    getDate: function(str_datetime, str_dateFormat){
+      var inputDate=new Date(0,0,0);
+      if (str_datetime.length == 0) return inputDate;
       // datetime parsing and formatting routimes. modify them if you wish other datetime format
-    //function str2dt (str_datetime) {
+      //function str2dt (str_datetime) {
       var re_date = /^(\d+)[\-|\/|\.](\d+)[\-|\/|\.](\d+)$/;
       if (!re_date.exec(str_datetime))
         return false;
@@ -89,6 +101,8 @@ dojo.widget.defineWidget(
           if (RegExp.$2 < 1 || RegExp.$2 > 31) return false;
           if (RegExp.$1 < 1 || RegExp.$1 > 12) return false;
           if (RegExp.$3 < 1 || RegExp.$3 > 9999) return false;
+          inputDate=new Date(parseFloat(RegExp.$3), parseFloat(RegExp.$1)-1, parseFloat(RegExp.$2));
+          return inputDate;
         case "YYYY\/MM\/DD":
         case "YY\/MM\/DD":
         case "YYYY-MM-DD":
@@ -99,6 +113,8 @@ dojo.widget.defineWidget(
           if (RegExp.$3 < 1 || RegExp.$3 > 31) return false;
           if (RegExp.$2 < 1 || RegExp.$2 > 12) return false;
           if (RegExp.$1 < 1 || RegExp.$1 > 9999) return false;
+          inputDate=new Date(parseFloat(RegExp.$1), parseFloat(RegExp.$2)-1, parseFloat(RegExp.$3));
+          return inputDate;
         case "DD\/MM\/YYYY":
         case "DD\/MM\/YY":
         case "DD-MM-YYYY":
@@ -110,9 +126,76 @@ dojo.widget.defineWidget(
           if (RegExp.$1 < 1 || RegExp.$1 > 31) return false;
           if (RegExp.$2 < 1 || RegExp.$2 > 12) return false;
           if (RegExp.$3 < 1 || RegExp.$3 > 9999) return false;
+          inputDate=new Date(parseFloat(RegExp.$3), parseFloat(RegExp.$2)-1, parseFloat(RegExp.$1));
+          return inputDate;
       }
-      return (new Date (RegExp.$1, RegExp.$2, RegExp.$3, 0, 0, 0));
+      return false;
     },
+
+
+		isInRange: function(){
+      if ((this.greaterThan == "" || this.greaterThan == null) && (this.lowerThan == "" || this.lowerThan == null)) {
+        return true;
+      }
+      if (this.greaterThan != "") {
+        if (document.getElementById(this.greaterThan).value == null || document.getElementById(this.greaterThan).value == "") {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return true;
+        } else if (this.textbox.value == "" || this.textbox.value == null) {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return true;
+        } else if (this.getDate(this.textbox.value,this.displayFormat) < this.getDate(document.getElementById(this.greaterThan).value,this.displayFormat)) {
+          if (this.isWrong == false) {
+            this.isWrong = true;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return false;
+        } else {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.greaterThan).update();
+          }
+          return true;
+        }
+      }
+      if (this.lowerThan != "") {
+        if (document.getElementById(this.lowerThan).value == null || document.getElementById(this.lowerThan).value == "") {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.lowerThan).update();
+          }
+          return true;
+        } else if (this.textbox.value == "" || this.textbox.value == null) {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.lowerThan).update();
+          }
+          return true;
+        } else if (this.getDate(this.textbox.value,this.displayFormat) > this.getDate(document.getElementById(this.lowerThan).value,this.displayFormat)) {
+      //  } else if ((parseFloat(this.textbox.value) < parseFloat(document.getElementById(this.lowerThan).value)) && (this.textbox.value != "" || this.textbox.value != null)) {
+          if (this.isWrong == false) {
+            this.isWrong = true;
+            dojo.widget.byId(this.lowerThan).update();
+          }
+          return false;
+        } else {
+          if (this.isWrong == true) {
+            this.isWrong = false;
+            dojo.widget.byId(this.lowerThan).update();
+          }
+          return true;
+        }
+      }
+		},
+
+
+
 		dateToRfc3339: function(/*String*/dateObject, /*String*/formattedString){
 		  // summary: sets a Date object based on an ISO 8601 formatted string (date only)
 		  var year = null;
@@ -137,6 +220,35 @@ dojo.widget.defineWidget(
 				break;
 		  }
 		  return dateObject; // Date
+		},
+
+		update: function() {
+			// summary:
+			//		Called by oninit, onblur, and onkeypress.
+			// description:
+			//		Show missing or invalid messages if appropriate, and highlight textbox field.
+			this.lastCheckedValue = this.textbox.value;
+			this.missingSpan.style.display = "none";
+			this.invalidSpan.style.display = "none";
+			this.rangeSpan.style.display = "none";
+	
+			var empty = this.isEmpty();
+			var valid = true;
+			if(this.promptMessage != this.textbox.value){ 
+				valid = this.isValid(); 
+			}
+			var missing = this.isMissing();
+	
+			// Display at most one error message
+			if(missing){
+				this.missingSpan.style.display = "";
+			}else if( !empty && !valid ){
+				this.invalidSpan.style.display = "";
+			}else if( !this.isInRange() ){
+				this.rangeSpan.style.display = "";
+			}
+			this.highlight();
 		}
+
 	}
 );
