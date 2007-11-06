@@ -361,6 +361,7 @@ Defines a view in the database schema.
 -->
 <!ATTLIST view
   name CDATA #REQUIRED
+  updatable (true | false) "false"
 >
 
 <!-- 

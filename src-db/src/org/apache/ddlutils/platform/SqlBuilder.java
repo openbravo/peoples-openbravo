@@ -3186,6 +3186,10 @@ public abstract class SqlBuilder
                 printStartOfStatement("VIEW", getStructureObjectName(view));
                 writeCreateViewStatement(view);        
                 printEndOfStatement(getStructureObjectName(view));
+                
+                if (view.isUpdatable()) {
+                    createUpdateRules(view);
+                }
             }
         }
     }   
@@ -3196,6 +3200,9 @@ public abstract class SqlBuilder
         printIdentifier(getStructureObjectName(view));
         print(" AS ");
         print(getSQLTranslation().exec(view.getStatement()));        
+    }
+    
+    protected void createUpdateRules(View view) throws IOException {
     }
     
      /**
@@ -3209,6 +3216,11 @@ public abstract class SqlBuilder
             if (view.getName() == null) {
                 _log.warn("Cannot write unnamed view " + view);
             } else {
+                
+                if (view.isUpdatable()) {
+                    dropUpdateRules(view);
+                }
+                
                 printStartOfStatement("VIEW", getStructureObjectName(view));
                 
                 print("DROP VIEW ");
@@ -3217,7 +3229,10 @@ public abstract class SqlBuilder
                 printEndOfStatement(getStructureObjectName(view));
             }
         }
-    }   
+    }
+    
+    protected void dropUpdateRules(View view) throws IOException {
+    }
     
     /**
      * Writes the given function .

@@ -483,6 +483,100 @@ public class PostgreSqlBuilder extends SqlBuilder
         print(getSQLTranslation().exec(view.getStatement()));        
     }
     
+    protected void createUpdateRules(View view) throws IOException {
+        
+        try {
+            RuleProcessor rule = new RuleProcessor(view.getStatement());
+
+            // INSERT RULE
+            print("CREATE OR REPLACE RULE ");
+            printIdentifier(shortenName(view.getName() + "_INS", getMaxTableNameLength()));
+            print(" AS ON INSERT TO ");
+            printIdentifier(getStructureObjectName(view));
+            print(" DO INSTEAD INSERT INTO ");
+            printIdentifier(shortenName(rule.getViewTable(), getMaxTableNameLength()));
+            print(" ( ");
+            for(int i = 0; i < rule.getViewFields().size(); i++) {
+                RuleProcessor.ViewField field = rule.getViewFields().get(i);
+                if (i > 0) {
+                    print (", ");
+                }
+                print(field.getField());
+            }
+            print(" ) VALUES ( ");
+            for(int i = 0; i < rule.getViewFields().size(); i++) {
+                RuleProcessor.ViewField field = rule.getViewFields().get(i);
+                if (i > 0) {
+                    print (", ");
+                }
+                print("NEW.");
+                print(field.getFieldas());
+            }       
+            print(")");
+            printEndOfStatement(getStructureObjectName(view));
+            
+            // UPDATE RULE
+            print("CREATE OR REPLACE RULE ");
+            printIdentifier(shortenName(view.getName() + "_UPD", getMaxTableNameLength()));
+            print(" AS ON UPDATE TO ");
+            printIdentifier(getStructureObjectName(view));
+            print(" DO INSTEAD UPDATE ");
+            printIdentifier(shortenName(rule.getViewTable(), getMaxTableNameLength()));
+            print(" SET ");
+            
+            for(int i = 0; i < rule.getViewFields().size(); i++) {
+                RuleProcessor.ViewField field = rule.getViewFields().get(i);
+                if (i > 0) {
+                    print (", ");
+                }
+                print(field.getField());
+                print(" = NEW.");
+                print(field.getFieldas());
+            }
+            print(" WHERE ");
+            print(rule.getViewFields().get(0).getField());
+            print(" = NEW.");
+            print(rule.getViewFields().get(0).getFieldas());            
+            printEndOfStatement(getStructureObjectName(view));   
+            
+            // DELETE RULE
+            print("CREATE OR REPLACE RULE ");
+            printIdentifier(shortenName(view.getName() + "_DEL", getMaxTableNameLength()));
+            print(" AS ON DELETE TO ");
+            printIdentifier(getStructureObjectName(view));
+            print(" DO INSTEAD DELETE FROM ");
+            printIdentifier(shortenName(rule.getViewTable(), getMaxTableNameLength()));
+            print(" WHERE ");
+            print(rule.getViewFields().get(0).getField());
+            print(" = OLD.");
+            print(rule.getViewFields().get(0).getFieldas());            
+            printEndOfStatement(getStructureObjectName(view));  
+            
+        } catch (RuleProcessorException e) {
+            throw new IOException(e);
+        }
+    }    
+    
+    
+    protected void dropUpdateRules(View view) throws IOException {
+        // INSERT RULE
+        print("DROP RULE ");
+        printIdentifier(shortenName(view.getName() + "_INS", getMaxTableNameLength()));
+        printEndOfStatement(getStructureObjectName(view));  
+        
+        // UPDATE RULE
+        print("DROP RULE ");
+        printIdentifier(shortenName(view.getName() + "_UPD", getMaxTableNameLength()));
+        printEndOfStatement(getStructureObjectName(view));  
+        
+        // DELETE RULE
+        print("DROP RULE ");
+        printIdentifier(shortenName(view.getName() + "_DEL", getMaxTableNameLength()));
+        printEndOfStatement(getStructureObjectName(view));  
+
+    }
+    
+    
     protected Translation createPLSQLFunctionTranslation(Database database) {
         return new PostgrePLSQLFunctionTranslation(database);
     }    

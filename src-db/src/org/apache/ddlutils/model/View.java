@@ -31,6 +31,8 @@ public class View implements StructureObject, Cloneable {
     
     /** The name of the view, may be <code>null</code>. */
     private String _name;
+    /** the updatable property. */
+    private boolean _updatable;
     /** The statement of the view. */
     private String _statement;
     
@@ -61,7 +63,24 @@ public class View implements StructureObject, Cloneable {
     public void setName(String name) {
         _name = name;
     }
-     
+
+    /**
+     * Returns the updatable event of this trigger.
+     * 
+     * @return The updatable event
+     */
+    public boolean isUpdatable() {
+        return _updatable;
+    }
+
+    /**
+     * Sets the updatable event of this trigger.
+     * 
+     * @param updatable The updatable event
+     */
+    public void setUpdatable(boolean updatable) {
+        _updatable = updatable;
+    }     
     /**
      * Returns the statement of this view.
      * 
@@ -88,6 +107,7 @@ public class View implements StructureObject, Cloneable {
         View result = (View)super.clone();
 
         result._name = _name;
+        result._updatable = _updatable;
         result._statement = _statement;
 
         return result;
@@ -106,6 +126,7 @@ public class View implements StructureObject, Cloneable {
             // (which is irrelevant for ccs) because they are contained in a set
             return  new EqualsBuilder()
                             .append(_name, otherView._name)
+                            .append(_updatable, otherView._updatable)
                             .append(_statement, otherView._statement)
                             .isEquals();
         } else {
@@ -123,6 +144,7 @@ public class View implements StructureObject, Cloneable {
     {
             return UtilsCompare.equalsIgnoreCase(_name, otherView._name) &&
                     new EqualsBuilder()
+                            .append(_updatable, otherView._updatable)
                             .append(_statement, otherView._statement)
                             .isEquals();
 
@@ -133,6 +155,7 @@ public class View implements StructureObject, Cloneable {
      */
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(_name)
+                                          .append(_updatable)
                                           .append(_statement)
                                           .toHashCode();
     }
@@ -147,6 +170,8 @@ public class View implements StructureObject, Cloneable {
         if ((getName() != null) && (getName().length() > 0)) {
             result.append("name=");
             result.append(getName());
+            result.append("; updatable=");
+            result.append(isUpdatable());
             result.append("; ");
         }
         result.append("]");
@@ -161,8 +186,9 @@ public class View implements StructureObject, Cloneable {
         if ((getName() != null) && (getName().length() > 0)) {
             result.append("name=");
             result.append(getName());
-            result.append("; ");
-        }
+            result.append("; updatable=");
+            result.append(isUpdatable());
+            result.append("; ");        }
         result.append("statement=");
         result.append(getStatement());
         result.append("]");

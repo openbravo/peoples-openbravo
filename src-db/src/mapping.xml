@@ -120,6 +120,7 @@ under the License.
   <class name="org.apache.ddlutils.model.View">
     <element name="view">
       <attribute name="name" property="name"/>
+      <attribute name="updatable" property="updatable"/>
       <text property="statement"/>
     </element>
   </class>
