@@ -179,7 +179,7 @@
   </target>
 
   <target name="uninstallWebService">
-    <ant dir="${base.subversin}/src" target="uninstallWebService" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.subversion}/src" target="uninstallWebService" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="preinstall">
