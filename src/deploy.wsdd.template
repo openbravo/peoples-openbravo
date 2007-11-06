@@ -20,13 +20,13 @@
     <service name="ExternalSales" provider="java:RPC">
         <parameter name="className" value="org.openbravo.erpCommon.ws.externalSales.ExternalSalesImpl"/>
         <parameter name="allowedMethods" value="*"/>
-        <beanMapping qname="myNS:Product"  xmlns:myNS="http://tecnicia14/openbravo/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.Product"/>
-        <beanMapping qname="myNS:Tax"  xmlns:myNS="http://tecnicia14/openbravo/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.Tax"/>
-        <beanMapping qname="myNS:Category"  xmlns:myNS="http://tecnicia14/openbravo/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.Category"/>
-        <beanMapping qname="myNS:BPartner"  xmlns:myNS="http://tecnicia14/openbravo/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.BPartner"/>
-        <beanMapping qname="myNS:Order"  xmlns:myNS="http://tecnicia14/openbravo/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.Order"/>
-        <beanMapping qname="myNS:OrderLine"  xmlns:myNS="http://tecnicia14/openbravo/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.OrderLine"/>
-        <beanMapping qname="myNS:OrderIdentifier"  xmlns:myNS="http://tecnicia14/openbravo/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.OrderIdentifier"/>
-        <beanMapping qname="myNS:Payment"  xmlns:myNS="http://tecnicia14/openbravo/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.Payment"/>
+        <beanMapping qname="myNS:Product"  xmlns:myNS="/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.Product"/>
+        <beanMapping qname="myNS:Tax"  xmlns:myNS="/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.Tax"/>
+        <beanMapping qname="myNS:Category"  xmlns:myNS="/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.Category"/>
+        <beanMapping qname="myNS:BPartner"  xmlns:myNS="/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.BPartner"/>
+        <beanMapping qname="myNS:Order"  xmlns:myNS="/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.Order"/>
+        <beanMapping qname="myNS:OrderLine"  xmlns:myNS="/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.OrderLine"/>
+        <beanMapping qname="myNS:OrderIdentifier"  xmlns:myNS="/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.OrderIdentifier"/>
+        <beanMapping qname="myNS:Payment"  xmlns:myNS="/services/ExternalSales" languageSpecificType="java:org.openbravo.erpCommon.ws.externalSales.Payment"/>
     </service>
 </deployment>
