@@ -46,6 +46,7 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
         removeTable("AD_SESSION");
         removeTable("AD_SYSTEM");
         removeTable("TIME_DIMENSION");
+        removeTable("AD_DEVELOPER");
         
         addTable("AD_CLIENT", "AD_CLIENT_ID <> 0");
         addTable("AD_CLIENTINFO", "AD_CLIENT_ID <> 0");
