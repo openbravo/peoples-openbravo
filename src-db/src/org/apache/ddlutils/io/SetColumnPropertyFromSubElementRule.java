@@ -56,7 +56,7 @@ public class SetColumnPropertyFromSubElementRule extends Rule
     /**
      * {@inheritDoc}
      */
-    public void begin(Attributes attributes) throws Exception
+    public void begin(String namespace, String name, Attributes attributes) throws Exception
     {
         for (int idx = 0; idx < attributes.getLength(); idx++)
         {
@@ -78,7 +78,7 @@ public class SetColumnPropertyFromSubElementRule extends Rule
     /**
      * {@inheritDoc}
      */
-    public void end() throws Exception
+    public void end(String namespace, String name) throws Exception
     {
         _usesBase64 = false;
     }
@@ -86,7 +86,7 @@ public class SetColumnPropertyFromSubElementRule extends Rule
     /**
      * {@inheritDoc}
      */
-    public void body(String text) throws Exception
+    public void body(String namespace, String name, String text) throws Exception
     {
         String attrValue = text.trim();
 

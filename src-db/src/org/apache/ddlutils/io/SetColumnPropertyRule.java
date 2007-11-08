@@ -56,7 +56,7 @@ public class SetColumnPropertyRule extends Rule
     /**
      * {@inheritDoc}
      */
-    public void begin(Attributes attributes) throws Exception
+    public void begin(String namespace, String name, Attributes attributes) throws Exception
     {
         Object bean = digester.peek();
 

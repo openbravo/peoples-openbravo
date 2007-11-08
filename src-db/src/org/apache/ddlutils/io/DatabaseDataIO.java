@@ -175,7 +175,6 @@ public class DatabaseDataIO
      * from a live database.
      * 
      * @param determineSchema Whether to try to find the table's schemas
-     * @deprecated Will be removed once proper schema support is in place
      */
     public void setDetermineSchema(boolean determineSchema)
     {
@@ -186,7 +185,6 @@ public class DatabaseDataIO
      * Sets the schema pattern to find the schemas of tables when reading data from a live database.
      * 
      * @param schemaPattern The schema pattern
-     * @deprecated Will be removed once proper schema support is in place
      */
     public void setSchemaPattern(String schemaPattern)
     {
