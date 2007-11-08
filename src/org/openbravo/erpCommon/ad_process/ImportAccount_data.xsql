@@ -28,7 +28,7 @@
 			'' as message, ParentElementValue_ID, '' as AD_Tree_ID, '' as Info, '' as Alias, '' as Combination,
 			'' as TableName, '' as ColumnName, '' as Account_ID, '' as AD_OrgTrx_ID, '' as C_ValidCombination_ID,
 			'' as Created, '' as CreatedBy, '' as C_LocFrom_ID, '' as C_LocTo_ID, '' as C_SalesRegion_ID, '' as C_Project_ID,
-			'' as C_Campaign_ID, '' as C_Activity_ID, '' as User1_ID, '' as User2_ID, '' as operands
+			'' as C_Campaign_ID, '' as C_Activity_ID, '' as User1_ID, '' as User2_ID, '' as operands, '' as value
       FROM I_ElementValue WHERE I_IsImported='N'
       AND AD_Client_ID = ?
       ]]>
@@ -326,7 +326,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT I_ElementValue_ID, C_ElementValue_ID
+        SELECT I_ElementValue_ID, C_ElementValue_ID, value
         FROM I_ElementValue
         WHERE I_IsImported='N'
         AND AD_Client_ID=?

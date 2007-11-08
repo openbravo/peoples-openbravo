@@ -148,16 +148,6 @@ public class ImportAccount extends ImportProcess {
             no = ImportAccountData.insertElementValue(con, conn, C_ElementValue_ID, I_ElementValue_ID);
             if (log4j.isDebugEnabled()) log4j.debug("Insert ElementValue = " + no);
             noInsert+=no;
-            String [][] strOperand = operandProcess(ImportAccountData.selectOperands(conn, I_ElementValue_ID));
-            String strSeqNo = "10";
-            for(int j=0;strOperand!=null && j<strOperand.length;j++){
-            	String C_ElementValue_Operand_ID = SequenceIdData.getSequence(conn, "C_ElementValue_Operand", vars.getClient());
-            	String strAccount = ImportAccountData.selectAccount(con, conn, strOperand[j][0], vars.getClient());
-            	if(strAccount!=null && !strAccount.equals("")){
-            	  ImportAccountData.insertOperands(con, conn, C_ElementValue_Operand_ID, (strOperand[j][1].equals("+")?"1":"-1"), C_ElementValue_ID, strAccount, strSeqNo, vars.getClient(), vars.getUser());
-                  strSeqNo = nextSeqNo(strSeqNo);
-                }
-            }
           } catch (ServletException ex) {
             if (log4j.isDebugEnabled()) log4j.debug("Insert ElementValue - " + ex.toString());
             ImportAccountData.insertElementValueError(con, conn, ex.toString(), I_ElementValue_ID);
@@ -175,6 +165,29 @@ public class ImportAccount extends ImportProcess {
           }
         }
         ImportAccountData.updateProcessing(con, conn, C_ElementValue_ID, I_ElementValue_ID);
+      }
+      for (int i =0;i<records.length;i++) {
+        String I_ElementValue_ID = records[i].iElementvalueId;
+        String elementValue = records[i].value;
+        if (log4j.isDebugEnabled()) log4j.debug("I_ElementValue_ID=" + I_ElementValue_ID + ", elementValue=" + elementValue);
+        try {
+          String [][] strOperand = operandProcess(ImportAccountData.selectOperands(conn, I_ElementValue_ID));
+          String strSeqNo = "10";
+          for(int j=0;strOperand!=null && j<strOperand.length;j++){
+              String C_ElementValue_Operand_ID = SequenceIdData.getSequence(conn, "C_ElementValue_Operand", vars.getClient());
+              String strAccount = ImportAccountData.selectAccount(con, conn, strOperand[j][0], vars.getClient());
+              String strElementValue = ImportAccountData.selectAccount(con, conn, elementValue, vars.getClient());
+              if(strAccount!=null && !strAccount.equals("")){
+                ImportAccountData.insertOperands(con, conn, C_ElementValue_Operand_ID, (strOperand[j][1].equals("+")?"1":"-1"), strElementValue, strAccount, strSeqNo, vars.getClient(), vars.getUser());
+                strSeqNo = nextSeqNo(strSeqNo);
+              } else {
+                  if (log4j.isDebugEnabled()) log4j.debug("Operand not inserted - Value = " + strOperand[j][0]);
+              }
+          }
+        } catch (ServletException ex) {
+            log4j.warn("ServletException I_ElementValue_ID=" + I_ElementValue_ID);
+            continue;
+        }
       }
       no = ImportAccountData.updateNotImported(con, conn);
       if (log4j.isDebugEnabled()) log4j.debug("Errors: " + no);
