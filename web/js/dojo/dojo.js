@@ -12229,7 +12229,7 @@ invalidMessage=(arrMessages[i].text);
 if(_b0a=="Missing"){
 missingMessage=(arrMessages[i].text);
 }
-if(_b0a=="Missing"){
+if(_b0a=="Range"){
 rangeMessage=(arrMessages[i].text);
 }
 }

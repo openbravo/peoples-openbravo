@@ -57,7 +57,7 @@ openbravo.messages.getMessage = function(index, _language)
         if (arrMessages[i].message == index){
           if (index=="Invalid") invalidMessage = (arrMessages[i].text);
           if (index=="Missing") missingMessage = (arrMessages[i].text);
-          if (index=="Missing") rangeMessage = (arrMessages[i].text);
+          if (index=="Range") rangeMessage = (arrMessages[i].text);
         }
     }
     return null;
