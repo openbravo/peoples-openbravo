@@ -3,7 +3,7 @@
 <trigger name="A_AMORTIZATIONLINE_TRG" table="A_AMORTIZATIONLINE" fires="before" insert="true" delete="true" update="true" foreach="row">
 <body>
 <![CDATA[
-
+DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License

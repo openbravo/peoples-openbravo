@@ -3,7 +3,7 @@
 <trigger name="C_ORDERLINE_TRG" table="C_ORDERLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
 <body>
 <![CDATA[
-
+DECLARE
   v_newTaxBaseAmt NUMBER;
   v_oldTaxBaseAmt NUMBER;
   v_oldLine   NUMBER := 0;

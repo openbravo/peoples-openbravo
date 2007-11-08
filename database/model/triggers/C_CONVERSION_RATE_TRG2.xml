@@ -3,7 +3,7 @@
 <trigger name="C_CONVERSION_RATE_TRG2" table="C_CONVERSION_RATE" fires="after" insert="true" update="true" foreach="statement">
 <body>
 <![CDATA[
-
+DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License

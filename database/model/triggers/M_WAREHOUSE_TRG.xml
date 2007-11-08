@@ -23,7 +23,7 @@
     *************************************************************************
     * New Accounting Defaults
     */
-
+DECLARE
 
   TYPE RECORD IS REF CURSOR;
   Cur_Defaults RECORD;

@@ -3,6 +3,7 @@
 <trigger name="M_MATCHPO_TRG" table="M_MATCHPO" fires="before" insert="true" update="true" foreach="row">
 <body>
 <![CDATA[
+DECLARE
   v_QtyOrdered NUMBER;
   v_QtyOrderOrdered NUMBER;
   v_Product_UOM     NUMBER;

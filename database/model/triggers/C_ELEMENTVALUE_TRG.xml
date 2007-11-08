@@ -3,6 +3,7 @@
 <trigger name="C_ELEMENTVALUE_TRG" table="C_ELEMENTVALUE" fires="after" insert="true" update="true" foreach="row">
 <body>
 <![CDATA[
+DECLARE
   v_xTree_ID NUMBER;
   v_xParent_ID NUMBER;
   v_NextNo     NUMBER;

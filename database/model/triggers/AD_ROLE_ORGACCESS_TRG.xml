@@ -3,7 +3,7 @@
 <trigger name="AD_ROLE_ORGACCESS_TRG" table="AD_ROLE_ORGACCESS" fires="after" insert="true" update="true" delete="true" foreach="statement">
 <body>
 <![CDATA[
-
+DECLARE
     /*************************************************************************
     * The contents of this file are subject to the Compiere License
     * Version 2.5.0 ("License"); You may not use this file except in

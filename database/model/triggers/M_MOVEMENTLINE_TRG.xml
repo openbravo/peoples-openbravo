@@ -3,6 +3,7 @@
 <trigger name="M_MOVEMENTLINE_TRG" table="M_MOVEMENTLINE" fires="after" insert="true" update="true" delete="true" foreach="row">
 <body>
 <![CDATA[
+DECLARE
   v_ID NUMBER;
   v_RO      NUMBER;
   V_STOCKED NUMBER;

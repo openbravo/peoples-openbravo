@@ -3,6 +3,7 @@
 <trigger name="M_INVENTORYLINE_TRG" table="M_INVENTORYLINE" fires="after" insert="true" update="true" delete="true" foreach="row">
 <body>
 <![CDATA[
+DECLARE
   v_ID NUMBER;
   v_RO      NUMBER;
   V_STOCKED NUMBER;

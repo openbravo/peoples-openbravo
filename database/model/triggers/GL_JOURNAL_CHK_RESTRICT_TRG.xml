@@ -20,7 +20,8 @@
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
-    BEGIN  IF UPDATING
+    BEGIN
+    IF UPDATING
     THEN  IF(:old.Processed='Y'
     AND ((COALESCE(:old.DATEDOC, '01-01-1386') <> COALESCE(:new.DATEDOC, '01-01-1386'))
     OR(COALESCE(:old.C_PERIOD_ID, 0) <> COALESCE(:new.C_PERIOD_ID, 0))

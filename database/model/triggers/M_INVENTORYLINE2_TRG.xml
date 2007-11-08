@@ -3,7 +3,7 @@
 <trigger name="M_INVENTORYLINE2_TRG" table="M_INVENTORYLINE" fires="before" insert="true" update="true" foreach="row">
 <body>
 <![CDATA[
-
+DECLARE
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
