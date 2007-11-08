@@ -26,14 +26,13 @@ import org.apache.tools.ant.Task;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ddlutils.task.VerbosityLevel;
 
 /**
  *
- * @author adrian
+ * @author Adrian
  */
 public class CreateDatabase extends Task {
     

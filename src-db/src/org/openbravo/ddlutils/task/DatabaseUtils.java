@@ -20,7 +20,6 @@ import java.util.Comparator;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import javax.sql.DataSource;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.io.DatabaseFilter;
@@ -31,10 +30,7 @@ import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.model.Table;
 import org.apache.tools.ant.BuildException;
 
-/**
- *
- * @author adrian
- */
+
 public class DatabaseUtils {
     
     /** Creates a new instance of DatabaseUtils */
