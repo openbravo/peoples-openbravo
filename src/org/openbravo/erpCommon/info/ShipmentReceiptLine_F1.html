@@ -214,7 +214,7 @@ activarControlTeclas();
               <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                 <TR>
                   <TD class="TextBox_ContentCell">
-                    <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateFrom");</SCRIPT>
+                    <INPUT dojotype="openbravo:DateTextbox" lowerThan="paramDateTo" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateFrom");</SCRIPT>
                   </TD>
                   <TD class="FieldButton_ContentCell">
                     <a class="FieldButtonLink" href="#"
@@ -247,7 +247,7 @@ activarControlTeclas();
               <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                 <TR>
                   <TD class="TextBox_ContentCell">
-                    <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateTo");</SCRIPT>
+                    <INPUT dojotype="openbravo:DateTextbox" greaterThan="paramDateFrom" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateTo");</SCRIPT>
                   </TD>
                   <TD class="FieldButton_ContentCell">
                     <a class="FieldButtonLink" href="#"

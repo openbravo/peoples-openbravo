@@ -227,7 +227,7 @@ function onloadFunctions() {
                 <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <TR>
                     <TD class="TextBox_ContentCell">
-                      <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFrom");</script>
+                      <INPUT dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFrom");</script>
                     </TD>
                     <TD class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
@@ -249,7 +249,7 @@ function onloadFunctions() {
                 <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <TR>
                     <TD class="TextBox_ContentCell">
-                      <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateTo");</script>
+                      <INPUT dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateTo");</script>
                     </TD>
                     <TD class="FieldButton_bg">
                       <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" >
@@ -270,11 +270,11 @@ function onloadFunctions() {
             <tr>
             <TR>
               <TD class="TitleCell"> <SPAN class="LabelText">From Amount</SPAN></TD>
-              <TD class="TextBox_ContentCell"> <INPUT dojoType="openbravo:RealNumberTextbox" class="TextBox_OneCell_width" type="text" name="inpAmtFrom" id="paramAmtFrom" size="10" maxlength="10" value=""></INPUT><script>djConfig.searchIds.push("paramAmtFrom");</script>
+              <TD class="TextBox_ContentCell"> <INPUT dojoType="openbravo:RealNumberTextbox" lowerThan="paramAmtTo" class="TextBox_OneCell_width" type="text" name="inpAmtFrom" id="paramAmtFrom" size="10" maxlength="10" value=""></INPUT><script>djConfig.searchIds.push("paramAmtFrom");</script>
               </TD>
                 <TD class="ContentCell"></TD>
               <TD class="TitleCell"> <SPAN class="LabelText">To Amount</SPAN></TD>
-              <TD class="TextBox_ContentCell"> <INPUT dojoType="openbravo:RealNumberTextbox" class="TextBox_OneCell_width" type="text" name="inpAmtTo" id="paramAmtTo" size="10" maxlength="10" value=""></INPUT><script>djConfig.searchIds.push("paramAmtTo");</script>
+              <TD class="TextBox_ContentCell"> <INPUT dojoType="openbravo:RealNumberTextbox" greaterThan="paramAmtFrom" class="TextBox_OneCell_width" type="text" name="inpAmtTo" id="paramAmtTo" size="10" maxlength="10" value=""></INPUT><script>djConfig.searchIds.push("paramAmtTo");</script>
               </TD>
               <TD class="ContentCell"></TD>
             </TR>

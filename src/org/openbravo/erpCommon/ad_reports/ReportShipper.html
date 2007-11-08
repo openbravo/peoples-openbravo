@@ -219,7 +219,7 @@ function depurar(command) {
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
                         <TD class="TextBox_ContentCell">
-                          <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpFrom" id="paramFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramFrom");</script>
+                          <INPUT dojoType="openbravo:DateTextbox" lowerThan="paramTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpFrom" id="paramFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramFrom");</script>
                         </TD>
                         <TD class="FieldButton_bg">
                           <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="showCalendar('frmMain.inpFrom', document.frmMain.inpFrom.value, false);return false;">
@@ -240,7 +240,7 @@ function depurar(command) {
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
                         <TD class="TextBox_ContentCell">
-                          <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpTo" id="paramTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramTo");</script>
+                          <INPUT dojoType="openbravo:DateTextbox" greaterThan="paramFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpTo" id="paramTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramTo");</script>
                         </TD>
                         <TD class="FieldButton_bg">
                           <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="showCalendar('frmMain.inpTo', document.frmMain.inpTo.value, false);return false;">

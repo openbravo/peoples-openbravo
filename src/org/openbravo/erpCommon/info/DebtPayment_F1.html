@@ -191,7 +191,7 @@ function onloadFunctions() {
               <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                 <TR>
                   <TD class="TextBox_ContentCell">
-                    <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width"  type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateFrom");</SCRIPT>
+                    <INPUT dojotype="openbravo:DateTextbox" lowerThan="paramDateTo" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width"  type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateFrom");</SCRIPT>
                   </TD>
                   <TD class="FieldButton_ContentCell">
                     <a class="FieldButtonLink" href="#"
@@ -224,7 +224,7 @@ function onloadFunctions() {
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                       <TR>
                         <TD class="TextBox_ContentCell">
-                          <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateTo");</SCRIPT>
+                          <INPUT dojotype="openbravo:DateTextbox" greaterThan="paramDateFrom" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateTo");</SCRIPT>
                         </TD>
                         <TD class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#"
@@ -271,7 +271,7 @@ function onloadFunctions() {
               <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                 <TR>
                   <TD class="TextBox_ContentCell">
-                    <INPUT dojoType="openbravo:RealNumberTextbox" class="TextBox_btn_OneCell_width" type="text" name="inpCal1" id="paramCal1" size="10" maxlength="10" value="" onkeyup="validateNumberBox(this.id);;return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramCal1");</SCRIPT>
+                    <INPUT dojoType="openbravo:RealNumberTextbox" lowerThan="paramCal2" class="TextBox_btn_OneCell_width" type="text" name="inpCal1" id="paramCal1" size="10" maxlength="10" value="" onkeyup="validateNumberBox(this.id);;return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramCal1");</SCRIPT>
                   </TD>
                   <TD class="FieldButton_ContentCell">
                     <a class="FieldButtonLink" href="#"
@@ -302,7 +302,7 @@ function onloadFunctions() {
               <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                 <TR>
                   <TD class="TextBox_ContentCell">
-                    <INPUT dojoType="openbravo:RealNumberTextbox" class="TextBox_btn_OneCell_width" type="text" name="inpCal2" id="paramCal2" size="10" maxlength="10" value="" onkeyup="validateNumberBox(this.id);;return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramCal2");</SCRIPT>
+                    <INPUT dojoType="openbravo:RealNumberTextbox" greaterThan="paramCal1" class="TextBox_btn_OneCell_width" type="text" name="inpCal2" id="paramCal2" size="10" maxlength="10" value="" onkeyup="validateNumberBox(this.id);;return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramCal2");</SCRIPT>
                   </TD>
                   <TD class="FieldButton_ContentCell">
                     <a class="FieldButtonLink" href="#"
