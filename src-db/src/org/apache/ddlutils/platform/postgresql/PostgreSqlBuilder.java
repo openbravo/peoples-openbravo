@@ -553,7 +553,7 @@ public class PostgreSqlBuilder extends SqlBuilder
             printEndOfStatement(getStructureObjectName(view));  
             
         } catch (RuleProcessorException e) {
-            throw new IOException(e);
+            throw new IOException(e.getMessage());
         }
     }    
     
