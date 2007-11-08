@@ -34,7 +34,7 @@ import org.apache.ddlutils.task.VerbosityLevel;
  * @author adrian
  */
 public class AlterDatabase extends Task {
-    
+    // hola
     private String driver;
     private String url;
     private String user;
