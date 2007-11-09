@@ -33,7 +33,7 @@ BEGIN
     OR Posted IS NULL
     OR Processing<>'N'
     OR Processing IS NULL) ;
-  DELETE Fact_Acct  WHERE AD_Table_ID=v_AD_Table_ID  AND RECORD_ID=p_C_Order_ID;
+  DELETE FROM Fact_Acct  WHERE AD_Table_ID=v_AD_Table_ID  AND RECORD_ID=p_C_Order_ID;
   -- Commented by cromero 19102006 COMMIT;
   RETURN;
 EXCEPTION
