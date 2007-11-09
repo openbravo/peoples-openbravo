@@ -121,11 +121,7 @@ BEGIN
                                       GREATEST(Cur_PlanProduct.DELAYMIN, (CASE WHEN Cur_PlanProduct.CAPACITY IS NULL THEN 0
                                                                   ELSE CEIL(v_Qty_new/Cur_PlanProduct.CAPACITY)
                                                                   END)));
-            Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID,
-                              Cur_PlanProduct.M_Product_ID, v_qty_new,
-                              v_neededqty_new, NULL, 'PP', 'Y', NULL, NULL,
-                              NULL, NULL, NULL, v_Planneddate_new, v_plannedorderdate_new,
-                              'N', 'N', Cur_PlanProduct.Vendor_ID, v_Aux_new);
+            Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_PlanProduct.M_Product_ID, v_qty_new, v_neededqty_new, NULL, 'PP', 'Y', NULL, NULL, NULL, NULL, NULL, v_Planneddate_new, v_plannedorderdate_new, 'N', 'N', Cur_PlanProduct.Vendor_ID, v_Aux_new);
             v_neededqty_old := v_neededqty_new;
             v_qty_old := v_qty_new;
             v_stock := v_stock + v_qty_new;

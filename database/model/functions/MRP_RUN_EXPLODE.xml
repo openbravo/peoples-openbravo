@@ -69,19 +69,7 @@ BEGIN
       ) LOOP
         IF (Cur_Run_Lines.Qty < 0) THEN
           v_New := 'Y';
-          Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Run_Lines.M_Product_ID, -1*Cur_Run_Lines.Qty,
-                              -1*Cur_Run_Lines.Qty, Cur_Run_Lines.MRP_RUN_Line_ID,
-                              (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN 'MP' ELSE 'WP' END), 'N', NULL,
-                              NULL, NULL, NULL, Cur_Run_Lines.MA_Processplan_ID,
-                              Cur_Run_Lines.planneddate - p_SecurityMargin,
-                              (CASE Cur_Run_Lines.ispurchased
-                               WHEN 'Y' THEN (Cur_Run_Lines.planneddate - p_SecurityMargin)
-                               ELSE Cur_Run_Lines.planneddate - p_SecurityMargin -
-                                    GREATEST(Cur_Run_Lines.DELAYMIN, CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0
-                                                                          ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END)
-                               END),
-                              'Y', (CASE WHEN Cur_Run_Lines.ispurchased = 'Y' THEN 'Y'
-                                         ELSE 'N' END), NULL, v_Aux_ID);
+          Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Run_Lines.M_Product_ID, -1*Cur_Run_Lines.Qty, -1*Cur_Run_Lines.Qty, Cur_Run_Lines.MRP_RUN_Line_ID, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN 'MP' ELSE 'WP' END), 'N', NULL, NULL, NULL, NULL, Cur_Run_Lines.MA_Processplan_ID, Cur_Run_Lines.planneddate - p_SecurityMargin, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN (Cur_Run_Lines.planneddate - p_SecurityMargin) ELSE Cur_Run_Lines.planneddate - p_SecurityMargin - GREATEST(Cur_Run_Lines.DELAYMIN, CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) END), 'Y', (CASE WHEN Cur_Run_Lines.ispurchased = 'Y' THEN 'Y' ELSE 'N' END), NULL, v_Aux_ID);
         ELSE
           v_ResultStr := 'Explode dependant products';
           FOR Cur_Dependants IN (SELECT MA_PROCESSPLAN_TOTALIZED.DEPENDANTPRODUCT, DEPQTY/PROQTY AS qty,
@@ -93,16 +81,7 @@ BEGIN
                        NULL, NULL, NULL, NULL, p_TimeHorizon,
                        p_PlanningDate, 'Y');
             v_New := 'Y';
-            Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Dependants.DependantProduct,
-                              Cur_Run_Lines.Qty*Cur_Dependants.qty,
-                              Cur_Run_Lines.Qty*Cur_Dependants.qty, Cur_Run_Lines.MRP_RUN_Line_ID,
-                              'WP', 'N', NULL,
-                              NULL, NULL, NULL, NULL,
-                              (CASE WHEN Cur_Dependants.qty > 0 THEN Cur_Run_Lines.planneddate
-                               ELSE Cur_Run_Lines.plannedorderdate END),
-                              Cur_Run_Lines.plannedorderdate,
-                              'Y', (CASE WHEN Cur_Dependants.qty < 0 THEN 'N'
-                                    ELSE 'Y' END), NULL, v_Aux_ID);
+            Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Dependants.DependantProduct, Cur_Run_Lines.Qty*Cur_Dependants.qty, Cur_Run_Lines.Qty*Cur_Dependants.qty, Cur_Run_Lines.MRP_RUN_Line_ID, 'WP', 'N', NULL, NULL, NULL, NULL, NULL, (CASE WHEN Cur_Dependants.qty > 0 THEN Cur_Run_Lines.planneddate ELSE Cur_Run_Lines.plannedorderdate END), Cur_Run_Lines.plannedorderdate, 'Y', (CASE WHEN Cur_Dependants.qty < 0 THEN 'N' ELSE 'Y' END), NULL, v_Aux_ID);
           END LOOP;
         END IF;
 
@@ -122,11 +101,7 @@ BEGIN
 
       END LOOP;
 /*
-      Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_parentRun_ID, p_Product_ID, p_Qty,
-                          p_NeededQty, Parent_ID, p_InOutTrxType, p_Fixed, p_OrderLine_ID,
-                          p_WorkRequirement_ID, p_SalesForecastLine_ID, p_RequisitionLine_ID,
-                          p_ProcessPlan_ID, p_PlannedDate, p_PlannedOrderDate, p_Production,
-                          p_IsExploded, p_Line_ID)
+      Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_parentRun_ID, p_Product_ID, p_Qty, p_NeededQty, Parent_ID, p_InOutTrxType, p_Fixed, p_OrderLine_ID, p_WorkRequirement_ID, p_SalesForecastLine_ID, p_RequisitionLine_ID, p_ProcessPlan_ID, p_PlannedDate, p_PlannedOrderDate, p_Production, p_IsExploded, p_Line_ID)
 */
       --Check remaining not exploded lines.
       SELECT count(*) INTO v_NewCount
