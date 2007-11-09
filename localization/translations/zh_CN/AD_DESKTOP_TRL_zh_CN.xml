@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<compiereTrl language="zh_CN" table="AD_DESKTOP">
-    <row id="100" trl="N">
-        <value column="Name" original="FrontOffice">前台</value>
-        <value column="Description" original="Front Office Desktop">前台桌面</value>
-        <value column="Help" original=""/>
-    </row>
-</compiereTrl>

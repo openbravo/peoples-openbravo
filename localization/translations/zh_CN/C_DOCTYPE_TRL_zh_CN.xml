@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<compiereTrl language="zh_CN" table="C_DOCTYPE">
-    <row id="0" trl="N">
-        <value column="Name" original="** New **">** 新建 **</value>
-        <value column="PrintName" original="** New **">** 新建 **</value>
-        <value column="DocumentNote" original="** NO INVOICE **">** 没有发票 **</value>
-    </row>
-</compiereTrl>

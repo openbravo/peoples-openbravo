@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<compiereTrl language = "es_VE" table = "C_DOCTYPE">
-    <row id = "0" trl = "N">
-        <value column = "Name" original = "** New **">** Nuevo **</value>
-        <value column = "PrintName" original = "** New **">** Nuevo **</value>
-        <value column = "DocumentNote" original = "** NO INVOICE **">** NO ES FACTURA **</value>
-    </row>
-</compiereTrl>

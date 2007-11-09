@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<compiereTrl language="es_CO" table="AD_WORKBENCH">
-  <row id="100" trl="N">
-    <value column="Name" original="Sales">Sales</value>
-    <value column="Description" original=""></value>
-    <value column="Help" original=""></value>
-  </row>
-</compiereTrl>

@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<compiereTrl language="fa_IR" table="AD_DESKTOP">
-  <row id="100" trl="N">
-    <value column="Name" original="FrontOffice">سیاستگزاران سازمان</value>
-    <value column="Description" original="Front Office Desktop">میز کار سیاستگزاران سازمان</value>
-    <value column="Help" original=""/>
-  </row>
-</compiereTrl>

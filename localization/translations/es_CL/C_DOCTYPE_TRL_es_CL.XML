@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<compiereTrl language="es_CL" table="C_DOCTYPE">
-  <row id="0" trl="N">
-    <value column="Name" original="Nota de Crédito">Nota de Crédito</value>
-    <value column="PrintName" original="NCredito">NCredito</value>
-    <value column="DocumentNote" original="** NO INVOICE **">** NO INVOICE **</value>
-  </row>
-</compiereTrl>
