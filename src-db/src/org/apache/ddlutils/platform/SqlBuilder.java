@@ -3491,10 +3491,10 @@ public abstract class SqlBuilder
     public void writeCreateTriggerFunction(Trigger trigger) throws IOException {
     }
     
-    public void writeTriggerExecuteStmt(Trigger trigger) throws IOException {             
+    public void writeTriggerExecuteStmt(Trigger trigger) throws IOException {   
+        println("DECLARE");
         print(getPLSQLTriggerTranslation().exec(trigger.getBody()));        
         println();
-        print(getFunctionEndBody());
     }
     
      /**
