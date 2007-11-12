@@ -125,21 +125,7 @@ public class PostgrePLSQLTranslation extends CombinedTranslation {
         // Procedures with output parameters...
         for (int i = 0; i < database.getFunctionCount(); i++) {
             if (database.getFunction(i).hasOutputParameters()) {
-                
-                try {
-                    Function f = (Function) database.getFunction(i).clone();
-                    while (f != null) {
-                        append(new FunctionWithOutputTranslation(f));
-                        Parameter lastparam = f.getParameter(f.getParameterCount() - 1);
-                        if (lastparam.getDefaultValue() == null || lastparam.getDefaultValue().equals("")) {
-                            f = null; // exit loop
-                        } else {
-                            f.removeParameter(f.getParameterCount() -1);
-                        }
-                    }
-                } catch (CloneNotSupportedException e) {
-                    // Will not happen
-                } 
+                appendFunctionWithOutputTranslation(database.getFunction(i));
             }
         }
         
@@ -160,6 +146,26 @@ public class PostgrePLSQLTranslation extends CombinedTranslation {
             }
         });
     }
+    
+    private void appendFunctionWithOutputTranslation(Function func) {
+        
+        try {
+            Function f = (Function) func.clone();
 
+            // First the recursive call
+            Parameter lastparam = f.getParameter(f.getParameterCount() - 1);
+            if (lastparam.getDefaultValue() != null && !lastparam.getDefaultValue().equals("")) {
+                f.removeParameter(f.getParameterCount() -1);
+                appendFunctionWithOutputTranslation(f);
+            }
+            
+            // Last the function translation
+            append(new FunctionWithOutputTranslation(func));
+
+
+        } catch (CloneNotSupportedException e) {
+            // Will not happen
+        }               
+    }
     
 }
