@@ -226,7 +226,8 @@
   </target>
 
     <target name="create.database">
-        <ant dir="${base.subversion}/database" target="create.database" inheritAll="true" inheritRefs="true"/>
+    	<antcall target="database.lib"/>
+    	<ant dir="${base.subversion}/database" target="create.database" inheritAll="true" inheritRefs="true"/>
     </target>
 
     <target name="update.database">
