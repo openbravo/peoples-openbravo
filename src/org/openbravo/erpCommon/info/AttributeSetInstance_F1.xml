@@ -24,7 +24,8 @@
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="paramWindowId" name="windowId" attribute="value" default=""/>
-	<PARAMETER id="paramAttribute" name="attribute" attribute="value"/>
+  <PARAMETER id="paramTabId" name="tabId" attribute="value" default=""/>
+  <PARAMETER id="paramAttribute" name="attribute" attribute="value"/>
 	<PARAMETER id="paramInstance" name="instance" attribute="value"/>
 	<PARAMETER id="paramProduct" name="product" attribute="value"/>
 	<PARAMETER id="paramLocatorId" name="locatorId" attribute="value"/>
@@ -36,5 +37,6 @@
 	<PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
 	<PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
 	<PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  <PARAMETER id="paramBody" name="body" attribute="onload" replace="xx();"/>
 	<DISCARD id="discard"/>
 </REPORT>

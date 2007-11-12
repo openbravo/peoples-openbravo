@@ -50,6 +50,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strProduct = vars.getRequestGlobalVariable("inpProduct", "AttributeSetInstance.product");
       vars.getRequestGlobalVariable("inpwindowId", "AttributeSetInstance.windowId");
       vars.getRequestGlobalVariable("inpLocatorId", "AttributeSetInstance.locatorId");
+      vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
       String strAttributeSet="";
       String strProductInstance="";
       if (strNameValue.equals("") || strNameValue.equals("0")) {
@@ -64,6 +65,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       }
       vars.setSessionValue("AttributeSetInstance.attribute", strAttributeSet);
       vars.setSessionValue("AttributeSetInstance.productInstance", strProductInstance);
+      vars.setSessionValue("AttributeSetInstance.close", "N");
       if (strAttributeSet.equals("") || strAttributeSet.equals("0")) advisePopUp(response, "Info", Utility.messageBD(this, "PAttributeNoSelection", vars.getLanguage()));
       else printPageFS(response, vars);
     } else if (vars.commandIn("FRAME1")) {
@@ -71,11 +73,12 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strAttributeSet = vars.getGlobalVariable("inpAttribute", "AttributeSetInstance.attribute");
       String strProductInstance = vars.getGlobalVariable("inpProductInstance", "AttributeSetInstance.productInstance", "");
       String strWindowId = vars.getGlobalVariable("inpwindowId", "AttributeSetInstance.windowId", "");
+      String strTabId = vars.getGlobalVariable("inpTabId", "AttributeSetInstance.tabId", "");
       String strLocator = vars.getGlobalVariable("inpLocatorId", "AttributeSetInstance.locatorId", "");
       String strProduct = vars.getGlobalVariable("inpProduct", "AttributeSetInstance.product", "");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       if (log4j.isDebugEnabled()) log4j.debug("strNameValue: " + strNameValue);
-      if (!strAttributeSet.equals("")) printPageFrame1(response, vars, strNameValue, strAttributeSet, strProductInstance, strWindowId, strLocator, strIsSOTrx, strProduct);
+      if (!strAttributeSet.equals("")) printPageFrame1(response, vars, strNameValue, strAttributeSet, strProductInstance, strWindowId, strTabId, strLocator, strIsSOTrx, strProduct);
       else advisePopUp(response, "Info", Utility.messageBD(this, "PAttributeNoSelection", vars.getLanguage()));
     } else if (vars.commandIn("FRAME2")) {
       printPageFrame2(response, vars);
@@ -83,11 +86,13 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strAttributeSet = vars.getRequiredStringParameter("inpAttribute");
       String strInstance = vars.getStringParameter("inpInstance");
       String strWindowId = vars.getStringParameter("inpwindowId");
+      String strTabId = vars.getStringParameter("inpTabId");
       String strProduct = vars.getRequestGlobalVariable("inpProduct", "AttributeSetInstance.product");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       OBError myMessage = writeFields(this, vars, AttributeSetInstanceData.select(this, strAttributeSet), strAttributeSet, strInstance, strWindowId, strIsSOTrx, strProduct);
       vars.setSessionValue("AttributeSetInstance.attribute", strAttributeSet);
-      vars.setMessage("AttributeSetInstance",myMessage);
+      vars.setSessionValue("AttributeSetInstance.close", "Y");
+      vars.setMessage(strTabId,myMessage);
       //vars.setSessionValue("AttributeSetInstance.message", strMessage);      
       response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME1");
     } else pageErrorPopUp(response);
@@ -243,7 +248,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strInstance, String strAttributeSet, String strProductInstance, String strWindowId, String strLocator, String strIsSOTrx, String strProduct) throws IOException, ServletException {
+  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strInstance, String strAttributeSet, String strProductInstance, String strWindowId, String strTabId, String strLocator, String strIsSOTrx, String strProduct) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the attributes seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/AttributeSetInstance_F1").createXmlDocument();
 
@@ -253,18 +258,22 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("attribute", strAttributeSet);
     xmlDocument.setParameter("windowId", strWindowId);
+    xmlDocument.setParameter("tabId", strTabId);
     xmlDocument.setParameter("locatorId", strLocator);
     
     {
         OBError myMessage = vars.getMessage("AttributeSetInstance");
         vars.removeMessage("AttributeSetInstance");
         if (myMessage!=null) {
+          if (myMessage.getType().equals("Success"))
           xmlDocument.setParameter("messageType", myMessage.getType());
           xmlDocument.setParameter("messageTitle", myMessage.getTitle());
           xmlDocument.setParameter("messageMessage", myMessage.getMessage());
         }
       }
-    
+    String message = "";
+    if (vars.getSessionValue("AttributeSetInstance.close").equals("Y")) message = "printMessage('')";
+    xmlDocument.setParameter("body", message);
     /*String message = vars.getSessionValue("AttributeSetInstance.message");    
     vars.removeSessionValue("AttributeSetInstance.message");
     if (!message.equals("")) {
