@@ -83,7 +83,7 @@
 
   <target name="sqlc" depends="copy.srcClient">
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}">
-      <arg line="${base.config}/dbCon5.xml .xsql . ${build.sqlc}/src"/>
+      <arg line="${base.config}/Openbravo.properties .xsql . ${build.sqlc}/src"/>
       <classpath refid="project.class.path"/>
     </java>
     <copy file="${base.subversion}/src/buildAD.xml" tofile="${base.source}/srcAD/build.xml"/>
@@ -152,7 +152,7 @@
       <fileset dir="${basedir}" includes="**/*.jasper"/>
     </copy>
     <java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}/XmlPool.xml' '${basedir}' '${base.design}' 'xml' 'true' 'false'"/>
+      <arg line="'${base.config}/Openbravo.properties' '${basedir}' '${base.design}' 'xml' 'true' 'false'"/>
       <classpath refid="project.class.path"/>
     </java>
     <!--java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
@@ -172,7 +172,7 @@
       <classpath refid="project.class.path"/>
     </java-->
     <java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}/XmlPool.xml' '${basedir}' '${base.design}' 'jasper' 'true' 'false'"/>
+      <arg line="'${base.config}/Openbravo.properties' '${basedir}' '${base.design}' 'jasper' 'true' 'false'"/>
       <classpath refid="project.class.path"/>
     </java>
     <antcall target="build.local.context"/>
@@ -244,7 +244,7 @@
 
   <target name="compile.translate">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="${base.config}/XmlPool.xml ${extension} ${basedir} ${base.design} ${package}"/>
+      <arg line="${base.config}/Openbravo.properties ${extension} ${basedir} ${base.design} ${package}"/>
       <classpath refid="project.class.path"/>
     </java>
   </target>
