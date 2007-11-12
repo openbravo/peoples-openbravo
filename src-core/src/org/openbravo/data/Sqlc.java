@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 
+import org.openbravo.database.CPStandAlone;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.InputSource;
@@ -106,7 +107,7 @@ public class Sqlc extends DefaultHandler {
     else sqlc.writeTxtFiles = argv[4].equalsIgnoreCase("true");
     parser.setContentHandler(sqlc);
     String strFileConnection = argv[0];
-    sqlc.readProperties(strFileConnection.replace("dbCon5.xml","Openbravo.properties"));
+    sqlc.readProperties(strFileConnection);
 
     // the first parameter is the directory where the search is done
     if(argv.length <= 2)
@@ -132,27 +133,9 @@ public class Sqlc extends DefaultHandler {
     log4j.info("file termination: " + strFilter);
     log4j.info("file connection: " + strFileConnection);
     log4j.info("Write TXT Files: " + sqlc.writeTxtFiles);
-    try {
-      //      parser.parse(strFileConnection);
-      parser.parse(new InputSource(new FileReader(new File(strFileConnection))));
-      try {
-        sqlc.connect();
-      } catch(ClassNotFoundException e){
-        log4j.error("Class " + sqlc.strDriver + " not found: " + e);
-        return;
-      } catch(SQLException e){
-        log4j.error("Error in URL: "+ sqlc.strURL + " of connection: " + e);
-        return;
-      }
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (SAXException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
+    
+    sqlc.connect(strFileConnection);
+    
     File path = new File(dirIni);
     if (!path.exists()) {
       log4j.error("Directory does not exist: " + dirIni);
@@ -297,20 +280,7 @@ public class Sqlc extends DefaultHandler {
     pushElement(qName);
     if (log4j.isDebugEnabled()) log4j.debug("Configuration: startElement is called: element  name=" + name);
     if (log4j.isDebugEnabled()) log4j.debug("Configuration: startElement is called: element qName=" + qName);
-    if (name.trim().equalsIgnoreCase("CONNECTION")) {
-      int size = amap.getLength();
-      for (int i = 0; i < size; i++) {     
-        if (amap.getQName(i).equals("driver")) {
-          strDriver = amap.getValue(i);
-        } else if (amap.getQName(i).equals("URL")) {
-          strURL = amap.getValue(i);
-        } else if (amap.getQName(i).equals("DBUser")) {
-          strDBUser = amap.getValue(i);
-        } else if (amap.getQName(i).equals("DBPassword")) {
-          strDBPassword = amap.getValue(i);
-        }
-      }
-    } else if (name.equals("SqlMethod")) {
+    if (name.equals("SqlMethod")) {
       sql.sqlStatic = "true";
       sql.sqlConnection = "false";
       String sqlPackage = null;
@@ -464,7 +434,22 @@ public class Sqlc extends DefaultHandler {
     }
   }
 
-  public void connect() throws ClassNotFoundException, SQLException {
+  public void connect(String file) throws ClassNotFoundException, SQLException {
+    Properties properties = new Properties();
+    try {
+      properties.load(new FileInputStream(file));
+      strDriver = properties.getProperty("bbdd.driver");
+      strURL = properties.getProperty("bbdd.url");
+      strDBUser = properties.getProperty("bbdd.user");
+      strDBPassword = properties.getProperty("bbdd.password");
+      if (properties.getProperty("bbdd.rdbms").equalsIgnoreCase("POSTGRE")) 
+          strURL += "/"+properties.getProperty("bbdd.sid");
+    } catch (IOException e) { 
+     System.out.println("Uh oh, got an IOException error!");
+     e.printStackTrace();
+    }
+    
+    
     log4j.info("Loading driver: " + strDriver);
     Class.forName(strDriver);
     log4j.info("Driver loaded");

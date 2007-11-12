@@ -17,6 +17,7 @@
  ************************************************************************
 */
 import java.io.*;
+import java.util.Properties;
 
 public class Setup {
   static String baseApp;
@@ -34,9 +35,11 @@ public class Setup {
   static String jakartaContextName;
   static String subversionBase;
   static String systemPassword = "";
+  static String systemUser = "";
   static String bbddTns = "";
   static String actualPath = ".";
-
+  static String rdbms = "";
+  
   public static void main(String[] args) throws Exception {
     if (args.length<12) throw new Exception("Incorrect number of arguments");
     baseApp = args[0];
@@ -54,220 +57,82 @@ public class Setup {
     if (args.length>12) systemPassword = args[12];
     if (args.length>13) bbddTns = args[13];
     if (args.length>14) actualPath = args[14];
+    if (args.length>15) rdbms = args[15];
+    if (args.length>16) systemUser = args[16];
+    
     File fileSource = new File(actualPath);
     if (!fileSource.exists()) throw new Exception("Unknown directory: " + actualPath);
     
-    replaceBuildFile(fileSource);
-    if (systemPassword!=null && !systemPassword.equals("")) replaceBuildDatabaseFile(fileSource);
-    replaceDBCon5File(fileSource);
-    replaceXMLPoolFile(fileSource);
+    replacePropertiesFile(fileSource);
     replaceUserConfigFile(fileSource);
-    replaceDeployWsddFile(fileSource);
   }
-
-  public static void replaceBuildFile(File path) {
+  public static void replacePropertiesFile(File path) {
     try {
-      File file = new File(path, "build.xml");
+      File file = new File(path, "config/Openbravo.properties");
       if (!file.exists()) {
-        System.out.println("Unknown file: " + path + "/build.xml");
+        System.out.println("Unknown file: " + path + "/Openbravo.properties");
         return;
       }
-      BufferedReader fileBuffer = new BufferedReader(new FileReader(file));
-      StringBuffer total = new StringBuffer();
-
-      String nextLine = fileBuffer.readLine();
-      while (nextLine != null) {
-        int aux = -1;
-        if ((aux=nextLine.indexOf("<property name=\"base.app\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, baseApp, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"base.source\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, baseSource, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"base.temp\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, baseTemp, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"attach.path\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, attachPath, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"web.url\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, webUrl, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"context.url\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, webUrl.replace("/web",""), aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"context.name\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, jakartaContextName, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"jakarta.context\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, "${jakarta.home}${separator}webapps${separator}" + jakartaContextName, aux);
-	} 
- 
-        total.append(nextLine).append("\n");
-        nextLine = fileBuffer.readLine();
+      
+      /*
+       * DB properties
+       */
+      Properties properties = new Properties();
+      properties.load(new FileInputStream(file));
+      properties.setProperty("bbdd.sid", bbddSid);
+      properties.setProperty("bbdd.user", bbddUser);
+      properties.setProperty("bbdd.password", bbddPassword);
+      properties.setProperty("bbdd.rdbms",rdbms);
+      
+      if (systemPassword!=null && !systemPassword.equals("")) {
+        properties.setProperty("bbdd.systemUser", systemUser);
+        properties.setProperty("bbdd.systemPassword", systemPassword);
       }
-      fileBuffer.close();
-
-
-      FileWriter fileWriter = new FileWriter(file);
-      PrintWriter printWriter = new PrintWriter(fileWriter);
-      printWriter.print(total.toString());
-      printWriter.close();
-    } catch (IOException e) {
+        
+      if (rdbms.equals("ORACLE")) { 
+        properties.setProperty("bbdd.driver", "oracle.jdbc.OracleDriver");
+        properties.setProperty("bbdd.url", "jdbc:oracle:thin:"+bbddUser+"/"+bbddPassword+"@"+bbddHost+":"+bbddPort+":"+bbddSid);
+        properties.setProperty("bbdd.sessionConfig","ALTER SESSION SET NLS_LANGUAGE='SPANISH' NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'");
+      } else { //postgres
+        properties.setProperty("bbdd.driver", "org.postgresql.Driver");
+        properties.setProperty("bbdd.url","jdbc:postgresql://"+bbddHost+":"+bbddPort);
+      }
+      
+      /*
+       * build.xml properties
+       */
+      properties.setProperty("base.app", baseApp);
+      properties.setProperty("base.source", baseSource);
+      properties.setProperty("base.temp", baseTemp);
+      properties.setProperty("attach.path", attachPath);
+      properties.setProperty("web.url", webUrl);
+      properties.setProperty("context.url", webUrl.replace("/web",""));
+      properties.setProperty("context.name", jakartaContextName);
+      
+      String strHeader = 
+         "# *************************************************************************\n"
+        +"# * The contents of this file are subject to the Openbravo  Public  License\n"
+        +"# * Version  1.0  (the  \"License\"),  being   the  Mozilla   Public  License\n"
+        +"# * Version 1.1  with a permitted attribution clause; you may not  use this\n"
+        +"# * file except in compliance with the License. You  may  obtain  a copy of\n"
+        +"# * the License at http://www.openbravo.com/legal/license.html \n"
+        +"# * Software distributed under the License  is  distributed  on  an \"AS IS\"\n"
+        +"# * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the\n"
+        +"# * License for the specific  language  governing  rights  and  limitations\n"
+        +"# * under the License. \n"
+        +"# * The Original Code is Openbravo ERP. \n"
+        +"# * The Initial Developer of the Original Code is Openbravo SL\n" 
+        +"# * All portions are Copyright (C) 2007 Openbravo SL\n" 
+        +"# * All Rights Reserved. \n"
+        +"# * Contributor(s):  ______________________________________.\n"
+        +"# ************************************************************************\n";
+        
+      properties.store(new FileOutputStream(file), strHeader);
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
-
-  public static void replaceDBCon5File(File path) {
-    try {
-      File file = new File(path, "config/dbCon5.xml");
-      if (!file.exists()) {
-        System.out.println("Unknown file: " + path + "/config/dbCon5.xml");
-        return;
-      }
-      StringBuffer strBuf = new StringBuffer();
-      strBuf.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-      strBuf.append("<!--\n");
-      strBuf.append(" *************************************************************************\n");
-      strBuf.append(" * The contents of this file are subject to the Openbravo  Public  License\n");
-      strBuf.append(" * Version  1.0  (the  \"License\"),  being   the  Mozilla   Public  License\n");
-      strBuf.append(" * Version 1.1  with a permitted attribution clause; you may not  use this\n");
-      strBuf.append(" * file except in compliance with the License. You  may  obtain  a copy of\n");
-      strBuf.append(" * the License at http://www.openbravo.com/legal/license.html \n");
-      strBuf.append(" * Software distributed under the License  is  distributed  on  an \"AS IS\"\n");
-      strBuf.append(" * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the\n");
-      strBuf.append(" * License for the specific  language  governing  rights  and  limitations\n");
-      strBuf.append(" * under the License. \n");
-      strBuf.append(" * The Original Code is Openbravo ERP. \n");
-      strBuf.append(" * The Initial Developer of the Original Code is Openbravo SL \n");
-      strBuf.append(" * All portions are Copyright (C) 2001-2006 Openbravo SL \n");
-      strBuf.append(" * All Rights Reserved. \n");
-      strBuf.append(" * Contributor(s):  ______________________________________.\n");
-      strBuf.append(" ************************************************************************\n");
-      strBuf.append("-->\n");
-      strBuf.append("\n");
-      strBuf.append("\n");
-      strBuf.append("<data-base>\n");
-      strBuf.append("  <connection name=\"myPool\" type=\"pool\" driver = \"oracle.jdbc.OracleDriver\" URL = \"jdbc:oracle:thin:").append(bbddUser).append("/").append(bbddPassword).append("@").append(bbddHost).append(":").append(bbddPort).append(":").append(bbddSid).append("\">\n");
-      strBuf.append("  </connection>\n");
-      strBuf.append("</data-base>\n");
-
-
-      FileWriter fileWriter = new FileWriter(file);
-      PrintWriter printWriter = new PrintWriter(fileWriter);
-      printWriter.print(strBuf.toString());
-      printWriter.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public static void replaceBuildDatabaseFile(File path) {
-    try {
-      File file = new File(path, "/database/build.xml");
-      if (!file.exists()) {
-        System.out.println("Unknown file: " + path + "/database/build.xml");
-        return;
-      }
-      BufferedReader fileBuffer = new BufferedReader(new FileReader(file));
-      StringBuffer total = new StringBuffer();
-
-      String nextLine = fileBuffer.readLine();
-      while (nextLine != null) {
-        int aux = -1;
-        if ((aux=nextLine.indexOf("<property name=\"bbdd.host\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, bbddHost, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"bbdd.port\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, bbddPort, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"bbdd.sid\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, bbddSid, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"systemPassword\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, systemPassword, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"bbdd.tns\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, bbddTns, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"bbdd.user\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, bbddUser, aux);
-        } else if ((aux=nextLine.indexOf("<property name=\"bbdd.password\""))!=-1) {
-          nextLine = replacePropertyValue(nextLine, bbddPassword, aux);
-        }
-
-        total.append(nextLine).append("\n");
-        nextLine = fileBuffer.readLine();
-      }
-      fileBuffer.close();
-
-
-      FileWriter fileWriter = new FileWriter(file);
-      PrintWriter printWriter = new PrintWriter(fileWriter);
-      printWriter.print(total.toString());
-      printWriter.close();
-      } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-
-  public static void replaceXMLPoolFile(File path) {
-    try {
-      File file = new File(path, "config/XmlPool.xml");
-      if (!file.exists()) {
-        System.out.println("Unknown file: " + path + "/config/XmlPool.xml");
-        return;
-      }
-      StringBuffer strBuf = new StringBuffer();
-      strBuf.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-      strBuf.append("<!--\n");
-      strBuf.append(" *************************************************************************\n");
-      strBuf.append(" * The contents of this file are subject to the Openbravo  Public  License\n");
-      strBuf.append(" * Version  1.0  (the  \"License\"),  being   the  Mozilla   Public  License\n");
-      strBuf.append(" * Version 1.1  with a permitted attribution clause; you may not  use this\n");
-      strBuf.append(" * file except in compliance with the License. You  may  obtain  a copy of\n");
-      strBuf.append(" * the License at http://www.openbravo.com/legal/license.html \n");
-      strBuf.append(" * Software distributed under the License  is  distributed  on  an \"AS IS\"\n");
-      strBuf.append(" * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the\n");
-      strBuf.append(" * License for the specific  language  governing  rights  and  limitations\n");
-      strBuf.append(" * under the License. \n");
-      strBuf.append(" * The Original Code is Openbravo ERP. \n");
-      strBuf.append(" * The Initial Developer of the Original Code is Openbravo SL \n");
-      strBuf.append(" * All portions are Copyright (C) 2001-2006 Openbravo SL \n");
-      strBuf.append(" * All Rights Reserved. \n");
-      strBuf.append(" * Contributor(s):  ______________________________________.\n");
-      strBuf.append(" ************************************************************************\n");
-      strBuf.append("-->\n");
-      strBuf.append("\n");
-      strBuf.append("\n");
-      strBuf.append("<!DOCTYPE aplication SYSTEM \"pool.dtd\">\n");
-      strBuf.append("<aplication>\n");
-      strBuf.append("  <pool name=\"myPool\">\n");
-      strBuf.append("    <dbDriver>oracle.jdbc.OracleDriver</dbDriver>\n");
-      strBuf.append("    <dbServer>jdbc:oracle:thin:@").append(bbddHost).append(":").append(bbddPort).append(":").append(bbddSid).append("</dbServer>\n");
-      strBuf.append("    <dbLogin>").append(bbddUser).append("</dbLogin>\n");
-      strBuf.append("    <dbPassword>").append(bbddPassword).append("</dbPassword>\n");
-      strBuf.append("    <minConns>1</minConns>\n");
-      strBuf.append("    <maxConns>10</maxConns>\n");
-      strBuf.append("    <maxConnTime>0.5</maxConnTime>\n");
-      strBuf.append("    <dbSessionConfig>ALTER SESSION SET NLS_LANGUAGE='SPANISH' NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'</dbSessionConfig>\n");
-      strBuf.append("    <rdbms>ORACLE</rdbms>\n");
-      strBuf.append("  </pool>\n");
-      strBuf.append("</aplication>\n");
-
-
-      FileWriter fileWriter = new FileWriter(file);
-      PrintWriter printWriter = new PrintWriter(fileWriter);
-      printWriter.print(strBuf.toString());
-      printWriter.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public static String replacePropertyValue(String line, String value, int pos) {
-    String result = line;
-    pos = line.indexOf("value=\"", pos+1);
-    if (pos==-1) return line;
-    pos=line.indexOf("\"", pos+1);
-    if (pos!=-1) {
-      result = line.substring(0, pos+1);
-      result += value;
-      pos=line.indexOf("\"", pos+1);
-      if (pos==-1) return line;
-      result += line.substring(pos);
-    }
-    return result;
-  }
+  
 
   public static void replaceUserConfigFile(File path) {
     try {
@@ -281,12 +146,19 @@ public class Setup {
 
       String nextLine = fileBuffer.readLine();
       boolean found = false;
+      boolean replaced = false;
       while (nextLine != null) {
-        if (!found && (nextLine.indexOf("fontBaseDir"))!=-1) {
-          found=true;
-        } else if (found) {
+        if (!found && (nextLine.indexOf("fontBaseDir")!=-1)) found=true;
+        if (found) System.out.println("found:"+nextLine);
+        if (found && (nextLine.indexOf("<!--")!=-1)) 
+          nextLine = "";
+        if (found && (nextLine.indexOf("<value>")!=-1)) { 
           nextLine = "<value>" + fontBase + "</value>";
+          replaced = true;
         }
+        if (replaced && (nextLine.indexOf("-->")!=-1))
+          nextLine = "";
+        
         total.append(nextLine).append("\n");
         nextLine = fileBuffer.readLine();
       }
@@ -302,33 +174,4 @@ public class Setup {
     }
   }
 
-  public static void replaceDeployWsddFile(File path) {
-    try {
-      File file = new File(path, "src/deploy.wsdd");
-      if (!file.exists()) {
-        System.out.println("Unknown file: " + path + "/src/deploy.wsdd");
-        return;
-      }
-      BufferedReader fileBuffer = new BufferedReader(new FileReader(file));
-      StringBuffer total = new StringBuffer();
-
-      String nextLine = fileBuffer.readLine();
-      while (nextLine != null) {
-        if ((nextLine.indexOf("xmlns:myNS="))!=-1) {
-          total.append(nextLine.replace(nextLine.substring(nextLine.indexOf("http://"), nextLine.indexOf("/services/")), webUrl.replace("/web",""))).append("\n");
-        }
-        else
-        total.append(nextLine).append("\n");
-        nextLine = fileBuffer.readLine();
-      }
-      fileBuffer.close();
-
-      FileWriter fileWriter = new FileWriter(file);
-      PrintWriter printWriter = new PrintWriter(fileWriter);
-      printWriter.print(total.toString());
-      printWriter.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
 }

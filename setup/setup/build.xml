@@ -28,6 +28,8 @@
   <property name="bbdd.password" value="TAD"></property>
   <property name="bbdd.sid" value="orcl"></property>
   <property name="bbdd.port" value="1521"></property>
+	<property name="bbdd.rdbms" value="ORACLE"/>
+	<property name="systemUser" value="SYSTEM"/>
   <property name="font.base" value="C:/AppsOpenBravo/lib/fop"></property>
 
   <condition property="temp.folder" value="C:\Temp" else="/tmp">
@@ -47,7 +49,7 @@
 
   <target name="setup" depends="default">
     <java classname="Setup" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="200M">
-      <arg line="'${base.app}' '${base.source}' '${base.temp}' '${attach.path}' '${font.base}' '${web.url}' '${bbdd.host}' '${bbdd.user}' '${bbdd.password}' '${bbdd.sid}' '${bbdd.port}' '${jakarta.context.name}' '${systemPassword}' '${bbdd.tns}' '${temp.folder}'"/>
+      <arg line="'${base.app}' '${base.source}' '${base.temp}' '${attach.path}' '${font.base}' '${web.url}' '${bbdd.host}' '${bbdd.user}' '${bbdd.password}' '${bbdd.sid}' '${bbdd.port}' '${jakarta.context.name}' '${systemPassword}' '${bbdd.tns}' '${temp.folder}' '${bbdd.rdbms}' '${systemUser}'"/>
     </java>
   </target>
 </project>

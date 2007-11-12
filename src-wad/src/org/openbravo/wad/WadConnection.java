@@ -20,7 +20,9 @@ package org.openbravo.wad;
 
 
 import java.sql.*;
+import java.util.Properties;
 import java.io.*;
+
 import org.apache.xerces.parsers.DOMParser;
 import org.xml.sax.*;
 import org.w3c.dom.*;
@@ -48,83 +50,127 @@ public class WadConnection implements ConnectionProvider {
 
   public void connect(String file) throws ClassNotFoundException, SQLException {
     if (log4j.isDebugEnabled()) log4j.debug("Creating Connection");
-    try {
-      DOMParser parser = new DOMParser();
+    
+    String dbDriver = null;
+    String dbLogin = null;
+    String dbPassword = null;
+    int minConns = 1;
+    int maxConns = 10;
+    double maxConnTime = 0.5;
+    String dbSessionConfig = null;
+    
+    if (file.endsWith(".properties")) {
+      Properties properties = new Properties();
       try {
-          parser.parse((file.toUpperCase().startsWith("FILE:///")?"":"file:///") + file);
-      } catch (SAXException se) {
-        log4j.error(se);
-        throw new SQLException("Couldn't load parse for pool file " + file);
-      } catch (IOException ioe) {
-        log4j.error(ioe);
-        throw new SQLException("Couldn't load pool file " + file + " for input/output operations");
+        properties.load(new FileInputStream(file));
+        this.defaultPoolName = properties.getProperty("bbdd.poolName","myPool");
+        dbDriver = properties.getProperty("bbdd.driver");
+        this.bbdd = properties.getProperty("bbdd.url");
+        dbLogin = properties.getProperty("bbdd.user");
+        dbPassword = properties.getProperty("bbdd.password");
+        minConns = new Integer(properties.getProperty("bbdd.minConns","1"));
+        maxConns = new Integer(properties.getProperty("bbdd.maxConns","10"));
+        maxConnTime = new Double(properties.getProperty("maxConnTime","0.5"));
+        dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
+        this.rdbms = properties.getProperty("bbdd.rdbms");
+        if (this.rdbms.equalsIgnoreCase("POSTGRE")) 
+          this.bbdd += "/"+properties.getProperty("bbdd.sid");
+      } catch (IOException e) { 
+       System.out.println("Uh oh, got an IOException error!");
+       e.printStackTrace();
       }
-      Document xmlPool = parser.getDocument();
-      NodeList nodeList = xmlPool.getElementsByTagName("pool");
-      log4j.debug("Pool's elements: " + nodeList.getLength());
-      Node child = null;
-      for (int i=0;i<nodeList.getLength();i++) {
-        Node pool = nodeList.item(i);
-        NamedNodeMap atributos = pool.getAttributes();
-        String poolName = atributos.item(0).getNodeValue();
-        if (log4j.isDebugEnabled()) log4j.debug("poolName: " + poolName);
-        this.defaultPoolName = poolName;
-
-        child = pool.getFirstChild();
-        child = child.getNextSibling();
-        String dbDriver = ((Text)child.getFirstChild()).getData();
-        if (log4j.isDebugEnabled()) log4j.debug("dbDriver: " + dbDriver);
-        Class.forName(dbDriver);
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        String dbServer = ((Text)child.getFirstChild()).getData();
-        if (log4j.isDebugEnabled()) log4j.debug("dbServer: " + dbServer);
-        this.bbdd = dbServer;
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        Text textDbLogin = (Text)child.getFirstChild();
-        String dbLogin;
-        if (textDbLogin != null) {
-          dbLogin  = textDbLogin.getData();
-          if (log4j.isDebugEnabled()) log4j.debug("dbLogin: " + dbLogin);
-        } else dbLogin = null;
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        Text textDbPassword = (Text)child.getFirstChild();
-        String dbPassword;
-        if (textDbPassword != null) {
-          dbPassword = textDbPassword.getData();
-          if (log4j.isDebugEnabled()) log4j.debug("dbPassword: " + dbPassword);
-        } else dbPassword = null;
-        this.myPool=DriverManager.getConnection(dbServer, dbLogin, dbPassword);
-        this.myPool.setAutoCommit(true);
-        
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        int minConns   = Integer.valueOf(((Text)child.getFirstChild()).getData()).intValue();
-        if (log4j.isDebugEnabled()) log4j.debug("minConns: " + minConns);
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        int maxConns   = Integer.valueOf(((Text)child.getFirstChild()).getData()).intValue();
-        if (log4j.isDebugEnabled()) log4j.debug("maxConns: " + maxConns);
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        double maxConnTime   = Double.valueOf(((Text)child.getFirstChild()).getData()).doubleValue();
-        if (log4j.isDebugEnabled()) log4j.debug("maxConnTime: " + Double.toString(maxConnTime));
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        String dbSessionConfig  = ((Text)child.getFirstChild()).getData();
-        if (log4j.isDebugEnabled()) log4j.debug("dbSessionConfig: " + dbSessionConfig);
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        String myrdbms  = ((Text)child.getFirstChild()).getData();
-        if (log4j.isDebugEnabled()) log4j.debug("rdbms: " + myrdbms);
-
-
-        this.rdbms = myrdbms;
+    } else { //xml file
+      try {
+        DOMParser parser = new DOMParser();
+        try {
+            parser.parse((file.toUpperCase().startsWith("FILE:///")?"":"file:///") + file);
+        } catch (SAXException se) {
+          log4j.error(se);
+          throw new SQLException("Couldn't load parse for pool file " + file);
+        } catch (IOException ioe) {
+          log4j.error(ioe);
+          throw new SQLException("Couldn't load pool file " + file + " for input/output operations");
+        }
+        Document xmlPool = parser.getDocument();
+        NodeList nodeList = xmlPool.getElementsByTagName("pool");
+        log4j.debug("Pool's elements: " + nodeList.getLength());
+        Node child = null;
+        for (int i=0;i<nodeList.getLength();i++) {
+          Node pool = nodeList.item(i);
+          NamedNodeMap atributos = pool.getAttributes();
+          this.defaultPoolName = atributos.item(0).getNodeValue();
+          
+  
+          child = pool.getFirstChild();
+          child = child.getNextSibling();
+          dbDriver = ((Text)child.getFirstChild()).getData();
+          
+          
+          child = child.getNextSibling();
+          child = child.getNextSibling();
+          this.bbdd = ((Text)child.getFirstChild()).getData();
+         
+          child = child.getNextSibling();
+          child = child.getNextSibling();
+          Text textDbLogin = (Text)child.getFirstChild();
+          if (textDbLogin != null) {
+            dbLogin  = textDbLogin.getData();
+            
+          } else dbLogin = null;
+          child = child.getNextSibling();
+          child = child.getNextSibling();
+          Text textDbPassword = (Text)child.getFirstChild();
+          if (textDbPassword != null) {
+            dbPassword = textDbPassword.getData();
+            
+          } else dbPassword = null;
+          
+          child = child.getNextSibling();
+          child = child.getNextSibling();
+          minConns   = Integer.valueOf(((Text)child.getFirstChild()).getData()).intValue();
+          
+          child = child.getNextSibling();
+          child = child.getNextSibling();
+          maxConns   = Integer.valueOf(((Text)child.getFirstChild()).getData()).intValue();
+          
+          child = child.getNextSibling();
+          child = child.getNextSibling();
+          maxConnTime   = Double.valueOf(((Text)child.getFirstChild()).getData()).doubleValue();
+          
+          child = child.getNextSibling();
+          child = child.getNextSibling();
+          dbSessionConfig  = ((Text)child.getFirstChild()).getData();
+          
+          child = child.getNextSibling();
+          child = child.getNextSibling();
+          this.rdbms  = ((Text)child.getFirstChild()).getData();
+          
+        }
       }
+      catch (Exception e) {
+        log4j.error(e);
+        throw new SQLException("Failed when creating database connections pool");
+      }
+    } //end if
+    if (log4j.isDebugEnabled()) log4j.debug("poolName: " + this.defaultPoolName); {
+       log4j.debug("dbDriver: " + dbDriver);
+       log4j.debug("dbServer: " + this.bbdd);
+       log4j.debug("dbLogin: " + dbLogin);
+       log4j.debug("dbPassword: " + dbPassword);
+       log4j.debug("minConns: " + minConns);
+       log4j.debug("maxConns: " + maxConns);
+       log4j.debug("maxConnTime: " + Double.toString(maxConnTime));
+       log4j.debug("dbSessionConfig: " + dbSessionConfig);
+       log4j.debug("rdbms: " + this.rdbms);
     }
-    catch (Exception e) {
+    
+    try {
+      log4j.info("Loading driver: " + dbDriver);
+      Class.forName(dbDriver);
+      log4j.info("Getting Connection: "+this.bbdd+","+ dbLogin);
+      this.myPool=DriverManager.getConnection(this.bbdd, dbLogin, dbPassword);
+      this.myPool.setAutoCommit(true);
+    } catch (Exception e) {
       log4j.error(e);
       throw new SQLException("Failed when creating database connections pool");
     }

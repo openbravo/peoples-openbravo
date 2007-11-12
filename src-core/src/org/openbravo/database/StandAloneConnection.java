@@ -13,10 +13,6 @@ package org.openbravo.database;
 
 import javax.servlet.ServletException;
 
-import org.apache.xerces.parsers.DOMParser;
-import org.xml.sax.*;
-import org.w3c.dom.*;
-
 import java.io.*;
 import java.sql.*;
 import org.openbravo.exception.*;
@@ -35,86 +31,28 @@ public class StandAloneConnection implements ConnectionProvider {
   static String sqlDateFormat;
 
   public void createPool(String poolDir) {
+    
+    Properties properties = new Properties();
     try {
+      properties.load(new FileInputStream(poolDir + "/Openbravo.properties"));
+      String poolName = properties.getProperty("bbdd.poolName","myPool");
+      String dbDriver = properties.getProperty("bbdd.driver");
+      String dbServer = properties.getProperty("bbdd.url");
+      String dbLogin = properties.getProperty("bbdd.user");
+      String dbPassword = properties.getProperty("bbdd.password");
+      int minConns = new Integer(properties.getProperty("bbdd.minConns","1"));
+      int maxConns = new Integer(properties.getProperty("bbdd.maxConns","10"));
+      double maxConnTime = new Double(properties.getProperty("maxConnTime","0.5"));
+      String dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
+      String rdbms = properties.getProperty("bbdd.rdbms");
+      sqlDateFormat = properties.getProperty("dateFormat.sql");
 
-      DOMParser parser = new DOMParser();
-      try {
-        parser.parse(poolDir + "/XmlPool.xml");
-      } catch (SAXException se) {
-        se.printStackTrace();
-      } catch (IOException ioe) {
-        ioe.printStackTrace();
-      }
-      Document xmlPool = parser.getDocument();
-      NodeList nodeList = xmlPool.getElementsByTagName("pool");
-      log4j.info("pool elements: " + nodeList.getLength());
-      Node child = null;
-      for (int i=0;i<nodeList.getLength();i++) {
-        Node pool = nodeList.item(i); // We obtain the pool
-        NamedNodeMap atributos = pool.getAttributes(); // We get its attributes to obtain its name
-        String poolName = atributos.item(0).getNodeValue(); // We get the name of the pool, which is the first and unique attribute of the pool
-        log4j.info("Pool name: " + poolName);
+      ConnectionPool myLocalPool = new ConnectionPool(dbDriver,dbServer,dbLogin,dbPassword, minConns,maxConns, maxConnTime,dbSessionConfig, rdbms);
 
-        /* We obtain the different nodes of the correspondant pool, which are the pool's configuration parameters, each one separated by two nodes
-        */
-        child = pool.getFirstChild();
-        child = child.getNextSibling();
-        String dbDriver = ((Text)child.getFirstChild()).getData();
-        log4j.info("Driver: " + dbDriver);
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        String dbServer = ((Text)child.getFirstChild()).getData();
-        log4j.info("Server: " + dbServer);
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        Text textDbLogin = (Text)child.getFirstChild();
-        String dbLogin;
-        if (textDbLogin != null) {
-          dbLogin  = textDbLogin.getData();
-          log4j.info("Login: " + dbLogin);
-        } else
-          dbLogin = null;
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        Text textDbPassword = (Text)child.getFirstChild();
-        String dbPassword;
-        if (textDbPassword != null) {
-          dbPassword = textDbPassword.getData();
-          log4j.info("Password: " + dbPassword);
-        } else
-          dbPassword = null;
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        int minConns   = Integer.valueOf(((Text)child.getFirstChild()).getData()).intValue();
-        log4j.info("Min conns: " + minConns);
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        int maxConns   = Integer.valueOf(((Text)child.getFirstChild()).getData()).intValue();
-        log4j.info("Max conns: " + maxConns);
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        double maxConnTime   = Double.valueOf(((Text)child.getFirstChild()).getData()).doubleValue();
-        log4j.info("maxConnTime: " + Double.toString(maxConnTime));
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        String dbSessionConfig  = ((Text)child.getFirstChild()).getData();
-        log4j.info("dbSessionConfig: " + dbSessionConfig);
-        child = child.getNextSibling();
-        child = child.getNextSibling();
-        String rdbms  = ((Text)child.getFirstChild()).getData();
-        log4j.info("rdbms: " + rdbms);
-
-        readProperties(poolDir+"/Openbravo.properties");
-
-        ConnectionPool myLocalPool = new ConnectionPool(dbDriver,dbServer,dbLogin,dbPassword, minConns,maxConns, maxConnTime,dbSessionConfig, rdbms);
-
-        if (myLocalPool==null)
-          log4j.error("Initialization failed on pool: " + i);
-        pools.put(poolName, myLocalPool);
-        if (i==0) {
-          myPool = myLocalPool;
-        }
-      }
+      if (myLocalPool==null)
+        log4j.error("Initialization failed on pool: " );
+      pools.put(poolName, myLocalPool);
+      myPool = myLocalPool;
     }
     catch (Exception e) {
       e.printStackTrace();

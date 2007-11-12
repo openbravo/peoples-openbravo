@@ -45,7 +45,7 @@
 
   <target name="sqlc" depends="init">
     <java classname="org.openbravo.data.Sqlc" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="${base.config}/dbCon5.xml .xsql ./src ${build.trl.sqlc}"/>
+      <arg line="${base.config}/Openbravo.properties .xsql ./src ${build.trl.sqlc}"/>
       <classpath refid="trl.class.path"/>
     </java>
   </target>

@@ -87,7 +87,7 @@
   </context-param>
   <context-param>
     <param-name>PoolFile</param-name>
-    <param-value>XmlPool.xml</param-value>
+    <param-value>Openbravo.properties</param-value>
   </context-param>
   <context-param>
     <param-name>FormatFile</param-name>

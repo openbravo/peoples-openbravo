@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is OpenBravo ERP. 
  * The Initial Developer of the Original Code is [Autores] and OpenBravo SL 
- * All portions are Copyright (C) 2005-2006 OpenBravo SL 
+ * All portions are Copyright (C) 2005-2007 OpenBravo SL 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.
  ************************************************************************
@@ -46,7 +46,13 @@ baseDir: normally the base directory is the directory where the fo file is
 
 <!--  
 fontBaseDir: Similar to baseDir, except that this value is used for fonts. If
-<value>C:\fop-0.20.5</value>
+         it isn't specified, the value from baseDir is used.
+-->
+<!--
+  <entry>     
+    <key>fontBaseDir</key>      
+    <value>/tmp</value>    
+  </entry>
 -->
 
 </configuration>

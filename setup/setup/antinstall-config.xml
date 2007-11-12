@@ -73,13 +73,18 @@
 			type="input"
 			name="propertiesBBDD"
 			displayText="Required database configure options">
-     <password property="systemPassword" displayText="System password" defaultValue="" regex=".+" testMask="true"/>
+    <text property="systemUser" displayText="System User" defaultValue="SYSTEM"/>
+    <password property="systemPassword" displayText="System password" defaultValue="" regex=".+" testMask="true"/>
     <text property="bbdd.host" displayText="Database server" defaultValue="localhost"/>
     <text property="bbdd.user" displayText="Database user" defaultValue="TAD"/>
     <password property="bbdd.password" displayText="Database user password" defaultValue="TAD" regex=".+" testMask="true"/>
     <text property="bbdd.sid" displayText="SID" defaultValue="orcl"/>
     <text property="bbdd.port" displayText="Port" defaultValue="1521"/>
     <text property="bbdd.tns" displayText="TNS" defaultValue="orcl"/>
+    <select property="bbdd.rdbms" displayText="DB" defaultValue="ORACLE">
+      <option value="ORACLE" text="Oracle"/>
+      <option value="POSTGRE" text="PostgreSQL"/>
+    </select>
 	</page>
   <page
 			type="progress"

@@ -135,7 +135,7 @@ public class Wad extends DefaultHandler {
     Wad wad = new Wad();
     wad.strSystemSeparator = System.getProperty("file.separator");
     wad.createXmlEngine(strFileConnection);
-    wad.createPool(strFileConnection + "/XmlPool.xml");
+    wad.createPool(strFileConnection + "/Openbravo.properties");
     wad.readProperties(strFileConnection + "/Openbravo.properties");
     try {
       // the second parameter is the tab to be generated
