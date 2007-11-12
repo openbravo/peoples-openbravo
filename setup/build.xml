@@ -59,17 +59,14 @@
   <target name="setup" depends="compile, jar">
     <copy file="..${separator}config${separator}log4j.lcf.template" tofile="${temp.folder}${separator}config${separator}log4j.lcf" overwrite="yes"/>
     <copy file="..${separator}config${separator}userconfig.xml.template" tofile="${temp.folder}${separator}config${separator}userconfig.xml" overwrite="yes"/>
-    <copy file="..${separator}src${separator}deploy.wsdd.template" tofile="${temp.folder}${separator}src${separator}deploy.wsdd" overwrite="yes"/>
     <copy file="..${separator}config${separator}Openbravo.properties.template" tofile="${temp.folder}${separator}config${separator}Openbravo.properties" overwrite="yes"/>
     <java jar="./${jar.name}.jar" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}"/>
     <copy file="${temp.folder}${separator}config${separator}log4j.lcf" tofile="..${separator}config${separator}log4j.lcf" overwrite="yes"/>
     <copy file="${temp.folder}${separator}config${separator}Openbravo.properties" tofile="..${separator}config${separator}Openbravo.properties" overwrite="yes"/>
     <copy file="${temp.folder}${separator}config${separator}userconfig.xml" tofile="..${separator}config${separator}userconfig.xml" overwrite="yes"/>
-    <copy file="${temp.folder}${separator}src${separator}deploy.wsdd" tofile="..${separator}src${separator}deploy.wsdd" overwrite="yes"/>
     <delete file="${temp.folder}${separator}config${separator}log4j.lcf"/>
     <delete file="${temp.folder}${separator}config${separator}Openbravo.properties"/>
     <delete file="${temp.folder}${separator}config${separator}userconfig.xml"/>
-    <delete file="${temp.folder}${separator}src${separator}deploy.wsdd"/>
     <delete includeEmptyDirs="true" >
           <fileset dir="${temp.folder}${separator}config" />
           <fileset dir="${temp.folder}${separator}src" />
