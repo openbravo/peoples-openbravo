@@ -205,8 +205,8 @@
   </target>
 
   <target name="install.source">
-    <ant dir="${base.subversion}/database" target="create.database" inheritAll="true" inheritRefs="true"/>
     <antcall target="database.lib"/>
+  	<ant dir="${base.subversion}/database" target="create.database" inheritAll="true" inheritRefs="true"/>
     <antcall target="core.lib"/>
     <antcall target="wad.lib"/>
     <antcall target="trl.lib"/>
@@ -216,8 +216,8 @@
   </target>
   
   <target name="eclipse.install.source">
+	<antcall target="database.lib"/>
     <ant dir="${base.subversion}/database" target="create.database" inheritAll="true" inheritRefs="true"/>
-    <antcall target="database.lib"/>
     <antcall target="core.lib"/>
     <antcall target="wad.lib"/>
     <antcall target="trl.lib"/>
