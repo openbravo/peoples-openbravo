@@ -3495,6 +3495,7 @@ public abstract class SqlBuilder
         println("DECLARE");
         print(getPLSQLTriggerTranslation().exec(trigger.getBody()));        
         println();
+        print(";");
     }
     
      /**
