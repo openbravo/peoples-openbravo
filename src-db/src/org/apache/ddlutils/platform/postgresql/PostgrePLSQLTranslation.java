@@ -32,10 +32,10 @@ public class PostgrePLSQLTranslation extends CombinedTranslation {
         
         // Numeric Type
         append(new ReplaceStrTranslation(" NUMBER,", " NUMERIC,"));
-        append(new ByLineTranslation(new ReplacePatTranslation("(\\s|\\t)+[Nn][Uu][Mm][Bb][Ee][Rr](\\s|\\t)+", "{1}NUMERIC{2}")));
+        append(new ByLineTranslation(new ReplacePatTranslation("(\\s|\\t)+[Nn][Uu][Mm][Bb][Ee][Rr](\\s|\\t)+", "$1NUMERIC$2")));
         append(new ReplaceStrTranslation(" NUMBER(", " NUMERIC("));
         append(new ReplaceStrTranslation(" NUMBER)", " NUMERIC)"));
-        append(new ByLineTranslation(new ReplacePatTranslation("(\\s|\\t)+[Nn][Uu][Mm][Bb][Ee][Rr](\\s|\\t)*$", "{1}NUMERIC{2}")));
+        append(new ByLineTranslation(new ReplacePatTranslation("(\\s|\\t)+[Nn][Uu][Mm][Bb][Ee][Rr](\\s|\\t)*$", "$1NUMERIC$2")));
         append(new ReplaceStrTranslation(" NUMBER;", " NUMERIC;"));
         append(new ReplaceStrTranslation(" NUMBER:", " NUMERIC:"));
         append(new ReplaceStrTranslation("'NUMBER'", "'NUMERIC'"));
@@ -57,8 +57,8 @@ public class PostgrePLSQLTranslation extends CombinedTranslation {
         
         // TimeStamp Type
         append(new ReplaceStrTranslation(" DATE,", " TIMESTAMP,"));
-        append(new ByLineTranslation(new ReplacePatTranslation("(\\s|\\t)+[Dd][Aa][Tt][Ee](\\s|\\t)+", "{1}TIMESTAMP{2}")));
-        append(new ByLineTranslation(new ReplacePatTranslation("(\\s|\\t)+[Dd][Aa][Tt][Ee](\\s|\\t)*$", "{1}TIMESTAMP{2}")));
+        append(new ByLineTranslation(new ReplacePatTranslation("(\\s|\\t)+[Dd][Aa][Tt][Ee](\\s|\\t)+", "$1TIMESTAMP$2")));
+        append(new ByLineTranslation(new ReplacePatTranslation("(\\s|\\t)+[Dd][Aa][Tt][Ee](\\s|\\t)*$", "$1TIMESTAMP$2")));
         append(new ReplaceStrTranslation("TO_DATE", "TO_DATE"));
         append(new ReplaceStrTranslation(" DATE;", " TIMESTAMP;"));
         append(new ReplaceStrTranslation("'DATE'", "'TIMESTAMP'"));
@@ -76,7 +76,7 @@ public class PostgrePLSQLTranslation extends CombinedTranslation {
         
         append(new ReplaceStrTranslation("'", "''"));
         append(new ByLineTranslation(new ReplacePatTranslation("^(AS|IS)([\\s|\\t]*)$", "AS '")));  
-        append(new ByLineTranslation(new ReplacePatTranslation("^(\\s|\\t)*(.+?)rowcount(\\s|\\t)*:=(\\s|\\t)*SQL%ROWCOUNT;", "{1}GET DIAGNOSTICS {2}rowcount:=ROW_COUNT;")));       
+        append(new ByLineTranslation(new ReplacePatTranslation("^(\\s|\\t)*(.+?)rowcount(\\s|\\t)*:=(\\s|\\t)*SQL%ROWCOUNT;", "$1GET DIAGNOSTICS $2rowcount:=ROW_COUNT;")));       
         append(new RemoveTranslation("COMMIT;"));
         append(new RemoveTranslation("ROLLBACK;"));
         append(new ReplaceStrTranslation("EXECUTE IMMEDIATE", "EXECUTE"));
@@ -91,7 +91,7 @@ public class PostgrePLSQLTranslation extends CombinedTranslation {
         //append(new ReplaceStrTranslation("TYPE ArrayName", "-- TYPE ArrayName"));
         //append(new ReplaceStrTranslation("TYPE ArrayPesos", "-- TYPE ArrayPesos"));
         
-        append(new ByLineTranslation(new ReplacePatTranslation("^(.+?)([\\s|\\t|\\(]+?)([^\\s|\\t|\\(]+?)%[Rr][Oo][Ww][Tt][Yy][Pp][Ee]","{1} RECORD")));        
+        append(new ByLineTranslation(new ReplacePatTranslation("^(.+?)([\\s|\\t|\\(]+?)([^\\s|\\t|\\(]+?)%[Rr][Oo][Ww][Tt][Yy][Pp][Ee]","$1 RECORD")));        
         
 		
         append(new ReplacePatTranslation("<<", "-- <<"));
@@ -101,10 +101,10 @@ public class PostgrePLSQLTranslation extends CombinedTranslation {
         append(new ReplaceStrTranslation("NOW()", "TO_DATE(NOW())"));
         append(new ReplacePatTranslation("\\(NEW.Updated-NEW.Created\\)", "substract_days\\(NEW.Updated,NEW.Created\\)")); 
         
-        append(new ReplacePatTranslation("OPEN(.+?)FOR(.+?);","OPEN {1} FOR EXECUTE {2};"));
+        append(new ReplacePatTranslation("OPEN(.+?)FOR(.+?);","OPEN $1 FOR EXECUTE $2;"));
        
         append(new ReplacePatTranslation("TYPE TYPE_Ref IS ", "TYPE_Ref "));
-        append(new ReplacePatTranslation("TYPE(\\s|\\t)(.+?)(\\s|\\t)(IS)(\\s|\\t)(.+)","--TYPE{1}{2}{3}{4}{5}{6}"));
+        append(new ReplacePatTranslation("TYPE(\\s|\\t)(.+?)(\\s|\\t)(IS)(\\s|\\t)(.+)","--TYPE$1$2$3$4$5$6"));
         
         append(new ReplacePatTranslation("ArrayPesos;", "INTEGER[10];"));
         append(new ReplacePatTranslation("ArrayPesos\\(", "Array("));
