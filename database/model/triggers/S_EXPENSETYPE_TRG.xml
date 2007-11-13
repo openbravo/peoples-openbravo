@@ -3,7 +3,7 @@
 <trigger name="S_EXPENSETYPE_TRG" table="S_EXPENSETYPE" fires="after" insert="true" update="true" foreach="row">
 <body>
 <![CDATA[
-DECLARE
+
     /*************************************************************************
     * The contents of this file are subject to the Compiere License
     * Version 2.5.0 ("License"); You may not use this file except in

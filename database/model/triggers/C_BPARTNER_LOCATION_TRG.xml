@@ -29,7 +29,7 @@
     *  or if not exists to Address1
     *  or if not exists to "-'
     ************************************************************************/
-DECLARE
+
     --v_City    VARCHAR2(60);
     --v_Address1   VARCHAR2(60);
     --v_Address2   VARCHAR2(60);

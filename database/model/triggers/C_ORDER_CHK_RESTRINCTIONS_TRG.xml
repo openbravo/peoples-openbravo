@@ -3,7 +3,7 @@
 <trigger name="C_ORDER_CHK_RESTRINCTIONS_TRG" table="C_ORDER" fires="before" insert="true" update="true" delete="true" foreach="row">
 <body>
 <![CDATA[
-DECLARE
+
 v_n NUMBER;
 v_OrderLine_Offer_Id NUMBER;
 v_Price NUMBER;

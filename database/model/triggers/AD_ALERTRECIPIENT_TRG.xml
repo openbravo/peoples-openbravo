@@ -3,7 +3,7 @@
 <trigger name="AD_ALERTRECIPIENT_TRG" table="AD_ALERTRECIPIENT" fires="after" insert="true" update="true" delete="true" foreach="row">
 <body>
 <![CDATA[
-DECLARE
+
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
     * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License

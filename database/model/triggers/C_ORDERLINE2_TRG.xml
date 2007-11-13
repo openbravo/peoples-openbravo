@@ -3,7 +3,7 @@
 <trigger name="C_ORDERLINE2_TRG" table="C_ORDERLINE" fires="before" update="true" foreach="row">
 <body>
 <![CDATA[
-DECLARE
+
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
