@@ -370,7 +370,7 @@ public class PostgreSqlBuilder extends SqlBuilder
                 f.removeParameter(function.getParameterCount() - 1);
                 StringBuffer sBody = new StringBuffer();
                 sBody.append("BEGIN\n");
-                sBody.append(function.getTypeCode() == Types.NULL ? "PERFORM " : "RETURN ");
+                sBody.append(function.getTypeCode() == Types.NULL ? " " : "RETURN ");
                 sBody.append(getStructureObjectName(function));
                 sBody.append(" (");
                 for(int i = 0; i < f.getParameterCount(); i++) {
