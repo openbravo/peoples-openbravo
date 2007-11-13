@@ -111,7 +111,8 @@ public class ChangeFunction2Translation implements Translation {
 //                Pattern pattern21a = Pattern.compile(patternStr21a);
 //                Matcher matcher21a = pattern21a.matcher(inputStr);
                 
-                String patternStr22 = "^(.+?)(\\s|\\t)*([^(\\s|\\t)\\(]+)%NOTFOUND(.+?)$";
+                //String patternStr22 = "^(.+?)(\\s|\\t)*([^(\\s|\\t|\\()]+)%NOTFOUND(.+?)$";
+                String patternStr22 = "^(.+?)([\\s|\\t|\\(]+?)([^\\s|\\t|\\(]+?)%NOTFOUND(.+?)$";
                 Pattern pattern22 = Pattern.compile(patternStr22);
                 Matcher matcher22= pattern22.matcher(inputStr);
                 
@@ -245,16 +246,15 @@ public class ChangeFunction2Translation implements Translation {
 //                  bw.write("SELECT * INTO "+matcher21a.group(7) +" FROM "+matcher21a.group(1)+"("+matcher21a.group(3)+","+matcher21a.group(4)+","+matcher21a.group(5)+","+matcher21a.group(6)+");");
                     
                 } else if (matcher22.find()) {
-                } else if (matcher22.find()) {
-                    bw.write(matcher22.group(1)+" NOT FOUND"+matcher22.group(4));
+                    bw.write(matcher22.group(1)+matcher22.group(2)+" NOT FOUND "+matcher22.group(4));
                 } else if (matcher23.find()) {//System.out.println(23);
                     bw.write(matcher23.group(1)+"RAISE EXCEPTION ''%'',"+matcher23.group(3)+";");
                 } else if (matcher23a.find()) {//System.out.println(23a);
                     bw.write(matcher23a.group(1)+"RAISE EXCEPTION ''%'', '''';");
                 } else if (matcher24.find()) {
                     bw.write("--"+matcher24.group(1)+" Exception;");
-            	} else if (matcher24a.find()) {//System.out.println(24);
-            		bw.write("--"+matcher24a.group(1)+" PRAGMA EXCEPTION_INIT"+matcher24a.group(2));                    
+                } else if (matcher24a.find()) {//System.out.println(24);
+                    bw.write("--"+matcher24a.group(1)+" PRAGMA EXCEPTION_INIT"+matcher24a.group(2));                    
                 } else if (matcher25.find()) {
                     bw.write(matcher25.group(1)+matcher25.group(2)+"["+matcher25.group(4)+"]"+matcher25.group(6));
                 } else if (matcher26.find()) {
