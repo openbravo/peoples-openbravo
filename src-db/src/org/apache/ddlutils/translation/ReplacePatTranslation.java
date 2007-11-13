@@ -37,25 +37,41 @@ public class ReplacePatTranslation implements Translation {
     
     public String exec(String s) {
 
-         Matcher m = _p.matcher(s);
+        Matcher m = _p.matcher(s);
          StringBuffer sb = new StringBuffer();
          while (m.find()) {
-             m.appendReplacement(sb, getReplaceString(m));
+             m.appendReplacement(sb, _replaceStr);
          }
          m.appendTail(sb);
-         return sb.toString();        
+         return sb.toString();     
+
     }
     
-    private String getReplaceString(Matcher m) {
-
-        String result = _replaceStr;
-        String groupi;
-        for (int i = 1; i <= m.groupCount(); i++) {
-            groupi = m.group(i);   
-            result = result.replace("{" + Integer.toString(i) + "}", groupi == null ? "" : groupi);
-        }
-       
-        return result;  
-    }
+//    private String getReplaceString(Matcher m) {
+//
+//        String result = _replaceStr;
+//        String groupi;
+//        for (int i = 1; i <= m.groupCount(); i++) {
+//            groupi = m.group(i);   
+//            result = result.replace("{" + Integer.toString(i) + "}", groupi == null ? "" : groupi);
+//        }
+//
+//       
+//        return result;  
+//    }
+//    
+//    private String escapeReplacement(String s) {
+//                
+//        StringBuffer result = new StringBuffer();
+//        for (int i = 0; i < s.length(); i++) {
+//            char c = s.charAt(i);
+//            if (c == '$') {
+//                result.append("\\$");
+//            } else {
+//                result.append(c);
+//            }
+//        }
+//        return result.toString();
+//    }
     
 }
