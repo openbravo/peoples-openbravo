@@ -26,6 +26,7 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import org.openbravo.utils.Replace;
+import org.openbravo.erpCommon.utility.DateTimeData;
 
 import org.openbravo.erpCommon.utility.SequenceIdData;
 
@@ -408,7 +409,13 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     }
     if (fields[0].isguaranteedate.equals("Y")) {
       if (log4j.isDebugEnabled()) log4j.debug("GuaranteeDate:"+((instanceData!=null && instanceData.length > 0)?instanceData[0].guaranteedate:""));
-      String strGuaranteeDate = (instanceData!=null && instanceData.length > 0)?instanceData[0].guaranteedate:"";
+      String strGuaranteeDate = null;
+      
+      if (strAttributeInstance.equals("") && strIsSOTrx.equals("N"))
+      strGuaranteeDate = DateTimeData.nDaysAfter(this, DateTimeData.today(this), fields[0].guaranteedays);
+      else
+      strGuaranteeDate = (instanceData!=null && instanceData.length > 0)?instanceData[0].guaranteedate:"";
+      
       strHtml.append("<tr><td class=\"TitleCell\"><span class=\"LabelText\">");
       String strName = Utility.messageBD(this, "GuaranteeDate", vars.getLanguage());
       strHtml.append(strName.equals("")?"GuaranteeDate":strName);
