@@ -21,7 +21,7 @@
   <template file="ReportWorkRequirementDailyEnvEdit.html"/>
 
   <PARAMETER id="paramDirection" name="direction" default=""/>
-  <PARAMETER id="paramLanguage" name="paramLanguage" attribute="value"/>
+  <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
    <structure name="structure1">
     <FIELD id="wrdocno">wrdocno</FIELD>

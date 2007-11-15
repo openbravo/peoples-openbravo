@@ -21,7 +21,7 @@
   <template file="ReportTotalProductTemplateEdit.html"/>
  
   <PARAMETER id="paramDirection" name="direction" default=""/>
-  <PARAMETER id="paramLanguage" name="paramLanguage" attribute="value"/>
+  <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="paramCSS2" name="theme" attribute="href" replace="Default"/>
 

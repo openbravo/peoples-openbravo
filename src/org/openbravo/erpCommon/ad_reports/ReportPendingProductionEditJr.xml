@@ -20,7 +20,7 @@
 <REPORT>
   <template file="ReportPendingProductionEditJr.html"/>
 
-  <PARAMETER id="paramLanguage" name="paramLanguage" attribute="value"/>
+  <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
 
 
   <structure name="structure1">

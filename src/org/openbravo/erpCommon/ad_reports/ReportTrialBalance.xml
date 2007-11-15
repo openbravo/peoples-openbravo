@@ -23,7 +23,7 @@
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
   <PARAMETER id="paramDirection" name="direction" default=""/>
   <PARAMETER id="paramMessage" name="paramMessage" attribute="onload" replace="xx();"/>
-  <PARAMETER id="paramLanguage" name="paramLanguage" attribute="value"/>
+  <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
 	<PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
 	<PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>

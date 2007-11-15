@@ -23,7 +23,7 @@
   <template file="Rpt_Etiquetas_Config.html"/>
 
   <PARAMETER id="paramDirection" name="direction" default=""/>
-  <PARAMETER id="paramLanguage" name="paramLanguage" attribute="value"/>
+  <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
 
   <PARAMETER id="fieldBPartner" name="bpartner" attribute="value"/>
   <PARAMETER id="fieldBpartnerName" name="bpartnerName" attribute="value"/>

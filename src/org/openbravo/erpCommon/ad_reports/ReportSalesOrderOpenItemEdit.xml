@@ -21,7 +21,7 @@
   <template file="ReportSalesOrderOpenItemEdit.html"/>
 
   <PARAMETER id="paramDirection" name="direction" default=""/>
-  <PARAMETER id="paramLanguage" name="paramLanguage" attribute="value"/>
+  <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
 
   <structure name="structure1">
     <FIELD id="fieldcCashlineId" attribute="onclick" replace="xx">cCashlineId</FIELD>

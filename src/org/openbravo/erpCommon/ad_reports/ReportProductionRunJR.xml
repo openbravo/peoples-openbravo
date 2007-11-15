@@ -21,7 +21,7 @@
   <template file="ReportProductionRunJR.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="paramDirection" name="direction" default=""/>
-  <PARAMETER id="paramLanguage" name="paramLanguage" attribute="value"/>
+  <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="paramLaunchDateFrom" name="launchDateFrom" attribute="value"/>
 	<PARAMETER id="paramLaunchDateFrom" name="launchDateFromdisplayFormat" attribute="displayformat" replace="xx"/>
 	<PARAMETER id="paramLaunchDateFrom" name="launchDateFromsaveFormat" attribute="saveformat" replace="yy"/>

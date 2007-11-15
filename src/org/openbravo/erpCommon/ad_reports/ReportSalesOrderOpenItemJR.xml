@@ -21,7 +21,7 @@
   <template file="ReportSalesOrderOpenItemJR.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="paramDirection" name="direction" default=""/>
-  <PARAMETER id="paramLanguage" name="paramLanguage" attribute="value"/>
+  <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="paramM_WAREHOUSESHIPPER_ID" name="mWarehouseId" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>

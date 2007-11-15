@@ -20,7 +20,7 @@
 <REPORT>
   <template file="ReportTrialBalancePDF.fo"/>
   <!--PARAMETER id="paramDirection" name="direction" default=""/>
-<PARAMETER id="paramLanguage" name="paramLanguage" attribute="value"/>
+<PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
 <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
 <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
 <PARAMETER id="parameterReg" name="constantReg" default="-1"/>
