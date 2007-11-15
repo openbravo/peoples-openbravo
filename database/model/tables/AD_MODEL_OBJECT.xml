@@ -52,5 +52,9 @@
       <foreign-key foreignTable="AD_WORKFLOW" name="MODELOBJECT_FK_WORKFLOW">
         <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
       </foreign-key>
+      <unique name="AD_MODEL_OBJECT_CLASSNAME">
+        <unique-column name="CLASSNAME"/>
+      </unique>
+      
     </table>
 </database>
