@@ -224,13 +224,13 @@
  END IF;
  /**
  * Delete Column
- *
- ELSE
+ */
+ /* ELSE
  v_Cmd := 'ALTER TABLE ' || v_TableName
  || ' DROP COLUMN ' || v_ColumnName;
  -- Execute it
  EXECUTE IMMEDIATE v_Cmd;
- END IF;
+ END IF;*/
  /**/
  -- Table did not exist - drop initial column
  IF(v_DB_TableName IS NULL) THEN
