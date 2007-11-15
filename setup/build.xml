@@ -69,7 +69,6 @@
     <delete file="${temp.folder}${separator}config${separator}userconfig.xml"/>
     <delete includeEmptyDirs="true" >
           <fileset dir="${temp.folder}${separator}config" />
-          <fileset dir="${temp.folder}${separator}src" />
     </delete>
   </target>
 </project>
