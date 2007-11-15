@@ -881,6 +881,8 @@ public interface Platform
      */
     public void delete(Connection connection, Database model, DynaBean dynaBean) throws DatabaseOperationException;
 
+    public Database loadModelFromDatabase() throws DatabaseOperationException;
+    
     /**
      * Reads the database model from the live database as specified by the data source set for
      * this platform.

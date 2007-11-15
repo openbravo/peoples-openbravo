@@ -80,6 +80,8 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
     private SqlBuilder _builder;
     /** The model reader for this platform. */
     private JdbcModelReader _modelReader;
+    /** The model loader for this platform. */
+    private ModelLoader _modelLoader;    
     /** Whether script mode is on. */
     private boolean _scriptModeOn;
     /** Whether SQL comments are generated or not. */
@@ -112,6 +114,18 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
     /**
      * {@inheritDoc}
      */
+    public ModelLoader getModelLoader()
+    {
+        if (_modelLoader == null) {
+            _modelLoader = new ModelLoaderBase(this);
+        }
+        return _modelLoader;
+    }
+    
+        
+    /**
+     * {@inheritDoc}
+     */
     public JdbcModelReader getModelReader()
     {
         if (_modelReader == null)
@@ -121,6 +135,16 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
         return _modelReader;
     }
 
+    /**
+     * Sets the model loader for this platform.
+     * 
+     * @param modelLoader The model loader
+     */
+    protected void setModelLoader(ModelLoader modelLoader)
+    {
+        _modelLoader = modelLoader;
+    }
+    
     /**
      * Sets the model reader for this platform.
      * 
@@ -1928,6 +1952,19 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
         {
             closeStatement(statement);
         }
+    }
+    
+    public Database loadModelFromDatabase() throws DatabaseOperationException {
+        
+        
+        Connection connection = borrowConnection();
+        try {
+            return getModelLoader().getDatabase(connection);
+        } catch (SQLException ex) {
+            throw new DatabaseOperationException( ex);
+        } finally {
+            returnConnection(connection);
+        }        
     }
 
     /**
