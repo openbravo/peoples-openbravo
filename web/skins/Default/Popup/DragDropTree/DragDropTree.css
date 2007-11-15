@@ -23,42 +23,42 @@
 .DragDropTree_element_icon {
   width: 16px;
   height: 16px;
-  background: url(iconElement.gif);
+  background: url(iconElement.png);
 }
 
 .DragDropTree_folderClosed_icon {
   width: 16px;
   height: 16px;
-  background: url(iconFolderClosed.gif);
+  background: url(iconFolderClosed.png);
 }
 
 .DragDropTree_folderOpened_icon {
   width: 16px;
   height: 16px;
-  background: url(iconFolderOpened.gif);
+  background: url(iconFolderOpened.png);
 }
 
 
 .DragDropTree_plus_icon {
   width: 18px;
   height: 13px;
-  background: url(iconPlus.gif);
+  background: url(iconPlus.png);
 }
 
 .DragDropTree_minus_icon {
   width: 18px;
   height: 13px;
-  background: url(iconMinus.gif);
+  background: url(iconMinus.png);
 }
 
 .DragDropTree_sibling_pos_icon {
   width: 15px;
   height: 6px;
-  background: url(iconSiblingPos.gif);
+  background: url(iconSiblingPos.png);
 }
 
 .DragDropTree_child_pos_icon {
   width: 15px;
   height: 6px;
-  background: url(iconChildPos.gif);
+  background: url(iconChildPos.png);
 }

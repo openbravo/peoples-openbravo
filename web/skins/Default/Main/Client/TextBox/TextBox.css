@@ -74,7 +74,7 @@
   white-space: nowrap;
   color: white;
   font-weight: normal;
-  background: url(message_bg_deg.gif) repeat-x top center;
+  background: url(message_bg_deg.png) repeat-x top center;
   background-color: #FF3E1D;
 }
 
@@ -84,7 +84,7 @@
   white-space: nowrap;
   color: white;
   font-weight: normal;
-  background: url(message_bg_deg.gif) repeat-x top center;
+  background: url(message_bg_deg.png) repeat-x top center;
   background-color: #FF3E1D;
 }
 
@@ -94,7 +94,7 @@
   white-space: nowrap;
   color: white;
   font-weight: normal;
-  background: url(message_bg_deg.gif) repeat-x top center;
+  background: url(message_bg_deg.png) repeat-x top center;
   background-color: #FF3E1D;
 }
 
@@ -129,7 +129,7 @@ td.TextBox_MsgContainer_td {
   margin-bottom: -2px;
   width:8px;
   height:5px;
-  background: url(message_arrow.gif) no-repeat top;
+  background: url(message_arrow.png) no-repeat top;
 }
 
 .TextBox_MsgContainer_div2{

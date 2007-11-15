@@ -51,7 +51,7 @@ body {
 }
 
 .datawarehouseopen {
-	background-image: url(minus.gif);
+	background-image: url(minus.png);
 	background-repeat: no-repeat;
 	display: table-cell;
 	display: -moz-inline-box;
@@ -63,7 +63,7 @@ body {
 }
 
 .datawarehouseclose {
-	background-image: url(plus.gif);
+	background-image: url(plus.png);
 	background-repeat: no-repeat;
 	display: table-cell;
 	display: -moz-inline-box;

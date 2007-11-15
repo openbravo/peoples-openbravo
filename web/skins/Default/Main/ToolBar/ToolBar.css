@@ -17,6 +17,9 @@
  ************************************************************************
 */
 
+@import url(./ExpansibleMenu/ExpansibleMenu.css);
+
+
 .Main_ToolBar_bg {
   background: url(backgroundCenter.png) repeat-x top center;
   background-color: #505050;
@@ -136,144 +139,6 @@ a.Main_ToolBar_Button:active {
   background: url(button.pressed.png) no-repeat center center;
   -moz-outline-style: none;
 }
-
-
-
-
-
-.ToolBar_DropDown_Menu_span_VISIBLE {
-  position: absolute;
-  z-index: 99;
-}
-
-.ToolBar_DropDown_Menu_span_HIDDEN {
-  height: 0px;
-  display:none;
-  visibility: collapse;
-}
-
-table.ToolBar_DropDown_Menu_table {
-  border: 0px;
-  border-bottom: 1px solid #101010;
-  border-collapse: collapse;
-  margin-left: 5px;
-}
-
-tr.ToolBar_DropDown_Menu_tr {
-  height:5px;
-  font-size:0pt;
-}
-
-td.ToolBar_DropDown_Menu_td1 {
-  width:8px;
-  height:5px;
-  border: 0px;
-  border-bottom: 1px solid #101010;
-}
-
-td.ToolBar_DropDown_Menu_td2 {
-  border: 0px;
-  border-bottom: 1px solid #101010;
-}
-
-.ToolBar_DropDown_Menu_div {
-  position: relative;
-  margin-bottom: -2px;
-  width:8px;
-  height:5px;
-  background: url(dropdown_arrow.gif) no-repeat top;
-}
-
-.ToolBar_DropDown_Menu_div2{
-  vertical-align: middle;
-  height: 18px;
-  _height: 22px;
-  border-left: 1px solid #101010;
-  border-right: 1px solid #101010;
-  padding-top: 1px;
-  _padding-top: 1px;
-  padding-bottom: 1px;
-  _padding-bottom: 0px;
-  padding-left: 6px;
-  padding-right: 6px;
-}
-
-table.ToolBar_DropDown_MenuVt_table {
-  border:0px;
-  border-collapse:collapse;
-}
-
-td.ToolBar_DropDown_MenuVt_td {
-  height:23px;
-}
-
-
-td.ToolBar_DropDown_Menu_bg {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 10pt;
-  white-space: nowrap;
-  color: white;
-  font-weight: normal;
-  background-color: #3A9011;
-  cursor: pointer;
-}
-
-td.ToolBar_DropDown_Menu_bg_hover {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 10pt;
-  white-space: nowrap;
-  color: white;
-  font-weight: normal;
-  background-color: #808080;
-  cursor: pointer;
-}
-
-td.ToolBar_DropDown_Menu_bg_active {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 10pt;
-  white-space: nowrap;
-  color: white;
-  font-weight: normal;
-  background-color: #959595;
-  cursor: pointer;
-}
-
-
-
-
-
-.ToolBar_DropDown_Menu_Icon {
-  border: 0px none;
-  width: 14px;
-  height: 13px;
-  margin: 0px;
-  vertical-align: middle;
-  margin-bottom: 3px;
-  _margin-bottom: 0px;
-}
-
-.ToolBar_DropDown_Menu_Icon_Excel {
-  background: url(miniconExcel.png) no-repeat center center;
-}
-
-.ToolBar_DropDown_Menu_Icon_Pdf {
-  background: url(miniconPdf.png) no-repeat center center;
-}
-
-.ToolBar_DropDown_Menu_Icon_Csv {
-  background: url(miniconCsv.png) no-repeat center center;
-}
-
-
-
-
-
-
-
-
-
-
-
 
 
 
