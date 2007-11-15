@@ -20,7 +20,7 @@
 <REPORT>
 	<template file="RptC_Bpartner.html"/>
 	<PARAMETER id="paramDirection" name="direction" default=""/>
-	<PARAMETER id="paramLanguage" name="paramLanguage" attribute="value"/>
+	<PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="paramBpartner" name="paramBpartner" attribute="value"/>
 	<PARAMETER id="param0" name="Param0" default="0"/>
