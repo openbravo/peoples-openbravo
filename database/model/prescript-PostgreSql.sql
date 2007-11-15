@@ -1,7 +1,36 @@
-CREATE TRUSTED PROCEDURAL LANGUAGE 'plpgsql'
-  HANDLER plpgsql_call_handler
-  VALIDATOR plpgsql_validator
+-- Creating auxiliar functions for language creation
+CREATE OR REPLACE FUNCTION exist_language(varchar)
+RETURNS bigint AS ' 
+  SELECT count(*) from pg_language where lanname = $1;
+' LANGUAGE 'sql'
 /-- END
+
+CREATE OR REPLACE FUNCTION insert_pg_language()
+RETURNS integer AS ' 
+  CREATE TRUSTED PROCEDURAL LANGUAGE ''plpgsql''
+  HANDLER plpgsql_call_handler
+  VALIDATOR plpgsql_validator;
+  SELECT 1;
+' LANGUAGE 'sql'
+/-- END
+
+CREATE OR REPLACE FUNCTION create_language(varchar)
+RETURNS integer AS '
+SELECT
+CASE WHEN exist_language($1)=0
+THEN insert_pg_language()
+END;
+SELECT 1;
+' LANGUAGE 'sql'
+/-- END
+
+SELECT * FROM create_language('plpgsql')
+/-- END
+
+--CREATE TRUSTED PROCEDURAL LANGUAGE 'plpgsql'
+--  HANDLER plpgsql_call_handler
+--  VALIDATOR plpgsql_validator;
+--/--END
 
 CREATE OR REPLACE FUNCTION dateFormat
 (
@@ -161,14 +190,14 @@ create or replace function to_interval (
        varchar
 )
 returns interval 
-as '	
+as '    
 declare    
-       interval__number	     alias for $1;
-       interval__units	     alias for $2;
+       interval__number      alias for $1;
+       interval__units       alias for $2;
 begin
 
-	-- We should probably do unit checking at some point
-	return ('''''''' || interval__number || '' '' || interval__units || '''''''')::interval;
+    -- We should probably do unit checking at some point
+    return ('''''''' || interval__number || '' '' || interval__units || '''''''')::interval;
 
 END;
 ' language 'plpgsql'
@@ -180,7 +209,7 @@ create or replace function add_months (
 )
 returns timestamptz as '
 begin
-	return $1 + to_interval($2,to_char(''months''));
+    return $1 + to_interval($2,to_char(''months''));
 
 END;
 ' language 'plpgsql'
@@ -194,7 +223,7 @@ numeric
 )
 RETURNS timestamptz AS '
 BEGIN
-	return $1 + to_interval($2::INTEGER,to_char(''months''));
+    return $1 + to_interval($2::INTEGER,to_char(''months''));
 END;
 ' LANGUAGE 'plpgsql'
 /-- END
@@ -206,7 +235,7 @@ integer
 )
 RETURNS timestamptz AS '
 BEGIN
-	return $1 + to_interval($2,to_char(''months''));
+    return $1 + to_interval($2,to_char(''months''));
 END;
 ' LANGUAGE 'plpgsql'
 /-- END
@@ -218,7 +247,7 @@ numeric
 )
 RETURNS timestamptz AS '
 BEGIN
-	return $1 + to_interval($2::INTEGER,to_char(''months''));
+    return $1 + to_interval($2::INTEGER,to_char(''months''));
 END;
 ' LANGUAGE 'plpgsql'
 /-- END
@@ -256,7 +285,32 @@ END;
 '  LANGUAGE 'plpgsql'
 /-- END
 
---DROP OPERATOR + (timestamptz, numeric) CASCADE/-- END
+
+CREATE OR REPLACE FUNCTION type_oid(varchar)
+RETURNS oid AS ' 
+  SELECT pg_type.oid from pg_type WHERE pg_type.typname = $1;
+' LANGUAGE 'sql'
+/-- END
+
+-- Creating auxiliar functions for operator dropping
+CREATE or REPLACE function drop_operator (operator_name IN varchar,param1 IN varchar,param2 IN varchar) returns varchar as '
+DECLARE
+  cnt int4;
+BEGIN
+  SELECT into cnt count(*) from pg_operator where upper(oprname) = upper(operator_name::name) and oprleft = type_oid(param1) and oprright = type_oid(param2);
+  if cnt > 0 then
+    execute ''DROP OPERATOR '' || operator_name || ''('' || param1 || '','' || param2 || '') CASCADE;'';
+    return operator_name || '' DROPPED'';
+  end if;
+  return operator_name || '' does not exist'';
+END;'
+language 'plpgsql' 
+/-- END
+
+--DROP OPERATOR + (timestamptz, numeric) CASCADE;
+SELECT * FROM drop_operator('+','timestamptz','numeric')
+/-- END
+
 CREATE OPERATOR +(
   PROCEDURE = "add_days",
   LEFTARG = timestamptz,
@@ -264,16 +318,20 @@ CREATE OPERATOR +(
   COMMUTATOR = +)
 /-- END
 
---DROP OPERATOR + (timestamptz, integer)/-- END
-CREATE OPERATOR + (
-   LEFTARG = timestamp with time zone,
-   RIGHTARG = integer,
-   PROCEDURE = add_days,
-   COMMUTATOR = +
-)
+--DROP OPERATOR + (timestamptz, integer);
+--SELECT * FROM drop_operator('+','timestamptz','integer');
+--CREATE OPERATOR + (
+--   LEFTARG = timestamptz,
+--   RIGHTARG = integer,
+--   PROCEDURE = add_days,
+--   COMMUTATOR = +
+--)
+--/--END
+
+--DROP OPERATOR + (date, numeric);
+SELECT * FROM drop_operator('+','date','numeric')
 /-- END
 
---DROP OPERATOR + (date, numeric)/-- END
 CREATE OPERATOR + (
    LEFTARG = date,
    RIGHTARG = numeric,
@@ -316,14 +374,18 @@ END;
 /-- END
 
 --DROP OPERATOR - (timestamptz, integer)/-- END
-CREATE OPERATOR - (
-   LEFTARG = timestamp with time zone,
-   RIGHTARG = integer,
-   PROCEDURE = substract_days
-)
+--SELECT * FROM drop_operator('-','timestamptz','integer');
+--CREATE OPERATOR - (
+--   LEFTARG = timestamp with time zone,
+--   RIGHTARG = integer,
+--   PROCEDURE = substract_days
+--)
+--/-- END
+
+--DROP OPERATOR - (date, numeric);
+SELECT * FROM drop_operator('-','date','numeric')
 /-- END
 
---DROP OPERATOR - (date, numeric)/-- END
 CREATE OPERATOR - (
    LEFTARG = date,
    RIGHTARG = numeric,
@@ -333,19 +395,19 @@ CREATE OPERATOR - (
 
 
 CREATE OR REPLACE FUNCTION negation(boolean)
-  RETURNS boolean AS
-'
+  RETURNS boolean AS '
 BEGIN
 RETURN NOT $1 ;
 END;
 ' LANGUAGE 'plpgsql'
 /-- END
 
---DROP OPERATOR ! (NONE, boolean)/-- END
-CREATE OPERATOR !(
-  PROCEDURE = "negation",
-  RIGHTARG = boolean)
-/-- END
+--DROP OPERATOR ! (NONE, boolean);
+--SELECT * FROM drop_operator('!','NONE','boolean');
+--CREATE OPERATOR !(
+--  PROCEDURE = "negation",
+--  RIGHTARG = boolean)
+--/-- END
 
 
 CREATE OR REPLACE FUNCTION trunc
@@ -580,9 +642,14 @@ END;
 --   RIGHTARG = timestamptz,
 --   PROCEDURE = substract_days
 --)
+--/--END
+
+--DROP OPERATOR - (timestamptz, numeric)
+--/--END
+
+SELECT * FROM drop_operator('-','timestamptz','numeric')
 /-- END
 
---DROP OPERATOR - (timestamptz, numeric)/-- END
 CREATE OPERATOR -(
   PROCEDURE = substract_days,
   LEFTARG = timestamptz,
@@ -606,20 +673,42 @@ END;   $BODY$
   LANGUAGE 'plpgsql' VOLATILE;
 /-- END
 
-
-CREATE OR REPLACE VIEW DUAL AS SELECT 'X' AS dummy
+-- Creating auxiliar functions for view dropping
+CREATE or REPLACE function drop_view (view_name IN varchar) returns varchar as '
+DECLARE
+  cnt int4;
+BEGIN
+  SELECT into cnt count(*) from pg_views where upper(viewname) = upper(view_name::name);
+  if cnt > 0 then
+    execute ''DROP VIEW '' || view_name || '';'';
+    return view_name || '' DROPPED'';
+  end if;
+  return view_name || '' does not exist'';
+END;'
+language 'plpgsql' 
 /-- END
 
+SELECT * FROM drop_view('DUAL')
+/-- END
+
+CREATE OR REPLACE VIEW DUAL AS SELECT 'X'::text AS dummy
+/-- END
+
+SELECT * FROM drop_view('USER_TABLES')
+/-- END
 
 CREATE OR REPLACE VIEW USER_TABLES
 (TABLE_NAME, BLOCKS, DURATION, LAST_ANALYZED)
 AS 
-SELECT UPPER(TABLENAME), NULL, NULL, NULL 
+SELECT UPPER(TABLENAME), NULL::numeric, NULL::varchar, NULL::date 
 FROM PG_TABLES 
 WHERE SCHEMANAME = CURRENT_SCHEMA()
 /-- END
 
---DROP VIEW USER_CONSTRAINTS/-- END
+--DROP VIEW USER_CONSTRAINTS
+--/--END
+SELECT * FROM drop_view('USER_CONSTRAINTS')
+/-- END
 
 CREATE OR REPLACE VIEW user_constraints AS 
  SELECT upper(pg_class.relname) AS table_name, 
@@ -650,7 +739,11 @@ CREATE OR REPLACE VIEW user_constraints AS
  LEFT JOIN pg_class fk_table ON fk_table.oid = pg_constraint.confrelid
 /-- END
 
---DROP VIEW USER_INDEXES/-- END
+--DROP VIEW USER_INDEXES
+--/--END
+
+SELECT * FROM drop_view('USER_INDEXES')
+/-- END
 
 CREATE OR REPLACE VIEW USER_INDEXES
 (TABLE_NAME, INDEX_NAME, TABLESPACE_NAME, UNIQUENESS, INDEX_TYPE, TABLE_TYPE)
@@ -665,7 +758,11 @@ AND PG_CLASS1.RELNAMESPACE = PG_NAMESPACE.OID
 AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
 /-- END
 
---DROP VIEW USER_IND_COLUMNS/-- END
+--DROP VIEW USER_IND_COLUMNS
+--/--END
+
+SELECT * FROM drop_view('USER_IND_COLUMNS')
+/-- END
 
 CREATE OR REPLACE VIEW USER_IND_COLUMNS
 (TABLE_NAME, INDEX_NAME, COLUMN_NAME, TABLESPACE_NAME, COLUMN_POSITION)
@@ -682,6 +779,9 @@ AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
 /-- END
 
 
+SELECT * FROM drop_view('USER_OBJECTS')
+/-- END
+
 CREATE OR REPLACE VIEW USER_OBJECTS
 (TABLE_NAME, OBJECT_NAME, OBJECT_ID, OBJECT_TYPE, STATUS)
 AS 
@@ -693,6 +793,12 @@ AND PG_CLASS.RELNAMESPACE = PG_NAMESPACE.OID
 AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
 /-- END
 
+
+--DROP VIEW USER_TAB_COLUMNS
+--/--END
+
+SELECT * FROM drop_view('USER_TAB_COLUMNS')
+/-- END
 
 CREATE OR REPLACE VIEW USER_TAB_COLUMNS
 (TABLE_NAME, COLUMN_NAME, DATA_TYPE, 
@@ -711,7 +817,11 @@ AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
 AND PG_ATTRIBUTE.ATTNUM>0
 /-- END
 
---DROP VIEW USER_TRIGGERS/-- END
+--DROP VIEW USER_TRIGGERS
+--/--END
+
+SELECT * FROM drop_view('USER_TRIGGERS')
+/-- END
 
 CREATE OR REPLACE VIEW USER_TRIGGERS
 (TABLE_NAME, TABLESPACE_NAME, TRIGGER_NAME)
@@ -733,6 +843,26 @@ BEGIN
  RETURN C_DateDayInMonth($1, TO_DATE($2));
 END;
    ' LANGUAGE 'plpgsql'
+/-- END
+
+
+-- DROP TEMPORARY FUNCTIONS
+DROP FUNCTION exist_language(varchar)
+/-- END
+
+DROP FUNCTION insert_pg_language()
+/-- END
+
+DROP FUNCTION create_language(varchar)
+/-- END
+
+DROP FUNCTION type_oid(varchar)
+/-- END
+
+DROP FUNCTION drop_operator (varchar,varchar,varchar)
+/-- END
+
+DROP FUNCTION drop_view (varchar)
 /-- END
 
 
