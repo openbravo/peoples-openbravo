@@ -152,7 +152,7 @@
       <fileset dir="${basedir}" includes="**/*.jasper"/>
     </copy>
     <java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}/Openbravo.properties' '${basedir}' '${base.design}' 'xml' 'true' 'false'"/>
+      <arg line="'${base.config}/Openbravo.properties' '${basedir}' '${base.design}' '.xml' 'true' 'false'"/>
       <classpath refid="project.class.path"/>
     </java>
     <!--java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">

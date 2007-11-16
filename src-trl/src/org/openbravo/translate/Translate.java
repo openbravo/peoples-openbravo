@@ -170,7 +170,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
         java.util.Date oldFileModified = new java.util.Date(fileParsing.lastModified());
         //if (count == 0) System.out.println("******************** " + newFileModified.compareTo(oldFileModified) + " - " + newFileModified + " - " + oldFileModified);
         //if (newFileModified.compareTo(oldFileModified) > 0) return;
-        if (!fileTermination.equalsIgnoreCase("jrxml") && newFileModified.compareTo(oldFileModified) > 0) return;
+        if (/*!fileTermination.equalsIgnoreCase("jrxml") && */newFileModified.compareTo(oldFileModified) > 0) return;
         //if (fileHTML.lastModified()>= fileParsing.lastModified()) return;
       }
       count++;
