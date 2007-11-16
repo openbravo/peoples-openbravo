@@ -55,11 +55,11 @@
       SET CURRENTNEXT=(SELECT AD_SEQUENCE.INCREMENTNO + 
                                    (CASE SIGN(COALESCE((SELECT MAX(t.AD_Sequence_ID) 
                                                           FROM AD_Sequence t 
-                                                          WHERE t.AD_Sequence_ID<v_StartWith),0)-TO_NUMBER(v_StartWithSys))
+                                                          WHERE t.AD_Sequence_ID<TO_NUMBER(v_StartWith)),0)-TO_NUMBER(v_StartWithSys))
                                     WHEN  -1  THEN TO_NUMBER(v_StartWithSys)-AD_SEQUENCE.INCREMENTNO 
                                     ELSE (SELECT MAX(t.AD_Sequence_ID) 
                                             FROM AD_Sequence t 
-                                           WHERE t.AD_Sequence_ID< v_StartWith) 
+                                           WHERE t.AD_Sequence_ID<TO_NUMBER(v_StartWith)) 
                                      END) AS SEQUENCE 
                              FROM AD_SEQUENCE 
                             WHERE UPPER(NAME) = 'AD_SEQUENCE')
@@ -69,10 +69,51 @@
         SET CURRENTNEXTSYS=(SELECT AD_SEQUENCE.INCREMENTNO + 
                                   COALESCE((SELECT MAX(t.AD_SEQUENCE_ID) 
                                               FROM AD_SEQUENCE t 
-                                             WHERE t.AD_SEQUENCE_ID< v_StartWith),(TO_NUMBER(v_StartWithSys)-AD_SEQUENCE.INCREMENTNO))
+                                             WHERE t.AD_SEQUENCE_ID<TO_NUMBER(v_StartWith)),(TO_NUMBER(v_StartWithSys)-AD_SEQUENCE.INCREMENTNO))
                               FROM AD_SEQUENCE 
                              WHERE UPPER(NAME) = 'AD_SEQUENCE')
        WHERE UPPER(NAME) = 'AD_SEQUENCE'; 
+       
+       
+     --Check for fac_acct_group sequence
+     select count(*)
+    into v_aux
+      from ad_sequence
+    where name='Fact_Acct_Group';
+    
+    if v_Aux=0 then
+      AD_Sequence_Next('AD_Sequence', 0, v_NextNo);
+      INSERT INTO AD_Sequence
+        (AD_Sequence_ID, AD_Client_ID, AD_Org_ID,
+        IsActive, Created, CreatedBy, Updated, UpdatedBy,
+        Name, Description,
+        IsAutoSequence, IncrementNo, StartNo,  
+        CurrentNextSys, CurrentNext,
+        IsAudited, IsTableID, StartNewYear)
+     VALUES
+        (v_NextNo, 0, 0,
+        'Y', now(), 0, now(), 0,
+        'Fact_Acct_Group', 'Fact_Acct_Group',
+        'Y', 1, 1000000,
+        (SELECT AD_SEQUENCE.INCREMENTNO + 
+                COALESCE((SELECT MAX(t.Fact_Acct_Group_id) 
+                            FROM FACT_ACCT t 
+                           WHERE t.Fact_Acct_Group_id< TO_NUMBER(v_StartWith)),(TO_NUMBER(v_StartWithSys)-AD_SEQUENCE.INCREMENTNO))
+            FROM AD_SEQUENCE 
+           WHERE UPPER(NAME) = 'AD_SEQUENCE'), 
+        (SELECT AD_SEQUENCE.INCREMENTNO + 
+               (CASE SIGN(COALESCE((SELECT MAX(t.Fact_Acct_Group_id) 
+                                      FROM fact_acct t 
+                                      WHERE t.Fact_Acct_Group_id<TO_NUMBER(v_StartWith)),0)-TO_NUMBER(v_StartWithSys))
+                WHEN  -1  THEN TO_NUMBER(v_StartWithSys)-AD_SEQUENCE.INCREMENTNO 
+                ELSE (SELECT MAX(t.Fact_Acct_Group_id) 
+                        FROM fact_acct t
+                       WHERE t.Fact_Acct_Group_id< TO_NUMBER(v_StartWith))
+                 END) AS SEQUENCE 
+         FROM AD_SEQUENCE 
+        WHERE UPPER(NAME) = 'AD_SEQUENCE'),
+        'N', 'Y', 'N');
+    end if;
        
      FOR Cur_Tables IN (
      SELECT AD_TABLE_ID, TABLENAME
