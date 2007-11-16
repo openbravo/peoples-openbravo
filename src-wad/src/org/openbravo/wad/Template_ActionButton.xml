@@ -33,6 +33,7 @@
 <PARAMETER id="processDescription" name="processDescription" replaceCharacters="htmlHelp" default=""/>
 <PARAMETER id="processHelp" name="processHelp" replaceCharacters="htmlHelp" default=""/>
 <PARAMETER id="sectionDetailFields" name="fields" default=""/>
+<PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
 
 <DISCARD id="discard"/>
 </REPORT>
