@@ -73,13 +73,13 @@ public class ModelLoaderBase implements ModelLoader {
 
             _stmt_listtables = _connection.prepareStatement("SELECT TABLE_NAME FROM USER_TABLES WHERE TABLE_NAME <> 'AD_SYSTEM_MODEL' ORDER BY TABLE_NAME");
             _stmt_pkname = _connection.prepareStatement("SELECT CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'P' AND TABLE_NAME = ?");
-            _stmt_listcolumns = _connection.prepareStatement("SELECT COLUMN_NAME, DATA_TYPE, CHAR_COL_DECL_LENGTH, DATA_PRECISION, DATA_SCALE, NULLABLE FROM USER_TAB_COLUMNS WHERE TABLE_NAME = ? ORDER BY COLUMN_ID");
+            _stmt_listcolumns = _connection.prepareStatement("SELECT COLUMN_NAME, DATA_TYPE, CHAR_COL_DECL_LENGTH, DATA_LENGTH ,DATA_PRECISION, DATA_SCALE, NULLABLE, DATA_DEFAULT FROM USER_TAB_COLUMNS WHERE TABLE_NAME = ? ORDER BY COLUMN_ID");
             _stmt_pkcolumns = _connection.prepareStatement("SELECT COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = ? ORDER BY POSITION");
             _stmt_listchecks = _connection.prepareStatement("SELECT CONSTRAINT_NAME, SEARCH_CONDITION FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'C' AND GENERATED = 'USER NAME' AND TABLE_NAME = ?");
             _stmt_listfks = _connection.prepareStatement("SELECT C.CONSTRAINT_NAME, C2.TABLE_NAME, C.DELETE_RULE, 'NO ACTION' FROM USER_CONSTRAINTS C, USER_CONSTRAINTS C2 WHERE C.R_CONSTRAINT_NAME = C2.CONSTRAINT_NAME AND C.CONSTRAINT_TYPE = 'R' AND C.TABLE_NAME = ?");
             _stmt_fkcolumns = _connection.prepareStatement("SELECT C.COLUMN_NAME, C2.COLUMN_NAME FROM USER_CONS_COLUMNS C, USER_CONSTRAINTS K, USER_CONS_COLUMNS C2, USER_CONSTRAINTS K2 WHERE C.CONSTRAINT_NAME = K.CONSTRAINT_NAME AND C2.CONSTRAINT_NAME = K2.CONSTRAINT_NAME AND K.R_CONSTRAINT_NAME = K2.CONSTRAINT_NAME AND C.CONSTRAINT_NAME = ? ORDER BY C.POSITION");
 
-            _stmt_listindexes = _connection.prepareStatement("SELECT INDEX_NAME, UNIQUENESS FROM USER_INDEXES WHERE TABLE_NAME = ? AND INDEX_NAME NOT IN (SELECT INDEX_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'U' OR CONSTRAINT_TYPE = 'P')");
+            _stmt_listindexes = _connection.prepareStatement("SELECT INDEX_NAME, UNIQUENESS FROM USER_INDEXES WHERE TABLE_NAME = ? AND INDEX_TYPE = 'NORMAL' AND INDEX_NAME NOT IN (SELECT INDEX_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'U' OR CONSTRAINT_TYPE = 'P')");
             _stmt_indexcolumns = _connection.prepareStatement("SELECT COLUMN_NAME FROM USER_IND_COLUMNS WHERE INDEX_NAME = ? ORDER BY COLUMN_POSITION");
 
             _stmt_listuniques = _connection.prepareStatement("SELECT CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'U' AND TABLE_NAME = ?");
@@ -87,7 +87,7 @@ public class ModelLoaderBase implements ModelLoader {
 
             _stmt_listviews = _connection.prepareStatement("SELECT VIEW_NAME, TEXT FROM USER_VIEWS");
             
-            _stmt_listsequences = _connection.prepareStatement("SELECT SEQUENCE_NAME, MIN_VALUE, INCREMENT_BY FROM USER_SEQUENCES");
+            _stmt_listsequences = _connection.prepareStatement("SELECT SEQUENCE_NAME, LAST_NUMBER, INCREMENT_BY FROM USER_SEQUENCES");
 
             return readDatabase();
             
@@ -147,8 +147,8 @@ public class ModelLoaderBase implements ModelLoader {
         t.addColumns(readColumns(tablename));
         
         // PKS
-        if (t.getPrimaryKey() == null || t.getPrimaryKey().equals("")) {
-            _stmt_pkcolumns.setString(1, tablename);
+        if (t.getPrimaryKey() != null && !t.getPrimaryKey().equals("")) {
+            _stmt_pkcolumns.setString(1, t.getPrimaryKey());
             fillList(_stmt_pkcolumns, new RowFiller() { public void fillRow(ResultSet r) throws SQLException {                
                 t.findColumn(r.getString(1)).setPrimaryKey(true);
             }});            
@@ -187,20 +187,21 @@ public class ModelLoaderBase implements ModelLoader {
         c.setTypeCode(translateType(rs.getString(2)));
         
         if (c.getTypeCode() == Types.DECIMAL) {
-            int size = rs.getInt(4);
+            int size = rs.getInt(5);
             if (size == 0) {
                 c.setSize(null);
             } else {                
-                c.setSizeAndScale(rs.getInt(4), rs.getInt(5));
+                c.setSizeAndScale(rs.getInt(5), rs.getInt(6));
             }
-        } else if (c.getTypeCode() == Types.CHAR || c.getTypeCode() == Types.VARCHAR || c.getTypeCode() == Types.NCHAR || c.getTypeCode() == Types.NVARCHAR) {
+        } else if (c.getTypeCode() == Types.CHAR || c.getTypeCode() == Types.VARCHAR || c.getTypeCode() == ExtTypes.NCHAR || c.getTypeCode() == ExtTypes.NVARCHAR) {
             c.setSizeAndScale(rs.getInt(3), null);
         } else if (c.getTypeCode() == Types.TIMESTAMP) {
             c.setSizeAndScale(7, null);
         } else if (c.getTypeCode() == Types.CLOB || c.getTypeCode() == Types.BLOB) {
-            c.setSizeAndScale(rs.getInt(3), null);
+            c.setSizeAndScale(rs.getInt(4), null);
         }
-        c.setRequired("N".equals(rs.getString(6)));        
+        c.setRequired("N".equals(rs.getString(7)));  
+        c.setDefaultValue(translateDefault(rs.getString(8), c.getTypeCode()));
         
         return c;
     }
@@ -327,6 +328,29 @@ public class ModelLoaderBase implements ModelLoader {
             }});
     }    
     
+    protected String translateDefault(String value, int type) {
+        
+        if (value == null) {
+            return null;
+        } else {
+            String sreturn = value.trim();
+
+            switch (type) {
+                case Types.CHAR:
+                case Types.VARCHAR:
+                case ExtTypes.NCHAR:
+                case ExtTypes.NVARCHAR:
+                case Types.LONGNVARCHAR:
+                    if (sreturn.length() >= 2 && sreturn.startsWith("'") && sreturn.endsWith("'")) {
+                        return sreturn.substring(1, value.length() - 2);
+                    } else {
+                        return sreturn;
+                    }
+                default: return sreturn;
+            }
+        }
+    }
+    
     protected boolean translateUniqueness(String uniqueness) {
         
         return "UNIQUE".equals(uniqueness);
@@ -358,9 +382,9 @@ public class ModelLoaderBase implements ModelLoader {
         } else if ("DATE".equals(nativeType)) {
             return Types.TIMESTAMP;
         } else if ("CLOB".equals(nativeType)) {
-            return Types.LONGVARCHAR;
+            return Types.CLOB;
         } else if ("BLOB".equals(nativeType)) {
-            return Types.LONGVARBINARY;
+            return Types.BLOB;
         } else {
             return Types.VARCHAR;
         }
