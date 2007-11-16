@@ -558,8 +558,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     
     strReportName = Replace.replace(Replace.replace(strReportName,"@basedesign@",strBaseDesign),"@attach@",strAttach);
     String strFileName = strReportName.substring(strReportName.lastIndexOf("/")+1);
-    String strContentDisposition = (strOutputType.equals("html")?"inline":"attachment");
-    response.setHeader( "Content-disposition", strContentDisposition + "; filename=" + strFileName + "." +strOutputType);
 
     ServletOutputStream os = null;
     try {
@@ -611,6 +609,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       if (strOutputType == null || strOutputType.equals("")) strOutputType = "html";
       if (strOutputType.equals("html")){
         if (log4j.isDebugEnabled()) log4j.debug("JR: Print HTML");
+        response.setHeader( "Content-disposition", "inline" + "; filename=" + strFileName + "." +strOutputType);
         JRHtmlExporter exporter = new JRHtmlExporter();
         exportParameters.put(JRHtmlExporterParameter.JASPER_PRINT, jasperPrint);
         exportParameters.put(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
@@ -620,9 +619,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
         exporter.exportReport();
       } else if (strOutputType.equals("pdf")){
         response.setContentType("application/pdf");
+        response.setHeader( "Content-disposition", "attachment" + "; filename=" + strFileName + "." +strOutputType);
         JasperExportManager.exportReportToPdfStream(jasperPrint, os);
       } else if (strOutputType.equals("xls")){
         response.setContentType("application/vnd.ms-excel");
+        response.setHeader( "Content-disposition", "attachment" + "; filename=" + strFileName + "." +strOutputType);
         JExcelApiExporter exporter = new JExcelApiExporter();
         exportParameters.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
         exportParameters.put(JRExporterParameter.OUTPUT_STREAM, os);
