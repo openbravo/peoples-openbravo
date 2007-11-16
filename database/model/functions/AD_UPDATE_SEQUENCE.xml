@@ -52,7 +52,7 @@
     v_StartWith:=TO_CHAR(TO_NUMBER(v_StartWithSys) +1) || '00000'; 
     v_StartWithSys:=v_StartWithSys || '00000'; 
     UPDATE AD_SEQUENCE 
-      SET CURRENTNEXTSYS=(SELECT AD_SEQUENCE.INCREMENTNO + 
+      SET CURRENTNEXT=(SELECT AD_SEQUENCE.INCREMENTNO + 
                                    (CASE SIGN(COALESCE((SELECT MAX(t.AD_Sequence_ID) 
                                                           FROM AD_Sequence t 
                                                           WHERE t.AD_Sequence_ID<v_StartWith),0)-TO_NUMBER(v_StartWithSys))
