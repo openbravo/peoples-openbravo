@@ -21,8 +21,10 @@
  TYPE RECORD IS REF CURSOR;
    Cur_Script RECORD;
    Cur_Tables RECORD;
- v_NextNo NUMBER;
- v_Aux NUMBER;
+   v_NextNo NUMBER;
+   v_Aux NUMBER;
+   v_StartWith VARCHAR(10) ; 
+   v_StartWithSys VARCHAR(10) ; 
  BEGIN
    select count(*)
     into v_aux
@@ -45,7 +47,34 @@
      
     end if;
     
-      FOR Cur_Tables IN (
+    --Update sequence for ad_update_sequence table
+    SELECT TAD_LEVEL INTO v_StartWithSys  FROM AD_SYSTEM  WHERE AD_SYSTEM_ID=0; 
+    v_StartWith:=TO_CHAR(TO_NUMBER(v_StartWithSys) +1) || '00000'; 
+    v_StartWithSys:=v_StartWithSys || '00000'; 
+    UPDATE AD_SEQUENCE 
+      SET CURRENTNEXTSYS=(SELECT AD_SEQUENCE.INCREMENTNO + 
+                                   (CASE SIGN(COALESCE((SELECT MAX(t.AD_Sequence_ID) 
+                                                          FROM AD_Sequence t 
+                                                          WHERE t.AD_Sequence_ID<v_StartWith),0)-TO_NUMBER(v_StartWithSys))
+                                    WHEN  -1  THEN TO_NUMBER(v_StartWithSys)-AD_SEQUENCE.INCREMENTNO 
+                                    ELSE (SELECT MAX(t.AD_Sequence_ID) 
+                                            FROM AD_Sequence t 
+                                           WHERE t.AD_Sequence_ID< v_StartWith) 
+                                     END) AS SEQUENCE 
+                             FROM AD_SEQUENCE 
+                            WHERE UPPER(NAME) = 'AD_SEQUENCE')
+     WHERE UPPER(NAME) = 'AD_SEQUENCE';
+     
+     UPDATE AD_SEQUENCE 
+        SET CURRENTNEXTSYS=(SELECT AD_SEQUENCE.INCREMENTNO + 
+                                  COALESCE((SELECT MAX(t.AD_SEQUENCE_ID) 
+                                              FROM AD_SEQUENCE t 
+                                             WHERE t.AD_SEQUENCE_ID< v_StartWith),(TO_NUMBER(v_StartWithSys)-AD_SEQUENCE.INCREMENTNO))
+                              FROM AD_SEQUENCE 
+                             WHERE UPPER(NAME) = 'AD_SEQUENCE')
+       WHERE UPPER(NAME) = 'AD_SEQUENCE'; 
+       
+     FOR Cur_Tables IN (
      SELECT AD_TABLE_ID, TABLENAME
      FROM AD_TABLE
      WHERE NOT EXISTS (SELECT 1
