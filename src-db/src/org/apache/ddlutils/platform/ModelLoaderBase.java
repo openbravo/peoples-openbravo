@@ -340,7 +340,7 @@ public class ModelLoaderBase implements ModelLoader {
                 case Types.VARCHAR:
                 case ExtTypes.NCHAR:
                 case ExtTypes.NVARCHAR:
-                case Types.LONGNVARCHAR:
+                case Types.LONGVARCHAR:
                     if (sreturn.length() >= 2 && sreturn.startsWith("'") && sreturn.endsWith("'")) {
                         return sreturn.substring(1, value.length() - 2);
                     } else {
