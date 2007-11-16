@@ -115,7 +115,6 @@
             INNER JOIN AD_ROLE role
               ON userRoles.AD_ROLE_ID = role.AD_ROLE_ID
          WHERE userRoles.AD_USER_ID = TO_NUMBER(?)
-           AND userRoles.AD_ROLE_ID <> 0
            AND role.ISACTIVE = 'Y'
            ]]></Sql>
       <Parameter name="aduserid"/>
@@ -153,7 +152,6 @@
           INNER JOIN AD_ORG org
             ON roleOrg.AD_ORG_ID = org.AD_ORG_ID
         WHERE roleOrg.AD_ROLE_ID = TO_NUMBER(?)
-           AND roleOrg.AD_ORG_ID <> 0
            AND roleOrg.ISACTIVE = 'Y'
            AND org.ISACTIVE = 'Y'
            ]]></Sql>
