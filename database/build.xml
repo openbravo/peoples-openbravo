@@ -69,7 +69,6 @@
     <antcall target="create.database.structure"/>
     <antcall target="import.database.data" />
     <antcall target="import.database.sampledata" />
-    <antcall target="database.postcreate" />
   </target>
 
     <target name="update.database">
@@ -242,15 +241,16 @@
     </target>   
 
     <target name="create.database.structure">
-    <createdatabase driver="${bbdd.driver}"
-                    url="${bbdd.owner.url}"
-                    user="${bbdd.user}"
-                    password="${bbdd.password}"
-                    model="model"
-                    dropfirst="false"
-                    failonerror="false"
-                    verbosity="${bbdd.verbosity}" />
-  </target>
+        <createdatabase driver="${bbdd.driver}"
+                        url="${bbdd.owner.url}"
+                        user="${bbdd.user}"
+                        password="${bbdd.password}"
+                        model="model"
+                        dropfirst="false"
+                        failonerror="false"
+                        verbosity="${bbdd.verbosity}" />
+        <antcall target="database.postcreate" />
+    </target>
 
     <target name="update.database.structure">
         <alterdatabase driver="${bbdd.driver}"
@@ -260,6 +260,7 @@
                        model="model"
                        failonerror="false"
                        verbosity="${bbdd.verbosity}" />
+        <antcall target="database.postcreate" />
     </target>   
 
     <target name="create.database.script">
@@ -336,16 +337,9 @@
             </fileset>
         </classpath>
         <transaction>
-          Insert into AD_SYSTEM
-             (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, 
-             CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
-             NAME, SUPPORTUNITS, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, 
-             TAD_LEVEL, TAD_PARENT_VERSION, TAD_TRANSACTIONALRANGE, TAD_THEME)
-           Values
-             (0, 0, 0, 'Y', 
-             NOW(), 0, NOW(), 0,
-             '?', 0, 20, 100, 
-             ${developer.id}, 'dev', 1, 'Default');
+          DELETE FROM AD_SYSTEM;
+          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, SUPPORTUNITS, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_LEVEL, TAD_PARENT_VERSION, TAD_TRANSACTIONALRANGE, TAD_THEME)
+          VALUES (0, 0, 0, 'Y', NOW(), 0, NOW(), 0, '?', 0, 20, 100, ${developer.id}, 'dev', 1, 'Default');
         </transaction>
     </sql>
   </target>
