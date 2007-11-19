@@ -3049,7 +3049,7 @@ public abstract class SqlBuilder
     }
 
     /**
-     * Writes the given index of the table.
+     * Writes the given check of the table.
      * 
      * @param table The table
      * @param check The check

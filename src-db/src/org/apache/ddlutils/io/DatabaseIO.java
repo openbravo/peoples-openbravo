@@ -34,6 +34,11 @@ import org.apache.commons.betwixt.io.BeanWriter;
 import org.apache.commons.betwixt.strategy.HyphenatedNameMapper;
 import org.apache.ddlutils.DdlUtilsException;
 import org.apache.ddlutils.model.Database;
+import org.apache.ddlutils.model.Function;
+import org.apache.ddlutils.model.Sequence;
+import org.apache.ddlutils.model.Table;
+import org.apache.ddlutils.model.Trigger;
+import org.apache.ddlutils.model.View;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -262,6 +267,105 @@ public class DatabaseIO
         return model;
     }
 
+    public void writeToDir(Database model, File dir) throws DdlUtilsException {
+        
+        Database d;
+        File subdir;
+        
+        // Write tables        
+        subdir = new File(dir, "tables");
+        subdir.mkdirs();
+        
+        for (int i = 0; i < model.getTableCount(); i++) {
+            Table t = model.getTable(i);
+            d = new Database();
+            d.setName("TABLE " + t.getName());
+            d.addTable(t);
+            write(d, new File(subdir, t.getName() + ".xml"));            
+        }
+        
+        // Write views
+        subdir = new File(dir, "views");
+        subdir.mkdirs();
+        
+        for (int i = 0; i < model.getViewCount(); i++) {
+            View v = model.getView(i);
+            d = new Database();
+            d.setName("VIEW " + v.getName());
+            d.addView(v);
+            write(d, new File(subdir, v.getName() + ".xml"));            
+        }        
+        
+        // Write sequences
+        subdir = new File(dir, "sequences");
+        subdir.mkdirs();
+        
+        for (int i = 0; i < model.getSequenceCount(); i++) {
+            Sequence s = model.getSequence(i);
+            d = new Database();
+            d.setName("SEQUENCE " + s.getName());
+            d.addSequence(s);
+            write(d, new File(subdir, s.getName() + ".xml"));            
+        } 
+         
+        // Write functions
+        subdir = new File(dir, "functions");
+        subdir.mkdirs();
+        
+        for (int i = 0; i < model.getFunctionCount(); i++) {
+            Function f = model.getFunction(i);
+            d = new Database();
+            d.setName("FUNCTION " + f.getName());
+            d.addFunction(f);
+            write(d, new File(subdir, f.getName() + ".xml"));            
+        }    
+         
+        // Write trigger
+        subdir = new File(dir, "triggers");
+        subdir.mkdirs();
+        
+        for (int i = 0; i < model.getTriggerCount(); i++) {
+            Trigger t = model.getTrigger(i);
+            d = new Database();
+            d.setName("TRIGGER " + t.getName());
+            d.addTrigger(t);
+            write(d, new File(subdir, t.getName() + ".xml"));            
+        }   
+    }
+    
+    /**
+     * Writes the database model to the specified file.
+     * 
+     * @param model    The database model
+     * @param file     The model file 
+     */
+    public void write(Database model, File file) throws DdlUtilsException
+    {
+        try
+        {
+            BufferedWriter writer = null;
+
+            try
+            {
+                writer = new BufferedWriter(new FileWriter(file));
+    
+                write(model, writer);
+                writer.flush();
+            }
+            finally
+            {
+                if (writer != null)
+                {
+                    writer.close();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new DdlUtilsException(ex);
+        }
+    }
+    
     /**
      * Writes the database model to the specified file.
      * 

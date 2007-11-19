@@ -41,7 +41,11 @@ public class FunctionWithOutputTranslation extends ReplacePatTranslation {
             if (i > 0) {
                 strPattern.append(",");
             }
-            strPattern.append("(.+?)");
+            if (i < f.getParameterCount() - 1) {
+                strPattern.append("([^,]+)");
+            } else {
+                strPattern.append("([^,\\)]+)");
+            }
             
             Parameter p = (Parameter) f.getParameter(i);
             if (p.getModeCode() == Parameter.MODE_OUT) {
@@ -74,9 +78,9 @@ public class FunctionWithOutputTranslation extends ReplacePatTranslation {
         strReplace.append(")"); 
         _replaceStr = strReplace.toString();
         
-//        System.out.println(_p);
-//        System.out.println(_replaceStr);
-//        
+        System.out.println(_p);
+        System.out.println(_replaceStr);
+        
     }
     
     private static void addPattern(StringBuffer pattern, String searchStr) {
