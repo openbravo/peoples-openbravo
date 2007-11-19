@@ -266,7 +266,6 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         OBError myMessage = vars.getMessage("AttributeSetInstance");
         vars.removeMessage("AttributeSetInstance");
         if (myMessage!=null) {
-          if (myMessage.getType().equals("Success"))
           xmlDocument.setParameter("messageType", myMessage.getType());
           xmlDocument.setParameter("messageTitle", myMessage.getTitle());
           xmlDocument.setParameter("messageMessage", myMessage.getMessage());
