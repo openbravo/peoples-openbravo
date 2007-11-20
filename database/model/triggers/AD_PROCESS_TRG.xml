@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER AD_PROCESS_TRG">
-<trigger name="AD_PROCESS_TRG" table="AD_PROCESS" fires="after" insert="true" update="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER AD_PROCESS_TRG">
+    <trigger name="AD_PROCESS_TRG" table="AD_PROCESS" fires="after" insert="true" update="true" delete="false" foreach="row">
+      <body>
+
 
 /*************************************************************************
 * The contents of this file are subject to the Compiere License
@@ -13,7 +13,7 @@
 * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 * implied. See the License for the specific language governing rights
 * and limitations under the License.
-* The Original Code is  Compiere  ERP &  Business Solution
+* The Original Code is  Compiere  ERP &amp;  Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -64,11 +64,11 @@ BEGIN
 --      update AD_Column/AD_Field Name
   IF UPDATING
   THEN
-    IF (   COALESCE (:OLD.NAME, '.') <> COALESCE (:NEW.NAME, '.')
-        OR COALESCE (:OLD.Description, '.') <>
+    IF (   COALESCE (:OLD.NAME, '.') &lt;&gt; COALESCE (:NEW.NAME, '.')
+        OR COALESCE (:OLD.Description, '.') &lt;&gt;
                                               COALESCE (:NEW.Description, '.')
-        OR COALESCE (:OLD.HELP, '.') <> COALESCE (:NEW.HELP, '.')
-        OR COALESCE (:OLD.IsActive, '.') <> COALESCE (:NEW.IsActive, '.')
+        OR COALESCE (:OLD.HELP, '.') &lt;&gt; COALESCE (:NEW.HELP, '.')
+        OR COALESCE (:OLD.IsActive, '.') &lt;&gt; COALESCE (:NEW.IsActive, '.')
        )
     THEN
       UPDATE AD_Process_Trl
@@ -101,21 +101,21 @@ BEGIN
 -- Changed  IsActive
   IF UPDATING
   THEN
-    IF (   COALESCE (:OLD.NAME, '.') <> COALESCE (:NEW.NAME, '.')
-        OR COALESCE (:OLD.Description, '.') <>
+    IF (   COALESCE (:OLD.NAME, '.') &lt;&gt; COALESCE (:NEW.NAME, '.')
+        OR COALESCE (:OLD.Description, '.') &lt;&gt;
                                               COALESCE (:NEW.Description, '.')
-        OR COALESCE (:OLD.HELP, '.') <> COALESCE (:NEW.HELP, '.')
-        OR COALESCE (:OLD.IsActive, '.') <> COALESCE (:NEW.IsActive, '.')
+        OR COALESCE (:OLD.HELP, '.') &lt;&gt; COALESCE (:NEW.HELP, '.')
+        OR COALESCE (:OLD.IsActive, '.') &lt;&gt; COALESCE (:NEW.IsActive, '.')
        )
     THEN
-      IF :NEW.IsActive <> :OLD.IsActive
+      IF :NEW.IsActive &lt;&gt; :OLD.IsActive
       THEN
         -- Menu
         UPDATE AD_Menu
            SET IsActive = :NEW.IsActive
          WHERE AD_Process_ID = :NEW.AD_Process_ID;
 
-        -- AD_Column -> Field
+        -- AD_Column -&gt; Field
         UPDATE AD_Field
            SET IsActive = :NEW.IsActive
          WHERE AD_Column_ID = (SELECT AD_Column_ID
@@ -126,7 +126,7 @@ BEGIN
     END IF;
   END IF;
 END AD_Process_Trg
-]]>
+
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

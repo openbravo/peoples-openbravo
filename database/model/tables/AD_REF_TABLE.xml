@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_REF_TABLE">
+  <database name="TABLE AD_REF_TABLE">
     <table name="AD_REF_TABLE" primaryKey="AD_REF_TABLE_KEY">
       <column name="AD_REFERENCE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,8 +16,6 @@
       <column name="WHERECLAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="ORDERBYCLAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" default="D" autoIncrement="false"/>
-      <check name="ADREFTABLE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADREFTABLE_ISVALUEDISP_CHECK" condition="isValueDisplayed in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="REF_TABLECLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -30,11 +28,13 @@
       <foreign-key foreignTable="AD_ORG" name="REF_TABLEORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_REFERENCE" name="AD_REFERENCE_REFTABLE"   onDelete="cascade">
+      <foreign-key foreignTable="AD_REFERENCE" name="AD_REFERENCE_REFTABLE" onDelete="cascade">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="ADD_TABLE_REFTABLE">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
+      <check name="ADREFTABLE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADREFTABLE_ISVALUEDISP_CHECK" condition="isValueDisplayed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

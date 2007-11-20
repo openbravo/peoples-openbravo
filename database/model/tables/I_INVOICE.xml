@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE I_INVOICE">
+  <database name="TABLE I_INVOICE">
     <table name="I_INVOICE" primaryKey="I_INVOICE_KEY">
       <column name="I_INVOICE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -56,10 +56,6 @@
       <column name="LINEDESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="QTYORDERED" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="PRICEACTUAL" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
-      <check name="I_INVOICE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="I_INVOICE_I_ISIMPORTED_CHECK" condition="I_IsImported in ('Y','N')"/>
-      <check name="I_INVOICE_PROCESSED_CHECK" condition="Processed in ('Y','N')"/>
-      <check name="I_INVOICE_ISSOTRX_CHECK" condition="IsSOTrx in ('Y','N')"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IINVOICE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -123,5 +119,9 @@
       <foreign-key foreignTable="M_PRODUCT" name="NPRODUCT_IINVOICE">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <check name="I_INVOICE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="I_INVOICE_I_ISIMPORTED_CHECK" condition="I_IsImported in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="I_INVOICE_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="I_INVOICE_ISSOTRX_CHECK" condition="IsSOTrx in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

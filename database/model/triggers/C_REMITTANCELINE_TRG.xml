@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_REMITTANCELINE_TRG">
-<trigger name="C_REMITTANCELINE_TRG" table="C_REMITTANCELINE" fires="before" insert="true" update="true" delete="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_REMITTANCELINE_TRG">
+    <trigger name="C_REMITTANCELINE_TRG" table="C_REMITTANCELINE" fires="before" insert="true" update="true" delete="true" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -48,7 +48,7 @@ BEGIN
   IF((DELETING OR INSERTING) AND v_Processed='Y') THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
-END C_RemittanceLine_Trg ]]>
+END C_RemittanceLine_Trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

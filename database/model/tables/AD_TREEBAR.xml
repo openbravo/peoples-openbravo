@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_TREEBAR">
+  <database name="TABLE AD_TREEBAR">
     <table name="AD_TREEBAR" primaryKey="AD_TREEBAR_KEY">
       <column name="AD_TREE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_USER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -11,18 +11,18 @@
       <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="AD_TREEBAR_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADTREEBAR">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADTREEBAR">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREE_ADTREEBAR"   onDelete="cascade">
+      <foreign-key foreignTable="AD_TREE" name="ADTREE_ADTREEBAR" onDelete="cascade">
         <reference local="AD_TREE_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_ADTREEBAR"   onDelete="cascade">
+      <foreign-key foreignTable="AD_USER" name="ADUSER_ADTREEBAR" onDelete="cascade">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <check name="AD_TREEBAR_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

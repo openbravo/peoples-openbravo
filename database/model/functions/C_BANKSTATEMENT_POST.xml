@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION C_BANKSTATEMENT_POST">
-<function name="C_BANKSTATEMENT_POST">
-        <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-        <body><![CDATA[
+  <database name="FUNCTION C_BANKSTATEMENT_POST">
+    <function name="C_BANKSTATEMENT_POST" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
   /************************************************************************* 
   * The contents of this file are subject to the Compiere License 
   * Version 2.5.0 ("License"); You may not use this file except in 
@@ -12,7 +12,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
   * implied. See the License for the specific language governing rights 
   * and limitations under the License. 
-  * The Original Code is  Compiere  ERP &  Business Solution 
+  * The Original Code is  Compiere  ERP &amp;  Business Solution 
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, 
   Inc. 
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, 
@@ -206,7 +206,7 @@
       WHERE c.C_BankStatement_ID=v_Record_ID 
         AND c.C_BANKACCOUNT_ID=b.C_BANKACCOUNT_ID 
         AND Ad_Isorgincluded(c.AD_ORG_ID, b.AD_ORG_ID, b.AD_CLIENT_ID)=-1; 
-      IF v_count>0 THEN 
+      IF v_count&gt;0 THEN 
         RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBankaccount@') ; 
       END IF; 
     END IF;--FINISH_PROCESS 
@@ -254,7 +254,7 @@
         AND l.C_BPARTNER_ID=bp.C_BPARTNER_ID 
         AND(Ad_Isorgincluded(l.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1--To be deprecated, to be fixed. This Check restriction should be checked when debt payment is created. Added by PSarobe 
         OR Ad_Isorgincluded(l.AD_ORG_ID, c.AD_ORG_ID, c.AD_CLIENT_ID)=-1) ; 
-      IF v_count>0 THEN 
+      IF v_count&gt;0 THEN 
         RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@NotCorrectOrgDebtpaymentBankstatement@') ; 
       END IF;--Finish added by PSarobe 
     END IF;--FINISH_PROCESS 
@@ -270,8 +270,8 @@
         AND bsl.C_Currency_ID=dp.C_Currency_ID 
         AND CASE dp.IsReceipt WHEN 'Y' THEN -- If IsReceipt = N, amount*-1 
             (dp.Amount-coalesce(dp.WriteOffAmt,0)) ELSE(coalesce(dp.WriteOffAmt,0)-dp.Amount) 
-        END <>(bsl.TrxAmt) ; 
-      IF v_count>0 THEN 
+        END &lt;&gt;(bsl.TrxAmt) ; 
+      IF v_count&gt;0 THEN 
        RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@DebtAmountsSamemoneyNoMatch@') ; 
       END IF; 
     END IF;--FINISH_PROCESS 
@@ -286,14 +286,14 @@
       WHERE bsl.C_BankStatement_ID=bs.C_BankStatement_ID 
         AND bsl.C_BankStatement_ID=v_Record_ID 
         AND bsl.C_Debt_Payment_ID=dp.C_Debt_Payment_ID 
-        AND bsl.C_Currency_ID<>dp.C_Currency_ID 
+        AND bsl.C_Currency_ID&lt;&gt;dp.C_Currency_ID 
     AND 
         C_Currency_Round(C_Currency_Convert( 
         (CASE dp.IsReceipt WHEN 'Y' THEN -- If IsReceipt = N, amount*-1 
           (dp.Amount-coalesce(dp.WriteOffAmt,0)) ELSE(coalesce(dp.WriteOffAmt,0)-dp.Amount) 
         END), dp.C_Currency_ID, bsl.C_Currency_ID, bs.StatementDate, NULL, bs.AD_Client_ID, bs.AD_Org_ID),bsl.C_Currency_ID, null) 
-        <> C_Currency_Round(bsl.TrxAmt, bsl.C_Currency_ID, null); 
-      IF v_count>0 THEN 
+        &lt;&gt; C_Currency_Round(bsl.TrxAmt, bsl.C_Currency_ID, null); 
+      IF v_count&gt;0 THEN 
         RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@DebtAmountsDifferentMoneyNoMatch@') ; 
       END IF; 
     END IF;--FINISH_PROCESS 
@@ -305,7 +305,7 @@
       WHERE bsl.C_BankStatement_ID=v_Record_ID 
         AND bsl.C_Debt_Payment_ID=dp.C_Debt_Payment_ID 
         AND C_Debt_Payment_Status(dp.C_SETTLEMENT_CANCEL_ID, dp.Cancel_Processed, dp.Generate_Processed, dp.IsPaid, dp.IsValid, dp.C_CashLine_ID, dp.C_BankStatementLine_ID) NOT IN('P', 'A') ; 
-      IF v_count>0 THEN 
+      IF v_count&gt;0 THEN 
         --Added by P.Sarobe. New messages 
     SELECT line, c_Debt_payment_Id INTO v_line, v_C_Debt_Payment_Id 
     FROM C_Bankstatementline WHERE c_Bankstatementline_Id = v_Bankstatementline_ID; 
@@ -345,7 +345,7 @@
        FROM C_BANKSTATEMENTLINE 
      WHERE C_BankStatement_ID=v_Record_ID 
        AND STMTAMT != TRXAMT-CHARGEAMT-CONVERTCHARGEAMT; 
-   IF v_count>0 THEN 
+   IF v_count&gt;0 THEN 
         RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@ChargeAmtsDontMatch@'); 
       END IF; 
   END IF; --FINISH_PROCESS 
@@ -359,9 +359,9 @@
         WHERE bsl.C_BankStatement_ID=v_Record_ID 
           AND bsl.C_Debt_Payment_ID=dp.C_Debt_Payment_ID 
         GROUP BY dp.C_Debt_Payment_ID 
-        HAVING COUNT(*)>1 
+        HAVING COUNT(*)&gt;1 
   ) A; 
-      IF v_count>0 THEN 
+      IF v_count&gt;0 THEN 
         --Added by PSarobe. 
      FOR Cur_BankstatementDebtpayment IN (SELECT line 
              FROM c_Bankstatementline 
@@ -528,7 +528,7 @@
     WHERE C_Bankstatement.C_Bankstatement_Id = C_Bankstatementline.C_BANKSTATEMENT_ID 
     AND C_Bankstatementline.C_DEBT_PAYMENT_ID = C_DP_Managementline.C_DEBT_PAYMENT_ID 
     AND C_DP_Managementline.C_DP_MANAGEMENT_ID = C_DP_Management.C_DP_MANAGEMENT_ID 
-    AND C_DP_Management.DATEACCT > C_Bankstatementline.DATEACCT 
+    AND C_DP_Management.DATEACCT &gt; C_Bankstatementline.DATEACCT 
     AND C_Bankstatement.C_Bankstatement_Id = v_Record_ID; 
      RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@debtpayment@'||'@DPDebtPaymentManaged@'||v_documentno_Dp_Management||' '||'@DPAccountdatelaterBankstatementlinedate@') ; 
     ELSE 
@@ -574,7 +574,7 @@
             v_Currency_ID:=v_BA_Currency_ID; 
           END IF; 
           v_ResultStr:='CalculatingSum'; 
-          IF(v_Currency_ID<>v_BA_Currency_ID) THEN 
+          IF(v_Currency_ID&lt;&gt;v_BA_Currency_ID) THEN 
             v_Total:=v_Total + C_Currency_Convert(Cur_Lines.StmtAmt, v_Currency_ID, v_BA_Currency_ID, v_BS_Date, NULL, Cur_Lines.AD_Client_ID, Cur_Lines.AD_Org_ID) ; 
           ELSE 
             v_Total:=v_Total + Cur_Lines.StmtAmt; 
@@ -592,7 +592,7 @@
         WHERE C_BankStatement_ID=v_Record_ID; 
       END; 
     END IF;--FINISH_PROCESS 
-    --<<FINISH_PROCESS>> 
+    --&lt;&lt;FINISH_PROCESS&gt;&gt; 
     --  Update AD_PInstance 
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ; 
     AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User, 'N', 1, v_Message) ; 
@@ -605,6 +605,6 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ; 
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ; 
   RETURN; 
-END C_Bankstatement_Post]]></body>
+END C_Bankstatement_Post</body>
     </function>
-</database>
+  </database>

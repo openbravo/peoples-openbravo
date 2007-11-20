@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_MOVEMENTLINE">
+  <database name="TABLE M_MOVEMENTLINE">
     <table name="M_MOVEMENTLINE" primaryKey="M_MOVEMENTLINE_KEY">
       <column name="M_MOVEMENTLINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -20,8 +20,6 @@
       <column name="M_PRODUCT_UOM_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="QUANTITYORDER" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="C_UOM_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="MMOVEMENTLINE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="M_MOVEMENTLINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MMOVEMENTLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -49,8 +47,10 @@
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MMOVEMENTLINE">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
-      <index name="M_MOVEMENTLINE_MOVEMENT">
+      <index name="M_MOVEMENTLINE_MOVEMENT" unique="false">
         <index-column name="M_MOVEMENT_ID"/>
       </index>
+      <check name="MMOVEMENTLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_MOVEMENTLINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
     </table>
-</database>
+  </database>

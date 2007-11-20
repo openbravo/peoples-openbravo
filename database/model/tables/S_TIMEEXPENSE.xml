@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE S_TIMEEXPENSE">
+  <database name="TABLE S_TIMEEXPENSE">
     <table name="S_TIMEEXPENSE" primaryKey="S_TIMEEXPENSE_KEY">
       <column name="S_TIMEEXPENSE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -18,8 +18,6 @@
       <column name="M_PRICELIST_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_WAREHOUSE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISAPPROVED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="STIMEEXPENSE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="STIMEEXPENSE_PROCESSED_CHECK" condition="Processed in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_STIMEEXPENSE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -35,5 +33,7 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_STIMEEXPENSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <check name="STIMEEXPENSE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="STIMEEXPENSE_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

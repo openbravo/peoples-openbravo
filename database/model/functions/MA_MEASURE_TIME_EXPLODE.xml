@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<database name="FUNCTION MA_MEASURE_TIME_EXPLODE">
-<function name="MA_MEASURE_TIME_EXPLODE">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_Measure_Time_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION MA_MEASURE_TIME_EXPLODE">
+    <function name="MA_MEASURE_TIME_EXPLODE" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Measure_Time_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -71,7 +71,7 @@
       v_ResultStr:='PInstanceNotFound';
       AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--<<MA_GlobalUse_Distribute>>') ;
+      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_GlobalUse_Distribute&gt;&gt;') ;
       v_Record_ID:=p_Measure_Time_ID;
     END IF;
   BEGIN --BODY
@@ -100,7 +100,7 @@
         )
       LOOP
         v_MeasureQty:=0;
-        WHILE v_MeasureQty<Cur_CCP.VALUENUMBER
+        WHILE v_MeasureQty&lt;Cur_CCP.VALUENUMBER
         LOOP
           v_Line:=v_Line + 10;
           Ad_Sequence_Next('MA_Measure_Values', v_Org_ID, v_NextNo);
@@ -126,13 +126,13 @@
         SET Processed='Y'
       WHERE MA_Measure_Time_ID=v_Record_ID;
     END IF; --FINISH_PROCESS
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     IF(p_Measure_Time_ID IS NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
       AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User_ID, 'N', v_Result, v_Message) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--<<MA_Measure_Time_Explode finished>> ' || v_Message) ;
+      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_Measure_Time_Explode finished&gt;&gt; ' || v_Message) ;
     END IF;
     RETURN;
   END; --BODY
@@ -165,7 +165,7 @@ WHEN OTHERS THEN
     END;
     RAISE;
   END IF;
-END MA_Measure_Time_Explode]]>
+END MA_Measure_Time_Explode
 </body>
-</function>
-</database>
+    </function>
+  </database>

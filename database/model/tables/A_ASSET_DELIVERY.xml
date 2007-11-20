@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE A_ASSET_DELIVERY">
+  <database name="TABLE A_ASSET_DELIVERY">
     <table name="A_ASSET_DELIVERY" primaryKey="A_ASSET_DELIVERY_KEY">
       <column name="A_ASSET_DELIVERY_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -24,7 +24,6 @@
       <column name="REFERRER" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="AD_USER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
-      <check name="A_ASSET_DELIVERY_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="A_ASSET" name="AASSET_AASSETDELIVERY">
         <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
       </foreign-key>
@@ -37,8 +36,9 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_AASSETDELIVERY">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INOUTLINE" name="MOUTLINE_AASSETDELIVERY"   onDelete="cascade">
+      <foreign-key foreignTable="M_INOUTLINE" name="MOUTLINE_AASSETDELIVERY" onDelete="cascade">
         <reference local="M_INOUTLINE_ID" foreign="M_INOUTLINE_ID"/>
       </foreign-key>
+      <check name="A_ASSET_DELIVER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

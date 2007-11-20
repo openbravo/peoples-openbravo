@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_DEBT_PAYMENT_BAL_TRG">
-<trigger name="C_DEBT_PAYMENT_BAL_TRG" table="C_DEBT_PAYMENT_BALANCING" fires="before" insert="true" update="true" delete="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_DEBT_PAYMENT_BAL_TRG">
+    <trigger name="C_DEBT_PAYMENT_BAL_TRG" table="C_DEBT_PAYMENT_BALANCING" fires="before" insert="true" update="true" delete="true" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -56,7 +56,7 @@ BEGIN
       SET GLItemAmt=COALESCE(GLItemAmt, 0) + v_Qty
     WHERE C_Debt_Payment_ID=:old.C_Debt_Payment_ID;
   END IF;
-END C_Debt_Payment_Bal_Trg ]]>
+END C_Debt_Payment_Bal_Trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

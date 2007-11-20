@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION C_CREATE_PINVOICE_FROM_OUTS">
-<function name="C_CREATE_PINVOICE_FROM_OUTS">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION C_CREATE_PINVOICE_FROM_OUTS">
+    <function name="C_CREATE_PINVOICE_FROM_OUTS" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -125,11 +125,11 @@
         AND p.C_Project_ID=pv.C_Project_ID
         AND sl.M_Locator_ID=l.M_Locator_ID
         AND s.IsSOTrx='Y'
-        AND s.MovementDate>=v_DateFrom
-        AND s.MovementDate<v_DateTo + 1
+        AND s.MovementDate&gt;=v_DateFrom
+        AND s.MovementDate&lt;v_DateTo + 1
         AND l.M_Warehouse_ID=v_Warehouse_ID
         AND pv.C_BPartner_ID=v_BPartner_ID
-        AND sl.MovementQty<>0
+        AND sl.MovementQty&lt;&gt;0
       UNION ALL
       SELECT s.AD_Client_ID,
         s.AD_Org_ID,
@@ -150,11 +150,11 @@
         AND s.C_Project_ID=p.C_Project_ID
         AND p.C_Project_ID=pv.C_Project_ID
         AND sl.M_Locator_ID=l.M_Locator_ID
-        AND s.MovementDate>=v_DateFrom
-        AND s.MovementDate<v_DateTo + 1
+        AND s.MovementDate&gt;=v_DateFrom
+        AND s.MovementDate&lt;v_DateTo + 1
         AND l.M_Warehouse_ID=v_Warehouse_ID
         AND pv.C_BPartner_ID=v_BPartner_ID
-        AND sl.MovementQty<>0
+        AND sl.MovementQty&lt;&gt;0
       ORDER BY C_Project_ID,
         M_Product_ID,
         C_UOM_ID,
@@ -162,7 +162,7 @@
       )
     LOOP
       v_BPLocation_ID:=C_Getbplocationid(v_BPartner_ID, 'B') ;
-      IF(v_Project_ID<>Cur_Outs.C_Project_ID) THEN
+      IF(v_Project_ID&lt;&gt;Cur_Outs.C_Project_ID) THEN
         v_NoRecords:=v_NoRecords + 1;
         v_Project_ID:=Cur_Outs.C_Project_ID;
         v_line:=0;
@@ -255,7 +255,7 @@
           M_INOUT d
         WHERE d.M_InOut_ID=dl.M_InOut_ID
           AND d.IsSOTrx='N'
-          AND dl.MovementQty<>COALESCE(A.QTY, 0)
+          AND dl.MovementQty&lt;&gt;COALESCE(A.QTY, 0)
           AND d.C_BPartner_ID=v_BPartner_ID
           AND dl.M_Product_ID=Cur_Outs.M_Product_ID
           AND(dl.M_ATTRIBUTESETInstance_ID=Cur_Outs.M_AttributeSetInstance_ID
@@ -294,11 +294,11 @@
             Cur_Outs.quantityOrder*(v_auxQty/Cur_Outs.MovementQty), Cur_Outs.M_Product_UOM_ID, v_priceActual
           )
           ;
-        IF(v_auxQtyTotal>=Cur_Outs.MovementQty) THEN
+        IF(v_auxQtyTotal&gt;=Cur_Outs.MovementQty) THEN
           EXIT;
         END IF;
       END LOOP;
-      IF(v_auxQtyTotal<Cur_Outs.MovementQty) THEN
+      IF(v_auxQtyTotal&lt;Cur_Outs.MovementQty) THEN
         v_line:=v_line + 10;
         v_auxQty:=Cur_Outs.MovementQty - v_auxQtyTotal;
         Ad_Sequence_Next('C_InvoiceLine', Cur_Outs.AD_Client_ID, v_InvoiceLine_ID) ;
@@ -330,7 +330,7 @@
           ;
       END IF;
     END LOOP;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     v_Message:=v_Message || '@Created@: ' || v_NoRecords;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
@@ -343,7 +343,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_Message) ;
   ROLLBACK;
   Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_Message) ;
-END C_Create_Pinvoice_From_Outs]]>
+END C_Create_Pinvoice_From_Outs
 </body>
-</function>
-</database>
+    </function>
+  </database>

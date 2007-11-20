@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_ALERTRULE_TRL">
+  <database name="TABLE AD_ALERTRULE_TRL">
     <table name="AD_ALERTRULE_TRL" primaryKey="AD_ALERTRULE_TRL_KEY">
       <column name="AD_ALERTRULE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_LANGUAGE" primaryKey="true" required="true" type="VARCHAR" size="6" autoIncrement="false"/>
@@ -25,4 +25,4 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

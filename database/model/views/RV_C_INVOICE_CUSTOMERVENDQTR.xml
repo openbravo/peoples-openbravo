@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<database name="VIEW RV_C_INVOICE_CUSTOMERVENDQTR">
-<view name="RV_C_INVOICE_CUSTOMERVENDQTR"><![CDATA[
+  <database name="VIEW RV_C_INVOICE_CUSTOMERVENDQTR">
+    <view name="RV_C_INVOICE_CUSTOMERVENDQTR" updatable="false">
 SELECT il.AD_Client_ID, il.AD_Org_ID,
   il.C_BPartner_ID, po.C_BPartner_ID AS Vendor_ID,
   TRUNC(il.DateInvoiced, 'Q') AS DateInvoiced,  --  DD Day, DY Week, MM Month
@@ -18,5 +18,5 @@ FROM RV_C_InvoiceLine il, M_Product_PO po
 WHERE il.M_Product_ID=po.M_Product_ID
 GROUP BY il.AD_Client_ID, il.AD_Org_ID, il.C_BPartner_ID, po.C_BPartner_ID,
   TRUNC(il.DateInvoiced, 'Q')
-]]></view>
-</database>
+</view>
+  </database>

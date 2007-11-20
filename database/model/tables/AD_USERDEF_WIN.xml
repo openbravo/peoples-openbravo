@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_USERDEF_WIN">
+  <database name="TABLE AD_USERDEF_WIN">
     <table name="AD_USERDEF_WIN" primaryKey="AD_USERDEF_WIN_KEY">
       <column name="AD_USERDEF_WIN_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -18,9 +18,6 @@
       <column name="ISDEFAULT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISREADONLY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISUSERUPDATEABLE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <check name="ADUSERDEFWIN_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADUSERDEFWIN_ISREADONLY_CHECK" condition="IsReadOnly in ('Y','N')"/> 
-      <check name="ADUSERDEFWIN_ISUSERUPDATEABLE_CHECK" condition="IsUserUpdateable in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADUSERDEFWIN">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -36,5 +33,8 @@
       <foreign-key foreignTable="AD_WINDOW" name="ADWINDOW_ADUSERDEFWIN">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
+      <check name="ADUSERDEFWIN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADUSERDEFWIN_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADUSERDEFWIN_IS_DATEABLE_CHECK" condition="IsUserUpdateable in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

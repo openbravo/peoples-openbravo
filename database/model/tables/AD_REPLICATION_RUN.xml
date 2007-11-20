@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_REPLICATION_RUN">
+  <database name="TABLE AD_REPLICATION_RUN">
     <table name="AD_REPLICATION_RUN" primaryKey="AD_REPLICATION_RUN_KEY">
       <column name="AD_REPLICATION_RUN_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -13,16 +13,16 @@
       <column name="AD_REPLICATION_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISREPLICATED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
-      <check name="ADREPRUN_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADREPRUN_ISREPLICATED_CHECK" condition="IsReplicated in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADREPLICATIONRUN">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADREPLICATIONRUN">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_REPLICATION" name="ADREPLICATION_ADREPRUN"   onDelete="cascade">
+      <foreign-key foreignTable="AD_REPLICATION" name="ADREPLICATION_ADREPRUN" onDelete="cascade">
         <reference local="AD_REPLICATION_ID" foreign="AD_REPLICATION_ID"/>
       </foreign-key>
+      <check name="ADREPRUN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADREPRUN_ISREPLICATED_CHECK" condition="IsReplicated in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

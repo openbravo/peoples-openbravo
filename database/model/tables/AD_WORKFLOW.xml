@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_WORKFLOW">
+  <database name="TABLE AD_WORKFLOW">
     <table name="AD_WORKFLOW" primaryKey="AD_WORKFLOW_KEY">
       <column name="AD_WORKFLOW_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -15,7 +15,6 @@
       <column name="ACCESSLEVEL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
       <column name="AD_WF_NODE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" default="D" autoIncrement="false"/>
-      <check name="AD_WORKFLOW_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="WORKFLOWCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -29,5 +28,6 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="AD_WORKFLOW_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

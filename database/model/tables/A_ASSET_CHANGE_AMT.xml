@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE A_ASSET_CHANGE_AMT">
+  <database name="TABLE A_ASSET_CHANGE_AMT">
     <table name="A_ASSET_CHANGE_AMT" primaryKey="A_ASSET_CHANGE_AMT_KEY">
       <column name="A_ASSET_CHANGE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_ACCTSCHEMA_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -14,12 +14,12 @@
       <column name="ASSETMARKETVALUEAMT" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="ASSETBOOKVALUEAMT" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="ASSETACCUMDEPRECIATIONAMT" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
-      <check name="ASSETCHAMT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="A_ASSET_CHANGE" name="AASSETCHANGE_AASSETCHANGEAMT">
         <reference local="A_ASSET_CHANGE_ID" foreign="A_ASSET_CHANGE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_AASSETCHANGEAMT">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
+      <check name="ASSETCHAMT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

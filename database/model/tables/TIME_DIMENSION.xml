@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE TIME_DIMENSION">
+  <database name="TABLE TIME_DIMENSION">
     <table name="TIME_DIMENSION" primaryKey="TIME_DIMENSION_PK">
       <column name="CAL_YEAR" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
       <column name="CAL_YEAR_SD" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
@@ -22,4 +22,4 @@
       <column name="END_DAY" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="DAY_SPAN" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
     </table>
-</database>
+  </database>

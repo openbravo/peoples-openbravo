@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER A_AMORTIZATIONLINE_TRG">
-<trigger name="A_AMORTIZATIONLINE_TRG" table="A_AMORTIZATIONLINE" fires="before" insert="true" delete="true" update="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER A_AMORTIZATIONLINE_TRG">
+    <trigger name="A_AMORTIZATIONLINE_TRG" table="A_AMORTIZATIONLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
+      <body>
+
 
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -45,16 +45,16 @@ BEGIN
 
   if(UPDATING) THEN
     IF coalesce(v_Processed, 'N')='Y'
-   and(  COALESCE(:old.A_AMORTIZATIONLINE_ID, 0) <> COALESCE(:new.A_AMORTIZATIONLINE_ID, 0)
-       or COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)
-       or COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0)
-       or COALESCE(:old.ISACTIVE, '') <> COALESCE(:new.ISACTIVE, '')
-       or COALESCE(:old.A_AMORTIZATION_ID, 0) <> COALESCE(:new.A_AMORTIZATION_ID, 0)
-       or COALESCE(:old.LINE, 0) <> COALESCE(:new.LINE, 0)
-       or COALESCE(:old.A_ASSET_ID, 0) <> COALESCE(:new.A_ASSET_ID, 0)
-       or COALESCE(:old.AMORTIZATION_PORCENTAGE, 0) <> COALESCE(:new.AMORTIZATION_PORCENTAGE, 0)
-       or COALESCE(:old.AMORTIZATIONAMT, 0) <> COALESCE(:new.AMORTIZATIONAMT, 0)
-       or COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:new.C_CURRENCY_ID, 0))
+   and(  COALESCE(:old.A_AMORTIZATIONLINE_ID, 0) &lt;&gt; COALESCE(:new.A_AMORTIZATIONLINE_ID, 0)
+       or COALESCE(:old.AD_CLIENT_ID, 0) &lt;&gt; COALESCE(:new.AD_CLIENT_ID, 0)
+       or COALESCE(:old.AD_ORG_ID, 0) &lt;&gt; COALESCE(:new.AD_ORG_ID, 0)
+       or COALESCE(:old.ISACTIVE, '') &lt;&gt; COALESCE(:new.ISACTIVE, '')
+       or COALESCE(:old.A_AMORTIZATION_ID, 0) &lt;&gt; COALESCE(:new.A_AMORTIZATION_ID, 0)
+       or COALESCE(:old.LINE, 0) &lt;&gt; COALESCE(:new.LINE, 0)
+       or COALESCE(:old.A_ASSET_ID, 0) &lt;&gt; COALESCE(:new.A_ASSET_ID, 0)
+       or COALESCE(:old.AMORTIZATION_PORCENTAGE, 0) &lt;&gt; COALESCE(:new.AMORTIZATION_PORCENTAGE, 0)
+       or COALESCE(:old.AMORTIZATIONAMT, 0) &lt;&gt; COALESCE(:new.AMORTIZATIONAMT, 0)
+       or COALESCE(:old.C_CURRENCY_ID, 0) &lt;&gt; COALESCE(:new.C_CURRENCY_ID, 0))
   then
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     end if;
@@ -66,7 +66,7 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     end if;
   end if;
-END a_AmortizationLine_Trg ]]>
+END a_AmortizationLine_Trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

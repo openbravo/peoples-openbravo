@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_SEQUENCEPRODUCT_COST">
+  <database name="TABLE MA_SEQUENCEPRODUCT_COST">
     <table name="MA_SEQUENCEPRODUCT_COST" primaryKey="MA_SEQUENCEPRODUCT_COST_KEY">
       <column name="MA_SEQUENCEPRODUCT_COST_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -21,8 +21,6 @@
       <column name="COSTCENTERCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="MA_CALCSTD_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="RAWMATERIALCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
-      <check name="MASEQPRODCT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="MASEQPRODCT_PRODUCTIONTYPE_CHECK" condition="ProductionType in ('+','-')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MASEQUENCEPRODUCTCOST">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -35,5 +33,7 @@
       <foreign-key foreignTable="MA_SEQUENCEPRODUCT" name="MASEQUENCEPRODUCT_MASEQUENCEPR">
         <reference local="MA_SEQUENCEPRODUCT_ID" foreign="MA_SEQUENCEPRODUCT_ID"/>
       </foreign-key>
+      <check name="MASEQPRODCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MASEQPRODCT_PRO_TIONTYPE_CHECK" condition="ProductionType in (&apos;+&apos;,&apos;-&apos;)"/>
     </table>
-</database>
+  </database>

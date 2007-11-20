@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_RAPPEL">
+  <database name="TABLE M_RAPPEL">
     <table name="M_RAPPEL" primaryKey="M_RAPPEL_KEY">
       <column name="M_RAPPEL_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -15,7 +15,6 @@
       <column name="INCLUDE_PRODUCT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="INCLUDE_PRODUCT_CATEGORY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="SCALED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <check name="M_RAPPEL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MRAPPEL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -25,5 +24,6 @@
       <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_MRAPPEL">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
+      <check name="M_RAPPEL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

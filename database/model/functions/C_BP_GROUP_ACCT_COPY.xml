@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<database name="FUNCTION C_BP_GROUP_ACCT_COPY">
-<function name="C_BP_GROUP_ACCT_COPY">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_BP_Group_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<body><![CDATA[
+  <database name="FUNCTION C_BP_GROUP_ACCT_COPY">
+    <function name="C_BP_GROUP_ACCT_COPY" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_BP_Group_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <body>
   /*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -13,7 +13,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -147,7 +147,7 @@
    END LOOP;
 
     v_Message:='@Deleted@=' || v_Deleted || ', @Updated@=' || v_Created;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_myResult, v_Message) ;
@@ -159,7 +159,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END C_BP_Group_Acct_Copy]]>
+END C_BP_Group_Acct_Copy
 </body>
-</function>
-</database>
+    </function>
+  </database>

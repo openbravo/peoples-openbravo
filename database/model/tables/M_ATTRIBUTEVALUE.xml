@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_ATTRIBUTEVALUE">
+  <database name="TABLE M_ATTRIBUTEVALUE">
     <table name="M_ATTRIBUTEVALUE" primaryKey="M_ATTRIBUTEVALUE_KEY">
       <column name="M_ATTRIBUTEVALUE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -13,15 +13,15 @@
       <column name="VALUE" primaryKey="false" required="true" type="NVARCHAR" size="40" autoIncrement="false"/>
       <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
-      <check name="M_ATTRIBUTEVALUE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MATTRIBUTEVALUE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_MATTRIBUTEVALUE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTE" name="MATTRIBUTE_MATTRIBUTEVALUE"   onDelete="cascade">
+      <foreign-key foreignTable="M_ATTRIBUTE" name="MATTRIBUTE_MATTRIBUTEVALUE" onDelete="cascade">
         <reference local="M_ATTRIBUTE_ID" foreign="M_ATTRIBUTE_ID"/>
       </foreign-key>
+      <check name="M_ATTRIBUTEVALU_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

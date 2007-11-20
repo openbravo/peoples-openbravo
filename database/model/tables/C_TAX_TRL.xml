@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_TAX_TRL">
+  <database name="TABLE C_TAX_TRL">
     <table name="C_TAX_TRL" primaryKey="C_TAX_TRL_KEY">
       <column name="C_TAX_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_LANGUAGE" primaryKey="true" required="true" type="VARCHAR" size="6" autoIncrement="false"/>
@@ -14,12 +14,10 @@
       <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="TAXINDICATOR" primaryKey="false" required="false" type="VARCHAR" size="5" autoIncrement="false"/>
-      <check name="C_TAX_TRL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="C_TAX_TRL_ISTRANSLATED_CHECK" condition="IsTranslated in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CTAXTRL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_CTAXTRL"   onDelete="cascade">
+      <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_CTAXTRL" onDelete="cascade">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CTAXTRL">
@@ -28,5 +26,7 @@
       <foreign-key foreignTable="C_TAX" name="CTAX_CTAXTRL">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
+      <check name="C_TAX_TRL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_TAX_TRL_ISTRANSLATED_CHECK" condition="IsTranslated in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_BANKACCOUNTDOC">
+  <database name="TABLE C_BANKACCOUNTDOC">
     <table name="C_BANKACCOUNTDOC" primaryKey="C_BANKACCOUNTDOC_KEY">
       <column name="C_BANKACCOUNTDOC_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -15,7 +15,6 @@
       <column name="PAYMENTRULE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
       <column name="CURRENTNEXT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="CHECK_PRINTFORMAT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="C_BANKACCOUNTDOC_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBANKACCOUNTDOC">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -25,8 +24,9 @@
       <foreign-key foreignTable="AD_PRINTFORMAT" name="ADPRINTFORMAT_CBANKACCOUNTDOC">
         <reference local="CHECK_PRINTFORMAT_ID" foreign="AD_PRINTFORMAT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BANKACCOUNT" name="CBANKACCOUNT_CBADOC"   onDelete="cascade">
+      <foreign-key foreignTable="C_BANKACCOUNT" name="CBANKACCOUNT_CBADOC" onDelete="cascade">
         <reference local="C_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
       </foreign-key>
+      <check name="C_BANKACCOUNTDO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

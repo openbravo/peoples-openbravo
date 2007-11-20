@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE PA_REPORTLINESET">
+  <database name="TABLE PA_REPORTLINESET">
     <table name="PA_REPORTLINESET" primaryKey="PA_REPORTLINESET_KEY">
       <column name="PA_REPORTLINESET_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -12,12 +12,12 @@
       <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="PROCESSING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
-      <check name="PA_REPORTLINESET_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_PAREPORTLINESET">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_PAREPORTLINESET">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="PA_REPORTLINESE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

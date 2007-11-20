@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<database name="FUNCTION AD_UPDATE_PINSTANCE">
-<function name="AD_UPDATE_PINSTANCE">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_AD_User_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_IsProcessing" type="CHAR" mode="in"/>
-<parameter name="p_Result" type="NUMERIC" mode="in"/>
-<parameter name="p_Message" type="VARCHAR" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION AD_UPDATE_PINSTANCE">
+    <function name="AD_UPDATE_PINSTANCE" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_AD_User_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_IsProcessing" type="CHAR" mode="in"/>
+      <parameter name="p_Result" type="NUMERIC" mode="in"/>
+      <parameter name="p_Message" type="VARCHAR" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -34,7 +34,7 @@ BEGIN
     ErrorMsg=p_Message
   WHERE AD_PInstance_ID=p_PInstance_ID;
   COMMIT;
-END AD_UPDATE_PINSTANCE]]>
+END AD_UPDATE_PINSTANCE
 </body>
-</function>
-</database>
+    </function>
+  </database>

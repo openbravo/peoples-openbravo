@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_PAYMENTTERMLINE">
+  <database name="TABLE C_PAYMENTTERMLINE">
     <table name="C_PAYMENTTERMLINE" primaryKey="C_PAYMENTTERMLINE_KEY">
       <column name="C_PAYMENTTERMLINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -24,11 +24,6 @@
       <column name="FIXMONTHOFFSET" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISNEXTBUSINESSDAY" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="NETDAY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <check name="CPAYMENTTLINE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/>
-      <check name="CPAYMENTTL_EXCLUDETAX_CHECK" condition="ExcludeTax in ('Y','N')"/>
-      <check name="CPAYMENTTL_ISDUEFIXED_CHECK" condition="IsDueFixed in ('Y','N')"/>
-      <check name="CPAYMENTTL_ISNEXTBUSDAY_CHECK" condition="IsNextBusinessDay in ('Y','N')"/>
-      <check name="CPAYMENTTL_ONREMAINDER_CHECK" condition="OnRemainder in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPAYMENTTERMLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -38,5 +33,10 @@
       <foreign-key foreignTable="C_PAYMENTTERM" name="CPAYMENTTERM_CPAYMENTTERMLINE">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
+      <check name="CPAYMENTTLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CPAYMENTTL_EXCLUDETAX_CHECK" condition="ExcludeTax in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CPAYMENTTL_ISDUEFIXED_CHECK" condition="IsDueFixed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CPAYMENTTL_ISNEXTBUSDAY_CHECK" condition="IsNextBusinessDay in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CPAYMENTTL_ONREMAINDER_CHECK" condition="OnRemainder in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_ELEMENT">
+  <database name="TABLE AD_ELEMENT">
     <table name="AD_ELEMENT" primaryKey="AD_ELEMENT_KEY">
       <column name="AD_ELEMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -19,22 +19,22 @@
       <column name="PO_PRINTNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="PO_DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="PO_HELP" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
-      <check name="AD_ELEMENT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADELEMENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADELEMENT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <index name="AD_ELEMENT_CLIENTORG">
+      <index name="AD_ELEMENT_CLIENTORG" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="AD_ORG_ID"/>
       </index>
-      <index name="AD_ELEMENT_NAME">
+      <index name="AD_ELEMENT_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
-      <index name="AD_ELEMENT_COLUMNNAME">
+      <index name="AD_ELEMENT_COLUMNNAME" unique="false">
         <index-column name="COLUMNNAME"/>
       </index>
+      <check name="AD_ELEMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

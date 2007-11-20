@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE S_EXPENSETYPE">
+  <database name="TABLE S_EXPENSETYPE">
     <table name="S_EXPENSETYPE" primaryKey="S_EXPENSETYPE_KEY">
       <column name="S_EXPENSETYPE_ID" primaryKey="true" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,8 +16,6 @@
       <column name="C_UOM_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_PRODUCT_CATEGORY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_TAXCATEGORY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="SEXPENSETYPE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="SEXPENSETYPE_ISINVOICED_CHECK" condition="IsInvoiced in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_SEXPENSETYPE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -33,5 +31,7 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODUCTCATEGORY_SEXPENSETYPE">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
+      <check name="SEXPENSETYPE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="SEXPENSETYPE_ISINVOICED_CHECK" condition="IsInvoiced in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

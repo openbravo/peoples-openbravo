@@ -1,27 +1,27 @@
 <?xml version="1.0"?>
-<database name="FUNCTION C_VALIDCOMBINATION_INSERT">
-<function name="C_VALIDCOMBINATION_INSERT">
-<parameter name="p_C_ValidCombination_ID" type="NUMERIC" mode="out"/>
-<parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_AD_Org_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_C_AcctSchema_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_Account_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_b_C_ValidCombination_ID" type="NUMERIC"  mode="in"/>
-<parameter name="p_MustBeFullyQualified" type="CHAR" default="N" mode="in"/>
-<parameter name="p_Alias" type="VARCHAR"  mode="in" default="NULL"/>
-<parameter name="p_CreatedBy" type="NUMERIC"  mode="in" default="NULL"/>
-<parameter name="p_M_Product_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<parameter name="p_C_BPartner_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<parameter name="p_AD_OrgTrx_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<parameter name="p_C_LocFrom_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<parameter name="p_C_LocTo_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<parameter name="p_C_SalesRegion_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<parameter name="p_C_Project_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<parameter name="p_C_Campaign_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<parameter name="p_C_Activity_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<parameter name="p_User1_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<parameter name="p_User2_ID" type="NUMERIC"  mode="in" default="NULL"/>
-<body><![CDATA[
+  <database name="FUNCTION C_VALIDCOMBINATION_INSERT">
+    <function name="C_VALIDCOMBINATION_INSERT" type="NULL">
+      <parameter name="p_C_ValidCombination_ID" type="NUMERIC" mode="out"/>
+      <parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_AD_Org_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_C_AcctSchema_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Account_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_b_C_ValidCombination_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_MustBeFullyQualified" type="CHAR" mode="in" default="N"/>
+      <parameter name="p_Alias" type="VARCHAR" mode="in" default="NULL"/>
+      <parameter name="p_CreatedBy" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_M_Product_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_C_BPartner_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_AD_OrgTrx_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_C_LocFrom_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_C_LocTo_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_C_SalesRegion_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_C_Project_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_C_Campaign_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_C_Activity_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_User1_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_User2_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -233,7 +233,7 @@
         p_C_ValidCombination_ID:=NULL;
       END IF;
     END IF;
-END C_ValidCombination_Insert]]>
+END C_ValidCombination_Insert
 </body>
-</function>
-</database>
+    </function>
+  </database>

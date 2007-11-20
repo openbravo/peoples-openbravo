@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_DEVELOPER">
+  <database name="TABLE AD_DEVELOPER">
     <table name="AD_DEVELOPER" primaryKey="AD_DEVELOPER_KEY">
       <column name="AD_DEVELOPER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -14,19 +14,19 @@
       <column name="EMAIL" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
       <column name="COMPANY" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
       <column name="SVNUSER" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
-      <check name="AD_DEVELOPER_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="AD_DEVELOPER_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_DEVELOPER_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <index name="AD_DEVELOPER_NAME">
+      <index name="AD_DEVELOPER_NAME" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="NAME"/>
       </index>
-      <index name="AD_DEVELOPER_EMAIL">
+      <index name="AD_DEVELOPER_EMAIL" unique="false">
         <index-column name="EMAIL"/>
       </index>
+      <check name="AD_DEVELOPER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

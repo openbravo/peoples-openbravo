@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<database name="FUNCTION GL_JOURNAL_POST">
-<function name="GL_JOURNAL_POST">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_GL_Journal_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION GL_JOURNAL_POST">
+    <function name="GL_JOURNAL_POST" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_GL_Journal_ID" type="NUMERIC" mode="in"/>
+      <body>
   /*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -13,7 +13,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -199,13 +199,13 @@
         v_TotalCr
       FROM GL_Journal
       WHERE GL_Journal_ID=v_Record_ID  FOR UPDATE;
-      IF(v_TotalDr<>v_TotalCr) THEN
+      IF(v_TotalDr&lt;&gt;v_TotalCr) THEN
         RAISE_APPLICATION_ERROR(-20000, '@DistinctAmtError@') ;
       END IF;
     END IF; --FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
       -- Check ControlAmt
-      IF(v_ControlAmt<>0 AND(v_ControlAmt<>v_TotalDr)) THEN
+      IF(v_ControlAmt&lt;&gt;0 AND(v_ControlAmt&lt;&gt;v_TotalDr)) THEN
         RAISE_APPLICATION_ERROR(-20000, '@ControlAmtError@') ;
       ELSE
         UPDATE GL_Journal
@@ -216,7 +216,7 @@
         WHERE GL_Journal_ID=v_Record_ID;
       END IF;
     END IF; --FINISH_PROCESS
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -235,7 +235,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   RETURN;
-END GL_Journal_Post]]>
+END GL_Journal_Post
 </body>
-</function>
-</database>
+    </function>
+  </database>

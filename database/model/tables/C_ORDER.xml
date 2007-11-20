@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_ORDER">
+  <database name="TABLE C_ORDER">
     <table name="C_ORDER" primaryKey="C_ORDER_KEY">
       <column name="C_ORDER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -72,18 +72,6 @@
       <column name="GENERATETEMPLATE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="DELIVERY_LOCATION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="COPYFROMPO" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <check name="C_ORDER_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="C_ORDER_ISSOTRX_CHECK" condition="IsSOTrx in ('Y','N')"/>
-      <check name="C_ORDER_PROCESSED_CHECK" condition="Processed in ('Y','N')"/>
-      <check name="C_ORDER_ISAPPROVED_CHECK" condition="IsApproved in ('Y','N')"/>
-      <check name="CORDER_ISCREDITAPPROVED_CHECK" condition="IsCreditApproved in ('Y','N')"/>
-      <check name="C_ORDER_ISDELIVERED_CHECK" condition="IsDelivered in ('Y','N')"/>
-      <check name="C_ORDER_ISINVOICED_CHECK" condition="IsInvoiced in ('Y','N')"/>
-      <check name="C_ORDER_ISPRINTED_CHECK" condition="IsPrinted in ('Y','N')"/>
-      <check name="C_ORDER_ISTRANSFERRED_CHECK" condition="IsTransferred in ('Y','N')"/>
-      <check name="C_ORDER_ISSELECTED_CHECK" condition="IsSelected in ('Y','N')"/>
-      <check name="CORDER_ISDISCOUNTPRINT_CHECK" condition="IsDiscountPrinted in ('Y','N')"/>
-      <check name="C_ORDER_ISTAXINCLUDED_CHECK" condition="IsTaxIncluded in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CORDER">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -153,20 +141,32 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_CORDER">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
-      <index name="C_ORDER_BPARTNER">
+      <index name="C_ORDER_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
-      <index name="C_ORDER_DOCNO">
+      <index name="C_ORDER_DOCNO" unique="false">
         <index-column name="DOCUMENTNO"/>
       </index>
-      <index name="C_ORDER_UPDATED">
+      <index name="C_ORDER_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <index name="C_ORDER_CLIENT_ORG_DATE_DOCNO">
+      <index name="C_ORDER_CLIENT_ORG_DATE_DOCNO" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="AD_ORG_ID"/>
         <index-column name="DATEORDERED"/>
         <index-column name="DOCUMENTNO"/>
       </index>
+      <check name="C_ORDER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDER_ISSOTRX_CHECK" condition="IsSOTrx in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDER_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDER_ISAPPROVED_CHECK" condition="IsApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CORDER_ISCREDITAPPROVED_CHECK" condition="IsCreditApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDER_ISDELIVERED_CHECK" condition="IsDelivered in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDER_ISINVOICED_CHECK" condition="IsInvoiced in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDER_ISPRINTED_CHECK" condition="IsPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDER_ISTRANSFERRED_CHECK" condition="IsTransferred in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDER_ISSELECTED_CHECK" condition="IsSelected in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CORDER_ISDISCOUNTPRINT_CHECK" condition="IsDiscountPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDER_ISTAXINCLUDED_CHECK" condition="IsTaxIncluded in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

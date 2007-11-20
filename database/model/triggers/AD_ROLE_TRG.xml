@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER AD_ROLE_TRG">
-<trigger name="AD_ROLE_TRG" table="AD_ROLE" fires="after" insert="true" update="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER AD_ROLE_TRG">
+    <trigger name="AD_ROLE_TRG" table="AD_ROLE" fires="after" insert="true" update="true" delete="false" foreach="row">
+      <body>
+
 
 /*************************************************************************
  * The contents of this file are subject to the Compiere License
@@ -13,7 +13,7 @@
  * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
  * implied. See the License for the specific language governing rights
  * and limitations under the License.
- * The Original Code is  Compiere  ERP &  Business Solution
+ * The Original Code is  Compiere  ERP &amp;  Business Solution
  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -31,7 +31,7 @@ Inc.
  ************************************************************************/
 BEGIN
 IF (UPDATING) THEN
- IF NOT(COALESCE(:OLD.UserLevel,'.')<>COALESCE(:NEW.UserLevel,'.')) THEN
+ IF NOT(COALESCE(:OLD.UserLevel,'.')&lt;&gt;COALESCE(:NEW.UserLevel,'.')) THEN
   RETURN;
  END IF;
  END IF;
@@ -48,7 +48,7 @@ IF (UPDATING) THEN
    'Y', SysDate, :new.CreatedBy, SysDate, :new.UpdatedBy);
   **/
 
-  IF (:new.UpdatedBy <> 0) THEN
+  IF (:new.UpdatedBy &lt;&gt; 0) THEN
    -- User_Roles for Dialog entry
    INSERT INTO AD_User_Roles
     (AD_User_ID, AD_Role_ID, AD_Client_ID, AD_Org_ID,
@@ -88,7 +88,7 @@ IF (UPDATING) THEN
   *  __O  3,1,7
   */
  -- System
- IF (:new.UserLevel='S') AND (:new.IsManual <> 'Y') THEN
+ IF (:new.UserLevel='S') AND (:new.IsManual &lt;&gt; 'Y') THEN
   -- Window
   INSERT INTO AD_Window_Access
    (AD_Window_ID, AD_Role_ID,
@@ -125,7 +125,7 @@ IF (UPDATING) THEN
   WHERE AccessLevel IN ('4','7','6');
 
  -- Client/Org
- ELSIF (:new.UserLevel=' CO' OR :new.UserLevel=' C') AND (:new.IsManual <> 'Y') THEN
+ ELSIF (:new.UserLevel=' CO' OR :new.UserLevel=' C') AND (:new.IsManual &lt;&gt; 'Y') THEN
   -- Window
   INSERT INTO AD_Window_Access
   (AD_Window_ID, AD_Role_ID,
@@ -162,7 +162,7 @@ IF (UPDATING) THEN
   WHERE AccessLevel IN ('7','6','3','1');
 
  -- Organization
- ELSIF (:new.UserLevel='  O') AND (:new.IsManual <> 'Y') THEN
+ ELSIF (:new.UserLevel='  O') AND (:new.IsManual &lt;&gt; 'Y') THEN
   -- Window
   INSERT INTO AD_Window_Access
    (AD_Window_ID, AD_Role_ID,
@@ -201,7 +201,7 @@ IF (UPDATING) THEN
  END IF;
 
 END AD_Role_Trg
-]]>
+
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

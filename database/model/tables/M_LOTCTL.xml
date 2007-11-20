@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_LOTCTL">
+  <database name="TABLE M_LOTCTL">
     <table name="M_LOTCTL" primaryKey="M_LOTCTL_KEY">
       <column name="M_LOTCTL_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,12 +16,12 @@
       <column name="CURRENTNEXT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="PREFIX" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false"/>
       <column name="SUFFIX" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false"/>
-      <check name="M_LOTCTL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MLOTCTL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_MLOTCTL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="M_LOTCTL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

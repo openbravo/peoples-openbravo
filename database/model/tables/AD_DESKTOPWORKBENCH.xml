@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_DESKTOPWORKBENCH">
+  <database name="TABLE AD_DESKTOPWORKBENCH">
     <table name="AD_DESKTOPWORKBENCH" primaryKey="AD_DESKTOPWORKBENCH_KEY">
       <column name="AD_DESKTOPWORKBENCH_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -12,7 +12,6 @@
       <column name="AD_WORKBENCH_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_DESKTOP_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="SEQNO" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="AD_DESKTOPWORKBENCH_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADDESKTOPWORKBENCH">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -25,5 +24,6 @@
       <foreign-key foreignTable="AD_WORKBENCH" name="ADWORKBENCH_ADDESKTOPWB">
         <reference local="AD_WORKBENCH_ID" foreign="AD_WORKBENCH_ID"/>
       </foreign-key>
+      <check name="AD_DESKTOPWORKB_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

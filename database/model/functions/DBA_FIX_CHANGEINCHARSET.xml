@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<database name="FUNCTION DBA_FIX_CHANGEINCHARSET">
-<function name="DBA_FIX_CHANGEINCHARSET">
-<body><![CDATA[
+  <database name="FUNCTION DBA_FIX_CHANGEINCHARSET">
+    <function name="DBA_FIX_CHANGEINCHARSET" type="NULL">
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -74,7 +74,7 @@ BEGIN
     SET NAME=DBA_REPLACE_CHANGEDCHARSET(NAME),
     DESCRIPTION=DBA_REPLACE_CHANGEDCHARSET(DESCRIPTION),
     HELP=DBA_REPLACE_CHANGEDCHARSET(HELP) ;
-END DBA_FIX_CHANGEINCHARSET]]>
+END DBA_FIX_CHANGEINCHARSET
 </body>
-</function>
-</database>
+    </function>
+  </database>

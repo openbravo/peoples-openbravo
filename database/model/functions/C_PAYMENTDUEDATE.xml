@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
-<database name="FUNCTION C_PAYMENTDUEDATE">
-<function name="C_PAYMENTDUEDATE" type="TIMESTAMP" size="7">
-<parameter name="p_bPartner_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_isSoTrx" type="CHAR" mode="in"/>
-<parameter name="p_fixMonthDay1" type="NUMERIC" mode="in"/>
-<parameter name="p_fixMonthDay2" type="NUMERIC" mode="in"/>
-<parameter name="p_fixMonthDay3" type="NUMERIC" mode="in"/>
-<parameter name="p_netDays" type="NUMERIC" mode="in"/>
-<parameter name="p_fixMonthOffset" type="NUMERIC" mode="in"/>
-<parameter name="p_netDay" type="CHAR" mode="in"/>
-<parameter name="p_isNextbusinessday" type="CHAR" mode="in"/>
-<parameter name="p_DocDate" type="TIMESTAMP" size="7" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION C_PAYMENTDUEDATE">
+    <function name="C_PAYMENTDUEDATE" type="TIMESTAMP">
+      <parameter name="p_bPartner_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_isSoTrx" type="CHAR" mode="in"/>
+      <parameter name="p_fixMonthDay1" type="NUMERIC" mode="in"/>
+      <parameter name="p_fixMonthDay2" type="NUMERIC" mode="in"/>
+      <parameter name="p_fixMonthDay3" type="NUMERIC" mode="in"/>
+      <parameter name="p_netDays" type="NUMERIC" mode="in"/>
+      <parameter name="p_fixMonthOffset" type="NUMERIC" mode="in"/>
+      <parameter name="p_netDay" type="CHAR" mode="in"/>
+      <parameter name="p_isNextbusinessday" type="CHAR" mode="in"/>
+      <parameter name="p_DocDate" type="TIMESTAMP" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -66,13 +66,13 @@ BEGIN
     --First aply offset (days and months)
     v_docDate := p_DocDate + COALESCE(p_netDays, 0) ;
     v_docDate := ADD_MONTHS2(v_docDate, COALESCE(p_fixMonthOffset, 0)) ;
-    IF((v_fixMonthDay2 < TO_NUMBER(TO_CHAR(TRUNC(v_docDate), 'dd'))) AND(v_fixMonthDay3 >= TO_NUMBER(TO_CHAR(TRUNC(v_docDate), 'dd')))) THEN
+    IF((v_fixMonthDay2 &lt; TO_NUMBER(TO_CHAR(TRUNC(v_docDate), 'dd'))) AND(v_fixMonthDay3 &gt;= TO_NUMBER(TO_CHAR(TRUNC(v_docDate), 'dd')))) THEN
       v_FixMonthDay := v_fixMonthDay3;
-    ELSIF((v_fixMonthDay1 < TO_NUMBER(TO_CHAR(TRUNC(v_docDate), 'dd'))) AND(v_fixMonthDay2 >= TO_NUMBER(TO_CHAR(TRUNC(v_docDate), 'dd')))) THEN
+    ELSIF((v_fixMonthDay1 &lt; TO_NUMBER(TO_CHAR(TRUNC(v_docDate), 'dd'))) AND(v_fixMonthDay2 &gt;= TO_NUMBER(TO_CHAR(TRUNC(v_docDate), 'dd')))) THEN
       v_FixMonthDay := v_fixMonthDay2;
     ELSE
       v_FixMonthDay := v_fixMonthDay1;
-      IF(v_FixMonthDay < TO_NUMBER(TO_CHAR(TRUNC(v_docDate), 'dd'))) THEN
+      IF(v_FixMonthDay &lt; TO_NUMBER(TO_CHAR(TRUNC(v_docDate), 'dd'))) THEN
         v_docDate := ADD_MONTHS(v_docDate, 1) ;
       END IF;
     END IF;
@@ -92,6 +92,6 @@ BEGIN
     END LOOP;
   END IF;
   RETURN COALESCE(v_DueDate, TRUNC(p_DocDate)) ;
-END C_PaymentDueDate]]></body>
-</function> 
-</database>
+END C_PaymentDueDate</body>
+    </function>
+  </database>

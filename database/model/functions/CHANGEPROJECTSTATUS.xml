@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION CHANGEPROJECTSTATUS">
-<function name="CHANGEPROJECTSTATUS">
-<parameter name="p_pinstance_id" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION CHANGEPROJECTSTATUS">
+    <function name="CHANGEPROJECTSTATUS" type="NULL">
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -79,13 +79,13 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20000, '@Notstatusdefined@');
     ELSIF (v_projectstatus = 'NF' OR v_projectstatus = 'OP')
     THEN
-      IF (v_p_projectstatus <> 'OR' AND v_p_projectstatus <> 'OU')
+      IF (v_p_projectstatus &lt;&gt; 'OR' AND v_p_projectstatus &lt;&gt; 'OU')
       THEN
         RAISE_APPLICATION_ERROR(-20000, '@Invalidprojectstatus@');
       END IF;
     ELSIF (v_projectstatus = 'OR')
     THEN
-      IF (v_p_projectstatus <> 'OC')
+      IF (v_p_projectstatus &lt;&gt; 'OC')
       THEN
         RAISE_APPLICATION_ERROR(-20000, '@Invalidprojectstatus@');
       END IF;
@@ -114,7 +114,7 @@ BEGIN
     RETURN;
   END IF;--FINISH_PROCESS
 
-  --<<FINISH_PROCESS>>
+  --&lt;&lt;FINISH_PROCESS&gt;&gt;
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE ('Updating PInstance - Finished ' || v_message);
   ad_update_pinstance (p_pinstance_id, NULL, 'N', v_result, v_message);
@@ -127,7 +127,7 @@ EXCEPTION
     ROLLBACK;
     ad_update_pinstance (p_pinstance_id, NULL, 'N', 0, v_resultstr);
 -- Commented by cromero 19102006 RETURN;
-END changeprojectstatus]]>
+END changeprojectstatus
 </body>
-</function>
-</database>
+    </function>
+  </database>

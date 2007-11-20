@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_BANKSTATEMENTLINE_TRG">
-<trigger name="C_BANKSTATEMENTLINE_TRG" table="C_BANKSTATEMENTLINE" fires="after" insert="true" update="true" delete="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_BANKSTATEMENTLINE_TRG">
+    <trigger name="C_BANKSTATEMENTLINE_TRG" table="C_BANKSTATEMENTLINE" fires="after" insert="true" update="true" delete="true" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Compiere License
@@ -13,7 +13,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &  Business Solution
+    * The Original Code is  Compiere  ERP &amp;  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -46,7 +46,7 @@ BEGIN
   FROM C_BankStatement
   WHERE C_BankStatement_ID=v_ID
   AND Processed='Y';
-  IF (v_RO > 0) THEN
+  IF (v_RO &gt; 0) THEN
   RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
   END IF;*/
   -- Update header
@@ -54,7 +54,7 @@ BEGIN
     SET StatementDifference=StatementDifference + v_Difference,
     EndingBalance=EndingBalance + v_Difference
   WHERE C_BankStatement_ID=v_ID;
-END C_BankStatementLine_Trg ]]>
+END C_BankStatementLine_Trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_USER">
+  <database name="TABLE AD_USER">
     <table name="AD_USER" primaryKey="AD_USER_KEY">
       <column name="AD_USER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -39,7 +39,6 @@
       <column name="DEFAULT_AD_ORG_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="DEFAULT_AD_ROLE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="DEFAULT_M_WAREHOUSE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="AD_USER_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADUSERDEFAULT">
         <reference local="DEFAULT_AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -82,15 +81,16 @@
       <foreign-key foreignTable="PA_GOAL" name="PAGOAL_ADUSER">
         <reference local="PA_GOAL_ID" foreign="PA_GOAL_ID"/>
       </foreign-key>
-      <index name="AD_USER_NAME">
+      <index name="AD_USER_NAME" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="NAME"/>
       </index>
-      <index name="AD_USER_EMAIL">
+      <index name="AD_USER_EMAIL" unique="false">
         <index-column name="EMAIL"/>
       </index>
       <unique name="AD_USER_UN_USERNAME">
         <unique-column name="USERNAME"/>
       </unique>
+      <check name="AD_USER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<database name="VIEW GL_JOURNALLINE_ACCT_V">
-<view name="GL_JOURNALLINE_ACCT_V"><![CDATA[
+  <database name="VIEW GL_JOURNALLINE_ACCT_V">
+    <view name="GL_JOURNALLINE_ACCT_V" updatable="false">
 SELECT
   gl.GL_JournalLine_ID, gl.AD_Client_ID, gl.AD_Org_ID, gl.IsActive,
   gl.Created, gl.CreatedBy, gl.Updated, gl.UpdatedBy, gl.GL_Journal_ID,
@@ -14,5 +14,5 @@ SELECT
   vc.IsFullyQualified, vc.C_Activity_ID
 FROM GL_JournalLine gl, C_ValidCombination vc
 WHERE gl.C_ValidCombination_ID = vc.C_ValidCombination_ID
-]]></view>
-</database>
+</view>
+  </database>

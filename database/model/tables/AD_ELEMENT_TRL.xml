@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_ELEMENT_TRL">
+  <database name="TABLE AD_ELEMENT_TRL">
     <table name="AD_ELEMENT_TRL" primaryKey="AD_ELEMENT_TRL_KEY">
       <column name="AD_ELEMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_LANGUAGE" primaryKey="true" required="true" type="VARCHAR" size="6" autoIncrement="false"/>
@@ -19,12 +19,10 @@
       <column name="PO_DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="PO_HELP" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="ISTRANSLATED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="ADELEMENTTRL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADELEMENTTRL_ISTRANSLATED_CHECK" condition="IsTranslated in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADELEMENTTRL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ELEMENT" name="ADELEMENT_ADELEMENTTRL"   onDelete="cascade">
+      <foreign-key foreignTable="AD_ELEMENT" name="ADELEMENT_ADELEMENTTRL" onDelete="cascade">
         <reference local="AD_ELEMENT_ID" foreign="AD_ELEMENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_AD_ELEMENT_TRL">
@@ -33,5 +31,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADELEMENTTRL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="ADELEMENTTRL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADELEMENTTRL_IS_ANSLATED_CHECK" condition="IsTranslated in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

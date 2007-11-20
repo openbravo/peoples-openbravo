@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_TAXCATEGORY_TRL">
+  <database name="TABLE C_TAXCATEGORY_TRL">
     <table name="C_TAXCATEGORY_TRL" primaryKey="C_TAXCATEGORY_TRL_KEY">
       <column name="C_TAXCATEGORY_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_LANGUAGE" primaryKey="true" required="true" type="VARCHAR" size="6" autoIncrement="false"/>
@@ -13,8 +13,6 @@
       <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="ISTRANSLATED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="CTAXCATEG_TRL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/>
-      <check name="CTAXCATEG_ISTRANSLATED_CHECK" condition="IsTranslated in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CTAXCATEGORYTRL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -27,5 +25,7 @@
       <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_TRL">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
       </foreign-key>
+      <check name="CTAXCATEG_TRL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CTAXCATEG_ISTRANSLATED_CHECK" condition="IsTranslated in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

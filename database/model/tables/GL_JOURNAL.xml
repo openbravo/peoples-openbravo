@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE GL_JOURNAL">
+  <database name="TABLE GL_JOURNAL">
     <table name="GL_JOURNAL" primaryKey="GL_JOURNAL_KEY">
       <column name="GL_JOURNAL_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -34,10 +34,6 @@
       <column name="PROCESSED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="POSTED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISOPENING" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="GL_JOURNAL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="GL_JOURNAL_ISAPPROVED_CHECK" condition="IsApproved in ('Y','N')"/>
-      <check name="GL_JOURNAL_ISPRINTED_CHECK" condition="IsPrinted in ('Y','N')"/>
-      <check name="GL_JOURNAL_PROCESSED_CHECK" condition="Processed in ('Y','N')"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_GLJOURNAL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -70,5 +66,9 @@
         <unique-column name="C_PERIOD_ID"/>
         <unique-column name="DOCUMENTNO"/>
       </unique>
+      <check name="GL_JOURNAL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="GL_JOURNAL_ISAPPROVED_CHECK" condition="IsApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="GL_JOURNAL_ISPRINTED_CHECK" condition="IsPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="GL_JOURNAL_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

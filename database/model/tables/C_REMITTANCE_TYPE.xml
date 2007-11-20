@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_REMITTANCE_TYPE">
+  <database name="TABLE C_REMITTANCE_TYPE">
     <table name="C_REMITTANCE_TYPE" primaryKey="C_REMITTANCE_TYPE_KEY">
       <column name="C_REMITTANCE_TYPE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -15,12 +15,12 @@
       <column name="PAYMENTRULECONSOLIDATED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="STATUS_RETURNED" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false"/>
       <column name="ISRECEIPT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <check name="C_REMITTANCE_TYPE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CREMITTANCETYPE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_CREMITTANCETYPE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="C_REMITTANCE_TY_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

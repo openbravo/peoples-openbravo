@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_PL_INVOICELINE">
+  <database name="TABLE MA_PL_INVOICELINE">
     <table name="MA_PL_INVOICELINE" primaryKey="MA_PL_INVOICELINE_KEY">
       <column name="MA_PL_INVOICELINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -12,7 +12,6 @@
       <column name="M_PRODUCTIONPLAN_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_INVOICELINE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="COST" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false"/>
-      <check name="MA_PL_INVOICELINE_ISACTIVE_CHECK" condition="IsActive in ('Y', 'N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAPLINVOICELINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -25,5 +24,6 @@
       <foreign-key foreignTable="M_PRODUCTIONPLAN" name="MPRODUCTIONPLAN_PLINVOICELINE">
         <reference local="M_PRODUCTIONPLAN_ID" foreign="M_PRODUCTIONPLAN_ID"/>
       </foreign-key>
+      <check name="MA_PL_INVOICELI_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
-</database>
+  </database>

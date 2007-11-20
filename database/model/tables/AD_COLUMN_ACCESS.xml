@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_COLUMN_ACCESS">
+  <database name="TABLE AD_COLUMN_ACCESS">
     <table name="AD_COLUMN_ACCESS" primaryKey="AD_COLUMN_ACCESS_KEY">
       <column name="AD_ROLE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_COLUMN_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -29,4 +29,4 @@
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

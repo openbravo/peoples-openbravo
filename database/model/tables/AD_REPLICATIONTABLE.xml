@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_REPLICATIONTABLE">
+  <database name="TABLE AD_REPLICATIONTABLE">
     <table name="AD_REPLICATIONTABLE" primaryKey="AD_REPLICATIONTABLE_KEY">
       <column name="AD_REPLICATIONTABLE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -13,7 +13,6 @@
       <column name="AD_TABLE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="REPLICATIONTYPE" primaryKey="false" required="true" type="CHAR" size="1" default="L" autoIncrement="false"/>
       <column name="ENTITYTYPE" primaryKey="false" required="true" type="CHAR" size="1" default="D" autoIncrement="false"/>
-      <check name="AD_REPLICATIONTABLE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADREPLICATIONTABLE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -23,8 +22,9 @@
       <foreign-key foreignTable="AD_REPLICATIONSTRATEGY" name="ADREPSTRATEGY_ADREPTABLE">
         <reference local="AD_REPLICATIONSTRATEGY_ID" foreign="AD_REPLICATIONSTRATEGY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADREPLICATIONTABLE"   onDelete="cascade">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADREPLICATIONTABLE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
+      <check name="AD_REPLICATIONT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

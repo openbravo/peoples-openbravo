@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_WORKSTATION">
+  <database name="TABLE MA_WORKSTATION">
     <table name="MA_WORKSTATION" primaryKey="MA_WORKSTATION_KEY">
       <column name="MA_WORKSTATION_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -12,7 +12,6 @@
       <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="MA_SECTION_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="VALUE" primaryKey="false" required="true" type="NVARCHAR" size="40" autoIncrement="false"/>
-      <check name="MA_WORKSTATION_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAWORKSTATION">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -22,5 +21,6 @@
       <foreign-key foreignTable="MA_SECTION" name="MA_GFH_MASECTION">
         <reference local="MA_SECTION_ID" foreign="MA_SECTION_ID"/>
       </foreign-key>
+      <check name="MA_WORKSTATION_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

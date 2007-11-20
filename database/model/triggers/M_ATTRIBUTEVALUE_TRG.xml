@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER M_ATTRIBUTEVALUE_TRG">
-<trigger name="M_ATTRIBUTEVALUE_TRG" table="M_ATTRIBUTEVALUE" fires="after" update="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER M_ATTRIBUTEVALUE_TRG">
+    <trigger name="M_ATTRIBUTEVALUE_TRG" table="M_ATTRIBUTEVALUE" fires="after" insert="false" update="true" delete="false" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -44,7 +44,7 @@ BEGIN
                 (select count(*)
                    from M_AttributeUse u1
                   where u1.M_AttributeSet_ID = u.M_AttributeSet_ID
-                    and u1.seqno<u.seqno) +1
+                    and u1.seqno&lt;u.seqno) +1
            into pos
            from M_AttributeSet s,
                 M_AttributeUse u
@@ -61,7 +61,7 @@ BEGIN
        WHERE M_AttributeSetInstance_ID = CurSetInstance.M_AttributeSetInstance_ID;
     END LOOP;
   END IF;
-END M_ATRIBUTEVALUE_TRG ]]>
+END M_ATRIBUTEVALUE_TRG 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_REMITTANCE_TRG">
-<trigger name="C_REMITTANCE_TRG" table="C_REMITTANCE" fires="before" insert="true" update="true" delete="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_REMITTANCE_TRG">
+    <trigger name="C_REMITTANCE_TRG" table="C_REMITTANCE" fires="before" insert="true" update="true" delete="true" foreach="row">
+      <body>
+
 
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -51,7 +51,7 @@ BEGIN
       RAISE_APPLICATION_ERROR (-20501, 'Document processed/posted');
     END IF;
   END IF;
-END c_remittance_trg ]]>
+END c_remittance_trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

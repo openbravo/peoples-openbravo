@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_PRODUCT">
+  <database name="TABLE M_PRODUCT">
     <table name="M_PRODUCT" primaryKey="M_PRODUCT_KEY">
       <column name="M_PRODUCT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -76,16 +76,6 @@
       <column name="QTYSTD" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="QTYTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="STOCKMIN" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
-      <check name="M_PRODUCT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="M_PRODUCT_ISSTOCKED_CHECK" condition="IsStocked in ('Y','N')"/>
-      <check name="M_PRODUCT_ISPURCHASED_CHECK" condition="IsPurchased in ('Y','N')"/>
-      <check name="M_PRODUCT_ISSOLD_CHECK" condition="IsSold in ('Y','N')"/>
-      <check name="M_PRODUCT_ISBOM_CHECK" condition="IsBOM in ('Y','N')"/>
-      <check name="MPROD_ISINVPRINTDET_CHECK" condition="IsInvoicePrintDetails in ('Y','N')"/>
-      <check name="MPROD_ISPICKLPRINTDET_CHECK" condition="IsPickListPrintDetails in ('Y','N')"/>
-      <check name="M_PRODUCT_ISVERIFIED_CHECK" condition="IsVerified in ('Y','N')"/>
-      <check name="M_PRODUCT_DISCONTINUED_CHECK" condition="Discontinued in ('Y','N')"/>
-      <check name="ENFORCEATTRIBUTE_CH_MPRODUCT" condition="ENFORCE_ATTRIBUTE IN ('Y','N')"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -113,7 +103,7 @@
       <foreign-key foreignTable="MA_PRODUCTTYPE" name="MA_PRODUCTTYPE_MPRODUCT">
         <reference local="MA_PRODUCTTYPE_ID" foreign="MA_PRODUCTTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESET" name="MATTRIBUTESET_MPRODUCT"   onDelete="cascade">
+      <foreign-key foreignTable="M_ATTRIBUTESET" name="MATTRIBUTESET_MPRODUCT" onDelete="cascade">
         <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_MPRODUCT">
@@ -137,16 +127,16 @@
       <foreign-key foreignTable="S_RESOURCE" name="SRESOURCE_MPRODUCT">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
       </foreign-key>
-      <index name="M_PRODUCT_NAME">
+      <index name="M_PRODUCT_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
-      <index name="M_PRODUCT_PRODUCTCATEGORY">
+      <index name="M_PRODUCT_PRODUCTCATEGORY" unique="false">
         <index-column name="M_PRODUCT_CATEGORY_ID"/>
       </index>
-      <index name="M_PRODUCT_UPC">
+      <index name="M_PRODUCT_UPC" unique="false">
         <index-column name="UPC"/>
       </index>
-      <index name="M_PRODUCT_BPARTNER">
+      <index name="M_PRODUCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
       <unique name="M_PRODUCT_EXPENSETYPE">
@@ -159,5 +149,15 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
+      <check name="M_PRODUCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISSTOCKED_CHECK" condition="IsStocked in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISPURCHASED_CHECK" condition="IsPurchased in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISSOLD_CHECK" condition="IsSold in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISBOM_CHECK" condition="IsBOM in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MPROD_ISINVPRINTDET_CHECK" condition="IsInvoicePrintDetails in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MPROD_ISPICKLPRINTDET_CHECK" condition="IsPickListPrintDetails in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISVERIFIED_CHECK" condition="IsVerified in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_DISCONTINUED_CHECK" condition="Discontinued in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ENFORCEATTRIBUTE_CH_MPRODUCT" condition="ENFORCE_ATTRIBUTE IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

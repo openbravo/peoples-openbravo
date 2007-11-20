@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE PLAN_TABLE">
+  <database name="TABLE PLAN_TABLE">
     <table name="PLAN_TABLE">
       <column name="STATEMENT_ID" primaryKey="false" required="false" type="VARCHAR" size="30" autoIncrement="false"/>
       <column name="TIMESTAMP" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
@@ -31,4 +31,4 @@
       <column name="ACCESS_PREDICATES" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false"/>
       <column name="FILTER_PREDICATES" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false"/>
     </table>
-</database>
+  </database>

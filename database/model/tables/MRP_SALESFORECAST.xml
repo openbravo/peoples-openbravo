@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MRP_SALESFORECAST">
+  <database name="TABLE MRP_SALESFORECAST">
     <table name="MRP_SALESFORECAST" primaryKey="MRP_SALESFORECAST_KEY">
       <column name="MRP_SALESFORECAST_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -12,7 +12,6 @@
       <column name="C_BPARTNER_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="DATEDOC" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
-      <check name="MRP_SALESFORECAST_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_MRP_SALESFORECAST">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -22,5 +21,6 @@
       <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_MRP_SALESFORECAST">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
+      <check name="MRP_SALESFORECA_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

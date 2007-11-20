@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_PRINTPAPER">
+  <database name="TABLE AD_PRINTPAPER">
     <table name="AD_PRINTPAPER" primaryKey="AD_PRINTPAPER_KEY">
       <column name="AD_PRINTPAPER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -19,8 +19,6 @@
       <column name="MARGINRIGHT" primaryKey="false" required="true" type="DECIMAL" size="10,0" default="36" autoIncrement="false"/>
       <column name="MARGINBOTTOM" primaryKey="false" required="true" type="DECIMAL" size="10,0" default="36" autoIncrement="false"/>
       <column name="PROCESSING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <check name="ADPRINTPAPER_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADPRINTPAPER_ISLANDSCAPE_CHECK" condition="IsLandscape in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPRINTPAPER">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -31,5 +29,7 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="ADPRINTPAPER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRINTPAPER_ISLANDSCAPE_CHECK" condition="IsLandscape in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

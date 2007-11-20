@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_INVOICELINE_OFFER">
+  <database name="TABLE C_INVOICELINE_OFFER">
     <table name="C_INVOICELINE_OFFER" primaryKey="C_INVOICELINE_OFFER_KEY">
       <column name="C_INVOICELINE_OFFER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -27,4 +27,4 @@
         <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

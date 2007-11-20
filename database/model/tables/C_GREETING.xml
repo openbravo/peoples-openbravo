@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_GREETING">
+  <database name="TABLE C_GREETING">
     <table name="C_GREETING" primaryKey="C_GREETING_KEY">
       <column name="C_GREETING_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -13,14 +13,14 @@
       <column name="GREETING" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="ISFIRSTNAMEONLY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISDEFAULT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="C_GREETING_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="CGREET_ISFIRSTNAMEONLY_CHECK" condition="IsFirstNameOnly in ('Y','N')"/>
-      <check name="C_GREETING_ISDEFAULT_CHECK" condition="IsDefault in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CGREETING">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CGREETING">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="C_GREETING_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CGREET_ISFIRSTNAMEONLY_CHECK" condition="IsFirstNameOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_GREETING_ISDEFAULT_CHECK" condition="IsDefault in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

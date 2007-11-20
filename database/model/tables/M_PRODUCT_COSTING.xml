@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_PRODUCT_COSTING">
+  <database name="TABLE M_PRODUCT_COSTING">
     <table name="M_PRODUCT_COSTING" primaryKey="M_PRODUCT_COSTING_KEY">
       <column name="M_PRODUCT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_ACCTSCHEMA_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -24,18 +24,18 @@
       <column name="PRICELASTINV" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="TOTALINVQTY" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="TOTALINVAMT" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
-      <check name="M_PRODUCT_COSTING_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCTCOSTING">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_MPRODUCTCOSTING">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_MPRODUCTCOSTING"   onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_MPRODUCTCOSTING" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MPRODUCTCOSTING"   onDelete="cascade">
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MPRODUCTCOSTING" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <check name="M_PRODUCT_COSTI_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

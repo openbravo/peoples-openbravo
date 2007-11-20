@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_REPORTVIEW">
+  <database name="TABLE AD_REPORTVIEW">
     <table name="AD_REPORTVIEW" primaryKey="AD_REPORTVIEW_KEY">
       <column name="AD_REPORTVIEW_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -14,15 +14,15 @@
       <column name="AD_TABLE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="WHERECLAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="ORDERBYCLAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
-      <check name="AD_REPORTVIEW_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADREPORTVIEW">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADREPORTVIEW">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADREPORTVIEW"   onDelete="cascade">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADREPORTVIEW" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
+      <check name="AD_REPORTVIEW_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

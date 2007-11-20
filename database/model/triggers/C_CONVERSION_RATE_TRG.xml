@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_CONVERSION_RATE_TRG">
-<trigger name="C_CONVERSION_RATE_TRG" table="C_CONVERSION_RATE" fires="before" insert="true" update="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_CONVERSION_RATE_TRG">
+    <trigger name="C_CONVERSION_RATE_TRG" table="C_CONVERSION_RATE" fires="before" insert="true" update="true" delete="false" foreach="row">
+      <body>
+
  
     /************************************************************************* 
     * The contents of this file are subject to the Compiere License 
@@ -13,7 +13,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
     * implied. See the License for the specific language governing rights 
     * and limitations under the License. 
-    * The Original Code is  Compiere  ERP &  Business Solution 
+    * The Original Code is  Compiere  ERP &amp;  Business Solution 
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, 
     Inc. 
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, 
@@ -36,7 +36,7 @@
       :new.ValidTo:=TO_DATE('29-JAN-2056', 'DD-MON-YYYY') ;
   END IF; 
   --Check for invalid dates 
-  IF :new.ValidTo < :new.ValidFrom THEN 
+  IF :new.ValidTo &lt; :new.ValidFrom THEN 
     RAISE_APPLICATION_ERROR (-20505, 'Date To is lower than Date From'); 
   END IF; 
    
@@ -73,7 +73,7 @@
         or (:new.MultiplyRate     != :old.MultiplyRate) 
       ); 
         
-    IF v_count>0 THEN 
+    IF v_count&gt;0 THEN 
       RAISE_APPLICATION_ERROR (-20506, 'Cannot modify used rate'); 
     END IF;     
   END IF; 
@@ -97,12 +97,12 @@
       and f.c_currency_id = :old.C_Currency_ID 
      and s.c_currency_id = :old.C_Currency_ID_TO 
      and f.dateacct between :old.ValidFrom and :old.ValidTo; 
-    IF v_count>0 THEN 
+    IF v_count&gt;0 THEN 
       RAISE_APPLICATION_ERROR (-20506, 'Cannot modify used rate'); 
     END IF;   
   END IF; 
  
-END C_Conversion_Rate_Trg ]]>
+END C_Conversion_Rate_Trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

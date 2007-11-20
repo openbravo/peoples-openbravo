@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_PRINTTABLEFORMAT">
+  <database name="TABLE AD_PRINTTABLEFORMAT">
     <table name="AD_PRINTTABLEFORMAT" primaryKey="AD_PRINTTABLEFORMAT_KEY">
       <column name="AD_PRINTTABLEFORMAT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -23,7 +23,6 @@
       <column name="ISPAINTVLINES" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISPRINTFUNCTIONSYMBOLS" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
-      <check name="AD_PRINTTABLEFORMAT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPRINTTABLEFORMAT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -54,5 +53,6 @@
       <foreign-key foreignTable="AD_PRINTFONT" name="REFAD_PRINTFONT1620">
         <reference local="FUNCT_PRINTFONT_ID" foreign="AD_PRINTFONT_ID"/>
       </foreign-key>
+      <check name="AD_PRINTTABLEFO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

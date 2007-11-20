@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE I_BANKSTATEMENT">
+  <database name="TABLE I_BANKSTATEMENT">
     <table name="I_BANKSTATEMENT" primaryKey="I_BANKSTATEMENT_KEY">
       <column name="I_BANKSTATEMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -40,10 +40,6 @@
       <column name="LINEDESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="STMTAMT" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="C_DEBT_PAYMENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="I_BANKSTATEMENT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="IBANKSTAT_I_ISIMPORTED_CHECK" condition="I_IsImported in ('Y','N')"/>
-      <check name="IBANKSTAT_PROCESSED_CHECK" condition="Processed in ('Y','N')"/>
-      <check name="IBANKSTAT_ISREVERSAL_CHECK" condition="IsReversal in ('Y','N')"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IBANKSTATEMENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -71,5 +67,9 @@
       <foreign-key foreignTable="C_INVOICE" name="CINVOICE_IBANKSTATEMENT">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
+      <check name="I_BANKSTATEMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IBANKSTAT_I_ISIMPORTED_CHECK" condition="I_IsImported in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IBANKSTAT_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IBANKSTAT_ISREVERSAL_CHECK" condition="IsReversal in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

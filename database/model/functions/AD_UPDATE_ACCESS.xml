@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<database name="FUNCTION AD_UPDATE_ACCESS">
-<function name="AD_UPDATE_ACCESS">
-<body><![CDATA[
+  <database name="FUNCTION AD_UPDATE_ACCESS">
+    <function name="AD_UPDATE_ACCESS" type="NULL">
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -20,7 +20,7 @@
 ************************************************************************/
 BEGIN
 END
-]]>
+
 </body>
-</function>
-</database>
+    </function>
+  </database>

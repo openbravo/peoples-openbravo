@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AT_COMMAND">
+  <database name="TABLE AT_COMMAND">
     <table name="AT_COMMAND" primaryKey="AT_COMMAND_KEY">
       <column name="AT_COMMAND_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -22,18 +22,18 @@
       <column name="REMEMBER_TAB" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="CHECK_WRITEABLE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ASSERTION" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="ATCOMMAND_WRITEABLE_CHECK" condition="CHECK_WRITEABLE IN ('Y','N')"/> 
-      <check name="ATCOMMAND_HASPREFIX_CHECK" condition="HAS_PREFIX IN ('Y','N')"/> 
-      <check name="ATCOMMAND_ISACTIVE_CHECK" condition="IsActive IN ('Y','N')"/> 
-      <check name="ATCOMMANDLINEINTERCH_CHECK" condition="LINE_INTERCHANGE IN ('Y','N')"/> 
-      <check name="ATCOMMAND_REMFRAME_CHECK" condition="REMEMBER_FRAME IN ('Y','N')"/> 
-      <check name="ATCOMMAND_REMTAB_CHECK" condition="REMEMBER_TAB IN ('Y','N')"/> 
-      <check name="ATCOMMAND_REMWINDOW_CHECK" condition="REMEMBER_WINDOW IN ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ATCOMMAND">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_ATCOMMAND">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="ATCOMMAND_WRITEABLE_CHECK" condition="CHECK_WRITEABLE IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ATCOMMAND_HASPREFIX_CHECK" condition="HAS_PREFIX IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ATCOMMAND_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ATCOMMANDLINEINTERCH_CHECK" condition="LINE_INTERCHANGE IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ATCOMMAND_REMFRAME_CHECK" condition="REMEMBER_FRAME IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ATCOMMAND_REMTAB_CHECK" condition="REMEMBER_TAB IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ATCOMMAND_REMWINDOW_CHECK" condition="REMEMBER_WINDOW IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

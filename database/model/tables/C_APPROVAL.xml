@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_APPROVAL">
+  <database name="TABLE C_APPROVAL">
     <table name="C_APPROVAL" primaryKey="AD_APPROVAL_KEY">
       <column name="C_APPROVAL_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -15,10 +15,6 @@
       <column name="ISWORKFLOWAPPROVED" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="AD_WORKFLOW_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISPRODUCTATTRIBUTEAPPROVED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="CAPPROVAL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="CAPPROVAL_ISAMOUNTAPPROVED_CHECK" condition="IsAmountApproved in ('Y','N')"/> 
-      <check name="CAPPROVAL_ISWORKFLAPPROVED_CHECK" condition="IsWorkflowApproved in ('Y','N')"/> 
-      <check name="CAPPROVAL_ISPRODATTAPPROVED_CHECK" condition="IsProductAttributeApproved in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CAPPROVAL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -32,5 +28,9 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="CAPPROVAL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CAPPROVAL_ISAMO_APPROVED_CHECK" condition="IsAmountApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CAPPROVAL_ISWOR_APPROVED_CHECK" condition="IsWorkflowApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CAPPROVAL_ISPRO_APPROVED_CHECK" condition="IsProductAttributeApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

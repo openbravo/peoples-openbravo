@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_ACCTSCHEMA">
+  <database name="TABLE C_ACCTSCHEMA">
     <table name="C_ACCTSCHEMA" primaryKey="C_ACCTSCHEMA_KEY">
       <column name="C_ACCTSCHEMA_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -24,13 +24,6 @@
       <column name="HASCOMBINATION" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="ISTRADEDISCOUNTPOSTED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISDISCOUNTCORRECTSTAX" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="CACCTSCHEMA_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="CACCTSCHEMA_ISACCRUAL_CHECK" condition="IsAccrual in ('Y','N')"/> 
-      <check name="CACCTSCHEMA_AUTOPERCONT_CHECK" condition="AutoPeriodControl in ('Y','N')"/> 
-      <check name="CACCTSCHEMA_HASALIAS_CHECK" condition="HasAlias in ('Y','N')"/> 
-      <check name="CACCTSCHEMA_HASCOMBINAT_CHECK" condition="HasCombination in ('Y','N')"/> 
-      <check name="CACCTSCHEMA_ISTRADPOSTED_CHECK" condition="IsTradeDiscountPosted in ('Y','N')"/> 
-      <check name="CACCTSCHEMA_ISDISCCORTAX_CHECK" condition="IsDiscountCorrectsTax in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_C_ACCTSCHEMA">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -47,5 +40,12 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="CACCTSCHEMA_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEMA_ISACCRUAL_CHECK" condition="IsAccrual in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEMA_AUTOPERCONT_CHECK" condition="AutoPeriodControl in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEMA_HASALIAS_CHECK" condition="HasAlias in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEMA_HASCOMBINAT_CHECK" condition="HasCombination in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEMA_ISTRADPOSTED_CHECK" condition="IsTradeDiscountPosted in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEMA_ISDISCCORTAX_CHECK" condition="IsDiscountCorrectsTax in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

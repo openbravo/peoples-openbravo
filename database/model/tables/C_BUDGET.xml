@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_BUDGET">
+  <database name="TABLE C_BUDGET">
     <table name="C_BUDGET" primaryKey="C_BUDGET_KEY">
       <column name="C_BUDGET_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -15,7 +15,6 @@
       <column name="COPYBUDGET" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="BUDGET_TYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
       <column name="EXPORTEXCEL" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <check name="C_BUDGET_ISACTIVE_CHECK" condition="IsActive IN ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="BUDGETCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -25,5 +24,6 @@
       <foreign-key foreignTable="C_YEAR" name="BUDGETYEAR">
         <reference local="C_YEAR_ID" foreign="C_YEAR_ID"/>
       </foreign-key>
+      <check name="C_BUDGET_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

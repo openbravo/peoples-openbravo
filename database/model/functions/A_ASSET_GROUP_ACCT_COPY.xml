@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION A_ASSET_GROUP_ACCT_COPY">
-<function name="A_ASSET_GROUP_ACCT_COPY">
-<parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION A_ASSET_GROUP_ACCT_COPY">
+    <function name="A_ASSET_GROUP_ACCT_COPY" type="NULL">
+      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -102,7 +102,7 @@
       v_Created_Total:=v_Created_Total + v_Created;
     END LOOP;
     v_Message:='@Created@=' || v_Created_Total || ', @Updated@=' || v_Updated_Total;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -114,7 +114,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END A_Asset_Group_Acct_Copy]]>
+END A_Asset_Group_Acct_Copy
 </body>
-</function>
-</database>
+    </function>
+  </database>

@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
-<database name="FUNCTION MRP_RUN_INSERTLINES">
-<function name="MRP_RUN_INSERTLINES">
-<parameter name="p_Client_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_Org_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_User_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_parentRun_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_Qty" type="NUMERIC" mode="in"/>
-<parameter name="p_NeededQty" type="NUMERIC" mode="in"/>
-<parameter name="p_Parent_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_InOutTrxType" type="CHAR" mode="in"/>
-<parameter name="p_Fixed" type="CHAR" mode="in"/>
-<parameter name="p_OrderLine_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_WorkRequirement_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_SalesForecastLine_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_RequisitionLine_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_ProcessPlan_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_PlannedDate" type="TIMESTAMP" size="7" mode="in"/>
-<parameter name="p_PlannedOrderDate" type="TIMESTAMP" size="7" mode="in"/>
-<parameter name="p_Production" type="CHAR" mode="in"/>
-<parameter name="p_IsExploded" type="CHAR" mode="in"/>
-<parameter name="p_Vendor_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_Line_ID" type="NUMERIC" mode="out"/>
-<body><![CDATA[
+  <database name="FUNCTION MRP_RUN_INSERTLINES">
+    <function name="MRP_RUN_INSERTLINES" type="NULL">
+      <parameter name="p_Client_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Org_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_User_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_parentRun_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Qty" type="NUMERIC" mode="in"/>
+      <parameter name="p_NeededQty" type="NUMERIC" mode="in"/>
+      <parameter name="p_Parent_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_InOutTrxType" type="CHAR" mode="in"/>
+      <parameter name="p_Fixed" type="CHAR" mode="in"/>
+      <parameter name="p_OrderLine_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_WorkRequirement_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_SalesForecastLine_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_RequisitionLine_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_ProcessPlan_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_PlannedDate" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_PlannedOrderDate" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_Production" type="CHAR" mode="in"/>
+      <parameter name="p_IsExploded" type="CHAR" mode="in"/>
+      <parameter name="p_Vendor_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Line_ID" type="NUMERIC" mode="out"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -81,7 +81,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE('MRP_RUN_INSERTLINES exception: ' || v_ResultStr) ;
   RAISE;
 --  RETURN;
-END Mrp_Run_Insertlines]]>
+END Mrp_Run_Insertlines
 </body>
-</function>
-</database>
+    </function>
+  </database>

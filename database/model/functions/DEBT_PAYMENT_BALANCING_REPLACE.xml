@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION DEBT_PAYMENT_BALANCING_REPLACE">
-<function name="DEBT_PAYMENT_BALANCING_REPLACE">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION DEBT_PAYMENT_BALANCING_REPLACE">
+    <function name="DEBT_PAYMENT_BALANCING_REPLACE" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -171,7 +171,7 @@
         RAISE_APPLICATION_ERROR(-20000, '@ProcessFailed@') ;
       END IF;
     END IF; --FINISH_PROCESS
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -184,7 +184,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END Debt_Payment_Balancing_Replace]]>
+END Debt_Payment_Balancing_Replace
 </body>
-</function>
-</database>
+    </function>
+  </database>

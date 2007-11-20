@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION MRP_REQUISITION">
-<function name="MRP_REQUISITION">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION MRP_REQUISITION">
+    <function name="MRP_REQUISITION" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -121,7 +121,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   END IF;
 --  RETURN;
-END MRP_REQUISITION]]>
+END MRP_REQUISITION
 </body>
-</function>
-</database>
+    </function>
+  </database>

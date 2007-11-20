@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_PROJECTLINE">
+  <database name="TABLE C_PROJECTLINE">
     <table name="C_PROJECTLINE" primaryKey="C_PROJECTLINE_KEY">
       <column name="C_PROJECTLINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -33,7 +33,6 @@
       <column name="PRODUCT_DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="PRODUCT_NAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="PRODUCT_VALUE" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
-      <check name="C_PROJECTLINE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPROJECTLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -46,7 +45,7 @@
       <foreign-key foreignTable="C_ORDER" name="CORDER_CPROJECTLINE">
         <reference local="C_ORDERPO_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CPROJECTLINE"   onDelete="cascade">
+      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CPROJECTLINE" onDelete="cascade">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PROJECTISSUE" name="CPROJECTISSUE_CPROJECTLINE">
@@ -61,5 +60,6 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODUCTCAT_CPROJECTLINE">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
+      <check name="C_PROJECTLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

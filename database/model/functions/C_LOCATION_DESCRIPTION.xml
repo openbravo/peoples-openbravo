@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION C_LOCATION_DESCRIPTION">
-<function name="C_LOCATION_DESCRIPTION" type="NVARCHAR">
-<parameter name="p_C_Location_ID" type="NUMERIC" />
-<body><![CDATA[
+  <database name="FUNCTION C_LOCATION_DESCRIPTION">
+    <function name="C_LOCATION_DESCRIPTION" type="NVARCHAR">
+      <parameter name="p_C_Location_ID" type="NUMERIC"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -57,6 +57,6 @@ BEGIN
     ON L.C_REGION_ID=R.C_REGION_ID
   WHERE L.C_LOCATION_ID=p_C_Location_ID;
   RETURN v_description;
-END C_Location_Description]]></body>
-</function> 
-</database>
+END C_Location_Description</body>
+    </function>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_ELEMENTVALUE">
+  <database name="TABLE C_ELEMENTVALUE">
     <table name="C_ELEMENTVALUE" primaryKey="C_ELEMENTVALUE_KEY">
       <column name="C_ELEMENTVALUE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -30,14 +30,6 @@
       <column name="SHOWELEMENT" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="SHOWVALUECOND" primaryKey="false" required="true" type="VARCHAR" size="2" default="A" autoIncrement="false"/>
       <column name="ELEMENTLEVEL" primaryKey="false" required="true" type="VARCHAR" size="2" default="C" autoIncrement="false"/>
-      <check name="C_ELEMENTVALUE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="CELEMVAL_ISDOCCONTROL_CHECK" condition="IsDocControlled in ('Y','N')"/>
-      <check name="CELEMVALUE_POSTACTUAL_CHECK" condition="PostActual in ('Y','N')"/>
-      <check name="CELEMVALUE_POSTBUDGET_CHECK" condition="PostBudget in ('Y','N')"/>
-      <check name="CELEMVAL_POSTENCUMBR_CHECK" condition="PostEncumbrance in ('Y','N')"/>
-      <check name="CELEMVAL_POSTSTATISTIC_CHECK" condition="PostStatistical in ('Y','N')"/>
-      <check name="CELEMVAL_ISBANKACCOUNT_CHECK" condition="IsBankAccount in ('Y','N')"/>
-      <check name="CELEMVAL_ISFORCURREN_CHECK" condition="IsForeignCurrency in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CELEMENTVALUE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -50,15 +42,23 @@
       <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CELEMENTVALUE">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENT" name="CELEMENT_CELEMENTVALUE"   onDelete="cascade">
+      <foreign-key foreignTable="C_ELEMENT" name="CELEMENT_CELEMENTVALUE" onDelete="cascade">
         <reference local="C_ELEMENT_ID" foreign="C_ELEMENT_ID"/>
       </foreign-key>
-      <index name="C_ELEMENTVALUE_NAME">
+      <index name="C_ELEMENTVALUE_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
       <unique name="C_ELEMENTVALUE_VALUE">
         <unique-column name="C_ELEMENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
+      <check name="C_ELEMENTVALUE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVAL_ISDOCCONTROL_CHECK" condition="IsDocControlled in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVALUE_POSTACTUAL_CHECK" condition="PostActual in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVALUE_POSTBUDGET_CHECK" condition="PostBudget in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVAL_POSTENCUMBR_CHECK" condition="PostEncumbrance in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVAL_POSTSTATISTIC_CHECK" condition="PostStatistical in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVAL_ISBANKACCOUNT_CHECK" condition="IsBankAccount in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVAL_ISFORCURREN_CHECK" condition="IsForeignCurrency in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

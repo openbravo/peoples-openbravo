@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER AT_COMMAND_TRG">
-<trigger name="AT_COMMAND_TRG" table="AT_COMMAND" fires="after" insert="true" update="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER AT_COMMAND_TRG">
+    <trigger name="AT_COMMAND_TRG" table="AT_COMMAND" fires="after" insert="true" update="true" delete="false" foreach="row">
+      <body>
+
 
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -49,11 +49,11 @@
  -- AT_Command update trigger
  --  synchronize name,...
  IF UPDATING THEN
-  IF(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
-  OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
-  OR COALESCE(:old.ArgHelp1, 0) <> COALESCE(:NEW.ArgHelp1, 0)
-  OR COALESCE(:old.ArgHelp2, 0) <> COALESCE(:NEW.ArgHelp2, 0)
-  OR COALESCE(:old.ArgHelp3, 0) <> COALESCE(:NEW.ArgHelp3, 0))
+  IF(COALESCE(:old.Name, '.') &lt;&gt; COALESCE(:NEW.Name, '.')
+  OR COALESCE(:old.Description, '.') &lt;&gt; COALESCE(:NEW.Description, '.')
+  OR COALESCE(:old.ArgHelp1, 0) &lt;&gt; COALESCE(:NEW.ArgHelp1, 0)
+  OR COALESCE(:old.ArgHelp2, 0) &lt;&gt; COALESCE(:NEW.ArgHelp2, 0)
+  OR COALESCE(:old.ArgHelp3, 0) &lt;&gt; COALESCE(:NEW.ArgHelp3, 0))
  THEN
     UPDATE AT_Command_Trl
       SET IsTranslated='N',
@@ -63,7 +63,7 @@
  END IF;
 -- Updating
 END AT_Command_Trg
-]]>
+
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

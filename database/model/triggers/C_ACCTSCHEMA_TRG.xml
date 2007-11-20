@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_ACCTSCHEMA_TRG">
-<trigger name="C_ACCTSCHEMA_TRG" table="C_ACCTSCHEMA" fires="after" insert="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_ACCTSCHEMA_TRG">
+    <trigger name="C_ACCTSCHEMA_TRG" table="C_ACCTSCHEMA" fires="after" insert="true" update="false" delete="false" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -62,7 +62,7 @@ BEGIN
   WHERE AD_TABLE_ID IN
     (SELECT AD_TABLE_ID FROM AD_TABLE WHERE ISDEFAULTACCT='Y')
     ;
-END C_AcctSchema_Trg ]]>
+END C_AcctSchema_Trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

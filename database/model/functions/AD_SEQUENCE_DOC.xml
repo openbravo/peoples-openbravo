@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<database name="FUNCTION AD_SEQUENCE_DOC">
-<function name="AD_SEQUENCE_DOC">
-<parameter name="p_SequenceName" type="VARCHAR" mode="in"/>
-<parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_Update_Next" type="CHAR" mode="in"/>
-<parameter name="p_DocumentNo" type="VARCHAR" mode="out"/>
-<body><![CDATA[
+  <database name="FUNCTION AD_SEQUENCE_DOC">
+    <function name="AD_SEQUENCE_DOC" type="NULL">
+      <parameter name="p_SequenceName" type="VARCHAR" mode="in"/>
+      <parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Update_Next" type="CHAR" mode="in"/>
+      <parameter name="p_DocumentNo" type="VARCHAR" mode="out"/>
+      <body>
   /*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -15,7 +15,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -29,7 +29,7 @@
   * Title: Get the next DocumentNo of TableName
   * Description:
   *  store in parameter p_DocumentNo
-  *  if ID < 1000000, use System Doc Sequence
+  *  if ID &lt; 1000000, use System Doc Sequence
   ************************************************************************/
   v_NextNo NUMBER;
   v_NextNoSys NUMBER;
@@ -40,7 +40,7 @@ BEGIN
   INTO v_NextNo, v_NextNoSys, v_Prefix, v_Suffix
   FROM AD_Sequence
   WHERE Name=p_SequenceName  AND IsActive='Y'  AND IsTableID='N'  AND IsAutoSequence='Y'  AND AD_Client_ID=p_AD_Client_ID  FOR UPDATE OF CurrentNext, CurrentNextSys;
-  IF(v_NextNoSys<>-1 AND p_AD_Client_ID<1000000) THEN -- System No
+  IF(v_NextNoSys&lt;&gt;-1 AND p_AD_Client_ID&lt;1000000) THEN -- System No
     IF p_Update_Next='Y' THEN
       UPDATE AD_Sequence
         SET CurrentNextSys=CurrentNextSys + IncrementNo, Updated=now()
@@ -58,7 +58,7 @@ BEGIN
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20000, '@DocumentSequenceNotFound@' || p_SequenceName) ;
-END AD_Sequence_Doc]]>
+END AD_Sequence_Doc
 </body>
-</function>
-</database>
+    </function>
+  </database>

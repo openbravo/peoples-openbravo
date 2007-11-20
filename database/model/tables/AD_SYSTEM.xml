@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_SYSTEM">
+  <database name="TABLE AD_SYSTEM">
     <table name="AD_SYSTEM" primaryKey="AD_SYSTEM_KEY">
       <column name="AD_SYSTEM_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -26,12 +26,12 @@
       <column name="TAD_PARENT_VERSION" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false"/>
       <column name="TAD_TRANSACTIONALRANGE" primaryKey="false" required="false" type="DECIMAL" default="1" autoIncrement="false"/>
       <column name="TAD_THEME" primaryKey="false" required="false" type="VARCHAR" size="25" autoIncrement="false"/>
-      <check name="AD_SYSTEM_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADSYSTEM">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADSYSTEM">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="AD_SYSTEM_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

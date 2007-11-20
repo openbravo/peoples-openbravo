@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_REPLICATION">
+  <database name="TABLE AD_REPLICATION">
     <table name="AD_REPLICATION" primaryKey="AD_REPLICATION_KEY">
       <column name="AD_REPLICATION_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -24,7 +24,6 @@
       <column name="PREFIX" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false"/>
       <column name="SUFFIX" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false"/>
       <column name="DATELASTRUN" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
-      <check name="AD_REPLICATION_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADREPLICATION1">
         <reference local="REMOTE_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -40,5 +39,6 @@
       <foreign-key foreignTable="AD_REPLICATIONSTRATEGY" name="ADREPLICATIONSTRATEGY_ADREP">
         <reference local="AD_REPLICATIONSTRATEGY_ID" foreign="AD_REPLICATIONSTRATEGY_ID"/>
       </foreign-key>
+      <check name="AD_REPLICATION_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

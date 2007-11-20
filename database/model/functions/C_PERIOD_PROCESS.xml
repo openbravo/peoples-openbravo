@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION C_PERIOD_PROCESS">
-<function name="C_PERIOD_PROCESS">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION C_PERIOD_PROCESS">
+    <function name="C_PERIOD_PROCESS" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
   /*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -12,7 +12,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -71,18 +71,18 @@
       UPDATE C_PeriodControl
         SET PeriodStatus='O'
       WHERE C_Period_ID=v_Record_ID
-        AND PeriodStatus<>'P';
+        AND PeriodStatus&lt;&gt;'P';
       -- Action: Close if not permanently closed
     ELSIF(p_PeriodAction='C') THEN
       UPDATE C_PeriodControl
         SET PeriodStatus='C'
       WHERE C_Period_ID=v_Record_ID
-        AND PeriodStatus<>'P';
+        AND PeriodStatus&lt;&gt;'P';
       -- Action: Permanently Close
     ELSIF(p_PeriodAction='P') THEN
       UPDATE C_PeriodControl  SET PeriodStatus='P'  WHERE C_Period_ID=v_Record_ID;
     END IF;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -95,7 +95,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END C_Period_Process]]>
+END C_Period_Process
 </body>
-</function>
-</database>
+    </function>
+  </database>

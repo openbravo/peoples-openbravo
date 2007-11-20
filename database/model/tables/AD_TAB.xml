@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_TAB">
+  <database name="TABLE AD_TAB">
     <table name="AD_TAB" primaryKey="AD_TAB_KEY">
       <column name="AD_TAB_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -36,12 +36,6 @@
       <column name="INCLUDED_TAB_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="FILTERCLAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="EDITREFERENCE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="ADTAB_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADTAB_ISSINGLEROW_CHECK" condition="IsSingleRow in ('Y','N')"/> 
-      <check name="ADTAB_ISINFOTAB_CHECK" condition="IsInfoTab in ('Y','N')"/> 
-      <check name="ADTAB_ISTRANSLATIONTAB_CHECK" condition="IsTranslationTab in ('Y','N')"/> 
-      <check name="ADTAB_ISREADONLY_CHECK" condition="IsReadOnly in ('Y','N')"/> 
-      <check name="ADTAB_HASTREE_CHECK" condition="HasTree in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="TABCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -72,18 +66,24 @@
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_TAB">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TAB"   onDelete="cascade">
+      <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TAB" onDelete="cascade">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
-      <index name="AD_TAB_TABLE">
+      <index name="AD_TAB_TABLE" unique="false">
         <index-column name="AD_TABLE_ID"/>
       </index>
-      <index name="AD_TAB_WINDOW">
+      <index name="AD_TAB_WINDOW" unique="false">
         <index-column name="AD_WINDOW_ID"/>
       </index>
       <unique name="AD_TAB_WINDOW_NAME_UNIQUE">
         <unique-column name="AD_WINDOW_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="ADTAB_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTAB_ISSINGLEROW_CHECK" condition="IsSingleRow in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTAB_ISINFOTAB_CHECK" condition="IsInfoTab in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTAB_ISTRANSLATIONTAB_CHECK" condition="IsTranslationTab in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTAB_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTAB_HASTREE_CHECK" condition="HasTree in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

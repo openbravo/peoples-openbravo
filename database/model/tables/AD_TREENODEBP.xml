@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_TREENODEBP">
+  <database name="TABLE AD_TREENODEBP">
     <table name="AD_TREENODEBP" primaryKey="AD_TREENODEBP_KEY">
       <column name="AD_TREE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="NODE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -12,18 +12,18 @@
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="PARENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="SEQNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="AD_TREENODEBP_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADTREENODEBP">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADTREENODEBP">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREE_ADTREENODEBP"   onDelete="cascade">
+      <foreign-key foreignTable="AD_TREE" name="ADTREE_ADTREENODEBP" onDelete="cascade">
         <reference local="AD_TREE_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
-      <index name="AD_TREENODEBP_PARENT">
+      <index name="AD_TREENODEBP_PARENT" unique="false">
         <index-column name="PARENT_ID"/>
       </index>
+      <check name="AD_TREENODEBP_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

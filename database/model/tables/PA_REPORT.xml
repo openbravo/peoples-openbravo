@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE PA_REPORT">
+  <database name="TABLE PA_REPORT">
     <table name="PA_REPORT" primaryKey="PA_REPORT_KEY">
       <column name="PA_REPORT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -19,14 +19,13 @@
       <column name="AD_PRINTFORMAT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="LISTSOURCES" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="LISTTRX" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="PA_REPORT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_PAREPORT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_PAREPORT"   onDelete="cascade">
+      <foreign-key foreignTable="AD_ORG" name="ADORG_PAREPORT" onDelete="cascade">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PRINTFORMAT" name="ADPRINTFORMAT_PAREPORT"   onDelete="setnull">
+      <foreign-key foreignTable="AD_PRINTFORMAT" name="ADPRINTFORMAT_PAREPORT" onDelete="setnull">
         <reference local="AD_PRINTFORMAT_ID" foreign="AD_PRINTFORMAT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_PAREPORT">
@@ -41,5 +40,6 @@
       <foreign-key foreignTable="PA_REPORTLINESET" name="PAREPORT_LINESET">
         <reference local="PA_REPORTLINESET_ID" foreign="PA_REPORTLINESET_ID"/>
       </foreign-key>
+      <check name="PA_REPORT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

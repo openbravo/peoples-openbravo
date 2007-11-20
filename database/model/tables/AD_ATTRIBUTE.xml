@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_ATTRIBUTE">
+  <database name="TABLE AD_ATTRIBUTE">
     <table name="AD_ATTRIBUTE" primaryKey="AD_ATTRIBUTE_KEY">
       <column name="AD_ATTRIBUTE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -32,14 +32,6 @@
       <column name="ISHEADING" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISFIELDONLY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="SEQNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="ADATTRIBUTE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADATTRIBUTE_ISREADONLY_CHECK" condition="IsReadOnly in ('Y','N')"/> 
-      <check name="ADATTRIBUTE_ISUPDATEABLE_CHECK" condition="IsUpdateable in ('Y','N')"/> 
-      <check name="ADATTRIBUTE_ISMANDATORY_CHECK" condition="IsMandatory in ('Y','N')"/> 
-      <check name="ADATTRIBUTE_ISENCRYPTED_CHECK" condition="IsEncrypted in ('Y','N')"/> 
-      <check name="ADATTRIBUTE_ISSAMELINE_CHECK" condition="IsSameLine in ('Y','N')"/> 
-      <check name="ADATTRIBUTE_ISHEADING_CHECK" condition="IsHeading in ('Y','N')"/> 
-      <check name="ADATTRIBUTE_ISFIELDONLY_CHECK" condition="IsFieldOnly in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADATTRIBUTE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -52,11 +44,19 @@
       <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCE_ADATTRIBUTE">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADATTRIBUTE"   onDelete="cascade">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADATTRIBUTE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_VAL_RULE" name="ADVALRULE_ADATTRIBUTE"   onDelete="setnull">
+      <foreign-key foreignTable="AD_VAL_RULE" name="ADVALRULE_ADATTRIBUTE" onDelete="setnull">
         <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
       </foreign-key>
+      <check name="ADATTRIBUTE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISUPDATEABLE_CHECK" condition="IsUpdateable in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISMANDATORY_CHECK" condition="IsMandatory in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISENCRYPTED_CHECK" condition="IsEncrypted in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISSAMELINE_CHECK" condition="IsSameLine in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISHEADING_CHECK" condition="IsHeading in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISFIELDONLY_CHECK" condition="IsFieldOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

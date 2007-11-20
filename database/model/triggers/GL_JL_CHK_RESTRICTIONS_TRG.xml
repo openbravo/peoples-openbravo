@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER GL_JL_CHK_RESTRICTIONS_TRG">
-<trigger name="GL_JL_CHK_RESTRICTIONS_TRG" table="GL_JOURNALLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER GL_JL_CHK_RESTRICTIONS_TRG">
+    <trigger name="GL_JL_CHK_RESTRICTIONS_TRG" table="GL_JOURNALLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -36,11 +36,11 @@ BEGIN
   FROM GL_JOURNAL
   WHERE GL_JOURNAL_ID=v_GL_JOURNAL_ID;
   IF(UPDATING) THEN
-    IF((COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:NEW.AMTSOURCEDR, 0) OR COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:NEW.AMTSOURCECR, 0) OR COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:NEW.C_CURRENCY_ID, 0))) THEN
-      IF(v_Processed='Y' AND ((COALESCE(:old.LINE, 0) <> COALESCE(:new.LINE, 0)) OR (COALESCE(:old.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:new.C_DEBT_PAYMENT_ID, 0)) OR(COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:new.AMTSOURCEDR, 0)) OR(COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:new.AMTSOURCECR, 0)) OR(COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:new.C_CURRENCY_ID, 0)) OR(COALESCE(:old.C_UOM_ID, 0) <> COALESCE(:new.C_UOM_ID, 0)))) THEN
+    IF((COALESCE(:old.AMTSOURCEDR, 0) &lt;&gt; COALESCE(:NEW.AMTSOURCEDR, 0) OR COALESCE(:old.AMTSOURCECR, 0) &lt;&gt; COALESCE(:NEW.AMTSOURCECR, 0) OR COALESCE(:old.C_CURRENCY_ID, 0) &lt;&gt; COALESCE(:NEW.C_CURRENCY_ID, 0))) THEN
+      IF(v_Processed='Y' AND ((COALESCE(:old.LINE, 0) &lt;&gt; COALESCE(:new.LINE, 0)) OR (COALESCE(:old.C_DEBT_PAYMENT_ID, 0) &lt;&gt; COALESCE(:new.C_DEBT_PAYMENT_ID, 0)) OR(COALESCE(:old.AMTSOURCEDR, 0) &lt;&gt; COALESCE(:new.AMTSOURCEDR, 0)) OR(COALESCE(:old.AMTSOURCECR, 0) &lt;&gt; COALESCE(:new.AMTSOURCECR, 0)) OR(COALESCE(:old.C_CURRENCY_ID, 0) &lt;&gt; COALESCE(:new.C_CURRENCY_ID, 0)) OR(COALESCE(:old.C_UOM_ID, 0) &lt;&gt; COALESCE(:new.C_UOM_ID, 0)))) THEN
         RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
       END IF;
-      IF(v_Posted='Y' AND ((COALESCE(:old.DATEACCT, '01-01-1386') <> COALESCE(:new.DATEACCT, '01-01-1386')) OR(COALESCE(:old.C_VALIDCOMBINATION_ID, 0) <> COALESCE(:new.C_VALIDCOMBINATION_ID, 0)) OR(COALESCE(:old.AMTACCTDR, 0) <> COALESCE(:new.AMTACCTDR, 0)) OR(COALESCE(:old.AMTACCTCR, 0) <> COALESCE(:new.AMTACCTCR, 0)))) THEN
+      IF(v_Posted='Y' AND ((COALESCE(:old.DATEACCT, '01-01-1386') &lt;&gt; COALESCE(:new.DATEACCT, '01-01-1386')) OR(COALESCE(:old.C_VALIDCOMBINATION_ID, 0) &lt;&gt; COALESCE(:new.C_VALIDCOMBINATION_ID, 0)) OR(COALESCE(:old.AMTACCTDR, 0) &lt;&gt; COALESCE(:new.AMTACCTDR, 0)) OR(COALESCE(:old.AMTACCTCR, 0) &lt;&gt; COALESCE(:new.AMTACCTCR, 0)))) THEN
         RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
       END IF;
     END IF;
@@ -52,7 +52,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
 END GL_JL_Chk_Restrictions_Trg
-]]>
+
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

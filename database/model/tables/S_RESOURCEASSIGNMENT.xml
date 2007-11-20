@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE S_RESOURCEASSIGNMENT">
+  <database name="TABLE S_RESOURCEASSIGNMENT">
     <table name="S_RESOURCEASSIGNMENT" primaryKey="S_RESOURCEASSIGNMENT_KEY">
       <column name="S_RESOURCEASSIGNMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,8 +16,6 @@
       <column name="ASSIGNDATETO" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="QTY" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="ISCONFIRMED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="SRESOURCEASSIGNMENT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="SRESOURCEASSIGNMENT_ISCONFIRMED_CHECK" condition="IsConfirmed in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_SRESOURCEASSIGNMENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -27,5 +25,7 @@
       <foreign-key foreignTable="S_RESOURCE" name="SRESOURCE_SRESOURCEASSIGNMENT">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
       </foreign-key>
+      <check name="SRESOURCEASSIGN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="SRESOURCEASSIGN_ONFIRMED_CHECK" condition="IsConfirmed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<database name="VIEW RV_ASSET_DELIVERY">
-<view name="RV_ASSET_DELIVERY"><![CDATA[
+  <database name="VIEW RV_ASSET_DELIVERY">
+    <view name="RV_ASSET_DELIVERY" updatable="false">
 SELECT ad.A_Asset_Delivery_ID, ad.AD_Client_ID, ad.AD_Org_ID, ad.IsActive, ad.Created, ad.CreatedBy, ad.Updated, ad.UpdatedBy,
   a.A_ASSET_ID, a.A_Asset_Group_ID, a.M_Product_ID,
   a.GUARANTEEDATE, a.ASSETSERVICEDATE,
@@ -12,5 +12,5 @@ SELECT ad.A_Asset_Delivery_ID, ad.AD_Client_ID, ad.AD_Org_ID, ad.IsActive, ad.Cr
   ad.DESCRIPTION
 FROM A_Asset_Delivery ad
  INNER JOIN A_Asset a ON (a.A_Asset_ID=ad.A_Asset_ID)
-]]></view>
-</database>
+</view>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_WORKFLOW_ACCESS">
+  <database name="TABLE AD_WORKFLOW_ACCESS">
     <table name="AD_WORKFLOW_ACCESS" primaryKey="AD_WORKFLOW_ACCESS_KEY">
       <column name="AD_WORKFLOW_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_ROLE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -11,23 +11,23 @@
       <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISREADWRITE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <check name="ADWORKFLOWAC_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADWORKFLOWAC_ISREADWRITE_CHECK" condition="IsReadWrite in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="AD_WORKFLOWACCESS_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_WORKFLOWACCESS_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADWORKFLOWACCESS"   onDelete="cascade">
+      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADWORKFLOWACCESS" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_WORKFLOW" name="ADWORKFOW_WORKFLOWACCESS"   onDelete="cascade">
+      <foreign-key foreignTable="AD_WORKFLOW" name="ADWORKFOW_WORKFLOWACCESS" onDelete="cascade">
         <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
       </foreign-key>
       <index name="AD_WORKFLOW_ACCESS_UN_KEY" unique="true">
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_WORKFLOW_ID"/>
       </index>
+      <check name="ADWORKFLOWAC_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADWORKFLOWAC_ISREADWRITE_CHECK" condition="IsReadWrite in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

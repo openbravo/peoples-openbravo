@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_TABLE_ACCESS">
+  <database name="TABLE AD_TABLE_ACCESS">
     <table name="AD_TABLE_ACCESS" primaryKey="AD_TABLE_ACCESS_KEY">
       <column name="AD_ROLE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_TABLE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -18,11 +18,11 @@
       <foreign-key foreignTable="AD_ORG" name="AD_DATAACCESSORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADTABLEACCESS"   onDelete="cascade">
+      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADTABLEACCESS" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADTABLEACCESS"   onDelete="cascade">
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADTABLEACCESS" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

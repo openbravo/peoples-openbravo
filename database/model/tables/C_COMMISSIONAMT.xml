@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_COMMISSIONAMT">
+  <database name="TABLE C_COMMISSIONAMT">
     <table name="C_COMMISSIONAMT" primaryKey="C_COMMISSIONAMT_KEY">
       <column name="C_COMMISSIONAMT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -14,7 +14,6 @@
       <column name="CONVERTEDAMT" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="ACTUALQTY" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="COMMISSIONAMT" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
-      <check name="C_COMMISSIONAMT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CCOMMISSIONAMT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -24,14 +23,15 @@
       <foreign-key foreignTable="C_COMMISSIONLINE" name="CCOMLINE_CCOMAMT">
         <reference local="C_COMMISSIONLINE_ID" foreign="C_COMMISSIONLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_COMMISSIONRUN" name="CCOMMENTRUN_CCOMMISSIONAMT"   onDelete="cascade">
+      <foreign-key foreignTable="C_COMMISSIONRUN" name="CCOMMENTRUN_CCOMMISSIONAMT" onDelete="cascade">
         <reference local="C_COMMISSIONRUN_ID" foreign="C_COMMISSIONRUN_ID"/>
       </foreign-key>
-      <index name="C_COMMISSIONAMT_COMLINE">
+      <index name="C_COMMISSIONAMT_COMLINE" unique="false">
         <index-column name="C_COMMISSIONLINE_ID"/>
       </index>
-      <index name="C_COMMISSIONAMT_RUN">
+      <index name="C_COMMISSIONAMT_RUN" unique="false">
         <index-column name="C_COMMISSIONRUN_ID"/>
       </index>
+      <check name="C_COMMISSIONAMT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

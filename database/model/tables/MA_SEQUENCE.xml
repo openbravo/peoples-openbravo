@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_SEQUENCE">
+  <database name="TABLE MA_SEQUENCE">
     <table name="MA_SEQUENCE" primaryKey="MA_SEQUENCE_KEY">
       <column name="MA_SEQUENCE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,7 +16,7 @@
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="COSTCENTERUSE" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false"/>
       <column name="PREPTIME" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false"/>
-      <column name="MULTIPLIER" primaryKey="false" required="true" type="DECIMAL"   autoIncrement="false"/>
+      <column name="MULTIPLIER" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false"/>
       <column name="SEQNO" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="NOQTY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="GROUPUSE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
@@ -25,12 +25,6 @@
       <column name="OUTSOURCED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="OUTSOURCINGCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="ISDEFAULT" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <check name="MA_SEQUENCE_ISACTIVE_CHECK" condition="isActive in ('Y','N')"/> 
-      <check name="MA_SEQUENCE_GROUPUSE_CHECK" condition="GROUPUSE in ('Y','N')"/> 
-      <check name="MA_SEQUENCE_NOQTY_CHECK" condition="NOQTY in ('Y','N')"/> 
-      <check name="MA_SEQUENCE_CALCULATED_CHECK" condition="Calculated in ('Y','N')"/>
-      <check name="MA_SEQUENCE_OUTSOURCED_CHECK" condition="outsourced in ('Y', 'N')"/> 
-      <check name="MA_SEQUENCE_ISDEFAULT_CHECK" condition="ISDEFAULT IN ('Y', 'N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MASEQUENCE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -43,5 +37,11 @@
       <foreign-key foreignTable="MA_PROCESSPLAN_VERSION" name="MAPROCESSPLANVERSION_MASEQ">
         <reference local="MA_PROCESSPLAN_VERSION_ID" foreign="MA_PROCESSPLAN_VERSION_ID"/>
       </foreign-key>
+      <check name="MA_SEQUENCE_ISACTIVE_CHECK" condition="isActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_SEQUENCE_GROUPUSE_CHECK" condition="GROUPUSE in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_SEQUENCE_NOQTY_CHECK" condition="NOQTY in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_SEQUENCE_CALCULATED_CHECK" condition="Calculated in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_SEQUENCE_OUTSOURCED_CHECK" condition="outsourced in (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MA_SEQUENCE_ISDEFAULT_CHECK" condition="ISDEFAULT IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
-</database>
+  </database>

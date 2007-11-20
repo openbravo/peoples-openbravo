@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_ACCT_RPT">
+  <database name="TABLE C_ACCT_RPT">
     <table name="C_ACCT_RPT" primaryKey="C_ACCT_RPT_KEY">
       <column name="C_ACCT_RPT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -18,4 +18,4 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

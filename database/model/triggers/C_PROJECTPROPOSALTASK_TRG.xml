@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_PROJECTPROPOSALTASK_TRG">
-<trigger name="C_PROJECTPROPOSALTASK_TRG" table="C_PROJECTPROPOSALTASK" fires="after" insert="true" update="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_PROJECTPROPOSALTASK_TRG">
+    <trigger name="C_PROJECTPROPOSALTASK_TRG" table="C_PROJECTPROPOSALTASK" fires="after" insert="true" update="true" delete="false" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -29,7 +29,7 @@ BEGIN
   UPDATE C_PROJECT
     SET LASTPLANNEDPROPOSALDATE=:NEW.UPDATED
   WHERE C_PROJECT_ID=v_Project;
-END C_ProjectProposalTask_Trg ]]>
+END C_ProjectProposalTask_Trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

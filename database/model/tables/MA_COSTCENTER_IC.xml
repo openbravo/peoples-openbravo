@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_COSTCENTER_IC">
+  <database name="TABLE MA_COSTCENTER_IC">
     <table name="MA_COSTCENTER_IC" primaryKey="MA_COSTCENTER_IC_KEY">
       <column name="MA_COSTCENTER_IC_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
@@ -11,7 +11,6 @@
       <column name="MA_COSTCENTER_VERSION_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="MA_INDIRECT_COST_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <check name="MA_COSTCENTER_IC_ISACTIVE_CHECK" condition="IsActive IN ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MACOSTCENTERIC">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -24,5 +23,6 @@
       <foreign-key foreignTable="MA_INDIRECT_COST" name="CSALARYCAT_MACOSTCENTERIC">
         <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
       </foreign-key>
+      <check name="MA_COSTCENTER_I_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

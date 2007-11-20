@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE FACT_ACCT_CFS">
+  <database name="TABLE FACT_ACCT_CFS">
     <table name="FACT_ACCT_CFS" primaryKey="FACT_ACCT_CFS_KEY">
       <column name="FACT_ACCT_CFS_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="FACT_ACCT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -19,8 +19,8 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_FACTACCTCFS">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="FACT_ACCT" name="FACTACCT_FACTACCTCFS"   onDelete="cascade">
+      <foreign-key foreignTable="FACT_ACCT" name="FACTACCT_FACTACCTCFS" onDelete="cascade">
         <reference local="FACT_ACCT_ID" foreign="FACT_ACCT_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

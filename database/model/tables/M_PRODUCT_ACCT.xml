@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_PRODUCT_ACCT">
+  <database name="TABLE M_PRODUCT_ACCT">
     <table name="M_PRODUCT_ACCT" primaryKey="M_PRODUCT_ACCT_KEY">
       <column name="M_PRODUCT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_ACCTSCHEMA_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -18,14 +18,13 @@
       <column name="P_COGS_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="P_TRADEDISCOUNTREC_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="P_TRADEDISCOUNTGRANT_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="M_PRODUCT_ACCT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCTACCT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_MPRODUCTACCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_MPRODUCTACCT"   onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_MPRODUCTACCT" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PINVOICEPV_MPRODUCT">
@@ -52,8 +51,9 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PCOGS_MPRODUCT">
         <reference local="P_COGS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_M_PRODUCT_ACCT"   onDelete="cascade">
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_M_PRODUCT_ACCT" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <check name="M_PRODUCT_ACCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

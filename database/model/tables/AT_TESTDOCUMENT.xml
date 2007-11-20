@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AT_TESTDOCUMENT">
+  <database name="TABLE AT_TESTDOCUMENT">
     <table name="AT_TESTDOCUMENT" primaryKey="AT_TESTDOCUMENT_KEY">
       <column name="AT_TESTDOCUMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -23,10 +23,6 @@
       <column name="LINE_INTERCHANGER" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="PREFIX" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="INTRODUCTION" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="ATTESTDOCUMENT_INTRODUCTION_CHECK" condition="INTRODUCTION IN ('Y','N')"/> 
-      <check name="ATTESTDOCUMENT_ISACTIVE_CHECK" condition="IsActive IN ('Y','N')"/> 
-      <check name="ATTESTDOCUMENT_LINEINTER_CHECK" condition="LINE_INTERCHANGER IN ('Y','N')"/> 
-      <check name="ATTESTDOCUMENT_PREFIX_CHECK" condition="PREFIX IN ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ATTESTDOCUMENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -36,5 +32,9 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_ATTESTDOCUMENT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="ATTESTDOCUMENT_ODUCTION_CHECK" condition="INTRODUCTION IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ATTESTDOCUMENT_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ATTESTDOCUMENT_LINEINTER_CHECK" condition="LINE_INTERCHANGER IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ATTESTDOCUMENT_PREFIX_CHECK" condition="PREFIX IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_ACCT_RPT_NODE">
+  <database name="TABLE C_ACCT_RPT_NODE">
     <table name="C_ACCT_RPT_NODE" primaryKey="C_ACCT_RPT_NODE_KEY">
       <column name="C_ACCT_RPT_NODE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_ACCT_RPT_GROUP_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -24,4 +24,4 @@
         <reference local="C_ACCT_RPT_GROUP_ID" foreign="C_ACCT_RPT_GROUP_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

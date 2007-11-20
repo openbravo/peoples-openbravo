@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_PRODUCTIONLINE">
+  <database name="TABLE M_PRODUCTIONLINE">
     <table name="M_PRODUCTIONLINE" primaryKey="M_PRODUCTIONLINE_KEY">
       <column name="M_PRODUCTIONLINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -26,9 +26,6 @@
       <column name="SECQUALITY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="CALCCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="COMPONENTCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
-      <check name="MPRODUCTLINE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/>
-      <check name="MPRODUCTLINE_PRINTLABEL_CHECK" condition="PRINTLABEL IN ('Y', 'N')"/>
-      <check name="M_PRODUCTIONLINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCTIONLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -53,8 +50,11 @@
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MPRODUCTIONLINE">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
-      <index name="M_PRODUCTIONLINE_PRODPLAN">
+      <index name="M_PRODUCTIONLINE_PRODPLAN" unique="false">
         <index-column name="M_PRODUCTIONPLAN_ID"/>
       </index>
+      <check name="MPRODUCTLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MPRODUCTLINE_PRINTLABEL_CHECK" condition="PRINTLABEL IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PRODUCTIONLINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
     </table>
-</database>
+  </database>

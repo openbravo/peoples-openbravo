@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_LANGUAGE">
+  <database name="TABLE AD_LANGUAGE">
     <table name="AD_LANGUAGE" primaryKey="AD_LANGUAGE_KEY">
       <column name="AD_LANGUAGE" primaryKey="true" required="true" type="VARCHAR" size="6" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -18,14 +18,14 @@
       <column name="AD_LANGUAGE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="PIXELSIZE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="TRANSLATEDBY" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false"/>
-      <check name="ADLANGUAGE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADLANGUAGE_ISBASELANG_CHECK" condition="IsBaseLanguage in ('Y','N')"/> 
-      <check name="ADLANGUAGE_ISSYSANG_CHECK" condition="IsSystemLanguage in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="LANGUAGECLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="LANGUAGEORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="ADLANGUAGE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADLANGUAGE_ISBASELANG_CHECK" condition="IsBaseLanguage in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADLANGUAGE_ISSYSANG_CHECK" condition="IsSystemLanguage in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION C_INVOICE_PERCENTAJE_PAID">
-<function name="C_INVOICE_PERCENTAJE_PAID" type="NUMERIC">
-<parameter name="p_Invoice_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION C_INVOICE_PERCENTAJE_PAID">
+    <function name="C_INVOICE_PERCENTAJE_PAID" type="NUMERIC">
+      <parameter name="p_Invoice_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -31,6 +31,6 @@ BEGIN
   WHERE DB.C_Invoice_ID = I.C_Invoice_ID
     AND I.C_INVOICE_ID = p_Invoice_ID;
   RETURN ROUND(v_percentaje,4);
-END C_INVOICE_PERCENTAJE_PAID]]></body>
-</function> 
-</database>
+END C_INVOICE_PERCENTAJE_PAID</body>
+    </function>
+  </database>

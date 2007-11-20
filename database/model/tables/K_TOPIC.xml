@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE K_TOPIC">
+  <database name="TABLE K_TOPIC">
     <table name="K_TOPIC" primaryKey="K_TOPIC_KEY">
       <column name="K_TOPIC_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -15,8 +15,6 @@
       <column name="K_TYPE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISPUBLIC" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="ISPUBLICWRITE" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <check name="K_TOPIC_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="K_TOPIC_ISPUBLIC_CHECK" condition="IsPublic in ('Y','N')"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_KTOPIC">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -26,5 +24,7 @@
       <foreign-key foreignTable="K_TYPE" name="KTYPE_KTOPIC">
         <reference local="K_TYPE_ID" foreign="K_TYPE_ID"/>
       </foreign-key>
+      <check name="K_TOPIC_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="K_TOPIC_ISPUBLIC_CHECK" condition="IsPublic in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

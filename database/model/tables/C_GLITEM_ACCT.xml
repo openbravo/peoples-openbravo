@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_GLITEM_ACCT">
+  <database name="TABLE C_GLITEM_ACCT">
     <table name="C_GLITEM_ACCT" primaryKey="C_GLITEM_ACCT_KEY">
       <column name="C_GLITEM_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_ACCTSCHEMA_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -12,14 +12,13 @@
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="GLITEM_DEBIT_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="GLITEM_CREDIT_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="C_GLITEM_ACCT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CGLITEMACCT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CGLITEMACCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CGLITEMACCT"   onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CGLITEMACCT" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_GLITEM" name="CGLITEM_CGLITEMACCT">
@@ -31,5 +30,6 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="GLITEMCREDITACCT_CGLITEMACCT">
         <reference local="GLITEM_CREDIT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
+      <check name="C_GLITEM_ACCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER AD_MENU_TRG">
-<trigger name="AD_MENU_TRG" table="AD_MENU" fires="after" insert="true" update="true" delete="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER AD_MENU_TRG">
+    <trigger name="AD_MENU_TRG" table="AD_MENU" fires="after" insert="true" update="true" delete="true" foreach="row">
+      <body>
+
 
   v_xTree_ID NUMBER;
   v_xParent_ID NUMBER;
@@ -73,9 +73,9 @@ BEGIN
   -- AD_Ref_List update trigger
   --  synchronize name,...
   IF UPDATING THEN
-    IF(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
-   OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
-   OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.'))
+    IF(COALESCE(:old.Name, '.') &lt;&gt; COALESCE(:NEW.Name, '.')
+   OR COALESCE(:old.Description, '.') &lt;&gt; COALESCE(:NEW.Description, '.')
+   OR COALESCE(:old.IsActive, '.') &lt;&gt; COALESCE(:NEW.IsActive, '.'))
   THEN
       IF(:old.IsActive!=:new.IsActive) THEN
         --  get AD_Tree_ID + ParentID
@@ -130,7 +130,7 @@ BEGIN
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20005, 'AD_Menu InsertTrigger Error: No ClientInfo or parent TreeNode') ;
-END AD_Menu_Trg]]>
+END AD_Menu_Trg
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

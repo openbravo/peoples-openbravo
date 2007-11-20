@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION USER_CONST_SEARCHCOND">
-<function name="USER_CONST_SEARCHCOND" type="VARCHAR">
-<parameter name="p_constraintName" type="VARCHAR" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION USER_CONST_SEARCHCOND">
+    <function name="USER_CONST_SEARCHCOND" type="VARCHAR">
+      <parameter name="p_constraintName" type="VARCHAR" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -34,6 +34,6 @@
       EXIT;
     END LOOP;
     RETURN(v_varchar2) ;
-END USER_CONST_SEARCHCOND]]></body>
-</function> 
-</database>
+END USER_CONST_SEARCHCOND</body>
+    </function>
+  </database>

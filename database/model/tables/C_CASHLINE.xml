@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_CASHLINE">
+  <database name="TABLE C_CASHLINE">
     <table name="C_CASHLINE" primaryKey="C_CASHLINE_KEY">
       <column name="C_CASHLINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -21,16 +21,13 @@
       <column name="ISGENERATED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="C_ORDER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_DEBT_PAYMENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="CCASHLINE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="CCASHLINE_ISGENERATED_CHECK" condition="IsGenerated in ('Y','N')"/> 
-      <check name="CASHTYPE_CH_PAYMENT" condition="CASHTYPE &lt;&gt;'P' OR C_DEBT_PAYMENT_ID IS NOT NULL"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CCASHLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CCASHLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CASH" name="CCASH_CCASHLINE"   onDelete="cascade">
+      <foreign-key foreignTable="C_CASH" name="CCASH_CCASHLINE" onDelete="cascade">
         <reference local="C_CASH_ID" foreign="C_CASH_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CHARGE" name="CCHARGE_CCASHLINE">
@@ -45,14 +42,17 @@
       <foreign-key foreignTable="C_ORDER" name="CORDER_FK_CCASHLINE">
         <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
-      <index name="C_CASHLINE_CASH">
+      <index name="C_CASHLINE_CASH" unique="false">
         <index-column name="C_CASH_ID"/>
       </index>
-      <index name="C_CASHLINE_ORDER">
+      <index name="C_CASHLINE_ORDER" unique="false">
         <index-column name="C_ORDER_ID"/>
       </index>
       <unique name="C_CASHLINE_DEBT_PAYMENT">
         <unique-column name="C_DEBT_PAYMENT_ID"/>
       </unique>
+      <check name="CCASHLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CCASHLINE_ISGENERATED_CHECK" condition="IsGenerated in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CASHTYPE_CH_PAYMENT" condition="CASHTYPE &lt;&gt;&apos;P&apos; OR C_DEBT_PAYMENT_ID IS NOT NULL"/>
     </table>
-</database>
+  </database>

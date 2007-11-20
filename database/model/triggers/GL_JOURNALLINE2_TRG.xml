@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER GL_JOURNALLINE2_TRG">
-<trigger name="GL_JOURNALLINE2_TRG" table="GL_JOURNALLINE" fires="before" insert="true" update="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER GL_JOURNALLINE2_TRG">
+    <trigger name="GL_JOURNALLINE2_TRG" table="GL_JOURNALLINE" fires="before" insert="true" update="true" delete="false" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -28,7 +28,7 @@
   v_CurrencyRateType  CHAR(1) ;
 BEGIN
   IF(UPDATING) THEN
-    IF NOT((COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:NEW.AMTSOURCEDR, 0) OR COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:NEW.AMTSOURCECR, 0) OR COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:NEW.C_CURRENCY_ID, 0))) THEN
+    IF NOT((COALESCE(:old.AMTSOURCEDR, 0) &lt;&gt; COALESCE(:NEW.AMTSOURCEDR, 0) OR COALESCE(:old.AMTSOURCECR, 0) &lt;&gt; COALESCE(:NEW.AMTSOURCECR, 0) OR COALESCE(:old.C_CURRENCY_ID, 0) &lt;&gt; COALESCE(:NEW.C_CURRENCY_ID, 0))) THEN
       RETURN;
     END IF;
   END IF;
@@ -57,7 +57,7 @@ BEGIN
   :NEW.CURRENCYRATE:=v_rate;
   :NEW.CURRENCYRATETYPE:=v_CurrencyRateType;
 END GL_JournalLine2_Trg
-]]>
+
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

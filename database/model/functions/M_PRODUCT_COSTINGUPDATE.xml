@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION M_PRODUCT_COSTINGUPDATE">
-<function name="M_PRODUCT_COSTINGUPDATE">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION M_PRODUCT_COSTINGUPDATE">
+    <function name="M_PRODUCT_COSTINGUPDATE" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
   /*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -12,7 +12,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -114,8 +114,8 @@
       DBMS_OUTPUT.PUT_LINE('Set to Difference PO') ;
       UPDATE M_Product_Costing
         SET FutureCostPrice=CostStandard +(CostStandardPOAmt/CostStandardPOQty)
-      WHERE CostStandardPOQty<>0
-        AND CostStandardPOAmt<>0
+      WHERE CostStandardPOQty&lt;&gt;0
+        AND CostStandardPOAmt&lt;&gt;0
         AND AD_Client_ID=v_AD_Client_ID
         AND(v_M_Product_Category_ID IS NULL
         OR EXISTS
@@ -131,8 +131,8 @@
       DBMS_OUTPUT.PUT_LINE('Set to Difference Inv') ;
       UPDATE M_Product_Costing
         SET FutureCostPrice=CostStandard +(CostStandardCumAmt/CostStandardCumQty)
-      WHERE CostStandardCumQty<>0
-        AND CostStandardCumAmt<>0
+      WHERE CostStandardCumQty&lt;&gt;0
+        AND CostStandardCumAmt&lt;&gt;0
         AND AD_Client_ID=v_AD_Client_ID
         AND(v_M_Product_Category_ID IS NULL
         OR EXISTS
@@ -148,7 +148,7 @@
       DBMS_OUTPUT.PUT_LINE('Set to PO Price') ;
       UPDATE M_Product_Costing
         SET FutureCostPrice=PriceLastPO
-      WHERE PriceLastPO<>0
+      WHERE PriceLastPO&lt;&gt;0
         AND AD_Client_ID=v_AD_Client_ID
         AND(v_M_Product_Category_ID IS NULL
         OR EXISTS
@@ -164,7 +164,7 @@
       DBMS_OUTPUT.PUT_LINE('Set to Inv Price') ;
       UPDATE M_Product_Costing
         SET FutureCostPrice=PriceLastInv
-      WHERE PriceLastInv<>0
+      WHERE PriceLastInv&lt;&gt;0
         AND AD_Client_ID=v_AD_Client_ID
         AND(v_M_Product_Category_ID IS NULL
         OR EXISTS
@@ -180,7 +180,7 @@
       DBMS_OUTPUT.PUT_LINE('Set to Average Cost') ;
       UPDATE M_Product_Costing
         SET FutureCostPrice=CostAverage
-      WHERE CostAverage<>0
+      WHERE CostAverage&lt;&gt;0
         AND AD_Client_ID=v_AD_Client_ID
         AND(v_M_Product_Category_ID IS NULL
         OR EXISTS
@@ -192,7 +192,7 @@
       rowcount:=SQL%ROWCOUNT;
       v_No:=rowcount;
       -- LL - Price List - Limit
-    ELSIF(v_SetFutureCostTo='LL' AND v_M_PriceList_Version_ID>0) THEN
+    ELSIF(v_SetFutureCostTo='LL' AND v_M_PriceList_Version_ID&gt;0) THEN
       DBMS_OUTPUT.PUT_LINE('Set to PriceList ' || v_M_PriceList_Version_ID) ;
       UPDATE M_Product_Costing
         SET FutureCostPrice=
@@ -279,7 +279,7 @@
     WHERE AD_Client_ID=v_AD_Client_ID;
     rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE(' - Updated: ' || rowcount) ;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -292,7 +292,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END M_Product_CostingUpdate]]>
+END M_Product_CostingUpdate
 </body>
-</function>
-</database>
+    </function>
+  </database>

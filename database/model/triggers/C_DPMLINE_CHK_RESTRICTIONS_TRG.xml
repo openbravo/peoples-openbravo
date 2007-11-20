@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_DPMLINE_CHK_RESTRICTIONS_TRG">
-<trigger name="C_DPMLINE_CHK_RESTRICTIONS_TRG" table="C_DP_MANAGEMENTLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_DPMLINE_CHK_RESTRICTIONS_TRG">
+    <trigger name="C_DPMLINE_CHK_RESTRICTIONS_TRG" table="C_DP_MANAGEMENTLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -33,14 +33,14 @@ BEGIN
   FROM C_DP_Management
   WHERE C_DP_Management_ID=v_C_DP_ID;
   IF UPDATING THEN
-    IF(v_Processed='Y' AND ((COALESCE(:OLD.LINE, 0) <> COALESCE(:NEW.LINE, 0)) OR(COALESCE(:OLD.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:NEW.C_DEBT_PAYMENT_ID, 0)) OR(COALESCE(:OLD.STATUS_FROM, 0) <> COALESCE(:NEW.STATUS_FROM, 0)) OR(COALESCE(:OLD.STATUS_TO, 0) <> COALESCE(:NEW.STATUS_TO, 0)))) THEN
+    IF(v_Processed='Y' AND ((COALESCE(:OLD.LINE, 0) &lt;&gt; COALESCE(:NEW.LINE, 0)) OR(COALESCE(:OLD.C_DEBT_PAYMENT_ID, 0) &lt;&gt; COALESCE(:NEW.C_DEBT_PAYMENT_ID, 0)) OR(COALESCE(:OLD.STATUS_FROM, 0) &lt;&gt; COALESCE(:NEW.STATUS_FROM, 0)) OR(COALESCE(:OLD.STATUS_TO, 0) &lt;&gt; COALESCE(:NEW.STATUS_TO, 0)))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;
   IF((DELETING OR INSERTING) AND v_Processed='Y') THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
-END C_DPMLine_Chk_Restrictions_Trg ]]>
+END C_DPMLine_Chk_Restrictions_Trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

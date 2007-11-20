@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<database name="VIEW RV_C_INVOICE">
-<view name="RV_C_INVOICE"><![CDATA[
+  <database name="VIEW RV_C_INVOICE">
+    <view name="RV_C_INVOICE" updatable="false">
 SELECT i.C_Invoice_ID,
   i.AD_Client_ID,i.AD_Org_ID,i.IsActive,i.Created,i.CreatedBy,i.Updated,i.UpdatedBy,
   i.IsSOTrx, i.DocumentNo, i.DocStatus, i.DocAction,
@@ -19,5 +19,5 @@ SELECT i.C_Invoice_ID,
 FROM  C_Invoice i, C_DocType d, C_BPartner b
 WHERE i.C_DocType_ID=d.C_DocType_ID
   AND i.C_BPartner_ID=b.C_BPartner_ID
-]]></view>
-</database>
+</view>
+  </database>

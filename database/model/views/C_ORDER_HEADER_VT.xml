@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<database name="VIEW C_ORDER_HEADER_VT">
-<view name="C_ORDER_HEADER_VT"><![CDATA[
+  <database name="VIEW C_ORDER_HEADER_VT">
+    <view name="C_ORDER_HEADER_VT" updatable="false">
 SELECT o.AD_Client_ID, o.AD_Org_ID, o.IsActive, o.Created, o.CreatedBy, o.Updated, o.UpdatedBy,
   dt.AD_Language,
   o.C_Order_ID, o.IsSOTrx, o.DocumentNo, o.DocStatus,  o.C_DocType_ID,
@@ -38,5 +38,5 @@ FROM C_Order o
   INNER JOIN AD_OrgInfo oi ON (o.AD_Org_ID=oi.AD_Org_ID)
   LEFT OUTER JOIN AD_User u ON (o.SalesRep_ID=u.AD_User_ID)
   LEFT OUTER JOIN C_BPartner ubp ON (u.C_BPartner_ID=ubp.C_BPartner_ID)
-]]></view>
-</database>
+</view>
+  </database>

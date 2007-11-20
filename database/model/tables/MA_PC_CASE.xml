@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_PC_CASE">
+  <database name="TABLE MA_PC_CASE">
     <table name="MA_PC_CASE" primaryKey="MA_PC_CASE_KEY">
       <column name="MA_PC_CASE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,7 +16,6 @@
       <column name="STARTDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="ENDDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="LAUNCHED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="MA_PC_CASE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_MAPCCASE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -32,5 +31,6 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MAPCCASE">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <check name="MA_PC_CASE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION A_ASSET_POST0">
-<function name="A_ASSET_POST0">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION A_ASSET_POST0">
+    <function name="A_ASSET_POST0" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
  * The contents of this file are subject to the Compiere License.  You may
  * obtain a copy of the License at    http://www.compiere.org/license.html
@@ -16,7 +16,7 @@
  *************************************************************************/
 BEGIN
  A_Asset_Post (p_PInstance_ID, NULL);
-END A_Asset_Post0]]>
+END A_Asset_Post0
 </body>
-</function>
-</database>
+    </function>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_SEQUENCE">
+  <database name="TABLE AD_SEQUENCE">
     <table name="AD_SEQUENCE" primaryKey="AD_SEQUENCE_KEY">
       <column name="AD_SEQUENCE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -22,11 +22,6 @@
       <column name="PREFIX" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false"/>
       <column name="SUFFIX" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false"/>
       <column name="STARTNEWYEAR" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="ADSEQ_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADSEQ_ISAUTOSEQUENCE_CHECK" condition="IsAutoSequence in ('Y','N')"/> 
-      <check name="ADSEQ_ISAUDITED_CHECK" condition="IsAudited in ('Y','N')"/> 
-      <check name="ADSEQ_ISTABLEID_CHECK" condition="IsTableID in ('Y','N')"/> 
-      <check name="ADSEQ_STARTNEWYEAR_CHECK" condition="StartNewYear in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="SEQUENCECLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -37,5 +32,10 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="ADSEQ_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADSEQ_ISAUTOSEQUENCE_CHECK" condition="IsAutoSequence in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADSEQ_ISAUDITED_CHECK" condition="IsAudited in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADSEQ_ISTABLEID_CHECK" condition="IsTableID in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADSEQ_STARTNEWYEAR_CHECK" condition="StartNewYear in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

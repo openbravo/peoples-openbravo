@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION M_INOUT_UPDATEQUANTITYES">
-<function name="M_INOUT_UPDATEQUANTITYES">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION M_INOUT_UPDATEQUANTITYES">
+    <function name="M_INOUT_UPDATEQUANTITYES" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -103,7 +103,7 @@
         COALESCE(QUANTITYORDER, 0)
       )
       A;
-    IF(v_Total>0) THEN
+    IF(v_Total&gt;0) THEN
       v_Message:='LinesNotMatch';
       v_Result:=0;
       FINISH_PROCESS:=true;
@@ -152,7 +152,7 @@
           WHERE M_INOUTLINE.M_INOUTLINE_ID=v_Lines_Aux;
         END LOOP;
       END;
-    END IF;----<<FINISH_PROCESS>>
+    END IF;----&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -165,7 +165,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END M_InOut_UpdateQuantityes]]>
+END M_InOut_UpdateQuantityes
 </body>
-</function>
-</database>
+    </function>
+  </database>

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<database name="FUNCTION GET_PRODUCT_COST">
-<function name="GET_PRODUCT_COST" type="NUMERIC">
-<parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_MovementDate" type="TIMESTAMP" size="7" mode="in"/>
-<parameter name="p_CostType" type="CHAR" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION GET_PRODUCT_COST">
+    <function name="GET_PRODUCT_COST" type="NUMERIC">
+      <parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_MovementDate" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_CostType" type="CHAR" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -52,8 +52,8 @@
       FOR Cur_Cost IN
         (SELECT COST
         FROM M_COSTING
-        WHERE DATEFROM < p_MovementDate
-          AND DATETO >= p_MovementDate
+        WHERE DATEFROM &lt; p_MovementDate
+          AND DATETO &gt;= p_MovementDate
           AND M_PRODUCT_ID = p_Product_ID
           AND(v_CostType IS NULL
           OR v_CostType = COSTTYPE)
@@ -66,6 +66,6 @@
       END LOOP;
       RETURN v_Cost;
     END IF;
-END Get_Product_Cost]]></body>
-</function> 
-</database>
+END Get_Product_Cost</body>
+    </function>
+  </database>

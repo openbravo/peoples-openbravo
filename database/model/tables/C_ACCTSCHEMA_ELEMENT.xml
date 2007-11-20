@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_ACCTSCHEMA_ELEMENT">
+  <database name="TABLE C_ACCTSCHEMA_ELEMENT">
     <table name="C_ACCTSCHEMA_ELEMENT" primaryKey="C_ACCTSCHEMA_ELEMENT_KEY">
       <column name="C_ACCTSCHEMA_ELEMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
@@ -25,9 +25,6 @@
       <column name="C_PROJECT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_CAMPAIGN_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_ACTIVITY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="CACCTSCHEL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="CACCTSCHEL_ISMANDATORY_CHECK" condition="IsMandatory in ('Y','N')"/> 
-      <check name="CACCTSCHEL_ISBALANCED_CHECK" condition="IsBalanced in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CASCHEMAELEMENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -37,7 +34,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORGID_C_ASCHEMAELEMENT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CASCHEMAELEMENT"   onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CASCHEMAELEMENT" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CACCTSCHEMAELEMENT">
@@ -67,8 +64,11 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CASCHEMAELEMENT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <index name="C_ACCTSCHEMA_ELEMENT_SCHEMA">
+      <index name="C_ACCTSCHEMA_ELEMENT_SCHEMA" unique="false">
         <index-column name="C_ACCTSCHEMA_ID"/>
       </index>
+      <check name="CACCTSCHEL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEL_ISMANDATORY_CHECK" condition="IsMandatory in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEL_ISBALANCED_CHECK" condition="IsBalanced in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

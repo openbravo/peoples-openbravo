@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MRP_RUN_PRODUCTION">
+  <database name="TABLE MRP_RUN_PRODUCTION">
     <table name="MRP_RUN_PRODUCTION" primaryKey="MRP_RUN_PRODUCTION_KEY">
       <column name="MRP_RUN_PRODUCTION_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -23,11 +23,6 @@
       <column name="LAUNCHWR" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="LAUNCHMR" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="RECALCULATESTOCK" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="MRPRUNPRODUCTION_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="MRPRUNPRODUCTION_LAUNCHWR_CHECK" condition="LAUNCHWR in ('Y','N')"/> 
-      <check name="MRPRUNPRODUCTION_LAUNCHMR_CHECK" condition="LAUNCHMR in ('Y','N')"/> 
-      <check name="MRPRUNPROD_RECALCULATESTOCK_CHECK" condition="RECALCULATESTOCK in ('Y','N')"/> 
-      <check name="MRPRUNPRODUCTION_SIMULATE_CHECK" condition="SIMULATE in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_RUN_PRODUCTION">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -49,5 +44,10 @@
       <foreign-key foreignTable="MRP_PLANNER" name="MRP_PLANNER_RUN_PRODUCTION">
         <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
       </foreign-key>
+      <check name="MRPRUNPRODUCTIO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MRPRUNPRODUCTIO_LAUNCHWR_CHECK" condition="LAUNCHWR in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MRPRUNPRODUCTIO_LAUNCHMR_CHECK" condition="LAUNCHMR in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MRPRUNPROD_RECA_ATESTOCK_CHECK" condition="RECALCULATESTOCK in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MRPRUNPRODUCTIO_SIMULATE_CHECK" condition="SIMULATE in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_CITY">
+  <database name="TABLE C_CITY">
     <table name="C_CITY" primaryKey="C_CITY_KEY">
       <column name="C_CITY_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,7 +16,6 @@
       <column name="AREACODE" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false"/>
       <column name="C_COUNTRY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_REGION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="C_CITY_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="C_CITYCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -29,5 +28,6 @@
       <foreign-key foreignTable="C_REGION" name="CREGION_CCITY">
         <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
+      <check name="C_CITY_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

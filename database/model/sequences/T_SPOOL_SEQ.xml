@@ -1,4 +1,4 @@
-<?xml version="1.0"?> 
-<database name="SEQUENCE T_SPOOL_SEQ">
-	<sequence name="T_SPOOL_SEQ" start="1" increment="1" />
-</database>
+<?xml version="1.0"?>
+  <database name="SEQUENCE T_SPOOL_SEQ">
+    <sequence name="T_SPOOL_SEQ" start="1" increment="1"/>
+  </database>

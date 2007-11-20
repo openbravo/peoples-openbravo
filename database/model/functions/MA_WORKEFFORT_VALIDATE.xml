@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION MA_WORKEFFORT_VALIDATE">
-<function name="MA_WORKEFFORT_VALIDATE">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION MA_WORKEFFORT_VALIDATE">
+    <function name="MA_WORKEFFORT_VALIDATE" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -79,7 +79,7 @@
         v_Client_ID:=Cur_Parameter.AD_Client_ID;
       END LOOP; -- Get Parameter
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--<<MA_WorkEffort_Validate>>') ;
+      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_WorkEffort_Validate&gt;&gt;') ;
     END IF;
   BEGIN --BODY
     SELECT Processed, MOVEMENTDATE
@@ -111,7 +111,7 @@
       FROM M_PRODUCTIONPLAN pp
       WHERE M_Production_ID=v_Record_ID
         AND PROCESSED='N';
-      IF(v_count<>0) THEN
+      IF(v_count&lt;&gt;0) THEN
         v_Message:='@ProducionRunNoProcessed@';
         RAISE_APPLICATION_ERROR(-20000, v_Message);
         FINISH_PROCESS:=TRUE;
@@ -126,7 +126,7 @@
       WHERE pp.MA_WRPHASE_ID=wp.MA_WRPHASE_ID
         AND pp.M_PRODUCTION_ID=v_Record_ID
         AND wp.GROUPUSE='Y';
-      IF(v_count<>0) THEN
+      IF(v_count&lt;&gt;0) THEN
         v_ResultStr:='Distributing product of global use';
         Ma_Globaluse_Distribute(v_Client_ID, v_Org_ID, v_User_ID, v_Record_ID) ;
       END IF;
@@ -141,7 +141,7 @@
       WHERE l.M_ProductionPlan_ID=p.M_ProductionPlan_ID
         AND p.M_Production_ID=v_Record_ID
         AND l.M_Locator_ID IS NULL;
-      IF(v_count<>0) THEN
+      IF(v_count&lt;&gt;0) THEN
         v_ResultStr := 'There are produts without Locator';
         v_Message:='@NeedLocator@';
         RAISE_APPLICATION_ERROR(-20000, v_Message);
@@ -164,7 +164,7 @@
           AND PRODUCTIONTYPE='-'
         )
         ;
-      IF(v_count<>0) THEN
+      IF(v_count&lt;&gt;0) THEN
         ROLLBACK;
         v_ResultStr := 'Same product in a production plan as P+ and P-';
         v_Message:='@P+AndP-InSamePlan@';
@@ -181,7 +181,7 @@
         AND PL.M_ATTRIBUTESETINSTANCE_ID IS NULL
         AND PL.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
         AND pp.M_Production_ID=v_Record_ID;
-      IF v_Count<>0 THEN
+      IF v_Count&lt;&gt;0 THEN
         v_Message:='@LinesWithoutAttributeSet@';
         RAISE_APPLICATION_ERROR(-20000, v_Message);
         FINISH_PROCESS:=TRUE;
@@ -207,7 +207,7 @@
         -- Check Stock levels for reductions
         -- Check, if product exists and if it is stocked
         -- Unlimited capacity if no item
-        IF(CUR_PL_Post.ProductType<>'I' OR CUR_PL_Post.IsStocked='N') THEN
+        IF(CUR_PL_Post.ProductType&lt;&gt;'I' OR CUR_PL_Post.IsStocked='N') THEN
           v_QtyOnHand:=Quantity;
           -- Stocked item
         ELSIF(CUR_PL_Post.IsStocked='Y') THEN
@@ -222,7 +222,7 @@
           --DBMS_OUTPUT.PUT_LINE('Qty=' || ProductQty);
           v_QtyOnHand:=v_ProductQty;
         END IF;
-        IF(CUR_PL_Post.PRODUCTIONTYPE='-' AND CUR_PL_Post.IsStocked<>'N' AND v_QtyOnHand-CUR_PL_Post.MovementQty<0) THEN
+        IF(CUR_PL_Post.PRODUCTIONTYPE='-' AND CUR_PL_Post.IsStocked&lt;&gt;'N' AND v_QtyOnHand-CUR_PL_Post.MovementQty&lt;0) THEN
           SELECT '@NotEnoughStocked@: ' || NAME
           INTO v_Message
           FROM M_PRODUCT
@@ -251,7 +251,7 @@
             CUR_PL_Post.MovementDate,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.MovementQty ELSE -CUR_PL_Post.MOVEMENTQTY END), CUR_PL_Post.M_Product_UOM_ID,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.QUANTITYORDER ELSE -CUR_PL_Post.QuantityOrder END), CUR_PL_Post.C_UOM_ID
           )
           ;
-        IF(CUR_PL_Post.IsStocked<>'N') THEN
+        IF(CUR_PL_Post.IsStocked&lt;&gt;'N') THEN
           M_Check_Stock(CUR_PL_Post.M_Product_ID, v_Client_ID, v_Org_ID, v_Result, v_Message) ;
         END IF;
         IF (v_Result=0) THEN
@@ -294,7 +294,7 @@
         WHERE MA_TOOLSET_ID = Cur_Toolset.MA_TOOLSET_ID;
       END LOOP;
     END IF;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --v_Message := v_Message || '@Created@: ' || v_NoRecords;
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
@@ -309,7 +309,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END Ma_Workeffort_Validate]]>
+END Ma_Workeffort_Validate
 </body>
-</function>
-</database>
+    </function>
+  </database>

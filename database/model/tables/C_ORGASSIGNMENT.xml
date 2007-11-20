@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_ORGASSIGNMENT">
+  <database name="TABLE C_ORGASSIGNMENT">
     <table name="C_ORGASSIGNMENT" primaryKey="C_ORGASSIGNMENT_KEY">
       <column name="C_ORGASSIGNMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -22,4 +22,4 @@
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

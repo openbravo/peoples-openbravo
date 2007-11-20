@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE I_GLJOURNAL">
+  <database name="TABLE I_GLJOURNAL">
     <table name="I_GLJOURNAL" primaryKey="I_GLJOURNAL_KEY">
       <column name="I_GLJOURNAL_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -64,9 +64,6 @@
       <column name="C_CAMPAIGN_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="USER1_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="USER2_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="I_GLJOURNAL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="IGLJOURNAL_I_ISIMPORTED_CHECK" condition="I_IsImported in ('Y','N')"/>
-      <check name="I_GLJOURNAL_PROCESSED_CHECK" condition="Processed in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IGLJOURNAL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -145,5 +142,8 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_OGLJOURNAL">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <check name="I_GLJOURNAL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IGLJOURNAL_I_ISIMPORTED_CHECK" condition="I_IsImported in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="I_GLJOURNAL_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

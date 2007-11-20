@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
-<database name="FUNCTION MRP_RUN_EXPLODE">
-<function name="MRP_RUN_EXPLODE">
-        <parameter name="p_User_ID" type="NUMERIC" mode="in"/>
-        <parameter name="p_Org_ID" type="NUMERIC" mode="in"/>
-        <parameter name="p_Client_ID" type="NUMERIC" mode="in"/>
-        <parameter name="p_Run_ID" type="NUMERIC" mode="in"/>
-        <parameter name="p_Planner_ID" type="NUMERIC" mode="in"/>
-        <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
-        <parameter name="p_PlanningDate" type="TIMESTAMP" size="7" mode="in"/>
-        <parameter name="p_SecurityMargin" type="NUMERIC" mode="in"/>
-        <body><![CDATA[
+  <database name="FUNCTION MRP_RUN_EXPLODE">
+    <function name="MRP_RUN_EXPLODE" type="NULL">
+      <parameter name="p_User_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Org_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Client_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Run_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Planner_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
+      <parameter name="p_PlanningDate" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_SecurityMargin" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -51,7 +51,7 @@ BEGIN
     WHERE MRP_RUN_PRODUCTION_ID = p_Run_ID
       AND isexploded = 'N';
 
-    WHILE (v_Count <> 0) LOOP
+    WHILE (v_Count &lt;&gt; 0) LOOP
       v_New := 'N';
       FOR Cur_Run_Lines IN (
         SELECT MRP_RUN_PRODUCTIONLINE.MRP_RUN_PRODUCTIONLINE_ID AS MRP_RUN_LINE_ID, InOutTrxType,
@@ -67,9 +67,9 @@ BEGIN
           AND isexploded = 'N'
           AND MRP_RUN_PRODUCTION_ID = p_Run_ID
       ) LOOP
-        IF (Cur_Run_Lines.Qty < 0) THEN
+        IF (Cur_Run_Lines.Qty &lt; 0) THEN
           v_New := 'Y';
-          Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Run_Lines.M_Product_ID, -1*Cur_Run_Lines.Qty, -1*Cur_Run_Lines.Qty, Cur_Run_Lines.MRP_RUN_Line_ID, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN 'MP' ELSE 'WP' END), 'N', NULL, NULL, NULL, NULL, Cur_Run_Lines.MA_Processplan_ID, Cur_Run_Lines.planneddate - p_SecurityMargin, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN (Cur_Run_Lines.planneddate - p_SecurityMargin) ELSE Cur_Run_Lines.planneddate - p_SecurityMargin - (CASE Cur_Run_Lines.DELAYMIN > (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) WHEN true THEN Cur_Run_Lines.DELAYMIN ELSE (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) END) END), 'Y', (CASE WHEN Cur_Run_Lines.ispurchased = 'Y' THEN 'Y' ELSE 'N' END), NULL, v_Aux_ID);
+          Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Run_Lines.M_Product_ID, -1*Cur_Run_Lines.Qty, -1*Cur_Run_Lines.Qty, Cur_Run_Lines.MRP_RUN_Line_ID, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN 'MP' ELSE 'WP' END), 'N', NULL, NULL, NULL, NULL, Cur_Run_Lines.MA_Processplan_ID, Cur_Run_Lines.planneddate - p_SecurityMargin, (CASE Cur_Run_Lines.ispurchased WHEN 'Y' THEN (Cur_Run_Lines.planneddate - p_SecurityMargin) ELSE Cur_Run_Lines.planneddate - p_SecurityMargin - (CASE Cur_Run_Lines.DELAYMIN &gt; (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) WHEN true THEN Cur_Run_Lines.DELAYMIN ELSE (CASE WHEN Cur_Run_Lines.CAPACITY IS NULL THEN 0 ELSE CEIL(Cur_Run_Lines.Qty/Cur_Run_Lines.CAPACITY) END) END) END), 'Y', (CASE WHEN Cur_Run_Lines.ispurchased = 'Y' THEN 'Y' ELSE 'N' END), NULL, v_Aux_ID);
         ELSE
           v_ResultStr := 'Explode dependant products';
           FOR Cur_Dependants IN (SELECT MA_PROCESSPLAN_TOTALIZED.DEPENDANTPRODUCT, DEPQTY/PROQTY AS qty,
@@ -81,7 +81,7 @@ BEGIN
                        NULL, NULL, NULL, NULL, p_TimeHorizon,
                        p_PlanningDate, 'Y');
             v_New := 'Y';
-            Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Dependants.DependantProduct, Cur_Run_Lines.Qty*Cur_Dependants.qty, Cur_Run_Lines.Qty*Cur_Dependants.qty, Cur_Run_Lines.MRP_RUN_Line_ID, 'WP', 'N', NULL, NULL, NULL, NULL, NULL, (CASE WHEN Cur_Dependants.qty > 0 THEN Cur_Run_Lines.planneddate ELSE Cur_Run_Lines.plannedorderdate END), Cur_Run_Lines.plannedorderdate, 'Y', (CASE WHEN Cur_Dependants.qty < 0 THEN 'N' ELSE 'Y' END), NULL, v_Aux_ID);
+            Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run_ID, Cur_Dependants.DependantProduct, Cur_Run_Lines.Qty*Cur_Dependants.qty, Cur_Run_Lines.Qty*Cur_Dependants.qty, Cur_Run_Lines.MRP_RUN_Line_ID, 'WP', 'N', NULL, NULL, NULL, NULL, NULL, (CASE WHEN Cur_Dependants.qty &gt; 0 THEN Cur_Run_Lines.planneddate ELSE Cur_Run_Lines.plannedorderdate END), Cur_Run_Lines.plannedorderdate, 'Y', (CASE WHEN Cur_Dependants.qty &lt; 0 THEN 'N' ELSE 'Y' END), NULL, v_Aux_ID);
           END LOOP;
         END IF;
 
@@ -121,6 +121,6 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE('MRP_RUN_EXPLODE exception: ' || v_ResultStr);
   RAISE;
 --  RETURN;
-END Mrp_Run_EXPLODE]]></body>
+END Mrp_Run_EXPLODE</body>
     </function>
-</database>
+  </database>

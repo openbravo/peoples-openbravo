@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_BP_EDI">
+  <database name="TABLE C_BP_EDI">
     <table name="C_BP_EDI" primaryKey="C_BPARTNER_EDI_KEY">
       <column name="C_BP_EDI_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -28,13 +28,6 @@
       <column name="RECEIVEINQUIRYREPLY" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="SENDORDER" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="RECEIVEORDERREPLY" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <check name="CBPEDI_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="CBPEDI_ISAUDITED_CHECK" condition="IsAudited in ('Y','N')"/> 
-      <check name="CBPEDI_ISINFOSENT_CHECK" condition="IsInfoSent in ('Y','N')"/> 
-      <check name="CBPEDI_SENDINQUIRY_CHECK" condition="SendInquiry in ('Y','N')"/> 
-      <check name="CBPEDI_REINQUIRYREPLY_CHECK" condition="ReceiveInquiryReply in ('Y','N')"/> 
-      <check name="CBPEDI_SENDORDER_CHECK" condition="SendOrder in ('Y','N')"/> 
-      <check name="CBPEDI_REORDERREPLY_CHECK" condition="ReceiveOrderReply in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPEDI">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -50,5 +43,12 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_CBPEDI">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <check name="CBPEDI_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPEDI_ISAUDITED_CHECK" condition="IsAudited in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPEDI_ISINFOSENT_CHECK" condition="IsInfoSent in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPEDI_SENDINQUIRY_CHECK" condition="SendInquiry in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPEDI_REINQUIRYREPLY_CHECK" condition="ReceiveInquiryReply in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPEDI_SENDORDER_CHECK" condition="SendOrder in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPEDI_REORDERREPLY_CHECK" condition="ReceiveOrderReply in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

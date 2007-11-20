@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<database name="FUNCTION AD_TABLE_IMPORT">
-<function name="AD_TABLE_IMPORT">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_AD_Table_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION AD_TABLE_IMPORT">
+    <function name="AD_TABLE_IMPORT" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_AD_Table_ID" type="NUMERIC" mode="in"/>
+      <body>
   /*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -13,7 +13,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -116,7 +116,7 @@
       v_IsUpdateable:='Y';
       v_varchar2:=Cur_Column.DATA_DEFAULT;
       v_varchar2:=SUBSTR(v_varchar2, 1, 2000) ;
-      IF(INSTR(v_varchar2, '''')<>0) THEN
+      IF(INSTR(v_varchar2, '''')&lt;&gt;0) THEN
         v_varchar2:=SUBSTR(SUBSTR(v_varchar2, 2, 1999), 1, INSTR(SUBSTR(v_varchar2, 2, 1999), '''') -1) ;
       ELSE
         v_varchar2:=TRIM(REPLACE(REPLACE(v_varchar2, 'now()', '@#Date@'), CHR(10), '')) ;
@@ -200,7 +200,7 @@
         END IF;
       END IF;
       v_columnName:=InitCap(Cur_Column.Column_Name) ;
-      IF(INSTR(v_columnName, '_')<>0 AND INSTR(v_columnName, '_')<5) THEN
+      IF(INSTR(v_columnName, '_')&lt;&gt;0 AND INSTR(v_columnName, '_')&lt;5) THEN
         v_columnName:=UPPER(SUBSTR(v_columnName, 1, INSTR(v_columnName, '_'))) ||SUBSTR(v_columnName, INSTR(v_columnName, '_') +1, 40) ;
       END IF;
       IF(v_columnName LIKE '%_Id') THEN
@@ -244,7 +244,7 @@
     END LOOP; --  All new columns
     -- Summary info
     v_Message:='@Created@ = ' || v_count;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
@@ -264,7 +264,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   END IF;
 --  RETURN;
-END AD_Table_Import]]>
+END AD_Table_Import
 </body>
-</function>
-</database>
+    </function>
+  </database>

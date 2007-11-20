@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_USERDEF_TAB">
+  <database name="TABLE AD_USERDEF_TAB">
     <table name="AD_USERDEF_TAB" primaryKey="AD_USERDEF_TAB_KEY">
       <column name="AD_USERDEF_TAB_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,9 +16,6 @@
       <column name="HELP" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="ISSINGLEROW" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISREADONLY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="ADUSERDEFTAB_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADUSERDEFTAB_ISSINGLEROW_CHECK" condition="IsSingleRow in ('Y','N')"/> 
-      <check name="ADUSERDEFTAB_ISREADONLY_CHECK" condition="IsReadOnly in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADUSERDEFTAB">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -31,5 +28,8 @@
       <foreign-key foreignTable="AD_USERDEF_WIN" name="ADUSERDEFWIN_ADUSERDEFTAB">
         <reference local="AD_USERDEF_WIN_ID" foreign="AD_USERDEF_WIN_ID"/>
       </foreign-key>
+      <check name="ADUSERDEFTAB_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADUSERDEFTAB_ISSINGLEROW_CHECK" condition="IsSingleRow in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADUSERDEFTAB_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_ATTRIBUTESET">
+  <database name="TABLE M_ATTRIBUTESET">
     <table name="M_ATTRIBUTESET" primaryKey="M_ATTRIBUTESET_KEY">
       <column name="M_ATTRIBUTESET_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -18,11 +18,6 @@
       <column name="ISGUARANTEEDATE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="GUARANTEEDAYS" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISLOCKABLE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="M_ATTRIBUTESET_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="M_ATTRIBUTESET_ISSERNO_CHECK" condition="IsSerNo in ('Y','N')"/>
-      <check name="M_ATTRIBUTESET_ISLOT_CHECK" condition="IsLot in ('Y','N')"/>
-      <check name="MATTRIBSET_ISGUARDATE_CHECK" condition="IsGuaranteeDate in ('Y','N')"/>
-      <check name="MATTRIBSET_ISLOCKABLE_CHECK" condition="IsLockable IN ('Y', 'N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MATTRIBUTESET">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -35,5 +30,10 @@
       <foreign-key foreignTable="M_SERNOCTL" name="MSERNOCTL_ATTRIBUTESET">
         <reference local="M_SERNOCTL_ID" foreign="M_SERNOCTL_ID"/>
       </foreign-key>
+      <check name="M_ATTRIBUTESET_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_ATTRIBUTESET_ISSERNO_CHECK" condition="IsSerNo in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_ATTRIBUTESET_ISLOT_CHECK" condition="IsLot in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MATTRIBSET_ISGUARDATE_CHECK" condition="IsGuaranteeDate in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MATTRIBSET_ISLOCKABLE_CHECK" condition="IsLockable IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
-</database>
+  </database>

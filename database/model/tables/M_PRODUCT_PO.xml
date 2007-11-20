@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_PRODUCT_PO">
+  <database name="TABLE M_PRODUCT_PO">
     <table name="M_PRODUCT_PO" primaryKey="M_PRODUCT_PO_KEY">
       <column name="M_PRODUCT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_BPARTNER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -34,9 +34,6 @@
       <column name="CAPACITY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="QTYSTD" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="QTYTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <check name="MPRODUCTPO_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="MPRODUCTPO_ISCURRENTVENDOR_CHECK" condition="IsCurrentVendor in ('Y','N')"/> 
-      <check name="MPRODUCTPO_DISCONTINUED_CHECK" condition="Discontinued in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCTPO_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -52,12 +49,15 @@
       <foreign-key foreignTable="C_UOM" name="C_UOM_M_PRODUCT_PO">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_PRODUCTPO"   onDelete="cascade">
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_PRODUCTPO" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <unique name="M_PRODUCT_PO_VENDORPRODNO">
         <unique-column name="C_BPARTNER_ID"/>
         <unique-column name="VENDORPRODUCTNO"/>
       </unique>
+      <check name="MPRODUCTPO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MPRODUCTPO_ISCU_NTVENDOR_CHECK" condition="IsCurrentVendor in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MPRODUCTPO_DISCONTINUED_CHECK" condition="Discontinued in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

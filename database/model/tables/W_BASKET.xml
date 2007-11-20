@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE W_BASKET">
+  <database name="TABLE W_BASKET">
     <table name="W_BASKET" primaryKey="W_BASKET_KEY">
       <column name="W_BASKET_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -14,7 +14,6 @@
       <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_PRICELIST_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_USER_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="W_BASKET_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_WBASKET">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -30,11 +29,12 @@
       <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_WBASKET">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
-      <index name="W_BASKET_CBPARTNER">
+      <index name="W_BASKET_CBPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
       <unique name="W_BASKET_SESSION">
         <unique-column name="SESSION_ID"/>
       </unique>
+      <check name="W_BASKET_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

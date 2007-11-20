@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_INDIRECT_COST">
+  <database name="TABLE MA_INDIRECT_COST">
     <table name="MA_INDIRECT_COST" primaryKey="MA_INDIRECT_COST_KEY">
       <column name="MA_INDIRECT_COST_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -12,12 +12,12 @@
       <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="COST_TYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
-      <check name="MA_INDIRECT_COST_ISACTIVE_CHECK" condition="IsActive IN ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAINDIRECT_COST">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAINDIRECT_COST">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="MA_INDIRECT_COS_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

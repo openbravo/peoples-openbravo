@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_INOUTLINE">
+  <database name="TABLE M_INOUTLINE">
     <table name="M_INOUTLINE" primaryKey="M_INOUTLINE_KEY">
       <column name="M_INOUTLINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -25,9 +25,6 @@
       <column name="QUANTITYORDER" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="M_PRODUCT_UOM_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_INOUTLINE_TYPE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="M_INOUTLINE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="M_INOUTLINE_ISINVOICED_CHECK" condition="IsInvoiced in ('Y','N')"/> 
-      <check name="M_INOUTLINE" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MINOUTLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -43,7 +40,7 @@
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_MINOUTLINE">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INOUT" name="MINOUT_MINOUTLINE"   onDelete="cascade">
+      <foreign-key foreignTable="M_INOUT" name="MINOUT_MINOUTLINE" onDelete="cascade">
         <reference local="M_INOUT_ID" foreign="M_INOUT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_INOUTLINE_TYPE" name="MINOUTLINETYPE_MINOUTLINE">
@@ -58,14 +55,17 @@
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MINOUTLINE">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
-      <index name="M_INOUTLINE_INOUT">
+      <index name="M_INOUTLINE_INOUT" unique="false">
         <index-column name="M_INOUT_ID"/>
       </index>
-      <index name="M_INOUTLINE_PRODUCT">
+      <index name="M_INOUTLINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <index name="M_INOUTLINE_ORDERLINE">
+      <index name="M_INOUTLINE_ORDERLINE" unique="false">
         <index-column name="C_ORDERLINE_ID"/>
       </index>
+      <check name="M_INOUTLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_INOUTLINE_ISINVOICED_CHECK" condition="IsInvoiced in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_INOUTLINE" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
     </table>
-</database>
+  </database>

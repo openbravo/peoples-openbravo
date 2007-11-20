@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_CONVERSION_RATE">
+  <database name="TABLE C_CONVERSION_RATE">
     <table name="C_CONVERSION_RATE" primaryKey="C_CURRENCYRATE_KEY">
       <column name="C_CONVERSION_RATE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,7 +16,6 @@
       <column name="CONVERSIONRATETYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
       <column name="MULTIPLYRATE" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="DIVIDERATE" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
-      <check name="C_CONVERSION_RATE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="C_CONVERSION_RATECLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -37,5 +36,6 @@
         <unique-column name="CONVERSIONRATETYPE"/>
         <unique-column name="VALIDFROM"/>
       </unique>
+      <check name="C_CONVERSION_RA_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

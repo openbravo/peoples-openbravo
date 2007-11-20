@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_DOCTYPE">
+  <database name="TABLE C_DOCTYPE">
     <table name="C_DOCTYPE" primaryKey="C_DOCTYPE_KEY">
       <column name="C_DOCTYPE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -40,21 +40,6 @@
       <column name="AD_TABLE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ORGFILTERED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="C_DOCTYPE_REVERSED_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="C_DOCTYPE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ORGFILTEREDMAXTABLE_CDOCTYPE" condition="(ORGFILTERED = 'N') OR (ISMAXTABLE='Y')"/>
-      <check name="C_DOCTYPE_ISSOTRX_CHECK" condition="IsSOTrx in ('Y','N')"/>
-      <check name="C_DOCTYPE_HASPROFORMA_CHECK" condition="HasProForma in ('Y','N')"/>
-      <check name="CDOCTYPE_CREATEPICKLIST_CHECK" condition="CreatePickList in ('Y','N')"/>
-      <check name="C_DOCTYPE_ISAPPROVED_CHECK" condition="IsApproved in ('Y','N')"/>
-      <check name="CDOCTYPEISDOCNOCONTROL_CHECK" condition="IsDocNoControlled in ('Y','N')"/>
-      <check name="C_DOCTYPE_ISBATCHED_CHECK" condition="IsBatched in ('Y','N')"/>
-      <check name="CDOCTYPE_ISBCONTRFORCED_CHECK" condition="IsBatchControlEnforced in ('Y','N')"/>
-      <check name="CDOCTYPE_ISBDOCNOCONTR_CHECK" condition="IsBatchDocNoControlled in ('Y','N')"/>
-      <check name="C_DOCTYPE_ISPRINTED_CHECK" condition="IsPrinted in ('Y','N')"/>
-      <check name="C_DOCTYPE_ISTRANSFERRED_CHECK" condition="IsTransferred in ('Y','N')"/>
-      <check name="C_DOCTYPE_HASCHARGES_CHECK" condition="HasCharges in ('Y','N')"/>
-      <check name="C_DOCTYPE_ISMAXTABLE_CHECK" condition="IsMaxTable in ('Y', 'N')"/>
-      <check name="C_DOCTYPE_ORGFILTERED_CHECK" condition="OrgFiltered in ('Y', 'N')"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CDOCTYPE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -92,5 +77,20 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="C_DOCTYPE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ORGFILTEREDMAXTABLE_CDOCTYPE" condition="(ORGFILTERED = &apos;N&apos;) OR (ISMAXTABLE=&apos;Y&apos;)"/>
+      <check name="C_DOCTYPE_ISSOTRX_CHECK" condition="IsSOTrx in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_DOCTYPE_HASPROFORMA_CHECK" condition="HasProForma in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CDOCTYPE_CREATEPICKLIST_CHECK" condition="CreatePickList in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_DOCTYPE_ISAPPROVED_CHECK" condition="IsApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CDOCTYPEISDOCNOCONTROL_CHECK" condition="IsDocNoControlled in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_DOCTYPE_ISBATCHED_CHECK" condition="IsBatched in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CDOCTYPE_ISBCONTRFORCED_CHECK" condition="IsBatchControlEnforced in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CDOCTYPE_ISBDOCNOCONTR_CHECK" condition="IsBatchDocNoControlled in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_DOCTYPE_ISPRINTED_CHECK" condition="IsPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_DOCTYPE_ISTRANSFERRED_CHECK" condition="IsTransferred in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_DOCTYPE_HASCHARGES_CHECK" condition="HasCharges in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_DOCTYPE_ISMAXTABLE_CHECK" condition="IsMaxTable in (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_DOCTYPE_ORGFILTERED_CHECK" condition="OrgFiltered in (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
-</database>
+  </database>

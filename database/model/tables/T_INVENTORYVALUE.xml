@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE T_INVENTORYVALUE">
+  <database name="TABLE T_INVENTORYVALUE">
     <table name="T_INVENTORYVALUE" primaryKey="T_INVENTORYVALUE_KEY">
       <column name="AD_PINSTANCE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_WAREHOUSE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -20,7 +20,7 @@
       <column name="PRICESTDAMT" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="PRICELIMITAMT" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="COSTSTANDARDAMT" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_PINSTANCE" name="ADPINSTANCE_TINVENTORYVALUE"   onDelete="cascade">
+      <foreign-key foreignTable="AD_PINSTANCE" name="ADPINSTANCE_TINVENTORYVALUE" onDelete="cascade">
         <reference local="AD_PINSTANCE_ID" foreign="AD_PINSTANCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_TINVENTORYVALUE">
@@ -29,11 +29,11 @@
       <foreign-key foreignTable="M_PRICELIST_VERSION" name="MPLVERSION_TINVENTORYVALUE">
         <reference local="M_PRICELIST_VERSION_ID" foreign="M_PRICELIST_VERSION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_TINVENTORYVALUE"   onDelete="cascade">
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_TINVENTORYVALUE" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_TINVENTORYVALUE"   onDelete="cascade">
+      <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_TINVENTORYVALUE" onDelete="cascade">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

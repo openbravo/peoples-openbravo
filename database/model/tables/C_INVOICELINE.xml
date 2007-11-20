@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_INVOICELINE">
+  <database name="TABLE C_INVOICELINE">
     <table name="C_INVOICELINE" primaryKey="C_INVOICELINE_KEY">
       <column name="C_INVOICELINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -35,9 +35,6 @@
       <column name="C_PROJECTLINE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_OFFER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="PRICESTD" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
-      <check name="C_INVOICELINE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="C_INVOICELINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
-      <check name="C_INVOICELINE_CHECK2" condition="LineNetAmt=0 OR C_Tax_ID IS NOT NULL"/>
       <foreign-key foreignTable="A_ASSET" name="AASSET_CINVOICELINE">
         <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
       </foreign-key>
@@ -71,7 +68,7 @@
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_CINVOICELINE">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INOUTLINE" name="MINOUTLINE_CINVOICELINE"   onDelete="setnull">
+      <foreign-key foreignTable="M_INOUTLINE" name="MINOUTLINE_CINVOICELINE" onDelete="setnull">
         <reference local="M_INOUTLINE_ID" foreign="M_INOUTLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_OFFER" name="MOFFER_CINVOICELINE">
@@ -86,17 +83,20 @@
       <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="SRESOURCEASSIGN_CINVOICELINE">
         <reference local="S_RESOURCEASSIGNMENT_ID" foreign="S_RESOURCEASSIGNMENT_ID"/>
       </foreign-key>
-      <index name="C_INVOICELINE_INVOICE">
+      <index name="C_INVOICELINE_INVOICE" unique="false">
         <index-column name="C_INVOICE_ID"/>
       </index>
-      <index name="C_INVOICELINE_PRODUCT">
+      <index name="C_INVOICELINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <index name="C_INVOICELINE_ORDERLINE">
+      <index name="C_INVOICELINE_ORDERLINE" unique="false">
         <index-column name="C_ORDERLINE_ID"/>
       </index>
-      <index name="C_INVOICELINE_INOUTLINE">
+      <index name="C_INVOICELINE_INOUTLINE" unique="false">
         <index-column name="M_INOUTLINE_ID"/>
       </index>
+      <check name="C_INVOICELINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INVOICELINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
+      <check name="C_INVOICELINE_CHECK2" condition="LineNetAmt=0 OR C_Tax_ID IS NOT NULL"/>
     </table>
-</database>
+  </database>

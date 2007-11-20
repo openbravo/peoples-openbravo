@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_TEXTINTERFACES">
+  <database name="TABLE AD_TEXTINTERFACES">
     <table name="AD_TEXTINTERFACES" primaryKey="AD_TEXTINTERFACES_KEY">
       <column name="AD_TEXTINTERFACES_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -11,12 +11,12 @@
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="TEXT" primaryKey="false" required="true" type="VARCHAR" size="4000" autoIncrement="false"/>
       <column name="FILENAME" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false"/>
-      <check name="AD_TEXTINTERFACES_IN_ISACTIVE" condition="ISACTIVE IN ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADTEXTINTERFACES">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADTEXTINTERFACES">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="AD_TEXTINTERFACES_IN_ISACTIVE" condition="ISACTIVE IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

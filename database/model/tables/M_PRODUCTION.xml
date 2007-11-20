@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_PRODUCTION">
+  <database name="TABLE M_PRODUCTION">
     <table name="M_PRODUCTION" primaryKey="M_PRODUCTION_KEY">
       <column name="M_PRODUCTION_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -27,9 +27,6 @@
       <column name="ISSOTRX" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="STARTTIME" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="VALIDATING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <check name="M_PRODUCTION_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="M_PRODUCTION_ISCREATED_CHECK" condition="IsCreated in ('Y','N')"/>
-      <check name="M_PRODUCTION_PROCESSED_CHECK" condition="Processed in ('Y','N')"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCTION">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -48,5 +45,8 @@
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_MPRODUCTION">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
+      <check name="M_PRODUCTION_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCTION_ISCREATED_CHECK" condition="IsCreated in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCTION_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

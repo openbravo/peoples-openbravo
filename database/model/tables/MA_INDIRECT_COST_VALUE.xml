@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_INDIRECT_COST_VALUE">
+  <database name="TABLE MA_INDIRECT_COST_VALUE">
     <table name="MA_INDIRECT_COST_VALUE" primaryKey="MA_INDIRECT_COST_VALUE_KEY">
       <column name="MA_INDIRECT_COST_VALUE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -17,9 +17,6 @@
       <column name="CALCULATE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="COST_UOM" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
       <column name="CALCULATED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="MAINDCOVAL_ISACTIVE_CHECK" condition="IsActive IN ('Y','N')"/> 
-      <check name="MAINDCOVAL_CALCULATE_CHECK" condition="Calculate IN ('Y','N')"/>
-      <check name="MAINDCOVAL_CALCULATED_CHECK" condition="Calculated IN ('Y','N')"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAINDIRECT_COST_VALUE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -29,5 +26,8 @@
       <foreign-key foreignTable="MA_INDIRECT_COST" name="MAINDIRECT_COST_MA_IC_VALUE">
         <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
       </foreign-key>
+      <check name="MAINDCOVAL_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MAINDCOVAL_CALCULATE_CHECK" condition="Calculate IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MAINDCOVAL_CALCULATED_CHECK" condition="Calculated IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

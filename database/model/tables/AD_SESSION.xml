@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_SESSION">
+  <database name="TABLE AD_SESSION">
     <table name="AD_SESSION" primaryKey="AD_SESSION_KEY">
       <column name="AD_SESSION_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -20,4 +20,4 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

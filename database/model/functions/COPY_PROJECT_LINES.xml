@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION COPY_PROJECT_LINES">
-<function name="COPY_PROJECT_LINES">
-<parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION COPY_PROJECT_LINES">
+    <function name="COPY_PROJECT_LINES" type="NULL">
+      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -93,7 +93,7 @@
       v_NoOfLines:=v_NoOfLines + 1;
     END LOOP;
     v_Message:='@Copied@=' || v_NoOfLines ;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -105,7 +105,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END COPY_PROJECT_LINES]]>
+END COPY_PROJECT_LINES
 </body>
-</function>
-</database>
+    </function>
+  </database>

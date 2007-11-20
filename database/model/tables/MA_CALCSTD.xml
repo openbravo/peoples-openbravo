@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_CALCSTD">
+  <database name="TABLE MA_CALCSTD">
     <table name="MA_CALCSTD" primaryKey="MA_CALCSTD_KEY">
       <column name="MA_CALCSTD_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -14,7 +14,6 @@
       <column name="DATETO" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="MA_PROCESSPLAN_VERSION_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_BUDGET_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="MA_CALCSTD_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MACALCSTD">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -27,5 +26,6 @@
       <foreign-key foreignTable="MA_PROCESSPLAN_VERSION" name="MA_PROCPLANVERSION_MACALCSTD">
         <reference local="MA_PROCESSPLAN_VERSION_ID" foreign="MA_PROCESSPLAN_VERSION_ID"/>
       </foreign-key>
+      <check name="MA_CALCSTD_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

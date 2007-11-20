@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_UOM">
+  <database name="TABLE C_UOM">
     <table name="C_UOM" primaryKey="C_UOM_KEY">
       <column name="C_UOM_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -17,20 +17,20 @@
       <column name="COSTINGPRECISION" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISDEFAULT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="BREAKDOWN" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="C_UOM_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="BREAKDOWN_CHECK_CUOM" condition="BREAKDOWN IN ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="C_UOMCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_UOMORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <index name="C_UOM_X12">
+      <index name="C_UOM_X12" unique="false">
         <index-column name="X12DE355"/>
       </index>
       <unique name="C_UOM_NAME">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="C_UOM_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="BREAKDOWN_CHECK_CUOM" condition="BREAKDOWN IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

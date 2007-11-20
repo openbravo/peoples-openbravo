@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_NOTE">
+  <database name="TABLE AD_NOTE">
     <table name="AD_NOTE" primaryKey="AD_NOTE_KEY">
       <column name="AD_NOTE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,8 +16,6 @@
       <column name="RECORD_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="TEXT" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="PROCESSED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="ADNOTE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADNOTE_PROCESSED_CHECK" condition="Processed in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADNOTE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -33,5 +31,7 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_ADNOTE">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <check name="ADNOTE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADNOTE_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

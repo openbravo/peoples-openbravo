@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_PROJECTPROPOSALTASK">
+  <database name="TABLE C_PROJECTPROPOSALTASK">
     <table name="C_PROJECTPROPOSALTASK" primaryKey="C_PROJECTPROPOSALTASK_KEY">
       <column name="C_PROJECTPROPOSALTASK_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -12,7 +12,6 @@
       <column name="C_PROJECTPROPOSAL_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_USER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="NOTE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
-      <check name="C_PRPROPTK_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_C_PROJECTPROPOSALTASK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -25,5 +24,6 @@
       <foreign-key foreignTable="C_PROJECTPROPOSAL" name="CPROJECTPOSAL_C_PROPOSALTASK">
         <reference local="C_PROJECTPROPOSAL_ID" foreign="C_PROJECTPROPOSAL_ID"/>
       </foreign-key>
+      <check name="C_PRPROPTK_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_FORM_ACCESS">
+  <database name="TABLE AD_FORM_ACCESS">
     <table name="AD_FORM_ACCESS" primaryKey="AD_FORM_ACCESS_KEY">
       <column name="AD_FORM_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_ROLE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -11,23 +11,23 @@
       <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISREADWRITE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <check name="ADFORMAC_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADFORMAC_ISREADWRITE_CHECK" condition="IsReadWrite in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADFORMACCESS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_FORM" name="ADFORM_ADFORMACCESS"   onDelete="cascade">
+      <foreign-key foreignTable="AD_FORM" name="ADFORM_ADFORMACCESS" onDelete="cascade">
         <reference local="AD_FORM_ID" foreign="AD_FORM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADFORMACCESS">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADFORMACCESS"   onDelete="cascade">
+      <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADFORMACCESS" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
       <index name="AD_FORM_ACCESS_UN_KEY" unique="true">
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_FORM_ID"/>
       </index>
+      <check name="ADFORMAC_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADFORMAC_ISREADWRITE_CHECK" condition="IsReadWrite in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

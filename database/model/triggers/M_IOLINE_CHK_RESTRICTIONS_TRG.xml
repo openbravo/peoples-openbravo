@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER M_IOLINE_CHK_RESTRICTIONS_TRG">
-<trigger name="M_IOLINE_CHK_RESTRICTIONS_TRG" table="M_INOUTLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER M_IOLINE_CHK_RESTRICTIONS_TRG">
+    <trigger name="M_IOLINE_CHK_RESTRICTIONS_TRG" table="M_INOUTLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
+      <body>
+
 
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -30,17 +30,17 @@ BEGIN
   END IF;
   SELECT PROCESSED INTO v_Processed FROM M_INOUT WHERE M_INOUT_ID=v_M_INOUT_ID;
   IF UPDATING THEN
-    IF(v_Processed='Y' AND ((COALESCE(:old.LINE, 0) <> COALESCE(:new.LINE, 0))
-   OR (COALESCE(:old.M_PRODUCT_ID, 0) <> COALESCE(:new.M_PRODUCT_ID, 0))
-   OR(COALESCE(:old.QUANTITYORDER, 0) <> COALESCE(:new.QUANTITYORDER, 0))
-   OR(COALESCE(:old.LOT, '.') <> COALESCE(:new.LOT, '.'))
-   OR(COALESCE(:old.SERNO, '.') <> COALESCE(:new.SERNO, '.'))
-   OR(COALESCE(:old.M_ATTRIBUTESETINSTANCE_ID, 0) <> COALESCE(:new.M_ATTRIBUTESETINSTANCE_ID, 0))
-   OR(COALESCE(:old.MOVEMENTQTY, 0) <> COALESCE(:new.MOVEMENTQTY, 0))
-   OR(COALESCE(:old.M_PRODUCT_UOM_ID, 0) <> COALESCE(:new.M_PRODUCT_UOM_ID, 0))
-   OR(COALESCE(:old.C_ORDERLINE_ID, 0) <> COALESCE(:new.C_ORDERLINE_ID, 0))
-   OR(COALESCE(:old.M_LOCATOR_ID, 0) <> COALESCE(:new.M_LOCATOR_ID, 0))
-   OR(COALESCE(:old.M_INOUTLINE_TYPE_ID, 0) <> COALESCE(:new.M_INOUTLINE_TYPE_ID, 0))))
+    IF(v_Processed='Y' AND ((COALESCE(:old.LINE, 0) &lt;&gt; COALESCE(:new.LINE, 0))
+   OR (COALESCE(:old.M_PRODUCT_ID, 0) &lt;&gt; COALESCE(:new.M_PRODUCT_ID, 0))
+   OR(COALESCE(:old.QUANTITYORDER, 0) &lt;&gt; COALESCE(:new.QUANTITYORDER, 0))
+   OR(COALESCE(:old.LOT, '.') &lt;&gt; COALESCE(:new.LOT, '.'))
+   OR(COALESCE(:old.SERNO, '.') &lt;&gt; COALESCE(:new.SERNO, '.'))
+   OR(COALESCE(:old.M_ATTRIBUTESETINSTANCE_ID, 0) &lt;&gt; COALESCE(:new.M_ATTRIBUTESETINSTANCE_ID, 0))
+   OR(COALESCE(:old.MOVEMENTQTY, 0) &lt;&gt; COALESCE(:new.MOVEMENTQTY, 0))
+   OR(COALESCE(:old.M_PRODUCT_UOM_ID, 0) &lt;&gt; COALESCE(:new.M_PRODUCT_UOM_ID, 0))
+   OR(COALESCE(:old.C_ORDERLINE_ID, 0) &lt;&gt; COALESCE(:new.C_ORDERLINE_ID, 0))
+   OR(COALESCE(:old.M_LOCATOR_ID, 0) &lt;&gt; COALESCE(:new.M_LOCATOR_ID, 0))
+   OR(COALESCE(:old.M_INOUTLINE_TYPE_ID, 0) &lt;&gt; COALESCE(:new.M_INOUTLINE_TYPE_ID, 0))))
   THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
@@ -48,7 +48,7 @@ BEGIN
   IF((DELETING OR INSERTING) AND v_Processed='Y') THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
-END M_IOLine_Chk_Restrictions_Trg ]]>
+END M_IOLine_Chk_Restrictions_Trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

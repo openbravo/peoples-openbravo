@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_BP_TAXCATEGORY">
+  <database name="TABLE C_BP_TAXCATEGORY">
     <table name="C_BP_TAXCATEGORY" primaryKey="C_BP_TAXCATEGORY_KEY">
       <column name="C_BP_TAXCATEGORY_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -18,4 +18,4 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

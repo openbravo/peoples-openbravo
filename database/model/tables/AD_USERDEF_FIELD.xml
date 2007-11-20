@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_USERDEF_FIELD">
+  <database name="TABLE AD_USERDEF_FIELD">
     <table name="AD_USERDEF_FIELD" primaryKey="AD_USERDEF_FIELD_KEY">
       <column name="AD_USERDEF_FIELD_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -22,11 +22,6 @@
       <column name="SORTNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="SEQNO" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISSAMELINE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="ADUSERDEFFIELD_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADUSERDEFFIELD_ISDISPLAY_CHECK" condition="IsDisplayed in ('Y','N')"/> 
-      <check name="ADUSERDEFFIELD_ISREADONLY_CHECK" condition="IsReadOnly in ('Y','N')"/> 
-      <check name="ADUSERDEFFIELD_ISUPDATE_CHECK" condition="IsUpdateable in ('Y','N')"/> 
-      <check name="ADUSERDEFFIELD_ISSAMELINE_CHECK" condition="IsSameLine in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADUSERDEFFIELD">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -39,5 +34,10 @@
       <foreign-key foreignTable="AD_USERDEF_TAB" name="ADUSERDEFTAB_ADUSERDEFFIELD">
         <reference local="AD_USERDEF_TAB_ID" foreign="AD_USERDEF_TAB_ID"/>
       </foreign-key>
+      <check name="ADUSERDEFFIELD_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADUSERDEFFIELD_ISDISPLAY_CHECK" condition="IsDisplayed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADUSERDEFFIELD_READONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADUSERDEFFIELD_ISUPDATE_CHECK" condition="IsUpdateable in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADUSERDEFFIELD_SAMELINE_CHECK" condition="IsSameLine in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

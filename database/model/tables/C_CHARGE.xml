@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_CHARGE">
+  <database name="TABLE C_CHARGE">
     <table name="C_CHARGE" primaryKey="C_CHARGE_KEY">
       <column name="C_CHARGE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,9 +16,6 @@
       <column name="ISSAMECURRENCY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="C_TAXCATEGORY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISTAXINCLUDED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="CCHARGE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="CCHARGE_ISSAMETAX_CHECK" condition="IsSameTax in ('Y','N')"/> 
-      <check name="CCHARGE_ISSAMECURRENCY_CHECK" condition="IsSameCurrency in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CCHARGE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -28,5 +25,8 @@
       <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_CCHARGE">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
       </foreign-key>
+      <check name="CCHARGE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CCHARGE_ISSAMETAX_CHECK" condition="IsSameTax in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CCHARGE_ISSAMECURRENCY_CHECK" condition="IsSameCurrency in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

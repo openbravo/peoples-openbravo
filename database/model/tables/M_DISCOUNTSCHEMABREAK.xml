@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_DISCOUNTSCHEMABREAK">
+  <database name="TABLE M_DISCOUNTSCHEMABREAK">
     <table name="M_DISCOUNTSCHEMABREAK" primaryKey="M_DISCOUNTSCHEMABREAK_KEY">
       <column name="M_DISCOUNTSCHEMABREAK_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -15,14 +15,13 @@
       <column name="BREAKDISCOUNT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false"/>
       <column name="M_PRODUCT_CATEGORY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_PRODUCT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="M_DISCSCBR_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MDISCOUNTSCHEMABREAK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_MDISCOUNTSCHEMABREAK">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTS_MDSBREAK"   onDelete="cascade">
+      <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTS_MDSBREAK" onDelete="cascade">
         <reference local="M_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MDISCOUNTSBREAK">
@@ -31,5 +30,6 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCATEGORY_MDISCOUNTSBREAK">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
+      <check name="M_DISCSCBR_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

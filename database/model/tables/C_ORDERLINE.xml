@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_ORDERLINE">
+  <database name="TABLE C_ORDERLINE">
     <table name="C_ORDERLINE" primaryKey="C_ORDERLINE_KEY">
       <column name="C_ORDERLINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -48,10 +48,6 @@
       <column name="LASTPRICESO" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="M_OFFER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="PRICESTD" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
-      <check name="C_ORDERLINE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="C_ORDERLINE_DIRECTSHIP_CHECK" condition="DirectShip in ('Y','N')"/> 
-      <check name="C_ORDERLINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
-      <check name="C_ORDERLINE_CHECK2" condition="LineNetAmt=0 OR C_Tax_ID IS NOT NULL"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CORDERLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -103,11 +99,15 @@
       <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="SRESOURCEASSIGN_CORDERLINE">
         <reference local="S_RESOURCEASSIGNMENT_ID" foreign="S_RESOURCEASSIGNMENT_ID"/>
       </foreign-key>
-      <index name="C_ORDERLINE_ORDER">
+      <index name="C_ORDERLINE_ORDER" unique="false">
         <index-column name="C_ORDER_ID"/>
       </index>
-      <index name="C_ORDERLINE_PRODUCT">
+      <index name="C_ORDERLINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
+      <check name="C_ORDERLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDERLINE_DIRECTSHIP_CHECK" condition="DirectShip in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDERLINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
+      <check name="C_ORDERLINE_CHECK2" condition="LineNetAmt=0 OR C_Tax_ID IS NOT NULL"/>
     </table>
-</database>
+  </database>

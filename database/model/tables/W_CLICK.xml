@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE W_CLICK">
+  <database name="TABLE W_CLICK">
     <table name="W_CLICK" primaryKey="W_CLICK_KEY">
       <column name="W_CLICK_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -19,8 +19,6 @@
       <column name="W_CLICKCOUNT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_USER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="EMAIL" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
-      <check name="WCLICK_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="WCLICK_PROCESSED_CHECK" condition="Processed in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_WCLICK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -30,8 +28,10 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_WCLICK">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="W_CLICKCOUNT" name="WCLICKCOUNT_WCLICK"   onDelete="cascade">
+      <foreign-key foreignTable="W_CLICKCOUNT" name="WCLICKCOUNT_WCLICK" onDelete="cascade">
         <reference local="W_CLICKCOUNT_ID" foreign="W_CLICKCOUNT_ID"/>
       </foreign-key>
+      <check name="WCLICK_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="WCLICK_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

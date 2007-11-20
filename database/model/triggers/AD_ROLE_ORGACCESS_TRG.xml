@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER AD_ROLE_ORGACCESS_TRG">
-<trigger name="AD_ROLE_ORGACCESS_TRG" table="AD_ROLE_ORGACCESS" fires="after" insert="true" update="true" delete="true" foreach="statement">
-<body>
-<![CDATA[
+  <database name="TRIGGER AD_ROLE_ORGACCESS_TRG">
+    <trigger name="AD_ROLE_ORGACCESS_TRG" table="AD_ROLE_ORGACCESS" fires="after" insert="true" update="true" delete="true" foreach="statement">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Compiere License
@@ -13,7 +13,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &  Business Solution
+    * The Original Code is  Compiere  ERP &amp;  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -54,15 +54,15 @@ BEGIN
         AD_Org_ID
       )
     LOOP
-      IF(v_Client_ID <> Cur_Org.AD_Client_ID) THEN
+      IF(v_Client_ID &lt;&gt; Cur_Org.AD_Client_ID) THEN
         v_Client_ID:=Cur_Org.AD_Client_ID;
-        IF(LENGTH(v_ClientList) <> 0) THEN
+        IF(LENGTH(v_ClientList) &lt;&gt; 0) THEN
           v_ClientList:=v_ClientList || ',';
         END IF;
         v_ClientList:=v_ClientList || Cur_Org.AD_Client_ID;
       END IF;
       -- Org
-      IF(LENGTH(v_OrgList) <> 0) THEN
+      IF(LENGTH(v_OrgList) &lt;&gt; 0) THEN
         v_OrgList:=v_OrgList || ',';
       END IF;
       v_OrgList:=v_OrgList || Cur_Org.AD_Org_ID;
@@ -75,7 +75,7 @@ BEGIN
     IF(v_OrgList IS NULL OR LENGTH(v_OrgList)=0) THEN
       v_OrgList:=' ';
     END IF;
-    DBMS_OUTPUT.PUT_LINE(CUR_Role.Name || ': Client=' || CUR_Role.ClientList || '->' || v_ClientList || ' - Org= ' || CUR_Role.OrgList || '->' || v_OrgList) ;
+    DBMS_OUTPUT.PUT_LINE(CUR_Role.Name || ': Client=' || CUR_Role.ClientList || '-&gt;' || v_ClientList || ' - Org= ' || CUR_Role.OrgList || '-&gt;' || v_OrgList) ;
     -- Update Role
     UPDATE AD_Role
       SET ClientList=v_ClientList,
@@ -83,7 +83,7 @@ BEGIN
     WHERE AD_ROLE.AD_ROLE_ID=CUR_Role.AD_ROLE_ID;
   END LOOP;
   -- Role
-END AD_Role_OrgAccess_Trg ]]>
+END AD_Role_OrgAccess_Trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_TAX_REPORT">
+  <database name="TABLE C_TAX_REPORT">
     <table name="C_TAX_REPORT" primaryKey="C_TAX_REPORT_KEY">
       <column name="C_TAX_REPORT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -17,12 +17,6 @@
       <column name="ISSUMMARY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISSOTRX" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISNEGATIVE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="C_TAX_REPORT_ISACTIVE_CHECK" condition="ISACTIVE IN ('Y','N')"/> 
-      <check name="C_TAX_REPORT_ISNEGATIVE_CHECK" condition="ISNEGATIVE IN ('Y','N')"/>
-      <check name="C_TAX_REPORT_ISREPORT_CHECK" condition="ISREPORT IN ('Y','N')"/>
-      <check name="C_TAX_REPORT_ISSHOWN_CHECK" condition="ISSHOWN IN ('Y','N')"/>
-      <check name="C_TAX_REPORT_ISSOTRX_CHECK" condition="ISSOTRX IN ('Y','N')"/>
-      <check name="C_TAX_REPORT_ISSUMMARY_CHECK" condition="ISSUMMARY IN ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CTAXREPORT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -32,5 +26,11 @@
       <foreign-key foreignTable="C_TAX" name="CTAX_CTAXREPORT">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
+      <check name="C_TAX_REPORT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_TAX_REPORT_ISNEGATIVE_CHECK" condition="ISNEGATIVE IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_TAX_REPORT_ISREPORT_CHECK" condition="ISREPORT IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_TAX_REPORT_ISSHOWN_CHECK" condition="ISSHOWN IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_TAX_REPORT_ISSOTRX_CHECK" condition="ISSOTRX IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_TAX_REPORT_ISSUMMARY_CHECK" condition="ISSUMMARY IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

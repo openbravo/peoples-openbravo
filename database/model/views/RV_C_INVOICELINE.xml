@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<database name="VIEW RV_C_INVOICELINE">
-<view name="RV_C_INVOICELINE"><![CDATA[
+  <database name="VIEW RV_C_INVOICELINE">
+    <view name="RV_C_INVOICELINE" updatable="false">
 SELECT
   il.AD_Client_ID, il.AD_Org_ID,
   il.C_InvoiceLine_ID, i.C_Invoice_ID, i.SalesRep_ID,
@@ -26,5 +26,5 @@ SELECT
 FROM  RV_C_Invoice i, C_InvoiceLine il, M_Product p
 WHERE i.C_Invoice_ID=il.C_Invoice_ID
   AND il.M_Product_ID=p.M_Product_ID
-]]></view>
-</database>
+</view>
+  </database>

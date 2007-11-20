@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<database name="FUNCTION AD_ISMEMBERINCLUDED">
-<function name="AD_ISMEMBERINCLUDED" type="NUMERIC">
-<parameter name="p_nodeID" type="NUMERIC" mode="in"/>
-<parameter name="p_parentID" type="NUMERIC" mode="in"/>
-<parameter name="p_treeID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION AD_ISMEMBERINCLUDED">
+    <function name="AD_ISMEMBERINCLUDED" type="NUMERIC">
+      <parameter name="p_nodeID" type="NUMERIC" mode="in"/>
+      <parameter name="p_parentID" type="NUMERIC" mode="in"/>
+      <parameter name="p_treeID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -45,6 +45,6 @@ BEGIN
     END IF;
   END LOOP;
   RETURN(-1) ;
-END AD_IsMemberIncluded]]></body>
-</function> 
-</database>
+END AD_IsMemberIncluded</body>
+    </function>
+  </database>

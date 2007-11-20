@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_BPARTNER">
+  <database name="TABLE C_BPARTNER">
     <table name="C_BPARTNER" primaryKey="C_BPARTNER_KEY">
       <column name="C_BPARTNER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -84,22 +84,6 @@
       <column name="PO_FIXMONTHDAY3" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="SO_BANKACCOUNT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="SO_BP_TAXCATEGORY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="CBPARTNER_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="CBPARTNER_ISSUMMARY_CHECK" condition="IsSummary in ('Y','N')"/> 
-      <check name="CBPARTNER_ISONETIME_CHECK" condition="IsOneTime in ('Y','N')"/> 
-      <check name="CBPARTNER_ISPROSPECT_CHECK" condition="IsProspect in ('Y','N')"/> 
-      <check name="CBPARTNER_ISVENDOR_CHECK" condition="IsVendor in ('Y','N')"/> 
-      <check name="CBPARTNER_ISCUSTOMER_CHECK" condition="IsCustomer in ('Y','N')"/> 
-      <check name="CBPARTNER_ISEMPLOYEE_CHECK" condition="IsEmployee in ('Y','N')"/> 
-      <check name="CBPARTNER_ISSALESREP_CHECK" condition="IsSalesRep in ('Y','N')"/> 
-      <check name="CBPARTNER_ISTAXEXEMPT_CHECK" condition="IsTaxExempt in ('Y','N')"/> 
-      <check name="CBPARTNER_ISDISCOUNTPRINTED_CHECK" condition="IsDiscountPrinted in ('Y','N')"/> 
-      <check name="CBPARTNER_SHOWPRICE_CHECK" condition="SHOWPRICEINORDER IN ('Y', 'N')"/> 
-      <check name="INVOICERULE_CK_CBPARTNER" condition="INVOICERULE &lt;&gt;'S' OR C_INVOICESCHEDULE_ID IS NOT NULL"/>
-      <unique name="C_BPARTNER_VALUE">
-        <unique-column name="AD_CLIENT_ID"/>
-        <unique-column name="VALUE"/>
-      </unique>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPARTNER">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -154,17 +138,33 @@
       <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTSPO_CBPARTNER">
         <reference local="PO_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_CBPARTNER"   onDelete="setnull">
+      <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_CBPARTNER" onDelete="setnull">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="MPRICELISTPO_CBUSPARTNER"   onDelete="setnull">
+      <foreign-key foreignTable="M_PRICELIST" name="MPRICELISTPO_CBUSPARTNER" onDelete="setnull">
         <reference local="PO_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_WH_SCHEDULE" name="C_BPARTNER_SCHEDULE">
         <reference local="M_WH_SCHEDULE_ID" foreign="M_WH_SCHEDULE_ID"/>
       </foreign-key>
-      <index name="C_BPARTNER_NAME">
+      <index name="C_BPARTNER_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
+      <unique name="C_BPARTNER_VALUE">
+        <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="VALUE"/>
+      </unique>
+      <check name="CBPARTNER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTNER_ISSUMMARY_CHECK" condition="IsSummary in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTNER_ISONETIME_CHECK" condition="IsOneTime in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTNER_ISPROSPECT_CHECK" condition="IsProspect in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTNER_ISVENDOR_CHECK" condition="IsVendor in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTNER_ISCUSTOMER_CHECK" condition="IsCustomer in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTNER_ISEMPLOYEE_CHECK" condition="IsEmployee in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTNER_ISSALESREP_CHECK" condition="IsSalesRep in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTNER_ISTAXEXEMPT_CHECK" condition="IsTaxExempt in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTNER_ISDIS_TPRINTED_CHECK" condition="IsDiscountPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTNER_SHOWPRICE_CHECK" condition="SHOWPRICEINORDER IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="INVOICERULE_CK_CBPARTNER" condition="INVOICERULE &lt;&gt;&apos;S&apos; OR C_INVOICESCHEDULE_ID IS NOT NULL"/>
     </table>
-</database>
+  </database>

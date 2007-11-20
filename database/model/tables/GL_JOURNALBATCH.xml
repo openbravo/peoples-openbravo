@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE GL_JOURNALBATCH">
+  <database name="TABLE GL_JOURNALBATCH">
     <table name="GL_JOURNALBATCH" primaryKey="GL_JOURNALBATCH_KEY">
       <column name="GL_JOURNALBATCH_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -24,9 +24,6 @@
       <column name="PROCESSED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="COPYFROM" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="ISTEMPLATE" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="GL_JOURNALBATCH_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="GLJOURNBATCH_PROCESSING_CHECK" condition="Processing in ('Y','N')"/>
-      <check name="GLJOURNBATCH_PROCESSED_CHECK" condition="Processed in ('Y','N')"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_GLJOURNALBATCH">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -47,5 +44,8 @@
         <unique-column name="C_PERIOD_ID"/>
         <unique-column name="DOCUMENTNO"/>
       </unique>
+      <check name="GL_JOURNALBATCH_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="GLJOURNBATCH_PROCESSING_CHECK" condition="Processing in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="GLJOURNBATCH_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

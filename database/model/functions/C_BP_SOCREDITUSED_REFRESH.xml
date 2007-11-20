@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION C_BP_SOCREDITUSED_REFRESH">
-<function name="C_BP_SOCREDITUSED_REFRESH">
-<parameter name="p_BPartner_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION C_BP_SOCREDITUSED_REFRESH">
+    <function name="C_BP_SOCREDITUSED_REFRESH" type="NULL">
+      <parameter name="p_BPartner_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -28,7 +28,7 @@ BEGIN
       AND C_DEBT_PAYMENT_STATUS(C_SETTLEMENT_CANCEL_ID, Cancel_Processed, Generate_Processed, IsPaid, IsValid, C_CashLine_ID, C_BankStatementLine_ID)='P'
     )
   WHERE C_BPartner_ID=p_BPartner_ID;
-END C_BP_SOCREDITUSED_REFRESH]]>
+END C_BP_SOCREDITUSED_REFRESH
 </body>
-</function>
-</database>
+    </function>
+  </database>

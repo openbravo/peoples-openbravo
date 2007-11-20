@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<database name="FUNCTION AD_TRANSLATE_ID">
-<function name="AD_TRANSLATE_ID" type="NUMERIC">
-<parameter name="p_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_offset" type="NUMERIC" mode="in"/>
-<parameter name="p_tableName" type="VARCHAR" mode="in"/>
-<parameter name="p_columnName" type="VARCHAR" mode="in"/>
-<parameter name="p_clientID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION AD_TRANSLATE_ID">
+    <function name="AD_TRANSLATE_ID" type="NUMERIC">
+      <parameter name="p_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_offset" type="NUMERIC" mode="in"/>
+      <parameter name="p_tableName" type="VARCHAR" mode="in"/>
+      <parameter name="p_columnName" type="VARCHAR" mode="in"/>
+      <parameter name="p_clientID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -37,6 +37,6 @@ BEGIN
     END IF;
   END IF;
   RETURN v_ID;
-END AD_Translate_ID ]]></body>
-</function> 
-</database>
+END AD_Translate_ID </body>
+    </function>
+  </database>

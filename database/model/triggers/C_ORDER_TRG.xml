@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_ORDER_TRG">
-<trigger name="C_ORDER_TRG" table="C_ORDER" fires="after" update="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_ORDER_TRG">
+    <trigger name="C_ORDER_TRG" table="C_ORDER" fires="after" insert="false" update="true" delete="false" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Compiere License
@@ -13,7 +13,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &  Business Solution
+    * The Original Code is  Compiere  ERP &amp;  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -30,18 +30,18 @@
     *  Sync Header Changes to Lines
     ************************************************************************/
     BEGIN  IF(UPDATING)
-    THEN  IF((COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
-    OR COALESCE(:old.POReference, '.') <> COALESCE(:NEW.POReference, '.')
-    OR COALESCE(:old.C_BPartner_ID, 0) <> COALESCE(:NEW.C_BPartner_ID, 0)
-    OR  COALESCE(:old.C_BPartner_Location_ID, 0) <> COALESCE(:NEW.C_BPartner_Location_ID, 0)
-    OR COALESCE(:old.M_Warehouse_ID, 0) <> COALESCE(:NEW.M_Warehouse_ID, 0)
-    OR COALESCE(:old.M_Shipper_ID, 0) <> COALESCE(:NEW.M_Shipper_ID, 0)
-    OR COALESCE(:old.C_Currency_ID, 0) <> COALESCE(:NEW.C_Currency_ID, 0) ))
+    THEN  IF((COALESCE(:old.Description, '.') &lt;&gt; COALESCE(:NEW.Description, '.')
+    OR COALESCE(:old.POReference, '.') &lt;&gt; COALESCE(:NEW.POReference, '.')
+    OR COALESCE(:old.C_BPartner_ID, 0) &lt;&gt; COALESCE(:NEW.C_BPartner_ID, 0)
+    OR  COALESCE(:old.C_BPartner_Location_ID, 0) &lt;&gt; COALESCE(:NEW.C_BPartner_Location_ID, 0)
+    OR COALESCE(:old.M_Warehouse_ID, 0) &lt;&gt; COALESCE(:NEW.M_Warehouse_ID, 0)
+    OR COALESCE(:old.M_Shipper_ID, 0) &lt;&gt; COALESCE(:NEW.M_Shipper_ID, 0)
+    OR COALESCE(:old.C_Currency_ID, 0) &lt;&gt; COALESCE(:NEW.C_Currency_ID, 0) ))
     THEN
     -- If order is processed, is not allowed to change C_BPartner nor M_WareHouse
     IF(:old.Processed='Y'
-    AND (:old.C_BPartner_ID <> :new.C_BPartner_ID
-    OR :old.M_WareHouse_ID <> :new.M_WareHouse_ID))
+    AND (:old.C_BPartner_ID &lt;&gt; :new.C_BPartner_ID
+    OR :old.M_WareHouse_ID &lt;&gt; :new.M_WareHouse_ID))
     THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
   -- Propagate Description changes
@@ -62,7 +62,7 @@
   END IF;
  END IF;
 END C_Order_Trg
-]]>
+
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

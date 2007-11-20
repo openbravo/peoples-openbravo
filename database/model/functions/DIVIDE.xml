@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<database name="FUNCTION DIVIDE">
-<function name="DIVIDE" type="NUMERIC">
-<parameter name="p_dividendo" type="NUMERIC" />
-<parameter name="p_divisor" type="NUMERIC" />
-<body><![CDATA[
+  <database name="FUNCTION DIVIDE">
+    <function name="DIVIDE" type="NUMERIC">
+      <parameter name="p_dividendo" type="NUMERIC"/>
+      <parameter name="p_divisor" type="NUMERIC"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -25,6 +25,6 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN(NULL) ;
-END DIVIDE]]></body>
-</function> 
-</database>
+END DIVIDE</body>
+    </function>
+  </database>

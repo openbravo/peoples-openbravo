@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_INVOICEDISCOUNT_TRG">
-<trigger name="C_INVOICEDISCOUNT_TRG" table="C_INVOICE_DISCOUNT" fires="after" update="true" delete="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_INVOICEDISCOUNT_TRG">
+    <trigger name="C_INVOICEDISCOUNT_TRG" table="C_INVOICE_DISCOUNT" fires="after" insert="false" update="true" delete="true" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -46,10 +46,10 @@ BEGIN
   WHERE C_Invoice_ID=v_ID
     AND(Processed='Y'
     OR Posted='Y') ;
-  IF(v_RO > 0) THEN
+  IF(v_RO &gt; 0) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
-END C_InvoiceDiscount_Trg ]]>
+END C_InvoiceDiscount_Trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

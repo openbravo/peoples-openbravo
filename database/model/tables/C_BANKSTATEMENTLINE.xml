@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_BANKSTATEMENTLINE">
+  <database name="TABLE C_BANKSTATEMENTLINE">
     <table name="C_BANKSTATEMENTLINE" primaryKey="C_BANKSTATEMENTLINE_KEY">
       <column name="C_BANKSTATEMENTLINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -26,8 +26,6 @@
       <column name="CONVERTCHARGEAMT" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="C_DEBT_PAYMENT_CREATE" primaryKey="false" required="false" type="VARCHAR" size="1" default="N" autoIncrement="false"/>
       <column name="C_DP_MANAGEMENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="C_BANKSTATLN_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="C_BANKSTATLN_ISREVERSAL_CHECK" condition="IsReversal in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBANKSTATEMENTLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -49,8 +47,10 @@
       <foreign-key foreignTable="C_DP_MANAGEMENT" name="CDPMANAGE_FK_BANKSTATELINE">
         <reference local="C_DP_MANAGEMENT_ID" foreign="C_DP_MANAGEMENT_ID"/>
       </foreign-key>
-      <index name="C_BANKSTMTLINE_BANKSTMT">
+      <index name="C_BANKSTMTLINE_BANKSTMT" unique="false">
         <index-column name="C_BANKSTATEMENT_ID"/>
       </index>
+      <check name="C_BANKSTATLN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_BANKSTATLN_ISREVERSAL_CHECK" condition="IsReversal in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

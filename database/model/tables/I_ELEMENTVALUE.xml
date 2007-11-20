@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE I_ELEMENTVALUE">
+  <database name="TABLE I_ELEMENTVALUE">
     <table name="I_ELEMENTVALUE" primaryKey="I_ELEMENTVALUE_KEY">
       <column name="I_ELEMENTVALUE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -33,13 +33,6 @@
       <column name="I_ISIMPORTED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ELEMENTLEVEL" primaryKey="false" required="false" type="VARCHAR" size="2" autoIncrement="false"/>
       <column name="OPERANDS" primaryKey="false" required="false" type="NVARCHAR" size="1000" autoIncrement="false"/>
-      <check name="I_ELEMENTVALUE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="IELEMVAL_ISDOCCONTROL_CHECK" condition="IsDocControlled in ('Y','N')"/>
-      <check name="IELEMVALUE_POSTACTUAL_CHECK" condition="PostActual in ('Y','N')"/>
-      <check name="IELEMVALUE_POSTBUDGET_CHECK" condition="PostBudget in ('Y','N')"/>
-      <check name="IELEMVALUE_POSTSTATIST_CHECK" condition="PostStatistical in ('Y','N')"/>
-      <check name="IELEMVALUE_POSTENCUMBR_CHECK" condition="PostEncumbrance in ('Y','N')"/>
-      <check name="IELEMVALUE_PROCESSED_CHECK" condition="Processed in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IELEMENTVALUE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -58,5 +51,12 @@
       <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_IELEMENTVALUE">
         <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
+      <check name="I_ELEMENTVALUE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IELEMVAL_ISDOCCONTROL_CHECK" condition="IsDocControlled in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IELEMVALUE_POSTACTUAL_CHECK" condition="PostActual in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IELEMVALUE_POSTBUDGET_CHECK" condition="PostBudget in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IELEMVALUE_POSTSTATIST_CHECK" condition="PostStatistical in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IELEMVALUE_POSTENCUMBR_CHECK" condition="PostEncumbrance in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IELEMVALUE_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

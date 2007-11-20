@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_PRODUCT_CATEGORY">
+  <database name="TABLE M_PRODUCT_CATEGORY">
     <table name="M_PRODUCT_CATEGORY" primaryKey="M_PRODUCT_CATEGORY_KEY">
       <column name="M_PRODUCT_CATEGORY_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -15,7 +15,6 @@
       <column name="ISDEFAULT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="PLANNEDMARGIN" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false"/>
       <column name="A_ASSET_GROUP_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="M_PRODUCT_CATEGORY_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="A_ASSET_GROUP" name="AASSETGROUP_MPRODUCTCATEGORY">
         <reference local="A_ASSET_GROUP_ID" foreign="A_ASSET_GROUP_ID"/>
       </foreign-key>
@@ -29,5 +28,6 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
+      <check name="M_PRODUCT_CATEG_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

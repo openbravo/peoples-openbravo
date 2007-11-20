@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_PC_VALUE">
+  <database name="TABLE MA_PC_VALUE">
     <table name="MA_PC_VALUE" primaryKey="MA_PC_VALUE_KEY">
       <column name="MA_PC_VALUE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -13,7 +13,6 @@
       <column name="MA_PC_TEST_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="DATADATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="TESTRESULT" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
-      <check name="MA_PC_VALUE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_MAPCVALUE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -26,5 +25,6 @@
       <foreign-key foreignTable="MA_PC_TEST" name="MA_PC_TEST_MAPCVALUE">
         <reference local="MA_PC_TEST_ID" foreign="MA_PC_TEST_ID"/>
       </foreign-key>
+      <check name="MA_PC_VALUE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

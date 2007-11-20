@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_WF_INSTANCE">
+  <database name="TABLE AD_WF_INSTANCE">
     <table name="AD_WF_INSTANCE" primaryKey="AD_WF_INSTANCE_KEY">
       <column name="AD_WF_INSTANCE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -11,21 +11,21 @@
       <column name="AD_WF_NODE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_WORKFLOW_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="AD_WF_INSTANCE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="WF_INSTANCECLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="WF_INSTANCEORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_WF_NODE" name="AD_WFNODE_WFINSTANCE"   onDelete="cascade">
+      <foreign-key foreignTable="AD_WF_NODE" name="AD_WFNODE_WFINSTANCE" onDelete="cascade">
         <reference local="AD_WF_NODE_ID" foreign="AD_WF_NODE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_WORKFLOW" name="AD_WORKFLOW_WFINSTANCE"   onDelete="cascade">
+      <foreign-key foreignTable="AD_WORKFLOW" name="AD_WORKFLOW_WFINSTANCE" onDelete="cascade">
         <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
       </foreign-key>
-      <index name="AD_WF_INSTANCE_WORKFLOW">
+      <index name="AD_WF_INSTANCE_WORKFLOW" unique="false">
         <index-column name="AD_WORKFLOW_ID"/>
       </index>
+      <check name="AD_WF_INSTANCE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

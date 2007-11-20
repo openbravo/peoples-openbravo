@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<database name="VIEW C_INVOICE_HEADER_V">
-<view name="C_INVOICE_HEADER_V"><![CDATA[
+  <database name="VIEW C_INVOICE_HEADER_V">
+    <view name="C_INVOICE_HEADER_V" updatable="false">
 SELECT i.AD_Client_ID, i.AD_Org_ID, i.IsActive, i.Created, i.CreatedBy, i.Updated, i.UpdatedBy,
   TO_CHAR('en_US') AS AD_Language,
   i.C_Invoice_ID, i.IsSOTrx, i.DocumentNo, i.DocStatus,  i.C_DocType_ID,
@@ -41,5 +41,5 @@ FROM C_Invoice i
   INNER JOIN AD_OrgInfo oi ON (i.AD_Org_ID=oi.AD_Org_ID)
   LEFT OUTER JOIN AD_User u ON (i.SalesRep_ID=u.AD_User_ID)
   LEFT OUTER JOIN C_BPartner ubp ON (u.C_BPartner_ID=ubp.C_BPartner_ID)
-]]></view>
-</database>
+</view>
+  </database>

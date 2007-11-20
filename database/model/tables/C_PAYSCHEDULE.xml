@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_PAYSCHEDULE">
+  <database name="TABLE C_PAYSCHEDULE">
     <table name="C_PAYSCHEDULE" primaryKey="C_PAYSCHEDULE_KEY">
       <column name="C_PAYSCHEDULE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -17,8 +17,6 @@
       <column name="DISCOUNT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false"/>
       <column name="ISVALID" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="GRACEDAYS" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="C_PAYSCHEDULE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="C_PAYSCHEDULE_ISVALID_CHECK" condition="IsValid in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPAYSCHEDULE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -28,5 +26,7 @@
       <foreign-key foreignTable="C_PAYMENTTERM" name="CPAYMENTTERM_CPAYSCHEDULE">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
+      <check name="C_PAYSCHEDULE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_PAYSCHEDULE_ISVALID_CHECK" condition="IsValid in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

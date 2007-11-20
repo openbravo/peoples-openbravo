@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_PROCESS_TRL">
+  <database name="TABLE AD_PROCESS_TRL">
     <table name="AD_PROCESS_TRL" primaryKey="AD_PROCESS_TRL_KEY">
       <column name="AD_PROCESS_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_LANGUAGE" primaryKey="true" required="true" type="VARCHAR" size="6" autoIncrement="false"/>
@@ -14,8 +14,6 @@
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="HELP" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="ISTRANSLATED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="ADPROCESSTRL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADPROCESSTRL_ISTRANSLATED_CHECK" condition="IsTranslated in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPROCESSTRL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -25,8 +23,10 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADPROCESSTRL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS" name="AD_PROCESS_AD_PROCESS_TRL"   onDelete="cascade">
+      <foreign-key foreignTable="AD_PROCESS" name="AD_PROCESS_AD_PROCESS_TRL" onDelete="cascade">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
+      <check name="ADPROCESSTRL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPROCESSTRL_IS_ANSLATED_CHECK" condition="IsTranslated in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

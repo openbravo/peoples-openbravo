@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION FRIE_NAME">
-<function name="FRIE_NAME" type="VARCHAR">
-<parameter name="p_Name" type="VARCHAR" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION FRIE_NAME">
+    <function name="FRIE_NAME" type="VARCHAR">
+      <parameter name="p_Name" type="VARCHAR" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -12,7 +12,7 @@
 * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 * implied. See the License for the specific language governing rights
 * and limitations under the License.
-* The Original Code is  Compiere  ERP &  Business Solution
+* The Original Code is  Compiere  ERP &amp;  Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -65,7 +65,7 @@ BEGIN
   v_RetValue := REPLACE(v_RetValue, '5ZR 1', '5 ZR 1') ;
   v_RetValue := REPLACE(v_RetValue, '0 ZR1', '0 ZR 1') ;
   v_RetValue := REPLACE(v_RetValue, '5 ZR1', '5 ZR 1') ;
-  -- Change "B." => B
+  -- Change "B." =&gt; B
   IF(SUBSTR(v_RetValue, 1, 2) = 'B.') THEN
     v_RetValue := REPLACE(v_RetValue, 'B.', 'B') ;
   END IF;
@@ -79,6 +79,6 @@ BEGIN
   END IF;
   --
   RETURN TRIM(v_RetValue) ;
-END FRIE_Name]]></body>
-</function> 
-</database>
+END FRIE_Name</body>
+    </function>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_PROCESS">
+  <database name="TABLE AD_PROCESS">
     <table name="AD_PROCESS" primaryKey="AD_PROCESS_KEY">
       <column name="AD_PROCESS_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -27,11 +27,6 @@
       <column name="ISBACKGROUND" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISJASPER" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="JRNAME" primaryKey="false" required="false" type="NVARCHAR" size="256" autoIncrement="false"/>
-      <check name="ADPROCESS_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADPROCESS_ISUSERSTARTABLE_CHECK" condition="IsUserStartable in ('Y','N')"/> 
-      <check name="ADPROCESS_ISREPORT_CHECK" condition="IsReport in ('Y','N')"/> 
-      <check name="ADPROCESS_ISDIRECTPRINT_CHECK" condition="IsDirectPrint in ('Y','N')"/> 
-      <check name="ADPROCESS_ISBACKGROUND_CHECK" condition="IsBackground in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPROCESS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -44,5 +39,10 @@
       <foreign-key foreignTable="AD_REPORTVIEW" name="ADREPORTVIEW_ADPROCESS">
         <reference local="AD_REPORTVIEW_ID" foreign="AD_REPORTVIEW_ID"/>
       </foreign-key>
+      <check name="ADPROCESS_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPROCESS_ISUSE_TARTABLE_CHECK" condition="IsUserStartable in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPROCESS_ISREPORT_CHECK" condition="IsReport in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPROCESS_ISDIRECTPRINT_CHECK" condition="IsDirectPrint in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPROCESS_ISBACKGROUND_CHECK" condition="IsBackground in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

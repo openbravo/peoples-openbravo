@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION C_DEBT_PAYMENT_PAID">
-<function name="C_DEBT_PAYMENT_PAID" type="CHAR">
-<parameter name="p_DebtPaymentID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION C_DEBT_PAYMENT_PAID">
+    <function name="C_DEBT_PAYMENT_PAID" type="CHAR">
+      <parameter name="p_DebtPaymentID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -39,6 +39,6 @@ BEGIN
       );
   END IF;
   RETURN v_paid;
-END C_Debt_Payment_Paid]]></body>
-</function> 
-</database>
+END C_Debt_Payment_Paid</body>
+    </function>
+  </database>

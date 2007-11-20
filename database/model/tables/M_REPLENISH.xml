@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_REPLENISH">
+  <database name="TABLE M_REPLENISH">
     <table name="M_REPLENISH" primaryKey="M_REPLENISH_KEY">
       <column name="M_PRODUCT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_WAREHOUSE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -13,18 +13,18 @@
       <column name="REPLENISHTYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
       <column name="LEVEL_MIN" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="LEVEL_MAX" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
-      <check name="M_REPLENISH_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MREPLENISH">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_MREPLENISH">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_REPLENISH"   onDelete="cascade">
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_REPLENISH" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="M_WAREHOUSE_REPLENISH"   onDelete="cascade">
+      <foreign-key foreignTable="M_WAREHOUSE" name="M_WAREHOUSE_REPLENISH" onDelete="cascade">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <check name="M_REPLENISH_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

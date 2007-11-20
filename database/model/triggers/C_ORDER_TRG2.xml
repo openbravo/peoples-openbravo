@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_ORDER_TRG2">
-<trigger name="C_ORDER_TRG2" table="C_ORDER" fires="after" update="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_ORDER_TRG2">
+    <trigger name="C_ORDER_TRG2" table="C_ORDER" fires="after" insert="false" update="true" delete="false" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -21,9 +21,9 @@
     * Contributor(s):  ______________________________________.
     ************************************************************************/
     BEGIN  IF(UPDATING)
-    THEN  IF((COALESCE(:old.PaymentRule, '.') <> COALESCE(:NEW.PaymentRule, '.')
-    OR COALESCE(:old.C_PaymentTerm_ID, 0) <> COALESCE(:NEW.C_PaymentTerm_ID, 0)
-    OR COALESCE(:old.DateAcct, '01-01-1386') <> COALESCE(:NEW.DateAcct, '01-01-1386')))
+    THEN  IF((COALESCE(:old.PaymentRule, '.') &lt;&gt; COALESCE(:NEW.PaymentRule, '.')
+    OR COALESCE(:old.C_PaymentTerm_ID, 0) &lt;&gt; COALESCE(:NEW.C_PaymentTerm_ID, 0)
+    OR COALESCE(:old.DateAcct, '01-01-1386') &lt;&gt; COALESCE(:NEW.DateAcct, '01-01-1386')))
     THEN
     -- Propagate Changes of Payment Info to existing invoices
   UPDATE C_Invoice
@@ -35,7 +35,7 @@
   END IF;
  END IF;
 END C_Order_Trg2
-]]>
+
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

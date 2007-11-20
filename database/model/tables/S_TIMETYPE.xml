@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE S_TIMETYPE">
+  <database name="TABLE S_TIMETYPE">
     <table name="S_TIMETYPE" primaryKey="S_TIMETYPE_KEY">
       <column name="S_TIMETYPE_ID" primaryKey="true" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -19,4 +19,4 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

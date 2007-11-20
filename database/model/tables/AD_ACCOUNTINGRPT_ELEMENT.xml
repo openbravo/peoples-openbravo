@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_ACCOUNTINGRPT_ELEMENT">
+  <database name="TABLE AD_ACCOUNTINGRPT_ELEMENT">
     <table name="AD_ACCOUNTINGRPT_ELEMENT" primaryKey="PK_AD_ACCOUNTINGRPT_ELEMENT">
       <column name="AD_ACCOUNTINGRPT_ELEMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
@@ -32,4 +32,4 @@
         <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

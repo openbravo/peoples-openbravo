@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION AD_DELETE_CLIENT0">
-<function name="AD_DELETE_CLIENT0">
-        <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-        <body><![CDATA[                                
+  <database name="FUNCTION AD_DELETE_CLIENT0">
+    <function name="AD_DELETE_CLIENT0" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>                                
 /************************************************************************* 
  * The contents of this file are subject to the Openbravo  Public  License 
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License 
@@ -26,6 +26,6 @@
  ************************************************************************/ 
 BEGIN 
  AD_Delete_Client (p_PInstance_ID, NULL); 
-END AD_Delete_Client0]]></body>
+END AD_Delete_Client0</body>
     </function>
-</database>
+  </database>

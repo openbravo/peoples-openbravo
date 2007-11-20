@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_VALIDCOMBINATION">
+  <database name="TABLE C_VALIDCOMBINATION">
     <table name="C_VALIDCOMBINATION" primaryKey="C_VALIDCOMBINATION_KEY">
       <column name="C_VALIDCOMBINATION_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -26,8 +26,6 @@
       <column name="C_ACTIVITY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="USER1_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="USER2_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="CVALIDCOMBIN_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/>
-      <check name="CVALCOMBIN_ISFULLQUAL_CHECK" condition="IsFullyQualified in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_VC">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -37,7 +35,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORGTRX_VC">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CVALIDCOMBINATION"   onDelete="cascade">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CVALIDCOMBINATION" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CVALIDCOMBINATION">
@@ -55,7 +53,7 @@
       <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER1_VC">
         <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEACCOUNT_VC"   onDelete="cascade">
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEACCOUNT_VC" onDelete="cascade">
         <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_LOCATION" name="MLOCATIONFROM_VC">
@@ -73,15 +71,17 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_VC">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <index name="C_VALIDCOMBINATION_ALIAS">
+      <index name="C_VALIDCOMBINATION_ALIAS" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="ALIAS"/>
       </index>
-      <index name="C_VALIDCOMBINATION_MAIN">
+      <index name="C_VALIDCOMBINATION_MAIN" unique="false">
         <index-column name="C_ACCTSCHEMA_ID"/>
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="AD_ORG_ID"/>
         <index-column name="ACCOUNT_ID"/>
       </index>
+      <check name="CVALIDCOMBIN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CVALCOMBIN_ISFULLQUAL_CHECK" condition="IsFullyQualified in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_WH_PERIOD">
+  <database name="TABLE M_WH_PERIOD">
     <table name="M_WH_PERIOD" primaryKey="M_WH_PERIOD_KEY">
       <column name="M_WH_PERIOD_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -12,7 +12,6 @@
       <column name="M_WH_SCHEDULE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="STARTDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="ENDDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
-      <check name="M_WH_PERIOD_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MWHPERIOD">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -22,5 +21,6 @@
       <foreign-key foreignTable="M_WH_SCHEDULE" name="MWHSCHEDULE_MWHPERIOD">
         <reference local="M_WH_SCHEDULE_ID" foreign="M_WH_SCHEDULE_ID"/>
       </foreign-key>
+      <check name="M_WH_PERIOD_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

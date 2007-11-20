@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_PRINTLABELLINE_TRL">
+  <database name="TABLE AD_PRINTLABELLINE_TRL">
     <table name="AD_PRINTLABELLINE_TRL" primaryKey="AD_PRINTLABELLINETRL_KEY">
       <column name="AD_PRINTLABELLINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_LANGUAGE" primaryKey="true" required="true" type="VARCHAR" size="6" autoIncrement="false"/>
@@ -25,4 +25,4 @@
         <reference local="AD_PRINTLABELLINE_ID" foreign="AD_PRINTLABELLINE_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

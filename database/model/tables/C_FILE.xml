@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_FILE">
+  <database name="TABLE C_FILE">
     <table name="C_FILE" primaryKey="C_FILE_KEY">
       <column name="C_FILE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -25,4 +25,4 @@
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
     </table>
-</database>
+  </database>

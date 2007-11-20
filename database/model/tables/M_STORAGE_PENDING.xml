@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_STORAGE_PENDING">
+  <database name="TABLE M_STORAGE_PENDING">
     <table name="M_STORAGE_PENDING" primaryKey="M_STORAGE_PENDING_KEY">
       <column name="M_PRODUCT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_WAREHOUSE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -18,7 +18,6 @@
       <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_STORAGE_PENDING_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="M_STORAGE_PENDING_CHECK1" condition="((QTYORDERORDERED IS NULL AND M_PRODUCT_UOM_ID IS NULL AND QTYORDERRESERVED IS NULL) OR (QTYORDERORDERED IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL AND QTYORDERRESERVED IS NOT NULL))"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MSTORAGEPENDING">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -47,5 +46,6 @@
         <unique-column name="C_UOM_ID"/>
         <unique-column name="M_PRODUCT_UOM_ID"/>
       </unique>
+      <check name="M_STORAGE_PENDING_CHECK1" condition="((QTYORDERORDERED IS NULL AND M_PRODUCT_UOM_ID IS NULL AND QTYORDERRESERVED IS NULL) OR (QTYORDERORDERED IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL AND QTYORDERRESERVED IS NOT NULL))"/>
     </table>
-</database>
+  </database>

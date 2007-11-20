@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<database name="FUNCTION C_GETBPLOCATIONID">
-<function name="C_GETBPLOCATIONID" type="NUMERIC">
-<parameter name="p_BPartnerID" type="NUMERIC" />
-<parameter name="p_LocationType" type="CHAR" />
-<body><![CDATA[
+  <database name="FUNCTION C_GETBPLOCATIONID">
+    <function name="C_GETBPLOCATIONID" type="NUMERIC">
+      <parameter name="p_BPartnerID" type="NUMERIC"/>
+      <parameter name="p_LocationType" type="CHAR"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -99,6 +99,6 @@
       END LOOP;
     END IF;
     RETURN v_BPLocationID;
-END C_GetBPLocationID ]]></body>
-</function> 
-</database>
+END C_GetBPLocationID </body>
+    </function>
+  </database>

@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
-<database name="FUNCTION MRP_PROCESSPLAN">
-<function name="MRP_PROCESSPLAN">
-<parameter name="p_User_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_Org_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_Client_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_Run_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_Planner_ID" type="NUMERIC" mode="in"/>
-<parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
-<parameter name="p_PlanningDate" type="TIMESTAMP" size="7" mode="in"/>
-<parameter name="p_SecurityMargin" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION MRP_PROCESSPLAN">
+    <function name="MRP_PROCESSPLAN" type="NULL">
+      <parameter name="p_User_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Org_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Client_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Run_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_Planner_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
+      <parameter name="p_PlanningDate" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_SecurityMargin" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -64,7 +64,7 @@ BEGIN
              AND isplanned = 'N'
            GROUP BY pl.M_PRODUCT_ID) AAA;
 
-    WHILE v_Count > 0 LOOP
+    WHILE v_Count &gt; 0 LOOP
       v_ResultStr := 'loop';
       v_Planned := 'N';
       FOR Cur_PlanProduct IN (
@@ -101,7 +101,7 @@ BEGIN
                               AND pl.MRP_RUN_PRODUCTION_ID = p_Run_ID
                               AND pl.M_PRODUCT_ID = MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID
                               AND parent.isplanned = 'N'
-                              AND pl.qty < 0 )
+                              AND pl.qty &lt; 0 )
           ORDER BY planneddate
           ) LOOP
           v_Planned := 'Y';
@@ -138,7 +138,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE('MRP_PROCESSPLAN exception: ' || v_ResultStr );
   RAISE;
 --  RETURN;
-END Mrp_Processplan]]>
+END Mrp_Processplan
 </body>
-</function>
-</database>
+    </function>
+  </database>

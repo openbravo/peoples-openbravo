@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_CLIENTINFO">
+  <database name="TABLE AD_CLIENTINFO">
     <table name="AD_CLIENTINFO" primaryKey="AD_CLIENTINFO_KEY">
       <column name="AD_CLIENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -33,13 +33,6 @@
       <column name="CHECKORDERORG" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="CHECKINOUTORG" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="GROUPACCTINVLINES" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="ADCLIENTINFO_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADCLIENTINFO_ISDISLNAMT_CHECK" condition="IsDiscountLineAmt in ('Y','N')"/> 
-      <check name="ADCLIENTINFO_ACCT2ACTIVE_CHECK" condition="Acct2_Active in ('Y','N')"/> 
-      <check name="ADCLIENTINFO_ACCT3ACTIVE_CHECK" condition="Acct3_Active in ('Y','N')"/> 
-      <check name="ADCLIENTINFO_ANEGATSTOCK_CHECK" condition="ALLOWNEGATIVESTOCK IN ('Y', 'N')"/> 
-      <check name="ADCLIENTINFO_ORDERORG_CHECK" condition="CHECKORDERORG IN ('Y', 'N')"/> 
-      <check name="ADCLIENTINFO_INOUTORG_CHECK" condition="CHECKINOUTORG IN ('Y', 'N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_CLIENTINFO">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -64,10 +57,10 @@
       <foreign-key foreignTable="AD_TREE" name="ADTREEPRODUCT_ADCLIENTINFO">
         <reference local="AD_TREE_PRODUCT_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA3_ADCLIENTINFO"   onDelete="setnull">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA3_ADCLIENTINFO" onDelete="setnull">
         <reference local="C_ACCTSCHEMA3_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA2_ADCLIENTINFO"   onDelete="setnull">
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA2_ADCLIENTINFO" onDelete="setnull">
         <reference local="C_ACCTSCHEMA2_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA1_ADCLIENTINFO">
@@ -100,5 +93,12 @@
       <foreign-key foreignTable="PA_GOAL" name="PAGOAL_AD_CLIENTINFO">
         <reference local="PA_GOAL_ID" foreign="PA_GOAL_ID"/>
       </foreign-key>
+      <check name="ADCLIENTINFO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADCLIENTINFO_ISDISLNAMT_CHECK" condition="IsDiscountLineAmt in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADCLIENTINFO_ACCT2ACTIVE_CHECK" condition="Acct2_Active in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADCLIENTINFO_ACCT3ACTIVE_CHECK" condition="Acct3_Active in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADCLIENTINFO_ANEGATSTOCK_CHECK" condition="ALLOWNEGATIVESTOCK IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCLIENTINFO_ORDERORG_CHECK" condition="CHECKORDERORG IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCLIENTINFO_INOUTORG_CHECK" condition="CHECKINOUTORG IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
-</database>
+  </database>

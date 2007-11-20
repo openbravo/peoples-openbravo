@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_INVOICEPAYSCHEDULE">
+  <database name="TABLE C_INVOICEPAYSCHEDULE">
     <table name="C_INVOICEPAYSCHEDULE" primaryKey="C_INVOICEPAYSCHEDULE_KEY">
       <column name="C_INVOICEPAYSCHEDULE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,8 +16,6 @@
       <column name="DISCOUNTDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="DISCOUNTAMT" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="ISVALID" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="CINVPAYSCHED_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/>
-      <check name="CINVPAYSCHED_ISVALID_CHECK" condition="IsValid in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CINVOICEPAYSCHEDULE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -30,8 +28,10 @@
       <foreign-key foreignTable="C_PAYSCHEDULE" name="CPAYSCHEDULE_CINVOICEPAYSCHED">
         <reference local="C_PAYSCHEDULE_ID" foreign="C_PAYSCHEDULE_ID"/>
       </foreign-key>
-      <index name="C_INVOICEPAYSCHEDULE_INVOICE">
+      <index name="C_INVOICEPAYSCHEDULE_INVOICE" unique="false">
         <index-column name="C_INVOICE_ID"/>
       </index>
+      <check name="CINVPAYSCHED_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CINVPAYSCHED_ISVALID_CHECK" condition="IsValid in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

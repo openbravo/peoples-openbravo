@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_BANKSTATEMENT">
+  <database name="TABLE C_BANKSTATEMENT">
     <table name="C_BANKSTATEMENT" primaryKey="C_BANKSTATEMENT_KEY">
       <column name="C_BANKSTATEMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -21,10 +21,6 @@
       <column name="PROCESSING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="PROCESSED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="POSTED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="C_BANKSTATEMENT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="C_BANKSTATEMENT_ISMANUAL_CHECK" condition="IsManual in ('Y','N')"/> 
-      <check name="C_BANKSTATEMENT_CREATEFROM_CHECK" condition="CreateFrom in ('Y','N')"/> 
-      <check name="C_BANKSTATEMENT_PROCESSED_CHECK" condition="Processed in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBANKSTATEMENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -34,8 +30,12 @@
       <foreign-key foreignTable="C_BANKACCOUNT" name="CBANKACCOUNT_CBANKSTATEMENT">
         <reference local="C_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
       </foreign-key>
-      <index name="C_BANKSTMT_UPDATED">
+      <index name="C_BANKSTMT_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
+      <check name="C_BANKSTATEMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_BANKSTATEMENT_ISMANUAL_CHECK" condition="IsManual in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_BANKSTATEMENT_EATEFROM_CHECK" condition="CreateFrom in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_BANKSTATEMENT_ROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

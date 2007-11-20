@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="FUNCTION MA_WORKREQUIREMENT_CLOSE">
-<function name="MA_WORKREQUIREMENT_CLOSE">
-<parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-<body><![CDATA[
+  <database name="FUNCTION MA_WORKREQUIREMENT_CLOSE">
+    <function name="MA_WORKREQUIREMENT_CLOSE" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body>
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -58,7 +58,7 @@
         v_Record_ID:=Cur_Parameter.Record_ID;
       END LOOP; --  Get Parameter
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--<<MA_WorkRequirement_Close>>') ;
+      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_WorkRequirement_Close&gt;&gt;') ;
     END IF;
   BEGIN --BODY
     v_ResultStr:='Closing phases';
@@ -75,14 +75,14 @@
     UPDATE MA_WorkRequirement
       SET closed='Y'
     WHERE MA_WorkRequirement_ID=v_Record_ID;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --v_Message := v_Message || '@Created@: ' || v_NoRecords;
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
       AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--<<MA_WorkRequirement_Process finished>> ' || v_Message) ;
+      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_WorkRequirement_Process finished&gt;&gt; ' || v_Message) ;
     END IF;
     RETURN;
   END; --BODY
@@ -115,7 +115,7 @@ WHEN OTHERS THEN
   END IF;
   --p_Invoice_ID := 0;        --  Error Indicator
   RETURN;
-END MA_WorkRequirement_Close]]>
+END MA_WorkRequirement_Close
 </body>
-</function>
-</database>
+    </function>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE M_INVENTORYLINE">
+  <database name="TABLE M_INVENTORYLINE">
     <table name="M_INVENTORYLINE" primaryKey="M_INVENTORYLINE_KEY">
       <column name="M_INVENTORYLINE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -21,8 +21,6 @@
       <column name="QUANTITYORDER" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="C_UOM_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="QUANTITYORDERBOOK" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
-      <check name="M_INVENTORYLINE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="M_INVENTORYLINE" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MINVENTORYLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -35,7 +33,7 @@
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_MINVENTORYLINE">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INVENTORY" name="MINVENTORY_MINVENTORYLINE"   onDelete="cascade">
+      <foreign-key foreignTable="M_INVENTORY" name="MINVENTORY_MINVENTORYLINE" onDelete="cascade">
         <reference local="M_INVENTORY_ID" foreign="M_INVENTORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_MINVENTORYLINE">
@@ -47,11 +45,13 @@
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MINVENTORYLINE">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
-      <index name="M_INVENTORYLINE_PRODUCT">
+      <index name="M_INVENTORYLINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <index name="M_INVENTORYLINE_INVENTORY">
+      <index name="M_INVENTORYLINE_INVENTORY" unique="false">
         <index-column name="M_INVENTORY_ID"/>
       </index>
+      <check name="M_INVENTORYLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_INVENTORYLINE" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
     </table>
-</database>
+  </database>

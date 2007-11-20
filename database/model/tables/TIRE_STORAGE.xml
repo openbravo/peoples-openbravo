@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE TIRE_STORAGE">
+  <database name="TABLE TIRE_STORAGE">
     <table name="TIRE_STORAGE" primaryKey="TIRE_STORAGE_KEY">
       <column name="TIRE_STORAGE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -29,10 +29,6 @@
       <column name="ISRETURNED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="DATERETURNED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="AD_USER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="TIRESTORAGE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="TIRESTORAGE_ISSTORED_CHECK" condition="IsStored in ('Y','N')"/> 
-      <check name="TIRESTORAGE_ISRETURNED_CHECK" condition="IsReturned in ('Y','N')"/> 
-      
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_TIRESTORAGE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -48,5 +44,8 @@
       <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_TIRESTORAGE">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
       </foreign-key>
+      <check name="TIRESTORAGE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="TIRESTORAGE_ISSTORED_CHECK" condition="IsStored in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="TIRESTORAGE_ISRETURNED_CHECK" condition="IsReturned in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_PROJECT">
+  <database name="TABLE C_PROJECT">
     <table name="C_PROJECT" primaryKey="C_PROJECT_KEY">
       <column name="C_PROJECT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -66,10 +66,6 @@
       <column name="SERVMARGIN" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="SERVREVENUE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="SETPROJECTTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <check name="C_PROJECT_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="C_PROJECT_ISCOMMITMENT_CHECK" condition="IsCommitment in ('Y','N')"/>
-      <check name="C_PROJECT_GENERATETO_CHECK" condition="GenerateTo in ('Y','N')"/>
-      <check name="C_PROJECT_PROCESSED_CHECK" condition="Processed in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPROJECT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -79,7 +75,7 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_SR_CPROJECT">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_CPROJECT"   onDelete="setnull">
+      <foreign-key foreignTable="AD_USER" name="ADUSER_CPROJECT" onDelete="setnull">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CPROJECT">
@@ -125,5 +121,9 @@
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="VALUE"/>
       </index>
+      <check name="C_PROJECT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_PROJECT_ISCOMMITMENT_CHECK" condition="IsCommitment in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_PROJECT_GENERATETO_CHECK" condition="GenerateTo in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_PROJECT_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

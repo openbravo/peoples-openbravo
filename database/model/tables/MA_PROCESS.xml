@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_PROCESS">
+  <database name="TABLE MA_PROCESS">
     <table name="MA_PROCESS" primaryKey="MA_PROCESS_KEY">
       <column name="MA_PROCESS_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -16,7 +16,6 @@
       <column name="MA_CC_IDPREP" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="MA_CC_IDWORK" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="MA_COSTCENTER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="MA_PROCESS_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAPROCESS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -35,5 +34,6 @@
       <foreign-key foreignTable="MA_WORKSTATION" name="MA_WORKSTATION_MAPROCESS">
         <reference local="MA_WORKSTATION_ID" foreign="MA_WORKSTATION_ID"/>
       </foreign-key>
+      <check name="MA_PROCESS_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_DP_MANAGEMENTLINE_TRG">
-<trigger name="C_DP_MANAGEMENTLINE_TRG" table="C_DP_MANAGEMENTLINE" fires="before" insert="true" update="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_DP_MANAGEMENTLINE_TRG">
+    <trigger name="C_DP_MANAGEMENTLINE_TRG" table="C_DP_MANAGEMENTLINE" fires="before" insert="true" update="true" delete="false" foreach="row">
+      <body>
+
 
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -37,7 +37,7 @@ BEGIN
 EXCEPTION
   WHEN OTHERS THEN
     NULL;
-END c_dp_managementline_trg ]]>
+END c_dp_managementline_trg 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>

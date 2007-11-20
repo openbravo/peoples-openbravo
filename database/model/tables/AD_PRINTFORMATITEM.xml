@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE AD_PRINTFORMATITEM">
+  <database name="TABLE AD_PRINTFORMATITEM">
     <table name="AD_PRINTFORMATITEM" primaryKey="AS_PRINTFORMATITEM_KEY">
       <column name="AD_PRINTFORMATITEM_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -47,19 +47,10 @@
       <column name="ISFIXEDWIDTH" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISNEXTPAGE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="PRINTNAMESUFFIX" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
-      <check name="ADPRFORMITEM_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="ADPRFORMITEM_ISPRINTED_CHECK" condition="IsPrinted in ('Y','N')"/> 
-      <check name="ADPRFORMITEM_ISRELPOS_CHECK" condition="IsRelativePosition in ('Y','N')"/> 
-      <check name="ADPRFORMITEM_ISNEXTLN_CHECK" condition="IsNextLine in ('Y','N')"/> 
-      <check name="ADPRFORMITEM_ISHEIGHTLN_CHECK" condition="IsHeightOneLine in ('Y','N')"/> 
-      <check name="ADPRFORMITEM_ISORDERBY_CHECK" condition="IsOrderBy in ('Y','N')"/> 
-      <check name="ADPRFORMITEM_ISGROUPBY_CHECK" condition="IsGroupBy in ('Y','N')"/> 
-      <check name="ADPRFORMITEM_ISPAGEBR_CHECK" condition="IsPageBreak in ('Y','N')"/> 
-      <check name="ADPRFORMITEM_ISSUMM_CHECK" condition="IsSummarized in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPRINTFORMATITEM">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADPRINTFORMATITEM"   onDelete="cascade">
+      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADPRINTFORMATITEM" onDelete="cascade">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADPRINTFORMATITEM">
@@ -71,17 +62,26 @@
       <foreign-key foreignTable="AD_PRINTFONT" name="ADPRINTFONT_ADPRINTFORMATITEM">
         <reference local="AD_PRINTFONT_ID" foreign="AD_PRINTFONT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PRINTFORMAT" name="ADPRINTFORMAT_PRINTFORMATCHILD"   onDelete="setnull">
+      <foreign-key foreignTable="AD_PRINTFORMAT" name="ADPRINTFORMAT_PRINTFORMATCHILD" onDelete="setnull">
         <reference local="AD_PRINTFORMATCHILD_ID" foreign="AD_PRINTFORMAT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PRINTFORMAT" name="ADPRINTFORMAT_PRINTFORMATITEM"   onDelete="cascade">
+      <foreign-key foreignTable="AD_PRINTFORMAT" name="ADPRINTFORMAT_PRINTFORMATITEM" onDelete="cascade">
         <reference local="AD_PRINTFORMAT_ID" foreign="AD_PRINTFORMAT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_PRINTGRAPH" name="ADPRINTGRAPH_PRINTFORMATITEM">
         <reference local="AD_PRINTGRAPH_ID" foreign="AD_PRINTGRAPH_ID"/>
       </foreign-key>
-      <index name="AD_PRINTFORMATITEM_FORMAT">
+      <index name="AD_PRINTFORMATITEM_FORMAT" unique="false">
         <index-column name="AD_PRINTFORMAT_ID"/>
       </index>
+      <check name="ADPRFORMITEM_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISPRINTED_CHECK" condition="IsPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISRELPOS_CHECK" condition="IsRelativePosition in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISNEXTLN_CHECK" condition="IsNextLine in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISHEIGHTLN_CHECK" condition="IsHeightOneLine in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISORDERBY_CHECK" condition="IsOrderBy in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISGROUPBY_CHECK" condition="IsGroupBy in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISPAGEBR_CHECK" condition="IsPageBreak in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISSUMM_CHECK" condition="IsSummarized in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

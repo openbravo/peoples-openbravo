@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE MA_MACHINESTATION">
+  <database name="TABLE MA_MACHINESTATION">
     <table name="MA_MACHINESTATION" primaryKey="MA_MACHINESTATION_KEY">
       <column name="MA_MACHINESTATION_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -11,7 +11,6 @@
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="MA_MACHINE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="MA_WORKSTATION_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <check name="MA_MACHINESTATION_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMACHINESTATION">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -24,5 +23,6 @@
       <foreign-key foreignTable="MA_WORKSTATION" name="MA_WORKSTATION_MAMACHINSTAT">
         <reference local="MA_WORKSTATION_ID" foreign="MA_WORKSTATION_ID"/>
       </foreign-key>
+      <check name="MA_MACHINESTATI_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

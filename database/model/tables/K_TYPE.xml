@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE K_TYPE">
+  <database name="TABLE K_TYPE">
     <table name="K_TYPE" primaryKey="K_TYPE_KEY">
       <column name="K_TYPE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -14,13 +14,13 @@
       <column name="HELP" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="ISPUBLIC" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISPUBLICWRITE" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <check name="K_TYPE_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="K_TYPE_ISPUBLIC_CHECK" condition="IsPublic in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_KTYPE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_KTYPE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="K_TYPE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="K_TYPE_ISPUBLIC_CHECK" condition="IsPublic in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

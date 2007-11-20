@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE C_DUNNING">
+  <database name="TABLE C_DUNNING">
     <table name="C_DUNNING" primaryKey="C_DUNNING_KEY">
       <column name="C_DUNNING_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -14,13 +14,13 @@
       <column name="SENDDUNNINGLETTER" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="GRACEDAYS" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISDEFAULT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <check name="C_DUNNING_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
-      <check name="CDUN_SENDDUNLET_CHECK" condition="SendDunningLetter in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CDUNNING">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CDUNNING">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="C_DUNNING_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CDUN_SENDDUNLET_CHECK" condition="SendDunningLetter in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<database name="TABLE PA_GOAL">
+  <database name="TABLE PA_GOAL">
     <table name="PA_GOAL" primaryKey="PA_GOAL_KEY">
       <column name="PA_GOAL_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -21,7 +21,6 @@
       <column name="MEASUREACTUAL" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false"/>
       <column name="GOALPERFORMANCE" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false"/>
       <column name="DATELASTRUN" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
-      <check name="PA_GOAL_ISACTIVE_CHECK" condition="IsActive in ('Y','N')"/> 
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_PAGOAL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -34,5 +33,6 @@
       <foreign-key foreignTable="PA_MEASURE" name="PAMEASURE_PAGOAL">
         <reference local="PA_MEASURE_ID" foreign="PA_MEASURE_ID"/>
       </foreign-key>
+      <check name="PA_GOAL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
-</database>
+  </database>

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<database name="TRIGGER C_PROJECT_TRG3">
-<trigger name="C_PROJECT_TRG3" table="C_PROJECT" fires="before" delete="true" foreach="row">
-<body>
-<![CDATA[
+  <database name="TRIGGER C_PROJECT_TRG3">
+    <trigger name="C_PROJECT_TRG3" table="C_PROJECT" fires="before" insert="false" update="false" delete="true" foreach="row">
+      <body>
+
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -39,7 +39,7 @@ BEGIN
     WHERE AD_TREE_ID=v_Tree_ID
       AND NODE_ID=:OLD.C_Project_ID;
   END IF;
-END C_Project_Trg3 ]]>
+END C_Project_Trg3 
 </body>
-</trigger>
-</database>
+    </trigger>
+  </database>
