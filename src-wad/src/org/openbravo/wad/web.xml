@@ -18,10 +18,7 @@
  ************************************************************************
 -->
 
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-    version="2.4">
+<web-app id="webapp">
   <listener>
       <listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>
   </listener>
@@ -126,16 +123,16 @@
     <param-value></param-value>
   </context-param>
   <servlet>
-    <servlet-name>AxisServlet</servlet-name>
     <display-name>Apache-Axis Servlet</display-name>
+    <servlet-name>AxisServlet</servlet-name>
     <servlet-class>
         org.apache.axis.transport.http.AxisServlet
     </servlet-class>
   </servlet>
 
   <servlet>
-    <servlet-name>AdminServlet</servlet-name>
     <display-name>Axis Admin Servlet</display-name>
+    <servlet-name>AdminServlet</servlet-name>
     <servlet-class>
         org.apache.axis.transport.http.AdminServlet
     </servlet-class>
@@ -143,8 +140,8 @@
   </servlet>
 
   <servlet>
-    <servlet-name>SOAPMonitorService</servlet-name>
     <display-name>SOAPMonitorService</display-name>
+    <servlet-name>SOAPMonitorService</servlet-name>
     <servlet-class>
         org.apache.axis.monitor.SOAPMonitorService
     </servlet-class>
@@ -155,8 +152,8 @@
     <load-on-startup>100</load-on-startup>
   </servlet>
   <servlet>
-    <servlet-name>HttpBaseServlet</servlet-name>
     <display-name>Base Servlet</display-name>
+    <servlet-name>HttpBaseServlet</servlet-name>
     <servlet-class>
         org.openbravo.base.HttpBaseServlet
     </servlet-class>
@@ -188,35 +185,35 @@
     </init-param>
   </servlet>
   <servlet>
-    <servlet-name>
-      erpDataGrid
-    </servlet-name>
     <display-name>
       DataGrid
     </display-name>
+    <servlet-name>
+      erpDataGrid
+    </servlet-name>
     <servlet-class>
       org.openbravo.erpCommon.utility.DataGrid
     </servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>
-      erpMessageJS
-    </servlet-name>
     <display-name>
       MessageJS
     </display-name>
+    <servlet-name>
+      erpMessageJS
+    </servlet-name>
     <servlet-class>
       org.openbravo.erpCommon.businessUtility.MessageJS
     </servlet-class>
   </servlet>
   <FIELDS_TMP id="sectionDetail1">
     <servlet>
-      <servlet-name>
-        <FIELD_TMP id="fieldName">codigo</FIELD_TMP>
-      </servlet-name>
       <display-name>
         <FIELD_TMP id="fieldDisplayName">codigo</FIELD_TMP>
       </display-name>
+      <servlet-name>
+        <FIELD_TMP id="fieldName">codigo</FIELD_TMP>
+      </servlet-name>
       <servlet-class>
         <FIELD_TMP id="fieldClassName">codigo</FIELD_TMP>
       </servlet-class>

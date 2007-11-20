@@ -25,15 +25,26 @@
 <PARAMETER id="paramWebClients" name="webClients" default=""/>
 <PARAMETER id="paramWebPath" name="webPath" default=""/>
 <PARAMETER id="paramAttachPath" name="attachPath" default=""/>
+
+<PARAMETER id="webapp1" name="webapp1" default="Y"/>
+<PARAMETER id="webapp" name="webapp" default="Y" withId="webapp1" 
+   boolean='xmlns="http://java.sun.com/xml/ns/j2ee" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4"'/>
+   
+
+    
+    
 <structure name="structure1">
-  <FIELD id="fieldName">name</FIELD>
   <FIELD id="fieldDisplayName">displayname</FIELD>
+  <FIELD id="fieldName">name</FIELD>
   <FIELD id="fieldClassName">classname</FIELD>
   <SECTION id="sectionDetail1"/>
 </structure>
 <structure name="structure2">
-  <FIELD id="fieldName2">name</FIELD>
   <FIELD id="fieldDisplayName2">displayname</FIELD>
+  <FIELD id="fieldName2">name</FIELD>
   <FIELD id="fieldClassName2">classname</FIELD>
   <SECTION id="sectionDetail2"/>
 </structure>
