@@ -249,6 +249,10 @@
     <target name="update.database.script">
         <ant dir="${base.subversion}/database" target="update.database.script" inheritAll="true" inheritRefs="true"/>   
    </target>
+
+    <target name="export.database.structure">
+        <ant dir="${base.subversion}/database" target="export.database.structure" inheritAll="true" inheritRefs="true"/>
+    </target>
     
     <target name="export.database.data">
         <ant dir="${base.subversion}/database" target="export.database.data" inheritAll="true" inheritRefs="true"/>

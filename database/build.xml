@@ -49,6 +49,10 @@
            classname="org.openbravo.ddlutils.task.AlterXML2SQL">
     <classpath refid="runtime-classpath" />
   </taskdef>
+  <taskdef name="exportdatabase"
+           classname="org.openbravo.ddlutils.task.ExportDatabase">
+    <classpath refid="runtime-classpath" />
+  </taskdef>
   <taskdef name="importdata"
            classname="org.openbravo.ddlutils.task.ImportDataXML">
     <classpath refid="runtime-classpath" />
@@ -281,6 +285,15 @@
                       output="${bbdd.outputscript}"
                       verbosity="${bbdd.verbosity}" />
   </target>
+
+    <target name="export.database.structure">
+        <exportdatabase driver="${bbdd.driver}"
+                        url="${bbdd.owner.url}"
+                        user="${bbdd.user}"
+                        password="${bbdd.password}"
+                        model="model"
+                        verbosity="${bbdd.verbosity}" />
+    </target>
 
   <target name="import.database.data">
       <importdata driver="${bbdd.driver}"
