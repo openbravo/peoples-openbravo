@@ -13,7 +13,7 @@
       <column name="V_LIABILITY_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="V_LIABILITY_SERVICES_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="V_PREPAYMENT_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="C_BP_VENDOR_ACCT_ID" primaryKey="true" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_BP_VENDOR_ACCT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="STATUS" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPVENDORACCT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
   <database name="TABLE C_WITHHOLDING_ACCT">
     <table name="C_WITHHOLDING_ACCT" primaryKey="C_WITHHOLDING_ACCT_KEY">
-      <column name="C_WITHHOLDING_ID" primaryKey="true" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="C_ACCTSCHEMA_ID" primaryKey="true" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_WITHHOLDING_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_ACCTSCHEMA_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_ORG_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISACTIVE" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>

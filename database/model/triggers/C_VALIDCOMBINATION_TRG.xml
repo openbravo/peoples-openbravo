@@ -192,7 +192,7 @@ BEGIN
   v_TempName := '_';
  END LOOP;
 
- --  Fully Qualified?
+ --  Fully Qualified
  IF NOT DELETING THEN
   IF (:new.IsFullyQualified='Y' AND v_IsFullyQualified='N') THEN
    RAISE Not_Fully_Qualified;

@@ -27,7 +27,7 @@
     **/
     v_UpdateIt BOOLEAN:=FALSE;
 BEGIN
-  -- Do we have to update?
+  -- Do we have to update
   IF(INSERTING OR UPDATING) THEN
     IF(:new.IsMandatory='Y') THEN
       v_UpdateIt:=TRUE;

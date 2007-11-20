@@ -33,7 +33,7 @@
   v_Qty          NUMBER;
   v_M_Product_ID NUMBER;
 BEGIN
-  -- Is RevenueRecognition Time Based?
+  -- Is RevenueRecognition Time Based
   SELECT IsTimeBased
   INTO v_IsTimeBased
   FROM C_RevenueRecognition

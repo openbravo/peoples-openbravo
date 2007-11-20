@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-  <database name="FUNCTION Mrp_Processplan_Recalculate">
-    <function name="Mrp_Processplan_Recalculate" type="NULL">
+  <database name="FUNCTION MRP_PROCESSPLAN_RECALCULATE">
+    <function name="MRP_PROCESSPLAN_RECALCULATE" type="NULL">
       <parameter name="p_User_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Run_ProductionLine_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>

@@ -36,7 +36,7 @@
       <column name="C_ORDER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_PROJECT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISAUTOMATICGENERATED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <column name="STATUS" primaryKey="false" required="true" type="CHAR" size="2" default="&apos;" autoIncrement="false"/>
+      <column name="STATUS" primaryKey="false" required="true" type="CHAR" size="2" default="&apos;&apos;" autoIncrement="false"/>
       <column name="STATUS_INITIAL" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CDEBTPAYMENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

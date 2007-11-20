@@ -42,13 +42,13 @@ BEGIN
     C_INVOICE i
   WHERE ci.AD_Client_ID = i.AD_Client_ID
     AND i.C_Invoice_ID = p_C_Invoice_ID;
-  -- What Amount is the Discount Base?
+  -- What Amount is the Discount Base
   IF(v_IsDiscountLineAmt = 'Y') THEN
     v_Amount := v_TotalLines;
   ELSE
     v_Amount := v_GrandTotal;
   END IF;
-  -- Anything to discount?
+  -- Anything to discount
   IF(v_Amount = 0) THEN
     RETURN 0;
   END IF;
