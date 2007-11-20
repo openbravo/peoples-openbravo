@@ -38,12 +38,12 @@ public class ReplacePatTranslation implements Translation {
     public String exec(String s) {
 
         Matcher m = _p.matcher(s);
-         StringBuffer sb = new StringBuffer();
-         while (m.find()) {
-             m.appendReplacement(sb, _replaceStr);
-         }
-         m.appendTail(sb);
-         return sb.toString();     
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            m.appendReplacement(sb, _replaceStr);
+        }
+        m.appendTail(sb);
+        return sb.toString();     
 
     }
     

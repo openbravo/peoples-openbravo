@@ -373,7 +373,7 @@ public class Function implements StructureObject, Cloneable {
             return new EqualsBuilder()
                     .append(_name, other._name)
                     .append(_parameters, other._parameters)
-                    .append(_body, other._body)
+                    .append(_body.trim(), other._body.trim())
                     .append(_typeCode, other._typeCode)
                     .isEquals();
         } else {
@@ -392,7 +392,7 @@ public class Function implements StructureObject, Cloneable {
         return UtilsCompare.equalsIgnoreCase(_name, otherFunction._name) &&
                 new EqualsBuilder()
                         .append(_parameters, otherFunction._parameters)
-                        .append(_body, otherFunction._body)
+                        .append(_body.trim(), otherFunction._body.trim())
                         .append(_typeCode, otherFunction._typeCode)
                         .isEquals();
     }

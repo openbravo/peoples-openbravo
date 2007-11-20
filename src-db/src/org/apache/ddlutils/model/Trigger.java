@@ -299,10 +299,10 @@ public class Trigger implements StructureObject, Cloneable {
                                       .append(_table, other._table)
                                       .append(_firesCode, other._firesCode)
                                       .append(_insert, other._insert)
-                                      .append(_update, other._firesCode)
+                                      .append(_update, other._update)
                                       .append(_delete, other._delete)
                                       .append(_foreachCode, other._foreachCode)
-                                      .append(_body, other._body)
+                                      .append(_body.trim(), other._body.trim())
                                       .isEquals();
         } else {
             return false;
@@ -325,7 +325,7 @@ public class Trigger implements StructureObject, Cloneable {
                                   .append(_update, otherTrigger._update)
                                   .append(_delete, otherTrigger._delete)
                                   .append(_foreachCode, otherTrigger._foreachCode)
-                                  .append(_body, otherTrigger._body)
+                                  .append(_body.trim(), otherTrigger._body.trim())
                                   .isEquals();
     }
     

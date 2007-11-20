@@ -1089,6 +1089,7 @@ public class Table implements StructureObject, Serializable, Cloneable
             return new EqualsBuilder().append(_name,                     other._name)
                                       .append(_primaryKey,               other._primaryKey)
                                       .append(_name,                     other._name)
+                                      .append(_columns,                  other._columns)
                                       .append(new HashSet(_foreignKeys), new HashSet(other._foreignKeys))
                                       .append(new HashSet(_indices),     new HashSet(other._indices))
                                       .append(new HashSet(_uniques),     new HashSet(other._uniques))

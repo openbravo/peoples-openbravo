@@ -127,7 +127,7 @@ public class View implements StructureObject, Cloneable {
             return  new EqualsBuilder()
                             .append(_name, otherView._name)
                             .append(_updatable, otherView._updatable)
-                            .append(_statement, otherView._statement)
+                            .append(_statement.trim(), otherView._statement.trim())
                             .isEquals();
         } else {
             return false;
@@ -145,7 +145,7 @@ public class View implements StructureObject, Cloneable {
             return UtilsCompare.equalsIgnoreCase(_name, otherView._name) &&
                     new EqualsBuilder()
                             .append(_updatable, otherView._updatable)
-                            .append(_statement, otherView._statement)
+                            .append(_statement.trim(), otherView._statement.trim())
                             .isEquals();
 
     }

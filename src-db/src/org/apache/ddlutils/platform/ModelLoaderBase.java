@@ -18,16 +18,22 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.model.Check;
 import org.apache.ddlutils.model.Column;
 import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.model.ForeignKey;
+import org.apache.ddlutils.model.Function;
 import org.apache.ddlutils.model.Reference;
 import org.apache.ddlutils.model.Table;
 import org.apache.ddlutils.model.Index;
 import org.apache.ddlutils.model.IndexColumn;
+import org.apache.ddlutils.model.Parameter;
 import org.apache.ddlutils.model.Sequence;
+import org.apache.ddlutils.model.Trigger;
 import org.apache.ddlutils.model.Unique;
 import org.apache.ddlutils.model.View;
 import org.apache.ddlutils.util.ExtTypes;
@@ -39,7 +45,7 @@ import org.apache.ddlutils.util.ExtTypes;
 public class ModelLoaderBase implements ModelLoader {
     
     
-    private Connection _connection;
+    protected Connection _connection;
     
        
     protected PreparedStatement _stmt_listtables;
@@ -61,6 +67,19 @@ public class ModelLoaderBase implements ModelLoader {
     
     protected PreparedStatement _stmt_listsequences;
     
+    protected PreparedStatement _stmt_listtriggers;
+    
+    protected PreparedStatement _stmt_listfunctions;
+    protected PreparedStatement _stmt_functioncode;
+    
+    private Pattern _pFunctionHeader = Pattern.compile(
+        "\\A\\s*([Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn]|[Pp][Rr][Oo][Cc][Ee][Dd][Uu][Rr][Ee])\\s+?.+?\\s*?(\\((.*?)\\))??" +
+        "\\s*?([Rr][Ee][Tt][Uu][Rr][Nn]\\s+?(.+?))?" +
+        "\\s+[Aa][Ss]\\s+");
+    private Pattern _pFunctionParam = Pattern.compile(
+        "^\\s*(.+?)\\s+(([Ii][Nn]|[Oo][Uu][Tt])\\s+)?(.+?)(\\s+[Dd][Ee][Ff][Aa][Uu][Ll][Tt]\\s+(.+?))?\\s*?$");
+
+    
     /** Creates a new instance of BasicModelLoader */
     public ModelLoaderBase(Platform p) {
     }
@@ -71,46 +90,64 @@ public class ModelLoaderBase implements ModelLoader {
         try {
             _connection = connection;
 
-            _stmt_listtables = _connection.prepareStatement("SELECT TABLE_NAME FROM USER_TABLES WHERE TABLE_NAME <> 'AD_SYSTEM_MODEL' ORDER BY TABLE_NAME");
-            _stmt_pkname = _connection.prepareStatement("SELECT CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'P' AND TABLE_NAME = ?");
-            _stmt_listcolumns = _connection.prepareStatement("SELECT COLUMN_NAME, DATA_TYPE, CHAR_COL_DECL_LENGTH, DATA_LENGTH ,DATA_PRECISION, DATA_SCALE, NULLABLE, DATA_DEFAULT FROM USER_TAB_COLUMNS WHERE TABLE_NAME = ? ORDER BY COLUMN_ID");
-            _stmt_pkcolumns = _connection.prepareStatement("SELECT COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = ? ORDER BY POSITION");
-            _stmt_listchecks = _connection.prepareStatement("SELECT CONSTRAINT_NAME, SEARCH_CONDITION FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'C' AND GENERATED = 'USER NAME' AND TABLE_NAME = ?");
-            _stmt_listfks = _connection.prepareStatement("SELECT C.CONSTRAINT_NAME, C2.TABLE_NAME, C.DELETE_RULE, 'NO ACTION' FROM USER_CONSTRAINTS C, USER_CONSTRAINTS C2 WHERE C.R_CONSTRAINT_NAME = C2.CONSTRAINT_NAME AND C.CONSTRAINT_TYPE = 'R' AND C.TABLE_NAME = ?");
-            _stmt_fkcolumns = _connection.prepareStatement("SELECT C.COLUMN_NAME, C2.COLUMN_NAME FROM USER_CONS_COLUMNS C, USER_CONSTRAINTS K, USER_CONS_COLUMNS C2, USER_CONSTRAINTS K2 WHERE C.CONSTRAINT_NAME = K.CONSTRAINT_NAME AND C2.CONSTRAINT_NAME = K2.CONSTRAINT_NAME AND K.R_CONSTRAINT_NAME = K2.CONSTRAINT_NAME AND C.CONSTRAINT_NAME = ? ORDER BY C.POSITION");
-
-            _stmt_listindexes = _connection.prepareStatement("SELECT INDEX_NAME, UNIQUENESS FROM USER_INDEXES WHERE TABLE_NAME = ? AND INDEX_TYPE = 'NORMAL' AND INDEX_NAME NOT IN (SELECT INDEX_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'U' OR CONSTRAINT_TYPE = 'P')");
-            _stmt_indexcolumns = _connection.prepareStatement("SELECT COLUMN_NAME FROM USER_IND_COLUMNS WHERE INDEX_NAME = ? ORDER BY COLUMN_POSITION");
-
-            _stmt_listuniques = _connection.prepareStatement("SELECT CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'U' AND TABLE_NAME = ?");
-            _stmt_uniquecolumns = _connection.prepareStatement("SELECT COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = ? ORDER BY POSITION");
-
-            _stmt_listviews = _connection.prepareStatement("SELECT VIEW_NAME, TEXT FROM USER_VIEWS");
-            
-            _stmt_listsequences = _connection.prepareStatement("SELECT SEQUENCE_NAME, LAST_NUMBER, INCREMENT_BY FROM USER_SEQUENCES");
+            initMetadataSentences();
 
             return readDatabase();
             
         } finally {
-        
-            _stmt_listtables.close();
-            _stmt_pkname.close();
-            _stmt_listcolumns.close();
-            _stmt_pkcolumns.close();
-            _stmt_listchecks.close();
-            _stmt_listfks.close();
-            _stmt_fkcolumns.close();
-
-            _stmt_listindexes.close();
-            _stmt_indexcolumns.close();
-
-            _stmt_listuniques.close();
-            _stmt_uniquecolumns.close();    
-
-            _stmt_listviews.close();
-            
-            _stmt_listsequences.close();
+            closeMetadataSentences();
         }       
+    }
+    
+    protected void initMetadataSentences() throws SQLException {
+
+        _stmt_listtables = _connection.prepareStatement("SELECT TABLE_NAME FROM USER_TABLES WHERE TABLE_NAME <> 'AD_SYSTEM_MODEL' ORDER BY TABLE_NAME");
+        _stmt_pkname = _connection.prepareStatement("SELECT CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'P' AND TABLE_NAME = ?");
+        _stmt_listcolumns = _connection.prepareStatement("SELECT COLUMN_NAME, DATA_TYPE, CHAR_COL_DECL_LENGTH, DATA_LENGTH ,DATA_PRECISION, DATA_SCALE, NULLABLE, DATA_DEFAULT FROM USER_TAB_COLUMNS WHERE TABLE_NAME = ? ORDER BY COLUMN_ID");
+        _stmt_pkcolumns = _connection.prepareStatement("SELECT COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = ? ORDER BY POSITION");
+        _stmt_listchecks = _connection.prepareStatement("SELECT CONSTRAINT_NAME, SEARCH_CONDITION FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'C' AND GENERATED = 'USER NAME' AND TABLE_NAME = ? ORDER BY CONSTRAINT_NAME");
+        _stmt_listfks = _connection.prepareStatement("SELECT C.CONSTRAINT_NAME, C2.TABLE_NAME, C.DELETE_RULE, 'NO ACTION' FROM USER_CONSTRAINTS C, USER_CONSTRAINTS C2 WHERE C.R_CONSTRAINT_NAME = C2.CONSTRAINT_NAME AND C.CONSTRAINT_TYPE = 'R' AND C.TABLE_NAME = ? ORDER BY C.CONSTRAINT_NAME");
+        _stmt_fkcolumns = _connection.prepareStatement("SELECT C.COLUMN_NAME, C2.COLUMN_NAME FROM USER_CONS_COLUMNS C, USER_CONSTRAINTS K, USER_CONS_COLUMNS C2, USER_CONSTRAINTS K2 WHERE C.CONSTRAINT_NAME = K.CONSTRAINT_NAME AND C2.CONSTRAINT_NAME = K2.CONSTRAINT_NAME AND K.R_CONSTRAINT_NAME = K2.CONSTRAINT_NAME AND C.CONSTRAINT_NAME = ? ORDER BY C.POSITION");
+
+        _stmt_listindexes = _connection.prepareStatement("SELECT INDEX_NAME, UNIQUENESS FROM USER_INDEXES WHERE TABLE_NAME = ? AND INDEX_TYPE = 'NORMAL' AND INDEX_NAME NOT IN (SELECT INDEX_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'U' OR CONSTRAINT_TYPE = 'P') ORDER BY INDEX_NAME");
+        _stmt_indexcolumns = _connection.prepareStatement("SELECT COLUMN_NAME FROM USER_IND_COLUMNS WHERE INDEX_NAME = ? ORDER BY COLUMN_POSITION");
+
+        _stmt_listuniques = _connection.prepareStatement("SELECT CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'U' AND TABLE_NAME = ? ORDER BY CONSTRAINT_NAME");
+        _stmt_uniquecolumns = _connection.prepareStatement("SELECT COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = ? ORDER BY POSITION");
+
+        _stmt_listviews = _connection.prepareStatement("SELECT VIEW_NAME, TEXT FROM USER_VIEWS");
+
+        _stmt_listsequences = _connection.prepareStatement("SELECT SEQUENCE_NAME, LAST_NUMBER, INCREMENT_BY FROM USER_SEQUENCES");
+
+        _stmt_listtriggers = _connection.prepareStatement("SELECT TRIGGER_NAME, TABLE_NAME, TRIGGER_TYPE, TRIGGERING_EVENT, TRIGGER_BODY FROM USER_TRIGGERS");
+
+        _stmt_listfunctions = _connection.prepareStatement("SELECT DISTINCT NAME FROM USER_SOURCE WHERE TYPE = 'PROCEDURE' OR TYPE = 'FUNCTION'");
+        _stmt_functioncode = _connection.prepareStatement("SELECT TEXT FROM USER_SOURCE WHERE NAME = ? ORDER BY LINE");
+    }
+    
+    protected void closeMetadataSentences() throws SQLException {
+        
+        _stmt_listtables.close();
+        _stmt_pkname.close();
+        _stmt_listcolumns.close();
+        _stmt_pkcolumns.close();
+        _stmt_listchecks.close();
+        _stmt_listfks.close();
+        _stmt_fkcolumns.close();
+
+        _stmt_listindexes.close();
+        _stmt_indexcolumns.close();
+
+        _stmt_listuniques.close();
+        _stmt_uniquecolumns.close();    
+
+        _stmt_listviews.close();
+
+        _stmt_listsequences.close();
+
+        _stmt_listtriggers.close();
+
+        _stmt_listfunctions.close();
     }
     
     protected Database readDatabase()  throws SQLException{
@@ -120,6 +157,8 @@ public class ModelLoaderBase implements ModelLoader {
         db.addTables(readTables());
         db.addViews(readViews());
         db.addSequences(readSequences());
+        db.addTriggers(readTriggers());
+        db.addFunctions(readFunctions());
         
         return db;
     }
@@ -184,7 +223,7 @@ public class ModelLoaderBase implements ModelLoader {
         Column c = new Column();
 
         c.setName(rs.getString(1));
-        c.setTypeCode(translateType(rs.getString(2)));
+        c.setTypeCode(translateColumnType(rs.getString(2)));
         
         if (c.getTypeCode() == Types.DECIMAL) {
             int size = rs.getInt(5);
@@ -328,6 +367,125 @@ public class ModelLoaderBase implements ModelLoader {
             }});
     }    
     
+    protected Collection readTriggers() throws SQLException {
+        
+        return readList(_stmt_listtriggers, 
+            new RowConstructor() { public Object getRow(ResultSet r) throws SQLException {
+                Trigger t = new Trigger();
+                t.setName(r.getString(1));
+                t.setTable(r.getString(2));               
+                t.setFiresCode(translateFires(r.getString(3)));
+                t.setForeachCode(translateForeach(r.getString(3)));
+                t.setInsert(translateIsInsert(r.getString(4)));
+                t.setUpdate(translateIsUpdate(r.getString(4)));
+                t.setDelete(translateIsDelete(r.getString(4)));
+                t.setBody(translatePLSQLBody(r.getString(5)));
+                return t;
+            }});
+    }   
+    
+    protected Collection readFunctions() throws SQLException {
+        
+        return readList(_stmt_listfunctions, 
+            new RowConstructor() { public Object getRow(ResultSet r) throws SQLException {
+                Function f = new Function();
+                f.setName(r.getString(1));
+                
+                parseFunctionCode(f, readFunctionCode(f.getName()));
+
+                return f;
+            }});
+    } 
+    
+    protected void parseFunctionCode(Function f, String functioncode) {
+        
+        Matcher mFunctionHeader = _pFunctionHeader.matcher(functioncode);
+
+        if (mFunctionHeader.find()) {
+            f.setTypeCode(translateParamType(mFunctionHeader.group(5)));
+            f.setBody(translatePLSQLBody(functioncode.substring(mFunctionHeader.end(0))));           
+            
+            if (mFunctionHeader.group(3) != null) {
+                StringTokenizer t = new StringTokenizer(mFunctionHeader.group(3), ",");
+                while (t.hasMoreTokens()) {
+                    Matcher mparam = _pFunctionParam.matcher(t.nextToken());
+                    if (mparam.find()) {
+                        Parameter p = new Parameter();
+                        p.setName(mparam.group(1));
+                        p.setModeCode(translateMode(mparam.group(3)));
+                        p.setTypeCode(translateParamType(mparam.group(4)));
+                        p.setDefaultValue(translateDefault(mparam.group(6), p.getTypeCode())); 
+                        
+                        f.addParameter(p);
+                    } else {
+                        System.out.println("NOP");
+                    }
+                    // System.out.println(t.nextToken());
+                }
+            }
+        } else {
+            System.out.println("NOP");
+        }
+    }
+    
+    protected String readFunctionCode(String function) throws SQLException {
+        
+        final StringBuffer code = new StringBuffer();
+        
+        _stmt_functioncode.setString(1, function);
+        fillList(_stmt_functioncode, new RowFiller() { public void fillRow(ResultSet r) throws SQLException {
+            code.append(r.getString(1));            
+        }});
+        
+        return code.toString();
+    }
+    
+    protected int translateMode(String value) {
+        if ("IN".equalsIgnoreCase(value)) {
+            return Parameter.MODE_IN;
+        } else if ("OUT".equalsIgnoreCase(value)) {
+            return Parameter.MODE_OUT;
+        } else {
+            return Parameter.MODE_NONE;
+        }
+    }
+    
+  
+    protected int translateFires(String value) {
+        return value.startsWith("BEFORE")
+                ? Trigger.FIRES_BEFORE
+                : Trigger.FIRES_AFTER;
+    }
+    
+    protected int translateForeach(String value) {
+        return value.endsWith("EACH ROW")
+                ? Trigger.FOR_EACH_ROW
+                : Trigger.FOR_EACH_STATEMENT;
+    }
+    
+    protected boolean translateIsInsert(String value) {
+        return value.contains("INSERT");
+    }
+    
+    protected boolean translateIsUpdate(String value) {
+        return value.contains("UPDATE");
+    }
+    
+    protected boolean translateIsDelete(String value) {
+        return value.contains("DELETE");
+    }
+    
+    protected String translatePLSQLBody(String value) {
+        String body = value.trim();
+        if (body.startsWith("DECLARE")) {
+            body = body.substring(7);
+        }
+        if (body.endsWith(";")) {
+            body = body.substring(0, body.length() -1);
+        }
+        return body;
+    }
+    
     protected String translateDefault(String value, int type) {
         
         if (value == null) {
@@ -342,7 +500,7 @@ public class ModelLoaderBase implements ModelLoader {
                 case ExtTypes.NVARCHAR:
                 case Types.LONGVARCHAR:
                     if (sreturn.length() >= 2 && sreturn.startsWith("'") && sreturn.endsWith("'")) {
-                        return sreturn.substring(1, value.length() - 2);
+                        return sreturn.substring(1, sreturn.length() - 1);
                     } else {
                         return sreturn;
                     }
@@ -353,37 +511,65 @@ public class ModelLoaderBase implements ModelLoader {
     
     protected boolean translateUniqueness(String uniqueness) {
         
-        return "UNIQUE".equals(uniqueness);
+        return "UNIQUE".equalsIgnoreCase(uniqueness);
     }
     
     protected int translateFKEvent(String fkevent) {
-        if ("CASCADE".equals(fkevent)) {
+        if ("CASCADE".equalsIgnoreCase(fkevent)) {
             return DatabaseMetaData.importedKeyCascade;
-        } else if ("SET NULL".equals(fkevent)) {
+        } else if ("SET NULL".equalsIgnoreCase(fkevent)) {
             return DatabaseMetaData.importedKeySetNull;
-        } else if ("RESTRICT".equals(fkevent)) {
+        } else if ("RESTRICT".equalsIgnoreCase(fkevent)) {
             return DatabaseMetaData.importedKeyRestrict;
         } else {
             return DatabaseMetaData.importedKeyNoAction;
         }
     }
     
-    protected int translateType(String nativeType) {
-        if ("CHAR".equals(nativeType)) {
+    protected int translateColumnType(String nativeType) {
+        
+        if (nativeType == null) {
+            return Types.NULL;
+        } else if ("CHAR".equalsIgnoreCase(nativeType)) {
             return Types.CHAR;
-        } else if ("VARCHAR2".equals(nativeType)) {
+        } else if ("VARCHAR2".equalsIgnoreCase(nativeType)) {
             return Types.VARCHAR;
-        } else if ("NCHAR".equals(nativeType)) {
+        } else if ("NCHAR".equalsIgnoreCase(nativeType)) {
             return ExtTypes.NCHAR;
-        } else if ("NVARCHAR2".equals(nativeType)) {
+        } else if ("NVARCHAR2".equalsIgnoreCase(nativeType)) {
             return ExtTypes.NVARCHAR;
-        } else if ("NUMBER".equals(nativeType)) {
+        } else if ("NUMBER".equalsIgnoreCase(nativeType)) {
             return Types.DECIMAL;
-        } else if ("DATE".equals(nativeType)) {
+        } else if ("DATE".equalsIgnoreCase(nativeType)) {
             return Types.TIMESTAMP;
-        } else if ("CLOB".equals(nativeType)) {
+        } else if ("CLOB".equalsIgnoreCase(nativeType)) {
             return Types.CLOB;
-        } else if ("BLOB".equals(nativeType)) {
+        } else if ("BLOB".equalsIgnoreCase(nativeType)) {
+            return Types.BLOB;
+        } else {
+            return Types.VARCHAR;
+        }
+    }
+    
+    protected int translateParamType(String nativeType) {
+        
+        if (nativeType == null) {
+            return Types.NULL;
+        } else if ("CHAR".equalsIgnoreCase(nativeType)) {
+            return Types.CHAR;
+        } else if ("VARCHAR2".equalsIgnoreCase(nativeType)) {
+            return Types.VARCHAR;
+        } else if ("NCHAR".equalsIgnoreCase(nativeType)) {
+            return ExtTypes.NCHAR;
+        } else if ("NVARCHAR2".equalsIgnoreCase(nativeType)) {
+            return ExtTypes.NVARCHAR;
+        } else if ("NUMBER".equalsIgnoreCase(nativeType)) {
+            return Types.NUMERIC;
+        } else if ("DATE".equalsIgnoreCase(nativeType)) {
+            return Types.TIMESTAMP;
+        } else if ("CLOB".equalsIgnoreCase(nativeType)) {
+            return Types.CLOB;
+        } else if ("BLOB".equalsIgnoreCase(nativeType)) {
             return Types.BLOB;
         } else {
             return Types.VARCHAR;
