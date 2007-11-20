@@ -319,9 +319,9 @@
     <war compress="true" destfile="${base.lib}/${context.name}.war" encoding="UTF-8" webxml="${base.context}/WEB-INF/web.xml">
       <zipfileset dir="${base.context}"/>
       <classes dir="${build}"/>
-      <lib dir="${build.core.lib}">
+      <!--lib dir="${build.core.lib}">
         <include name="openbravo-core.jar"/>
-      </lib>
+      </lib-->
       <!-- lib dir="${base.lib}">
         <exclude name="openbravo-wad.jar"/>
         <exclude name="openbravo-trl.jar"/>
