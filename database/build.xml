@@ -249,7 +249,6 @@
                         dropfirst="false"
                         failonerror="false"
                         verbosity="${bbdd.verbosity}" />
-        <antcall target="database.postcreate" />
     </target>
 
     <target name="update.database.structure">
@@ -260,7 +259,6 @@
                        model="model"
                        failonerror="false"
                        verbosity="${bbdd.verbosity}" />
-        <antcall target="database.postcreate" />
     </target>   
 
     <target name="create.database.script">
@@ -292,6 +290,7 @@
                   password="${bbdd.password}"
                   input="sourcedata"
                   verbosity="${bbdd.verbosity}" />
+        <antcall target="database.postcreate.${bbdd.rdbms}" />
   </target>
 
   <target name="export.database.data">
@@ -311,6 +310,7 @@
                   password="${bbdd.password}"
                   input="sampledata"
                   verbosity="${bbdd.verbosity}" />
+        <antcall target="database.postcreate.${bbdd.rdbms}" />
   </target>
 
   <target name="export.database.sampledata">
@@ -323,7 +323,16 @@
                   verbosity="${bbdd.verbosity}" />
   </target> 
 
-  <target name="database.postcreate">
+  <target name="save.database.model">
+    <savemodel driver="${bbdd.driver}"
+                      url="${bbdd.owner.url}"
+                      user="${bbdd.user}"
+                      password="${bbdd.password}"
+                  model="model"
+                  verbosity="${bbdd.verbosity}" />
+  </target>
+
+  <target name="database.postcreate.ORACLE">
     <sql driver="${bbdd.driver}"
          url="${bbdd.owner.url}"
          userid="${bbdd.user}"
@@ -340,16 +349,30 @@
           DELETE FROM AD_SYSTEM;
           INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, SUPPORTUNITS, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_LEVEL, TAD_PARENT_VERSION, TAD_TRANSACTIONALRANGE, TAD_THEME)
           VALUES (0, 0, 0, 'Y', NOW(), 0, NOW(), 0, '?', 0, 20, 100, ${developer.id}, 'dev', 1, 'Default');
+          CALL AD_UPDATE_SEQUENCE();
         </transaction>
     </sql>
   </target>
 
-  <target name="save.database.model">
-    <savemodel driver="${bbdd.driver}"
-                      url="${bbdd.owner.url}"
-                      user="${bbdd.user}"
-                      password="${bbdd.password}"
-                  model="model"
-                  verbosity="${bbdd.verbosity}" />
+  <target name="database.postcreate.POSTGRE">
+    <sql driver="${bbdd.driver}"
+         url="${bbdd.owner.url}"
+         userid="${bbdd.user}"
+         password="${bbdd.password}"
+         onerror="continue"
+         autocommit="true">
+        <classpath>
+            <fileset dir="${base.lib}">
+                <include name="**/*.jar">
+                </include>
+            </fileset>
+        </classpath>
+        <transaction>
+          DELETE FROM AD_SYSTEM;
+          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, SUPPORTUNITS, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_LEVEL, TAD_PARENT_VERSION, TAD_TRANSACTIONALRANGE, TAD_THEME)
+          VALUES (0, 0, 0, 'Y', NOW(), 0, NOW(), 0, '?', 0, 20, 100, ${developer.id}, 'dev', 1, 'Default');
+          SELECT AD_UPDATE_SEQUENCE();
+        </transaction>
+    </sql>
   </target>
 </project>
