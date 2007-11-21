@@ -187,14 +187,6 @@
     <ant dir="${base.subversion}/bdutil" target="preinstall_complete" inheritAll="true" inheritRefs="true"/>
   </target>
 
-  <target name="setup">
-    <ant dir="./setup" target="setup" inheritAll="true" inheritRefs="true"/>
-  </target>
-
-  <target name="setup.compile">
-    <ant dir="./setup" target="compile" inheritAll="true" inheritRefs="true"/>
-  </target>
-
   <target name="install">
     <ant dir="${base.subversion}/install" target="build" inheritAll="true" inheritRefs="true"/>
     <ant dir="${base.subversion}/install" target="install" inheritAll="true" inheritRefs="true"/>
