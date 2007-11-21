@@ -65,6 +65,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
   protected static Log4JLogger logger;
   String strServidorRenderFo = "";
   protected static String stcFileProperties = null;
+  protected static Properties propFileProperties = null;
   protected String PoolFileName;
 
   public void init (ServletConfig config) {
@@ -96,7 +97,10 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
           PropertyConfigurator.configure(prefix + "/" + strBaseConfigPath + "/" + file);
         }
       }
+      
       stcFileProperties = prefix + "/" + strBaseConfigPath + "/" + "Openbravo.properties";
+      propFileProperties = null;
+      
       logger = new Log4JLogger(log4j);
       MessageHandler.setQuiet(true);
       MessageHandler.setScreenLogger(logger);
@@ -225,19 +229,35 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
   }
 
   public static String getJavaDateTimeFormat() {
-    String javaDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
-    Properties properties = new Properties();
-    try {
-      properties.load(new FileInputStream(stcFileProperties));
-      System.out.println("***************"+stcFileProperties);
-      javaDateTimeFormat = properties.getProperty("dateTimeFormat.java");
-    } catch (IOException e) { 
-      // catch possible io errors from readLine()
-      System.out.println("Uh oh, got an IOException error!");
-      e.printStackTrace();
-    }
-    return javaDateTimeFormat;
+	  return getOBProperty("dateTimeFormat.java", "dd-MM-yyyy HH:mm:ss");
   }
+  
+	public static String getOBProperty(String skey, String sdefault) {
+		  
+		initOBProperties();
+		return propFileProperties.getProperty(skey, sdefault);	  
+	}  
+	
+	public static String getOBProperty(String skey) {
+	  
+		initOBProperties();
+		return propFileProperties.getProperty(skey);	  
+	}
+  
+  	public static void initOBProperties() {
+	  
+  		if (propFileProperties == null) {
+			propFileProperties = new Properties();
+			try {
+				propFileProperties.load(new FileInputStream(stcFileProperties));
+			    System.out.println("***************" + stcFileProperties);
+			} catch (IOException e) { 
+			    // catch possible io errors from readLine()
+				System.out.println("Uh oh, got an IOException error!");
+			    e.printStackTrace();
+			}
+  		}
+  	}
 
 
   /* Database access utilities

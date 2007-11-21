@@ -42,11 +42,6 @@
   </filter>
 
   <context-param>
-    <param-name>AuthenticationManager</param-name>
-    <param-value>org.openbravo.authentication.basic.DefaultAuthenticationManager</param-value>
-<!--    <param-value>org.openbravo.authentication.lam.LamAuthenticationManager</param-value> -->
-  </context-param>
-  <context-param>
     <param-name>BaseConfigPath</param-name>
     <param-value>WEB-INF</param-value>
   </context-param>

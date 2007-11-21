@@ -84,7 +84,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     super.init(config);
 
     // Authentication manager load
-    String sAuthManagerClass = config.getServletContext().getInitParameter("AuthenticationManager"); 
+    // String sAuthManagerClass = config.getServletContext().getInitParameter("AuthenticationManager"); 
+    String sAuthManagerClass = HttpBaseServlet.getOBProperty("authentication.class");
     if (sAuthManagerClass == null  || sAuthManagerClass.equals("")) {
         // If not defined, load default
         sAuthManagerClass = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
