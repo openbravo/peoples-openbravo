@@ -31,15 +31,15 @@ class ShowSessionStructureData implements FieldProvider {
   String completeName;
   String name;
   String value;
-
+  String rownum;
 
   public String getField(String fieldName) {
     if (fieldName.equalsIgnoreCase("isPreference"))
-      return (isPreference?"SI":"NO");
+      return (isPreference?"Yes":"NO");
     else if (fieldName.equalsIgnoreCase("isAccounting"))
-      return (isAccounting?"SI":"NO");
+      return (isAccounting?"Yes":"NO");
     else if (fieldName.equalsIgnoreCase("isGlobal"))
-      return (isGlobal?"SI":"NO");
+      return (isGlobal?"Yes":"NO");
     else if (fieldName.equalsIgnoreCase("window"))
       return ((window==null)?"":window);
     else if (fieldName.equalsIgnoreCase("windowName"))
@@ -50,6 +50,8 @@ class ShowSessionStructureData implements FieldProvider {
       return ((name==null)?"":name);
     else if (fieldName.equalsIgnoreCase("value"))
       return ((value==null)?"":value);
+    else if (fieldName.equalsIgnoreCase("rownum"))
+        return ((rownum==null)?"0":rownum);
     else {
       if (log4j.isDebugEnabled()) log4j.debug("Field does not exist: " + fieldName);
       return null;

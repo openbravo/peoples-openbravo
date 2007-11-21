@@ -20,7 +20,7 @@
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <HEAD>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <TITLE>Show Session</TITLE>
 <LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS"/>
@@ -50,6 +50,19 @@ var baseDirection = "../../../../../web/";
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script> 
 <SCRIPT language="JavaScript" type="text/javascript">
+            
+            function depurar(action) {
+                var frm=document.frmMain;
+                if (action=="SAVE_NEW") {
+                    if (frm.inpNombreVariable.value==null || frm.inpNombreVariable.value=="") {
+			            frm.inpNombreVariable.focus();
+			            mensaje(7);
+			            return false;
+                    } 
+                } 
+                return true;
+            }
+
 function onloadFunctions() {
 	new TypeAheadCombo("inpWindow");
 }
@@ -76,7 +89,7 @@ function onloadFunctions() {
         <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
           <TR id="paramParentTabContainer"><td class="tabBackGroundInit"><div><span class="tabTitle"><div><span>Show Session - Session Variables</span></div></span></div></td></tr>
           <tr><td class="tabBackGround"></td></tr>
-          </TR>
+          
           <TR id="paramMainTabContainer"><td class="tabBackGround">
   <table class="tabTable"><tr>
     <td valign="top"><span class="tabLeft">&nbsp;</span></td>
@@ -217,16 +230,16 @@ function onloadFunctions() {
                     </SELECT></TD>
                   <TD class="TitleCell"></TD>
                   <TD class="TitleCell"> <SPAN class="LabelText">is global window</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"> <INPUT type="checkbox" name="inpWindowGlobal" value="Y" id="inpWindowGlobal"></INPUT></TD>
+                  <TD class="Radio_Check_ContentCell"> <INPUT type="checkbox" name="inpWindowGlobal" value="Y" id="fieldWindowGCheck"></INPUT></TD>
                 </TR>
 
                 <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Variable</SPAN></TD>
-                  <TD class="TextBox_ContentCell"><INPUT name="inpNombreVariable" type="text" id="inpNombreVariable2" class="dojoValidateValid TextBox_OneCell_width"></INPUT></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Value</SPAN></TD>
-                  <TD class="TextBox_ContentCell"><INPUT name="inpValorVariable" type="text" id="inpValorVariable2" class="dojoValidateValid TextBox_OneCell_width"></INPUT></TD>
+                  <TD class="TitleCell"> </TD>
+                  <TD class="Radio_Check_ContentCell"></TD>
+                  <TD class="TitleCell"> <SPAN class="LabelText"></SPAN></TD>
+                  <TD class="Radio_Check_ContentCell"></TD>                  
                   <TD class="TitleCell"> <SPAN class="LabelText">is global</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"> <INPUT type="checkbox" name="inpGlobal" value="Y" id="inpGlobal"></INPUT></TD>
+                  <TD class="Radio_Check_ContentCell"> <INPUT type="checkbox" name="inpGlobal" value="Y" id="fieldGlobalCheck"></INPUT></TD>
                 </TR>
 
                 <TR>
@@ -235,7 +248,7 @@ function onloadFunctions() {
                   <TD class="TitleCell"> <SPAN class="LabelText"></SPAN></TD>
                   <TD class="Radio_Check_ContentCell"></TD>
                   <TD class="TitleCell"> <SPAN class="LabelText">is preference</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"><INPUT type="checkbox" name="inpPreference" value="Y" id="inpPreference"></INPUT></TD>
+                  <TD class="Radio_Check_ContentCell"><INPUT type="checkbox" name="inpPreference" value="Y" id="fieldPreferenceCheck"></INPUT></TD>
                 </TR>
 
 
@@ -257,7 +270,7 @@ function onloadFunctions() {
                   <TD class="TitleCell"> <SPAN class="LabelText"></SPAN></TD>
                   <TD class="Radio_Check_ContentCell"></TD>
                   <TD class="TitleCell"> <SPAN class="LabelText">is accounting</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"><INPUT type="checkbox" name="inpAccounting" value="Y" id="inpAccounting"></INPUT></TD>
+                  <TD class="Radio_Check_ContentCell"><INPUT type="checkbox" name="inpAccounting" value="Y" id="fieldAccountingCheck"></INPUT></TD>
                 </TR>
 
                 <TR>
@@ -317,11 +330,35 @@ function onloadFunctions() {
             </TR>
           </TABLE>
         </div>
-
+			<div >
+              <DIV class="Main_ContentPane_Client" style="overflow: auto; border-top: 0px none;" id="tdbottomButtons">
+                <table class="Main_Client_TableEdition" cellspacing="0" cellpadding="0" style="width: 435px">
+                   <tr>
+                     <TD class="TitleCell"> <SPAN class="LabelText">Variable</SPAN></TD>
+                     <TD class="TextBox_ContentCell"><INPUT name="inpNombreVariable" type="text" id="inpNombreVariable2" class="dojoValidateValid TextBox_OneCell_width"></INPUT></TD>
+                     <TD class="TitleCell"> <SPAN class="LabelText">Value</SPAN></TD>
+                     <TD class="TextBox_ContentCell"><INPUT name="inpValorVariable" type="text" id="inpValorVariable2" class="dojoValidateValid TextBox_OneCell_width"></INPUT></TD>
+                    </tr>
+                    <TR>
+                    <TD></TD>
+                    <TD class="Button_LeftAlign_ContentCell">
+                        <div><a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Process'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('SAVE_NEW', true, null, null, null, true);return false;" onmouseover="window.status='Save';return true;">
+                             <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Process';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                             <tr>
+                                <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border=0/></td>
+                                <td class="Button_text Button_width">Process</td>
+                                <td class="Button_right"></td>
+                            </tr>
+                            </table>
+                       </a></div>
+                   </TD>
+                   </TR>
+                </TABLE>
+              </div>
 
         <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
           <TR>
-            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>
+            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"/></TD>
           </TR>
         </TABLE></td>
       <td valign="top">

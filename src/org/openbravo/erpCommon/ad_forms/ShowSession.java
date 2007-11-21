@@ -284,6 +284,11 @@ public class ShowSession extends HttpSecureAppServlet {
       }
       resData = new ShowSessionStructureData[vecCompleto.size()];
       vecCompleto.copyInto(resData);
+      
+      for (int i=0;i<resData.length;i++) {
+    	  resData[i].rownum=""+i;
+        }
+      
       if (log4j.isDebugEnabled()) log4j.debug("ShowSession - orderStructure - Total: " + resData.length + "-" + resData[0].name);
     } catch (Exception e) {
       log4j.error("ShowSession - orderStructure - Ordering Session variables error " + e);
