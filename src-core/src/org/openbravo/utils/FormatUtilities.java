@@ -18,7 +18,7 @@ public class FormatUtilities {
   static Logger log4j = Logger.getLogger(FormatUtilities.class);
 
   public static String truncate(String s, int i) {
-    if(s == null && s.length() == 0) return "";
+    if(s == null || s.length() == 0) return "";
     if(i < s.length()) s = s.substring(0, i) + "...";
     return s;
   }
