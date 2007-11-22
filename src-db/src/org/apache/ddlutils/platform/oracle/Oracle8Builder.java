@@ -41,6 +41,7 @@ import org.apache.ddlutils.model.ValueObject;
 import org.apache.ddlutils.model.Index;
 import org.apache.ddlutils.model.Table;
 import org.apache.ddlutils.model.TypeMap;
+import org.apache.ddlutils.model.View;
 import org.apache.ddlutils.platform.SqlBuilder;
 import org.apache.ddlutils.util.Jdbc3Utils;
 import org.apache.oro.text.regex.MalformedPatternException;
@@ -554,6 +555,14 @@ public class Oracle8Builder extends SqlBuilder
      */
     protected String getFunctionEndBody() {
         return ";";
+    }
+    
+    protected void writeCreateViewStatement(View view) throws IOException {  
+        
+        print("CREATE FORCE VIEW ");
+        printIdentifier(getStructureObjectName(view));
+        print(" AS ");
+        print(getSQLTranslation().exec(view.getStatement()));        
     }
     
     /**

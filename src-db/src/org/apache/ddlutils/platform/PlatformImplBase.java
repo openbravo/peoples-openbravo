@@ -70,6 +70,8 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
 {
     /** The default name for models read from the database, if no name as given.*/
     protected static final String MODEL_DEFAULT_NAME = "default";
+    
+    protected static final int MAX_LOOPS_OF_FORCED = 5;
 
     /** The log for this platform. */
     private final Log _log = LogFactory.getLog(getClass());
@@ -303,6 +305,8 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
         Statement statement    = null;
         int       errors       = 0;
         int       commandCount = 0;
+        
+        ArrayList aForcedCommands = new ArrayList();
 
         // we tokenize the SQL along the delimiters, and we also make sure that only delimiters
         // at the end of a line or the end of the string are used (row mode)
@@ -356,6 +360,11 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
                             _log.debug(ex);
                         }
                         errors++;
+                        
+                        // It is a "forced" command ?
+                        if (command.contains("SCRIPT OPTIONS (FORCE = TRUE)")) {
+                            aForcedCommands.add(command);
+                        }
                     }
                     else
                     {
@@ -374,6 +383,46 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
                 connection.clearWarnings();
             }
             _log.info("Executed "+ commandCount + " SQL command(s) with " + errors + " error(s)");
+            
+            
+            // execute the forced commands
+            int loops = 0;
+            while (loops < MAX_LOOPS_OF_FORCED && !aForcedCommands.isEmpty()) {
+                
+                loops++;
+                commandCount = 0;
+                errors = 0;
+                
+                for (int i = 0; i < aForcedCommands.size(); i++) {
+                    
+                    commandCount ++;
+                    
+                    String command = (String) aForcedCommands.get(i);
+                    
+                    if (_log.isDebugEnabled()) {
+                        _log.debug("About to execute SQL " + command);
+                    }
+                    try {
+                        int results = statement.executeUpdate(command);
+                        if (_log.isDebugEnabled()) {
+                            _log.debug("After execution, " + results + " row(s) have been changed");
+                        }
+                    } catch (SQLException ex) {
+
+                        _log.warn("SQL Command failed with: " + ex.getMessage());
+                        if (_log.isDebugEnabled()) {                            
+                            _log.debug(ex);
+                        }
+                        errors++;
+                    }
+                }                
+                _log.info("Executed "+ commandCount + " forced SQL command(s) with " + errors + " error(s)");
+            }
+            
+            if (!aForcedCommands.isEmpty()) {
+                _log.info("There are still " + aForcedCommands.size() + " forced commands not executed sucessfully.");
+            }
+
         }
         catch (SQLException ex)
         {

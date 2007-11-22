@@ -3196,10 +3196,10 @@ public abstract class SqlBuilder
     
     protected void writeCreateViewStatement(View view) throws IOException {  
         
-        print("CREATE FORCE VIEW ");
+        print("CREATE VIEW ");
         printIdentifier(getStructureObjectName(view));
         print(" AS ");
-        print(getSQLTranslation().exec(view.getStatement()));        
+        print(getSQLTranslation().exec(view.getStatement()));       
     }
     
     protected void createUpdateRules(View view) throws IOException {
@@ -3648,6 +3648,11 @@ public abstract class SqlBuilder
         printComment(type + " " + statementName);
         printComment("-----------------------------------------------------------------------");
     }
+    
+    protected void printScriptOptions(String options) throws IOException {
+        printComment("SCRIPT OPTIONS (" + options + ")");
+    }
+    
     /** 
      * Prints a newline.
      */
