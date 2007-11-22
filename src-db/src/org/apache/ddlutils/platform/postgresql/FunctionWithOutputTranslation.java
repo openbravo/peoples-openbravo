@@ -42,9 +42,9 @@ public class FunctionWithOutputTranslation extends ReplacePatTranslation {
                 strPattern.append(",");
             }
             if (i < f.getParameterCount() - 1) {
-                strPattern.append("([^,]+)");
+                strPattern.append("([^,;]+)");
             } else {
-                strPattern.append("([^,\\)]+)");
+                strPattern.append("([^,;\\)]+)");
             }
             
             Parameter p = (Parameter) f.getParameter(i);
