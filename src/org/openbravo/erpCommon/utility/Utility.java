@@ -250,7 +250,7 @@ public class Utility {
     while (st.hasMoreTokens()) ht.put(st.nextToken(), "x");
 
     Enumeration<String> e = ht.keys();
-    while (e.hasMoreElements()) retValue += (String)e.nextElement() + ",";
+    while (e.hasMoreElements()) retValue += e.nextElement() + ",";
 
     retValue = retValue.substring(0, retValue.length()-1);
     return retValue;

@@ -346,7 +346,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
             String strCalculate = dataProduction[j].mProductId + "&" + dataProduction[j].mAttributesetinstanceId + "&" + dataProduction[j].mLocatorId;
             if (log4j.isDebugEnabled()) log4j.debug("******** Hashtable.production: " + strCalculate);
             if (log4j.isDebugEnabled()) log4j.debug("******** Production, hashtable calculated: " + calculated.get(strCalculate));
-            Integer isnull = (Integer)calculated.get(strCalculate);
+            Integer isnull = calculated.get(strCalculate);
             if (isnull == null){
               String strPartial = processChilds(vars, dataProduction[j].mAttributesetinstanceId, dataProduction[j].mProductId, dataProduction[j].mLocatorId, strIn);
               if (!strPartial.equals("")) {

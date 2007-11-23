@@ -337,7 +337,7 @@ public  class Fact {
             //  check if all keys are zero
             Iterator<BigDecimal> values = map.values().iterator();
             while (values.hasNext()){
-                BigDecimal bal = (BigDecimal)values.next();
+                BigDecimal bal = values.next();
                 if (bal.compareTo(ZERO) != 0){
                     map.clear();
                     log4jFact.warn ("isSegmentBalanced (" + segmentType + ") NO - " + toString() + ", Balance=" + bal);
@@ -395,7 +395,7 @@ public  class Fact {
             //  Create entry for non-zero element
             Iterator<Integer> keys = map.keySet().iterator();
             while (keys.hasNext()){
-                Integer key = (Integer)keys.next();
+                Integer key = keys.next();
                 BigDecimal diff = map.get(key);
                 //
                 if (diff.compareTo(ZERO) != 0){

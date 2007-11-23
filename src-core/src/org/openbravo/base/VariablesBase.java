@@ -387,7 +387,7 @@ public class VariablesBase {
     if (!isMultipart || items==null) return "";
     Iterator<FileItem> iter = items.iterator();
     while (iter.hasNext()) {
-      FileItem item = (FileItem) iter.next();
+      FileItem item = iter.next();
       if (item.isFormField() && item.getFieldName().equals(parameter)) {
         try {
           return (item.getString());
@@ -405,7 +405,7 @@ public class VariablesBase {
     Iterator<FileItem> iter = items.iterator();
     Vector<String> result = new Vector<String>();
     while (iter.hasNext()) {
-      FileItem item = (FileItem) iter.next();
+      FileItem item = iter.next();
       if (item.isFormField() && item.getFieldName().equals(parameter)) {
         try {
           result.addElement(item.getString());
@@ -421,7 +421,7 @@ public class VariablesBase {
     if (!isMultipart || items==null) return null;
     Iterator<FileItem> iter = items.iterator();
     while (iter.hasNext()) {
-      FileItem item = (FileItem) iter.next();
+      FileItem item = iter.next();
       if (!item.isFormField() && item.getFieldName().equals(parameter)) return item;
     }
     return null;

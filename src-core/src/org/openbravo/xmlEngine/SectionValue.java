@@ -58,7 +58,7 @@ class SectionValue {
       breakFieldValue.savePrevious();
     }
     for (Enumeration<FunctionValue> e = vecFunctionValue.elements() ; e.hasMoreElements() ;) {
-      FunctionValue functionInstance = (FunctionValue)e.nextElement();
+      FunctionValue functionInstance = e.nextElement();
       functionInstance.init();
     }
     if (sectionTemplate.intLevel != sectionTemplate.dataTemplate.intTotalLevels) {
@@ -106,7 +106,7 @@ class SectionValue {
 
   public void acumulate() {
     for (Enumeration<FunctionValue> e = vecFunctionValue.elements() ; e.hasMoreElements() ;) {
-      FunctionValue functionInstance = (FunctionValue)e.nextElement();
+      FunctionValue functionInstance = e.nextElement();
       functionInstance.acumulate();
     }
   }

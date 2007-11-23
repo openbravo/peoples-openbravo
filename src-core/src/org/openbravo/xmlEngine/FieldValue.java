@@ -32,7 +32,7 @@ class FieldValue implements XmlComponentValue {
     if (fieldTemplate.vecReplace != null) {
       String strFin = strIni;
       for (Enumeration<ReplaceElement> e = fieldTemplate.vecReplace.elements() ; e.hasMoreElements();) {
-        ReplaceElement replaceElement = (ReplaceElement)e.nextElement();
+        ReplaceElement replaceElement = e.nextElement();
         strFin = Replace.replace(strFin, replaceElement.replaceWhat, replaceElement.replaceWith);
       }
       return strFin;
