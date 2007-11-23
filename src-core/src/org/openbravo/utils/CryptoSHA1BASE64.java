@@ -18,7 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import sun.misc.BASE64Encoder;
 
 public final class CryptoSHA1BASE64 {
-  public static String encriptar(String textoplano) throws ServletException {
+  public static String hash(String plaintext) throws ServletException {
     MessageDigest md = null;
 
     try {
@@ -28,7 +28,7 @@ public final class CryptoSHA1BASE64 {
     }
 
     try {
-      md.update(textoplano.getBytes("UTF-8")); // Message summary generation
+      md.update(plaintext.getBytes("UTF-8")); // Message summary generation
     } catch(UnsupportedEncodingException e) {
       throw new ServletException(e.getMessage());
     }

@@ -44,7 +44,7 @@ public class FormatUtilities {
   public static String sha1Base64(String text) throws ServletException {
     if (text==null || text.trim().equals("")) return "";
     String result = text;
-    result = CryptoSHA1BASE64.encriptar(text);
+    result = CryptoSHA1BASE64.hash(text);
     return result;
   }
 

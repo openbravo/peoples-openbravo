@@ -29,8 +29,8 @@ public class CryptoUtility {
     String clave = argv[0];
     System.out.println("************* " + clave);
     String strEnc = CryptoUtility.encrypt(clave);
-    System.out.println("ENCRIPTED TEXT: " + strEnc);
-    System.out.println("DECRIPTED TEXT: " + CryptoUtility.decrypt(strEnc));
+    System.out.println("ENCRYPTED TEXT: " + strEnc);
+    System.out.println("DECRYPTED TEXT: " + CryptoUtility.decrypt(strEnc));
   }
 
   private static void initCipher() {
