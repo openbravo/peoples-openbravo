@@ -480,9 +480,9 @@ public class WadActionButton {
    */
   public static void buildHtml(ConnectionProvider conn, XmlEngine xmlEngine, File fileDir, FieldsData fd, Vector<Object> vecFields, int max_textbox_length, int max_size_edition_1_columns, String strLanguage, boolean isGeneric, String calendarDescription, String clockDescription, String calculatorDescription, String jsDateFormat) throws ServletException, IOException {
     String[] discard = {"", "isGeneric", "fieldDiscardProcess"};
-    if (fd.xmltext.equals("")) discard[0] = new String("helpDiscard");
-    if (isGeneric) discard[1] = new String("isNotGeneric");
-    if (fd.isjasper.equals("Y")) discard[2] = new String("fieldDiscardJasper");
+    if (fd.xmltext.equals("")) discard[0] = "helpDiscard";
+    if (isGeneric) discard[1] = "isNotGeneric";
+    if (fd.isjasper.equals("Y")) discard[2] = "fieldDiscardJasper";
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/Template_ActionButton", discard).createXmlDocument();
     ProcessRelationData[] efd = ProcessRelationData.selectParameters(conn, strLanguage, fd.reference);
     xmlDocument.setParameter("tab", fd.realname);

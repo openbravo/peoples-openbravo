@@ -122,7 +122,7 @@ public class WADLink extends WADControl {
 
   public String toXml() {
     String[] discard = {"xx_PARAM"};
-    if (getData("IsParameter").equals("Y")) discard[0] = new String("xx");
+    if (getData("IsParameter").equals("Y")) discard[0] = "xx";
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADLinkXML", discard).createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));

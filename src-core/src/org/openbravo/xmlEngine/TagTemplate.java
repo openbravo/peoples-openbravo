@@ -53,9 +53,9 @@ class TagTemplate implements XmlComponentTemplate {
     if (initValue != null && replaceWhat != null) {
       int index = initValue.indexOf(replaceWhat);
       if (index != -1) {
-        String finalValue = new String(initValue.substring(0,index) +
+        String finalValue = initValue.substring(0,index) +
             replaceWith +
-            initValue.substring(index + replaceWhat.length()));
+            initValue.substring(index + replaceWhat.length());
         return finalValue;
       }
     }

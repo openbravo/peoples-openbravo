@@ -195,8 +195,8 @@ public class WADSearch extends WADControl {
   public String toXml() {
     String[] discard = {"xx_PARAM", "xx_PARAM_R"};
     if (getData("IsParameter").equals("Y")) {
-      discard[0] = new String("xx");
-      discard[1] = new String("xx_R");
+      discard[0] = "xx";
+      discard[1] = "xx_R";
     }
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADSearchXML", discard).createXmlDocument();
 

@@ -23,7 +23,7 @@ class CharacterComponent implements XmlComponentTemplate, XmlComponentValue {
   }
 
   public CharacterComponent(String name, Attributes amap) {
-    character = new String("<" + name);
+    character = "<" + name;
     for (int i = 0; i < amap.getLength(); i++) {
       String attname = amap.getQName(i);
       String value = amap.getValue(i);

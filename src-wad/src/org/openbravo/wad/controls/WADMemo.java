@@ -110,10 +110,10 @@ public class WADMemo extends WADControl {
   public String toXml() {
     String[] discard = {"xx_PARAM", "xx_PARAMHIDDEN", "xx_HIDDEN"};
     if (getData("IsDisplayed").equals("N")) {
-      if (getData("IsParameter").equals("Y")) discard[1] = new String("xx");
-      else discard[2] = new String("xx");
+      if (getData("IsParameter").equals("Y")) discard[1] = "xx";
+      else discard[2] = "xx";
     } else {
-      if (getData("IsParameter").equals("Y")) discard[0] = new String("xx");
+      if (getData("IsParameter").equals("Y")) discard[0] = "xx";
     }
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADMemoXML", discard).createXmlDocument();
     xmlDocument.setParameter("columnName", getData("ColumnName"));

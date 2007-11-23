@@ -1284,7 +1284,7 @@ public class WadUtility {
   public static String getSQLWadContext(String code, Vector<Object> vecParameters) {
     if (code==null || code.trim().equals("")) return "";
     String token;
-    String strValue = new String(code);
+    String strValue = code;
     StringBuffer strOut = new StringBuffer();
 
     int i = strValue.indexOf("@");
@@ -1330,7 +1330,7 @@ public class WadUtility {
   public static String getWadContext(String code, Vector<Object> vecFields, Vector<Object> vecAuxiliarFields, FieldsData[] parentsFieldsData, boolean isDefaultValue, String isSOTrx, String windowId) {
     if (code==null || code.trim().equals("")) return "";
     String token;
-    String strValue = new String(code);
+    String strValue = code;
     StringBuffer strOut = new StringBuffer();
 
     int i = strValue.indexOf("@");
@@ -1358,7 +1358,7 @@ public class WadUtility {
   public static String getWadComboReloadContext(String code, String isSOTrx) {
     if (code==null || code.trim().equals("")) return "";
     String token;
-    String strValue = new String(code);
+    String strValue = code;
     StringBuffer strOut = new StringBuffer();
 
     int i = strValue.indexOf("@");
@@ -1402,7 +1402,7 @@ public class WadUtility {
   public static String getTextWadContext(String code, Vector<Object> vecFields, Vector<Object> vecAuxiliarFields, FieldsData[] parentsFieldsData, boolean isDefaultValue, String isSOTrx, String windowId) {
     if (code==null || code.trim().equals("")) return "";
     String token;
-    String strValue = new String(code);
+    String strValue = code;
     StringBuffer strOut = new StringBuffer();
 
     int h = strValue.indexOf(";");
@@ -1501,7 +1501,7 @@ public class WadUtility {
   public static String displayLogic(String code, Vector<Object> vecDL, FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecFields, String windowId, Vector<Object> vecContext) {
     if (code==null || code.trim().equals("")) return "";
     String token, token2;
-    String strValue = new String(code);
+    String strValue = code;
     StringBuffer strOut = new StringBuffer();
 
     String strAux;
