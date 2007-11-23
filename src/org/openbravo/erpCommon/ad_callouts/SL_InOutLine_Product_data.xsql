@@ -52,7 +52,7 @@
   <SqlMethod name="fromOrder" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT COALESCE(count (*),0) 
+      SELECT COALESCE(count (*),0) AS orders
       FROM M_INOUTLINE
       WHERE M_INOUTLINE_ID=?
     </Sql>
