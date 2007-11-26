@@ -119,9 +119,12 @@ under the License.
   
   <class name="org.apache.ddlutils.model.View">
     <element name="view">
-      <attribute name="name" property="name"/>
-      <attribute name="updatable" property="updatable"/>
-      <text property="statement"/>
+        <attribute name="name" property="name"/>
+        <text property="statement"/>
+        <option>
+            <name>org.apache.commons.betwixt.mixed-content-encoding</name>
+            <value>CDATA</value>
+        </option>
     </element>
   </class>
   
@@ -130,7 +133,12 @@ under the License.
       <attribute name="name" property="name"/>
       <attribute name="type" property="type"/>
       <element property="parameters" updater="addParameter"/>
-      <element name="body" property="body"/>
+      <element name="body" property="body">
+        <option>
+            <name>org.apache.commons.betwixt.mixed-content-encoding</name>
+            <value>CDATA</value>
+        </option>
+      </element>
     </element>
   </class>
   
@@ -152,7 +160,12 @@ under the License.
       <attribute name="update" property="update"/>
       <attribute name="delete" property="delete"/>
       <attribute name="foreach" property="foreach"/>
-      <element name="body" property="body"/>
+      <element name="body" property="body">
+        <option>
+            <name>org.apache.commons.betwixt.mixed-content-encoding</name>
+            <value>CDATA</value>
+        </option>
+      </element>
     </element>
   </class>
 

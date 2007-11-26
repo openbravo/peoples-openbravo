@@ -3187,9 +3187,7 @@ public abstract class SqlBuilder
                 writeCreateViewStatement(view);        
                 printEndOfStatement(getStructureObjectName(view));
                 
-                if (view.isUpdatable()) {
-                    createUpdateRules(view);
-                }
+                createUpdateRules(view);
             }
         }
     }   
@@ -3217,9 +3215,7 @@ public abstract class SqlBuilder
                 _log.warn("Cannot write unnamed view " + view);
             } else {
                 
-                if (view.isUpdatable()) {
-                    dropUpdateRules(view);
-                }
+                dropUpdateRules(view);
                 
                 printStartOfStatement("VIEW", getStructureObjectName(view));
                 

@@ -109,7 +109,10 @@ public class ImportDataXML extends Task {
             if (getModel() == null) {
                 try {
                     // Load the model saved in the database
-                    originaldb = DatabaseUtils.loadCurrentDatabase(ds);
+                    originaldb = platform.loadModelFromDatabase(); 
+                    if (originaldb == null) { 
+                        originaldb = DatabaseUtils.loadCurrentDatabase(ds);
+                    }
                     _log.info("Model loaded from database.");
                 } catch (SQLException e) {
                     originaldb =  new Database();

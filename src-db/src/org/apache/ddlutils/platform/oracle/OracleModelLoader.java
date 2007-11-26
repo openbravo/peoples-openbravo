@@ -9,34 +9,17 @@
 
 package org.apache.ddlutils.platform.oracle;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
-import org.apache.ddlutils.model.Database;
+import org.apache.ddlutils.Platform;
+import org.apache.ddlutils.platform.ModelLoaderBase;
 
 /**
  *
  * @author adrian
  */
-public class OracleModelLoader {
+public class OracleModelLoader extends ModelLoaderBase {
     
-    private Connection _connection;
-    
-    /** Creates a new instance of OracleModelReader */
-    public OracleModelLoader() {
-    }
-    
-    
-    public Database getDatabase(Connection connection) throws SQLException {
-        Database db = new Database();
-        
-        db.addTables(readTables());
-        
-        return db;
-        
-    }
-    
-    public Collection readTables() {
-        return null;
-    }
+    /** Creates a new instance of BasicModelLoader */
+    public OracleModelLoader(Platform p) {
+        super(p);
+    }    
 }

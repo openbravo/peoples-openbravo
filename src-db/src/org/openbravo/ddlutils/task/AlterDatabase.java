@@ -92,14 +92,12 @@ public class AlterDatabase extends Task {
 
             Database originaldb;
             if (getOriginalmodel() == null) {
-                try {
-                    // Load the model saved in the database
+                // Load the model saved in the database                    
+                originaldb = platform.loadModelFromDatabase(); 
+                if (originaldb == null) { 
                     originaldb = DatabaseUtils.loadCurrentDatabase(ds);
-//                    log("Original model loaded from database.");
-                } catch (SQLException e) {
-                    originaldb = new Database();
-                    _log.info("Original model considered empty.");
-                }                     
+                }
+                _log.info("Original model loaded from database.");              
             } else {
                 // Load the model from the file
                 originaldb = DatabaseUtils.readDatabase(getModel());

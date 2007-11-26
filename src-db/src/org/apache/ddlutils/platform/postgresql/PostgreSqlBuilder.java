@@ -486,8 +486,9 @@ public class PostgreSqlBuilder extends SqlBuilder
     
     protected void createUpdateRules(View view) throws IOException {
         
-        try {
-            RuleProcessor rule = new RuleProcessor(view.getStatement());
+        RuleProcessor rule = new RuleProcessor(view.getStatement());
+        
+        if (rule.isUpdatable()) {
 
             // INSERT RULE
             print("CREATE OR REPLACE RULE ");
@@ -515,7 +516,7 @@ public class PostgreSqlBuilder extends SqlBuilder
             }       
             print(")");
             printEndOfStatement(getStructureObjectName(view));
-            
+
             // UPDATE RULE
             print("CREATE OR REPLACE RULE ");
             printIdentifier(shortenName(view.getName() + "_UPD", getMaxTableNameLength()));
@@ -524,7 +525,7 @@ public class PostgreSqlBuilder extends SqlBuilder
             print(" DO INSTEAD UPDATE ");
             printIdentifier(shortenName(rule.getViewTable(), getMaxTableNameLength()));
             print(" SET ");
-            
+
             for(int i = 0; i < rule.getViewFields().size(); i++) {
                 RuleProcessor.ViewField field = rule.getViewFields().get(i);
                 if (i > 0) {
@@ -539,7 +540,7 @@ public class PostgreSqlBuilder extends SqlBuilder
             print(" = NEW.");
             print(rule.getViewFields().get(0).getFieldas());            
             printEndOfStatement(getStructureObjectName(view));   
-            
+
             // DELETE RULE
             print("CREATE OR REPLACE RULE ");
             printIdentifier(shortenName(view.getName() + "_DEL", getMaxTableNameLength()));
@@ -552,29 +553,30 @@ public class PostgreSqlBuilder extends SqlBuilder
             print(" = OLD.");
             print(rule.getViewFields().get(0).getFieldas());            
             printEndOfStatement(getStructureObjectName(view));  
-            
-        } catch (RuleProcessorException e) {
-            throw new IOException(e.getMessage());
         }
     }    
     
     
     protected void dropUpdateRules(View view) throws IOException {
-        // INSERT RULE
-        print("DROP RULE ");
-        printIdentifier(shortenName(view.getName() + "_INS", getMaxTableNameLength()));
-        printEndOfStatement(getStructureObjectName(view));  
         
-        // UPDATE RULE
-        print("DROP RULE ");
-        printIdentifier(shortenName(view.getName() + "_UPD", getMaxTableNameLength()));
-        printEndOfStatement(getStructureObjectName(view));  
+        RuleProcessor rule = new RuleProcessor(view.getStatement());
         
-        // DELETE RULE
-        print("DROP RULE ");
-        printIdentifier(shortenName(view.getName() + "_DEL", getMaxTableNameLength()));
-        printEndOfStatement(getStructureObjectName(view));  
+        if (rule.isUpdatable()) {
+            // INSERT RULE
+            print("DROP RULE ");
+            printIdentifier(shortenName(view.getName() + "_INS", getMaxTableNameLength()));
+            printEndOfStatement(getStructureObjectName(view));  
 
+            // UPDATE RULE
+            print("DROP RULE ");
+            printIdentifier(shortenName(view.getName() + "_UPD", getMaxTableNameLength()));
+            printEndOfStatement(getStructureObjectName(view));  
+
+            // DELETE RULE
+            print("DROP RULE ");
+            printIdentifier(shortenName(view.getName() + "_DEL", getMaxTableNameLength()));
+            printEndOfStatement(getStructureObjectName(view));  
+        }
     }
     
     

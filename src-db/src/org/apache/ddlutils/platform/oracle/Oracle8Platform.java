@@ -102,6 +102,7 @@ public class Oracle8Platform extends PlatformImplBase
 
         setSqlBuilder(new Oracle8Builder(this));
         setModelReader(new Oracle8ModelReader(this));
+        setModelLoader(new OracleModelLoader(this));
     }
 
     /**

@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.sql.SQLException;
 import java.util.Properties;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.ddlutils.Platform;
@@ -94,21 +93,25 @@ public class AlterXML2SQL extends Task {
             pl = PlatformFactory.createNewPlatformInstance(ds);
             // platform.setDelimitedIdentifierModeOn(true);
             _log.info("Using database platform.");
-            
-            if (getOriginalmodel() == null) {
-                try {
-                    // Load the model saved in the database
-                    originaldb = DatabaseUtils.loadCurrentDatabase(ds);
-                    _log.info("Original model loaded from database.");
-                } catch (SQLException e) {
-                    originaldb = new Database();
-                    _log.info("Original model considered empty.");
-                }                     
-            } else {
-                // Load the model from the file
-                originaldb = DatabaseUtils.readDatabase(getModel());
-                _log.info("Original model loaded from file.");
-            }               
+
+            try {                        
+
+                if (getOriginalmodel() == null) {
+                    // Load the model saved in the database                    
+                    originaldb = pl.loadModelFromDatabase(); 
+                    if (originaldb == null) { 
+                        originaldb = DatabaseUtils.loadCurrentDatabase(ds);
+                    }
+                    _log.info("Original model loaded from database.");                      
+                } else {
+                    // Load the model from the file
+                    originaldb = DatabaseUtils.readDatabase(getModel());
+                    _log.info("Original model loaded from file.");
+                }     
+            } catch (Exception e) {
+                // log(e.getLocalizedMessage());
+                throw new BuildException(e);
+            }                  
         } else {
             pl = PlatformFactory.createNewPlatformInstance(platform);
             _log.info("Using platform : " + platform);

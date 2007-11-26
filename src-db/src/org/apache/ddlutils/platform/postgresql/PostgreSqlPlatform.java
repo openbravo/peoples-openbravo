@@ -101,6 +101,7 @@ public class PostgreSqlPlatform extends PlatformImplBase
 
         setSqlBuilder(new PostgreSqlBuilder(this));
         setModelReader(new PostgreSqlModelReader(this));
+        setModelLoader(new PostgreSqlModelLoader(this));
     }
 
     /**

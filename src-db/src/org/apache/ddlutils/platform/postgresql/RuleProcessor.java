@@ -21,11 +21,18 @@ public class RuleProcessor {
     
     private ArrayList<ViewField> _viewfields = new ArrayList<ViewField>();
     private String _viewtable = null;
+    private boolean _bupdatable = false;
     
     /** Creates a new instance of RuleProcessor */
-    public RuleProcessor(String sql) throws RuleProcessorException {
-        String field = "\\s*((.+?)(\\s+?[Aa][Ss]\\s+?(.+?))??)\\s*?((,)|(\\s[Ff][Rr][Oo][Mm]))";
+    public RuleProcessor(String sql)  {
+        
+        String field = "\\s*((.+?)(\\s+?[Aa][Ss]\\s+?(.+?))??)\\s*?((,)|(\\s[Ff][Rr][Oo][Mm]\\s+))";
         Pattern p = Pattern.compile("^\\s*[Ss][Ee][Ll][Ee][Cc][Tt]\\s" + field); //  
+        
+        Pattern pField = Pattern.compile("\\w+(\\.\\w+)?");
+        Pattern pFieldas = Pattern.compile("\\w+");
+        Pattern pTable = Pattern.compile("\\w+(\\s+\\w+)?");
+        
         Matcher m = p.matcher(sql);
         if (m.find()) {
 
@@ -38,27 +45,50 @@ public class RuleProcessor {
 
             while (",".equals(sseparator)) {
                 if (m.find(offset)) {
-                    addField(m.group(2), m.group(4));
-                    sseparator = m.group(5);
-                    offset = m.end();  
-
+                    if (pField.matcher(m.group(2)).matches() && (m.group(4) == null || pFieldas.matcher(m.group(4)).matches())) {
+                        addField(m.group(2), m.group(4));
+                        sseparator = m.group(5);
+                        offset = m.end();  
+                    } else {
+                        // Field definition does not matches
+                        _bupdatable = false;
+                        return;
+                    }
                 } else {
-                    throw new RuleProcessorException();
+                    // No field declaration after ","
+                    _bupdatable = false;
+                    return;
                 }
             }
             // From reached
             
-            p = Pattern.compile("\\s+?(.+?)\\s+?[Ww][Hh][Ee][Rr][Ee]\\s");
+            p = Pattern.compile("(.+?)\\s+?[Ww][Hh][Ee][Rr][Ee]\\s");
             m = p.matcher(sql);
             if (m.find(offset)) {
-                addTable(m.group(1));
+                if (pTable.matcher(m.group(1)).matches()) {
+                    addTable(m.group(1));
+                } else {
+                    // table definition does not matches
+                    _bupdatable = false;
+                    return;
+                }
             } else {
-                throw new RuleProcessorException();
+                // No table name found 
+                _bupdatable = false;
+                return;
             }
 
         } else {
-            throw new RuleProcessorException();
+            // No select command found
+            _bupdatable = false;
+            return;
         }
+        
+        _bupdatable = true;
+    }
+    
+    public boolean isUpdatable() {
+        return _bupdatable;
     }
     
     private void addField(String field, String fieldas) {
@@ -94,18 +124,22 @@ public class RuleProcessor {
         public String getFieldas() {
             return _fieldas == null ? _field : _fieldas;
         }
+    }    
+    
+    public String toString() {
+        
+        StringBuffer result = new StringBuffer();
+        result.append("RuleProcessor [viewTable=");
+        result.append(_viewtable);
+        result.append("; viewFields = (");
+        for(ViewField f : _viewfields) {
+            result.append(f.getField());
+            result.append(" AS ");
+            result.append(f.getFieldas());
+            result.append(",");
+        }
+        result.append(");]");
+        
+        return result.toString();
     }
-//    
-//    public static void main(String[] args) {
-//        
-//        try {
-//            RuleProcessor p = new RuleProcessor(" SELECT   PEPE AS MYPEPE, juanillo  , estupendo FROM COCOLOCO WHERE NO SE SABE");
-//            p = new RuleProcessor(" SELECT PEPE  as cosa FROM COCOLOCO WHERE NO SE SABE");
-//            p = new RuleProcessor(" SELECT PEPE FROM COCOLOCO WHERE NO SE SABE");
-//            p = new RuleProcessor(" SELECT PEPEFROM COCOLOCO WHERE NO SE SABE");
-//        } catch (RuleProcessorException e) {
-//            System.out.println(e);
-//        }
-//
-//    }    
 }

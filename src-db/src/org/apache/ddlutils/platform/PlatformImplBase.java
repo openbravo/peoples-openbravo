@@ -306,7 +306,7 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
         int       errors       = 0;
         int       commandCount = 0;
         
-        ArrayList aForcedCommands = new ArrayList();
+        ArrayList<String> aForcedCommands = new ArrayList<String>();
 
         // we tokenize the SQL along the delimiters, and we also make sure that only delimiters
         // at the end of a line or the end of the string are used (row mode)
@@ -393,11 +393,10 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
                 commandCount = 0;
                 errors = 0;
                 
-                for (int i = 0; i < aForcedCommands.size(); i++) {
+                for (Iterator<String> it = aForcedCommands.iterator(); it.hasNext();) {
                     
+                    String command = it.next();
                     commandCount ++;
-                    
-                    String command = (String) aForcedCommands.get(i);
                     
                     if (_log.isDebugEnabled()) {
                         _log.debug("About to execute SQL " + command);
@@ -407,6 +406,7 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
                         if (_log.isDebugEnabled()) {
                             _log.debug("After execution, " + results + " row(s) have been changed");
                         }
+                        it.remove();
                     } catch (SQLException ex) {
 
                         _log.warn("SQL Command failed with: " + ex.getMessage());
@@ -414,8 +414,8 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
                             _log.debug(ex);
                         }
                         errors++;
-                    }
-                }                
+                    }                    
+                }               
                 _log.info("Executed "+ commandCount + " forced SQL command(s) with " + errors + " error(s)");
             }
             
@@ -2010,7 +2010,7 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
         try {
             return getModelLoader().getDatabase(connection);
         } catch (SQLException ex) {
-            throw new DatabaseOperationException( ex);
+            throw new DatabaseOperationException(ex);
         } finally {
             returnConnection(connection);
         }        
