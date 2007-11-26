@@ -25,12 +25,15 @@ public class FormatUtilities {
 
   public static String replaceTildes(String strIni) {
     //Delete tilde characters
-    return Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( strIni, "á", "a"), "é", "e"), "í", "i"), "ó", "o"), "ú", "u"), "Á", "A"), "É", "E"), "Í", "I"), "Ó", "O"), "Ú", "U");
+    return strIni.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('Á', 'A').replace('É', 'E').replace('Í', 'I').replace('Ó', 'O').replace('Ú', 'U');
   }
+
+  private static final char[] delChars = {'-', '/', '#', ' ', '&', ',', '(', ')' };
 
   public static String replace(String strIni) {
     //delete characters: " ","&",","
-    return Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( replaceTildes(strIni), "-",""), "/", ""), "#", ""), " ", ""), "&", ""), ",", ""), "(", ""), ")", "");
+    String result = replaceTildes( Replace.delChars(strIni, delChars));
+    return result;
   }
 
   public static String replaceJS(String strIni) {
