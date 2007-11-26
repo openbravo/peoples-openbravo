@@ -76,7 +76,7 @@
 
   <condition property="no.java.home" value="true">
     <not>
-      <isset property="${env.JAVA_HOME}"/>
+      <isset property="env.JAVA_HOME"/>
     </not>
   </condition>
 
