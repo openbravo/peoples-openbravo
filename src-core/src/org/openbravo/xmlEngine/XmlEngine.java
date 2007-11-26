@@ -248,16 +248,13 @@ public class XmlEngine extends HttpServlet {
     */
   private XmlTemplate addXmlTemplate(String strXmlTemplateName, String strXmlTemplateFile, String[] discard) {
     log4jXmlEngine.info("Adding: " + strXmlTemplateName);
-    for (Enumeration<XmlTemplate> e = hasXmlTemplate.elements() ; e.hasMoreElements() ;) {
-      XmlTemplate xmlTemplate = e.nextElement();
-      log4jXmlEngine.debug("Comparing: xmlTemplate.name():" + xmlTemplate.name() +
-          "and strXmlTemplateName:" + strXmlTemplateName);
-      if (xmlTemplate.name().equals(strXmlTemplateName)) {
-        return xmlTemplate;
-      }
-    }
+  	XmlTemplate xmlTemplate = hasXmlTemplate.get(strXmlTemplateName);
+  	if (xmlTemplate != null) {
+  		return xmlTemplate;
+  	}
+      
     log4jXmlEngine.debug("Before the new XmlTemplate");
-    XmlTemplate xmlTemplate = new XmlTemplate(strXmlTemplateName, strXmlTemplateFile, discard, this);
+    xmlTemplate = new XmlTemplate(strXmlTemplateName, strXmlTemplateFile, discard, this);
     xmlTemplate.configuration.strDriverDefault = strDriverDefault;
     xmlTemplate.configuration.strUrlDefault = strUrlDefault;
     hasXmlTemplate.put(strXmlTemplateName, xmlTemplate);
