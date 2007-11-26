@@ -132,8 +132,9 @@ public class ReportWarehouseDetailInventoryJR extends HttpSecureAppServlet {
     if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportWarehouseDetailInventory.pdf");
 
    HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("REPORT_TITLE", "Warehouse inventory detail report");
-		parameters.put("REPORT_SUBTITLE", "Report consignment stock");
+        parameters.put("REPORT_TITLE", classInfo.name);
+        String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strDateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strDateTo;
+        parameters.put("REPORT_SUBTITLE", strSubTitle);		
     renderJR(vars, response, strReportName, strOutput, parameters, data, null ); 
 
   }
