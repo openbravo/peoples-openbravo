@@ -33,11 +33,6 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "RV_GeneralLedgerJournal")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
-
 
     if (vars.commandIn("DEFAULT")) {
       String strFactAcctGroupId = vars.getStringParameter("inpFactAcctGroupId");

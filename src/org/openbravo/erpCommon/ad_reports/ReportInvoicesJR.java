@@ -37,10 +37,6 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    /*if (!Utility.hasProcessAccess(this, vars, "", "RV_C_InvoiceLine")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }*/
 
     if (vars.commandIn("DEFAULT")) {
       String strC_BPartner_ID = vars.getGlobalVariable("inpcBPartnerId", "ReportInvoices|C_BPartner_ID", "");

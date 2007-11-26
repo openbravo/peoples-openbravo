@@ -40,10 +40,6 @@ public class ImportAccountServlet extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "ImportAccount")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
     String process = ImportData.processId(this, "ImportAccount");
 		String strTabId = vars.getGlobalVariable("inpTabId", "ImportAccountServlet|tabId");
 		String strWindowId = vars.getGlobalVariable("inpwindowId", "ImportAccountServlet|windowId");

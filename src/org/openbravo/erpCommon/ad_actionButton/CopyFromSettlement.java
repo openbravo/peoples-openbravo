@@ -43,11 +43,6 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "CopyFromSettlement")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
-
     if (vars.commandIn("DEFAULT")) {
       vars.getGlobalVariable("inpProcessId", "CopyFromSettlement|AD_Process_ID");
       vars.getGlobalVariable("inpwindowId", "CopyFromSettlement|Window_ID");

@@ -36,10 +36,6 @@ public class ReportInventory extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "ReportInventory")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")) {
       String strmWarehouseId = vars.getStringParameter("inpmWarehouseId", vars.getWarehouse());

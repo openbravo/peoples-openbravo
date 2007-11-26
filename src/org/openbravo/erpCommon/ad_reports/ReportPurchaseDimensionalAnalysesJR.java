@@ -43,11 +43,6 @@ public class ReportPurchaseDimensionalAnalysesJR extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "ReportPurchaseDimensionalAnalysesJR")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
-
     if (vars.commandIn("DEFAULT", "DEFAULT_COMPARATIVE")){
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportPurchaseDimensionalAnalysesJR|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportPurchaseDimensionalAnalysesJR|dateTo", "");

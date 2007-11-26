@@ -39,10 +39,6 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "RV_ReportWorkRequirementDaily")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")) {
       String strStartDateFrom = vars.getGlobalVariable("inpStartDateFrom", "ReportWorkRequirementDaily|StartDateFrom", "");

@@ -31,7 +31,10 @@ import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.security.SessionLoginData;
+import org.openbravo.erpCommon.security.AccessData;
 import org.openbravo.data.FieldProvider;
+
+
 
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -147,6 +150,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
 
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     Variables variables = new Variables(request);
+    VariablesSecureApp vars = new VariablesSecureApp(request);
     
     try {
       myTheme = variables.getSessionValue("#Theme");
@@ -166,6 +170,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       ClassInfoData[] classInfoAux = ClassInfoData.set();
       classInfo = classInfoAux[0];
     }
+    
+  //  bdErrorGeneral(response, "Error", "No access");
     
     if (log4j.isDebugEnabled()) log4j.debug("class info type: " + classInfo.type + " - ID: " + classInfo.id + " - NAME: " + classInfo.name);
     String strAjax = "";
@@ -221,7 +227,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
             strLanguage = DefaultOptionsData.getDefaultLanguage(this); 
           }
                               
-          VariablesSecureApp vars = new VariablesSecureApp(request);
+         
           if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strRole, strClient, strOrg, strWarehouse)) {
             readProperties(vars, prefix + strBaseConfigPath + "/Openbravo.properties");
             readNumberFormat(vars, prefix + strBaseConfigPath + "/Format.xml");
@@ -241,8 +247,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       logout(request, response);
       return;
     }
+    
     try {
-      super.service(request,response);
+      super.initialize(request,response);
+      if (vars.getRole().equals("") || hasAccess(vars))
+        super.serviceInitialized(request,response);
+      else
+        bdError(response, "AccessTableNoView", vars.getLanguage());
     } catch (ServletException ex) {
       log4j.error("Error captured: " + ex);
       ex.printStackTrace();
@@ -257,6 +268,61 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       e.printStackTrace();
       bdErrorGeneral(response, "Error", e.toString());
     }
+  }
+  
+  
+  /**
+   * Cheks access passing all the parameters
+   * @param vars
+   * @param type: type of element
+   * @param id: id for the element
+   * @return true in case it has access false if not
+   */
+  protected boolean hasGeneralAccess(VariablesSecureApp vars, String type, String id){
+    try {
+      if (classInfo.type.equals("W"))
+        return hasLevelAccess(vars,AccessData.selectAccessLevel(this, type, id))
+            && AccessData.selectAccess(this, vars.getRole(), "TABLE", id).equals("0") 
+            && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
+      else /*if (type.equals("P") || type.equals("R") || type.equals("X") || type.equals("T") || type.equals("F"))*/
+        return hasLevelAccess(vars,AccessData.selectAccessLevel(this, type, id))
+            && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
+    } catch (Exception e) {
+      log4j.error("Error checking access: " + e.toString());
+      return false;
+    }
+  
+  }
+  /**
+   * Checks if the user has access to the window
+   * */
+  private boolean hasAccess(VariablesSecureApp vars) {
+    try {
+      if (classInfo==null || classInfo.id.equals("") || classInfo.type.equals(""))
+        return true;
+     return hasGeneralAccess(vars, classInfo.type, classInfo.id);
+      
+    } catch(Exception e) {
+      log4j.error("Error checking access: " + e.toString());
+      return false;
+    }
+  }
+
+  /**
+   * Checks if the level access is correct.
+   * 
+   */
+  private boolean hasLevelAccess(VariablesSecureApp vars, String accessLevel) {
+    String userLevel = vars.getSessionValue("#User_Level");
+
+    boolean retValue = true;
+
+    if (accessLevel.equals("4") && userLevel.indexOf("S") == -1) retValue = false;
+    else if (accessLevel.equals("1") && userLevel.indexOf("O") == -1) retValue = false;
+    else if (accessLevel.equals("3") && (!(userLevel.indexOf("C")!=-1 || userLevel.indexOf("O")!=-1)) ) retValue = false;
+    else if (accessLevel.equals("6") && (!(userLevel.indexOf("S")!=-1 || userLevel.indexOf("C")!=-1)) ) retValue = false;
+
+    return retValue;
   }
   
   /**
@@ -350,6 +416,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
 
     xmlDocument.setParameter("ParamTitulo", strTitle);
     xmlDocument.setParameter("ParamTexto", strText);
+    
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

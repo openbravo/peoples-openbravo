@@ -44,10 +44,6 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "RV_ReportAccountingCountDimensionalAnaly")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
     if (log4j.isDebugEnabled()) log4j.debug("Command: "+vars.getStringParameter("Command"));
     if (vars.commandIn("DEFAULT", "DEFAULT_COMPARATIVE")){
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportAccountingCountDimensionalAnalyses|dateFrom", "");

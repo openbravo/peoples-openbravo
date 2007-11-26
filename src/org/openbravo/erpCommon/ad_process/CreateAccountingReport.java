@@ -46,10 +46,6 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "CreateAccountingReport")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
     String process = CreateAccountingReportData.processId(this, "CreateAccountingReport");
     /*String strTabId = vars.getGlobalVariable("inpTabId", "CreateAccountingReport|tabId");
     String strWindowId = vars.getGlobalVariable("inpwindowId", "CreateAccountingReport|windowId");*/

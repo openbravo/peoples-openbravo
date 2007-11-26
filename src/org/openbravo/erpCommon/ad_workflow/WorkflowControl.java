@@ -43,7 +43,7 @@ public class WorkflowControl extends HttpSecureAppServlet {
 
     String strAD_Workflow_ID = vars.getGlobalVariable("inpadWorkflowId", "WorkflowControl|adWorkflowId");
 
-    if (!Utility.hasWorkflowAccess(this, vars, strAD_Workflow_ID)) {
+    if (!hasGeneralAccess(vars, "F", strAD_Workflow_ID)) {
       bdError(response, "AccessTableNoView", vars.getLanguage());
       return;
     }

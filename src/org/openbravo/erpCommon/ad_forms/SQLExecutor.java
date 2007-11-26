@@ -35,10 +35,6 @@ public class SQLExecutor extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     OBError myMessage = null;
 
-    if (!Utility.hasFormAccess(this, vars, "", "org.openbravo.erpCommon.ad_forms.SQLExecutor")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")) {
       String strSQL = vars.getGlobalVariable("inpSQL", "SQLExecutor|sql", "");

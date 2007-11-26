@@ -27,7 +27,6 @@
 <PARAMETER id="key" name = "key" default=" "/>
 <PARAMETER id="windowId" name = "windowId" default=" "/>
 <PARAMETER id="tabId" name = "tabId" default=" "/>
-<PARAMETER id="tableLevel" name = "tableLevel" default=" "/>
 <PARAMETER id="keyParent" name = "keyParent" default=" "/>
 <PARAMETER id="keyParentINP" name = "keyParentINP" default=" "/>
 <PARAMETER id="keyData" name = "keyData" default=" "/>

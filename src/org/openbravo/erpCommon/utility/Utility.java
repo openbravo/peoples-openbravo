@@ -35,31 +35,7 @@ import org.apache.log4j.Logger ;
 
 public class Utility {
   static Logger log4j = Logger.getLogger(Utility.class);
-/*
-  public static String truncate(String s, int i) {
-    if(s == null && s.length() == 0) return "";
-    if(i < s.length()) s = s.substring(0, i) + "...";
-    return s;
-  }
 
-  public static String replaceTildes(String strIni) {
-    //Delete tilde characters
-    return Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( strIni, "á", "a"), "é", "e"), "í", "i"), "ó", "o"), "ú", "u"), "Á", "A"), "É", "E"), "Í", "I"), "Ó", "O"), "Ú", "U");
-  }
-
-  public static String replace(String strIni) {
-    //delete characters: " ","&",","
-    return Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( Replace.replace( replaceTildes(strIni), "-",""), "/", ""), "#", ""), " ", ""), "&", ""), ",", ""), "(", ""), ")", "");
-  }
-
-  public static String replaceJS(String strIni) {
-    return replaceJS(strIni, true);
-  }
-
-  public static String replaceJS(String strIni, boolean isUnderQuotes) {
-    return Replace.replace( Replace.replace(Replace.replace(Replace.replace(strIni, "'", (isUnderQuotes?"\\'":"&#039;")), "\"", "\\\""), "\n", "\\n"), "\r", "");
-  }
-*/
   public static boolean isDecimalNumber (String reference) {
     if (reference==null || reference.equals("")) return false;
     switch (Integer.valueOf(reference).intValue()) {
@@ -256,86 +232,6 @@ public class Utility {
     return retValue;
   }
 
-  public static boolean hasFormAccess (ConnectionProvider conn, VariablesSecureApp vars, String process) {
-    return hasFormAccess (conn, vars, process, "");
-  }
-
-  public static boolean hasFormAccess (ConnectionProvider conn, VariablesSecureApp vars, String process, String processName) {
-    try {
-      if (process.equals("") && processName.equals("")) return true;
-      else if (!process.equals("")) {
-        if (!WindowAccessData.hasFormAccess(conn, vars.getRole(), process)) return false;
-      } else {
-        if (!WindowAccessData.hasFormAccessName(conn, vars.getRole(), processName)) return false;
-      }
-    } catch (ServletException e) {
-      return false;
-    }
-    return true;
-  }
-
-  public static boolean hasProcessAccess (ConnectionProvider conn, VariablesSecureApp vars, String process) {
-    return hasProcessAccess (conn, vars, process, "");
-  }
-
-  public static boolean hasProcessAccess (ConnectionProvider conn, VariablesSecureApp vars, String process, String processName) {
-    try {
-      if (process.equals("") && processName.equals("")) return true;
-      else if (!process.equals("")) {
-        if (!WindowAccessData.hasProcessAccess(conn, vars.getRole(), process)) return false;
-      } else {
-        if (!WindowAccessData.hasProcessAccessName(conn, vars.getRole(), processName)) return false;
-      }
-    } catch (ServletException e) {
-      return false;
-    }
-    return true;
-  }
-
-  public static boolean hasTaskAccess (ConnectionProvider conn, VariablesSecureApp vars, String task) {
-    return hasTaskAccess(conn, vars, task, "");
-  }
-
-  public static boolean hasTaskAccess (ConnectionProvider conn, VariablesSecureApp vars, String task, String taskName) {
-    try {
-      if (task.equals("") && taskName.equals("")) return true;
-      else if (!task.equals("")) {
-        if (!WindowAccessData.hasTaskAccess(conn, vars.getRole(), task)) return false;
-      } else if (!WindowAccessData.hasTaskAccessName(conn, vars.getRole(), taskName)) return false;
-    } catch (ServletException e) {
-      return false;
-    }
-    return true;
-  }
-
-  public static boolean hasWorkflowAccess (ConnectionProvider conn, VariablesSecureApp vars, String workflow) {
-    try {
-      if (workflow.equals("")) return true;
-      else {
-        if (!WindowAccessData.hasWorkflowAccess(conn, vars.getRole(), workflow)) return false;
-      }
-    } catch (ServletException e) {
-      return false;
-    }
-    return true;
-  }
-
-  public static boolean hasAccess (ConnectionProvider conn, VariablesSecureApp vars, String TableLevel, String AD_Client_ID, String AD_Org_ID, String window, String tab) {
-    String command = vars.getCommand();
-    try {
-      if (!canViewInsert(conn, vars, TableLevel, window)) return false;
-      else if (!WindowAccessData.hasWindowAccess(conn, vars.getRole(), window)) return false;
-      else if (WindowAccessData.hasNoTableAccess(conn, vars.getRole(), tab)) return false;
-      else if (command.toUpperCase().startsWith("SAVE")) {
-        if (!canUpdate (conn, vars, AD_Client_ID, AD_Org_ID, window)) return false;
-      } else if (command.toUpperCase().startsWith("DELETE")) {
-        if (!canUpdate (conn, vars, AD_Client_ID, AD_Org_ID, window)) return false;
-      }
-    } catch (ServletException e) {
-      return false;
-    }
-    return true;
-  }
 
   public static boolean canUpdate (ConnectionProvider conn, VariablesSecureApp vars, String AD_Client_ID, String AD_Org_ID, String window) throws ServletException {
     String User_Level = getContext(conn, vars, "#User_Level", window);
@@ -361,20 +257,6 @@ public class Utility {
     return retValue;
   }
 
-  public static boolean canViewInsert(ConnectionProvider conn, VariablesSecureApp vars, String TableLevel, String window) {
-    String User_Level = getContext(conn, vars, "#User_Level", window);
-
-    boolean retValue = true;
-
-    if (TableLevel.equals("4") && User_Level.indexOf("S") == -1) retValue = false;
-    else if (TableLevel.equals("1") && User_Level.indexOf("O") == -1) retValue = false;
-    else if (TableLevel.equals("3") && (!(User_Level.indexOf("C")!=-1 || User_Level.indexOf("O")!=-1)) ) retValue = false;
-    else if (TableLevel.equals("6") && (!(User_Level.indexOf("S")!=-1 || User_Level.indexOf("C")!=-1)) ) retValue = false;
-
-    if (retValue) return retValue;
-
-    return retValue;
-  }
 
   public static String parseTranslation(ConnectionProvider conn, VariablesSecureApp vars, String language, String text) {
     if (text == null || text.length() == 0) return text;

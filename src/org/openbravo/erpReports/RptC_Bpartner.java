@@ -35,11 +35,6 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    /*if (!Utility.hasProcessAccess(this, vars, "", "RV_ReportBank")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }*/
-
     if (vars.commandIn("DEFAULT")) {
       String strcBpartnerId = vars.getSessionValue("RptC_Bpartner.inpcBpartnerId_R");
     /*String strcBpartnerId = vars.getStringParameter("inpcBpartnerId");*/

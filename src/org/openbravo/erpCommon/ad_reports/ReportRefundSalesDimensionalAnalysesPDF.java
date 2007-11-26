@@ -45,11 +45,6 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "RV_ReportRefundSalesDimensionalAnalyses")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
-
     if (vars.commandIn("DEFAULT")){
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportRefundSalesDimensionalAnalyses|dateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportRefundSalesDimensionalAnalyses|dateTo");

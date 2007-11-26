@@ -33,11 +33,6 @@ public class ReportSalesOrderOpenItem extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "RV_ReportSalesOrderOpenItem")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
-
     if (vars.commandIn("DEFAULT")) {
       String strWarehouse = vars.getGlobalVariable("inpWarehouse", "ReportSalesOrderOpenItem|Warehouse", "");
       printPageDataSheet(response, vars, strWarehouse);

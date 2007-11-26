@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2007 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+<SqlClass name="AccessData" package="org.openbravo.erpCommon.security">
+   <SqlMethod name="selectAccessLevel" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT ACCESSLEVEL
+          FROM AD_FORM
+         WHERE 'X' = ? 
+           AND AD_FORM_ID = TO_NUMBER(?)
+         UNION 
+         SELECT ACCESSLEVEL
+          FROM AD_PROCESS 
+         WHERE ('P' = ? OR 'R' = ?)
+           AND AD_PROCESS_ID = TO_NUMBER(?)
+         UNION
+         SELECT T.ACCESSLEVEL
+          FROM AD_TABLE T, 
+               AD_TAB TB
+         WHERE T.AD_TABLE_ID = TB.AD_TABLE_ID
+           AND 'W' = ?
+           AND TB.AD_TAB_ID = ?
+         UNION
+         SELECT ACCESSLEVEL
+          FROM AD_TASK
+         WHERE 'T' = ? 
+           AND AD_TASK_ID = TO_NUMBER(?)
+         UNION
+        SELECT ACCESSLEVEL
+          FROM AD_WORKFLOW
+         WHERE 'T' = ? 
+           AND AD_WORKFLOW_ID = TO_NUMBER(?)
+      ]]></Sql>
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+      
+      <Parameter name="type"/>
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+      
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+      
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+      
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+   </SqlMethod>
+   
+  <SqlMethod name="selectAccess" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+       SELECT SUM(TOTAL) AS TOTAL
+         FROM (SELECT COUNT(*) AS TOTAL 
+                FROM AD_Process_Access 
+               WHERE AD_Role_ID = ? 
+                 AND ('P' = ? OR 'R' = ?)
+                 AND AD_Process_ID = ? 
+                 AND IsActive = 'Y'
+               UNION
+              SELECT COUNT(*) AS TOTAL 
+                FROM AD_Form_Access 
+               WHERE AD_Role_ID = ?
+                 AND 'X' = ? 
+                 AND AD_Form_ID = ? 
+                 AND IsActive = 'Y'
+               UNION
+               SELECT COUNT(*) AS TOTAL 
+                 FROM AD_Window_Access 
+                WHERE AD_Role_ID = ? 
+                  AND 'W' = ?
+                  AND AD_Window_ID = (SELECT AD_WINDOW_ID
+                                        FROM AD_TAB
+                                       WHERE AD_TAB_ID = ?) 
+                  AND IsActive = 'Y'
+                UNION
+               SELECT COUNT(*) AS TOTAL 
+                 FROM AD_Table_Access t, AD_Tab tb
+                WHERE t.AD_Table_ID = tb.AD_Table_ID 
+                 AND t.AD_Role_ID = ? 
+                 AND 'TABLE' = ? 
+                 AND tb.AD_Tab_ID = ? 
+                 AND t.IsActive = 'Y' 
+                 AND t.IsExclude = 'Y'
+               UNION
+              SELECT COUNT(*) AS TOTAL 
+                FROM AD_Task_Access 
+               WHERE AD_Role_ID = ? 
+                 AND 'T' = ?
+                 AND AD_Task_ID = ? 
+                 AND IsActive = 'Y' 
+               UNION
+              SELECT COUNT(*) AS TOTAL 
+                FROM AD_Workflow_Access 
+               WHERE AD_Role_ID = ?
+                 AND 'F' = ? 
+                 AND AD_Workflow_ID = ? 
+                 AND IsActive = 'Y' )
+       
+      ]]></Sql>
+      <Parameter name="role"/>
+      <Parameter name="type"/>
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+      
+      <Parameter name="role"/>
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+      
+      <Parameter name="role"/>
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+      
+      <Parameter name="role"/>
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+      
+      <Parameter name="role"/>
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+      
+      <Parameter name="role"/>
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+   </SqlMethod>
+</SqlClass>

@@ -46,10 +46,6 @@ public class SendMailText extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     OBError myMessage = null;
 
-    if (!Utility.hasProcessAccess(this, vars, "", "R_MailText Send")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")) {
       String strMailTemplate = vars.getGlobalVariable("inpMailTemplate", "SendMailText|mailTemplate", "");

@@ -39,16 +39,10 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   private static final long serialVersionUID = 1L;
   protected static final String windowId = "<PARAMETER_TMP id="windowId">Almacen</PARAMETER_TMP>";
   protected static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
-  protected static final String tableLevel = "<PARAMETER_TMP id="tableLevel">Almacen</PARAMETER_TMP>";
   protected static final double SUBTABS_COL_SIZE = 15;
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (!Utility.hasAccess(this, vars, tableLevel, <PARAMETER_TMP id="clientId">data.adClientId</PARAMETER_TMP>, <PARAMETER_TMP id="orgId">data.adOrgId</PARAMETER_TMP>, windowId, tabId)) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");

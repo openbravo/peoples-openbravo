@@ -44,10 +44,6 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "CreateCashFlowStatement")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
     String process = CreateCashFlowStatementData.processId(this, "CreateCashFlowStatement");
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars, process);

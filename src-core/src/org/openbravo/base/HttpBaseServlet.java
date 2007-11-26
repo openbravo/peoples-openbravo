@@ -184,7 +184,10 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
     }
   }
 
-  public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+  /*
+   * Iniatilizes base variables
+   */
+  public void initialize(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     strDireccion = HttpBaseUtils.getLocalAddress(request);
     String strActualUrl = HttpBaseUtils.getLocalHostAddress(request);
     log4j.info("Server name: " + strActualUrl);
@@ -211,7 +214,17 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
     strReplaceWith = HttpBaseUtils.getRelativeUrl(request, strReplaceWith);
     log4j.info("xmlEngine.strReplaceWith: " + strReplaceWith);
     xmlEngine.strReplaceWith = strReplaceWith;
-
+   
+  }
+  /*
+   * calls super.service. It is used after calling initialize.
+   */
+  public void serviceInitialized(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    super.service(request, response);
+  }
+  
+  public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    initialize(request, response);
     log4j.info("Call to HttpServlet.service");
     super.service(request,response);
   }
@@ -317,7 +330,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
   }
 
   public void releasePreparedStatement(PreparedStatement preparedStatement) throws SQLException {
-    myPool.releasePreparedStatement(preparedStatement);
+    try {
+      myPool.releasePreparedStatement(preparedStatement);
+    } catch (Exception ex) {}
   }
 
   public Statement getStatement(String poolName) throws Exception {

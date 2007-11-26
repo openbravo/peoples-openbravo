@@ -38,10 +38,6 @@ public class BackgroundProcessList extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasFormAccess(this, vars, "", "org.openbravo.erpCommon.ad_forms.BackgroundProcessList")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars);

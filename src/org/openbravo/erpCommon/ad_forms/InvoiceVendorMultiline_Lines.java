@@ -54,10 +54,6 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasFormAccess(this, vars, "", formClassName)) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
     {
       InvoiceVendorMultilineData[] data = InvoiceVendorMultilineData.selectWindowData(this, vars.getLanguage(), formClassName);
       if (data==null || data.length==0) {

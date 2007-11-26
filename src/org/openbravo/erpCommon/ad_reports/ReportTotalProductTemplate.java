@@ -32,11 +32,6 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (!Utility.hasProcessAccess(this, vars, "", "ReportTotalProductTemplate")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
     if (vars.commandIn("FIND"))
       printPageDataHtml(response, vars);
     else

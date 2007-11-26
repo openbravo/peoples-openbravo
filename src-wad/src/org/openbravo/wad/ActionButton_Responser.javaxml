@@ -43,12 +43,24 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
+    
+    String strProcessId = null;
+    String command = vars.getCommand();
+    
+    if (command.equals("DEFAULT"))
+      strProcessId = vars.getRequiredStringParameter("inpadProcessId");
+    else if (command.startsWith("BUTTON"))
+      strProcessId = command.substring("BUTTON".length());
+    else if (command.startsWith("SAVE_BUTTONActionButton"))
+      strProcessId = command.substring("SAVE_BUTTONActionButton".length());
+   
+    if (!vars.commandIn("DEFAULT") &amp;&amp; !hasGeneralAccess(vars, "P", strProcessId)) {
+      bdErrorGeneralPopUp(response, Utility.messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
+    }
+    
+      
     if (vars.commandIn("DEFAULT")) {
-      String strProcessId = vars.getRequiredStringParameter("inpadProcessId");
-      if (!Utility.hasProcessAccess(this, vars, strProcessId)) {
-        bdError(response, "AccessTableNoView", vars.getLanguage());
-      } else printPageDefault(response, vars, strProcessId);
+      printPageDefault(response, vars, strProcessId);
 <FIELDS_TMP id="sectionActionButtons1">    } else if (vars.commandIn("BUTTON<FIELD_TMP id="ProcessID1">button</FIELD_TMP>")) {
         <FIELD_TMP id="FieldsLoad1">String strField = vars.getStringParameter("inpFields");</FIELD_TMP>
         printPageButton<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>(response, vars<FIELD_TMP id="FieldsLoadName1">, strFields</FIELD_TMP>);

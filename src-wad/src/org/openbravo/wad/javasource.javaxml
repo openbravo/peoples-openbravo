@@ -45,18 +45,12 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   private static final long serialVersionUID = 1L;
   protected static final String windowId = "<PARAMETER_TMP id="windowId">Almacen</PARAMETER_TMP>";
   protected static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
-  protected static final String tableLevel = "<PARAMETER_TMP id="tableLevel">Almacen</PARAMETER_TMP>";
   protected static final String defaultTabView = "<PARAMETER_TMP id="defaultView">RELATION</PARAMETER_TMP>";
   protected static final double SUBTABS_COL_SIZE = 15;
   protected TableSQLData tableSQL = null;
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (!Utility.hasAccess(this, vars, tableLevel, <PARAMETER_TMP id="clientId">data.adClientId</PARAMETER_TMP>, <PARAMETER_TMP id="orgId">data.adOrgId</PARAMETER_TMP>, windowId, tabId)) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     try {
       tableSQL = new TableSQLData(vars, this, tabId, Utility.getContext(this, vars, "#User_Org", windowId), Utility.getContext(this, vars, "#User_Client", windowId));

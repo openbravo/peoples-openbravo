@@ -40,10 +40,6 @@ public class Rpt_Etiquetas extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "RptM_ProductionLine")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")) {
       vars.getGlobalVariable("inpwindowId", "Rpt_Etiquetas|windowID","");

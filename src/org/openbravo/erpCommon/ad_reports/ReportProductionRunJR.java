@@ -35,10 +35,6 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "ReportProductionRunJR")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")) {
       String strLaunchDateFrom = vars.getGlobalVariable("inpLaunchDateFrom", "ReportProductionRunJR|LaunchDateFrom", "");

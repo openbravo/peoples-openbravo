@@ -56,10 +56,6 @@ String strProductRMailTextID = "";
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "S_ExpenseAPInvoice")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")) {
       String strcBpartnerId = vars.getStringParameter("inpcBpartnerId");

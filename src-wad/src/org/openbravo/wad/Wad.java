@@ -1262,7 +1262,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
     xmlDocument.setParameter("windowId", strWindow);
     xmlDocument.setParameter("tabId", strTab);
-    xmlDocument.setParameter("tableLevel", accesslevel);
     xmlDocument.setParameter("whereClauseParams", whereClauseParams);
     xmlDocument.setParameter("parentwhereclause", parentwhereclause);
     xmlDocument.setParameter("reportPDF", strProcess);
@@ -1488,7 +1487,6 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("table", tableName);
     xmlDocument.setParameter("windowId", strWindow);
     xmlDocument.setParameter("tabId", strTab);
-    xmlDocument.setParameter("tableLevel", accesslevel);
     xmlDocument.setParameter("tableId", tableId);
     xmlDocument.setParameter("createFromProcessId", ((Integer.valueOf(createFromProcess).intValue()>0)?createFromProcess:""));
     xmlDocument.setParameter("postedProcessId", ((Integer.valueOf(postedProcess).intValue()>0)?postedProcess:""));

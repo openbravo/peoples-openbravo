@@ -38,10 +38,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "RV_ReportGeneralLedger")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")) {
       String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId", "ReportGeneralLedger|cAcctSchemaId", "");

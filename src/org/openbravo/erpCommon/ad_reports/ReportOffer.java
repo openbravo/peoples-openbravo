@@ -34,10 +34,6 @@ public class ReportOffer extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "ReportOffer")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")){
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportOffer|dateFrom", "");

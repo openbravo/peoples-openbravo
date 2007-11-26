@@ -44,13 +44,11 @@ public class ExecuteTask extends HttpSecureAppServlet {
         data = ExecuteTaskData.selectTrl(this, vars.getLanguage(), strTaskId);
       }
       if (data==null || data.length==0) throw new ServletException("Task not found: " + strTaskId);
-      if (!Utility.canViewInsert(this, vars, data[0].accesslevel, "ExecuteTask")) {
-        bdError(response, "AccessTableNoView", vars.getLanguage());
-        return;
-      } else if (!Utility.hasTaskAccess(this, vars, strTaskId)) {
+      if (!hasGeneralAccess(vars, "T", strTaskId)) {
         bdError(response, "AccessTableNoView", vars.getLanguage());
         return;
       }
+      
       String command = Utility.parseTranslation(this, vars, vars.getLanguage(), data[0].osCommand);
       String taskinstance = SequenceIdData.getSequence(this, "AD_TaskInstance", vars.getClient());
       ExecuteTaskData.insert(this, taskinstance, vars.getClient(), vars.getOrg(), vars.getUser(), strTaskId);

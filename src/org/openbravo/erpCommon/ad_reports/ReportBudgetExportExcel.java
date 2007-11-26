@@ -19,7 +19,6 @@
 
 package org.openbravo.erpCommon.ad_reports;
 
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -33,10 +32,6 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "ReportBudgetGenerateExcel")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")){
       String strKey = vars.getRequiredGlobalVariable("inpcBudgetId", "ReportBudgetGenerateExcel|inpcBudgetId");

@@ -45,10 +45,6 @@ public class CreateTaxReport extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "CreateTaxReport")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
     String process = CreateTaxReportData.processId(this, "CreateTaxReport");
     if (vars.commandIn("DEFAULT")) {
       String strTaxReportId = vars.getGlobalVariable("inpTaxReportId", "CreateTaxReport|taxReport", "");

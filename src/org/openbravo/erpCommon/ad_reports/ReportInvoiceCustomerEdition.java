@@ -35,10 +35,6 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (!Utility.hasProcessAccess(this, vars, "", "RV_ReportInvoiceCustomer")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")){
       String strdateFrom = vars.getGlobalVariable("inpDateFrom", "ReportInvoiceCustomerEdition|DateFrom", "");

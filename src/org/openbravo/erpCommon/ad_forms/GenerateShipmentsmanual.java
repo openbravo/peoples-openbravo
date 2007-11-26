@@ -49,10 +49,6 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     OBError myMessage = null;
     
-    if (!Utility.hasFormAccess(this, vars, "", "org.openbravo.erpCommon.ad_forms.GenerateShipmentsmanual")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
 
     if (vars.commandIn("DEFAULT")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "GenerateShipmentsmanual|DateFrom", "");

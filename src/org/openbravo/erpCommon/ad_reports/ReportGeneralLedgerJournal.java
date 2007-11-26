@@ -43,12 +43,6 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
 
     if (log4j.isDebugEnabled()) log4j.debug("Command: "+vars.getStringParameter("Command"));
 
-    if (!Utility.hasProcessAccess(this, vars, "", "RV_GeneralLedgerJournal")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
-
-
     if (vars.commandIn("DEFAULT")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportGeneralLedgerJournal|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedgerJournal|DateTo", "");

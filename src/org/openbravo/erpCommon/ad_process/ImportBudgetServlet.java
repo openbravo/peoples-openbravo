@@ -39,11 +39,6 @@ public class ImportBudgetServlet extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (log4j.isDebugEnabled()) log4j.debug("role: " + vars.getRole());
-    if (!Utility.hasProcessAccess(this, vars, "", "ImportBudget")) {
-      bdError(response, "AccessTableNoView", vars.getLanguage());
-      return;
-    }
     String process = ImportData.processId(this, "ImportBudget");
     if (vars.commandIn("DEFAULT")) {
       String strTabId = vars.getGlobalVariable("inpTabId", "ImportBudgetServlet|tabId");
