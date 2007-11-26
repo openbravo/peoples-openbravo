@@ -49,11 +49,12 @@ public class WADPAttribute extends WADSearch {
     setValidation(validation.toString());
     setCalloutJS();
     {
-      StringBuffer text = new StringBuffer();
-      text.append("function debugSearch(key, text, keyField) {\n");
-      text.append("  return true;\n");
-      text.append("}");
-      addJSCode("debugSearch", text.toString());
+
+      String text = 
+    	  "function debugSearch(key, text, keyField) {\n" +
+    	  "  return true;\n" +
+    	  "}";
+      addJSCode("debugSearch", text);
     }
     if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y")) {
       StringBuffer commandScript = new StringBuffer();

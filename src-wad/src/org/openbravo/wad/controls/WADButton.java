@@ -54,7 +54,6 @@ public class WADButton extends WADControl {
 
     xmlDocument.setParameter("callout", getOnChangeCode());
     StringBuffer text = new StringBuffer();
-    text = new StringBuffer();
     if (getData("MappingName").equals("")) {
       text.append("openServletNewWindow('BUTTON").append(FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
       text.append("', false, '").append(getData("TabName")).append("_Edition.html', 'BUTTON', null, true");
@@ -63,7 +62,7 @@ public class WADButton extends WADControl {
       text.append(");");
     } else {
       text.append("openServletNewWindow('DEFAULT', false, '..");
-      if (!getData("MappingName").startsWith("/")) text.append("/");
+      if (!getData("MappingName").startsWith("/")) text.append('/');
       text.append(getData("MappingName")).append("', 'BUTTON', '").append(getData("AD_Process_ID")).append("', true");
       text.append(",600, 900);");
     }
@@ -82,7 +81,6 @@ public class WADButton extends WADControl {
 
     xmlDocument.setParameter("callout", getOnChangeCode());
     StringBuffer text = new StringBuffer();
-    text = new StringBuffer();
     if (getData("MappingName").equals("")) {
       text.append("openServletNewWindow('BUTTON").append(FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
       text.append("', false, '").append(getData("TabName")).append("_Edition.html', 'BUTTON', null, true");
@@ -91,7 +89,7 @@ public class WADButton extends WADControl {
       text.append(");");
     } else {
       text.append("openServletNewWindow('DEFAULT', false, '..");
-      if (!getData("MappingName").startsWith("/")) text.append("/");
+      if (!getData("MappingName").startsWith("/")) text.append('/');
       text.append(getData("MappingName")).append("', 'BUTTON', '").append(getData("AD_Process_ID")).append("', true");
       text.append(",600, 900);");
     }

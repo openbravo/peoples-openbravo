@@ -39,43 +39,38 @@ public class WADGrid extends WADControl {
 
   private void generateJSCode() {
     addJSCode("DataGrid", "dojo.require(\"openbravo.widget.DataGrid\");");
-    StringBuffer text = new StringBuffer();
-    {
-      text.append("function updateHeader(liveGrid, offset) {\n");
-      text.append("  dojo.byId('bookmark').innerHTML = (offset+1) + \" - \"");
-      text.append("+ (offset+liveGrid.visibleRows) + \" / \" + liveGrid.metaData.getTotalRows();\n");
-      text.append("}");
-      addJSCode("updateHeader", text.toString());
-    }
-    {
-      text = new StringBuffer();
+    String str = 
+    	"function updateHeader(liveGrid, offset) {\n" +
+    	"  dojo.byId('bookmark').innerHTML = (offset+1) + \" - \"" +
+    	"+ (offset+liveGrid.visibleRows) + \" / \" + liveGrid.metaData.getTotalRows();\n" +
+    	'}';
+      addJSCode("updateHeader", str);
+
+      StringBuffer text = new StringBuffer();
       text.append("function onRowDblClick(cell) {\n");
       text.append("  var value = dojo.widget.byId('").append(getData("id")).append("').getSelectedRows();\n");
       text.append("  if (value==null || value==\"\" || value.length>1) return false;\n");
       text.append("  setInputValue('").append(getData("inpKeyName")).append("', value);\n");
       text.append("  return submitCommandForm('EDIT', true, null, document.frmMain.urlwin.value, '_self');\n");
-      text.append("}");
+      text.append('}');
       addJSCode("onRowDblClick", text.toString());
-    }
-    {
+
       text = new StringBuffer();
       text.append("function getSelectedValues() {\n");
       text.append("  var value = dojo.widget.byId('").append(getData("id")).append("').getSelectedRows();\n");
       text.append("  if (value==null || value.length==0) return \"\";\n");
       text.append("  return value[0];\n"); 
-      text.append("}");
+      text.append('}');
       addJSCode("getSelectedValues", text.toString());
-    }
-    {
+
       text = new StringBuffer();
       text.append("function isMultipleSelected() {\n");
       text.append("  var value = dojo.widget.byId('").append(getData("id")).append("').getSelectedRows();\n");
       text.append("  if (value==null || value==\"\") return false;\n");
       text.append("  return (value.length>1);\n");
-      text.append("}");
+      text.append('}');
       addJSCode("isMultipleSelected", text.toString());
-    }
-    {
+
       text = new StringBuffer();
       text.append("function onGridLoadDo() {\n");
       text.append("  if (selectedRow==null) return true;\n");
@@ -89,41 +84,37 @@ public class WADGrid extends WADControl {
       text.append("  }\n");*/
       //text.append("  dojo.widget.byId('").append(getData("id")).append("').setFocus();\n");
       text.append("  return true;\n");
-      text.append("}");
+      text.append('}');
       addJSCode("onGridLoadDo", text.toString());
-    }
-    {
+
       text = new StringBuffer();
-      text.append("function setGridFilters(newparams) {\n");
-      text.append("  var params = [];\n");
-      text.append("  params[\"newFilter\"] = \"1\";\n");
-      text.append("  if (newparams!=null && newparams.length>0) {\n");
-      text.append("    var total = newparams.length;\n");
-      text.append("    for (var i=0;i<total;i++) {\n");
-      text.append("      params[newparams[i][0]] = newparams[i][1];\n");
-      text.append("    }\n");
-      text.append("  }\n");
+      text.append("function setGridFilters(newparams) {\n" +
+    		      "  var params = [];\n" +
+    		      "  params[\"newFilter\"] = \"1\";\n" +
+    		      "  if (newparams!=null && newparams.length>0) {\n" +
+    		      "    var total = newparams.length;\n" +
+    		      "    for (var i=0;i<total;i++) {\n" +
+    		      "      params[newparams[i][0]] = newparams[i][1];\n" +
+                  "    }\n" +
+                  "  }\n");
       text.append("  dojo.widget.byId('").append(getData("id")).append("').setRequestParams(params);\n");
       text.append("  return true;\n");
-      text.append("}");
+      text.append('}');
       addJSCode("setGridFilters", text.toString());
-    }
-    {
+
       text = new StringBuffer();
       text.append("function updateGridData() {\n");
       text.append("  dojo.widget.byId('").append(getData("id")).append("').refreshGridData();\n");
       text.append("  return true;\n");
-      text.append("}");
+      text.append('}');
       addJSCode("updateGridData", text.toString());
-    }
-    {
+
       text = new StringBuffer();
       text.append("function updateGridDataAfterFilter() {\n");
       text.append("  dojo.widget.byId('").append(getData("id")).append("').refreshGridDataAfterFilter();\n");
       text.append("  return true;\n");
-      text.append("}");
+      text.append('}');
       addJSCode("updateGridDataAfterFilter", text.toString());
-    }
   }
 
   public String toString() {

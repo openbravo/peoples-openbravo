@@ -60,11 +60,11 @@ public class WADSearch extends WADControl {
     setValidation(validation.toString());
     setCalloutJS();
     {
-      StringBuffer text = new StringBuffer();
-      text.append("function debugSearch(key, text, keyField) {\n");
-      text.append("  return true;\n");
-      text.append("}");
-      addJSCode("debugSearch", text.toString());
+      String text = 
+    	  "function debugSearch(key, text, keyField) {\n" +
+    	  "  return true;\n" +
+    	  "}";
+      addJSCode("debugSearch", text);
     }
     if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y")) {
       StringBuffer columnsScript = new StringBuffer();
@@ -81,11 +81,11 @@ public class WADSearch extends WADControl {
             servletName = data[0].mappingname;
             this.searchName = data[0].referenceNameTrl;
             //this.imageName = FormatUtilities.replace(data[0].referenceName) + ".gif";
-            if (!servletName.startsWith("/")) servletName = "/" + servletName;
+            if (!servletName.startsWith("/")) servletName = '/' + servletName;
             for (int i=0;i<data.length;i++) {
               if (data[i].columntype.equals("I")) {
                 columnsScript.append(", 'inp").append(data[i].name).append("'");
-                columnsScript.append(", inputValue(document.frmMain.inp").append(Sqlc.TransformaNombreColumna(data[i].columnname)).append(")");
+                columnsScript.append(", inputValue(document.frmMain.inp").append(Sqlc.TransformaNombreColumna(data[i].columnname)).append(')');
               } else {
                  hiddenScript.append("<input type=\"hidden\" name=\"inp").append(Sqlc.TransformaNombreColumna(data[i].name));
                  hiddenScript.append(data[i].columnSuffix).append("\" value=\"\" ");

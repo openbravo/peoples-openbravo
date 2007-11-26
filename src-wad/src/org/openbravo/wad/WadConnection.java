@@ -74,7 +74,7 @@ public class WadConnection implements ConnectionProvider {
         dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
         this.rdbms = properties.getProperty("bbdd.rdbms");
         if (this.rdbms.equalsIgnoreCase("POSTGRE")) 
-          this.bbdd += "/"+properties.getProperty("bbdd.sid");
+          this.bbdd += '/'+properties.getProperty("bbdd.sid");
       } catch (IOException e) { 
        System.out.println("Uh oh, got an IOException error!");
        e.printStackTrace();
@@ -167,7 +167,7 @@ public class WadConnection implements ConnectionProvider {
     try {
       log4j.info("Loading driver: " + dbDriver);
       Class.forName(dbDriver);
-      log4j.info("Getting Connection: "+this.bbdd+","+ dbLogin);
+      log4j.info("Getting Connection: "+this.bbdd+','+ dbLogin);
       this.myPool=DriverManager.getConnection(this.bbdd, dbLogin, dbPassword);
       this.myPool.setAutoCommit(true);
     } catch (Exception e) {
