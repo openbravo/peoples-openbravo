@@ -280,11 +280,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
    */
   protected boolean hasGeneralAccess(VariablesSecureApp vars, String type, String id){
     try {
-      if (classInfo.type.equals("W"))
+      if (type.equals("W"))
         return hasLevelAccess(vars,AccessData.selectAccessLevel(this, type, id))
             && AccessData.selectAccess(this, vars.getRole(), "TABLE", id).equals("0") 
             && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
-      else /*if (type.equals("P") || type.equals("R") || type.equals("X") || type.equals("T") || type.equals("F"))*/
+      else if (type.equals("S"))
+        return true;
+      else 
         return hasLevelAccess(vars,AccessData.selectAccessLevel(this, type, id))
             && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
     } catch (Exception e) {
