@@ -19,46 +19,35 @@
 -->
 
 <project name="openbravo" default="compile.complete" basedir=".">
-	<property environment="env"/>
-	<property file="config/Openbravo.properties"/>
+  <property environment="env"/>
+  <property file="config/Openbravo.properties"/>
   <property name="separator" value="/"/>
-  <property name="base.subversion" value="${base.source}"/>
-  
-  <property name="base.context" value="${base.subversion}/WebContent"/>
+
+  <property name="base.context" value="${base.source}/WebContent"/>
   <property name="context.name" value="openbravo"/>
   <property name="jakarta.home" value="${env.CATALINA_HOME}"/>
-  <property name="build.core.lib" value="${base.subversion}/src-core/lib"/>
-  <property name="build.trl.lib" value="${base.subversion}/src-trl/lib"/>
-  <property name="build.wad.lib" value="${base.subversion}/src-wad/lib"/>
+  <property name="build.core.lib" value="${base.source}/src-core/lib"/>
+  <property name="build.trl.lib" value="${base.source}/src-trl/lib"/>
+  <property name="build.wad.lib" value="${base.source}/src-wad/lib"/>
   <condition property="jakarta.base" value="${env.CATALINA_BASE}" else="${jakarta.home}">
     <and>
       <isset property="env.CATALINA_BASE"/>
     </and>
   </condition>
   <property name="log.path" value="${jakarta.base}/logs"/>
-  <property name="base.src" value="${base.subversion}${separator}src"/>
+  <property name="base.src" value="${base.source}${separator}src"/>
   <property name="base.design" value="${base.context}/src-loc"/>
-  <property name="base.web" value="${base.subversion}${separator}web"/>
+  <property name="base.web" value="${base.source}${separator}web"/>
   <property name="base.wad" value="${base.source}${separator}src-wad"/>
   <property name="build" value="${base.source}${separator}build${separator}classes"/>
   <property name="build.AD" value="${base.source}${separator}srcAD"/>
   <property name="build.sqlc" value="${base.source}${separator}build${separator}javasqlc"/>
   <property name="build.docs" value="${base.source}${separator}docs${separator}api"/>
   <property name="lib" value="${jakarta.home}${separator}common"/>
-  <property name="base.lib" value="${base.subversion}${separator}lib"/>
-  <property name="base.config" value="${base.subversion}${separator}config"/>
+  <property name="base.lib" value="${base.source}${separator}lib"/>
+  <property name="base.config" value="${base.source}${separator}config"/>
   <property name="jakarta.context" value="${jakarta.base}${separator}webapps${separator}openbravo"/>
   <property name="base.client.src" value="${base.source}${separator}srcClient"/>
-  <property name="client" value="download"/>
-  <property name="release_dir" value="/opt/AppsPublicRelease/release"/>
-  <property name="release_fonts" value="/opt/download"/>
-  <property name="release_dest" value="/opt/release"/>
-  <property name="release" value="2.12"/>
-  <property name="fileRelease" value="/opt/FileRelease"/>
-  <property name="documentation" value="/opt/documentation"/>
-  <property name="demo_dest" value="/opt/demo"/>
-  <property name="demo_client" value="demo"/>
-  <property name="demo_dir" value="/opt/AppsPublicRelease/demo"/>
   <property name="build.maxmemory" value="512M"/>
   <property name="debug.level" value="false"/>
 
@@ -69,9 +58,9 @@
   </condition>
 
   <condition property="temp.folder" value="c:\Temp" else="/tmp">
-        <and>
-                <os family="windows"/>
-        </and>
+    <and>
+      <os family="windows"/>
+    </and>
   </condition>
 
   <condition property="no.java.home" value="true">
@@ -101,84 +90,83 @@
   </target>
 
   <target name="compile.complete" depends="init">
-    <ant dir="${base.subversion}/src" target="compile.complete" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src" target="compile.complete" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="compile" depends="init">
-    <ant dir="${base.subversion}/src" target="compile" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src" target="compile" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="compile.complete.development" depends="init">
-    <ant dir="${base.subversion}/src" target="compile.complete.development" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src" target="compile.complete.development" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="compile.development" depends="init">
-    <ant dir="${base.subversion}/src" target="compile.development" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src" target="compile.development" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="eclipse.compile" depends="init">
-    <ant dir="${base.subversion}/src-core" target="build.jar" inheritAll="true" inheritRefs="true"/>
-    <ant dir="${base.subversion}/src-trl" target="build.jar" inheritAll="true" inheritRefs="true"/>
-    <ant dir="${base.subversion}/src-wad" target="build.jar" inheritAll="true" inheritRefs="true"/>
-    <ant dir="${base.subversion}/src" target="eclipse.compile" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src-core" target="build.jar" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src-trl" target="build.jar" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src-wad" target="build.jar" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src" target="eclipse.compile" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="eclipse.compile.complete" depends="init">
-    <ant dir="${base.subversion}/src-core" target="build.jar" inheritAll="true" inheritRefs="true"/>
-    <ant dir="${base.subversion}/src-trl" target="build.jar" inheritAll="true" inheritRefs="true"/>
-    <ant dir="${base.subversion}/src-wad" target="build.jar" inheritAll="true" inheritRefs="true"/>
-    <ant dir="${base.subversion}/src" target="eclipse.compile.complete" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src-core" target="build.jar" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src-trl" target="build.jar" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src-wad" target="build.jar" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src" target="eclipse.compile.complete" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="compile.src" depends="init">
-    <ant dir="${base.subversion}/src" target="compile.src" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src" target="compile.src" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="war" depends="init">
-    <ant dir="${base.subversion}${separator}src" target="build.war" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}${separator}src" target="build.war" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="core.docs" depends="init">
-    <ant dir="${base.subversion}${separator}src-core" target="doc" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}${separator}src-core" target="doc" inheritAll="true" inheritRefs="true"/>
   </target>
-  
+
   <target name="core.lib" depends="init">
-    <ant dir="${base.subversion}${separator}src-core" target="build" inheritAll="true" inheritRefs="true"/>
-    <copy file="${base.subversion}/src-core/lib/openbravo-core.jar" todir="${base.lib}" overwrite="true" failonerror="false"/>
+    <ant dir="${base.source}${separator}src-core" target="build" inheritAll="true" inheritRefs="true"/>
+    <copy file="${base.source}/src-core/lib/openbravo-core.jar" todir="${base.lib}" overwrite="true" failonerror="false"/>
   </target>
-  
+
   <target name="eclipse.wad.lib" depends="init">
-    <ant dir="${base.subversion}${separator}src-wad" target="sqlc" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}${separator}src-wad" target="sqlc" inheritAll="true" inheritRefs="true"/>
   </target>
-  
+
   <target name="wad.docs" depends="init">
-    <ant dir="${base.subversion}${separator}src-wad" target="doc" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}${separator}src-wad" target="doc" inheritAll="true" inheritRefs="true"/>
   </target>
-  
+
   <target name="wad.lib" depends="init">
-    <ant dir="${base.subversion}${separator}src-wad" target="build" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}${separator}src-wad" target="build" inheritAll="true" inheritRefs="true"/>
   </target>
-  
+
   <target name="eclipse.trl.lib" depends="init">
-    <ant dir="${base.subversion}${separator}src-trl" target="sqlc" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}${separator}src-trl" target="sqlc" inheritAll="true" inheritRefs="true"/>
   </target>
-  
+
   <target name="trl.docs" depends="init">
-    <ant dir="${base.subversion}${separator}src-trl" target="doc" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}${separator}src-trl" target="doc" inheritAll="true" inheritRefs="true"/>
   </target>
-  
+
   <target name="trl.lib" depends="init">
-    <ant dir="${base.subversion}${separator}src-trl" target="build" inheritAll="true" inheritRefs="true"/>
-    <!--copy file="${base.subversion}/src-trl/lib/openbravo-trl.jar" todir="${base.lib}" overwrite="true" failonerror="false"/-->
+    <ant dir="${base.source}${separator}src-trl" target="build" inheritAll="true" inheritRefs="true"/>
   </target>
-  
+
   <target name="database.lib" depends="init">
-    <ant dir="${base.subversion}${separator}src-db" target="jar" inheritAll="true" inheritRefs="true"/>
-    <copy file="${base.subversion}/src-db/build/lib/dbmanager.jar" todir="${base.subversion}/database/lib" overwrite="true" failonerror="false"/>
+    <ant dir="${base.source}${separator}src-db" target="jar" inheritAll="true" inheritRefs="true"/>
+    <copy file="${base.source}/src-db/build/lib/dbmanager.jar" todir="${base.source}/database/lib" overwrite="true" failonerror="false"/>
   </target>
 
   <target name="installWebService" depends="init">
-    <ant dir="${base.subversion}/src" target="installWebService" inheritAll="true" inheritRefs="true">
+    <ant dir="${base.source}/src" target="installWebService" inheritAll="true" inheritRefs="true">
       <property name="wsdd" value="1"/>
     </ant>
   </target>
@@ -188,18 +176,18 @@
   </target>
 
   <target name="preinstall" depends="init">
-    <ant dir="${base.subversion}/bdutil" target="build" inheritAll="true" inheritRefs="true"/>
-    <ant dir="${base.subversion}/bdutil" target="preinstall" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/bdutil" target="build" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/bdutil" target="preinstall" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="preinstall.complete" depends="init">
-    <ant dir="${base.subversion}/bdutil" target="build" inheritAll="true" inheritRefs="true"/>
-    <ant dir="${base.subversion}/bdutil" target="preinstall_complete" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/bdutil" target="build" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/bdutil" target="preinstall_complete" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="install" depends="init">
-    <ant dir="${base.subversion}/install" target="build" inheritAll="true" inheritRefs="true"/>
-    <ant dir="${base.subversion}/install" target="install" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/install" target="build" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/install" target="install" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="deploy" depends="init">
@@ -208,7 +196,7 @@
 
   <target name="install.source" depends="init">
     <antcall target="database.lib"/>
-  	<ant dir="${base.subversion}/database" target="create.database" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/database" target="create.database" inheritAll="true" inheritRefs="true"/>
     <antcall target="core.lib"/>
     <antcall target="wad.lib"/>
     <antcall target="trl.lib"/>
@@ -216,10 +204,10 @@
     <antcall target="installWebService"/>
     <antcall target="war"/>
   </target>
-  
+
   <target name="eclipse.install.source" depends="init">
-	<antcall target="database.lib"/>
-    <ant dir="${base.subversion}/database" target="create.database" inheritAll="true" inheritRefs="true"/>
+    <antcall target="database.lib"/>
+    <ant dir="${base.source}/database" target="create.database" inheritAll="true" inheritRefs="true"/>
     <antcall target="core.lib"/>
     <antcall target="wad.lib"/>
     <antcall target="trl.lib"/>
@@ -227,53 +215,52 @@
     <antcall target="installWebService"/>
   </target>
 
-    <target name="create.database" depends="init">
-    	<antcall target="database.lib"/>
-    	<ant dir="${base.subversion}/database" target="create.database" inheritAll="true" inheritRefs="true"/>
-    </target>
+  <target name="create.database" depends="init">
+    <antcall target="database.lib"/>
+    <ant dir="${base.source}/database" target="create.database" inheritAll="true" inheritRefs="true"/>
+  </target>
 
-    <target name="update.database" depends="init">
-        <ant dir="${base.subversion}/database" target="update.database" inheritAll="true" inheritRefs="true"/>   
-   </target>
+  <target name="update.database" depends="init">
+    <ant dir="${base.source}/database" target="update.database" inheritAll="true" inheritRefs="true"/>
+  </target>
 
-    <target name="create.database.structure" depends="init">
-        <ant dir="${base.subversion}/database" target="create.database.structure" inheritAll="true" inheritRefs="true"/>
-    </target>
+  <target name="create.database.structure" depends="init">
+    <ant dir="${base.source}/database" target="create.database.structure" inheritAll="true" inheritRefs="true"/>
+  </target>
 
-    <target name="update.database.structure" depends="init">
-        <ant dir="${base.subversion}/database" target="update.database.structure" inheritAll="true" inheritRefs="true"/>   
-   </target>
+  <target name="update.database.structure" depends="init">
+    <ant dir="${base.source}/database" target="update.database.structure" inheritAll="true" inheritRefs="true"/>
+  </target>
 
-    <target name="create.database.script" depends="init">
-        <ant dir="${base.subversion}/database" target="create.database.script" inheritAll="true" inheritRefs="true"/>
-    </target>
+  <target name="create.database.script" depends="init">
+    <ant dir="${base.source}/database" target="create.database.script" inheritAll="true" inheritRefs="true"/>
+  </target>
 
-    <target name="update.database.script" depends="init">
-        <ant dir="${base.subversion}/database" target="update.database.script" inheritAll="true" inheritRefs="true"/>   
-   </target>
+  <target name="update.database.script" depends="init">
+    <ant dir="${base.source}/database" target="update.database.script" inheritAll="true" inheritRefs="true"/>
+  </target>
 
-    <target name="export.database.structure" depends="init">
-        <ant dir="${base.subversion}/database" target="export.database.structure" inheritAll="true" inheritRefs="true"/>
-    </target>
-    
-    <target name="export.database.data" depends="init">
-        <ant dir="${base.subversion}/database" target="export.database.data" inheritAll="true" inheritRefs="true"/>
-    </target>
-    
-    <target name="import.database.data" depends="init">
-        <ant dir="${base.subversion}/database" target="import.database.data" inheritAll="true" inheritRefs="true"/>
-    </target>
+  <target name="export.database.structure" depends="init">
+    <ant dir="${base.source}/database" target="export.database.structure" inheritAll="true" inheritRefs="true"/>
+  </target>
 
-    <target name="export.database.sampledata" depends="init">
-        <ant dir="${base.subversion}/database" target="export.database.sampledata" inheritAll="true" inheritRefs="true"/>
-    </target>
+  <target name="export.database.data" depends="init">
+    <ant dir="${base.source}/database" target="export.database.data" inheritAll="true" inheritRefs="true"/>
+  </target>
 
-    <target name="import.database.sampledata" depends="init">
-        <ant dir="${base.subversion}/database" target="import.database.sampledata" inheritAll="true" inheritRefs="true"/>
-    </target>
+  <target name="import.database.data" depends="init">
+    <ant dir="${base.source}/database" target="import.database.data" inheritAll="true" inheritRefs="true"/>
+  </target>
 
-    <target name="save.database.model" depends="init">
-        <ant dir="${base.subversion}/database" target="save.database.model" inheritAll="true" inheritRefs="true"/>
-    </target>
+  <target name="export.database.sampledata" depends="init">
+    <ant dir="${base.source}/database" target="export.database.sampledata" inheritAll="true" inheritRefs="true"/>
+  </target>
 
+  <target name="import.database.sampledata" depends="init">
+    <ant dir="${base.source}/database" target="import.database.sampledata" inheritAll="true" inheritRefs="true"/>
+  </target>
+
+  <target name="save.database.model" depends="init">
+    <ant dir="${base.source}/database" target="save.database.model" inheritAll="true" inheritRefs="true"/>
+  </target>
 </project>

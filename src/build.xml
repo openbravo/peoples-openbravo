@@ -69,7 +69,6 @@
         <exclude name="${attach.path.condition}"/>
       </fileset>
     </delete>
-    <delete file="${jakarta.home}/webapps/${context.name}.war" failonerror="false"/>
   </target>
 
   <target name="copy.srcClient">
@@ -86,8 +85,8 @@
       <arg line="${base.config}/Openbravo.properties .xsql . ${build.sqlc}/src"/>
       <classpath refid="project.class.path"/>
     </java>
-    <copy file="${base.subversion}/src/buildAD.xml" tofile="${base.source}/srcAD/build.xml"/>
-    <copy file="${base.subversion}/src/log4j.lcf" tofile="${base.source}/srcAD/log4j.lcf"/>
+    <copy file="${base.source}/src/buildAD.xml" tofile="${base.source}/srcAD/build.xml"/>
+    <copy file="${base.source}/src/log4j.lcf" tofile="${base.source}/srcAD/log4j.lcf"/>
     <ant dir="${base.source}/srcAD" target="buildAD" inheritAll="true" inheritRefs="true"/>
   </target>
 
@@ -110,7 +109,7 @@
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true"/>
   </target>
-  
+
   <target name="postwad">
     <copy todir="${base.design}/design" >
       <fileset dir="${build.AD}" includes="**/*.xml"/>
@@ -155,29 +154,13 @@
       <arg line="'${base.config}/Openbravo.properties' '${basedir}' '${base.design}' '.xml' 'true' 'false'"/>
       <classpath refid="project.class.path"/>
     </java>
-    <!--java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}/XmlPool.xml' '${basedir}' '${base.design}' 'fo' 'true' 'false'"/>
-      <classpath refid="project.class.path"/>
-    </java>
-    <java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}/XmlPool.xml' '${basedir}' '${base.design}' 'html' 'true' 'false'"/>
-      <classpath refid="project.class.path"/>
-    </java>
-    <java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}/XmlPool.xml' '${basedir}' '${base.design}' 'srpt' 'true' 'false'"/>
-      <classpath refid="project.class.path"/>
-    </java>
-    <java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}/XmlPool.xml' '${basedir}' '${base.design}' 'jrxml' 'true' 'false'"/>
-      <classpath refid="project.class.path"/>
-    </java-->
     <java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}/Openbravo.properties' '${basedir}' '${base.design}' 'jasper' 'true' 'false'"/>
       <classpath refid="project.class.path"/>
     </java>
     <antcall target="build.local.context"/>
   </target>
-    
+
   <target name="build.local.context">
     <copy todir="${base.context}"  encoding="UTF-8">
       <fileset file="${basedir}/index.html"/>
@@ -195,36 +178,24 @@
     </copy>
     <mkdir dir="${base.context}/web"/>
     <copy todir="${base.context}/web"  encoding="UTF-8">
-      <fileset dir="${base.subversion}/web/"/>
+      <fileset dir="${base.source}/web/"/>
     </copy>
     <chmod dir="${base.context}" perm="775"/>
   </target>   
 
   <target name="compile.src" depends="compileSqlc, postsrc, copy.files">
-    <!--antcall inheritall="true" inheritrefs="true" target="compile.translate">
-      <param name="extension" value="html"/>
-    </antcall>
-    <antcall inheritall="true" inheritrefs="true" target="compile.translate">
-      <param name="extension" value="fo"/>
-    </antcall-->
   </target>
-  
+
   <target name="eclipse.compile" depends="wad,sqlc, postsrc, translate">
   </target>
- 
+
   <target name="eclipse.compile.complete" depends="clean,wad,sqlc, postsrc, translate">
-  </target>   
+  </target>
 
   <target name="compile" depends="wad,compileSqlc, postsrc, translate">
   </target>
 
   <target name="compile.complete" depends="clean,wad,compileSqlc,postsrc, translate">
-    <!--antcall inheritall="true" inheritrefs="true" target="compile.translate">
-      <param name="extension" value="html"/>
-    </antcall>
-    <antcall inheritall="true" inheritrefs="true" target="compile.translate">
-      <param name="extension" value="fo"/>
-    </antcall-->
   </target>
 
   <target name="translate" if="translation">
@@ -270,34 +241,9 @@
       <fileset dir="${base.context}"/>
     </copy>
     <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes"/>
-      <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes" encoding="UTF-8">
-      <fileset dir="${build}"/>
-    </copy> 
-    <!-- mkdir dir="${jakarta.base}/webapps/${context.name}/src-loc"/>
-    <copy todir="${jakarta.base}/webapps/${context.name}/src-loc"  encoding="UTF-8">
-      <fileset dir="${base.design}"/>
-    </copy>
-    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF"/>
-    <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF"  encoding="UTF-8">
-      <fileset file="${build.sqlc}/src/web.xml"/>
-      <fileset dir="${base.config}"/>
-    </copy>
-    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib"/>
-    <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib"  encoding="UTF-8">
-      <fileset dir="${base.lib}">
-        <exclude name="openbravo-wad.jar"/>
-        <exclude name="openbravo-trl.jar"/>
-        <exclude name="*.war"/>
-      </fileset>
-    </copy>
-    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes"/>
     <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes" encoding="UTF-8">
       <fileset dir="${build}"/>
-    </copy>
-    <mkdir dir="${jakarta.base}/webapps/${context.name}/web"/>
-    <copy todir="${jakarta.base}/webapps/${context.name}/web"  encoding="UTF-8">
-      <fileset dir="${base.subversion}/web/"/>
-    </copy -->
+    </copy> 
     <chmod dir="${jakarta.base}/webapps/${context.name}" perm="775"/>
   </target>
 
@@ -319,21 +265,6 @@
     <war compress="true" destfile="${base.lib}/${context.name}.war" encoding="UTF-8" webxml="${base.context}/WEB-INF/web.xml">
       <zipfileset dir="${base.context}"/>
       <classes dir="${build}"/>
-      <!--lib dir="${build.core.lib}">
-        <include name="openbravo-core.jar"/>
-      </lib-->
-      <!-- lib dir="${base.lib}">
-        <exclude name="openbravo-wad.jar"/>
-        <exclude name="openbravo-trl.jar"/>
-        <exclude name="servlet-api.jar"/>
-      </lib>
-      <classes dir="${build}"/>
-      <zipfileset dir="${base.subversion}/web" 
-                  prefix="web"/>
-      <zipfileset dir="${base.config}" 
-                  prefix="WEB-INF"/>
-      <zipfileset dir="${base.design}" 
-                  prefix="src-loc"/ -->
     </war>
   </target>
 </project>
