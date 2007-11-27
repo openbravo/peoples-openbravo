@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_ACCTSCHEMA_TRG">
     <trigger name="C_ACCTSCHEMA_TRG" table="C_ACCTSCHEMA" fires="after" insert="true" update="false" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -63,6 +63,6 @@ BEGIN
     (SELECT AD_TABLE_ID FROM AD_TABLE WHERE ISDEFAULTACCT='Y')
     ;
 END C_AcctSchema_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

@@ -4,7 +4,7 @@
       <parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_M_Product_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Date" type="TIMESTAMP" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -44,7 +44,7 @@ BEGIN
         AND AD_CLIENT_ID = p_AD_Client_ID
         AND ISACTIVE = 'Y'
       )
-      AND TO_DATE(VALIDFROM) &lt;= TO_DATE(COALESCE(p_Date, now()))
+      AND TO_DATE(VALIDFROM) <= TO_DATE(COALESCE(p_Date, now()))
       AND EXISTS(SELECT 1
                  FROM M_PRODUCTPRICE
                  WHERE M_PRICELIST_VERSION_ID = M_PRICELIST_VERSION.M_PRICELIST_VERSION_ID
@@ -69,6 +69,6 @@ BEGIN
     v_Price := 0;
   END IF;
   RETURN v_Price;
-END Get_Product_Price_Date</body>
+END Get_Product_Price_Date]]></body>
     </function>
   </database>

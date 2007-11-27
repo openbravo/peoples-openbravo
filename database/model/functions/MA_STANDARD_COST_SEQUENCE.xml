@@ -6,7 +6,7 @@
       <parameter name="p_CalcDate" type="TIMESTAMP" mode="in"/>
       <parameter name="p_User" type="NUMERIC" mode="in"/>
       <parameter name="p_Message" type="VARCHAR" mode="out"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -66,7 +66,7 @@ BEGIN --BODY
       SUM(CASE sp.productiontype WHEN '+' THEN (sp.quantity*COALESCE(sp.decrease,1)*COALESCE(sp.rejected,1))
           ELSE 0 END),
       SUM(CASE sp.productiontype
-          WHEN '+' THEN (CASE WHEN sp.quantity &lt;&gt; 0 THEN COALESCE(sp.ComponentCost,1) ELSE 0 END )
+          WHEN '+' THEN (CASE WHEN sp.quantity <> 0 THEN COALESCE(sp.ComponentCost,1) ELSE 0 END )
           ELSE 0 END)
     INTO v_CostCenterUse, v_Multiplier, v_Outsourced, v_OutsourcingCost, v_CostCenter_Version, v_ProcessPlan_Version,
       v_ProducedKG, v_ProducedUd, v_CompCostSum
@@ -76,7 +76,7 @@ BEGIN --BODY
                             WHERE ValidFrom = (SELECT max(ccv1.ValidFrom)
                                                FROM MA_CostCenter_Version ccv1
                                                WHERE MA_CostCenter_Version.MA_CostCenter_ID = ccv1.MA_CostCenter_ID
-                                                 AND ccv1.ValidFrom &lt;= p_CalcDate)) ccv
+                                                 AND ccv1.ValidFrom <= p_CalcDate)) ccv
                  ON p.MA_COSTCENTER_ID = ccv.MA_CostCenter_ID
   WHERE s.MA_Process_ID = p.MA_Process_ID
     AND s.MA_Sequence_ID = sp.MA_Sequence_ID
@@ -110,7 +110,7 @@ BEGIN --BODY
   LOOP
     v_ResultStr := 'Calculate Sequence';
     IF (Cur_IntermediateProduct_In.Calculated = 'N') THEN
-      DBMS_OUTPUT.PUT_LINE('Same PP -&gt; MA_Sequence: ' || p_Sequence_ID);
+      DBMS_OUTPUT.PUT_LINE('Same PP -> MA_Sequence: ' || p_Sequence_ID);
         MA_Standard_Cost_Sequence(Cur_IntermediateProduct_In.MA_Sequence_ID, p_Budget_ID, p_CalcDate, p_User, p_Message);
     END IF;
       v_SequenceCost_Tmp := COALESCE(v_SequenceCost_Tmp, 0) + Cur_UsedProducts.quantityfactor*Cur_IntermediateProduct_In.cost;
@@ -134,13 +134,13 @@ BEGIN --BODY
       AND ppv.MA_ProcessPlan_Version_ID = s.MA_ProcessPlan_Version_ID
       AND s.MA_Sequence_ID = sp2.MA_Sequence_ID
           AND sp2.productiontype = '+'
-      AND ppv.DateFrom &lt;= p_CalcDate
-      AND ppv.DateTo &gt; p_CalcDate
+      AND ppv.DateFrom <= p_CalcDate
+      AND ppv.DateTo > p_CalcDate
         ORDER BY to_order
       ) LOOP
     v_ResultStr := 'Calculate Sequence';
     IF (Cur_IntermediateProduct_Out.Calculated = 'N') THEN
-      DBMS_OUTPUT.PUT_LINE('Different PP -&gt; MA_Sequence: ' || p_Sequence_ID);
+      DBMS_OUTPUT.PUT_LINE('Different PP -> MA_Sequence: ' || p_Sequence_ID);
           MA_Standard_Cost_Sequence(Cur_IntermediateProduct_Out.MA_Sequence_ID, p_Budget_ID, p_CalcDate, p_User, p_Message);
     END IF;
         v_SequenceCost_Tmp := COALESCE(v_SequenceCost_Tmp, 0) + Cur_UsedProducts.quantityfactor*Cur_IntermediateProduct_Out.cost;
@@ -205,7 +205,7 @@ BEGIN --BODY
         AND scc.Datefrom = (SELECT max(scc1.datefrom)
                             FROM C_Salary_Category_Cost scc1
                             WHERE scc1.C_Salary_Category_ID = cce.C_Salary_Category_ID
-                              AND scc1.datefrom &lt; p_CalcDate)
+                              AND scc1.datefrom < p_CalcDate)
       GROUP BY cce.C_Salary_Category_ID
       )
     LOOP
@@ -241,7 +241,7 @@ BEGIN --BODY
         AND mc.validfrom = (SELECT max(mc1.validfrom)
                             FROM MA_Machine_Cost mc1
                             WHERE mc1.MA_Machine_ID = ccm.MA_Machine_ID
-                              AND mc1.validfrom &lt; p_CalcDate)
+                              AND mc1.validfrom < p_CalcDate)
       GROUP BY ccm.MA_Machine_ID
       )
     LOOP
@@ -275,8 +275,8 @@ BEGIN --BODY
       WHERE ccic.MA_Indirect_Cost_ID = ic.MA_Indirect_Cost_ID
         AND ic.MA_Indirect_Cost_ID = icv.MA_Indirect_Cost_ID
         AND ccic.MA_CostCenter_Version_ID = v_CostCenter_Version
-        AND icv.datefrom &lt; p_CalcDate
-        AND icv.dateto &gt; p_CalcDate
+        AND icv.datefrom < p_CalcDate
+        AND icv.dateto > p_CalcDate
         AND ic.Cost_Type = 'P'
       GROUP BY ccic.MA_Indirect_Cost_ID
       )
@@ -308,8 +308,8 @@ BEGIN --BODY
       WHERE ccic.MA_Costcenter_Version_ID = v_CostCenter_Version
         AND ccic.MA_Indirect_Cost_ID = icv.MA_Indirect_Cost_ID
         AND icv.COST_UOM = 'P'
-        AND icv.DATEFROM &lt; p_CalcDate
-        AND icv.DATETO &gt; p_CalcDate
+        AND icv.DATEFROM < p_CalcDate
+        AND icv.DATETO > p_CalcDate
       GROUP BY ccic.MA_Indirect_Cost_ID
       )
     LOOP
@@ -348,7 +348,7 @@ BEGIN --BODY
               (v_CompCostSum*quantity)),4),
       UPDATED = now()
   WHERE productiontype = '+'
-    AND quantity &lt;&gt; 0
+    AND quantity <> 0
     AND MA_Sequence_ID = p_Sequence_ID;
 
   --Set sequence as calculated
@@ -366,6 +366,6 @@ EXCEPTION
     DBMS_OUTPUT.PUT_LINE('ERROR MA_Standard_Cost_Sequence, sequence_ID '|| p_Sequence_ID || ', date ' || p_CalcDate || ' at ' ||v_ResultStr);
     RAISE;
 END Ma_Standard_Cost_Sequence
-</body>
+]]></body>
     </function>
   </database>

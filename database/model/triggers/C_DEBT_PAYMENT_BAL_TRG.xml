@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_DEBT_PAYMENT_BAL_TRG">
     <trigger name="C_DEBT_PAYMENT_BAL_TRG" table="C_DEBT_PAYMENT_BALANCING" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -57,6 +57,6 @@ BEGIN
     WHERE C_Debt_Payment_ID=:old.C_Debt_Payment_ID;
   END IF;
 END C_Debt_Payment_Bal_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

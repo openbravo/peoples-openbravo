@@ -2,7 +2,7 @@
   <database name="FUNCTION AD_DEVELOPMENT_MIGRATION">
     <function name="AD_DEVELOPMENT_MIGRATION" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -130,7 +130,7 @@
     ORDER BY TableName)
     LOOP
       EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM '||Cur_Tables.NAME||' WHERE '||Cur_Tables.COL_ID||' BETWEEN '||v_min||' AND ' ||v_max INTO v_count;
-      IF(v_count&gt;0) THEN
+      IF(v_count>0) THEN
         EXECUTE IMMEDIATE 'SELECT MIN('||Cur_Tables.COL_ID||') FROM '||Cur_Tables.NAME||' WHERE '||Cur_Tables.COL_ID||' BETWEEN '||v_min||' AND ' ||v_max INTO v_minID;
         SELECT CurrentNextSys
         INTO v_nextID
@@ -159,7 +159,7 @@
     ORDER BY AD_DEPENDENCIES.TABLENAME, AD_DEPENDENCIES.COLUMNNAME)
     LOOP
       EXECUTE IMMEDIATE 'SELECT count(*) FROM ' || Cur_TranslateData.TABLENAME || ' WHERE ' || Cur_TranslateData.COLUMNNAME || ' BETWEEN ' || v_min || ' AND ' || v_max INTO v_count;
-      IF(v_count&gt;0) THEN
+      IF(v_count>0) THEN
         v_strSql:='UPDATE ' || Cur_TranslateData.TABLENAME || ' SET ' || Cur_TranslateData.COLUMNNAME || ' = ' || Cur_TranslateData.COLUMNNAME || ' + ' || Cur_TranslateData."OFFSET";
         v_strSql:=v_strSql || 'WHERE ' || Cur_TranslateData.COLUMNNAME || ' BETWEEN ' ||v_min||' AND ' ||v_max;
         v_seqNo:=v_seqNo + 1;
@@ -171,7 +171,7 @@
     INTO v_count
     FROM AD_Treenode
     WHERE Node_ID BETWEEN v_min AND v_max;
-    IF(v_count&gt;0) THEN
+    IF(v_count>0) THEN
       SELECT max("OFFSET")
       INTO v_Offset
       FROM AD_ID_TRANSLATION
@@ -185,7 +185,7 @@
     INTO v_count
     FROM AD_Treenode
     WHERE Parent_ID BETWEEN v_min AND v_max;
-    IF(v_count&gt;0) THEN
+    IF(v_count>0) THEN
       SELECT max("OFFSET")
       INTO v_Offset
       FROM AD_ID_TRANSLATION
@@ -235,7 +235,7 @@
       DBMS_OUTPUT.PUT_LINE(Cur_Script.SEQNO || ' - ' || v_ResultStr) ;
     END;
   END LOOP;
-  --&lt;&lt;END_PROCESS&gt;&gt;
+  --<<END_PROCESS>>
   IF(p_PInstance_ID IS NOT NULL) THEN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
@@ -255,6 +255,6 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   END IF;
 END AD_Development_Migration
-</body>
+]]></body>
     </function>
   </database>

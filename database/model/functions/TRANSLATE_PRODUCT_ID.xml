@@ -4,7 +4,7 @@
       <parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Value" type="NUMERIC" mode="in"/>
       <parameter name="p_IsDirect" type="CHAR" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -35,6 +35,6 @@ BEGIN
   ELSE
     RETURN(p_Value + v_MinKey) ;
   END IF;
-END Translate_Product_ID</body>
+END Translate_Product_ID]]></body>
     </function>
   </database>

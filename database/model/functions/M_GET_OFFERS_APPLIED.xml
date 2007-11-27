@@ -3,7 +3,7 @@
     <function name="M_GET_OFFERS_APPLIED" type="VARCHAR">
       <parameter name="p_Id" type="NUMERIC"/>
       <parameter name="p_Type" type="VARCHAR"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -44,14 +44,14 @@ BEGIN
         END IF;
         v_Offers := v_Offers || 'F: ' || CurOffers.Fixed ||CurOffers.CurSymbol;
       ELSE
-        IF COALESCE(CurOffers.AddAmt,0) &lt;&gt; 0 THEN
+        IF COALESCE(CurOffers.AddAmt,0) <> 0 THEN
           IF v_Offers IS NOT NULL THEN
             v_Offers := v_Offers || ' + ';
           END IF;
           v_Offers := v_Offers || CurOffers.AddAmt || CurOffers.CurSymbol;
         END IF;
 
-        IF COALESCE(CurOffers.Discount,0) &lt;&gt; 0 THEN
+        IF COALESCE(CurOffers.Discount,0) <> 0 THEN
           IF v_Offers IS NOT NULL THEN
             v_Offers := v_Offers || ' + ';
           END IF;
@@ -78,14 +78,14 @@ BEGIN
         END IF;
         v_Offers := v_Offers || 'F: ' || CurOffers.Fixed || CurOffers.CurSymbol;
       ELSE
-        IF COALESCE(CurOffers.AddAmt,0) &lt;&gt; 0 THEN
+        IF COALESCE(CurOffers.AddAmt,0) <> 0 THEN
           IF v_Offers IS NOT NULL THEN
             v_Offers := v_Offers || ' + ';
           END IF;
           v_Offers := v_Offers || CurOffers.AddAmt || CurOffers.CurSymbol;
         END IF;
 
-        IF COALESCE(CurOffers.Discount,0) &lt;&gt; 0 THEN
+        IF COALESCE(CurOffers.Discount,0) <> 0 THEN
           IF v_Offers IS NOT NULL THEN
             v_Offers := v_Offers || ' + ';
           END IF;
@@ -95,6 +95,6 @@ BEGIN
     END LOOP;
   END IF;
   RETURN v_Offers;
-END M_Get_Offers_Applied </body>
+END M_Get_Offers_Applied ]]></body>
     </function>
   </database>

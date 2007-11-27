@@ -2,7 +2,7 @@
   <database name="FUNCTION MA_PC_CASE_CREATE">
     <function name="MA_PC_CASE_CREATE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -68,7 +68,7 @@
         v_Org_ID:=Cur_Parameter.AD_Org_ID;
       END LOOP; --  Get Parameter
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_WorkRequirement_Close&gt;&gt;') ;
+      DBMS_OUTPUT.PUT_LINE('--<<MA_WorkRequirement_Close>>') ;
     END IF;
   BEGIN --BODY
     v_ResultStr:='Read Periodic control and date';
@@ -102,14 +102,14 @@
         ;
     END LOOP;
     UPDATE MA_PC_Case  SET launched='Y'  WHERE MA_PC_Case_ID=p_Record_ID;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --v_Message := v_Message || '@Created@: ' || v_NoRecords;
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
       AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_WorkRequirement_Process finished&gt;&gt; ' || v_Message) ;
+      DBMS_OUTPUT.PUT_LINE('--<<MA_WorkRequirement_Process finished>> ' || v_Message) ;
     END IF;
     RETURN;
   END; --BODY
@@ -143,6 +143,6 @@ WHEN OTHERS THEN
   --p_Invoice_ID := 0;        --  Error Indicator
   RETURN;
 END MA_PC_CASE_CREATE
-</body>
+]]></body>
     </function>
   </database>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_FORM_TRG2">
     <trigger name="AD_FORM_TRG2" table="AD_FORM" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
 /*************************************************************************
@@ -26,9 +26,9 @@
   v_ClassName  VARCHAR2(60) ;
 BEGIN
   IF(UPDATING) THEN
-    IF NOT(COALESCE(:old.NAME, '.') &lt;&gt; COALESCE(:NEW.NAME, '.')
-   OR COALESCE(:old.IsActive, '.') &lt;&gt; COALESCE(:NEW.IsActive, '.')
-   OR COALESCE(:old.CLASSNAME, '.') &lt;&gt; COALESCE(:NEW.CLASSNAME, '.'))
+    IF NOT(COALESCE(:old.NAME, '.') <> COALESCE(:NEW.NAME, '.')
+   OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')
+   OR COALESCE(:old.CLASSNAME, '.') <> COALESCE(:NEW.CLASSNAME, '.'))
   THEN
       RETURN;
     END IF;
@@ -103,6 +103,6 @@ BEGIN
   END IF;
 END AD_Form_Trg2
 
-</body>
+]]></body>
     </trigger>
   </database>

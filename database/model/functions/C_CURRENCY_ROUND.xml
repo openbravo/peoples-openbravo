@@ -4,7 +4,7 @@
       <parameter name="p_Amount" type="NUMERIC" mode="in"/>
       <parameter name="p_CurTo_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Costing" type="VARCHAR" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -14,7 +14,7 @@
 * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 * implied. See the License for the specific language governing rights
 * and limitations under the License.
-* The Original Code is  Compiere  ERP &amp;  Business Solution
+* The Original Code is  Compiere  ERP &  Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -30,7 +30,7 @@ Inc.
 *  Round Amount using Costing or Standard Precision
 *  Returns unmodified amount if currency not found
 * Test:
-*  SELECT C_Currency_Round(C_Currency_Convert(100,116,100,null,null),100,null) FROM DUAL =&gt; 64.72
+*  SELECT C_Currency_Round(C_Currency_Convert(100,116,100,null,null),100,null) FROM DUAL => 64.72
 ************************************************************************/
   v_StdPrecision  NUMBER;
   v_CostPrecision NUMBER;
@@ -54,6 +54,6 @@ BEGIN
     RETURN ROUND(p_Amount, v_CostPrecision) ;
   END IF;
   RETURN ROUND(p_Amount, v_StdPrecision) ;
-END C_Currency_Round </body>
+END C_Currency_Round ]]></body>
     </function>
   </database>

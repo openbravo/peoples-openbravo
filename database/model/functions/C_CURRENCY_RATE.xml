@@ -7,7 +7,7 @@
       <parameter name="p_RateType" type="CHAR" mode="in"/>
       <parameter name="p_Client_ID" type="NUMERIC" mode="in" default="0"/>
       <parameter name="p_Org_ID" type="NUMERIC" mode="in" default="0"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -17,7 +17,7 @@
 * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 * implied. See the License for the specific language governing rights
 * and limitations under the License.
-* The Original Code is  Compiere  ERP &amp;  Business Solution
+* The Original Code is  Compiere  ERP &  Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -33,7 +33,7 @@ Inc.
 *  from CurrencyFrom_ID to CurrencyTo_ID
 *  Returns NULL, if rate not found
 * Test
-*  SELECT C_Currency_Rate(116, 100, null, null) FROM DUAL; =&gt; .647169
+*  SELECT C_Currency_Rate(116, 100, null, null) FROM DUAL; => .647169
 ************************************************************************/
   -- Currency From variables
   v_cf_IsEuro      char(1);
@@ -97,22 +97,22 @@ BEGIN
     RETURN NULL;
   END IF;
   -- Fixed - From Euro to EMU
-  IF(v_cf_IsEuro = 'Y' AND v_ct_IsEMUMember = 'Y' AND v_ConvDate &gt;= v_ct_EMUEntryDate) THEN
+  IF(v_cf_IsEuro = 'Y' AND v_ct_IsEMUMember = 'Y' AND v_ConvDate >= v_ct_EMUEntryDate) THEN
     RETURN v_ct_EMURate;
   END IF;
   -- Fixed - From EMU to Euro
-  IF(v_ct_IsEuro = 'Y' AND v_cf_IsEMUMember = 'Y' AND v_ConvDate &gt;= v_cf_EMUEntryDate) THEN
+  IF(v_ct_IsEuro = 'Y' AND v_cf_IsEMUMember = 'Y' AND v_ConvDate >= v_cf_EMUEntryDate) THEN
     RETURN 1 / v_cf_EMURate;
   END IF;
   -- Fixed - From EMU to EMU
-  IF(v_cf_IsEMUMember = 'Y' AND v_cf_IsEMUMember = 'Y'  AND v_ConvDate &gt;= v_cf_EMUEntryDate AND v_ConvDate &gt;= v_ct_EMUEntryDate) THEN
+  IF(v_cf_IsEMUMember = 'Y' AND v_cf_IsEMUMember = 'Y'  AND v_ConvDate >= v_cf_EMUEntryDate AND v_ConvDate >= v_ct_EMUEntryDate) THEN
     RETURN v_ct_EMURate / v_cf_EMURate;
   END IF;
   -- Flexible Rates
   v_CurrencyFrom := p_CurFrom_ID;
   v_CurrencyTo := p_CurTo_ID;
   -- if EMU Member involved, replace From/To Currency
-  IF((v_cf_isEMUMember = 'Y' AND v_ConvDate &gt;= v_cf_EMUEntryDate) OR(v_ct_isEMUMember = 'Y' AND v_ConvDate &gt;= v_ct_EMUEntryDate)) THEN
+  IF((v_cf_isEMUMember = 'Y' AND v_ConvDate >= v_cf_EMUEntryDate) OR(v_ct_isEMUMember = 'Y' AND v_ConvDate >= v_ct_EMUEntryDate)) THEN
     SELECT MAX(C_Currency_ID)
     INTO v_CurrencyEuro
     FROM C_Currency
@@ -122,7 +122,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('Euro Not Found') ;
       RETURN NULL;
     END IF;
-    IF(v_cf_isEMUMember = 'Y' AND v_ConvDate &gt;= v_cf_EMUEntryDate) THEN
+    IF(v_cf_isEMUMember = 'Y' AND v_ConvDate >= v_cf_EMUEntryDate) THEN
       v_CurrencyFrom := v_CurrencyEuro;
     ELSE
       v_CurrencyTo := v_CurrencyEuro;
@@ -158,11 +158,11 @@ BEGIN
     RETURN NULL;
   END IF;
   -- Currency From was EMU
-  IF(v_cf_isEMUMember = 'Y' AND v_ConvDate &gt;= v_cf_EMUEntryDate) THEN
+  IF(v_cf_isEMUMember = 'Y' AND v_ConvDate >= v_cf_EMUEntryDate) THEN
     RETURN v_Rate / v_cf_EMURate;
   END IF;
   -- Currency To was EMU
-  IF(v_ct_isEMUMember = 'Y' AND v_ConvDate &gt;= v_ct_EMUEntryDate) THEN
+  IF(v_ct_isEMUMember = 'Y' AND v_ConvDate >= v_ct_EMUEntryDate) THEN
     RETURN v_Rate * v_ct_EMURate;
   END IF;
   RETURN v_Rate;
@@ -170,6 +170,6 @@ EXCEPTION
 WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(SQLERRM) ;
   RETURN NULL;
-END C_Currency_Rate</body>
+END C_Currency_Rate]]></body>
     </function>
   </database>

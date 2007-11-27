@@ -3,7 +3,7 @@
     <function name="A_ASSET_CREATE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_InOutLine_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
   /*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -13,7 +13,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -92,7 +92,7 @@
           ON(p.M_Product_Category_ID=pc.M_Product_Category_ID)
         INNER JOIN C_BPartner bp
           ON(s.C_BPartner_ID=bp.C_BPartner_ID)
-        WHERE pc.A_Asset_Group_ID IS NOT NULL  AND sl.M_InOutLine_ID=p_InOutLine_ID  AND sl.MovementQty&gt;0
+        WHERE pc.A_Asset_Group_ID IS NOT NULL  AND sl.M_InOutLine_ID=p_InOutLine_ID  AND sl.MovementQty>0
         )
       LOOP
         FOR i IN 1 .. Cur_Shipline.MovementQty
@@ -100,7 +100,7 @@
           v_ResultStr:='InsertingAsset';
           AD_Sequence_Next('A_Asset', Cur_Shipline.AD_Client_ID, v_A_Asset_ID) ;
           v_DocumentNo:='_' || Cur_Shipline.DocumentNo;
-          IF(Cur_Shipline.MovementQty&gt;1) THEN
+          IF(Cur_Shipline.MovementQty>1) THEN
             v_DocumentNo:=v_DocumentNo || '_' || i;
           END IF;
           v_Value:='_' || Cur_Shipline.Value || v_DocumentNo;
@@ -137,7 +137,7 @@
       END LOOP;
     END IF;
     DBMS_OUTPUT.PUT_LINE('Assets Created=' || v_count) ;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     DBMS_OUTPUT.PUT_LINE('A_Asset_Create - Finished ' || v_Message) ;
     --  Update AD_PInstance
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -155,6 +155,6 @@ WHEN OTHERS THEN
   END IF;
   RETURN;
 END A_Asset_Create
-</body>
+]]></body>
     </function>
   </database>

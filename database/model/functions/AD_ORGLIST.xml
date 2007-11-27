@@ -2,7 +2,7 @@
   <database name="FUNCTION AD_ORGLIST">
     <function name="AD_ORGLIST" type="VARCHAR">
       <parameter name="p_roleID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -37,6 +37,6 @@ BEGIN
       v_orgList:=v_orgList||','||Cur_Roles.AD_Org_ID;
     END LOOP;
     RETURN SUBSTR(v_orgList, 2, 4000) ;
-END AD_OrgList</body>
+END AD_OrgList]]></body>
     </function>
   </database>

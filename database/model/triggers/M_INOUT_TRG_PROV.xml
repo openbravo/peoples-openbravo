@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_INOUT_TRG_PROV">
     <trigger name="M_INOUT_TRG_PROV" table="M_INOUT" fires="before" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -39,6 +39,6 @@ BEGIN
   WHERE C_DocType_ID=v_docType_ID;
   :NEW.MOVEMENTTYPE:=v_movementType;
 END M_InOut_Trg_Prov 
-</body>
+]]></body>
     </trigger>
   </database>

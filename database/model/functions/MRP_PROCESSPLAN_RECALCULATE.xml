@@ -6,7 +6,7 @@
       <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
       <parameter name="p_PlanningDate" type="TIMESTAMP" mode="in"/>
       <parameter name="p_SecurityMargin" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -70,12 +70,12 @@ BEGIN
       FROM MRP_RUN_PRODUCTIONLINE
       WHERE parent_id = p_Run_ProductionLine_ID
       ) LOOP
-      IF v_qty &gt; 0 THEN
+      IF v_qty > 0 THEN
         SELECT (DEPQTY/PROQTY)*v_qty, (DEPQTY/PROQTY)*v_qty INTO v_qty_new, v_neededqty_new
         FROM MA_PROCESSPLAN_TOTALIZED
         WHERE PRODUCED = v_Product
           AND DEPENDANTPRODUCT = Cur_Childs.M_PRODUCT_ID;
-        IF v_qty_new &lt; 0 THEN
+        IF v_qty_new < 0 THEN
           v_Planneddate_new := v_PlannedOrderdate;
           v_PlannedOrderdate_new := v_PlannedOrderdate;
         ELSE
@@ -88,8 +88,8 @@ BEGIN
         v_qty_new := -v_qty;
 
         --Update needed production qty acording to lot qtys configuration
-        IF (v_neededqty_new &lt;&gt; 0) THEN
-          IF (v_qtymin &gt; v_neededqty_new) THEN
+        IF (v_neededqty_new <> 0) THEN
+          IF (v_qtymin > v_neededqty_new) THEN
             v_qty_new := v_qtymin;
           END IF;
           IF (v_qtytype = 'M') THEN --Multiple lot qty
@@ -114,9 +114,9 @@ BEGIN
       WHERE MRP_RUN_PRODUCTIONLINE_ID =  Cur_Childs.MRP_RUN_PRODUCTIONLINE_ID;
 
       v_ResultStr := 'Recalculate. Recursive Call';
-      IF (v_Qty_new &lt;&gt; Cur_Childs.qty
-          OR v_planneddate &lt;&gt; Cur_Childs.planneddate
-          OR v_plannedorderdate &lt;&gt; Cur_Childs.plannedorderdate) THEN
+      IF (v_Qty_new <> Cur_Childs.qty
+          OR v_planneddate <> Cur_Childs.planneddate
+          OR v_plannedorderdate <> Cur_Childs.plannedorderdate) THEN
         Mrp_Processplan_Recalculate(p_User_ID, Cur_Childs.MRP_Run_ProductionLine_ID, p_TimeHorizon,
                                     p_PlanningDate, p_SecurityMargin);
       END IF;
@@ -130,6 +130,6 @@ WHEN OTHERS THEN
   RAISE;
 --  RETURN;
 END Mrp_Processplan_Recalculate
-</body>
+]]></body>
     </function>
   </database>

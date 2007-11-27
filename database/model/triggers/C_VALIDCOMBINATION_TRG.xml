@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_VALIDCOMBINATION_TRG">
     <trigger name="C_VALIDCOMBINATION_TRG" table="C_VALIDCOMBINATION" fires="before" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
 
@@ -214,6 +214,6 @@ EXCEPTION
   RAISE_APPLICATION_ERROR (-20101, 'Not fully Qualified: ' || v_Combination || '(' || :new.C_ValidCombination_ID || ')');
 
 END C_ValidCombination_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

@@ -2,7 +2,7 @@
   <database name="FUNCTION M_WH_PERIOD_GENERATE">
     <function name="M_WH_PERIOD_GENERATE" type="NULL">
       <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -87,7 +87,7 @@
     ELSIF(v_Periodicity='F') THEN --Fortnightly
       IF(TO_NUMBER(TO_CHAR(v_DateFrom, 'DD'))=1) THEN
         v_startDate:=v_DateFrom;
-      ELSIF(TO_NUMBER(TO_CHAR(v_DateFrom, 'DD'))&gt;15) THEN
+      ELSIF(TO_NUMBER(TO_CHAR(v_DateFrom, 'DD'))>15) THEN
         v_startDate:=TO_DATE('01/'||TO_CHAR(ADD_MONTHS(v_startDate, 1), 'MM/YYYY'), 'DD/MM/YYYY') ;
       ELSE
         v_startDate:=TO_DATE('01/'||TO_CHAR(v_startDate, 'MM/YYYY'), 'DD/MM/YYYY') ;
@@ -101,7 +101,7 @@
     END IF;
     FOR v_no IN 1..1000
     LOOP -- max number of periods inserted: 1000
-      IF(v_startDate&gt;v_DateTo) THEN
+      IF(v_startDate>v_DateTo) THEN
         EXIT; -- Stop inserting
       END IF;
       IF(v_Periodicity='D') THEN
@@ -153,7 +153,7 @@
       END IF;
     END LOOP;
     --  Update AD_PInstance
-    --&lt;&lt;END_PROCEDURE&gt;&gt;
+    --<<END_PROCEDURE>>
     AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 1, NULL) ;
     RETURN;
   END; --BODY
@@ -167,6 +167,6 @@ WHEN OTHERS THEN
   END IF;
   RETURN;
 END M_WH_Period_Generate
-</body>
+]]></body>
     </function>
   </database>

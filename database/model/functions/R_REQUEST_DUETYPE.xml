@@ -3,7 +3,7 @@
     <function name="R_REQUEST_DUETYPE" type="VARCHAR">
       <parameter name="p_ActionDate" type="TIMESTAMP"/>
       <parameter name="p_ToleranceDays" type="NUMERIC" default="1"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -13,7 +13,7 @@
 * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 * implied. See the License for the specific language governing rights
 * and limitations under the License.
-* The Original Code is  Compiere  ERP &amp;  Business Solution
+* The Original Code is  Compiere  ERP &  Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -30,14 +30,14 @@ Inc.
 ************************************************************************/
 BEGIN
   -- scheduled
-  IF(TRUNC(p_ActionDate) &gt; TRUNC(SysDate)) THEN
+  IF(TRUNC(p_ActionDate) > TRUNC(SysDate)) THEN
     RETURN '7';
     -- overdue
-  ELSIF(TRUNC(p_ActionDate) &lt; TRUNC(SysDate+p_ToleranceDays)) THEN
+  ELSIF(TRUNC(p_ActionDate) < TRUNC(SysDate+p_ToleranceDays)) THEN
     RETURN '3';
   END IF;
   --
   RETURN '5';
-END R_Request_DueType</body>
+END R_Request_DueType]]></body>
     </function>
   </database>

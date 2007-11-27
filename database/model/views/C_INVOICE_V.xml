@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW C_INVOICE_V">
-    <view name="C_INVOICE_V" updatable="false">
+    <view name="C_INVOICE_V"><![CDATA[
 SELECT i.C_Invoice_ID, i.AD_Client_ID, i.AD_Org_ID, i.IsActive, i.Created, i.CreatedBy, i.Updated, i.UpdatedBy,
 i.IsSOTrx, i.DocumentNo, i.DocStatus, i.DocAction, i.Processing, i.Processed, i.C_DocType_ID,
 i.C_DocTypeTarget_ID, i.C_Order_ID, i.Description, i.IsApproved, i.IsTransferred,
@@ -16,5 +16,5 @@ CASE WHEN SUBSTR(d.DocBaseType,2,1)='P' THEN -1 ELSE 1 END AS MultiplierAP,
 d.DocBaseType
 FROM C_Invoice i
  INNER JOIN C_DocType d ON (i.C_DocType_ID=d.C_DocType_ID)
-</view>
+]]></view>
   </database>

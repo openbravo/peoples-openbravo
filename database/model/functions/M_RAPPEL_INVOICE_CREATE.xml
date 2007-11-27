@@ -2,7 +2,7 @@
   <database name="FUNCTION M_RAPPEL_INVOICE_CREATE">
     <function name="M_RAPPEL_INVOICE_CREATE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -90,7 +90,7 @@
     FROM M_RAPPEL_BPARTNER
     WHERE M_RAPPEL_BPARTNER_ID=v_Record_ID;
     IF v_LimitDate IS NOT NULL AND v_validTo IS NOT NULL THEN
-      IF v_validTo&gt;v_LimitDate THEN
+      IF v_validTo>v_LimitDate THEN
         v_LimitDate:=v_validTo;
       END IF;
     ELSIF v_validTo IS NOT NULL AND v_LimitDate IS NULL THEN
@@ -111,8 +111,8 @@
       AND R.M_RAPPEL_ID=RP.M_RAPPEL_ID
       AND R.C_CURRENCY_ID=I.C_CURRENCY_ID
       AND I.PROCESSED='Y'
-      AND I.DATEINVOICED&gt;=RP.VALIDFROM
-      AND I.DATEINVOICED&lt;v_LimitDate+1
+      AND I.DATEINVOICED>=RP.VALIDFROM
+      AND I.DATEINVOICED<v_LimitDate+1
       AND I.C_BPARTNER_ID=RP.C_BPARTNER_ID
       AND I.C_BPARTNER_ID = PL.C_BPARTNER_ID
       /*Commented by Carlos ROmero
@@ -201,7 +201,7 @@
           AMNT_FROM,
           AMNT_TO
         FROM M_RAPPEL_SCALE
-        WHERE AMNT_TO&lt;v_TotalLines
+        WHERE AMNT_TO<v_TotalLines
           AND M_RAPPEL_ID=v_RappelID
         )
       LOOP
@@ -258,8 +258,8 @@
         AND R.M_RAPPEL_ID=RP.M_RAPPEL_ID
         AND R.C_CURRENCY_ID=I.C_CURRENCY_ID
         AND I.PROCESSED='Y'
-        AND I.DATEINVOICED&gt;=RP.VALIDFROM
-        AND I.DATEINVOICED&lt;v_LimitDate+1
+        AND I.DATEINVOICED>=RP.VALIDFROM
+        AND I.DATEINVOICED<v_LimitDate+1
         AND I.C_BPARTNER_ID=RP.C_BPARTNER_ID
         AND IL.M_PRODUCT_ID IN
         (SELECT P.M_PRODUCT_ID
@@ -417,7 +417,7 @@
     END LOOP;
   END IF;
  END IF;--FINISH_PROCESS
- --&lt;&lt;FINISH_PROCESS&gt;&gt;
+ --<<FINISH_PROCESS>>
  --  UPDATE AD_PINSTANCE
  DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || V_MESSAGE) ;
  AD_UPDATE_PINSTANCE(P_PINSTANCE_ID, NULL, 'N', 1, V_MESSAGE) ;
@@ -430,6 +430,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(P_PINSTANCE_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END M_RAPPEL_INVOICE_CREATE
-</body>
+]]></body>
     </function>
   </database>

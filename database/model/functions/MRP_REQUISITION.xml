@@ -2,7 +2,7 @@
   <database name="FUNCTION MRP_REQUISITION">
     <function name="MRP_REQUISITION" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -122,6 +122,6 @@ WHEN OTHERS THEN
   END IF;
 --  RETURN;
 END MRP_REQUISITION
-</body>
+]]></body>
     </function>
   </database>

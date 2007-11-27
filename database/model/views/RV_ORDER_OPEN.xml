@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_ORDER_OPEN">
-    <view name="RV_ORDER_OPEN" updatable="false">
+    <view name="RV_ORDER_OPEN"><![CDATA[
 SELECT l.AD_Client_ID, l.AD_Org_ID,
   l.IsActive, l.Created, l.CreatedBy, l.Updated, l.UpdatedBy,
   o.C_Order_ID, o.DocStatus, o.DocAction, o.C_DocType_ID, o.IsApproved, o.IsCreditApproved,
@@ -13,6 +13,6 @@ SELECT l.AD_Client_ID, l.AD_Org_ID,
   (l.QtyOrdered-l.QtyInvoiced)*l.PriceActual AS NetAmtToInvoice
 FROM C_Order o, C_OrderLine l
 WHERE o.C_Order_ID=l.C_Order_ID
-  AND (l.QtyOrdered&lt;&gt;l.QtyDelivered OR l.QtyOrdered&lt;&gt;l.QtyInvoiced)
-</view>
+  AND (l.QtyOrdered<>l.QtyDelivered OR l.QtyOrdered<>l.QtyInvoiced)
+]]></view>
   </database>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_BPARTNER_LOCATION_TRG">
     <trigger name="C_BPARTNER_LOCATION_TRG" table="C_BPARTNER_LOCATION" fires="before" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
     /*************************************************************************
     * The contents of this file are subject to the Compiere License
@@ -12,7 +12,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &amp;  Business Solution
+    * The Original Code is  Compiere  ERP &  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -37,7 +37,7 @@
 BEGIN
   DBMS_OUTPUT.PUT_LINE('C_BPartner_Location_Trg') ;
   IF(UPDATING) THEN
-    IF NOT(COALESCE(:old.C_Location_ID, 0) &lt;&gt; COALESCE(:NEW.C_Location_ID, 0) OR COALESCE(:old.Updated, '01-01-1386') &lt;&gt; COALESCE(:NEW.Updated, '01-01-1386')) THEN
+    IF NOT(COALESCE(:old.C_Location_ID, 0) <> COALESCE(:NEW.C_Location_ID, 0) OR COALESCE(:old.Updated, '01-01-1386') <> COALESCE(:NEW.Updated, '01-01-1386')) THEN
       RETURN;
     END IF;
   END IF;
@@ -71,6 +71,6 @@ WHEN OTHERS THEN
   :new.Name:=C_Location_Name(:new.C_Location_ID) ||'('||:new.C_Location_ID||')';
 END C_BPartner_Location_Trg
 
-</body>
+]]></body>
     </trigger>
   </database>

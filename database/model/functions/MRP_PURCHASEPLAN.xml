@@ -10,7 +10,7 @@
       <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
       <parameter name="p_PlanningDate" type="TIMESTAMP" mode="in"/>
       <parameter name="p_SecurityMargin" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -90,7 +90,7 @@ BEGIN
         SELECT pl.*,
           (CASE WHEN pl.INOUTTRXTYPE = 'ST' THEN 0
                 WHEN pl.INOUTTRXTYPE = 'MS' THEN 1
-                WHEN pl.QTY &gt;= 0 THEN 2
+                WHEN pl.QTY >= 0 THEN 2
                 ELSE 3 END) AS PRIORITY
         FROM MRP_RUN_PURCHASELINE pl,
           M_PRODUCT
@@ -101,16 +101,16 @@ BEGIN
         ) LOOP
 
         v_neededQty_New :=  - Cur_Lines.qty - v_Stock;
-        IF (v_neededQty_New &gt; 0) THEN
+        IF (v_neededQty_New > 0) THEN
           v_planneddate_new := TO_DATE(Cur_Lines.planneddate) - p_securitymargin;
 
-          IF (v_Planneddate_old IS NULL OR TRUNC(v_Planneddate_old) &lt;&gt; TRUNC(v_Planneddate_new)) THEN
+          IF (v_Planneddate_old IS NULL OR TRUNC(v_Planneddate_old) <> TRUNC(v_Planneddate_new)) THEN
             v_planneddate_old := v_planneddate_new;
             UPDATE MRP_RUN_PURCHASELINE
             SET iscompleted = 'Y',
               neededqty = qty
             WHERE MRP_RUN_PURCHASE_ID = p_Run_ID
-              AND planneddate &lt;= v_planneddate_new;
+              AND planneddate <= v_planneddate_new;
 
             v_Qty_New := GREATEST(v_neededqty_New, Cur_PlanProduct.qtymin);
             IF (Cur_PlanProduct.qtytype = 'M') THEN --Multiple lot qty
@@ -160,6 +160,6 @@ WHEN OTHERS THEN
   RAISE;
 --  RETURN;
 END Mrp_Purchaseplan
-</body>
+]]></body>
     </function>
   </database>

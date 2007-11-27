@@ -13,7 +13,7 @@
       <parameter name="p_qtyorderreserved" type="NUMERIC"/>
       <parameter name="p_qtyordered" type="NUMERIC"/>
       <parameter name="p_qtyorderordered" type="NUMERIC"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -91,6 +91,6 @@ BEGIN
       AND COALESCE(M_PRODUCT_UOM_ID, -1)=COALESCE(p_product_uom, -1) ;
   END IF;
 END M_UPDATE_STORAGE_PENDING
-</body>
+]]></body>
     </function>
   </database>

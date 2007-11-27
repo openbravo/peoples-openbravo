@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_ASSET_CUSTOMER">
-    <view name="RV_ASSET_CUSTOMER" updatable="false">
+    <view name="RV_ASSET_CUSTOMER"><![CDATA[
 SELECT A_Asset_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
   VALUE, NAME, DESCRIPTION, HELP, A_ASSET_GROUP_ID, M_PRODUCT_ID, SERNO, LOT, VERSIONNO,
   GUARANTEEDATE, ASSETSERVICEDATE,
@@ -8,5 +8,5 @@ SELECT A_Asset_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Update
   (SELECT COUNT(*) FROM A_Asset_Delivery ad WHERE a.A_Asset_ID=ad.A_Asset_ID) AS DeliveryCount
 FROM A_Asset a
 WHERE C_BPartner_ID IS NOT NULL
-</view>
+]]></view>
   </database>

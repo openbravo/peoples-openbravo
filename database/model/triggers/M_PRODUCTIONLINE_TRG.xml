@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_PRODUCTIONLINE_TRG">
     <trigger name="M_PRODUCTIONLINE_TRG" table="M_PRODUCTIONLINE" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
   v_ID NUMBER;
@@ -18,7 +18,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -42,20 +42,20 @@ BEGIN
     AND pp.M_ProductionPlan_ID=v_ID
     AND(p.Processed='Y'
     OR p.Posted='Y') ;
-  IF (v_RO &gt; 0) THEN
+  IF (v_RO > 0) THEN
     IF (DELETING) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
     IF (UPDATING) THEN
-      IF (:old.M_ProductionPlan_ID &lt;&gt; :new.M_ProductionPlan_ID
-          OR :old.M_Product_ID &lt;&gt; :new.M_Product_ID
-          OR :old.movementqty &lt;&gt; :new.movementqty
-          OR :old.M_Locator_ID &lt;&gt; :new.M_Locator_ID
-          OR :old.M_Attributesetinstance_ID &lt;&gt; :new.M_Attributesetinstance_ID
-          OR :old.M_Product_UOM_ID &lt;&gt; :new.M_Product_UOM_ID
-          OR :old.quantityorder &lt;&gt; :new.quantityorder
-          OR :old.C_UOM_ID &lt;&gt; :new.C_UOM_ID
-          OR :old.Productiontype &lt;&gt; :new.Productiontype) THEN
+      IF (:old.M_ProductionPlan_ID <> :new.M_ProductionPlan_ID
+          OR :old.M_Product_ID <> :new.M_Product_ID
+          OR :old.movementqty <> :new.movementqty
+          OR :old.M_Locator_ID <> :new.M_Locator_ID
+          OR :old.M_Attributesetinstance_ID <> :new.M_Attributesetinstance_ID
+          OR :old.M_Product_UOM_ID <> :new.M_Product_UOM_ID
+          OR :old.quantityorder <> :new.quantityorder
+          OR :old.C_UOM_ID <> :new.C_UOM_ID
+          OR :old.Productiontype <> :new.Productiontype) THEN
         RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
       END IF;
     END IF;
@@ -68,7 +68,7 @@ BEGIN
       WHERE M_Product_ID=:OLD.M_PRODUCT_ID
         AND IsStocked='Y'
         AND ProductType='I';
-      IF V_STOCKED &gt; 0 THEN
+      IF V_STOCKED > 0 THEN
         IF :OLD.PRODUCTIONTYPE='+' THEN
           v_MOVEMENTQTY:=:OLD.MOVEMENTQTY;
           v_QUANTITYORDER:=:OLD.QUANTITYORDER;
@@ -86,7 +86,7 @@ BEGIN
       WHERE M_Product_ID=:NEW.M_PRODUCT_ID
         AND IsStocked='Y'
         AND ProductType='I';
-      IF V_STOCKED &gt; 0 THEN
+      IF V_STOCKED > 0 THEN
         IF :NEW.PRODUCTIONTYPE='+' THEN
           v_MOVEMENTQTY:=:NEW.MOVEMENTQTY;
           v_QUANTITYORDER:=:NEW.QUANTITYORDER;
@@ -100,6 +100,6 @@ BEGIN
   END IF;
 END M_ProductionLine_Trg
 
-</body>
+]]></body>
     </trigger>
   </database>

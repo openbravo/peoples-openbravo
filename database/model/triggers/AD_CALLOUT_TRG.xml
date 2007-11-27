@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_CALLOUT_TRG">
     <trigger name="AD_CALLOUT_TRG" table="AD_CALLOUT" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
 /*************************************************************************
@@ -26,8 +26,8 @@
   v_ClassName  VARCHAR2(60) ;
 BEGIN
   IF(UPDATING) THEN
-    IF(NOT(COALESCE(:old.Name, '.') &lt;&gt; COALESCE(:NEW.Name, '.')
-   OR COALESCE(:old.IsActive, '.') &lt;&gt; COALESCE(:NEW.IsActive, '.')))
+    IF(NOT(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
+   OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')))
   THEN
       RETURN;
     END IF;
@@ -91,6 +91,6 @@ BEGIN
     END IF;
   END IF;
 END AD_Callout_Trg
-</body>
+]]></body>
     </trigger>
   </database>

@@ -3,7 +3,7 @@
     <function name="C_DP_MANAGEMENT_POST" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_DP_Management_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -90,7 +90,7 @@
       END LOOP; --  Get Parameter
       DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;C_Settlement_Post&gt;&gt;') ;
+      DBMS_OUTPUT.PUT_LINE('--<<C_Settlement_Post>>') ;
       v_Record_ID:=p_DP_Management_ID;
     END IF;
   BEGIN --BODY
@@ -206,7 +206,7 @@
       FROM C_DP_Management m,
        C_DocType
       WHERE C_DocType.DocBaseType IN ('DPM')
-     AND AD_ISORGINCLUDED(M.AD_Org_ID,C_DocType.AD_Org_ID, M.AD_Client_ID) &lt;&gt; -1
+     AND AD_ISORGINCLUDED(M.AD_Org_ID,C_DocType.AD_Org_ID, M.AD_Client_ID) <> -1
     AND M.C_DOCTYPE_ID = C_DOCTYPE.C_DOCTYPE_ID
     AND M.C_DP_MANAGEMENT_ID=V_RECORD_ID;
 
@@ -240,7 +240,7 @@
         FROM C_DP_ManagementLine
         WHERE C_DP_Management_ID=v_Record_ID
         GROUP BY C_Debt_Payment_ID
-        HAVING count(*)&gt;1
+        HAVING count(*)>1
         )
         A;
       IF v_Aux!=0 THEN
@@ -267,7 +267,7 @@
         WHERE m1.C_DP_Management_ID=ml1.C_DP_Management_ID
           AND ml1.C_Debt_Payment_ID=ml.C_Debt_Payment_ID
           AND m1.processed='Y'
-          AND m1.DateAcct&gt;m.DateAcct
+          AND m1.DateAcct>m.DateAcct
         )
         ;
       if v_Aux!=0 then
@@ -291,13 +291,13 @@
         WHERE C_Debt_Payment_ID=Cur_Lines.C_Debt_Payment_ID;
       end loop;
     END IF;--FINISH_PROCESS
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     IF(p_PInstance_ID IS NOT NULL) THEN
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
       AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;C_DP_Management_Post finished&gt;&gt; ' || v_Message) ;
+      DBMS_OUTPUT.PUT_LINE('--<<C_DP_Management_Post finished>> ' || v_Message) ;
       IF(v_Result=0) THEN
         RAISE_APPLICATION_ERROR(-20100, v_Message) ;
       END IF;
@@ -332,6 +332,6 @@ WHEN OTHERS THEN
   END IF;
   RETURN;
 END C_DP_Management_Post
-</body>
+]]></body>
     </function>
   </database>

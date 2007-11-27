@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_ATTRIBUTEVALUE_TRG">
     <trigger name="M_ATTRIBUTEVALUE_TRG" table="M_ATTRIBUTEVALUE" fires="after" insert="false" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -44,7 +44,7 @@ BEGIN
                 (select count(*)
                    from M_AttributeUse u1
                   where u1.M_AttributeSet_ID = u.M_AttributeSet_ID
-                    and u1.seqno&lt;u.seqno) +1
+                    and u1.seqno<u.seqno) +1
            into pos
            from M_AttributeSet s,
                 M_AttributeUse u
@@ -62,6 +62,6 @@ BEGIN
     END LOOP;
   END IF;
 END M_ATRIBUTEVALUE_TRG 
-</body>
+]]></body>
     </trigger>
   </database>

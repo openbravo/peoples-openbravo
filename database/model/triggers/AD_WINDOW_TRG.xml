@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_WINDOW_TRG">
     <trigger name="AD_WINDOW_TRG" table="AD_WINDOW" fires="after" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -13,7 +13,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &amp;  Business Solution
+    * The Original Code is  Compiere  ERP &  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -74,10 +74,10 @@
  -- AD_Window update trigger
  --  synchronize name,...
  IF UPDATING THEN
-  IF(COALESCE(:old.Name, '.') &lt;&gt; COALESCE(:NEW.Name, '.')
-  OR COALESCE(:old.Description, '.') &lt;&gt; COALESCE(:NEW.Description, '.')
-  OR COALESCE(:old.Help, '.') &lt;&gt; COALESCE(:NEW.Help, '.')
-  OR COALESCE(:old.IsActive, '.') &lt;&gt; COALESCE(:NEW.IsActive, '.'))
+  IF(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
+  OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
+  OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.')
+  OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.'))
  THEN
     -- Update Menu
     UPDATE AD_Menu
@@ -105,6 +105,6 @@
 -- Updating
 END AD_Window_Trg
 
-</body>
+]]></body>
     </trigger>
   </database>

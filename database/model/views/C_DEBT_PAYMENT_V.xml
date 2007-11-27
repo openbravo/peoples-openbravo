@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW C_DEBT_PAYMENT_V">
-    <view name="C_DEBT_PAYMENT_V" updatable="false">
+    <view name="C_DEBT_PAYMENT_V"><![CDATA[
 SELECT C_DEBT_PAYMENT_ID, AD_CLIENT_ID, AD_ORG_ID,
 ISACTIVE, CREATED, CREATEDBY,
 UPDATED, UPDATEDBY, ISRECEIPT,
@@ -15,5 +15,5 @@ CASE IsReceipt WHEN 'Y' THEN WriteOffAmt ELSE WriteOffAmt*-1 END AS WriteOffAmt,
 CASE IsReceipt WHEN 'Y' THEN 1 ELSE -1 END AS MultiplierAP,
 GLITEMAMT, C_ORDER_ID, STATUS
 FROM C_DEBT_Payment
-</view>
+]]></view>
   </database>

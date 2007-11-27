@@ -2,7 +2,7 @@
   <database name="FUNCTION C_DEBT_PAYMENT_CHANGE">
     <function name="C_DEBT_PAYMENT_CHANGE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -102,7 +102,7 @@
         WHERE C_Debt_Payment_ID=v_Record_ID;
       END IF;
     END IF; --FINISH_PROCESS
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -116,6 +116,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END C_Debt_Payment_Change
-</body>
+]]></body>
     </function>
   </database>

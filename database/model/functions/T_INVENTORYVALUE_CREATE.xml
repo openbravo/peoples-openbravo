@@ -2,7 +2,7 @@
   <database name="FUNCTION T_INVENTORYVALUE_CREATE">
     <function name="T_INVENTORYVALUE_CREATE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
   /*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -12,7 +12,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -139,7 +139,7 @@
         FROM M_Transaction t,
           M_Locator l
         WHERE t.M_Product_ID=T_InventoryValue.M_Product_ID  --            AND t.M_AttributeSetInstance_ID=T_InventoryValue.M_AttributeSetInstance_ID
-          AND t.MovementDate&gt;T_InventoryValue.DateValue
+          AND t.MovementDate>T_InventoryValue.DateValue
           AND t.M_Locator_ID=l.M_Locator_ID
           AND l.M_Warehouse_ID=T_InventoryValue.M_Warehouse_ID
         )
@@ -219,7 +219,7 @@
       rowcount:=SQL%ROWCOUNT;
       v_Message:='@Created@ = ' || rowcount;
     END IF;--FINISH_PROCESS
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -233,6 +233,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END T_InventoryValue_Create
-</body>
+]]></body>
     </function>
   </database>

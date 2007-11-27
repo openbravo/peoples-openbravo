@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_DP_MANAGEMENT_CHK_RESTR_TRG">
     <trigger name="C_DP_MANAGEMENT_CHK_RESTR_TRG" table="C_DP_MANAGEMENT" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
 /*************************************************************************
@@ -23,36 +23,36 @@
 BEGIN
   IF UPDATING THEN
     IF (    :OLD.processed = 'Y'
-        AND (   (COALESCE (:OLD.documentno, '.') &lt;&gt;
+        AND (   (COALESCE (:OLD.documentno, '.') <>
                                                COALESCE (:NEW.documentno, '.')
                 )
-             OR (COALESCE (:OLD.c_doctype_id, 0) &lt;&gt;
+             OR (COALESCE (:OLD.c_doctype_id, 0) <>
                                                COALESCE (:NEW.c_doctype_id, 0)
                 )
-             OR (COALESCE (:OLD.datetrx, '01-01-9999') &lt;&gt;
+             OR (COALESCE (:OLD.datetrx, '01-01-9999') <>
                                          COALESCE (:NEW.datetrx, '01-01-9999')
                 )
-             OR (COALESCE (:OLD.c_currency_id, 0) &lt;&gt;
+             OR (COALESCE (:OLD.c_currency_id, 0) <>
                                               COALESCE (:NEW.c_currency_id, 0)
                 )
-             OR (COALESCE (:OLD.user1_id, 0) &lt;&gt; COALESCE (:NEW.user1_id, 0))
-             OR (COALESCE (:OLD.user2_id, 0) &lt;&gt; COALESCE (:NEW.user2_id, 0))
+             OR (COALESCE (:OLD.user1_id, 0) <> COALESCE (:NEW.user1_id, 0))
+             OR (COALESCE (:OLD.user2_id, 0) <> COALESCE (:NEW.user2_id, 0))
             )
        ) THEN
       RAISE_APPLICATION_ERROR (-20501, 'Document processed/posted');
     END IF;
 
     IF (    :OLD.posted = 'Y'
-        AND (   (COALESCE (:OLD.dateacct, '01-01-1386') &lt;&gt;
+        AND (   (COALESCE (:OLD.dateacct, '01-01-1386') <>
                                         COALESCE (:NEW.dateacct, '01-01-1386')
                 )
-             OR (COALESCE (:OLD.c_campaign_id, 0) &lt;&gt;
+             OR (COALESCE (:OLD.c_campaign_id, 0) <>
                                               COALESCE (:NEW.c_campaign_id, 0)
                 )
-             OR (COALESCE (:OLD.c_project_id, 0) &lt;&gt;
+             OR (COALESCE (:OLD.c_project_id, 0) <>
                                                COALESCE (:NEW.c_project_id, 0)
                 )
-             OR (COALESCE (:OLD.c_activity_id, 0) &lt;&gt;
+             OR (COALESCE (:OLD.c_activity_id, 0) <>
                                               COALESCE (:NEW.c_activity_id, 0)
                 )
             )
@@ -73,6 +73,6 @@ BEGIN
  END IF;
   END IF;
 END c_dp_management_chk_restr_trg 
-</body>
+]]></body>
     </trigger>
   </database>

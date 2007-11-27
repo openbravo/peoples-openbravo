@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_DESKTOP_TRG">
     <trigger name="AD_DESKTOP_TRG" table="AD_DESKTOP" fires="after" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
  BEGIN
     /******************************************************************************
@@ -11,7 +11,7 @@
     * Software distributed under the License is distributed on an  "AS IS"  basis,
     * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
     * the specific language governing rights and limitations under the License.
-    * The Original Code is                  Compiere  ERP &amp;  Business Solution
+    * The Original Code is                  Compiere  ERP &  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
     * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
@@ -43,8 +43,8 @@
  -- Update Trigger
  IF UPDATING THEN
   -- reset Translation flag
-  IF(:old.Name &lt;&gt; :new.Name  OR :old.Description &lt;&gt; :new.Description
-  OR :old.Help &lt;&gt; :new.Help)
+  IF(:old.Name <> :new.Name  OR :old.Description <> :new.Description
+  OR :old.Help <> :new.Help)
  THEN
     UPDATE AD_Desktop_Trl
       SET IsTranslated='N'
@@ -54,6 +54,6 @@
 -- UPDATING
 END AD_Desktop_Trg
 
-</body>
+]]></body>
     </trigger>
   </database>

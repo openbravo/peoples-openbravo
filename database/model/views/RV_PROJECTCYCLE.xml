@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_PROJECTCYCLE">
-    <view name="RV_PROJECTCYCLE" updatable="false">
+    <view name="RV_PROJECTCYCLE"><![CDATA[
 SELECT p.AD_Client_ID, p.AD_Org_ID, p.IsActive, p.Created,p.CreatedBy, p.Updated,p.UpdatedBy,
 c.C_Cycle_ID, c.Name AS CycleName, c.C_Currency_ID,
 cs.C_CycleStep_ID, cs.Name AS CycleStepName, cs.SeqNo, cs.RelativeWeight,
@@ -25,5 +25,5 @@ FROM C_Cycle c
   INNER JOIN C_Phase pp ON (cp.C_Phase_ID=pp.C_Phase_ID)
   INNER JOIN C_Project p ON (cp.C_Phase_ID=p.C_Phase_ID)
   INNER JOIN C_ProjectType pt ON (p.C_ProjectType_ID=pt.C_ProjectType_ID)
-</view>
+]]></view>
   </database>

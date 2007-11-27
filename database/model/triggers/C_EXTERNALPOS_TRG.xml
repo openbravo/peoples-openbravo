@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_EXTERNALPOS_TRG">
     <trigger name="C_EXTERNALPOS_TRG" table="C_EXTERNALPOS" fires="before" insert="true" update="false" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -25,6 +25,6 @@
   :new.AD_ORGANIZATION_CODE:=:new.AD_ORG_ID;
  END IF;
 END C_ExternalPOS_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_INTERNAL_CONSUMPTIONLINE_TRG">
     <trigger name="M_INTERNAL_CONSUMPTIONLINE_TRG" table="M_INTERNAL_CONSUMPTIONLINE" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
   v_ID NUMBER;
@@ -38,7 +38,7 @@ BEGIN
   WHERE M_Internal_Consumption_ID=v_ID
     AND(Processed='Y'
     OR Posted='Y') ;
-  IF(v_RO &gt; 0) THEN
+  IF(v_RO > 0) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
   -- Updating inventory
@@ -49,7 +49,7 @@ BEGIN
     WHERE M_Product_ID=:OLD.M_PRODUCT_ID
       AND IsStocked='Y'
       AND ProductType='I';
-    IF V_STOCKED &gt; 0 THEN
+    IF V_STOCKED > 0 THEN
       v_MOVEMENTQTY:=:OLD.MOVEMENTQTY;
       v_QUANTITYORDER:=:OLD.QUANTITYORDER;
       M_UPDATE_INVENTORY(:OLD.AD_CLIENT_ID, :OLD.AD_ORG_ID, :OLD.UPDATEDBY, :OLD.M_PRODUCT_ID, :OLD.M_LOCATOR_ID, :OLD.M_ATTRIBUTESETINSTANCE_ID, :OLD.C_UOM_ID, :OLD.M_PRODUCT_UOM_ID, NULL, NULL, NULL, v_MOVEMENTQTY, v_QUANTITYORDER) ;
@@ -62,13 +62,13 @@ BEGIN
     WHERE M_Product_ID=:NEW.M_PRODUCT_ID
       AND IsStocked='Y'
       AND ProductType='I';
-    IF V_STOCKED &gt; 0 THEN
+    IF V_STOCKED > 0 THEN
       v_MOVEMENTQTY:=:NEW.MOVEMENTQTY;
       v_QUANTITYORDER:=:NEW.QUANTITYORDER;
       M_UPDATE_INVENTORY(:NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID, :NEW.UPDATEDBY, :NEW.M_PRODUCT_ID, :NEW.M_LOCATOR_ID, :NEW.M_ATTRIBUTESETINSTANCE_ID, :NEW.C_UOM_ID, :NEW.M_PRODUCT_UOM_ID, NULL, NULL, NULL, -v_MOVEMENTQTY, -v_QUANTITYORDER) ;
     END IF;
   END IF;
 END M_Internal_ConsumptionLine_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_FIELDGROUP_TRG">
     <trigger name="AD_FIELDGROUP_TRG" table="AD_FIELDGROUP" fires="after" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -13,7 +13,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &amp;  Business Solution
+    * The Original Code is  Compiere  ERP &  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -46,7 +46,7 @@
     AND IsSystemLanguage='Y';
  END IF;
  IF UPDATING THEN
-  IF(COALESCE(:OLD.Name, '.') &lt;&gt; COALESCE(:NEW.Name, '.')) THEN
+  IF(COALESCE(:OLD.Name, '.') <> COALESCE(:NEW.Name, '.')) THEN
     UPDATE AD_FieldGroup_Trl
       SET IsTranslated='N'
       --  Updated=SysDate
@@ -56,6 +56,6 @@
 -- Updating
 END AD_FieldGroup_Trg
 
-</body>
+]]></body>
     </trigger>
   </database>

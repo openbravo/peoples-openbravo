@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER A_AMORTIZATION_TRG">
     <trigger name="A_AMORTIZATION_TRG" table="A_AMORTIZATION" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
 /*************************************************************************
@@ -54,6 +54,6 @@
   END IF;
  END IF;
 END A_AMORTIZATION_TRG 
-</body>
+]]></body>
     </trigger>
   </database>

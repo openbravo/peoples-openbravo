@@ -3,7 +3,7 @@
     <function name="AD_MESSAGE_GET2" type="NVARCHAR">
       <parameter name="p_Value" type="NVARCHAR" mode="in"/>
       <parameter name="p_AD_Language" type="VARCHAR" mode="in"/>
-      <body>
+      <body><![CDATA[
 /******************************************************************************
 * The contents of this file are subject to the   Compiere License  Version 1.1
 * ("License"); You may not use this file except in compliance with the License
@@ -11,7 +11,7 @@
 * Software distributed under the License is distributed on an  "AS IS"  basis,
 * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
 * the specific language governing rights and limitations under the License.
-* The Original Code is                  Compiere  ERP &amp;  Business Solution
+* The Original Code is                  Compiere  ERP &  Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
 * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
@@ -35,12 +35,12 @@ BEGIN
        AND AD_MESSAGE.VALUE = p_Value;
   END IF;
 
-  /*POSTGRESQL&gt;
+  /*POSTGRESQL>
   IF (NOT FOUND) THEN
-  RETURN &lt;' || p_Value || '&gt;';
+  RETURN <' || p_Value || '>';
   END IF;
-  &lt;POSTGRESQL*/
-  /*ORACLE&gt;*/
+  <POSTGRESQL*/
+  /*ORACLE>*/
 
 EXCEPTION
   WHEN OTHERS THEN
@@ -48,6 +48,6 @@ EXCEPTION
 END;
 --
 RETURN v_RetValue;
-END AD_MESSAGE_GET2</body>
+END AD_MESSAGE_GET2]]></body>
     </function>
   </database>

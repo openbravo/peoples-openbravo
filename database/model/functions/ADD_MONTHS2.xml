@@ -3,7 +3,7 @@
     <function name="ADD_MONTHS2" type="TIMESTAMP">
       <parameter name="pDate" type="TIMESTAMP" mode="in"/>
       <parameter name="pMonths" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -31,12 +31,12 @@ BEGIN
     return add_months(pdate, pMonths);
   else
     pDateAux := add_months(pDate, pMonths);
-    if (to_number(to_char(pDateAux,'DD'))&gt;to_number(to_char(pDate,'DD'))) then
+    if (to_number(to_char(pDateAux,'DD'))>to_number(to_char(pDate,'DD'))) then
       return to_date(to_char(pDate,'DD')||to_char(pDateAux,'-MM-YYYY'),'DD-MM-YYYY');
     else
       return pDateAux;
     end if;
   end if;
-END ADD_MONTHS2</body>
+END ADD_MONTHS2]]></body>
     </function>
   </database>

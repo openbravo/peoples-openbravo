@@ -4,7 +4,7 @@
       <parameter name="p_TableName" type="VARCHAR" mode="in"/>
       <parameter name="p_Record_ID" type="VARCHAR" mode="in"/>
       <parameter name="p_Language" type="VARCHAR" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -24,11 +24,11 @@
   v_Value VARCHAR2(4000) ;
 BEGIN
   EXECUTE IMMEDIATE 'SELECT DOCUMENTNO||'' - ''||GRANDTOTAL||'' - ''||(SELECT NAME FROM C_BPARTNER B WHERE B.C_BPARTNER_ID=C_INVOICE.C_BPARTNER_ID) FROM C_INVOICE WHERE C_INVOICE_ID='||p_Record_ID INTO v_Value;
-  --&lt;&lt; END_PROCESS &gt;&gt;
+  --<< END_PROCESS >>
   RETURN v_Value;
   /*EXCEPTION
   WHEN OTHERS THEN
   RETURN '**'; */
-END XX_COLUMN_IDENTIFIER</body>
+END XX_COLUMN_IDENTIFIER]]></body>
     </function>
   </database>

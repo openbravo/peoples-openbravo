@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION NOW">
     <function name="NOW" type="TIMESTAMP">
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -20,6 +20,6 @@
 ************************************************************************/
 BEGIN
   RETURN SYSDATE;
-END NOW </body>
+END NOW ]]></body>
     </function>
   </database>

@@ -2,7 +2,7 @@
   <database name="FUNCTION AD_COLUMN_IDENTIFIER_SQL">
     <function name="AD_COLUMN_IDENTIFIER_SQL" type="VARCHAR">
       <parameter name="p_TableName" type="VARCHAR" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -68,11 +68,11 @@
     ELSE
       v_SQL:='**No key found';
     END IF;
---    &lt;&lt; END_PROCESS &gt;&gt;
+--    << END_PROCESS >>
     RETURN v_SQL;
 EXCEPTION
   WHEN OTHERS THEN
     RETURN '**';
-END AD_COLUMN_IDENTIFIER_SQL</body>
+END AD_COLUMN_IDENTIFIER_SQL]]></body>
     </function>
   </database>

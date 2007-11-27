@@ -2,7 +2,7 @@
   <database name="FUNCTION MA_INDIRECT_COST_CALCULATE">
     <function name="MA_INDIRECT_COST_CALCULATE" type="NULL">
       <parameter name="p_pinstance_id" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
  /*************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -68,15 +68,15 @@ BEGIN
          WHERE p.m_production_id = pp.m_production_id
            AND pp.m_productionplan_id = pl.m_productionplan_id
            AND pl.m_product_id = pr.m_product_id
-           AND p.movementdate &lt; dateto
-           AND p.movementdate &gt; datefrom
+           AND p.movementdate < dateto
+           AND p.movementdate > datefrom
            AND p.ISSOTRX = 'N'
            AND pl.productiontype = '+'
-           AND(v_Cost_Type &lt;&gt; 'S' OR pr.issold = 'Y'))
+           AND(v_Cost_Type <> 'S' OR pr.issold = 'Y'))
       WHERE ma_indirect_cost_value_id = v_record_id;
   END IF;
 
-  --&lt;&lt;FINISH_PROCESS&gt;&gt;
+  --<<FINISH_PROCESS>>
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_message);
   ad_update_pinstance(p_pinstance_id,   p_user,   'N',   v_result,   v_message);
@@ -94,6 +94,6 @@ WHEN others THEN
   RETURN;
 
 END ma_indirect_cost_calculate
-</body>
+]]></body>
     </function>
   </database>

@@ -2,7 +2,7 @@
   <database name="FUNCTION MRP_PURCHASEORDER">
     <function name="MRP_PURCHASEORDER" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -163,17 +163,17 @@
         FROM M_PriceList_Version plv
         WHERE plv.M_PriceList_ID = Cur_workproposal.PO_PRICELIST_ID
         AND plv.IsActive= 'Y'
-        AND plv.ValidFrom &lt;= v_DateDoc
+        AND plv.ValidFrom <= v_DateDoc
         AND plv.AD_Client_ID =v_Client_ID
         AND ValidFrom = (SELECT max(ValidFrom)
                           FROM M_PriceList pl, M_PriceList_Version plv
                           WHERE pl.M_PriceList_ID=plv.M_PriceList_ID
                           AND plv.IsActive= 'Y'
                           AND pl.M_PriceList_ID = Cur_workproposal.PO_PRICELIST_ID
-                          AND plv.ValidFrom &lt;= v_DateDoc
+                          AND plv.ValidFrom <= v_DateDoc
                           AND plv.AD_Client_ID =v_Client_ID));
 
-      IF (v_count &gt; 0) THEN
+      IF (v_count > 0) THEN
         SELECT PriceList, PriceStd,
                M_Get_Offers_Price(v_DateDoc,Cur_workproposal.C_BPartner_ID,Cur_workproposal.M_Product_ID,PriceStd,Cur_workproposal.QTY, Cur_workproposal.PO_PRICELIST_ID),
                PriceLimit
@@ -185,14 +185,14 @@
                 FROM M_PriceList_Version plv
                 WHERE plv.M_PriceList_ID = Cur_workproposal.PO_PRICELIST_ID
                   AND plv.IsActive= 'Y'
-                  AND plv.ValidFrom &lt;= v_DateDoc
+                  AND plv.ValidFrom <= v_DateDoc
                   AND plv.AD_Client_ID =v_Client_ID
                   AND ValidFrom = (SELECT max(ValidFrom)
                                   FROM M_PriceList pl, M_PriceList_Version plv
                                   WHERE pl.M_PriceList_ID=plv.M_PriceList_ID
                                     AND plv.IsActive= 'Y'
                                     AND pl.M_PriceList_ID = Cur_workproposal.PO_PRICELIST_ID
-                                    AND plv.ValidFrom &lt;= v_DateDoc
+                                    AND plv.ValidFrom <= v_DateDoc
                                     AND plv.AD_Client_ID =v_Client_ID));
       ELSE
         SELECT NAME INTO v_ProductName
@@ -246,6 +246,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
 --  RETURN;
 END MRP_PURCHASEORDER
-</body>
+]]></body>
     </function>
   </database>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_ORDERTAX_TRG">
     <trigger name="C_ORDERTAX_TRG" table="C_ORDERTAX" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -13,7 +13,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &amp;  Business Solution
+    * The Original Code is  Compiere  ERP &  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -45,12 +45,12 @@ BEGIN
   FROM C_ORDER
   WHERE C_ORDER_ID=v_C_ORDER_ID;
   IF UPDATING THEN
-    IF(v_Processed='Y' AND v_Docaction &lt;&gt; 'CL' AND ((COALESCE(:old.TAXBASEAMT, 0) &lt;&gt; COALESCE(:new.TAXBASEAMT, 0)) OR(COALESCE(:old.TAXAMT, 0) &lt;&gt; COALESCE(:new.TAXAMT, 0)) OR(COALESCE(:old.C_TAX_ID, 0) &lt;&gt; COALESCE(:new.C_TAX_ID, 0)))) THEN
+    IF(v_Processed='Y' AND v_Docaction <> 'CL' AND ((COALESCE(:old.TAXBASEAMT, 0) <> COALESCE(:new.TAXBASEAMT, 0)) OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0)) OR(COALESCE(:old.C_TAX_ID, 0) <> COALESCE(:new.C_TAX_ID, 0)))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;
   NULL;
-  IF((DELETING OR INSERTING) AND v_Processed='Y' AND v_Docaction &lt;&gt; 'CL') THEN
+  IF((DELETING OR INSERTING) AND v_Processed='Y' AND v_Docaction <> 'CL') THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
   /** Is not needed
@@ -65,13 +65,13 @@ BEGIN
   INTO v_RO
   FROM C_Order
   WHERE C_Order_ID=v_ID
-  AND DocAction &lt;&gt; 'CL' -- allow to close order
+  AND DocAction <> 'CL' -- allow to close order
   AND (Processed='Y' OR Posted='Y');
-  IF (v_RO &gt; 0) THEN
+  IF (v_RO > 0) THEN
   RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
   END IF;
   **/
 END C_OrderTax_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

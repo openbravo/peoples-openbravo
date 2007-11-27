@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_DEBT_PAYMENT_TRG">
     <trigger name="C_DEBT_PAYMENT_TRG" table="C_DEBT_PAYMENT" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -74,7 +74,7 @@ BEGIN
             into v_Aux
             from c_orderline
            where c_order_id = :NEW.C_Order_ID;
-           if v_Aux&gt;0 then
+           if v_Aux>0 then
              RAISE_APPLICATION_ERROR(-20000, '@OrderCompletelyInvoiced@');          
            end if;
         END IF;
@@ -100,30 +100,30 @@ BEGIN
     END IF;
     :new.Status := :new.Status_Initial;
   ELSIF (UPDATING) THEN
-    IF (:old.IsValid = 'Y' AND ((:old.IsActive &lt;&gt; :new.IsActive)
-                   OR (:old.IsReceipt&lt;&gt;:new.IsReceipt)
-               OR (COALESCE(:old.C_Settlement_Generate_ID,0)&lt;&gt;COALESCE(:new.C_Settlement_Generate_ID,0))
-               -- OR (COALESCE(:old.C_Invoice_ID,0)&lt;&gt;COALESCE(:new.C_Invoice_ID,0))
-                OR (COALESCE(:old.C_BPartner_ID,0)&lt;&gt;COALESCE(:new.C_BPartner_ID,0))
-               OR (:old.C_Currency_ID&lt;&gt;:new.C_Currency_ID)
-               OR (:old.Amount&lt;&gt;:new.Amount)
-               OR (:old.IsManual&lt;&gt;:new.IsManual))) THEN
+    IF (:old.IsValid = 'Y' AND ((:old.IsActive <> :new.IsActive)
+                   OR (:old.IsReceipt<>:new.IsReceipt)
+               OR (COALESCE(:old.C_Settlement_Generate_ID,0)<>COALESCE(:new.C_Settlement_Generate_ID,0))
+               -- OR (COALESCE(:old.C_Invoice_ID,0)<>COALESCE(:new.C_Invoice_ID,0))
+                OR (COALESCE(:old.C_BPartner_ID,0)<>COALESCE(:new.C_BPartner_ID,0))
+               OR (:old.C_Currency_ID<>:new.C_Currency_ID)
+               OR (:old.Amount<>:new.Amount)
+               OR (:old.IsManual<>:new.IsManual))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'A valid Debt/Payment should not be modified');
     END IF;
     IF (C_DEBT_PAYMENT_STATUS(:old.C_Settlement_Cancel_ID,:old.Cancel_Processed,:old.Generate_Processed,
         :old.IsPaid,:old.IsValid,:old.C_CashLine_ID,:old.C_BankStatementLine_ID) NOT IN ('P','I')
-     AND ((COALESCE(:old.C_BankAccount_ID,0)&lt;&gt;COALESCE(:new.C_BankAccount_ID,0)) OR
-       (COALESCE(:old.C_CashBook_ID,0)&lt;&gt;COALESCE(:new.C_CashBook_ID,0)) OR
-        (:old.PaymentRule&lt;&gt;:new.PaymentRule) OR (:old.DatePlanned&lt;&gt;:new.DatePlanned))) THEN
+     AND ((COALESCE(:old.C_BankAccount_ID,0)<>COALESCE(:new.C_BankAccount_ID,0)) OR
+       (COALESCE(:old.C_CashBook_ID,0)<>COALESCE(:new.C_CashBook_ID,0)) OR
+        (:old.PaymentRule<>:new.PaymentRule) OR (:old.DatePlanned<>:new.DatePlanned))) THEN
       RAISE_APPLICATION_ERROR(-20511, 'This Debt/Payment can not be modified');
     END IF;
     IF (:new.C_Settlement_Cancel_ID IS NOT NULL) THEN
-     IF (:old.C_Settlement_Cancel_ID&lt;&gt;:new.C_Settlement_Cancel_ID) THEN
+     IF (:old.C_Settlement_Cancel_ID<>:new.C_Settlement_Cancel_ID) THEN
         RAISE_APPLICATION_ERROR(-20512, 'The Debt/Payment is already in a Settlement Cancel');
      END IF;
-     IF ((COALESCE(:old.C_Settlement_Cancel_ID,0)&lt;&gt;COALESCE(:new.C_Settlement_Cancel_ID,0))
-      OR (:old.IsPaid&lt;&gt;:new.IsPaid)
-      OR (:old.WriteOffAmt&lt;&gt;:new.WriteOffAmt)) THEN
+     IF ((COALESCE(:old.C_Settlement_Cancel_ID,0)<>COALESCE(:new.C_Settlement_Cancel_ID,0))
+      OR (:old.IsPaid<>:new.IsPaid)
+      OR (:old.WriteOffAmt<>:new.WriteOffAmt)) THEN
           SELECT processed INTO v_IsProcessed FROM C_Settlement
           WHERE C_Settlement_ID =:new.C_Settlement_Cancel_ID;
 
@@ -133,8 +133,8 @@ BEGIN
      END IF;
     END IF;
     IF (:new.C_Settlement_Generate_ID IS NOT NULL) THEN
-      IF ((:old.C_GLItem_ID&lt;&gt;:new.C_GLItem_ID)
-        OR (:old.IsDirectPosting&lt;&gt;:new.IsDirectPosting)) THEN
+      IF ((:old.C_GLItem_ID<>:new.C_GLItem_ID)
+        OR (:old.IsDirectPosting<>:new.IsDirectPosting)) THEN
         SELECT processed INTO v_IsProcessed FROM C_Settlement
           WHERE C_Settlement_ID =:new.C_Settlement_Generate_ID;
           IF v_IsProcessed='Y' THEN
@@ -235,7 +235,7 @@ BEGIN
   INTO v_S_Currency_ID, v_S_Date, v_Client_ID, v_Org_ID
   FROM C_Settlement WHERE C_Settlement_ID = v_Settlement_ID;
 
-  IF (v_Currency_ID &lt;&gt; v_S_Currency_ID) THEN
+  IF (v_Currency_ID <> v_S_Currency_ID) THEN
    v_Canceled :=C_Currency_Convert(v_Canceled, v_Currency_ID, v_S_Currency_ID, v_S_Date, null, v_Client_ID, v_Org_ID);
    v_Generated := C_Currency_Convert(v_Generated, v_Currency_ID, v_S_Currency_ID, v_S_Date, null, v_Client_ID, v_Org_ID);
    v_Applied :=C_Currency_Convert(v_Applied, v_Currency_ID, v_S_Currency_ID, v_S_Date, null, v_Client_ID, v_Org_ID);
@@ -248,6 +248,6 @@ BEGIN
     WHERE C_Settlement_ID = v_Settlement_ID;
  END IF;
 END C_Debt_Payment_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

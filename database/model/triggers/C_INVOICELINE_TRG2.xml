@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_INVOICELINE_TRG2">
     <trigger name="C_INVOICELINE_TRG2" table="C_INVOICELINE" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
 
@@ -54,8 +54,8 @@ BEGIN
          FROM M_OFFER
          WHERE v_DateInvoiced BETWEEN DATEFROM AND COALESCE(DATETO,TO_DATE('31/12/9999','DD/MM/YYYY'))
    AND IsActive = 'Y'
-   AND (:NEW.QtyInvoiced &gt;= COALESCE(Qty_From,0) OR Qty_From IS NULL)
-   AND (:NEW.QtyInvoiced &lt;= COALESCE(Qty_To,0) OR Qty_To IS NULL)
+   AND (:NEW.QtyInvoiced >= COALESCE(Qty_From,0) OR Qty_From IS NULL)
+   AND (:NEW.QtyInvoiced <= COALESCE(Qty_To,0) OR Qty_To IS NULL)
    AND ((PRICELIST_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRICELIST
            WHERE M_OFFER_ID=M_OFFER.M_OFFER_ID
            AND M_PRICELIST_ID = v_PriceList_ID))
@@ -98,8 +98,8 @@ BEGIN
     FROM M_OFFER
     WHERE v_DateInvoiced BETWEEN DATEFROM AND COALESCE(DATETO,TO_DATE('31/12/9999','DD/MM/YYYY'))
  AND IsActive = 'Y'
- AND (:NEW.QtyInvoiced &gt;= COALESCE(Qty_From,0) OR Qty_From IS NULL)
-   AND (:NEW.QtyInvoiced &lt;= COALESCE(Qty_To,0) OR Qty_To IS NULL)
+ AND (:NEW.QtyInvoiced >= COALESCE(Qty_From,0) OR Qty_From IS NULL)
+   AND (:NEW.QtyInvoiced <= COALESCE(Qty_To,0) OR Qty_To IS NULL)
    AND ((PRICELIST_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRICELIST
            WHERE M_OFFER_ID=M_OFFER.M_OFFER_ID
            AND M_PRICELIST_ID = v_PriceList_ID))
@@ -153,6 +153,6 @@ BEGIN
  END IF;
 
 END C_InvoiceLine_Trg2 
-</body>
+]]></body>
     </trigger>
   </database>

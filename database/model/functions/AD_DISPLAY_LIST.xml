@@ -4,7 +4,7 @@
       <parameter name="p_ReferenceValue_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Value" type="NVARCHAR" mode="in"/>
       <parameter name="p_AD_Language" type="VARCHAR" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -44,6 +44,6 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN 'Not found!!!';
-END AD_Display_List</body>
+END AD_Display_List]]></body>
     </function>
   </database>

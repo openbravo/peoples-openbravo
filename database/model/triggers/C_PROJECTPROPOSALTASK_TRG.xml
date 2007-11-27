@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_PROJECTPROPOSALTASK_TRG">
     <trigger name="C_PROJECTPROPOSALTASK_TRG" table="C_PROJECTPROPOSALTASK" fires="after" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -30,6 +30,6 @@ BEGIN
     SET LASTPLANNEDPROPOSALDATE=:NEW.UPDATED
   WHERE C_PROJECT_ID=v_Project;
 END C_ProjectProposalTask_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

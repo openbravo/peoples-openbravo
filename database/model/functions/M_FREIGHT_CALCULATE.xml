@@ -2,7 +2,7 @@
   <database name="FUNCTION M_FREIGHT_CALCULATE">
     <function name="M_FREIGHT_CALCULATE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -180,9 +180,9 @@
             WHERE M_FreightCategory_ID=v_FreightCategory_ID
               AND C_Region_ID=v_From_ID
               AND TO_Region_ID=v_To_ID
-              AND QtyFrom&lt;=v_Qty
-              AND QtyTo&gt;v_Qty
-              AND ValidFrom&lt;v_date
+              AND QtyFrom<=v_Qty
+              AND QtyTo>v_Qty
+              AND ValidFrom<v_date
             GROUP BY M_Shipper_ID
             )
             af
@@ -191,8 +191,8 @@
             AND f.VALIDFROM=af.validFrom
             AND f.C_Region_ID=v_From_ID
             AND f.TO_Region_ID=v_To_ID
-            AND f.QtyFrom&lt;=v_Qty
-            AND f.QtyTo&gt;v_Qty
+            AND f.QtyFrom<=v_Qty
+            AND f.QtyTo>v_Qty
           ORDER BY amount
           )
         LOOP
@@ -214,9 +214,9 @@
           WHERE M_FreightCategory_ID=v_FreightCategory_ID
             AND C_Region_ID=v_From_ID
             AND TO_Region_ID=v_To_ID
-            AND QtyFrom&lt;=v_Qty
-            AND QtyTo&gt;v_Qty
-            AND ValidFrom&lt;v_date
+            AND QtyFrom<=v_Qty
+            AND QtyTo>v_Qty
+            AND ValidFrom<v_date
             AND M_Shipper_ID=v_Shipper_ID
           ORDER BY ValidFrom DESC
           )
@@ -243,7 +243,7 @@
     v_Result:=0;
     v_Message:='@NotFreight@';
   END IF;
-  --&lt;&lt;FINISH_PROCESS&gt;&gt;
+  --<<FINISH_PROCESS>>
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User_ID, 'N', v_Result, v_Message) ;
@@ -256,6 +256,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END M_Freight_Calculate
-</body>
+]]></body>
     </function>
   </database>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW M_INOUT_HEADER_V">
-    <view name="M_INOUT_HEADER_V" updatable="false">
+    <view name="M_INOUT_HEADER_V"><![CDATA[
 SELECT io.AD_Client_ID, io.AD_Org_ID, io.IsActive, io.Created, io.CreatedBy, io.Updated, io.UpdatedBy,
   TO_CHAR('en_US') AS AD_Language,
   io.M_InOut_ID, io.IsSOTrx, io.DocumentNo, io.DocStatus,  io.C_DocType_ID,
@@ -31,5 +31,5 @@ FROM M_InOut io
   LEFT OUTER JOIN C_Greeting bpcg ON (bpc.C_Greeting_ID=bpcg.C_Greeting_ID)
   INNER JOIN AD_OrgInfo oi ON (io.AD_Org_ID=oi.AD_Org_ID)
   INNER JOIN M_Warehouse wh ON (io.M_Warehouse_ID=wh.M_Warehouse_ID)
-</view>
+]]></view>
   </database>

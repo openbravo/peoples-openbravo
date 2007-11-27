@@ -3,7 +3,7 @@
     <function name="AD_DELETE_CLIENT" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
-      <body>                                
+      <body><![CDATA[                                
 /************************************************************************* 
 * The contents of this file are subject to the Openbravo  Public  License 
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License 
@@ -113,7 +113,7 @@
     FOR Cur_Tables IN 
       (SELECT AD_Table_ID, UPPER(TableName) AS NAME 
     FROM AD_Table 
-    WHERE IsView='N'  AND UPPER(TableName)&lt;&gt;'AD_CLIENT'  AND EXISTS 
+    WHERE IsView='N'  AND UPPER(TableName)<>'AD_CLIENT'  AND EXISTS 
       (SELECT 1 
       FROM AD_Column 
       WHERE AD_Table_ID=AD_Table.AD_Table_ID  AND UPPER(ColumnName)='AD_CLIENT_ID' 
@@ -167,9 +167,9 @@
     WHEN OTHERS THEN 
       v_Result:=0;
       if (coalesce(length(v_Message),0)!=0) then
-        v_Message:=substr(v_Message||'&lt;br&gt;&lt;br&gt;',1,2000);
+        v_Message:=substr(v_Message||'<br><br>',1,2000);
       end if;
-      v_Message := substr(v_Message||'@SQLScriptError@ '||Cur_Script.SeqNo||'. @Executing@'||Cur_Script.strSQL||'&lt;br&gt;'||SQLERRM,1,2000);
+      v_Message := substr(v_Message||'@SQLScriptError@ '||Cur_Script.SeqNo||'. @Executing@'||Cur_Script.strSQL||'<br>'||SQLERRM,1,2000);
     END;
   END LOOP;
 
@@ -177,24 +177,24 @@
    into v_count
     from user_constraints
    where status!='ENABLED';
-  if v_count&gt;0 then
+  if v_count>0 then
     v_Result:=0;
-    v_Message:=substr(v_Message||'&lt;br&gt;&lt;br&gt;@ProcessLeft@ '||v_count||' @DisabledConstraints@',1,2000);
+    v_Message:=substr(v_Message||'<br><br>@ProcessLeft@ '||v_count||' @DisabledConstraints@',1,2000);
   end if;
 
   select count(*)
   into v_count
     from user_triggers
     where status!='ENABLED';
-  if v_count&gt;0 then
+  if v_count>0 then
     v_Result:=0;
-    v_Message:=substr(v_Message||'&lt;br&gt;&lt;br&gt;@ProcessLeft@ '||v_count||' @DisabledTriggers@',1,2000);
+    v_Message:=substr(v_Message||'<br><br>@ProcessLeft@ '||v_count||' @DisabledTriggers@',1,2000);
   end if;
 
-   --&lt;&lt;END_PROCESS&gt;&gt;
+   --<<END_PROCESS>>
   IF(p_PInstance_ID IS NOT NULL) THEN
     --  Update AD_PInstance
-    if (coalesce(length(v_Message),0)&gt;=1997) then
+    if (coalesce(length(v_Message),0)>=1997) then
         v_Message:=substr(v_Message,1,1997)||'...';
       end if;
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
@@ -215,6 +215,6 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   END IF;
 --  RETURN;
-END AD_Delete_Client</body>
+END AD_Delete_Client]]></body>
     </function>
   </database>

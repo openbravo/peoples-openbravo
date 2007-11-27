@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_ELEMENTVALUE_TRG">
     <trigger name="C_ELEMENTVALUE_TRG" table="C_ELEMENTVALUE" fires="after" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
   v_xTree_ID NUMBER;
@@ -70,7 +70,7 @@ BEGIN
   -- C_ElementValue update trigger
   --  synchronize name,...
   IF UPDATING THEN
-    IF COALESCE(:old.Name, '.') &lt;&gt; COALESCE(:NEW.Name, '.') THEN
+    IF COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.') THEN
       UPDATE C_ElementValue_Trl
         SET IsTranslated='N',
         Updated=SysDate
@@ -104,6 +104,6 @@ WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20013, 'C_ElementValue InsertTrigger Error: No ClientInfo or parent TreeNode') ;
 END C_ElementValue_TI
 
-</body>
+]]></body>
     </trigger>
   </database>

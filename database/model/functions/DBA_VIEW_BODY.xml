@@ -3,7 +3,7 @@
     <function name="DBA_VIEW_BODY" type="VARCHAR">
       <parameter name="p_owner" type="VARCHAR" mode="in"/>
       <parameter name="p_viewName" type="VARCHAR" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -36,6 +36,6 @@ BEGIN
       EXIT;
     END LOOP;
     RETURN(v_varchar2) ;
-END DBA_VIEW_BODY</body>
+END DBA_VIEW_BODY]]></body>
     </function>
   </database>

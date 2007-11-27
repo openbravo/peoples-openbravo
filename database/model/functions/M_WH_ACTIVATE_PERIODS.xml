@@ -2,7 +2,7 @@
   <database name="FUNCTION M_WH_ACTIVATE_PERIODS">
     <function name="M_WH_ACTIVATE_PERIODS" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -91,12 +91,12 @@
         M_WH_PERIOD
       WHERE M_WH_SCHEDULE.M_WH_SCHEDULE_ID=M_WH_PERIOD.M_WH_SCHEDULE_ID
         AND M_WH_SCHEDULE.M_WH_SCHEDULE_ID=v_WHSchedule_ID
-        AND M_WH_PERIOD.STARTDATE&gt;=v_DateFrom
-        AND M_WH_PERIOD.ENDDATE&lt;=v_DateTo
+        AND M_WH_PERIOD.STARTDATE>=v_DateFrom
+        AND M_WH_PERIOD.ENDDATE<=v_DateTo
       )
       ;
     --  Update AD_PInstance
-    --&lt;&lt;END_PROCEDURE&gt;&gt;
+    --<<END_PROCEDURE>>
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, NULL) ;
     RETURN;
   END; --BODY
@@ -110,6 +110,6 @@ WHEN OTHERS THEN
   END IF;
   RETURN;
 END M_Wh_Activate_Periods
-</body>
+]]></body>
     </function>
   </database>

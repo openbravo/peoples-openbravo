@@ -4,7 +4,7 @@
       <parameter name="p_NodeID" type="NUMERIC" mode="in"/>
       <parameter name="p_clientID" type="NUMERIC" mode="in"/>
       <parameter name="p_Language" type="VARCHAR" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -59,6 +59,6 @@ BEGIN
       AND NODE_ID = AD_MENU.AD_MENU_ID;
   END LOOP;
   RETURN(v_Name) ;
-END AD_PARENT_MENU_ELEMENT</body>
+END AD_PARENT_MENU_ELEMENT]]></body>
     </function>
   </database>

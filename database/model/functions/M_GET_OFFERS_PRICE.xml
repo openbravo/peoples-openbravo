@@ -7,7 +7,7 @@
       <parameter name="p_PriceStd" type="NUMERIC" mode="in"/>
       <parameter name="p_Qty" type="NUMERIC" mode="in"/>
       <parameter name="p_PriceList" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -34,8 +34,8 @@
       FROM M_OFFER
       WHERE p_Date BETWEEN DATEFROM AND COALESCE(DATETO, TO_DATE('31/12/9999', 'DD/MM/YYYY'))
         AND IsActive = 'Y'
-  AND (p_Qty &gt;= COALESCE(Qty_From,0) OR Qty_From IS NULL)
-  AND (p_Qty &lt;= COALESCE(Qty_To,0) OR Qty_To IS NULL)
+  AND (p_Qty >= COALESCE(Qty_From,0) OR Qty_From IS NULL)
+  AND (p_Qty <= COALESCE(Qty_To,0) OR Qty_To IS NULL)
   AND ((PRICELIST_SELECTION='Y' AND NOT EXISTS (SELECT 1 FROM M_OFFER_PRICELIST
            WHERE M_OFFER_ID=M_OFFER.M_OFFER_ID
            AND M_PRICELIST_ID = p_PriceList))
@@ -116,6 +116,6 @@
   EXCEPTION
   WHEN OTHERS THEN
     RETURN p_PriceStd;
-END M_Get_Offers_Price</body>
+END M_Get_Offers_Price]]></body>
     </function>
   </database>

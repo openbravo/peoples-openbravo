@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_INVOICE_TRG2">
     <trigger name="C_INVOICE_TRG2" table="C_INVOICE" fires="after" insert="true" update="false" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
 /*************************************************************************
@@ -33,7 +33,7 @@ BEGIN
     WHERE C_BPARTNER_ID=:NEW.C_BPARTNER_ID
       AND ISACTIVE='Y'
       AND(ISCUSTOMER=:NEW.ISSOTRX
-      OR ISVENDOR &lt;&gt; :NEW.ISSOTRX)
+      OR ISVENDOR <> :NEW.ISSOTRX)
     ORDER BY LINE
     )
   LOOP
@@ -56,6 +56,6 @@ BEGIN
       ;
   END LOOP;
 END C_Invoice_Trg2 
-</body>
+]]></body>
     </trigger>
   </database>

@@ -4,7 +4,7 @@
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Date" type="TIMESTAMP" mode="in" default="now()"/>
       <parameter name="p_Products" type="CHAR" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -110,7 +110,7 @@
         )
         ;
     END LOOP;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User, 'N', 1, v_Message) ;
@@ -124,6 +124,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END Generate_Standar_Costs
-</body>
+]]></body>
     </function>
   </database>

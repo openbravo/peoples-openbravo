@@ -2,7 +2,7 @@
   <database name="FUNCTION MRP_PROCESSPLAN_RECALCULATE0">
     <function name="MRP_PROCESSPLAN_RECALCULATE0" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -73,6 +73,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
 --  RETURN;
 END MRP_PROCESSPLAN_RECALCULATE0
-</body>
+]]></body>
     </function>
   </database>

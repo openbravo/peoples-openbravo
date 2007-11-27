@@ -2,7 +2,7 @@
   <database name="FUNCTION M_PRODUCT_BOM_CHECK">
     <function name="M_PRODUCT_BOM_CHECK" type="NULL">
       <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>                                
+      <body><![CDATA[                                
   /*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -12,7 +12,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -69,7 +69,7 @@
     IF(v_IsBOM='N') THEN
       FINISH_PROCESS:=true;
       -- Did not find product
-    ELSIF(v_IsBOM&lt;&gt;'Y') THEN
+    ELSIF(v_IsBOM<>'Y') THEN
       RETURN;
     END IF;
     IF(NOT FINISH_PROCESS) THEN
@@ -135,7 +135,7 @@
         SELECT T_Selection_ID  FROM T_Selection2  WHERE Query_ID=1;
       END LOOP;
     END IF; --FINISH_PROCESS
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     -- OK
     v_Message:='OK';
     UPDATE M_Product  SET IsVerified='Y'  WHERE M_Product_ID=v_Record_ID;
@@ -154,6 +154,6 @@ WHEN OTHERS THEN
   -- Commented by cromero 19102006 COMMIT;
   --
   RETURN;
-END M_Product_BOM_Check</body>
+END M_Product_BOM_Check]]></body>
     </function>
   </database>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_INOUT_CHK_RESTRICTIONS_TRG">
     <trigger name="M_INOUT_CHK_RESTRICTIONS_TRG" table="M_INOUT" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -22,29 +22,29 @@
  BEGIN
   IF UPDATING THEN
     IF(:old.Processed='Y'
-    AND ((COALESCE(:old.C_BPartner_ID, 0) &lt;&gt; COALESCE(:new.C_BPartner_ID, 0))
-    OR(COALESCE(:old.DOCUMENTNO, '.') &lt;&gt; COALESCE(:new.DOCUMENTNO, '.'))
-    OR(COALESCE(:old.C_DOCTYPE_ID, 0) &lt;&gt; COALESCE(:new.C_DOCTYPE_ID, 0))
-    OR(COALESCE(:old.AD_USER_ID, 0) &lt;&gt; COALESCE(:new.AD_USER_ID, 0))
-    OR(COALESCE(:old.C_ORDER_ID, 0) &lt;&gt; COALESCE(:new.C_ORDER_ID, 0))
-    OR(COALESCE(:old.DATEORDERED, '01-01-1386') &lt;&gt; COALESCE(:new.DATEORDERED, '01-01-1386'))
-    OR(COALESCE(:OLD.C_BPARTNER_LOCATION_ID, 0) &lt;&gt; COALESCE(:NEW.C_BPARTNER_LOCATION_ID, 0))
-    OR(COALESCE(:old.PICKDATE, '01-01-1386') &lt;&gt; COALESCE(:new.PICKDATE, '01-01-1386'))
-    OR(COALESCE(:old.SHIPDATE, '01-01-1386') &lt;&gt; COALESCE(:new.SHIPDATE, '01-01-1386'))
-    OR(COALESCE(:old.C_CHARGE_ID, 0) &lt;&gt; COALESCE(:new.C_CHARGE_ID, 0))
-    OR(COALESCE(:old.CHARGEAMT, 0) &lt;&gt; COALESCE(:new.CHARGEAMT, 0))
-    OR(COALESCE(:old.AD_ORGTRX_ID, 0) &lt;&gt; COALESCE(:new.AD_ORGTRX_ID, 0))
-    OR(COALESCE(:old.USER1_ID, 0) &lt;&gt; COALESCE(:new.USER1_ID, 0))
-    OR(COALESCE(:old.M_SHIPPER_ID, 0) &lt;&gt; COALESCE(:new.M_SHIPPER_ID, 0))
-    OR(COALESCE(:old.SALESREP_ID, 0) &lt;&gt; COALESCE(:new.SALESREP_ID, 0))
-    OR(COALESCE(:old.M_WAREHOUSE_ID, 0) &lt;&gt; COALESCE(:new.M_WAREHOUSE_ID, 0))
-    OR(COALESCE(:old.USER2_ID, 0) &lt;&gt; COALESCE(:new.USER2_ID, 0))
-    OR(COALESCE(:old.DELIVERYRULE, '.') &lt;&gt; COALESCE(:new.DELIVERYRULE, '.'))
-    OR(COALESCE(:old.DELIVERYVIARULE, '.') &lt;&gt; COALESCE(:new.DELIVERYVIARULE, '.'))
-    OR(COALESCE(:old.PRIORITYRULE, '.') &lt;&gt; COALESCE(:new.PRIORITYRULE, '.')))) THEN
+    AND ((COALESCE(:old.C_BPartner_ID, 0) <> COALESCE(:new.C_BPartner_ID, 0))
+    OR(COALESCE(:old.DOCUMENTNO, '.') <> COALESCE(:new.DOCUMENTNO, '.'))
+    OR(COALESCE(:old.C_DOCTYPE_ID, 0) <> COALESCE(:new.C_DOCTYPE_ID, 0))
+    OR(COALESCE(:old.AD_USER_ID, 0) <> COALESCE(:new.AD_USER_ID, 0))
+    OR(COALESCE(:old.C_ORDER_ID, 0) <> COALESCE(:new.C_ORDER_ID, 0))
+    OR(COALESCE(:old.DATEORDERED, '01-01-1386') <> COALESCE(:new.DATEORDERED, '01-01-1386'))
+    OR(COALESCE(:OLD.C_BPARTNER_LOCATION_ID, 0) <> COALESCE(:NEW.C_BPARTNER_LOCATION_ID, 0))
+    OR(COALESCE(:old.PICKDATE, '01-01-1386') <> COALESCE(:new.PICKDATE, '01-01-1386'))
+    OR(COALESCE(:old.SHIPDATE, '01-01-1386') <> COALESCE(:new.SHIPDATE, '01-01-1386'))
+    OR(COALESCE(:old.C_CHARGE_ID, 0) <> COALESCE(:new.C_CHARGE_ID, 0))
+    OR(COALESCE(:old.CHARGEAMT, 0) <> COALESCE(:new.CHARGEAMT, 0))
+    OR(COALESCE(:old.AD_ORGTRX_ID, 0) <> COALESCE(:new.AD_ORGTRX_ID, 0))
+    OR(COALESCE(:old.USER1_ID, 0) <> COALESCE(:new.USER1_ID, 0))
+    OR(COALESCE(:old.M_SHIPPER_ID, 0) <> COALESCE(:new.M_SHIPPER_ID, 0))
+    OR(COALESCE(:old.SALESREP_ID, 0) <> COALESCE(:new.SALESREP_ID, 0))
+    OR(COALESCE(:old.M_WAREHOUSE_ID, 0) <> COALESCE(:new.M_WAREHOUSE_ID, 0))
+    OR(COALESCE(:old.USER2_ID, 0) <> COALESCE(:new.USER2_ID, 0))
+    OR(COALESCE(:old.DELIVERYRULE, '.') <> COALESCE(:new.DELIVERYRULE, '.'))
+    OR(COALESCE(:old.DELIVERYVIARULE, '.') <> COALESCE(:new.DELIVERYVIARULE, '.'))
+    OR(COALESCE(:old.PRIORITYRULE, '.') <> COALESCE(:new.PRIORITYRULE, '.')))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
-    IF(:old.Posted='Y' AND ((COALESCE(:old.DATEACCT, '01-01-1386') &lt;&gt; COALESCE(:new.DATEACCT, '01-01-1386')) OR(COALESCE(:old.C_CAMPAIGN_ID, 0) &lt;&gt; COALESCE(:new.C_CAMPAIGN_ID, 0)) OR(COALESCE(:old.C_PROJECT_ID, 0) &lt;&gt; COALESCE(:new.C_PROJECT_ID, 0)) OR(COALESCE(:old.C_ACTIVITY_ID, 0) &lt;&gt; COALESCE(:new.C_ACTIVITY_ID, 0)))) THEN
+    IF(:old.Posted='Y' AND ((COALESCE(:old.DATEACCT, '01-01-1386') <> COALESCE(:new.DATEACCT, '01-01-1386')) OR(COALESCE(:old.C_CAMPAIGN_ID, 0) <> COALESCE(:new.C_CAMPAIGN_ID, 0)) OR(COALESCE(:old.C_PROJECT_ID, 0) <> COALESCE(:new.C_PROJECT_ID, 0)) OR(COALESCE(:old.C_ACTIVITY_ID, 0) <> COALESCE(:new.C_ACTIVITY_ID, 0)))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;
@@ -59,6 +59,6 @@
     END IF;
   END IF;
 END M_InOut_Chk_Restrictions_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

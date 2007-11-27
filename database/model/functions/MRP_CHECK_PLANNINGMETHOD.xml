@@ -5,7 +5,7 @@
       <parameter name="p_Type" type="CHAR" mode="in"/>
       <parameter name="p_Days" type="NUMERIC" mode="in"/>
       <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -25,7 +25,7 @@
   p_Days_Aux NUMBER := 0;
   v_Return NUMBER := -1;
 BEGIN
-    if p_Days &lt; 0 THEN
+    if p_Days < 0 THEN
       p_Days_Aux := 0;
     ELSE
       p_Days_Aux := p_Days;
@@ -37,11 +37,11 @@ BEGIN
     WHERE p.MRP_PLANNINGMETHOD_ID = p_PlanningMethod_ID
     AND p.INOUTTRXTYPE = p_Type
     AND p_Days_Aux BETWEEN COALESCE(p.DaysFrom, 0) AND COALESCE(p.DaysTo, 999999999)
-    AND p_Days_Aux &lt;= p_TimeHorizon;
+    AND p_Days_Aux <= p_TimeHorizon;
     RETURN v_Return;
 EXCEPTION
   WHEN OTHERS THEN
     RETURN -1;
-END MRP_CHECK_PLANNINGMETHOD</body>
+END MRP_CHECK_PLANNINGMETHOD]]></body>
     </function>
   </database>

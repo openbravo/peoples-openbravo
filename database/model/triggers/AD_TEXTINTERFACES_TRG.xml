@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_TEXTINTERFACES_TRG">
     <trigger name="AD_TEXTINTERFACES_TRG" table="AD_TEXTINTERFACES" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
 /*************************************************************************
@@ -42,7 +42,7 @@ BEGIN
   --  synchronize text
   IF UPDATING
   THEN
-    IF (COALESCE (:OLD.TEXT, '.') &lt;&gt; COALESCE (:NEW.TEXT, '.'))
+    IF (COALESCE (:OLD.TEXT, '.') <> COALESCE (:NEW.TEXT, '.'))
     THEN
       -- Update AD_TEXTINTERFACES_TRL
       -- Translation
@@ -59,6 +59,6 @@ BEGIN
       WHERE AD_TEXTINTERFACES_ID = :OLD.AD_TEXTINTERFACES_ID;
   END IF;
 END AD_TEXTINTERFACES_TRG 
-</body>
+]]></body>
     </trigger>
   </database>

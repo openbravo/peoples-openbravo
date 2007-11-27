@@ -2,7 +2,7 @@
   <database name="FUNCTION AT_TEST_DELETE">
     <function name="AT_TEST_DELETE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -57,7 +57,7 @@
     --Delete lines
     DELETE FROM AT_LINE  WHERE AT_TEST_ID=v_Record_ID;
     v_Message:='@Deleted@=' || v_NoOfLines || ' lines';
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -70,6 +70,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END AT_Test_Delete
-</body>
+]]></body>
     </function>
   </database>

@@ -6,7 +6,7 @@
       <parameter name="p_ColumnName" type="VARCHAR" mode="in"/>
       <parameter name="p_Reference_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Reference_Value_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -114,7 +114,7 @@ BEGIN
             AND(c.ISKEY='Y'
             OR c.ISSECONDARYKEY='Y')
             AND c.ISPARENT='Y'
-            AND UPPER(c.COLUMNNAME) &lt;&gt; 'AD_LANGUAGE';
+            AND UPPER(c.COLUMNNAME) <> 'AD_LANGUAGE';
           v_SQL:='(SELECT COALESCE(TO_CHAR(MAX(' || p_TableRef || 'T.' || v_NewColumnName || ')), TO_CHAR(' || p_TableRef || '.' || p_ColumnName || ')) FROM ' || v_NewTableName || ' ' || p_TableRef || 'T WHERE '|| p_TableRef||'T.' || v_FieldValue || '='|| p_TableRef||'.'|| v_FieldValue || ' AND ' || p_TableRef || 'T.AD_LANGUAGE=L.AD_LANGUAGE) ';
         END IF;
       END IF;
@@ -172,11 +172,11 @@ TYPE RECORD IS REF CURSOR;
       END IF; --END_PROCESS
     END;
   END IF;
-  --&lt;&lt;END_PROCESS&gt;&gt;
+  --<<END_PROCESS>>
   RETURN v_SQL;
   /*EXCEPTION
   WHEN OTHERS THEN
   RETURN '**'; */
-END AD_COLUMN_IDENTIFIER_REF_SQL</body>
+END AD_COLUMN_IDENTIFIER_REF_SQL]]></body>
     </function>
   </database>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_REFERENCE_TRG">
     <trigger name="AD_REFERENCE_TRG" table="AD_REFERENCE" fires="after" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
  
 /*************************************************************************
@@ -13,7 +13,7 @@
 * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 * implied. See the License for the specific language governing rights
 * and limitations under the License.
-* The Original Code is  Compiere  ERP &amp;  Business Solution
+* The Original Code is  Compiere  ERP &  Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -46,10 +46,10 @@ BEGIN
 --  synchronize name,...
   IF UPDATING
   THEN
-    IF (   COALESCE (:OLD.NAME, '.') &lt;&gt; COALESCE (:NEW.NAME, '.')
-        OR COALESCE (:OLD.Description, '.') &lt;&gt;
+    IF (   COALESCE (:OLD.NAME, '.') <> COALESCE (:NEW.NAME, '.')
+        OR COALESCE (:OLD.Description, '.') <>
                                               COALESCE (:NEW.Description, '.')
-        OR COALESCE (:OLD.HELP, '.') &lt;&gt; COALESCE (:NEW.HELP, '.')
+        OR COALESCE (:OLD.HELP, '.') <> COALESCE (:NEW.HELP, '.')
        )
     THEN
       UPDATE AD_Reference_Trl
@@ -61,6 +61,6 @@ BEGIN
 -- Updating
 END AD_Reference_Trg
 
-</body>
+]]></body>
     </trigger>
   </database>

@@ -2,7 +2,7 @@
   <database name="FUNCTION C_PERIODCONTROL_PROCESS">
     <function name="C_PERIODCONTROL_PROCESS" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
   /*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -12,7 +12,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -71,14 +71,14 @@
         SET PeriodStatus='O',
         PeriodAction='N'
       WHERE C_PeriodControl_ID=v_Record_ID
-        AND PeriodStatus&lt;&gt;'P';
+        AND PeriodStatus<>'P';
       -- Action: Close if not permanently closed
     ELSIF(v_PeriodAction='C') THEN
       UPDATE C_PeriodControl
         SET PeriodStatus='C',
         PeriodAction='N'
       WHERE C_PeriodControl_ID=v_Record_ID
-        AND PeriodStatus&lt;&gt;'P';
+        AND PeriodStatus<>'P';
       -- Action: Permanently Close
     ELSIF(v_PeriodAction='P') THEN
       UPDATE C_PeriodControl
@@ -86,7 +86,7 @@
         PeriodAction='N'
       WHERE C_PeriodControl_ID=v_Record_ID;
     END IF;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -100,6 +100,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END C_PeriodControl_Process
-</body>
+]]></body>
     </function>
   </database>

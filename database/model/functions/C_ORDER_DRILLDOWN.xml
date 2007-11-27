@@ -2,7 +2,7 @@
   <database name="FUNCTION C_ORDER_DRILLDOWN">
     <function name="C_ORDER_DRILLDOWN" type="NULL">
       <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
   /*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -12,7 +12,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -146,7 +146,7 @@
             (
               PInstance_ID,
               T_Spool_Seq.NEXTVAL,
-              '&gt; ' || Cur_InOut.NAME || ' ' || Cur_InOut.DocumentNo || ':  @DocStatus@=' || Cur_InOut.DocStatus  || ', @Processed@=' || Cur_InOut.Processed || ', Wh=' || Cur_InOut.M_Warehouse_ID
+              '> ' || Cur_InOut.NAME || ' ' || Cur_InOut.DocumentNo || ':  @DocStatus@=' || Cur_InOut.DocStatus  || ', @Processed@=' || Cur_InOut.Processed || ', Wh=' || Cur_InOut.M_Warehouse_ID
             )
             ;
           -- Shipment Lines
@@ -213,7 +213,7 @@
             (
               PInstance_ID,
               T_Spool_Seq.NEXTVAL,
-              '&gt; ' || Cur_Invoice.NAME || ' ' || Cur_Invoice.DocumentNo || ':  @DocStatus@=' || Cur_Invoice.DocStatus  || ', @Processed@=' || Cur_Invoice.Processed
+              '> ' || Cur_Invoice.NAME || ' ' || Cur_Invoice.DocumentNo || ':  @DocStatus@=' || Cur_Invoice.DocStatus  || ', @Processed@=' || Cur_Invoice.Processed
             )
             ;
           -- Invoice Lines
@@ -247,7 +247,7 @@
         END LOOP; -- Invoices
       END; -- Invoice
     END LOOP; -- Order
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -259,6 +259,6 @@ EXCEPTION
     AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
     RETURN;
 END C_ORDER_DRILLDOWN
-</body>
+]]></body>
     </function>
   </database>

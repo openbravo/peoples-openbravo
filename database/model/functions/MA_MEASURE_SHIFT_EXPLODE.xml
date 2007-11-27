@@ -2,7 +2,7 @@
   <database name="FUNCTION MA_MEASURE_SHIFT_EXPLODE">
     <function name="MA_MEASURE_SHIFT_EXPLODE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -116,7 +116,7 @@
           ;
         -- v_time is equal to now() at starttime
         v_Time:=TRUNC(now()) +(Cur_CCP_Group.STARTTIME - TRUNC(Cur_CCP_Group.STARTTIME)) ;
-        WHILE(v_Time - TRUNC(v_Time))&lt;=(Cur_CCP_Group.ENDTIME - TRUNC(Cur_CCP_Group.ENDTIME))
+        WHILE(v_Time - TRUNC(v_Time))<=(Cur_CCP_Group.ENDTIME - TRUNC(Cur_CCP_Group.ENDTIME))
         LOOP
           Ad_Sequence_Next('MA_Measure_Time', v_Org_ID, v_Measure_Time);
           INSERT
@@ -143,7 +143,7 @@
         SET Processed='Y'
       WHERE MA_Measure_Shift_ID=v_Record_ID;
     END IF;--FINISH_PROCESS
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User_ID, 'N', v_Result, v_Message) ;
@@ -158,6 +158,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END MA_Measure_Shift_Explode
-</body>
+]]></body>
     </function>
   </database>

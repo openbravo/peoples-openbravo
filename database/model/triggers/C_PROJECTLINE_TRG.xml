@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_PROJECTLINE_TRG">
     <trigger name="C_PROJECTLINE_TRG" table="C_PROJECTLINE" fires="before" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -13,7 +13,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &amp;  Business Solution
+    * The Original Code is  Compiere  ERP &  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -33,11 +33,11 @@
   v_PlannedMargin NUMBER:=NULL;
 BEGIN
   -- Calculate PlannedAmt
-  IF(:new.PlannedQty &lt;&gt; 0 AND :new.PlannedPrice &lt;&gt; 0) THEN
+  IF(:new.PlannedQty <> 0 AND :new.PlannedPrice <> 0) THEN
     :new.PlannedAmt:=:new.PlannedQty * :new.PlannedPrice;
   END IF;
   -- Get Margin from Product
-  IF(:new.M_Product_ID IS NOT NULL AND :new.PlannedPrice &lt;&gt; 0) THEN
+  IF(:new.M_Product_ID IS NOT NULL AND :new.PlannedPrice <> 0) THEN
     SELECT COALESCE(MAX(PriceLimit), 0),
       COALESCE(MAX(PriceStd), 0)
     INTO v_PriceLimit,
@@ -51,20 +51,20 @@ BEGIN
       WHERE C_Project_ID=:new.C_Project_ID
       )
       ;
-    IF(v_PriceLimit &lt;&gt; 0) THEN
+    IF(v_PriceLimit <> 0) THEN
       :new.PlannedMarginAmt:=:new.PlannedQty *(:new.PlannedPrice - v_PriceLimit) ;
     END IF;
     -- Get Margin from Product Category
-  ELSIF(:new.M_Product_Category_ID IS NOT NULL AND :new.PlannedPrice &lt;&gt; 0) THEN
+  ELSIF(:new.M_Product_Category_ID IS NOT NULL AND :new.PlannedPrice <> 0) THEN
     SELECT COALESCE(MAX(PlannedMargin), 0)
     INTO v_PlannedMargin
     FROM M_Product_Category
     WHERE M_Product_Category_ID=:new.M_Product_Category_ID;
-    IF(v_PlannedMargin &lt;&gt; 0) THEN
+    IF(v_PlannedMargin <> 0) THEN
       :new.PlannedMarginAmt:=:new.PlannedAmt * v_PlannedMargin;
     END IF;
   END IF;
 END C_ProjectLine_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

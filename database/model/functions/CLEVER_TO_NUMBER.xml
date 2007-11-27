@@ -2,7 +2,7 @@
   <database name="FUNCTION CLEVER_TO_NUMBER">
     <function name="CLEVER_TO_NUMBER" type="NUMERIC">
       <parameter name="p_text" type="VARCHAR"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -26,6 +26,6 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN NULL;
-END Clever_To_Number</body>
+END Clever_To_Number]]></body>
     </function>
   </database>

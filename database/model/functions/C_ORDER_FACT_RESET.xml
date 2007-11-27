@@ -2,7 +2,7 @@
   <database name="FUNCTION C_ORDER_FACT_RESET">
     <function name="C_ORDER_FACT_RESET" type="NULL">
       <parameter name="p_C_Order_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -29,9 +29,9 @@ BEGIN
     SET Posted='N',
     Processing='N'
   WHERE C_Order_ID=p_C_Order_ID
-    AND(Posted&lt;&gt;'N'
+    AND(Posted<>'N'
     OR Posted IS NULL
-    OR Processing&lt;&gt;'N'
+    OR Processing<>'N'
     OR Processing IS NULL) ;
   DELETE FROM Fact_Acct  WHERE AD_Table_ID=v_AD_Table_ID  AND RECORD_ID=p_C_Order_ID;
   -- Commented by cromero 19102006 COMMIT;
@@ -42,6 +42,6 @@ WHEN OTHERS THEN
   ROLLBACK;
   RETURN;
 END C_Order_Fact_Reset
-</body>
+]]></body>
     </function>
   </database>

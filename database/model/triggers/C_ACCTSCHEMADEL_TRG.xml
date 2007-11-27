@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_ACCTSCHEMADEL_TRG">
     <trigger name="C_ACCTSCHEMADEL_TRG" table="C_ACCTSCHEMA" fires="before" insert="false" update="false" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
@@ -23,6 +23,6 @@
 BEGIN
   DELETE FROM C_ACCTSCHEMA_TABLE WHERE C_ACCTSCHEMA_ID=:old.C_ACCTSCHEMA_ID;
 END C_AcctSchemaDel_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

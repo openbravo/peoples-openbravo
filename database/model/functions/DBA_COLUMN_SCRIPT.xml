@@ -7,7 +7,7 @@
       <parameter name="p_addType" type="CHAR" mode="in"/>
       <parameter name="p_addDefault" type="CHAR" mode="in"/>
       <parameter name="p_addNull" type="CHAR" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -95,6 +95,6 @@
       EXIT;
     END LOOP;
     RETURN(REPLACE(REPLACE(v_script, CHR(10), ''), CHR(13), '')) ;
-END DBA_COLUMN_SCRIPT</body>
+END DBA_COLUMN_SCRIPT]]></body>
     </function>
   </database>

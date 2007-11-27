@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION DATE_NULO">
     <function name="DATE_NULO" type="TIMESTAMP">
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -20,6 +20,6 @@
 ************************************************************************/
 BEGIN
   RETURN(NULL) ;
-END DATE_NULO</body>
+END DATE_NULO]]></body>
     </function>
   </database>

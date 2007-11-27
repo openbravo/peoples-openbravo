@@ -2,7 +2,7 @@
   <database name="FUNCTION GENERATESOFROMPROJECTORDER">
     <function name="GENERATESOFROMPROJECTORDER" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -72,7 +72,7 @@
       LOOP
         -- Check that we have some restrictions
         v_ResultStr:='CheckRestriction';
-        IF(Cur_SO.PROJECTSTATUS IS NULL OR Cur_SO.PROJECTSTATUS&lt;&gt;'OR') THEN
+        IF(Cur_SO.PROJECTSTATUS IS NULL OR Cur_SO.PROJECTSTATUS<>'OR') THEN
           RAISE_APPLICATION_ERROR(-20000, '@Invalidprojectstatus@');
         END IF;
         IF(NOT FINISH_PROCESS) THEN
@@ -134,7 +134,7 @@
                 AND pv.IsActive='Y'
                 AND p.M_Product_ID=SOLINES.M_PRODUCT_ID
                 AND pv.M_PriceList_Version_ID=Cur_SO.M_PRICELIST_VERSION_ID;
-              IF(v_Size&gt;0) THEN
+              IF(v_Size>0) THEN
                 SELECT Bom_Pricestd(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceStd,
                   Bom_Pricelist(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceList,
                   Bom_Pricelimit(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceLimit,
@@ -239,7 +239,7 @@
       END LOOP;
       v_Message:='@DocumentNo@: ' || v_Message;
     END;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -253,6 +253,6 @@ WHEN OTHERS THEN
   Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END Generatesofromprojectorder
-</body>
+]]></body>
     </function>
   </database>

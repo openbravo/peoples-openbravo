@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_CASH_CHK_RESTRICTIONS_TRG">
     <trigger name="C_CASH_CHK_RESTRICTIONS_TRG" table="C_CASH" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -22,13 +22,13 @@
     ************************************************************************/
     BEGIN  IF UPDATING
     THEN  IF(:old.Processed='Y'
-    AND ((COALESCE(:old.STATEMENTDATE, '01-01-1386') &lt;&gt; COALESCE(:new.STATEMENTDATE, '01-01-1386'))
-    OR(COALESCE(:old.AD_ORGTRX_ID, 0) &lt;&gt; COALESCE(:new.AD_ORGTRX_ID, 0))
-    OR(COALESCE(:old.USER1_ID, 0) &lt;&gt; COALESCE(:new.USER1_ID, 0))
-    OR(COALESCE(:old.USER2_ID, 0) &lt;&gt; COALESCE(:new.USER2_ID, 0))))
+    AND ((COALESCE(:old.STATEMENTDATE, '01-01-1386') <> COALESCE(:new.STATEMENTDATE, '01-01-1386'))
+    OR(COALESCE(:old.AD_ORGTRX_ID, 0) <> COALESCE(:new.AD_ORGTRX_ID, 0))
+    OR(COALESCE(:old.USER1_ID, 0) <> COALESCE(:new.USER1_ID, 0))
+    OR(COALESCE(:old.USER2_ID, 0) <> COALESCE(:new.USER2_ID, 0))))
     THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
-  IF(:old.Posted='Y' AND ((COALESCE(:old.DATEACCT, '01-01-1386') &lt;&gt; COALESCE(:new.DATEACCT, '01-01-1386')) OR(COALESCE(:old.C_CAMPAIGN_ID, 0) &lt;&gt; COALESCE(:new.C_CAMPAIGN_ID, 0)) OR(COALESCE(:old.C_PROJECT_ID, 0) &lt;&gt; COALESCE(:new.C_PROJECT_ID, 0)) OR(COALESCE(:old.C_ACTIVITY_ID, 0) &lt;&gt; COALESCE(:new.C_ACTIVITY_ID, 0)))) THEN
+  IF(:old.Posted='Y' AND ((COALESCE(:old.DATEACCT, '01-01-1386') <> COALESCE(:new.DATEACCT, '01-01-1386')) OR(COALESCE(:old.C_CAMPAIGN_ID, 0) <> COALESCE(:new.C_CAMPAIGN_ID, 0)) OR(COALESCE(:old.C_PROJECT_ID, 0) <> COALESCE(:new.C_PROJECT_ID, 0)) OR(COALESCE(:old.C_ACTIVITY_ID, 0) <> COALESCE(:new.C_ACTIVITY_ID, 0)))) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
  END IF;
@@ -43,6 +43,6 @@
   END IF;
  END IF;
 END C_Cash_Chk_Restrictions_Trg 
-</body>
+]]></body>
     </trigger>
   </database>

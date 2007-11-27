@@ -3,7 +3,7 @@
     <function name="AD_GET_NEXT_SEQUENCE" type="NUMERIC">
       <parameter name="p_TableName" type="VARCHAR" mode="in"/>
       <parameter name="p_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -30,7 +30,7 @@ BEGIN
   FROM AD_SEQUENCE
   WHERE NAME=p_TableName AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y';
   v_ResultStr:='Write';
-  IF(v_NextNoSys &lt;&gt; -1 AND p_ID &lt; 1000000) THEN -- System No
+  IF(v_NextNoSys <> -1 AND p_ID < 1000000) THEN -- System No
     UPDATE AD_SEQUENCE
       SET CurrentNextSys=CurrentNextSys + IncrementNo,
       Updated=now()
@@ -48,6 +48,6 @@ WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20516, 'Table Sequence not found ') ;
   --   || v_ResultStr || ': ' || p_TableName);
   RETURN 0;
-END Ad_Get_Next_Sequence</body>
+END Ad_Get_Next_Sequence]]></body>
     </function>
   </database>

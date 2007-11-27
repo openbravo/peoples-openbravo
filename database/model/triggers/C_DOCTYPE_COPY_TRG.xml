@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_DOCTYPE_COPY_TRG">
     <trigger name="C_DOCTYPE_COPY_TRG" table="C_DOCTYPE_COPY" fires="after" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -51,6 +51,6 @@
  -- Updating
 END C_DOCTYPE_COPY_Trg
 
-</body>
+]]></body>
     </trigger>
   </database>

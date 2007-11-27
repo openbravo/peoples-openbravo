@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_C_INVOICE_PRODWEEK">
-    <view name="RV_C_INVOICE_PRODWEEK" updatable="false">
+    <view name="RV_C_INVOICE_PRODWEEK"><![CDATA[
 SELECT il.AD_Client_ID, il.AD_Org_ID, il.M_Product_Category_ID,
   TRUNC(il.DateInvoiced, 'DY') AS DateInvoiced,
   SUM(il.LineNetAmt) AS LineNetAmt,
@@ -16,5 +16,5 @@ SELECT il.AD_Client_ID, il.AD_Org_ID, il.M_Product_Category_ID,
 FROM RV_C_InvoiceLine il
 GROUP BY il.AD_Client_ID, il.AD_Org_ID, il.M_Product_Category_ID,
   TRUNC(il.DateInvoiced, 'DY')
-</view>
+]]></view>
   </database>

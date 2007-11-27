@@ -2,7 +2,7 @@
   <database name="FUNCTION MA_COPY_VERSION">
     <function name="MA_COPY_VERSION" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -77,8 +77,8 @@
     UPDATE MA_Processplan_Version
       SET dateto=v_Date
     WHERE MA_Processplan_ID=v_Record_ID
-      AND dateto&gt;=v_Date
-      AND datefrom&lt;=v_Date;
+      AND dateto>=v_Date
+      AND datefrom<=v_Date;
     v_ResultStr:='InsertVersion';
     Ad_Sequence_Next('MA_ProcessPlan_Version', v_Client_ID, v_ProcessPlanVersion_ID) ;
     Ad_Sequence_Doc('DocumentNo_MA_ProcessPlan_Version', v_Client_ID, 'Y', v_DocumentNo) ;
@@ -147,7 +147,7 @@
           ;
       END LOOP;
     END LOOP;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User_ID, 'N', v_Result, v_Message) ;
@@ -160,6 +160,6 @@ EXCEPTION
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
     RETURN;
 END MA_Copy_Version
-</body>
+]]></body>
     </function>
   </database>

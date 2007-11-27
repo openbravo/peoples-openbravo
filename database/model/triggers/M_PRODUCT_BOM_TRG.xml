@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_PRODUCT_BOM_TRG">
     <trigger name="M_PRODUCT_BOM_TRG" table="M_PRODUCT_BOM" fires="after" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -13,7 +13,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &amp;  Business Solution
+    * The Original Code is  Compiere  ERP &  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -31,7 +31,7 @@
   WHERE M_Product_ID=:new.M_Product_ID
     AND IsVerified='Y';
   ELSIF(UPDATING) THEN
-  IF(COALESCE(:NEW.M_ProductBOM_ID, 0) &lt;&gt; COALESCE(:old.M_ProductBOM_ID, 0)) THEN
+  IF(COALESCE(:NEW.M_ProductBOM_ID, 0) <> COALESCE(:old.M_ProductBOM_ID, 0)) THEN
     UPDATE M_Product
       SET IsVerified='N'
     WHERE M_Product_ID=:new.M_Product_ID
@@ -40,6 +40,6 @@
  END IF;
 END M_Product_BOM_Trg
 
-</body>
+]]></body>
     </trigger>
   </database>

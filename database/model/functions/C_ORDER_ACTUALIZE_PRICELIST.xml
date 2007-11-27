@@ -2,7 +2,7 @@
   <database name="FUNCTION C_ORDER_ACTUALIZE_PRICELIST">
     <function name="C_ORDER_ACTUALIZE_PRICELIST" type="NULL">
       <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>
+      <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -77,8 +77,8 @@
       (SELECT Ad_Client_ID,  C_Order_ID,   C_BPartner_ID,   DateOrdered
       FROM C_ORDER
       WHERE C_ORDER.IsSoTrx='Y'
-        AND DateOrdered&gt;=v_DateFrom
-        AND DateOrdered&lt;v_DateTo
+        AND DateOrdered>=v_DateFrom
+        AND DateOrdered<v_DateTo
         AND C_BPartner_ID=v_BPartner_ID
       )
     LOOP
@@ -115,7 +115,7 @@
        FROM AD_PINSTANCE
        WHERE Ad_Pinstance_ID=v_pinstance;
        DBMS_OUTPUT.PUT_LINE('Reactivating c_order_id: ' || Cur_PEDIDOS.C_Order_ID || ' Result: ' || v_result || ' Message: '|| v_ResultStr) ;
-       IF(v_Result&lt;&gt;0) THEN
+       IF(v_Result<>0) THEN
          SELECT M_PriceList_ID
          INTO v_priceList
          FROM C_BPARTNER
@@ -125,7 +125,7 @@
            FROM M_PRICELIST_VERSION
            WHERE M_PriceList_ID=v_priceList
              AND IsActive='Y'
-             AND ValidFrom&lt;Cur_PEDIDOS.DateOrdered
+             AND ValidFrom<Cur_PEDIDOS.DateOrdered
            ORDER BY ValidFrom DESC
            )
          LOOP
@@ -189,7 +189,7 @@
            END; -- FOR COMMIT
        END IF;
     END LOOP;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
     Ad_Update_Pinstance(PInstance_ID, NULL, 'N', v_Result, v_ResultStr) ;
@@ -202,6 +202,6 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   Ad_Update_Pinstance(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END C_Order_Actualize_Pricelist</body>
+END C_Order_Actualize_Pricelist]]></body>
     </function>
   </database>

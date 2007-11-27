@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TRIGGER GL_JOURNALLINE2_TRG">
     <trigger name="GL_JOURNALLINE2_TRG" table="GL_JOURNALLINE" fires="before" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
 
 
     /*************************************************************************
@@ -28,7 +28,7 @@
   v_CurrencyRateType  CHAR(1) ;
 BEGIN
   IF(UPDATING) THEN
-    IF NOT((COALESCE(:old.AMTSOURCEDR, 0) &lt;&gt; COALESCE(:NEW.AMTSOURCEDR, 0) OR COALESCE(:old.AMTSOURCECR, 0) &lt;&gt; COALESCE(:NEW.AMTSOURCECR, 0) OR COALESCE(:old.C_CURRENCY_ID, 0) &lt;&gt; COALESCE(:NEW.C_CURRENCY_ID, 0))) THEN
+    IF NOT((COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:NEW.AMTSOURCEDR, 0) OR COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:NEW.AMTSOURCECR, 0) OR COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:NEW.C_CURRENCY_ID, 0))) THEN
       RETURN;
     END IF;
   END IF;
@@ -58,6 +58,6 @@ BEGIN
   :NEW.CURRENCYRATETYPE:=v_CurrencyRateType;
 END GL_JournalLine2_Trg
 
-</body>
+]]></body>
     </trigger>
   </database>
