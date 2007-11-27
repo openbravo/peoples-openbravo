@@ -18,7 +18,8 @@
  ************************************************************************
 -->
 
-
+<SqlClass name="WindowAccessData" package="org.openbravo.erpCommon.utility">
+  <SqlClassComment></SqlClassComment>
 
    <SqlMethod name="hasWriteAccess" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>

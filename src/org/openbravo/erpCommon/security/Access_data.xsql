@@ -116,7 +116,7 @@
                WHERE AD_Role_ID = ?
                  AND 'F' = ? 
                  AND AD_Workflow_ID = ? 
-                 AND IsActive = 'Y' )
+                 AND IsActive = 'Y' ) AS TOTAL
        
       ]]></Sql>
       <Parameter name="role"/>
