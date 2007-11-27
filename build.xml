@@ -259,6 +259,14 @@
   <target name="import.database.sampledata" depends="init">
     <ant dir="${base.source}/database" target="import.database.sampledata" inheritAll="true" inheritRefs="true"/>
   </target>
+	
+	  <target name="trl.clean">
+	  	<ant dir="${base.subversion}/src" target="trl.clean" inheritAll="true" inheritRefs="true"/>
+	  </target>
+	
+	  <target name="translate">
+	  	<ant dir="${base.subversion}/src" target="translate" inheritAll="true" inheritRefs="true"/>
+	  </target>
 
   <target name="save.database.model" depends="init">
     <ant dir="${base.source}/database" target="save.database.model" inheritAll="true" inheritRefs="true"/>

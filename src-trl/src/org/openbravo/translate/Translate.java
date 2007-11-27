@@ -59,8 +59,11 @@ public class Translate extends DefaultHandler implements LexicalHandler {
 
   static Logger log4j = Logger.getLogger(Translate.class);
 
-  public Translate (String xmlPoolFile, String _fileTermination) throws ServletException {
+  public Translate (String xmlPoolFile) throws ServletException {
     pool = new CPStandAlone (xmlPoolFile);
+  }
+  public Translate (String xmlPoolFile, String _fileTermination) throws ServletException {
+    this(xmlPoolFile);
     fileTermination = _fileTermination;
     isHtml=fileTermination.toLowerCase().endsWith("html");
     if (isHtml) parser =  new org.cyberneko.html.parsers.SAXParser();
@@ -78,6 +81,14 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     DirFilter dirFilter = null;
     String relativePath = "";
 
+    if ((argv.length == 2) && argv[0].equals("clean")) {
+      log4j.debug("clean AD_TEXTINTERFACES");
+      Translate translate=new Translate(argv[1]);
+      translate.clean();
+      return;
+    }
+        
+        
     if (argv.length < 4) {
       log4j.error("Usage: java Translate XmlPool.xml fileTermination sourceDir destinyDir relativePath");
       return;
@@ -111,6 +122,13 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     translate.destroy();
   }
 
+  private void clean() {
+    try {
+      TranslateData.clean(pool);
+    } catch (Exception e) {
+      log4j.error(e.toString());
+    }
+  }
   // lista los archivos y directorios correspondientes a un File
   public static void listDir(File file, boolean boolFilter, DirFilter dirFilter, File fileFin, String relativePath) {
     File[] list;

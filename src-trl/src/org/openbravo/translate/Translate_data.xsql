@@ -54,8 +54,7 @@
     <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
         update ad_textinterfaces
-           set updated 	 = now(),
-               updatedby = 0
+           set isUsed = 'Y'
          where ad_textinterfaces_id = ( select min(A.ad_textinterfaces_id)
                                           from (select B.*
                                                 from (select min(ad_textinterfaces_id) AS ad_textinterfaces_id, 1 AS o
@@ -79,9 +78,9 @@
     <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
       insert into ad_textinterfaces
-        (AD_TEXTINTERFACES_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, TEXT, FILENAME)
+        (AD_TEXTINTERFACES_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, TEXT, FILENAME, ISUSED)
       values
-        (Ad_Get_Next_Sequence('AD_TextInterfaces',1),0 ,0, 'Y', now(), 0, now(), 0, ?, ?)
+        (Ad_Get_Next_Sequence('AD_TextInterfaces',1),0 ,0, 'Y', now(), 0, now(), 0, ?, ?, 'Y')
     </Sql>
     <Parameter name="text"/>
     <Parameter name="filename"/>
@@ -91,8 +90,7 @@
     <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
       update ad_textinterfaces
-         set updated 	 = now(),
-             updatedby = 0
+         set isUsed='Y'
        where ad_textinterfaces_id = ?
     </Sql>
     <Parameter name="adTextinterfacesId"/>
@@ -108,6 +106,14 @@
     <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
       SELECT AD_LANGUAGE AS NAME FROM AD_LANGUAGE WHERE ISACTIVE='Y' AND ISSYSTEMLANGUAGE='Y' AND ISBASELANGUAGE='N'
+    </Sql>
+  </SqlMethod>
+  
+  <SqlMethod name="clean" type="preparedStatement" return="rowCount">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+      update ad_textinterfaces
+         set isUsed='N'
     </Sql>
   </SqlMethod>
 </SqlClass>
