@@ -284,7 +284,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
         return hasLevelAccess(vars,AccessData.selectAccessLevel(this, type, id))
             && AccessData.selectAccess(this, vars.getRole(), "TABLE", id).equals("0") 
             && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
-      else if (type.equals("S"))
+      else if (type.equals("S")||type.equals("C"))
         return true;
       else 
         return hasLevelAccess(vars,AccessData.selectAccessLevel(this, type, id))
