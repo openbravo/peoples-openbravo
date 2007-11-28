@@ -42,7 +42,7 @@ public class PrintJR extends HttpSecureAppServlet {
     System.out.println("************ antes");
     String strOutputType = vars.getStringParameter("inpoutputtype", "html");
     System.out.println("*********** despues: " + strOutputType);
-    if (hasGeneralAccess(vars, "R", strProcessId)) {
+    if (!hasGeneralAccess(vars, "P", strProcessId)) {
       bdError(response, "AccessTableNoView", vars.getLanguage());
       return;
     }
