@@ -75,6 +75,20 @@ function depurarCombo(){
   return true;
 }
 </SCRIPT-->
+
+<SCRIPT language="JavaScript" type="text/javascript">
+
+function depurar(command) {
+	var frm = document.frmMain;
+	if (frm.inpTaxReportId.value == ""){
+		frm.inpTaxReportId.focus();
+		mensaje(7);
+		return false;
+	}
+	return true;
+}
+
+</SCRIPT>
 </HEAD>
 <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="focoPrimerControl();resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();">
 <FORM id="form" method="POST" action="CreateTaxReport.html" name="frmMain">
@@ -324,7 +338,7 @@ function depurarCombo(){
                   onblur="this.className='ButtonLink'; window.status=''; return true;"
                   onkeypress="this.className='ButtonLink_active'; return true;"
                   onkeyup="this.className='ButtonLink_hover'; return true;"
-                  onclick="openServletNewWindow('FIND', false, 'CreateTaxReport.html', 'CreateTaxReport', null, false, '700', '1000', true);return false;">
+                  onclick="openServletNewWindow('FIND', true, 'CreateTaxReport.html', 'CreateTaxReport', null, false, '700', '1000', true);return false;">
                   <table class="Button"
                     onmousedown="this.className='Button_active'; return true;"
                     onmouseup="this.className='Button'; return true;"
