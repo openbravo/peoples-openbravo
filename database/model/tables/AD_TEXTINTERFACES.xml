@@ -11,7 +11,7 @@
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="TEXT" primaryKey="false" required="true" type="VARCHAR" size="4000" autoIncrement="false"/>
       <column name="FILENAME" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false"/>
-      <column name="ISUSED" primaryKey="false" requiered="true" type="CHAR" size="1" default="N"/>
+      <column name="ISUSED" primaryKey="false" required="true" type="CHAR" size="1" default="N"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADTEXTINTERFACES">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
