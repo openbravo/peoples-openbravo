@@ -75,7 +75,7 @@ public class PostgrePLSQLTranslation extends CombinedTranslation {
         append(new ReplaceStrTranslation("BLOB$", "OID"));
         
         append(new ReplaceStrTranslation("'", "''"));
-        append(new ByLineTranslation(new ReplacePatTranslation("^(AS|IS)([\\s|\\t]*)$", "AS '")));  
+        //append(new ByLineTranslation(new ReplacePatTranslation("^(AS|IS)([\\s|\\t]*)$", "AS '")));  
         append(new ByLineTranslation(new ReplacePatTranslation("^(\\s|\\t)*(.+?)rowcount(\\s|\\t)*:=(\\s|\\t)*SQL%ROWCOUNT;", "$1GET DIAGNOSTICS $2rowcount:=ROW_COUNT;")));       
         append(new RemoveTranslation("COMMIT;"));
         append(new RemoveTranslation("ROLLBACK;"));
@@ -111,29 +111,20 @@ public class PostgrePLSQLTranslation extends CombinedTranslation {
         append(new ReplacePatTranslation("ArrayName;", "VARCHAR[20];"));
         append(new ReplacePatTranslation("ArrayName\\(", "Array("));
 
-        // Perform
+        // Procedures with output parameters... and Perform
         for(int i = 0; i < database.getFunctionCount(); i++) {
-            if (database.getFunction(i).getTypeCode() == Types.NULL && 
-            	!database.getFunction(i).getName().equalsIgnoreCase("AD_SEQUENCE_NEXT") &&
-            	!database.getFunction(i).getName().equalsIgnoreCase("AD_SEQUENCE_DOC") &&	
-            	!database.getFunction(i).getName().equalsIgnoreCase("AD_SEQUENCE_DOCTYPE") &&
-            	!database.getFunction(i).getName().equalsIgnoreCase("FACT_ACCT_BALANCE_UPDATE") ) {
-                append(new ReplaceStrTranslation(database.getFunction(i).getName() + " *(", "PERFORM " + database.getFunction(i).getName() + "("));               
+          if (database.getFunction(i).hasOutputParameters()) {
+            appendFunctionWithOutputTranslation(database.getFunction(i)); 
+          } else { 
+          //Perform
+          if (database.getFunction(i).getTypeCode() == Types.NULL) {
+                append(new ReplaceStrTranslation(database.getFunction(i).getName() + " *(", "PERFORM " + database.getFunction(i).getName() + "("));
             }
+          }
         }
         
-        // Procedures with output parameters...
-        for (int i = 0; i < database.getFunctionCount(); i++) {
-            if (database.getFunction(i).hasOutputParameters()) {
-                appendFunctionWithOutputTranslation(database.getFunction(i));
-            }
-        }
-        
+        //Added in order to avoid error invoking DBA_RECOMPILE method. It should be eliminated. 
         append(new ReplaceStrTranslation("DBA_RECOMPILE(", "PERFORM DBA_RECOMPILE("));
-        //append(new ReplaceStrTranslation("AD_Tab_Import (", "PERFORM AD_Tab_Import("));  
-        //append(new ReplaceStrTranslation("A_Asset_Post (", "PERFORM A_Asset_Post("));        
-        //append(new ReplaceStrTranslation("changeprojectstatustoorder (", "PERFORM changeprojectstatustoorder("));        
-        //append(new ReplaceStrTranslation("closeproject (", "PERFORM closeproject("));        
         
         // Miscellaneous translations
         append(new ChangeFunction2Translation());
