@@ -23,7 +23,7 @@ dateTimeFormat.java = dd-MM-yyyy HH:mm:ss
 
 bbdd.outputscript=~/databasescript.sql
 bbdd.verbosity=INFO
-application.version=2.34
+application.version=2.35
 developer.id=1
 
 #DB properties
