@@ -44,7 +44,7 @@
     v_User NUMBER;
 	v_line NUMBER;
     v_Count NUMBER:=0;
-    END_PROCESS BOOLEAN:=true;
+    END_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || PInstance_ID) ;
