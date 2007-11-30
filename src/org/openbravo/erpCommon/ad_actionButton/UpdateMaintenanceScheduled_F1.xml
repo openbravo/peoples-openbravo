@@ -30,6 +30,13 @@
   <PARAMETER id="buttonCancel" name="cancel" attribute="alt" replace="xx" default=""/>
   <PARAMETER id="buttonOk" name="ok" attribute="alt" replace="xx" default=""/>
   <PARAMETER id="paramMaintType" name="maintType" attribute="value"/>
+
+	<PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
+  <PARAMETER id="paramPartDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
+	<PARAMETER id="paramPartDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
+	<PARAMETER id="paramPartDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
+	<PARAMETER id="paramPartDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
+
   <SUBREPORT id="reportMaintType" name="reportMaintType" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramMaintType"/>
   </SUBREPORT>
