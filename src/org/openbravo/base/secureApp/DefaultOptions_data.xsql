@@ -147,7 +147,7 @@
    <SqlMethod name="getDefaultOrg" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT TO_CHAR(MIN(roleOrg.AD_ORG_ID)) AS AD_ORG_ID
+        SELECT TO_CHAR(MAX(roleOrg.AD_ORG_ID)) AS AD_ORG_ID
         FROM AD_ROLE_ORGACCESS roleOrg 
           INNER JOIN AD_ORG org
             ON roleOrg.AD_ORG_ID = org.AD_ORG_ID
