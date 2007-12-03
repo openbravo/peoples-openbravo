@@ -23,6 +23,11 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.*;
 import javax.servlet.*;
 
+/**
+ * @author Fernando Iriazabal
+ *
+ * This one is the class in charge of the report of accounting
+ */
 public class AccountTree {
   static Logger log4j = Logger.getLogger(AccountTree.class);
   private VariablesSecureApp vars;
@@ -32,6 +37,16 @@ public class AccountTree {
   private AccountTreeData[] resultantAccounts;
   private String[] elementValueParent;
 
+  /**
+   * Constructor
+   * 
+   * @param _vars: VariablesSecureApp object with the session methods.
+   * @param _conn: ConnectionProvider object with the connection methods.
+   * @param _elements: Array of account's elements.
+   * @param _accounts: Array of accounts.
+   * @param _elementValueParent: String with the value of the parent element to evaluate.
+   * @throws ServletException
+   */
   public AccountTree(VariablesSecureApp _vars, ConnectionProvider _conn, AccountTreeData[] _elements, AccountTreeData[] _accounts, String _elementValueParent) throws ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("AccountTree []");
     vars = _vars;
@@ -48,6 +63,16 @@ public class AccountTree {
     }
   }
   
+  /**
+   * Constructor
+   * 
+   * @param _vars: VariablesSecureApp object with the session methods.
+   * @param _conn: ConnectionProvider object with the connection methods.
+   * @param _elements: Array of account's elements.
+   * @param _accounts: Array of accounts.
+   * @param _elementValueParent: Array with the value of the parent elements to evaluate.
+   * @throws ServletException
+   */
   public AccountTree(VariablesSecureApp _vars, ConnectionProvider _conn, AccountTreeData[] _elements, AccountTreeData[] _accounts, String[] _elementValueParent) throws ServletException {
      if (log4j.isDebugEnabled()) log4j.debug("AccountTree []");
     vars = _vars;
@@ -103,11 +128,23 @@ public class AccountTree {
     }*/
   }
 
+  /**
+   * Method to get the processed accounts.
+   * 
+   * @return Array with the resultant accounts.
+   */
   public AccountTreeData[] getAccounts() {
     return resultantAccounts;
   }
 
-  /*Apply the sign to the qty according to the showValueCond field*/
+  /**
+   * Applies the sign to the quantity, according to the showValueCond field
+   * 
+   * @param qty: Double value with the quantity to evaluate.
+   * @param sign: String with the showValueCond field value.
+   * @param isSummary: Boolean that indicates if this is a summary record.
+   * @return Double with the correct sign applied.
+   */
   private double applySign(double qty, String sign, boolean isSummary) {
     double total=0.0;
     if (isSummary && !sign.equalsIgnoreCase("A")) {
@@ -119,7 +156,15 @@ public class AccountTree {
     return total;
   }
 
-  /*Update the qty and the operation qty fields of the element*/
+  /**
+   * Update the quantity and the operation quantity fields of the element, 
+   * depending on the isDebitCredit field.
+   * 
+   * @param element: AccoutnTreeData object with the element information.
+   * @param isDebitCredit: String with the parameter to evaluate if is 
+   *                       a Debit or Credit element.
+   * @return AccountTreeData object with the new element's information.
+   */
   private AccountTreeData setDataQty(AccountTreeData element, String isDebitCredit) {
     if (element==null || accounts==null || accounts.length==0) return element;
     for (int i=0;i<accounts.length;i++) {
@@ -140,6 +185,15 @@ public class AccountTree {
     return element;
   }
 
+  /**
+   * This method updates al the Quantitie's signs of the tree. Is used by the 
+   * constructor to initializa the element's quantities.
+   * 
+   * @param indice: String with the index from which to start updating.
+   * @param level: Integer with the level of the elements.
+   * @param isDebitCredit: String with the is debit or credit value of the trunk.
+   * @return Array of AccountTreeData with the updated tree.
+   */
   private AccountTreeData[] updateTreeQuantitiesSign(String indice, int level, String isDebitCredit) {
     if (elements==null || elements.length==0) return elements;
     AccountTreeData[] result = null;
@@ -164,6 +218,13 @@ public class AccountTree {
     return result;
   }
 
+  /**
+   * Method to know if an element has form or not.
+   * 
+   * @param indice: String with the index of the element.
+   * @param forms: Array with the existing forms.
+   * @return Boolean indicating if has or not form.
+   */
   private boolean hasForm(String indice, AccountTreeData[] forms) {
     if (indice == null) {
       log4j.error("AccountTree.hasForm - Missing index");
@@ -175,6 +236,14 @@ public class AccountTree {
     return false;
   }
 
+  /**
+   * Method to calculate the values with the form's conditions.
+   * 
+   * @param vecAll: Vector with the evaluated tree.
+   * @param forms: Array with the forms.
+   * @param indice: String with the index of the element to evaluate.
+   * @param vecTotal: Vector with the totals of the operation.
+   */
   private void formsCalculate(Vector<Object> vecAll, AccountTreeData[] forms, String indice, Vector<Object> vecTotal) {
     if (log4j.isDebugEnabled()) log4j.debug("AccountTree.formsCalculate");
     if (resultantAccounts==null || resultantAccounts.length==0) return;
@@ -225,10 +294,26 @@ public class AccountTree {
     vecTotal.set(1, Double.toString(totalRef));
   }
 
+  /**
+   * Main method, which is called by the constructor to evaluate the tree.
+   * 
+   * @param forms: Array with the forms.
+   * @param indice: Array with the start indexes.
+   * @param vecTotal: Vector with the accumulated totals.
+   * @return Array with the new calculated tree.
+   */
   private AccountTreeData[] calculateTree(AccountTreeData[] forms, String[] indice, Vector<Object> vecTotal) {
     return calculateTree(forms, indice, vecTotal, true, false);
   }
   
+  /**
+   * Main method, which is called by the constructor to evaluate the tree.
+   * 
+   * @param forms: Array with the forms.
+   * @param indice: String with the index of the start element.
+   * @param vecTotal: Vector with the accumulated totals.
+   * @return Array with the new calculated tree.
+   */
   private AccountTreeData[] calculateTree(AccountTreeData[] forms, String indice, Vector<Object> vecTotal) {
     String[] i=new String[1];
     i[0]=indice;
@@ -240,12 +325,35 @@ public class AccountTree {
     return false;
   }
   
+  /**
+   * Main method, which is called by the constructor to evaluate the tree.
+   * 
+   * @param forms: Array with the forms.
+   * @param indice: String with the index of the start element.
+   * @param vecTotal: Vector with the accumulated totals.
+   * @param applysign: Boolean to know if the sign must be applied or not.
+   * @param isExactValue: Boolean auxiliar to use only for the calls from the 
+   *                      forms calculating.
+   * @return Array with the new calculated tree.
+   */
   private AccountTreeData[] calculateTree(AccountTreeData[] forms, String indice, Vector<Object> vecTotal, boolean applysign, boolean isExactValue) {
     String[] i=new String[1];
     i[0]=indice;
  
     return calculateTree(forms, i, vecTotal, applysign, isExactValue);
   }
+  
+  /**
+   * Main method, which is called by the constructor to evaluate the tree.
+   * 
+   * @param forms: Array with the forms.
+   * @param indice: Array with the start indexes.
+   * @param vecTotal: Vector with the accumulated totals.
+   * @param applysign: Boolean to know if the sign must be applied or not.
+   * @param isExactValue: Boolean auxiliar to use only for the calls from the 
+   *                      forms calculating.
+   * @return Array with the new calculated tree.
+   */
   private AccountTreeData[] calculateTree(AccountTreeData[] forms, String[] indice, Vector<Object> vecTotal, boolean applysign, boolean isExactValue) {
     if (resultantAccounts==null || resultantAccounts.length==0) return resultantAccounts;
     if (indice == null){ indice=new String[1]; indice[0]="0";}
@@ -314,6 +422,15 @@ public class AccountTree {
     return result;
   }
 
+  /**
+   * Method to make the level filter of the tree, to eliminate the 
+   * levels that shouldn't be shown in the report.
+   * 
+   * @param indice: Array of indexes to evaluate.
+   * @param found: Boolean to know if the index has been found
+   * @param strLevel: String with the level.
+   * @return New Array with the filter applied.
+   */
   private AccountTreeData[] levelFilter(String[] indice, boolean found, String strLevel) {
     if (resultantAccounts==null || resultantAccounts.length==0 || strLevel==null || strLevel.equals("")) return resultantAccounts;
     AccountTreeData[] result = null;
@@ -336,6 +453,15 @@ public class AccountTree {
     return result;
   }
   
+  /**
+   * Method to make the level filter of the tree, to eliminate the 
+   * levels that shouldn't be shown in the report.
+   * 
+   * @param indice: String with the index to evaluate.
+   * @param found: Boolean to know if the index has been found
+   * @param strLevel: String with the level.
+   * @return New Array with the filter applied.
+   */
   private AccountTreeData[] levelFilter(String indice, boolean found, String strLevel) {
     String[] i=new String[1];
     i[0]=indice;
@@ -343,6 +469,15 @@ public class AccountTree {
     return levelFilter(i, found, strLevel);
   }
 
+  /**
+   * Method to filter the complete tree to show only the desired levels.
+   * 
+   * @param indice: Array of start indexes.
+   * @param notEmptyLines: Boolean to indicate if the empty lines must been removed.
+   * @param strLevel: String with the level.
+   * @param isLevel: Boolean not used.
+   * @return New Array with the filtered tree.
+   */
   public AccountTreeData[] filterStructure(String[] indice, boolean notEmptyLines, String strLevel, boolean isLevel) {
     if (log4j.isDebugEnabled()) log4j.debug("AccountTree.filterStructure() - accounts: " + resultantAccounts.length);
     if (resultantAccounts==null || resultantAccounts.length==0) return resultantAccounts;
@@ -390,6 +525,13 @@ public class AccountTree {
     return r;
 }*/
 
+  /**
+   * Not used
+   * 
+   * @param notEmptyLines
+   * @param strLevel
+   * @param isLevel
+   */
   public void filter(boolean notEmptyLines, String strLevel, boolean isLevel) {
     if (log4j.isDebugEnabled()) log4j.debug("filter");
     if (resultantAccounts==null) log4j.warn("No resultant Acct");
