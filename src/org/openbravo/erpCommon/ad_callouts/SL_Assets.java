@@ -102,4 +102,3 @@ public class SL_Assets extends HttpSecureAppServlet {
     out.close();
   }
 }
-  
