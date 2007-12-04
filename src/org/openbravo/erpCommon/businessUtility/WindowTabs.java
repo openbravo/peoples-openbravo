@@ -26,6 +26,12 @@ import java.util.*;
 import org.apache.log4j.Logger ;
 
 
+/**
+ * @author Fernando
+ *
+ * Class in charge of building the application's tabs for each
+ * window type.
+ */
 public class WindowTabs {
   static Logger log4j = Logger.getLogger(WindowTabs.class);
   private VariablesSecureApp vars;
@@ -40,6 +46,16 @@ public class WindowTabs {
   private Hashtable<String, Stack<WindowTabsData>> tabs = new Hashtable<String, Stack<WindowTabsData>>();
   private Stack<WindowTabsData> breadcrumb = new Stack<WindowTabsData>();
 
+  /**
+   * Constructor
+   * Used by WAD windows.
+   * 
+   * @param _conn: Object with the database connection methods.
+   * @param _vars: Object with the session information.
+   * @param _tabId: String with the id of the tab.
+   * @param _windowId: String with the id of the window.
+   * @throws Exception
+   */
   public WindowTabs(ConnectionProvider _conn, VariablesSecureApp _vars, String _tabId, String _windowId) throws Exception {
     if (_conn==null || _vars==null || _tabId==null || _tabId.equals("") || _windowId==null || _windowId.equals("")) throw new Exception("Missing parameters");
     this.conn = _conn;
@@ -51,6 +67,15 @@ public class WindowTabs {
     getTabs();
   }
 
+  /**
+   * Constructor
+   * Used by manual windows.
+   * 
+   * @param _conn: Object with the database connection methods.
+   * @param _vars: Object with the session information.
+   * @param _className: String with the form's classname.
+   * @throws Exception
+   */
   public WindowTabs(ConnectionProvider _conn, VariablesSecureApp _vars, String _className) throws Exception {
     if (_conn==null || _vars==null || _className==null || _className.equals("")) throw new Exception("Missing parameters");
     this.conn = _conn;
@@ -60,6 +85,12 @@ public class WindowTabs {
     getTabs();
   }
 
+  /**
+   * Obtains all the window information from database.
+   * (For manual windows)
+   * 
+   * @throws Exception
+   */
   private void getWindowInfo() throws Exception {
     WindowTabsData[] windowInfo = WindowTabsData.selectJavaInfo(this.conn, this.className);
     if (windowInfo==null || windowInfo.length==0) {
@@ -78,11 +109,22 @@ public class WindowTabs {
     this.Title = windowInfo[0].name;
   }
 
+  /**
+   * Gets the menu root element for the selected window.
+   * 
+   * @return String with the menu root element.
+   * @throws Exception
+   */
   private String getMenuInfo() throws Exception {
     if (this.action.equals("W")) return WindowTabsData.selectMenu(this.conn, this.vars.getLanguage(), this.WindowID);
     else return WindowTabsData.selectMenuManual(this.conn, this.vars.getLanguage(), this.ID);
   }
 
+  /**
+   * Build the internal structure of all the tabs defined for the window.
+   * 
+   * @throws Exception
+   */
   private void getTabs() throws Exception {
     WindowTabsData[] tabsAux = null;
     if (this.action.equals("W")) tabsAux = WindowTabsData.select(this.conn, this.vars.getLanguage(), this.WindowID);
@@ -106,6 +148,15 @@ public class WindowTabs {
     } else getTabsByLevel(tabsAux, pos, true);
   }
 
+  /**
+   * Used by the getTabs() method to build the internal structure.
+   * 
+   * @param tabsAux: Array with the tabs.
+   * @param pos: Integer with the actual position in the array.
+   * @param register: Boolean to indicates if the actual position must 
+   *                  be saved in the breadcrumb.
+   * @throws Exception
+   */
   private void getTabsByLevel(WindowTabsData[] tabsAux, int pos, boolean register) throws Exception {
     if (register) {
       tabsAux[pos].isbreadcrumb = "Y";
@@ -133,6 +184,10 @@ public class WindowTabs {
     if (nextPos!=-1) getTabsByLevel(tabsAux, nextPos, true);
   }
 
+  /**
+   * Method to get the parent's tabs of the actual (If exists).
+   * @return String with the HTML text for the tabs.
+   */
   public String parentTabs() {
     StringBuffer text = new StringBuffer();
     if (this.tabs==null) return text.toString();
@@ -185,6 +240,11 @@ public class WindowTabs {
     return text.toString();
   }
 
+  /**
+   * Method to get the tabs of the same level as the actual.
+   * 
+   * @return String with the HTML of the tabs.
+   */
   public String mainTabs() {
     StringBuffer text = new StringBuffer();
     if (this.tabs==null) return text.toString();
@@ -232,6 +292,11 @@ public class WindowTabs {
     return text.toString();
   }
 
+  /**
+   * Method to get the child tabs from the actual.
+   * 
+   * @return String with the HTML of the tabs.
+   */
   public String childTabs() {
     StringBuffer text = new StringBuffer();
     if (this.tabs==null) return text.append("<td class=\"tabTabbarBackGround\"></td>").toString();
@@ -298,6 +363,11 @@ public class WindowTabs {
     return text.toString();
   }*/
 
+  /**
+   * Method to obtain the breadcrumb for this tab.
+   * 
+   * @return String with the HTML of the breadcrumb.
+   */
   public String breadcrumb() {
     StringBuffer text = new StringBuffer();
     if (this.breadcrumb==null || this.breadcrumb.empty()) return text.toString();
@@ -322,6 +392,14 @@ public class WindowTabs {
     return text.toString();
   }
 
+  /**
+   * Auxiliar method to get the click command for the elements.
+   * 
+   * @param _tabId: String with the id of the tab.
+   * @param _tabName: String with the tab's name.
+   * @param _level: Integer with the tab's level.
+   * @return String with the javascript command.
+   */
   private String getUrlCommand(String _tabId, String _tabName, int _level) {
     StringBuffer text = new StringBuffer();
     if (!_tabId.equals(this.TabID) && this.level+1>=_level) {
