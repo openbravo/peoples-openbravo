@@ -206,8 +206,11 @@
         l.M_ATTRIBUTESETINSTANCE_ID) A left join 
       (SELECT il.M_InOutLine_ID, il.C_OrderLine_ID, (il.MovementQty-SUM(COALESCE(mi.Qty,0))) AS QTY,
       il.quantityOrder*DIVIDE((il.MovementQty-SUM(COALESCE(mi.Qty,0))),(il.MovementQty)) as quantityOrder, il.M_Product_UOM_ID
-        FROM M_INOUTLINE il left join M_MATCHINV mi on il.M_InOutLine_ID=mi.M_InOutLine_ID
+        FROM M_INOUTLINE il left join M_MATCHINV mi on il.M_InOutLine_ID=mi.M_InOutLine_ID,
+             M_INOUT io
         WHERE il.C_OrderLine_ID IS NOT NULL
+        AND io.M_InOut_ID = il.M_InOut_ID
+        AND io.Processed = 'Y'
         GROUP BY il.M_InOutLine_ID, il.C_OrderLine_ID, il.MovementQty, il.quantityOrder, il.M_Product_UOM_ID
         HAVING (il.MovementQty-SUM(COALESCE(mi.Qty,0))) <> 0) B on A.C_OrderLine_ID=B.C_OrderLine_ID
       WHERE A.C_UOM_ID=uom.C_UOM_ID
@@ -226,8 +229,10 @@
         l.C_OrderLine_ID,l.Line, max(uom.stdprecision) as stdprecision, il.M_InOutLine_ID as M_InOutLine_ID, l.Description,
         (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.quantityOrder*DIVIDE((l.QtyOrdered-COALESCE(l.QTYINVOICED ,0)),(l.QtyOrdered)) ELSE il.quantityOrder END) AS quantityOrder, 
         (CASE WHEN il.M_INOUTLINE_ID IS NULL THEN l.M_Product_UOM_ID ELSE il.M_Product_UOM_ID END) AS M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id
-        FROM C_ORDERLINE l left join M_InOutLine il on l.C_OrderLine_ID = il.C_OrderLine_ID
-                                                    AND il.IsInvoiced = 'N',
+        FROM C_ORDERLINE l left join (SELECT M_InOutLine.* FROM M_InOutLine, M_InOut
+                                      WHERE M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID
+                                      AND M_InOutLine.IsInvoiced = 'N'
+                                      AND M_InOut.Processed='Y') il  on l.C_OrderLine_ID = il.C_OrderLine_ID,
         C_UOM uom,  M_PRODUCT p  
         WHERE l.C_UOM_ID=uom.C_UOM_ID
         AND l.M_Product_ID=p.M_Product_ID 
