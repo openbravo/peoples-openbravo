@@ -64,7 +64,7 @@ function onloadFunctions() {
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();focoPrimerControl();xx();"  id="paramBody">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();onloadFunctions();focoPrimerControl();xx();" onresize="resizeArea();" id="paramBody">
 <FORM name="frmMain" method="POST" action="AttributeSetInstance_F1.html" target="_self">
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1">
@@ -87,7 +87,7 @@ function onloadFunctions() {
 
   <tr>
     <td>
-      <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
+      <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar" id="tdToolBar">
         <tr class="Popup_NavBar_bg"><td></td>
           <td class="Popup_NavBar_separator_cell"></td>
           <td class="Popup_NavBar_bg_logo_left"></td>
@@ -102,7 +102,7 @@ function onloadFunctions() {
 
   <tr>
     <td>
-      <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar">
+      <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar" id="tdtopTabs">
         <tr>
           <td class="Popup_SeparatorBar_bg"></td>
         </tr>
@@ -112,7 +112,7 @@ function onloadFunctions() {
   
   <tr>
     <td>
-      <div class="Popup_ContentPane_Client" style="overflow: auto;">
+      <div class="Popup_Client_TablePopup" style="padding: 0px; margin: 0px; overflow: auto;" id="client">
         <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
 
           <tr>

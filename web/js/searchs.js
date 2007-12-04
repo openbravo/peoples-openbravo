@@ -152,7 +152,7 @@ function openPAttribute(strTop, strLeft, strNombreSelector, strWindowName, depur
     for (var i=9;arguments[i]!=null;i++) {
       parametros[i-9] = arguments[i];
     }
-    windowSearch(strNombreSelector, 300, 600, strTop, strLeft, strWindowName, parametros, strValueID);
+    windowSearch(strNombreSelector, 450, 650, strTop, strLeft, strWindowName, parametros, strValueID);
   }
 }
 /*

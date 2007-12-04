@@ -364,7 +364,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
           strHtml.append(strValue);
           strHtml.append("</textarea>");
         }
-        strHtml.append("</td></tr>\n");
+        strHtml.append("</td><td></td><td></td></tr>\n");
       }
     }
     if (fields[0].islot.equals("Y")) {
@@ -385,7 +385,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       }
       if (strAttributeInstance.equals("") && strIsSOTrx.equals("N")) strHtml.append("value=\"" + AttributeSetInstanceData.selectNextLot(this, fields[0].mLotctlId) + "\" ");
       else strHtml.append("value=\"" + ((instanceData!=null && instanceData.length>0)?instanceData[0].lot:"") + "\" ");
-      strHtml.append("></td></tr>\n");
+      strHtml.append("></td><td></td><td></td></tr>\n");
     }
     if (fields[0].isserno.equals("Y")) {
       strHtml.append("<tr><td class=\"TitleCell\"><span class=\"LabelText\">");
@@ -404,7 +404,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       }
       if (strAttributeInstance.equals("") && strIsSOTrx.equals("N")) strHtml.append("value=\"" + AttributeSetInstanceData.selectNextSerNo(this, fields[0].mSernoctlId) + "\" ");
       else strHtml.append("value=\"" + ((instanceData!=null && instanceData.length>0)?instanceData[0].serno:"") + "\" ");
-      strHtml.append("></td></tr>\n");
+      strHtml.append("></td><td></td><td></td></tr>\n");
     }
     if (fields[0].isguaranteedate.equals("Y")) {
       if (log4j.isDebugEnabled()) log4j.debug("GuaranteeDate:"+((instanceData!=null && instanceData.length > 0)?instanceData[0].guaranteedate:""));
@@ -449,7 +449,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       strHtml.append("</TD>");
       strHtml.append("</TR>");
       strHtml.append("</TABLE>");
-      strHtml.append("</TD>");
+      strHtml.append("</TD><td></td><td></td>");
       strHtml.append("</TR>");
     }
     if (fields[0].islockable.equals("Y")) {
@@ -473,7 +473,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       strHtml.append("\">");
       if (instanceData!=null && instanceData.length>0) strHtml.append(instanceData[0].lockDescription);
       strHtml.append("</textarea>");
-      strHtml.append("</td></tr>\n");
+      strHtml.append("</td><td></td><td></td></tr>\n");
     }
     return strHtml.toString();
   }
