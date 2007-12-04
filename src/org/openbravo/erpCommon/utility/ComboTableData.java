@@ -28,6 +28,12 @@ import java.sql.*;
 import org.apache.log4j.Logger;
 
 
+/**
+ * @author Fernando Iriazabal
+ *
+ * This class builds the queries for populating the different kind of combos
+ * in the application.
+ */
 public class ComboTableData {
   static Logger log4j = Logger.getLogger(ComboTableData.class);
   private final String internalPrefix = "@@";
@@ -46,13 +52,43 @@ public class ComboTableData {
   private Vector<QueryFieldStructure> orderBy = new Vector<QueryFieldStructure>();
   private int index = 0;
 
+  /**
+   * Constructor
+   */
   public ComboTableData() {
   }
 
+  /**
+   * Constructor
+   * 
+   * @param _conn: Object with the database connection methods.
+   * @param _referenceType: String with the type of reference.
+   * @param _name: String with the Object name.
+   * @param _objectReference: String with id to the reference value.
+   * @param _validation: String with the id to the validation.
+   * @param _orgList: String with the list of granted organizations.
+   * @param _clientList: String with the list of granted clients.
+   * @param _index: String with the id of the default value for the combo.
+   * @throws Exception
+   */
   public ComboTableData(ConnectionProvider _conn, String _referenceType, String _name, String _objectReference, String _validation, String _orgList, String _clientList, int _index) throws Exception {
     this(null, _conn, _referenceType, _name, _objectReference, _validation, _orgList, _clientList, _index);
   }
 
+  /**
+   * Constructor
+   * 
+   * @param _vars: Object with the session methods.
+   * @param _conn: Object with the database connection methods.
+   * @param _referenceType: String with the type of reference.
+   * @param _name: String with the Object name.
+   * @param _objectReference: String with id to the reference value.
+   * @param _validation: String with the id to the validation.
+   * @param _orgList: String with the list of granted organizations.
+   * @param _clientList: String with the list of granted clients.
+   * @param _index: String with the id of the default value for the combo.
+   * @throws Exception
+   */
   public ComboTableData(VariablesSecureApp _vars, ConnectionProvider _conn, String _referenceType, String _name, String _objectReference, String _validation, String _orgList, String _clientList, int _index) throws Exception {
     if (_vars!=null) setVars(_vars);
     setPool(_conn);
@@ -67,24 +103,52 @@ public class ComboTableData {
     parseNames();
   }
 
+  /**
+   * Setter for the session object.
+   * 
+   * @param _vars: New session object.
+   * @throws Exception
+   */
   public void setVars(VariablesSecureApp _vars) throws Exception {
     if (_vars==null) throw new Exception("The session vars is null");
     this.vars = _vars;
   }
   
+  /**
+   * Getter for the session object.
+   * 
+   * @return Session object.
+   */
   public VariablesSecureApp getVars() {
     return this.vars;
   }
 
+  /**
+   * Setter for the database handler object.
+   * 
+   * @param _conn: New database handler object.
+   * @throws Exception
+   */
   public void setPool(ConnectionProvider _conn) throws Exception {
     if (_conn==null) throw new Exception("The pool is null");
     this.pool = _conn;
   }
   
+  /**
+   * Getter for the database handler object.
+   * 
+   * @return Database handler object.
+   */
   public ConnectionProvider getPool() {
     return this.pool;
   }
 
+  /**
+   * Setter for the reference type id.
+   * 
+   * @param _reference: String with the new reference
+   * @throws Exception
+   */
   public void setReferenceType(String _reference) throws Exception {
     if (_reference!=null && !_reference.equals("")) {
       try {
@@ -96,18 +160,40 @@ public class ComboTableData {
     setParameter(internalPrefix + "reference", _reference);
   }
 
+  /**
+   * Getter for the reference type id.
+   * 
+   * @return String with the reference type id.
+   */
   public String getReferenceType() {
     return getParameter(internalPrefix + "reference");
   }
 
+  /**
+   * Setter for the object name.
+   * 
+   * @param _name: String with the new object name.
+   * @throws Exception
+   */
   public void setObjectName(String _name) throws Exception {
     setParameter(internalPrefix + "name", _name);
   }
 
+  /**
+   * Getter for the object name.
+   * 
+   * @return String with the object name.
+   */
   public String getObjectName() {
     return getParameter(internalPrefix + "name");
   }
 
+  /**
+   * Setter for the object reference id.
+   * 
+   * @param _reference: String with the new object reference id.
+   * @throws Exception
+   */
   public void setObjectReference(String _reference) throws Exception {
     if (_reference!=null && !_reference.equals("")) {
       try {
@@ -119,10 +205,21 @@ public class ComboTableData {
     setParameter(internalPrefix + "objectReference", _reference);
   }
 
+  /**
+   * Getter for the object reference id.
+   * 
+   * @return String with the object reference id.
+   */
   public String getObjectReference() {
     return getParameter(internalPrefix + "objectReference");
   }
 
+  /**
+   * Setter for the validation id.
+   * 
+   * @param _reference: String for the new validation id.
+   * @throws Exception
+   */
   public void setValidation(String _reference) throws Exception {
     if (_reference!=null && !_reference.equals("")) {
       try {
@@ -134,106 +231,227 @@ public class ComboTableData {
     setParameter(internalPrefix + "validation", _reference);
   }
 
+  /**
+   * Getter for the validation id.
+   * 
+   * @return String with the validation id.
+   */
   public String getValidation() {
     return getParameter(internalPrefix + "validation");
   }
 
+  /**
+   * Setter for the granted organizations list.
+   * 
+   * @param _orgList: String with the new granted organizations list.
+   * @throws Exception
+   */
   public void setOrgList(String _orgList) throws Exception {
     setParameter(internalPrefix + "orgList", _orgList);
   }
 
+  /**
+   * Getter for the granted organizations list.
+   * 
+   * @return String with the granted organizations list.
+   */
   public String getOrgList() {
     return getParameter(internalPrefix + "orgList");
   }
 
+  /**
+   * Setter for the granted clients list.
+   * 
+   * @param _clientList: String with the new granted clients list.
+   * @throws Exception
+   */
   public void setClientList(String _clientList) throws Exception {
     setParameter(internalPrefix + "clientList", _clientList);
   }
 
+  /**
+   * Getter for the granted clients list.
+   * 
+   * @return String with the granted clients list.
+   */
   public String getClientList() {
     return getParameter(internalPrefix + "clientList");
   }
 
+  /**
+   * Adds new field to the select section of the query.
+   * 
+   * @param _field: String with the field.
+   * @param _alias: String with the alias for this field.
+   */
   public void addSelectField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " AS ", _alias, "SELECT");
     if (this.select == null) this.select = new Vector<QueryFieldStructure>();
     select.addElement(p);
   }
 
+  /**
+   * Gets the defined fields for the select section of the query.
+   * 
+   * @return Vector with the select's fields.
+   */
   public Vector<QueryFieldStructure> getSelectFields() {
     return this.select;
   }
 
+  /**
+   * Adds new field to the from section of the query.
+   * 
+   * @param _field: String with the field.
+   * @param _alias: String with the alias for the field.
+   */
   public void addFromField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM");
     if (this.from == null) this.from = new Vector<QueryFieldStructure>();
     from.addElement(p);
   }
 
+  /**
+   * Gets the defined fields for the from section of the query.
+   * 
+   * @return Vector with the from's fields.
+   */
   public Vector<QueryFieldStructure> getFromFields() {
     return this.from;
   }
 
+  /**
+   * Adds new field to the where section of the query.
+   * 
+   * @param _field: String with the field.
+   * @param _type: String for group fields.
+   */
   public void addWhereField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
     if (this.where == null) this.where = new Vector<QueryFieldStructure>();
     where.addElement(p);
   }
 
+  /**
+   * Gets the defined fields for the where section of the query.
+   * 
+   * @return Vector with the where's fields.
+   */
   public Vector<QueryFieldStructure> getWhereFields() {
     return this.where;
   }
 
+  /**
+   * Adds new field to the order by section of the query.
+   * 
+   * @param _field: String with the field.
+   */
   public void addOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
     if (this.orderBy == null) this.orderBy = new Vector<QueryFieldStructure>();
     orderBy.addElement(p);
   }
 
+  /**
+   * Gets the defined fields for the order by section of the query.
+   * 
+   * @return Vector with the order by's fields.
+   */
   public Vector<QueryFieldStructure> getOrderByFields() {
     return this.orderBy;
   }
 
+  /**
+   * Adds a new parameter to the select section of the query.
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the name of the field.
+   */
   public void addSelectParameter(String _parameter, String _fieldName) {
     if (this.paramSelect == null) this.paramSelect = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "SELECT");
     paramSelect.addElement(aux);
   }
 
+  /**
+   * Gets all the defined parameters for the select section.
+   * @return Vector with the parameters.
+   */
   public Vector<QueryParameterStructure> getSelectParameters() {
     return this.paramSelect;
   }
 
+  /**
+   * Adds a new parameter to the from section of the query.
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the name od the field.
+   */
   public void addFromParameter(String _parameter, String _fieldName) {
     if (this.paramFrom == null) this.paramFrom = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "FROM");
     paramFrom.addElement(aux);
   }
 
+  /**
+   * Gets the defined parameters for the from section.
+   * 
+   * @return Vector with the parameters.
+   */
   public Vector<QueryParameterStructure> getFromParameters() {
     return this.paramFrom;
   }
 
+  /**
+   * Adds a new parameter to the where section of the query.
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the name of the field.
+   * @param _type: String with a group name.
+   */
   public void addWhereParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramWhere == null) this.paramWhere = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
     paramWhere.addElement(aux);
   }
 
+  /**
+   * Gets the parameters defined for the where section.
+   * 
+   * @return Vector with the parameters.
+   */
   public Vector<QueryParameterStructure> getWhereParameters() {
     return this.paramWhere;
   }
 
+  /**
+   * Adds a new parameter to the order by section of the query.
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the name of the field.
+   */
   public void addOrderByParameter(String _parameter, String _fieldName) {
     if (this.paramOrderBy == null) this.paramOrderBy = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "ORDERBY");
     paramOrderBy.addElement(aux);
   }
 
+  /**
+   * Gets the parameters for the order by section.
+   * 
+   * @return Vector with the parameters. 
+   */
   public Vector<QueryParameterStructure> getOrderByParameters() {
     return this.paramOrderBy;
   }
 
+  /**
+   * Setter for the parameters value.
+   * 
+   * @param name: The name of the field defined for the parameter.
+   * @param value: The value for this parameter.
+   * @throws Exception
+   */
   public void setParameter(String name, String value) throws Exception {
     if (name==null || name.equals("")) throw new Exception("Invalid parameter name");
     if (this.parameters==null) this.parameters = new Hashtable<String, String>();
@@ -241,12 +459,23 @@ public class ComboTableData {
     else this.parameters.put(name.toUpperCase(), value);
   }
 
+  /**
+   * Getter for the parameters value.
+   * 
+   * @param name: The name of the field defined for the parameter.
+   * @return String with the value.
+   */
   public String getParameter(String name) {
     if (name==null || name.equals("")) return "";
     else if (this.parameters==null) return "";
     else return this.parameters.get(name.toUpperCase());
   }
 
+  /**
+   * Gets the values for all of the defined parameters in the query.
+   * 
+   * @return Vector with the values.
+   */
   public Vector<String> getParameters() {
     Vector<String> result = new Vector<String>();
     if (log4j.isDebugEnabled()) log4j.debug("Obtaining parameters");
@@ -290,14 +519,29 @@ public class ComboTableData {
     return result;
   }
 
+  /**
+   * Setter for the table alias index.
+   * 
+   * @param _index: Integer with the new index.
+   */
   public void setIndex(int _index) {
     this.index = _index;
   }
 
+  /**
+   * Getter for the table alias index.
+   * 
+   * @return Integer with the index.
+   */
   public int getIndex() {
     return this.index;
   }
 
+  /**
+   * Main method to build the query.
+   * 
+   * @throws Exception
+   */
   public void generateSQL() throws Exception {
     if (getPool()==null) throw new Exception("No pool defined for database connection");
     else if (getReferenceType().equals("")) throw new Exception("No reference type defined");
@@ -305,6 +549,14 @@ public class ComboTableData {
     identifier("", null);
   }
 
+  /**
+   * Auxiliar method to build the query for list types.
+   * 
+   * @param tableName: Name of the table
+   * @param fieldName: Name of the field.
+   * @param referenceValue: Id of the reference value.
+   * @throws Exception
+   */
   private void setListQuery(String tableName, String fieldName, String referenceValue) throws Exception {
     int myIndex = this.index++;
     addSelectField("td" + myIndex + ".value", "id");
@@ -330,6 +582,14 @@ public class ComboTableData {
     addOrderByField("(CASE WHEN td_trl" + myIndex + ".name IS NULL THEN td" + myIndex + ".name ELSE td_trl" + myIndex + ".name END)");
   }
 
+  /**
+   * Auxiliar method to build the query for the Table type
+   * 
+   * @param tableName: Name of the table
+   * @param fieldName: Name of the field.
+   * @param referenceValue: Id of the reference value.
+   * @throws Exception
+   */
   private void setTableQuery(String tableName, String fieldName, String referenceValue) throws Exception {
     int myIndex = this.index++;
     ComboTableQueryData trd[] = ComboTableQueryData.selectRefTable(getPool(), ((referenceValue!=null && !referenceValue.equals(""))?referenceValue:getObjectReference()));
@@ -370,6 +630,14 @@ public class ComboTableData {
     addOrderByField(orderByAux);
   }
 
+  /**
+   * Auxiliar method to build the query for the TableDir type.
+   * 
+   * @param tableName: Name of the table.
+   * @param fieldName: Name of the field.
+   * @param parentFieldName: Real name of the parent column.
+   * @throws Exception
+   */
   private void setTableDirQuery(String tableName, String fieldName, String parentFieldName) throws Exception {
     int myIndex = this.index++;
     String name = ((fieldName!=null && !fieldName.equals(""))?fieldName:getObjectName());
@@ -396,6 +664,12 @@ public class ComboTableData {
     addOrderByField("2");
   }
   
+  /**
+   * Method to fix the names of the fields. Searchs all the fields in the where clause 
+   * and order by clause to change the names with correct aliases. This intends to fix 
+   * the problem of the names in the whereclauses, filterclauses and orderbyclauses fields 
+   * of the tab's table, where the user doesn´t know the alias of the referenced field.
+   */
   public void parseNames() {
     Vector<QueryFieldStructure> tables = getFromFields();
     if (tables==null || tables.size()==0) return;
@@ -439,6 +713,14 @@ public class ComboTableData {
     }
   }
 
+  /**
+   * Auxiliar method to make a replace ignoring the case.
+   * 
+   * @param data: String with the text.
+   * @param replaceWhat: The string to search.
+   * @param replaceWith: The new string to replace with.
+   * @return String with the text replaced.
+   */
   private String replaceIgnoreCase(String data, String replaceWhat, String replaceWith) {
     if (data==null || data.equals("")) return "";
     if (log4j.isDebugEnabled()) log4j.debug("parsing data: " + data + " - replace: " + replaceWhat + " - with: " + replaceWith);
@@ -453,6 +735,13 @@ public class ComboTableData {
     return text.toString();
   }
 
+  /**
+   * Parse the validation string searching the @ elements and 
+   * replacing them with the correct values, adding the needed
+   * parameters.
+   * 
+   * @throws Exception
+   */
   private void parseValidation() throws Exception {
     if (getValidation()==null || getValidation().equals("")) return;
     if (log4j.isDebugEnabled()) log4j.debug("Validation id: " + getValidation());
@@ -463,6 +752,13 @@ public class ComboTableData {
     if (log4j.isDebugEnabled()) log4j.debug("Validation parsed: " + val);
   }
 
+  /**
+   * Auxiliar method to replace the variable sections of the clauses.
+   * 
+   * @param context: String with the variable.
+   * @param type: String with the type of the clause (WHERE, ORDER...)
+   * @return String with the text replaced.
+   */
   public String parseContext(String context, String type) {
     if (context==null || context.equals("")) return "";
     StringBuffer strOut = new StringBuffer();
@@ -494,6 +790,13 @@ public class ComboTableData {
     return strOut.toString().replace("'?'","?");
   }
 
+  /**
+   * Support method for the generateSQL method, to build the query.
+   * 
+   * @param tableName: String with the name of the table.
+   * @param field: String with the name of the field.
+   * @throws Exception
+   */
   public void identifier(String tableName, FieldProvider field) throws Exception {
     String reference;
     if (field==null) reference = getReferenceType();
@@ -531,6 +834,15 @@ public class ComboTableData {
     }
   }
 
+  /**
+   * Checks if the table has a translated table, making the joins to the translated one.
+   * 
+   * @param tableName: Name of the table.
+   * @param field: Name of the field.
+   * @param reference: Id of the reference.
+   * @return Boolean to indicate if the translated table has been found.
+   * @throws Exception
+   */
   private boolean checkTableTranslation(String tableName, FieldProvider field, String reference) throws Exception {
     if (tableName==null || tableName.equals("") || field==null) return false;
     ComboTableQueryData[] data = ComboTableQueryData.selectTranslatedColumn(getPool(), field.getField("tablename"), field.getField("name"));
@@ -542,6 +854,14 @@ public class ComboTableData {
     return true;
   }
   
+  /**
+   * Formating method to add the correct functions to the fields for the presentation.
+   * It depends on the type of field (DATE, NUMBER...).
+   * 
+   * @param field: Name of the field.
+   * @param reference: Id of the reference type.
+   * @return String with the format applied.
+   */
   private String formatField(String field, String reference) {
     String result = "";
     if (field==null || field.length()==0) return "";
