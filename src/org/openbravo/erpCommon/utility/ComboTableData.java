@@ -894,6 +894,14 @@ public class ComboTableData {
     return result;
   }
 
+  /**
+   * Returns the generated query.
+   * 
+   * @param onlyId: Boolean to indicate if the select clause must
+   *                have only the key field.
+   * @param discard: Array of field groups to remove from the query.
+   * @return String with the query.
+   */
   public String getQuery(boolean onlyId, String[] discard) {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = getSelectFields();
@@ -978,6 +986,13 @@ public class ComboTableData {
     return text.toString();
   }
 
+  /**
+   * Auxiliar method to search a value in an array.
+   * 
+   * @param data: Array with the data.
+   * @param element: String to search in the array.
+   * @return Boolean to indicate if the element was found in the array.
+   */
   private boolean isInArray(String[] data, String element) {
     if (data==null || data.length==0 || element==null || element.equals("")) return false;
     for (int i=0; i<data.length;i++) {
@@ -986,6 +1001,14 @@ public class ComboTableData {
     return false;
   }
 
+  /**
+   * Fills the query parameter's values.
+   * 
+   * @param st: PreparedStatement object.
+   * @param iParameter: Index of the parameter.
+   * @param discard: Array with the groups to discard.
+   * @return Integer with the next parameter's index.
+   */
   private int setSQLParameters(PreparedStatement st, int iParameter, String[] discard) {
     Vector<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux!=null) {
@@ -1034,6 +1057,15 @@ public class ComboTableData {
     return iParameter;
   }
 
+  /**
+   * Executes the query in the database and returns the data.
+   * 
+   * @param includeActual: Boolean that indicates if the actual selected 
+   *                       value must be included in the result, even if it 
+   *                       doesn´t exists in the new query.
+   * @return Array of FieldProvider with the data.
+   * @throws Exception
+   */
   public FieldProvider[] select(boolean includeActual) throws Exception {
     String strSql = getQuery(false, null);
     if (log4j.isDebugEnabled()) log4j.debug("SQL: " + strSql);
