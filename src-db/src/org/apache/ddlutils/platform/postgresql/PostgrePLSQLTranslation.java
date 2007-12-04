@@ -123,9 +123,6 @@ public class PostgrePLSQLTranslation extends CombinedTranslation {
           }
         }
         
-        //Added in order to avoid error invoking DBA_RECOMPILE method. It should be eliminated. 
-        append(new ReplaceStrTranslation("DBA_RECOMPILE(", "PERFORM DBA_RECOMPILE("));
-        
         // Miscellaneous translations
         append(new ChangeFunction2Translation());
         
