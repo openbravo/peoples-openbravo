@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_ALERTRECIPIENT_TRG">
     <trigger name="AD_ALERTRECIPIENT_TRG" table="AD_ALERTRECIPIENT" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
     /*************************************************************************
@@ -34,6 +35,7 @@
      end if;
    END IF;
 END AD_AlertRecipient_Trg 
-]]></body>
+
+</body>
     </trigger>
   </database>

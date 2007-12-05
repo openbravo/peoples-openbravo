@@ -33,8 +33,8 @@
         <unique-column name="NAME"/>
       </unique>
       <check name="ADSEQ_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADSEQ_ISAUTOSEQUENCE_CHECK" condition="IsAutoSequence in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADSEQ_ISAUDITED_CHECK" condition="IsAudited in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADSEQ_ISAUTOSEQUENCE_CHECK" condition="IsAutoSequence in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADSEQ_ISTABLEID_CHECK" condition="IsTableID in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADSEQ_STARTNEWYEAR_CHECK" condition="StartNewYear in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

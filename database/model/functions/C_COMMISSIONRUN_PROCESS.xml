@@ -2,15 +2,14 @@
   <database name="FUNCTION C_COMMISSIONRUN_PROCESS">
     <function name="C_COMMISSIONRUN_PROCESS" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
- /******************************************************************************
+      <body>/******************************************************************************
   * The contents of this file are subject to the   Compiere License  Version 1.1
   * ("License"); You may not use this file except in compliance with the License
   * You may obtain a copy of the License at http://www.compiere.org/license.html
   * Software distributed under the License is distributed on an  "AS IS"  basis,
   * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
   * the specific language governing rights and limitations under the License.
-  * The Original Code is                  Compiere  ERP &  Business Solution
+  * The Original Code is                  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
   * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
@@ -201,7 +200,7 @@ BEGIN
  END LOOP;--FINISH_PROCESS
 
 
---<<FINISH_PROCESS>>
+--&lt;&lt;FINISH_PROCESS&gt;&gt;
  --  Update AD_PInstance
  DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message);
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message);
@@ -217,6 +216,7 @@ EXCEPTION
         RETURN;
 
 END C_Commissionrun_Process
-]]></body>
+
+</body>
     </function>
   </database>

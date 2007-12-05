@@ -5,9 +5,9 @@
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="Sysdate" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
       <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SysDate" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_DP_MANAGEMENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="STATUS_FROM" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false"/>
@@ -20,11 +20,11 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CDPMANAGEMENTLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DEBT_PAYMENT" name="DEBTPAYMENT_DPMANAGEMENTLINE">
-        <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_DP_MANAGEMENT" name="CDPMANAGEMENT_CDPMANAGEMENTLIN">
         <reference local="C_DP_MANAGEMENT_ID" foreign="C_DP_MANAGEMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DEBT_PAYMENT" name="DEBTPAYMENT_DPMANAGEMENTLINE">
+        <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
       </foreign-key>
     </table>
   </database>

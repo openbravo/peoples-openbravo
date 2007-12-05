@@ -38,9 +38,9 @@
       <foreign-key foreignTable="MA_WORKREQUIREMENT" name="MA_WORKREQUIREMENT_MAWRPHASE">
         <reference local="MA_WORKREQUIREMENT_ID" foreign="MA_WORKREQUIREMENT_ID"/>
       </foreign-key>
-      <check name="MA_WRPHASE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MA_WRPHASE_CLOSED_CHECK" condition="Closed in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MA_WRPHASE_GROUPUSE_CHECK" condition="GroupUse in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_WRPHASE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MA_WRPHASE_NOQTY_CHECK" condition="Noqty in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MA_WRPHASE_OUTSOURCED_CHECK" condition="outsourced in (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>

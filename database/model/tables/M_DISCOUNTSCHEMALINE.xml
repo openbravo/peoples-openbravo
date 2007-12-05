@@ -49,11 +49,11 @@
       <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTSCHEMA_MDSLINE" onDelete="cascade">
         <reference local="M_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MDISCOUNTSLINE" onDelete="setnull">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCATEGORY_MDISCOUNTSLINE">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MDISCOUNTSLINE" onDelete="setnull">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <check name="MDISCHLN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

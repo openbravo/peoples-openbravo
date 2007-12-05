@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_CASHBOOK_TRG">
     <trigger name="C_CASHBOOK_TRG" table="C_CASHBOOK" fires="after" insert="true" update="false" delete="false" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
     /*************************************************************************
@@ -13,7 +14,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &  Business Solution
+    * The Original Code is  Compiere  ERP &amp;  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -63,6 +64,7 @@ BEGIN
       ;
   END LOOP;
 END C_Cashbook_Trg 
-]]></body>
+
+</body>
     </trigger>
   </database>

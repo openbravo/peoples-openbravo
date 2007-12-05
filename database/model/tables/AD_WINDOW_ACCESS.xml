@@ -27,7 +27,7 @@
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_WINDOW_ID"/>
       </index>
-      <check name="ADWINDOWACCESS_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADWINDOWACCESS_EADWRITE_CHECK" condition="IsReadWrite in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADWINDOWACCESS_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

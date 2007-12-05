@@ -2,8 +2,7 @@
   <database name="FUNCTION M_INVENTORY_POST">
     <function name="M_INVENTORY_POST" type="NULL">
       <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[                                
-  /*************************************************************************
+      <body>/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -12,7 +11,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -118,7 +117,7 @@
       AND P.M_ATTRIBUTESET_ID IS NOT NULL
       AND M.M_ATTRIBUTESETINSTANCE_ID IS NULL
       AND M.M_Inventory_ID=v_Record_ID;
-    IF v_Count<>0 THEN
+    IF v_Count&lt;&gt;0 THEN
       RAISE_APPLICATION_ERROR(-20000, 'Inline'||v_line||' '||'@productWithoutAttributeSet@') ;
     END IF;
   END IF;--PROCESS_ERROR
@@ -132,13 +131,13 @@
 		 FROM M_Inventoryline il
 		 WHERE il.M_INVENTORY_ID = v_Record_ID
 		 GROUP BY il.M_Product_ID, COALESCE(il.M_AttributeSetInstance_ID, 0), COALESCE(il.M_Product_UOM_ID, 0), il.M_Locator_ID
-		 HAVING COUNT(*)>1) A;
-	IF v_Aux <>0 THEN
+		 HAVING COUNT(*)&gt;1) A;
+	IF v_Aux &lt;&gt;0 THEN
 	   FOR Cur_Inventorylines IN (SELECT M_Product_ID, COALESCE(M_AttributeSetInstance_ID, 0) AS Atributte, COALESCE(M_Product_UOM_ID, 0) as ProductUOM, M_Locator_ID
 	   	   					  	  FROM M_Inventoryline
 								  WHERE M_Inventory_Id=v_Record_ID
 								  GROUP BY M_Product_ID, COALESCE(M_AttributeSetInstance_ID, 0), COALESCE(M_Product_UOM_ID, 0), M_Locator_ID
-								  HAVING COUNT(*)>1) LOOP
+								  HAVING COUNT(*)&gt;1) LOOP
 				FOR Cur_Lines IN (SELECT line
 							  	  FROM M_Inventoryline
 								  WHERE M_PRODUCT_ID = Cur_Inventorylines.M_Product_ID
@@ -199,13 +198,13 @@
     v_Result:=1; -- success
   END IF;--PROCESS_ERROR
   -- End Processing --------------------------------------------------------
-  --<<END_PROCESSING>>
+  --&lt;&lt;END_PROCESSING&gt;&gt;
   IF(NOT PROCESS_ERROR AND NOT END_PROCESS) THEN
     v_ResultStr:='UnLockingInventory';
     UPDATE M_Inventory  SET Processed='Y'  WHERE M_Inventory_ID=v_Record_ID;
     -- Commented by cromero 19102006 COMMIT;
   END IF;--
-  --<<END_PROCESS>>
+  --&lt;&lt;END_PROCESS&gt;&gt;
   IF(NOT PROCESS_ERROR) THEN
     v_ResultStr:='UnLockingInventory';
     UPDATE M_Inventory
@@ -219,7 +218,7 @@
     AD_UPDATE_PINSTANCE(PInstance_ID, v_User, 'N', v_Result, v_Message) ;
     RETURN;
   END IF;--PROCESS_ERROR
-  --<<PROCESS_ERROR>>
+  --&lt;&lt;PROCESS_ERROR&gt;&gt;
   --To be deprecated because now we always use raise_aplication_error. Added by Psarobe 13062007
   v_ResultStr:='UnLockingInventory';
   UPDATE M_Inventory
@@ -250,6 +249,7 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END M_Inventory_Post 
-]]></body>
+
+</body>
     </function>
   </database>

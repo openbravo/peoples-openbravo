@@ -3,8 +3,7 @@
     <function name="C_INVOICE_DISCOUNT_OLD" type="NUMERIC">
       <parameter name="p_C_Invoice_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_PayDate" type="TIMESTAMP" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -61,6 +60,7 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN NULL;
-END C_Invoice_Discount_Old]]></body>
+END C_Invoice_Discount_Old
+</body>
     </function>
   </database>

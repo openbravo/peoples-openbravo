@@ -2,8 +2,7 @@
   <database name="FUNCTION MA_PRODUCTION_COST_GENERATE">
     <function name="MA_PRODUCTION_COST_GENERATE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[                                
-/*************************************************************************
+      <body>/*************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -90,11 +89,11 @@ BEGIN
         Ma_Production_Cost(Cur_Production.M_Production_ID, p_User, v_Message);
       END LOOP;
 
---<<FINISH_PROCESS>>
+--&lt;&lt;FINISH_PROCESS&gt;&gt;
       --  Update AD_PInstance
        IF (v_Message IS NOT NULL) THEN
         v_Result := 2;
-        v_Message := '@Success@<br>' || v_Message;
+        v_Message := '@Success@&lt;br&gt;' || v_Message;
       END IF;
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message);
       Ad_Update_Pinstance(p_PInstance_ID, p_User, 'N', v_Result, v_Message);
@@ -109,6 +108,7 @@ EXCEPTION
     Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr);
     RETURN;
 
-END Ma_Production_Cost_Generate]]></body>
+END Ma_Production_Cost_Generate
+</body>
     </function>
   </database>

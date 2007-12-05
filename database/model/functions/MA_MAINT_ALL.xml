@@ -2,8 +2,7 @@
   <database name="FUNCTION MA_MAINT_ALL">
     <function name="MA_MAINT_ALL" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -90,13 +89,13 @@
       DBMS_OUTPUT.PUT_LINE('  MA_Maintenance_ID=' || Cur_Maintenance.MA_Maintenance_ID) ;
       MA_Maintenance_Schedule(NULL, Cur_Maintenance.MA_Maintenance_ID, v_InitDate, v_EndDate, v_Client_ID, v_Org_ID, v_AD_User_ID) ;
     END LOOP;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
       AD_UPDATE_PINSTANCE(p_PInstance_ID, v_AD_User_ID, 'N', v_Result, v_Message) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--<<MA_Maintenance escheduling finished>> ' || v_Message) ;
+      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_Maintenance escheduling finished&gt;&gt; ' || v_Message) ;
     END IF;
     RETURN;
   END; --BODY
@@ -130,6 +129,7 @@ WHEN OTHERS THEN
   END IF;
   RETURN;
 END MA_Maint_All
-]]></body>
+
+</body>
     </function>
   </database>

@@ -29,14 +29,14 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMAINT_SCHEDULED">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_MACHINE" name="MAMACHINE_MAMAINT_SCHEDULED">
-        <reference local="MA_MACHINE_ID" foreign="MA_MACHINE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MA_MACHINE_TYPE" name="MACHINETYPE_MAMAINT_SCHEDULED">
         <reference local="MA_MACHINE_TYPE_ID" foreign="MA_MACHINE_TYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_MAINTENANCE" name="MAINTENANCE_MAMAINT_SCHEDULED">
         <reference local="MA_MAINTENANCE_ID" foreign="MA_MAINTENANCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_MACHINE" name="MAMACHINE_MAMAINT_SCHEDULED">
+        <reference local="MA_MACHINE_ID" foreign="MA_MACHINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_MAINT_OPERATION" name="MAMAINTOPERATIONMAINTSCHEDULED">
         <reference local="MA_MAINT_OPERATION_ID" foreign="MA_MAINT_OPERATION_ID"/>

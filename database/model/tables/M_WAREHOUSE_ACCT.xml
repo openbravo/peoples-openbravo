@@ -23,6 +23,9 @@
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_MWAREHOUSEACCT" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_WAREHOUSE" name="M_WAREHOUSE_WAREHOUSE_ACCT" onDelete="cascade">
+        <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_WDIFFERENCES_MWAREHOUSE">
         <reference local="W_DIFFERENCES_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
@@ -34,9 +37,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_WREVALUATION_MWAREHOUSE">
         <reference local="W_REVALUATION_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_WAREHOUSE" name="M_WAREHOUSE_WAREHOUSE_ACCT" onDelete="cascade">
-        <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
       <check name="M_WAREHOUSE_ACC_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

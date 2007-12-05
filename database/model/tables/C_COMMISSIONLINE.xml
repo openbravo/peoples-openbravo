@@ -42,17 +42,17 @@
       <foreign-key foreignTable="C_SALESREGION" name="CSALESREGION_CCOMMISSIONLINE">
         <reference local="C_SALESREGION_ID" foreign="C_SALESREGION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CCOMMISSIONLINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODUCTCAT_CCOMMISSIONLINE">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CCOMMISSIONLINE">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <index name="C_COMMISSIONLINE_COMMISSION" unique="false">
         <index-column name="C_COMMISSION_ID"/>
       </index>
-      <check name="C_COMMISSIONLIN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CCOMMISL_ISPOSITIVEONLY_CHECK" condition="IsPositiveOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_COMMISSIONLIN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CCOMNISL_COMMISRDERS_CHECK" condition="CommissionOrders in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

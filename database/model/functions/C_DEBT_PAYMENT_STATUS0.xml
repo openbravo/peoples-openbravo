@@ -2,8 +2,7 @@
   <database name="FUNCTION C_DEBT_PAYMENT_STATUS0">
     <function name="C_DEBT_PAYMENT_STATUS0" type="CHAR">
       <parameter name="p_Debt_Payment_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -35,6 +34,7 @@ BEGIN
   WHERE C_Debt_Payment_ID = p_Debt_Payment_ID ;
 
   RETURN v_Display;
-END C_DEBT_PAYMENT_STATUS0]]></body>
+END C_DEBT_PAYMENT_STATUS0
+</body>
     </function>
   </database>

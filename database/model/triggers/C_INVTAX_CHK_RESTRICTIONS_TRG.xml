@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_INVTAX_CHK_RESTRICTIONS_TRG">
     <trigger name="C_INVTAX_CHK_RESTRICTIONS_TRG" table="C_INVOICETAX" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
 /*************************************************************************
@@ -33,9 +34,9 @@ BEGIN
   FROM C_INVOICE
   WHERE C_INVOICE_ID=v_C_INVOICE_ID;
   IF UPDATING THEN
-    IF(v_Processed='Y' AND ((COALESCE(:old.TAXBASEAMT, 0) <> COALESCE(:new.TAXBASEAMT, 0))
-   OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0))
-   OR(COALESCE(:old.C_TAX_ID, 0) <> COALESCE(:new.C_TAX_ID, 0))))
+    IF(v_Processed='Y' AND ((COALESCE(:old.TAXBASEAMT, 0) &lt;&gt; COALESCE(:new.TAXBASEAMT, 0))
+   OR(COALESCE(:old.TAXAMT, 0) &lt;&gt; COALESCE(:new.TAXAMT, 0))
+   OR(COALESCE(:old.C_TAX_ID, 0) &lt;&gt; COALESCE(:new.C_TAX_ID, 0))))
   THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted - ' || :old.TAXBASEAMT || ' - ' ||:new.TAXBASEAMT || ' - ' ||:old.TAXAMT || ' - ' || :new.TAXAMT || ' - ' || :old.C_TAX_ID || ' - ' ||:new.C_TAX_ID) ;
     END IF;
@@ -44,6 +45,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
 END C_InvTax_Chk_Restrictions_Trg 
-]]></body>
+
+</body>
     </trigger>
   </database>

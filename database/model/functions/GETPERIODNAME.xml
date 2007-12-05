@@ -3,8 +3,7 @@
     <function name="GETPERIODNAME" type="NVARCHAR">
       <parameter name="p_PeriodNo" type="NUMERIC" mode="in"/>
       <parameter name="p_Year_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -29,6 +28,7 @@ BEGIN
   WHERE C_YEAR_ID=p_Year_ID
     AND periodno=p_PeriodNo;
   RETURN v_Period;
-END GetPeriodName]]></body>
+END GetPeriodName
+</body>
     </function>
   </database>

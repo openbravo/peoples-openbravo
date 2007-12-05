@@ -29,25 +29,25 @@
       <column name="ISDEFAULTACCT" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="SQL_RECORD_IDENTIFIER" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false"/>
       <column name="DEVELOPMENTSTATUS" primaryKey="false" required="false" type="VARCHAR" size="2" default="RE" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="TABLECLIENT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="TABLEORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_VAL_RULE" name="AD_VALRULE_TABLE">
         <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TABLE" onDelete="setnull">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="TABLECLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="TABLEORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <unique name="AD_TABLE_NAME">
         <unique-column name="NAME"/>
       </unique>
       <check name="ADTABLE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTABLE_ISVIEW_CHECK" condition="IsView in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTABLE_ISSECUR_YENABLED_CHECK" condition="IsSecurityEnabled in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADTABLE_ISDELETEABLE_CHECK" condition="IsDeleteable in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADTABLE_ISHIGHVOLUME_CHECK" condition="IsHighVolume in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTABLE_ISSECUR_YENABLED_CHECK" condition="IsSecurityEnabled in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTABLE_ISVIEW_CHECK" condition="IsView in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

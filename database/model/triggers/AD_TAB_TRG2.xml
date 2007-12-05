@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_TAB_TRG2">
     <trigger name="AD_TAB_TRG2" table="AD_TAB" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
 /*************************************************************************
@@ -27,7 +28,7 @@
  v_IsActive      CHAR(1) := 'Y';
 BEGIN
   IF (UPDATING) THEN
-    IF NOT((COALESCE(:old.NAME,'.')<>COALESCE(:NEW.NAME,'.') OR COALESCE(:old.IsActive,'.')<>COALESCE(:NEW.IsActive,'.'))) THEN
+    IF NOT((COALESCE(:old.NAME,'.')&lt;&gt;COALESCE(:NEW.NAME,'.') OR COALESCE(:old.IsActive,'.')&lt;&gt;COALESCE(:NEW.IsActive,'.'))) THEN
       RETURN;
     END IF;
   END IF;
@@ -42,7 +43,7 @@ BEGIN
   FROM AD_WINDOW
   WHERE AD_WINDOW_ID = :NEW.AD_WINDOW_ID;
 
-  IF v_IsActive <> 'Y' THEN
+  IF v_IsActive &lt;&gt; 'Y' THEN
       v_IsActive := :NEW.ISACTIVE;
   END IF;
   SELECT AD_MAPPING_FORMAT(TO_CHAR(W.NAME)), AD_MAPPING_FORMAT(TO_CHAR(:new.NAME))
@@ -88,6 +89,7 @@ BEGIN
  END IF;
 
 END AD_Tab_Trg2
-]]></body>
+
+</body>
     </trigger>
   </database>

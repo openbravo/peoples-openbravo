@@ -45,13 +45,13 @@
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MINVENTORYLINE">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
-      <index name="M_INVENTORYLINE_PRODUCT" unique="false">
-        <index-column name="M_PRODUCT_ID"/>
-      </index>
       <index name="M_INVENTORYLINE_INVENTORY" unique="false">
         <index-column name="M_INVENTORY_ID"/>
       </index>
-      <check name="M_INVENTORYLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <index name="M_INVENTORYLINE_PRODUCT" unique="false">
+        <index-column name="M_PRODUCT_ID"/>
+      </index>
       <check name="M_INVENTORYLINE" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
+      <check name="M_INVENTORYLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

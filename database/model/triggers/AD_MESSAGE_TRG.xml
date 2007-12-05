@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_MESSAGE_TRG">
     <trigger name="AD_MESSAGE_TRG" table="AD_MESSAGE" fires="after" insert="true" update="true" delete="false" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
 /*************************************************************************
@@ -13,7 +14,7 @@
 * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 * implied. See the License for the specific language governing rights
 * and limitations under the License.
-* The Original Code is  Compiere  ERP &  Business Solution
+* The Original Code is  Compiere  ERP &amp;  Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -47,8 +48,8 @@ BEGIN
 --  synchronize name,...
   IF UPDATING
   THEN
-    IF (   COALESCE (:OLD.MsgText, '.') <> COALESCE (:NEW.MsgText, '.')
-        OR COALESCE (:OLD.MsgTip, '.') <> COALESCE (:NEW.MsgTip, '.')
+    IF (   COALESCE (:OLD.MsgText, '.') &lt;&gt; COALESCE (:NEW.MsgText, '.')
+        OR COALESCE (:OLD.MsgTip, '.') &lt;&gt; COALESCE (:NEW.MsgTip, '.')
        )
     THEN
       UPDATE AD_Message_Trl
@@ -60,6 +61,7 @@ BEGIN
 -- Updating
 END AD_Message_Trg
 
-]]></body>
+
+</body>
     </trigger>
   </database>

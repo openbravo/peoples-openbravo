@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_C_INVOICE_PRODMONTH">
-    <view name="RV_C_INVOICE_PRODMONTH"><![CDATA[
-SELECT il.AD_Client_ID, il.AD_Org_ID, il.M_Product_Category_ID,
+    <view name="RV_C_INVOICE_PRODMONTH" updatable="false">SELECT il.AD_Client_ID, il.AD_Org_ID, il.M_Product_Category_ID,
   TRUNC(il.DateInvoiced, 'MM') AS DateInvoiced,
   SUM(il.LineNetAmt) AS LineNetAmt,
   SUM(il.LineListAmt) AS LineListAmt,
@@ -15,6 +14,5 @@ SELECT il.AD_Client_ID, il.AD_Org_ID, il.M_Product_Category_ID,
   SUM(QtyInvoiced) AS QtyInvoiced
 FROM RV_C_InvoiceLine il
 GROUP BY il.AD_Client_ID, il.AD_Org_ID, il.M_Product_Category_ID,
-  TRUNC(il.DateInvoiced, 'MM')
-]]></view>
+  TRUNC(il.DateInvoiced, 'MM')</view>
   </database>

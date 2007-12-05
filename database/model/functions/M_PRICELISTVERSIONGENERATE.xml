@@ -2,8 +2,7 @@
   <database name="FUNCTION M_PRICELISTVERSIONGENERATE">
     <function name="M_PRICELISTVERSIONGENERATE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[                                
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -77,7 +76,7 @@
     INTO v_NameFrom
     FROM M_PRICELIST_VERSION
     WHERE M_PriceList_Version_ID=v_M_PriceList_Version_ID;
-    WHILE(v_Count<=LENGTH(v_NameFrom) AND v_Count<=LENGTH(v_Nameto)) AND(SUBSTR(v_NameFrom, v_Count, 1)=SUBSTR(v_NameTo, v_Count, 1))
+    WHILE(v_Count&lt;=LENGTH(v_NameFrom) AND v_Count&lt;=LENGTH(v_Nameto)) AND(SUBSTR(v_NameFrom, v_Count, 1)=SUBSTR(v_NameTo, v_Count, 1))
     LOOP
       v_Count:=v_Count + 1;
     END LOOP;
@@ -96,8 +95,8 @@
        'N', v_Record_ID
     FROM M_PRICELIST_VERSION
     WHERE M_PRICELIST_VERSION_BASE_ID=v_M_PriceList_Version_ID
-      AND M_PRICELIST_VERSION_ID<>v_Record_ID;
-    --<<FINISH_PROCESS>>
+      AND M_PRICELIST_VERSION_ID&lt;&gt;v_Record_ID;
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -110,6 +109,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END M_Pricelistversiongenerate]]></body>
+END M_Pricelistversiongenerate
+</body>
     </function>
   </database>

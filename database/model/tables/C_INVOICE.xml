@@ -57,11 +57,11 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CINVOICE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_CINVOICE">
-        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CINVOICE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_CINVOICE">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSER_CINVOICE">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
@@ -105,14 +105,14 @@
       <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_CINVOICE">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
+      <index name="C_INVOICE_BPARTNER" unique="false">
+        <index-column name="C_BPARTNER_ID"/>
+      </index>
       <index name="C_INVOICE_CLIENT_ORG_DATE_DOC" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="AD_ORG_ID"/>
         <index-column name="DATEINVOICED"/>
         <index-column name="DOCUMENTNO"/>
-      </index>
-      <index name="C_INVOICE_BPARTNER" unique="false">
-        <index-column name="C_BPARTNER_ID"/>
       </index>
       <index name="C_INVOICE_DOCNO" unique="false">
         <index-column name="DOCUMENTNO"/>
@@ -120,16 +120,16 @@
       <index name="C_INVOICE_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="C_INVOICE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_INVOICE_ISSOTRX_CHECK" condition="IsSOTrx in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_INVOICE_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_INVOICE_ISAPPROVED_CHECK" condition="IsApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_INVOICE_ISTRANSFERRED_CHECK" condition="IsTransferred in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_INVOICE_ISPRINTED_CHECK" condition="IsPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CINV_ISDISCOUNTPRINT_CHECK" condition="IsDiscountPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_INVOICE_ISTAXINCLUDED_CHECK" condition="IsTaxIncluded in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_INVOICE_ISPAID_CHECK" condition="IsPaid in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="C_INVOICE_CREATEFROM_CHECK" condition="CreateFrom in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="C_INVOICE_GENERATETO_CHECK" condition="GenerateTo in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INVOICE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INVOICE_ISAPPROVED_CHECK" condition="IsApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INVOICE_ISPAID_CHECK" condition="IsPaid in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INVOICE_ISPRINTED_CHECK" condition="IsPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INVOICE_ISSOTRX_CHECK" condition="IsSOTrx in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INVOICE_ISTAXINCLUDED_CHECK" condition="IsTaxIncluded in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INVOICE_ISTRANSFERRED_CHECK" condition="IsTransferred in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INVOICE_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

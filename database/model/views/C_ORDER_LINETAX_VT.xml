@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW C_ORDER_LINETAX_VT">
-    <view name="C_ORDER_LINETAX_VT"><![CDATA[
-SELECT ol.AD_Client_ID, ol.AD_Org_ID, ol.IsActive, ol.Created, ol.CreatedBy, ol.Updated, ol.UpdatedBy,
+    <view name="C_ORDER_LINETAX_VT" updatable="false">SELECT ol.AD_Client_ID, ol.AD_Org_ID, ol.IsActive, ol.Created, ol.CreatedBy, ol.Updated, ol.UpdatedBy,
   uom.AD_Language,
   ol.C_Order_ID, ol.C_OrderLine_ID, ol.C_Tax_ID,
   ol.Line,
@@ -12,7 +11,7 @@ SELECT ol.AD_Client_ID, ol.AD_Org_ID, ol.IsActive, ol.Created, ol.CreatedBy, ol.
     p.UPC, p.SKU, p.Value AS ProductValue,
   ra.Description AS ResourceDescription, -- forth line
   CASE WHEN i.IsDiscountPrinted='Y' THEN ol.PriceList END AS PriceList,
-  CASE WHEN i.IsDiscountPrinted='Y' AND ol.PriceList>ol.PriceActual THEN (ol.PriceList-ol.PriceActual)/ol.PriceList*100 END AS Discount,
+  CASE WHEN i.IsDiscountPrinted='Y' AND ol.PriceList&gt;ol.PriceActual THEN (ol.PriceList-ol.PriceActual)/ol.PriceList*100 END AS Discount,
   ol.PriceActual, ol.LineNetAmt
 FROM  C_OrderLine ol
   INNER JOIN C_UOM_Trl uom ON (ol.C_UOM_ID=uom.C_UOM_ID)
@@ -58,6 +57,5 @@ SELECT ot.AD_Client_ID, ot.AD_Org_ID, ot.IsActive, ot.Created, ot.CreatedBy, ot.
   null,null, ot.TaxBaseAmt, ot.TaxAmt
 FROM C_OrderTax ot
   INNER JOIN C_Tax t ON (ot.C_Tax_ID=t.C_Tax_ID), AD_Language l
-WHERE l.IsBaseLanguage='N' AND l.IsSystemLanguage='Y'
-]]></view>
+WHERE l.IsBaseLanguage='N' AND l.IsSystemLanguage='Y'</view>
   </database>

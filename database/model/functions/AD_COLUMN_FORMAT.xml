@@ -4,8 +4,7 @@
       <parameter name="p_ColumnName" type="VARCHAR" mode="in"/>
       <parameter name="p_Reference_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_IsData" type="CHAR" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -45,6 +44,7 @@
 EXCEPTION
   WHEN OTHERS THEN
     RETURN v_Column;
-END AD_COLUMN_FORMAT]]></body>
+END AD_COLUMN_FORMAT
+</body>
     </function>
   </database>

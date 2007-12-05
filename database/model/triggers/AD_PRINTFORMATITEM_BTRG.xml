@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_PRINTFORMATITEM_BTRG">
     <trigger name="AD_PRINTFORMATITEM_BTRG" table="AD_PRINTFORMATITEM" fires="before" insert="true" update="true" delete="false" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
 BEGIN
@@ -14,7 +15,7 @@ BEGIN
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &  Business Solution
+    * The Original Code is  Compiere  ERP &amp;  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -45,6 +46,7 @@ BEGIN
   END IF;
 END AD_PrintFormatItem_BTrg
 
-]]></body>
+
+</body>
     </trigger>
   </database>

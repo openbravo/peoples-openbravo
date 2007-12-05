@@ -26,17 +26,17 @@
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_AASSETACCT">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVALIDCOMBINATION_AASSETACCT3">
-        <reference local="A_ACCUMDEPRECIATION_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVALIDCOMBINATION_AASSETACCT2">
-        <reference local="A_DISPOSAL_LOSS" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVALIDCOMBINATION_AASSETACCT">
         <reference local="A_DEPRECIATION_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVALIDCOMBINATION_AASSETACCT1">
         <reference local="A_DISPOSAL_GAIN" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVALIDCOMBINATION_AASSETACCT2">
+        <reference local="A_DISPOSAL_LOSS" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVALIDCOMBINATION_AASSETACCT3">
+        <reference local="A_ACCUMDEPRECIATION_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <check name="A_ASSET_ACCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

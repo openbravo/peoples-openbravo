@@ -28,14 +28,8 @@
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_MPRODCATACCT" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PPURCHASEPV_MPRODUCTCATEGOR">
-        <reference local="P_PURCHASEPRICEVARIANCE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PTDISCOUNTREC_MPRODUCTCATEG">
-        <reference local="P_TRADEDISCOUNTREC_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PTDISCOUNTGRANT_MPRODUCTCAT">
-        <reference local="P_TRADEDISCOUNTGRANT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCAT_MPRODCATACCT" onDelete="cascade">
+        <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PASSET_MPRODUCTCATEGORY">
         <reference local="P_ASSET_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
@@ -49,11 +43,17 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PINVOICEPV_MPRODUCTCATEGORY">
         <reference local="P_INVOICEPRICEVARIANCE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PPURCHASEPV_MPRODUCTCATEGOR">
+        <reference local="P_PURCHASEPRICEVARIANCE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PREVENUE_MPRODUCTCATEGORY">
         <reference local="P_REVENUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCAT_MPRODCATACCT" onDelete="cascade">
-        <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PTDISCOUNTGRANT_MPRODUCTCAT">
+        <reference local="P_TRADEDISCOUNTGRANT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PTDISCOUNTREC_MPRODUCTCATEG">
+        <reference local="P_TRADEDISCOUNTREC_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <check name="MPRODCATAC_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

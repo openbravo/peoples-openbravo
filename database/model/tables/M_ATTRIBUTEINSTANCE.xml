@@ -21,11 +21,11 @@
       <foreign-key foreignTable="M_ATTRIBUTE" name="MATTRIBUTE_MATTRIBUTEINST">
         <reference local="M_ATTRIBUTE_ID" foreign="M_ATTRIBUTE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST__MATTRINST" onDelete="cascade">
-        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_ATTRIBUTEVALUE" name="MATTRIBUTEVALUE_MATTRINST">
         <reference local="M_ATTRIBUTEVALUE_ID" foreign="M_ATTRIBUTEVALUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST__MATTRINST" onDelete="cascade">
+        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
       <check name="M_ATTRIBUTEINST_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

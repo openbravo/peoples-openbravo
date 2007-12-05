@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_WINDOW_TRG2">
     <trigger name="AD_WINDOW_TRG2" table="AD_WINDOW" fires="after" insert="false" update="true" delete="false" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
 /*************************************************************************
@@ -23,8 +24,8 @@
     TYPE RECORD IS REF CURSOR;
   CUR_DATA RECORD;
 BEGIN
-  IF((COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
-  OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')))
+  IF((COALESCE(:old.Name, '.') &lt;&gt; COALESCE(:NEW.Name, '.')
+  OR COALESCE(:old.IsActive, '.') &lt;&gt; COALESCE(:NEW.IsActive, '.')))
  THEN
     FOR CUR_DATA IN
       (
@@ -61,6 +62,7 @@ BEGIN
   END IF;
 END AD_Window_Trg2
 
-]]></body>
+
+</body>
     </trigger>
   </database>

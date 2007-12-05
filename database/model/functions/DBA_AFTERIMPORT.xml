@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION DBA_AFTERIMPORT">
     <function name="DBA_AFTERIMPORT" type="NULL">
-      <body><![CDATA[
-  /*************************************************************************
+      <body>/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -11,7 +10,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -45,7 +44,7 @@
       FROM USER_TABLES
       WHERE DURATION IS NULL -- No temporary tables
         AND(LAST_ANALYZED IS NULL
-        OR LAST_ANALYZED<SysDate-7)
+        OR LAST_ANALYZED&lt;SysDate-7)
       )
     LOOP
       v_Cmd:='ANALYZE TABLE ' || Cur_Stat.Table_Name || ' COMPUTE STATISTICS';
@@ -55,6 +54,7 @@
     DBMS_OUTPUT.PUT_LINE('Statistics computed: ' || v_NoC) ;
     --
 END DBA_AfterImport
-]]></body>
+
+</body>
     </function>
   </database>

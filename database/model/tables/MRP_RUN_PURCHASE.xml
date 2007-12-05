@@ -29,23 +29,23 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MRP_RUN_PURCHASE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="VENDOR_MRP_RUN_PURCHASE">
-        <reference local="VENDOR_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_MRP_RUN_PURCHASE">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BP_GROUP" name="C_BP_GROUP_MRP_RUN_PURCHASE">
         <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_RUN_PURCHASE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCTCATEGORY_PURCHASE">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_RUN_PURCHASE">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="MRP_PLANNER" name="MRP_PLANNER_RUN_PURCHASE">
         <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="VENDOR_MRP_RUN_PURCHASE">
+        <reference local="VENDOR_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <check name="MRPRUNPURCHASE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MRPRUNPURCHASE_LAUNCHPO_CHECK" condition="LAUNCHPO in (&apos;Y&apos;,&apos;N&apos;)"/>

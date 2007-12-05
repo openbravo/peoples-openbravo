@@ -4,8 +4,7 @@
       <parameter name="p_Date" type="TIMESTAMP" mode="in"/>
       <parameter name="p_BPartner_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -100,7 +99,7 @@
       )
     LOOP
       IF v_Names IS NOT NULL THEN
-        v_Names := v_Names||'<br/>&nbsp;';
+        v_Names := v_Names||'&lt;br/&gt;&amp;nbsp;';
       END IF;
       v_Names := v_Names||Cur_Offer.name;
     END LOOP;
@@ -108,6 +107,7 @@
 EXCEPTION
   WHEN OTHERS THEN
     RETURN NULL;
-END M_GET_OFFERS_NAME ]]></body>
+END M_GET_OFFERS_NAME 
+</body>
     </function>
   </database>

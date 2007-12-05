@@ -1,12 +1,10 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_M_TRANSACTION_SUM">
-    <view name="RV_M_TRANSACTION_SUM"><![CDATA[
-SELECT t.AD_Client_ID, t.AD_Org_ID,
+    <view name="RV_M_TRANSACTION_SUM" updatable="false">SELECT t.AD_Client_ID, t.AD_Org_ID,
   t.MovementType, l.M_Warehouse_ID, t.M_Locator_ID, t.M_Product_ID, t.MovementDate,
   SUM(t.MovementQty) AS MovementQty
 FROM M_Transaction t, M_Locator l
 WHERE t.M_Locator_ID=l.M_Locator_ID
 GROUP BY t.AD_Client_ID, t.AD_Org_ID,
-  t.MovementType, l.M_Warehouse_ID, t.M_Locator_ID, t.M_Product_ID, t.MovementDate
-]]></view>
+  t.MovementType, l.M_Warehouse_ID, t.M_Locator_ID, t.M_Product_ID, t.MovementDate</view>
   </database>

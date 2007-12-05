@@ -127,6 +127,9 @@
       <foreign-key foreignTable="S_RESOURCE" name="SRESOURCE_MPRODUCT">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
       </foreign-key>
+      <index name="M_PRODUCT_BPARTNER" unique="false">
+        <index-column name="C_BPARTNER_ID"/>
+      </index>
       <index name="M_PRODUCT_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
@@ -135,9 +138,6 @@
       </index>
       <index name="M_PRODUCT_UPC" unique="false">
         <index-column name="UPC"/>
-      </index>
-      <index name="M_PRODUCT_BPARTNER" unique="false">
-        <index-column name="C_BPARTNER_ID"/>
       </index>
       <unique name="M_PRODUCT_EXPENSETYPE">
         <unique-column name="S_EXPENSETYPE_ID"/>
@@ -149,15 +149,15 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="M_PRODUCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISSTOCKED_CHECK" condition="IsStocked in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISPURCHASED_CHECK" condition="IsPurchased in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISSOLD_CHECK" condition="IsSold in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISBOM_CHECK" condition="IsBOM in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ENFORCEATTRIBUTE_CH_MPRODUCT" condition="ENFORCE_ATTRIBUTE IN (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MPROD_ISINVPRINTDET_CHECK" condition="IsInvoicePrintDetails in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MPROD_ISPICKLPRINTDET_CHECK" condition="IsPickListPrintDetails in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISVERIFIED_CHECK" condition="IsVerified in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="M_PRODUCT_DISCONTINUED_CHECK" condition="Discontinued in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ENFORCEATTRIBUTE_CH_MPRODUCT" condition="ENFORCE_ATTRIBUTE IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISBOM_CHECK" condition="IsBOM in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISPURCHASED_CHECK" condition="IsPurchased in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISSOLD_CHECK" condition="IsSold in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISSTOCKED_CHECK" condition="IsStocked in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISVERIFIED_CHECK" condition="IsVerified in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

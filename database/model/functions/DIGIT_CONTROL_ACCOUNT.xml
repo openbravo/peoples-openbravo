@@ -3,8 +3,7 @@
     <function name="DIGIT_CONTROL_ACCOUNT" type="VARCHAR">
       <parameter name="p_entidadOficina" type="VARCHAR"/>
       <parameter name="p_numeroCuenta" type="VARCHAR"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -28,7 +27,7 @@
   v_contador NUMBER:=8;
 BEGIN
   v_pesos:=ArrayPesos(1, 2, 4, 8, 5, 10, 9, 7, 3, 6) ;
-  WHILE(v_contador > 0)
+  WHILE(v_contador &gt; 0)
   LOOP
     v_digito:=SUBSTR(p_entidadOficina, v_contador, 1) ;
     v_dc1:=v_dc1 + v_pesos(v_contador+2) *v_digito;
@@ -41,7 +40,7 @@ BEGIN
     v_dc1:=0;
   END IF;
   v_contador:=10;
-  WHILE(v_contador > 0)
+  WHILE(v_contador &gt; 0)
   LOOP
     v_digito:=SUBSTR(p_numeroCuenta, v_contador, 1) ;
     v_dc2:=v_dc2 + v_pesos(v_contador) *v_digito;
@@ -54,6 +53,7 @@ BEGIN
     v_dc2:=0;
   END IF;
   RETURN(TO_CHAR(v_dc1) ||TO_CHAR(v_dc2)) ;
-END DIGIT_CONTROL_ACCOUNT]]></body>
+END DIGIT_CONTROL_ACCOUNT
+</body>
     </function>
   </database>

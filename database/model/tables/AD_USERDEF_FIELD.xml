@@ -36,8 +36,8 @@
       </foreign-key>
       <check name="ADUSERDEFFIELD_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADUSERDEFFIELD_ISDISPLAY_CHECK" condition="IsDisplayed in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADUSERDEFFIELD_READONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADUSERDEFFIELD_ISUPDATE_CHECK" condition="IsUpdateable in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADUSERDEFFIELD_READONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADUSERDEFFIELD_SAMELINE_CHECK" condition="IsSameLine in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

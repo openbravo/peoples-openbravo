@@ -3,8 +3,7 @@
     <function name="GET_PRICELIST_VERSION" type="NUMERIC">
       <parameter name="p_Pricelist_Id" type="NUMERIC" mode="in"/>
       <parameter name="p_Date" type="TIMESTAMP" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -31,7 +30,7 @@
       WHERE PL.M_PRICELIST_ID = PLV.M_PRICELIST_ID
         AND PLV.ISACTIVE = 'Y'
         AND PL.M_PRICELIST_ID = p_Pricelist_Id
-        AND PLV.VALIDFROM <= p_Date
+        AND PLV.VALIDFROM &lt;= p_Date
       ORDER BY PLV.VALIDFROM DESC
       )
     LOOP
@@ -39,6 +38,7 @@
       EXIT;
     END LOOP;
     RETURN v_M_PriceList_Version_ID;
-END Get_Pricelist_Version ]]></body>
+END Get_Pricelist_Version 
+</body>
     </function>
   </database>

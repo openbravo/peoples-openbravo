@@ -5,8 +5,7 @@
       <parameter name="p_OrgId" type="NUMERIC" mode="in"/>
       <parameter name="p_DocBaseType" type="CHAR" mode="in"/>
       <parameter name="p_DocSubTypeSO" type="CHAR" mode="in" default="NULL"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -33,7 +32,7 @@
         AND(p_DocSubTypeSO IS NULL
         OR DOCSUBTYPESO=p_DocSubTypeSO)
         AND AD_Client_Id=p_ClientId
-        AND AD_ISORGINCLUDED(p_OrgId, AD_Org_ID, p_ClientId) <> -1
+        AND AD_ISORGINCLUDED(p_OrgId, AD_Org_ID, p_ClientId) &lt;&gt; -1
       ORDER BY AD_ISORGINCLUDED(p_OrgId, AD_Org_ID, p_ClientId),
         IsDefault,
         C_DocType_ID
@@ -43,6 +42,7 @@
       EXIT;
     END LOOP;
     RETURN v_DocTypeId;
-END Ad_Get_DocType ]]></body>
+END Ad_Get_DocType 
+</body>
     </function>
   </database>

@@ -5,8 +5,7 @@
       <parameter name="p_DateAcct" type="TIMESTAMP" mode="in"/>
       <parameter name="p_DocBaseType" type="CHAR" mode="in"/>
       <parameter name="p_C_AcctSchema_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
@@ -15,7 +14,7 @@
 * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 * implied. See the License for the specific language governing rights
 * and limitations under the License.
-* The Original Code is  Compiere  ERP & Business Solution
+* The Original Code is  Compiere  ERP &amp; Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -78,7 +77,7 @@ Inc.
         END IF;
       END IF; -- No AutoPeriodControl --
       -- Get Period if not AutoPeriodControl aoutside limits
-      IF(v_C_Period_ID <> -1) THEN
+      IF(v_C_Period_ID &lt;&gt; -1) THEN
         SELECT MAX(p.C_Period_ID)
         INTO v_C_Period_ID
         FROM C_Period p,
@@ -91,7 +90,7 @@ Inc.
         IF(v_C_Period_ID IS NULL) THEN
           DBMS_OUTPUT.PUT_LINE('No Period found for Date ' || p_DateAcct) ;
           v_C_Period_ID := -1;
-        ELSIF(CUR_AS.AutoPeriodControl <> 'Y') THEN
+        ELSIF(CUR_AS.AutoPeriodControl &lt;&gt; 'Y') THEN
           -- Check PeriodControl for Period and Document Type
           SELECT MAX(PeriodStatus)
           INTO v_PeriodStatus
@@ -113,6 +112,7 @@ Inc.
     END LOOP;
     DBMS_OUTPUT.PUT_LINE('Period_ID=' || v_C_Period_ID) ;
     RETURN v_C_Period_ID;
-END GL_Period_Open]]></body>
+END GL_Period_Open
+</body>
     </function>
   </database>

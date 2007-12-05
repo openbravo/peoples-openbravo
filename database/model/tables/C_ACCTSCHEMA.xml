@@ -40,12 +40,12 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="CACCTSCHEMA_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CACCTSCHEMA_ISACCRUAL_CHECK" condition="IsAccrual in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CACCTSCHEMA_AUTOPERCONT_CHECK" condition="AutoPeriodControl in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CACCTSCHEMA_HASALIAS_CHECK" condition="HasAlias in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CACCTSCHEMA_HASCOMBINAT_CHECK" condition="HasCombination in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CACCTSCHEMA_ISTRADPOSTED_CHECK" condition="IsTradeDiscountPosted in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEMA_ISACCRUAL_CHECK" condition="IsAccrual in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEMA_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CACCTSCHEMA_ISDISCCORTAX_CHECK" condition="IsDiscountCorrectsTax in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEMA_ISTRADPOSTED_CHECK" condition="IsTradeDiscountPosted in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

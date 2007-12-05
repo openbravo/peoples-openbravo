@@ -29,23 +29,23 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADPRINTTABLEFORMAT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PRINTCOLOR" name="ADPRINTCOLOR_TABLEFUNCTFG">
-        <reference local="FUNCTFG_PRINTCOLOR_ID" foreign="AD_PRINTCOLOR_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_PRINTCOLOR" name="ADPRINTCOLOR_TABLEFUNCTBG">
         <reference local="FUNCTBG_PRINTCOLOR_ID" foreign="AD_PRINTCOLOR_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_PRINTCOLOR" name="ADPRINTCOLOR_TABLEFUNCTFG">
+        <reference local="FUNCTFG_PRINTCOLOR_ID" foreign="AD_PRINTCOLOR_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_PRINTCOLOR" name="ADPRINTCOLOR_TABLEHDRLINE">
         <reference local="HDRLINE_PRINTCOLOR_ID" foreign="AD_PRINTCOLOR_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_PRINTCOLOR" name="ADPRINTCOLOR_TABLELINE">
-        <reference local="LINE_PRINTCOLOR_ID" foreign="AD_PRINTCOLOR_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_PRINTCOLOR" name="ADPRINTCOLOR_TABLEHDRTEXTBG">
         <reference local="HDRTEXTBG_PRINTCOLOR_ID" foreign="AD_PRINTCOLOR_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_PRINTCOLOR" name="ADPRINTCOLOR_TABLEHDRTEXTFG">
         <reference local="HDRTEXTFG_PRINTCOLOR_ID" foreign="AD_PRINTCOLOR_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_PRINTCOLOR" name="ADPRINTCOLOR_TABLELINE">
+        <reference local="LINE_PRINTCOLOR_ID" foreign="AD_PRINTCOLOR_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_PRINTFONT" name="ADPRINTFONT_TABLEHDR">
         <reference local="HDR_PRINTFONT_ID" foreign="AD_PRINTFONT_ID"/>

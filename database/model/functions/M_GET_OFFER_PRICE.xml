@@ -3,8 +3,7 @@
     <function name="M_GET_OFFER_PRICE" type="NUMERIC">
       <parameter name="p_Offer_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_PriceStd" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -52,6 +51,7 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN NULL;
-END M_Get_Offer_Price ]]></body>
+END M_Get_Offer_Price 
+</body>
     </function>
   </database>

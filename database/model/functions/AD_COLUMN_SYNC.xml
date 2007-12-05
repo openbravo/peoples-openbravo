@@ -2,8 +2,7 @@
   <database name="FUNCTION AD_COLUMN_SYNC">
     <function name="AD_COLUMN_SYNC" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[                                
-  /*************************************************************************
+      <body>/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -12,7 +11,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -140,7 +139,7 @@
      v_Message:='DisplayType Not Supported';
    END IF;
    -- Default (literal)
-   IF(v_DefaultValue IS NOT NULL AND LENGTH(v_DefaultValue)<>0) THEN
+   IF(v_DefaultValue IS NOT NULL AND LENGTH(v_DefaultValue)&lt;&gt;0) THEN
      IF(v_AD_Reference_ID IN(10, 14, 17, 20, 28)) THEN
        v_Cmd:=v_Cmd || ' DEFAULT (''' || v_DefaultValue || ''')';
      ELSE
@@ -195,7 +194,7 @@
      v_Message:='DisplayType Not Supported';
    END IF;
    -- Default (literal)
-   IF(v_DefaultValue IS NOT NULL AND LENGTH(v_DefaultValue)<>0) THEN
+   IF(v_DefaultValue IS NOT NULL AND LENGTH(v_DefaultValue)&lt;&gt;0) THEN
      IF(v_AD_Reference_ID IN(10, 14, 17, 20, 28)) THEN
        v_Cmd:=v_Cmd || ' DEFAULT (''' || v_DefaultValue || ''')';
      ELSE
@@ -245,7 +244,7 @@
  END;
  END IF;
  END IF; --FINISH_PROCESS
- --<<FINISH_PROCESS>>
+ --&lt;&lt;FINISH_PROCESS&gt;&gt;
  --  Update AD_PInstance
  DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -258,6 +257,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END AD_Column_Sync]]></body>
+END AD_Column_Sync
+</body>
     </function>
   </database>

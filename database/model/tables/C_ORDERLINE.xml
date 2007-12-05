@@ -54,11 +54,11 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CORDERLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_SOLINE">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPARTNERLOCATION_SOLINE">
         <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_SOLINE">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CHARGE" name="CCHARGE_CORDERLINE">
         <reference local="C_CHARGE_ID" foreign="C_CHARGE_ID"/>
@@ -105,9 +105,9 @@
       <index name="C_ORDERLINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <check name="C_ORDERLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_ORDERLINE_DIRECTSHIP_CHECK" condition="DirectShip in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="C_ORDERLINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
       <check name="C_ORDERLINE_CHECK2" condition="LineNetAmt=0 OR C_Tax_ID IS NOT NULL"/>
+      <check name="C_ORDERLINE_DIRECTSHIP_CHECK" condition="DirectShip in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDERLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

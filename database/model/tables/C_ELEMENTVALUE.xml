@@ -53,12 +53,12 @@
         <unique-column name="VALUE"/>
       </unique>
       <check name="C_ELEMENTVALUE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVAL_ISBANKACCOUNT_CHECK" condition="IsBankAccount in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CELEMVAL_ISDOCCONTROL_CHECK" condition="IsDocControlled in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CELEMVALUE_POSTACTUAL_CHECK" condition="PostActual in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CELEMVALUE_POSTBUDGET_CHECK" condition="PostBudget in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVAL_ISFORCURREN_CHECK" condition="IsForeignCurrency in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CELEMVAL_POSTENCUMBR_CHECK" condition="PostEncumbrance in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CELEMVAL_POSTSTATISTIC_CHECK" condition="PostStatistical in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CELEMVAL_ISBANKACCOUNT_CHECK" condition="IsBankAccount in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CELEMVAL_ISFORCURREN_CHECK" condition="IsForeignCurrency in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVALUE_POSTACTUAL_CHECK" condition="PostActual in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVALUE_POSTBUDGET_CHECK" condition="PostBudget in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

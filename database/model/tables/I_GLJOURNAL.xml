@@ -67,14 +67,14 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IGLJOURNAL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_IGLJOURNAL">
-        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORGDOC_IGLJOURNAL">
         <reference local="AD_ORGDOC_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_IGLJOURNAL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_IGLJOURNAL">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_IGLJOURNAL">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
@@ -103,11 +103,11 @@
       <foreign-key foreignTable="C_ELEMENTVALUE" name="CEVALUEUSER1_IGLJOURNAL">
         <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="CLOCTO_IGLJOURNAL">
-        <reference local="C_LOCTO_ID" foreign="C_LOCATION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_LOCATION" name="CLOCFROM_IGLJOURNAL">
         <reference local="C_LOCFROM_ID" foreign="C_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="CLOCTO_IGLJOURNAL">
+        <reference local="C_LOCTO_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PERIOD" name="CPERIOD_IGLJOURNAL">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
@@ -130,20 +130,20 @@
       <foreign-key foreignTable="GL_CATEGORY" name="GLCATEGORY_IGLJOURNAL">
         <reference local="GL_CATEGORY_ID" foreign="GL_CATEGORY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_JOURNAL" name="GLJOURNAL_IGLJOURNAL">
-        <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
+      <foreign-key foreignTable="GL_JOURNALLINE" name="GLJOURBELLINE_IGLJOURNAL">
+        <reference local="GL_JOURNALLINE_ID" foreign="GL_JOURNALLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="GL_JOURNALBATCH" name="GLJOURNALBATCH_IGLJOURNAL">
         <reference local="GL_JOURNALBATCH_ID" foreign="GL_JOURNALBATCH_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="GL_JOURNALLINE" name="GLJOURBELLINE_IGLJOURNAL">
-        <reference local="GL_JOURNALLINE_ID" foreign="GL_JOURNALLINE_ID"/>
+      <foreign-key foreignTable="GL_JOURNAL" name="GLJOURNAL_IGLJOURNAL">
+        <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_OGLJOURNAL">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="I_GLJOURNAL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="IGLJOURNAL_I_ISIMPORTED_CHECK" condition="I_IsImported in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="I_GLJOURNAL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="I_GLJOURNAL_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

@@ -43,9 +43,6 @@
       <foreign-key foreignTable="C_BPARTNER" name="CBUSPARTNER_CASCHEMAELEMENT">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="SOCAMPAIGN_CASCHEMAELEMENT">
-        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_ELEMENT" name="CELEMENT_CASCHEMAELEMENT">
         <reference local="C_ELEMENT_ID" foreign="C_ELEMENT_ID"/>
       </foreign-key>
@@ -64,11 +61,14 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CASCHEMAELEMENT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="SOCAMPAIGN_CASCHEMAELEMENT">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      </foreign-key>
       <index name="C_ACCTSCHEMA_ELEMENT_SCHEMA" unique="false">
         <index-column name="C_ACCTSCHEMA_ID"/>
       </index>
       <check name="CACCTSCHEL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CACCTSCHEL_ISMANDATORY_CHECK" condition="IsMandatory in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CACCTSCHEL_ISBALANCED_CHECK" condition="IsBalanced in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CACCTSCHEL_ISMANDATORY_CHECK" condition="IsMandatory in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

@@ -29,11 +29,11 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_VC">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_VC">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORGTRX_VC">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_VC">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CVALIDCOMBINATION" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
@@ -44,23 +44,14 @@
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_VC">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="SOCAMPAIGN_VC">
-        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER2_VC">
-        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEACCOUNT_VC" onDelete="cascade">
+        <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER1_VC">
         <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEACCOUNT_VC" onDelete="cascade">
-        <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="MLOCATIONFROM_VC">
-        <reference local="C_LOCFROM_ID" foreign="C_LOCATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="MLOCATIONTO_VC">
-        <reference local="C_LOCTO_ID" foreign="C_LOCATION_ID"/>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER2_VC">
+        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_VC">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
@@ -68,8 +59,17 @@
       <foreign-key foreignTable="C_SALESREGION" name="CSALESREGION_VC">
         <reference local="C_SALESREGION_ID" foreign="C_SALESREGION_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="MLOCATIONFROM_VC">
+        <reference local="C_LOCFROM_ID" foreign="C_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="MLOCATIONTO_VC">
+        <reference local="C_LOCTO_ID" foreign="C_LOCATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_VC">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="SOCAMPAIGN_VC">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
       <index name="C_VALIDCOMBINATION_ALIAS" unique="false">
         <index-column name="AD_CLIENT_ID"/>
@@ -81,7 +81,7 @@
         <index-column name="AD_ORG_ID"/>
         <index-column name="ACCOUNT_ID"/>
       </index>
-      <check name="CVALIDCOMBIN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CVALCOMBIN_ISFULLQUAL_CHECK" condition="IsFullyQualified in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CVALIDCOMBIN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

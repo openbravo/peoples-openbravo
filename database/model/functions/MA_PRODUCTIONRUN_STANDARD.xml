@@ -2,8 +2,7 @@
   <database name="FUNCTION MA_PRODUCTIONRUN_STANDARD">
     <function name="MA_PRODUCTIONRUN_STANDARD" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -73,8 +72,8 @@
         AND (v_Product_UOM_old IS NULL OR T.M_Product_UOM_id = v_Product_UOM_old)
         AND T.M_LOCATOR_ID=L.M_LOCATOR_ID
         AND L.M_WAREHOUSE_ID = W.M_WAREHOUSE_ID
-        AND AD_ISORGINCLUDED(v_Org_old,W.AD_ORG_ID,W.AD_CLIENT_ID)<>-1
-        AND COALESCE(T.QtyOnHand, 0)>0
+        AND AD_ISORGINCLUDED(v_Org_old,W.AD_ORG_ID,W.AD_CLIENT_ID)&lt;&gt;-1
+        AND COALESCE(T.QtyOnHand, 0)&gt;0
       ORDER BY L.PRIORITYNO, T.M_ATTRIBUTESETINSTANCE_ID, T.M_PRODUCT_UOM_ID;
       v_storage CUR_STOCK%ROWTYPE;
       NEXT_PRODUCT BOOLEAN:=false;
@@ -101,7 +100,7 @@
           v_Client_ID:=Cur_Parameter.AD_Client_ID;
         END LOOP; --  Get Parameter
       ELSE
-        DBMS_OUTPUT.PUT_LINE('--<<MA_ProductionRun_Standard>>') ;
+        DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_ProductionRun_Standard&gt;&gt;') ;
       END IF;
     BEGIN --BODY
       v_ResultStr:='Getting DoneQuantity and process_ID';
@@ -215,7 +214,7 @@
           v_ResultStr:='CreatingLine Products';
           IF(Cur_WRPUsed.IsStocked='Y') THEN
             v_QtyAcumulated:=0;
-            IF(NOT Cur_Stock_ISOPEN) OR(v_Product_old<>Cur_WRPUsed.M_Product_ID  OR v_UOM_old<>Cur_WRPUsed.C_UOM_ID) THEN
+            IF(NOT Cur_Stock_ISOPEN) OR(v_Product_old&lt;&gt;Cur_WRPUsed.M_Product_ID  OR v_UOM_old&lt;&gt;Cur_WRPUsed.C_UOM_ID) THEN
               v_Product_old:=Cur_WRPUsed.M_Product_ID;
               v_UOM_old:=Cur_WRPUsed.C_UOM_ID;
               v_Product_UOM_old := Cur_WRPUsed.M_Product_UOM_ID;
@@ -300,7 +299,7 @@
                          END)
                       )
                       ;
-                    IF(v_QtyAcumulated>=v_DoneQuantity*Cur_WRPUsed.MovementQty) THEN
+                    IF(v_QtyAcumulated&gt;=v_DoneQuantity*Cur_WRPUsed.MovementQty) THEN
                       EXIT;
                     END IF;
                     v_QtyStorage:=0;
@@ -311,7 +310,7 @@
                   END IF;
               END LOOP;
             END IF; --NEXT_PRODUCT
-            IF (v_QtyAcumulated < v_DoneQuantity*Cur_WRPUsed.MovementQty) THEN
+            IF (v_QtyAcumulated &lt; v_DoneQuantity*Cur_WRPUsed.MovementQty) THEN
               v_Message := '@NotEnoughStocked@: ' || Cur_WRPUsed.pname;
             RAISE_APPLICATION_ERROR(-20000, v_Message);
             END IF;
@@ -366,7 +365,7 @@
                   ;
               END IF;
           END IF;
-            --<<NEXT_PRODUCT>>
+            --&lt;&lt;NEXT_PRODUCT&gt;&gt;
             NEXT_PRODUCT:=false;
             v_Line:=v_Line + 10;
         END LOOP; --Used Products
@@ -438,7 +437,7 @@
         UPDATE M_PRODUCTIONPLAN
           SET Processed='Y'
         WHERE M_ProductionPlan_ID=v_Record_ID;
-      --<<FINISH_PROCESS>>
+      --&lt;&lt;FINISH_PROCESS&gt;&gt;
       v_ResultStr:='Ending';
       --v_Message := v_Message || '@Created@: ' || v_NoRecords;
       IF(p_PInstance_ID IS NOT NULL) THEN
@@ -446,7 +445,7 @@
         DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
         AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
       ELSE
-        DBMS_OUTPUT.PUT_LINE('--<<MA_ProductionRun_Standard finished>> ' || v_Message) ;
+        DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_ProductionRun_Standard finished&gt;&gt; ' || v_Message) ;
       END IF;
       RETURN;
     END; --BODY
@@ -459,6 +458,7 @@ EXCEPTION
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
     RETURN;
 END MA_ProductionRun_Standard
-]]></body>
+
+</body>
     </function>
   </database>

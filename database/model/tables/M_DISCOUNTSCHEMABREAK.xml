@@ -24,11 +24,11 @@
       <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTS_MDSBREAK" onDelete="cascade">
         <reference local="M_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MDISCOUNTSBREAK">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCATEGORY_MDISCOUNTSBREAK">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MDISCOUNTSBREAK">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <check name="M_DISCSCBR_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

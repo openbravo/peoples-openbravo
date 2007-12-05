@@ -25,7 +25,7 @@
       <foreign-key foreignTable="MA_CCP_GROUP" name="MA_CCP_GROUP_MACCP">
         <reference local="MA_CCP_GROUP_ID" foreign="MA_CCP_GROUP_ID"/>
       </foreign-key>
-      <check name="MA_CCP_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MA_CCP_CRITICAL_CHECK" condition="Critical in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_CCP_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

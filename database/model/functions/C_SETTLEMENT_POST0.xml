@@ -2,8 +2,7 @@
   <database name="FUNCTION C_SETTLEMENT_POST0">
     <function name="C_SETTLEMENT_POST0" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[                                
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -21,6 +20,7 @@
 ************************************************************************/
 BEGIN
   C_Settlement_Post(p_PInstance_ID, NULL) ;
-END C_Settlement_Post0]]></body>
+END C_Settlement_Post0
+</body>
     </function>
   </database>

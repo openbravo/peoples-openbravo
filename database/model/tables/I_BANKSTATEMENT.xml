@@ -69,7 +69,7 @@
       </foreign-key>
       <check name="I_BANKSTATEMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="IBANKSTAT_I_ISIMPORTED_CHECK" condition="I_IsImported in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="IBANKSTAT_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="IBANKSTAT_ISREVERSAL_CHECK" condition="IsReversal in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IBANKSTAT_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

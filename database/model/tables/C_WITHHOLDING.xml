@@ -36,9 +36,9 @@
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
       <check name="C_WITHHOLDING_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CWITHOLD_ISTAXWITHHOLD_CHECK" condition="IsTaxWithholding in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CWITHHOLD_ISTAXPRORAT_CHECK" condition="IsTaxProrated in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CWITHOLD_ISPAIDTO3PART_CHECK" condition="IsPaidTo3Party in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CWITHOLD_ISPNTWITHOLD_CHECK" condition="IsPercentWithholding in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CWITHOLD_ISTAXWITHHOLD_CHECK" condition="IsTaxWithholding in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

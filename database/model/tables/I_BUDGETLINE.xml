@@ -57,9 +57,6 @@
       <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_I_BUDGETLINE">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="C_BUSPARTNER_I_BUDGETLINE">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BP_GROUP" name="C_BP_GROUP_I_BUDGETLINE">
         <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
       </foreign-key>
@@ -69,8 +66,8 @@
       <foreign-key foreignTable="C_BUDGETLINE" name="C_BUDGETLINE_I_BUDGETLINE">
         <reference local="C_BUDGETLINE_ID" foreign="C_BUDGETLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_I_BUDGETLINE">
-        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
+      <foreign-key foreignTable="C_BPARTNER" name="C_BUSPARTNER_I_BUDGETLINE">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCY_I_BUDGETLINE">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
@@ -90,11 +87,14 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_VALIDCOMBINATION_IBUDGETLINE">
         <reference local="C_VALIDCOMBINATION_ID" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCT_CATEGORY_IBUDGETLINE">
+        <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_I_BUDGETLINE">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCT_CATEGORY_IBUDGETLINE">
-        <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
+      <foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_I_BUDGETLINE">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
       <check name="I_BUDGETLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

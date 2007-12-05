@@ -45,18 +45,18 @@
       <foreign-key foreignTable="C_ELEMENT" name="CELEMENT_IELEMENTVALUE">
         <reference local="C_ELEMENT_ID" foreign="C_ELEMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CEVALUEPARENT_IELEMENTVALUE">
-        <reference local="PARENTELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_IELEMENTVALUE">
         <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="CEVALUEPARENT_IELEMENTVALUE">
+        <reference local="PARENTELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
       <check name="I_ELEMENTVALUE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="IELEMVAL_ISDOCCONTROL_CHECK" condition="IsDocControlled in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="IELEMVALUE_POSTACTUAL_CHECK" condition="PostActual in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="IELEMVALUE_POSTBUDGET_CHECK" condition="PostBudget in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="IELEMVALUE_POSTSTATIST_CHECK" condition="PostStatistical in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="IELEMVALUE_POSTENCUMBR_CHECK" condition="PostEncumbrance in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IELEMVALUE_POSTSTATIST_CHECK" condition="PostStatistical in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="IELEMVALUE_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

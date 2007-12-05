@@ -39,9 +39,6 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADCLIENTINFO">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREESALESREG_ADCLIENTINFO">
-        <reference local="AD_TREE_SALESREGION_ID" foreign="AD_TREE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_TREE" name="ADTREEBPARTNER_ADCLIENTINFO">
         <reference local="AD_TREE_BPARTNER_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
@@ -51,20 +48,23 @@
       <foreign-key foreignTable="AD_TREE" name="ADTREEORG_ADCLIENTINFO">
         <reference local="AD_TREE_ORG_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREEPROJECT_ADCLIENTINFO">
-        <reference local="AD_TREE_PROJECT_ID" foreign="AD_TREE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_TREE" name="ADTREEPRODUCT_ADCLIENTINFO">
         <reference local="AD_TREE_PRODUCT_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA3_ADCLIENTINFO" onDelete="setnull">
-        <reference local="C_ACCTSCHEMA3_ID" foreign="C_ACCTSCHEMA_ID"/>
+      <foreign-key foreignTable="AD_TREE" name="ADTREEPROJECT_ADCLIENTINFO">
+        <reference local="AD_TREE_PROJECT_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="ADTREESALESREG_ADCLIENTINFO">
+        <reference local="AD_TREE_SALESREGION_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA1_ADCLIENTINFO">
+        <reference local="C_ACCTSCHEMA1_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA2_ADCLIENTINFO" onDelete="setnull">
         <reference local="C_ACCTSCHEMA2_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA1_ADCLIENTINFO">
-        <reference local="C_ACCTSCHEMA1_ID" foreign="C_ACCTSCHEMA_ID"/>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA3_ADCLIENTINFO" onDelete="setnull">
+        <reference local="C_ACCTSCHEMA3_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_ADCLIENTINFO">
         <reference local="C_BPARTNERCASHTRX_ID" foreign="C_BPARTNER_ID"/>
@@ -72,17 +72,17 @@
       <foreign-key foreignTable="C_CALENDAR" name="CCALENDAR_ADCLIENTINFO">
         <reference local="C_CALENDAR_ID" foreign="C_CALENDAR_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="C_UOM_LENGTH_AD_CLIENTINFO">
+        <reference local="C_UOM_LENGTH_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="C_UOM_TIME_AD_CLIENTINFO">
+        <reference local="C_UOM_TIME_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_UOM" name="C_UOM_VOLUME_AD_CLIENTINFO">
         <reference local="C_UOM_VOLUME_ID" foreign="C_UOM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_UOM" name="C_UOM_WEIGHT_AD_CLIENTINFO">
         <reference local="C_UOM_WEIGHT_ID" foreign="C_UOM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="C_UOM_TIME_AD_CLIENTINFO">
-        <reference local="C_UOM_TIME_ID" foreign="C_UOM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_UOM" name="C_UOM_LENGTH_AD_CLIENTINFO">
-        <reference local="C_UOM_LENGTH_ID" foreign="C_UOM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_ADCLIENTINFO">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
@@ -93,12 +93,12 @@
       <foreign-key foreignTable="PA_GOAL" name="PAGOAL_AD_CLIENTINFO">
         <reference local="PA_GOAL_ID" foreign="PA_GOAL_ID"/>
       </foreign-key>
-      <check name="ADCLIENTINFO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADCLIENTINFO_ISDISLNAMT_CHECK" condition="IsDiscountLineAmt in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADCLIENTINFO_ACCT2ACTIVE_CHECK" condition="Acct2_Active in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADCLIENTINFO_ACCT3ACTIVE_CHECK" condition="Acct3_Active in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADCLIENTINFO_ANEGATSTOCK_CHECK" condition="ALLOWNEGATIVESTOCK IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCLIENTINFO_ORDERORG_CHECK" condition="CHECKORDERORG IN (&apos;Y&apos;, &apos;N&apos;)"/>
       <check name="ADCLIENTINFO_INOUTORG_CHECK" condition="CHECKINOUTORG IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCLIENTINFO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADCLIENTINFO_ISDISLNAMT_CHECK" condition="IsDiscountLineAmt in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADCLIENTINFO_ORDERORG_CHECK" condition="CHECKORDERORG IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

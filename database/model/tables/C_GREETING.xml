@@ -20,7 +20,7 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="C_GREETING_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CGREET_ISFIRSTNAMEONLY_CHECK" condition="IsFirstNameOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="C_GREETING_ISDEFAULT_CHECK" condition="IsDefault in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CGREET_ISFIRSTNAMEONLY_CHECK" condition="IsFirstNameOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

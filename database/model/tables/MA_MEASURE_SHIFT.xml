@@ -27,7 +27,7 @@
       <foreign-key foreignTable="AD_USER" name="AD_USER_MAMEASURESHIFT">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <check name="MEASURESHIFT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MA_MEASURE_SHIFT_SHIFT_CHECK" condition="Shift in (&apos;M&apos;,&apos;T&apos;)"/>
+      <check name="MEASURESHIFT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

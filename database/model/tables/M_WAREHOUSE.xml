@@ -20,20 +20,20 @@
       <column name="TODOCUMENTNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="LOCATORUNITSPERPALLET" primaryKey="false" required="false" type="DECIMAL" default="1" autoIncrement="false"/>
       <column name="WAREHOUSE_SIZE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_WAREHOUSE">
+        <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_WAREHOUSE_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_WAREHOUSE_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_WAREHOUSE">
-        <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
-      </foreign-key>
       <unique name="M_WAREHOUSE_NAME">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="MWAREHOUSE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ISSHIPPER_WAREHOUSE" condition="IsShipper IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MWAREHOUSE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

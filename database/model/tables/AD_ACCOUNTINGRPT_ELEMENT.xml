@@ -19,17 +19,17 @@
       <column name="C_ACCTSCHEMA_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISREPORT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="REPORT_TYPE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false"/>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="ADACCOUNTRPT_FK_ACCOUNT">
+        <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="ADACCOUNTRPT_FK_ACCTSCHEMA">
+        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADACCOUNTRPT_FK_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADACCOUNTRPT_FK_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="ADACCOUNTRPT_FK_ACCTSCHEMA">
-        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="ADACCOUNTRPT_FK_ACCOUNT">
-        <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
     </table>
   </database>

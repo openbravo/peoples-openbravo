@@ -11,17 +11,17 @@
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_OFFER_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_BPARTNER_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="M_OFFER_BPARTNER_CLIENT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="M_OFFER_BPARTNER_ORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="M_OFFER_BPARTNER_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="M_OFFER_BPARTNER_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_OFFER" name="M_OFFER_BPARTNER_OFFER">
         <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="M_OFFER_BPARTNER_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <unique name="M_OFFER_BPARTNER_UNIQUE">
         <unique-column name="C_BPARTNER_ID"/>

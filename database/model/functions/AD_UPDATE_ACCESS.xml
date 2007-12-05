@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_UPDATE_ACCESS">
     <function name="AD_UPDATE_ACCESS" type="NULL">
-      <body><![CDATA[/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -148,6 +148,7 @@ BEGIN
       OR
       (AD_ROLE.USERLEVEL = '  O' AND AD_WORKFLOW.ACCESSLEVEL IN (3,1,7))
     );
-END AD_UPDATE_ACCESS]]></body>
+END AD_UPDATE_ACCESS
+</body>
     </function>
   </database>

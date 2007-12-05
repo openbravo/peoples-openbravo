@@ -22,14 +22,14 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAPROCESS">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_COSTCENTER" name="MA_COSTCENTER_MAPROCESSWORK">
-        <reference local="MA_CC_IDWORK" foreign="MA_COSTCENTER_ID"/>
+      <foreign-key foreignTable="MA_COSTCENTER" name="MA_COSTCENTER_MAPROCESS">
+        <reference local="MA_COSTCENTER_ID" foreign="MA_COSTCENTER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_COSTCENTER" name="MA_COSTCENTER_MAPROCESSPREP">
         <reference local="MA_CC_IDPREP" foreign="MA_COSTCENTER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_COSTCENTER" name="MA_COSTCENTER_MAPROCESS">
-        <reference local="MA_COSTCENTER_ID" foreign="MA_COSTCENTER_ID"/>
+      <foreign-key foreignTable="MA_COSTCENTER" name="MA_COSTCENTER_MAPROCESSWORK">
+        <reference local="MA_CC_IDWORK" foreign="MA_COSTCENTER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_WORKSTATION" name="MA_WORKSTATION_MAPROCESS">
         <reference local="MA_WORKSTATION_ID" foreign="MA_WORKSTATION_ID"/>

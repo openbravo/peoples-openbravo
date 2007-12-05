@@ -2,8 +2,7 @@
   <database name="FUNCTION CLOSEPROJECT">
     <function name="CLOSEPROJECT" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -68,7 +67,7 @@
     v_ResultStr:='CheckRestriction';
     IF(v_ProjectStatus IS NULL) THEN
       RAISE_APPLICATION_ERROR(-20000, '@Notprojectstatus@');
-    ELSIF v_ProjectStatus<>'OC' THEN
+    ELSIF v_ProjectStatus&lt;&gt;'OC' THEN
       RAISE_APPLICATION_ERROR(-20000, '@Invalidprojectstatus@');
     END IF;
     IF(NOT FINISH_PROCESS) THEN
@@ -111,7 +110,7 @@
         updatedby=v_AD_User_ID
       WHERE c_project_id=v_p_Record_ID;
     END IF; --FINISH_PROCESS
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -125,6 +124,7 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END CloseProject
-]]></body>
+
+</body>
     </function>
   </database>

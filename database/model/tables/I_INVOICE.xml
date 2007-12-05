@@ -65,9 +65,6 @@
       <foreign-key foreignTable="AD_ORG" name="ADORGTRX_IINVOICE">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="REFAD_USER1974">
-        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSER_IINVOICE">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
@@ -92,11 +89,11 @@
       <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_IINVOICE">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="CINVOICE_IINVOICE">
-        <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_INVOICELINE" name="CINVLICELINE_IINVOICE">
         <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_INVOICE" name="CINVOICE_IINVOICE">
+        <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_LOCATION" name="CLOCATION_IINVOICE">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
@@ -119,9 +116,12 @@
       <foreign-key foreignTable="M_PRODUCT" name="NPRODUCT_IINVOICE">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="I_INVOICE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <foreign-key foreignTable="AD_USER" name="REFAD_USER1974">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
       <check name="I_INVOICE_I_ISIMPORTED_CHECK" condition="I_IsImported in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="I_INVOICE_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="I_INVOICE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="I_INVOICE_ISSOTRX_CHECK" condition="IsSOTrx in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="I_INVOICE_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

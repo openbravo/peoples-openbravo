@@ -2,8 +2,7 @@
   <database name="FUNCTION C_CONVERTDOCUMENTNO_TO_NUMBER">
     <function name="C_CONVERTDOCUMENTNO_TO_NUMBER" type="NUMERIC">
       <parameter name="p_DocumentNo" type="VARCHAR" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -32,6 +31,7 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN 0;
-END C_ConvertDocumentNo_To_Number]]></body>
+END C_ConvertDocumentNo_To_Number
+</body>
     </function>
   </database>

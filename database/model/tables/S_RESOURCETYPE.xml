@@ -44,17 +44,17 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCATEGORY_SRESOURCETYPE">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <check name="SRESTYPE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="SRESTYPE_ISSING_SIGNMENT_CHECK" condition="IsSingleAssignment in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="SRESTYPE_ALLOWU_RACTIONS_CHECK" condition="AllowUOMFractions in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="SRESTYPE_ISTIMESLOT_CHECK" condition="IsTimeSlot in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="SRESTYPE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="SRESTYPE_ISDATESLOT_CHECK" condition="IsDateSlot in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="SRESTYPE_ONSUNDAY_CHECK" condition="OnSunday in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="SRESTYPE_ISSING_SIGNMENT_CHECK" condition="IsSingleAssignment in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="SRESTYPE_ISTIMESLOT_CHECK" condition="IsTimeSlot in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="SRESTYPE_ONFRIDAY_CHECK" condition="OnFriday in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="SRESTYPE_ONMONDAY_CHECK" condition="OnMonday in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="SRESTYPE_ONSATURDAY_CHECK" condition="OnSaturday in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="SRESTYPE_ONSUNDAY_CHECK" condition="OnSunday in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="SRESTYPE_ONTHURSDAY_CHECK" condition="OnThursday in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="SRESTYPE_ONTUESDAY_CHECK" condition="OnTuesday in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="SRESTYPE_ONWEDNESDAY_CHECK" condition="OnWednesday in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="SRESTYPE_ONTHURSDAY_CHECK" condition="OnThursday in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="SRESTYPE_ONFRIDAY_CHECK" condition="OnFriday in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="SRESTYPE_ONSATURDAY_CHECK" condition="OnSaturday in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

@@ -32,7 +32,7 @@
       <foreign-key foreignTable="M_PRICELIST_VERSION" name="MPRICELISTVERSION_MPRICELISTVE">
         <reference local="M_PRICELIST_VERSION_BASE_ID" foreign="M_PRICELIST_VERSION_ID"/>
       </foreign-key>
-      <check name="MPRICELISTVER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MPRICELISTVER_GENERATE_CHECK" condition="M_PRICELIST_VERSION_GENERATE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MPRICELISTVER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

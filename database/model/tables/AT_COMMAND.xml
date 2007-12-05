@@ -28,12 +28,12 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_ATCOMMAND">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="ATCOMMAND_WRITEABLE_CHECK" condition="CHECK_WRITEABLE IN (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ATCOMMAND_HASPREFIX_CHECK" condition="HAS_PREFIX IN (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ATCOMMAND_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ATCOMMANDLINEINTERCH_CHECK" condition="LINE_INTERCHANGE IN (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ATCOMMAND_REMFRAME_CHECK" condition="REMEMBER_FRAME IN (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ATCOMMAND_REMTAB_CHECK" condition="REMEMBER_TAB IN (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ATCOMMAND_REMWINDOW_CHECK" condition="REMEMBER_WINDOW IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ATCOMMAND_WRITEABLE_CHECK" condition="CHECK_WRITEABLE IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

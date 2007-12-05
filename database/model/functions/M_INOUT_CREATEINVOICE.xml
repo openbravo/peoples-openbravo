@@ -2,8 +2,7 @@
   <database name="FUNCTION M_INOUT_CREATEINVOICE">
     <function name="M_INOUT_CREATEINVOICE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-  /*************************************************************************
+      <body>/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -12,14 +11,14 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright ? 1999-2005 Openbravo, S.L
+  * Contributions are Copyright :1 1999-2005 Openbravo, S.L
   *************************************************************************
   * $Id: M_InOut_CreateInvoice.sql,v 1.7 2003/07/22 05:41:27 jjanke Exp $
   ***
@@ -300,7 +299,7 @@
         END IF;
       END LOOP; -- All Shipments
     END;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -314,6 +313,7 @@ WHEN OTHERS THEN
   Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END M_Inout_Createinvoice
-]]></body>
+
+</body>
     </function>
   </database>

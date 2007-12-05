@@ -62,26 +62,23 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MINOUT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_MINOUT1">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_MINOUT">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_SR_MINOUT">
-        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_MINOUT1">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSER_MINOUT">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="ADUSER_SR_MINOUT">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_MINOUT">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_MINOUT">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="VBPLOCATION_MINOUT">
-        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_MINOUT">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
@@ -110,26 +107,29 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_MINOUT">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
-      <index name="M_INOUT_ORDER" unique="false">
-        <index-column name="C_ORDER_ID"/>
-      </index>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="VBPLOCATION_MINOUT">
+        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
       <index name="M_INOUT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
       <index name="M_INOUT_DOCUMENTNO" unique="false">
         <index-column name="DOCUMENTNO"/>
       </index>
+      <index name="M_INOUT_ORDER" unique="false">
+        <index-column name="C_ORDER_ID"/>
+      </index>
       <index name="M_INOUT_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="M_INOUT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ISLOGISTIC_MINOUT" condition="ISLOGISTIC IN (&apos;N&apos;,&apos;Y&apos;)"/>
-      <check name="MINOUT_UPDATELINES_YN" condition="UPDATELINES IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_INOUT_CREATEFROM_CHECK" condition="CreateFrom in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_INOUT_GENERATELINES_CHECK" condition="GENERATELINES IN (&apos;N&apos;,&apos;Y&apos;)"/>
+      <check name="M_INOUT_GENERATETO_CHECK" condition="GenerateTo in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_INOUT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_INOUT_ISPRINTED_CHECK" condition="IsPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="M_INOUT_ISSOTRX_CHECK" condition="IsSOTrx in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="M_INOUT_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_INOUT_ISPRINTED_CHECK" condition="IsPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_INOUT_CREATEFROM_CHECK" condition="CreateFrom in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_INOUT_GENERATETO_CHECK" condition="GenerateTo in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_INOUT_GENERATELINES_CHECK" condition="GENERATELINES IN (&apos;N&apos;,&apos;Y&apos;)"/>
+      <check name="MINOUT_UPDATELINES_YN" condition="UPDATELINES IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -29,6 +29,9 @@
       <foreign-key foreignTable="AD_FORM" name="ADFORM_ADMENU">
         <reference local="AD_FORM_ID" foreign="AD_FORM_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_WORKBENCH" name="ADMENU_ADWORKBENCH">
+        <reference local="AD_WORKBENCH_ID" foreign="AD_WORKBENCH_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_MENU_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -41,14 +44,11 @@
       <foreign-key foreignTable="AD_WINDOW" name="ADWINDOW_ADMENU">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_WORKBENCH" name="ADMENU_ADWORKBENCH">
-        <reference local="AD_WORKBENCH_ID" foreign="AD_WORKBENCH_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_WORKFLOW" name="ADWORKFLOW_ADMENU">
         <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
       </foreign-key>
       <check name="ADMENU_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADMENU_ISSOTRX_CHECK" condition="IsSOTrx in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADMENU_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADMENU_ISSOTRX_CHECK" condition="IsSOTrx in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

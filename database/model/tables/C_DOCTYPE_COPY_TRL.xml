@@ -15,14 +15,14 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CDOCTYPECOPYTRL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="LANGUAGE_DOCTYPE_COPY_TRL">
-        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CDOCTYPECOPYTRL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE_COPY" name="DOCTYPE_COPY_DOCTYPE_COPY_TRL">
         <reference local="C_DOCTYPE_COPY_ID" foreign="C_DOCTYPE_COPY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_LANGUAGE" name="LANGUAGE_DOCTYPE_COPY_TRL">
+        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
     </table>
   </database>

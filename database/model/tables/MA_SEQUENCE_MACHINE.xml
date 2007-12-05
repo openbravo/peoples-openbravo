@@ -15,11 +15,11 @@
       <foreign-key foreignTable="AD_CLIENT" name="CLIENT_FK_SEQMACHINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ORG_FK_SEQMACHINE">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MA_MACHINE" name="MACHINE_FK_SEQMACHINE">
         <reference local="MA_MACHINE_ID" foreign="MA_MACHINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ORG_FK_SEQMACHINE">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_SEQUENCE" name="SEQUENCE_FK_SEQMACHINE">
         <reference local="MA_SEQUENCE_ID" foreign="MA_SEQUENCE_ID"/>

@@ -24,11 +24,11 @@
       <column name="PREFIX" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false"/>
       <column name="SUFFIX" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false"/>
       <column name="DATELASTRUN" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADREPLICATION1">
-        <reference local="REMOTE_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADREPLICATION">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADREPLICATION1">
+        <reference local="REMOTE_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADREPLICATION">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>

@@ -49,9 +49,9 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_MINVENTORY">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
+      <check name="MINVENTORY_GENERATELIST_CHECK" condition="GenerateList in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="M_INVENTORY_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="M_INVENTORY_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="M_INVENTORY_UPDATEQTY_CHECK" condition="UpdateQty in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MINVENTORY_GENERATELIST_CHECK" condition="GenerateList in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

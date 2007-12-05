@@ -32,11 +32,11 @@
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_C_PROJECT_VENDOR">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="PRICELIST_PROJECTVENDOR">
-        <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRICELIST_VERSION" name="MPRICELISTVERSION_CPROJECTVEND">
         <reference local="M_PRICELIST_VERSION_ID" foreign="M_PRICELIST_VERSION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRICELIST" name="PRICELIST_PROJECTVENDOR">
+        <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
       <check name="C_PROJECT_VENDO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

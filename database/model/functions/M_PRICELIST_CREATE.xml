@@ -2,8 +2,7 @@
   <database name="FUNCTION M_PRICELIST_CREATE">
     <function name="M_PRICELIST_CREATE" type="NULL">
       <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[                                
-  /*************************************************************************
+      <body>/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -12,14 +11,14 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright ? 1999-2005 Openbravo, S.L
+  * Contributions are Copyright :1 1999-2005 Openbravo, S.L
   *************************************************************************
   * $Id: M_PriceList_Create.sql,v 1.7 2003/06/16 14:40:03 jjanke Exp $
   ***
@@ -90,7 +89,7 @@
       SET PricePO=PriceLastPO
     WHERE(PricePO IS NULL
       OR PricePO=0)
-      AND PriceLastPO<>0;
+      AND PriceLastPO&lt;&gt;0;
     UPDATE M_Product_PO  SET PricePO=0  WHERE PricePO IS NULL;
     -- Set default current vendor
     UPDATE M_Product_PO
@@ -101,7 +100,7 @@
       FROM M_Product_PO pp
       WHERE pp.M_Product_ID=M_Product_PO.M_Product_ID
       GROUP BY pp.M_Product_ID
-      HAVING COUNT(*)>1
+      HAVING COUNT(*)&gt;1
       )
       ;
     -- Commented by cromero 19102006 COMMIT;
@@ -136,7 +135,7 @@
             FROM M_Product_PO x
             WHERE x.M_Product_ID=po.M_Product_ID
             GROUP BY M_Product_ID
-            HAVING COUNT(*)>1
+            HAVING COUNT(*)&gt;1
             )
           ORDER BY 1
           )
@@ -262,7 +261,7 @@
         v_Message:=v_Message || '@Selected@=' || rowcount;
         -- DBMS_OUTPUT.PUT_LINE(v_Message);
         -- Delete Prices in Selection, so that we can insert
-        IF(v_PriceList_Version_Base_ID IS NULL  OR v_PriceList_Version_Base_ID<>v_PriceList_Version_ID) THEN
+        IF(v_PriceList_Version_Base_ID IS NULL  OR v_PriceList_Version_Base_ID&lt;&gt;v_PriceList_Version_ID) THEN
           v_ResultStr:=v_ResultStr || ', Delete';
           DELETE
           FROM M_ProductPrice
@@ -461,7 +460,7 @@
       END LOOP; -- For all DiscountLines
       -- Delete Temporary Selection
       DELETE FROM T_Selection;
-      --<<FINISH_PROCESS>>
+      --&lt;&lt;FINISH_PROCESS&gt;&gt;
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE(v_Message) ;
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished') ;
@@ -474,6 +473,7 @@ EXCEPTION
     DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
     AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
     RETURN;
-END M_PriceList_Create]]></body>
+END M_PriceList_Create
+</body>
     </function>
   </database>

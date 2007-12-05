@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_UPDATE_SEQUENCE_GENERATE">
     <function name="AD_UPDATE_SEQUENCE_GENERATE" type="NULL">
-      <body><![CDATA[
-/************************************************************************* 
+      <body>/************************************************************************* 
 * The contents of this file are subject to the Openbravo  Public  License 
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License 
 * Version 1.1  with a permitted attribution clause; you may not  use this 
@@ -44,7 +43,7 @@
           ) 
           , 
            'UPDATE AD_SEQUENCE SET CURRENTNEXT=(SELECT AD_SEQUENCE.INCREMENTNO + ' ||  'COALESCE((SELECT MAX(t.' || Cur_Tables.NAME || '_ID) FROM ' || Cur_Tables.NAME || 
-           ' t WHERE t.' || Cur_Tables.NAME || '_ID>=AD_SEQUENCE.STARTNO),' ||  'AD_SEQUENCE.STARTNO-AD_SEQUENCE.INCREMENTNO) AS SEQUENCE FROM AD_SEQUENCE WHERE UPPER(NAME) = '||''''||Cur_Tables.NAME||''''|| 
+           ' t WHERE t.' || Cur_Tables.NAME || '_ID&gt;=AD_SEQUENCE.STARTNO),' ||  'AD_SEQUENCE.STARTNO-AD_SEQUENCE.INCREMENTNO) AS SEQUENCE FROM AD_SEQUENCE WHERE UPPER(NAME) = '||''''||Cur_Tables.NAME||''''|| 
            ') WHERE UPPER(NAME) = '||''''||Cur_Tables.NAME||'''' 
         ) 
         ; 
@@ -58,8 +57,8 @@
             , 
              'UPDATE AD_SEQUENCE SET CURRENTNEXTSYS=('|| 
        ' SELECT AD_SEQUENCE.INCREMENTNO + ( CASE SIGN(COALESCE((SELECT MAX(t.' || Cur_Tables.NAME ||'_ID) FROM '||Cur_Tables.NAME||' t ' || 
-             ' WHERE t.' || Cur_Tables.NAME || '_ID<' || v_StartWith ||'),0)-' || v_StartWithSys || ') WHEN  -1  THEN '||v_StartWithSys || '-AD_SEQUENCE.INCREMENTNO ELSE ' || '(SELECT MAX(t.' || Cur_Tables.NAME || 
-             '_ID) FROM ' ||Cur_Tables.NAME||  ' t WHERE t.' ||Cur_Tables.NAME ||'_ID<' || v_StartWith || ') END) AS SEQUENCE '||  ' FROM AD_SEQUENCE '||  ' WHERE UPPER(NAME) = ' || '''' || Cur_Tables.NAME || ''''||') '|| 
+             ' WHERE t.' || Cur_Tables.NAME || '_ID&lt;' || v_StartWith ||'),0)-' || v_StartWithSys || ') WHEN  -1  THEN '||v_StartWithSys || '-AD_SEQUENCE.INCREMENTNO ELSE ' || '(SELECT MAX(t.' || Cur_Tables.NAME || 
+             '_ID) FROM ' ||Cur_Tables.NAME||  ' t WHERE t.' ||Cur_Tables.NAME ||'_ID&lt;' || v_StartWith || ') END) AS SEQUENCE '||  ' FROM AD_SEQUENCE '||  ' WHERE UPPER(NAME) = ' || '''' || Cur_Tables.NAME || ''''||') '|| 
              ' WHERE UPPER(NAME) = ' ||''''|| Cur_Tables.NAME || '''' 
           ) 
           ; 
@@ -72,13 +71,14 @@
             ) 
             , 
              'UPDATE AD_SEQUENCE SET CURRENTNEXTSYS=(' ||  ' SELECT AD_SEQUENCE.INCREMENTNO + COALESCE((SELECT MAX(t.' || Cur_Tables.NAME || 
-             '_ID) FROM ' || Cur_Tables.NAME ||' t WHERE t.' || Cur_Tables.NAME ||'_ID<' || v_StartWith ||'),(' || v_StartWithSys || '-AD_SEQUENCE.INCREMENTNO))' || 
+             '_ID) FROM ' || Cur_Tables.NAME ||' t WHERE t.' || Cur_Tables.NAME ||'_ID&lt;' || v_StartWith ||'),(' || v_StartWithSys || '-AD_SEQUENCE.INCREMENTNO))' || 
              ' FROM AD_SEQUENCE WHERE UPPER(NAME) = ' || '''' || Cur_Tables.NAME || ''''||')' ||  ' WHERE UPPER(NAME) = ' ||''''|| Cur_Tables.NAME || '''' 
           ) 
           ; 
       END IF; 
     END LOOP; 
 END Ad_Update_Sequence_Generate
-]]></body>
+
+</body>
     </function>
   </database>

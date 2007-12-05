@@ -41,11 +41,11 @@
       <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_MPRODUCTIONLINE">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MPRODUCTIONLINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCTIONPLAN" name="MPRODUCTIONPLAN_LINE">
         <reference local="M_PRODUCTIONPLAN_ID" foreign="M_PRODUCTIONPLAN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MPRODUCTIONLINE">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MPRODUCTIONLINE">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
@@ -53,8 +53,8 @@
       <index name="M_PRODUCTIONLINE_PRODPLAN" unique="false">
         <index-column name="M_PRODUCTIONPLAN_ID"/>
       </index>
+      <check name="M_PRODUCTIONLINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
       <check name="MPRODUCTLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MPRODUCTLINE_PRINTLABEL_CHECK" condition="PRINTLABEL IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_PRODUCTIONLINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
     </table>
   </database>

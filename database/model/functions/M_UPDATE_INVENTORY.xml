@@ -14,8 +14,7 @@
       <parameter name="p_datelastinventory" type="TIMESTAMP"/>
       <parameter name="p_preqty" type="NUMERIC"/>
       <parameter name="p_preqtyorder" type="NUMERIC"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -93,6 +92,7 @@ BEGIN
       AND COALESCE(M_PRODUCT_UOM_ID, -1)=COALESCE(p_product_uom, -1) ;
   END IF;
 END M_UPDATE_INVENTORY
-]]></body>
+
+</body>
     </function>
   </database>

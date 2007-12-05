@@ -20,12 +20,12 @@
       <foreign-key foreignTable="AD_ORG" name="AD_DEVELOPER_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="AD_DEVELOPER_EMAIL" unique="false">
+        <index-column name="EMAIL"/>
+      </index>
       <index name="AD_DEVELOPER_NAME" unique="false">
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="NAME"/>
-      </index>
-      <index name="AD_DEVELOPER_EMAIL" unique="false">
-        <index-column name="EMAIL"/>
       </index>
       <check name="AD_DEVELOPER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

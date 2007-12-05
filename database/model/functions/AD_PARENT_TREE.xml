@@ -3,8 +3,7 @@
     <function name="AD_PARENT_TREE" type="VARCHAR">
       <parameter name="p_tree_id" type="NUMERIC" mode="in"/>
       <parameter name="p_node_id" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-   p VARCHAR2(32767);
+      <body>p VARCHAR2(32767);
   vp NUMBER(10);
 BEGIN
 
@@ -21,6 +20,7 @@ BEGIN
     END IF;
     RETURN '|'||vp||'|';
   EXCEPTION WHEN OTHERS THEN RETURN ' ';
-END AD_PARENT_TREE]]></body>
+END AD_PARENT_TREE
+</body>
     </function>
   </database>

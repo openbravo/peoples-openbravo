@@ -33,9 +33,9 @@
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MAWORKREQ">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
       </foreign-key>
-      <check name="MAWORKREQMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MAWORKREQMENT_CLOSED_CHECK" condition="Closed in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MAWORKREQ_EXPLODEPHASES_CHECK" condition="ExplodePhases in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MAWORKREQMENT_CLOSED_CHECK" condition="Closed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MAWORKREQMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MAWORKREQMENT_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

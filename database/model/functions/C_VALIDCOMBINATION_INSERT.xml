@@ -21,8 +21,7 @@
       <parameter name="p_C_Activity_ID" type="NUMERIC" mode="in" default="NULL"/>
       <parameter name="p_User1_ID" type="NUMERIC" mode="in" default="NULL"/>
       <parameter name="p_User2_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -144,7 +143,7 @@
     IF(p_User2_ID IS NOT NULL) THEN
       v_User2_ID:=p_User2_ID;
     END IF;
-    -- Are nandatory elements null?
+    -- Are nandatory elements null:1
     IF(v_AD_Client_ID IS NULL OR v_AD_Org_ID IS NULL  OR v_C_AcctSchema_ID IS NULL OR v_Account_ID IS NULL) THEN
       DBMS_OUTPUT.PUT_LINE('Mandatory Fields Null') ;
       p_C_ValidCombination_ID:=NULL;
@@ -234,6 +233,7 @@
       END IF;
     END IF;
 END C_ValidCombination_Insert
-]]></body>
+
+</body>
     </function>
   </database>

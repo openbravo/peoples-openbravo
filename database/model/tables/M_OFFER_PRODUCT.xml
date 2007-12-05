@@ -14,11 +14,11 @@
       <foreign-key foreignTable="AD_CLIENT" name="M_OFFER_PRODUCT_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="M_OFFER_PRODUCT_ORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_OFFER" name="M_OFFER_PRODUCT_OFFER">
         <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="M_OFFER_PRODUCT_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_OFFER_PRODUCT_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>

@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER A_ASSET_GROUP_TRG2">
     <trigger name="A_ASSET_GROUP_TRG2" table="A_ASSET_GROUP" fires="before" insert="false" update="false" delete="true" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
     /*************************************************************************
@@ -23,6 +24,7 @@
     BEGIN
   DELETE FROM A_Asset_Group_Acct  WHERE A_Asset_Group_ID=:old.A_Asset_Group_ID;
 END A_ASSET_GROUP_Trg2 
-]]></body>
+
+</body>
     </trigger>
   </database>

@@ -37,17 +37,17 @@
       <foreign-key foreignTable="MA_COSTCENTER_VERSION" name="MA_CC_VERSION_PRODUCTIONPLAN">
         <reference local="MA_COSTCENTER_VERSION_ID" foreign="MA_COSTCENTER_VERSION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_WRPHASE" name="MPRODPLAN_MAPRODUCTOINRUN">
-        <reference local="MA_WRPHASE_ID" foreign="MA_WRPHASE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_MPRODUCTIONPLAN">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MPRODUCTIONPLAN">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      <foreign-key foreignTable="MA_WRPHASE" name="MPRODPLAN_MAPRODUCTOINRUN">
+        <reference local="MA_WRPHASE_ID" foreign="MA_WRPHASE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCTION" name="MPRODUCTION_PLAN">
         <reference local="M_PRODUCTION_ID" foreign="M_PRODUCTION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MPRODUCTIONPLAN">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <index name="M_PRODUCTIONPLAN_PRODUCTION" unique="false">
         <index-column name="M_PRODUCTION_ID"/>

@@ -33,9 +33,9 @@
       <index name="C_BANKSTMT_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
+      <check name="C_BANKSTATEMENT_EATEFROM_CHECK" condition="CreateFrom in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="C_BANKSTATEMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="C_BANKSTATEMENT_ISMANUAL_CHECK" condition="IsManual in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_BANKSTATEMENT_EATEFROM_CHECK" condition="CreateFrom in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="C_BANKSTATEMENT_ROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

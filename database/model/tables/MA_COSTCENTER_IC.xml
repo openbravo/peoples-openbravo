@@ -17,11 +17,11 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_MACOSTCENTERIC">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_COSTCENTER_VERSION" name="MACCVERSION_COSTCENTERIC">
-        <reference local="MA_COSTCENTER_VERSION_ID" foreign="MA_COSTCENTER_VERSION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MA_INDIRECT_COST" name="CSALARYCAT_MACOSTCENTERIC">
         <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_COSTCENTER_VERSION" name="MACCVERSION_COSTCENTERIC">
+        <reference local="MA_COSTCENTER_VERSION_ID" foreign="MA_COSTCENTER_VERSION_ID"/>
       </foreign-key>
       <check name="MA_COSTCENTER_I_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

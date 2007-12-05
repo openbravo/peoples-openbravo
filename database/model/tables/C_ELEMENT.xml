@@ -21,17 +21,17 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CELEMENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="C_ELEMENTORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREE2_CELEMENT" onDelete="setnull">
-        <reference local="ADD2TREE_ID" foreign="AD_TREE_ID"/>
+      <foreign-key foreignTable="AD_TREE" name="ADTREE_CELEMENT" onDelete="setnull">
+        <reference local="AD_TREE_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TREE" name="ADTREE1_CELEMENT" onDelete="setnull">
         <reference local="ADD1TREE_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TREE" name="ADTREE_CELEMENT" onDelete="setnull">
-        <reference local="AD_TREE_ID" foreign="AD_TREE_ID"/>
+      <foreign-key foreignTable="AD_TREE" name="ADTREE2_CELEMENT" onDelete="setnull">
+        <reference local="ADD2TREE_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_ELEMENTORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <unique name="C_ELEMENT_NAME">
         <unique-column name="AD_CLIENT_ID"/>

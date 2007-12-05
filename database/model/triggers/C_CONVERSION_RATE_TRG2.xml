@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_CONVERSION_RATE_TRG2">
     <trigger name="C_CONVERSION_RATE_TRG2" table="C_CONVERSION_RATE" fires="after" insert="true" update="true" delete="false" foreach="statement">
-      <body><![CDATA[
+      <body>
+
 
 
 /*************************************************************************
@@ -33,13 +34,14 @@
     and r1.C_Currency_ID_To = r2.C_Currency_ID_To
     and r1.c_Conversion_Rate_ID != r2.c_Conversion_Rate_ID;
 
-   if v_Count > 0 then
+   if v_Count &gt; 0 then
      RAISE_APPLICATION_ERROR (-20504, 'There are different conversion rates with same dates');
    end if;
 
 
 
 END C_Conversion_Rate_Trg2 
-]]></body>
+
+</body>
     </trigger>
   </database>

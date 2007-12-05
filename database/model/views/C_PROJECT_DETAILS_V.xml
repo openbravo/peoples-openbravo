@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW C_PROJECT_DETAILS_V">
-    <view name="C_PROJECT_DETAILS_V"><![CDATA[
-SELECT pl.AD_Client_ID, pl.AD_Org_ID, pl.IsActive, pl.Created, pl.CreatedBy, pl.Updated, pl.UpdatedBy,
+    <view name="C_PROJECT_DETAILS_V" updatable="false">SELECT pl.AD_Client_ID, pl.AD_Org_ID, pl.IsActive, pl.Created, pl.CreatedBy, pl.Updated, pl.UpdatedBy,
   TO_CHAR('en_US') AS AD_Language,
     pj.C_Project_ID, pl.C_ProjectLine_ID,
     pl.Line,
@@ -17,6 +16,5 @@ SELECT pl.AD_Client_ID, pl.AD_Org_ID, pl.IsActive, pl.Created, pl.CreatedBy, pl.
 FROM C_ProjectLine pl
   INNER JOIN C_Project pj ON (pl.C_Project_ID=pj.C_Project_ID)
   LEFT OUTER JOIN M_Product p ON (pl.M_Product_ID=p.M_Product_ID)
-WHERE pl.IsPrinted='Y'
-]]></view>
+WHERE pl.IsPrinted='Y'</view>
   </database>

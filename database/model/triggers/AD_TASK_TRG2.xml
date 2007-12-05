@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_TASK_TRG2">
     <trigger name="AD_TASK_TRG2" table="AD_TASK" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
 /*************************************************************************
@@ -26,8 +27,8 @@
   v_ClassName  VARCHAR2(60) ;
 BEGIN
   IF(UPDATING) THEN
-    IF NOT((COALESCE(:old.CLASSNAME, '.') <> COALESCE(:NEW.CLASSNAME, '.')
-   OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')))
+    IF NOT((COALESCE(:old.CLASSNAME, '.') &lt;&gt; COALESCE(:NEW.CLASSNAME, '.')
+   OR COALESCE(:old.IsActive, '.') &lt;&gt; COALESCE(:NEW.IsActive, '.')))
   THEN
       RETURN;
     END IF;
@@ -92,6 +93,7 @@ BEGIN
   END IF;
 END AD_Task_Trg2
 
-]]></body>
+
+</body>
     </trigger>
   </database>

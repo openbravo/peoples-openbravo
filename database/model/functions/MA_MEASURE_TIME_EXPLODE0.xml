@@ -2,8 +2,7 @@
   <database name="FUNCTION MA_MEASURE_TIME_EXPLODE0">
     <function name="MA_MEASURE_TIME_EXPLODE0" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -22,6 +21,7 @@
 BEGIN
   MA_Measure_Time_Explode(p_PInstance_ID, NULL) ;
 END MA_Measure_Time_Explode0
-]]></body>
+
+</body>
     </function>
   </database>

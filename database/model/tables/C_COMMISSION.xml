@@ -35,8 +35,8 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_CCOMMISSION">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <check name="CCOMMISSION_CREATEFROM_CHECK" condition="CreateFrom in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="C_COMMISSION_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CCOMMISSION_LISTDETAILS_CHECK" condition="ListDetails in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CCOMMISSION_CREATEFROM_CHECK" condition="CreateFrom in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

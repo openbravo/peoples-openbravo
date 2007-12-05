@@ -2,8 +2,7 @@
   <database name="FUNCTION GET_PURCHASE_PRICE">
     <function name="GET_PURCHASE_PRICE" type="NUMERIC">
       <parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -66,7 +65,7 @@
         WHERE M_PRODUCTPRICE.M_PRICELIST_VERSION_ID = M_PRICELIST_VERSION.M_PRICELIST_VERSION_ID
           AND M_PRICELIST_VERSION.M_PRICELIST_ID = M_PRICELIST.M_PRICELIST_ID
           AND M_PRICELIST.ISSOPRICELIST = 'N'  --  AND M_PRICELIST_VERSION.ISACTIVE= 'Y'
-          AND M_PRICELIST_VERSION.VALIDFROM < now()
+          AND M_PRICELIST_VERSION.VALIDFROM &lt; now()
           AND M_PRODUCTPRICE.M_PRODUCT_ID = p_Product_ID
         ORDER BY M_PRICELIST_VERSION.VALIDFROM DESC
         )
@@ -85,6 +84,7 @@
       v_Price := 0;
     END IF;
     RETURN v_Price;
-END Get_Purchase_Price]]></body>
+END Get_Purchase_Price
+</body>
     </function>
   </database>

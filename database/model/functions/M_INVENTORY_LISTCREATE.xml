@@ -2,8 +2,7 @@
   <database name="FUNCTION M_INVENTORY_LISTCREATE">
     <function name="M_INVENTORY_LISTCREATE" type="NULL">
       <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-  /*************************************************************************
+      <body>/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -12,7 +11,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -135,14 +134,14 @@
     IF(LENGTH(v_ProductValue)=0) THEN
       v_ProductValue:=NULL;
     END IF;
-    IF(v_ProductValue IS NOT NULL AND SUBSTR(v_ProductValue, LENGTH(v_ProductValue), 1)<>'%') THEN
+    IF(v_ProductValue IS NOT NULL AND SUBSTR(v_ProductValue, LENGTH(v_ProductValue), 1)&lt;&gt;'%') THEN
       v_ProductValue:=v_ProductValue || '%';
     END IF;
     IF(v_ProductValue IS NOT NULL) THEN
       v_ProductValue:=UPPER(v_ProductValue) ;
     END IF;
     --  Create 0 Storage Records
-    IF(v_QtyRange='=' AND v_Locator_ID>0) THEN
+    IF(v_QtyRange='=' AND v_Locator_ID&gt;0) THEN
       v_ResultStr:='Creating 0 values';
       DECLARE
         Cur_Products RECORD;
@@ -231,8 +230,8 @@
       DBMS_OUTPUT.PUT_LINE('  QtyRange=' || v_QtyRange || ', OnHand=' || Cur_Storage.QtyOnHand) ;
       --
       IF(v_QtyRange IS NULL --  all
-        OR(v_QtyRange='>' AND Cur_Storage.QtyOnHand>0) OR(v_QtyRange='<' AND Cur_Storage.QtyOnHand<0) OR(v_QtyRange='=' AND Cur_Storage.QtyOnHand=0) OR(v_QtyRange='N' AND Cur_Storage.QtyOnHand<>0)) THEN
-        --    DO we have this record already?
+        OR(v_QtyRange='&gt;' AND Cur_Storage.QtyOnHand&gt;0) OR(v_QtyRange='&lt;' AND Cur_Storage.QtyOnHand&lt;0) OR(v_QtyRange='=' AND Cur_Storage.QtyOnHand=0) OR(v_QtyRange='N' AND Cur_Storage.QtyOnHand&lt;&gt;0)) THEN
+        --    DO we have this record already:1
         SELECT MAX(QtyBook)
         INTO v_NextNo
         FROM M_InventoryLine
@@ -292,7 +291,7 @@
     v_Message:='@Inserted@=' || v_NoInserted || ', @Updated@=' || v_NoUpdated;
     v_Result:=1; --    success
   END IF;--END_PROCESS
-  --<<END_PROCESS>>
+  --&lt;&lt;END_PROCESS&gt;&gt;
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished') ;
   DBMS_OUTPUT.PUT_LINE(v_Message) ;
@@ -306,6 +305,7 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END M_Inventory_ListCreate
-]]></body>
+
+</body>
     </function>
   </database>

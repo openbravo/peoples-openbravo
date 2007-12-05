@@ -46,9 +46,9 @@
       <check name="CBPEDI_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CBPEDI_ISAUDITED_CHECK" condition="IsAudited in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CBPEDI_ISINFOSENT_CHECK" condition="IsInfoSent in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPEDI_SENDINQUIRY_CHECK" condition="SendInquiry in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CBPEDI_REINQUIRYREPLY_CHECK" condition="ReceiveInquiryReply in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPEDI_SENDORDER_CHECK" condition="SendOrder in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CBPEDI_REORDERREPLY_CHECK" condition="ReceiveOrderReply in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPEDI_SENDINQUIRY_CHECK" condition="SendInquiry in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPEDI_SENDORDER_CHECK" condition="SendOrder in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

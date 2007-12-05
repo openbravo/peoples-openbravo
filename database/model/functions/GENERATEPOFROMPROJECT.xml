@@ -2,8 +2,7 @@
   <database name="FUNCTION GENERATEPOFROMPROJECT">
     <function name="GENERATEPOFROMPROJECT" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -97,7 +96,7 @@
       LOOP
         -- Check that we have some restrictions
         v_ResultStr:='CheckRestriction';
-        IF(Cur_SO.PROJECTSTATUS IS NULL OR Cur_SO.PROJECTSTATUS<>'OR') THEN
+        IF(Cur_SO.PROJECTSTATUS IS NULL OR Cur_SO.PROJECTSTATUS&lt;&gt;'OR') THEN
          RAISE_APPLICATION_ERROR(-20000, '@Invalidprojectstatus@');
         END IF;
         v_C_Order_ID:=Ad_Sequence_Nextno('C_Order') ;
@@ -155,7 +154,7 @@
       END LOOP;
       v_Message:='@DocumentNo@: ' || v_Message;
     END;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -169,6 +168,7 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END GeneratePOFromProject
-]]></body>
+
+</body>
     </function>
   </database>

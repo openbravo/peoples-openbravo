@@ -36,11 +36,11 @@
       <foreign-key foreignTable="AD_PRINTFONT" name="AD_PRINTFONT_ADPRINTFORMAT">
         <reference local="AD_PRINTFONT_ID" foreign="AD_PRINTFONT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PRINTPAPER" name="ADPRINTPAPER_ADPRINTFORMAT">
-        <reference local="AD_PRINTPAPER_ID" foreign="AD_PRINTPAPER_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_PRINTTABLEFORMAT" name="ADPRINTFORMATTABLE_FORMAT">
         <reference local="AD_PRINTTABLEFORMAT_ID" foreign="AD_PRINTTABLEFORMAT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_PRINTPAPER" name="ADPRINTPAPER_ADPRINTFORMAT">
+        <reference local="AD_PRINTPAPER_ID" foreign="AD_PRINTPAPER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_REPORTVIEW" name="ADPRINTVIEW_ADPRINTFORMAT">
         <reference local="AD_REPORTVIEW_ID" foreign="AD_REPORTVIEW_ID"/>
@@ -57,8 +57,8 @@
         <unique-column name="NAME"/>
       </unique>
       <check name="ADPRINTFORM_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRINTFORM_ISTABBAS_CHECK" condition="IsTableBased in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADPRINTFORM_ISFORM_CHECK" condition="IsForm in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADPRINTFORM_ISSTFOOTER_CHECK" condition="IsStandardHeaderFooter in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRINTFORM_ISTABBAS_CHECK" condition="IsTableBased in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

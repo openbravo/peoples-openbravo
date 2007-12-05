@@ -23,11 +23,11 @@
       <foreign-key foreignTable="AD_CLIENT" name="CLIENT_FK_PRODUCTORG">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ORG_FK_PRODUCTORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_LOCATOR" name="LOCATOR_FK_PRODUCTORG">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ORG_FK_PRODUCTORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="PRODUCT_FK_PRODUCTORG">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>

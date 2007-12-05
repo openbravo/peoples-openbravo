@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_PRODUCT_COSTING">
-    <view name="RV_PRODUCT_COSTING"><![CDATA[
-SELECT  pc.M_Product_ID, pc.C_AcctSchema_ID, p.Value, p.Name, p.M_Product_Category_ID,
+    <view name="RV_PRODUCT_COSTING" updatable="false">SELECT  pc.M_Product_ID, pc.C_AcctSchema_ID, p.Value, p.Name, p.M_Product_Category_ID,
   pc.AD_Client_ID, pc.AD_Org_ID, pc.IsActive, pc.Created,pc.CreatedBy,pc.Updated,pc.UpdatedBy,
   pc.CurrentCostPrice,
   --  Standard Costing
@@ -18,6 +17,5 @@ SELECT  pc.M_Product_ID, pc.C_AcctSchema_ID, p.Value, p.Name, p.M_Product_Catego
   --  LastPrice
   pc.PriceLastPO, pc.PriceLastInv
 FROM  M_Product_Costing pc, M_Product p
-WHERE pc.M_Product_ID=p.M_Product_ID
-]]></view>
+WHERE pc.M_Product_ID=p.M_Product_ID</view>
   </database>

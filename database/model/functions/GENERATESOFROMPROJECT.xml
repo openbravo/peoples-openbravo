@@ -2,8 +2,7 @@
   <database name="FUNCTION GENERATESOFROMPROJECT">
     <function name="GENERATESOFROMPROJECT" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -69,7 +68,7 @@
       LOOP
         -- Check that we have some restrictions
         v_ResultStr:='CheckRestriction';
-        IF(Cur_SO.PROJECTSTATUS IS NULL OR Cur_SO.PROJECTSTATUS<>'OR') THEN
+        IF(Cur_SO.PROJECTSTATUS IS NULL OR Cur_SO.PROJECTSTATUS&lt;&gt;'OR') THEN
           RAISE_APPLICATION_ERROR(-20000, '@Invalidprojectstatus@');
           EXIT;
         END IF;
@@ -116,7 +115,7 @@
         v_Message:='@DocumentNo@: ' || v_Message;
       END IF;--FINISH_PROCESS
     END;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -130,6 +129,7 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END GenerateSOFromProject
-]]></body>
+
+</body>
     </function>
   </database>

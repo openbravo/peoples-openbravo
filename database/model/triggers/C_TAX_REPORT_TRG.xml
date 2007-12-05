@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_TAX_REPORT_TRG">
     <trigger name="C_TAX_REPORT_TRG" table="C_TAX_REPORT" fires="after" insert="true" update="true" delete="false" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
 /*************************************************************************
@@ -74,9 +75,9 @@ BEGIN
   -- AD_Ref_List update trigger
   --  synchronize name,...
   IF UPDATING THEN
-    IF((COALESCE(:OLD.NAME, '.') <> COALESCE(:NEW.NAME, '.')
-   OR COALESCE(:OLD.Description, '.') <> COALESCE(:NEW.Description, '.')
-   OR COALESCE(:OLD.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')))
+    IF((COALESCE(:OLD.NAME, '.') &lt;&gt; COALESCE(:NEW.NAME, '.')
+   OR COALESCE(:OLD.Description, '.') &lt;&gt; COALESCE(:NEW.Description, '.')
+   OR COALESCE(:OLD.IsActive, '.') &lt;&gt; COALESCE(:NEW.IsActive, '.')))
   THEN
       IF(:OLD.IsActive!=:NEW.IsActive) THEN
         --  get AD_Tree_ID + ParentID
@@ -102,6 +103,7 @@ WHEN NO_DATA_FOUND THEN
   */
 END C_TAX_REPORT_Trg
 
-]]></body>
+
+</body>
     </trigger>
   </database>

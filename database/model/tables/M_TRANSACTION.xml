@@ -54,11 +54,11 @@
       <foreign-key foreignTable="M_MOVEMENTLINE" name="MMOVEMENTLINE_MTRANSACTION">
         <reference local="M_MOVEMENTLINE_ID" foreign="M_MOVEMENTLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MINVENTORYCOUNT">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCTIONLINE" name="MPRODUCTIONLINE_MTRANSACTION">
         <reference local="M_PRODUCTIONLINE_ID" foreign="M_PRODUCTIONLINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MINVENTORYCOUNT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOM_MTRANSACTION">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
@@ -66,7 +66,7 @@
       <index name="M_TRANSSACTION_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <check name="M_TRANSACTION_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="M_TRANSACTION_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
+      <check name="M_TRANSACTION_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

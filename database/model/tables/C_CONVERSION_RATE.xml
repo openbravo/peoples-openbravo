@@ -22,11 +22,11 @@
       <foreign-key foreignTable="AD_ORG" name="C_CONVERSION_RATEORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCYCONVRATETO">
-        <reference local="C_CURRENCY_ID_TO" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CCONVERSIONRATE">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCYCONVRATETO">
+        <reference local="C_CURRENCY_ID_TO" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <unique name="C_CONVERSIONRATE_ONCE">
         <unique-column name="AD_CLIENT_ID"/>

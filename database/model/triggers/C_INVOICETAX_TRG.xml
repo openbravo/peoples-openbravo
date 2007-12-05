@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_INVOICETAX_TRG">
     <trigger name="C_INVOICETAX_TRG" table="C_INVOICETAX" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
     /*************************************************************************
@@ -13,7 +14,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &  Business Solution
+    * The Original Code is  Compiere  ERP &amp;  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -36,7 +37,7 @@ BEGIN
     INTO v_Processed
     FROM C_INVOICE
     WHERE C_INVOICE_ID=:old.C_INVOICE_ID;
-    IF(v_Processed='Y' AND ((COALESCE(:old.TAXBASEAMT, 0) <> COALESCE(:new.TAXBASEAMT, 0)) OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0)) OR(COALESCE(:old.C_TAX_ID, 0) <> COALESCE(:new.C_TAX_ID, 0)))) THEN
+    IF(v_Processed='Y' AND ((COALESCE(:old.TAXBASEAMT, 0) &lt;&gt; COALESCE(:new.TAXBASEAMT, 0)) OR(COALESCE(:old.TAXAMT, 0) &lt;&gt; COALESCE(:new.TAXAMT, 0)) OR(COALESCE(:old.C_TAX_ID, 0) &lt;&gt; COALESCE(:new.C_TAX_ID, 0)))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;
@@ -53,10 +54,11 @@ BEGIN
   WHERE C_Invoice_ID=v_ID
     AND(Processed='Y'
     OR Posted='Y') ;
-  IF(v_RO > 0) THEN
+  IF(v_RO &gt; 0) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
 END C_InvoiceTax_Trg 
-]]></body>
+
+</body>
     </trigger>
   </database>

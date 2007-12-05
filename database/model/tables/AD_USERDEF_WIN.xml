@@ -34,7 +34,7 @@
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
       <check name="ADUSERDEFWIN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADUSERDEFWIN_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADUSERDEFWIN_IS_DATEABLE_CHECK" condition="IsUserUpdateable in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADUSERDEFWIN_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

@@ -5,8 +5,7 @@
       <parameter name="p_Org_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_User_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Production_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -44,7 +43,7 @@
   BEGIN
     --  Get Parameters
     v_ResultStr:='ReadingParameters';
-    DBMS_OUTPUT.PUT_LINE('--<<MA_GlobalUse_Distribute>>') ;
+    DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_GlobalUse_Distribute&gt;&gt;') ;
 
   BEGIN --BODY
     --It should only be generated products in M_ProductionLine in GlobalUse case.
@@ -71,7 +70,7 @@
       AND wpp.M_PRODUCT_ID NOT IN (SELECT M_Product_ID
                                    FROM MA_GLOBALUSE
                                    WHERE M_Production_ID=p_Production_ID);
-    IF(v_count<>0) THEN
+    IF(v_count&lt;&gt;0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@ProductMissing@ ' || v_ProductName);
     END IF;
     v_ResultSTR:='Distributing Products';
@@ -108,7 +107,7 @@
           AND pp.M_PRODUCTIONPLAN_ID=Cur_ProductionPlan.M_ProductionPlan_ID
           AND wp.GROUPUSE='Y'
           AND wpp.M_PRODUCT_ID=Cur_GlobalUse.M_Product_ID;
-        IF(v_Factor<>0) THEN
+        IF(v_Factor&lt;&gt;0) THEN
           SELECT MAX(Line) +10
           INTO v_Line
           FROM M_PRODUCTIONLINE
@@ -136,9 +135,9 @@
       END LOOP;
     END LOOP;
     --  End Processing --------------------------------------------------------
-    --<<END_PROCESSING>>
-    --<<FINISH_PROCESS>>
-    DBMS_OUTPUT.PUT_LINE('--<<MA_GlobalUse_Distribute finished>> ' || v_Message) ;
+    --&lt;&lt;END_PROCESSING&gt;&gt;
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_GlobalUse_Distribute finished&gt;&gt; ' || v_Message) ;
     RETURN;
   END; --BODY
 EXCEPTION
@@ -164,6 +163,7 @@ WHEN OTHERS THEN
     END;
     RAISE;
 END Ma_Globaluse_Distribute
-]]></body>
+
+</body>
     </function>
   </database>

@@ -23,19 +23,19 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_MPRICELIST">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_MPRICELIST">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRICELIST" name="BASEPRICELIST">
         <reference local="BASEPRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_MPRICELIST">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <unique name="M_PRICELIST_NAME">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
       <check name="M_PRICELIST_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MPRICELISTISTAXINCL_CHECK" condition="IsTaxIncluded in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MPRICELISTISSOPRLIST_CHECK" condition="IsSOPriceList in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MPRICELISTISTAXINCL_CHECK" condition="IsTaxIncluded in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="MPRLIST_ENFORCEPRLIM_CHECK" condition="EnforcePriceLimit in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

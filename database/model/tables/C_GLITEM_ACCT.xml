@@ -24,11 +24,11 @@
       <foreign-key foreignTable="C_GLITEM" name="CGLITEM_CGLITEMACCT">
         <reference local="C_GLITEM_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="GLITEMDEBITACCT_CGLITEMACCT">
-        <reference local="GLITEM_DEBIT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="GLITEMCREDITACCT_CGLITEMACCT">
         <reference local="GLITEM_CREDIT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="GLITEMDEBITACCT_CGLITEMACCT">
+        <reference local="GLITEM_DEBIT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <check name="C_GLITEM_ACCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

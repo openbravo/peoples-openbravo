@@ -36,26 +36,20 @@
       <column name="INCLUDED_TAB_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="FILTERCLAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="EDITREFERENCE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="TABCLIENT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_AD_TAB">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADTABSORTYESNO">
-        <reference local="AD_COLUMNSORTYESNO_ID" foreign="AD_COLUMN_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADTABSORTORDER">
         <reference local="AD_COLUMNSORTORDER_ID" foreign="AD_COLUMN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADTABSORTYESNO">
+        <reference local="AD_COLUMNSORTYESNO_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_FORM" name="ADFORM_ADTAB">
         <reference local="EDITREFERENCE" foreign="AD_FORM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_IMAGE" name="ADIMAGE_ADTAB">
         <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="TABORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADTAB">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
@@ -69,6 +63,12 @@
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TAB" onDelete="cascade">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="TABCLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="TABORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <index name="AD_TAB_TABLE" unique="false">
         <index-column name="AD_TABLE_ID"/>
       </index>
@@ -79,11 +79,11 @@
         <unique-column name="AD_WINDOW_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="ADTAB_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTAB_ISSINGLEROW_CHECK" condition="IsSingleRow in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTAB_ISINFOTAB_CHECK" condition="IsInfoTab in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTAB_ISTRANSLATIONTAB_CHECK" condition="IsTranslationTab in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTAB_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADTAB_HASTREE_CHECK" condition="HasTree in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTAB_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTAB_ISINFOTAB_CHECK" condition="IsInfoTab in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTAB_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTAB_ISSINGLEROW_CHECK" condition="IsSingleRow in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTAB_ISTRANSLATIONTAB_CHECK" condition="IsTranslationTab in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

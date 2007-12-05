@@ -5,8 +5,7 @@
       <parameter name="p_UOMFrom_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_UOMTo_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_StdPrecision" type="VARCHAR" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
@@ -15,7 +14,7 @@
 * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 * implied. See the License for the specific language governing rights
 * and limitations under the License.
-* The Original Code is  Compiere  ERP &  Business Solution
+* The Original Code is  Compiere  ERP &amp;  Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -31,7 +30,7 @@ Inc.
 *  from UOMFrom_ID to UOMTo_ID
 *  standard or costing precision based on target UOM
 * Test:
-*  SELECT C_UOM_Convert (11,101,102, 'Y') FROM DUAL => 1.38
+*  SELECT C_UOM_Convert (11,101,102, 'Y') FROM DUAL =&gt; 1.38
 ************************************************************************/
   v_Result           NUMBER := NULL;
   v_Rate             NUMBER := NULL;
@@ -91,6 +90,7 @@ BEGIN
     END;
   END IF;
 RETURN v_Result;
-END C_UOM_Convert ]]></body>
+END C_UOM_Convert 
+</body>
     </function>
   </database>

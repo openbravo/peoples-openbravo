@@ -2,8 +2,7 @@
   <database name="FUNCTION C_ORDER_STATUS">
     <function name="C_ORDER_STATUS" type="CHAR">
       <parameter name="p_OrderID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -41,13 +40,13 @@ BEGIN
     INTO v_CountNotDelivered
     FROM C_OrderLine
     WHERE C_ORDER_ID = p_OrderID
-      AND QtyOrdered <> QtyDelivered;
+      AND QtyOrdered &lt;&gt; QtyDelivered;
     --Invoiced
     SELECT COUNT(*)
     INTO v_CountNotInvoiced
     FROM C_OrderLine
     WHERE C_ORDER_ID = p_OrderID
-      AND QtyOrdered <> QtyInvoiced;
+      AND QtyOrdered &lt;&gt; QtyInvoiced;
     --paid
     IF(v_CountNotInvoiced = 0) THEN
       SELECT COUNT(*)
@@ -61,7 +60,7 @@ BEGIN
           AND C_InvoiceLine.C_Invoice_ID = C_Invoice.C_Invoice_ID
           AND C_OrderLine.C_Order_ID = p_OrderID
         )
-        AND grandtotal <>
+        AND grandtotal &lt;&gt;
         (SELECT SUM(C_Currency_Convert(Amount, C_Debt_Payment.C_Currency_ID, C_Invoice.C_Currency_ID, C_Invoice.DateInvoiced, null, null, null))
         FROM C_Debt_Payment
         WHERE C_Invoice_ID = C_Invoice.C_Invoice_ID
@@ -73,7 +72,7 @@ BEGIN
       INTO v_CountNotPaid
       FROM C_Order
       WHERE C_Order_ID = p_OrderID
-        AND grandtotal <>
+        AND grandtotal &lt;&gt;
         (SELECT SUM(C_Currency_Convert(Amount, C_Debt_Payment.C_Currency_ID, C_Order.C_Currency_ID, to_date(now()), null, null, null))
         FROM C_Debt_Payment
         WHERE C_Order_ID = p_OrderID
@@ -81,21 +80,22 @@ BEGIN
         )
         ;
     END IF;
-    IF(v_CountNotDelivered <> 0 AND v_CountNotInvoiced <> 0 AND v_CountNotPaid <> 0) THEN
+    IF(v_CountNotDelivered &lt;&gt; 0 AND v_CountNotInvoiced &lt;&gt; 0 AND v_CountNotPaid &lt;&gt; 0) THEN
       v_Status := '2'; --Pending
-    ELSIF(v_CountNotDelivered <> 0 AND v_CountNotInvoiced <> 0 AND v_CountNotPaid = 0) THEN
+    ELSIF(v_CountNotDelivered &lt;&gt; 0 AND v_CountNotInvoiced &lt;&gt; 0 AND v_CountNotPaid = 0) THEN
       v_Status := '3'; --Paid and not delivered
-    ELSIF(v_CountNotDelivered = 0 AND v_CountNotInvoiced <> 0 AND v_CountNotPaid <> 0) THEN
+    ELSIF(v_CountNotDelivered = 0 AND v_CountNotInvoiced &lt;&gt; 0 AND v_CountNotPaid &lt;&gt; 0) THEN
       v_Status := '4'; --Delivered, not invoiced nor paid
-    ELSIF(v_CountNotDelivered = 0 AND v_CountNotInvoiced = 0 AND v_CountNotPaid <> 0) THEN
+    ELSIF(v_CountNotDelivered = 0 AND v_CountNotInvoiced = 0 AND v_CountNotPaid &lt;&gt; 0) THEN
       v_Status := '5'; --Invoiced not paid
-    ELSIF(v_CountNotDelivered = 0 AND v_CountNotInvoiced <> 0 AND v_CountNotPaid = 0) THEN
+    ELSIF(v_CountNotDelivered = 0 AND v_CountNotInvoiced &lt;&gt; 0 AND v_CountNotPaid = 0) THEN
       v_Status := '6'; --Pending to invoice
     ELSIF(v_CountNotDelivered = 0 AND v_CountNotInvoiced = 0 AND v_CountNotPaid = 0) THEN
       v_Status := '9'; --Finished
     END IF;
   END IF;
   RETURN v_Status;
-END C_Order_Status]]></body>
+END C_Order_Status
+</body>
     </function>
   </database>

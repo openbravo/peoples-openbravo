@@ -49,14 +49,14 @@
       <foreign-key foreignTable="C_UOM" name="CUOM_TEST">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_ACCOUNT_TEST">
-        <reference local="ACCOUNT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_TEST">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_TEST">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_ACCOUNT_TEST">
+        <reference local="ACCOUNT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <check name="TEST_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="TEST_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>

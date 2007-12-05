@@ -4,8 +4,7 @@
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Order_ID" type="NUMERIC" mode="in" default="NULL"/>
       <parameter name="p_Invoice_ID" type="NUMERIC" mode="out"/>
-      <body><![CDATA[
-  /*************************************************************************
+      <body>/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -14,7 +13,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -69,7 +68,7 @@
     CURSOR Cur_OrderLine (Order_ID NUMBER) IS
       SELECT *
       FROM C_ORDERLINE l
-      WHERE QtyOrdered<>QtyInvoiced
+      WHERE QtyOrdered&lt;&gt;QtyInvoiced
         AND C_Order_ID=Order_ID
       ORDER BY Line  FOR UPDATE;
       ptr_ol Cur_OrderLine%ROWTYPE;
@@ -122,8 +121,8 @@
           WHERE AD_PROCESS_ID IN
             (SELECT AD_PROCESS_ID FROM AD_PINSTANCE WHERE AD_PInstance_ID=p_PInstance_ID)
             AND IsProcessing='Y'
-            AND AD_PInstance_ID<>p_PInstance_ID;
-          IF(v_count>0) THEN
+            AND AD_PInstance_ID&lt;&gt;p_PInstance_ID;
+          IF(v_count&gt;0) THEN
             RAISE_APPLICATION_ERROR(-20000, '@SerialProcessStillRunning@') ;
           END IF;
           --  Update AD_PInstance
@@ -170,7 +169,7 @@
             END IF;
           END LOOP; -- Get Parameter
         ELSE
-          DBMS_OUTPUT.PUT_LINE('--<<C_Invoive_Create>>') ;
+          DBMS_OUTPUT.PUT_LINE('--&lt;&lt;C_Invoive_Create&gt;&gt;') ;
           v_C_Order_ID:=p_Order_ID;
           v_DateInvoiced_aux:=NULL;
           v_InvoiceToDate:=NULL;
@@ -192,11 +191,11 @@
               OR(v_C_Order_ID IS NULL AND v_Selection = 'N'
               AND o.DocStatus IN('CO', 'CL')
               AND IsSOTrx='Y'  -- not for InvoiceSchedule
-              AND InvoiceRule<>'S'  -- of all or a specific business partner / organization
+              AND InvoiceRule&lt;&gt;'S'  -- of all or a specific business partner / organization
               AND(v_BPartner_ID IS NULL
               OR C_BPartner_ID=v_BPartner_ID)
               AND(v_InvoiceToDate IS NULL
-              OR DateOrdered<TRUNC(v_InvoiceToDate) +1)
+              OR DateOrdered&lt;TRUNC(v_InvoiceToDate) +1)
               AND(v_AD_Org_ID IS NULL
               OR AD_Org_ID=v_AD_Org_ID)) -- where there is something to invoice
               OR (v_Selection = 'Y'
@@ -209,7 +208,7 @@
               (SELECT *
               FROM C_ORDERLINE l
               WHERE o.C_Order_ID=l.C_Order_ID
-                AND l.QtyOrdered<>l.QtyInvoiced
+                AND l.QtyOrdered&lt;&gt;l.QtyInvoiced
               )
             ORDER BY PriorityRule,
               C_BPartner_ID,
@@ -217,7 +216,7 @@
             )
           LOOP
             DBMS_OUTPUT.PUT_LINE('Order ' || Cur_Order.DocumentNo || ', ID=' || Cur_Order.C_Order_ID) ;
-            -- Parameter Order Date => Invoice Date, Accounting Date
+            -- Parameter Order Date =&gt; Invoice Date, Accounting Date
             v_DateInvoiced:=v_DateInvoiced_aux;
             IF(v_DateInvoiced IS NULL) THEN
               SELECT MAX(s.movementDate)
@@ -282,8 +281,8 @@
                 INTO v_NoRecords
                 FROM C_ORDERLINE
                 WHERE C_Order_ID=Cur_Order.C_Order_ID
-                  AND qtyOrdered<>qtyDelivered;
-                IF(v_NoRecords>0) THEN
+                  AND qtyOrdered&lt;&gt;qtyDelivered;
+                IF(v_NoRecords&gt;0) THEN
                   DBMS_OUTPUT.PUT_LINE('Order not completely delivered') ;
                   Next_Order:=TRUE;
                 END IF;
@@ -347,7 +346,7 @@
             ELSIF(Cur_Order.InvoiceRule='N') THEN
               DBMS_OUTPUT.PUT_LINE('Invoice Rule: Do not invoice') ;
               Next_Order:=TRUE;
-              -- (S)chedule after Delivery -> Invoice Schedule (ignore here)
+              -- (S)chedule after Delivery -&gt; Invoice Schedule (ignore here)
             ELSE
               Next_Order:=TRUE;
             END IF;
@@ -508,7 +507,7 @@
                       )
                       ;
                   END IF;--Next_O_Line
-                  --<<Next_O_Line>>
+                  --&lt;&lt;Next_O_Line&gt;&gt;
                   Next_O_Line:=FALSE;
                   v_ResultStr:='Fetching_OrderLine(*)';
                   FETCH Cur_OrderLine INTO ptr_ol;
@@ -556,7 +555,7 @@
                       )
                       ;
                   END IF;--Next_S_Line
-                  --<<Next_S_Line>>
+                  --&lt;&lt;Next_S_Line&gt;&gt;
                   Next_S_Line:=FALSE;
                   v_ResultStr:='Fetching_ShipmentLine(*)';
                   FETCH Cur_InOutLine INTO ptr_sl;
@@ -577,7 +576,7 @@
         	  END IF;
 			  --Finished added by P.Sarobe
             END IF;--Next_Order
-            --<<Next_Order>>
+            --&lt;&lt;Next_Order&gt;&gt;
             Next_Order:=FALSE;
             v_ResultStr:='ClosingLine';
             IF(Cur_OrderLine_ISOPEN) THEN
@@ -711,18 +710,18 @@
                 AND o.DocStatus IN('CO', 'CL')
                 AND o.IsSOTrx='Y'  -- completed orders
                 AND sh.DocStatus IN('CO', 'CL') -- we need to invoice - and not invoiced
-                AND ol.QtyOrdered<>ol.QtyInvoiced
-                AND sl.IsInvoiced<>'Y'  --  just invoice scheduled or after delivery orders (invoiceRule Scheduled or after delivery). (O)rder completely delivered pending!!!
+                AND ol.QtyOrdered&lt;&gt;ol.QtyInvoiced
+                AND sl.IsInvoiced&lt;&gt;'Y'  --  just invoice scheduled or after delivery orders (invoiceRule Scheduled or after delivery). (O)rder completely delivered pending!!!
                 AND o.InvoiceRule IN('S', 'D') --  not invoice logistic inouts
                 AND(sh.IsLogistic='N'
                 OR sh.IsLogistic IS NULL) --  enforce limitDate to invoice
                 AND(v_InvoiceToDate IS NULL
-                OR TRUNC(o.DateOrdered)<=v_InvoiceToDate) -- Selection
+                OR TRUNC(o.DateOrdered)&lt;=v_InvoiceToDate) -- Selection
                 AND((v_Selection='Y'
                 AND o.IsSelected='Y') -- or scheduled
-                OR(v_Selection<>'Y'
+                OR(v_Selection&lt;&gt;'Y'
                 AND(si.DateLimit IS NULL
-                OR TRUNC(o.DateOrdered)<=si.DateLimit)) )
+                OR TRUNC(o.DateOrdered)&lt;=si.DateLimit)) )
               ORDER BY sh.C_BPartner_ID, (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 1, 1))
                   WHEN '0'
@@ -822,7 +821,7 @@
               -- Invoice Date from Parameter                  -- or Order
               v_DateInvoiced:=COALESCE(v_DateInvoiced_aux, COALESCE(v_DateOrdered, Now())) ; -- si.DateOrdered);
               --  Summary Invoice only if BP has Schedule setup and selected in invoice
-              IF(NOT(Cur_InvoiceSchedule.C_InvoiceSchedule_ID IS NOT NULL AND Cur_InvoiceSchedule.InvoiceRule='S') AND v_InOut_ID<>Cur_InvoiceSchedule.M_InOut_ID) THEN -- and new document
+              IF(NOT(Cur_InvoiceSchedule.C_InvoiceSchedule_ID IS NOT NULL AND Cur_InvoiceSchedule.InvoiceRule='S') AND v_InOut_ID&lt;&gt;Cur_InvoiceSchedule.M_InOut_ID) THEN -- and new document
                 v_Partner_ID:=-2; -- indicate BP change to force new invoice
               END IF;
               -- BPartner changed - New Invoice
@@ -843,8 +842,8 @@
               14.-User dimension 1 (User1_ID)
               15.-User dimension 2 (User2_ID)
               */
-              IF((v_Partner_ID<>Cur_InvoiceSchedule.C_BPartner_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 1, 1)='1' AND v_gOrg_ID<>Cur_InvoiceSchedule.AD_Org_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 2, 1)='1' AND v_gOrder_ID<>Cur_InvoiceSchedule.C_Order_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 3, 1)='1' AND v_gInOut_ID<>Cur_InvoiceSchedule.M_InOut_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 4, 1)='1' AND v_gBillTo_ID<>Cur_InvoiceSchedule.BillTo_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 5, 1)='1' AND v_gBPartner_Location_ID<>Cur_InvoiceSchedule.C_BPartner_Location_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 6, 1)='1' AND v_gSalesRep_ID<>Cur_InvoiceSchedule.SalesRep_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 7, 1)='1' AND v_gPaymentRule<>Cur_InvoiceSchedule.PaymentRule) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 8, 1)='1' AND v_gPaymentTerm_ID<>Cur_InvoiceSchedule.C_PaymentTerm_ID) OR(SUBSTR(
-                Cur_InvoiceSchedule.InvoiceGrouping, 9, 1)='1' AND v_gCurrency_ID<>Cur_InvoiceSchedule.C_Currency_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 10, 1)='1' AND v_gCampaign_ID<>Cur_InvoiceSchedule.C_Campaign_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 11, 1)='1' AND v_gProject_ID<>Cur_InvoiceSchedule.C_Project_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 12, 1)='1' AND v_gActivitiy_ID<>Cur_InvoiceSchedule.C_Activity_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 13, 1)='1' AND v_gOrgTrx_ID<>Cur_InvoiceSchedule.AD_OrgTrx_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 14, 1)='1' AND v_gUser1_ID<>Cur_InvoiceSchedule.User1_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 15, 1)='1' AND v_gUser2_ID<>Cur_InvoiceSchedule.User2_ID)) THEN
+              IF((v_Partner_ID&lt;&gt;Cur_InvoiceSchedule.C_BPartner_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 1, 1)='1' AND v_gOrg_ID&lt;&gt;Cur_InvoiceSchedule.AD_Org_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 2, 1)='1' AND v_gOrder_ID&lt;&gt;Cur_InvoiceSchedule.C_Order_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 3, 1)='1' AND v_gInOut_ID&lt;&gt;Cur_InvoiceSchedule.M_InOut_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 4, 1)='1' AND v_gBillTo_ID&lt;&gt;Cur_InvoiceSchedule.BillTo_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 5, 1)='1' AND v_gBPartner_Location_ID&lt;&gt;Cur_InvoiceSchedule.C_BPartner_Location_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 6, 1)='1' AND v_gSalesRep_ID&lt;&gt;Cur_InvoiceSchedule.SalesRep_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 7, 1)='1' AND v_gPaymentRule&lt;&gt;Cur_InvoiceSchedule.PaymentRule) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 8, 1)='1' AND v_gPaymentTerm_ID&lt;&gt;Cur_InvoiceSchedule.C_PaymentTerm_ID) OR(SUBSTR(
+                Cur_InvoiceSchedule.InvoiceGrouping, 9, 1)='1' AND v_gCurrency_ID&lt;&gt;Cur_InvoiceSchedule.C_Currency_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 10, 1)='1' AND v_gCampaign_ID&lt;&gt;Cur_InvoiceSchedule.C_Campaign_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 11, 1)='1' AND v_gProject_ID&lt;&gt;Cur_InvoiceSchedule.C_Project_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 12, 1)='1' AND v_gActivitiy_ID&lt;&gt;Cur_InvoiceSchedule.C_Activity_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 13, 1)='1' AND v_gOrgTrx_ID&lt;&gt;Cur_InvoiceSchedule.AD_OrgTrx_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 14, 1)='1' AND v_gUser1_ID&lt;&gt;Cur_InvoiceSchedule.User1_ID) OR(SUBSTR(Cur_InvoiceSchedule.InvoiceGrouping, 15, 1)='1' AND v_gUser2_ID&lt;&gt;Cur_InvoiceSchedule.User2_ID)) THEN
                 v_Partner_ID:=Cur_InvoiceSchedule.C_BPartner_ID;
                 v_gOrg_ID:=Cur_InvoiceSchedule.AD_Org_ID;
                 v_gOrder_ID:=Cur_InvoiceSchedule.C_Order_ID;
@@ -869,7 +868,7 @@
                   v_description:=NULL;
                 END IF;
                 -- Post it, if not first time
-                IF(p_Invoice_ID<>-1) THEN
+                IF(p_Invoice_ID&lt;&gt;-1) THEN
                   UPDATE C_INVOICE
                     SET DateInvoiced=v_DateInvoiced,
                     DateAcct=v_DateInvoiced
@@ -978,7 +977,7 @@
               END IF;--FINISH_PROCESS
               IF(NOT FINISH_PROCESS) THEN
                 -- New Shipment
-                IF(Cur_InvoiceSchedule.M_InOut_ID<>v_InOut_ID) THEN
+                IF(Cur_InvoiceSchedule.M_InOut_ID&lt;&gt;v_InOut_ID) THEN
                   v_InOut_ID:=Cur_InvoiceSchedule.M_InOut_ID;
                   -- Get Reference Info
          SELECT PrintName
@@ -1051,7 +1050,7 @@
             END LOOP; -- Invoice Schedule
             IF(NOT FINISH_PROCESS) THEN
               -- Post last invoice, if exists
-              IF(p_Invoice_ID<>-1) THEN
+              IF(p_Invoice_ID&lt;&gt;-1) THEN
                 v_DateInvoiced:=COALESCE(v_DateInvoiced_aux, COALESCE(v_DateOrdered, Now())) ;
                 UPDATE C_INVOICE
                   SET DateInvoiced=v_DateInvoiced,
@@ -1062,14 +1061,14 @@
             END IF;--FINISH_PROCESS
           END; -- Block
         END IF; -- PInstance not null
-        --<<FINISH_PROCESS>>
+        --&lt;&lt;FINISH_PROCESS&gt;&gt;
         v_Message:='@Created@: ' || v_NoRecords||v_Message;
         IF(p_PInstance_ID IS NOT NULL) THEN
           --  Update AD_PInstance
           DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
           Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
         ELSE
-          DBMS_OUTPUT.PUT_LINE('--<<C_Invoive_Create finished>> ' || v_Message) ;
+          DBMS_OUTPUT.PUT_LINE('--&lt;&lt;C_Invoive_Create finished&gt;&gt; ' || v_Message) ;
         END IF;
         RETURN;
       END; --BODY
@@ -1104,6 +1103,7 @@
       p_Invoice_ID:=0; -- Error Indicator
       RETURN;
 END C_Invoice_Create
-]]></body>
+
+</body>
     </function>
   </database>

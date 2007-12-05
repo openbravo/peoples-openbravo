@@ -13,14 +13,14 @@
       <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="LINE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <foreign-key foreignTable="C_ACCT_RPT" name="ACCTRPT_CACCTRPTGROUP">
+        <reference local="C_ACCT_RPT_ID" foreign="C_ACCT_RPT_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CACCTRPTGROUP">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CACCTRPTGROUP">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ACCT_RPT" name="ACCTRPT_CACCTRPTGROUP">
-        <reference local="C_ACCT_RPT_ID" foreign="C_ACCT_RPT_ID"/>
       </foreign-key>
     </table>
   </database>

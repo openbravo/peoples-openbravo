@@ -2,8 +2,7 @@
   <database name="FUNCTION MRP_PURCHASE_RUN">
     <function name="MRP_PURCHASE_RUN" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -86,6 +85,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
 --  RETURN;
-END Mrp_Purchase_Run]]></body>
+END Mrp_Purchase_Run
+</body>
     </function>
   </database>

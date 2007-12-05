@@ -19,8 +19,8 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_C_INCOTERMS">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="C_INCOTERMS_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CINCOTERM_REQUIRDESCR_CHECK" condition="requiresDescription in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INCOTERMS_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="C_INCOTERMS_ISDELIVERY_CHECK" condition="IsDelivery in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

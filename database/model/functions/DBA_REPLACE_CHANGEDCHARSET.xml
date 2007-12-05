@@ -2,8 +2,7 @@
   <database name="FUNCTION DBA_REPLACE_CHANGEDCHARSET">
     <function name="DBA_REPLACE_CHANGEDCHARSET" type="VARCHAR">
       <parameter name="p_str" type="VARCHAR"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -45,6 +44,7 @@ BEGIN
   v_str := REPLACE(v_str, 'Âº', 'º') ;
   v_str := REPLACE(v_str, 'Ã?', 'Ó') ;
   RETURN(v_str) ;
-END Dba_Replace_Changedcharset]]></body>
+END Dba_Replace_Changedcharset
+</body>
     </function>
   </database>

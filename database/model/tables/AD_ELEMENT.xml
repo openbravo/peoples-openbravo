@@ -29,11 +29,11 @@
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="AD_ORG_ID"/>
       </index>
-      <index name="AD_ELEMENT_NAME" unique="false">
-        <index-column name="NAME"/>
-      </index>
       <index name="AD_ELEMENT_COLUMNNAME" unique="false">
         <index-column name="COLUMNNAME"/>
+      </index>
+      <index name="AD_ELEMENT_NAME" unique="false">
+        <index-column name="NAME"/>
       </index>
       <check name="AD_ELEMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

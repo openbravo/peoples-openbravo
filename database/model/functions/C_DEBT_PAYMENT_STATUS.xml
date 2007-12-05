@@ -8,8 +8,7 @@
       <parameter name="p_IsValid" type="CHAR" mode="in"/>
       <parameter name="p_C_CashLine_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_C_BankStatementLine_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -47,6 +46,7 @@ BEGIN
     v_Display := 'P';
   END IF;
   RETURN v_Display;
-END C_DEBT_PAYMENT_STATUS ]]></body>
+END C_DEBT_PAYMENT_STATUS 
+</body>
     </function>
   </database>

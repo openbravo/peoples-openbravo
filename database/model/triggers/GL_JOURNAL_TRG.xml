@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER GL_JOURNAL_TRG">
     <trigger name="GL_JOURNAL_TRG" table="GL_JOURNAL" fires="after" insert="false" update="true" delete="true" foreach="row">
-      <body><![CDATA[
+      <body>
+
 
 
     /*************************************************************************
@@ -13,7 +14,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &  Business Solution
+    * The Original Code is  Compiere  ERP &amp;  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -29,8 +30,8 @@
     -- Subtract Old Amount
     IF(UPDATING
     OR DELETING)
-    THEN  IF(:old.TotalDr <> :NEW.TotalDr
-    OR :OLD.TotalCr <> :NEW.TotalCr)
+    THEN  IF(:old.TotalDr &lt;&gt; :NEW.TotalDr
+    OR :OLD.TotalCr &lt;&gt; :NEW.TotalCr)
     THEN  IF(:old.GL_JournalBatch_ID IS NOT NULL
     AND :old.IsActive='Y')
     THEN
@@ -43,8 +44,8 @@
  END IF;
  -- Add new Amount
  IF(INSERTING OR UPDATING) THEN
-  IF(COALESCE(:old.TotalDr, 0) <> COALESCE(:NEW.TotalDr, 0)
-  OR COALESCE(:old.TotalCr, 0) <> COALESCE(:NEW.TotalCr, 0))
+  IF(COALESCE(:old.TotalDr, 0) &lt;&gt; COALESCE(:NEW.TotalDr, 0)
+  OR COALESCE(:old.TotalCr, 0) &lt;&gt; COALESCE(:NEW.TotalCr, 0))
  THEN
     IF(:new.GL_JournalBatch_ID IS NOT NULL AND :new.IsActive='Y') THEN
       UPDATE GL_JournalBatch
@@ -56,6 +57,7 @@
  END IF;
 END GL_Journal_Trg
 
-]]></body>
+
+</body>
     </trigger>
   </database>

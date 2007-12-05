@@ -6,8 +6,7 @@
       <parameter name="p_AD_Org_ID" type="NUMERIC"/>
       <parameter name="p_Result" type="NUMERIC" mode="out"/>
       <parameter name="p_Message" type="VARCHAR" mode="out"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -46,9 +45,9 @@ BEGIN
         AND AD_ORG_ID=p_AD_Org_ID
       )
       A
-    WHERE QTY<0
-      OR QTYORDER<0;
-    IF v_ExistsNegativeStock<>0 THEN
+    WHERE QTY&lt;0
+      OR QTYORDER&lt;0;
+    IF v_ExistsNegativeStock&lt;&gt;0 THEN
       p_Result:=0;
       p_Message:='@NotEnoughStocked@';
     END IF;
@@ -79,6 +78,7 @@ WHEN OTHERS THEN
   RAISE;
   RETURN;
 END M_Check_Stock
-]]></body>
+
+</body>
     </function>
   </database>

@@ -38,11 +38,11 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADATTRIBUTE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCEVALUE_ADATTRIBUTE">
-        <reference local="AD_REFERENCE_VALUE_ID" foreign="AD_REFERENCE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCE_ADATTRIBUTE">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCEVALUE_ADATTRIBUTE">
+        <reference local="AD_REFERENCE_VALUE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADATTRIBUTE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
@@ -51,12 +51,12 @@
         <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
       </foreign-key>
       <check name="ADATTRIBUTE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADATTRIBUTE_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADATTRIBUTE_ISUPDATEABLE_CHECK" condition="IsUpdateable in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADATTRIBUTE_ISMANDATORY_CHECK" condition="IsMandatory in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADATTRIBUTE_ISENCRYPTED_CHECK" condition="IsEncrypted in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADATTRIBUTE_ISSAMELINE_CHECK" condition="IsSameLine in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADATTRIBUTE_ISHEADING_CHECK" condition="IsHeading in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="ADATTRIBUTE_ISFIELDONLY_CHECK" condition="IsFieldOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISHEADING_CHECK" condition="IsHeading in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISMANDATORY_CHECK" condition="IsMandatory in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISSAMELINE_CHECK" condition="IsSameLine in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADATTRIBUTE_ISUPDATEABLE_CHECK" condition="IsUpdateable in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

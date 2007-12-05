@@ -30,7 +30,7 @@
       </unique>
       <check name="CAPPROVAL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CAPPROVAL_ISAMO_APPROVED_CHECK" condition="IsAmountApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CAPPROVAL_ISWOR_APPROVED_CHECK" condition="IsWorkflowApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="CAPPROVAL_ISPRO_APPROVED_CHECK" condition="IsProductAttributeApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CAPPROVAL_ISWOR_APPROVED_CHECK" condition="IsWorkflowApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

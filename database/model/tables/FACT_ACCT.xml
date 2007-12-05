@@ -73,26 +73,23 @@
       <foreign-key foreignTable="C_BPARTNER" name="C_BUSPARTNER_FACT_ACCT">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_FACT_ACCT">
-        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCY_FACT_ACCT">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_FACTACCT">
         <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER2_FACTACCT">
-        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER1_FACTACCT">
         <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="C_LOCATIONTO_FACT_ACCT">
-        <reference local="C_LOCTO_ID" foreign="C_LOCATION_ID"/>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER2_FACTACCT">
+        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_LOCATION" name="C_LOCATIONFROM_FACT_ACCT">
         <reference local="C_LOCFROM_ID" foreign="C_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="C_LOCATIONTO_FACT_ACCT">
+        <reference local="C_LOCTO_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PERIOD" name="CPERIOD_FACTACCT">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
@@ -120,6 +117,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_FACT_ACCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_FACT_ACCT">
+        <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
       <index name="FACT_ACCT_ACCOUNT" unique="false">
         <index-column name="AD_CLIENT_ID"/>

@@ -24,8 +24,8 @@
       <foreign-key foreignTable="M_ATTRIBUTESEARCH" name="MATTRIBUTESEARCH_MATTRIBUTE">
         <reference local="M_ATTRIBUTESEARCH_ID" foreign="M_ATTRIBUTESEARCH_ID"/>
       </foreign-key>
+      <check name="MATTRIB_ISINSTANCATTRIB_CHECK" condition="IsInstanceAttribute in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="M_ATTRIBUTE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="M_ATTRIBUTE_ISMANDATORY_CHECK" condition="IsMandatory in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MATTRIB_ISINSTANCATTRIB_CHECK" condition="IsInstanceAttribute in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

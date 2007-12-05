@@ -2,10 +2,9 @@
   <database name="FUNCTION GENERATE_STANDAR_COSTS">
     <function name="GENERATE_STANDAR_COSTS" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Date" type="TIMESTAMP" mode="in" default="now()"/>
+      <parameter name="p_Date" type="TIMESTAMP" mode="in"/>
       <parameter name="p_Products" type="CHAR" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -110,7 +109,7 @@
         )
         ;
     END LOOP;
-    --<<FINISH_PROCESS>>
+    --&lt;&lt;FINISH_PROCESS&gt;&gt;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User, 'N', 1, v_Message) ;
@@ -124,6 +123,7 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END Generate_Standar_Costs
-]]></body>
+
+</body>
     </function>
   </database>

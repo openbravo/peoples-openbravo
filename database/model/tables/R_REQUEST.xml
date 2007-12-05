@@ -43,11 +43,11 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_RREQUEST">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_SR_RREQUEST">
-        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSER_RREQUEST">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="ADUSER_SR_RREQUEST">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_RREQUEST">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
@@ -58,9 +58,6 @@
       <foreign-key foreignTable="C_DEBT_PAYMENT" name="CDEBT_PAYMENT_RREQUEST">
         <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="RINVOICE_RREQUEST">
-        <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_ORDER" name="CORDER_RREQUEST">
         <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
@@ -70,17 +67,20 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_RREQUEST">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_INVOICE" name="RINVOICE_RREQUEST">
+        <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="R_MAILTEXT" name="RMAILTEXT_RREQUEST">
         <reference local="R_MAILTEXT_ID" foreign="R_MAILTEXT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="R_REQUESTTYPE" name="RREQUESTTYPE_RREQUEST">
         <reference local="R_REQUESTTYPE_ID" foreign="R_REQUESTTYPE_ID"/>
       </foreign-key>
-      <index name="R_REQUEST_USER" unique="false">
-        <index-column name="AD_USER_ID"/>
-      </index>
       <index name="R_REQUEST_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
+      </index>
+      <index name="R_REQUEST_USER" unique="false">
+        <index-column name="AD_USER_ID"/>
       </index>
       <check name="RREQUEST_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="RREQUEST_ISESCALATED_CHECK" condition="IsEscalated in (&apos;Y&apos;,&apos;N&apos;)"/>

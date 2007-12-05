@@ -2,8 +2,7 @@
   <database name="FUNCTION AD_MAPPING_FORMAT">
     <function name="AD_MAPPING_FORMAT" type="VARCHAR">
       <parameter name="p_str" type="VARCHAR"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -41,11 +40,12 @@ BEGIN
   v_str:=replace(v_str, '/', '') ;
   v_str:=replace(v_str, '#', '') ;
   v_str:=replace(v_str, ' ', '') ;
-  v_str:=replace(v_str, '&', '') ;
+  v_str:=replace(v_str, '&amp;', '') ;
   v_str:=replace(v_str, ',', '') ;
   v_str:=replace(v_str, '(', '') ;
   v_str:=replace(v_str, ')', '') ;
   RETURN(v_str) ;
-END AD_MAPPING_FORMAT]]></body>
+END AD_MAPPING_FORMAT
+</body>
     </function>
   </database>

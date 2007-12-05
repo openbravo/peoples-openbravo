@@ -45,7 +45,7 @@
         <unique-column name="DOCUMENTNO"/>
       </unique>
       <check name="GL_JOURNALBATCH_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="GLJOURNBATCH_PROCESSING_CHECK" condition="Processing in (&apos;Y&apos;,&apos;N&apos;)"/>
       <check name="GLJOURNBATCH_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="GLJOURNBATCH_PROCESSING_CHECK" condition="Processing in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>
   </database>

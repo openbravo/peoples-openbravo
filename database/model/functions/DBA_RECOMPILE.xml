@@ -2,8 +2,7 @@
   <database name="FUNCTION DBA_RECOMPILE">
     <function name="DBA_RECOMPILE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-  /*************************************************************************
+      <body>/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -12,7 +11,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &  Business Solution
+  * The Original Code is  Compiere  ERP &amp;  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -39,7 +38,7 @@
       object_name,
       object_type
     FROM user_objects
-    WHERE status<>'VALID'
+    WHERE status&lt;&gt;'VALID'
       AND object_type IN('VIEW', 'PACKAGE', 'PACKAGE BODY', 'FUNCTION', 'PROCEDURE', 'TRIGGER', 'JAVA CLASS')
     ORDER BY object_type,
       object_name;
@@ -78,7 +77,7 @@
         --
         OPEN Cur_Valids(ci.object_ID) ;
         FETCH Cur_Valids INTO valid_text;
-        IF Cur_Valids%ROWCOUNT>0 THEN
+        IF Cur_Valids%ROWCOUNT&gt;0 THEN
           IF(v_PrintInfo='Y') THEN
             DBMS_OUTPUT.PUT_LINE('OK: ' || ci.object_type || ' ' || ci.object_name) ;
           END IF;
@@ -86,7 +85,7 @@
           CLOSE Cur_Valids;
           EXIT;
         ELSE
-          IF(LENGTH(v_Message)<1950) THEN
+          IF(LENGTH(v_Message)&lt;1950) THEN
             v_Message:=v_Message || ci.object_name || ' ';
           END IF;
           IF(v_PrintInfo='Y') THEN
@@ -110,24 +109,24 @@
   IF(LENGTH(v_Message)=1) THEN
     v_Message:='All valid';
     DBMS_OUTPUT.PUT_LINE(v_Message) ;
-  ELSIF(LENGTH(v_Message)>80) THEN
+  ELSIF(LENGTH(v_Message)&gt;80) THEN
     v_Buffer:=v_Message;
-    DBMS_OUTPUT.PUT_LINE('>') ;
-    WHILE(LENGTH(v_Buffer)>0)
+    DBMS_OUTPUT.PUT_LINE('&gt;') ;
+    WHILE(LENGTH(v_Buffer)&gt;0)
     LOOP
       v_Line:=SUBSTR(v_Buffer, 1, 80) ;
       DBMS_OUTPUT.PUT_LINE(v_Line) ;
       v_Buffer:=SUBSTR(v_Buffer, 81) ;
     END LOOP;
-    DBMS_OUTPUT.PUT_LINE('<') ;
+    DBMS_OUTPUT.PUT_LINE('&lt;') ;
     v_Result:=0;
     DBMS_OUTPUT.PUT_LINE('ERROR') ;
   ELSE
-    DBMS_OUTPUT.PUT_LINE('>' || v_Message || '<') ;
+    DBMS_OUTPUT.PUT_LINE('&gt;' || v_Message || '&lt;') ;
     v_Result:=0;
     DBMS_OUTPUT.PUT_LINE('ERROR') ;
   END IF;
-  --<<FINISH_PROCESS>>
+  --&lt;&lt;FINISH_PROCESS&gt;&gt;
   IF(p_PInstance_ID IS NOT NULL) THEN
     --  Update AD_PInstance
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -143,6 +142,7 @@ WHEN OTHERS THEN
     CLOSE Cur_Valids;
   END IF;
 END DBA_Recompile
-]]></body>
+
+</body>
     </function>
   </database>

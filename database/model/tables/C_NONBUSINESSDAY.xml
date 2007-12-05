@@ -12,14 +12,14 @@
       <column name="NAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="DATE1" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="C_CALENDAR_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <foreign-key foreignTable="C_CALENDAR" name="C_CALENDARNONBUSINESSDAY">
+        <reference local="C_CALENDAR_ID" foreign="C_CALENDAR_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_NONBUSINESDAYSCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_NONBUSINESDAYSORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CALENDAR" name="C_CALENDARNONBUSINESSDAY">
-        <reference local="C_CALENDAR_ID" foreign="C_CALENDAR_ID"/>
       </foreign-key>
       <check name="C_NONBUSINESSDA_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
     </table>

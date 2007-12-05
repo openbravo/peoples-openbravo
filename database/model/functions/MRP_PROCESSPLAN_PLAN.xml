@@ -7,8 +7,7 @@
       <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
       <parameter name="p_PlanningDate" type="TIMESTAMP" mode="in"/>
       <parameter name="p_SecurityMargin" type="NUMERIC" mode="in"/>
-      <body><![CDATA[
-/*************************************************************************
+      <body>/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -48,9 +47,9 @@ BEGIN
         COALESCE(M_PRODUCT_ORG.QTYMIN, M_PRODUCT_ORG.QTYMIN, 0) AS qtymin,
         COALESCE(M_PRODUCT_ORG.QTYSTD, M_PRODUCT_ORG.QTYSTD, 1) AS qtystd,
         (CASE WHEN pl.INOUTTRXTYPE IN ('ST', 'MS') THEN 0
-              WHEN (pl.INOUTTRXTYPE = 'WR' AND pl.QTY < 0) THEN 3
-              WHEN (pl.INOUTTRXTYPE = 'WR' AND pl.QTY >= 0) THEN 4
-              WHEN pl.QTY >= 0 THEN 1
+              WHEN (pl.INOUTTRXTYPE = 'WR' AND pl.QTY &lt; 0) THEN 3
+              WHEN (pl.INOUTTRXTYPE = 'WR' AND pl.QTY &gt;= 0) THEN 4
+              WHEN pl.QTY &gt;= 0 THEN 1
               ELSE 2 END) AS PRIORITY
       FROM
         M_PRODUCT INNER JOIN MRP_RUN_PRODUCTIONLINE pl ON pl.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
@@ -62,10 +61,10 @@ BEGIN
       ) LOOP
 
       v_Qty_New := Cur_Lines.qty;
-      IF (Cur_Lines.ISFIXED = 'N' AND v_Qty_New > 0) THEN
+      IF (Cur_Lines.ISFIXED = 'N' AND v_Qty_New &gt; 0) THEN
 
         v_neededQty_New := Cur_Lines.qty - v_Stock;
-        IF (v_neededQty_New > 0) THEN
+        IF (v_neededQty_New &gt; 0) THEN
           v_Qty_New := GREATEST(v_neededqty_New, Cur_Lines.qtymin);
           IF (Cur_Lines.qtytype = 'M') THEN --Multiple lot qty
             v_Qty_new := CEIL(v_qty_new/Cur_Lines.qtystd)*Cur_Lines.qtystd;
@@ -86,8 +85,8 @@ BEGIN
             plannedorderdate = v_plannedorderdate_new
         WHERE MRP_RUN_PRODUCTIONLINE_ID = Cur_Lines.MRP_RUN_PRODUCTIONLINE_ID;
 
-        IF (Cur_Lines.qty <> v_qty_new
-            OR Cur_Lines.plannedorderdate <> v_plannedorderdate_new) THEN
+        IF (Cur_Lines.qty &lt;&gt; v_qty_new
+            OR Cur_Lines.plannedorderdate &lt;&gt; v_plannedorderdate_new) THEN
           Mrp_Processplan_Recalculate(p_User_ID, Cur_Lines.MRP_Run_ProductionLine_ID, p_TimeHorizon,
                                     p_PlanningDate, p_SecurityMargin);
         END IF;
@@ -105,6 +104,7 @@ WHEN OTHERS THEN
   RAISE;
 --  RETURN;
 END Mrp_Processplan_Plan
-]]></body>
+
+</body>
     </function>
   </database>
