@@ -20,13 +20,13 @@ import org.apache.ddlutils.model.Database;
  * @author adrian
  */
 public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
-    
+
     /** Creates a new instance of OpenbravoMetadataFilter */
     public OpenbravoMetadataFilter() {
     }
-    
+
     public void init(Database database) {
-        
+    
         addTable("AD_CLIENT", "AD_CLIENT_ID = 0");
         addTable("AD_CLIENTINFO", "AD_CLIENT_ID = 0");
         addTable("AD_ORG", "AD_CLIENT_ID = 0");
@@ -36,9 +36,9 @@ public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
         addTable("AD_USER", "AD_CLIENT_ID = 0");
         addTable("AD_USER_ROLES", "AD_CLIENT_ID = 0");
         addTable("AD_DEVELOPER");
-        
+    
         //addTable("AD_WORKBENCH", "AD_CLIENT_ID = 0");
-        
+    
         addTable("AD_ALERTRULE", "AD_CLIENT_ID = 0");
         addTable("AD_ALERTRULE_TRL", "AD_CLIENT_ID = 0");
         addTable("AD_AUXILIARINPUT", "AD_CLIENT_ID = 0");
@@ -96,6 +96,20 @@ public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
         addTable("AD_WINDOW", "AD_CLIENT_ID = 0");
         addTable("AD_WINDOW_TRL", "AD_CLIENT_ID = 0");
         addTable("AD_WORKFLOW", "AD_CLIENT_ID = 0");
-        addTable("AD_WORKFLOW_TRL", "AD_CLIENT_ID = 0");    
-    }    
+        addTable("AD_WORKFLOW_TRL", "AD_CLIENT_ID = 0");
+        addTable("AD_ACCOUNTINGRPT_ELEMENT", "AD_CLIENT_ID = 0");
+        addTable("C_COUNTRY", "AD_CLIENT_ID = 0");
+        addTable("C_COUNTRY_TRL", "AD_CLIENT_ID = 0");
+        addTable("C_CURRENCY", "AD_CLIENT_ID = 0");
+        addTable("C_CURRENCY_TRL", "AD_CLIENT_ID = 0");
+        addTable("C_DOCTYPE", "AD_CLIENT_ID = 0");
+        addTable("C_DOCTYPE_TRL", "AD_CLIENT_ID = 0");
+        addTable("C_REGION", "AD_CLIENT_ID = 0");
+        addTable("C_UOM", "AD_CLIENT_ID = 0");
+        addTable("C_UOM_TRL", "AD_CLIENT_ID = 0");
+        addTable("GL_CATEGORY", "AD_CLIENT_ID = 0");
+        addTable("M_ATTRIBUTESET", "AD_CLIENT_ID = 0");
+        addTable("M_ATTRIBUTESETINSTANCE", "AD_CLIENT_ID = 0");
+        addTable("TEST", "AD_CLIENT_ID = 0");
+    }
 }
