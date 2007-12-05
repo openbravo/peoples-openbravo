@@ -240,6 +240,11 @@
     <ant dir="${base.source}/database" target="update.database.script" inheritAll="true" inheritRefs="true"/>
   </target>
 
+  <target name="export.database" depends="init">
+    <ant dir="${base.source}/database" target="export.database.structure" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/database" target="export.database.data" inheritAll="true" inheritRefs="true"/>
+  </target>
+
   <target name="export.database.structure" depends="init">
     <ant dir="${base.source}/database" target="export.database.structure" inheritAll="true" inheritRefs="true"/>
   </target>
