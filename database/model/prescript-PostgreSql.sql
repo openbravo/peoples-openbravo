@@ -58,6 +58,20 @@ EXCEPTION
 END;
 ' LANGUAGE 'plpgsql'
 /-- END
+ 
+CREATE OR REPLACE FUNCTION to_number
+(
+ interval
+)
+RETURNS NUMERIC AS '
+BEGIN
+RETURN to_number(extract(epoch FROM ($1))/86400, ''S99999999999999999.'');
+EXCEPTION 
+  WHEN OTHERS THEN 
+    RETURN NULL;
+END;
+' LANGUAGE 'plpgsql'
+/-- END
 
 CREATE OR REPLACE FUNCTION to_date
 (
