@@ -276,4 +276,9 @@
   <target name="save.database.model" depends="init">
     <ant dir="${base.source}/database" target="save.database.model" inheritAll="true" inheritRefs="true"/>
   </target>
+
+  <target name="compare.database.structure" depends="init">
+    <ant dir="${base.source}/database" target="compare.database.structure" inheritAll="true" inheritRefs="true"/>
+  </target>
+
 </project>

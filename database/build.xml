@@ -65,6 +65,10 @@
            classname="org.openbravo.ddlutils.task.SaveDatabase">
     <classpath refid="runtime-classpath" />
   </taskdef>
+  <taskdef name="comparedatabase"
+           classname="org.openbravo.ddlutils.task.CompareDatabase">
+    <classpath refid="runtime-classpath" />
+  </taskdef>
 
   <target name="create.database">
     <antcall target="clean.database.${bbdd.rdbms}"/>
@@ -390,4 +394,14 @@
         </transaction>
     </sql>
   </target>
+
+    <target name="compare.database.structure">
+        <comparedatabase driver="${bbdd.driver}"
+                        url="${bbdd.owner.url}"
+                        user="${bbdd.user}"
+                        password="${bbdd.password}"
+                        model="model"
+                        verbosity="${bbdd.verbosity}" />
+    </target>
+
 </project>
