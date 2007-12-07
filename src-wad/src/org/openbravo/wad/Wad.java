@@ -753,7 +753,7 @@ public class Wad extends DefaultHandler {
         Properties gridProps = new Properties();
         gridProps.setProperty("id", "grid");
         gridProps.setProperty("NumRows", "20");
-        gridProps.setProperty("width", "94%");
+        gridProps.setProperty("width", "99%");
         gridProps.setProperty("ShowLineNumbers", "true");
         gridProps.setProperty("editable", "false");
         gridProps.setProperty("sortable", "true");

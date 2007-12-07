@@ -90,6 +90,19 @@ function selectFilters(params) {
   updateGridDataAfterFilter();
   return true;
 }
+
+ function calculateNumRows() {
+   resizeArea();
+   var grid_header_height = document.getElementById("grid_sample_header").clientHeight + 1;
+   var grid_row_height = document.getElementById("grid_sample_row").clientHeight + 1;
+   var client_height = document.getElementById("client").clientHeight;
+   client_height = client_height - grid_header_height;
+   client_height = client_height - 20;
+   var numRows = (client_height)/(grid_row_height);
+   numRows = parseInt(numRows);
+   document.getElementById("grid_sample").style.display = "none";
+   return numRows;
+ }
 </script>
 <script language="JavaScript" type="text/javascript" id="selectedColumn"></script>
 <script language="JavaScript" type="text/javascript" id="fieldScript"></script>
@@ -129,7 +142,7 @@ function selectFilters(params) {
           <TR id="paramMainTabContainer"></TR>
           <TR id="paramChildTabContainer"></TR>
         </TABLE>
-        <DIV class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
+        <DIV class="Main_ContentPane_Client" style="overflow: hidden; display: none;" id="client">
           <TABLE summary="" id="sectionDetail">
             <TR>
               <TD>
@@ -216,6 +229,14 @@ function selectFilters(params) {
   </tr>
   </TBODY>
 </table>
+<TABLE cellspacing="0" cellpadding="0" width="10px" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="grid_sample">
+  <TR class="DataGrid_Body_Row" id="grid_sample_header">
+    <TH width="10px" class="DataGrid_Header_Cell">DataGrid</TH>
+  </TR>
+  <TR class="DataGrid_Body_Row DataGrid_Body_Row_1" onclick="selectActual(this); loadData('BBAccountingUser', '1000012', '', '1'); return true;" id="grid_sample_row">
+    <TD class="DataGrid_Body_Cell">Loading...</TD>
+  </TR>
+</TABLE>
                   <PARAMETER_TMP id="parent">        <input type="hidden" name="inpKeyParent" value="" id="keyParent">
                 <div class="RelationInfoContainer">
                   <table class="RelationInfo">

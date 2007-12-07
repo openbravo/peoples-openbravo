@@ -68,16 +68,17 @@ dojo.widget.defineWidget(
 		structureUrl: "",
 		dataUrl: "",
 		updatesUrl: "",
+		calculateNumRows: false,
 		numRows: 20,
 		offset: 0,
-    sortCols: "",
-    sortDirs: "",
+		sortCols: "",
+		sortDirs: "",
 		editable: true,
 		sortable: true,
 		onInvalidValue: alert,
 		onScroll: function() {},
 		onGridLoad: function() {},
-    defaultRow: 0,
+		defaultRow: 0,
 		showLineNumbers: "true",
 		lineNoColumnWidth: "40px",
 		lineNoColumnTitle: "#",
@@ -85,6 +86,7 @@ dojo.widget.defineWidget(
 		lineNoColumnHeaderClass: "DataGrid_Header_LineNoCell",
 		bufferSize: 7.0,		
 		maxWidth: "100%",
+		percentageWidthRelativeToId: "body",
 		isFirstLoad: true,
 
 		templateString: "<div></div>",
@@ -100,6 +102,9 @@ dojo.widget.defineWidget(
 			if (this.updatesUrl == "")
 				this.updatesUrl = dataUrl;
 			this.selectedRows = new openbravo.widget.DataGrid.IndexedRows();
+      if (this.calculateNumRows == true) {
+        this.numRows = calculateNumRows();
+      }
 			this.editor = null;
 			this.editing = false;
 			this.editingCell = null;
@@ -938,8 +943,12 @@ dojo.widget.defineWidget(
 * @type Number
 */
 		setMaxWidth: function() {
-			var maxWidthInt = Math.round(this.proportion * dojo.html.getViewport().width);
-			maxWidthInt -= 3 * this.scrollWidth;
+			if(this.percentageWidthRelativeToId != "body") {
+				var maxWidthInt = Math.round(this.proportion * document.getElementById(this.percentageWidthRelativeToId).clientWidth);
+			} else {
+				var maxWidthInt = Math.round(this.proportion * dojo.html.getViewport().width);
+			}
+			maxWidthInt -= 2 * this.scrollWidth;
 			this.maxWidth = maxWidthInt + "px";
 			return maxWidthInt;
 		},
@@ -949,12 +958,15 @@ dojo.widget.defineWidget(
 */
 		onResize: function() {
 			this.setMaxWidth();
-			var desiredWidth = Math.round(this.proportion * 
-					dojo.html.getViewport().width);
+			if(this.percentageWidthRelativeToId != "body") {
+				var desiredWidth = Math.round(this.proportion * document.getElementById(this.percentageWidthRelativeToId).clientWidth);
+			} else {
+				var desiredWidth = Math.round(this.proportion * dojo.html.getViewport().width);
+			}
 			this.tableNode.parentNode.style.width = desiredWidth - 
-					3 * this.scrollWidth + "px";
+					2 * this.scrollWidth + "px";
 			this.domNode.style.width = desiredWidth - 
-					3 * this.scrollWidth + 40 + "px";
+					2 * this.scrollWidth + 40 + "px";
 		},
 		
 /**

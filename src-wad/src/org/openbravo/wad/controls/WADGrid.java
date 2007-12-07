@@ -130,7 +130,8 @@ public class WADGrid extends WADControl {
     text.append("      updatesUrl=\"../utility/DataGrid.html?Command=UPDATE&inpadTabId=");
     text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
     text.append(getData("AD_Window_ID")).append("\" \n");
-    text.append("      numRows=\"").append(getData("NumRows")).append("\" \n");
+    //text.append("      numRows=\"").append(getData("NumRows")).append("\" \n");
+    text.append("      calculateNumRows=\"true\" \n");
     text.append("      editable=\"").append(getData("editable")).append("\" sortable=\"").append(getData("sortable")).append("\" \n");
     text.append("      deleteable=\"").append(getData("deleteable")).append("\" \n");
     text.append("      onInvalidValue=\"alert\" \n");
@@ -139,7 +140,9 @@ public class WADGrid extends WADControl {
     text.append("      bufferSize=\"3.0\"\n");
     text.append("      showLineNumbers=\"").append(getData("ShowLineNumbers")).append("\" \n");
     text.append("      offset=\"xx\" sortcols=\"xx\" sortdirs=\"xx\" defaultrow=\"xx\" \n");
-    text.append("      maxWidth=\"").append(getData("width")).append("\" preventCache=\"true\" useCache=\"true\" cacheContent=\"false\">\n");
+    text.append("      maxWidth=\"").append(getData("width")).append("\" \n");
+    text.append("      percentageWidthRelativeToId=\"client\" \n");
+    text.append("      preventCache=\"true\" useCache=\"true\" cacheContent=\"false\">\n");
     text.append("    </div>\n");
     text.append("<script>djConfig.searchIds.push(\"").append(getData("id")).append("\");</script>");
     text.append("</TD></TR></TABLE>");
