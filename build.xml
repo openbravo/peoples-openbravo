@@ -165,6 +165,18 @@
     <copy file="${base.source}/src-db/build/lib/dbmanager.jar" todir="${base.source}/database/lib" overwrite="true" failonerror="false"/>
   </target>
 
+  <target name="clean" depends="init">
+    <ant dir="${base.source}/src" target="clean" inheritAll="true" inheritRefs="true"/>
+  </target>
+
+  <target name="trl.clean" depends="init">
+    <ant dir="${base.source}/src" target="trl.clean" inheritAll="true" inheritRefs="true"/>
+  </target>
+
+  <target name="translate" depends="init">
+    <ant dir="${base.source}/src" target="translate" inheritAll="true" inheritRefs="true"/>
+  </target>
+
   <target name="installWebService" depends="init">
     <ant dir="${base.source}/src" target="installWebService" inheritAll="true" inheritRefs="true">
       <property name="wsdd" value="1"/>
@@ -264,14 +276,6 @@
   <target name="import.database.sampledata" depends="init">
     <ant dir="${base.source}/database" target="import.database.sampledata" inheritAll="true" inheritRefs="true"/>
   </target>
-	
-	  <target name="trl.clean">
-	  	<ant dir="${base.subversion}/src" target="trl.clean" inheritAll="true" inheritRefs="true"/>
-	  </target>
-	
-	  <target name="translate">
-	  	<ant dir="${base.subversion}/src" target="translate" inheritAll="true" inheritRefs="true"/>
-	  </target>
 
   <target name="save.database.model" depends="init">
     <ant dir="${base.source}/database" target="save.database.model" inheritAll="true" inheritRefs="true"/>
