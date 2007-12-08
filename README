@@ -3,14 +3,18 @@ This is the development trunk of Openbravo ERP.
 * Installation
 
 First run the setup binary corresponding to your system in the
-setup directory.
+config directory. For example in x86 Linux:
+
+  ./setup-properties-linux.bin
 
 Then, to install run:
 
   ant install.source
 
-It builds the Openbravo core, creates the database structure, compiles
+It creates the database structure, builds the core, compiles
 Openbravo and generates a war file.
+
+Deploy this war file into the tomcat/webapps directory.
 
 * Documentation
 
@@ -24,7 +28,7 @@ contains a small list.
 
 Please share your changes so others can benefit.
 
-Please use diff -u or SVN to prepare patches.
+Please use svn diff to prepare patches.
 
 * Contact
 
