@@ -27,57 +27,126 @@ import org.apache.log4j.Logger;
 import javax.servlet.ServletException;
 
 
+/**
+ * @author Fernando Iriazabal
+ *
+ * Implements the needed methods to execute the differents kinds of queries
+ * in the database.
+ */
 public class ExecuteQuery {
   static Logger log4j = Logger.getLogger(ExecuteQuery.class);
   private ConnectionProvider pool;
   private Vector<String> parameters = new Vector<String>();
   private String sql;
 
+  /**
+   * Constructor
+   */
   public ExecuteQuery() {
   }
 
+  /**
+   * Constructor
+   * 
+   * @param _conn: Handler for the database connection.
+   * @param _sql: String with the query.
+   * @param _parameters: Vector with the query's parameters.
+   * @throws Exception
+   */
   public ExecuteQuery(ConnectionProvider _conn, String _sql, Vector<String> _parameters) throws Exception {
     setPool(_conn);
     setSQL(_sql);
     setParameters(_parameters);
   }
 
+  /**
+   * Setter for the database connection handler.
+   * 
+   * @param _conn: Object handler for the database connection.
+   * @throws Exception
+   */
   public void setPool(ConnectionProvider _conn) throws Exception {
     if (_conn==null) throw new Exception("The pool is null");
     this.pool = _conn;
   }
   
+  /**
+   * Getter for the database connection handler.
+   * 
+   * @return Object with the database connection handler.
+   */
   public ConnectionProvider getPool() {
     return this.pool;
   }
 
+  /**
+   * Setter for the query.
+   * 
+   * @param _sql: String with the query.
+   * @throws Exception
+   */
   public void setSQL(String _sql) throws Exception {
     this.sql = ((_sql==null)?"":_sql);
   }
 
+  /**
+   * Getter for the query.
+   * 
+   * @return String with the query.
+   */
   public String getSQL() {
     return this.sql;
   }
 
+  /**
+   * Setter for the query parameters.
+   * 
+   * @param _parameters: Vector with the parameters.
+   * @throws Exception
+   */
   public void setParameters(Vector<String> _parameters) throws Exception {
     this.parameters = _parameters;
   }
 
+  /**
+   * Getter for the query parameters.
+   * 
+   * @return Vector with the parameters.
+   */
   public Vector<String> getParameters() {
     return this.parameters;
   }
 
+  /**
+   * Adds new parameter to the list of query parameters.
+   * 
+   * @param _value: String with the parameter.
+   */
   public void addParameter(String _value) {
     if (this.parameters==null) this.parameters = new Vector<String>();
     if (_value==null || _value.equals("")) this.parameters.addElement("");
     else this.parameters.addElement(_value);
   }
 
+  /**
+   * Returns the selected parameter.
+   * 
+   * @param position: Position of the selected parameter.
+   * @return String with the parameter.
+   */
   public String getParameter(int position) {
     if (this.parameters == null || this.parameters.size() < position) return "";
     else return this.parameters.elementAt(position);
   }
 
+  /**
+   * Executes the query.
+   * 
+   * @param startPosition: Initial position for the first element to return.
+   * @param rangeLength: size of range of elements to return.
+   * @return Array of FieldProviders with the result of the query.
+   * @throws ServletException
+   */
   public FieldProvider[] select(int startPosition, int rangeLength) throws ServletException {
     PreparedStatement st = null ;
     ResultSet result;
@@ -161,6 +230,12 @@ public class ExecuteQuery {
   }
 
 
+  /**
+   * Executes a statement query. For insert, update or delete queries.
+   * 
+   * @return Integer with the number of rows affected.
+   * @throws ServletException
+   */
   public int executeStatement() throws ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("SQL: " + getSQL());
     PreparedStatement st = null;
