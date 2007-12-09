@@ -29,6 +29,12 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.utils.FormatUtilities;
 
 
+/**
+ * @author Fernando Iriazabal
+ *
+ * Servlet that prints a javascript with the confirmation messages for the
+ * check javascript of the window.
+ */
 public class MessagesJS extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
@@ -42,6 +48,14 @@ public class MessagesJS extends HttpSecureAppServlet {
     printPageDataSheet(response, vars);
   }
 
+  /**
+   * Prints the javascript with the messages.
+   * 
+   * @param response: Handler for the response.
+   * @param vars: Handler for the session info.
+   * @throws IOException
+   * @throws ServletException
+   */
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: print page");
     OBError myError = null;
