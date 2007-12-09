@@ -26,9 +26,20 @@ import org.openbravo.utils.Replace;
 import org.apache.log4j.Logger ;
 
 
+/**
+ * @author Fernando Iriazabal
+ *
+ * Utility class for the window tree type.
+ */
 public class WindowTreeUtility {
   static Logger log4j = Logger.getLogger(WindowTreeUtility.class);
   
+  /**
+   * Gets the tree type.
+   * 
+   * @param keyColumnName: Name of the column key.
+   * @return String with the tree type.
+   */
   public static String getTreeType(String keyColumnName) {
     if (log4j.isDebugEnabled()) log4j.debug("WindowTreeUtility.getTreeID() - key Column: " + keyColumnName);
     if(keyColumnName == null || keyColumnName.length() == 0) return "";
@@ -51,6 +62,20 @@ public class WindowTreeUtility {
     return TreeType;
   }
 
+  /**
+   * Gets the array with the tree elements.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param TreeType: The type of tree.
+   * @param TreeID: The id of the tree.
+   * @param editable: is editable?
+   * @param strParentID: Parent id node (optional).
+   * @param strNodeId: The node to search (optional).
+   * @param strTabID: Id of the tab.
+   * @return Array with the tree elements.
+   * @throws ServletException
+   */
   public static WindowTreeData[] getTree(ConnectionProvider conn, VariablesSecureApp vars, String TreeType, String TreeID, boolean editable, String strParentID, String strNodeId, String strTabID) throws ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("WindowTreeUtility.getTree() - TreeID: " + TreeID);
     WindowTreeData[] data = null;
@@ -86,6 +111,13 @@ public class WindowTreeUtility {
     return data;
   }
 
+  /**
+   * Auxiliar method to transform a FieldProvider into a WindowTreeData object.
+   * 
+   * @param data: FieldProvider to transform.
+   * @return WindowTreeData object.
+   * @throws ServletException
+   */
   public static WindowTreeData transformFieldProvider(FieldProvider data) throws ServletException {
     WindowTreeData aux = new WindowTreeData();
     aux.nodeId = data.getField("nodeId");
@@ -106,6 +138,22 @@ public class WindowTreeUtility {
     return aux;
   }
 
+  /**
+   * Adds an html node structure. Used by the WindowTree java to build the html tree.
+   * 
+   * @param name: Text to display.
+   * @param description: Description.
+   * @param target: Target to open link (deprecated).
+   * @param isSummary: If is a folder.
+   * @param windowType: Type of window.
+   * @param strDirection: Base path for the urls.
+   * @param strOnClick: Command for the onclick event.
+   * @param strOnDblClick: Command for the onDblClick event.
+   * @param hasChilds: Boolean to know if has any child.
+   * @param nodeId: Id of the node.
+   * @param action: Type of element.
+   * @return String html with the node.
+   */
   public static String addNodeElement(String name, String description, String target, boolean isSummary, String windowType, String strDirection, String strOnClick, String strOnDblClick, boolean hasChilds, String nodeId, String action) {
     if (log4j.isDebugEnabled()) log4j.debug("WindowTreeUtility.addNodeElement() - name: " + name);
     StringBuffer element = new StringBuffer();
@@ -132,6 +180,12 @@ public class WindowTreeUtility {
     return element.toString();
   }
 
+  /**
+   * Type for the class of the html element.
+   * 
+   * @param type: Database type.
+   * @return String with the css type.
+   */
   public static String windowType(String type) {
     if (log4j.isDebugEnabled()) log4j.debug("WindowTreeUtility.windowType() - type: " + type);
     if (type==null || type.equals("")) return "";
@@ -145,6 +199,12 @@ public class WindowTreeUtility {
     else return WindowTreeUtilityClient.windowType(type);
   }
 
+  /**
+   * Type for the id of the html element. Used in the test application.
+   * 
+   * @param tipo: Database type.
+   * @return String with the id type.
+   */
   public static String windowTypeNico(String tipo) {
     if (log4j.isDebugEnabled()) log4j.debug("WindowTreeUtility.windowTypeNico() - type: " + tipo);
     if (tipo==null) return "";
@@ -158,6 +218,18 @@ public class WindowTreeUtility {
     else return WindowTreeUtilityClient.windowTypeNico(tipo);
   }
 
+  /**
+   * Sets the node in the specified position.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param TreeType: Type of tree.
+   * @param TreeID: Id of the tree.
+   * @param strParentID: Parent node id.
+   * @param strLink: Actual node id.
+   * @param strSeqNo: Sequence number.
+   * @throws ServletException
+   */
   public static void setNode(ConnectionProvider conn, VariablesSecureApp vars, String TreeType, String TreeID, String strParentID, String strLink, String strSeqNo) throws ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("WindowTreeUtility.setNode() - TreeID: " + TreeID);
 
