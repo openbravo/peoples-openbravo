@@ -31,6 +31,11 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 
+/**
+ * @author Fernando Iriazabal
+ *
+ * DataGrid handler class
+ */
 public class DataGrid extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   public void init (ServletConfig config) {
@@ -54,32 +59,33 @@ public class DataGrid extends HttpSecureAppServlet {
       ex.printStackTrace();
     }
 
+    //Asking for column's structure
     if (vars.commandIn("STRUCTURE")) {
       printPageStructure(response, vars, tableSQL);
-    } else if (vars.commandIn("DATA")) {
+    } else if (vars.commandIn("DATA")) { //DataGrid data
       if (log4j.isDebugEnabled()) log4j.debug(">>DATA");
-      if(action.equalsIgnoreCase("getRows")){
+      if(action.equalsIgnoreCase("getRows")){ //Asking for data rows
         printPageData(response, vars, tableSQL);
-      } else if (action.equalsIgnoreCase("getIdsInRange")){
+      } else if (action.equalsIgnoreCase("getIdsInRange")){ //Asking for selected rows
         if (log4j.isDebugEnabled()) log4j.debug(">>>>getIdsInRange");
         printPageDataId(response, vars, tableSQL);
-      } else if (action.equalsIgnoreCase("getColumnTotals")){
+      } else if (action.equalsIgnoreCase("getColumnTotals")){ //Asking for total of the selected rows
         if (log4j.isDebugEnabled()) log4j.debug(">>>>getColumnTotals");
         getColumnTotals(response, vars, tableSQL);
-      } else if (action.equalsIgnoreCase("getComboContent")) {
+      } else if (action.equalsIgnoreCase("getComboContent")) { //Asking for dynamic combo content (Edition)
         if (log4j.isDebugEnabled()) log4j.debug(">>>>getComboContent");
         getComboContent(response, vars, TabId);
-      } else if (action.equalsIgnoreCase("getDefaultValues")) {
+      } else if (action.equalsIgnoreCase("getDefaultValues")) { //Asking for default values (Edition)
         if (log4j.isDebugEnabled()) log4j.debug(">>>>getDefaultValues");
         this.getDefaultValues(response, vars);
       }
-    } else if (vars.commandIn("UPDATE")) {
+    } else if (vars.commandIn("UPDATE")) { //Updating rows
       if (log4j.isDebugEnabled()) log4j.debug(">>UPDATE");
       try {
-        if (action.equalsIgnoreCase("deleteRow")) {
+        if (action.equalsIgnoreCase("deleteRow")) { //Deleting
           if (log4j.isDebugEnabled()) log4j.debug(">>>>deleteRow");
           delete(response, vars, tableSQL);
-        } else {
+        } else { //Inserting or updating
           save(response, vars);
         }
       } catch (Exception e) {
@@ -90,10 +96,23 @@ public class DataGrid extends HttpSecureAppServlet {
     }
   }
 
+  /**
+   * Returns the column headers.
+   * 
+   * @param tableSQL: Object hanler of tab's query
+   * @return Array with the column's headers.
+   * @throws ServletException
+   */
   private SQLReturnObject[] getHeaders(TableSQLData tableSQL) throws ServletException {
     return tableSQL.getHeaders();
   }
 
+  /**
+   * Gets the total for the selected rows.
+   * 
+   * @param tableSQL: Object hanler of tab's query
+   * @return String with the total.
+   */
   private String getTotalRows(TableSQLData tableSQL) {
     if (tableSQL==null) return "0";
     FieldProvider[] data = null;
@@ -107,6 +126,15 @@ public class DataGrid extends HttpSecureAppServlet {
     else return data[0].getField("TOTAL");
   }
 
+  /**
+   * Prints the response for the structure command.
+   * 
+   * @param response: Handler for the response Object.
+   * @param vars: Handler for the session info.
+   * @param tableSQL: Object hanler of tab's query.
+   * @throws IOException
+   * @throws ServletException
+   */
   private void printPageStructure(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: print page structure");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
@@ -134,6 +162,15 @@ public class DataGrid extends HttpSecureAppServlet {
     out.close();
   }
 
+  /**
+   * Prints the response for the data rows command.
+   * 
+   * @param response: Handler for the response Object.
+   * @param vars: Handler for the session info.
+   * @param tableSQL: Object hanler of tab's query.
+   * @throws IOException
+   * @throws ServletException
+   */
   private void printPageData(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: print page rows");
     int pageSize = new Integer(vars.getStringParameter("page_size")).intValue();
@@ -221,6 +258,15 @@ public class DataGrid extends HttpSecureAppServlet {
     out.close();
   }
 
+  /**
+   * Prints the response for the getRowsIds command.
+   * 
+   * @param response: Handler for the response Object.
+   * @param vars: Handler for the session info.
+   * @param tableSQL: Object hanler of tab's query.
+   * @throws IOException
+   * @throws ServletException
+   */
   private void printPageDataId(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: print page ids");
     int minOffset  = new Integer(vars.getStringParameter("minOffset")).intValue();
@@ -256,6 +302,15 @@ public class DataGrid extends HttpSecureAppServlet {
     out.close();
   }
 
+  /**
+   * Prints the response for the getColumnsTotal command.
+   * 
+   * @param response: Handler for the response Object.
+   * @param vars: Handler for the session info.
+   * @param tableSQL: Object hanler of tab's query.
+   * @throws ServletException
+   * @throws IOException
+   */
   private void getColumnTotals(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL) throws ServletException, IOException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: print page column total");
     String rows = vars.getInStringParameter("rows");
@@ -285,6 +340,15 @@ public class DataGrid extends HttpSecureAppServlet {
     out.close();
   }
 
+  /**
+   * Prints the response for the delete command.
+   * 
+   * @param response: Handler for the response Object.
+   * @param vars: Handler for the session info.
+   * @param tableSQL: Object hanler of tab's query.
+   * @throws IOException
+   * @throws ServletException
+   */
   private void delete(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Delete record");
     Vector<String> parametersData = null;
@@ -355,6 +419,15 @@ public class DataGrid extends HttpSecureAppServlet {
     out.close();
   }
 
+  /**
+   * Prints the response for the getComboContent command.
+   * 
+   * @param response: Handler for the response Object.
+   * @param vars: Handler for the session info.
+   * @param TabId: Id of the tab
+   * @throws ServletException
+   * @throws IOException
+   */
   private void getComboContent(HttpServletResponse response, VariablesSecureApp vars, String TabId) throws ServletException, IOException {
       /*
       String columnname = vars.getStringParameter("subordinatedColumn");
@@ -460,9 +533,25 @@ public class DataGrid extends HttpSecureAppServlet {
     }*/
   }
     
+  /**
+   * Prints the response for the getDefaultValues command.
+   * 
+   * @param response: Handler for the response Object.
+   * @param vars: Handler for the session info.
+   * @throws ServletException
+   * @throws IOException
+   */
   private void getDefaultValues(HttpServletResponse response, VariablesSecureApp vars) throws ServletException, IOException {
   }
 
+  /**
+   * Prints the response for the Insert or Update commands.
+   * 
+   * @param response: Handler for the response Object.
+   * @param vars: Handler for the session info.
+   * @throws ServletException
+   * @throws IOException
+   */
   private void save(HttpServletResponse response, VariablesSecureApp vars) throws ServletException, IOException {
   }
 }
