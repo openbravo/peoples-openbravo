@@ -25,6 +25,11 @@ import java.util.*;
 import org.apache.log4j.Logger ;
 
 
+/**
+ * @author Fernando Iriazabal
+ *
+ * Class in charge of the keymap building for each window type.
+ */
 public class KeyMap {
   static Logger log4j = Logger.getLogger(KeyMap.class);
   private VariablesSecureApp vars;
@@ -33,6 +38,15 @@ public class KeyMap {
   private Properties myData = new Properties();
   private Vector<Properties> structure = new Vector<Properties>();
 
+  /**
+   * Constructor
+   * 
+   * @param _conn: Handler for the database connection.
+   * @param _vars: Handler for the session info.
+   * @param _tabId: String with the tab's id.
+   * @param _windowId: String with the window's id.
+   * @throws Exception
+   */
   public KeyMap(ConnectionProvider _conn, VariablesSecureApp _vars, String _tabId, String _windowId) throws Exception {
     if (_conn==null || _vars==null || _tabId==null || _tabId.equals("") || _windowId==null || _windowId.equals("")) throw new Exception("Missing parameters");
     this.conn = _conn;
@@ -41,18 +55,38 @@ public class KeyMap {
     generateStructure();
   }
   
+  /**
+   * Constructor
+   * 
+   * @param _conn: Handler for the database connection.
+   * @param _vars: Handler for the session info.
+   * @param _action: String with the window type (form, report, process...)
+   * @throws Exception
+   */
   public KeyMap(ConnectionProvider _conn, VariablesSecureApp _vars, String _action) throws Exception {
     if (_conn==null || _vars==null || _action==null || _action.equals("")) throw new Exception("Missing parameters");
     this.conn = _conn;
     this.vars = _vars;
   }
 
+  /**
+   * Setter for any internal attribute.
+   * 
+   * @param name: String with the name of the attribute.
+   * @param value: String with the value of the attribute.
+   */
   private void setData(String name, String value) {
     if (name==null || name.equals("")) return;
     if (this.myData==null) this.myData = new Properties();
     this.myData.setProperty(name, value);
   }
 
+  /**
+   * Getter for any internal attribute.
+   * 
+   * @param name: String with the name of the attribute.
+   * @return String with the value of the attribute.
+   */
   private String getData(String name) {
     if (name==null || name.equals("") || this.myData==null) return "";
     String aux = this.myData.getProperty(name);
@@ -60,16 +94,31 @@ public class KeyMap {
     else return aux;
   }
 
+  /**
+   * Adds new structure of additional information for this tab.
+   * 
+   * @param _prop: Properties with all the additional info for this tab.
+   */
   public void addStructure(Properties _prop) {
     if (_prop==null) return;
     if (this.structure == null) this.structure = new Vector<Properties>();
     this.structure.addElement(_prop);
   }
 
+  /**
+   * Gets the additional information for this tab.
+   * 
+   * @return Vector with the additional information.
+   */
   public Vector<Properties> getStructure() {
     return this.structure;
   }
 
+  /**
+   * Gets the keymap for the sort tab window type.
+   * 
+   * @return String with the javascript for the keynap.
+   */
   public String getSortTabKeyMaps() {
     StringBuffer script = new StringBuffer();
     script.append("\nvar arrTeclas = new Array(\n");
@@ -79,6 +128,11 @@ public class KeyMap {
     return script.toString();
   }
 
+  /**
+   * Gets the keymap for the Relation window type.
+   * 
+   * @return String with the javascript for the keynap.
+   */
   public String getRelationKeyMaps() {
     StringBuffer script = new StringBuffer();
     script.append("\nvar arrTeclas = new Array(\n");
@@ -91,6 +145,12 @@ public class KeyMap {
     return script.toString();
   }
 
+  /**
+   * Gets the keymap for the Edition window type.
+   * 
+   * @param isNew: Boolean to indicate if is a new record or not.
+   * @return String with the javascript for the keynap.
+   */
   public String getEditionKeyMaps(boolean isNew) {
     StringBuffer script = new StringBuffer();
     script.append("\nvar arrTeclas = new Array(\n");
@@ -121,6 +181,11 @@ public class KeyMap {
     return script.toString();
   }
   
+    /**
+   * Gets the keymap for the Action button window type.
+   * 
+   * @return String with the javascript for the keynap.
+   */
   public String getActionButtonKeyMaps() {
     StringBuffer script = new StringBuffer();
     script.append("\nvar arrTeclas = new Array(\n");
@@ -131,6 +196,11 @@ public class KeyMap {
     return script.toString();
   }
 
+    /**
+   * Gets the keymap for the Form window type.
+   * 
+   * @return String with the javascript for the keynap.
+   */
   public String getFormKeyMaps() {
     StringBuffer script = new StringBuffer();
     script.append("\nvar arrTeclas = new Array(\n");
@@ -141,6 +211,11 @@ public class KeyMap {
     return script.toString();
   }
 
+    /**
+   * Gets the keymap for the Report window type.
+   * 
+   * @return String with the javascript for the keynap.
+   */
   public String getReportKeyMaps() {
     StringBuffer script = new StringBuffer();
     script.append("\nvar arrTeclas = new Array(\n");
@@ -151,6 +226,11 @@ public class KeyMap {
     return script.toString();
   }
 
+  /**
+   * Generates the needed info to build the keymap.
+   * 
+   * @throws Exception
+   */
   private void generateStructure() throws Exception {
     TableSQLQueryData[] data = TableSQLQueryData.selectStructure(this.conn, this.TabID, this.vars.getLanguage());
     if (data==null || data.length==0) throw new Exception("Couldn't get structure for tab " + this.TabID);
