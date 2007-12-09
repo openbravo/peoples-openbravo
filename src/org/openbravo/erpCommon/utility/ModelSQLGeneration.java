@@ -26,12 +26,28 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.apache.log4j.Logger;
 
 
+/**
+ * @author Fernando Iriazabal
+ *
+ * Implements the common tasks needed to build the query of the windows.
+ */
 public class ModelSQLGeneration {
   static Logger log4j = Logger.getLogger(ModelSQLGeneration.class);
 
+  /**
+   * Constructor
+   */
   public ModelSQLGeneration() {
   }
 
+  /**
+   * Gets the order by clause.
+   * 
+   * @param vars: Handler for the session info.
+   * @param tableSQL: Handler for the query builder.
+   * @return Vector with the list of fields in the order by clause.
+   * @throws Exception
+   */
   private static Vector<String> getOrderBy(VariablesSecureApp vars, TableSQLData tableSQL) throws Exception {
     Vector<String> vOrderBy = new Vector<String>();
     StringBuffer orderBy = new StringBuffer();
@@ -65,6 +81,16 @@ public class ModelSQLGeneration {
     return vOrderBy;
   }
 
+  /**
+   * Returns the filter clause to apply to the query.
+   * 
+   * @param vars: Handler for the session info.
+   * @param tableSQL: Handler for the query builder.
+   * @param filter: Vector with specific filters.
+   * @param filterParams: Vector with the parameters for the specific filters.
+   * @return Object with the filters defined.
+   * @throws Exception
+   */
   private static SQLReturnObject getFilter(VariablesSecureApp vars, TableSQLData tableSQL, Vector<String> filter, Vector<String> filterParams) throws Exception {
     SQLReturnObject result = new SQLReturnObject();
     if (tableSQL==null) return result;
@@ -123,6 +149,15 @@ public class ModelSQLGeneration {
     return result;
   }
 
+  /**
+   * Formats the filter to get the correct output (adds TO_DATE, TO_NUMBER...).
+   * 
+   * @param tablename: String with the table name.
+   * @param columnname: String with the column name.
+   * @param reference: String with the reference id.
+   * @param first: Boolean to know if is the first or not. 
+   * @return String with the formated field.
+   */
   private static String formatFilter(String tablename, String columnname, String reference, boolean first) {
     if (columnname==null || columnname.equals("") || tablename==null || tablename.equals("") || reference==null || reference.equals("")) return "";
     StringBuffer text = new StringBuffer();
@@ -148,6 +183,13 @@ public class ModelSQLGeneration {
     return text.toString();
   }
 
+  /**
+   * Sets the order by in the session.
+   * 
+   * @param vars: Handler for the session info.
+   * @param tableSQL: Handler for the query builder.
+   * @throws Exception
+   */
   private static void setSessionOrderBy(VariablesSecureApp vars, TableSQLData tableSQL) throws Exception {
     Vector<QueryFieldStructure> vOrderBy = tableSQL.getOrderByFields();
     StringBuffer txtAux = new StringBuffer();
@@ -184,6 +226,18 @@ public class ModelSQLGeneration {
     vars.setSessionValue(tableSQL.getTabID() + "|orderbyDirections", txtAux.toString());
   }
 
+  /**
+   * Generates the query for this tab.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param tableSQL: Handler for the query builder.
+   * @param selectFields: String with the fields of the select clause.
+   * @param filter: Vector with the specific filter fields.
+   * @param filterParams: Vector with the parameters for the specific filter fields.
+   * @return String with the sql.
+   * @throws Exception
+   */
   public static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars, TableSQLData tableSQL, String selectFields, Vector<String> filter, Vector<String> filterParams) throws Exception {
     Vector<String> orderBy = new Vector<String>();
     String loadSessionOrder = vars.getSessionValue(tableSQL.getTabID() + "|newOrder");
