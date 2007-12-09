@@ -28,6 +28,11 @@ import java.util.Enumeration;
 import org.apache.log4j.Logger;
 
 
+/**
+ * @author Fernando Iriazabal
+ *
+ * Handler to manage all the process for the tab's query building.
+ */
 public class TableSQLData {
   static Logger log4j = Logger.getLogger(TableSQLData.class);
   private final String internalPrefix = "@@";
@@ -56,9 +61,22 @@ public class TableSQLData {
   private int index = 0;
   private boolean isSameTable = false;
 
+  /**
+   * Constructor
+   */
   public TableSQLData() {
   }
 
+  /**
+   * Constructor
+   * 
+   * @param _vars: Handler for the session info.
+   * @param _conn: Handler for the database connection.
+   * @param _adTabId: Id of the tab.
+   * @param _orgList: List of granted organizations.
+   * @param _clientList: List of granted clients.
+   * @throws Exception
+   */
   public TableSQLData(VariablesSecureApp _vars, ConnectionProvider _conn, String _adTabId, String _orgList, String _clientList) throws Exception {
     if (_vars!=null) setVars(_vars);
     setPool(_conn);
@@ -70,6 +88,13 @@ public class TableSQLData {
     generateSQL();
   }
 
+  /**
+   * Setter for the parameters.
+   * 
+   * @param name: String with the name.
+   * @param value: String with the value.
+   * @throws Exception
+   */
   public void setParameter(String name, String value) throws Exception {
     if (name==null || name.equals("")) throw new Exception("Invalid parameter name");
     if (this.parameters==null) this.parameters = new Hashtable<String, String>();
@@ -77,12 +102,23 @@ public class TableSQLData {
     else this.parameters.put(name.toUpperCase(), value);
   }
 
+  /**
+   * Getter for the parameters.
+   * 
+   * @param name: String with the name of the parameter to get.
+   * @return String with the value of the parameter.
+   */
   public String getParameter(String name) {
     if (name==null || name.equals("")) return "";
     else if (this.parameters==null) return "";
     else return this.parameters.get(name.toUpperCase());
   }
 
+  /**
+   * Gets all the parameters defined.
+   * 
+   * @return Vector with all the parameters defined.
+   */
   public Vector<String> getParameters() {
     Vector<String> result = new Vector<String>();
     if (log4j.isDebugEnabled()) log4j.debug("Obtaining parameters");
@@ -135,6 +171,11 @@ public class TableSQLData {
     return result;
   }
 
+  /**
+   * Gets all the parameter's values defined.
+   * 
+   * @return Vector with the values.
+   */
   public Vector<String> getParameterValues() {
     Vector<String> result = new Vector<String>();
     if (log4j.isDebugEnabled()) log4j.debug("Obtaining parameters values");
@@ -181,6 +222,11 @@ public class TableSQLData {
     return result;
   }
 
+  /**
+   * Gets all the parameter's value for the total query.
+   * 
+   * @return Vector with the values.
+   */
   public Vector<String> getParameterValuesTotalSQL() {
     Vector<String> result = new Vector<String>();
     if (log4j.isDebugEnabled()) log4j.debug("Obtaining parameters values");
@@ -211,37 +257,80 @@ public class TableSQLData {
     return result;
   }
 
+  /**
+   * Setter for the handler of session info.
+   * 
+   * @param _vars: Handler of session info.
+   * @throws Exception
+   */
   public void setVars(VariablesSecureApp _vars) throws Exception {
     if (_vars==null) throw new Exception("The session vars is null");
     this.vars = _vars;
   }
   
+  /**
+   * Getter for the handler of session info.
+   * 
+   * @return Handler of session info.
+   */
   public VariablesSecureApp getVars() {
     return this.vars;
   }
 
+  /**
+   * Setter for the handler of database connection.
+   * 
+   * @param _conn: Handler of database connection.
+   * @throws Exception
+   */
   public void setPool(ConnectionProvider _conn) throws Exception {
     if (_conn==null) throw new Exception("The pool is null");
     this.pool = _conn;
   }
   
+  /**
+   * Getter for the handler of database connection.
+   * 
+   * @return Handler of database connection.
+   */
   public ConnectionProvider getPool() {
     return this.pool;
   }
 
+  /**
+   * Setter for the tab id.
+   * 
+   * @param _data: String with the tab id.
+   * @throws Exception
+   */
   public void setTabID(String _data) throws Exception {
     if (_data==null || _data.equals("")) throw new Exception("The Tab ID must be specified");
     setParameter(internalPrefix + "AD_Tab_ID", _data);
   }
 
+  /**
+   * Getter for the tab id.
+   * 
+   * @return String with the tab id.
+   */
   public String getTabID() {
     return getParameter(internalPrefix + "AD_Tab_ID");
   }
 
+  /**
+   * Indicates if is of the same table or not.
+   * 
+   * @return Boolean that indicates if is of the same table or not.
+   */
   public boolean getIsSameTable() {
     return this.isSameTable;
   }
 
+  /**
+   * Method to set the parameters for the window information.
+   * 
+   * @throws Exception
+   */
   public void setWindowDefinition() throws Exception {
     TableSQLQueryData[] data = TableSQLQueryData.selectWindowDefinition(getPool(), getVars().getLanguage(), getTabID());
     if (data==null || data.length==0) throw new Exception("Couldn't extract window information");
@@ -281,92 +370,200 @@ public class TableSQLData {
     }
   }
 
+  /**
+   * Gets the window id.
+   * 
+   * @return String with the window id.
+   */
   public String getWindowID() {
     return getParameter(internalPrefix + "AD_Window_ID");
   }
 
+  /**
+   * Gets the key column.
+   * 
+   * @return String with the key column.
+   */
   public String getKeyColumn() {
     return getParameter(internalPrefix + "KeyColumn");
   }
 
+  /**
+   * Gets the table id.
+   * 
+   * @return String with the table id.
+   */
   public String getTableID() {
     return getParameter(internalPrefix + "AD_Table_ID");
   }
 
+  /**
+   * Gets the table name.
+   * 
+   * @return String with the table name.
+   */
   public String getTableName() {
     return getParameter(internalPrefix + "TableName");
   }
 
+  /**
+   * Gets the where clause.
+   * 
+   * @return String with the where clause.
+   */
   public String getWhereClause() {
     return getParameter(internalPrefix + "WhereClause");
   }
 
+  /**
+   * Gets the order by clause.
+   * 
+   * @return String with the order by clause.
+   */
   public String getOrderByClause() {
     return getParameter(internalPrefix + "OrderByClause");
   }
 
+  /**
+   * Gets the filter clause.
+   * 
+   * @return String with the filter clause.
+   */
   public String getFilterClause() {
     return getParameter(internalPrefix + "FilterClause");
   }
 
+  /**
+   * Gets the tab level.
+   * 
+   * @return String with the tab level.
+   */
   public String getTabLevel() {
     return getParameter(internalPrefix + "TabLevel");
   }
 
+  /**
+   * Gets the window type.
+   * 
+   * @return String with the window type.
+   */
   public String getWindowType() {
     return getParameter(internalPrefix + "WindowType");
   }
 
+  /**
+   * Gets the parent column name.
+   * 
+   * @return String with the parent column name.
+   */
   public String getParentColumnName() {
     return getParameter(internalPrefix + "ParentColumnName");
   }
 
+  /**
+   * Setter for the list of granted organizations.
+   * 
+   * @param _orgList: Granted organizations.
+   * @throws Exception
+   */
   public void setOrgList(String _orgList) throws Exception {
     setParameter(internalPrefix + "orgList", _orgList);
   }
 
+  /**
+   * Getter for the list of granted organizations.
+   * 
+   * @return String with the list.
+   */
   public String getOrgList() {
     return getParameter(internalPrefix + "orgList");
   }
 
+  /**
+   * Setter for the list of granted clients.
+   * 
+   * @param _clientList: List of granted clients.
+   * @throws Exception
+   */
   public void setClientList(String _clientList) throws Exception {
     setParameter(internalPrefix + "clientList", _clientList);
   }
 
+  /**
+   * Getter for the list of granted clients.
+   * 
+   * @return String with the list.
+   */
   public String getClientList() {
     return getParameter(internalPrefix + "clientList");
   }
 
+  /**
+   * Adds new structure of window information.
+   * 
+   * @param _prop: Properties with the window information.
+   */
   public void addStructure(Properties _prop) {
     if (_prop==null) return;
     if (this.structure == null) this.structure = new Vector<Properties>();
     this.structure.addElement(_prop);
   }
 
+  /**
+   * Gets the structure with the window information.
+   * 
+   * @return Vector with the information.
+   */
   public Vector<Properties> getStructure() {
     return this.structure;
   }
 
+  /**
+   * Adds new order by field by position.
+   * 
+   * @param _data: String with the order by.
+   */
   public void addOrderByPosition(String _data) {
     if (_data==null) return;
     if (this.orderByPosition == null) this.orderByPosition = new Vector<String>();
     this.orderByPosition.addElement(_data);
   }
 
+  /**
+   * Gets order by fields by position
+   * @return Vector with the positions of the order by fields.
+   */
   public Vector<String> getOrderByPosition() {
     return this.orderByPosition;
   }
 
+  /**
+   * Adds new order by direction (Asc, Desc)
+   * 
+   * @param _data: String with the order by direction.
+   */
   public void addOrderByDirection(String _data) {
     if (_data==null) return;
     if (this.orderByDirection == null) this.orderByDirection = new Vector<String>();
     this.orderByDirection.addElement(_data);
   }
 
+  /**
+   * Gets the list of directions for the order by fields.
+   * 
+   * @return Vector with the directions.
+   */
   public Vector<String> getOrderByDirection() {
     return this.orderByDirection;
   }
 
+  /**
+   * Gets the window information filtered.
+   * 
+   * @param propertyName: Name of the property to filter.
+   * @param propertyValue: Vaule of the property to filter.
+   * @return Vector with the filtered information.
+   */
   public Vector<Properties> getFilteredStructure(String propertyName, String propertyValue) {
     Vector<Properties> vAux = new Vector<Properties>();
     if (this.structure==null) return vAux;
@@ -377,18 +574,41 @@ public class TableSQLData {
     return vAux;
   }
 
+  /**
+   * Setter for the table alias index.
+   * 
+   * @param _index: Integer with the new index.
+   */
   public void setIndex(int _index) {
     this.index = _index;
   }
 
+  /**
+   * Getter for the table alias index.
+   * 
+   * @return Integer with the index.
+   */
   public int getIndex() {
     return this.index;
   }
 
+  /**
+   * Adds new field to the select clause.
+   * 
+   * @param _field: String with the field.
+   * @param _alias: String with the alias.
+   */
   public void addSelectField(String _field, String _alias) {
     addSelectField(_field, _alias, false);
   }
 
+  /**
+   * Adds new field to the select clause.
+   * 
+   * @param _field: String with the field.
+   * @param _alias: String with the alias.
+   * @param _new: Boolean to know if the field is new (not used).
+   */
   public void addSelectField(String _field, String _alias, boolean _new) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " AS ", _alias, "SELECT");
     if (this.select == null) this.select = new Vector<QueryFieldStructure>();
@@ -402,6 +622,12 @@ public class TableSQLData {
     this.select.addElement(p);
   }
 
+  /**
+   * Gets a field of the select clause by the alias name.
+   * 
+   * @param _alias: String with the alias.
+   * @return Object with the field.
+   */
   public QueryFieldStructure getSelectFieldElement(String _alias) {
     if (this.select == null) return null;
     for (int i=0;i<this.select.size();i++) {
@@ -411,6 +637,12 @@ public class TableSQLData {
     return null;
   }
 
+  /**
+   * Gets field of the select clause by the alias name.
+   * 
+   * @param _alias: String with the alias.
+   * @return String with the field.
+   */
   public String getSelectField(String _alias) {
     if (this.select == null) return "";
     for (int i=0;i<this.select.size();i++) {
@@ -420,140 +652,298 @@ public class TableSQLData {
     return "";
   }
 
+  /**
+   * Gets the list of fields of the select clause.
+   * 
+   * @return Vector with the fields.
+   */
   public Vector<QueryFieldStructure> getSelectFields() {
     return this.select;
   }
 
+  /**
+   * Adds new field to the from clause.
+   * 
+   * @param _field: String with the field.
+   * @param _alias: String with the alias.
+   */
   public void addFromField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM");
     if (this.from == null) this.from = new Vector<QueryFieldStructure>();
     from.addElement(p);
   }
 
+  /**
+   * Gets the list of fields of the from clause.
+   * 
+   * @return Vector with the list of fields.
+   */
   public Vector<QueryFieldStructure> getFromFields() {
     return this.from;
   }
 
+  /**
+   * Adds new field to the where clause.
+   * 
+   * @param _field: String with the field.
+   * @param _type: String with the type of field.
+   */
   public void addWhereField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
     if (this.where == null) this.where = new Vector<QueryFieldStructure>();
     where.addElement(p);
   }
 
+  /**
+   * Gets the list of fields of the where clause.
+   * 
+   * @return Vector with the list of fields.
+   */
   public Vector<QueryFieldStructure> getWhereFields() {
     return this.where;
   }
 
+  /**
+   * Adds new field to the filter clause.
+   * 
+   * @param _field: Strin with the field.
+   * @param _type: String with the type of field.
+   */
   public void addFilterField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
     if (this.filter == null) this.filter = new Vector<QueryFieldStructure>();
     filter.addElement(p);
   }
 
+  /**
+   * Gets the list of the fields of the filter clause.
+   * 
+   * @return Vector with the list.
+   */
   public Vector<QueryFieldStructure> getFilterFields() {
     return this.filter;
   }
 
+  /**
+   * Adds fields to the internal filter clause. The internal filter clause is the
+   * one defined by the tab in the dictionary.
+   * 
+   * @param _field: String with the field.
+   * @param _type: String with the type.
+   */
   public void addInternalFilterField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
     if (this.internalFilter == null) this.internalFilter = new Vector<QueryFieldStructure>();
     internalFilter.addElement(p);
   }
 
+  /**
+   * Gets the list of fields of the internal filter clause.
+   * 
+   * @return Vector with the list of fields.
+   */
   public Vector<QueryFieldStructure> getInternalFilterFields() {
     return this.internalFilter;
   }
 
+  /**
+   * Adds a field to the order by clause.
+   * 
+   * @param _field: String with the field.
+   */
   public void addOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
     if (this.orderBy == null) this.orderBy = new Vector<QueryFieldStructure>();
     this.orderBy.addElement(p);
   }
 
+  /**
+   * Gets the list of fields of the order by clause.
+   * 
+   * @return Vector with the list of fields.
+   */
   public Vector<QueryFieldStructure> getOrderByFields() {
     return this.orderBy;
   }
 
+  /**
+   * Adds new field to the internal order by clause. The internal order by clause is
+   * the one defined in the application dictionary for the tab.
+   * 
+   * @param _field: String with the field.
+   */
   public void addInternalOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
     if (this.internalOrderBy == null) this.internalOrderBy = new Vector<QueryFieldStructure>();
     this.internalOrderBy.addElement(p);
   }
 
+  /**
+   * Gets the list of fields of the internal order by clause.
+   * 
+   * @return Vector with the list of fields.
+   */
   public Vector<QueryFieldStructure> getInternalOrderByFields() {
     return this.internalOrderBy;
   }
 
+  /**
+   * Adds a new parameter to the select clause.
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the name of the field for this parameter.
+   */
   public void addSelectParameter(String _parameter, String _fieldName) {
     if (this.paramSelect == null) this.paramSelect = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "SELECT");
     this.paramSelect.addElement(aux);
   }
 
+  /**
+   * Gets the list of parameters of the select clause.
+   * 
+   * @return Vector with the list of parameters
+   */
   public Vector<QueryParameterStructure> getSelectParameters() {
     return this.paramSelect;
   }
 
+  /**
+   * Adds new parameter to the from clause.
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the field of this parameter.
+   */
   public void addFromParameter(String _parameter, String _fieldName) {
     if (this.paramFrom == null) this.paramFrom = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "FROM");
     this.paramFrom.addElement(aux);
   }
 
+  /**
+   * Gets the list of parameters for the from clause.
+   * 
+   * @return Vector with the list of parameters
+   */
   public Vector<QueryParameterStructure> getFromParameters() {
     return this.paramFrom;
   }
 
+  /**
+   * Adds new parameter to the where clause.
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the field of this parameter.
+   * @param _type: String with the type of parameter.
+   */
   public void addWhereParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramWhere == null) this.paramWhere = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
     this.paramWhere.addElement(aux);
   }
 
+  /**
+   * Gets the list of parameters for the where clause.
+   * 
+   * @return Vector with the list of parameters
+   */
   public Vector<QueryParameterStructure> getWhereParameters() {
     return this.paramWhere;
   }
 
+  /**
+   * Adds new parameter to the filter clause.
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the field for the parameter.
+   * @param _type: String with the type of parameter.
+   */
   public void addFilterParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramFilter == null) this.paramFilter = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
     this.paramFilter.addElement(aux);
   }
 
+  /**
+   * Gets the list of parameters for the filter clause.
+   * 
+   * @return Vector with the list of parameters
+   */
   public Vector<QueryParameterStructure> getFilterParameters() {
     return this.paramFilter;
   }
 
+  /**
+   * Adds new parameter to the internal filter clause (the one defined in the dictionary).
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the field for the parameter.
+   * @param _type: String with the type of parameter.
+   */
   public void addInternalFilterParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramInternalFilter == null) this.paramInternalFilter = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
     this.paramInternalFilter.addElement(aux);
   }
 
+  /**
+   * Gets the list of parameters for the internal filter clause.
+   * 
+   * @return Vector with the list of parameters
+   */
   public Vector<QueryParameterStructure> getInternalFilterParameters() {
     return this.paramInternalFilter;
   }
 
+  /**
+   * Adds new parameter to the order by clause.
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the field for the parameter.
+   */
   public void addOrderByParameter(String _parameter, String _fieldName) {
     if (this.paramOrderBy == null) this.paramOrderBy = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "ORDERBY");
     this.paramOrderBy.addElement(aux);
   }
 
+  /**
+   * Gets the list of parameters for the order by clause.
+   * 
+   * @return Vector with the list of parameters
+   */
   public Vector<QueryParameterStructure> getOrderByParameters() {
     return this.paramOrderBy;
   }
 
+  /**
+   * Adds new parameter to the internal order by clause (the one defined in the dictionary).
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the field for the parameter.
+   */
   public void addInternalOrderByParameter(String _parameter, String _fieldName) {
     if (this.paramInternalOrderBy == null) this.paramInternalOrderBy = new Vector<QueryParameterStructure>();
     QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "ORDERBY");
     this.paramInternalOrderBy.addElement(aux);
   }
 
+  /**
+   * Gets the list of parameters for the internal order by clause.
+   * 
+   * @return Vector with the list of parameters
+   */
   public Vector<QueryParameterStructure> getInternalOrderByParameters() {
     return this.paramInternalOrderBy;
   }
 
+  /**
+   * Method to parse the text of the clauses, searching the @ parameters.
+   * 
+   * @param context: Text to parse.
+   * @param type: Type of the text (the clause).
+   * @return String parsed.
+   */
   public String parseContext(String context, String type) {
     if (context==null || context.equals("")) return "";
     StringBuffer strOut = new StringBuffer();
@@ -586,6 +976,10 @@ public class TableSQLData {
     return strOut.toString().replace("'?'","?");
   }
 
+  /**
+   * Generates the needed information of the tab. The columns, the ids...
+   * @throws Exception
+   */
   private void generateStructure() throws Exception {
     if (getPool()==null) throw new Exception("No pool defined for database connection");
     else if (getTabID().equals("")) throw new Exception("No Tab defined");
@@ -649,6 +1043,11 @@ public class TableSQLData {
     }
   }
 
+  /**
+   * Generates the sql with the given information.
+   * 
+   * @throws Exception
+   */
   public void generateSQL() throws Exception {
     if (getPool()==null) throw new Exception("No pool defined for database connection");
     Vector<Properties> headers = getStructure();
@@ -676,6 +1075,15 @@ public class TableSQLData {
     setWindowFilters();
   }
 
+  /**
+   * Auxiliar method to build the query with the recursive process to build the foreigns to the
+   * references.
+   * 
+   * @param parentTableName: String with the name of the parent table.
+   * @param field: String with the field name.
+   * @param identifierName: String with the identifier name.
+   * @throws Exception
+   */
   public void identifier(String parentTableName, Properties field, String identifierName) throws Exception {
     String reference;
     if (field==null) return;
@@ -710,6 +1118,16 @@ public class TableSQLData {
     }
   }
 
+  /**
+   * Checks if the table has any translated table and makes the joins.
+   * 
+   * @param tableName: String with the name of the table.
+   * @param field: String with the name of the field.
+   * @param reference: String with the id of the reference.
+   * @param identifierName: String with the identifier name.
+   * @return Boolean to know if the translation were found.
+   * @throws Exception
+   */
   private boolean checkTableTranslation(String tableName, Properties field, String reference, String identifierName) throws Exception {
     if (tableName==null || tableName.equals("") || field==null) return false;
     ComboTableQueryData[] data = ComboTableQueryData.selectTranslatedColumn(getPool(), field.getProperty("TableName"), field.getProperty("ColumnName"));
@@ -721,6 +1139,13 @@ public class TableSQLData {
     return true;
   }
   
+  /**
+   * Formats the fields to get a correct output.
+   * 
+   * @param field: String with the field.
+   * @param reference: String with the reference id.
+   * @return String with the formated field.
+   */
   private String formatField(String field, String reference) {
     String result = "";
     if (field==null) return "";
@@ -759,6 +1184,13 @@ public class TableSQLData {
     return result;
   }
 
+  /**
+   * Transform a fieldprovider into a Properties object.
+   * 
+   * @param field: FieldProvider object.
+   * @return Properties with the FieldProvider information.
+   * @throws Exception
+   */
   private Properties fieldToProperties(FieldProvider field) throws Exception {
     Properties aux = new Properties();
     if (field!=null) {
@@ -772,6 +1204,14 @@ public class TableSQLData {
     return aux;
   }
 
+  /**
+   * Sets the image type field in he query.
+   * 
+   * @param tableName: String with the table name.
+   * @param fieldName: String with the field name.
+   * @param identifierName: String with the identifier name.
+   * @throws Exception
+   */
   private void setImageQuery(String tableName, String fieldName, String identifierName) throws Exception {
     int myIndex = this.index++;
     addSelectField("((CASE td" + myIndex + ".isActive WHEN 'N' THEN '" + INACTIVE_DATA + "' ELSE '' END) || td" + myIndex + ".imageURL)", identifierName);
@@ -781,6 +1221,15 @@ public class TableSQLData {
     addFromField(tables, "td" + myIndex);
   }
 
+  /**
+   * Sets the list reference type in the query.
+   * 
+   * @param tableName: String with the table name.
+   * @param fieldName: String with the field name.
+   * @param referenceValue: String with the reference value.
+   * @param identifierName: String with the identifier name.
+   * @throws Exception
+   */
   private void setListQuery(String tableName, String fieldName, String referenceValue, String identifierName) throws Exception {
     int myIndex = this.index++;
     addSelectField("((CASE td" + myIndex + ".isActive WHEN 'N' THEN '" + INACTIVE_DATA + "' ELSE '' END) || (CASE WHEN td_trl" + myIndex + ".name IS NULL THEN td" + myIndex + ".name ELSE td_trl" + myIndex + ".name END))", identifierName);
@@ -796,6 +1245,15 @@ public class TableSQLData {
     addFromParameter("#AD_LANGUAGE", "LANGUAGE");
   }
 
+  /**
+   * Sets the table reference type in the query.
+   * 
+   * @param tableName: String with the table name.
+   * @param fieldName: String with the field name.
+   * @param referenceValue: String with the reference value.
+   * @param identifierName: String with the identifier name.
+   * @throws Exception
+   */
   private void setTableQuery(String tableName, String fieldName, String referenceValue, String identifierName) throws Exception {
     int myIndex = this.index++;
     ComboTableQueryData trd[] = ComboTableQueryData.selectRefTable(getPool(), referenceValue);
@@ -813,6 +1271,16 @@ public class TableSQLData {
     identifier("td" + myIndex, fieldsAux, identifierName);
   }
 
+  /**
+   * Sets the table dir reference type in the query.
+   * 
+   * @param tableName: String with the table name.
+   * @param fieldName: String with the field name.
+   * @param parentFieldName: String with the parent field name.
+   * @param referenceValue: String with the reference value.
+   * @param identifierName: String with the identifier name.
+   * @throws Exception
+   */
   private void setTableDirQuery(String tableName, String fieldName, String parentFieldName, String referenceValue, String identifierName) throws Exception {
     int myIndex = this.index++;
     String name = fieldName;
@@ -834,6 +1302,16 @@ public class TableSQLData {
     for (int i=0;i<trd.length;i++) identifier("td" + myIndex, fieldToProperties(trd[i]), identifierName);
   }
 
+  /**
+   * Search for the close char inside a text. This method bear in mind that
+   * in the string can be another open chars with their own close char.
+   * 
+   * @param text: String where is the close char to search.
+   * @param pos: Integer with the start position.
+   * @param openChar: The open char.
+   * @param closeChar: The close char.
+   * @return Integer with the position of the close char or -1 if isn't.
+   */
   private int findCloseTarget(String text, int pos, String openChar, String closeChar) {
     if (text==null || text.equals("")) return -1;
     int nextOpen = text.indexOf(openChar, pos);
@@ -849,6 +1327,12 @@ public class TableSQLData {
     return nextClose;
   }
 
+  /**
+   * Return the given order by clause into a structured field Vector.
+   * 
+   * @param text: order by clause.
+   * @return Vector with the fields.
+   */
   private Vector<String> getOrdeByIntoFields(String text) {
     Vector<String> result = new Vector<String>();
     if (text!=null && !text.equals("")) {
@@ -874,6 +1358,12 @@ public class TableSQLData {
     return result;
   }
 
+  /**
+   * Sets the filters for the window, including the filters by granted clients and 
+   * organizations.
+   * 
+   * @throws Exception
+   */
   private void setWindowFilters() throws Exception {
     String strWhereClause = getWhereClause();
     if (strWhereClause!=null && !strWhereClause.equals("")) {
@@ -909,6 +1399,12 @@ public class TableSQLData {
     }
   }
 
+  /**
+   * Returns the order by clause of the application dictionary into the 
+   * handler structure.
+   * 
+   * @throws Exception
+   */
   private void getFieldsOrderByClause() throws Exception {
     TableSQLQueryData[] orderByData = TableSQLQueryData.selectOrderByFields(getPool(), getTabID());
     if (orderByData==null) return;
@@ -917,6 +1413,13 @@ public class TableSQLData {
     }
   }
 
+  /**
+   * Returns the actual order by columns. 
+   * The columns names inside the handler.
+   * 
+   * @param data: String with the order by clause.
+   * @return String with the correct columns names.
+   */
   private String getRealOrderByColumn(String data) {
     if (data==null || data.equals("")) return "";
     data = data.trim();
@@ -961,10 +1464,24 @@ public class TableSQLData {
     return orderField + " " + orderDirection;
   }
 
+  /**
+   * Returns the columns defined for this tab, including the ones derived
+   * from the references.
+   * 
+   * @return Array with the columns.
+   */
   public SQLReturnObject[] getHeaders() {
     return getHeaders(false);
   }
 
+  /**
+   * Returns the columns defined for this tab, including the ones derived
+   * from the references.
+   * 
+   * @param withoutIdentifiers: Boolean to indicate if the identifier columns 
+   *                            must be removed from the list.
+   * @return Array with the columns.
+   */
   public SQLReturnObject[] getHeaders(boolean withoutIdentifiers) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
@@ -1014,6 +1531,13 @@ public class TableSQLData {
     return data;
   }
   
+  /**
+   * Auxiliar method to clone the column object. It's used to add 
+   * key column when the key column must be a reference one.
+   * 
+   * @param data: Column object to clone.
+   * @return New cloned column object.
+   */
   public SQLReturnObject getClone(SQLReturnObject data) {
     SQLReturnObject dataAux = new SQLReturnObject();
     dataAux.setData("columnname", data.getData("columnname"));
@@ -1029,6 +1553,12 @@ public class TableSQLData {
     return dataAux;
   }
 
+  /**
+   * Gets the position of a column.
+   * 
+   * @param _name: String with the column name.
+   * @return Properties with the position and other information.
+   */
   public Properties getColumnPosition(String _name) {
     SQLReturnObject[] vAux = getHeaders();
     Properties _prop = new Properties();
@@ -1042,6 +1572,12 @@ public class TableSQLData {
     return null;
   }
 
+  /**
+   * Gets the alias of the selected field.
+   * 
+   * @param _data: String with the field.
+   * @return String with the alias.
+   */
   public String getSelectFieldAlias(String _data) {
     if (this.select == null) return "";
     for (int i=0;i<this.select.size();i++) {
@@ -1053,6 +1589,12 @@ public class TableSQLData {
     return "";
   }
 
+  /**
+   * Sets the order by clause.
+   * 
+   * @param _fields: Vector with the order by fields.
+   * @param _params: Vector with the order by parameters.
+   */
   public void setOrderBy(Vector<String> _fields, Vector<String> _params) {
     this.orderBy = new Vector<QueryFieldStructure>();
     this.paramOrderBy = new Vector<QueryParameterStructure>();
@@ -1082,6 +1624,12 @@ public class TableSQLData {
     }
   }
 
+  /**
+   * Sets the filter clause.
+   * 
+   * @param _fields: Vector with the fields for the filter clause.
+   * @param _params: Vector with the paramters.
+   */
   public void setFilter(Vector<String> _fields, Vector<String> _params) {
     this.filter = new Vector<QueryFieldStructure>();
     this.paramFilter = new Vector<QueryParameterStructure>();
@@ -1105,10 +1653,25 @@ public class TableSQLData {
     }
   }
 
+  /**
+   * Gets the sql generated.
+   * 
+   * @return String with the sql.
+   */
   public String getSQL() {
     return getSQL(null, null, null, null, null);
   }
 
+  /**
+   * Gets the sql generated.
+   * 
+   * @param _FilterFields: Vector with specific filter fields.
+   * @param _FilterParams: Vector with parameters for the specific filter fields.
+   * @param _OrderFields: Vector with specific order by fields.
+   * @param _OrderParams: Vector with parameters for the specific orfer by fields.
+   * @param selectFields: String with the fields for the select clause.
+   * @return String with the generated sql.
+   */
   public String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams, Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields) {
     StringBuffer text = new StringBuffer();
     boolean hasWhere = false;
@@ -1178,6 +1741,11 @@ public class TableSQLData {
     return text.toString();
   }
 
+  /**
+   * Gets the sql for the total queries.
+   * 
+   * @return String with the sql.
+   */
   public String getTotalSQL() {
     StringBuffer text = new StringBuffer();
     Vector<QueryFieldStructure> aux = null;
