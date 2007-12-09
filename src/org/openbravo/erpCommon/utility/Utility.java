@@ -33,9 +33,20 @@ import javax.servlet.ServletException;
 import java.io.*;
 import org.apache.log4j.Logger ;
 
+/**
+ * @author Fernando Iriazabal
+ *
+ * Utility class
+ */
 public class Utility {
   static Logger log4j = Logger.getLogger(Utility.class);
 
+  /**
+   * Checks if the references is a decimal number type.
+   * 
+   * @param reference: String with the reference.
+   * @return True if is a decimal or false if not.
+   */
   public static boolean isDecimalNumber (String reference) {
     if (reference==null || reference.equals("")) return false;
     switch (Integer.valueOf(reference).intValue()) {
@@ -47,6 +58,12 @@ public class Utility {
     return false;
   }
 
+  /**
+   * Checks if the references is an integer number type.
+   * 
+   * @param reference: String with the reference.
+   * @return True if is an integer or false if not.
+   */
   public static boolean isIntegerNumber (String reference) {
     if (reference==null || reference.equals("")) return false;
     switch (Integer.valueOf(reference).intValue()) {
@@ -57,6 +74,12 @@ public class Utility {
     return false;
   }
 
+  /**
+   * Checks if the references is a datetime type.
+   * 
+   * @param reference: String with the reference.
+   * @return True if is a datetime or false if not.
+   */
   public static boolean isDateTime (String reference) {
     if (reference==null || reference.equals("")) return false;
     switch (Integer.valueOf(reference).intValue()) {
@@ -67,11 +90,30 @@ public class Utility {
     return false;
   }
 
+  /**
+   * Checks if the record has attachments associated.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param userClient: String with the list of granted clients.
+   * @param userOrg: String with the list of granted organizations.
+   * @param tableId: String with the table id.
+   * @param recordId: String with the record id.
+   * @return True if the record has attachments or false if not.
+   * @throws ServletException
+   */
   public static boolean hasAttachments(ConnectionProvider conn, String userClient, String userOrg, String tableId, String recordId) throws ServletException {
     if (tableId.equals("") || recordId.equals("")) return false;
     else return UtilityData.select(conn, userClient, userOrg, tableId, recordId);
   }
 
+  /**
+   * Translate the given code into some message from the application dictionary.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param strCode: String with the code to search.
+   * @param strLanguage: String with the translation language.
+   * @return String with the translated message.
+   */
   public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage) {
     String strMessage="";
     if (strLanguage==null || strLanguage.equals("")) strLanguage = "en_US";
@@ -94,6 +136,14 @@ public class Utility {
     return Replace.replace(Replace.replace(strMessage, "\n", "\\n"), "\"", "&quot;");
   }
 
+  /**
+   * Gets the value of the given preference.
+   * 
+   * @param vars: Handler for the session info.
+   * @param context: String with the preference.
+   * @param window: String with the window id.
+   * @return String with the value.
+   */
   public static String getPreference(VariablesSecureApp vars, String context, String window) {
     if (context==null || context.equals("")) throw new IllegalArgumentException("getPreference - require context");
     String retValue="";
@@ -104,6 +154,14 @@ public class Utility {
     return (retValue);
   }
 
+  /**
+   * Gets the transactional range defined.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param window: String with the window id.
+   * @return String with the value.
+   */
   public static String getTransactionalDate(ConnectionProvider conn, VariablesSecureApp vars, String window) {
     String retValue="";
 
@@ -115,6 +173,15 @@ public class Utility {
     return retValue;
   }
 
+  /**
+   * Gets a value from the context.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param context: String with the parameter to search.
+   * @param window: String with the window id.
+   * @return String with the value.
+   */
   public static String getContext(ConnectionProvider conn, VariablesSecureApp vars, String context, String window) {
     if (context==null || context.equals("")) throw new IllegalArgumentException("getContext - require context");
     String retValue="";
@@ -140,6 +207,17 @@ public class Utility {
     return retValue;
   }
 
+  /**
+   * Gets a default value.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param columnname: String with the column name.
+   * @param context: String with the parameter.
+   * @param window: String with the window id.
+   * @param defaultValue: String with the default value.
+   * @return String with the value.
+   */
   public static String getDefault(ConnectionProvider conn, VariablesSecureApp vars, String columnname, String context, String window, String defaultValue) {
     if (columnname == null || columnname.equals("")) return "";
     String defStr = getPreference(vars, columnname, window);
@@ -159,6 +237,15 @@ public class Utility {
     return defStr;
   }
 
+  /**
+   * Parse the given string searching the @ elements to translate with the correct values.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param context: String to parse.
+   * @param window: String with the window id.
+   * @return String parsed.
+   */
   public static String parseContext(ConnectionProvider conn, VariablesSecureApp vars, String context, String window) {
     if (context==null || context.equals("")) return "";
     StringBuffer strOut = new StringBuffer();
@@ -183,6 +270,19 @@ public class Utility {
     return strOut.toString();
   }
 
+  /**
+   * Gets the document number from the database.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param WindowNo: Window id.
+   * @param TableName: Table name.
+   * @param C_DocTypeTarget_ID: Id of the doctype target.
+   * @param C_DocType_ID: id of the doctype.
+   * @param onlyDocType: Search only for doctype.
+   * @param updateNext: Save the new sequence in database.
+   * @return String with the new document number.
+   */
   public static String getDocumentNo (ConnectionProvider conn, VariablesSecureApp vars, String WindowNo, String TableName, String C_DocTypeTarget_ID, String C_DocType_ID, boolean onlyDocType, boolean updateNext) {
     if (TableName == null || TableName.length() == 0) throw new IllegalArgumentException("Utility.getDocumentNo - required parameter missing");
     String AD_Client_ID = getContext(conn, vars, "AD_Client_ID", WindowNo);
@@ -203,6 +303,15 @@ public class Utility {
     } else return cs.razon;
   }
 
+  /**
+   * Gets the document number from database.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param AD_Client_ID: String with the client id.
+   * @param TableName: Table name.
+   * @param updateNext: Save the new sequence in database.
+   * @return String with the new document number.
+   */
   public static String getDocumentNo (ConnectionProvider conn, String AD_Client_ID, String TableName, boolean updateNext) {
     if (TableName == null || TableName.length() == 0) throw new IllegalArgumentException("Utility.getDocumentNo - required parameter missing");
 
@@ -216,6 +325,12 @@ public class Utility {
     else return cs.razon;
   }
 
+  /**
+   * Adds the system element to the given list.
+   * 
+   * @param list: String with the list.
+   * @return String with the modified list.
+   */
   public static String addSystem (String list) {
     String retValue = "";
 
@@ -233,6 +348,17 @@ public class Utility {
   }
 
 
+  /**
+   * Checks if the user can make modifications in the window.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param AD_Client_ID: Id of the client.
+   * @param AD_Org_ID: Id of the organization.
+   * @param window: Window id.
+   * @return True if has permission, false if not.
+   * @throws ServletException
+   */
   public static boolean canUpdate (ConnectionProvider conn, VariablesSecureApp vars, String AD_Client_ID, String AD_Org_ID, String window) throws ServletException {
     String User_Level = getContext(conn, vars, "#User_Level", window);
 
@@ -258,6 +384,15 @@ public class Utility {
   }
 
 
+  /**
+   * Parse the text searching @ parameters to translate.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param language: String with the language to translate.
+   * @param text: String with the text to translate.
+   * @return String translated.
+   */
   public static String parseTranslation(ConnectionProvider conn, VariablesSecureApp vars, String language, String text) {
     if (text == null || text.length() == 0) return text;
 
@@ -287,6 +422,16 @@ public class Utility {
     return outStr.toString();
   }
 
+  /**
+   * For each token found in the parseTranslation method, this method is called
+   * to find the correct translation.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param token: String with the token to translate.
+   * @param language: String with the language to translate.
+   * @return String with the token translated.
+   */
   public static String translate(ConnectionProvider conn, VariablesSecureApp vars, String token, String language) {
     String strTranslate = token;
     strTranslate = vars.getSessionValue(token);
@@ -296,6 +441,14 @@ public class Utility {
     return strTranslate;
   }
 
+  /**
+   * Checks if the value exists in the given array of FieldProviders.
+   * 
+   * @param data: Array of FieldProviders.
+   * @param fieldName: Name of the field to search.
+   * @param key: The value to search.
+   * @return True if exists or false if not.
+   */
   public static boolean isInFieldProvider(FieldProvider[] data, String fieldName, String key) {
     if (data==null || data.length==0) return false;
     else if (fieldName==null || fieldName.trim().equals("")) return false;
@@ -313,6 +466,13 @@ public class Utility {
     return false;
   }
 
+  /**
+   * Deprecated. Used in the old order by window.
+   * @deprecated
+   * @param SQL
+   * @param fields
+   * @return
+   */
   public static String getOrderByFromSELECT(String[] SQL, Vector<String> fields) {
     if (SQL==null || SQL.length==0) return "";
     else if (fields==null || fields.size()==0) return "";
@@ -338,6 +498,14 @@ public class Utility {
     return script.toString();
   }
 
+  /**
+   * Gets the window id for a tab.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param strTabID: Id of the tab.
+   * @return String with the id of the window.
+   * @throws ServletException
+   */
   public static String getWindowID(ConnectionProvider conn, String strTabID) throws ServletException {
     return UtilityData.getWindowID(conn, strTabID);
   }
@@ -357,6 +525,14 @@ public class Utility {
     return regValue.toString();
   }*/
 
+  /**
+   * Saves the content into a fisical file.
+   * 
+   * @param strPath: path for the file.
+   * @param strFile: name of the file.
+   * @param data: content of the file.
+   * @return true if everything is ok or false if not.
+   */
   public static boolean generateFile(String strPath, String strFile, String data) {
     try {
       File fileData = new File(strPath, strFile);
@@ -387,10 +563,30 @@ public class Utility {
     return result;
   }
 */
+  /**
+   * Checks if the tab is declared as a tree tab.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param stradTabId: Id of the tab.
+   * @return True if is a tree tab or false if isn't.
+   * @throws ServletException
+   */
   public static boolean isTreeTab(ConnectionProvider conn, String stradTabId) throws ServletException {
     return UtilityData.isTreeTab(conn, stradTabId);
   }
 
+  /**
+   * Fill the parameters of the sql with the session values or FieldProvider values.
+   * Used in the combo fields.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param data: FieldProvider with the columns values.
+   * @param cmb: ComboTableData object.
+   * @param window: Window id.
+   * @param actual_value: actual value for the combo.
+   * @throws ServletException
+   */
   public static void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp vars, FieldProvider data, ComboTableData cmb, String window, String actual_value) throws ServletException {
     Vector<String> vAux = cmb.getParameters();
     if (vAux!=null && vAux.size()>0) {
@@ -408,6 +604,17 @@ public class Utility {
     }
   }
 
+  /**
+   * Fill the parameters of the sql with the session values or FieldProvider values.
+   * Used in the combo relation's grids.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param data: FieldProvider with the columns values.
+   * @param cmb: TableSQLData object.
+   * @param window: Window id.
+   * @throws ServletException
+   */
   public static void fillTableSQLParameters(ConnectionProvider conn, VariablesSecureApp vars, FieldProvider data, TableSQLData cmb, String window) throws ServletException {
     Vector<String> vAux = cmb.getParameters();
     if (vAux!=null && vAux.size()>0) {
@@ -425,6 +632,19 @@ public class Utility {
     }
   }
 
+  /**
+   * Auxiliar method, used by fillSQLParameters and fillTableSQLParameters to get the
+   * values for each parameter.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param data: FieldProvider with the columns values.
+   * @param name: Name of the parameter.
+   * @param window: Window id.
+   * @param actual_value: Actual value.
+   * @return String with the parsed parameter.
+   * @throws Exception
+   */
   public static String parseParameterValue(ConnectionProvider conn, VariablesSecureApp vars, FieldProvider data, String name, String window, String actual_value) throws Exception {
     String strAux = null;
     if (name.equalsIgnoreCase("@ACTUAL_VALUE@")) return actual_value;
@@ -437,6 +657,15 @@ public class Utility {
     return strAux;
   }
 
+  /**
+   * Gets the Message for the instance of the processes.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param pinstanceData: Array with the instance information.
+   * @return Object with the message.
+   * @throws ServletException
+   */
   public static OBError getProcessInstanceMessage(ConnectionProvider conn, VariablesSecureApp vars, PInstanceProcessData[] pinstanceData) throws ServletException {
     OBError myMessage = new OBError();
     if (pinstanceData!=null && pinstanceData.length>0) {
@@ -478,6 +707,16 @@ public class Utility {
     return myMessage;
   }
 
+  /**
+   * Translate the message, searching the @ parameters, and making use of the
+   * ErrorTextParser class to get the appropiated message.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param strLanguage: Language to translate.
+   * @param message: Strin with the message to translate.
+   * @return Object with the message.
+   */
   public static OBError translateError(ConnectionProvider conn, VariablesSecureApp vars, String strLanguage, String message) {
     OBError myError = new OBError();
     myError.setType("Error");
@@ -553,6 +792,14 @@ public class Utility {
     return myError;
   }
 
+  /**
+   * Search a message in the database.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param strCode: Message to search.
+   * @param strLanguage: Language to translate.
+   * @return FieldProvider with the message info.
+   */
   public static FieldProvider locateMessage(ConnectionProvider conn, String strCode, String strLanguage) {
     FieldProvider[] fldMessage = null;
 
