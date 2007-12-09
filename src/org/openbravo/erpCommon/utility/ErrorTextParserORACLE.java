@@ -21,9 +21,18 @@ package org.openbravo.erpCommon.utility;
 import org.openbravo.data.FieldProvider;
 import org.apache.log4j.Logger;
 
+/**
+ * @author Fernando Iriazabal
+ * 
+ * Instance of the Abstract class, ErrorTextParser, that implements
+ * the error parsing for ORACLE RDBMS.
+ */
 public class ErrorTextParserORACLE extends ErrorTextParser {
   static Logger log4j = Logger.getLogger(ErrorTextParserORACLE.class);
 
+  /* (non-Javadoc)
+   * @see org.openbravo.erpCommon.utility.ErrorTextParser#parse()
+   */
   public OBError parse() throws Exception {
     if (getMessage().equals("")) return null;
     else if (getConnection()==null) return null;
