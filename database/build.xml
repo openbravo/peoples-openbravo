@@ -17,7 +17,30 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
+<!--
+List of targets:
 
+create.database: creates the database from scratch.
+update.database: updates structure and data in database.
+clean.database.ORACLE: Drop database from Oracle.
+clean.database.POSTGRE: Drop database from PostgreSQL.
+ORACLE.structure: Creates the database in Oracle.
+POSTGRE.structure: Creates the database in PostgreSql.
+prepare.database: Call to the specific rdbms structure.
+create.database.structure: Create the database structure from xml files.
+update.database.structure: Updates the database structure from xml files.
+create.database.script: Creates the database script in the script directory.
+update.database.script: Updates the database script in the script directory.
+export.database.structure: Exports the database structure in the xml's files.
+import.database.data: Imports the data into the database.
+export.database.data: Exports the data from database to xml's files.
+import.database.sampledata: Imports the database sample data from xml's files.
+export.database.sampledata: Exports the database sample data to xml's files.
+save.database.model: Saves the model in the database.
+database.postcreate.ORACLE: Executes post creation operation in Oracle database.
+database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL database.
+compare.database.structure: Generates a diff script.
+-->
 <project name="openbravo" default="create.database" basedir=".">
   <property environment="env" />
   <property name="database.file" value="${base.source}/database" />
