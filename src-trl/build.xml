@@ -17,6 +17,18 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
+<!--
+List of targets:
+
+init: creates all the needed folders.
+clean: removes all the files and folders.
+sqlc: generates java files from xsql's files.
+compileSqlc: compile the java files generated from xsql's files.
+compile: compile the java files of the project.
+build.jar: generates the jar file in the lib folder.
+build: compile the project, including the xsql's files and generates the jar and doc.
+doc: generates the api for the project.
+-->
 <project default="compile" basedir="." name="openbravo-trl">
   <property name="build.trl" value="${basedir}/build/classes"/>
   <property name="build.trl.docs" value="${basedir}/docs"/>
