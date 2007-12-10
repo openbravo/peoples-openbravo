@@ -10,6 +10,17 @@
 * specific language governing permissions and limitations under the License.
 ************************************************************************************
 -->
+
+<!--
+List of targets:
+
+init: creates all the needed folders.
+clean: removes all the files and folders.
+compile: compile the java files of the project.
+build.jar: generates the jar file in the lib folder.
+build: compile the project and generates the jar and doc.
+doc: generates the api for the project.
+-->
 <project default="compile" basedir="." name="openbravo-core">
   <property name="build.core" value="${basedir}/build/classes"/>
   <property name="build.core.docs" value="${basedir}/docs"/>
