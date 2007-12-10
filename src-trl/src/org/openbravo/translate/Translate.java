@@ -34,8 +34,9 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
+ * @author Fernando Iriazabal
+ * 
  * Translate the HTML file of the folder especified
- *
  **/
 public class Translate extends DefaultHandler implements LexicalHandler {
   public static final String VERSION = "V1.O00.1";
@@ -59,9 +60,23 @@ public class Translate extends DefaultHandler implements LexicalHandler {
 
   static Logger log4j = Logger.getLogger(Translate.class);
 
+  /**
+   * Constructor
+   * 
+   * @param xmlPoolFile: Path to the XmlPool.xml file.
+   * @throws ServletException
+   */
   public Translate (String xmlPoolFile) throws ServletException {
     pool = new CPStandAlone (xmlPoolFile);
   }
+  
+  /**
+   * Constructor
+   * 
+   * @param xmlPoolFile: Path to the XmlPool.xml file.
+   * @param _fileTermination: File extension to filter.
+   * @throws ServletException
+   */
   public Translate (String xmlPoolFile, String _fileTermination) throws ServletException {
     this(xmlPoolFile);
     fileTermination = _fileTermination;
@@ -80,6 +95,20 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     toLanguage = TranslateData.systemLanguage(pool);
   }
 
+  /**
+   * Command Line method.
+   * 
+   * @param argv: List of arguments. There is 2 call ways, with 2 arguments; the first
+   *              one is the attribute to indicate if the AD_TEXTINTERFACES must be 
+   *              cleaned ("clean") and the second one is the XmlPool.xml path.
+   *              The other way is with more arguments, where:
+   *              0- XmlPool.xml path.
+   *              1- File extension.
+   *              2- Path where are the files to translate.
+   *              3- Path where the translated files must be created.
+   *              4- Relative path.
+   * @throws Exception
+   */
   public static void main(String argv[]) throws Exception {
     PropertyConfigurator.configure("log4j.lcf");
     String dirIni;
@@ -129,6 +158,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     translate.destroy();
   }
 
+  /**
+   * Executes the clean of the AD_TEXTINTERFACES table.
+   */
   private void clean() {
     try {
       TranslateData.clean(pool);
@@ -136,7 +168,16 @@ public class Translate extends DefaultHandler implements LexicalHandler {
       log4j.error(e.toString());
     }
   }
-  // lista los archivos y directorios correspondientes a un File
+  
+  /**
+   * List all the files and folders in the selected path.
+   * 
+   * @param file: The selected path to list.
+   * @param boolFilter: If is filtered.
+   * @param dirFilter: Filter to apply.
+   * @param fileFin: Path where the new files must been created.
+   * @param relativePath: The relative path.
+   */
   public static void listDir(File file, boolean boolFilter, DirFilter dirFilter, File fileFin, String relativePath) {
     File[] list;
     if(boolFilter) list = file.listFiles(dirFilter);
@@ -163,10 +204,13 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     }
   }
 
-  /* cambiar dirIni.toString() por file
-     buscar la terminacion solo en el final
+  /**
+   * Parse each file searching the text to translate.
+   * 
+   * @param fileParsing: File to parse.
+   * @param fileFin: Path where the new files must been created.
+   * @param relativePath: The relative path.
    */
-
   private static void parseFile(File fileParsing, File fileFin, String relativePath) {
     String strFileName = fileParsing.getName();
     if (log4j.isDebugEnabled()) log4j.debug("Parsing of " + strFileName);
@@ -229,6 +273,13 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     }
   }
 
+  /**
+   * Parse each attribute of each element in the file. This method decides
+   * which ones must been translated.
+   * 
+   * @param amap: Attributes of the element.
+   * @return String with the list of attributes translated.
+   */
   public String parseAttributes(Attributes amap) {
     StringBuffer data = new StringBuffer();
     String type = "";
@@ -267,14 +318,26 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     return data.toString();
   }
 
+  /**
+   * The start of the document to translate.
+   */
   public void startDocument() {
     if (!isHtml) strBuffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
   }
 
+  /**
+   * The prefix mapping for the file.
+   */
   public void startPrefixMapping(String prefix, String uri) {
     actualPrefix = " xmlns:" + prefix + "=\"" + uri + "\"";
   }
 
+  /**
+   * Method to know if a specific element in the file is parseable or not.
+   * 
+   * @param tagname: Name of the element.
+   * @return True if the element is parseable, false if not.
+   */
   public boolean isParseable(String tagname) {
     if (tagname.equalsIgnoreCase("script")) return false;
     else if (fileTermination.equalsIgnoreCase("jrxml")) {
@@ -283,6 +346,10 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     return true;
   }
 
+  /**
+   * Start of an element of the file. When the parser finds a new element 
+   * in the file, it calls to this method.
+   */
   public void startElement(String uri, String name, String qName, Attributes amap) {//(String name, AttributeList amap) throws SAXException {
     if (log4j.isDebugEnabled()) log4j.debug("Configuration: startElement is called: element name=" + qName);
     if (actualTag!=null && isParseable(actualTag) && translationText != null) {
@@ -306,13 +373,24 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   public void startDTD(String name, String publicId, String systemId) {}
   public void startEntity(String name) {}
 
+  /**
+   * Method to insert begining of CDATA expresions.
+   */
   public void startCDATA() {
     strBuffer.append("<![CDATA[");
   }
+  
+  /**
+   * Method to insert ends of CDATA expresions.
+   */
   public void endCDATA() {
     strBuffer.append("]]>");
   }
 
+  /**
+   * End of an element of the file. When the parser finds the end of an element 
+   * in the file, it calls to this method.
+   */
   public void endElement(String uri, String name, String qName) {//(String name) throws SAXException {
     if (log4j.isDebugEnabled()) log4j.debug("Configuration: endElement is called: " + qName);
     if (isParseable(actualTag) && translationText != null) {
@@ -330,6 +408,10 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     actualTag="";
   }
 
+  /**
+   * This method is called by the parser when it finds any content between 
+   * the start and end element's tags.
+   */
   public void characters(char[] ch, int start, int length) {//throws SAXException {
     String chars = new String(ch, start, length);
     if (log4j.isDebugEnabled()) log4j.debug("Configuration(characters) is called: " + chars);
@@ -337,10 +419,24 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     translationText.append(chars);
   }
 
+  /**
+   * This method is the one in charge of the translation of the found text.
+   * 
+   * @param ini: String with the text to translate.
+   * @return String with the translated text.
+   */
   public String translate(String ini) {
     return translate(ini, false);
   }
 
+  /**
+   * This method is the one in charge of the translation of the found text.
+   * 
+   * @param ini: String with the text to translate.
+   * @param isPartial: Indicates if the text passed is partial text or the 
+   *                   complete one found in the element content.
+   * @return String with the translated text.
+   */
   public String translate(String ini, boolean isPartial) {
     ini = replace(replace(ini.trim(), "\r", ""), "\n", " ");
     ini = ini.trim();
@@ -380,6 +476,12 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     return resultado;
   }
 
+  /**
+   * To know if a text is numeric or not.
+   * 
+   * @param ini: String with the text.
+   * @return True if has no letter in the text or false if has any letter.
+   */
   public boolean isNumeric(String ini) {
     boolean isNumericData = true;
     for (int i=0; i< ini.length(); i++) {
@@ -391,6 +493,14 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     return isNumericData;
   }
 
+  /**
+   * Replace a char, inside a given text, with another char.
+   * 
+   * @param strInicial: Text where is the char to replace.
+   * @param strReplaceWhat: Char to replace.
+   * @param strReplaceWith: Char to replace with.
+   * @return String with the replaced text.
+   */
   public String replace(String strInicial, String strReplaceWhat, String strReplaceWith) {
     int index = 0;
     int pos;
@@ -407,6 +517,12 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     return strFinal.toString();
   }
 
+  /**
+   * This method remove all the spaces in the string.
+   * 
+   * @param strIni: String to clean.
+   * @return String without spaces.
+   */
   public String delSp(String strIni){
     boolean sp = false;
     String strFin = "";
@@ -417,6 +533,15 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     return strFin;
   }
 
+  /**
+   * This method splits the main string into shortest fragments to translate 
+   * them separately.
+   * 
+   * @param ini: String to split
+   * @param indice: Index of the separator array to use.
+   * @param isTranslated: Indicates if the text has been translated.
+   * @return String translated.
+   */
   public String tokenize(String ini, int indice, Vector<String> isTranslated) {
     StringBuffer fin = new StringBuffer();
     try {
@@ -461,6 +586,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     return fin.toString();
   }
 
+  /**
+   * The method to close database connection.
+   */
   public void destroy() {
     pool.destroy();
   }
