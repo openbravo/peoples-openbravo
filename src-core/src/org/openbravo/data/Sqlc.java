@@ -1325,34 +1325,34 @@ public class Sqlc extends DefaultHandler {
   }
 
   static public String TransformaNombreColumna(String strName, boolean isFile){
-    String strNombreTransformado = "";
-    String BarraBaja = "_";
     int numChars = strName.length();
+    StringBuilder result = new StringBuilder(numChars);
     boolean underscore = false;
     for (int i=0; i<numChars; i++){
+      char curr = strName.charAt(i);
       if (i==0) {
         if (isFile) {
-          strNombreTransformado = new Character(Character.toUpperCase(strName.charAt(i))).toString();
+          result.append(Character.toUpperCase(curr));
         } else {
-          strNombreTransformado = new Character(Character.toLowerCase(strName.charAt(i))).toString();
+          result.append(Character.toLowerCase(curr));
         }
       } else {
-        if (strName.substring(i,i+1).compareTo(BarraBaja) == 0) underscore = true;
+        if (curr == '_') underscore = true;
         else{
           if (underscore){
-            strNombreTransformado = strNombreTransformado + new Character(Character.toUpperCase(strName.charAt(i))).toString();
+            result.append(Character.toUpperCase(curr));
             underscore = false;
           } else {
             if (isFile) {
-              strNombreTransformado = strNombreTransformado + new Character(strName.charAt(i)).toString();
+              result.append(curr);
             } else {
-              strNombreTransformado = strNombreTransformado + new Character(Character.toLowerCase(strName.charAt(i))).toString();
+              result.append(Character.toLowerCase(curr));
             }
           }
         }
       }
     }
-    return(strNombreTransformado);
+    return result.toString();
   }
 
   public void readProperties(String strFileProperties) {
