@@ -58,13 +58,12 @@ class CommandLine_CopyFiles {
     CPStandAlone conn = null;
     try {
       conn = new CPStandAlone(connectionFile);
-      FileUtility fUtility = new FileUtility();
       LanguageComboData[] data = LanguageComboData.selectOthers(conn, language);
       if (data!=null && data.length>0) {
         for (int i=0;i<data.length;i++) {
           File fileLang = new File(destiny, data[i].adLanguage);
           fileLang.mkdir();
-          log4j.info("files copied to " + data[i].adLanguage + ": " + fUtility.copy(fileSource, fileLang, filter, discardHidden, overwrite));
+          log4j.info("files copied to " + data[i].adLanguage + ": " + FileUtility.copy(fileSource, fileLang, filter, discardHidden, overwrite));
         }
       }
 

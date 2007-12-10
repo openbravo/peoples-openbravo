@@ -92,7 +92,7 @@ public class FileUtility {
     return f.delete();
   }
 
-  public int copy(File source, File destiny, DirFilter dirFilter, boolean discardHidden, boolean overwrite) throws Exception {
+  public static int copy(File source, File destiny, DirFilter dirFilter, boolean discardHidden, boolean overwrite) throws Exception {
     File[] list;
     int total = 0;
     if(dirFilter!=null) list = source.listFiles(dirFilter);
@@ -117,7 +117,7 @@ public class FileUtility {
     return total;
   }
 
-  public void copyFile(File in, File out) throws Exception {
+  public static void copyFile(File in, File out) throws Exception {
     FileChannel src=null, cp=null;
     try {
       src = new FileInputStream(in).getChannel();
@@ -152,7 +152,7 @@ public class FileUtility {
     fos.close();
   }*/
 
-  public void delete(File source) throws Exception {
+  public static void delete(File source) throws Exception {
     File[] list = source.listFiles();
     for(int i = 0; i < list.length; i++) {
       File fileItem = list[i];

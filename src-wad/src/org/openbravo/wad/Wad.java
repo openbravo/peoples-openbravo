@@ -303,15 +303,14 @@ public class Wad extends DefaultHandler {
         LanguagesData[] dataLang = LanguagesData.select(wad.pool);
         if (dataLang!=null && dataLang.length>0) {
           for (int pos=0;pos<dataLang.length;pos++) {
-            FileUtility f = new FileUtility();
             File languageBase = new File(fileTrl, dataLang[pos].adLanguage);
-            if (complete && languageBase.exists()) f.delete(languageBase);
+            if (complete && languageBase.exists()) FileUtility.delete(languageBase);
             languageBase.mkdir();
-            //f.copy(fileBase, languageBase,new DirFilter("html"), true, true);
-            //f.copy(fileBase, languageBase,new DirFilter("fo"), true, true);
-            f.copy(fileBase, languageBase,new DirFilter(".xml"), true, true);
-            //f.copy(fileBase, languageBase,new DirFilter("srpt"), true, true);
-            //f.copy(fileBase, languageBase,new DirFilter("jrxml"), true, true);
+            //FileUtility.copy(fileBase, languageBase,new DirFilter("html"), true, true);
+            //FileUtility.copy(fileBase, languageBase,new DirFilter("fo"), true, true);
+            FileUtility.copy(fileBase, languageBase,new DirFilter(".xml"), true, true);
+            //FileUtility.copy(fileBase, languageBase,new DirFilter("srpt"), true, true);
+            //FileUtility.copy(fileBase, languageBase,new DirFilter("jrxml"), true, true);
             //executeCommandTask("ant precopyfiles -Dlanguage=" + dataLang[pos].adLanguage, dir);
             File fileDirTrlBase = new File(fileTrl, dataLang[pos].adLanguage + wad.strSystemSeparator + "org" + wad.strSystemSeparator + "openbravo" + wad.strSystemSeparator +"erpCommon" + wad.strSystemSeparator + "ad_actionButton");
             if (!fileDirTrlBase.exists()) {
@@ -877,14 +876,13 @@ public class Wad extends DefaultHandler {
 
             //processTabHtmlEditionTrl(efd, efdTRL, efdauxiliar, fileDirTrl, tabsData.tabid, tabName, realWindowName, keyColumnName, tabNamePresentation, tab1trl, tab2trl, allTabstrl, selectedTabtrl, tabsData.key, parentsFieldsData, vecFields, strProcess, strDirectPrint, tabsData.isreadonly.equals("Y"), tabsData.tablevel, dataLang[pos].adLanguage, windowName, isSOTrx, tabsData.tableId, pixelSize);
           }
-          FileUtility f = new FileUtility();
           File languageBase = new File(fileTrl, dataLang[pos].adLanguage);
           languageBase.mkdir();
           File fTrl = new File(fileBaseAplication, "srcAD");
-          f.copy(fTrl, languageBase,new DirFilter("html"), true, false);
-          f.copy(fTrl, languageBase,new DirFilter("fo"), true, false);
-          f.copy(fTrl, languageBase,new DirFilter("xml"), true, false);
-          f.copy(fTrl, languageBase,new DirFilter("srpt"), true, false);
+          FileUtility.copy(fTrl, languageBase,new DirFilter("html"), true, false);
+          FileUtility.copy(fTrl, languageBase,new DirFilter("fo"), true, false);
+          FileUtility.copy(fTrl, languageBase,new DirFilter("xml"), true, false);
+          FileUtility.copy(fTrl, languageBase,new DirFilter("srpt"), true, false);
         }
       }
 
