@@ -66,6 +66,24 @@ public class VariablesSecureApp extends VariablesBase {
     this.jsDateFormat = getSessionValue("#AD_JsDateFormat");
     this.sqlDateFormat = getSessionValue("#AD_SqlDateFormat");
   }
+  
+  public VariablesSecureApp(HttpServletRequest request, boolean f) {
+    super(request,f);
+    this.user = getSessionValue("#AD_User_ID");
+    this.role = getSessionValue("#AD_Role_ID");
+    this.language = getSessionValue("#AD_Language");
+    this.theme = getSessionValue("#Theme");
+    this.client = getSessionValue("#AD_Client_ID");
+    this.organization = getSessionValue("#AD_Org_ID");
+    this.userClient = getSessionValue("#User_Client");
+    this.userOrganization = getSessionValue("#User_Org");
+    this.warehouse = getSessionValue("#M_Warehouse_ID");
+    this.dbSessionID = getSessionValue("#AD_Session_ID");
+    this.command = getStringParameter("Command", "DEFAULT");
+    this.javaDateFormat = getSessionValue("#AD_JavaDateFormat");
+    this.jsDateFormat = getSessionValue("#AD_JsDateFormat");
+    this.sqlDateFormat = getSessionValue("#AD_SqlDateFormat");
+  }
 
   public String getUser() {
     return user;

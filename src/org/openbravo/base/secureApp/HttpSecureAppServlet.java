@@ -249,7 +249,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     }
     
     try {
+      
       super.initialize(request,response);
+      VariablesSecureApp vars = new VariablesSecureApp(request, false); 
       if (vars.getRole().equals("") || hasAccess(vars))
         super.serviceInitialized(request,response);
       else

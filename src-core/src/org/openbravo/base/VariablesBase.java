@@ -50,6 +50,15 @@ public class VariablesBase {
       }
     }
   }
+  /**
+   * Overloaded constructor, used to prevent session removal in case of multipart
+   * @param request
+   * @param f dummy boolean, only for overload the constructor
+   */
+  public VariablesBase(HttpServletRequest request, boolean f) {
+    this.session = request.getSession(true);
+    this.httpRequest = request;
+  }
 
   public String getGlobalVariable(String requestParameter, String sessionAttribute, boolean clearSession,
       boolean requestRequired, boolean sessionRequired, String defaultValue) throws ServletException {
