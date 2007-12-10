@@ -17,7 +17,53 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
+<!--
+List of targets:
 
+init: checks if exists the JAVA_HOME var.
+compile.complete: refer to compile.complete target of src.
+compile: refer to compile target of src.
+compile.complete.development: refer to compile.complete.development target of src.
+compile.development: refer to compile.development target of src.
+eclipse.compile: refer to eclipse.compile target of src.
+eclipse.compile.complete: refer to eclipse.compile.complete target of src.
+compile.src: refer to compile.src target of src.
+war: refer to build.war target of src.
+core.docs: refer to doc target of src-core.
+core.lib: refer to build target of src-core.
+eclipse.wad.lib: refer to sqlc target of src-wad.
+wad.docs: refer to doc target of src-wad.
+wad.lib: refer to build target of src-wad.
+eclipse.trl.lib: refer to sqlc target of src-trl.
+trl.docs: refer to doc target of src-trl.
+trl.lib: refer to build target of src-trl.
+database.lib: refer to jar target of src-db.
+clean: refer to clean target of src.
+trl.clean: refer to trl.clean target of src.
+translate: refer to translate target of src.
+installWebService: refer to installWebService target of src.
+uninstallWebService: refer to uninstallWebService target of src.
+preinstall: deprecated.
+preinstall.complete: deprecated.
+install: deprecated.
+deploy: copy war to the jakarta context.
+install.source: install the ERP from sources (from subversion).
+eclipse.install.source: install the ERP from sources for eclipse (from subversion).
+create.database: refer to create.database target of database.
+update.database: refer to update.database target of database.
+create.database.structure: refer to create.database.structure target of database.
+update.database.structure: refer to update.database.structure target of database.
+create.database.script: refer to create.database.script target of database.
+update.database.script: refer to update.database.script target of database.
+export.database: exports database structure and data to xml files.
+export.database.structure: refer to export.database.structure target of database.
+export.database.data: refer to export.database.data target of database.
+import.database.data: refer to import.database.data target of database.
+export.database.sampledata: refer to export.database.sampledata target of database.
+import.database.sampledata: refer to import.database.sampledata target of database.
+save.database.model: refer to save.database.model target of database.
+compare.database.structure: refer to compare.database.structure target of database.
+-->
 <project name="openbravo" default="compile.complete" basedir=".">
   <property environment="env"/>
   <property file="config/Openbravo.properties"/>
