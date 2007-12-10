@@ -1326,11 +1326,10 @@ public class Sqlc extends DefaultHandler {
 
   static public String TransformaNombreColumna(String strName, boolean isFile){
     String strNombreTransformado = "";
-    //    Character BarraBaja = new Character('_');
     String BarraBaja = "_";
-    int intNumCaracteres = strName.length();
-    boolean blnFueBarraBaja = false;
-    for (int i=0; i<intNumCaracteres; i++){
+    int numChars = strName.length();
+    boolean underscore = false;
+    for (int i=0; i<numChars; i++){
       if (i==0) {
         if (isFile) {
           strNombreTransformado = new Character(Character.toUpperCase(strName.charAt(i))).toString();
@@ -1338,12 +1337,11 @@ public class Sqlc extends DefaultHandler {
           strNombreTransformado = new Character(Character.toLowerCase(strName.charAt(i))).toString();
         }
       } else {
-        //        if (new Character(strName.charAt(i)).compareTo(BarraBaja) == 0) blnFueBarraBaja = true;
-        if (strName.substring(i,i+1).compareTo(BarraBaja) == 0) blnFueBarraBaja = true;
+        if (strName.substring(i,i+1).compareTo(BarraBaja) == 0) underscore = true;
         else{
-          if (blnFueBarraBaja){
+          if (underscore){
             strNombreTransformado = strNombreTransformado + new Character(Character.toUpperCase(strName.charAt(i))).toString();
-            blnFueBarraBaja = false;
+            underscore = false;
           } else {
             if (isFile) {
               strNombreTransformado = strNombreTransformado + new Character(strName.charAt(i)).toString();
