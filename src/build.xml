@@ -19,6 +19,37 @@
  ************************************************************************
 -->
 
+<!--
+List of methods inside:
+
+init: creates all the folders.
+trl.clean: clean the AD_TEXTINTERFACES table
+clean: delete all folders.
+copy.srcClient: copy the content of the srcClient to the src folder.
+sqlc: generates the java from the xsql files.
+compileSqlc: compiles all the java generated from the xsqls.
+wad: generates all the files from the mda.
+postwad: copies the generated files to the base design folder.
+postsrc: copies the src files to the base design folder and the 
+         xml and jasper files to the translated designs folders
+build.local.context: copies all files to the eclipse base context 
+                     (WebContent...).
+compile.src: comiles only the src files.
+eclipse.compile: generates specified wad files and compiles modified xsql files.
+eclipse.compile.complete: generates all wad files and compiles all xsql files
+compile: compiles specified WAD window and src and also translates.
+compile.complete: compiles all WAD windows and src and also translates.
+translate: Translate the modified files.
+compile.translate: Translate the specified extensions files.
+installWebService: install the web services configuration file.
+uninstallWebService: uninstall the web services configuration file.
+copy.files: copy the local files to the context.
+compile.development: like compile, but also copies the files to the context.
+compile.complete.development: like compile.complete, but also copies the files 
+                              to the context.
+build.war: build a war file in the lib directory.
+-->
+	
 <project name="openbravo sources" default="compile" basedir=".">
   <property name="webTab" value="all"/>
   <property name="tab" value="%"/>
@@ -34,7 +65,6 @@
       <equals arg1="no" arg2="${tr}"/>
     </not>
   </condition>
-
   <target name="init">
     <mkdir dir="${build}"/>
     <mkdir dir="${base.design}/design"/>
