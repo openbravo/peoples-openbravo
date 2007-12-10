@@ -18,7 +18,18 @@
  * Contributor(s): Openbravo S.L.
  ************************************************************************
 -->
+<!--
+List of targets:
 
+init: creates the needed folders.
+clean: removes all the created files and folders.
+sqlc: generates java files from xsql's files.
+compileSqlc: compile the java files generated from xsql's files.
+compile: compile the java files of the project.
+build.jar: generates the jar file in the lib folder.
+build: compile the project, including the xsql's files and generates the jar and doc.
+doc: generates the api for the project.
+-->
 <project name="openbravo-wad" default="compile" basedir=".">
   <property name="build.wad" value="${basedir}/build/classes"/>
   <property name="build.wad.docs" value="${basedir}/docs"/>
