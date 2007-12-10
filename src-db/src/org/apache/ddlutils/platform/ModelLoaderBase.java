@@ -101,7 +101,7 @@ public class ModelLoaderBase implements ModelLoader {
     
     protected void initMetadataSentences() throws SQLException {
 
-        _stmt_listtables = _connection.prepareStatement("SELECT TABLE_NAME FROM USER_TABLES WHERE TABLE_NAME <> 'AD_SYSTEM_MODEL' ORDER BY TABLE_NAME");
+        _stmt_listtables = _connection.prepareStatement("SELECT TABLE_NAME FROM USER_TABLES WHERE TABLE_NAME <> 'AD_SYSTEM_MODEL' AND TABLE_NAME <> 'PLAN_TABLE' ORDER BY TABLE_NAME");
         _stmt_pkname = _connection.prepareStatement("SELECT CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'P' AND TABLE_NAME = ?");
         _stmt_listcolumns = _connection.prepareStatement("SELECT COLUMN_NAME, DATA_TYPE, CHAR_COL_DECL_LENGTH, DATA_LENGTH ,DATA_PRECISION, DATA_SCALE, NULLABLE, DATA_DEFAULT FROM USER_TAB_COLUMNS WHERE TABLE_NAME = ? ORDER BY COLUMN_ID");
         _stmt_pkcolumns = _connection.prepareStatement("SELECT COLUMN_NAME FROM USER_CONS_COLUMNS WHERE CONSTRAINT_NAME = ? ORDER BY POSITION");
@@ -418,13 +418,13 @@ public class ModelLoaderBase implements ModelLoader {
                         
                         f.addParameter(p);
                     } else {
-                        System.out.println("NOP");
+                        System.out.println("Function parameter not readed for function : " + f.getName());
                     }
                     // System.out.println(t.nextToken());
                 }
             }
         } else {
-            System.out.println("NOP");
+            System.out.println("Function header not readed for function : " + f.getName());
         }
     }
     
@@ -500,7 +500,23 @@ public class ModelLoaderBase implements ModelLoader {
                 case ExtTypes.NVARCHAR:
                 case Types.LONGVARCHAR:
                     if (sreturn.length() >= 2 && sreturn.startsWith("'") && sreturn.endsWith("'")) {
-                        return sreturn.substring(1, sreturn.length() - 1);
+                        sreturn =  sreturn.substring(1, sreturn.length() - 1);
+                        int i = 0;
+                        StringBuffer sunescaped = new StringBuffer();
+                        while (i < sreturn.length()) {
+                            char c = sreturn.charAt(i);
+                            if (c == '\'') {
+                                i++;
+                                if (i < sreturn.length()) {
+                                    sunescaped.append(c);
+                                    i++;                                    
+                                }                                
+                            } else {
+                                sunescaped.append(c);
+                                i++;
+                            }
+                        }
+                        return sunescaped.toString();
                     } else {
                         return sreturn;
                     }
