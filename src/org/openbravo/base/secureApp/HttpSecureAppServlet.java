@@ -150,7 +150,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
 
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     Variables variables = new Variables(request);
-    VariablesSecureApp vars = new VariablesSecureApp(request);
     
     try {
       myTheme = variables.getSessionValue("#Theme");
@@ -227,7 +226,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
             strLanguage = DefaultOptionsData.getDefaultLanguage(this); 
           }
                               
-         
+          VariablesSecureApp vars = new VariablesSecureApp(request);
           if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strRole, strClient, strOrg, strWarehouse)) {
             readProperties(vars, prefix + strBaseConfigPath + "/Openbravo.properties");
             readNumberFormat(vars, prefix + strBaseConfigPath + "/Format.xml");
