@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2007 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,12 +24,12 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql><![CDATA[
-      SELECT ad_column.ColumnName As columnName, ad_column.ColumnName As columnNameInp, 
+      SELECT ad_field.seqno, ad_column.ColumnName As columnName, ad_column.ColumnName As columnNameInp, 
       ad_field.name as Name, ismandatory as required, ad_reference_value_id as referenceValue, 
       ad_column.ad_reference_id as reference, displayLength as displaySize, 'x' as htmltext, '' as xmltext, 
       isSameLine as issameline, (CASE ad_field.isActive WHEN 'N' THEN 'N' ELSE isDisplayed END) as isdisplayed, isupdateable as isupdateable, 
       isparent, ad_column.FIELDLENGTH, (CASE WHEN (ad_column.AD_REFERENCE_ID<>30 OR AD_REFERENCE_VALUE_ID IS NULL) THEN REPLACE(REPLACE(REPLACE(ad_element.name, 'Substitute', 'Product'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') ELSE (SELECT NAME FROM AD_REFERENCE WHERE AD_REFERENCE.AD_REFERENCE_ID=ad_column.AD_REFERENCE_VALUE_ID) END) as searchName, ad_column.ad_callout_id, 
-      ad_column.ad_process_id, ad_field.isreadonly, ad_field.DISPLAYLOGIC, ad_field.isEncrypted, AD_FIELD.AD_FIELDGROUP_ID AS FieldGroup, ad_field.ad_tab_id as tabid, '' as ad_column_id, ad_column.ad_val_rule_id, '' as displaylength, '' as value, '' as ad_window_id, 
+      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) displaylogic, ad_field.isEncrypted, AD_FIELD.AD_FIELDGROUP_ID AS FieldGroup, ad_field.ad_tab_id as tabid, '' as ad_column_id, ad_column.ad_val_rule_id, '' as displaylength, '' as value, '' as ad_window_id, 
       AD_COLUMN.ValueMin, AD_COLUMN.ValueMax, REPLACE(REPLACE(REPLACE(REPLACE(ad_column.columnname, 'Substitute', 'M_Product'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') as realName, mom.mappingname as java_class_name, '' as realcolumnname, '' as xsqltext, ad_column.isEncrypted AS isColumnEncrypted, ad_column.isDesencryptable, 
       ad_reference.name as reference_name, ad_reference.name as reference_name_trl, '' AS CLASSNAME, '' AS MAPPINGNAME, ad_callout.name as calloutname, 
       moc.classname as classname_callout, momc.mappingname as mappingname_callout, '' AS COLUMNNAME_END, ad_field.isactive 
@@ -55,20 +55,39 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
         AND ad_field.ad_tab_id = ?
         AND ad_column.isActive = 'Y'
-      ORDER BY ad_field.SEQNO
+              union 
+      select (case when upper(columnname)='CREATED' then 10000 
+                   when upper(columnname)='CREATEDBY' then 10001
+                   when upper(columnname)='UPDATED' then 10002
+                   else 10003
+              end), columnname,  columnname, c.name, 'N', 
+             c.ad_reference_value_id, c.ad_reference_id, 44, 'x', 
+             null, 
+             (case when upper(columnname) in ('CREATED', 'UPDATED') then 'N'
+                   else 'Y'
+               end), 'Y', 'N', 'N', c.FIELDLENGTH, c.name, null, 
+             null, 'Y', '@#ShowAudit@=''Y''', 'N', 1000100001 fieldgroup, tb.ad_tab_id, null, null, null, null, null, null, null, c.columnname, 
+             null, null, null, 'N', 'N', r.name, r.name, null, null, null, null, null, null, 'Y'
+       from ad_column c, ad_tab tb, ad_reference r
+      where c.ad_table_id = tb.ad_table_id
+        and upper(columnname) in ('CREATED', 'CREATEDBY', 'UPDATED', 'UPDATEDBY')
+        and tb.ad_tab_id = ?
+        and r.ad_reference_id = c.ad_reference_id
+      ORDER BY SEQNO
     ]]></Sql>
+    <Parameter name="tab"/>
     <Parameter name="tab"/>
   </SqlMethod>
 
   <SqlMethod name="selectTrl" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql><![CDATA[
-      SELECT ad_column.ColumnName As columnName, ad_column.ColumnName As columnNameInp, 
+      SELECT ad_field.seqno, ad_column.ColumnName As columnName, ad_column.ColumnName As columnNameInp, 
       (CASE WHEN ad_field_trl.name IS NULL THEN '*' || ad_field.name ELSE ad_field_trl.name END) as Name, ismandatory as required, ad_reference_value_id as referenceValue, 
       ad_column.ad_reference_id as reference, displayLength as displaySize, 'x' as htmltext, 
       isSameLine as issameline, (CASE ad_field.isActive WHEN 'N' THEN 'N' ELSE isDisplayed END) as isdisplayed, isupdateable as isupdateable, 
       isparent, ad_column.FIELDLENGTH, (CASE WHEN (ad_column.AD_REFERENCE_ID<>30 OR AD_REFERENCE_VALUE_ID IS NULL) THEN REPLACE(REPLACE(REPLACE(ad_element.name, 'Substitute', 'Product'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') ELSE (SELECT NAME FROM AD_REFERENCE WHERE AD_REFERENCE.AD_REFERENCE_ID=ad_column.AD_REFERENCE_VALUE_ID) END) as searchName, ad_column.ad_callout_id, 
-      ad_column.ad_process_id, ad_field.isreadonly, ad_field.DISPLAYLOGIC, ad_field.isEncrypted, AD_FIELD.AD_FIELDGROUP_ID AS FieldGroup,
+      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) displaylogic, ad_field.isEncrypted, AD_FIELD.AD_FIELDGROUP_ID AS FieldGroup,
       ad_field.ad_tab_id as tabid, AD_COLUMN.ValueMin, AD_COLUMN.ValueMax, REPLACE(REPLACE(REPLACE(REPLACE(ad_column.columnname, 'Substitute', 'M_Product'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') as realName, mom.mappingname as java_class_name, ad_column.isEncrypted AS isColumnEncrypted, ad_column.isDesencryptable, 
       ad_reference.name as reference_name, ad_column.ad_val_rule_id, 
       (CASE WHEN ad_reference_trl.ad_reference_id IS NULL THEN ad_reference.name ELSE ad_reference_trl.name END) as reference_name_trl, ad_callout.name as calloutname, 
@@ -99,8 +118,40 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
         AND ad_field.ad_tab_id = ? 
         AND ad_column.isActive = 'Y'
-      ORDER BY ad_field.SEQNO
+     union 
+          SELECT (case when upper(c.columnname)='CREATED' then 10000 
+                   when upper(c.columnname)='CREATEDBY' then 10001
+                   when upper(c.columnname)='UPDATED' then 10002
+                   else 10003
+              end), c.ColumnName As columnName, c.ColumnName As columnNameInp, 
+      (CASE WHEN ad_element_trl.name IS NULL THEN '*' || ad_element.name ELSE ad_element_trl.name END) as Name, ismandatory as required, ad_reference_value_id as referenceValue, 
+      c.ad_reference_id as reference, 44, 'x' as htmltext, 
+      (case when upper(c.columnname) in ('CREATED', 'UPDATED') then 'N'
+                   else 'Y'
+               end) as issameline, 'Y' as isdisplayed, 'N' as isupdateable, 
+      'Y', c.FIELDLENGTH, (CASE WHEN (c.AD_REFERENCE_ID<>30 OR AD_REFERENCE_VALUE_ID IS NULL) THEN REPLACE(REPLACE(REPLACE(ad_element.name, 'Substitute', 'Product'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') ELSE (SELECT NAME FROM AD_REFERENCE WHERE r.AD_REFERENCE_ID=c.AD_REFERENCE_VALUE_ID) END) as searchName, c.ad_callout_id, 
+      c.ad_process_id, 'Y', '@#ShowAudit@=''Y''' displaylogic, 'N', 1000100001 AS FieldGroup,
+      tb.ad_tab_id as tabid, c.ValueMin, c.ValueMax, REPLACE(REPLACE(REPLACE(REPLACE(c.columnname, 'Substitute', 'M_Product'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') as realName,null as java_class_name, c.isEncrypted AS isColumnEncrypted, c.isDesencryptable, 
+      r.name as reference_name, c.ad_val_rule_id, 
+      (CASE WHEN ad_reference_trl.ad_reference_id IS NULL THEN r.name ELSE ad_reference_trl.name END) as reference_name_trl, null as calloutname, 
+      null, null, 'Y' 
+       from  ad_tab tb, ad_column c
+                                                  left join ad_element on c.ad_element_id = ad_element.ad_element_id
+                                                  left join ad_element_trl on ad_element_trl.ad_element_id = ad_element.ad_element_id
+                                                  and ad_language = ?,
+                                                  ad_reference r
+                                                  left join ad_reference_trl on r.ad_reference_id = ad_reference_trl.ad_reference_id 
+                                               AND ad_reference_trl.ad_language = ?
+                                               
+      where c.ad_table_id = tb.ad_table_id
+        and upper(c.columnname) in ('CREATED', 'CREATEDBY', 'UPDATED', 'UPDATEDBY')
+        and tb.ad_tab_id = ?
+        and r.ad_reference_id = c.ad_reference_id
+        ORDER BY SEQNO
     ]]></Sql>
+    <Parameter name="adLanguage"/>
+    <Parameter name="adLanguage"/>
+    <Parameter name="tab"/>
     <Parameter name="adLanguage"/>
     <Parameter name="adLanguage"/>
     <Parameter name="tab"/>
@@ -119,12 +170,12 @@
   <SqlMethod name="selectDisplayLogic" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql>
-      SELECT ad_column.ColumnName As columnName, ad_column.ColumnName As columnNameInp, 
+      SELECT ad_field.seqno, ad_column.ColumnName As columnName, ad_column.ColumnName As columnNameInp, 
       ad_field.name as Name, ismandatory as required, ad_reference_value_id as referenceValue, 
       ad_column.ad_reference_id as reference, displayLength as displaySize, 'x' as htmltext, 
       isSameLine as issameline, isDisplayed as isdisplayed, isupdateable as isupdateable, 
       isparent, ad_column.FIELDLENGTH, ad_element.name as searchName, ad_column.ad_callout_id, 
-      ad_column.ad_process_id, ad_field.isreadonly, ad_field.DISPLAYLOGIC, ad_field.ad_tab_id as tabid, 
+      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) displaylogic, ad_field.ad_tab_id as tabid, 
       ad_callout.name as calloutname, moc.classname as classname_callout, momc.mappingname as mappingname_callout 
       FROM ad_field, 
            ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id
@@ -140,20 +191,35 @@
         AND ad_field.displaylogic is not null 
         AND AD_FIELD.ISDISPLAYED = 'Y' 
         AND ad_field.ad_tab_id = ?
-      ORDER BY ad_field.SEQNO
+      union
+      select (case when upper(columnname)='CREATED' then 10000 
+                   when upper(columnname)='CREATEDBY' then 10001
+                   when upper(columnname)='UPDATED' then 10002
+                   else 10003
+              end), columnname,  columnname, c.name, 'N', 
+             c.ad_reference_value_id, c.ad_reference_id, 44, 'x', 
+             'N', 'Y', 'N', 'N', c.FIELDLENGTH, c.name, null, 
+             null, 'Y', '@#ShowAudit@=''Y''', tb.ad_tab_id, null, null, null
+       from ad_column c, ad_tab tb, ad_reference r
+      where c.ad_table_id = tb.ad_table_id
+        and upper(columnname) in ('CREATED', 'CREATEDBY', 'UPDATED', 'UPDATEDBY')
+        and tb.ad_tab_id = ?
+        and r.ad_reference_id = c.ad_reference_id
+      ORDER BY SEQNO
     </Sql>
+    <Parameter name="tab"/>
     <Parameter name="tab"/>
   </SqlMethod>
 
   <SqlMethod name="selectDisplayLogicTrl" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql>
-      SELECT ad_column.ColumnName As columnName, ad_column.ColumnName As columnNameInp, 
+      SELECT ad_field.seqno, ad_column.ColumnName As columnName, ad_column.ColumnName As columnNameInp, 
       (CASE WHEN ad_field_trl.name IS NULL THEN '*' || ad_field.name ELSE ad_field_trl.name END) as Name, ismandatory as required, ad_reference_value_id as referenceValue, 
       ad_column.ad_reference_id as reference, displayLength as displaySize, 'x' as htmltext, 
       isSameLine as issameline, isDisplayed as isdisplayed, isupdateable as isupdateable, 
       isparent, ad_column.FIELDLENGTH, ad_element.name as searchName, ad_column.ad_callout_id, 
-      ad_column.ad_process_id, ad_field.isreadonly, ad_field.DISPLAYLOGIC, ad_field.ad_tab_id as tabid, ad_callout.name as calloutname, 
+      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) displaylogic, ad_field.ad_tab_id as tabid, ad_callout.name as calloutname, 
       moc.classname as classname_callout, momc.mappingname as mappingname_callout
       FROM ad_field left join ad_field_trl on ad_field.ad_field_id = ad_field_trl.ad_field_id
                                           AND ad_field_trl.isactive = 'Y'
@@ -171,10 +237,25 @@
         AND ad_field.ad_tab_id = ?
         AND ad_field.displaylogic is not null 
         AND AD_FIELD.ISDISPLAYED = 'Y' 
-      ORDER BY ad_field.SEQNO
+        union
+      select (case when upper(columnname)='CREATED' then 10000 
+                   when upper(columnname)='CREATEDBY' then 10001
+                   when upper(columnname)='UPDATED' then 10002
+                   else 10003
+              end), columnname,  columnname, c.name, 'N', 
+             c.ad_reference_value_id, c.ad_reference_id, 44, 'x', 
+             'N', 'Y', 'N', 'N', c.FIELDLENGTH, c.name, null, 
+             null, 'Y', '@#ShowAudit@=''Y''', tb.ad_tab_id, null, null, null
+       from ad_column c, ad_tab tb, ad_reference r
+      where c.ad_table_id = tb.ad_table_id
+        and upper(columnname) in ('CREATED', 'CREATEDBY', 'UPDATED', 'UPDATEDBY')
+        and tb.ad_tab_id = ?
+         and r.ad_reference_id = c.ad_reference_id
+      ORDER BY SEQNO
     </Sql>
     <Parameter name="adLanguage"/>
     <Parameter name="tab"/>    
+    <Parameter name="tab"/>  
   </SqlMethod>
 
   <SqlMethod name="selectionColumns" type="preparedStatement" return="multiple">
