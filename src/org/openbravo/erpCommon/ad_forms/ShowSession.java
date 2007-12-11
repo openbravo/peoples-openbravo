@@ -70,6 +70,7 @@ public class ShowSession extends HttpSecureAppServlet {
     } else if (vars.commandIn("SAVE_PREFERENCES")) {
       String strTranslate = vars.getStringParameter("inpTranslate", "N");
       String strAccounting = vars.getStringParameter("inpAccounting", "N");
+      String strAudit = vars.getStringParameter("inpAudit", "N");
       String strFecha = vars.getStringParameter("inpFecha");
       String strTest = vars.getStringParameter("inpTest", "N");
       String strRecordRange = vars.getGlobalVariable("inpRecordRange", "#RecordRange");
@@ -78,6 +79,7 @@ public class ShowSession extends HttpSecureAppServlet {
       String strTransactionalRange = vars.getGlobalVariable("inpTransactionalRange", "#Transactional$Range");
       vars.setSessionValue("#Date", strFecha);
       vars.setSessionValue("#ShowTrl", strTranslate);
+      vars.setSessionValue("#ShowAudit", strAudit);
       String strPreference = ShowSessionData.selectPreference(this, Utility.getContext(this, vars, "#User_Client", "ShowSession"), Utility.getContext(this, vars, "#User_Org", "ShowSession"), vars.getUser(), "ShowTrl");
       ShowSessionData.updateRange(this, vars.getUser(), strRecordRange, strRecordRangeInfo, strTransactionalRange, strTheme);
       if (!strPreference.equals("")) ShowSessionData.update(this, vars.getUser(), strTranslate, strPreference);
@@ -433,6 +435,7 @@ public class ShowSession extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("translate", vars.getSessionValue("#ShowTrl", "N"));
     xmlDocument.setParameter("accounting", vars.getSessionValue("#ShowAcct", "N"));
+    xmlDocument.setParameter("audit", vars.getSessionValue("#ShowAudit", "N"));
     xmlDocument.setParameter("fecha", vars.getSessionValue("#Date", ""));
     xmlDocument.setParameter("fechadisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("fechasaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));

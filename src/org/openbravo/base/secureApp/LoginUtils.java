@@ -108,6 +108,7 @@ public class LoginUtils {
           vars.setSessionValue("#Date", Utility.getContext(conn, vars, "#Date", "LoginHandler"));
           vars.setSessionValue("#ShowTrl", Utility.getPreference(vars, "ShowTrl", ""));
           vars.setSessionValue("#ShowAcct", Utility.getPreference(vars, "ShowAcct", ""));
+          vars.setSessionValue("#ShowAudit", Utility.getPreference(vars, "ShowAudit", ""));
           SystemPreferencesData[] dataSystem = SystemPreferencesData.select(conn);
           if (dataSystem!=null && dataSystem.length>0) {
             vars.setSessionValue("#RecordRange", dataSystem[0].tadRecordrange);
