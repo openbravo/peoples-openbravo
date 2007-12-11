@@ -95,8 +95,9 @@ function selectFilters(params) {
    resizeArea();
    var grid_header_height = document.getElementById("grid_sample_header").clientHeight + 1;
    var grid_row_height = document.getElementById("grid_sample_row").clientHeight + 1;
+   var related_info_cont = document.getElementById("related_info_cont");
    var client_height = document.getElementById("client").clientHeight;
-   client_height = client_height - grid_header_height;
+   client_height = client_height - grid_header_height - (related_info_cont?related_info_cont.clientHeight:0);
    client_height = client_height - 20;
    var numRows = (client_height)/(grid_row_height);
    numRows = parseInt(numRows);
@@ -238,7 +239,7 @@ function selectFilters(params) {
   </TR>
 </TABLE>
                   <PARAMETER_TMP id="parent">        <input type="hidden" name="inpKeyParent" value="" id="keyParent">
-                <div class="RelationInfoContainer">
+                <div class="RelationInfoContainer" id="related_info_cont">
                   <table class="RelationInfo">
                     <tr>
                       <td class="RelationInfoTitle"><FIELD_TMP id="fieldParentKeyNameDescription">xx</FIELD_TMP>:</td>
