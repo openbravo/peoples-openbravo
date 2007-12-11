@@ -24,8 +24,8 @@
         <fileset dir="${basedir}/lib/build-only">
             <include name="**/*.jar"/>
         </fileset>
-    </path>   
-    
+    </path>
+
     <target name="init">
         <mkdir dir="${build.db.classes}"/>
         <mkdir dir="${build.db.lib}"/>

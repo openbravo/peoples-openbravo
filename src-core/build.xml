@@ -25,13 +25,13 @@ doc: generates the api for the project.
   <property name="build.core" value="${basedir}/build/classes"/>
   <property name="build.core.docs" value="${basedir}/docs"/>
   <property name="build.core.src" value="${basedir}/src"/>
- 
+
   <path id="core.class.path">
     <fileset dir="${build.core.lib}">
       <include name="**/*.jar"/>
     </fileset>
-  </path>   
-    
+  </path>
+
   <target name="init">
     <mkdir dir="${build.core}"/>
     <mkdir dir="${build.core.docs}"/>
@@ -54,15 +54,15 @@ doc: generates the api for the project.
       <fileset dir="${build.core}"/>
       <manifest>
         <attribute name="Built-By" value="Openbravo S.L."/>
-          <!--section name="common/class1.class">
-          <attribute name="Sealed" value="false"/>
-        </section-->
-      </manifest>
-    </jar> 
-  </target>
+        <!--section name="common/class1.class">
+        <attribute name="Sealed" value="false"/>
+      </section-->
+    </manifest>
+  </jar> 
+</target>
 
-  <target name="build" depends="compile, doc, build.jar">
-  </target>
+<target name="build" depends="compile, doc, build.jar">
+</target>
 
 <target name="doc" depends="init" description="Generate api">
   <javadoc packagenames="org.openbravo.*" 

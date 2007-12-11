@@ -49,7 +49,7 @@ compile.complete.development: like compile.complete, but also copies the files
                               to the context.
 build.war: build a war file in the lib directory.
 -->
-	
+
 <project name="openbravo sources" default="compile" basedir=".">
   <property name="webTab" value="all"/>
   <property name="tab" value="%"/>
@@ -79,13 +79,13 @@ build.war: build a war file in the lib directory.
     <mkdir dir="${build.docs}"/>
   </target>
 
-	<target name="trl.clean" if="translation">
+  <target name="trl.clean" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="clean ${base.config}/Openbravo.properties"/>
       <classpath refid="project.class.path"/>
     </java>
-	</target>
-	
+  </target>
+  
   <target name="clean" depends="trl.clean">
     <property name="complete" value="true"/>
     <delete includeEmptyDirs="true" failonerror="false">
@@ -106,7 +106,7 @@ build.war: build a war file in the lib directory.
         <exclude name="${attach.path.condition}"/>
       </fileset>
     </delete>
-  	
+
   </target>
 
   <target name="copy.srcClient">
