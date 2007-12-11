@@ -150,7 +150,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
 
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     Variables variables = new Variables(request);
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+  //  VariablesSecureApp vars = new VariablesSecureApp(request);
     
     try {
       myTheme = variables.getSessionValue("#Theme");
@@ -227,7 +227,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
             strLanguage = DefaultOptionsData.getDefaultLanguage(this); 
           }
                               
-         
+          VariablesSecureApp vars = new VariablesSecureApp(request);
           if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strRole, strClient, strOrg, strWarehouse)) {
             readProperties(vars, prefix + strBaseConfigPath + "/Openbravo.properties");
             readNumberFormat(vars, prefix + strBaseConfigPath + "/Format.xml");
@@ -251,11 +251,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     try {
       
       super.initialize(request,response);
-      VariablesSecureApp vars = new VariablesSecureApp(request, false); 
-      if (vars.getRole().equals("") || hasAccess(vars))
+      VariablesSecureApp vars1 = new VariablesSecureApp(request, false); 
+      if (vars1.getRole().equals("") || hasAccess(vars1))
         super.serviceInitialized(request,response);
       else
-        bdError(response, "AccessTableNoView", vars.getLanguage());
+        bdError(response, "AccessTableNoView", vars1.getLanguage());
     } catch (ServletException ex) {
       log4j.error("Error captured: " + ex);
       ex.printStackTrace();
