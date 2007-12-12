@@ -63,6 +63,7 @@
 
 .readonly {
   color: #606060;
+  background: none !important;
   background-color: #E8E8E8 !important;
   font-weight: bold;
   border: 1px solid #888888;
