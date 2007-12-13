@@ -17,7 +17,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2007 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -42,7 +42,8 @@ BEGIN
       UPDATE AD_MODEL_OBJECT
         SET CLASSNAME=('org.openbravo.erpWindows.' || CUR_DATA.WINDOWNAME || '.' || CUR_DATA.TABNAME),
         ISACTIVE=:NEW.ISACTIVE
-      WHERE AD_MODEL_OBJECT_ID=CUR_DATA.AD_MODEL_OBJECT_ID;
+      WHERE AD_MODEL_OBJECT_ID=CUR_DATA.AD_MODEL_OBJECT_ID
+        and classname not like '%ComboReload%';
       UPDATE AD_MODEL_OBJECT_MAPPING
         SET MAPPINGNAME=('/' || CUR_DATA.WINDOWNAME || '/' || CUR_DATA.TABNAME || '_Relation.html'),
         ISACTIVE=:NEW.ISACTIVE
