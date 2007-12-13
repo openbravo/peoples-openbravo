@@ -9,7 +9,7 @@
       <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
       <parameter name="p_PlanningDate" type="TIMESTAMP" mode="in"/>
       <parameter name="p_SecurityMargin" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -63,7 +63,7 @@ BEGIN
              AND isplanned = 'N'
            GROUP BY pl.M_PRODUCT_ID) AAA;
 
-    WHILE v_Count &gt; 0 LOOP
+    WHILE v_Count > 0 LOOP
       v_ResultStr := 'loop';
       v_Planned := 'N';
       FOR Cur_PlanProduct IN (
@@ -90,17 +90,19 @@ BEGIN
         -- Check for dead-locks
         v_ResultStr := 'dead-lock';
         FOR Cur_DeadLock IN (
-          SELECT M_PRODUCT_ID
-          FROM MRP_RUN_PRODUCTIONLINE
-          WHERE MRP_RUN_PRODUCTION_ID = p_Run_ID
-            AND isplanned = 'N'
+          SELECT MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID
+          FROM MRP_RUN_PRODUCTIONLINE, M_PRODUCT
+          WHERE MRP_RUN_PRODUCTIONLINE.MRP_RUN_PRODUCTION_ID = p_Run_ID
+            AND MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+            AND M_PRODUCT.ISPURCHASED = 'N'
+            AND MRP_RUN_PRODUCTIONLINE.isplanned = 'N'
             AND NOT EXISTS (SELECT 1
                             FROM MRP_RUN_PRODUCTIONLINE pl, MRP_RUN_PRODUCTIONLINE parent
                             WHERE pl.PARENT_ID = parent.MRP_RUN_PRODUCTIONLINE_ID
                               AND pl.MRP_RUN_PRODUCTION_ID = p_Run_ID
                               AND pl.M_PRODUCT_ID = MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID
                               AND parent.isplanned = 'N'
-                              AND pl.qty &lt; 0 )
+                              AND pl.qty < 0 )
           ORDER BY planneddate
           ) LOOP
           v_Planned := 'Y';
@@ -139,6 +141,6 @@ WHEN OTHERS THEN
 --  RETURN;
 END Mrp_Processplan
 
-</body>
+]]></body>
     </function>
   </database>
