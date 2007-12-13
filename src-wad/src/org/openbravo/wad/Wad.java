@@ -1384,6 +1384,7 @@ public class Wad extends DefaultHandler {
     boolean noPInstance = (ActionButtonRelationData.select(pool, strTab).length == 0);
     boolean noActionButton = FieldsData.hasActionButton(pool, strTab).equals("0");
     StringBuffer dl = new StringBuffer();
+    StringBuffer readOnlyLogic = new StringBuffer();
     //Auxiliary fields of the window
     Vector<Object> vecAuxiliarFields = new Vector<Object>();
     FieldsData[] auxiliarFields = FieldsData.selectAuxiliar(pool, "", strTab);
@@ -1417,6 +1418,24 @@ public class Wad extends DefaultHandler {
         dl.append("\", windowId) + \"\\\";\\n");
       }
     }
+    
+    {
+      Vector<Object> vecContext = new Vector<Object>();
+      Vector<Object> vecDL = new Vector<Object>();
+      EditionFieldsData[] efd = EditionFieldsData.selectReadOnlyLogic(pool, strTab);
+      if (efd!=null) {
+        for (int i=0;i<efd.length;i++)
+          WadUtility.displayLogic(efd[i].readonlylogic, vecDL, parentsFieldsData, vecAuxiliarFields, vecFields, strWindow, vecContext);
+      }
+      for (int i=0;i<vecContext.size();i++) {
+        readOnlyLogic.append("var str");
+        readOnlyLogic.append(FormatUtilities.replace(vecContext.elementAt(i).toString()));
+        readOnlyLogic.append("=\\\"\" + Utility.getContext(this, vars, \"");
+        readOnlyLogic.append(vecContext.elementAt(i).toString());
+        readOnlyLogic.append("\", windowId) + \"\\\";\\n");
+      }
+    }
+    
     String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", ""};
     if (parentsFieldsData==null || parentsFieldsData.length == 0) {
       discard[0] = "parent";  // remove the parent tags
@@ -1470,6 +1489,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("where", generateStaticWhere(strWhere, vecParametersTop));
     xmlDocument.setParameter("filter", strFilter);
     xmlDocument.setParameter("displayLogic", dl.toString());
+    xmlDocument.setParameter("readOnlyLogic", readOnlyLogic.toString());
     xmlDocument.setParameter("grandfatherName", grandfatherField);
     xmlDocument.setParameter("defaultView", (FieldsData.isSingleRow(pool, strTab).equals("Y")?"EDIT":"RELATION"));
     xmlDocument.setParameter("whereClauseParams", whereClauseParams);
@@ -1809,7 +1829,7 @@ public class Wad extends DefaultHandler {
     for (int i=0;i<allfields.length;i++) {
       WADControl auxControl = null;
       try {
-        auxControl = WadUtility.getControl(pool, allfields[i], strReadOnly, tabName, "", xmlEngine, false, false);
+        auxControl = WadUtility.getControl(pool, allfields[i], strReadOnly, tabName, "", xmlEngine, false, false, false);
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
@@ -2738,7 +2758,7 @@ public class Wad extends DefaultHandler {
     for (int i=0;i< efd.length; i++) {
       WADControl auxControl = null;
       try {
-        auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, "", xmlEngine, false, false);
+        auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, "", xmlEngine, false, false, false);
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
@@ -2778,6 +2798,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("keyId", keyColumnName);
     xmlDocument.setParameter("tabId", strTab);
     xmlDocument.setParameter("tableId", strTable);
+    
     Vector<Object> vecDisplayLogic = new Vector<Object>();
     EditionFieldsData efdDl[] = EditionFieldsData.selectDisplayLogic(pool, strTab);
     if (efdDl!=null) {
@@ -2785,6 +2806,15 @@ public class Wad extends DefaultHandler {
         WadUtility.displayLogic(efdDl[i].displaylogic, vecDisplayLogic, parentsFieldsData, new Vector<Object>(), vecFields, windowId, new Vector<Object>());
       }
     }
+    
+    Vector<Object> vecReadOnlyLogic = new Vector<Object>();
+    EditionFieldsData efdReadOnlyLogic[] = EditionFieldsData.selectReadOnlyLogic(pool, strTab);
+    if (efdReadOnlyLogic!=null) {
+      for (int i=0;i< efdReadOnlyLogic.length; i++) {
+        WadUtility.displayLogic(efdReadOnlyLogic[i].readonlylogic, vecReadOnlyLogic, parentsFieldsData, new Vector<Object>(), vecFields, windowId, new Vector<Object>());
+      }
+    }
+    
     Vector<Object> vecAuxiliar = new Vector<Object>();
     StringBuffer htmlHidden = new StringBuffer();
     if (efdauxiliar!=null) {
@@ -2809,6 +2839,7 @@ public class Wad extends DefaultHandler {
     Properties importsJS = new Properties();
     Properties javaScriptFunctions = new Properties();
     StringBuffer displayLogicFunction = new StringBuffer();
+    StringBuffer readOnlyLogicFunction = new StringBuffer();
     StringBuffer validations = new StringBuffer();
     StringBuffer onload = new StringBuffer();
     StringBuffer html = new StringBuffer();
@@ -2823,7 +2854,7 @@ public class Wad extends DefaultHandler {
     for (int i=0;i< efd.length; i++) {
       WADControl auxControl = null;
       try {
-        auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, strLanguage, xmlEngine, (WadUtility.isInVector(vecDisplayLogic, efd[i].getField("columnname"))), WadUtility.isInVector(vecReloads, efd[i].getField("columnname")));
+        auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, strLanguage, xmlEngine, (WadUtility.isInVector(vecDisplayLogic, efd[i].getField("columnname"))), WadUtility.isInVector(vecReloads, efd[i].getField("columnname")), WadUtility.isInVector(vecReadOnlyLogic, efd[i].getField("columnname")));
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
@@ -2926,6 +2957,7 @@ public class Wad extends DefaultHandler {
         if (!auxControl.getValidation().equals("")) validations.append(auxControl.getValidation()).append("\n");
         if (!auxControl.getOnLoad().equals("")) onload.append(auxControl.getOnLoad()).append("\n");
         displayLogicFunction.append(WadUtility.getDisplayLogic(auxControl, new Vector<Object>(), parentsFieldsData, vecAuxiliar, vecFields, windowId, new Vector<Object>(), isreadonly));
+        readOnlyLogicFunction.append(WadUtility.getReadOnlyLogic(auxControl, new Vector<Object>(), parentsFieldsData, vecAuxiliar, vecFields, windowId, new Vector<Object>(), isreadonly));
       }
     }
 
@@ -2971,12 +3003,18 @@ public class Wad extends DefaultHandler {
     script.append(displayLogicFunction);
     script.append("  return true;\n");
     script.append("}\n");
+    
+    script.append("\nfunction readOnlyLogic() {\n");
+    script.append(readOnlyLogicFunction);
+    script.append("  return true;\n");
+    script.append("}\n");
 
     script.append("\nfunction onloadClient() {\n");
     script.append("  var frm=document.frmMain;\n");
     script.append("  var key = eval(\"document.frmMain.\" + frm.inpKeyName.value);");
     script.append(onload);
     script.append("  displayLogic();\n");
+    script.append("  readOnlyLogic();\n");
 //    script.append("  setInputValue(frm.inpLastFieldChanged, \"\");\n");
     script.append("  return true;\n");
     script.append("}\n");

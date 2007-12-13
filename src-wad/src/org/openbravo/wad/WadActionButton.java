@@ -447,7 +447,7 @@ public class WadActionButton {
       for (int i=0;i< data.length; i++) {
         WADControl auxControl = null;
         try {
-          auxControl = WadUtility.getControl(conn, data[i], false, (fd.columnname + fd.reference), "", xmlEngine, false, false);
+          auxControl = WadUtility.getControl(conn, data[i], false, (fd.columnname + fd.reference), "", xmlEngine, false, false, false);
           auxControl.setData("IsParameter", "Y");
         } catch (Exception ex) {
           throw new ServletException(ex);
@@ -509,7 +509,7 @@ public class WadActionButton {
       for (int i=0;i< efd.length; i++) {
         WADControl auxControl = null;
         try {
-          auxControl = WadUtility.getControl(conn, efd[i], false, (fd.columnname + fd.reference), strLanguage, xmlEngine, false, false);
+          auxControl = WadUtility.getControl(conn, efd[i], false, (fd.columnname + fd.reference), strLanguage, xmlEngine, false, false, false);
         } catch (Exception ex) {
           throw new ServletException(ex);
         }

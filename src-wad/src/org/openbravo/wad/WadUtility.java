@@ -1805,7 +1805,7 @@ public class WadUtility {
     if (aux!=null) _prop.setProperty(_name, aux);
   }
 
-  public static WADControl getControl(ConnectionProvider conn, FieldProvider field, boolean isreadonly, String tabName, String adLanguage, XmlEngine xmlEngine, boolean isDisplayLogic, boolean isReloadObject) throws Exception {
+  public static WADControl getControl(ConnectionProvider conn, FieldProvider field, boolean isreadonly, String tabName, String adLanguage, XmlEngine xmlEngine, boolean isDisplayLogic, boolean isReloadObject, boolean isReadOnlyLogic) throws Exception {
     if (field == null) return null;
     Properties prop = new Properties();
     setPropertyValue(prop, field, "ColumnName", "columnname", null);
@@ -1840,10 +1840,12 @@ public class WadUtility {
     setPropertyValue(prop, field, "MappingName", "javaClassName", "");
     setPropertyValue(prop, field, "IsColumnEncrypted", "iscolumnencrypted", "");
     setPropertyValue(prop, field, "IsDesencryptable", "isdesencryptable", "");
+    setPropertyValue(prop, field, "ReadOnlyLogic", "readonlylogic", "");
     prop.setProperty("TabName", tabName);
     prop.setProperty("IsReadOnlyTab", (isreadonly?"Y":"N"));
     prop.setProperty("AD_Language", adLanguage);
     prop.setProperty("IsDisplayLogic", (isDisplayLogic?"Y":"N"));
+    prop.setProperty("IsReadOnlyLogic", (isReadOnlyLogic?"Y":"N"));
     prop.setProperty("IsComboReload", (isReloadObject?"Y":"N"));
 
     String classname = "org.openbravo.wad.controls.WAD" + FormatUtilities.replace(field.getField("referenceName"));
@@ -1869,6 +1871,18 @@ public class WadUtility {
     return (control.getData("IsDisplayed").equals("Y") && fieldgroup!=null && !fieldgroup.equals("") && !fieldgroup.equals(strFieldGroup));
   }
 
+  public static String getReadOnlyLogic(WADControl auxControl, Vector<Object> vecDL, FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecFields, String windowId, Vector<Object> vecContext, boolean isreadonly) {
+    String code = auxControl.getData("ReadOnlyLogic");
+    if (code==null || code.equals("")) return "";
+    StringBuffer _displayLogic = new StringBuffer();
+    String element = auxControl.getData("ColumnName");
+    if (auxControl.getType().equals("Combo"))
+      element = "report"+element+"_S";
+    
+    _displayLogic.append("  readOnlyLogicElement('").append(element).append("', (").append(displayLogic(code, vecDL, parentsFieldsData, vecAuxiliar, vecFields, windowId, vecContext)).append("));\n");
+
+    return _displayLogic.toString();
+  }
   public static String getDisplayLogic(WADControl auxControl, Vector<Object> vecDL, FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecFields, String windowId, Vector<Object> vecContext, boolean isreadonly) {
     String code = auxControl.getData("DisplayLogic");
     if (code==null || code.equals("")) return "";

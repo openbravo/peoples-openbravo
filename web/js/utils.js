@@ -526,7 +526,7 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   adds += ", toolbar=" + getArrayValue(parameters, "toolbar", "0");
   adds += ", resizable=" + getArrayValue(parameters, "resizable", "1");
   if (doSubmit && (getArrayValue(parameters, "debug", false)==true)) {
-	  if (!depurar(getArrayValue(parameters, "Command", "DEFAULT"), null, "")) return false;
+    if (!depurar(getArrayValue(parameters, "Command", "DEFAULT"), null, "")) return false;
   }
   var winPopUp = window.open((doSubmit?"":url), _name, adds);
   if (closeControl) window.onunload = function(){winPopUp.close();}
@@ -944,7 +944,7 @@ function activarControlTeclas() {
 
     var agt=navigator.userAgent.toLowerCase();
 
-/*	 if (agt.indexOf('gecko') != -1) { 
+/*   if (agt.indexOf('gecko') != -1) { 
         document.releaseEvents(Event.KEYDOWN);
      }
   if (agt.indexOf('gecko') != -1)
@@ -1630,7 +1630,7 @@ function changeReadOnly(id, forced) {
     if (element.readOnly!=true) element.readOnly=true;
     else element.readOnly=false;
   } else {
-    forced = forced.toLowerCase();
+//    forced = forced.toLowerCase();
     if (forced=="true") element.readOnly=true;
     else if (forced=="false") element.readOnly=false;
     else return false;
@@ -2250,6 +2250,51 @@ function displayLogicElement(id, display) {
   }
   return true;
 }
+
+/**
+* Sets elements as readonly or not depending on the logic
+* @param {Object} id A reference to the object that will be handled.
+* @param {Boolean} readonly set readonly or not depending on this field
+* @returns True if everything goes right, otherwise false.
+* @type Boolean
+*/
+function readOnlyLogicElement(id, readonly) {
+  obj = getStyle(id);
+  if (obj==null) return false;
+
+  obj = getReference(id);
+  className = obj.className;
+ 
+  if (readonly) {
+    obj.className = className.replace("ReadOnly","");
+    obj.readOnly = true;
+      
+    if (className.indexOf("Combo ")!=-1) {
+       obj.className = className.replace("Combo","ComboReadOnly");
+       obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+obj.getAttribute("onChange"));
+     }
+    if (className.indexOf("ComboKey ")!=-1) {
+      obj.className = className.replace("ComboKey","ComboKeyReadOnly");
+      obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+obj.getAttribute("onChange"));
+    }
+    if (className.indexOf("LabelText ")!=-1)
+      obj.className = className.replace("LabelText","LabelTextReadOnly");
+    if ((className.indexOf("TextBox_")!=-1)||(className.indexOf("TextArea_")!=-1)) {
+      if (className.indexOf("readonly")==-1) changeClass(id,'readonly ', '');
+    }
+  } else { //not readonly
+    obj.className = obj.className.replace("ReadOnly","");
+    obj.className = obj.className.replace("readonly","");
+    obj.readOnly = false;
+    if (className.indexOf("Combo")!=-1) {
+      onchange = obj.getAttribute("onChange");
+      if (onchange.indexOf("selectCombo")!=-1) 
+        obj.setAttribute("onChange", onchange.substring(0,onchange.indexOf("selectCombo"))+onchange.substring(onchange.indexOf(";",onchange.indexOf("selectCombo"))+1, onchange.length));
+    }
+  }
+  return true;
+}
+
 
 /**
 * Search for a key in a combo elements.

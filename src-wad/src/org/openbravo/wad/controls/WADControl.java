@@ -175,6 +175,7 @@ public class WADControl {
   public String getOnChangeCode() {
     StringBuffer text = new StringBuffer();
     if (getData("IsDisplayLogic").equals("Y")) text.append("displayLogic();");
+    if (getData("IsReadOnlyLogic").equals("Y")) text.append("readOnlyLogic();");
     String callout = getData("CallOutName");
     String isComboReload = getData("IsComboReload");
     if (isComboReload==null || isComboReload.equals("")) isComboReload = "N";

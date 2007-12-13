@@ -962,6 +962,13 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     }
 </FIELDS_TMP>
 
+<FIELDS_TMP id="selReadOnlyLogic">    String getReadOnlyLogicContext(VariablesSecureApp vars) throws IOException, ServletException {
+      log4j.debug("Output: Read Only logic context fields");
+      String result = "<PARAMETER_TMP id="paramReadOnlyLogic">xx</PARAMETER_TMP>";
+      return result;
+    }
+</FIELDS_TMP>
+
 <FIELDS_TMP id="sectionEncrypted2">    void printPageButton<FIELD_TMP id="EncryptedRealName2">name</FIELD_TMP>(HttpServletResponse response, VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>)
     throws IOException, ServletException {
       log4j.debug("Output: Button Encrypted <FIELD_TMP id="EncryptedRealName2">xx</FIELD_TMP>");
