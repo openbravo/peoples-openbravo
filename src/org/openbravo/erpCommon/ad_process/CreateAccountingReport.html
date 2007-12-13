@@ -64,6 +64,11 @@ function depurarCombo(){
       value = array[i][2];
     }
   }
+  if(value=='A'){
+  	displayLogicElement('selEliminarYear', false);
+  }else{
+  	displayLogicElement('selEliminarYear', true);
+  }
   for (j = 0; j<combo.length; j++) {
     if (value == combo[j][0]) {
       arrayCombo[count] = new Array(combo[j][1], combo[j][2]);
@@ -71,6 +76,17 @@ function depurarCombo(){
     }
   }
   rellenarCombo(frm.inpPeriodId, arrayCombo, false, false);
+  
+  var arrayCombo2 = new Array();
+  count=0;
+  for (j = 0; j<combo.length; j++) {
+    if (combo[j][0]=='A') {
+      arrayCombo2[count] = new Array(combo[j][1], combo[j][2]);
+      count = count+1;
+    }
+  }
+  rellenarCombo(frm.inpYearId, arrayCombo2, false, false);
+  
   return true;
 }
 function displayCombos(){
@@ -258,6 +274,16 @@ function displayCombos(){
 			<select class="ComboKey Combo_OneCell_width required" required="true" id="inpPeriodId" name="inpPeriodId">
 				<option value=""></option>
 				<DIV id="reportPeriod"></DIV>
+			</select>
+		</td>
+    <td/>
+	</tr>
+	<tr id="selEliminarYear">
+		<td class="TitleCell"><span class="LabelText">Year&nbsp;</span></td>
+		<td class="Combo_ContentCell">
+			<select class="ComboKey Combo_OneCell_width required" required="true" id="inpYearId" name="inpYearId">
+				<option value=""></option>
+				<DIV id="reportYear"></DIV>
 			</select>
 		</td>
     <td/>

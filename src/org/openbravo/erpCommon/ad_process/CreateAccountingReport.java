@@ -58,18 +58,20 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       String strAccountingReportId = vars.getGlobalVariable("inpAccountingReportId", "CreateAccountingReport|accountingReport", "");
       String strOrg = vars.getGlobalVariable("inpadOrgId", "CreateAccountingReport|orgId", "0");
       String strPeriod = vars.getGlobalVariable("inpPeriodId", "CreateAccountingReport|period", "");
-      printPage(response, vars, strAccountingReportId, strOrg, strPeriod, process);
+      String strYear = vars.getGlobalVariable("inpYearId", "CreateAccountingReport|year", "");
+      printPage(response, vars, strAccountingReportId, strOrg, strPeriod, strYear, process);
     } else if (vars.commandIn("FIND")){
       String strAccountingReportId = vars.getRequestGlobalVariable("inpAccountingReportId", "CreateAccountingReport|accountingReport");
       String strOrg = vars.getGlobalVariable("inpadOrgId", "CreateAccountingReport|orgId", "0");
       String strPeriod = vars.getRequestGlobalVariable("inpPeriodId", "CreateAccountingReport|period");
-      printPagePopUp(response, vars, strAccountingReportId, strOrg, strPeriod);
+      String strYear = vars.getRequestGlobalVariable("inpYearId", "CreateAccountingReport|year");
+      printPagePopUp(response, vars, strAccountingReportId, strOrg, strPeriod, strYear);
       //printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
 
 
-void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAccountingReportId, String strOrg, String strPeriod, String strProcessId) throws IOException, ServletException {
+void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAccountingReportId, String strOrg, String strPeriod, String strYear, String strProcessId) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: process CreateAccountingReport");
       
       ActionButtonDefaultData[] data = null;
@@ -92,6 +94,7 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
       xmlDocument.setParameter("accounting", strAccountingReportId);
       xmlDocument.setParameter("org", strOrg);
       xmlDocument.setParameter("period", strPeriod);
+      xmlDocument.setParameter("year", strYear);
       xmlDocument.setParameter("array", strArray);
 
       try {
@@ -151,13 +154,13 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
       out.close();
     }
 
-void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, String strAccountingReportId, String strOrg, String strPeriod) throws IOException, ServletException {
+void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, String strAccountingReportId, String strOrg, String strPeriod, String strYear) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: pop up CreateAccountingReport");
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/CreateAccountingReportPopUp").createXmlDocument();
       String strPeriodFrom = "";
       int level = 0;
       String strPeriodTo = "";
-      String strYear = DateTimeData.sysdateYear(this);
+      //String strYear = DateTimeData.sysdateYear(this);
       //log4j.debug("****************************strAccountingReportId: "+strAccountingReportId);
       String strAccountingType = CreateAccountingReportData.selectType(this, strAccountingReportId);
       //log4j.debug("****************************strAccountingType: "+strAccountingType);

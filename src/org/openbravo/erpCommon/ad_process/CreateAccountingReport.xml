@@ -39,6 +39,7 @@
   <PARAMETER id="paramAccountingrptElementId" name="accounting" default=""/>
   <PARAMETER id="paramOrgId" name="org" default=""/>
   <PARAMETER id="paramPeriod" name="period" default=""/>
+  <PARAMETER id="paramYear" name="year" default=""/>
   <PARAMETER id="paramArray" name="array" default=""/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
 
@@ -50,7 +51,10 @@
       <ARGUMENT name="paramterListSelected" widthId="paramOrgId"/>
     </SUBREPORT>
    <SUBREPORT id="reportPeriod" name="reportPeriod" report="/org/openbravo/erpCommon/reference/List">
-      <ARGUMENT name="parameterListSelected" widthId="paramPeriod"/>
+      <ARGUMENT name="parameterListSelected" withId="paramPeriod"/>
+   </SUBREPORT>
+   <SUBREPORT id="reportYear" name="reportYear" report="/org/openbravo/erpCommon/reference/List">
+      <ARGUMENT name="parameterListSelected" withId="paramYear"/>
    </SUBREPORT>
 	<DISCARD id="discard"/>
 </REPORT>
