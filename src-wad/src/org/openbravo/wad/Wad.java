@@ -32,6 +32,7 @@ import org.openbravo.wad.controls.*;
 import java.io.*;
 import javax.servlet.*;
 
+import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -331,15 +332,22 @@ public class Wad extends DefaultHandler {
         wad.processWebXml(fileWebXml, fileWebXmlClient, attachPath, webPath);
       }
 
-      TabsData tabsData[] = TabsData.selectTabs(wad.pool, strWindowName);
-      if (generateTabs) {
-        for (int i=0;i< tabsData.length; i++) {
-          log4j.info("Processing Window: " + tabsData[i].windowname +
-            " - Tab: " + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
-          log4j.debug("Processing: " + tabsData[i].tabid);
-          wad.processTab(fileFin, fileFinReloads, tabsData[i], fileTrl, dirBaseTrl, translateStr, fileBase, fileBaseAplication);
+      String strCurrentWindow;
+      StringTokenizer st = new StringTokenizer(strWindowName, ",", false);
+      while (st.hasMoreTokens()) {
+        strCurrentWindow = st.nextToken().trim();
+        TabsData tabsData[] = TabsData.selectTabs(wad.pool, strCurrentWindow);
+        if (generateTabs) {
+          for (int i=0;i< tabsData.length; i++) {
+            log4j.info("Processing Window: " + tabsData[i].windowname +
+              " - Tab: " + tabsData[i].tabname + " - id: " + tabsData[i].tabid);
+            log4j.debug("Processing: " + tabsData[i].tabid);
+            wad.processTab(fileFin, fileFinReloads, tabsData[i], fileTrl, dirBaseTrl, translateStr, fileBase, fileBaseAplication);
+          }
         }
       }
+      
+      
       wad.pool.destroy();
     } catch (Exception e) {
       wad.pool.destroy();
