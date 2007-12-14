@@ -2,7 +2,7 @@
   <database name="FUNCTION C_CASH_POST">
     <function name="C_CASH_POST" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   License
   * compliance with the License. You may obtain a copy of the License at
@@ -11,7 +11,7 @@
   AS IS
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -113,7 +113,7 @@
     AND C_ORDER_ID IS NOT NULL
     AND C_DEBT_PAYMENT_ID IS NOT NULL;
     DBMS_OUTPUT.PUT_LINE ('  Record_ID=' || v_Record_ID);
-    IF (v_Processed = 'Y' AND v_Count&gt;0) THEN
+    IF (v_Processed = 'Y' AND v_Count>0) THEN
     v_Message := '@AlreadyPosted@';
     v_Result := 0;
     FINISH_PROCESS := true;
@@ -217,7 +217,7 @@
       WHERE C_CASH.C_CASHBOOK_ID=C_CASHBOOK.C_CASHBOOK_ID
         AND Ad_Isorgincluded(C_CASH.AD_ORG_ID, C_CASHBOOK.AD_ORG_ID, C_CASHBOOK.AD_CLIENT_ID)=-1
         AND C_CASH_ID=v_Record_ID;
-      IF v_count&gt;0 THEN
+      IF v_count>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgCashbook@') ;
       END IF;
     END IF;--FINISH_PROCESS
@@ -237,7 +237,7 @@
         AND o.C_BPARTNER_ID=bp.C_BPARTNER_ID
         AND(Ad_Isorgincluded(o.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1
         OR Ad_Isorgincluded(o.AD_ORG_ID, c.AD_ORG_ID, c.AD_CLIENT_ID)=-1) ;
-      IF v_count&gt;0 THEN
+      IF v_count>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@NotCorrectOrgOrderCashLine@') ;
       END IF;
     END IF;--FINISH_PROCESS
@@ -257,7 +257,7 @@
         AND l.C_BPARTNER_ID=bp.C_BPARTNER_ID
         AND(Ad_Isorgincluded(l.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1 --To be deprecated, to be fixed. This Check restriction should be checked when debt payment is created. Added by PSarobe
         OR Ad_Isorgincluded(l.AD_ORG_ID, c.AD_ORG_ID, c.AD_CLIENT_ID)=-1) ;
-      IF v_count&gt;0 THEN
+      IF v_count>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@NotCorrectOrgDebtpaymentCashLine@') ;
       END IF;
     END IF;--FINISH_PROCESS
@@ -274,10 +274,10 @@
         (SELECT 1
         FROM C_ORDERLINE ol
         WHERE ol.C_Order_ID=cl.C_Order_ID
-          AND ol.QTYORDERED&lt;&gt;ol.QTYINVOICED
+          AND ol.QTYORDERED<>ol.QTYINVOICED
         )
         ;
-      IF v_count&gt;0 THEN
+      IF v_count>0 THEN
         v_Message:='@CashOrderInvoiced@. Line:'||v_line;
         v_Result:=0;
         FINISH_PROCESS:=true;
@@ -299,8 +299,8 @@
         CASE dp.IsReceipt WHEN 'Y' THEN -- If IsReceipt = N, amount*-1
           (dp.Amount-coalesce(dp.WriteOffAmt,0)) ELSE (coalesce(dp.WriteOffAmt,0)-dp.Amount)
         END
-        &lt;&gt;(cl.Amount+coalesce(cl.WriteOffAmt,0)) ;
-      IF v_count&gt;0 THEN
+        <>(cl.Amount+coalesce(cl.WriteOffAmt,0)) ;
+      IF v_count>0 THEN
        RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@DebtAmountsSamemoneyNoMatch@') ;
       END IF;
     END IF;--FINISH_PROCESS
@@ -316,13 +316,13 @@
         AND cl.C_Cash_ID=v_Record_ID
         AND cl.CASHTYPE='P'
         AND cl.C_Debt_Payment_ID=dp.C_Debt_Payment_ID
-        AND cl.C_Currency_ID&lt;&gt;dp.C_Currency_ID
+        AND cl.C_Currency_ID<>dp.C_Currency_ID
         AND
         CASE dp.IsReceipt WHEN 'Y' THEN -- If IsReceipt = N, amount*-1
           (coalesce(dp.Amount,0)-coalesce(dp.WriteOffAmt,0)) ELSE (coalesce(dp.WriteOffAmt,0)-coalesce(dp.Amount,0))
         END
-        &lt;&gt;C_Currency_Round(C_Currency_Convert((coalesce(cl.Amount,0) + coalesce(cl.WriteOffAmt,0)), cl.C_Currency_ID, dp.C_Currency_ID, c.DateAcct, NULL, c.AD_Client_ID, c.AD_Org_ID), dp.C_Currency_ID, NULL) ;
-      IF v_count&gt;0 THEN
+        <>C_Currency_Round(C_Currency_Convert((coalesce(cl.Amount,0) + coalesce(cl.WriteOffAmt,0)), cl.C_Currency_ID, dp.C_Currency_ID, c.DateAcct, NULL, c.AD_Client_ID, c.AD_Org_ID), dp.C_Currency_ID, NULL) ;
+      IF v_count>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@DebtAmountsDifferentMoneyNoMatch@') ;
       END IF;
     END IF;--FINISH_PROCESS
@@ -380,9 +380,9 @@
           AND cl.CASHTYPE='P'
           AND cl.C_Debt_Payment_ID=dp.C_Debt_Payment_ID
         GROUP BY dp.C_Debt_Payment_ID
-        HAVING COUNT(*)&gt;1
+        HAVING COUNT(*)>1
 		)A;
-      IF v_count&gt;0 THEN
+      IF v_count>0 THEN
 	  --Added by PSarobe. This is also checked in the unique index C_CASHLINE_DEBT_PAYMENT
 	  	 FOR Cur_CashlineDebtpayment IN (SELECT line
 		 	 						 	FROM c_cashline
@@ -407,7 +407,7 @@
         OR(cl.CASHTYPE NOT IN('O', 'P')
         AND(C_ORDER_ID IS NOT NULL
         OR C_DEBT_PAYMENT_ID IS NOT NULL))) ;
-      IF v_count&gt;0 THEN
+      IF v_count>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@WrongLineTypeAndReferenceCash@');
       END IF;
     END IF;--FINISH_PROCESS
@@ -469,7 +469,7 @@
         C_CASH c
       WHERE cb.C_CashBook_ID=c.C_CashBook_ID
         AND c.C_Cash_ID=v_Record_ID;
-      IF(v_count&gt;0) THEN
+      IF(v_count>0) THEN
         v_SettlementDocType_ID:=Ad_Get_DocType(v_AD_Client_ID, v_AD_Org_ID, 'STT') ;
         Ad_Sequence_Next('C_Settlement', v_Record_ID, v_settlementID) ;
         Ad_Sequence_Doctype(v_SettlementDocType_ID, v_Record_ID, 'Y', v_DocumentNo) ;
@@ -535,7 +535,7 @@
             v_Currency_ID:=v_CB_Currency_ID;
           END IF;
           v_ResultStr:='CalculatingSum';
-          IF(v_Currency_ID&lt;&gt;v_CB_Currency_ID) THEN
+          IF(v_Currency_ID<>v_CB_Currency_ID) THEN
             v_Total:=v_Total + C_Currency_Convert(Cur_Lines.Amount, v_Currency_ID, v_CB_Currency_ID, v_CB_Date, NULL, Cur_Lines.AD_Client_ID, Cur_Lines.AD_Org_ID) ;
           ELSE
             v_Total:=v_Total + Cur_Lines.Amount;
@@ -557,11 +557,11 @@
           SET AD_Client_ID=v_AD_Client_ID,
           AD_Org_ID=v_AD_Org_ID
         WHERE C_Cash_ID=v_Record_ID
-          AND(AD_Client_ID&lt;&gt;v_AD_Client_ID
-          OR AD_Org_ID&lt;&gt;v_AD_Org_ID) ;
+          AND(AD_Client_ID<>v_AD_Client_ID
+          OR AD_Org_ID<>v_AD_Org_ID) ;
       END;
     END IF;--FINISH_PROCESS
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User, 'N', 1, v_Message) ;
@@ -575,6 +575,7 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END C_Cash_Post
-</body>
+
+]]></body>
     </function>
   </database>

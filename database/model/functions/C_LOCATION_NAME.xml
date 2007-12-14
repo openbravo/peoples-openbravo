@@ -2,7 +2,7 @@
   <database name="FUNCTION C_LOCATION_NAME">
     <function name="C_LOCATION_NAME" type="NVARCHAR">
       <parameter name="p_C_Location_ID" type="NUMERIC"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -28,11 +28,12 @@ BEGIN  SELECT COALESCE(TO_CHAR(L.CITY), '') ||', '||COALESCE(TO_CHAR(L.ADDRESS1)
   INTO v_name
   FROM C_LOCATION L
   WHERE L.C_LOCATION_ID=p_C_Location_ID;
-  IF(LENGTH(v_name) &gt; 59) THEN
+  IF(LENGTH(v_name) > 59) THEN
     v_name:=SUBSTR(v_name, 1, 56) ||'...';
   END IF;
   RETURN v_name;
 END C_Location_Name
-</body>
+
+]]></body>
     </function>
   </database>

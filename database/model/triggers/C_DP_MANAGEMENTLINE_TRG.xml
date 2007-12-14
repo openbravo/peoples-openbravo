@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_DP_MANAGEMENTLINE_TRG">
     <trigger name="C_DP_MANAGEMENTLINE_TRG" table="C_DP_MANAGEMENTLINE" fires="before" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -40,6 +41,7 @@ EXCEPTION
     NULL;
 END c_dp_managementline_trg 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

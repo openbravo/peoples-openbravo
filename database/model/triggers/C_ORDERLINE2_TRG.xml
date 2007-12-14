@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_ORDERLINE2_TRG">
     <trigger name="C_ORDERLINE2_TRG" table="C_ORDERLINE" fires="before" insert="false" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -28,7 +29,7 @@
 BEGIN
   IF(UPDATING) THEN
     IF(:NEW.M_PRODUCT_ID IS NOT NULL) THEN
-      IF((COALESCE(:old.QtyDelivered, 0) &lt;&gt; COALESCE(:NEW.QtyDelivered, 0))) THEN
+      IF((COALESCE(:old.QtyDelivered, 0) <> COALESCE(:NEW.QtyDelivered, 0))) THEN
         -- Get ID
         v_ID:=:new.C_Order_ID;
         v_QtyReserved:=-(:new.qtydelivered - :old.qtydelivered) ;
@@ -43,7 +44,7 @@ BEGIN
         WHERE M_Product_ID=:NEW.M_PRODUCT_ID
           AND IsStocked='Y'
           AND ProductType='I';
-        IF V_STOCKED &gt; 0 THEN
+        IF V_STOCKED > 0 THEN
           M_UPDATE_STORAGE_PENDING(:new.AD_Client_ID, :new.AD_Org_ID, :new.UpdatedBy, :new.M_Product_ID, :new.M_Warehouse_ID, :new.M_AttributeSetInstance_ID, :new.C_UOM_ID, :new.M_PRODUCT_UOM_ID, v_QtyReserved, v_QtyOrderReserved, 0, NULL) ;
         END IF;
       END IF;
@@ -52,6 +53,7 @@ BEGIN
 END C_OrderLine2_Trg
 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

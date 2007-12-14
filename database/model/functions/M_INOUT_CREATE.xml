@@ -7,7 +7,7 @@
       <parameter name="p_ForceDelivery" type="CHAR" mode="in" default="N"/>
       <parameter name="p_InOut_ID" type="NUMERIC" mode="out"/>
       <parameter name="p_Locator_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -16,7 +16,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -62,7 +62,7 @@
       AND
       M_Warehouse_ID=Warehouse_ID -- Parameter
       -- Incomplete lines and comments
-      AND(QtyOrdered&lt;&gt;QtyDelivered OR(QtyOrdered=0 AND
+      AND(QtyOrdered<>QtyDelivered OR(QtyOrdered=0 AND
       M_Product_ID IS NULL)) -- Don't include Direct Ship's
       AND
       DirectShip='N' AND -- We ship it anyway
@@ -79,16 +79,16 @@
       l.C_Order_ID=o.C_Order_ID -- Delivery Rule: (L)ine, (O)rder
     GROUP BY o.DeliveryRule
     HAVING((o.DeliveryRule IN('L', 'O') AND
-      SUM(s.QtyOnHand)&gt;=l.QtyOrdered-l.QtyDelivered) -- Delivery Rule: (A)vailability
+      SUM(s.QtyOnHand)>=l.QtyOrdered-l.QtyDelivered) -- Delivery Rule: (A)vailability
       OR
-      SUM(s.QtyOnHand)&gt;0) ) --  Delivery Rule (R)eceipt ** NOT HANDELED **
+      SUM(s.QtyOnHand)>0) ) --  Delivery Rule (R)eceipt ** NOT HANDELED **
       -- Service
       OR
       EXISTS
       (SELECT *
       FROM M_PRODUCT p
       WHERE l.M_Product_ID=p.M_Product_ID AND(p.IsStocked='N' OR
-        p.ProductType&lt;&gt;'I')
+        p.ProductType<>'I')
       )
       -- Comment + AdHoc
       OR
@@ -110,7 +110,7 @@
       T.C_UOM_ID=p_UOM AND
       COALESCE(T.M_PRODUCT_UOM_ID, 0)=COALESCE(p_Product_UOM, 0) AND
       COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, 0)=COALESCE(p_Attribute, COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, 0)) AND
-      COALESCE(T.QtyOnHand, 0)&lt;&gt;0
+      COALESCE(T.QtyOnHand, 0)<>0
     ORDER BY L.PRIORITYNO,
       T.M_ATTRIBUTESETINSTANCE_ID;
     v_storage Cur_Storage%ROWTYPE;
@@ -144,8 +144,8 @@
       FROM AD_PINSTANCE
       WHERE AD_PROCESS_ID IN(SELECT AD_PROCESS_ID FROM AD_PINSTANCE WHERE AD_PInstance_ID=p_PInstance_ID)
         AND IsProcessing='Y'
-        AND AD_PInstance_ID&lt;&gt;p_PInstance_ID;
-      IF(v_count&gt;0) THEN
+        AND AD_PInstance_ID<>p_PInstance_ID;
+      IF(v_count>0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@SerialProcessStillRunning@') ;
       END IF;
       --  Update AD_PInstance
@@ -175,7 +175,7 @@
       CREATE_FROM_INVOICE:=true;
     ELSE
       v_Record_ID:=p_Order_ID;
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;M_InOut_Create&gt;&gt; Order_ID=' || v_Record_ID);
+      DBMS_OUTPUT.PUT_LINE('--<<M_InOut_Create>> Order_ID=' || v_Record_ID);
     END IF;
     BEGIN --BODY
       IF(NOT CREATE_FROM_INVOICE) THEN
@@ -213,7 +213,7 @@
             -- Manually Selected
             AND((v_Selection='Y'
                 AND o.IsSelected='Y')
-            OR(v_Selection&lt;&gt;'Y' -- Specific or individual organization
+            OR(v_Selection<>'Y' -- Specific or individual organization
                AND(v_AD_Org_ID IS NULL OR
                    v_AD_Org_ID=o.AD_Org_ID) -- Specific order or all open orders
                AND(o.C_Order_ID=v_Record_ID -- Parameter
@@ -221,7 +221,7 @@
                       AND EXISTS (SELECT *
                                   FROM C_ORDERLINE ll
                                   WHERE o.C_Order_ID=ll.C_Order_ID
-                                  AND ll.QtyOrdered&lt;&gt;ll.QtyDelivered
+                                  AND ll.QtyOrdered<>ll.QtyDelivered
                                   AND ll.DirectShip='N'
                                   AND ll.M_Product_ID IS NOT NULL
               )))))
@@ -357,15 +357,15 @@
                         AND ProductType='I';
                     END IF;
                     -- Item is stocked - check availability
-                    IF(v_IsStocked&lt;&gt;0) THEN
+                    IF(v_IsStocked<>0) THEN
                       -- check every locator availability and if qty available
                       --  create InOut line, update storage reservation + qty
                       IF(NOT Cur_Storage_ISOPEN)
-                        OR(v_Product_old&lt;&gt;ol.M_Product_ID
-                           OR v_Warehouse_old&lt;&gt;ol.M_Warehouse_ID
-                           OR v_UOM_old&lt;&gt;ol.C_UOM_ID
-                           OR COALESCE(v_Attribute_old, 0)&lt;&gt;COALESCE(ol.M_AttributeSetInstance_ID, 0)
-                           OR COALESCE(v_Product_UOM_old, 0)&lt;&gt;COALESCE(ol.M_Product_UOM_ID, 0)) THEN
+                        OR(v_Product_old<>ol.M_Product_ID
+                           OR v_Warehouse_old<>ol.M_Warehouse_ID
+                           OR v_UOM_old<>ol.C_UOM_ID
+                           OR COALESCE(v_Attribute_old, 0)<>COALESCE(ol.M_AttributeSetInstance_ID, 0)
+                           OR COALESCE(v_Product_UOM_old, 0)<>COALESCE(ol.M_Product_UOM_ID, 0)) THEN
                         v_Product_old:=ol.M_Product_ID;
                         v_Warehouse_old:=ol.M_Warehouse_ID;
                         v_UOM_old:=ol.C_UOM_ID;
@@ -389,7 +389,7 @@
                         LOOP
                           -- How much do we deliver from here?
                           v_ResultStr:='Deliver';
-                          IF(v_Qty&gt;v_QtyStorage) THEN
+                          IF(v_Qty>v_QtyStorage) THEN
                             v_LocatorQty:=v_QtyStorage;
                           ELSE
                             v_LocatorQty:=v_Qty;
@@ -399,7 +399,7 @@
                           IF v_storage.M_Product_UOM_ID IS NOT NULL THEN
                             v_ActualQty:=v_storage.QtyOrder*(v_LocatorQty/v_storage.QtyOnHand) ;
                           END IF;
-                          IF(v_LocatorQty&lt;&gt;0) THEN
+                          IF(v_LocatorQty<>0) THEN
                             -- Create InOut Line
                             Ad_Sequence_Next('M_InOutLine', Cur_Order.C_Order_ID, v_NextNo) ;
                             --
@@ -435,9 +435,9 @@
                           v_QtyStorage:=v_storage.QtyOnHand;
                         END LOOP; -- Storage
                       END IF;--NEXT_PRODUCT
-                      --&lt;&lt;NEXT_PRODUCT&gt;&gt;
+                      --<<NEXT_PRODUCT>>
                       NEXT_PRODUCT:=false;
-                      IF(v_Qty&lt;&gt;0 AND p_ForceDelivery='Y') THEN
+                      IF(v_Qty<>0 AND p_ForceDelivery='Y') THEN
                         -- Create InOut Line
                         Ad_Sequence_Next('M_InOutLine', Cur_Order.C_Order_ID, v_NextNo) ;
                         IF(v_ProductUOM IS NOT NULL) THEN
@@ -496,7 +496,7 @@
                     END IF;
                   END;
                 END IF;--Next_Line
-                --&lt;&lt;Next_Line&gt;&gt;
+                --<<Next_Line>>
                 Next_Line:=false;
                 FETCH Cur_OrderLine INTO ol;
                 EXIT WHEN Cur_OrderLine%NOTFOUND;
@@ -508,7 +508,7 @@
               DBMS_OUTPUT.PUT_LINE('v_lines!!!!!!!!!!!!!!!!!' || v_lines) ;
               ROLLBACK TO SAVEPOINT sp_new_shipment;
             ELSE
-              v_Message:=v_Message || '@OrderDocumentno@ ' || Cur_Order.DocumentNo || ' -&gt; @InoutDocumentno@ ' || v_DocumentNo || '; ';
+              v_Message:=v_Message || '@OrderDocumentno@ ' || Cur_Order.DocumentNo || ' -> @InoutDocumentno@ ' || v_DocumentNo || '; ';
               IF(p_PInstance_ID IS NOT NULL) THEN
                 v_ResultStr:='InsertLog';
                 INSERT INTO AD_PINSTANCE_LOG
@@ -528,7 +528,7 @@
               M_Inout_Post(NULL, p_InOut_ID) ;
             END IF;
           END IF;--Next_Order
-          --&lt;&lt;Next_Order&gt;&gt;
+          --<<Next_Order>>
           Next_Order:=false;
           IF(Cur_Storage_ISOPEN) THEN
             CLOSE Cur_Storage;
@@ -545,7 +545,7 @@
         /**************************************************************************
         * Create Shipment from Invoice
         *************************************************************************/
-        --&lt;&lt;CREATE_FROM_INVOICE&gt;&gt;
+        --<<CREATE_FROM_INVOICE>>
         CREATE_FROM_INVOICE:=false;
         DECLARE
           Cur_Invoice RECORD;
@@ -663,13 +663,13 @@
         END;
       END IF;--FINISH_PROCESS
       /*************************************************************************/
-      --&lt;&lt;FINISH_PROCESS&gt;&gt;
+      --<<FINISH_PROCESS>>
       IF(p_PInstance_ID IS NOT NULL) THEN
         --  Update AD_PInstance
         DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
         AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
       ELSE
-        DBMS_OUTPUT.PUT_LINE('--&lt;&lt;M_InOut_Create finished&gt;&gt; ' || v_Message);
+        DBMS_OUTPUT.PUT_LINE('--<<M_InOut_Create finished>> ' || v_Message);
       END IF;
       --
       RETURN;
@@ -710,6 +710,7 @@ p_InOut_ID:=0; -- Error Indicator
 RETURN;
 END M_Inout_Create 
 
-</body>
+
+]]></body>
     </function>
   </database>

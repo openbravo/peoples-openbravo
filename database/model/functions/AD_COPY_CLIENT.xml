@@ -2,7 +2,7 @@
   <database name="FUNCTION AD_COPY_CLIENT">
     <function name="AD_COPY_CLIENT" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -213,7 +213,7 @@
       FOR Cur_Columns IN
         (SELECT UPPER(COLUMNNAME) AS NAME
       FROM AD_Column
-      WHERE AD_Table_ID=Cur_RoleTables.AD_Table_ID AND UPPER(ColumnName)&lt;&gt;'AD_CLIENT_ID' AND(UPPER(ColumnName)&lt;&gt;'' OR '' IS NULL)
+      WHERE AD_Table_ID=Cur_RoleTables.AD_Table_ID AND UPPER(ColumnName)<>'AD_CLIENT_ID' AND(UPPER(ColumnName)<>'' OR '' IS NULL)
       ORDER BY UPPER(COLUMNNAME))
       LOOP
         v_strTemp:=v_strTemp ||','|| Cur_Columns.NAME;
@@ -239,7 +239,7 @@
     ORDER BY TableName)
     LOOP
       EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM '||Cur_Tables.NAME||' WHERE AD_Client_ID = '||p_AD_Client_ID INTO v_count;
-      IF(v_count&gt;0) THEN
+      IF(v_count>0) THEN
         SELECT MAX(UPPER(ColumnName))
         INTO v_ID_Column
         FROM AD_Column
@@ -262,7 +262,7 @@
         FOR Cur_Columns IN
           (SELECT UPPER(COLUMNNAME) AS NAME
         FROM AD_Column
-        WHERE AD_Table_ID=Cur_Tables.AD_Table_ID AND UPPER(ColumnName)&lt;&gt;'AD_CLIENT_ID' AND(UPPER(ColumnName)&lt;&gt;v_ID_Column OR v_ID_Column IS NULL)
+        WHERE AD_Table_ID=Cur_Tables.AD_Table_ID AND UPPER(ColumnName)<>'AD_CLIENT_ID' AND(UPPER(ColumnName)<>v_ID_Column OR v_ID_Column IS NULL)
         ORDER BY UPPER(COLUMNNAME))
         LOOP
           v_strTemp:=v_strTemp ||','|| Cur_Columns.NAME;
@@ -287,10 +287,10 @@
     FOR Cur_TranslateData IN
       (SELECT AD_DEPENDENCIES.TABLENAME, AD_DEPENDENCIES.COLUMNNAME, AD_DEPENDENCIES.DEPENDS_ON_TABLENAME, AD_DEPENDENCIES.DEPENDS_ON_COLUMNNAME, AD_ID_TRANSLATION."OFFSET"
     FROM AD_DEPENDENCIES, AD_ID_TRANSLATION
-    WHERE AD_DEPENDENCIES.DEPENDS_ON_TABLENAME=AD_ID_TRANSLATION.AD_TABLE AND AD_DEPENDENCIES.DEPENDS_ON_TABLENAME&lt;&gt;AD_DEPENDENCIES.TABLENAME AND AD_DEPENDENCIES.DEPENDS_ON_COLUMNNAME=AD_ID_TRANSLATION.AD_COLUMN
+    WHERE AD_DEPENDENCIES.DEPENDS_ON_TABLENAME=AD_ID_TRANSLATION.AD_TABLE AND AD_DEPENDENCIES.DEPENDS_ON_TABLENAME<>AD_DEPENDENCIES.TABLENAME AND AD_DEPENDENCIES.DEPENDS_ON_COLUMNNAME=AD_ID_TRANSLATION.AD_COLUMN
     ORDER BY AD_DEPENDENCIES.TABLENAME, AD_DEPENDENCIES.COLUMNNAME)
     LOOP
-      IF(Cur_TranslateData.TABLENAME&lt;&gt;v_tableActual OR v_count&gt;20) THEN
+      IF(Cur_TranslateData.TABLENAME<>v_tableActual OR v_count>20) THEN
         v_count:=0;
         v_tableActual:=Cur_TranslateData.TABLENAME;
         IF(v_strSql IS NOT NULL) THEN
@@ -318,7 +318,7 @@
     WHERE AD_DEPENDENCIES.DEPENDS_ON_TABLENAME=AD_ID_TRANSLATION.AD_TABLE AND AD_DEPENDENCIES.DEPENDS_ON_TABLENAME=AD_DEPENDENCIES.TABLENAME AND AD_DEPENDENCIES.DEPENDS_ON_COLUMNNAME=AD_ID_TRANSLATION.AD_COLUMN
     ORDER BY AD_DEPENDENCIES.TABLENAME, AD_DEPENDENCIES.COLUMNNAME)
     LOOP
-      IF(Cur_TranslateDataSelfDep.TABLENAME&lt;&gt;v_tableActual OR v_count&gt;20) THEN
+      IF(Cur_TranslateDataSelfDep.TABLENAME<>v_tableActual OR v_count>20) THEN
         v_count:=0;
         v_tableActual:=Cur_TranslateDataSelfDep.TABLENAME;
         IF(v_strSql IS NOT NULL) THEN
@@ -531,9 +531,9 @@
     WHEN OTHERS THEN
       v_Result:=0;
       if (coalesce(length(v_Message),0)!=0) then
-        v_Message:=substr(v_Message||'&lt;br&gt;&lt;br&gt;',1,2000);
+        v_Message:=substr(v_Message||'<br><br>',1,2000);
       end if;
-      v_Message := substr(v_Message||'@SQLScriptError@ '||Cur_Script.SeqNo||'. @Executing@'||Cur_Script.strSQL||'&lt;br&gt;'||SQLERRM,1,2000);
+      v_Message := substr(v_Message||'@SQLScriptError@ '||Cur_Script.SeqNo||'. @Executing@'||Cur_Script.strSQL||'<br>'||SQLERRM,1,2000);
     END;
   END LOOP;
 
@@ -542,28 +542,28 @@
    into v_count
     from user_constraints
    where status!='ENABLED';
-  if v_count&gt;0 then
+  if v_count>0 then
     if v_Result!=0 then
       v_Result:=2;
     end if;
-    v_Message:=substr(v_Message||'&lt;br&gt;&lt;br&gt;@ProcessLeft@ '||v_count||' @DisabledConstraints@',1,2000);
+    v_Message:=substr(v_Message||'<br><br>@ProcessLeft@ '||v_count||' @DisabledConstraints@',1,2000);
   end if;
 
   select count(*)
   into v_count
     from user_triggers
     where status!='ENABLED';
-  if v_count&gt;0 then
+  if v_count>0 then
     if v_Result!=0 then
       v_Result:=2;
     end if;
-    v_Message:=substr(v_Message||'&lt;br&gt;&lt;br&gt;@ProcessLeft@ '||v_count||' @DisabledTriggers@',1,2000);
+    v_Message:=substr(v_Message||'<br><br>@ProcessLeft@ '||v_count||' @DisabledTriggers@',1,2000);
   end if;
 
-  --&lt;&lt;END_PROCESS&gt;&gt;
+  --<<END_PROCESS>>
   IF(p_PInstance_ID IS NOT NULL) THEN
     --  Update AD_PInstance
-    if (coalesce(length(v_Message),0)&gt;=1997) then
+    if (coalesce(length(v_Message),0)>=1997) then
       v_Message:=substr(v_Message,1,1997)||'...';
     end if;
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
@@ -584,6 +584,7 @@ WHEN OTHERS THEN
   END IF;
 END AD_Copy_Client
 
-</body>
+
+]]></body>
     </function>
   </database>

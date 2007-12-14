@@ -2,7 +2,7 @@
   <database name="FUNCTION MA_STANDARD_COST">
     <function name="MA_STANDARD_COST" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -56,8 +56,8 @@ BEGIN --BODY
   WHERE MA_Sequence_ID IN (SELECT MA_SEQUENCE_ID
                            FROM MA_SEQUENCE s, MA_ProcessPlan_version ppv
                            WHERE s.MA_ProcessPlan_Version_ID = ppv.MA_ProcessPlan_Version_ID
-                             AND ppv.DateFrom &lt;= p_CalcDate
-                             AND ppv.DateTo &gt; p_CalcDate
+                             AND ppv.DateFrom <= p_CalcDate
+                             AND ppv.DateTo > p_CalcDate
                              AND (p_ProcessPlan IS NULL OR ppv.MA_ProcessPlan_ID = p_ProcessPlan)
                              AND EXISTS (SELECT 1 FROM MA_SEQUENCEPRODUCT
                                          WHERE PRODUCTIONTYPE = '+'
@@ -67,8 +67,8 @@ BEGIN --BODY
     SELECT s.MA_Sequence_ID, ppv.DATEFROM
     FROM MA_Sequence s, MA_ProcessPlan_Version ppv
     WHERE s.MA_ProcessPlan_Version_ID = ppv.MA_ProcessPlan_Version_ID
-      AND ppv.DateFrom &lt;= p_CalcDate
-      AND ppv.DateTo &gt; p_CalcDate
+      AND ppv.DateFrom <= p_CalcDate
+      AND ppv.DateTo > p_CalcDate
       AND s.calculated = 'N'
       AND (p_ProcessPlan IS NULL OR ppv.MA_ProcessPlan_ID = p_ProcessPlan)
       AND EXISTS (SELECT 1 FROM MA_SEQUENCEPRODUCT
@@ -87,7 +87,7 @@ BEGIN --BODY
 
   --  Update AD_PInstance
   IF (v_Message IS NOT NULL) THEN
-    v_Message := '@Success@&lt;br&gt;' || v_Message;
+    v_Message := '@Success@<br>' || v_Message;
     v_Result := 2;
   END IF;
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message);
@@ -110,6 +110,7 @@ EXCEPTION
     RETURN;
 END Ma_Standard_Cost
 
-</body>
+
+]]></body>
     </function>
   </database>

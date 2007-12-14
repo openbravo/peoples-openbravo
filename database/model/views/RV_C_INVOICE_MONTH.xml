@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_C_INVOICE_MONTH">
-    <view name="RV_C_INVOICE_MONTH" updatable="false">SELECT AD_Client_ID, AD_Org_ID, SalesRep_ID,
+    <view name="RV_C_INVOICE_MONTH"><![CDATA[SELECT AD_Client_ID, AD_Org_ID, SalesRep_ID,
   TRUNC(DateInvoiced, 'MM') AS DateInvoiced,  --  DD Day, DY Week, MM Month
   SUM(LineNetAmt) AS LineNetAmt,
   SUM(LineListAmt) AS LineListAmt,
@@ -13,5 +13,5 @@
     100-ROUND((SUM(LineNetAmt)-SUM(LineOverLimitAmt))/SUM(LineNetAmt)*100,2) END) AS LineOverLimit
 FROM RV_C_InvoiceLine
 GROUP BY AD_Client_ID, AD_Org_ID, SalesRep_ID,
-  TRUNC(DateInvoiced, 'MM')</view>
+  TRUNC(DateInvoiced, 'MM')]]></view>
   </database>

@@ -4,7 +4,7 @@
       <parameter name="p_PaymentTerm_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_DocDate" type="TIMESTAMP" mode="in"/>
       <parameter name="p_PayDate" type="TIMESTAMP" mode="in" default="SYSDATE"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
 * compliance with the License. You may obtain a copy of the License at
@@ -13,7 +13,7 @@
 * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 * implied. See the License for the specific language governing rights
 * and limitations under the License.
-* The Original Code is  Compiere  ERP &amp;  Business Solution
+* The Original Code is  Compiere  ERP &  Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -35,6 +35,7 @@ Inc.
 BEGIN
   RETURN TRUNC(p_PayDate) - C_PAYMENTTERM_DUEDATE(p_PaymentTerm_ID, p_DocDate, NULL) ;
 END C_PaymentTerm_DueDays
-</body>
+
+]]></body>
     </function>
   </database>

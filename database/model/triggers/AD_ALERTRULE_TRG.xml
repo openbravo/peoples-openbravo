@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_ALERTRULE_TRG">
     <trigger name="AD_ALERTRULE_TRG" table="AD_ALERTRULE" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -61,7 +62,7 @@
      END IF;
 
    IF UPDATING THEN
-    IF (:old.Name &lt;&gt; :new.Name) THEN
+    IF (:old.Name <> :new.Name) THEN
     UPDATE AD_AlertRule_Trl
       SET IsTranslated='N'
     WHERE AD_AlertRule_ID=:new.AD_AlertRule_ID;
@@ -77,6 +78,7 @@
    END IF;
 END AD_AlertRule_Trg 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

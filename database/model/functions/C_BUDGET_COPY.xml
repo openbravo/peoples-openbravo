@@ -2,7 +2,7 @@
   <database name="FUNCTION C_BUDGET_COPY">
     <function name="C_BUDGET_COPY" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -111,7 +111,7 @@
         )
         ;
     END LOOP;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User_ID, 'N', v_Result, v_Message) ;
@@ -125,6 +125,7 @@ EXCEPTION
     RETURN;
 END C_Budget_Copy
 
-</body>
+
+]]></body>
     </function>
   </database>

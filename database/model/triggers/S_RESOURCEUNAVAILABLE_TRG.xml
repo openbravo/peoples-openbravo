@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER S_RESOURCEUNAVAILABLE_TRG">
     <trigger name="S_RESOURCEUNAVAILABLE_TRG" table="S_RESOURCEUNAVAILABLE" fires="before" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -14,7 +15,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &amp;  Business Solution
+    * The Original Code is  Compiere  ERP &  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -28,7 +29,7 @@
     * Title: Resource Unavailability
     * Description:
     *   - Truncate + Fill date
-    *   - Endure that start &lt; end
+    *   - Endure that start < end
     ************************************************************************/
     BEGIN
     -- Truncate + Fill Date
@@ -38,13 +39,14 @@
   ELSE
     :new.DateTo:=TRUNC(:new.DateTo) ;
   END IF;
-  -- start &lt; end
-  IF(:new.DateFrom &gt; :new.DateTo) THEN
+  -- start < end
+  IF(:new.DateFrom > :new.DateTo) THEN
     RAISE_APPLICATION_ERROR(-20403, 'End Date greater than Start Date') ;
   END IF;
 END S_ResourceUnavailable_Trg
 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

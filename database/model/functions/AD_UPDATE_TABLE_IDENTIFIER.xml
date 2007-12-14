@@ -2,7 +2,7 @@
   <database name="FUNCTION AD_UPDATE_TABLE_IDENTIFIER">
     <function name="AD_UPDATE_TABLE_IDENTIFIER" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -68,7 +68,7 @@
       v_count:=v_count + 1;
     END LOOP;
     v_Message:='@Updated@: ' || v_count;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     DBMS_OUTPUT.PUT_LINE('AD_Update_Table_Identifier - Finished ' || v_Message) ;
     --  Update AD_PInstance
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -87,6 +87,7 @@ WHEN OTHERS THEN
   RETURN;
 END Ad_Update_Table_Identifier
 
-</body>
+
+]]></body>
     </function>
   </database>

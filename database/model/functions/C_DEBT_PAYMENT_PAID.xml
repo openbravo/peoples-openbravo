@@ -2,7 +2,7 @@
   <database name="FUNCTION C_DEBT_PAYMENT_PAID">
     <function name="C_DEBT_PAYMENT_PAID" type="CHAR">
       <parameter name="p_DebtPaymentID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -39,6 +39,7 @@ BEGIN
   END IF;
   RETURN v_paid;
 END C_Debt_Payment_Paid
-</body>
+
+]]></body>
     </function>
   </database>

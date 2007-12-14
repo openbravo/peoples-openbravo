@@ -2,7 +2,7 @@
   <database name="FUNCTION C_DEBT_PAYMENT_CREATE">
     <function name="C_DEBT_PAYMENT_CREATE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -214,7 +214,7 @@
       C_Debt_Payment_Create='Y'
     WHERE C_BankStatementLine_ID=v_Record_ID;
     --  v_Message := 'Sett: '||v_SettlementID||' debt: '||v_debtPaymentID;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -228,6 +228,7 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END c_debt_payment_Create
-</body>
+
+]]></body>
     </function>
   </database>

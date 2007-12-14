@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_CASHLINE_TRG">
     <trigger name="C_CASHLINE_TRG" table="C_CASHLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -14,7 +15,7 @@
  * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
  * implied. See the License for the specific language governing rights
  * and limitations under the License.
- * The Original Code is  Compiere  ERP &amp;  Business Solution
+ * The Original Code is  Compiere  ERP &  Business Solution
  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -119,7 +120,7 @@ BEGIN
   * Update CashBook Header
   */
  -- Convert to CashBook Currency
- IF (v_Currency_ID &lt;&gt; v_CB_Currency_ID) THEN
+ IF (v_Currency_ID <> v_CB_Currency_ID) THEN
   v_Difference := C_Currency_Convert(v_Difference, v_Currency_ID, v_CB_Currency_ID, v_CB_Date, null, v_Client_ID, v_Org_ID);
  END IF;
  -- Update header
@@ -128,11 +129,12 @@ BEGIN
    EndingBalance = EndingBalance + v_Difference
  WHERE C_Cash_ID = v_Cash_ID;
 
--- v_Trace := v_Trace || ' &gt; ' || SQL%ROWCOUNT || ' &lt; Difference=' || v_Difference;
+-- v_Trace := v_Trace || ' > ' || SQL%ROWCOUNT || ' < Difference=' || v_Difference;
 -- INSERT INTO AD_TRACE (What) VALUES (v_Trace);
 
 END C_CashLine_Trg 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

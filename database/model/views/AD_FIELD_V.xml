@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW AD_FIELD_V">
-    <view name="AD_FIELD_V" updatable="false">SELECT t.AD_Window_ID, f.AD_Tab_ID, f.AD_Field_ID, tbl.AD_Table_ID, f.AD_Column_ID, 
+    <view name="AD_FIELD_V"><![CDATA[SELECT t.AD_Window_ID, f.AD_Tab_ID, f.AD_Field_ID, tbl.AD_Table_ID, f.AD_Column_ID, 
   f.Name, f.Description, f.Help, f.IsDisplayed, f.DisplayLogic, f.DisplayLength, 
   f.SeqNo, f.SortNo, f.IsSameLine, f.IsHeading, f.IsFieldOnly, f.IsReadOnly, 
   f.IsEncrypted AS IsEncryptedField, 
@@ -18,5 +18,5 @@ FROM AD_Field f
   INNER JOIN AD_Reference r ON (c.AD_Reference_ID = r.AD_Reference_ID)
   LEFT OUTER JOIN AD_Val_Rule vr ON (c.AD_Val_Rule_ID=vr.AD_Val_Rule_ID)
 WHERE f.IsActive = 'Y' 
-  AND c.IsActive = 'Y'</view>
+  AND c.IsActive = 'Y']]></view>
   </database>

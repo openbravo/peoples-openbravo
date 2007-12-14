@@ -2,7 +2,7 @@
   <database name="FUNCTION GENERATE_AVERAGE_COSTS">
     <function name="GENERATE_AVERAGE_COSTS" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -90,21 +90,21 @@
         AND M_PRODUCT.COSTTYPE='AV'
         AND M_INOUT.ISSOTRX='N'
         AND M_INOUT.PROCESSED='Y'
-        AND M_INOUTLINE.MOVEMENTQTY&gt;0
+        AND M_INOUTLINE.MOVEMENTQTY>0
         AND NOT EXISTS
         (SELECT 1 FROM M_COSTING WHERE M_INOUTLINE_ID=M_INOUTLINE.M_INOUTLINE_ID)
       ORDER BY M_PRODUCT.M_PRODUCT_ID, M_INOUT.MOVEMENTDATE, M_INOUTLINE.MOVEMENTQTY DESC
       )
     LOOP
    v_ResultStr:='new albaran:   '||Cur_InOutLine.M_INOUTLINE_ID;
-      IF(Cur_InOutLine.MOVEMENTDATE&lt;&gt;v_DateOld OR Cur_InOutLine.M_PRODUCT_ID&lt;&gt;v_ProductOld) THEN
+      IF(Cur_InOutLine.MOVEMENTDATE<>v_DateOld OR Cur_InOutLine.M_PRODUCT_ID<>v_ProductOld) THEN
         v_CumQty:=0;
       END IF;
       SELECT COUNT(*)
       INTO v_Count
       FROM M_COSTING
       WHERE M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID;
-      IF(v_Count&gt;0) THEN
+      IF(v_Count>0) THEN
         FOR Cur_ProdCost IN
           (SELECT COST, DATETO
           FROM M_COSTING
@@ -124,28 +124,28 @@
         INTO v_Qty
         FROM M_TRANSACTION
         WHERE M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID
-          AND MOVEMENTDATE&lt;Cur_InOutLine.MOVEMENTDATE;
+          AND MOVEMENTDATE<Cur_InOutLine.MOVEMENTDATE;
       ELSE
         v_Qty:=0;
       END IF;
    v_ResultStr:='invoice albaran:   '||Cur_InOutLine.M_INOUTLINE_ID;
-      SELECT CASE WHEN SUM(QTYINVOICED) &lt;=0 THEN 0 ELSE SUM(C_INVOICELINE.QTYINVOICED*C_INVOICELINE.PRICEACTUAL) /SUM(QTYINVOICED) END,
-        CASE WHEN SUM(QTYINVOICED) &lt;=0 THEN 0 ELSE COUNT(C_INVOICELINE.C_INVOICELINE_ID) END
+      SELECT CASE WHEN SUM(QTYINVOICED) <=0 THEN 0 ELSE SUM(C_INVOICELINE.QTYINVOICED*C_INVOICELINE.PRICEACTUAL) /SUM(QTYINVOICED) END,
+        CASE WHEN SUM(QTYINVOICED) <=0 THEN 0 ELSE COUNT(C_INVOICELINE.C_INVOICELINE_ID) END
       INTO v_Price, v_Count
       FROM M_MATCHINV, C_INVOICELINE
       WHERE M_MATCHINV.C_INVOICELINE_ID=C_INVOICELINE.C_INVOICELINE_ID
         AND M_MATCHINV.M_INOUTLINE_ID=Cur_InOutLine.M_INOUTLINE_ID
-        AND QTYINVOICED&lt;&gt;0;
+        AND QTYINVOICED<>0;
       IF(v_Count=0) THEN
         v_ResultStr:='order albaran:   '||Cur_InOutLine.M_INOUTLINE_ID;
-  SELECT CASE WHEN SUM(C_ORDERLINE.QTYORDERED) &lt;=0 THEN 0 ELSE SUM(C_ORDERLINE.QTYORDERED*C_ORDERLINE.PRICEACTUAL) /SUM(C_ORDERLINE.QTYORDERED) END,
-          CASE WHEN SUM(C_ORDERLINE.QTYORDERED) &lt;=0 THEN 0 ELSE COUNT(C_ORDERLINE.C_ORDERLINE_ID) END
+  SELECT CASE WHEN SUM(C_ORDERLINE.QTYORDERED) <=0 THEN 0 ELSE SUM(C_ORDERLINE.QTYORDERED*C_ORDERLINE.PRICEACTUAL) /SUM(C_ORDERLINE.QTYORDERED) END,
+          CASE WHEN SUM(C_ORDERLINE.QTYORDERED) <=0 THEN 0 ELSE COUNT(C_ORDERLINE.C_ORDERLINE_ID) END
         INTO v_Price, v_Count
         FROM M_MATCHPO, C_ORDERLINE
         WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
           AND M_MATCHPO.C_INVOICELINE_ID IS NULL
           AND M_MATCHPO.M_INOUTLINE_ID=Cur_InOutLine.M_INOUTLINE_ID
-          AND C_ORDERLINE.QTYORDERED&lt;&gt;0;
+          AND C_ORDERLINE.QTYORDERED<>0;
 
       END IF;
       IF(v_Count=0) THEN
@@ -160,7 +160,7 @@
             AND M_PRICELIST_VERSION.M_PRICELIST_VERSION_ID=M_PRODUCTPRICE.M_PRICELIST_VERSION_ID
             AND M_PRICELIST_VERSION.ISACTIVE='Y'
             AND M_PRODUCTPRICE.M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID
-            AND M_PRICELIST_VERSION.VALIDFROM&lt;Cur_InOutLine.MOVEMENTDATE
+            AND M_PRICELIST_VERSION.VALIDFROM<Cur_InOutLine.MOVEMENTDATE
           ORDER BY M_PRICELIST_VERSION.VALIDFROM DESC
           )
         LOOP
@@ -191,7 +191,7 @@
           TO_DATE('01/01/3000', 'DD/MM/YYYY'), Cur_InOutLine.MOVEMENTDATE, 'N', Cur_InOutLine.M_INOUTLINE_ID,
           NULL, Cur_InOutLine.MOVEMENTQTY, v_Price, COALESCE(v_Qty, 0) + Cur_InOutLine.MOVEMENTQTY + v_CumQty,(
           CASE
-            WHEN v_Qty+v_CumQty&lt;0 THEN v_Price
+            WHEN v_Qty+v_CumQty<0 THEN v_Price
             WHEN (v_Qty+Cur_InOutLine.MOVEMENTQTY+v_CumQty) = 0 THEN 0
             ELSE (((v_Qty+v_CumQty)*COALESCE(v_Cost, v_Price)) +(Cur_InOutLine.MOVEMENTQTY *v_Price)) /(v_Qty+Cur_InOutLine.MOVEMENTQTY+v_CumQty) END),
           'AV', 'N'
@@ -203,7 +203,7 @@
       v_DateOld:=Cur_InOutLine.MOVEMENTDATE;
       v_ProductOld:=Cur_InOutLine.M_PRODUCT_ID;
     END LOOP;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User, 'N', 1, v_Message) ;
@@ -218,6 +218,7 @@ WHEN OTHERS THEN
   RETURN;
 END Generate_Average_Costs
 
-</body>
+
+]]></body>
     </function>
   </database>

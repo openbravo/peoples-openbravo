@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_WORKBENCH_TRG">
     <trigger name="AD_WORKBENCH_TRG" table="AD_WORKBENCH" fires="after" insert="true" update="false" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -14,7 +15,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &amp;  Business Solution
+    * The Original Code is  Compiere  ERP &  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -61,7 +62,7 @@
     Description=:new.Description
   WHERE AD_Workbench_ID=:new.AD_Workbench_ID;
   -- reset Translation flag
-  IF(:old.Name &lt;&gt; :new.Name  OR :old.Description &lt;&gt; :new.Description  OR :old.Help &lt;&gt; :new.Help) THEN
+  IF(:old.Name <> :new.Name  OR :old.Description <> :new.Description  OR :old.Help <> :new.Help) THEN
     UPDATE AD_Workbench_Trl
       SET IsTranslated='N'
     WHERE AD_Workbench_ID=:new.AD_Workbench_ID;
@@ -70,6 +71,7 @@
 -- UPDATING
 END AD_Workbench_Trg 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

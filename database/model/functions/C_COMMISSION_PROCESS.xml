@@ -2,14 +2,14 @@
   <database name="FUNCTION C_COMMISSION_PROCESS">
     <function name="C_COMMISSION_PROCESS" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/******************************************************************************
+      <body><![CDATA[/******************************************************************************
   * The contents of this file are subject to the   Compiere License  Version 1.1
   * ("License"); You may not use this file except in compliance with the License
   * You may obtain a copy of the License at http://www.compiere.org/license.html
   * Software distributed under the License is distributed on an  "AS IS"  basis,
   * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
   * the specific language governing rights and limitations under the License.
-  * The Original Code is                  Compiere  ERP &amp;  Business Solution
+  * The Original Code is                  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
   * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
@@ -194,8 +194,8 @@
           || ' AND p.DocStatus IN (''CL'',''CO'')'
           || ' AND h.C_Invoice_ID = l.C_Invoice_ID'
           || ' AND h.AD_Client_ID = :1'
-          || ' AND h.DateInvoiced &gt;= to_date('':2'')'
-          || ' AND h.DateInvoiced &lt; to_date('':3'') +1';
+          || ' AND h.DateInvoiced >= to_date('':2'')'
+          || ' AND h.DateInvoiced < to_date('':3'') +1';
           || ' ';
           ELSE
           v_Cmd := 'SELECT h.C_Currency_ID, SUM(l.LineNetAmt) AS Amt, SUM(l.QtyInvoiced) AS Qty, '
@@ -205,8 +205,8 @@
           || ' AND p.DocStatus IN (''CL'',''CO'')'
           || ' AND h.C_Invoice_ID = l.C_Invoice_ID'
           || ' AND h.AD_Client_ID = :1'
-          || ' AND h.DateInvoiced &gt;= to_date('':2'')'
-          || ' AND h.DateInvoiced &lt; to_date('':3'') +1';
+          || ' AND h.DateInvoiced >= to_date('':2'')'
+          || ' AND h.DateInvoiced < to_date('':3'') +1';
           END IF;*/
           -- Invoice Basis
         ELSIF(v_DocBasisType='I') THEN
@@ -218,8 +218,8 @@
             || ' AND h.DocStatus IN (''CL'',''CO'')'
             || ' AND h.ISSOTRX = ''Y'''
             || ' AND h.AD_Client_ID = :1'
-            || ' AND h.DateInvoiced &gt;= to_date('':2'')'
-            || ' AND h.DateInvoiced &lt; to_date('':3'') +1';
+            || ' AND h.DateInvoiced >= to_date('':2'')'
+            || ' AND h.DateInvoiced < to_date('':3'') +1';
           ELSE
             v_Cmd:='SELECT h.C_Currency_ID, SUM(l.LineNetAmt) AS Amt, SUM(l.QtyInvoiced) AS Qty, '
             || 'NULL, NULL, NULL, NULL '
@@ -228,8 +228,8 @@
             || ' AND h.DocStatus IN (''CL'',''CO'')'
             || ' AND h.ISSOTRX = ''Y'''
             || ' AND h.AD_Client_ID = :1'
-            || ' AND h.DateInvoiced &gt;= to_date('':2'')'
-            || ' AND h.DateInvoiced &lt; to_date('':3'') +1';
+            || ' AND h.DateInvoiced >= to_date('':2'')'
+            || ' AND h.DateInvoiced < to_date('':3'') +1';
           END IF;
           -- Order Basis
         ELSE
@@ -241,8 +241,8 @@
             || ' AND h.DocStatus IN (''CL'',''CO'')'
             || ' AND h.ISSOTRX = ''Y'''
             || ' AND h.AD_Client_ID = :1'
-            || ' AND h.DateOrdered &gt;= to_date('':2'')'
-            || ' AND h.DateOrdered &lt; to_date('':3'') +1';
+            || ' AND h.DateOrdered >= to_date('':2'')'
+            || ' AND h.DateOrdered < to_date('':3'') +1';
           ELSE
             v_Cmd:='SELECT h.C_Currency_ID, SUM(l.LineNetAmt) AS Amt, SUM(l.QtyOrdered) AS Qty, '
             || 'NULL, NULL, NULL, NULL '
@@ -251,8 +251,8 @@
             || ' AND h.DocStatus IN (''CL'',''CO'')'
             || ' AND h.ISSOTRX = ''Y'''
             || ' AND h.AD_Client_ID = :1'
-            || ' AND h.DateOrdered &gt;= to_date('':2'')'
-            || ' AND h.DateOrdered &lt; to_date('':3'') +1';
+            || ' AND h.DateOrdered >= to_date('':2'')'
+            || ' AND h.DateOrdered < to_date('':3'') +1';
           END IF;
         END IF;
         -- CommissionOrders/Invoices
@@ -284,7 +284,7 @@
           v_Cmd:=v_Cmd || ' AND l.M_Product_ID IN '  || '(SELECT M_Product_ID FROM M_Product WHERE M_Product_Category_ID=' || CUR_CLine.M_Product_Category_ID ||')';
         END IF;
         -- Grouping
-        IF(v_ListDetails&lt;&gt;'Y') THEN
+        IF(v_ListDetails<>'Y') THEN
           v_Cmd:=v_Cmd || ' GROUP BY h.C_Currency_ID';
         END IF;
         --
@@ -334,7 +334,7 @@
       END LOOP; -- For every Commission Line
     END;
     v_Message:='@CommissionRun@ = ' || v_DocumentNo || ' - ' || v_Name;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -349,6 +349,7 @@ WHEN OTHERS THEN
   RETURN;
 END C_Commission_Process
 
-</body>
+
+]]></body>
     </function>
   </database>

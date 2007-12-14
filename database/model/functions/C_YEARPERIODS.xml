@@ -2,7 +2,7 @@
   <database name="FUNCTION C_YEARPERIODS">
     <function name="C_YEARPERIODS" type="NULL">
       <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -11,7 +11,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -120,7 +120,7 @@
       END IF;
     END LOOP;
     --  Update AD_PInstance
-    --&lt;&lt;END_PROCEDURE&gt;&gt;
+    --<<END_PROCEDURE>>
     --  DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished');
     AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 1, NULL) ;
     RETURN;
@@ -133,6 +133,7 @@ WHEN OTHERS THEN
   RETURN;
 END C_YearPeriods
 
-</body>
+
+]]></body>
     </function>
   </database>

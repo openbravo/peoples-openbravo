@@ -22,7 +22,7 @@
       <parameter name="p_IsExploded" type="CHAR" mode="in"/>
       <parameter name="p_Vendor_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Line_ID" type="NUMERIC" mode="out"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -82,6 +82,7 @@ WHEN OTHERS THEN
 --  RETURN;
 END Mrp_Run_Insertlines
 
-</body>
+
+]]></body>
     </function>
   </database>

@@ -4,7 +4,7 @@
       <parameter name="p_owner" type="VARCHAR" mode="in"/>
       <parameter name="p_tableName" type="VARCHAR" mode="in"/>
       <parameter name="p_columnName" type="VARCHAR" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -38,6 +38,7 @@
     END LOOP;
     RETURN(v_varchar2) ;
 END DBA_COLUMN_DEFAULT
-</body>
+
+]]></body>
     </function>
   </database>

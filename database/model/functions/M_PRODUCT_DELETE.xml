@@ -2,7 +2,7 @@
   <database name="FUNCTION M_PRODUCT_DELETE">
     <function name="M_PRODUCT_DELETE" type="NULL">
       <parameter name="whereClause" type="VARCHAR" mode="in" default="NULL"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -11,7 +11,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -26,7 +26,7 @@
     CUR_DEL RECORD;
     --
     SQL_Base VARCHAR2(255):='SELECT M_Product_ID FROM M_Product WHERE ';
-    -- SQL_Where  VARCHAR2(255) := 'ValueX IN (SELECT ValueX FROM M_Product GROUP BY ValueX HAVING Count(*) &lt;&gt; 1) AND INSTR(Value,''@'') &lt;&gt; 0';
+    -- SQL_Where  VARCHAR2(255) := 'ValueX IN (SELECT ValueX FROM M_Product GROUP BY ValueX HAVING Count(*) <> 1) AND INSTR(Value,''@'') <> 0';
     SQL_Statement VARCHAR2(255):='';
   BEGIN
     -- Delete inactive
@@ -46,6 +46,7 @@
   END IF;
 END M_Product_Delete
 
-</body>
+
+]]></body>
     </function>
   </database>

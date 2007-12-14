@@ -2,7 +2,7 @@
   <database name="FUNCTION MRP_PRODUCTION_RUN">
     <function name="MRP_PRODUCTION_RUN" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -74,8 +74,8 @@
     UPDATE MRP_RUN_PRODUCTIONLINE
     SET isexploded = 'N'
     WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID
-      AND qty &lt;0
-      AND INOUTTRXTYPE &lt;&gt; 'WR';
+      AND qty <0
+      AND INOUTTRXTYPE <> 'WR';
 
     v_ResultStr:='Initialize';
     MRP_RUN_INITIALIZE(v_User_ID, v_Org_ID, v_Client_ID, v_Record_ID, v_Planner_ID, v_Product_ID,
@@ -102,6 +102,7 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
 --  RETURN;
 END Mrp_Production_Run
-</body>
+
+]]></body>
     </function>
   </database>

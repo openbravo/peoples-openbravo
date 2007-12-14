@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_PAYMENTTERM_TRG">
     <trigger name="C_PAYMENTTERM_TRG" table="C_PAYMENTTERM" fires="after" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -14,7 +15,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &amp;  Business Solution
+    * The Original Code is  Compiere  ERP &  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -52,9 +53,9 @@
  -- C_PaymentTerm update trigger
  --  synchronize name,...
  IF(UPDATING) THEN
-  IF((COALESCE(:old.DocumentNote, '.') &lt;&gt; COALESCE(:NEW.DocumentNote, '.')
-  OR COALESCE(:old.Name, '.') &lt;&gt; COALESCE(:NEW.Name, '.')
-  OR COALESCE(:old.Description, '.') &lt;&gt; COALESCE(:NEW.Description, '.')))
+  IF((COALESCE(:old.DocumentNote, '.') <> COALESCE(:NEW.DocumentNote, '.')
+  OR COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
+  OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')))
  THEN
     UPDATE C_PaymentTerm_Trl
       SET IsTranslated='N',
@@ -66,6 +67,7 @@
 END C_PaymentTerm_Trg
 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

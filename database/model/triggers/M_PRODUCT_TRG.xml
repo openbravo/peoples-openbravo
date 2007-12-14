@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_PRODUCT_TRG">
     <trigger name="M_PRODUCT_TRG" table="M_PRODUCT" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -43,7 +44,7 @@ BEGIN
    SELECT 0 AS QtyOnHand, QtyReserved, QtyOrdered
    FROM M_Storage_Pending s
    WHERE s.M_Product_ID=:new.M_Product_ID) A;
-   IF (v_ControlNo &lt;&gt; 0) THEN
+   IF (v_ControlNo <> 0) THEN
     RAISE_APPLICATION_ERROR(-20400, 'Product has active Inventory');
    END IF;
   END IF;
@@ -127,6 +128,7 @@ EXCEPTION
 
 END M_Product_Trg 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

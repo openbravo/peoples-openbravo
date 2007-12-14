@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_ORDERLINE_TRG">
     <trigger name="C_ORDERLINE_TRG" table="C_ORDERLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -17,12 +18,12 @@
   v_UOM_ID    NUMBER(10);
 BEGIN
 IF (UPDATING) THEN
-  IF NOT(COALESCE(:old.M_Product_ID,0) &lt;&gt; COALESCE(:NEW.M_Product_ID,0)
-  OR COALESCE(:old.LineNetAmt,0) &lt;&gt; COALESCE(:NEW.LineNetAmt,0)
-  OR COALESCE(:old.FreightAmt,0) &lt;&gt; COALESCE(:NEW.FreightAmt,0)
-  OR COALESCE(:old.ChargeAmt,0) &lt;&gt; COALESCE(:NEW.ChargeAmt,0)
-  OR COALESCE(:old.C_Tax_ID,0) &lt;&gt; COALESCE(:NEW.C_Tax_ID,0)
-  OR COALESCE(:old.C_Uom_ID,0) &lt;&gt; COALESCE(:NEW.C_Uom_ID,0))
+  IF NOT(COALESCE(:old.M_Product_ID,0) <> COALESCE(:NEW.M_Product_ID,0)
+  OR COALESCE(:old.LineNetAmt,0) <> COALESCE(:NEW.LineNetAmt,0)
+  OR COALESCE(:old.FreightAmt,0) <> COALESCE(:NEW.FreightAmt,0)
+  OR COALESCE(:old.ChargeAmt,0) <> COALESCE(:NEW.ChargeAmt,0)
+  OR COALESCE(:old.C_Tax_ID,0) <> COALESCE(:NEW.C_Tax_ID,0)
+  OR COALESCE(:old.C_Uom_ID,0) <> COALESCE(:NEW.C_Uom_ID,0))
  THEN
   RETURN;
   END IF;
@@ -31,20 +32,20 @@ IF (UPDATING) THEN
   * Check Product changes = not possible when reservation, invoice or delivery exists
   */
  IF (DELETING) THEN
-  IF (:old.QtyReserved &lt;&gt; 0) THEN
+  IF (:old.QtyReserved <> 0) THEN
    RAISE_APPLICATION_ERROR(-20200, 'Changed Product had Reservation=' || :old.QtyReserved);
-  ELSIF (:old.QtyDelivered &lt;&gt; 0) THEN
+  ELSIF (:old.QtyDelivered <> 0) THEN
    RAISE_APPLICATION_ERROR(-20201, 'Changed Product had Delieveries=' || :old.QtyDelivered);
-  ELSIF (:old.QtyInvoiced &lt;&gt; 0) THEN
+  ELSIF (:old.QtyInvoiced <> 0) THEN
    RAISE_APPLICATION_ERROR(-20202, 'Changed Product was Invoiced=' || :old.QtyInvoiced);
   END IF;
  ELSIF (UPDATING) THEN
-   IF (:old.M_Product_ID &lt;&gt; :NEW.M_Product_ID) THEN
-  IF (:old.QtyReserved &lt;&gt; 0) THEN
+   IF (:old.M_Product_ID <> :NEW.M_Product_ID) THEN
+  IF (:old.QtyReserved <> 0) THEN
    RAISE_APPLICATION_ERROR(-20203, 'Changed Product had Reservation=' || :old.QtyReserved);
-  ELSIF (:old.QtyDelivered &lt;&gt; 0) THEN
+  ELSIF (:old.QtyDelivered <> 0) THEN
    RAISE_APPLICATION_ERROR(-20204, 'Changed Product had Delieveries=' || :old.QtyDelivered);
-  ELSIF (:old.QtyInvoiced &lt;&gt; 0) THEN
+  ELSIF (:old.QtyInvoiced <> 0) THEN
    RAISE_APPLICATION_ERROR(-20205, 'Changed Product was Invoiced=' || :old.QtyInvoiced);
   END IF;
    END IF;
@@ -54,7 +55,7 @@ IF (UPDATING) THEN
  IF (UPDATING OR INSERTING) THEN
      IF (:NEW.M_PRODUCT_ID IS NOT NULL) THEN
        SELECT C_UOM_ID INTO v_UOM_ID FROM M_PRODUCT WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
-       IF (COALESCE(v_UOM_ID,0) &lt;&gt; COALESCE(:NEW.C_UOM_ID,0)) THEN
+       IF (COALESCE(v_UOM_ID,0) <> COALESCE(:NEW.C_UOM_ID,0)) THEN
          RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)');
        END IF;
      END IF;
@@ -184,6 +185,7 @@ IF (UPDATING) THEN
 END C_OrderLine_Trg
 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

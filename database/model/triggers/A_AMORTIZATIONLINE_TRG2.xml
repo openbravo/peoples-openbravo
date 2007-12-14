@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER A_AMORTIZATIONLINE_TRG2">
     <trigger name="A_AMORTIZATIONLINE_TRG2" table="A_AMORTIZATIONLINE" fires="after" insert="false" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -15,6 +16,7 @@
    exception when others then null; */
 END a_AmortizationLine_Trg2 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

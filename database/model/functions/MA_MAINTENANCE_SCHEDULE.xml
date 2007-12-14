@@ -8,7 +8,7 @@
       <parameter name="p_Client_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Org_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_User_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -87,7 +87,7 @@
       END LOOP;
       DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_Maintenance_Schedule&gt;&gt;') ;
+      DBMS_OUTPUT.PUT_LINE('--<<MA_Maintenance_Schedule>>') ;
       v_Record_ID:=p_MA_Maintenance_ID;
       v_InitDate:=p_InitDate;
       v_EndDate:=p_EndDate;
@@ -115,7 +115,7 @@
       IF(Cur_Periodicity.Periodicity_Type='DA') THEN
         v_ResultStr:='Daily Periodicity';
         v_Date:=v_InitDate;
-        WHILE(v_Date&lt;v_EndDate)
+        WHILE(v_Date<v_EndDate)
         LOOP
           SELECT count(*)
           INTO v_Count
@@ -178,7 +178,7 @@
         SELECT next_day(v_InitDate-1, to_number(Cur_Periodicity.weekday))
         INTO v_Date
         FROM DUAL;
-        WHILE(v_Date&lt;v_EndDate)
+        WHILE(v_Date<v_EndDate)
         LOOP
           SELECT count(*)
           INTO v_Count
@@ -239,10 +239,10 @@
       ELSIF(Cur_Periodicity.Periodicity_Type='M1') THEN
         v_ResultStr:='Monthly Periodicity';
         v_Date:=TO_DATE(Cur_Periodicity.Monthday || '/' || TO_CHAR(v_InitDate, 'mm/yyyy'), 'dd/mm/yyyy') ;
-        IF(v_date&lt;v_InitDate) THEN
+        IF(v_date<v_InitDate) THEN
           v_Date:=ADD_MONTHS(v_Date, 1) ;
         END IF;
-        WHILE(v_Date&lt;v_EndDate)
+        WHILE(v_Date<v_EndDate)
         LOOP
           v_DateInt:=v_Date;
           IF(Cur_Periodicity.ExcludeWeekend='Y' AND TO_CHAR(v_Date, 'd')='6') THEN
@@ -310,10 +310,10 @@
         v_ResultStr:='Bi-Monthly Periodicity';
         v_Date:=ADD_MONTHS(Cur_Periodicity.initdate, 2*(TRUNC(MONTHS_BETWEEN(v_InitDate, Cur_Periodicity.initdate) /2))) ;
         --v_Date := TRUNC(Cur_Periodicity.lastdatecalc, 'mm/yyyy')+Cur_Periodicity.Monthday;
-        IF(v_date&lt;v_InitDate) THEN
+        IF(v_date<v_InitDate) THEN
           v_Date:=ADD_MONTHS(v_Date, 2) ;
         END IF;
-        WHILE(v_Date&lt;v_EndDate)
+        WHILE(v_Date<v_EndDate)
         LOOP
           v_DateInt:=v_Date;
           IF(Cur_Periodicity.ExcludeWeekend='Y' AND TO_CHAR(v_Date, 'd')='6') THEN
@@ -380,10 +380,10 @@
       ELSIF(Cur_Periodicity.Periodicity_Type='M3') THEN
         v_ResultStr:='Quarterly Periodicity';
         v_Date:=ADD_MONTHS(Cur_Periodicity.initdate, 3*(TRUNC(MONTHS_BETWEEN(v_InitDate, Cur_Periodicity.initdate) /3))) ;
-        IF(v_date&lt;v_InitDate) THEN
+        IF(v_date<v_InitDate) THEN
           v_Date:=ADD_MONTHS(v_Date, 3) ;
         END IF;
-        WHILE(v_Date&lt;v_EndDate)
+        WHILE(v_Date<v_EndDate)
         LOOP
           v_DateInt:=v_Date;
           IF(Cur_Periodicity.ExcludeWeekend='Y' AND TO_CHAR(v_Date, 'd')='6') THEN
@@ -450,10 +450,10 @@
       ELSIF(Cur_Periodicity.Periodicity_Type='M6') THEN
         v_ResultStr:='Half-yearly Periodicity';
         v_Date:=ADD_MONTHS(Cur_Periodicity.initdate, 6*(TRUNC(MONTHS_BETWEEN(v_InitDate, Cur_Periodicity.initdate) /6))) ;
-        IF(v_date&lt;v_InitDate) THEN
+        IF(v_date<v_InitDate) THEN
           v_Date:=ADD_MONTHS(v_Date, 6) ;
         END IF;
-        WHILE(v_Date&lt;v_EndDate)
+        WHILE(v_Date<v_EndDate)
         LOOP
           v_DateInt:=v_Date;
           IF(Cur_Periodicity.ExcludeWeekend='Y' AND TO_CHAR(v_Date, 'd')='6') THEN
@@ -520,13 +520,13 @@
       END IF;
     END LOOP;
     v_Message:='@Created@=' || v_InsertCount;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
       AD_UPDATE_PINSTANCE(p_PInstance_ID, v_AD_User_ID, 'N', v_Result, v_Message) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;MA_Maintenance escheduling finished&gt;&gt; ' || v_Message) ;
+      DBMS_OUTPUT.PUT_LINE('--<<MA_Maintenance escheduling finished>> ' || v_Message) ;
     END IF;
     RETURN;
   END; --BODY
@@ -561,6 +561,7 @@ WHEN OTHERS THEN
   RETURN;
 END MA_Maintenance_Schedule
 
-</body>
+
+]]></body>
     </function>
   </database>

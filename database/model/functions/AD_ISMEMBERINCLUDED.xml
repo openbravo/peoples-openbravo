@@ -4,7 +4,7 @@
       <parameter name="p_nodeID" type="NUMERIC" mode="in"/>
       <parameter name="p_parentID" type="NUMERIC" mode="in"/>
       <parameter name="p_treeID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -45,6 +45,7 @@ BEGIN
   END LOOP;
   RETURN(-1) ;
 END AD_IsMemberIncluded
-</body>
+
+]]></body>
     </function>
   </database>

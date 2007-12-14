@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_COMMISSIONAMT_TRG">
     <trigger name="C_COMMISSIONAMT_TRG" table="C_COMMISSIONAMT" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -14,7 +15,7 @@
     * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
     * implied. See the License for the specific language governing rights
     * and limitations under the License.
-    * The Original Code is  Compiere  ERP &amp;  Business Solution
+    * The Original Code is  Compiere  ERP &  Business Solution
     * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
     Inc.
     * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -59,13 +60,13 @@ BEGIN
     WHERE C_CommissionLine_ID=:new.C_CommissionLine_ID;
     -- Quantities
     v_Result :=(:new.ActualQty - v_QtySubtract) * v_QtyMultiplier;
-    IF(v_IsPositiveOnly='Y' AND v_Result &lt; 0) THEN
+    IF(v_IsPositiveOnly='Y' AND v_Result < 0) THEN
       v_Result:=0;
     END IF;
     -- Amount
     :new.CommissionAmt:=v_Result;
     v_Result :=(:new.ConvertedAmt - v_AmtSubtract) * v_AmtMultiplier;
-    IF(v_IsPositiveOnly='Y' AND v_Result &lt; 0) THEN
+    IF(v_IsPositiveOnly='Y' AND v_Result < 0) THEN
       v_Result:=0;
     END IF;
     :new.CommissionAmt:=:new.CommissionAmt + v_Result;
@@ -77,6 +78,7 @@ BEGIN
   END IF;
 END C_CommissionAmt_Trg 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

@@ -3,7 +3,7 @@
     <function name="C_SETTLEMENT_POST" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Settlement_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -85,7 +85,7 @@
       END LOOP; --  Get Parameter
       DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;C_Settlement_Post&gt;&gt;') ;
+      DBMS_OUTPUT.PUT_LINE('--<<C_Settlement_Post>>') ;
       v_Record_ID:=p_Settlement_ID;
     END IF;
   BEGIN --BODY
@@ -104,7 +104,7 @@
         OR C_CASHLINE_ID IS NOT NULL)
         AND(C_SETTLEMENT_GENERATE_ID=v_Record_ID
         OR C_SETTLEMENT_CANCEL_ID=v_Record_ID) ;
-      IF v_Aux&lt;&gt;0 THEN
+      IF v_Aux<>0 THEN
 	  	 SELECT AD_COLUMN_IDENTIFIER_STD('C_Debt_Payment',TO_CHAR(C_DEBT_PAYMENT.C_Debt_Payment_Id)), C_BANKSTATEMENTLINE_ID, C_CASHLINE_ID
 		 INTO v_column_identifier, v_Bankstatement_ID,v_Cashline_ID
 		 FROM C_DEBT_PAYMENT WHERE C_DEBT_PAYMENT_ID = v_Debt_Payment_ID;
@@ -131,7 +131,7 @@
         FROM C_DEBT_PAYMENT
         WHERE C_SETTLEMENT_CANCEL_ID IS NOT NULL
           AND C_SETTLEMENT_GENERATE_ID=v_Record_ID;
-        IF v_Aux&lt;&gt;0 THEN
+        IF v_Aux<>0 THEN
 		  SELECT documentno, datetrx, AD_COLUMN_IDENTIFIER_STD('C_Debt_Payment', TO_CHAR(C_DEBT_PAYMENT.C_Debt_Payment_Id))
 		  INTO v_documentno_Settlement, v_dateSettlement, v_column_identifier
 		  FROM C_SETTLEMENT, C_DEBT_PAYMENT
@@ -167,7 +167,7 @@
         WHERE POSTED='Y'
           AND C_SETTLEMENT_ID=v_Record_ID;
         --Direct accounting settlement verification is not necessary because it's controlled in the previous restriction
-        IF v_Aux&lt;&gt;0 THEN
+        IF v_Aux<>0 THEN
           RAISE_APPLICATION_ERROR(-20000, '@SettlementDocumentPosted@') ;
         ELSE
           UPDATE C_SETTLEMENT
@@ -218,7 +218,7 @@
         OR c.C_SETTLEMENT_GENERATE_ID=v_Record_ID)
         AND c.C_BPARTNER_ID=bp.C_BPARTNER_ID
         AND Ad_Isorgincluded(c.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1;
-      IF v_Aux&gt;0 THEN
+      IF v_Aux>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@OrgDebtpayment@'||v_column_identifier||' '||'@OrgdifferentBpartner@') ;
       END IF;
     END IF;--FINISH_PROCESS
@@ -233,7 +233,7 @@
       FROM C_SETTLEMENT S,
         C_DocType
       WHERE C_DocType.DocBaseType IN ('STT','STM')
-   AND AD_ISORGINCLUDED(S.AD_Org_ID,C_DocType.AD_Org_ID, S.AD_Client_ID) &lt;&gt; -1
+   AND AD_ISORGINCLUDED(S.AD_Org_ID,C_DocType.AD_Org_ID, S.AD_Client_ID) <> -1
    AND S.C_SETTLEMENT_ID = v_Record_ID
    AND S.C_DOCTYPE_ID = C_DocType.C_DOCTYPE_ID;
       IF v_Aux=0 THEN
@@ -252,7 +252,7 @@
         OR c.C_SETTLEMENT_GENERATE_ID=v_Record_ID)
         AND s.C_SETTLEMENT_ID=v_Record_ID
         AND Ad_Isorgincluded(c.AD_ORG_ID, s.AD_ORG_ID, s.AD_CLIENT_ID)=-1;
-      IF v_Aux&gt;0 THEN
+      IF v_Aux>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@OrgDebtpayment@'||v_column_identifier||' '||'@OrgdifferentSettlement@') ;
       END IF;
     END IF;--FINISH_PROCESS
@@ -262,9 +262,9 @@
       INTO v_Aux
       FROM C_DEBT_PAYMENT p
       WHERE p.C_Settlement_Cancel_ID=v_Record_ID
-        AND C_Debt_Payment_Status(p.C_SETTLEMENT_CANCEL_ID, p.Cancel_Processed, p.Generate_Processed, p.IsPaid, p.IsValid, p.C_CashLine_ID, p.C_BankStatementLine_ID)&lt;&gt;'P';
+        AND C_Debt_Payment_Status(p.C_SETTLEMENT_CANCEL_ID, p.Cancel_Processed, p.Generate_Processed, p.IsPaid, p.IsValid, p.C_CashLine_ID, p.C_BankStatementLine_ID)<>'P';
       -- If p_PInstance_ID is null there is not need to check Debt/Payment Status
-      IF((v_Aux&gt;0) AND(p_PInstance_ID IS NOT NULL)) THEN
+      IF((v_Aux>0) AND(p_PInstance_ID IS NOT NULL)) THEN
         RAISE_APPLICATION_ERROR(-20000, '@DebtPaymentNotPending@') ;
       END IF;
 	  --Until here to be deprecated
@@ -279,7 +279,7 @@
         AND ml.C_Debt_Payment_ID=dp.C_Debt_Payment_ID
         AND dp.C_Settlement_Cancel_ID=v_Record_ID
         AND m.processed='Y'
-        AND m.DateAcct&gt;v_DateAcct;
+        AND m.DateAcct>v_DateAcct;
       if v_Aux!=0 then
 	  	SELECT m.DOCUMENTNO, AD_COLUMN_IDENTIFIER_STD ('C_Debt_Payment', TO_CHAR(ml.C_Debt_Payment_Id))
 		INTO v_documentno_Dp_Management, v_column_identifier
@@ -322,7 +322,7 @@
         GeneratedAmt=v_GeneratedAmt,
         ChargedAmt=v_ChargedAmt
       WHERE C_Settlement_ID=v_Record_ID;
-      IF(v_CanceledNotChargeAmt&lt;&gt;v_GeneratedAmt) THEN
+      IF(v_CanceledNotChargeAmt<>v_GeneratedAmt) THEN
         RAISE_APPLICATION_ERROR(-20000, '@SettlementNotMatch@') ;
       END IF;
     END IF;--FINISH_PROCESS
@@ -345,8 +345,8 @@
       FROM C_Debt_Payment_V c
       WHERE c.C_Settlement_Generate_ID=v_Record_ID
         AND c.isManual='Y'
-        AND c.Amount&lt;&gt;c.GLItemAmt;
-      IF(v_Aux&gt;0) THEN
+        AND c.Amount<>c.GLItemAmt;
+      IF(v_Aux>0) THEN
         SELECT Ad_Column_Identifier_Std('C_Debt_Payment', to_char(v_Debt_Payment_ID))
         INTO v_column_identifier
         FROM DUAL;
@@ -498,12 +498,12 @@
         Processed='Y'
       WHERE C_Settlement_ID=v_Record_ID;
     END IF;--FINISH_PROCESS
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     IF(p_PInstance_ID IS NOT NULL) THEN
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
       AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;C_Settlement_Post finished&gt;&gt; ' || v_Message) ;
+      DBMS_OUTPUT.PUT_LINE('--<<C_Settlement_Post finished>> ' || v_Message) ;
     END IF;
     RETURN;
   END; --BODY
@@ -537,6 +537,7 @@ WHEN OTHERS THEN
   END IF;
   RETURN;
 END C_Settlement_Post
-</body>
+
+]]></body>
     </function>
   </database>

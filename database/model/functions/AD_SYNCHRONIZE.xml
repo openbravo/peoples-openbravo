@@ -2,7 +2,7 @@
   <database name="FUNCTION AD_SYNCHRONIZE">
     <function name="AD_SYNCHRONIZE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -11,7 +11,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -210,9 +210,9 @@
     WHERE EXISTS
       (SELECT *
       FROM AD_ELEMENT e
-      WHERE AD_COLUMN.AD_Element_ID=e.AD_Element_ID  AND(--AD_Column.ColumnName &lt;&gt; e.ColumnName OR
-        AD_COLUMN.NAME&lt;&gt;e.NAME  OR COALESCE(TO_CHAR(AD_COLUMN.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(e.Description), ' ')
-        OR COALESCE(TO_CHAR(AD_COLUMN.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(e.Help), ' '))
+      WHERE AD_COLUMN.AD_Element_ID=e.AD_Element_ID  AND(--AD_Column.ColumnName <> e.ColumnName OR
+        AD_COLUMN.NAME<>e.NAME  OR COALESCE(TO_CHAR(AD_COLUMN.Description), ' ')<>COALESCE(TO_CHAR(e.Description), ' ')
+        OR COALESCE(TO_CHAR(AD_COLUMN.Help), ' ')<>COALESCE(TO_CHAR(e.Help), ' '))
       )
       ;
     v_rowcount:=SQL%ROWCOUNT;
@@ -240,8 +240,8 @@
       (SELECT *
       FROM AD_ELEMENT e, AD_COLUMN c
       WHERE AD_FIELD.AD_Column_ID=c.AD_Column_ID  AND c.AD_Element_ID=e.AD_Element_ID
-      AND c.AD_Process_ID IS NULL  AND(AD_FIELD.NAME&lt;&gt;e.NAME OR COALESCE(TO_CHAR(AD_FIELD.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(e.Description), ' ')
-      OR COALESCE(TO_CHAR(AD_FIELD.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(e.Help), ' '))
+      AND c.AD_Process_ID IS NULL  AND(AD_FIELD.NAME<>e.NAME OR COALESCE(TO_CHAR(AD_FIELD.Description), ' ')<>COALESCE(TO_CHAR(e.Description), ' ')
+      OR COALESCE(TO_CHAR(AD_FIELD.Help), ' ')<>COALESCE(TO_CHAR(e.Help), ' '))
       )AND NOT EXISTS
       (SELECT 1
       FROM AD_TAB t, AD_WINDOW w
@@ -283,8 +283,8 @@
       WHERE AD_FIELD_TRL.AD_Field_ID=f.AD_Field_ID  AND f.AD_Column_ID=c.AD_Column_ID
       AND c.AD_Element_ID=e.AD_Element_ID AND c.AD_Process_ID IS NULL
       AND AD_FIELD_TRL.AD_LANGUAGE=e.AD_LANGUAGE  AND f.IsCentrallyMaintained='Y' AND f.IsActive='Y'
-      AND(AD_FIELD_TRL.NAME&lt;&gt;e.NAME OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(e.Description), ' ')
-      OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(e.Help), ' '))
+      AND(AD_FIELD_TRL.NAME<>e.NAME OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.Description), ' ')
+      OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(e.Help), ' '))
       ) AND NOT EXISTS
       (SELECT 1
       FROM AD_FIELD f, AD_TAB t, AD_WINDOW w
@@ -317,8 +317,8 @@
       (SELECT *
       FROM AD_ELEMENT e, AD_COLUMN c
       WHERE AD_FIELD.AD_Column_ID=c.AD_Column_ID  AND c.AD_Element_ID=e.AD_Element_ID
-      AND c.AD_Process_ID IS NULL  AND(AD_FIELD.NAME&lt;&gt;e.PO_Name OR COALESCE(TO_CHAR(AD_FIELD.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(e.PO_Description), ' ')
-      OR COALESCE(TO_CHAR(AD_FIELD.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(e.PO_Help), ' ')) AND e.PO_Name IS NOT NULL
+      AND c.AD_Process_ID IS NULL  AND(AD_FIELD.NAME<>e.PO_Name OR COALESCE(TO_CHAR(AD_FIELD.Description), ' ')<>COALESCE(TO_CHAR(e.PO_Description), ' ')
+      OR COALESCE(TO_CHAR(AD_FIELD.Help), ' ')<>COALESCE(TO_CHAR(e.PO_Help), ' ')) AND e.PO_Name IS NOT NULL
       )
       AND EXISTS
       (SELECT *
@@ -362,8 +362,8 @@
       WHERE AD_FIELD_TRL.AD_Field_ID=f.AD_Field_ID  AND f.AD_Column_ID=c.AD_Column_ID
       AND c.AD_Element_ID=e.AD_Element_ID AND c.AD_Process_ID IS NULL
       AND AD_FIELD_TRL.AD_LANGUAGE=e.AD_LANGUAGE  AND f.IsCentrallyMaintained='Y' AND f.IsActive='Y'
-      AND(AD_FIELD_TRL.NAME&lt;&gt;e.PO_Name OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(e.PO_Description), ' ')
-      OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(e.PO_Help), ' ')) AND e.PO_Name IS NOT NULL
+      AND(AD_FIELD_TRL.NAME<>e.PO_Name OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(e.PO_Description), ' ')
+      OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(e.PO_Help), ' ')) AND e.PO_Name IS NOT NULL
       )
       AND EXISTS
       (SELECT *
@@ -397,8 +397,8 @@
       (SELECT *
       FROM AD_PROCESS p, AD_COLUMN c
       WHERE c.AD_Process_ID=p.AD_Process_ID AND AD_FIELD.AD_Column_ID=c.AD_Column_ID
-      AND(AD_FIELD.NAME&lt;&gt;p.NAME OR COALESCE(TO_CHAR(AD_FIELD.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(p.Description), ' ')
-      OR COALESCE(TO_CHAR(AD_FIELD.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(p.Help), ' '))
+      AND(AD_FIELD.NAME<>p.NAME OR COALESCE(TO_CHAR(AD_FIELD.Description), ' ')<>COALESCE(TO_CHAR(p.Description), ' ')
+      OR COALESCE(TO_CHAR(AD_FIELD.Help), ' ')<>COALESCE(TO_CHAR(p.Help), ' '))
       )
       ;
     v_rowcount:=SQL%ROWCOUNT;
@@ -435,8 +435,8 @@
       (SELECT *
       FROM AD_PROCESS_TRL p, AD_COLUMN c, AD_FIELD f
       WHERE c.AD_Process_ID=p.AD_Process_ID AND f.AD_Column_ID=c.AD_Column_ID  AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
-      AND p.AD_LANGUAGE=AD_FIELD_TRL.AD_LANGUAGE  AND f.IsCentrallyMaintained='Y' AND f.IsActive='Y'  AND(AD_FIELD_TRL.NAME&lt;&gt;p.NAME
-      OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(p.Description), ' ') OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(p.Help), ' '))
+      AND p.AD_LANGUAGE=AD_FIELD_TRL.AD_LANGUAGE  AND f.IsCentrallyMaintained='Y' AND f.IsActive='Y'  AND(AD_FIELD_TRL.NAME<>p.NAME
+      OR COALESCE(TO_CHAR(AD_FIELD_TRL.Description), ' ')<>COALESCE(TO_CHAR(p.Description), ' ') OR COALESCE(TO_CHAR(AD_FIELD_TRL.Help), ' ')<>COALESCE(TO_CHAR(p.Help), ' '))
       );
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
@@ -447,11 +447,11 @@
     WHERE AD_Process_Para.IsCentrallyMaintained='Y' AND AD_Process_Para.IsActive='Y'
     AND EXISTS (SELECT * FROM AD_Element e
     WHERE e.AD_Element_ID=AD_Process_Para.AD_Element_ID
-    AND e.ColumnName&lt;&gt;AD_Process_Para.ColumnName);*/
+    AND e.ColumnName<>AD_Process_Para.ColumnName);*/
     -- Paramenter Fields
     UPDATE AD_PROCESS_PARA
       SET IsCentrallyMaintained='N'
-    WHERE IsCentrallyMaintained&lt;&gt;'N'  AND NOT EXISTS
+    WHERE IsCentrallyMaintained<>'N'  AND NOT EXISTS
       (SELECT *
       FROM AD_ELEMENT e
       WHERE AD_PROCESS_PARA.AD_Element_ID=e.AD_Element_ID
@@ -479,9 +479,9 @@
     WHERE AD_PROCESS_PARA.IsCentrallyMaintained='Y' AND AD_PROCESS_PARA.IsActive='Y'  AND EXISTS
       (SELECT *
       FROM AD_ELEMENT e
-      WHERE e.AD_Element_ID=AD_PROCESS_PARA.AD_Element_ID  AND(AD_PROCESS_PARA.NAME&lt;&gt;e.NAME
-      OR COALESCE(TO_CHAR(AD_PROCESS_PARA.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(e.Description), ' ')
-      OR COALESCE(TO_CHAR(AD_PROCESS_PARA.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(e.Help), ' '))
+      WHERE e.AD_Element_ID=AD_PROCESS_PARA.AD_Element_ID  AND(AD_PROCESS_PARA.NAME<>e.NAME
+      OR COALESCE(TO_CHAR(AD_PROCESS_PARA.Description), ' ')<>COALESCE(TO_CHAR(e.Description), ' ')
+      OR COALESCE(TO_CHAR(AD_PROCESS_PARA.Help), ' ')<>COALESCE(TO_CHAR(e.Help), ' '))
       )
       ;
     v_rowcount:=SQL%ROWCOUNT;
@@ -519,8 +519,8 @@
       FROM AD_ELEMENT_TRL et, AD_PROCESS_PARA f
       WHERE et.AD_LANGUAGE=AD_PROCESS_PARA_TRL.AD_LANGUAGE AND f.AD_Element_ID=et.AD_Element_ID
       AND f.AD_Process_Para_ID=AD_PROCESS_PARA_TRL.AD_Process_Para_ID  AND f.IsCentrallyMaintained='Y'
-      AND f.IsActive='Y'  AND(AD_PROCESS_PARA_TRL.NAME&lt;&gt;et.NAME OR COALESCE(TO_CHAR(AD_PROCESS_PARA_TRL.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(et.Description), ' ')
-      OR COALESCE(TO_CHAR(AD_PROCESS_PARA_TRL.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(et.Help), ' '))
+      AND f.IsActive='Y'  AND(AD_PROCESS_PARA_TRL.NAME<>et.NAME OR COALESCE(TO_CHAR(AD_PROCESS_PARA_TRL.Description), ' ')<>COALESCE(TO_CHAR(et.Description), ' ')
+      OR COALESCE(TO_CHAR(AD_PROCESS_PARA_TRL.Help), ' ')<>COALESCE(TO_CHAR(et.Help), ' '))
       );
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
@@ -539,8 +539,8 @@
     WHERE AD_WF_NODE.IsCentrallyMaintained='Y'  AND EXISTS
       (SELECT *
       FROM AD_WINDOW w
-      WHERE w.AD_Window_ID=AD_WF_NODE.AD_Window_ID  AND(w.NAME&lt;&gt;AD_WF_NODE.NAME OR COALESCE(TO_CHAR(w.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(AD_WF_NODE.Description), ' ')
-      OR COALESCE(TO_CHAR(w.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(AD_WF_NODE.Help), ' '))
+      WHERE w.AD_Window_ID=AD_WF_NODE.AD_Window_ID  AND(w.NAME<>AD_WF_NODE.NAME OR COALESCE(TO_CHAR(w.Description), ' ')<>COALESCE(TO_CHAR(AD_WF_NODE.Description), ' ')
+      OR COALESCE(TO_CHAR(w.Help), ' ')<>COALESCE(TO_CHAR(AD_WF_NODE.Help), ' '))
       )
       ;
     v_rowcount:=SQL%ROWCOUNT;
@@ -571,8 +571,8 @@
       FROM AD_WINDOW_TRL t, AD_WF_NODE n
       WHERE AD_WF_NODE_TRL.AD_WF_Node_ID=n.AD_WF_Node_ID AND n.AD_Window_ID=t.AD_Window_ID
       AND AD_WF_NODE_TRL.AD_LANGUAGE=t.AD_LANGUAGE AND n.IsCentrallyMaintained='Y' AND n.IsActive='Y'
-      AND(AD_WF_NODE_TRL.NAME&lt;&gt;t.NAME OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(t.Description), ' ')
-      OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(t.Help), ' '))
+      AND(AD_WF_NODE_TRL.NAME<>t.NAME OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Description), ' ')<>COALESCE(TO_CHAR(t.Description), ' ')
+      OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Help), ' ')<>COALESCE(TO_CHAR(t.Help), ' '))
       )
       ;
     v_rowcount:=SQL%ROWCOUNT;
@@ -592,8 +592,8 @@
     WHERE AD_WF_NODE.IsCentrallyMaintained='Y'  AND EXISTS
       (SELECT *
       FROM AD_FORM f
-      WHERE f.AD_Form_ID=AD_WF_NODE.AD_Form_ID  AND(f.NAME&lt;&gt;AD_WF_NODE.NAME OR COALESCE(TO_CHAR(f.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(AD_WF_NODE.Description), ' ')
-      OR COALESCE(TO_CHAR(f.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(AD_WF_NODE.Help), ' '))
+      WHERE f.AD_Form_ID=AD_WF_NODE.AD_Form_ID  AND(f.NAME<>AD_WF_NODE.NAME OR COALESCE(TO_CHAR(f.Description), ' ')<>COALESCE(TO_CHAR(AD_WF_NODE.Description), ' ')
+      OR COALESCE(TO_CHAR(f.Help), ' ')<>COALESCE(TO_CHAR(AD_WF_NODE.Help), ' '))
       )
       ;
     v_rowcount:=SQL%ROWCOUNT;
@@ -624,8 +624,8 @@
       FROM AD_FORM_TRL t, AD_WF_NODE n
       WHERE AD_WF_NODE_TRL.AD_WF_Node_ID=n.AD_WF_Node_ID AND n.AD_Form_ID=t.AD_Form_ID
       AND AD_WF_NODE_TRL.AD_LANGUAGE=t.AD_LANGUAGE AND n.IsCentrallyMaintained='Y' AND n.IsActive='Y'
-      AND(AD_WF_NODE_TRL.NAME&lt;&gt;t.NAME OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Description), ' ')&lt;&gt;COALESCE(TO_CHAR(t.Description), ' ')
-      OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Help), ' ')&lt;&gt;COALESCE(TO_CHAR(t.Help), ' '))
+      AND(AD_WF_NODE_TRL.NAME<>t.NAME OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Description), ' ')<>COALESCE(TO_CHAR(t.Description), ' ')
+      OR COALESCE(TO_CHAR(AD_WF_NODE_TRL.Help), ' ')<>COALESCE(TO_CHAR(t.Help), ' '))
       )
       ;
     v_rowcount:=SQL%ROWCOUNT;
@@ -641,7 +641,7 @@
       (SELECT *
       FROM AD_ELEMENT e, AD_COLUMN c
       WHERE e.AD_Element_ID=c.AD_Element_ID  AND c.AD_Column_ID=AD_PRINTFORMATITEM.AD_Column_ID
-      AND e.NAME&lt;&gt;AD_PRINTFORMATITEM.NAME
+      AND e.NAME<>AD_PRINTFORMATITEM.NAME
       )
       AND EXISTS
       (SELECT *
@@ -662,7 +662,7 @@
       (SELECT *
       FROM AD_ELEMENT e, AD_COLUMN c, AD_PRINTFORMAT pf
       WHERE e.AD_Element_ID=c.AD_Element_ID  AND c.AD_Column_ID=AD_PRINTFORMATITEM.AD_Column_ID
-      AND LENGTH(AD_PRINTFORMATITEM.PrintName)&gt;0  AND e.PrintName&lt;&gt;AD_PRINTFORMATITEM.PrintName
+      AND LENGTH(AD_PRINTFORMATITEM.PrintName)>0  AND e.PrintName<>AD_PRINTFORMATITEM.PrintName
       AND pf.AD_PrintFormat_ID=AD_PRINTFORMATITEM.AD_PrintFormat_ID  AND pf.IsForm='N' AND IsTableBased='Y'
       )
       AND EXISTS
@@ -686,7 +686,7 @@
       FROM AD_ELEMENT_TRL e, AD_COLUMN c, AD_PRINTFORMATITEM pfi, AD_PRINTFORMAT pf
       WHERE e.AD_LANGUAGE=AD_PRINTFORMATITEM_TRL.AD_LANGUAGE  AND e.AD_Element_ID=c.AD_Element_ID
       AND c.AD_Column_ID=pfi.AD_Column_ID  AND pfi.AD_PrintFormatItem_ID=AD_PRINTFORMATITEM_TRL.AD_PrintFormatItem_ID
-      AND LENGTH(pfi.PrintName)&gt;0  AND(e.PrintName&lt;&gt;AD_PRINTFORMATITEM_TRL.PrintName OR AD_PRINTFORMATITEM_TRL.PrintName IS NULL)
+      AND LENGTH(pfi.PrintName)>0  AND(e.PrintName<>AD_PRINTFORMATITEM_TRL.PrintName OR AD_PRINTFORMATITEM_TRL.PrintName IS NULL)
       AND pf.AD_PrintFormat_ID=pfi.AD_PrintFormat_ID  AND pf.IsForm='N' AND IsTableBased='Y'
       )
       AND EXISTS
@@ -708,7 +708,7 @@
       (SELECT *
       FROM AD_PRINTFORMATITEM pfi, AD_PRINTFORMAT pf
       WHERE pfi.AD_PrintFormatItem_ID=AD_PRINTFORMATITEM_TRL.AD_PrintFormatItem_ID
-      AND LENGTH(pfi.PrintName)&gt;0  AND pfi.PrintName&lt;&gt;AD_PRINTFORMATITEM_TRL.PrintName
+      AND LENGTH(pfi.PrintName)>0  AND pfi.PrintName<>AD_PRINTFORMATITEM_TRL.PrintName
       AND pf.AD_PrintFormat_ID=pfi.AD_PrintFormat_ID  AND pf.IsForm='N' AND pf.IsTableBased='Y'
       )
       AND EXISTS
@@ -936,7 +936,7 @@
       ;
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  trl rows updated: ' || v_rowcount) ;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
@@ -955,6 +955,7 @@ WHEN OTHERS THEN
   RETURN;
 END Ad_Synchronize
 
-</body>
+
+]]></body>
     </function>
   </database>

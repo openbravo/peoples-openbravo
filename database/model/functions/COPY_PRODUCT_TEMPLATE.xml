@@ -2,7 +2,7 @@
   <database name="FUNCTION COPY_PRODUCT_TEMPLATE">
     <function name="COPY_PRODUCT_TEMPLATE" type="NULL">
       <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -114,7 +114,7 @@
         (SELECT MAX(VALIDFROM)
         FROM M_PRICELIST_VERSION
         WHERE ISACTIVE='Y'
-          AND VALIDFROM&lt;=TO_CHAR(Now(), 'DD/MM/YYYY')
+          AND VALIDFROM<=TO_CHAR(Now(), 'DD/MM/YYYY')
           AND M_PRICELIST_ID=v_Mpricelist
         )
         AND M_PRICELIST_VERSION.M_PRICELIST_ID=v_Mpricelist
@@ -165,7 +165,7 @@
       v_NoOfLines:=v_NoOfLines + 1;
     END LOOP;
     v_Message:='@Copied@=' || v_NoOfLines ;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     Ad_Update_Pinstance(PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -179,6 +179,7 @@ WHEN OTHERS THEN
   RETURN;
 END Copy_Product_Template
 
-</body>
+
+]]></body>
     </function>
   </database>

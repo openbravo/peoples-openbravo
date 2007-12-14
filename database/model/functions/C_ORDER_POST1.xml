@@ -3,7 +3,7 @@
     <function name="C_ORDER_POST1" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Order_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -151,11 +151,11 @@
       /**
       * Waiting on Prepayment  can only be closed
       */
-      IF(v_DocStatus='WP' AND v_DocAction&lt;&gt;'CL') THEN
+      IF(v_DocStatus='WP' AND v_DocAction<>'CL') THEN
         RAISE_APPLICATION_ERROR(-20000, '@WaitingPayment@') ;
       END IF;
     END IF;--FINISH_PROCESS
-    IF (v_DocSubTypeSO='PR' AND v_invoicerule &lt;&gt; 'I') THEN
+    IF (v_DocSubTypeSO='PR' AND v_invoicerule <> 'I') THEN
       RAISE_APPLICATION_ERROR(-20000, '@PrepayMustImmediate@');
     END IF;
     IF(NOT FINISH_PROCESS) THEN
@@ -222,7 +222,7 @@
           IF(v_DocSubTypeSO IN('WI', 'WP', 'WR')) THEN
             -- Cancel existing Deli very + Invoice Documents
             M_Inout_Cancel(NULL, v_Record_ID) ;
-            IF(v_DocSubTypeSO&lt;&gt;'WP') THEN
+            IF(v_DocSubTypeSO<>'WP') THEN
               C_Invoice_Cancel(NULL, v_Record_ID);
             END IF;
           END IF;
@@ -384,7 +384,7 @@
          C_DOCTYPE
    WHERE C_DocType.DocBaseType IN ('SOO', 'POO')
      AND C_DocType.IsSOTrx=C.ISSOTRX
-    AND AD_ISORGINCLUDED(C.AD_Org_ID,C_DocType.AD_Org_ID, C.AD_Client_ID) &lt;&gt; -1
+    AND AD_ISORGINCLUDED(C.AD_Org_ID,C_DocType.AD_Org_ID, C.AD_Client_ID) <> -1
     AND C.C_DOCTYPETARGET_ID = C_DOCTYPE.C_DOCTYPE_ID
     AND C.C_ORDER_ID = v_Record_ID;
    IF v_Count=0 THEN
@@ -410,7 +410,7 @@
             QuantityOrder=QuantityOrder,
             Updated=Now()
           WHERE C_Order_ID=v_Record_ID
-            AND QtyOrdered&lt;&gt;QtyDelivered;
+            AND QtyOrdered<>QtyDelivered;
           -- For Purchase orders, M_MatchPO table used. Notice that only delivered lines(C_Invoiceline_Id is null) using
         ELSE
           UPDATE C_ORDERLINE
@@ -459,7 +459,7 @@
           LineNetAmt=0,
           Updated=Now()
         WHERE C_Order_ID=v_Record_ID
-          AND QtyOrdered&lt;&gt;0;
+          AND QtyOrdered<>0;
       END IF;
     END IF;--FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
@@ -490,7 +490,7 @@
       FROM AD_CLIENTINFO
       WHERE AD_CLIENT_ID=v_Client_ID
         AND CHECKORDERORG='Y';
-      IF v_count&gt;0 THEN
+      IF v_count>0 THEN
         v_ResultStr:='CheckingRestrictions - C_ORDER ORG IS IN C_BPARTNER ORG TREE';
         SELECT COUNT(*)
         INTO v_count
@@ -499,7 +499,7 @@
         WHERE c.C_Order_ID=v_Record_ID
           AND c.C_BPARTNER_ID=bp.C_BPARTNER_ID
           AND Ad_Isorgincluded(c.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1;
-        IF v_count&gt;0 THEN
+        IF v_count>0 THEN
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerOrder@') ;
         END IF;
       END IF;
@@ -512,11 +512,11 @@
         v_DocSubTypeSO_Target CHAR(2) ;
       BEGIN
         v_ResultStr:='ConvertingDocType';
-        IF(v_DocType_ID&lt;&gt;v_DocTypeTarget_ID) THEN
+        IF(v_DocType_ID<>v_DocTypeTarget_ID) THEN
           -- New
           IF(v_DocStatus='DR' OR v_DocType_ID=0) THEN
             -- Update to Target Document Type
-            WHILE(v_DocType_ID&lt;&gt;v_DocTypeTarget_ID)
+            WHILE(v_DocType_ID<>v_DocTypeTarget_ID)
             LOOP
             BEGIN
               v_ResultStr:='UpdateDocType';
@@ -540,7 +540,7 @@
           -- Change Offer to anything, Change InProcess to anything
           IF(v_DocSubTypeSO IN('ON', 'OB') OR v_DocStatus='IP') THEN
             -- Update to Target Document Type
-            WHILE(v_DocType_ID&lt;&gt;v_DocTypeTarget_ID)
+            WHILE(v_DocType_ID<>v_DocTypeTarget_ID)
             LOOP
             BEGIN
               v_ResultStr:='UpdateDocType';
@@ -562,7 +562,7 @@
           RAISE_APPLICATION_ERROR(-20000, '@CannotChangeDocType@') ;
         END IF;
       END IF;
-    END IF; -- C_DocType_ID &lt;&gt; C_DocTypeTarget_ID
+    END IF; -- C_DocType_ID <> C_DocTypeTarget_ID
   END; -- Conversion
 END IF;--FINISH_PROCESS
 IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
@@ -627,7 +627,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
           FROM M_PRICELIST_VERSION v,
             C_ORDER o
           WHERE v.M_PriceList_ID=o.M_PriceList_ID
-            AND v.ValidFrom&lt;=o.DateOrdered
+            AND v.ValidFrom<=o.DateOrdered
             AND v.IsActive='Y'
             AND o.C_Order_ID=v_Record_ID
           ORDER BY v.ValidFrom DESC
@@ -764,7 +764,7 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
          AND p.IsStocked='Y' AND p.ProductType='I'
          -- Target Level = 0 if DirectShip='Y' or Binding='N'
          AND (CASE l.DirectShip WHEN 'Y' THEN 0 ELSE (CASE v_IsBinding WHEN 'N' THEN 0 ELSE l.QtyOrdered END)END)
-         -l.QtyReserved-l.QtyDelivered &lt;&gt; 0
+         -l.QtyReserved-l.QtyDelivered <> 0
        FOR UPDATE) LOOP
    -- Qty corrected for SO/PO
    IF (v_DocSubTypeSO IS NOT NULL) THEN
@@ -799,7 +799,7 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
     WHERE C_OrderLine_ID = Cur_ResLine.C_OrderLine_ID;
    END IF;
    rowcount:=SQL%ROWCOUNT;
-   IF (rowcount &lt;&gt; 1) THEN
+   IF (rowcount <> 1) THEN
        IF (p_PInstance_ID IS NOT NULL) THEN
  ROLLBACK;
      v_ResultStr := 'LockingOrder';
@@ -925,8 +925,8 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
     SET AD_Client_ID=v_Client_ID,
     AD_Org_ID=v_Org_ID
   WHERE C_Order_ID=v_Record_ID
-    AND(AD_Client_ID&lt;&gt;v_Client_ID
-    OR AD_Org_ID&lt;&gt;v_Org_ID) ;
+    AND(AD_Client_ID<>v_Client_ID
+    OR AD_Org_ID<>v_Org_ID) ;
 END IF;--FINISH_PROCESS
 IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
   /**************************************************************************
@@ -993,8 +993,8 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     FROM C_DOCTYPE
     WHERE C_DocType_ID=v_DocType_ID;
     DBMS_OUTPUT.PUT_LINE('IsApproved=' || v_IsApproved) ;
-    IF(v_IsApproved&lt;&gt;'N') THEN -- Approval needed
-      IF(v_DocAction&lt;&gt;'AP') THEN
+    IF(v_IsApproved<>'N') THEN -- Approval needed
+      IF(v_DocAction<>'AP') THEN
         UPDATE C_ORDER
           SET DocStatus='NA',
           DocAction='AP',
@@ -1029,7 +1029,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
   /**************************************************************************
   * Prepayment Order  Create Invoice
   *************************************************************************/
-  IF(v_DocSubTypeSO='PR' AND v_DocStatus&lt;&gt;'WP') THEN
+  IF(v_DocSubTypeSO='PR' AND v_DocStatus<>'WP') THEN
     DBMS_OUTPUT.PUT_LINE('Create PreInvoice - ' || v_Record_ID) ;
     v_ResultStr:='CreatePreInvoice';
     C_Invoice_Create(NULL, v_Record_ID, Invoice_ID) ;
@@ -1387,7 +1387,7 @@ END;
 END IF;--FINISH_PROCESS
 IF(NOT FINISH_PROCESS) THEN
   -- End Processing --------------------------------------------------------
-  --&lt;&lt;END_PROCESSING&gt;&gt;
+  --<<END_PROCESSING>>
   -- Cloase Order
   IF(v_DocAction='CL') THEN
     UPDATE C_ORDER
@@ -1406,7 +1406,7 @@ IF(NOT FINISH_PROCESS) THEN
     COMMIT;
   END IF;
 END IF;--FINISH_PROCESS
---&lt;&lt;FINISH_PROCESS&gt;&gt;
+--<<FINISH_PROCESS>>
 IF(p_PInstance_ID IS NOT NULL) THEN
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
@@ -1447,6 +1447,7 @@ WHEN OTHERS THEN
   END IF;
   RETURN;
 END C_Order_Post1
-</body>
+
+]]></body>
     </function>
   </database>

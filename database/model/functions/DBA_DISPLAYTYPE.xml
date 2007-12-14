@@ -2,7 +2,7 @@
   <database name="FUNCTION DBA_DISPLAYTYPE">
     <function name="DBA_DISPLAYTYPE" type="VARCHAR">
       <parameter name="p_AD_Reference_ID" type="NUMERIC" mode="in"/>
-      <body>BEGIN
+      <body><![CDATA[BEGIN
 /*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -12,7 +12,7 @@
 * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
 * implied. See the License for the specific language governing rights
 * and limitations under the License.
-* The Original Code is  Compiere  ERP &amp;  Business Solution
+* The Original Code is  Compiere  ERP &  Business Solution
 * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
 Inc.
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -78,6 +78,7 @@ Inc.
     RETURN 'Unknown ('||p_AD_Reference_ID||')';
   END IF;
 END DBA_DisplayType
-</body>
+
+]]></body>
     </function>
   </database>

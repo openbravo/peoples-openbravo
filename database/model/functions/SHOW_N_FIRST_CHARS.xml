@@ -3,7 +3,7 @@
     <function name="SHOW_N_FIRST_CHARS" type="VARCHAR">
       <parameter name="p_text" type="VARCHAR"/>
       <parameter name="p_numChar" type="NUMERIC"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -21,11 +21,12 @@
 ************************************************************************/
   v_Auxtext VARCHAR2(3) ;
 BEGIN
-  IF(LENGTH(p_text) &gt; p_numChar) THEN
+  IF(LENGTH(p_text) > p_numChar) THEN
     v_Auxtext := '...';
   END IF;
   RETURN(SUBSTR(p_text, 1, p_numChar) || v_Auxtext) ;
 END SHOW_N_FIRST_CHARS
-</body>
+
+]]></body>
     </function>
   </database>

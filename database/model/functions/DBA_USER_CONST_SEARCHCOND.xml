@@ -2,7 +2,7 @@
   <database name="FUNCTION DBA_USER_CONST_SEARCHCOND">
     <function name="DBA_USER_CONST_SEARCHCOND" type="VARCHAR">
       <parameter name="p_constraintName" type="VARCHAR" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -34,6 +34,7 @@
     END LOOP;
     RETURN(v_varchar2) ;
 END DBA_USER_CONST_SEARCHCOND
-</body>
+
+]]></body>
     </function>
   </database>

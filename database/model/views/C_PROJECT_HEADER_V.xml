@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW C_PROJECT_HEADER_V">
-    <view name="C_PROJECT_HEADER_V" updatable="false">SELECT p.AD_Client_ID, p.AD_Org_ID, p.IsActive, p.Created, p.CreatedBy, p.Updated, p.UpdatedBy,
+    <view name="C_PROJECT_HEADER_V"><![CDATA[SELECT p.AD_Client_ID, p.AD_Org_ID, p.IsActive, p.Created, p.CreatedBy, p.Updated, p.UpdatedBy,
   TO_CHAR('en_US') AS AD_Language, p.C_Project_ID,
     p.Value, p.Name AS ProjectName, p.Description, p.Note, p.IsSummary, p.ProjectCategory,
     oi.C_Location_ID AS Org_Location_ID, oi.TaxID,
@@ -32,5 +32,5 @@ FROM C_Project p
   LEFT OUTER JOIN AD_User bpc ON (p.AD_User_ID=bpc.AD_User_ID)
   LEFT OUTER JOIN C_Greeting bpcg on (bpc.C_Greeting_ID=bpcg.C_Greeting_ID)
   LEFT OUTER JOIN C_BPartner_Location bpl ON (p.C_BPartner_Location_ID=bpl.C_BPartner_Location_ID)
-  LEFT OUTER JOIN C_PaymentTerm pt ON (p.C_PaymentTerm_ID=pt.C_PaymentTerm_ID)</view>
+  LEFT OUTER JOIN C_PaymentTerm pt ON (p.C_PaymentTerm_ID=pt.C_PaymentTerm_ID)]]></view>
   </database>

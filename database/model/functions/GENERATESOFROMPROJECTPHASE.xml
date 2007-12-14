@@ -2,7 +2,7 @@
   <database name="FUNCTION GENERATESOFROMPROJECTPHASE">
     <function name="GENERATESOFROMPROJECTPHASE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -81,7 +81,7 @@
       LOOP
         -- Check that we have some restrictions
         /*v_ResultStr := 'CheckRestriction';
-        IF (Cur_SO.PROJECTSTATUS IS NULL OR Cur_SO.PROJECTSTATUS &lt;&gt; 'OR') THEN
+        IF (Cur_SO.PROJECTSTATUS IS NULL OR Cur_SO.PROJECTSTATUS <> 'OR') THEN
         v_Message := 'InvalidProjectStatus';
         v_Result := 0;
         FINISH_PROCESS;
@@ -165,7 +165,7 @@
               AND pv.IsActive='Y'
               AND p.M_Product_ID=Cur_SOLINES.M_PRODUCT_ID
               AND pv.M_PriceList_Version_ID=v_M_PriceList_Version_ID;
-            IF(v_Size&gt;0) THEN
+            IF(v_Size>0) THEN
               SELECT Bom_Pricestd(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceStd,
                 Bom_Pricelist(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceList,
                 Bom_Pricelimit(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceLimit,
@@ -203,7 +203,7 @@
               AND p.M_Product_ID=Cur_SOLINES.M_PRODUCT_ID
               AND pv.M_PriceList_ID=COALESCE(Cur_SO.M_PRICELIST_ID, v_M_PriceList_ID, v_M_PriceList_ID2)
             ORDER BY pv.ValidFrom DESC;
-            IF(v_Size&gt;0) THEN
+            IF(v_Size>0) THEN
               SELECT Bom_Pricestd(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceStd,
                 Bom_Pricelist(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceList,
                 Bom_Pricelimit(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceLimit,
@@ -236,7 +236,7 @@
                   AND pv.M_PriceList_ID=bpl.M_PriceList_ID
                   AND bpl.M_PriceList_ID=pl.BasePriceList_ID
                   AND pv.IsActive='Y'
-                  AND pv.ValidFrom&lt;=Now()
+                  AND pv.ValidFrom<=Now()
                   AND p.M_Product_ID=Cur_SOLINES.M_PRODUCT_ID
                   AND pl.M_PriceList_ID=COALESCE(Cur_SO.M_PRICELIST_ID, v_M_PriceList_ID, v_M_PriceList_ID2)
                 ORDER BY pv.ValidFrom DESC
@@ -301,7 +301,7 @@
       END LOOP;
       v_Message:='@DocumentNo@: ' || v_Message;
     END;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -316,6 +316,7 @@ WHEN OTHERS THEN
   RETURN;
 END Generatesofromprojectphase
 
-</body>
+
+]]></body>
     </function>
   </database>

@@ -2,7 +2,7 @@
   <database name="FUNCTION GL_JOURNALBATCH_POST">
     <function name="GL_JOURNALBATCH_POST" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -11,7 +11,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -87,7 +87,7 @@
         )
         ;
     END;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -101,6 +101,7 @@ EXCEPTION
     RETURN;
 END GL_JournalBatch_Post
 
-</body>
+
+]]></body>
     </function>
   </database>

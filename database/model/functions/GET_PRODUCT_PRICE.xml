@@ -3,7 +3,7 @@
     <function name="GET_PRODUCT_PRICE" type="NUMERIC">
       <parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_M_Product_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -42,7 +42,7 @@ BEGIN
         AND AD_CLIENT_ID = p_AD_Client_ID
         AND ISACTIVE = 'Y'
       )
-      AND VALIDFROM &lt;= TO_CHAR(SYSDATE, 'DD/MM/YYYY')
+      AND VALIDFROM <= TO_CHAR(SYSDATE, 'DD/MM/YYYY')
     )
     ;
   IF(v_M_PriceList_Version_ID IS NULL) THEN
@@ -60,6 +60,7 @@ BEGIN
   END IF;
   RETURN v_Price;
 END Get_Product_Price
-</body>
+
+]]></body>
     </function>
   </database>

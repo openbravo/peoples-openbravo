@@ -2,7 +2,7 @@
   <database name="FUNCTION A_AMORTIZATION_PROCESS">
     <function name="A_AMORTIZATION_PROCESS" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -97,7 +97,7 @@
         SET IsFullyDepreciated='Y'
       WHERE COALESCE(AmortizationValueAmt, -1)=COALESCE(DepreciatedValue, -2) ;
     END IF;
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
@@ -120,6 +120,7 @@ WHEN OTHERS THEN
 --  RETURN;
 END a_Amortization_Process
 
-</body>
+
+]]></body>
     </function>
   </database>

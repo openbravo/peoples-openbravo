@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_PROJECT_TRG3">
     <trigger name="C_PROJECT_TRG3" table="C_PROJECT" fires="before" insert="false" update="false" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -42,6 +43,7 @@ BEGIN
   END IF;
 END C_Project_Trg3 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

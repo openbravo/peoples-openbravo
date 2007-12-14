@@ -2,7 +2,7 @@
   <database name="FUNCTION TRANSLATE_TAXCATEGORY_ID">
     <function name="TRANSLATE_TAXCATEGORY_ID" type="NUMERIC">
       <parameter name="p_TaxcategoryId" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -26,7 +26,7 @@ BEGIN
   WHERE C_TaxCategory_ID = p_TaxcategoryId
     AND(UPPER(Name) LIKE '%SUPERREDUCIDO%'
     OR UPPER(Name) LIKE '%4%') ;
-  IF v_Total &lt;&gt; 0 THEN
+  IF v_Total <> 0 THEN
     RETURN 3;
   END IF;
   SELECT COALESCE(COUNT(C_TaxCategory_ID), 0)
@@ -35,12 +35,13 @@ BEGIN
   WHERE C_TaxCategory_ID = p_TaxcategoryId
     AND(UPPER(Name) LIKE '%REDUCIDO%'
     OR UPPER(Name) LIKE '%7%') ;
-  IF v_Total &lt;&gt; 0 THEN
+  IF v_Total <> 0 THEN
     RETURN 2;
   ELSE
     RETURN 1;
   END IF;
 END Translate_TaxCategory_ID
-</body>
+
+]]></body>
     </function>
   </database>

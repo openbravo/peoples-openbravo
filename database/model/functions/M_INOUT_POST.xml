@@ -3,7 +3,7 @@
     <function name="M_INOUT_POST" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_InOut_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -12,7 +12,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -98,7 +98,7 @@
       END LOOP; -- Get Parameter
       DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;M_InOut_Post&gt;&gt;') ;
+      DBMS_OUTPUT.PUT_LINE('--<<M_InOut_Post>>') ;
       v_Record_ID:=p_InOut_ID;
     END IF;
   BEGIN --BODY
@@ -111,7 +111,7 @@
     FROM AD_CLIENTINFO
     WHERE AD_CLIENT_ID=v_AD_Client_ID
       AND CHECKINOUTORG='Y';
-    IF v_Count&gt;0 THEN
+    IF v_Count>0 THEN
       v_ResultStr:='CheckingRestrictions - M_INOUT ORG IS IN C_BPARTNER ORG TREE';
       SELECT count(*)
       INTO v_Count
@@ -120,7 +120,7 @@
       WHERE m.M_InOut_ID=v_Record_ID
         AND m.C_BPARTNER_ID=bp.C_BPARTNER_ID
         AND AD_IsOrgIncluded(m.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1;
-      IF v_Count&gt;0 THEN
+      IF v_Count>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerInout@') ;
       END IF;
     END IF;
@@ -133,7 +133,7 @@
    WHERE M_Inout_ID = v_Record_ID
      AND C_DocType.DocBaseType IN ('MMR', 'MMS')
     AND C_DocType.IsSOTrx=M.IsSOTrx
-    AND AD_ISORGINCLUDED(m.AD_Org_ID,C_DocType.AD_Org_ID, m.AD_Client_ID) &lt;&gt; -1
+    AND AD_ISORGINCLUDED(m.AD_Org_ID,C_DocType.AD_Org_ID, m.AD_Client_ID) <> -1
      AND M.C_DOCTYPE_ID=C_DocType.C_DOCTYPE_ID;
       IF v_Count=0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgDoctypeShipment@') ;
@@ -146,7 +146,7 @@
         AND P.M_ATTRIBUTESET_ID IS NOT NULL
         AND M.M_ATTRIBUTESETINSTANCE_ID IS NULL
         AND M.M_INOUT_ID=v_Record_ID;
-      IF v_Count&lt;&gt;0 THEN
+      IF v_Count<>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@productWithoutAttributeSet@') ;
       END IF;
       SELECT COUNT(*), MAX(M.line)
@@ -159,7 +159,7 @@
         AND P.ISLOCKED='Y'
         AND I.ISSOTRX='Y'
         AND I.M_INOUT_ID=v_Record_ID;
-      IF v_Count&lt;&gt;0 THEN
+      IF v_Count<>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@lockedProduct@') ;
       END IF;
       -- Process Shipments
@@ -303,7 +303,7 @@
                 Ad_Sequence_Next('M_MatchPO', Cur_SLines.AD_Org_ID, v_MatchPO_ID) ;
                 -- The min qty. Modified by Ismael Ciordia
                 v_Qty:=Cur_SLines.MovementQty;
-                --IF (ABS(Cur_SLines.MovementQty) &gt; ABS(Cur_SLines.QtyOrdered)) THEN
+                --IF (ABS(Cur_SLines.MovementQty) > ABS(Cur_SLines.QtyOrdered)) THEN
                 -- v_Qty := Cur_SLines.QtyOrdered;
                 --END IF;
                 v_ResultStr:='InsertMatchPO ' || v_MatchPO_ID;
@@ -343,7 +343,7 @@
                 Ad_Sequence_Next('M_MatchInv', Cur_ILines.AD_Org_ID, v_MatchInv_ID) ;
                 -- The min qty. Modified by Ismael Ciordia
                 v_Qty:=Cur_ILines.MovementQty;
-                --IF (ABS(Cur_ILines.MovementQty) &gt; ABS(Cur_ILines.QtyInvoiced)) THEN
+                --IF (ABS(Cur_ILines.MovementQty) > ABS(Cur_ILines.QtyInvoiced)) THEN
                 -- v_Qty := Cur_ILines.QtyInvoiced;
                 --END IF;
                 v_ResultStr:='InsertMatchPO ' || v_MatchPO_ID;
@@ -515,13 +515,13 @@
       */
       v_ResultStr:='Fini';
     END IF; --FINISH_PROCESS
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
       AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;M_InOut_Post finished&gt;&gt;') ;
+      DBMS_OUTPUT.PUT_LINE('--<<M_InOut_Post finished>>') ;
     END IF;
     RETURN;
   END; --BODY
@@ -556,6 +556,7 @@ WHEN OTHERS THEN
   RETURN;
 END M_Inout_Post
 
-</body>
+
+]]></body>
     </function>
   </database>

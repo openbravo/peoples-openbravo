@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_EXTERNALPOS_TRG">
     <trigger name="C_EXTERNALPOS_TRG" table="C_EXTERNALPOS" fires="before" insert="true" update="false" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
     /*************************************************************************
@@ -27,6 +28,7 @@
  END IF;
 END C_ExternalPOS_Trg 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

@@ -2,7 +2,7 @@
   <database name="FUNCTION A_ASSET_POST0">
     <function name="A_ASSET_POST0" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
  * The contents of this file are subject to the Compiere License.  You may
  * obtain a copy of the License at    http://www.compiere.org/license.html
  * Software is on an  "AS IS" basis,  WITHOUT WARRANTY OF ANY KIND, either
@@ -17,6 +17,7 @@ BEGIN
  A_Asset_Post (p_PInstance_ID, NULL);
 END A_Asset_Post0
 
-</body>
+
+]]></body>
     </function>
   </database>

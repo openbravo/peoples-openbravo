@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION NUMBER_NULL">
     <function name="NUMBER_NULL" type="NUMERIC">
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -20,6 +20,7 @@
 BEGIN
   RETURN(Null) ;
 END NUMBER_NULL
-</body>
+
+]]></body>
     </function>
   </database>

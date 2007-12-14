@@ -2,7 +2,7 @@
   <database name="FUNCTION M_INOUT_UPDATEQUANTITYES">
     <function name="M_INOUT_UPDATEQUANTITYES" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -102,7 +102,7 @@
         COALESCE(QUANTITYORDER, 0)
       )
       A;
-    IF(v_Total&gt;0) THEN
+    IF(v_Total>0) THEN
       v_Message:='LinesNotMatch';
       v_Result:=0;
       FINISH_PROCESS:=true;
@@ -151,7 +151,7 @@
           WHERE M_INOUTLINE.M_INOUTLINE_ID=v_Lines_Aux;
         END LOOP;
       END;
-    END IF;----&lt;&lt;FINISH_PROCESS&gt;&gt;
+    END IF;----<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
@@ -166,6 +166,7 @@ WHEN OTHERS THEN
   RETURN;
 END M_InOut_UpdateQuantityes
 
-</body>
+
+]]></body>
     </function>
   </database>

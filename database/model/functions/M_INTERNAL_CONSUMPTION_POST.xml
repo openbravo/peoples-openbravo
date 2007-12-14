@@ -2,7 +2,7 @@
   <database name="FUNCTION M_INTERNAL_CONSUMPTION_POST">
     <function name="M_INTERNAL_CONSUMPTION_POST" type="NULL">
       <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -11,7 +11,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -99,7 +99,7 @@
         AND P.M_ATTRIBUTESET_ID IS NOT NULL
         AND M.M_ATTRIBUTESETINSTANCE_ID IS NULL
         AND M.M_Internal_Consumption_ID=Record_ID;
-      IF v_Count&lt;&gt;0 THEN
+      IF v_Count<>0 THEN
        RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@productWithoutAttributeSet@') ;
       END IF;
     END IF;--END_PROCESS
@@ -155,14 +155,14 @@
     END IF;--END PROCESS
     IF(NOT END_PROCESS) THEN
       -- End Processing --------------------------------------------------------
-      --&lt;&lt;END_PROCESSING&gt;&gt;
+      --<<END_PROCESSING>>
       v_ResultStr:='UnLockingMovement';
       UPDATE M_Internal_Consumption
         SET Processed='Y'
       WHERE M_Internal_Consumption_ID=Record_ID;
       -- Commented by cromero 19102006 COMMIT;
     END IF;--END_PROCESS
-    --&lt;&lt;END_PROCESS&gt;&gt;
+    --<<END_PROCESS>>
     v_ResultStr:='UnLockingMovement';
     UPDATE M_Internal_Consumption
       SET Processing='N'
@@ -185,6 +185,7 @@ WHEN OTHERS THEN
   RETURN;
 END M_Internal_Consumption_Post
 
-</body>
+
+]]></body>
     </function>
   </database>

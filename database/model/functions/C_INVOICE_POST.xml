@@ -3,7 +3,7 @@
     <function name="C_INVOICE_POST" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Invoice_ID" type="NUMERIC" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
   * compliance with the License. You may obtain a copy of the License at
@@ -12,7 +12,7 @@
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
   * and limitations under the License.
-  * The Original Code is  Compiere  ERP &amp;  Business Solution
+  * The Original Code is  Compiere  ERP &  Business Solution
   * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
   Inc.
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
@@ -154,7 +154,7 @@
       END LOOP; -- Get Parameter
       DBMS_OUTPUT.PUT_LINE('  v_Record_ID=' || v_Record_ID) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;C_Invoive_Post&gt;&gt;') ;
+      DBMS_OUTPUT.PUT_LINE('--<<C_Invoive_Post>>') ;
       v_Record_ID:=p_Invoice_ID;
     END IF;
   BEGIN --BODY
@@ -174,7 +174,7 @@
      SELECT SUM(Amt) INTO v_acctAmount
   FROM C_INVOICELINE_ACCTDIMENSION
   WHERE C_InvoiceLine_ID = Cur_line.C_InvoiceLine_ID;
-  IF (v_acctAmount &lt;&gt; Cur_line.LinenetAmt) THEN
+  IF (v_acctAmount <> Cur_line.LinenetAmt) THEN
      v_Message:='@QuantitiesNotMatch@';
           RAISE_APPLICATION_ERROR(-20000, '@QuantitiesNotMatch@') ;
   END IF;
@@ -242,7 +242,7 @@
           INTO v_Aux
           FROM C_DEBT_PAYMENT
         WHERE C_Invoice_ID = v_Record_ID;
-        IF V_Aux&gt;0 THEN
+        IF V_Aux>0 THEN
       RAISE_APPLICATION_ERROR(-20000, '@InvoiceWithManualDP@');
         ELSE
           -- Reset Lines to 0
@@ -289,7 +289,7 @@
          C_DOCTYPE
    WHERE C_DOCTYPE.DocBaseType IN ('ARI', 'API','ARC','APC')
     AND C_DOCTYPE.IsSOTrx=C.ISSOTRX
-    AND Ad_Isorgincluded(C.AD_Org_ID,C_DOCTYPE.AD_Org_ID, C.AD_Client_ID) &lt;&gt; -1
+    AND Ad_Isorgincluded(C.AD_Org_ID,C_DOCTYPE.AD_Org_ID, C.AD_Client_ID) <> -1
     AND C.C_DOCTYPETARGET_ID = C_DOCTYPE.C_DOCTYPE_ID
     AND C.C_INVOICE_ID = V_RECORD_ID;
    IF v_Count=0 THEN
@@ -411,7 +411,7 @@
           -- Close Invoice
           UPDATE C_INVOICE
             SET DocStatus='RE', -- it IS reversed
-            Description=COALESCE(TO_CHAR(Description), '') || ' (*R* -&gt; ' || v_RDocumentNo || ')',
+            Description=COALESCE(TO_CHAR(Description), '') || ' (*R* -> ' || v_RDocumentNo || ')',
             DocAction='--',
             Processed='Y',
             Updated=Now()
@@ -428,7 +428,7 @@
           SELECT COUNT(*)
           INTO v_count
           FROM C_DEBT_PAYMENT dp
-          WHERE C_Debt_Payment_Status(dp.C_Settlement_Cancel_ID, dp.Cancel_Processed, dp.Generate_Processed, dp.IsPaid, dp.IsValid, dp.C_CashLine_ID, dp.C_BankStatementLine_ID)&lt;&gt;'P'
+          WHERE C_Debt_Payment_Status(dp.C_Settlement_Cancel_ID, dp.Cancel_Processed, dp.Generate_Processed, dp.IsPaid, dp.IsValid, dp.C_CashLine_ID, dp.C_BankStatementLine_ID)<>'P'
             AND(dp.C_Invoice_ID=v_Record_ID
             OR dp.C_Invoice_ID=v_RInvoice_ID) ;
           -- To cancel, the sum of amounts should be 0
@@ -500,7 +500,7 @@
         * Modified by Jon Alegria
         */
         IF(v_DocAction='RE') THEN
-          IF(v_DocStatus&lt;&gt;'CO') THEN
+          IF(v_DocStatus<>'CO') THEN
             RAISE_APPLICATION_ERROR(-20000, '@NotCompletedInvoice@');
           END IF;
           IF(NOT END_PROCESSING) THEN
@@ -513,9 +513,9 @@
             INTO v_RECount, v_Debtpayment_ID
             FROM C_DEBT_PAYMENT
             WHERE C_DEBT_PAYMENT.C_Invoice_ID=v_Record_ID
-            AND C_Debt_Payment_Status(C_Settlement_Cancel_ID, Cancel_Processed, C_DEBT_PAYMENT.Generate_Processed, IsPaid, IsValid, C_Cashline_ID, C_BankstatementLine_ID)&lt;&gt;'P'
+            AND C_Debt_Payment_Status(C_Settlement_Cancel_ID, Cancel_Processed, C_DEBT_PAYMENT.Generate_Processed, IsPaid, IsValid, C_Cashline_ID, C_BankstatementLine_ID)<>'P'
             AND C_ORDER_ID IS NULL;
-            IF(v_RECount&lt;&gt;0) THEN
+            IF(v_RECount<>0) THEN
               --Added by P.Sarobe. New messages
           SELECT c_Bankstatementline_Id, c_cashline_id, c_settlement_cancel_id, ispaid, cancel_processed
           INTO v_Bankstatementline_ID, v_CashLine_ID, v_Settlement_Cancel_ID, v_ispaid, v_Cancel_Processed
@@ -566,7 +566,7 @@
             SELECT MIN(DateAcct)
             INTO v_FirstSales
             FROM C_INVOICE
-            WHERE C_Invoice_ID&lt;&gt;v_Record_ID
+            WHERE C_Invoice_ID<>v_Record_ID
               AND C_BPartner_ID=v_BPartner_ID;
             UPDATE C_BPARTNER  SET FirstSale=v_FirstSales  WHERE C_BPartner_ID=v_BPartner_ID;
             -- Undo Last contact
@@ -575,7 +575,7 @@
                 DocumentNo,
                 Ad_User_ID
               FROM C_INVOICE
-              WHERE C_Invoice_ID&lt;&gt;v_Record_ID
+              WHERE C_Invoice_ID<>v_Record_ID
                 AND Ad_User_ID=v_BPartner_User_ID
               ORDER BY Updated DESC
               )
@@ -607,7 +607,7 @@
                     C_INVOICELINE
                   WHERE C_INVOICE.C_Invoice_ID=C_INVOICELINE.C_INVOICE_ID
                     AND C_INVOICELINE.C_ORDERLINE_ID=Cur_ReactivateInvoiceLine.C_ORDERLINE_ID
-                    AND C_INVOICELINE.C_InvoiceLine_ID&lt;&gt;Cur_ReactivateInvoiceLine.C_InvoiceLine_ID;
+                    AND C_INVOICELINE.C_InvoiceLine_ID<>Cur_ReactivateInvoiceLine.C_InvoiceLine_ID;
                   UPDATE C_ORDERLINE
                     SET QtyInvoiced=QtyInvoiced - Cur_ReactivateInvoiceLine.QtyInvoiced,
                     DateInvoiced=v_REDateInvoiced
@@ -620,7 +620,7 @@
                     M_INOUTLINE ml
                   WHERE M.M_InOut_ID=ml.M_InOut_ID
                     AND ml.M_InOutLine_ID=Cur_ReactivateInvoiceLine.M_InOutLine_ID;
-                  IF(v_REInOutStatus&lt;&gt;'RE') THEN
+                  IF(v_REInOutStatus<>'RE') THEN
                     SELECT COALESCE(SUM(C_INVOICELINE.QTYINVOICED), 0)
                     INTO v_REtotalQtyInvoiced
                     FROM C_INVOICELINE,
@@ -707,11 +707,11 @@
           WHERE c.C_BPARTNER_ID=bp.C_BPARTNER_ID
             AND Ad_Isorgincluded(c.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1
             AND c.C_Invoice_ID=v_Record_ID;
-          IF v_count&gt;0 THEN
+          IF v_count>0 THEN
             RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerInvoice@') ;
           END IF;
           IF(NOT FINISH_PROCESS) THEN
-            WHILE(v_DocType_ID&lt;&gt;v_DocTypeTarget_ID)
+            WHILE(v_DocType_ID<>v_DocTypeTarget_ID)
             LOOP
             BEGIN
               v_ResultStr:='UpdateDocType';
@@ -780,7 +780,7 @@
               FROM M_PRICELIST_VERSION v,
                 C_INVOICE o
               WHERE v.M_PriceList_ID=o.M_PriceList_ID
-                AND v.ValidFrom&lt;=o.DateOrdered
+                AND v.ValidFrom<=o.DateOrdered
                 AND v.IsActive='Y'
                 AND o.C_Invoice_ID=v_Record_ID
               ORDER BY v.ValidFrom DESC
@@ -938,7 +938,7 @@
               SUM(C_INVOICELINE.LINENETAMT) AS LINENETAMT
             FROM C_INVOICELINE
             WHERE C_INVOICE_ID=v_Record_ID
-              AND C_INVOICELINE.LINENETAMT&lt;&gt;0
+              AND C_INVOICELINE.LINENETAMT<>0
               AND C_INVOICE_DISCOUNT_ID IS NULL
             GROUP BY C_TAX_ID
             )
@@ -1111,13 +1111,13 @@
         UPDATE C_INVOICELINE
           SET AD_Client_ID=v_Client_ID
         WHERE C_Invoice_ID=v_Record_ID
-          AND AD_Client_ID&lt;&gt;v_Client_ID;
+          AND AD_Client_ID<>v_Client_ID;
         v_ResultStr:='SyncOwnershipOrg';
         UPDATE C_INVOICELINE
           SET AD_Org_ID=v_Org_ID
         WHERE C_Invoice_ID=v_Record_ID
           AND C_Charge_ID IS NULL -- sync for products
-          AND AD_Org_ID&lt;&gt;v_Org_ID;
+          AND AD_Org_ID<>v_Org_ID;
       END IF;--FINISH_PROCESS
       IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
         /**************************************************************************
@@ -1132,8 +1132,8 @@
           FROM C_DOCTYPE
           WHERE C_DocType_ID=v_DocType_ID;
           DBMS_OUTPUT.PUT_LINE('IsApproved=' || v_IsApproved) ;
-          IF(v_IsApproved&lt;&gt;'N') THEN -- Approval needed
-            IF(v_DocAction&lt;&gt;'AP') THEN
+          IF(v_IsApproved<>'N') THEN -- Approval needed
+            IF(v_DocAction<>'AP') THEN
               UPDATE C_INVOICE  SET DocStatus='NA'  WHERE C_Invoice_ID=v_Record_ID;
               v_Message:='NotApproved';
               DBMS_OUTPUT.PUT_LINE('Approval needed') ;
@@ -1203,7 +1203,7 @@
             LOOP
               -- The min qty. Modified by Ismael Ciordia
               --v_Qty := Cur_ILines_Receipt.MovementQty;
-              --IF (ABS(Cur_ILines_Receipt.MovementQty) &gt; ABS(Cur_ILines_Receipt.QtyInvoiced)) THEN
+              --IF (ABS(Cur_ILines_Receipt.MovementQty) > ABS(Cur_ILines_Receipt.QtyInvoiced)) THEN
               v_Qty:=Cur_ILines_Receipt.QtyInvoiced;
               --END IF;
               Ad_Sequence_Next('M_MatchInv', Cur_ILines_Receipt.AD_Org_ID, v_MatchInv_ID) ;
@@ -1249,7 +1249,7 @@
             LOOP
               -- The min qty. Modified by Ismael Ciordia
               --v_Qty := Cur_ILines_PO.QtyOrdered;
-              --IF (ABS(Cur_ILines_PO.QtyOrdered) &gt; ABS(Cur_ILines_PO.QtyInvoiced)) THEN
+              --IF (ABS(Cur_ILines_PO.QtyOrdered) > ABS(Cur_ILines_PO.QtyInvoiced)) THEN
               v_Qty:=Cur_ILines_PO.QtyInvoiced;
               --END IF;
               Ad_Sequence_Next('M_MatchPO', Cur_ILines_PO.AD_Org_ID, v_MatchPO_ID) ;
@@ -1304,7 +1304,7 @@
                   M_INOUTLINE ml
                 WHERE M.M_InOut_ID=ml.M_InOut_ID
                   AND ml.M_InOutLine_ID=CurLines.M_InOutLine_ID;
-                IF(v_inOutStatus&lt;&gt;'RE') THEN
+                IF(v_inOutStatus<>'RE') THEN
                   SELECT COALESCE(SUM(C_INVOICELINE.QTYINVOICED), 0)
                   INTO v_totalQtyInvoiced
                   FROM C_INVOICELINE,
@@ -1380,8 +1380,8 @@
           INTO v_totalCash
           FROM C_DEBT_PAYMENT_V dp
           WHERE C_INVOICE_ID=v_Record_ID;
-          --Insert C_Debt_Payment if GrandTotal - v_totalCash &lt;&gt; 0;
-          IF(v_GrandTotal&lt;&gt;v_totalCash) THEN
+          --Insert C_Debt_Payment if GrandTotal - v_totalCash <> 0;
+          IF(v_GrandTotal<>v_totalCash) THEN
             DECLARE
               CUR_PAYMENTS RECORD;
               v_plannedDate DATE;
@@ -1615,7 +1615,7 @@
                 END IF; -- v_cashBook IS NOT NULL
               END LOOP;
             END;
-          END IF; -- v_GrandTotal &lt;&gt; v_totalCash
+          END IF; -- v_GrandTotal <> v_totalCash
         END;
         IF(NOT FINISH_PROCESS) THEN
           C_Bp_Socreditused_Refresh(v_BPartner_ID) ;
@@ -1636,7 +1636,7 @@
       END IF;--FINISH_PROCESS
       IF(NOT FINISH_PROCESS) THEN
         -- End Processing --------------------------------------------------------
-        --&lt;&lt;END_PROCESSING&gt;&gt;
+        --<<END_PROCESSING>>
         v_ResultStr:='UnLockingInvoice';
         UPDATE C_INVOICE
           SET Processing='N',
@@ -1647,13 +1647,13 @@
         -- Commented by cromero 19102006   COMMIT;
         -- Commented by cromero 19102006 END IF;
       END IF;--FINISH_PROCESS
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
       Ad_Update_Pinstance(p_PInstance_ID, v_UpdatedBy, 'N', v_Result, v_Message) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;C_Invoive_Post finished&gt;&gt; ' || v_Message) ;
+      DBMS_OUTPUT.PUT_LINE('--<<C_Invoive_Post finished>> ' || v_Message) ;
     END IF;
     RETURN;
   END; --BODY
@@ -1688,6 +1688,7 @@ WHEN OTHERS THEN
   END IF;
   -- Commented by cromero 19102006 RETURN;
 END C_Invoice_Post
-</body>
+
+]]></body>
     </function>
   </database>

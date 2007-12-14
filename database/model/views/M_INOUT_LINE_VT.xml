@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW M_INOUT_LINE_VT">
-    <view name="M_INOUT_LINE_VT" updatable="false">SELECT iol.AD_Client_ID, iol.AD_Org_ID, iol.IsActive, iol.Created, iol.CreatedBy, iol.Updated, iol.UpdatedBy,
+    <view name="M_INOUT_LINE_VT"><![CDATA[SELECT iol.AD_Client_ID, iol.AD_Org_ID, iol.IsActive, iol.Created, iol.CreatedBy, iol.Updated, iol.UpdatedBy,
   uom.AD_Language,
   iol.M_InOut_ID, iol.M_InOutLine_ID,
   iol.Line,
@@ -32,5 +32,5 @@ FROM M_Product_BOM b  -- BOM lines
     AND bp.IsBOM='Y' AND bp.IsVerified='Y' AND bp.IsPickListPrintDetails='Y')
   INNER JOIN M_Product p ON (b.M_ProductBOM_ID=p.M_Product_ID) -- BOM line product
   INNER JOIN C_UOM_Trl uom ON (p.C_UOM_ID=uom.C_UOM_ID)
-  INNER JOIN M_Product_Trl pt ON (iol.M_PRODUCT_ID=pt.M_PRODUCT_ID AND uom.AD_Language=pt.AD_Language)</view>
+  INNER JOIN M_Product_Trl pt ON (iol.M_PRODUCT_ID=pt.M_PRODUCT_ID AND uom.AD_Language=pt.AD_Language)]]></view>
   </database>

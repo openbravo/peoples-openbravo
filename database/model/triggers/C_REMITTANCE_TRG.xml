@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_REMITTANCE_TRG">
     <trigger name="C_REMITTANCE_TRG" table="C_REMITTANCE" fires="before" insert="true" update="true" delete="true" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -54,6 +55,7 @@ BEGIN
   END IF;
 END c_remittance_trg 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

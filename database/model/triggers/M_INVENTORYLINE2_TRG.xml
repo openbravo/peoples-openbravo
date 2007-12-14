@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_INVENTORYLINE2_TRG">
     <trigger name="M_INVENTORYLINE2_TRG" table="M_INVENTORYLINE" fires="before" insert="true" update="true" delete="false" foreach="row">
-      <body>
+      <body><![CDATA[
+
 
 
 
@@ -22,8 +23,8 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
     BEGIN IF(UPDATING)
-    THEN  IF NOT((COALESCE(:OLD.M_Product_Uom_ID, 0) &lt;&gt; COALESCE(:NEW.M_Product_Uom_ID, 0)
-    OR COALESCE(:OLD.QuantityOrderBook, 0) &lt;&gt; COALESCE(:NEW.QuantityOrderBook, 0)))
+    THEN  IF NOT((COALESCE(:OLD.M_Product_Uom_ID, 0) <> COALESCE(:NEW.M_Product_Uom_ID, 0)
+    OR COALESCE(:OLD.QuantityOrderBook, 0) <> COALESCE(:NEW.QuantityOrderBook, 0)))
     THEN  RETURN;
     END IF;
    END IF;
@@ -37,6 +38,7 @@
 END M_InventoryLine2_Trg
 
 
-</body>
+
+]]></body>
     </trigger>
   </database>

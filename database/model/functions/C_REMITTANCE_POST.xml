@@ -3,7 +3,7 @@
     <function name="C_REMITTANCE_POST" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Remittance_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -101,7 +101,7 @@
       END LOOP; --  Get Parameter
       DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;C_Settlement_Post&gt;&gt;') ;
+      DBMS_OUTPUT.PUT_LINE('--<<C_Settlement_Post>>') ;
       v_Record_ID:=p_Remittance_ID;
     END IF;
   BEGIN --BODY
@@ -393,7 +393,7 @@
           AND isManual='N';
         --Post DPManagement
         C_Dp_Management_Post(NULL, v_DPMId) ;
-        IF v_GeneratedAmt&gt;0 THEN
+        IF v_GeneratedAmt>0 THEN
           v_IsReceipt:='N';
         ELSE
           v_IsReceipt:='Y';
@@ -521,14 +521,14 @@
           ;
       END IF;
     END IF;--FINISH_PROCESS
-    --&lt;&lt;FINISH_PROCESS&gt;&gt;
+    --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     UPDATE C_REMITTANCE SET Processing = 'N' WHERE C_Remittance_ID = v_Record_ID;
     IF(p_PInstance_ID IS NOT NULL) THEN
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
       Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
     ELSE
-      DBMS_OUTPUT.PUT_LINE('--&lt;&lt;C_DP_Management_Post finished&gt;&gt; ' || v_Message) ;
+      DBMS_OUTPUT.PUT_LINE('--<<C_DP_Management_Post finished>> ' || v_Message) ;
       IF(v_Result=0) THEN
         RAISE_APPLICATION_ERROR(-20100, v_Message) ;
       END IF;
@@ -566,6 +566,7 @@ WHEN OTHERS THEN
   END IF;
   RETURN;
 END C_Remittance_Post
-</body>
+
+]]></body>
     </function>
   </database>

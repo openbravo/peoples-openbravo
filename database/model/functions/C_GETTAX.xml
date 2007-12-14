@@ -9,7 +9,7 @@
       <parameter name="p_shipBPartnerLoc_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_Project_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_IsSOTrx" type="CHAR" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -90,7 +90,7 @@
             ON(t.AD_Client_ID = o.AD_Client_ID)
           WHERE t.ISTAXEXEMPT = 'Y'
             AND o.AD_Org_ID = p_Org_ID
-            AND t.ValidFrom &lt;= p_shipDate
+            AND t.ValidFrom <= p_shipDate
             AND t.isActive = 'Y'
           ORDER BY t.VALIDFROM DESC
           )
@@ -155,7 +155,7 @@
             AND lt.C_Location_ID = v_shipTo
             AND(t.To_Country_ID = lt.C_Country_ID OR(t.To_Country_ID IS NULL))
             AND(t.To_Region_ID = lt.C_Region_ID   OR(t.To_Region_ID IS NULL))
-            AND t.ValidFrom &lt;= p_shipDate
+            AND t.ValidFrom <= p_shipDate
          --   AND ((t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (v_BPTaxCategory IS NULL))
             AND ((t.C_BP_TaxCategory_ID IS NOT NULL AND t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (t.C_BP_TaxCategory_ID IS NULL))
             AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
@@ -194,7 +194,7 @@
               OR(t.C_Region_ID IS NULL))
               AND t.To_Country_ID IS NULL
               AND t.To_Region_ID IS NULL
-              AND t.ValidFrom &lt;= p_shipDate
+              AND t.ValidFrom <= p_shipDate
               --AND ((t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (v_BPTaxCategory IS NULL))
               AND ((t.C_BP_TaxCategory_ID IS NOT NULL AND t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (t.C_BP_TaxCategory_ID IS NULL))
               AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
@@ -215,7 +215,7 @@
             WHERE t.AD_Client_ID = lf.AD_Client_ID
               AND lf.C_Location_ID = v_billFrom
               AND t.IsDefault = 'Y'
-              AND t.ValidFrom &lt;= p_shipDate
+              AND t.ValidFrom <= p_shipDate
               --AND ((t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (v_BPTaxCategory IS NULL))
               AND ((t.C_BP_TaxCategory_ID IS NOT NULL AND t.C_BP_TaxCategory_ID = v_BPTaxCategory) OR (t.C_BP_TaxCategory_ID IS NULL))
               AND (SoPoType = 'B' OR (SoPoType =(case when p_IsSOTrx='Y' then 'S' else 'P' end)))
@@ -231,6 +231,7 @@
     END IF;
     RETURN v_TaxID;
 END C_GetTax 
-</body>
+
+]]></body>
     </function>
   </database>

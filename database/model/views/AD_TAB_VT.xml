@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW AD_TAB_VT">
-    <view name="AD_TAB_VT" updatable="false">SELECT trl.AD_Language, t.AD_Tab_ID, t.AD_Window_ID, t.AD_Table_ID, trl.Name, trl.Description,
+    <view name="AD_TAB_VT"><![CDATA[SELECT trl.AD_Language, t.AD_Tab_ID, t.AD_Window_ID, t.AD_Table_ID, trl.Name, trl.Description,
 trl.Help, t.SeqNo, t.IsSingleRow, t.HasTree, t.IsInfoTab, tbl.ReplicationType,
 tbl.TableName, tbl.AccessLevel, tbl.IsSecurityEnabled, tbl.IsDeleteable,
 tbl.IsHighVolume, tbl.IsView, TO_CHAR('N') AS HasAssociation,
@@ -12,5 +12,5 @@ FROM AD_Tab t
   INNER JOIN AD_Table tbl ON (t.AD_Table_ID = tbl.AD_Table_ID)
   INNER JOIN AD_Tab_Trl trl ON (t.AD_Tab_ID = trl.AD_Tab_ID)
 WHERE t.IsActive='Y'
-  AND tbl.IsActive='Y'</view>
+  AND tbl.IsActive='Y']]></view>
   </database>

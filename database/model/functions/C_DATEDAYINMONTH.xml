@@ -3,7 +3,7 @@
     <function name="C_DATEDAYINMONTH" type="TIMESTAMP">
       <parameter name="p_Day" type="NUMERIC" mode="in"/>
       <parameter name="p_Date" type="TIMESTAMP" mode="in"/>
-      <body>/*************************************************************************
+      <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
 * Version 1.1  with a permitted attribution clause; you may not  use this
@@ -25,11 +25,12 @@
   v_DateAux DATE;
 BEGIN
   v_DateAux := LAST_DAY(p_Date) ;
-  IF(TO_NUMBER(TO_CHAR(v_DateAux, 'DD')) &gt; p_Day) THEN
+  IF(TO_NUMBER(TO_CHAR(v_DateAux, 'DD')) > p_Day) THEN
     v_DateAux := TO_DATE(LPAD(TO_CHAR(p_Day), 2, '0') ||'/'||TO_CHAR(p_Date, 'MM/YYYY'), 'DD/MM/YYYY') ;
   END IF;
   RETURN v_DateAux;
 END C_DateDayInMonth
-</body>
+
+]]></body>
     </function>
   </database>
