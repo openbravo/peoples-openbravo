@@ -99,14 +99,14 @@ public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
         addTable("AD_WORKFLOW_TRL", "AD_CLIENT_ID = 0");
         addTable("AD_ACCOUNTINGRPT_ELEMENT", "AD_CLIENT_ID = 0");
         addTable("C_COUNTRY", "AD_CLIENT_ID = 0");
-        addTable("C_COUNTRY_TRL", "AD_CLIENT_ID = 0");
+        addTable("C_COUNTRY_TRL", "AD_CLIENT_ID = 0 AND AD_LANGUAGE = 'es_ES'");
         addTable("C_CURRENCY", "AD_CLIENT_ID = 0");
-        addTable("C_CURRENCY_TRL", "AD_CLIENT_ID = 0");
+        addTable("C_CURRENCY_TRL", "AD_CLIENT_ID = 0 AND AD_LANGUAGE = 'es_ES'");
         addTable("C_DOCTYPE", "AD_CLIENT_ID = 0");
-        addTable("C_DOCTYPE_TRL", "AD_CLIENT_ID = 0");
+        addTable("C_DOCTYPE_TRL", "AD_CLIENT_ID = 0 AND AD_LANGUAGE = 'es_ES'");
         addTable("C_REGION", "AD_CLIENT_ID = 0");
         addTable("C_UOM", "AD_CLIENT_ID = 0");
-        addTable("C_UOM_TRL", "AD_CLIENT_ID = 0");
+        addTable("C_UOM_TRL", "AD_CLIENT_ID = 0 AND AD_LANGUAGE = 'es_ES'");
         addTable("GL_CATEGORY", "AD_CLIENT_ID = 0");
         addTable("M_ATTRIBUTESET", "AD_CLIENT_ID = 0");
         addTable("M_ATTRIBUTESETINSTANCE", "AD_CLIENT_ID = 0");
