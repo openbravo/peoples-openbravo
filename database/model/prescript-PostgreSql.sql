@@ -32,6 +32,106 @@ SELECT * FROM create_language('plpgsql')
 --  VALIDATOR plpgsql_validator;
 --/--END
 
+CREATE OR REPLACE FUNCTION dba_getattnumpos(conkey _int4, attnum int4)
+  RETURNS int4 AS
+$BODY$
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  DECLARE i integer;
+begin
+  for i in 1..array_upper(conkey,1)
+  loop     
+     IF (conkey[i] = attnum) THEN
+	RETURN i;
+     END IF;
+  end loop;  
+  return 0;
+end;
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+/-- END
+
+
+CREATE OR REPLACE FUNCTION dba_getstandard_search_text(text)
+  RETURNS text AS
+$BODY$
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  DECLARE  v_text TEXT;
+  DECLARE  v_p1 NUMERIC;
+  DECLARE  v_p2 NUMERIC;
+  DECLARE  v_p3 NUMERIC;
+  DECLARE  v_i NUMERIC;
+begin
+  v_text := replace($1, ' = ANY',' in');
+  v_text := replace(v_text, 'ARRAY[', '');
+  v_text := replace(v_text, ']' , '');
+  v_text := replace(v_text, '::bpchar', '');
+  v_text := replace(v_text, '::text', '');
+  v_text := substring(v_text,2,length(v_text)-2);
+
+    WHILE (v_text LIKE '%::%') LOOP
+      v_p1 := INSTR(v_text, '::');
+      v_p2 := 0;
+      v_p3 := 0;
+      IF (SUBSTR(v_text,v_p1-1,1) = ')') THEN
+        v_i := 1;
+        WHILE (v_p2=0) LOOP
+          v_i := v_i + 1;
+          IF (SUBSTR(v_text, v_p1 - v_i, 1) = '(') THEN
+            v_p2 := v_p1 - v_i;
+          END IF;
+        END LOOP;
+      END IF;
+      v_i := 1;
+      WHILE (v_p3=0) LOOP
+        v_i := v_i + 1;
+        IF ((SUBSTR(v_text, v_p1 + v_i, 1) IN (' ',')',CHR(10),CHR(13)) OR (v_p1 + v_i>= length(v_text))))  THEN
+          v_p3 := v_p1 + v_i;
+        END IF;
+      END LOOP;
+      --RAISE_APPLICATION_ERROR(-20001,'v_p3 = '||v_p3);
+      IF (v_p2 = 0) THEN
+        v_text := SUBSTR(v_text, 1, v_p1-1) || SUBSTR(v_text, v_p3, 4000);
+      ELSE
+        v_text := SUBSTR(v_text, 1, v_p2-1) || SUBSTR(v_text, v_p2 + 1, v_p1 - (v_p2 + 2)) || SUBSTR(v_text, v_p3, 4000);
+      END IF;
+    END LOOP;
+
+    RETURN upper(v_text);
+END;
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+/-- END
+
 CREATE OR REPLACE FUNCTION dateFormat
 (
 )
@@ -725,32 +825,25 @@ SELECT * FROM drop_view('USER_CONSTRAINTS')
 /-- END
 
 CREATE OR REPLACE VIEW user_constraints AS 
- SELECT upper(pg_class.relname) AS table_name, 
-        upper(pg_constraint.conname) AS constraint_name, 
-        CASE upper(pg_constraint.contype)
-            WHEN 'F' THEN 'R'
-            ELSE upper(pg_constraint.contype)
-        END AS constraint_type, upper(pg_constraint.confdeltype) AS delete_rule, 
-        array_to_string(ARRAY( SELECT '"'||pg_attribute.attname||'"' as attr_name
-                               FROM pg_attribute
-                               WHERE pg_attribute.attrelid = pg_constraint.conrelid  AND pg_attribute.attnum = ANY(pg_constraint.conkey)
-                               ORDER BY position( pg_attribute.attnum in array_to_string(pg_constraint.conkey,'-'))),
-                         ',') AS column_names,
-        upper(fk_table.relname) AS fk_table,
-        array_to_string(ARRAY( SELECT '"'||pg_attribute.attname||'"' as attr_name
-                               FROM pg_attribute
-                               WHERE pg_attribute.attrelid = pg_constraint.confrelid AND pg_attribute.attnum = ANY(pg_constraint.confkey)
-                               ORDER BY position( pg_attribute.attnum in array_to_string(pg_constraint.confkey,'-'))),
-                         ',') AS fk_column_names, pg_constraint.confmatchtype AS fk_matchtype,
-        CASE upper(pg_constraint.contype)
-            WHEN 'P' THEN upper(pg_constraint.conname)
-            WHEN 'U' THEN upper(pg_constraint.conname)
-            ELSE ''
-        END AS index_name, 
-        pg_constraint.consrc AS search_condition
- FROM pg_constraint
- INNER JOIN pg_class ON  pg_class.oid = pg_constraint.conrelid 
- LEFT JOIN pg_class fk_table ON fk_table.oid = pg_constraint.confrelid
+ SELECT upper(pg_class.relname::text) AS table_name, upper(pg_constraint.conname::text) AS constraint_name, 
+        CASE upper(pg_constraint.contype::text)
+            WHEN 'F'::text THEN 'R'::text
+            ELSE upper(pg_constraint.contype::text)
+        END AS constraint_type, upper(pg_constraint.confdeltype::text) AS delete_rule, array_to_string(ARRAY( SELECT ('"'::text || pg_attribute.attname::text) || '"'::text AS attr_name
+           FROM pg_attribute
+          WHERE pg_attribute.attrelid = pg_constraint.conrelid AND (pg_attribute.attnum = ANY (pg_constraint.conkey))
+          ORDER BY "position"(array_to_string(pg_constraint.conkey, '-'::text), pg_attribute.attnum::text)), ','::text) AS column_names, upper(fk_table.relname::text) AS fk_table, array_to_string(ARRAY( SELECT ('"'::text || pg_attribute.attname::text) || '"'::text AS attr_name
+           FROM pg_attribute
+          WHERE pg_attribute.attrelid = pg_constraint.confrelid AND (pg_attribute.attnum = ANY (pg_constraint.confkey))
+          ORDER BY "position"(array_to_string(pg_constraint.confkey, '-'::text), pg_attribute.attnum::text)), ','::text) AS fk_column_names, pg_constraint.confmatchtype AS fk_matchtype, 
+        CASE upper(pg_constraint.contype::text)
+            WHEN 'P'::text THEN upper(pg_constraint.conname::text)
+            WHEN 'U'::text THEN upper(pg_constraint.conname::text)
+            ELSE ''::text
+        END AS index_name, dba_getstandard_search_text(pg_constraint.consrc) AS search_condition
+   FROM pg_constraint
+   JOIN pg_class ON pg_class.oid = pg_constraint.conrelid
+   LEFT JOIN pg_class fk_table ON fk_table.oid = pg_constraint.confrelid
 /-- END
 
 --DROP VIEW USER_INDEXES
@@ -778,20 +871,21 @@ AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
 SELECT * FROM drop_view('USER_IND_COLUMNS')
 /-- END
 
-CREATE OR REPLACE VIEW USER_IND_COLUMNS
-(TABLE_NAME, INDEX_NAME, COLUMN_NAME, TABLESPACE_NAME, COLUMN_POSITION)
-AS 
-SELECT UPPER(PG_CLASS1.RELNAME), UPPER(PG_CLASS.RELNAME), UPPER(PG_ATTRIBUTE.ATTNAME), UPPER(PG_NAMESPACE.NSPNAME), PG_ATTRIBUTE.ATTNUM
-FROM PG_INDEX, PG_CLASS, PG_CLASS PG_CLASS1, PG_NAMESPACE, PG_ATTRIBUTE
-WHERE PG_INDEX.INDEXRELID = PG_CLASS.OID
-AND PG_INDEX.INDRELID = PG_CLASS1.OID
-AND PG_ATTRIBUTE.ATTRELID = PG_INDEX.INDRELID 
-AND PG_ATTRIBUTE.ATTNUM IN (PG_INDEX.INDKEY[0], PG_INDEX.INDKEY[1], PG_INDEX.INDKEY[2] ,PG_INDEX.INDKEY[3], PG_INDEX.INDKEY[4] ,PG_INDEX.INDKEY[5],PG_INDEX.INDKEY[6], PG_INDEX.INDKEY[7], PG_INDEX.INDKEY[8] ,PG_INDEX.INDKEY[9], PG_INDEX.INDKEY[10] ,PG_INDEX.INDKEY[11])
-AND PG_CLASS.RELNAMESPACE = PG_NAMESPACE.OID
-AND PG_CLASS1.RELNAMESPACE = PG_NAMESPACE.OID
-AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
+CREATE OR REPLACE VIEW user_ind_columns AS
+SELECT upper(pg_class1.relname::text) AS table_name, upper(pg_class.relname::text) AS index_name,
+       upper(pg_attribute.attname::text) AS column_name,
+       upper(pg_namespace.nspname::text) AS tablespace_name,
+       (dba_getattnumpos(pg_index.indkey, pg_attribute.attnum)+1) AS column_position
+   FROM pg_index, pg_class, pg_class pg_class1, pg_namespace, pg_attribute
+  WHERE pg_index.indexrelid = pg_class.oid
+    AND pg_index.indrelid = pg_class1.oid
+    AND pg_attribute.attrelid = pg_index.indrelid
+    AND pg_attribute.attnum = ANY (indkey)
+    AND pg_class.relnamespace = pg_namespace.oid
+    AND pg_class1.relnamespace = pg_namespace.oid
+    AND pg_namespace.nspname = current_schema()
+  ORDER BY table_name, index_name, column_position
 /-- END
-
 
 SELECT * FROM drop_view('USER_OBJECTS')
 /-- END
@@ -808,27 +902,56 @@ AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
 /-- END
 
 
+
+SELECT * FROM drop_view('USER_CONS_COLUMNS')
+/-- END
+
+CREATE OR REPLACE VIEW user_cons_columns AS 
+ SELECT upper(pg_constraint.conname::text) AS constraint_name, upper(pg_class.relname::text) AS table_name, upper(pg_attribute.attname::text) AS column_name, dba_getattnumpos(pg_constraint.conkey::integer[], pg_attribute.attnum::integer) AS "position"
+   FROM pg_constraint, pg_class, pg_attribute
+  WHERE pg_constraint.conrelid = pg_class.oid AND pg_attribute.attrelid = pg_constraint.conrelid AND (pg_attribute.attnum = ANY (pg_constraint.conkey))
+  ORDER BY pg_class.relname, pg_constraint.conname
+/-- END
+
+
 --DROP VIEW USER_TAB_COLUMNS
 --/--END
 
 SELECT * FROM drop_view('USER_TAB_COLUMNS')
 /-- END
 
-CREATE OR REPLACE VIEW USER_TAB_COLUMNS
-(TABLE_NAME, COLUMN_NAME, DATA_TYPE, 
-DATA_LENGTH, DATA_PRECISION, DATA_SCALE, DATA_DEFAULT, NULLABLE, COLUMN_ID)
-AS 
-SELECT UPPER(PG_CLASS.RELNAME), UPPER(PG_ATTRIBUTE.ATTNAME),UPPER(PG_TYPE.TYPNAME), 
-CASE PG_ATTRIBUTE.ATTLEN WHEN -1 THEN PG_ATTRIBUTE.ATTTYPMOD-4 ELSE PG_ATTRIBUTE.ATTLEN END,10, 0, 
-CASE PG_ATTRIBUTE.ATTHASDEF WHEN TRUE THEN (SELECT PG_ATTRDEF.ADSRC FROM
-PG_ATTRDEF WHERE PG_ATTRDEF.ADRELID = PG_CLASS.OID AND PG_ATTRDEF.ADNUM = 
-PG_ATTRIBUTE.ATTNUM) ELSE NULL END, PG_ATTRIBUTE.ATTNOTNULL, PG_ATTRIBUTE.ATTNUM 
-FROM PG_CLASS, PG_NAMESPACE, PG_ATTRIBUTE, PG_TYPE
-WHERE PG_ATTRIBUTE.ATTRELID = PG_CLASS.OID
-AND PG_ATTRIBUTE.ATTTYPID = PG_TYPE.OID 
-AND PG_CLASS.RELNAMESPACE = PG_NAMESPACE.OID
-AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
-AND PG_ATTRIBUTE.ATTNUM>0
+CREATE OR REPLACE VIEW user_tab_columns AS
+ SELECT upper(pg_class.relname::text) AS table_name, upper(pg_attribute.attname::text) AS column_name, upper(pg_type.typname::text) AS data_type,
+        CASE pg_type.typname
+            WHEN 'varchar'::name THEN pg_attribute.atttypmod - 4
+            WHEN 'bpchar'::name THEN pg_attribute.atttypmod - 4
+            ELSE NULL::integer
+        END AS char_col_decl_length,
+
+        CASE pg_type.typname
+            WHEN 'bytea'::name THEN 4000
+            WHEN 'text'::name THEN 4000
+            ELSE pg_attribute.attlen
+        END AS data_length,
+
+        CASE pg_type.typname
+            WHEN 'bytea'::name THEN 4000
+            WHEN 'text'::name THEN 4000
+            ELSE 
+                CASE atttypmod
+                    WHEN -1 THEN 0
+                    ELSE 10 
+                END
+        END AS data_precision,
+        0 AS data_scale,
+        CASE pg_attribute.atthasdef
+            WHEN true THEN ( SELECT pg_attrdef.adsrc
+               FROM pg_attrdef
+              WHERE pg_attrdef.adrelid = pg_class.oid AND pg_attrdef.adnum = pg_attribute.attnum)
+            ELSE NULL::text
+        END AS data_default, pg_attribute.attnotnull AS nullable, pg_attribute.attnum AS column_id
+   FROM pg_class, pg_namespace, pg_attribute, pg_type
+  WHERE pg_attribute.attrelid = pg_class.oid AND pg_attribute.atttypid = pg_type.oid AND pg_class.relnamespace = pg_namespace.oid AND pg_namespace.nspname = current_schema() AND pg_attribute.attnum > 0
 /-- END
 
 --DROP VIEW USER_TRIGGERS
