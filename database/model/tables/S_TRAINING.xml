@@ -34,6 +34,6 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODUCTCATEGORY_STRAINING">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <check name="S_TRAINING_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="S_TRAINING_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

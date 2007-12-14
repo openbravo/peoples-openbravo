@@ -35,12 +35,12 @@
       <foreign-key foreignTable="MA_SEQUENCE" name="MASEQUENCE_MASEQUENCEPRODUCT">
         <reference local="MA_SEQUENCE_ID" foreign="MA_SEQUENCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MASEQUENCEPRODUCT">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MASEQPRODUCT">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
-      <check name="MA_SEQUENCEPROD_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MASEQUENCEPRODUCT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <check name="MA_SEQUENCEPROD_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

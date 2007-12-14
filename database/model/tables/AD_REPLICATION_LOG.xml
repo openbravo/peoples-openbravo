@@ -25,7 +25,7 @@
       <foreign-key foreignTable="AD_REPLICATIONTABLE" name="ADREPTABLE_ADREPLOG" onDelete="setnull">
         <reference local="AD_REPLICATIONTABLE_ID" foreign="AD_REPLICATIONTABLE_ID"/>
       </foreign-key>
-      <check name="ADREPLOG_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADREPLOG_ISREPLICATED_CHECK" condition="IsReplicated in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADREPLOG_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADREPLOG_ISREPLICATED_CHECK" condition="ISREPLICATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

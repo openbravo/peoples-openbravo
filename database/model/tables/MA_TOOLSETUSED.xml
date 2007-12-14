@@ -24,6 +24,6 @@
       <foreign-key foreignTable="M_PRODUCTIONPLAN" name="M_PRODPLAN_MATOOLSETUSED">
         <reference local="M_PRODUCTIONPLAN_ID" foreign="M_PRODUCTIONPLAN_ID"/>
       </foreign-key>
-      <check name="MA_TOOLSETUSED_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_TOOLSETUSED_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

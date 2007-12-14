@@ -19,8 +19,8 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MRP_PLANNER">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="MRPPLANNER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MRPPLANNER_ISPRODUCTION_CHECK" condition="IsProduction in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MRPPLANNER_ISPURCHASE_CHECK" condition="IsPurchase in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MRPPLANNER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPPLANNER_ISPRODUCTION_CHECK" condition="ISPRODUCTION IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPPLANNER_ISPURCHASE_CHECK" condition="ISPURCHASE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

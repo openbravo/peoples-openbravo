@@ -26,6 +26,6 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_WITHHOLDING_CWITHHOLDING">
         <reference local="WITHHOLDING_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <check name="C_WITHHOLDING_A_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_WITHHOLDING_A_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

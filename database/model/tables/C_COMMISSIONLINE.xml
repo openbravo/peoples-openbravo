@@ -51,8 +51,8 @@
       <index name="C_COMMISSIONLINE_COMMISSION" unique="false">
         <index-column name="C_COMMISSION_ID"/>
       </index>
-      <check name="CCOMMISL_ISPOSITIVEONLY_CHECK" condition="IsPositiveOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_COMMISSIONLIN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CCOMNISL_COMMISRDERS_CHECK" condition="CommissionOrders in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CCOMMISL_ISPOSITIVEONLY_CHECK" condition="ISPOSITIVEONLY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CCOMNISL_COMMISRDERS_CHECK" condition="COMMISSIONORDERS IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_COMMISSIONLIN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -24,6 +24,6 @@
       <foreign-key foreignTable="MRP_PLANNINGMETHOD" name="MRP_PLANNINGMETHOD_PMLINE">
         <reference local="MRP_PLANNINGMETHOD_ID" foreign="MRP_PLANNINGMETHOD_ID"/>
       </foreign-key>
-      <check name="MRPPLANLN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MRPPLANLN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

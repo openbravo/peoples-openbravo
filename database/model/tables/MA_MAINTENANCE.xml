@@ -23,15 +23,15 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMAINTENANCE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="MA_MAINT_OPERATION" name="MAMAINTOPERATION_MAMAINTENANCE">
+        <reference local="MA_MAINT_OPERATION_ID" foreign="MA_MAINT_OPERATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="MA_MACHINE" name="MA_MACHINE_MAMAINTENANCE">
         <reference local="MA_MACHINE_ID" foreign="MA_MACHINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_MACHINE_TYPE" name="MA_MACHINE_TYPE_MAMAINTENANCE">
         <reference local="MA_MACHINE_TYPE_ID" foreign="MA_MACHINE_TYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_MAINT_OPERATION" name="MAMAINTOPERATION_MAMAINTENANCE">
-        <reference local="MA_MAINT_OPERATION_ID" foreign="MA_MAINT_OPERATION_ID"/>
-      </foreign-key>
-      <check name="MA_MAINTENANCE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_MAINTENANCE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

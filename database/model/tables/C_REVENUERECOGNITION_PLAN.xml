@@ -41,6 +41,6 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_UNEARNEDREVENUE_CREVENUEREC">
         <reference local="UNEARNEDREVENUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <check name="CREVCOGPLAN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CREVCOGPLAN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -26,7 +26,7 @@
       <foreign-key foreignTable="C_PAYMENTTERM" name="CPAYMENTTERM_CPAYSCHEDULE">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
-      <check name="C_PAYSCHEDULE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_PAYSCHEDULE_ISVALID_CHECK" condition="IsValid in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_PAYSCHEDULE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_PAYSCHEDULE_ISVALID_CHECK" condition="ISVALID IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -29,6 +29,6 @@
         <index-column name="C_DEBT_PAYMENT_ID"/>
         <index-column name="C_GLITEM_ID"/>
       </index>
-      <check name="CDEBTPAYBALG_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CDEBTPAYBALG_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

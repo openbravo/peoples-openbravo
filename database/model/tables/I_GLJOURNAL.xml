@@ -70,11 +70,11 @@
       <foreign-key foreignTable="AD_ORG" name="ADORGDOC_IGLJOURNAL">
         <reference local="AD_ORGDOC_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_IGLJOURNAL">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORGTRX_IGLJOURNAL">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_IGLJOURNAL">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_IGLJOURNAL">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
@@ -142,8 +142,8 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_OGLJOURNAL">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="IGLJOURNAL_I_ISIMPORTED_CHECK" condition="I_IsImported in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="I_GLJOURNAL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="I_GLJOURNAL_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="IGLJOURNAL_I_ISIMPORTED_CHECK" condition="I_ISIMPORTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="I_GLJOURNAL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="I_GLJOURNAL_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

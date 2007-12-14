@@ -13,15 +13,15 @@
       <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADUSERROLES" onDelete="cascade">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="ADUSER_USERROLES" onDelete="cascade">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="AD_USERROLESCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_USERROLESORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_USERROLES" onDelete="cascade">
-        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
-      </foreign-key>
-      <check name="AD_USER_ROLES_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AD_USER_ROLES_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

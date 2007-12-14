@@ -22,6 +22,6 @@
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCPLAN_MAPROCPLANVERSION">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
       </foreign-key>
-      <check name="MAPROCPLVER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MAPROCPLVER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

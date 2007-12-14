@@ -32,13 +32,13 @@
       <foreign-key foreignTable="MA_WRPHASE" name="MAWRPHASE_MAWRPHASEPRODUCT">
         <reference local="MA_WRPHASE_ID" foreign="MA_WRPHASE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MAWRPHASEPRODUCT">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MAWRPHASEPRODUCT">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
-      <check name="MAWRPHASEPROD_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MAWRPHASPRODT_PRODTYPE_CHECK" condition="ProductionType in (&apos;+&apos;,&apos;-&apos;)"/>
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MAWRPHASEPRODUCT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <check name="MAWRPHASEPROD_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MAWRPHASPRODT_PRODTYPE_CHECK" condition="PRODUCTIONTYPE IN (&apos;+&apos;, &apos;-&apos;)"/>
     </table>
   </database>

@@ -48,7 +48,7 @@
         <unique-column name="DOCUMENTNO"/>
         <unique-column name="LINE"/>
       </unique>
-      <check name="M_EDI_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_EDI_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_EDI_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_EDI_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

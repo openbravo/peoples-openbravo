@@ -36,12 +36,12 @@
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPLOCATION_C_PROJECTPROPOSAL">
         <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PAYMENTTERM" name="C_PAYMENTTERM_C_PPROPOSAL">
-        <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_C_PROJECTPROPOSAL">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <check name="C_PROJECTPROPOS_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <foreign-key foreignTable="C_PAYMENTTERM" name="C_PAYMENTTERM_C_PPROPOSAL">
+        <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
+      </foreign-key>
+      <check name="C_PROJECTPROPOS_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -28,16 +28,16 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_ATTESTDOCUMENTLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AT_COMMAND" name="AT_COMMAND_ATTESTDOCUMENTLINE">
-        <reference local="AT_COMMAND_ID" foreign="AT_COMMAND_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AT_TESTDOCUMENT" name="ATTESTDOCUMENT_TESTDOCLINE">
         <reference local="AT_TESTDOCUMENT_ID" foreign="AT_TESTDOCUMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AT_COMMAND" name="AT_COMMAND_ATTESTDOCUMENTLINE">
+        <reference local="AT_COMMAND_ID" foreign="AT_COMMAND_ID"/>
       </foreign-key>
       <unique name="AT_TESTDOCUMENTLINE_UNIQUE">
         <unique-column name="AT_TESTDOCUMENT_ID"/>
         <unique-column name="AT_COMMAND_ID"/>
       </unique>
-      <check name="AT_TESTDOCL_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AT_TESTDOCL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

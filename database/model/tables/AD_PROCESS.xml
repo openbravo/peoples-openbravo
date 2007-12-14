@@ -39,10 +39,10 @@
       <foreign-key foreignTable="AD_REPORTVIEW" name="ADREPORTVIEW_ADPROCESS">
         <reference local="AD_REPORTVIEW_ID" foreign="AD_REPORTVIEW_ID"/>
       </foreign-key>
-      <check name="ADPROCESS_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPROCESS_ISBACKGROUND_CHECK" condition="IsBackground in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPROCESS_ISDIRECTPRINT_CHECK" condition="IsDirectPrint in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPROCESS_ISREPORT_CHECK" condition="IsReport in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPROCESS_ISUSE_TARTABLE_CHECK" condition="IsUserStartable in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPROCESS_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPROCESS_ISBACKGROUND_CHECK" condition="ISBACKGROUND IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPROCESS_ISDIRECTPRINT_CHECK" condition="ISDIRECTPRINT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPROCESS_ISREPORT_CHECK" condition="ISREPORT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPROCESS_ISUSE_TARTABLE_CHECK" condition="ISUSERSTARTABLE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

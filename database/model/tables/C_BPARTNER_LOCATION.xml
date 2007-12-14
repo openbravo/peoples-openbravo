@@ -26,17 +26,17 @@
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CBPLOCATION" onDelete="cascade">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="C_BUSPARTNER_LOCATIONCLIENT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="C_BUSPARTNER_LOCATIONORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_LOCATION" name="CLOCATION_CBPLOCATION">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_SALESREGION" name="CSALESREGION_BPARTNERLOCATION" onDelete="setnull">
         <reference local="C_SALESREGION_ID" foreign="C_SALESREGION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="C_BUSPARTNER_LOCATIONCLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_BUSPARTNER_LOCATIONORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <index name="C_BPLOCATION_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
@@ -44,10 +44,10 @@
       <index name="C_BPLOCATION_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="CBPARTLOC_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTLOC_ISBILLTO_CHECK" condition="IsBillTo in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTLOC_ISPAYFROM_CHECK" condition="IsPayFrom in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTLOC_ISREMITTO_CHECK" condition="IsRemitTo in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTLOC_ISSHIPTO_CHECK" condition="IsShipTo in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTLOC_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTLOC_ISBILLTO_CHECK" condition="ISBILLTO IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTLOC_ISPAYFROM_CHECK" condition="ISPAYFROM IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTLOC_ISREMITTO_CHECK" condition="ISREMITTO IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTLOC_ISSHIPTO_CHECK" condition="ISSHIPTO IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

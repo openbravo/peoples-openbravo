@@ -20,6 +20,6 @@
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_AASSETCHANGEAMT">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <check name="ASSETCHAMT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ASSETCHAMT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

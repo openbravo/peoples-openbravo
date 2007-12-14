@@ -39,6 +39,6 @@
       <foreign-key foreignTable="M_INOUTLINE" name="MOUTLINE_AASSETDELIVERY" onDelete="cascade">
         <reference local="M_INOUTLINE_ID" foreign="M_INOUTLINE_ID"/>
       </foreign-key>
-      <check name="A_ASSET_DELIVER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="A_ASSET_DELIVER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -25,7 +25,7 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MPRODUCTTRL" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="MPRODUCTTRL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MPRODUCTTRL_ISTRANSLATED_CHECK" condition="IsTranslated in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MPRODUCTTRL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MPRODUCTTRL_ISTRANSLATED_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

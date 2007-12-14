@@ -25,7 +25,7 @@
       <foreign-key foreignTable="AD_REPORTVIEW" name="ADREPORTVIEW_COL">
         <reference local="AD_REPORTVIEW_ID" foreign="AD_REPORTVIEW_ID"/>
       </foreign-key>
-      <check name="ADREPVIEWCOL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADREPVIEWCOL_ISGROUPFUN_CHECK" condition="IsGroupFunction in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADREPVIEWCOL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADREPVIEWCOL_ISGROUPFUN_CHECK" condition="ISGROUPFUNCTION IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -26,8 +26,8 @@
       <foreign-key foreignTable="MA_INDIRECT_COST" name="MAINDIRECT_COST_MA_IC_VALUE">
         <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
       </foreign-key>
-      <check name="MAINDCOVAL_CALCULATE_CHECK" condition="Calculate IN (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MAINDCOVAL_CALCULATED_CHECK" condition="Calculated IN (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MAINDCOVAL_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MAINDCOVAL_CALCULATED_CHECK" condition="CALCULATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MAINDCOVAL_CALCULATE_CHECK" condition="CALCULATE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MAINDCOVAL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -24,7 +24,7 @@
       <foreign-key foreignTable="K_TYPE" name="KTYPE_KTOPIC">
         <reference local="K_TYPE_ID" foreign="K_TYPE_ID"/>
       </foreign-key>
-      <check name="K_TOPIC_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="K_TOPIC_ISPUBLIC_CHECK" condition="IsPublic in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="K_TOPIC_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="K_TOPIC_ISPUBLIC_CHECK" condition="ISPUBLIC IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

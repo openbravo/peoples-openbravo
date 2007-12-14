@@ -29,6 +29,6 @@
       <foreign-key foreignTable="M_PRICELIST" name="M_PRICELIST_M_REQUISITION">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
-      <check name="M_REQUISITION_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_REQUISITION_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

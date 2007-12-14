@@ -50,7 +50,7 @@
       <index name="C_BANKSTMTLINE_BANKSTMT" unique="false">
         <index-column name="C_BANKSTATEMENT_ID"/>
       </index>
-      <check name="C_BANKSTATLN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_BANKSTATLN_ISREVERSAL_CHECK" condition="IsReversal in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_BANKSTATLN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_BANKSTATLN_ISREVERSAL_CHECK" condition="ISREVERSAL IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

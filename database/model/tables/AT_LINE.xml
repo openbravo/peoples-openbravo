@@ -36,6 +36,6 @@
       <foreign-key foreignTable="AT_TEST" name="CHILD_TEST_ATLINE">
         <reference local="CHILD_TEST" foreign="AT_TEST_ID"/>
       </foreign-key>
-      <check name="AT_LINE_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AT_LINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

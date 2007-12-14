@@ -38,7 +38,7 @@
       <foreign-key foreignTable="AD_WORKBENCH" name="ADWORKBENCH_ADWORKBENCHWINDOW">
         <reference local="AD_WORKBENCH_ID" foreign="AD_WORKBENCH_ID"/>
       </foreign-key>
-      <check name="ADWORKBENCHW_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADWORKBENCHW_ISPRIMARY_CHECK" condition="IsPrimary in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADWORKBENCHW_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADWORKBENCHW_ISPRIMARY_CHECK" condition="ISPRIMARY IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

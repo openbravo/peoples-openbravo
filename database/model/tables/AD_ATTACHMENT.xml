@@ -31,6 +31,6 @@
         <index-column name="AD_TABLE_ID"/>
         <index-column name="RECORD_ID"/>
       </index>
-      <check name="AD_ATTACHMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AD_ATTACHMENT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

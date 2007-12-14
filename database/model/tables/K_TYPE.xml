@@ -20,7 +20,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_KTYPE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="K_TYPE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="K_TYPE_ISPUBLIC_CHECK" condition="IsPublic in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="K_TYPE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="K_TYPE_ISPUBLIC_CHECK" condition="ISPUBLIC IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

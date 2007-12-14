@@ -25,8 +25,8 @@
       <foreign-key foreignTable="C_WITHHOLDING" name="CWITHHOLDING_CBPWITHHOLDING">
         <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
       </foreign-key>
-      <check name="CBPWITHHOLDING_DHOLDING_CHECK" condition="IsMandatoryWithholding in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPWITHHOLDING_EMEXEMPT_CHECK" condition="IsTemporaryExempt in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPWITHHOLDING_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPWITHHOLDING_DHOLDING_CHECK" condition="ISMANDATORYWITHHOLDING IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPWITHHOLDING_EMEXEMPT_CHECK" condition="ISTEMPORARYEXEMPT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPWITHHOLDING_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

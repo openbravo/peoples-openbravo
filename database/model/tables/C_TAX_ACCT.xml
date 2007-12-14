@@ -42,6 +42,6 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_TREC_CTAX">
         <reference local="T_RECEIVABLES_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <check name="C_TAX_ACCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_TAX_ACCT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

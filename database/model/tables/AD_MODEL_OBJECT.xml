@@ -53,7 +53,7 @@
       <unique name="AD_MODEL_OBJECT_CLASSNAME">
         <unique-column name="CLASSNAME"/>
       </unique>
-      <check name="ADMODELOBJECT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADMODELOBJECT_ISDEFAULT_CHECK" condition="IsDefault in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADMODELOBJECT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADMODELOBJECT_ISDEFAULT_CHECK" condition="ISDEFAULT IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

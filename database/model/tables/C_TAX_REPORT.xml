@@ -26,11 +26,11 @@
       <foreign-key foreignTable="C_TAX" name="CTAX_CTAXREPORT">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
-      <check name="C_TAX_REPORT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_TAX_REPORT_ISNEGATIVE_CHECK" condition="ISNEGATIVE IN (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_TAX_REPORT_ISREPORT_CHECK" condition="ISREPORT IN (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_TAX_REPORT_ISSHOWN_CHECK" condition="ISSHOWN IN (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_TAX_REPORT_ISSOTRX_CHECK" condition="ISSOTRX IN (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_TAX_REPORT_ISSUMMARY_CHECK" condition="ISSUMMARY IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_TAX_REPORT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_TAX_REPORT_ISNEGATIVE_CHECK" condition="ISNEGATIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_TAX_REPORT_ISREPORT_CHECK" condition="ISREPORT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_TAX_REPORT_ISSHOWN_CHECK" condition="ISSHOWN IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_TAX_REPORT_ISSOTRX_CHECK" condition="ISSOTRX IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_TAX_REPORT_ISSUMMARY_CHECK" condition="ISSUMMARY IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -16,14 +16,14 @@
       <column name="WHERECLAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="ORDERBYCLAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" default="D" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_TABLE" name="ADD_TABLE_REFTABLE">
+        <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_REFTABLE_DISPLAY">
         <reference local="AD_DISPLAY" foreign="AD_COLUMN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_REFTABLE_ID">
         <reference local="AD_KEY" foreign="AD_COLUMN_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADD_TABLE_REFTABLE">
-        <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_REFERENCE" name="AD_REFERENCE_REFTABLE" onDelete="cascade">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
@@ -34,7 +34,7 @@
       <foreign-key foreignTable="AD_ORG" name="REF_TABLEORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="ADREFTABLE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADREFTABLE_ISVALUEDISP_CHECK" condition="isValueDisplayed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADREFTABLE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADREFTABLE_ISVALUEDISP_CHECK" condition="ISVALUEDISPLAYED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

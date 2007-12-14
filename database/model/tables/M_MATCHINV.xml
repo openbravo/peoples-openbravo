@@ -36,7 +36,7 @@
         <index-column name="C_INVOICELINE_ID"/>
         <index-column name="M_INOUTLINE_ID"/>
       </index>
-      <check name="M_MATCHINV_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_MATCHINV_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_MATCHINV_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_MATCHINV_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

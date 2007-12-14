@@ -30,7 +30,7 @@
       <foreign-key foreignTable="K_TOPIC" name="KTOPIC_KENTRY">
         <reference local="K_TOPIC_ID" foreign="K_TOPIC_ID"/>
       </foreign-key>
-      <check name="K_ENTRY_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="K_ENTRY_ISPUBLIC_CHECK" condition="IsPublic in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="K_ENTRY_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="K_ENTRY_ISPUBLIC_CHECK" condition="ISPUBLIC IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -29,6 +29,6 @@
       <foreign-key foreignTable="R_REQUESTTYPE" name="RREQUESTTYPE_RPROCESSORRULE">
         <reference local="R_REQUESTTYPE_ID" foreign="R_REQUESTTYPE_ID"/>
       </foreign-key>
-      <check name="R_REQPROCROUTE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="R_REQPROCROUTE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

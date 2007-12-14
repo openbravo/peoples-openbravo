@@ -35,7 +35,7 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="ADWINDOW_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADWINDOW_ISSOTRX_CHECK" condition="IsSOTrx in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADWINDOW_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADWINDOW_ISSOTRX_CHECK" condition="ISSOTRX IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

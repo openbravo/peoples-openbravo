@@ -23,6 +23,6 @@
       <foreign-key foreignTable="MA_MAINT_PART" name="MAMAINTPART_MAMAINT_WORKER">
         <reference local="MA_MAINT_PART_ID" foreign="MA_MAINT_PART_ID"/>
       </foreign-key>
-      <check name="MA_MAINT_WORKER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_MAINT_WORKER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

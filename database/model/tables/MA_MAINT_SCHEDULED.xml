@@ -47,6 +47,6 @@
       <foreign-key foreignTable="M_INTERNAL_CONSUMPTION" name="M_INTCONSUMP_MAINT_SCHEDULED">
         <reference local="M_INTERNAL_CONSUMPTION_ID" foreign="M_INTERNAL_CONSUMPTION_ID"/>
       </foreign-key>
-      <check name="MA_MAINT_SCHEDU_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_MAINT_SCHEDU_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

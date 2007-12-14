@@ -60,11 +60,11 @@
       <foreign-key foreignTable="C_PROJECTPHASE" name="CPROJECTPHASE_STIMEEXPENSELINE">
         <reference local="C_PROJECTPHASE_ID" foreign="C_PROJECTPHASE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_STIMEEXPENSELINE">
-        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_PROJECTTASK" name="CPROJECTTASK_STIMEEXPENSELINE">
         <reference local="C_PROJECTTASK_ID" foreign="C_PROJECTTASK_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_STIMEEXPENSELINE">
+        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_UOM" name="CUOM_STIMEEXPENSELINE">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
@@ -81,9 +81,9 @@
       <foreign-key foreignTable="S_TIMETYPE" name="STIMETYPE_STIMEEXPENSELINE">
         <reference local="S_TIMETYPE_ID" foreign="S_TIMETYPE_ID"/>
       </foreign-key>
-      <check name="STIMEEXLN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="STIMEEXLN_ISINVOICED_CHECK" condition="IsInvoiced in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="STIMEEXLN_ISTIMEREPORT_CHECK" condition="IsTimeReport in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="S_TIMEEXPENSELINE_CHECK1" condition="ISINVOICED=&apos;N&apos; OR C_BPARTNER_ID IS NOT NULL"/>
+      <check name="STIMEEXLN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="STIMEEXLN_ISINVOICED_CHECK" condition="ISINVOICED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="STIMEEXLN_ISTIMEREPORT_CHECK" condition="ISTIMEREPORT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="S_TIMEEXPENSELINE_CHECK1" condition="(ISINVOICED = &apos;N&apos;) OR (C_BPARTNER_ID IS NOT NULL)"/>
     </table>
   </database>

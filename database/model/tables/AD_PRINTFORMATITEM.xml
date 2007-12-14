@@ -74,14 +74,14 @@
       <index name="AD_PRINTFORMATITEM_FORMAT" unique="false">
         <index-column name="AD_PRINTFORMAT_ID"/>
       </index>
-      <check name="ADPRFORMITEM_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISGROUPBY_CHECK" condition="IsGroupBy in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISHEIGHTLN_CHECK" condition="IsHeightOneLine in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISNEXTLN_CHECK" condition="IsNextLine in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISORDERBY_CHECK" condition="IsOrderBy in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISPAGEBR_CHECK" condition="IsPageBreak in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISPRINTED_CHECK" condition="IsPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISRELPOS_CHECK" condition="IsRelativePosition in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISSUMM_CHECK" condition="IsSummarized in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISGROUPBY_CHECK" condition="ISGROUPBY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISHEIGHTLN_CHECK" condition="ISHEIGHTONELINE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISNEXTLN_CHECK" condition="ISNEXTLINE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISORDERBY_CHECK" condition="ISORDERBY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISPAGEBR_CHECK" condition="ISPAGEBREAK IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISPRINTED_CHECK" condition="ISPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISRELPOS_CHECK" condition="ISRELATIVEPOSITION IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISSUMM_CHECK" condition="ISSUMMARIZED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

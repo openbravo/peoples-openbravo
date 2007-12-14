@@ -28,6 +28,6 @@
         <unique-column name="C_ACCTSCHEMA_ID"/>
         <unique-column name="AD_TABLE_ID"/>
       </unique>
-      <check name="C_ACCTSCHEMA_TA_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ACCTSCHEMA_TA_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

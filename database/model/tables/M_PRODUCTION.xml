@@ -45,8 +45,8 @@
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_MPRODUCTION">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <check name="M_PRODUCTION_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCTION_ISCREATED_CHECK" condition="IsCreated in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCTION_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCTION_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PRODUCTION_ISCREATED_CHECK" condition="ISCREATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PRODUCTION_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

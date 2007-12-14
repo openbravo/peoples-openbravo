@@ -45,11 +45,11 @@
       <foreign-key foreignTable="C_ORDER" name="CORDER_CPROJECTLINE1">
         <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CPROJECTLINE" onDelete="cascade">
-        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_PROJECTISSUE" name="CPROJECTISSUE_CPROJECTLINE">
         <reference local="C_PROJECTISSUE_ID" foreign="C_PROJECTISSUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CPROJECTLINE" onDelete="cascade">
+        <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_TAX" name="C_TAX_FK_PROJECTLINE">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
@@ -60,6 +60,6 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CPROJECTLINE">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="C_PROJECTLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_PROJECTLINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

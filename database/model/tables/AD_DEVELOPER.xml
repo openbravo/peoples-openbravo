@@ -27,6 +27,6 @@
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="NAME"/>
       </index>
-      <check name="AD_DEVELOPER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AD_DEVELOPER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

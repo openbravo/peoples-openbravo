@@ -23,6 +23,6 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="PRODCATE_C_EXTERNALPOS_CAT">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <check name="C_EXTERNALPOS_C_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_EXTERNALPOS_C_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

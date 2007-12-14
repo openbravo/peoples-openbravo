@@ -29,7 +29,7 @@
         <index-column name="C_GREETING_ID"/>
         <index-column name="AD_LANGUAGE"/>
       </index>
-      <check name="C_GREETING_TRL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CGREET_TRL_ISTRANSLATED_CHECK" condition="IsTranslated in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CGREET_TRL_ISTRANSLATED_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_GREETING_TRL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

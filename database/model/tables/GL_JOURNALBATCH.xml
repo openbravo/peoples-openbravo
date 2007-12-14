@@ -44,8 +44,8 @@
         <unique-column name="C_PERIOD_ID"/>
         <unique-column name="DOCUMENTNO"/>
       </unique>
-      <check name="GL_JOURNALBATCH_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="GLJOURNBATCH_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="GLJOURNBATCH_PROCESSING_CHECK" condition="Processing in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="GLJOURNBATCH_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="GLJOURNBATCH_PROCESSING_CHECK" condition="PROCESSING IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="GL_JOURNALBATCH_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

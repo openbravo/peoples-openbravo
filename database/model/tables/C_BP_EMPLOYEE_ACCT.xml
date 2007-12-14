@@ -30,6 +30,6 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_EPREPAYMENT_CBPEMPLOYEE">
         <reference local="E_PREPAYMENT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <check name="C_BP_EMPLOYEE_A_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_BP_EMPLOYEE_A_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

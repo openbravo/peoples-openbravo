@@ -46,11 +46,11 @@
       <foreign-key foreignTable="AD_CALLOUT" name="ADCOLUMN_FK_CALLOUT">
         <reference local="AD_CALLOUT_ID" foreign="AD_CALLOUT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ELEMENT" name="AD_ELEMENT_AD_COLUMN">
-        <reference local="AD_ELEMENT_ID" foreign="AD_ELEMENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADCOLUMN" onDelete="setnull">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ELEMENT" name="AD_ELEMENT_AD_COLUMN">
+        <reference local="AD_ELEMENT_ID" foreign="AD_ELEMENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_REFERENCE" name="AD_REFERENCE_COLUMNDATATYPE">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
@@ -77,16 +77,16 @@
         <unique-column name="AD_TABLE_ID"/>
         <unique-column name="COLUMNNAME"/>
       </unique>
-      <check name="ADCOLUMN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISDESENCRYPT_CHECK" condition="IsDesencryptable IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISENCRYPTED_CHECK" condition="IsEncrypted in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISIDENTIFIER_CHECK" condition="IsIdentifier in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISKEY_CHECK" condition="IsKey in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISMANDATORY_CHECK" condition="IsMandatory in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISPARENT_CHECK" condition="IsParent in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISSELCOL_CHECK" condition="IsSelectionColumn in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISSYNCDBASE_CHECK" condition="IsSyncDatabase in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISTRANSLATED_CHECK" condition="IsTranslated in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISUPDATEABLE_CHECK" condition="IsUpdateable in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISDESENCRYPT_CHECK" condition="ISDESENCRYPTABLE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISENCRYPTED_CHECK" condition="ISENCRYPTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISIDENTIFIER_CHECK" condition="ISIDENTIFIER IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISKEY_CHECK" condition="ISKEY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISMANDATORY_CHECK" condition="ISMANDATORY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISPARENT_CHECK" condition="ISPARENT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISSELCOL_CHECK" condition="ISSELECTIONCOLUMN IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISSYNCDBASE_CHECK" condition="ISSYNCDATABASE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISTRANSLATED_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISUPDATEABLE_CHECK" condition="ISUPDATEABLE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

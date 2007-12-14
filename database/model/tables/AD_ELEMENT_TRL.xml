@@ -25,13 +25,13 @@
       <foreign-key foreignTable="AD_ELEMENT" name="ADELEMENT_ADELEMENTTRL" onDelete="cascade">
         <reference local="AD_ELEMENT_ID" foreign="AD_ELEMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_AD_ELEMENT_TRL">
-        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADELEMENTTRL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="ADELEMENTTRL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADELEMENTTRL_IS_ANSLATED_CHECK" condition="IsTranslated in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_AD_ELEMENT_TRL">
+        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
+      <check name="ADELEMENTTRL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADELEMENTTRL_IS_ANSLATED_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

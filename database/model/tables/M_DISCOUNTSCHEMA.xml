@@ -24,7 +24,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_MDISCOUNTSCHEMA">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="MDISCOUNTSCHEM_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MDISCSCHEM_ISQUANTBASED_CHECK" condition="IsQuantityBased in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MDISCOUNTSCHEM_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MDISCSCHEM_ISQUANTBASED_CHECK" condition="ISQUANTITYBASED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

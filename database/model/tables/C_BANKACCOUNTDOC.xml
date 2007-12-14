@@ -27,6 +27,6 @@
       <foreign-key foreignTable="C_BANKACCOUNT" name="CBANKACCOUNT_CBADOC" onDelete="cascade">
         <reference local="C_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
       </foreign-key>
-      <check name="C_BANKACCOUNTDO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_BANKACCOUNTDO_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -73,8 +73,8 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_IPRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="I_PROD_DISCONTINUED_CHECK" condition="Discontinued in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="I_PRODUCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="I_PRODUCT_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="I_PRODUCT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="I_PRODUCT_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="I_PROD_DISCONTINUED_CHECK" condition="DISCONTINUED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

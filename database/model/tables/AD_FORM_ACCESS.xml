@@ -27,7 +27,7 @@
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_FORM_ID"/>
       </index>
-      <check name="ADFORMAC_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADFORMAC_ISREADWRITE_CHECK" condition="IsReadWrite in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADFORMAC_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADFORMAC_ISREADWRITE_CHECK" condition="ISREADWRITE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

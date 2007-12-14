@@ -41,11 +41,11 @@
       <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADPROCESSPARA" onDelete="cascade">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCE_ADPROCESSPARA">
-        <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCEVALUE_ADPROCPARA">
         <reference local="AD_REFERENCE_VALUE_ID" foreign="AD_REFERENCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCE_ADPROCESSPARA">
+        <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_VAL_RULE" name="ADVALRULE_AD_PROCESSPARA">
         <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
@@ -53,9 +53,9 @@
       <index name="AD_PROCESS_PARA_PROCESS" unique="false">
         <index-column name="AD_PROCESS_ID"/>
       </index>
-      <check name="ADPROCPARA_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPROCPARA_ISCENTMAINT_CHECK" condition="IsCentrallyMaintained in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPROCPARA_ISMANDATORY_CHECK" condition="IsMandatory in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPROCPARA_ISRANGE_CHECK" condition="IsRange in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPROCPARA_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPROCPARA_ISCENTMAINT_CHECK" condition="ISCENTRALLYMAINTAINED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPROCPARA_ISMANDATORY_CHECK" condition="ISMANDATORY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPROCPARA_ISRANGE_CHECK" condition="ISRANGE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

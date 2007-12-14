@@ -25,7 +25,7 @@
       <foreign-key foreignTable="AD_PRINTFORMATITEM" name="ADPRINTFORMATITEM_TRL" onDelete="cascade">
         <reference local="AD_PRINTFORMATITEM_ID" foreign="AD_PRINTFORMATITEM_ID"/>
       </foreign-key>
-      <check name="ADPRINTFORMTRL_ISACTIVE_CHECK" condition="IsTranslated in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRINTFORMTRL_ISTRANS_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRINTFORMTRL_ISACTIVE_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRINTFORMTRL_ISTRANS_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -28,6 +28,6 @@
       <foreign-key foreignTable="W_BASKET" name="WBASKET_WBASKETLINE">
         <reference local="W_BASKET_ID" foreign="W_BASKET_ID"/>
       </foreign-key>
-      <check name="W_BASKETLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="W_BASKETLINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

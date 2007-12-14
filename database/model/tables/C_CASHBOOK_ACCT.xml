@@ -42,6 +42,6 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_CBRECEIPT_CCASHBOOK">
         <reference local="CB_RECEIPT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <check name="C_CASHBOOK_ACCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_CASHBOOK_ACCT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

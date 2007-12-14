@@ -31,6 +31,6 @@
         <index-column name="AD_PROCESS_ID"/>
         <index-column name="RECORD_ID"/>
       </index>
-      <check name="AD_PINSTANCE_ISACTIVE_CHECK" condition="IsProcessing in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AD_PINSTANCE_ISACTIVE_CHECK" condition="ISPROCESSING IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

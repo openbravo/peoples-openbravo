@@ -37,11 +37,11 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_IINVENTORY">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INVENTORY" name="MINVENTORY_IINVENTORY">
-        <reference local="M_INVENTORY_ID" foreign="M_INVENTORY_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_INVENTORYLINE" name="MINVENTORYLINE_IINVENTORY">
         <reference local="M_INVENTORYLINE_ID" foreign="M_INVENTORYLINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_INVENTORY" name="MINVENTORY_IINVENTORY">
+        <reference local="M_INVENTORY_ID" foreign="M_INVENTORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_IINVENTORY">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>

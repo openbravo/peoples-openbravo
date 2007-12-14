@@ -52,13 +52,13 @@
         <unique-column name="C_ELEMENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="C_ELEMENTVALUE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CELEMVAL_ISBANKACCOUNT_CHECK" condition="IsBankAccount in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CELEMVAL_ISDOCCONTROL_CHECK" condition="IsDocControlled in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CELEMVAL_ISFORCURREN_CHECK" condition="IsForeignCurrency in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CELEMVAL_POSTENCUMBR_CHECK" condition="PostEncumbrance in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CELEMVAL_POSTSTATISTIC_CHECK" condition="PostStatistical in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CELEMVALUE_POSTACTUAL_CHECK" condition="PostActual in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CELEMVALUE_POSTBUDGET_CHECK" condition="PostBudget in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CELEMVALUE_POSTACTUAL_CHECK" condition="POSTACTUAL IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CELEMVALUE_POSTBUDGET_CHECK" condition="POSTBUDGET IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CELEMVAL_ISBANKACCOUNT_CHECK" condition="ISBANKACCOUNT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CELEMVAL_ISDOCCONTROL_CHECK" condition="ISDOCCONTROLLED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CELEMVAL_ISFORCURREN_CHECK" condition="ISFOREIGNCURRENCY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CELEMVAL_POSTENCUMBR_CHECK" condition="POSTENCUMBRANCE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CELEMVAL_POSTSTATISTIC_CHECK" condition="POSTSTATISTICAL IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ELEMENTVALUE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -31,17 +31,17 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MASEQUENCE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_PROCESS" name="MAPROCESS_MASEQUENCE">
-        <reference local="MA_PROCESS_ID" foreign="MA_PROCESS_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MA_PROCESSPLAN_VERSION" name="MAPROCESSPLANVERSION_MASEQ">
         <reference local="MA_PROCESSPLAN_VERSION_ID" foreign="MA_PROCESSPLAN_VERSION_ID"/>
       </foreign-key>
-      <check name="MA_SEQUENCE_CALCULATED_CHECK" condition="Calculated in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MA_SEQUENCE_GROUPUSE_CHECK" condition="GROUPUSE in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MA_SEQUENCE_ISACTIVE_CHECK" condition="isActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <foreign-key foreignTable="MA_PROCESS" name="MAPROCESS_MASEQUENCE">
+        <reference local="MA_PROCESS_ID" foreign="MA_PROCESS_ID"/>
+      </foreign-key>
+      <check name="MA_SEQUENCE_CALCULATED_CHECK" condition="CALCULATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MA_SEQUENCE_GROUPUSE_CHECK" condition="GROUPUSE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MA_SEQUENCE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
       <check name="MA_SEQUENCE_ISDEFAULT_CHECK" condition="ISDEFAULT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MA_SEQUENCE_NOQTY_CHECK" condition="NOQTY in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MA_SEQUENCE_OUTSOURCED_CHECK" condition="outsourced in (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MA_SEQUENCE_NOQTY_CHECK" condition="NOQTY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MA_SEQUENCE_OUTSOURCED_CHECK" condition="OUTSOURCED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

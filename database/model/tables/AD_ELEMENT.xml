@@ -35,6 +35,6 @@
       <index name="AD_ELEMENT_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
-      <check name="AD_ELEMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AD_ELEMENT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

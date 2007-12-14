@@ -24,6 +24,6 @@
       <foreign-key foreignTable="C_YEAR" name="BUDGETYEAR">
         <reference local="C_YEAR_ID" foreign="C_YEAR_ID"/>
       </foreign-key>
-      <check name="C_BUDGET_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_BUDGET_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

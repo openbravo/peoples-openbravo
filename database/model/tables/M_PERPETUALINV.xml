@@ -32,7 +32,7 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_MPERPETUALINV">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
-      <check name="M_PERPETUALINV_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PERPETVALINU_C_H_MOVEMENT" condition="CountHighMovement in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PERPETUALINV_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PERPETVALINU_C_H_MOVEMENT" condition="COUNTHIGHMOVEMENT IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

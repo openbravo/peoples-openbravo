@@ -92,20 +92,20 @@
       <index name="SETTINVOICE_DEBT_PAYMENT" unique="false">
         <index-column name="C_INVOICE_ID"/>
       </index>
-      <check name="CANCEL_DEBT_PAYMENT" condition="Cancel_Processed=&apos;N&apos; OR C_Settlement_Cancel_ID IS NOT NULL"/>
-      <check name="CANCELISVALID_DEBT_PAYMENT" condition="C_Settlement_Cancel_ID IS NULL OR IsValid=&apos;Y&apos;"/>
-      <check name="CBPARTNER_DEBT_PAYMENT" condition="c_bpartner_id is not null"/>
-      <check name="CDEBTPAYM_CANCEL_PROCESSED" condition="CANCEL_PROCESSED IN (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_DEBT_PAYMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_DEBT_PAYMENT_ISMANUAL" condition="ISMANUAL in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_DEBT_PAYMENT_ISRECEIPT" condition="IsReceipt in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_DEBT_PAYMENT_ISVALID" condition="ISVALID in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CDEBTPAYM_GENERATE_PROCESSED" condition="GENERATE_PROCESSED IN (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CLINE_BSLINE_DEBT_PAYMENT" condition="C_CashLine_ID IS NULL OR C_BankStatementLine_ID IS NULL"/>
-      <check name="DIRECTPOSTING_DEBT_PAYMENT_CHK" condition="ISDIRECTPOSTING=&apos;N&apos; OR C_GLITEM_ID IS NOT NULL"/>
-      <check name="ISPAID_CDEBTPAYMENT" condition="C_SETTLEMENT_CANCEL_ID IS NOT NULL OR C_SETTLEMENT_GENERATE_ID IS NOT NULL OR ISPAID=&apos;N&apos;"/>
-      <check name="ISPAID2_CDEBTPAYMENT" condition="(C_BANKSTATEMENTLINE_ID IS NULL AND C_CASHLINE_ID IS NULL) OR ISPAID=&apos;Y&apos;"/>
-      <check name="ISVALIDACTIVE_DEBT_PAYMENT" condition="IsValid=&apos;N&apos; OR IsActive=&apos;Y&apos;"/>
-      <check name="ISVALIDPLUS_DEBT_PAYMENT2" condition="(IsValid=&apos;Y&apos; AND ((C_Settlement_Generate_ID IS NULL AND Generate_Processed=&apos;N&apos;) OR (C_Settlement_Generate_ID IS NOT NULL AND Generate_Processed=&apos;Y&apos;))) OR (IsValid=&apos;N&apos; AND C_Settlement_Generate_ID IS NOT NULL AND Generate_Processed=&apos;N&apos;) OR (IsValid=&apos;N&apos; AND IsAutomaticGenerated=&apos;N&apos;)"/>
+      <check name="CANCELISVALID_DEBT_PAYMENT" condition="(C_SETTLEMENT_CANCEL_ID IS NULL) OR (ISVALID = &apos;Y&apos;)"/>
+      <check name="CANCEL_DEBT_PAYMENT" condition="(CANCEL_PROCESSED = &apos;N&apos;) OR (C_SETTLEMENT_CANCEL_ID IS NOT NULL)"/>
+      <check name="CBPARTNER_DEBT_PAYMENT" condition="C_BPARTNER_ID IS NOT NULL"/>
+      <check name="CDEBTPAYM_CANCEL_PROCESSED" condition="CANCEL_PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CDEBTPAYM_GENERATE_PROCESSED" condition="GENERATE_PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CLINE_BSLINE_DEBT_PAYMENT" condition="(C_CASHLINE_ID IS NULL) OR (C_BANKSTATEMENTLINE_ID IS NULL)"/>
+      <check name="C_DEBT_PAYMENT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_DEBT_PAYMENT_ISMANUAL" condition="ISMANUAL IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_DEBT_PAYMENT_ISRECEIPT" condition="ISRECEIPT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_DEBT_PAYMENT_ISVALID" condition="ISVALID IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="DIRECTPOSTING_DEBT_PAYMENT_CHK" condition="(ISDIRECTPOSTING = &apos;N&apos;) OR (C_GLITEM_ID IS NOT NULL)"/>
+      <check name="ISPAID2_CDEBTPAYMENT" condition="((C_BANKSTATEMENTLINE_ID IS NULL) AND (C_CASHLINE_ID IS NULL)) OR (ISPAID = &apos;Y&apos;)"/>
+      <check name="ISPAID_CDEBTPAYMENT" condition="((C_SETTLEMENT_CANCEL_ID IS NOT NULL) OR (C_SETTLEMENT_GENERATE_ID IS NOT NULL)) OR (ISPAID = &apos;N&apos;)"/>
+      <check name="ISVALIDACTIVE_DEBT_PAYMENT" condition="(ISVALID = &apos;N&apos;) OR (ISACTIVE = &apos;Y&apos;)"/>
+      <check name="ISVALIDPLUS_DEBT_PAYMENT2" condition="(((ISVALID = &apos;Y&apos;) AND (((C_SETTLEMENT_GENERATE_ID IS NULL) AND (GENERATE_PROCESSED = &apos;N&apos;)) OR ((C_SETTLEMENT_GENERATE_ID IS NOT NULL) AND (GENERATE_PROCESSED = &apos;Y&apos;)))) OR (((ISVALID = &apos;N&apos;) AND (C_SETTLEMENT_GENERATE_ID IS NOT NULL)) AND (GENERATE_PROCESSED = &apos;N&apos;))) OR ((ISVALID = &apos;N&apos;) AND (ISAUTOMATICGENERATED = &apos;N&apos;))"/>
     </table>
   </database>

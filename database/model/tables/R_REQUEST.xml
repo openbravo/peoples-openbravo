@@ -49,9 +49,6 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_SR_RREQUEST">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_RREQUEST">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_RREQUEST">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
@@ -63,6 +60,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_RREQUEST">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_RREQUEST">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_RREQUEST">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
@@ -82,8 +82,8 @@
       <index name="R_REQUEST_USER" unique="false">
         <index-column name="AD_USER_ID"/>
       </index>
-      <check name="RREQUEST_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="RREQUEST_ISESCALATED_CHECK" condition="IsEscalated in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="RREQUEST_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="RREQUEST_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="RREQUEST_ISESCALATED_CHECK" condition="ISESCALATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="RREQUEST_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

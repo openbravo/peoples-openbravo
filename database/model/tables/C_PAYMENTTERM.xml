@@ -40,9 +40,9 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="CPAYMENTT_AFTERDELIVERY_CHECK" condition="AfterDelivery in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_PAYMENTTERM_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CPAYMENTT_ISDUEFIXED_CHECK" condition="IsDueFixed in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CPAYMENTT_ISNEXTBUSDAY_CHECK" condition="IsNextBusinessDay in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CPAYMENTT_AFTERDELIVERY_CHECK" condition="AFTERDELIVERY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CPAYMENTT_ISDUEFIXED_CHECK" condition="ISDUEFIXED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CPAYMENTT_ISNEXTBUSDAY_CHECK" condition="ISNEXTBUSINESSDAY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_PAYMENTTERM_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

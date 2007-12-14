@@ -40,14 +40,14 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_GLJOURNAL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCTSCHEMA_GL_JOURNAL">
-        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_GLJOURNAL">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_GLJOURNAL">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCTSCHEMA_GL_JOURNAL">
+        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PERIOD" name="C_PERIOD_JOURNAL">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
@@ -66,9 +66,9 @@
         <unique-column name="C_PERIOD_ID"/>
         <unique-column name="DOCUMENTNO"/>
       </unique>
-      <check name="GL_JOURNAL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="GL_JOURNAL_ISAPPROVED_CHECK" condition="IsApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="GL_JOURNAL_ISPRINTED_CHECK" condition="IsPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="GL_JOURNAL_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="GL_JOURNAL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="GL_JOURNAL_ISAPPROVED_CHECK" condition="ISAPPROVED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="GL_JOURNAL_ISPRINTED_CHECK" condition="ISPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="GL_JOURNAL_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

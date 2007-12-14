@@ -20,6 +20,6 @@
       <foreign-key foreignTable="M_EDI" name="MEDI_EDIINFO">
         <reference local="M_EDI_ID" foreign="M_EDI_ID"/>
       </foreign-key>
-      <check name="M_EDI_INFO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_EDI_INFO_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

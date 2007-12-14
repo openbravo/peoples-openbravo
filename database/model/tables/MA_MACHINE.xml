@@ -28,6 +28,6 @@
       <foreign-key foreignTable="MA_MACHINE_TYPE" name="MA_MACHINE_TYPE_MAMACHINE">
         <reference local="MA_MACHINE_TYPE_ID" foreign="MA_MACHINE_TYPE_ID"/>
       </foreign-key>
-      <check name="MA_MACHINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_MACHINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

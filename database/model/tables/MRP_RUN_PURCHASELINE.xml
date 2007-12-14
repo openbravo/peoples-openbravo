@@ -39,19 +39,19 @@
       <foreign-key foreignTable="MA_WORKREQUIREMENT" name="MAWORKREQUIREMENT_MRPRUNPURCHA">
         <reference local="MA_WORKREQUIREMENT_ID" foreign="MA_WORKREQUIREMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_RUN_PURCHASELINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_REQUISITIONLINE" name="M_REQUISITIONLINE_RUN_PURCHASE">
-        <reference local="M_REQUISITIONLINE_ID" foreign="M_REQUISITIONLINE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MRP_RUN_PURCHASE" name="MRP_PLANNER_RUN_PURCHASELINE">
         <reference local="MRP_RUN_PURCHASE_ID" foreign="MRP_RUN_PURCHASE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MRP_SALESFORECASTLINE" name="MRP_SALESFORECASTLINE_PURCHASE">
         <reference local="MRP_SALESFORECASTLINE_ID" foreign="MRP_SALESFORECASTLINE_ID"/>
       </foreign-key>
-      <check name="MRPRUNPURLN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MRPRUNPURLN_ISFIXED_CHECK" condition="ISFIXED in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_RUN_PURCHASELINE">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_REQUISITIONLINE" name="M_REQUISITIONLINE_RUN_PURCHASE">
+        <reference local="M_REQUISITIONLINE_ID" foreign="M_REQUISITIONLINE_ID"/>
+      </foreign-key>
+      <check name="MRPRUNPURLN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPURLN_ISFIXED_CHECK" condition="ISFIXED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

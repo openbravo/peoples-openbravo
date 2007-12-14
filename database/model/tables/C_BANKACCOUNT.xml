@@ -34,6 +34,6 @@
       <index name="C_BANKACCT_BANK" unique="false">
         <index-column name="C_BANK_ID"/>
       </index>
-      <check name="C_BANKACCOUNT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_BANKACCOUNT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

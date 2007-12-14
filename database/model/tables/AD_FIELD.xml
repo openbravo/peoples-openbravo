@@ -28,11 +28,11 @@
       <column name="ISENCRYPTED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" default="D" autoIncrement="false"/>
       <column name="SHOWINRELATION" primaryKey="false" required="false" type="VARCHAR" size="1" default="Y" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_FIELD">
-        <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_FIELDGROUP" name="ADFIELDGROUP_ADFIELD">
         <reference local="AD_FIELDGROUP_ID" foreign="AD_FIELDGROUP_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_FIELD">
+        <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TAB" name="AD_TAB_FIELD" onDelete="cascade">
         <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
@@ -49,13 +49,13 @@
       <index name="AD_FIELD_TAB" unique="false">
         <index-column name="AD_TAB_ID"/>
       </index>
-      <check name="ADFIELD_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADFIELD_ISCENMAINT_CHECK" condition="IsCentrallyMaintained in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADFIELD_ISDISPLAYED_CHECK" condition="IsDisplayed in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADFIELD_ISENCRYPTED_CHECK" condition="IsEncrypted in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADFIELD_ISFIELDONLY_CHECK" condition="IsFieldOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADFIELD_ISHEADING_CHECK" condition="IsHeading in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADFIELD_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADFIELD_ISSAMELINE_CHECK" condition="IsSameLine in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADFIELD_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADFIELD_ISCENMAINT_CHECK" condition="ISCENTRALLYMAINTAINED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADFIELD_ISDISPLAYED_CHECK" condition="ISDISPLAYED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADFIELD_ISENCRYPTED_CHECK" condition="ISENCRYPTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADFIELD_ISFIELDONLY_CHECK" condition="ISFIELDONLY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADFIELD_ISHEADING_CHECK" condition="ISHEADING IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADFIELD_ISREADONLY_CHECK" condition="ISREADONLY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADFIELD_ISSAMELINE_CHECK" condition="ISSAMELINE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -90,9 +90,6 @@
       <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CPROJECT">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_PROJECT">
-        <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_PAYMENTTERM" name="CPAYMENTTERM_CPROJECT">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
@@ -104,6 +101,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECTTYPE" name="CPROJECTTYPE_CPROJECT">
         <reference local="C_PROJECTTYPE_ID" foreign="C_PROJECTTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_PROJECT">
+        <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRICELIST_VERSION" name="MPRICELISTVERSION_CPROJECT">
         <reference local="M_PRICELIST_VERSION_ID" foreign="M_PRICELIST_VERSION_ID"/>
@@ -121,9 +121,9 @@
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="VALUE"/>
       </index>
-      <check name="C_PROJECT_GENERATETO_CHECK" condition="GenerateTo in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_PROJECT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_PROJECT_ISCOMMITMENT_CHECK" condition="IsCommitment in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_PROJECT_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_PROJECT_GENERATETO_CHECK" condition="GENERATETO IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_PROJECT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_PROJECT_ISCOMMITMENT_CHECK" condition="ISCOMMITMENT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_PROJECT_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

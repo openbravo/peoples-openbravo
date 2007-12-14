@@ -24,6 +24,6 @@
       <foreign-key foreignTable="GL_JOURNAL" name="GLJOURNAL_CREVENUERECRUN">
         <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
       </foreign-key>
-      <check name="CREVRUN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CREVRUN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

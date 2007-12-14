@@ -69,14 +69,14 @@
       <foreign-key foreignTable="C_ORDER" name="CORDER_CORDERLINE">
         <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_SOPOREF">
-        <reference local="REF_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_TAX" name="CTAX_CORDERLINE">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_UOM" name="CUOM_CORDERLINE">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_SOPOREF">
+        <reference local="REF_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_CORDERLINE">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
@@ -84,11 +84,11 @@
       <foreign-key foreignTable="M_OFFER" name="MOFFER_CORDERLINE">
         <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CORDERLINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTOUMID_CORDERLINE">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CORDERLINE">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_SHIPPER" name="MSHIPPER_CORDERLINE">
         <reference local="M_SHIPPER_ID" foreign="M_SHIPPER_ID"/>
@@ -105,9 +105,9 @@
       <index name="C_ORDERLINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <check name="C_ORDERLINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
-      <check name="C_ORDERLINE_CHECK2" condition="LineNetAmt=0 OR C_Tax_ID IS NOT NULL"/>
-      <check name="C_ORDERLINE_DIRECTSHIP_CHECK" condition="DirectShip in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_ORDERLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_ORDERLINE_CHECK1" condition="((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))"/>
+      <check name="C_ORDERLINE_CHECK2" condition="(LINENETAMT = 0) OR (C_TAX_ID IS NOT NULL)"/>
+      <check name="C_ORDERLINE_DIRECTSHIP_CHECK" condition="DIRECTSHIP IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ORDERLINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

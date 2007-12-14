@@ -18,6 +18,6 @@
       <foreign-key foreignTable="C_INVOICELINE" name="CINVOICELINE_AASSETADDITION">
         <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
       </foreign-key>
-      <check name="A_ASSET_ADDITIO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="A_ASSET_ADDITIO_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

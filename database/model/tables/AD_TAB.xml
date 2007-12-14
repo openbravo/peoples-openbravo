@@ -36,9 +36,6 @@
       <column name="INCLUDED_TAB_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="FILTERCLAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="EDITREFERENCE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_AD_TAB">
-        <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADTABSORTORDER">
         <reference local="AD_COLUMNSORTORDER_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
@@ -56,6 +53,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_TAB" name="ADTAB_INCLUDED">
         <reference local="INCLUDED_TAB_ID" foreign="AD_TAB_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_AD_TAB">
+        <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_TAB">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
@@ -79,11 +79,11 @@
         <unique-column name="AD_WINDOW_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="ADTAB_HASTREE_CHECK" condition="HasTree in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTAB_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTAB_ISINFOTAB_CHECK" condition="IsInfoTab in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTAB_ISREADONLY_CHECK" condition="IsReadOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTAB_ISSINGLEROW_CHECK" condition="IsSingleRow in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTAB_ISTRANSLATIONTAB_CHECK" condition="IsTranslationTab in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTAB_HASTREE_CHECK" condition="HASTREE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADTAB_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADTAB_ISINFOTAB_CHECK" condition="ISINFOTAB IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADTAB_ISREADONLY_CHECK" condition="ISREADONLY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADTAB_ISSINGLEROW_CHECK" condition="ISSINGLEROW IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADTAB_ISTRANSLATIONTAB_CHECK" condition="ISTRANSLATIONTAB IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

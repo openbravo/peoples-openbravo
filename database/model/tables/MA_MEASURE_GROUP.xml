@@ -26,6 +26,6 @@
       <foreign-key foreignTable="MA_MEASURE_SHIFT" name="MA_MEASURESHIFT_MAMEASUREGROUP">
         <reference local="MA_MEASURE_SHIFT_ID" foreign="MA_MEASURE_SHIFT_ID"/>
       </foreign-key>
-      <check name="MA_MEASURE_GROU_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_MEASURE_GROU_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

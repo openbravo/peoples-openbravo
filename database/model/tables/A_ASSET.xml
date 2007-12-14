@@ -60,12 +60,6 @@
       <column name="DEPRECIATEDPLAN" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="DEPRECIATEDPREVIOUSAMT" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="DEPRECIATEDVALUE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="A_ASSET_ATTRIBUTESETINSTANCE">
-        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="A_ASSET_CURRENCY">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="A_ASSET_GROUP" name="AASSETGROUP_AASSET">
         <reference local="A_ASSET_GROUP_ID" foreign="A_ASSET_GROUP_ID"/>
       </foreign-key>
@@ -77,6 +71,12 @@
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSER_AASSET">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="A_ASSET_ATTRIBUTESETINSTANCE">
+        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="A_ASSET_CURRENCY">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_AASSET">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
@@ -93,9 +93,9 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_AASSET">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="AASSET_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="AASSET_ISDISPOSED_CHECK" condition="IsDisposed in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="AASSET_ISINPOSESSION_CHECK" condition="IsInPosession in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="AASSET_ISOWNED_CHECK" condition="IsOwned in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AASSET_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AASSET_ISDISPOSED_CHECK" condition="ISDISPOSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AASSET_ISINPOSESSION_CHECK" condition="ISINPOSESSION IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AASSET_ISOWNED_CHECK" condition="ISOWNED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -75,17 +75,17 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CORDER">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_CORDER">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORGTRX_CORDER">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSER_CORDER">
-        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_CORDER">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSERDROPSHIP_CORDER">
         <reference local="DROPSHIP_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="ADUSER_CORDER">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSER_SR_CORDER">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
@@ -93,14 +93,14 @@
       <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CORDER">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CORDER">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNERDROPSHIP_CORDER">
         <reference local="DROPSHIP_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPARTNERLOCATION_SOHEADER">
         <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CORDER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPLOCATIONBILLTO_SOHEADER">
         <reference local="BILLTO_ID" foreign="C_BPARTNER_LOCATION_ID"/>
@@ -117,9 +117,6 @@
       <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CORDER">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_CORDER">
-        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPETARGET_CORDER">
         <reference local="C_DOCTYPETARGET_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
@@ -131,6 +128,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CORDER">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_CORDER">
+        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_SOHEADER">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
@@ -156,17 +156,17 @@
       <index name="C_ORDER_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="C_ORDER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_ORDER_ISAPPROVED_CHECK" condition="IsApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CORDER_ISCREDITAPPROVED_CHECK" condition="IsCreditApproved in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_ORDER_ISDELIVERED_CHECK" condition="IsDelivered in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CORDER_ISDISCOUNTPRINT_CHECK" condition="IsDiscountPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_ORDER_ISINVOICED_CHECK" condition="IsInvoiced in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_ORDER_ISPRINTED_CHECK" condition="IsPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_ORDER_ISSELECTED_CHECK" condition="IsSelected in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_ORDER_ISSOTRX_CHECK" condition="IsSOTrx in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_ORDER_ISTAXINCLUDED_CHECK" condition="IsTaxIncluded in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_ORDER_ISTRANSFERRED_CHECK" condition="IsTransferred in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_ORDER_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CORDER_ISCREDITAPPROVED_CHECK" condition="ISCREDITAPPROVED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CORDER_ISDISCOUNTPRINT_CHECK" condition="ISDISCOUNTPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ORDER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ORDER_ISAPPROVED_CHECK" condition="ISAPPROVED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ORDER_ISDELIVERED_CHECK" condition="ISDELIVERED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ORDER_ISINVOICED_CHECK" condition="ISINVOICED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ORDER_ISPRINTED_CHECK" condition="ISPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ORDER_ISSELECTED_CHECK" condition="ISSELECTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ORDER_ISSOTRX_CHECK" condition="ISSOTRX IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ORDER_ISTAXINCLUDED_CHECK" condition="ISTAXINCLUDED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ORDER_ISTRANSFERRED_CHECK" condition="ISTRANSFERRED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_ORDER_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

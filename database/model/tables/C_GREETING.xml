@@ -19,8 +19,8 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CGREETING">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="C_GREETING_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_GREETING_ISDEFAULT_CHECK" condition="IsDefault in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CGREET_ISFIRSTNAMEONLY_CHECK" condition="IsFirstNameOnly in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CGREET_ISFIRSTNAMEONLY_CHECK" condition="ISFIRSTNAMEONLY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_GREETING_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_GREETING_ISDEFAULT_CHECK" condition="ISDEFAULT IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -53,20 +53,20 @@
       <foreign-key foreignTable="C_COUNTRY" name="COUTRYTO_ITAX">
         <reference local="TO_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_ITAX">
-        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_TAX" name="CTAX1_ITAX">
         <reference local="PARENT_TAX_ID" foreign="C_TAX_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_TAX" name="CTAX_ITAX">
+        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ORG_ITAX">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_REGION" name="REGION_ITAX">
-        <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_REGION" name="REGIONTO_ITAX">
         <reference local="TO_REGION_ID" foreign="C_REGION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_REGION" name="REGION_ITAX">
+        <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_TAXCATEGORY" name="TAXCATEGORY_ITAX">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>

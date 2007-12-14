@@ -22,6 +22,6 @@
       <foreign-key foreignTable="C_CYCLE" name="CCYCLE_CCYCLESTEP" onDelete="cascade">
         <reference local="C_CYCLE_ID" foreign="C_CYCLE_ID"/>
       </foreign-key>
-      <check name="C_CYCLESTEP_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_CYCLESTEP_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

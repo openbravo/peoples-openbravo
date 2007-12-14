@@ -36,18 +36,6 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CTAX">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_COUNTRY" name="C_COUNTRY_C_TAX">
-        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_COUNTRY" name="C_COUNTRYTO_C_TAX">
-        <reference local="TO_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_REGION" name="C_REGION_C_TAX">
-        <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_REGION" name="C_REGIONTO_C_TAX">
-        <reference local="TO_REGION_ID" foreign="C_REGION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_CTAX" onDelete="cascade">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
       </foreign-key>
@@ -57,14 +45,26 @@
       <foreign-key foreignTable="C_TAX" name="CTAX_PARENT">
         <reference local="PARENT_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="C_COUNTRYTO_C_TAX">
+        <reference local="TO_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="C_COUNTRY_C_TAX">
+        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_REGION" name="C_REGIONTO_C_TAX">
+        <reference local="TO_REGION_ID" foreign="C_REGION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_REGION" name="C_REGION_C_TAX">
+        <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
+      </foreign-key>
       <unique name="C_TAX_NAME1">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
         <unique-column name="PARENT_TAX_ID"/>
       </unique>
-      <check name="C_TAX_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_TAX_ISDOCUMENTLEVEL_CHECK" condition="IsDocumentLevel in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_TAX_ISPRINTTAX_CHECK" condition="ISPRINTTAX IN (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CTAX_REQTAXCERTIFIC_CHECK" condition="RequiresTaxCertificate in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CTAX_REQTAXCERTIFIC_CHECK" condition="REQUIRESTAXCERTIFICATE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_TAX_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_TAX_ISDOCUMENTLEVEL_CHECK" condition="ISDOCUMENTLEVEL IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_TAX_ISPRINTTAX_CHECK" condition="ISPRINTTAX IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

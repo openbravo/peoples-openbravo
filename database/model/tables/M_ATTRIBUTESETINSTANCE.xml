@@ -29,7 +29,7 @@
       <foreign-key foreignTable="M_ATTRIBUTESET" name="REFM_ATTRIBUTESET1765">
         <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
       </foreign-key>
-      <check name="MATTRIBSETINST_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MATTRIBSETINST_ISLOCKED_CHECK" condition="IsLocked IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MATTRIBSETINST_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MATTRIBSETINST_ISLOCKED_CHECK" condition="ISLOCKED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

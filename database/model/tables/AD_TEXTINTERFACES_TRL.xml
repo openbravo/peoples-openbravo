@@ -15,11 +15,11 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADTEXTINTERFACESTRL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_TEXTINTERFACESTRL">
-        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADTEXTINTERFACESTRL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_TEXTINTERFACESTRL">
+        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TEXTINTERFACES" name="AD_TEXTINTERFACESTRL">
         <reference local="AD_TEXTINTERFACES_ID" foreign="AD_TEXTINTERFACES_ID"/>
@@ -28,7 +28,7 @@
         <index-column name="AD_LANGUAGE"/>
         <index-column name="AD_TEXTINTERFACES_ID"/>
       </index>
-      <check name="ADTEXTTRL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADTEXTTRL_ISTRANSLATED_CHECK" condition="IsTranslated in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADTEXTTRL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADTEXTTRL_ISTRANSLATED_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

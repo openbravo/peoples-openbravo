@@ -51,7 +51,7 @@
       <index name="C_BPBANKACCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
-      <check name="CBPBANKACCOUNT_ISACH_CHECK" condition="IsACH in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPBANKACCOUNT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPBANKACCOUNT_ISACH_CHECK" condition="ISACH IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPBANKACCOUNT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

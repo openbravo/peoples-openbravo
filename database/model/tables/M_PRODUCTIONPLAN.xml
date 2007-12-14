@@ -52,7 +52,7 @@
       <index name="M_PRODUCTIONPLAN_PRODUCTION" unique="false">
         <index-column name="M_PRODUCTION_ID"/>
       </index>
-      <check name="MPRODPLAN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MPRODPLAN_OUTSOURCED_CHECK" condition="outsourced in (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MPRODPLAN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MPRODPLAN_OUTSOURCED_CHECK" condition="OUTSOURCED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

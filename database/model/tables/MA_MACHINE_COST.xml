@@ -31,6 +31,6 @@
       <foreign-key foreignTable="MA_MACHINE" name="MAMACHINE_MAMACHINECOST">
         <reference local="MA_MACHINE_ID" foreign="MA_MACHINE_ID"/>
       </foreign-key>
-      <check name="MA_MACHINE_COST_ISACTIVE_CHECK" condition="IsActive IN (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_MACHINE_COST_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

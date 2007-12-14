@@ -33,6 +33,6 @@
       <foreign-key foreignTable="M_REQUISITION" name="M_REQUISITION_MREQUISITIONLINE">
         <reference local="M_REQUISITION_ID" foreign="M_REQUISITION_ID"/>
       </foreign-key>
-      <check name="M_REQUISITIONLI_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_REQUISITIONLI_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

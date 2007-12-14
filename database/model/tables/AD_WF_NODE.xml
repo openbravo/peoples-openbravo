@@ -50,7 +50,7 @@
       <index name="AD_WF_NODE_WORKFLOW" unique="false">
         <index-column name="AD_WORKFLOW_ID"/>
       </index>
-      <check name="ADWFNODE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADWFNODE_ISCENTMAINT_CHECK" condition="IsCentrallyMaintained in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADWFNODE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADWFNODE_ISCENTMAINT_CHECK" condition="ISCENTRALLYMAINTAINED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

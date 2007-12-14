@@ -38,6 +38,6 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_WREVALUATION_MWAREHOUSE">
         <reference local="W_REVALUATION_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <check name="M_WAREHOUSE_ACC_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_WAREHOUSE_ACC_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -28,7 +28,7 @@
       <foreign-key foreignTable="M_RAPPEL" name="M_RAPPEL_M_RAPPEL_BPARTNER">
         <reference local="M_RAPPEL_ID" foreign="M_RAPPEL_ID"/>
       </foreign-key>
-      <check name="MRAPPELBPARTNER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MRAPPELBPARTNER_ISSOTRX_CHECK" condition="IsSOTRX in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MRAPPELBPARTNER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRAPPELBPARTNER_ISSOTRX_CHECK" condition="ISSOTRX IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

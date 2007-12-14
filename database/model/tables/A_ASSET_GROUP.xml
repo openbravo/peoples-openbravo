@@ -20,7 +20,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_AASSETGROUP">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="AASSETGROUP_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="AASSETGROUP_ISOWNED_CHECK" condition="IsOwned in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AASSETGROUP_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AASSETGROUP_ISOWNED_CHECK" condition="ISOWNED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

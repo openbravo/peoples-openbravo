@@ -23,6 +23,6 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_ADTREEBAR" onDelete="cascade">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <check name="AD_TREEBAR_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AD_TREEBAR_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

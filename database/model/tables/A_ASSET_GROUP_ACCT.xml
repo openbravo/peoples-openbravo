@@ -27,9 +27,6 @@
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_AASSETGROUPACCT">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVALIDCOMBINATION_AASSETGROUPA">
-        <reference local="A_DISPOSAL_GAIN" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVALIDCOMBINATION_AASSETGROUP1">
         <reference local="A_DEPRECIATION_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
@@ -39,6 +36,9 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVALIDCOMBINATION_AASSETGROUP3">
         <reference local="A_DISPOSAL_LOSS" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <check name="A_ASSET_GROUP_A_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="CVALIDCOMBINATION_AASSETGROUPA">
+        <reference local="A_DISPOSAL_GAIN" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <check name="A_ASSET_GROUP_A_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -26,6 +26,6 @@
       <foreign-key foreignTable="M_PRODUCTION" name="M_PRODUCTION_MAWEINCIDENCE">
         <reference local="M_PRODUCTION_ID" foreign="M_PRODUCTION_ID"/>
       </foreign-key>
-      <check name="MA_WEINCIDENCE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_WEINCIDENCE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

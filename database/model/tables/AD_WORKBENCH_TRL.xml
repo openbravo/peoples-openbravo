@@ -26,7 +26,7 @@
       <foreign-key foreignTable="AD_WORKBENCH" name="ADWORKBENCH_ADWORKBENCHTRL">
         <reference local="AD_WORKBENCH_ID" foreign="AD_WORKBENCH_ID"/>
       </foreign-key>
-      <check name="ADWORKBTRL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADWORKBTRL_ISTRANSLATED_CHECK" condition="IsTranslated in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADWORKBTRL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADWORKBTRL_ISTRANSLATED_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

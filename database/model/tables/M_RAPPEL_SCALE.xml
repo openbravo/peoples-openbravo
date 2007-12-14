@@ -22,6 +22,6 @@
       <foreign-key foreignTable="M_RAPPEL" name="M_RAPPEL_M_RAPPEL_SCALE">
         <reference local="M_RAPPEL_ID" foreign="M_RAPPEL_ID"/>
       </foreign-key>
-      <check name="DISC" condition="DISCOUNT BETWEEN 0 AND 100"/>
+      <check name="DISC" condition="(DISCOUNT &gt;= 0) AND (DISCOUNT &lt;= 100)"/>
     </table>
   </database>

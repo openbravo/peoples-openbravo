@@ -24,6 +24,6 @@
       <foreign-key foreignTable="MA_TOOLSET_TYPE" name="MA_TOOLSETTYPEMATOOLSETPROCESS">
         <reference local="MA_TOOLSET_TYPE_ID" foreign="MA_TOOLSET_TYPE_ID"/>
       </foreign-key>
-      <check name="MA_TOOLSETPROCE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_TOOLSETPROCE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

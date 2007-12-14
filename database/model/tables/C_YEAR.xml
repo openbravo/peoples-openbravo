@@ -28,6 +28,6 @@
         <unique-column name="C_CALENDAR_ID"/>
         <unique-column name="YEAR"/>
       </unique>
-      <check name="C_YEAR_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_YEAR_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

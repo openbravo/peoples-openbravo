@@ -37,6 +37,6 @@
         <unique-column name="Y"/>
         <unique-column name="Z"/>
       </unique>
-      <check name="M_LOCATOR_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_LOCATOR_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

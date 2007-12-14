@@ -57,9 +57,9 @@
       <index name="C_SETTLEMENT_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
+      <check name="CSETTLEMENT_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
       <check name="CSETTLEM_CREATEFILE_CHECK" condition="CREATEFILE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_SETTLEMENT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CSETTLEMENT_PROCESSED_CHECK" condition="Processed in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_SETTLEMENT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
       <check name="DATEACCT_CSETTLEMENT" condition="DATEACCT IS NOT NULL"/>
     </table>
   </database>

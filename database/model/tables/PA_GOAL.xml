@@ -27,12 +27,12 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_PAGOAL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="PA_GOAL" name="PA_GOAL_PARENT">
-        <reference local="PARENT_ID" foreign="PA_GOAL_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="PA_MEASURE" name="PAMEASURE_PAGOAL">
         <reference local="PA_MEASURE_ID" foreign="PA_MEASURE_ID"/>
       </foreign-key>
-      <check name="PA_GOAL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <foreign-key foreignTable="PA_GOAL" name="PA_GOAL_PARENT">
+        <reference local="PARENT_ID" foreign="PA_GOAL_ID"/>
+      </foreign-key>
+      <check name="PA_GOAL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

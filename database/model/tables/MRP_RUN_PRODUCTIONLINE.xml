@@ -36,17 +36,11 @@
       <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_PRODUCTION">
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_PRODUCTIONLINE">
-        <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MA_WORKREQUIREMENT" name="MAWORKREQUIREMENT_MRPRUNPRODUC">
         <reference local="MA_WORKREQUIREMENT_ID" foreign="MA_WORKREQUIREMENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_RUN_PRODUCTIONLINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_REQUISITIONLINE" name="M_REQUISITIONLINE_PRODUCTION">
-        <reference local="M_REQUISITIONLINE_ID" foreign="M_REQUISITIONLINE_ID"/>
+      <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_PRODUCTIONLINE">
+        <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MRP_RUN_PRODUCTION" name="MRP_PLANNER_RUN_PRODUCTIONLINE">
         <reference local="MRP_RUN_PRODUCTION_ID" foreign="MRP_RUN_PRODUCTION_ID"/>
@@ -54,11 +48,17 @@
       <foreign-key foreignTable="MRP_SALESFORECASTLINE" name="MRP_SALESFORECASTLINE_PROD">
         <reference local="MRP_SALESFORECASTLINE_ID" foreign="MRP_SALESFORECASTLINE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_RUN_PRODUCTIONLINE">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_REQUISITIONLINE" name="M_REQUISITIONLINE_PRODUCTION">
+        <reference local="M_REQUISITIONLINE_ID" foreign="M_REQUISITIONLINE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="MRP_RUN_PRODUCTIONLINE" name="PARENT_MRP_RUN_PRODUCTIONLINE">
         <reference local="PARENT_ID" foreign="MRP_RUN_PRODUCTIONLINE_ID"/>
       </foreign-key>
-      <check name="MRPRUNPRLN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MRPRUNPRLN_ISFIXED_CHECK" condition="ISFIXED in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MRPRUNPRLN_ISPLANNED_CHECK" condition="ISPLANNED IN ( &apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPRLN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPRLN_ISFIXED_CHECK" condition="ISFIXED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPRLN_ISPLANNED_CHECK" condition="ISPLANNED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

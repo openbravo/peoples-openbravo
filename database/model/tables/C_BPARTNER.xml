@@ -87,11 +87,11 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPARTNER">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
-        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CBPARTNER">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
+        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
       <foreign-key foreignTable="C_BP_TAXCATEGORY" name="BP_CBPTAXCATEGORYPO">
         <reference local="PO_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
@@ -101,9 +101,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CPBARTNERPARENT">
         <reference local="BPARTNER_PARENT_ID" foreign="C_BPARTNER_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_WH_SCHEDULE" name="C_BPARTNER_SCHEDULE">
-        <reference local="M_WH_SCHEDULE_ID" foreign="M_WH_SCHEDULE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BP_GROUP" name="CBPGROUP_CBPARTNER">
         <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
@@ -123,23 +120,26 @@
       <foreign-key foreignTable="C_PAYMENTTERM" name="CPOPAYMENTTERM_CBPARTNER">
         <reference local="PO_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_WH_SCHEDULE" name="C_BPARTNER_SCHEDULE">
+        <reference local="M_WH_SCHEDULE_ID" foreign="M_WH_SCHEDULE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_SALARY_CATEGORY" name="C_SALARY_CATEGORY_CBPARTNER">
         <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="FORCEDORG_CBPARTNER">
         <reference local="AD_FORCED_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTS_CBPARTNER">
-        <reference local="M_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTSPO_CBPARTNER">
         <reference local="PO_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_CBPARTNER" onDelete="setnull">
-        <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTS_CBPARTNER">
+        <reference local="M_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRICELIST" name="MPRICELISTPO_CBUSPARTNER" onDelete="setnull">
         <reference local="PO_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_CBPARTNER" onDelete="setnull">
+        <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BANKACCOUNT" name="POBACKACCOUTN_CBPARTNER">
         <reference local="PO_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
@@ -154,17 +154,17 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="CBPARTNER_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTNER_ISCUSTOMER_CHECK" condition="IsCustomer in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTNER_ISDIS_TPRINTED_CHECK" condition="IsDiscountPrinted in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTNER_ISEMPLOYEE_CHECK" condition="IsEmployee in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTNER_ISONETIME_CHECK" condition="IsOneTime in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTNER_ISPROSPECT_CHECK" condition="IsProspect in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTNER_ISSALESREP_CHECK" condition="IsSalesRep in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTNER_ISSUMMARY_CHECK" condition="IsSummary in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTNER_ISTAXEXEMPT_CHECK" condition="IsTaxExempt in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CBPARTNER_ISVENDOR_CHECK" condition="IsVendor in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CBPARTNER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTNER_ISCUSTOMER_CHECK" condition="ISCUSTOMER IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTNER_ISDIS_TPRINTED_CHECK" condition="ISDISCOUNTPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTNER_ISEMPLOYEE_CHECK" condition="ISEMPLOYEE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTNER_ISONETIME_CHECK" condition="ISONETIME IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTNER_ISPROSPECT_CHECK" condition="ISPROSPECT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTNER_ISSALESREP_CHECK" condition="ISSALESREP IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTNER_ISSUMMARY_CHECK" condition="ISSUMMARY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTNER_ISTAXEXEMPT_CHECK" condition="ISTAXEXEMPT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTNER_ISVENDOR_CHECK" condition="ISVENDOR IN (&apos;Y&apos;, &apos;N&apos;)"/>
       <check name="CBPARTNER_SHOWPRICE_CHECK" condition="SHOWPRICEINORDER IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="INVOICERULE_CK_CBPARTNER" condition="INVOICERULE &lt;&gt;&apos;S&apos; OR C_INVOICESCHEDULE_ID IS NOT NULL"/>
+      <check name="INVOICERULE_CK_CBPARTNER" condition="(INVOICERULE &lt;&gt; &apos;S&apos;) OR (C_INVOICESCHEDULE_ID IS NOT NULL)"/>
     </table>
   </database>

@@ -32,7 +32,7 @@
       <foreign-key foreignTable="S_RESOURCETYPE" name="SRESOURCETYPE_SRESOURCE" onDelete="cascade">
         <reference local="S_RESOURCETYPE_ID" foreign="S_RESOURCETYPE_ID"/>
       </foreign-key>
-      <check name="SRESOURCE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="SRESOURCE_ISAVAILABLE_CHECK" condition="IsAvailable in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="SRESOURCE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="SRESOURCE_ISAVAILABLE_CHECK" condition="ISAVAILABLE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

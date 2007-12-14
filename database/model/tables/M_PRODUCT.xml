@@ -97,17 +97,17 @@
       <foreign-key foreignTable="C_UOM" name="CUOM_MPRODUCT">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MPRODUCT">
-        <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="MA_PRODUCTTYPE" name="MA_PRODUCTTYPE_MPRODUCT">
-        <reference local="MA_PRODUCTTYPE_ID" foreign="MA_PRODUCTTYPE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_ATTRIBUTESET" name="MATTRIBUTESET_MPRODUCT" onDelete="cascade">
         <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_MPRODUCT">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MPRODUCT">
+        <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_PRODUCTTYPE" name="MA_PRODUCTTYPE_MPRODUCT">
+        <reference local="MA_PRODUCTTYPE_ID" foreign="MA_PRODUCTTYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_FREIGHTCATEGORY" name="MFREIGHTCATEGORY_MPRODUCT">
         <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
@@ -149,15 +149,15 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="ENFORCEATTRIBUTE_CH_MPRODUCT" condition="ENFORCE_ATTRIBUTE IN (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MPROD_ISINVPRINTDET_CHECK" condition="IsInvoicePrintDetails in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MPROD_ISPICKLPRINTDET_CHECK" condition="IsPickListPrintDetails in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_DISCONTINUED_CHECK" condition="Discontinued in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISBOM_CHECK" condition="IsBOM in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISPURCHASED_CHECK" condition="IsPurchased in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISSOLD_CHECK" condition="IsSold in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISSTOCKED_CHECK" condition="IsStocked in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISVERIFIED_CHECK" condition="IsVerified in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ENFORCEATTRIBUTE_CH_MPRODUCT" condition="ENFORCE_ATTRIBUTE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MPROD_ISINVPRINTDET_CHECK" condition="ISINVOICEPRINTDETAILS IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MPROD_ISPICKLPRINTDET_CHECK" condition="ISPICKLISTPRINTDETAILS IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PRODUCT_DISCONTINUED_CHECK" condition="DISCONTINUED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISBOM_CHECK" condition="ISBOM IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISPURCHASED_CHECK" condition="ISPURCHASED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISSOLD_CHECK" condition="ISSOLD IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISSTOCKED_CHECK" condition="ISSTOCKED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PRODUCT_ISVERIFIED_CHECK" condition="ISVERIFIED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

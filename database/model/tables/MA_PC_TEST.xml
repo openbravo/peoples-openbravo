@@ -22,6 +22,6 @@
       <foreign-key foreignTable="MA_PERIODIC_CONTROL" name="MA_PERIODIC_CONTROL_MAPCTEST">
         <reference local="MA_PERIODIC_CONTROL_ID" foreign="MA_PERIODIC_CONTROL_ID"/>
       </foreign-key>
-      <check name="MA_PC_TEST_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_PC_TEST_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

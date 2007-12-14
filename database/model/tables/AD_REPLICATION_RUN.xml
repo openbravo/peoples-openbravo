@@ -22,7 +22,7 @@
       <foreign-key foreignTable="AD_REPLICATION" name="ADREPLICATION_ADREPRUN" onDelete="cascade">
         <reference local="AD_REPLICATION_ID" foreign="AD_REPLICATION_ID"/>
       </foreign-key>
-      <check name="ADREPRUN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADREPRUN_ISREPLICATED_CHECK" condition="IsReplicated in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADREPRUN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADREPRUN_ISREPLICATED_CHECK" condition="ISREPLICATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

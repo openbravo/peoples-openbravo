@@ -29,6 +29,6 @@
         <unique-column name="C_BPARTNER_ID"/>
         <unique-column name="M_PRODUCT_ID"/>
       </unique>
-      <check name="M_PRODUCT_TEMPL_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="M_PRODUCT_TEMPL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

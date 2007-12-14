@@ -19,12 +19,12 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MRPSALESFORECASTLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MRPSALESFORECASTLINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MRP_SALESFORECAST" name="MRPSALESFORECAST_MRPSALESFOREC">
         <reference local="MRP_SALESFORECAST_ID" foreign="MRP_SALESFORECAST_ID"/>
       </foreign-key>
-      <check name="MRPSALLN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MRPSALESFORECASTLINE">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <check name="MRPSALLN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

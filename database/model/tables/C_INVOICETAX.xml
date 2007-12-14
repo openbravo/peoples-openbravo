@@ -27,6 +27,6 @@
       <foreign-key foreignTable="C_TAX" name="CTAX_CINVOICETAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
-      <check name="C_INVOICETAX_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INVOICETAX_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

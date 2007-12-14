@@ -47,11 +47,11 @@
       <foreign-key foreignTable="C_CHARGE" name="CCHARGE_CINVOICELINE">
         <reference local="C_CHARGE_ID" foreign="C_CHARGE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_INVOICE" name="CINVOICE_CINVOICELINE">
-        <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_INVOICE_DISCOUNT" name="CINVOICELINE_FK_DISCINVOICE">
         <reference local="C_INVOICE_DISCOUNT_ID" foreign="C_INVOICE_DISCOUNT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_INVOICE" name="CINVOICE_CINVOICELINE">
+        <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ORDERLINE" name="CORDERLINE_CINVOICELINE">
         <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
@@ -71,11 +71,11 @@
       <foreign-key foreignTable="M_OFFER" name="MOFFER_CINVOICELINE">
         <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CINVOICELINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_CINVOICELINE">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_CINVOICELINE">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PROJECTLINE" name="PROJECTLINE_CINVOICELINE">
         <reference local="C_PROJECTLINE_ID" foreign="C_PROJECTLINE_ID"/>
@@ -95,8 +95,8 @@
       <index name="C_INVOICELINE_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <check name="C_INVOICELINE_CHECK1" condition="((QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL) OR (QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL))"/>
-      <check name="C_INVOICELINE_CHECK2" condition="LineNetAmt=0 OR C_Tax_ID IS NOT NULL"/>
-      <check name="C_INVOICELINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_INVOICELINE_CHECK1" condition="((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))"/>
+      <check name="C_INVOICELINE_CHECK2" condition="(LINENETAMT = 0) OR (C_TAX_ID IS NOT NULL)"/>
+      <check name="C_INVOICELINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

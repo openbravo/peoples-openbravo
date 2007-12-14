@@ -26,8 +26,8 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CINVOICESCHEDULE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="CINVOICESCHED_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CINVOICESCHED_ISAMOUNT_CHECK" condition="IsAmount in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CINVSCHED_EVENINVWEEK_CHECK" condition="EvenInvoiceWeek in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CINVOICESCHED_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CINVOICESCHED_ISAMOUNT_CHECK" condition="ISAMOUNT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CINVSCHED_EVENINVWEEK_CHECK" condition="EVENINVOICEWEEK IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

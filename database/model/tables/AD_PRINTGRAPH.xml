@@ -25,9 +25,6 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADPRINTGRAPH">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PRINTFORMAT" name="ADPRINTFORMAT_ADPRINTGRAPH">
-        <reference local="AD_PRINTFORMAT_ID" foreign="AD_PRINTFORMAT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_PRINTFORMATITEM" name="ADPRINTFORMATITEM_GRAPHDATA">
         <reference local="DATA_PRINTFORMATITEM_ID" foreign="AD_PRINTFORMATITEM_ID"/>
       </foreign-key>
@@ -46,6 +43,9 @@
       <foreign-key foreignTable="AD_PRINTFORMATITEM" name="ADPRINTFORMATITEM_GRAPHDESCR">
         <reference local="DESCRIPTION_PRINTFORMATITEM_ID" foreign="AD_PRINTFORMATITEM_ID"/>
       </foreign-key>
-      <check name="AD_PRINTGRAPH_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <foreign-key foreignTable="AD_PRINTFORMAT" name="ADPRINTFORMAT_ADPRINTGRAPH">
+        <reference local="AD_PRINTFORMAT_ID" foreign="AD_PRINTFORMAT_ID"/>
+      </foreign-key>
+      <check name="AD_PRINTGRAPH_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -20,6 +20,6 @@
       <foreign-key foreignTable="C_DUNNINGLEVEL" name="CDUNNINGLEVEL_CDUNNINGRUN">
         <reference local="C_DUNNINGLEVEL_ID" foreign="C_DUNNINGLEVEL_ID"/>
       </foreign-key>
-      <check name="C_DUNNINGRUN_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_DUNNINGRUN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

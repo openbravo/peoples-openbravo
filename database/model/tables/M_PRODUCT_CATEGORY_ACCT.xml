@@ -55,6 +55,6 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PTDISCOUNTREC_MPRODUCTCATEG">
         <reference local="P_TRADEDISCOUNTREC_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <check name="MPRODCATAC_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MPRODCATAC_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

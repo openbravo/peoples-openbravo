@@ -33,9 +33,6 @@
       <foreign-key foreignTable="AD_PRINTCOLOR" name="ADPRINTCOLOR_ADPRINTFORMAT">
         <reference local="AD_PRINTCOLOR_ID" foreign="AD_PRINTCOLOR_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_PRINTFONT" name="AD_PRINTFONT_ADPRINTFORMAT">
-        <reference local="AD_PRINTFONT_ID" foreign="AD_PRINTFONT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_PRINTTABLEFORMAT" name="ADPRINTFORMATTABLE_FORMAT">
         <reference local="AD_PRINTTABLEFORMAT_ID" foreign="AD_PRINTTABLEFORMAT_ID"/>
       </foreign-key>
@@ -48,6 +45,9 @@
       <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADPRINTFORMAT">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_PRINTFONT" name="AD_PRINTFONT_ADPRINTFORMAT">
+        <reference local="AD_PRINTFONT_ID" foreign="AD_PRINTFONT_ID"/>
+      </foreign-key>
       <index name="AD_PRINTFORMAT_TABLE" unique="false">
         <index-column name="AD_TABLE_ID"/>
       </index>
@@ -56,9 +56,9 @@
         <unique-column name="AD_TABLE_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="ADPRINTFORM_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRINTFORM_ISFORM_CHECK" condition="IsForm in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRINTFORM_ISSTFOOTER_CHECK" condition="IsStandardHeaderFooter in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="ADPRINTFORM_ISTABBAS_CHECK" condition="IsTableBased in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="ADPRINTFORM_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRINTFORM_ISFORM_CHECK" condition="ISFORM IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRINTFORM_ISSTFOOTER_CHECK" condition="ISSTANDARDHEADERFOOTER IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRINTFORM_ISTABBAS_CHECK" condition="ISTABLEBASED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

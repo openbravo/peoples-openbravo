@@ -28,21 +28,21 @@
       <foreign-key foreignTable="C_COUNTRY" name="CCOUNTRY_CCOUNTRY">
         <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CCOUNTRY">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_COUNTRYCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_COUNTRYORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CCOUNTRY">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
       <unique name="C_COUNTRYCODE">
         <unique-column name="COUNTRYCODE"/>
       </unique>
-      <check name="C_COUNTRY_HASPOSTAL_ADD_CHECK" condition="HasPostal_Add in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_COUNTRY_HASREGION_CHECK" condition="HasRegion in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_COUNTRY_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="C_COUNTRY_ISDEFAULT_CHECK" condition="IsDefault in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_COUNTRY_HASPOSTAL_ADD_CHECK" condition="HASPOSTAL_ADD IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_COUNTRY_HASREGION_CHECK" condition="HASREGION IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_COUNTRY_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_COUNTRY_ISDEFAULT_CHECK" condition="ISDEFAULT IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

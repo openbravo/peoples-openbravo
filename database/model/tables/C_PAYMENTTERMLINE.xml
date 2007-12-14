@@ -33,10 +33,10 @@
       <foreign-key foreignTable="C_PAYMENTTERM" name="CPAYMENTTERM_CPAYMENTTERMLINE">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
-      <check name="CPAYMENTTL_EXCLUDETAX_CHECK" condition="ExcludeTax in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CPAYMENTTLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CPAYMENTTL_ISDUEFIXED_CHECK" condition="IsDueFixed in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CPAYMENTTL_ISNEXTBUSDAY_CHECK" condition="IsNextBusinessDay in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="CPAYMENTTL_ONREMAINDER_CHECK" condition="OnRemainder in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="CPAYMENTTLINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CPAYMENTTL_EXCLUDETAX_CHECK" condition="EXCLUDETAX IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CPAYMENTTL_ISDUEFIXED_CHECK" condition="ISDUEFIXED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CPAYMENTTL_ISNEXTBUSDAY_CHECK" condition="ISNEXTBUSINESSDAY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CPAYMENTTL_ONREMAINDER_CHECK" condition="ONREMAINDER IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

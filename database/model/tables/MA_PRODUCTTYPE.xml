@@ -19,8 +19,8 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAPRODUCTTYPE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="MA_PRODUCTTYPE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MA_PRODUCTTYPE_RMINPUT_CHECK" condition="RMInput in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MA_PRODUCTTYPE_RMOUTPUT_CHECK" condition="RMOutput in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_PRODUCTTYPE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MA_PRODUCTTYPE_RMINPUT_CHECK" condition="RMINPUT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MA_PRODUCTTYPE_RMOUTPUT_CHECK" condition="RMOUTPUT IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

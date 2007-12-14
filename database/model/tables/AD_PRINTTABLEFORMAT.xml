@@ -53,6 +53,6 @@
       <foreign-key foreignTable="AD_PRINTFONT" name="REFAD_PRINTFONT1620">
         <reference local="FUNCT_PRINTFONT_ID" foreign="AD_PRINTFONT_ID"/>
       </foreign-key>
-      <check name="AD_PRINTTABLEFO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AD_PRINTTABLEFO_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

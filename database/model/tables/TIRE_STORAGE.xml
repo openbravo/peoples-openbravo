@@ -44,8 +44,8 @@
       <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_TIRESTORAGE">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
       </foreign-key>
-      <check name="TIRESTORAGE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="TIRESTORAGE_ISRETURNED_CHECK" condition="IsReturned in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="TIRESTORAGE_ISSTORED_CHECK" condition="IsStored in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="TIRESTORAGE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="TIRESTORAGE_ISRETURNED_CHECK" condition="ISRETURNED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="TIRESTORAGE_ISSTORED_CHECK" condition="ISSTORED IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

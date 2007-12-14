@@ -22,6 +22,6 @@
       <foreign-key foreignTable="MA_MEASURE_GROUP" name="MA_MEASURE_GROUP_MAMEASURETIME">
         <reference local="MA_MEASURE_GROUP_ID" foreign="MA_MEASURE_GROUP_ID"/>
       </foreign-key>
-      <check name="MA_MEASURE_TIME_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MA_MEASURE_TIME_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

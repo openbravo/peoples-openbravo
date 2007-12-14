@@ -30,10 +30,10 @@
       <foreign-key foreignTable="M_SERNOCTL" name="MSERNOCTL_ATTRIBUTESET">
         <reference local="M_SERNOCTL_ID" foreign="M_SERNOCTL_ID"/>
       </foreign-key>
-      <check name="MATTRIBSET_ISGUARDATE_CHECK" condition="IsGuaranteeDate in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MATTRIBSET_ISLOCKABLE_CHECK" condition="IsLockable IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_ATTRIBUTESET_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_ATTRIBUTESET_ISLOT_CHECK" condition="IsLot in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="M_ATTRIBUTESET_ISSERNO_CHECK" condition="IsSerNo in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MATTRIBSET_ISGUARDATE_CHECK" condition="ISGUARANTEEDATE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MATTRIBSET_ISLOCKABLE_CHECK" condition="ISLOCKABLE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_ATTRIBUTESET_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_ATTRIBUTESET_ISLOT_CHECK" condition="ISLOT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_ATTRIBUTESET_ISSERNO_CHECK" condition="ISSERNO IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

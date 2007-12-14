@@ -48,20 +48,23 @@
       <foreign-key foreignTable="AD_CLIENT" name="AC_CLIENT_I_BUDGETLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="AD_ORG_I_BUDGETLINE">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORGTRX_I_BUDGETLINE">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_I_BUDGETLINE">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_I_BUDGETLINE">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BP_GROUP" name="C_BP_GROUP_I_BUDGETLINE">
-        <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BUDGET" name="CBUDGET_IBUDGETLINE">
         <reference local="C_BUDGET_ID" foreign="C_BUDGET_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PERIOD" name="CPERIOD_IBUDGETLINE">
+        <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BP_GROUP" name="C_BP_GROUP_I_BUDGETLINE">
+        <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BUDGETLINE" name="C_BUDGETLINE_I_BUDGETLINE">
         <reference local="C_BUDGETLINE_ID" foreign="C_BUDGETLINE_ID"/>
@@ -71,9 +74,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCY_I_BUDGETLINE">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_PERIOD" name="CPERIOD_IBUDGETLINE">
-        <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="C_PROJECT_I_BUDGETLINE">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
@@ -96,6 +96,6 @@
       <foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_I_BUDGETLINE">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <check name="I_BUDGETLINE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="I_BUDGETLINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

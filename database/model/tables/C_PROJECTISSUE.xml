@@ -45,6 +45,6 @@
       <foreign-key foreignTable="S_TIMEEXPENSELINE" name="STIMEEXPENSELINE_CPROJECTISSUE">
         <reference local="S_TIMEEXPENSELINE_ID" foreign="S_TIMEEXPENSELINE_ID"/>
       </foreign-key>
-      <check name="C_PROJECTISSUE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_PROJECTISSUE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

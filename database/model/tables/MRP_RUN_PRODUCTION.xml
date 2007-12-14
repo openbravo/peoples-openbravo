@@ -35,19 +35,19 @@
       <foreign-key foreignTable="C_BP_GROUP" name="C_BP_GROUP_MRP_RUN_PRODUCTION">
         <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="MRP_PLANNER" name="MRP_PLANNER_RUN_PRODUCTION">
+        <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCTCATEGORY_RPROD">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_RUN_PRODUCTION">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MRP_PLANNER" name="MRP_PLANNER_RUN_PRODUCTION">
-        <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
-      </foreign-key>
-      <check name="MRPRUNPROD_RECA_ATESTOCK_CHECK" condition="RECALCULATESTOCK in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MRPRUNPRODUCTIO_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MRPRUNPRODUCTIO_LAUNCHMR_CHECK" condition="LAUNCHMR in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MRPRUNPRODUCTIO_LAUNCHWR_CHECK" condition="LAUNCHWR in (&apos;Y&apos;,&apos;N&apos;)"/>
-      <check name="MRPRUNPRODUCTIO_SIMULATE_CHECK" condition="SIMULATE in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="MRPRUNPRODUCTIO_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPRODUCTIO_LAUNCHMR_CHECK" condition="LAUNCHMR IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPRODUCTIO_LAUNCHWR_CHECK" condition="LAUNCHWR IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPRODUCTIO_SIMULATE_CHECK" condition="SIMULATE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPROD_RECA_ATESTOCK_CHECK" condition="RECALCULATESTOCK IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

@@ -24,6 +24,6 @@
       <unique name="AD_REFERENCE_NAME">
         <unique-column name="NAME"/>
       </unique>
-      <check name="AD_REFERENCE_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="AD_REFERENCE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>

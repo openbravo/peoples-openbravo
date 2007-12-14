@@ -70,6 +70,6 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_BUNIDENTIFIED_CBANKACCOUNT">
         <reference local="B_UNIDENTIFIED_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <check name="C_BANKACCOUNT_A_ISACTIVE_CHECK" condition="IsActive in (&apos;Y&apos;,&apos;N&apos;)"/>
+      <check name="C_BANKACCOUNT_A_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
     </table>
   </database>
