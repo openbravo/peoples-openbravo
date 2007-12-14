@@ -46,6 +46,8 @@ public class CreateXML2SQL extends Task {
     private File model;
     private File output;
     private boolean dropfirst;
+    
+    private String object = null;
 
     protected Log _log;
     private VerbosityLevel _verbosity = null;
@@ -98,6 +100,20 @@ public class CreateXML2SQL extends Task {
         try {        
 
             Database db = DatabaseUtils.readDatabase(model);
+            
+            
+             // Write creation script
+            _log.info("Writing creation script");
+            // crop database if needed
+            if (object != null) {
+                Database empty = new Database();
+                empty.setName("empty");
+                db = DatabaseUtils.cropDatabase(empty, db, object);
+                _log.info("for database object " + object);                
+            } else {
+                _log.info("for the complete database");                
+            }              
+            
             Writer w = new FileWriter(output);
             w.write(pl.getCreateTablesSql(db, isDropfirst(), false));
             w.close();
@@ -172,6 +188,18 @@ public class CreateXML2SQL extends Task {
 
     public void setDropfirst(boolean dropfirst) {
         this.dropfirst = dropfirst;
+    }
+    
+    public void setObject(String object) {
+        if (object == null || object.trim().startsWith("$") || object.trim().equals("")) {
+            this.object = null;
+        } else {            
+            this.object = object;
+        }
+    }
+    
+    public String getObject() {
+        return object;
     }
     
     /**

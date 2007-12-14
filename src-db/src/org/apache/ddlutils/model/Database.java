@@ -720,10 +720,10 @@ public class Database implements Serializable, Cloneable
         HashSet namesOfProcessedChecks = new HashSet();
         int     tableIdx = 0;
 
-        if ((getName() == null) || (getName().length() == 0))
-        {
-            throw new ModelException("The database model has no name");
-        }
+//        if ((getName() == null) || (getName().length() == 0))
+//        {
+//            throw new ModelException("The database model has no name");
+//        }
 
         for (Iterator tableIt = _tables.iterator(); tableIt.hasNext(); tableIdx++)
         {
@@ -1317,6 +1317,7 @@ public class Database implements Serializable, Cloneable
         result._views = (ArrayList)_views.clone();
         result._functions = (ArrayList)_functions.clone();
         result._triggers = (ArrayList)_triggers.clone();
+        result._sequences = (ArrayList)_sequences.clone();
 
         return result;
     }

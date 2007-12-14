@@ -47,6 +47,8 @@ public class AlterXML2SQL extends Task {
 
     private File model;
     private File output;
+    
+    private String object = null;
 
     protected Log _log;
     private VerbosityLevel _verbosity = null;
@@ -123,9 +125,18 @@ public class AlterXML2SQL extends Task {
         try {        
 
             Database db = DatabaseUtils.readDatabase(model);
+                        
+            // Write update script
+            _log.info("Writing update script");
+            // crop database if needed
+            if (object != null) {
+                db = DatabaseUtils.cropDatabase(originaldb, db, object);
+                _log.info("for database object " + object);                
+            } else {
+                _log.info("for the complete database");                
+            }            
 
             Writer w = new FileWriter(output);
-
             pl.getSqlBuilder().setWriter(w);
             pl.getSqlBuilder().alterDatabase(originaldb, db, null);
             w.close();
@@ -200,6 +211,18 @@ public class AlterXML2SQL extends Task {
 
     public void setModel(File model) {
         this.model = model;
+    }
+    
+    public void setObject(String object) {
+        if (object == null || object.trim().startsWith("$") || object.trim().equals("")) {
+            this.object = null;
+        } else {            
+            this.object = object;
+        }
+    }
+    
+    public String getObject() {
+        return object;
     }
     
     /**

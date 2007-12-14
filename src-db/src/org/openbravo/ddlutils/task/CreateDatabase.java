@@ -47,6 +47,8 @@ public class CreateDatabase extends Task {
     private File model;   
     private boolean dropfirst = false;
     private boolean failonerror = false;
+    
+    private String object = null;
 
     protected Log _log;
     private VerbosityLevel _verbosity = null;
@@ -103,9 +105,20 @@ public class CreateDatabase extends Task {
                 platform.evaluateBatch(DatabaseUtils.readFile(getPrescript()), !isFailonerror());
             }
             
+            Database db = DatabaseUtils.readDatabase(getModel());
+            
             // Create database
             _log.info("Executing creation script");
-            Database db = DatabaseUtils.readDatabase(getModel());
+            // crop database if needed
+            if (object != null) {
+                Database empty = new Database();
+                empty.setName("empty");
+                db = DatabaseUtils.cropDatabase(empty, db, object);
+                _log.info("for database object " + object);                
+            } else {
+                _log.info("for the complete database");                
+            }             
+            
             platform.createTables(db, isDropfirst(), !isFailonerror());   
             
             // execute the post-script
@@ -212,6 +225,18 @@ public class CreateDatabase extends Task {
     public void setPostscript(File postscript) {
         this.postscript = postscript;
     }    
+    
+    public void setObject(String object) {
+        if (object == null || object.trim().startsWith("$") || object.trim().equals("")) {
+            this.object = null;
+        } else {            
+            this.object = object;
+        }
+    }
+    
+    public String getObject() {
+        return object;
+    }
     
     /**
      * Specifies the verbosity of the task's debug output.

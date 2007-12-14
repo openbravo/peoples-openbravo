@@ -370,7 +370,14 @@ public class Column extends ValueObject implements Cloneable, Serializable
             comparator.append(_primaryKey,             other._primaryKey);
             comparator.append(_required,               other._required);
             comparator.append(_autoIncrement,          other._autoIncrement);
-            comparator.append(_typeCode,               other._typeCode);
+            
+            int typeCode2 = _typeCode == ExtTypes.NVARCHAR ? Types.VARCHAR : _typeCode;
+            typeCode2 = typeCode2 == ExtTypes.NCHAR ? Types.CHAR : typeCode2;
+            int othertypeCode2 = other._typeCode == ExtTypes.NVARCHAR ? Types.VARCHAR : other._typeCode;
+            othertypeCode2 = othertypeCode2 == ExtTypes.NCHAR ? Types.CHAR : othertypeCode2;
+            comparator.append(typeCode2,               othertypeCode2);            
+//            comparator.append(_typeCode,               other._typeCode);            
+            
             comparator.append(getParsedDefaultValue(), other.getParsedDefaultValue());
 
             // comparing the size makes only sense for types where it is relevant

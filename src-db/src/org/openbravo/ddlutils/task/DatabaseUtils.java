@@ -17,6 +17,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import javax.sql.DataSource;
@@ -87,6 +88,43 @@ public class DatabaseUtils {
             return dbIO.readplain(f); 
         }
     } 
+    
+    public static Database cropDatabase(Database sourcedb, Database targetdb, String sobjectlist) {
+
+        Database cropdb = null;
+        try {
+            cropdb = (Database) sourcedb.clone();
+            
+            StringTokenizer st = new StringTokenizer(sobjectlist, ",");
+            
+            while (st.hasMoreTokens()) {
+                moveObject(cropdb, targetdb, st.nextToken().trim());
+            }
+     
+        } catch (CloneNotSupportedException e) {
+        }
+        
+        cropdb.initialize(); // throws an exception if inconsistent
+        return cropdb;        
+    }
+    
+    public static void moveObject(Database cropdb, Database targetdb, String sobject) {
+        
+        cropdb.removeTable(cropdb.findTable(sobject));
+        cropdb.addTable(targetdb.findTable(sobject));
+
+        cropdb.removeSequence(cropdb.findSequence(sobject));
+        cropdb.addSequence(targetdb.findSequence(sobject));
+
+        cropdb.removeView(cropdb.findView(sobject));
+        cropdb.addView(targetdb.findView(sobject));
+
+        cropdb.removeFunction(cropdb.findFunction(sobject));
+        cropdb.addFunction(targetdb.findFunction(sobject));
+
+        cropdb.removeTrigger(cropdb.findTrigger(sobject));
+        cropdb.addTrigger(targetdb.findTrigger(sobject));
+    }
     
     private static void executeUpdate(DataSource ds, String query) throws SQLException {
         

@@ -46,6 +46,8 @@ public class AlterDatabase extends Task {
     private File originalmodel;   
     private File model;
     private boolean failonerror = false;
+    
+    private String object = null;
 
     protected Log _log;
     private VerbosityLevel _verbosity = null;
@@ -118,18 +120,19 @@ public class AlterDatabase extends Task {
                 }         
             }
             
+            Database db = DatabaseUtils.readDatabase(getModel());     
+            
             // Alter the database
             _log.info("Executing update script");
-            Database db = DatabaseUtils.readDatabase(getModel());            
-            platform.alterTables(originaldb, db, !isFailonerror());
+            // crop database if needed
+            if (object != null) {
+                db = DatabaseUtils.cropDatabase(originaldb, db, object);
+                _log.info("for database object " + object);                
+            } else {
+                _log.info("for the complete database");                
+            }
             
-            //
-//            Writer w = new StringWriter();
-//            platform.getSqlBuilder().setWriter(w);
-//            platform.getSqlBuilder().alterDatabase(originaldb, db, null);
-//            w.close();       
-//            log(w.toString());           
-            
+            platform.alterTables(originaldb, db, !isFailonerror());                   
             
             if (originaldb.getTableCount() == 0) {
                 // execute the post-script
@@ -236,6 +239,18 @@ public class AlterDatabase extends Task {
 
     public void setPostscript(File postscript) {
         this.postscript = postscript;
+    }
+    
+    public void setObject(String object) {
+        if (object == null || object.trim().startsWith("$") || object.trim().equals("")) {
+            this.object = null;
+        } else {            
+            this.object = object;
+        }
+    }
+    
+    public String getObject() {
+        return object;
     }
     
     /**

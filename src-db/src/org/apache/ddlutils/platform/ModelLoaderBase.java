@@ -42,7 +42,7 @@ import org.apache.ddlutils.util.ExtTypes;
  *
  * @author adrian
  */
-public class ModelLoaderBase implements ModelLoader {
+public abstract class ModelLoaderBase implements ModelLoader {
     
     
     protected Connection _connection;
@@ -239,7 +239,7 @@ public class ModelLoaderBase implements ModelLoader {
         } else if (c.getTypeCode() == Types.CLOB || c.getTypeCode() == Types.BLOB) {
             c.setSizeAndScale(rs.getInt(4), null);
         }
-        c.setRequired("N".equals(rs.getString(7)));  
+        c.setRequired(translateRequired(rs.getString(7)));  
         c.setDefaultValue(translateDefault(rs.getString(8), c.getTypeCode()));
         
         return c;
@@ -486,111 +486,21 @@ public class ModelLoaderBase implements ModelLoader {
         return body;
     }
     
-    protected String translateDefault(String value, int type) {
-        
-        if (value == null) {
-            return null;
-        } else {
-            String sreturn = value.trim();
-
-            switch (type) {
-                case Types.CHAR:
-                case Types.VARCHAR:
-                case ExtTypes.NCHAR:
-                case ExtTypes.NVARCHAR:
-                case Types.LONGVARCHAR:
-                    if (sreturn.length() >= 2 && sreturn.startsWith("'") && sreturn.endsWith("'")) {
-                        sreturn =  sreturn.substring(1, sreturn.length() - 1);
-                        int i = 0;
-                        StringBuffer sunescaped = new StringBuffer();
-                        while (i < sreturn.length()) {
-                            char c = sreturn.charAt(i);
-                            if (c == '\'') {
-                                i++;
-                                if (i < sreturn.length()) {
-                                    sunescaped.append(c);
-                                    i++;                                    
-                                }                                
-                            } else {
-                                sunescaped.append(c);
-                                i++;
-                            }
-                        }
-                        return sunescaped.toString();
-                    } else {
-                        return sreturn;
-                    }
-                default: return sreturn;
-            }
-        }
-    }
-    
     protected boolean translateUniqueness(String uniqueness) {
         
         return "UNIQUE".equalsIgnoreCase(uniqueness);
     }
     
-    protected int translateFKEvent(String fkevent) {
-        if ("CASCADE".equalsIgnoreCase(fkevent)) {
-            return DatabaseMetaData.importedKeyCascade;
-        } else if ("SET NULL".equalsIgnoreCase(fkevent)) {
-            return DatabaseMetaData.importedKeySetNull;
-        } else if ("RESTRICT".equalsIgnoreCase(fkevent)) {
-            return DatabaseMetaData.importedKeyRestrict;
-        } else {
-            return DatabaseMetaData.importedKeyNoAction;
-        }
-    }
+    protected abstract int translateFKEvent(String fkevent);
     
-    protected int translateColumnType(String nativeType) {
-        
-        if (nativeType == null) {
-            return Types.NULL;
-        } else if ("CHAR".equalsIgnoreCase(nativeType)) {
-            return Types.CHAR;
-        } else if ("VARCHAR2".equalsIgnoreCase(nativeType)) {
-            return Types.VARCHAR;
-        } else if ("NCHAR".equalsIgnoreCase(nativeType)) {
-            return ExtTypes.NCHAR;
-        } else if ("NVARCHAR2".equalsIgnoreCase(nativeType)) {
-            return ExtTypes.NVARCHAR;
-        } else if ("NUMBER".equalsIgnoreCase(nativeType)) {
-            return Types.DECIMAL;
-        } else if ("DATE".equalsIgnoreCase(nativeType)) {
-            return Types.TIMESTAMP;
-        } else if ("CLOB".equalsIgnoreCase(nativeType)) {
-            return Types.CLOB;
-        } else if ("BLOB".equalsIgnoreCase(nativeType)) {
-            return Types.BLOB;
-        } else {
-            return Types.VARCHAR;
-        }
-    }
+    protected abstract String translateDefault(String value, int type);
     
-    protected int translateParamType(String nativeType) {
+    protected abstract boolean translateRequired(String required);
+
+    protected abstract int translateParamType(String nativeType);
         
-        if (nativeType == null) {
-            return Types.NULL;
-        } else if ("CHAR".equalsIgnoreCase(nativeType)) {
-            return Types.CHAR;
-        } else if ("VARCHAR2".equalsIgnoreCase(nativeType)) {
-            return Types.VARCHAR;
-        } else if ("NCHAR".equalsIgnoreCase(nativeType)) {
-            return ExtTypes.NCHAR;
-        } else if ("NVARCHAR2".equalsIgnoreCase(nativeType)) {
-            return ExtTypes.NVARCHAR;
-        } else if ("NUMBER".equalsIgnoreCase(nativeType)) {
-            return Types.NUMERIC;
-        } else if ("DATE".equalsIgnoreCase(nativeType)) {
-            return Types.TIMESTAMP;
-        } else if ("CLOB".equalsIgnoreCase(nativeType)) {
-            return Types.CLOB;
-        } else if ("BLOB".equalsIgnoreCase(nativeType)) {
-            return Types.BLOB;
-        } else {
-            return Types.VARCHAR;
-        }
-    }
+    protected abstract int translateColumnType(String nativeType);
+
     
     private List readList(PreparedStatement stmt, RowConstructor r) throws SQLException {
         
