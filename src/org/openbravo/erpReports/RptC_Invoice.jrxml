@@ -171,7 +171,7 @@
 	<parameter name="ATTACH" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="BASE_DESIGN" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["/opt/AppsOpenbravo/src"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["/home/openbravo/workspaceBuena/openbravo/src"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LANGUAGE" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["en_US"]]></defaultValueExpression>
@@ -187,23 +187,24 @@
 	</parameter>
 	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpReports/"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpReports"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<queryString><![CDATA[SELECT C_INVOICE.C_INVOICE_ID, C_BPARTNER.NAME, C_BPARTNER.TAXID AS CIF, AD_USER.NAME AS CONTACT_NAME, C_LOCATION.ADDRESS1, 
-       C_LOCATION.POSTAL, C_LOCATION.CITY, C_REGION.NAME AS REGION,
+       C_LOCATION.POSTAL, C_LOCATION.CITY, C_REGION.NAME AS REGION,C_COUNTRY.NAME AS COUNTRY,C_BPARTNER_LOCATION.PHONE AS PHONE, C_BPARTNER_LOCATION.FAX AS FAX,
        C_INVOICE.DATEINVOICED, C_INVOICE.DOCUMENTNO, C_BPARTNER.VALUE AS CODE_BPARTNER, 
        AD_CLIENT.DESCRIPTION AS ENTITY, C_Location_Description(AD_ORGINFO.C_LOCATION_ID) AS LOCATION
   FROM C_INVOICE LEFT JOIN C_BPARTNER ON C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
                  LEFT JOIN AD_USER ON C_INVOICE.AD_USER_ID = AD_USER.AD_USER_ID
                  LEFT JOIN C_BPARTNER_LOCATION ON C_INVOICE.C_BPARTNER_LOCATION_ID = C_BPARTNER_LOCATION.C_BPARTNER_LOCATION_ID
                  LEFT JOIN C_LOCATION ON C_BPARTNER_LOCATION.C_LOCATION_ID = C_LOCATION.C_LOCATION_ID
-                 LEFT JOIN C_REGION ON C_LOCATION.C_REGION_ID = C_REGION.C_REGION_ID,
+                 LEFT JOIN C_REGION ON C_LOCATION.C_REGION_ID = C_REGION.C_REGION_ID
+                 LEFT JOIN C_COUNTRY ON C_LOCATION.C_COUNTRY_ID=C_COUNTRY.C_COUNTRY_ID,
         AD_ORGINFO, AD_CLIENT
   WHERE C_INVOICE.ad_org_id = AD_ORGINFO.ad_org_id
     AND C_INVOICE.ad_client_id = AD_CLIENT.ad_client_id
-    AND C_INVOICE.C_INVOICE_ID IN (1000087,1000089,1000102)]]></queryString>
+    AND C_INVOICE.C_INVOICE_ID IN (1000032)]]></queryString>
 
 	<field name="C_INVOICE_ID" class="java.math.BigDecimal"/>
 	<field name="NAME" class="java.lang.String"/>
@@ -213,6 +214,9 @@
 	<field name="POSTAL" class="java.lang.String"/>
 	<field name="CITY" class="java.lang.String"/>
 	<field name="REGION" class="java.lang.String"/>
+	<field name="COUNTRY" class="java.lang.String"/>
+	<field name="PHONE" class="java.lang.String"/>
+	<field name="FAX" class="java.lang.String"/>
 	<field name="DATEINVOICED" class="java.util.Date"/>
 	<field name="DOCUMENTNO" class="java.lang.String"/>
 	<field name="CODE_BPARTNER" class="java.lang.String"/>
@@ -276,8 +280,8 @@
 				<staticText>
 					<reportElement
 						style="Report_Title"
-						x="15"
-						y="1"
+						x="8"
+						y="0"
 						width="182"
 						height="50"
 						forecolor="#666666"
@@ -286,26 +290,7 @@
 					<textElement textAlignment="Left">
 						<font fontName="Bitstream Vera Sans" size="36"/>
 					</textElement>
-				<text><![CDATA[INVOICE]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="default"
-						mode="Transparent"
-						x="15"
-						y="88"
-						width="181"
-						height="50"
-						key="staticText-6"
-						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[FAX no.: xx(948) 326 581 
-Phone no.: xx(948) 326 580
-xxYour Address
-xx1111 Your Town (Country)]]></text>
+				<text><![CDATA[ORDER]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -334,6 +319,46 @@ xx1111 Your Town (Country)]]></text>
 						key="line-35"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="15"
+						y="96"
+						width="182"
+						height="31"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{ADDRESS1}==null?" ":$F{ADDRESS1})+"\n"+($F{POSTAL}==null?" ":$F{POSTAL})+" "+($F{CITY}==null?" ":$F{CITY})+" ("+($F{COUNTRY}==null?" ":$F{COUNTRY})+")"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="15"
+						y="61"
+						width="182"
+						height="35"
+						key="textField-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["FAX no.: "+($F{FAX}==null?" ":$F{FAX})+"\n"+"Phone no.: "+($F{PHONE}==null?" ":$F{PHONE})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="332"
+						y="0"
+						width="142"
+						height="50"
+						key="textField-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ENTITY}+"\n"+$F{LOCATION}]]></textFieldExpression>
+				</textField>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -350,8 +375,7 @@ xx1111 Your Town (Country)]]></text>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{TOTAL_LINENETAMT}.add($V{TOTAL_TAXAMT})!=null)?$P{NUMBERFORMAT}.format($V{TOTAL_LINENETAMT}.add($V{TOTAL_TAXAMT})):new String(" ")
-]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{TOTAL_LINENETAMT}.add($V{TOTAL_TAXAMT})!=null)?$P{NUMBERFORMAT}.format($V{TOTAL_LINENETAMT}.add($V{TOTAL_TAXAMT})):new String(" ")]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
