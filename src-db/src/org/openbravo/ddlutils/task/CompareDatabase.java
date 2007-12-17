@@ -91,9 +91,9 @@ public class CompareDatabase extends Task {
         
             // Load database
             Database db1 = platform.loadModelFromDatabase();        
-            if (db1 == null) { 
-                db1 = DatabaseUtils.loadCurrentDatabase(ds);
-            }
+//            if (db1 == null) { 
+//                db1 = DatabaseUtils.loadCurrentDatabase(ds);
+//            }
             _log.info("Platform database");
             _log.info(db1.toString());
 

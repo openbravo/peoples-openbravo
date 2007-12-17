@@ -133,20 +133,20 @@ public class CreateDatabase extends Task {
                 platform.evaluateBatch(DatabaseUtils.readFile(getPostscript()), !isFailonerror());
             }            
             
-            // Manage the database if not
-            try {
-                _log.info("Executing system model script");
-                DatabaseUtils.manageDatabase(ds);
-            } catch (SQLException ex) {
-                // Exception if already exists the table.
-            }
-            
-            // Save model in the database if posible
-            try {                
-                DatabaseUtils.saveCurrentDatabase(ds, db);
-            } catch (SQLException ex) {
-                _log.info("Database model not saved in the database.");
-            }
+//            // Manage the database if not
+//            try {
+//                _log.info("Executing system model script");
+//                DatabaseUtils.manageDatabase(ds);
+//            } catch (SQLException ex) {
+//                // Exception if already exists the table.
+//            }
+//            
+//            // Save model in the database if posible
+//            try {                
+//                DatabaseUtils.saveCurrentDatabase(ds, db);
+//            } catch (SQLException ex) {
+//                _log.info("Database model not saved in the database.");
+//            }
             
         } catch (Exception e) {
             // _log.info(e.getLocalizedMessage());

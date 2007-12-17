@@ -331,7 +331,7 @@ An unique index is defined for one or more columns of a table, which are specifi
 <!--
 Sorry, no documentation available
 -->
-<!ELEMENT check EMPTY>
+<!ELEMENT check (#PCDATA)>
 <!--
 @attr name     Sorry, no documentation available.
 @attr condition   Sorry, no documentation available.

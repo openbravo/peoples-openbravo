@@ -104,17 +104,13 @@ public class ExportDataXML extends Task {
                         
             Database originaldb;
             if (getModel() == null) {
-                try {
-                    // Load the model saved in the database
-                    originaldb = platform.loadModelFromDatabase(); 
-                    if (originaldb == null) { 
-                        originaldb = DatabaseUtils.loadCurrentDatabase(ds);
-                    }
-                    _log.info("Model loaded from database.");
-                } catch (SQLException e) {
+                originaldb = platform.loadModelFromDatabase(); 
+                if (originaldb == null) {
                     originaldb =  new Database();
                     _log.info("Model considered empty.");
-                }                     
+                } else {
+                    _log.info("Model loaded from database.");
+                }                        
             } else {
                 // Load the model from the file
                 originaldb = DatabaseUtils.readDatabase(getModel());

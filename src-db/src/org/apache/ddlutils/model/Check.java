@@ -82,8 +82,30 @@ public class Check implements ConstraintObject, Cloneable {
      * @param condition The condition
      */
     public void setCondition(String condition) {
-        _condition = condition;
-    }    
+        if (condition != null) {
+            _condition = condition;
+        }
+    }   
+    
+    /**
+     * Returns the condition of this constraint check.
+     * 
+     * @return The condition
+     */
+    public String getConditionattr() {
+        return null;
+    }
+    
+    /**
+     * Sets the condition of this constraint check.
+     * 
+     * @param condition The condition
+     */
+    public void setConditionattr(String condition) {
+        if (condition != null) {
+            _condition = condition;
+        }
+    } 
     
     /**
      * {@inheritDoc}

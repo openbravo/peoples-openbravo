@@ -14,8 +14,6 @@ package org.openbravo.ddlutils.task;
 
 import java.io.File;
 import java.util.Properties;
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.ddlutils.model.Database;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -71,19 +69,21 @@ public class SaveDatabase extends Task {
        
         initLogging();
         
-        BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName(getDriver());
-        ds.setUrl(getUrl());
-        ds.setUsername(getUser());
-        ds.setPassword(getPassword());
-                
-        try {
-            Database db = DatabaseUtils.readDatabase(getModel());
-            DatabaseUtils.saveCurrentDatabase(ds, db);
-        } catch (Exception e) {
-            // log(e.getLocalizedMessage());
-            throw new BuildException(e);
-        }
+        throw new BuildException("ant task not valid.");        
+        
+//        BasicDataSource ds = new BasicDataSource();
+//        ds.setDriverClassName(getDriver());
+//        ds.setUrl(getUrl());
+//        ds.setUsername(getUser());
+//        ds.setPassword(getPassword());
+//                
+//        try {
+//            Database db = DatabaseUtils.readDatabase(getModel());
+//            DatabaseUtils.saveCurrentDatabase(ds, db);
+//        } catch (Exception e) {
+//            // log(e.getLocalizedMessage());
+//            throw new BuildException(e);
+//        }
     }
     
     public String getDriver() {

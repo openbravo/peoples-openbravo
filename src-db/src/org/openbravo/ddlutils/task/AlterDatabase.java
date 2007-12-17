@@ -94,12 +94,13 @@ public class AlterDatabase extends Task {
 
             Database originaldb;
             if (getOriginalmodel() == null) {
-                // Load the model saved in the database                    
                 originaldb = platform.loadModelFromDatabase(); 
-                if (originaldb == null) { 
-                    originaldb = DatabaseUtils.loadCurrentDatabase(ds);
-                }
-                _log.info("Original model loaded from database.");              
+                if (originaldb == null) {
+                    originaldb =  new Database();
+                    _log.info("Original model considered empty.");
+                } else {
+                    _log.info("Original model loaded from database.");
+                }             
             } else {
                 // Load the model from the file
                 originaldb = DatabaseUtils.readDatabase(getModel());
@@ -148,19 +149,19 @@ public class AlterDatabase extends Task {
                 }  
             }
             
-            try {
-                _log.info("Executing system model script");
-                DatabaseUtils.manageDatabase(ds);
-            } catch (SQLException ex) {
-                // Exception if already exists the table.
-            }
-            
-            try {                
-                // Save model in the database if posible
-                DatabaseUtils.saveCurrentDatabase(ds, db);
-            } catch (SQLException ex) {
-                _log.info("Database model not saved in the database.");
-            }            
+//            try {
+//                _log.info("Executing system model script");
+//                DatabaseUtils.manageDatabase(ds);
+//            } catch (SQLException ex) {
+//                // Exception if already exists the table.
+//            }
+//            
+//            try {                
+//                // Save model in the database if posible
+//                DatabaseUtils.saveCurrentDatabase(ds, db);
+//            } catch (SQLException ex) {
+//                _log.info("Database model not saved in the database.");
+//            }            
         
             // save the model
         } catch (Exception e) {

@@ -105,7 +105,12 @@ under the License.
   <class name="org.apache.ddlutils.model.Check">
     <element name="check">
       <attribute name="name" property="name"/>
-      <attribute name="condition" property="condition"/>
+      <attribute name="condition" property="conditionattr"/>
+        <text property="condition"/>
+        <option>
+            <name>org.apache.commons.betwixt.mixed-content-encoding</name>
+            <value>CDATA</value>
+        </option>
     </element>
   </class>
   

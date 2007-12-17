@@ -389,6 +389,7 @@ public class Function implements StructureObject, Cloneable {
      */
     public boolean equalsIgnoreCase(Function otherFunction)
     {
+        
         return UtilsCompare.equalsIgnoreCase(_name, otherFunction._name) &&
                 new EqualsBuilder()
                         .append(_parameters, otherFunction._parameters)

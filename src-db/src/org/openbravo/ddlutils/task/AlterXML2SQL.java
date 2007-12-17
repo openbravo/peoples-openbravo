@@ -99,12 +99,13 @@ public class AlterXML2SQL extends Task {
             try {                        
 
                 if (getOriginalmodel() == null) {
-                    // Load the model saved in the database                    
                     originaldb = pl.loadModelFromDatabase(); 
-                    if (originaldb == null) { 
-                        originaldb = DatabaseUtils.loadCurrentDatabase(ds);
-                    }
-                    _log.info("Original model loaded from database.");                      
+                    if (originaldb == null) {
+                        originaldb =  new Database();
+                        _log.info("Original model considered empty.");
+                    } else {
+                        _log.info("Original model loaded from database.");
+                    }                   
                 } else {
                     // Load the model from the file
                     originaldb = DatabaseUtils.readDatabase(getModel());

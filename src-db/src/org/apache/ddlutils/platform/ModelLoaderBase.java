@@ -9,8 +9,10 @@
 
 package org.apache.ddlutils.platform;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -72,10 +74,11 @@ public abstract class ModelLoaderBase implements ModelLoader {
     protected PreparedStatement _stmt_listfunctions;
     protected PreparedStatement _stmt_functioncode;
     
-    private Pattern _pFunctionHeader = Pattern.compile(
-        "\\A\\s*([Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn]|[Pp][Rr][Oo][Cc][Ee][Dd][Uu][Rr][Ee])\\s+?.+?\\s*?(\\((.*?)\\))??" +
-        "\\s*?([Rr][Ee][Tt][Uu][Rr][Nn]\\s+?(.+?))?" +
-        "\\s+[Aa][Ss]\\s+");
+    private static Pattern _pFunctionHeader = Pattern.compile(
+        "\\A\\s*([Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn]|[Pp][Rr][Oo][Cc][Ee][Dd][Uu][Rr][Ee])\\s+\\w+\\s*(\\((.*?)\\))??" +
+        "\\s*([Rr][Ee][Tt][Uu][Rr][Nn]\\s+(\\w+)\\s*)?" +
+        "(/\\*.*?\\*/\\s*)?" +   
+        "([Aa][Ss]|[Ii][Ss])\\s+", Pattern.DOTALL);
     private Pattern _pFunctionParam = Pattern.compile(
         "^\\s*(.+?)\\s+(([Ii][Nn]|[Oo][Uu][Tt])\\s+)?(.+?)(\\s+[Dd][Ee][Ff][Aa][Uu][Ll][Tt]\\s+(.+?))?\\s*?$");
 
@@ -402,11 +405,18 @@ public abstract class ModelLoaderBase implements ModelLoader {
         Matcher mFunctionHeader = _pFunctionHeader.matcher(functioncode);
 
         if (mFunctionHeader.find()) {
+
             f.setTypeCode(translateParamType(mFunctionHeader.group(5)));
-            f.setBody(translatePLSQLBody(functioncode.substring(mFunctionHeader.end(0))));           
+            
+            String scomment = mFunctionHeader.group(6);
+            if (scomment == null) {
+                f.setBody(translatePLSQLBody(functioncode.substring(mFunctionHeader.end(0))));  
+            } else {
+                f.setBody(translatePLSQLBody(scomment + "\n" + functioncode.substring(mFunctionHeader.end(0))));  
+            }
             
             if (mFunctionHeader.group(3) != null) {
-                StringTokenizer t = new StringTokenizer(mFunctionHeader.group(3), ",");
+                StringTokenizer t = new StringTokenizer(removeLineComments(mFunctionHeader.group(3)), ",");
                 while (t.hasMoreTokens()) {
                     Matcher mparam = _pFunctionParam.matcher(t.nextToken());
                     if (mparam.find()) {
@@ -426,6 +436,29 @@ public abstract class ModelLoaderBase implements ModelLoader {
         } else {
             System.out.println("Function header not readed for function : " + f.getName());
         }
+    }
+    
+    protected String removeLineComments(String scode) {
+        
+        StringBuffer sreturn = new StringBuffer();
+        BufferedReader bf = new BufferedReader(new StringReader(scode));
+        
+        try {
+            String line;
+            while((line = bf.readLine()) != null) {
+                int i = line.indexOf("--");
+                if (i >= 0) {
+                    sreturn.append(line.substring(0, i));
+                } else {
+                    sreturn.append(line);
+                }
+                sreturn.append('\n');
+            }
+        } catch (IOException ex) {
+            // never happens
+        }
+        
+        return sreturn.toString();
     }
     
     protected String readFunctionCode(String function) throws SQLException {

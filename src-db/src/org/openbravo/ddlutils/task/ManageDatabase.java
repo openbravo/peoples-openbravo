@@ -12,10 +12,7 @@
 
 package org.openbravo.ddlutils.task;
 
-import java.sql.SQLException;
 import java.util.Properties;
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.ddlutils.model.Database;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -69,25 +66,27 @@ public class ManageDatabase extends Task {
        
         initLogging();
         
-        BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName(getDriver());
-        ds.setUrl(getUrl());
-        ds.setUsername(getUser());
-        ds.setPassword(getPassword());
+        throw new BuildException("ant task not valid.");        
         
-        // Check if already managed
-        try {
-            Database db = DatabaseUtils.loadCurrentDatabase(ds);
-            throw new BuildException("Database already managed.");
-        } catch (SQLException ex) {
-        }
-               
-        try {            
-            DatabaseUtils.manageDatabase(ds);            
-        } catch (Exception e) {
-            // log(e.getLocalizedMessage());
-            throw new BuildException(e);
-        }
+//        BasicDataSource ds = new BasicDataSource();
+//        ds.setDriverClassName(getDriver());
+//        ds.setUrl(getUrl());
+//        ds.setUsername(getUser());
+//        ds.setPassword(getPassword());
+//        
+//        // Check if already managed
+//        try {
+//            Database db = DatabaseUtils.loadCurrentDatabase(ds);
+//            throw new BuildException("Database already managed.");
+//        } catch (SQLException ex) {
+//        }
+//               
+//        try {            
+//            DatabaseUtils.manageDatabase(ds);            
+//        } catch (Exception e) {
+//            // log(e.getLocalizedMessage());
+//            throw new BuildException(e);
+//        }
     }
     
     public String getDriver() {

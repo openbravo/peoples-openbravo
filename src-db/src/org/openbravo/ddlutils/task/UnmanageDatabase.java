@@ -13,7 +13,6 @@
 package org.openbravo.ddlutils.task;
 
 import java.util.Properties;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.tools.ant.Task;
 
 import org.apache.log4j.Level;
@@ -22,6 +21,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ddlutils.task.VerbosityLevel;
+import org.apache.tools.ant.BuildException;
 
 /**
  *
@@ -66,16 +66,18 @@ public class UnmanageDatabase extends Task {
        
         initLogging();
         
-        BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName(getDriver());
-        ds.setUrl(getUrl());
-        ds.setUsername(getUser());
-        ds.setPassword(getPassword());
-               
-        try {            
-            DatabaseUtils.unmanageDatabase(ds);
-        } catch (Exception e) {
-        }
+        throw new BuildException("ant task not valid.");        
+        
+//        BasicDataSource ds = new BasicDataSource();
+//        ds.setDriverClassName(getDriver());
+//        ds.setUrl(getUrl());
+//        ds.setUsername(getUser());
+//        ds.setPassword(getPassword());
+//               
+//        try {            
+//            DatabaseUtils.unmanageDatabase(ds);
+//        } catch (Exception e) {
+//        }
     }
     
     public String getDriver() {
