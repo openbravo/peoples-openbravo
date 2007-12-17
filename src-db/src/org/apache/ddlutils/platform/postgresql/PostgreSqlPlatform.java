@@ -261,15 +261,15 @@ public class PostgreSqlPlatform extends PlatformImplBase
      * {@inheritDoc}
      */
     public void disableAllFK(Connection connection, Database model,boolean continueOnError) throws DatabaseOperationException {
-    	
-    	try {    		
-            PreparedStatement pstmt=connection.prepareStatement("UPDATE pg_trigger  SET tgenabled=FALSE where tgisconstraint='t'");    	       
-            pstmt.executeUpdate();  	
-            pstmt.close();    	       
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new DatabaseOperationException("Error while disabling foreign key ", e);
-        }              
+//    	
+//    	try {    		
+//            PreparedStatement pstmt=connection.prepareStatement("UPDATE pg_trigger  SET tgenabled=FALSE where tgisconstraint='t'");    	       
+//            pstmt.executeUpdate();  	
+//            pstmt.close();    	       
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            throw new DatabaseOperationException("Error while disabling foreign key ", e);
+//        }              
     }
     
     /**
@@ -277,14 +277,14 @@ public class PostgreSqlPlatform extends PlatformImplBase
      */
     public void enableAllFK(Connection connection, Database model,boolean continueOnError) throws DatabaseOperationException {
     	
-        try {
-            PreparedStatement pstmt=connection.prepareStatement("UPDATE pg_trigger  SET tgenabled=TRUE where tgisconstraint='t'");    	       
-            pstmt.executeUpdate(); 
-            pstmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new DatabaseOperationException("Error while enabling foreign key ", e);
-        }        
+//        try {
+//            PreparedStatement pstmt=connection.prepareStatement("UPDATE pg_trigger  SET tgenabled=TRUE where tgisconstraint='t'");    	       
+//            pstmt.executeUpdate(); 
+//            pstmt.close();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            throw new DatabaseOperationException("Error while enabling foreign key ", e);
+//        }        
     }
     
     /**
@@ -292,14 +292,14 @@ public class PostgreSqlPlatform extends PlatformImplBase
      */
     public void disableAllTriggers(Connection connection, Database model,boolean continueOnError) throws DatabaseOperationException {
         
-    	try {
-            PreparedStatement pstmt=connection.prepareStatement("UPDATE pg_trigger  SET tgenabled=FALSE where tgisconstraint='f'");    	       
-            pstmt.executeUpdate();
-            pstmt.close();    	       
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new DatabaseOperationException("Error while disabling triggers ", e);
-        }         	    
+//    	try {
+//            PreparedStatement pstmt=connection.prepareStatement("UPDATE pg_trigger  SET tgenabled=FALSE where tgisconstraint='f'");    	       
+//            pstmt.executeUpdate();
+//            pstmt.close();    	       
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            throw new DatabaseOperationException("Error while disabling triggers ", e);
+//        }         	    
     }
     
     /**
@@ -307,14 +307,14 @@ public class PostgreSqlPlatform extends PlatformImplBase
      */
     public void enableAllTriggers(Connection connection, Database model,boolean continueOnError) throws DatabaseOperationException {    	
         
-    	try {
-            PreparedStatement pstmt=connection.prepareStatement("UPDATE pg_trigger  SET tgenabled=TRUE where tgisconstraint='f'");    	       
-            pstmt.executeUpdate();
-            pstmt.close();    	       
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new DatabaseOperationException("Error while enabling triggers ", e);
-        }     
+//    	try {
+//            PreparedStatement pstmt=connection.prepareStatement("UPDATE pg_trigger  SET tgenabled=TRUE where tgisconstraint='f'");    	       
+//            pstmt.executeUpdate();
+//            pstmt.close();    	       
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            throw new DatabaseOperationException("Error while enabling triggers ", e);
+//        }     
     }
     
 //    /**
