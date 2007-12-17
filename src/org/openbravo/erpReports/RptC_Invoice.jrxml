@@ -290,7 +290,7 @@
 					<textElement textAlignment="Left">
 						<font fontName="Bitstream Vera Sans" size="36"/>
 					</textElement>
-				<text><![CDATA[ORDER]]></text>
+				<text><![CDATA[INVOICE]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
