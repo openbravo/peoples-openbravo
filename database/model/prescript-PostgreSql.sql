@@ -399,6 +399,22 @@ END;
 '  LANGUAGE 'plpgsql'
 /-- END
 
+CREATE OR REPLACE FUNCTION months_between (init_date timestamptz, end_date timestamptz) 
+RETURNS integer 
+AS '
+DECLARE
+  v_months INTEGER;
+  v_months_total INTEGER;
+  v_years INTEGER;
+begin
+  v_months=extract(month from (age(init_date,end_date)));
+  v_years=extract(year from (age(init_date,end_date)));
+
+  v_months_total=abs((v_years*12) + v_months);
+  return v_months_total;
+end
+'  LANGUAGE 'plpgsql';
+/-- END
 
 CREATE OR REPLACE FUNCTION type_oid(varchar)
 RETURNS oid AS ' 
