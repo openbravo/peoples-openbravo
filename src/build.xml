@@ -211,6 +211,7 @@ build.war: build a war file in the lib directory.
       <fileset dir="${base.lib}">
         <exclude name="openbravo-wad.jar"/>
         <exclude name="openbravo-trl.jar"/>
+        <exclude name="servlet-api.jar"/>
         <exclude name="*.war"/>
       </fileset>
     </copy>
@@ -301,7 +302,10 @@ build.war: build a war file in the lib directory.
     <chmod dir="${build}" perm="755"/>
     <delete failonerror="false" file="${base.lib}/${context.name}.war"/>
     <war compress="true" destfile="${base.lib}/${context.name}.war" encoding="UTF-8" webxml="${base.context}/WEB-INF/web.xml">
-      <zipfileset dir="${base.context}"/>
+      <zipfileset dir="${base.context}">
+	<exclude name="**/WEB-INF/web.xml"/>
+	<exclude name="**/WEB-INF/lib/servlet-api.jar"/>
+      </zipfileset>
       <classes dir="${build}"/>
     </war>
   </target>
