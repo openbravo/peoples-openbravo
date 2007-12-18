@@ -28,6 +28,10 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
         super(p);
     }    
     
+    protected String readName() {
+        return "PostgreSql server";
+    }
+    
     protected void initMetadataSentences() throws SQLException {
 
         _stmt_listtables = _connection.prepareStatement("SELECT TABLE_NAME FROM USER_TABLES WHERE TABLE_NAME <> 'AD_SYSTEM_MODEL' AND TABLE_NAME <> 'PLAN_TABLE' ORDER BY TABLE_NAME");

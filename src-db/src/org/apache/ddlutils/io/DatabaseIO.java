@@ -22,12 +22,14 @@ package org.apache.ddlutils.io;
 import java.beans.IntrospectionException;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 
 import org.apache.commons.betwixt.io.BeanReader;
 import org.apache.commons.betwixt.io.BeanWriter;
@@ -266,11 +268,45 @@ public class DatabaseIO
         model.initialize();
         return model;
     }
-
+    
+    public static File[] readFileArray(File f) {
+        
+        if (f.isDirectory()) {
+            
+            ArrayList<File> fileslist = new ArrayList<File>();
+            
+            File[] directoryfiles = f.listFiles(new FileFilter() {
+                public boolean accept(File pathname) {
+                    return !pathname.isHidden()
+                          && (pathname.isDirectory() || (pathname.isFile() && pathname.getName().endsWith(".xml")));
+                }
+            });                     
+            
+            
+            for (File file : directoryfiles) {
+                File[] ff = readFileArray(file);
+                for (File fileint : ff) {
+                    fileslist.add(fileint);
+                }                
+            }
+            
+            return fileslist.toArray(new File[fileslist.size()]);
+        } else {
+            return new File[] { f };
+        }
+    }
+    
     public void writeToDir(Database model, File dir) throws DdlUtilsException {
         
         Database d;
-        File subdir;
+        File subdir;      
+        
+        // remove all .xml files
+        dir.mkdirs();
+        File[] filestodelete = readFileArray(dir);
+        for (File filedelete : filestodelete) {
+            filedelete.delete();
+        }
         
         // Write tables        
         subdir = new File(dir, "tables");

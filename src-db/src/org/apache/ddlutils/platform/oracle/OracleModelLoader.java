@@ -26,6 +26,10 @@ public class OracleModelLoader extends ModelLoaderBase {
         super(p);
     }  
     
+    protected String readName() {
+        return "Oracle server";
+    }
+    
     protected boolean translateRequired(String required) {
         return "N".equals(required);
     }

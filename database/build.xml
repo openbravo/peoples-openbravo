@@ -281,6 +281,7 @@ compare.database.structure: Generates a diff script.
                         dropfirst="false"
                         failonerror="false"
                         verbosity="${bbdd.verbosity}" />
+        <antcall target="database.poststructure.${bbdd.rdbms}" />
     </target>
 
     <target name="update.database.structure">
@@ -292,6 +293,7 @@ compare.database.structure: Generates a diff script.
                        object="${bbdd.object}"
                        failonerror="false"
                        verbosity="${bbdd.verbosity}" />
+        <antcall target="database.poststructure.${bbdd.rdbms}" />
     </target>   
 
     <target name="create.database.script">
@@ -475,4 +477,25 @@ compare.database.structure: Generates a diff script.
         </transaction>
     </sql>
   </target>
+  <target name="database.poststructure.ORACLE">
+    <sql driver="${bbdd.driver}"
+         url="${bbdd.owner.url}"
+         userid="${bbdd.user}"
+         password="${bbdd.password}"
+         onerror="continue"
+         autocommit="true">
+        <classpath>
+            <fileset dir="${base.lib}">
+                <include name="**/*.jar">
+                </include>
+            </fileset>
+        </classpath>
+        <transaction>
+            PURGE RECYCLEBIN;
+        </transaction>
+    </sql>
+  </target>
+  <target name="database.poststructure.POSTGRE">
+  </target>
+
 </project>
