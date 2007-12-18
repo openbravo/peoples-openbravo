@@ -118,19 +118,22 @@ public class Oracle8Platform extends PlatformImplBase
      */
     public void disableAllFK(Connection connection, Database model,boolean continueOnError) throws DatabaseOperationException {
     	
-        try {
-            PreparedStatement pstmt=connection.prepareStatement("SELECT 'ALTER TABLE'|| ' ' || TABLE_NAME || ' ' || 'DISABLE CONSTRAINT' || ' ' || CONSTRAINT_NAME  SQL_STR FROM USER_CONSTRAINTS WHERE  CONSTRAINT_TYPE='R' ");
-            ResultSet rs=pstmt.executeQuery();    	       
+        String current = null;
+    	try {
+            current = "SELECT 'ALTER TABLE'|| ' ' || TABLE_NAME || ' ' || 'DISABLE CONSTRAINT' || ' ' || CONSTRAINT_NAME  SQL_STR FROM USER_CONSTRAINTS WHERE  CONSTRAINT_TYPE='R' ";
+            PreparedStatement pstmt  = connection.prepareStatement(current);
+            ResultSet rs = pstmt.executeQuery();    	       
             while (rs.next ()) {
-                // System.out.println (rs.getString("SQL_STR"));
-                PreparedStatement pstmtd = connection.prepareStatement(rs.getString("SQL_STR"));
+                current = rs.getString("SQL_STR");
+                PreparedStatement pstmtd=connection.prepareStatement(current);
                 pstmtd.executeUpdate();
                 pstmtd.close();
             }
             rs.close();
-            pstmt.close();
+            pstmt.close();    	       
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL command failed with " + e.getMessage());
+            System.out.println(current);
             throw new DatabaseOperationException("Error while disabling foreign key ", e);
         }               
     }
@@ -140,19 +143,22 @@ public class Oracle8Platform extends PlatformImplBase
      */
     public void enableAllFK(Connection connection, Database model,boolean continueOnError) throws DatabaseOperationException {
     	
+        String current = null;
     	try {
-            PreparedStatement pstmt  =connection.prepareStatement("SELECT 'ALTER TABLE'|| ' ' || TABLE_NAME || ' ' || 'ENABLE CONSTRAINT' || ' ' || CONSTRAINT_NAME  SQL_STR FROM USER_CONSTRAINTS WHERE  CONSTRAINT_TYPE='R' ");
+            current = "SELECT 'ALTER TABLE'|| ' ' || TABLE_NAME || ' ' || 'ENABLE CONSTRAINT' || ' ' || CONSTRAINT_NAME  SQL_STR FROM USER_CONSTRAINTS WHERE  CONSTRAINT_TYPE='R' ";
+            PreparedStatement pstmt  = connection.prepareStatement(current);
             ResultSet rs = pstmt.executeQuery();    	       
             while (rs.next ()) {
-                // System.out.println (rs.getString("SQL_STR"));
-                PreparedStatement pstmtd=connection.prepareStatement(rs.getString("SQL_STR"));
+                current = rs.getString("SQL_STR");
+                PreparedStatement pstmtd=connection.prepareStatement(current);
                 pstmtd.executeUpdate();
                 pstmtd.close();
             }
             rs.close();
             pstmt.close();    	       
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL command failed with " + e.getMessage());
+            System.out.println(current);
             throw new DatabaseOperationException("Error while enabling foreign key ", e);
         }        
     }
@@ -161,20 +167,23 @@ public class Oracle8Platform extends PlatformImplBase
      * {@inheritDoc}
      */
     public void disableAllTriggers(Connection connection, Database model, boolean continueOnError) throws DatabaseOperationException {
-        
+      
+        String current = null;
     	try {
-            PreparedStatement pstmt = connection.prepareStatement("SELECT 'ALTER TRIGGER'|| ' ' || TRIGGER_NAME || ' ' || 'DISABLE' SQL_STR FROM USER_TRIGGERS");
+            current = "SELECT 'ALTER TRIGGER'|| ' ' || TRIGGER_NAME || ' ' || 'DISABLE' SQL_STR FROM USER_TRIGGERS";
+            PreparedStatement pstmt = connection.prepareStatement(current);
             ResultSet rs = pstmt.executeQuery();    	       
             while (rs.next ()) {
-                // System.out.println (rs.getString("SQL_STR"));
-                PreparedStatement pstmtd=connection.prepareStatement(rs.getString("SQL_STR"));
+                current = rs.getString("SQL_STR");
+                PreparedStatement pstmtd=connection.prepareStatement(current);
                 pstmtd.executeUpdate();
                 pstmtd.close();
             }
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL command failed with " + e.getMessage());
+            System.out.println(current);
             throw new DatabaseOperationException("Error while disabling triggers ", e);
         }         	    
     }
@@ -184,22 +193,24 @@ public class Oracle8Platform extends PlatformImplBase
      */
     public void enableAllTriggers(Connection connection, Database model,boolean continueOnError) throws DatabaseOperationException {    	
         
-        try {            
-    	    PreparedStatement pstmt = connection.prepareStatement("SELECT 'ALTER TRIGGER'|| ' ' || TRIGGER_NAME || ' ' || 'ENABLE' SQL_STR FROM USER_TRIGGERS");
+        String current = null;
+    	try {
+            current = "SELECT 'ALTER TRIGGER'|| ' ' || TRIGGER_NAME || ' ' || 'ENABLE' SQL_STR FROM USER_TRIGGERS";
+            PreparedStatement pstmt = connection.prepareStatement(current);
             ResultSet rs = pstmt.executeQuery();    	       
             while (rs.next ()) {
-                // System.out.println (rs.getString("SQL_STR"));
-                PreparedStatement pstmtd = connection.prepareStatement(rs.getString("SQL_STR"));
+                current = rs.getString("SQL_STR");
+                PreparedStatement pstmtd=connection.prepareStatement(current);
                 pstmtd.executeUpdate();
                 pstmtd.close();
             }
             rs.close();
             pstmt.close();
-    	       
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("SQL command failed with " + e.getMessage());
+            System.out.println(current);
             throw new DatabaseOperationException("Error while enabling triggers ", e);
-        }     
+        }      
     }
     
 //    /**
