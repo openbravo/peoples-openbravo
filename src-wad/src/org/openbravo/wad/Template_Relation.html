@@ -113,7 +113,7 @@ function selectFilters(params) {
   dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script>
 </head>
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();updateMenuIcon('buttonMenu');" onresize="resizeArea(true);">
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();calculateMsgBoxWidth();updateMenuIcon('buttonMenu');" onresize="resizeArea(true);calculateMsgBoxWidth();">
 <form id="form" method="POST" action="Window_Edition.html" name="frmMain">
 <input type="hidden" name="Command">
 <input type="hidden" name="inpTabId" value="" id="fieldTabId">

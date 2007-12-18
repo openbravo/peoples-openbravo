@@ -2826,6 +2826,15 @@ function resizeAreaUserOps() {
   mnu.style.display = "";
 }
 
+/**
+* Function Description
+*/
+function calculateMsgBoxWidth() {
+  var client_width = document.getElementById("client").clientWidth;
+  var msgbox_table = document.getElementById("messageBoxID");
+  msgbox_table.style.width = client_width;
+ }
+
 /*if (!document.all)
   document.captureEvents(Event.MOUSEDOWN);
 document.onmousedown=menuContextual;*/
