@@ -107,19 +107,19 @@ public class AlterDatabase extends Task {
                 _log.info("Original model loaded from file.");
             }   
             
-            if (originaldb.getTableCount() == 0) {
-                // execute the pre-script
-                if (getPrescript() == null) {
-                    // try to execute the default prescript
-                    File fpre = new File(getModel(), "prescript-" + platform.getName() + ".sql");
-                    if (fpre.exists()) {
-                        _log.info("Executing default prescript");
-                        platform.evaluateBatch(DatabaseUtils.readFile(fpre), !isFailonerror());
-                    }
-                } else {
-                    platform.evaluateBatch(DatabaseUtils.readFile(getPrescript()), !isFailonerror());
-                }         
-            }
+
+            // execute the pre-script
+            if (getPrescript() == null) {
+                // try to execute the default prescript
+                File fpre = new File(getModel(), "prescript-" + platform.getName() + ".sql");
+                if (fpre.exists()) {
+                    _log.info("Executing default prescript");
+                    platform.evaluateBatch(DatabaseUtils.readFile(fpre), !isFailonerror());
+                }
+            } else {
+                platform.evaluateBatch(DatabaseUtils.readFile(getPrescript()), !isFailonerror());
+            }         
+
             
             Database db = DatabaseUtils.readDatabase(getModel());     
             
@@ -135,19 +135,19 @@ public class AlterDatabase extends Task {
             
             platform.alterTables(originaldb, db, !isFailonerror());                   
             
-            if (originaldb.getTableCount() == 0) {
-                // execute the post-script
-                if (getPostscript() == null) {
-                    // try to execute the default prescript
-                    File fpost = new File(getModel(), "postscript-" + platform.getName() + ".sql");
-                    if (fpost.exists()) {
-                        _log.info("Executing default postscript");
-                        platform.evaluateBatch(DatabaseUtils.readFile(fpost), !isFailonerror());
-                    }                
-                } else {
-                    platform.evaluateBatch(DatabaseUtils.readFile(getPostscript()), !isFailonerror());
-                }  
-            }
+
+            // execute the post-script
+            if (getPostscript() == null) {
+                // try to execute the default prescript
+                File fpost = new File(getModel(), "postscript-" + platform.getName() + ".sql");
+                if (fpost.exists()) {
+                    _log.info("Executing default postscript");
+                    platform.evaluateBatch(DatabaseUtils.readFile(fpost), !isFailonerror());
+                }                
+            } else {
+                platform.evaluateBatch(DatabaseUtils.readFile(getPostscript()), !isFailonerror());
+            }  
+
             
 //            try {
 //                _log.info("Executing system model script");

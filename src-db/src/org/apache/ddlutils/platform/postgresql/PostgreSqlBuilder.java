@@ -563,18 +563,24 @@ public class PostgreSqlBuilder extends SqlBuilder
         
         if (rule.isUpdatable()) {
             // INSERT RULE
-            print("DROP RULE ");
+            print("DROP RULE IF EXISTS ");
             printIdentifier(shortenName(view.getName() + "_INS", getMaxTableNameLength()));
+            print(" ON ");
+            printIdentifier(getStructureObjectName(view));
             printEndOfStatement(getStructureObjectName(view));  
 
             // UPDATE RULE
-            print("DROP RULE ");
+            print("DROP RULE IF EXISTS ");
             printIdentifier(shortenName(view.getName() + "_UPD", getMaxTableNameLength()));
+            print(" ON ");
+            printIdentifier(getStructureObjectName(view));
             printEndOfStatement(getStructureObjectName(view));  
 
             // DELETE RULE
-            print("DROP RULE ");
+            print("DROP RULE IF EXISTS ");
             printIdentifier(shortenName(view.getName() + "_DEL", getMaxTableNameLength()));
+            print(" ON ");
+            printIdentifier(getStructureObjectName(view));
             printEndOfStatement(getStructureObjectName(view));  
         }
     }
