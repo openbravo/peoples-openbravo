@@ -29,7 +29,7 @@
       ad_column.ad_reference_id as reference, displayLength as displaySize, 'x' as htmltext, '' as xmltext, 
       isSameLine as issameline, (CASE ad_field.isActive WHEN 'N' THEN 'N' ELSE isDisplayed END) as isdisplayed, isupdateable as isupdateable, 
       isparent, ad_column.FIELDLENGTH, (CASE WHEN (ad_column.AD_REFERENCE_ID<>30 OR AD_REFERENCE_VALUE_ID IS NULL) THEN REPLACE(REPLACE(REPLACE(ad_element.name, 'Substitute', 'Product'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') ELSE (SELECT NAME FROM AD_REFERENCE WHERE AD_REFERENCE.AD_REFERENCE_ID=ad_column.AD_REFERENCE_VALUE_ID) END) as searchName, ad_column.ad_callout_id, 
-      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) displaylogic, ad_field.isEncrypted, AD_FIELD.AD_FIELDGROUP_ID AS FieldGroup, ad_field.ad_tab_id as tabid, '' as ad_column_id, ad_column.ad_val_rule_id, '' as displaylength, '' as value, '' as ad_window_id, 
+      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) as displaylogic, ad_field.isEncrypted, AD_FIELD.AD_FIELDGROUP_ID AS FieldGroup, ad_field.ad_tab_id as tabid, '' as ad_column_id, ad_column.ad_val_rule_id, '' as displaylength, '' as value, '' as ad_window_id, 
       AD_COLUMN.ValueMin, AD_COLUMN.ValueMax, REPLACE(REPLACE(REPLACE(REPLACE(ad_column.columnname, 'Substitute', 'M_Product'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') as realName, mom.mappingname as java_class_name, '' as realcolumnname, '' as xsqltext, ad_column.isEncrypted AS isColumnEncrypted, ad_column.isDesencryptable, 
       ad_reference.name as reference_name, ad_reference.name as reference_name_trl, '' AS CLASSNAME, '' AS MAPPINGNAME, ad_callout.name as calloutname, 
       moc.classname as classname_callout, momc.mappingname as mappingname_callout, '' AS COLUMNNAME_END, ad_field.isactive, ad_column.readonlylogic 
@@ -66,7 +66,7 @@
              (case when upper(columnname) in ('CREATED', 'UPDATED') then 'N'
                    else 'Y'
                end), 'Y', 'N', 'N', c.FIELDLENGTH, c.name, null, 
-             null, 'Y', '@#ShowAudit@=''Y''', 'N', 1000100001 fieldgroup, tb.ad_tab_id, null, null, null, null, null, null, null, c.columnname, 
+             null, 'Y', '@#ShowAudit@=''Y''', 'N', 1000100001 as fieldgroup, tb.ad_tab_id, null, null, null, null, null, null, null, c.columnname, 
              null, null, null, 'N', 'N', r.name, r.name, null, null, null, null, null, null, 'Y', null
        from ad_column c, ad_tab tb, ad_reference r
       where c.ad_table_id = tb.ad_table_id
@@ -87,7 +87,7 @@
       ad_column.ad_reference_id as reference, displayLength as displaySize, 'x' as htmltext, 
       isSameLine as issameline, (CASE ad_field.isActive WHEN 'N' THEN 'N' ELSE isDisplayed END) as isdisplayed, isupdateable as isupdateable, 
       isparent, ad_column.FIELDLENGTH, (CASE WHEN (ad_column.AD_REFERENCE_ID<>30 OR AD_REFERENCE_VALUE_ID IS NULL) THEN REPLACE(REPLACE(REPLACE(ad_element.name, 'Substitute', 'Product'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') ELSE (SELECT NAME FROM AD_REFERENCE WHERE AD_REFERENCE.AD_REFERENCE_ID=ad_column.AD_REFERENCE_VALUE_ID) END) as searchName, ad_column.ad_callout_id, 
-      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) displaylogic, ad_field.isEncrypted, AD_FIELD.AD_FIELDGROUP_ID AS FieldGroup,
+      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) as displaylogic, ad_field.isEncrypted, AD_FIELD.AD_FIELDGROUP_ID AS FieldGroup,
       ad_field.ad_tab_id as tabid, AD_COLUMN.ValueMin, AD_COLUMN.ValueMax, REPLACE(REPLACE(REPLACE(REPLACE(ad_column.columnname, 'Substitute', 'M_Product'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') as realName, mom.mappingname as java_class_name, ad_column.isEncrypted AS isColumnEncrypted, ad_column.isDesencryptable, 
       ad_reference.name as reference_name, ad_column.ad_val_rule_id, 
       (CASE WHEN ad_reference_trl.ad_reference_id IS NULL THEN ad_reference.name ELSE ad_reference_trl.name END) as reference_name_trl, ad_callout.name as calloutname, 
@@ -130,7 +130,7 @@
                    else 'Y'
                end) as issameline, 'Y' as isdisplayed, 'N' as isupdateable, 
       'Y', c.FIELDLENGTH, (CASE WHEN (c.AD_REFERENCE_ID<>30 OR AD_REFERENCE_VALUE_ID IS NULL) THEN REPLACE(REPLACE(REPLACE(ad_element.name, 'Substitute', 'Product'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') ELSE (SELECT NAME FROM AD_REFERENCE WHERE r.AD_REFERENCE_ID=c.AD_REFERENCE_VALUE_ID) END) as searchName, c.ad_callout_id, 
-      c.ad_process_id, 'Y', '@#ShowAudit@=''Y''' displaylogic, 'N', 1000100001 AS FieldGroup,
+      c.ad_process_id, 'Y', '@#ShowAudit@=''Y''' as displaylogic, 'N', 1000100001 AS FieldGroup,
       tb.ad_tab_id as tabid, c.ValueMin, c.ValueMax, REPLACE(REPLACE(REPLACE(REPLACE(c.columnname, 'Substitute', 'M_Product'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') as realName,null as java_class_name, c.isEncrypted AS isColumnEncrypted, c.isDesencryptable, 
       r.name as reference_name, c.ad_val_rule_id, 
       (CASE WHEN ad_reference_trl.ad_reference_id IS NULL THEN r.name ELSE ad_reference_trl.name END) as reference_name_trl, null as calloutname, 
@@ -175,7 +175,7 @@
       ad_column.ad_reference_id as reference, displayLength as displaySize, 'x' as htmltext, 
       isSameLine as issameline, isDisplayed as isdisplayed, isupdateable as isupdateable, 
       isparent, ad_column.FIELDLENGTH, ad_element.name as searchName, ad_column.ad_callout_id, 
-      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) displaylogic, ad_field.ad_tab_id as tabid, 
+      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) as displaylogic, ad_field.ad_tab_id as tabid, 
       ad_callout.name as calloutname, moc.classname as classname_callout, momc.mappingname as mappingname_callout 
       FROM ad_field, 
            ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id
@@ -219,7 +219,7 @@
       ad_column.ad_reference_id as reference, displayLength as displaySize, 'x' as htmltext, 
       isSameLine as issameline, isDisplayed as isdisplayed, isupdateable as isupdateable, 
       isparent, ad_column.FIELDLENGTH, ad_element.name as searchName, ad_column.ad_callout_id, 
-      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) displaylogic, ad_field.ad_tab_id as tabid, ad_callout.name as calloutname, 
+      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) as displaylogic, ad_field.ad_tab_id as tabid, ad_callout.name as calloutname, 
       moc.classname as classname_callout, momc.mappingname as mappingname_callout
       FROM ad_field left join ad_field_trl on ad_field.ad_field_id = ad_field_trl.ad_field_id
                                           AND ad_field_trl.isactive = 'Y'
@@ -266,7 +266,7 @@
       ad_column.ad_reference_id as reference, displayLength as displaySize, 'x' as htmltext, 
       isSameLine as issameline, isDisplayed as isdisplayed, isupdateable as isupdateable, 
       isparent, ad_column.FIELDLENGTH, ad_element.name as searchName, ad_column.ad_callout_id, 
-      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) displaylogic, ad_field.ad_tab_id as tabid, 
+      ad_column.ad_process_id, ad_field.isreadonly, to_char(ad_field.DISPLAYLOGIC) as displaylogic, ad_field.ad_tab_id as tabid, 
       ad_callout.name as calloutname, moc.classname as classname_callout, momc.mappingname as mappingname_callout,
       ad_column.readonlylogic 
       FROM ad_field, 
