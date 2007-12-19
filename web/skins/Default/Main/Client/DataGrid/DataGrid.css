@@ -187,8 +187,9 @@ td.DataGrid_Body_Cell {
   border-right: 1px solid #808080;
   border-left: 1px solid #808080;
   overflow: hidden;
-  white-space: nowrap;
+  white-space: nowrap !important;
   vertical-align: middle !important;
+  cursor: default;
 }
 
 td.DataGrid_Body_Cell span {
