@@ -295,6 +295,14 @@ public class DataToDatabaseSink implements DataSink
         {
             throw new DataSinkException(ex);
         }
+        
+        // delete filtered tables
+        if (_databasefilter != null) {
+            String [] tablenames = _databasefilter.getTableNames();
+            for (String table : tablenames) {
+                _platform.deleteDataFromTable(_connection, _model, table, _databasefilter.getTableFilter(table), _haltOnErrors);                
+            }
+        }       
     }
 
     /**
@@ -559,11 +567,6 @@ public class DataToDatabaseSink implements DataSink
     private void upsertSingleBeanIntoDatabase(Table table, DynaBean bean) throws DataSinkException {
         
         try {
-//            // delete old table data
-//            if (!_mergedTables.contains(table)){
-//                _mergedTables.add(table);
-//                _platform.deleteDataFromTable(_connection, _model, table, _haltOnErrors);
-//            }
 
             _platform.upsert(_connection, _model, bean);
 

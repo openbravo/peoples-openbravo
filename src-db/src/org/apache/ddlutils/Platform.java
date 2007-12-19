@@ -987,4 +987,7 @@ public interface Platform
      * @param continueOnError Whether to continue executing the sql commands when an error occurred
      */
     public void deleteDataFromTable(Connection connection, Database model, Table table, boolean continueOnError) throws DatabaseOperationException;       
+    
+    public void deleteDataFromTable(Connection connection, Database model, String table, String sqlfilter, boolean continueOnError);
+     
 }

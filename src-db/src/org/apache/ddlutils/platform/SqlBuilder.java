@@ -2142,7 +2142,17 @@ public abstract class SqlBuilder
         printIdentifier(getStructureObjectName(table));
         printEndOfStatement();        
     }
-
+    
+    public void writeDeleteTable(Database database, String table, String sqlfilter) throws IOException {
+    	print("DELETE FROM ");
+        printIdentifier(table);
+        if (!"".equals(sqlfilter)) {
+            print(" WHERE ");
+            print(sqlfilter);
+        }
+        printEndOfStatement();
+    }
+    
     /**
      * Generates the first part of the ALTER TABLE statement including the
      * table name.

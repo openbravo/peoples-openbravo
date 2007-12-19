@@ -2132,6 +2132,14 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
     }
     
     /**
+     * {@inheritDoc}
+     */
+    public void deleteDataFromTable(Connection connection, Database model, String table, String sqlfilter, boolean continueOnError) {
+        String sql = getDeleteDataFromTableSql(model, table, sqlfilter, continueOnError);
+        evaluateBatch(connection, sql, continueOnError);
+    }
+    
+    /**
      * Allows the platform to postprocess the model just read from the database.
      * 
      * @param model The model
@@ -2511,4 +2519,17 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
             return null; // won't happen because we're using a string writer
         }
     }    
+
+    protected String getDeleteDataFromTableSql(Database model, String table, String sqlfilter, boolean continueOnError) {
+
+        try {
+            StringWriter buffer = new StringWriter();
+
+            getSqlBuilder().setWriter(buffer);
+            getSqlBuilder().writeDeleteTable(model, table, sqlfilter);
+            return buffer.toString();
+        } catch (IOException e) {           
+            return null; // won't happen because we're using a string writer
+        }
+    }      
 }
