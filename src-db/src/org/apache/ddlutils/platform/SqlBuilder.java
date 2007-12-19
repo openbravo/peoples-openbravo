@@ -28,6 +28,7 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -591,11 +592,14 @@ public abstract class SqlBuilder
                                                                          ColumnRequiredChange.class,
                                                                          ColumnDataTypeChange.class,
                                                                          ColumnSizeChange.class });
+        
+        Predicate predicatetriggers = new MultiInstanceofPredicate(new Class[] { AddTriggerChange.class });
 
         processTableStructureChanges(currentModel,
                                      desiredModel,
                                      params,
-                                     CollectionUtils.select(changes, predicate));
+                                     CollectionUtils.select(changes, predicate),
+                                     CollectionUtils.select(changes, predicatetriggers));
 
         // 4th pass: adding tables
         applyForSelectedChanges(changes,
@@ -983,8 +987,24 @@ public abstract class SqlBuilder
     protected void processTableStructureChanges(Database           currentModel,
                                                 Database           desiredModel,
                                                 CreationParameters params,
-                                                Collection         changes) throws IOException
+                                                Collection         changes,
+                                                Collection         triggerchanges) throws IOException
     {
+        // Get unchanged triggers
+        Set<String> addedTriggers = new HashSet<String>();
+        for (Iterator changeIt = triggerchanges.iterator(); changeIt.hasNext();) {
+            AddTriggerChange change = (AddTriggerChange) changeIt.next();
+            addedTriggers.add(((AddTriggerChange)change).getNewTrigger().getName());
+        }
+        
+        Set<String> unchangedTriggers = new HashSet<String>();
+        for (int i = 0; i < desiredModel.getTriggerCount(); i++) {
+            if (!addedTriggers.contains(desiredModel.getTrigger(i).getName())) {
+                unchangedTriggers.add(desiredModel.getTrigger(i).getName());
+            }
+        }
+        
+        
         ListOrderedMap changesPerTable = new ListOrderedMap();
         ListOrderedMap unchangedFKs    = new ListOrderedMap();
         boolean        caseSensitive   = getPlatform().isDelimitedIdentifierModeOn();
@@ -1049,7 +1069,8 @@ public abstract class SqlBuilder
                                          desiredModel,
                                          (String)entry.getKey(),
                                          params == null ? null : params.getParametersFor(targetTable),
-                                         (List)entry.getValue());
+                                         (List)entry.getValue(),
+                                         unchangedTriggers);
         }
         // and finally we're re-creating the unchanged foreign keys
         for (Iterator tableFKIt = unchangedFKs.entrySet().iterator(); tableFKIt.hasNext();)
@@ -1164,7 +1185,8 @@ public abstract class SqlBuilder
                                                 Database desiredModel,
                                                 String   tableName,
                                                 Map      parameters,
-                                                List     changes) throws IOException
+                                                List     changes,
+                                                Set<String> unchangedtriggers) throws IOException
     {
         Table sourceTable = currentModel.findTable(tableName, getPlatform().isDelimitedIdentifierModeOn());
         Table targetTable = desiredModel.findTable(tableName, getPlatform().isDelimitedIdentifierModeOn());
@@ -1194,8 +1216,23 @@ public abstract class SqlBuilder
             processTableStructureChanges(currentModel, desiredModel, sourceTable, targetTable, parameters, changes);
         }
 
-        if (!changes.isEmpty())
+        if (!changes.isEmpty())    
         {
+            
+            // read unchanged triggers
+            List<Trigger> triggers = new ArrayList<Trigger>();
+            for (int i = 0; i < desiredModel.getTriggerCount(); i++) {
+                Trigger t = desiredModel.getTrigger(i);
+                if (unchangedtriggers.contains(t.getName()) && t.getTable().equals(tableName)) {
+                    triggers.add(t);
+                }
+            }
+            
+            // drop unchanged triggers
+            for (Iterator<Trigger> it = triggers.iterator(); it.hasNext();) {
+                dropTrigger(desiredModel, it.next());
+            }
+            
             // we can only copy the data if no required columns without default value and
             // non-autoincrement have been added
             boolean canMigrateData = true;
@@ -1238,6 +1275,11 @@ public abstract class SqlBuilder
             {
                 dropTable(sourceTable);
                 createTable(desiredModel, realTargetTable, parameters);
+            }
+            
+            // create unchanged triggers
+            for (Iterator<Trigger> it = triggers.iterator(); it.hasNext();) {
+                createTrigger(desiredModel, it.next());
             }
         }
     }
