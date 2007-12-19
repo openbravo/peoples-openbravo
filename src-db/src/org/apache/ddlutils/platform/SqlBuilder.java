@@ -1295,6 +1295,7 @@ public abstract class SqlBuilder
         table.setSchema(targetTable.getSchema());
         table.setName(targetTable.getName() + "_");
         table.setType(targetTable.getType());
+        table.setPrimaryKey(targetTable.getPrimaryKey());
         for (int idx = 0; idx < targetTable.getColumnCount(); idx++)
         {
             try
@@ -1352,6 +1353,7 @@ public abstract class SqlBuilder
         table.setSchema(targetTable.getSchema());
         table.setName(targetTable.getName());
         table.setType(targetTable.getType());
+        table.setPrimaryKey(targetTable.getPrimaryKey());
         for (int idx = 0; idx < targetTable.getColumnCount(); idx++)
         {
             try
@@ -1492,7 +1494,7 @@ public abstract class SqlBuilder
                                  Database            desiredModel,
                                  AddPrimaryKeyChange change) throws IOException
     {
-        writeExternalPrimaryKeysCreateStmt(change.getChangedTable(), change.getPrimaryKeyColumns());
+        writeExternalPrimaryKeysCreateStmt(change.getChangedTable(), change.getprimaryKeyName(), change.getPrimaryKeyColumns());
         change.apply(currentModel, getPlatform().isDelimitedIdentifierModeOn());
     }
 
@@ -1595,7 +1597,7 @@ public abstract class SqlBuilder
 
         if (!getPlatformInfo().isPrimaryKeyEmbedded())
         {
-            writeExternalPrimaryKeysCreateStmt(table, table.getPrimaryKeyColumns());
+            writeExternalPrimaryKeysCreateStmt(table, table.getPrimaryKey(), table.getPrimaryKeyColumns());
         }
         if (!getPlatformInfo().isIndicesEmbedded())
         {
@@ -2552,7 +2554,7 @@ public abstract class SqlBuilder
      * @param table             The table
      * @param primaryKeyColumns The primary key columns 
      */
-    protected void writeExternalPrimaryKeysCreateStmt(Table table, Column[] primaryKeyColumns) throws IOException
+    protected void writeExternalPrimaryKeysCreateStmt(Table table, String primaryKeyName, Column[] primaryKeyColumns) throws IOException
     {
         if ((primaryKeyColumns.length > 0) && shouldGeneratePrimaryKeys(primaryKeyColumns))
         {
@@ -2561,10 +2563,10 @@ public abstract class SqlBuilder
             printIndent();
             print("ADD CONSTRAINT ");
             
-            if (table.getPrimaryKey() == null || table.getPrimaryKey().equals("")) {
+            if (primaryKeyName == null || primaryKeyName.equals("")) {
                 printIdentifier(getConstraintName(null, table, "PK", null));
             } else  {
-                printIdentifier(table.getPrimaryKey());
+                printIdentifier(primaryKeyName);
             }
             
             print(" ");

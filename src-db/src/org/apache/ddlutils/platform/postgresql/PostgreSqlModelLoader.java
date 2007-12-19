@@ -10,6 +10,7 @@
 package org.apache.ddlutils.platform.postgresql;
 
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import org.apache.ddlutils.Platform;
@@ -22,6 +23,8 @@ import org.apache.ddlutils.util.ExtTypes;
  * @author adrian
  */
 public class PostgreSqlModelLoader extends ModelLoaderBase {
+
+    protected PreparedStatement _stmt_functioncode;
     
     /** Creates a new instance of PostgreSqlModelLoader */
     public PostgreSqlModelLoader(Platform p) {
@@ -87,17 +90,42 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
                 "'trunc', 'instr', 'last_day', 'is_trigger_enabled', 'drop_view') and lower(p.proname) not in ( " +
                 "'ad_script_disable_triggers', 'ad_script_disable_constraints', 'ad_script_enable_triggers', 'ad_script_enable_constraints', " +
                 "'ad_script_drop_recreate_indexes', 'ad_script_execute', 'dba_getattnumpos', 'dba_getstandard_search_text', 'dump', 'negation')");
-        _stmt_functioncode = _connection.prepareStatement("select 'function ' || ?");
-    }
-    
-    protected void parseFunctionCode(Function f, String functioncode) {
+        _stmt_functioncode = _connection.prepareStatement("select 'function ' || ?"); // dummy sentence        
         
-        f.setBody("/********/");           
+        _stmt_functioncode = _connection.prepareStatement("");
+        
+        
+//  SELECT 
+//         pg_proc.prorettype,
+//         pg_proc.proargtypes,
+//         pg_proc.proallargtypes,
+//         pg_proc.proargmodes,
+//         pg_proc.proargnames
+//    FROM pg_catalog.pg_proc
+//         JOIN pg_catalog.pg_namespace
+//         ON (pg_proc.pronamespace = pg_namespace.oid)
+//   WHERE pg_proc.prorettype <> 'pg_catalog.cstring'::pg_catalog.regtype
+//     AND (pg_proc.proargtypes[0] IS NULL
+//      OR pg_proc.proargtypes[0] <> 'pg_catalog.cstring'::pg_catalog.regtype)
+//     AND NOT pg_proc.proisagg
+//     AND pg_catalog.pg_function_is_visible(pg_proc.oid)
+//     AND upper(pg_proc.proname) = 'C_CURRENCY_CONVERT'
+//
+//SELECT pg_catalog.format_type(1700, NULL);        
     }
     
-    protected String readFunctionCode(String function) throws SQLException {
-        return null;
+    protected void closeMetadataSentences() throws SQLException {
+        super.closeMetadataSentences();
+        _stmt_functioncode.close();
     }
+    
+    protected Function readFunction(String name) throws SQLException {
+        
+        Function f = new Function();
+        f.setName(name);
+        f.setBody("/********/");           
+        return f;
+    }    
     
     protected boolean translateRequired(String required) {
         return "t".equals(required);

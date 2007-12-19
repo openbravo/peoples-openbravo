@@ -230,6 +230,7 @@ public class SapDbBuilder extends SqlBuilder
             {
                 PrimaryKeyChange    pkChange    = (PrimaryKeyChange)change;
                 AddPrimaryKeyChange addPkChange = new AddPrimaryKeyChange(pkChange.getChangedTable(),
+                                                                          pkChange.getNewName(),
                                                                           pkChange.getNewPrimaryKeyColumns());
 
                 processChange(currentModel, desiredModel, addPkChange);

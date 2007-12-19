@@ -324,7 +324,7 @@ public class MySqlBuilder extends SqlBuilder
         printIndent();
         print("DROP PRIMARY KEY");
         printEndOfStatement();
-        writeExternalPrimaryKeysCreateStmt(change.getChangedTable(), change.getNewPrimaryKeyColumns());
+        writeExternalPrimaryKeysCreateStmt(change.getChangedTable(), change.getNewName(), change.getNewPrimaryKeyColumns());
         change.apply(currentModel, getPlatform().isDelimitedIdentifierModeOn());
     }
 

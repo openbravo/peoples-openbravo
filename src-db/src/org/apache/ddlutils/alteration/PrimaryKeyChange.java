@@ -30,6 +30,7 @@ import org.apache.ddlutils.model.Table;
  */
 public class PrimaryKeyChange extends TableChangeImplBase
 {
+    private String _newName;
     /** The columns making up the original primary key. */
     private Column[] _oldPrimaryKeyColumns;
     /** The columns making up the new primary key. */
@@ -42,11 +43,16 @@ public class PrimaryKeyChange extends TableChangeImplBase
      * @param oldPrimaryKeyColumns The columns making up the original primary key
      * @param newPrimaryKeyColumns The columns making up the new primary key
      */
-    public PrimaryKeyChange(Table table, Column[] oldPrimaryKeyColumns, Column[] newPrimaryKeyColumns)
+    public PrimaryKeyChange(Table table, String newName, Column[] oldPrimaryKeyColumns, Column[] newPrimaryKeyColumns)
     {
         super(table);
+        _newName = newName;
         _oldPrimaryKeyColumns = oldPrimaryKeyColumns;
         _newPrimaryKeyColumns = newPrimaryKeyColumns;
+    }
+    
+    public String getNewName() {
+        return _newName;
     }
 
     /**
@@ -76,7 +82,7 @@ public class PrimaryKeyChange extends TableChangeImplBase
     {
         Table table = database.findTable(getChangedTable().getName(), caseSensitive);
         
-        table.setPrimaryKey(getChangedTable().getPrimaryKey());
+        table.setPrimaryKey(_newName);
 
         for (int idx = 0; idx < _oldPrimaryKeyColumns.length; idx++)
         {

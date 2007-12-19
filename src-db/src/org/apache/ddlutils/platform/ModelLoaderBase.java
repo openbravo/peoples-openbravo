@@ -392,14 +392,17 @@ public abstract class ModelLoaderBase implements ModelLoader {
         
         return readList(_stmt_listfunctions, 
             new RowConstructor() { public Object getRow(ResultSet r) throws SQLException {
-                Function f = new Function();
-                f.setName(r.getString(1));
-                
-                parseFunctionCode(f, readFunctionCode(f.getName()));
-
-                return f;
+                return readFunction(r.getString(1));
             }});
     } 
+    
+    protected Function readFunction(String name) throws SQLException {
+        
+        Function f = new Function();
+        f.setName(name);
+        parseFunctionCode(f, readFunctionCode(name));
+        return f;
+    }
     
     protected void parseFunctionCode(Function f, String functioncode) {
         

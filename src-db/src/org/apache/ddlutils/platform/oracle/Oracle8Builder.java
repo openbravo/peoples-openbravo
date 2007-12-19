@@ -453,7 +453,8 @@ public class Oracle8Builder extends SqlBuilder
             else if (change instanceof PrimaryKeyChange)
             {
                 PrimaryKeyChange    pkChange    = (PrimaryKeyChange)change;
-                AddPrimaryKeyChange addPkChange = new AddPrimaryKeyChange(pkChange.getChangedTable(),
+                AddPrimaryKeyChange addPkChange = new AddPrimaryKeyChange(pkChange.getChangedTable(), 
+                                                                          pkChange.getNewName(),
                                                                           pkChange.getNewPrimaryKeyColumns());
 
                 processChange(currentModel, desiredModel, addPkChange);

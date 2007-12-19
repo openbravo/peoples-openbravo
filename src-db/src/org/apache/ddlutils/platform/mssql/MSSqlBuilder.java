@@ -443,7 +443,7 @@ public class MSSqlBuilder extends SqlBuilder
                     Column[] pk = table.getPrimaryKeyColumns();
 
                     additionalChanges.add(new RemovePrimaryKeyChange(table, pk));
-                    additionalChanges.add(new AddPrimaryKeyChange(table, pk));
+                    additionalChanges.add(new AddPrimaryKeyChange(table, table.getPrimaryKey(), pk));
                     removedPKs.add(table);
                 }
                 for (int idx = 0; idx < table.getIndexCount(); idx++)
@@ -584,6 +584,7 @@ public class MSSqlBuilder extends SqlBuilder
             {
                 PrimaryKeyChange    pkChange    = (PrimaryKeyChange)change;
                 AddPrimaryKeyChange addPkChange = new AddPrimaryKeyChange(pkChange.getChangedTable(),
+                                                                          pkChange.getNewName(),
                                                                           pkChange.getNewPrimaryKeyColumns());
 
                 processChange(currentModel, desiredModel, addPkChange);

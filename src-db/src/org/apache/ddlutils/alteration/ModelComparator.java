@@ -451,7 +451,7 @@ public class ModelComparator
             }
             // we have to use the target table here because the primary key might
             // reference a new column
-            changes.add(new AddPrimaryKeyChange(targetTable, targetPK));
+            changes.add(new AddPrimaryKeyChange(targetTable, targetTable.getPrimaryKey(), targetPK));
         }
         else if ((targetPK.length == 0) && (sourcePK.length > 0))
         {
@@ -490,7 +490,7 @@ public class ModelComparator
                 {
                     _log.info("The primary key of table " + sourceTable.getName() + " needs to be changed");
                 }
-                changes.add(new PrimaryKeyChange(sourceTable, sourcePK, targetPK));
+                changes.add(new PrimaryKeyChange(sourceTable, targetTable.getPrimaryKey(), sourcePK, targetPK));
             }
         }
         
