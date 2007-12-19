@@ -25,7 +25,7 @@
       <foreign-key foreignTable="MA_MAINTENANCE" name="MAMAINTENANCE_MAINTPERIODICITY">
         <reference local="MA_MAINTENANCE_ID" foreign="MA_MAINTENANCE_ID"/>
       </foreign-key>
-      <check name="MAINTPERIOD_EXCLUDWEEK_CHECK" condition="EXCLUDEWEEKEND IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MAMAINTPERIOD_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MAINTPERIOD_EXCLUDWEEK_CHECK"><![CDATA[EXCLUDEWEEKEND IN ('Y', 'N')]]></check>
+      <check name="MAMAINTPERIOD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

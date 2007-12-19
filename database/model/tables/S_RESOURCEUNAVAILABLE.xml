@@ -22,6 +22,6 @@
       <foreign-key foreignTable="S_RESOURCE" name="SRESOURCE_SRESUNAVAILABLE" onDelete="cascade">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
       </foreign-key>
-      <check name="S_RESOURCEUNAVA_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="S_RESOURCEUNAVA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

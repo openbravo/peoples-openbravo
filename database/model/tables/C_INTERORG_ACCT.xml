@@ -30,6 +30,6 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_INTERCOMPANYDUETO_CINTERORG">
         <reference local="INTERCOMPANYDUETO_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <check name="C_INTERORG_ACCT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_INTERORG_ACCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

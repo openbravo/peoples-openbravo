@@ -32,6 +32,6 @@
         <unique-column name="AD_USER_ID"/>
         <unique-column name="ATTRIBUTE"/>
       </unique>
-      <check name="AD_PREFERENCE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AD_PREFERENCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

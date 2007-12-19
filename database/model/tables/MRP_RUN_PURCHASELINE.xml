@@ -51,7 +51,7 @@
       <foreign-key foreignTable="M_REQUISITIONLINE" name="M_REQUISITIONLINE_RUN_PURCHASE">
         <reference local="M_REQUISITIONLINE_ID" foreign="M_REQUISITIONLINE_ID"/>
       </foreign-key>
-      <check name="MRPRUNPURLN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MRPRUNPURLN_ISFIXED_CHECK" condition="ISFIXED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPURLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MRPRUNPURLN_ISFIXED_CHECK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
     </table>
   </database>

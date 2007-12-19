@@ -27,7 +27,7 @@
         <index-column name="AD_ROLE_ID"/>
         <index-column name="AD_WORKFLOW_ID"/>
       </index>
-      <check name="ADWORKFLOWAC_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADWORKFLOWAC_ISREADWRITE_CHECK" condition="ISREADWRITE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADWORKFLOWAC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADWORKFLOWAC_ISREADWRITE_CHECK"><![CDATA[ISREADWRITE IN ('Y', 'N')]]></check>
     </table>
   </database>

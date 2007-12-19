@@ -21,7 +21,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MINTERNAL_CONSUMPTION">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="MINTERNCONSUMPT_ISACTIV_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_INTERNAL_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MINTERNCONSUMPT_ISACTIV_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_INTERNAL_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

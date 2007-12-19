@@ -120,16 +120,16 @@
       <index name="C_INVOICE_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="CINV_ISDISCOUNTPRINT_CHECK" condition="ISDISCOUNTPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_INVOICE_CREATEFROM_CHECK" condition="CREATEFROM IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_INVOICE_GENERATETO_CHECK" condition="GENERATETO IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_INVOICE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_INVOICE_ISAPPROVED_CHECK" condition="ISAPPROVED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_INVOICE_ISPAID_CHECK" condition="ISPAID IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_INVOICE_ISPRINTED_CHECK" condition="ISPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_INVOICE_ISSOTRX_CHECK" condition="ISSOTRX IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_INVOICE_ISTAXINCLUDED_CHECK" condition="ISTAXINCLUDED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_INVOICE_ISTRANSFERRED_CHECK" condition="ISTRANSFERRED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_INVOICE_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CINV_ISDISCOUNTPRINT_CHECK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_CREATEFROM_CHECK"><![CDATA[CREATEFROM IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_GENERATETO_CHECK"><![CDATA[GENERATETO IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_ISAPPROVED_CHECK"><![CDATA[ISAPPROVED IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_ISPAID_CHECK"><![CDATA[ISPAID IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_ISTAXINCLUDED_CHECK"><![CDATA[ISTAXINCLUDED IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_ISTRANSFERRED_CHECK"><![CDATA[ISTRANSFERRED IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

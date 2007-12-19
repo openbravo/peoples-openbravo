@@ -40,12 +40,12 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="CACCTSCHEMA_AUTOPERCONT_CHECK" condition="AUTOPERIODCONTROL IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CACCTSCHEMA_HASALIAS_CHECK" condition="HASALIAS IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CACCTSCHEMA_HASCOMBINAT_CHECK" condition="HASCOMBINATION IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CACCTSCHEMA_ISACCRUAL_CHECK" condition="ISACCRUAL IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CACCTSCHEMA_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CACCTSCHEMA_ISDISCCORTAX_CHECK" condition="ISDISCOUNTCORRECTSTAX IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CACCTSCHEMA_ISTRADPOSTED_CHECK" condition="ISTRADEDISCOUNTPOSTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CACCTSCHEMA_AUTOPERCONT_CHECK"><![CDATA[AUTOPERIODCONTROL IN ('Y', 'N')]]></check>
+      <check name="CACCTSCHEMA_HASALIAS_CHECK"><![CDATA[HASALIAS IN ('Y', 'N')]]></check>
+      <check name="CACCTSCHEMA_HASCOMBINAT_CHECK"><![CDATA[HASCOMBINATION IN ('Y', 'N')]]></check>
+      <check name="CACCTSCHEMA_ISACCRUAL_CHECK"><![CDATA[ISACCRUAL IN ('Y', 'N')]]></check>
+      <check name="CACCTSCHEMA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CACCTSCHEMA_ISDISCCORTAX_CHECK"><![CDATA[ISDISCOUNTCORRECTSTAX IN ('Y', 'N')]]></check>
+      <check name="CACCTSCHEMA_ISTRADPOSTED_CHECK"><![CDATA[ISTRADEDISCOUNTPOSTED IN ('Y', 'N')]]></check>
     </table>
   </database>

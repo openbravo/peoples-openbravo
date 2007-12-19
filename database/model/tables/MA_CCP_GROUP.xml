@@ -20,7 +20,7 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MACCPGROUP">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="MACCPGR_HASSECPRODUCT_CHECK" condition="HASSECPRODUCT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MA_CCP_GROUP_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MACCPGR_HASSECPRODUCT_CHECK"><![CDATA[HASSECPRODUCT IN ('Y', 'N')]]></check>
+      <check name="MA_CCP_GROUP_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

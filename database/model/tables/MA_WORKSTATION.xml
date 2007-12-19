@@ -21,6 +21,6 @@
       <foreign-key foreignTable="MA_SECTION" name="MA_GFH_MASECTION">
         <reference local="MA_SECTION_ID" foreign="MA_SECTION_ID"/>
       </foreign-key>
-      <check name="MA_WORKSTATION_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MA_WORKSTATION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

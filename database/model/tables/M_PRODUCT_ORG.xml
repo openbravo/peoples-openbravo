@@ -36,6 +36,6 @@
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="M_PRODUCT_ID"/>
       </unique>
-      <check name="ISACTIVE_CH_PRODUCTORG" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ISACTIVE_CH_PRODUCTORG"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

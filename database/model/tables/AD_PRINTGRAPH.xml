@@ -46,6 +46,6 @@
       <foreign-key foreignTable="AD_PRINTFORMAT" name="ADPRINTFORMAT_ADPRINTGRAPH">
         <reference local="AD_PRINTFORMAT_ID" foreign="AD_PRINTFORMAT_ID"/>
       </foreign-key>
-      <check name="AD_PRINTGRAPH_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AD_PRINTGRAPH_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

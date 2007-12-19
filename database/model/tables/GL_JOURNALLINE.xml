@@ -46,7 +46,7 @@
       <foreign-key foreignTable="GL_JOURNAL" name="GLJOURNAL_GLJOURNALLINE">
         <reference local="GL_JOURNAL_ID" foreign="GL_JOURNAL_ID"/>
       </foreign-key>
-      <check name="GLJOURNLINE_ISGENERATED_CHECK" condition="ISGENERATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="GL_JOURNALLINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="GLJOURNLINE_ISGENERATED_CHECK"><![CDATA[ISGENERATED IN ('Y', 'N')]]></check>
+      <check name="GL_JOURNALLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

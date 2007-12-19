@@ -148,9 +148,9 @@
       <foreign-key foreignTable="C_PROJECT" name="REFC_PROJECT1959">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <check name="I_ORDER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="I_ORDER_ISSOTRX_CHECK" condition="ISSOTRX IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="I_ORDER_I_ISIMPORTED_CHECK" condition="I_ISIMPORTED IN (&apos;Y&apos;, &apos;N&apos;, &apos;E&apos;)"/>
-      <check name="I_ORDER_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="I_ORDER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="I_ORDER_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
+      <check name="I_ORDER_I_ISIMPORTED_CHECK"><![CDATA[I_ISIMPORTED IN ('Y', 'N', 'E')]]></check>
+      <check name="I_ORDER_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

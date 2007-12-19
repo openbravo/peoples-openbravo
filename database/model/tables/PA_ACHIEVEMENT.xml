@@ -27,7 +27,7 @@
       <foreign-key foreignTable="PA_ACHIEVEMENT" name="PA_ACHIEVEMENT_PARENT">
         <reference local="PARENT_ID" foreign="PA_ACHIEVEMENT_ID"/>
       </foreign-key>
-      <check name="PAACHIEVEMENT_ISACHIEVED_CHECK" condition="ISACHIEVED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="PAACHIEVEMENT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="PAACHIEVEMENT_ISACHIEVED_CHECK"><![CDATA[ISACHIEVED IN ('Y', 'N')]]></check>
+      <check name="PAACHIEVEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

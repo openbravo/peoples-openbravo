@@ -25,7 +25,7 @@
       <foreign-key foreignTable="AD_REF_LIST" name="AD_REFLISTTRL" onDelete="cascade">
         <reference local="AD_REF_LIST_ID" foreign="AD_REF_LIST_ID"/>
       </foreign-key>
-      <check name="ADREFLISTTRL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADREFLISTTRL_IS_ANSLATED_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADREFLISTTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADREFLISTTRL_IS_ANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

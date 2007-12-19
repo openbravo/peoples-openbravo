@@ -28,6 +28,6 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_RREQUESTPROCESSOR">
         <reference local="SUPERVISOR_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <check name="R_REQUESTPROCES_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="R_REQUESTPROCES_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

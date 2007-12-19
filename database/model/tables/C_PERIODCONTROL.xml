@@ -23,6 +23,6 @@
       <foreign-key foreignTable="C_PERIOD" name="C_PERIOD_PERIODCONTROL">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
       </foreign-key>
-      <check name="C_PERIODCONTROL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_PERIODCONTROL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

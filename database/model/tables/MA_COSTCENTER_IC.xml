@@ -23,6 +23,6 @@
       <foreign-key foreignTable="MA_COSTCENTER_VERSION" name="MACCVERSION_COSTCENTERIC">
         <reference local="MA_COSTCENTER_VERSION_ID" foreign="MA_COSTCENTER_VERSION_ID"/>
       </foreign-key>
-      <check name="MA_COSTCENTER_I_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MA_COSTCENTER_I_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

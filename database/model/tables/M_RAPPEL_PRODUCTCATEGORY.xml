@@ -23,6 +23,6 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="PRODCATE_M_RAPPEL_PRODCATE">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <check name="MRAPPRCAT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRAPPRCAT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

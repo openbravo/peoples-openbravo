@@ -44,10 +44,10 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_RUN_PRODUCTION">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="MRPRUNPRODUCTIO_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MRPRUNPRODUCTIO_LAUNCHMR_CHECK" condition="LAUNCHMR IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MRPRUNPRODUCTIO_LAUNCHWR_CHECK" condition="LAUNCHWR IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MRPRUNPRODUCTIO_SIMULATE_CHECK" condition="SIMULATE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MRPRUNPROD_RECA_ATESTOCK_CHECK" condition="RECALCULATESTOCK IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPRODUCTIO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MRPRUNPRODUCTIO_LAUNCHMR_CHECK"><![CDATA[LAUNCHMR IN ('Y', 'N')]]></check>
+      <check name="MRPRUNPRODUCTIO_LAUNCHWR_CHECK"><![CDATA[LAUNCHWR IN ('Y', 'N')]]></check>
+      <check name="MRPRUNPRODUCTIO_SIMULATE_CHECK"><![CDATA[SIMULATE IN ('Y', 'N')]]></check>
+      <check name="MRPRUNPROD_RECA_ATESTOCK_CHECK"><![CDATA[RECALCULATESTOCK IN ('Y', 'N')]]></check>
     </table>
   </database>

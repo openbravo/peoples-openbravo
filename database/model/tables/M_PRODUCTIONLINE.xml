@@ -53,8 +53,8 @@
       <index name="M_PRODUCTIONLINE_PRODPLAN" unique="false">
         <index-column name="M_PRODUCTIONPLAN_ID"/>
       </index>
-      <check name="MPRODUCTLINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MPRODUCTLINE_PRINTLABEL_CHECK" condition="PRINTLABEL IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_PRODUCTIONLINE_CHECK1" condition="((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))"/>
+      <check name="MPRODUCTLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MPRODUCTLINE_PRINTLABEL_CHECK"><![CDATA[PRINTLABEL IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCTIONLINE_CHECK1"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
     </table>
   </database>

@@ -121,9 +121,9 @@
         <index-column name="AD_CLIENT_ID"/>
         <index-column name="VALUE"/>
       </index>
-      <check name="C_PROJECT_GENERATETO_CHECK" condition="GENERATETO IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_PROJECT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_PROJECT_ISCOMMITMENT_CHECK" condition="ISCOMMITMENT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_PROJECT_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_PROJECT_GENERATETO_CHECK"><![CDATA[GENERATETO IN ('Y', 'N')]]></check>
+      <check name="C_PROJECT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_PROJECT_ISCOMMITMENT_CHECK"><![CDATA[ISCOMMITMENT IN ('Y', 'N')]]></check>
+      <check name="C_PROJECT_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

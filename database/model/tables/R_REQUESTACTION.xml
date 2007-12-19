@@ -60,6 +60,6 @@
       <foreign-key foreignTable="R_REQUEST" name="RREQUEST_RREQUESTACTION">
         <reference local="R_REQUEST_ID" foreign="R_REQUEST_ID"/>
       </foreign-key>
-      <check name="R_REQUESTACTION_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="R_REQUESTACTION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

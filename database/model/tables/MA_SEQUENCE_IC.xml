@@ -24,6 +24,6 @@
       <foreign-key foreignTable="MA_SEQUENCE" name="SEQUENCE_FK_SEQIC">
         <reference local="MA_SEQUENCE_ID" foreign="MA_SEQUENCE_ID"/>
       </foreign-key>
-      <check name="ISACTIVE_CH_SEQIC" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ISACTIVE_CH_SEQIC"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

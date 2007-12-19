@@ -29,6 +29,6 @@
       <foreign-key foreignTable="AT_ROLLOGIN" name="ATROLLOGIN_ATTEST">
         <reference local="AT_ROLLOGIN_ID" foreign="AT_ROLLOGIN_ID"/>
       </foreign-key>
-      <check name="AT_TEST_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AT_TEST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -77,16 +77,16 @@
         <unique-column name="AD_TABLE_ID"/>
         <unique-column name="COLUMNNAME"/>
       </unique>
-      <check name="ADCOLUMN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISDESENCRYPT_CHECK" condition="ISDESENCRYPTABLE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISENCRYPTED_CHECK" condition="ISENCRYPTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISIDENTIFIER_CHECK" condition="ISIDENTIFIER IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISKEY_CHECK" condition="ISKEY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISMANDATORY_CHECK" condition="ISMANDATORY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISPARENT_CHECK" condition="ISPARENT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISSELCOL_CHECK" condition="ISSELECTIONCOLUMN IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISSYNCDBASE_CHECK" condition="ISSYNCDATABASE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISTRANSLATED_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCOLUMN_ISUPDATEABLE_CHECK" condition="ISUPDATEABLE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCOLUMN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADCOLUMN_ISDESENCRYPT_CHECK"><![CDATA[ISDESENCRYPTABLE IN ('Y', 'N')]]></check>
+      <check name="ADCOLUMN_ISENCRYPTED_CHECK"><![CDATA[ISENCRYPTED IN ('Y', 'N')]]></check>
+      <check name="ADCOLUMN_ISIDENTIFIER_CHECK"><![CDATA[ISIDENTIFIER IN ('Y', 'N')]]></check>
+      <check name="ADCOLUMN_ISKEY_CHECK"><![CDATA[ISKEY IN ('Y', 'N')]]></check>
+      <check name="ADCOLUMN_ISMANDATORY_CHECK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
+      <check name="ADCOLUMN_ISPARENT_CHECK"><![CDATA[ISPARENT IN ('Y', 'N')]]></check>
+      <check name="ADCOLUMN_ISSELCOL_CHECK"><![CDATA[ISSELECTIONCOLUMN IN ('Y', 'N')]]></check>
+      <check name="ADCOLUMN_ISSYNCDBASE_CHECK"><![CDATA[ISSYNCDATABASE IN ('Y', 'N')]]></check>
+      <check name="ADCOLUMN_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="ADCOLUMN_ISUPDATEABLE_CHECK"><![CDATA[ISUPDATEABLE IN ('Y', 'N')]]></check>
     </table>
   </database>

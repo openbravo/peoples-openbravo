@@ -24,8 +24,8 @@
       <foreign-key foreignTable="M_ATTRIBUTESEARCH" name="MATTRIBUTESEARCH_MATTRIBUTE">
         <reference local="M_ATTRIBUTESEARCH_ID" foreign="M_ATTRIBUTESEARCH_ID"/>
       </foreign-key>
-      <check name="MATTRIB_ISINSTANCATTRIB_CHECK" condition="ISINSTANCEATTRIBUTE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_ATTRIBUTE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_ATTRIBUTE_ISMANDATORY_CHECK" condition="ISMANDATORY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MATTRIB_ISINSTANCATTRIB_CHECK"><![CDATA[ISINSTANCEATTRIBUTE IN ('Y', 'N')]]></check>
+      <check name="M_ATTRIBUTE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_ATTRIBUTE_ISMANDATORY_CHECK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
     </table>
   </database>

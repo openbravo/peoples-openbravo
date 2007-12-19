@@ -54,6 +54,6 @@
       <foreign-key foreignTable="PA_REPORTLINE" name="PAREPORTLINE_PAREPORTSOURCE">
         <reference local="PA_REPORTLINE_ID" foreign="PA_REPORTLINE_ID"/>
       </foreign-key>
-      <check name="PA_REPORTSOURCE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="PA_REPORTSOURCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

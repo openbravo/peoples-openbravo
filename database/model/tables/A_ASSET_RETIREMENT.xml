@@ -25,6 +25,6 @@
       <foreign-key foreignTable="C_INVOICELINE" name="CINVOICELINE_AASSETRETIREMENT">
         <reference local="C_INVOICELINE_ID" foreign="C_INVOICELINE_ID"/>
       </foreign-key>
-      <check name="A_ASSET_RETIREM_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="A_ASSET_RETIREM_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

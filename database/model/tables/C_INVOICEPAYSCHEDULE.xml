@@ -31,7 +31,7 @@
       <index name="C_INVOICEPAYSCHEDULE_INVOICE" unique="false">
         <index-column name="C_INVOICE_ID"/>
       </index>
-      <check name="CINVPAYSCHED_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CINVPAYSCHED_ISVALID_CHECK" condition="ISVALID IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CINVPAYSCHED_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CINVPAYSCHED_ISVALID_CHECK"><![CDATA[ISVALID IN ('Y', 'N')]]></check>
     </table>
   </database>

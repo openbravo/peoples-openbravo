@@ -20,7 +20,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CDUNNING">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="CDUN_SENDDUNLET_CHECK" condition="SENDDUNNINGLETTER IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_DUNNING_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CDUN_SENDDUNLET_CHECK"><![CDATA[SENDDUNNINGLETTER IN ('Y', 'N')]]></check>
+      <check name="C_DUNNING_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

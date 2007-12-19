@@ -67,9 +67,9 @@
       <foreign-key foreignTable="C_INVOICE" name="CINVOICE_IBANKSTATEMENT">
         <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
       </foreign-key>
-      <check name="IBANKSTAT_ISREVERSAL_CHECK" condition="ISREVERSAL IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="IBANKSTAT_I_ISIMPORTED_CHECK" condition="I_ISIMPORTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="IBANKSTAT_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="I_BANKSTATEMENT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="IBANKSTAT_ISREVERSAL_CHECK"><![CDATA[ISREVERSAL IN ('Y', 'N')]]></check>
+      <check name="IBANKSTAT_I_ISIMPORTED_CHECK"><![CDATA[I_ISIMPORTED IN ('Y', 'N')]]></check>
+      <check name="IBANKSTAT_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="I_BANKSTATEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

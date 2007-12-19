@@ -67,8 +67,8 @@
       <index name="C_ACCTSCHEMA_ELEMENT_SCHEMA" unique="false">
         <index-column name="C_ACCTSCHEMA_ID"/>
       </index>
-      <check name="CACCTSCHEL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CACCTSCHEL_ISBALANCED_CHECK" condition="ISBALANCED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CACCTSCHEL_ISMANDATORY_CHECK" condition="ISMANDATORY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CACCTSCHEL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CACCTSCHEL_ISBALANCED_CHECK"><![CDATA[ISBALANCED IN ('Y', 'N')]]></check>
+      <check name="CACCTSCHEL_ISMANDATORY_CHECK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
     </table>
   </database>

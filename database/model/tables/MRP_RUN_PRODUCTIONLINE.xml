@@ -57,8 +57,8 @@
       <foreign-key foreignTable="MRP_RUN_PRODUCTIONLINE" name="PARENT_MRP_RUN_PRODUCTIONLINE">
         <reference local="PARENT_ID" foreign="MRP_RUN_PRODUCTIONLINE_ID"/>
       </foreign-key>
-      <check name="MRPRUNPRLN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MRPRUNPRLN_ISFIXED_CHECK" condition="ISFIXED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MRPRUNPRLN_ISPLANNED_CHECK" condition="ISPLANNED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPRLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MRPRUNPRLN_ISFIXED_CHECK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>
+      <check name="MRPRUNPRLN_ISPLANNED_CHECK"><![CDATA[ISPLANNED IN ('Y', 'N')]]></check>
     </table>
   </database>

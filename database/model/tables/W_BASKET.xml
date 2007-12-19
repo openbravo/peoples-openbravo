@@ -35,6 +35,6 @@
       <unique name="W_BASKET_SESSION">
         <unique-column name="SESSION_ID"/>
       </unique>
-      <check name="W_BASKET_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="W_BASKET_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

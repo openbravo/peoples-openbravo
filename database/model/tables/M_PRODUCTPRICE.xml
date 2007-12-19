@@ -25,6 +25,6 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MPRODUCTPRICE" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="M_PRODUCTPRICE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_PRODUCTPRICE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

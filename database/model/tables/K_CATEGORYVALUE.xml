@@ -21,6 +21,6 @@
       <foreign-key foreignTable="K_CATEGORY" name="KCATEGORY_KCATEGORYVALUE">
         <reference local="K_CATEGORY_ID" foreign="K_CATEGORY_ID"/>
       </foreign-key>
-      <check name="K_CATEGORYVALUE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="K_CATEGORYVALUE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

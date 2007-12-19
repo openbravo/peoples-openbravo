@@ -43,12 +43,12 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_CBPEDI">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
-      <check name="CBPEDI_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPEDI_ISAUDITED_CHECK" condition="ISAUDITED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPEDI_ISINFOSENT_CHECK" condition="ISINFOSENT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPEDI_REINQUIRYREPLY_CHECK" condition="RECEIVEINQUIRYREPLY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPEDI_REORDERREPLY_CHECK" condition="RECEIVEORDERREPLY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPEDI_SENDINQUIRY_CHECK" condition="SENDINQUIRY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPEDI_SENDORDER_CHECK" condition="SENDORDER IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPEDI_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CBPEDI_ISAUDITED_CHECK"><![CDATA[ISAUDITED IN ('Y', 'N')]]></check>
+      <check name="CBPEDI_ISINFOSENT_CHECK"><![CDATA[ISINFOSENT IN ('Y', 'N')]]></check>
+      <check name="CBPEDI_REINQUIRYREPLY_CHECK"><![CDATA[RECEIVEINQUIRYREPLY IN ('Y', 'N')]]></check>
+      <check name="CBPEDI_REORDERREPLY_CHECK"><![CDATA[RECEIVEORDERREPLY IN ('Y', 'N')]]></check>
+      <check name="CBPEDI_SENDINQUIRY_CHECK"><![CDATA[SENDINQUIRY IN ('Y', 'N')]]></check>
+      <check name="CBPEDI_SENDORDER_CHECK"><![CDATA[SENDORDER IN ('Y', 'N')]]></check>
     </table>
   </database>

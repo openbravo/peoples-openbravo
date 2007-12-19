@@ -81,7 +81,7 @@
         <index-column name="AD_ORG_ID"/>
         <index-column name="ACCOUNT_ID"/>
       </index>
-      <check name="CVALCOMBIN_ISFULLQUAL_CHECK" condition="ISFULLYQUALIFIED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CVALIDCOMBIN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CVALCOMBIN_ISFULLQUAL_CHECK"><![CDATA[ISFULLYQUALIFIED IN ('Y', 'N')]]></check>
+      <check name="CVALIDCOMBIN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -28,7 +28,7 @@
       <foreign-key foreignTable="AT_COMMAND" name="AT_COMMANDTRL">
         <reference local="AT_COMMAND_ID" foreign="AT_COMMAND_ID"/>
       </foreign-key>
-      <check name="ATCOMMANDTRL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ATCOMMANDTRL_IS_ANSLATED_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ATCOMMANDTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ATCOMMANDTRL_IS_ANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

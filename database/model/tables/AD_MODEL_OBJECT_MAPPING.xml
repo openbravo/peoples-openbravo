@@ -21,7 +21,7 @@
       <foreign-key foreignTable="AD_ORG" name="MODELOBJMAP_FK_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="ADMODELOBJECTMA_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADMODELOBJECTMA_NG_ISDEF_CHECK" condition="ISDEFAULT IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADMODELOBJECTMA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADMODELOBJECTMA_NG_ISDEF_CHECK"><![CDATA[ISDEFAULT IN ('Y', 'N')]]></check>
     </table>
   </database>

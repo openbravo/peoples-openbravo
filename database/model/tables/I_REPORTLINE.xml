@@ -46,8 +46,8 @@
       <foreign-key foreignTable="PA_REPORTSOURCE" name="PAREPORTSOURCE_IREPORTLINE">
         <reference local="PA_REPORTSOURCE_ID" foreign="PA_REPORTSOURCE_ID"/>
       </foreign-key>
-      <check name="I_REPORTLINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="I_REPORTLINE_ISPRINTED_CHECK" condition="ISPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="I_REPORTLINE_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="I_REPORTLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="I_REPORTLINE_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
+      <check name="I_REPORTLINE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

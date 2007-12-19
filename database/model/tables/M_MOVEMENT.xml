@@ -41,8 +41,8 @@
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_MMOVEMENT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <check name="MMOVEMENT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MMOVEMENT_MOVEFROMTOLOC_CHECK" condition="MOVE_FROMTO_LOCATOR IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MMOVEMENT_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MMOVEMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MMOVEMENT_MOVEFROMTOLOC_CHECK"><![CDATA[MOVE_FROMTO_LOCATOR IN ('Y', 'N')]]></check>
+      <check name="MMOVEMENT_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

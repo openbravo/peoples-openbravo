@@ -23,8 +23,8 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAPROCESSPLAN">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="MAPROCPLAN_CALCULATED_CHECK" condition="CALCULATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MAPROCPLAN_EXPLPHASES_CHECK" condition="EXPLODEPHASES IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MA_PROCESSPLAN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MAPROCPLAN_CALCULATED_CHECK"><![CDATA[CALCULATED IN ('Y', 'N')]]></check>
+      <check name="MAPROCPLAN_EXPLPHASES_CHECK"><![CDATA[EXPLODEPHASES IN ('Y', 'N')]]></check>
+      <check name="MA_PROCESSPLAN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

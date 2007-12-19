@@ -25,8 +25,8 @@
       <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_CCHARGE">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
       </foreign-key>
-      <check name="CCHARGE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CCHARGE_ISSAMECURRENCY_CHECK" condition="ISSAMECURRENCY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CCHARGE_ISSAMETAX_CHECK" condition="ISSAMETAX IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CCHARGE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CCHARGE_ISSAMECURRENCY_CHECK"><![CDATA[ISSAMECURRENCY IN ('Y', 'N')]]></check>
+      <check name="CCHARGE_ISSAMETAX_CHECK"><![CDATA[ISSAMETAX IN ('Y', 'N')]]></check>
     </table>
   </database>

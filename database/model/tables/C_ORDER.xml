@@ -156,17 +156,17 @@
       <index name="C_ORDER_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="CORDER_ISCREDITAPPROVED_CHECK" condition="ISCREDITAPPROVED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CORDER_ISDISCOUNTPRINT_CHECK" condition="ISDISCOUNTPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_ORDER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_ORDER_ISAPPROVED_CHECK" condition="ISAPPROVED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_ORDER_ISDELIVERED_CHECK" condition="ISDELIVERED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_ORDER_ISINVOICED_CHECK" condition="ISINVOICED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_ORDER_ISPRINTED_CHECK" condition="ISPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_ORDER_ISSELECTED_CHECK" condition="ISSELECTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_ORDER_ISSOTRX_CHECK" condition="ISSOTRX IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_ORDER_ISTAXINCLUDED_CHECK" condition="ISTAXINCLUDED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_ORDER_ISTRANSFERRED_CHECK" condition="ISTRANSFERRED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_ORDER_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CORDER_ISCREDITAPPROVED_CHECK"><![CDATA[ISCREDITAPPROVED IN ('Y', 'N')]]></check>
+      <check name="CORDER_ISDISCOUNTPRINT_CHECK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISAPPROVED_CHECK"><![CDATA[ISAPPROVED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISDELIVERED_CHECK"><![CDATA[ISDELIVERED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISINVOICED_CHECK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISSELECTED_CHECK"><![CDATA[ISSELECTED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISTAXINCLUDED_CHECK"><![CDATA[ISTAXINCLUDED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISTRANSFERRED_CHECK"><![CDATA[ISTRANSFERRED IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

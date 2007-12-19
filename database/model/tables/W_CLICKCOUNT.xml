@@ -27,6 +27,6 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="TARGETURL"/>
       </unique>
-      <check name="W_CLICKCOUNT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="W_CLICKCOUNT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

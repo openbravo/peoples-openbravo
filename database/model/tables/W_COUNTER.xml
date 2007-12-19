@@ -31,7 +31,7 @@
       <foreign-key foreignTable="W_COUNTERCOUNT" name="WCOUNTERCOUNT_WCOUNTER" onDelete="cascade">
         <reference local="W_COUNTERCOUNT_ID" foreign="W_COUNTERCOUNT_ID"/>
       </foreign-key>
-      <check name="WCOUNTER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="WCOUNTER_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="WCOUNTER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="WCOUNTER_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

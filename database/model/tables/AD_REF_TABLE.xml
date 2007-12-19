@@ -34,7 +34,7 @@
       <foreign-key foreignTable="AD_ORG" name="REF_TABLEORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="ADREFTABLE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADREFTABLE_ISVALUEDISP_CHECK" condition="ISVALUEDISPLAYED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADREFTABLE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADREFTABLE_ISVALUEDISP_CHECK"><![CDATA[ISVALUEDISPLAYED IN ('Y', 'N')]]></check>
     </table>
   </database>

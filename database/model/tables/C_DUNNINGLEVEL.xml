@@ -31,8 +31,8 @@
       <foreign-key foreignTable="C_DUNNING" name="CDUNNING_CDUNNINGLEVEL">
         <reference local="C_DUNNING_ID" foreign="C_DUNNING_ID"/>
       </foreign-key>
-      <check name="CDUNLEV_CHARGEINTEREST_CHECK" condition="CHARGEINTEREST IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CDUNNINGLEVEL_CHARGEFEE_CHECK" condition="CHARGEFEE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_DUNNINGLEVEL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CDUNLEV_CHARGEINTEREST_CHECK"><![CDATA[CHARGEINTEREST IN ('Y', 'N')]]></check>
+      <check name="CDUNNINGLEVEL_CHARGEFEE_CHECK"><![CDATA[CHARGEFEE IN ('Y', 'N')]]></check>
+      <check name="C_DUNNINGLEVEL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

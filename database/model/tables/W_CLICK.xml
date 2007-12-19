@@ -31,7 +31,7 @@
       <foreign-key foreignTable="W_CLICKCOUNT" name="WCLICKCOUNT_WCLICK" onDelete="cascade">
         <reference local="W_CLICKCOUNT_ID" foreign="W_CLICKCOUNT_ID"/>
       </foreign-key>
-      <check name="WCLICK_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="WCLICK_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="WCLICK_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="WCLICK_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

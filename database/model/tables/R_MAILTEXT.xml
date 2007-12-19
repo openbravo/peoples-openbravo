@@ -19,7 +19,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_RMAILTEXT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="RMAILTEXT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="RMAILTEXT_ISHTML_CHECK" condition="ISHTML IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="RMAILTEXT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="RMAILTEXT_ISHTML_CHECK"><![CDATA[ISHTML IN ('Y', 'N')]]></check>
     </table>
   </database>

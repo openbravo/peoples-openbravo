@@ -26,7 +26,7 @@
       <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_CDOCTYPETRL" onDelete="cascade">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
-      <check name="CDOCTYPETRL_ISTRANSLAT_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_DOCTYPE_TRL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CDOCTYPETRL_ISTRANSLAT_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="C_DOCTYPE_TRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

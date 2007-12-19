@@ -34,7 +34,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADIMPFORMATROW">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="ADIMPFORMATROW_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADIMPFORMROW_DIV100_CHECK" condition="DIVIDEBY100 IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADIMPFORMATROW_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADIMPFORMROW_DIV100_CHECK"><![CDATA[DIVIDEBY100 IN ('Y', 'N')]]></check>
     </table>
   </database>

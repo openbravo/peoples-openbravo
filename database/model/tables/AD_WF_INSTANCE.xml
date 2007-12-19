@@ -26,6 +26,6 @@
       <index name="AD_WF_INSTANCE_WORKFLOW" unique="false">
         <index-column name="AD_WORKFLOW_ID"/>
       </index>
-      <check name="AD_WF_INSTANCE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AD_WF_INSTANCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

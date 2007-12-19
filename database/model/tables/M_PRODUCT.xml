@@ -149,15 +149,15 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="ENFORCEATTRIBUTE_CH_MPRODUCT" condition="ENFORCE_ATTRIBUTE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MPROD_ISINVPRINTDET_CHECK" condition="ISINVOICEPRINTDETAILS IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MPROD_ISPICKLPRINTDET_CHECK" condition="ISPICKLISTPRINTDETAILS IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_PRODUCT_DISCONTINUED_CHECK" condition="DISCONTINUED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISBOM_CHECK" condition="ISBOM IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISPURCHASED_CHECK" condition="ISPURCHASED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISSOLD_CHECK" condition="ISSOLD IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISSTOCKED_CHECK" condition="ISSTOCKED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_PRODUCT_ISVERIFIED_CHECK" condition="ISVERIFIED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ENFORCEATTRIBUTE_CH_MPRODUCT"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
+      <check name="MPROD_ISINVPRINTDET_CHECK"><![CDATA[ISINVOICEPRINTDETAILS IN ('Y', 'N')]]></check>
+      <check name="MPROD_ISPICKLPRINTDET_CHECK"><![CDATA[ISPICKLISTPRINTDETAILS IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_ISBOM_CHECK"><![CDATA[ISBOM IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_ISPURCHASED_CHECK"><![CDATA[ISPURCHASED IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_ISSOLD_CHECK"><![CDATA[ISSOLD IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_ISSTOCKED_CHECK"><![CDATA[ISSTOCKED IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_ISVERIFIED_CHECK"><![CDATA[ISVERIFIED IN ('Y', 'N')]]></check>
     </table>
   </database>

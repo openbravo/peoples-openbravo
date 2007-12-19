@@ -137,6 +137,6 @@
         <index-column name="AD_TABLE_ID"/>
         <index-column name="RECORD_ID"/>
       </index>
-      <check name="FACT_ACCT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="FACT_ACCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

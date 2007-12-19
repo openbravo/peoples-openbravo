@@ -24,6 +24,6 @@
       <foreign-key foreignTable="AD_PROCESS" name="PROCESS_FK_PROCESS_SCHEDULING">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
-      <check name="AD_PROCESS_SCHEDULING_ISFT" condition="ISFULLTIME IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AD_PROCESS_SCHEDULING_ISFT"><![CDATA[ISFULLTIME IN ('Y', 'N')]]></check>
     </table>
   </database>

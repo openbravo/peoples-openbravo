@@ -53,9 +53,9 @@
       <index name="AD_PROCESS_PARA_PROCESS" unique="false">
         <index-column name="AD_PROCESS_ID"/>
       </index>
-      <check name="ADPROCPARA_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPROCPARA_ISCENTMAINT_CHECK" condition="ISCENTRALLYMAINTAINED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPROCPARA_ISMANDATORY_CHECK" condition="ISMANDATORY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPROCPARA_ISRANGE_CHECK" condition="ISRANGE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPROCPARA_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADPROCPARA_ISCENTMAINT_CHECK"><![CDATA[ISCENTRALLYMAINTAINED IN ('Y', 'N')]]></check>
+      <check name="ADPROCPARA_ISMANDATORY_CHECK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
+      <check name="ADPROCPARA_ISRANGE_CHECK"><![CDATA[ISRANGE IN ('Y', 'N')]]></check>
     </table>
   </database>

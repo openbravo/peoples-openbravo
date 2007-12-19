@@ -35,6 +35,6 @@
       <foreign-key foreignTable="PA_GOAL" name="PAGOAL_ADWORKBENCH">
         <reference local="PA_GOAL_ID" foreign="PA_GOAL_ID"/>
       </foreign-key>
-      <check name="AD_WORKBENCH_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AD_WORKBENCH_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

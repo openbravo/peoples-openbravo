@@ -42,6 +42,6 @@
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="STATUS"/>
       </unique>
-      <check name="C_BP_VENDOR_ACC_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_BP_VENDOR_ACC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

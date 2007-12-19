@@ -40,6 +40,6 @@
       <foreign-key foreignTable="PA_REPORTLINESET" name="PAREPORT_LINESET">
         <reference local="PA_REPORTLINESET_ID" foreign="PA_REPORTLINESET_ID"/>
       </foreign-key>
-      <check name="PA_REPORT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="PA_REPORT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

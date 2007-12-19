@@ -28,6 +28,6 @@
         <unique-column name="AD_USER_ID"/>
         <unique-column name="R_INTERESTAREA_ID"/>
       </unique>
-      <check name="R_CONTACTINTERE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="R_CONTACTINTERE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

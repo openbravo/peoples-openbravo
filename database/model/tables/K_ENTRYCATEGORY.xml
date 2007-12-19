@@ -26,6 +26,6 @@
       <foreign-key foreignTable="K_ENTRY" name="KENTRY_KENTRYCATALOG">
         <reference local="K_ENTRY_ID" foreign="K_ENTRY_ID"/>
       </foreign-key>
-      <check name="K_ENTRYCATEGORY_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="K_ENTRYCATEGORY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

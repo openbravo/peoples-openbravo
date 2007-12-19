@@ -79,11 +79,11 @@
         <unique-column name="AD_WINDOW_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="ADTAB_HASTREE_CHECK" condition="HASTREE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADTAB_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADTAB_ISINFOTAB_CHECK" condition="ISINFOTAB IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADTAB_ISREADONLY_CHECK" condition="ISREADONLY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADTAB_ISSINGLEROW_CHECK" condition="ISSINGLEROW IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADTAB_ISTRANSLATIONTAB_CHECK" condition="ISTRANSLATIONTAB IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADTAB_HASTREE_CHECK"><![CDATA[HASTREE IN ('Y', 'N')]]></check>
+      <check name="ADTAB_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADTAB_ISINFOTAB_CHECK"><![CDATA[ISINFOTAB IN ('Y', 'N')]]></check>
+      <check name="ADTAB_ISREADONLY_CHECK"><![CDATA[ISREADONLY IN ('Y', 'N')]]></check>
+      <check name="ADTAB_ISSINGLEROW_CHECK"><![CDATA[ISSINGLEROW IN ('Y', 'N')]]></check>
+      <check name="ADTAB_ISTRANSLATIONTAB_CHECK"><![CDATA[ISTRANSLATIONTAB IN ('Y', 'N')]]></check>
     </table>
   </database>

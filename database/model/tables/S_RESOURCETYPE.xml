@@ -44,17 +44,17 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCATEGORY_SRESOURCETYPE">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <check name="SRESTYPE_ALLOWU_RACTIONS_CHECK" condition="ALLOWUOMFRACTIONS IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESTYPE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESTYPE_ISDATESLOT_CHECK" condition="ISDATESLOT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESTYPE_ISSING_SIGNMENT_CHECK" condition="ISSINGLEASSIGNMENT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESTYPE_ISTIMESLOT_CHECK" condition="ISTIMESLOT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESTYPE_ONFRIDAY_CHECK" condition="ONFRIDAY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESTYPE_ONMONDAY_CHECK" condition="ONMONDAY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESTYPE_ONSATURDAY_CHECK" condition="ONSATURDAY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESTYPE_ONSUNDAY_CHECK" condition="ONSUNDAY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESTYPE_ONTHURSDAY_CHECK" condition="ONTHURSDAY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESTYPE_ONTUESDAY_CHECK" condition="ONTUESDAY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESTYPE_ONWEDNESDAY_CHECK" condition="ONWEDNESDAY IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="SRESTYPE_ALLOWU_RACTIONS_CHECK"><![CDATA[ALLOWUOMFRACTIONS IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ISDATESLOT_CHECK"><![CDATA[ISDATESLOT IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ISSING_SIGNMENT_CHECK"><![CDATA[ISSINGLEASSIGNMENT IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ISTIMESLOT_CHECK"><![CDATA[ISTIMESLOT IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONFRIDAY_CHECK"><![CDATA[ONFRIDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONMONDAY_CHECK"><![CDATA[ONMONDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONSATURDAY_CHECK"><![CDATA[ONSATURDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONSUNDAY_CHECK"><![CDATA[ONSUNDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONTHURSDAY_CHECK"><![CDATA[ONTHURSDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONTUESDAY_CHECK"><![CDATA[ONTUESDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONWEDNESDAY_CHECK"><![CDATA[ONWEDNESDAY IN ('Y', 'N')]]></check>
     </table>
   </database>

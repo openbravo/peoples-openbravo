@@ -23,6 +23,6 @@
       <foreign-key foreignTable="AD_ORG" name="REFSEARCHCOLUMN_FK_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="AD_REF_SEARCH_C_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AD_REF_SEARCH_C_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

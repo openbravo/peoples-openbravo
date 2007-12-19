@@ -28,9 +28,9 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="CAPPROVAL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CAPPROVAL_ISAMO_APPROVED_CHECK" condition="ISAMOUNTAPPROVED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CAPPROVAL_ISPRO_APPROVED_CHECK" condition="ISPRODUCTATTRIBUTEAPPROVED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CAPPROVAL_ISWOR_APPROVED_CHECK" condition="ISWORKFLOWAPPROVED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CAPPROVAL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CAPPROVAL_ISAMO_APPROVED_CHECK"><![CDATA[ISAMOUNTAPPROVED IN ('Y', 'N')]]></check>
+      <check name="CAPPROVAL_ISPRO_APPROVED_CHECK"><![CDATA[ISPRODUCTATTRIBUTEAPPROVED IN ('Y', 'N')]]></check>
+      <check name="CAPPROVAL_ISWOR_APPROVED_CHECK"><![CDATA[ISWORKFLOWAPPROVED IN ('Y', 'N')]]></check>
     </table>
   </database>

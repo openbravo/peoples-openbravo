@@ -23,6 +23,6 @@
       <unique name="MESSAGE_UN_VALUE">
         <unique-column name="VALUE"/>
       </unique>
-      <check name="AD_MESSAGE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AD_MESSAGE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

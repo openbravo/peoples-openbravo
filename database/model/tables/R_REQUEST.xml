@@ -82,8 +82,8 @@
       <index name="R_REQUEST_USER" unique="false">
         <index-column name="AD_USER_ID"/>
       </index>
-      <check name="RREQUEST_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="RREQUEST_ISESCALATED_CHECK" condition="ISESCALATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="RREQUEST_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="RREQUEST_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="RREQUEST_ISESCALATED_CHECK"><![CDATA[ISESCALATED IN ('Y', 'N')]]></check>
+      <check name="RREQUEST_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -46,6 +46,6 @@
       <index name="MINTERNAL_CONSUMPTIONLINE_INDX" unique="false">
         <index-column name="M_INTERNAL_CONSUMPTION_ID"/>
       </index>
-      <check name="MINTCONLN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MINTCONLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

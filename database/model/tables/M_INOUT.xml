@@ -122,14 +122,14 @@
       <index name="M_INOUT_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="ISLOGISTIC_MINOUT" condition="ISLOGISTIC IN (&apos;N&apos;, &apos;Y&apos;)"/>
-      <check name="MINOUT_UPDATELINES_YN" condition="UPDATELINES IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_INOUT_CREATEFROM_CHECK" condition="CREATEFROM IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_INOUT_GENERATELINES_CHECK" condition="GENERATELINES IN (&apos;N&apos;, &apos;Y&apos;)"/>
-      <check name="M_INOUT_GENERATETO_CHECK" condition="GENERATETO IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_INOUT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_INOUT_ISPRINTED_CHECK" condition="ISPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_INOUT_ISSOTRX_CHECK" condition="ISSOTRX IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="M_INOUT_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ISLOGISTIC_MINOUT"><![CDATA[ISLOGISTIC IN ('N', 'Y')]]></check>
+      <check name="MINOUT_UPDATELINES_YN"><![CDATA[UPDATELINES IN ('Y', 'N')]]></check>
+      <check name="M_INOUT_CREATEFROM_CHECK"><![CDATA[CREATEFROM IN ('Y', 'N')]]></check>
+      <check name="M_INOUT_GENERATELINES_CHECK"><![CDATA[GENERATELINES IN ('N', 'Y')]]></check>
+      <check name="M_INOUT_GENERATETO_CHECK"><![CDATA[GENERATETO IN ('Y', 'N')]]></check>
+      <check name="M_INOUT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_INOUT_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
+      <check name="M_INOUT_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
+      <check name="M_INOUT_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

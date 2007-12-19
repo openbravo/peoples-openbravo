@@ -17,6 +17,6 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_MATTRIBUTESEARCH">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <check name="M_ATTRIBUTESEAR_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="M_ATTRIBUTESEAR_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

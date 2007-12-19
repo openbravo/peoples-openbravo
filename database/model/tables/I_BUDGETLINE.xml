@@ -96,6 +96,6 @@
       <foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_I_BUDGETLINE">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
-      <check name="I_BUDGETLINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="I_BUDGETLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

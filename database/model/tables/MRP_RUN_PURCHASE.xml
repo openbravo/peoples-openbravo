@@ -47,9 +47,9 @@
       <foreign-key foreignTable="C_BPARTNER" name="VENDOR_MRP_RUN_PURCHASE">
         <reference local="VENDOR_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <check name="MRPRUNPURCHASE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MRPRUNPURCHASE_LAUNCHPO_CHECK" condition="LAUNCHPO IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MRPRUNPURCHASE_RECAL_CHECK" condition="RECALCULATESTOCK IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MRPRUNPURCHASE_SIMULATE_CHECK" condition="SIMULATE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MRPRUNPURCHASE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MRPRUNPURCHASE_LAUNCHPO_CHECK"><![CDATA[LAUNCHPO IN ('Y', 'N')]]></check>
+      <check name="MRPRUNPURCHASE_RECAL_CHECK"><![CDATA[RECALCULATESTOCK IN ('Y', 'N')]]></check>
+      <check name="MRPRUNPURCHASE_SIMULATE_CHECK"><![CDATA[SIMULATE IN ('Y', 'N')]]></check>
     </table>
   </database>

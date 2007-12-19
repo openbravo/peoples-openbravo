@@ -93,12 +93,12 @@
       <foreign-key foreignTable="PA_GOAL" name="PAGOAL_AD_CLIENTINFO">
         <reference local="PA_GOAL_ID" foreign="PA_GOAL_ID"/>
       </foreign-key>
-      <check name="ADCLIENTINFO_ACCT2ACTIVE_CHECK" condition="ACCT2_ACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCLIENTINFO_ACCT3ACTIVE_CHECK" condition="ACCT3_ACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCLIENTINFO_ANEGATSTOCK_CHECK" condition="ALLOWNEGATIVESTOCK IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCLIENTINFO_INOUTORG_CHECK" condition="CHECKINOUTORG IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCLIENTINFO_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCLIENTINFO_ISDISLNAMT_CHECK" condition="ISDISCOUNTLINEAMT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADCLIENTINFO_ORDERORG_CHECK" condition="CHECKORDERORG IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADCLIENTINFO_ACCT2ACTIVE_CHECK"><![CDATA[ACCT2_ACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_ACCT3ACTIVE_CHECK"><![CDATA[ACCT3_ACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_ANEGATSTOCK_CHECK"><![CDATA[ALLOWNEGATIVESTOCK IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_INOUTORG_CHECK"><![CDATA[CHECKINOUTORG IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_ISDISLNAMT_CHECK"><![CDATA[ISDISCOUNTLINEAMT IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_ORDERORG_CHECK"><![CDATA[CHECKORDERORG IN ('Y', 'N')]]></check>
     </table>
   </database>

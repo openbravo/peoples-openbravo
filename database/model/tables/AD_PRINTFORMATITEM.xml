@@ -74,14 +74,14 @@
       <index name="AD_PRINTFORMATITEM_FORMAT" unique="false">
         <index-column name="AD_PRINTFORMAT_ID"/>
       </index>
-      <check name="ADPRFORMITEM_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISGROUPBY_CHECK" condition="ISGROUPBY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISHEIGHTLN_CHECK" condition="ISHEIGHTONELINE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISNEXTLN_CHECK" condition="ISNEXTLINE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISORDERBY_CHECK" condition="ISORDERBY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISPAGEBR_CHECK" condition="ISPAGEBREAK IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISPRINTED_CHECK" condition="ISPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISRELPOS_CHECK" condition="ISRELATIVEPOSITION IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPRFORMITEM_ISSUMM_CHECK" condition="ISSUMMARIZED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRFORMITEM_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADPRFORMITEM_ISGROUPBY_CHECK"><![CDATA[ISGROUPBY IN ('Y', 'N')]]></check>
+      <check name="ADPRFORMITEM_ISHEIGHTLN_CHECK"><![CDATA[ISHEIGHTONELINE IN ('Y', 'N')]]></check>
+      <check name="ADPRFORMITEM_ISNEXTLN_CHECK"><![CDATA[ISNEXTLINE IN ('Y', 'N')]]></check>
+      <check name="ADPRFORMITEM_ISORDERBY_CHECK"><![CDATA[ISORDERBY IN ('Y', 'N')]]></check>
+      <check name="ADPRFORMITEM_ISPAGEBR_CHECK"><![CDATA[ISPAGEBREAK IN ('Y', 'N')]]></check>
+      <check name="ADPRFORMITEM_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
+      <check name="ADPRFORMITEM_ISRELPOS_CHECK"><![CDATA[ISRELATIVEPOSITION IN ('Y', 'N')]]></check>
+      <check name="ADPRFORMITEM_ISSUMM_CHECK"><![CDATA[ISSUMMARIZED IN ('Y', 'N')]]></check>
     </table>
   </database>

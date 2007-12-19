@@ -27,7 +27,7 @@
       <foreign-key foreignTable="AD_USER" name="AD_USER_MAMEASURESHIFT">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <check name="MA_MEASURE_SHIFT_SHIFT_CHECK" condition="SHIFT IN (&apos;M&apos;, &apos;T&apos;)"/>
-      <check name="MEASURESHIFT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MA_MEASURE_SHIFT_SHIFT_CHECK"><![CDATA[SHIFT IN ('M', 'T')]]></check>
+      <check name="MEASURESHIFT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

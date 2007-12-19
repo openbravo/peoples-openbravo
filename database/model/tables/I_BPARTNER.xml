@@ -73,7 +73,7 @@
       <foreign-key foreignTable="C_REGION" name="CREGION_IBPARTNER">
         <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
-      <check name="IBPARTNER_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="I_BPARTNER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="IBPARTNER_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="I_BPARTNER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

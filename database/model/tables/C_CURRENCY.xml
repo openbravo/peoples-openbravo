@@ -28,8 +28,8 @@
       <unique name="C_CURRENCYISOCODE">
         <unique-column name="ISO_CODE"/>
       </unique>
-      <check name="C_CURRENCY_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_CURRENCY_ISEURO_CHECK" condition="ISEURO IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_CURR_ISEMUMEMBER_CHECK" condition="ISEMUMEMBER IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="C_CURRENCY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_CURRENCY_ISEURO_CHECK"><![CDATA[ISEURO IN ('Y', 'N')]]></check>
+      <check name="C_CURR_ISEMUMEMBER_CHECK"><![CDATA[ISEMUMEMBER IN ('Y', 'N')]]></check>
     </table>
   </database>

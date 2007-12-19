@@ -44,10 +44,10 @@
       <index name="C_BPLOCATION_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="CBPARTLOC_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTLOC_ISBILLTO_CHECK" condition="ISBILLTO IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTLOC_ISPAYFROM_CHECK" condition="ISPAYFROM IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTLOC_ISREMITTO_CHECK" condition="ISREMITTO IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTLOC_ISSHIPTO_CHECK" condition="ISSHIPTO IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CBPARTLOC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CBPARTLOC_ISBILLTO_CHECK"><![CDATA[ISBILLTO IN ('Y', 'N')]]></check>
+      <check name="CBPARTLOC_ISPAYFROM_CHECK"><![CDATA[ISPAYFROM IN ('Y', 'N')]]></check>
+      <check name="CBPARTLOC_ISREMITTO_CHECK"><![CDATA[ISREMITTO IN ('Y', 'N')]]></check>
+      <check name="CBPARTLOC_ISSHIPTO_CHECK"><![CDATA[ISSHIPTO IN ('Y', 'N')]]></check>
     </table>
   </database>

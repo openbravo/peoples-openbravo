@@ -24,6 +24,6 @@
       <foreign-key foreignTable="AD_WORKBENCH" name="ADWORKBENCH_ADDESKTOPWB">
         <reference local="AD_WORKBENCH_ID" foreign="AD_WORKBENCH_ID"/>
       </foreign-key>
-      <check name="AD_DESKTOPWORKB_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AD_DESKTOPWORKB_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

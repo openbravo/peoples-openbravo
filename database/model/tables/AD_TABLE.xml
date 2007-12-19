@@ -44,10 +44,10 @@
       <unique name="AD_TABLE_NAME">
         <unique-column name="NAME"/>
       </unique>
-      <check name="ADTABLE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADTABLE_ISDELETEABLE_CHECK" condition="ISDELETEABLE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADTABLE_ISHIGHVOLUME_CHECK" condition="ISHIGHVOLUME IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADTABLE_ISSECUR_YENABLED_CHECK" condition="ISSECURITYENABLED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADTABLE_ISVIEW_CHECK" condition="ISVIEW IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADTABLE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADTABLE_ISDELETEABLE_CHECK"><![CDATA[ISDELETEABLE IN ('Y', 'N')]]></check>
+      <check name="ADTABLE_ISHIGHVOLUME_CHECK"><![CDATA[ISHIGHVOLUME IN ('Y', 'N')]]></check>
+      <check name="ADTABLE_ISSECUR_YENABLED_CHECK"><![CDATA[ISSECURITYENABLED IN ('Y', 'N')]]></check>
+      <check name="ADTABLE_ISVIEW_CHECK"><![CDATA[ISVIEW IN ('Y', 'N')]]></check>
     </table>
   </database>

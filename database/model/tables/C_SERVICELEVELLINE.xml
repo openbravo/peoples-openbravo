@@ -23,7 +23,7 @@
       <foreign-key foreignTable="C_SERVICELEVEL" name="CSERVICELEVEL_LINE" onDelete="cascade">
         <reference local="C_SERVICELEVEL_ID" foreign="C_SERVICELEVEL_ID"/>
       </foreign-key>
-      <check name="CSERVLEVLINE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CSERVLEVLINE_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CSERVLEVLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CSERVLEVLINE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

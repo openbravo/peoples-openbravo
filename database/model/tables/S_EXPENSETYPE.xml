@@ -31,7 +31,7 @@
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODUCTCATEGORY_SEXPENSETYPE">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
       </foreign-key>
-      <check name="SEXPENSETYPE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SEXPENSETYPE_ISINVOICED_CHECK" condition="ISINVOICED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="SEXPENSETYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="SEXPENSETYPE_ISINVOICED_CHECK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
     </table>
   </database>

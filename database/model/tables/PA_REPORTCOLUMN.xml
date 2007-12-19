@@ -80,8 +80,8 @@
       <foreign-key foreignTable="PA_REPORTCOLUMN" name="PAREPORTCOLUMN_OPER2">
         <reference local="OPER_2_ID" foreign="PA_REPORTCOLUMN_ID"/>
       </foreign-key>
-      <check name="PAREPORTCOLUMN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="PAREPORTCOLUMN_ISADCONV_CHECK" condition="ISADHOCCONVERSION IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="PAREPORTCOLUMN_ISPRINTED_CHECK" condition="ISPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="PAREPORTCOLUMN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="PAREPORTCOLUMN_ISADCONV_CHECK"><![CDATA[ISADHOCCONVERSION IN ('Y', 'N')]]></check>
+      <check name="PAREPORTCOLUMN_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
     </table>
   </database>

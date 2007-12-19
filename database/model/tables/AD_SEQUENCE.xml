@@ -32,10 +32,10 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="ADSEQ_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADSEQ_ISAUDITED_CHECK" condition="ISAUDITED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADSEQ_ISAUTOSEQUENCE_CHECK" condition="ISAUTOSEQUENCE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADSEQ_ISTABLEID_CHECK" condition="ISTABLEID IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADSEQ_STARTNEWYEAR_CHECK" condition="STARTNEWYEAR IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADSEQ_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADSEQ_ISAUDITED_CHECK"><![CDATA[ISAUDITED IN ('Y', 'N')]]></check>
+      <check name="ADSEQ_ISAUTOSEQUENCE_CHECK"><![CDATA[ISAUTOSEQUENCE IN ('Y', 'N')]]></check>
+      <check name="ADSEQ_ISTABLEID_CHECK"><![CDATA[ISTABLEID IN ('Y', 'N')]]></check>
+      <check name="ADSEQ_STARTNEWYEAR_CHECK"><![CDATA[STARTNEWYEAR IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -56,9 +56,9 @@
         <unique-column name="AD_TABLE_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="ADPRINTFORM_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPRINTFORM_ISFORM_CHECK" condition="ISFORM IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPRINTFORM_ISSTFOOTER_CHECK" condition="ISSTANDARDHEADERFOOTER IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADPRINTFORM_ISTABBAS_CHECK" condition="ISTABLEBASED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADPRINTFORM_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADPRINTFORM_ISFORM_CHECK"><![CDATA[ISFORM IN ('Y', 'N')]]></check>
+      <check name="ADPRINTFORM_ISSTFOOTER_CHECK"><![CDATA[ISSTANDARDHEADERFOOTER IN ('Y', 'N')]]></check>
+      <check name="ADPRINTFORM_ISTABBAS_CHECK"><![CDATA[ISTABLEBASED IN ('Y', 'N')]]></check>
     </table>
   </database>

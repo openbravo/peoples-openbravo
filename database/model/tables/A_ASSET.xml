@@ -93,9 +93,9 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_AASSET">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="AASSET_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="AASSET_ISDISPOSED_CHECK" condition="ISDISPOSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="AASSET_ISINPOSESSION_CHECK" condition="ISINPOSESSION IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="AASSET_ISOWNED_CHECK" condition="ISOWNED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AASSET_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AASSET_ISDISPOSED_CHECK"><![CDATA[ISDISPOSED IN ('Y', 'N')]]></check>
+      <check name="AASSET_ISINPOSESSION_CHECK"><![CDATA[ISINPOSESSION IN ('Y', 'N')]]></check>
+      <check name="AASSET_ISOWNED_CHECK"><![CDATA[ISOWNED IN ('Y', 'N')]]></check>
     </table>
   </database>

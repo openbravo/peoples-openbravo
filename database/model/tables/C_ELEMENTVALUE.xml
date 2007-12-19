@@ -52,13 +52,13 @@
         <unique-column name="C_ELEMENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="CELEMVALUE_POSTACTUAL_CHECK" condition="POSTACTUAL IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CELEMVALUE_POSTBUDGET_CHECK" condition="POSTBUDGET IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CELEMVAL_ISBANKACCOUNT_CHECK" condition="ISBANKACCOUNT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CELEMVAL_ISDOCCONTROL_CHECK" condition="ISDOCCONTROLLED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CELEMVAL_ISFORCURREN_CHECK" condition="ISFOREIGNCURRENCY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CELEMVAL_POSTENCUMBR_CHECK" condition="POSTENCUMBRANCE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CELEMVAL_POSTSTATISTIC_CHECK" condition="POSTSTATISTICAL IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="C_ELEMENTVALUE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="CELEMVALUE_POSTACTUAL_CHECK"><![CDATA[POSTACTUAL IN ('Y', 'N')]]></check>
+      <check name="CELEMVALUE_POSTBUDGET_CHECK"><![CDATA[POSTBUDGET IN ('Y', 'N')]]></check>
+      <check name="CELEMVAL_ISBANKACCOUNT_CHECK"><![CDATA[ISBANKACCOUNT IN ('Y', 'N')]]></check>
+      <check name="CELEMVAL_ISDOCCONTROL_CHECK"><![CDATA[ISDOCCONTROLLED IN ('Y', 'N')]]></check>
+      <check name="CELEMVAL_ISFORCURREN_CHECK"><![CDATA[ISFOREIGNCURRENCY IN ('Y', 'N')]]></check>
+      <check name="CELEMVAL_POSTENCUMBR_CHECK"><![CDATA[POSTENCUMBRANCE IN ('Y', 'N')]]></check>
+      <check name="CELEMVAL_POSTSTATISTIC_CHECK"><![CDATA[POSTSTATISTICAL IN ('Y', 'N')]]></check>
+      <check name="C_ELEMENTVALUE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

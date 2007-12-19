@@ -23,6 +23,6 @@
       <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADREPORTVIEW" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
-      <check name="AD_REPORTVIEW_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AD_REPORTVIEW_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

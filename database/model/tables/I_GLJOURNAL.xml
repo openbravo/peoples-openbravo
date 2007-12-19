@@ -142,8 +142,8 @@
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_OGLJOURNAL">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="IGLJOURNAL_I_ISIMPORTED_CHECK" condition="I_ISIMPORTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="I_GLJOURNAL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="I_GLJOURNAL_PROCESSED_CHECK" condition="PROCESSED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="IGLJOURNAL_I_ISIMPORTED_CHECK"><![CDATA[I_ISIMPORTED IN ('Y', 'N')]]></check>
+      <check name="I_GLJOURNAL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="I_GLJOURNAL_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

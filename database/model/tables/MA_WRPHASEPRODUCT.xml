@@ -38,7 +38,7 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MAWRPHASEPRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
-      <check name="MAWRPHASEPROD_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MAWRPHASPRODT_PRODTYPE_CHECK" condition="PRODUCTIONTYPE IN (&apos;+&apos;, &apos;-&apos;)"/>
+      <check name="MAWRPHASEPROD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MAWRPHASPRODT_PRODTYPE_CHECK"><![CDATA[PRODUCTIONTYPE IN ('+', '-')]]></check>
     </table>
   </database>

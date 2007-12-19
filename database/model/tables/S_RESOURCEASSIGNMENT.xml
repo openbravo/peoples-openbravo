@@ -25,7 +25,7 @@
       <foreign-key foreignTable="S_RESOURCE" name="SRESOURCE_SRESOURCEASSIGNMENT">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
       </foreign-key>
-      <check name="SRESOURCEASSIGN_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="SRESOURCEASSIGN_ONFIRMED_CHECK" condition="ISCONFIRMED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="SRESOURCEASSIGN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="SRESOURCEASSIGN_ONFIRMED_CHECK"><![CDATA[ISCONFIRMED IN ('Y', 'N')]]></check>
     </table>
   </database>

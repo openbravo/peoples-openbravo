@@ -91,6 +91,6 @@
       <unique name="AD_USER_UN_USERNAME">
         <unique-column name="USERNAME"/>
       </unique>
-      <check name="AD_USER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="AD_USER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

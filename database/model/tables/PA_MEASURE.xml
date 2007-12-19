@@ -48,6 +48,6 @@
       <foreign-key foreignTable="PA_MEASURECALC" name="PAMEASURECALC_PAMEASURE">
         <reference local="PA_MEASURECALC_ID" foreign="PA_MEASURECALC_ID"/>
       </foreign-key>
-      <check name="PA_MEASURE_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="PA_MEASURE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

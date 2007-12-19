@@ -25,7 +25,7 @@
       <foreign-key foreignTable="AD_MENU" name="AD_MENUTRL" onDelete="cascade">
         <reference local="AD_MENU_ID" foreign="AD_MENU_ID"/>
       </foreign-key>
-      <check name="ADMENUTRL_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="ADMENUTRL_ISTRANSLATED_CHECK" condition="ISTRANSLATED IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="ADMENUTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADMENUTRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>

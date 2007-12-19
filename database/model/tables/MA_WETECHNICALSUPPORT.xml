@@ -25,6 +25,6 @@
       <foreign-key foreignTable="M_PRODUCTION" name="M_PRODUCTION_MAWETS">
         <reference local="M_PRODUCTION_ID" foreign="M_PRODUCTION_ID"/>
       </foreign-key>
-      <check name="MA_WETECHNICALS_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
+      <check name="MA_WETECHNICALS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -154,17 +154,17 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
       </unique>
-      <check name="CBPARTNER_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTNER_ISCUSTOMER_CHECK" condition="ISCUSTOMER IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTNER_ISDIS_TPRINTED_CHECK" condition="ISDISCOUNTPRINTED IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTNER_ISEMPLOYEE_CHECK" condition="ISEMPLOYEE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTNER_ISONETIME_CHECK" condition="ISONETIME IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTNER_ISPROSPECT_CHECK" condition="ISPROSPECT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTNER_ISSALESREP_CHECK" condition="ISSALESREP IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTNER_ISSUMMARY_CHECK" condition="ISSUMMARY IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTNER_ISTAXEXEMPT_CHECK" condition="ISTAXEXEMPT IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTNER_ISVENDOR_CHECK" condition="ISVENDOR IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="CBPARTNER_SHOWPRICE_CHECK" condition="SHOWPRICEINORDER IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="INVOICERULE_CK_CBPARTNER" condition="(INVOICERULE &lt;&gt; &apos;S&apos;) OR (C_INVOICESCHEDULE_ID IS NOT NULL)"/>
+      <check name="CBPARTNER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CBPARTNER_ISCUSTOMER_CHECK"><![CDATA[ISCUSTOMER IN ('Y', 'N')]]></check>
+      <check name="CBPARTNER_ISDIS_TPRINTED_CHECK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
+      <check name="CBPARTNER_ISEMPLOYEE_CHECK"><![CDATA[ISEMPLOYEE IN ('Y', 'N')]]></check>
+      <check name="CBPARTNER_ISONETIME_CHECK"><![CDATA[ISONETIME IN ('Y', 'N')]]></check>
+      <check name="CBPARTNER_ISPROSPECT_CHECK"><![CDATA[ISPROSPECT IN ('Y', 'N')]]></check>
+      <check name="CBPARTNER_ISSALESREP_CHECK"><![CDATA[ISSALESREP IN ('Y', 'N')]]></check>
+      <check name="CBPARTNER_ISSUMMARY_CHECK"><![CDATA[ISSUMMARY IN ('Y', 'N')]]></check>
+      <check name="CBPARTNER_ISTAXEXEMPT_CHECK"><![CDATA[ISTAXEXEMPT IN ('Y', 'N')]]></check>
+      <check name="CBPARTNER_ISVENDOR_CHECK"><![CDATA[ISVENDOR IN ('Y', 'N')]]></check>
+      <check name="CBPARTNER_SHOWPRICE_CHECK"><![CDATA[SHOWPRICEINORDER IN ('Y', 'N')]]></check>
+      <check name="INVOICERULE_CK_CBPARTNER"><![CDATA[(INVOICERULE <> 'S') OR (C_INVOICESCHEDULE_ID IS NOT NULL)]]></check>
     </table>
   </database>

@@ -33,7 +33,7 @@
       <foreign-key foreignTable="MA_CALCSTD" name="MA_CALCSTD_MASEQPRODCOST">
         <reference local="MA_CALCSTD_ID" foreign="MA_CALCSTD_ID"/>
       </foreign-key>
-      <check name="MASEQPRODCT_ISACTIVE_CHECK" condition="ISACTIVE IN (&apos;Y&apos;, &apos;N&apos;)"/>
-      <check name="MASEQPRODCT_PRO_TIONTYPE_CHECK" condition="PRODUCTIONTYPE IN (&apos;+&apos;, &apos;-&apos;)"/>
+      <check name="MASEQPRODCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MASEQPRODCT_PRO_TIONTYPE_CHECK"><![CDATA[PRODUCTIONTYPE IN ('+', '-')]]></check>
     </table>
   </database>
