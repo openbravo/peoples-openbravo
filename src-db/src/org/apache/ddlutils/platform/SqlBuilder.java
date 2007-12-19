@@ -1295,7 +1295,7 @@ public abstract class SqlBuilder
         table.setSchema(targetTable.getSchema());
         table.setName(targetTable.getName() + "_");
         table.setType(targetTable.getType());
-        table.setPrimaryKey(targetTable.getPrimaryKey());
+        table.setPrimaryKey(null); // generated name
         for (int idx = 0; idx < targetTable.getColumnCount(); idx++)
         {
             try
