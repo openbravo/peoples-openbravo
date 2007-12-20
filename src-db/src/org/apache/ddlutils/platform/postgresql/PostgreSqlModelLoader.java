@@ -11,11 +11,19 @@ package org.apache.ddlutils.platform.postgresql;
 
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.model.Function;
+import org.apache.ddlutils.model.Parameter;
 import org.apache.ddlutils.platform.ModelLoaderBase;
+import org.apache.ddlutils.platform.RowConstructor;
+import org.apache.ddlutils.platform.RowFiller;
 import org.apache.ddlutils.util.ExtTypes;
 
 /**
@@ -25,6 +33,9 @@ import org.apache.ddlutils.util.ExtTypes;
 public class PostgreSqlModelLoader extends ModelLoaderBase {
 
     protected PreparedStatement _stmt_functionparams;
+    protected PreparedStatement _stmt_paramtypes;
+    
+    protected Map<Integer, Integer> _paramtypes =  new HashMap<Integer, Integer>();
     
     /** Creates a new instance of PostgreSqlModelLoader */
     public PostgreSqlModelLoader(Platform p) {
@@ -93,7 +104,8 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
         
         _stmt_functioncode = _connection.prepareStatement("select 'function ' || ?"); // dummy sentence        
         
-        _stmt_functionparams = _connection.prepareStatement("  SELECT " +
+        _stmt_functionparams = _connection.prepareStatement(
+                "  SELECT " +
                 "         pg_proc.prorettype," +
                 "         pg_proc.proargtypes," +
                 "         pg_proc.proallargtypes," +
@@ -107,7 +119,9 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
                 "      OR pg_proc.proargtypes[0] <> 'pg_catalog.cstring'::pg_catalog.regtype)" +
                 "     AND NOT pg_proc.proisagg" +
                 "     AND pg_catalog.pg_function_is_visible(pg_proc.oid)" +
-                "     AND upper(pg_proc.proname) = ?");
+                "     AND upper(pg_proc.proname) = ?" +
+                "         ORDER BY pg_proc.proargtypes DESC");
+        _stmt_paramtypes = _connection.prepareStatement("SELECT pg_catalog.format_type(?, NULL)");        
         
         
 //  SELECT 
@@ -132,15 +146,143 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
     protected void closeMetadataSentences() throws SQLException {
         super.closeMetadataSentences();
         _stmt_functionparams.close();
+        _stmt_paramtypes.close();
     }
     
     protected Function readFunction(String name) throws SQLException {
         
-        Function f = new Function();
+        final Function f = new Function();
         f.setName(name);
+        
+        final FinalBoolean firststep = new FinalBoolean();
+            
+        _stmt_functionparams.setString(1, name);
+        fillList(_stmt_functionparams, new RowFiller() { public void fillRow(ResultSet r) throws SQLException {
+
+            if (firststep.get()) {
+                // just set defaults
+                Integer[] atypes = getIntArray(r, 2);
+                Integer[] aalltypes = getIntArray2(r, 3);
+                if (aalltypes != null) {    
+                    atypes = aalltypes;
+                }     
+                for (int i = atypes.length; i < f.getParameterCount(); i++) {
+                    f.getParameter(i).setDefaultValue("0"); // a dummy default value
+                }
+                
+            } else {
+                int ireturn = r.getInt(1);
+                Integer[] atypes = getIntArray(r, 2);
+                Integer[] aalltypes = getIntArray2(r, 3);
+                String[] modes = getStringArray(r, 4);
+                String[] names = getStringArray(r, 5);
+
+                if (aalltypes == null) {
+                    f.setTypeCode(getParamType(ireturn));                  
+                } else {
+                    f.setTypeCode(Types.NULL);    
+                    atypes = aalltypes;
+                }
+
+                for (int i = 0; i < atypes.length; i++) {
+                    Parameter p = new Parameter();
+                    p.setTypeCode(getParamType(atypes[i]));
+                    if (modes == null) {
+                        p.setModeCode(Parameter.MODE_IN);
+                    } else {
+                        p.setModeCode("i".equals(modes[i]) 
+                                ? Parameter.MODE_IN
+                                : Parameter.MODE_OUT);
+                    }
+                    if (names != null) {
+                        p.setName(names[i]);
+                    }
+
+                    f.addParameter(p);
+                }          
+                firststep.set(true);
+            }
+        }});        
+        
+        
         f.setBody("/********/");           
         return f;
     }    
+    
+    protected Integer[] getIntArray(ResultSet r, int iposition) throws SQLException {
+        
+        String s = r.getString(iposition);
+        if (s == null) {
+            return null;
+        } else {
+            ArrayList<Integer> list = new ArrayList<Integer>();        
+        
+            StringTokenizer st = new StringTokenizer(s);
+
+            while (st.hasMoreTokens()) {
+                list.add(Integer.parseInt(st.nextToken()));
+            }        
+
+            return list.toArray(new Integer[list.size()]);
+        }
+    }
+    
+    protected Integer[] getIntArray2(ResultSet r, int iposition) throws SQLException {
+        
+        String s = r.getString(iposition);
+        if (s == null) {
+            return null;
+        } else {
+            ArrayList<Integer> list = new ArrayList<Integer>();        
+            if (s.length() > 1 && s.charAt(0) == '{' && s.charAt(s.length() - 1) == '}') {
+                s = s.substring(1, s.length() - 1);
+            }
+        
+            StringTokenizer st = new StringTokenizer(s, ",");
+
+            while (st.hasMoreTokens()) {
+                list.add(Integer.parseInt(st.nextToken()));
+            }        
+
+            return list.toArray(new Integer[list.size()]);
+        }
+    }
+    
+    protected String[] getStringArray(ResultSet r, int iposition) throws SQLException {
+        
+        String s = r.getString(iposition);
+        if (s == null) {
+            return null;
+        } else {
+            ArrayList<String> list = new ArrayList<String>();
+            if (s.length() > 1 && s.charAt(0) == '{' && s.charAt(s.length() - 1) == '}') {
+                s = s.substring(1, s.length() - 1);
+            }
+        
+            StringTokenizer st = new StringTokenizer(s, ",");
+
+            while (st.hasMoreTokens()) {
+                list.add(st.nextToken());
+            }        
+
+            return list.toArray(new String[list.size()]);
+        }
+    }
+    
+    protected int getParamType(int pgtype) throws SQLException {
+        
+        if (!_paramtypes.containsKey(pgtype)) {
+
+            _stmt_paramtypes.setInt(1, pgtype);
+            String stype = (String) readRow(_stmt_paramtypes, new RowConstructor() { public Object getRow(ResultSet r) throws SQLException {
+                return r.getString(1);
+            }});
+
+            _paramtypes.put(pgtype, translateParamType(stype));    
+        }
+        
+        return _paramtypes.get(pgtype);
+    }
     
     protected boolean translateRequired(String required) {
         return "t".equals(required);
@@ -223,6 +365,10 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
         
         if (nativeType == null) {
             return Types.NULL;
+        } else if ("VOID".equalsIgnoreCase(nativeType)) {
+            return Types.NULL;
+        } else if ("CHARACTER".equalsIgnoreCase(nativeType)) {
+            return Types.CHAR;
         } else if ("BPCHAR".equalsIgnoreCase(nativeType)) {
             return Types.CHAR;
         } else if ("VARCHAR".equalsIgnoreCase(nativeType)) {
@@ -230,6 +376,8 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
         } else if ("NUMERIC".equalsIgnoreCase(nativeType)) {
             return Types.NUMERIC;
         } else if ("TIMESTAMP".equalsIgnoreCase(nativeType)) {
+            return Types.TIMESTAMP;
+        } else if (nativeType.startsWith("timestamp")) {
             return Types.TIMESTAMP;
         } else if ("TEXT".equalsIgnoreCase(nativeType)) {
             return Types.CLOB;
@@ -250,5 +398,15 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
         } else {
             return DatabaseMetaData.importedKeyNoAction;
         }
-    }      
+    }     
+    
+    private static class FinalBoolean {
+        private boolean b = false;
+        public boolean get() {
+            return b;
+        }
+        public void set(boolean value) {
+            b = value;
+        }        
+    }
 }

@@ -390,10 +390,9 @@ public abstract class ModelLoaderBase implements ModelLoader {
     
     protected Collection readFunctions() throws SQLException {
         
-        return readList(_stmt_listfunctions, 
-            new RowConstructor() { public Object getRow(ResultSet r) throws SQLException {
-                return readFunction(r.getString(1));
-            }});
+        return readList(_stmt_listfunctions, new RowConstructor() { public Object getRow(ResultSet r) throws SQLException {
+            return readFunction(r.getString(1));
+        }});
     } 
     
     protected Function readFunction(String name) throws SQLException {
@@ -541,7 +540,7 @@ public abstract class ModelLoaderBase implements ModelLoader {
     protected abstract int translateColumnType(String nativeType);
 
     
-    private List readList(PreparedStatement stmt, RowConstructor r) throws SQLException {
+    protected List readList(PreparedStatement stmt, RowConstructor r) throws SQLException {
         
         List l = new ArrayList();
         ResultSet rs = null;
@@ -559,7 +558,7 @@ public abstract class ModelLoaderBase implements ModelLoader {
         return l;
     }
     
-    private Object readRow(PreparedStatement stmt, RowConstructor r) throws SQLException {
+    protected Object readRow(PreparedStatement stmt, RowConstructor r) throws SQLException {
         
         ResultSet rs = null;
         
@@ -577,7 +576,7 @@ public abstract class ModelLoaderBase implements ModelLoader {
         }        
     }    
     
-    private void fillRow(PreparedStatement stmt, RowFiller r) throws SQLException {
+    protected void fillRow(PreparedStatement stmt, RowFiller r) throws SQLException {
         
         ResultSet rs = null;
         
@@ -593,7 +592,7 @@ public abstract class ModelLoaderBase implements ModelLoader {
         }        
     }  
     
-    private void fillList(PreparedStatement stmt, RowFiller r) throws SQLException {
+    protected void fillList(PreparedStatement stmt, RowFiller r) throws SQLException {
         
         ResultSet rs = null;
         
