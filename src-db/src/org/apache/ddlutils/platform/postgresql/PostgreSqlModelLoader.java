@@ -356,6 +356,8 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
             return Types.CLOB;
         } else if ("BYTEA".equalsIgnoreCase(nativeType)) {
             return Types.BLOB;
+        } else if ("OID".equalsIgnoreCase(nativeType)) {
+            return Types.BLOB;
         } else {
             return Types.VARCHAR;
         }
@@ -382,6 +384,8 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
         } else if ("TEXT".equalsIgnoreCase(nativeType)) {
             return Types.CLOB;
         } else if ("BYTEA".equalsIgnoreCase(nativeType)) {
+            return Types.BLOB;
+        } else if ("OID".equalsIgnoreCase(nativeType)) {
             return Types.BLOB;
         } else {
             return Types.VARCHAR;

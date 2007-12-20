@@ -947,12 +947,14 @@ CREATE OR REPLACE VIEW user_tab_columns AS
         CASE pg_type.typname
             WHEN 'bytea'::name THEN 4000
             WHEN 'text'::name THEN 4000
+            WHEN 'oid'::name THEN 4000
             ELSE pg_attribute.attlen
         END AS data_length,
 
         CASE pg_type.typname
             WHEN 'bytea'::name THEN 4000
             WHEN 'text'::name THEN 4000
+            WHEN 'oid'::name THEN 4000
             ELSE 
                 CASE atttypmod
                     WHEN -1 THEN 0
