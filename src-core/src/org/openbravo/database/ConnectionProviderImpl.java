@@ -77,7 +77,6 @@ public class ConnectionProviderImpl implements ConnectionProvider {
         if (rdbms.equalsIgnoreCase("POSTGRE")) 
           dbServer += "/"+properties.getProperty("bbdd.sid");
       } catch (IOException e) { 
-       System.out.println("Uh oh, got an IOException error!");
        e.printStackTrace();
       }
     } else { //XML file

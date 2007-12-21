@@ -190,7 +190,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
   public void initialize(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     strDireccion = HttpBaseUtils.getLocalAddress(request);
     String strActualUrl = HttpBaseUtils.getLocalHostAddress(request);
-    log4j.info("Server name: " + strActualUrl);
+    if(log4j.isDebugEnabled()) log4j.debug("Server name: " + strActualUrl);
     HttpSession session = request.getSession(true);
     String strLanguage = "";
     try {
@@ -201,18 +201,18 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
       strLanguage = "";
     }
     if (strBaseDesignPath.endsWith("/")) strDefaultDesignPath = strDefaultDesignPath.substring(0, strDefaultDesignPath.length()-1);
-    log4j.info("*********************Base path: " + strBaseDesignPath);
+    if(log4j.isDebugEnabled())	log4j.debug("*********************Base path: " + strBaseDesignPath);
     String strNewAddBase = strDefaultDesignPath;
     String strFinal = strBaseDesignPath;
     if (!strLanguage.equals("") && !strLanguage.equals("en_US")) strNewAddBase = strLanguage;
     if (!strFinal.endsWith("/" + strNewAddBase)) strFinal += "/" + strNewAddBase;
-    log4j.info("*********************Base path: " + strFinal);
+    if(log4j.isDebugEnabled()) log4j.debug("*********************Base path: " + strFinal);
     xmlEngine.fileBaseLocation = new File(isFullPathBaseDesignPath?strFinal:(prefix + "/" + strFinal));
     strReplaceWith = strLocalReplaceWith.replace("@actual_url_context@", strDireccion);
     strReplaceWith = strReplaceWith.replace("@actual_url@", strActualUrl);
     strReplaceWithFull = strReplaceWith;
     strReplaceWith = HttpBaseUtils.getRelativeUrl(request, strReplaceWith);
-    log4j.info("xmlEngine.strReplaceWith: " + strReplaceWith);
+    if(log4j.isDebugEnabled()) log4j.info("xmlEngine.strReplaceWith: " + strReplaceWith);
     xmlEngine.strReplaceWith = strReplaceWith;
    
   }
@@ -225,7 +225,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
   
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     initialize(request, response);
-    log4j.info("Call to HttpServlet.service");
+    if(log4j.isDebugEnabled()) log4j.debug("Call to HttpServlet.service");
     super.service(request,response);
   }
 
@@ -263,10 +263,8 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
 			propFileProperties = new Properties();
 			try {
 				propFileProperties.load(new FileInputStream(stcFileProperties));
-			    System.out.println("***************" + stcFileProperties);
 			} catch (IOException e) { 
 			    // catch possible io errors from readLine()
-				System.out.println("Uh oh, got an IOException error!");
 			    e.printStackTrace();
 			}
   		}
@@ -408,7 +406,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
     }
 
     try {
-      log4j.info("Beginning of renderFO");
+      if(log4j.isDebugEnabled()) log4j.debug("Beginning of renderFO");
       if (strBaseDesignPath!=null && strFopConfig!=null) {
         File fopFile = new File(prefix + "/" + strBaseConfigPath + "/" + strFopConfig);
         if (fopFile.exists()) {
@@ -425,9 +423,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
         InputSource inputFO = new InputSource(sr);
 
         //log4j.info("Beginning of ByteArrayOutputStream");
-        log4j.info("Beginning of response.setContentType");
+        if(log4j.isDebugEnabled()) log4j.debug("Beginning of response.setContentType");
         response.setContentType("application/pdf; charset=UTF-8");
-        log4j.info("Beginning of driver");
+        if(log4j.isDebugEnabled()) log4j.debug("Beginning of driver");
         Driver driver = new Driver();
         driver.setLogger(logger);
         driver.setRenderer(Driver.RENDER_PDF);
@@ -436,7 +434,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
         //ByteArrayOutputStream out = new ByteArrayOutputStream();
         driver.setOutputStream(response.getOutputStream());
 
-        log4j.info("driver.run()");
+        if(log4j.isDebugEnabled()) log4j.debug("driver.run()");
         driver.run();
         /*log4j.info("Beginning of out.toByteArray()");
           byte[] content = out.toByteArray();
@@ -452,7 +450,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
         /*response.getOutputStream().write(content);
           log4j.info("Beginning of response.getOutputStream().flush()");
           response.getOutputStream().flush();*/
-        log4j.info("End of renderFO");
+        if(log4j.isDebugEnabled()) log4j.debug("End of renderFO");
         response.getOutputStream().flush();
         response.getOutputStream().close();
         sr.close();

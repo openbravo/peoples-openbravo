@@ -444,7 +444,6 @@ public class Sqlc extends DefaultHandler {
       if (properties.getProperty("bbdd.rdbms").equalsIgnoreCase("POSTGRE")) 
           strURL += "/"+properties.getProperty("bbdd.sid");
     } catch (IOException e) { 
-     System.out.println("Uh oh, got an IOException error!");
      e.printStackTrace();
     }
     
@@ -1365,7 +1364,6 @@ public class Sqlc extends DefaultHandler {
       log4j.info("javaDateFormat: " + javaDateFormat);
     } catch (IOException e) { 
       // catch possible io errors from readLine()
-      System.out.println("Uh oh, got an IOException error!");
       e.printStackTrace();
     }
   }

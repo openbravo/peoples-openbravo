@@ -82,7 +82,6 @@ public class RDBMSIndependent {
         st.executeUpdate();
       }
     } catch(SQLException e){
-      //System.out.println("SQL error in query: " + strSql + "Exception:"+ e);
       throw e;
     } finally {
       if (conn==null) connectionProvider.releasePreparedStatement(st);
