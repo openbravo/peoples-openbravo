@@ -82,14 +82,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     fileTermination = _fileTermination;
     isHtml=fileTermination.toLowerCase().endsWith("html");
     if (isHtml) parser =  new org.cyberneko.html.parsers.SAXParser();
-    else {
-      try {
-        parser = new SAXParser();
-        parser.setFeature( "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-      } catch (Exception e) {
-        log4j.error("Exception: " + e);
-      }
-    }
+    else parser = new SAXParser();
     parser.setContentHandler(this);
     fromLanguage = TranslateData.baseLanguage(pool);
     toLanguage = TranslateData.systemLanguage(pool);
