@@ -3361,7 +3361,6 @@ public class Wad extends DefaultHandler {
         log4j.info("sqlDateFormat: " + sqlDateFormat);
     } catch (IOException e) { 
        // catch possible io errors from readLine()
-       System.out.println("Uh oh, got an IOException error!");
        e.printStackTrace();
     }
   }

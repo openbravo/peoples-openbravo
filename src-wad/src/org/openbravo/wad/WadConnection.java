@@ -76,7 +76,6 @@ public class WadConnection implements ConnectionProvider {
         if (this.rdbms.equalsIgnoreCase("POSTGRE")) 
           this.bbdd += '/'+properties.getProperty("bbdd.sid");
       } catch (IOException e) { 
-       System.out.println("Uh oh, got an IOException error!");
        e.printStackTrace();
       }
     } else { //xml file
