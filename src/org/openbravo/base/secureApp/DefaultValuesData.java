@@ -28,8 +28,7 @@ public class DefaultValuesData implements FieldProvider {
   public String getField(String fieldName) {
     if (fieldName.equalsIgnoreCase("columnname"))
       return columnname;
-    else {
-      System.out.println("Field does not exist: " + fieldName);
+    else {      
       return null;
     }
   }

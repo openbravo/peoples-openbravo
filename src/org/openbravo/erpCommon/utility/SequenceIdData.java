@@ -38,7 +38,6 @@ public class SequenceIdData implements FieldProvider {
     if (fieldName.equalsIgnoreCase("dummy"))
       return dummy;
     else {
-      System.out.println("Field does not exist: " + fieldName);
       return null;
     }
   }
@@ -70,7 +69,6 @@ public class SequenceIdData implements FieldProvider {
     } catch (NoConnectionAvailableException ex) {
       throw new ServletException("@CODE=NoConnectionAvailable");
     } catch (SQLException ex2) {
-      System.out.println("SQL error in query: " + strSql + "Exception:"+ ex2);
       throw new ServletException("@CODE=" + Integer.toString(ex2.getErrorCode()) + "@" + ex2.getMessage());
     } catch (Exception ex3) {
       throw new ServletException("@CODE=@" + ex3.getMessage());

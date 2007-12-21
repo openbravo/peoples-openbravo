@@ -213,8 +213,7 @@ void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strTa
       if (log4j.isDebugEnabled()) log4j.debug("**********************strTaxId: "+strTaxId);
       CreateTaxReportData[] data = CreateTaxReportData.select(this, String.valueOf(rownum), strParent, String.valueOf(level), Utility.getContext(this, vars, "#User_Client", "CreateTaxReport"), strOrg, strPeriodFrom, DateTimeData.nDaysAfter(this,strPeriodTo,"1"), strTaxReportId);
       if (data == null || data.length == 0) data = CreateTaxReportData.set();
-	  else rownum++;
-	  System.out.println("rownum" +rownum);
+	  else rownum++;	  
       vectorArray.addElement(data[0]);
       if (log4j.isDebugEnabled()) log4j.debug("**********************data[0]*********************data[0].id: " + data[0].id + "- data[0].name:"+data[0].name+"  data[0].total:"+data[0].total);
       CreateTaxReportData[] dataAux = CreateTaxReportData.selectChild(this, Utility.getContext(this, vars, "#User_Client", "CreateTaxReport"), Utility.getContext(this, vars, "#User_Org", "CreateTaxReport"), data[0].id);

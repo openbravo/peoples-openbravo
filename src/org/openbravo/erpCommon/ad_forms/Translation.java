@@ -244,7 +244,6 @@ public class Translation extends HttpSecureAppServlet
 		StringBuffer sql = null;
 		
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			//	System.out.println(factory.getClass().getName());
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document document = builder.newDocument();
 

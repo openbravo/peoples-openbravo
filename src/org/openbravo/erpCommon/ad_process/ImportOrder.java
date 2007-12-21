@@ -562,8 +562,6 @@ public class ImportOrder extends ImportProcess {
   String cOrderPost(Connection con, ConnectionProvider conn, VariablesSecureApp vars, String strcOrderId, String order_documentno)
       throws IOException, ServletException {
     String pinstance = SequenceIdData.getSequence(conn, "AD_PInstance", vars.getClient());
-    //System.out.println("*************************"+pinstance);
-
     PInstanceProcessData.insertPInstance(conn, pinstance, "104", strcOrderId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
     //PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y", vars.getClient(), vars.getOrg(), vars.getUser());
     ImportOrderData.cOrderPost0(con, conn, pinstance);
@@ -573,7 +571,6 @@ public class ImportOrder extends ImportProcess {
     if (pinstanceData!=null && pinstanceData.length>0) {
       if (!pinstanceData[0].errormsg.equals("")) {
         String message = pinstanceData[0].errormsg;
-        //System.out.println("*****************1"+message);
         if (message.startsWith("@") && message.endsWith("@")) {
           message = message.substring(1, message.length()-1);
           if (message.indexOf("@")==-1) messageResult = Utility.messageBD(conn, message, vars.getLanguage());

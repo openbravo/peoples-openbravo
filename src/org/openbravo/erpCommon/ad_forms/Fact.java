@@ -161,7 +161,6 @@ public  class Fact {
 			if(!Amt.equals("")) m_Amt = new BigDecimal(Amt);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			//System.out.println("******************** Amount: " + ((Amt!=null)?Amt:"null"));
 		}
         if (m_Amt.compareTo(ZERO) < 0)
             return createLine (docLine, accountCr, C_Currency_ID, "", m_Amt.abs().toString(), Fact_Acct_Group_ID, SeqNo, DocBaseType,conn);
@@ -185,7 +184,6 @@ public  class Fact {
 			if(!Amt.equals("")) m_Amt = new BigDecimal(Amt);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			//System.out.println("******************** Amount: " + ((Amt!=null)?Amt:"null"));
 		}
         if (m_Amt.compareTo(ZERO) < 0)
             return createLine (docLine, account, C_Currency_ID, "", m_Amt.abs().toString(), Fact_Acct_Group_ID, SeqNo, DocBaseType,conn);

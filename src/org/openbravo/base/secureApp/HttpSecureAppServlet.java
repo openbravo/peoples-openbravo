@@ -567,8 +567,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       log4j.info("sqlDateFormat: " + sqlDateFormat);
       vars.setSessionValue("#AD_SqlDateFormat", sqlDateFormat);
     } catch (IOException e) { 
-     // catch possible io errors from readLine()
-     System.out.println("Uh oh, got an IOException error!");
+     // catch possible io errors from readLine()     
      e.printStackTrace();
     }
  }

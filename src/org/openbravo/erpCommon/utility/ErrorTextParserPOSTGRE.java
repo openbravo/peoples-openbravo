@@ -111,7 +111,6 @@ public class ErrorTextParserPOSTGRE extends ErrorTextParser {
       }
     }
     else{
-      System.out.println("Error:"+getMessage());
       myError = new OBError();
       myError.setType("Error");
       myError.setMessage(getMessage());

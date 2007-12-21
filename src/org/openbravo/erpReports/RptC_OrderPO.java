@@ -70,9 +70,6 @@ public class RptC_OrderPO extends HttpSecureAppServlet {
       throw new ServletException(e.getMessage());
     }
     parameters.put("SR_LINES", jasperReportLines);
-    System.out.println("************ " + strReplaceWithFull);
-    System.out.println("************ " + strcOrderId);
-
     parameters.put("ORDER_ID", strcOrderId);
     renderJR(vars, response, null, "pdf", parameters, null, null);
   }

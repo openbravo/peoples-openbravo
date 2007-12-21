@@ -280,8 +280,7 @@ public Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,Var
     }catch (ServletException e){
       e.printStackTrace();
       return false;
-    }
-    //System.out.println("***************************************** - " + strCount);
+    }    
     if(!strCount.equals("0")) return false;
     else return true;
   }

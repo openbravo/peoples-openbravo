@@ -40,7 +40,7 @@ public class DocGLJournal extends AcctServer {
  */
 public DocGLJournal(String AD_Client_ID){
   super(AD_Client_ID);
-  log4jDocGLJournal.info("- DocGLJournal - OBJECT CREATED.");
+  if(log4jDocGLJournal.isDebugEnabled()) log4jDocGLJournal.debug("- DocGLJournal - OBJECT CREATED.");
 }
 
 public String m_PostingType = Fact.POST_Actual;

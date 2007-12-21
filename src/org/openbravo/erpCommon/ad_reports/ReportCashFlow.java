@@ -140,7 +140,6 @@ void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, Stri
       {
         OBError myMessage = vars.getMessage("ReportCashFlow");
         vars.removeMessage("ReportCashFlow");
-        System.out.println("***************** " + (myMessage!=null));
         if (myMessage!=null) {
           xmlDocument.setParameter("messageType", myMessage.getType());
           xmlDocument.setParameter("messageTitle", myMessage.getTitle());

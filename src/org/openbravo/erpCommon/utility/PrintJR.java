@@ -39,9 +39,7 @@ public class PrintJR extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     
     String strProcessId = vars.getRequiredStringParameter("inpadProcessId");
-    System.out.println("************ antes");
     String strOutputType = vars.getStringParameter("inpoutputtype", "html");
-    System.out.println("*********** despues: " + strOutputType);
     if (!hasGeneralAccess(vars, "P", strProcessId)) {
       bdError(response, "AccessTableNoView", vars.getLanguage());
       return;

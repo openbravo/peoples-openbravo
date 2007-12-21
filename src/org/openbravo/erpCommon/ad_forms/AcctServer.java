@@ -407,25 +407,19 @@ public abstract class AcctServer extends HttpSecureAppServlet {
     for (int i=0;i<(this.m_as).length;i++){
       acct = m_as[i];
       if(AcctSchemaData.selectAcctSchemaTable(this, acct.m_C_AcctSchema_ID, AcctServer.AD_Table_ID)){
-        new_as.add(new AcctSchema(this,acct.m_C_AcctSchema_ID));
-        /*System.out.println("###################### acct.m_C_AcctSchema_ID - " + acct.m_C_AcctSchema_ID);
-        System.out.println("###################### this.AD_Table_ID - " + this.AD_Table_ID);*/
+        new_as.add(new AcctSchema(this,acct.m_C_AcctSchema_ID));        
       }
     }
     AcctSchema[] retValue = new AcctSchema [new_as.size()];
     new_as.toArray(retValue);
     if (log4j.isDebugEnabled()) log4j.debug("AcctServer - RELOADING ARRAY: " + retValue.length);
-    this.m_as = retValue;
-    /*System.out.println("###################### reloadAcctSchemaArray - this.AD_Table_ID - " + this.AD_Table_ID);
-    System.out.println("###################### reloadAcctSchemaArray - this.m_as - " + (this.m_as).length);
-    System.out.println("###################### reloadAcctSchemaArray - retValue - " + retValue.length);*/
+    this.m_as = retValue;    
   }
 
 
   public boolean post(String strClave, boolean force,VariablesSecureApp vars,ConnectionProvider conn,Connection con)throws ServletException{
     Record_ID = strClave;
-    if (log4j.isDebugEnabled()) log4j.debug("post " + strClave+" tablename: "+tableName);
-    //System.out.println("********************************** Record_ID post - **************************");
+    if (log4j.isDebugEnabled()) log4j.debug("post " + strClave+" tablename: "+tableName);    
     try{
         if (AcctServerData.update(con,conn,tableName,strClave)!=1){
               log4j.warn("AcctServer - Post -Cannot lock Document - ignored: " + tableName + "_ID=" + strClave);
@@ -437,14 +431,10 @@ public abstract class AcctServer extends HttpSecureAppServlet {
         }catch(ServletException e){
             log4j.warn(e);
         }
-        FieldProvider data [] = getObjectFieldProvider();
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Post - Select registro realizada -" + data.length);
-        //for (int i=0;i<data.length;i++){
-        //System.out.println("********************************** Record_ID - " + Record_ID);
+        FieldProvider data [] = getObjectFieldProvider();       
         if (getDocumentConfirmation(conn, Record_ID) && post(data,force,vars,conn,con)){
          success++;
-        }else errors++;
-        //}
+        }else errors++;        
     }
     catch (ServletException e){
         log4j.warn(e);

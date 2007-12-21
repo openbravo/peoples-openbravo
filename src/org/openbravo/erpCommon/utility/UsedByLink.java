@@ -96,8 +96,6 @@ public class UsedByLink extends HttpSecureAppServlet {
         data[i].total = Integer.toString(total);
         if (total>0) {
           vecTotal.addElement(data[i]);
-          System.out.println("************************ SQL DATA: " + data[i].name + " - " + data[i].adTabId + " - " + data[i].tablename + " - " + data[i].columnname + " - " + keyId);
-          System.out.println("************************ WHERE: " + strWhereClause);
         }
       }
       data = new UsedByLinkData[vecTotal.size()];

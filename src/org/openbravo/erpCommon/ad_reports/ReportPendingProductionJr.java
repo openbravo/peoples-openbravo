@@ -55,7 +55,6 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
      String strOutput = "html";
 	 String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportPendingProductionJr.jrxml";
       if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportPendingProductionJr.pdf");
-System.out.println(data.length);
        HashMap<String, Object> parameters = new HashMap<String, Object>();
        parameters.put("REPORT_TITLE", classInfo.name);
         //parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
