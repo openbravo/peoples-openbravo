@@ -110,6 +110,5 @@ public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
         addTable("GL_CATEGORY", "AD_CLIENT_ID = 0");
         addTable("M_ATTRIBUTESET", "AD_CLIENT_ID = 0");
         addTable("M_ATTRIBUTESETINSTANCE", "AD_CLIENT_ID = 0");
-        addTable("TEST", "AD_CLIENT_ID = 0");
     }
 }
