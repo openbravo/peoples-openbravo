@@ -88,6 +88,9 @@ dojo.widget.defineWidget(
 		maxWidth: "100%",
 		percentageWidthRelativeToId: "body",
 		isFirstLoad: true,
+		hasBeenResized: false,
+    offsetBeforeResize: 0,
+
 
 		templateString: "<div></div>",
 		templateCssPath: null, // Defined in the skin --- DataGrid.css
@@ -138,6 +141,7 @@ dojo.widget.defineWidget(
 				handleError: dojo.lang.hitch(this, "handleUpdateError")
 			};
 			this.columns = new openbravo.widget.DataGrid.Columns();
+      this.numberOfResizes = 0;
 			this.requestStructure();
 		},
 
@@ -958,6 +962,19 @@ dojo.widget.defineWidget(
 */
 		onResize: function() {
 			this.setMaxWidth();
+      if (this.numRows != calculateNumRows()) {
+        this.numberOfResizes += 1;
+        this.offsetBeforeResize = this.getCurrentOffset();
+        this.hasBeenResized = true;
+        this.numRows = calculateNumRows();
+        this.visibleRows = this.numRows;
+        this.visibleRowsMax = this.numRows;
+        document.getElementById(this.widgetId + '_container').innerHTML = ""; 
+        document.getElementById(this.widgetId + '_container').style.display='none';
+        document.getElementById(this.widgetId + '_container').setAttribute('id',this.widgetId + '_container_old' + this.numberOfResizes);
+        this.render();
+      }
+
 			if(this.percentageWidthRelativeToId != "body") {
 				var desiredWidth = Math.round(this.proportion * document.getElementById(this.percentageWidthRelativeToId).clientWidth);
 			} else {
@@ -1002,9 +1019,10 @@ dojo.widget.defineWidget(
 	            var colMetadata = this.columns.get(j);
 	            cell.className = openbravo.widget.DataGrid.Column.prototype.DEFAULT_HEADER_CLASS;
 	            dojo.html.prependClass(cell, colMetadata.headerClassName);
-	            dojo.event.connect(cell, "onmouseover", this, "hoverCellHeader");
-	            dojo.event.connect(cell, "onmouseout", this, "plainCellHeader");
-	            dojo.event.connect(cell, "onmousedown", this, "resizeHeader");
+              dojo.event.connect(cell, "onmouseover", this, "hoverCellHeader");
+              dojo.event.connect(cell, "onmouseout", this, "plainCellHeader");
+              dojo.event.connect(cell, "onmousedown", this, "resizeHeader");
+
 				var s = colMetadata.title;
 				cell.innerHTML = (s && typeof s == 'string')? s.split(" ").join("&nbsp;") : s; 
 	            if (colMetadata.visible) {
@@ -1031,8 +1049,8 @@ dojo.widget.defineWidget(
 	            var row = document.createElement("tr");
 	            row.className = 'DataGrid_Body_Row';
 	            dojo.html.prependClass(row,( i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd"));
-				dojo.event.connect(row, "onclick", this, "cellClicked");
-				dojo.event.connect(row, "ondblclick", this, "cellDoubleClicked");
+							dojo.event.connect(row, "onclick", this, "cellClicked");
+							dojo.event.connect(row, "ondblclick", this, "cellDoubleClicked");
 	            for(var j = 0; j < numCols; j++) {
 	                var cell = document.createElement("td");
 	                var colMetadata = this.columns.get(j);
@@ -1056,10 +1074,11 @@ dojo.widget.defineWidget(
 	        table.focus();
 	        this.tableNode = table;
 	        this.tableHeader = tableHeader;
-			if (dojo.render.html.ie)
+			if (dojo.render.html.ie && !this.hasBeenResized) {
 				dojo.event.connect(this.domNode, "onkey", this, "keyPressed");
-			else
-				dojo.event.connect(document, "onkey", this, "keyPressed");
+      } else if (!this.hasBeenResized) {
+        dojo.event.connect(document, "onkey", this, "keyPressed");
+      }
 	        var container = this.domNode;
 	        var gridContainer = document.createElement("div");
 	        gridContainer.id = gridId + "_container";
@@ -1074,30 +1093,42 @@ dojo.widget.defineWidget(
 			this.setBounds();
 			table.style.height = (row.offsetHeight + 1) * (this.numRows);
 			this.domNode.style.height = table.offsetHeight + "px";
-      var sortColsName = new Array();
-      if (this.sortCols!=null && this.sortCols!="") {
-        var auxSortCols = this.sortCols.split(",");
-        var totalSortCols = auxSortCols.length;
-        for (var i=0; i<totalSortCols;i++) {
-          sortColsName[i] = this.columns.get(auxSortCols[i]).name;
+      if (!this.hasBeenResized) {
+        var sortColsName = new Array();
+        if (this.sortCols!=null && this.sortCols!="") {
+          var auxSortCols = this.sortCols.split(",");
+          var totalSortCols = auxSortCols.length;
+          for (var i=0; i<totalSortCols;i++) {
+            sortColsName[i] = this.columns.get(auxSortCols[i]).name;
+          }
         }
-      }
+
       /*var auxRow = {id: this.defaultRow, offset: this.offset};
-      this.selectedRows.add(auxRow);*/
-			var opts = {
-				prefetchBuffer : true,
-				offset: this.offset, 
-				columns: this.columns, 
-        sortCols: sortColsName,
-        sortDirs: ((this.sortDirs!=null && this.sortDirs!="")?this.sortDirs.split(","):[]),
-        defaultRow: this.defaultRow,
-        onscroll : this.onScroll
-			};
-	        this.postRendering(opts);
-	        if (this.proportion)
-	        	dojo.event.connect(window, "onresize", this, "onResize");
-	        dojo.event.connect(this.scroller, "handleScroll", this, "handleScroll");
-	        dojo.addOnUnload(this, "cleanup");
+        this.selectedRows.add(auxRow);*/
+        var opts = {
+          prefetchBuffer : true,
+          offset: this.offset, 
+          columns: this.columns, 
+          sortCols: sortColsName,
+          sortDirs: ((this.sortDirs!=null && this.sortDirs!="")?this.sortDirs.split(","):[]),
+          defaultRow: this.defaultRow,
+          onscroll : this.onScroll
+        };
+      } else {
+        var opts = {
+          prefetchBuffer : true,
+          offset: this.offset, 
+          columns: this.columns, 
+          defaultRow: this.defaultRow,
+          onscroll : this.onScroll
+        };
+      }
+
+      this.postRendering(opts);
+      if (this.proportion)
+      dojo.event.connect(window, "onresize", this, "onResize");
+      dojo.event.connect(this.scroller, "handleScroll", this, "handleScroll");
+      dojo.addOnUnload(this, "cleanup");
 		},
 		
 /**
@@ -1296,6 +1327,7 @@ dojo.widget.defineWidget(
 			  this.selectedRows.clear();
 			  this.refreshGridData();
 		  }
+      this.onResize();
 		},
     
 /**
@@ -1691,8 +1723,11 @@ dojo.widget.defineWidget(
 		   	  		this.tableNode.rows[i].style.height = rowHeight + "px";
 		   	  		dojo.html.setVisibility(this.tableNode.rows[i], true);
 		   	  	}
-		   	  	for (var i = newTotalRows; i < this.numRows; i++)
+		   	  	for (var i = newTotalRows; i < this.numRows; i++) {
+		   	  		//-> to show the empty rows with the same height than the filled cells -> this.tableNode.rows[i].style.height = rowHeight + "px";
+              //-> this removes completly the empty cells -> this.tableNode.rows[i].style.display = 'none';
 		   	  		dojo.html.setVisibility(this.tableNode.rows[i], false);
+            }
 	   	  	}
 	   	  	this.tableNode.style.height = this.viewPort.rowHeight * this.visibleRows + "px";	
 			this.scroller.updateHeight();
@@ -1788,6 +1823,10 @@ dojo.widget.defineWidget(
 				this.isFirstLoad = false;
 				this.onGridLoad();
 		  }
+      if (this.hasBeenResized) {
+        this.hasBeenResized = false;
+        this.moveTableContent(this.offsetBeforeResize);
+      }
 	      this.processQueuedRequest();
 	   },
 	

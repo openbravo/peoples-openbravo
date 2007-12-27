@@ -93,11 +93,13 @@ function selectFilters(params) {
 
  function calculateNumRows() {
    resizeArea();
+   document.getElementById("grid_sample").style.display = "block";
    var grid_header_height = document.getElementById("grid_sample_header").clientHeight + 1;
    var grid_row_height = document.getElementById("grid_sample_row").clientHeight + 1;
+   var messagebox_cont = document.getElementById("messageBoxID");
    var related_info_cont = document.getElementById("related_info_cont");
    var client_height = document.getElementById("client").clientHeight;
-   client_height = client_height - grid_header_height - (related_info_cont?related_info_cont.clientHeight:0);
+   client_height = client_height - grid_header_height - (related_info_cont?related_info_cont.clientHeight:0) - (messagebox_cont?messagebox_cont.clientHeight:0);
    client_height = client_height - 20;
    var numRows = (client_height)/(grid_row_height);
    numRows = parseInt(numRows);
