@@ -25,14 +25,15 @@
 /*************************************************************************
 * Title: Check in deleting, invoice not processed
 ************************************************************************/
+v_DateNull DATE := TO_DATE('31-12-9999','DD-MM-YYYY');
 BEGIN
   -- If remittance is processed, is not allowed to change
   IF (UPDATING) THEN
     IF (:OLD.processed = 'Y' AND ((COALESCE (:OLD.documentno, '')!= COALESCE (:NEW.documentno, ''))
              OR (COALESCE (:OLD.NAME, '') != COALESCE (:NEW.NAME, ''))
-             OR (COALESCE (:OLD.datetrx, '01-01-9999')!=COALESCE (:NEW.datetrx, '01-01-9999'))
+             OR (COALESCE (:OLD.datetrx, v_DateNull)!=COALESCE (:NEW.datetrx, v_DateNull))
              OR (COALESCE (:OLD.c_bankaccount_id, 0)!= COALESCE (:NEW.c_bankaccount_id, 0))
-             OR (COALESCE (:OLD.duedate, '01-01-9999')!= COALESCE (:NEW.duedate, '01-01-9999'))
+             OR (COALESCE (:OLD.duedate, v_DateNull)!= COALESCE (:NEW.duedate, v_DateNull))
              OR (COALESCE (:OLD.C_REMITTANCE_TYPE_ID,0) != COALESCE (:NEW.C_REMITTANCE_TYPE_ID,0))
              OR ((COALESCE (:OLD.c_settlement_id, 0)!= COALESCE (:NEW.c_settlement_id, 0)) AND :NEW.processed!='N')
              OR ((COALESCE (:OLD.c_dp_management_id, 0) != COALESCE (:NEW.c_dp_management_id, 0)) AND :NEW.processed!='N')

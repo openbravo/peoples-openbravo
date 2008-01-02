@@ -35,7 +35,7 @@
   --RAISE_APPLICATION_ERROR (-20506, 'Cannot modify used rate'); 
   IF(:new.ValidTo IS NULL) THEN 
     -- If there is no end date, set it to X 
-      :new.ValidTo:=TO_DATE('29-01-2056', 'DD-MM-YYYY') ;
+      :new.ValidTo:=TO_DATE('31-12-9999', 'DD-MM-YYYY') ;
   END IF; 
   --Check for invalid dates 
   IF :new.ValidTo < :new.ValidFrom THEN 

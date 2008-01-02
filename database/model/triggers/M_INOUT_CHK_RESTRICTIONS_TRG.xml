@@ -21,6 +21,9 @@
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
+  
+  v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
+
  BEGIN
   IF UPDATING THEN
     IF(:old.Processed='Y'
@@ -29,10 +32,10 @@
     OR(COALESCE(:old.C_DOCTYPE_ID, 0) <> COALESCE(:new.C_DOCTYPE_ID, 0))
     OR(COALESCE(:old.AD_USER_ID, 0) <> COALESCE(:new.AD_USER_ID, 0))
     OR(COALESCE(:old.C_ORDER_ID, 0) <> COALESCE(:new.C_ORDER_ID, 0))
-    OR(COALESCE(:old.DATEORDERED, '01-01-1386') <> COALESCE(:new.DATEORDERED, '01-01-1386'))
+    OR(COALESCE(:old.DATEORDERED, v_DateNull) <> COALESCE(:new.DATEORDERED, v_DateNull))
     OR(COALESCE(:OLD.C_BPARTNER_LOCATION_ID, 0) <> COALESCE(:NEW.C_BPARTNER_LOCATION_ID, 0))
-    OR(COALESCE(:old.PICKDATE, '01-01-1386') <> COALESCE(:new.PICKDATE, '01-01-1386'))
-    OR(COALESCE(:old.SHIPDATE, '01-01-1386') <> COALESCE(:new.SHIPDATE, '01-01-1386'))
+    OR(COALESCE(:old.PICKDATE, v_DateNull) <> COALESCE(:new.PICKDATE, v_DateNull))
+    OR(COALESCE(:old.SHIPDATE, v_DateNull) <> COALESCE(:new.SHIPDATE, v_DateNull))
     OR(COALESCE(:old.C_CHARGE_ID, 0) <> COALESCE(:new.C_CHARGE_ID, 0))
     OR(COALESCE(:old.CHARGEAMT, 0) <> COALESCE(:new.CHARGEAMT, 0))
     OR(COALESCE(:old.AD_ORGTRX_ID, 0) <> COALESCE(:new.AD_ORGTRX_ID, 0))
@@ -46,7 +49,7 @@
     OR(COALESCE(:old.PRIORITYRULE, '.') <> COALESCE(:new.PRIORITYRULE, '.')))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
-    IF(:old.Posted='Y' AND ((COALESCE(:old.DATEACCT, '01-01-1386') <> COALESCE(:new.DATEACCT, '01-01-1386')) OR(COALESCE(:old.C_CAMPAIGN_ID, 0) <> COALESCE(:new.C_CAMPAIGN_ID, 0)) OR(COALESCE(:old.C_PROJECT_ID, 0) <> COALESCE(:new.C_PROJECT_ID, 0)) OR(COALESCE(:old.C_ACTIVITY_ID, 0) <> COALESCE(:new.C_ACTIVITY_ID, 0)))) THEN
+    IF(:old.Posted='Y' AND ((COALESCE(:old.DATEACCT, v_DateNull) <> COALESCE(:new.DATEACCT, v_DateNull)) OR(COALESCE(:old.C_CAMPAIGN_ID, 0) <> COALESCE(:new.C_CAMPAIGN_ID, 0)) OR(COALESCE(:old.C_PROJECT_ID, 0) <> COALESCE(:new.C_PROJECT_ID, 0)) OR(COALESCE(:old.C_ACTIVITY_ID, 0) <> COALESCE(:new.C_ACTIVITY_ID, 0)))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;

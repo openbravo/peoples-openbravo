@@ -26,11 +26,12 @@
     *************************************************************************
     * Calculate End Date
     */
+    v_DateNull DATE := TO_DATE('01-01-1900','DD-MM-YYYY');
     BEGIN
 
 
    IF(UPDATING) THEN
-     IF NOT((COALESCE(:old.StartDate, '01-01-1386') <> COALESCE(:NEW.StartDate, '01-01-1386'))) THEN
+     IF NOT((COALESCE(:old.StartDate, v_DateNull) <> COALESCE(:NEW.StartDate, v_DateNull))) THEN
     RETURN;
         END IF;
       END IF;

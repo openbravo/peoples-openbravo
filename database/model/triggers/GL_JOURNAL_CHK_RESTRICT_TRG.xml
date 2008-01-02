@@ -22,17 +22,18 @@
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
+    v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
     BEGIN
     IF UPDATING
     THEN  IF(:old.Processed='Y'
-    AND ((COALESCE(:old.DATEDOC, '01-01-1386') <> COALESCE(:new.DATEDOC, '01-01-1386'))
+    AND ((COALESCE(:old.DATEDOC, v_DateNull) <> COALESCE(:new.DATEDOC, v_DateNull))
     OR(COALESCE(:old.C_PERIOD_ID, 0) <> COALESCE(:new.C_PERIOD_ID, 0))
     OR(COALESCE(:old.CURRENCYRATE, 0) <> COALESCE(:new.CURRENCYRATE, 0))
     OR(COALESCE(:old.CURRENCYRATETYPE, '.') <> COALESCE(:new.CURRENCYRATETYPE, '.'))
     OR(COALESCE(:old.CONTROLAMT, 0) <> COALESCE(:new.CONTROLAMT, 0))))
     THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
-  IF(:old.Posted='Y' AND ((COALESCE(:old.DATEACCT, '01-01-1386') <> COALESCE(:new.DATEACCT, '01-01-1386')) OR(COALESCE(:old.C_ACCTSCHEMA_ID, 0) <> COALESCE(:new.C_ACCTSCHEMA_ID, 0)) OR(COALESCE(:old.GL_CATEGORY_ID, 0) <> COALESCE(:new.GL_CATEGORY_ID, 0)) OR(COALESCE(:old.POSTINGTYPE, '.') <> COALESCE(:new.POSTINGTYPE, '.')))) THEN
+  IF(:old.Posted='Y' AND ((COALESCE(:old.DATEACCT, v_DateNull) <> COALESCE(:new.DATEACCT, v_DateNull)) OR(COALESCE(:old.C_ACCTSCHEMA_ID, 0) <> COALESCE(:new.C_ACCTSCHEMA_ID, 0)) OR(COALESCE(:old.GL_CATEGORY_ID, 0) <> COALESCE(:new.GL_CATEGORY_ID, 0)) OR(COALESCE(:old.POSTINGTYPE, '.') <> COALESCE(:new.POSTINGTYPE, '.')))) THEN
    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
  END IF;

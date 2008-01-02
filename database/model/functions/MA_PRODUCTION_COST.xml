@@ -395,7 +395,7 @@ BEGIN
                             PRICE,  CUMQTY,
                             COST, ISPERMANENT, ISPRODUCTION, COSTTYPE)
                      VALUES (v_NextNo,Now(), p_User_ID, Now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
-                            Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, TO_DATE('31/12/9999','DD/MM/YYYY'), v_ProductionDate, 'N',
+                            Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, TO_DATE('31-12-9999','DD-MM-YYYY'), v_ProductionDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4), COALESCE(v_Qty,0) + Cur_ProductionLine.MOVEMENTQTY,
                             (CASE (Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4) END), 'N', 'Y', 'AV');
@@ -459,7 +459,7 @@ BEGIN
                             (CASE (v_Qty+Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(((v_Qty*v_CostOld)+(v_Cost))/(v_Qty+Cur_ProductionLine.MOVEMENTQTY),4)END),
                                 'N', 'Y', 'AV');
               ELSIF (v_count2 = 0) THEN
-                SELECT COALESCE(MIN(DATEFROM), TO_DATE('31/12/9999','DD/MM/YYYY')) INTO v_DateTo
+                SELECT COALESCE(MIN(DATEFROM), TO_DATE('31-12-9999','DD-MM-YYYY')) INTO v_DateTo
                 FROM M_COSTING
                 WHERE DATEFROM > v_ProductionDate
                   AND M_PRODUCT_ID = Cur_ProductionLine.M_PRODUCT_ID;

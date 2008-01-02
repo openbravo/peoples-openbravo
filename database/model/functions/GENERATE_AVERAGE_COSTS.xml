@@ -171,7 +171,7 @@
    v_ResultStr:='update costing:   '||Cur_InOutLine.M_INOUTLINE_ID;
       UPDATE M_COSTING
         SET DATETO=Cur_InOutLine.MOVEMENTDATE
-      WHERE DATETO=TO_DATE('01/01/3000', 'DD/MM/YYYY')
+      WHERE DATETO=TO_DATE('31-12-9999', 'DD-MM-YYYY')
         AND M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID;
       --AND COSTTYPE = 'AV';
    v_ResultStr:='insert costing:   '||Cur_InOutLine.M_INOUTLINE_ID;
@@ -188,7 +188,7 @@
         (
           Ad_Sequence_Nextno('M_Costing'), now(), v_User, now(),
           v_User, Cur_InOutLine.AD_CLIENT_ID, Cur_InOutLine.AD_ORG_ID, Cur_InOutLine.M_PRODUCT_ID,
-          TO_DATE('01/01/3000', 'DD/MM/YYYY'), Cur_InOutLine.MOVEMENTDATE, 'N', Cur_InOutLine.M_INOUTLINE_ID,
+          TO_DATE('31-12-9999', 'DD-MM-YYYY'), Cur_InOutLine.MOVEMENTDATE, 'N', Cur_InOutLine.M_INOUTLINE_ID,
           NULL, Cur_InOutLine.MOVEMENTQTY, v_Price, COALESCE(v_Qty, 0) + Cur_InOutLine.MOVEMENTQTY + v_CumQty,(
           CASE
             WHEN v_Qty+v_CumQty<0 THEN v_Price

@@ -32,7 +32,7 @@ BEGIN
    v_Price := p_PriceActual;
     FOR Cur_Offer IN (SELECT M_OFFER_ID
          FROM M_OFFER
-         WHERE p_Date BETWEEN DATEFROM AND COALESCE(DATETO,TO_DATE('31/12/9999','DD/MM/YYYY'))
+         WHERE p_Date BETWEEN DATEFROM AND COALESCE(DATETO,TO_DATE('31-12-9999','DD-MM-YYYY'))
          AND IsActive = 'Y'
    AND (p_Qty >= COALESCE(Qty_From,0) OR Qty_From IS NULL)
    AND (p_Qty <= COALESCE(Qty_To,0) OR Qty_To IS NULL)

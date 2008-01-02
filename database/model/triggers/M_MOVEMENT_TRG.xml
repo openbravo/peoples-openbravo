@@ -21,10 +21,10 @@
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
-
+v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
 BEGIN
   IF (:old.PROCESSED = 'Y' AND(
-     (COALESCE(:old.MOVEMENTDATE, '01-01-1386') <> COALESCE(:new.MOVEMENTDATE, '01-01-1386'))
+     (COALESCE(:old.MOVEMENTDATE, v_DateNull) <> COALESCE(:new.MOVEMENTDATE, v_DateNull))
      OR (COALESCE(:old.AD_ORGTRX_ID, 0) <> COALESCE(:new.AD_ORGTRX_ID, 0))
      OR (COALESCE(:old.DOCUMENTNO, '.') <> COALESCE(:new.DOCUMENTNO, '.')))) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;

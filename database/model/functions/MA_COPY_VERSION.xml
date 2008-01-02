@@ -92,7 +92,7 @@
       (
         v_ProcessPlanVersion_ID, v_Client_ID, v_Org_ID, 'Y',
         now(), COALESCE(v_User_ID, 0), now(), COALESCE(v_User_ID, 0),
-        v_Record_ID, v_DocumentNo, v_Date, TO_DATE('01/01/3000', 'DD/MM/YYYY')
+        v_Record_ID, v_DocumentNo, v_Date, TO_DATE('31-12-9999', 'DD-MM-YYYY')
       )
       ;
     FOR Cur_Sequence IN

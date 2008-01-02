@@ -25,6 +25,7 @@
     /*************************************************************************
     * Title: Check in deleting, invoice not processed
     ************************************************************************/
+    v_DateNull DATE := TO_DATE('31-12-9999','DD-MM-YYYY');
     BEGIN
     -- If invoice is processed, is not allowed to change C_BPartner
     IF UPDATING
@@ -32,9 +33,9 @@
     OR :OLD.Posted='Y')
     AND (  COALESCE(:old.NAME, '')!=COALESCE(:new.NAME, '')
     OR COALESCE(:old.DESCRIPTION, '')!=COALESCE(:new.DESCRIPTION, '')
-    OR COALESCE(:old.DATEACCT, '01-01-9999')!=COALESCE(:new.DATEACCT, '01-01-9999')
-    OR COALESCE(:old.STARTDATE, '01-01-9999')!=COALESCE(:new.STARTDATE, '01-01-9999')
-    OR COALESCE(:old.ENDDATE, '01-01-9999')!=COALESCE(:new.ENDDATE, '01-01-9999')
+    OR COALESCE(:old.DATEACCT, v_DateNull)!=COALESCE(:new.DATEACCT, v_DateNull)
+    OR COALESCE(:old.STARTDATE, v_DateNull)!=COALESCE(:new.STARTDATE, v_DateNull)
+    OR COALESCE(:old.ENDDATE, v_DateNull)!=COALESCE(:new.ENDDATE, v_DateNull)
     OR COALESCE(:old.C_PROJECT_ID, 0)!=COALESCE(:new.C_PROJECT_ID, 0)
     OR COALESCE(:old.C_CAMPAIGN_ID, 0)!=COALESCE(:new.C_CAMPAIGN_ID, 0)
     OR COALESCE(:old.C_ACTIVITY_ID, 0)!=COALESCE(:new.C_ACTIVITY_ID, 0)

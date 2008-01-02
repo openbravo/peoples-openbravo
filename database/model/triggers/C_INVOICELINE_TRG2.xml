@@ -54,7 +54,7 @@ BEGIN
    v_Price := :NEW.PriceActual;
     FOR Cur_Offer IN (SELECT M_OFFER_ID
          FROM M_OFFER
-         WHERE v_DateInvoiced BETWEEN DATEFROM AND COALESCE(DATETO,TO_DATE('31/12/9999','DD/MM/YYYY'))
+         WHERE v_DateInvoiced BETWEEN DATEFROM AND COALESCE(DATETO,TO_DATE('31-12-9999','DD-MM-YYYY'))
    AND IsActive = 'Y'
    AND (:NEW.QtyInvoiced >= COALESCE(Qty_From,0) OR Qty_From IS NULL)
    AND (:NEW.QtyInvoiced <= COALESCE(Qty_To,0) OR Qty_To IS NULL)
@@ -98,7 +98,7 @@ BEGIN
 
    FOR Cur_Offer IN (SELECT M_OFFER_ID
     FROM M_OFFER
-    WHERE v_DateInvoiced BETWEEN DATEFROM AND COALESCE(DATETO,TO_DATE('31/12/9999','DD/MM/YYYY'))
+    WHERE v_DateInvoiced BETWEEN DATEFROM AND COALESCE(DATETO,TO_DATE('31-12-9999','DD-MM-YYYY'))
  AND IsActive = 'Y'
  AND (:NEW.QtyInvoiced >= COALESCE(Qty_From,0) OR Qty_From IS NULL)
    AND (:NEW.QtyInvoiced <= COALESCE(Qty_To,0) OR Qty_To IS NULL)

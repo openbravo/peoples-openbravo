@@ -22,11 +22,12 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-    v_Count number;
+v_Count number;
+v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
     BEGIN
     IF UPDATING THEN
      IF (:old.Processed='Y'
-        AND ((COALESCE(:old.STATEMENTDATE, '01-01-1386') <> COALESCE(:new.STATEMENTDATE, '01-01-1386'))
+        AND ((COALESCE(:old.STATEMENTDATE, v_DateNull) <> COALESCE(:new.STATEMENTDATE, v_DateNull))
         OR(COALESCE(:old.C_BANKACCOUNT_ID, 0) <> COALESCE(:new.C_BANKACCOUNT_ID, 0))))
       THEN
       RAISE_APPLICATION_ERROR ( -20501, 'Document processed/posted');

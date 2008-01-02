@@ -87,7 +87,7 @@
     LOOP
       UPDATE M_COSTING
         SET DATETO=p_Date
-      WHERE DATETO=TO_DATE('01/01/3000', 'DD/MM/YYYY')
+      WHERE DATETO=TO_DATE('31-12-9999', 'DD-MM-YYYY')
         AND M_PRODUCT_ID=Cur_PriceList.M_PRODUCT_ID
         AND COSTTYPE='ST';
       INSERT
@@ -103,7 +103,7 @@
         (
           Ad_Sequence_Nextno('M_Costing'), now(), v_User, now(),
           v_User, Cur_PriceList.AD_CLIENT_ID, Cur_PriceList.AD_ORG_ID, Cur_PriceList.M_PRODUCT_ID,
-          TO_DATE('01/01/3000', 'DD/MM/YYYY'), p_Date, 'N', NULL,
+          TO_DATE('31-12-9999', 'DD-MM-YYYY'), p_Date, 'N', NULL,
           NULL, 0, Cur_PriceList.COSTSTD, 0,
           Cur_PriceList.COSTSTD, 'ST', 'N'
         )

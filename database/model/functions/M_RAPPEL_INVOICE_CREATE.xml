@@ -95,7 +95,7 @@
     ELSIF v_validTo IS NOT NULL AND v_LimitDate IS NULL THEN
       v_LimitDate:=v_validTo;
     ELSE
-      v_LimitDate:=COALESCE(v_LimitDate, TO_DATE('31/DIC/2999')) ;
+      v_LimitDate:=COALESCE(v_LimitDate, TO_DATE('31-12-9999','DD-MM-YYYY')) ;
     END IF;
     -- CALCULATE DISCOUNT
   BEGIN

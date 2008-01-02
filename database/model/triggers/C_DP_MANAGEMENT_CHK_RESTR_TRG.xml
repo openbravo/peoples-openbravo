@@ -22,6 +22,7 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
+v_DateNull DATE := TO_DATE('01-01-1900','DD-MM-YYYY');
 BEGIN
   IF UPDATING THEN
     IF (    :OLD.processed = 'Y'
@@ -31,8 +32,8 @@ BEGIN
              OR (COALESCE (:OLD.c_doctype_id, 0) <>
                                                COALESCE (:NEW.c_doctype_id, 0)
                 )
-             OR (COALESCE (:OLD.datetrx, '01-01-9999') <>
-                                         COALESCE (:NEW.datetrx, '01-01-9999')
+             OR (COALESCE (:OLD.datetrx, v_DateNull) <>
+                                         COALESCE (:NEW.datetrx, v_DateNull)
                 )
              OR (COALESCE (:OLD.c_currency_id, 0) <>
                                               COALESCE (:NEW.c_currency_id, 0)
@@ -45,8 +46,8 @@ BEGIN
     END IF;
 
     IF (    :OLD.posted = 'Y'
-        AND (   (COALESCE (:OLD.dateacct, '01-01-1386') <>
-                                        COALESCE (:NEW.dateacct, '01-01-1386')
+        AND (   (COALESCE (:OLD.dateacct, v_DateNull) <>
+                                        COALESCE (:NEW.dateacct, v_DateNull)
                 )
              OR (COALESCE (:OLD.c_campaign_id, 0) <>
                                               COALESCE (:NEW.c_campaign_id, 0)

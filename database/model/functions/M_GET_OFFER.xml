@@ -31,7 +31,7 @@ This function should not be used, now more than one offer can be applied
     FOR Cur_Offer IN
       (SELECT M_OFFER_ID
       FROM M_OFFER
-      WHERE p_Date BETWEEN DATEFROM AND COALESCE(DATETO, TO_DATE('31/12/9999'))
+      WHERE p_Date BETWEEN DATEFROM AND COALESCE(DATETO, TO_DATE('31-12-9999', 'DD-MM-YYYY'))
         AND((BPARTNER_SELECTION = 'Y'
         AND NOT EXISTS
         (SELECT 1
