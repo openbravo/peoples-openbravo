@@ -40,6 +40,7 @@ public class OracleModelLoader extends ModelLoaderBase {
             return null;
         } else {
             String sreturn = value.trim();
+            if(sreturn.equalsIgnoreCase("NULL")) return null;
 
             switch (type) {
                 case Types.CHAR:
@@ -64,7 +65,8 @@ public class OracleModelLoader extends ModelLoaderBase {
                                 i++;
                             }
                         }
-                        return sunescaped.toString();
+                        if(sunescaped.toString().length()==0) return null;
+                        else return sunescaped.toString();
                     } else {
                         return sreturn;
                     }
