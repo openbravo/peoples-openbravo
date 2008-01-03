@@ -948,7 +948,10 @@ CREATE OR REPLACE VIEW user_tab_columns AS
             WHEN 'bytea'::name THEN 4000
             WHEN 'text'::name THEN 4000
             WHEN 'oid'::name THEN 4000
-            ELSE pg_attribute.attlen
+            ELSE CASE PG_ATTRIBUTE.ATTLEN 
+                     WHEN -1 THEN PG_ATTRIBUTE.ATTTYPMOD-4 
+                     ELSE PG_ATTRIBUTE.ATTLEN 
+                 END
         END AS data_length,
 
         CASE pg_type.typname
@@ -967,7 +970,7 @@ CREATE OR REPLACE VIEW user_tab_columns AS
                FROM pg_attrdef
               WHERE pg_attrdef.adrelid = pg_class.oid AND pg_attrdef.adnum = pg_attribute.attnum)
             ELSE NULL::text
-        END AS data_default, pg_attribute.attnotnull AS nullable, pg_attribute.attnum AS column_id
+        END AS data_default, not pg_attribute.attnotnull AS nullable, pg_attribute.attnum AS column_id
    FROM pg_class, pg_namespace, pg_attribute, pg_type
   WHERE pg_attribute.attrelid = pg_class.oid AND pg_attribute.atttypid = pg_type.oid AND pg_class.relnamespace = pg_namespace.oid AND pg_namespace.nspname = current_schema() AND pg_attribute.attnum > 0
 /-- END

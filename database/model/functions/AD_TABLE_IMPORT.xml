@@ -118,7 +118,7 @@
       IF(INSTR(v_varchar2, '''')<>0) THEN
         v_varchar2:=SUBSTR(SUBSTR(v_varchar2, 2, 1999), 1, INSTR(SUBSTR(v_varchar2, 2, 1999), '''') -1) ;
       ELSE
-        v_varchar2:=TRIM(REPLACE(REPLACE(v_varchar2, 'now()', '@#Date@'), CHR(10), '')) ;
+        v_varchar2:=TRIM(REPLACE(REPLACE(v_varchar2, REPLACE('now ()',' ',''), '@#Date@'), CHR(10), '')) ;
       END IF;
       v_DefaultValue:=v_varchar2;
       IF(UPPER(Cur_Column.Column_Name)=UPPER(Cur_Column.Table_Name) ||'_ID') THEN --ID column
@@ -176,7 +176,7 @@
         v_FieldLength:=Cur_Column.Data_Length;
       END IF;
       IF(v_AD_Reference_ID IS NULL) THEN
-        IF(Cur_Column.Data_Type='CHAR' AND Cur_Column.Data_Length=1) THEN
+        IF(Cur_Column.Data_Type IN('CHAR','BPCHAR') AND Cur_Column.Data_Length=1) THEN
           v_AD_Reference_ID:=20;
         ELSIF(Cur_Column.Data_Type IN('VARCHAR2', 'NVARCHAR2', 'CHAR', 'NCHAR') AND Cur_Column.Data_Length=4000) THEN
           v_AD_Reference_ID:=14;
