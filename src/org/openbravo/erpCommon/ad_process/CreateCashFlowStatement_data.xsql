@@ -244,7 +244,7 @@
         INSERT INTO FACT_ACCT_CFS
         (FACT_ACCT_CFS_ID,  FACT_ACCT_ID,  AD_CLIENT_ID,  AD_ORG_ID,  ISACTIVE,  CREATED,  CREATEDBY,  UPDATED,  UPDATEDBY,  ACCOUNT_ID,  AMOUNT, FACT_ACCT_REF_ID)
         VALUES
-        (?,?,?,?,'Y',SYSDATE,?,SYSDATE,?,?,?,?)
+        (?,?,?,?,'Y',NOW(),?,NOW(),?,?,?,?)
       </Sql>
     <Parameter name="factAcctCFS"/>
     <Parameter name="factAcctId"/>
