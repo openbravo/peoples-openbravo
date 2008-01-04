@@ -19,6 +19,7 @@ package org.apache.ddlutils.platform.postgresql;
  * under the License.
  */
 
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -245,7 +246,7 @@ public class PostgreSqlPlatform extends PlatformImplBase
                 case Types.VARBINARY:
                 case Types.LONGVARBINARY:
                 case Types.BLOB:
-                    statement.setBlob(sqlIndex, null);
+                	statement.setBlob(sqlIndex, (Blob)null);
                     break;
                 default:
                     statement.setNull(sqlIndex, typeCode);
