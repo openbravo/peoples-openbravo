@@ -63,7 +63,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * Constructor
    * 
-   * @param xmlPoolFile: Path to the XmlPool.xml file.
+   * @param xmlPoolFile Path to the XmlPool.xml file.
    * @throws ServletException
    */
   public Translate (String xmlPoolFile) throws ServletException {
@@ -73,8 +73,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * Constructor
    * 
-   * @param xmlPoolFile: Path to the XmlPool.xml file.
-   * @param _fileTermination: File extension to filter.
+   * @param xmlPoolFile Path to the XmlPool.xml file.
+   * @param _fileTermination File extension to filter.
    * @throws ServletException
    */
   public Translate (String xmlPoolFile, String _fileTermination) throws ServletException {
@@ -91,7 +91,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * Command Line method.
    * 
-   * @param argv: List of arguments. There is 2 call ways, with 2 arguments; the first
+   * @param argv List of arguments. There is 2 call ways, with 2 arguments; the first
    *              one is the attribute to indicate if the AD_TEXTINTERFACES must be 
    *              cleaned ("clean") and the second one is the XmlPool.xml path.
    *              The other way is with more arguments, where:
@@ -165,11 +165,11 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * List all the files and folders in the selected path.
    * 
-   * @param file: The selected path to list.
-   * @param boolFilter: If is filtered.
-   * @param dirFilter: Filter to apply.
-   * @param fileFin: Path where the new files must been created.
-   * @param relativePath: The relative path.
+   * @param file The selected path to list.
+   * @param boolFilter If is filtered.
+   * @param dirFilter Filter to apply.
+   * @param fileFin Path where the new files must been created.
+   * @param relativePath The relative path.
    */
   public static void listDir(File file, boolean boolFilter, DirFilter dirFilter, File fileFin, String relativePath) {
     File[] list;
@@ -200,9 +200,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * Parse each file searching the text to translate.
    * 
-   * @param fileParsing: File to parse.
-   * @param fileFin: Path where the new files must been created.
-   * @param relativePath: The relative path.
+   * @param fileParsing File to parse.
+   * @param fileFin Path where the new files must been created.
+   * @param relativePath The relative path.
    */
   private static void parseFile(File fileParsing, File fileFin, String relativePath) {
     String strFileName = fileParsing.getName();
@@ -270,7 +270,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * Parse each attribute of each element in the file. This method decides
    * which ones must been translated.
    * 
-   * @param amap: Attributes of the element.
+   * @param amap Attributes of the element.
    * @return String with the list of attributes translated.
    */
   public String parseAttributes(Attributes amap) {
@@ -328,7 +328,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * Method to know if a specific element in the file is parseable or not.
    * 
-   * @param tagname: Name of the element.
+   * @param tagname Name of the element.
    * @return True if the element is parseable, false if not.
    */
   public boolean isParseable(String tagname) {
@@ -415,7 +415,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * This method is the one in charge of the translation of the found text.
    * 
-   * @param ini: String with the text to translate.
+   * @param ini String with the text to translate.
    * @return String with the translated text.
    */
   public String translate(String ini) {
@@ -425,8 +425,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * This method is the one in charge of the translation of the found text.
    * 
-   * @param ini: String with the text to translate.
-   * @param isPartial: Indicates if the text passed is partial text or the 
+   * @param ini String with the text to translate.
+   * @param isPartial Indicates if the text passed is partial text or the 
    *                   complete one found in the element content.
    * @return String with the translated text.
    */
@@ -472,7 +472,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * To know if a text is numeric or not.
    * 
-   * @param ini: String with the text.
+   * @param ini String with the text.
    * @return True if has no letter in the text or false if has any letter.
    */
   public boolean isNumeric(String ini) {
@@ -489,9 +489,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * Replace a char, inside a given text, with another char.
    * 
-   * @param strInicial: Text where is the char to replace.
-   * @param strReplaceWhat: Char to replace.
-   * @param strReplaceWith: Char to replace with.
+   * @param strInicial Text where is the char to replace.
+   * @param strReplaceWhat Char to replace.
+   * @param strReplaceWith Char to replace with.
    * @return String with the replaced text.
    */
   public String replace(String strInicial, String strReplaceWhat, String strReplaceWith) {
@@ -513,7 +513,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * This method remove all the spaces in the string.
    * 
-   * @param strIni: String to clean.
+   * @param strIni String to clean.
    * @return String without spaces.
    */
   public String delSp(String strIni){
@@ -530,9 +530,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * This method splits the main string into shortest fragments to translate 
    * them separately.
    * 
-   * @param ini: String to split
-   * @param indice: Index of the separator array to use.
-   * @param isTranslated: Indicates if the text has been translated.
+   * @param ini String to split
+   * @param indice Index of the separator array to use.
+   * @param isTranslated Indicates if the text has been translated.
    * @return String translated.
    */
   public String tokenize(String ini, int indice, Vector<String> isTranslated) {
