@@ -152,7 +152,7 @@ public class ExecuteQuery {
     ResultSet result;
     Vector<SQLReturnObject> vector = new Vector<SQLReturnObject>(0);
     boolean hasRange = !(startPosition==0 && rangeLength==0);
-    boolean hasRangeLimit = (rangeLength==0);
+    boolean hasRangeLimit = !(rangeLength==0);
     if (hasRange) {
       if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
         addParameter(Integer.toString(startPosition));
