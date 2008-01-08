@@ -88,7 +88,7 @@
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
            SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN i.c_project_id ELSE ila.c_project_id END AS C_Project,
-                  CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN il.linenetamt*C_Invoice_Percentaje_Paid(i.C_Invoice_ID) ELSE ila.amt*C_Invoice_Percentaje_Paid(i.C_Invoice_ID) END AS amount
+                  CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN il.linenetamt*C_Invoice_Percentage_Paid(i.C_Invoice_ID) ELSE ila.amt*C_Invoice_Percentage_Paid(i.C_Invoice_ID) END AS amount
            FROM C_Invoice i, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
              M_Product p
            WHERE i.C_Invoice_ID = il.C_Invoice_ID
