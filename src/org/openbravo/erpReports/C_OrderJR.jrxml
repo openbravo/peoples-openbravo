@@ -192,7 +192,7 @@
 					<textElement>
 						<font size="20"/>
 					</textElement>
-				<text><![CDATA[INVOICE]]></text>
+				<text><![CDATA[ORDER]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -313,7 +313,7 @@
 					<textElement>
 						<font size="8"/>
 					</textElement>
-				<text><![CDATA[Invoice Number]]></text>
+				<text><![CDATA[Order Number]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
