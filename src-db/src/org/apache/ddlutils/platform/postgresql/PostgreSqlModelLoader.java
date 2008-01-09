@@ -285,7 +285,7 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
     }
     
     protected boolean translateRequired(String required) {
-        return "t".equals(required);
+        return "f".equals(required);
     }
     
     protected String translateDefault(String value, int type) {

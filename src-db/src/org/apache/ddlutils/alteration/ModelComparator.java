@@ -545,8 +545,12 @@ public class ModelComparator
         ArrayList changes = new ArrayList();
 
         // if (_platformInfo.getTargetJdbcType(targetColumn.getTypeCode()) != sourceColumn.getTypeCode())
-        if (targetColumn.getTypeCode() != sourceColumn.getTypeCode())
+        // if (targetColumn.getTypeCode() != sourceColumn.getTypeCode())
+        if (_platformInfo.getComparerJDBCType(targetColumn.getTypeCode()) != _platformInfo.getComparerJDBCType(sourceColumn.getTypeCode()))
         {
+            if (_log.isInfoEnabled()) {
+                _log.info("Column " + sourceColumn.getName() + " of table " + sourceTable.getName() + " needs to be changed because of the type." );
+            }
             changes.add(new ColumnDataTypeChange(sourceTable, sourceColumn, targetColumn.getTypeCode()));
         }
 
@@ -556,6 +560,9 @@ public class ModelComparator
         if (sizeMatters &&
             !StringUtils.equals(sourceColumn.getSize(), targetColumn.getSize()))
         {
+            if (_log.isInfoEnabled()) {
+                _log.info("Column " + sourceColumn.getName() + " of table " + sourceTable.getName() + " needs to be changed because of the size." );
+            }
             changes.add(new ColumnSizeChange(sourceTable, sourceColumn, targetColumn.getSizeAsInt(), targetColumn.getScale()));
         }
         else if (scaleMatters &&
@@ -563,6 +570,9 @@ public class ModelComparator
              (sourceColumn.getScale() == null && targetColumn.getScale() != null) ||
              (sourceColumn.getScale() != null && !sourceColumn.getScale().equals(targetColumn.getScale()))))
         {
+            if (_log.isInfoEnabled()) {
+                _log.info("Column " + sourceColumn.getName() + " of table " + sourceTable.getName() + " needs to be changed because of the scale." );
+            }
             changes.add(new ColumnSizeChange(sourceTable, sourceColumn, targetColumn.getSizeAsInt(), targetColumn.getScale()));
         }
 
@@ -572,15 +582,24 @@ public class ModelComparator
         if (((sourceDefaultValue == null) && (targetDefaultValue != null)) ||
             ((sourceDefaultValue != null) && !sourceDefaultValue.equals(targetDefaultValue)))
         {
+            if (_log.isInfoEnabled()) {
+                _log.info("Column " + sourceColumn.getName() + " of table " + sourceTable.getName() + " needs to be changed because of the default value." );
+            }
             changes.add(new ColumnDefaultValueChange(sourceTable, sourceColumn, targetColumn.getDefaultValue()));
         }
 
         if (sourceColumn.isRequired() != targetColumn.isRequired())
         {
+            if (_log.isInfoEnabled()) {
+                _log.info("Column " + sourceColumn.getName() + " of table " + sourceTable.getName() + " needs to be changed because of the required attribute." );
+            }
             changes.add(new ColumnRequiredChange(sourceTable, sourceColumn));
         }
         if (sourceColumn.isAutoIncrement() != targetColumn.isAutoIncrement())
         {
+            if (_log.isInfoEnabled()) {
+                _log.info("Column " + sourceColumn.getName() + " of table " + sourceTable.getName() + " needs to be changed because of the autoincrement attribute." );
+            }
             changes.add(new ColumnAutoIncrementChange(sourceTable, sourceColumn));
         }
 

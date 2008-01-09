@@ -124,6 +124,8 @@ public class PlatformInfo
     /** Whether auto-commit mode for the reading of the values of identity columns after insertion
         shall be used. */ 
     private boolean _autoCommitModeForLastIdentityValueReading = true;
+    
+    private boolean _ncharsupported = true;
 
     /** Specifies the maximum length that a table name can have for this database (-1 if there is no limit). */
     private int _maxTableNameLength = -1;
@@ -746,6 +748,14 @@ public class PlatformInfo
         _autoCommitModeForLastIdentityValueReading = autoCommitModeForLastIdentityValueReading;
     }
 
+    public boolean isNcharsupported() {
+        return _ncharsupported;
+    }
+    
+    public void setNcharsupported(boolean ncharsupported) {
+        _ncharsupported = ncharsupported;
+    }
+    
     /**
      * Returns the maximum number of characters that a table name can have.
      * 
@@ -972,7 +982,20 @@ public class PlatformInfo
 
         return targetJdbcType == null ? typeCode : targetJdbcType.intValue(); 
     }
-
+    
+    public int getComparerJDBCType(int typeCode) {
+        
+        if (_ncharsupported) {
+            return typeCode;
+        } else {
+            switch (typeCode) {
+            case ExtTypes.NVARCHAR : return Types.VARCHAR;
+            case ExtTypes.NCHAR : return Types.CHAR;
+            default : return typeCode;
+            }
+        }
+    }
+    
     /**
      * Adds a mapping from jdbc type to database-native type.
      * 
