@@ -230,7 +230,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="uninstallWebService" depends="init">
-    <ant dir="${base.subversin}/src" target="uninstallWebService" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.source}/src" target="uninstallWebService" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="preinstall" depends="init">
