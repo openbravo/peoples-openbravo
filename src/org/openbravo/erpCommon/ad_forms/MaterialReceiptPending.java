@@ -103,7 +103,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString()); 
 
-	  try {
+    try {
       KeyMap key = new KeyMap(this, vars, "MaterialReceiptPending.html");
       xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
     } catch (Exception ex) {
@@ -160,18 +160,19 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
   OBError processPurchaseOrder(VariablesSecureApp vars, String strcOrderLineId)
       throws IOException, ServletException {
     String strMessageResult = "";
-    OBError myMessage = null;    
-    
+    String strMessageType = "Success";
+    OBError myMessage = null;
+    OBError myMessageAux = null;
     myMessage = new OBError();
     myMessage.setTitle("");
     if (strcOrderLineId.equals("")){
-//    	New message system
-        myMessage.setType("Success");        
+//      New message system
+        myMessage.setType("Success");
         myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
         return myMessage;
         //return "";
     }
-     
+
     Connection conn = null;
     try{
       conn = this.getTransactionConnection();
@@ -180,6 +181,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
         strcOrderLineId = Replace.replace(strcOrderLineId, "'", "");
         StringTokenizer st = new StringTokenizer(strcOrderLineId, ",", false);
         String strmInoutId = "";
+        String strDocumentno = "";
         String strDateReceipt = "";
         String docTargetType = MaterialReceiptPendingData.cDoctypeTarget(this, Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), Utility.getContext(this, vars, "#User_Org", "MaterialReceiptPending"));
         String strLastBpartnerId = "";
@@ -189,18 +191,21 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           MaterialReceiptPendingData[] data = MaterialReceiptPendingData.select(this, strOrderlineId);
           if (!strLastBpartnerId.equals(data[0].cBpartnerId)){
             if (!strmInoutId.equals("")){
-              strMessageResult = mInoutPost(conn, vars, strmInoutId);
+              myMessageAux = mInoutPost(conn, vars, strmInoutId);
+              strMessageResult += Utility.messageBD(this, "Goods Receipt", vars.getLanguage()) + " " + strDocumentno + ": " + myMessageAux.getMessage() + "<br>";
+              if (strMessageType.equals("Success")) strMessageType = myMessageAux.getType();
+              else if (strMessageType.equals("Warning") && myMessageAux.getType().equals("Error")) strMessageType = "Error";
             }
             line = 10;
             strmInoutId = SequenceIdData.getSequence(this, "M_InOut", vars.getClient());
-            String strDocumentno = Utility.getDocumentNo(this, vars, "", "M_InOut", Utility.getContext(this, vars, "C_DocTypeTarget_ID", docTargetType), Utility.getContext(this, vars, "C_DocType_ID", docTargetType), false, true);
-           strDateReceipt = vars.getStringParameter("inpDateReceipt" + data[0].cBpartnerId);
+            strDocumentno = Utility.getDocumentNo(this, vars, "", "M_InOut", Utility.getContext(this, vars, "C_DocTypeTarget_ID", docTargetType), Utility.getContext(this, vars, "C_DocType_ID", docTargetType), false, true);
+            strDateReceipt = vars.getStringParameter("inpDateReceipt" + data[0].cBpartnerId);
 
             if (strDateReceipt.equals("")){
-            	myMessage.setType("Success");        
-                myMessage.setMessage(Utility.messageBD(this, "DateReceipt", vars.getLanguage()) + " " + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
-                return myMessage;
-            	//return(Utility.messageBD(this, "DateReceipt", vars.getLanguage()) + " " + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
+              myMessage.setType("Error");
+              myMessage.setMessage(Utility.messageBD(this, "DateReceipt", vars.getLanguage()) + " " + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
+              return myMessage;
+              //return(Utility.messageBD(this, "DateReceipt", vars.getLanguage()) + " " + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
             }
             MaterialReceiptPendingData.insert(conn, this, strmInoutId, vars.getClient(), vars.getOrg(), "Y", vars.getUser(), vars.getUser(), "N", strDocumentno, "CO", "DR", "N", "N", "N", docTargetType, data[0].description, data[0].cOrderId, data[0].dateordered, "N", "V+", strDateReceipt, strDateReceipt, data[0].cBpartnerId, data[0].cBpartnerLocationId, data[0].mWarehouseId, data[0].poreference, data[0].deliveryrule, data[0].freightcostrule, data[0].freightamt, data[0].deliveryviarule, data[0].mShipperId, data[0].cChargeId, data[0].chargeamt, data[0].priorityrule, "N", "N", "N", vars.getUser(), data[0].salesrepId, data[0].adOrgtrxId, data[0].cProjectId, data[0].cCampaignId, data[0].cActivityId, data[0].user1Id, data[0].user2Id, "N", "N", "N");
           }
@@ -213,7 +218,10 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(), vars.getOrg(), "Y", vars.getUser(), vars.getUser(), String.valueOf(line), dataLine[0].description, strmInoutId, strOrderlineId, strLocator, dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N", dataLine[0].lot, dataLine[0].serno, dataLine[0].mAttributesetinstanceId, "N", dataLine[0].quantityorder, dataLine[0].mProductUomId);
           line += 10;
         }
-        strMessageResult = mInoutPost(conn, vars, strmInoutId);
+        myMessageAux = mInoutPost(conn, vars, strmInoutId);
+        strMessageResult += Utility.messageBD(this, "Goods Receipt", vars.getLanguage()) + " " + strDocumentno + ": " + myMessageAux.getMessage();
+        if (strMessageType.equals("Success")) strMessageType = myMessageAux.getType();
+        else if (strMessageType.equals("Warning") && myMessageAux.getType().equals("Error")) strMessageType = "Error";
       }
       releaseCommitConnection(conn);
     }
@@ -223,51 +231,28 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-  	myMessage.setType("Error");        
-    myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-    return myMessage;
+      myMessage.setType("Error");
+      myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+      return myMessage;
       //return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
     }
-    myMessage.setType("Success");        
+    myMessage.setType(strMessageType);
     myMessage.setMessage(strMessageResult.equals("")?Utility.messageBD(this, "Success", vars.getLanguage()):strMessageResult);
     return myMessage;
     //return strMessageResult.equals("")?Utility.messageBD(this, "Success", vars.getLanguage()):strMessageResult;
   }
 
-  String mInoutPost(Connection conn, VariablesSecureApp vars, String strmInoutId)
+  OBError mInoutPost(Connection conn, VariablesSecureApp vars, String strmInoutId)
       throws IOException, ServletException {
     String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
 
     PInstanceProcessData.insertPInstance(this, pinstance, "109", strmInoutId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
     //PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y", vars.getClient(), vars.getOrg(), vars.getUser());
     MaterialReceiptPendingData.mInoutPost0(conn, this, pinstance);
-    
+
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
-    String messageResult="";
-    if (pinstanceData!=null && pinstanceData.length>0) {
-      if (!pinstanceData[0].errormsg.equals("")) {
-        String message = pinstanceData[0].errormsg;
-        if (message.startsWith("@") && message.endsWith("@")) {
-          message = message.substring(1, message.length()-1);
-          if (message.indexOf("@")==-1) messageResult = Utility.messageBD(this, message, vars.getLanguage());
-          else messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), "@" + message + "@");
-        } else {
-          messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), message);
-        }
-      } else if (!pinstanceData[0].pMsg.equals("")) {
-        //String message = pinstanceData[0].pMsg;
-        //messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), message);
-        total += 1;
-        messageResult = Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total);
-      } else if (pinstanceData[0].result.equals("1")) {
-        //messageResult = Utility.messageBD(this, "Success", vars.getLanguage());
-        total += 1;
-        messageResult = Utility.messageBD(this, "Created", vars.getLanguage() + " :" + String.valueOf(total));
-      } else {
-        messageResult = Utility.messageBD(this, "Error", vars.getLanguage());
-      }
-    }
-    return messageResult;
+    OBError myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
+    return myMessage;
   }
 
 
