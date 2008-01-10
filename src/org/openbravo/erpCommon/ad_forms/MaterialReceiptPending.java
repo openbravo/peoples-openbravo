@@ -56,16 +56,18 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "MaterialReceiptPending|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "MaterialReceiptPending|DateTo", "");
+      String strDocumentNo = vars.getGlobalVariable("inpDocumentNo", "MaterialReceiptPending|DocumentNo", "");
       String strC_BPartner_ID = vars.getGlobalVariable("inpcBpartnerId", "MaterialReceiptPending|C_BPartner_ID", "");
       String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId", "MaterialReceiptPending|AD_Org_ID", vars.getOrg());
       vars.setSessionValue("MaterialReceiptPending|isSOTrx", "Y");
-      printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo);
+      printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo, strDocumentNo);
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "MaterialReceiptPending|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "MaterialReceiptPending|DateTo");
+      String strDocumentNo = vars.getRequestGlobalVariable("inpDocumentNo", "MaterialReceiptPending|DocumentNo");
       String strC_BPartner_ID = vars.getRequestGlobalVariable("inpcBpartnerId", "MaterialReceiptPending|C_BPartner_ID");
       String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId", "MaterialReceiptPending|AD_Org_ID");
-      printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo);
+      printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo, strDocumentNo);
     } else if (vars.commandIn("GENERATE")) {
       String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder");
       //New message system
@@ -78,7 +80,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
 }
 
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo)
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo, String strDocumentNo)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -97,7 +99,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     } else {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/MaterialReceiptPending").createXmlDocument();
       String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
-      data = MaterialReceiptPendingData.selectLines(this, strDateFormat, Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strC_BPartner_ID);
+      data = MaterialReceiptPendingData.selectLines(this, strDateFormat, Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strC_BPartner_ID, strDocumentNo);
     }
       
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "MaterialReceiptPending", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
@@ -140,6 +142,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramAdOrgId", strAD_Org_ID);
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateTo", strDateTo);
+    xmlDocument.setParameter("paramDocumentNo", strDocumentNo);
     xmlDocument.setParameter("paramBPartnerDescription", MaterialReceiptPendingData.bPartnerDescription(this, strC_BPartner_ID));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "AD_Org Security validation", Utility.getContext(this, vars, "#User_Org", "MaterialReceiptPending"), Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), 0);
