@@ -26,6 +26,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.erpCommon.reference.*;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.businessUtility.WindowTabsData;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -161,6 +162,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       throws IOException, ServletException {
     String strMessageResult = "";
     String strMessageType = "Success";
+    String strWindowName = WindowTabsData.selectWindowInfo(this, vars.getLanguage(), "184");
     OBError myMessage = null;
     OBError myMessageAux = null;
     myMessage = new OBError();
@@ -192,7 +194,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           if (!strLastBpartnerId.equals(data[0].cBpartnerId)){
             if (!strmInoutId.equals("")){
               myMessageAux = mInoutPost(conn, vars, strmInoutId);
-              strMessageResult += Utility.messageBD(this, "Goods Receipt", vars.getLanguage()) + " " + strDocumentno + ": " + myMessageAux.getMessage() + "<br>";
+              strMessageResult += strWindowName + " " + strDocumentno + ": " + myMessageAux.getMessage() + "<br>";
               if (strMessageType.equals("Success")) strMessageType = myMessageAux.getType();
               else if (strMessageType.equals("Warning") && myMessageAux.getType().equals("Error")) strMessageType = "Error";
             }
@@ -219,7 +221,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           line += 10;
         }
         myMessageAux = mInoutPost(conn, vars, strmInoutId);
-        strMessageResult += Utility.messageBD(this, "Goods Receipt", vars.getLanguage()) + " " + strDocumentno + ": " + myMessageAux.getMessage();
+        strMessageResult += strWindowName + " " + strDocumentno + ": " + myMessageAux.getMessage();
         if (strMessageType.equals("Success")) strMessageType = myMessageAux.getType();
         else if (strMessageType.equals("Warning") && myMessageAux.getType().equals("Error")) strMessageType = "Error";
       }
