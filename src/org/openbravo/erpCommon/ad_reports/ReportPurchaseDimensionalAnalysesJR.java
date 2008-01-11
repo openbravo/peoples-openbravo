@@ -318,9 +318,9 @@ public class ReportPurchaseDimensionalAnalysesJR extends HttpSecureAppServlet {
       strOrderby = " ORDER BY 1";
     }
     String strHaving = "";
-    if (!strMayor.equals("") && !strMenor.equals("")) {strHaving = " HAVING SUM(AMOUNT) > "+strMayor+" AND SUM(AMOUNT) < "+strMenor;}
-    else if (!strMayor.equals("") && strMenor.equals("")) {strHaving = " HAVING SUM(AMOUNT) > "+strMayor;}
-    else if (strMayor.equals("") && !strMenor.equals("")) {strHaving = " HAVING SUM(AMOUNT) < "+strMenor;}
+    if (!strMayor.equals("") && !strMenor.equals("")) {strHaving = " HAVING SUM(LINENETAMT) > "+strMayor+" AND SUM(LINENETAMT) < "+strMenor;}
+    else if (!strMayor.equals("") && strMenor.equals("")) {strHaving = " HAVING SUM(LINENETAMT) > "+strMayor;}
+    else if (strMayor.equals("") && !strMenor.equals("")) {strHaving = " HAVING SUM(LINENETAMT) < "+strMenor;}
     else{ strHaving = " HAVING SUM(LINENETAMT) <> 0 OR SUM(LINENETREF) <> 0";}
     strOrderby = strHaving + strOrderby;
 
