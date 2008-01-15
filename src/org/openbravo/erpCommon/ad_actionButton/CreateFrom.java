@@ -956,12 +956,9 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
       if (strPayment.startsWith("(")) strPayment = strPayment.substring(1, strPayment.length()-1);
       if (!strPayment.equals("")) {
         strPayment = Replace.replace(strPayment, "'", "");
-        strPayment = Replace.replace(strPayment, " ", "");
-        if (log4j.isDebugEnabled()) log4j.debug("CreateFrom.saveBank - strPayment " + strPayment + "-");
         StringTokenizer st = new StringTokenizer(strPayment, ",", false);
         while (st.hasMoreTokens()) {
           String strDebtPaymentId = st.nextToken().trim();
-          if (log4j.isDebugEnabled()) log4j.debug("CreateFrom.saveBank - NotIsReconcilied-" + strDebtPaymentId + "- " + CreateFromBankData.NotIsReconcilied(conn, this, strDebtPaymentId));
           if (!CreateFromBankData.NotIsReconcilied(conn, this, strDebtPaymentId)) {
             releaseRollbackConnection(conn);
             log4j.warn("CreateFrom.saveBank - debt_payment " + strDebtPaymentId + " is reconcilied");
