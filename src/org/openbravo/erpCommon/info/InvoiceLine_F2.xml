@@ -29,7 +29,7 @@
     <FUNCTION id="funcEvenOddRowxx" name="MODULE" arg1="fieldRownum" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
     <FIELD id="funcEvenOddRowxx" attribute="id" replace="xx">position</FIELD>
     <FIELD id="CheckNumxx" attribute="id" replace="xx">position</FIELD>
-    <FIELD id="CheckNumxx" attribute="value">cValidcombinationId</FIELD>
+    <FIELD id="CheckNumxx" attribute="value">cInvoicelineId</FIELD>
     <FIELD id="funcEvenOddRowxx" attribute="onclick" replace="xx" replaceCharacters="htmlJavaScript">lineText</FIELD>
     <FIELD id="funcEvenOddRowxx" attribute="onclick" replace="hh" replaceCharacters="htmlJavaScript">position</FIELD>
     <FIELD id="fieldBpartnername">bpartnerName</FIELD>
