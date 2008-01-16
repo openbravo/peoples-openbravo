@@ -63,7 +63,8 @@ public class OpenBravoDriverManagerConnectionFactory implements ConnectionFactor
 
     try {
       stmt = conn.createStatement();
-      rset = stmt.executeQuery(_dbSessionConfig);
+      if(!_dbSessionConfig.equals(""))
+    	  rset = stmt.executeQuery(_dbSessionConfig);
     } catch(SQLException e) {
       e.printStackTrace();
     } finally {
