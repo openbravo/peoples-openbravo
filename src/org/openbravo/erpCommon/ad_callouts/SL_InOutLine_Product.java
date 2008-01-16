@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -76,9 +76,16 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_InOutLine_Product';\n\n");
     resultado.append("var respuesta = new Array(");
     //if (strIsSOTrx.equals("Y")) {
-      if (strLocator.startsWith("\"")) strLocator=strLocator.substring(1,strLocator.length()-1);
-      resultado.append("new Array(\"inpmLocatorId\", \"" + strLocator + "\"),");
-      resultado.append("new Array(\"inpmLocatorId_R\", \"" + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator, vars.getLanguage())) + "\"),");
+    if (strLocator.startsWith("\"")) strLocator=strLocator.substring(1,strLocator.length()-1);    
+    if (strLocator==null || strLocator.equals("")) {
+      resultado.append("new Array(\"inpmLocatorId\", \"\"),");
+      resultado.append("new Array(\"inpmLocatorId_R\", \"\"),");
+    }
+    else {
+      resultado.append("new Array(\"inpmLocatorId\", \""+ strLocator +"\"),");
+      resultado.append("new Array(\"inpmLocatorId_R\", \"" + FormatUtilities.replaceJS(SLInOutLineProductData.locator(this, strLocator, vars.getLanguage())) + "\"),");      
+    }       
+    
       if (!strAttribute.equals("")) {
         if (strAttribute.startsWith("\"")) strAttribute=strAttribute.substring(1,strAttribute.length()-1);
         resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),");
