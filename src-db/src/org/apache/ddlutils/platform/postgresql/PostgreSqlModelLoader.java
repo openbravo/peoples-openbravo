@@ -290,53 +290,48 @@ public class PostgreSqlModelLoader extends ModelLoaderBase {
     
     protected String translateDefault(String value, int type) {
         
-        if (value == null) {
-            return null;
-        } else {
-            String sreturn = value.trim();
+        switch (type) {
+            case Types.CHAR:
+            case Types.VARCHAR:
+            case ExtTypes.NCHAR:
+            case ExtTypes.NVARCHAR:
+            case Types.LONGVARCHAR:
+                if (value.endsWith("::character varying")) {
+                    value = value.substring(0, value.length() - 19);
+                }
+                if (value.endsWith("::bpchar")) {
+                    value = value.substring(0, value.length() - 8);
+                }
 
-            switch (type) {
-                case Types.CHAR:
-                case Types.VARCHAR:
-                case ExtTypes.NCHAR:
-                case ExtTypes.NVARCHAR:
-                case Types.LONGVARCHAR:
-                    if (sreturn.endsWith("::character varying")) {
-                        sreturn = sreturn.substring(0, sreturn.length() - 19);
-                    }
-                    if (sreturn.endsWith("::bpchar")) {
-                        sreturn = sreturn.substring(0, sreturn.length() - 8);
-                    }
-                    
-                    if (sreturn.length() >= 2 && sreturn.startsWith("'") && sreturn.endsWith("'")) {
-                        sreturn =  sreturn.substring(1, sreturn.length() - 1);
-                        int i = 0;
-                        StringBuffer sunescaped = new StringBuffer();
-                        while (i < sreturn.length()) {
-                            char c = sreturn.charAt(i);
-                            if (c == '\'') {
-                                i++;
-                                if (i < sreturn.length()) {
-                                    sunescaped.append(c);
-                                    i++;                                    
-                                }                                
-                            } else {
+                if (value.length() >= 2 && value.startsWith("'") && value.endsWith("'")) {
+                    value = value.substring(1, value.length() - 1);
+                    int i = 0;
+                    StringBuffer sunescaped = new StringBuffer();
+                    while (i < value.length()) {
+                        char c = value.charAt(i);
+                        if (c == '\'') {
+                            i++;
+                            if (i < value.length()) {
                                 sunescaped.append(c);
-                                i++;
-                            }
+                                i++;                                    
+                            }                                
+                        } else {
+                            sunescaped.append(c);
+                            i++;
                         }
-                        return sunescaped.toString();
-                    } else {
-                        return sreturn;
                     }
-                case Types.TIMESTAMP:
-                    if ("now()".equals(sreturn)) {
-                        return "SYSDATE";
-                    } else {
-                        return sreturn;
-                    }
-                default: return sreturn;
-            }
+                    if(sunescaped.length() == 0) return null;
+                    else return sunescaped.toString();
+                } else {
+                    return value;
+                }
+            case Types.TIMESTAMP:
+                if ("now()".equalsIgnoreCase(value)) {
+                    return "SYSDATE";
+                } else {
+                    return value;
+                }
+            default: return value;
         }
     }
     

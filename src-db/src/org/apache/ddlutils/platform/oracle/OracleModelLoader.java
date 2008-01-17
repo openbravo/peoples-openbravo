@@ -36,42 +36,35 @@ public class OracleModelLoader extends ModelLoaderBase {
     
     protected String translateDefault(String value, int type) {
         
-        if (value == null) {
-            return null;
-        } else {
-            String sreturn = value.trim();
-            if(sreturn.equalsIgnoreCase("NULL")) return null;
-
-            switch (type) {
-                case Types.CHAR:
-                case Types.VARCHAR:
-                case ExtTypes.NCHAR:
-                case ExtTypes.NVARCHAR:
-                case Types.LONGVARCHAR:
-                    if (sreturn.length() >= 2 && sreturn.startsWith("'") && sreturn.endsWith("'")) {
-                        sreturn =  sreturn.substring(1, sreturn.length() - 1);
-                        int i = 0;
-                        StringBuffer sunescaped = new StringBuffer();
-                        while (i < sreturn.length()) {
-                            char c = sreturn.charAt(i);
-                            if (c == '\'') {
-                                i++;
-                                if (i < sreturn.length()) {
-                                    sunescaped.append(c);
-                                    i++;                                    
-                                }                                
-                            } else {
+        switch (type) {
+            case Types.CHAR:
+            case Types.VARCHAR:
+            case ExtTypes.NCHAR:
+            case ExtTypes.NVARCHAR:
+            case Types.LONGVARCHAR:
+                if (value.length() >= 2 && value.startsWith("'") && value.endsWith("'")) {
+                    value =  value.substring(1, value.length() - 1);
+                    int i = 0;
+                    StringBuffer sunescaped = new StringBuffer();
+                    while (i < value.length()) {
+                        char c = value.charAt(i);
+                        if (c == '\'') {
+                            i++;
+                            if (i < value.length()) {
                                 sunescaped.append(c);
-                                i++;
-                            }
+                                i++;                                    
+                            }                                
+                        } else {
+                            sunescaped.append(c);
+                            i++;
                         }
-                        if(sunescaped.toString().length()==0) return null;
-                        else return sunescaped.toString();
-                    } else {
-                        return sreturn;
                     }
-                default: return sreturn;
-            }
+                    if(sunescaped.length() == 0) return null;
+                    else return sunescaped.toString();
+                } else {
+                    return value;
+                }
+            default: return value;
         }
     }
     

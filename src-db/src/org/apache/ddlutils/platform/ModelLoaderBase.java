@@ -244,7 +244,7 @@ public abstract class ModelLoaderBase implements ModelLoader {
             c.setSizeAndScale(rs.getInt(4), null);
         }
         c.setRequired(translateRequired(rs.getString(7)));  
-        c.setDefaultValue(translateDefault(rs.getString(8), c.getTypeCode()));
+        c.setDefaultValue(translateColumnDefault(rs.getString(8), c.getTypeCode()));
         
         return c;
     }
@@ -427,7 +427,7 @@ public abstract class ModelLoaderBase implements ModelLoader {
                         p.setName(mparam.group(1));
                         p.setModeCode(translateMode(mparam.group(3)));
                         p.setTypeCode(translateParamType(mparam.group(4)));
-                        p.setDefaultValue(translateDefault(mparam.group(6), p.getTypeCode())); 
+                        p.setDefaultValue(translateParamDefault(mparam.group(6), p.getTypeCode())); 
                         
                         f.addParameter(p);
                     } else {
@@ -527,12 +527,35 @@ public abstract class ModelLoaderBase implements ModelLoader {
         return "UNIQUE".equalsIgnoreCase(uniqueness);
     }
     
+    protected String translateColumnDefault(String value, int type) {
+        
+        if (value == null) {
+            return null;
+        } else {
+            value = value.trim();
+            if(value.equalsIgnoreCase("NULL")) {
+                return null;
+            } else {
+                return translateDefault(value, type);
+            }
+        }
+    }
+    
+    protected String translateParamDefault(String value, int type) {
+        
+        if (value == null) {
+            return null;
+        } else {
+            return translateDefault(value.trim(), type);
+        }
+    }
+    
     protected abstract String readName();
     
     protected abstract int translateFKEvent(String fkevent);
     
     protected abstract String translateDefault(String value, int type);
-    
+
     protected abstract boolean translateRequired(String required);
 
     protected abstract int translateParamType(String nativeType);
