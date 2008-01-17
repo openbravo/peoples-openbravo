@@ -42,4 +42,5 @@ base.source=/opt/openbravo
 attach.path=/opt/openbravo/attachment
 web.url=http://localhost:8880/openbravo/web
 context.url=http://localhost:8880/openbravo
+context.name=openbravo
 base.temp=/opt/tmp

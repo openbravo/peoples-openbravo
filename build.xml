@@ -70,7 +70,6 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="separator" value="/"/>
 
   <property name="base.context" value="${base.source}/WebContent"/>
-  <property name="context.name" value="openbravo"/>
   <property name="jakarta.home" value="${env.CATALINA_HOME}"/>
   <property name="build.core.lib" value="${base.source}/src-core/lib"/>
   <property name="build.trl.lib" value="${base.source}/src-trl/lib"/>
