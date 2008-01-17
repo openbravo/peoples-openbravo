@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="ReportSalesPartnerProduct_srpt"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="595"
+		 pageHeight="842"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="PARTNER" isForPrompting="false" class="java.math.BigDecimal">
+		<defaultValueExpression ><![CDATA[new BigDecimal(1000004)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT C_ORDER.C_BPARTNER_ID, AD_COLUMN_IDENTIFIER(to_char('M_PRODUCT'), to_char(M_PRODUCT_ID), to_char('es_ES')) AS PRODUCT, SUM(C_ORDERLINE.LINENETAMT) as LINENETAMT
+FROM C_ORDER, C_ORDERLINE
+WHERE C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID
+  AND ISSOTRX = 'Y'
+  AND C_ORDER.C_BPARTNER_ID = $P{PARTNER}
+GROUP BY C_ORDERLINE.M_PRODUCT_ID, C_ORDER.C_BPARTNER_ID
+ORDER BY C_ORDER.C_BPARTNER_ID]]></queryString>
+
+	<field name="c_bpartner_id" class="java.math.BigDecimal"/>
+	<field name="product" class="java.lang.String"/>
+	<field name="linenetamt" class="java.math.BigDecimal"/>
+
+	<variable name="sumlinenetamt" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$F{linenetamt}]]></variableExpression>
+	</variable>
+
+		<group  name="C_BPARTNER_ID" >
+			<groupExpression><![CDATA[$F{c_bpartner_id}]]></groupExpression>
+			<groupHeader>
+			<band height="237"  isSplitAllowed="true" >
+				<pieChart>
+					<chart  hyperlinkTarget="Self" >
+					<reportElement
+						x="25"
+						y="0"
+						width="458"
+						height="232"
+						key="element-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
+					</chartLegend>
+					</chart>
+					<pieDataset>
+						<dataset resetType="Group" resetGroup="C_BPARTNER_ID" >
+						</dataset>
+						<keyExpression><![CDATA[$F{product}]]></keyExpression>
+						<valueExpression><![CDATA[$F{linenetamt}]]></valueExpression>
+						<labelExpression><![CDATA[$F{product}]]></labelExpression>
+				<sectionHyperlink >
+				</sectionHyperlink>
+					</pieDataset>
+					<piePlot 
+isCircular="true" >
+						<plot />
+					</piePlot>
+				</pieChart>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>
