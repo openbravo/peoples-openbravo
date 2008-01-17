@@ -47,7 +47,7 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEINVOICED <= to_date(?)]]></Parameter>
-    <Parameter name="cbPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="cbPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="cProductCategoryId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="cProjectKind" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.PROJECTKIND IN]]></Parameter>
