@@ -178,7 +178,7 @@
 					<textElement>
 						<font pdfFontName="Helvetica"/>
 					</textElement>
-				<text><![CDATA[Work Requeriment]]></text>
+				<text><![CDATA[Work Requirement]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

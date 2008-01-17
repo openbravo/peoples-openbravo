@@ -269,7 +269,7 @@
 					<textElement>
 						<font pdfFontName="Helvetica"/>
 					</textElement>
-				<text><![CDATA[Cutomer:]]></text>
+				<text><![CDATA[Customer:]]></text>
 				</staticText>
 				<line direction="TopDown">
 					<reportElement

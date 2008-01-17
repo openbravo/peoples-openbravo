@@ -453,7 +453,7 @@
 					<textElement>
 						<font pdfFontName="Helvetica"/>
 					</textElement>
-				<text><![CDATA[Secuence:]]></text>
+				<text><![CDATA[Sequence:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement

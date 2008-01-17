@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,7 +65,7 @@
 								<fo:block padding-top="2pt" text-align="center" font-weight="bold">Product</fo:block>
 							</fo:table-cell>
 							<fo:table-cell border-width="0.5pt" border-style="solid">
-								<fo:block padding-top="2pt" text-align="center" font-weight="bold">Atributte</fo:block>
+								<fo:block padding-top="2pt" text-align="center" font-weight="bold">Attribute</fo:block>
 							</fo:table-cell>
 							<fo:table-cell border-width="0.5pt" border-style="solid">
 								<fo:block padding-top="2pt" text-align="center" font-weight="bold">Quantity</fo:block>
@@ -77,7 +77,7 @@
 									<fo:block padding-top="2pt" start-indent="2pt" text-align="left" id="fieldProductName">Product</fo:block>
 								</fo:table-cell>
 								<fo:table-cell border-width="0.5pt" border-style="solid">
-									<fo:block padding-top="2pt" start-indent="2pt" text-align="left" id="fieldDescription">Atributte</fo:block>
+									<fo:block padding-top="2pt" start-indent="2pt" text-align="left" id="fieldDescription">Attribute</fo:block>
 								</fo:table-cell>
 								<fo:table-cell border-width="0.5pt" border-style="solid">
 									<fo:block padding-top="2pt" end-indent="2pt" text-align="end">

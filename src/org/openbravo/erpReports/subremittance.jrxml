@@ -249,7 +249,7 @@
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Texto estático]]></text>
+				<text><![CDATA[Static text]]></text>
 				</staticText>
 			</band>
 		</columnHeader>
