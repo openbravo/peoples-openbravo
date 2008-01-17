@@ -38,7 +38,6 @@ import javax.net.ssl.*;
 public class HttpBaseServlet extends HttpServlet implements ConnectionProvider 
 {
   private static final long serialVersionUID = 1L;
-  protected static PeriodicGarbageCollector myGc;
   protected static ConnectionProviderImpl myPool;
   protected static int isDefinedBasePath = 0;
   public String strBaseConfigPath;
@@ -163,20 +162,6 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
           makeConnection();
         } catch (Exception ex) {
           ex.printStackTrace();
-        }
-      }
-      if((myGc == null)&&(strGarbageCollectionTime!=null && !strGarbageCollectionTime.equals(""))) { // Only created by first servlet to call
-        try {
-          String garbageCollectionTime  = strGarbageCollectionTime;
-          log4j.info("garbageCollectionTime: " + garbageCollectionTime);
-
-          PeriodicGarbageCollector myLocalGc = new PeriodicGarbageCollector(Long.parseLong(garbageCollectionTime));
-          if (myLocalGc==null)
-            log4j.error("Could not start the garbage collector: ");
-          myGc = myLocalGc;
-        }
-        catch (Exception e) {
-          e.printStackTrace();
         }
       }
     } catch (ServletException e) {
