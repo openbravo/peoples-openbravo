@@ -797,6 +797,30 @@ function byDefaultAction(action) {
 
 
 /**
+* Stops the propagation and the default action of the browser shortchut
+* @param {Event} evt Event handling object.
+*/
+function stopKeyPressEvent(evt) {
+  if (evt.ctrlKey) {
+    evt.cancelBubble = true;
+    evt.returnValue = false;
+      if (evt.stopPropagation) {
+        evt.preventDefault();
+      }
+  }
+}
+
+
+/**
+* Enables the propagation and the default action of the browser shortchut
+* @param {Event} evt Event handling object.
+*/
+function startKeyPressEvent(evt) {
+  return true;
+}
+
+
+/**
 * Builds the keys array on each screen. Each key that we want to use should have this structure.
 * @param {String} key A text version of the handled key.
 * @param {String} event Event that we want to fire when the key is is pressed.
@@ -865,40 +889,83 @@ function obtainKeyCode(code) {
 
 /**
 * Handles the events execution of keys pressed, based on the events registered in the keyArray global array.   
-* @param {Event} keyCode Code of the key pressed.
+* @param {Event} pushedKey Code of the key pressed.
 * @returns True if the key is not registered in the array, false if a event for this key is registered in keyArray array.
 * @type Boolean
-* @see #obtainKeyCode
+* @see #obtenerCodigoTecla
 */
 function keyControl(pushedKey) {
-  if (keyArray==null || keyArray.length==0) return true;
+  try {
+    if (keyArray==null || keyArray.length==0) return true;
+  } catch (e) {
+    return true;
+  }
   if (!pushedKey) pushedKey = window.event;
-  var keyCode = window.event ? pushedKey.keyCode : pushedKey.which;
-  var target = (pushedKey.target?pushedKey.target: pushedKey.srcElement);
-  //var target = (document.layers) ? pushedKey.target : pushedKey.srcElement;
+  var keyCode = pushedKey.keyCode ? pushedKey.keyCode : pushedKey.which ? pushedKey.which : pushedKey.charCode;
   var total = keyArray.length;
   for (var i=0;i<total;i++) {
     if (keyArray[i]!=null && keyArray[i]) {
       if (keyCode == obtainKeyCode(keyArray[i].key)) {
         if (keyArray[i].auxKey==null || keyArray[i].auxKey=="" || keyArray[i].auxKey=="null") {
-          if (keyArray[i].field==null || (target!=null && target.name!=null && isIdenticalField(keyArray[i].field, target.name))) {
-            var eventoTrl = replaceEventString(keyArray[i].evento, target.name, keyArray[i].field);
-            eval(eventoTrl);
-            return false;
+          if (!pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
+            if(!keyArray[i].propagateKey) {
+              if (window.event && window.event.keyCode == 116) {  //F5 Special case
+                window.event.keyCode = 8;
+                keyCode = 8;
+              }
+            }
+            if(!keyArray[i].propagateKey) document.onkeypress=stopKeyPressEvent;
+            if (keyArray[i].field==null ) {
+              try {
+                eval(keyArray[i].event);
+                if(!keyArray[i].propagateKey) return false;
+                else return true;
+              } catch (e) {
+                document.onkeypress=startKeyPressEvent;
+                return true;
+              }
+              document.onkeypress=startKeyPressEvent;
+              return true;
+            }
           }
-        } else if (keyArray[i].field==null || (target!=null && target.name!=null && isIdenticalField(keyArray[i].field, target.name))) {
+        } else if (keyArray[i].field==null) {
+          if(!keyArray[i].propagateKey) document.onkeypress=stopKeyPressEvent;
           if (keyArray[i].auxKey=="ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
-            var eventoTrl = replaceEventString(keyArray[i].evento, target.name, keyArray[i].field);
-            eval(eventoTrl);
-            return false;
+            try {
+              eval(keyArray[i].event);
+              document.onkeypress=startKeyPressEvent;
+              if(!keyArray[i].propagateKey) return false;
+              else return true;
+            } catch (e) {
+              document.onkeypress=startKeyPressEvent;
+              return true;
+            }
+            document.onkeypress=startKeyPressEvent;
+            return true;
           } else if (keyArray[i].auxKey=="altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
-            var eventoTrl = replaceEventString(keyArray[i].evento, target.name, keyArray[i].field);
-            eval(eventoTrl);
-            return false;
+            try {
+              eval(keyArray[i].event);
+              document.onkeypress=startKeyPressEvent;
+              if(!keyArray[i].propagateKey) return false;
+              else return true;
+            } catch (e) {
+              document.onkeypress=startKeyPressEvent;
+              return true;
+            }
+            document.onkeypress=startKeyPressEvent;
+            return true;
           } else if (keyArray[i].auxKey=="shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
-            var eventoTrl = replaceEventString(keyArray[i].evento, target.name, keyArray[i].field);
-            eval(eventoTrl);
-            return false;
+            try {
+              eval(keyArray[i].event);
+              document.onkeypress=startKeyPressEvent;
+              if(!keyArray[i].propagateKey) return false;
+              else return true;
+            } catch (e) {
+              document.onkeypress=startKeyPressEvent;
+              return true;
+            }
+            document.onkeypress=startKeyPressEvent;
+            return true;
           }
         }
       }
@@ -906,6 +973,34 @@ function keyControl(pushedKey) {
   }
   return true;
 }
+
+/**
+* Put the focus on the Menu frame
+*/
+function putFocusOnMenu(){
+  parent.frameMenu.focus();
+}
+
+/**
+* Put the focus on the Window frame
+*/
+function putFocusOnWindow(){
+  parent.frameAplicacion.focus();
+}
+
+/**
+* Used to activate the key-press handling. Must be called after set the keys global array <em>keyArray</em>.
+*/
+function enableShortcuts(type) {
+  if (type!=null && type!='null' && type!='') {
+    try {
+      getShortcuts(type);
+    } catch (e) {
+    }
+  }
+  document.onkeydown=keyControl;
+}
+
 
 /**
 * Validates the name of a Field
@@ -937,24 +1032,6 @@ function replaceEventString(eventoJS, inputname, arrayName) {
   return eventoJS;
 }
 
-
-/**
-* Used to activate the key-press handling. Must be called after set the keys global array <em>arraTeclas</em>.
-*/
-function enableShortcuts() {
-  if (keyArray==null || keyArray.length==0) return true;
-
-    var agt=navigator.userAgent.toLowerCase();
-
-/*   if (agt.indexOf('gecko') != -1) { 
-        document.releaseEvents(Event.KEYDOWN);
-     }
-  if (agt.indexOf('gecko') != -1)
-    document.captureEvents(Event.KEYDOWN);*/
-  
-  document.onkeydown=keyControl;
-  return true;
-}
 
 /**
 * Search an array for a given parent key, and fills a combo with the founded values.

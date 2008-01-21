@@ -95,12 +95,13 @@ public class VerticalMenu extends HttpSecureAppServlet {
     menu.append("';return true;\"");
     menu.append(" onmouseout=\"window.status='';return true;\"");
     menu.append(" id=\"folderInformation\">\n");
-    menu.append("      <tr class=\"Child");
-    if (open) menu.append(" Opened");
-    menu.append("\" id=\"childInformation\" onmouseover=\"setHover(this);return true;\" onmouseout=\"setMouseUp(this);this.className=this.className.replace(' Child_hover', (isOpened?' Opened':''));return true;\"");
+    menu.append("      <tr class=\"Normal ");
+    if (!open) menu.append("NOT_");
+    menu.append("Opened NOT_Hover NOT_Selected NOT_Pressed");
+    menu.append("\" id=\"childInformation\" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
     menu.append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");
     menu.append("        <td width=\"5px\" id=\"folderCell1_Information\"><img src=\"").append(strReplaceWith).append("/images/blank.gif\" class=\"Menu_Client_Button_BigIcon Menu_Client_Button_BigIcon_folder");
-    menu.append((open?"Opened":""));
+    menu.append((open?"Opened":"Closed"));
     menu.append("\" id=\"folderImgInformation\"></td>\n");
     menu.append("        <td nowrap=\"\" id=\"folderCell2_Information\">");
     menu.append(Utility.messageBD(this, "Information", vars.getLanguage()));
@@ -155,9 +156,11 @@ public class VerticalMenu extends HttpSecureAppServlet {
   public String generarMenuVertical(MenuData[] menuData, String strDireccion, String indice, boolean open) {
     if (menuData==null || menuData.length==0) return "";
     if (indice == null) indice="0";
+//    boolean haveData=false;
     StringBuffer strText = new StringBuffer();
     for (int i=0;i<menuData.length;i++) {
       if (menuData[i].parentId.equals(indice)) {
+//        haveData=true;
         String strHijos = generarMenuVertical(menuData, strDireccion, menuData[i].nodeId, open);
         String strID = "";
         if (!strHijos.equals("") || menuData[i].issummary.equals("N")) {
@@ -174,8 +177,9 @@ public class VerticalMenu extends HttpSecureAppServlet {
           strText.append("';return true;\"");
           strText.append(" onmouseout=\"window.status='';return true;\">\n");
           strText.append("      <tr");
-          strText.append(" class=\"Child");
-          if (open && menuData[i].issummary.equals("Y")) strText.append(" Opened");
+          strText.append(" class=\"Normal ");
+          if (!open || !menuData[i].issummary.equals("Y")) strText.append("NOT_");
+          strText.append("Opened NOT_Hover NOT_Selected NOT_Pressed");
           strText.append("\"");
           if (menuData[i].issummary.equals("N")) {
             strText.append(" id=\"child").append(strID).append("\"");
@@ -194,7 +198,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
           } else {
             strText.append(" id=\"child").append(menuData[i].nodeId).append("\"");
           }
-          strText.append(" onmouseover=\"setHover(this);return true;\" onmouseout=\"setMouseUp(this);this.className=this.className.replace(' Child_hover', (isOpened?' Opened':''));return true;\"");
+          strText.append(" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
           strText.append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");
           strText.append("        <td width=\"5px\"");
           if (menuData[i].issummary.equals("Y")) strText.append(" id=\"folderCell1_").append(menuData[i].nodeId).append("\"");
@@ -213,7 +217,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
             strText.append(" Menu_Client_Button_");
             if (indice.equals("0")) strText.append("Big");
             strText.append("Icon_folder");
-            strText.append((open?"Opened":""));
+            strText.append((open?"Opened":"Closed"));
           }
           strText.append("\"");
           if (menuData[i].issummary.equals("Y")) strText.append(" id=\"folderImg").append(menuData[i].nodeId).append("\"");
@@ -230,7 +234,11 @@ public class VerticalMenu extends HttpSecureAppServlet {
           strText.append("</tr>\n");
           strText.append("<tr>\n");
           strText.append("  <td");
-          strText.append(" style=\"").append((!open?"display: none;":"")).append("\" id=\"parent").append(menuData[i].nodeId).append("\">\n");
+          if (strHijos.equals("")) {
+            strText.append(" style=\"").append("display: none;").append("\" id=\"parent").append(menuData[i].nodeId).append("\">\n");
+          } else {
+            strText.append(" style=\"").append((!open?"display: none;":"")).append("\" id=\"parent").append(menuData[i].nodeId).append("\">\n");
+          }
           strText.append("    <table cellspacing=\"0\" cellpadding=\"0\" class=\"Menu_Client_child_bg\">\n");
           strText.append(strHijos);
           strText.append("    </table>\n");
@@ -277,7 +285,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
       result.append(" id=\"info").append(FormatUtilities.replace(data[i].name)).append("\"");
       result.append(">\n");
       result.append("      <tr");
-      result.append(" class=\"Child\"");
+      result.append(" class=\"Normal NOT_Opened NOT_Hover NOT_Selected NOT_Pressed\"");
       result.append(" id=\"childinfo").append(FormatUtilities.replace(data[i].name)).append("\"");
       result.append(" onclick=\"checkSelected('childinfo").append(FormatUtilities.replace(data[i].name)).append("');openSearch(null, null, '");
       String javaClassName = data[i].classname.trim();
@@ -287,7 +295,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
       else if (data[i].nodeId.equals("800013")) javaClassName = "/info/Locator_Detail_FS.html";
       else if (data[i].nodeId.equals("31")) javaClassName = "/info/Locator_FS.html";
       result.append(direccion).append(javaClassName);
-      result.append("', null, false);return false;\" onmouseover=\"setHover(this);return true;\" onmouseout=\"setMouseUp(this);this.className=this.className.replace(' Child_hover', (isOpened?' Opened':''));return true;\"");
+      result.append("', null, false);return false;\" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
       result.append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");
       result.append("        <td width=\"5px\"><img src=\"").append(strReplaceWith).append("/images/blank.gif\" class=\"Menu_Client_Button_Icon Menu_Client_Button_Icon_childInfo\"></td>\n");
       result.append("        <td nowrap=\"\">");
