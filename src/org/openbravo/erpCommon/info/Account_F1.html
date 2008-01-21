@@ -40,9 +40,9 @@
       </script>
 
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array();
-arrTeclas[0] = new Teclas("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey");
-activarControlTeclas();
+keyArray = new Array();
+keyArray[0] = new keyArrayItem("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey");
+enableShortcuts();
 </SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
 function depurar() {
@@ -70,7 +70,7 @@ function onloadFunctions() {
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();focoPrimerControl();" >
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();setFocusFirstControl();" >
 <FORM name="frmSelector" method="POST" action="Account_F2.html" target="medio">
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>

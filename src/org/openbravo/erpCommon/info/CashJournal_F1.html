@@ -41,19 +41,19 @@
 
 
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array(
-new Teclas("ENTER", "openSearch(null, null, '../info/DebtPayment_FS.html', 'SELECTOR_DEBT', false, 'frmCash', 'inpcDebtPaymentId',  'inpcDebtPaymentId_DES', document.frmCash.inpcDebtPaymentId_DES.value, 'Command', 'KEY');", "inpcInvoiceId_DES", "null"),
-new Teclas("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
+keyArray = new Array(
+new keyArrayItem("ENTER", "openSearch(null, null, '../info/DebtPayment_FS.html', 'SELECTOR_DEBT', false, 'frmCash', 'inpcDebtPaymentId',  'inpcDebtPaymentId_DES', document.frmCash.inpcDebtPaymentId_DES.value, 'Command', 'KEY');", "inpcInvoiceId_DES", "null"),
+new keyArrayItem("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
 );
 
-activarControlTeclas();
+enableShortcuts();
 
 function onloadFunctions() {
 	new TypeAheadCombo("sectionCashBook");
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();focoPrimerControl();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();setFocusFirstControl();">
 
 
 <FORM name="frmCash" method="POST" action="CashJournal_F2.html" target="medio">

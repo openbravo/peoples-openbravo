@@ -44,8 +44,8 @@
 <SCRIPT language="JavaScript" type="text/javascript">
 
 
-function activarTeclas() {
-  arrTeclas[arrTeclas.length] = new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
+function enableLocalShortcuts() {
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
 }
 
 function debugSearch(strClave, strTexto, gCampoClave) {
@@ -73,7 +73,7 @@ function actualizarInvoices(arrDatos, arrDatos2) {
 function onloadFunctions() {
 	new TypeAheadCombo("inpPurchaseOrder");
   new TypeAheadCombo("inpShipmentReciept");
-  activarTeclas();
+  enableLocalShortcuts();
 }
 </SCRIPT>
   <script language="JavaScript" type="text/javascript">
@@ -102,7 +102,7 @@ function onloadFunctions() {
 
 
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="resizeArea();focoPrimerControl();onloadFunctions();" onresize="resizeArea();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="resizeArea();setFocusFirstControl();onloadFunctions();" onresize="resizeArea();">
 
 <FORM id="form" method="POST" action="../ad_actionButton/CreateFrom.html" name="frmMain">
   <INPUT type="hidden" name="Command">

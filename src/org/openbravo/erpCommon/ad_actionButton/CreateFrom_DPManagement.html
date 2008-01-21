@@ -41,8 +41,8 @@
  <script language="JavaScript" type="text/javascript" id="keyMap"></script>
 <SCRIPT language="JavaScript" type="text/javascript">
 
-function activarTeclas() {
-arrTeclas = new Array(new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null"));
+function enableLocalShortcuts() {
+keyArray = new Array(new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null"));
 }
 
 function depurar(action) {
@@ -103,14 +103,14 @@ function onloadFunctions() {
 	new TypeAheadCombo("inppaymentrule");
   new TypeAheadCombo("inpisreceipt");
   new TypeAheadCombo("inpadOrgId");
-  activarTeclas();
+  enableLocalShortcuts();
 }
 </SCRIPT></HEAD>
 
 
 
 
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="focoPrimerControl();onloadFunctions();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="setFocusFirstControl();onloadFunctions();">
 <FORM id="form" method="POST" action="../ad_actionButton/CreateFrom.html" name="frmMain">
 <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>

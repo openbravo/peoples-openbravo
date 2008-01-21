@@ -53,11 +53,11 @@ var baseDirection = "../../../../../web/";
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script> 
 <SCRIPT language="JavaScript" type="text/javascript">
-//arrTeclas = new Array();
-//arrTeclas[0] = new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY', 'WindowID', 'GenerateShipmentsmanual');", "inpBpartnerId_DES", "null");
-//arrTeclas[1] = new Teclas("ENTER", "submitCommandForm('FIND');", null, null),
-//arrTeclas[2] = new Teclas("M", "mostrarMenu();", null, "ctrlKey")
-//activarControlTeclas();
+//keyArray = new Array();
+//keyArray[0] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY', 'WindowID', 'GenerateShipmentsmanual');", "inpBpartnerId_DES", "null");
+//keyArray[1] = new keyArrayItem("ENTER", "submitCommandForm('FIND');", null, null),
+//keyArray[2] = new keyArrayItem("M", "mostrarMenu();", null, "ctrlKey")
+//enableShortcuts();
 
 function depurar(action) {
   var frm=document.frmMain;
@@ -81,7 +81,7 @@ function onloadFunctions() {
 }
 </SCRIPT>
 </HEAD>
-<BODY onload="onloadFunctions();xx();resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
+<BODY onload="onloadFunctions();xx();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
 
 <FORM method="POST" action="GenerateShipmentsmanual.html" name="frmMain" >
 <INPUT type="hidden" name="Command"></INPUT>

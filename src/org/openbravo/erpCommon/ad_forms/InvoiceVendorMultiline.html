@@ -42,7 +42,7 @@ var baseDirection = "../../../../../web/";
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
 <script language="JavaScript" type="text/javascript" id="keyMap"></script>
 <SCRIPT language="javascript" type="text/javascript">
-arrTeclas[arrTeclas.length] = new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, true, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_D', document.frmMain.inpcBpartnerId_D.value, 'inpIDValue', document.frmMain.inpcBpartnerId.value, 'Command', 'KEY', 'WindowID', 'InvoiceVendorMultiline.html');", "inpcBpartnerId_D", "null");
+keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, true, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_D', document.frmMain.inpcBpartnerId_D.value, 'inpIDValue', document.frmMain.inpcBpartnerId.value, 'Command', 'KEY', 'WindowID', 'InvoiceVendorMultiline.html');", "inpcBpartnerId_D", "null");
 
 function calloutSE_Invoice_BPartner(changedField) {
 submitCommandFormParameter('DEFAULT', frmMain.inpLastFieldChanged, changedField, false, null, '../ad_callouts/SE_Invoice_BPartner.html', 'frameOculto', null, null, true);
@@ -61,7 +61,7 @@ function onloadFunctions() {
   new TypeAheadCombo("reportC_BPartner_Location_ID_S");
   new TypeAheadCombo("reportPaymentRule_S");
   new TypeAheadCombo("reportC_PaymentTerm_ID_S");
-  activarTeclas();
+  enableLocalShortcuts();
 }
 
 function depurar() {
@@ -69,7 +69,7 @@ function depurar() {
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="resizeArea();updateMenuIcon('buttonMenu');onloadFunctions();xx();focoPrimerControl();" onresize="resizeArea();" id="paramBody">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="resizeArea();updateMenuIcon('buttonMenu');onloadFunctions();xx();setFocusFirstControl();" onresize="resizeArea();" id="paramBody">
 <form id="form" method="POST" action="InvoiceVendorMultiline.html" name="frmMain">
   <input type="hidden" name="Command">
   <input type="hidden" name="inpCommandType" value="" id="paramCommandType">

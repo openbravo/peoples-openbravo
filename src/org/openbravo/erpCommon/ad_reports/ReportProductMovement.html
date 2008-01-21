@@ -73,11 +73,11 @@ function depurar(action)
 }
 
 function onloadFunctions(){
-  arrTeclas = new Array(new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null"), new Teclas("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null"));
+  keyArray = new Array(new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null"), new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null"));
   }
 </SCRIPT>
 </HEAD>
-    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();">
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
 <FORM method="POST" action="ReportProductMovement.html" name="frmMain" id="form">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpmInoutId"></INPUT>

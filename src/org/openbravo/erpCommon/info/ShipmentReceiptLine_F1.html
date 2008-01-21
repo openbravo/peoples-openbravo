@@ -43,16 +43,16 @@
 
 
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array(
-new Teclas("ENTER", "openSearch(null, null, 'BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmOrder', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmOrder.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null"),
-new Teclas("ENTER", "openSearch(null, null, 'Product_FS.html', 'SELECTOR_PRODUCT', false, 'frmOrder', 'inpmProductId', 'inpmProductId_DES', document.frmOrder.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null"),
-new Teclas("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
+keyArray = new Array(
+new keyArrayItem("ENTER", "openSearch(null, null, 'BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmOrder', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmOrder.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null"),
+new keyArrayItem("ENTER", "openSearch(null, null, 'Product_FS.html', 'SELECTOR_PRODUCT', false, 'frmOrder', 'inpmProductId', 'inpmProductId_DES', document.frmOrder.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null"),
+new keyArrayItem("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
 );
 
-activarControlTeclas();
+enableShortcuts();
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="focoPrimerControl();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="setFocusFirstControl();">
 
 
 <FORM name="frmOrder" method="POST" action="ShipmentReceiptLine_F1.html" target="medio">

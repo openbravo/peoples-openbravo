@@ -50,9 +50,9 @@ var baseDirection = "../../../../../web/";
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script> 
 <SCRIPT language="JavaScript" type="text/javascript">
-//arrTeclas = new Array();
-//arrTeclas[2] = new Teclas("M", "mostrarMenu();", null, "ctrlKey")
-//activarControlTeclas();
+//keyArray = new Array();
+//keyArray[2] = new keyArrayItem("M", "mostrarMenu();", null, "ctrlKey")
+//enableShortcuts();
 
 function depurar(action) {
   var frm=document.frmMain;
@@ -67,7 +67,7 @@ function depurar(action) {
 
 </SCRIPT>
 </HEAD>
-<BODY onload="xx();resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();"  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
+<BODY onload="xx();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();"  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
 <FORM method="POST" action="DebtPaymentUnapply.html" name="frmMain" >
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>

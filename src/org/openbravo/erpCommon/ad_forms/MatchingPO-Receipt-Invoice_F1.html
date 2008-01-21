@@ -30,12 +30,12 @@
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array(
-new Teclas("M", "mostrarMenu();", null, "ctrlKey"),
-new Teclas("ENTER", "openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY', 'WindowID', 'MatchingPO');", "inpmProductId_DES", "null"),
-new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null")
+keyArray = new Array(
+new keyArrayItem("M", "mostrarMenu();", null, "ctrlKey"),
+new keyArrayItem("ENTER", "openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY', 'WindowID', 'MatchingPO');", "inpmProductId_DES", "null"),
+new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null")
 );
-activarControlTeclas();
+enableShortcuts();
 
 var arrFinalDocs = new Array(
 new Array("1", "2", "Albaran"),
@@ -51,7 +51,7 @@ function onloadFunctions() {
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();selectCombo(document.frmMain.inpsourcedoc, 'yy');rellenarComboHijo(document.frmMain.inpfinaldoc, arrFinalDocs, document.frmMain.inpsourcedoc.options[document.frmMain.inpsourcedoc.selectedIndex].value, false, true);selectCombo(document.frmMain.inpfinaldoc, 'xx');selectCombo(document.frmMain.inpsearchmode, 'zz');focoPrimerControl();" id="paramBody">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();selectCombo(document.frmMain.inpsourcedoc, 'yy');rellenarComboHijo(document.frmMain.inpfinaldoc, arrFinalDocs, document.frmMain.inpsourcedoc.options[document.frmMain.inpsourcedoc.selectedIndex].value, false, true);selectCombo(document.frmMain.inpfinaldoc, 'xx');selectCombo(document.frmMain.inpsearchmode, 'zz');setFocusFirstControl();" id="paramBody">
 <TABLE width="100%" border="0" cellspacing="1" cellpadding="0" >
 <TR>
           <TD  width="2%"> <A href="#" onclick="mostrarMenu();return false;" onmouseover="window.status='Menu';return true;" onmouseout="window.status='';return true;" class="TBButton"> 

@@ -42,9 +42,9 @@
     dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
   </script>
 <SCRIPT language="JavaScript" type="text/javascript">
-var arrTeclas = new Array();
-function activarTeclas() {
-arrTeclas = new Array(new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null"));
+var keyArray = new Array();
+function enableLocalShortcuts() {
+keyArray = new Array(new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null"));
 }
 function depurar(action) {
   	var frm=document.frmMain;
@@ -106,10 +106,10 @@ function onloadFunctions() {
 	new TypeAheadCombo("inppaymentrule");
   new TypeAheadCombo("inpisreceipt");
   new TypeAheadCombo("inpadOrgId");
-  activarTeclas();
+  enableLocalShortcuts();
 }
 </SCRIPT></HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="focoPrimerControl();onloadFunctions();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="setFocusFirstControl();onloadFunctions();">
 <FORM id="form" method="POST" action="../ad_actionButton/CreateFrom.html" name="frmMain">
 <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>

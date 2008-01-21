@@ -29,10 +29,10 @@
 <SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array(
-new Teclas("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', 'SELECTOR_PRODUCT', true, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null")
+keyArray = new Array(
+new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', 'SELECTOR_PRODUCT', true, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null")
 );
-activarControlTeclas();
+enableShortcuts();
 
 function debugSearch(key, text, keyField) {
   if (keyField=="inpmProductId") {
@@ -95,7 +95,7 @@ function onloadFunctions() {
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="focoPrimerControl();onloadFunctions();return true;">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="setFocusFirstControl();onloadFunctions();return true;">
 <FORM id="form" method="POST" action="../ad_actionButton/CreateFromMultiple_F1.html" name="frmMain">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpLastFieldChanged"></INPUT>

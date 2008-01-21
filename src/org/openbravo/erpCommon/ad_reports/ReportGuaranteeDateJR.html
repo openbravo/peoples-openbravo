@@ -65,11 +65,11 @@ function depurar() {
 
 function onloadFunctions() {
 	new TypeAheadCombo("inpmWarehouseId");
-  arrTeclas[arrTeclas.length] = new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
 }
 </SCRIPT>
 </HEAD>
-    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();">
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
 <FORM method="POST" action="ReportGuaranteeDateJR.html" name="frmMain" id="form">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpmProductId"></INPUT>

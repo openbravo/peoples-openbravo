@@ -41,11 +41,11 @@ function debugSearch(strClave, strTexto, gCampoClave) {
 	return true;
 }
 
-arrTeclas = new Array(
-new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', true, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null"),
-new Teclas("ENTER", "openSearch(null, null, '../info/Locator_FS.html', null, false, 'frmMain', 'inpmLocatorId', 'inpmLocatorId_DES', document.frmMain.inpmLocatorId_DES.value, 'Command', 'KEY', 'WindowID', 'CreateFrom_Shipment');", "inpmLocatorId_DES", "null") 
+keyArray = new Array(
+new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', true, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null"),
+new keyArrayItem("ENTER", "openSearch(null, null, '../info/Locator_FS.html', null, false, 'frmMain', 'inpmLocatorId', 'inpmLocatorId_DES', document.frmMain.inpmLocatorId_DES.value, 'Command', 'KEY', 'WindowID', 'CreateFrom_Shipment');", "inpmLocatorId_DES", "null") 
 );
-activarControlTeclas();
+enableShortcuts();
 
 function depurar(action) {
   var frm=document.frmMain;

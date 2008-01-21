@@ -107,7 +107,7 @@ public class WADSearch extends WADControl {
       text.append(commandScript).append(", 'Command', 'KEY'");
       commandScript.append(");");
       text.append(");");
-      setOnLoad("arrTeclas[arrTeclas.length] = new Teclas(\"ENTER\", \"" + text.toString() + "\", \"inp" + getData("ColumnNameInp") + "_R\", \"null\");");
+      setOnLoad("keyArray[keyArray.length] = new keyArrayItem(\"ENTER\", \"" + text.toString() + "\", \"inp" + getData("ColumnNameInp") + "_R\", \"null\");");
       this.command = commandScript.toString();
       this.hiddenFields = hiddenScript.toString();
     }

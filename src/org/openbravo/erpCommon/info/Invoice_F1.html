@@ -42,19 +42,19 @@
 
 
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array(
-new Teclas("ENTER", "openSearch(null, null, 'BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmInvoice', 'inpBpartnerId', 'inpBpartnerId_DES', document.frmInvoice.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null"),
-new Teclas("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
+keyArray = new Array(
+new keyArrayItem("ENTER", "openSearch(null, null, 'BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmInvoice', 'inpBpartnerId', 'inpBpartnerId_DES', document.frmInvoice.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null"),
+new keyArrayItem("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
 );
 
-activarControlTeclas();
+enableShortcuts();
 
 function onloadFunctions() {
 	new TypeAheadCombo("inpisSOTrx");
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();focoPrimerControl();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();setFocusFirstControl();">
 
 <FORM name="frmInvoice" method="POST" action="Invoice_F2.html" target="medio">
   <INPUT type="hidden" name="Command">

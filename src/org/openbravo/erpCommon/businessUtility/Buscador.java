@@ -371,7 +371,7 @@ public class Buscador extends HttpSecureAppServlet {
           strMethod = searchsCommand(fields[i], false, strTab, strWindow, strIsSOTrx);
         }
 
-        strMethod = "new Teclas(\"ENTER\", \"" + strMethod + "\", \"inpParam" + FormatUtilities.replace(fields[i].columnname) + "_DES\", \"null\")";
+        strMethod = "new keyArrayItem(\"ENTER\", \"" + strMethod + "\", \"inpParam" + FormatUtilities.replace(fields[i].columnname) + "_DES\", \"null\")";
         vecKeys.addElement(strMethod);
 
         if (fields[i].reference.equals("21")) {
@@ -513,16 +513,16 @@ public class Buscador extends HttpSecureAppServlet {
       //strHtml.append("</td></tr></table>\n");
       strHtml.append("</td></tr>\n");
     }
-    vecKeys.addElement("new Teclas(\"B\", \"aceptar()\", null, \"ctrlKey\")");
-    vecKeys.addElement("new Teclas(\"ESCAPE\", \"window.close()\", null, null)");
+    vecKeys.addElement("new keyArrayItem(\"B\", \"aceptar()\", null, \"ctrlKey\")");
+    vecKeys.addElement("new keyArrayItem(\"ESCAPE\", \"window.close()\", null, null)");
     if (vecKeys.size()>0) {
-      script.append("var arrTeclas = new Array();\n");
-      script.append("function activarTeclas() {\n");
+      script.append("var keyArray = new Array();\n");
+      script.append("function enableLocalShortcuts() {\n");
       script.append("\n");
       for (int i=0;i<vecKeys.size();i++) {
-        script.append("arrTeclas[").append(i).append("] = ").append(vecKeys.elementAt(i).toString()).append(";\n");
+        script.append("keyArray[").append(i).append("] = ").append(vecKeys.elementAt(i).toString()).append(";\n");
       }
-      script.append("activarControlTeclas();\n");
+      script.append("enableShortcuts();\n");
       script.append("}\n");
     }
     StringBuffer scrScr = new StringBuffer();

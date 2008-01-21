@@ -53,11 +53,11 @@ var baseDirection = "../../../../../web/";
 
 
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array();
-arrTeclas[0] = new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
-arrTeclas[1] = new Teclas("ENTER", "submitCommandForm('FIND', false, null, '../RptC_Invoice.pdf', 'PDF');", null, null);
-arrTeclas[2] = new Teclas("M", "mostrarMenu();", null, "ctrlKey");
-activarControlTeclas();
+keyArray = new Array();
+keyArray[0] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
+keyArray[1] = new keyArrayItem("ENTER", "submitCommandForm('FIND', false, null, '../RptC_Invoice.pdf', 'PDF');", null, null);
+keyArray[2] = new keyArrayItem("M", "mostrarMenu();", null, "ctrlKey");
+enableShortcuts();
 
 function onloadFunctions() {
 	new TypeAheadCombo("inpOrg");

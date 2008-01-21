@@ -71,7 +71,7 @@ public class WADPAttribute extends WADSearch {
       text.append(commandScript).append(", 'Command', 'KEY'");
       commandScript.append(");");
       text.append(");");
-      setOnLoad("arrTeclas[arrTeclas.length] = new Teclas(\"ENTER\", \"" + text.toString() + "\", \"inp" + getData("ColumnNameInp") + "_R\", \"null\");");
+      setOnLoad("keyArray[keyArray.length] = new keyArrayItem(\"ENTER\", \"" + text.toString() + "\", \"inp" + getData("ColumnNameInp") + "_R\", \"null\");");
       this.imageName = "AttributeSetInstance";
       this.searchName = getData("Name");
       this.command = commandScript.toString();

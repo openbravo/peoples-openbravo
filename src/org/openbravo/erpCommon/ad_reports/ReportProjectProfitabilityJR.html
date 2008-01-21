@@ -68,11 +68,11 @@ function depurar()
 }
 function onloadFunctions() {
   //new TypeAheadCombo("paramOrg");
-  arrTeclas = new Array(new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null"), new Teclas("ENTER", "openSearch(null, null, '../info/Project_FS.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', inputValue(document.frmMain.inpcProjectId_D), 'inpIDValue', inputValue(document.frmMain.inpcProjectId), 'WindowID', inputValue(document.frmMain.inpwindowId), 'inpc_bpartner_id', inputValue(document.frmMain.inpcBPartnerId), 'Command', 'KEY');", "inpcProjectId_D", "null"));
+  keyArray = new Array(new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null"), new keyArrayItem("ENTER", "openSearch(null, null, '../info/Project_FS.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', inputValue(document.frmMain.inpcProjectId_D), 'inpIDValue', inputValue(document.frmMain.inpcProjectId), 'WindowID', inputValue(document.frmMain.inpwindowId), 'inpc_bpartner_id', inputValue(document.frmMain.inpcBPartnerId), 'Command', 'KEY');", "inpcProjectId_D", "null"));
 }
 </SCRIPT>
   </HEAD>
-    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();">
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
     <FORM method="POST" action="ReportProjectProfitabilityJR.html" name="frmMain" id="form">
       	<INPUT type="hidden" name="Command"></INPUT>
         <INPUT type="hidden" name="inpwindowId" id="inpwindowId" value="184"></INPUT>

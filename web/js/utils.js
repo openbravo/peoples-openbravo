@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,42 +41,42 @@ new Array (0,31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31) //Leap year
 * de la página, control de campos numéricos...
 */
 
-var gBotonPorDefecto;
+var gByDefaultAction;
 var gEnviado=false;
-var arrTeclas=null;
+var keyArray=null;
 var gAUXILIAR=0;
 var gWaitingCallOut=false;
 
 /**
 * Set the focus on the first visible control in the form
-* @param {Form} Formulario Optional- Defines the form containing the field, where we want to set the focus. If is not present, the first form of the page will be used.
-* @param {String} Campo Optional - Name of the control where we want to set the focus. If is not present the first field will be used.
+* @param {Form} form Optional- Defines the form containing the field, where we want to set the focus. If is not present, the first form of the page will be used.
+* @param {String} field Optional - Name of the control where we want to set the focus. If is not present the first field will be used.
 */
-function focoPrimerControl(Formulario, Campo) {
+function setFocusFirstControl(form, field) {
   var encontrado = false;
-  if (Formulario==null) Formulario=document.forms[0];
-  var total = Formulario.length;
+  if (form==null) form=document.forms[0];
+  var total = form.length;
   for(var i=0;i<total; i++)
   {
-    if ((Formulario.elements[i].type != "hidden") && (Formulario.elements[i].type != "button") && (Formulario.elements[i].type != "submit") && (Formulario.elements[i].type != "image") && (Formulario.elements[i].type != "reset")) 
+    if ((form.elements[i].type != "hidden") && (form.elements[i].type != "button") && (form.elements[i].type != "submit") && (form.elements[i].type != "image") && (form.elements[i].type != "reset")) 
     { 
-      if(Campo!=null) {
-        if (Campo == Formulario.elements[i].name && !Formulario.elements[i].readonly && !Formulario.elements[i].disabled) {
-          Formulario.elements[i].focus();
+      if(field!=null) {
+        if (field == form.elements[i].name && !form.elements[i].readonly && !form.elements[i].disabled) {
+          form.elements[i].focus();
           encontrado=true;
           break;
         }
-      } else if (!Formulario.elements[i].readonly && !Formulario.elements[i].disabled) {
+      } else if (!form.elements[i].readonly && !form.elements[i].disabled) {
         try {
-          Formulario.elements[i].focus();
+          form.elements[i].focus();
           encontrado=true;
           break;
         } catch (ignore) {}
       }
     }
   }
-  if (encontrado && Formulario.elements[i].type && Formulario.elements[i].type.indexOf("select")==-1)
-    Formulario.elements[i].select();
+  if (encontrado && form.elements[i].type && form.elements[i].type.indexOf("select")==-1)
+    form.elements[i].select();
 }
 
 /** 
@@ -760,17 +760,17 @@ function editHelp(url, tipo, id, value, height, width) {
 
 /**
 * Handles window events. This function handles events such as KeyDown; when a user hit the ENTER key to do somethig by default.
-* @param {Number} CodigoTecla ASCII code of the key pressed.
+* @param {Number} keyCode ASCII code of the key pressed.
 * @returns True if the key pressed is not ment to be handled. False if is a handled key. 
 * @type Boolean
 */
-function pulsarTecla(CodigoTecla) {
-  if (gBotonPorDefecto!=null)
+function keyPress(keyCode) {
+  if (gByDefaultAction!=null)
   {
-    var tecla = (!CodigoTecla) ? window.event.keyCode : CodigoTecla.which;
+    var tecla = (!keyCode) ? window.event.keyCode : keyCode.which;
     if (tecla == 13)
     {
-      eval(gBotonPorDefecto);
+      eval(gByDefaultAction);
       return false;
     }
   }
@@ -780,47 +780,49 @@ function pulsarTecla(CodigoTecla) {
 
 /**
 * Defines a defult action on each page, the one that will be executed when the user hit the ENTER key. This function is shared in pages containing frames.
-* @param {String} accion Default command to be executed when the user hit the ENTER key.
+* @param {String} action Default command to be executed when the user hit the ENTER key.
 * @returns Always retrun true.
 * @type Boolean
-* @see #pulsarTecla
+* @see #keyPress
 */
-function porDefecto(accion) {
-  gBotonPorDefecto = accion;
+function byDefaultAction(action) {
+  gByDefaultAction = action;
   if (!document.all)
   {
     document.captureEvents(Event.KEYDOWN);
   }
-  document.onkeydown=pulsarTecla;
+  document.onkeydown=keyPress;
   return true;
 }
 
 
 /**
 * Builds the keys array on each screen. Each key that we want to use should have this structure.
-* @param {Sting} tecla A text version of the handled key.
-* @param {String} evento Event that we want to fire when the key is is pressed.
-* @param {String} campo Name of the field on the window. If is null, is a global event, for the hole window.
-* @param {String} teclaAuxiliar Text defining the auxiliar key. The value could be CTRL for the Control key, ALT for the Alt, null if we don't have to use an auxiliar key.
+* @param {String} key A text version of the handled key.
+* @param {String} event Event that we want to fire when the key is is pressed.
+* @param {String} field Name of the field on the window. If is null, is a global event, for the hole window.
+* @param {String} auxKey Text defining the auxiliar key. The value could be CTRL for the Control key, ALT for the Alt, null if we don't have to use an auxiliar key.
+* @param {Boolean} propagateKey True if the key is going to be prograpated or false if is not going to be propagated.
 */
-function Teclas(tecla, evento, campo, teclaAuxiliar) {
-  this.tecla = tecla;
-  this.evento = evento;
-  this.campo = campo;
-  this.teclaAuxiliar = teclaAuxiliar;
+function keyArrayItem(key, event, field, auxKey, propagateKey) {
+  this.key = key;
+  this.event = event;
+  this.field = field;
+  this.auxKey = auxKey;
+  this.propagateKey = propagateKey;
 }
 
 
 /**
 * Returns the ASCII code of the given key
-* @param {String} codigo Text version of a key
+* @param {String} code Text version of a key
 * @returns The ASCII code of the key
 * @type Number
 */
-function obtenerCodigoTecla(codigo) {
-  if (codigo==null) return 0;
-  else if (codigo.length==1) return codigo.toUpperCase().charCodeAt(0);
-  switch (codigo.toUpperCase()) {
+function obtainKeyCode(code) {
+  if (code==null) return 0;
+  else if (code.length==1) return code.toUpperCase().charCodeAt(0);
+  switch (code.toUpperCase()) {
     case "BACKSPACE": return 8;
     case "TAB": return 9;
     case "ENTER": return 13;
@@ -862,39 +864,39 @@ function obtenerCodigoTecla(codigo) {
 
 
 /**
-* Handles the events execution of keys pressed, based on the events registered in the arrTeclas global array.   
-* @param {Event} CodigoTecla Code of the key pressed.
-* @returns True if the key is not registered in the array, false if a event for this key is registered in arrTeclas array.
+* Handles the events execution of keys pressed, based on the events registered in the keyArray global array.   
+* @param {Event} keyCode Code of the key pressed.
+* @returns True if the key is not registered in the array, false if a event for this key is registered in keyArray array.
 * @type Boolean
-* @see #obtenerCodigoTecla
+* @see #obtainKeyCode
 */
-function controlTecla(CodigoTecla) {
-  if (arrTeclas==null || arrTeclas.length==0) return true;
-  if (!CodigoTecla) CodigoTecla = window.event;
-  var tecla = window.event ? CodigoTecla.keyCode : CodigoTecla.which;
-  var target = (CodigoTecla.target?CodigoTecla.target: CodigoTecla.srcElement);
-  //var target = (document.layers) ? CodigoTecla.target : CodigoTecla.srcElement;
-  var total = arrTeclas.length;
+function keyControl(pushedKey) {
+  if (keyArray==null || keyArray.length==0) return true;
+  if (!pushedKey) pushedKey = window.event;
+  var keyCode = window.event ? pushedKey.keyCode : pushedKey.which;
+  var target = (pushedKey.target?pushedKey.target: pushedKey.srcElement);
+  //var target = (document.layers) ? pushedKey.target : pushedKey.srcElement;
+  var total = keyArray.length;
   for (var i=0;i<total;i++) {
-    if (arrTeclas[i]!=null && arrTeclas[i]) {
-      if (tecla == obtenerCodigoTecla(arrTeclas[i].tecla)) {
-        if (arrTeclas[i].teclaAuxiliar==null || arrTeclas[i].teclaAuxiliar=="" || arrTeclas[i].teclaAuxiliar=="null") {
-          if (arrTeclas[i].campo==null || (target!=null && target.name!=null && isIdenticalField(arrTeclas[i].campo, target.name))) {
-            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
+    if (keyArray[i]!=null && keyArray[i]) {
+      if (keyCode == obtainKeyCode(keyArray[i].key)) {
+        if (keyArray[i].auxKey==null || keyArray[i].auxKey=="" || keyArray[i].auxKey=="null") {
+          if (keyArray[i].field==null || (target!=null && target.name!=null && isIdenticalField(keyArray[i].field, target.name))) {
+            var eventoTrl = replaceEventString(keyArray[i].evento, target.name, keyArray[i].field);
             eval(eventoTrl);
             return false;
           }
-        } else if (arrTeclas[i].campo==null || (target!=null && target.name!=null && isIdenticalField(arrTeclas[i].campo, target.name))) {
-          if (arrTeclas[i].teclaAuxiliar=="ctrlKey" && CodigoTecla.ctrlKey && !CodigoTecla.altKey && !CodigoTecla.shiftKey) {
-            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
+        } else if (keyArray[i].field==null || (target!=null && target.name!=null && isIdenticalField(keyArray[i].field, target.name))) {
+          if (keyArray[i].auxKey=="ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
+            var eventoTrl = replaceEventString(keyArray[i].evento, target.name, keyArray[i].field);
             eval(eventoTrl);
             return false;
-          } else if (arrTeclas[i].teclaAuxiliar=="altKey" && !CodigoTecla.ctrlKey && CodigoTecla.altKey && !CodigoTecla.shiftKey) {
-            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
+          } else if (keyArray[i].auxKey=="altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
+            var eventoTrl = replaceEventString(keyArray[i].evento, target.name, keyArray[i].field);
             eval(eventoTrl);
             return false;
-          } else if (arrTeclas[i].teclaAuxiliar=="shiftKey" && !CodigoTecla.ctrlKey && !CodigoTecla.altKey && CodigoTecla.shiftKey) {
-            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
+          } else if (keyArray[i].auxKey=="shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
+            var eventoTrl = replaceEventString(keyArray[i].evento, target.name, keyArray[i].field);
             eval(eventoTrl);
             return false;
           }
@@ -939,8 +941,8 @@ function replaceEventString(eventoJS, inputname, arrayName) {
 /**
 * Used to activate the key-press handling. Must be called after set the keys global array <em>arraTeclas</em>.
 */
-function activarControlTeclas() {
-  if (arrTeclas==null || arrTeclas.length==0) return true;
+function enableShortcuts() {
+  if (keyArray==null || keyArray.length==0) return true;
 
     var agt=navigator.userAgent.toLowerCase();
 
@@ -950,7 +952,7 @@ function activarControlTeclas() {
   if (agt.indexOf('gecko') != -1)
     document.captureEvents(Event.KEYDOWN);*/
   
-  document.onkeydown=controlTecla;
+  document.onkeydown=keyControl;
   return true;
 }
 
@@ -1477,7 +1479,7 @@ function seleccionarListCompleto(campo) {
 function tamanoMaximo(campo, tamano, evt) {
   if (campo==null || !campo) return false;
   if (campo.value.length>=tamano) {
-    if (document.layers) CodigoTecla.which=0;
+    if (document.layers) keyCode.which=0;
     else {
       if (evt==null) evt = window.event;
       evt.keyCode=0;
@@ -2320,27 +2322,27 @@ function estaEnCombo(combo, clave) {
 * @param {Event} evt The event handling object associated with the field.
 * @returns True if is an allowed number, otherwise false.
 * @type Boolean
-* @see #obtenerCodigoTecla
+* @see #obtainKeyCode
 */
 function auto_completar_numero(obj, bolDecimal, bolNegativo, evt) {
   var numero;
   if (document.all) evt = window.event;
   if (document.layers) { numero = evt.which; }
   if (document.all)    { numero = evt.keyCode;}
-  if (numero != obtenerCodigoTecla("ENTER") && numero != obtenerCodigoTecla("LEFTARROW") && numero != obtenerCodigoTecla("RIGHTARROW") && numero != obtenerCodigoTecla("UPARROW") && numero != obtenerCodigoTecla("DOWNARROW") && numero != obtenerCodigoTecla("DELETE") && numero != obtenerCodigoTecla("BACKSPACE") && numero != obtenerCodigoTecla("END") && numero != obtenerCodigoTecla("HOME") && !evt["ctrlKey"]) {
+  if (numero != obtainKeyCode("ENTER") && numero != obtainKeyCode("LEFTARROW") && numero != obtainKeyCode("RIGHTARROW") && numero != obtainKeyCode("UPARROW") && numero != obtainKeyCode("DOWNARROW") && numero != obtainKeyCode("DELETE") && numero != obtainKeyCode("BACKSPACE") && numero != obtainKeyCode("END") && numero != obtainKeyCode("HOME") && !evt["ctrlKey"]) {
     if (numero>95 && numero <106) { //Teclado numérico
       numero = numero - 96;
       if(isNaN(numero)) {
         if (document.all) evt.returnValue = false;
         return false;
       }
-    } else if (numero!=obtenerCodigoTecla("DECIMAL") && numero != obtenerCodigoTecla("NUMBERDECIMAL") && numero != obtenerCodigoTecla("NEGATIVE") && numero != obtenerCodigoTecla("NUMBERNEGATIVE")) { //No es "-" ni "."
+    } else if (numero!=obtainKeyCode("DECIMAL") && numero != obtainKeyCode("NUMBERDECIMAL") && numero != obtainKeyCode("NEGATIVE") && numero != obtainKeyCode("NUMBERNEGATIVE")) { //No es "-" ni "."
       numero = String.fromCharCode(numero);
       if(isNaN(numero)) {
         if (document.all) evt.returnValue = false;
         return false;
       }
-    } else if (numero==obtenerCodigoTecla("DECIMAL") || numero==obtenerCodigoTecla("NUMBERDECIMAL")) { //Es "."
+    } else if (numero==obtainKeyCode("DECIMAL") || numero==obtainKeyCode("NUMBERDECIMAL")) { //Es "."
       if (bolDecimal) {
         if (obj.value==null || obj.value=="") return true;
         else {

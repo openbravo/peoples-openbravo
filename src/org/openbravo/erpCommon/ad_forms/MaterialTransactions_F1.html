@@ -31,13 +31,13 @@
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array(
-new Teclas("M", "mostrarMenu();", null, "ctrlKey")
+keyArray = new Array(
+new keyArrayItem("M", "mostrarMenu();", null, "ctrlKey")
 ,
-new Teclas("ENTER", "openSearch(null, null, '../info/Locator_FS.html', null, false, 'frmMain', 'inpmLocatorId', 'inpmLocatorId_DES', document.frmMain.inpmLocatorId_DES.value, 'Command', 'KEY', 'WindowID', '168');", "inpmLocatorId_DES", "null"), 
-new Teclas("ENTER", "openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY', 'WindowID', '168');", "inpmProductId_DES", "null")
+new keyArrayItem("ENTER", "openSearch(null, null, '../info/Locator_FS.html', null, false, 'frmMain', 'inpmLocatorId', 'inpmLocatorId_DES', document.frmMain.inpmLocatorId_DES.value, 'Command', 'KEY', 'WindowID', '168');", "inpmLocatorId_DES", "null"), 
+new keyArrayItem("ENTER", "openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY', 'WindowID', '168');", "inpmProductId_DES", "null")
 );
-activarControlTeclas();
+enableShortcuts();
 
 function depurarSelector(action) {
 	var clave = radioValue(parent.medio.document.frmSelector.inpMTransactionId);
@@ -65,7 +65,7 @@ function onloadFunctions() {
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();focoPrimerControl();porDefecto('submitCommandForm(\'FIND\', true, null, null, \'medio\')');">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();setFocusFirstControl();byDefaultAction('submitCommandForm(\'FIND\', true, null, null, \'medio\')');">
 <span id="paramToolBar">toolbar</span> <BR></BR>
 <FORM name="frmMain" method="POST" action="MaterialTransactions_F2.html" target="medio">
   <INPUT type="hidden" name="Command"></INPUT>

@@ -44,14 +44,14 @@
       
 
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array(
-new Teclas("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
+keyArray = new Array(
+new keyArrayItem("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
 );
 
-activarControlTeclas();
+enableShortcuts();
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="focoPrimerControl();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="setFocusFirstControl();">
 
 <FORM name="frmPago" method="POST" action="Locator_F2.html" target="medio">
   <INPUT type="hidden" name="Command">

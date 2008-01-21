@@ -61,11 +61,11 @@ function depurar()
 }
 function onloadFunctions() {
  // new TypeAheadCombo("inpProjectpublic");
-  arrTeclas[arrTeclas.length] = new Teclas("ENTER", "openSearch(null, null, '../info/Project_FS.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', inputValue(document.frmMain.inpcProjectId_D), 'inpIDValue', 'WindowID', inputValue(document.frmMain.inpcProjectId), 'Command', 'KEY');", "inpcProjectId_D", "null"); 
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Project_FS.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', inputValue(document.frmMain.inpcProjectId_D), 'inpIDValue', 'WindowID', inputValue(document.frmMain.inpcProjectId), 'Command', 'KEY');", "inpcProjectId_D", "null"); 
 }
 </script>
 </head>
-    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();">
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
 
 <FORM method="POST" action="ReportInvoiceCustomerEdition.html" name="frmMain" id="form">
      <INPUT type="hidden" name="Command">

@@ -50,9 +50,9 @@ var baseDirection = "../../../../../web/";
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script> 
 <SCRIPT language="JavaScript" type="text/javascript">
-var arrTeclas = new Array();
-function activarTeclas() {
-arrTeclas[0] = new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_D', document.frmMain.inpBpartnerId_D.value, 'Command', 'KEY');", "inpBpartnerId_D", "null");
+var keyArray = new Array();
+function enableLocalShortcuts() {
+keyArray[0] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_D', document.frmMain.inpBpartnerId_D.value, 'Command', 'KEY');", "inpBpartnerId_D", "null");
 }
 function depurar() {
 	var frm = document.frmMain;
@@ -95,7 +95,7 @@ function depurar() {
 
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="activarTeclas();resizeArea();xx;"  id="body" onresize="resizeArea();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="enableLocalShortcuts();resizeArea();xx;"  id="body" onresize="resizeArea();">
 <FORM id="form" method="POST" action="ExpenseAPInvoice.html" name="frmMain">
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>

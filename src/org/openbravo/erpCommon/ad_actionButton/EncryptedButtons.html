@@ -36,10 +36,10 @@
 var baseDirection="../../../../../web/";
 </SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array(
-new Teclas("ENTER", "saveChanges();", null, null)
+keyArray = new Array(
+new keyArrayItem("ENTER", "saveChanges();", null, null)
 );
-activarControlTeclas();
+enableShortcuts();
 
 function saveChanges() {
 	var frm = document.frmMain;
@@ -52,7 +52,7 @@ function depurar() {
 }
 </SCRIPT>
 </HEAD>
-<BODY onload="focoPrimerControl();xx();"  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramBody">
+<BODY onload="setFocusFirstControl();xx();"  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramBody">
 <FORM name="frmMain" method="post" action="EncryptedButtons.html" id="fieldForm">
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>

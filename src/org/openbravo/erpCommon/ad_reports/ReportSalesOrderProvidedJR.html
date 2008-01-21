@@ -74,7 +74,7 @@ function onloadFunctions() {
  // new TypeAheadCombo("inpProjectkind");
 //  new TypeAheadCombo("inpProjectpublic");
  // new TypeAheadCombo("inpProductCategory2");
-  arrTeclas = new Array(new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null"),new Teclas("ENTER", "openSearch(null, null, '../info/Project_FS.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', inputValue(document.frmMain.inpcProjectId_D), 'inpIDValue', 'WindowID', inputValue(document.frmMain.inpcProjectId), 'Command', 'KEY');", "inpcProjectId_D", "null"), new Teclas("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null"));
+  keyArray = new Array(new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null"),new keyArrayItem("ENTER", "openSearch(null, null, '../info/Project_FS.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', inputValue(document.frmMain.inpcProjectId_D), 'inpIDValue', 'WindowID', inputValue(document.frmMain.inpcProjectId), 'Command', 'KEY');", "inpcProjectId_D", "null"), new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null"));
 }
 </SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramArrayProduct">
@@ -86,7 +86,7 @@ new Array(2,4,'F4')
 );
 </SCRIPT>
 </HEAD>
-    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();">
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
 <FORM method="POST" action="ReportSalesOrderProvidedJR.html" name="frmMain" id="form">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpcBpartnerId" value=""></INPUT>

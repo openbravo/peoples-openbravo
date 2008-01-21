@@ -39,15 +39,15 @@
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array(
-new Teclas("ENTER", "openSearch(null, null, 'BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmOrder', 'inpBpartnerId', 'inpBpartnerId_DES', document.frmOrder.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null"),
-new Teclas("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
+keyArray = new Array(
+new keyArrayItem("ENTER", "openSearch(null, null, 'BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmOrder', 'inpBpartnerId', 'inpBpartnerId_DES', document.frmOrder.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null"),
+new keyArrayItem("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
 );
 
-activarControlTeclas();
+enableShortcuts();
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="focoPrimerControl();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="setFocusFirstControl();">
 
 
 

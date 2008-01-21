@@ -41,10 +41,10 @@
 
 
 <SCRIPT language="JavaScript" type="text/javascript">
-arrTeclas = new Array(
-new Teclas("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
+keyArray = new Array(
+new keyArrayItem("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey")
 );
-activarControlTeclas();
+enableShortcuts();
 </SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
 function depurar() {
@@ -62,7 +62,7 @@ function onloadFunctions() {
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();focoPrimerControl();" >
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();setFocusFirstControl();" >
 <FORM name="frmSelector" method="POST" action="ProductMultiple_F2.html" target="medio">
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>

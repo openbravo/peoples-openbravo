@@ -25,13 +25,13 @@
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://yourSite/web/";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-var arrTeclas = new Array();
-function activarTeclas() {
-arrTeclas[0] = new Teclas("ENTER", "openSearch(null, null, '../info/Request_FS.html', null, false, 'frmMain', 'inprRequestId', 'inprRequestId_D', document.frmMain.inprRequestId_D.value, 'Command', 'KEY');", "inprRequestId_D", "null");
+var keyArray = new Array();
+function enableLocalShortcuts() {
+keyArray[0] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Request_FS.html', null, false, 'frmMain', 'inprRequestId', 'inprRequestId_D', document.frmMain.inprRequestId_D.value, 'Command', 'KEY');", "inprRequestId_D", "null");
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="activarTeclas();xx"  id="body">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="enableLocalShortcuts();xx"  id="body">
 <span id="paramToolBar">toolbar</span> <BR></BR>
 <TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
   <TR> 

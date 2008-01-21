@@ -33,24 +33,24 @@
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
 <SCRIPT language="javascript" type="text/javascript">
-  var arrTeclas = new Array();
-  function activarTeclas() {
-    arrTeclas[0] = new Teclas("M", "mostrarMenu();", null, "ctrlKey");
-    arrTeclas[1] = new Teclas("N", "submitCommandForm('NEW', false, null, 'InvoiceVendorMultiline.html', '_parent', null, true, null, true);", null, "ctrlKey");
-    arrTeclas[3] = new Teclas("L", "submitCommandForm('RELATION', true, null, 'InvoiceVendorMultiline.html', '_parent', null, true, null, true);", null, "ctrlKey");
+  var keyArray = new Array();
+  function enableLocalShortcuts() {
+    keyArray[0] = new keyArrayItem("M", "mostrarMenu();", null, "ctrlKey");
+    keyArray[1] = new keyArrayItem("N", "submitCommandForm('NEW', false, null, 'InvoiceVendorMultiline.html', '_parent', null, true, null, true);", null, "ctrlKey");
+    keyArray[3] = new keyArrayItem("L", "submitCommandForm('RELATION', true, null, 'InvoiceVendorMultiline.html', '_parent', null, true, null, true);", null, "ctrlKey");
     var clave=document.frmMain.inpCommandType.value;
     if (clave!=null && clave!="" && clave=="EDIT") {
-      arrTeclas[4] = new Teclas("D", "submitCommandForm('DELETE', true, null, 'InvoiceVendorMultiline.html', '_parent');", null, "ctrlKey");
-      arrTeclas[5] = new Teclas("S", "submitCommandForm('SAVE_EDIT_EDIT', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
-      arrTeclas[6] = new Teclas("G", "submitCommandForm('SAVE_EDIT_RELATION', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
-      arrTeclas[7] = new Teclas("H", "submitCommandForm('SAVE_EDIT_NEW', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
+      keyArray[4] = new keyArrayItem("D", "submitCommandForm('DELETE', true, null, 'InvoiceVendorMultiline.html', '_parent');", null, "ctrlKey");
+      keyArray[5] = new keyArrayItem("S", "submitCommandForm('SAVE_EDIT_EDIT', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
+      keyArray[6] = new keyArrayItem("G", "submitCommandForm('SAVE_EDIT_RELATION', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
+      keyArray[7] = new keyArrayItem("H", "submitCommandForm('SAVE_EDIT_NEW', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
     } else {
-      arrTeclas[4] = new Teclas("S", "submitCommandForm('SAVE_NEW_EDIT', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
-      arrTeclas[5] = new Teclas("G", "submitCommandForm('SAVE_NEW_RELATION', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
-      arrTeclas[6] = new Teclas("H", "submitCommandForm('SAVE_NEW_NEW', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
+      keyArray[4] = new keyArrayItem("S", "submitCommandForm('SAVE_NEW_EDIT', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
+      keyArray[5] = new keyArrayItem("G", "submitCommandForm('SAVE_NEW_RELATION', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
+      keyArray[6] = new keyArrayItem("H", "submitCommandForm('SAVE_NEW_NEW', true, null, 'InvoiceVendorMultiline.html', '_parent', null, null, null, true);", null, "ctrlKey");
     }
-    arrTeclas[8] = new Teclas("ENTER", "openProductSearch(true);", "inpmProductId_D%", "null");
-    arrTeclas[9] = new Teclas("F8", "submitCommandFormParameter(\"DIRECT\", document.frmSecond.inpmProductId,  document.frmMain.inpmProductId@endinputname@.value, false, document.frmSecond, '../Product/Product_Edition.html', '_parent');", "inpmProductId_D%", "null");
+    keyArray[8] = new keyArrayItem("ENTER", "openProductSearch(true);", "inpmProductId_D%", "null");
+    keyArray[9] = new keyArrayItem("F8", "submitCommandFormParameter(\"DIRECT\", document.frmSecond.inpmProductId,  document.frmMain.inpmProductId@endinputname@.value, false, document.frmSecond, '../Product/Product_Edition.html', '_parent');", "inpmProductId_D%", "null");
   }
 </SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
@@ -199,7 +199,7 @@ function acctDimensionButton(cInvoicelineId, qty) {
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="activarTeclas();focoPrimerControl();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="enableLocalShortcuts();setFocusFirstControl();">
   <IFRAME name="frameMultiOculto" src="InvoiceVendorMultiline_Lines.html?Command=HIDDEN" width="0" height="0" style="visibility: hidden; overflow:hidden; display: none;"></IFRAME>
   <FORM name="frmMain" method="POST" action="InvoiceVendorMultiline_Lines.html">
     <INPUT type="hidden" name="Command"></INPUT>

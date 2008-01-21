@@ -54,15 +54,15 @@ function depurar() {
 	*/
 	return true;
 }
-var arrTeclas = new Array(
-new Teclas("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'BPARTNER_SELECTOR', false, 'frmSelector', 'inpBpartnerId', 'inpBpartnerId_DES', document.frmSelector.inpBpartnerId_DES.value, 'Command', 'KEY', 'WindowID', document.frmSelector.inpWindowId.value);", "inpBpartnerId_DES", "null"),
-new Teclas("B", "submitCommandForm(\'FIND\', true);", null, "ctrlKey")
+var keyArray = new Array(
+new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'BPARTNER_SELECTOR', false, 'frmSelector', 'inpBpartnerId', 'inpBpartnerId_DES', document.frmSelector.inpBpartnerId_DES.value, 'Command', 'KEY', 'WindowID', document.frmSelector.inpWindowId.value);", "inpBpartnerId_DES", "null"),
+new keyArrayItem("B", "submitCommandForm(\'FIND\', true);", null, "ctrlKey")
 );
 
-activarControlTeclas();
+enableShortcuts();
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="focoPrimerControl();" >
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="setFocusFirstControl();" >
 <FORM name="frmSelector" method="POST" action="Project_F2.html" target="medio">
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>

@@ -28,15 +28,15 @@ function depurar() {
 	return true;
 }
 
-arrTeclas = new Array(
-new Teclas("B", "submitCommandForm('ORDERBY', true, null, null, '_top');", null, "ctrlKey")
+keyArray = new Array(
+new keyArrayItem("B", "submitCommandForm('ORDERBY', true, null, null, '_top');", null, "ctrlKey")
 );
-activarControlTeclas();
+enableShortcuts();
 </SCRIPT>
 <TITLE>Filter</TITLE>
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META>
 </HEAD>
-<BODY bottommargin="0" leftmargin="0" marginheight="0" marginwidth="0" rightmargin="0" topmargin="0" onload="focoPrimerControl();" >
+<BODY bottommargin="0" leftmargin="0" marginheight="0" marginwidth="0" rightmargin="0" topmargin="0" onload="setFocusFirstControl();" >
 <FORM name="frmMain" method="post" action="TabFilter.html">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpTabId" value="xx" id="paramTabId"></INPUT>

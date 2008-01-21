@@ -116,11 +116,11 @@ function actualizarDatos(CommandValue, productId, identifier, levelid) {
 }
 
 function onloadFunctions(){
-  arrTeclas[arrTeclas.length] = new Teclas("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null");
 }
 </SCRIPT>
 </HEAD>
-    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();">
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
 <FORM method="POST" action="ReportProductionCost.html" name="frmMain" id="form">
 <INPUT type="hidden" name="Command"></INPUT>
 <input type="hidden" name="inpId" value=""></input>

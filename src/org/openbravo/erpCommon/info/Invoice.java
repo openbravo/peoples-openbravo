@@ -182,11 +182,11 @@ public class Invoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     StringBuffer total = new StringBuffer();
-    total.append("arrTeclas = new Array(\n");
-    total.append("new Teclas(\"ENTER\", \"openSearch(null, null, '../Invoice_FS.html', 'SELECTOR_INVOICE', false, 'frmMain', 'inpNewcInvoiceId', 'inpNewcInvoiceId_DES', document.frmMain.inpNewcInvoiceId_DES.value, 'Command', 'KEY', 'WindowID', '");
+    total.append("keyArray = new Array(\n");
+    total.append("new keyArrayItem(\"ENTER\", \"openSearch(null, null, '../Invoice_FS.html', 'SELECTOR_INVOICE', false, 'frmMain', 'inpNewcInvoiceId', 'inpNewcInvoiceId_DES', document.frmMain.inpNewcInvoiceId_DES.value, 'Command', 'KEY', 'WindowID', '");
     total.append(strWindow).append("');\", \"inpNewcInvoiceId_DES\", \"null\")\n");
     total.append(");\n");
-    total.append("activarControlTeclas();\n");
+    total.append("enableShortcuts();\n");
     xmlDocument.setParameter("WindowIDArray", total.toString());
     xmlDocument.setParameter("WindowID", strWindow);
     response.setContentType("text/html; charset=UTF-8");
