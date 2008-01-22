@@ -83,7 +83,7 @@ BEGIN
                                             AND ol.DatePromised IS NOT NULL
                                             AND Mrp_Check_Planningmethod(
                                                     COALESCE(po.MRP_PlanningMethod_ID, p.MRP_PlanningMethod_ID),
-                                                    'SO', (ol.DatePromised - p_PlanningDate), p_TimeHorizon) <> -1
+                                                    'SO', TO_NUMBER(ol.DatePromised - p_PlanningDate), p_TimeHorizon) <> -1
                                             AND Ad_Isorgincluded(o.AD_ORG_ID, p_Org_ID, p_Client_ID) > -1)
                                OR EXISTS (SELECT 1
                                           FROM MRP_SALESFORECAST sf, MRP_SALESFORECASTLINE sfl
@@ -92,7 +92,7 @@ BEGIN
                                             AND sf.C_BPARTNER_ID = p_BPartner_ID
                                             AND Mrp_Check_Planningmethod(
                                                     COALESCE(po.MRP_PlanningMethod_ID, p.MRP_PlanningMethod_ID),
-                                                    'SF', (sfl.DatePlanned - p_PlanningDate), p_TimeHorizon) <> -1
+                                                    'SF', TO_NUMBER(sfl.DatePlanned - p_PlanningDate), p_TimeHorizon) <> -1
                                             AND Ad_Isorgincluded(sf.AD_ORG_ID, p_Org_ID, p_Client_ID) > -1)
                               )
                           AND (p_BP_Group_ID IS NULL
@@ -108,7 +108,7 @@ BEGIN
                                            AND ol.DatePromised IS NOT NULL
                                            AND Mrp_Check_Planningmethod(
                                                     COALESCE(po.MRP_PlanningMethod_ID, p.MRP_PlanningMethod_ID),
-                                                    'SO', (ol.DatePromised - p_PlanningDate), p_TimeHorizon) <> -1
+                                                    'SO', TO_NUMBER(ol.DatePromised - p_PlanningDate), p_TimeHorizon) <> -1
                                            AND Ad_Isorgincluded(o.AD_ORG_ID, p_Org_ID, p_Client_ID) > -1)
                                 OR EXISTS (SELECT 1
                                            FROM MRP_SALESFORECAST sf, MRP_SALESFORECASTLINE sfl, C_BPARTNER bp
@@ -118,7 +118,7 @@ BEGIN
                                              AND bp.C_BP_Group_ID = p_BP_Group_ID
                                              AND Mrp_Check_Planningmethod(
                                                     COALESCE(po.MRP_PlanningMethod_ID, p.MRP_PlanningMethod_ID),
-                                                    'SF', (sfl.DatePlanned - p_PlanningDate), p_TimeHorizon) <> -1
+                                                    'SF', TO_NUMBER(sfl.DatePlanned - p_PlanningDate), p_TimeHorizon) <> -1
                                              AND Ad_Isorgincluded(sf.AD_ORG_ID, p_Org_ID, p_Client_ID) > -1)
                               )
       ) LOOP
@@ -144,7 +144,7 @@ BEGIN
           v_ResultStr := 'Inserting Order lines product: ' || Cur_Product.M_Product_ID;
           FOR Cur_OrderLine IN (SELECT Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
                                                                 (CASE o.IsSOTrx WHEN 'Y' THEN 'SO' ELSE 'PO' END),
-                                                                (ol.DatePromised - p_PlanningDate), p_TimeHorizon) AS WEIGHTING,
+                                                                TO_NUMBER(ol.DatePromised - p_PlanningDate), p_TimeHorizon) AS WEIGHTING,
                                       (ol.QTYORDERED - COALESCE(ol.QTYDELIVERED, 0)) AS qty,
                                       ol.C_OrderLine_ID, GREATEST(COALESCE(ol.DatePromised, ol.DateOrdered, o.DateOrdered), p_PlanningDate) AS planningDate,
                                       COALESCE(ol.DateOrdered, o.Dateordered) AS dateordered,
@@ -157,7 +157,7 @@ BEGIN
                                    AND ol.M_Product_ID = Cur_Product.M_Product_ID
                                    AND Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
                                                                (CASE o.IsSOTrx WHEN 'Y' THEN 'SO' ELSE 'PO' END),
-                                                               (COALESCE(ol.DatePromised, ol.DateOrdered, o.DateOrdered) - p_PlanningDate), p_TimeHorizon) <> -1
+                                                               TO_NUMBER(COALESCE(ol.DatePromised, ol.DateOrdered, o.DateOrdered) - p_PlanningDate), p_TimeHorizon) <> -1
                                    AND Ad_Isorgincluded(o.AD_ORG_ID, p_Org_ID, p_Client_ID) > -1
           ) LOOP
             Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run, Cur_Product.M_Product_ID, (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN (-1*Cur_OrderLine.Qty*Cur_OrderLine.Weighting) ELSE (Cur_OrderLine.Qty*Cur_OrderLine.Weighting) END), (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN (-1*Cur_OrderLine.Qty*Cur_OrderLine.Weighting) ELSE (Cur_OrderLine.Qty*Cur_OrderLine.Weighting) END), NULL, (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN 'SO' ELSE 'PO' END), 'Y', Cur_OrderLine.C_OrderLine_ID, NULL, NULL, NULL, NULL, Cur_OrderLine.planningDate, Cur_OrderLine.dateordered, p_Production, (CASE WHEN (Cur_OrderLine.IsSOTrx = 'Y' AND p_Production = 'Y') OR (p_Production = 'N' AND Cur_OrderLine.Qty < 0 ) THEN 'N' ELSE 'Y' END), NULL, v_Aux_ID);
@@ -175,7 +175,7 @@ BEGIN
                                        WHEN '-' THEN ((-1 * WPP.MOVEMENTQTY) * (WP.QUANTITY - WP.DONEQUANTITY))
                                        ELSE 0 END) AS TOTAL,
                                    Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID, 'WR',
-                                (WR.LAUNCHDATE - p_PlanningDate), p_TimeHorizon) AS WEIGHTING
+                                TO_NUMBER(WR.LAUNCHDATE - p_PlanningDate), p_TimeHorizon) AS WEIGHTING
                                 FROM MA_WORKREQUIREMENT WR, MA_WRPHASE WP, MA_WRPHASEPRODUCT WPP
                                 WHERE WR.MA_WORKREQUIREMENT_ID = WP.MA_WORKREQUIREMENT_ID
                                   AND WP.MA_WRPHASE_ID = WPP.MA_WRPHASE_ID
@@ -183,7 +183,7 @@ BEGIN
                                   AND WPP.M_PRODUCT_ID = Cur_Product.M_Product_ID
                                   AND (WR.ENDDATE - p_PlanningDate) < p_TimeHorizon
                                   AND Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID, 'WR',
-                                  (WR.LAUNCHDATE - p_PlanningDate), p_TimeHorizon) <> -1
+                                  TO_NUMBER(WR.LAUNCHDATE - p_PlanningDate), p_TimeHorizon) <> -1
                                   AND Ad_Isorgincluded(WR.AD_ORG_ID, p_Org_ID, p_Client_ID) > -1
                                 GROUP BY WR.MA_WORKREQUIREMENT_ID, WR.ENDDATE, WR.STARTDATE, WR.LAUNCHDATE) A
                               WHERE A.EXPECTED >0
@@ -218,7 +218,7 @@ BEGIN
 
           v_ResultStr := 'Inserting Sales forecast for product: ' || Cur_Product.M_Product_ID;
           FOR Cur_SalesForeCast IN (SELECT Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
-                                              'SF', (sfl.DatePlanned - p_PlanningDate), p_TimeHorizon) AS Weighting,
+                                              'SF', TO_NUMBER(sfl.DatePlanned - p_PlanningDate), p_TimeHorizon) AS Weighting,
                                           sfl.MRP_SALESFORECASTLINE_ID, GREATEST(sfl.DatePlanned, p_Planningdate) AS DatePlanned,
                                           -1*sfl.qty AS qty
                                      FROM MRP_SALESFORECAST sf, MRP_SALESFORECASTLINE sfl
@@ -226,7 +226,7 @@ BEGIN
                                        AND (sf.IsActive = 'Y' AND sfl.Isactive = 'Y')
                                        AND sfl.M_Product_ID = Cur_Product.M_Product_ID
                                        AND Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
-                                              'SF', (sfl.DatePlanned - p_PlanningDate), p_TimeHorizon) <> -1
+                                              'SF', TO_NUMBER(sfl.DatePlanned - p_PlanningDate), p_TimeHorizon) <> -1
                                        AND Ad_Isorgincluded(sf.AD_ORG_ID, p_Org_ID, p_Client_ID) > -1
           ) LOOP
             Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run, Cur_Product.M_Product_ID, (Cur_SalesForeCast.Qty*Cur_SalesForeCast.Weighting), (Cur_SalesForeCast.Qty*Cur_SalesForeCast.Weighting), NULL, 'SF', 'Y', NULL, NULL, Cur_SalesForeCast.MRP_SALESFORECASTLINE_ID, NULL, NULL, Cur_SalesForeCast.DatePlanned, NULL, p_Production, CASE WHEN (Cur_SalesForeCast.Qty < 0 AND p_Production='Y') OR (Cur_SalesForeCast.Qty > 0 AND p_Production='N') THEN 'N' ELSE 'Y' END, NULL, v_Aux_ID);
@@ -236,11 +236,11 @@ BEGIN
             v_ResultStr := 'Inserting Requisition lines for product: ' || Cur_Product.M_Product_ID;
             FOR Cur_RequisitionLine IN (SELECT r.M_RequisitionLine_ID, (-1)*r.qty AS qty, GREATEST(r.DatePlanned, p_PlanningDate) AS DATEPLANNED,
                                                Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
-                                              'MF', (r.DatePlanned - p_PlanningDate), p_TimeHorizon) AS Weighting
+                                              'MF', TO_NUMBER(r.DatePlanned - p_PlanningDate), p_TimeHorizon) AS Weighting
                                           FROM M_REQUISITIONLINE r
                                          WHERE r.isActive = 'Y'
                                            AND Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
-                                              'MF', (r.DatePlanned - p_PlanningDate), p_TimeHorizon) <> -1
+                                              'MF', TO_NUMBER(r.DatePlanned - p_PlanningDate), p_TimeHorizon) <> -1
                                            AND r.M_Product_ID = Cur_Product.M_Product_ID
                                            AND r.C_Order_ID IS NULL
             ) LOOP
