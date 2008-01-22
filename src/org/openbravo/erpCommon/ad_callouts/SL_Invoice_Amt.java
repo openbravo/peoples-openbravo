@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,12 +77,13 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
 
     if (strQtyInvoice.equals("")) qtyInvoice=ZERO;
     else qtyInvoice = new BigDecimal(strQtyInvoice);
+    /*
     if (strChanged.equals("inpqtyinvoiced")||strChanged.equals("inppricelist"))
     {
       if (log4j.isDebugEnabled()) log4j.debug("strPriceList: "+strPriceList.replace("\"", "")+" product:"+strProduct+" qty:"+strQtyInvoice);
       strPriceActual = SLOrderProductData.getOffersPriceInvoice(this, data[0].dateinvoiced, data[0].cBpartnerId, strProduct, strPriceList.replace("\"", ""), strQtyInvoice, data[0].mPricelistId, data[0].id);
     }
-
+    */
     
     if (strPriceActual.equals("")) strPriceActual = "0";
     if (strPriceLimit.equals("")) strPriceLimit = "0";
