@@ -22,6 +22,10 @@ var classOpened = "Icon_folderOpened";
 var classClosed = "Icon_folderClosed";
 var isOpened = false;
 var focusedMenuElement = null;
+var isGoingDown = null;
+var firstGoingDown = null;
+var isGoingUp = null;
+var firstGoingUp = null;
 
 function getReference(id) {
   if (document.getElementById) return document.getElementById(id);
@@ -143,7 +147,7 @@ function activateElement(obj){
     cambiarSituacion(null, obj);
     //obj.onclick();  //With this value the window will be opened
   } else {
-    menuDownKey();
+    setMenuElementFocus(getNextMenuElement(focusedMenuElement));
   }
   return true;
 }
@@ -298,6 +302,7 @@ function getLastMenuElement() {
 }
 
 function getNextMenuElement(obj) {
+  var error = false;
   if (obj==null || obj=='null' || obj=='') {
     var firstElementObj = getFirstMenuElement();
     return firstElementObj;
@@ -340,14 +345,22 @@ function getNextMenuElement(obj) {
         nextElement = nextElement.parentNode; //TR0_2
       }
     } catch (e) {
-      nextElement = nextElementTmp;
-      // up a level
-      nextElement = nextElement.parentNode; // TBODY_1
-      nextElement = nextElement.parentNode; // TABLE_1
-      nextElement = nextElement.parentNode; // TD_1
-      nextElement = nextElement.parentNode; // TR0_1
-      nextElementTmp = nextElement;
+      try {
+        nextElement = nextElementTmp;
+        // up a level
+        nextElement = nextElement.parentNode; // TBODY_1
+        nextElement = nextElement.parentNode; // TABLE_1
+        nextElement = nextElement.parentNode; // TD_1
+        nextElement = nextElement.parentNode; // TR0_1
+        nextElementTmp = nextElement;
+      } catch (e) {
+        error=true;
+        break;
+      }
     }
+  }
+  if (error==true) {
+    return obj;
   }
   nextElement = nextElement.firstChild;
   for (;;) {
@@ -466,6 +479,7 @@ function getNextMenuElement(obj) {
 }
 
 function getPreviousMenuElement(obj) {
+  var error = false;
   if (obj==null || obj=='null' || obj=='') {
     var lastElementObj = getLastMenuElement();
     return lastElementObj;
@@ -600,12 +614,22 @@ function getPreviousMenuElement(obj) {
 
   previousElement = previousElement.firstChild;
   for (;;) {
-    if (previousElement.nodeType != '1') {
-      previousElement = previousElement.nextSibling; // TABLE_3
-    } else {
+    try {      
+      if (previousElement.nodeType != '1') {
+        previousElement = previousElement.nextSibling; // TABLE_3
+      } else {
+        break;
+      }
+    } catch (e) {
+      error=true;
       break;
     }
   }
+
+  if (error==true) {
+    return obj;
+  }
+
   previousElement = previousElement.firstChild;
   for (;;) {
     if (previousElement.nodeType != '1') {
@@ -732,14 +756,68 @@ function setMenuElementFocus(obj) {
   putMenuElementFocus(focusedMenuElement);
 }
 
-function menuUpKey() {
-  var obj = getPreviousMenuElement(focusedMenuElement);
-  setMenuElementFocus(obj);
+function menuUpKey(state) {
+  if (navigator.userAgent.indexOf("NT") != -1 && state == true) {
+    setMenuElementFocus(getPreviousMenuElement(focusedMenuElement));
+  } else {
+    if (state) {
+      if (!isGoingUp) {
+        firstGoingUp = true;
+        isGoingUp = true;
+        menuUpKeyDelay();
+      }
+    } else if (!state) {
+      isGoingUp = false;
+      return true;
+    }
+  }
+  return false;
 }
 
-function menuDownKey() {
-  var obj = getNextMenuElement(focusedMenuElement);
-  setMenuElementFocus(obj);
+function menuUpKeyDelay() {
+  if (isGoingUp) {
+    setMenuElementFocus(getPreviousMenuElement(focusedMenuElement));
+    if (firstGoingUp) {
+      firstGoingUp = false;
+      setTimeout('menuUpKeyDelay();', 400);
+    } else {
+      setTimeout('menuUpKeyDelay();', 60);
+    }
+  } else {
+    return false;
+  }
+}
+
+function menuDownKey(state) {
+  if (navigator.userAgent.indexOf("NT") != -1 && state==true) {
+    setMenuElementFocus(getNextMenuElement(focusedMenuElement));
+  } else {
+    if (state) {
+      if (!isGoingDown) {
+        firstGoingDown = true;
+        isGoingDown = true;
+        menuDownKeyDelay();
+      }
+    } else if (!state) {
+      isGoingDown = false;
+      return true;
+    }
+  }
+  return false;
+}
+
+function menuDownKeyDelay(){
+  if (isGoingDown) {
+    setMenuElementFocus(getNextMenuElement(focusedMenuElement));
+    if (firstGoingDown) {
+      firstGoingDown = false;
+      setTimeout('menuDownKeyDelay();', 400);
+    } else {
+      setTimeout('menuDownKeyDelay();', 60);
+    }
+  } else {
+    return false;
+  }
 }
 
 function menuLeftKey() {

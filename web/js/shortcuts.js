@@ -30,17 +30,19 @@ this.dispatchEvent(evt);
 /**
 * Builds the keys array on each screen. Each key that we want to use should have this structure.
 * @param {String} key A text version of the handled key.
-* @param {String} event Event that we want to fire when the key is is pressed.
+* @param {String} evalfunc Function that will be eval when the key is is pressed.
 * @param {String} field Name of the field on the window. If is null, is a global event, for the hole window.
 * @param {String} auxKey Text defining the auxiliar key. The value could be CTRL for the Control key, ALT for the Alt, null if we don't have to use an auxiliar key.
 * @param {Boolean} propagateKey True if the key is going to be prograpated or false if is not going to be propagated.
+* @param {String} eventShotter Function that will launch the process.
 */
-function keyArrayItem(key, event, field, auxKey, propagateKey) {
+function keyArrayItem(key, evalfunc, field, auxKey, propagateKey, event) {
   this.key = key;
-  this.event = event;
+  this.evalfunc = evalfunc;
   this.field = field;
   this.auxKey = auxKey;
   this.propagateKey = propagateKey;
+  this.eventShotter = event;
 }
 
 /**
@@ -51,17 +53,20 @@ function getShortcuts(type) {
     this.keyArray = new Array();
   } else if (type=='window') {
     this.keyArray = new Array(
-    new keyArrayItem("M", "putFocusOnMenu();", null, "ctrlKey", false)
+    new keyArrayItem("M", "putFocusOnMenu();", null, "ctrlKey", false, 'onkeydown')
     );
   } else if (type=='menu') {
     this.keyArray = new Array(
-    new keyArrayItem("UPARROW", "menuUpKey();", null, null, false),
-    new keyArrayItem("RIGHTARROW", "menuRightKey();", null, null, false),
-    new keyArrayItem("DOWNARROW", "menuDownKey();", null, null, false),
-    new keyArrayItem("LEFTARROW", "menuLeftKey();", null, null, false),
-    new keyArrayItem("HOME", "menuHomeKey();", null, null, false),
-    new keyArrayItem("END", "menuEndKey();", null, null, false),
-    new keyArrayItem("ENTER", "menuEnterKey();", null, null, false)
+    new keyArrayItem("UPARROW", "menuUpKey(true);", null, null, false, 'onkeydown'),
+    new keyArrayItem("RIGHTARROW", "menuRightKey();", null, null, false, 'onkeydown'),
+    new keyArrayItem("DOWNARROW", "menuDownKey(true);", null, null, false, 'onkeydown'),
+    new keyArrayItem("LEFTARROW", "menuLeftKey();", null, null, false, 'onkeydown'),
+    new keyArrayItem("HOME", "menuHomeKey();", null, null, false, 'onkeydown'),
+    new keyArrayItem("END", "menuEndKey();", null, null, false, 'onkeydown'),
+    new keyArrayItem("ENTER", "menuEnterKey();", null, null, false, 'onkeydown'),
+    new keyArrayItem("UPARROW", "menuUpKey(false);", null, null, null, 'onkeyup'),
+    new keyArrayItem("DOWNARROW", "menuDownKey(false);", null, null, null, 'onkeyup'),    
+    new keyArrayItem("M", "alert('M');", null, "ctrlKey", false, 'onkeydown')
     );
   }
 }
