@@ -34,7 +34,7 @@
 		</fo:block>
 		<fo:block space-before.optimum="15pt" font-family="Helvetica" font-size="9pt">Ref:&#160;&#160;<fo:inline id="fieldReference">xx203017</fo:inline>
 		</fo:block>
-		<fo:block space-before.optimum="15pt" font-family="Helvetica" font-size="9pt">Pamplona<fo:inline>,&#160;</fo:inline>
+		<fo:block space-before.optimum="15pt" font-family="Helvetica" font-size="9pt">xxPamplona<fo:inline>,&#160;</fo:inline>
 			<fo:inline id="fieldDate">November 19th 2003</fo:inline>
 		</fo:block>
 		<fo:block space-before.optimum="15pt" font-family="Helvetica" font-size="9pt">
