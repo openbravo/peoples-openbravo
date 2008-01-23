@@ -12,15 +12,25 @@
 
 package org.apache.ddlutils.platform;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import org.apache.ddlutils.model.Database;
-
 /**
  *
  * @author adrian
  */
-public interface ModelLoader {
+public class ExcludeFilter {
     
-    public Database getDatabase(Connection connection, ExcludeFilter filter) throws SQLException;    
+    public String[] getExcludedTables() {
+        return new String[0];
+    }
+    public String[] getExcludedViews() {
+        return new String[0];
+    }
+    public String[] getExcludedSequences() {
+        return new String[0];
+    }
+    public String[] getExcludedFunctions() {
+        return new String[0];
+    }
+    public String[] getExcludedTriggers() {
+        return new String[0];
+    }    
 }

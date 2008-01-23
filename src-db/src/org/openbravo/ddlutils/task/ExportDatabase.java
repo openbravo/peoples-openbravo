@@ -39,6 +39,7 @@ public class ExportDatabase extends Task {
     private String url;
     private String user;
     private String password;
+    private String excludeobjects = "org.apache.ddlutils.platform.ExcludeFilter";
     
     private File model;   
 
@@ -82,7 +83,7 @@ public class ExportDatabase extends Task {
         Platform platform = PlatformFactory.createNewPlatformInstance(ds);
         // platform.setDelimitedIdentifierModeOn(true); 
         
-        Database db = platform.loadModelFromDatabase();        
+        Database db = platform.loadModelFromDatabase(DatabaseUtils.getExcludeFilter(excludeobjects));        
         _log.info(db.toString());
         
         DatabaseIO io = new DatabaseIO();
@@ -121,6 +122,14 @@ public class ExportDatabase extends Task {
         this.password = password;
     }
 
+    public String getExcludeobjects() {
+        return excludeobjects;
+    }
+
+    public void setExcludeobjects(String excludeobjects) {
+        this.excludeobjects = excludeobjects;
+    }
+
     public File getModel() {
         return model;
     }
@@ -128,7 +137,7 @@ public class ExportDatabase extends Task {
     public void setModel(File model) {
         this.model = model;
     }
-
+    
     /**
      * Specifies the verbosity of the task's debug output.
      * 

@@ -23,6 +23,7 @@ import org.apache.ddlutils.io.DatabaseFilter;
 import org.apache.ddlutils.io.DatabaseIO;
 import org.apache.ddlutils.io.DynamicDatabaseFilter;
 import org.apache.ddlutils.model.Database;
+import org.apache.ddlutils.platform.ExcludeFilter;
 import org.apache.tools.ant.BuildException;
 
 
@@ -144,68 +145,6 @@ public class DatabaseUtils {
         
         c.close();
     }    
-//    
-//    public static void manageDatabase(DataSource ds) throws SQLException {
-//        
-//        // prepare table
-//        Platform platform = PlatformFactory.createNewPlatformInstance(ds);
-//        // platform.setDelimitedIdentifierModeOn(true);
-//        
-//        Database db = new Database();
-//        db.setName("AD_SYSTEM_MODEL");
-//        Table t = new Table();
-//        t.setName("AD_SYSTEM_MODEL");
-//        Column c = new Column();
-//        c.setName("MODEL");
-//        c.setPrimaryKey(false);
-//        c.setRequired(false);
-//        c.setAutoIncrement(false);
-//        c.setTypeCode(Types.LONGVARBINARY);
-//        t.addColumn(c);
-//        db.addTable(t);
-//        
-//        platform.createTables(db, false, true);
-//        
-//        // insert an empty database
-//        db = new Database();
-//        db.setName("unnamed");            
-//        saveCurrentDatabase(ds, db);
-//    }
-//    
-//    public static void unmanageDatabase(DataSource ds) throws SQLException {
-//        executeUpdate(ds, "DROP TABLE AD_SYSTEM_MODEL");
-//    }
-//    
-//    public static void saveCurrentDatabase(DataSource ds, Database model) throws SQLException {
-//        
-//        executeUpdate(ds, "DELETE FROM AD_SYSTEM_MODEL");
-//
-//        Connection c = ds.getConnection();
-//        
-//        PreparedStatement s = c.prepareStatement("INSERT INTO AD_SYSTEM_MODEL (MODEL) VALUES (?)");
-//
-//        s.setBytes(1, serializeDatabase(model));
-//        s.executeUpdate();
-//        s.close();
-//        
-//        c.close();        
-//    }
-//    
-//    public static Database loadCurrentDatabase(DataSource ds) throws SQLException {
-//        
-//        Connection c = ds.getConnection();
-//        
-//        PreparedStatement s = c.prepareStatement("SELECT MODEL FROM AD_SYSTEM_MODEL");
-//        ResultSet rs = s.executeQuery();
-//        rs.next();
-//        byte[] model = rs.getBytes(1);
-//        rs.close();
-//        s.close();
-//        
-//        c.close();
-//        
-//        return deserializeDatabase(model);
-//    }
     
     public static String readFile(File f) throws IOException {
 
@@ -220,42 +159,24 @@ public class DatabaseUtils {
         br.close();
         return s.toString();        
     }
-    
-//    private static byte[] serializeDatabase(Database model) {
-//        
-//        try {        
-//            ByteArrayOutputStream out = new ByteArrayOutputStream();     
-//
-//            Writer w =  new OutputStreamWriter(new GZIPOutputStream(out), "UTF-8");
-//            new DatabaseIO().write(model, w);
-//            w.flush();
-//            w.close();
-//            
-//            return out.toByteArray();        
-//        } catch (IOException e) {
-//            return null;
-//        }        
-//    }
-//    
-//    private static Database deserializeDatabase(byte[] model) {
-//        
-//        try {        
-//            ByteArrayInputStream in = new ByteArrayInputStream(model);
-//            Reader r = new InputStreamReader(new GZIPInputStream(in), "UTF-8");
-//            
-//            DatabaseIO dbIO = new DatabaseIO();
-//            dbIO.setValidateXml(false);
-//            return dbIO.read(r);
-//        } catch (IOException e) {
-//            return null;
-//        }
-//    }
-    
+       
     public static DatabaseFilter getDynamicDatabaseFilter(String filter, Database database) {
         try {
             DynamicDatabaseFilter dbfilter = (DynamicDatabaseFilter) Class.forName(filter).newInstance();
             dbfilter.init(database);
             return dbfilter;
+        } catch (InstantiationException ex) {
+            throw new BuildException(ex);
+        } catch (IllegalAccessException ex) {
+            throw new BuildException(ex);
+        } catch (ClassNotFoundException ex) {
+            throw new BuildException(ex);
+        }
+    }
+       
+    public static ExcludeFilter getExcludeFilter(String filtername) {
+        try {
+            return (ExcludeFilter) Class.forName(filtername).newInstance();
         } catch (InstantiationException ex) {
             throw new BuildException(ex);
         } catch (IllegalAccessException ex) {

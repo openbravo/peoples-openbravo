@@ -2000,12 +2000,11 @@ public abstract class PlatformImplBase extends JdbcSupport implements Platform
         }
     }
     
-    public Database loadModelFromDatabase() throws DatabaseOperationException {
-        
-        
+    public Database loadModelFromDatabase(ExcludeFilter filter) throws DatabaseOperationException {
+               
         Connection connection = borrowConnection();
         try {
-            return getModelLoader().getDatabase(connection);
+            return getModelLoader().getDatabase(connection, filter);
         } catch (SQLException ex) {
             throw new DatabaseOperationException(ex);
         } finally {

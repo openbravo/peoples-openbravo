@@ -44,6 +44,7 @@ public class CompareDatabase extends Task {
     private String url;
     private String user;
     private String password;
+    private String excludeobjects = "org.apache.ddlutils.platform.ExcludeFilter";
     
     private File model;   
 
@@ -90,7 +91,7 @@ public class CompareDatabase extends Task {
         try {      
         
             // Load database
-            Database db1 = platform.loadModelFromDatabase();        
+            Database db1 = platform.loadModelFromDatabase(DatabaseUtils.getExcludeFilter(excludeobjects));        
 //            if (db1 == null) { 
 //                db1 = DatabaseUtils.loadCurrentDatabase(ds);
 //            }
@@ -208,6 +209,14 @@ public class CompareDatabase extends Task {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getExcludeobjects() {
+        return excludeobjects;
+    }
+
+    public void setExcludeobjects(String excludeobjects) {
+        this.excludeobjects = excludeobjects;
     }
 
     public File getModel() {

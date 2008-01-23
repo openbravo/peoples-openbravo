@@ -31,6 +31,7 @@ import org.apache.commons.beanutils.DynaBean;
 import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.model.Table;
 import org.apache.ddlutils.platform.CreationParameters;
+import org.apache.ddlutils.platform.ExcludeFilter;
 import org.apache.ddlutils.platform.JdbcModelReader;
 import org.apache.ddlutils.platform.SqlBuilder;
 
@@ -881,7 +882,7 @@ public interface Platform
      */
     public void delete(Connection connection, Database model, DynaBean dynaBean) throws DatabaseOperationException;
 
-    public Database loadModelFromDatabase() throws DatabaseOperationException;
+    public Database loadModelFromDatabase(ExcludeFilter filter) throws DatabaseOperationException;
     
     /**
      * Reads the database model from the live database as specified by the data source set for

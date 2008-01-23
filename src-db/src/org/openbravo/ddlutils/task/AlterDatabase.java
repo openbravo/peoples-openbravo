@@ -13,7 +13,6 @@
 package org.openbravo.ddlutils.task;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.Properties;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.ddlutils.Platform;
@@ -34,11 +33,12 @@ import org.apache.ddlutils.task.VerbosityLevel;
  * @author adrian
  */
 public class AlterDatabase extends Task {
-    // hola
+
     private String driver;
     private String url;
     private String user;
     private String password;
+    private String excludeobjects = "org.apache.ddlutils.platform.ExcludeFilter";
     
     private File prescript = null;
     private File postscript = null;
@@ -94,7 +94,7 @@ public class AlterDatabase extends Task {
 
             Database originaldb;
             if (getOriginalmodel() == null) {
-                originaldb = platform.loadModelFromDatabase(); 
+                originaldb = platform.loadModelFromDatabase(DatabaseUtils.getExcludeFilter(excludeobjects)); 
                 if (originaldb == null) {
                     originaldb =  new Database();
                     _log.info("Original model considered empty.");
@@ -107,7 +107,7 @@ public class AlterDatabase extends Task {
                 _log.info("Original model loaded from file.");
             }   
             
-
+            
             // execute the pre-script
             if (getPrescript() == null) {
                 // try to execute the default prescript
@@ -200,6 +200,14 @@ public class AlterDatabase extends Task {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getExcludeobjects() {
+        return excludeobjects;
+    }
+
+    public void setExcludeobjects(String excludeobjects) {
+        this.excludeobjects = excludeobjects;
     }
 
     public File getOriginalmodel() {

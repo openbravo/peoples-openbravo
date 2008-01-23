@@ -3287,7 +3287,7 @@ public abstract class SqlBuilder
     /**
      * Writes the given function .
      * 
-     * @param view The function
+     * @param function The function
      */
     protected void createFunction(Function function) throws IOException {
         

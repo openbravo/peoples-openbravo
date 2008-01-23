@@ -44,6 +44,7 @@ public class AlterXML2SQL extends Task {
     private String url;
     private String user;
     private String password;   
+    private String excludeobjects = "org.apache.ddlutils.platform.ExcludeFilter";
 
     private File model;
     private File output;
@@ -99,7 +100,7 @@ public class AlterXML2SQL extends Task {
             try {                        
 
                 if (getOriginalmodel() == null) {
-                    originaldb = pl.loadModelFromDatabase(); 
+                    originaldb = pl.loadModelFromDatabase(DatabaseUtils.getExcludeFilter(excludeobjects)); 
                     if (originaldb == null) {
                         originaldb =  new Database();
                         _log.info("Original model considered empty.");
@@ -180,6 +181,14 @@ public class AlterXML2SQL extends Task {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getExcludeobjects() {
+        return excludeobjects;
+    }
+
+    public void setExcludeobjects(String excludeobjects) {
+        this.excludeobjects = excludeobjects;
     }
 
     public String getPlatform() {

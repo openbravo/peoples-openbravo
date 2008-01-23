@@ -13,7 +13,6 @@
 package org.openbravo.ddlutils.task;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.Properties;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.ddlutils.Platform;
@@ -40,6 +39,7 @@ public class ImportDataXML extends Task {
     private String url;
     private String user;
     private String password;
+    private String excludeobjects = "org.apache.ddlutils.platform.ExcludeFilter";
     
     private File prescript = null;
     private File postscript = null;
@@ -107,7 +107,7 @@ public class ImportDataXML extends Task {
                         
             Database originaldb;
             if (getModel() == null) {
-                originaldb = platform.loadModelFromDatabase(); 
+                originaldb = platform.loadModelFromDatabase(DatabaseUtils.getExcludeFilter(excludeobjects)); 
                 if (originaldb == null) {
                     originaldb =  new Database();
                     _log.info("Model considered empty.");
@@ -173,6 +173,14 @@ public class ImportDataXML extends Task {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getExcludeobjects() {
+        return excludeobjects;
+    }
+
+    public void setExcludeobjects(String excludeobjects) {
+        this.excludeobjects = excludeobjects;
     }
 
     public File getModel() {

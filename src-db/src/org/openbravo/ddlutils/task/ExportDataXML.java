@@ -15,7 +15,6 @@ package org.openbravo.ddlutils.task;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.sql.SQLException;
 import java.util.Properties;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.ddlutils.Platform;
@@ -45,13 +44,14 @@ public class ExportDataXML extends Task {
     private String url;
     private String user;
     private String password;
+    private String excludeobjects = "org.apache.ddlutils.platform.ExcludeFilter";
     
     private File prescript = null;
     private File postscript = null;
     
     private File model = null;
     private String filter = "org.apache.ddlutils.io.AllDatabaseFilter";
-    
+   
     private File output;
     private String encoding = "UTF-8";
 
@@ -104,7 +104,7 @@ public class ExportDataXML extends Task {
                         
             Database originaldb;
             if (getModel() == null) {
-                originaldb = platform.loadModelFromDatabase(); 
+                originaldb = platform.loadModelFromDatabase(DatabaseUtils.getExcludeFilter(excludeobjects)); 
                 if (originaldb == null) {
                     originaldb =  new Database();
                     _log.info("Model considered empty.");
@@ -115,7 +115,7 @@ public class ExportDataXML extends Task {
                 // Load the model from the file
                 originaldb = DatabaseUtils.readDatabase(getModel());
                 _log.info("Model loaded from file.");
-            }            
+            } 
             
             DatabaseDataIO dbdio = new DatabaseDataIO();
             dbdio.setEnsureFKOrder(false);
@@ -183,6 +183,14 @@ public class ExportDataXML extends Task {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getExcludeobjects() {
+        return excludeobjects;
+    }
+
+    public void setExcludeobjects(String excludeobjects) {
+        this.excludeobjects = excludeobjects;
     }
 
     public File getModel() {
