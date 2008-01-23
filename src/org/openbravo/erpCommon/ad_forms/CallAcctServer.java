@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,8 +33,6 @@ import javax.servlet.http.*;
 
 public class CallAcctServer extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-
-  public final String [] TableIds = {"318","407","392","800019","800060","319", "321", "323", "259", "224", "800176"};
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -59,7 +57,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
     } else if (vars.commandIn("RUN")) {
       String strTableId = vars.getStringParameter("inpadTableId");
       if (log4j.isDebugEnabled()) log4j.debug(strTableId);
-      printPageLog(response, vars, strTableId, acctServer, adProcessId);
+      runProcess(response, vars, strTableId, acctServer, adProcessId);
     } else pageError(response);
   }
 
@@ -98,7 +96,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
 
 
     
-    AcctServerData[] data = AcctServerData.selectTables(this,  vars.getLanguage(), Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""));
+    AcctServerData[] data = AcctServerData.selectTables(this,  vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", ""));
     if (log4j.isDebugEnabled()) log4j.debug("select tables org:"+Utility.getContext(this, vars, "#User_Org", "")+", Client:"+Utility.getContext(this, vars, "#User_Client", "")+",lang:"+vars.getLanguage()); 
     if (log4j.isDebugEnabled()) log4j.debug("lenght:"+data.length);
     xmlDocument.setData("reportadTableId", "liststructure", data);
@@ -111,69 +109,33 @@ public class CallAcctServer extends HttpSecureAppServlet {
     out.close();
 	}
   }
-
-  private void printPageLog(HttpServletResponse response, VariablesSecureApp vars, String strTableId, PeriodicBackground acctServer, String adProcessId) throws IOException, ServletException{
-    String adPinstanceId = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
-    PInstanceProcessData.insertPInstance(this, adPinstanceId, adProcessId, "0", "N", vars.getUser(), vars.getClient(), vars.getOrg());
-    PInstanceProcessData.insertPInstanceParamNumber(this, adPinstanceId, "10", "AD_Table_ID", strTableId, vars.getClient(), vars.getOrg(), vars.getUser());
-    
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-    out.println("<html>");
-    out.println("<head>");
-    out.println("<link REL=\"stylesheet\" TYPE=\"text/css\" HREF=\"" + strReplaceWith + "/css/aplication.css\" TITLE=\"Style\"/>");
-    out.println("<title>Log</title>");
-    out.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
-    out.println("<SCRIPT language=\"JavaScript\" type=\"text/javascript\">var baseDirection = \"" + strReplaceWith + "/\";</SCRIPT>");
-    out.println("<script language=\"JavaScript\" src=\"" + strReplaceWith + "/js/messages.js\" type=\"text/javascript\"></script>");
-    out.println("<script language=\"JavaScript\" src=\"" + strReplaceWith + "/js/utils.js\" type=\"text/javascript\"></script>");
-    out.println("<script language=\"JavaScript\" src=\"" + strReplaceWith + "/js/ajax.js\" type=\"text/javascript\"></script>");
-    out.println("<SCRIPT language=\"JavaScript\" type=\"text/javascript\">LNG_POR_DEFECTO = \"" + vars.getLanguage() + "\";</SCRIPT>");
-    out.println("<SCRIPT language=\"JavaScript\" type=\"text/javascript\">\n");
-    out.println("var id=0;\n");
-    out.println("var finish=false;\n");
-    out.println("function callback() {\n");
-    out.println("  var strText = \"\";\n");
-    out.println("  if (getReadyStateHandler(xmlreq)) {\n");
-    out.println("    try {\n");
-    out.println("      if (xmlreq.responseText) strText = xmlreq.responseText;\n");
-    out.println("    } catch (e) {\n");
-    out.println("    }\n");
-    out.println("    if (strText!=null && strText.indexOf(\"ENDOFPROCESS\")==-1) {\n");
-    out.println("      if (strText != \"\") \n");
-    out.println("        layer(\"messageText\", strText, true, true);\n");
-    out.println("      id = setTimeout(\"refreshData();\", 800);\n");
-    out.println("      document.getElementById('messageText').style.cursor='wait';\n");
-    out.println("    } else if (strText==null) {\n");
-    out.println("      id = setTimeout(\"refreshData();\", 800);\n");
-    out.println("      document.getElementById('messageText').style.cursor='wait';\n");
-    out.println("    } else if (!finish) {\n");
-    out.println("      clearTimeout(id);\n");
-    out.println("      finish=true;\n");
-    out.println("      document.getElementById('messageText').style.cursor='default';\n");
-    out.println("      alert(\"" + Utility.messageBD(this, "ProcessOK", vars.getLanguage()) + "\");\n");
-    out.println("    }\n");
-    out.println("  }\n");
-    out.println("  return true;\n");
-    out.println("}\n");
-    out.println("function refreshData() {\n");
-    out.println("  return submitXmlHttpRequest(callback, document.forms[0], \"REFRESH_INFO\", \"CallAcctServer.html\", false);\n");
-    out.println("}\n");
-    out.println("</SCRIPT>\n");
-    out.println("</head>");
-    out.println("<body leftmargin=\"0\" topmargin=\"0\" marginwidth=\"0\" marginheight=\"0\" onLoad=\"refreshData();\">");
-    out.println("<form name=\"frmMain\" action=\"\" method=\"post\"><input type=\"hidden\" name=\"Command\"></forms>\n");
-    out.println("<H1>Log</H1>");
-    out.println("<HR>");
-    out.println("<span id=\"messageText\"></span>");
-    out.println("</body>");
-    out.println("</html>");
-    out.close();
-
-    if (acctServer.directLaunch(vars, adPinstanceId)) {
-      while(acctServer.isDirectProcess() && !acctServer.isProcessing()){ if (log4j.isDebugEnabled()) log4j.debug("Waiting fot the beginning of the thread");};
-    }
+  
+  private void runProcess(HttpServletResponse response, VariablesSecureApp vars, String strTableId, PeriodicBackground acctServer, String adProcessId) throws IOException, ServletException {
+	  OBError myMessage = new OBError();
+	  myMessage.setTitle("");
+	  try {
+		  String adPinstanceId = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+		  PInstanceProcessData.insertPInstance(this, adPinstanceId, adProcessId, "0", "N", vars.getUser(), vars.getClient(), vars.getOrg());
+		  PInstanceProcessData.insertPInstanceParamNumber(this, adPinstanceId, "10", "AD_Table_ID", strTableId, vars.getClient(), vars.getOrg(), vars.getUser());
+		  if (acctServer.directLaunch(vars, adPinstanceId)) {
+		      while(acctServer.isDirectProcess() && !acctServer.isProcessing()){ 
+		    	  if (log4j.isDebugEnabled()) log4j.debug("Waiting for the thread to begin");
+		      }		      
+		      myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), acctServer.getOut()));
+		      myMessage.setType("Info");
+		  }
+		  else {
+			  myMessage.setMessage(Utility.messageBD(this, "BP_RUNNING", vars.getLanguage()));
+			  myMessage.setType("Error");
+		  }
+	  }
+	  catch(Exception e) {
+		  log4j.error(e.getMessage());
+	  }
+	  finally {
+		  vars.setMessage("CallAcctServer", myMessage);
+		  printPage(response,vars, strTableId, "");
+	  }
   }
 
   public void printPageAjax(HttpServletResponse response, VariablesSecureApp vars, String strMessage) throws IOException, ServletException {

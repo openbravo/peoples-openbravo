@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -164,7 +164,6 @@ public class PeriodicBackground implements Runnable {
           } catch(Exception ex) {
             ex.printStackTrace();
           }
-          addLog("Finalizacion del proceso background.");
           initializeParams();
         } else if (isDirectProcess()) {
           if (debugMode) debug("run()");
@@ -176,7 +175,7 @@ public class PeriodicBackground implements Runnable {
             } catch(Exception ex) {
               ex.printStackTrace();
             }
-            addLog("Finalizacion del proceso manual.");
+            addLog("@DL_ENDED@", false);
             this.vars = null;
             initializeParams();
           }
@@ -242,8 +241,13 @@ public class PeriodicBackground implements Runnable {
   public void addLog(String texto, boolean generalLog) {
     writingLog=true;
     Timestamp tmp = new Timestamp(System.currentTimeMillis());
-    if (generalLog) this.message.append(tmp.toString()).append(" - ").append(texto).append("<br>");
-    lastLog.append("<span>").append(tmp.toString()).append(" - ").append(texto).append("</span><br>");
+    if(this.isDirectProcess()){
+    	lastLog.append("<span>").append(texto).append("</span><br>");
+    }
+    else {
+    	if (generalLog) this.message.append(tmp.toString()).append(" - ").append(texto).append("<br>");
+    	lastLog.append("<span>").append(tmp.toString()).append(" - ").append(texto).append("</span><br>");
+    }
     writingLog=false;
   }
 
@@ -325,10 +329,11 @@ public class PeriodicBackground implements Runnable {
       this.directLaunch = true;
       this.cancelRequested=false;
       this.adClientId = strClient;
+      this.clearLastLog();
       if (debugMode) debug("directLaunch(vars, " + stradPinstanceId + "): " + strClient);
       return true;
     } else {
-      addLog("El proceso no se puede lanzar de forma manual si está activo el proceso background");
+      addLog("This task cannot be lauched while the background process is active");
       this.directLaunch = false;
       this.cancelRequested=false;
       setProcessing(false);
