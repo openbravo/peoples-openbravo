@@ -188,7 +188,7 @@ function onloadFunctions() {
                   
                   <TD class="Button_RightAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Accept'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="openServletNewWindow('RUN', false, 'CallAcctServer.html', 'PROCESO_CONTABLE', null, null, '420', null, true);return false;">
+                      <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Accept'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('RUN', false);return false;">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Accept';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                         <tr>
                           <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -231,52 +231,6 @@ function onloadFunctions() {
       </td>
     </tr>
   </table>
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <!--TABLE width="100%" border="0" cellpadding="2" cellspacing="0">
-          <TR > 
-            <TD width="25%">&nbsp;</TD>
-            <TD width="11%" > <SPAN >Table</SPAN></TD>
-            <TD width="51%" > <SELECT name="inpadTableId" id="inpadTableId">
-                <OPTION value=""></OPTION><DIV id="reportTable_M"></DIV>
-              </SELECT></TD>
-            <TD width="7%">&nbsp;</TD>
-            <TD width="6%">&nbsp;</TD>
-          </TR>
-          <TR > 
-            <TD colspan="3"> <TABLE width="100%">
-                <TR> 
-                  <TD width="50%" > <A href="#" onclick="submitCommandForm('CANCELAR',false,null,null,'_self');return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
-                    <img width="16" height="16" src="../../../../../web/images/Cancel.jpg"  alt="Cancel" title="Cancel" border="0" id="buttonCancel"></IMG></A></TD>
-                  <TD width="50%" > <A href="#" onclick="openServletNewWindow('RUN', false, 'CallAcctServer.html', 'PROCESO_CONTABLE', null, null, '420', null, true);return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
-                    <img width="16" height="16" src="../../../../../web/images/Ok.jpg"  alt="Accept" title="Accept" border="0" id="buttonOk"></IMG></A></TD>
-                </TR>
-              </TABLE></TD>
-          </TR>
-        </TABLE>
-      </FORM></TD>
-  </TR>
-</TABLE-->
 </form>
 </BODY>
 </HTML>
