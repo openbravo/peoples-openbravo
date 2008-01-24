@@ -10,7 +10,7 @@
 * specific language governing permissions and limitations under the License.
 ************************************************************************************
 -->
-<project default="jar" basedir="." name="openbravo-db">
+<project default="jar" basedir="." name="dbmanager">
 
     <property name="build.db.classes" value="${basedir}/build/classes"/>
     <property name="build.db.lib" value="${basedir}/build/lib"/>
@@ -19,9 +19,6 @@
  
     <path id="db.class.path">
         <fileset dir="${basedir}/lib">
-            <include name="**/*.jar"/>
-        </fileset>
-        <fileset dir="${basedir}/lib/build-only">
             <include name="**/*.jar"/>
         </fileset>
     </path>
@@ -58,7 +55,7 @@
 
 
     <target name="doc" depends="init" description="Generate api">
-        <javadoc packagenames="org.openbravo.*" 
+        <javadoc packagenames="com.openbravo.*" 
             sourcepath="${build.db.src}"
             destdir="${build.db.docs}"
             author="true"
