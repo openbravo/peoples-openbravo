@@ -191,6 +191,8 @@
 	</parameter>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<parameter name="CURRENCYFORMAT" isForPrompting="false" class="java.text.NumberFormat"/>
+	<parameter name="CURRENCYSYMBOL" isForPrompting="false" class="java.lang.String"/>
 	<queryString><![CDATA[SELECT C_INVOICE.C_INVOICE_ID, C_BPARTNER.NAME, C_BPARTNER.TAXID AS CIF, AD_USER.NAME AS CONTACT_NAME, C_LOCATION.ADDRESS1, 
        C_LOCATION.POSTAL, C_LOCATION.CITY, C_REGION.NAME AS REGION,C_COUNTRY.NAME AS COUNTRY,C_BPARTNER_LOCATION.PHONE AS PHONE, C_BPARTNER_LOCATION.FAX AS FAX,
        C_INVOICE.DATEINVOICED, C_INVOICE.DOCUMENTNO, C_BPARTNER.VALUE AS CODE_BPARTNER, 
@@ -363,6 +365,20 @@
 			</groupHeader>
 			<groupFooter>
 			<band height="18"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="332"
+						y="-1"
+						width="68"
+						height="17"
+						key="textField-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Total ("+$P{CURRENCYSYMBOL}+"): "]]></textFieldExpression>
+				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="C_INVOICE_ID"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Gray"
@@ -377,20 +393,6 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{TOTAL_LINENETAMT}.add($V{TOTAL_TAXAMT})!=null)?$P{NUMBERFORMAT}.format($V{TOTAL_LINENETAMT}.add($V{TOTAL_TAXAMT})):new String(" ")]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement
-						style="Report_Footer"
-						x="340"
-						y="0"
-						width="60"
-						height="16"
-						key="staticText-18"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right">
-						<font/>
-					</textElement>
-				<text><![CDATA[Total:]]></text>
-				</staticText>
 			</band>
 			</groupFooter>
 		</group>

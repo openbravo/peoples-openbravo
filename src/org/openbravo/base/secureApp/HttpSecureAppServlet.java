@@ -651,8 +651,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       DecimalFormatSymbols dfs = new DecimalFormatSymbols();
       dfs.setDecimalSeparator(variables.getSessionValue("#AD_ReportDecimalSeparator").charAt(0));
       dfs.setGroupingSeparator(variables.getSessionValue("#AD_ReportGroupingSeparator").charAt(0));
-      DecimalFormat NumberFormat = new DecimalFormat(variables.getSessionValue("#AD_ReportNumberFormat"), dfs);
-      designParameters.put("NUMBERFORMAT", NumberFormat);
+      DecimalFormat numberFormat = new DecimalFormat(variables.getSessionValue("#AD_ReportNumberFormat"), dfs);
+      designParameters.put("NUMBERFORMAT", numberFormat);
       
       if (log4j.isDebugEnabled()) log4j.debug("creating the format factory: " + variables.getJavaDateFormat());
       JRFormatFactory jrFormatFactory = new JRFormatFactory();

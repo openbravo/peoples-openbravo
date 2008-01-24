@@ -22,6 +22,8 @@ import org.openbravo.base.secureApp.*;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
+
+import java.text.NumberFormat;
 import java.util.*;
 
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -72,6 +74,12 @@ public class RptC_Invoice extends HttpSecureAppServlet {
     
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("C_INVOICE_ID", strcInvoiceId);
+
+    String currencyCode=pdfInvoicesData[0].currencyCode;
+    String currencySymbol=pdfInvoicesData[0].symbol;
+
+	parameters.put("CURRENCYSYMBOL",currencyCode );
+
     
     renderJR(vars, response, strReportName, "pdf", parameters, pdfInvoicesData, null );
   }
