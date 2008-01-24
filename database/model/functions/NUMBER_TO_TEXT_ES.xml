@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -27,7 +27,7 @@ TYPE ArrayName IS VARRAY(9) OF VARCHAR2(20) ;
   v_twentys ArrayName;
   v_sw             NUMBER; -- sw_dieces_veintes
   v_init           NUMBER := 1; --inicio_tecia
-  v_number_to_text VARCHAR2(1000) ; --numero_convertido
+  v_number_to_text VARCHAR2(1000) := ''; --numero_convertido
   v_number_format  VARCHAR2(20) ; --numero_a_cadena
   v_aux            VARCHAR2(1000) ; --tercia_de_numeros
 BEGIN
@@ -82,8 +82,10 @@ BEGIN
         v_number_to_text := v_number_to_text || ' EUROS';
       END IF;
     ELSIF(i = 5) THEN
-      IF(v_aux > 0) THEN
+      IF(to_number(v_aux) > 1) THEN
         v_number_to_text := v_number_to_text || ' CENTIMOS';
+      ELSIF(to_number(v_aux) = 1) THEN
+        v_number_to_text := v_number_to_text || ' CENTIMO';
       END IF;
     END IF;
     v_init := v_init + 3;
