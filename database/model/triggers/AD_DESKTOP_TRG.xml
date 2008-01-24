@@ -5,6 +5,7 @@
 
 
 
+
  BEGIN
     /******************************************************************************
     * The contents of this file are subject to the   Compiere License  Version 1.1
@@ -45,8 +46,8 @@
  -- Update Trigger
  IF UPDATING THEN
   -- reset Translation flag
-  IF(:old.Name <> :new.Name  OR :old.Description <> :new.Description
-  OR :old.Help <> :new.Help)
+  IF(COALESCE(:old.Name, '.') <> COALESCE(:new.Name,'.')  OR COALESCE(:old.Description,'.') <> COALESCE(:new.Description,'.')
+  OR COALESCE(:old.Help,'.') <> COALESCE(:new.Help,'.'))
  THEN
     UPDATE AD_Desktop_Trl
       SET IsTranslated='N'
@@ -55,6 +56,7 @@
  END IF;
 -- UPDATING
 END AD_Desktop_Trg
+
 
 
 

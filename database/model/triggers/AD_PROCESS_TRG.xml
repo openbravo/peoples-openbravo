@@ -6,6 +6,7 @@
 
 
 
+
 /*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -66,17 +67,15 @@ BEGIN
 --      update AD_Column/AD_Field Name
   IF UPDATING
   THEN
-    IF (   COALESCE (:OLD.NAME, '.') <> COALESCE (:NEW.NAME, '.')
-        OR COALESCE (:OLD.Description, '.') <>
-                                              COALESCE (:NEW.Description, '.')
-        OR COALESCE (:OLD.HELP, '.') <> COALESCE (:NEW.HELP, '.')
-        OR COALESCE (:OLD.IsActive, '.') <> COALESCE (:NEW.IsActive, '.')
-       )
+  
+    IF(    COALESCE (:OLD.NAME, '.') <> COALESCE (:NEW.NAME, '.')
+        OR COALESCE (:OLD.Description, '.') <> COALESCE (:NEW.Description, '.')
+        OR COALESCE (:OLD.HELP, '.') <> COALESCE (:NEW.HELP, '.') )
     THEN
-      UPDATE AD_Process_Trl
-         SET IsTranslated = 'N',
-             Updated = SYSDATE
-       WHERE AD_Process_ID = :NEW.AD_Process_ID;
+        UPDATE AD_Process_Trl
+             SET IsTranslated = 'N',
+            Updated = SYSDATE
+         WHERE AD_Process_ID = :NEW.AD_Process_ID;
 
       UPDATE AD_Column
          SET NAME = :NEW.NAME,
@@ -128,6 +127,7 @@ BEGIN
     END IF;
   END IF;
 END AD_Process_Trg
+
 
 
 

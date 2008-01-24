@@ -6,6 +6,7 @@
 
 
 
+
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
     * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -62,7 +63,7 @@
      END IF;
 
    IF UPDATING THEN
-    IF (:old.Name <> :new.Name) THEN
+    IF (COALESCE(:old.Name, '.') <> COALESCE(:new.Name,'.')) THEN
     UPDATE AD_AlertRule_Trl
       SET IsTranslated='N'
     WHERE AD_AlertRule_ID=:new.AD_AlertRule_ID;
@@ -77,6 +78,7 @@
       WHERE AD_AlertRule_ID=:old.AD_AlertRule_ID;
    END IF;
 END AD_AlertRule_Trg 
+
 
 
 ]]></body>

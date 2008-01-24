@@ -6,6 +6,7 @@
 
 
 
+
     /*************************************************************************
     * The contents of this file are subject to the Compiere License
     * Version 2.5.0 ("License"); You may not use this file except in
@@ -78,25 +79,27 @@
  IF UPDATING THEN
   IF(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
   OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
-  OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.')
-  OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.'))
+  OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.'))
  THEN
-    -- Update Menu
-    UPDATE AD_Menu
-      SET IsActive=:new.IsActive,
-      Name=:new.Name,
-      Description=:new.Description
-    WHERE AD_Window_ID=:new.AD_Window_ID;
-    -- Update Workflow
-    UPDATE AD_WF_Node
-      SET IsActive=:new.IsActive
-    WHERE AD_Window_ID=:new.AD_Window_ID;
-    UPDATE AD_WF_Node
-      SET Name=:new.Name,
-      Description=:new.Description,
-      Help=:new.Help
-    WHERE AD_Window_ID=:new.AD_Window_ID
-      AND IsCentrallyMaintained='Y';
+    IF (COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')) THEN
+        -- Update Menu
+        UPDATE AD_Menu
+          SET IsActive=:new.IsActive,
+          Name=:new.Name,
+          Description=:new.Description
+        WHERE AD_Window_ID=:new.AD_Window_ID;
+        -- Update Workflow
+        UPDATE AD_WF_Node
+          SET IsActive=:new.IsActive
+        WHERE AD_Window_ID=:new.AD_Window_ID;
+        UPDATE AD_WF_Node
+          SET Name=:new.Name,
+          Description=:new.Description,
+          Help=:new.Help
+        WHERE AD_Window_ID=:new.AD_Window_ID
+          AND IsCentrallyMaintained='Y';
+    END IF;
+    
     -- Translation
     UPDATE AD_Window_Trl
       SET IsTranslated='N',
@@ -106,6 +109,7 @@
  END IF;
 -- Updating
 END AD_Window_Trg
+
 
 
 

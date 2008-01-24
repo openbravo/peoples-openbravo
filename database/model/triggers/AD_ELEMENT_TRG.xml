@@ -6,6 +6,7 @@
 
 
 
+
     /*************************************************************************
     * The contents of this file are subject to the Compiere License
     * Version 2.5.0 ("License"); You may not use this file except in
@@ -79,7 +80,7 @@
   END IF;
   **/
   --  reset Translation flag
-  IF(:old.Name <> :new.Name OR :old.PO_Name <> :new.PO_Name  OR :old.PrintName <> :new.PrintName OR :old.PO_PrintName <> :new.PO_PrintName  OR :old.Description <> :new.Description OR :old.PO_Description <> :new.PO_Description  OR :old.Help <> :new.Help OR :old.PO_Help <> :new.PO_Help) THEN
+  IF(COALESCE(:old.Name,'.') <> COALESCE(:new.Name,'.') OR COALESCE(:old.PO_Name,'.') <> COALESCE(:new.PO_Name,'.')  OR COALESCE(:old.PrintName,'.') <> COALESCE(:new.PrintName,'.') OR COALESCE(:old.PO_PrintName,'.') <> COALESCE(:new.PO_PrintName,'.')  OR COALESCE(:old.Description,'.') <> COALESCE(:new.Description,'.') OR COALESCE(:old.PO_Description,'.') <> COALESCE(:new.PO_Description,'.')  OR COALESCE(:old.Help,'.') <> COALESCE(:new.Help,'.') OR COALESCE(:old.PO_Help,'.') <> COALESCE(:new.PO_Help,'.')) THEN
     UPDATE AD_Element_Trl
       SET IsTranslated='N'
     WHERE AD_Element_ID=:new.AD_Element_ID;
@@ -96,6 +97,7 @@
  END IF;
 -- UPDATING
 END AD_Element_TRG
+
 
 
 
