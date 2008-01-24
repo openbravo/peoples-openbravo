@@ -289,6 +289,7 @@ compare.database.structure: Generates a diff script.
                        url="${bbdd.owner.url}"
                        user="${bbdd.user}"
                        password="${bbdd.password}"
+                       excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
                        model="model"
                        object="${bbdd.object}"
                        failonerror="false"
@@ -313,6 +314,7 @@ compare.database.structure: Generates a diff script.
                       url="${bbdd.owner.url}"
                       user="${bbdd.user}"
                       password="${bbdd.password}"
+                      excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
                       model="model"
                       object="${bbdd.object}"
                       output="${bbdd.outputscript}"
@@ -324,6 +326,7 @@ compare.database.structure: Generates a diff script.
                         url="${bbdd.owner.url}"
                         user="${bbdd.user}"
                         password="${bbdd.password}"
+                        excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
                         model="model"
                         verbosity="${bbdd.verbosity}" />
     </target>
@@ -333,8 +336,9 @@ compare.database.structure: Generates a diff script.
       <importdata driver="${bbdd.driver}"
                   url="${bbdd.owner.url}"
                   user="${bbdd.user}"
-                  filter="org.openbravo.ddlutils.task.OpenbravoMetadataFilter"   
+                  filter="com.openbravo.db.OpenbravoMetadataFilter"   
                   password="${bbdd.password}"
+                  excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
                   input="sourcedata"
                   verbosity="${bbdd.verbosity}" />
       <antcall target="database.postimport.${bbdd.rdbms}" />
@@ -346,7 +350,8 @@ compare.database.structure: Generates a diff script.
                   url="${bbdd.owner.url}"
                   user="${bbdd.user}"
                   password="${bbdd.password}"
-                  filter="org.openbravo.ddlutils.task.OpenbravoMetadataFilter"   
+                  excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
+                  filter="com.openbravo.db.OpenbravoMetadataFilter"   
                   output="sourcedata"
                   verbosity="${bbdd.verbosity}" />
   </target> 
@@ -357,6 +362,7 @@ compare.database.structure: Generates a diff script.
                   url="${bbdd.owner.url}"
                   user="${bbdd.user}"
                   password="${bbdd.password}"
+                  excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
                   input="sampledata"
                   verbosity="${bbdd.verbosity}" />
       <antcall target="database.postimport.${bbdd.rdbms}" />
@@ -368,7 +374,8 @@ compare.database.structure: Generates a diff script.
                   url="${bbdd.owner.url}"
                   user="${bbdd.user}"
                   password="${bbdd.password}"
-                  filter="org.openbravo.ddlutils.task.OpenbravoDataFilter"   
+                  excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
+                  filter="com.openbravo.db.OpenbravoDataFilter"   
                   output="sampledata"
                   verbosity="${bbdd.verbosity}" />
   </target> 
