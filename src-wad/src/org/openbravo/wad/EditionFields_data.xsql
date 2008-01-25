@@ -124,7 +124,7 @@
                    when upper(c.columnname)='UPDATED' then 10002
                    else 10003
               end), c.ColumnName As columnName, c.ColumnName As columnNameInp, 
-      (CASE WHEN ad_element_trl.name IS NULL THEN '*' || ad_element.name ELSE ad_element_trl.name END) as Name, ismandatory as required, ad_reference_value_id as referenceValue, 
+      (CASE WHEN ad_element_trl.name IS NULL THEN '*' || ad_element.name ELSE ad_element_trl.name END) as Name, 'N' as required, ad_reference_value_id as referenceValue, 
       c.ad_reference_id as reference, 44, 'x' as htmltext, 
       (case when upper(c.columnname) in ('CREATED', 'UPDATED') then 'N'
                    else 'Y'
