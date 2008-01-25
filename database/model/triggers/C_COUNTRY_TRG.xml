@@ -53,7 +53,8 @@
  IF UPDATING THEN
   IF(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
   OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
-  OR COALESCE(:old.Help,'.') <> COALESCE(:new.Help,'.') )
+  OR COALESCE(:old.RegionName,'.') <> COALESCE(:new.RegionName,'.')
+  OR COALESCE(:old.DisplaySequence,'.') <> COALESCE(:new.DisplaySequence,'.')  )
  THEN
     -- Translation
     UPDATE C_COUNTRY_Trl
