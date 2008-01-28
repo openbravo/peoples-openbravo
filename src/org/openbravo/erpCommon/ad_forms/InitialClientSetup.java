@@ -160,16 +160,16 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     }
     OBError myMessage = new OBError();
     myMessage.setTitle("");
-    log4j.debug("InitialClientSetup - before setMessage");
+    if(log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - before setMessage");
     if(strError!=null && !strError.equals("")) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), strError);
     }
-    log4j.debug("InitialClientSetup - isOK: " + isOK);
+    if(log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - isOK: " + isOK);
     if(isOK) myMessage.setType("Success");
     else myMessage.setType("Error");
-    log4j.debug("InitialClientSetup - Message Type: " + myMessage.getType());
+    if(log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - Message Type: " + myMessage.getType());
     vars.setMessage("InitialClientSetup", myMessage);
-    log4j.debug("InitialClientSetup - after setMessage");
+    if(log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - after setMessage");
     if (myMessage!=null) {
       xmlDocument.setParameter("messageType", myMessage.getType());
       xmlDocument.setParameter("messageTitle", myMessage.getTitle());
@@ -241,27 +241,32 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
     }
-    try {
-      m_info.append(SALTO_LINEA).append("*****************************************************").append(SALTO_LINEA);
-      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingAccounting", vars.getLanguage())).append(SALTO_LINEA);
-      if (!createAccounting(vars, strMoneda, InitialClientSetupData.moneda(this, strMoneda), bProducto, bTercero, bProyecto, bCampana, bZonaVentas, avData)){
-        releaseRollbackConnection(conn);
-        m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
-        strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
-        isOK = false;
-        return m_info.toString();
-      }
-    } catch (Exception err){
-      log4j.warn(err);
-      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
-      strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
-      strError = err.toString();
-      strError = strError.substring( strError.lastIndexOf("@ORA-") ,strError.length());
-      log4j.debug("InitialClientSetup - after strError: " + strError);
-      isOK = false;
-      try {
-        releaseRollbackConnection(conn);
-      } catch (Exception ignored) {}
+    m_info.append(SALTO_LINEA).append("*****************************************************").append(SALTO_LINEA);
+    if(avData.length == 0) {    	
+	    m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "SkippingAccounting", vars.getLanguage())).append(SALTO_LINEA);	    
+    }
+    else {
+	    try {	      
+	      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingAccounting", vars.getLanguage())).append(SALTO_LINEA);
+	      if (!createAccounting(vars, strMoneda, InitialClientSetupData.moneda(this, strMoneda), bProducto, bTercero, bProyecto, bCampana, bZonaVentas, avData)){
+	        releaseRollbackConnection(conn);
+	        m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
+	        strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
+	        isOK = false;
+	        return m_info.toString();
+	      }
+	    } catch (Exception err){
+	      log4j.warn(err);
+	      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
+	      strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
+	      strError = err.toString();
+	      strError = strError.substring( strError.lastIndexOf("@ORA-") ,strError.length());
+	      log4j.debug("InitialClientSetup - after strError: " + strError);
+	      isOK = false;
+	      try {
+	        releaseRollbackConnection(conn);
+	      } catch (Exception ignored) {}
+	    }
     }
     try {
       m_info.append(SALTO_LINEA).append("*****************************************************").append(SALTO_LINEA);
