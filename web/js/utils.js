@@ -1695,7 +1695,7 @@ function updateMenuIcon(id) {
 * @returns True if the operation was made correctly, false if not.
 * @see #changeClass
 */
-function mostrarMenu(id) {
+function menuShowHide(id) {
   if (!top.frameMenu) window.open(baseFrameServlet, "_blank");
   else {
     var frame = top.document;

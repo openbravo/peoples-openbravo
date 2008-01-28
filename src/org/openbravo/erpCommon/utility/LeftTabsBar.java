@@ -47,7 +47,7 @@ public class LeftTabsBar {
     text.append("        </tr>\n");
     text.append("        <tr>\n");
     text.append("          <td>\n");
-    text.append("              <A class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"mostrarMenu('buttonMenu');return false;\">\n");
+    text.append("              <A class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"menuShowHide('buttonMenu');return false;\">\n");
     text.append("                <IMG class=\"Main_LeftTabsBar_ButtonLeft_Icon Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide\" src=\"").append(base_direction).append("/images/blank.gif\" border=\"0\" id=\"buttonMenu\"></IMG>\n");
     text.append("              </A>\n");
     text.append("          </td>\n");
@@ -97,7 +97,7 @@ public class LeftTabsBar {
     text.append("        </tr>\n");
     text.append("        <tr>\n");
     text.append("          <td>\n");
-    text.append("              <A class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"mostrarMenu('buttonMenu');return false;\">\n");
+    text.append("              <A class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"menuShowHide('buttonMenu');return false;\">\n");
     text.append("                <IMG class=\"Main_LeftTabsBar_ButtonLeft_Icon Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide\" src=\"").append(base_direction).append("/images/blank.gif\" border=\"0\" id=\"buttonMenu\"></IMG>\n");
     text.append("              </A>\n");
     text.append("          </td>\n");
@@ -147,7 +147,7 @@ public class LeftTabsBar {
     text.append("        </tr>\n");
     text.append("        <tr>\n");
     text.append("          <td>\n");
-    text.append("              <A class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"mostrarMenu('buttonMenu');return false;\">\n");
+    text.append("              <A class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"menuShowHide('buttonMenu');return false;\">\n");
     text.append("                <IMG class=\"Main_LeftTabsBar_ButtonLeft_Icon Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide\" src=\"").append(base_direction).append("/images/blank.gif\" border=\"0\" id=\"buttonMenu\"></IMG>\n");
     text.append("              </A>\n");
     text.append("          </td>\n");
