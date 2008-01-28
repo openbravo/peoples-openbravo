@@ -974,6 +974,19 @@ function keyControl(pushedKey) {
             }
             document.onkeypress = startKeyPressEvent;
             return true;
+          } else if (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
+            try {
+              eval(keyArray[i].evalfunc);
+              document.onkeypress = startKeyPressEvent;
+              if (!keyArray[i].propagateKey) 
+                return false; else 
+                return true;
+            } catch (e) {
+              document.onkeypress = startKeyPressEvent;
+              return true;
+            }
+            document.onkeypress = startKeyPressEvent;
+            return true;
           }
         }
       }
