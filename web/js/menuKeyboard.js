@@ -44,36 +44,36 @@ function getStyle(id, esId) {
   return null;
 }
 
-function cambiarSituacion(evt, elemento) {
-  if(elemento == null) {
-    elemento = (!document.all) ? evt.target : event.srcElement;
+function changeState(evt, element) {
+  if(element == null) {
+    element = (!document.all) ? evt.target : event.srcElement;
   } else if (evt == null) {
-    elemento = elemento.lastChild;
+    element = element.lastChild;
     for (;;) {
-      if (elemento.nodeType != '1') {
-        elemento = elemento.previousSibling; // TR0_1
+      if (element.nodeType != '1') {
+        element = element.previousSibling; // TR0_1
       } else {
         break;
       }
     }
   }
-  if (elemento.tagName == 'IMG') elemento = elemento.parentNode;
-  if (elemento.parentNode.className.indexOf("NOT_Hover NOT_Selected NOT_Pressed") != -1) {
-    setMenuElementFocus(elemento.parentNode);
+  if (element.tagName == 'IMG') element = element.parentNode;
+  if (element.parentNode.className.indexOf("NOT_Hover NOT_Selected NOT_Pressed") != -1) {
+    setMenuElementFocus(element.parentNode);
   }  
   var indice = null;
-  if (document.all) indice = elemento.sourceIndex;
+  if (document.all) indice = element.sourceIndex;
   var hijo=null;
   var total = "";
   try {
-    if (elemento.id.indexOf("folder")==-1 && elemento.id.indexOf("folderCell")==-1 && elemento.id.indexOf("folderImg")==-1) {
-      if (element.onclick) return elemento.onclick();
+    if (element.id.indexOf("folder")==-1 && element.id.indexOf("folderCell")==-1 && element.id.indexOf("folderImg")==-1) {
+      if (element.onclick) return element.onclick();
       else return true;
-    } else if (elemento.id.indexOf("folderNoChilds")==0) return true;
-    else if (elemento.id.indexOf("folderCell1")==0) total = elemento.id.replace("folderCell1_", "");
-    else if (elemento.id.indexOf("folderCell2")==0) total = elemento.id.replace("folderCell2_", "");
-    else if (elemento.id.indexOf("folderImg")==0) total = elemento.id.replace("folderImg", "");
-    else total = elemento.id.replace("folder","");
+    } else if (element.id.indexOf("folderNoChilds")==0) return true;
+    else if (element.id.indexOf("folderCell1")==0) total = element.id.replace("folderCell1_", "");
+    else if (element.id.indexOf("folderCell2")==0) total = element.id.replace("folderCell2_", "");
+    else if (element.id.indexOf("folderImg")==0) total = element.id.replace("folderImg", "");
+    else total = element.id.replace("folder","");
   } catch (e) {}
   hijo = getReference("parent" + total);
   var actualclass = getObjectClass("folderImg" + total);
@@ -105,11 +105,11 @@ function checkSelected(id) {
 }
 
 
-document.onclick=cambiarSituacion;
+document.onclick=changeState;
 
 if (document.layers) {
   window.captureEvents(Event.ONCLICK);
-  window.onclick=cambiarSituacion;
+  window.onclick=changeState;
 }
 
 function setMouseOver(obj) {
@@ -144,7 +144,7 @@ function setMouseUp(obj) {
 function activateElement(obj){
   var jump = false;
   if (obj.className.indexOf(" NOT_Opened")!=-1) {
-    cambiarSituacion(null, obj);
+    changeState(null, obj);
     //obj.onclick();  //With this value the window will be opened
   } else {
     setMenuElementFocus(getNextMenuElement(focusedMenuElement));
@@ -154,7 +154,7 @@ function activateElement(obj){
 
 function desactivateElement(obj){
   if (obj.className.indexOf(" Opened")!=-1) {
-    cambiarSituacion(null, obj);
+    changeState(null, obj);
   } else {
     var obj = getMenuElementParent(focusedMenuElement);
     setMenuElementFocus(obj);
@@ -845,6 +845,6 @@ function menuHomeKey() {
 }
 
 function menuEnterKey() {
-  cambiarSituacion(null, focusedMenuElement);
+  changeState(null, focusedMenuElement);
   focusedMenuElement.onclick();  
 }
