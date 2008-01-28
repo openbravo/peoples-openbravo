@@ -23,9 +23,7 @@ var classClosed = "Icon_folderClosed";
 var isOpened = false;
 var focusedMenuElement = null;
 var isGoingDown = null;
-var firstGoingDown = null;
 var isGoingUp = null;
-var firstGoingUp = null;
 
 function getReference(id) {
   if (document.getElementById) return document.getElementById(id);
@@ -764,7 +762,7 @@ function menuUpKey(state) {
       if (!isGoingUp) {
         firstGoingUp = true;
         isGoingUp = true;
-        menuUpKeyDelay();
+        menuUpKeyDelay(true);
       }
     } else if (!state) {
       isGoingUp = false;
@@ -774,14 +772,13 @@ function menuUpKey(state) {
   return false;
 }
 
-function menuUpKeyDelay() {
+function menuUpKeyDelay(firstGoingUp) {
   if (isGoingUp) {
     setMenuElementFocus(getPreviousMenuElement(focusedMenuElement));
     if (firstGoingUp) {
-      firstGoingUp = false;
-      setTimeout('menuUpKeyDelay();', 400);
+      setTimeout('menuUpKeyDelay(false);', 400);
     } else {
-      setTimeout('menuUpKeyDelay();', 60);
+      setTimeout('menuUpKeyDelay(false);', 60);
     }
   } else {
     return false;
@@ -796,7 +793,7 @@ function menuDownKey(state) {
       if (!isGoingDown) {
         firstGoingDown = true;
         isGoingDown = true;
-        menuDownKeyDelay();
+        menuDownKeyDelay(true);
       }
     } else if (!state) {
       isGoingDown = false;
@@ -806,14 +803,13 @@ function menuDownKey(state) {
   return false;
 }
 
-function menuDownKeyDelay(){
+function menuDownKeyDelay(firstGoingDown){
   if (isGoingDown) {
     setMenuElementFocus(getNextMenuElement(focusedMenuElement));
     if (firstGoingDown) {
-      firstGoingDown = false;
-      setTimeout('menuDownKeyDelay();', 400);
+      setTimeout('menuDownKeyDelay(false);', 400);
     } else {
-      setTimeout('menuDownKeyDelay();', 60);
+      setTimeout('menuDownKeyDelay(false);', 60);
     }
   } else {
     return false;
