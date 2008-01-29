@@ -76,7 +76,7 @@
     v_WarehouseName VARCHAR2(60) ;
     v_CashProcessed NUMBER;
     v_count NUMBER;
-    isSoTrx CHAR(1) ;
+    v_isSoTrx CHAR(1) ;
     v_Aux NUMBER;
     v_c_Bpartner_Id NUMBER;
     v_c_currency_id NUMBER;
@@ -129,7 +129,7 @@
     INTO v_IsProcessing, v_IsProcessed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID, v_IsApproved, v_Client_ID,
       v_Org_ID, v_UpdatedBy, v_M_Warehouse_ID, v_Date,
-      isSoTrx, v_c_Bpartner_Id, v_c_currency_id, v_C_PROJECT_ID,
+      v_isSoTrx, v_c_Bpartner_Id, v_c_currency_id, v_C_PROJECT_ID,
       v_CBPartner_ID, v_PriceList_ID, v_invoicerule
     FROM C_ORDER
     WHERE C_Order_ID=v_Record_ID  FOR UPDATE;
@@ -401,7 +401,7 @@
       */
       IF(v_DocAction='CL') THEN
         -- Cancel undelivered Items
-        IF(isSoTrx='Y') THEN --Sales orders
+        IF(v_isSoTrx='Y') THEN --Sales orders
           UPDATE C_ORDERLINE
             SET QtyOrdered=QtyDelivered,
             --MODIFIED BY P.SAROBE
@@ -1342,7 +1342,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
         VALUES
          (v_debtPaymentID, v_Client_ID, v_Org_ID, 'Y',
           Now(), v_UpdatedBy, Now(), v_UpdatedBy,
-          IsSOTrx, NULL, NULL, '',
+          v_isSoTrx, NULL, NULL, '',
           v_Record_ID, v_c_Bpartner_Id, v_c_currency_id, null,
           NULL, v_CashBook_ID, 'C', 'N',
           (v_GrandTotal-v_totalCash), 0, v_Date, 'N',
@@ -1374,7 +1374,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
           v_CashLine_ID, v_Client_ID, v_Org_ID, 'Y',
           Now(), v_UpdatedBy, Now(), v_UpdatedBy,
           v_Cash_ID, v_debtPaymentID, v_Line, v_DocumentNo,
-          (v_GrandTotal-v_totalCash) * (CASE WHEN IsSOTrx='N' THEN -1 ELSE 1 END), 'P', 0, 0,
+          (v_GrandTotal-v_totalCash) * (CASE WHEN v_isSoTrx='N' THEN -1 ELSE 1 END), 'P', 0, 0,
            'Y'
         )
         ;
