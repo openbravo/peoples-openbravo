@@ -30,4 +30,11 @@
         SELECT AD_PROCESS_ID AS ID, CLASSNAME FROM AD_PROCESS WHERE ISBACKGROUND = 'Y'
       ]]></Sql>
    </SqlMethod>
+   <SqlMethod name="isActive" type="preparedStatement" return="Boolean">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT (CASE ISACTIVE WHEN 'Y' THEN 1 ELSE 0 END)AS ISACTIVE FROM AD_PROCESS WHERE AD_PROCESS_ID = ?
+      ]]></Sql>
+      <Parameter name="adProcessId"/>
+   </SqlMethod>   
 </SqlClass>

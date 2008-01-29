@@ -141,6 +141,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
           }
           if (object!=null) {
             object.start();
+            try {            
+              object.setActive(SystemPreferencesData.isActive(this, backgroundData[countBack].id));
+            } catch (ServletException sex) {
+              sex.printStackTrace();
+            }            
             backgroundProcess.put(backgroundData[countBack].id, object);
           }
         }
