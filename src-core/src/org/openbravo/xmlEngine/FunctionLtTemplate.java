@@ -28,7 +28,7 @@ class FunctionLtTemplate extends FunctionTemplate {
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      log4jFunctionLtTemplate.info("New FunctionLtValue");
+      if(log4jFunctionLtTemplate.isDebugEnabled()) log4jFunctionLtTemplate.debug("New FunctionLtValue");
       functionValue = new FunctionLtValue(this, xmlDocument);
     }
     return functionValue;

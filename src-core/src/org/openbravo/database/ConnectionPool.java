@@ -47,7 +47,7 @@ public class ConnectionPool {
       nex.printStackTrace();
       throw new ServletException(nex.toString());
     }
-    log4j.info("Starting ConnectionPool Version 1.0.1:");
+    if(log4j.isDebugEnabled()) log4j.debug("Starting ConnectionPool Version 1.0.1:");
   }//End ConnectionPool()
 
   public ConnectionPool(String _driver, String _server, String _login, String _password, int _minConns, int _maxConns, double _maxConnTime, String _dbSessionConfig, String _rdbms) throws ServletException {

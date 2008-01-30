@@ -28,7 +28,7 @@ class FunctionSubtractTemplate extends FunctionTemplate {
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      log4jFunctionSubtractTemplate.info("New FunctionSubtractValue");
+      if(log4jFunctionSubtractTemplate.isDebugEnabled()) log4jFunctionSubtractTemplate.debug("New FunctionSubtractValue");
       functionValue = new FunctionSubtractValue(this, xmlDocument);
     }
     return functionValue;

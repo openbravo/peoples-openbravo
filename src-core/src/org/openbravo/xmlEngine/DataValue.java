@@ -191,10 +191,10 @@ class DataValue implements XmlComponentValue {
   public String executeArray() {
     int i = 0;
     //    init();
-    log4jDataValue.info("data.length:" + data.length);
+    if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("data.length:" + data.length);
     for (i=0;i<data.length ;i++ ) {
       readFieldsArray(data[i]);
-      log4jDataValue.info("data[" + i + "]");
+      if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("data[" + i + "]");
       if (i == 0) {
         firstValues();
       } else {
@@ -208,9 +208,9 @@ class DataValue implements XmlComponentValue {
       firstSectionValue.close();
     }
 
-    log4jDataValue.info("StringBuffer length:" + firstSectionValue.strSection.length());
+    if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("StringBuffer length:" + firstSectionValue.strSection.length());
     String strStringPrint = new String(firstSectionValue.strSection);
-    log4jDataValue.info("String length:" + strStringPrint.length());
+    if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("String length:" + strStringPrint.length());
     return strStringPrint;
 
     //    return new String(firstSectionValue.strSection);
@@ -229,20 +229,22 @@ class DataValue implements XmlComponentValue {
   public void connect() {
     try {
       //        Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-      log4jDataValue.info("Loading driver" // of " + strName
-          + " Driver: " + dataTemplate.strDriver);
+    	if(log4jDataValue.isDebugEnabled()) {
+	      log4jDataValue.debug("Loading driver" // of " + strName
+	          + " Driver: " + dataTemplate.strDriver);
+      }
       Class.forName(dataTemplate.strDriver);
-      log4jDataValue.info("Driver loaded");
+      if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("Driver loaded");
     } catch(ClassNotFoundException e){
       log4jDataValue.error("Class not found: " + e);
     }
     try {
       //      String url="jdbc:odbc:report";
       connection=DriverManager.getConnection(dataTemplate.strURL);
-      log4jDataValue.info("connection created");
+      if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("connection created");
       if (dataTemplate.strSQL != null) {
         preparedStatement = connection.prepareStatement(dataTemplate.strSQL);
-        log4jDataValue.info("preparedStament created");
+        if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("preparedStament created");
       }
     } catch(SQLException e){
       log4jDataValue.error("SQL error in connect: " + e);
@@ -265,29 +267,29 @@ class DataValue implements XmlComponentValue {
       for (Enumeration<Object> e = vecParameterValue.elements() ; e.hasMoreElements() ;) {
         ParameterValue parameter = (ParameterValue)e.nextElement();
         if (parameter.parameterTemplate.type == java.sql.Types.INTEGER) {
-          log4jDataValue.info("setInt: " + i + " valor: " + Integer.parseInt(parameter.strValue));
+          if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("setInt: " + i + " valor: " + Integer.parseInt(parameter.strValue));
           preparedStatement.setInt(i, Integer.parseInt(parameter.strValue));
         } else if (parameter.parameterTemplate.type == java.sql.Types.VARCHAR) {
           String strValue;
           if (parameter.xmlComponentValue != null) {
-            log4jDataValue.info("value in xmlComponentValue");
+            if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("value in xmlComponentValue");
             if (parameter.parameterTemplate.section != null) {
               strValue = parameter.xmlComponentValue.printPrevious();  // detailed in section print printPrevious
             } else {
               strValue = parameter.xmlComponentValue.print();  // detailed in section print printPrevious
             }
           } else {
-            log4jDataValue.info("value in strValue");
+            if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("value in strValue");
             strValue = parameter.strValue;
           }
-          log4jDataValue.info("setString: " + i + " name: " + parameter.parameterTemplate.strName + " value: " + strValue);
+          if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("setString: " + i + " name: " + parameter.parameterTemplate.strName + " value: " + strValue);
           preparedStatement.setString(i, strValue);
         }
         i++;
       }
-      log4jDataValue.info("query execution:");
+      if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("query execution:");
       result = preparedStatement.executeQuery();
-      log4jDataValue.info("query done");
+      if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("query done");
     } catch(SQLException e){
       log4jDataValue.error("SQL error in query: " + dataTemplate.strSQL + "Exception:"+ e);
     }
@@ -315,7 +317,7 @@ class DataValue implements XmlComponentValue {
   }
 
   private void init () {
-    log4jDataValue.info("DataValue: init");
+    if(log4jDataValue.isDebugEnabled()) log4jDataValue.debug("DataValue: init");
     for (Enumeration<Object> e = vecSectionValue.elements() ; e.hasMoreElements() ;) {
       SectionValue section = (SectionValue)e.nextElement();
       log4jDataValue.debug("DataValue: init, section:" + section.sectionTemplate.name);

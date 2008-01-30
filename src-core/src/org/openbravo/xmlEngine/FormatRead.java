@@ -33,7 +33,7 @@ public class FormatRead extends DefaultHandler {
       java.lang.String name,
       java.lang.String qName,
       Attributes amap) {
-    log4jFormatRead.info("FormatRead: startElement is called:" + name);
+    if(log4jFormatRead.isDebugEnabled()) log4jFormatRead.debug("FormatRead: startElement is called:" + name);
 
     if (name.equals("Number")) {
       String formatName = null;
@@ -43,7 +43,7 @@ public class FormatRead extends DefaultHandler {
       String formatInternal = null;
 
       for (int i = 0; i < amap.getLength(); i++) {
-        log4jFormatRead.debug("  FormatRead (attribute list): attribute name=" + amap.getQName(i) + " value=" + amap.getValue(i));
+        if(log4jFormatRead.isDebugEnabled()) log4jFormatRead.debug("  FormatRead (attribute list): attribute name=" + amap.getQName(i) + " value=" + amap.getValue(i));
         if (amap.getQName(i).equals("name")) {
           formatName = amap.getValue(i);
         } else if (amap.getQName(i).equals("decimal")) {

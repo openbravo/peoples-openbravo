@@ -249,12 +249,12 @@ public class StandAloneConnection implements ConnectionProvider {
   }
 
   public void connect() throws ClassNotFoundException, SQLException {
-    log4j.info("Driver loading: " + strDriver);
+    if(log4j.isDebugEnabled()) log4j.debug("Driver loading: " + strDriver);
     Class.forName(strDriver);
-    log4j.info("Driver loaded");
-    log4j.info("Connection with: "+ strURL);
+    if(log4j.isDebugEnabled()) log4j.debug("Driver loaded");
+    if(log4j.isDebugEnabled()) log4j.debug("Connection with: "+ strURL);
     connection=DriverManager.getConnection(strURL);
-    log4j.info("connect made");
+    if(log4j.isDebugEnabled()) log4j.debug("connect made");
   }
 
   public void closeConnection() {
@@ -310,10 +310,10 @@ public class StandAloneConnection implements ConnectionProvider {
     //  Read properties file.
     Properties properties = new Properties();
     try {
-      log4j.info("strFileProperties: " + strFileProperties);
+      if(log4j.isDebugEnabled()) log4j.debug("strFileProperties: " + strFileProperties);
       properties.load(new FileInputStream(strFileProperties));
       sqlDateFormat = properties.getProperty("dateFormat.sql");
-      log4j.info("sqlDateFormat: " + sqlDateFormat);
+      if(log4j.isDebugEnabled()) log4j.debug("sqlDateFormat: " + sqlDateFormat);
     } catch (IOException e) { 
       // catch possible io errors from readLine()
       e.printStackTrace();

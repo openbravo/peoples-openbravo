@@ -27,7 +27,7 @@ class FunctionMedTemplate extends FunctionTemplate {
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      log4jFunctionMedTemplate.info("New FunctionMedValue: " + fieldName);
+      if(log4jFunctionMedTemplate.isDebugEnabled()) log4jFunctionMedTemplate.debug("New FunctionMedValue: " + fieldName);
       functionValue = new FunctionMedValue(this, xmlDocument);
     }
     return functionValue;

@@ -114,7 +114,7 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
 
   public void startPrefixMapping(java.lang.String prefix,
       java.lang.String uri) {
-    log4jXmlTemplate.info("XmlTemplate: startPrefixMapping is called, prefix:" + prefix + " uri: " + uri);
+    if(log4jXmlTemplate.isDebugEnabled()) log4jXmlTemplate.debug("XmlTemplate: startPrefixMapping is called, prefix:" + prefix + " uri: " + uri);
     this.prefix = prefix;
   }
 
@@ -122,14 +122,14 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
       java.lang.String name,
       java.lang.String qName,
       Attributes amap) { //throws SAXException {
-    log4jXmlTemplate.info("XmlTemplate: startElement is called3:" + name + " strElement: " + strElement);
+    if(log4jXmlTemplate.isDebugEnabled()) log4jXmlTemplate.debug("XmlTemplate: startElement is called3:" + name + " strElement: " + strElement);
     StackElement previousStackElement = peekElement();
     stackElement = new StackElement(qName);
     pushElement(stackElement);
     if (previousStackElement != null) {
       stackElement.setPrintEnabled(previousStackElement.printEnabled());
     }
-    log4jXmlTemplate.debug("Call to CharacterComponent");
+    if(log4jXmlTemplate.isDebugEnabled()) log4jXmlTemplate.debug("Call to CharacterComponent");
     TagTemplate tag = new TagTemplate(qName, amap, xmlEngine.strReplaceWhat, xmlEngine.strReplaceWith, prefix, uri);
     prefix = null;
 
@@ -137,7 +137,7 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     String strClass = null;
 
     for (int i = 0; i < amap.getLength(); i++) {
-      log4jXmlTemplate.info("  XmlTemplate (attribute list): attribute name=" + amap.getQName(i) + " value=" + amap.getValue(i));
+      if(log4jXmlTemplate.isDebugEnabled()) log4jXmlTemplate.debug("  XmlTemplate (attribute list): attribute name=" + amap.getQName(i) + " value=" + amap.getValue(i));
       if (amap.getQName(i).equals("id")) {
         id = amap.getValue(i);
       } else if (amap.getQName(i).equals("class")) {
@@ -266,7 +266,7 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
       java.lang.String name,
       java.lang.String qName) { //throws SAXException {
     do {
-      log4jXmlTemplate.info("XmlTemplate: endElement is called: " + name + " strElement: " + strElement);
+      if(log4jXmlTemplate.isDebugEnabled()) log4jXmlTemplate.debug("XmlTemplate: endElement is called: " + name + " strElement: " + strElement);
       stackElement = popElement();
       if (stackElement == null) {
         log4jXmlTemplate.warn("XmlTemplate: not begin tag for " + name);
@@ -301,9 +301,11 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
   }
 
   public void characters(char[] ch, int start, int length) { //throws SAXException {
-    log4jXmlTemplate.info("XmlTemplate: characters is called: " + new String(ch, start, length) +
+    if(log4jXmlTemplate.isDebugEnabled()) {
+	log4jXmlTemplate.debug("XmlTemplate: characters is called: " + new String(ch, start, length) +
         " element:" + strElement + " function of:" + strFunctionOfElement +
         " previousElement:" + strPreviousElement);
+    }
     if (strElement == null) return;
     if(!stackElement.printEnabled()) return;
     if (!peekElement().skipCharacters()) {
@@ -313,10 +315,10 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
   }
 
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
-    log4jXmlTemplate.debug("Creation of XmlDocument: " + strName);
+    if(log4jXmlTemplate.isDebugEnabled()) log4jXmlTemplate.debug("Creation of XmlDocument: " + strName);
     XmlDocument subXmlDocument = xmlDocument.hasSubXmlDocuments.get(strName);
     if (subXmlDocument == null) {
-      log4jXmlTemplate.info("new subXmlDocument : " + strName + " in createXmlComponentValue of " +
+      if(log4jXmlTemplate.isDebugEnabled()) log4jXmlTemplate.debug("new subXmlDocument : " + strName + " in createXmlComponentValue of " +
           xmlDocument.xmlTemplate.strName);
       subXmlDocument = new XmlDocument(this, xmlDocument);
     }

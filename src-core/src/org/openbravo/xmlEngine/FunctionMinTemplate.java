@@ -28,7 +28,7 @@ class FunctionMinTemplate extends FunctionTemplate {
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      log4jFunctionMinTemplate.info("New FunctionMinValue");
+      if(log4jFunctionMinTemplate.isDebugEnabled()) log4jFunctionMinTemplate.debug("New FunctionMinValue");
       functionValue = new FunctionMinValue(this, xmlDocument);
     }
     return functionValue;

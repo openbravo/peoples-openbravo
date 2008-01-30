@@ -28,7 +28,7 @@ class FunctionAddTemplate extends FunctionTemplate {
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      log4jFunctionAddTemplate.info("New FunctionAddValue");
+      if(log4jFunctionAddTemplate.isDebugEnabled()) log4jFunctionAddTemplate.debug("New FunctionAddValue");
       functionValue = new FunctionAddValue(this, xmlDocument);
     }
     return functionValue;

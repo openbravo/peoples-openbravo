@@ -95,7 +95,7 @@ class AttributeComponentTemplate implements XmlComponentTemplate, IDComponent {
         }
       }
     }
-    log4jAttributeComponentTemplate.info("New FieldValue: " + ((FieldTemplate)xmlComponentTemplate).name());
+    if(log4jAttributeComponentTemplate.isDebugEnabled()) log4jAttributeComponentTemplate.debug("New FieldValue: " + ((FieldTemplate)xmlComponentTemplate).name());
     FieldValue fieldValue = new FieldValue((FieldTemplate)(this.xmlComponentTemplate), xmlDocument);
     return fieldValue;
   }

@@ -27,7 +27,7 @@ class FunctionEqualTemplate extends FunctionTemplate {
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      log4jFunctionEqualTemplate.info("New FunctionEqualValue");
+      if(log4jFunctionEqualTemplate.isDebugEnabled()) log4jFunctionEqualTemplate.debug("New FunctionEqualValue");
       functionValue = new FunctionEqualValue(this, xmlDocument);
     }
     return functionValue;

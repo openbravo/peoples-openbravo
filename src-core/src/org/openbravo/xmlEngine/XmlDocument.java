@@ -164,7 +164,7 @@ public String print() {
 }
 
 public String print(String strBlank) {
-  log4jXmlDocument.info("Start of print of: "+ xmlTemplate.strName);
+  if(log4jXmlDocument.isDebugEnabled()) log4jXmlDocument.debug("Start of print of: "+ xmlTemplate.strName);
 
   for (Enumeration<DataValue> e = hasDataValue.elements() ; e.hasMoreElements();) {
     DataValue elementDataValue = e.nextElement();

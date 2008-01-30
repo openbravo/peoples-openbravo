@@ -28,7 +28,7 @@ class FunctionMaxTemplate extends FunctionTemplate {
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      log4jFunctionMaxTemplate.info("New FunctionMaxValue");
+      if(log4jFunctionMaxTemplate.isDebugEnabled()) log4jFunctionMaxTemplate.debug("New FunctionMaxValue");
       functionValue = new FunctionMaxValue(this, xmlDocument);
     }
     return functionValue;

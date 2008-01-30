@@ -26,7 +26,7 @@ class FunctionCountTemplate extends FunctionTemplate {
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      log4jFunctionCountTemplate.info("New FunctionCountValue: " + fieldName);
+      if(log4jFunctionCountTemplate.isDebugEnabled()) log4jFunctionCountTemplate.debug("New FunctionCountValue: " + fieldName);
       functionValue = new FunctionCountValue(this, xmlDocument);
     }
     return functionValue;

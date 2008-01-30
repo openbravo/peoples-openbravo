@@ -109,8 +109,8 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
       strDefaultDesignPath = config.getServletContext().getInitParameter("DefaultDesignPath");
       strDefaultServlet = config.getServletContext().getInitParameter("DefaultServlet");
       strGarbageCollectionTime = config.getServletContext().getInitParameter("GarbageCollectionTime");
-      log4j.info("BaseConfigPath: " + strBaseConfigPath);
-      log4j.info("BaseDesignPath: " + strBaseDesignPath);
+      if(log4j.isDebugEnabled()) log4j.debug("BaseConfigPath: " + strBaseConfigPath);
+      if(log4j.isDebugEnabled()) log4j.debug("BaseDesignPath: " + strBaseDesignPath);
       strVersion = config.getServletContext().getInitParameter("Version");
       strParentVersion = config.getServletContext().getInitParameter("Parent_Version");
       try {
@@ -148,13 +148,13 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
       xmlEngine.strReplaceWhat = config.getServletContext().getInitParameter("ReplaceWhat");
       strLocalReplaceWith = config.getServletContext().getInitParameter("ReplaceWith");
       xmlEngine.strReplaceWith = strLocalReplaceWith;
-      log4j.info("Replace attribute value: \"" + xmlEngine.strReplaceWhat + "\" with: \"" + xmlEngine.strReplaceWith + "\".");
+      if(log4j.isDebugEnabled()) log4j.debug("Replace attribute value: \"" + xmlEngine.strReplaceWhat + "\" with: \"" + xmlEngine.strReplaceWith + "\".");
       XmlEngine.strTextDividedByZero = config.getServletContext().getInitParameter("TextDividedByZero");
       xmlEngine.fileXmlEngineFormat = new File (prefix + "/" + strBaseConfigPath + "/" + strFileFormat);
       xmlEngine.initialize();
       strServidorRenderFo = config.getServletContext().getInitParameter("ServidorRenderFo");
 
-      log4j.info("Text of divided by zero: " + XmlEngine.strTextDividedByZero);
+      if(log4j.isDebugEnabled()) log4j.debug("Text of divided by zero: " + XmlEngine.strTextDividedByZero);
 
       if(myPool == null) {
         try {
@@ -197,7 +197,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
     strReplaceWith = strReplaceWith.replace("@actual_url@", strActualUrl);
     strReplaceWithFull = strReplaceWith;
     strReplaceWith = HttpBaseUtils.getRelativeUrl(request, strReplaceWith);
-    if(log4j.isDebugEnabled()) log4j.info("xmlEngine.strReplaceWith: " + strReplaceWith);
+    if(log4j.isDebugEnabled()) log4j.debug("xmlEngine.strReplaceWith: " + strReplaceWith);
     xmlEngine.strReplaceWith = strReplaceWith;
    
   }

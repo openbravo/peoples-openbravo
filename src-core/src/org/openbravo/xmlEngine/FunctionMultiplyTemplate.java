@@ -28,7 +28,7 @@ class FunctionMultiplyTemplate extends FunctionTemplate {
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      log4jFunctionMultiplyTemplate.info("New FunctionMultiplyValue");
+      if(log4jFunctionMultiplyTemplate.isDebugEnabled()) log4jFunctionMultiplyTemplate.debug("New FunctionMultiplyValue");
       functionValue = new FunctionMultiplyValue(this, xmlDocument);
     }
     return functionValue;

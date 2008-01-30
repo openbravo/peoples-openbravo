@@ -127,12 +127,13 @@ public class Sqlc extends DefaultHandler {
     else
       strFilter = argv[1];
     dirFilter = new  DirFilter(strFilter);
-    log4j.info("directory source: " + dirIni);
-    log4j.info("directory destiny: " + dirFin);
-    log4j.info("file termination: " + strFilter);
-    log4j.info("file connection: " + strFileConnection);
-    log4j.info("Write TXT Files: " + sqlc.writeTxtFiles);
-    
+    if(log4j.isDebugEnabled()) {
+	    log4j.debug("directory source: " + dirIni);
+	    log4j.debug("directory destiny: " + dirFin);
+	    log4j.debug("file termination: " + strFilter);
+	    log4j.debug("file connection: " + strFileConnection);
+	    log4j.debug("Write TXT Files: " + sqlc.writeTxtFiles);
+    }
     sqlc.connect(strFileConnection);
     
     File path = new File(dirIni);
@@ -215,7 +216,7 @@ public class Sqlc extends DefaultHandler {
           resultsFileTxt = new FileWriter(fileTxt);
           sqlc.printWriterTxt = new PrintWriter(resultsFileTxt);
         }
-        log4j.info("File: " + fileParsing + " \tprocessed");
+        if(log4j.isDebugEnabled()) log4j.debug("File: " + fileParsing + " \tprocessed");
         java.util.Date date = new java.util.Date();  // there is date in java.sql.*
         if (log4j.isDebugEnabled()) log4j.debug("Time: " + date.getTime()); 
 
@@ -448,12 +449,12 @@ public class Sqlc extends DefaultHandler {
     }
     
     
-    log4j.info("Loading driver: " + strDriver);
+    if(log4j.isDebugEnabled()) log4j.debug("Loading driver: " + strDriver);
     Class.forName(strDriver);
-    log4j.info("Driver loaded");
+    if(log4j.isDebugEnabled()) log4j.debug("Driver loaded");
     if (strDBUser==null || strDBUser.equals("")) connection=DriverManager.getConnection(strURL);
     else connection=DriverManager.getConnection(strURL, strDBUser, strDBPassword);
-    log4j.info("connect made");
+    if(log4j.isDebugEnabled()) log4j.debug("connect made");
   }
 
   public void closeConnection() {
@@ -1358,10 +1359,10 @@ public class Sqlc extends DefaultHandler {
     //  Read properties file.
     Properties properties = new Properties();
     try {
-      log4j.info("strFileProperties: " + strFileProperties);
+      if(log4j.isDebugEnabled()) log4j.debug("strFileProperties: " + strFileProperties);
       properties.load(new FileInputStream(strFileProperties));
       javaDateFormat = properties.getProperty("dateFormat.java");
-      log4j.info("javaDateFormat: " + javaDateFormat);
+      if(log4j.isDebugEnabled()) log4j.debug("javaDateFormat: " + javaDateFormat);
     } catch (IOException e) { 
       // catch possible io errors from readLine()
       e.printStackTrace();

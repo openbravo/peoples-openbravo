@@ -71,14 +71,14 @@ class TemplateConfiguration extends DefaultHandler {
   }
 
   public void processingInstruction (String name, String remainder) {
-    log4jTemplateConfiguration.info("TemplateConfiguration: processingInstruction " + name);
+    if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("TemplateConfiguration: processingInstruction " + name);
   }
 
   public void startElement(java.lang.String uri,
       java.lang.String name,
       java.lang.String qName,
       Attributes amap) { //throws SAXException {
-    log4jTemplateConfiguration.info("TemplateConfiguration: startElement is called: " + name);
+    if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("TemplateConfiguration: startElement is called: " + name);
     readBuffer();
     if (name.trim().equalsIgnoreCase("FIELD")) {
       pushElement(name);
@@ -124,7 +124,7 @@ class TemplateConfiguration extends DefaultHandler {
       xmlComponentArg1 = null;
       xmlComponentArg2 = null;
       for (int i = 0; i < amap.getLength(); i++) {
-        log4jTemplateConfiguration.info("  FUNCTION: attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
+        if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("  FUNCTION: attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
         if (amap.getQName(i).equals("id")) {
           id = amap.getValue(i);
         } else if (amap.getQName(i).equals("attribute")) {
@@ -159,7 +159,7 @@ class TemplateConfiguration extends DefaultHandler {
       id = null;
       sectionSubreport = null;
       for (int i = 0; i < amap.getLength(); i++) {
-        log4jTemplateConfiguration.info("  SUBREPORT: attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
+        if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("  SUBREPORT: attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
         if (amap.getQName(i).equals("id")) {
           id = amap.getValue(i);
         } else if (amap.getQName(i).equals("name")) {
@@ -179,7 +179,7 @@ class TemplateConfiguration extends DefaultHandler {
       String withId = null;
       String strArgumentName = null;
       for (int i = 0; i < amap.getLength(); i++) {
-        log4jTemplateConfiguration.info("  ARGUMENT: attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
+        if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("  ARGUMENT: attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
         if (amap.getQName(i).equals("withId")) {
           withId = amap.getValue(i);
         } else if (amap.getQName(i).equals("name")) {
@@ -187,7 +187,7 @@ class TemplateConfiguration extends DefaultHandler {
         }
       }
       XmlComponentTemplate xmlComponent = (XmlComponentTemplate)hashtable.get(withId);
-      log4jTemplateConfiguration.debug("XmlComponent of id: " + withId + " xmlComponent: " + xmlComponent);
+      if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("XmlComponent of id: " + withId + " xmlComponent: " + xmlComponent);
       // Search in the parameterSQL of the structuers of the subreport
       for (Enumeration<Object> e1 = subreport.hasDataTemplate.elements() ; e1.hasMoreElements();) {
         DataTemplate elementDataTemplate = (DataTemplate)e1.nextElement();
@@ -196,7 +196,7 @@ class TemplateConfiguration extends DefaultHandler {
           if (parameterTemplate.strName.equals(strArgumentName)) {
             parameterTemplate.xmlComponentTemplate = xmlComponent;  // XmlEngineNP: the value should be saved in parameter
             parameterTemplate.section = sectionSubreport;
-            log4jTemplateConfiguration.info("Argument: asigned to parametro_SQL: " + parameterTemplate.strName);
+            if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("Argument: asigned to parametro_SQL: " + parameterTemplate.strName);
           }
         }
       }
@@ -205,7 +205,7 @@ class TemplateConfiguration extends DefaultHandler {
       if (parameterTemplate != null) {
         parameterTemplate.xmlComponentTemplate = xmlComponent;
         parameterTemplate.section = sectionSubreport;
-        log4jTemplateConfiguration.info("Argument: asigned to parameter: " + parameterTemplate.strName);
+        if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("Argument: asigned to parameter: " + parameterTemplate.strName);
       }
     } else if (name.trim().equalsIgnoreCase("SECTION")) {
       id = null;
@@ -238,11 +238,11 @@ class TemplateConfiguration extends DefaultHandler {
     } else if (name.trim().equalsIgnoreCase("CONNECTION")) {
       pushElement(name);
       for (int i = 0; i < amap.getLength(); i++) {
-        log4jTemplateConfiguration.info("  TemplateConfiguration (CONNECTION): attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
+        if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("  TemplateConfiguration (CONNECTION): attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
         if (amap.getQName(i).equals("driver")) {
-          log4jTemplateConfiguration.debug("    adding driver");
+          if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("    adding driver");
           activeDataTemplate.strDriver = amap.getValue(i);
-          log4jTemplateConfiguration.debug("    driver added");
+          if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("    driver added");
         } else if (amap.getQName(i).equals("URL")) {
           activeDataTemplate.strURL = amap.getValue(i);
           //          } else if (amap.getQName(i).equals("SQL")) {
@@ -252,7 +252,7 @@ class TemplateConfiguration extends DefaultHandler {
     } else if (name.trim().equalsIgnoreCase("STRUCTURE")) {
       pushElement(name);
       for (int i = 0; i < amap.getLength(); i++) {
-        log4jTemplateConfiguration.info("  TemplateConfiguration (STRUCTURE): attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
+        if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("  TemplateConfiguration (STRUCTURE): attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
         if (amap.getQName(i).equals("name")) {
           activeDataTemplate = new DataTemplate();
           //            activeDataTemplate.clear();  // XmlEngineNP: hay que pasarlo a XmlDocument, si es necesario
@@ -268,7 +268,7 @@ class TemplateConfiguration extends DefaultHandler {
     } else if (name.trim().equalsIgnoreCase("TEMPLATE")) {
       pushElement(name);
       for (int i = 0; i < amap.getLength(); i++) {
-        log4jTemplateConfiguration.info("  TemplateConfiguration (TEMPLATE): attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
+        if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("  TemplateConfiguration (TEMPLATE): attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
         if (amap.getQName(i).equals("file")) {
           strTemplate = amap.getValue(i);
         }
@@ -333,7 +333,7 @@ class TemplateConfiguration extends DefaultHandler {
   public void endElement(java.lang.String uri,
       java.lang.String name,
       java.lang.String qName) { //throws SAXException {
-    log4jTemplateConfiguration.info("TemplateConfiguration: endElement is called: " + name);
+    if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("TemplateConfiguration: endElement is called: " + name);
     readBuffer();
     if (name.equals("SUBREPORT")) {
       popElement();
@@ -341,8 +341,11 @@ class TemplateConfiguration extends DefaultHandler {
   }
 
   public void characters(char[] ch, int start, int length) { //throws SAXException {
-    log4jTemplateConfiguration.info("TemplateConfiguration: characters is called: " + new String(ch, start, length));
-    log4jTemplateConfiguration.info("TemplateConfiguration: characters is called: " + strElement);
+    if(log4jTemplateConfiguration.isDebugEnabled()) {
+    	log4jTemplateConfiguration.debug("TemplateConfiguration: characters is called: " + new String(ch, start, length));
+    	log4jTemplateConfiguration.debug("TemplateConfiguration: characters is called: " + strElement);
+    }
+    
     if (buffer == null) buffer = new StringBuffer();
     buffer.append(ch, start, length);
   }
