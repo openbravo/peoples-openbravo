@@ -23,7 +23,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright :1 1999-2005 Openbravo, S.L
+  * Contributions are Copyright :1 1999-2008 Openbravo, S.L
   *************************************************************************
   * $Id: M_InOut_Create.sql,v 1.17 2003/09/05 04:58:06 jjanke Exp $
   ***
@@ -199,7 +199,8 @@
              o.DateOrdered, o.DeliveryRule, o.FreightCostRule, o.FreightAmt,
              o.C_Project_ID, o.C_Activity_ID, o.C_Campaign_ID, o.AD_OrgTrx_ID,
              o.User1_ID, o.User2_ID, o.DeliveryViaRule, o.M_Shipper_ID,
-             o.C_Charge_ID, o.ChargeAmt, o.PriorityRule, o.SALESREP_ID
+             o.C_Charge_ID, o.ChargeAmt, o.PriorityRule, o.SALESREP_ID,              
+             o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
            FROM C_ORDER o INNER JOIN C_ORDERLINE l ON(o.C_Order_ID=l.C_Order_ID) --  Orders are IP  or CO if Standard Orders
            WHERE(o.DocStatus='IP' OR(o.DocStatus='CO'
                                      AND o.IsDelivered='N'
@@ -231,7 +232,8 @@
              o.DateOrdered, o.DeliveryRule, o.FreightCostRule, o.FreightAmt,
              o.C_Project_ID, o.C_Activity_ID, o.C_Campaign_ID, o.AD_OrgTrx_ID,
              o.User1_ID, o.User2_ID, o.DeliveryViaRule, o.M_Shipper_ID,
-             o.C_Charge_ID, o.ChargeAmt, o.PriorityRule, o.SALESREP_ID
+             o.C_Charge_ID, o.ChargeAmt, o.PriorityRule, o.SALESREP_ID,
+             o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
            ORDER BY o.PriorityRule
           ) LOOP
           DBMS_OUTPUT.PUT_LINE('Order ' || Cur_Order.DocumentNo || '/' || Cur_Order.C_Order_ID || ', Wh=' || Cur_Order.M_Warehouse_ID || ', Force=' || p_ForceDelivery || ', Delivery=' || Cur_Order.DeliveryRule) ;
@@ -289,7 +291,8 @@
               C_Campaign_ID, AD_OrgTrx_ID, User1_ID, User2_ID,
               DeliveryViaRule, M_Shipper_ID, C_Charge_ID, ChargeAmt,
               PriorityRule, DocStatus, DocAction, Processing,
-              Processed, SALESREP_ID)
+              Processed, SALESREP_ID, 
+              DELIVERY_LOCATION_ID) -- Added by Rafa Roda to include delivery location
             VALUES
               (p_InOut_ID, Cur_Order.C_Order_ID, Cur_Order.IsSOTrx, Cur_Order.AD_Client_ID,
               Cur_Order.AD_Org_ID, 'Y', now(), 0,
@@ -301,7 +304,8 @@
               Cur_Order.C_Campaign_ID, Cur_Order.AD_OrgTrx_ID, Cur_Order.User1_ID, Cur_Order.User2_ID,
               Cur_Order.DeliveryViaRule, Cur_Order.M_Shipper_ID, Cur_Order.C_Charge_ID, Cur_Order.ChargeAmt,
               Cur_Order.PriorityRule, 'DR', 'CO', 'N',
-              'N', Cur_Order.SALESREP_ID);
+              'N', Cur_Order.SALESREP_ID, 
+              Cur_Order.DELIVERY_LOCATION_ID); -- Added by Rafa Roda to include delivery location
           END IF;--Next_Order
           IF(NOT Next_Order) THEN
             /**
