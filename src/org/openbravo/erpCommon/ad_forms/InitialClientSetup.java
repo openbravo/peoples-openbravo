@@ -187,13 +187,13 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     isOK = true;
     strSummary = new StringBuffer();
     strSummary.append(Utility.messageBD(this, "ReportSummary", vars.getLanguage())).append(SALTO_LINEA);
-    String strCliente = new String(vars.getStringParameter("inpCliente").getBytes("ISO-8859-1"),"UTF-8");
-    String strOrganizacion = new String(vars.getStringParameter("inpOrganizacion").getBytes("ISO-8859-1"),"UTF-8");
-    String strClienteUsuario = new String(vars.getStringParameter("inpClienteUsuario").getBytes("ISO-8859-1"),"UTF-8");
-    String strOrganizacionUsuario = new String(vars.getStringParameter("inpOrganizacionUsuario").getBytes("ISO-8859-1"),"UTF-8");
+    String strCliente = vars.getStringParameter("inpCliente");
+    String strOrganizacion = vars.getStringParameter("inpOrganizacion");
+    String strClienteUsuario = vars.getStringParameter("inpClienteUsuario");
+    String strOrganizacionUsuario = vars.getStringParameter("inpOrganizacionUsuario");
     String strMoneda = vars.getStringParameter("inpMoneda");
     String strPais = vars.getStringParameter("inpPais");
-    String strCiudad = new String(vars.getStringParameter("inpCiudad").getBytes("ISO-8859-1"),"UTF-8");
+    String strCiudad = vars.getStringParameter("inpCiudad");
     String strRegion = vars.getStringParameter("inpRegion");
     boolean bProducto = isTrue(vars.getStringParameter("inpProducto"));
     boolean bTercero = isTrue(vars.getStringParameter("inpTercero"));

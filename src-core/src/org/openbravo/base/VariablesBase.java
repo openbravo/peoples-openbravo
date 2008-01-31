@@ -33,10 +33,12 @@ public class VariablesBase {
   public VariablesBase() {
   }
 
-  public VariablesBase(HttpServletRequest request) {
+
+@SuppressWarnings("unchecked")
+public VariablesBase(HttpServletRequest request) {
     this.session = request.getSession(true);
-    this.httpRequest = request;
-    this.isMultipart = ServletFileUpload.isMultipartContent(request);
+    this.httpRequest = request;    
+    this.isMultipart = ServletFileUpload.isMultipartContent(new ServletRequestContext(request));
     if (isMultipart) {
       DiskFileItemFactory factory = new DiskFileItemFactory();
       //factory.setSizeThreshold(yourMaxMemorySize);
@@ -45,7 +47,7 @@ public class VariablesBase {
       //upload.setSizeMax(yourMaxRequestSize);
       try {
         items = upload.parseRequest(request);
-      } catch (FileUploadException ex) {
+      } catch (Exception ex) {
         ex.printStackTrace();
       }
     }
@@ -399,7 +401,7 @@ public class VariablesBase {
       FileItem item = iter.next();
       if (item.isFormField() && item.getFieldName().equals(parameter)) {
         try {
-          return (item.getString());
+          return (item.getString("UTF-8"));
         } catch (Exception ex) {
           ex.printStackTrace();
           return "";
