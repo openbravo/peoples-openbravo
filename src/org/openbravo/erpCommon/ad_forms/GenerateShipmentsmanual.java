@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -81,40 +81,31 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
       if (pinstanceData!=null && pinstanceData.length>0) {
         if (!pinstanceData[0].errormsg.equals("")) {
           String message = pinstanceData[0].errormsg;
+          myMessage.setType("Info");
           if (message.startsWith("@") && message.endsWith("@")) {
             message = message.substring(1, message.length()-1);
-            if (message.indexOf("@")==-1){
-            	myMessage.setType("Error");        
+            if (message.indexOf("@")==-1){        
                 myMessage.setMessage(Utility.messageBD(this, message, vars.getLanguage()));                
-            	//messageResult = Utility.messageBD(this, message, vars.getLanguage());
             }
-            else{
-            	myMessage.setType("Error");        
-                myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), "@" + message + "@"));
-            	//messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), "@" + message + "@");            
+            else{        
+                myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), "@" + message + "@"));            
             }
-          } else {
-        	 myMessage.setType("Error");        
-             myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), message));  
-             //messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), message);
-            
+          } else {        
+             myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), message));              
           }
         } else if (pinstanceData[0].result.equals("1")) {
         	myMessage.setType("Success");        
             myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));	
-           //messageResult = Utility.messageBD(this, "Success", vars.getLanguage());
         } else {
           myMessage.setType("Error");        
           myMessage.setMessage(Utility.messageBD(this, "Error", vars.getLanguage()));		
-          //messageResult = Utility.messageBD(this, "Error", vars.getLanguage());
         }
       }
       GenerateShipmentsmanualData.updateReset(this, strSalesOrder);
 
       if (log4j.isDebugEnabled()) log4j.debug(myMessage.getMessage());
       // new message system
-      vars.setMessage("GenerateShipmentsmanual", myMessage);
-      //vars.setSessionValue("GenerateShipmentsmanual|message", messageResult);      
+      vars.setMessage("GenerateShipmentsmanual", myMessage);      
       response.sendRedirect(strDireccion + request.getServletPath());
   } else pageError(response);
 }
@@ -127,8 +118,7 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
       PrintWriter out = response.getWriter();
       String discard[]={"sectionDetail"};
       XmlDocument xmlDocument=null;
-      //String strMessage = vars.getSessionValue("GenerateShipmentsmanual|message");
-      //vars.removeSessionValue("GenerateShipmentsmanual|message");
+
       GenerateShipmentsmanualData[] data=null;
       String strTreeOrg = GenerateShipmentsmanualData.treeOrg(this, vars.getClient());
       if (strC_BPartner_ID.equals("") && strAD_Org_ID.equals("")){
@@ -185,8 +175,7 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramBPartnerDescription", GenerateInvoicesmanualData.bPartnerDescription(this, strC_BPartner_ID));
-    //
-    //xmlDocument.setParameter("paramMessage", (strMessage.equals("")?"":"alert('" + Replace.replace(strMessage, "\"", "\\'") + "');"));
+    
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "AD_Org Security validation", Utility.getContext(this, vars, "#User_Org", "GenerateShipmentsmanual"), Utility.getContext(this, vars, "#User_Client", "GenerateShipmentsmanual"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "GenerateShipmentsmanual", strAD_Org_ID);
