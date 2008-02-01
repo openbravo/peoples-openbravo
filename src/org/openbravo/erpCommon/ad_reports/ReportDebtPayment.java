@@ -90,7 +90,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    String discard[]={"discard", "discard2", "discard3"};
+    String discard[]={"discard", "discard2", "discard3", "discard4"};
     String strAux = "";
     if (log4j.isDebugEnabled()) log4j.debug("strGroup = " + strGroup);
     if (strPending.equals("") && strConciliate.equals("") && strSettle.equals("")) {
@@ -122,15 +122,22 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       discard[0] = "sectionBpartner";
       discard[1] = "sectionStatus2";
       discard[2] = "sectionTotal2";
+      if(!strGroup.equals("")) {
+    	  discard[3] = "sectionDetail2";
+      }
+      else {
+    	  discard[3] = "sectionTotal";
+      }
     }
-
-    if(!strGroup.equals("")){
-      discard[0] = "sectionDetail2";
-      discard[1] = "sectionStatus2";
-      discard[2] = "sectionTotal2";
-    } else {
-      discard[0] = "sectionBpartner";
-      discard[1] = "sectionTotal";
+    else {
+	    if(!strGroup.equals("")){
+	      discard[0] = "sectionDetail2";
+	      discard[1] = "sectionStatus2";
+	      discard[2] = "sectionTotal2";
+	    } else {
+	      discard[0] = "sectionBpartner";
+	      discard[1] = "sectionTotal";
+	    }
     }
     if (vars.commandIn("DEFAULT")) {
       discard[0] = "sectionBpartner";
