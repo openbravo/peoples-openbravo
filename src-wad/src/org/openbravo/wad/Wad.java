@@ -228,28 +228,28 @@ public class Wad extends DefaultHandler {
       File fileFin = new File(dirFin);
       if (!fileFin.exists()) {
         log4j.error("No such directory: " + fileFin.getAbsoluteFile());
-        wad.pool.destroy();
+        
         return;
       }
 
       File fileFinReloads = new File(dirReference + wad.strSystemSeparator + "ad_callouts");
       if (!fileFinReloads.exists()) {
         log4j.error("No such directory: " + fileFinReloads.getAbsoluteFile());
-        wad.pool.destroy();
+        
         return;
       }
 
       File fileReference = new File(dirReference + wad.strSystemSeparator + "reference");
       if (!fileReference.exists()) {
         log4j.error("No such directory: " + fileReference.getAbsoluteFile());
-        wad.pool.destroy();
+        
         return;
       }
 
       File fileWebXml = new File(dirWebXml);
       if (!fileWebXml.exists()) {
         log4j.error("No such directory: " + fileWebXml.getAbsoluteFile());
-        wad.pool.destroy();
+        
         return;
       }
 
@@ -265,28 +265,28 @@ public class Wad extends DefaultHandler {
       File fileActionButton = new File(dirActionButton);
       if (!fileActionButton.exists()) {
         log4j.error("No such directory: " + fileActionButton.getAbsoluteFile());
-        wad.pool.destroy();
+        
         return;
       }
 
       File fileTrl = new File(dirBaseTrl);
       if (!fileTrl.exists()) {
         log4j.error("No such directory: " + fileTrl.getAbsoluteFile());
-        wad.pool.destroy();
+        
         return;
       }
 
       File fileBase = new File(strBaseSrc);
       if (!fileBase.exists()) {
         log4j.error("No such directory: " + fileBase.getAbsoluteFile());
-        wad.pool.destroy();
+        
         return;
       }
 
       File fileBaseAplication = new File(basePath);
       if (!fileBaseAplication.exists()) {
         log4j.error("No such directory: " + fileBaseAplication.getAbsoluteFile());
-        wad.pool.destroy();
+        
         return;
       }
 
@@ -348,10 +348,12 @@ public class Wad extends DefaultHandler {
       }
       
       
-      wad.pool.destroy();
+      
     } catch (Exception e) {
-      wad.pool.destroy();
+      
       throw new Exception(e);
+    } finally {
+      wad.pool.destroy();
     }
   }
 

@@ -199,8 +199,7 @@ public class Translation extends HttpSecureAppServlet
   }
  
   private void exportContibutors(String directory, String AD_Language) {
-    String fileName = directory + File.separator + CONTRIBUTORS_FILENAME+"_" + AD_Language + ".xml";
-    File out = new File(fileName);
+    File out = new File(directory, CONTRIBUTORS_FILENAME+"_" + AD_Language + ".xml");
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = factory.newDocumentBuilder();
