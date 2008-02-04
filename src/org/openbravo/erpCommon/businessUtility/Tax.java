@@ -31,6 +31,8 @@ public class Tax {
   public static String get (ConnectionProvider conn, String M_Product_ID, String shipDate, String AD_Org_ID, String M_Warehouse_ID, String billC_BPartner_Location_ID, String shipC_BPartner_Location_ID, String C_Project_ID, boolean IsSOTrx) throws IOException,ServletException {
     log4jTax.debug("Tax.get");
     return TaxData.taxGet(conn, M_Product_ID, shipDate, AD_Org_ID, M_Warehouse_ID, billC_BPartner_Location_ID, shipC_BPartner_Location_ID, C_Project_ID, (IsSOTrx?"Y":"N"));
+
+//FIXME: If this code is not goint be used, it should be removed
 /*System.out.println("billC_BPartner_Location_ID: " + billC_BPartner_Location_ID);
     String billFrom = TaxData.billLocation(conn, AD_Org_ID);
     TaxData[] td = TaxData.billTo(conn, billC_BPartner_Location_ID);
@@ -95,6 +97,8 @@ public static String validateCreditCardNumber (String creditCardNumber, String c
    if(creditCardNumber == null || creditCardType == null) return "CreditCardNumberError";
    String ccStartList = "";
    String ccLengthList = "";
+	 // FIXME: If we know that creditCardType is M and assign some vars, why we do check creditCardType	
+	 // variable again. We should use else clauses more intelligently to avoid doing unnecessary comparations
    if(creditCardType.equals("M")){
      ccStartList = "51,52,53,54,55";
      ccLengthList = "16";

@@ -49,6 +49,7 @@ public class ExternalSalesImpl implements ExternalSales{
       
     }
 
+		// FIXME: This should be removed
    public String test2(String p){
     return p;
     }

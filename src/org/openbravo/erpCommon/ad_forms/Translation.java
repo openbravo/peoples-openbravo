@@ -334,6 +334,8 @@ public class Translation extends HttpSecureAppServlet
 			//transformer.transform (source, result);
             OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream (out), "utf-8");
             transformer.transform (source, new StreamResult(osw));
+                // FIXME: We should be closing the file (out and its related classes) here to make sure that is closed
+                // and that is does not really get closed when the GC claims the object (indeterministic)
 		}
 		catch (Exception e)
 		{

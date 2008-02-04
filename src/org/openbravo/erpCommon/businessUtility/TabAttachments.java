@@ -173,18 +173,23 @@ public class TabAttachments extends HttpSecureAppServlet {
       FileItem file = vars.getMultiFile(inpName);
       if (file==null) throw new ServletException("Empty file");
       strName = file.getName();
+			// FIXME: Get the directory separator from Java runtime
       int i = strName.lastIndexOf("\\");
       if (i!=-1) {
         strName = strName.substring(i+1);
+			// FIXME: Get the directory separator from Java runtime
       } else if ((i=strName.lastIndexOf("/"))!=-1) {
         strName = strName.substring(i+1);
       }
       TabAttachmentsData.insert(conn, this, strFileReference, vars.getClient(), vars.getOrg(), vars.getUser(), tableId, key, strDataType, strText, strName);
       try {
+				// FIXME: Get the directory separator from Java runtime
         File uploadedDir = new File(strFTPDirectory+"/"+tableId+"-"+key);
         if (!uploadedDir.exists()) uploadedDir.mkdirs();
         File uploadedFile = new File(uploadedDir, strName);
         file.write(uploadedFile);
+				// FIXME: We should be closing the file here to make sure that is closed
+				// and that is does not really get closed when the GC claims the object (indeterministic)
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
@@ -219,6 +224,7 @@ public class TabAttachments extends HttpSecureAppServlet {
       TabAttachmentsData.delete(conn, this, strFileReference);
       try {
         FileUtility f = new FileUtility();
+				// FIXME: Get the directory separator from Java runtime
         File file = new File(strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name);
         if (file.exists()) f = new FileUtility(strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name, false);
         else f = new FileUtility(strFTPDirectory, strFileReference, false);
@@ -338,6 +344,7 @@ public class TabAttachments extends HttpSecureAppServlet {
     */
     
     TabAttachmentsData [] files = TabAttachmentsData.selectEdit(this, strFileReference);
+		// FIXME: If we do not use this code, it should be removed
     /*
     String viewButtons = "yes";
     if (strFileReference.equals("")||files==null||files.length==0) viewButtons="none";
@@ -359,6 +366,7 @@ public class TabAttachments extends HttpSecureAppServlet {
     TabAttachmentsData[] data = TabAttachmentsData.selectEdit(this, strFileReference);
     if (data==null || data.length==0) throw new ServletException("Missing file");
     FileUtility f = new FileUtility();
+		// FIXME: Get the directory separator from Java runtime
     File file = new File(strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name);
     if (file.exists()) f = new FileUtility(strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name, false, true);
     else f = new FileUtility(strFTPDirectory, strFileReference, false, true);

@@ -24,6 +24,7 @@ public interface ExternalSales {
     public Product[] getProductsCatalog( int entityId, int organizationId, int salesChannel, String username, String password);
     public void uploadOrders(int entityId, int organizationId, int salesChannel, Order[] newOrders, String username, String password);
     public Order[] getOrders(int entityId, int organizationId, OrderIdentifier[] orderIds, String username, String password);
+	// FIXME: The following two members should be removed
     public String test();
     public String test2(String p);
 

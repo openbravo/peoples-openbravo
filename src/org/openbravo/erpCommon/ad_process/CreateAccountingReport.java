@@ -47,6 +47,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     String process = CreateAccountingReportData.processId(this, "CreateAccountingReport");
+		// TODO: Remove it if we are not using it
     /*String strTabId = vars.getGlobalVariable("inpTabId", "CreateAccountingReport|tabId");
     String strWindowId = vars.getGlobalVariable("inpwindowId", "CreateAccountingReport|windowId");*/
     //String strDeleteOld = vars.getStringParameter("inpDeleteOld", "Y");
@@ -181,6 +182,7 @@ void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, Stri
       }else {
         strPeriodFrom = "01/01/" + strPeriod;
         //log4j.debug("*************************strPeriodFrom2: "+strPeriodFrom);
+				// TODO: Does this work with MM/DD/YY o YY/MM/DD locales?
         strPeriodTo = DateTimeData.nDaysAfter(this, "31/12/" + strPeriod, "1");
       }
       strPeriodFrom = CreateAccountingReportData.selectFormat(this, strPeriodFrom, vars.getSqlDateFormat());

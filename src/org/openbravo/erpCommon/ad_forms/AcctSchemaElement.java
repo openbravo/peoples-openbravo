@@ -53,6 +53,9 @@ public final class AcctSchemaElement implements Serializable {
                 String mandatory = data[i].ismandatory;
                 String balanced = data[i].isbalanced;
                 String defaultValue = "";
+								// FIXME: For the sake of clarity we should be SEGMENT_Org
+								// and String SEGMENT_Account for the next, etc. What's the point
+								// defining constants that we do not use
                 if(segmentType.equals("OO"))
                     defaultValue = data[i].orgId;
                 else

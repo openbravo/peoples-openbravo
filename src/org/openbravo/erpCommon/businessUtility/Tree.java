@@ -52,6 +52,7 @@ public class Tree {
     boolean bolFirstLine = true;
     String strText = "";
     for (int i = 0; i < data.length; i++) {
+			// FIXME: Get this comparation out of the loop. It is only done once 
       if (bolFirstLine){
         bolFirstLine = false;
         strText = data[i].id;
@@ -70,6 +71,7 @@ public class Tree {
     boolean bolFirstLine = true;
     String strText = "";
     for (int i = 0; i < data.length; i++) {
+			// FIXME: Get this comparation out of the loop. It is only done once 
       if (bolFirstLine){
         bolFirstLine = false;
         strText = data[i].id;

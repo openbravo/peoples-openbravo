@@ -657,6 +657,7 @@ public class Buscador extends HttpSecureAppServlet {
   }
 
   public String getServletInfo() {
+		// FIXME: Should be in English
     return "Servlet que presenta el buscador";
   } // end of getServletInfo() method
 }
