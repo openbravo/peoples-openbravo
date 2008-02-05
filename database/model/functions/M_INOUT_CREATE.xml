@@ -2,10 +2,10 @@
   <database name="FUNCTION M_INOUT_CREATE">
     <function name="M_INOUT_CREATE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_InOut_ID" type="NUMERIC" mode="out"/>
       <parameter name="p_Order_ID" type="NUMERIC" mode="in" default="NULL"/>
       <parameter name="p_Invoice_ID" type="NUMERIC" mode="in" default="NULL"/>
       <parameter name="p_ForceDelivery" type="CHAR" mode="in" default="N"/>
-      <parameter name="p_InOut_ID" type="NUMERIC" mode="out"/>
       <parameter name="p_Locator_ID" type="NUMERIC" mode="in" default="NULL"/>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License

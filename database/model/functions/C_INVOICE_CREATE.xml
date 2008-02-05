@@ -2,8 +2,8 @@
   <database name="FUNCTION C_INVOICE_CREATE">
     <function name="C_INVOICE_CREATE" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Order_ID" type="NUMERIC" mode="in" default="NULL"/>
       <parameter name="p_Invoice_ID" type="NUMERIC" mode="out"/>
+      <parameter name="p_Order_ID" type="NUMERIC" mode="in" default="NULL"/>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in

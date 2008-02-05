@@ -27,7 +27,7 @@
   Dummy NUMBER;
 BEGIN
   -- No forced Delivery
-  M_InOut_Create(PInstance_ID, NULL, NULL, 'N', Dummy) ;
+  M_InOut_Create(PInstance_ID,Dummy, NULL, NULL, 'N') ;
 END M_InOut_Create0
 
 

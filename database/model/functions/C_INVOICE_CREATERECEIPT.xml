@@ -99,7 +99,7 @@
     IF(NOT FINISH_PROCESS) THEN
       -- Create (and post) the shipment
       v_ResultStr:='Create Shipment';
-      M_InOut_Create(NULL, NULL, v_Record_ID, 'Y', v_InOut_ID, v_M_Locator_ID) ;
+      M_InOut_Create(NULL, v_InOut_ID, NULL, v_Record_ID, 'Y', v_M_Locator_ID) ;
       DBMS_OUTPUT.PUT_LINE('  Shipment - ' || v_InOut_ID) ;
       IF(v_InOut_ID=0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@InOutCreateFailed@');

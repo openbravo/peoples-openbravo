@@ -27,7 +27,7 @@
   ************************************************************************/
   v_Dummy NUMBER;
 BEGIN
-  C_Invoice_Create(p_PInstance_ID, NULL, v_Dummy) ;
+  C_Invoice_Create(p_PInstance_ID, v_Dummy, NULL) ;
 END C_Invoice_Create0
 
 ]]></body>

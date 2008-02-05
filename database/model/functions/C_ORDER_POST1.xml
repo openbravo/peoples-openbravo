@@ -1032,7 +1032,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
   IF(v_DocSubTypeSO='PR' AND v_DocStatus<>'WP') THEN
     DBMS_OUTPUT.PUT_LINE('Create PreInvoice - ' || v_Record_ID) ;
     v_ResultStr:='CreatePreInvoice';
-    C_Invoice_Create(NULL, v_Record_ID, Invoice_ID) ;
+    C_Invoice_Create(NULL, Invoice_ID, v_Record_ID) ;
     DBMS_OUTPUT.PUT_LINE('  PreInvoice - ' || Invoice_ID) ;
     IF(Invoice_ID=0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@PreInvoiceCreateFailed@');
