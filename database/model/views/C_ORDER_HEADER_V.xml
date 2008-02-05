@@ -1,40 +1,15 @@
 <?xml version="1.0"?>
   <database name="VIEW C_ORDER_HEADER_V">
-    <view name="C_ORDER_HEADER_V"><![CDATA[SELECT o.AD_Client_ID, o.AD_Org_ID, o.IsActive, o.Created, o.CreatedBy, o.Updated, o.UpdatedBy,
-  TO_CHAR('en_US') AS AD_Language,
-  o.C_Order_ID, o.IsSOTrx, o.DocumentNo, o.DocStatus,  o.C_DocType_ID,
-  o.C_BPartner_ID, bp.Value AS BPValue,
-  oi.C_Location_ID AS Org_Location_ID, oi.TaxID,
-  dt.PrintName AS DocumentType, dt.DocumentNote AS DocumentTypeNote,
-  o.SalesRep_ID, COALESCE(ubp.Name, u.Name) AS SalesRep_Name,
-  o.DateOrdered, o.DatePromised,
-  bpg.Name AS BPGreeting,
-  bp.Name, bp.Name2,
-  bpcg.Name AS BPContactGreeting,
-  bpc.Title,
-  NULLIF (bpc.Name, bp.Name) AS ContactName,
-  bpl.C_Location_ID,
-  bp.ReferenceNo,
-  o.Description,
-  o.POReference,
-  o.C_Currency_ID,
-  pt.Name AS PaymentTerm, pt.DocumentNote AS PaymentTermNote,
-  o.C_Charge_ID, o.ChargeAmt,
-  o.TotalLines,
-  o.GrandTotal,
-  o.M_PriceList_ID,
-  o.IsTaxIncluded,
-  o.C_Campaign_ID, o.C_Project_ID, o.C_Activity_ID,
-  o.M_Shipper_ID, o.DeliveryRule, o.DeliveryViaRule, o.PriorityRule, o.InvoiceRule
-FROM C_Order o
-  INNER JOIN C_DocType dt ON (o.C_DocType_ID=dt.C_DocType_ID)
-  INNER JOIN C_PaymentTerm pt ON (o.C_PaymentTerm_ID=pt.C_PaymentTerm_ID)
-  INNER JOIN C_BPartner bp ON (o.C_BPartner_ID=bp.C_BPartner_ID)
-  LEFT OUTER JOIN C_Greeting bpg ON (bp.C_Greeting_ID=bpg.C_Greeting_ID)
-  INNER JOIN C_BPartner_Location bpl ON (o.C_BPartner_Location_ID=bpl.C_BPartner_Location_ID)
-  LEFT OUTER JOIN AD_User bpc ON (o.AD_User_ID=bpc.AD_User_ID)
-  LEFT OUTER JOIN C_Greeting bpcg ON (bpc.C_Greeting_ID=bpcg.C_Greeting_ID)
-  INNER JOIN AD_OrgInfo oi ON (o.AD_Org_ID=oi.AD_Org_ID)
-  LEFT OUTER JOIN AD_User u ON (o.SalesRep_ID=u.AD_User_ID)
-  LEFT OUTER JOIN C_BPartner ubp ON (u.C_BPartner_ID=ubp.C_BPartner_ID)]]></view>
+    <view name="C_ORDER_HEADER_V"><![CDATA[ SELECT o.ad_client_id, o.ad_org_id, o.isactive, o.created, o.createdby, o.updated, o.updatedby, to_char('en_US') AS ad_language, o.c_order_id, o.issotrx, o.documentno, o.docstatus, o.c_doctype_id, o.c_bpartner_id, bp.value AS bpvalue, oi.c_location_id AS org_location_id, oi.taxid, dt.printname AS documenttype, dt.documentnote AS documenttypenote, o.salesrep_id, COALESCE(ubp.name, u.name) AS salesrep_name, o.dateordered, o.datepromised, bpg.name AS bpgreeting, bp.name, bp.name2, bpcg.name AS bpcontactgreeting, bpc.title, NULLIF(bpc.name, bp.name) AS contactname, bpl.c_location_id, bp.referenceno, o.description, o.poreference, o.c_currency_id, pt.name AS paymentterm, pt.documentnote AS paymenttermnote, o.c_charge_id, o.chargeamt, o.totallines, o.grandtotal, o.m_pricelist_id, o.istaxincluded, o.c_campaign_id, o.c_project_id, o.c_activity_id, o.m_shipper_id, o.deliveryrule, o.deliveryviarule, o.priorityrule, o.invoicerule
+   FROM c_order o
+   JOIN c_doctype dt ON o.c_doctype_id = dt.c_doctype_id
+   JOIN c_paymentterm pt ON o.c_paymentterm_id = pt.c_paymentterm_id
+   JOIN c_bpartner bp ON o.c_bpartner_id = bp.c_bpartner_id
+   LEFT JOIN c_greeting bpg ON bp.c_greeting_id = bpg.c_greeting_id
+   JOIN c_bpartner_location bpl ON o.c_bpartner_location_id = bpl.c_bpartner_location_id
+   LEFT JOIN ad_user bpc ON o.ad_user_id = bpc.ad_user_id
+   LEFT JOIN c_greeting bpcg ON bpc.c_greeting_id = bpcg.c_greeting_id
+   JOIN ad_orginfo oi ON o.ad_org_id = oi.ad_org_id
+   LEFT JOIN ad_user u ON o.salesrep_id = u.ad_user_id
+   LEFT JOIN c_bpartner ubp ON u.c_bpartner_id = ubp.c_bpartner_id]]></view>
   </database>

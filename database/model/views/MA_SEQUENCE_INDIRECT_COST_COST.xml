@@ -1,30 +1,17 @@
 <?xml version="1.0"?>
   <database name="VIEW MA_SEQUENCE_INDIRECT_COST_COST">
-    <view name="MA_SEQUENCE_INDIRECT_COST_COST"><![CDATA[SELECT MA_SEQUENCE.MA_SEQUENCE_ID, MA_INDIRECT_COST_VALUE.MA_INDIRECT_COST_ID,
-    (CASE MA_INDIRECT_COST_VALUE.COST_UOM
-    WHEN 'H' THEN MA_SEQUENCE.COSTCENTERUSE*MA_INDIRECT_COST_VALUE.COST
-    WHEN 'U' THEN SUM(MA_SEQUENCEPRODUCT.QUANTITY)*MA_INDIRECT_COST_VALUE.COST
-    WHEN 'K' THEN SUM(MA_SEQUENCEPRODUCT.QUANTITY*M_PRODUCT.WEIGHT)*MA_INDIRECT_COST_VALUE.COST
-    END) AS COST
-FROM MA_SEQUENCE, MA_PROCESS, MA_PROCESSPLAN_VERSION, MA_COSTCENTER_VERSION,
-     MA_COSTCENTER_IC, MA_INDIRECT_COST_VALUE, M_PRODUCT, MA_SEQUENCEPRODUCT
-WHERE MA_SEQUENCE.MA_PROCESS_ID = MA_PROCESS.MA_PROCESS_ID
-  AND MA_SEQUENCE.MA_PROCESSPLAN_VERSION_ID = MA_PROCESSPLAN_VERSION.MA_PROCESSPLAN_VERSION_ID
-  AND MA_PROCESS.MA_COSTCENTER_ID = MA_COSTCENTER_VERSION.MA_COSTCENTER_ID
-  AND MA_COSTCENTER_VERSION.MA_COSTCENTER_VERSION_ID = MA_COSTCENTER_IC.MA_COSTCENTER_VERSION_ID
-  AND MA_COSTCENTER_IC.MA_INDIRECT_COST_ID = MA_INDIRECT_COST_VALUE.MA_INDIRECT_COST_ID
-  AND MA_SEQUENCE.MA_SEQUENCE_ID = MA_SEQUENCEPRODUCT.MA_SEQUENCE_ID
-  AND MA_SEQUENCEPRODUCT.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-  AND MA_SEQUENCEPRODUCT.PRODUCTIONTYPE = '+'
-  AND MA_INDIRECT_COST_VALUE.COST_UOM <> 'P'
-  AND MA_COSTCENTER_VERSION.VALIDFROM = (SELECT MAX(ccv.VALIDFROM)
-                                         FROM MA_COSTCENTER_VERSION ccv
-                                         WHERE ccv.MA_COSTCENTER_ID = MA_COSTCENTER_VERSION.MA_COSTCENTER_ID
-                                         AND ccv.VALIDFROM <= MA_PROCESSPLAN_VERSION.DATEFROM)
-  AND MA_INDIRECT_COST_VALUE.DATEFROM = (SELECT MAX(sc.DATEFROM)
-                                   FROM MA_INDIRECT_COST_VALUE sc
-                                   WHERE sc.MA_INDIRECT_COST_ID = MA_INDIRECT_COST_VALUE.MA_INDIRECT_COST_ID
-                                   AND sc.DATEFROM <= MA_PROCESSPLAN_VERSION.DATEFROM)
-GROUP BY MA_SEQUENCE.MA_SEQUENCE_ID, MA_INDIRECT_COST_VALUE.MA_INDIRECT_COST_ID, MA_INDIRECT_COST_VALUE.COST,
-         MA_INDIRECT_COST_VALUE.COST_UOM, MA_SEQUENCE.COSTCENTERUSE]]></view>
+    <view name="MA_SEQUENCE_INDIRECT_COST_COST"><![CDATA[ SELECT ma_sequence.ma_sequence_id, ma_indirect_cost_value.ma_indirect_cost_id, 
+        CASE ma_indirect_cost_value.cost_uom
+            WHEN 'H' THEN ma_sequence.costcenteruse * ma_indirect_cost_value.cost
+            WHEN 'U' THEN sum(ma_sequenceproduct.quantity) * ma_indirect_cost_value.cost
+            WHEN 'K' THEN sum(ma_sequenceproduct.quantity * m_product.weight) * ma_indirect_cost_value.cost
+            ELSE NULL
+        END AS cost
+   FROM ma_sequence, ma_process, ma_processplan_version, ma_costcenter_version, ma_costcenter_ic, ma_indirect_cost_value, m_product, ma_sequenceproduct
+  WHERE ma_sequence.ma_process_id = ma_process.ma_process_id AND ma_sequence.ma_processplan_version_id = ma_processplan_version.ma_processplan_version_id AND ma_process.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ma_costcenter_version.ma_costcenter_version_id = ma_costcenter_ic.ma_costcenter_version_id AND ma_costcenter_ic.ma_indirect_cost_id = ma_indirect_cost_value.ma_indirect_cost_id AND ma_sequence.ma_sequence_id = ma_sequenceproduct.ma_sequence_id AND ma_sequenceproduct.m_product_id = m_product.m_product_id AND ma_sequenceproduct.productiontype = '+' AND ma_indirect_cost_value.cost_uom <> 'P' AND ma_costcenter_version.validfrom = (( SELECT max(ccv.validfrom) AS max
+           FROM ma_costcenter_version ccv
+          WHERE ccv.ma_costcenter_id = ma_costcenter_version.ma_costcenter_id AND ccv.validfrom <= ma_processplan_version.datefrom)) AND ma_indirect_cost_value.datefrom = (( SELECT max(sc.datefrom) AS max
+           FROM ma_indirect_cost_value sc
+          WHERE sc.ma_indirect_cost_id = ma_indirect_cost_value.ma_indirect_cost_id AND sc.datefrom <= ma_processplan_version.datefrom))
+  GROUP BY ma_sequence.ma_sequence_id, ma_indirect_cost_value.ma_indirect_cost_id, ma_indirect_cost_value.cost, ma_indirect_cost_value.cost_uom, ma_sequence.costcenteruse]]></view>
   </database>

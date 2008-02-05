@@ -1,33 +1,13 @@
 <?xml version="1.0"?>
   <database name="VIEW M_INOUT_HEADER_VT">
-    <view name="M_INOUT_HEADER_VT"><![CDATA[SELECT io.AD_Client_ID, io.AD_Org_ID, io.IsActive, io.Created, io.CreatedBy, io.Updated, io.UpdatedBy,
-  dt.AD_Language,
-  io.M_InOut_ID, io.IsSOTrx, io.DocumentNo, io.DocStatus,  io.C_DocType_ID,
-  io.C_BPartner_ID, bp.Value AS BPValue,
-  oi.C_Location_ID AS Org_Location_ID, oi.TaxID,
-  io.M_Warehouse_ID,
-  wh.C_Location_ID AS Warehouse_Location_ID,
-  dt.PrintName AS DocumentType, dt.DocumentNote AS DocumentTypeNote,
-  io.C_Order_ID,
-  io.MovementDate, io.MovementType,
-  bpg.Name AS BPGreeting,
-  bp.Name, bp.Name2,
-  bpcg.Name AS BPContactGreeting,
-  bpc.Title,
-  NULLIF (bpc.Name, bp.Name) AS ContactName,
-  bpl.C_Location_ID,
-  bp.ReferenceNo,
-  io.Description,
-  io.POReference,
-  io.DateOrdered,
-  io.M_Shipper_ID, io.DeliveryRule, io.DeliveryViaRule, io.PriorityRule
-FROM M_InOut io
-  INNER JOIN C_DocType_Trl dt ON (io.C_DocType_ID=dt.C_DocType_ID)
-  INNER JOIN C_BPartner bp ON (io.C_BPartner_ID=bp.C_BPartner_ID)
-  LEFT OUTER JOIN C_Greeting_Trl bpg ON (bp.C_Greeting_ID=bpg.C_Greeting_ID AND dt.AD_Language=bpg.AD_Language)
-  INNER JOIN C_BPartner_Location bpl ON (io.C_BPartner_Location_ID=bpl.C_BPartner_Location_ID)
-  LEFT OUTER JOIN AD_User bpc ON (io.AD_User_ID=bpc.AD_User_ID)
-  LEFT OUTER JOIN C_Greeting_Trl bpcg ON (bpc.C_Greeting_ID=bpcg.C_Greeting_ID AND dt.AD_Language=bpcg.AD_Language)
-  INNER JOIN AD_OrgInfo oi ON (io.AD_Org_ID=oi.AD_Org_ID)
-  INNER JOIN M_Warehouse wh ON (io.M_Warehouse_ID=wh.M_Warehouse_ID)]]></view>
+    <view name="M_INOUT_HEADER_VT"><![CDATA[ SELECT io.ad_client_id, io.ad_org_id, io.isactive, io.created, io.createdby, io.updated, io.updatedby, dt.ad_language, io.m_inout_id, io.issotrx, io.documentno, io.docstatus, io.c_doctype_id, io.c_bpartner_id, bp.value AS bpvalue, oi.c_location_id AS org_location_id, oi.taxid, io.m_warehouse_id, wh.c_location_id AS warehouse_location_id, dt.printname AS documenttype, dt.documentnote AS documenttypenote, io.c_order_id, io.movementdate, io.movementtype, bpg.name AS bpgreeting, bp.name, bp.name2, bpcg.name AS bpcontactgreeting, bpc.title, NULLIF(bpc.name, bp.name) AS contactname, bpl.c_location_id, bp.referenceno, io.description, io.poreference, io.dateordered, io.m_shipper_id, io.deliveryrule, io.deliveryviarule, io.priorityrule
+   FROM m_inout io
+   JOIN c_doctype_trl dt ON io.c_doctype_id = dt.c_doctype_id
+   JOIN c_bpartner bp ON io.c_bpartner_id = bp.c_bpartner_id
+   LEFT JOIN c_greeting_trl bpg ON bp.c_greeting_id = bpg.c_greeting_id AND dt.ad_language = bpg.ad_language
+   JOIN c_bpartner_location bpl ON io.c_bpartner_location_id = bpl.c_bpartner_location_id
+   LEFT JOIN ad_user bpc ON io.ad_user_id = bpc.ad_user_id
+   LEFT JOIN c_greeting_trl bpcg ON bpc.c_greeting_id = bpcg.c_greeting_id AND dt.ad_language = bpcg.ad_language
+   JOIN ad_orginfo oi ON io.ad_org_id = oi.ad_org_id
+   JOIN m_warehouse wh ON io.m_warehouse_id = wh.m_warehouse_id]]></view>
   </database>

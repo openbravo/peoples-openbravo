@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW REPORT_PROJECTPROPOSAL">
-    <view name="REPORT_PROJECTPROPOSAL"><![CDATA[SELECT P.DATESEND AS FROMDATESEND, P.DATESEND AS TODATESEND, P.AD_CLIENT_ID, P.AD_ORG_ID, P.AD_USER_ID, 
-P.C_BPARTNER_ID, P.C_BPARTNER_LOCATION_ID, P.C_PROJECT_ID, P.C_PROJECTPROPOSAL_ID, P.ISSOTRX, 
-U.FIRSTNAME, U.LASTNAME, P.DATESEND, P.CREATED, P.CREATEDBY, P.UPDATED, P.UPDATEDBY 
-FROM C_PROJECTPROPOSAL P, AD_USER U 
-WHERE P.AD_USER_ID = U.AD_USER_ID 
-AND P.ISACTIVE = 'Y']]></view>
+    <view name="REPORT_PROJECTPROPOSAL"><![CDATA[ SELECT p.datesend AS fromdatesend, p.datesend AS todatesend, p.ad_client_id, p.ad_org_id, p.ad_user_id, p.c_bpartner_id, p.c_bpartner_location_id, p.c_project_id, p.c_projectproposal_id, p.issotrx, u.firstname, u.lastname, p.datesend, p.created, p.createdby, p.updated, p.updatedby
+   FROM c_projectproposal p, ad_user u
+  WHERE p.ad_user_id = u.ad_user_id AND p.isactive = 'Y']]></view>
   </database>

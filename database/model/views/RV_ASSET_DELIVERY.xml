@@ -1,14 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_ASSET_DELIVERY">
-    <view name="RV_ASSET_DELIVERY"><![CDATA[SELECT ad.A_Asset_Delivery_ID, ad.AD_Client_ID, ad.AD_Org_ID, ad.IsActive, ad.Created, ad.CreatedBy, ad.Updated, ad.UpdatedBy,
-  a.A_ASSET_ID, a.A_Asset_Group_ID, a.M_Product_ID,
-  a.GUARANTEEDATE, a.ASSETSERVICEDATE,
-  a.C_BPARTNER_ID, ad.AD_USER_ID,
-  ad.MOVEMENTDATE, ad.SERNO, ad.LOT, ad.VERSIONNO,
-  ad.M_INOUTLINE_ID,
-  ad.EMAIL, ad.MESSAGEID, ad.DELIVERYCONFIRMATION,
-  ad.URL, ad.REMOTE_ADDR, ad.REMOTE_HOST, ad.REFERRER,
-  ad.DESCRIPTION
-FROM A_Asset_Delivery ad
- INNER JOIN A_Asset a ON (a.A_Asset_ID=ad.A_Asset_ID)]]></view>
+    <view name="RV_ASSET_DELIVERY"><![CDATA[ SELECT ad.a_asset_delivery_id, ad.ad_client_id, ad.ad_org_id, ad.isactive, ad.created, ad.createdby, ad.updated, ad.updatedby, a.a_asset_id, a.a_asset_group_id, a.m_product_id, a.guaranteedate, a.assetservicedate, a.c_bpartner_id, ad.ad_user_id, ad.movementdate, ad.serno, ad.lot, ad.versionno, ad.m_inoutline_id, ad.email, ad.messageid, ad.deliveryconfirmation, ad.url, ad.remote_addr, ad.remote_host, ad.referrer, ad.description
+   FROM a_asset_delivery ad
+   JOIN a_asset a ON a.a_asset_id = ad.a_asset_id]]></view>
   </database>

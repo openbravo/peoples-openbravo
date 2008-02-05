@@ -1,22 +1,12 @@
 <?xml version="1.0"?>
   <database name="VIEW AD_FIELD_V">
-    <view name="AD_FIELD_V"><![CDATA[SELECT t.AD_Window_ID, f.AD_Tab_ID, f.AD_Field_ID, tbl.AD_Table_ID, f.AD_Column_ID, 
-  f.Name, f.Description, f.Help, f.IsDisplayed, f.DisplayLogic, f.DisplayLength, 
-  f.SeqNo, f.SortNo, f.IsSameLine, f.IsHeading, f.IsFieldOnly, f.IsReadOnly, 
-  f.IsEncrypted AS IsEncryptedField, 
-  c.ColumnName, c.FieldLength, c.VFormat, c.DefaultValue, c.IsKey, c.IsParent, 
-  c.IsMandatory, c.IsIdentifier, c.IsTranslated, c.AD_Reference_Value_ID, 
-  c.Callout, c.AD_Reference_ID, c.AD_Val_Rule_ID, c.AD_Process_ID, 
-  c.ReadOnlyLogic, c.IsUpdateable, c.IsEncrypted AS IsEncryptedColumn, c.IsSelectionColumn,
-  tbl.TableName, c.ValueMin, c.ValueMax, 
-  fg.Name AS FieldGroup, vr.Code AS ValidationCode
-FROM AD_Field f 
-  INNER JOIN AD_Tab t ON (f.AD_Tab_ID = t.AD_Tab_ID)
-  LEFT OUTER JOIN AD_FieldGroup fg ON (f.AD_FieldGroup_ID = fg.AD_FieldGroup_ID) 
-  LEFT OUTER JOIN AD_Column c ON (f.AD_Column_ID = c.AD_Column_ID)
-  INNER JOIN AD_Table tbl ON (c.AD_Table_ID = tbl.AD_Table_ID)
-  INNER JOIN AD_Reference r ON (c.AD_Reference_ID = r.AD_Reference_ID)
-  LEFT OUTER JOIN AD_Val_Rule vr ON (c.AD_Val_Rule_ID=vr.AD_Val_Rule_ID)
-WHERE f.IsActive = 'Y' 
-  AND c.IsActive = 'Y']]></view>
+    <view name="AD_FIELD_V"><![CDATA[ SELECT t.ad_window_id, f.ad_tab_id, f.ad_field_id, tbl.ad_table_id, f.ad_column_id, f.name, f.description, f.help, f.isdisplayed, f.displaylogic, f.displaylength, f.seqno, f.sortno, f.issameline, f.isheading, f.isfieldonly, f.isreadonly, f.isencrypted AS isencryptedfield, c.columnname, c.fieldlength, c.vformat, c.defaultvalue, c.iskey, c.isparent, c.ismandatory, c.isidentifier, c.istranslated, c.ad_reference_value_id, c.callout, c.ad_reference_id, c.ad_val_rule_id, c.ad_process_id, c.readonlylogic, c.isupdateable, c.isencrypted AS isencryptedcolumn, c.isselectioncolumn, tbl.tablename, c.valuemin, c.valuemax, fg.name AS fieldgroup, vr.code AS validationcode
+   FROM ad_field f
+   JOIN ad_tab t ON f.ad_tab_id = t.ad_tab_id
+   LEFT JOIN ad_fieldgroup fg ON f.ad_fieldgroup_id = fg.ad_fieldgroup_id
+   LEFT JOIN ad_column c ON f.ad_column_id = c.ad_column_id
+   JOIN ad_table tbl ON c.ad_table_id = tbl.ad_table_id
+   JOIN ad_reference r ON c.ad_reference_id = r.ad_reference_id
+   LEFT JOIN ad_val_rule vr ON c.ad_val_rule_id = vr.ad_val_rule_id
+  WHERE f.isactive = 'Y' AND c.isactive = 'Y']]></view>
   </database>

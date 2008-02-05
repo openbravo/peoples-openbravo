@@ -1,21 +1,18 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_PRODUCT_COSTING">
-    <view name="RV_PRODUCT_COSTING"><![CDATA[SELECT  pc.M_Product_ID, pc.C_AcctSchema_ID, p.Value, p.Name, p.M_Product_Category_ID,
-  pc.AD_Client_ID, pc.AD_Org_ID, pc.IsActive, pc.Created,pc.CreatedBy,pc.Updated,pc.UpdatedBy,
-  pc.CurrentCostPrice,
-  --  Standard Costing
-  pc.FutureCostPrice, pc.CostStandard,
-  pc.CostStandardPOQty, pc.CostStandardPOAmt,
-  (CASE pc.CostStandardPOQty WHEN 0 THEN 0 ELSE pc.CostStandardPOAmt/pc.CostStandardPOQty END) AS CostStandardPODiff,
-  pc.CostStandardCumQty, pc.CostStandardCumAmt,
-  (CASE pc.CostStandardCumQty WHEN 0 THEN 0 ELSE pc.CostStandardCumAmt/pc.CostStandardCumQty END) AS CostStandardInvDiff,
-  --  Average Costing
-  pc.CostAverage,
-  pc.CostAverageCumQty, pc.CostAverageCumAmt,
-  pc.TotalInvQty, pc.TotalInvAmt,
-  (CASE pc.TotalInvQty WHEN 0 THEN 0 ELSE pc.TotalInvAmt/pc.TotalInvQty END) AS TotalInvCost,
-  --  LastPrice
-  pc.PriceLastPO, pc.PriceLastInv
-FROM  M_Product_Costing pc, M_Product p
-WHERE pc.M_Product_ID=p.M_Product_ID]]></view>
+    <view name="RV_PRODUCT_COSTING"><![CDATA[ SELECT pc.m_product_id, pc.c_acctschema_id, p.value, p.name, p.m_product_category_id, pc.ad_client_id, pc.ad_org_id, pc.isactive, pc.created, pc.createdby, pc.updated, pc.updatedby, pc.currentcostprice, pc.futurecostprice, pc.coststandard, pc.coststandardpoqty, pc.coststandardpoamt, 
+        CASE pc.coststandardpoqty
+            WHEN 0 THEN 0
+            ELSE pc.coststandardpoamt / pc.coststandardpoqty
+        END AS coststandardpodiff, pc.coststandardcumqty, pc.coststandardcumamt, 
+        CASE pc.coststandardcumqty
+            WHEN 0 THEN 0
+            ELSE pc.coststandardcumamt / pc.coststandardcumqty
+        END AS coststandardinvdiff, pc.costaverage, pc.costaveragecumqty, pc.costaveragecumamt, pc.totalinvqty, pc.totalinvamt, 
+        CASE pc.totalinvqty
+            WHEN 0 THEN 0
+            ELSE pc.totalinvamt / pc.totalinvqty
+        END AS totalinvcost, pc.pricelastpo, pc.pricelastinv
+   FROM m_product_costing pc, m_product p
+  WHERE pc.m_product_id = p.m_product_id]]></view>
   </database>

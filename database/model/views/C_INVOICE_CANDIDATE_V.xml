@@ -1,52 +1,12 @@
 <?xml version="1.0"?>
   <database name="VIEW C_INVOICE_CANDIDATE_V">
-    <view name="C_INVOICE_CANDIDATE_V"><![CDATA[SELECT 
-  o.AD_Client_ID, o.AD_Org_ID, o.C_BPartner_ID, o.C_Order_ID, 
-  o.DocumentNo, o.DateOrdered, o.C_DocType_ID, o.TOTALLINES AS amountLines, 
-  SUM((l.QtyOrdered-l.QtyInvoiced)*l.PriceActual) AS TotalLines 
-FROM  C_Order o 
-  INNER JOIN C_OrderLine l ON (o.C_Order_ID=l.C_Order_ID) 
-  INNER JOIN C_BPartner bp ON (o.C_BPartner_ID=bp.C_BPartner_ID) 
-  LEFT OUTER JOIN C_InvoiceSchedule si ON (bp.C_InvoiceSchedule_ID=si.C_InvoiceSchedule_ID) 
-WHERE o.DocStatus IN ('CO','CL','IP') -- Standard Orders are IP 
-  --  not Offers and open Walkin-Receipts 
-  AND o.C_DocType_ID IN (SELECT C_DocType_ID FROM C_DocType 
-    WHERE DocBaseType='SOO' AND DocSubTypeSO NOT IN ('ON','OB','WR')) 
-  --  we need to invoice 
-  AND l.QtyOrdered <> l.QtyInvoiced 
-  -- 
-  AND ( 
-    --  Immediate 
-    o.InvoiceRule='I' 
-    --  Order compete ** not supported ** 
-    OR  o.InvoiceRule='O' 
-    --  Not invoice 
-    OR  o.InvoiceRule='N' 
-    --  Delivery 
-    OR  (o.InvoiceRule='D' AND l.QtyInvoiced<>l.QtyDelivered) 
-    --  Order Schedule, but none defined on Business Partner level 
-    OR  (o.InvoiceRule='S' AND bp.C_InvoiceSchedule_ID IS NULL) 
-    --  Schedule defined at BP 
-    OR  (o.InvoiceRule='S' AND bp.C_InvoiceSchedule_ID IS NOT NULL AND 
-        ( 
-        --  Daily or none 
-          (si.InvoiceFrequency IS NULL OR si.InvoiceFrequency='D') 
-        --  Weekly 
-        OR  (si.InvoiceFrequency='W') 
-        --  Bi-Monthly 
-        OR  (si.InvoiceFrequency='T' 
-          AND (TRUNC(o.DateOrdered) <= TRUNC(SysDate,'MM')+si.InvoiceDayCutoff-1 
-            AND TRUNC(SysDate) >= TRUNC(o.DateOrdered,'MM')+si.InvoiceDay-1) 
-          OR  (TRUNC(o.DateOrdered) <= TRUNC(SysDate,'MM')+si.InvoiceDayCutoff+14 
-            AND TRUNC(SysDate) >= TRUNC(o.DateOrdered,'MM')+si.InvoiceDay+14) 
-          ) 
-        --  Monthly 
-        OR  (si.InvoiceFrequency='M' 
-          AND TRUNC(o.DateOrdered) <= TRUNC(SysDate,'MM')+si.InvoiceDayCutoff-1 -- after cutoff 
-          AND TRUNC(SysDate) >= TRUNC(o.DateOrdered,'MM')+si.InvoiceDay-1)      -- after invoice day 
-        ) 
-      ) 
-    ) 
-GROUP BY o.AD_Client_ID, o.AD_Org_ID, o.C_BPartner_ID, o.C_Order_ID, 
-  o.DocumentNo, o.DateOrdered, o.C_DocType_ID, o.TOTALLINES]]></view>
+    <view name="C_INVOICE_CANDIDATE_V"><![CDATA[ SELECT o.ad_client_id, o.ad_org_id, o.c_bpartner_id, o.c_order_id, o.documentno, o.dateordered, o.c_doctype_id, o.totallines AS amountlines, sum((l.qtyordered - l.qtyinvoiced) * l.priceactual) AS totallines
+   FROM c_order o
+   JOIN c_orderline l ON o.c_order_id = l.c_order_id
+   JOIN c_bpartner bp ON o.c_bpartner_id = bp.c_bpartner_id
+   LEFT JOIN c_invoiceschedule si ON bp.c_invoiceschedule_id = si.c_invoiceschedule_id
+  WHERE (o.docstatus IN ('CO', 'CL', 'IP')) AND (o.c_doctype_id IN ( SELECT c_doctype.c_doctype_id
+   FROM c_doctype
+  WHERE c_doctype.docbasetype = 'SOO' AND (c_doctype.docsubtypeso NOT IN ('ON', 'OB', 'WR')))) AND l.qtyordered <> l.qtyinvoiced AND (o.invoicerule = 'I' OR o.invoicerule = 'O' OR o.invoicerule = 'N' OR o.invoicerule = 'D' AND l.qtyinvoiced <> l.qtydelivered OR o.invoicerule = 'S' AND bp.c_invoiceschedule_id IS NULL OR o.invoicerule = 'S' AND bp.c_invoiceschedule_id IS NOT NULL AND (si.invoicefrequency IS NULL OR si.invoicefrequency = 'D' OR si.invoicefrequency = 'W' OR si.invoicefrequency = 'T' AND trunc(o.dateordered) <= (TRUNC(now(), 'MM') + si.invoicedaycutoff - 1) AND trunc(now()) >= (TRUNC(o.dateordered, 'MM') + si.invoiceday - 1) OR trunc(o.dateordered) <= (TRUNC(now(), 'MM') + si.invoicedaycutoff + 14) AND trunc(now()) >= (TRUNC(o.dateordered, 'MM') + si.invoiceday + 14) OR si.invoicefrequency = 'M' AND trunc(o.dateordered) <= (TRUNC(now(), 'MM') + si.invoicedaycutoff - 1) AND trunc(now()) >= (TRUNC(o.dateordered, 'MM') + si.invoiceday - 1)))
+  GROUP BY o.ad_client_id, o.ad_org_id, o.c_bpartner_id, o.c_order_id, o.documentno, o.dateordered, o.c_doctype_id, o.totallines]]></view>
   </database>

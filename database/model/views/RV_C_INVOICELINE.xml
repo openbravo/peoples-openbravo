@@ -1,28 +1,22 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_C_INVOICELINE">
-    <view name="RV_C_INVOICELINE"><![CDATA[SELECT
-  il.AD_Client_ID, il.AD_Org_ID,
-  il.C_InvoiceLine_ID, i.C_Invoice_ID, i.SalesRep_ID,
-  i.C_BPartner_ID, i.C_BP_Group_ID,
-  il.M_Product_ID, p.M_Product_Category_ID,
-  i.DateInvoiced, i.DateAcct,
-  --  Qty
-  il.QtyInvoiced*i.Multiplier AS QtyInvoiced,
-  --  Item Amounts
-  il.PriceList, il.PriceActual, il.PriceLimit,
-  (CASE PriceList WHEN 0 THEN 0 ELSE
-    ROUND((PriceList-PriceActual)/PriceList*100,2) END) AS Discount,
-  (CASE PriceLimit WHEN 0 THEN 0 ELSE
-    ROUND((PriceActual-PriceLimit)/PriceLimit*100,2) END) AS Margin,
-  --  Line Amounts
-  ROUND(i.Multiplier*LineNetAmt, 2) AS LineNetAmt,
-  ROUND(i.Multiplier*PriceList*QtyInvoiced, 2) AS LineListAmt,
-  (CASE WHEN il.PriceLimit IS NULL THEN ROUND(i.Multiplier*LineNetAmt,2) ELSE
-    ROUND(i.Multiplier*PriceLimit*QtyInvoiced,2) END) AS LineLimitAmt,
-  ROUND(i.Multiplier*PriceList*QtyInvoiced-LineNetAmt,2) AS LineDiscountAmt,
-  (CASE WHEN il.PriceLimit IS NULL THEN 0 ELSE
-    ROUND(i.Multiplier*LineNetAmt-PriceLimit*QtyInvoiced,2) END) AS LineOverLimitAmt
-FROM  RV_C_Invoice i, C_InvoiceLine il, M_Product p
-WHERE i.C_Invoice_ID=il.C_Invoice_ID
-  AND il.M_Product_ID=p.M_Product_ID]]></view>
+    <view name="RV_C_INVOICELINE"><![CDATA[ SELECT il.ad_client_id, il.ad_org_id, il.c_invoiceline_id, i.c_invoice_id, i.salesrep_id, i.c_bpartner_id, i.c_bp_group_id, il.m_product_id, p.m_product_category_id, i.dateinvoiced, i.dateacct, il.qtyinvoiced * i.multiplier AS qtyinvoiced, il.pricelist, il.priceactual, il.pricelimit, 
+        CASE il.pricelist
+            WHEN 0 THEN 0
+            ELSE round((il.pricelist - il.priceactual) / il.pricelist * 100, 2)
+        END AS discount, 
+        CASE il.pricelimit
+            WHEN 0 THEN 0
+            ELSE round((il.priceactual - il.pricelimit) / il.pricelimit * 100, 2)
+        END AS margin, round(i.multiplier * il.linenetamt, 2) AS linenetamt, round(i.multiplier * il.pricelist * il.qtyinvoiced, 2) AS linelistamt, 
+        CASE
+            WHEN il.pricelimit IS NULL THEN round(i.multiplier * il.linenetamt, 2)
+            ELSE round(i.multiplier * il.pricelimit * il.qtyinvoiced, 2)
+        END AS linelimitamt, round(i.multiplier * il.pricelist * il.qtyinvoiced - il.linenetamt, 2) AS linediscountamt, 
+        CASE
+            WHEN il.pricelimit IS NULL THEN 0
+            ELSE round(i.multiplier * il.linenetamt - il.pricelimit * il.qtyinvoiced, 2)
+        END AS lineoverlimitamt
+   FROM rv_c_invoice i, c_invoiceline il, m_product p
+  WHERE i.c_invoice_id = il.c_invoice_id AND il.m_product_id = p.m_product_id]]></view>
   </database>

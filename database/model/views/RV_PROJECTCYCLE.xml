@@ -1,27 +1,10 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_PROJECTCYCLE">
-    <view name="RV_PROJECTCYCLE"><![CDATA[SELECT p.AD_Client_ID, p.AD_Org_ID, p.IsActive, p.Created,p.CreatedBy, p.Updated,p.UpdatedBy,
-c.C_Cycle_ID, c.Name AS CycleName, c.C_Currency_ID,
-cs.C_CycleStep_ID, cs.Name AS CycleStepName, cs.SeqNo, cs.RelativeWeight,
-pp.C_Phase_ID, pp.Name AS ProjectPhaseName,
-pt.C_ProjectType_ID, pt.Name AS ProjectTypeName,
-p.Value AS ProjectValue, p.Name AS ProjectName, p.Description, p.Note,
-p.C_BPartner_ID, p.C_BPartner_Location_ID, p.AD_User_ID, p.POReference,
-p.SalesRep_ID, p.M_Warehouse_ID, p.ProjectCategory,
-p.DateContract, p.DateFinish,
-p.IsCommitment, p.IsCommitCeiling,
-p.CommittedQty*cs.RelativeWeight AS CommittedQty,
-C_Currency_Convert (p.CommittedAmt, p.C_Currency_ID, c.C_Currency_ID, TO_DATE(SysDate), 'S', p.AD_Client_ID, p.AD_Org_ID)*cs.RelativeWeight AS CommittedAmt,
-p.PlannedQty*cs.RelativeWeight AS PlannedQty,
-C_Currency_Convert (p.PlannedAmt, p.C_Currency_ID, c.C_Currency_ID, TO_DATE(SysDate), 'S', p.AD_Client_ID, p.AD_Org_ID)*cs.RelativeWeight AS PlannedAmt,
-C_Currency_Convert (p.PlannedMarginAmt, p.C_Currency_ID, c.C_Currency_ID, TO_DATE(SysDate), 'S', p.AD_Client_ID, p.AD_Org_ID)*cs.RelativeWeight AS PlannedMarginAmt,
-C_Currency_Convert (p.InvoicedAmt, p.C_Currency_ID, c.C_Currency_ID, TO_DATE(SysDate), 'S', p.AD_Client_ID, p.AD_Org_ID)*cs.RelativeWeight AS InvoicedAmt,
-p.InvoicedQty*cs.RelativeWeight AS InvoicedQty,
-C_Currency_Convert (p.ProjectBalanceAmt, p.C_Currency_ID, c.C_Currency_ID, TO_DATE(SysDate), 'S', p.AD_Client_ID, p.AD_Org_ID)*cs.RelativeWeight AS ProjectBalanceAmt
-FROM C_Cycle c
-  INNER JOIN C_CycleStep cs ON (c.C_Cycle_ID=cs.C_Cycle_ID)
-  INNER JOIN C_CyclePhase cp ON (cs.C_CycleStep_ID=cp.C_CycleStep_ID)
-  INNER JOIN C_Phase pp ON (cp.C_Phase_ID=pp.C_Phase_ID)
-  INNER JOIN C_Project p ON (cp.C_Phase_ID=p.C_Phase_ID)
-  INNER JOIN C_ProjectType pt ON (p.C_ProjectType_ID=pt.C_ProjectType_ID)]]></view>
+    <view name="RV_PROJECTCYCLE"><![CDATA[ SELECT p.ad_client_id, p.ad_org_id, p.isactive, p.created, p.createdby, p.updated, p.updatedby, c.c_cycle_id, c.name AS cyclename, c.c_currency_id, cs.c_cyclestep_id, cs.name AS cyclestepname, cs.seqno, cs.relativeweight, pp.c_phase_id, pp.name AS projectphasename, pt.c_projecttype_id, pt.name AS projecttypename, p.value AS projectvalue, p.name AS projectname, p.description, p.note, p.c_bpartner_id, p.c_bpartner_location_id, p.ad_user_id, p.poreference, p.salesrep_id, p.m_warehouse_id, p.projectcategory, p.datecontract, p.datefinish, p.iscommitment, p.iscommitceiling, p.committedqty * cs.relativeweight AS committedqty, c_currency_convert(p.committedamt, p.c_currency_id, c.c_currency_id, to_date(now()), 'S', p.ad_client_id, p.ad_org_id) * cs.relativeweight AS committedamt, p.plannedqty * cs.relativeweight AS plannedqty, c_currency_convert(p.plannedamt, p.c_currency_id, c.c_currency_id, to_date(now()), 'S', p.ad_client_id, p.ad_org_id) * cs.relativeweight AS plannedamt, c_currency_convert(p.plannedmarginamt, p.c_currency_id, c.c_currency_id, to_date(now()), 'S', p.ad_client_id, p.ad_org_id) * cs.relativeweight AS plannedmarginamt, c_currency_convert(p.invoicedamt, p.c_currency_id, c.c_currency_id, to_date(now()), 'S', p.ad_client_id, p.ad_org_id) * cs.relativeweight AS invoicedamt, p.invoicedqty * cs.relativeweight AS invoicedqty, c_currency_convert(p.projectbalanceamt, p.c_currency_id, c.c_currency_id, to_date(now()), 'S', p.ad_client_id, p.ad_org_id) * cs.relativeweight AS projectbalanceamt
+   FROM c_cycle c
+   JOIN c_cyclestep cs ON c.c_cycle_id = cs.c_cycle_id
+   JOIN c_cyclephase cp ON cs.c_cyclestep_id = cp.c_cyclestep_id
+   JOIN c_phase pp ON cp.c_phase_id = pp.c_phase_id
+   JOIN c_project p ON cp.c_phase_id = p.c_phase_id
+   JOIN c_projecttype pt ON p.c_projecttype_id = pt.c_projecttype_id]]></view>
   </database>

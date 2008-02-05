@@ -1,36 +1,20 @@
 <?xml version="1.0"?>
   <database name="VIEW M_INOUT_LINE_VT">
-    <view name="M_INOUT_LINE_VT"><![CDATA[SELECT iol.AD_Client_ID, iol.AD_Org_ID, iol.IsActive, iol.Created, iol.CreatedBy, iol.Updated, iol.UpdatedBy,
-  uom.AD_Language,
-  iol.M_InOut_ID, iol.M_InOutLine_ID,
-  iol.Line,
-  iol.MovementQty, uom.UOMSymbol,
-  COALESCE(COALESCE(pt.Name,p.Name), iol.Description) AS Name, -- main line
-  CASE WHEN COALESCE(pt.Name,p.Name) IS NOT NULL THEN iol.Description END AS Description, -- second line
-  COALESCE(pt.DocumentNote, p.DocumentNote) AS DocumentNote, -- third line
-    p.UPC, p.SKU, p.Value AS ProductValue,
-  iol.M_Locator_ID, iol.Lot, iol.SerNo
-FROM  M_InOutLine iol
-  INNER JOIN C_UOM_Trl uom ON (iol.C_UOM_ID=uom.C_UOM_ID)
-  LEFT OUTER JOIN M_Product p ON (iol.M_PRODUCT_ID=p.M_PRODUCT_ID)
-  LEFT OUTER JOIN M_Product_Trl pt ON (iol.M_PRODUCT_ID=pt.M_PRODUCT_ID AND uom.AD_Language=pt.AD_Language)
-UNION
-SELECT iol.AD_Client_ID, iol.AD_Org_ID, iol.IsActive, iol.Created, iol.CreatedBy, iol.Updated, iol.UpdatedBy,
-  uom.AD_Language,
-  iol.M_InOut_ID, iol.M_InOutLine_ID,
-  iol.Line+(b.Line/100) AS Line,
-  iol.MovementQty*b.BOMQty AS QtyInvoiced,
-  uom.UOMSymbol,
-  COALESCE (pt.Name, p.Name) AS Name, -- main line
-  b.Description, -- second line
-  COALESCE (pt.DocumentNote, p.DocumentNote) AS DocumentNote, -- third line
-    p.UPC, p.SKU, p.Value AS ProductValue,
-  iol.M_Locator_ID, iol.Lot, iol.SerNo
-FROM M_Product_BOM b  -- BOM lines
-  INNER JOIN M_InOutLine iol ON (b.M_Product_ID=iol.M_Product_ID)
-  INNER JOIN M_Product bp ON (bp.M_Product_ID=iol.M_Product_ID -- BOM Product
-    AND bp.IsBOM='Y' AND bp.IsVerified='Y' AND bp.IsPickListPrintDetails='Y')
-  INNER JOIN M_Product p ON (b.M_ProductBOM_ID=p.M_Product_ID) -- BOM line product
-  INNER JOIN C_UOM_Trl uom ON (p.C_UOM_ID=uom.C_UOM_ID)
-  INNER JOIN M_Product_Trl pt ON (iol.M_PRODUCT_ID=pt.M_PRODUCT_ID AND uom.AD_Language=pt.AD_Language)]]></view>
+    <view name="M_INOUT_LINE_VT"><![CDATA[ SELECT iol.ad_client_id, iol.ad_org_id, iol.isactive, iol.created, iol.createdby, iol.updated, iol.updatedby, uom.ad_language, iol.m_inout_id, iol.m_inoutline_id, iol.line, iol.movementqty, uom.uomsymbol, COALESCE(COALESCE(pt.name, p.name), iol.description) AS name, 
+        CASE
+            WHEN COALESCE(pt.name, p.name) IS NOT NULL THEN iol.description
+            ELSE NULL
+        END AS description, COALESCE(pt.documentnote, p.documentnote) AS documentnote, p.upc, p.sku, p.value AS productvalue, iol.m_locator_id, iol.lot, iol.serno
+   FROM m_inoutline iol
+   JOIN c_uom_trl uom ON iol.c_uom_id = uom.c_uom_id
+   LEFT JOIN m_product p ON iol.m_product_id = p.m_product_id
+   LEFT JOIN m_product_trl pt ON iol.m_product_id = pt.m_product_id AND uom.ad_language = pt.ad_language
+UNION 
+ SELECT iol.ad_client_id, iol.ad_org_id, iol.isactive, iol.created, iol.createdby, iol.updated, iol.updatedby, uom.ad_language, iol.m_inout_id, iol.m_inoutline_id, iol.line + b.line / 100 AS line, iol.movementqty * b.bomqty AS movementqty, uom.uomsymbol, COALESCE(pt.name, p.name) AS name, b.description, COALESCE(pt.documentnote, p.documentnote) AS documentnote, p.upc, p.sku, p.value AS productvalue, iol.m_locator_id, iol.lot, iol.serno
+   FROM m_product_bom b
+   JOIN m_inoutline iol ON b.m_product_id = iol.m_product_id
+   JOIN m_product bp ON bp.m_product_id = iol.m_product_id AND bp.isbom = 'Y' AND bp.isverified = 'Y' AND bp.ispicklistprintdetails = 'Y'
+   JOIN m_product p ON b.m_productbom_id = p.m_product_id
+   JOIN c_uom_trl uom ON p.c_uom_id = uom.c_uom_id
+   JOIN m_product_trl pt ON iol.m_product_id = pt.m_product_id AND uom.ad_language = pt.ad_language]]></view>
   </database>

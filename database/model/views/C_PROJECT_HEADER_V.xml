@@ -1,36 +1,16 @@
 <?xml version="1.0"?>
   <database name="VIEW C_PROJECT_HEADER_V">
-    <view name="C_PROJECT_HEADER_V"><![CDATA[SELECT p.AD_Client_ID, p.AD_Org_ID, p.IsActive, p.Created, p.CreatedBy, p.Updated, p.UpdatedBy,
-  TO_CHAR('en_US') AS AD_Language, p.C_Project_ID,
-    p.Value, p.Name AS ProjectName, p.Description, p.Note, p.IsSummary, p.ProjectCategory,
-    oi.C_Location_ID AS Org_Location_ID, oi.TaxID,
-    p.C_ProjectType_ID, pjt.Name AS ProjectTypeName, p.C_Phase_ID, pjp.Name AS ProjectPhaseName,
-  p.SalesRep_ID, COALESCE(ubp.Name, u.Name) AS SalesRep_Name,
-  p.C_BPartner_ID, bp.Value AS BPValue,
-  bpg.Name AS BPGreeting,
-  bp.Name, bp.Name2,
-  bpcg.Name AS BPContactGreeting,
-  bpc.Title,
-  NULLIF (bpc.Name, bp.Name) AS ContactName,
-  bpl.C_Location_ID,
-  bp.ReferenceNo,
-  pt.Name AS PaymentTerm, pt.DocumentNote AS PaymentTermNote,
-    p.POReference,
-    p.C_Currency_ID, p.M_PriceList_Version_ID,
-    p.C_Campaign_ID,
-    p.PlannedAmt, p.PlannedQty, p.PlannedMarginAmt, p.InvoicedAmt, p.InvoicedQty, p.ProjectBalanceAmt,
-    p.IsCommitment, p.CommittedAmt, p.CommittedQty, p.DateContract, p.DateFinish, p.IsCommitCeiling,
-    p.M_Warehouse_ID
-FROM C_Project p
-  LEFT OUTER JOIN C_BPartner bp ON (p.C_BPartner_ID=bp.C_BPartner_ID)
-  INNER JOIN AD_OrgInfo oi ON (p.AD_Org_ID=oi.AD_Org_ID)
-    LEFT OUTER JOIN C_ProjectType pjt ON (p.C_ProjectType_ID=pjt.C_ProjectType_ID)
-    LEFT OUTER JOIN C_Phase pjp ON (p.C_Phase_ID=pjp.C_Phase_ID)
-  LEFT OUTER JOIN AD_User u ON (p.SalesRep_ID=u.AD_User_ID)
-  LEFT OUTER JOIN C_BPartner ubp ON (u.C_BPartner_ID=ubp.C_BPartner_ID)
-  LEFT OUTER JOIN C_Greeting bpg on (bp.C_Greeting_ID=bpg.C_Greeting_ID)
-  LEFT OUTER JOIN AD_User bpc ON (p.AD_User_ID=bpc.AD_User_ID)
-  LEFT OUTER JOIN C_Greeting bpcg on (bpc.C_Greeting_ID=bpcg.C_Greeting_ID)
-  LEFT OUTER JOIN C_BPartner_Location bpl ON (p.C_BPartner_Location_ID=bpl.C_BPartner_Location_ID)
-  LEFT OUTER JOIN C_PaymentTerm pt ON (p.C_PaymentTerm_ID=pt.C_PaymentTerm_ID)]]></view>
+    <view name="C_PROJECT_HEADER_V"><![CDATA[ SELECT p.ad_client_id, p.ad_org_id, p.isactive, p.created, p.createdby, p.updated, p.updatedby, to_char('en_US') AS ad_language, p.c_project_id, p.value, p.name AS projectname, p.description, p.note, p.issummary, p.projectcategory, oi.c_location_id AS org_location_id, oi.taxid, p.c_projecttype_id, pjt.name AS projecttypename, p.c_phase_id, pjp.name AS projectphasename, p.salesrep_id, COALESCE(ubp.name, u.name) AS salesrep_name, p.c_bpartner_id, bp.value AS bpvalue, bpg.name AS bpgreeting, bp.name, bp.name2, bpcg.name AS bpcontactgreeting, bpc.title, NULLIF(bpc.name, bp.name) AS contactname, bpl.c_location_id, bp.referenceno, pt.name AS paymentterm, pt.documentnote AS paymenttermnote, p.poreference, p.c_currency_id, p.m_pricelist_version_id, p.c_campaign_id, p.plannedamt, p.plannedqty, p.plannedmarginamt, p.invoicedamt, p.invoicedqty, p.projectbalanceamt, p.iscommitment, p.committedamt, p.committedqty, p.datecontract, p.datefinish, p.iscommitceiling, p.m_warehouse_id
+   FROM c_project p
+   LEFT JOIN c_bpartner bp ON p.c_bpartner_id = bp.c_bpartner_id
+   JOIN ad_orginfo oi ON p.ad_org_id = oi.ad_org_id
+   LEFT JOIN c_projecttype pjt ON p.c_projecttype_id = pjt.c_projecttype_id
+   LEFT JOIN c_phase pjp ON p.c_phase_id = pjp.c_phase_id
+   LEFT JOIN ad_user u ON p.salesrep_id = u.ad_user_id
+   LEFT JOIN c_bpartner ubp ON u.c_bpartner_id = ubp.c_bpartner_id
+   LEFT JOIN c_greeting bpg ON bp.c_greeting_id = bpg.c_greeting_id
+   LEFT JOIN ad_user bpc ON p.ad_user_id = bpc.ad_user_id
+   LEFT JOIN c_greeting bpcg ON bpc.c_greeting_id = bpcg.c_greeting_id
+   LEFT JOIN c_bpartner_location bpl ON p.c_bpartner_location_id = bpl.c_bpartner_location_id
+   LEFT JOIN c_paymentterm pt ON p.c_paymentterm_id = pt.c_paymentterm_id]]></view>
   </database>

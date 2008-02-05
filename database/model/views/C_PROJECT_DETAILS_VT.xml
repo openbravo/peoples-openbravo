@@ -1,20 +1,12 @@
 <?xml version="1.0"?>
   <database name="VIEW C_PROJECT_DETAILS_VT">
-    <view name="C_PROJECT_DETAILS_VT"><![CDATA[SELECT pl.AD_Client_ID, pl.AD_Org_ID, pl.IsActive, pl.Created, pl.CreatedBy, pl.Updated, pl.UpdatedBy,
-  TO_CHAR('en_US') AS AD_Language,
-    pj.C_Project_ID, pl.C_ProjectLine_ID,
-    pl.Line,
-    pl.PlannedQty, pl.PlannedPrice, pl.PlannedAmt, pl.PlannedMarginAmt,
-    pl.CommittedAmt,
-    pl.M_Product_ID,
-  COALESCE(p.Name, pl.Description) AS Name, -- main line
-  CASE WHEN p.Name IS NOT NULL THEN pl.Description END AS Description, -- second line
-  p.DocumentNote, -- third line
-    p.UPC, p.SKU, p.Value AS ProductValue,
-    pl.M_Product_Category_ID,
-    pl.InvoicedAmt, pl.InvoicedQty, pl.CommittedQty
-FROM C_ProjectLine pl
-  INNER JOIN C_Project pj ON (pl.C_Project_ID=pj.C_Project_ID)
-  LEFT OUTER JOIN M_Product p ON (pl.M_Product_ID=p.M_Product_ID)
-WHERE pl.IsPrinted='Y']]></view>
+    <view name="C_PROJECT_DETAILS_VT"><![CDATA[ SELECT pl.ad_client_id, pl.ad_org_id, pl.isactive, pl.created, pl.createdby, pl.updated, pl.updatedby, to_char('en_US') AS ad_language, pj.c_project_id, pl.c_projectline_id, pl.line, pl.plannedqty, pl.plannedprice, pl.plannedamt, pl.plannedmarginamt, pl.committedamt, pl.m_product_id, COALESCE(p.name, pl.description) AS name, 
+        CASE
+            WHEN p.name IS NOT NULL THEN pl.description
+            ELSE NULL
+        END AS description, p.documentnote, p.upc, p.sku, p.value AS productvalue, pl.m_product_category_id, pl.invoicedamt, pl.invoicedqty, pl.committedqty
+   FROM c_projectline pl
+   JOIN c_project pj ON pl.c_project_id = pj.c_project_id
+   LEFT JOIN m_product p ON pl.m_product_id = p.m_product_id
+  WHERE pl.isprinted = 'Y']]></view>
   </database>
