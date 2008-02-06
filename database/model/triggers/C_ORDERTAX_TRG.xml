@@ -6,6 +6,7 @@
 
 
 
+
     /*************************************************************************
     * The contents of this file are subject to the Compiere License
     * Version 2.5.0 ("License"); You may not use this file except in
@@ -47,7 +48,12 @@ BEGIN
   FROM C_ORDER
   WHERE C_ORDER_ID=v_C_ORDER_ID;
   IF UPDATING THEN
-    IF(v_Processed='Y' AND v_Docaction <> 'CL' AND ((COALESCE(:old.TAXBASEAMT, 0) <> COALESCE(:new.TAXBASEAMT, 0)) OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0)) OR(COALESCE(:old.C_TAX_ID, 0) <> COALESCE(:new.C_TAX_ID, 0)))) THEN
+    IF(v_Processed='Y' AND v_Docaction <> 'CL' 
+    AND ((COALESCE(:old.TAXBASEAMT, 0) <> COALESCE(:new.TAXBASEAMT, 0)) 
+    OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0)) 
+    OR(COALESCE(:old.C_TAX_ID, 0) <> COALESCE(:new.C_TAX_ID, 0))
+    OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
+    OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;
@@ -74,6 +80,7 @@ BEGIN
   END IF;
   **/
 END C_OrderTax_Trg 
+
 
 
 ]]></body>

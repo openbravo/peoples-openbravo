@@ -6,6 +6,7 @@
 
 
 
+
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -36,8 +37,10 @@ BEGIN
   WHERE C_INVOICE_ID=v_C_INVOICE_ID;
   IF UPDATING THEN
     IF(v_Processed='Y' AND ((COALESCE(:old.TAXBASEAMT, 0) <> COALESCE(:new.TAXBASEAMT, 0))
-   OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0))
-   OR(COALESCE(:old.C_TAX_ID, 0) <> COALESCE(:new.C_TAX_ID, 0))))
+	   OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0))
+	   OR(COALESCE(:old.C_TAX_ID, 0) <> COALESCE(:new.C_TAX_ID, 0))
+	   OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
+	   OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0))))
   THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted - ' || :old.TAXBASEAMT || ' - ' ||:new.TAXBASEAMT || ' - ' ||:old.TAXAMT || ' - ' || :new.TAXAMT || ' - ' || :old.C_TAX_ID || ' - ' ||:new.C_TAX_ID) ;
     END IF;
@@ -46,6 +49,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
 END C_InvTax_Chk_Restrictions_Trg 
+
 
 
 ]]></body>

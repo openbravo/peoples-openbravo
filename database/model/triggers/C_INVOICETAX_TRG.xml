@@ -6,6 +6,7 @@
 
 
 
+
     /*************************************************************************
     * The contents of this file are subject to the Compiere License
     * Version 2.5.0 ("License"); You may not use this file except in
@@ -38,7 +39,12 @@ BEGIN
     INTO v_Processed
     FROM C_INVOICE
     WHERE C_INVOICE_ID=:old.C_INVOICE_ID;
-    IF(v_Processed='Y' AND ((COALESCE(:old.TAXBASEAMT, 0) <> COALESCE(:new.TAXBASEAMT, 0)) OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0)) OR(COALESCE(:old.C_TAX_ID, 0) <> COALESCE(:new.C_TAX_ID, 0)))) THEN
+    IF(v_Processed='Y' 
+    AND ((COALESCE(:old.TAXBASEAMT, 0) <> COALESCE(:new.TAXBASEAMT, 0)) 
+    OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0)) 
+    OR(COALESCE(:old.C_TAX_ID, 0) <> COALESCE(:new.C_TAX_ID, 0))
+    OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
+    OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;
@@ -59,6 +65,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
 END C_InvoiceTax_Trg 
+
 
 
 ]]></body>
