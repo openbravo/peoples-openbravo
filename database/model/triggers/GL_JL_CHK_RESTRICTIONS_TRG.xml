@@ -6,6 +6,7 @@
 
 
 
+
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
     * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -40,10 +41,22 @@ BEGIN
   WHERE GL_JOURNAL_ID=v_GL_JOURNAL_ID;
   IF(UPDATING) THEN
     IF((COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:NEW.AMTSOURCEDR, 0) OR COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:NEW.AMTSOURCECR, 0) OR COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:NEW.C_CURRENCY_ID, 0))) THEN
-      IF(v_Processed='Y' AND ((COALESCE(:old.LINE, 0) <> COALESCE(:new.LINE, 0)) OR (COALESCE(:old.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:new.C_DEBT_PAYMENT_ID, 0)) OR(COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:new.AMTSOURCEDR, 0)) OR(COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:new.AMTSOURCECR, 0)) OR(COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:new.C_CURRENCY_ID, 0)) OR(COALESCE(:old.C_UOM_ID, 0) <> COALESCE(:new.C_UOM_ID, 0)))) THEN
+      IF(v_Processed='Y' 
+        AND ((COALESCE(:old.LINE, 0) <> COALESCE(:new.LINE, 0)) 
+        OR (COALESCE(:old.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:new.C_DEBT_PAYMENT_ID, 0)) 
+        OR(COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:new.AMTSOURCEDR, 0)) 
+        OR(COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:new.AMTSOURCECR, 0)) 
+        OR(COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:new.C_CURRENCY_ID, 0)) 
+        OR(COALESCE(:old.C_UOM_ID, 0) <> COALESCE(:new.C_UOM_ID, 0))
+        OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
+        OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN
         RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
       END IF;
-      IF(v_Posted='Y' AND ((COALESCE(:old.DATEACCT, v_DateNull) <> COALESCE(:new.DATEACCT, v_DateNull)) OR(COALESCE(:old.C_VALIDCOMBINATION_ID, 0) <> COALESCE(:new.C_VALIDCOMBINATION_ID, 0)) OR(COALESCE(:old.AMTACCTDR, 0) <> COALESCE(:new.AMTACCTDR, 0)) OR(COALESCE(:old.AMTACCTCR, 0) <> COALESCE(:new.AMTACCTCR, 0)))) THEN
+      IF(v_Posted='Y' 
+        AND ((COALESCE(:old.DATEACCT, v_DateNull) <> COALESCE(:new.DATEACCT, v_DateNull)) 
+        OR(COALESCE(:old.C_VALIDCOMBINATION_ID, 0) <> COALESCE(:new.C_VALIDCOMBINATION_ID, 0)) 
+        OR(COALESCE(:old.AMTACCTDR, 0) <> COALESCE(:new.AMTACCTDR, 0)) 
+        OR(COALESCE(:old.AMTACCTCR, 0) <> COALESCE(:new.AMTACCTCR, 0)))) THEN
         RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
       END IF;
     END IF;
@@ -55,6 +68,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
 END GL_JL_Chk_Restrictions_Trg
+
 
 
 

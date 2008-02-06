@@ -6,6 +6,7 @@
 
 
 
+
     /************************************************************************* 
     * The contents of this file are subject to the Openbravo  Public  License 
     * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License 
@@ -39,7 +40,15 @@ BEGIN
   FROM C_BANKSTATEMENT 
   WHERE C_BANKSTATEMENT_ID=v_C_BANKSTATEMENT_ID; 
   IF UPDATING THEN 
-    IF(v_Processed='Y' AND ((COALESCE(:OLD.LINE, 0) <> COALESCE(:NEW.LINE, 0)) OR(COALESCE(:OLD.C_CHARGE_ID, 0) <> COALESCE(:NEW.C_CHARGE_ID, 0)) OR(COALESCE(:OLD.CHARGEAMT, 0) <> COALESCE(:NEW.CHARGEAMT, 0)) OR(COALESCE(:OLD.STMTAMT, 0) <> COALESCE(:NEW.STMTAMT, 0)) OR(COALESCE(:OLD.TRXAMT, 0) <> COALESCE(:NEW.TRXAMT, 0)) OR(COALESCE(:OLD.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:NEW.C_DEBT_PAYMENT_ID, 0)))) THEN 
+    IF(v_Processed='Y' 
+      AND ((COALESCE(:OLD.LINE, 0) <> COALESCE(:NEW.LINE, 0)) 
+      OR(COALESCE(:OLD.C_CHARGE_ID, 0) <> COALESCE(:NEW.C_CHARGE_ID, 0)) 
+      OR(COALESCE(:OLD.CHARGEAMT, 0) <> COALESCE(:NEW.CHARGEAMT, 0)) 
+      OR(COALESCE(:OLD.STMTAMT, 0) <> COALESCE(:NEW.STMTAMT, 0))
+      OR(COALESCE(:OLD.TRXAMT, 0) <> COALESCE(:NEW.TRXAMT, 0)) 
+      OR(COALESCE(:OLD.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:NEW.C_DEBT_PAYMENT_ID, 0))
+      OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
+      OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)) )) THEN 
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ; 
     END IF; 
     IF(v_Posted='Y' AND ((COALESCE(:OLD.DATEACCT, v_DateNull) <> COALESCE(:NEW.DATEACCT, v_DateNull)))) THEN 
@@ -50,6 +59,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ; 
   END IF; 
 END C_BStmtLine_Chk_Restrict_Trg
+
 
 
 

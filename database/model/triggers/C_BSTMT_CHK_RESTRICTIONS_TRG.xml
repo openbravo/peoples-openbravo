@@ -6,6 +6,7 @@
 
 
 
+
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -28,7 +29,9 @@ v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
     IF UPDATING THEN
      IF (:old.Processed='Y'
         AND ((COALESCE(:old.STATEMENTDATE, v_DateNull) <> COALESCE(:new.STATEMENTDATE, v_DateNull))
-        OR(COALESCE(:old.C_BANKACCOUNT_ID, 0) <> COALESCE(:new.C_BANKACCOUNT_ID, 0))))
+        OR(COALESCE(:old.C_BANKACCOUNT_ID, 0) <> COALESCE(:new.C_BANKACCOUNT_ID, 0))
+        OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
+        OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0))))
       THEN
       RAISE_APPLICATION_ERROR ( -20501, 'Document processed/posted');
      END IF;
@@ -62,6 +65,7 @@ v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
      END IF;
    END IF;
 END C_BStmt_Chk_Restrictions_Trg 
+
 
 
 ]]></body>

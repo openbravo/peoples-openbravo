@@ -6,6 +6,7 @@
 
 
 
+
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -42,7 +43,9 @@
     OR COALESCE(:old.USER1_ID, 0)!=COALESCE(:new.USER1_ID, 0)
     OR COALESCE(:old.USER2_ID, 0)!=COALESCE(:new.USER2_ID, 0)
     OR COALESCE(:old.C_CURRENCY_ID, 0)!=COALESCE(:new.C_CURRENCY_ID, 0)
-    OR COALESCE(:old.TOTALAMORTIZATION, 0)!=COALESCE(:new.TOTALAMORTIZATION, 0) ) )
+    OR COALESCE(:old.TOTALAMORTIZATION, 0)!=COALESCE(:new.TOTALAMORTIZATION, 0) 
+    OR COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0)
+    OR COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0) ))
     THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
  end if;
  END IF;
@@ -57,6 +60,7 @@
   END IF;
  END IF;
 END A_AMORTIZATION_TRG 
+
 
 
 ]]></body>

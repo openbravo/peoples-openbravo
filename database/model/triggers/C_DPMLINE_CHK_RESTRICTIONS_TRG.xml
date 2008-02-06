@@ -6,6 +6,7 @@
 
 
 
+
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
     * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -35,14 +36,21 @@ BEGIN
   FROM C_DP_Management
   WHERE C_DP_Management_ID=v_C_DP_ID;
   IF UPDATING THEN
-    IF(v_Processed='Y' AND ((COALESCE(:OLD.LINE, 0) <> COALESCE(:NEW.LINE, 0)) OR(COALESCE(:OLD.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:NEW.C_DEBT_PAYMENT_ID, 0)) OR(COALESCE(:OLD.STATUS_FROM, '') <> COALESCE(:NEW.STATUS_FROM, '')) OR(COALESCE(:OLD.STATUS_TO, '') <> COALESCE(:NEW.STATUS_TO, '')))) THEN
-      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
+    IF(v_Processed='Y' 
+      AND ((COALESCE(:OLD.LINE, 0) <> COALESCE(:NEW.LINE, 0))
+      OR(COALESCE(:OLD.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:NEW.C_DEBT_PAYMENT_ID, 0))
+      OR(COALESCE(:OLD.STATUS_FROM, 0) <> COALESCE(:NEW.STATUS_FROM, 0))
+      OR(COALESCE(:OLD.STATUS_TO, 0) <> COALESCE(:NEW.STATUS_TO, 0))
+      OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
+      OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN
+        RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;
   IF((DELETING OR INSERTING) AND v_Processed='Y') THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
 END C_DPMLine_Chk_Restrictions_Trg 
+
 
 
 ]]></body>

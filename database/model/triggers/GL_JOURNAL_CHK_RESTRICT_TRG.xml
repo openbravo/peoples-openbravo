@@ -6,6 +6,7 @@
 
 
 
+
     /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
     * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -30,7 +31,9 @@
     OR(COALESCE(:old.C_PERIOD_ID, 0) <> COALESCE(:new.C_PERIOD_ID, 0))
     OR(COALESCE(:old.CURRENCYRATE, 0) <> COALESCE(:new.CURRENCYRATE, 0))
     OR(COALESCE(:old.CURRENCYRATETYPE, '.') <> COALESCE(:new.CURRENCYRATETYPE, '.'))
-    OR(COALESCE(:old.CONTROLAMT, 0) <> COALESCE(:new.CONTROLAMT, 0))))
+    OR(COALESCE(:old.CONTROLAMT, 0) <> COALESCE(:new.CONTROLAMT, 0))
+    OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
+    OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0))))
     THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   IF(:old.Posted='Y' AND ((COALESCE(:old.DATEACCT, v_DateNull) <> COALESCE(:new.DATEACCT, v_DateNull)) OR(COALESCE(:old.C_ACCTSCHEMA_ID, 0) <> COALESCE(:new.C_ACCTSCHEMA_ID, 0)) OR(COALESCE(:old.GL_CATEGORY_ID, 0) <> COALESCE(:new.GL_CATEGORY_ID, 0)) OR(COALESCE(:old.POSTINGTYPE, '.') <> COALESCE(:new.POSTINGTYPE, '.')))) THEN
@@ -48,6 +51,7 @@
   END IF;
  END IF;
 END GL_Journal_Chk_Restrict_Trg
+
 
 
 

@@ -5,6 +5,7 @@
 
 
 
+
 /*************************************************************************
     * The contents of this file are subject to the Openbravo  Public  License
     * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -26,10 +27,13 @@ BEGIN
   IF (:old.PROCESSED = 'Y' AND(
      (COALESCE(:old.MOVEMENTDATE, v_DateNull) <> COALESCE(:new.MOVEMENTDATE, v_DateNull))
      OR (COALESCE(:old.AD_ORGTRX_ID, 0) <> COALESCE(:new.AD_ORGTRX_ID, 0))
-     OR (COALESCE(:old.M_WAREHOUSE_ID, 0) <> COALESCE(:new.M_WAREHOUSE_ID, 0)))) THEN
+     OR (COALESCE(:old.M_WAREHOUSE_ID, 0) <> COALESCE(:new.M_WAREHOUSE_ID, 0))
+     OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
+     OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
 END M_Inventory_Trg
+
 
 
 

@@ -6,6 +6,7 @@
 
 
 
+
 v_n NUMBER;
 v_OrderLine_Offer_Id NUMBER;
 v_Price NUMBER;
@@ -16,8 +17,10 @@ v_DateNull DATE := TO_DATE('01-01-1900','DD-MM-YYYY');
 
 BEGIN
   IF UPDATING THEN
-    IF(:OLD.Processed='Y' AND :OLD.Docaction <> 'CL' AND ((COALESCE(:OLD.C_BPartner_ID, 0) <> COALESCE(:NEW.C_BPartner_ID, 0))
-                  OR(COALESCE(:OLD.DOCUMENTNO, '.') <> COALESCE(:NEW.DOCUMENTNO, '.'))
+    IF(:OLD.Processed='Y' AND :OLD.Docaction <> 'CL' 
+          AND( 
+               (COALESCE(:OLD.C_BPartner_ID, 0) <> COALESCE(:NEW.C_BPartner_ID, 0))
+               OR(COALESCE(:OLD.DOCUMENTNO, '.') <> COALESCE(:NEW.DOCUMENTNO, '.'))
                OR(COALESCE(:OLD.C_DOCTYPE_ID, 0) <> COALESCE(:NEW.C_DOCTYPE_ID, 0))
                OR(COALESCE(:OLD.C_DOCTYPETARGET_ID, 0) <> COALESCE(:NEW.C_DOCTYPETARGET_ID, 0))
                OR(COALESCE(:OLD.DATEORDERED, v_DateNull) <> COALESCE(:NEW.DATEORDERED, v_DateNull))
@@ -41,7 +44,11 @@ BEGIN
                OR(COALESCE(:OLD.DROPSHIP_BPARTNER_ID, 0) <> COALESCE(:NEW.DROPSHIP_BPARTNER_ID, 0))
                OR(COALESCE(:OLD.DROPSHIP_LOCATION_ID, 0) <> COALESCE(:NEW.DROPSHIP_LOCATION_ID, 0))
                OR(COALESCE(:OLD.DELIVERYVIARULE, '.') <> COALESCE(:NEW.DELIVERYVIARULE, '.'))
-               OR(COALESCE(:OLD.PRIORITYRULE,'.') <> COALESCE(:NEW.PRIORITYRULE, '.')))) THEN
+               OR(COALESCE(:OLD.PRIORITYRULE,'.') <> COALESCE(:NEW.PRIORITYRULE, '.'))
+               OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
+               OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0))
+          )
+    )THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
     IF(:OLD.Posted='Y' AND ((COALESCE(:OLD.DATEACCT, v_DateNull) <> COALESCE(:NEW.DATEACCT, v_DateNull)) OR(COALESCE(:OLD.C_CAMPAIGN_ID, 0) <> COALESCE(:NEW.C_CAMPAIGN_ID, 0)) OR(COALESCE(:OLD.C_PROJECT_ID, 0) <> COALESCE(:NEW.C_PROJECT_ID, 0)) OR(COALESCE(:OLD.C_ACTIVITY_ID, 0) <> COALESCE(:NEW.C_ACTIVITY_ID, 0)))) THEN
@@ -74,6 +81,7 @@ BEGIN
     END IF;
   END IF;
 END C_Order_Chk_Restrinctions_Trg 
+
 
 
 ]]></body>

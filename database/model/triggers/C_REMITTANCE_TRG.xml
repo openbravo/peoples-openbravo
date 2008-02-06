@@ -6,6 +6,7 @@
 
 
 
+
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -37,6 +38,8 @@ BEGIN
              OR (COALESCE (:OLD.C_REMITTANCE_TYPE_ID,0) != COALESCE (:NEW.C_REMITTANCE_TYPE_ID,0))
              OR ((COALESCE (:OLD.c_settlement_id, 0)!= COALESCE (:NEW.c_settlement_id, 0)) AND :NEW.processed!='N')
              OR ((COALESCE (:OLD.c_dp_management_id, 0) != COALESCE (:NEW.c_dp_management_id, 0)) AND :NEW.processed!='N')
+             OR (COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
+             OR (COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0))
             )
        ) THEN
       RAISE_APPLICATION_ERROR (-20501, 'Document processed/posted');
@@ -55,6 +58,7 @@ BEGIN
     END IF;
   END IF;
 END c_remittance_trg 
+
 
 
 ]]></body>
