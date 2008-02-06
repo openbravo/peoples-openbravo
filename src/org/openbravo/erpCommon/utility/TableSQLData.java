@@ -983,7 +983,8 @@ public class TableSQLData {
   private void generateStructure() throws Exception {
     if (getPool()==null) throw new Exception("No pool defined for database connection");
     else if (getTabID().equals("")) throw new Exception("No Tab defined");
-    TableSQLQueryData[] data = TableSQLQueryData.selectStructure(getPool(), getTabID(), getVars().getLanguage());
+    
+    TableSQLQueryData[] data = TableSQLQueryData.selectRelationStructure(getPool(), getVars().getLanguage(), getTabID());
     if (data==null || data.length==0) throw new Exception("Couldn't get structure for tab " + getTabID());
     String primaryKey = "";
     String secondaryKey = "";

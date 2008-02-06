@@ -56,6 +56,38 @@
     <Parameter name="adLanguage"/>
     <Parameter name="adTabId"/>
   </SqlMethod>
+  
+  <SqlMethod name="selectRelationStructure" type="preparedStatement" return="multiple">
+     <SqlMethodComment></SqlMethodComment>
+     <Sql>
+       <![CDATA[
+        SELECT c.ColumnName, c.AD_Reference_ID, c.AD_Reference_Value_ID, c.AD_Val_Rule_ID,
+        c.FieldLength, c.DefaultValue, c.IsKey, c.IsParent, c.IsMandatory, c.IsUpdateable,
+        c.ReadOnlyLogic, c.IsIdentifier, c.SeqNo, c.IsTranslated, c.IsEncrypted, c.VFormat,
+        c.ValueMin, c.ValueMax, c.IsSelectionColumn, c.AD_Process_ID, c.IsSessionAttr,
+        c.IsSecondaryKey, c.IsDesencryptable, c.AD_CallOut_ID, COALESCE(f_trl.Name, f.Name) AS Name,
+        f.AD_FieldGroup_ID, f.IsDisplayed, f.DisplayLogic, f.DisplayLength, f.IsReadOnly,
+        f.SortNo, f.IsSameLine, f.IsHeading, f.IsFieldOnly, f.ShowInRelation,
+        c.AD_Table_ID, t.TabLevel, t.HasTree, t.WhereClause, t.OrderByClause,
+        t.AD_ColumnSortOrder_ID, t.AD_ColumnSortYESNO_ID, t.IsSortTab, t.IsReadOnly AS IsTabReadOnly,
+        t.FilterClause, t.EditReference,
+        '' AS WindowType, '' AS IsSOTrx, ''AS Window_Name,
+        '' AS Window_Name_Trl, t.name AS Tab_Name, '' AS Tab_Name_Trl, t.AD_Window_ID, '' AS TableName,
+        REPLACE(replace(REPLACE(REPLACE(REPLACE(REPLACE(c.columnname, 'C_Settlement_Generate_ID', 'C_Settlement_ID'), 'Ref_OrderLine_ID', 'C_OrderLine_ID'), 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as columnname_Search
+        FROM AD_Tab t
+             inner join AD_Column c on t.AD_Table_ID = c.AD_Table_ID
+             left join AD_Field f on c.AD_Column_ID = f.AD_Column_ID AND f.IsActive = 'Y' AND f.AD_Tab_ID = t.AD_Tab_ID
+             left join AD_Field_Trl f_trl on f.AD_Field_ID = f_trl.AD_Field_ID AND f_trl.AD_Language = ?
+        WHERE t.AD_Tab_ID = ?
+        AND c.IsActive = 'Y'
+        AND (c.IsKey = 'Y' or c.IsSecondaryKey = 'Y' or (f.IsDisplayed='Y' and f.ShowInRelation='Y' and c.IsEncrypted='N'))
+        ORDER BY f.SeqNo, c.SeqNo
+       ]]>
+     </Sql>
+     <Parameter name="adLanguage"/>
+     <Parameter name="adTabId"/>
+   </SqlMethod>
+  
   <SqlMethod name="selectWindowDefinition" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
