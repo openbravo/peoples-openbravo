@@ -232,61 +232,11 @@ public class KeyMap {
    * @throws Exception
    */
   private void generateStructure() throws Exception {
-    TableSQLQueryData[] data = TableSQLQueryData.selectStructure(this.conn, this.TabID, this.vars.getLanguage());
+    TableSQLQueryData[] data = TableSQLQueryData.selectKeyMapStructure(this.conn, this.TabID);
     if (data==null || data.length==0) throw new Exception("Couldn't get structure for tab " + this.TabID);
-    String primaryKey = "";
-    String secondaryKey = "";
-    setData("TabName", data[0].tabName);
-    setData("TabNameUrl", FormatUtilities.replace(data[0].tabName));
-    setData("WindowName", data[0].windowName);
+    
     setData("WindowNameUrl", FormatUtilities.replace(data[0].windowName));
-    setData("IsTabReadOnly", data[0].istabreadonly);
-    for (int i=0;i<data.length;i++) {
-      Properties prop = new Properties();
-      prop.setProperty("ColumnName", data[i].columnname);
-      prop.setProperty("AD_Reference_ID", data[i].adReferenceId);
-      prop.setProperty("AD_Reference_Value_ID", data[i].adReferenceValueId);
-      prop.setProperty("AD_Val_Rule_ID", data[i].adValRuleId);
-      prop.setProperty("FieldLength", data[i].fieldlength);
-      prop.setProperty("DefaultValue", data[i].defaultvalue);
-      prop.setProperty("IsKey", data[i].iskey);
-      prop.setProperty("IsParent", data[i].isparent);
-      prop.setProperty("IsMandatory", data[i].ismandatory);
-      prop.setProperty("IsUpdateable", data[i].isupdateable);
-      prop.setProperty("ReadOnlyLogic", data[i].readonlylogic);
-      prop.setProperty("IsIdentifier", data[i].isidentifier);
-      prop.setProperty("SeqNo", data[i].seqno);
-      prop.setProperty("IsTranslated", data[i].istranslated);
-      prop.setProperty("IsEncrypted", data[i].isencrypted);
-      prop.setProperty("VFormat", data[i].vformat);
-      prop.setProperty("ValueMin", data[i].valuemin);
-      prop.setProperty("ValueMax", data[i].valuemax);
-      prop.setProperty("IsSelectionColumn", data[i].isselectioncolumn);
-      prop.setProperty("AD_Process_ID", data[i].adProcessId);
-      prop.setProperty("IsSessionAttr", data[i].issessionattr);
-      prop.setProperty("IsSecondaryKey", data[i].issecondarykey);
-      prop.setProperty("IsDesencryptable", data[i].isdesencryptable);
-      prop.setProperty("AD_CallOut_ID", data[i].adCalloutId);
-      prop.setProperty("Name", data[i].name);
-      prop.setProperty("AD_FieldGroup_ID", data[i].adFieldgroupId);
-      prop.setProperty("IsDisplayed", data[i].isdisplayed);
-      prop.setProperty("DisplayLogic", data[i].displaylogic);
-      prop.setProperty("DisplayLength", data[i].displaylength);
-      prop.setProperty("IsReadOnly", data[i].isreadonly);
-      prop.setProperty("SortNo", data[i].sortno);
-      prop.setProperty("IsSameLine", data[i].issameline);
-      prop.setProperty("IsHeading", data[i].isheading);
-      prop.setProperty("IsFieldOnly", data[i].isfieldonly);
-      prop.setProperty("ShowInRelation", data[i].showinrelation);
-      addStructure(prop);
-      if (primaryKey.equals("") && data[i].iskey.equals("Y")) {
-        primaryKey = data[i].columnname;
-      } else if (secondaryKey.equals("") && data[i].issecondarykey.equals("Y")) {
-        secondaryKey = data[i].columnname;
-      }
-    }
-    if (!primaryKey.equals("")) setData("KeyColumn", primaryKey);
-    else if (!secondaryKey.equals("")) setData("KeyColumn", secondaryKey);
-    else throw new Exception("No column key defined for this tab");
+    setData("TabNameUrl", FormatUtilities.replace(data[0].tabName));
+    
   }
 }
