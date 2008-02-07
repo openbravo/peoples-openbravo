@@ -54,7 +54,7 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
   boolean existsColumn(ResultSetMetaData rmeta, String col) {
     try {
       for (int i=1; i<=rmeta.getColumnCount(); i++) {
-        if (rmeta.getColumnName(i).equals(col)) return true;
+        if (rmeta.getColumnName(i).equalsIgnoreCase(col)) return true;
       }
     } catch (Exception ex){}
     return false;
