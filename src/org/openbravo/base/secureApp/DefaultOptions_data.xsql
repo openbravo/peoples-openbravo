@@ -164,7 +164,7 @@
         SELECT MIN(lang.AD_LANGUAGE) AS AD_LANGUAGE
           FROM AD_LANGUAGE lang
          WHERE lang.ISACTIVE = 'Y'
-           AND lang.ISSYSTEMLANGUAGE = 'Y'
+           AND lang.ISBASELANGUAGE = 'Y'
            ]]></Sql>      
    </SqlMethod>
    
