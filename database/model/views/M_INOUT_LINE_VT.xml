@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW M_INOUT_LINE_VT">
-    <view name="M_INOUT_LINE_VT"><![CDATA[ SELECT iol.ad_client_id, iol.ad_org_id, iol.isactive, iol.created, iol.createdby, iol.updated, iol.updatedby, uom.ad_language, iol.m_inout_id, iol.m_inoutline_id, iol.line, iol.movementqty, uom.uomsymbol, COALESCE(COALESCE(pt.name, p.name), iol.description) AS name, 
+    <view name="M_INOUT_LINE_VT"><![CDATA[SELECT iol.ad_client_id, iol.ad_org_id, iol.isactive, iol.created, iol.createdby, iol.updated, iol.updatedby, uom.ad_language, iol.m_inout_id, iol.m_inoutline_id, iol.line, iol.movementqty, uom.uomsymbol, COALESCE(COALESCE(pt.name, p.name), iol.description) AS name, 
         CASE
             WHEN COALESCE(pt.name, p.name) IS NOT NULL THEN iol.description
             ELSE NULL

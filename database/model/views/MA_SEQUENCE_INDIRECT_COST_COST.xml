@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW MA_SEQUENCE_INDIRECT_COST_COST">
-    <view name="MA_SEQUENCE_INDIRECT_COST_COST"><![CDATA[ SELECT ma_sequence.ma_sequence_id, ma_indirect_cost_value.ma_indirect_cost_id, 
+    <view name="MA_SEQUENCE_INDIRECT_COST_COST"><![CDATA[SELECT ma_sequence.ma_sequence_id, ma_indirect_cost_value.ma_indirect_cost_id, 
         CASE ma_indirect_cost_value.cost_uom
             WHEN 'H' THEN ma_sequence.costcenteruse * ma_indirect_cost_value.cost
             WHEN 'U' THEN sum(ma_sequenceproduct.quantity) * ma_indirect_cost_value.cost

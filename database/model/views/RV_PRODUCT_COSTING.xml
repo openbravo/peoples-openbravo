@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_PRODUCT_COSTING">
-    <view name="RV_PRODUCT_COSTING"><![CDATA[ SELECT pc.m_product_id, pc.c_acctschema_id, p.value, p.name, p.m_product_category_id, pc.ad_client_id, pc.ad_org_id, pc.isactive, pc.created, pc.createdby, pc.updated, pc.updatedby, pc.currentcostprice, pc.futurecostprice, pc.coststandard, pc.coststandardpoqty, pc.coststandardpoamt, 
+    <view name="RV_PRODUCT_COSTING"><![CDATA[SELECT pc.m_product_id, pc.c_acctschema_id, p.value, p.name, p.m_product_category_id, pc.ad_client_id, pc.ad_org_id, pc.isactive, pc.created, pc.createdby, pc.updated, pc.updatedby, pc.currentcostprice, pc.futurecostprice, pc.coststandard, pc.coststandardpoqty, pc.coststandardpoamt, 
         CASE pc.coststandardpoqty
             WHEN 0 THEN 0
             ELSE pc.coststandardpoamt / pc.coststandardpoqty

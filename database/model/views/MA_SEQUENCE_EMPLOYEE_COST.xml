@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW MA_SEQUENCE_EMPLOYEE_COST">
-    <view name="MA_SEQUENCE_EMPLOYEE_COST"><![CDATA[ SELECT ma_sequence.ma_sequence_id, c_salary_category_cost.c_salary_category_id, 
+    <view name="MA_SEQUENCE_EMPLOYEE_COST"><![CDATA[SELECT ma_sequence.ma_sequence_id, c_salary_category_cost.c_salary_category_id, 
         CASE c_salary_category_cost.costuom
             WHEN 'H' THEN ma_sequence.costcenteruse * c_salary_category_cost.cost
             WHEN 'U' THEN sum(ma_sequenceproduct.quantity) * c_salary_category_cost.cost
