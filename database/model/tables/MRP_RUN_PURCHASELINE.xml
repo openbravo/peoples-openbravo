@@ -30,11 +30,17 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MRP_RUN_PURCHASELINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_PURCHASE">
+        <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_MRPRUNPURCHLN">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_PURCHASE">
-        <reference local="C_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_RUN_PURCHASELINE">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_REQUISITIONLINE" name="M_REQUISITIONLINE_RUN_PURCHASE">
+        <reference local="M_REQUISITIONLINE_ID" foreign="M_REQUISITIONLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_WORKREQUIREMENT" name="MAWORKREQUIREMENT_MRPRUNPURCHA">
         <reference local="MA_WORKREQUIREMENT_ID" foreign="MA_WORKREQUIREMENT_ID"/>
@@ -44,12 +50,6 @@
       </foreign-key>
       <foreign-key foreignTable="MRP_SALESFORECASTLINE" name="MRP_SALESFORECASTLINE_PURCHASE">
         <reference local="MRP_SALESFORECASTLINE_ID" foreign="MRP_SALESFORECASTLINE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_RUN_PURCHASELINE">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_REQUISITIONLINE" name="M_REQUISITIONLINE_RUN_PURCHASE">
-        <reference local="M_REQUISITIONLINE_ID" foreign="M_REQUISITIONLINE_ID"/>
       </foreign-key>
       <check name="MRPRUNPURLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="MRPRUNPURLN_ISFIXED_CHECK"><![CDATA[ISFIXED IN ('Y', 'N')]]></check>

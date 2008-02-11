@@ -22,11 +22,11 @@
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAPCCASE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRIBUTESETINSTANCE_MAPCCASE">
-        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MA_PERIODIC_CONTROL" name="MA_PERIODIC_CONTROL_MAPCCASE">
         <reference local="MA_PERIODIC_CONTROL_ID" foreign="MA_PERIODIC_CONTROL_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRIBUTESETINSTANCE_MAPCCASE">
+        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MAPCCASE">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>

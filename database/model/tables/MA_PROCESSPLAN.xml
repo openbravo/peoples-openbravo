@@ -17,14 +17,14 @@
       <column name="SECONDARYUNIT" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
       <column name="CONVERSIONRATE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="COPYVERSION" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAPROCESSPLAN">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAPROCESSPLAN">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAPROCESSPLAN">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <check name="MA_PROCESSPLAN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="MAPROCPLAN_CALCULATED_CHECK"><![CDATA[CALCULATED IN ('Y', 'N')]]></check>
       <check name="MAPROCPLAN_EXPLPHASES_CHECK"><![CDATA[EXPLODEPHASES IN ('Y', 'N')]]></check>
-      <check name="MA_PROCESSPLAN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

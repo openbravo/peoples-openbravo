@@ -55,35 +55,14 @@
       <foreign-key foreignTable="AD_CLIENT" name="AC_CLIENT_FACT_ACCT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_FACTACCT">
-        <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_FACT_ACCT">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORGTRX_FACT_ACCT">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="AD_ORG_FACT_ACCT">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_FACTACCT" onDelete="cascade">
-        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_FACTACCT">
-        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER1_FACTACCT">
-        <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER2_FACTACCT">
-        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_FACTACCT">
-        <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_PERIOD" name="CPERIOD_FACTACCT">
-        <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_TAX" name="CTAX_FACTACCT">
-        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
+      <foreign-key foreignTable="AD_TABLE" name="ADTABLE_FACTACCT">
+        <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_BUSPARTNER_FACT_ACCT">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
@@ -106,17 +85,38 @@
       <foreign-key foreignTable="C_UOM" name="C_UOM_FACT_ACCT">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_FACTACCT" onDelete="cascade">
+        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_FACTACCT">
+        <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_FACTACCT">
+        <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER1_FACTACCT">
+        <reference local="USER1_ID" foreign="C_ELEMENTVALUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUEUSER2_FACTACCT">
+        <reference local="USER2_ID" foreign="C_ELEMENTVALUE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_PERIOD" name="CPERIOD_FACTACCT">
+        <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_TAX" name="CTAX_FACTACCT">
+        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="GL_BUDGET" name="GLBUDGET_FACTACCT">
         <reference local="GL_BUDGET_ID" foreign="GL_BUDGET_ID"/>
       </foreign-key>
       <foreign-key foreignTable="GL_CATEGORY" name="GLCATEGORY_FACTACCT">
         <reference local="GL_CATEGORY_ID" foreign="GL_CATEGORY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_FACTACCT">
-        <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_FACT_ACCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_FACTACCT">
+        <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_CAMPAIGN" name="SO_CAMPAIGN_FACT_ACCT">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>

@@ -25,15 +25,6 @@
       <column name="C_CURRENCY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="POSTING" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="TOTALAMORTIZATION" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_AAMORTIZATION">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="A_AMORTIZATION_ORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="A_AMORTIZATIO_CURRENCY">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="A_AMORTIZA_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>
@@ -42,6 +33,15 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="A_AMORTIZA_PROJECT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="A_AMORTIZATIO_CURRENCY">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="A_AMORTIZATION_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_AAMORTIZATION">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <check name="A_AMORTIZATION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

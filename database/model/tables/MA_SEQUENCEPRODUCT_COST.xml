@@ -21,17 +21,17 @@
       <column name="COSTCENTERCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="MA_CALCSTD_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="RAWMATERIALCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MASEQUENCEPRODUCTCOST">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MASEQUENCEPRODUCTCOST">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_SEQUENCEPRODUCT" name="MASEQUENCEPRODUCT_MASEQUENCEPR">
-        <reference local="MA_SEQUENCEPRODUCT_ID" foreign="MA_SEQUENCEPRODUCT_ID"/>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MASEQUENCEPRODUCTCOST">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_CALCSTD" name="MA_CALCSTD_MASEQPRODCOST">
         <reference local="MA_CALCSTD_ID" foreign="MA_CALCSTD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_SEQUENCEPRODUCT" name="MASEQUENCEPRODUCT_MASEQUENCEPR">
+        <reference local="MA_SEQUENCEPRODUCT_ID" foreign="MA_SEQUENCEPRODUCT_ID"/>
       </foreign-key>
       <check name="MASEQPRODCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="MASEQPRODCT_PRO_TIONTYPE_CHECK"><![CDATA[PRODUCTIONTYPE IN ('+', '-')]]></check>

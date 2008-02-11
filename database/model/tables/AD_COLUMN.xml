@@ -43,12 +43,6 @@
       <column name="ISDESENCRYPTABLE" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="AD_CALLOUT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="DEVELOPMENTSTATUS" primaryKey="false" required="false" type="VARCHAR" size="2" default="RE" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CALLOUT" name="ADCOLUMN_FK_CALLOUT">
-        <reference local="AD_CALLOUT_ID" foreign="AD_CALLOUT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADCOLUMN" onDelete="setnull">
-        <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ELEMENT" name="AD_ELEMENT_AD_COLUMN">
         <reference local="AD_ELEMENT_ID" foreign="AD_ELEMENT_ID"/>
       </foreign-key>
@@ -63,6 +57,12 @@
       </foreign-key>
       <foreign-key foreignTable="AD_VAL_RULE" name="AD_VALRULE_COLUMN">
         <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CALLOUT" name="ADCOLUMN_FK_CALLOUT">
+        <reference local="AD_CALLOUT_ID" foreign="AD_CALLOUT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADCOLUMN" onDelete="setnull">
+        <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="COLUMNCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

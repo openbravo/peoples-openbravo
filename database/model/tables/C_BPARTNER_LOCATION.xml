@@ -23,6 +23,12 @@
       <column name="C_LOCATION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISTAXLOCATION" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="UPC" primaryKey="false" required="false" type="NVARCHAR" size="30" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_CLIENT" name="C_BUSPARTNER_LOCATIONCLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_BUSPARTNER_LOCATIONORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CBPLOCATION" onDelete="cascade">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
@@ -31,12 +37,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_SALESREGION" name="CSALESREGION_BPARTNERLOCATION" onDelete="setnull">
         <reference local="C_SALESREGION_ID" foreign="C_SALESREGION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="C_BUSPARTNER_LOCATIONCLIENT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="C_BUSPARTNER_LOCATIONORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <index name="C_BPLOCATION_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>

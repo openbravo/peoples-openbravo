@@ -20,6 +20,12 @@
       <column name="AD_FORM_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_REFERENCE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CALLOUT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_CLIENT" name="MODELOBJ_FK_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="MODELOBJ_FK_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CALLOUT" name="MODELOBJECT_FK_CALLOUT">
         <reference local="AD_CALLOUT_ID" foreign="AD_CALLOUT_ID"/>
       </foreign-key>
@@ -43,12 +49,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_WORKFLOW" name="MODELOBJECT_FK_WORKFLOW">
         <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="MODELOBJ_FK_CLIENT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="MODELOBJ_FK_ORG">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <unique name="AD_MODEL_OBJECT_CLASSNAME">
         <unique-column name="CLASSNAME"/>

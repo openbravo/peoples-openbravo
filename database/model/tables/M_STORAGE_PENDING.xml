@@ -30,11 +30,11 @@
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRIBUTE_MSTORAGEPENDING">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOM_MSTORAGEPENDING">
-        <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MSTORAGEPENDING">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOM_MSTORAGEPENDING">
+        <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_MSTORAGEPENDING">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>

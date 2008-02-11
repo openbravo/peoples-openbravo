@@ -78,6 +78,9 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_SR_CPROJECT">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_PROJECT">
+        <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CPROJECT">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
@@ -101,9 +104,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECTTYPE" name="CPROJECTTYPE_CPROJECT">
         <reference local="C_PROJECTTYPE_ID" foreign="C_PROJECTTYPE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_PROJECT">
-        <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRICELIST_VERSION" name="MPRICELISTVERSION_CPROJECT">
         <reference local="M_PRICELIST_VERSION_ID" foreign="M_PRICELIST_VERSION_ID"/>

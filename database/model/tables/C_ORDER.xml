@@ -75,14 +75,11 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CORDER">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_CORDER">
-        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CORDER">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_USER" name="ADUSERDROPSHIP_CORDER">
-        <reference local="DROPSHIP_USER_ID" foreign="AD_USER_ID"/>
+      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_CORDER">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSER_CORDER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
@@ -90,17 +87,23 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_SR_CORDER">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="ADUSERDROPSHIP_CORDER">
+        <reference local="DROPSHIP_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_CORDER">
+        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CORDER">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CORDER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNERDROPSHIP_CORDER">
         <reference local="DROPSHIP_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPARTNERLOCATION_SOHEADER">
         <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CORDER">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="CBPLOCATIONBILLTO_SOHEADER">
         <reference local="BILLTO_ID" foreign="C_BPARTNER_LOCATION_ID"/>
@@ -129,9 +132,6 @@
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CORDER">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_CORDER">
-        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_SOHEADER">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
@@ -156,11 +156,11 @@
       <index name="C_ORDER_UPDATED" unique="false">
         <index-column name="UPDATED"/>
       </index>
-      <check name="CORDER_ISCREDITAPPROVED_CHECK"><![CDATA[ISCREDITAPPROVED IN ('Y', 'N')]]></check>
-      <check name="CORDER_ISDISCOUNTPRINT_CHECK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISAPPROVED_CHECK"><![CDATA[ISAPPROVED IN ('Y', 'N')]]></check>
+      <check name="CORDER_ISCREDITAPPROVED_CHECK"><![CDATA[ISCREDITAPPROVED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISDELIVERED_CHECK"><![CDATA[ISDELIVERED IN ('Y', 'N')]]></check>
+      <check name="CORDER_ISDISCOUNTPRINT_CHECK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISINVOICED_CHECK"><![CDATA[ISINVOICED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISSELECTED_CHECK"><![CDATA[ISSELECTED IN ('Y', 'N')]]></check>

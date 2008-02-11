@@ -15,17 +15,17 @@
       <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="LOGO" primaryKey="false" required="false" type="NVARCHAR" size="200" autoIncrement="false"/>
       <column name="REFERENCE_ORDER" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADORGINFO">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_AD_ORGINFO">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_ADORGINFO">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADORGINFO">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_LOCATION" name="C_LOCATION_AD_ORGINFO">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_ADORGINFO">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="PA_GOAL" name="PAGOAL_AD_ORGINFO">
         <reference local="PA_GOAL_ID" foreign="PA_GOAL_ID"/>

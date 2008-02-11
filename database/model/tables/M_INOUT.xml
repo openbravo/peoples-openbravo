@@ -98,14 +98,14 @@
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_MINOUT">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_FREIGHTCATEGORY" name="M_FREIGHTCATEGORY_M_INOUT">
+        <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_SHIPPER" name="MSHIPPER_MINOUT">
         <reference local="M_SHIPPER_ID" foreign="M_SHIPPER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_MINOUT">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_FREIGHTCATEGORY" name="M_FREIGHTCATEGORY_M_INOUT">
-        <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="VBPLOCATION_MINOUT">
         <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
@@ -123,7 +123,6 @@
         <index-column name="UPDATED"/>
       </index>
       <check name="ISLOGISTIC_MINOUT"><![CDATA[ISLOGISTIC IN ('N', 'Y')]]></check>
-      <check name="MINOUT_UPDATELINES_YN"><![CDATA[UPDATELINES IN ('Y', 'N')]]></check>
       <check name="M_INOUT_CREATEFROM_CHECK"><![CDATA[CREATEFROM IN ('Y', 'N')]]></check>
       <check name="M_INOUT_GENERATELINES_CHECK"><![CDATA[GENERATELINES IN ('N', 'Y')]]></check>
       <check name="M_INOUT_GENERATETO_CHECK"><![CDATA[GENERATETO IN ('Y', 'N')]]></check>
@@ -131,5 +130,6 @@
       <check name="M_INOUT_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
       <check name="M_INOUT_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
       <check name="M_INOUT_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
+      <check name="MINOUT_UPDATELINES_YN"><![CDATA[UPDATELINES IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -23,20 +23,20 @@
       <column name="NAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="OUTSOURCED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAWRPHASE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAWRPHASE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_PROCESS" name="MAPROCESS_MAWRPHASE">
-        <reference local="MA_PROCESS_ID" foreign="MA_PROCESS_ID"/>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAWRPHASE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_SEQUENCE" name="MA_SEQUENCE_MAWRPHASE">
         <reference local="MA_SEQUENCE_ID" foreign="MA_SEQUENCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_WORKREQUIREMENT" name="MA_WORKREQUIREMENT_MAWRPHASE">
         <reference local="MA_WORKREQUIREMENT_ID" foreign="MA_WORKREQUIREMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_PROCESS" name="MAPROCESS_MAWRPHASE">
+        <reference local="MA_PROCESS_ID" foreign="MA_PROCESS_ID"/>
       </foreign-key>
       <check name="MA_WRPHASE_CLOSED_CHECK"><![CDATA[CLOSED IN ('Y', 'N')]]></check>
       <check name="MA_WRPHASE_GROUPUSE_CHECK"><![CDATA[GROUPUSE IN ('Y', 'N')]]></check>

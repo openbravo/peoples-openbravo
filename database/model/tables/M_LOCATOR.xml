@@ -19,9 +19,6 @@
       <column name="SIZEMULTIPLIER" primaryKey="false" required="false" type="DECIMAL" default="1" autoIncrement="false"/>
       <column name="INVOICINGTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="M_LOCATOR_TYPE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <foreign-key foreignTable="M_LOCATOR_TYPE" name="MLOCATORTYPE_MLOCATOR">
-        <reference local="M_LOCATOR_TYPE_ID" foreign="M_LOCATOR_TYPE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="M_WAREHOUSE_LOCATOR" onDelete="cascade">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
@@ -30,6 +27,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_WH_LOCATOR_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_LOCATOR_TYPE" name="MLOCATORTYPE_MLOCATOR">
+        <reference local="M_LOCATOR_TYPE_ID" foreign="M_LOCATOR_TYPE_ID"/>
       </foreign-key>
       <unique name="M_LOCATION_WHERE">
         <unique-column name="M_WAREHOUSE_ID"/>

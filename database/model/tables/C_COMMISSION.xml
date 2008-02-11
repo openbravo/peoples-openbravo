@@ -36,7 +36,7 @@
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <check name="CCOMMISSION_CREATEFROM_CHECK"><![CDATA[CREATEFROM IN ('Y', 'N')]]></check>
-      <check name="CCOMMISSION_LISTDETAILS_CHECK"><![CDATA[LISTDETAILS IN ('Y', 'N')]]></check>
       <check name="C_COMMISSION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CCOMMISSION_LISTDETAILS_CHECK"><![CDATA[LISTDETAILS IN ('Y', 'N')]]></check>
     </table>
   </database>

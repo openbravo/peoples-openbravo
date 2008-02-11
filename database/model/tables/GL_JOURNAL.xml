@@ -40,17 +40,17 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_GLJOURNAL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_GLJOURNAL">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_GLJOURNAL">
-        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCTSCHEMA_GL_JOURNAL">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_PERIOD" name="C_PERIOD_JOURNAL">
         <reference local="C_PERIOD_ID" foreign="C_PERIOD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_GLJOURNAL">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_GLJOURNAL">
+        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="GL_BUDGET" name="GLBUDGET_GLJOURNAL">
         <reference local="GL_BUDGET_ID" foreign="GL_BUDGET_ID"/>

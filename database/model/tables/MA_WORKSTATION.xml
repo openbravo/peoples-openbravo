@@ -12,11 +12,11 @@
       <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="MA_SECTION_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="VALUE" primaryKey="false" required="true" type="NVARCHAR" size="40" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAWORKSTATION">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAWORKSTATION">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAWORKSTATION">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_SECTION" name="MA_GFH_MASECTION">
         <reference local="MA_SECTION_ID" foreign="MA_SECTION_ID"/>

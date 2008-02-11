@@ -14,11 +14,11 @@
       <column name="PRODUCT" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
       <column name="SEQNO" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="HASSECPRODUCT" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMEASUREGROUP">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMEASURE_GROUP">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMEASUREGROUP">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_CCP_GROUP" name="MA_CCP_GROUP_MAMEASURE_GROUP">
         <reference local="MA_CCP_GROUP_ID" foreign="MA_CCP_GROUP_ID"/>

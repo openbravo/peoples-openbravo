@@ -13,11 +13,11 @@
       <column name="DOCUMENTNO" primaryKey="false" required="true" type="NVARCHAR" size="30" autoIncrement="false"/>
       <column name="DATEFROM" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="DATETO" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAPROCESSPLANVERSION">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAPROCESSPLANVERSION">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAPROCESSPLANVERSION">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCPLAN_MAPROCPLANVERSION">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>

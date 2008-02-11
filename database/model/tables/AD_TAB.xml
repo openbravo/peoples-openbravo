@@ -36,6 +36,15 @@
       <column name="INCLUDED_TAB_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="FILTERCLAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="EDITREFERENCE" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_AD_TAB">
+        <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_TAB">
+        <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TAB" onDelete="cascade">
+        <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_COLUMN" name="ADCOLUMN_ADTABSORTORDER">
         <reference local="AD_COLUMNSORTORDER_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
@@ -53,15 +62,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_TAB" name="ADTAB_INCLUDED">
         <reference local="INCLUDED_TAB_ID" foreign="AD_TAB_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_AD_TAB">
-        <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_TABLE" name="AD_TABLE_TAB">
-        <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TAB" onDelete="cascade">
-        <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="TABCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

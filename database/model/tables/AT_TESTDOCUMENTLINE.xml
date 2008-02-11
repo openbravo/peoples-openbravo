@@ -22,17 +22,17 @@
       <column name="ARGTYPE2" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="ARGTYPE1" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="ASSERTPREFIX" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ATTESTDOCUMENTLINE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_ATTESTDOCUMENTLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AT_TESTDOCUMENT" name="ATTESTDOCUMENT_TESTDOCLINE">
-        <reference local="AT_TESTDOCUMENT_ID" foreign="AT_TESTDOCUMENT_ID"/>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ATTESTDOCUMENTLINE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AT_COMMAND" name="AT_COMMAND_ATTESTDOCUMENTLINE">
         <reference local="AT_COMMAND_ID" foreign="AT_COMMAND_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AT_TESTDOCUMENT" name="ATTESTDOCUMENT_TESTDOCLINE">
+        <reference local="AT_TESTDOCUMENT_ID" foreign="AT_TESTDOCUMENT_ID"/>
       </foreign-key>
       <unique name="AT_TESTDOCUMENTLINE_UNIQUE">
         <unique-column name="AT_TESTDOCUMENT_ID"/>

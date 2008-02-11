@@ -15,9 +15,6 @@
       <column name="ISDEFAULT" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="C_NATION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="VALUE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false"/>
-      <foreign-key foreignTable="C_COUNTRY" name="CCOUNTRY_CREGION">
-        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_REGIONCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -26,6 +23,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="C_REGIONORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="CCOUNTRY_CREGION">
+        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
       </foreign-key>
       <unique name="C_REGION_NAME">
         <unique-column name="C_COUNTRY_ID"/>

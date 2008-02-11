@@ -19,6 +19,9 @@
       <column name="PO_DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="PO_HELP" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="ISTRANSLATED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_AD_ELEMENT_TRL">
+        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADELEMENTTRL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -27,9 +30,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADELEMENTTRL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_AD_ELEMENT_TRL">
-        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
       <check name="ADELEMENTTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="ADELEMENTTRL_IS_ANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>

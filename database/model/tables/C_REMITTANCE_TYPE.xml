@@ -15,11 +15,11 @@
       <column name="PAYMENTRULECONSOLIDATED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="STATUS_RETURNED" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false"/>
       <column name="ISRECEIPT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CREMITTANCETYPE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_CREMITTANCETYPE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CREMITTANCETYPE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <check name="C_REMITTANCE_TY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

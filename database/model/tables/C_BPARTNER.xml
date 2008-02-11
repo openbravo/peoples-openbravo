@@ -84,20 +84,26 @@
       <column name="PO_FIXMONTHDAY3" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="SO_BANKACCOUNT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="SO_BP_TAXCATEGORY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
+        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPARTNER">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CBPARTNER">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
-        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BP_TAXCATEGORY" name="BP_CBPTAXCATEGORYPO">
         <reference local="PO_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BP_TAXCATEGORY" name="BP_CBPTAXCATEGORYSO">
         <reference local="SO_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_WH_SCHEDULE" name="C_BPARTNER_SCHEDULE">
+        <reference local="M_WH_SCHEDULE_ID" foreign="M_WH_SCHEDULE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_SALARY_CATEGORY" name="C_SALARY_CATEGORY_CBPARTNER">
+        <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CPBARTNERPARENT">
         <reference local="BPARTNER_PARENT_ID" foreign="C_BPARTNER_ID"/>
@@ -120,26 +126,20 @@
       <foreign-key foreignTable="C_PAYMENTTERM" name="CPOPAYMENTTERM_CBPARTNER">
         <reference local="PO_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_WH_SCHEDULE" name="C_BPARTNER_SCHEDULE">
-        <reference local="M_WH_SCHEDULE_ID" foreign="M_WH_SCHEDULE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_SALARY_CATEGORY" name="C_SALARY_CATEGORY_CBPARTNER">
-        <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="FORCEDORG_CBPARTNER">
         <reference local="AD_FORCED_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTSPO_CBPARTNER">
-        <reference local="PO_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTS_CBPARTNER">
         <reference local="M_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRICELIST" name="MPRICELISTPO_CBUSPARTNER" onDelete="setnull">
-        <reference local="PO_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      <foreign-key foreignTable="M_DISCOUNTSCHEMA" name="MDISCOUNTSPO_CBPARTNER">
+        <reference local="PO_DISCOUNTSCHEMA_ID" foreign="M_DISCOUNTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_CBPARTNER" onDelete="setnull">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRICELIST" name="MPRICELISTPO_CBUSPARTNER" onDelete="setnull">
+        <reference local="PO_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BANKACCOUNT" name="POBACKACCOUTN_CBPARTNER">
         <reference local="PO_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>

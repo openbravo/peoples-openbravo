@@ -17,17 +17,17 @@
       <column name="CALCULATE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="COST_UOM" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
       <column name="CALCULATED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAINDIRECT_COST_VALUE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAINDIRECT_COST_VALUE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAINDIRECT_COST_VALUE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_INDIRECT_COST" name="MAINDIRECT_COST_MA_IC_VALUE">
         <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
       </foreign-key>
-      <check name="MAINDCOVAL_CALCULATED_CHECK"><![CDATA[CALCULATED IN ('Y', 'N')]]></check>
       <check name="MAINDCOVAL_CALCULATE_CHECK"><![CDATA[CALCULATE IN ('Y', 'N')]]></check>
+      <check name="MAINDCOVAL_CALCULATED_CHECK"><![CDATA[CALCULATED IN ('Y', 'N')]]></check>
       <check name="MAINDCOVAL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -42,21 +42,21 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_IELEMENTVALUE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_IELEMENTVALUE">
-        <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_ELEMENT" name="CELEMENT_IELEMENTVALUE">
         <reference local="C_ELEMENT_ID" foreign="C_ELEMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_IELEMENTVALUE">
+        <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ELEMENTVALUE" name="CEVALUEPARENT_IELEMENTVALUE">
         <reference local="PARENTELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
+      <check name="I_ELEMENTVALUE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="IELEMVAL_ISDOCCONTROL_CHECK"><![CDATA[ISDOCCONTROLLED IN ('Y', 'N')]]></check>
       <check name="IELEMVALUE_POSTACTUAL_CHECK"><![CDATA[POSTACTUAL IN ('Y', 'N')]]></check>
       <check name="IELEMVALUE_POSTBUDGET_CHECK"><![CDATA[POSTBUDGET IN ('Y', 'N')]]></check>
       <check name="IELEMVALUE_POSTENCUMBR_CHECK"><![CDATA[POSTENCUMBRANCE IN ('Y', 'N')]]></check>
       <check name="IELEMVALUE_POSTSTATIST_CHECK"><![CDATA[POSTSTATISTICAL IN ('Y', 'N')]]></check>
       <check name="IELEMVALUE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
-      <check name="IELEMVAL_ISDOCCONTROL_CHECK"><![CDATA[ISDOCCONTROLLED IN ('Y', 'N')]]></check>
-      <check name="I_ELEMENTVALUE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

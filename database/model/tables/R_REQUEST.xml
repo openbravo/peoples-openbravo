@@ -49,6 +49,9 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_SR_RREQUEST">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_RREQUEST">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_CAMPAIGN" name="CCAMPAIGN_RREQUEST">
         <reference local="C_CAMPAIGN_ID" foreign="C_CAMPAIGN_ID"/>
       </foreign-key>
@@ -60,9 +63,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_RREQUEST">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_RREQUEST">
-        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_RREQUEST">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>

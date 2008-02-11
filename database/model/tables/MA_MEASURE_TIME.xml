@@ -13,11 +13,11 @@
       <column name="MEASUREHOUR" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="EXPLODE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="PROCESSED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMEASURETIME">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMEASURETIME">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMEASURETIME">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_MEASURE_GROUP" name="MA_MEASURE_GROUP_MAMEASURETIME">
         <reference local="MA_MEASURE_GROUP_ID" foreign="MA_MEASURE_GROUP_ID"/>

@@ -16,11 +16,11 @@
       <column name="SHIFT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="INITDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
       <column name="EXCLUDEWEEKEND" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMAINT_PERIODICITY">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMAINT_PERIODICITY">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMAINT_PERIODICITY">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_MAINTENANCE" name="MAMAINTENANCE_MAINTPERIODICITY">
         <reference local="MA_MAINTENANCE_ID" foreign="MA_MAINTENANCE_ID"/>

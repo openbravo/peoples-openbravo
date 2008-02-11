@@ -17,11 +17,11 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_KENTRYCATEGORY">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="K_CATEGORYVALUE" name="KCATEGORYVALUE_KENTRYCATEGORY">
-        <reference local="K_CATEGORYVALUE_ID" foreign="K_CATEGORYVALUE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="K_CATEGORY" name="KCATEGORY_KENTRYCATEGORY">
         <reference local="K_CATEGORY_ID" foreign="K_CATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="K_CATEGORYVALUE" name="KCATEGORYVALUE_KENTRYCATEGORY">
+        <reference local="K_CATEGORYVALUE_ID" foreign="K_CATEGORYVALUE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="K_ENTRY" name="KENTRY_KENTRYCATALOG">
         <reference local="K_ENTRY_ID" foreign="K_ENTRY_ID"/>

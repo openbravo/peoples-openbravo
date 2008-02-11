@@ -23,11 +23,14 @@
       <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
       <column name="MA_MAINT_OPERATION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_INTERNAL_CONSUMPTION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMAINT_SCHEDULED">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMAINT_SCHEDULED">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMAINT_SCHEDULED">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      <foreign-key foreignTable="M_INTERNAL_CONSUMPTION" name="M_INTCONSUMP_MAINT_SCHEDULED">
+        <reference local="M_INTERNAL_CONSUMPTION_ID" foreign="M_INTERNAL_CONSUMPTION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_MACHINE_TYPE" name="MACHINETYPE_MAMAINT_SCHEDULED">
         <reference local="MA_MACHINE_TYPE_ID" foreign="MA_MACHINE_TYPE_ID"/>
@@ -43,9 +46,6 @@
       </foreign-key>
       <foreign-key foreignTable="MA_MAINT_PART" name="MAMAINTPART_MAMAINT_SCHEDULED">
         <reference local="MA_MAINT_PART_ID" foreign="MA_MAINT_PART_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_INTERNAL_CONSUMPTION" name="M_INTCONSUMP_MAINT_SCHEDULED">
-        <reference local="M_INTERNAL_CONSUMPTION_ID" foreign="M_INTERNAL_CONSUMPTION_ID"/>
       </foreign-key>
       <check name="MA_MAINT_SCHEDU_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

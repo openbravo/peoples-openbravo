@@ -37,11 +37,11 @@
       <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_IREPORTLINE">
         <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="PA_REPORTLINESET" name="PAREPORTLINESET_IREPORTLINE">
-        <reference local="PA_REPORTLINESET_ID" foreign="PA_REPORTLINESET_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="PA_REPORTLINE" name="PAREPORTLINE_IREPORTLINE">
         <reference local="PA_REPORTLINE_ID" foreign="PA_REPORTLINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="PA_REPORTLINESET" name="PAREPORTLINESET_IREPORTLINE">
+        <reference local="PA_REPORTLINESET_ID" foreign="PA_REPORTLINESET_ID"/>
       </foreign-key>
       <foreign-key foreignTable="PA_REPORTSOURCE" name="PAREPORTSOURCE_IREPORTLINE">
         <reference local="PA_REPORTSOURCE_ID" foreign="PA_REPORTSOURCE_ID"/>

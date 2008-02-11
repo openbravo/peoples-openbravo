@@ -17,11 +17,11 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_MATTRIBUTEUSE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESET" name="MATTRIBUTESET_MATTRIBUTEUSE">
-        <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_ATTRIBUTE" name="MATTRIBUTE_MATTRIBUTEUSE">
         <reference local="M_ATTRIBUTE_ID" foreign="M_ATTRIBUTE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESET" name="MATTRIBUTESET_MATTRIBUTEUSE">
+        <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
       </foreign-key>
       <check name="M_ATTRIBUTEUSE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

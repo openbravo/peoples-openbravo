@@ -36,6 +36,9 @@
       <foreign-key foreignTable="C_UOM" name="CUOM_MTRANSACTION">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_INTERNAL_CONSUMPTION" name="M_INTL_CONSUMP_MTRANSACTION">
+        <reference local="M_INTERNAL_CONSUMPTIONLINE_ID" foreign="M_INTERNAL_CONSUMPTION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRIBUTESETINSTANCE_MTRANSAC">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
@@ -51,17 +54,14 @@
       <foreign-key foreignTable="M_MOVEMENTLINE" name="MMOVEMENTLINE_MTRANSACTION">
         <reference local="M_MOVEMENTLINE_ID" foreign="M_MOVEMENTLINE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MINVENTORYCOUNT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_PRODUCTIONLINE" name="MPRODUCTIONLINE_MTRANSACTION">
         <reference local="M_PRODUCTIONLINE_ID" foreign="M_PRODUCTIONLINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOM_MTRANSACTION">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MINVENTORYCOUNT">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_INTERNAL_CONSUMPTION" name="M_INTL_CONSUMP_MTRANSACTION">
-        <reference local="M_INTERNAL_CONSUMPTIONLINE_ID" foreign="M_INTERNAL_CONSUMPTION_ID"/>
       </foreign-key>
       <index name="M_TRANSSACTION_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>

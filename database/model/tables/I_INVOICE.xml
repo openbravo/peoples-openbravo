@@ -59,11 +59,11 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_IINVOICE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_IINVOICE">
-        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_IINVOICE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_IINVOICE">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSER_IINVOICE">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
@@ -119,9 +119,9 @@
       <foreign-key foreignTable="AD_USER" name="REFAD_USER1974">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <check name="I_INVOICE_I_ISIMPORTED_CHECK"><![CDATA[I_ISIMPORTED IN ('Y', 'N')]]></check>
       <check name="I_INVOICE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="I_INVOICE_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
-      <check name="I_INVOICE_I_ISIMPORTED_CHECK"><![CDATA[I_ISIMPORTED IN ('Y', 'N')]]></check>
       <check name="I_INVOICE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
     </table>
   </database>

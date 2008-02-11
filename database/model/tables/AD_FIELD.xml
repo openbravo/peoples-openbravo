@@ -28,14 +28,14 @@
       <column name="ISENCRYPTED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" default="D" autoIncrement="false"/>
       <column name="SHOWINRELATION" primaryKey="false" required="false" type="VARCHAR" size="1" default="Y" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_FIELDGROUP" name="ADFIELDGROUP_ADFIELD">
-        <reference local="AD_FIELDGROUP_ID" foreign="AD_FIELDGROUP_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_FIELD">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TAB" name="AD_TAB_FIELD" onDelete="cascade">
         <reference local="AD_TAB_ID" foreign="AD_TAB_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_FIELDGROUP" name="ADFIELDGROUP_ADFIELD">
+        <reference local="AD_FIELDGROUP_ID" foreign="AD_FIELDGROUP_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="FIELDCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

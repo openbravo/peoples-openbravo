@@ -28,11 +28,11 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CASCHEMAELEMENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGID_C_ASCHEMAELEMENT">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CASCHEMAELEMENT">
         <reference local="ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORGID_C_ASCHEMAELEMENT">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CASCHEMAELEMENT" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
@@ -43,11 +43,11 @@
       <foreign-key foreignTable="C_BPARTNER" name="CBUSPARTNER_CASCHEMAELEMENT">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_CASCHEMAELEMENT">
-        <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_ELEMENT" name="CELEMENT_CASCHEMAELEMENT">
         <reference local="C_ELEMENT_ID" foreign="C_ELEMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="CELEMENTVALUE_CASCHEMAELEMENT">
+        <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_LOCATION" name="CLOCATION_CASCHEMAELEMENT">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>

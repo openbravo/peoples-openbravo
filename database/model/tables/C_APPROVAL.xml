@@ -15,14 +15,14 @@
       <column name="ISWORKFLOWAPPROVED" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
       <column name="AD_WORKFLOW_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="ISPRODUCTATTRIBUTEAPPROVED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_WORKFLOW" name="AD_WORKFLOW_APPROVAL">
+        <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CAPPROVAL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CAPPROVAL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_WORKFLOW" name="AD_WORKFLOW_APPROVAL">
-        <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
       </foreign-key>
       <unique name="C_APPROVAL_NAME">
         <unique-column name="AD_CLIENT_ID"/>

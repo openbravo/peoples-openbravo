@@ -57,17 +57,20 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CINVOICE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_CINVOICE">
-        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CINVOICE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORGTRX_CINVOICE">
+        <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSER_CINVOICE">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="ADUSER_SR_CINVOICE">
         <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_BPLOCATION_CINVOICE">
+        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CINVOICE">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
@@ -84,11 +87,11 @@
       <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CINVOICE">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPETARGET_CINVOICE">
-        <reference local="C_DOCTYPETARGET_ID" foreign="C_DOCTYPE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_CINVOICE">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPETARGET_CINVOICE">
+        <reference local="C_DOCTYPETARGET_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ORDER" name="CORDER_CINVOICE">
         <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
@@ -98,9 +101,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="CPROJECT_CINVOICE">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_BPLOCATION_CINVOICE">
-        <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_CINVOICE">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>

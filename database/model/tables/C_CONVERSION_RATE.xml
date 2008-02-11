@@ -16,9 +16,6 @@
       <column name="CONVERSIONRATETYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
       <column name="MULTIPLYRATE" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="DIVIDERATE" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CCONVERSIONRATE">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_CONVERSION_RATECLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -27,6 +24,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCYCONVRATETO">
         <reference local="C_CURRENCY_ID_TO" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CCONVERSIONRATE">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <unique name="C_CONVERSIONRATE_ONCE">
         <unique-column name="AD_CLIENT_ID"/>

@@ -34,23 +34,23 @@
       <column name="CAPACITY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="QTYSTD" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="QTYTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_MPRODUCTPO">
-        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_BUSPARTNER_M_PRODUCT_PO">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_UOM" name="C_UOM_M_PRODUCT_PO">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_MPRODUCTPO">
+        <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_PRODUCTPO" onDelete="cascade">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCTPO_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_PRODUCTPO_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_PRODUCTPO" onDelete="cascade">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <unique name="M_PRODUCT_PO_VENDORPRODNO">
         <unique-column name="C_BPARTNER_ID"/>

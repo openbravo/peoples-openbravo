@@ -11,6 +11,9 @@
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_OFFER_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_PRICELIST_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <foreign-key foreignTable="M_OFFER" name="MOFFER_MOFFERPRICELIST">
+        <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="MOFFERPRICELIST_ADCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -19,9 +22,6 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRICELIST" name="MOFFERPRICELIST_MPRICELIST">
         <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_OFFER" name="MOFFER_MOFFERPRICELIST">
-        <reference local="M_OFFER_ID" foreign="M_OFFER_ID"/>
       </foreign-key>
     </table>
   </database>

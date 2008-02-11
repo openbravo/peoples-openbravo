@@ -38,11 +38,11 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADATTRIBUTE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCEVALUE_ADATTRIBUTE">
-        <reference local="AD_REFERENCE_VALUE_ID" foreign="AD_REFERENCE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCE_ADATTRIBUTE">
         <reference local="AD_REFERENCE_ID" foreign="AD_REFERENCE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_REFERENCE" name="ADREFERENCEVALUE_ADATTRIBUTE">
+        <reference local="AD_REFERENCE_VALUE_ID" foreign="AD_REFERENCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADATTRIBUTE" onDelete="cascade">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>

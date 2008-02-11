@@ -163,11 +163,11 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_EPREPAYMENT_CSCHEMADEFAULT">
         <reference local="E_PREPAYMENT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_NOTINVOICEDRECEIPTS_CSCHEMA">
-        <reference local="NOTINVOICEDRECEIPTS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_NOTINVOICEDREC_CSCHEMADEFAU">
         <reference local="NOTINVOICEDRECEIVABLES_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_NOTINVOICEDRECEIPTS_CSCHEMA">
+        <reference local="NOTINVOICEDRECEIPTS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_NOTINVOICEDREVENUE_CSCHEMAD">
         <reference local="NOTINVOICEDREVENUE_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
@@ -238,11 +238,11 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_UNREALIZEDLOSS_CSCHEMADEFAU">
         <reference local="UNREALIZEDLOSS_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_VLIABILITYSERVICES_CSCHEMAD">
-        <reference local="V_LIABILITY_SERVICES_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_VLIABILITY_CSCHEMADEFAULT">
         <reference local="V_LIABILITY_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_VLIABILITYSERVICES_CSCHEMAD">
+        <reference local="V_LIABILITY_SERVICES_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_VPREPAYMENT_CSCHEMADEFAULT">
         <reference local="V_PREPAYMENT_ACCT" foreign="C_VALIDCOMBINATION_ID"/>

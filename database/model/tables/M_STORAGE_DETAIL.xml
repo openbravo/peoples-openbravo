@@ -34,11 +34,11 @@
       <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_MSTORAGEDETAIL">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOM_MSTORAGEDETAIL">
-        <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_MSTORAGEDETAIL">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOM_MSTORAGEDETAIL">
+        <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
       </foreign-key>
       <unique name="M_STORAGE_DETAIL_UN">
         <unique-column name="M_PRODUCT_ID"/>

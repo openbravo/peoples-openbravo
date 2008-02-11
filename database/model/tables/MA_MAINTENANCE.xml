@@ -17,20 +17,20 @@
       <column name="MA_MACHINE_TYPE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="MA_MACHINE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="EXPLODE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMAINTENANCE">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMAINTENANCE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MA_MAINT_OPERATION" name="MAMAINTOPERATION_MAMAINTENANCE">
-        <reference local="MA_MAINT_OPERATION_ID" foreign="MA_MAINT_OPERATION_ID"/>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMAINTENANCE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_MACHINE" name="MA_MACHINE_MAMAINTENANCE">
         <reference local="MA_MACHINE_ID" foreign="MA_MACHINE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_MACHINE_TYPE" name="MA_MACHINE_TYPE_MAMAINTENANCE">
         <reference local="MA_MACHINE_TYPE_ID" foreign="MA_MACHINE_TYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_MAINT_OPERATION" name="MAMAINTOPERATION_MAMAINTENANCE">
+        <reference local="MA_MAINT_OPERATION_ID" foreign="MA_MAINT_OPERATION_ID"/>
       </foreign-key>
       <check name="MA_MAINTENANCE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

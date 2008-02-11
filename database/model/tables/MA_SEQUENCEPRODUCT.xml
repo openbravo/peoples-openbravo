@@ -23,23 +23,23 @@
       <column name="CONSUMERM" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="DECREASEIND" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="COST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MASEQUENCEPRODUCT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MASEQUENCEPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MASEQUENCEPRODUCT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_UOM" name="CUOMID_MASEQUENCEPRODUCT">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MASEQUENCEPRODUCT">
+        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_SEQUENCE" name="MASEQUENCE_MASEQUENCEPRODUCT">
         <reference local="MA_SEQUENCE_ID" foreign="MA_SEQUENCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_UOM" name="MPRODUCTUOMID_MASEQPRODUCT">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_MASEQUENCEPRODUCT">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <check name="MA_SEQUENCEPROD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

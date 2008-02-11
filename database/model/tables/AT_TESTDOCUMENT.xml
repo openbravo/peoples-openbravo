@@ -23,14 +23,14 @@
       <column name="LINE_INTERCHANGER" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="PREFIX" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="INTRODUCTION" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ATTESTDOCUMENT">
-        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_AT_TESTDOCUMENT">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_ATTESTDOCUMENT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ATTESTDOCUMENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <check name="ATTESTDOCUMENT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="ATTESTDOCUMENT_LINEINTER_CHECK"><![CDATA[LINE_INTERCHANGER IN ('Y', 'N')]]></check>

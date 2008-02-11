@@ -76,14 +76,14 @@
       <column name="QTYSTD" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <column name="QTYTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="STOCKMIN" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MPRODUCT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_IMAGE" name="ADIMAGE_MPRODUCT">
         <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
-        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_MPRODUCT">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
@@ -97,17 +97,17 @@
       <foreign-key foreignTable="C_UOM" name="CUOM_MPRODUCT">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESET" name="MATTRIBUTESET_MPRODUCT" onDelete="cascade">
-        <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_MPRODUCT">
-        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MPRODUCT">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MA_PRODUCTTYPE" name="MA_PRODUCTTYPE_MPRODUCT">
         <reference local="MA_PRODUCTTYPE_ID" foreign="MA_PRODUCTTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESET" name="MATTRIBUTESET_MPRODUCT" onDelete="cascade">
+        <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_MPRODUCT">
+        <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_FREIGHTCATEGORY" name="MFREIGHTCATEGORY_MPRODUCT">
         <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
