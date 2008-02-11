@@ -65,7 +65,7 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "DROP_VIEW",
             "AD_COPY_CLIENT",
             "AD_DELETE_CLIENT",
-            "C_DATEDAYINMONTH",
+            "MONTHS_BETWEEN",
             "AD_SCRIPT_DISABLE_TRIGGERS",
             "AD_SCRIPT_DISABLE_CONSTRAINTS",
             "AD_SCRIPT_ENABLE_TRIGGERS",
