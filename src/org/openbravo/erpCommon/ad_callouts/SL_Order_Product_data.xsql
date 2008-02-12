@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,7 +34,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT C_INVOICE_ID AS ID, C_BPARTNER_ID, DATEINVOICED FROM C_INVOICE WHERE C_INVOICE_ID = ?
+      SELECT C_INVOICE_ID AS ID, DATEINVOICED, C_BPARTNER_ID, M_PRICELIST_ID
+      	FROM C_INVOICE WHERE C_INVOICE_ID = ?
       ]]>
     </Sql>
     <Parameter name="cInvoiceId"/>
@@ -129,11 +130,30 @@
                         AND O.C_ORDER_ID    = ?)) as TOTAL FROM DUAL
 	 </Sql>
     <Parameter name="cBpartnerId"/>
-	  <Parameter name="pricestd"/>
+	<Parameter name="pricestd"/>
     <Parameter name="mProductId"/>
     <Parameter name="dateordered"/>
     <Parameter name="qty"/>
     <Parameter name="priclist"/>
     <Parameter name="orderid"/>
+  </SqlMethod>
+  
+  <SqlMethod name="getOffersStdPriceInvoice" type="preparedStatement" return="String" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+	  SELECT ROUND(M_GET_OFFERS_STD_PRICE(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?), TO_NUMBER(?), TO_NUMBER(?)),
+                    (SELECT PRICEPRECISION 
+                       FROM C_CURRENCY C,
+                            C_INVOICE  I 
+                      WHERE C.C_CURRENCY_ID = I.C_CURRENCY_ID
+                        AND I.C_INVOICE_ID    = ?)) as TOTAL FROM DUAL
+	 </Sql>
+    <Parameter name="cBpartnerId"/>
+	<Parameter name="pricestd"/>
+    <Parameter name="mProductId"/>
+    <Parameter name="dateordered"/>
+    <Parameter name="qty"/>
+    <Parameter name="priclist"/>
+    <Parameter name="invoiceid"/>
   </SqlMethod>
 </SqlClass>

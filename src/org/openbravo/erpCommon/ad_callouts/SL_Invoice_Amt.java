@@ -50,60 +50,70 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
       String strProduct = vars.getStringParameter("inpmProductId");
       String strTabId = vars.getStringParameter("inpTabId");
       String strPriceList = vars.getStringParameter("inppricelist");
+      String strPriceStd = vars.getStringParameter("inppricestd");
       
       try {
-        printPage(response, vars, strChanged, strQtyInvoice, strPriceActual, strInvoiceId, strProduct, strPriceLimit, strTabId, strPriceList);
+        printPage(response, vars, strChanged, strQtyInvoice, strPriceActual, strInvoiceId, strProduct, strPriceLimit, strTabId, strPriceList, strPriceStd);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
     } else pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged, String strQtyInvoice, String strPriceActual, String strInvoiceId, String strProduct, String strPriceLimit, String strTabId, String strPriceList) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged, String strQtyInvoice, String strPriceActual, String strInvoiceId, String strProduct, String strPriceLimit, String strTabId, String strPriceList, String strPriceStd) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     SLInvoiceAmtData[] data = SLInvoiceAmtData.select(this, strInvoiceId);
     String strPrecision = "0", strPricePrecision="0";
     boolean enforcedLimit=false;
     if (data!=null && data.length>0) {
-      strPrecision = data[0].stdprecision;
-      strPricePrecision = data[0].priceprecision;
+      strPrecision = data[0].stdprecision.equals("")?"0":data[0].stdprecision;
+      strPricePrecision = data[0].priceprecision.equals("")?"0":data[0].priceprecision;
       enforcedLimit = (data[0].enforcepricelimit.equals("Y")?true:false);
     }
     int StdPrecision = Integer.valueOf(strPrecision).intValue();
     int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
 
-    BigDecimal qtyInvoice, priceActual, LineNetAmt, priceLimit;
-
-    if (strQtyInvoice.equals("")) qtyInvoice=ZERO;
-    else qtyInvoice = new BigDecimal(strQtyInvoice);
-    /*
-    if (strChanged.equals("inpqtyinvoiced")||strChanged.equals("inppricelist"))
-    {
-      if (log4j.isDebugEnabled()) log4j.debug("strPriceList: "+strPriceList.replace("\"", "")+" product:"+strProduct+" qty:"+strQtyInvoice);
-      strPriceActual = SLOrderProductData.getOffersPriceInvoice(this, data[0].dateinvoiced, data[0].cBpartnerId, strProduct, strPriceList.replace("\"", ""), strQtyInvoice, data[0].mPricelistId, data[0].id);
-    }
-    */
-    
-    if (strPriceActual.equals("")) strPriceActual = "0";
-    if (strPriceLimit.equals("")) strPriceLimit = "0";
- 
     if (log4j.isDebugEnabled()) log4j.debug("strPriceActual: "+strPriceActual);
     if (log4j.isDebugEnabled()) log4j.debug("strPriceLimit: "+strPriceLimit);
-    priceActual = (new BigDecimal(strPriceActual)).setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-    priceLimit = (new BigDecimal(strPriceLimit)).setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+    
+    BigDecimal qtyInvoice, priceActual, LineNetAmt, priceLimit, priceStd;
 
-
-    LineNetAmt = qtyInvoice.multiply(priceActual);
-
-    if (LineNetAmt.scale() > StdPrecision)
-      LineNetAmt = LineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-
-
+    qtyInvoice = (strQtyInvoice.equals("")?ZERO:new BigDecimal(strQtyInvoice));
+    priceStd = (strPriceStd.equals("")?ZERO:new BigDecimal(strPriceStd));
+    priceActual = (strPriceActual.equals("")?ZERO:(new BigDecimal(strPriceActual))).setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+    priceLimit = (strPriceLimit.equals("")?ZERO:(new BigDecimal(strPriceLimit))).setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+    
     StringBuffer resultado = new StringBuffer();
 
     resultado.append("var calloutName='SL_Invoice_Amt';\n\n");
     resultado.append("var respuesta = new Array(");
+    
+    SLOrderProductData[] dataInvoice = SLOrderProductData.selectInvoice(this, strInvoiceId);
+
+    //If unit price (actual price) changes, recalculates standard price (std price) applying price adjustments (offers) if any
+    if (strChanged.equals("inppriceactual"))
+    {
+      if (log4j.isDebugEnabled()) log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
+      priceStd = new BigDecimal(SLOrderProductData.getOffersStdPriceInvoice(this, dataInvoice[0].cBpartnerId, strPriceActual.replace("\"", ""), strProduct, dataInvoice[0].dateinvoiced, strQtyInvoice, dataInvoice[0].mPricelistId, dataInvoice[0].id));
+      resultado.append("new Array(\"inppricestd\", \"" + priceStd.toString() + "\"),");
+    }
+    
+    //If quantity changes, recalculates unit price (actual price) applying price adjustments (offers) if any
+    if (strChanged.equals("inpqtyinvoiced"))
+    {
+      if (log4j.isDebugEnabled()) log4j.debug("strPriceList: "+strPriceList.replace("\"", "")+" product:"+strProduct+" qty:"+strQtyInvoice);
+      priceActual = new BigDecimal(SLOrderProductData.getOffersPriceInvoice(this, dataInvoice[0].dateinvoiced, dataInvoice[0].cBpartnerId, strProduct, priceStd.toString(), strQtyInvoice, dataInvoice[0].mPricelistId, dataInvoice[0].id));
+      if (priceActual.scale() > PricePrecision) priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+    }     
+   
+    //Net amount of a line equals quantity x unit price (actual price)
+    LineNetAmt = qtyInvoice.multiply(priceActual);
+
+    if (LineNetAmt.scale() > StdPrecision)
+      LineNetAmt = LineNetAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+    
+    //Check price limit
     if (enforcedLimit) {
       if (priceLimit.doubleValue() != 0.0 && priceActual.compareTo(priceLimit) < 0) resultado.append("new Array('MESSAGE', \"" + FormatUtilities.replaceJS(Utility.messageBD(this, "UnderLimitPrice", vars.getLanguage())) + "\"), ");
     }
