@@ -155,7 +155,7 @@ public class UsedByLink extends HttpSecureAppServlet {
       return;
     }
     String windowRef= FormatUtilities.replace(dataRef[0].windowname) + "/" + FormatUtilities.replace(dataRef[0].tabname) + "_Edition.html";
-    strScript.append("top.opener.submitFormGetParams('DEFAULT', '../").append(windowRef).append("', getParamsScript(document.forms[0]));\n");
+    strScript.append("top.opener.submitFormGetParams('DIRECT', '../").append(windowRef).append("', getParamsScript(document.forms[0]));\n");
     strScript.append("top.close();\n");
     strScript.append("return true;\n");
     strScript.append("}\n");
