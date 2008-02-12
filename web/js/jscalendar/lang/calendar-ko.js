@@ -14,14 +14,14 @@
 // full day names
 
 Calendar._DN = new Array
-("ÀÏ¿äÀÏ",
- "¿ù¿äÀÏ",
- "È­¿äÀÏ",
- "¼ö¿äÀÏ",
- "¸ñ¿äÀÏ",
- "±İ¿äÀÏ",
- "Åä¿äÀÏ",
- "ÀÏ¿äÀÏ");
+("Ã€ÃÂ¿Ã¤Ã€Ã",
+ "Â¿Ã¹Â¿Ã¤Ã€Ã",
+ "ÃˆÂ­Â¿Ã¤Ã€Ã",
+ "Â¼Ã¶Â¿Ã¤Ã€Ã",
+ "Â¸Ã±Â¿Ã¤Ã€Ã",
+ "Â±ÃÂ¿Ã¤Ã€Ã",
+ "Ã…Ã¤Â¿Ã¤Ã€Ã",
+ "Ã€ÃÂ¿Ã¤Ã€Ã");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -37,29 +37,29 @@ Calendar._DN = new Array
 
 // short day names
 Calendar._SDN = new Array
-("ÀÏ",
- "¿ù",
- "È­",
- "¼ö",
- "¸ñ",
- "±İ",
- "Åä",
- "ÀÏ");
+("Ã€Ã",
+ "Â¿Ã¹",
+ "ÃˆÂ­",
+ "Â¼Ã¶",
+ "Â¸Ã±",
+ "Â±Ã",
+ "Ã…Ã¤",
+ "Ã€Ã");
 
 // full month names
 Calendar._MN = new Array
-("1¿ù",
- "2¿ù",
- "3¿ù",
- "4¿ù",
- "5¿ù",
- "6¿ù",
- "7¿ù",
- "8¿ù",
- "9¿ù",
- "10¿ù",
- "11¿ù",
- "12¿ù");
+("1Â¿Ã¹",
+ "2Â¿Ã¹",
+ "3Â¿Ã¹",
+ "4Â¿Ã¹",
+ "5Â¿Ã¹",
+ "6Â¿Ã¹",
+ "7Â¿Ã¹",
+ "8Â¿Ã¹",
+ "9Â¿Ã¹",
+ "10Â¿Ã¹",
+ "11Â¿Ã¹",
+ "12Â¿Ã¹");
 
 // short month names
 Calendar._SMN = new Array
@@ -78,43 +78,43 @@ Calendar._SMN = new Array
 
 // tooltips
 Calendar._TT = {};
-Calendar._TT["INFO"] = "calendar ¿¡ ´ëÇØ¼­";
+Calendar._TT["INFO"] = "calendar Â¿Â¡ Â´Ã«Ã‡Ã˜Â¼Â­";
 
 Calendar._TT["ABOUT"] =
 "DHTML Date/Time Selector\n" +
 "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
 "\n"+
-"ÃÖ½Å ¹öÀüÀ» ¹ŞÀ¸½Ã·Á¸é http://www.dynarch.com/projects/calendar/ ¿¡ ¹æ¹®ÇÏ¼¼¿ä\n" +
+"ÃƒÃ–Â½Ã… Â¹Ã¶Ã€Ã¼Ã€Â» Â¹ÃÃ€Â¸Â½ÃƒÂ·ÃÂ¸Ã© http://www.dynarch.com/projects/calendar/ Â¿Â¡ Â¹Ã¦Â¹Â®Ã‡ÃÂ¼Â¼Â¿Ã¤\n" +
 "\n"+
-"GNU LGPL ¶óÀÌ¼¾½º·Î ¹èÆ÷µË´Ï´Ù. \n"+
-"¶óÀÌ¼¾½º¿¡ ´ëÇÑ ÀÚ¼¼ÇÑ ³»¿ëÀº http://gnu.org/licenses/lgpl.html À» ÀĞÀ¸¼¼¿ä." +
+"GNU LGPL Â¶Ã³Ã€ÃŒÂ¼Â¾Â½ÂºÂ·Ã Â¹Ã¨Ã†Ã·ÂµÃ‹Â´ÃÂ´Ã™. \n"+
+"Â¶Ã³Ã€ÃŒÂ¼Â¾Â½ÂºÂ¿Â¡ Â´Ã«Ã‡Ã‘ Ã€ÃšÂ¼Â¼Ã‡Ã‘ Â³Â»Â¿Ã«Ã€Âº http://gnu.org/licenses/lgpl.html Ã€Â» Ã€ÃÃ€Â¸Â¼Â¼Â¿Ã¤." +
 "\n\n" +
-"³¯Â¥ ¼±ÅÃ:\n" +
-"- ¿¬µµ¸¦ ¼±ÅÃÇÏ·Á¸é \xab, \xbb ¹öÆ°À» »ç¿ëÇÕ´Ï´Ù\n" +
-"- ´ŞÀ» ¼±ÅÃÇÏ·Á¸é " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " ¹öÆ°À» ´©¸£¼¼¿ä\n" +
-"- °è¼Ó ´©¸£°í ÀÖÀ¸¸é À§ °ªµéÀ» ºü¸£°Ô ¼±ÅÃÇÏ½Ç ¼ö ÀÖ½À´Ï´Ù.";
+"Â³Â¯Ã‚Â¥ Â¼Â±Ã…Ãƒ:\n" +
+"- Â¿Â¬ÂµÂµÂ¸Â¦ Â¼Â±Ã…ÃƒÃ‡ÃÂ·ÃÂ¸Ã© \xab, \xbb Â¹Ã¶Ã†Â°Ã€Â» Â»Ã§Â¿Ã«Ã‡Ã•Â´ÃÂ´Ã™\n" +
+"- Â´ÃÃ€Â» Â¼Â±Ã…ÃƒÃ‡ÃÂ·ÃÂ¸Ã© " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " Â¹Ã¶Ã†Â°Ã€Â» Â´Â©Â¸Â£Â¼Â¼Â¿Ã¤\n" +
+"- Â°Ã¨Â¼Ã“ Â´Â©Â¸Â£Â°Ã­ Ã€Ã–Ã€Â¸Â¸Ã© Ã€Â§ Â°ÂªÂµÃ©Ã€Â» ÂºÃ¼Â¸Â£Â°Ã” Â¼Â±Ã…ÃƒÃ‡ÃÂ½Ã‡ Â¼Ã¶ Ã€Ã–Â½Ã€Â´ÃÂ´Ã™.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"½Ã°£ ¼±ÅÃ:\n" +
-"- ¸¶¿ì½º·Î ´©¸£¸é ½Ã°£ÀÌ Áõ°¡ÇÕ´Ï´Ù\n" +
-"- Shift Å°¿Í ÇÔ²² ´©¸£¸é °¨¼ÒÇÕ´Ï´Ù\n" +
-"- ´©¸¥ »óÅÂ¿¡¼­ ¸¶¿ì½º¸¦ ¿òÁ÷ÀÌ¸é Á» ´õ ºü¸£°Ô °ªÀÌ º¯ÇÕ´Ï´Ù.\n";
+"Â½ÃƒÂ°Â£ Â¼Â±Ã…Ãƒ:\n" +
+"- Â¸Â¶Â¿Ã¬Â½ÂºÂ·Ã Â´Â©Â¸Â£Â¸Ã© Â½ÃƒÂ°Â£Ã€ÃŒ ÃÃµÂ°Â¡Ã‡Ã•Â´ÃÂ´Ã™\n" +
+"- Shift Ã…Â°Â¿Ã Ã‡Ã”Â²Â² Â´Â©Â¸Â£Â¸Ã© Â°Â¨Â¼Ã’Ã‡Ã•Â´ÃÂ´Ã™\n" +
+"- Â´Â©Â¸Â¥ Â»Ã³Ã…Ã‚Â¿Â¡Â¼Â­ Â¸Â¶Â¿Ã¬Â½ÂºÂ¸Â¦ Â¿Ã²ÃÃ·Ã€ÃŒÂ¸Ã© ÃÂ» Â´Ãµ ÂºÃ¼Â¸Â£Â°Ã” Â°ÂªÃ€ÃŒ ÂºÂ¯Ã‡Ã•Â´ÃÂ´Ã™.\n";
 
-Calendar._TT["PREV_YEAR"] = "Áö³­ ÇØ (±æ°Ô ´©¸£¸é ¸ñ·Ï)";
-Calendar._TT["PREV_MONTH"] = "Áö³­ ´Ş (±æ°Ô ´©¸£¸é ¸ñ·Ï)";
-Calendar._TT["GO_TODAY"] = "¿À´Ã ³¯Â¥·Î";
-Calendar._TT["NEXT_MONTH"] = "´ÙÀ½ ´Ş (±æ°Ô ´©¸£¸é ¸ñ·Ï)";
-Calendar._TT["NEXT_YEAR"] = "´ÙÀ½ ÇØ (±æ°Ô ´©¸£¸é ¸ñ·Ï)";
-Calendar._TT["SEL_DATE"] = "³¯Â¥¸¦ ¼±ÅÃÇÏ¼¼¿ä";
-Calendar._TT["DRAG_TO_MOVE"] = "¸¶¿ì½º µå·¡±×·Î ÀÌµ¿ ÇÏ¼¼¿ä";
-Calendar._TT["PART_TODAY"] = " (¿À´Ã)";
-Calendar._TT["MON_FIRST"] = "¿ù¿äÀÏÀ» ÇÑ ÁÖÀÇ ½ÃÀÛ ¿äÀÏ·Î";
-Calendar._TT["SUN_FIRST"] = "ÀÏ¿äÀÏÀ» ÇÑ ÁÖÀÇ ½ÃÀÛ ¿äÀÏ·Î";
-Calendar._TT["CLOSE"] = "´İ±â";
-Calendar._TT["TODAY"] = "¿À´Ã";
-Calendar._TT["TIME_PART"] = "(Shift-)Å¬¸¯ ¶Ç´Â µå·¡±× ÇÏ¼¼¿ä";
+Calendar._TT["PREV_YEAR"] = "ÃÃ¶Â³Â­ Ã‡Ã˜ (Â±Ã¦Â°Ã” Â´Â©Â¸Â£Â¸Ã© Â¸Ã±Â·Ã)";
+Calendar._TT["PREV_MONTH"] = "ÃÃ¶Â³Â­ Â´Ã (Â±Ã¦Â°Ã” Â´Â©Â¸Â£Â¸Ã© Â¸Ã±Â·Ã)";
+Calendar._TT["GO_TODAY"] = "Â¿Ã€Â´Ãƒ Â³Â¯Ã‚Â¥Â·Ã";
+Calendar._TT["NEXT_MONTH"] = "Â´Ã™Ã€Â½ Â´Ã (Â±Ã¦Â°Ã” Â´Â©Â¸Â£Â¸Ã© Â¸Ã±Â·Ã)";
+Calendar._TT["NEXT_YEAR"] = "Â´Ã™Ã€Â½ Ã‡Ã˜ (Â±Ã¦Â°Ã” Â´Â©Â¸Â£Â¸Ã© Â¸Ã±Â·Ã)";
+Calendar._TT["SEL_DATE"] = "Â³Â¯Ã‚Â¥Â¸Â¦ Â¼Â±Ã…ÃƒÃ‡ÃÂ¼Â¼Â¿Ã¤";
+Calendar._TT["DRAG_TO_MOVE"] = "Â¸Â¶Â¿Ã¬Â½Âº ÂµÃ¥Â·Â¡Â±Ã—Â·Ã Ã€ÃŒÂµÂ¿ Ã‡ÃÂ¼Â¼Â¿Ã¤";
+Calendar._TT["PART_TODAY"] = " (Â¿Ã€Â´Ãƒ)";
+Calendar._TT["MON_FIRST"] = "Â¿Ã¹Â¿Ã¤Ã€ÃÃ€Â» Ã‡Ã‘ ÃÃ–Ã€Ã‡ Â½ÃƒÃ€Ã› Â¿Ã¤Ã€ÃÂ·Ã";
+Calendar._TT["SUN_FIRST"] = "Ã€ÃÂ¿Ã¤Ã€ÃÃ€Â» Ã‡Ã‘ ÃÃ–Ã€Ã‡ Â½ÃƒÃ€Ã› Â¿Ã¤Ã€ÃÂ·Ã";
+Calendar._TT["CLOSE"] = "Â´ÃÂ±Ã¢";
+Calendar._TT["TODAY"] = "Â¿Ã€Â´Ãƒ";
+Calendar._TT["TIME_PART"] = "(Shift-)Ã…Â¬Â¸Â¯ Â¶Ã‡Â´Ã‚ ÂµÃ¥Â·Â¡Â±Ã— Ã‡ÃÂ¼Â¼Â¿Ã¤";
 
 // date formats
 Calendar._TT["DEF_DATE_FORMAT"] = "%Y-%m-%d";
 Calendar._TT["TT_DATE_FORMAT"] = "%b/%e [%a]";
 
-Calendar._TT["WK"] = "ÁÖ";
+Calendar._TT["WK"] = "ÃÃ–";

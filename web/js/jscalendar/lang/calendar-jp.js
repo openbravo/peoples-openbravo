@@ -1,45 +1,45 @@
 // ** I18N
 Calendar._DN = new Array
-("“ú",
- "Œ",
- "‰Î",
- "…",
- "–Ø",
- "‹à",
- "“y",
- "“ú");
+("Â“Ãº",
+ "ÂŒÂ",
+ "Â‰Ã",
+ "ÂÂ…",
+ "Â–Ã˜",
+ "Â‹Ã ",
+ "Â“y",
+ "Â“Ãº");
 Calendar._MN = new Array
-("1Œ",
- "2Œ",
- "3Œ",
- "4Œ",
- "5Œ",
- "6Œ",
- "7Œ",
- "8Œ",
- "9Œ",
- "10Œ",
- "11Œ",
- "12Œ");
+("1ÂŒÂ",
+ "2ÂŒÂ",
+ "3ÂŒÂ",
+ "4ÂŒÂ",
+ "5ÂŒÂ",
+ "6ÂŒÂ",
+ "7ÂŒÂ",
+ "8ÂŒÂ",
+ "9ÂŒÂ",
+ "10ÂŒÂ",
+ "11ÂŒÂ",
+ "12ÂŒÂ");
 
 // tooltips
 Calendar._TT = {};
-Calendar._TT["TOGGLE"] = "T‚ÌÅ‰‚Ì—j“ú‚ğØ‚è‘Ö‚¦";
-Calendar._TT["PREV_YEAR"] = "‘O”N";
-Calendar._TT["PREV_MONTH"] = "‘OŒ";
-Calendar._TT["GO_TODAY"] = "¡“ú";
-Calendar._TT["NEXT_MONTH"] = "—‚Œ";
-Calendar._TT["NEXT_YEAR"] = "—‚”N";
-Calendar._TT["SEL_DATE"] = "“ú•t‘I‘ğ";
-Calendar._TT["DRAG_TO_MOVE"] = "ƒEƒBƒ“ƒhƒE‚ÌˆÚ“®";
-Calendar._TT["PART_TODAY"] = " (¡“ú)";
-Calendar._TT["MON_FIRST"] = "Œ—j“ú‚ğæ“ª‚É";
-Calendar._TT["SUN_FIRST"] = "“ú—j“ú‚ğæ“ª‚É";
-Calendar._TT["CLOSE"] = "•Â‚¶‚é";
-Calendar._TT["TODAY"] = "¡“ú";
+Calendar._TT["TOGGLE"] = "ÂTÂ‚ÃŒÂÃ…ÂÂ‰Â‚ÃŒÂ—jÂ“ÃºÂ‚Ã°ÂÃ˜Â‚Ã¨Â‘Ã–Â‚Â¦";
+Calendar._TT["PREV_YEAR"] = "Â‘OÂ”N";
+Calendar._TT["PREV_MONTH"] = "Â‘OÂŒÂ";
+Calendar._TT["GO_TODAY"] = "ÂÂ¡Â“Ãº";
+Calendar._TT["NEXT_MONTH"] = "Â—Â‚ÂŒÂ";
+Calendar._TT["NEXT_YEAR"] = "Â—Â‚Â”N";
+Calendar._TT["SEL_DATE"] = "Â“ÃºÂ•tÂ‘IÂ‘Ã°";
+Calendar._TT["DRAG_TO_MOVE"] = "ÂƒEÂƒBÂƒÂ“ÂƒhÂƒEÂ‚ÃŒÂˆÃšÂ“Â®";
+Calendar._TT["PART_TODAY"] = " (ÂÂ¡Â“Ãº)";
+Calendar._TT["MON_FIRST"] = "ÂŒÂÂ—jÂ“ÃºÂ‚Ã°ÂÃ¦Â“ÂªÂ‚Ã‰";
+Calendar._TT["SUN_FIRST"] = "Â“ÃºÂ—jÂ“ÃºÂ‚Ã°ÂÃ¦Â“ÂªÂ‚Ã‰";
+Calendar._TT["CLOSE"] = "Â•Ã‚Â‚Â¶Â‚Ã©";
+Calendar._TT["TODAY"] = "ÂÂ¡Â“Ãº";
 
 // date formats
 Calendar._TT["DEF_DATE_FORMAT"] = "y-mm-dd";
-Calendar._TT["TT_DATE_FORMAT"] = "%mŒ %d“ú (%a)";
+Calendar._TT["TT_DATE_FORMAT"] = "%mÂŒÂ %dÂ“Ãº (%a)";
 
-Calendar._TT["WK"] = "T";
+Calendar._TT["WK"] = "ÂT";

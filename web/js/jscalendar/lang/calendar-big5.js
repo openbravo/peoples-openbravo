@@ -11,14 +11,14 @@
 	
 // full day names
 Calendar._DN = new Array
-("�P����",
- "�P���@",
- "�P���G",
- "�P���T",
- "�P���|",
- "�P����",
- "�P����",
- "�P����");
+("¬P´Á¤é",
+ "¬P´Á¤@",
+ "¬P´Á¤G",
+ "¬P´Á¤T",
+ "¬P´Á¥|",
+ "¬P´Á¤­",
+ "¬P´Á¤»",
+ "¬P´Á¤é");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -34,48 +34,48 @@ Calendar._DN = new Array
 
 // short day names
 Calendar._SDN = new Array
-("��",
- "�@",
- "�G",
- "�T",
- "�|",
- "��",
- "��",
- "��");
+("¤é",
+ "¤@",
+ "¤G",
+ "¤T",
+ "¥|",
+ "¤­",
+ "¤»",
+ "¤é");
 
 // full month names
 Calendar._MN = new Array
-("�@��",
- "�G��",
- "�T��",
- "�|��",
- "����",
- "����",
- "�C��",
- "�K��",
- "�E��",
- "�Q��",
- "�Q�@��",
- "�Q�G��");
+("¤@¤ë",
+ "¤G¤ë",
+ "¤T¤ë",
+ "¥|¤ë",
+ "¤­¤ë",
+ "¤»¤ë",
+ "¤C¤ë",
+ "¤K¤ë",
+ "¤E¤ë",
+ "¤Q¤ë",
+ "¤Q¤@¤ë",
+ "¤Q¤G¤ë");
 
 // short month names
 Calendar._SMN = new Array
-("�@��",
- "�G��",
- "�T��",
- "�|��",
- "����",
- "����",
- "�C��",
- "�K��",
- "�E��",
- "�Q��",
- "�Q�@��",
- "�Q�G��");
+("¤@¤ë",
+ "¤G¤ë",
+ "¤T¤ë",
+ "¥|¤ë",
+ "¤­¤ë",
+ "¤»¤ë",
+ "¤C¤ë",
+ "¤K¤ë",
+ "¤E¤ë",
+ "¤Q¤ë",
+ "¤Q¤@¤ë",
+ "¤Q¤G¤ë");
 
 // tooltips
 Calendar._TT = {};
-Calendar._TT["INFO"] = "����";
+Calendar._TT["INFO"] = "Ãö©ó";
 
 Calendar._TT["ABOUT"] =
 "DHTML Date/Time Selector\n" +
@@ -83,41 +83,41 @@ Calendar._TT["ABOUT"] =
 "For latest version visit: http://www.dynarch.com/projects/calendar/\n" +
 "Distributed under GNU LGPL.  See http://gnu.org/licenses/lgpl.html for details." +
 "\n\n" +
-"�����ܤ�k:\n" +
-"- �ϥ� \xab, \xbb ���s�i��ܦ~��\n" +
-"- �ϥ� " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " ���s�i��ܤ��\n" +
-"- �����W�������s�i�H�[�ֿ��";
+"¤é´Á¿ï¾Ü¤èªk:\n" +
+"- ¨Ï¥Î \xab, \xbb «ö¶s¥i¿ï¾Ü¦~¥÷\n" +
+"- ¨Ï¥Î " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " «ö¶s¥i¿ï¾Ü¤ë¥÷\n" +
+"- «ö¦í¤W­±ªº«ö¶s¥i¥H¥[§Ö¿ï¨ú";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"�ɶ���ܤ�k:\n" +
-"- �I�����󪺮ɶ������i�W�[���\n" +
-"- �P�ɫ�Shift��A�I���i��֨��\n" +
-"- �I���é즲�i�[�֧��ܪ���";
+"®É¶¡¿ï¾Ü¤èªk:\n" +
+"- ÂIÀ»¥ô¦óªº®É¶¡³¡¥÷¥i¼W¥[¨ä­È\n" +
+"- ¦P®É«öShiftÁä¦AÂIÀ»¥i´î¤Ö¨ä­È\n" +
+"- ÂIÀ»¨Ã©ì¦²¥i¥[§Ö§ïÅÜªº­È";
 
-Calendar._TT["PREV_YEAR"] = "�W�@�~ (�������)";
-Calendar._TT["PREV_MONTH"] = "�U�@�~ (�������)";
-Calendar._TT["GO_TODAY"] = "�줵��";
-Calendar._TT["NEXT_MONTH"] = "�W�@�� (�������)";
-Calendar._TT["NEXT_YEAR"] = "�U�@�� (�������)";
-Calendar._TT["SEL_DATE"] = "��ܤ��";
-Calendar._TT["DRAG_TO_MOVE"] = "�즲";
-Calendar._TT["PART_TODAY"] = " (����)";
+Calendar._TT["PREV_YEAR"] = "¤W¤@¦~ («ö¦í¿ï³æ)";
+Calendar._TT["PREV_MONTH"] = "¤U¤@¦~ («ö¦í¿ï³æ)";
+Calendar._TT["GO_TODAY"] = "¨ì¤µ¤é";
+Calendar._TT["NEXT_MONTH"] = "¤W¤@¤ë («ö¦í¿ï³æ)";
+Calendar._TT["NEXT_YEAR"] = "¤U¤@¤ë («ö¦í¿ï³æ)";
+Calendar._TT["SEL_DATE"] = "¿ï¾Ü¤é´Á";
+Calendar._TT["DRAG_TO_MOVE"] = "©ì¦²";
+Calendar._TT["PART_TODAY"] = " (¤µ¤é)";
 
 // the following is to inform that "%s" is to be the first day of week
 // %s will be replaced with the day name.
-Calendar._TT["DAY_FIRST"] = "�N %s ��ܦb�e";
+Calendar._TT["DAY_FIRST"] = "±N %s Åã¥Ü¦b«e";
 
 // This may be locale-dependent.  It specifies the week-end days, as an array
 // of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
 // means Monday, etc.
 Calendar._TT["WEEKEND"] = "0,6";
 
-Calendar._TT["CLOSE"] = "����";
-Calendar._TT["TODAY"] = "����";
-Calendar._TT["TIME_PART"] = "�I��or�즲�i���ܮɶ�(�P�ɫ�Shift����)";
+Calendar._TT["CLOSE"] = "Ãö³¬";
+Calendar._TT["TODAY"] = "¤µ¤é";
+Calendar._TT["TIME_PART"] = "ÂIÀ»or©ì¦²¥i§ïÅÜ®É¶¡(¦P®É«öShift¬°´î)";
 
 // date formats
 Calendar._TT["DEF_DATE_FORMAT"] = "%Y-%m-%d";
 Calendar._TT["TT_DATE_FORMAT"] = "%a, %b %e";
 
-Calendar._TT["WK"] = "�g";
+Calendar._TT["WK"] = "¶g";
 Calendar._TT["TIME"] = "Time:";

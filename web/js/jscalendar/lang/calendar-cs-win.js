@@ -7,25 +7,25 @@
 */
 
 // ** I18N
-Calendar._DN  = new Array('Nedìle','Pondìlí','Úterı','Støeda','Ètvrtek','Pátek','Sobota','Nedìle');
-Calendar._SDN = new Array('Ne','Po','Út','St','Èt','Pá','So','Ne');
-Calendar._MN  = new Array('Leden','Únor','Bøezen','Duben','Kvìten','Èerven','Èervenec','Srpen','Záøí','Øíjen','Listopad','Prosinec');
-Calendar._SMN = new Array('Led','Úno','Bøe','Dub','Kvì','Èrv','Èvc','Srp','Záø','Øíj','Lis','Pro');
+Calendar._DN  = new Array('NedÃ¬le','PondÃ¬lÃ­','ÃšterÃ½','StÃ¸eda','Ãˆtvrtek','PÃ¡tek','Sobota','NedÃ¬le');
+Calendar._SDN = new Array('Ne','Po','Ãšt','St','Ãˆt','PÃ¡','So','Ne');
+Calendar._MN  = new Array('Leden','Ãšnor','BÃ¸ezen','Duben','KvÃ¬ten','Ãˆerven','Ãˆervenec','Srpen','ZÃ¡Ã¸Ã­','Ã˜Ã­jen','Listopad','Prosinec');
+Calendar._SMN = new Array('Led','Ãšno','BÃ¸e','Dub','KvÃ¬','Ãˆrv','Ãˆvc','Srp','ZÃ¡Ã¸','Ã˜Ã­j','Lis','Pro');
 
 // tooltips
 Calendar._TT = {};
-Calendar._TT["INFO"] = "O komponentì kalendáø";
-Calendar._TT["TOGGLE"] = "Zmìna prvního dne v tıdnu";
-Calendar._TT["PREV_YEAR"] = "Pøedchozí rok (pøidr pro menu)";
-Calendar._TT["PREV_MONTH"] = "Pøedchozí mìsíc (pøidr pro menu)";
-Calendar._TT["GO_TODAY"] = "Dnešní datum";
-Calendar._TT["NEXT_MONTH"] = "Další mìsíc (pøidr pro menu)";
-Calendar._TT["NEXT_YEAR"] = "Další rok (pøidr pro menu)";
+Calendar._TT["INFO"] = "O komponentÃ¬ kalendÃ¡Ã¸";
+Calendar._TT["TOGGLE"] = "ZmÃ¬na prvnÃ­ho dne v tÃ½dnu";
+Calendar._TT["PREV_YEAR"] = "PÃ¸edchozÃ­ rok (pÃ¸idrÂ pro menu)";
+Calendar._TT["PREV_MONTH"] = "PÃ¸edchozÃ­ mÃ¬sÃ­c (pÃ¸idrÂ pro menu)";
+Calendar._TT["GO_TODAY"] = "DneÂšnÃ­ datum";
+Calendar._TT["NEXT_MONTH"] = "DalÂšÃ­ mÃ¬sÃ­c (pÃ¸idrÂ pro menu)";
+Calendar._TT["NEXT_YEAR"] = "DalÂšÃ­ rok (pÃ¸idrÂ pro menu)";
 Calendar._TT["SEL_DATE"] = "Vyber datum";
-Calendar._TT["DRAG_TO_MOVE"] = "Chy a táhni, pro pøesun";
+Calendar._TT["DRAG_TO_MOVE"] = "ChyÂ a tÃ¡hni, pro pÃ¸esun";
 Calendar._TT["PART_TODAY"] = " (dnes)";
-Calendar._TT["MON_FIRST"] = "Uka jako první Pondìlí";
-//Calendar._TT["SUN_FIRST"] = "Uka jako první Nedìli";
+Calendar._TT["MON_FIRST"] = "UkaÂ jako prvnÃ­ PondÃ¬lÃ­";
+//Calendar._TT["SUN_FIRST"] = "UkaÂ jako prvnÃ­ NedÃ¬li";
 
 Calendar._TT["ABOUT"] =
 "DHTML Date/Time Selector\n" +
@@ -33,33 +33,33 @@ Calendar._TT["ABOUT"] =
 "For latest version visit: http://www.dynarch.com/projects/calendar/\n" +
 "Distributed under GNU LGPL.  See http://gnu.org/licenses/lgpl.html for details." +
 "\n\n" +
-"Vıbìr datumu:\n" +
+"VÃ½bÃ¬r datumu:\n" +
 "- Use the \xab, \xbb buttons to select year\n" +
-"- Pouijte tlaèítka " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " k vıbìru mìsíce\n" +
-"- Podrte tlaèítko myši na jakémkoliv z tìch tlaèítek pro rychlejší vıbìr.";
+"- PouÂijte tlaÃ¨Ã­tka " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " k vÃ½bÃ¬ru mÃ¬sÃ­ce\n" +
+"- PodrÂte tlaÃ¨Ã­tko myÂši na jakÃ©mkoliv z tÃ¬ch tlaÃ¨Ã­tek pro rychlejÂšÃ­ vÃ½bÃ¬r.";
 
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Vıbìr èasu:\n" +
-"- Kliknìte na jakoukoliv z èástí vıbìru èasu pro zvıšení.\n" +
-"- nebo Shift-click pro sníení\n" +
-"- nebo kliknìte a táhnìte pro rychlejší vıbìr.";
+"VÃ½bÃ¬r Ã¨asu:\n" +
+"- KliknÃ¬te na jakoukoliv z Ã¨Ã¡stÃ­ vÃ½bÃ¬ru Ã¨asu pro zvÃ½ÂšenÃ­.\n" +
+"- nebo Shift-click pro snÃ­ÂenÃ­\n" +
+"- nebo kliknÃ¬te a tÃ¡hnÃ¬te pro rychlejÂšÃ­ vÃ½bÃ¬r.";
 
 // the following is to inform that "%s" is to be the first day of week
 // %s will be replaced with the day name.
-Calendar._TT["DAY_FIRST"] = "Zobraz %s první";
+Calendar._TT["DAY_FIRST"] = "Zobraz %s prvnÃ­";
 
 // This may be locale-dependent.  It specifies the week-end days, as an array
 // of comma-separated numbers.  The numbers are from 0 to 6: 0 means Sunday, 1
 // means Monday, etc.
 Calendar._TT["WEEKEND"] = "0,6";
 
-Calendar._TT["CLOSE"] = "Zavøít";
+Calendar._TT["CLOSE"] = "ZavÃ¸Ã­t";
 Calendar._TT["TODAY"] = "Dnes";
-Calendar._TT["TIME_PART"] = "(Shift-)Klikni nebo táhni pro zmìnu hodnoty";
+Calendar._TT["TIME_PART"] = "(Shift-)Klikni nebo tÃ¡hni pro zmÃ¬nu hodnoty";
 
 // date formats
 Calendar._TT["DEF_DATE_FORMAT"] = "d.m.yy";
 Calendar._TT["TT_DATE_FORMAT"] = "%a, %b %e";
 
 Calendar._TT["WK"] = "wk";
-Calendar._TT["TIME"] = "Èas:";
+Calendar._TT["TIME"] = "Ãˆas:";
