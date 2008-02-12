@@ -46,8 +46,8 @@ public class SalesOrderLine extends HttpSecureAppServlet {
       String strSOTrx = vars.getStringParameter("inpisSOTrxTab");
       if (strSOTrx.equals("")) strSOTrx = Utility.getContext(this, vars, "isSOTrx", windowId);
       vars.setSessionValue("SalesOrderLine.isSOTrx", strSOTrx);
-      vars.getRequestGlobalVariable("inpProduct", "SalesOrderLine.product");
-      vars.getRequestGlobalVariable("inpBPartner", "SalesOrderLine.bpartner");
+      vars.getRequestGlobalVariable("inpmProductId", "SalesOrderLine.product");
+      vars.getRequestGlobalVariable("inpcBpartnerId", "SalesOrderLine.bpartner");
       if (!strNameValue.equals("")) {
         int i=0, count=1, inicio=0;
         String search = " - ", token="";
