@@ -33,7 +33,7 @@
         AND C_ORDER.C_BPARTNER_LOCATION_ID = C_BPARTNER_LOCATION.C_BPARTNER_LOCATION_ID
         AND C_ORDER.M_PRICELIST_ID = M_PRICELIST.M_PRICELIST_ID
         AND C_ORDER.AD_ORG_ID = AD_ORG.AD_ORG_ID
-        AND C_ORDER.C_ORDER_ID = ?
+        AND C_ORDER.C_ORDER_id = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -44,9 +44,9 @@
       <![CDATA[
         SELECT coalesce(ROUND(SUM(TOTALLINES),2),0) AS SHIPMENTAMOUNTPENDING
         FROM M_INOUT_CANDIDATE_V
-        WHERE C_BPARTNER_ID = ?
-        AND AD_ORG_ID = ?
-        AND AD_CLIENT_ID = ?
+        WHERE C_BPARTNER_id = TO_NUMBER(?)
+        AND AD_ORG_id = TO_NUMBER(?)
+        AND AD_CLIENT_id = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -59,9 +59,9 @@
       <![CDATA[
         SELECT coalesce(ROUND(SUM(TOTALLINES),2),0) AS INVOICEAMOUNTPENDING
         FROM C_INVOICE_CANDIDATE_V
-        WHERE C_BPARTNER_ID = ?
-        AND AD_ORG_ID = ?
-        AND AD_CLIENT_ID = ?
+        WHERE C_BPARTNER_ID = TO_NUMBER(?)
+        AND AD_ORG_ID = TO_NUMBER(?)
+        AND AD_CLIENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -74,10 +74,10 @@
       <![CDATA[
         SELECT coalesce(ROUND(SUM(DP.AMOUNT),2),0) AS AMOUNTDEBT
         FROM C_DEBT_PAYMENT DP, C_CURRENCY
-        WHERE DP.C_BPARTNER_ID = ?
+        WHERE DP.C_BPARTNER_ID = TO_NUMBER(?)
         AND DP.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
-        AND DP.AD_ORG_ID = ?
-        AND DP.AD_CLIENT_ID = ?
+        AND DP.AD_ORG_ID = TO_NUMBER(?)
+        AND DP.AD_CLIENT_ID = TO_NUMBER(?)
         AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, 
         DP.C_CASHLINE_ID, DP.C_BANKSTATEMENTLINE_ID) = 'P'
         AND DP.ISRECEIPT=?
@@ -94,7 +94,7 @@
       <![CDATA[
         SELECT max(coalesce(to_char(FIRSTNAME),'')||' '||coalesce(to_char(LASTNAME),'')||(case coalesce(to_char(PHONE),'') when '' then '' else ' ('||to_char(PHONE)||')' end)) AS CONTACT
         FROM AD_USER
-        WHERE AD_USER_ID = ?
+        WHERE AD_USER_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adUserId"/>
@@ -110,9 +110,9 @@
         AND I.DATEINVOICED >= TRUNC(TO_DATE(NOW()), 'YEAR') 
         AND I.PROCESSED = 'Y'
         AND I.ISSOTRX=?
-        AND I.C_BPARTNER_ID = ?
-        AND I.AD_ORG_ID = ?
-        AND I.AD_CLIENT_ID = ?
+        AND I.C_BPARTNER_ID = TO_NUMBER(?)
+        AND I.AD_ORG_ID = TO_NUMBER(?)
+        AND I.AD_CLIENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="issotrx"/>
@@ -131,8 +131,8 @@
         AND I.DATEINVOICED >= TRUNC(TO_DATE(NOW()), 'YEAR') 
         AND I.PROCESSED = 'Y'
         AND I.ISSOTRX=?
-        AND I.AD_ORG_ID = ?
-        AND I.AD_CLIENT_ID = ?
+        AND I.AD_ORG_ID = TO_NUMBER(?)
+        AND I.AD_CLIENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="issotrx"/>
@@ -145,11 +145,11 @@
       <![CDATA[
         SELECT TO_CHAR(MAX(DATEORDERED),to_char(?)) AS DATEORDERED
         FROM C_ORDER
-        WHERE C_BPARTNER_ID = ?
+        WHERE C_BPARTNER_ID = TO_NUMBER(?)
         AND DOCSTATUS = 'CO' 
         AND ISSOTRX = ?
-        AND AD_ORG_ID = ?
-        AND AD_CLIENT_ID = ?
+        AND AD_ORG_ID = TO_NUMBER(?)
+        AND AD_CLIENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="dateFormat"/>
@@ -170,9 +170,9 @@
         AND C_ORDER.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
         AND C_ORDER.ISSOTRX='N'
         AND C_ORDER.DOCSTATUS = 'CO'
-        AND C_ORDER.C_BPARTNER_ID = ?
-        AND C_ORDER.AD_ORG_ID = ?
-        AND C_ORDER.AD_CLIENT_ID = ?
+        AND C_ORDER.C_BPARTNER_ID = TO_NUMBER(?)
+        AND C_ORDER.AD_ORG_ID = TO_NUMBER(?)
+        AND C_ORDER.AD_CLIENT_ID = TO_NUMBER(?)
         GROUP BY C_ORDERLINE.QTYORDERED, PRICEACTUAL) A
       ]]>
     </Sql>
@@ -192,9 +192,9 @@
         AND C_ORDER.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
         AND C_ORDER.ISSOTRX='N'
         AND C_ORDER.DOCSTATUS = 'CO'
-        AND C_ORDER.C_BPARTNER_ID = ?
-        AND C_ORDER.AD_ORG_ID = ? 
-        AND C_ORDER.AD_CLIENT_ID = ?
+        AND C_ORDER.C_BPARTNER_ID = TO_NUMBER(?)
+        AND C_ORDER.AD_ORG_ID = TO_NUMBER(?) 
+        AND C_ORDER.AD_CLIENT_ID = TO_NUMBER(?)
         GROUP BY C_ORDERLINE.QTYORDERED, PRICEACTUAL) A
       ]]>
     </Sql>

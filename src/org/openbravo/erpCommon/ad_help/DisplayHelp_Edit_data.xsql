@@ -30,7 +30,7 @@
       <![CDATA[
         SELECT AD_WINDOW_ID AS ID, NAME AS ORIGINALNAME, NAME, HELP, '' AS iscentrallymaintained
         FROM AD_WINDOW
-        WHERE AD_WINDOW_ID = ?
+        WHERE AD_WINDOW_ID = TO_NUMBER(?)
         AND ISACTIVE='Y'
         ]]>
       </Sql>
@@ -44,7 +44,7 @@
         (CASE WHEN AD_WINDOW_TRL.NAME IS NULL THEN '*' || AD_WINDOW.NAME ELSE AD_WINDOW_TRL.NAME END) AS NAME, AD_WINDOW_TRL.HELP, '' AS iscentrallymaintained
         FROM AD_WINDOW left join AD_WINDOW_TRL on AD_WINDOW.AD_WINDOW_ID = AD_WINDOW_TRL.AD_WINDOW_ID
                                                and AD_WINDOW_TRL.AD_LANGUAGE = ?
-        WHERE AD_WINDOW.AD_WINDOW_ID = ?
+        WHERE AD_WINDOW.AD_WINDOW_ID = TO_NUMBER(?)
         AND AD_WINDOW.ISACTIVE= 'Y'
         ]]>
       </Sql>
@@ -57,7 +57,7 @@
       <![CDATA[
         SELECT AD_TAB_ID AS ID, NAME AS ORIGINALNAME, NAME, HELP, '' AS iscentrallymaintained
         FROM AD_TAB
-        WHERE AD_TAB_ID = ?
+        WHERE AD_TAB_ID = TO_NUMBER(?)
         AND ISACTIVE='Y'
         ]]>
       </Sql>
@@ -71,7 +71,7 @@
         (CASE WHEN AD_TAB_TRL.NAME IS NULL THEN '*' || AD_TAB.NAME ELSE AD_TAB_TRL.NAME END) AS NAME, AD_TAB_TRL.HELP, '' AS iscentrallymaintained
         FROM AD_TAB left join AD_TAB_TRL on AD_TAB.AD_TAB_ID = AD_TAB_TRL.AD_TAB_ID
                                         AND AD_TAB_TRL.AD_LANGUAGE =?
-        WHERE AD_TAB.AD_TAB_ID = ?
+        WHERE AD_TAB.AD_TAB_ID = TO_NUMBER(?)
         AND AD_TAB.ISACTIVE = 'Y'
         ]]>
       </Sql>
@@ -84,7 +84,7 @@
       <![CDATA[
         SELECT AD_FORM_ID AS ID, NAME AS ORIGINALNAME, NAME, HELP, '' AS iscentrallymaintained
         FROM AD_FORM
-        WHERE AD_FORM_ID = ?
+        WHERE AD_FORM_ID = TO_NUMBER(?)
         AND ISACTIVE='Y'
         ]]>
       </Sql>
@@ -98,7 +98,7 @@
         (CASE WHEN AD_FORM_TRL.NAME IS NULL THEN '***' || AD_FORM.NAME ELSE AD_FORM_TRL.NAME END) AS NAME, AD_FORM_TRL.HELP, '' AS iscentrallymaintained
         FROM AD_FORM left join AD_FORM_TRL on AD_FORM.AD_FORM_ID = AD_FORM_TRL.AD_FORM_ID
                                         AND AD_FORM_TRL.AD_LANGUAGE =?
-        WHERE AD_FORM.AD_FORM_ID = ?
+        WHERE AD_FORM.AD_FORM_ID = TO_NUMBER(?)
         AND AD_FORM.ISACTIVE = 'Y'
         ]]>
       </Sql>
@@ -111,7 +111,7 @@
       <![CDATA[
         SELECT AD_PROCESS_ID AS ID, NAME AS ORIGINALNAME, NAME, HELP, '' AS iscentrallymaintained
         FROM AD_PROCESS
-        WHERE AD_PROCESS_ID = ?
+        WHERE AD_PROCESS_ID = TO_NUMBER(?)
         AND ISACTIVE='Y'
         ]]>
       </Sql>
@@ -125,7 +125,7 @@
         (CASE WHEN AD_PROCESS_TRL.NAME IS NULL THEN '***' || AD_PROCESS.NAME ELSE AD_PROCESS_TRL.NAME END) AS NAME, AD_PROCESS_TRL.HELP, '' AS iscentrallymaintained
         FROM AD_PROCESS left join AD_PROCESS_TRL on AD_PROCESS.AD_PROCESS_ID = AD_PROCESS_TRL.AD_PROCESS_ID
                                         AND AD_PROCESS_TRL.AD_LANGUAGE =?
-        WHERE AD_PROCESS.AD_PROCESS_ID = ?
+        WHERE AD_PROCESS.AD_PROCESS_ID = TO_NUMBER(?)
         AND AD_PROCESS.ISACTIVE = 'Y'
         ]]>
       </Sql>
@@ -138,7 +138,7 @@
       <![CDATA[
         SELECT AD_FIELD_ID AS ID, NAME AS ORIGINALNAME, NAME, HELP, iscentrallymaintained AS iscentrallymaintained
         FROM AD_FIELD
-        WHERE AD_FIELD_ID = ? 
+        WHERE AD_FIELD_ID = TO_NUMBER(?) 
         AND ISACTIVE='Y'
         AND ISDISPLAYED = 'Y'
         ]]>
@@ -153,7 +153,7 @@
         (CASE WHEN AD_FIELD_TRL.NAME IS NULL THEN '*' || AD_FIELD.NAME ELSE AD_FIELD_TRL.NAME END) AS NAME, AD_FIELD_TRL.HELP, AD_FIELD.ISCENTRALLYMAINTAINED AS iscentrallymaintained
         FROM AD_FIELD left join AD_FIELD_TRL on AD_FIELD.AD_FIELD_ID = AD_FIELD_TRL.AD_FIELD_ID
                                             AND AD_FIELD_TRL.AD_LANGUAGE = ?
-        WHERE AD_FIELD.AD_FIELD_ID = ?
+        WHERE AD_FIELD.AD_FIELD_ID = TO_NUMBER(?)
         AND AD_FIELD.ISACTIVE='Y'
         AND AD_FIELD.ISDISPLAYED = 'Y'
         ]]>
@@ -167,7 +167,7 @@
       <![CDATA[
         SELECT AD_FIELD_ID AS ID, NAME AS ORIGINALNAME, NAME, HELP, iscentrallymaintained AS iscentrallymaintained
         FROM AD_FIELD
-        WHERE AD_FIELD_ID = ? 
+        WHERE AD_FIELD_ID = TO_NUMBER(?) 
         AND ISACTIVE='Y'
         AND ISDISPLAYED = 'Y'
         ]]>
@@ -180,7 +180,7 @@
       <![CDATA[
         SELECT AD_COLUMN.AD_ELEMENT_ID AS ID, AD_ELEMENT.NAME AS ORIGINALNAME, AD_ELEMENT.NAME, AD_ELEMENT.HELP, '' AS iscentrallymaintained
         FROM AD_COLUMN, AD_FIELD, AD_ELEMENT
-        WHERE AD_FIELD.AD_FIELD_ID = ? 
+        WHERE AD_FIELD.AD_FIELD_ID = TO_NUMBER(?) 
         AND AD_FIELD.ISACTIVE='Y'
         AND AD_FIELD.AD_COLUMN_ID = AD_COLUMN.AD_COLUMN_ID
         AND AD_COLUMN.AD_ELEMENT_ID = AD_ELEMENT.AD_ELEMENT_ID
@@ -198,7 +198,7 @@
         FROM AD_ELEMENT left join AD_ELEMENT_TRL on AD_ELEMENT.AD_ELEMENT_ID = AD_ELEMENT_TRL.AD_ELEMENT_ID
                                                  AND AD_ELEMENT_TRL.AD_LANGUAGE = ? ,     
         AD_COLUMN, AD_FIELD
-        WHERE AD_FIELD.AD_FIELD_ID = ?
+        WHERE AD_FIELD.AD_FIELD_ID = TO_NUMBER(?)
         AND AD_FIELD.AD_COLUMN_ID = AD_COLUMN.AD_COLUMN_ID
         AND AD_COLUMN.AD_ELEMENT_ID = AD_ELEMENT.AD_ELEMENT_ID
         AND AD_ELEMENT.ISACTIVE = 'Y'        
@@ -212,7 +212,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_WINDOW SET NAME=?, HELP=? WHERE AD_WINDOW_ID=?
+        UPDATE AD_WINDOW SET NAME=?, HELP=? WHERE AD_WINDOW_ID = TO_NUMBER(?)
         ]]>
       </Sql>
         <Parameter name="name"/>
@@ -223,7 +223,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_WINDOW_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_WINDOW_ID=? AND AD_LANGUAGE=?
+        UPDATE AD_WINDOW_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_WINDOW_ID = TO_NUMBER(?) AND AD_LANGUAGE=?
         ]]>
       </Sql>
         <Parameter name="name"/>
@@ -236,7 +236,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_TAB SET NAME=?, HELP=? WHERE AD_TAB_ID=?
+        UPDATE AD_TAB SET NAME=?, HELP=? WHERE AD_TAB_ID = TO_NUMBER(?)
         ]]>
       </Sql>
         <Parameter name="name"/>
@@ -247,7 +247,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_TAB_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_TAB_ID=? AND AD_LANGUAGE=?
+        UPDATE AD_TAB_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_TAB_ID = TO_NUMBER(?) AND AD_LANGUAGE=?
         ]]>
       </Sql>
         <Parameter name="name"/>
@@ -260,7 +260,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_FORM SET NAME=?, HELP=? WHERE AD_FORM_ID=?
+        UPDATE AD_FORM SET NAME=?, HELP=? WHERE AD_FORM_ID = TO_NUMBER(?)
         ]]>
       </Sql>
         <Parameter name="name"/>
@@ -271,7 +271,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_FORM_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_FORM_ID=? AND AD_LANGUAGE=?
+        UPDATE AD_FORM_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_FORM_ID = TO_NUMBER(?) AND AD_LANGUAGE=?
         ]]>
       </Sql>
         <Parameter name="name"/>
@@ -284,7 +284,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_PROCESS SET NAME=?, HELP=? WHERE AD_PROCESS_ID=?
+        UPDATE AD_PROCESS SET NAME=?, HELP=? WHERE AD_PROCESS_ID = TO_NUMBER(?)
         ]]>
       </Sql>
         <Parameter name="name"/>
@@ -295,7 +295,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_PROCESS_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_PROCESS_ID=? AND AD_LANGUAGE=?
+        UPDATE AD_PROCESS_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_PROCESS_ID = TO_NUMBER(?) AND AD_LANGUAGE=?
         ]]>
       </Sql>
         <Parameter name="name"/>
@@ -308,7 +308,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_FIELD SET NAME=?, HELP=? , ISCENTRALLYMAINTAINED=? WHERE AD_FIELD_ID=?
+        UPDATE AD_FIELD SET NAME=?, HELP=? , ISCENTRALLYMAINTAINED=? WHERE AD_FIELD_ID = TO_NUMBER(?)
         ]]>
       </Sql>
         <Parameter name="name"/>
@@ -320,7 +320,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_FIELD_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_FIELD_ID=? AND AD_LANGUAGE=?
+        UPDATE AD_FIELD_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_FIELD_ID = TO_NUMBER(?) AND AD_LANGUAGE=?
         ]]>
       </Sql>
         <Parameter name="name"/>
@@ -333,7 +333,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_FIELD SET ISCENTRALLYMAINTAINED=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_FIELD_ID=?
+        UPDATE AD_FIELD SET ISCENTRALLYMAINTAINED=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_FIELD_ID = TO_NUMBER(?)
         ]]>
       </Sql>
         <Parameter name="centrally"/>
@@ -344,7 +344,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_ELEMENT SET NAME=?, HELP=? WHERE AD_ELEMENT_ID=?
+        UPDATE AD_ELEMENT SET NAME=?, HELP=? WHERE AD_ELEMENT_ID = TO_NUMBER(?)
         ]]>
       </Sql>
         <Parameter name="name"/>
@@ -355,7 +355,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        UPDATE AD_ELEMENT_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_ELEMENT_ID=? AND AD_LANGUAGE=?
+        UPDATE AD_ELEMENT_TRL SET NAME=?, HELP=?, updated=now(), updatedby=TO_NUMBER(?) WHERE AD_ELEMENT_ID = TO_NUMBER(?) AND AD_LANGUAGE=?
         ]]>
       </Sql>
         <Parameter name="name"/>

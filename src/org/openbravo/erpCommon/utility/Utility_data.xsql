@@ -31,8 +31,8 @@
         FROM C_File
         WHERE AD_CLIENT_ID IN ('1') 
         AND AD_ORG_ID IN ('1') 
-        AND AD_Table_ID = ? 
-        AND AD_Record_ID = ? 
+        AND AD_Table_ID = TO_NUMBER(?) 
+        AND AD_Record_ID = TO_NUMBER(?) 
         AND IsActive = 'Y' 
       </Sql>
       <Parameter name="adClientId" optional="true" type="replace" after="AND AD_CLIENT_ID IN (" text="'1'"/>
@@ -45,7 +45,7 @@
       <Sql>
         select AD_WINDOW_ID AS TOTAL 
         FROM AD_TAB
-        WHERE AD_TAB_ID = ?
+        WHERE AD_TAB_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="adTabId"/>
    </SqlMethod>
@@ -54,7 +54,7 @@
       <Sql>
         select (case HASTREE when 'Y' then 1 else 0 end) AS TOTAL 
         FROM AD_TAB
-        WHERE AD_TAB_ID = ?
+        WHERE AD_TAB_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="adTabId"/>
    </SqlMethod>

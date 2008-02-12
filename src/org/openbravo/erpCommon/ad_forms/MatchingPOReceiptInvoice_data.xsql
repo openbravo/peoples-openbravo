@@ -43,8 +43,8 @@
       lin.Line,lin.C_OrderLine_ID, p.Name,lin.M_Product_ID, lin.QtyOrdered
       HAVING 0 <>SUM(COALESCE(mo.Qty, 0)) 
       ]]></Sql>
-		<Parameter name="parProduct" optional="true" after="WHERE " text=" lin.M_Product_ID = ? AND "/>
-		<Parameter name="parBpartner" optional="true" after="WHERE " text=" hdr.C_BPartner_ID = ? AND "/>
+		<Parameter name="parProduct" optional="true" after="WHERE " text=" lin.M_Product_ID = TO_NUMBER(?) AND "/>
+		<Parameter name="parBpartner" optional="true" after="WHERE " text=" hdr.C_BPartner_ID = TO_NUMBER(?) AND "/>
 		<Parameter name="parQty" optional="true" after="WHERE "><![CDATA[ lin.QtyOrdered = ? AND ]]></Parameter>
 		<Parameter name="parDesde" optional="true" after="WHERE "><![CDATA[ hdr.DateOrdered >= TO_DATE(?) AND ]]></Parameter>
 		<Parameter name="parHasta" optional="true" after="WHERE "><![CDATA[ hdr.DateOrdered <= TO_DATE(?) AND ]]></Parameter>
@@ -71,8 +71,8 @@
       lin.Line,lin.C_InvoiceLine_ID, p.Name,lin.M_Product_ID, lin.QtyInvoiced 
       HAVING 0 <>SUM(COALESCE(mi.Qty, 0)) 
       ]]></Sql>
-		<Parameter name="parProduct" optional="true" after="WHERE " text=" lin.M_Product_ID = ? AND "/>
-		<Parameter name="parBpartner" optional="true" after="WHERE " text=" hdr.C_BPartner_ID = ? AND "/>
+		<Parameter name="parProduct" optional="true" after="WHERE " text=" lin.M_Product_ID = TO_NUMBER(?) AND "/>
+		<Parameter name="parBpartner" optional="true" after="WHERE " text=" hdr.C_BPartner_ID = TO_NUMBER(?) AND "/>
 		<Parameter name="parQty" optional="true" after="WHERE " text=" lin.QtyInvoiced = ? AND "/>
 		<Parameter name="parDesde" optional="true" after="WHERE "><![CDATA[ hdr.DateInvoiced >= TO_DATE(?) AND ]]></Parameter>
 		<Parameter name="parHasta" optional="true" after="WHERE "><![CDATA[ hdr.DateInvoiced <= TO_DATE(?) AND ]]></Parameter>
@@ -100,8 +100,8 @@
       HAVING 0 <>SUM(COALESCE(m.Qty, 0)) 
       ]]></Sql>
 		<Parameter name="parFinalDoc" optional="true" type="replace" after="C_DocType dt, " text="M_MatchPO"/>
-		<Parameter name="parProduct" optional="true" after="WHERE " text=" lin.M_Product_ID = ? AND "/>
-		<Parameter name="parBpartner" optional="true" after="WHERE " text=" hdr.C_BPartner_ID = ? AND "/>
+		<Parameter name="parProduct" optional="true" after="WHERE " text=" lin.M_Product_ID = TO_NUMBER(?) AND "/>
+		<Parameter name="parBpartner" optional="true" after="WHERE " text=" hdr.C_BPartner_ID = TO_NUMBER(?) AND "/>
 		<Parameter name="parQty" optional="true" after="WHERE " text=" lin.MovementQty = ? AND "/>
 		<Parameter name="parDesde" optional="true" after="WHERE "><![CDATA[ hdr.MovementDate >= TO_DATE(?) AND ]]></Parameter>
 		<Parameter name="parHasta" optional="true" after="WHERE "><![CDATA[ hdr.MovementDate <= TO_DATE(?) AND ]]></Parameter>
@@ -119,7 +119,7 @@
 		<Sql><![CDATA[
       SELECT hdr.C_BPartner_ID, lin.M_Product_ID, lin.QtyOrdered as Qty
       FROM C_Order hdr, C_OrderLine lin
-      WHERE lin.C_OrderLine_ID = ? 
+      WHERE lin.C_OrderLine_ID = TO_NUMBER(?) 
       AND hdr.C_Order_ID=lin.C_Order_ID 
       ]]></Sql>
 		<Parameter name="clave"/>
@@ -129,7 +129,7 @@
 		<Sql><![CDATA[
       SELECT hdr.C_BPartner_ID, lin.M_Product_ID, lin.QtyInvoiced as Qty
       FROM C_Invoice hdr, C_InvoiceLine lin
-      WHERE lin.C_InvoiceLine_ID = ? 
+      WHERE lin.C_InvoiceLine_ID = TO_NUMBER(?) 
       AND hdr.C_Invoice_ID=lin.C_Invoice_ID 
       ]]></Sql>
 		<Parameter name="clave"/>
@@ -139,7 +139,7 @@
 		<Sql><![CDATA[
       SELECT hdr.C_BPartner_ID, lin.M_Product_ID, lin.MovementQty as Qty
       FROM M_InOut hdr, M_InOutLine lin
-      WHERE lin.M_InoutLine_ID = ? 
+      WHERE lin.M_InoutLine_ID = TO_NUMBER(?) 
       AND hdr.M_InOut_ID=lin.M_InOut_ID 
       ]]></Sql>
 		<Parameter name="clave"/>
@@ -147,14 +147,14 @@
 	<SqlMethod name="bpartner" type="preparedStatement" return="String" default="">
 		<SqlMethodComment></SqlMethodComment>
 		<Sql><![CDATA[
-      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID=?
+      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
       ]]></Sql>
 		<Parameter name="cBpartnerId"/>
 	</SqlMethod>
 	<SqlMethod name="product" type="preparedStatement" return="String" default="">
 		<SqlMethodComment></SqlMethodComment>
 		<Sql><![CDATA[
-      SELECT NAME FROM M_PRODUCT WHERE M_PRODUCT_ID=?
+      SELECT NAME FROM M_PRODUCT WHERE M_PRODUCT_ID = TO_NUMBER(?)
       ]]></Sql>
 		<Parameter name="cProductId"/>
 	</SqlMethod>
@@ -196,8 +196,8 @@
 		<SqlMethodComment></SqlMethodComment>
 		<Sql><![CDATA[
       UPDATE M_Storage_Pending SET QtyOrdered = QtyOrdered-TO_NUMBER(?) 
-      WHERE M_Product_ID = ? 
-      AND M_Warehouse_ID = (SELECT MAX(M_Warehouse_ID) FROM M_Locator WHERE M_Locator_ID = (SELECT M_Locator_ID FROM M_InOutLine WHERE M_InOutLine_ID=?))
+      WHERE M_Product_ID = TO_NUMBER(?) 
+      AND M_Warehouse_ID = (SELECT MAX(M_Warehouse_ID) FROM M_Locator WHERE M_Locator_ID = (SELECT M_Locator_ID FROM M_InOutLine WHERE M_InOutLine_ID = TO_NUMBER(?)))
       ]]></Sql>
 		<Parameter name="qty"/>
     <Parameter name="mProductId"/>

@@ -39,8 +39,8 @@
          ELSE 'N' 
          END) AS TOTAL
          FROM C_INVOICE i, C_DOCTYPE dt 
-         WHERE i.C_Invoice_ID=?
-         AND dt.C_DocType_ID=?
+         WHERE i.C_Invoice_ID = TO_NUMBER(?)
+         AND dt.C_DocType_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cInvoiceId"/>

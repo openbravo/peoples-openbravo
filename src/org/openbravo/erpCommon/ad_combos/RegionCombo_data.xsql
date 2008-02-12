@@ -30,7 +30,7 @@
         SELECT R.C_REGION_ID AS ID, R.NAME  AS NAME, '' AS PADRE
         FROM C_REGION R, C_COUNTRY C
         WHERE R.C_COUNTRY_ID = C.C_COUNTRY_ID
-        AND C.C_COUNTRY_ID = ?
+        AND C.C_COUNTRY_ID = TO_NUMBER(?)
         ORDER BY R.C_COUNTRY_ID, R.NAME
       </Sql>
     <Parameter name="pais"/>

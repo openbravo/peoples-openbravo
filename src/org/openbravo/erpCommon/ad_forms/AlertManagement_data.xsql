@@ -58,10 +58,10 @@
           AND A.AD_ORG_ID IN ('1')
           AND R.AD_ALERTRULE_ID = A.AD_ALERTRULE_ID
           AND RE.AD_ALERTRULE_ID = A.AD_ALERTRULE_ID
-          AND ((RE.AD_USER_ID IS NOT NULL AND RE.AD_USER_ID = ?) 
+          AND ((RE.AD_USER_ID IS NOT NULL AND RE.AD_USER_ID = TO_NUMBER(?)) 
                OR 
-              (RE.AD_USER_ID IS NULL AND RE.AD_ROLE_ID = ?)) 
-          AND A.AD_ALERTRULE_ID = ?
+              (RE.AD_USER_ID IS NULL AND RE.AD_ROLE_ID = TO_NUMBER(?))) 
+          AND A.AD_ALERTRULE_ID = TO_NUMBER(?)
           AND 1=1 AND 2=2
           ORDER BY R.AD_ALERTRULE_ID, A.AD_ALERT_ID
           
@@ -89,16 +89,16 @@
               AD_ALERTRECIPIENT R 
         WHERE A.ISACTIVE='Y'
           AND R.AD_ALERTRULE_ID = A.AD_ALERTRULE_ID
-          AND ((R.AD_USER_ID IS NOT NULL AND R.AD_USER_ID = ?) 
+          AND ((R.AD_USER_ID IS NOT NULL AND R.AD_USER_ID = TO_NUMBER(?)) 
                OR 
-              (R.AD_USER_ID IS NULL AND R.AD_ROLE_ID = ?)) 
+              (R.AD_USER_ID IS NULL AND R.AD_ROLE_ID = TO_NUMBER(?))) 
           AND 1=1
       ]]>
     </Sql>
     <Parameter name="lang"/>
     <Parameter name="user"/>
     <Parameter name="role"/>
-    <Parameter name="alertRule" optional="true" after="AND 1=1"><![CDATA[ AND A.AD_ALERTRULE_ID = ?]]></Parameter>
+    <Parameter name="alertRule" optional="true" after="AND 1=1"><![CDATA[ AND A.AD_ALERTRULE_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
    
   <SqlMethod name="selectComboAlertRules" type="preparedStatement" return="multiple">
@@ -111,9 +111,9 @@
               AD_ALERTRECIPIENT R 
         WHERE A.ISACTIVE='Y'
           AND R.AD_ALERTRULE_ID = A.AD_ALERTRULE_ID
-          AND ((R.AD_USER_ID IS NOT NULL AND R.AD_USER_ID = ?) 
+          AND ((R.AD_USER_ID IS NOT NULL AND R.AD_USER_ID = TO_NUMBER(?)) 
                OR 
-              (R.AD_USER_ID IS NULL AND R.AD_ROLE_ID = ?)) 
+              (R.AD_USER_ID IS NULL AND R.AD_ROLE_ID = TO_NUMBER(?))) 
       ]]>
     </Sql>
     <Parameter name="lang"/>
@@ -129,7 +129,7 @@
           SET NOTE = ?,
               ISFIXED = ?,
               ISACTIVE = ?
-        WHERE AD_ALERT_ID = ?              
+        WHERE AD_ALERT_ID = TO_NUMBER(?)              
      ]]>
      </Sql>
      <Parameter name="note"/>     

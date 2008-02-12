@@ -173,6 +173,32 @@ END;
 ' LANGUAGE 'plpgsql'
 /-- END
 
+CREATE OR REPLACE FUNCTION to_number(integer)
+  RETURNS "numeric" AS
+$BODY$
+BEGIN
+RETURN to_number($1, 'S99999999999999D999999');
+EXCEPTION 
+  WHEN OTHERS THEN 
+    RETURN NULL;
+END;
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE;
+/-- END
+
+CREATE OR REPLACE FUNCTION to_number(numeric)
+  RETURNS "numeric" AS
+$BODY$
+BEGIN
+RETURN $1;
+EXCEPTION 
+  WHEN OTHERS THEN 
+    RETURN NULL;
+END;
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE;
+/-- END
+
 CREATE OR REPLACE FUNCTION to_date
 (
 text
@@ -191,6 +217,17 @@ CREATE OR REPLACE FUNCTION to_date
   RETURNS timestamp AS '
 BEGIN
 RETURN to_timestamp(to_char($1, dateFormat()), dateFormat());
+END;
+' LANGUAGE 'plpgsql'
+/-- END
+
+CREATE OR REPLACE FUNCTION to_date
+(
+timestamp, varchar
+)
+RETURNS timestamp AS '
+BEGIN
+RETURN to_timestamp($1, $2);
 END;
 ' LANGUAGE 'plpgsql'
 /-- END
@@ -539,6 +576,69 @@ END;
 --  RIGHTARG = boolean)
 --/-- END
 
+CREATE OR REPLACE FUNCTION equal(numeric, varchar)
+  RETURNS boolean AS '
+BEGIN
+RETURN $1 = TO_NUMBER($2);
+END;
+' LANGUAGE 'plpgsql'
+/-- END
+
+--DROP OPERATOR = (numeric, varchar);
+--SELECT * FROM drop_operator('=','numeric','varchar');
+CREATE OPERATOR =(
+  PROCEDURE = "equal",
+  LEFTARG = numeric,
+  RIGHTARG = varchar)
+--/-- END
+
+CREATE OR REPLACE FUNCTION lowerequal(numeric, varchar)
+  RETURNS boolean AS '
+BEGIN
+RETURN $1 <= TO_NUMBER($2);
+END;
+' LANGUAGE 'plpgsql'
+/-- END
+
+--DROP OPERATOR <= (numeric, varchar);
+--SELECT * FROM drop_operator('<=','numeric','varchar');
+CREATE OPERATOR <=(
+  PROCEDURE = "lowerequal",
+  LEFTARG = numeric,
+  RIGHTARG = varchar)
+--/-- END
+
+CREATE OR REPLACE FUNCTION lowerequal(timestamp, varchar)
+  RETURNS boolean AS '
+BEGIN
+RETURN $1 <= TO_DATE($2);
+END;
+' LANGUAGE 'plpgsql'
+/-- END
+
+--DROP OPERATOR <= (timestamp, varchar);
+--SELECT * FROM drop_operator('<=','timestamp','varchar');
+CREATE OPERATOR <=(
+  PROCEDURE = "lowerequal",
+  LEFTARG = timestamp,
+  RIGHTARG = varchar)
+--/-- END
+
+CREATE OR REPLACE FUNCTION greaterequal(timestamp, varchar)
+  RETURNS boolean AS '
+BEGIN
+RETURN $1 >= TO_DATE($2);
+END;
+' LANGUAGE 'plpgsql'
+/-- END
+
+--DROP OPERATOR >= (timestamp, varchar);
+--SELECT * FROM drop_operator('>=','timestamp','varchar');
+CREATE OPERATOR >=(
+  PROCEDURE = "greaterequal",
+  LEFTARG = timestamp,
+  RIGHTARG = varchar)
+--/-- END
 
 CREATE OR REPLACE FUNCTION trunc
 (

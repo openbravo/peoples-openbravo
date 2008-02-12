@@ -34,6 +34,6 @@
           ]]>
       </Sql>
       <Parameter name="adLanguage"/>
-      <Parameter name="adWindowId" optional="true" after="WHERE " text=" W.AD_WINDOW_ID = ? AND "/> 
+      <Parameter name="adWindowId" optional="true" after="WHERE " text=" W.AD_WINDOW_ID = TO_NUMBER(?) AND "/> 
   </SqlMethod>
 </SqlClass>

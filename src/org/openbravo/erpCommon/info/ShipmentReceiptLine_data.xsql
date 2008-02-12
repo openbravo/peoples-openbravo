@@ -52,10 +52,10 @@
         <Parameter name="documentno" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.POReference) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="businesPartner" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.C_BPartner_ID=? ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.MovementDate >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.MovementDate < to_date(?) ]]></Parameter>
-        <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID=? ]]></Parameter>
+        <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="isinvoiced"/>
    </SqlMethod>
    <SqlMethod name="set" type="constant" return="multiple">
@@ -93,10 +93,10 @@
         <Parameter name="documentno" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.POReference) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="businesPartner" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.C_BPartner_ID=? ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.MovementDate >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.MovementDate < to_date(?) ]]></Parameter>
-        <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID=? ]]></Parameter>
+        <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="replace" after="(ml.MOVEMENTQTY - COALESCE(SUM(mi.QTY),0)) " text="="/>
    </SqlMethod>
    <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
@@ -160,7 +160,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> 
       <![CDATA[
-        SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID=?
+        SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
       ]]>
       </Sql>
         <Parameter name="cBpartnerId"/>
@@ -169,7 +169,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> 
       <![CDATA[
-        SELECT NAME FROM M_PRODUCT WHERE M_PRODUCT_ID=?
+        SELECT NAME FROM M_PRODUCT WHERE M_PRODUCT_ID = TO_NUMBER(?)
       ]]>
       </Sql>
         <Parameter name="mProductId"/>

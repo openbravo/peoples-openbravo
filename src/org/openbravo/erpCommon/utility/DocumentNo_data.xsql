@@ -29,7 +29,7 @@
       <Sql><![CDATA[
         SELECT ISMAXTABLE 
         FROM C_DOCTYPE 
-        WHERE C_DOCTYPE_ID = ? 
+        WHERE C_DOCTYPE_ID = TO_NUMBER(?) 
       ]]></Sql>
       <Parameter name="cDoctypeId"/>
    </SqlMethod>

@@ -98,7 +98,7 @@
         SELECT bp.name as name
         FROM C_BPARTNER bp 
         WHERE UPPER(AD_COLUMN_IDENTIFIER(TO_CHAR('C_BPartner'), TO_CHAR(bp.C_BPartner_ID), TO_CHAR(?))) = UPPER(?)
-        AND bp.C_BPartner_ID = ? 
+        AND bp.C_BPartner_ID = TO_NUMBER(?) 
         ORDER BY bp.name
       ]]></Sql>
         <Parameter name="language"/>
@@ -111,7 +111,7 @@
         SELECT bp.value as value
         FROM C_BPARTNER bp 
         WHERE UPPER(AD_COLUMN_IDENTIFIER(TO_CHAR('C_BPartner'), TO_CHAR(bp.C_BPartner_ID), TO_CHAR(?))) = UPPER(?)
-        AND bp.C_BPartner_ID = ? 
+        AND bp.C_BPartner_ID = TO_NUMBER(?) 
         ORDER BY bp.value
       ]]></Sql>
         <Parameter name="language"/>

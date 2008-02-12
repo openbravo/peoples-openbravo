@@ -40,7 +40,7 @@
       AND IOL.ISINVOICED = 'N'
       AND IO.MOVEMENTDATE >= TO_DATE(?)
       AND IO.MOVEMENTDATE < TO_DATE(?)
-      AND IO.C_BPARTNER_ID = ?
+      AND IO.C_BPARTNER_ID = TO_NUMBER(?)
       GROUP BY IO.AD_ORG_ID, IO.MOVEMENTTYPE, IOLT.INVOICINGMODE,IOLT.IN_PRODUCT_ID, IOLT.OUT_PRODUCT_ID
       ORDER BY IO.AD_ORG_ID
     ]]></Sql>
@@ -72,9 +72,9 @@
       ) ST
       WHERE ST.M_LOCATOR_ID = M_LOCATOR.M_LOCATOR_ID
       AND ST.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-      AND M_PRODUCT.C_BPARTNER_ID = ?
+      AND M_PRODUCT.C_BPARTNER_ID = TO_NUMBER(?)
       AND M_WH_SCHEDULE_PRODUCT.INVOICINGTYPE = M_LOCATOR.INVOICINGTYPE
-      AND M_WH_SCHEDULE_PRODUCT.M_WH_SCHEDULE_ID = ?
+      AND M_WH_SCHEDULE_PRODUCT.M_WH_SCHEDULE_ID = TO_NUMBER(?)
       GROUP BY ST.AD_ORG_ID, M_WH_SCHEDULE_PRODUCT.M_PRODUCT_ID,  ST.DAY) AAA
       GROUP BY AD_ORG_ID, M_PRODUCT_ID) AA
       ORDER BY AD_ORG_ID
@@ -123,16 +123,16 @@
       HAVING SUM(M_TRANSACTION.MOVEMENTQTY) <> 0) 
       AND 1=1 
       AND EXISTS (SELECT p.M_WH_PERIOD_ID FROM M_WH_PERIOD p 
-      WHERE p.M_WH_SCHEDULE_ID = ? 
+      WHERE p.M_WH_SCHEDULE_ID = TO_NUMBER(?) 
       AND p.STARTDATE >= TO_DATE(?)
       AND p.ENDDATE < TO_DATE(?)
       AND NOT EXISTS (SELECT 1 FROM M_WH_PERIOD_INVOICED i 
       WHERE i.M_WH_PERIOD_ID = p.M_WH_PERIOD_ID 
       AND i.C_BPARTNER_ID = M_PRODUCT.C_BPARTNER_ID
-      AND i.AD_ORG_ID = ?))) A
-      WHERE EXISTS (SELECT 1 FROM C_BPARTNER bp WHERE bp.M_WH_SCHEDULE_ID = ? AND bp.C_BPARTNER_ID = A.C_BPARTNER_ID)
+      AND i.AD_ORG_ID = TO_NUMBER(?)))) A
+      WHERE EXISTS (SELECT 1 FROM C_BPARTNER bp WHERE bp.M_WH_SCHEDULE_ID = TO_NUMBER(?) AND bp.C_BPARTNER_ID = A.C_BPARTNER_ID)
     ]]></Sql>
-    <Parameter name="cBpartnerId" optional="true" after="AND IOL.ISINVOICED = 'N' " text=" AND IO.C_BPARTNER_ID = ? "/>
+    <Parameter name="cBpartnerId" optional="true" after="AND IOL.ISINVOICED = 'N' " text=" AND IO.C_BPARTNER_ID = TO_NUMBER(?) "/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND IO.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND IO.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="periodfrom"/>
@@ -140,7 +140,7 @@
     <Parameter name="periodfrom"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_WAREHOUSE.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_WAREHOUSE.AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="cBpartnerId" optional="true" after="AND 1=1 " text=" AND M_PRODUCT.C_BPARTNER_ID = ? "/>
+    <Parameter name="cBpartnerId" optional="true" after="AND 1=1 " text=" AND M_PRODUCT.C_BPARTNER_ID = TO_NUMBER(?) "/>
     <Parameter name="mWhScheduleId"/>
     <Parameter name="periodfrom"/>
     <Parameter name="periodto"/>
@@ -151,13 +151,13 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
       SELECT p.M_WH_PERIOD_ID AS ID, p.STARTDATE, p.ENDDATE FROM M_WH_PERIOD p 
-      WHERE p.M_WH_SCHEDULE_ID = ? 
+      WHERE p.M_WH_SCHEDULE_ID = TO_NUMBER(?) 
       AND p.STARTDATE >= TO_DATE(?)
       AND p.ENDDATE <= TO_DATE(?)
       AND NOT EXISTS (SELECT 1 FROM M_WH_PERIOD_INVOICED i 
       WHERE i.M_WH_PERIOD_ID = p.M_WH_PERIOD_ID 
-      AND i.C_BPARTNER_ID = ?
-      AND i.AD_ORG_ID = ? )
+      AND i.C_BPARTNER_ID = TO_NUMBER(?)
+      AND i.AD_ORG_ID = TO_NUMBER(?) )
       ORDER BY p.STARTDATE
     ]]></Sql>
     <Parameter name="mWhScheduleId"/>
@@ -174,7 +174,7 @@
       WHERE M_WH_Period.AD_Org_ID IN('1') 
       AND M_WH_Period.AD_Client_ID IN('1') 
       AND M_WH_Period.isActive = 'Y' 
-      AND M_WH_Schedule_ID = ?
+      AND M_WH_Schedule_ID = TO_NUMBER(?)
       ORDER BY M_WH_Period.StartDate
     ]]></Sql>
     <Parameter name="adOrgClient" type="replace" optional="true" after="M_WH_Period.AD_Org_ID IN(" text="'1'"/>
@@ -195,7 +195,7 @@
     <Sql><![CDATA[
       SELECT STARTDATE
       FROM M_WH_PERIOD 
-      WHERE M_WH_PERIOD_ID = ? 
+      WHERE M_WH_PERIOD_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="mWhPeriodId"/>
   </SqlMethod>
@@ -204,7 +204,7 @@
     <Sql><![CDATA[
       SELECT ENDDATE
       FROM M_WH_PERIOD 
-      WHERE M_WH_PERIOD_ID = ? 
+      WHERE M_WH_PERIOD_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="mWhPeriodId"/>
   </SqlMethod>
@@ -213,7 +213,7 @@
     <Sql><![CDATA[
       SELECT C_Currency_ID
       FROM M_PriceList 
-      WHERE M_PriceList_ID = ? 
+      WHERE M_PriceList_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="mPricelistId"/>
   </SqlMethod>
@@ -222,7 +222,7 @@
     <Sql><![CDATA[
       SELECT M_PriceList_ID
       FROM C_Bpartner 
-      WHERE C_Bpartner_ID = ? 
+      WHERE C_Bpartner_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -231,7 +231,7 @@
     <Sql><![CDATA[
       SELECT C_UOM_ID
       FROM M_PRODUCT 
-      WHERE M_Product_ID = ? 
+      WHERE M_Product_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>
@@ -240,7 +240,7 @@
     <Sql><![CDATA[
       SELECT STORAGEPAYMENTRULE
       FROM C_Bpartner 
-      WHERE C_Bpartner_ID = ? 
+      WHERE C_Bpartner_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -249,7 +249,7 @@
     <Sql><![CDATA[
       SELECT Name
       FROM C_BPartner 
-      WHERE C_BPartner_ID = ? 
+      WHERE C_BPartner_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -258,7 +258,7 @@
     <Sql><![CDATA[
       SELECT dateordered
       FROM C_ORDER
-      WHERE C_ORDER_ID = ? 
+      WHERE C_ORDER_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -267,7 +267,7 @@
     <Sql><![CDATA[
       SELECT C_Project_ID
       FROM C_ORDER
-      WHERE C_ORDER_ID = ? 
+      WHERE C_ORDER_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="cOrderId"/>
   </SqlMethod>
@@ -279,7 +279,7 @@
       FROM M_INOUT IO, M_INOUTLINE IOL, M_INOUTLINE_TYPE IOLT
       WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID
       AND IOL.M_INOUTLINE_TYPE_ID = IOLT.M_INOUTLINE_TYPE_ID 
-      AND IO.C_BPARTNER_ID = ?
+      AND IO.C_BPARTNER_ID = TO_NUMBER(?)
       AND IO.AD_ORG_ID IN ('1')
       AND IO.AD_CLIENT_ID IN ('1') 
       AND IO.ISLOGISTIC  = 'Y'

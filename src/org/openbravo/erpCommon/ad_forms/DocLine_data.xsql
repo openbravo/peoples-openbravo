@@ -26,7 +26,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT CH_Expense_Acct as expense, CH_Revenue_Acct as revenue FROM C_Charge_Acct WHERE C_Charge_ID=? AND C_AcctSchema_ID=?
+      SELECT CH_Expense_Acct as expense, CH_Revenue_Acct as revenue FROM C_Charge_Acct WHERE C_Charge_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="C_Charge_ID"/>

@@ -106,10 +106,10 @@
     <Parameter name="org" optional="true" type="replace" after="AND p.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND p.Datecontract > to_date(?) ]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND p.Datecontract < to_date(?) ]]></Parameter>
-    <Parameter name="projecttype" optional="true" after="AND 1=1"><![CDATA[ AND p.C_Projecttype_ID = ? ]]></Parameter>
-    <Parameter name="project" optional="true" after="AND 1=1"><![CDATA[ AND p.C_Project_ID =? ]]></Parameter>
-    <Parameter name="Responsible" optional="true" after="AND 1=1"><![CDATA[ AND p.Responsible_ID = ? ]]></Parameter>
-    <Parameter name="Partner" optional="true" after="AND 1=1"><![CDATA[ AND p.C_BPartner_ID = ? ]]></Parameter>
+    <Parameter name="projecttype" optional="true" after="AND 1=1"><![CDATA[ AND p.C_Projecttype_ID = TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="project" optional="true" after="AND 1=1"><![CDATA[ AND p.C_Project_ID = TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="Responsible" optional="true" after="AND 1=1"><![CDATA[ AND p.Responsible_ID = TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="Partner" optional="true" after="AND 1=1"><![CDATA[ AND p.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -134,8 +134,8 @@
       FROM AD_CLIENTINFO, AD_TREENODE, AD_ORG
       WHERE AD_CLIENTINFO.AD_TREE_ORG_ID = AD_TREENODE.AD_TREE_ID
       AND AD_TREENODE.NODE_ID = AD_ORG.AD_ORG_ID
-      AND AD_TREENODE.PARENT_ID = ?
-      AND AD_CLIENTINFO.AD_CLIENT_ID = ?
+      AND AD_TREENODE.PARENT_ID = TO_NUMBER(?)
+      AND AD_CLIENTINFO.AD_CLIENT_ID = TO_NUMBER(?)
       ORDER BY seqno
       ]]>
     </Sql>

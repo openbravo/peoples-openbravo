@@ -48,28 +48,28 @@
   <SqlMethod name="usuario" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT USERNAME FROM AD_USER WHERE AD_USER_ID = ?
+      SELECT USERNAME FROM AD_USER WHERE AD_USER_ID = TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="adUserId"/>
   </SqlMethod>
   <SqlMethod name="rol" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT NAME FROM AD_ROLE WHERE AD_ROLE_ID = ?
+      SELECT NAME FROM AD_ROLE WHERE AD_ROLE_ID = TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="adRoleId"/>
   </SqlMethod>
   <SqlMethod name="cliente" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT NAME FROM AD_CLIENT WHERE AD_CLIENT_ID = ?
+      SELECT NAME FROM AD_CLIENT WHERE AD_CLIENT_ID = TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="adClientId"/>
   </SqlMethod>
   <SqlMethod name="organizacion" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT NAME FROM AD_ORG WHERE AD_ORG_ID = ?
+      SELECT NAME FROM AD_ORG WHERE AD_ORG_ID = TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="adOrgId"/>
   </SqlMethod>
@@ -92,7 +92,7 @@
       FROM AD_Preference 
       WHERE AD_Client_ID IN ('1') 
       AND AD_Org_ID IN ('2') 
-      AND (AD_User_ID IS NULL OR AD_User_ID=0 OR AD_User_ID=?) 
+      AND (AD_User_ID IS NULL OR AD_User_ID=0 OR AD_User_ID = TO_NUMBER(?)) 
       AND IsActive='Y' 
       AND UPPER(Attribute) = UPPER(?)
       ORDER BY AD_Client_ID, AD_Org_ID, AD_User_ID
@@ -106,7 +106,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
       UPDATE AD_PREFERENCE SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), VALUE=?
-      WHERE AD_Preference_ID = ?
+      WHERE AD_Preference_ID = TO_NUMBER(?)
     ]]></Sql>
       <Parameter name="adUserId"/>
       <Parameter name="value"/>

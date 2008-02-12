@@ -35,7 +35,7 @@
       <Sql>
         SELECT ISSUMMARY 
         FROM AD_MENU 
-        WHERE AD_MENU_ID = ?
+        WHERE AD_MENU_ID = TO_NUMBER(?)
       </Sql>
         <Parameter name="table" optional="true" type="replace" after="FROM " text="AD_MENU"/>
         <Parameter name="column" optional="true" type="replace" after="WHERE " text="AD_MENU_ID"/>

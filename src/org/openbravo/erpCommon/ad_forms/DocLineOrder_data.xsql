@@ -29,7 +29,7 @@
           SELECT OL.AD_ORG_ID, OL.C_BPARTNER_ID, OL.M_PRODUCT_ID, OL.LINE, OL.DESCRIPTION,
           OL.C_UOM_ID, OL.C_TAX_ID, OL.C_CHARGE_ID, OL.CHARGEAMT, OL.C_ORDERLINE_ID,
           OL.QTYORDERED, OL.LINENETAMT
-          FROM C_OrderLine OL WHERE C_Order_ID=? ORDER BY Line
+          FROM C_OrderLine OL WHERE C_Order_ID = TO_NUMBER(?) ORDER BY Line
      ]]>
      </Sql>
      <Parameter name="C_Order_ID"/>

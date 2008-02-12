@@ -35,7 +35,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT ChargeAmt FROM C_Charge WHERE C_Charge_ID=?
+      SELECT ChargeAmt FROM C_Charge WHERE C_Charge_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cChargeId"/>

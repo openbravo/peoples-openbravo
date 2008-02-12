@@ -43,7 +43,7 @@
         AND o.AD_Org_ID IN ('1') 
         AND l.C_UOM_ID=uom.C_UOM_ID
         AND l.M_Product_ID=p.M_Product_ID
-        AND l.C_Order_ID = ? 
+        AND l.C_Order_ID = TO_NUMBER(?) 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.C_UOM_ID,
         uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id
         HAVING (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0
@@ -66,7 +66,7 @@
         AND o.DocStatus IN ('CL','CO') 
         AND o.AD_Client_ID IN ('1') 
         AND o.AD_Org_ID IN ('1')
-        AND o.C_BPartner_ID = ?
+        AND o.C_BPartner_ID = TO_NUMBER(?)
         AND EXISTS (SELECT 1 
                      FROM C_ORDERLINE l left join M_MATCHPO m on  l.C_OrderLine_ID=m.C_OrderLine_ID
                                                               and m.C_InvoiceLine_ID IS NOT NULL  
@@ -95,7 +95,7 @@
         AND ic.AD_Client_ID IN ('1') 
         AND ic.AD_Org_ID IN ('1') 
         AND l.M_Product_ID=p.M_Product_ID 
-        AND ic.C_Order_ID = ? 
+        AND ic.C_Order_ID = TO_NUMBER(?) 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,
         l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.QTYINVOICED, l.ad_org_id
         ORDER BY NAME, l.Line
@@ -116,7 +116,7 @@
         WHERE o.C_ORDER_ID = ic.C_ORDER_ID 
         AND ic.AD_Client_ID IN ('1') 
         AND ic.AD_Org_ID IN ('1') 
-        AND ic.C_BPartner_ID = ? 
+        AND ic.C_BPartner_ID = TO_NUMBER(?) 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal 
         ORDER BY NAME
       ]]>
@@ -145,7 +145,7 @@
         AND o.AD_Org_ID IN ('1') 
         AND l.C_UOM_ID=uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID  
-        AND l.C_Order_ID = ? 
+        AND l.C_Order_ID = TO_NUMBER(?) 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.C_UOM_ID,
         uom.UOMSymbol, uomt.UOMSYMBOL,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID 
         HAVING (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0
@@ -175,7 +175,7 @@
         AND ic.AD_Client_ID IN ('1') 
         AND ic.AD_Org_ID IN ('1') 
         AND l.M_Product_ID=p.M_Product_ID
-        AND ic.C_Order_ID = ? 
+        AND ic.C_Order_ID = TO_NUMBER(?) 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,
         l.C_UOM_ID,uom.UOMSymbol, uomt.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.QTYINVOICED 
         ORDER BY NAME, l.Line
@@ -264,7 +264,7 @@
         AND s.AD_Org_ID IN ('1') 
         AND l.C_UOM_ID=uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID 
-        AND l.M_InOut_ID=? 
+        AND l.M_InOut_ID = TO_NUMBER(?) 
         GROUP BY s.M_InOut_ID, s.DocumentNo, s.MovementDate, l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,
         l.M_Product_ID,ma.serno,p.NAME, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID 
         HAVING  (l.MovementQty-SUM(COALESCE(mi.Qty,0))) <> 0
@@ -287,7 +287,7 @@
         AND s.DocStatus IN ('CL','CO') 
         AND s.AD_Client_ID IN ('1') 
         AND s.AD_Org_ID IN ('1') 
-        AND s.C_BPartner_ID = ? 
+        AND s.C_BPartner_ID = TO_NUMBER(?) 
         AND EXISTS (SELECT 1 
                      FROM M_INOUTLINE l left join M_MATCHINV mi on l.M_InOutLine_ID=mi.M_InOutLine_ID
                       WHERE l.M_INOUT_ID = s.M_INOUT_ID 
@@ -320,7 +320,7 @@
         AND l.C_UOM_ID=uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID 
         AND l.isinvoiced = 'N' 
-        AND l.M_InOut_ID=?
+        AND l.M_InOut_ID = TO_NUMBER(?)
         GROUP BY s.M_InOut_ID, s.DocumentNo, s.MovementDate, l.MovementQty,l.C_UOM_ID,uom.UOMSymbol,
         l.M_Product_ID,p.NAME, ma.serno, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID
         ORDER BY NAME, l.Line
@@ -342,7 +342,7 @@
         AND s.DocStatus IN ('CL','CO') 
         AND s.AD_Client_ID IN ('1') 
         AND s.AD_Org_ID IN ('1')
-        AND s.C_BPartner_ID = ?  
+        AND s.C_BPartner_ID = TO_NUMBER(?)  
         AND EXISTS (SELECT 1 FROM M_INOUTLINE l 
         WHERE l.M_INOUT_ID = s.M_INOUT_ID 
         AND l.isinvoiced = 'N') 
@@ -374,7 +374,7 @@
         AND s.AD_Org_ID IN ('1') 
         AND l.C_UOM_ID=uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID 
-        AND l.M_InOut_ID=? 
+        AND l.M_InOut_ID = TO_NUMBER(?) 
         GROUP BY s.M_InOut_ID, s.DocumentNo, s.MovementDate, l.MovementQty,l.C_UOM_ID,uom.UOMSymbol, uomt.UOMSymbol,
         l.M_Product_ID,p.NAME, ma.serno, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID 
         HAVING  (l.MovementQty-SUM(COALESCE(mi.Qty,0))) <> 0
@@ -408,7 +408,7 @@
         AND l.C_UOM_ID=uom.C_UOM_ID 
         AND l.M_Product_ID=p.M_Product_ID 
         AND l.isinvoiced = 'N' 
-        AND l.M_InOut_ID=? 
+        AND l.M_InOut_ID = TO_NUMBER(?) 
         GROUP BY s.M_InOut_ID, s.DocumentNo, s.MovementDate, l.MovementQty,l.C_UOM_ID,uom.UOMSymbol, uomt.UOMSymbol,
         l.M_Product_ID,p.NAME,ma.serno, l.M_InOutLine_ID,l.Line,l.C_OrderLine_ID
         ORDER BY NAME, l.Line
@@ -467,7 +467,7 @@
       SELECT plv.M_PriceList_Version_ID AS ID
       FROM M_PRICELIST pl,M_PRICELIST_VERSION plv 
       WHERE pl.M_PriceList_ID=plv.M_PriceList_ID AND plv.IsActive='Y'
-      AND plv.ValidFrom <= TO_DATE(?) AND pl.M_PriceList_ID=? 
+      AND plv.ValidFrom <= TO_DATE(?) AND pl.M_PriceList_ID = TO_NUMBER(?) 
       ORDER BY plv.ValidFrom DESC
       ]]>
     </Sql>
@@ -481,7 +481,7 @@
       <![CDATA[
       SELECT PriceActual,PriceList,PriceLimit,Description, '' AS C_ORDERLINE_ID, PriceStd
       FROM C_OrderLine 
-      WHERE C_OrderLine_ID=?
+      WHERE C_OrderLine_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>
@@ -496,8 +496,8 @@
       M_GET_OFFER_PRICE(M_GET_OFFER(to_date(?), to_number(?), pp.M_Product_ID), BOM_PriceStd(pp.M_Product_ID,pp.M_PriceList_Version_ID)) AS PriceActual, 
       M_GET_OFFER(to_date(?), to_number(?), pp.M_Product_ID) AS M_Offer_ID
       FROM M_PRODUCTPRICE pp 
-      WHERE pp.M_Product_ID=? 
-      AND pp.M_PriceList_Version_ID=? 
+      WHERE pp.M_Product_ID = TO_NUMBER(?) 
+      AND pp.M_PriceList_Version_ID = TO_NUMBER(?) 
       ]]>
     </Sql>
     <Parameter name="dateinvoiced"/>
@@ -514,7 +514,7 @@
       Created,CreatedBy,Updated,UpdatedBy, C_OrderLine_ID,M_InOutLine_ID, Line,Description, M_Product_ID,
       C_UOM_ID,QtyInvoiced, PriceList,PriceActual,PriceLimit, LineNetAmt,ChargeAmt,C_Tax_ID, QuantityOrder, M_Product_UOM_ID,
       M_Attributesetinstance_ID, PriceStd)
-      VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), (SELECT (COALESCE(Max(Line),0))+10 FROM C_InvoiceLine WHERE C_Invoice_ID=?), ?, 
+      VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), (SELECT (COALESCE(Max(Line),0))+10 FROM C_InvoiceLine WHERE C_Invoice_ID = TO_NUMBER(?)), ?, 
       TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 0, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?))
     </Sql>
     <Parameter name="cInvoicelineId"/>
@@ -544,7 +544,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
       UPDATE C_Invoice SET C_Order_ID=TO_NUMBER(?)
-      WHERE C_Invoice_ID = ?
+      WHERE C_Invoice_ID = TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="cOrderId"/>
     <Parameter name="cInvoiceId"/>
@@ -553,8 +553,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql> <![CDATA[
       UPDATE C_INVOICE SET C_Order_ID=NULL
-      WHERE C_Invoice_ID=?
-      AND C_Order_ID IS NOT NULL AND C_Order_ID <> ?
+      WHERE C_Invoice_ID = TO_NUMBER(?)
+      AND C_Order_ID IS NOT NULL AND C_Order_ID <> TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="cInvoiceId"/>
     <Parameter name="cOrderId"/>
@@ -564,7 +564,7 @@
     <Sql><![CDATA[
       SELECT C_Project_ID
       FROM C_INVOICE
-      WHERE C_INVOICE_ID = ? 
+      WHERE C_INVOICE_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="cInvoiceId"/>
   </SqlMethod>
@@ -573,7 +573,7 @@
     <Sql><![CDATA[
       SELECT C_Tax_ID
       FROM C_ORDERLINE
-      WHERE C_ORDERLINE_ID = ? 
+      WHERE C_ORDERLINE_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="cOrderLineId"/>
   </SqlMethod>

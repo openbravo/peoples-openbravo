@@ -46,7 +46,7 @@
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="key" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="bpartner" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.C_BPARTNER_ID = ? ]]></Parameter>
+        <Parameter name="bpartner" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.C_BPARTNER_ID = TO_NUMBER(?) ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -66,13 +66,13 @@
       ]]></Sql>
         <Parameter name="adUserClient" type="replace" optional="true" after="P.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="P.AD_ORG_ID IN (" text="'1'"/>
-        <Parameter name="bpartner" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.C_BPARTNER_ID = ? ]]></Parameter>
+        <Parameter name="bpartner" optional="true" after="AND P.ISACTIVE = 'Y'"><![CDATA[ AND P.C_BPARTNER_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="key"/>
    </SqlMethod>
    <SqlMethod name="selectTercero" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = ?
+        SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
       ]]></Sql>
         <Parameter name="cBparnterId"/>
    </SqlMethod>

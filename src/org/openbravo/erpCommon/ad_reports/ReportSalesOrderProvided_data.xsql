@@ -50,21 +50,21 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_ORDER.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND C_ORDER.DATEORDERED >= TO_DATE(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND C_ORDER.DATEORDERED < TO_DATE(?)]]></Parameter>
-    <Parameter name="cBPartnerId" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = ?]]></Parameter>
-    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[ AND C_ORDER.M_WAREHOUSE_ID = ?]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
-    <Parameter name="cProductCategoryId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="cBPartnerId" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[ AND C_ORDER.M_WAREHOUSE_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cProductCategoryId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="cProjectKind" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.PROJECTKIND = ?]]></Parameter>
-    <Parameter name="cRegionId" optional="true" after="AND 1=1"><![CDATA[ AND C_LOCATION.C_REGION_ID = ?]]></Parameter>
+    <Parameter name="cRegionId" optional="true" after="AND 1=1"><![CDATA[ AND C_LOCATION.C_REGION_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="cProjectPublic" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.PUBLICPRIVATE = ?]]></Parameter>
-    <Parameter name="productId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = ?]]></Parameter>
+    <Parameter name="productId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
   
   <SqlMethod name="bPartnerDescription" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT NAME FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = ?
+    WHERE C_BPARTNER_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -72,7 +72,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT NAME FROM M_WAREHOUSE 
-    WHERE M_WAREHOUSE_ID = ?
+    WHERE M_WAREHOUSE_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="mWarehouseId"/>
   </SqlMethod>
@@ -80,7 +80,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT INITCAP(NAME) AS NAME FROM C_REGION 
-    WHERE C_REGION_ID = ?
+    WHERE C_REGION_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cRegionId"/>
   </SqlMethod>
@@ -101,7 +101,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT NAME FROM M_PRODUCT_CATEGORY 
-    WHERE M_PRODUCT_CATEGORY_ID = ?
+    WHERE M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cCategoryId"/>
   </SqlMethod>
@@ -126,7 +126,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT VALUE || ' - ' ||NAME FROM C_PROJECT 
-    WHERE C_PROJECT_ID = ?
+    WHERE C_PROJECT_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cProjectId"/>
   </SqlMethod>
@@ -135,7 +135,7 @@
         <Sql>
             SELECT M_PRODUCT.NAME AS NAME 
             FROM M_PRODUCT
-            WHERE M_PRODUCT.M_PRODUCT_ID = ?
+            WHERE M_PRODUCT.M_PRODUCT_ID = TO_NUMBER(?)
         </Sql>
     <Parameter name="productId"/>
   </SqlMethod>

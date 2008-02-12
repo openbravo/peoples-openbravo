@@ -69,7 +69,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE C_DEBT_PAYMENT SET ispaid = 'N'
-      WHERE c_debt_payment_id = ?
+      WHERE c_debt_payment_ID = TO_NUMBER(?)
     </Sql>
    <Parameter name="cDebtPaymentId"/>
   </SqlMethod>
@@ -77,7 +77,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE C_DEBT_PAYMENT SET ispaid = 'N', c_settlement_cancel_id = NULL, CANCEL_PROCESSED = 'N'
-      WHERE c_debt_payment_id = ?
+      WHERE c_debt_payment_ID = TO_NUMBER(?)
     </Sql>
    <Parameter name="cDebtPaymentId"/>
   </SqlMethod>

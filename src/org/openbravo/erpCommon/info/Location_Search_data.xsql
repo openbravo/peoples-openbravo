@@ -35,7 +35,7 @@
              C_COUNTRY C 
         WHERE L.C_COUNTRY_ID = C.C_COUNTRY_ID
         AND L.ISACTIVE = 'Y'
-        AND L.C_LOCATION_ID = ?
+        AND L.C_LOCATION_ID = TO_NUMBER(?)
         ]]>
       </Sql>
       <Parameter name="language"/>
@@ -55,7 +55,7 @@
              C_COUNTRY C
         WHERE L.C_COUNTRY_ID = C.C_COUNTRY_ID
         AND L.ISACTIVE = 'Y'
-        AND L.C_LOCATION_ID = ?
+        AND L.C_LOCATION_ID = TO_NUMBER(?)
         ]]>
       </Sql>
       <Parameter name="language"/>
@@ -65,7 +65,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       UPDATE C_LOCATION SET UPDATED = now(), UPDATEDBY = TO_NUMBER(?), ADDRESS1 = ?, ADDRESS2 = ?, CITY = ?, POSTAL = ?, C_COUNTRY_ID = TO_NUMBER(?), C_REGION_ID = TO_NUMBER(?)
-      WHERE C_LOCATION_ID = ?
+      WHERE C_LOCATION_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="updatedby"/>
       <Parameter name="address1"/>

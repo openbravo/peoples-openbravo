@@ -42,9 +42,9 @@
         ORDER BY P.NAME, L.PRIORITYNO, L.X, L.Y, L.Z 
       ]]>
     </Sql>
-    <Parameter name="bpartner" optional="true" after="WHERE " text=" P.C_BPARTNER_ID = ? AND "/>
-    <Parameter name="product" optional="true" after="WHERE " text=" S.M_PRODUCT_ID = ? AND "/>
-    <Parameter name="warehouse" optional="true" after="WHERE " text=" L.M_WAREHOUSE_ID = ? AND "/>
+    <Parameter name="bpartner" optional="true" after="WHERE " text=" P.C_BPARTNER_ID = TO_NUMBER(?) AND "/>
+    <Parameter name="product" optional="true" after="WHERE " text=" S.M_PRODUCT_ID = TO_NUMBER(?) AND "/>
+    <Parameter name="warehouse" optional="true" after="WHERE " text=" L.M_WAREHOUSE_ID = TO_NUMBER(?) AND "/>
     <Parameter name="x" optional="true" after="WHERE " text=" L.X = ? AND "/>
     <Parameter name="y" optional="true" after="WHERE " text=" L.Y = ? AND "/>
     <Parameter name="z" optional="true" after="WHERE " text=" L.Z = ? AND "/>
@@ -53,14 +53,14 @@
   <SqlMethod name="bpartnerDescription" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = ?
+      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
   <SqlMethod name="productDescription" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT NAME FROM M_PRODUCT WHERE M_PRODUCT_ID = ?
+      SELECT NAME FROM M_PRODUCT WHERE M_PRODUCT_ID = TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>
@@ -71,11 +71,11 @@
         INSERT INTO M_INOUTLINE (M_INOUTLINE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, LINE, 
         DESCRIPTION, M_INOUT_ID, C_ORDERLINE_ID, M_LOCATOR_ID, M_PRODUCT_ID, C_UOM_ID, MOVEMENTQTY, ISINVOICED, LOT, SERNO, 
         M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, M_INOUTLINE_TYPE_ID) 
-        SELECT TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y',now(),TO_NUMBER(?),now(),TO_NUMBER(?), (SELECT COALESCE(MAX(LINE),0) + 10 FROM M_INOUTLINE WHERE M_INOUT_ID=?),
+        SELECT TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y',now(),TO_NUMBER(?),now(),TO_NUMBER(?), (SELECT COALESCE(MAX(LINE),0) + 10 FROM M_INOUTLINE WHERE M_INOUT_ID = TO_NUMBER(?)),
         NULL,TO_NUMBER(?),NULL,M_LOCATOR_ID,M_PRODUCT_ID,C_UOM_ID,TO_NUMBER(?),'N',NULL,NULL,
         M_ATTRIBUTESETINSTANCE_ID,'N',TO_NUMBER(?),M_PRODUCT_UOM_ID,TO_NUMBER(?)
         FROM M_STORAGE_DETAIL 
-        WHERE M_STORAGE_DETAIL_ID = ? 
+        WHERE M_STORAGE_DETAIL_ID = TO_NUMBER(?) 
       ]]>
     </Sql>
     <Parameter name="mInoutlineId"/>

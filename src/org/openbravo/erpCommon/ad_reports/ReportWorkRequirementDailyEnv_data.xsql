@@ -49,7 +49,7 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND wr.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parStartDateFrom" optional="true" after="AND 1=1"><![CDATA[AND wr.STARTDATE >= TO_DATE(?)]]></Parameter>
     <Parameter name="parStartDateTo" optional="true" after="AND 1=1"><![CDATA[AND wr.STARTDATE <= TO_DATE(?)]]></Parameter>
-    <Parameter name="parProcessPlan" optional="true" after="AND 1=1"><![CDATA[AND wr.MA_ProcessPlan_id = ?]]></Parameter>
+    <Parameter name="parProcessPlan" optional="true" after="AND 1=1"><![CDATA[AND wr.MA_ProcessPlan_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

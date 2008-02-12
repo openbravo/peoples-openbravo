@@ -33,7 +33,7 @@
         '' as c_settlement_id, '' as documentno,  '' AS C_DEBT_PAYMENT_BALANCING_ID, '' AS TERCERO, '' AS EFECTO,
         '' AS CONCEPTO, '' AS DATEPLANNED, '' AS DATEFORMAT
         FROM C_DEBT_PAYMENT
-        WHERE c_settlement_generate_id = ?
+        WHERE c_settlement_generate_ID = TO_NUMBER(?)
         AND isactive='Y' 
       ]]>
     </Sql>
@@ -46,7 +46,7 @@
       <![CDATA[
         SELECT ad_org_id as org, ad_client_id as client, datetrx
         FROM C_Settlement
-        WHERE c_settlement_id = ?
+        WHERE c_settlement_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cSettlementId"/>
@@ -107,7 +107,7 @@
       <![CDATA[
         SELECT AMOUNTDEBIT, AMOUNTCREDIT, C_GLITEM_ID, C_DEBT_PAYMENT_BALANCING_ID
         FROM C_DEBT_PAYMENT_BALANCING
-        WHERE c_debt_payment_id = ?
+        WHERE c_debt_payment_ID = TO_NUMBER(?)
         AND isactive = 'Y'
       ]]>
     </Sql>
@@ -148,7 +148,7 @@
         LEFT JOIN C_BPARTNER ON C_DEBT_PAYMENT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
         LEFT JOIN AD_REF_LIST_V ON C_DEBT_PAYMENT.PAYMENTRULE = AD_REF_LIST_V.VALUE AND AD_REF_LIST_V.AD_LANGUAGE = 'es_ES' AND AD_REF_LIST_V.AD_REFERENCE_ID = 195
         WHERE C_DEBT_PAYMENT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID	
-        AND C_SETTLEMENT.C_SETTLEMENT_ID = ?
+        AND C_SETTLEMENT.C_SETTLEMENT_ID = TO_NUMBER(?)
         ORDER BY C_DEBT_PAYMENT.DATEPLANNED, TERCERO, EFECTO
       ]]>
     </Sql>

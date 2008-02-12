@@ -82,13 +82,13 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
     <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT to_char(" text="'8'"/>
     <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 , to_char(" text="'9'"/>
@@ -104,13 +104,13 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN(" text="'14'"/>
     <Parameter name="dateFromRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
     <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-    <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 2=2"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND C_INVOICE.SALESREP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 2=2"><![CDATA[AND C_PROJECT.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="producttype" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, UOMSYMBOL" text=", 1"/>
   </SqlMethod>
@@ -160,13 +160,13 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, UOMSYMBOL" text=", 1"/>
   </SqlMethod>
@@ -197,13 +197,13 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_INVOICE.AD_CLIENT_ID IN (" text="'7'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.DATEINVOICED < to_date(?)]]></Parameter>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = ?]]></Parameter>
-    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_BPARTNER.SALESREP_ID = ?]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_INVOICE.SALESREP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND C_BPARTNER.SALESREP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="producttype" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT.PRODUCTTYPE = ?]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectBpartner" type="preparedStatement" return="multiple">
@@ -227,7 +227,7 @@
     <![CDATA[
       SELECT C_PROJECT.NAME
       FROM C_PROJECT
-      WHERE C_PROJECT_ID = ?
+      WHERE C_PROJECT_ID = TO_NUMBER(?)
      ]]></Sql>
      <Parameter name="cProjectId"/>
   </SqlMethod>
@@ -253,7 +253,7 @@
     <![CDATA[
       SELECT C_BP_GROUP.NAME
       FROM C_BP_GROUP
-      WHERE C_BP_GROUP.C_BP_GROUP_ID = ?
+      WHERE C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)
      ]]></Sql>
     <Parameter name="cBpGroupId"/>
   </SqlMethod>
@@ -264,7 +264,7 @@
     <![CDATA[
       SELECT M_PRODUCT_CATEGORY.NAME
       FROM M_PRODUCT_CATEGORY
-      WHERE M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?
+      WHERE M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)
      ]]></Sql>
     <Parameter name="mProductCategoryId"/>
   </SqlMethod>
@@ -275,7 +275,7 @@
     <![CDATA[
       SELECT AD_USER.FIRSTNAME||' '||AD_USER.LASTNAME
       FROM AD_USER
-      WHERE AD_USER.AD_USER_ID = ?
+      WHERE AD_USER.AD_USER_ID = TO_NUMBER(?)
      ]]></Sql>
     <Parameter name="mWarehouseId"/>
   </SqlMethod>
@@ -286,7 +286,7 @@
     <![CDATA[
       SELECT AD_CLIENT.NAME
       FROM AD_CLIENT
-      WHERE AD_CLIENT.AD_CLIENT_ID = ?
+      WHERE AD_CLIENT.AD_CLIENT_ID = TO_NUMBER(?)
      ]]></Sql>
     <Parameter name="adClientId"/>
   </SqlMethod>
@@ -297,7 +297,7 @@
     <![CDATA[
       SELECT ad_ref_list_trl.NAME FROM ad_ref_list, ad_ref_list_trl 
       WHERE ad_ref_list.AD_REF_LIST_ID = ad_ref_list_trl.AD_REF_LIST_ID
-      AND ad_ref_list.ad_reference_id = ?
+      AND ad_ref_list.ad_reference_ID = TO_NUMBER(?)
       AND ad_ref_list_trl.ad_language = ?
       AND ad_ref_list.VALUE = ?
      ]]></Sql>
@@ -315,7 +315,7 @@
               FROM AD_REF_LIST 
              WHERE AD_REFERENCE_ID = 800087
              AND AD_REF_LIST.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
-             ORDER BY TO_NUMBER(VALUE)) AA
+             ORDER BY VALUE) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="notShown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID NOT IN]]></Parameter>
@@ -329,7 +329,7 @@
               FROM AD_REF_LIST 
              WHERE AD_REFERENCE_ID = 800087 
              AND AD_REF_LIST.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
-             ORDER BY TO_NUMBER(VALUE)) AA
+             ORDER BY VALUE) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="shown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID IN]]></Parameter>
@@ -347,7 +347,7 @@
              AND L.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
                AND l.AD_REF_LIST_ID  = t.AD_REF_LIST_ID
                AND t.AD_LANGUAGE = ?
-             ORDER BY TO_NUMBER(VALUE)) AA
+             ORDER BY VALUE) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="lang"/> 
@@ -365,7 +365,7 @@
                AND l.AD_REF_LIST_ID  = t.AD_REF_LIST_ID
                AND L.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
                AND t.AD_LANGUAGE = ?
-             ORDER BY TO_NUMBER(VALUE)) AA
+             ORDER BY VALUE) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="lang"/> 

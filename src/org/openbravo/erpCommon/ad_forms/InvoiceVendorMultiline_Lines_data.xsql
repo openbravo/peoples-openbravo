@@ -31,7 +31,7 @@
       SELECT C_INVOICELINE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, C_INVOICE_ID, C_ORDERLINE_ID, M_INOUTLINE_ID, LINE, DESCRIPTION, M_PRODUCT_ID, QTYINVOICED, PRICELIST, PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID, CHARGEAMT, C_UOM_ID, C_TAX_ID, S_RESOURCEASSIGNMENT_ID, A_ASSET_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, C_INVOICE_DISCOUNT_ID, 
       AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(M_PRODUCT_ID), TO_CHAR(?)) AS M_PRODUCT_ID_D, PRICESTD, M_OFFER_ID 
       FROM C_INVOICELINE 
-      WHERE C_INVOICE_ID = ? 
+      WHERE C_INVOICE_ID = TO_NUMBER(?) 
       ORDER BY LINE
      ]]>
      </Sql>
@@ -49,7 +49,7 @@
       <![CDATA[
       SELECT LINE AS TOTAL
       FROM C_INVOICELINE 
-      WHERE C_INVOICELINE_ID = ? 
+      WHERE C_INVOICELINE_ID = TO_NUMBER(?) 
      ]]>
      </Sql>
      <Parameter name="cInvoiceId"/>
@@ -60,7 +60,7 @@
       <![CDATA[
       SELECT COALESCE(MAX(LINE), 0) + 10 AS TOTAL
       FROM C_INVOICELINE 
-      WHERE C_INVOICE_ID = ? 
+      WHERE C_INVOICE_ID = TO_NUMBER(?) 
      ]]>
      </Sql>
      <Parameter name="cInvoiceId"/>
@@ -71,7 +71,7 @@
       <![CDATA[
       SELECT C_UOM_ID AS TOTAL
       FROM M_PRODUCT 
-      WHERE M_PRODUCT_ID = ? 
+      WHERE M_PRODUCT_ID = TO_NUMBER(?) 
      ]]>
      </Sql>
      <Parameter name="mProductId"/>
@@ -83,7 +83,7 @@
         C_CHARGE_ID = TO_NUMBER(?), CHARGEAMT = TO_NUMBER(?), C_UOM_ID = TO_NUMBER(?), S_RESOURCEASSIGNMENT_ID = TO_NUMBER(?), A_ASSET_ID = TO_NUMBER(?), TAXAMT = TO_NUMBER(?), 
         M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?), ISDESCRIPTION = ?, QUANTITYORDER = TO_NUMBER(?), M_PRODUCT_UOM_ID = TO_NUMBER(?), C_INVOICE_DISCOUNT_ID = TO_NUMBER(?), 
         PRICESTD = TO_NUMBER(?)
-        WHERE C_INVOICELINE_ID = ? 
+        WHERE C_INVOICELINE_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="updatedby"/>
     <Parameter name="mProductId"/>
@@ -126,7 +126,7 @@
     VALUES ( TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 
     'Y', now(), TO_NUMBER(?), 
     now(), TO_NUMBER(?), TO_NUMBER(?), 
-    TO_NUMBER(?), TO_NUMBER(?), (SELECT COALESCE(MAX(LINE), 0) +10 FROM C_INVOICELINE WHERE C_INVOICE_ID=?), 
+    TO_NUMBER(?), TO_NUMBER(?), (SELECT COALESCE(MAX(LINE), 0) +10 FROM C_INVOICELINE WHERE C_INVOICE_ID = TO_NUMBER(?)), 
     ?, TO_NUMBER(?), TO_NUMBER(?), 
     TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 
     (TO_NUMBER(?)*TO_NUMBER(?)), TO_NUMBER(?), TO_NUMBER(?), 
@@ -169,7 +169,7 @@
   <SqlMethod name="delete" type="preparedStatement" connection="true" static="false" return="rowCount">
     <Sql><![CDATA[
         DELETE FROM C_INVOICELINE 
-        WHERE C_INVOICELINE_ID = ? 
+        WHERE C_INVOICELINE_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="cInvoicelineId"/>
   </SqlMethod>

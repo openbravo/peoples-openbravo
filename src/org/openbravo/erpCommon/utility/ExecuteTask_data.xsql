@@ -29,7 +29,7 @@
       <Sql>
         SELECT NAME, OS_COMMAND, ACCESSLEVEL 
         FROM AD_TASK 
-        WHERE AD_TASK_ID = ?
+        WHERE AD_TASK_ID = TO_NUMBER(?)
       </Sql>
         <Parameter name="adTaskId"/>
    </SqlMethod>
@@ -39,7 +39,7 @@
         SELECT COALESCE(TRL.NAME, T.NAME) AS NAME, T.OS_COMMAND, ACCESSLEVEL 
         FROM AD_TASK T left join AD_TASK_TRL TRL on T.AD_TASK_ID = TRL.AD_TASK_ID 
                                                 AND TRL.AD_LANGUAGE = ?
-        WHERE T.AD_TASK_ID = ?  
+        WHERE T.AD_TASK_ID = TO_NUMBER(?)  
       </Sql>
         <Parameter name="adLanguage"/>
         <Parameter name="adTaskId"/>   

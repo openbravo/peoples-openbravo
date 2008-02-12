@@ -53,17 +53,17 @@
     <Parameter name="adLanguage"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
-    <Parameter name="cBpartnerId" optional="true" after="AND o.IsSOTrx='Y' " text=" AND o.C_BPartner_ID = ? "/>
-    <Parameter name="adOrgId" optional="true" after="AND o.IsSOTrx='Y' " text=" AND o.AD_Org_ID = ? "/>
-    <Parameter name="adForcedOrgId" optional="true" after="AND o.IsSOTrx='Y' " text=" AND bp.AD_Forced_Org_ID = ? "/>
+    <Parameter name="cBpartnerId" optional="true" after="AND o.IsSOTrx='Y' " text=" AND o.C_BPartner_ID = TO_NUMBER(?) "/>
+    <Parameter name="adOrgId" optional="true" after="AND o.IsSOTrx='Y' " text=" AND o.AD_Org_ID = TO_NUMBER(?) "/>
+    <Parameter name="adForcedOrgId" optional="true" after="AND o.IsSOTrx='Y' " text=" AND bp.AD_Forced_Org_ID = TO_NUMBER(?) "/>
     <Parameter name="paymentrule" optional="true" after="AND o.IsSOTrx='Y' " text=" AND o.PaymentRule = ? "/>
-    <Parameter name="adwarehouseid" optional="true" after="AND o.IsSOTrx='Y' " text=" AND o.m_warehouse_id = ? "/>
+    <Parameter name="adwarehouseid" optional="true" after="AND o.IsSOTrx='Y' " text=" AND o.m_warehouse_ID = TO_NUMBER(?) "/>
   </SqlMethod>
   <SqlMethod name="selectBPartner" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = ?
+        SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -75,7 +75,7 @@
         SELECT DOCBASETYPE
         FROM C_ORDER, C_DOCTYPE C1
         WHERE C_ORDER.C_DOCTYPE_ID = C1.C_DOCTYPE_ID
-        AND C_ORDER_ID= ?
+        AND C_ORDER_ID = TO_NUMBER(?)
       ]]>
     </Sql>
      <Parameter name="cOrderId"/>
@@ -87,7 +87,7 @@
         SELECT DOCSUBTYPESO
         FROM C_ORDER, C_DOCTYPE C1
         WHERE C_ORDER.C_DOCTYPE_ID = C1.C_DOCTYPE_ID
-        AND C_ORDER_ID= ?
+        AND C_ORDER_ID = TO_NUMBER(?)
       ]]>
     </Sql>
      <Parameter name="cOrderId"/>
@@ -97,7 +97,7 @@
     <Sql>
       <![CDATA[
         SELECT C_DOCTYPESHIPMENT_ID FROM C_DOCTYPE
-        WHERE C_DOCTYPE_ID = ?
+        WHERE C_DOCTYPE_ID = TO_NUMBER(?)
       ]]>
     </Sql>
      <Parameter name="cDoctypeId"/>
@@ -110,7 +110,7 @@
         FROM C_DOCTYPE
         WHERE DOCBASETYPE = ?
         AND DOCSUBTYPESO = ?
-        AND AD_ORG_ID = ?
+        AND AD_ORG_ID = TO_NUMBER(?)
       ]]>
     </Sql>
      <Parameter name="docbasetype"/>
@@ -126,9 +126,9 @@
         WHERE EXISTS (SELECT 1 FROM M_INOUT, M_INOUTLINE, C_ORDERLINE
                      WHERE M_INOUT.M_INOUT_ID = M_INOUTLINE.M_INOUT_ID
                      AND M_INOUTLINE.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID
-                     AND C_ORDERLINE.C_ORDER_ID = ?
+                     AND C_ORDERLINE.C_ORDER_ID = TO_NUMBER(?)
                      )
-        AND C_ORDER.C_ORDER_ID= ?
+        AND C_ORDER.C_ORDER_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -141,7 +141,7 @@
         SELECT DISTINCT M_INOUT.M_INOUT_ID FROM M_INOUT, M_INOUTLINE, C_ORDERLINE
         WHERE M_INOUT.M_INOUT_ID = M_INOUTLINE.M_INOUT_ID
         AND M_INOUTLINE.C_ORDERLINE_ID = C_ORDERLINE.C_ORDERLINE_ID
-        AND C_ORDERLINE.C_ORDER_ID = ?
+        AND C_ORDERLINE.C_ORDER_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -154,7 +154,7 @@
         FROM C_ORDER o, C_ORDERLINE ol 
         WHERE o.DocStatus IN ('CO', 'CL') 
         AND o.IsSOTrx='Y' 
-        AND o.C_Order_ID = ? 
+        AND o.C_Order_ID = TO_NUMBER(?) 
         AND o.C_Order_ID = ol.C_Order_ID
         AND (EXISTS(SELECT 1 FROM C_CashLine l, C_Cash c WHERE l.C_Cash_ID = c.C_Cash_ID 
         OR l.C_Order_ID = o.C_Order_ID AND c.Processed = 'Y')
@@ -172,7 +172,7 @@
       <![CDATA[
         SELECT COALESCE(MAX((CASE o.PaymentRule WHEN 'C' THEN (CASE WHEN cl.C_CashLine_ID IS NULL THEN 1 ELSE 0 END) ELSE 0 END)),0) AS SHOULDDELETE
         FROM C_ORDER o left join C_CASHLINE cl on o.C_Order_ID = cl.C_Order_ID 
-        WHERE o.C_Order_ID = ?
+        WHERE o.C_Order_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -182,7 +182,7 @@
     <Sql>
       <![CDATA[
         DELETE FROM C_CASHLINE
-        WHERE C_ORDER_ID = ? 
+        WHERE C_ORDER_ID = TO_NUMBER(?) 
         AND EXISTS (SELECT 1 FROM C_CASH WHERE PROCESSED='N' AND C_CASH_ID = C_CASHLINE.C_CASH_ID)
       ]]>
     </Sql>
@@ -202,7 +202,7 @@
     <Sql>
       <![CDATA[
         UPDATE M_TRANSACTION SET AD_ORG_ID= TO_NUMBER(?), UPDATED = now(), UPDATEDBY = TO_NUMBER(?) 
-        WHERE M_INOUTLINE_ID IN (SELECT M_INOUTLINE_ID FROM M_INOUTLINE WHERE M_INOUT_ID = ?)
+        WHERE M_INOUTLINE_ID IN (SELECT M_INOUTLINE_ID FROM M_INOUTLINE WHERE M_INOUT_ID = TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="adOrgId"/>
@@ -214,7 +214,7 @@
     <Sql>
       <![CDATA[
         UPDATE C_ORDER SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), DOCSTATUS='CO', DOCACTION='RE' 
-        WHERE C_ORDER_ID = ? 
+        WHERE C_ORDER_ID = TO_NUMBER(?) 
       ]]>
     </Sql>
     <Parameter name="adUserId"/>
@@ -225,7 +225,7 @@
     <Sql>
       <![CDATA[
         UPDATE M_INOUT SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), PROCESSED = 'N'
-        WHERE M_INOUT_ID = ? 
+        WHERE M_INOUT_ID = TO_NUMBER(?) 
       ]]>
     </Sql>
     <Parameter name="adUserId"/>
@@ -236,7 +236,7 @@
     <Sql>
       <![CDATA[
         UPDATE M_INOUT SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), DOCUMENTNO= ?, C_DOCTYPE_ID = TO_NUMBER(?), AD_ORG_ID = TO_NUMBER(?), PROCESSED = 'Y'
-        WHERE M_INOUT_ID = ? 
+        WHERE M_INOUT_ID = TO_NUMBER(?) 
       ]]>
     </Sql>
     <Parameter name="adUserId"/>
@@ -250,7 +250,7 @@
     <Sql>
       <![CDATA[
         UPDATE M_INOUTLINE SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), AD_ORG_ID = TO_NUMBER(?)
-        WHERE M_INOUT_ID = ? 
+        WHERE M_INOUT_ID = TO_NUMBER(?) 
       ]]>
     </Sql>
     <Parameter name="adUserId"/>
@@ -284,10 +284,10 @@
     <Sql>
       <![CDATA[
         UPDATE C_ORDERLINE SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), AD_ORG_ID=TO_NUMBER(?) 
-        WHERE C_ORDER_ID = ? 
+        WHERE C_ORDER_ID = TO_NUMBER(?) 
       ]]>
     </Sql>
-    <Parameter name="cTaxId" optional="true" after="UPDATED=now()" text=", C_Tax_ID=?"/>
+    <Parameter name="cTaxId" optional="true" after="UPDATED=now()" text=", C_Tax_ID = TO_NUMBER(?)"/>
     <Parameter name="adUserId"/>
     <Parameter name="adOrgId"/>
     <Parameter name="cOrderId"/>
@@ -297,7 +297,7 @@
     <Sql>
       <![CDATA[
         UPDATE C_ORDER SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), AD_ORG_ID=TO_NUMBER(?), C_DOCTYPE_ID = TO_NUMBER(?), C_DOCTYPETARGET_ID = TO_NUMBER(?)
-        WHERE C_ORDER_ID = ? 
+        WHERE C_ORDER_ID = TO_NUMBER(?) 
       ]]>
     </Sql>
     <Parameter name="adUserId"/>

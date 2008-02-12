@@ -35,7 +35,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE C_PROJECT SET PROCESSED = 'Y' WHERE C_PROJECT_ID = ?
+        UPDATE C_PROJECT SET PROCESSED = 'Y' WHERE C_PROJECT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="c_project_id"/>
@@ -44,7 +44,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE C_PROJECTLINE SET PROCESSED = 'Y' WHERE C_PROJECT_ID = ?
+        UPDATE C_PROJECTLINE SET PROCESSED = 'Y' WHERE C_PROJECT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="c_project_id"/>

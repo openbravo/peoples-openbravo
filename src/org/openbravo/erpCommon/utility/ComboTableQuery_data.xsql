@@ -35,7 +35,7 @@
         WHERE ad_ref_table.ad_table_id = ad_table.ad_table_id
           AND ad_ref_table.ad_key = c1.ad_column_id
           AND ad_ref_table.ad_display = c2.ad_column_id
-          AND ad_ref_table.ad_reference_id = ?
+          AND ad_ref_table.ad_reference_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="reference"/>
@@ -59,7 +59,7 @@
       <Sql>
         SELECT CODE
         FROM AD_VAL_RULE 
-        WHERE AD_VAL_RULE_ID = ?
+        WHERE AD_VAL_RULE_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="adValRuleId"/>
   </SqlMethod>

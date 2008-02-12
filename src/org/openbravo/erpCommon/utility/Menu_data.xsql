@@ -54,14 +54,14 @@
                                                 AND m_t.AD_LANGUAGE = ? 
         WHERE m.IsActive='Y' 
         AND (m.IsSummary='Y' OR m.Action='B' OR m.Action='L' OR m.Action='I'
-        OR EXISTS (SELECT * FROM AD_WINDOW_ACCESS wa WHERE wa.AD_Window_ID=m.AD_Window_ID AND wa.AD_Role_ID=?)
-        OR EXISTS (SELECT * FROM AD_PROCESS_ACCESS wa WHERE wa.AD_Process_ID=m.AD_Process_ID AND wa.AD_Role_ID=?)
-        OR EXISTS (SELECT * FROM AD_FORM_ACCESS wa WHERE wa.AD_Form_ID=m.AD_Form_ID AND wa.AD_Role_ID=?)
-        OR EXISTS (SELECT * FROM AD_TASK_ACCESS wa WHERE wa.AD_Task_ID=m.AD_Task_ID AND wa.AD_Role_ID=?)
+        OR EXISTS (SELECT * FROM AD_WINDOW_ACCESS wa WHERE wa.AD_Window_ID=m.AD_Window_ID AND wa.AD_Role_ID = TO_NUMBER(?))
+        OR EXISTS (SELECT * FROM AD_PROCESS_ACCESS wa WHERE wa.AD_Process_ID=m.AD_Process_ID AND wa.AD_Role_ID = TO_NUMBER(?))
+        OR EXISTS (SELECT * FROM AD_FORM_ACCESS wa WHERE wa.AD_Form_ID=m.AD_Form_ID AND wa.AD_Role_ID = TO_NUMBER(?))
+        OR EXISTS (SELECT * FROM AD_TASK_ACCESS wa WHERE wa.AD_Task_ID=m.AD_Task_ID AND wa.AD_Role_ID = TO_NUMBER(?))
         OR EXISTS (SELECT * FROM AD_WORKFLOW w, AD_WORKFLOW_ACCESS wa WHERE w.AD_Workflow_ID=wa.AD_Workflow_ID 
                     AND wa.AD_Workflow_ID=m.AD_Workflow_ID 
                     AND w.isActive = 'Y'
-                    AND wa.AD_Role_ID=?)
+                    AND wa.AD_Role_ID = TO_NUMBER(?))
         )) menuData left join AD_WINDOW W on menuData.AD_Window_ID = W.AD_Window_ID
                     left join AD_TAB T on W.AD_Window_ID = T.AD_WINDOW_ID
                     left join AD_MODEL_OBJECT MOW on T.AD_TAB_ID = MOW.AD_TAB_ID
@@ -113,7 +113,7 @@
         HAVING AD_TAB.ad_window_id=T.ad_window_id 
         AND MIN(AD_TAB.seqno)=T.seqno)
         OR T.ad_tab_id is null)
-        AND tn.ad_tree_id = ?
+        AND tn.ad_tree_ID = TO_NUMBER(?)
         AND tn.IsActive='Y'
         ORDER BY PARENT_ID, SEQNO
       </Sql>
@@ -208,11 +208,11 @@
         AND tn.IsActive='Y'
       </Sql>
       <Parameter name="language"/>
-      <Parameter name="adWindowId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Window_ID = ? "/>
-      <Parameter name="adProcessId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Process_ID = ? "/>
-      <Parameter name="adFormId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_FORM_ID = ? "/>
-      <Parameter name="adTaskId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Task_ID = ? "/>
-      <Parameter name="adWorkflowId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Workflow_ID = ? "/>
+      <Parameter name="adWindowId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Window_ID = TO_NUMBER(?) "/>
+      <Parameter name="adProcessId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Process_ID = TO_NUMBER(?) "/>
+      <Parameter name="adFormId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_FORM_ID = TO_NUMBER(?) "/>
+      <Parameter name="adTaskId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Task_ID = TO_NUMBER(?) "/>
+      <Parameter name="adWorkflowId" optional="true" after="WHERE m.IsActive='Y'" text=" AND m.AD_Workflow_ID = TO_NUMBER(?) "/>
    </SqlMethod>
 
    <SqlMethod name="selectIdentificacion" type="preparedStatement" return="multiple">
@@ -223,7 +223,7 @@
         WHERE t.AD_Tree_ID=tn.AD_Tree_ID
         AND tn.Parent_ID IS NULL
         AND t.AD_Tree_ID=c.AD_Tree_Menu_ID
-        AND c.AD_Client_ID=?
+        AND c.AD_Client_ID = TO_NUMBER(?)
       </Sql>
         <Parameter name="strCliente"/>
    </SqlMethod>
@@ -269,7 +269,7 @@
       <Sql>
         SELECT USERNAME
         FROM AD_USER 
-        WHERE AD_User_ID = ?
+        WHERE AD_User_ID = TO_NUMBER(?)
       </Sql>
         <Parameter name="adUserId"/>
    </SqlMethod>

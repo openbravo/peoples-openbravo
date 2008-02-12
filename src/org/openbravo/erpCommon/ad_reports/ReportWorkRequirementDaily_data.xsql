@@ -63,7 +63,7 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND wr.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parStartDateFrom" optional="true" after="AND 1=1"><![CDATA[AND wr.STARTDATE >= TO_DATE(?)]]></Parameter>
     <Parameter name="parStartDateTo" optional="true" after="AND 1=1"><![CDATA[AND wr.STARTDATE <= TO_DATE(?)]]></Parameter>
-    <Parameter name="parProcessPlan" optional="true" after="AND 1=1"><![CDATA[AND ppv.MA_ProcessPlan_id = ?]]></Parameter>
+    <Parameter name="parProcessPlan" optional="true" after="AND 1=1"><![CDATA[AND ppv.MA_ProcessPlan_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -73,7 +73,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-          SELECT sum((wrp.QUANTITY - wrp.DONEQUANTITY) * wrpp.MOVEMENTQTY) AS cantidad
+          SELECT TO_CHAR(sum((wrp.QUANTITY - wrp.DONEQUANTITY) * wrpp.MOVEMENTQTY)) AS cantidad
           FROM MA_WRPhaseProduct wrpp, MA_WRPhase wrp 
           WHERE wrpp.MA_WRPHASE_ID = wrp.MA_WRPHASE_ID
           AND wrpp.PRODUCTIONTYPE = '+'
@@ -90,7 +90,7 @@
         <![CDATA[
           SELECT p.name
           FROM M_Product p, MA_WRPhaseProduct w
-          WHERE w.MA_WRPHASE_ID = ?
+          WHERE w.MA_WRPHASE_ID = TO_NUMBER(?)
           AND p.M_Product_ID = w.M_Product_ID
           AND w.PRODUCTIONTYPE = '+'
         ]]></Sql>

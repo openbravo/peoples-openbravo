@@ -28,7 +28,7 @@
       FROM AD_Preference 
       WHERE AD_Client_ID IN ('1') 
       AND AD_Org_ID IN ('2') 
-      AND (AD_User_ID IS NULL OR AD_User_ID=0 OR AD_User_ID=?) 
+      AND (AD_User_ID IS NULL OR AD_User_ID=0 OR AD_User_ID = TO_NUMBER(?)) 
       AND IsActive='Y' 
       ORDER BY Attribute, AD_Client_ID, AD_Org_ID, AD_User_ID DESC
     </Sql>
@@ -43,7 +43,7 @@
       FROM AD_Preference 
       WHERE AD_Client_ID IN (0, '1') 
       AND AD_Org_ID IN (0, '2') 
-      AND (AD_User_ID IS NULL OR AD_User_ID=0 OR AD_User_ID=?) 
+      AND (AD_User_ID IS NULL OR AD_User_ID=0 OR AD_User_ID = TO_NUMBER(?)) 
       AND IsActive='Y' 
       AND Attribute = ?
       ORDER BY Attribute, AD_Client_ID, AD_Org_ID, AD_User_ID

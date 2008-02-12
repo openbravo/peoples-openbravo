@@ -41,7 +41,7 @@
         AND AD_COLUMN.isactive='Y'
         AND AD_FIELD.isactive='Y' 
         AND ISSELECTIONCOLUMN='Y' 
-        AND ad_field.ad_tab_id=?
+        AND ad_field.ad_tab_ID = TO_NUMBER(?)
         ORDER BY AD_COLUMN.seqno, AD_FIELD.seqno
       ]]></Sql>
         <Parameter name="adLanguage"/>
@@ -67,7 +67,7 @@
         AND AD_COLUMN.isactive='Y'
         AND AD_FIELD.isactive='Y' 
         AND isidentifier='Y'
-        AND ad_field.ad_tab_id=?
+        AND ad_field.ad_tab_ID = TO_NUMBER(?)
         ORDER BY AD_COLUMN.seqno, AD_FIELD.seqno
       ]]></Sql>
         <Parameter name="adLanguage"/>
@@ -79,7 +79,7 @@
       <![CDATA[
       SELECT ishighvolume FROM AD_TAB, AD_TABLE 
       WHERE AD_TAB.ad_table_id = AD_TABLE.ad_table_id
-      AND AD_TAB.ad_tab_id=?
+      AND AD_TAB.ad_tab_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="tab"/>
@@ -90,7 +90,7 @@
         SELECT ColumnName
         FROM AD_FIELD, AD_COLUMN 
         WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
-        AND ad_tab_id = ?
+        AND ad_tab_ID = TO_NUMBER(?)
         AND isparent = 'Y'
         order by ad_column.seqno
       ]]></Sql>
@@ -107,7 +107,7 @@
            AD_MODEL_OBJECT MO, AD_MODEL_OBJECT_MAPPING MOM, 
            AD_TABLE T, AD_COLUMN C 
       WHERE R.VALIDATIONTYPE = 'S' 
-      AND R.AD_REFERENCE_ID = ?
+      AND R.AD_REFERENCE_ID = TO_NUMBER(?)
       AND R.AD_REFERENCE_ID = MO.AD_REFERENCE_ID
       AND MO.ACTION = 'S' 
       AND MO.ISACTIVE = 'Y'
@@ -136,7 +136,7 @@
       <Sql><![CDATA[
           select tablename AS NAME from ad_ref_search rs, ad_table t
           where rs.ad_table_id = t.ad_table_id
-          and rs.ad_reference_id=?
+          and rs.ad_reference_ID = TO_NUMBER(?)
       ]]></Sql>
       <Parameter name="ad_reference_id"/>
   </SqlMethod>

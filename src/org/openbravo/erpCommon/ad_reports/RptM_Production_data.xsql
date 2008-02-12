@@ -30,7 +30,7 @@
       <![CDATA[
         SELECT M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, ABS(MOVEMENTQTY) AS QTY 
         FROM M_PRODUCTIONLINE 
-        WHERE M_PRODUCTIONLINE_ID = ?
+        WHERE M_PRODUCTIONLINE_ID = TO_NUMBER(?)
         ]]>
         </Sql>
         <Parameter name="mProductionLineId"/>

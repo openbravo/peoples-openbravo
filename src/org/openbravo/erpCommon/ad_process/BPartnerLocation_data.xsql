@@ -28,7 +28,7 @@
       <![CDATA[
         SELECT C_BPartner_Location_ID, AD_Client_ID, AD_Org_ID, C_BPartner_ID, C_Location_ID
 			  FROM C_BPartner_Location
-			  WHERE AD_Client_ID = ?
+			  WHERE AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>

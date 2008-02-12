@@ -37,12 +37,12 @@
                               right join M_PRODUCT_UOM P_UOM        on T.M_PRODUCT_UOM_ID = P_UOM.M_PRODUCT_UOM_ID 
                               left join C_UOM C2                   on P_UOM.C_UOM_ID = C2.C_UOM_ID,
            M_LOCATOR M, M_PRODUCT P,  C_UOM C1
-      WHERE T.M_PRODUCT_ID = ? 
+      WHERE T.M_PRODUCT_ID = TO_NUMBER(?) 
       AND T.M_PRODUCT_ID = P.M_PRODUCT_ID 
       AND T.M_LOCATOR_ID = M.M_LOCATOR_ID 
       AND T.C_UOM_ID = C1.C_UOM_ID 
       AND COALESCE(C1.C_UOM_ID,0) = COALESCE(to_number(?), 0)
-      AND T.M_LOCATOR_ID = ? 
+      AND T.M_LOCATOR_ID = TO_NUMBER(?) 
       AND T.AD_CLIENT_ID IN ('1') 
       AND T.AD_ORG_ID IN ('2') 
       AND 1=1
@@ -77,7 +77,7 @@
       GROUP BY T.M_LOCATOR_ID, M.VALUE, T.M_PRODUCT_ID, P.NAME, T.C_UOM_ID, C1.NAME, T.M_PRODUCT_UOM_ID, C2.NAME
       ORDER BY LOCATOR, PRODUCT
       ]]></Sql>
-      <Parameter name="mWarehouseId" optional="true" after="WHERE " text=" MW.M_WAREHOUSE_ID = ? AND "/>
+      <Parameter name="mWarehouseId" optional="true" after="WHERE " text=" MW.M_WAREHOUSE_ID = TO_NUMBER(?) AND "/>
       <Parameter name="adClientId" optional="true" type="replace" after="AND T.AD_CLIENT_ID IN (" text="'1'"/>
       <Parameter name="adOrgId" optional="true" type="replace" after="AND T.AD_ORG_ID IN (" text="'2'"/>
   </SqlMethod>
@@ -89,7 +89,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT VALUE FROM M_WAREHOUSE
-    WHERE M_WAREHOUSE_ID = ?
+    WHERE M_WAREHOUSE_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="mLocatorId"/>
   </SqlMethod>

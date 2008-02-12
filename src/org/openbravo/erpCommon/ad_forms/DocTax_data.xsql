@@ -27,8 +27,8 @@
     <Sql>
       <![CDATA[
 	SELECT T_Due_Acct, T_Liability_Acct, T_Credit_Acct, T_Receivables_Acct, T_Expense_Acct 
-	FROM C_Tax_Acct WHERE C_Tax_ID=? 
-	AND C_AcctSchema_ID=?
+	FROM C_Tax_Acct WHERE C_Tax_ID = TO_NUMBER(?) 
+	AND C_AcctSchema_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="C_Tax_ID"/>

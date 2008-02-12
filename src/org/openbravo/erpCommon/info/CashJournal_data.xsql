@@ -50,8 +50,8 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="C.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="key" optional="true" after="AND C.C_CASHBOOK_ID = CB.C_CASHBOOK_ID"><![CDATA[ AND UPPER(C.NAME) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="cashBook" optional="true" after="AND C.C_CASHBOOK_ID = CB.C_CASHBOOK_ID"><![CDATA[ AND C.C_CASHBOOK_ID = ? ]]></Parameter>
-        <Parameter name="pago" optional="true" after="AND C.C_CASHBOOK_ID = CB.C_CASHBOOK_ID"><![CDATA[ AND DP.C_DEBT_PAYMENT_ID=? ]]></Parameter>
+        <Parameter name="cashBook" optional="true" after="AND C.C_CASHBOOK_ID = CB.C_CASHBOOK_ID"><![CDATA[ AND C.C_CASHBOOK_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="pago" optional="true" after="AND C.C_CASHBOOK_ID = CB.C_CASHBOOK_ID"><![CDATA[ AND DP.C_DEBT_PAYMENT_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND C.C_CASHBOOK_ID = CB.C_CASHBOOK_ID"><![CDATA[ AND C.STATEMENTDATE >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND C.C_CASHBOOK_ID = CB.C_CASHBOOK_ID"><![CDATA[ AND C.STATEMENTDATE < to_date(?) ]]></Parameter>
         <Parameter name="amountFrom" optional="true" after="AND C.C_CASHBOOK_ID = CB.C_CASHBOOK_ID"><![CDATA[ AND CL.AMOUNT >= ? ]]></Parameter>

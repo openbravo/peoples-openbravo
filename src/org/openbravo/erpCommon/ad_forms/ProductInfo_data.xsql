@@ -32,7 +32,7 @@
   '' AS COSTSTANDARD, '' AS C_CURRENCY_ID, '' AS PRICELIST, '' AS PRICESTD, '' AS PRICELIMIT, '' AS PRICEPO
   FROM M_PRODUCT_CATEGORY PC, M_PRODUCT P 
   WHERE PC.M_PRODUCT_CATEGORY_ID=P.M_PRODUCT_CATEGORY_ID
-  AND P.M_PRODUCT_ID=?
+  AND P.M_PRODUCT_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="Product"/>
@@ -45,8 +45,8 @@
   P_PurchasePriceVariance_Acct as purchasepricevariance, P_InvoicePriceVariance_Acct as invoicepricevariance, 
   P_TradeDiscountRec_Acct as discountrec, P_TradeDiscountGrant_Acct as discountgrant
   FROM M_Product_Acct
-  WHERE M_Product_ID=? 
-  AND C_AcctSchema_ID=?
+  WHERE M_Product_ID = TO_NUMBER(?) 
+  AND C_AcctSchema_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="Product"/>
@@ -61,7 +61,7 @@
   P_TradeDiscountRec_Acct as discountrec, P_TradeDiscountGrant_Acct as discountgrant
   FROM M_Product_Category pc, M_Product_Category_Acct pca 
   WHERE pc.M_Product_Category_ID=pca.M_Product_Category_ID
-  AND pca.C_AcctSchema_ID=? 
+  AND pca.C_AcctSchema_ID = TO_NUMBER(?) 
   ORDER BY pc.IsDefault DESC, pc.Created
      ]]>
      </Sql>
@@ -82,8 +82,8 @@
       <Sql>
   SELECT CURRENTCOSTPRICE,COSTAVERAGE,PRICELASTPO,COSTSTANDARD
   FROM M_PRODUCT_COSTING 
-  WHERE M_PRODUCT_ID=? 
-  AND C_ACCTSCHEMA_ID=?
+  WHERE M_PRODUCT_ID = TO_NUMBER(?) 
+  AND C_ACCTSCHEMA_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="M_Product_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -120,7 +120,7 @@
   FROM M_PriceList pl, M_PriceList_Version plv, M_ProductPrice pp 
   WHERE pl.M_PriceList_ID = plv.M_PriceList_ID
   AND plv.M_PriceList_Version_ID = pp.M_PriceList_Version_ID
-  AND pp.M_Product_ID=?
+  AND pp.M_Product_ID = TO_NUMBER(?)
   AND 1=1
   ORDER BY pl.IsSOPriceList ASC, plv.ValidFrom DESC
       </Sql>
@@ -132,8 +132,8 @@
     <Sql>
       <![CDATA[
   UPDATE M_Product_Costing SET CurrentCostPrice = TO_NUMBER(?)
-  WHERE M_Product_ID = ?
-  AND C_AcctSchema_ID = ?
+  WHERE M_Product_ID = TO_NUMBER(?)
+  AND C_AcctSchema_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="cost"/>
@@ -145,7 +145,7 @@
       <Sql>
   SELECT C_Currency_ID, PriceList,PricePO,PriceLastPO 
   FROM M_Product_PO 
-  WHERE M_Product_ID = ? 
+  WHERE M_Product_ID = TO_NUMBER(?) 
   ORDER BY IsCurrentVendor DESC
       </Sql>
       <Parameter name="M_Product_ID"/>

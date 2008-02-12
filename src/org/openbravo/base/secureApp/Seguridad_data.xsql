@@ -22,8 +22,8 @@
         r.AD_Client_ID, c.NAME, u.C_BPARTNER_ID, c.VALUE, c.SMTPHOST 
         FROM AD_ROLE r, AD_CLIENT c, AD_USER u, 
         AD_USER_ROLES ur 
-        WHERE r.AD_Role_ID = ? 
-        AND ur.AD_USER_ID = ? 
+        WHERE r.AD_Role_ID = to_number(?) 
+        AND ur.AD_USER_ID = to_number(?) 
         AND r.AD_CLIENT_ID = c.AD_CLIENT_ID
         AND r.IsActive='Y' AND c.IsActive='Y' 
         AND r.AD_ROLE_ID = ur.AD_ROLE_ID 
@@ -61,7 +61,7 @@
    <SqlMethod name="loggedOK" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT COUNT(*) AS TOTAL FROM AD_SESSION WHERE AD_SESSION_ID = ? AND PROCESSED = 'N' AND ISACTIVE = 'Y'
+        SELECT COUNT(*) AS TOTAL FROM AD_SESSION WHERE AD_SESSION_ID = to_number(?) AND PROCESSED = 'N' AND ISACTIVE = 'Y'
       </Sql>
       <Parameter name="adSessionId"/>
    </SqlMethod>

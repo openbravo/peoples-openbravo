@@ -32,7 +32,7 @@
         WHERE A_R.AD_ROLE_ID = A_U_R.AD_ROLE_ID 
         AND A_U_R.ISACTIVE = 'Y' 
         AND A_R.ISACTIVE = 'Y' 
-        AND A_U_R.AD_USER_ID = ?
+        AND A_U_R.AD_USER_ID = TO_NUMBER(?)
         ORDER BY A_R.NAME
       </Sql>
         <Parameter name="user"/>
@@ -43,8 +43,8 @@
         SELECT COUNT(*) AS TOTAL 
         FROM AD_USER_ROLES A_U_R 
         WHERE A_U_R.ISACTIVE = 'Y' 
-        AND A_U_R.AD_USER_ID = ?
-        AND A_U_R.AD_ROLE_ID = ?
+        AND A_U_R.AD_USER_ID = TO_NUMBER(?)
+        AND A_U_R.AD_ROLE_ID = TO_NUMBER(?)
       </Sql>
         <Parameter name="user"/>
         <Parameter name="role"/>

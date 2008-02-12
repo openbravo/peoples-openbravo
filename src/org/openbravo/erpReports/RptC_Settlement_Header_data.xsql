@@ -36,7 +36,7 @@
         AND C_BANKACCOUNT.C_BANK_ID = C_BANK.C_BANK_ID 
         AND CS.AD_CLIENT_ID = AD_CLIENT.AD_CLIENT_ID
         AND CS.AD_ORG_ID = AD_ORGINFO.AD_ORG_ID
-        AND CS.C_SETTLEMENT_ID = ?
+        AND CS.C_SETTLEMENT_ID = TO_NUMBER(?)
         ]]>
         </Sql>
         <Parameter name="cSettlementId"/>

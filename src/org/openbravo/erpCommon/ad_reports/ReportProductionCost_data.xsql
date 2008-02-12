@@ -39,8 +39,8 @@
           WHERE p.IsSOTrx = 'N'
           AND p.Processed = 'Y'
           AND pl.ProductionType = '+'
-          AND p.MovementDate >= ?
-          AND p.MovementDate < ?
+          AND p.MovementDate >= TO_DATE(?)
+          AND p.MovementDate < TO_DATE(?)
           AND 1=1
           GROUP BY pl.M_Product_ID, wrp.MA_Sequence_ID) rp
           LEFT OUTER JOIN MA_SequenceProduct sp ON (rp.M_Product_ID = sp.M_Product_ID AND rp.MA_Sequence_ID = sp.MA_Sequence_ID), M_Product
@@ -53,7 +53,7 @@
       <Parameter name="level"/>
     <Parameter name="dateFrom"/>
     <Parameter name="dateTo"/>
-    <Parameter name="mProductId" optional="true" after="1=1"> AND pl.M_PRODUCT_ID = ?</Parameter>
+    <Parameter name="mProductId" optional="true" after="1=1"> AND pl.M_PRODUCT_ID = TO_NUMBER(?)</Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -83,9 +83,9 @@
               WHERE p.IsSOTrx = 'N'
               AND pl.ProductionType = '+'
               AND p.Processed = 'Y'
-              AND p.MovementDate >= ?
-              AND p.MovementDate < ?
-              AND pl.M_Product_ID = ?
+              AND p.MovementDate >= TO_DATE(?)
+              AND p.MovementDate < TO_DATE(?)
+              AND pl.M_Product_ID = TO_NUMBER(?)
               GROUP BY pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID
               HAVING SUM(pl.MovementQty) <> 0) rpp 
            LEFT OUTER JOIN
@@ -135,9 +135,9 @@
               WHERE p.IsSOTrx = 'N'
               AND pl.ProductionType = '+'
               AND p.Processed = 'Y'
-              AND p.MovementDate >= ?
-              AND p.MovementDate < ?
-              AND pl.M_Product_ID = ?
+              AND p.MovementDate >= TO_DATE(?)
+              AND p.MovementDate < TO_DATE(?)
+              AND pl.M_Product_ID = TO_NUMBER(?)
               GROUP BY pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID
               HAVING SUM(pl.MovementQty) <> 0) rpp 
            LEFT OUTER JOIN
@@ -183,9 +183,9 @@
               WHERE p.IsSOTrx = 'N'
               AND pl.ProductionType = '+'
               AND p.Processed = 'Y'
-              AND p.MovementDate >= ?
-              AND p.MovementDate < ?
-              AND pl.M_Product_ID = ?
+              AND p.MovementDate >= TO_DATE(?)
+              AND p.MovementDate < TO_DATE(?)
+              AND pl.M_Product_ID = TO_NUMBER(?)
               GROUP BY pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID
               HAVING SUM(pl.MovementQty) <> 0) rpp 
            LEFT OUTER JOIN
@@ -231,9 +231,9 @@
               WHERE p.IsSOTrx = 'N'
               AND pl.ProductionType = '+'
               AND p.Processed = 'Y'
-              AND p.MovementDate >= ?
-              AND p.MovementDate < ?
-              AND pl.M_Product_ID = ?
+              AND p.MovementDate >= TO_DATE(?)
+              AND p.MovementDate < TO_DATE(?)
+              AND pl.M_Product_ID = TO_NUMBER(?)
               GROUP BY pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID
               HAVING SUM(pl.MovementQty) <> 0) rpp 
            LEFT OUTER JOIN
@@ -279,9 +279,9 @@
               WHERE p.IsSOTrx = 'N'
               AND pl.ProductionType = '+'
               AND p.Processed = 'Y'
-              AND p.MovementDate >= ?
-              AND p.MovementDate < ?
-              AND pl.M_Product_ID = ?
+              AND p.MovementDate >= TO_DATE(?)
+              AND p.MovementDate < TO_DATE(?)
+              AND pl.M_Product_ID = TO_NUMBER(?)
               GROUP BY pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID, pp.MA_CostCenter_Version_ID, pp.CalcCost
               HAVING SUM(pl.MovementQty) <> 0) rpp 
            GROUP BY rpp.MA_CostCenter_Version_ID, rpp.ComponentCost, rpp.MA_Sequence_ID
@@ -305,7 +305,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT max(NAME) as name FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = ?
+    WHERE C_BPARTNER_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -313,7 +313,7 @@
   <SqlMethod name="mProductDescription" type="preparedStatement" return="String" default="">
      <SqlMethodComment></SqlMethodComment>
      <Sql>
-     SELECT MAX(NAME) AS NAME FROM M_PRODUCT WHERE M_PRODUCT_ID = ?
+     SELECT MAX(NAME) AS NAME FROM M_PRODUCT WHERE M_PRODUCT_ID = TO_NUMBER(?)
      </Sql>
      <Parameter name="cBpartnerId"/>
    </SqlMethod>

@@ -29,11 +29,11 @@
       <![CDATA[
         SELECT C_PERIOD_ID AS ID, NAME, '' AS TOTALAMTDR, '' AS TOTALAMTCR, '' AS ACCOUNT_ID
         FROM C_PERIOD
-        WHERE C_YEAR_ID = ?
+        WHERE C_YEAR_ID = TO_NUMBER(?)
         AND PERIODNO>=(
                 SELECT MIN(PERIODNO)
                 FROM C_PERIOD
-                WHERE C_YEAR_ID = ?
+                WHERE C_YEAR_ID = TO_NUMBER(?)
                 AND CLOSE_FACT_ACCT_GROUP_ID IS NULL)
         ORDER BY PERIODNO
       ]]>
@@ -48,9 +48,9 @@
         SELECT (CASE sign(SUM(AMTACCTDR)-sum(amtacctcr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-sum(amtacctcr)) END) AS TOTALAMTCR, 
         (CASE sign(SUM(AMTACCTCR)-sum(amtacctdr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-sum(amtacctdr)) END) AS TOTALAMTDR, ACCOUNT_ID
         FROM FACT_ACCT
-        WHERE C_PERIOD_ID BETWEEN (SELECT C_PERIOD_ID FROM  C_PERIOD WHERE C_YEAR_ID = ? AND PERIODNO = (SELECT MIN(PERIODNO)
+        WHERE C_PERIOD_ID BETWEEN (SELECT C_PERIOD_ID FROM  C_PERIOD WHERE C_YEAR_ID = TO_NUMBER(?) AND PERIODNO = (SELECT MIN(PERIODNO)
                 FROM C_PERIOD
-                WHERE C_YEAR_ID = ?
+                WHERE C_YEAR_ID = TO_NUMBER(?)
                 AND CLOSE_FACT_ACCT_GROUP_ID IS NULL)) AND ?
         AND ACCOUNT_ID IN (SELECT ACCOUNT_ID 
                 FROM C_ELEMENTVALUE, C_VALIDCOMBINATION
@@ -101,7 +101,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT ENDDATE FROM C_PERIOD WHERE C_PERIOD_ID = ?
+        SELECT ENDDATE FROM C_PERIOD WHERE C_PERIOD_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cPeriodId"/>
@@ -110,7 +110,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT STARTDATE FROM C_PERIOD WHERE C_PERIOD_ID = ?
+        SELECT STARTDATE FROM C_PERIOD WHERE C_PERIOD_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cPeriodId"/>
@@ -121,8 +121,8 @@
       <![CDATA[
         SELECT C_PERIOD_ID
         FROM C_PERIOD 
-        WHERE STARTDATE > (SELECT STARTDATE FROM C_PERIOD WHERE C_PERIOD_ID = ?)
-        AND C_YEAR_ID = ?
+        WHERE STARTDATE > (SELECT STARTDATE FROM C_PERIOD WHERE C_PERIOD_ID = TO_NUMBER(?))
+        AND C_YEAR_ID = TO_NUMBER(?)
         ORDER BY STARTDATE ASC
       ]]>
     </Sql>
@@ -134,8 +134,8 @@
     <Sql>
       <![CDATA[
       SELECT C_YEAR_ID FROM C_YEAR
-      WHERE C_CALENDAR_ID = (SELECT  C_CALENDAR_ID FROM C_YEAR WHERE C_YEAR_ID = ?)
-      AND C_YEAR_ID > ?
+      WHERE C_CALENDAR_ID = (SELECT  C_CALENDAR_ID FROM C_YEAR WHERE C_YEAR_ID = TO_NUMBER(?))
+      AND C_YEAR_ID > TO_NUMBER(?)
       ORDER BY YEAR
       ]]>
     </Sql>
@@ -147,7 +147,7 @@
     <Sql>
       <![CDATA[
 	    SELECT C_PERIOD_ID FROM C_PERIOD
-      WHERE C_YEAR_ID = ?
+      WHERE C_YEAR_ID = TO_NUMBER(?)
       ORDER BY PERIODNO
       ]]>
     </Sql>
@@ -165,7 +165,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_CURRENCY_ID FROM C_ACCTSCHEMA WHERE C_ACCTSCHEMA_ID = ?
+        SELECT C_CURRENCY_ID FROM C_ACCTSCHEMA WHERE C_ACCTSCHEMA_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cAcctschemaId"/>
@@ -177,7 +177,7 @@
         SELECT C_VALIDCOMBINATION.ACCOUNT_ID 
         FROM C_ACCTSCHEMA_GL, C_VALIDCOMBINATION
         WHERE C_ACCTSCHEMA_GL.INCOMESUMMARY_ACCT = C_VALIDCOMBINATION.C_VALIDCOMBINATION_ID
-        AND C_ACCTSCHEMA_GL.C_ACCTSCHEMA_ID = ?
+        AND C_ACCTSCHEMA_GL.C_ACCTSCHEMA_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cAcctschemaId"/>
@@ -189,8 +189,8 @@
         UPDATE C_PERIOD SET CLOSE_FACT_ACCT_GROUP_ID = TO_NUMBER(?)
         WHERE C_PERIOD_ID IN (SELECT C_PERIOD_ID 
                          FROM C_PERIOD 
-                         WHERE C_YEAR_ID = ?    
-                         AND PERIODNO <= (SELECT PERIODNO FROM C_PERIOD WHERE C_PERIOD_ID = ?)
+                         WHERE C_YEAR_ID = TO_NUMBER(?)    
+                         AND PERIODNO <= (SELECT PERIODNO FROM C_PERIOD WHERE C_PERIOD_ID = TO_NUMBER(?))
                          AND CLOSE_FACT_ACCT_GROUP_ID IS NULL)
       ]]>
     </Sql>

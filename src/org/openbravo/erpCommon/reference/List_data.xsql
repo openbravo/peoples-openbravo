@@ -25,7 +25,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       SELECT value as id, ((CASE ad_ref_list.isActive WHEN 'N' THEN '**' ELSE '' END) || name) AS name, description FROM ad_ref_list 
-      WHERE ad_ref_list.ad_reference_id = ? 
+      WHERE ad_ref_list.ad_reference_ID = TO_NUMBER(?) 
       AND (ad_ref_list.isActive = 'Y' 
       OR ad_ref_list.value = ?)
       ORDER BY NAME
@@ -40,7 +40,7 @@
       (CASE WHEN arl_t.description IS NULL THEN arl.description ELSE arl_t.description END) AS DESCRIPTION 
       FROM ad_ref_list arl left join ad_ref_list_trl arl_t  on arl.ad_ref_list_id = arl_t.ad_ref_list_id 
                                                            AND arl_t.ad_language = ? 
-      WHERE arl.ad_reference_id = ? 
+      WHERE arl.ad_reference_ID = TO_NUMBER(?) 
       AND (arl.isActive = 'Y' 
       OR arl.Value = ? )
       ORDER BY (CASE WHEN arl_t.name IS NULL THEN arl.name ELSE arl_t.name END)
@@ -53,7 +53,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       SELECT name FROM ad_ref_list 
-      WHERE ad_ref_list.ad_reference_id = ?
+      WHERE ad_ref_list.ad_reference_ID = TO_NUMBER(?)
         AND value = ?
     </Sql>
     <Parameter name="list"/>
@@ -65,7 +65,7 @@
       SELECT (CASE WHEN arl_t.name IS NULL THEN arl.name ELSE arl_t.name END) AS NAME 
       FROM ad_ref_list arl left join ad_ref_list_trl arl_t  on arl.ad_ref_list_id = arl_t.ad_ref_list_id 
                                                            AND arl_t.ad_language = ? 
-      WHERE arl.ad_reference_id = ? 
+      WHERE arl.ad_reference_ID = TO_NUMBER(?) 
       AND arl.Value = ?
     </Sql>
     <Parameter name="language"/>

@@ -64,7 +64,7 @@ public class InformeInOut extends HttpSecureAppServlet {
   void printPage(HttpServletResponse response, VariablesSecureApp vars,  String strDesde, String strHasta, String strCategoriaProducto) throws IOException, ServletException {
     response.setContentType("application/xls");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/InformeInOut_Excel").createXmlDocument();
-    xmlDocument.setData("structure1", InformeInOutData.select(this, vars.getSqlDateFormat(), strHasta, strDesde, strCategoriaProducto));
+    xmlDocument.setData("structure1", InformeInOutData.select(this, strHasta, strDesde,  vars.getSqlDateFormat(), strCategoriaProducto));
 
 
     response.setContentType("application/xls");

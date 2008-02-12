@@ -36,7 +36,7 @@
         FROM AD_Preference 
         WHERE AD_Client_ID IN (0, TO_NUMBER(?))
         AND AD_Org_ID IN (0, TO_NUMBER(?))
-        AND (AD_User_ID IS NULL OR AD_User_ID=0 OR AD_User_ID=?)
+        AND (AD_User_ID IS NULL OR AD_User_ID=0 OR AD_User_ID = TO_NUMBER(?))
         AND IsActive='Y' 
         ORDER BY Attribute, AD_Client_ID, AD_Org_ID, AD_User_ID
       </Sql>
@@ -58,7 +58,7 @@
         <![CDATA[
           SELECT STDPRECISION 
           FROM C_CURRENCY 
-          WHERE C_CURRENCY_ID = ? 
+          WHERE C_CURRENCY_ID = to_number(?) 
           AND AD_CLIENT_ID IN ('1')
           AND AD_ORG_ID IN ('1') 
         ]]>

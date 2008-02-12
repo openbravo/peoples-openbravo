@@ -32,15 +32,15 @@
             from MA_MEASURE_TIME t, MA_MEASURE_VALUES v, MA_CCP c
             where t.MA_MEASURE_TIME_ID = v.MA_MEASURE_TIME_ID
               and v.MA_CCP_ID = c.MA_CCP_ID 
-              and t.MA_MEASURE_GROUP_ID = ?
+              and t.MA_MEASURE_GROUP_ID = TO_NUMBER(?)
             union all
               select to_date('31/12/9999'), v.seqno, c.name || (CASE c.CRITICAL WHEN 'Y' THEN ' (PC)' ELSE '' END) AS name, ' ' as value, identific, 0 as valueid, 'hidden' as type, 'N' as valuec
               from ma_measure_time t, ma_measure_values v, ma_ccp c, 
                 (select VALUE-1 as identific from ad_INTEGER 
                  where VALUE<=(
                    select 10-count(*) from MA_Measure_time
-                   where ma_measure_group_id=?)) AAA
-              where t.ma_measure_group_id = ?
+                   where ma_measure_group_ID = TO_NUMBER(?))) AAA
+              where t.ma_measure_group_ID = TO_NUMBER(?)
                 and t.MA_MEASURE_TIME_ID = v.MA_MEASURE_TIME_ID
                 and v.MA_CCP_ID = c.MA_CCP_ID
         ) AA

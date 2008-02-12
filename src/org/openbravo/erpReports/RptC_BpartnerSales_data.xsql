@@ -166,10 +166,10 @@
      ]]></Sql>
         <Field name="position" value="count"/>
         <Parameter name="cBpartnerId" optional="true" after="AND 1=1">
-        <![CDATA[ AND I.C_BPARTNER_ID = ? ]]>
+        <![CDATA[ AND I.C_BPARTNER_ID = TO_NUMBER(?) ]]>
         </Parameter>
         <Parameter name="cBpartnerId" optional="true" after="AND 2=2">
-        <![CDATA[ AND I.C_BPARTNER_ID = ? ]]>
+        <![CDATA[ AND I.C_BPARTNER_ID = TO_NUMBER(?) ]]>
         </Parameter>
   </SqlMethod>
   <SqlMethod name="selectInvoiceperiod" type="preparedStatement" return="multiple">
@@ -213,10 +213,10 @@
      ]]></Sql>
         <Field name="position" value="count"/>
         <Parameter name="cBpartnerId" optional="true" after="AND 1=1">
-        <![CDATA[ AND I.C_BPARTNER_ID = ? ]]>
+        <![CDATA[ AND I.C_BPARTNER_ID = TO_NUMBER(?) ]]>
         </Parameter>
         <Parameter name="cBpartnerId" optional="true" after="AND 2=2">
-        <![CDATA[ AND I.C_BPARTNER_ID = ? ]]>
+        <![CDATA[ AND I.C_BPARTNER_ID = TO_NUMBER(?) ]]>
         </Parameter>
   </SqlMethod>
   <SqlMethod name="selectInoutperiod" type="preparedStatement" return="multiple">
@@ -260,10 +260,10 @@
      ]]></Sql>
         <Field name="position" value="count"/>
         <Parameter name="cBpartnerId" optional="true" after="AND 1=1">
-        <![CDATA[ AND I.C_BPARTNER_ID = ? ]]>
+        <![CDATA[ AND I.C_BPARTNER_ID = TO_NUMBER(?) ]]>
         </Parameter>
         <Parameter name="cBpartnerId" optional="true" after="AND 2=2">
-        <![CDATA[ AND I.C_BPARTNER_ID = ? ]]>
+        <![CDATA[ AND I.C_BPARTNER_ID = TO_NUMBER(?) ]]>
         </Parameter>
   </SqlMethod>
   <SqlMethod name="selectABC" type="preparedStatement" return="multiple">
@@ -315,7 +315,7 @@
         AND P.C_UOM_ID = U.C_UOM_ID
         AND TO_CHAR(I.DATEINVOICED,'YYYY') = ?
         AND I.ISSOTRX='Y'
-        AND I.C_BPARTNER_ID = ?) AA
+        AND I.C_BPARTNER_ID = TO_NUMBER(?)) AA
         GROUP BY VALUE, NAME_UOM
         ORDER BY AMOUNT DESC
      ]]></Sql>
@@ -335,7 +335,7 @@
         AND P.C_UOM_ID = U.C_UOM_ID
         AND TO_CHAR(I.DATEINVOICED,'YYYY') = ?
         AND I.ISSOTRX='Y'
-        AND I.C_BPARTNER_ID = ?) AA
+        AND I.C_BPARTNER_ID = TO_NUMBER(?)) AA
         GROUP BY VALUE, NAME_UOM
         ORDER BY AMOUNT DESC
      ]]></Sql>

@@ -57,8 +57,8 @@
         <Parameter name="adUserOrg" type="replace" optional="true" after="i.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="key" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND UPPER(i.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND UPPER(i.Description) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="businesPartner" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.C_BPartner_ID=? ]]></Parameter>
-        <Parameter name="order" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.C_Order_ID=? ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="order" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.C_Order_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced < to_date(?) ]]></Parameter>
         <Parameter name="grandTotalFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal >= ? ]]></Parameter>

@@ -27,7 +27,7 @@
         SELECT PARAMETERNAME, P_STRING, P_STRING_TO, P_NUMBER, P_NUMBER_TO, 
         P_DATE, P_DATE_TO, INFO, INFO_TO 
         FROM AD_PINSTANCE_PARA
-        WHERE AD_PINSTANCE_ID = ?
+        WHERE AD_PINSTANCE_ID = TO_NUMBER(?)
         ORDER BY SEQNO
       ]]>
     </Sql>
@@ -57,7 +57,7 @@
     <Sql>
       <![CDATA[
       UPDATE AD_PInstance SET IsProcessing='Y' 
-      WHERE AD_PInstance_ID = ?
+      WHERE AD_PInstance_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adPinstanceId"/>
@@ -67,7 +67,7 @@
     <Sql>
       <![CDATA[
       UPDATE AD_PInstance SET IsProcessing='N', Updated=to_date(now()), Result=TO_NUMBER(?), ErrorMsg=TO_CHAR(?) 
-      WHERE AD_PInstance_ID = ?
+      WHERE AD_PInstance_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="result"/>

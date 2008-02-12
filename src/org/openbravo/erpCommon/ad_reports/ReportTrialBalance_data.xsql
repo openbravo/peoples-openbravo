@@ -38,7 +38,7 @@
       0 AS AMTACCTCR
       FROM AD_TREENODE, C_ELEMENTVALUE
       WHERE AD_TREENODE.NODE_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
-      AND AD_TREENODE.AD_TREE_ID = ?
+      AND AD_TREENODE.AD_TREE_ID = TO_NUMBER(?)
       AND AD_TREENODE.ISACTIVE = 'Y'
       AND C_ELEMENTVALUE.ISACTIVE = 'Y'
       UNION		
@@ -69,8 +69,8 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="F.AD_ORG_ID IN(" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT < TO_DATE(?)]]></Parameter>
-    <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= ?]]></Parameter>
-    <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= ?]]></Parameter>
+    <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= TO_NUMBER(?)]]></Parameter>
+    <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
   
   
@@ -109,8 +109,8 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="F.AD_ORG_ID IN(" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT < TO_DATE(?)]]></Parameter>
-    <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= ?]]></Parameter>
-    <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= ?]]></Parameter>
+    <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= TO_NUMBER(?)]]></Parameter>
+    <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= TO_NUMBER(?)]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND F.C_BPARTNER_ID IN]]></Parameter>
   </SqlMethod>
   
@@ -122,7 +122,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = ?
+        WHERE AD_CLIENT_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -130,7 +130,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT AD_TREE_ID FROM AD_TREE
-        WHERE AD_CLIENT_ID = ?
+        WHERE AD_CLIENT_ID = TO_NUMBER(?)
         AND TREETYPE = 'EV'
         
     </Sql>
@@ -141,7 +141,7 @@
     <Sql>
         SELECT NAME
         FROM AD_CLIENT
-        WHERE AD_CLIENT_ID = ?
+        WHERE AD_CLIENT_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -154,7 +154,7 @@
         WHERE C_ElementValue.AD_Org_ID IN('1') 
         AND C_ElementValue.AD_Client_ID IN('1')  
         AND C_ElementValue.IsSummary='N' 
-        AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = ? ) 
+        AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = TO_NUMBER(?) ) 
         ORDER BY C_ElementValue.Value
     ]]></Sql>
   <Parameter name="adOrgClient" type="replace" optional="true" after="C_ElementValue.AD_Org_ID IN(" text="'1'"/>

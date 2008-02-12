@@ -35,7 +35,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       SELECT COALESCE(SUM(QTYONHAND),0) AS QTYONHAND FROM M_STORAGE_DETAIL
-      WHERE M_LOCATOR_ID = ?
+      WHERE M_LOCATOR_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="mLocatorId"/>
   </SqlMethod>
@@ -44,8 +44,8 @@
     <Sql>
     <![CDATA[
       SELECT COALESCE(SUM(QTYONHAND),0) AS QTYONHAND FROM M_STORAGE_DETAIL
-      WHERE M_LOCATOR_ID = ?
-      AND M_PRODUCT_ID <> ?
+      WHERE M_LOCATOR_ID = TO_NUMBER(?)
+      AND M_PRODUCT_ID <> TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="mLocatorId"/>
@@ -56,8 +56,8 @@
     <Sql>   
       SELECT COALESCE(MAX(M_INOUTLINE.M_INOUTLINE_ID),0) AS FILLEDLOCATOR FROM M_INOUT, M_INOUTLINE
       WHERE M_INOUT.M_INOUT_ID = M_INOUTLINE.M_INOUT_ID
-      AND M_INOUT.M_INOUT_ID = ?
-      AND M_INOUTLINE.M_LOCATOR_ID = ?
+      AND M_INOUT.M_INOUT_ID = TO_NUMBER(?)
+      AND M_INOUTLINE.M_LOCATOR_ID = TO_NUMBER(?)
     </Sql>  
     <Parameter name="mInoutId"/>
     <Parameter name="mLocatorId"/>

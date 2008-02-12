@@ -46,16 +46,16 @@
             AND C.AD_Org_ID IN ('1') 
       ]]></Sql>
         <Field name="position" value="count"/>
-        <Parameter name="acctschema" optional="true" after="WHERE "><![CDATA[ C.C_ACCTSCHEMA_ID = ? AND ]]></Parameter>
+        <Parameter name="acctschema" optional="true" after="WHERE "><![CDATA[ C.C_ACCTSCHEMA_ID = TO_NUMBER(?) AND ]]></Parameter>
         <Parameter name="alias" optional="true" after="WHERE "><![CDATA[ (C.ALIAS IS NULL  OR UPPER(C.ALIAS) LIKE UPPER(?)) AND ]]></Parameter>
         <Parameter name="combination" optional="true" after="WHERE "><![CDATA[ UPPER(C.COMBINATION) LIKE UPPER(?) AND ]]></Parameter>
-        <Parameter name="organization" optional="true" after="WHERE "><![CDATA[ C.AD_ORG_ID = ? AND ]]></Parameter>
-        <Parameter name="account" optional="true" after="WHERE "><![CDATA[ C.ACCOUNT_ID = ? AND ]]></Parameter>
-        <Parameter name="product" optional="true" after="WHERE "><![CDATA[ C.M_PRODUCT_ID = ? AND ]]></Parameter>
-        <Parameter name="bpartner" optional="true" after="WHERE "><![CDATA[ C.C_BPARTNER_ID = ? AND ]]></Parameter>
-        <Parameter name="project" optional="true" after="WHERE "><![CDATA[ C.C_PROJECT_ID = ? AND ]]></Parameter>
-        <Parameter name="campaign" optional="true" after="WHERE "><![CDATA[ C.C_CAMPAIGN_ID = ? AND ]]></Parameter>
-        <Parameter name="validcombination" optional="true" after="WHERE "><![CDATA[ C.C_VALIDCOMBINATION_ID = ? AND ]]></Parameter>
+        <Parameter name="organization" optional="true" after="WHERE "><![CDATA[ C.AD_ORG_ID = TO_NUMBER(?) AND ]]></Parameter>
+        <Parameter name="account" optional="true" after="WHERE "><![CDATA[ C.ACCOUNT_ID = TO_NUMBER(?) AND ]]></Parameter>
+        <Parameter name="product" optional="true" after="WHERE "><![CDATA[ C.M_PRODUCT_ID = TO_NUMBER(?) AND ]]></Parameter>
+        <Parameter name="bpartner" optional="true" after="WHERE "><![CDATA[ C.C_BPARTNER_ID = TO_NUMBER(?) AND ]]></Parameter>
+        <Parameter name="project" optional="true" after="WHERE "><![CDATA[ C.C_PROJECT_ID = TO_NUMBER(?) AND ]]></Parameter>
+        <Parameter name="campaign" optional="true" after="WHERE "><![CDATA[ C.C_CAMPAIGN_ID = TO_NUMBER(?) AND ]]></Parameter>
+        <Parameter name="validcombination" optional="true" after="WHERE "><![CDATA[ C.C_VALIDCOMBINATION_ID = TO_NUMBER(?) AND ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="C.AD_Org_ID IN (" text="'1'"/>
    </SqlMethod>
@@ -88,7 +88,7 @@
             AND (C.ALIAS IS NULL 
             OR UPPER(C.ALIAS) LIKE UPPER(?)) 
       ]]></Sql>
-        <Parameter name="acctschema" optional="true" after="WHERE "><![CDATA[ C.C_ACCTSCHEMA_ID = ? AND ]]></Parameter>
+        <Parameter name="acctschema" optional="true" after="WHERE "><![CDATA[ C.C_ACCTSCHEMA_ID = TO_NUMBER(?) AND ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="C.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="key"/>
@@ -96,7 +96,7 @@
    <SqlMethod name="combination" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT COMBINATION FROM C_VALIDCOMBINATION WHERE C_VALIDCOMBINATION_ID = ?
+        SELECT COMBINATION FROM C_VALIDCOMBINATION WHERE C_VALIDCOMBINATION_ID = TO_NUMBER(?)
       ]]></Sql>
         <Parameter name="key"/>
    </SqlMethod>

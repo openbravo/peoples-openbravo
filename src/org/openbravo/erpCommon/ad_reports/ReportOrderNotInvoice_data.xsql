@@ -84,16 +84,16 @@
     <Parameter name="adLanguage"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="C_ORDER.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="C_ORDER.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="cBpartnerId" optional="true" after="1=1">AND C_ORDER.C_BPARTNER_ID = ?</Parameter>
-    <Parameter name="cOrgId" optional="true" after="1=1">AND C_ORDER.AD_ORG_ID = ?</Parameter>
+    <Parameter name="cBpartnerId" optional="true" after="1=1">AND C_ORDER.C_BPARTNER_ID = TO_NUMBER(?)</Parameter>
+    <Parameter name="cOrgId" optional="true" after="1=1">AND C_ORDER.AD_ORG_ID = TO_NUMBER(?)</Parameter>
     <Parameter name="invoiceRule" optional="true" after="1=1">AND C_ORDER.INVOICERULE = ?</Parameter>
     <Parameter name="dateFrom" optional="true" after="1=1"><![CDATA[ AND C_ORDER.DATEORDERED >= to_date(?) ]]></Parameter>
     <Parameter name="dateTo" optional="true" after="1=1"><![CDATA[ AND C_ORDER.DATEORDERED < to_date(?) ]]></Parameter>
     <Parameter name="adLanguage"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'2'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="C.AD_ORG_ID IN (" text="'2'"/>
-    <Parameter name="cBpartnerId" optional="true" after="2=2">AND C.C_BPARTNER_ID = ?</Parameter>
-    <Parameter name="cOrgId" optional="true" after="2=2">AND C.AD_ORG_ID = ?</Parameter>
+    <Parameter name="cBpartnerId" optional="true" after="2=2">AND C.C_BPARTNER_ID = TO_NUMBER(?)</Parameter>
+    <Parameter name="cOrgId" optional="true" after="2=2">AND C.AD_ORG_ID = TO_NUMBER(?)</Parameter>
     <Parameter name="invoiceRule" optional="true" after="2=2">AND C.INVOICERULE = ?</Parameter>
     <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[ AND C.DATEORDERED >= to_date(?) ]]></Parameter>
     <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[ AND C.DATEORDERED < to_date(?) ]]></Parameter>
@@ -106,7 +106,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT max(NAME) as name FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = ?
+    WHERE C_BPARTNER_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>

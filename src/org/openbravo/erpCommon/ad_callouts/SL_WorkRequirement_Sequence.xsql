@@ -29,7 +29,7 @@
       <![CDATA[
         SELECT  s.MA_Process_ID, s.COSTCENTERUSE, s.PREPTIME, s.NOQTY, s.GROUPUSE, '' AS quantity
         FROM    MA_Sequence s
-        WHERE   MA_Sequence_ID = ?
+        WHERE   MA_Sequence_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="maSequenceId"/>
@@ -40,8 +40,8 @@
       <![CDATA[
         SELECT  (s.multiplier * w.quantity) AS quantity
         FROM    MA_Sequence s, MA_WorkRequirement w
-        WHERE   s.MA_Sequence_ID = ?
-        AND     w.MA_WorkRequirement_ID = ?
+        WHERE   s.MA_Sequence_ID = TO_NUMBER(?)
+        AND     w.MA_WorkRequirement_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="maSequenceId"/>
@@ -53,8 +53,8 @@
       <![CDATA[
         SELECT  (s.multiplier * w.quantity) AS quantity
         FROM    MA_Sequence s, MA_WorkRequirement w
-        WHERE   s.MA_Sequence_ID = ?
-        AND     w.MA_WorkRequirement_ID = ?
+        WHERE   s.MA_Sequence_ID = TO_NUMBER(?)
+        AND     w.MA_WorkRequirement_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="maSequenceId"/>

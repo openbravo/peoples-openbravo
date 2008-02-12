@@ -59,7 +59,7 @@
       <![CDATA[
         SELECT COALESCE(C_DOCTYPE.DOCUMENTCOPIES, 1) AS DOCUMENTCOPIES
         FROM M_INOUT left join C_DOCTYPE on  M_INOUT.C_DOCTYPE_ID = C_DOCTYPE.C_DOCTYPE_ID
-        WHERE M_INOUT.M_INOUT_ID = ?
+        WHERE M_INOUT.M_INOUT_ID = TO_NUMBER(?)
         ]]>
         </Sql>
         
@@ -72,7 +72,7 @@
       <![CDATA[
           SELECT VALUE AS M_INOUT_ID
           FROM AD_INTEGER
-          WHERE VALUE <= ?
+          WHERE VALUE <= TO_NUMBER(?)
         ]]>
         </Sql>
         <Parameter name="rownum"/>

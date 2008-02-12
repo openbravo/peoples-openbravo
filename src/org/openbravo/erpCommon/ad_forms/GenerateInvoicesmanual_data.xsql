@@ -43,7 +43,7 @@
     <Field name="rownum" value="count"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND ic.ad_client_id in (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND ic.ad_org_id in (" text="'1'"/>
-    <Parameter name="parBPartner" optional="true" after="AND 1=1">AND ic.C_BPartner_ID= ?</Parameter>
+    <Parameter name="parBPartner" optional="true" after="AND 1=1">AND ic.C_BPartner_ID = TO_NUMBER(?)</Parameter>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND ic.DateOrdered >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND ic.DateOrdered < TO_DATE(?)]]></Parameter>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 2=2 AND ic.ad_org_id in (" text="'1'"/>
@@ -82,7 +82,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT NAME FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = ?
+    WHERE C_BPARTNER_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -90,7 +90,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = ?
+        WHERE AD_CLIENT_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>

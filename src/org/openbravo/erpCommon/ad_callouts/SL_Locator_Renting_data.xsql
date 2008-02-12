@@ -36,7 +36,7 @@
     <Sql><![CDATA[
       SELECT 1
       FROM M_LOCATOR_RENTING ML
-      WHERE M_LOCATOR_ID= ?
+      WHERE M_LOCATOR_ID = TO_NUMBER(?)
       AND VALIDFROM < now()
       AND COALESCE(VALIDTO, TO_DATE('31/12/9999','DD/MM/YYYY')) > now()
       ]]>

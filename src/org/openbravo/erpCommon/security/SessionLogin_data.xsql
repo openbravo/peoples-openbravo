@@ -54,7 +54,7 @@
       <Sql>
         UPDATE AD_SESSION SET ISACTIVE = ?, UPDATED = now(), UPDATEDBY = TO_NUMBER(?), 
         WEBSESSION = ?, REMOTE_ADDR = ?, REMOTE_HOST = ?, PROCESSED = ? 
-        WHERE AD_SESSION_ID = ?
+        WHERE AD_SESSION_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="isactive"/>
       <Parameter name="adUserId"/>
@@ -69,7 +69,7 @@
       <Sql>
         UPDATE AD_SESSION SET UPDATED = now(), UPDATEDBY = TO_NUMBER(?), 
         PROCESSED = 'Y' 
-        WHERE AD_SESSION_ID = ?
+        WHERE AD_SESSION_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="adUserId"/>
       <Parameter name="adSessionId"/>

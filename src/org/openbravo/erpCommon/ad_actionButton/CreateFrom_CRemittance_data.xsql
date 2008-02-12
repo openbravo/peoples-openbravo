@@ -72,7 +72,7 @@
     <Parameter name="userClient" optional="true" type="replace" after="AND DP.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="userOrg" optional="true" type="replace" after="AND DP.AD_ORG_ID IN (" text="'1'"/>    
     <Parameter name="adOrgId" optional="true" type="replace" after="AND  DP.AD_ORG_ID IN (" text="'2'"/>    
-    <Parameter name="cBPartnerId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.C_BPARTNER_ID = ? "/>
+    <Parameter name="cBPartnerId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.C_BPARTNER_ID = TO_NUMBER(?) "/>
     <Parameter name="paymentrule" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.PAYMENTRULE = ? "/>
     <Parameter name="planneddateFrom" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.DATEPLANNED >= TO_DATE(?) ]]></Parameter>
     <Parameter name="planneddateTo" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
@@ -89,7 +89,7 @@
   <SqlMethod name="bpartner" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID=?
+      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -98,7 +98,7 @@
     <Sql><![CDATA[
       SELECT COUNT(*) 
       FROM C_DEBT_PAYMENT DP 
-      WHERE DP.C_DEBT_PAYMENT_ID = ? 
+      WHERE DP.C_DEBT_PAYMENT_ID = TO_NUMBER(?) 
       AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.Cancel_Processed, DP.Generate_Processed, 
       DP.IsPaid, DP.IsValid, DP.C_CashLine_ID, DP.C_BankStatementLine_ID)='P' 
       AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE DP.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID) 
@@ -115,7 +115,7 @@
          SELECT TO_NUMBER(?),TO_NUMBER(?), AD_ORG_ID ,'Y', 
                 now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?), C_DEBT_PAYMENT_ID
                 FROM C_DEBT_PAYMENT
-                WHERE C_DEBT_PAYMENT_ID = ?
+                WHERE C_DEBT_PAYMENT_ID = TO_NUMBER(?)
         ]]>
     </Sql>
     <Parameter name="LineID"/>
@@ -134,7 +134,7 @@
       <![CDATA[
           SELECT COALESCE(MAX(LINE),0) AS LINE
             FROM C_REMITTANCELINE 
-           WHERE C_REMITTANCE_ID = ?
+           WHERE C_REMITTANCE_ID = TO_NUMBER(?)
         ]]>
     </Sql>
     <Parameter name="remittaceID"/>

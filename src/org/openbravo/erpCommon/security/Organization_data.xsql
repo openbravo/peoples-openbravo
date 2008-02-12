@@ -33,7 +33,7 @@
         AND A_R_O.ISACTIVE = 'Y' 
         AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
         AND R.ISACTIVE = 'Y' 
-        AND (LPAD(R.USERLEVEL, 1, 1)='S' OR A_O.AD_ORG_ID <> 0)
+        AND (LPAD(R.USERLEVEL, 1, '1')='S' OR A_O.AD_ORG_ID <> 0)
         ORDER BY A_R_O.AD_ROLE_ID, A_O.NAME
       ]]></Sql>
    </SqlMethod>

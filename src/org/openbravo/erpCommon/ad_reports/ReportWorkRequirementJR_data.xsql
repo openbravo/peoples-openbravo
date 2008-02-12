@@ -63,7 +63,7 @@
     <Parameter name="parStartDateTo" optional="true" after="AND 1=1"><![CDATA[AND wr.STARTDATE < TO_DATE(?)+1]]></Parameter>
     <Parameter name="parEndDateFrom" optional="true" after="AND 1=1"><![CDATA[AND wr.ENDDATE > TO_DATE(?)]]></Parameter>
     <Parameter name="parEndDateTo" optional="true" after="AND 1=1"><![CDATA[AND wr.ENDDATE < TO_DATE(?)+1]]></Parameter>
-    <Parameter name="parProcessPlan" optional="true" after="AND 1=1"><![CDATA[AND pp.MA_ProcessPlan_id =?]]></Parameter>
+    <Parameter name="parProcessPlan" optional="true" after="AND 1=1"><![CDATA[AND pp.MA_ProcessPlan_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -77,8 +77,8 @@
         FROM MA_WRPhaseProduct wrpp, MA_WRPhase wrp 
         WHERE wrpp.MA_WRPHASE_ID = wrp.MA_WRPHASE_ID
         AND wrpp.PRODUCTIONTYPE = '+'
-        AND wrp.MA_WORKREQUIREMENT_ID = ?
-          AND wrpp.M_PRODUCT_ID = ?
+        AND wrp.MA_WORKREQUIREMENT_ID = TO_NUMBER(?)
+          AND wrpp.M_PRODUCT_ID = TO_NUMBER(?)
         AND wrp.CLOSED = 'N'
         ]]></Sql>
         <Parameter name="wrid"/>

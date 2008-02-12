@@ -29,7 +29,7 @@
       <![CDATA[
       SELECT MA_MACHINE_ID, MA_MACHINE_TYPE_ID, MAINTENANCE_TYPE, MA_MAINT_OPERATION_ID
       FROM MA_MAINTENANCE
-      WHERE MA_MAINTENANCE_ID = ?
+      WHERE MA_MAINTENANCE_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="strmaMaintenanceId"/>

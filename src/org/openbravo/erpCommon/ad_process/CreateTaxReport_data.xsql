@@ -38,7 +38,7 @@
       AD_TREE, AD_TREENODE
       WHERE AD_TREE.AD_TREE_ID = AD_TREENODE.AD_TREE_ID
       AND AD_TREENODE.NODE_ID = TR.C_TAX_REPORT_ID
-      AND TR.C_TAX_REPORT_ID = ?
+      AND TR.C_TAX_REPORT_ID = TO_NUMBER(?)
       AND AD_TREE.TREETYPE = 'TR'
       GROUP BY TR.C_TAX_REPORT_ID, TR.NAME, TR.DESCRIPTION, TR.ISSUMMARY, TR.ISSHOWN,
       AD_TREENODE.NODE_ID, TR.ISNEGATIVE
@@ -51,8 +51,8 @@
     <Parameter name="level"/>
     <Parameter name="adClientId" optional="true" type="replace" after="C_INVOICETAX.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="C_INVOICETAX.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEACCT >= ?]]></Parameter>
-    <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEACCT < ?]]></Parameter>
+    <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEACCT >= TO_DATE(?)]]></Parameter>
+    <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEACCT < TO_DATE(?)]]></Parameter>
     <Parameter name="cTaxReportId"/>
   </SqlMethod>
 
@@ -71,7 +71,7 @@
       AND AD_TREENODE.NODE_ID =  TR.C_TAX_REPORT_ID
       AND TR.AD_CLIENT_ID IN ('1')
       AND TR.AD_ORG_ID IN ('1')
-      AND AD_TREENODE.PARENT_ID = ?
+      AND AD_TREENODE.PARENT_ID = TO_NUMBER(?)
       AND AD_TREE.TREETYPE = 'TR'
       GROUP BY TR.C_TAX_REPORT_ID, TR.NAME, TR.DESCRIPTION, TR.ISSUMMARY, TR.ISSHOWN, AD_TREENODE.NODE_ID, AD_TREENODE.SEQNO
       ORDER BY AD_TREENODE.SEQNO
@@ -90,8 +90,8 @@
       FROM AD_CLIENTINFO, AD_TREENODE, AD_ORG
       WHERE AD_CLIENTINFO.AD_TREE_ORG_ID = AD_TREENODE.AD_TREE_ID
       AND AD_TREENODE.NODE_ID = AD_ORG.AD_ORG_ID
-      AND AD_TREENODE.PARENT_ID = ?
-      AND AD_CLIENTINFO.AD_CLIENT_ID = ?
+      AND AD_TREENODE.PARENT_ID = TO_NUMBER(?)
+      AND AD_CLIENTINFO.AD_CLIENT_ID = TO_NUMBER(?)
       ORDER BY ISSUMMARY DESC
       ]]>
     </Sql>
@@ -128,7 +128,7 @@
       <![CDATA[
       SELECT C_TAX_ID AS ID
       FROM C_TAX_REPORT
-      WHERE C_TAX_REPORT_ID = ?
+      WHERE C_TAX_REPORT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cTaxReportId"/>
@@ -143,7 +143,7 @@
       WHERE AD_ORG_ID IN ('1')
       AND AD_CLIENT_ID IN ('1')
       AND ISREPORT='Y'
-      AND (isActive = 'Y' OR C_TAX_REPORT_ID = ? )
+      AND (isActive = 'Y' OR C_TAX_REPORT_ID = TO_NUMBER(?) )
       ]]>
     </Sql>
     <Parameter name="adOrgClient" type="replace" optional="true" after="WHERE AD_ORG_ID IN (" text="'1'"/>

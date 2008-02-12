@@ -30,7 +30,7 @@
       BL.DATEACCT, BL.C_BANKSTATEMENTLINE_ID, BL.VALUTADATE, BL.C_DEBT_PAYMENT_ID, BL.ISREVERSAL,
       BL.STMTAMT, BL.TRXAMT, DP.C_BPARTNER_ID AS C_BPARTNER_ID, DP.ISMANUAL AS ISMANUAL,  bl.CONVERTCHARGEAMT, bl.C_Currency_ID
       FROM C_BANKSTATEMENTLINE BL left join C_DEBT_PAYMENT DP on BL.C_DEBT_PAYMENT_ID = DP.C_DEBT_PAYMENT_ID
-      WHERE C_BANKSTATEMENT_ID = ? 
+      WHERE C_BANKSTATEMENT_ID = TO_NUMBER(?) 
       ORDER BY LINE
      ]]>
      </Sql>
@@ -41,8 +41,8 @@
     <Sql>
       <![CDATA[
       select b_expense_acct from c_bankaccount_acct
-      where c_bankaccount_id = ?
-      and c_acctschema_id = ?
+      where c_bankaccount_ID = TO_NUMBER(?)
+      and c_acctschema_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="cBankaccountId"/>
@@ -54,7 +54,7 @@
       <![CDATA[
       SELECT COUNT(*) AS COUNT
       FROM C_BANKSTATEMENTLINE BL left join C_DEBT_PAYMENT DP on BL.C_DEBT_PAYMENT_ID = DP.C_DEBT_PAYMENT_ID
-      WHERE C_BANKSTATEMENT_ID = ?
+      WHERE C_BANKSTATEMENT_ID = TO_NUMBER(?)
       AND EXISTS (SELECT 1
           FROM C_YEAR, C_PERIOD, C_PERIODCONTROL, AD_CLIENTINFO
           WHERE C_YEAR.C_YEAR_ID = C_PERIOD.C_YEAR_ID

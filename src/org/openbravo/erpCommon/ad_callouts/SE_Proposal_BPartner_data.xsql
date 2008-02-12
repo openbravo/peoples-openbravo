@@ -36,7 +36,7 @@
     <Sql>
       <![CDATA[
         select paymentrule from c_bpartner
-        where c_bpartner_id = ?
+        where c_bpartner_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cBPartnerId"/>

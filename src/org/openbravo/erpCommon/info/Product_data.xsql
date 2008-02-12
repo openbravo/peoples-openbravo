@@ -43,7 +43,7 @@
         AND p.IsSummary='N' 
         AND p.IsActive='Y' 
         AND pr.IsActive='Y'
-        AND pr.M_PriceList_Version_ID=?
+        AND pr.M_PriceList_Version_ID = TO_NUMBER(?)
         AND pr.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
         AND pv.M_PriceList_ID=pl.M_PriceList_ID
         AND p.AD_Client_ID IN ('1') 
@@ -84,7 +84,7 @@
         SELECT name as name
         FROM M_Product 
         WHERE UPPER(AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(M_Product_ID), TO_CHAR(?))) = UPPER(?)
-        AND M_Product_ID = ? 
+        AND M_Product_ID = TO_NUMBER(?) 
         ORDER BY name
       ]]></Sql>
         <Parameter name="language"/>
@@ -97,7 +97,7 @@
         SELECT value as value
         FROM M_Product 
         WHERE UPPER(AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(M_Product_ID), TO_CHAR(?))) = UPPER(?)
-        AND M_Product_ID = ? 
+        AND M_Product_ID = TO_NUMBER(?) 
         ORDER BY value
       ]]></Sql>
         <Parameter name="language"/>

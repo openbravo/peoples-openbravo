@@ -31,7 +31,7 @@
         WHERE tn.IsActive='Y' 
         AND m.isActive='Y' 
         AND tn.Node_ID = m.C_ElementValue_ID 
-        AND tn.AD_Tree_ID = ? 
+        AND tn.AD_Tree_ID = TO_NUMBER(?) 
         ORDER BY COALESCE(tn.Parent_ID, -1), tn.SeqNo
       ]]></Sql>
         <Parameter name="conCodigo"/>
@@ -50,7 +50,7 @@
         WHERE tn.IsActive='Y' 
         AND m.isActive='Y' 
         AND tn.Node_ID = m.C_ElementValue_ID 
-        AND tn.AD_Tree_ID = ? 
+        AND tn.AD_Tree_ID = TO_NUMBER(?) 
         ORDER BY COALESCE(tn.Parent_ID, -1), tn.SeqNo 
       ]]></Sql>
         <Parameter name="conCodigo"/>

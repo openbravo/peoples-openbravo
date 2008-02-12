@@ -29,7 +29,7 @@
       SELECT E.C_ElementValue_ID as id, (E.Value || ' - ' || E.Name) as name 
       FROM C_ElementValue E, AD_TREENODE T
       WHERE E.C_ELEMENTVALUE_ID = T.NODE_ID 
-      AND T.AD_TREE_ID = ? 
+      AND T.AD_TREE_ID = TO_NUMBER(?) 
       AND (T.PARENT_ID IS NULL 
       OR T.PARENT_ID = 0)
       AND E.AD_Org_ID IN('1') 
@@ -49,7 +49,7 @@
                                                             and ET.AD_Language     = ? , 
       AD_TREENODE T
       WHERE E.C_ELEMENTVALUE_ID = T.NODE_ID 
-      AND T.AD_TREE_ID = ? 
+      AND T.AD_TREE_ID = TO_NUMBER(?) 
       AND (T.PARENT_ID IS NULL 
            OR T.PARENT_ID = 0)
       AND E.AD_Org_ID IN('1') 

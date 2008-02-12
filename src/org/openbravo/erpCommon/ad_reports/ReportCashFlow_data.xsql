@@ -39,7 +39,7 @@
           AD_TREE, AD_TREENODE      
           WHERE AD_TREE.AD_TREE_ID = AD_TREENODE.AD_TREE_ID      
           AND AD_TREENODE.NODE_ID = AR.AD_ACCOUNTINGRPT_ELEMENT_ID      
-          AND AR.AD_ACCOUNTINGRPT_ELEMENT_ID = ?
+          AND AR.AD_ACCOUNTINGRPT_ELEMENT_ID = TO_NUMBER(?)
           AND AD_TREE.TREETYPE = 'AR'      
           GROUP BY REPORT_TYPE, AR.AD_ACCOUNTINGRPT_ELEMENT_ID, AR.NAME, AR.DESCRIPTION, AR.ISSUMMARY, AR.ISSHOWN, 
           AD_TREENODE.NODE_ID,       
@@ -52,9 +52,9 @@
     <Parameter name="level"/>
     <Parameter name="adClientId" optional="true" type="replace" after="FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= ?]]></Parameter>
-    <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < ?]]></Parameter>
-    <Parameter name="accountId" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT_CFS.ACCOUNT_ID = ?]]></Parameter>
+    <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
+    <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
+    <Parameter name="accountId" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT_CFS.ACCOUNT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="adAccountingElementId"/>
   </SqlMethod>
 
@@ -69,15 +69,15 @@
         AND FACT_ACCT.AD_TABLE_ID IN (392,407)
         AND LINE_ID IS NOT NULL
         AND 1=1
-        AND AD_CLIENT_ID = ?
+        AND AD_CLIENT_ID = TO_NUMBER(?)
         AND NOT EXISTS (SELECT 1 FROM FACT_ACCT_CFS
                 WHERE FACT_ACCT.FACT_ACCT_ID = FACT_ACCT_CFS.FACT_ACCT_ID)
       ]]>
     </Sql>
     <Parameter name="adClientId" optional="true" type="replace" after="FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= ?]]></Parameter>
-    <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < ?]]></Parameter>
+    <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
+    <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
     <Parameter name="currentClient"/>
   </SqlMethod>
 
@@ -97,8 +97,8 @@
       AND AD_TREENODE.NODE_ID = AR.AD_ACCOUNTINGRPT_ELEMENT_ID
       AND AR.AD_CLIENT_ID IN ('1')
       AND AR.AD_ORG_ID IN ('1')
-      AND AD_TREENODE.PARENT_ID = ?
-      AND AD_TREE.AD_TREE_ID = ?
+      AND AD_TREENODE.PARENT_ID = TO_NUMBER(?)
+      AND AD_TREE.AD_TREE_ID = TO_NUMBER(?)
       GROUP BY AR.AD_ACCOUNTINGRPT_ELEMENT_ID, AR.NAME, AR.DESCRIPTION, AR.ISSUMMARY, AR.ISSHOWN, AD_TREENODE.NODE_ID, 
       AR.FILTEREDBYORGANIZATION, AR.TEMPORARYFILTERTYPE, AD_TREENODE.SEQNO
       ORDER BY AD_TREENODE.SEQNO
@@ -116,7 +116,7 @@
       <![CDATA[
         SELECT AD_TREE_ID AS ID FROM AD_TREE
         WHERE TREETYPE = 'AR'
-        AND AD_CLIENT_ID = ?
+        AND AD_CLIENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="client"/>
@@ -130,8 +130,8 @@
       FROM AD_CLIENTINFO, AD_TREENODE, AD_ORG
       WHERE AD_CLIENTINFO.AD_TREE_ORG_ID = AD_TREENODE.AD_TREE_ID
       AND AD_TREENODE.NODE_ID = AD_ORG.AD_ORG_ID
-      AND AD_TREENODE.PARENT_ID = ?
-      AND AD_CLIENTINFO.AD_CLIENT_ID = ?
+      AND AD_TREENODE.PARENT_ID = TO_NUMBER(?)
+      AND AD_CLIENTINFO.AD_CLIENT_ID = TO_NUMBER(?)
       ORDER BY ISSUMMARY DESC
       ]]>
     </Sql>
@@ -203,7 +203,7 @@
       <![CDATA[
         SELECT ACCOUNT_ID AS ID
         FROM AD_ACCOUNTINGRPT_ELEMENT
-        WHERE AD_ACCOUNTINGRPT_ELEMENT_ID = ?
+        WHERE AD_ACCOUNTINGRPT_ELEMENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adAccountingrptElementId"/>
@@ -219,7 +219,7 @@
       WHERE AD_ORG_ID IN ('1')
       AND AD_CLIENT_ID IN ('1')
       AND ISREPORT='Y'
-      AND (isActive = 'Y' OR AD_ACCOUNTINGRPT_ELEMENT_ID = ? )
+      AND (isActive = 'Y' OR AD_ACCOUNTINGRPT_ELEMENT_ID = TO_NUMBER(?) )
       ]]>
     </Sql>
     <Parameter name="adOrgClient" type="replace" optional="true" after="WHERE AD_ORG_ID IN (" text="'1'"/>
@@ -233,7 +233,7 @@
       <![CDATA[
       SELECT TEMPORARYFILTERTYPE
       FROM AD_ACCOUNTINGRPT_ELEMENT
-      WHERE AD_ACCOUNTINGRPT_ELEMENT_ID = ?
+      WHERE AD_ACCOUNTINGRPT_ELEMENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adAccountingrptElementId"/>
@@ -248,7 +248,7 @@
 	   WHERE AD_REF_LIST.AD_REF_LIST_ID = AD_REF_LIST_TRL.AD_REF_LIST_ID
 	   AND AD_REF_LIST.AD_CLIENT_ID IN ('1')
 	   AND AD_REF_LIST.AD_ORG_ID IN ('1')
-	   AND AD_REF_LIST.AD_REFERENCE_ID = ?
+	   AND AD_REF_LIST.AD_REFERENCE_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adLanguage"/>

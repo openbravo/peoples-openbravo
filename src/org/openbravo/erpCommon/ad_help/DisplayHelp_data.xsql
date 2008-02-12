@@ -37,7 +37,7 @@
           AND AD_TAB.isactive='Y'
           AND AD_FIELD.isactive = 'Y'
           AND AD_FIELD.ISDISPLAYED = 'Y'
-          AND AD_TAB.ad_window_id = ? 
+          AND AD_TAB.ad_window_ID = TO_NUMBER(?) 
           ORDER BY AD_TAB.seqno, AD_TAB.AD_TAB_ID, AD_FIELD.SEQNO, AD_FIELD.AD_FIELD_ID
         ]]>
       </Sql>
@@ -62,7 +62,7 @@
         AND AD_TAB.isactive='Y'
         AND AD_FIELD.isactive = 'Y'
         AND AD_FIELD.ISDISPLAYED = 'Y'
-        AND AD_TAB.ad_window_id = ? 
+        AND AD_TAB.ad_window_ID = TO_NUMBER(?) 
         ORDER BY AD_TAB.seqno, AD_TAB.AD_TAB_ID, AD_FIELD.SEQNO, AD_FIELD.AD_FIELD_ID
         ]]>
       </Sql>
@@ -78,7 +78,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> 
       <![CDATA[
-        SELECT NAME FROM AD_WINDOW WHERE AD_WINDOW_ID = ?
+        SELECT NAME FROM AD_WINDOW WHERE AD_WINDOW_ID = TO_NUMBER(?)
       ]]>
       </Sql>
         <Parameter name="windowId"/>
@@ -90,7 +90,7 @@
         SELECT (CASE WHEN AD_WINDOW_TRL.NAME IS NULL THEN '*' || AD_WINDOW.NAME ELSE AD_WINDOW_TRL.NAME END) AS NAME
         FROM AD_WINDOW left join AD_WINDOW_TRL on AD_WINDOW.AD_WINDOW_ID = AD_WINDOW_TRL.AD_WINDOW_ID 
                                               AND AD_WINDOW_TRL.AD_LANGUAGE =?
-        WHERE AD_WINDOW.AD_WINDOW_ID = ? 
+        WHERE AD_WINDOW.AD_WINDOW_ID = TO_NUMBER(?) 
         AND AD_WINDOW.ISACTIVE = 'Y'
       ]]>
       </Sql>
@@ -101,7 +101,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> 
       <![CDATA[
-        SELECT HELP FROM AD_WINDOW WHERE AD_WINDOW_ID = ?
+        SELECT HELP FROM AD_WINDOW WHERE AD_WINDOW_ID = TO_NUMBER(?)
       ]]>
       </Sql>
         <Parameter name="windowId"/>
@@ -112,7 +112,7 @@
       <![CDATA[
         SELECT NAME, HELP
         FROM AD_FORM
-        WHERE AD_FORM_ID = ?
+        WHERE AD_FORM_ID = TO_NUMBER(?)
       ]]>
       </Sql>
         <Parameter name="formName"/>
@@ -125,7 +125,7 @@
                (CASE WHEN AD_FORM_TRL.HELP IS NULL THEN '***' || AD_FORM.HELP ELSE AD_FORM_TRL.HELP END) AS HELP
         FROM AD_FORM left join AD_FORM_TRL on AD_FORM.AD_FORM_ID = AD_FORM_TRL.AD_FORM_ID 
                                               AND AD_FORM_TRL.AD_LANGUAGE =?
-        WHERE AD_FORM.AD_FORM_ID = ? 
+        WHERE AD_FORM.AD_FORM_ID = TO_NUMBER(?) 
       ]]>
       </Sql>
         <Parameter name="adLanguage"/>
@@ -137,7 +137,7 @@
       <![CDATA[
         SELECT NAME, HELP
         FROM AD_PROCESS
-        WHERE AD_PROCESS_ID = ?
+        WHERE AD_PROCESS_ID = TO_NUMBER(?)
       ]]>
       </Sql>
         <Parameter name="processName"/>
@@ -150,7 +150,7 @@
                (CASE WHEN AD_PROCESS_TRL.HELP IS NULL THEN '***' || AD_PROCESS.HELP ELSE AD_PROCESS_TRL.HELP END) AS HELP
         FROM AD_PROCESS left join AD_PROCESS_TRL on AD_PROCESS.AD_PROCESS_ID = AD_PROCESS_TRL.AD_PROCESS_ID 
                                                     AND AD_PROCESS_TRL.AD_LANGUAGE =?
-        WHERE AD_PROCESS.AD_PROCESS_ID = ? 
+        WHERE AD_PROCESS.AD_PROCESS_ID = TO_NUMBER(?) 
       ]]>
       </Sql>
         <Parameter name="adLanguage"/>
@@ -163,7 +163,7 @@
         SELECT (CASE WHEN AD_WINDOW_TRL.HELP IS NULL THEN (CASE WHEN AD_WINDOW.HELP IS NOT NULL THEN '*' END) || AD_WINDOW.HELP ELSE AD_WINDOW_TRL.HELP END) AS HELP 
         FROM AD_WINDOW left join AD_WINDOW_TRL on AD_WINDOW.AD_WINDOW_ID = AD_WINDOW_TRL.AD_WINDOW_ID
                                               and AD_WINDOW_TRL.AD_LANGUAGE = ?
-        WHERE AD_WINDOW.AD_WINDOW_ID = ? 
+        WHERE AD_WINDOW.AD_WINDOW_ID = TO_NUMBER(?) 
         AND AD_WINDOW.ISACTIVE = 'Y'
       ]]>
       </Sql>

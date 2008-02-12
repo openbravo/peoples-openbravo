@@ -32,7 +32,7 @@
       FROM C_ORDER, C_ORDERLINE
       WHERE C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID
       AND C_ORDER.DOCSTATUS = 'CO'
-      AND C_ORDERLINE.C_ORDERLINE_ID = ?
+      AND C_ORDERLINE.C_ORDERLINE_ID = TO_NUMBER(?)
       ]]></Sql>
 	<Field name="rownum" value="count"/>
     <Parameter name="cOrderlineId"/>
@@ -73,7 +73,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND C_ORDER.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND C_ORDER.ISSOTRX='N'"><![CDATA[ AND C_ORDER.DATEORDERED >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND C_ORDER.ISSOTRX='N'"><![CDATA[ AND C_ORDER.DATEORDERED < TO_DATE(?)]]></Parameter>
-    <Parameter name="parBPartner" optional="true" after="AND C_ORDER.ISSOTRX='N'"> AND C_BPARTNER.C_BPARTNER_ID = ?</Parameter>
+    <Parameter name="parBPartner" optional="true" after="AND C_ORDER.ISSOTRX='N'"> AND C_BPARTNER.C_BPARTNER_ID = TO_NUMBER(?)</Parameter>
     <Parameter name="parDocumentNo" optional="true" after="AND C_ORDER.ISSOTRX='N'"> AND C_ORDER.DOCUMENTNO = ?</Parameter>
   </SqlMethod>
   <SqlMethod name="insert" connection="true" type="preparedStatement" return="rowCount">
@@ -157,7 +157,7 @@
       <![CDATA[
         SELECT C_DocTypeShipment_ID
         FROM C_DOCTYPE
-        WHERE C_DocType_ID = ?
+        WHERE C_DocType_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cDoctypeId"/>
@@ -167,7 +167,7 @@
     <Sql>
     <![CDATA[
     SELECT NAME FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = ?
+    WHERE C_BPARTNER_ID = TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -175,7 +175,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = ?
+        WHERE AD_CLIENT_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>

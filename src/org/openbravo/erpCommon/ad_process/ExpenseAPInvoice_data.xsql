@@ -28,8 +28,8 @@
         WHERE st.S_TimeExpense_Id = stl.S_TimeExpense_Id
         AND st.AD_Client_ID IN ('1')
         AND st.AD_Org_ID IN ('1')
-        AND st.DateReport >= ?
-        AND st.DateReport < ?
+        AND st.DateReport >= TO_DATE(?)
+        AND st.DateReport < TO_DATE(?)
         AND stl.ISTIMEREPORT <> 'Y'
         AND st.PROCESSED = 'Y'
         AND stl.C_InvoiceLine_ID IS NULL
@@ -39,7 +39,7 @@
     <Parameter name="userOrg" optional="true" type="replace" after="AND st.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="dateReportFrom"/>
     <Parameter name="dateReportTo"/>
-    <Parameter name="cBpartnerId" optional="true" after="AND stl.C_InvoiceLine_ID IS NULL"><![CDATA[ AND st.C_BPartner_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerId" optional="true" after="AND stl.C_InvoiceLine_ID IS NULL"><![CDATA[ AND st.C_BPartner_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">
@@ -52,11 +52,11 @@
     <Sql><![CDATA[
       SELECT MAX(C_INVOICE.C_INVOICE_ID) AS C_INVOICE_ID
       FROM C_INVOICE, C_INVOICELINE
-      WHERE C_INVOICE.AD_CLIENT_ID = ?
-      AND C_INVOICE.AD_ORG_ID = ?
-      AND C_INVOICE.DATEINVOICED = ?
-      AND C_INVOICE.C_BPARTNER_ID = ?
-      AND C_INVOICE.C_CURRENCY_ID = ?
+      WHERE C_INVOICE.AD_CLIENT_ID = TO_NUMBER(?)
+      AND C_INVOICE.AD_ORG_ID = TO_NUMBER(?)
+      AND C_INVOICE.DATEINVOICED = TO_DATE(?)
+      AND C_INVOICE.C_BPARTNER_ID = TO_NUMBER(?)
+      AND C_INVOICE.C_CURRENCY_ID = TO_NUMBER(?)
       AND C_INVOICE.DOCSTATUS = 'DR'
       AND C_INVOICE.PROCESSED <> 'Y'
       AND C_INVOICE.ISACTIVE = 'Y'
@@ -67,9 +67,9 @@
     <Parameter name="dateinvoiced"/>
     <Parameter name="cBpartnerId"/>
     <Parameter name="cCurrencyId"/>
-    <Parameter name="cProjectId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_PROJECT_ID = ?]]></Parameter>
-    <Parameter name="cActivityId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_ACTIVITY_ID = ?]]></Parameter>
-    <Parameter name="cCampaignId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_CAMPAIGN_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cActivityId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_ACTIVITY_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cCampaignId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_CAMPAIGN_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectInvoiceLine" type="preparedStatement" connection="true" return="multiple">
@@ -77,14 +77,14 @@
     <Sql><![CDATA[
       SELECT C_INVOICELINE_ID, SUM(QTYINVOICED) AS QTYINVOICED
       FROM C_INVOICELINE
-      WHERE C_INVOICE_ID = ?
-      AND AD_CLIENT_ID = ?
-      AND AD_ORG_ID = ?
-      AND M_PRODUCT_ID = ?
-      AND C_UOM_ID = ?
-      AND PRICESTD = ?
-      AND PRICELIST = ?
-      AND PRICELIMIT = ?
+      WHERE C_INVOICE_ID = TO_NUMBER(?)
+      AND AD_CLIENT_ID = TO_NUMBER(?)
+      AND AD_ORG_ID = TO_NUMBER(?)
+      AND M_PRODUCT_ID = TO_NUMBER(?)
+      AND C_UOM_ID = TO_NUMBER(?)
+      AND PRICESTD = TO_NUMBER(?)
+      AND PRICELIST = TO_NUMBER(?)
+      AND PRICELIMIT = TO_NUMBER(?)
       AND C_INVOICELINE.ISACTIVE = 'Y'
       GROUP BY C_INVOICELINE_ID
       ]]></Sql>
@@ -97,7 +97,7 @@
     <Parameter name="pricelist"/>
     <Parameter name="pricelimit"/>
     <Parameter name="description" optional="true" after="AND C_INVOICELINE.ISACTIVE = 'Y'"><![CDATA[ AND C_INVOICELINE.DESCRIPTION = ?]]></Parameter>
-    <Parameter name="cTaxId" optional="true" after="AND C_INVOICELINE.ISACTIVE = 'Y'"><![CDATA[ AND C_INVOICELINE.C_TAX_ID = ?]]></Parameter>
+    <Parameter name="cTaxId" optional="true" after="AND C_INVOICELINE.ISACTIVE = 'Y'"><![CDATA[ AND C_INVOICELINE.C_TAX_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectAcctdimension" type="preparedStatement" connection="true" return="multiple">
@@ -105,17 +105,17 @@
     <Sql><![CDATA[
       SELECT C_INVOICELINE_ACCTDIMENSION_ID, SUM(AMT) AS AMT
       FROM C_INVOICELINE_ACCTDIMENSION
-      WHERE AD_CLIENT_ID = ?
-      AND AD_ORG_ID = ?
-      AND C_INVOICELINE_ID = ?
+      WHERE AD_CLIENT_ID = TO_NUMBER(?)
+      AND AD_ORG_ID = TO_NUMBER(?)
+      AND C_INVOICELINE_ID = TO_NUMBER(?)
       AND ISACTIVE = 'Y'
       GROUP BY C_INVOICELINE_ACCTDIMENSION_ID
       ]]></Sql>
     <Parameter name="adClientId"/>
     <Parameter name="adOrgId"/>
     <Parameter name="cInvoicelineId"/>
-    <Parameter name="cProjectId" optional="true" after="AND ISACTIVE = 'Y'"><![CDATA[ AND C_PROJECT_ID = ?]]></Parameter>
-    <Parameter name="cCampaignId" optional="true" after="AND ISACTIVE = 'Y'"><![CDATA[ AND C_CAMPAIGN_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND ISACTIVE = 'Y'"><![CDATA[ AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cCampaignId" optional="true" after="AND ISACTIVE = 'Y'"><![CDATA[ AND C_CAMPAIGN_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectLine" type="preparedStatement" connection="true" return="String" default="10">
@@ -123,7 +123,7 @@
     <Sql><![CDATA[
       SELECT MAX(LINE) AS LINE
       FROM C_INVOICELINE
-      WHERE C_INVOICE_ID = ?
+      WHERE C_INVOICE_ID = TO_NUMBER(?)
       ]]></Sql>
     <Parameter name="cInvoiceId"/>
   </SqlMethod>
@@ -169,7 +169,7 @@
     <![CDATA[
      SELECT C_DocTypeInvoice_ID
      FROM C_DOCTYPE
-     WHERE C_DocType_ID = ?
+     WHERE C_DocType_ID = TO_NUMBER(?)
     ]]>
     </Sql>
   <Parameter name="cDoctypeId"/>
@@ -179,7 +179,7 @@
      <Sql>
      <![CDATA[
        SELECT NAME FROM C_BPARTNER
-       WHERE C_BPARTNER_ID = ?
+       WHERE C_BPARTNER_ID = TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -190,7 +190,7 @@
       <![CDATA[
         SELECT MAX(C_BPARTNER_LOCATION_ID) AS ID
         FROM C_BPARTNER_LOCATION
-        WHERE C_BPARTNER_ID = ?
+        WHERE C_BPARTNER_ID = TO_NUMBER(?)
         AND ISBILLTO = 'Y'
       ]]></Sql>
     <Parameter name="cBpartnerId"/>
@@ -202,7 +202,7 @@
       <![CDATA[
         SELECT MAX(C_BPARTNER_LOCATION_ID) AS ID
         FROM C_BPARTNER_LOCATION
-        WHERE C_BPARTNER_ID = ?
+        WHERE C_BPARTNER_ID = TO_NUMBER(?)
         AND ISSHIPTO = 'Y'
       ]]></Sql>
     <Parameter name="cBpartnerId"/>
@@ -214,7 +214,7 @@
       <![CDATA[
       SELECT MAX(AD_USER_ID)
       FROM AD_USER
-      WHERE C_BPARTNER_ID = ?
+      WHERE C_BPARTNER_ID = TO_NUMBER(?)
      ]]></Sql>
       <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -225,7 +225,7 @@
       <![CDATA[
       SELECT PaymentrulePO
       FROM C_BPARTNER
-      WHERE C_BPARTNER_ID = ?
+      WHERE C_BPARTNER_ID = TO_NUMBER(?)
       ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -236,7 +236,7 @@
       <![CDATA[
       SELECT PO_PriceList_ID
       FROM C_BPartner
-      WHERE C_BPartner_ID = ?
+      WHERE C_BPartner_ID = TO_NUMBER(?)
      ]]></Sql>
       <Parameter name="cBpartnerId"/>
     </SqlMethod>
@@ -247,7 +247,7 @@
       <![CDATA[
       SELECT Pricelist, Pricestd, Pricelimit
       FROM M_ProductPrice
-      WHERE M_ProductPrice.M_Product_ID = ?
+      WHERE M_ProductPrice.M_Product_ID = TO_NUMBER(?)
       AND M_ProductPrice.M_PriceList_Version_ID = get_pricelist_version(TO_NUMBER(?), TO_DATE(?)) 
       ]]></Sql>
     <Parameter name="mProductID"/>
@@ -261,7 +261,7 @@
       <![CDATA[
         SELECT PO_PaymentTerm_ID
         FROM C_BPARTNER
-        WHERE C_BPARTNER_ID = ?
+        WHERE C_BPARTNER_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -272,7 +272,7 @@
       <![CDATA[
         SELECT M_PRODUCT_UOM_ID
         FROM M_PRODUCT_UOM
-        WHERE M_PRODUCT_ID = ?
+        WHERE M_PRODUCT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -592,8 +592,8 @@ TO_NUMBER(?)
 
   <SqlMethod name="updateExpense" type="preparedStatement" connection="true" return="rowCount">
     <Sql><![CDATA[
-        UPDATE S_TimeExpenseLine SET C_InvoiceLine_ID = ?
-        WHERE S_TimeExpenseLine_ID = ?
+        UPDATE S_TimeExpenseLine SET C_InvoiceLine_ID = TO_NUMBER(?)
+        WHERE S_TimeExpenseLine_ID = TO_NUMBER(?)
     ]]></Sql>
   <Parameter name="cInvoiceLineId"/>
   <Parameter name="sTimeExpenseLineId"/>
@@ -602,7 +602,7 @@ TO_NUMBER(?)
  <SqlMethod name="updateInvoiceline" type="preparedStatement" connection="true" return="rowCount">
    <Sql><![CDATA[
         UPDATE C_INVOICELINE SET QTYINVOICED = ?, LINENETAMT = ?
-        WHERE C_INVOICELINE_ID = ?
+        WHERE C_INVOICELINE_ID = TO_NUMBER(?)
     ]]></Sql>
   <Parameter name="qtyinvoiced"/>
   <Parameter name="linenetamt"/>
@@ -612,7 +612,7 @@ TO_NUMBER(?)
 <SqlMethod name="updateAcctdimension" type="preparedStatement" connection="true" return="rowCount">
   <Sql><![CDATA[
       UPDATE C_INVOICELINE_ACCTDIMENSION SET AMT = ?
-      WHERE C_INVOICELINE_ACCTDIMENSION_ID = ?
+      WHERE C_INVOICELINE_ACCTDIMENSION_ID = TO_NUMBER(?)
     ]]></Sql>
   <Parameter name="qtyinvoiced"/>
   <Parameter name="cInvoicelineId"/>

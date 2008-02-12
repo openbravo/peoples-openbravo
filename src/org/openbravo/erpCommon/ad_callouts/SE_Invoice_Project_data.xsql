@@ -29,7 +29,7 @@
       <![CDATA[
         SELECT C_PROJECT.C_PAYMENTTERM_ID AS PAYMENTTERM, C_PROJECT.PAYMENTRULE AS PAYMENTRULE
         FROM C_PROJECT
-        WHERE C_PROJECT_ID=?
+        WHERE C_PROJECT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cProjectId"/>

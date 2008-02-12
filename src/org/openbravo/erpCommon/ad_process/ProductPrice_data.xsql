@@ -33,8 +33,8 @@
 				INNER JOIN  M_PriceList_Version pv ON (pp.M_PriceList_Version_ID=pv.M_PriceList_Version_ID)
 				INNER JOIN M_Pricelist pl ON (pv.M_PriceList_ID=pl.M_PriceList_ID)
 				WHERE pv.IsActive='Y'
-				AND p.M_Product_ID=?
-				AND pv.M_PriceList_Version_ID=?
+				AND p.M_Product_ID = TO_NUMBER(?)
+				AND pv.M_PriceList_Version_ID = TO_NUMBER(?)
 			]]>
     </Sql>
     <Parameter name="mProductId"/>
@@ -54,8 +54,8 @@
 				INNER JOIN  M_PriceList_Version pv ON (pp.M_PriceList_Version_ID=pv.M_PriceList_Version_ID)
 				INNER JOIN M_Pricelist pl ON (pv.M_PriceList_ID=pl.M_PriceList_ID)
 				WHERE pv.IsActive='Y'
-				AND p.M_Product_ID=?
-				AND pv.M_PriceList_ID=?
+				AND p.M_Product_ID = TO_NUMBER(?)
+				AND pv.M_PriceList_ID = TO_NUMBER(?)
 				ORDER BY pv.ValidFrom DESC
 			]]>
     </Sql>
@@ -69,7 +69,7 @@
       <![CDATA[
 				select max(c_tax_id)
 				from c_tax
-				where ad_client_id = ?
+				where ad_client_ID = TO_NUMBER(?)
 				and isdefault = 'Y'
 			]]>
     </Sql>
@@ -93,7 +93,7 @@
       <![CDATA[
 				SELECT C_UOM_ID
 				FROM M_Product
-				WHERE M_Product_ID=?
+				WHERE M_Product_ID = TO_NUMBER(?)
 			]]>
     </Sql>
 		<Parameter name="mProductId"/>

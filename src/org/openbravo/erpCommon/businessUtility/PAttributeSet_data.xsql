@@ -36,7 +36,7 @@
                                                         and A_U.ISACTIVE = 'Y'
          
         WHERE  A_S.ISACTIVE = 'Y'
-        AND A_S.M_ATTRIBUTESET_ID = ? 
+        AND A_S.M_ATTRIBUTESET_ID = TO_NUMBER(?) 
         ORDER BY A_U.SEQNO
       ]]></Sql>
         <Parameter name="mAttributesetId"/>
@@ -50,7 +50,7 @@
       <Sql> <![CDATA[
          SELECT P.m_attributeset_id, P.m_attributesetinstance_id, M.DESCRIPTION 
          FROM M_PRODUCT P left join M_ATTRIBUTESETINSTANCE M on P.M_ATTRIBUTESETINSTANCE_ID = M.M_ATTRIBUTESETINSTANCE_ID
-         WHERE P.m_product_id=?
+         WHERE P.m_product_ID = TO_NUMBER(?)
       ]]></Sql>
         <Parameter name="mProductId"/>
    </SqlMethod>

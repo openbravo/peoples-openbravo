@@ -28,7 +28,7 @@
     <Sql>
       <![CDATA[
         SELECT C_BPARTNER_ID FROM AD_ORGINFO
-        WHERE AD_ORG_ID = ?
+        WHERE AD_ORG_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="org"/>
@@ -37,7 +37,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        select iso_code from c_currency where c_currency_id = ?
+        select iso_code from c_currency where c_currency_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="currencyId"/>
@@ -47,7 +47,7 @@
     <Sql>
       <![CDATA[
         SELECT COALESCE(MAX(line),0) + 10 FROM c_cashline
-        WHERE c_cash_id =?
+        WHERE c_cash_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cashId"/>
@@ -58,7 +58,7 @@
       <![CDATA[
         SELECT MAX(C.C_CASH_ID)
         FROM C_CASH C
-        WHERE C.C_CASHBOOK_ID=?
+        WHERE C.C_CASHBOOK_ID = TO_NUMBER(?)
         AND C.DATEACCT = TO_DATE(?)
         AND C.PROCESSED = 'N'
       ]]>
@@ -80,7 +80,7 @@
     <Sql>
       <![CDATA[
       SELECT c_currency_id FROM C_BANKACCOUNT
-      WHERE c_bankaccount_id = ?
+      WHERE c_bankaccount_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="bankAccount"/>
@@ -90,7 +90,7 @@
     <Sql>
       <![CDATA[
       SELECT c_currency_id FROM C_CASHBOOK
-      WHERE c_cashbook_id = ?
+      WHERE c_cashbook_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cashBook"/>
@@ -215,7 +215,7 @@
     <Sql>
       <![CDATA[
         UPDATE C_SETTLEMENT SET PROCESSED = 'Y'
-        WHERE C_SETTLEMENT_ID = ?
+        WHERE C_SETTLEMENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="settlementId"/>
@@ -224,7 +224,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT NAME FROM C_CASHBOOK WHERE C_CASHBOOK_ID = ?
+        SELECT NAME FROM C_CASHBOOK WHERE C_CASHBOOK_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cashBook"/>

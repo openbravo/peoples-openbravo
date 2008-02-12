@@ -85,7 +85,7 @@
     <Sql>
       <![CDATA[
       UPDATE AD_ClientInfo SET C_AcctSchema1_ID = TO_NUMBER(?), C_Calendar_ID = TO_NUMBER(?)
-      WHERE AD_Client_ID = ?
+      WHERE AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="C_AcctSchema_ID"/>
@@ -270,7 +270,7 @@
     <Sql>
       <![CDATA[
       UPDATE C_AcctSchema_Element SET Org_ID=  TO_NUMBER(?)
-      WHERE C_AcctSchema_Element_ID= ?
+      WHERE C_AcctSchema_Element_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="AD_Org_ID"/>
@@ -281,7 +281,7 @@
     <Sql>
       <![CDATA[
       UPDATE C_AcctSchema_Element SET C_ElementValue_ID= TO_NUMBER(?), C_Element_ID= TO_NUMBER(?)
-      WHERE C_AcctSchema_Element_ID=?
+      WHERE C_AcctSchema_Element_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="C_ElementValue_ID"/>
@@ -293,7 +293,7 @@
     <Sql>
       <![CDATA[
       UPDATE C_AcctSchema_Element SET C_Project_ID = TO_NUMBER(?)
-      WHERE C_AcctSchema_ID = ?
+      WHERE C_AcctSchema_ID = TO_NUMBER(?)
       AND ElementType='PJ'
       ]]>
     </Sql>
@@ -509,7 +509,7 @@
     <Sql>
         SELECT MAX(AD_TREE_ID) AS ID 
         FROM AD_TREE
-        WHERE AD_CLIENT_ID = ? 
+        WHERE AD_CLIENT_ID = TO_NUMBER(?) 
         AND TREETYPE = 'EV'
     </Sql>
     <Parameter name="client"/>
@@ -520,7 +520,7 @@
         SELECT C_ELEMENTVALUE_ID AS ID 
         FROM C_ELEMENTVALUE
         WHERE VALUE = ? 
-        AND AD_CLIENT_ID = ?
+        AND AD_CLIENT_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="value"/>
     <Parameter name="client"/>
@@ -547,7 +547,7 @@
     <Sql>
       SELECT Description
       FROM C_Currency 
-      where  C_Currency_ID = ?
+      where  C_Currency_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="moneda"/>
   </SqlMethod>
@@ -582,7 +582,7 @@
     <Sql>
       UPDATE C_AcctSchema_Element 
       SET C_SalesRegion_ID = TO_NUMBER(?)
-      WHERE C_AcctSchema_ID= ?
+      WHERE C_AcctSchema_ID = TO_NUMBER(?)
       AND ElementType='SR'
     </Sql>
     <Parameter name="C_SalesRegion_ID"/>
@@ -593,7 +593,7 @@
     <Sql>
       UPDATE C_AcctSchema_Element 
       SET C_Campaign_ID = TO_NUMBER(?)
-      WHERE C_AcctSchema_ID= ?
+      WHERE C_AcctSchema_ID = TO_NUMBER(?)
       AND ElementType='MC'
     </Sql>
     <Parameter name="C_Campaign_ID"/>
@@ -604,7 +604,7 @@
     <Sql>
       UPDATE C_AcctSchema_Element 
       SET C_BPartner_ID = TO_NUMBER(?)
-      WHERE C_AcctSchema_ID= ?
+      WHERE C_AcctSchema_ID = TO_NUMBER(?)
       AND ElementType='BP'
     </Sql>
     <Parameter name="C_BPartner_ID"/>
@@ -615,7 +615,7 @@
     <Sql>
       UPDATE C_AcctSchema_Element 
       SET M_Product_ID = TO_NUMBER(?)
-      WHERE C_AcctSchema_ID= ?
+      WHERE C_AcctSchema_ID = TO_NUMBER(?)
       AND ElementType='PR'
     </Sql>
     <Parameter name="M_Product_ID"/>
@@ -738,7 +738,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE AD_OrgInfo SET C_Location_ID = TO_NUMBER(?)
-      WHERE AD_Org_ID = ?
+      WHERE AD_Org_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="C_Location_ID"/>
     <Parameter name="AD_Org_ID"/>
@@ -774,7 +774,7 @@
     <Sql>
       UPDATE AD_ClientInfo 
       SET C_BPartnerCashTrx_ID = TO_NUMBER(?), M_ProductFreight_ID = TO_NUMBER(?)
-      WHERE AD_Client_ID = ?
+      WHERE AD_Client_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="C_BPartner_ID"/>
     <Parameter name="M_Product_ID"/>
@@ -856,7 +856,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE AD_User SET C_BPartner_ID = TO_NUMBER(?)
-      WHERE AD_User_ID = ?
+      WHERE AD_User_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="C_BPartner_ID"/>
     <Parameter name="AD_User_U_ID"/>

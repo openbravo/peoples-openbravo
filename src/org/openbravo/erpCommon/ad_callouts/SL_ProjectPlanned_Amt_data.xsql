@@ -31,7 +31,7 @@
       WHERE C_Projectline.C_Project_ID = C_Project.C_Project_ID
       AND C_Project.M_PriceList_ID = M_PriceList.M_PriceList_ID
       AND M_PriceList.C_Currency_ID = C_Currency.C_Currency_ID
-      AND C_Projectline.C_Projectline_ID = ?
+      AND C_Projectline.C_Projectline_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cProjectId"/>
   </SqlMethod>
@@ -40,8 +40,8 @@
     <Sql>
       SELECT PRICELIMIT 
       FROM M_PRODUCTPRICE 
-      WHERE M_PRICELIST_VERSION_ID = ? 
-      AND M_PRODUCT_ID=?
+      WHERE M_PRICELIST_VERSION_ID = TO_NUMBER(?) 
+      AND M_PRODUCT_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="mPricelistVersionId"/>
     <Parameter name="mProductId"/>
@@ -51,7 +51,7 @@
       <Sql>
         UPDATE C_PROJECTLINE SET 
         PLANNEDAMT = TO_NUMBER(?), UPDATED = now(), UPDATEDBY = TO_NUMBER(?)
-        WHERE C_PROJECTLINE_ID = ?
+        WHERE C_PROJECTLINE_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="plannedAmt"/>
       <Parameter name="updatedby"/>

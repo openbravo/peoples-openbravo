@@ -32,7 +32,7 @@
         F.ACCTVALUE AS VALUE, F.ACCTDESCRIPTION AS NAME,
         (CASE F.AMTACCTDR WHEN 0 THEN NULL ELSE F.AMTACCTDR END) AS AMTACCTDR, (CASE F.AMTACCTCR WHEN 0 THEN NULL ELSE F.AMTACCTCR END) AS AMTACCTCR, F.DESCRIPTION
         FROM FACT_ACCT F
-        WHERE FACT_ACCT_GROUP_ID = ?
+        WHERE FACT_ACCT_GROUP_ID = TO_NUMBER(?)
         AND (DATEACCT = TO_DATE(?) OR TO_DATE(?) = NULL)
         ORDER BY F.FACT_ACCT_GROUP_ID, F.SEQNO
       ]]></Sql>
@@ -52,7 +52,7 @@
         FROM FACT_ACCT F
         WHERE FACT_ACCT_GROUP_ID IN (SELECT DISTINCT FACT_ACCT_GROUP_ID
                                        FROM FACT_ACCT
-                                      WHERE RECORD_ID2=?)
+                                      WHERE RECORD_ID2=TO_NUMBER(?))
         ORDER BY F.DATEACCT, F.FACT_ACCT_GROUP_ID, F.SEQNO
         ]]></Sql>
     <Field name="rownum" value="count"/>

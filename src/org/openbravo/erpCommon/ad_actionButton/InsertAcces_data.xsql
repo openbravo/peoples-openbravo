@@ -43,8 +43,8 @@
     <Sql>
     <![CDATA[
         select 1 from ad_window_Access
-        where ad_role_id=?
-        and ad_window_id=?
+        where ad_role_ID = TO_NUMBER(?)
+        and ad_window_ID = TO_NUMBER(?)
     ]]>
     </Sql>
         <Parameter name="roleId"/>
@@ -72,8 +72,8 @@
     <Sql>
     <![CDATA[
         select 1 from ad_process_Access
-        where ad_role_id=?
-        and ad_process_id=?
+        where ad_role_ID = TO_NUMBER(?)
+        and ad_process_ID = TO_NUMBER(?)
     ]]>
     </Sql>
         <Parameter name="roleId"/>
@@ -101,8 +101,8 @@
     <Sql>
     <![CDATA[
         select 1 from ad_form_Access
-        where ad_role_id=?
-        and ad_form_id=?
+        where ad_role_ID = TO_NUMBER(?)
+        and ad_form_ID = TO_NUMBER(?)
     ]]>
     </Sql>
         <Parameter name="roleId"/>
@@ -130,8 +130,8 @@
     <Sql>
     <![CDATA[
         select 1 from ad_workflow_Access
-        where ad_role_id=?
-        and ad_workflow_id=?
+        where ad_role_ID = TO_NUMBER(?)
+        and ad_workflow_ID = TO_NUMBER(?)
     ]]>
     </Sql>
         <Parameter name="roleId"/>
@@ -159,8 +159,8 @@
     <Sql>
     <![CDATA[
         select 1 from ad_task_Access
-        where ad_role_id=?
-        and ad_task_id=?
+        where ad_role_ID = TO_NUMBER(?)
+        and ad_task_ID = TO_NUMBER(?)
     ]]>
     </Sql>
         <Parameter name="roleId"/>

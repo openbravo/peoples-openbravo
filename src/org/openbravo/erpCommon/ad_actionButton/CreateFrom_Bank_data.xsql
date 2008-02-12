@@ -59,15 +59,15 @@
     <Parameter name="userClient" optional="true" type="replace" after="AND p.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="userOrg" optional="true" type="replace" after="AND p.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adLanguage"/>
-    <Parameter name="cBPartnerId" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.C_BPARTNER_ID = ? "/>
+    <Parameter name="cBPartnerId" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.C_BPARTNER_ID = TO_NUMBER(?) "/>
     <Parameter name="paymentrule" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.PAYMENTRULE = ? "/>
     <Parameter name="planneddateFrom" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)"><![CDATA[ AND p.DATEPLANNED >= TO_DATE(?) ]]></Parameter>
     <Parameter name="planneddateTo" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)"><![CDATA[ AND p.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
     <Parameter name="amountFrom" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)"><![CDATA[ AND p.AMOUNT >= ? ]]></Parameter>
     <Parameter name="amountTo" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)"><![CDATA[ AND p.AMOUNT <= ? ]]></Parameter>
     <Parameter name="isreceipt" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.ISRECEIPT = ? "/>
-    <Parameter name="cBankaccountId" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.C_BankAccount_ID = ? "/>
-    <Parameter name="adOrgId" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.AD_ORG_ID = ? "/>
+    <Parameter name="cBankaccountId" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.C_BankAccount_ID = TO_NUMBER(?) "/>
+    <Parameter name="adOrgId" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.AD_ORG_ID = TO_NUMBER(?) "/>
     <Parameter name="ischarge" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.ISPAID = ? "/>
     <Parameter name="invoice" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND EXISTS (SELECT 1 FROM C_INVOICE WHERE p.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID AND DOCUMENTNO LIKE TO_CHAR(?))"/>
   </SqlMethod>
@@ -78,7 +78,7 @@
       <![CDATA[
         SELECT COUNT(*) 
         FROM C_DEBT_Payment_v p 
-        WHERE p.C_Debt_Payment_ID = ? 
+        WHERE p.C_Debt_Payment_ID = TO_NUMBER(?) 
         AND C_DEBT_PAYMENT_STATUS(p.C_Settlement_Cancel_ID, p.Cancel_Processed, p.Generate_Processed, 
         p.IsPaid, p.IsValid, p.C_CashLine_ID, p.C_BankStatementLine_ID) IN ('P', 'A') 
         AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)
@@ -89,7 +89,7 @@
   <SqlMethod name="bpartner" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID=?
+      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -110,23 +110,23 @@
         SELECT TO_NUMBER(?),TO_NUMBER(?),p.AD_ORG_ID, 
                'Y', now(), TO_NUMBER(?), 
                now(), TO_NUMBER(?), TO_NUMBER(?), 
-               TO_DATE(?), TO_DATE(?), (SELECT (COALESCE(Max(Line),0))+10 FROM C_BankStatementLine WHERE C_BankStatement_ID=?), 'N', 
+               TO_DATE(?), TO_DATE(?), (SELECT (COALESCE(Max(Line),0))+10 FROM C_BankStatementLine WHERE C_BankStatement_ID = TO_NUMBER(?)), 'N', 
                p.C_Debt_Payment_ID, Description, 
                C_Currency_Convert(p.Amount,p.C_Currency_ID, (SELECT A.C_CURRENCY_ID
                                                               FROM C_BANKSTATEMENT S, C_BANKACCOUNT A 
                                                               WHERE S.C_BANKACCOUNT_ID = A.C_BANKACCOUNT_ID 
-                                                              AND S.C_BankStatement_ID = ?),TO_DATE(?),null,p.AD_Client_ID,p.AD_Org_ID),
+                                                              AND S.C_BankStatement_ID = TO_NUMBER(?)),TO_DATE(?),null,p.AD_Client_ID,p.AD_Org_ID),
                TO_NUMBER(?),
                (SELECT A.C_CURRENCY_ID
                   FROM C_BANKSTATEMENT S, C_BANKACCOUNT A 
                   WHERE S.C_BANKACCOUNT_ID = A.C_BANKACCOUNT_ID 
-                  AND S.C_BankStatement_ID = ?), 
+                  AND S.C_BankStatement_ID = TO_NUMBER(?)), 
                C_Currency_Convert(p.Amount,p.C_Currency_ID, (SELECT A.C_CURRENCY_ID
                                                                               FROM C_BANKSTATEMENT S, C_BANKACCOUNT A 
                                                                               WHERE S.C_BANKACCOUNT_ID = A.C_BANKACCOUNT_ID 
-                                                                              AND S.C_BankStatement_ID = ?),TO_DATE(?),null,p.AD_Client_ID,p.AD_Org_ID)- TO_NUMBER(?)
+                                                                              AND S.C_BankStatement_ID = TO_NUMBER(?)),TO_DATE(?),null,p.AD_Client_ID,p.AD_Org_ID)- TO_NUMBER(?)
         FROM C_Debt_Payment_v p 
-        WHERE p.C_Debt_Payment_ID=?
+        WHERE p.C_Debt_Payment_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cBankstatementlineId"/>

@@ -27,7 +27,7 @@
       <Sql>
         SELECT ARGNO AS argno, ARGHELP1 AS arghelp1, ARGHELP2 AS arghelp2, ARGHELP3 AS arghelp3
         FROM AT_Command
-        WHERE AT_Command_Id = ?
+        WHERE AT_Command_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="atCommandId"/>
    </SqlMethod>
@@ -59,7 +59,7 @@
       <Sql>
         SELECT count(*)
         FROM AT_Line
-        WHERE AT_Test_Id = ?
+        WHERE AT_Test_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="atTestId"/>
    </SqlMethod>

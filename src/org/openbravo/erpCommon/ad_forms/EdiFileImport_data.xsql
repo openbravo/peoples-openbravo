@@ -37,7 +37,7 @@
 				C_ORDERLINE_ID, LINEDESCRIPTION, C_UOM_ID, QTYORDERED, PRICEACTUAL, FREIGHTAMT, C_CAMPAIGN_ID, DATEORDERED,
 				DATEPROMISED, ORDER_REFERENCENO, BPARTNERUPC, BILLTO_UPC, C_BPARTNER_LOCATION_UPC, VENDOR_UPC
 				from i_order
-				where I_ORDER_ID = ?
+				where I_ORDER_ID = TO_NUMBER(?)
 			]]></Sql>
 		<Parameter name="iOrderId"/>
 	</SqlMethod>
@@ -81,7 +81,7 @@
 		<Sql>
 			<![CDATA[
 				DELETE FROM I_ORDER
-				where ad_client_id = ?
+				where ad_client_ID = TO_NUMBER(?)
 		]]>
 		</Sql>
 		<Parameter name="client"/>

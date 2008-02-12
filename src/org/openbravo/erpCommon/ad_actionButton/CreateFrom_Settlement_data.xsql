@@ -58,7 +58,7 @@
     <Parameter name="userClient" optional="true" type="replace" after="AND DP.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="userOrg" optional="true" type="replace" after="AND DP.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="language"/>
-    <Parameter name="cBPartnerId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.C_BPARTNER_ID = ? "/>
+    <Parameter name="cBPartnerId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.C_BPARTNER_ID = TO_NUMBER(?) "/>
     <Parameter name="paymentrule" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.PAYMENTRULE = ? "/>
     <Parameter name="planneddateFrom" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.DATEPLANNED >= TO_DATE(?) ]]></Parameter>
     <Parameter name="planneddateTo" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
@@ -66,12 +66,12 @@
     <Parameter name="amountFrom" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.AMOUNT >= ? ]]></Parameter>
     <Parameter name="amountTo" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.AMOUNT <= ? ]]></Parameter>
     <Parameter name="amount" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND ABS(DP.AMOUNT) < ? ]]></Parameter>
-    <Parameter name="adOrgId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.AD_Org_ID = ? "/>
+    <Parameter name="adOrgId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.AD_Org_ID = TO_NUMBER(?) "/>
   </SqlMethod>
   <SqlMethod name="bpartner" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID=?
+      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -80,7 +80,7 @@
     <Sql><![CDATA[
       SELECT COUNT(*) 
       FROM C_DEBT_PAYMENT DP 
-      WHERE DP.C_DEBT_PAYMENT_ID = ? 
+      WHERE DP.C_DEBT_PAYMENT_ID = TO_NUMBER(?) 
       AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.Cancel_Processed, DP.Generate_Processed, 
       DP.IsPaid, DP.IsValid, DP.C_CashLine_ID, DP.C_BankStatementLine_ID)='P' 
       AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE DP.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID) 
@@ -93,7 +93,7 @@
     <Sql>
       <![CDATA[
         UPDATE C_DEBT_PAYMENT SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), C_SETTLEMENT_CANCEL_ID=TO_NUMBER(?), WRITEOFFAMT=TO_NUMBER(?), ISPAID=? 
-        WHERE C_DEBT_PAYMENT_ID = ?
+        WHERE C_DEBT_PAYMENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adUserId"/>

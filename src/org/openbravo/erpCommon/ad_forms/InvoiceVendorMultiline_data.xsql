@@ -100,7 +100,7 @@
       WHERE	 I.ISSOTRX  = 'N'
        AND	195  = L.AD_REFERENCE_ID
        AND	I.PAYMENTRULE  = L.VALUE
-       AND	I.C_INVOICE_ID  = ?
+       AND	I.C_INVOICE_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="dateformat"/>
@@ -162,7 +162,7 @@
       FROM C_DocType
       WHERE C_DocType.AD_Org_ID IN('1') 
       AND C_DocType.AD_Client_ID IN('1') 
-      AND C_DocType.AD_Client_ID=? 
+      AND C_DocType.AD_Client_ID = TO_NUMBER(?) 
       AND C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC') 
       AND C_DocType.IsSOTrx=? 
       AND C_DocType.isActive = 'Y'
@@ -221,7 +221,7 @@
         CreateFrom = ?, GenerateTo = ?, C_Project_ID = TO_NUMBER(?), C_Activity_ID = TO_NUMBER(?), C_Campaign_ID = TO_NUMBER(?), AD_OrgTrx_ID = TO_NUMBER(?), 
         User1_ID = TO_NUMBER(?), User2_ID = TO_NUMBER(?), DocStatus = ?, C_DocType_ID = TO_NUMBER(?), CopyFrom = ?, 
         DocAction = ?, Posted = ?, updated = now(), updatedby = TO_NUMBER(?) 
-        WHERE C_Invoice.C_Invoice_ID = ? 
+        WHERE C_Invoice.C_Invoice_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="istransferred"></Parameter> 
     <Parameter name="sendemail"></Parameter> 
@@ -336,7 +336,7 @@
   <SqlMethod name="delete" type="preparedStatement" return="rowCount">
     <Sql><![CDATA[
         DELETE FROM C_INVOICE 
-        WHERE C_INVOICE.C_INVOICE_ID = ? 
+        WHERE C_INVOICE.C_INVOICE_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="cInvoiceId"/>
     

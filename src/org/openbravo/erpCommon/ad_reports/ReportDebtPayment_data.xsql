@@ -71,7 +71,7 @@
       <Parameter name="adLanguage"/>
       <Parameter name="adUserClient" type="replace" optional="true" after="DP.AD_Client_ID IN (" text="'1'"/>
       <Parameter name="adUserOrg" type="replace" optional="true" after="DP.AD_Org_ID IN (" text="'1'"/>
-      <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID=? ]]></Parameter>
+      <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
       <Parameter name="dateFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned >= to_date(?) ]]></Parameter>
       <Parameter name="dateTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned < to_date(?) ]]></Parameter>
       <Parameter name="AmountFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount >= ? ]]></Parameter>
@@ -81,7 +81,7 @@
       <Parameter name="status" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.status=? ]]></Parameter>
       <Parameter name="isSettle" optional="true" type="argument" after="DP.IsValid='Y'" text="AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, 
       DP.C_CASHLINE_ID, DP.C_BANKSTATEMENTLINE_ID) IN"/>
-      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID= ? ]]></Parameter>
+      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID = TO_NUMBER(?) ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectNoBpartner" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -130,7 +130,7 @@
       <Parameter name="adLanguage"/>
       <Parameter name="adUserClient" type="replace" optional="true" after="DP.AD_Client_ID IN (" text="'1'"/>
       <Parameter name="adUserOrg" type="replace" optional="true" after="DP.AD_Org_ID IN (" text="'1'"/>
-      <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID=? ]]></Parameter>
+      <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
       <Parameter name="dateFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned >= to_date(?) ]]></Parameter>
       <Parameter name="dateTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned < to_date(?) ]]></Parameter>
       <Parameter name="AmountFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount >= ? ]]></Parameter>
@@ -140,7 +140,7 @@
       <Parameter name="status" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.status=? ]]></Parameter>
       <Parameter name="isSettle" optional="true" type="argument" after="DP.IsValid='Y'" text="AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, 
       DP.C_CASHLINE_ID, DP.C_BANKSTATEMENTLINE_ID) IN"/>
-      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID= ? ]]></Parameter>
+      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID = TO_NUMBER(?) ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -150,7 +150,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT NAME FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = ?
+    WHERE C_BPARTNER_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>

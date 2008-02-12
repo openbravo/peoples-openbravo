@@ -29,7 +29,7 @@
                '' as n
 			  FROM I_Tax
 			  WHERE I_IsImported='N'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -42,7 +42,7 @@
         SELECT C_TaxCategory_ID
 			  FROM C_TaxCategory
 			  WHERE Name = ?
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="name"/>
@@ -56,7 +56,7 @@
         SELECT C_BP_TaxCategory_ID
 			  FROM C_BP_TaxCategory
 			  WHERE Name = ?
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="name"/>
@@ -70,7 +70,7 @@
         SELECT C_Tax_ID
 			  FROM C_Tax
 			  WHERE Name = ?
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="name"/>
@@ -83,7 +83,7 @@
     <Sql>
       <![CDATA[
       DELETE FROM I_Tax WHERE I_IsImported='Y'
-      AND AD_Client_ID = ?
+      AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -123,7 +123,7 @@
 			  WHERE C_TaxCategory_ID IS NULL
         AND TC_Name IS NOT NULL
 			  AND I_IsImported='N'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -143,7 +143,7 @@
 			  WHERE C_BP_TaxCategory_ID IS NULL
         AND BPTC_Name IS NOT NULL
 			  AND I_IsImported='N'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -163,7 +163,7 @@
 			  WHERE C_Tax_ID IS NULL
         AND T_Name IS NOT NULL
 			  AND I_IsImported='N'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -183,7 +183,7 @@
 			  WHERE C_Country_ID IS NULL
         AND from_code_Country IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -198,7 +198,7 @@
 			  WHERE C_Country_ID IS NULL
           AND from_code_Country IS NOT NULL
   			  AND I_IsImported<>'Y'
-          AND AD_Client_ID = ?
+          AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -218,7 +218,7 @@
 			  WHERE TO_Country_ID IS NULL
         AND to_code_Country IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -233,7 +233,7 @@
 			  WHERE TO_Country_ID IS NULL
           AND to_code_Country IS NOT NULL
   			  AND I_IsImported<>'Y'
-          AND AD_Client_ID = ?
+          AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -253,7 +253,7 @@
 			  WHERE C_Region_ID IS NULL
         AND from_code_Region IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -268,7 +268,7 @@
 			  WHERE C_Region_ID IS NULL
           AND from_code_Region IS NOT NULL
   			  AND I_IsImported<>'Y'
-          AND AD_Client_ID = ?
+          AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -288,7 +288,7 @@
 			  WHERE TO_Region_ID IS NULL
         AND to_code_Region IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -303,7 +303,7 @@
 			  WHERE TO_Region_ID IS NULL
           AND to_code_Region IS NOT NULL
   			  AND I_IsImported<>'Y'
-          AND AD_Client_ID = ?
+          AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -324,7 +324,7 @@
             'Y',now(),CreatedBy,now(),UpdatedBy,
             TC_Name, TC_Description, TC_commodityCode
 			  	  FROM I_Tax
-				    WHERE I_Tax_ID=?
+				    WHERE I_Tax_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="CTaxCategoryID"/>
@@ -337,10 +337,10 @@
       <![CDATA[
 			  UPDATE C_TaxCategory 
            SET updated = now(),
-               updatedBy = (SELECT updatedBy FROM I_Tax WHERE I_Tax_ID = ?),
-               description = COALESCE((SELECT TC_Description FROM I_Tax WHERE I_Tax_ID = ?),description),
-               commodityCode = COALESCE((SELECT TC_commodityCode FROM I_Tax WHERE I_Tax_ID = ?),commodityCode)
-         WHERE C_TaxCategory_ID = ?
+               updatedBy = (SELECT updatedBy FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),
+               description = COALESCE((SELECT TC_Description FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),description),
+               commodityCode = COALESCE((SELECT TC_commodityCode FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),commodityCode)
+         WHERE C_TaxCategory_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ITaxID"/>
@@ -361,7 +361,7 @@
             'Y',now(),CreatedBy,now(),UpdatedBy,
             BPTC_Name, BPTC_Description
 			  	  FROM I_Tax
-				    WHERE I_Tax_ID=?
+				    WHERE I_Tax_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="CBPTaxCategoryID"/>
@@ -374,9 +374,9 @@
       <![CDATA[
 			  UPDATE C_BP_TaxCategory 
            SET updated        = now(),
-               updatedBy      = (SELECT updatedBy FROM I_Tax WHERE I_Tax_ID = ?),
-               description    = COALESCE((SELECT BPTC_Description FROM I_Tax WHERE I_Tax_ID = ?),description)
-         WHERE C_BP_TaxCategory_ID = ?
+               updatedBy      = (SELECT updatedBy FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),
+               description    = COALESCE((SELECT BPTC_Description FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),description)
+         WHERE C_BP_TaxCategory_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ITaxID"/>
@@ -398,7 +398,7 @@
             parent_Name, COALESCE(ValidFrom,now()), 0,
             TO_NUMBER(?)
 			  	  FROM I_Tax
-				    WHERE I_Tax_ID=?
+				    WHERE I_Tax_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="TaxID"/>
@@ -424,7 +424,7 @@
             TAXINDICATOR, COALESCE(ISSUMMARY,'N'), COALESCE(ISTAXEXEMPT,'N'),    
             COALESCE(SOPOTYPE,'B'), LINE, COALESCE(CASCADE,'N')
 			  	  FROM I_Tax
-				    WHERE I_Tax_ID=?
+				    WHERE I_Tax_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="TaxID"/>
@@ -571,7 +571,7 @@
       <![CDATA[
         UPDATE I_Tax
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||?
-				WHERE I_Tax_ID=?
+				WHERE I_Tax_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="error"/>
@@ -586,7 +586,7 @@
         SET I_IsImported='Y', 
             C_TaxCategory_ID=TO_NUMBER(?),
             Updated=now(), Processed='Y'
-        WHERE I_Tax_ID=?
+        WHERE I_Tax_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="CTaxCategoryID"/>
@@ -599,7 +599,7 @@
       <![CDATA[
         UPDATE I_Tax
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Set Imported, '
-				WHERE I_Tax_ID=?
+				WHERE I_Tax_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="i_tax_id"/>
@@ -612,7 +612,7 @@
 				UPDATE I_BPartner
         SET I_IsImported='N', Updated=now()
 			  WHERE I_IsImported<>'Y'
-        AND AD_CLIENT_ID=?
+        AND AD_CLIENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>

@@ -46,9 +46,9 @@
     <Parameter name="adUserClient" type="replace" optional="true" after=" AND C_ORDER.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="dateFrom" optional="true" after="1=1"><![CDATA[ AND C_ORDER.DATEORDERED >= TO_DATE(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="1=1"><![CDATA[ AND C_ORDER.DATEORDERED < TO_DATE(?)]]></Parameter>
-    <Parameter name="cbPartnerId" optional="true" after="AND 1=1"><![CDATA[ AND C_ORDER.C_BPARTNER_ID = ?]]></Parameter>
-    <Parameter name="mWarehouseId" optional="true" after="1=1"><![CDATA[ AND C_ORDER.M_WAREHOUSE_ID = ?]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="1=1"><![CDATA[ AND C_ORDER.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cbPartnerId" optional="true" after="AND 1=1"><![CDATA[ AND C_ORDER.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="1=1"><![CDATA[ AND C_ORDER.M_WAREHOUSE_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="1=1"><![CDATA[ AND C_ORDER.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -58,7 +58,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT VALUE || ' - ' ||NAME FROM C_PROJECT 
-        WHERE C_PROJECT_ID = ?
+        WHERE C_PROJECT_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cProjectId"/>
   </SqlMethod>

@@ -24,16 +24,16 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT ID, LEVEL_ID, NIVEL,totalAmt, COLUMN_LEVEL, LEVEL_REPORT,to_number(LEVEL_REPORT)*2 AS WIDTH_MARGIN, 76-to_number(LEVEL_REPORT)*2 AS WIDTH_TEXT, NAME, (CASE LEVEL_REPORT WHEN to_char(1) THEN ID ELSE LEVEL1 END) AS LEVEL1,(CASE LEVEL_REPORT WHEN to_char(2) THEN ID ELSE LEVEL2 END) AS LEVEL2,(CASE LEVEL_REPORT WHEN to_char(3) THEN ID ELSE LEVEL3 END) AS LEVEL3,(CASE LEVEL_REPORT WHEN to_char(4) THEN ID ELSE LEVEL4 END) AS LEVEL4,(CASE LEVEL_REPORT WHEN to_char(1) THEN 'TableHeaderLevel1' WHEN to_char(2) THEN 'TableHeaderLevel2' WHEN to_char(3) THEN 'TableHeaderLevel3' ELSE 'TableHeaderLevel4' END) AS CLASS_LEVEL, '' AS ORDEN, '' AS TOTALAMT_REF, '' AS COLUMNNAME, '' AS LINE, '' AS DESCRIPTION, '' AS JOIN_GROUP1, '' AS TABLENAME, '' AS JOIN_GROUP2, '' AS CLASS_LEVEL_REF, '' AS CLASS_IMAGE
+      SELECT ID, LEVEL_ID, NIVEL,totalAmt, COLUMN_LEVEL, LEVEL_REPORT,TO_NUMBER(LEVEL_REPORT)*2 AS WIDTH_MARGIN, 76-to_number(LEVEL_REPORT)*2 AS WIDTH_TEXT, NAME, (CASE LEVEL_REPORT WHEN to_char(1) THEN ID ELSE LEVEL1 END) AS LEVEL1,(CASE LEVEL_REPORT WHEN to_char(2) THEN ID ELSE LEVEL2 END) AS LEVEL2,(CASE LEVEL_REPORT WHEN to_char(3) THEN ID ELSE LEVEL3 END) AS LEVEL3,(CASE LEVEL_REPORT WHEN to_char(4) THEN ID ELSE LEVEL4 END) AS LEVEL4,(CASE LEVEL_REPORT WHEN to_char(1) THEN 'TableHeaderLevel1' WHEN to_char(2) THEN 'TableHeaderLevel2' WHEN to_char(3) THEN 'TableHeaderLevel3' ELSE 'TableHeaderLevel4' END) AS CLASS_LEVEL, '' AS ORDEN, '' AS TOTALAMT_REF, '' AS COLUMNNAME, '' AS LINE, '' AS DESCRIPTION, '' AS JOIN_GROUP1, '' AS TABLENAME, '' AS JOIN_GROUP2, '' AS CLASS_LEVEL_REF, '' AS CLASS_IMAGE
       FROM (
       SELECT A.ID, to_char('12')||A.ID||to_char('99') AS LEVEL_ID, to_char('1') AS NIVEL, to_char('13') AS COLUMN_LEVEL, A.totalAmt, to_char('7') AS LEVEL_REPORT, '' AS NAME, to_char('8') AS LEVEL1, to_char('9') AS LEVEL2, to_char('10') AS LEVEL3, to_char('11') AS LEVEL4 FROM
         (SELECT to_char('2') AS ID, (CASE ev.accountSign WHEN 'D' THEN SUM(amtacctdr - amtacctcr) ELSE SUM(amtacctcr - amtacctdr) END)  AS totalAmt
         FROM fact_acct fa, c_elementvalue ev
         WHERE fa.account_id = ev.c_elementValue_id
         AND fa.ad_client_id IN ('3')
-        AND fa.account_id = to_char(?)
-        AND fa.dateacct >= to_char(?)
-        AND fa.dateacct < to_char(?)
+        AND fa.account_id = TO_number(?)
+        AND fa.dateacct >= TO_DATE(?)
+        AND fa.dateacct < TO_DATE(?)
         AND fa.factaccttype NOT IN ('O','C','R')
         AND fa.ad_org_id IN ('1')
         AND 1=1
@@ -59,7 +59,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 1=1" text="AND  2=2"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY ev.accountSign" text=", 1"/>
     <Parameter name="tableDimension" type="replace" optional="true" after=") A, " text="DUAL"/>
@@ -85,9 +85,9 @@
         FROM fact_acct fa, c_elementvalue ev
         WHERE fa.account_id = ev.c_elementValue_id
         AND fa.ad_client_id IN ('3')
-        AND fa.account_id = ?
-        AND fa.dateacct >= ?
-        AND fa.dateacct < ?
+        AND fa.account_ID = TO_NUMBER(?)
+        AND fa.dateacct >= TO_DATE(?)
+        AND fa.dateacct < TO_DATE(?)
         AND fa.factaccttype NOT IN ('O','C','R')
         AND 0=0 AND fa.ad_org_id IN ('1')
         AND 1=1
@@ -97,9 +97,9 @@
         FROM fact_acct fa, c_elementvalue ev
         WHERE fa.account_id = ev.c_elementValue_id
         AND fa.ad_client_id IN('13')
-        AND fa.account_id = ?
-        AND fa.dateacct >= ?
-        AND fa.dateacct < ?
+        AND fa.account_ID = TO_NUMBER(?)
+        AND fa.dateacct >= TO_DATE(?)
+        AND fa.dateacct < TO_DATE(?)
         AND fa.factaccttype NOT IN ('O','C','R')
         AND 5=5 AND fa.ad_org_id IN ('1')
         AND 3=3
@@ -127,7 +127,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 1=1" text="AND  2=2"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY ev.accountSign" text=", 1"/>
     <Parameter name="idDimension" type="replace" optional="true" after="UNION SELECT to_char(" text="'12'"/>
@@ -138,7 +138,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 5=5 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 3=3"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 3=3"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 3=3" text="AND  4=4"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY  ev.accountSign" text=", 1"/>
     <Parameter name="tableDimension" type="replace" optional="true" after="GROUP BY ID, ORDEN) AM, " text="DUAL"/>
@@ -158,9 +158,9 @@
             FROM fact_acct fa, c_elementvalue ev
             WHERE fa.account_id = ev.c_elementValue_id
             AND fa.ad_client_id IN ('3')
-            AND fa.account_id = ?
-            AND fa.dateacct >= ?
-            AND fa.dateacct < ?
+            AND fa.account_ID = TO_NUMBER(?)
+            AND fa.dateacct >= TO_DATE(?)
+            AND fa.dateacct < TO_DATE(?)
             AND fa.factaccttype NOT IN ('O','C','R')
             AND 0=0 AND fa.ad_org_id IN ('1')
             AND 1=1
@@ -173,9 +173,9 @@
                                                           AND TO_NUMBER(VALUE) <= TO_NUMBER(TO_CHAR(TO_DATE(to_char(?)), 'MM'))) D
             WHERE fa.account_id = ev.c_elementValue_id
             AND fa.ad_client_id IN('6')
-            AND fa.account_id = ?
-            AND fa.dateacct >= ?
-            AND fa.dateacct < ?
+            AND fa.account_ID = TO_NUMBER(?)
+            AND fa.dateacct >= TO_DATE(?)
+            AND fa.dateacct < TO_DATE(?)
             AND fa.factaccttype NOT IN ('O','C','R')
             AND 5=5 AND fa.ad_org_id IN ('1')
             AND 3=3
@@ -202,7 +202,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 1=1" text="AND  2=2"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY ev.accountSign, TO_NUMBER(TO_CHAR(fa.dateacct,'MM'))" text=", 1"/>
     <Parameter name="idDimension" type="replace" optional="true" after="UNION SELECT to_char(" text="'5'"/>
@@ -215,7 +215,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 5=5 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 3=3"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 3=3"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 3=3" text="AND  4=4"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY D.PERIOD" text=", 1"/>
     <Parameter name="tableDimension" type="replace" optional="true" after=") A, " text="DUAL"/>
@@ -235,9 +235,9 @@
             FROM fact_acct fa, c_elementvalue ev, AD_MONTH
             WHERE fa.account_id = ev.c_elementValue_id
             AND fa.ad_client_id IN ('3')
-            AND fa.account_id = ?
-            AND fa.dateacct >= ?
-            AND fa.dateacct < ?
+            AND fa.account_ID = TO_NUMBER(?)
+            AND fa.dateacct >= TO_DATE(?)
+            AND fa.dateacct < TO_DATE(?)
             AND fa.factaccttype NOT IN ('O','C','R')
             AND TO_NUMBER(TO_CHAR(TO_DATE(fa.dateacct), 'MM')) = TO_NUMBER(AD_MONTH.VALUE)
             AND 0=0 AND fa.ad_org_id IN ('1')
@@ -251,9 +251,9 @@
                                                           AND TO_NUMBER(VALUE) <= TO_NUMBER(TO_CHAR(TO_DATE(to_char(?)), 'MM'))) D
             WHERE fa.account_id = ev.c_elementValue_id
             AND fa.ad_client_id IN('6')
-            AND fa.account_id = ?
-            AND fa.dateacct >= ?
-            AND fa.dateacct < ?
+            AND fa.account_ID = TO_NUMBER(?)
+            AND fa.dateacct >= TO_DATE(?)
+            AND fa.dateacct < TO_DATE(?)
             AND fa.factaccttype NOT IN ('O','C','R')
             AND 5=5 AND fa.ad_org_id IN ('1')
             AND 3=3
@@ -280,7 +280,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 1=1" text="AND  2=2"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY ev.accountSign, TO_NUMBER(AD_MONTH.QUARTER)" text=", 1"/>
     <Parameter name="idDimension" type="replace" optional="true" after="UNION SELECT TO_CHAR(" text="'5'"/>
@@ -293,7 +293,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 5=5 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 3=3"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 3=3"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 3=3" text="AND  4=4"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY D.PERIOD" text=", 1"/>
     <Parameter name="tableDimension" type="replace" optional="true" after=") A, " text="DUAL"/>
@@ -317,9 +317,9 @@
         FROM fact_acct fa, c_elementvalue ev
         WHERE fa.account_id = ev.c_elementValue_id
         AND fa.ad_client_id IN ('10')
-        AND fa.account_id = ?
-        AND fa.dateacct >= ?
-        AND fa.dateacct < ?
+        AND fa.account_ID = TO_NUMBER(?)
+        AND fa.dateacct >= TO_DATE(?)
+        AND fa.dateacct < TO_DATE(?)
         AND fa.factaccttype NOT IN ('O','C','R')
         AND 0=0 AND fa.ad_org_id IN ('1')
         AND 1=1
@@ -329,9 +329,9 @@
         FROM fact_acct fa, c_elementvalue ev
         WHERE fa.account_id = ev.c_elementValue_id
         AND fa.ad_client_id IN('13')
-        AND fa.account_id = ?
-        AND fa.dateacct >= ?
-        AND fa.dateacct < ?
+        AND fa.account_ID = TO_NUMBER(?)
+        AND fa.dateacct >= TO_DATE(?)
+        AND fa.dateacct < TO_DATE(?)
         AND fa.factaccttype NOT IN ('O','C','R')
         AND 9=9 AND fa.ad_org_id IN ('1')
         AND 3=3
@@ -347,9 +347,9 @@
                                                           AND TO_NUMBER(VALUE) <= TO_NUMBER(TO_CHAR(TO_DATE(to_char(?)), 'MM'))) D
         WHERE fa.account_id = ev.c_elementValue_id
         AND fa.ad_client_id IN  ('16')
-        AND fa.account_id = ?
-        AND fa.dateacct >= ?
-        AND fa.dateacct < ?
+        AND fa.account_ID = TO_NUMBER(?)
+        AND fa.dateacct >= TO_DATE(?)
+        AND fa.dateacct < TO_DATE(?)
         AND fa.factaccttype NOT IN ('O','C','R')
         AND 10=10 AND fa.ad_org_id IN ('1')
         AND 5=5
@@ -362,9 +362,9 @@
                                                           AND TO_NUMBER(VALUE) <= TO_NUMBER(TO_CHAR(TO_DATE(to_char(?)), 'MM'))) D
         WHERE fa.account_id = ev.c_elementValue_id
         AND fa.ad_client_id IN   ('19')
-        AND fa.account_id = ?
-        AND fa.dateacct >= ?
-        AND fa.dateacct < ?
+        AND fa.account_ID = TO_NUMBER(?)
+        AND fa.dateacct >= TO_DATE(?)
+        AND fa.dateacct < TO_DATE(?)
         AND fa.factaccttype NOT IN ('O','C','R')
         AND 11=11 AND fa.ad_org_id IN ('1')
         AND 7=7
@@ -394,7 +394,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 1=1" text="AND  2=2"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY ev.accountSign, TO_NUMBER(TO_CHAR(fa.dateacct,'MM'))" text=", 1"/>
     <Parameter name="idDimension" type="replace" optional="true" after="UNION SELECT to_char(" text="'12'"/>
@@ -405,7 +405,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 9=9 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 3=3"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 3=3"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 3=3" text="AND  4=4"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY  ev.accountSign, TO_NUMBER(TO_CHAR(fa.dateacct,'MM'))" text=", 1"/>
     <Parameter name="level" type="replace" optional="true" after="SELECT ID,ORDEN,PERIOD, to_char(" text="'24'"/>
@@ -419,7 +419,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 10=10 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 5=5"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 5=5"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 5=5"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 5=5"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 5=5" text="AND  6=6"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY ev.accountSign, D.PERIOD" text=", 1"/>
     <Parameter name="idDimension" type="replace" optional="true" after="UNION  SELECT to_char(" text="'18'"/>
@@ -432,7 +432,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 11=11 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 7=7"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 7=7"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 7=7"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 7=7"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 7=7" text="AND  8=8"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY  ev.accountSign, D.PERIOD" text=", 1"/>
     <Parameter name="tableDimension" type="replace" optional="true" after="GROUP BY ID, ORDEN, PERIOD, LEVEL_REPORT) AM, " text="DUAL"/>
@@ -456,11 +456,11 @@
         FROM fact_acct fa, c_elementvalue ev, AD_MONTH
         WHERE fa.account_id = ev.c_elementValue_id
         AND fa.ad_client_id IN ('10')
-        AND fa.account_id = ?
-        AND fa.dateacct >= ?
-        AND fa.dateacct < ?
+        AND fa.account_ID = TO_NUMBER(?)
+        AND fa.dateacct >= TO_DATE(?)
+        AND fa.dateacct < TO_DATE(?)
         AND fa.factaccttype NOT IN ('O','C','R')
-        AND TO_CHAR(TO_DATE(fa.dateacct), 'MM') = TO_NUMBER(AD_MONTH.VALUE)
+        AND TO_NUMBER(TO_CHAR(TO_DATE(fa.dateacct), 'MM')) = TO_NUMBER(AD_MONTH.VALUE)
         AND 0=0 AND fa.ad_org_id IN ('1')
         AND 1=1
         AND  2=2
@@ -469,11 +469,11 @@
         FROM fact_acct fa, c_elementvalue ev, AD_MONTH
         WHERE fa.account_id = ev.c_elementValue_id
         AND fa.ad_client_id IN('13')
-        AND fa.account_id = ?
-        AND fa.dateacct >= ?
-        AND fa.dateacct < ?
+        AND fa.account_ID = TO_NUMBER(?)
+        AND fa.dateacct >= TO_DATE(?)
+        AND fa.dateacct < TO_DATE(?)
         AND fa.factaccttype NOT IN ('O','C','R')
-        AND TO_CHAR(TO_DATE(fa.dateacct), 'MM') = TO_NUMBER(AD_MONTH.VALUE)
+        AND TO_NUMBER(TO_CHAR(TO_DATE(fa.dateacct), 'MM')) = TO_NUMBER(AD_MONTH.VALUE)
         AND 9=9 AND fa.ad_org_id IN ('1')
         AND 3=3
         AND  4=4
@@ -488,9 +488,9 @@
                                                           AND TO_NUMBER(VALUE) <= TO_NUMBER(TO_CHAR(TO_DATE(to_char(?)), 'MM'))) D
         WHERE fa.account_id = ev.c_elementValue_id
         AND fa.ad_client_id IN  ('16')
-        AND fa.account_id = ?
-        AND fa.dateacct >= ?
-        AND fa.dateacct < ?
+        AND fa.account_ID = TO_NUMBER(?)
+        AND fa.dateacct >= TO_DATE(?)
+        AND fa.dateacct < TO_DATE(?)
         AND fa.factaccttype NOT IN ('O','C','R')
         AND 10=10 AND fa.ad_org_id IN ('1')
         AND 5=5
@@ -503,9 +503,9 @@
                                                           AND TO_NUMBER(VALUE) <= TO_NUMBER(TO_CHAR(TO_DATE(to_char(?)), 'MM'))) D
         WHERE fa.account_id = ev.c_elementValue_id
         AND fa.ad_client_id IN   ('19')
-        AND fa.account_id = ?
-        AND fa.dateacct >= ?
-        AND fa.dateacct < ?
+        AND fa.account_ID = TO_NUMBER(?)
+        AND fa.dateacct >= TO_DATE(?)
+        AND fa.dateacct < TO_DATE(?)
         AND fa.factaccttype NOT IN ('O','C','R')
         AND 11=11 AND fa.ad_org_id IN ('1')
         AND 7=7
@@ -535,7 +535,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 0=0 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 1=1" text="AND  2=2"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY ev.accountSign, TO_NUMBER(AD_MONTH.QUARTER)" text=", VARIBLE11"/>
     <Parameter name="idDimension" type="replace" optional="true" after="UNION SELECT to_char(" text="'12'"/>
@@ -546,7 +546,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 9=9 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 3=3"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 3=3"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 3=3" text="AND  4=4"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY  ev.accountSign, TO_NUMBER(AD_MONTH.QUARTER)" text=", 1"/>
     <Parameter name="level" type="replace" optional="true" after="SELECT ID,ORDEN,PERIOD, to_char(" text="'24'"/>
@@ -560,7 +560,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 10=10 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 5=5"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 5=5"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 5=5"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 5=5"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 5=5" text="AND  6=6"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY ev.accountSign, D.PERIOD" text=", 1"/>
     <Parameter name="idDimension" type="replace" optional="true" after="UNION  SELECT to_char(" text="'18'"/>
@@ -573,7 +573,7 @@
     <Parameter name="adOrgId" optional="true" type="replace" after="AND 11=11 AND fa.ad_org_id IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 7=7"><![CDATA[ AND C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 7=7"><![CDATA[ AND M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 7=7"><![CDATA[AND C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 7=7"><![CDATA[AND C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="filter" type="replace" optional="true" after="AND 7=7" text="AND  8=8"/>
     <Parameter name="groupBy" type="replace" optional="true" after="GROUP BY  ev.accountSign, D.PERIOD" text=", 1"/>
     <Parameter name="tableDimension" type="replace" optional="true" after="GROUP BY ID, ORDEN, PERIOD, LEVEL_REPORT) AM, " text="DUAL"/>
@@ -614,7 +614,7 @@
     <![CDATA[
       SELECT C_PROJECT.NAME
       FROM C_PROJECT
-      WHERE C_PROJECT_ID = ?
+      WHERE C_PROJECT_ID = TO_NUMBER(?)
      ]]></Sql>
      <Parameter name="cProjectId"/>
   </SqlMethod>
@@ -625,7 +625,7 @@
     <![CDATA[
       SELECT C_ELEMENTVALUE.NAME
       FROM C_ELEMENTVALUE
-      WHERE C_ELEMENTVALUE.C_ELEMENTVALUE_ID = ?
+      WHERE C_ELEMENTVALUE.C_ELEMENTVALUE_ID = TO_NUMBER(?)
       AND C_ELEMENTVALUE.ISACTIVE = 'Y'
      ]]></Sql>
      <Parameter name="accountingId"/>
@@ -637,7 +637,7 @@
     <![CDATA[
       SELECT AD_CLIENT.NAME
       FROM AD_CLIENT
-      WHERE AD_CLIENT.AD_CLIENT_ID = ?
+      WHERE AD_CLIENT.AD_CLIENT_ID = TO_NUMBER(?)
      ]]></Sql>
     <Parameter name="adClientId"/>
   </SqlMethod>

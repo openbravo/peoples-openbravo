@@ -28,7 +28,7 @@
     <Sql>
       SELECT COALESCE(Stock_Min,0) as Stock, Enforce_Attribute
       FROM M_Product
-      WHERE M_Product_ID = ?
+      WHERE M_Product_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>
@@ -36,8 +36,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       SELECT SUM (QTYONHAND) AS QTY FROM M_STORAGE_DETAIL
-      WHERE M_PRODUCT_ID = ?
-      AND C_UOM_ID = ?
+      WHERE M_PRODUCT_ID = TO_NUMBER(?)
+      AND C_UOM_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="mProductId"/>
     <Parameter name="cUOMId"/>
@@ -46,9 +46,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       SELECT SUM (QTYONHAND) AS QTY FROM M_STORAGE_DETAIL
-      WHERE M_PRODUCT_ID = ?
-      AND C_UOM_ID = ?
-      AND M_ATTRIBUTESETINSTANCE_ID = ?
+      WHERE M_PRODUCT_ID = TO_NUMBER(?)
+      AND C_UOM_ID = TO_NUMBER(?)
+      AND M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="mProductId"/>
     <Parameter name="cUOMId"/>
@@ -58,7 +58,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       SELECT ISSOTRX FROM C_ORDER
-      WHERE C_ORDER_ID = ?
+      WHERE C_ORDER_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cOrderId"/>
   </SqlMethod>

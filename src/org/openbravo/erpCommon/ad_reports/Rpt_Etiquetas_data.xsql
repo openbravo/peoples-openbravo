@@ -32,8 +32,8 @@
         COALESCE(M_PRODUCT_CUSTOMER.DESCRIPTION, M_PRODUCT.DESCRIPTION) AS DESCRIPTION, COALESCE(M_PRODUCT_CUSTOMER.UPC, M_PRODUCT.UPC) AS UPC, 
         '' AS LOT, '' AS GUARANTEEDATE
         FROM M_PRODUCT LEFT JOIN M_PRODUCT_CUSTOMER on M_PRODUCT.M_PRODUCT_ID = M_PRODUCT_CUSTOMER.M_PRODUCT_ID
-        WHERE M_PRODUCT.M_PRODUCT_ID = ?
-        AND M_PRODUCT_CUSTOMER.C_BPARTNER_ID = ?
+        WHERE M_PRODUCT.M_PRODUCT_ID = TO_NUMBER(?)
+        AND M_PRODUCT_CUSTOMER.C_BPARTNER_ID = TO_NUMBER(?)
         ]]>
         </Sql>
         <Parameter name="mProductId"/>
@@ -45,7 +45,7 @@
       <![CDATA[
         SELECT NAME
         FROM M_PRODUCT
-        WHERE M_PRODUCT_ID = ?
+        WHERE M_PRODUCT_ID = TO_NUMBER(?)
         ]]>
         </Sql>
         <Parameter name="mProductId"/>
@@ -56,7 +56,7 @@
       <![CDATA[
         SELECT NAME
         FROM C_BPARTNER
-        WHERE C_BPARTNER_ID = ?
+        WHERE C_BPARTNER_ID = TO_NUMBER(?)
         ]]>
         </Sql>
         <Parameter name="cBpartnerId"/>
@@ -67,7 +67,7 @@
       <![CDATA[
         SELECT DESCRIPTION
         FROM M_ATTRIBUTESETINSTANCE
-        WHERE M_ATTRIBUTESETINSTANCE_ID = ?
+        WHERE M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?)
         ]]>
         </Sql>
         <Parameter name="mAttributesetinstanceId"/>
@@ -78,7 +78,7 @@
       <![CDATA[
         SELECT DESCRIPTION, LOT, GUARANTEEDATE
         FROM M_ATTRIBUTESETINSTANCE
-        WHERE M_ATTRIBUTESETINSTANCE_ID = ?
+        WHERE M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?)
         ]]>
         </Sql>
         <Parameter name="mAttributesetinstanceId"/>

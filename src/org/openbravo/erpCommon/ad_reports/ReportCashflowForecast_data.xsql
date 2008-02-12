@@ -115,7 +115,7 @@
      ]]></Sql>
     <Parameter name="dateMax" optional="true" after="AND 1=1"><![CDATA[ AND DP.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
     <Parameter name="dateMax" optional="true" after="AND 2=2"><![CDATA[ AND DP.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
-    <Parameter name="bankaccount" optional="true" after="AND 3=3"><![CDATA[ AND BA.C_BANKACCOUNT_ID = ? ]]></Parameter>
+    <Parameter name="bankaccount" optional="true" after="AND 3=3"><![CDATA[ AND BA.C_BANKACCOUNT_ID = TO_NUMBER(?) ]]></Parameter>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND B.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND B.AD_ORG_ID IN (" text="'1'"/> 
   </SqlMethod>
@@ -161,7 +161,7 @@
          AND DP.C_BANKACCOUNT_ID IS NOT NULL         
          AND C_DEBT_PAYMENT_STATUS(C_SETTLEMENT_CANCEL_ID, CANCEL_PROCESSED, GENERATE_PROCESSED, DP.ISPAID, ISVALID, C_CASHLINE_ID, C_BANKSTATEMENTLINE_ID) = 'P'
          AND BP.C_BPARTNER_ID = DP.C_BPARTNER_ID
-         AND DP.C_BANKACCOUNT_ID = ?
+         AND DP.C_BANKACCOUNT_ID = TO_NUMBER(?)
          AND M.VALUE = (CASE DP.ISRECEIPT WHEN 'Y' THEN 'Income' WHEN 'N' THEN 'Payments' END)
          AND NOT EXISTS (SELECT 1 
                            FROM C_REMITTANCELINE  RL,

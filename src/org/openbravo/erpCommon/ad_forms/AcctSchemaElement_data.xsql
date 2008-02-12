@@ -30,7 +30,7 @@
       Org_ID,C_ElementValue_ID,C_BPartner_ID,M_Product_ID,C_Activity_ID,C_Location_ID,
       C_Campaign_ID,C_Project_ID,C_SalesRegion_ID 
       FROM C_AcctSchema_Element 
-      WHERE C_AcctSchema_ID=? 
+      WHERE C_AcctSchema_ID = TO_NUMBER(?) 
       AND IsActive='Y' 
       ORDER BY SeqNo
       </Sql>

@@ -30,7 +30,7 @@
         SELECT f.SeqNo,c.ColumnName,f.StartNo,f.EndNo,f.DataType,c.FieldLength,
         f.DataFormat,f.DecimalPoint,f.DivideBy100,f.ConstantValue,f.Callout, f.Name
         FROM AD_ImpFormat_Row f,AD_Column c
-        WHERE AD_ImpFormat_ID = ?
+        WHERE AD_ImpFormat_ID = TO_NUMBER(?)
         AND f.AD_Column_ID=c.AD_Column_ID
         ORDER BY SeqNo
       ]]></Sql>
@@ -74,7 +74,7 @@
     <Sql>
       <![CDATA[
         DELETE FROM I_ELEMENTVALUE
-        where ad_client_id = ?
+        where ad_client_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="client"/>
@@ -84,7 +84,7 @@
       <Sql><![CDATA[
       SELECT t.TableName
       FROM AD_Table t
-      WHERE t.AD_Table_ID in (SELECT ad_table_id FROM AD_ImpFormat WHERE ad_impformat_id = ?)
+      WHERE t.AD_Table_ID in (SELECT ad_table_id FROM AD_ImpFormat WHERE ad_impformat_ID = TO_NUMBER(?))
       ]]></Sql>
         <Parameter name="adImpformatId"/>
   </SqlMethod>
@@ -95,14 +95,14 @@
       FROM AD_Table t, AD_Column c 
       WHERE t.AD_Table_ID=c.AD_Table_ID 
       AND c.IsKey='Y' 
-      and t.AD_Table_ID in (SELECT ad_table_id FROM AD_ImpFormat WHERE ad_impformat_id = ?)
+      and t.AD_Table_ID in (SELECT ad_table_id FROM AD_ImpFormat WHERE ad_impformat_ID = TO_NUMBER(?))
       ]]></Sql>
         <Parameter name="adImpformatId"/>
   </SqlMethod>
   <SqlMethod name="parse" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      select substr(to_char(?),to_number(0), to_number(?)) AS FIELD from dual
+      select substr(to_char(?),0, to_number(?)) AS FIELD from dual
       ]]></Sql>
     <Parameter name="text"/>
     <Parameter name="length"/>
@@ -119,7 +119,7 @@
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       SELECT FORMATTYPE FROM AD_IMPFORMAT
-      WHERE AD_IMPFORMAT_ID = ? 
+      WHERE AD_IMPFORMAT_ID = TO_NUMBER(?) 
       ]]></Sql>
     <Parameter name="impFormat"/>
   </SqlMethod>

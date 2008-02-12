@@ -30,7 +30,7 @@
 				Description, AD_User_ID, BPartnerValue, ProductValue, QtyOrdered, LineDescription,
 				Order_ReferenceNo
 				FROM I_Order
-				WHERE AD_Client_ID = ?
+				WHERE AD_Client_ID = TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="ad_client_id"/>
   </SqlMethod>

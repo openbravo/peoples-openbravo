@@ -34,7 +34,7 @@
                                                             and  ET.AD_Language  = 'es_ES' , 
       AD_TREENODE T
       WHERE E.C_ELEMENTVALUE_ID = T.NODE_ID 
-      AND T.AD_TREE_ID = ?
+      AND T.AD_TREE_ID = TO_NUMBER(?)
       AND (T.PARENT_ID IS NULL 
       OR T.PARENT_ID = 0)
       AND E.AD_Org_ID IN('1') 
@@ -47,7 +47,7 @@
                                                             and ET.AD_Language = 'es_ES' , 
       AD_TREENODE T
       WHERE E.C_ELEMENTVALUE_ID = T.NODE_ID 
-      AND T.AD_TREE_ID = ?
+      AND T.AD_TREE_ID = TO_NUMBER(?)
       AND (T.PARENT_ID IS NULL 
       OR T.PARENT_ID = 0)  
       AND E.AD_Org_ID IN ('2') 

@@ -30,7 +30,7 @@
       SELECT AD_CLIENT_ID, '' AS AD_USER_ID, '' as AD_ORG_ID
       FROM AD_CLIENT WHERE ISACTIVE='Y'
       ]]></Sql>
-      <Parameter name="adClientId" optional="true" after="WHERE " text=" AD_CLIENT_ID = ? AND "/>
+      <Parameter name="adClientId" optional="true" after="WHERE " text=" AD_CLIENT_ID = TO_NUMBER(?) AND "/>
    </SqlMethod>
    <SqlMethod name="checkPlannedRange" type="preparedStatement" return="Boolean" default="false">
       <SqlMethodComment></SqlMethodComment>
@@ -42,8 +42,8 @@
         AND to_char(timefrom, 'HH24:MI:SS')<= to_char(now(), 'HH24:MI:SS') 
         AND (timeto is null OR
         to_char(timeto, 'HH24:MI:SS') > to_char(now(), 'HH24:MI:SS'))
-        AND AD_Client_ID = ? 
-        AND AD_Process_ID = ? 
+        AND AD_Client_ID = TO_NUMBER(?) 
+        AND AD_Process_ID = TO_NUMBER(?) 
       ]]></Sql>
       <Parameter name="adClientId"/>
       <Parameter name="adProcessId"/>
@@ -58,14 +58,14 @@
         AND to_char(timefrom, 'HH24:MI:SS')<= to_char(now(), 'HH24:MI:SS') 
         AND (timeto is null OR
         to_char(timeto, 'HH24:MI:SS') > to_char(now(), 'HH24:MI:SS'))
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]></Sql>
       <Parameter name="adClientId"/>
    </SqlMethod>
    <SqlMethod name="selectClientId" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      SELECT AD_CLIENT_ID FROM AD_PINSTANCE WHERE AD_PINSTANCE_ID=?
+      SELECT AD_CLIENT_ID FROM AD_PINSTANCE WHERE AD_PINSTANCE_ID = TO_NUMBER(?)
       ]]></Sql>
       <Parameter name="adPinstanceId"/>
    </SqlMethod>
@@ -84,7 +84,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         UPDATE AD_NOTE SET UPDATED=now(), UPDATEDBY=0, TEXT=? 
-        WHERE AD_NOTE_ID = ?
+        WHERE AD_NOTE_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="text"/>
       <Parameter name="adNoteId"/>

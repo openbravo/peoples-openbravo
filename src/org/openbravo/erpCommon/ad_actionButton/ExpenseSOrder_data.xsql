@@ -44,7 +44,7 @@
         ORDER BY E.AD_ORG_ID, el.C_BPartner_ID, el.C_Project_ID, e.S_TimeExpense_ID, el.Line
       ]]>
     </Sql>
-    <Parameter name="bpartner" optional="true" after="WHERE "><![CDATA[ el.C_BPartner_ID=? AND ]]></Parameter>
+    <Parameter name="bpartner" optional="true" after="WHERE "><![CDATA[ el.C_BPartner_ID = TO_NUMBER(?) AND ]]></Parameter>
     <Parameter name="dateFrom" optional="true" after="WHERE "><![CDATA[ e.DateReport >= TO_DATE(?) AND ]]></Parameter>
     <Parameter name="dateTo" optional="true" after="WHERE "><![CDATA[ e.DateReport  < TO_DATE(?) AND ]]></Parameter>
     <Parameter name="adUserClient" type="replace" optional="true" after="E.AD_CLIENT_ID IN (" text="'1'"/>
@@ -55,7 +55,7 @@
     <Sql>
       <![CDATA[
         UPDATE S_TimeExpenseLine SET C_OrderLine_ID= TO_NUMBER(?)
-        WHERE S_TimeExpenseLine_ID= ?
+        WHERE S_TimeExpenseLine_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="COrderlineId"/>
@@ -167,7 +167,7 @@
     <Sql>
       <![CDATA[
         SELECT MAX(C_BPARTNER_LOCATION_ID) FROM C_BPARTNER_LOCATION
-        WHERE C_BPARTNER_ID = ?
+        WHERE C_BPARTNER_ID = TO_NUMBER(?)
         AND C_BPartner_Location.IsActive='Y'
       ]]>
     </Sql>
@@ -180,7 +180,7 @@
         SELECT MAX(C_BPARTNER_LOCATION_ID) FROM C_BPARTNER_LOCATION
         WHERE  C_BPartner_Location.IsBillTo='Y' 
         AND C_BPartner_Location.IsActive='Y'
-        AND C_BPARTNER_ID = ?
+        AND C_BPARTNER_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -190,7 +190,7 @@
     <Sql><![CDATA[
       SELECT Name
       FROM C_BPartner 
-      WHERE C_BPartner_ID = ? 
+      WHERE C_BPartner_ID = TO_NUMBER(?) 
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>

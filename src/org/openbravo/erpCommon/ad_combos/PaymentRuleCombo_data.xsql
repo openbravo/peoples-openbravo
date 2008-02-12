@@ -31,7 +31,7 @@
       WHERE AD_REFERENCE_ID=195
       AND R_L.VALUE IN (SELECT B.PAYMENTRULE
       FROM C_BANKACCOUNTDOC B
-      WHERE C_BANKACCOUNT_ID=?)
+      WHERE C_BANKACCOUNT_ID = TO_NUMBER(?))
       </Sql>
       <Parameter name="cuenta"/>
    </SqlMethod>
@@ -44,7 +44,7 @@
       WHERE arl.ad_reference_id = 195 
       AND arl.VALUE IN (SELECT B.PAYMENTRULE
                           FROM C_BANKACCOUNTDOC B
-                          WHERE C_BANKACCOUNT_ID=?)
+                          WHERE C_BANKACCOUNT_ID = TO_NUMBER(?))
       </Sql>
       <Parameter name="cuenta"/>
       <Parameter name="idioma"/>

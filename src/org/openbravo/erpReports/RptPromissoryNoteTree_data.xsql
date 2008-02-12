@@ -40,7 +40,7 @@
       <![CDATA[
           SELECT C_DEBT_PAYMENT.DESCRIPTION
           FROM C_DEBT_PAYMENT
-          WHERE C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID = ?
+          WHERE C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID = TO_NUMBER(?)
         ]]>
         </Sql>
         <Parameter name="cDebtPaymentId"/>

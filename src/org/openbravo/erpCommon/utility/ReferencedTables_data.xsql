@@ -30,7 +30,7 @@
       <![CDATA[
         SELECT AD_COLUMN_ID, COLUMNNAME, AD_REFERENCE_ID, AD_REFERENCE_VALUE_ID, AD_VAL_RULE_ID, '' AS TABLENAME 
         FROM AD_COLUMN 
-        WHERE AD_COLUMN.AD_TABLE_ID = ? 
+        WHERE AD_COLUMN.AD_TABLE_ID = TO_NUMBER(?) 
         AND AD_COLUMN.ISPARENT = 'Y'
         ORDER BY AD_REFERENCE_ID
       ]]>
@@ -46,7 +46,7 @@
         FROM AD_REF_TABLE, AD_TABLE, AD_COLUMN
         WHERE AD_REF_TABLE.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
         AND AD_REF_TABLE.AD_KEY = AD_COLUMN.AD_COLUMN_ID
-        AND AD_REF_TABLE.AD_REFERENCE_ID = ?
+        AND AD_REF_TABLE.AD_REFERENCE_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="referencevalue"/>
@@ -57,7 +57,7 @@
       <![CDATA[
         SELECT TABLENAME AS TABLENAME
         FROM AD_TABLE 
-        WHERE AD_TABLE_ID = ?
+        WHERE AD_TABLE_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="field" optional="true" type="replace" after="SELECT " text="TABLENAME"/>
@@ -71,7 +71,7 @@
       <![CDATA[
         SELECT TABLENAME
         FROM AD_TABLE 
-        WHERE AD_TABLE_ID = ?
+        WHERE AD_TABLE_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adTableId"/>
@@ -93,7 +93,7 @@
       <![CDATA[
         SELECT (case ISSOTRX when 'Y' then 1 else 0 end) AS ISSOTRX 
         FROM C_ORDER 
-        WHERE C_ORDER_ID = ?
+        WHERE C_ORDER_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="table" optional="true" type="replace" after="FROM " text="C_ORDER"/>
@@ -106,7 +106,7 @@
       <![CDATA[
         SELECT (case SETTLEMENTTYPE when 'I' then 0 else 1 end) AS ISSOTRX 
         FROM C_SETTLEMENT 
-        WHERE C_SETTLEMENT_ID = ?
+        WHERE C_SETTLEMENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="keyId"/>
@@ -117,7 +117,7 @@
       <![CDATA[
         SELECT COUNT(*) AS TOTAL 
         FROM AD_COLUMN 
-        WHERE AD_TABLE_ID = ? 
+        WHERE AD_TABLE_ID = TO_NUMBER(?) 
         AND UPPER(COLUMNNAME) = 'ISSOTRX'
       ]]>
     </Sql>

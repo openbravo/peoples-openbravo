@@ -30,7 +30,7 @@
         SELECT F.NAME, C.AD_REFERENCE_ID, F.SHOWINRELATION, F.ISDISPLAYED, F.NAME AS COMPLETE_NAME, C.ColumnName 
         FROM AD_FIELD F, AD_COLUMN C
         WHERE F.AD_COLUMN_ID = C.AD_COLUMN_ID 
-        AND F.AD_TAB_ID = ?
+        AND F.AD_TAB_ID = TO_NUMBER(?)
         ORDER BY F.SEQNO
       ]]></Sql>
         <Field name="position" value="count"/>
@@ -50,7 +50,7 @@
                                                   AND FT.AD_LANGUAGE = ?, 
           AD_COLUMN C
         WHERE F.AD_COLUMN_ID = C.AD_COLUMN_ID 
-        AND F.AD_TAB_ID = ?
+        AND F.AD_TAB_ID = TO_NUMBER(?)
         ORDER BY F.SEQNO
       ]]></Sql>
         <Field name="position" value="count"/>

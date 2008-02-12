@@ -30,14 +30,14 @@
       FROM C_Order, M_PriceList, C_Currency 
       WHERE C_Order.M_PriceList_ID = M_PriceList.M_PriceList_ID
       AND M_PriceList.C_Currency_ID = C_Currency.C_Currency_ID
-      AND C_Order.C_Order_ID = ?
+      AND C_Order.C_Order_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="cOrderId"/>
   </SqlMethod>
   <SqlMethod name="listPriceType" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT (CASE ENFORCEPRICELIMIT WHEN 'Y' THEN 1 ELSE 0 END) AS TYPE FROM M_PRICELIST WHERE M_PRICELIST_ID = ?
+      SELECT (CASE ENFORCEPRICELIMIT WHEN 'Y' THEN 1 ELSE 0 END) AS TYPE FROM M_PRICELIST WHERE M_PRICELIST_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="priceList"/>
   </SqlMethod>
@@ -46,8 +46,8 @@
     <Sql>
       SELECT PRICELIMIT 
       FROM M_PRODUCTPRICE 
-      WHERE M_PRICELIST_VERSION_ID = ? 
-      AND M_PRODUCT_ID=?
+      WHERE M_PRICELIST_VERSION_ID = TO_NUMBER(?) 
+      AND M_PRODUCT_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="mPricelistVersionId"/>
     <Parameter name="mProductId"/>

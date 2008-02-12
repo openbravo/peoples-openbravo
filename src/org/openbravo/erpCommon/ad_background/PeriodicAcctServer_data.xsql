@@ -26,7 +26,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       SELECT CREATEDBY AS AD_USER_ID, AD_ORG_ID, '' AS AD_TABLE_ID FROM AD_PROCESS
-      WHERE AD_PROCESS_ID = ?
+      WHERE AD_PROCESS_ID = TO_NUMBER(?)
     ]]></Sql>
     <Parameter name="adProcessId"/>
    </SqlMethod>
@@ -34,7 +34,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       SELECT P_NUMBER FROM AD_PINSTANCE_PARA
-      WHERE AD_PINSTANCE_ID = ?
+      WHERE AD_PINSTANCE_ID = TO_NUMBER(?)
       AND PARAMETERNAME = 'AD_Table_ID'
     ]]></Sql>
     <Parameter name="adPinstanceId"/>

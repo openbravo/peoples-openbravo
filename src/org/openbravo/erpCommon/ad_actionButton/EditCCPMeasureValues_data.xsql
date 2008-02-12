@@ -29,7 +29,7 @@
         FROM MA_Measure_Shift s, MA_Measure_Group g, MA_CCP_Group cg
         WHERE g.MA_CCP_GROUP_ID = cg.MA_CCP_GROUP_ID
           AND s.MA_Measure_Shift_ID = g.MA_Measure_Shift_ID
-          AND s.MA_Measure_Shift_ID = ?
+          AND s.MA_Measure_Shift_ID = TO_NUMBER(?)
         ORDER BY g.MA_MEASURE_GROUP_ID, cg.seqno
       ]]>
       </Sql>
@@ -67,7 +67,7 @@
       <![CDATA[
         SELECT VALUETYPE AS TYPE
         FROM MA_MEASURE_VALUES
-        WHERE MA_MEASURE_VALUES_ID = ?
+        WHERE MA_MEASURE_VALUES_ID = TO_NUMBER(?)
       ]]>
       </Sql>
       <Parameter name="maMeasureValueID"/>
@@ -80,7 +80,7 @@
         SET V_NUMBER = TO_NUMBER(?),
             V_STRING = ?,
             V_CHAR = ?
-        WHERE MA_MEASURE_VALUES_ID = ?
+        WHERE MA_MEASURE_VALUES_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="vnumber"/>
@@ -94,7 +94,7 @@
       <![CDATA[
         UPDATE MA_MEASURE_GROUP
         SET PRODUCT = ?
-        WHERE MA_MEASURE_GROUP_ID = ?
+        WHERE MA_MEASURE_GROUP_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="product"/>

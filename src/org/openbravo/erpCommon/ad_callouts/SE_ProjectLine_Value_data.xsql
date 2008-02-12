@@ -26,7 +26,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        select value, name, description from m_product where m_product_id = ?
+        select value, name, description from m_product where m_product_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="product"/>

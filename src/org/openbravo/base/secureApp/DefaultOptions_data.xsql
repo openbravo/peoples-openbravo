@@ -183,7 +183,7 @@
           AS DEFAULT_M_WAREHOUSE_ID, 
         (SELECT MIN(ad_language) FROM ad_language WHERE isbaselanguage='Y' AND isactive='Y') AS DEFAULT_AD_LANGUAGE 
         FROM ad_role_orgaccess ro
-        WHERE ro.ad_role_id = (SELECT MAX(ad_role_id) FROM ad_user_roles WHERE ad_user_id = ? AND isActive = 'Y')
+        WHERE ro.ad_role_id = (SELECT MAX(ad_role_id) FROM ad_user_roles WHERE ad_user_id = to_number(?) AND isActive = 'Y')
         AND ro.isactive = 'Y'
         ORDER BY ro.ad_org_id, ro.ad_client_id
       ]]></Sql>
@@ -199,7 +199,7 @@
             DEFAULT_AD_CLIENT_ID = TO_NUMBER(?),
             DEFAULT_AD_ORG_ID = TO_NUMBER(?),
             DEFAULT_M_WAREHOUSE_ID = TO_NUMBER(?)
-        WHERE AD_USER_ID = ?
+        WHERE AD_USER_ID = to_number(?)
       ]]></Sql>
       <Parameter name="adlanguage"/>
       <Parameter name="adroleid"/>

@@ -30,7 +30,7 @@
 			'' as Created, '' as CreatedBy, '' as C_LocFrom_ID, '' as C_LocTo_ID, '' as C_SalesRegion_ID, '' as C_Project_ID,
 			'' as C_Campaign_ID, '' as C_Activity_ID, '' as User1_ID, '' as User2_ID, '' as operands, '' as value
       FROM I_ElementValue WHERE I_IsImported='N'
-      AND AD_Client_ID = ?
+      AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -41,7 +41,7 @@
     <Sql>
       <![CDATA[
       DELETE FROM I_ElementValue WHERE I_IsImported='Y'
-      AND AD_Client_ID = ?
+      AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -76,12 +76,12 @@
         SET ElementName = (
           SELECT Name
           FROM C_Element
-          WHERE C_Element_ID = ?
+          WHERE C_Element_ID = TO_NUMBER(?)
         )
         WHERE ElementName IS NULL
         AND C_Element_ID IS NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cElementId"/>
@@ -100,7 +100,7 @@
         )
         WHERE C_Element_ID IS NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -114,7 +114,7 @@
         SET I_IsImported='E', I_ErrorMsg='ERR=Invalid Element, '
         WHERE C_Element_ID IS NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -135,7 +135,7 @@
         WHERE Default_Account IS NOT NULL
         AND AD_Column_ID IS NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -151,7 +151,7 @@
         AND Default_Account IS NOT NULL
         AND UPPER(Default_Account)<>'DEFAULT_ACCT'
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -166,7 +166,7 @@
         WHERE isActive IS NULL
         OR isActive NOT IN ('Y','N')
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="column" optional="true" type="replace" after="SET " text="isActive"/>
@@ -184,7 +184,7 @@
         WHERE IsSummary IS NULL
         OR IsSummary NOT IN ('Y','N')
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -202,7 +202,7 @@
         WHERE IsDocControlled IS NULL
         OR IsDocControlled NOT IN ('Y','N')
         AND I_IsImported='N'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -216,7 +216,7 @@
         SET AccountType='E'
         WHERE AccountType IS NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -230,7 +230,7 @@
         SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid AccountType, '
         WHERE AccountType NOT IN ('A','E','L','M','O','R')
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -244,7 +244,7 @@
         SET AccountSign='N'
         WHERE AccountSign IS NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -258,7 +258,7 @@
         SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid AccountSign, '
         WHERE AccountSign NOT IN ('N','C','D')
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -278,7 +278,7 @@
           AND I_ElementValue.Value=ev.Value
         )
         WHERE C_ElementValue_ID IS NULL
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -298,7 +298,7 @@
           AND I_ElementValue.Value=ev.Value
         )
         WHERE C_ElementValue_ID IS NULL
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -329,7 +329,7 @@
         SELECT I_ElementValue_ID, C_ElementValue_ID, value
         FROM I_ElementValue
         WHERE I_IsImported='N'
-        AND AD_Client_ID=?
+        AND AD_Client_ID = TO_NUMBER(?)
         ORDER BY I_ElementValue_ID
       ]]>
     </Sql>
@@ -342,7 +342,7 @@
       <![CDATA[
         SELECT operands
         FROM I_ElementValue
-        WHERE I_ElementValue_ID = ?
+        WHERE I_ElementValue_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="iElementValueId"/>
@@ -355,7 +355,7 @@
         SELECT c_elementvalue_id
         FROM c_ElementValue
         WHERE value = ?
-        and ad_client_id = ?
+        and ad_client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="value"/>
@@ -375,7 +375,7 @@
           Value,Name,Description, AccountType,AccountSign,IsDocControlled,
           IsSummary,PostActual,PostBudget,PostEncumbrance,PostStatistical, coalesce(elementlevel,'S')
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?
+        WHERE I_ElementValue_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cElementvalueId"/>
@@ -412,53 +412,53 @@
         SET Value=
         (SELECT Value
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
       ,Name=
         (SELECT Name
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
       ,Description=
         (SELECT Description
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
       , AccountType=
         (SELECT AccountType
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
       ,AccountSign=
         (SELECT AccountSign
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
       ,IsDocControlled=
         (SELECT IsDocControlled
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
       ,IsSummary=
         (SELECT IsSummary
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
       ,PostActual=
         (SELECT PostActual
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
       ,PostBudget=
         (SELECT PostBudget
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
       ,PostEncumbrance=
         (SELECT PostEncumbrance
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
       ,PostStatistical=
         (SELECT PostStatistical
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
       ,Updated=now()
       ,UpdatedBy=
         (SELECT UpdatedBy
         FROM I_ElementValue
-        WHERE I_ElementValue_ID=?)
-        WHERE C_ElementValue_ID=?
+        WHERE I_ElementValue_ID = TO_NUMBER(?))
+        WHERE C_ElementValue_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="iElementvalueId"/>
@@ -486,7 +486,7 @@
         Updated=now(),
         Processed='Y',
         Processing='Y'
-        WHERE I_ElementValue_ID=?
+        WHERE I_ElementValue_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cElementvalueId"/>
@@ -499,7 +499,7 @@
       <![CDATA[
         UPDATE I_ElementValue 
         SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||' Insert ElementValue: '||?
-        WHERE I_ElementValue_ID=?
+        WHERE I_ElementValue_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="message"/>
@@ -512,7 +512,7 @@
       <![CDATA[
         UPDATE I_ElementValue 
         SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||' Update ElementValue: '||?
-        WHERE I_ElementValue_ID=?
+        WHERE I_ElementValue_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="message"/>
@@ -544,7 +544,7 @@
         )
         WHERE ParentElementValue_ID IS NULL
         AND I_IsImported='Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -559,7 +559,7 @@
         WHERE ParentElementValue_ID IS NULL
         AND ParentValue IS NOT NULL
         AND I_IsImported='Y'
-        AND AD_Client_ID = ?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -577,7 +577,7 @@
         AND e.AD_Tree_ID IS NOT NULL
         AND i.ParentElementValue_ID IS NOT NULL
         AND i.I_IsImported='Y'
-        AND i.AD_Client_ID=?
+        AND i.AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -590,8 +590,8 @@
         UPDATE AD_TreeNode
         SET Parent_ID=TO_NUMBER(?),
           SeqNo=TO_NUMBER(?)
-        WHERE AD_Tree_ID=?
-        AND Node_ID=?
+        WHERE AD_Tree_ID = TO_NUMBER(?)
+        AND Node_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="parentId"/>
@@ -610,7 +610,7 @@
         AND Processed='Y'
         AND Processing='Y'
         AND C_ElementValue_ID IS NOT NULL
-        AND AD_Client_ID=?
+        AND AD_Client_ID = TO_NUMBER(?)
         AND 1=1
       ]]>
     </Sql>
@@ -624,7 +624,7 @@
       <![CDATA[
         UPDATE C_ValidCombination
         SET Updated=now()
-        WHERE AD_Client_ID=?
+        WHERE AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -636,8 +636,8 @@
       <![CDATA[
         SELECT C_AcctSchema_ID
         FROM C_AcctSchema_Element
-        WHERE C_Element_ID=?
-        AND AD_Client_ID=?
+        WHERE C_Element_ID = TO_NUMBER(?)
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cElementId"/>
@@ -664,7 +664,7 @@
           AND UPPER(i.Default_Account)='DEFAULT_ACCT'
           AND i.I_IsImported='Y'
         )
-        AND AD_Client_ID=?
+        AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -676,7 +676,7 @@
       <![CDATA[
         select c_element_id
         from c_acctschema_element
-        where c_acctschema_id = ?
+        where c_acctschema_ID = TO_NUMBER(?)
         and upper(elementtype) like 'AC'
       ]]>
     </Sql>
@@ -695,7 +695,7 @@
         AND i.Processed='Y'
         AND Processing='Y'
         AND i.C_ElementValue_ID IS NOT NULL
-        AND C_Element_ID=?
+        AND C_Element_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cElementId"/>
@@ -707,7 +707,7 @@
       <![CDATA[
         UPDATE I_ElementValue
         SET Processing='N'
-        WHERE I_ElementValue_ID=?
+        WHERE I_ElementValue_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="iElementvalueId"/>
@@ -720,7 +720,7 @@
         SELECT x.AD_CLIENT_ID as C_ValidCombination_ID, Account_ID
         FROM C_ACCTSCHEMA_DEFAULT x
         INNER JOIN C_VALIDCOMBINATION vc ON (x.AD_CLIENT_ID=vc.C_ValidCombination_ID)
-        WHERE x.C_AcctSchema_ID=?
+        WHERE x.C_AcctSchema_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="columnname" optional="true" type="replace" after="SELECT x." text="AD_CLIENT_ID"/>
@@ -739,7 +739,7 @@
         AD_ORGTRX_ID, C_LOCFROM_ID, C_LOCTO_ID, C_SALESREGION_ID,
         C_PROJECT_ID, C_CAMPAIGN_ID, C_ACTIVITY_ID, USER1_ID,USER2_ID
         FROM C_ValidCombination
-        WHERE C_ValidCombination_ID=?
+        WHERE C_ValidCombination_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cValidcombinationId"/>
@@ -780,7 +780,7 @@
       <![CDATA[
         update C_ValidCombination
         SET Account_ID = TO_NUMBER(?)
-        WHERE C_ValidCombination_ID = ?
+        WHERE C_ValidCombination_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="accountId"/>
@@ -793,7 +793,7 @@
       <![CDATA[
         UPDATE  C_ACCTSCHEMA_DEFAULT
         SET  AD_CLIENT_ID=TO_NUMBER(?)
-        WHERE C_AcctSchema_ID=?
+        WHERE C_AcctSchema_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="tablename" optional="true" type="replace" after="UPDATE  " text="C_ACCTSCHEMA_DEFAULT"/>
@@ -808,7 +808,7 @@
       <![CDATA[
 			  UPDATE C_ValidCombination
 				SET Account_ID=TO_NUMBER(?)
-				WHERE Account_ID=?
+				WHERE Account_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cElementvalueId"/>
@@ -821,7 +821,7 @@
       <![CDATA[
 			  UPDATE Fact_Acct
 				SET Account_ID=TO_NUMBER(?)
-				WHERE Account_ID=?
+				WHERE Account_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cElementvalueId"/>

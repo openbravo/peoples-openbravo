@@ -47,7 +47,7 @@
         <Parameter name="key" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID=? ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
         <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= ? ]]></Parameter>

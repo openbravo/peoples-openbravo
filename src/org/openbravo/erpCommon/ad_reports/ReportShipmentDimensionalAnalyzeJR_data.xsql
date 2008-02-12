@@ -78,13 +78,13 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_INOUT.AD_CLIENT_ID IN (" text="'8'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.MOVEMENTDATE >= TO_DATE(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.MOVEMENTDATE < TO_DATE(?)]]></Parameter>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
-    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.SALESREP_ID = ?]]></Parameter>
-    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[AND M_WAREHOUSE.M_WAREHOUSE_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.SALESREP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT to_char(" text="'9'"/>
     <Parameter name="nivel2" type="replace" optional="true" after="AS NIVEL1 , to_char(" text="'10'"/>
     <Parameter name="nivel3" type="replace" optional="true" after="AS NIVEL2 , to_char(" text="'11'"/>
@@ -98,13 +98,13 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_INOUT.AD_CLIENT_ID IN(" text="'16'"/>
     <Parameter name="dateFromRef" optional="true" after="AND 2=2"><![CDATA[AND M_INOUT.MOVEMENTDATE >= TO_DATE(?)]]></Parameter>
     <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND M_INOUT.MOVEMENTDATE < TO_DATE(?)]]></Parameter>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="mWarehouseId" optional="true" after="AND 2=2"><![CDATA[AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
-    <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND M_INOUT.SALESREP_ID = ?]]></Parameter>
-    <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="AND 2=2"><![CDATA[AND M_WAREHOUSE.M_WAREHOUSE_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND M_INOUT.SALESREP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL" text=", 1"/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
@@ -150,13 +150,13 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_INOUT.AD_CLIENT_ID IN (" text="'8'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.MOVEMENTDATE >= TO_DATE(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.MOVEMENTDATE < TO_DATE(?)]]></Parameter>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
-    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.SALESREP_ID = ?]]></Parameter>
-    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[AND M_WAREHOUSE.M_WAREHOUSE_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.SALESREP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL" text=", 1"/>
   </SqlMethod>
   <SqlMethod name="selectBpartner" type="preparedStatement" return="multiple">
@@ -195,7 +195,7 @@
     <![CDATA[
       SELECT C_BP_GROUP.NAME
       FROM C_BP_GROUP
-      WHERE C_BP_GROUP.C_BP_GROUP_ID = ?
+      WHERE C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)
      ]]></Sql>
     <Parameter name="cBpGroupId"/>
   </SqlMethod>
@@ -206,7 +206,7 @@
     <![CDATA[
       SELECT M_PRODUCT_CATEGORY.NAME
       FROM M_PRODUCT_CATEGORY
-      WHERE M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?
+      WHERE M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)
      ]]></Sql>
     <Parameter name="mProductCategoryId"/>
   </SqlMethod>
@@ -217,7 +217,7 @@
     <![CDATA[
       SELECT M_WAREHOUSE.NAME
       FROM M_WAREHOUSE
-      WHERE M_WAREHOUSE.M_WAREHOUSE_ID = ?
+      WHERE M_WAREHOUSE.M_WAREHOUSE_ID = TO_NUMBER(?)
      ]]></Sql>
     <Parameter name="mWarehouseId"/>
   </SqlMethod>
@@ -228,7 +228,7 @@
     <![CDATA[
       SELECT AD_USER.FIRSTNAME||' '||AD_USER.LASTNAME
       FROM AD_USER
-      WHERE AD_USER.AD_USER_ID = ?
+      WHERE AD_USER.AD_USER_ID = TO_NUMBER(?)
      ]]></Sql>
     <Parameter name="mWarehouseId"/>
   </SqlMethod>
@@ -239,7 +239,7 @@
     <![CDATA[
       SELECT AD_CLIENT.NAME
       FROM AD_CLIENT
-      WHERE AD_CLIENT.AD_CLIENT_ID = ?
+      WHERE AD_CLIENT.AD_CLIENT_ID = TO_NUMBER(?)
      ]]></Sql>
     <Parameter name="adClientId"/>
   </SqlMethod>

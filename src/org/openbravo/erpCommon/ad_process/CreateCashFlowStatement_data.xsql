@@ -32,7 +32,7 @@
         FROM FACT_ACCT
         WHERE AD_TABLE_ID IN (392, 407)
         AND LINE_ID IS NOT NULL
-        and AD_CLIENT_ID = ?
+        and AD_CLIENT_ID = TO_NUMBER(?)
         AND NOT EXISTS (SELECT 1 FROM FACT_ACCT_CFS
                 WHERE FACT_ACCT.FACT_ACCT_ID = FACT_ACCT_CFS.FACT_ACCT_ID)
         ORDER BY FACT_ACCT.DATEACCT ,FACT_ACCT_ID 
@@ -48,8 +48,8 @@
         SELECT ACCOUNT_ID, (AMTACCTCR-AMTACCTDR) AS AMOUNT, FACT_ACCT_ID AS ID
         FROM FACT_ACCT
         WHERE AD_TABLE_ID = 800019
-        AND RECORD_ID2 = ?
-        AND RECORD_ID = ?
+        AND RECORD_ID2 = TO_NUMBER(?)
+        AND RECORD_ID = TO_NUMBER(?)
         AND ACCOUNT_ID IN (
                 SELECT ACCOUNT_ID FROM C_ACCTSCHEMA_DEFAULT, C_VALIDCOMBINATION
                 WHERE C_ACCTSCHEMA_DEFAULT.WRITEOFF_ACCT = C_VALIDCOMBINATION.C_VALIDCOMBINATION_ID)
@@ -98,7 +98,7 @@
       <![CDATA[
         SELECT C_INVOICE_ID, C_ORDER_ID, C_SETTLEMENT_GENERATE_ID, C_SETTLEMENT_CANCEL_ID, ISMANUAL
         FROM C_DEBT_PAYMENT
-        WHERE C_DEBT_PAYMENT_ID = ?
+        WHERE C_DEBT_PAYMENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="payment"/>
@@ -110,7 +110,7 @@
       <![CDATA[
         SELECT C_DEBT_PAYMENT_ID AS ID, C_INVOICE_ID, C_ORDER_ID, C_SETTLEMENT_GENERATE_ID, AMTACCTDR-AMTACCTCR AS AMOUNT
         FROM C_DEBT_PAYMENT, FACT_ACCT
-        WHERE C_SETTLEMENT_CANCEL_ID = ?
+        WHERE C_SETTLEMENT_CANCEL_ID = TO_NUMBER(?)
         AND C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID = FACT_ACCT.RECORD_ID2
         AND AD_TABLE_ID = 800019
         AND RECORD_ID = C_SETTLEMENT_CANCEL_ID
@@ -127,7 +127,7 @@
       <![CDATA[
         SELECT SUM(AMTACCTCR-AMTACCTDR) AS AMOUNT
         FROM C_DEBT_PAYMENT, FACT_ACCT
-        WHERE C_SETTLEMENT_GENERATE_ID = ?
+        WHERE C_SETTLEMENT_GENERATE_ID = TO_NUMBER(?)
         AND C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID = FACT_ACCT.RECORD_ID2
         AND AD_TABLE_ID = 800019
         AND RECORD_ID = C_SETTLEMENT_GENERATE_ID
@@ -151,12 +151,12 @@
       <![CDATA[
         SELECT ACCOUNT_ID AS ACCOUNT, AMTACCTDR-AMTACCTCR AS AMOUNT, FACT_ACCT_ID AS ID
         FROM FACT_ACCT
-        WHERE RECORD_ID = ?
+        WHERE RECORD_ID = TO_NUMBER(?)
         AND AD_TABLE_ID = 800019
-        AND RECORD_ID2 = ?
+        AND RECORD_ID2 = TO_NUMBER(?)
         AND ACCOUNT_ID NOT IN (SELECT ACCOUNT_ID FROM FACT_ACCT
                                           WHERE AD_TABLE_ID IN (392,407)
-                                          AND RECORD_ID2 = ?)
+                                          AND RECORD_ID2 = TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="settlement"/>
@@ -170,12 +170,12 @@
       <![CDATA[
         SELECT sum(AMTACCTDR-AMTACCTCR) AS AMOUNT
         FROM FACT_ACCT
-        WHERE RECORD_ID = ?
+        WHERE RECORD_ID = TO_NUMBER(?)
         AND AD_TABLE_ID = 800019
-        AND RECORD_ID2 = ?
+        AND RECORD_ID2 = TO_NUMBER(?)
         AND ACCOUNT_ID NOT IN (SELECT ACCOUNT_ID FROM FACT_ACCT
                                           WHERE AD_TABLE_ID IN (392,407)
-                                          AND RECORD_ID2 = ?)
+                                          AND RECORD_ID2 = TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="settlement"/>
@@ -189,17 +189,17 @@
       <![CDATA[
         SELECT ACCOUNT_ID AS ACCOUNT, AMTACCTDR-AMTACCTCR AS AMOUNT, FACT_ACCT_ID AS ID
         FROM FACT_ACCT
-        WHERE RECORD_ID =   ?
+        WHERE RECORD_ID = TO_NUMBER(?)
         AND AD_TABLE_ID = 800019
-        AND RECORD_ID2 = 	?
+        AND RECORD_ID2 = TO_NUMBER(?)
         AND ACCOUNT_ID NOT IN (SELECT C_VALIDCOMBINATION.ACCOUNT_ID FROM C_GLITEM_ACCT, C_DEBT_PAYMENT, C_VALIDCOMBINATION
                                           WHERE C_GLITEM_ACCT.C_GLITEM_ID = C_DEBT_PAYMENT.C_GLITEM_ID
                                           AND C_VALIDCOMBINATION.C_VALIDCOMBINATION_ID = C_GLITEM_ACCT.GLITEM_CREDIT_ACCT
-                                          AND C_DEBT_PAYMENT_ID = ?)
+                                          AND C_DEBT_PAYMENT_ID = TO_NUMBER(?))
         AND ACCOUNT_ID NOT IN (SELECT C_VALIDCOMBINATION.ACCOUNT_ID FROM C_GLITEM_ACCT, C_DEBT_PAYMENT, C_VALIDCOMBINATION
                                           WHERE C_GLITEM_ACCT.C_GLITEM_ID = C_DEBT_PAYMENT.C_GLITEM_ID
                                           AND C_VALIDCOMBINATION.C_VALIDCOMBINATION_ID = C_GLITEM_ACCT.GLITEM_DEBIT_ACCT
-                                          AND C_DEBT_PAYMENT_ID = ?)
+                                          AND C_DEBT_PAYMENT_ID = TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="settlement"/>
@@ -214,17 +214,17 @@
       <![CDATA[
         SELECT sum(AMTACCTDR-AMTACCTCR) AS AMOUNT
         FROM FACT_ACCT
-        WHERE RECORD_ID =   ?
+        WHERE RECORD_ID = TO_NUMBER(?)
         AND AD_TABLE_ID = 800019
-        AND RECORD_ID2 = 	?
+        AND RECORD_ID2 = TO_NUMBER(?)
         AND ACCOUNT_ID NOT IN (SELECT C_VALIDCOMBINATION.ACCOUNT_ID FROM C_GLITEM_ACCT, C_DEBT_PAYMENT, C_VALIDCOMBINATION
                                           WHERE C_GLITEM_ACCT.C_GLITEM_ID = C_DEBT_PAYMENT.C_GLITEM_ID
                                           AND C_VALIDCOMBINATION.C_VALIDCOMBINATION_ID = C_GLITEM_ACCT.GLITEM_CREDIT_ACCT
-                                          AND C_DEBT_PAYMENT_ID = ?)
+                                          AND C_DEBT_PAYMENT_ID = TO_NUMBER(?))
         AND ACCOUNT_ID NOT IN (SELECT C_VALIDCOMBINATION.ACCOUNT_ID FROM C_GLITEM_ACCT, C_DEBT_PAYMENT, C_VALIDCOMBINATION
                                           WHERE C_GLITEM_ACCT.C_GLITEM_ID = C_DEBT_PAYMENT.C_GLITEM_ID
                                           AND C_VALIDCOMBINATION.C_VALIDCOMBINATION_ID = C_GLITEM_ACCT.GLITEM_DEBIT_ACCT
-                                          AND C_DEBT_PAYMENT_ID = ?)
+                                          AND C_DEBT_PAYMENT_ID = TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="settlement"/>
@@ -263,8 +263,8 @@
       <![CDATA[
         SELECT ACCOUNT_ID, AMTACCTDR-AMTACCTCR AS AMOUNT, FACT_ACCT_ID AS ID
         FROM FACT_ACCT
-        WHERE AD_TABLE_ID = ?
-        AND RECORD_ID = ?
+        WHERE AD_TABLE_ID = TO_NUMBER(?)
+        AND RECORD_ID = TO_NUMBER(?)
         AND RECORD_ID2 IS NULL
       ]]>
     </Sql>
@@ -278,8 +278,8 @@
       <![CDATA[
         select sum(AmtAcctDr-AmtAcctCr) as amount
         from fact_acct
-        where ad_table_id = ?
-        and record_id = ?
+        where ad_table_ID = TO_NUMBER(?)
+        and record_ID = TO_NUMBER(?)
         and record_id2 is null
       ]]>
     </Sql>
@@ -294,7 +294,7 @@
         select max(amtacctCr-amtacctDr)-sum(fact_acct_CFS.amount) as Difference
         from fact_acct, fact_acct_CFS 
         where fact_acct.fact_acct_id = fact_acct_CFS.fact_acct_id 
-        AND fact_acct.fact_acct_id = ?
+        AND fact_acct.fact_acct_ID = TO_NUMBER(?)
         group by fact_acct.fact_acct_id 
       ]]>
     </Sql>
@@ -308,7 +308,7 @@
         select fact_acct_CFS.FACT_ACCT_CFS_ID as ID, amount
         from fact_acct, fact_acct_CFS 
         where fact_acct.fact_acct_id = fact_acct_CFS.fact_acct_id 
-        AND fact_acct.fact_acct_id = ? 
+        AND fact_acct.fact_acct_ID = TO_NUMBER(?) 
         order by abs(fact_acct_CFS.amount) desc
       ]]>
     </Sql>
@@ -320,7 +320,7 @@
     <Sql>
       <![CDATA[
         update fact_acct_CFS set amount = ? + amount
-        where fact_acct_CFS_id = ?
+        where fact_acct_CFS_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="difference"/>

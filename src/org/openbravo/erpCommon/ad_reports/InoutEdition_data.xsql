@@ -45,9 +45,9 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_INOUT.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="dateFrom" optional="true" after="1=1"><![CDATA[AND M_INOUT.MOVEMENTDATE >= TO_DATE(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="1=1"><![CDATA[AND M_INOUT.MOVEMENTDATE < TO_DATE(?)]]></Parameter>
-    <Parameter name="cBPartnerId" optional="true" after="1=1"><![CDATA[AND M_INOUT.C_BPARTNER_ID = ?]]></Parameter>
-    <Parameter name="mWarehouseId" optional="true" after="1=1"><![CDATA[AND M_INOUT.M_WAREHOUSE_ID = ?]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="1=1"><![CDATA[AND M_INOUT.C_PROJECT_ID = ?]]></Parameter>
+    <Parameter name="cBPartnerId" optional="true" after="1=1"><![CDATA[AND M_INOUT.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="1=1"><![CDATA[AND M_INOUT.M_WAREHOUSE_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="1=1"><![CDATA[AND M_INOUT.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="issotrx"/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">

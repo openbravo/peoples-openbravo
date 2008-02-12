@@ -48,12 +48,12 @@
         <Parameter name="documentno" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.POReference) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="businesPartner" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.C_BPartner_ID=? ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.LINENETAMT >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.LINENETAMT < to_date(?) ]]></Parameter>
         <Parameter name="grandTotalFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.GrandTotal >= ? ]]></Parameter>
         <Parameter name="grandTotalTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.GrandTotal <= ? ]]></Parameter>
-        <Parameter name="product" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND IL.M_Product_ID=? ]]></Parameter>
+        <Parameter name="product" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND IL.M_Product_ID = TO_NUMBER(?) ]]></Parameter>
       </SqlMethod>
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -90,12 +90,12 @@
         <Parameter name="documentno" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID=? ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
         <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= ? ]]></Parameter>
         <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal <= ? ]]></Parameter>
-        <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID=? ]]></Parameter>
+        <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="isdelivered" optional="true" type="none" after="HAVING 1=1 "><![CDATA[ AND (ol.QTYORDERED - COALESCE(SUM(mp2.QTY), 0)) <> 0 ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="none" after="HAVING 1=1 "><![CDATA[ AND (ol.QTYORDERED - COALESCE(SUM(mp.QTY),0)) <> 0 ]]></Parameter>
    </SqlMethod-->
@@ -159,7 +159,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> 
       <![CDATA[
-        SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID=?
+        SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
       ]]>
       </Sql>
         <Parameter name="cBpartnerId"/>
@@ -168,7 +168,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> 
       <![CDATA[
-        SELECT NAME FROM M_PRODUCT WHERE M_PRODUCT_ID=?
+        SELECT NAME FROM M_PRODUCT WHERE M_PRODUCT_ID = TO_NUMBER(?)
       ]]>
       </Sql>
         <Parameter name="mProductId"/>

@@ -38,7 +38,7 @@
         '' AS CREATEFROM, '' AS GENERATETO, '' AS SENDEMAIL, '' AS AD_USER_ID, '' AS COPYFROM, '' AS ISSELFSERVICE, '' AS AD_ORGTRX_ID,
         '' AS USER1_ID, '' AS USER2_ID, '' AS CONVERTED, '' AS PERIOD, '' AS C_INVOICELINE_ID,'' AS M_INOUTLINE_ID, '' AS M_PRODUCT_ID,
         '' AS DATETRX1, '' AS DATETRX2, '' AS QTY1, '' AS QTY2, '' AS ACCOUNT_ID, '' AS C_INVOICE_ID, '' AS NAME
-        FROM C_INVOICE WHERE AD_CLIENT_ID=?
+        FROM C_INVOICE WHERE AD_CLIENT_ID = TO_NUMBER(?)
         AND PROCESSED='Y' 
         AND (PROCESSING='N' OR PROCESSING IS NULL)
         AND POSTED='N' 
@@ -55,7 +55,7 @@
     <Sql>
       <![CDATA[
         UPDATE DUAL SET Processing='Y' 
-        WHERE CLAVE_ID = ?
+        WHERE CLAVE_ID = TO_NUMBER(?)
         AND Processed='Y'
         AND (Processing='N' OR Processing IS NULL) 
         AND Posted='N'
@@ -69,7 +69,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT DocBaseType, GL_Category_ID FROM C_DocType WHERE C_DocType_ID=?
+        SELECT DocBaseType, GL_Category_ID FROM C_DocType WHERE C_DocType_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="docType"/>
@@ -78,7 +78,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT GL_Category_ID FROM C_DocType WHERE AD_Client_ID=? AND DocBaseType=?
+        SELECT GL_Category_ID FROM C_DocType WHERE AD_Client_ID = TO_NUMBER(?) AND DocBaseType=?
      ]]>
      </Sql>
      <Parameter name="client"/>
@@ -89,7 +89,7 @@
     <Sql>
       <![CDATA[
         SELECT GL_Category_ID FROM GL_Category
-        WHERE AD_Client_ID=?
+        WHERE AD_Client_ID = TO_NUMBER(?)
         ORDER BY IsDefault DESC
      ]]>
      </Sql>
@@ -99,7 +99,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        DELETE FROM Fact_Acct WHERE AD_Table_ID = ? AND Record_ID = ?
+        DELETE FROM Fact_Acct WHERE AD_Table_ID = TO_NUMBER(?) AND Record_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="Table"/>
@@ -148,7 +148,7 @@
       where c_year.c_year_id = c_period.c_year_id
       and c_period.c_period_id = c_periodcontrol.c_period_id
       and c_year.c_calendar_id = ad_clientinfo.c_calendar_id
-      and ad_clientinfo.ad_client_id = ?
+      and ad_clientinfo.ad_client_ID = TO_NUMBER(?)
       and c_periodcontrol.docbasetype = ?
       and c_periodcontrol.periodstatus = 'O'
       and to_date(?) >= c_period.StartDate
@@ -165,7 +165,7 @@
     <Sql>
       <![CDATA[
         UPDATE DUAL SET Processing='N' 
-        WHERE CLAVE_ID = ?
+        WHERE CLAVE_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="tableName" type="replace" optional="true" after="UPDATE " text="DUAL"/>
@@ -205,7 +205,7 @@
     <Sql>
       <![CDATA[
         UPDATE DUAL SET Posted= ? ,Processing='N'
-        WHERE CLAVE_ID = ?
+        WHERE CLAVE_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="tableName" type="replace" optional="true" after="UPDATE " text="DUAL"/>
@@ -224,7 +224,7 @@
         AND m1.M_InOutLine_ID IS NULL
         AND m2.C_InvoiceLine_ID IS NULL
         AND m1.M_Product_ID=m2.M_Product_ID
-        AND m1.AD_Client_ID=?
+        AND m1.AD_Client_ID = TO_NUMBER(?)
         AND NOT EXISTS (SELECT * FROM M_MatchInv mi 
         WHERE mi.C_InvoiceLine_ID=m1.C_InvoiceLine_ID AND mi.M_InOutLine_ID=m2.M_InOutLine_ID)
      ]]>
@@ -253,7 +253,7 @@
    <SqlMethod name="selectExpenseAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT CH_Expense_Acct as account_ID FROM C_Charge_Acct WHERE C_Charge_ID = ? AND C_AcctSchema_ID = ?
+        SELECT CH_Expense_Acct as account_ID FROM C_Charge_Acct WHERE C_Charge_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_Charge_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -261,7 +261,7 @@
    <SqlMethod name="selectRevenueAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT CH_Revenue_Acct as account_ID FROM C_Charge_Acct WHERE C_Charge_ID=? AND C_AcctSchema_ID=?
+        SELECT CH_Revenue_Acct as account_ID FROM C_Charge_Acct WHERE C_Charge_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_Charge_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -269,7 +269,7 @@
    <SqlMethod name="selectLiabilityAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT V_Liability_Acct as account_ID FROM C_BP_Vendor_Acct WHERE C_BPartner_ID=? AND C_AcctSchema_ID=?
+        SELECT V_Liability_Acct as account_ID FROM C_BP_Vendor_Acct WHERE C_BPartner_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
         AND STATUS IS NULL
       </Sql>
       <Parameter name="C_BPartner_ID"/>
@@ -278,7 +278,7 @@
    <SqlMethod name="selectLiabilityServicesAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT V_Liability_Services_Acct as account_ID FROM C_BP_Vendor_Acct WHERE C_BPartner_ID=? AND C_AcctSchema_ID=?
+        SELECT V_Liability_Services_Acct as account_ID FROM C_BP_Vendor_Acct WHERE C_BPartner_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
         AND STATUS IS NULL
       </Sql>
       <Parameter name="C_BPartner_ID"/>
@@ -287,7 +287,7 @@
    <SqlMethod name="selectReceivableAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT C_Receivable_Acct as account_ID FROM C_BP_Customer_Acct WHERE C_BPartner_ID=? AND C_AcctSchema_ID=?
+        SELECT C_Receivable_Acct as account_ID FROM C_BP_Customer_Acct WHERE C_BPartner_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
         AND STATUS IS NULL
       </Sql>
       <Parameter name="C_BPartner_ID"/>
@@ -296,7 +296,7 @@
    <SqlMethod name="selectUnallocatedCashAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT B_UnallocatedCash_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID=? AND C_AcctSchema_ID=?
+        SELECT B_UnallocatedCash_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_BankAccount_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -304,7 +304,7 @@
    <SqlMethod name="selectInTransitAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT B_InTransit_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID=? AND C_AcctSchema_ID=?
+        SELECT B_InTransit_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_BankAccount_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -313,7 +313,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
 	SELECT B_INTRANSIT_ACCT AS ACCOUNT_ID FROM C_Acctschema_Default
-	WHERE C_ACCTSCHEMA_ID = ?
+	WHERE C_ACCTSCHEMA_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
@@ -321,7 +321,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
 	SELECT B_Revaluationloss_Acct AS ACCOUNT_ID FROM C_ACCTSCHEMA_DEFAULT
-	WHERE C_ACCTSCHEMA_ID = ?
+	WHERE C_ACCTSCHEMA_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
@@ -329,14 +329,14 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
 	SELECT B_Revaluationgain_Acct AS ACCOUNT_ID FROM C_ACCTSCHEMA_DEFAULT
-	WHERE C_ACCTSCHEMA_ID = ?
+	WHERE C_ACCTSCHEMA_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
    <SqlMethod name="selectPaymentSelectAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT B_PaymentSelect_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID=? AND C_AcctSchema_ID=?
+        SELECT B_PaymentSelect_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_BankAccount_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -345,7 +345,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT WRITEOFF_ACCT AS ACCOUNT_ID FROM C_ACCTSCHEMA_DEFAULT
-        WHERE C_ACCTSCHEMA_ID = ?
+        WHERE C_ACCTSCHEMA_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
@@ -353,7 +353,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT a.PayDiscount_Exp_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp 
-        WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID=? AND a.C_AcctSchema_ID=?
+        WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID = TO_NUMBER(?) AND a.C_AcctSchema_ID = TO_NUMBER(?)
         AND STATUS IS NULL
       </Sql>
       <Parameter name="C_BPartner_ID"/>
@@ -363,7 +363,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT PayDiscount_Rev_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp 
-        WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID=? AND a.C_AcctSchema_ID=?
+        WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID = TO_NUMBER(?) AND a.C_AcctSchema_ID = TO_NUMBER(?)
         AND STATUS IS NULL
       </Sql>
       <Parameter name="C_BPartner_ID"/>
@@ -373,7 +373,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT WriteOff_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp 
-        WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID=? AND a.C_AcctSchema_ID=?
+        WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID = TO_NUMBER(?) AND a.C_AcctSchema_ID = TO_NUMBER(?)
         AND STATUS IS NULL
       </Sql>
       <Parameter name="C_BPartner_ID"/>
@@ -382,7 +382,7 @@
    <SqlMethod name="selectAssetAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT B_Asset_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID=? AND C_AcctSchema_ID=?
+        SELECT B_Asset_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_BankAccount_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -390,7 +390,7 @@
    <SqlMethod name="selectConvertChargeLossAmt" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT B_REVALUATIONLOSS_ACCT as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID=? AND C_AcctSchema_ID=?
+        SELECT B_REVALUATIONLOSS_ACCT as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_BankAccount_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -398,7 +398,7 @@
    <SqlMethod name="selectConvertChargeGainAmt" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT B_REVALUATIONGAIN_ACCT as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID=? AND C_AcctSchema_ID=?
+        SELECT B_REVALUATIONGAIN_ACCT as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_BankAccount_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -406,7 +406,7 @@
    <SqlMethod name="selectInterestRevAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT B_InterestRev_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID=? AND C_AcctSchema_ID=?
+        SELECT B_InterestRev_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_BankAccount_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -414,7 +414,7 @@
    <SqlMethod name="selectInterestExpAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT B_InterestExp_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID=? AND C_AcctSchema_ID=?
+        SELECT B_InterestExp_Acct as account_ID FROM C_BankAccount_Acct WHERE C_BankAccount_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_BankAccount_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -422,7 +422,7 @@
    <SqlMethod name="selectCBAssetAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT CB_Asset_Acct as account_ID FROM C_CashBook_Acct WHERE C_CashBook_ID = ? AND C_AcctSchema_ID = ?
+        SELECT CB_Asset_Acct as account_ID FROM C_CashBook_Acct WHERE C_CashBook_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_CashBook_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -430,7 +430,7 @@
    <SqlMethod name="selectCashTransferAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT CB_CashTransfer_Acct as account_ID FROM C_CashBook_Acct WHERE C_CashBook_ID=? AND C_AcctSchema_ID=?
+        SELECT CB_CashTransfer_Acct as account_ID FROM C_CashBook_Acct WHERE C_CashBook_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_CashBook_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -439,7 +439,7 @@
    <SqlMethod name="selectCBExpenseAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT CB_Expense_Acct as account_ID FROM C_CashBook_Acct WHERE C_CashBook_ID=? AND C_AcctSchema_ID=?
+        SELECT CB_Expense_Acct as account_ID FROM C_CashBook_Acct WHERE C_CashBook_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_CashBook_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -447,7 +447,7 @@
    <SqlMethod name="selectCBReceiptAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT CB_Receipt_Acct as account_ID FROM C_CashBook_Acct WHERE C_CashBook_ID=? AND C_AcctSchema_ID=?
+        SELECT CB_Receipt_Acct as account_ID FROM C_CashBook_Acct WHERE C_CashBook_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_CashBook_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -455,7 +455,7 @@
    <SqlMethod name="selectCBDifferencesAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT CB_Differences_Acct as account_ID FROM C_CashBook_Acct WHERE C_CashBook_ID=? AND C_AcctSchema_ID=?
+        SELECT CB_Differences_Acct as account_ID FROM C_CashBook_Acct WHERE C_CashBook_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_CashBook_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -463,7 +463,7 @@
    <SqlMethod name="selectWDifferencesAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT W_Differences_Acct as account_ID FROM M_Warehouse_Acct WHERE M_Warehouse_ID=? AND C_AcctSchema_ID=?
+        SELECT W_Differences_Acct as account_ID FROM M_Warehouse_Acct WHERE M_Warehouse_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="M_Warehouse_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -472,7 +472,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT NotInvoicedReceipts_Acct as account_ID FROM C_BP_Group_Acct a, C_BPartner bp
-        WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID=? AND a.C_AcctSchema_ID=?
+        WHERE a.C_BP_Group_ID=bp.C_BP_Group_ID AND bp.C_BPartner_ID = TO_NUMBER(?) AND a.C_AcctSchema_ID = TO_NUMBER(?)
         and a.status is null
       </Sql>
       <Parameter name="C_BPartner_ID"/>
@@ -481,7 +481,7 @@
    <SqlMethod name="selectPJAssetAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT PJ_Asset_Acct as account_ID FROM C_Project_Acct WHERE C_Project_ID=? AND C_AcctSchema_ID=?
+        SELECT PJ_Asset_Acct as account_ID FROM C_Project_Acct WHERE C_Project_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_Project_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -489,7 +489,7 @@
    <SqlMethod name="selectPJWIPAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT PJ_WIP_Acct  as account_ID FROM C_Project_Acct WHERE C_Project_ID=? AND C_AcctSchema_ID=?
+        SELECT PJ_WIP_Acct  as account_ID FROM C_Project_Acct WHERE C_Project_ID = TO_NUMBER(?) AND C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_Project_ID"/>
       <Parameter name="C_AcctSchema_ID"/>
@@ -497,7 +497,7 @@
    <SqlMethod name="selectPPVOffsetAcct" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT PPVOffset_Acct as account_ID FROM C_AcctSchema_GL WHERE C_AcctSchema_ID=?
+        SELECT PPVOffset_Acct as account_ID FROM C_AcctSchema_GL WHERE C_AcctSchema_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
@@ -548,8 +548,8 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       select docbasetype as name from c_doctype 
-      where ad_table_id = ?
-      and ad_client_id = ?
+      where ad_table_ID = TO_NUMBER(?)
+      and ad_client_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="table"/>
       <Parameter name="client"/>
@@ -557,7 +557,7 @@
    <SqlMethod name="selectGroupLines" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT GROUPACCTINVLINES FROM AD_CLIENTINFO WHERE AD_CLIENT_ID = ?
+        SELECT GROUPACCTINVLINES FROM AD_CLIENTINFO WHERE AD_CLIENT_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="client"/>
    </SqlMethod>
@@ -565,8 +565,8 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT ACCTDESCRIPTION FROM C_ACCTSCHEMA_TABLE
-        WHERE AD_TABLE_ID = ?
-        AND C_ACCTSCHEMA_ID = ?
+        WHERE AD_TABLE_ID = TO_NUMBER(?)
+        AND C_ACCTSCHEMA_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="tableId"/>
       <Parameter name="acctschemaId"/>
@@ -575,7 +575,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT NAME FROM C_BPARTNER
-        WHERE C_BPARTNER_ID = ?
+        WHERE C_BPARTNER_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="bpartnerId"/>
    </SqlMethod>

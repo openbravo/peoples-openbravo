@@ -29,7 +29,7 @@
       <![CDATA[
       SELECT MA_Process_Id as process, costcenteruse as ccuse, preptime, '' as quantity, COALESCE(Outsourced, 'N') as outsourced
       FROM MA_Sequence
-      WHERE MA_Sequence_Id = ?
+      WHERE MA_Sequence_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="maSequenceId"/>
@@ -39,8 +39,8 @@
     <Sql>
       SELECT wr.quantity*s.multiplier AS quantity
       FROM MA_WorkRequirement wr, MA_Sequence s
-      WHERE s.MA_Sequence_Id = ?
-      AND wr.MA_WorkRequirement_ID = ?
+      WHERE s.MA_Sequence_ID = TO_NUMBER(?)
+      AND wr.MA_WorkRequirement_ID = TO_NUMBER(?)
     </Sql>
     <Parameter name="maSequenceId"/>
     <Parameter name="maWRequirementId"/>

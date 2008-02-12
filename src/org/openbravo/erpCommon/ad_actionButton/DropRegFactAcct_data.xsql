@@ -30,8 +30,8 @@
         SELECT REG_FACT_ACCT_GROUP_ID AS ID, GETPERIODNAME(MIN(PERIODNO), TO_NUMBER(?))|| ' - ' || GETPERIODNAME(MAX(PERIODNO),TO_NUMBER(?)) AS NAME
         FROM C_PERIOD 
         WHERE REG_FACT_ACCT_GROUP_ID IS NOT NULL
-        AND C_YEAR_ID = ?
-        AND REG_FACT_ACCT_GROUP_ID = (select MAX(REG_FACT_ACCT_GROUP_ID) FROM C_PERIOD WHERE C_YEAR_ID = ?)
+        AND C_YEAR_ID = TO_NUMBER(?)
+        AND REG_FACT_ACCT_GROUP_ID = (select MAX(REG_FACT_ACCT_GROUP_ID) FROM C_PERIOD WHERE C_YEAR_ID = TO_NUMBER(?))
         GROUP BY REG_FACT_ACCT_GROUP_ID
       ]]>
     </Sql>
@@ -45,7 +45,7 @@
     <Sql>
       <![CDATA[
   UPDATE C_PERIOD SET REG_FACT_ACCT_GROUP_ID = NULL, UPDATED = now(), UPDATEDBY = TO_NUMBER(?)
-  WHERE REG_FACT_ACCT_GROUP_ID = ?
+  WHERE REG_FACT_ACCT_GROUP_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="user"/>
@@ -55,7 +55,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-  DELETE FROM FACT_ACCT WHERE FACT_ACCT_GROUP_ID = ?
+  DELETE FROM FACT_ACCT WHERE FACT_ACCT_GROUP_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="fact_acct_group_id"/>
@@ -69,7 +69,7 @@
         WHERE PeriodStatus <> 'P'
         AND C_PERIOD_ID IN (SELECT C_PERIOD_ID 
                 FROM C_PERIOD 
-                WHERE CLOSE_FACT_ACCT_GROUP_ID = ?)
+                WHERE CLOSE_FACT_ACCT_GROUP_ID = TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="user"/>
@@ -79,7 +79,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT DISTINCT CLOSE_FACT_ACCT_GROUP_ID AS ID FROM C_PERIOD WHERE REG_FACT_ACCT_GROUP_ID = ?
+        SELECT DISTINCT CLOSE_FACT_ACCT_GROUP_ID AS ID FROM C_PERIOD WHERE REG_FACT_ACCT_GROUP_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="reg_fact_acct_group_id"/>
@@ -88,7 +88,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT DISTINCT DIVIDEUP_FACT_ACCT_GROUP_ID AS ID FROM C_PERIOD WHERE REG_FACT_ACCT_GROUP_ID = ?
+        SELECT DISTINCT DIVIDEUP_FACT_ACCT_GROUP_ID AS ID FROM C_PERIOD WHERE REG_FACT_ACCT_GROUP_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="reg_fact_acct_group_id"/>
@@ -98,7 +98,7 @@
     <Sql>
       <![CDATA[
   UPDATE C_PERIOD SET CLOSE_FACT_ACCT_GROUP_ID = NULL, UPDATED = now(), UPDATEDBY = TO_NUMBER(?)
-  WHERE CLOSE_FACT_ACCT_GROUP_ID = ?
+  WHERE CLOSE_FACT_ACCT_GROUP_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="user"/>

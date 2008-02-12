@@ -48,8 +48,8 @@
         I.C_CAMPAIGN_ID, I.C_ACTIVITY_ID, I.USER1_ID, I.USER2_ID, I.DOCUMENTNO, I.DATEACCT,
         I.C_DOCTYPE_ID, I.C_CHARGE_ID, I.CHARGEAMT, I.POSTED, I.MOVEMENTDATE, I.C_BPARTNER_LOCATION_ID
         FROM M_INOUT I
-        WHERE AD_Client_ID=? 
-        AND M_INOUT_ID=?
+        WHERE AD_Client_ID = TO_NUMBER(?) 
+        AND M_INOUT_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="client"/>
@@ -63,13 +63,13 @@
         SET CostAverageCumQty=(SELECT CostAverageCumQty - SUM(il.MovementQty)
                                FROM M_InOutLine il 
                                WHERE M_Product_Costing.M_Product_ID=il.M_Product_ID
-                               AND il.M_InOut_ID= ?), 
+                               AND il.M_InOut_ID = TO_NUMBER(?)), 
             CostAverageCumAmt=(SELECT CostAverageCumAmt - SUM(il.MovementQty*CurrentCostPrice) FROM M_InOutLine il 
                                 WHERE M_Product_Costing.M_Product_ID=il.M_Product_ID
-                                AND il.M_InOut_ID= ?)
+                                AND il.M_InOut_ID = TO_NUMBER(?))
         WHERE EXISTS (SELECT * FROM M_InOutLine il 
                                  WHERE M_Product_Costing.M_Product_ID=il.M_Product_ID
-                                 AND il.M_InOut_ID = ?)
+                                 AND il.M_InOut_ID = TO_NUMBER(?))
      ]]>
      </Sql>
      <Parameter name="M_InOut_ID"/>

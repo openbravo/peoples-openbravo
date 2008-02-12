@@ -30,7 +30,7 @@
         '' AS CODEBRANCH, '' AS DIGITCONTROL, '' AS C_CASH_ID, '' AS STATEMENTDATE, '' AS BEGINNINGBALANCE, '' AS ENDINGBALANCE,
         '' AS STATEMENTDIFFERENCE, '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED, '' AS AD_ORGTRX_ID, '' AS C_PROJECT_ID,
         '' AS C_CAMPAIGN_ID, '' AS C_ACTIVITY_ID, '' AS USER1_ID, '' AS USER2_ID, '' AS C_BANKACCOUNT_ID, '' AS ISMANUAL, '' AS CREATEFROM
-        FROM C_BankStatementLine B WHERE C_BankStatement_ID=? ORDER BY Line
+        FROM C_BankStatementLine B WHERE C_BankStatement_ID = TO_NUMBER(?) ORDER BY Line
      ]]>
      </Sql>
      <Parameter name="C_BankAccount_ID"/>
@@ -39,7 +39,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_Currency_ID FROM C_BankAccount WHERE C_BankAccount_ID=?
+        SELECT C_Currency_ID FROM C_BankAccount WHERE C_BankAccount_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="C_BankAccount_ID"/>
@@ -51,8 +51,8 @@
         SELECT B.AD_CLIENT_ID, B.AD_ORG_ID, B.NAME, B.C_BANKACCOUNT_ID, B.POSTED,
         B.STATEMENTDATE, B.STATEMENTDIFFERENCE
         FROM C_BANKSTATEMENT B          
-        WHERE AD_Client_ID=? 
-        AND C_BANKSTATEMENT_ID=?
+        WHERE AD_Client_ID = TO_NUMBER(?) 
+        AND C_BANKSTATEMENT_ID = TO_NUMBER(?)
      ]]>
      </Sql>
      <Parameter name="client"/>

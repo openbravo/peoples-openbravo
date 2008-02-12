@@ -26,8 +26,8 @@
       <Sql>
         select Count(*) AS TOTAL 
         FROM AD_Window_Access 
-        WHERE AD_Window_ID = ?
-        AND AD_Role_ID = ? 
+        WHERE AD_Window_ID = TO_NUMBER(?)
+        AND AD_Role_ID = TO_NUMBER(?) 
         AND IsActive = 'Y' 
       </Sql>
       <Parameter name="adWindowId"/>
