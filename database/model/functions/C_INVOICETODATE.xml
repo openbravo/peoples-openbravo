@@ -46,12 +46,12 @@ BEGIN
     IF((TO_NUMBER(TO_CHAR(v_date, 'DD')) < p_invoiceDay) AND(v_date < LAST_DAY(v_date))) THEN
       v_auxDate:=C_DATEDAYINMONTH(v_invoiceDay, to_date(ADD_MONTHS(v_date, -1))) ;
     ELSE
-      v_auxDate:=C_DATEDAYINMONTH(v_invoiceDay, v_date) ;
+      v_auxDate:=C_DATEDAYINMONTH(v_invoiceDay, to_date(v_date)) ;
     END IF;
     IF((TO_NUMBER(TO_CHAR(v_auxDate, 'DD')) < v_invoiceCutOff) AND(v_auxDate < LAST_DAY(v_auxDate))) THEN
       v_invoiceToDate:=C_DATEDAYINMONTH(v_invoiceCutOff, to_date(ADD_MONTHS(v_auxDate, -1))) ;
     ELSE
-      v_invoiceToDate:=C_DATEDAYINMONTH(v_invoiceCutOff, v_auxDate) ;
+      v_invoiceToDate:=C_DATEDAYINMONTH(v_invoiceCutOff, to_date(v_auxDate)) ;
     END IF;
   ELSIF(p_invoiceFrecuency IN('W')) THEN
     v_auxDate:=v_date;

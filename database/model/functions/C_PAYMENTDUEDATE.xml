@@ -75,7 +75,7 @@ BEGIN
         v_docDate := ADD_MONTHS(v_docDate, 1) ;
       END IF;
     END IF;
-    v_DueDate := C_Datedayinmonth(v_FixMonthDay, v_docDate) ;
+    v_DueDate := C_Datedayinmonth(v_FixMonthDay, to_date(v_docDate)) ;
   ELSE
     v_DueDate := TRUNC(p_DocDate) + COALESCE(p_netDays, 0) ;
     v_DueDate := ADD_MONTHS(v_DueDate, COALESCE(p_fixMonthOffset, 0)) ;
