@@ -30,10 +30,10 @@
       </foreign-key>
       <check name="ATCOMMAND_HASPREFIX_CHECK"><![CDATA[HAS_PREFIX IN ('Y', 'N')]]></check>
       <check name="ATCOMMAND_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ATCOMMANDLINEINTERCH_CHECK"><![CDATA[LINE_INTERCHANGE IN ('Y', 'N')]]></check>
       <check name="ATCOMMAND_REMFRAME_CHECK"><![CDATA[REMEMBER_FRAME IN ('Y', 'N')]]></check>
       <check name="ATCOMMAND_REMTAB_CHECK"><![CDATA[REMEMBER_TAB IN ('Y', 'N')]]></check>
       <check name="ATCOMMAND_REMWINDOW_CHECK"><![CDATA[REMEMBER_WINDOW IN ('Y', 'N')]]></check>
       <check name="ATCOMMAND_WRITEABLE_CHECK"><![CDATA[CHECK_WRITEABLE IN ('Y', 'N')]]></check>
+      <check name="ATCOMMANDLINEINTERCH_CHECK"><![CDATA[LINE_INTERCHANGE IN ('Y', 'N')]]></check>
     </table>
   </database>

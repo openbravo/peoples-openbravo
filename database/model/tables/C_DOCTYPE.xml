@@ -77,20 +77,20 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
-      <check name="CDOCTYPE_CREATEPICKLIST_CHECK"><![CDATA[CREATEPICKLIST IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_HASCHARGES_CHECK"><![CDATA[HASCHARGES IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_HASPROFORMA_CHECK"><![CDATA[HASPROFORMA IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ISAPPROVED_CHECK"><![CDATA[ISAPPROVED IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ISBATCHED_CHECK"><![CDATA[ISBATCHED IN ('Y', 'N')]]></check>
-      <check name="CDOCTYPE_ISBCONTRFORCED_CHECK"><![CDATA[ISBATCHCONTROLENFORCED IN ('Y', 'N')]]></check>
-      <check name="CDOCTYPE_ISBDOCNOCONTR_CHECK"><![CDATA[ISBATCHDOCNOCONTROLLED IN ('Y', 'N')]]></check>
-      <check name="CDOCTYPEISDOCNOCONTROL_CHECK"><![CDATA[ISDOCNOCONTROLLED IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ISMAXTABLE_CHECK"><![CDATA[ISMAXTABLE IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ISTRANSFERRED_CHECK"><![CDATA[ISTRANSFERRED IN ('Y', 'N')]]></check>
       <check name="C_DOCTYPE_ORGFILTERED_CHECK"><![CDATA[ORGFILTERED IN ('Y', 'N')]]></check>
+      <check name="CDOCTYPE_CREATEPICKLIST_CHECK"><![CDATA[CREATEPICKLIST IN ('Y', 'N')]]></check>
+      <check name="CDOCTYPE_ISBCONTRFORCED_CHECK"><![CDATA[ISBATCHCONTROLENFORCED IN ('Y', 'N')]]></check>
+      <check name="CDOCTYPE_ISBDOCNOCONTR_CHECK"><![CDATA[ISBATCHDOCNOCONTROLLED IN ('Y', 'N')]]></check>
+      <check name="CDOCTYPEISDOCNOCONTROL_CHECK"><![CDATA[ISDOCNOCONTROLLED IN ('Y', 'N')]]></check>
       <check name="ORGFILTEREDMAXTABLE_CDOCTYPE"><![CDATA[(ORGFILTERED = 'N') OR (ISMAXTABLE = 'Y')]]></check>
     </table>
   </database>

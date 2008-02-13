@@ -20,7 +20,7 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MACCPGROUP">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <check name="MACCPGR_HASSECPRODUCT_CHECK"><![CDATA[HASSECPRODUCT IN ('Y', 'N')]]></check>
       <check name="MA_CCP_GROUP_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MACCPGR_HASSECPRODUCT_CHECK"><![CDATA[HASSECPRODUCT IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -49,9 +49,9 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_MINVENTORY">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
-      <check name="MINVENTORY_GENERATELIST_CHECK"><![CDATA[GENERATELIST IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_UPDATEQTY_CHECK"><![CDATA[UPDATEQTY IN ('Y', 'N')]]></check>
+      <check name="MINVENTORY_GENERATELIST_CHECK"><![CDATA[GENERATELIST IN ('Y', 'N')]]></check>
     </table>
   </database>

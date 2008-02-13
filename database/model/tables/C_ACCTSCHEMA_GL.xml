@@ -55,8 +55,8 @@
         <reference local="SUSPENSEERROR_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <check name="CACCTSCHEMAGL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CACCTSCHEMAGL_U_SPEERROR_CHECK"><![CDATA[USESUSPENSEERROR IN ('Y', 'N')]]></check>
       <check name="CACCTSCHEMAGL_USECURBAL_CHECK"><![CDATA[USECURRENCYBALANCING IN ('Y', 'N')]]></check>
       <check name="CACCTSCHEMAGL_USESUSPENB_CHECK"><![CDATA[USESUSPENSEBALANCING IN ('Y', 'N')]]></check>
-      <check name="CACCTSCHEMAGL_U_SPEERROR_CHECK"><![CDATA[USESUSPENSEERROR IN ('Y', 'N')]]></check>
     </table>
   </database>
