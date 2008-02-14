@@ -238,7 +238,7 @@
     <Parameter name="tablename" optional="true" type="replace" after="FROM " text="AD_WINDOW"/>
     <Parameter name="columnname" optional="true" type="replace" after="WHERE " text="AD_WINDOW_ID"/>
     <Parameter name="keyId"/>
-    <Parameter name="whereclause" optional="true" type="replace" after="? " text="AND 1=1"/>
+    <Parameter name="whereclause" optional="true" type="replace" after="TO_NUMBER(?) " text="AND 1=1"/>
   </SqlMethod>
   <SqlMethod name="parentTabTableName" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
