@@ -94,9 +94,17 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       else printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
     } else if (vars.commandIn("DIRECT")) {
       String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getStringParameter("inpDirectKey");
+      
+      <PARAMETER_TMP id="withSecondaryKey">  
+      //Double pk, inpDirectKey is useless
+      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", "");
+      </PARAMETER_TMP>  
       if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getRequiredGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
       else vars.setSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
-      <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = getParentID(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
+      <PARAMETER_TMP id="parent">
+      <PARAMETER_TMP id="keySequence">
+      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = getParentID(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
+      </PARAMETER_TMP>
       vars.setSessionValue(windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);
       vars.setSessionValue("<PARENT_TMP id="parentTab">xxtabId</PARENT_TMP>|<PARAMETER_TMP id="parentTabName">xxparentTabName</PARAMETER_TMP>.view", "EDIT");
 <PARAMETER_TMP id="grandfather">      vars.removeSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>");</PARAMETER_TMP>

@@ -1446,7 +1446,7 @@ public class Wad extends DefaultHandler {
       }
     }
     
-    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", ""};
+    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", ""};
     if (parentsFieldsData==null || parentsFieldsData.length == 0) {
       discard[0] = "parent";  // remove the parent tags
       hasParentsFields=false;
@@ -1469,7 +1469,7 @@ public class Wad extends DefaultHandler {
       discard[14] = "sectionIsHighVolume4";
     }
     if (isHighVolumen) discard[10] = "sectionNotIsHighVolume";
-    if (isSecondaryKey) discard[11] = "keySequence";
+    if (isSecondaryKey) discard[11] = "keySequence"; else discard[24] = "withSecondaryKey";
     if (grandfatherField.equals("")) discard[12]="grandfather";
     if (!hasCreateFrom) discard[13]="sectionCreateFrom";
     if (!hasPosted) discard[19]="sectionPosted";
