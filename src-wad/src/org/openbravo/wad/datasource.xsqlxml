@@ -169,6 +169,16 @@ package="org.openbravo.wad.Window">
     <Parameter id="paramKey" name="param1"/>
     <PARAMETER_TMP id="parent"><Parameter id="paramParent" name="param2"/></PARAMETER_TMP>
   </SqlMethod>
+  
+  <SqlMethod id="fieldRealNameEncrypted" name="checkxx" type="preparedStatement" return="string">
+    <Sql>&#60;&#33;[CDATA[
+        SELECT COUNT(*)
+          FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP>
+         WHERE <PARAMETER_TMP id="key">table</PARAMETER_TMP> = ? 
+    ]]&#62;</Sql>
+    <Parameter id="paramKey" name="param1"/>
+  </SqlMethod>
+  
 </FIELDS_TMP>
 
 <FIELDS_TMP id="sectionActionSearchs">

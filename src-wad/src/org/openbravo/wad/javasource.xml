@@ -247,6 +247,7 @@
   <FIELD id="EncryptedFieldID2">id</FIELD>
   <FIELD id="EncryptedName2">columnname</FIELD>
   <FIELD id="EncryptedRealName2">name</FIELD>
+  <FIELD id="EncryptedUpdateName2">realname</FIELD>
   <SECTION id="sectionEncrypted2"/>
 </structure>
 
