@@ -34,6 +34,8 @@
   <PARAMETER id="package" name = "package" default=" "/>
   <PARAMETER id="key" name = "key" default=" "/>
   <PARAMETER id="keyParent" name = "keyParent" default=" "/>
+  <PARAMETER id="parentTab" name = "parentTab" default=" "/>
+  <PARAMETER id="parentTabName" name = "parentTabName" default=" "/>
   <PARAMETER id="keyParentINP" name = "keyParentINP" default=" "/>
   <PARAMETER id="defaultView" name = "defaultView" default=" "/>
   <PARAMETER id="keyData" name = "keyData" default=" "/>

@@ -98,6 +98,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       else vars.setSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
       <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = getParentID(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
       vars.setSessionValue(windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);
+      vars.setSessionValue("<PARENT_TMP id="parentTab">xxtabId</PARENT_TMP>|<PARAMETER_TMP id="parentTabName">xxparentTabName</PARAMETER_TMP>.view", "EDIT");
 <PARAMETER_TMP id="grandfather">      vars.removeSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>");</PARAMETER_TMP>
       refreshParentSession(vars, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);
 </PARAMETER_TMP>

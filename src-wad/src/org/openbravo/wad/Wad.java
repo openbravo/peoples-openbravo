@@ -1510,6 +1510,8 @@ public class Wad extends DefaultHandler {
     if (parentsFieldsData.length > 0) {
       xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
       xmlDocument.setParameter("keyParentINP", Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
+      xmlDocument.setParameter("parentTab", parentsFieldsData[0].adTabId);
+      xmlDocument.setParameter("parentTabName", parentsFieldsData[0].parentTabName);
     }
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
     xmlDocument.setParameter("table", tableName);
