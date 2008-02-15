@@ -29,6 +29,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.erpCommon.security.AccessData;
 
 
 /**
@@ -84,7 +85,7 @@ public class DataGrid extends HttpSecureAppServlet {
       try {
         if (action.equalsIgnoreCase("deleteRow")) { //Deleting
           if (log4j.isDebugEnabled()) log4j.debug(">>>>deleteRow");
-          delete(response, vars, tableSQL);
+          delete(response, vars, tableSQL, TabId);
         } else { //Inserting or updating
           save(response, vars);
         }
@@ -349,60 +350,70 @@ public class DataGrid extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  private void delete(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
+  private void delete(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL, String strTab) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Delete record");
-    Vector<String> parametersData = null;
-    String rows = vars.getInStringParameter("rows");
-    StringBuffer SqlDataBuffer = new StringBuffer();
-    SqlDataBuffer.append("DELETE FROM ").append(tableSQL.getTableName()).append(" \n");
-    SqlDataBuffer.append("WHERE ").append(tableSQL.getKeyColumn()).append(" \n");
-    SqlDataBuffer.append("IN ").append(rows);
-    String parentKey = tableSQL.getParentColumnName();
-    if (parentKey!=null && !parentKey.equals("")) {
-      SqlDataBuffer.append(" AND ").append(tableSQL.getTableName()).append(".").append(parentKey).append(" = ?");
-      if (parametersData==null) parametersData = new Vector<String>();
-      parametersData.addElement(vars.getGlobalVariable("inpParentKey", tableSQL.getWindowID() + "|" + parentKey));
-    }
-    if (log4j.isDebugEnabled()) log4j.debug(SqlDataBuffer.toString());
+    
     int result = 1;
     int total = 0;
     String type, title, description="";
-    try{
-      ExecuteQuery execquery = new ExecuteQuery(this, SqlDataBuffer.toString(), parametersData);
-      total = execquery.executeStatement();
-      if (total == 0) {
-        result=0;
-        type="Error";
-        title="Error";
-        description="0 " + Utility.messageBD(this, "RowsDeleted", vars.getLanguage());
-      } else {
-        result=1;
-        type="Success";
-        title="Success";
-        description=total + " " + Utility.messageBD(this, "RowsDeleted", vars.getLanguage());
-      }
-    } catch (ServletException e) { 
-      log4j.error("Error in delete: " + e);
-      e.printStackTrace();
-      OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
-      if (!myError.isConnectionAvailable()) {
-        bdErrorAjax(response, "Error", "Connection Error", "No database connection");
-        return;
-      } else {
-        result = 0;
-        type = myError.getType();
-        title = myError.getTitle();
-        if (!myError.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + myError.getMessage() + "]]>";
-        else description = myError.getMessage();
-      }
-    } catch (Exception e) {
-      log4j.error("Error in delete: " + e);
-      e.printStackTrace();
-      result = 0;
-      type = "ERROR";
-      title = "Error";
-      if (!e.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + e.getMessage() + "]]>";
-      else description = e.getMessage();
+    
+    if (AccessData.isReadOnly(this, strTab).equals("Y")) {
+      result=0;
+      type="Error";
+      title="Error";
+      description=Utility.messageBD(this,"AccessCannotDelete", vars.getLanguage());;
+    } else {    
+	    Vector<String> parametersData = null;
+	    String rows = vars.getInStringParameter("rows");
+	    StringBuffer SqlDataBuffer = new StringBuffer();
+	    SqlDataBuffer.append("DELETE FROM ").append(tableSQL.getTableName()).append(" \n");
+	    SqlDataBuffer.append("WHERE ").append(tableSQL.getKeyColumn()).append(" \n");
+	    SqlDataBuffer.append("IN ").append(rows);
+	    String parentKey = tableSQL.getParentColumnName();
+	    if (parentKey!=null && !parentKey.equals("")) {
+	      SqlDataBuffer.append(" AND ").append(tableSQL.getTableName()).append(".").append(parentKey).append(" = ?");
+	      if (parametersData==null) parametersData = new Vector<String>();
+	      parametersData.addElement(vars.getGlobalVariable("inpParentKey", tableSQL.getWindowID() + "|" + parentKey));
+	    }
+	    if (log4j.isDebugEnabled()) log4j.debug(SqlDataBuffer.toString());
+	    
+	    try{
+	      ExecuteQuery execquery = new ExecuteQuery(this, SqlDataBuffer.toString(), parametersData);
+	      total = execquery.executeStatement();
+	      if (total == 0) {
+	        result=0;
+	        type="Error";
+	        title="Error";
+	        description="0 " + Utility.messageBD(this, "RowsDeleted", vars.getLanguage());
+	      } else {
+	        result=1;
+	        type="Success";
+	        title="Success";
+	        description=total + " " + Utility.messageBD(this, "RowsDeleted", vars.getLanguage());
+	      }
+	    } catch (ServletException e) { 
+	      log4j.error("Error in delete: " + e);
+	      e.printStackTrace();
+	      OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+	      if (!myError.isConnectionAvailable()) {
+	        bdErrorAjax(response, "Error", "Connection Error", "No database connection");
+	        return;
+	      } else {
+	        result = 0;
+	        type = myError.getType();
+	        title = myError.getTitle();
+	        if (!myError.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + myError.getMessage() + "]]>";
+	        else description = myError.getMessage();
+	      }
+	    } catch (Exception e) {
+	      log4j.error("Error in delete: " + e);
+	      e.printStackTrace();
+	      result = 0;
+	      type = "ERROR";
+	      title = "Error";
+	      if (!e.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + e.getMessage() + "]]>";
+	      else description = e.getMessage();
+	    }
     }
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/DataGridDelete").createXmlDocument();

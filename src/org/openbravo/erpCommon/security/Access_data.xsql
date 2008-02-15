@@ -144,4 +144,14 @@
       <Parameter name="type"/>
       <Parameter name="id"/>
    </SqlMethod>
+   
+    <SqlMethod name="isReadOnly" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT isReadOnly
+          FROM AD_Tab
+         WHERE AD_Tab_ID = ? 
+      </Sql>
+      <Parameter name="tabId"/>
+    </SqlMethod>
 </SqlClass>
