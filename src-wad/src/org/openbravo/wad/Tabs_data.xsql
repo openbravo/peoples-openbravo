@@ -69,7 +69,7 @@
         WHERE ad_tab.AD_WINDOW_ID = ad_window.AD_WINDOW_ID
           AND ad_tab.tablevel = 0 
           AND ad_tab.isactive = 'Y'
-          AND ad_tab.AD_WINDOW_ID = ?
+          AND ad_tab.AD_WINDOW_ID = to_number(?)
           ]]>
           <!-- No se procesan de momento las que no tienen key en la tabla -->
       </Sql>
@@ -92,7 +92,7 @@
         WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
           AND AD_TAB.tablevel = 0 
           AND AD_TAB.isactive = 'Y'
-          AND AD_TAB.AD_WINDOW_ID = ? 
+          AND AD_TAB.AD_WINDOW_ID = to_number(?) 
           ]]>
           <!-- No se procesan de momento las que no tienen key en la tabla -->
       </Sql>
@@ -113,7 +113,7 @@
         COALESCE(a1.ad_tab_id,-1) AS Parent_Key, a2.isInfoTab, a2.isTranslationTab, AD_ShortName(a2.Name) as NameTab, 
         a2.EDITREFERENCE 
         FROM AD_TAB a1, AD_TAB a2
-        WHERE a1.ad_tab_id = ?
+        WHERE a1.ad_tab_id = to_number(?)
         AND a1.ad_window_id = a2.ad_window_id
         AND a2.seqno > a1.seqno
         AND a2.isactive = 'Y'
@@ -161,7 +161,7 @@
              AD_TAB a2 left join AD_TAB_TRL at2 on  a2.ad_tab_id = at2.ad_tab_id 
                                               AND at2.isactive ='Y'
                                               AND at2.AD_LANGUAGE = ?
-        WHERE a1.ad_tab_id = ?
+        WHERE a1.ad_tab_id = to_number(?)
         AND a1.ad_window_id = a2.ad_window_id
         AND a2.seqno > a1.seqno
         AND a2.isactive = 'Y'
@@ -204,7 +204,7 @@
                               left join ad_model_object_mapping mom on mo.ad_model_object_id = mom.ad_model_object_id 
                                     and mom.isactive = 'Y' 
                                     and mom.isdefault = 'Y'
-        WHERE ad_process.ad_process_id = ?
+        WHERE ad_process.ad_process_id = to_number(?)
         ]]>
       </Sql>
       <Parameter name="adProcessId"/>
@@ -213,7 +213,7 @@
     <SqlMethodComment>Subtabs of the tab of the parameter</SqlMethodComment>
       <Sql><![CDATA[
         SELECT isdirectprint as name FROM ad_process 
-        WHERE ad_process_id = ?
+        WHERE ad_process_id = to_number(?)
         ]]>
       </Sql>
       <Parameter name="adProcessId"/>
@@ -222,7 +222,7 @@
     <SqlMethodComment>Subtabs of the tab of the parameter</SqlMethodComment>
       <Sql><![CDATA[
         SELECT mappingname as name FROM ad_model_object mo, ad_model_object_mapping mom
-        WHERE mo.ad_form_id = ? 
+        WHERE mo.ad_form_id = to_number(?) 
         AND mo.isactive = 'Y' 
         AND mo.isdefault = 'Y' 
         AND mo.ad_model_object_id = mom.ad_model_object_id 

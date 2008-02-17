@@ -41,7 +41,7 @@
                                left join ad_val_rule avr on app.AD_VAL_RULE_ID = avr.AD_VAL_RULE_ID, 
           ad_reference r left join ad_reference_trl rt on r.ad_reference_id = rt.ad_reference_id 
                                                       and rt.ad_language = ?
-      where app.AD_PROCESS_ID = ? 
+      where app.AD_PROCESS_ID = to_number(?) 
       and app.ad_reference_id = r.ad_reference_id  
       and app.ISACTIVE = 'Y' 
       ORDER BY app.SEQNO
@@ -79,7 +79,7 @@
       and ad_column.ad_process_id = app.ad_process_id 
       and app.ISACTIVE = 'Y' 
       and app.AD_REFERENCE_ID IN (30, 31, 35, 25) 
-      and ad_field.ad_tab_id = ? 
+      and ad_field.ad_tab_id = to_number(?) 
       GROUP BY app.columnname, (CASE WHEN (app.ad_reference_id<>30 OR app.ad_reference_value_id is null) 
               THEN app.columnname 
               ELSE c.columnname END), app.AD_REFERENCE_ID, ad_column.istranslated
@@ -96,7 +96,7 @@
       where c.AD_COLUMN_ID = f.AD_COLUMN_ID 
       and c.AD_PROCESS_ID = p.AD_PROCESS_ID  
       and p.DEFAULTVALUE LIKE '@SQL=%'
-      and f.AD_TAB_ID = ?
+      and f.AD_TAB_ID = to_number(?)
       ]]>
     </Sql>
     <Parameter name="adTabId"/>
