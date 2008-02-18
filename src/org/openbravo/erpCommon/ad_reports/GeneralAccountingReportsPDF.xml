@@ -35,6 +35,7 @@
   <PARAMETER id="fieldPeriodRef" name="periodRef" replaceCharacters="fo"/>
   <PARAMETER id="fieldAgnoInitial" name="agnoInitial" replaceCharacters="fo"/>
   <PARAMETER id="fieldAgnoRef" name="agnoRef" replaceCharacters="fo"/>
+  <PARAMETER id="fieldOrg" name="org" replaceCharacters="fo"/>
 
 
   <structure name="group">

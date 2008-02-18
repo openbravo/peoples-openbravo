@@ -40,6 +40,7 @@
           WHERE AD_TREE.AD_TREE_ID = AD_TREENODE.AD_TREE_ID      
           AND AD_TREENODE.NODE_ID = AR.AD_ACCOUNTINGRPT_ELEMENT_ID      
           AND AR.AD_ACCOUNTINGRPT_ELEMENT_ID = TO_NUMBER(?)
+          AND A.C_ACCTSCHEMA_ID = TO_NUMBER(?)
           AND AD_TREE.TREETYPE = 'AR'      
           GROUP BY REPORT_TYPE, AR.AD_ACCOUNTINGRPT_ELEMENT_ID, AR.NAME, AR.DESCRIPTION, AR.ISSUMMARY, AR.ISSHOWN, 
           AD_TREENODE.NODE_ID,       
@@ -55,7 +56,8 @@
     <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
     <Parameter name="accountId" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT_CFS.ACCOUNT_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="adAccountingElementId"/>
+    <Parameter name="adAccountingElementId"/>    
+    <Parameter name="acctschema"/>
   </SqlMethod>
 
   <SqlMethod name="selectMissingEntries" type="preparedStatement" return="multiple">
@@ -76,6 +78,7 @@
     </Sql>
     <Parameter name="adClientId" optional="true" type="replace" after="FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
     <Parameter name="currentClient"/>
@@ -220,11 +223,13 @@
       AND AD_CLIENT_ID IN ('1')
       AND ISREPORT='Y'
       AND (isActive = 'Y' OR AD_ACCOUNTINGRPT_ELEMENT_ID = TO_NUMBER(?) )
+      AND 1=1
       ]]>
     </Sql>
     <Parameter name="adOrgClient" type="replace" optional="true" after="WHERE AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adAccountingrptElementId"/>
+    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCTSCHEMA_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectType" type="preparedStatement" return="string">

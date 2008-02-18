@@ -31,6 +31,7 @@ import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.Utility;
 
 
 import java.util.*;
@@ -44,6 +45,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Command: "+vars.getStringParameter("Command"));
 
     if (vars.commandIn("DEFAULT")) {
+      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId", "ReportGeneralLedger|cAcctSchemaId", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportGeneralLedgerJournal|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedgerJournal|DateTo", "");
       String strDocument = vars.getGlobalVariable("inpDocument", "ReportGeneralLedgerJournal|Document", "");
@@ -52,28 +54,30 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
      // String strTable = vars.getGlobalVariable("inpTable", "ReportGeneralLedgerJournal|Table");
       String strTable = vars.getStringParameter("inpTable");
       String strRecord = vars.getStringParameter("inpRecord");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable, strRecord, "");
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable, strRecord, "", strcAcctSchemaId);
     } else if (vars.commandIn("DIRECT")) {
       String strTable = vars.getGlobalVariable("inpTable", "ReportGeneralLedgerJournal|Table");
       String strRecord = vars.getGlobalVariable("inpRecord", "ReportGeneralLedgerJournal|Record");
       setHistoryCommand(request, "DIRECT");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
-      printPageDataSheet(response, vars, "", "", "", "", strTable, strRecord, "");
+      printPageDataSheet(response, vars, "", "", "", "", strTable, strRecord, "","");
     } else if (vars.commandIn("DIRECT2")) {
       String strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId", "ReportGeneralLedgerJournal|FactAcctGroupId");
       setHistoryCommand(request, "DIRECT2");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
-      printPageDataSheet(response, vars, "", "", "", "", "", "", strFactAcctGroupId);
+      printPageDataSheet(response, vars, "", "", "", "", "", "", strFactAcctGroupId, "");
     } else if (vars.commandIn("FIND")) {
+      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId", "ReportGeneralLedger|cAcctSchemaId");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportGeneralLedgerJournal|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportGeneralLedgerJournal|DateTo");
       String strDocument = vars.getRequestGlobalVariable("inpDocument", "ReportGeneralLedgerJournal|Document");
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org","0");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
       setHistoryCommand(request, "DEFAULT");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, "", "", "");
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strDocument, strOrg, "", "", "", strcAcctSchemaId);
     } else if (vars.commandIn("PDF","XLS")) {
       if (log4j.isDebugEnabled()) log4j.debug("PDF");
+      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId", "ReportGeneralLedger|cAcctSchemaId");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportGeneralLedgerJournal|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportGeneralLedgerJournal|DateTo");
       String strDocument = vars.getRequestGlobalVariable("inpDocument", "ReportGeneralLedgerJournal|Document");
@@ -84,7 +88,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strRecord = vars.getStringParameter("inpRecord");
       vars.setSessionValue("ReportGeneralLedgerJournal.initRecordNumber", "0");
       setHistoryCommand(request, "DEFAULT");
-      printPagePDF(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable, strRecord, "");
+      printPagePDF(response, vars, strDateFrom, strDateTo, strDocument, strOrg, strTable, strRecord, "", strcAcctSchemaId);
     }else if (vars.commandIn("PREVIOUS_RELATION")) {
       String strInitRecord = vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRange", "ReportGeneralLedgerJournal");
@@ -110,7 +114,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     } else pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable, String strRecord, String strFactAcctGroupId) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable, String strRecord, String strFactAcctGroupId, String strcAcctSchemaId) throws IOException, ServletException {
 	String  strRecordRange="500";
     int intRecordRange = (strRecordRange.equals("")?0:Integer.parseInt(strRecordRange));
     String strInitRecord = vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber");
@@ -126,8 +130,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String strTreeOrg = ReportGeneralLedgerJournalData.treeOrg(this, vars.getClient());
       String strOrgFamily = getFamily(strTreeOrg, strOrg);
       if (strRecord.equals("")) {
-        data = ReportGeneralLedgerJournalData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocument, strOrgFamily, initRecordNumber, intRecordRange);
-        if (data!=null && data.length > 0) strPosition = ReportGeneralLedgerJournalData.selectCount(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocument, strOrgFamily, data[0].dateacct, data[0].identifier);
+        data = ReportGeneralLedgerJournalData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocument, strcAcctSchemaId, strOrgFamily, initRecordNumber, intRecordRange);
+        if (data!=null && data.length > 0) strPosition = ReportGeneralLedgerJournalData.selectCount(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocument, strcAcctSchemaId, strOrgFamily, data[0].dateacct, data[0].identifier);
       } else {
    	    data = ReportGeneralLedgerJournalData.selectDirect(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strTable, strRecord, initRecordNumber, intRecordRange);
         if (data!=null && data.length > 0) strPosition = ReportGeneralLedgerJournalData.selectCountDirect(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"),strTable, strRecord, data[0].dateacct, data[0].identifier);        
@@ -140,10 +144,11 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       if (data!=null && data.length > 0) strPosition = ReportGeneralLedgerJournalData.selectCountDirect2(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"),strFactAcctGroupId, data[0].dateacct, data[0].identifier);
     }
     if (data==null || data.length==0) {
-      //String discard[]={"sectionJournal", "hasPrevious", "hasNext"};
+      String discard[]={"sectionDateAcct"};
       toolbar.prepareRelationBarTemplate(false, false,"submitCommandForm('XLS', false, null, 'ReportGeneralLedgerJournal.xls', 'EXCEL');return false;");
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal").createXmlDocument();
-      data = ReportGeneralLedgerJournalData.set();
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal", discard).createXmlDocument();
+      data = ReportGeneralLedgerJournalData.set("0");
+      data[0].rownum = "0";
     } else {
       /*  String[] discard = {"withoutPrevious", "withoutNext"};
           if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
@@ -195,7 +200,9 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
     xmlDocument.setParameter("document", strDocument);
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
+    xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
+    xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData.selectCombo(this, vars.getRole()));
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID","liststructure",ReportGeneralLedgerData.selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId));
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("dateFrom", strDateFrom);
@@ -213,7 +220,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable, String strRecord, String strFactAcctGroupId) throws IOException, ServletException {
+  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable, String strRecord, String strFactAcctGroupId, String strcAcctSchemaId) throws IOException, ServletException {
 
     ReportGeneralLedgerJournalData[] data=null;
 
@@ -221,7 +228,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     
     if (strRecord.equals("")) 
-      data = ReportGeneralLedgerJournalData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocument, strOrgFamily);
+      data = ReportGeneralLedgerJournalData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocument, strcAcctSchemaId, strOrgFamily);
     else 
       data = ReportGeneralLedgerJournalData.selectDirect(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strTable, strRecord);
     
@@ -241,7 +248,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
 
   
   public String getFamily(String strTree, String strChild) throws IOException, ServletException {
-    return Tree.getMembers(this, strTree, strChild);
+    return Tree.getMembers(this, strTree, (strChild==null||strChild.equals(""))?"0":strChild);
     /*    ReportGeneralLedgerData [] data = ReportGeneralLedgerData.selectChildren(this, strTree, strChild);
           String strFamily = "";
           if(data!=null && data.length>0) {

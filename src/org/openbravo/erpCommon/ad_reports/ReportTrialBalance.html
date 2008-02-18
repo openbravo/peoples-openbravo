@@ -85,10 +85,11 @@ function displayLogic() {
 }
 
 function onloadFunctions() {
-	new TypeAheadCombo("inpOrg");
+  new TypeAheadCombo("inpOrg");
   new TypeAheadCombo("inpLevel");
+  new TypeAheadCombo("inpcAcctSchemaId");
   new TypeAheadCombo("inpAccountFrom");
-  new TypeAheadCombo("inpAccountTo");
+  new TypeAheadCombo("inpAccountTo"); 
   displayLogic();
 }
 
@@ -105,6 +106,10 @@ function depurar() {
       return false;
     }  else if (inputValue(frm.inpLevel)==null || inputValue(frm.inpLevel)=="") {
       frm.inpLevel.focus();
+      mensaje(7);
+      return false;
+    }  else if (inputValue(frm.inpcAcctSchemaId)==null || inputValue(frm.inpcAcctSchemaId)=="") {
+      frm.inpcAcctSchemaId.focus();
       mensaje(7);
       return false;
     }
@@ -294,6 +299,13 @@ function depurar() {
               </TD>
               <TD class="TitleCell"/>
               <TD class="TitleCell"/>
+            </TR>
+            <TR>
+              <TD class="TitleCell"> <SPAN class="LabelText">Accounting schema</SPAN></TD>
+              <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" required="true" onchange="submitCommandForm('DEFAULT',true);">
+                  <OPTION value=""> <DIV id="reportC_ACCTSCHEMA_ID"></DIV></OPTION>
+                </SELECT>
+              </TD>
             </TR>
             <TR>
               <TD class="TitleCell"> <SPAN class="LabelText">Organization</SPAN></TD>

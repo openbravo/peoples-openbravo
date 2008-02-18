@@ -40,6 +40,8 @@
 							<fo:block font-size="10pt" text-align="left" padding-top="2pt">
 								<fo:inline font-weight="bold">Enterprise:&#160;&#160;</fo:inline>
 								<fo:inline id="fieldCompanyName">xx</fo:inline>&#160;&#160;<fo:inline id="fieldAgnoInitial"/>
+								<fo:inline font-weight="bold">Organization:&#160;&#160;</fo:inline>
+								<fo:inline id="fieldOrg">xx</fo:inline>
 							</fo:block>
 						</fo:table-cell>
 						<fo:table-cell>

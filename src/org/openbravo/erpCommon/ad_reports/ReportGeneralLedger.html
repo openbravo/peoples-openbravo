@@ -63,6 +63,11 @@ function imprimir()
 	return true;
 }
 
+function CALLOUT_ELEMENTVALUE() {
+submitCommandForm('DEFAULT');
+return true;
+}
+
 function depurar(){
 	var frm = document.frmMain;
 	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
@@ -73,6 +78,10 @@ function depurar(){
 		frm.inpDateTo.focus();
 		mensaje(7);
 		return false;
+	} else if (frm.inpcAcctSchemaId.value == null || frm.inpcAcctSchemaId.value == ""){
+		frm.inpcAcctSchemaId.focus();
+		mensaje(7);
+		return false;
 	}
 	seleccionarListCompleto(frm.inpcBPartnerId_IN);
 	return true;
@@ -81,7 +90,8 @@ function depurar(){
 function onloadFunctions() {
   new TypeAheadCombo("inpcElementValueIdFrom");
    new TypeAheadCombo("inpcElementValueIdTo");
-	new TypeAheadCombo("inpOrg");
+	new TypeAheadCombo("inpOrg");	
+	new TypeAheadCombo("inpcAcctSchemaId");
 }
 </SCRIPT>
 </HEAD>
@@ -287,6 +297,13 @@ function onloadFunctions() {
               <TD class="TitleCell"><SPAN class="LabelText">Hide matched Debt/Payments</SPAN></TD>
               <TD class="Radio_Check_ContentCell"><INPUT TYPE="checkbox" id="paramHideMatched" name="inpHideMatched"/></TD>
               <TD class="ContentCell"></TD>
+            </TR>
+            <TR>
+              <TD class="TitleCell"> <SPAN class="LabelText">Accounting schema</SPAN></TD>
+              <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="CALLOUT_ELEMENTVALUE()">
+                  <OPTION value=""> <DIV id="reportC_ACCTSCHEMA_ID"></DIV></OPTION>
+                </SELECT>
+              </TD>
             </TR>
             <TR>
               <TD class="TitleCell"> <SPAN class="LabelText">From Account</SPAN></TD>

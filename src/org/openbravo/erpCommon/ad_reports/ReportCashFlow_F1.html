@@ -71,6 +71,11 @@ function depurarCombo(){
     }
   }
   rellenarCombo(frm.inpPeriodId, arrayCombo, false, false);
+	if (frm.inpcAcctSchemaId.value == null || frm.inpcAcctSchemaId.value == "") {
+		frm.inpcAcctSchemaId.focus();
+		mensaje(7);
+		return false;
+	}
   return true;
 }
 function displayCombos(){
@@ -90,7 +95,7 @@ function displayCombos(){
 }
 </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="setFocusFirstControl();displayCombos();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="focoPrimerControl();displayCombos();resizeArea();updateMenuIcon('buttonMenu');focoPrimerControl();" onresize="resizeArea();">
 <FORM id="form" method="POST" action="ReportCashFlow_F1.html" name="frmMain">
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
@@ -249,6 +254,15 @@ function displayCombos(){
 			<select class="ComboKey Combo_TwoCells_width" name="inpadOrgId" id="inpadOrgId">
 				<option value=""></option>
 				<DIV id="reportAD_ORG"></DIV>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td class="TitleCell"><span class="LabelText">Account schema&nbsp;</span></td>
+		<td class="Combo_ContentCell" colspan="2">
+			<select class="ComboKey Combo_TwoCells_width" name="inpcAcctSchemaId" id="inpcAcctSchemaId" onChange="submitCommandForm('FRAME1');return false;">
+				<option value=""></option>
+				<DIV id="reportC_ACCTSCHEMA_ID"></DIV>
 			</select>
 		</td>
 	</tr>

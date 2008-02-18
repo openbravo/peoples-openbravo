@@ -46,6 +46,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
 
     if (vars.commandIn("DEFAULT")) {
+      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId", "ReportTrialBalance|cAcctSchemaId", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportTrialBalance|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo", "");
       String strOnly = vars.getGlobalVariable("inpOnly", "ReportTrialBalance|Only", "-1");
@@ -57,8 +58,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportTrialBalance|cBpartnerId");
       String strAll = vars.getStringParameter("inpAll");
 
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly, strAccountFrom, strAccountTo, strAll, strcBpartnerId);
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly, strAccountFrom, strAccountTo, strAll, strcBpartnerId, strcAcctSchemaId);
     } else if (vars.commandIn("FIND")) {
+      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId", "ReportTrialBalance|cAcctSchemaId");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportTrialBalance|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo");
       String strOnly = vars.getRequestGlobalVariable("inpOnly", "ReportTrialBalance|Only");
@@ -69,8 +71,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportTrialBalance|cBpartnerId");
       String strAll = vars.getStringParameter("inpAll");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly, strAccountFrom, strAccountTo, strAll, strcBpartnerId);
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly, strAccountFrom, strAccountTo, strAll, strcBpartnerId, strcAcctSchemaId);
     } else if (vars.commandIn("PDF")){
+      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId", "ReportTrialBalance|cAcctSchemaId");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportTrialBalance|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo");
       String strOnly = vars.getRequestGlobalVariable("inpOnly", "ReportTrialBalance|Only");
@@ -81,11 +84,11 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportTrialBalance|cBpartnerId");
       String strAll = vars.getStringParameter("inpAll");
-      printPageDataPDF(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly, strAccountFrom, strAccountTo, strAll, strcBpartnerId);
+      printPageDataPDF(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strOnly, strAccountFrom, strAccountTo, strAll, strcBpartnerId, strcAcctSchemaId);
     }else pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg, String strLevel, String strOnly, String strAccountFrom, String strAccountTo, String strAll, String strcBpartnerId)
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg, String strLevel, String strOnly, String strAccountFrom, String strAccountTo, String strAll, String strcBpartnerId, String strcAcctSchemaId)
     throws IOException, ServletException {
     String strMessage="";    
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
@@ -121,12 +124,12 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           if (log4j.isDebugEnabled()) log4j.debug("Select BP, strcBpartnerId:"+strcBpartnerId+" - strAll:"+strAll);
           if (!strAll.equals("")) strcBpartnerId="";
           discard[1] = "sectionNoBP";
-          data = ReportTrialBalanceData.selectBP(this, strDateFrom, strDateTo, strOrg, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo,strcBpartnerId);
+          data = ReportTrialBalanceData.selectBP(this, strDateFrom, strDateTo, strOrg, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo,strcBpartnerId, strcAcctSchemaId);
         } else {
-          data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo);
+          data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount, strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo);
         }
       }else{
-        data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"),"","");
+        data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount, strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"),"","");
       }
 
       if (log4j.isDebugEnabled()) log4j.debug("Calculating tree...");
@@ -183,9 +186,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       }
     } 
 
-    xmlDocument.setData("reportAccountFrom_ID","liststructure", ReportTrialBalanceData.selectAccount(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), ""));
-    xmlDocument.setData("reportAccountTo_ID","liststructure", ReportTrialBalanceData.selectAccount(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), ""));
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
+    xmlDocument.setData("reportAccountFrom_ID","liststructure", ReportTrialBalanceData.selectAccount(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), "", strcAcctSchemaId));
+    xmlDocument.setData("reportAccountTo_ID","liststructure", ReportTrialBalanceData.selectAccount(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), "", strcAcctSchemaId));
+    xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData.selectCombo(this, vars.getRole()));
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData.selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), strcAcctSchemaId));    
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
@@ -198,6 +202,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("Only", strOnly);
     xmlDocument.setParameter("adOrgId", strOrg);
     xmlDocument.setParameter("Level", strLevel);
+    xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);    
     xmlDocument.setParameter("accountFrom", strAccountFrom);
     xmlDocument.setParameter("accountTo", strAccountTo);
     xmlDocument.setParameter("paramMessage", (strMessage.equals("")?"":"alert('" + strMessage + "');"));
@@ -222,7 +227,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg, String strLevel, String strOnly, String strAccountFrom, String strAccountTo, String strAll, String strcBpartnerId)
+  void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg, String strLevel, String strOnly, String strAccountFrom, String strAccountTo, String strAll, String strcBpartnerId, String strcAcctSchemaId)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     /*response.setContentType("text/html; charset=UTF-8");
@@ -248,12 +253,12 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           if (log4j.isDebugEnabled()) log4j.debug("Select BP, strcBpartnerId:"+strcBpartnerId+" - strAll:"+strAll);
           if (!strAll.equals("")) strcBpartnerId="";
           discard[1] = "sectionNoBP";
-          data = ReportTrialBalanceData.selectBP(this, strDateFrom, strDateTo, strOrg, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo,strcBpartnerId);
+          data = ReportTrialBalanceData.selectBP(this, strDateFrom, strDateTo, strOrg, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo,strcBpartnerId, strcAcctSchemaId);
         } else {        
-          data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo);
+          data = ReportTrialBalanceData.select(this, strDateFrom, strDateTo, strOrg, strTreeAccount, strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strAccountFrom, strAccountTo);
         }
       }else{
-        data = ReportTrialBalanceData.select(this, strDateFrom,  strDateTo, strOrg, strTreeAccount, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"),"","");
+        data = ReportTrialBalanceData.select(this, strDateFrom,  strDateTo, strOrg, strTreeAccount, strcAcctSchemaId, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(this, vars, "#User_Org", "ReportTrialBalance"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"),"","");
       }
 
 

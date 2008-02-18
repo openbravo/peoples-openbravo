@@ -41,6 +41,7 @@
       AND AD_TREENODE.AD_TREE_ID = TO_NUMBER(?)
       AND AD_TREENODE.ISACTIVE = 'Y'
       AND C_ELEMENTVALUE.ISACTIVE = 'Y'
+      AND (select max(c_element_id) from c_acctschema_element where c_acctschema_id = ? and ELEMENTTYPE = 'AC') = C_ELEMENTVALUE.C_ELEMENT_ID
       UNION		
       SELECT 0 AS PARENT_ID, F.ACCOUNT_ID AS ID, EV.ELEMENTLEVEL, EV.NAME AS NAME, EV.VALUE AS ACCOUNT_ID, 
       SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN F.AMTACCTDR-F.AMTACCTCR ELSE 0 END)) AS SALDO_INICIAL, 
@@ -64,6 +65,7 @@
     <Parameter name="dateTo"/>
     <Parameter name="org"/>
     <Parameter name="treeAcct"/>
+    <Parameter name="acctSchema"/>    
     <Parameter name="orgFamily" type="replace" optional="true" after="f.AD_ORG_ID IN(" text="'2'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="F.AD_ORG_ID IN(" text="'1'"/>
@@ -71,6 +73,7 @@
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT < TO_DATE(?)]]></Parameter>
     <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= TO_NUMBER(?)]]></Parameter>
     <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= TO_NUMBER(?)]]></Parameter>
+    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[ AND F.C_ACCTSCHEMA_ID = to_number(?)]]></Parameter>    
   </SqlMethod>
   
   
@@ -112,6 +115,7 @@
     <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= TO_NUMBER(?)]]></Parameter>
     <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= TO_NUMBER(?)]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND F.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[ AND F.C_ACCTSCHEMA_ID = to_number(?)]]></Parameter>        
   </SqlMethod>
   
   <SqlMethod name="set" type="constant" return="multiple">
@@ -155,11 +159,13 @@
         AND C_ElementValue.AD_Client_ID IN('1')  
         AND C_ElementValue.IsSummary='N' 
         AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = TO_NUMBER(?) ) 
+        AND 1=1
         ORDER BY C_ElementValue.Value
     ]]></Sql>
   <Parameter name="adOrgClient" type="replace" optional="true" after="C_ElementValue.AD_Org_ID IN(" text="'1'"/>
   <Parameter name="adUserClient" type="replace" optional="true" after="C_ElementValue.AD_Client_ID IN(" text="'1'"/>
   <Parameter name="cElementvalueId"/>
+  <Parameter name="schema" optional="true" after="AND 1=1"><![CDATA[ AND (select max(c_element_id) from c_acctschema_element where c_acctschema_id = ? and ELEMENTTYPE = 'AC') = C_ElementValue.c_element_id ]]></Parameter>  
   </SqlMethod>
 
   <SqlMethod name="selectAccountingName" type="preparedStatement" return="string">

@@ -249,7 +249,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
+    xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData.selectCombo(this, vars.getRole()));
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("cElementValueFrom", strcelementvaluefrom);
@@ -267,8 +267,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramAll0", strAll.equals("")?"0":"1");
     xmlDocument.setParameter("paramHide0", strHide.equals("")?"0":"1");
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerIdAux));
-    xmlDocument.setData("reportC_ELEMENTVALUEFROM","liststructure",ReportGeneralLedgerData.selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom));
-    xmlDocument.setData("reportC_ELEMENTVALUETO","liststructure",ReportGeneralLedgerData.selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom));
+    xmlDocument.setData("reportC_ELEMENTVALUEFROM","liststructure",ReportGeneralLedgerData.selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom, strcAcctSchemaId));
+    xmlDocument.setData("reportC_ELEMENTVALUETO","liststructure",ReportGeneralLedgerData.selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom, strcAcctSchemaId));
     xmlDocument.setData("reportC_ACCTSCHEMA_ID","liststructure",ReportGeneralLedgerData.selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId));
     
      if (log4j.isDebugEnabled()) log4j.debug("data.length: "+data.length);

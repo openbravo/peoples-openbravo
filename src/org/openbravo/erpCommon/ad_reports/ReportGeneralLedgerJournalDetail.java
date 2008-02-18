@@ -36,15 +36,17 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strFactAcctGroupId = vars.getStringParameter("inpFactAcctGroupId");
-      printPageDataSheet(response, vars, strFactAcctGroupId, "",null);
+      printPageDataSheet(response, vars, strFactAcctGroupId, "",null, "");
     } else if (vars.commandIn("DIRECT")) {
       String strFactAcctGroupId = vars.getStringParameter("inpFactAcctGroupId");
       String strDateAcct = getValue(strFactAcctGroupId,0);
       strFactAcctGroupId = getValue(strFactAcctGroupId,1);
-      printPageDataSheet(response, vars, strFactAcctGroupId, strDateAcct, null);
+      printPageDataSheet(response, vars, strFactAcctGroupId, strDateAcct, null, "");
     } else if (vars.commandIn("DP")) {
       String strDPId = vars.getStringParameter("inpDPid");
-      printPageDataSheet(response, vars, null, null, strDPId);     
+      String strcAcctSchemaId = getValue(strDPId,0);
+      strDPId = getValue(strDPId,1);
+      printPageDataSheet(response, vars, null, null, strDPId, strcAcctSchemaId);     
     } else if (vars.commandIn("PREVIOUS_RELATION")) {
       String strInitRecord = vars.getSessionValue("ReportGeneralLedgerJournalDetail.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRange", "ReportGeneralLedgerJournalDetail");
@@ -70,7 +72,7 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     } else pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strFactAcctGroupId, String strDateacct, String strDPId) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strFactAcctGroupId, String strDateacct, String strDPId, String strcAcctSchemaId) throws IOException, ServletException {
     String strRecordRange = Utility.getContext(this, vars, "#RecordRange", "ReportGeneralLedgerJournalDetail");
     int intRecordRange = (strRecordRange.equals("")?0:Integer.parseInt(strRecordRange));
     String strInitRecord = vars.getSessionValue("ReportGeneralLedgerJournalDetail.initRecordNumber");
@@ -86,7 +88,7 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     if (strDPId==null) 
       data = ReportGeneralLedgerJournalDetailData.select(this, strFactAcctGroupId, strDateacct, initRecordNumber, intRecordRange);
     else
-      data = ReportGeneralLedgerJournalDetailData.selectByDP(this, strDPId);
+      data = ReportGeneralLedgerJournalDetailData.selectByDP(this, strDPId, strcAcctSchemaId);
 
 
     // if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");

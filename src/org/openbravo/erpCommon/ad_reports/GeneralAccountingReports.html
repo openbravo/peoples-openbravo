@@ -66,6 +66,10 @@ function depurar(command) {
 		frm.inpOrganizacion.focus();
 		mensaje(1);
 		return false;
+	} else if (frm.inpcAcctSchemaId.value == ""){
+		frm.inpcAcctSchemaId.focus();
+		mensaje(1);
+		return false;
 	} else if (frm.inpcElementvalueId.value == ""){
 		frm.inpcElementvalueId.focus();
 		mensaje(1);
@@ -80,6 +84,7 @@ function depurar(command) {
 
 function onloadFunctions() {
   new TypeAheadCombo("inpOrganizacion");
+  new TypeAheadCombo("inpcAcctSchemaId");  
   new TypeAheadCombo("inpcElementvalueId");
   new TypeAheadCombo("inpLevel");
 }
@@ -363,10 +368,11 @@ function onloadFunctions() {
                   <TD class="Combo_ContentCell"> <SELECT name="inpLevel" id="inpLevel" class="ComboKey Combo_OneCell_width" onchange="logChanges(this);return true;">
                     <OPTION value=""></OPTION><DIV id="reportLevel"></DIV>
                   </SELECT></TD>
-                  <TD class="TitleCell"> </TD>
                   <TD class="ContentCell"></TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="ContentCell"></TD>
+				  <TD class="TitleCell"> <SPAN class="LabelText">Accounting schema</SPAN></TD>
+                  <TD class="Combo_ContentCell"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_OneCell_width" onchange="submitCommandForm('DEFAULT',false,null,null,'_self');logChanges(this);return true;">
+                    <OPTION value=""></OPTION><DIV id="reportC_ACCTSCHEMA_ID"></DIV>
+                  </SELECT></TD>
                 </TR>
 
                 <TR>

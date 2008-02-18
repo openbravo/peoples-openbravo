@@ -35,6 +35,7 @@
   <PARAMETER id="parameterOnly" name="constantOnly" default="-1"/>
   <PARAMETER id="paramOnly" name="Only" boolean="checked" withId="parameterOnly"/>
   <PARAMETER id="paramAD_ORGID" name="adOrgId"/>
+  <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>  
   <PARAMETER id="paramLevel" name="Level"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
@@ -57,16 +58,23 @@
   <SUBREPORT id="reportAD_ORGID" name="reportAD_ORGID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramAD_ORGID"/>
   </SUBREPORT>
+  
   <SUBREPORT id="reportLevel" name="reportLevel" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramLevel"/>
   </SUBREPORT>
+  
   <SUBREPORT id="reportAccountTo_ID" name="reportAccountTo_ID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramAccountTo"/>
   </SUBREPORT>
+  
   <SUBREPORT id="reportAccountFrom_ID" name="reportAccountFrom_ID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramAccountFrom"/>
   </SUBREPORT>
 
+  <SUBREPORT id="reportC_ACCTSCHEMA_ID" name="reportC_ACCTSCHEMA_ID" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramC_ACCTSCHEMA_ID"/>
+  </SUBREPORT>
+    
   <PARAMETER id="param2" name="param2" default="2"/>
 
   <structure name="structure1">

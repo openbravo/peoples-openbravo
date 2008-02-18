@@ -53,6 +53,7 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>  
 
   <SUBREPORT id="reportC_ElementValue_ID" name="reportC_ElementValue_ID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="fieldC_ElementValue_ID"/>
@@ -63,4 +64,8 @@
   <SUBREPORT id="reportLevel" name="reportLevel" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramLevel"/>
   </SUBREPORT>
+
+	 <SUBREPORT id="reportC_ACCTSCHEMA_ID" name="reportC_ACCTSCHEMA_ID" report="org/openbravo/erpCommon/reference/List">
+	   <ARGUMENT name="parameterListSelected" withId="paramC_ACCTSCHEMA_ID"/>
+	</SUBREPORT>       
 </REPORT>

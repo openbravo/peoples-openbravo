@@ -38,6 +38,21 @@
         <Parameter name="rol"/>
    </SqlMethod>
    
+   <SqlMethod name="selectRpt" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+		SELECT C_ACCT_RPT_ID AS ID, NAME 
+		FROM C_ACCT_RPT
+		WHERE AD_ORG_ID IN ('1')
+		AND AD_CLIENT_ID IN ('1')
+		AND 1=1
+		ORDER BY NAME
+      ]]></Sql>
+		<Parameter name="org" optional="true" type="replace" after="WHERE AD_ORG_ID IN (" text="'1'"/>      
+		<Parameter name="client" optional="true" type="replace" after="AND AD_CLIENT_ID IN (" text="'1'"/>      
+		<Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCT_RPT.C_ACCTSCHEMA_ID = TO_NUMBER(?)]]></Parameter>
+   </SqlMethod>
+   
     <SqlMethod name="selectGroups" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
@@ -172,6 +187,7 @@
         <Parameter name="accountType"/>
         <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
+        <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = TO_NUMBER(?)]]></Parameter>
         <Parameter name="year"/>
         <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
    </SqlMethod>

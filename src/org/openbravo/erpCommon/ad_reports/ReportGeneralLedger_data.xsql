@@ -52,7 +52,7 @@
     <Field name="rownum" value="count"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE fact_acct.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND fact_acct.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = to_number(?)]]></Parameter>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND dateacct >= to_date(?) ]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
@@ -97,7 +97,7 @@
     <Field name="rownum" value="count"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE fact_acct.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND fact_acct.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = to_number(?) ]]></Parameter>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND dateacct >= to_date(?) ]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
@@ -106,8 +106,8 @@
 
     <Parameter name="parDateTo" optional="true" after="AND 5=5"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
     
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ and coalesce(amtacctdr,amtacctcr)>=? ]]></Parameter>   
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ and coalesce(amtacctdr,amtacctcr)<=? ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ and coalesce(amtacctdr,amtacctcr)>=to_number(?) ]]></Parameter>   
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ and coalesce(amtacctdr,amtacctcr)<=to_number(?) ]]></Parameter>
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
   </SqlMethod>
   
@@ -140,14 +140,14 @@
     <Field name="rownum" value="count"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE fact_acct.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND fact_acct.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = to_number(?) ]]></Parameter>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND dateacct >= to_date(?) ]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2 "><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
 
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ and coalesce(amtacctdr,amtacctcr)>=? ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ and coalesce(amtacctdr,amtacctcr)<=? ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ and coalesce(amtacctdr,amtacctcr)>=to_number(?) ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ and coalesce(amtacctdr,amtacctcr)<=to_number(?) ]]></Parameter>
     
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
   </SqlMethod>
@@ -186,7 +186,7 @@
     <Field name="rownum" value="count"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE fact_acct.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND fact_acct.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = to_number(?) ]]></Parameter>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND dateacct >= to_date(?) ]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
@@ -194,8 +194,8 @@
 
     <Parameter name="parDateTo" optional="true" after="AND 5=5"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
     
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ and coalesce(amtacctdr,amtacctcr)>=? ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ and coalesce(amtacctdr,amtacctcr)<=? ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ and coalesce(amtacctdr,amtacctcr)>=to_number(?) ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ and coalesce(amtacctdr,amtacctcr)<=to_number(?) ]]></Parameter>
     
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
   </SqlMethod>
@@ -210,7 +210,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = to_number(?)
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -220,9 +220,9 @@
     <Sql>
         SELECT NODE_ID AS ID
         FROM AD_TREENODE 
-        WHERE AD_TREE_ID = TO_NUMBER(?) 
+        WHERE AD_TREE_ID = to_number(?) 
         CONNECT BY PRIOR NODE_ID = PARENT_ID 
-        START WITH NODE_ID = TO_NUMBER(?) AND AD_TREE_ID = TO_NUMBER(?)
+        START WITH NODE_ID = to_number(?) AND AD_TREE_ID = to_number(?)
     </Sql>
     <Parameter name="tree"/>
     <Parameter name="element"/>
@@ -246,19 +246,21 @@
       SELECT C_ElementValue.C_ElementValue_ID as id, ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.Value || ' - ' || C_ElementValue.Name) as name FROM C_ElementValue
       WHERE C_ElementValue.AD_Org_ID IN('1') AND C_ElementValue.AD_Client_ID IN('1')  AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = TO_NUMBER(?) )
       and c_elementvalue.ELEMENTLEVEL='S'
+      AND 1=1
       ORDER BY name
     ]]></Sql>
     
 <Parameter name="adOrgClient" type="replace" optional="true" after="C_ElementValue.AD_Org_ID IN(" text="'1'"/>
 <Parameter name="adUserClient" type="replace" optional="true" after="C_ElementValue.AD_Client_ID IN(" text="'1'"/>
 <Parameter name="cElementvalueId"/>
+<Parameter name="schema" optional="true" after="AND 1=1"><![CDATA[ AND (select max(c_element_id) from c_acctschema_element where c_acctschema_id = ? and ELEMENTTYPE = 'AC') = C_ElementValue.c_element_id ]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectC_ACCTSCHEMA_ID" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
       SELECT C_ACCTSCHEMA_ID as id, ((CASE C_ACCTSCHEMA.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ACCTSCHEMA.Name) as name FROM C_ACCTSCHEMA
-      WHERE C_ACCTSCHEMA.AD_Org_ID IN('1') AND C_ACCTSCHEMA.AD_Client_ID IN('1')  AND (C_ACCTSCHEMA.isActive = 'Y' OR C_ACCTSCHEMA.C_ACCTSCHEMA_ID = TO_NUMBER(?) )
+      WHERE C_ACCTSCHEMA.AD_Org_ID IN('1') AND C_ACCTSCHEMA.AD_Client_ID IN('1')  AND (C_ACCTSCHEMA.isActive = 'Y' OR C_ACCTSCHEMA.C_ACCTSCHEMA_ID = to_number(?) )
       ORDER BY name
     ]]></Sql>
     
@@ -273,7 +275,7 @@
     <![CDATA[
         SELECT NAME
         FROM AD_CLIENT
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = to_number(?)
       ]]></Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -283,8 +285,8 @@
       <Sql><![CDATA[
 	   SELECT c_elementvalue_id as name
        FROM C_ELEMENTVALUE 
-       WHERE value between (select value from c_elementvalue where c_elementvalue_ID = TO_NUMBER(?)) 
-       and  (select value from c_elementvalue where c_elementvalue_ID = TO_NUMBER(?))
+       WHERE value between (select value from c_elementvalue where c_elementvalue_id = to_number(?)) 
+       and  (select value from c_elementvalue where c_elementvalue_id = to_number(?))
 	   and c_elementvalue.ELEMENTLEVEL = 'S'
        ORDER BY value asc
       ]]></Sql>
@@ -303,8 +305,8 @@
       AND DATEACCT < TO_DATE(?)
       AND FACT_ACCT.AD_ORG_ID IN ('1')
       ]]></Sql>
-      <Parameter name="bpartner" optional="true" after="1=1"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID = TO_NUMBER(?) ]]></Parameter>
-      <Parameter name="acctschema" optional="true" after="1=1"><![CDATA[ and fact_acct.C_ACCTSCHEMA_ID = TO_NUMBER(?) ]]></Parameter>
+      <Parameter name="bpartner" optional="true" after="1=1"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID = to_number(?) ]]></Parameter>
+      <Parameter name="acctschema" optional="true" after="1=1"><![CDATA[ and fact_acct.C_ACCTSCHEMA_ID = to_number(?) ]]></Parameter>
       <Parameter name="account"/>
       <Parameter name="date"/>
       <Parameter name="orgs" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
@@ -321,8 +323,8 @@
       AND DATEACCT < TO_DATE(?)
       AND FACT_ACCT.AD_ORG_ID IN ('1')
       ]]></Sql>
-      <Parameter name="bpartner" optional="true" after="1=1"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID = TO_NUMBER(?) ]]></Parameter>
-      <Parameter name="acctschema" optional="true" after="1=1"><![CDATA[ and fact_acct.C_ACCTSCHEMA_ID = TO_NUMBER(?) ]]></Parameter>
+      <Parameter name="bpartner" optional="true" after="1=1"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID = to_number(?) ]]></Parameter>
+      <Parameter name="acctschema" optional="true" after="1=1"><![CDATA[ and fact_acct.C_ACCTSCHEMA_ID = to_number(?) ]]></Parameter>
       <Parameter name="account"/>
       <Parameter name="date"/>
       <Parameter name="orgs" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>

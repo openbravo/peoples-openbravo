@@ -44,7 +44,7 @@
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <PARAMETER id="inpRecord" name="paramRecord" attribute="value" default=""/>
   <PARAMETER id="inpTable" name="paramTable" attribute="value" default=""/>
-  
+  <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
 
   <SUBREPORT id="reportDocument" name="reportDocument" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramDocument"/>
@@ -52,6 +52,10 @@
   <SUBREPORT id="reportAD_ORGID" name="reportAD_ORGID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramAD_ORGID"/>
   </SUBREPORT>
+
+     <SUBREPORT id="reportC_ACCTSCHEMA_ID" name="reportC_ACCTSCHEMA_ID" report="org/openbravo/erpCommon/reference/List">
+      <ARGUMENT name="parameterListSelected" withId="paramC_ACCTSCHEMA_ID"/>
+    </SUBREPORT>
 
   <PARAMETER id="param2" name="param2" default="2"/>
 
@@ -75,4 +79,5 @@
     <SECTION id="sectionJournal" field="identifier"/>
     <SECTION id="sectionDetail"/>
   </structure>
+  <DISCARD id="discard"/>
 </REPORT>

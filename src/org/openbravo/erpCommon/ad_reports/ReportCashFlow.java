@@ -52,20 +52,23 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       printPage_FS(response, vars);
     } else if (vars.commandIn("FRAME1")) {
+      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId", "ReportCashFlow|cAcctSchemaId", "");      
       String strAccountingReportId = vars.getGlobalVariable("inpAccountingReportId", "ReportCashFlow|accountingReport", "");
       String strOrg = vars.getGlobalVariable("inpadOrgId", "ReportCashFlow|orgId", "0");
       String strPeriod = vars.getGlobalVariable("inpPeriodId", "ReportCashFlow|period", "");
-      printPageFrame1(response, vars, strAccountingReportId, strOrg, strPeriod, process);
+      printPageFrame1(response, vars, strcAcctSchemaId, strAccountingReportId, strOrg, strPeriod, process);
     } else if (vars.commandIn("DEPURAR")){
+      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId", "ReportCashFlow|cAcctSchemaId");
       String strAccountingReportId = vars.getRequestGlobalVariable("inpAccountingReportId", "ReportCashFlow|accountingReport");
       String strOrg = vars.getGlobalVariable("inpadOrgId", "ReportCashFlow|orgId", "0");
       String strPeriod = vars.getRequestGlobalVariable("inpPeriodId", "ReportCashFlow|period");
-      printPageDepurar(response, vars, strAccountingReportId, strOrg, strPeriod, process);
+      printPageDepurar(response, vars, strcAcctSchemaId, strAccountingReportId, strOrg, strPeriod, process);
     } else if (vars.commandIn("FIND")){
+      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId", "ReportCashFlow|cAcctSchemaId");
       String strAccountingReportId = vars.getRequestGlobalVariable("inpAccountingReportId", "ReportCashFlow|accountingReport");
       String strOrg = vars.getGlobalVariable("inpadOrgId", "ReportCashFlow|orgId", "0");
       String strPeriod = vars.getRequestGlobalVariable("inpPeriodId", "ReportCashFlow|period");
-      printPagePopUp(response, vars, strAccountingReportId, strOrg, strPeriod, process);
+      printPagePopUp(response, vars, strcAcctSchemaId, strAccountingReportId, strOrg, strPeriod, process);
     } else pageErrorPopUp(response);
   }
 
@@ -78,7 +81,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     out.close();
   }
 
-void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strAccountingReportId, String strOrg, String strPeriod, String strProcessId) throws IOException, ServletException {
+void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod, String strProcessId) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: printPage ReportCashFlow_F1");
       
       ActionButtonDefaultData[] data = null;
@@ -90,11 +93,12 @@ void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, Stri
       }
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportCashFlow_F1").createXmlDocument();
 
-      String strArray = arrayEntry(vars);
+      String strArray = arrayEntry(vars, strcAcctSchemaId);
 
       xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("help", strHelp);
+      xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);    
       xmlDocument.setParameter("accounting", strAccountingReportId);
       xmlDocument.setParameter("org", strOrg);
       xmlDocument.setParameter("period", strPeriod);
@@ -109,9 +113,11 @@ void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, Stri
         throw new ServletException(ex);
       }
 
-      xmlDocument.setData("reportAD_ACCOUNTINGRPT_ELEMENT", "liststructure", ReportCashFlowData.selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), ""));
+      xmlDocument.setData("reportAD_ACCOUNTINGRPT_ELEMENT", "liststructure", ReportCashFlowData.selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), "", strcAcctSchemaId));
 
       xmlDocument.setData("reportPeriod", "liststructure", ReportCashFlowData.selectCombo(this, Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), vars.getLanguage()));
+
+      xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData.selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), strcAcctSchemaId));    
 
       ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportCashFlow", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
       toolbar.prepareSimpleToolBarTemplate();
@@ -154,7 +160,7 @@ void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, Stri
       out.close();
     }
 
-void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, String strAccountingReportId, String strOrg, String strPeriod, String process) throws IOException, ServletException {
+void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod, String process) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: pop up ReportCashFlow");
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportCashFlowPopUp").createXmlDocument();
       String strPeriodFrom = "";
@@ -182,7 +188,7 @@ void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, Stri
 
       Vector<Object> vectorArray = new Vector<Object>();
 
-      childData(vars, vectorArray, strAccountingReportId, strPeriodFrom, strPeriodTo, strTreeOrg, level, "0");
+      childData(vars, vectorArray, strcAcctSchemaId, strAccountingReportId, strPeriodFrom, strPeriodTo, strTreeOrg, level, "0");
 
       ReportCashFlowData[] dataTree = convertVector(vectorArray);
       dataTree = filterData(dataTree);
@@ -199,7 +205,7 @@ void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, Stri
       out.close();
 }
 
-void printPageDepurar (HttpServletResponse response, VariablesSecureApp vars, String strAccountingReportId, String strOrg, String strPeriod, String process) throws IOException, ServletException {
+void printPageDepurar (HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod, String process) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: ReportCashFlow_F0");
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportCashFlow_F0").createXmlDocument();
       String strPeriodFrom = "";
@@ -224,7 +230,7 @@ void printPageDepurar (HttpServletResponse response, VariablesSecureApp vars, St
       strTreeOrg = strOrg;
       treeOrg(vars, strOrg);
 
-      ReportCashFlowData [] data = ReportCashFlowData.selectMissingEntries(this, Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), strPeriodFrom, strPeriodTo, vars.getClient());
+      ReportCashFlowData [] data = ReportCashFlowData.selectMissingEntries(this, Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), strcAcctSchemaId, strPeriodFrom, strPeriodTo, vars.getClient());
       if (log4j.isDebugEnabled()) log4j.debug("printPageDepurar - data.length: " + data.length);
       if (log4j.isDebugEnabled()) log4j.debug("printPageDepurar - #User_Client: " + Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"));
       if (log4j.isDebugEnabled()) log4j.debug("printPageDepurar - #User_Org: " + Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"));
@@ -259,9 +265,9 @@ void printPageDepurar (HttpServletResponse response, VariablesSecureApp vars, St
 }
 
 
-String arrayEntry(VariablesSecureApp vars) throws ServletException{
+String arrayEntry(VariablesSecureApp vars, String strcAcctSchemaId) throws ServletException{
       String result = "";
-      ReportCashFlowData[] data = ReportCashFlowData.selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), "");
+      ReportCashFlowData[] data = ReportCashFlowData.selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), "", strcAcctSchemaId);
       if (data == null || data.length == 0) {
         result = "var array = null;";
       } else {
@@ -297,15 +303,15 @@ void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException{
       return;
 }
 
-void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strAccountingReportId, String strPeriodFrom, String strPeriodTo, String strOrg, int level, String strParent) throws IOException, ServletException{
+void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strcAcctSchemaId, String strAccountingReportId, String strPeriodFrom, String strPeriodTo, String strOrg, int level, String strParent) throws IOException, ServletException{
       if (log4j.isDebugEnabled()) log4j.debug("Ouput: child tree data");
       String strAccountId = ReportCashFlowData.selectAccounting(this, strAccountingReportId);
-      ReportCashFlowData[] data = ReportCashFlowData.select(this, strParent, String.valueOf(level), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), strOrg, strPeriodFrom, strPeriodTo, strAccountId, strAccountingReportId);
+      ReportCashFlowData[] data = ReportCashFlowData.select(this, strParent, String.valueOf(level), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), strOrg, strPeriodFrom, strPeriodTo, strAccountId, strAccountingReportId, strcAcctSchemaId);
       if (data == null || data.length == 0) data = ReportCashFlowData.set();
       vectorArray.addElement(data[0]);
       ReportCashFlowData[] dataAux = ReportCashFlowData.selectChild(this, Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), data[0].id, ReportCashFlowData.selectTree(this, vars.getClient()));
       for (int i = 0; i<dataAux.length; i++){
-          childData(vars, vectorArray, dataAux[i].id, strPeriodFrom, strPeriodTo, strOrg, level+1, data[0].id);
+          childData(vars, vectorArray, strcAcctSchemaId, dataAux[i].id, strPeriodFrom, strPeriodTo, strOrg, level+1, data[0].id);
       }
 }
 
