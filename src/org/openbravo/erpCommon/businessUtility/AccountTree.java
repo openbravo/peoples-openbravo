@@ -198,12 +198,13 @@ public class AccountTree {
     if (elements==null || elements.length==0) return elements;
     AccountTreeData[] result = null;
     Vector<Object> vec = new Vector<Object>();
-   // if (log4j.isDebugEnabled()) log4j.debug("AccountTree.updateTreeQuantitiesSign() - elements: " + elements.length);
+    if (log4j.isDebugEnabled()) log4j.debug("AccountTree.updateTreeQuantitiesSign() - elements: " + elements.length);
     if (indice == null) indice="0";
     for (int i=0;i<elements.length;i++) {
       if (elements[i].parentId.equals(indice)) {
-        if (level==0) isDebitCredit = elements[i].accountsign;
-        else if (isDebitCredit.equals("") || isDebitCredit.equalsIgnoreCase("N")) isDebitCredit = elements[i].accountsign;
+        //if (level==0) 
+    	  isDebitCredit = elements[i].accountsign;
+        //else if (isDebitCredit.equals("") || isDebitCredit.equalsIgnoreCase("N")) isDebitCredit = elements[i].accountsign;
         AccountTreeData[] dataChilds = updateTreeQuantitiesSign(elements[i].nodeId, (level+1), isDebitCredit);
         elements[i].elementLevel = Integer.toString(level);
         elements[i] = setDataQty(elements[i], isDebitCredit);
