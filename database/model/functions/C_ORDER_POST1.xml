@@ -1074,7 +1074,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     */
     DBMS_OUTPUT.PUT_LINE('Create Shipment - ' || v_Record_ID) ;
     v_ResultStr:='CreateShipment';
-    M_Inout_Create(NULL, v_Record_ID, NULL, 'Y', InOut_ID) ; -- Force Delivery
+    M_Inout_Create(NULL,InOut_ID, v_Record_ID, NULL, 'Y') ; -- Force Delivery
     DBMS_OUTPUT.PUT_LINE('  Shipment - ' || InOut_ID) ;
     IF(InOut_ID=0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@InOutCreateFailed@');
