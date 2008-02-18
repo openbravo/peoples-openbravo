@@ -27,8 +27,8 @@
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT DISTINCT bp.C_BPartner_ID, bp.value, bp.name as name, replace(AD_COLUMN_IDENTIFIER(TO_CHAR('C_BPartner'), TO_CHAR(bp.C_BPartner_ID), 
-        TO_CHAR(?)), '''', CHR(92) || '''') as name_hidden, 
+        SELECT DISTINCT bp.C_BPartner_ID, bp.value, bp.name as name, 
+        AD_COLUMN_IDENTIFIER(TO_CHAR('C_BPartner'), TO_CHAR(bp.C_BPartner_ID), TO_CHAR(?)) as name_hidden, 
         (bp.SO_CreditLimit-bp.SO_CreditUsed) AS SO_CreditAvailable, bp.SO_CreditUsed, 
         COALESCE(c.name,u.name) AS Contact, COALESCE(c.ad_user_id,u.ad_user_id) as C_BPartner_Contact_ID, bpl.Phone, l.Postal, 
         bpl.c_bpartner_location_id as C_BPartner_Location_ID,
