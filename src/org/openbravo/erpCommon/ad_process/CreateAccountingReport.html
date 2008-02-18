@@ -86,8 +86,14 @@ function depurarCombo(){
     }
   }
   rellenarCombo(frm.inpYearId, arrayCombo2, false, false);
-  
   return true;
+}
+function depurar(){
+	if (frm.inpcAcctSchemaId.value == null || frm.inpcAcctSchemaId.value == "") {
+		frm.inpcAcctSchemaId.focus();
+		mensaje(7);
+		return false;
+	} return true;
 }
 function displayCombos(){
 	var frm = document.frmMain;
@@ -265,6 +271,15 @@ function displayCombos(){
 			<select class="ComboKey Combo_TwoCells_width" name="inpadOrgId" id="inpadOrgId">
 				<option value=""></option>
 				<DIV id="reportAD_ORG"></DIV>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td class="TitleCell"><span class="LabelText">Account schema&nbsp;</span></td>
+		<td class="Combo_ContentCell" colspan="2">
+			<select class="ComboKey Combo_TwoCells_width" name="inpcAcctSchemaId" id="inpcAcctSchemaId" onChange="submitCommandForm('DEFAULT',true);return false;">
+				<option value=""></option>
+				<DIV id="reportC_ACCTSCHEMA_ID"></DIV>
 			</select>
 		</td>
 	</tr>

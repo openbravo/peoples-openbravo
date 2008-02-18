@@ -42,6 +42,7 @@
   <PARAMETER id="paramYear" name="year" default=""/>
   <PARAMETER id="paramArray" name="array" default=""/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
+  <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
 
 
     <SUBREPORT id="reportAD_ACCOUNTINGRPT_ELEMENT" name="reportAD_ACCOUNTINGRPT_ELEMENT" report="org/openbravo/erpCommon/reference/List">
@@ -49,6 +50,9 @@
     </SUBREPORT>
     <SUBREPORT id="reportAD_ORG" name="reportAD_ORG" report="/org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="paramterListSelected" widthId="paramOrgId"/>
+    </SUBREPORT>
+    <SUBREPORT id="reportC_ACCTSCHEMA_ID" name="reportC_ACCTSCHEMA_ID" report="org/openbravo/erpCommon/reference/List">
+      <ARGUMENT name="parameterListSelected" withId="paramC_ACCTSCHEMA_ID"/>
     </SUBREPORT>
    <SUBREPORT id="reportPeriod" name="reportPeriod" report="/org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramPeriod"/>

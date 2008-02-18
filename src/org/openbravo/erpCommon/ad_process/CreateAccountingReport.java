@@ -22,6 +22,7 @@ import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.*;
 
 import org.openbravo.erpCommon.ad_actionButton.*;
+import org.openbravo.erpCommon.ad_reports.ReportGeneralLedgerData;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -56,23 +57,25 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     //String strCreateNewCombination = vars.getStringParameter("inpCreateNewCombination", "Y");
     if (vars.commandIn("DEFAULT")) {
       //printPage(response, vars, process, strWindowId, strTabId, strDeleteOld, strCElementId, strUpdateDefault, strCreateNewCombination);
+      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId", "CreateAccountingReport|cAcctSchemaId", "");      
       String strAccountingReportId = vars.getGlobalVariable("inpAccountingReportId", "CreateAccountingReport|accountingReport", "");
       String strOrg = vars.getGlobalVariable("inpadOrgId", "CreateAccountingReport|orgId", "0");
       String strPeriod = vars.getGlobalVariable("inpPeriodId", "CreateAccountingReport|period", "");
       String strYear = vars.getGlobalVariable("inpYearId", "CreateAccountingReport|year", "");
-      printPage(response, vars, strAccountingReportId, strOrg, strPeriod, strYear, process);
+      printPage(response, vars, strcAcctSchemaId, strAccountingReportId, strOrg, strPeriod, strYear, process);
     } else if (vars.commandIn("FIND")){
+      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId", "CreateAccountingReport|cAcctSchemaId");
       String strAccountingReportId = vars.getRequestGlobalVariable("inpAccountingReportId", "CreateAccountingReport|accountingReport");
       String strOrg = vars.getGlobalVariable("inpadOrgId", "CreateAccountingReport|orgId", "0");
       String strPeriod = vars.getRequestGlobalVariable("inpPeriodId", "CreateAccountingReport|period");
       String strYear = vars.getRequestGlobalVariable("inpYearId", "CreateAccountingReport|year");
-      printPagePopUp(response, vars, strAccountingReportId, strOrg, strPeriod, strYear);
+      printPagePopUp(response, vars, strcAcctSchemaId, strAccountingReportId, strOrg, strPeriod, strYear);
       //printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
 
 
-void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAccountingReportId, String strOrg, String strPeriod, String strYear, String strProcessId) throws IOException, ServletException {
+void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod, String strYear, String strProcessId) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: process CreateAccountingReport");
       
       ActionButtonDefaultData[] data = null;
@@ -86,7 +89,7 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
 
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/CreateAccountingReport").createXmlDocument();
 
-      String strArray = arrayEntry(vars);
+      String strArray = arrayEntry(vars, strcAcctSchemaId);
 
       xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
@@ -97,6 +100,8 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
       xmlDocument.setParameter("period", strPeriod);
       xmlDocument.setParameter("year", strYear);
       xmlDocument.setParameter("array", strArray);
+      xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);    
+      
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "", Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), 0);
@@ -107,7 +112,8 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
         throw new ServletException(ex);
       }
 
-      xmlDocument.setData("reportAD_ACCOUNTINGRPT_ELEMENT", "liststructure", CreateAccountingReportData.selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), ""));
+      xmlDocument.setData("reportAD_ACCOUNTINGRPT_ELEMENT", "liststructure", CreateAccountingReportData.selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), strcAcctSchemaId, ""));
+      xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData.selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), strcAcctSchemaId));    
 
       //xmlDocument.setData("reportPeriod", "liststructure", CreateAccountingReportData.selectPeriod(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), "800074"));
       xmlDocument.setData("reportPeriod", "liststructure", CreateAccountingReportData.selectCombo(this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), vars.getLanguage()));
@@ -155,7 +161,7 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
       out.close();
     }
 
-void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, String strAccountingReportId, String strOrg, String strPeriod, String strYear) throws IOException, ServletException {
+void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod, String strYear) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: pop up CreateAccountingReport");
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/CreateAccountingReportPopUp").createXmlDocument();
       String strPeriodFrom = "";
@@ -192,7 +198,7 @@ void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, Stri
 
       Vector<Object> vectorArray = new Vector<Object>();
 
-      childData(vars, vectorArray, strAccountingReportId, strPeriodFrom, strPeriodTo, strTreeOrg, level, "0");
+      childData(vars, vectorArray, strcAcctSchemaId, strAccountingReportId, strPeriodFrom, strPeriodTo, strTreeOrg, level, "0");
 
       CreateAccountingReportData[] dataTree = convertVector(vectorArray);
       dataTree = filterData(dataTree);
@@ -209,9 +215,9 @@ void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, Stri
       out.close();
 }
 
-String arrayEntry(VariablesSecureApp vars) throws ServletException{
+String arrayEntry(VariablesSecureApp vars, String strcAcctSchemaId) throws ServletException{
       String result = "";
-      CreateAccountingReportData[] data = CreateAccountingReportData.selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), "");
+      CreateAccountingReportData[] data = CreateAccountingReportData.selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), strcAcctSchemaId, "");
       if (data == null || data.length == 0) {
         result = "var array = null;";
       } else {
@@ -247,7 +253,7 @@ void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException{
       return;
 }
 
-void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strAccountingReportId, String strPeriodFrom, String strPeriodTo, String strOrg, int level, String strParent) throws IOException, ServletException{
+void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strcAcctSchemaId, String strAccountingReportId, String strPeriodFrom, String strPeriodTo, String strOrg, int level, String strParent) throws IOException, ServletException{
       if (log4j.isDebugEnabled()) log4j.debug("**********************strAccountingReportId: "+strAccountingReportId);
       if (log4j.isDebugEnabled()) log4j.debug("**********************strPeriodFrom: "+strPeriodFrom);
       if (log4j.isDebugEnabled()) log4j.debug("**********************strPeriodTo: "+strPeriodTo);
@@ -259,13 +265,13 @@ void childData(VariablesSecureApp vars, Vector<Object> vectorArray, String strAc
       //CreateAccountingReportData[] dataTree = new CreateAccountingReportData[data.length];
       String strAccountId = CreateAccountingReportData.selectAccounting(this, strAccountingReportId);
       if (log4j.isDebugEnabled()) log4j.debug("**********************strAccountId: "+strAccountId);
-      CreateAccountingReportData[] data = CreateAccountingReportData.select(this, strParent, String.valueOf(level), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), strOrg, strPeriodFrom, strPeriodTo, strAccountId, strAccountingReportId);
+      CreateAccountingReportData[] data = CreateAccountingReportData.select(this, strParent, String.valueOf(level), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), strOrg, strPeriodFrom, strPeriodTo, strAccountId, strcAcctSchemaId, strAccountingReportId);
       if (data == null || data.length == 0) data = CreateAccountingReportData.set();
       vectorArray.addElement(data[0]);
       if (log4j.isDebugEnabled()) log4j.debug("**********************data[0]*********************: "+data[0].name+"  "+data[0].total);
-      CreateAccountingReportData[] dataAux = CreateAccountingReportData.selectChild(this, Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), data[0].id);
+      CreateAccountingReportData[] dataAux = CreateAccountingReportData.selectChild(this, Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), data[0].id, strcAcctSchemaId);
       for (int i = 0; i<dataAux.length; i++){
-              childData(vars, vectorArray, dataAux[i].id, strPeriodFrom, strPeriodTo, strOrg, level+1, data[0].id);
+              childData(vars, vectorArray, strcAcctSchemaId, dataAux[i].id, strPeriodFrom, strPeriodTo, strOrg, level+1, data[0].id);
       }
 }
 
