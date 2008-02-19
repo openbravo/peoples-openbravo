@@ -67,7 +67,7 @@ public class Invoice extends HttpSecureAppServlet {
       printPageFrame1(response, vars, strNameValue, strWindow);
     } else if (vars.commandIn("FRAME2")) {
       String strName = vars.getGlobalVariable("inpKey", "Invoice.name", "");
-      String strPaid = vars.getStringParameter("inpPaid");
+      String strPaid = vars.getStringParameter("inpPaid", "N");
       String strBpartnerId = vars.getStringParameter("inpBpartnerId");
       String strDateFrom = vars.getStringParameter("inpDateFrom");
       String strFechaTo = vars.getStringParameter("inpFechaTo");
