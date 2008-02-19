@@ -1092,7 +1092,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
         */
         DBMS_OUTPUT.PUT_LINE('Create Invoice - ' || v_Record_ID) ;
         v_ResultStr:='CreateInvoice';
-        C_Invoice_Create(NULL, v_Record_ID, Invoice_ID) ;
+        C_Invoice_Create(NULL,Invoice_ID, v_Record_ID) ;
         DBMS_OUTPUT.PUT_LINE('  Invoice - ' || Invoice_ID) ;
         IF(Invoice_ID IS NULL OR Invoice_ID=0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@InvoiceCreateFailed@');
