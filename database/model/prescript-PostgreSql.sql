@@ -592,7 +592,7 @@ CREATE OPERATOR =(
   RIGHTARG = varchar)
 --/-- END
 
-CREATE OR REPLACE FUNCTION lowerequal(numeric, varchar)
+CREATE OR REPLACE FUNCTION lowerequalNumeric(numeric, varchar)
   RETURNS boolean AS '
 BEGIN
 RETURN $1 <= TO_NUMBER($2);
@@ -603,12 +603,12 @@ END;
 --DROP OPERATOR <= (numeric, varchar);
 --SELECT * FROM drop_operator('<=','numeric','varchar');
 CREATE OPERATOR <=(
-  PROCEDURE = "lowerequal",
+  PROCEDURE = "lowerequalNumeric",
   LEFTARG = numeric,
   RIGHTARG = varchar)
 --/-- END
 
-CREATE OR REPLACE FUNCTION lowerequal(timestamp, varchar)
+CREATE OR REPLACE FUNCTION lowerequalTimestamp(timestamp, varchar)
   RETURNS boolean AS '
 BEGIN
 RETURN $1 <= TO_DATE($2);
@@ -619,7 +619,7 @@ END;
 --DROP OPERATOR <= (timestamp, varchar);
 --SELECT * FROM drop_operator('<=','timestamp','varchar');
 CREATE OPERATOR <=(
-  PROCEDURE = "lowerequal",
+  PROCEDURE = "lowerequalTimestamp",
   LEFTARG = timestamp,
   RIGHTARG = varchar)
 --/-- END
