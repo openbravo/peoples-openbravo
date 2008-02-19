@@ -127,9 +127,9 @@ public class RemittanceCancel extends HttpSecureAppServlet {
           String strLID = SequenceIdData.getSequence(this, "C_DP_ManagementLine", vars.getClient());
           RemittanceCancelData.returnDPOriginal(conn, this, strLID, vars.getClient(), vars.getOrg(), vars.getUser(), strDPMID,strRLId, line.toString());
 
-          line += 10;
+          /*line += 10;
           strLID = SequenceIdData.getSequence(this, "C_DP_ManagementLine", vars.getClient());
-          RemittanceCancelData.returnDPGenerated(conn, this, strLID, vars.getClient(), vars.getOrg(), vars.getUser(), strDPMID,strRLId, line.toString());
+          RemittanceCancelData.returnDPGenerated(conn, this, strLID, vars.getClient(), vars.getOrg(), vars.getUser(), strDPMID,strRLId, line.toString());*/
         }
         if (log4j.isDebugEnabled()) log4j.debug("*********************dpmid: "+strDPMID);
         //Call c_dp_management_post
