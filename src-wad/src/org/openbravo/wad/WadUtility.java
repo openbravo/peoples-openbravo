@@ -1883,6 +1883,16 @@ public class WadUtility {
 
     return _displayLogic.toString();
   }
+  public static String getDisplayLogicForGroups(String strFieldGroup, StringBuffer code) {
+    if ((code == null)||(code.length()==0)) return "";
+    StringBuffer _displayLogic = new StringBuffer();
+    _displayLogic.append("if ").append(code).append("{\n");
+    _displayLogic.append("  displayLogicElement('fldgrp").append(strFieldGroup).append("', true);\n");
+    _displayLogic.append("} else {\n");
+    _displayLogic.append("  displayLogicElement('fldgrp").append(strFieldGroup).append("', false);\n");
+    _displayLogic.append("}\n");
+    return _displayLogic.toString();
+  }
   public static String getDisplayLogic(WADControl auxControl, Vector<Object> vecDL, FieldsData[] parentsFieldsData, Vector<Object> vecAuxiliar, Vector<Object> vecFields, String windowId, Vector<Object> vecContext, boolean isreadonly) {
     String code = auxControl.getData("DisplayLogic");
     if (code==null || code.equals("")) return "";

@@ -2856,6 +2856,10 @@ public class Wad extends DefaultHandler {
     StringBuffer onload = new StringBuffer();
     StringBuffer html = new StringBuffer();
     String strFieldGroup = "";
+    int fieldGroupElements = 0;
+    boolean fieldGroupHasDisplayLogic = false;
+    
+    StringBuffer strGroupDisplayLogic = new StringBuffer();
     int columnType = 0;
     html.append("<tr>\n");
     html.append("  <td class=\"TableEdition_OneCell_width\"></td>\n");
@@ -2870,10 +2874,19 @@ public class Wad extends DefaultHandler {
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
+      
       if (WadUtility.isNewGroup(auxControl, strFieldGroup)) {
+        if (fieldGroupHasDisplayLogic && (fieldGroupElements!=0)) {
+          strGroupDisplayLogic.append(")");
+          displayLogicFunction.append(WadUtility.getDisplayLogicForGroups(strFieldGroup, strGroupDisplayLogic));
+        }
+        strGroupDisplayLogic = new StringBuffer("(");
+        fieldGroupElements = 0;
+        fieldGroupHasDisplayLogic = true;
+        
         strFieldGroup = auxControl.getData("AD_FieldGroup_ID");
         html.append("      <tr><td colspan=\"4\">\n");
-        html.append("      <table border=0 cellspacing=0 cellpadding=0 class=\"FieldGroup\"><tr class=\"FieldGroup_TopMargin\"></tr>\n<tr>\n");
+        html.append("      <table border=0 cellspacing=0 cellpadding=0 class=\"FieldGroup\" id=\"fldgrp"+strFieldGroup+"\"><tr class=\"FieldGroup_TopMargin\"></tr>\n<tr>\n");
         html.append("<td class=\"FieldGroupTitle_Left\"><img src=\"../../../../../web/images/blank.gif\" class=\"FieldGroupTitle_Left_bg\" border=0/></td>");
         String strText="";
         if (strLanguage.equals("")) strText = EditionFieldsData.fieldGroupName(pool, strFieldGroup);
@@ -2882,7 +2895,23 @@ public class Wad extends DefaultHandler {
         html.append("<td class=\"FieldGroupTitle_Right\"><img src=\"../../../../../web/images/blank.gif\" class=\"FieldGroupTitle_Right_bg\" border=0/></td>");
         html.append("<td class=\"FieldGroupContent\">&nbsp;</td></tr>\n<tr class=\"FieldGroup_BottomMargin\"></tr></table>");
         html.append("      </td></tr>\n");
+        
       }
+      
+      //insert display logic for field groups 
+      if (auxControl.getData("IsDisplayed").equals("Y") && fieldGroupHasDisplayLogic && !strFieldGroup.equals("")) {
+        String displ = WadUtility.displayLogic(auxControl.getData("DisplayLogic"), new Vector<Object>(), parentsFieldsData, vecAuxiliar, vecFields, windowId, new Vector<Object>());
+        if (displ.length()!=0){
+          displ="("+displ+")";
+          if (!strGroupDisplayLogic.toString().contains(displ)) {
+            strGroupDisplayLogic.append((fieldGroupElements==0?"":" || ")+ displ);
+            fieldGroupElements ++;
+          }
+         } else {
+           fieldGroupHasDisplayLogic=false;
+           log4j.info(auxControl.getData("ColumnName"));
+         }
+      } 
 
       if (log4j.isDebugEnabled()) log4j.debug("Column: " + auxControl.getData("ColumnName") + ", col:  " + columnType);
       // hidden inputs
@@ -2972,7 +3001,13 @@ public class Wad extends DefaultHandler {
         readOnlyLogicFunction.append(WadUtility.getReadOnlyLogic(auxControl, new Vector<Object>(), parentsFieldsData, vecAuxiliar, vecFields, windowId, new Vector<Object>(), isreadonly));
       }
     }
-
+    
+    //display logic for last group
+    if (fieldGroupHasDisplayLogic && (fieldGroupElements!=0)) {
+      strGroupDisplayLogic.append(")");
+      displayLogicFunction.append(WadUtility.getDisplayLogicForGroups(strFieldGroup, strGroupDisplayLogic));
+    }
+    
     xmlDocument.setParameter("hiddenControlDesign", htmlHidden.toString());
     xmlDocument.setParameter("controlDesign", html.toString());
     StringBuffer sbImportCSS = new StringBuffer();
