@@ -61,6 +61,8 @@ export.database.data: refer to export.database.data target of database.
 import.database.data: refer to import.database.data target of database.
 export.database.sampledata: refer to export.database.sampledata target of database.
 import.database.sampledata: refer to import.database.sampledata target of database.
+export.database.masterdata: refer to export.database.masterdata target of database.
+import.database.masterdata: refer to import.database.masterdata target of database.
 save.database.model: refer to save.database.model target of database.
 compare.database.structure: refer to compare.database.structure target of database.
 -->
@@ -320,6 +322,14 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="import.database.sampledata" depends="init">
     <ant dir="${base.source}/database" target="import.database.sampledata" inheritAll="true" inheritRefs="true"/>
+  </target>
+
+  <target name="export.database.masterdata" depends="init">
+    <ant dir="${base.source}/database" target="export.database.masterdata" inheritAll="true" inheritRefs="true"/>
+  </target>
+
+  <target name="import.database.masterdata" depends="init">
+    <ant dir="${base.source}/database" target="import.database.masterdata" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="save.database.model" depends="init">
