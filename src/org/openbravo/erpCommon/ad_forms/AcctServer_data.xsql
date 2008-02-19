@@ -579,4 +579,12 @@
       </Sql>
       <Parameter name="bpartnerId"/>
    </SqlMethod>
+   <SqlMethod name="selectOrgName" type="preparedStatement" return="string" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT NAME FROM AD_ORG
+        WHERE AD_ORG_ID = ?
+      </Sql>
+      <Parameter name="org"/>
+   </SqlMethod>
   </SqlClass>
