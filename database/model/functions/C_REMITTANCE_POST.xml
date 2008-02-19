@@ -346,7 +346,7 @@
           UPDATE C_REMITTANCELINE
             SET C_DEBT_PAYMENT_CANCELLED=v_DPID
           WHERE C_RemittanceLine_ID=Cur_RemittanceLines.c_RemittanceLine_id;
-          v_line:=v_line + 10;
+          /*v_line:=v_line + 10;
           Ad_Sequence_Next('C_DP_ManagementLine', v_AD_Org_ID, v_DPMLineId) ;
           INSERT
           INTO C_DP_MANAGEMENTLINE
@@ -363,7 +363,7 @@
               v_DPMId, Cur_RemittanceLines.Status, v_Status_To, v_DPId,
               v_line
             )
-            ;
+            ;*/
           v_line:=v_line + 10;
           Ad_Sequence_Next('C_DP_ManagementLine', v_AD_Org_ID, v_DPMLineId) ;
           INSERT
