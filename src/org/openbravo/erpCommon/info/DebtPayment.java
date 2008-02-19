@@ -86,7 +86,7 @@ public class DebtPayment extends HttpSecureAppServlet {
         vars.setSessionValue("DebtPayment.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("DebtPayment.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "DebtPayment");
@@ -97,7 +97,7 @@ public class DebtPayment extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("DebtPayment.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -153,7 +153,7 @@ public class DebtPayment extends HttpSecureAppServlet {
     } else {
       String[] discard = {"withoutPrevious", "withoutNext"};
       data = DebtPaymentData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCalc2, strPaymentRule, strIsPaid, strIsReceipt, strIsPending, strInvoice, strOrder, initRecordNumber, intRecordRange);
-      if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/DebtPayment_F2", discard).createXmlDocument();
     }

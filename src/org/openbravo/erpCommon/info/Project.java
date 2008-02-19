@@ -90,7 +90,7 @@ public class Project extends HttpSecureAppServlet {
       printPageFrame2(response, vars, strKey, strName, strBpartners, strIsSOTrx);
     } else if (vars.commandIn("FRAME3")) {
       printPageFrame3(response, vars);
-    } else if (vars.commandIn("PREVIOUS_RELATION")) {
+    } else if (vars.commandIn("PREVIOUS")) {
       String strInitRecord = vars.getSessionValue("Project.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Project");
       int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
@@ -102,8 +102,8 @@ public class Project extends HttpSecureAppServlet {
         vars.setSessionValue("Project.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
-    } else if (vars.commandIn("NEXT_RELATION")) {
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
+    } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("Project.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Project");
       int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
@@ -113,7 +113,7 @@ public class Project extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("Project.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -181,21 +181,23 @@ public class Project extends HttpSecureAppServlet {
    // if (!strIsSOTrx.equals("Y")) strBpartners="";
     boolean hasPrevious=false, hasNext=false;
     if (strKey.equals("") && strName.equals("") && strBpartners.equals("")) {
-      String[] discard = {"sectionDetail"};
+      String[] discard = {"sectionDetail", "hasPrevious", "hasNext"};
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Project_F2", discard).createXmlDocument();
       xmlDocument.setData("structure1", ProjectData.set());
     } else {
-      hasPrevious = hasNext = true;
+      String[] discard = {"withoutPrevious", "withoutNext"};
       ProjectData[] data = ProjectData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "Project"), Utility.getContext(this, vars, "#User_Org", "Project"), strKey, strName, strBpartners, initRecordNumber, intRecordRange);
-      if (data==null || data.length==0 || initRecordNumber<=1) hasPrevious = false;
-      if (data==null || data.length==0 || data.length<intRecordRange) hasNext = false;
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Project_F2").createXmlDocument();
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Project_F2", discard).createXmlDocument();
       xmlDocument.setData("structure1", data);
     }
 
+    /*
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "Project_F2", false, "document.frmMain.inpClave", "", "", false, "info", strReplaceWith, false, true);
     toolbar.prepareInfoTemplate(hasPrevious, hasNext, vars.getSessionValue("#ShowTest", "N").equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
+    */
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());

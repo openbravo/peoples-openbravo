@@ -70,10 +70,10 @@ public class ProductMultiple extends HttpSecureAppServlet {
         int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
         initRecord -= intRecordRange;
         strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
-        vars.setSessionValue("BusinessPartner.initRecordNumber", strInitRecord);
+        vars.setSessionValue("ProductMultiple.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("ProductMultiple.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "ProductMultiple");
@@ -84,7 +84,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("ProductMultiple.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -142,7 +142,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
     } else {
       String[] discard = {"withoutPrevious", "withoutNext"};
       ProductMultipleData[] data = ProductMultipleData.select(this, strKey, strName, strProductCategory, Utility.getContext(this, vars, "#User_Client", "ProductMultiple"), Utility.getContext(this, vars, "#User_Org", "ProductMultiple"), initRecordNumber, intRecordRange);
-      if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ProductMultiple_F2", discard).createXmlDocument();
       xmlDocument.setData("structure1", data);

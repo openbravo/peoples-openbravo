@@ -147,7 +147,7 @@ public class SalesOrderLine extends HttpSecureAppServlet {
         vars.setSessionValue("SalesOrderLine.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("SalesOrderLine.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "SalesOrderLine");
@@ -158,7 +158,7 @@ public class SalesOrderLine extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("SalesOrderLine.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -245,7 +245,7 @@ public class SalesOrderLine extends HttpSecureAppServlet {
       } else {
         data = SalesOrderLineData.selectSOTrx(this, Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""), initRecordNumber, intRecordRange);
       }
-      if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/SalesOrderLine_F2", discard).createXmlDocument();
     }

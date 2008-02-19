@@ -122,7 +122,7 @@ public class Account extends HttpSecureAppServlet {
         vars.setSessionValue("Account.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("Account.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Account");
@@ -133,7 +133,7 @@ public class Account extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("Account.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -264,7 +264,7 @@ public class Account extends HttpSecureAppServlet {
     } else {
       String[] discard = {"withoutPrevious", "withoutNext"};
       AccountData[] data = AccountData.select(this, strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), initRecordNumber, intRecordRange);
-      if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Account_F2", discard).createXmlDocument();
       xmlDocument.setData("structure1", data);

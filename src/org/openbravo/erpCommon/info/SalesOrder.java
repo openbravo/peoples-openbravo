@@ -88,7 +88,7 @@ public class SalesOrder extends HttpSecureAppServlet {
         int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
         initRecord -= intRecordRange;
         strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
-        vars.setSessionValue("SalesOrder.initRecordNumber", strInitRecord);
+        request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
       }
 
       response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
@@ -102,7 +102,7 @@ public class SalesOrder extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("SalesOrder.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -180,7 +180,7 @@ public class SalesOrder extends HttpSecureAppServlet {
     } else {
       String[] discard = {"withoutPrevious", "withoutNext"};
       SalesOrderData[] data = SalesOrderData.select(this, Utility.getContext(this, vars, "#User_Client", "SalesOrder"), Utility.getContext(this, vars, "#User_Org", "SalesOrder"), strName, strDescription, strOrder, strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, initRecordNumber, intRecordRange);
-      if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/SalesOrder_F2", discard).createXmlDocument();
       xmlDocument.setData("structure1", data);

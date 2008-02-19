@@ -98,7 +98,7 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
         vars.setSessionValue("ShipmentReceipt.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("ShipmentReceipt.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "ShipmentReceipt");
@@ -109,7 +109,7 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("ShipmentReceipt.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -188,7 +188,7 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
     } else {
       String[] discard = {"withoutPrevious", "withoutNext"};
       ShipmentReceiptData[] data = ShipmentReceiptData.select(this, Utility.getContext(this, vars, "#User_Client", "ShipmentReceipt"), Utility.getContext(this, vars, "#User_Org", "ShipmentReceipt"), strName, strDescription, strBpartnerId, strOrderReference, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strSalesTransaction, initRecordNumber, intRecordRange);
-      if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ShipmentReceipt_F2", discard).createXmlDocument();
       xmlDocument.setData("structure1", data);

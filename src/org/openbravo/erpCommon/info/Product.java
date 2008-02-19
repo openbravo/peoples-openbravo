@@ -137,7 +137,7 @@ public class Product extends HttpSecureAppServlet {
       printPageFrame2(response, vars, strKey, strName, strWarehouse, strPriceListVersion);
     } else if (vars.commandIn("FRAME3")) {
       printPageFrame3(response, vars);
-    } else if (vars.commandIn("PREVIOUS_RELATION")) {
+    } else if (vars.commandIn("PREVIOUS")) {
       String strInitRecord = vars.getSessionValue("Product.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Product");
       int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
@@ -149,8 +149,8 @@ public class Product extends HttpSecureAppServlet {
         vars.setSessionValue("Product.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
-    } else if (vars.commandIn("NEXT_RELATION")) {
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
+    } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("Product.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Product");
       int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
@@ -160,7 +160,7 @@ public class Product extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("Product.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -251,21 +251,23 @@ public class Product extends HttpSecureAppServlet {
     boolean hasPrevious = false, hasNext = false;
 
     if (strKey.equals("") && strName.equals("")) {
-      String[] discard = {"sectionDetail"};
+      String[] discard = {"sectionDetail", "hasPrevious", "hasNext"};
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Product_F2", discard).createXmlDocument();
       xmlDocument.setData("structure1", ProductData.set());
     } else {
-      hasPrevious = hasNext = true;
+      String[] discard = {"withoutPrevious", "withoutNext"};
       ProductData[] data = ProductData.select(this, vars.getLanguage(), strWarehouse, strKey, strName, strPriceListVersion, Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars, "#User_Org", "Product"), initRecordNumber, intRecordRange);
-      if (data==null || data.length==0 || initRecordNumber<=1) hasPrevious = false;
-      if (data==null || data.length==0 || data.length<intRecordRange) hasNext = false;
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Product_F2").createXmlDocument();
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Product_F2", discard).createXmlDocument();
       xmlDocument.setData("structure1", data);
     }
 
+    /*
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "Product_F2", false, "document.frmMain.inpClave", "", "", false, "info", strReplaceWith, false, true);
     toolbar.prepareInfoTemplate(hasPrevious, hasNext, vars.getSessionValue("#ShowTest", "N").equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
+    */
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());

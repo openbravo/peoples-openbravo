@@ -91,7 +91,7 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
         vars.setSessionValue("BusinessPartnerMultiple.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("BusinessPartnerMultiple.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "BusinessPartnerMultiple");
@@ -102,7 +102,7 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("BusinessPartnerMultiple.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -154,7 +154,7 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     } else {
       String[] discard = {"withoutPrevious", "withoutNext"};
       BusinessPartnerMultipleData[] data = BusinessPartnerMultipleData.select(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartnerMultiple"), Utility.getContext(this, vars, "#User_Org", "BusinessPartnerMultiple"), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, initRecordNumber, intRecordRange);
-      if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartnerMultiple_F2", discard).createXmlDocument();
       xmlDocument.setData("structure1", data);

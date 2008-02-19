@@ -139,7 +139,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
         vars.setSessionValue("ShipmentReceiptLine.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("ShipmentReceiptLine.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "ShipmentReceiptLine");
@@ -150,7 +150,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("ShipmentReceiptLine.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -235,7 +235,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
       } else {
         data = ShipmentReceiptLineData.selectSOTrx(this, Utility.getContext(this, vars, "#User_Client", "ShipmentReceiptLine"), Utility.getContext(this, vars, "#User_Org", "ShipmentReceiptLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strProduct, (strInvoiced.equals("Y")?"=":"<>"), initRecordNumber, intRecordRange);
       }
-      if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ShipmentReceiptLine_F2", discard).createXmlDocument();
     }

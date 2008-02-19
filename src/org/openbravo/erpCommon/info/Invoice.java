@@ -79,7 +79,7 @@ public class Invoice extends HttpSecureAppServlet {
       printPageFrame2(response, vars, strName, strPaid, strBpartnerId, strDateFrom, strFechaTo, strDescription, strCal1, strCalc2, strOrder, strSOTrx);
     } else if (vars.commandIn("FIND")) {
       String strName = vars.getGlobalVariable("inpKey", "Invoice.name", "");
-      String strPaid = vars.getStringParameter("inpPaid");
+      String strPaid = vars.getStringParameter("inpPaid", "N");
       if (strPaid.equals(""))strPaid = "N";
       if (strPaid.equals("-1"))strPaid = "Y";
       if (log4j.isDebugEnabled()) log4j.debug("the value of inpPaid is: "+strPaid);
@@ -109,7 +109,7 @@ public class Invoice extends HttpSecureAppServlet {
         vars.setSessionValue("Invoice.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("Invoice.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Invoice");
@@ -120,7 +120,7 @@ public class Invoice extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("Invoice.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -211,7 +211,7 @@ public class Invoice extends HttpSecureAppServlet {
     } else {
       String[] discard = {"withoutPrevious", "withoutNext"};
       InvoiceData[] data = InvoiceData.select(this, vars.getSqlDateFormat(), Utility.getContext(this, vars, "#User_Client", "Invoice"), Utility.getContext(this, vars, "#User_Org", "Invoice"), strName, strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData.nDaysAfter(this,strFechaTo, "1"), strCal1,  strCalc2, strSOTrx, strPaid, initRecordNumber, intRecordRange);
-      if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Invoice_F2", discard).createXmlDocument();
       xmlDocument.setData("structure1", data);

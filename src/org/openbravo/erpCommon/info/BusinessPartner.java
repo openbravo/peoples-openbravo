@@ -120,7 +120,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
         vars.setSessionValue("BusinessPartner.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("BusinessPartner.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "BusinessPartner");
@@ -131,7 +131,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("BusinessPartner.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
     } else pageError(response);
   }
 
@@ -208,7 +208,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
     } else {
       String[] discard = {"withoutPrevious", "withoutNext"};
       BusinessPartnerData[] data = BusinessPartnerData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getContext(this, vars, "#User_Org", "BusinessPartner"), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, initRecordNumber, intRecordRange);
-      if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
+      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartner_F2", discard).createXmlDocument();
       xmlDocument.setData("structure1", data);

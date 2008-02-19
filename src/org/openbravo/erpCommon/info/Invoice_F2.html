@@ -63,9 +63,9 @@
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();setFocusFirstControl();window.focus();" onresize="resizeArea();">
 <form name="frmSelector" method="POST" action="">
   <INPUT type="hidden" name="Command">
-<INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
-  <input type="hidden" name="inpTexto"></input>
-  <input type="hidden" name="inpLastKeySelected"></input>
+<INPUT type="hidden" name="IsPopUpCall" value="1">
+  <input type="hidden" name="inpTexto">
+  <input type="hidden" name="inpLastKeySelected">
 
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
@@ -115,35 +115,30 @@
           </table>
           
           <table cellspacing="0" cellpadding="0" width="100%" style="text-align:-moz-center;_text-align:center;border-collapse:collapse;">
-
             <td align=left width=50% style="padding-left: 7px;">
-
               <table cellspacing="0" cellpadding="0" id="hasPrevious">
                 <td class="Main_ToolBar_textlabel_bg_left">
-                  <a href="#" onClick="return false;" class="Main_ToolBar_Button" onMouseOver="window.status='Reference';return true;" onMouseOut="window.status='';return true;" onclick="this.hideFocus=true" onblur="this.hideFocus=false" id="linkButtonRelatedInfo"><img class="Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Previous" src="../../../../../web/images/blank.gif" title="Reference" border="0" id="buttonRelatedInfo"></a>
+                  <a href="#"
+                  onClick="submitCommandForm('PREVIOUS', false, parent.superior.document.forms[0], 'Invoice_F2.html', null, null, false);return false;" class="Main_ToolBar_Button" onMouseOver="window.status='Reference';return true;" onMouseOut="window.status='';return true;" onclick="this.hideFocus=true" onblur="this.hideFocus=false" id="linkButtonRelatedInfo"><img class="Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Previous" src="../../../../../web/images/blank.gif" title="Reference" border="0" id="buttonRelatedInfo"></a>
                 </td>
-                <td class="Main_ToolBar_textlabel_bg_body" width=65px align="center"><a href="#" class="Main_ToolBar_text_relatedinfo">Previous</a></td>
+                <td class="Main_ToolBar_textlabel_bg_body" width=65px align="center"><a href="#" 
+                  onClick="submitCommandForm('PREVIOUS', false, parent.superior.document.forms[0], 'Invoice_F2.html', null, null, false);return false;" class="Main_ToolBar_text_relatedinfo">Previous</a></td>
                 <td width="1"><img src="../../../../../web/images/blank.gif" class="Main_ToolBar_textlabel_bg_right" border="0"></img></td>
               </table>
-
               <span id="withoutPrevious"></span>
-
             </td>
-
             <td align=right width=50% style="padding-right: 7px;">
-
               <table cellspacing="0" cellpadding="0" id="hasNext">
                 <td width="1"><img src="../../../../../web/images/blank.gif" class="Main_ToolBar_textlabel_bg_left" border="0"></img></td>
-                <td class="Main_ToolBar_textlabel_bg_body" width=65px align=center><a href="#" class="Main_ToolBar_text_relatedinfo">Next</a></td>
+                <td class="Main_ToolBar_textlabel_bg_body" width=65px align=center><a href="#" 
+                   onClick="submitCommandForm('NEXT', false, parent.superior.document.forms[0], 'Invoice_F2.html', null, null, false);return false;" class="Main_ToolBar_text_relatedinfo">Next</a></td>
                 <td class="Main_ToolBar_textlabel_bg_right">
-                  <a href="#" onClick="return false;" class="Main_ToolBar_Button" onMouseOver="window.status='Reference';return true;" onMouseOut="window.status='';return true;" onclick="this.hideFocus=true" onblur="this.hideFocus=false" id="linkButtonRelatedInfo"><img class="Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Next" src="../../../../../web/images/blank.gif" title="Reference" border="0" id="buttonRelatedInfo"></a>
+                  <a href="#" 
+                   onClick="submitCommandForm('NEXT', false, parent.superior.document.forms[0], 'Invoice_F2.html', null, null, false);return false;" class="Main_ToolBar_Button" onMouseOver="window.status='Reference';return true;" onMouseOut="window.status='';return true;" onclick="this.hideFocus=true" onblur="this.hideFocus=false" id="linkButtonRelatedInfo"><img class="Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Next" src="../../../../../web/images/blank.gif" title="Reference" border="0" id="buttonRelatedInfo"></a>
                 </td>
               </table>
-
               <span id="withoutNext"></span>
-
             </td>
-
           </table>
 
         </div>
