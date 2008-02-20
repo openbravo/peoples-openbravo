@@ -67,7 +67,7 @@ public class ExternalSalesImpl implements ExternalSales{
       try {
 
         //Select
-        ExternalSalesProductData[] data = ExternalSalesProductData.select(pool,  Integer.toString(ClientID), Integer.toString(salesChannel));
+        ExternalSalesProductData[] data = ExternalSalesProductData.select(pool,  Integer.toString(ClientID), Integer.toString(salesChannel), Integer.toString(organizationId));
 
 
         if (data != null && data.length > 0){
@@ -133,6 +133,8 @@ public class ExternalSalesImpl implements ExternalSales{
           //Reading default parameters
           ExternalSalesData[] externalPOS = ExternalSalesData.select(pool, Integer.toString(ClientID), Integer.toString(organizationId), Integer.toString(salesChannel));
 
+          String defaultBPvalue = "";
+
           if (externalPOS != null && externalPOS.length >0) {
             data[0].adClientId = externalPOS[0].adClientId;
             data[0].adOrgId = externalPOS[0].adOrgId;
@@ -145,14 +147,15 @@ public class ExternalSalesImpl implements ExternalSales{
             data[0].cBpartnerLocationId = externalPOS[0].cBpartnerLocationId;
             data[0].billtoId = externalPOS[0].billtoId;
             data[0].performPost = externalPOS[0].performPost;
+            defaultBPvalue = externalPOS[0].bpValue;
           }
 
           if (newOrders[i].getOrderId() != null)
           {
             data[0].orderReferenceno = newOrders[i].getOrderId().getDocumentNo();
-            SimpleDateFormat dateFormat = new SimpleDateFormat(javaDateFormat); 
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
             data[0].dateordered = ""+dateFormat.format(newOrders[i].getOrderId().getDateNew());
-            data[0].dateTimeFormat = javaDateFormat;
+            data[0].dateTimeFormat = "YYYY-MM-DD HH24:MI:SS";
           }
           if (newOrders[i].getBusinessPartner() != null)
           {
@@ -164,7 +167,11 @@ public class ExternalSalesImpl implements ExternalSales{
             data[0].postal = newOrders[i].getBusinessPartner().getPostal();
             data[0].address1 = newOrders[i].getBusinessPartner().getAddress1();
             data[0].address2 = newOrders[i].getBusinessPartner().getAddress2();
+          } 
+          if ((data[0].bpartnervalue==null || data[0].bpartnervalue.equals("")) && (data[0].name==null || data[0].name.equals(""))){
+            data[0].bpartnervalue = defaultBPvalue;
           }
+
           int k = 1;
           if (newOrders[i].getPayment() != null)
           {
