@@ -47,7 +47,7 @@
 		<Sql>
 			<![CDATA[
 				UPDATE I_Order SET
-					BPartnerValue=TO_NUMBER(?),
+					BPartnerValue=?,
 					Name=?,
 					C_BPartner_ID=TO_NUMBER(?),
 					C_Location_ID=TO_NUMBER(?),
@@ -740,7 +740,8 @@
 					from c_bpartner bp
 					where c_bpartner_id=I_Order.c_bpartner_id
 				) 
-				where c_bpartner_id is not null
+				where m_pricelist_id is null
+				and c_bpartner_id is not null
 				and i_isimported <> 'Y'
 				and I_Order.issotrx = 'Y'
 				and ad_client_ID = TO_NUMBER(?)
