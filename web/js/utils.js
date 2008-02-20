@@ -890,7 +890,7 @@ function obtainKeyCode(code) {
 
 
 /**
-* Handles the events execution of keys pressed, based on the events registered in the keyArray global array.   
+* Handles the events execution of keys pressed, based on the events registered in the keyArray global array.
 * @param {Event} pushedKey Code of the key pressed.
 * @returns True if the key is not registered in the array, false if a event for this key is registered in keyArray array.
 * @type Boolean
@@ -905,6 +905,7 @@ function keyControl(pushedKey) {
   if (!pushedKey) pushedKey = window.event;
  // alert(pushedKey.type);
   var keyCode = pushedKey.keyCode ? pushedKey.keyCode : pushedKey.which ? pushedKey.which : pushedKey.charCode;
+  var keyTarget = pushedKey.target ? pushedKey.target: pushedKey.srcElement;
   var total = keyArray.length;
   for (var i=0;i<total;i++) {
     if (keyArray[i] != null && keyArray[i] && keyArray[i].eventShotter != 'onkeyup' && pushedKey.type=='keydown') {
@@ -916,12 +917,17 @@ function keyControl(pushedKey) {
                 window.event.keyCode = 8;
                 keyCode = 8;
               }
+              if (window.event && window.event.keyCode == 121) { //F10 Special case
+                window.event.keyCode = 8;
+                keyCode = 8;
+              }              
             }
             if (!keyArray[i].propagateKey) 
               document.onkeypress = stopKeyPressEvent;
-            if (keyArray[i].field == null) {
+            if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
+              var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
               try {
-                eval(keyArray[i].evalfunc);
+                eval(evalfuncTrl);
                 if (!keyArray[i].propagateKey) 
                   return false; else 
                   return true;
@@ -933,11 +939,12 @@ function keyControl(pushedKey) {
               return true;
             }
           }
-        } else if (keyArray[i].field == null) {
+        } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
+          var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
           if (!keyArray[i].propagateKey) document.onkeypress = stopKeyPressEvent;
           if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
             try {
-              eval(keyArray[i].evalfunc);
+              eval(evalfuncTrl);
               document.onkeypress = startKeyPressEvent;
               if (!keyArray[i].propagateKey) 
                 return false; else 
@@ -950,7 +957,7 @@ function keyControl(pushedKey) {
             return true;
           } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
             try {
-              eval(keyArray[i].evalfunc);
+              eval(evalfuncTrl);
               document.onkeypress = startKeyPressEvent;
               if (!keyArray[i].propagateKey) 
                 return false; else 
@@ -963,7 +970,7 @@ function keyControl(pushedKey) {
             return true;
           } else if (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
             try {
-              eval(keyArray[i].evalfunc);
+              eval(evalfuncTrl);
               document.onkeypress = startKeyPressEvent;
               if (!keyArray[i].propagateKey) 
                 return false; else 
@@ -976,7 +983,7 @@ function keyControl(pushedKey) {
             return true;
           } else if (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
             try {
-              eval(keyArray[i].evalfunc);
+              eval(evalfuncTrl);
               document.onkeypress = startKeyPressEvent;
               if (!keyArray[i].propagateKey) 
                 return false; else 
@@ -1033,53 +1040,6 @@ function putFocusOnMenu(){
 */
 function putFocusOnWindow(){
   parent.frameAplicacion.focus();
-}
-
-
-
-
-function keyUpControl(pushedKey){
-  try {
-    if (keyArray == null || keyArray.length == 0) 
-      return true;
-  } catch (e) {
-    return true;
-  }
-  if (!pushedKey) 
-    pushedKey = window.event;
-  var keyCode = pushedKey.keyCode ? pushedKey.keyCode : pushedKey.which ? pushedKey.which : pushedKey.charCode;
-  var total = keyArray.length;
-  for (var i = 0; i < total; i++) {
-    if (keyArray[i] != null && keyArray[i]) {
-      if (keyCode == obtainKeyCode(keyArray[i].key)) {
-        if (keyArray[i].auxKey == null || keyArray[i].auxKey == "" || keyArray[i].auxKey == "null") {
-          if (!pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
-            if (!keyArray[i].propagateKey) {
-              if (window.event && window.event.keyCode == 116) { //F5 Special case
-                window.event.keyCode = 8;
-                keyCode = 8;
-              }
-            }
-            if (!keyArray[i].propagateKey) 
-              document.onkeypress = stopKeyPressEvent;
-            if (keyArray[i].field == null) {
-              try {
-                alert('a');//eval(keyArray[i].event);
-                if (!keyArray[i].propagateKey) 
-                  return false; else 
-                  return true;
-              } catch (e) {
-                document.onkeypress = startKeyPressEvent;
-                return true;
-              }
-              document.onkeypress = startKeyPressEvent;
-              return true;
-            }
-          }
-        }
-      }
-    }
-  }
 }
 
 /**
