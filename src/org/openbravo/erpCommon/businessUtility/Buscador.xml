@@ -22,7 +22,7 @@
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
   <PARAMETER id="paramDirection" name="direction" default=""/>
   <PARAMETER id="paramLanguage" name="language" default=""/>
-	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
+  <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="paramScripsJS" name="scripsJS"/>
   <PARAMETER id="paramScript" name="script"/>
   <PARAMETER id="keyMap" name="keyMap" default=""/>
