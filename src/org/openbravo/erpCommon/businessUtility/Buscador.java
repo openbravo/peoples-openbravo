@@ -498,9 +498,6 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("</td>\n");
           strHtml.append("</tr>\n");
           strHtml.append("</table>\n");
-          strHtml.append("<SPAN class=\"invalid\" style=\"display: none;\">* The value entered is not valid.</SPAN>");
-          strHtml.append("<SPAN class=\"missing\" style=\"display: none;\">* This value is required.</SPAN>");
-          strHtml.append("<SPAN class=\"range\" style=\"display: none;\">* This value is out of range.</SPAN>");
           strHtml.append("</td>\n");
         } else {
           strHtml.append("<input type=\"text\" ");
