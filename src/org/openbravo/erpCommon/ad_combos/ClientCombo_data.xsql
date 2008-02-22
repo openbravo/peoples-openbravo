@@ -60,5 +60,14 @@
         ORDER BY A_C.NAME
       </Sql>
    </SqlMethod>
-
+      <SqlMethod name="selectAllClientsNoSystem1" type="preparedStatement" return="multiple">
+      <Sql>
+        <![CDATA[      
+        SELECT A_C.AD_CLIENT_ID AS ID, A_C.NAME 
+        FROM AD_CLIENT A_C
+        WHERE A_C.AD_CLIENT_ID <> 0
+        ORDER BY A_C.NAME
+        ]]>
+      </Sql>
+   </SqlMethod>
 </SqlClass>

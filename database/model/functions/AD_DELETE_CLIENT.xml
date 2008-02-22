@@ -81,6 +81,10 @@
       --GOTO END_PROCESS; 
     END IF; 
   BEGIN --BODY 
+    IF (v_AD_Client_ID = 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@DeletingSystemClient@') ;
+    END IF;
+    
     DELETE FROM AD_SCRIPT_SQL; 
     FOR Cur_Triggers IN 
       (SELECT OBJECT_NAME AS NAME 
