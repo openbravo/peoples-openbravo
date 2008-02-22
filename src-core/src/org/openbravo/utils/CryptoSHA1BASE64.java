@@ -15,7 +15,6 @@ import javax.servlet.ServletException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import sun.misc.BASE64Encoder;
 
 public final class CryptoSHA1BASE64 {
   public static String hash(String plaintext) throws ServletException {
@@ -34,7 +33,12 @@ public final class CryptoSHA1BASE64 {
     }
 
     byte raw[] = md.digest(); // Message summary reception
-    String hash = (new BASE64Encoder()).encode(raw); // Encoding to BASE64
-    return hash;
+    try{
+    	String hash = new String(org.apache.commons.codec.binary.Base64.encodeBase64(raw),"UTF-8");
+    	return hash;
+    }
+    catch (UnsupportedEncodingException use){
+    	throw new ServletException(use);
+    }
   }
 }
