@@ -24,37 +24,37 @@
     Cur_Invoiceline RECORD;
     Cur_Pricelist_Version RECORD;
   BEGIN
-    FOR Cur_Orderline IN
-      (SELECT COALESCE(C_ORDERLINE.PRICEACTUAL, 0) AS Price
-      FROM C_ORDERLINE,
-        C_ORDER
-      WHERE C_ORDERLINE.C_ORDER_ID = C_ORDER.C_ORDER_ID
-        AND C_ORDER.ISSOTRX = 'N'
-        AND C_ORDER.DOCSTATUS = 'CO'
-        AND C_ORDER.PROCESSED = 'Y'
-        AND C_ORDERLINE.M_PRODUCT_ID = p_Product_ID
-      ORDER BY C_ORDER.DATEORDERED DESC
+    FOR Cur_Invoiceline IN
+      (SELECT COALESCE(C_INVOICELINE.PRICEACTUAL, 0) AS Price
+      FROM C_INVOICELINE,
+        C_INVOICE
+      WHERE C_INVOICELINE.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
+        AND C_INVOICE.ISSOTRX = 'N'
+        AND C_INVOICE.DOCSTATUS = 'CO'
+        AND C_INVOICE.PROCESSED = 'Y'
+        AND C_INVOICELINE.M_PRODUCT_ID = p_Product_ID
+      ORDER BY C_INVOICE.DATEINVOICED DESC
       )
     LOOP
-      v_Price := Cur_Orderline.PRICE;
+      v_Price := Cur_Invoiceline.PRICE;
       EXIT;
     END LOOP;
     IF(v_Price IS NULL) THEN
-      FOR Cur_Invoiceline IN
-        (SELECT COALESCE(C_INVOICELINE.PRICEACTUAL, 0) AS Price
-        FROM C_INVOICELINE,
-          C_INVOICE
-        WHERE C_INVOICELINE.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
-          AND C_INVOICE.ISSOTRX = 'N'
-          AND C_INVOICE.DOCSTATUS = 'CO'
-          AND C_INVOICE.PROCESSED = 'Y'
-          AND C_INVOICELINE.M_PRODUCT_ID = p_Product_ID
-        ORDER BY C_INVOICE.DATEINVOICED DESC
+      FOR Cur_Orderline IN
+        (SELECT COALESCE(C_ORDERLINE.PRICEACTUAL, 0) AS Price
+        FROM C_ORDERLINE,
+          C_ORDER
+        WHERE C_ORDERLINE.C_ORDER_ID = C_ORDER.C_ORDER_ID
+          AND C_ORDER.ISSOTRX = 'N'
+          AND C_ORDER.DOCSTATUS = 'CO'
+          AND C_ORDER.PROCESSED = 'Y'
+          AND C_ORDERLINE.M_PRODUCT_ID = p_Product_ID
+        ORDER BY C_ORDER.DATEORDERED DESC
         )
       LOOP
-        v_Price := Cur_Invoiceline.PRICE;
+        v_Price := Cur_Orderline.PRICE;
         EXIT;
-      END LOOP;
+      END LOOP;          
     END IF;
     IF(v_Price IS NULL) THEN
       FOR Cur_Pricelist_Version IN
