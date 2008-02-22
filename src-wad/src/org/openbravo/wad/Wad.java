@@ -2909,7 +2909,6 @@ public class Wad extends DefaultHandler {
           }
          } else {
            fieldGroupHasDisplayLogic=false;
-           log4j.info(auxControl.getData("ColumnName"));
          }
       } 
 
