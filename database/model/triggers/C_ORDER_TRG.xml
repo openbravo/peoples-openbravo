@@ -23,7 +23,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SL
-    * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+    * Contributions are Copyright (C) 1999-2008 Openbravo, S.L
     *************************************************************************
     * $Id: C_Order_Trg.sql,v 1.4 2003/05/30 04:23:38 jjanke Exp $
     ***
@@ -55,16 +55,6 @@
   UPDATE C_Invoice
    SET Description=:new.Description,
    POReference=:new.POReference
-  WHERE C_Order_ID=:new.C_Order_ID;
-  -- Sync Lines
-  UPDATE C_OrderLine
-   SET C_BPartner_ID=:new.C_BPartner_ID,
-   C_BPartner_Location_ID=:new.C_BPartner_Location_ID,
-   DATEORDERED=:new.DATEORDERED,
-   DATEPROMISED=:new.DATEPROMISED,
-   M_Warehouse_ID=:new.M_Warehouse_ID,
-   M_Shipper_ID=:new.M_Shipper_ID,
-   C_Currency_ID=:new.C_Currency_ID
   WHERE C_Order_ID=:new.C_Order_ID;
   END IF;
  END IF;
