@@ -7,7 +7,10 @@ config directory. For example in x86 Linux:
 
   ./setup-properties-linux.bin
 
-Then, to install run:
+If there is no setup binary for your operating system and architecture,
+send a request to <jar at openbravo dot com>.
+
+Then, to install it run:
 
   ant install.source
 
@@ -23,8 +26,9 @@ See http://wiki.openbravo.com for more documentation.
 * Helping out
 
 If you'd like to help out, great!
-The http://wiki.openbravo.com/wiki/index.php/Project_Ideas page
-contains a small list.
+The http://wiki.openbravo.com/wiki/index.php/Project_Ideas and 
+http://wiki.openbravo.com/wiki/index.php/Community_Projects pages
+contain a small list.
 
 Please share your changes so others can benefit.
 
