@@ -108,11 +108,11 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
       xmlDocument.setParameter("dateFrom", strdateFrom);
-    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("dateTo", strdateTo);
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
       xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
       xmlDocument.setParameter("cProjectId", strcProjectId);

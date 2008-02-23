@@ -42,7 +42,9 @@ public class GenerateModel347 extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strType = vars.getStringParameter("inpReportType", "New");
-      printPageDataSheet(response, vars, strType);
+      String strDateFrom = vars.getStringParameter("inpDateFrom");
+      String strDateTo = vars.getStringParameter("inpDateTo");
+      printPageDataSheet(response, vars, strType, strDateFrom, strDateTo);
     } else if (vars.commandIn("FIND")){
       String strDateFrom = vars.getStringParameter("inpDateFrom");
       String strDateTo = vars.getStringParameter("inpDateTo");
@@ -53,7 +55,7 @@ public class GenerateModel347 extends HttpSecureAppServlet {
     }else pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strType)
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strType, String strDateFrom, String strDateTo)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -94,8 +96,13 @@ public class GenerateModel347 extends HttpSecureAppServlet {
       }
     }
 
-
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
+    xmlDocument.setParameter("dateFrom", strDateFrom);
+    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTo", strDateTo);
+    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("newType", strType);
@@ -126,7 +133,6 @@ public class GenerateModel347 extends HttpSecureAppServlet {
       strLinea = dataLines[i].constant1 + dataLines[i].model + dataLines[i].ejercicio + dataLines[i].nifDeclarante + dataLines[i].nifDeclarado + dataLines[i].nifRepresentante + dataLines[i].nombreSocial + dataLines[i].tipoDeclaracion + dataLines[i].codigoProvincia + dataLines[i].codigoPais + dataLines[i].claveCodigo + dataLines[i].importe + dataLines[i].operacionSeguro + dataLines[i].arrendamiento + dataLines[i].blancos;
       strBuf = strBuf.append("\r\n").append(strLinea);
     }
-
     out.print(strBuf.toString());
     out.close();
   }
