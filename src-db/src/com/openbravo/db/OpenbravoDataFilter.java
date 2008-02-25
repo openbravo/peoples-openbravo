@@ -121,6 +121,8 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
         addTable("C_COUNTRY_TRL", "AD_CLIENT_ID <> 0 AND AD_LANGUAGE <> 'es_ES'");//
         addTable("C_CURRENCY", "AD_CLIENT_ID <> 0");//
         addTable("C_CURRENCY_TRL", "AD_CLIENT_ID <> 0 AND AD_LANGUAGE <> 'es_ES'");//
+        addTable("C_DOCTYPE", "AD_CLIENT_ID <> 0");
+        addTable("C_DOCTYPE_TRL", "AD_CLIENT_ID <> 0 AND AD_LANGUAGE <> 'es_ES'");
         addTable("C_REGION", "AD_CLIENT_ID <> 0");//
         addTable("C_UOM", "AD_CLIENT_ID <> 0");//
         addTable("C_UOM_TRL", "AD_CLIENT_ID <> 0 AND AD_LANGUAGE <> 'es_ES'");//
