@@ -567,7 +567,7 @@ public class ComboTableData {
     addFromField(tables, "td" + myIndex);
     addFromField("ad_ref_list_trl td_trl" + myIndex + " on td" + myIndex + ".ad_ref_list_id = td_trl" + myIndex + ".ad_ref_list_id AND td_trl" + myIndex + ".ad_language = ?", "td_trl" + myIndex);
     addFromParameter("#AD_LANGUAGE", "LANGUAGE");
-    addWhereField("td" + myIndex + ".ad_reference_id = To_number(?)", "KEY");
+    addWhereField("td" + myIndex + ".ad_reference_id = (?)", "KEY");
     if (referenceValue==null || referenceValue.equals("")) {
       addWhereParameter("AD_REFERENCE_ID", "KEY", "KEY");
       setParameter("AD_REFERENCE_ID", getObjectReference());
@@ -621,7 +621,7 @@ public class ComboTableData {
     }
     if (tableName==null || tableName.equals("")) {
       parseValidation();
-      addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "." + trd[0].keyname + " = To_number(?) )", "ISACTIVE");
+      addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "." + trd[0].keyname + " = (?) )", "ISACTIVE");
       addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
     }
     String orderByAux = (trd[0].orderbyclause.equals("")?"2":trd[0].orderbyclause);
@@ -657,7 +657,7 @@ public class ComboTableData {
     addFromField(tables, "td" + myIndex);
     if (tableName==null || tableName.equals("")) {
       parseValidation();
-      addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "." + name + " = To_number(?) )", "ISACTIVE");
+      addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "." + name + " = (?) )", "ISACTIVE");
       addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
     }
     for (int i=0;i<trd.length;i++) identifier("td" + myIndex, trd[i]);
