@@ -44,7 +44,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue", "BusinessPartner.name");
       String strIDValue = vars.getStringParameter("inpIDValue");
       if (!strIDValue.equals("")) {
-        String strNameAux = BusinessPartnerData.existsActual(this, vars.getLanguage(), strNameValue, strIDValue);
+        String strNameAux = BusinessPartnerData.existsActual(this, strNameValue, strIDValue);
         if (!strNameAux.equals("")) strNameValue = strNameAux;
       }
       vars.removeSessionValue("BusinessPartner.key");
@@ -64,7 +64,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "BusinessPartner.key");
       String strIDValue = vars.getStringParameter("inpIDValue");
       if (!strIDValue.equals("")) {
-        String strNameAux = BusinessPartnerData.existsActualValue(this, vars.getLanguage(), strKeyValue, strIDValue);
+        String strNameAux = BusinessPartnerData.existsActualValue(this, strKeyValue, strIDValue);
         if (!strNameAux.equals("")) strKeyValue = strNameAux;
       }
       vars.removeSessionValue("BusinessPartner.name");
@@ -207,7 +207,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       xmlDocument.setData("structure1", BusinessPartnerData.set());
     } else {
       String[] discard = {"withoutPrevious", "withoutNext"};
-      BusinessPartnerData[] data = BusinessPartnerData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getContext(this, vars, "#User_Org", "BusinessPartner"), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, initRecordNumber, intRecordRange);
+      BusinessPartnerData[] data = BusinessPartnerData.select(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getContext(this, vars, "#User_Org", "BusinessPartner"), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, initRecordNumber, intRecordRange);
       if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartner_F2", discard).createXmlDocument();
