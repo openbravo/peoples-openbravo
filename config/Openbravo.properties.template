@@ -30,11 +30,11 @@ bbdd.password=TAD
 bbdd.driver=oracle.jdbc.driver.OracleDriver
 bbdd.url=jdbc:oracle:thin:@localhost:1521:xe
 bbdd.rdbms=ORACLE
+bbdd.sessionConfig=ALTER SESSION SET NLS_LANGUAGE='AMERICAN' NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'
 
 # build.xml properties
-base.app=AppsOpenbravo
 base.source=/opt/openbravo
-attach.path=/opt/openbravo/attachment
+attach.path=/opt/openbravo/attachments
 context.name=openbravo
 web.url=@actual_url_context@/web
 context.url=http://localhost:8880/openbravo
