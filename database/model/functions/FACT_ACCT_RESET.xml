@@ -170,16 +170,17 @@
               -- Delete Fact
               v_ResultStr:='DeleteFact';
         DELETE --Deleting complete entries related to the document
-        FROM FACT_ACCT_CFS
-        WHERE EXISTS (SELECT 1 
-              FROM FACT_ACCT_CFS CFS1
-              WHERE FACT_ACCT_CFS.FACT_ACCT_ID = CFS1.FACT_ACCT_ID 
-              AND EXISTS (SELECT 1 FROM FACT_ACCT
-                     WHERE AD_TABLE_ID=Cur_Tables.AD_Table_ID
+           FROM FACT_ACCT_CFS
+           WHERE FACT_ACCT_CFS_ID IN (
+		        SELECT FACT_ACCT_CFS_ID
+		        FROM FACT_ACCT_CFS CFS1
+		        INNER JOIN FACT_ACCT ON
+			             FACT_ACCT.FACT_ACCT_ID = CFS1.FACT_ACCT_REF_ID
+			             AND AD_TABLE_ID=Cur_Tables.AD_Table_ID
                          AND Record_ID=Cur_Fact_Acct.Record_ID
-                         AND AD_Client_ID = Cur_Clients.AD_Client_ID
-                         AND FACT_ACCT.FACT_ACCT_ID = CFS1.FACT_ACCT_REF_ID));
-              DELETE
+                         AND FACT_ACCT.AD_Client_ID = Cur_Clients.AD_Client_ID
+	        );
+        DELETE
               FROM FACT_ACCT
               WHERE AD_TABLE_ID=Cur_Tables.AD_Table_ID
                 AND Record_ID=Cur_Fact_Acct.Record_ID
