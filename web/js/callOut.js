@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,14 @@ function displayLogic() {
   return true;
 }
 
+function setgWaitingCallOut(state, frameName) {
+  if (frameName==null || frameName=="") frameName=frameDefault;
+  objFrame = eval("parent." + frameName);
+  objFrame.setGWaitingCallOut(state);
+}
+
 function returnResponse(arrRespuesta, calloutName, frameName, formName) {
+  setgWaitingCallOut(false, frameName);
   if (arrRespuesta==null && (calloutName==null || calloutName=="")) return false;
   if (frameName==null || frameName=="") frameName=frameDefault;
   objFrame = eval("parent." + frameName);

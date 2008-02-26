@@ -175,12 +175,12 @@ function submitForm(campo, valor, Formulario, bolComprobar, isCallOut) {
       return false;
     } else {
       gEnviado=1;
-      if (isCallOut) gWaitingCallOut=true;
+      if (isCallOut) setGWaitingCallOut(true);
       campo.value = valor;
       Formulario.submit();
     }
   } else {
-    if (isCallOut) gWaitingCallOut=true;
+    if (isCallOut) setGWaitingCallOut(true);
     campo.value = valor;
     Formulario.submit();
   }
@@ -2204,6 +2204,23 @@ function fillElements(frm, name, callout) {
 }
 
 /**
+* Set the value of the variable gWaitingCallOut
+* @param {state} boolean: true to set the variable to true, false to set the variable to false.
+* @returns True if everything goes right, otherwise false.
+*/
+function setGWaitingCallOut(state) {
+  if (state==true) {
+    gWaitingCallOut=true;
+  } else if (state==false) {
+    gWaitingCallOut=false;
+  } else {
+    return false;
+  }
+  return true;
+}
+
+
+/**
 * Function Description
 * @param {Array} arrElements The array of elements
 * @param {String} calloutName The CallOut to be associated.
@@ -2213,7 +2230,6 @@ function fillElements(frm, name, callout) {
 * @see #formElementEvent
 */
 function fillElementsFromArray(arrElements, calloutName, Formulario) {
-  gWaitingCallOut=false;
   if (arrElements==null && arrGeneralChange==null) return false;
   if (Formulario==null || !Formulario) Formulario=document.forms[0];
   if (arrElements!=null) {
