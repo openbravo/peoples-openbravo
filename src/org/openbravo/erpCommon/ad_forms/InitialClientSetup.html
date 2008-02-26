@@ -205,20 +205,9 @@ function onloadFunctions() {
                   <TD class="TextBox_ContentCell" colspan="2">
                     <INPUT dojoType="openbravo:ValidationTextbox" required="true" class="TextBox_TwoCells_width required" type="text" name="inpCliente" id="paramCliente" maxlength="30" value="Cliente"></INPUT><script>djConfig.searchIds.push("paramCliente");</script>
                   </TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">System Installation</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"> <INPUT type="checkbox" name="inpSystem" id="fieldSystem" value="-1"></INPUT></TD>
-                  <TD class="ContentCell">
-                </TR>
-                <TR>
                   <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>
                   <TD class="TextBox_ContentCell" colspan="2">
                     <INPUT dojoType="openbravo:ValidationTextbox" required="true" class="TextBox_TwoCells_width required" type="text" name="inpOrganizacion" id="paramOrganizacion" size="20" maxlength="30" value="Org"></INPUT><script>djConfig.searchIds.push("paramOrganizacion");</script>
-                  </TD>
-                  <TD class="TitleCell"><SPAN class="LabelText">Currency</SPAN></TD>
-                  <TD class="Combo_ContentCell" colspan="2">
-                    <SELECT name="inpMoneda" id="inpMoneda" class="Combo Combo_TwoCells_width required" required="true">
-                      <OPTION value=""></OPTION><DIV id="reportCurrency_M"></DIV>
-                    </SELECT>
                   </TD>
                 </TR>
                 <TR>
@@ -250,9 +239,12 @@ function onloadFunctions() {
                   <TD class="TextBox_ContentCell" colspan="2">
                     <INPUT dojoType="openbravo:ValidationTextbox" required="true" class="TextBox_TwoCells_width required" type="text"  name="inpCiudad" id="paramCiudad" maxlength="30" value=""></INPUT><script>djConfig.searchIds.push("paramCiudad");</script>
                   </TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="ContentCell"></TD>
-                  <TD class="ContentCell"></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Currency</SPAN></TD>
+                  <TD class="Combo_ContentCell" colspan="2">
+                    <SELECT name="inpMoneda" id="inpMoneda" class="Combo Combo_TwoCells_width required" required="true">
+                      <OPTION value=""></OPTION><DIV id="reportCurrency_M"></DIV>
+                    </SELECT>
+                  </TD>
                 </TR>
                 <TR>
                   <td colspan="6">
