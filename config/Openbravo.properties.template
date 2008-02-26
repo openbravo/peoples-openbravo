@@ -15,18 +15,13 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
-dateFormat.js = %d-%m-%Y
-dateFormat.sql = DD-MM-YYYY
-dateFormat.java = dd-MM-yyyy
-dateTimeFormat.java = dd-MM-yyyy HH:mm:ss
+# Date/time format
+dateFormat.js=%d-%m-%Y
+dateFormat.sql=DD-MM-YYYY
+dateFormat.java=dd-MM-yyyy
+dateTimeFormat.java=dd-MM-yyyy HH:mm:ss
 
-
-bbdd.outputscript=~/databasescript.sql
-bbdd.verbosity=INFO
-application.version=2.35
-development.environment.id=1
-
-#DB properties
+# DB properties
 bbdd.sid=xe
 bbdd.systemUser=SYSTEM
 bbdd.systemPassword=SYSTEM
@@ -40,7 +35,13 @@ bbdd.rdbms=ORACLE
 base.app=AppsOpenbravo
 base.source=/opt/openbravo
 attach.path=/opt/openbravo/attachment
+context.name=openbravo
 web.url=@actual_url_context@/web
 context.url=http://localhost:8880/openbravo
-context.name=openbravo
 base.temp=/tmp
+
+# Development
+bbdd.outputscript=~/databasescript.sql
+bbdd.verbosity=INFO
+application.version=2.35
+development.environment.id=1
