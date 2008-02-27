@@ -186,6 +186,17 @@ $BODY$
   LANGUAGE 'plpgsql' VOLATILE;
 /-- END
 
+CREATE OR REPLACE FUNCTION to_number(bigint)
+  RETURNS "numeric" AS
+$BODY$
+BEGIN
+RETURN cast($1 as numeric);
+END;
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE;
+/-- END
+
+
 CREATE OR REPLACE FUNCTION to_number(numeric)
   RETURNS "numeric" AS
 $BODY$
@@ -253,6 +264,18 @@ RETURN to_char($1, ''999999999999D'');
 END;
 ' LANGUAGE 'plpgsql'
 /-- END
+
+CREATE OR REPLACE FUNCTION to_char
+(
+bigint
+)
+RETURNS  VARCHAR AS '
+BEGIN
+RETURN cast($1 as VARCHAR);
+END;
+' LANGUAGE 'plpgsql'
+/-- END
+
 
 CREATE OR REPLACE FUNCTION to_char
 (
