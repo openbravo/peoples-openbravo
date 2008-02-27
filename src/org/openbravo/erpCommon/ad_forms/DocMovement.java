@@ -38,8 +38,8 @@ public class DocMovement extends AcctServer {
  *  Constructor
  *  @param AD_Client_ID client
  */
-public DocMovement(String AD_Client_ID){
-  super(AD_Client_ID);
+public DocMovement(String AD_Client_ID, ConnectionProvider connectionProvider){
+  super(AD_Client_ID, connectionProvider);
 }
 
 public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id) throws ServletException{

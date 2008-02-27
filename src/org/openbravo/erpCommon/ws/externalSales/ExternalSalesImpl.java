@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -23,14 +23,22 @@ import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 import org.openbravo.database.ConnectionProviderImpl;
-import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.base.ConnectionProviderContextListener;
+import org.openbravo.base.ConfigParameters;
 
 import org.apache.log4j.Logger ;
 
+import org.apache.axis.MessageContext;
+import org.apache.axis.transport.http.HTTPConstants;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletContext;
+
 
 public class ExternalSalesImpl implements ExternalSales{
-    protected static ConnectionProviderImpl pool;
+    protected static ConnectionProvider pool;
     protected static String javaDateFormat;
     static Logger log4j = Logger.getLogger(ExternalSales.class);
 
@@ -39,14 +47,14 @@ public class ExternalSalesImpl implements ExternalSales{
       if (log4j.isDebugEnabled()) log4j.debug("ExternalSales");
       initPool();
     }
-    
+
     private boolean access(String username, String password) {
      try {
       	return !ExternalSalesOrderData.access(pool, username,password).equals("0");
       } catch (Exception e) {
         return false;
       }
-      
+
     }
 
 		// FIXME: This should be removed
@@ -60,7 +68,7 @@ public class ExternalSalesImpl implements ExternalSales{
     public Product[] getProductsCatalog( int ClientID, int organizationId, int salesChannel, String username, String password)
     {
     if (!access(username, password)) {
-      if (log4j.isDebugEnabled()) log4j.debug("Access denied for user: " + username + " - password: " + password); 
+      if (log4j.isDebugEnabled()) log4j.debug("Access denied for user: " + username + " - password: " + password);
        return null;
     }
     if (log4j.isDebugEnabled()) log4j.debug("getProductsCatalog"+" ClientID "+ClientID+" organizationId "+organizationId+" salesChannel "+ salesChannel);
@@ -108,7 +116,7 @@ public class ExternalSalesImpl implements ExternalSales{
       } catch (Exception e) {
           log4j.error("Error : getProductsCatalog");
           e.printStackTrace();
-      } 
+      }
 
       destroyPool();
       return null;
@@ -117,7 +125,7 @@ public class ExternalSalesImpl implements ExternalSales{
     public void uploadOrders(int ClientID, int organizationId, int salesChannel, Order[] newOrders, String username, String password)
     {
     if (!access(username, password)) {
-       if (log4j.isDebugEnabled()) log4j.debug("Access denied"); 
+       if (log4j.isDebugEnabled()) log4j.debug("Access denied");
        return;
     }
 
@@ -153,7 +161,7 @@ public class ExternalSalesImpl implements ExternalSales{
           if (newOrders[i].getOrderId() != null)
           {
             data[0].orderReferenceno = newOrders[i].getOrderId().getDocumentNo();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             data[0].dateordered = ""+dateFormat.format(newOrders[i].getOrderId().getDateNew());
             data[0].dateTimeFormat = "YYYY-MM-DD HH24:MI:SS";
           }
@@ -167,7 +175,7 @@ public class ExternalSalesImpl implements ExternalSales{
             data[0].postal = newOrders[i].getBusinessPartner().getPostal();
             data[0].address1 = newOrders[i].getBusinessPartner().getAddress1();
             data[0].address2 = newOrders[i].getBusinessPartner().getAddress2();
-          } 
+          }
           if ((data[0].bpartnervalue==null || data[0].bpartnervalue.equals("")) && (data[0].name==null || data[0].name.equals(""))){
             data[0].bpartnervalue = defaultBPvalue;
           }
@@ -175,9 +183,9 @@ public class ExternalSalesImpl implements ExternalSales{
           int k = 1;
           if (newOrders[i].getPayment() != null)
           {
-            //At this time we only permit two different paymentrule. 
+            //At this time we only permit two different paymentrule.
             //Second payment will sumaryze the rest of payments
-            //This could change in the future 
+            //This could change in the future
             if (newOrders[i].getPayment() != null && newOrders[i].getPayment().length>= 1) {
               data[0].paymentamount1 = Double.toString(newOrders[i].getPayment()[0].getAmount());
               data[0].paymentrule1 = newOrders[i].getPayment()[0].getPaymentType();
@@ -226,12 +234,12 @@ public class ExternalSalesImpl implements ExternalSales{
     public Order[] getOrders(int ClientID, int organizationId, OrderIdentifier[] orderIds, String username, String password)
     {
     if (!access(username, password)) {
-       if (log4j.isDebugEnabled()) log4j.debug("Access denied"); 
+       if (log4j.isDebugEnabled()) log4j.debug("Access denied");
        return null;
     }
 
     if (log4j.isDebugEnabled()) log4j.debug("getOrders");
-      SimpleDateFormat dateFormat = new SimpleDateFormat(javaDateFormat); 
+      SimpleDateFormat dateFormat = new SimpleDateFormat(javaDateFormat);
 
       initPool();
       Vector<Order> vOrders = new Vector<Order>();
@@ -246,9 +254,9 @@ public class ExternalSalesImpl implements ExternalSales{
           //Select
 
           ExternalSalesOrderData[] data = ExternalSalesOrderData.select(pool, Integer.toString(ClientID), dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
-          if ((data == null) || (data.length == 0)) 
+          if ((data == null) || (data.length == 0))
             data = ExternalSalesOrderData.selectIOrder(pool, Integer.toString(ClientID), dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
-          
+
           if (data != null && data.length > 0){
             if (log4j.isDebugEnabled()) log4j.debug("data.length "+data.length);
             Order order = new org.openbravo.erpCommon.ws.externalSales.Order();
@@ -260,7 +268,7 @@ public class ExternalSalesImpl implements ExternalSales{
               orderIdentifier.setDocumentNo(orderIds[cont].getDocumentNo());
               orderIdentifier.setDateNew(orderIds[cont].getDateNew());
               order.setOrderId(orderIdentifier);
-              
+
               ExternalSalesOrderData[] dataLines = null;
               if ((data[i].id != null) && (!data[i].id.equals(""))){
                 dataLines = ExternalSalesOrderData.selectLines(pool, Integer.toString(ClientID), data[i].id);
@@ -268,7 +276,7 @@ public class ExternalSalesImpl implements ExternalSales{
                 if (log4j.isDebugEnabled()) log4j.debug("ClientID "+Integer.toString(ClientID)+" orderIds "+ orderIds[cont].getDocumentNo()+" - "+dateFormat.format(orderIds[cont].getDateNew()).toString());
                 dataLines = ExternalSalesOrderData.selectLinesIOrder(pool, Integer.toString(ClientID), dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
               }
-              
+
               OrderLine [] orderLines = null;
               if (dataLines != null && dataLines.length > 0){
                 if (log4j.isDebugEnabled()) log4j.debug("getOrders dataLines.length "+dataLines.length);
@@ -292,7 +300,7 @@ public class ExternalSalesImpl implements ExternalSales{
               bpartner.setId(data[i].bpartnervalue);
               bpartner.setName(data[i].cBpartnerName);
               order.setBusinessPartner(bpartner);
-              
+
               ExternalSalesOrderData[] dataPayments = null;
               if ((data[i].id != null) && (!data[i].id.equals("")))
                 dataPayments = ExternalSalesOrderData.selectPayment(pool, Integer.toString(ClientID), data[i].id);
@@ -300,7 +308,7 @@ public class ExternalSalesImpl implements ExternalSales{
                 if (log4j.isDebugEnabled()) log4j.debug("ClientID "+Integer.toString(ClientID)+" orderIds "+ orderIds[cont].getDocumentNo()+" - "+dateFormat.format(orderIds[cont].getDateNew()).toString());
                 dataPayments = ExternalSalesOrderData.selectPaymentIOrder(pool, Integer.toString(ClientID), dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
               }
-              
+
               Payment [] payments = null;
               if (dataPayments != null && dataPayments.length > 0){
                 if (log4j.isDebugEnabled()) log4j.debug("getOrders dataPayments.length "+dataPayments.length);
@@ -334,8 +342,10 @@ public class ExternalSalesImpl implements ExternalSales{
     private void initPool () {
       if (log4j.isDebugEnabled()) log4j.debug("init");
        try{
-         pool = HttpBaseServlet.getPoolWS();
-         javaDateFormat = HttpBaseServlet.getJavaDateTimeFormat();
+        HttpServlet srv = (HttpServlet) MessageContext.getCurrentContext().getProperty(HTTPConstants.MC_HTTP_SERVLET);
+        ServletContext context = srv.getServletContext();
+        pool = ConnectionProviderContextListener.getPool(context);
+        javaDateFormat = ConfigParameters.retrieveFrom(context).getJavaDateTimeFormat();
          log4j.info("Java Date Format : "+javaDateFormat);
        } catch (Exception e) {
           log4j.error("Error : initPool");

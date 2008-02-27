@@ -40,8 +40,8 @@ public class DocPayment extends AcctServer {
  *  Constructor
  *  @param AD_Client_ID AD_Client_ID
  */
-public DocPayment(String AD_Client_ID){
-    super(AD_Client_ID);
+public DocPayment(String AD_Client_ID, ConnectionProvider connectionProvider){
+    super(AD_Client_ID, connectionProvider);
 }
 
 public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id) throws ServletException{
@@ -70,7 +70,7 @@ private DocLine[] loadLines(ConnectionProvider conn){
     ArrayList<Object> list = new ArrayList<Object>();
     DocLinePaymentData[] data = null;
     try{
-        data = DocLinePaymentData.select(this, Record_ID);
+        data = DocLinePaymentData.select(connectionProvider, Record_ID);
     }
     catch (ServletException e){
         log4j.warn(e);
@@ -92,7 +92,7 @@ private DocLine[] loadLines(ConnectionProvider conn){
         docLine.C_Currency_ID_From = data[i].getField("cCurrencyId");
         docLine.conversionDate = data[i].getField("conversiondate");
         try{
-          docLine.dpStatus = DocLinePaymentData.getDPStatus(this, Record_ID, data[i].getField("cDebtPaymentId"));
+          docLine.dpStatus = DocLinePaymentData.getDPStatus(connectionProvider, Record_ID, data[i].getField("cDebtPaymentId"));
         } catch(ServletException e) {
           log4j.error(e);
           docLine.dpStatus = "";

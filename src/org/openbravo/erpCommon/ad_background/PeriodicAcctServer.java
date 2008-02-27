@@ -75,22 +75,22 @@ public class PeriodicAcctServer implements BackgroundProcess {
     } else tables = TableIds;
     for (int i=0;i<tables.length;i++){
       periodicBG.doPause();
-      AcctServer acct = AcctServer.get(tables[i], periodicBG.adClientId);
+      AcctServer acct = AcctServer.get(tables[i], periodicBG.adClientId, periodicBG.conn);
       acct.setBatchSize(batchSize);
       int total = 0;
       while (acct.checkDocuments()) {
         periodicBG.doPause();
         if (total==0) {
         	if(periodicBG.isDirectProcess())
-        		periodicBG.addLog("@DL_ACCOUNTING@ - "+ AcctServer.tableName, false);
+        		periodicBG.addLog("@DL_ACCOUNTING@ - "+ acct.tableName, false);
         	else
-        		periodicBG.addLog("Accounting - " + AcctServer.tableName, false);
+        		periodicBG.addLog("Accounting - " + acct.tableName, false);
         }
         else {
         	if(periodicBG.isDirectProcess())
-        		periodicBG.addLog("@DL_COUNTED@ " + total + " - " + AcctServer.tableName, false);
+        		periodicBG.addLog("@DL_COUNTED@ " + total + " - " + acct.tableName, false);
         	else
-        		periodicBG.addLog("Counted " + total + " - " + AcctServer.tableName, false);
+        		periodicBG.addLog("Counted " + total + " - " + acct.tableName, false);
         }
         try {
           acct.run(periodicBG.vars);
@@ -103,18 +103,18 @@ public class PeriodicAcctServer implements BackgroundProcess {
         }
         if (!periodicBG.canContinue(directProcess, periodicBG.adClientId)) {
         	if(periodicBG.isDirectProcess())
-        		periodicBG.addLog("@DL_TABLE@ = "+AcctServer.tableName + " - "  +acct.getInfo(periodicBG.vars), false);
+        		periodicBG.addLog("@DL_TABLE@ = "+acct.tableName + " - "  +acct.getInfo(periodicBG.vars), false);
         	else
-        		periodicBG.addLog("Table = " + AcctServer.tableName + " - "  +acct.getInfo(periodicBG.vars));
+        		periodicBG.addLog("Table = " + acct.tableName + " - "  +acct.getInfo(periodicBG.vars));
           adNoteId = periodicBG.saveLog(adNoteId, periodicBG.adClientId);
           return;
         }
         total += Integer.valueOf(batchSize).intValue();
       }
       if(periodicBG.isDirectProcess())
-    	  periodicBG.addLog("@DL_TABLE@ = " + AcctServer.tableName + " - " + acct.getInfo(periodicBG.vars), false);
+    	  periodicBG.addLog("@DL_TABLE@ = " + acct.tableName + " - " + acct.getInfo(periodicBG.vars), false);
       else
-    	  periodicBG.addLog("Table = " + AcctServer.tableName + " - " + acct.getInfo(periodicBG.vars));
+    	  periodicBG.addLog("Table = " + acct.tableName + " - " + acct.getInfo(periodicBG.vars));
       adNoteId = periodicBG.saveLog(adNoteId, periodicBG.adClientId);
     }
   }

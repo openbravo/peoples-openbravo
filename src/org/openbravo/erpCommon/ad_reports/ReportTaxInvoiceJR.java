@@ -4,14 +4,14 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -128,17 +128,10 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     JasperReport jasperSaleForeign;
     JasperReport jasperPurchase;
     JasperReport jasperPurchaseForeign;
-    
+
     String strLanguage = vars.getLanguage();
-    if (strBaseDesignPath.endsWith("/")) strDefaultDesignPath = strDefaultDesignPath.substring(0, strDefaultDesignPath.length()-1);
-    log4j.info("*********************Base path: " + strBaseDesignPath);
-    String strNewAddBase = strDefaultDesignPath;
-    String strFinal = strBaseDesignPath;
-    if (!strLanguage.equals("") && !strLanguage.equals("en_US")) strNewAddBase = strLanguage;
-    if (!strFinal.endsWith("/" + strNewAddBase)) strFinal += "/" + strNewAddBase;
-    log4j.info("*********************Base path: " + strFinal);
-    String strBaseDesign = prefix + "/" + strFinal;
-    try { 
+    String strBaseDesign = getBaseDesignPath(strLanguage);
+    try {
       JasperDesign jasperSaleD = JRXmlLoader.load(strBaseDesign+"/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSale.jrxml");
       JasperDesign jasperSaleForeignD = JRXmlLoader.load(strBaseDesign+"/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSaleForeign.jrxml");
       JasperDesign jasperPurchaseD = JRXmlLoader.load(strBaseDesign+"/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchase.jrxml");
@@ -171,7 +164,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     String strPurchase = "";
     String discard[] = {"discard", "discard", "discard", "discard"};
     if (log4j.isDebugEnabled()) log4j.debug("****** strSales: " + strSales + " fecha desde: " + strDateFrom + " fecha hasta: " + strDateTo + " detalle: " + strDetail);
-  
+
 
 
     if (log4j.isDebugEnabled()) log4j.debug("****** xmlDocument");
@@ -253,7 +246,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     String strPurchase = "";
     String discard[] = {"discard", "discard", "discard", "discard"};
     if (log4j.isDebugEnabled()) log4j.debug("****** strSales: " + strSales + " fecha desde: " + strDateFrom + " fecha hasta: " + strDateTo + " detalle: " + strDetail);
-    
+
     if (strDateFrom.equals("") && strDateTo.equals("") && strDetail.equals("-1")) {
       if (log4j.isDebugEnabled()) log4j.debug("****** all null");
       discard[0] = "sectionTaxSale";
@@ -381,7 +374,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("sale", strSale);
     xmlDocument.setParameter("purchase", strPurchase);
     if (log4j.isDebugEnabled()) log4j.debug("****** setData reportAD_ORGID");
-    
+
     xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
 
     if (log4j.isDebugEnabled()) log4j.debug("****** setData dataSale");
@@ -396,7 +389,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     out.close();
   }*/
 
-  
+
   void printPageDataExcel(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");

@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -35,7 +35,7 @@ import java.sql.Connection;
 
 public class Posted extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  
+
 
   public void init (ServletConfig config) {
     super.init(config);
@@ -46,7 +46,7 @@ public class Posted extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Posted: doPost");
 
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    
+
     if (vars.commandIn("DEFAULT")) {
       String strKey = vars.getGlobalVariable("inpKey", "Posted|key");
       String strTableId = vars.getGlobalVariable("inpTableId", "Posted|tableId");
@@ -59,7 +59,7 @@ public class Posted extends HttpSecureAppServlet {
 
       printPage(response, vars, strKey, strWindowId, strTabId, strProcessId, strTableId, strPath, strTabName, strPosted);
     } else if (vars.commandIn("SAVE")) {
-      
+
       String strKey = vars.getRequiredGlobalVariable("inpKey", "Posted|key");
       String strTableId = vars.getRequiredGlobalVariable("inpTableId", "Posted|tableId");
       String strTabId = vars.getRequestGlobalVariable("inpTabId", "Posted|tabId");
@@ -69,7 +69,7 @@ public class Posted extends HttpSecureAppServlet {
       vars.getRequestGlobalVariable("inpWindowId", "Posted|windowId");
       vars.getRequestGlobalVariable("inpTabName", "Posted|tabName");
       String strEliminar = vars.getStringParameter("inpEliminar", "N");
-      
+
 
       if (log4j.isDebugEnabled()) log4j.debug("SAVE, strPosted: " +strPosted+" Elim "+strEliminar);
 
@@ -84,7 +84,7 @@ public class Posted extends HttpSecureAppServlet {
           //  vars.setSessionValue(strWindowId + "|" + strTabName + ".message", messageResult);
             vars.setMessage(strTabId, messageResult);
             printPageClosePopUp(response, vars);
-          } else {         
+          } else {
             printPageClosePopUp(response, vars, (strDireccion + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable=" + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org));
           }
         }
@@ -96,7 +96,7 @@ public class Posted extends HttpSecureAppServlet {
             //vars.setSessionValue(strWindowId + "|" + strTabName + ".message", Utility.messageBD(this, "NoFactAcct", vars.getLanguage()));
             vars.setMessage(strTabId, Utility.translateError(this, vars, vars.getLanguage(), "NoFactAcct"));
             printPageClosePopUp(response, vars);
-          } else {              
+          } else {
             printPageClosePopUp(response, vars, (strDireccion + "/ad_reports/ReportGeneralLedgerJournal.html?Command=DIRECT&inpTable=" + strTableId + "&inpRecord=" + strKey + "&inpOrg=" + data[0].org));
           }
         } else {
@@ -116,7 +116,7 @@ public class Posted extends HttpSecureAppServlet {
     OBError myMessage = null;
     try {
       con = getTransactionConnection();
-      AcctServer acct = AcctServer.get(strTableId, vars.getClient());
+      AcctServer acct = AcctServer.get(strTableId, vars.getClient(), this.myPool);
       if (!acct.post(strKey,false, vars,this,con)) {
           releaseRollbackConnection(con);
          // return (Utility.messageBD(this, "ProcessRunError", vars.getLanguage()) + "\\n" + acct.getInfo(vars));
@@ -132,7 +132,7 @@ public class Posted extends HttpSecureAppServlet {
         releaseRollbackConnection(con);
       } catch (Exception ignored) {}
    }
-    
+
     if (myMessage==null) {
       myMessage = new OBError();
       myMessage.setType("Success");
@@ -144,9 +144,9 @@ public class Posted extends HttpSecureAppServlet {
 
   OBError processButtonDelete(VariablesSecureApp vars, String strKey, String strTableId) throws ServletException {
     OBError myMessage = null;
-    
+
     try {
-    
+
       String strClient = PostedData.selectClient(this, PostedData.selectTableName(this, strTableId), strKey);
       String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
       PInstanceProcessData.insertPInstance(this, pinstance, "176", strKey, "N", vars.getUser(), vars.getClient(), vars.getOrg());
@@ -155,7 +155,7 @@ public class Posted extends HttpSecureAppServlet {
       PInstanceProcessData.insertPInstanceParam(this, pinstance, "30", "DeletePosting", "Y", vars.getClient(), vars.getOrg(), vars.getUser());
       if (log4j.isDebugEnabled()) log4j.debug("delete, pinstance " + pinstance);
       ActionButtonData.process176(this, pinstance);
-  
+
       PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
       myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
     } catch (ServletException ex) {
@@ -208,7 +208,7 @@ public class Posted extends HttpSecureAppServlet {
         }
       /*String message = vars.getSessionValue("Posted|message");
       if (!message.equals("")) message = "alert('" + message + "');";
-      vars.removeSessionValue("Posted|message");      
+      vars.removeSessionValue("Posted|message");
       xmlDocument.setParameter("message", message);
       */
       xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");

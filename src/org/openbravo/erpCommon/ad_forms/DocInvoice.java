@@ -40,8 +40,8 @@ public class DocInvoice extends AcctServer {
  *  Constructor
  *  @param AD_Client_ID AD_Client_ID
  */
-public DocInvoice(String AD_Client_ID){
-    super(AD_Client_ID);
+public DocInvoice(String AD_Client_ID, ConnectionProvider connectionProvider){
+    super(AD_Client_ID, connectionProvider);
 }
 
 public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id) throws ServletException{
@@ -77,8 +77,8 @@ private DocLine[] loadLines(){
     DocLineInvoiceData[] data = null;
     try{
         log4jDocInvoice.debug("############### groupLines = " + groupLines);
-        if (groupLines.equals("Y")) data = DocLineInvoiceData.selectTotal(this, Record_ID);
-        else data = DocLineInvoiceData.select(this, Record_ID);
+        if (groupLines.equals("Y")) data = DocLineInvoiceData.selectTotal(connectionProvider, Record_ID);
+        else data = DocLineInvoiceData.select(connectionProvider, Record_ID);
     }catch(ServletException e){
         log4jDocInvoice.warn(e);
     }
@@ -105,7 +105,7 @@ private DocTax[] loadTaxes(){
     ArrayList<Object> list = new ArrayList<Object>();
     DocInvoiceData [] data = null;
     try{
-        data = DocInvoiceData.select(this, Record_ID);
+        data = DocInvoiceData.select(connectionProvider, Record_ID);
     }catch(ServletException e){
         log4jDocInvoice.warn(e);
     }
@@ -132,7 +132,7 @@ private DocLine_Payment[] loadDebtPayments(){
     ArrayList<Object> list = new ArrayList<Object>();
     DocInvoiceData [] data = null;
     try{
-        data = DocInvoiceData.selectDebtPayments(this, Record_ID);
+        data = DocInvoiceData.selectDebtPayments(connectionProvider, Record_ID);
     }catch(ServletException e){
         log4jDocInvoice.warn(e);
     }

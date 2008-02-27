@@ -38,8 +38,8 @@ public class DocGLJournal extends AcctServer {
  *  Constructor
  *  @param AD_Client_ID client
  */
-public DocGLJournal(String AD_Client_ID){
-  super(AD_Client_ID);
+public DocGLJournal(String AD_Client_ID, ConnectionProvider connectionProvider){
+  super(AD_Client_ID,connectionProvider);
   if(log4jDocGLJournal.isDebugEnabled()) log4jDocGLJournal.debug("- DocGLJournal - OBJECT CREATED.");
 }
 

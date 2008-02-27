@@ -5,15 +5,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -22,6 +22,13 @@
   <listener>
       <listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>
   </listener>
+  <listener>
+      <listener-class>org.openbravo.base.ConnectionProviderContextListener</listener-class>
+  </listener>
+  <listener>
+      <listener-class>org.openbravo.base.PeriodicBackgroundContextListener</listener-class>
+  </listener>
+
 
   <filter>
     <filter-name>Charset Filter</filter-name>
@@ -100,10 +107,6 @@
   <context-param>
     <param-name>AttachmentDirectory</param-name>
     <param-value><PARAMETER_TMP id="paramAttachPath">C:\\AppsAttachment</PARAMETER_TMP></param-value>
-  </context-param>
-  <context-param>
-    <param-name>GarbageCollectionTime</param-name>
-    <param-value>3600</param-value>
   </context-param>
   <context-param>
     <param-name>PeriodicBackgroundTime</param-name>
@@ -216,7 +219,7 @@
   </FIELDS_TMP>
   <PARAMS_TMP id="paramWebClients"></PARAMS_TMP>
 
-  
+
   <!-- MAPPING -->
   <FIELDS_TMP id="sectionDetail2">
     <servlet-mapping>

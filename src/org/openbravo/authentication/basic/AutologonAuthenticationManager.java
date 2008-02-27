@@ -21,6 +21,7 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.HttpBaseUtils;
+import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.secureApp.SeguridadData;
 import org.openbravo.database.ConnectionProvider;
 
@@ -41,7 +42,7 @@ public class AutologonAuthenticationManager implements AuthenticationManager {
                 
         if (s instanceof ConnectionProvider) {
             ConnectionProvider conn = (ConnectionProvider) s;
-            m_sAutologonUsername = HttpBaseServlet.getOBProperty("authentication.autologon.username");
+            m_sAutologonUsername = ConfigParameters.retrieveFrom(s.getServletContext()).getOBProperty("authentication.autologon.username");
             try {
                 m_sUserId = SeguridadData.getUserId(conn, m_sAutologonUsername);
             } catch (ServletException e) {

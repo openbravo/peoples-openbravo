@@ -102,7 +102,7 @@ public  class Fact {
         }
         //
         log4jFact.debug("createLine - Fact_Acct_Group_ID = " + Fact_Acct_Group_ID);
-        FactLine line = new FactLine (AcctServer.AD_Table_ID, m_doc.Record_ID,
+        FactLine line = new FactLine (m_doc.AD_Table_ID, m_doc.Record_ID,
             docLine == null ? "" : docLine.m_TrxLine_ID, Fact_Acct_Group_ID, SeqNo, DocBaseType);
         log4jFact.debug("createLine - line.m_Fact_Acct_Group_ID = " + line.m_Fact_Acct_Group_ID);
         log4jFact.debug("Object created");
@@ -241,7 +241,7 @@ public  class Fact {
         BigDecimal diff = getSourceBalance();
         log4jFact.debug ("balanceSource = " + diff);
         //  new line
-        FactLine line = new FactLine (AcctServer.AD_Table_ID, m_doc.Record_ID, "", fl.m_Fact_Acct_Group_ID, fl.m_SeqNo, fl.m_DocBaseType);//antes "0".
+        FactLine line = new FactLine (m_doc.AD_Table_ID, m_doc.Record_ID, "", fl.m_Fact_Acct_Group_ID, fl.m_SeqNo, fl.m_DocBaseType);//antes "0".
         line.setDocumentInfo(m_doc, null);
         line.setJournalInfo(m_doc.GL_Budget_ID, m_doc.GL_Category_ID);
         line.setPostingType(m_postingType);
@@ -403,7 +403,7 @@ public  class Fact {
                       return;
                     }
                     FactLine fl = (FactLine)m_lines.get(0);
-                    FactLine line = new FactLine (AcctServer.AD_Table_ID, m_doc.Record_ID, "", fl.m_Fact_Acct_Group_ID, fl.m_SeqNo, fl.m_DocBaseType);
+                    FactLine line = new FactLine (m_doc.AD_Table_ID, m_doc.Record_ID, "", fl.m_Fact_Acct_Group_ID, fl.m_SeqNo, fl.m_DocBaseType);
                     line.setDocumentInfo(m_doc, null);
                     line.setJournalInfo(m_doc.GL_Budget_ID, m_doc.GL_Category_ID);
                     line.setPostingType(m_postingType);
@@ -478,7 +478,7 @@ public  class Fact {
               return null;
             }
             FactLine fl = (FactLine)m_lines.get(0);
-            line = new FactLine (AcctServer.AD_Table_ID, m_doc.Record_ID, "", fl.m_Fact_Acct_Group_ID, fl.m_SeqNo, fl.m_DocBaseType);
+            line = new FactLine (m_doc.AD_Table_ID, m_doc.Record_ID, "", fl.m_Fact_Acct_Group_ID, fl.m_SeqNo, fl.m_DocBaseType);
             line.setDocumentInfo(m_doc, null);
             line.setJournalInfo(m_doc.GL_Budget_ID, m_doc.GL_Category_ID);
             line.setPostingType(m_postingType);

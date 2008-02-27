@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -30,7 +30,6 @@ import org.openbravo.database.ConnectionProvider;
 
 public class PeriodicBackground implements Runnable {
   public ConnectionProvider conn;
-  public HttpBaseServlet baseServlet;
   private Thread runner;
   private long seconds;
   private boolean isactive=true;
@@ -51,12 +50,11 @@ public class PeriodicBackground implements Runnable {
   private boolean debugMode = false;
 
 
-  public PeriodicBackground(HttpBaseServlet _base, long _seconds, String _logFileString, String _adProcessId, String _objectName) throws IOException {
+  public PeriodicBackground(ConnectionProvider connectionProvider, long _seconds, String _logFileString, String _adProcessId, String _objectName) throws IOException {
     runner = new Thread(this);
     this.seconds = _seconds;
     this.logFileString = _logFileString;
-    this.conn = _base;
-    this.baseServlet = _base;
+    this.conn = connectionProvider;
     this.adProcessId = _adProcessId;
     if (!startClass(_objectName)) {
       runner.interrupt();
@@ -117,7 +115,7 @@ public class PeriodicBackground implements Runnable {
       Date nowc = new Date();
       pid = formatter.format(nowc);
 
-      BufferedWriter pidout = new BufferedWriter(new 
+      BufferedWriter pidout = new BufferedWriter(new
                                       FileWriter(logFileString + "pid" + adProcessId));
       pidout.write(pid);
       pidout.close();
@@ -130,7 +128,7 @@ public class PeriodicBackground implements Runnable {
 
   public boolean isSamePID() {
     try {
-      BufferedReader in = new BufferedReader(new 
+      BufferedReader in = new BufferedReader(new
                      FileReader(logFileString + "pid" + adProcessId));
       String curr_pid = in.readLine();
       in.close();
@@ -359,11 +357,11 @@ public class PeriodicBackground implements Runnable {
     runner.interrupt();
 
     try {
-      runner.join(millis); 
-    } catch(InterruptedException e){} // ignore 
+      runner.join(millis);
+    } catch(InterruptedException e){} // ignore
   }
 
-  public void destroy() { 
+  public void destroy() {
     try {
       destroy(10000);
     } catch(SQLException e) {}

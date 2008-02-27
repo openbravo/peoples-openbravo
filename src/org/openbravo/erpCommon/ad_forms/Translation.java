@@ -125,6 +125,8 @@ public class Translation extends HttpSecureAppServlet
     myMessage.setTitle("");
      int AD_Client_ID = Integer.valueOf(strClient);
 
+      String strFTPDirectory = globalParameters.strFTPDirectory;
+
      if (new File(strFTPDirectory).canWrite()) {
        if (log4j.isDebugEnabled()) log4j.debug("can write...");
      } else {
@@ -162,7 +164,7 @@ public class Translation extends HttpSecureAppServlet
    
   private OBError importTrl(String strLang, String strClient, VariablesSecureApp vars) {
     String AD_Language = strLang;
-    String directory =  strFTPDirectory+"/lang/"+AD_Language+"/";
+    String directory =  globalParameters.strFTPDirectory+"/lang/"+AD_Language+"/";
     OBError myMessage = null;    
         
     myMessage = new OBError();
@@ -171,7 +173,7 @@ public class Translation extends HttpSecureAppServlet
      if ((new File(directory).exists())&&(new File(directory).canRead())) {
        if (log4j.isDebugEnabled()) log4j.debug("can read "+directory);
      } else {
-       log4j.error("Can't read on directory: "+strFTPDirectory);
+       log4j.error("Can't read on directory: "+globalParameters.strFTPDirectory);
        myMessage.setType("Error");        
        myMessage.setMessage(Utility.messageBD(this, "CannotReadDirectory", vars.getLanguage())+" "+directory);
        return myMessage;

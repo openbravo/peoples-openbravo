@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2007 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2007 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -31,7 +31,7 @@ import java.sql.*;
 import net.sf.jasperreports.engine.JRException;
 
 public class ExportGrid extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;	
+  private static final long serialVersionUID = 1L;
   private GridBO gridBO;
   private PreparedStatement st = null;
 
@@ -43,14 +43,7 @@ public class ExportGrid extends HttpSecureAppServlet {
     InputStream is = null;
 
     String strLanguage = vars.getLanguage();
-    if (strBaseDesignPath.endsWith("/")) strDefaultDesignPath = strDefaultDesignPath.substring(0, strDefaultDesignPath.length()-1);
-    if (log4j.isDebugEnabled()) log4j.debug("*********************Base path: " + strBaseDesignPath);
-    String strNewAddBase = strDefaultDesignPath;
-    String strFinal = strBaseDesignPath;
-    if (!strLanguage.equals("") && !strLanguage.equals("en_US")) strNewAddBase = strLanguage;
-    if (!strFinal.endsWith("/" + strNewAddBase)) strFinal += "/" + strNewAddBase;
-    if (log4j.isDebugEnabled()) log4j.debug("*********************Base path: " + strFinal);
-    String strBaseDesign = prefix + strFinal;
+    String strBaseDesign = getBaseDesignPath(strLanguage);
     if (log4j.isDebugEnabled()) log4j.debug("*********************Base design path: " + strBaseDesign);
 
     try {
@@ -68,7 +61,7 @@ public class ExportGrid extends HttpSecureAppServlet {
       } else if (vars.commandIn("EXCEL")) {
         response.setContentType("application/vnd.ms-excel");
         gridBO.createXLSReport(is, gridReportVO, os);
-      } else if (vars.commandIn("CSV")) { 
+      } else if (vars.commandIn("CSV")) {
         response.setContentType("text/csv");
         gridBO.createCSVReport(is, gridReportVO, os);
       }
@@ -104,7 +97,7 @@ public class ExportGrid extends HttpSecureAppServlet {
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
         st = this.getPreparedStatement(strSQL);
         data = execquery.select(0,0);
-      } catch (Exception e) { 
+      } catch (Exception e) {
         if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
         e.printStackTrace();
         throw new ServletException(e.getMessage());
@@ -120,7 +113,7 @@ public class ExportGrid extends HttpSecureAppServlet {
         Class<?> fieldClass = String.class;
        /* if (headers[i].getField("adReferenceId").equals("11")) fieldClass = Integer.class;
         else*/ if (headers[i].getField("adReferenceId").equals("11") || headers[i].getField("adReferenceId").equals("12") || headers[i].getField("adReferenceId").equals("800008") || headers[i].getField("adReferenceId").equals("800019")) fieldClass = Double.class;
-        
+
         columns.add(new GridColumnVO(headers[i].getField("name"), columnname, Integer.valueOf(headers[i].getField("width")), fieldClass));
       }
     }

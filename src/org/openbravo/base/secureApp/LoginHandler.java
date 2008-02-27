@@ -32,23 +32,20 @@ public class LoginHandler extends HttpBaseServlet{
   }
 
   public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
- 
+
    log4j.info("start doPost");
     VariablesSecureApp vars = new VariablesSecureApp(req);
 
         // Empty session
         req.getSession(true).setAttribute("#Authenticated_user", null);
-      
+
       if (vars.getStringParameter("user").equals("")) {
         res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
       } else {
-
-        if (log4j.isDebugEnabled()) log4j.debug("Base path: " + strBaseDesignPath);
-
             String strUser = vars.getRequiredStringParameter("user");
             String strPass = FormatUtilities.sha1Base64(vars.getStringParameter("password"));
             String strUserAuth = SeguridadData.valido(this, strUser, strPass);
-            
+
             if (!strUserAuth.equals("-1")) {
                 req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
                 goToTarget(res, vars);
@@ -60,11 +57,11 @@ public class LoginHandler extends HttpBaseServlet{
   }
 
     private void goToTarget(HttpServletResponse response, VariablesSecureApp vars) throws IOException {
-        
+
         String target = vars.getSessionValue("target");
         if (target.equals("")) {
             response.sendRedirect(strDireccion + "/security/Menu.html");
-        } else {          
+        } else {
             response.sendRedirect(target);
         }
   }

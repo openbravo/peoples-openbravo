@@ -129,7 +129,7 @@ public class DocLine {
                 m_DateDoc = data.getField("datedoc");
                 //
         //  Product Info
-        p_productInfo = new ProductInfo(m_M_Product_ID, vo);
+        p_productInfo = new ProductInfo(m_M_Product_ID, vo.getConnectionProvider());
 
         //  Document Consistency
         if (m_AD_Org_ID == "")

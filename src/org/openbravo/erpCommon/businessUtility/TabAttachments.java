@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -35,14 +35,14 @@ import org.apache.commons.fileupload.*;
 
 public class TabAttachments extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  
+
   public void init (ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-	  
+
     VariablesSecureApp vars = new VariablesSecureApp(request);
     OBError myMessage = null;
 
@@ -62,8 +62,8 @@ public class TabAttachments extends HttpSecureAppServlet {
 
       String strFileReference = SequenceIdData.getSequence(this, "C_File", vars.getClient());
       OBError oberrInsert = insert(vars, strFileReference, tableId, key, strDataType, strText);
-      if (!oberrInsert.getType().equals("Success")) {        
-    	  vars.setMessage("TabAttachments", oberrInsert); 
+      if (!oberrInsert.getType().equals("Success")) {
+    	  vars.setMessage("TabAttachments", oberrInsert);
        response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
      } else {
         if (vars.commandIn("SAVE_NEW_RELATION")) {
@@ -160,11 +160,11 @@ public class TabAttachments extends HttpSecureAppServlet {
   }
 
   OBError insert(VariablesSecureApp vars, String strFileReference, String tableId, String key, String strDataType, String strText) throws IOException, ServletException {
-	  
+
 	  OBError myMessage = null;
 	  myMessage = new OBError();
 	  myMessage.setTitle("");
-	  
+
     if (log4j.isDebugEnabled()) log4j.debug("Deleting records");
     Connection conn = null;
     try {
@@ -184,7 +184,7 @@ public class TabAttachments extends HttpSecureAppServlet {
       TabAttachmentsData.insert(conn, this, strFileReference, vars.getClient(), vars.getOrg(), vars.getUser(), tableId, key, strDataType, strText, strName);
       try {
 				// FIXME: Get the directory separator from Java runtime
-        File uploadedDir = new File(strFTPDirectory+"/"+tableId+"-"+key);
+        File uploadedDir = new File(globalParameters.strFTPDirectory+"/"+tableId+"-"+key);
         if (!uploadedDir.exists()) uploadedDir.mkdirs();
         File uploadedFile = new File(uploadedDir, strName);
         file.write(uploadedFile);
@@ -215,7 +215,7 @@ public class TabAttachments extends HttpSecureAppServlet {
 	  OBError myMessage = null;
 	  myMessage = new OBError();
 	  myMessage.setTitle("");
-	  
+
     if (log4j.isDebugEnabled()) log4j.debug("Deleting records");
     Connection conn = null;
     try {
@@ -225,9 +225,9 @@ public class TabAttachments extends HttpSecureAppServlet {
       try {
         FileUtility f = new FileUtility();
 				// FIXME: Get the directory separator from Java runtime
-        File file = new File(strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name);
-        if (file.exists()) f = new FileUtility(strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name, false);
-        else f = new FileUtility(strFTPDirectory, strFileReference, false);
+        File file = new File(globalParameters.strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name);
+        if (file.exists()) f = new FileUtility(globalParameters.strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name, false);
+        else f = new FileUtility(globalParameters.strFTPDirectory, strFileReference, false);
         if(!f.deleteFile()) {
         	myMessage.setType("Error");
         	myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
@@ -257,7 +257,7 @@ public class TabAttachments extends HttpSecureAppServlet {
   void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Attachments relations frame set");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/businessUtility/TabAttachments_FS").createXmlDocument();
-    
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -274,9 +274,9 @@ public class TabAttachments extends HttpSecureAppServlet {
       tableId = data[0].adTableId;
       if (data[0].isreadonly.equals("Y")) discard[0] = new String("selReadOnly");
     }
-    
+
     TabAttachmentsData[] files = TabAttachmentsData.select(this, Utility.getContext(this, vars, "#User_Client", strWindow), Utility.getContext(this, vars, "#User_Org", strWindow), tableId, key);
-    
+
     if ((files==null)||(files.length==0)) discard[0] ="widthData";
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/businessUtility/TabAttachments_F1", discard).createXmlDocument();
 
@@ -297,7 +297,7 @@ public class TabAttachments extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
      }
    }
-   
+
     xmlDocument.setData("structure1", files);
 
     response.setContentType("text/html; charset=UTF-8");
@@ -325,8 +325,8 @@ public class TabAttachments extends HttpSecureAppServlet {
     xmlDocument.setParameter("key", key);
     xmlDocument.setParameter("save", (strFileReference.equals("")?"NEW":"EDIT"));
     xmlDocument.setParameter("recordIdentifier",TabAttachmentsData.selectRecordIdentifier(this,key,vars.getLanguage(),strTab));
-    
-    
+
+
     {
         OBError myMessage = vars.getMessage("TabAttachments");
         vars.removeMessage("TabAttachments");
@@ -337,22 +337,22 @@ public class TabAttachments extends HttpSecureAppServlet {
         }
       }
 
-    
+
     /*String message = vars.getSessionValue("TabAttachments.message");
     if (!message.equals("")) message = "alert('" + message + "');";
     xmlDocument.setParameter("body", message);
     */
-    
+
     TabAttachmentsData [] files = TabAttachmentsData.selectEdit(this, strFileReference);
 		// FIXME: If we do not use this code, it should be removed
     /*
     String viewButtons = "yes";
     if (strFileReference.equals("")||files==null||files.length==0) viewButtons="none";
-      
+
     xmlDocument.setParameter("butEdit", viewButtons);
     xmlDocument.setParameter("butDownload", viewButtons);
     xmlDocument.setParameter("butDel", viewButtons);*/
-   
+
     xmlDocument.setData("structure1", (strFileReference.equals("")?TabAttachmentsData.set():files));
     xmlDocument.setData("reportAD_Datatype_ID_D", "liststructure", DataTypeComboData.select(this, Utility.getContext(this, vars, "#User_Client", "TabAttachments"), Utility.getContext(this, vars, "#User_Org", "TabAttachments")));
 
@@ -367,9 +367,9 @@ public class TabAttachments extends HttpSecureAppServlet {
     if (data==null || data.length==0) throw new ServletException("Missing file");
     FileUtility f = new FileUtility();
 		// FIXME: Get the directory separator from Java runtime
-    File file = new File(strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name);
-    if (file.exists()) f = new FileUtility(strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name, false, true);
-    else f = new FileUtility(strFTPDirectory, strFileReference, false, true);
+    File file = new File(globalParameters.strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name);
+    if (file.exists()) f = new FileUtility(globalParameters.strFTPDirectory+"/"+data[0].adTableId+"-"+data[0].adRecordId, data[0].name, false, true);
+    else f = new FileUtility(globalParameters.strFTPDirectory, strFileReference, false, true);
     if (data[0].datatypeContent.equals("")) response.setContentType("application/txt");
     else response.setContentType(data[0].datatypeContent);
     response.setHeader("Content-Disposition","attachment; filename=" + data[0].name );

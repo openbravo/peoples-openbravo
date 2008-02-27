@@ -4,14 +4,14 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,7 +93,7 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
-    }  
+    }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
     xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
@@ -112,21 +112,14 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
   void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdate, String strProcessPlan, String strVersion) throws IOException, ServletException{
     if (log4j.isDebugEnabled()) log4j.debug("Output: print html");
     String strLanguage = vars.getLanguage();
-    if (strBaseDesignPath.endsWith("/")) strDefaultDesignPath = strDefaultDesignPath.substring(0, strDefaultDesignPath.length()-1);
-    log4j.info("*********************Base path: " + strBaseDesignPath);
-    String strNewAddBase = strDefaultDesignPath;
-    String strFinal = strBaseDesignPath;
-    if (!strLanguage.equals("") && !strLanguage.equals("en_US")) strNewAddBase = strLanguage;
-    if (!strFinal.endsWith("/" + strNewAddBase)) strFinal += "/" + strNewAddBase;
-    log4j.info("*********************Base path: " + strFinal);
-    String strBaseDesign = prefix + "/" + strFinal;
+    String strBaseDesign = getBaseDesignPath(strLanguage);
     HashMap<String, Object> parameters = new HashMap<String, Object> ();
     parameters.put("MA_PROCESSPLAN_ID", strProcessPlan);
     parameters.put("MA_PROCESSPLAN_VERSION_ID", strVersion);
     parameters.put("REPORT_TITLE", classInfo.name);
     JasperReport jasperReportCost;
     JasperReport jasperReportProduced;
-    try { 
+    try {
       JasperDesign jasperDesignCost = JRXmlLoader.load(strBaseDesign+"/org/openbravo/erpCommon/ad_reports/ReportStandardCostsJR_srptcosts.jrxml");
       JasperDesign jasperDesignProduced = JRXmlLoader.load(strBaseDesign+"/org/openbravo/erpCommon/ad_reports/ReportStandardCostsJR_subreport0.jrxml");
       jasperReportCost = JasperCompileManager.compileReport(jasperDesignCost);

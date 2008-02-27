@@ -31,139 +31,41 @@ import org.openbravo.database.*;
 import org.openbravo.exception.*;
 import org.apache.commons.pool.ObjectPool;
 
-import org.apache.avalon.framework.logger.Log4JLogger; 
+import org.apache.avalon.framework.logger.Log4JLogger;
 
 import javax.net.ssl.*;
 
-public class HttpBaseServlet extends HttpServlet implements ConnectionProvider 
+public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
 {
   private static final long serialVersionUID = 1L;
-  protected static ConnectionProviderImpl myPool;
-  protected static int isDefinedBasePath = 0;
-  public String strBaseConfigPath;
-  public String strBaseDesignPath;
-  public static boolean isFullPathBaseDesignPath = false;
-  public String strDefaultDesignPath;
+  protected ConnectionProvider myPool;
   public String strDireccion;
   public String strReplaceWith;
   public String strReplaceWithFull;
-  private String strLocalReplaceWith;
-  public String strFopConfig;
-  public String strGarbageCollectionTime;
-  protected static String strBBDD;
-  public String strVersion;
-  public String strParentVersion;
-  protected static String prefix = null;
-  protected static String strContext = null;
-  protected static String strSystemLanguage;
-  protected static String strFileProperties;
-  protected static String strFileSeparator;
-  protected static String strDefaultServlet;
+  protected String strDefaultServlet;
   public XmlEngine xmlEngine=null;
   public Logger log4j = Logger.getLogger(this.getClass());
-  protected static Log4JLogger logger;
-  String strServidorRenderFo = "";
-  protected static String stcFileProperties = null;
-  protected static Properties propFileProperties = null;
   protected String PoolFileName;
+
+  protected ConfigParameters globalParameters;
 
   public void init (ServletConfig config) {
     try {
       super.init(config);
-      strBaseConfigPath = config.getServletContext().getInitParameter("BaseConfigPath");
-      if (prefix == null) {
-        prefix =  config.getServletContext().getRealPath("/");
-        if (log4j.isDebugEnabled()) log4j.debug("************************prefix: " + prefix);
-        if (strContext==null || strContext.equals("")) {
-          String path = "/";
-          int secondPath = -1;
-          int firstPath = prefix.lastIndexOf(path);
-          if (firstPath==-1) {
-            path = "\\";
-            firstPath = prefix.lastIndexOf(path);
-          }
-          if (firstPath!=-1) {
-            secondPath = prefix.lastIndexOf(path, firstPath-1);
-            strContext = prefix.substring(secondPath+1, firstPath);
-          }
-        }
-        if (log4j.isDebugEnabled()) log4j.debug("context: " + strContext);
-        String file = config.getServletContext().getInitParameter("log4j-init-file");
-        if (log4j.isDebugEnabled()) log4j.debug("Log file: " + file);
-        // if the log4j-init-file is not set, then no point in trying
-        if(file != null) {
-          //PropertyConfigurator.configure(prefix+file);
-          PropertyConfigurator.configure(prefix + "/" + strBaseConfigPath + "/" + file);
-        }
-      }
-      
-      stcFileProperties = prefix + "/" + strBaseConfigPath + "/" + "Openbravo.properties";
-      propFileProperties = null;
-      
-      logger = new Log4JLogger(log4j);
-      MessageHandler.setQuiet(true);
-      MessageHandler.setScreenLogger(logger);
-      String strFileFormat = config.getServletContext().getInitParameter("FormatFile");
-      strFopConfig = config.getServletContext().getInitParameter("FOPConfig");
-      strBaseDesignPath = config.getServletContext().getInitParameter("BaseDesignPath");
-      strDefaultDesignPath = config.getServletContext().getInitParameter("DefaultDesignPath");
-      strDefaultServlet = config.getServletContext().getInitParameter("DefaultServlet");
-      strGarbageCollectionTime = config.getServletContext().getInitParameter("GarbageCollectionTime");
-      if(log4j.isDebugEnabled()) log4j.debug("BaseConfigPath: " + strBaseConfigPath);
-      if(log4j.isDebugEnabled()) log4j.debug("BaseDesignPath: " + strBaseDesignPath);
-      strVersion = config.getServletContext().getInitParameter("Version");
-      strParentVersion = config.getServletContext().getInitParameter("Parent_Version");
-      try {
-        strSystemLanguage = System.getProperty("user.language") + "_" + System.getProperty("user.country");
-      } catch (java.security.AccessControlException err) {
-        log4j.warn(err.getMessage());
-        strSystemLanguage = "en_US";
-      }
-      try {
-        strFileSeparator = System.getProperty("file.separator");
-      } catch (java.security.AccessControlException err) {
-        log4j.warn(err.getMessage());
-        strFileSeparator = "/";
-      }
-      try {
-        strFileProperties = System.getProperty("user.home") + strFileSeparator + "TAD.properties";
-      } catch (java.security.AccessControlException err) {
-        log4j.warn(err.getMessage());
-        strFileProperties = "";
-      }
+      globalParameters = ConfigParameters.retrieveFrom(config.getServletContext());
+      strDefaultServlet = globalParameters.strDefaultServlet;
       xmlEngine = new XmlEngine();
-      if (isDefinedBasePath==0) {
-        try {
-          File testPrefix = new File(strBaseDesignPath);
-          if (!testPrefix.exists()) isFullPathBaseDesignPath = false;
-          else isFullPathBaseDesignPath = true;
-          testPrefix = null;
-        } catch (Exception e) {
-      	  isFullPathBaseDesignPath = false;
-        }
-        isDefinedBasePath = 1;
-      }
-      
-      xmlEngine.fileBaseLocation = new File(isFullPathBaseDesignPath?strBaseDesignPath:(prefix + "/" + strBaseDesignPath));
-      xmlEngine.strReplaceWhat = config.getServletContext().getInitParameter("ReplaceWhat");
-      strLocalReplaceWith = config.getServletContext().getInitParameter("ReplaceWith");
-      xmlEngine.strReplaceWith = strLocalReplaceWith;
-      if(log4j.isDebugEnabled()) log4j.debug("Replace attribute value: \"" + xmlEngine.strReplaceWhat + "\" with: \"" + xmlEngine.strReplaceWith + "\".");
-      XmlEngine.strTextDividedByZero = config.getServletContext().getInitParameter("TextDividedByZero");
-      xmlEngine.fileXmlEngineFormat = new File (prefix + "/" + strBaseConfigPath + "/" + strFileFormat);
+      xmlEngine.fileBaseLocation = new File(globalParameters.getBaseDesignPath());
+      xmlEngine.strReplaceWhat = globalParameters.strReplaceWhat;
+      xmlEngine.strReplaceWith = globalParameters.strLocalReplaceWith;
+      log4j.debug("Replace attribute value: \"" + xmlEngine.strReplaceWhat + "\" with: \"" + xmlEngine.strReplaceWith + "\".");
+      xmlEngine.strTextDividedByZero = globalParameters.strTextDividedByZero;
+      xmlEngine.fileXmlEngineFormat = new File (globalParameters.getXmlEngineFileFormatPath());
       xmlEngine.initialize();
-      strServidorRenderFo = config.getServletContext().getInitParameter("ServidorRenderFo");
 
-      if(log4j.isDebugEnabled()) log4j.debug("Text of divided by zero: " + XmlEngine.strTextDividedByZero);
+      log4j.debug("Text of divided by zero: " + XmlEngine.strTextDividedByZero);
 
-      if(myPool == null) {
-        try {
-          PoolFileName = config.getServletContext().getInitParameter("PoolFile");
-          makeConnection();
-        } catch (Exception ex) {
-          ex.printStackTrace();
-        }
-      }
+      myPool = ConnectionProviderContextListener.getPool(config.getServletContext());
     } catch (ServletException e) {
       e.printStackTrace();
     }
@@ -185,21 +87,13 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
     catch (Exception e) {
       strLanguage = "";
     }
-    if (strBaseDesignPath.endsWith("/")) strDefaultDesignPath = strDefaultDesignPath.substring(0, strDefaultDesignPath.length()-1);
-    if(log4j.isDebugEnabled())	log4j.debug("*********************Base path: " + strBaseDesignPath);
-    String strNewAddBase = strDefaultDesignPath;
-    String strFinal = strBaseDesignPath;
-    if (!strLanguage.equals("") && !strLanguage.equals("en_US")) strNewAddBase = strLanguage;
-    if (!strFinal.endsWith("/" + strNewAddBase)) strFinal += "/" + strNewAddBase;
-    if(log4j.isDebugEnabled()) log4j.debug("*********************Base path: " + strFinal);
-    xmlEngine.fileBaseLocation = new File(isFullPathBaseDesignPath?strFinal:(prefix + "/" + strFinal));
-    strReplaceWith = strLocalReplaceWith.replace("@actual_url_context@", strDireccion);
-    strReplaceWith = strReplaceWith.replace("@actual_url@", strActualUrl);
+    xmlEngine.fileBaseLocation = new File(getBaseDesignPath(strLanguage));
+    strReplaceWith = globalParameters.strLocalReplaceWith.replace("@actual_url@", strActualUrl).replace("@actual_url_context@", strDireccion);
     strReplaceWithFull = strReplaceWith;
     strReplaceWith = HttpBaseUtils.getRelativeUrl(request, strReplaceWith);
     if(log4j.isDebugEnabled()) log4j.debug("xmlEngine.strReplaceWith: " + strReplaceWith);
     xmlEngine.strReplaceWith = strReplaceWith;
-   
+
   }
   /*
    * calls super.service. It is used after calling initialize.
@@ -207,11 +101,25 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
   public void serviceInitialized(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     super.service(request, response);
   }
-  
+
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     initialize(request, response);
     if(log4j.isDebugEnabled()) log4j.debug("Call to HttpServlet.service");
     super.service(request,response);
+  }
+
+  protected String getBaseDesignPath(String language) {
+    log4j.info("*********************Base path: " + globalParameters.strBaseDesignPath);
+    String strNewAddBase = globalParameters.strDefaultDesignPath;
+    String strFinal = globalParameters.strBaseDesignPath;
+    if (!language.equals("") && !language.equals("en_US")) {
+      strNewAddBase = language;
+    }
+    if (!strFinal.endsWith("/" + strNewAddBase)) {
+      strFinal += "/" + strNewAddBase;
+    }
+    log4j.info("*********************Base path: " + strFinal);
+    return globalParameters.prefix + strFinal;
   }
 
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -226,59 +134,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
     return;
   }
 
-  public static String getJavaDateTimeFormat() {
-	  return getOBProperty("dateTimeFormat.java", "dd-MM-yyyy HH:mm:ss");
-  }
-  
-	public static String getOBProperty(String skey, String sdefault) {
-		  
-		initOBProperties();
-		return propFileProperties.getProperty(skey, sdefault);	  
-	}  
-	
-	public static String getOBProperty(String skey) {
-	  
-		initOBProperties();
-		return propFileProperties.getProperty(skey);	  
-	}
-  
-  	public static void initOBProperties() {
-	  
-  		if (propFileProperties == null) {
-			propFileProperties = new Properties();
-			try {
-				propFileProperties.load(new FileInputStream(stcFileProperties));
-			} catch (IOException e) { 
-			    // catch possible io errors from readLine()
-			    e.printStackTrace();
-			}
-  		}
-  	}
 
-
-  /* Database access utilities
-  */
-  public static ConnectionProviderImpl getPoolWS() throws PoolNotFoundException {
-    if (myPool == null)
-      throw new PoolNotFoundException("Default pool not found");
-    else
-      return myPool;
-  }
-  @SuppressWarnings("unused") // It will be used to implement the Pool status service
-  private ObjectPool getPool(String poolName) throws PoolNotFoundException {
-    if (myPool == null)
-      throw new PoolNotFoundException("Default pool not found");
-    else
-      return myPool.getPool(poolName);
-  }
-
-  @SuppressWarnings("unused") // It will be used to implement the Pool status service
-  private ObjectPool getPool() throws PoolNotFoundException {
-    if (myPool == null)
-      throw new PoolNotFoundException("Default pool not found");
-    else
-      return myPool.getPool();
-  }
 
   public Connection getConnection() throws NoConnectionAvailableException {
     return (myPool.getConnection());
@@ -360,10 +216,15 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
 
 
   public String getPoolStatus() {
-    return myPool.getStatus();
+    if( myPool instanceof ConnectionProviderImpl ) {
+        return ((ConnectionProviderImpl)myPool).getStatus();
+    } else {
+        return "Status unavailable";
+    }
+
   }
 
-  /** 
+  /**
    * renders an FO inputsource into a PDF file which is rendered
    * directly to the response object's OutputStream
    */
@@ -377,9 +238,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
         public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
         public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
         @SuppressWarnings("unused") //external implementation
-		public boolean isServerTrusted(java.security.cert.X509Certificate[] cert) {return true;}
+        public boolean isServerTrusted(java.security.cert.X509Certificate[] cert) {return true;}
         @SuppressWarnings("unused") //external implementation
-		public boolean isClientTrusted(java.security.cert.X509Certificate[] cert) {return true;}
+        public boolean isClientTrusted(java.security.cert.X509Certificate[] cert) {return true;}
       }
     };
     // Install the all-trusting trust manager
@@ -392,16 +253,16 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
 
     try {
       if(log4j.isDebugEnabled()) log4j.debug("Beginning of renderFO");
-      if (strBaseDesignPath!=null && strFopConfig!=null) {
-        File fopFile = new File(prefix + "/" + strBaseConfigPath + "/" + strFopConfig);
+      if (globalParameters.haveFopConfig()) {
+        File fopFile = new File(globalParameters.getFopConfigPath());
         if (fopFile.exists()) {
           @SuppressWarnings("unused") //external implementation
-		org.apache.fop.apps.Options options = new org.apache.fop.apps.Options(new File(prefix + "/" + strBaseConfigPath + "/" + strFopConfig));
+          org.apache.fop.apps.Options options = new org.apache.fop.apps.Options(fopFile);
         }
       }
       strFo = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + strFo;
 
-      if ((strServidorRenderFo==null) || (strServidorRenderFo.equals(""))) {
+      if ((globalParameters.strServidorRenderFo==null) || (globalParameters.strServidorRenderFo.equals(""))) {
         if (log4j.isDebugEnabled()) log4j.debug(strFo);
         StringReader sr = new StringReader(strFo);
         if (log4j.isDebugEnabled()) log4j.debug(sr.toString());
@@ -412,7 +273,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
         response.setContentType("application/pdf; charset=UTF-8");
         if(log4j.isDebugEnabled()) log4j.debug("Beginning of driver");
         Driver driver = new Driver();
-        driver.setLogger(logger);
+        driver.setLogger(globalParameters.getFopLogger());
         driver.setRenderer(Driver.RENDER_PDF);
         driver.setInputSource(inputFO);
 
@@ -443,7 +304,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
         driver = null;
       } else {
         response.setContentType("application/pdf; charset=UTF-8");
-        RenderFoI render = (RenderFoI) Naming.lookup("rmi://"+strServidorRenderFo+"/RenderFo");
+        RenderFoI render = (RenderFoI) Naming.lookup("rmi://"+ globalParameters.strServidorRenderFo+"/RenderFo");
 
         byte[] content = render.computeRenderFo(strFo);
         response.setContentLength(content.length);
@@ -505,21 +366,6 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
     }
     strArray = strArray + ");";
     return strArray;
-  }
-
-  public void makeConnection() throws PoolNotFoundException {
-    if (myPool != null) {
-      try {
-        myPool.destroy();
-      } catch (Exception ignored) {}
-      myPool = null;
-    }
-    try {
-      String strPoolFile = prefix + "/" + strBaseConfigPath + "/" + PoolFileName;
-      myPool = new ConnectionProviderImpl(strPoolFile, (!strPoolFile.startsWith("/") && !strPoolFile.substring(1,1).equals(":")), strContext);
-    } catch (Exception e) {
-      throw new PoolNotFoundException(e.getMessage());
-    }
   }
 
   public String getServletInfo() {

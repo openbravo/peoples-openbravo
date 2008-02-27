@@ -39,26 +39,54 @@ import org.openbravo.data.FieldProvider;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JExcelApiExporter;
+import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
+import org.openbravo.authentication.AuthenticationException;
+import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.authentication.basic.DefaultAuthenticationManager;
+import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.base.PeriodicBackgroundContextListener;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.ad_background.PeriodicBackground;
+import org.openbravo.erpCommon.security.SessionLogin;
+import org.openbravo.erpCommon.security.SessionLoginData;
+import org.openbravo.erpCommon.utility.*;
+import org.openbravo.utils.Replace;
+import org.openbravo.xmlEngine.XmlDocument;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 public class HttpSecureAppServlet extends HttpBaseServlet{
   private static final long serialVersionUID = 1L;
   public boolean boolHist = true;
-  String strServletIdentificacion;
-  String strServletSinIdentificar;
   String myTheme = "";
-  public String strServletGoBack;
-  public String strFTPDirectory;
-  public String strPeriodicBackgroundTime;
-  public String strLogFileAcctServer;
   public ClassInfoData classInfo;
   protected AuthenticationManager m_AuthManager = null;
 
   String servletClass = this.getClass().getName();
-  protected static Hashtable<String, PeriodicBackground> backgroundProcess;
 
   public class Variables extends VariablesHistory {
     public Variables(HttpServletRequest request) {
@@ -87,76 +115,33 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     super.init(config);
 
     // Authentication manager load
-    // String sAuthManagerClass = config.getServletContext().getInitParameter("AuthenticationManager"); 
-    String sAuthManagerClass = HttpBaseServlet.getOBProperty("authentication.class");
+    // String sAuthManagerClass = config.getServletContext().getInitParameter("AuthenticationManager");
+    String sAuthManagerClass = globalParameters.getOBProperty("authentication.class");
     if (sAuthManagerClass == null  || sAuthManagerClass.equals("")) {
         // If not defined, load default
         sAuthManagerClass = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
-    }    
-    
+    }
+
     try {
         m_AuthManager = (AuthenticationManager) Class.forName(sAuthManagerClass).newInstance();
     } catch (Exception e) {
         log4j.error("Authentication manager not defined", e);
         m_AuthManager = new DefaultAuthenticationManager();
     }
-    
+
     try {
         m_AuthManager.init(this);
     } catch (AuthenticationException e) {
         log4j.error("Unable to initialize authentication manager", e);
     }
-    
-    strServletIdentificacion = config.getServletContext().getInitParameter("LoginServlet");
-    strServletSinIdentificar = config.getServletContext().getInitParameter("ServletSinIdentificar");
+
     if (log4j.isDebugEnabled()) log4j.debug("strdireccion: " + strDireccion);
-    strServletGoBack = config.getServletContext().getInitParameter("ServletGoBack");
-    strFTPDirectory = config.getServletContext().getInitParameter("AttachmentDirectory");
-    strFTPDirectory = strFTPDirectory.replace("@actual_path_context@", prefix);
-    try {
-      File f = new File(strFTPDirectory);
-      if (!f.exists()) f.mkdir();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    if (log4j.isDebugEnabled()) log4j.debug("strServletGoBack: " + strServletGoBack);
-    strPeriodicBackgroundTime = config.getServletContext().getInitParameter("PeriodicBackgroundTime");
-    strLogFileAcctServer = config.getServletContext().getInitParameter("LogFileAcctServer");
-    strLogFileAcctServer = prefix + "/" + strBaseConfigPath + "/" + strLogFileAcctServer;
-    if (backgroundProcess == null && strPeriodicBackgroundTime!=null && !strPeriodicBackgroundTime.equals("") && strLogFileAcctServer!=null && !strLogFileAcctServer.equals("")) {
-      backgroundProcess = new Hashtable<String, PeriodicBackground>();
-      SystemPreferencesData[] backgroundData = null;
-      try {
-        backgroundData = SystemPreferencesData.selectBackground(this);
-      } catch (ServletException sex) {
-        sex.printStackTrace();
-      }
-      if (backgroundData!=null && backgroundData.length>0) {
-        for (int countBack = 0;countBack<backgroundData.length;countBack++) {
-          PeriodicBackground object = null;
-          try {
-          object = new PeriodicBackground(this, Long.parseLong(strPeriodicBackgroundTime), strLogFileAcctServer, backgroundData[countBack].id, backgroundData[countBack].classname);
-          } catch (IOException ioe) {
-            ioe.printStackTrace();
-          }
-          if (object!=null) {
-            object.start();
-            try {            
-              object.setActive(SystemPreferencesData.isActive(this, backgroundData[countBack].id));
-            } catch (ServletException sex) {
-              sex.printStackTrace();
-            }            
-            backgroundProcess.put(backgroundData[countBack].id, object);
-          }
-        }
-      }
-    }
   }
 
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     Variables variables = new Variables(request);
   //  VariablesSecureApp vars = new VariablesSecureApp(request);
-    
+
     try {
       myTheme = variables.getSessionValue("#Theme");
     } catch (Exception ignored) {
@@ -175,9 +160,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       ClassInfoData[] classInfoAux = ClassInfoData.set();
       classInfo = classInfoAux[0];
     }
-    
+
   //  bdErrorGeneral(response, "Error", "No access");
-    
+
     if (log4j.isDebugEnabled()) log4j.debug("class info type: " + classInfo.type + " - ID: " + classInfo.id + " - NAME: " + classInfo.name);
     String strAjax = "";
     String strHidden = "";
@@ -191,7 +176,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     try {
       strPopUp = request.getParameter("IsPopUpCall");
     } catch (Exception ignored) {}
-    
+
     try {
       String strUserAuth = m_AuthManager.authenticate(request, response);
       if (strUserAuth != null) {
@@ -201,22 +186,22 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
           String strClient = "";
           String strOrg = "";
           String strWarehouse = "";
-          
+
           strRole = DefaultOptionsData.defaultRole(this, strUserAuth);
           if(strRole == null)
         	  strRole = DefaultOptionsData.getDefaultRole(this, strUserAuth);
           validateDefault(strRole, strUserAuth, "Role");
-          
+
           strOrg = DefaultOptionsData.defaultOrg(this, strUserAuth);
           if(strOrg == null )
         	  strOrg = DefaultOptionsData.getDefaultOrg(this, strRole);
           validateDefault(strOrg, strRole, "Org");
-          
+
           strClient = DefaultOptionsData.defaultClient(this, strUserAuth);
           if(strClient == null)
         	  strClient = DefaultOptionsData.getDefaultClient(this, strRole);
           validateDefault(strClient, strRole, "Client");
-          
+
           strWarehouse = DefaultOptionsData.defaultWarehouse(this, strUserAuth);
           if(strWarehouse == null) {
         	  if(!strRole.equals("0")) {
@@ -226,23 +211,23 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
         	  else
         		  strWarehouse = "";
           }
-          
-          strLanguage = DefaultOptionsData.defaultLanguage(this, strUserAuth);          
+
+          strLanguage = DefaultOptionsData.defaultLanguage(this, strUserAuth);
           if(strLanguage == null) {
-            strLanguage = DefaultOptionsData.getDefaultLanguage(this); 
+            strLanguage = DefaultOptionsData.getDefaultLanguage(this);
           }
-                              
+
           VariablesSecureApp vars = new VariablesSecureApp(request);
           if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strRole, strClient, strOrg, strWarehouse)) {
-            readProperties(vars, prefix + strBaseConfigPath + "/Openbravo.properties");
-            readNumberFormat(vars, prefix + strBaseConfigPath + "/Format.xml");
+            readProperties(vars, globalParameters.getOpenbravoPropertiesPath());
+            readNumberFormat(vars, globalParameters.getFormatPath());
             saveLoginBD(request, vars, strClient, strOrg);
           } else {
             // Re-login
             log4j.error("Unable to fill session Arguments for: " +  strUserAuth);
             logout(request, response);
             return;
-          }          
+          }
         } else variables.updateHistory(request);
       }
       log4j.info("Call to HttpBaseServlet.service");
@@ -252,11 +237,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       logout(request, response);
       return;
     }
-    
+
     try {
-      
+
       super.initialize(request,response);
-      VariablesSecureApp vars1 = new VariablesSecureApp(request, false); 
+      VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
       if (vars1.getRole().equals("") || hasAccess(vars1))
         super.serviceInitialized(request,response);
       else
@@ -276,8 +261,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       bdErrorGeneral(response, "Error", e.toString());
     }
   }
-  
-  
+
+
   /**
    * Cheks access passing all the parameters
    * @param vars
@@ -289,18 +274,18 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     try {
       if (type.equals("W"))
         return hasLevelAccess(vars,AccessData.selectAccessLevel(this, type, id))
-            && AccessData.selectAccess(this, vars.getRole(), "TABLE", id).equals("0") 
+            && AccessData.selectAccess(this, vars.getRole(), "TABLE", id).equals("0")
             && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
       else if (type.equals("S")||type.equals("C")||type.equals("P"))
         return true;
-      else 
+      else
         return hasLevelAccess(vars,AccessData.selectAccessLevel(this, type, id))
             && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
     } catch (Exception e) {
       log4j.error("Error checking access: " + e.toString());
       return false;
     }
-  
+
   }
   /**
    * Checks if the user has access to the window
@@ -310,7 +295,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       if (classInfo==null || classInfo.id.equals("") || classInfo.type.equals(""))
         return true;
      return hasGeneralAccess(vars, classInfo.type, classInfo.id);
-      
+
     } catch(Exception e) {
       log4j.error("Error checking access: " + e.toString());
       return false;
@@ -319,7 +304,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
 
   /**
    * Checks if the level access is correct.
-   * 
+   *
    */
   private boolean hasLevelAccess(VariablesSecureApp vars, String accessLevel) {
     String userLevel = vars.getSessionValue("#User_Level");
@@ -333,13 +318,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
 
     return retValue;
   }
-  
+
   /**
    * Validates if a selected default value is null or empty String
    * @param strValue
    * @param strKey
    * @param strError
-   * @throws Exeption 
+   * @throws Exeption
    * */
   private void validateDefault(String strValue, String strKey, String strError) throws Exception {
 	  if(strValue == null || strValue.equals(""))
@@ -352,7 +337,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     vars.clearSession(true);
     if (log4j.isDebugEnabled()) log4j.debug("Cerrando session");
     if (!vars.getDBSession().equals("")) SessionLoginData.saveProcessed(this, vars.getUser(), vars.getDBSession());
-    
+
     m_AuthManager.logout(request, response);
   }
 
@@ -425,7 +410,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
 
     xmlDocument.setParameter("ParamTitulo", strTitle);
     xmlDocument.setParameter("ParamTexto", strText);
-    
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -543,14 +528,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
   }
 
   public PeriodicBackground getBackgroundProcess(String id) {
-    if (backgroundProcess == null || backgroundProcess.isEmpty()) return null;
-    PeriodicBackground bg = backgroundProcess.get(id);
-    return bg;
+    return PeriodicBackgroundContextListener.getBackgroundProcess(this.getServletContext(), id);
   }
   public void updateBackgroundProcess(String id, PeriodicBackground object) {
-    if (backgroundProcess == null) backgroundProcess = new Hashtable<String, PeriodicBackground>();
-    backgroundProcess.remove(id);
-    backgroundProcess.put(id, object);
+    PeriodicBackgroundContextListener.updateBackgroundProcess(this.getServletContext(), id, object);
   }
 
   private void readProperties(VariablesSecureApp vars, String strFileProperties) {
@@ -571,17 +552,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       String sqlDateFormat = properties.getProperty("dateFormat.sql");
       log4j.info("sqlDateFormat: " + sqlDateFormat);
       vars.setSessionValue("#AD_SqlDateFormat", sqlDateFormat);
-    } catch (IOException e) { 
-     // catch possible io errors from readLine()     
+    } catch (IOException e) {
+     // catch possible io errors from readLine()
      e.printStackTrace();
     }
  }
- 
- private void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {    	
+
+ private void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {
     String strNumberFormat = "###,##0.00"; // Default number format
     String strGroupingSeparator = ","; // Default grouping separator
     String strDecimalSeparator = "."; // Default decimal separator
-    String strName = "euroInform"; // Name of the format to use    
+    String strName = "euroInform"; // Name of the format to use
     try{
       // Reading number format configuration
       DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -601,15 +582,15 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
             break;
           }
         }
-      }          
+      }
     } catch(Exception e) {
       log4j.error(e.getMessage());
     }
     vars.setSessionValue("#AD_ReportNumberFormat", strNumberFormat);
     vars.setSessionValue("#AD_ReportGroupingSeparator", strGroupingSeparator);
-    vars.setSessionValue("#AD_ReportDecimalSeparator", strDecimalSeparator);    
+    vars.setSessionValue("#AD_ReportDecimalSeparator", strDecimalSeparator);
  }
- 
+
   private void saveLoginBD(HttpServletRequest request, VariablesSecureApp vars, String strCliente, String strOrganizacion) throws ServletException {
     SessionLogin sl = new SessionLogin(request, strCliente, strOrganizacion, vars.getSessionValue("#AD_User_ID"));
     sl.save(this);
@@ -617,21 +598,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
   }
 
   public void renderJR(VariablesSecureApp variables, HttpServletResponse response, String strReportName, String strOutputType, HashMap<String, Object> designParameters, FieldProvider[] data, Map<Object, Object> exportParameters) throws ServletException{
-  
+
     if (strReportName == null || strReportName.equals("")) strReportName = PrintJRData.getReportName(this, classInfo.id);
 
-    String strAttach = strFTPDirectory + "/284-" +classInfo.id;
-    
+    String strAttach = globalParameters.strFTPDirectory + "/284-" +classInfo.id;
+
     String strLanguage = variables.getLanguage();
     Locale locLocale = new Locale(strLanguage.substring(0,2),strLanguage.substring(3,5));
-    
-    if (strBaseDesignPath.endsWith("/")) strDefaultDesignPath = strDefaultDesignPath.substring(0, strDefaultDesignPath.length()-1);
-    String strNewAddBase = strDefaultDesignPath;
-    String strFinal = strBaseDesignPath;
-    if (!strLanguage.equals("") && !strLanguage.equals("en_US")) strNewAddBase = strLanguage;
-    if (!strFinal.endsWith("/" + strNewAddBase)) strFinal += "/" + strNewAddBase;
-    String strBaseDesign = prefix + "/" + strFinal;
-    
+
+    String strBaseDesign = getBaseDesignPath(strLanguage);
+
     strReportName = Replace.replace(Replace.replace(strReportName,"@basedesign@",strBaseDesign),"@attach@",strAttach);
     String strFileName = strReportName.substring(strReportName.lastIndexOf("/")+1);
 
@@ -652,13 +628,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       designParameters.put("USER_ORG", Utility.getContext(this, variables, "#User_Org", ""));
       designParameters.put("LANGUAGE", strLanguage);
       designParameters.put("LOCALE", locLocale);
-      
+
       DecimalFormatSymbols dfs = new DecimalFormatSymbols();
       dfs.setDecimalSeparator(variables.getSessionValue("#AD_ReportDecimalSeparator").charAt(0));
       dfs.setGroupingSeparator(variables.getSessionValue("#AD_ReportGroupingSeparator").charAt(0));
       DecimalFormat numberFormat = new DecimalFormat(variables.getSessionValue("#AD_ReportNumberFormat"), dfs);
       designParameters.put("NUMBERFORMAT", numberFormat);
-      
+
       if (log4j.isDebugEnabled()) log4j.debug("creating the format factory: " + variables.getJavaDateFormat());
       JRFormatFactory jrFormatFactory = new JRFormatFactory();
       jrFormatFactory.setDatePattern(variables.getJavaDateFormat());
@@ -705,10 +681,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
         exportParameters.put(JRExporterParameter.OUTPUT_STREAM, os);
         exportParameters.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
         exportParameters.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
-    
+
         exporter.setParameters(exportParameters);
         exporter.exportReport();
-      
+
       } else {
         throw new ServletException("Output format no supported");
       }

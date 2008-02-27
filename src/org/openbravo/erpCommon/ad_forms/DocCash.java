@@ -39,8 +39,8 @@ public class DocCash extends AcctServer {
  *  Constructor
  *  @param AD_Client_ID AD_Client_ID
  */
-public DocCash(String AD_Client_ID){
-    super(AD_Client_ID);
+public DocCash(String AD_Client_ID, ConnectionProvider connectionProvider){
+    super(AD_Client_ID, connectionProvider);
 }
 
 public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id) throws ServletException{
@@ -83,7 +83,7 @@ public boolean loadDocumentDetails (FieldProvider [] data,ConnectionProvider con
 private void setCashBookInfo(){
     DocCashData [] data = null;
     try{
-        data = DocCashData.select(this, Record_ID);
+        data = DocCashData.select(connectionProvider, Record_ID);
     }
     catch (ServletException e){
         log4jDocCash.warn(e);
@@ -104,7 +104,7 @@ private DocLine[] loadLines(ConnectionProvider conn){
     ArrayList<Object> list = new ArrayList<Object>();
     DocLineCashData[] data = null;
     try{
-        data = DocLineCashData.select(this, Record_ID);
+        data = DocLineCashData.select(connectionProvider, Record_ID);
         for (int i=0;data!=null && i<data.length;i++){
             String t_Line_ID = data[i].cCashlineId;
             DocLine_Cash docLine = new DocLine_Cash (DocumentType, Record_ID, t_Line_ID);
@@ -114,7 +114,7 @@ private DocLine[] loadLines(ConnectionProvider conn){
             docLine.m_C_Order_Id = data[i].cOrderId;
             docLine.m_C_Debt_Payment_Id = data[i].cDebtPaymentId;
             docLine.m_Record_Id2 = data[i].cDebtPaymentId;
-            docLine.m_C_BPartner_ID = DocLineCashData.selectDebtBPartner(this, docLine.m_C_Debt_Payment_Id);
+            docLine.m_C_BPartner_ID = DocLineCashData.selectDebtBPartner(connectionProvider, docLine.m_C_Debt_Payment_Id);
             docLine.setReference(data[i].cOrderId, data[i].cDebtPaymentId, conn);
             docLine.setAmount (data[i].amount,data[i].discountamt, data[i].writeoffamt);
             list.add(docLine);

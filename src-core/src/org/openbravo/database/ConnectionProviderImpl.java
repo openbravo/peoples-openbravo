@@ -46,9 +46,13 @@ public class ConnectionProviderImpl implements ConnectionProvider {
 
 
   public ConnectionProviderImpl (String file, boolean isRelative, String _context) throws PoolNotFoundException {
+    create(file, isRelative, _context);
+  }
+
+  private void create(String file, boolean isRelative, String _context) throws PoolNotFoundException {
     if (log4j.isDebugEnabled()) log4j.debug("Creating ConnectionProviderImpl");
     if (_context!=null && !_context.equals("")) contextName = _context;
-    
+
     String poolName = null;
     String dbDriver = null;
     String dbServer = null;
@@ -59,7 +63,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     double maxConnTime = 0.5;
     String dbSessionConfig = null;
     String rdbms = null;
-    
+
     if (file.endsWith(".properties")) {
       Properties properties = new Properties();
       try {
@@ -74,9 +78,9 @@ public class ConnectionProviderImpl implements ConnectionProvider {
         maxConnTime = new Double(properties.getProperty("maxConnTime","0.5"));
         dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
         rdbms = properties.getProperty("bbdd.rdbms");
-        if (rdbms.equalsIgnoreCase("POSTGRE")) 
+        if (rdbms.equalsIgnoreCase("POSTGRE"))
           dbServer += "/"+properties.getProperty("bbdd.sid");
-      } catch (IOException e) { 
+      } catch (IOException e) {
        e.printStackTrace();
       }
     } else { //XML file
@@ -137,8 +141,8 @@ public class ConnectionProviderImpl implements ConnectionProvider {
         }
       } catch (Exception e) {}
     }
-    
-    if (log4j.isDebugEnabled()) { 
+
+    if (log4j.isDebugEnabled()) {
       log4j.debug("poolName: " + poolName);
       log4j.debug("dbDriver: " + dbDriver);
       log4j.debug("dbServer: " + dbServer);
@@ -150,7 +154,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       log4j.debug("dbSessionConfig: " + dbSessionConfig);
       log4j.debug("rdbms: " + rdbms);
     }
-    
+
     try {
         addNewPool(dbDriver,dbServer,dbLogin,dbPassword, minConns,maxConns,maxConnTime,dbSessionConfig, rdbms, poolName);
     }catch (Exception e) {
@@ -162,6 +166,11 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   public void destroy(String name) throws Exception {
     PoolingDriver driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
     driver.closePool(name);
+  }
+
+  public void reload(String file, boolean isRelative, String _context) throws Exception {
+      destroy();
+      create(file, isRelative, _context);
   }
 
   public void destroy() throws Exception {
@@ -181,8 +190,8 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     GenericObjectPool connectionPool = new GenericObjectPool(null);
     connectionPool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_GROW);
     connectionPool.setMaxActive(maxConns);
-    connectionPool.setTestOnBorrow(false); 
-    connectionPool.setTestOnReturn(false); 
+    connectionPool.setTestOnBorrow(false);
+    connectionPool.setTestOnReturn(false);
     connectionPool.setTestWhileIdle(false);
 
     KeyedObjectPoolFactory keyedObject = new StackKeyedObjectPoolFactory();

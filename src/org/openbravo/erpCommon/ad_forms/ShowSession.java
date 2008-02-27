@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -282,11 +282,11 @@ public class ShowSession extends HttpSecureAppServlet {
       }
       resData = new ShowSessionStructureData[vecCompleto.size()];
       vecCompleto.copyInto(resData);
-      
+
       for (int i=0;i<resData.length;i++) {
     	  resData[i].rownum=""+i;
         }
-      
+
       if (log4j.isDebugEnabled()) log4j.debug("ShowSession - orderStructure - Total: " + resData.length + "-" + resData[0].name);
     } catch (Exception e) {
       log4j.error("ShowSession - orderStructure - Ordering Session variables error " + e);
@@ -325,7 +325,7 @@ public class ShowSession extends HttpSecureAppServlet {
           if (!existsWindow(windows, data1.window)) windows.addElement(data1.window);
           realName = realName.substring(pos+1);
         }
-        
+
         data1.completeName = sessionName;
         data1.name = realName;
         data1.value = vars.getSessionValue(sessionName);
@@ -426,9 +426,9 @@ public class ShowSession extends HttpSecureAppServlet {
 
   void printPagePreferences(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("ShowSession - printPagePreferences - Output: preferences");
-    
+
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ShowSessionPreferences").createXmlDocument();
-    
+
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
     xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
@@ -491,20 +491,20 @@ public class ShowSession extends HttpSecureAppServlet {
     script.append(Utility.messageBD(this, "Client", vars.getLanguage())).append(": ").append(ShowSessionData.cliente(this, vars.getClient())).append("\n");
     script.append(Utility.messageBD(this, "Org", vars.getLanguage())).append(": ").append(ShowSessionData.organizacion(this, vars.getOrg())).append("\n");
     script.append(Utility.messageBD(this, "Web", vars.getLanguage())).append(": ").append(strReplaceWith).append("\n");
-    script.append(Utility.messageBD(this, "DB", vars.getLanguage())).append(": ").append(strBBDD).append("\n");
+    script.append(Utility.messageBD(this, "DB", vars.getLanguage())).append(": ").append(globalParameters.strBBDD).append("\n");
     script.append(Utility.messageBD(this, "RecordRange", vars.getLanguage())).append(": ").append(vars.getSessionValue("#RecordRange")).append("\n");
     script.append(Utility.messageBD(this, "SearchsRecordRange", vars.getLanguage())).append(": ").append(vars.getSessionValue("#RecordRangeInfo")).append("\n");
-    if (strVersion!=null && !strVersion.equals("")) script.append(Utility.messageBD(this, "SourceVersion", vars.getLanguage())).append(": ").append(strVersion).append("\n");
-    if (strParentVersion!=null && !strParentVersion.equals("")) script.append(Utility.messageBD(this, "VerticalSourceVersion", vars.getLanguage())).append(": ").append(strParentVersion).append("\n");
+    if (globalParameters.strVersion!=null && !globalParameters.strVersion.equals("")) script.append(Utility.messageBD(this, "SourceVersion", vars.getLanguage())).append(": ").append(globalParameters.strVersion).append("\n");
+    if (globalParameters.strParentVersion!=null && !globalParameters.strParentVersion.equals("")) script.append(Utility.messageBD(this, "VerticalSourceVersion", vars.getLanguage())).append(": ").append(globalParameters.strParentVersion).append("\n");
     String strBBDDVersion = ShowSessionData.versionBBDD(this);
     if (strBBDDVersion!=null && !strBBDDVersion.equals("")) script.append(Utility.messageBD(this, "DBVersion", vars.getLanguage())).append(": ").append(strBBDDVersion).append("\n");
     String strBBDDParentVersion = ShowSessionData.versionVerticalBBDD(this);
     if (strBBDDParentVersion!=null && !strBBDDParentVersion.equals("")) script.append(Utility.messageBD(this, "VerticalDBVersion", vars.getLanguage())).append(": ").append(strBBDDParentVersion).append("\n");
     script.append(Utility.messageBD(this, "JavaVM", vars.getLanguage())).append(": ").append(System.getProperty("java.vm.name")).append("\n");
     script.append(Utility.messageBD(this, "VersionJavaVM", vars.getLanguage())).append(": ").append(System.getProperty("java.vm.version")).append("\n");
-    script.append(Utility.messageBD(this, "SystemLanguage", vars.getLanguage())).append(": ").append(strSystemLanguage).append("\n");
+    script.append(Utility.messageBD(this, "SystemLanguage", vars.getLanguage())).append(": ").append(globalParameters.strSystemLanguage).append("\n");
     script.append(Utility.messageBD(this, "JavaTMP", vars.getLanguage())).append(": ").append(System.getProperty("java.io.tmpdir")).append("\n");
-    script.append(Utility.messageBD(this, "UserFolder", vars.getLanguage())).append(": ").append(strFileProperties).append("\n");
+    //script.append(Utility.messageBD(this, "UserFolder", vars.getLanguage())).append(": ").append(strFileProperties).append("\n");
     script.append(Utility.messageBD(this, "OS", vars.getLanguage())).append(": ").append(System.getProperty("os.name")).append(" ").append(System.getProperty("os.version"));
     script.append(" ").append(System.getProperty("sun.os.patch.level"));
 ;

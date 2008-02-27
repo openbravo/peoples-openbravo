@@ -18,7 +18,6 @@ package org.openbravo.erpCommon.ad_forms;
 
 
 import org.openbravo.erpCommon.utility.*;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.exception.*;
 import java.math.*;
@@ -34,17 +33,20 @@ import org.openbravo.data.FieldProvider;
 
 
 
-public abstract class AcctServer extends HttpSecureAppServlet {
-  static Logger log4j = Logger.getLogger(AcctServer.class);
+public abstract class AcctServer  {
+    static Logger log4j = Logger.getLogger(AcctServer.class);
+
+    protected ConnectionProvider connectionProvider;
+
     public String              batchSize = "100";
 
     public BigDecimal ZERO = new BigDecimal("0");
 
     public String           groupLines = "";
     public String           Qty = null;
-    public static String    tableName = "";
-    public static String    strDateColumn = "";
-    public static String    AD_Table_ID = "";
+    public String           tableName = "";
+    public String           strDateColumn = "";
+    public String           AD_Table_ID = "";
     public String           AD_Client_ID = "";
     public String           AD_Org_ID = "";
     public String           Status = "";
@@ -237,12 +239,14 @@ public abstract class AcctServer extends HttpSecureAppServlet {
 
     /**
      *  Cosntructor
-     *  @param  AD_Client_ID    Client ID of these Documents
+     *  @param  m_AD_Client_ID    Client ID of these Documents
+     *  @param  connectionProvider  Provider for db connections.
      */
-    public AcctServer (String m_AD_Client_ID){
+    public AcctServer (String m_AD_Client_ID, ConnectionProvider connectionProvider){
         AD_Client_ID = m_AD_Client_ID;
+        this.connectionProvider = connectionProvider;
         if (log4j.isDebugEnabled()) log4j.debug("AcctServer - LOADING ARRAY: " + m_AD_Client_ID);
-        m_as = AcctSchema.getAcctSchemaArray (this, m_AD_Client_ID);
+        m_as = AcctSchema.getAcctSchemaArray (connectionProvider, m_AD_Client_ID);
     }   //  
 
     public void setBatchSize(String newbatchSize) {
@@ -252,22 +256,22 @@ public abstract class AcctServer extends HttpSecureAppServlet {
     public void run(VariablesSecureApp vars) throws IOException, ServletException{
       AD_Client_ID = vars.getClient();
       try {
-        Connection con = getTransactionConnection();
+        Connection con = connectionProvider.getTransactionConnection();
         String strIDs = "";
         if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Run - TableName = " + tableName);
-        AcctServerData [] data = AcctServerData.select(this,tableName, AD_Client_ID, strDateColumn, 0, Integer.valueOf(batchSize).intValue());
+        AcctServerData [] data = AcctServerData.select(connectionProvider,tableName, AD_Client_ID, strDateColumn, 0, Integer.valueOf(batchSize).intValue());
         if(data==null)if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Run -Select inicial realizada N = " + data.length + " - Key: " + data[0].id);
         for (int i=0;data != null && i<data.length;i++){
             strIDs += data[i].getField("ID") + ", ";
-            if (!post(data[i].getField("ID"),false, vars,this,con)) {
-                releaseRollbackConnection(con);
+            if (!post(data[i].getField("ID"),false, vars,connectionProvider,con)) {
+                connectionProvider.releaseRollbackConnection(con);
                 return;
             }
         }
         if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Run -" + data.length + " IDs [" + strIDs + "]");
         //  Create Automatic Matching
         //match (vars, this,con);
-        releaseCommitConnection(con);
+        connectionProvider.releaseCommitConnection(con);
       } catch (NoConnectionAvailableException ex) {
         throw new ServletException("@CODE=NoConnectionAvailable");
       } catch (SQLException ex2) {
@@ -280,19 +284,20 @@ public abstract class AcctServer extends HttpSecureAppServlet {
      *
      *  @param  AD_Table_ID     Table ID of Documents
      *  @param  AD_Client_ID    Client ID of Documents
+     *  @param  connectionProvider Database connection provider
      *  @return Document
      */
-    public static AcctServer get (String AD_Table_ID, String AD_Client_ID) throws ServletException{
+    public static AcctServer get (String AD_Table_ID, String AD_Client_ID, ConnectionProvider connectionProvider) throws ServletException{
         AcctServer acct = null;
         if (log4j.isDebugEnabled()) log4j.debug("get - table: "+AD_Table_ID);
         switch (Integer.parseInt(AD_Table_ID)){
             case    318:
-                acct = new DocInvoice (AD_Client_ID);
-                AcctServer.tableName = "C_Invoice";
-                AcctServer.AD_Table_ID = "318";
-                AcctServer.strDateColumn = "DateAcct";
+                acct = new DocInvoice (AD_Client_ID, connectionProvider);
+                acct.tableName = "C_Invoice";
+                acct.AD_Table_ID = "318";
+                acct.strDateColumn = "DateAcct";
                 acct.reloadAcctSchemaArray();
-                acct.groupLines = AcctServerData.selectGroupLines(acct, AD_Client_ID);
+                acct.groupLines = AcctServerData.selectGroupLines(acct.connectionProvider, AD_Client_ID);
                 break;
 /*          case    390:
                 acct = new DocAllocation (AD_Client_ID);
@@ -301,68 +306,68 @@ public abstract class AcctServer extends HttpSecureAppServlet {
                 acct.reloadAcctSchemaArray();
                 acct.break;*/
             case    800060:
-                acct = new DocAmortization (AD_Client_ID);
-                AcctServer.tableName = "A_Amortization";
-                AcctServer.AD_Table_ID = "800060";
-                AcctServer.strDateColumn = "DateAcct";
+                acct = new DocAmortization (AD_Client_ID, connectionProvider);
+                acct.tableName = "A_Amortization";
+                acct.AD_Table_ID = "800060";
+                acct.strDateColumn = "DateAcct";
                 acct.reloadAcctSchemaArray();
                 break;
                 
             case    800176:
                 if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Get DPM");
-                acct = new DocDPManagement (AD_Client_ID);
-                AcctServer.tableName = "C_DP_Management";
-                AcctServer.AD_Table_ID = "800176";
-                AcctServer.strDateColumn = "DateAcct";
+                acct = new DocDPManagement (AD_Client_ID, connectionProvider);
+                acct.tableName = "C_DP_Management";
+                acct.AD_Table_ID = "800176";
+                acct.strDateColumn = "DateAcct";
                 acct.reloadAcctSchemaArray();
                 break;
             case    407:
-                acct = new DocCash (AD_Client_ID);
-                AcctServer.tableName = "C_Cash";
-                AcctServer.strDateColumn = "DateAcct";
-                AcctServer.AD_Table_ID = "407";
+                acct = new DocCash (AD_Client_ID, connectionProvider);
+                acct.tableName = "C_Cash";
+                acct.strDateColumn = "DateAcct";
+                acct.AD_Table_ID = "407";
                 acct.reloadAcctSchemaArray();
                 break;
             case    392:
-                acct = new DocBank (AD_Client_ID);
-                AcctServer.tableName = "C_Bankstatement";
-                AcctServer.strDateColumn = "StatementDate";
-                AcctServer.AD_Table_ID = "392";
+                acct = new DocBank (AD_Client_ID, connectionProvider);
+                acct.tableName = "C_Bankstatement";
+                acct.strDateColumn = "StatementDate";
+                acct.AD_Table_ID = "392";
                 acct.reloadAcctSchemaArray();
                 break;
             case    259:
-                acct = new DocOrder (AD_Client_ID);
-                AcctServer.tableName = "C_Order";
-                AcctServer.strDateColumn = "DateAcct";
-                AcctServer.AD_Table_ID = "259";
+                acct = new DocOrder (AD_Client_ID, connectionProvider);
+                acct.tableName = "C_Order";
+                acct.strDateColumn = "DateAcct";
+                acct.AD_Table_ID = "259";
                 acct.reloadAcctSchemaArray();
                 break;
             case    800019:
-                acct = new DocPayment (AD_Client_ID);
-                AcctServer.tableName = "C_Settlement";
-                AcctServer.strDateColumn = "Dateacct";
-                AcctServer.AD_Table_ID = "800019";
+                acct = new DocPayment (AD_Client_ID, connectionProvider);
+                acct.tableName = "C_Settlement";
+                acct.strDateColumn = "Dateacct";
+                acct.AD_Table_ID = "800019";
                 acct.reloadAcctSchemaArray();
                 break;
             case    319:
-                acct = new DocInOut (AD_Client_ID);
-                AcctServer.tableName = "M_InOut";
-                AcctServer.strDateColumn = "DateAcct";
-                AcctServer.AD_Table_ID = "319";
+                acct = new DocInOut (AD_Client_ID, connectionProvider);
+                acct.tableName = "M_InOut";
+                acct.strDateColumn = "DateAcct";
+                acct.AD_Table_ID = "319";
                 acct.reloadAcctSchemaArray();
                 break;
             case    321:
-                acct = new DocInventory (AD_Client_ID);
-                AcctServer.tableName = "M_Inventory";
-                AcctServer.strDateColumn = "MovementDate";
-                AcctServer.AD_Table_ID = "321";
+                acct = new DocInventory (AD_Client_ID, connectionProvider);
+                acct.tableName = "M_Inventory";
+                acct.strDateColumn = "MovementDate";
+                acct.AD_Table_ID = "321";
                 acct.reloadAcctSchemaArray();
                 break;
             case    323:
-                acct = new DocMovement (AD_Client_ID);
-                AcctServer.tableName = "M_Movement";
-                AcctServer.strDateColumn = "MovementDate";
-                AcctServer.AD_Table_ID = "323";
+                acct = new DocMovement (AD_Client_ID, connectionProvider);
+                acct.tableName = "M_Movement";
+                acct.strDateColumn = "MovementDate";
+                acct.AD_Table_ID = "323";
                 acct.reloadAcctSchemaArray();
                 break;/*
             case    325:
@@ -372,10 +377,10 @@ public abstract class AcctServer extends HttpSecureAppServlet {
                 break;*/
             case    224:
                 if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Before OBJECT CREATION");
-                acct = new DocGLJournal (AD_Client_ID);
-                AcctServer.tableName = "GL_Journal";
-                AcctServer.strDateColumn = "DateAcct";
-                AcctServer.AD_Table_ID = "224";
+                acct = new DocGLJournal (AD_Client_ID, connectionProvider);
+                acct.tableName = "GL_Journal";
+                acct.strDateColumn = "DateAcct";
+                acct.AD_Table_ID = "224";
                 acct.reloadAcctSchemaArray();
                 break;/*
             case    472:
@@ -401,13 +406,13 @@ public abstract class AcctServer extends HttpSecureAppServlet {
     }   //  get
 
   public void reloadAcctSchemaArray() throws ServletException{
-    if (log4j.isDebugEnabled()) log4j.debug("AcctServer - reloadAcctSchemaArray - " + AcctServer.AD_Table_ID);
+    if (log4j.isDebugEnabled()) log4j.debug("AcctServer - reloadAcctSchemaArray - " + AD_Table_ID);
     AcctSchema acct = null;
     ArrayList<Object> new_as = new ArrayList<Object>();
     for (int i=0;i<(this.m_as).length;i++){
       acct = m_as[i];
-      if(AcctSchemaData.selectAcctSchemaTable(this, acct.m_C_AcctSchema_ID, AcctServer.AD_Table_ID)){
-        new_as.add(new AcctSchema(this,acct.m_C_AcctSchema_ID));        
+      if(AcctSchemaData.selectAcctSchemaTable(connectionProvider, acct.m_C_AcctSchema_ID, AD_Table_ID)){
+        new_as.add(new AcctSchema(connectionProvider,acct.m_C_AcctSchema_ID));
       }
     }
     AcctSchema[] retValue = new AcctSchema [new_as.size()];
@@ -427,7 +432,7 @@ public abstract class AcctServer extends HttpSecureAppServlet {
         }
         if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Post -TableName -" + tableName + "- ad_client_id -" + AD_Client_ID + "- " + tableName + "_id -" + strClave);
         try{
-            loadObjectFieldProvider(this,AD_Client_ID,strClave);
+            loadObjectFieldProvider(connectionProvider,AD_Client_ID,strClave);
         }catch(ServletException e){
             log4j.warn(e);
         }
@@ -644,7 +649,7 @@ public abstract class AcctServer extends HttpSecureAppServlet {
             }
             //  delete it
             try{
-            AcctServerData.delete(this,tableName,Record_ID);
+            AcctServerData.delete(connectionProvider,tableName,Record_ID);
             }catch(ServletException e){
                 log4j.warn(e);
             }
@@ -663,18 +668,18 @@ public abstract class AcctServer extends HttpSecureAppServlet {
       //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocumentType - DocumentType: " + DocumentType + " - C_DocType_ID : " + C_DocType_ID);
         try{
             if (/*DocumentType=="" && */C_DocType_ID != null && C_DocType_ID !=""){
-                AcctServerData[] data = AcctServerData.selectDocType(this,C_DocType_ID);
+                AcctServerData[] data = AcctServerData.selectDocType(connectionProvider,C_DocType_ID);
                 DocumentType = data[0].docbasetype;
                 GL_Category_ID = data[0].glCategoryId;
             }
                     //  We have a document Type, but no GL info - search for DocType
             if (GL_Category_ID == ""){
-                AcctServerData[] data = AcctServerData.selectGLCategory(this,AD_Client_ID,DocumentType);
+                AcctServerData[] data = AcctServerData.selectGLCategory(connectionProvider,AD_Client_ID,DocumentType);
                 if (data!=null && data.length != 0)GL_Category_ID = data[0].glCategoryId;
             }
             if (DocumentType == "")log4j.warn("AcctServer - loadDocumentType - No DocType for GL Info");
             if (GL_Category_ID == ""){
-                AcctServerData[] data = AcctServerData.selectDefaultGLCategory(this,AD_Client_ID);
+                AcctServerData[] data = AcctServerData.selectDefaultGLCategory(connectionProvider,AD_Client_ID);
                 GL_Category_ID = data[0].glCategoryId;
             }
         }catch(ServletException e){
@@ -703,7 +708,7 @@ public abstract class AcctServer extends HttpSecureAppServlet {
         //
         int no=0;
         try{
-            String AD_Note_ID = SequenceIdData.getSequence(this, "AD_Note", vars.getClient());
+            String AD_Note_ID = SequenceIdData.getSequence(connectionProvider, "AD_Note", vars.getClient());
             
 
             //  Create Entry
@@ -921,7 +926,7 @@ public abstract class AcctServer extends HttpSecureAppServlet {
         AcctServerData [] data=null;
         try{
           if (log4j.isDebugEnabled()) log4j.debug("setC_Period_ID - inside try - AD_Client_ID - " + AD_Client_ID + " -- DateAcct - " + DateAcct + " -- DocumentType - " + DocumentType);
-          data = AcctServerData.periodOpen(this,AD_Client_ID,DocumentType,DateAcct);
+          data = AcctServerData.periodOpen(connectionProvider,AD_Client_ID,DocumentType,DateAcct);
         }catch (ServletException e){
             log4j.warn(e);
         }
@@ -1246,15 +1251,15 @@ public abstract class AcctServer extends HttpSecureAppServlet {
     public abstract boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId);
 
     public String getInfo(VariablesSecureApp vars) {
-      return(Utility.messageBD(this, "Created", vars.getLanguage()) + "=" + success /*+ ", " + Utility.messageBD(this, "Errors", vars.getLanguage()) + "=" + errors*/);
+      return(Utility.messageBD(connectionProvider, "Created", vars.getLanguage()) + "=" + success /*+ ", " + Utility.messageBD(this, "Errors", vars.getLanguage()) + "=" + errors*/);
     } // end of getInfo() method
 
     public boolean checkDocuments() throws ServletException{
       if(m_as.length==0) return false;
-      AcctServerData [] docTypes = AcctServerData.selectDocTypes(this, AD_Table_ID, AD_Client_ID);
+      AcctServerData [] docTypes = AcctServerData.selectDocTypes(connectionProvider, AD_Table_ID, AD_Client_ID);
       //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
       for (int i=0;i<docTypes.length;i++){
-          AcctServerData [] data = AcctServerData.selectDocuments(this, tableName, docTypes[i].name, strDateColumn);
+          AcctServerData [] data = AcctServerData.selectDocuments(connectionProvider, tableName, docTypes[i].name, strDateColumn);
           if (log4j.isDebugEnabled()) log4j.debug("AcctServer - not posted "+docTypes[i].name+" documets length-" + data.length);
            if(data!=null && data.length>0) {
             if (!data[0].id.equals("")) return true;
@@ -1266,4 +1271,8 @@ public abstract class AcctServer extends HttpSecureAppServlet {
     public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method
+
+    public ConnectionProvider getConnectionProvider() {
+        return connectionProvider;
+    }
 }
