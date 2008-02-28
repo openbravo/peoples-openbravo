@@ -159,6 +159,8 @@ public class PeriodicBackground implements Runnable {
           initializeParams();
           try {
             process();
+          } catch(InterruptedException e) {
+            throw e;
           } catch(Exception ex) {
             ex.printStackTrace();
           }
@@ -170,6 +172,8 @@ public class PeriodicBackground implements Runnable {
           } else {
             try {
               object.processPL(this, true);
+            } catch(InterruptedException e) {
+              throw e;
             } catch(Exception ex) {
               ex.printStackTrace();
             }
