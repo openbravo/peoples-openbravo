@@ -73,7 +73,13 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "DBA_GETATTNUMPOS",
             "DBA_GETSTANDARD_SEARCH_TEXT",
             "DUMP",
-            "NEGATION"};
+            "NEGATION",
+            "EQUAL",
+            "GREATEREQUAL",
+            "LOWEREQUAL",
+            "LOWEREQUALNUMERIC",
+            "LOWEREQUALTIMESTAMP",
+            };
     }
 
 }
