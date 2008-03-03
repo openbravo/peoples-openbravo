@@ -25,8 +25,8 @@
   *      from the client selected to the new client
   ************************************************************************/
   --  Logistice
-  v_ResultStr VARCHAR2(2000):='';
-  v_Message VARCHAR2(2000):='';
+  v_ResultStr VARCHAR2(4000):='';
+  v_Message VARCHAR2(4000):='';
   v_Result NUMBER:=1; -- 0=failure
   --  Parameter
   TYPE RECORD IS REF CURSOR;
@@ -46,6 +46,7 @@
     Cur_TranslateData RECORD;
     Cur_TranslateDataSelfDep RECORD;
     Cur_Script RECORD;
+    CUR_v_rc_ISOPEN BOOLEAN :=false;
     --
     v_seqNo NUMBER:=0;
     v_NextNo NUMBER(10):=1000000;
@@ -109,59 +110,11 @@
     AD_DEPENDENCIES_CREATE() ;
 
     v_ResultStr:='Disabling triggers';
-    FOR Cur_Triggers IN
-      (SELECT OBJECT_NAME AS NAME
-      FROM USER_OBJECTS
-      WHERE OBJECT_TYPE='TRIGGER'
-      ORDER BY OBJECT_NAME
-      )
-    LOOP
-      v_seqNo:=v_seqNo + 1;
-      INSERT
-      INTO AD_SCRIPT_SQL VALUES
-        (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' DISABLE') ;
-    END LOOP;
+    v_seqNo:= ad_script_disable_triggers(v_seqNo);
     v_ResultStr:='Disabling constraints';
-    FOR Cur_Constraints IN
-      (SELECT TABLE_NAME, CONSTRAINT_NAME
-    FROM USER_CONSTRAINTS C1
-    WHERE CONSTRAINT_TYPE IN('P', 'U', 'R')
-    ORDER BY(CASE CONSTRAINT_TYPE WHEN 'R' THEN 1 WHEN 'U' THEN 2 WHEN 'P' THEN 3
-      END
-      ), TABLE_NAME, CONSTRAINT_NAME)
-    LOOP
-      v_seqNo:=v_seqNo + 1;
-      INSERT
-      INTO AD_SCRIPT_SQL VALUES
-        (v_seqNo, 'ALTER TABLE '||Cur_Constraints.TABLE_NAME||' DISABLE CONSTRAINT '||Cur_Constraints.CONSTRAINT_NAME) ;
-    END LOOP;
+    v_seqNo:= ad_script_disable_constraints(v_seqNo);
     v_ResultStr:='Dropping and recreating unique indexes';
-    FOR Cur_UniqueIndex IN (SELECT i.INDEX_NAME, i.TABLE_NAME, i.TABLESPACE_NAME, CONSTRAINT_TYPE
-                 FROM USER_INDEXES I left join USER_CONSTRAINTS C1 on c1.INDEX_NAME=I.INDEX_NAME
-                 WHERE UNIQUENESS='UNIQUE' AND INDEX_TYPE='NORMAL' AND TABLE_TYPE='TABLE'
-               --AND CONSTRAINT_TYPE != 'U'
-               ORDER BY INDEX_NAME)
-
-    LOOP
-      v_seqNo:=v_seqNo + 1;
-      INSERT
-      INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'DROP INDEX '||Cur_UniqueIndex.INDEX_NAME) ;
-
-   IF Cur_UniqueIndex.CONSTRAINT_TYPE != 'P' THEN
-    v_strSql:='CREATE INDEX '||Cur_UniqueIndex.INDEX_NAME||' ON '||Cur_UniqueIndex.TABLE_NAME||'(';
-       v_strTemp:='';
-       FOR Cur_IndexColumns IN
-         (SELECT COLUMN_NAME
-       FROM USER_IND_COLUMNS
-       WHERE INDEX_NAME=Cur_UniqueIndex.INDEX_NAME
-       ORDER BY COLUMN_POSITION)
-       LOOP
-         v_strTemp:=v_strTemp ||','|| Cur_IndexColumns.COLUMN_NAME;
-       END LOOP;
-       v_strSql:=v_strSql || SUBSTR(v_strTemp, 2, 4000) || ') TABLESPACE '||Cur_UniqueIndex.TABLESPACE_NAME;
-       INSERT INTO AD_SCRIPT_SQL VALUES(v_seqNo+100000, v_strSql) ;
-   END IF;
-    END LOOP;
+    v_seqNo:= ad_script_drop_recreate_index(v_seqNo);
     v_ResultStr:='Insert client';
     AD_Sequence_Next('AD_Client', 1000000, v_NextNo) ;
     --AD_Client
@@ -298,7 +251,7 @@
           v_seqNo:=v_seqNo + 1;
           INSERT INTO AD_SCRIPT_SQL VALUES(v_seqNo, v_strSql) ;
         END IF;
-        v_strSql:='UPDATE '||v_tableActual||' A SET AD_CLIENT_ID = '|| v_NextNo || ' ';
+        v_strSql:='UPDATE '||v_tableActual||' SET AD_CLIENT_ID = '|| v_NextNo || ' ';
       END IF;
       v_strSql:=v_strSql || ', '||Cur_TranslateData.COLUMNNAME||' = AD_Translate_ID('||Cur_TranslateData.COLUMNNAME|| ',
         '||Cur_TranslateData."OFFSET"||','''||Cur_TranslateData.DEPENDS_ON_TABLENAME||''','''||Cur_TranslateData.DEPENDS_ON_COLUMNNAME||''',
@@ -328,11 +281,16 @@
         END IF;
       END IF;
       v_dynamic_select:='SELECT DISTINCT ' || Cur_TranslateDataSelfDep.COLUMNNAME || ' FROM ' || Cur_TranslateDataSelfDep.TABLENAME || ' WHERE AD_CLIENT_ID = ' || p_AD_Client_ID || ' AND '||Cur_TranslateDataSelfDep.COLUMNNAME||' IS NOT NULL';
+ IF (CUR_v_rc_ISOPEN=true) THEN
+  CUR_v_rc_ISOPEN:=false;
+  CLOSE v_rc;
+ END IF;
       OPEN v_rc FOR v_dynamic_select;
+ CUR_v_rc_ISOPEN:=true;
       LOOP
         FETCH v_rc INTO v_oldId;
         EXIT WHEN v_rc%NOTFOUND;
-        v_strSql:='UPDATE '||v_tableActual||' A SET AD_CLIENT_ID = '|| v_NextNo || ' ';
+        v_strSql:='UPDATE '||v_tableActual||' SET AD_CLIENT_ID = '|| v_NextNo || ' ';
         v_translatedId:=AD_Translate_ID(v_oldId, Cur_TranslateDataSelfDep."OFFSET", Cur_TranslateDataSelfDep.DEPENDS_ON_TABLENAME, Cur_TranslateDataSelfDep.DEPENDS_ON_COLUMNNAME, p_AD_Client_ID) ;
         v_strSql:=v_strSql || ', '||Cur_TranslateDataSelfDep.COLUMNNAME||' = ' || v_translatedId ;
         v_strSql:=v_strSql || ' WHERE AD_CLIENT_ID = '|| v_NextNo || ' AND '||Cur_TranslateDataSelfDep.COLUMNNAME||' = ' || v_oldId;
@@ -493,49 +451,14 @@
     INTO AD_SCRIPT_SQL VALUES
       (v_seqNo, 'UPDATE AD_Role SET ClientList = TO_CHAR(AD_Client_ID), OrgList = AD_OrgList(AD_Role_ID) '|| 'WHERE AD_Client_ID = '||v_NextNo) ;
     v_ResultStr:='Enabling  constraints';
-    FOR Cur_ConstraintsEnable IN
-      (SELECT TABLE_NAME, CONSTRAINT_NAME
-    FROM USER_CONSTRAINTS C1
-    WHERE CONSTRAINT_TYPE IN('P', 'U', 'R')
-    ORDER BY(CASE CONSTRAINT_TYPE WHEN 'R' THEN 3 WHEN 'U' THEN 2 WHEN 'P' THEN 1
-      END
-      ), TABLE_NAME, CONSTRAINT_NAME)
-    LOOP
-      v_seqNo:=v_seqNo + 1;
-      INSERT
-      INTO AD_SCRIPT_SQL VALUES
-        (v_seqNo, 'ALTER TABLE '||Cur_ConstraintsEnable.TABLE_NAME||' ENABLE CONSTRAINT '||Cur_ConstraintsEnable.CONSTRAINT_NAME) ;
-    END LOOP;
+    v_seqNo:= ad_script_enable_constraints(v_seqNo);
     v_ResultStr:='Enabling triggers';
-    FOR Cur_Triggers IN
-      (SELECT OBJECT_NAME AS NAME
-    FROM USER_OBJECTS
-    WHERE OBJECT_TYPE='TRIGGER'
-    ORDER BY OBJECT_NAME)
-    LOOP
-      v_seqNo:=v_seqNo + 1;
-      INSERT
-      INTO AD_SCRIPT_SQL VALUES
-        (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' ENABLE') ;
-    END LOOP;
+    v_seqNo:= ad_script_enable_triggers(v_seqNo);
     -- Update sequence values
     v_ResultStr:='Updating sequences';
     Ad_Update_Sequence_Generate() ;
 
-  FOR Cur_Script IN
-     (SELECT STRSQL, SEQNO FROM AD_SCRIPT_SQL ORDER BY SEQNO)
-    LOOP
-    BEGIN
-      EXECUTE IMMEDIATE(Cur_Script.STRSQL) ;
-    EXCEPTION
-    WHEN OTHERS THEN
-      v_Result:=0;
-      if (coalesce(length(v_Message),0)!=0) then
-        v_Message:=substr(v_Message||'<br><br>',1,2000);
-      end if;
-      v_Message := substr(v_Message||'@SQLScriptError@ '||Cur_Script.SeqNo||'. @Executing@'||Cur_Script.strSQL||'<br>'||SQLERRM,1,2000);
-    END;
-  END LOOP;
+ v_ResultStr := ad_script_execute(v_ResultStr);
 
 
   select count(*)

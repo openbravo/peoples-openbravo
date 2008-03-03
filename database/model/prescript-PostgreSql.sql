@@ -987,7 +987,7 @@ CREATE OR REPLACE VIEW user_constraints AS
             WHEN 'P'::text THEN upper(pg_constraint.conname::text)
             WHEN 'U'::text THEN upper(pg_constraint.conname::text)
             ELSE ''::text
-        END AS index_name, dba_getstandard_search_text(pg_constraint.consrc) AS search_condition
+        END AS index_name, dba_getstandard_search_text(pg_constraint.consrc) AS search_condition, 'ENABLED'::text AS STATUS
    FROM pg_constraint
    JOIN pg_class ON pg_class.oid = pg_constraint.conrelid
    LEFT JOIN pg_class fk_table ON fk_table.oid = pg_constraint.confrelid
@@ -1113,9 +1113,9 @@ SELECT * FROM drop_view('USER_TRIGGERS')
 /-- END
 
 CREATE OR REPLACE VIEW USER_TRIGGERS
-(TABLE_NAME, TABLESPACE_NAME, TRIGGER_NAME)
+(TABLE_NAME, TABLESPACE_NAME, TRIGGER_NAME, STATUS)
 AS 
-SELECT UPPER(PG_CLASS.RELNAME), UPPER(PG_NAMESPACE.NSPNAME), PG_TRIGGER.TGNAME
+SELECT UPPER(PG_CLASS.RELNAME), UPPER(PG_NAMESPACE.NSPNAME), PG_TRIGGER.TGNAME, 'ENABLED'::text
 FROM PG_TRIGGER, PG_CLASS, PG_NAMESPACE
 WHERE PG_TRIGGER.tgrelid = PG_CLASS.OID
 AND PG_CLASS.RELNAMESPACE = PG_NAMESPACE.OID

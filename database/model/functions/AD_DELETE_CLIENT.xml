@@ -15,7 +15,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SL 
-* All portions are Copyright (C) 2001-2007 Openbravo SL 
+* All portions are Copyright (C) 2001-2008 Openbravo SL 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________. 
 ************************************************************************/ 
@@ -25,8 +25,8 @@
   *   Delete data (for every table in TAD schema) from the client selected 
   ************************************************************************/ 
   -- Logistice 
-  v_ResultStr VARCHAR2(2000):=''; 
-  v_Message VARCHAR2(2000):=''; 
+  v_ResultStr VARCHAR2(4000):=''; 
+  v_Message VARCHAR2(4000):=''; 
   v_Result NUMBER:=1; -- 0=failure 
   -- Parameter 
   TYPE RECORD IS REF CURSOR; 
@@ -59,6 +59,7 @@
       AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ; 
       -- Get Parameters 
       v_ResultStr:='ReadingParameters'; 
+
       FOR Cur_Parameter IN 
         (SELECT p.ParameterName, p.P_String, p.P_Number 
         FROM AD_PInstance i 
@@ -86,32 +87,10 @@
     END IF;
     
     DELETE FROM AD_SCRIPT_SQL; 
-    FOR Cur_Triggers IN 
-      (SELECT OBJECT_NAME AS NAME 
-      FROM USER_OBJECTS 
-      WHERE OBJECT_TYPE='TRIGGER' 
-      ORDER BY OBJECT_NAME 
-      ) 
-    LOOP 
-      v_seqNo:=v_seqNo + 1; 
-      INSERT 
-      INTO AD_SCRIPT_SQL VALUES 
-        (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' DISABLE') ; 
-    END LOOP; 
+    v_ResultStr := 'Disabling  triggers';
+    v_seqNo := ad_script_disable_triggers(v_seqNo);
     v_ResultStr:='Disabling constraints'; 
-    FOR Cur_Constraints IN 
-      (SELECT TABLE_NAME, CONSTRAINT_NAME 
-    FROM USER_CONSTRAINTS C1 
-    WHERE CONSTRAINT_TYPE IN('P', 'U', 'R') AND DELETE_RULE NOT LIKE 'CASCADE' 
-    ORDER BY(CASE CONSTRAINT_TYPE WHEN 'R' THEN 1 WHEN 'U' THEN 2 WHEN 'P' THEN 3 
-      END 
-      ), TABLE_NAME, CONSTRAINT_NAME) 
-    LOOP 
-      v_seqNo:=v_seqNo + 1; 
-      INSERT 
-      INTO AD_SCRIPT_SQL VALUES 
-        (v_seqNo, 'ALTER TABLE '||Cur_Constraints.TABLE_NAME||' DISABLE CONSTRAINT '||Cur_Constraints.CONSTRAINT_NAME) ; 
-    END LOOP; 
+    v_seqNo := ad_script_disable_constraints(v_seqNo);
     AD_Sequence_Next('AD_Client', 1000000, v_NextNo) ; 
     FOR Cur_Tables IN 
       (SELECT AD_Table_ID, UPPER(TableName) AS NAME 
@@ -132,49 +111,29 @@
     INSERT 
     INTO AD_SCRIPT_SQL VALUES 
       (v_seqNo, 'DELETE FROM AD_Client WHERE AD_Client_ID = '||v_AD_Client_ID) ; 
+-- Deal with users that have defaults set to the deleted client
+ v_seqNo := v_seqNo + 1;
+ INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'UPDATE AD_USER SET DEFAULT_AD_CLIENT_ID=null where DEFAULT_AD_CLIENT_ID NOT IN (SELECT AD_Client_ID from AD_Client)');
+ v_seqNo := v_seqNo + 1;
+ INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'UPDATE AD_USER SET DEFAULT_AD_ORG_ID=null where DEFAULT_AD_ORG_ID NOT IN (SELECT AD_Org_ID from AD_Org)');
+ v_seqNo := v_seqNo + 1;
+ INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'UPDATE AD_USER SET DEFAULT_AD_ROLE_ID=null where DEFAULT_AD_ROLE_ID NOT IN (SELECT AD_Role_ID from AD_Role)');
+ v_seqNo := v_seqNo + 1;
+ INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'UPDATE AD_USER SET DEFAULT_M_WAREHOUSE_ID=null where DEFAULT_M_WAREHOUSE_ID NOT IN (SELECT M_Warehouse_ID from M_Warehouse)');
+ -- make sure Openbravo user can logon
+ v_seqNo := v_seqNo + 1;
+ INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'UPDATE AD_USER SET DEFAULT_AD_CLIENT_ID=0, DEFAULT_AD_ORG_ID=0, DEFAULT_AD_ROLE_ID=0 where AD_USER_ID=100 AND DEFAULT_AD_CLIENT_ID is null and DEFAULT_AD_ORG_ID is null and DEFAULT_AD_ROLE_ID is null');
+
+
     v_ResultStr:='Enabling  constraints'; 
-    FOR Cur_ConstraintsEnable IN 
-      (SELECT TABLE_NAME, CONSTRAINT_NAME 
-    FROM USER_CONSTRAINTS C1 
-    WHERE CONSTRAINT_TYPE IN('P', 'U', 'R') AND DELETE_RULE NOT LIKE 'CASCADE' 
-    ORDER BY(CASE CONSTRAINT_TYPE WHEN 'R' THEN 3 WHEN 'U' THEN 2 WHEN 'P' THEN 1 
-      END 
-      ), TABLE_NAME, CONSTRAINT_NAME) 
-    LOOP 
-      v_seqNo:=v_seqNo + 1; 
-      INSERT 
-      INTO AD_SCRIPT_SQL VALUES 
-        (v_seqNo, 'ALTER TABLE '||Cur_ConstraintsEnable.TABLE_NAME||' ENABLE CONSTRAINT '||Cur_ConstraintsEnable.CONSTRAINT_NAME) ; 
-    END LOOP; 
-    FOR Cur_Triggers IN 
-      (SELECT OBJECT_NAME AS NAME 
-    FROM USER_OBJECTS 
-    WHERE OBJECT_TYPE='TRIGGER' 
-    ORDER BY OBJECT_NAME) 
-    LOOP 
-      v_seqNo:=v_seqNo + 1; 
-      INSERT 
-      INTO AD_SCRIPT_SQL VALUES 
-        (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' ENABLE') ; 
-    END LOOP; 
+    v_seqNo := ad_script_enable_constraints(v_seqNo);
+    v_ResultStr := 'Enabling  triggers';
+    v_seqNo := ad_script_enable_triggers(v_seqNo);
     -- Update sequence values 
     v_ResultStr:='Updating sequences'; 
     Ad_Update_Sequence_Generate() ; 
-
-    FOR Cur_Script IN 
-      (SELECT STRSQL, SEQNO FROM AD_SCRIPT_SQL ORDER BY SEQNO)
-    LOOP 
-    BEGIN 
-      EXECUTE IMMEDIATE(Cur_Script.STRSQL) ; 
-    EXCEPTION 
-    WHEN OTHERS THEN 
-      v_Result:=0;
-      if (coalesce(length(v_Message),0)!=0) then
-        v_Message:=substr(v_Message||'<br><br>',1,2000);
-      end if;
-      v_Message := substr(v_Message||'@SQLScriptError@ '||Cur_Script.SeqNo||'. @Executing@'||Cur_Script.strSQL||'<br>'||SQLERRM,1,2000);
-    END;
-  END LOOP;
+    v_ResultStr:='Executing';
+    v_ResultStr := ad_script_execute(v_ResultStr);
 
   select count(*)
    into v_count
@@ -219,6 +178,7 @@ WHEN OTHERS THEN
   END IF;
 --  RETURN;
 END AD_Delete_Client
+
 
 ]]></body>
     </function>
