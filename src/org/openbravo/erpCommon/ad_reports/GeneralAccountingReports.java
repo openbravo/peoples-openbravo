@@ -11,13 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_reports;
 
+import org.openbravo.erpCommon.security.WarehouseData;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.erpCommon.ad_forms.AcctServerData;
 import org.openbravo.erpCommon.businessUtility.*;
@@ -274,6 +275,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
     xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData.selectCombo(this, vars.getRole()));
     xmlDocument.setData("reportC_ElementValue_ID","liststructure", GeneralAccountingReportsData.selectRpt(this, Utility.getContext(this, vars, "#User_Org", "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"), strcAcctSchemaId));
+    
+    xmlDocument.setParameter("accountingReports", arrayDobleEntrada("arrAccountingReports", GeneralAccountingReportsData.selectRptDouble(this)));
     /*try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Acct_Rpt_ID", "", "", Utility.getContext(this, vars, "#User_Org", "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "GeneralAccountingReports", "");

@@ -26,7 +26,7 @@
   <SqlMethod name="selectCombo" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME, '' as pagebreak 
+        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME, '' as pagebreak, '' AS PADRE 
         FROM AD_ORG A_O, AD_ROLE_ORGACCESS A_R_O, AD_ROLE R
         WHERE A_R_O.AD_ORG_ID = A_O.AD_ORG_ID 
         AND A_R_O.ISACTIVE = 'Y' 
@@ -52,7 +52,15 @@
 		<Parameter name="client" optional="true" type="replace" after="AND AD_CLIENT_ID IN (" text="'1'"/>      
 		<Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCT_RPT.C_ACCTSCHEMA_ID = TO_NUMBER(?)]]></Parameter>
    </SqlMethod>
-   
+   <SqlMethod name="selectRptDouble" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+		SELECT C_ACCT_RPT.C_ACCTSCHEMA_ID AS PADRE, C_ACCT_RPT.C_ACCT_RPT_ID AS ID, C_ACCT_RPT.NAME AS NAME 
+		FROM C_ACCT_RPT
+		ORDER BY NAME
+      </Sql>
+   </SqlMethod>
+      
     <SqlMethod name="selectGroups" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,6 +82,13 @@ function depurar(command) {
 	return true;
 }
 
+function refreshAccountingReports() {
+  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
+  var cmbAccountingReports = document.frmMain.inpcElementvalueId;  
+  cambiarListaCombo(cmbAccountingReports, arrAccountingReports, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
+  return true;
+}
+
 function onloadFunctions() {
   new TypeAheadCombo("inpOrganizacion");
   new TypeAheadCombo("inpcAcctSchemaId");  
@@ -89,6 +96,12 @@ function onloadFunctions() {
   new TypeAheadCombo("inpLevel");
 }
 </SCRIPT>
+
+<script language="JavaScript" type="text/javascript" id="paramArrayAccountingReports">
+var arrAccountingReports=null;
+</script>
+
+
 </HEAD>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
       <FORM method="POST" action="GeneralAccountingReports.pdf" name="frmMain" target="_blank" id="form">
@@ -370,7 +383,7 @@ function onloadFunctions() {
                   </SELECT></TD>
                   <TD class="ContentCell"></TD>
 				  <TD class="TitleCell"> <SPAN class="LabelText">Accounting schema</SPAN></TD>
-                  <TD class="Combo_ContentCell"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_OneCell_width" onchange="submitCommandForm('DEFAULT',false,null,null,'_self');logChanges(this);return true;">
+                  <TD class="Combo_ContentCell"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_OneCell_width" onchange="refreshAccountingReports(); logChanges(this); return true;">
                     <OPTION value=""></OPTION><DIV id="reportC_ACCTSCHEMA_ID"></DIV>
                   </SELECT></TD>
                 </TR>
