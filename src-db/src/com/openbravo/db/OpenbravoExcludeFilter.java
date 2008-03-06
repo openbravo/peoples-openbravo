@@ -80,7 +80,7 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "LOWEREQUAL",
             "LOWEREQUALNUMERIC",
             "LOWEREQUALTIMESTAMP",
-            "NOW",
+            "NOW"
             };
     }
 
