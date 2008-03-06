@@ -69,6 +69,7 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "AD_SCRIPT_ENABLE_TRIGGERS",
             "AD_SCRIPT_ENABLE_CONSTRAINTS",
             "AD_SCRIPT_DROP_RECREATE_INDEXES",
+            "AD_SCRIPT_DROP_RECREATE_INDEX",
             "AD_SCRIPT_EXECUTE",
             "DBA_GETATTNUMPOS",
             "DBA_GETSTANDARD_SEARCH_TEXT",
@@ -79,6 +80,7 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "LOWEREQUAL",
             "LOWEREQUALNUMERIC",
             "LOWEREQUALTIMESTAMP",
+            "NOW",
             };
     }
 
