@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -23,15 +23,18 @@
 vResult NUMBER;
 BEGIN
 
-
  SELECT c_salary_category_id into vResult
- FROM  (SELECT * from c_bp_salcategory   
-                where c_bpartner_id= pCBPartner 
-                and datefrom<=pDate
-                order by datefrom desc) 
-	        where rownum=1;
+         FROM  c_bp_salcategory, (SELECT c_salary_category_id AS c_salary_category_id, MAX(datefrom) AS datefrom  
+		                                from c_bp_salcategory   
+                                        where c_bpartner_id= pCBPartner 
+                                        and datefrom<=pDate
+										order by datefrom desc ) AAA
+ WHERE c_bp_salcategory.c_salary_category_id = aaa.c_salary_category_id
+ AND c_bp_salcategory.datefrom = aaa.datefrom;
  
- return vResult;
-end C_CALCULATE_CATSALARY]]></body>
+ RETURN vResult;
+END C_CALCULATE_CATSALARY
+
+]]></body>
     </function>
   </database>

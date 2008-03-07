@@ -2,10 +2,30 @@
   <database name="TRIGGER C_BP_SALCATEGORY_TRG">
     <trigger name="C_BP_SALCATEGORY_TRG" table="C_BP_SALCATEGORY" fires="before" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
+	  
+	  /*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+
 v_sales_cat_id NUMBER;
 v_cost NUMBER;
 v_costuom CHAR(1);
 v_count NUMBER;
+--TYPE RECORD IS REFCURSOR;
+Cur_Sal_cat_cost RECORD;
 
 BEGIN
 
@@ -17,7 +37,7 @@ BEGIN
   SELECT COUNT(*) INTO v_count FROM C_SALARY_CATEGORY_COST WHERE C_SALARY_CATEGORY_ID=:NEW.C_SALARY_CATEGORY_ID AND DATEFROM<=:NEW.DATEFROM;
   
   IF (v_count=0) THEN
-      RAISE_APPLICATION_ERROR(-20518,'Incoherenia de fechas');
+      RAISE_APPLICATION_ERROR(-20518,'@Dates inconsistency@');
   END IF;
   
   FOR Cur_Sal_cat_cost IN
@@ -38,6 +58,8 @@ BEGIN
   END IF;
   
 
-END C_BP_SALCATEGORY_TRG]]></body>
+END C_BP_SALCATEGORY_TRG
+
+]]></body>
     </trigger>
   </database>
