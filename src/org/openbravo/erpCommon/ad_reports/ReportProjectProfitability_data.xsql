@@ -36,19 +36,11 @@
         FROM C_BPartner bpclient, AD_Org org, 
           C_Project p LEFT JOIN C_BPartner bpresp ON  p.Responsible_ID = bpresp.C_BPartner_ID
                       LEFT JOIN C_Projecttype pt ON pt.C_Projecttype_ID = p.C_Projecttype_ID 
-                      LEFT JOIN (SELECT S_TimeExpenseLine.C_Project_ID, SUM((CASE S_TimeExpenseLine.IsTimereport WHEN 'Y' THEN S_TimeExpenseLine.qty ELSE 0 END)*C_Salary_Category_Cost.cost) AS cost
-           FROM S_TimeExpenseLine , S_TimeExpense, C_BPartner, C_Salary_Category_Cost
+                      LEFT JOIN (SELECT S_TimeExpenseLine.C_Project_ID, SUM((CASE S_TimeExpenseLine.IsTimereport WHEN 'Y' THEN S_TimeExpenseLine.qty ELSE 0 END)*  C_CALCULATECOST_CATSALARY(C_CALCULATE_CATSALARY(C_BPartner.c_bpartner_id,  s_timeexpense.DATEREPORT), s_timeexpense.DATEREPORT)) AS cost
+           FROM S_TimeExpenseLine , S_TimeExpense, C_BPartner
            WHERE S_TimeExpense.S_TimeExpense_ID = S_TimeExpenseLine.S_TimeExpense_ID
            AND S_TimeExpense.C_BPartner_ID = C_BPartner.C_BPartner_ID
-           AND S_TimeExpense.Processed = 'Y'
-             AND C_BPartner.C_Salary_Category_ID = C_Salary_Category_Cost.C_Salary_Category_ID
-             AND C_Salary_Category_Cost.C_Salary_Category_Cost_ID = (SELECT MAX(scc1.c_salary_category_cost_id)
-                                                  FROM C_SALARY_CATEGORY_COST scc1
-                                                  WHERE scc1.c_salary_category_id = C_BPartner.c_salary_category_id
-                                                  AND scc1.datefrom = (SELECT MAX(scc2.datefrom)
-                                                                       FROM C_SALARY_CATEGORY_COST scc2
-                                                                       WHERE scc2.c_salary_category_id = scc1.c_salary_category_id
-                                                                         AND scc2.datefrom < S_TimeExpense.DATEREPORT))
+           AND S_TimeExpense.Processed = 'Y'             
            GROUP BY S_TimeExpenseLine.C_Project_ID) cost ON p.C_Project_ID = cost.C_Project_ID
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
