@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER C_BP_SALCATEGORY_TRG">
+    <trigger name="C_BP_SALCATEGORY_TRG" table="C_BP_SALCATEGORY" fires="before" insert="true" update="true" delete="false" foreach="row">
+      <body><![CDATA[
+v_sales_cat_id NUMBER;
+v_cost NUMBER;
+v_costuom CHAR(1);
+v_count NUMBER;
+
+BEGIN
+
+
+      
+  IF (UPDATING OR INSERTING)  THEN
+  
+
+  SELECT COUNT(*) INTO v_count FROM C_SALARY_CATEGORY_COST WHERE C_SALARY_CATEGORY_ID=:NEW.C_SALARY_CATEGORY_ID AND DATEFROM<=:NEW.DATEFROM;
+  
+  IF (v_count=0) THEN
+      RAISE_APPLICATION_ERROR(-20518,'Incoherenia de fechas');
+  END IF;
+  
+  FOR Cur_Sal_cat_cost IN
+      (SELECT DATEFROM, C_SALARY_CATEGORY_COST_ID, COST, COSTUOM 
+      FROM C_SALARY_CATEGORY_COST WHERE C_SALARY_CATEGORY_ID=:NEW.C_SALARY_CATEGORY_ID
+    AND DATEFROM<=:NEW.DATEFROM
+    ORDER BY DATEFROM DESC
+      )
+    LOOP
+      --v_cost := Cur_Sal_cat_cost.COST;
+   v_costuom := Cur_Sal_cat_cost.COSTUOM;
+      EXIT;
+    END LOOP;
+  
+  --:NEW.COST := v_cost;
+  :NEW.COSTUOM := v_costuom;
+
+  END IF;
+  
+
+END C_BP_SALCATEGORY_TRG]]></body>
+    </trigger>
+  </database>
