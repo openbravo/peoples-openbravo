@@ -2,31 +2,22 @@
   <database name="TRIGGER C_BPARTNER_TRG2">
     <trigger name="C_BPARTNER_TRG2" table="C_BPARTNER" fires="after" insert="false" update="true" delete="false" foreach="row">
       <body><![CDATA[
-/*************************************************************************
- * The contents of this file are subject to the Compiere License
- * Version 2.5.0 ("License"); You may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.compiere.org/license.html
- * Software distributed under the License is distributed on an
- * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
- * implied. See the License for the specific language governing rights
- * and limitations under the License.
- * The Original Code is  Compiere  ERP  Solution
- * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
-Inc.
- * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
- * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
- * All Rights Reserved.
- * Contributor(s): Openbravo SL
- * Contributions are Copyright ¿¿ 1999-2005 Openbravo, S.L
- *************************************************************************
- * $Id: C_BPartner_Trg.sql,v 1.4 2002/10/23 03:16:57 jjanke Exp $
- ***
- * Title: Business Partner new necord
- * Description:
- *    - create default Account records
- *    - add treenode
- ************************************************************************/
+    /************************************************************************* 
+    * The contents of this file are subject to the Openbravo  Public  License 
+    * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License 
+    * Version 1.1  with a permitted attribution clause; you may not  use this 
+    * file except in compliance with the License. You  may  obtain  a copy of 
+    * the License at http://www.openbravo.com/legal/license.html 
+    * Software distributed under the License  is  distributed  on  an "AS IS" 
+    * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the 
+    * License for the specific  language  governing  rights  and  limitations 
+    * under the License. 
+    * The Original Code is Openbravo ERP. 
+    * The Initial Developer of the Original Code is Openbravo SL 
+    * All portions are Copyright (C) 2001-2008 Openbravo SL 
+    * All Rights Reserved. 
+    * Contributor(s):  ______________________________________. 
+    ************************************************************************/
 
    vID    NUMBER;
 
@@ -40,12 +31,14 @@ BEGIN
        INSERT INTO C_BP_SALCATEGORY
        (C_BP_SALCATEGORY_ID, AD_CLIENT_ID,AD_ORG_ID,ISACTIVE,CREATED,CREATEDBY,
        UPDATED,UPDATEDBY,C_BPARTNER_ID,C_SALARY_CATEGORY_ID,DATEFROM)
-       VALUES (vId, :NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID, 'Y', SYSDATE, :NEW.UPDATEDBY, SYSDATE, :NEW.UPDATEDBY, :NEW.C_BPARTNER_ID, 
-       :NEW.C_SALARY_CATEGORY_ID, SYSDATE);
+       VALUES (vId, :NEW.AD_CLIENT_ID, :NEW.AD_ORG_ID, 'Y', now(), :NEW.UPDATEDBY, now(), :NEW.UPDATEDBY, :NEW.C_BPARTNER_ID, 
+       :NEW.C_SALARY_CATEGORY_ID, now());
      END IF;
 
 
 
-END C_BPartner_Trg2]]></body>
+END C_BPartner_Trg2
+
+]]></body>
     </trigger>
   </database>
