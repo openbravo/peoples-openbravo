@@ -23,15 +23,15 @@
 vResult NUMBER;
 BEGIN
 
- SELECT c_salary_category_id into vResult
-         FROM  c_bp_salcategory, (SELECT c_salary_category_id AS c_salary_category_id, MAX(datefrom) AS datefrom  
-		                                from c_bp_salcategory   
-                                        where c_bpartner_id= pCBPartner 
-                                        and datefrom<=pDate
-										order by datefrom desc ) AAA
- WHERE c_bp_salcategory.c_salary_category_id = aaa.c_salary_category_id
+ SELECT c_salary_category_id 
+ FROM  c_bp_salcategory, (SELECT MAX(datefrom) AS datefrom  
+                          from c_bp_salcategory   
+                          where c_bpartner_id= pCBPartner 
+                          and datefrom<=pDate
+                          order by datefrom desc ) AAA
+ WHERE c_bp_salcategory.c_bpartner_id= pCBPartner 
  AND c_bp_salcategory.datefrom = aaa.datefrom;
- 
+  
  RETURN vResult;
 END C_CALCULATE_CATSALARY
 
