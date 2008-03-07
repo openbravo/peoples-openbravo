@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+  * Contributions are Copyright (C) 1999-2008 Openbravo, S.L
   *************************************************************************
   * $Id: M_InOut_Post.sql,v 1.8 2003/09/05 04:58:06 jjanke Exp $
   ***
@@ -164,8 +164,8 @@
       END IF;
       -- Process Shipments
 
-   -- Set org lines like the headear
-     UPDATE M_INOUT
+   -- Set org lines like the header
+     UPDATE M_INOUTLINE
       SET AD_ORG_ID = (SELECT AD_ORG_ID FROM M_INOUT WHERE M_INOUT_ID = v_Record_ID)
     WHERE M_INOUT_ID = v_Record_ID;
 
