@@ -23,7 +23,7 @@
 vResult NUMBER;
 BEGIN
 
- SELECT c_salary_category_id 
+ SELECT c_salary_category_id INTO vResult
  FROM  c_bp_salcategory, (SELECT MAX(datefrom) AS datefrom  
                           from c_bp_salcategory   
                           where c_bpartner_id= pCBPartner 
