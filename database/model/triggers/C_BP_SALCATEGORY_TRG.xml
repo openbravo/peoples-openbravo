@@ -24,7 +24,7 @@ v_sales_cat_id NUMBER;
 v_cost NUMBER;
 v_costuom CHAR(1);
 v_count NUMBER;
---TYPE RECORD IS REFCURSOR;
+TYPE RECORD IS REF CURSOR;
 Cur_Sal_cat_cost RECORD;
 
 BEGIN
