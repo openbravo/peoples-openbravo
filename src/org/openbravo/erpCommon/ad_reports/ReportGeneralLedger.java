@@ -270,6 +270,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setData("reportC_ELEMENTVALUEFROM","liststructure",ReportGeneralLedgerData.selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom, strcAcctSchemaId));
     xmlDocument.setData("reportC_ELEMENTVALUETO","liststructure",ReportGeneralLedgerData.selectC_ElementValue_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom, strcAcctSchemaId));
     xmlDocument.setData("reportC_ACCTSCHEMA_ID","liststructure",ReportGeneralLedgerData.selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId));
+
+    xmlDocument.setParameter("accounFromArray", arrayDobleEntrada("arrAccountFrom", ReportGeneralLedgerData.selectC_ElementValue_ID_Double(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom)));
+    xmlDocument.setParameter("accounToArray", arrayDobleEntrada("arrAccountTo", ReportGeneralLedgerData.selectC_ElementValue_ID_Double(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom)));    
+ 
     
      if (log4j.isDebugEnabled()) log4j.debug("data.length: "+data.length);
     

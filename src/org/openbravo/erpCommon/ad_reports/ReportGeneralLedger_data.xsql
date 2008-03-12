@@ -28,7 +28,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-     SELECT AA.*, 0 AS TOTALDR, 0 AS TOTALCR FROM (
+     SELECT AA.*, 0 AS TOTALDR, 0 AS TOTALCR, '' AS PADRE FROM (
       SELECT VALUE, PARTNER, dateacct, NAME, 
       (CASE WHEN ABS(SUM(AMTACCTDR))>ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTDR)-SUM(AMTACCTCR) END) AS AMTACCTDR,
       (CASE WHEN ABS(SUM(AMTACCTDR))<=ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTCR)-SUM(AMTACCTDR) END) AS AMTACCTCR,
@@ -256,6 +256,24 @@
 <Parameter name="schema" optional="true" after="AND 1=1"><![CDATA[ AND (select max(c_element_id) from c_acctschema_element where c_acctschema_id = ? and ELEMENTTYPE = 'AC') = C_ElementValue.c_element_id ]]></Parameter>
   </SqlMethod>
 
+  <SqlMethod name="selectC_ElementValue_ID_Double" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT c_acctschema_element.c_acctschema_id AS PADRE, C_ElementValue.C_ElementValue_ID as id, ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.Value || ' - ' || C_ElementValue.Name) as name 
+      FROM C_ElementValue, c_acctschema_element
+      WHERE C_ElementValue.AD_Org_ID IN('1') AND C_ElementValue.AD_Client_ID IN('1')
+      AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = TO_NUMBER(?) )
+      and c_elementvalue.ELEMENTLEVEL='S'
+      AND 1=1
+      AND c_acctschema_element.ELEMENTTYPE = 'AC'
+      AND c_acctschema_element.c_element_id = C_ElementValue.c_element_id
+      ORDER BY PADRE ASC, name ASC 
+    ]]></Sql>    
+    <Parameter name="adOrgClient" type="replace" optional="true" after="C_ElementValue.AD_Org_ID IN(" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="C_ElementValue.AD_Client_ID IN(" text="'1'"/>
+    <Parameter name="cElementvalueId"/>
+  </SqlMethod>
+  
   <SqlMethod name="selectC_ACCTSCHEMA_ID" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[

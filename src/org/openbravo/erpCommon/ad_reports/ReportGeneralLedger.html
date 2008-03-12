@@ -64,8 +64,12 @@ function imprimir()
 }
 
 function CALLOUT_ELEMENTVALUE() {
-submitCommandForm('DEFAULT');
-return true;
+  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
+  var cmbAccountFrom = document.frmMain.inpcElementValueIdFrom;  
+  var cmbAccountTo = document.frmMain.inpcElementValueIdTo;  
+  cambiarListaCombo(cmbAccountFrom, arrAccountFrom, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
+  cambiarListaCombo(cmbAccountTo, arrAccountTo, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);  
+  return true;
 }
 
 function depurar(){
@@ -93,7 +97,18 @@ function onloadFunctions() {
 	new TypeAheadCombo("inpOrg");	
 	new TypeAheadCombo("inpcAcctSchemaId");
 }
+
 </SCRIPT>
+
+<script language="JavaScript" type="text/javascript" id="paramArrayAccountFrom">
+var arrAccountFrom=null;
+</script>
+
+<script language="JavaScript" type="text/javascript" id="paramArrayAccountTo">
+var arrAccountTo=null;
+</script>
+
+
 </HEAD>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
 <FORM method="POST" action="ReportGeneralLedger.html" name="frmMain" target="_self" id="form">
