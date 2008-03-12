@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -209,6 +209,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramAll0", strAll.equals("")?"0":"1");
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerIdAux));
 
+    xmlDocument.setParameter("accounFromArray", arrayDobleEntrada("arrAccountFrom", ReportTrialBalanceData.selectAccountDouble(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"),"")));
+    xmlDocument.setParameter("accounToArray", arrayDobleEntrada("arrAccountTo", ReportTrialBalanceData.selectAccountDouble(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"),"")));    
     if (log4j.isDebugEnabled()) log4j.debug("filling structure, data.length:"+new_data.length);
     if (discard[1].equals("sectionNoBP")) { 
       if (log4j.isDebugEnabled()) log4j.debug("without BPs");

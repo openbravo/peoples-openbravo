@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<TITLE>Generate Invoices manual</TITLE>
+<TITLE>Balance Sheet</TITLE>
     <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Client/DataGrid/DataGrid.css" id="paramCSS" />
@@ -84,6 +84,7 @@ function displayLogic() {
   }
 }
 
+
 function onloadFunctions() {
   new TypeAheadCombo("inpOrg");
   new TypeAheadCombo("inpLevel");
@@ -117,7 +118,26 @@ function depurar() {
   return true;
 }
 
+
+function refreshAccounts() {
+  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
+  var cmbAccountFrom = document.frmMain.inpAccountFrom;  
+  var cmbAccountTo = document.frmMain.inpAccountTo;  
+  cambiarListaCombo(cmbAccountFrom, arrAccountFrom, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
+  cambiarListaCombo(cmbAccountTo, arrAccountTo, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);  
+  return true;
+}
 </SCRIPT>
+
+<script language="JavaScript" type="text/javascript" id="paramArrayAccountFrom">
+var arrAccountFrom=null;
+</script>
+
+<script language="JavaScript" type="text/javascript" id="paramArrayAccountTo">
+var arrAccountTo=null;
+</script>
+
+
 </HEAD>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea(); updateMenuIcon('buttonMenu'); setFocusFirstControl(); onloadFunctions();" onresize="resizeArea();">
 <FORM method="POST" action="ReportTrialBalance.html" name="frmMain"  target="_self">
@@ -302,7 +322,7 @@ function depurar() {
             </TR>
             <TR>
               <TD class="TitleCell"> <SPAN class="LabelText">Accounting schema</SPAN></TD>
-              <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" required="true" onchange="submitCommandForm('DEFAULT',true);">
+              <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" required="true" onchange="refreshAccounts();">
                   <OPTION value=""> <DIV id="reportC_ACCTSCHEMA_ID"></DIV></OPTION>
                 </SELECT>
               </TD>

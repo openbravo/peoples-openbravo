@@ -31,7 +31,7 @@
       SELECT SUM(PARENT_ID) AS PARENT_ID, ID, NAME, ACCOUNT_ID, ELEMENTLEVEL, SUM(AMTACCTDR) AS AMTACCTDR, 
       SUM(AMTACCTCR) AS AMTACCTCR, SUM(SALDO_INICIAL) AS SALDO_INICIAL,0 AS TOTALAMTACCTDR, 0 AS TOTALAMTACCTCR,
       SUM(SALDO_INICIAL+AMTACCTDR-AMTACCTCR) AS SALDO_FINAL, TO_DATE(?) AS DATE_FROM, TO_DATE(?) AS DATE_TO, ? AS AD_ORG_ID,
-      '' AS BP
+      '' AS BP, '' AS PADRE
       FROM
       (SELECT AD_TREENODE.PARENT_ID, C_ELEMENTVALUE.C_ELEMENTVALUE_ID AS ID, C_ELEMENTVALUE.ELEMENTLEVEL, 
       C_ELEMENTVALUE.NAME AS NAME, C_ELEMENTVALUE.VALUE AS ACCOUNT_ID, 0 AS SALDO_INICIAL, 0 AS AMTACCTDR, 
@@ -167,6 +167,25 @@
   <Parameter name="cElementvalueId"/>
   <Parameter name="schema" optional="true" after="AND 1=1"><![CDATA[ AND (select max(c_element_id) from c_acctschema_element where c_acctschema_id = ? and ELEMENTTYPE = 'AC') = C_ElementValue.c_element_id ]]></Parameter>  
   </SqlMethod>
+  <SqlMethod name="selectAccountDouble" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+        SELECT c_acctschema_element.c_acctschema_id AS PADRE, C_ElementValue.value as id, 
+        ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.value || ' - ' || C_ElementValue.Name) as name 
+        FROM C_ElementValue, c_acctschema_element
+        WHERE C_ElementValue.AD_Org_ID IN('1') 
+        AND C_ElementValue.AD_Client_ID IN('1')  
+        AND C_ElementValue.IsSummary='N' 
+        AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = TO_NUMBER(?) ) 
+        AND 1=1
+        AND c_acctschema_element.ELEMENTTYPE = 'AC'
+        and c_acctschema_element.c_acctschema_id = C_ElementValue.c_element_id         
+        ORDER BY C_ElementValue.Value
+    ]]></Sql>
+  <Parameter name="adOrgClient" type="replace" optional="true" after="C_ElementValue.AD_Org_ID IN(" text="'1'"/>
+  <Parameter name="adUserClient" type="replace" optional="true" after="C_ElementValue.AD_Client_ID IN(" text="'1'"/>
+  <Parameter name="cElementvalueId"/>  
+  </SqlMethod>  
 
   <SqlMethod name="selectAccountingName" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
