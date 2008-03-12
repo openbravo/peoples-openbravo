@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,8 +31,8 @@
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   
-	<PARAMETER id="paramLanguage" name="language" default=""/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+    <PARAMETER id="paramLanguage" name="language" default=""/>
+    <PARAMETER id="paramDirection" name="direction" default=""/>
   <PARAMETER id="paramHelp" name="help" default=""/>
   <PARAMETER id="paramAccountingrptElementId" name="accounting" default=""/>
   <PARAMETER id="paramOrgId" name="org" default=""/>
@@ -41,6 +41,7 @@
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
 
+  <PARAMETER id="paramArrayAccount" name="accounArray"/>
 
     <SUBREPORT id="reportAD_ACCOUNTINGRPT_ELEMENT" name="reportAD_ACCOUNTINGRPT_ELEMENT" report="org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramAccountingrptElementId"/>

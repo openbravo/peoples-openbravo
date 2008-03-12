@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,8 @@
           AD_TREENODE.NODE_ID, COALESCE(CASE       
           AR.ISSUMMARY WHEN 'N' THEN      sum(amount) ELSE 0 END,0) AS TOTAL, AR.FILTEREDBYORGANIZATION,       
           AR.TEMPORARYFILTERTYPE, '' AS VALUE, ? AS LEVEL_ACCOUNT, (CASE TO_NUMBER(?) WHEN 0 THEN       
-          'SinBordes' ELSE 'SinBordesSinFondo' END) AS CLASS_ACCOUNT, 'TEXT-INDENT: '||TO_CHAR(TO_NUMBER(?)*10)||'pt' AS CLASS_STYLE      
+          'SinBordes' ELSE 'SinBordesSinFondo' END) AS CLASS_ACCOUNT, 'TEXT-INDENT: '||TO_CHAR(TO_NUMBER(?)*10)||'pt' AS CLASS_STYLE,
+          '' AS PADRE      
           FROM AD_ACCOUNTINGRPT_ELEMENT AR left join (SELECT AMOUNT, C_ACCTSCHEMA_ID
           FROM FACT_ACCT, FACT_ACCT_CFS
           WHERE FACT_ACCT.AD_CLIENT_ID IN ('1')      
@@ -212,7 +213,6 @@
     <Parameter name="adAccountingrptElementId"/>
   </SqlMethod>
 
-
   <SqlMethod name="selectAD_Accountingrpt_Element_ID" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -230,6 +230,24 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adAccountingrptElementId"/>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCTSCHEMA_ID = TO_NUMBER(?)]]></Parameter>
+  </SqlMethod>
+  
+  <SqlMethod name="selectAD_Accountingrpt_Element_ID_Double" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT C_ACCTSCHEMA_ID AS PADRE, AD_ACCOUNTINGRPT_ELEMENT_ID AS ID, NAME, FILTEREDBYORGANIZATION, TEMPORARYFILTERTYPE
+      FROM AD_ACCOUNTINGRPT_ELEMENT
+      WHERE AD_ORG_ID IN ('1')
+      AND AD_CLIENT_ID IN ('1')
+      AND ISREPORT='Y'
+      AND (isActive = 'Y' OR AD_ACCOUNTINGRPT_ELEMENT_ID = TO_NUMBER(?) )
+      AND 1=1
+      ]]>
+    </Sql>
+    <Parameter name="adOrgClient" type="replace" optional="true" after="WHERE AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adAccountingrptElementId"/>
   </SqlMethod>
 
   <SqlMethod name="selectType" type="preparedStatement" return="string">

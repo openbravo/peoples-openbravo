@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -103,6 +103,9 @@ void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, Stri
       xmlDocument.setParameter("org", strOrg);
       xmlDocument.setParameter("period", strPeriod);
       xmlDocument.setParameter("array", strArray);
+
+      xmlDocument.setParameter("accounArray", arrayDobleEntrada("arrAccount", ReportCashFlowData.selectAD_Accountingrpt_Element_ID_Double(this, Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), "")));    
+   
 
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), 0);
