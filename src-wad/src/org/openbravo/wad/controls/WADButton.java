@@ -19,17 +19,22 @@
 package org.openbravo.wad.controls;
 
 import java.util.*;
+
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADButton extends WADControl {
-
+  private String shortcut="";
   public WADButton() {
   }
 
   public WADButton(Properties prop) {
     setInfo(prop);
     initialize();
+  }
+  
+  public void setShortcuts(HashMap<String, String> sc){
+    setData("nameButton", getNameButton(sc));
   }
 
   public void initialize() {
@@ -40,19 +45,49 @@ public class WADButton extends WADControl {
     setValidation("");
     setCalloutJS();
   }
+  
+  private String getNameButton(HashMap<String, String> sc){
+    String name = getData("Name");
+    String retVal = "";
+    String buttonId = getData("ColumnName")+"_linkBTN";
+    
+    if (!(getData("IsDisplayed").equals("Y") && !getData("AD_Reference_Value_ID").equals("") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus"))) {
+      int i = 0;
+      while ((i<name.length()) && sc.containsKey(name.substring(i, i+1).toUpperCase())) { 
+        retVal += name.substring(i, i+1);
+        i++;
+      }
+      if (i==name.length()) {
+        i = 1;
+        while (i<=10 && sc.containsKey(new Integer(i).toString())) i++;
+        if (i<10) {
+          retVal +="<span>(<u>"+i+"</u>)</span>";
+          sc.put(new Integer(i).toString(), "executeWindowButton('"+buttonId+"');");
+          shortcut=new Integer(i).toString();
+        }
+      } else {
+        sc.put(name.substring(i,i+1).toUpperCase(), "executeWindowButton('"+buttonId+"');");
+        shortcut=name.substring(i,i+1).toUpperCase();
+        retVal += "<u>"+name.substring(i,i+1)+"</u>"+name.substring(i+1);
+      }
+    } /*else {
+      int i = 1;
+      while (i<=10 && sc.containsKey(new Integer(i).toString())) i++;
+      retVal=name;
+      if (i<10) {
+        retVal +="<span>(<u>"+i+"</u>)</span>";
+        sc.put(new Integer(i).toString(), "executeWindowButton('"+buttonId+"');"); 
+      }
+    }*/
+      
+    return retVal;
+  }
 
   public String getType() {
     return "Button_CenterAlign";
   }
 
-  public String editMode() {
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADButton").createXmlDocument();
-
-    xmlDocument.setParameter("columnName", getData("ColumnName"));
-    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-    xmlDocument.setParameter("name", getData("Name"));
-
-    xmlDocument.setParameter("callout", getOnChangeCode());
+  private StringBuffer getAction(){
     StringBuffer text = new StringBuffer();
     if (getData("MappingName").equals("")) {
       text.append("openServletNewWindow('BUTTON").append(FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
@@ -66,9 +101,20 @@ public class WADButton extends WADControl {
       text.append(getData("MappingName")).append("', 'BUTTON', '").append(getData("AD_Process_ID")).append("', true");
       text.append(",600, 900);");
     }
-    /*if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N")) {
-      xmlDocument.setParameter("action", "");
-    } else */xmlDocument.setParameter("action", text.toString());
+    return text;
+  }
+  
+  public String editMode() {
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADButton").createXmlDocument();
+
+    xmlDocument.setParameter("columnName", getData("ColumnName"));
+    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+    xmlDocument.setParameter("nameHTML", getData("nameButton"));
+    xmlDocument.setParameter("name", getData("Name"));
+
+    xmlDocument.setParameter("callout", getOnChangeCode());
+    
+    xmlDocument.setParameter("action", getAction().toString());
     return replaceHTML(xmlDocument.print());
   }
 
@@ -77,25 +123,13 @@ public class WADButton extends WADControl {
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+    xmlDocument.setParameter("nameHTML", getData("nameButton"));
     xmlDocument.setParameter("name", getData("Name"));
+    
 
     xmlDocument.setParameter("callout", getOnChangeCode());
-    StringBuffer text = new StringBuffer();
-    if (getData("MappingName").equals("")) {
-      text.append("openServletNewWindow('BUTTON").append(FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
-      text.append("', false, '").append(getData("TabName")).append("_Edition.html', 'BUTTON', null, true");
-      if (getData("ColumnName").equalsIgnoreCase("CreateFrom")) text.append(",600, 900");
-      else text.append(", 600, 900");
-      text.append(");");
-    } else {
-      text.append("openServletNewWindow('DEFAULT', false, '..");
-      if (!getData("MappingName").startsWith("/")) text.append('/');
-      text.append(getData("MappingName")).append("', 'BUTTON', '").append(getData("AD_Process_ID")).append("', true");
-      text.append(",600, 900);");
-    }
-    /*if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")) {
-      xmlDocument.setParameter("action", "");
-    } else */xmlDocument.setParameter("action", text.toString());
+    
+    xmlDocument.setParameter("action", getAction().toString());
     return replaceHTML(xmlDocument.print());
   }
 
@@ -111,6 +145,9 @@ public class WADButton extends WADControl {
         text.append("_BTN\" replaceCharacters=\"htmlPreformated\"/>");
       }
     } else {
+      if (getData("IsDisplayed").equals("Y") && !getData("AD_Reference_Value_ID").equals("") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
+        text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("_BTNname\" name=\"").append(getData("ColumnName")).append("_BTNname\" default=\"\"/>\n");
+      }
       text.append("<FIELD id=\"").append(getData("ColumnName"));
       text.append("\" attribute=\"value\">").append(getData("ColumnName")).append("</FIELD>");
       if (getData("IsDisplayed").equals("Y") && !getData("AD_Reference_Value_ID").equals("") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
@@ -122,6 +159,9 @@ public class WADButton extends WADControl {
   }
 
   public String toJava() {
-    return "";
+    if (getData("IsDisplayed").equals("Y") && !getData("AD_Reference_Value_ID").equals("") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus"))
+      return "xmlDocument.setParameter(\""+getData("ColumnName")+"_BTNname\", getButtonName(vars, \""+getData("AD_Reference_Value_ID")+"\", (dataField==null?data[0].getField(\""+getData("ColumnNameInp")+"\"):dataField.getField(\""+getData("ColumnNameInp")+"\")), \""+getData("ColumnName")+"_linkBTN\"));";
+    else
+      return "";
   }
 }

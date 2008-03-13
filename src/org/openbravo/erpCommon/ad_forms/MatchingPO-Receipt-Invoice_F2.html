@@ -23,7 +23,9 @@
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" type="text/javascript">
 function cargarDatos() {
 	var uno = parent.uno;
@@ -63,8 +65,27 @@ function cargarDatos() {
 	return true;
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="setFocusFirstControl();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <FORM name="frmMain" method="POST" action="MatchingPO-Receipt-Invoice_F4.html" target="cuatro">
   <INPUT type="hidden" name="Command">
   <INPUT type="hidden" name="inpType">
@@ -88,7 +109,7 @@ function cargarDatos() {
     </TR>
     <DIV id="sectionDetail"> 
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpClave" value="xx" onclick="cargarDatos();return true;"  id="fieldClave"> 
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpClave" value="xx" onclick="cargarDatos();return true;"  id="fieldClave"></INPUT></SPAN>
           <INPUT type="hidden" name="inpTotalxx" value="xx" id="fieldTotalImporte"> 
           <INPUT type="hidden" name="inpMatchedxx" value="xx" id="fieldMatchedImporte">
         </TD>
@@ -103,7 +124,7 @@ function cargarDatos() {
     </DIV>
     <DIV class="discard"> 
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization" >xx12345</TD>
         <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
@@ -114,7 +135,7 @@ function cargarDatos() {
         <TD width="9%" id="fieldSRLine" >xx45</TD>
       </TR>
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization" >xx12345</TD>
         <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
@@ -125,7 +146,7 @@ function cargarDatos() {
         <TD width="9%" id="fieldSRLine" >xx45</TD>
       </TR>
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization" >xx12345</TD>
         <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
@@ -136,7 +157,7 @@ function cargarDatos() {
         <TD width="9%" id="fieldSRLine" >xx45</TD>
       </TR>
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization" >xx12345</TD>
         <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
@@ -147,7 +168,7 @@ function cargarDatos() {
         <TD width="9%" id="fieldSRLine" >xx45</TD>
       </TR>
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization" >xx12345</TD>
         <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
@@ -158,7 +179,7 @@ function cargarDatos() {
         <TD width="9%" id="fieldSRLine" >xx45</TD>
       </TR>
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization" >xx12345</TD>
         <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
@@ -169,7 +190,7 @@ function cargarDatos() {
         <TD width="9%" id="fieldSRLine" >xx45</TD>
       </TR>
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization" >xx12345</TD>
         <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
@@ -180,7 +201,7 @@ function cargarDatos() {
         <TD width="9%" id="fieldSRLine" >xx45</TD>
       </TR>
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization" >xx12345</TD>
         <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
@@ -191,7 +212,7 @@ function cargarDatos() {
         <TD width="9%" id="fieldSRLine" >xx45</TD>
       </TR>
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization" >xx12345</TD>
         <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
@@ -202,7 +223,7 @@ function cargarDatos() {
         <TD width="9%" id="fieldSRLine" >xx45</TD>
       </TR>
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization" >xx12345</TD>
         <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>
@@ -213,7 +234,7 @@ function cargarDatos() {
         <TD width="9%" id="fieldSRLine" >xx45</TD>
       </TR>
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId">
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization" >xx12345</TD>
         <TD width="10%" id="fieldLocator" >xx15/03/2490&nbsp;</TD>

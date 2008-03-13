@@ -43,8 +43,6 @@
   <PARAMETER id="paramDirection" name="direction" default=""/>
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
-  <PARAMETER id="keyMap" name="keyMap" default=""/>
-
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
 

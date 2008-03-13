@@ -26,7 +26,9 @@
   <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO="en_US";</SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
   <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
-  <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+  <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
   <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
@@ -38,7 +40,6 @@
   <script language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-  <script language="JavaScript" type="text/javascript" id="keyMap"></script>
   <script type="text/javascript">
     dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
   </script>
@@ -103,8 +104,28 @@ function enableLocalShortcuts() {
       enableLocalShortcuts();
     }
   </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client0', 'frameButton'),
+		  new windowTableId('client', 'frameButton'),
+		  new windowTableId('tdbottomButtons', 'frameButton2')
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="setFocusFirstControl();onloadFunctions();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <FORM id="form" method="POST" action="../ad_actionButton/CreateFrom.html" name="frmMain">
 <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
@@ -232,7 +253,7 @@ src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" bord
           </TBODY>
         </table>
         <!-- MessageBox END -->
-        <TABLE cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector">
+        <TABLE cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector" id="client0">
           <TR>
             <TD class="TableEdition_OneCell_width"></TD>
             <TD class="TableEdition_OneCell_width"></TD>
@@ -272,7 +293,7 @@ src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" bord
                     <INPUT type="text" class="dojoValidateValid TextBox_btn_TwoCells_width" maxlength="22" name="inpBpartnerId_DES" value=""  id="inpBpartnerId_DES"></INPUT>
                   </td>
                 <td class="TextBox_btn_OneCell">
-                  <a onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'WindowID', 'xx');return false;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onfocus="this.className='FieldButtonLink_hover'; window.status='Business Partner '; return true;" href="#" class="FieldButtonLink">
+                  <a onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'WindowID', 'xx');return false;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onblur="window.status=''; return true;" onfocus="setWindowElementFocus(this); window.status='Business Partner '; return true;" href="#" class="FieldButtonLink">
                     <table id="C_Bpartner_IDlinkBusinessPartner" onmouseout="this.className='FieldButton'; window.status=''; return true;" onmouseover="this.className='FieldButton_hover'; window.status='Business Partner '; return true;" onmouseup="this.className='FieldButton'; return true;" onmousedown="this.className='FieldButton_active'; return true;" class="FieldButton">
                       <tbody>
                         <tr>
@@ -288,7 +309,7 @@ src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" bord
               </TABLE>
             </TD>
             <TD></TD>
-            <TD class="TitleCell"> <SPAN class="LabelText">Payment Rule</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Payment Rule</SPAN></TD>
             <TD class="Combo_ContentCell">
               <SELECT id="inppaymentrule" class="Combo Combo_OneCell_width" name="inppaymentrule">
                 <OPTION value=""></OPTION><DIV id="reportPaymentRule"></DIV>
@@ -297,7 +318,7 @@ src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" bord
           </tr>
 
           <tr>
-            <TD class="TitleCell"> <SPAN class="LabelText">Receipt type</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Receipt type</SPAN></TD>
             <TD class="Combo_ContentCell">
               <SELECT id="inpisreceipt" class="Combo Combo_OneCell_width" name="inpisreceipt">
                 <OPTION value="">All</OPTION>
@@ -305,7 +326,7 @@ src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" bord
                 <OPTION value="Y" id="fieldIsReceiptCobro">Collection</OPTION>
               </SELECT>
             </TD>
-            <TD class="TitleCell"> <SPAN class="LabelText">From Date planned</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">From Date planned</SPAN></TD>
             <TD class="TextBox_btn_ContentCell">
               <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                 <TR>
@@ -326,7 +347,7 @@ border="0"></IMG>
                 </TR>
               </TABLE>
             </TD>
-            <TD class="TitleCell"> <SPAN class="LabelText">To Date planned</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">To Date planned</SPAN></TD>
             <TD class="TextBox_btn_ContentCell">
               <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                 <TR>
@@ -422,16 +443,16 @@ id="buttonCalc"></IMG>
           </tr>
 
           <tr>
-            <TD class="TitleCell"> <SPAN class="LabelText">Organization</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>
             <TD class="Combo_ContentCell">
               <SELECT name="inpadOrgId" class="Combo Combo_OneCell_width" id="inpadOrgId">
                 <OPTION value=""></OPTION>
                 <DIV id="reportAD_Org_ID"></DIV>
               </SELECT>
             </TD>
-            <TD class="TitleCell"> <SPAN class="LabelText">Autocalculated</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Autocalculated</SPAN></TD>
             <TD class="Radio_Check_ContentCell">
-              <INPUT type="checkbox" name="inpAutoClaculated" value="" id="paramAutoCalculated"></INPUT></TD>
+              <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpAutoClaculated" value="" id="paramAutoCalculated"></INPUT></SPAN></TD>
             <TD>
           </tr>
 
@@ -443,8 +464,8 @@ id="buttonCalc"></IMG>
             <TD></TD>
             <TD class="Button_CenterAlign_ContentCell">
               <div>
-                <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Results'; return true;" onblur="this.className='ButtonLink'; 
-window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" 
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Results'; return true;" onblur="
+window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" 
 onclick="submitCommandForm('FIND_SETTLEMENT', true);return false;">
             <table class="Button" onmouseout="this.className='Button';window.status='';return true;" 
 onmouseover="this.className='Button_hover';window.status='Results';return true;" onmousedown="this.className='Button_active';return true;" 
@@ -464,10 +485,10 @@ src="../../../../../web/images/blank.gif" border=0 id="buttonResults"/></td>
         </TABLE>
 
 
-        <div style="overflow: auto; width:895px; height: 280px;">
+        <div style="overflow: auto; width:895px; height: 280px;" id="client">
           <TABLE cellspacing="0" cellpadding="0" class="DataGrid_Header_Table DataGrid_Body_Table">
             <TR class="Popup_Client_Selector_DataGrid_HeaderRow"> 
-              <TD width="27" class="DataGrid_Body_LineNoCell"><INPUT type="checkbox" name="inpTodos" onclick="cargarDatos(this);return true;" value="Y" id="fieldMarcarTodos"></INPUT></TD>
+              <TD width="27" class="DataGrid_Body_LineNoCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpTodos" onclick="cargarDatos(this);return true;" value="Y" id="fieldMarcarTodos"></INPUT></SPAN></TD>
               <TH width="175" class="DataGrid_Header_Cell">Business Partner</TH>
               <TH width="109" class="DataGrid_Header_Cell">Organization</TH>
               <TH width="136" class="DataGrid_Header_Cell">Invoice</TH>
@@ -480,7 +501,7 @@ src="../../../../../web/images/blank.gif" border=0 id="buttonResults"/></td>
             </TR>
             <DIV id="sectionDetail">
               <TR class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="inpRecord10000003"> 
-                <TD class="DataGrid_Body_LineNoCell"><INPUT type="checkbox" name="inpcDebtPaymentId" value="" id="fieldCDebtPaymentId" onclick="actualizarDatos(this);return true;"><INPUT type="hidden" name="inpPricexx" value="" id="fieldPrice"></TD>
+                <TD class="DataGrid_Body_LineNoCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpcDebtPaymentId" value="" id="fieldCDebtPaymentId" onclick="actualizarDatos(this);return true;"></SPAN><INPUT type="hidden" name="inpPricexx" value="" id="fieldPrice"></TD>
                 <TD class="DataGrid_Body_Cell" id="fieldBpartner">xxQuantity</TD>
                 <TD class="DataGrid_Body_Cell" id="fieldOrg">xx</TD>
                 <TD class="DataGrid_Body_Cell" id="fieldInvoice">xxUOM</TD>
@@ -489,7 +510,7 @@ src="../../../../../web/images/blank.gif" border=0 id="buttonResults"/></td>
                 <TD class="DataGrid_Body_Cell" id="fieldAmount">xx</TD>
                 <TD class="DataGrid_Body_Cell" id="fieldCurrency">xx</TD>
                 <TD class="DataGrid_Body_Cell"><INPUT name="inpwriteoffxx" type="text" id="fieldWriteOff" size="8" value="0" onkeyup="auto_completar_numero(this, true, true);return true;"></INPUT></TD>
-                <TD class="DataGrid_Body_Cell"><INPUT type="checkbox" name="inpispaidxx" value="Y" id="fieldIsPaid"></INPUT></TD></TR></DIV></TABLE>
+                <TD class="DataGrid_Body_Cell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpispaidxx" value="Y" id="fieldIsPaid"></INPUT></SPAN></TD></TR></DIV></TABLE>
               </TR>
             </DIV>
           </TABLE>

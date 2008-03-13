@@ -314,7 +314,7 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("<td class=\"FieldButton_ContentCell\">");
         strHtml.append("<a href=\"#\" class=\"FieldButtonLink\" onclick=\"showCalendar('frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("', ");
         strHtml.append("document.frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(".value, false, '").append(FormatUtilities.replace(vars.getSessionValue("#AD_SqlDateFormat"))).append("');");
-        strHtml.append("return false;\" onfocus=\"this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;\" onblur=\"this.className='FieldButtonLink'; window.status=''; return true;\" onkeypress=\"this.className='FieldButtonLink_active'; return true;\" onkeyup=\"this.className='FieldButtonLink_hover'; return true;\">\n");
+        strHtml.append("return false;\" onfocus=\"setWindowElementFocus(this); window.status='Calendar'; return true;\" onblur=\"window.status=''; return true;\" onkeypress=\"this.className='FieldButtonLink_active'; return true;\" onkeyup=\"this.className='FieldButtonLink_focus'; return true;\">\n");
         strHtml.append("<table class=\"FieldButton\" onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Show calendar';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n");
         strHtml.append("<tr>\n");
         strHtml.append("<td class=\"FieldButton_bg\">");
@@ -329,9 +329,9 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("</td>\n");
       } else if (fields[i].reference.equals("20")) { //YesNo
         strHtml.append("<TD class=\"Radio_Check_ContentCell\">\n");
-        strHtml.append("<input type=\"checkbox\" value=\"Y\"  name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("\" ");
+        strHtml.append("<span class=\"Checkbox_container_NOT_Focused\"><input type=\"checkbox\" value=\"Y\"  name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("\" ");
         if (fields[i].value.equals("Y")) strHtml.append("checked");
-        strHtml.append(">\n");
+        strHtml.append("></input></span>\n");
       } else if (fields[i].reference.equals("30") || fields[i].reference.equals("21") || fields[i].reference.equals("31") || fields[i].reference.equals("35") || fields[i].reference.equals("25") || fields[i].reference.equals("800011")) { //Search
         strHtml.append("<td class=\"TextBox_btn_ContentCell\" colspan=\"3\">\n");
         strHtml.append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\">\n");
@@ -400,16 +400,19 @@ public class Buscador extends HttpSecureAppServlet {
         else if (Utility.isIntegerNumber(fields[i].reference)) strHtml.append("onkeydown=\"validateNumberBox(this.id);auto_completar_numero(this, false, false);return true;\" ");
         strHtml.append(">");
         if (Utility.isDecimalNumber(fields[i].reference) || Utility.isIntegerNumber(fields[i].reference)) {
-          strHtml.append("<td class=\"FieldButton_ContentCell\">\n<TABLE class=\"FieldButton\" onclick=\"calculator('frmMain.");
+          strHtml.append("<td class=\"FieldButton_ContentCell\">\n");
+          strHtml.append("<a class=\"FieldButtonLink\" href=\"#\" onfocus=\"setWindowElementFocus(this); window.status='Calculator'; return true;\" onblur=\"window.status=''; return true;\" onkeypress=\"this.className='FieldButtonLink_active'; return true;\" onkeyup=\"this.className='FieldButtonLink_focus'; return true;\" ");
+          strHtml.append("onclick=\"calculator('frmMain.");
           strHtml.append("inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("', "); 
-          strHtml.append("document.frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(".value, false);return false;\" ");
+          strHtml.append("document.frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(".value, false);return false;\">\n");
+          strHtml.append("<table class=\"FieldButton\" ");
           strHtml.append("onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Show calculator';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">");
           strHtml.append("<tr>\n<td class=\"FieldButton_bg\">\n");
-          strHtml.append("<IMG alt=\"Calculator\" class=\"FieldButton_Icon FieldButton_Icon_Calc\" title=\"Calculator\" src=\"").append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></IMG>\n");
-          strHtml.append("</td>\n</tr>\n</table>\n</td>\n</tr>\n</table>\n");
-          strHtml.append("<SPAN class=\"invalid\" style=\"display: none;\">* The value entered is not valid.</SPAN>");
-          strHtml.append("<SPAN class=\"missing\" style=\"display: none;\">* This value is required.</SPAN>");
-          strHtml.append("<SPAN class=\"range\" style=\"display: none;\">* This value is out of range.</SPAN>");
+          strHtml.append("<img alt=\"Calculator\" class=\"FieldButton_Icon FieldButton_Icon_Calc\" title=\"Calculator\" src=\"").append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></img>\n");
+          strHtml.append("</td>\n</tr>\n</table>\n</td>\n</tr>\n</table>\n</a>\n");
+          strHtml.append("<span class=\"invalid\" style=\"display: none;\">* The value entered is not valid.</span>");
+          strHtml.append("<span class=\"missing\" style=\"display: none;\">* This value is required.</span>");
+          strHtml.append("<span class=\"range\" style=\"display: none;\">* This value is out of range.</span>");
           strHtml.append("</td>");
         }
       } else if ((Integer.valueOf(fields[i].fieldlength).intValue() > MAX_TEXTBOX_LENGTH)) { //Memo // REplace with reference // 1-2-3 cells doing < MAX_TEXTBOX_LENGTH/4 /2 > /2
@@ -486,7 +489,7 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("<td class=\"FieldButton_ContentCell\">");
           strHtml.append("<a href=\"#\" class=\"FieldButtonLink\" onclick=\"showCalendar('frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f', ");
           strHtml.append("document.frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f.value, false, '").append(FormatUtilities.replace(vars.getSessionValue("#AD_SqlDateFormat"))).append("');");
-          strHtml.append("return false;\" onfocus=\"this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;\" onblur=\"this.className='FieldButtonLink'; window.status=''; return true;\" onkeypress=\"this.className='FieldButtonLink_active'; return true;\" onkeyup=\"this.className='FieldButtonLink_hover'; return true;\">\n");
+          strHtml.append("return false;\" onfocus=\"setWindowElementFocus(this); window.status='Calendar'; return true;\" onblur=\"window.status=''; return true;\" onkeypress=\"this.className='FieldButtonLink_active'; return true;\" onkeyup=\"this.className='FieldButtonLink_focus'; return true;\">\n");
           strHtml.append("<table class=\"FieldButton\" onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Show calendar';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n");
           strHtml.append("<tr>\n");
           strHtml.append("<td class=\"FieldButton_bg\">");

@@ -32,6 +32,8 @@ import org.openbravo.wad.controls.*;
 import java.io.*;
 import javax.servlet.*;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Enumeration;
@@ -1393,6 +1395,7 @@ public class Wad extends DefaultHandler {
     String hasTree = TableLinkData.hasTree(pool, strTab);
     boolean noPInstance = (ActionButtonRelationData.select(pool, strTab).length == 0);
     boolean noActionButton = FieldsData.hasActionButton(pool, strTab).equals("0");
+    HashMap<String, String> shortcuts = new HashMap<String, String>();
     StringBuffer dl = new StringBuffer();
     StringBuffer readOnlyLogic = new StringBuffer();
     //Auxiliary fields of the window
@@ -1446,7 +1449,7 @@ public class Wad extends DefaultHandler {
       }
     }
     
-    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", ""};
+    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", "", "", ""};
     if (parentsFieldsData==null || parentsFieldsData.length == 0) {
       discard[0] = "parent";  // remove the parent tags
       hasParentsFields=false;
@@ -1480,6 +1483,9 @@ public class Wad extends DefaultHandler {
     if (!editReference.equals("")) discard[21]="NothasReference";
     if ((noPInstance)&&(noActionButton)) discard[22]="hasAdPInstance";
     if (noActionButton) discard[23]="hasAdActionButton";
+    if (FieldsData.hasButtonList(pool, strTab).equals("0")) discard[25]="buttonList";
+    if (FieldsData.hasButtonFixed(pool, strTab).equals("0")) discard[26]="buttonFixed";
+    
     
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard).createXmlDocument();
     
@@ -1850,7 +1856,21 @@ public class Wad extends DefaultHandler {
         controlsJavaSource.append("    try {\n      ComboTableData comboTableData = null;\n");
       }
       controlsJavaSource.append(auxControl.toJava()).append((auxControl.toJava().equals("")?"":"\n"));
+      
+      if ((auxControl instanceof WADButton) && (auxControl.getData("IsDisplayed").equals("Y"))) {
+        ((WADButton)auxControl).setShortcuts(shortcuts);
+      } 
     }
+    
+    //Shorcuts for buttons
+    FieldsData[] shortcutsAux = new FieldsData[shortcuts.size()];
+    Iterator<String> ik = shortcuts.keySet().iterator();
+    for (int i=0; i<shortcuts.size();i++) {
+      shortcutsAux[i] = new FieldsData();
+      if (ik.hasNext()) shortcutsAux[i].name = ik.next(); 
+    }
+    xmlDocument.setData("structure37", shortcutsAux);
+    
     if (needsComboTableData) controlsJavaSource.append("    } catch (Exception ex) {\n      ex.printStackTrace();\n      throw new ServletException(ex);\n    }\n");
     xmlDocument.setParameter("controlsJavaCode", controlsJavaSource.toString());
     xmlDocument.setParameter("defaultValues", strDefaultValues.toString());
@@ -2803,6 +2823,9 @@ public class Wad extends DefaultHandler {
    */
   private void processTabHtmlEdition(FieldProvider[] efd, FieldProvider[] efdauxiliar, File fileDir, String strTab, String tabName, String keyColumnName, String tabNamePresentation, String windowId, FieldsData[] parentsFieldsData, Vector<Object> vecFields, boolean isreadonly, String isSOTrx, String strTable, double pixelSize, String strLanguage) throws ServletException, IOException {
     if (log4j.isDebugEnabled()) log4j.debug("Procesig edition html" + (strLanguage.equals("")?"":" translated") + ": " + strTab + ", " + tabName);
+    
+    HashMap<String, String> shortcuts = new HashMap<String, String>();
+    
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/Template_Edition").createXmlDocument();
     xmlDocument.setParameter("tab", tabNamePresentation);
     xmlDocument.setParameter("form", tabName+ "_Relation.html");
@@ -2871,6 +2894,7 @@ public class Wad extends DefaultHandler {
       WADControl auxControl = null;
       try {
         auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, strLanguage, xmlEngine, (WadUtility.isInVector(vecDisplayLogic, efd[i].getField("columnname"))), WadUtility.isInVector(vecReloads, efd[i].getField("columnname")), WadUtility.isInVector(vecReadOnlyLogic, efd[i].getField("columnname")));
+        
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
@@ -2917,6 +2941,9 @@ public class Wad extends DefaultHandler {
       if (auxControl.getData("IsDisplayed").equals("N")) {
         htmlHidden.append(auxControl.toString()).append("\n");
       } else {
+        if (auxControl instanceof WADButton){
+          ((WADButton)auxControl).setShortcuts(shortcuts);
+        }
         if (auxControl.getData("IsSameLine").equals("Y")) {
           columnType = COLUMN_2_OF_2;
           html.append("<td");
@@ -3035,6 +3062,8 @@ public class Wad extends DefaultHandler {
       String _name = (String)e.nextElement();
       script.append(javaScriptFunctions.getProperty(_name)).append("\n");
     }
+    
+    String buttonShorcuts =  WadUtility.getbuttonShortcuts(shortcuts);
     script.append("\nfunction reloadComboReloads").append(strTab).append("(changedField) {\n");
     script.append("  submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloads' + document.frmMain.inpTabId.value + '.html', 'frameOculto', null, null, true);\n");
     script.append("  return true;\n");
@@ -3061,6 +3090,7 @@ public class Wad extends DefaultHandler {
     script.append(onload);
     script.append("  displayLogic();\n");
     script.append("  readOnlyLogic();\n");
+    script.append(buttonShorcuts);
 //    script.append("  setInputValue(frm.inpLastFieldChanged, \"\");\n");
     script.append("  return true;\n");
     script.append("}\n");

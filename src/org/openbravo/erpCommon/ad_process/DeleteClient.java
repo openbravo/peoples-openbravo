@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.ad_process;
 
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.erpCommon.utility.KeyMap;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -115,12 +114,6 @@ public class DeleteClient extends HttpSecureAppServlet {
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);
     xmlDocument.setParameter("Client", strClient);
-    try {
-      KeyMap key = new KeyMap(this, vars, "DeleteClient.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_process.DeleteClient");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());

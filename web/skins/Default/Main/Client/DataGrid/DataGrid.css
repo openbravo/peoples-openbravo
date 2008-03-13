@@ -67,7 +67,37 @@ table.DataGrid_Header_Table {
   vertical-align: middle !important;
 }
 
+table.DataGrid_Header_Table_focus {
+  border-top: #505050 4px solid; 
+  border-right: #505050 4px solid; 
+  border-left: #505050 4px solid; 
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 0px; 
+  padding: 0px;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  text-indent: 2pt; 
+  z-index: 100;
+  vertical-align: middle !important;
+}
+
 table.DataGrid_Body_Table {
+  border-bottom: #505050 4px solid; 
+  border-right: #505050 4px solid; 
+  border-left: #505050 4px solid; 
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 0px; 
+  padding: 0px;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size : 8pt;
+  text-indent: 2pt; 
+  z-index : 100;
+  vertical-align: middle !important;
+}
+
+table.DataGrid_Body_Table_focus {
   border-bottom: #505050 4px solid; 
   border-right: #505050 4px solid; 
   border-left: #505050 4px solid; 

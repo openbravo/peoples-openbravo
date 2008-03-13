@@ -34,7 +34,9 @@
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
         var LNG_POR_DEFECTO = "en_US";
       </script>
+      <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
@@ -47,7 +49,6 @@
       <script language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-      <script language="JavaScript" type="text/javascript" id="keyMap"></script>
       <script type="text/javascript">
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
@@ -101,14 +102,36 @@ function onloadFunctions() {
   new TypeAheadCombo("inpSalesrepId2");
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+		resizeArea();
+		updateMenuIcon('buttonMenu');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
-    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
+    <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <TABLE width="100%" border="0" cellspacing="1" cellpadding="0" >
 <TR>
-          <TD  width="2%"> <A href="#" onclick="menuShowHide();return false;" onmouseover="window.status='Menu';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
+          <TD width="2%"> <A href="#" onclick="menuShowHide();return false;" onmouseover="window.status='Menu';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
             <img src="../../../../../web/images/Menu.jpg"  alt="Menu" title="Menu" border="0" id="buttonMenu"></IMG></A></TD>
-          <TD  width="1%">&nbsp;</TD>
-          <TD  width="2%"> <A href="#" onclick="submitCommandForm('DEFAULT',false,null,null,'frameAplicacion');return false;" onmouseover="window.status='Update';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
+          <TD width="1%">&nbsp;</TD>
+          <TD width="2%"> <A href="#" onclick="submitCommandForm('DEFAULT',false,null,null,'frameAplicacion');return false;" onmouseover="window.status='Update';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
             <img src="../../../../../web/images/Refresh.jpg"  alt="Update" title="Update" border="0" id="buttonRefresh"></IMG></A></TD>
           <TD >&nbsp;</TD>
           <TD > <A href="../secureApp/GoBack.html" onmouseover="window.status='Back';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
@@ -231,53 +254,53 @@ function onloadFunctions() {
   <TABLE width="100%">
     <TR> 
       <TD width="10%" > <SPAN >Comparative</SPAN></TD>
-      <TD width="90%" > <INPUT type="checkbox" onclick="submitCommandForm('DEFAULT_COMPARATIVE', false, null, 'ReportRefundInvoiceCustomerDimensionalAnalysesFilter.html', '_self');return false;" name="inpComparative" value="Y" id="paramComparative"></INPUT>
+      <TD width="90%" > <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" onclick="submitCommandForm('DEFAULT_COMPARATIVE', false, null, 'ReportRefundInvoiceCustomerDimensionalAnalysesFilter.html', '_self');return false;" name="inpComparative" value="Y" id="paramComparative"></INPUT></SPAN>
       </TD>
     </TR>
   </TABLE>
   <TABLE width="100%" id="selEliminarHeader1">
     <TR> 
-      <TD  width="7%"> <SPAN >Ppal from</SPAN></TD>
-      <TD  width="6%"> <INPUT  type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      <TD width="7%"> <SPAN >Ppal from</SPAN></TD>
+      <TD width="6%"> <INPUT  type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
       </TD>
       <TD width="4%" > <A href="#" onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
         <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
-      <TD  width="6%"> <SPAN >Ref from</SPAN></TD>
-      <TD  width="4%"> <INPUT  type="text" name="inpDateFromRef" id="paramDateFromRef" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      <TD width="6%"> <SPAN >Ref from</SPAN></TD>
+      <TD width="4%"> <INPUT  type="text" name="inpDateFromRef" id="paramDateFromRef" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
       </TD>
       <TD width="3%" > <A href="#" onclick="showCalendar('frmMain.inpDateFromRef', document.frmMain.inpDateFromRef.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
         <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
-      <TD  width="9%"> <SPAN >Business Partner Group</SPAN></TD>
-      <TD  width="20%"> <SELECT name="inpPartnerGroup" id="inpPartnerGroup">
+      <TD width="9%"> <SPAN >Business Partner Group</SPAN></TD>
+      <TD width="20%"> <SELECT name="inpPartnerGroup" id="inpPartnerGroup">
           <OPTION value=""> <DIV id="reportC_BP_GROUPID"></DIV></OPTION>
         </SELECT></TD>
-      <TD  width="7%"> <SPAN >Organization</SPAN></TD>
-      <TD  width="13%"> <SELECT name="inpOrg" id="inpOrg">
+      <TD width="7%"> <SPAN >Organization</SPAN></TD>
+      <TD width="13%"> <SELECT name="inpOrg" id="inpOrg">
           <OPTION value=""> <DIV id="reportAD_ORGID"></DIV></OPTION>
         </SELECT></TD>
-      <TD  width="21%"> <A href="#" onclick="openServletNewWindow('EDIT_HTML_COMPARATIVE', true, 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition.html', 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition', null, false, '700', '1000', true);return false;" onmouseover="window.status='HTML_Report';return true;" onmouseout="window.status='';return true;" > 
+      <TD width="21%"> <A href="#" onclick="openServletNewWindow('EDIT_HTML_COMPARATIVE', true, 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition.html', 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition', null, false, '700', '1000', true);return false;" onmouseover="window.status='HTML_Report';return true;" onmouseout="window.status='';return true;" > 
         <img src="../../../../../web/images/Find.jpg"  alt="Results" title="Results" border="0" id="buttonResults"></IMG></A></TD>
     </TR>
     <TR> 
-      <TD  width="7%"> <SPAN >Ppal to</SPAN></TD>
-      <TD  width="6%"> <INPUT  type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      <TD width="7%"> <SPAN >Ppal to</SPAN></TD>
+      <TD width="6%"> <INPUT  type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
       </TD>
       <TD width="4%" > <A href="#" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
         <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
-      <TD  width="6%"> <SPAN >Ref to</SPAN></TD>
-      <TD  width="4%"> <INPUT  type="text" name="inpDateToRef" id="paramDateToRef" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      <TD width="6%"> <SPAN >Ref to</SPAN></TD>
+      <TD width="4%"> <INPUT  type="text" name="inpDateToRef" id="paramDateToRef" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
       </TD>
       <TD width="2%" > <A href="#" onclick="showCalendar('frmMain.inpDateToRef', document.frmMain.inpDateToRef.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
         <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
-      <TD  width="9%"> <SPAN >Product group</SPAN></TD>
-      <TD  width="20%"> <SELECT name="inpProductCategory" id="inpProductCategory">
+      <TD width="9%"> <SPAN >Product group</SPAN></TD>
+      <TD width="20%"> <SELECT name="inpProductCategory" id="inpProductCategory">
           <OPTION value=""> <DIV id="reportM_PRODUCT_CATEGORYID"></DIV></OPTION>
         </SELECT></TD>
-      <TD  width="7%"> <SPAN >Commercial</SPAN></TD>
-      <TD  width="13%"> <SELECT name="inpSalesrepId" id="inpSalesrepId">
+      <TD width="7%"> <SPAN >Commercial</SPAN></TD>
+      <TD width="13%"> <SELECT name="inpSalesrepId" id="inpSalesrepId">
           <OPTION value=""> <DIV id="reportSalesRep_ID"></DIV></OPTION>
         </SELECT></TD>
-      <TD  width="21%"> <!--A href="#" onclick="imprimir();return false;" onmouseover="window.status='PDF_Report';return true;" onmouseout="window.status='';return true;" > 
+      <TD width="21%"> <!--A href="#" onclick="imprimir();return false;" onmouseover="window.status='PDF_Report';return true;" onmouseout="window.status='';return true;" > 
         <img width="16" height="16" src="../../../../../web/images/pdf.jpg" alt="PDF_Report" title="PDF_Report" border="0" id="buttonPdf"></IMG></A--></TD>
     </TR>
     <TR> 
@@ -304,37 +327,37 @@ function onloadFunctions() {
   </TABLE>
   <TABLE width="100%" id="selEliminarHeader2">
     <TR> 
-      <TD  width="7%"> <SPAN >From</SPAN></TD>
-      <TD  width="6%"> <INPUT  type="text" name="inpDateFrom2" id="inpDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      <TD width="7%"> <SPAN >From</SPAN></TD>
+      <TD width="6%"> <INPUT  type="text" name="inpDateFrom2" id="inpDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
       </TD>
       <TD width="6%" > <A href="#" onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
         <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
-      <TD  width="8%"> <SPAN >Until</SPAN></TD>
-      <TD  width="4%"> <INPUT  type="text" name="inpDateTo2" id="inpDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
+      <TD width="8%"> <SPAN >Until</SPAN></TD>
+      <TD width="4%"> <INPUT  type="text" name="inpDateTo2" id="inpDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);return true;"></INPUT>
       </TD>
       <TD width="10%" > <A href="#" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
         <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
-      <TD  width="9%"> <SPAN >Business Partner Group</SPAN></TD>
-      <TD  width="17%"> <SELECT name="inpPartnerGroup" id="inpPartnerGroup2">
+      <TD width="9%"> <SPAN >Business Partner Group</SPAN></TD>
+      <TD width="17%"> <SELECT name="inpPartnerGroup" id="inpPartnerGroup2">
           <OPTION value=""> <DIV id="reportC_BP_GROUPID"></DIV></OPTION>
         </SELECT></TD>
-      <TD  width="33%"> <A href="#" onclick="openServletNewWindow('EDIT_HTML', true, 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition.html', 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition', null, false, '700', '1000', true);return false;" onmouseover="window.status='HTML_Report';return true;" onmouseout="window.status='';return true;" > 
+      <TD width="33%"> <A href="#" onclick="openServletNewWindow('EDIT_HTML', true, 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition.html', 'ReportRefundInvoiceCustomerDimensionalAnalysesEdition', null, false, '700', '1000', true);return false;" onmouseover="window.status='HTML_Report';return true;" onmouseout="window.status='';return true;" > 
         <img src="../../../../../web/images/Find.jpg"  alt="Results" title="Results" border="0" id="buttonResults"></IMG></A></TD>
     </TR>
     <TR> 
-      <TD  width="7%"> <SPAN >Organization</SPAN></TD>
-      <TD  colspan="2"> <SELECT name="inpOrg" id="inpOrg2">
+      <TD width="7%"> <SPAN >Organization</SPAN></TD>
+      <TD colspan="2"> <SELECT name="inpOrg" id="inpOrg2">
           <OPTION value=""> <DIV id="reportAD_ORGID"></DIV></OPTION>
         </SELECT></TD>
-      <TD  width="8%"> <SPAN >Commercial</SPAN></TD>
-      <TD  colspan="2"> <SELECT name="inpSalesrepId" id="inpSalesrepId2">
+      <TD width="8%"> <SPAN >Commercial</SPAN></TD>
+      <TD colspan="2"> <SELECT name="inpSalesrepId" id="inpSalesrepId2">
           <OPTION value=""> <DIV id="reportSalesRep_ID"></DIV></OPTION>
         </SELECT></TD>
-      <TD  width="9%"> <SPAN >Product group</SPAN></TD>
-      <TD  width="17%"> <SELECT name="inpProductCategory" id="inpProductCategory2">
+      <TD width="9%"> <SPAN >Product group</SPAN></TD>
+      <TD width="17%"> <SELECT name="inpProductCategory" id="inpProductCategory2">
           <OPTION value=""> <DIV id="reportM_PRODUCT_CATEGORYID"></DIV></OPTION>
         </SELECT></TD>
-      <TD  width="33%"> <!--A href="#" onclick="imprimir();return false;" onmouseover="window.status='PDF_Report';return true;" onmouseout="window.status='';return true;" > 
+      <TD width="33%"> <!--A href="#" onclick="imprimir();return false;" onmouseover="window.status='PDF_Report';return true;" onmouseout="window.status='';return true;" > 
         <img width="16" height="16" src="../../../../../web/images/pdf.jpg" alt="PDF_Report" title="PDF_Report" border="0" id="buttonPdf"></IMG></A--></TD>
     </TR>
     <TR> 
@@ -380,8 +403,8 @@ function onloadFunctions() {
         </TABLE></TD>
       <TD width="41%"> <TABLE border="0" cellspacing="0" cellpadding="0" >
           <TR> 
-            <TD  colspan="2"></TD>
-            <TD  colspan="2" id="paramShowName"></TD>
+            <TD colspan="2"></TD>
+            <TD colspan="2" id="paramShowName"></TD>
           </TR>
           <TR> 
             <TD rowspan="3" > <SELECT name="inpNotShown" size="7" multiple="" id="reportNotShown">
@@ -427,31 +450,31 @@ function onloadFunctions() {
         </TABLE></TD>
       <TD width="41%"> <TABLE width="100%">
           <TR> 
-            <TD width="20%" > <SPAN >Order</SPAN></TD>
+            <TD width="20%" ><SPAN >Order</SPAN></TD>
             <TD colspan="3" ></TD>
           </TR>
           <TR> 
-            <TD width="20%" > <SPAN >Normal</SPAN></TD>
-            <TD colspan="3" > <INPUT type="radio" name="inpOrder" value="Normal" checked="" id="paramNormalOrder"></INPUT>
+            <TD width="20%" ><SPAN >Normal</SPAN></TD>
+            <TD colspan="3" ><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpOrder" value="Normal" checked="" id="paramNormalOrder"></INPUT></SPAN>
             </TD>
           </TR>
           <TR> 
-            <TD width="20%" > <SPAN >Sales 
+            <TD width="20%" ><SPAN>Sales 
               asc</SPAN></TD>
-            <TD width="5%" > <INPUT type="radio" name="inpOrder" value="Amountasc" checked="" id="paramAmountascOrder"></INPUT>
+            <TD width="5%" ><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpOrder" value="Amountasc" checked="" id="paramAmountascOrder"></INPUT></SPAN>
             </TD>
-            <TD width="20%" > <SPAN >Asc. Rate</SPAN></TD>
-            <TD width="55%"> <INPUT type="radio" name="inpOrder" value="Ratioasc" checked="" id="paramRatioascOrder"></INPUT>
+            <TD width="20%" ><SPAN>Asc. Rate</SPAN></TD>
+            <TD width="55%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpOrder" value="Ratioasc" checked="" id="paramRatioascOrder"></INPUT></SPAN>
             </TD>
           </TR>
           <TR> 
-            <TD width="20%" > <SPAN >Sales 
+            <TD width="20%" ><SPAN>Sales 
               desc</SPAN></TD>
-            <TD width="5%" > <INPUT type="radio" name="inpOrder" value="Amountdesc" checked="" id="paramAmountdescOrder"></INPUT>
+            <TD width="5%" ><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpOrder" value="Amountdesc" checked="" id="paramAmountdescOrder"></INPUT></SPAN>
             </TD>
-            <TD width="20%" > <SPAN >Desc. 
+            <TD width="20%" ><SPAN>Desc. 
               Rate</SPAN></TD>
-            <TD width="55%"> <INPUT type="radio" name="inpOrder" value="Ratiodesc" checked="" id="paramRatiodescOrder"></INPUT>
+            <TD width="55%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpOrder" value="Ratiodesc" checked="" id="paramRatiodescOrder"></INPUT></SPAN>
             </TD>
           </TR>
         </TABLE></TD>

@@ -23,16 +23,15 @@
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">  LNG_POR_DEFECTO = "en_US";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://openbravo/web/";</SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-keyArray = new Array(
-new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', 'SELECTOR_PRODUCT', true, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null")
-);
-enableShortcuts();
+
 
 function debugSearch(key, text, keyField) {
   if (keyField=="inpmProductId") {
@@ -92,10 +91,30 @@ function onloadFunctions() {
   new TypeAheadCombo("inpmInoutlineTypeId");
   new TypeAheadCombo("reportM_WAREHOUSE_ID");
   new TypeAheadCombo("inpmLocatorX");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', 'SELECTOR_PRODUCT', true, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null");
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client', 'frameButton'),
+		  new windowTableId('tdbottomButtons', 'frameButton2')
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+		
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="setFocusFirstControl();onloadFunctions();return true;">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="onLoadDo();" onresize="onResizeDo();">
 <FORM id="form" method="POST" action="../ad_actionButton/CreateFromMultiple_F1.html" name="frmMain">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpLastFieldChanged"></INPUT>
@@ -107,7 +126,7 @@ function onloadFunctions() {
   <INPUT type="hidden" name="inpBPartner" value="" id="parambpartner"></INPUT> 
   <TABLE width="45%" cellspacing="0" cellpadding="0" border="1" >
     <TR> 
-      <TD  id="processDescription">&nbsp;</TD>
+      <TD id="processDescription">&nbsp;</TD>
     </TR>
     <TR></TR>
     <TR> 
@@ -115,7 +134,7 @@ function onloadFunctions() {
     </TR>
   </TABLE>
   <BR></BR>
-  <TABLE border="0" cellspacing="0" cellpadding="0">
+  <TABLE border="0" cellspacing="0" cellpadding="0" id="client">
     <TR> 
       <TD width="127" > <SPAN >Product:</SPAN></TD>
       <TD colspan="3" > <INPUT type="hidden" name="inpmProductId"></INPUT> 

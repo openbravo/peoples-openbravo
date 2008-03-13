@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,9 @@
 <LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></LINK> 
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Login/Login.css" id="paramCSS"/>
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
@@ -48,8 +50,28 @@ function buttonOK_click() {
 }
 
 </SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
+  function onLoadDo() {
+    this.windowTables = new Array(
+      new windowTableId('client')
+    );
+    setWindowTableParentElement();
+    enableShortcuts('edition');
+    fixFocus('buttonOK');
+    resizeArea();
+    try {
+      onloadFunctions();
+      limpiar();
+    } catch (e) {}
+    setWindowElementFocus('firstElement');
+  }
+
+  function onResizeDo() {
+    resizeArea();
+  }
+</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();onloadFunctions();limpiar();setFocusFirstControl();byDefaultAction('buttonOK_click()');" onresize="resizeArea();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 
 
 
@@ -130,11 +152,12 @@ function buttonOK_click() {
                   <td class="Button_CenterAlign_ContentCell">
                     <div>
                       <a class="ButtonLink" href="#"
-                        onfocus="this.className='ButtonLink_hover'; window.status='Login'; return true;"
-                        onblur="this.className='ButtonLink'; window.status=''; return true;"
+                        onfocus="setWindowElementFocus(this); window.status='xx'; return true;"
+                        onblur="window.status=''; return true;"
                         onkeypress="this.className='ButtonLink_active'; return true;"
-                        onkeyup="this.className='ButtonLink_hover'; return true;"
-                        onclick="buttonOK_click();">
+                        onkeyup="this.className='ButtonLink_focus'; return true;"
+                        onclick="buttonOK_click();"
+                        id="buttonOK">
                         <table class="Button"
                           onmousedown="this.className='Button_active'; return true;"
                           onmouseup="this.className='Button'; return true;"
@@ -230,7 +253,7 @@ function buttonOK_click() {
 
 
           <tr class="Login_Block_Separator_Middle"><td></td></tr>
-          <tr><td class="Login_Copyright_Container_Cell"><span class="Login_Copyright_text">Copyright Openbravo 2001-2007</span></td></tr>
+          <tr><td class="Login_Copyright_Container_Cell"><span class="Login_Copyright_text">Copyright Openbravo 2001-2008</span></td></tr>
 
         </table>
 

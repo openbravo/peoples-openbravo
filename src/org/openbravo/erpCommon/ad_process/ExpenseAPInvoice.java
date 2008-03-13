@@ -247,12 +247,6 @@ String strProductRMailTextID = "";
     
                 // New interface paramenters
       try {
-        KeyMap key = new KeyMap(this, vars, "ExpenseAPInvoice.html");
-        xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-      try {
         WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_process.ExpenseAPInvoice");
 
         xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());

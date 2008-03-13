@@ -22,7 +22,9 @@
 <LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"> 
       <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
       <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
       <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
@@ -36,14 +38,28 @@ function depurarSelector(action) {
   parent.opener.closeMultiSearch(action, data);
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client', 'superior'),
+		  new windowTableId('client', 'medio'),
+		  new windowTableId('client', 'inferior')
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+	}
+
+	function onResizeDo(){
+	}
+	</SCRIPT>
 </HEAD>
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 
 
 <table cellspacing="0" cellpadding="0" width="100%" style="height:100%; vertical-align:middle;">
   <tr>
     <td>
-      <div class="Popup_ContentPane_Client" style="overflow: auto;">
+      <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
         <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector">
 
           <tr>
@@ -62,10 +78,10 @@ function depurarSelector(action) {
             <td class="Button_RightAlign_ContentCell">
               <div>
                 <a class="ButtonLink" href="#"
-                  onfocus="this.className='ButtonLink_hover'; window.status='OK'; return true;"
-                  onblur="this.className='ButtonLink'; window.status=''; return true;"
+                  onfocus="setWindowElementFocus(this); window.status='OK'; return true;"
+                  onblur="window.status=''; return true;"
                   onkeypress="this.className='ButtonLink_active'; return true;"
-                  onkeyup="this.className='ButtonLink_hover'; return true;"
+                  onkeyup="this.className='ButtonLink_focus'; return true;"
                   onclick="depurarSelector('SAVE');return false;">
                   <table class="Button"
                     onmousedown="this.className='Button_active'; return true;"
@@ -84,10 +100,10 @@ function depurarSelector(action) {
             <td class="Button_LeftAlign_ContentCell">
               <div>
                 <a class="ButtonLink" href="#"
-                  onfocus="this.className='ButtonLink_hover'; window.status='Cancel'; return true;"
-                  onblur="this.className='ButtonLink'; window.status=''; return true;"
+                  onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;"
+                  onblur="window.status=''; return true;"
                   onkeypress="this.className='ButtonLink_active'; return true;"
-                  onkeyup="this.className='ButtonLink_hover'; return true;"
+                  onkeyup="this.className='ButtonLink_focus'; return true;"
                   onclick="depurarSelector('CLEAR');return false;">
                   <table class="Button"
                     onmousedown="this.className='Button_active'; return true;"

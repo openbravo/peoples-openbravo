@@ -71,6 +71,15 @@ a.Popup_Client_UserOps_LabelLink:hover {
   text-decoration: underline;
 }
 
+a.Popup_Client_UserOps_LabelLink_focus_alpha {
+  font-weight: bold;
+  color: #2985BA;
+  border-bottom-style: solid;
+  border-width: 2px;
+  border-bottom-color: #FCD938;
+  outline: none;
+}
+
 a.Popup_Client_UserOps_LabelLink_Selected {
   padding-left: 0px;
   color: #2985BA;
@@ -86,4 +95,13 @@ a.Popup_Client_UserOps_LabelLink_Selected:visited {
 
 a.Popup_Client_UserOps_LabelLink_Selected:hover {
   text-decoration: underline;
+}
+
+a.Popup_Client_UserOps_LabelLink_Selected_focus_alpha {
+  font-weight: bold;
+  color: #2985BA;
+  border-bottom-style: solid;
+  border-width: 2px;
+  border-bottom-color: #FCD938;
+  outline: none;
 }

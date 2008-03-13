@@ -21,19 +21,34 @@
 <TITLE>Payment selector</TITLE>
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" type="text/javascript">
 function cargarDatos(text) {
 	document.frmSelector.inpTexto.value=text;
 	return true;
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client', 'superior'),
+		  new windowTableId('client', 'medio')
+		);
+		setWindowTableParentElement();
+		enableShortcuts('edition');
+	}
+
+	function onResizeDo(){
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="setFocusFirstControl();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <FORM name="frmSelector" method="POST" action="MaterialTransactions_F2.html" target="frameAplicacion">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpTexto"></INPUT>
-  <TABLE width="100%" border="1" cellspacing="0" cellpadding="0" >
+  <TABLE width="100%" border="1" cellspacing="0" cellpadding="0" id="client">
     <TR> 
       <td width="2%">&nbsp;</td>
       <td width="13%">Organization</td>
@@ -46,7 +61,7 @@ function cargarDatos(text) {
     </TR>
     <DIV id="sectionDetail"> 
       <TR > 
-        <TD width="2%"> <INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT>
+        <TD width="2%"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpMTransactionId" value="xx" onclick="cargarDatos('xx');return true;"  id="fieldMTransactionId"></INPUT></SPAN>
         </TD>
         <TD width="13%" id="fieldOrganization">&nbsp;</TD>
         <TD width="13%" id="fieldLocator">&nbsp;</TD>

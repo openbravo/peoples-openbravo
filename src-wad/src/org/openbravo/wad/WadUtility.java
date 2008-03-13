@@ -23,6 +23,7 @@ import org.openbravo.utils.FormatUtilities;
 import java.io.*;
 import javax.servlet.*;
 import java.util.*;
+
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.wad.controls.*;
 import org.openbravo.data.FieldProvider;
@@ -1862,6 +1863,7 @@ public class WadUtility {
     _myClass.setInfo(prop);
     _myClass.initialize();
     _myClass.setConnection(null);
+    
     return _myClass;
   }
 
@@ -1882,6 +1884,17 @@ public class WadUtility {
     _displayLogic.append("  readOnlyLogicElement('").append(element).append("', (").append(displayLogic(code, vecDL, parentsFieldsData, vecAuxiliar, vecFields, windowId, vecContext)).append("));\n");
 
     return _displayLogic.toString();
+  }
+  
+  public static String getbuttonShortcuts(HashMap<String, String> sc) {
+    StringBuffer shortcuts = new StringBuffer();
+    Iterator<String> ik = sc.keySet().iterator();
+    Iterator<String> iv = sc.values().iterator();
+    while(ik.hasNext() && iv.hasNext()){
+      //shortcuts.append("keyArray[keyArray.length] = new keyArrayItem(\"").append(ik.next()).append("\", \"").append(iv.next()).append("\", null, \"altKey\", false, \"onkeydown\");\n");
+      shortcuts.append("keyArray[keyArray.length] = new keyArrayItem(\"").append(ik.next()).append("\", \"").append(iv.next()).append("\", null, \"altKey\", false, \"onkeydown\");\n");
+    }
+    return shortcuts.toString();
   }
   public static String getDisplayLogicForGroups(String strFieldGroup, StringBuffer code) {
     if ((code == null)||(code.length()==0)) return "";

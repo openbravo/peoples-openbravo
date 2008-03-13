@@ -21,7 +21,9 @@
 <TITLE>Request process</TITLE>
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">LNG_POR_DEFECTO = "en_US";</SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">
 var baseDirection="../../../../../web/";
 </SCRIPT>
@@ -38,8 +40,22 @@ function submitThisPage(strCommand) {
 	return true;
 }
 </SCRIPT>
+  <SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" >
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <FORM id="form" method="POST" action="RequestAction.html" name="frmMain">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpLastFieldChanged"></INPUT>
@@ -48,7 +64,7 @@ function submitThisPage(strCommand) {
   <INPUT type="hidden" name="inpTabId" value="" id="tab"></INPUT>
   <TABLE width="100%" cellspacing="0" cellpadding="0" border="1" >
     <TR> 
-      <TD  id="processDescription">&nbsp;</TD>
+      <TD id="processDescription">&nbsp;</TD>
     </TR>
     <TR></TR>
     <TR> 
@@ -59,15 +75,15 @@ function submitThisPage(strCommand) {
   <BR></BR>
   <TABLE cellspacing="0" cellpadding="0" border="0">
     <TR> 
-      <TD  id="question">&nbsp;</TD>
+      <TD id="question">&nbsp;</TD>
     </TR>
   </TABLE>
-  <TABLE summary="" cellpadding="0" cellspacing="0" border="0" width="100%">
+  <TABLE summary="" cellpadding="0" cellspacing="0" border="0" width="100%" id="client">
     <TR> 
       <td>&nbsp;</td>
-      <TD  width="30px"> <A href="#" onclick="closeThisPage();return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
+      <TD width="30px"> <A href="#" onclick="closeThisPage();return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
         <img width="16" height="16" src="../../../../../web/images/Cancel.jpg"  alt="Cancel" title="Cancel" border="0"></IMG></A></TD>
-      <TD  width="30px"> <A href="#" onclick="submitThisPage('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
+      <TD width="30px"> <A href="#" onclick="submitThisPage('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
         <img width="16" height="16" src="../../../../../web/images/Ok.jpg"  alt="Accept" title="Accept" border="0"></IMG></A></TD>
       <td>&nbsp;</td>
     </TR>

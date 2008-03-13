@@ -23,7 +23,9 @@
 <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">LNG_POR_DEFECTO = "en_US";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
 <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
@@ -37,14 +39,12 @@
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
   <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
- <script language="JavaScript" type="text/javascript" id="keyMap"></script>
-  <script type="text/javascript">
+ <script type="text/javascript">
     dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
   </script>
 <SCRIPT language="JavaScript" type="text/javascript">
-var keyArray = new Array();
 function enableLocalShortcuts() {
-keyArray = new Array(new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null"));
+keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null");
 }
 function depurar(action) {
   	var frm=document.frmMain;
@@ -108,8 +108,29 @@ function onloadFunctions() {
   new TypeAheadCombo("inpadOrgId");
   enableLocalShortcuts();
 }
-</SCRIPT></HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="setFocusFirstControl();onloadFunctions();">
+</SCRIPT>	
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client', 'frameButton'),
+		  new windowTableId('client2', 'frameButton'),
+		  new windowTableId('tdbottomButtons', 'frameButton2')
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+		
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+	}
+	</SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="onLoadDo();" onresize="onResizeDo();">
 <FORM id="form" method="POST" action="../ad_actionButton/CreateFrom.html" name="frmMain">
 <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
@@ -153,7 +174,7 @@ function onloadFunctions() {
 
     <tr>
       <td>
-        <div class="Popup_ContentPane_Client" style="overflow: auto;">
+        <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
 
            <!-- MessageBox -->
                 <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
@@ -278,7 +299,7 @@ function onloadFunctions() {
                       <INPUT type="text" class="dojoValidateValid TextBox_btn_TwoCells_width" maxlength="22" name="inpcBpartnerId_DES" id="fieldCBPartnerID_DES" value=""></INPUT>
                     </td>
                     <TD class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Business Partner'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value);return false;">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value);return false;">
                       <TABLE class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Business Partner';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="fieldWindowID">
                         <TR>
                           <TD class="FieldButton_bg">
@@ -292,7 +313,7 @@ function onloadFunctions() {
                 </TABLE>
               </TD>
               <TD class="TitleCell"></TD>
-              <TD class="TitleCell"> <SPAN class="LabelText">Payment Rule</SPAN></TD>
+              <TD class="TitleCell"><SPAN class="LabelText">Payment Rule</SPAN></TD>
               <TD class="Combo_ContentCell">
                 <SELECT name="inppaymentrule" class="Combo Combo_OneCell_width" id="inppaymentrule">
                   <OPTION value=""></OPTION><DIV id="reportPaymentRule"></DIV>
@@ -300,7 +321,7 @@ function onloadFunctions() {
               </TD>
             </tr>
             <tr>
-              <TD class="TitleCell"> <SPAN class="LabelText">Receipt type</SPAN></TD>
+              <TD class="TitleCell"><SPAN class="LabelText">Receipt type</SPAN></TD>
               <TD class="Combo_ContentCell">
                 <SELECT name="inpisreceipt" id="inpisreceipt" class="Combo Combo_OneCell_width">
                 <OPTION value="">All</OPTION>
@@ -308,7 +329,7 @@ function onloadFunctions() {
                 <OPTION value="Y" id="fieldIsReceiptCobro">Collection</OPTION></SELECT>
               </TD>
 
-            <TD class="TitleCell"> <SPAN class="LabelText">From Date planned</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">From Date planned</SPAN></TD>
             <TD class="TextBox_btn_ContentCell">
               <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                 <TR>
@@ -327,7 +348,7 @@ function onloadFunctions() {
                 </TR>
               </TABLE>
             </TD>
-            <TD class="TitleCell"> <SPAN class="LabelText">To Date planned</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">To Date planned</SPAN></TD>
             <TD class="TextBox_btn_ContentCell">
               <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                 <TR>
@@ -416,13 +437,13 @@ function onloadFunctions() {
             </TD>
             </tr>
 <tr>
-              <TD class="TitleCell"> <SPAN class="LabelText">Status</SPAN></TD>
+              <TD class="TitleCell"><SPAN class="LabelText">Status</SPAN></TD>
               <TD class="Combo_ContentCell">
                 <SELECT name="inpStatusFrom" id="inpStatusFrom" class="Combo Combo_OneCell_width">
                 <OPTION value=""></OPTION>
                 <DIV id="reportStatusFrom"></DIV></SELECT>
               </TD>
-              <TD class="TitleCell"> <SPAN class="LabelText">Organization</SPAN></TD>
+              <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>
               <TD class="Combo_ContentCell">
                 <SELECT name="inpadOrgId" id="inpadOrgId" class="Combo Combo_OneCell_width">
                 <OPTION value=""></OPTION>
@@ -436,7 +457,7 @@ function onloadFunctions() {
               <td class="TitleCell"></td>
               <td class="Button_RightAlign_ContentCell">
                 <div>
-                  <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Search'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('FIND_SETTLEMENT', true);return false;">
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND_SETTLEMENT', true);return false;">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
                       <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -460,10 +481,10 @@ function onloadFunctions() {
    </table>
            
 <table cellspacing="0" cellpadding="0" width="100%" style="text-align:-moz-center;_text-align:center;">
-  <div class="Popup_ContentPane_Client" style="overflow: auto;">
+  <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client2">
     <TABLE cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table">
       <TR class="Popup_Client_Selector_DataGrid_HeaderRow">
-        <td class="DataGrid_Body_LineNoCell" width="25"><INPUT type="checkbox" name="inpTodos" onclick="cargarDatos(this);return true;" value="Y" id="fieldMarcarTodos"></INPUT></td>
+        <td class="DataGrid_Body_LineNoCell" width="25"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpTodos" onclick="cargarDatos(this);return true;" value="Y" id="fieldMarcarTodos"></INPUT></SPAN></td>
         <th class="DataGrid_Header_Cell">Business Partner</th>
         <th class="DataGrid_Header_Cell">Organization</th>
         <th class="DataGrid_Header_Cell">Invoice</th>
@@ -477,7 +498,7 @@ function onloadFunctions() {
       <DIV id="sectionDetail">
         <TR class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="inpRecord10000003">
           <TD class="DataGrid_Body_LineNoCell">
-          <INPUT type="checkbox" name="inpcDebtPaymentId" value="" id="fieldCDebtPaymentId" onclick="actualizarDatos(this.value, this.checked);return true;"></INPUT></TD>
+          <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpcDebtPaymentId" value="" id="fieldCDebtPaymentId" onclick="actualizarDatos(this.value, this.checked);return true;"></INPUT></SPAN></TD>
           <TD class="DataGrid_Body_Cell" id="fieldBpartner">xxQuantity</TD>
           <TD class="DataGrid_Body_Cell" id="fieldOrg">xx</TD>
           <TD class="DataGrid_Body_Cell" id="fieldInvoice">xxUOM</TD>

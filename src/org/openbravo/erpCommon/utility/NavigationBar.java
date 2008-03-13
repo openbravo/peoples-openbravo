@@ -46,10 +46,10 @@ public class NavigationBar {
     toolbar.append("<TABLE class=\"Main_ContentPane_NavBar\" id=\"tdtopNavButtons\">\n");
     toolbar.append("  <TR class=\"Main_NavBar_bg\"><TD></TD>\n");
     toolbar.append("  <TD class=\"Main_NavBar_LeftButton_cell\">\n");
-    toolbar.append("    <a class=\"Main_NavBar_LeftButton\" href=\"../secureApp/GoBack.html\" border=\"0\" onmouseover=\"window.status='");
+    toolbar.append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onclick=\"openLink('../secureApp/GoBack.html', 'frameAplicacion')\" border=\"0\" onmouseover=\"window.status='");
     String auxText = Utility.messageBD(conn, "GoBack", language);
     toolbar.append(auxText);
-    toolbar.append("';return true;\" onmouseout=\"window.status='';return true;\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_back\" border=\"0\" alt=\"");
+    toolbar.append("';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonBack\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_back\" border=\"0\" alt=\"");
     toolbar.append(auxText).append("\" title=\"").append(auxText).append("\"");
     toolbar.append("/></a>\n");
     toolbar.append("  </TD>\n");
@@ -58,7 +58,7 @@ public class NavigationBar {
     toolbar.append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onClick=\"submitCommandForm('DEFAULT', false, null, '").append(servlet_action);
     toolbar.append("', '_self', null, true);return false;\" border=\"0\" onmouseover=\"window.status='");
     auxText = Utility.messageBD(conn, "Refresh", language);
-    toolbar.append(auxText).append("';return true;\" onmouseout=\"window.status='';return true;\"><IMG src=\"");
+    toolbar.append(auxText).append("';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonRefresh\"><IMG src=\"");
     toolbar.append(base_direction).append("/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_refresh\" border=\"0\" alt=\"");
     toolbar.append(auxText).append("\" title=\"").append(auxText).append("\"");
     toolbar.append("></a>\n");
@@ -68,7 +68,7 @@ public class NavigationBar {
     toolbar.append("  <TD class=\"Main_NavBar_RightButton_cell\">\n");
     toolbar.append("    <a class=\"Main_NavBar_RightButton\" href=\"#\" onclick=\"about();return false;\" border=\"0\" onmouseover=\"window.status='");
     auxText = Utility.messageBD(conn, "About", language);
-    toolbar.append(auxText).append("';return true;\" onmouseout=\"window.status='';return true;\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_NavBar_RightButton_Icon Main_NavBar_RightButton_Icon_about\" border=\"0\"");
+    toolbar.append(auxText).append("';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonAbout\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_NavBar_RightButton_Icon Main_NavBar_RightButton_Icon_about\" border=\"0\"");
     toolbar.append(" alt=\"").append(auxText).append("\" title=\"").append(auxText).append("\"");
     toolbar.append("></a>\n");
     toolbar.append("  </TD>\n");
@@ -81,7 +81,7 @@ public class NavigationBar {
     toolbar.append(window_type).append("', '").append(window_name);
     toolbar.append("');return false;\" border=\"0\" onmouseover=\"window.status='");
     auxText = Utility.messageBD(conn, "Help", language);
-    toolbar.append(auxText).append("';return true;\" onmouseout=\"window.status='';return true;\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_NavBar_RightButton_Icon Main_NavBar_RightButton_Icon_help\" border=\"0\"");
+    toolbar.append(auxText).append("';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonHelp\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_NavBar_RightButton_Icon Main_NavBar_RightButton_Icon_help\" border=\"0\"");
     toolbar.append(" alt=\"").append(auxText).append("\" title=\"").append(auxText).append("\"");
     toolbar.append("></a>\n");
     toolbar.append("  </TD>\n");

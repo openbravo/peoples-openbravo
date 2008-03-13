@@ -88,3 +88,12 @@ a.Popup_Client_Help_LabelLink:visited {
 a.Popup_Client_Help_LabelLink:hover {
   text-decoration: underline;
 }
+
+a.Popup_Client_Help_LabelLink_focus_alpha {
+  font-weight: bold;
+  color: #2985BA;
+  border-bottom-style: solid;
+  border-width: 2px;
+  border-bottom-color: #FCD938;
+  outline:0;
+}

@@ -479,10 +479,15 @@ A.dojoTabLink {
 }
 
 A.dojoTabLink:HOVER { 
-  
   text-decoration: underline;
   font-size:  8pt;  
- }
+}
+
+A.dojoTabLink:focus { 
+  text-decoration: underline;
+  font-size: 8pt;
+  outline:0;
+}
 
 A.Link { 
   color: Black;

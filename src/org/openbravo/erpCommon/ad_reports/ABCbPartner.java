@@ -66,12 +66,6 @@ public class ABCbPartner extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
-      KeyMap key = new KeyMap(this, vars, "ABCbPartner.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ABCbPartner");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());

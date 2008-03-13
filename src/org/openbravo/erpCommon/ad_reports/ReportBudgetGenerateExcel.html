@@ -34,7 +34,11 @@ var baseDirection = "../../../../../web/";
   var LNG_POR_DEFECTO = "en_US";
 </script>
  
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+ 
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+ 
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
@@ -47,13 +51,34 @@ var baseDirection = "../../../../../web/";
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" id="keyMap"></script>
 <script type="text/javascript"> 
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script> 
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+		resizeArea();
+		updateMenuIcon('buttonMenu');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
-    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
+    <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <FORM method="POST" action="ReportBudgetGenerateExcel.html" name="frmMain"  id="form">
   <INPUT type="hidden" name="Command"></INPUT>
   <input type="hidden" name="inpLastFieldChanged" value="">
@@ -192,7 +217,7 @@ var baseDirection = "../../../../../web/";
                 </td>
                 </TR>
                         <tr>
-                          <TD class="TitleCell"> <SPAN class="LabelText">Business Partner</SPAN></TD>
+                          <TD class="TitleCell"><SPAN class="LabelText">Business Partner</SPAN></TD>
                           <TD class="List_ContentCell" colspan="2">
 
                     <TABLE border="0" cellspacing="0" cellpadding="0">
@@ -206,10 +231,10 @@ var baseDirection = "../../../../../web/";
                               <TD>
                                 <A class="List_Button_TopLink" href="#"
                                   onclick="openMultiSearch(null, null, '../info/BusinessPartnerMultiple_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId_IN');return false;"
-                                  onfocus="this.className='List_Button_TopLink_hover'; window.status='Add'; return true;"
-                                  onblur="this.className='List_Button_TopLink'; window.status=''; return true;"
+                                  onfocus="setWindowElementFocus(this); window.status='Add'; return true;"
+                                  onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_TopLink_active'; return true;"
-                                  onkeyup="this.className='List_Button_TopLink_hover'; return true;">
+                                  onkeyup="this.className='List_Button_TopLink_focus'; return true;">
                                   <table class="List_Button_Top"
                                     onmousedown="this.className='List_Button_Top_active'; return true;"
                                     onmouseup="this.className='List_Button_Top'; return true;"
@@ -232,10 +257,10 @@ var baseDirection = "../../../../../web/";
                               <TD>
                                 <A class="List_Button_MiddleLink" href="#"
                                   onclick="eliminarElementosList(document.frmMain.inpcBPartnerId_IN);return false;"
-                                  onfocus="this.className='List_Button_MiddleLink_hover'; window.status='Delete selected elements'; return true;"
-                                  onblur="this.className='List_Button_MiddleLink'; window.status=''; return true;"
+                                  onfocus="setWindowElementFocus(this); window.status='Delete selected elements'; return true;"
+                                  onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_MiddleLink_active'; return true;"
-                                  onkeyup="this.className='List_Button_MiddleLink_hover'; return true;">
+                                  onkeyup="this.className='List_Button_MiddleLink_focus'; return true;">
                                   <table class="List_Button_Middle"
                                     onmousedown="this.className='List_Button_Middle_active'; return true;"
                                     onmouseup="this.className='List_Button_Middle'; return true;"
@@ -258,10 +283,10 @@ var baseDirection = "../../../../../web/";
                               <TD>
                                 <A class="List_Button_BottomLink" href="#"
                                   onclick="limpiarLista(document.frmMain.inpcBPartnerId_IN);return false;"
-                                  onfocus="this.className='List_Button_BottomLink_hover'; window.status='Delete all elements'; return true;"
-                                  onblur="this.className='List_Button_BottomLink'; window.status=''; return true;"
+                                  onfocus="setWindowElementFocus(this); window.status='Delete all elements'; return true;"
+                                  onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_BottomLink_active'; return true;"
-                                  onkeyup="this.className='List_Button_BottomLink_hover'; return true;">
+                                  onkeyup="this.className='List_Button_BottomLink_focus'; return true;">
                                   <table class="List_Button_Bottom"
                                     onmousedown="this.className='List_Button_Bottom_active'; return true;"
                                     onmouseup="this.className='List_Button_Bottom'; return true;"
@@ -282,13 +307,13 @@ var baseDirection = "../../../../../web/";
                     </TABLE>
 
                   </TD>
-                          <TD class="TitleCell"> <SPAN class="LabelText">Partner Group</SPAN></TD>
+                          <TD class="TitleCell"><SPAN class="LabelText">Partner Group</SPAN></TD>
                           <TD class="List_ContentCell" colspan="2">
                             <select class="List_width List_height" name="inpcBPGroupID" size="5" multiple="" id="reportCBPGroupId">
                           </select></TD>
                         </tr>
                         <TR>
-                          <TD class="TitleCell"> <SPAN class="LabelText">Product</SPAN></TD>
+                          <TD class="TitleCell"><SPAN class="LabelText">Product</SPAN></TD>
                           <TD class="List_ContentCell" colspan="2">
 
                     <TABLE border="0" cellspacing="0" cellpadding="0">
@@ -302,10 +327,10 @@ var baseDirection = "../../../../../web/";
                               <TD>
                                 <A class="List_Button_TopLink" href="#"
                                   onclick="openMultiSearch(null, null, '../info/ProductMultiple_FS.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId_IN');return false;"
-                                  onfocus="this.className='List_Button_TopLink_hover'; window.status='Add'; return true;"
-                                  onblur="this.className='List_Button_TopLink'; window.status=''; return true;"
+                                  onfocus="setWindowElementFocus(this); window.status='Add'; return true;"
+                                  onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_TopLink_active'; return true;"
-                                  onkeyup="this.className='List_Button_TopLink_hover'; return true;">
+                                  onkeyup="this.className='List_Button_TopLink_focus'; return true;">
                                   <table class="List_Button_Top"
                                     onmousedown="this.className='List_Button_Top_active'; return true;"
                                     onmouseup="this.className='List_Button_Top'; return true;"
@@ -328,10 +353,10 @@ var baseDirection = "../../../../../web/";
                               <TD>
                                 <A class="List_Button_MiddleLink" href="#"
                                   onclick="eliminarElementosList(document.frmMain.inpmProductId_IN);return false;"
-                                  onfocus="this.className='List_Button_MiddleLink_hover'; window.status='Delete selected elements'; return true;"
-                                  onblur="this.className='List_Button_MiddleLink'; window.status=''; return true;"
+                                  onfocus="setWindowElementFocus(this); window.status='Delete selected elements'; return true;"
+                                  onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_MiddleLink_active'; return true;"
-                                  onkeyup="this.className='List_Button_MiddleLink_hover'; return true;">
+                                  onkeyup="this.className='List_Button_MiddleLink_focus'; return true;">
                                   <table class="List_Button_Middle"
                                     onmousedown="this.className='List_Button_Middle_active'; return true;"
                                     onmouseup="this.className='List_Button_Middle'; return true;"
@@ -354,10 +379,10 @@ var baseDirection = "../../../../../web/";
                               <TD>
                                 <A class="List_Button_BottomLink" href="#"
                                   onclick="limpiarLista(document.frmMain.inpmProductId_IN);return false;"
-                                  onfocus="this.className='List_Button_BottomLink_hover'; window.status='Delete all elements'; return true;"
-                                  onblur="this.className='List_Button_BottomLink'; window.status=''; return true;"
+                                  onfocus="setWindowElementFocus(this); window.status='Delete all elements'; return true;"
+                                  onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_BottomLink_active'; return true;"
-                                  onkeyup="this.className='List_Button_BottomLink_hover'; return true;">
+                                  onkeyup="this.className='List_Button_BottomLink_focus'; return true;">
                                   <table class="List_Button_Bottom"
                                     onmousedown="this.className='List_Button_Bottom_active'; return true;"
                                     onmouseup="this.className='List_Button_Bottom'; return true;"
@@ -378,7 +403,7 @@ var baseDirection = "../../../../../web/";
                     </TABLE>
 
                   </TD>
-                          <TD class="TitleCell"> <SPAN class="LabelText">Product cat.</SPAN></TD>
+                          <TD class="TitleCell"><SPAN class="LabelText">Product cat.</SPAN></TD>
                           <TD class="List_ContentCell"> <SELECT class="List_width List_height" name="inpmProductCategoryId" size="5" multiple="" id="reportM_PRODUCTCATEGORY">
                           </SELECT></TD>
                         </TR>
@@ -391,21 +416,21 @@ var baseDirection = "../../../../../web/";
 </select></TD>
   </TR-->
                         <TR>
-                          <TD class="TitleCell"> <SPAN class="LabelText">Sales Region</SPAN></TD>
+                          <TD class="TitleCell"><SPAN class="LabelText">Sales Region</SPAN></TD>
                           <TD colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpcSalesRegionId" size="5" multiple="" id="reportCSalesRegionId"></select></TD>
-                          <TD class="TitleCell"> <SPAN class="LabelText">Campaign</SPAN></TD>
+                          <TD class="TitleCell"><SPAN class="LabelText">Campaign</SPAN></TD>
                           <TD colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpcCampaingId" size="5" multiple="" id="reportCCampaignId"></select></TD>
                         </TR>
                         <TR>
-                          <TD class="TitleCell"> <SPAN class="LabelText">Activity</SPAN></TD>
+                          <TD class="TitleCell"><SPAN class="LabelText">Activity</SPAN></TD>
                           <TD colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpcActivityId" size="5" multiple="" id="reportCActivityId"></select></TD>
-                          <TD class="TitleCell"> <SPAN class="LabelText">Project</SPAN></TD>
+                          <TD class="TitleCell"><SPAN class="LabelText">Project</SPAN></TD>
                           <TD colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpcProjectId" size="5" multiple="" id="reportCProjectId"></select></TD>
                         </TR>
                         <TR>
-                          <TD class="TitleCell"> <SPAN class="LabelText">Trx organization</SPAN></TD>
+                          <TD class="TitleCell"><SPAN class="LabelText">Trx organization</SPAN></TD>
                           <TD colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpTrxOrg" size="5" multiple="" id="reportTrxOrg"></select></TD>
-                          <TD class="TitleCell"> <SPAN class="LabelText">Month</SPAN></TD>
+                          <TD class="TitleCell"><SPAN class="LabelText">Month</SPAN></TD>
                           <TD colspan="2" class="List_ContentCell"> <select class="List_width List_height" name="inpMonth" size="5" multiple="" id="reportMonth"></select></TD>
                         </TR>
                         <TR>
@@ -453,7 +478,7 @@ var baseDirection = "../../../../../web/";
                           <TD class="TitleCell"></TD>
                           <TD class="Button_CenterAlign_ContentCell">
                             <DIV>
-                              <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Generate Excel'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('EXCEL', false, null, 'ReportBudgetGenerateExcelXLS.xls', '_blank', null, false);return false;">
+                              <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Generate Excel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('EXCEL', false, null, 'ReportBudgetGenerateExcelXLS.xls', '_blank', null, false);return false;">
                               <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                                 <TR>
                                   <TD class="Button_left"><IMG class="Button_Icon Button_Icon_process" alt="Generate Excel" title="Generate Excel" src="../../../../../web/images/blank.gif" border="0/"></IMG></TD>

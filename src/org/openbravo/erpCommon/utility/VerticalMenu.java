@@ -75,8 +75,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strCliente, boolean open) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Vertical Menu's screen");
     String[] discard = new String[1];
-    if (open) discard[0] = new String("fieldDesplegar");
-    else discard[0] = new String("fieldContraer");
+    if (open) discard[0] = new String("buttonExpand");
+    else discard[0] = new String("buttonCollapse");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/VerticalMenu", discard).createXmlDocument();
     
     
@@ -97,7 +97,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
     menu.append(" id=\"folderInformation\">\n");
     menu.append("      <tr class=\"Normal ");
     if (!open) menu.append("NOT_");
-    menu.append("Opened NOT_Hover NOT_Selected NOT_Pressed");
+    menu.append("Opened NOT_Hover NOT_Selected NOT_Pressed NOT_Focused");
     menu.append("\" id=\"childInformation\" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
     menu.append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");
     menu.append("        <td width=\"5px\" id=\"folderCell1_Information\"><img src=\"").append(strReplaceWith).append("/images/blank.gif\" class=\"Menu_Client_Button_BigIcon Menu_Client_Button_BigIcon_folder");
@@ -179,7 +179,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
           strText.append("      <tr");
           strText.append(" class=\"Normal ");
           if (!open || !menuData[i].issummary.equals("Y")) strText.append("NOT_");
-          strText.append("Opened NOT_Hover NOT_Selected NOT_Pressed");
+          strText.append("Opened NOT_Hover NOT_Selected NOT_Pressed NOT_Focused");
           strText.append("\"");
           if (menuData[i].issummary.equals("N")) {
             strText.append(" id=\"child").append(strID).append("\"");
@@ -285,7 +285,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
       result.append(" id=\"info").append(FormatUtilities.replace(data[i].name)).append("\"");
       result.append(">\n");
       result.append("      <tr");
-      result.append(" class=\"Normal NOT_Opened NOT_Hover NOT_Selected NOT_Pressed\"");
+      result.append(" class=\"Normal NOT_Opened NOT_Hover NOT_Selected NOT_Pressed NOT_Focused\"");
       result.append(" id=\"childinfo").append(FormatUtilities.replace(data[i].name)).append("\"");
       result.append(" onclick=\"checkSelected('childinfo").append(FormatUtilities.replace(data[i].name)).append("');openSearch(null, null, '");
       String javaClassName = data[i].classname.trim();

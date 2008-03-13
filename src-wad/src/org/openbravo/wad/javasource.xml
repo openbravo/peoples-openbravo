@@ -268,4 +268,9 @@
   <SECTION id="sectionButtonText"/>
 </structure>
 
+<structure name="structure37">
+  <FIELD id="fieldButtonSCName">name</FIELD>
+  <SECTION id="sectionButtonShorcuts"/>
+</structure>
+
 </REPORT>

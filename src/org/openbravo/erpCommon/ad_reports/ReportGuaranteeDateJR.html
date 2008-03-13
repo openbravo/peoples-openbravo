@@ -34,7 +34,9 @@
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
         var LNG_POR_DEFECTO = "en_US";
       </script>
+      <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
@@ -47,7 +49,6 @@
       <script language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-      <script language="JavaScript" type="text/javascript" id="keyMap"></script>
       <script type="text/javascript">
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
@@ -68,8 +69,33 @@ function onloadFunctions() {
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+		resizeArea();
+		updateMenuIcon('buttonMenu');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
-    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
+    <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <FORM method="POST" action="ReportGuaranteeDateJR.html" name="frmMain" id="form">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpmProductId"></INPUT>
@@ -218,7 +244,7 @@ function onloadFunctions() {
                           <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDate" id="paramDate" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDate");</script>
                         </TD>
                         <TD class="FieldButton_bg">
-                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="showCalendar('frmMain.inpDate', document.frmMain.inpDate.value, false);return false;" >
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDate', document.frmMain.inpDate.value, false);return false;" >
                           <table class="FieldButton"onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <TR>
                               <TD class="FieldButton_bg">
@@ -232,7 +258,7 @@ function onloadFunctions() {
                     </TABLE>
                  </TD>
                  <TD class="ContentCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Business Partner</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Business Partner</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell" colspan="2">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
@@ -241,7 +267,7 @@ function onloadFunctions() {
                           <INPUT class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpBpartnerId_DES" maxlength="20" value=""></INPUT>
                         </TD>
                         <TD class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Business Partner'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value);return false;">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value);return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <TR>
                               <TD class="FieldButton_bg">
@@ -255,7 +281,7 @@ function onloadFunctions() {
                   </TD>
                 </tr>
                 <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Warehouse</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Warehouse</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT  name="inpmWarehouseId" id="inpmWarehouseId" class="Combo Combo_TwoCells_width">
                       <OPTION value=""> <DIV id="reportM_WAREHOUSEID"></DIV></OPTION>
                     </SELECT></TD>
@@ -284,7 +310,7 @@ function onloadFunctions() {
                     <TD class="TitleCell"></TD>
                     <TD class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='View Results in a New Window'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="openServletNewWindow('FIND', true, 'ReportGuaranteeDateJR.html', 'ReportGuaranteeDateJR', null, false, '700', '1000', true);return false;">
+                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('FIND', true, 'ReportGuaranteeDateJR.html', 'ReportGuaranteeDateJR', null, false, '700', '1000', true);return false;">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                           <tr>
                             <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>

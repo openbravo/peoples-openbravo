@@ -74,6 +74,16 @@ a.LabelLink:hover {
   text-decoration: underline;
 }
 
+a.LabelLink_focus_alpha {
+  background: url(link.focused.png) no-repeat;
+  font-weight: bold;
+  color: #2985BA;
+  border-bottom-style: solid;
+  border-width: 2px;
+  border-bottom-color: #FCD938;
+  outline: none;
+}
+
 a.LabelLink_noicon {
   color: #2985BA;
   text-decoration: none;
@@ -92,4 +102,13 @@ a.LabelLink_noicon:visited {
 
 a.LabelLink_noicon:hover {
   text-decoration: underline;
+}
+
+a.LabelLink_noicon_focus_alpha {
+  font-weight: bold;
+  color: #2985BA;
+  border-bottom-style: solid;
+  border-width: 2px;
+  border-bottom-color: #FCD938;
+  outline: none;
 }

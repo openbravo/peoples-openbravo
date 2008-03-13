@@ -23,7 +23,9 @@
   <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
 
   <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
@@ -70,8 +72,19 @@
       top.close();
     }
   </SCRIPT>
+  <SCRIPT language="JavaScript" type="text/javascript">
+    function onLoadDo() {
+      this.windowTables = new Array(
+        new windowTableId('client')
+      );
+      setWindowTableParentElement();
+      enableShortcuts('popup');
+      setWindowElementFocus('firstElement');
+      xinha_init();
+    }
+  </SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="setFocusFirstControl();xinha_init();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();">
 <FORM name="frmMain" action="DisplayHelp.html" method="POST" target="frameOculto" id="sectionDetail">
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
@@ -110,7 +123,7 @@
   </TR>
   <TR valign="top">
     <TD>
-      <DIV class="Popup_ContentPane_Client" style="overflow: auto;">
+      <DIV class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
                             <!-- MessageBox -->
                             <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
                               <TBODY>
@@ -217,7 +230,7 @@
             </TD>
           </TR>
           <TR id="discardName">
-            <TD class="TextBox_ContentCell" colspan="2"><INPUT class="TextBox_TwoCells_width" name="inpName" size="50" maxlength="50" id="fieldName" value="Tab name" type="text"></INPUT></TD>
+            <TD class="TextBox_ContentCell" colspan="2"><INPUT class="dojoValidateValid TextBox_TwoCells_width" name="inpName" size="50" maxlength="50" id="fieldName" value="Tab name" type="text"></INPUT></TD>
             <TD></TD>
             <TD></TD>
           </TR>
@@ -230,24 +243,28 @@
             <TD></TD>
             <TD class="Button_RightAlign_ContentCell">
               <DIV>
-                <TABLE class="Button" onclick="submitCommandForm('SAVE_' + document.frmMain.inpType.value, true);return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Accept';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                  <TR>
-                    <TD class="Button_left"><IMG class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border="0"></IMG></TD>
-                    <TD class="Button_text Button_width" id="tdButtonOk">OK</TD>
-                    <TD class="Button_right"></TD>
-                  </TR>
-                </TABLE>
+                <A class="ButtonLink" href="#" onfocus="this.className='ButtonLink_focus'; window.status='OK'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE_' + document.frmMain.inpType.value, true);return false;">
+                  <TABLE class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='OK'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                    <TR>
+                      <TD class="Button_left"><IMG class="Button_Icon Button_Icon_ok" alt="OK" title="OK" src="../web/images/blank.gif" border="0/"></IMG></TD>
+                      <TD class="Button_text Button_width">OK</TD>
+                      <TD class="Button_right"></TD>
+                    </TR>
+                  </TABLE>
+                </A>
               </DIV>
             </TD>
             <TD class="Button_LeftAlign_ContentCell">
               <DIV>
-                <TABLE class="Button" onclick="closeWindow();return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                  <TR>
-                    <TD class="Button_left"><IMG class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border="0" title="xx" id="buttonCancel"></IMG></TD>
-                    <TD class="Button_text Button_width" id="tdButtonCancel">Cancel</TD>
-                    <TD class="Button_right"></TD>
-                  </TR>
-                </TABLE>
+                <A class="ButtonLink" href="#" onfocus="this.className='ButtonLink_focus'; window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="closeWindow();return false;">
+                  <TABLE class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Cancel'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                    <TR>
+                      <TD class="Button_left"><IMG class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../web/images/blank.gif" border="0/"></IMG></TD>
+                      <TD class="Button_text Button_width">Cancel</TD>
+                      <TD class="Button_right"></TD>
+                    </TR>
+                  </TABLE>
+                </A>
               </DIV>
             </TD>
             <TD></TD>

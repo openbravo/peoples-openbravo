@@ -75,12 +75,6 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      KeyMap key = new KeyMap(this, vars, "ReportTotalProductTemplate.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportTotalProductTemplate");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
@@ -124,12 +118,6 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
-    try {
-      KeyMap key = new KeyMap(this, vars, "ReportTotalProductTemplate.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportTotalProductTemplate");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());

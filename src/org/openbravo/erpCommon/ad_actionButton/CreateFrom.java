@@ -322,13 +322,6 @@ public class CreateFrom extends HttpSecureAppServlet {
 		throw new ServletException(ex);
 	}
 
-    try {
-      KeyMap key = new KeyMap(this, vars, "CreateFrom_Bank.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
     xmlDocument.setData("structure1", data);
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -409,13 +402,6 @@ public class CreateFrom extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
-    }
-
-    try {
-      KeyMap key = new KeyMap(this, vars, "CreateFrom_Invoice.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
     }
 
     xmlDocument.setData("structure1", data);
@@ -499,13 +485,6 @@ public class CreateFrom extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
-    }
-
-    try {
-      KeyMap key = new KeyMap(this, vars, "CreateFrom_Shipment.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
     }
 
     xmlDocument.setData("structure1", data);
@@ -682,13 +661,6 @@ public class CreateFrom extends HttpSecureAppServlet {
     }
 
 
-    try {
-      KeyMap key = new KeyMap(this, vars, "CreateFrom_Settlement.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
     xmlDocument.setData("structure1", data);
 
     response.setContentType("text/html; charset=UTF-8");
@@ -805,13 +777,6 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
     xmlDocument.setParameter("isreceiptPago", strIsReceipt);
     xmlDocument.setParameter("isreceiptCobro", strIsReceipt);
 
-    try {
-      KeyMap key = new KeyMap(this, vars, "CreateFrom_DPManagement.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
     xmlDocument.setData("structure1", data);
 
     response.setContentType("text/html; charset=UTF-8");
@@ -852,13 +817,6 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
       strIsReceipt = isSOTrx;
     } else {
       data = CreateFromCRemittanceData.select(this, vars.getLanguage(), strMarcarTodos,  Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strOrgFamily, strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount,strStatusFrom);
-    }
-
-    try {
-      KeyMap key = new KeyMap(this, vars, "CreateFrom_CRemittance.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));

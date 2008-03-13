@@ -23,7 +23,9 @@
   <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
 
   <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></SCRIPT>
 
@@ -36,8 +38,23 @@
   </SCRIPT>
   <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
 </HEAD>
-
-<BODY onload="resizeAreaHelp();" onresize="resizeAreaHelp();">
+  <SCRIPT language="JavaScript" type="text/javascript">
+    function onLoadDo() {
+      this.windowTables = new Array(
+        new windowTableId('clientIndex'),
+        new windowTableId('client')
+      );
+      setWindowTableParentElement();
+      enableShortcuts('popup');
+      resizeAreaHelp();
+      setWindowElementFocus('firstElement');
+    }
+    function onResizeDo() {
+      resizeAreaHelp();
+    }
+  </SCRIPT>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 
 <DIV class="Popup_ContentPane_CircleLogo">
   <DIV class="Popup_WindowLogo">
@@ -71,7 +88,7 @@
   </TR>
   <TR valign="top">
     <TD>
-      <DIV class="Popup_ContentPane_Client" style="overflow: auto;" >
+      <DIV class="Popup_ContentPane_Client" style="overflow: auto;">
         <TABLE cellspacing="0" cellpadding="0" class="Popup_Client_TableHelp">
 
           <TR>

@@ -21,7 +21,9 @@
 <TITLE>Locator selector</TITLE>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
@@ -30,12 +32,9 @@
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-keyArray = new Array(
-new keyArrayItem("M", "menuShowHide();", null, "ctrlKey"),
-new keyArrayItem("ENTER", "openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY', 'WindowID', 'MatchingPO');", "inpmProductId_DES", "null"),
-new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null")
-);
-enableShortcuts();
+keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY', 'WindowID', 'MatchingPO');", "inpmProductId_DES", "null");
+keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null");
+
 
 var arrFinalDocs = new Array(
 new Array("1", "2", "Albaran"),
@@ -50,18 +49,44 @@ function onloadFunctions() {
   new TypeAheadCombo("reportState_M");
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+		selectCombo(document.frmMain.inpsourcedoc, 'yy');
+		rellenarComboHijo(document.frmMain.inpfinaldoc, arrFinalDocs, document.frmMain.inpsourcedoc.options[document.frmMain.inpsourcedoc.selectedIndex].value, false, true);
+		selectCombo(document.frmMain.inpfinaldoc, 'xx');
+		selectCombo(document.frmMain.inpsearchmode, 'zz');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();selectCombo(document.frmMain.inpsourcedoc, 'yy');rellenarComboHijo(document.frmMain.inpfinaldoc, arrFinalDocs, document.frmMain.inpsourcedoc.options[document.frmMain.inpsourcedoc.selectedIndex].value, false, true);selectCombo(document.frmMain.inpfinaldoc, 'xx');selectCombo(document.frmMain.inpsearchmode, 'zz');setFocusFirstControl();" id="paramBody">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();"id="paramBody">
 <TABLE width="100%" border="0" cellspacing="1" cellpadding="0" >
 <TR>
-          <TD  width="2%"> <A href="#" onclick="menuShowHide();return false;" onmouseover="window.status='Menu';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
+          <TD width="2%"> <A href="#" onclick="menuShowHide();return false;" onmouseover="window.status='Menu';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
             <img src="../../../../../web/images/Menu.jpg"  alt="Menu" title="Menu" border="0" id="buttonMenu"></IMG></A></TD>
           <TD > <HR></HR>
           </TD>
-          <TD  width="100"> <A HREF="#" onClick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/TB_Openbravo.gif"  alt="Openbravo" title="Openbravo" border="0"></IMG></A></TD>
+          <TD width="100"> <A HREF="#" onClick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/TB_Openbravo.gif"  alt="Openbravo" title="Openbravo" border="0"></IMG></A></TD>
           <TD > <HR></HR>
           </TD>
-          <TD  width="2%"> <A href="../secureApp/GoBack.html" onmouseover="window.status='Back';return true;" onmouseout="window.status='';return true;" target="_parent" class="TBButton"> 
+          <TD width="2%"> <A href="../secureApp/GoBack.html" onmouseover="window.status='Back';return true;" onmouseout="window.status='';return true;" target="_parent" class="TBButton"> 
             <img src="../../../../../web/images/Back.jpg"  alt="Back" title="Back" border="0" id="buttonBack"></IMG></A></TD>
   </TR>
 </TABLE>
@@ -84,7 +109,7 @@ function onloadFunctions() {
           <OPTION value="0">Not balanced</OPTION>
           <OPTION value="1">Balanced</OPTION>
         </SELECT></TD>
-      <TD  width="9%"> <SPAN >Business Partner</SPAN></TD>
+      <TD width="9%"> <SPAN >Business Partner</SPAN></TD>
       <TD width="21%" > <INPUT type="hidden" name="inpcBpartnerId" value="" id="paramBpartner"></INPUT> 
         <INPUT type="text" name="inpcBpartnerId_DES" size="20" maxlength="20" value="" id="paramBpartnerDes"></INPUT> 
         <A href="#" onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 

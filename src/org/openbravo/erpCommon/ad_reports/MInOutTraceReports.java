@@ -111,12 +111,6 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
-      KeyMap key = new KeyMap(this, vars, "MInOutTraceReports.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.MInOutTraceReports");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
@@ -169,12 +163,6 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "MInOutTraceReports", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
-    try {
-      KeyMap key = new KeyMap(this, vars, "MInOutTraceReports.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.MInOutTraceReports");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());

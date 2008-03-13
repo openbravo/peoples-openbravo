@@ -275,13 +275,7 @@ public class SQLExecutor extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString());
 	
     log4j.debug("toolbar");
-	try {
-      KeyMap key = new KeyMap(this, vars, "SQLExecutor.html");
-      xmlDocument.setParameter("keyMap", key.getRelationKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    log4j.debug("keymap");
+	log4j.debug("keymap");
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.SQLExecutor");
       log4j.debug("tabs");

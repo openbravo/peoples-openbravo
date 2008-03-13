@@ -43,3 +43,55 @@
 .dojoHtmlCheckboxOffHover {
 	background: url(check.png) -80px 0px;
 }
+
+
+
+.Checkbox_NOT_focus_alphaed, .Radio_NOT_focus_alphaed {
+  padding: 0px;
+  margin: 0px;
+  outline: 0;
+  text-decoration: none;
+  -moz-outline-style: none;
+  border-style: solid;
+  border-width: 2px;
+  border-color: transparent;
+}
+
+.Checkbox_container_NOT_focus_alphaed, .Radio_container_NOT_focus_alphaed {
+  display: table-cell;
+  display: -moz-inline-box;
+  padding: 0px;
+  margin: 0px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  _border-style: none;
+  border-width: 2px;
+  border-color: transparent;
+  outline:0;
+}
+
+.Checkbox_focus_alphaed, .Radio_focus_alphaed {
+  padding: 0px;
+  margin: 0px;
+  outline: 0;
+  text-decoration: none;
+  -moz-outline-style: none;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #FCD938;
+}
+
+.Checkbox_container_focus_alphaed, .Radio_container_focus_alphaed {
+  display: table-cell;
+  display: -moz-inline-box;
+  padding: 0px;
+  margin: 0px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  _border-style: none;
+  border-width: 2px;
+  border-color: #FCD938;
+  outline:0;
+}

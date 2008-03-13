@@ -23,7 +23,9 @@
   <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
 
   <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
-  <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+  <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
   <SCRIPT language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></SCRIPT>
 
@@ -52,8 +54,23 @@ function depurar(action) {
 }
 
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client', 'frameButton'),
+		  new windowTableId('client', 'frameButton2')
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+		
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="setFocusFirstControl();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="onLoadDo();" onresize="onResizeDo();">
 <DIV class="Popup_ContentPane_CircleLogo">
   <DIV class="Popup_WindowLogo">
     <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
@@ -92,7 +109,7 @@ function depurar(action) {
   </TR>
   <TR>
     <TD>
-      <DIV class="Popup_ContentPane_Client" style="overflow: auto;">
+      <DIV class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
                             <!-- MessageBox -->
                             <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
                               <TBODY>
@@ -187,11 +204,11 @@ function depurar(action) {
             <TD class="TableEdition_OneCell_width"></TD>
           </TR>
           <TR> 
-            <TD class="TitleCell"> <SPAN class="LabelText">Measure date</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Measure date</SPAN></TD>
             <TD class="ReadOnly_Text_ContentCell"><SPAN id="paramMeasureDate" class="Label_ReadOnly_Text"></SPAN></TD>
-            <TD class="TitleCell"> <SPAN class="LabelText">Shift</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Shift</SPAN></TD>
             <TD class="ReadOnly_Text_ContentCell"><SPAN id="paramShift" class="Label_ReadOnly_Text"></SPAN></TD>
-            <TD class="TitleCell"> <SPAN class="LabelText">Product</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Product</SPAN></TD>
             <TD class="ReadOnly_Text_ContentCell"><SPAN id="paramProduct" class="Label_ReadOnly_Text"></SPAN></TD>
           </TR>
           <DIV id="sectionDetail">

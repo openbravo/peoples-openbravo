@@ -349,10 +349,10 @@ function getKeyField() {
 
                   <div id="unlockbutton" style="display: none;">
                     <a class="ButtonLink" href="#"
-                      onfocus="this.className='ButtonLink_hover'; window.status='Unlock Tree'; return true;"
-                      onblur="this.className='ButtonLink'; window.status=''; return true;"
+                      onfocus="setWindowElementFocus(this); window.status='Unlock Tree'; return true;"
+                      onblur="window.status=''; return true;"
                       onkeypress="this.className='ButtonLink_active'; return true;"
-                      onkeyup="this.className='ButtonLink_hover'; return true;"
+                      onkeyup="this.className='ButtonLink_focus'; return true;"
                       onclick="UnlockTree();">
 
                       <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Unlock Tree';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
@@ -367,10 +367,10 @@ function getKeyField() {
 
                   <div id="lockbutton" style="display: none;">
                     <a class="ButtonLink" href="#"
-                      onfocus="this.className='ButtonLink_hover'; window.status='Lock Tree'; return true;"
-                      onblur="this.className='ButtonLink'; window.status=''; return true;"
+                      onfocus="setWindowElementFocus(this); window.status='Lock Tree'; return true;"
+                      onblur="window.status=''; return true;"
                       onkeypress="this.className='ButtonLink_active'; return true;"
-                      onkeyup="this.className='ButtonLink_hover'; return true;"
+                      onkeyup="this.className='ButtonLink_focus'; return true;"
                       onclick="LockTree();">
 
                       <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Lock Tree';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
@@ -389,10 +389,10 @@ function getKeyField() {
 
                   <div>
                     <a class="ButtonLink" href="#"
-                      onfocus="this.className='ButtonLink_hover'; window.status='Expand all'; return true;"
-                      onblur="this.className='ButtonLink'; window.status=''; return true;"
+                      onfocus="setWindowElementFocus(this); window.status='Expand all'; return true;"
+                      onblur="window.status=''; return true;"
                       onkeypress="this.className='ButtonLink_active'; return true;"
-                      onkeyup="this.className='ButtonLink_hover'; return true;"
+                      onkeyup="this.className='ButtonLink_focus'; return true;"
                       onclick="treeObj.expandAll()">
 
                       <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Expand all';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
@@ -411,10 +411,10 @@ function getKeyField() {
 
                   <div>
                     <a class="ButtonLink" href="#"
-                      onfocus="this.className='ButtonLink_hover'; window.status='Collapse all'; return true;"
-                      onblur="this.className='ButtonLink'; window.status=''; return true;"
+                      onfocus="setWindowElementFocus(this); window.status='Collapse all'; return true;"
+                      onblur="window.status=''; return true;"
                       onkeypress="this.className='ButtonLink_active'; return true;"
-                      onkeyup="this.className='ButtonLink_hover'; return true;"
+                      onkeyup="this.className='ButtonLink_focus'; return true;"
                       onclick="treeObj.collapseAll(); treeObj.expandNode(0);">
 
                       <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Collapse all';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
@@ -433,10 +433,10 @@ function getKeyField() {
 
                   <div>
                     <a class="ButtonLink" href="#"
-                      onfocus="this.className='ButtonLink_hover'; window.status='Close'; return true;"
-                      onblur="this.className='ButtonLink'; window.status=''; return true;"
+                      onfocus="setWindowElementFocus(this); window.status='Close'; return true;"
+                      onblur="window.status=''; return true;"
                       onkeypress="this.className='ButtonLink_active'; return true;"
-                      onkeyup="this.className='ButtonLink_hover'; return true;"
+                      onkeyup="this.className='ButtonLink_focus'; return true;"
                       onclick="window.close();">
 
                       <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Close';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">

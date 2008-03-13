@@ -25,7 +25,6 @@
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="paramScripsJS" name="scripsJS"/>
   <PARAMETER id="paramScript" name="script"/>
-  <PARAMETER id="keyMap" name="keyMap" default=""/>
   <PARAMETER id="paramTabId" name="tab" attribute="value"/>
   <PARAMETER id="paramWindow" name="window" attribute="value"/>
   <PARAMETER id="paramData" name="data"/>

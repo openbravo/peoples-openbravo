@@ -33,7 +33,9 @@
   <script language="JavaScript" type="text/javascript" id="paramLanguage">
     var LNG_POR_DEFECTO = "en_US";
   </script>
-  <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+  <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
   <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
@@ -47,7 +49,6 @@
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
   <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-  <script language="JavaScript" type="text/javascript" id="keyMap"></script>
   <script type="text/javascript">
     dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
   </script>
@@ -77,8 +78,35 @@
       new TypeAheadCombo("inpadShipperpathId");
     }
   </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client'),
+		  new windowTableId('tdbottomButtons')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+		xx();
+		resizeArea();
+		updateMenuIcon('buttonMenu');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
-<BODY onload="onloadFunctions();xx();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
+<BODY onload="onLoadDo();" onresize="onResizeDo();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
 
 <FORM  method="POST" action="ChangeOrderOrg.html" name="frmMain" id="form">
   <INPUT type="hidden" name="Command"></INPUT>
@@ -226,7 +254,7 @@
 <!-- Form filter caption end-->
 <!-- Partner choice-->
           <TR>
-             <TD class="TitleCell"> <SPAN class="LabelText">Business Partner</SPAN></TD>
+             <TD class="TitleCell"><SPAN class="LabelText">Business Partner</SPAN></TD>
              <TD class="TextBox_btn_ContentCell" colspan="2">
              <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
               <TR>
@@ -235,7 +263,7 @@
                     <INPUT class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpBpartnerId_DES" maxlength="20" value="" id="paramBPartnerDescription"></INPUT>
                 </TD>
                   <TD class="FieldButton_ContentCell">
-                  <A class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Business Partner'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'WindowID', 'ChangeOrderOrg');return false;">          
+                  <A class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'WindowID', 'ChangeOrderOrg');return false;">          
                     <TABLE class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Business Partner';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                       <TR>
                         <TD class="FieldButton_bg">
@@ -253,19 +281,19 @@
 <!-- Partner choice end-->
 
           <TR>
-            <TD class="TitleCell"> <SPAN class="LabelText">Organization</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>
             <TD class="Combo_ContentCell">
               <SELECT name="inpadOrgId" id="inpadOrgId" class="Combo Combo_OneCell_width">
                 <OPTION value=""></OPTION><DIV id="reportAD_Org_ID"></DIV>
               </SELECT>
             </TD>
-            <TD class="TitleCell"> <SPAN class="LabelText">Forced organization</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Forced organization</SPAN></TD>
             <TD class="Combo_ContentCell">
               <SELECT name="inpadForcedOrgId" id="inpadForcedOrgId" class="Combo Combo_OneCell_width">
                 <OPTION value=""></OPTION><DIV id="reportAD_Forced_Org_ID"></DIV>
               </SELECT>
             </TD>
-            <TD class="TitleCell"> <SPAN class="LabelText">Destiny organization</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Destiny organization</SPAN></TD>
             <TD class="Combo_ContentCell">
               <SELECT name="inpadOrgIdNew" id="inpadOrgIdNew" class="Combo Combo_OneCell_width">
                 <OPTION value=""></OPTION><DIV id="reportAD_Org_IDNew"></DIV>
@@ -274,13 +302,13 @@
           </TR>
 
           <TR>
-            <TD class="TitleCell"> <SPAN class="LabelText">Payment rule</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Payment rule</SPAN></TD>
             <TD class="Combo_ContentCell">
               <SELECT name="inppaymentrule" id="inppaymentrule" class="Combo Combo_OneCell_width">
                 <OPTION value=""></OPTION><DIV id="reportPaymentRule"></DIV>
               </SELECT>
             </TD>
-            <TD class="TitleCell"> <SPAN class="LabelText">Tax</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Tax</SPAN></TD>
             <TD class="Combo_ContentCell" colspan="3">
               <SELECT name="inpcTaxId" id="inpcTaxId" class="Combo Combo_ThreeCells_width">
                 <OPTION value=""></OPTION><DIV id="reportC_TAX_ID"></DIV>
@@ -288,7 +316,7 @@
             </TD>
           </TR>
           <TR>
-            <TD class="TitleCell"> <SPAN class="LabelText">Warehouse</SPAN></TD>
+            <TD class="TitleCell"><SPAN class="LabelText">Warehouse</SPAN></TD>
             <TD class="Combo_ContentCell" colspan="3">
               <SELECT name="inpadShipperpathId" id="inpadShipperpathId" class="Combo Combo_OneCell_width">
                 <OPTION value=""></OPTION><DIV id="reportM_Warehouse_ID"></DIV>
@@ -300,7 +328,7 @@
               <TD class="TitleCell"></TD>
               <TD class="Button_LeftAlign_ContentCell">
               <div>
-                <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Results'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('FIND', true, null, 'ChangeOrderOrg.html');return false;">
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Results'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true, null, 'ChangeOrderOrg.html');return false;">
                 <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Results';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                   <tr>
                     <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Results" title="Results" src="../../../../../web/images/blank.gif" border=0 id="buttonResults"/></td>                    
@@ -323,7 +351,7 @@
           <div class="Popup_ContentPane_Client" style="overflow: auto;">
         <TABLE cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table">
               <TR class="Popup_Client_Selector_DataGrid_HeaderRow"> 
-                <TD width="24" class="DataGrid_Body_LineNoCell"><INPUT type="checkbox" name="inpTodos" onclick="marcarTodos(document.frmMain.inpcOrderId, this.checked);return true;"></INPUT></TD>
+                <TD width="24" class="DataGrid_Body_LineNoCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpTodos" onclick="marcarTodos(document.frmMain.inpcOrderId, this.checked);return true;"></INPUT></SPAN></TD>
                 <TH class="DataGrid_Header_Cell" width="93">Document No.</TH>
                 <TH class="DataGrid_Header_Cell" width="93">Organization</TH>
                 <TH class="DataGrid_Header_Cell" width="281">Business Partner</TH>
@@ -335,7 +363,7 @@
 <!--Detail-->
               <DIV id="sectionDetail">
                 <TR class="DataGrid_Body_Row DataGrid_Body_Row_xx" id="funcEvenOddRow"> 
-                  <TD class="DataGrid_Body_LineNoCell"><INPUT type="checkbox" name="inpcOrderId" value="" id="fieldCOrderId"></INPUT></TD>
+                  <TD class="DataGrid_Body_LineNoCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpcOrderId" value="" id="fieldCOrderId"></INPUT></SPAN></TD>
                   <TD class="DataGrid_Body_Cell" id="fieldDocumentNo">xxQuantity</TD>
                   <TD class="DataGrid_Body_Cell" id="fieldOrganization">xx</TD>
                   <TD class="DataGrid_Body_Cell" id="fieldBPartner">xxUOM</TD>
@@ -372,7 +400,7 @@
           <TR>
             <TD class="Button_LeftAlign_ContentCell">
             <DIV>
-                <A class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Process'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('SAVE', true, null, 'ChangeOrderOrg.html');return false;">
+                <A class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE', true, null, 'ChangeOrderOrg.html');return false;">
                 <TABLE class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Process';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <TR>                      
                       <TD class="Button_left"><IMG class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border=0/></TD>

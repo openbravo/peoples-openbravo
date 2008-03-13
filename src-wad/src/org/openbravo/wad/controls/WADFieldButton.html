@@ -20,10 +20,10 @@
 
 
 <a class="FieldButtonLink" href="#"
-  onfocus="this.className='FieldButtonLink_hover'; window.status='xx'; return true;"
-  onblur="this.className='FieldButtonLink'; window.status=''; return true;"
+  onfocus="setWindowElementFocus(this); window.status='xx'; return true;"
+  onblur="window.status=''; return true;"
   onkeypress="this.className='FieldButtonLink_active'; return true;"
-  onkeyup="this.className='FieldButtonLink_hover'; return true;"
+  onkeyup="this.className='FieldButtonLink_focus'; return true;"
   onclick="xx();return false;" id="fieldLink">
   <table class="FieldButton"
     onmousedown="this.className='FieldButton_active'; return true;"

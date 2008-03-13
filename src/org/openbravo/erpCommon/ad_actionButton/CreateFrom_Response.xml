@@ -23,5 +23,4 @@
 	<PARAMETER id="paramDirection" name="direction" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 
-  <PARAMETER id="keyMap" name="keyMap" default=""/>
-</REPORT>
+  </REPORT>

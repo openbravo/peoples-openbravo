@@ -48,7 +48,6 @@
   <PARAMETER id="paramMainTabContainer" name="mainTabContainer" default=" "/>
   <PARAMETER id="paramChildTabContainer" name="childTabContainer" default=" "/>
   <PARAMETER id="tdtopButtons" name="navigationBar" default=""/>
-  <PARAMETER id="keyMap" name="keyMap" default=""/>
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>

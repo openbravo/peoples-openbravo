@@ -33,7 +33,9 @@
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
         var LNG_POR_DEFECTO = "en_US";
       </script>
+      <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
@@ -45,7 +47,6 @@
       <script language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-      <script language="JavaScript" type="text/javascript" id="keyMap"></script>
       <script type="text/javascript">
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
@@ -76,8 +77,33 @@ function onloadFunctions(){
 }
 
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+		resizeArea();
+		updateMenuIcon('buttonMenu');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
-    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
+    <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 
 <FORM method="POST" action="MInOutTraceReports.html" name="frmMain" id="form">
   <INPUT type="hidden" name="Command"></INPUT>
@@ -220,7 +246,7 @@ function onloadFunctions(){
                 </td>
                 </TR>
                 <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Product</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Product</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell" colspan="2">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
@@ -229,7 +255,7 @@ function onloadFunctions(){
                           <INPUT dojoType="openbravo:ValidationTextbox" class="dojoValidateValid TextBox_btn_TwoCells_width required" required="true" type="text"  name="inpmProductId_D" maxlength="20" value=""></INPUT>
                         </TD>
                         <TD class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Product'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="openSearch(null, null, '../info/ProductComplete_FS.html', null, true, 'frmMain', 'inpmProductId', 'inpmProductId_D', document.frmMain.inpmProductId_D.value, 'WindowID', 'MInOutTraceReports');return false;" >
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Product'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/ProductComplete_FS.html', null, true, 'frmMain', 'inpmProductId', 'inpmProductId_D', document.frmMain.inpmProductId_D.value, 'WindowID', 'MInOutTraceReports');return false;" >
                           <table class="FieldButton" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;"> 
                             <TR>
                               <TD class="FieldButton_bg">
@@ -242,18 +268,18 @@ function onloadFunctions(){
                       </TR>
                     </TABLE>
                   </TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Attribute</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Attribute</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT  name="inpmAttributeSetInstanceId" id="inpmAttributeSetInstanceId" class="Combo Combo_TwoCells_width">
                       <OPTION value=""> <DIV id="reportM_ATTRIBUTESETINSTANCE_ID"></DIV></OPTION>
                     </SELECT></TD>
                   <TD class="ContentCell"></TD>
                 </TR>
                 <TR>
-                    <TD  class="TitleCell"> <SPAN class="LabelText">In coming</SPAN></TD>
-                    <TD  class="Radio_Check_ContentCell"> <INPUT type="radio" name="inpInOut" value="Y" checked id="paramIn" class="RadioButton"></INPUT>
+                    <TD class="TitleCell"><SPAN class="LabelText">In coming</SPAN></TD>
+                    <TD class="Radio_Check_ContentCell"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpInOut" value="Y" checked id="paramIn" class="RadioButton"></INPUT></SPAN>
                     </TD>
-                    <TD  class="TitleCell"> <SPAN class="LabelText">Out going</SPAN></TD>
-                    <TD class="Radio_Check_ContentCell"> <INPUT type="radio" name="inpInOut" value="N" checked="" id="paramOut" class="RadioButton"></INPUT>
+                    <TD class="TitleCell"><SPAN class="LabelText">Out going</SPAN></TD>
+                    <TD class="Radio_Check_ContentCell"><SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpInOut" value="N" checked="" id="paramOut" class="RadioButton"></INPUT></SPAN>
                     </TD>
                   <TD class="ContentCell"></TD>
                     <TD class="TitleCell"></TD>
@@ -280,7 +306,7 @@ function onloadFunctions(){
                     <TD class="TitleCell"></TD>
                     <TD class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='View Results in a New Window'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="openServletNewWindow('FIND', true, 'MInOutTraceReports.html', 'MInOutTraceReports', null, false, '700', '1000', true);return false;">
+                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('FIND', true, 'MInOutTraceReports.html', 'MInOutTraceReports', null, false, '700', '1000', true);return false;">
                         <table class="Button" onmouseover="window.status='Results';return true;" onmouseout="window.status='';return true;"> 
                           <tr>
                             <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>

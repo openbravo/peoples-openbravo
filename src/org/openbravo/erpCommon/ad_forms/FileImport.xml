@@ -20,7 +20,6 @@
 <REPORT>
 	<template file="FileImport.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
-  <PARAMETER id="keyMap" name="keyMap" default=""/>
   <PARAMETER id="paramParentTabContainer" name="parentTabContainer" default=" "/>
   <PARAMETER id="paramMainTabContainer" name="mainTabContainer" default=" "/>
   <PARAMETER id="paramChildTabContainer" name="childTabContainer" default=" "/>

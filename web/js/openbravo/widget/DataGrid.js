@@ -492,6 +492,8 @@ dojo.widget.defineWidget(
 * @param {EventHandler} evt - event handler
 */
 		cellDoubleClicked: function(evt) {
+      isClickOnGrid=true;
+      focusGrid();
 			var node = evt.target;
 			var isCell = node.nodeName.toLowerCase() == "td";
 			if (!isCell) {
@@ -511,6 +513,8 @@ dojo.widget.defineWidget(
 * @param {EventHandler} evt - event handler
 */
 		cellClicked: function(evt) {
+      isClickOnGrid=true;
+      focusGrid();
 			if (this.locked) return;
 			this.lastHoveredColumn = null;
 			var isCell = (evt.target.nodeName.toLowerCase() == "td");
@@ -705,6 +709,7 @@ dojo.widget.defineWidget(
 			if (!this.keyMapping) {
 				var k = dojo.event.browser.keys;
 				var m = this.keyMapping = [];
+        /* Remove to let the shortcuts.js to do the job
 				m[k.KEY_ESCAPE] = this.cancelEdit;
 				m[k.KEY_ENTER] = this.enterKeyPressed;
 				m[k.KEY_INSERT] = this.addNewRow;
@@ -715,17 +720,11 @@ dojo.widget.defineWidget(
 				m[k.KEY_RIGHT_ARROW] = this.goToRightCell;
 				m[k.KEY_HOME] = this.goToFirstRow;
 				m[k.KEY_END] = this.goToLastRow;
-				m[k.KEY_PAGE_UP] = function() {
-					if (!this.editing)
-						this.moveCurrentPosition(-this.numRows);
-				};
-				m[k.KEY_PAGE_DOWN] = function() {
-					if (!this.editing)
-						this.moveCurrentPosition(this.numRows);
-				};
+				m[k.KEY_PAGE_UP] = this.goToPreviousPage;
+				m[k.KEY_PAGE_DOWN] = this.goToNextPage;
 				for (var key in m) {
 					m[key] = dojo.lang.hitch(this, m[key]);
-				}
+				}*/
 			}
 			return this.keyMapping;
 		},	
@@ -1005,7 +1004,8 @@ dojo.widget.defineWidget(
 
 	    	var gridId = this.widgetId;
 			var tableHeader = document.createElement("table");
-			tableHeader.className = 'DataGrid_Header_Table';
+			if(isGridFocused) tableHeader.className = 'DataGrid_Header_Table_Focus';
+			else tableHeader.className = 'DataGrid_Header_Table';
 			if (this.sortable)
 				tableHeader.id = gridId + '_table_header';
 			tableHeader.cellspacing = 0;
@@ -1042,7 +1042,8 @@ dojo.widget.defineWidget(
 			table.id = gridId + "_table";
 			table.cellspacing = "0";
 			table.cellpadding = "0";
-			table.className = 'DataGrid_Body_Table';
+      if(isGridFocused) table.className = 'DataGrid_Body_Table_Focus';
+      else table.className = 'DataGrid_Body_Table';
 			table.style.width = totalWidth + 'px';
 	        var tbody = document.createElement("tbody");
 			for (var i = 0; i < this.numRows; i++) {
@@ -1206,7 +1207,23 @@ dojo.widget.defineWidget(
 			if (this.checkEditingRow())
 				this.goToRow(this.metaData.totalRows - 1);
 		},
-		
+
+/**
+* It moves the area to the previous visible page.
+*/
+		goToPreviousPage: function() {
+      if (!this.editing)
+        this.moveCurrentPosition(-this.numRows);
+    },
+
+/**
+* It moves the area to the next visible page.
+*/
+		goToNextPage: function() {
+      if (!this.editing)
+				this.moveCurrentPosition(this.numRows);
+    },
+
 /**
 * It puts the page focus in the grid, selecting the first record, in case any selected record exists.
 */
@@ -1365,6 +1382,27 @@ dojo.widget.defineWidget(
 			this.moveTableContent(contentOffset);
 		},
 		
+/**
+* It display the grid focused.
+*/
+    focusGrid: function() {
+      isGridFocused = true;
+      openbravo.html.prereplaceClass(this.table, 'DataGrid_Body_Table_Focus', 'DataGrid_Body_Table');
+      openbravo.html.prereplaceClass(this.tableHeader, 'DataGrid_Header_Table_Focus', 'DataGrid_Header_Table');
+      return true;
+		},
+
+/**
+* It display the grid blured.
+*/
+    blurGrid: function() {
+      isGridFocused = false;
+      openbravo.html.prereplaceClass(this.table, 'DataGrid_Body_Table', 'DataGrid_Body_Table_Focus');
+      openbravo.html.prereplaceClass(this.tableHeader, 'DataGrid_Header_Table', 'DataGrid_Header_Table_Focus');
+      return true;
+		},
+
+
 /**
 * It is an utility to modify the content of a cell.
 * @param {Number} rowNo - number of row

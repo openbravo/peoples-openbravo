@@ -23,10 +23,11 @@
   <PARAMETER id="xx" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xx" name="columnNameInp" attribute="name" replace="xx"/>
   <PARAMETER id="xx" name="callout" attribute="onchange" replace="xx();"/>
-  <PARAMETER id="xx_BTN" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xx_BTN" name="name"/>
-  <PARAMETER id="fieldLink" name="action" attribute="onclick" replace="xx();"/>
-  <PARAMETER id="fieldLink" name="name" attribute="onfocus" replace="xx"/>
+  <PARAMETER id="xx_BTNname" name="columnName" attribute="id" replace="xx"/>
+  <PARAMETER id="xx_BTNname" name="nameHTML"/>
+  <PARAMETER id="xx_linkBTN" name="action" attribute="onclick" replace="xx();"/>
+  <PARAMETER id="xx_linkBTN" name="name" attribute="onfocus" replace="xx"/>
+  <PARAMETER id="xx_linkBTN" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="fieldTable" name="name" attribute="onmouseover" replace="xx"/>
   <PARAMETER id="fieldButton" name="name" attribute="alt"/>
   <PARAMETER id="fieldButton" name="name" attribute="title"/>

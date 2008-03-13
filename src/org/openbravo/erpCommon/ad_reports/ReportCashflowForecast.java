@@ -117,12 +117,6 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
     xmlDocument.setData("structureSummary",dataSummary);
 
    try {
-      KeyMap key = new KeyMap(this, vars, "ReportCashflowForecast.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportCashflowForecast");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());

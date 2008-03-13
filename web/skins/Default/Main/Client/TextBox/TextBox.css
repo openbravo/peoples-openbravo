@@ -52,6 +52,12 @@
   padding-left: 4px;
 }
 
+.TextBox_focus_alpha {
+  outline: none;
+  -moz-outline-style: none;
+  border: 2px solid #FCD938;
+}
+
 .required {
   background: url(required_bg.png) repeat-x top !important;
   background-color: #FFFADE !important;

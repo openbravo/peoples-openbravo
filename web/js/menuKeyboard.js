@@ -22,8 +22,11 @@ var classOpened = "Icon_folderOpened";
 var classClosed = "Icon_folderClosed";
 var isOpened = false;
 var focusedMenuElement = null;
+var selectedMenuElement = null;
 var isGoingDown = null;
 var isGoingUp = null;
+var isMenuFocused = null;
+
 
 function getReference(id) {
   if (document.getElementById) return document.getElementById(id);
@@ -43,6 +46,7 @@ function getStyle(id, esId) {
 }
 
 function changeState(evt, element) {
+  if (window.navigator.appName.indexOf("Microsoft")!=-1) onFocusMenu();
   if(element == null) {
     element = (!document.all) ? evt.target : event.srcElement;
   } else if (evt == null) {
@@ -57,6 +61,7 @@ function changeState(evt, element) {
   }
   if (element.tagName == 'IMG') element = element.parentNode;
   if (element.parentNode.className.indexOf("NOT_Hover NOT_Selected NOT_Pressed") != -1) {
+    //focusedMenuElement = element.parentNode;
     setMenuElementFocus(element.parentNode);
   }  
   var indice = null;
@@ -102,12 +107,24 @@ function checkSelected(id) {
 
 }
 
-
 document.onclick=changeState;
 
 if (document.layers) {
   window.captureEvents(Event.ONCLICK);
-  window.onclick=changeState;
+  window.onclick=changeState;  
+}
+
+function onFocusMenu() {
+  isMenuFocused = true;
+  try {
+    top.frameAplicacion.removeWindowElementFocus(top.frameAplicacion.focusedWindowElement);
+  } catch(e) {}
+  putMenuElementFocus(focusedMenuElement);
+}
+
+function onBlurMenu() {
+  isMenuFocused = false;  
+  removeMenuElementFocus(focusedMenuElement);
 }
 
 function setMouseOver(obj) {
@@ -699,14 +716,18 @@ function getMenuElementParent(obj) {
 }
 
 function putMenuElementFocus(obj) {
-  var actualclass = obj.className;
-  obj.className = obj.className.replace(' NOT_Selected', ' Selected');
+  try {
+    var actualclass = obj.className;
+    obj.className = obj.className.replace(' NOT_Focused', ' Focused');
+  } catch (e) {
+    return false;
+  }
   return true;
 }
 
 function removeMenuElementFocus(obj) {
   var actualclass = obj.className;
-  obj.className = obj.className.replace(' Selected', ' NOT_Selected');
+  obj.className = obj.className.replace(' Focused', ' NOT_Focused');
   return true;
 }
 
@@ -727,6 +748,9 @@ function getMenuElementOffsetTop(obj){
 }
 
 function setMenuElementFocus(obj) {
+  if (obj=='firstElement') {
+    obj=getFirstMenuElement();
+  }
   var menuScrollTop = document.getElementById('Menu_Client').scrollTop;
   var menuScrollHeight = document.getElementById('Menu_Client').scrollHeight;
   var menuHeight = document.getElementById("Menu_Client").clientHeight;
@@ -751,7 +775,7 @@ function setMenuElementFocus(obj) {
     removeMenuElementFocus(focusedMenuElement);
   }
   focusedMenuElement = obj;
-  putMenuElementFocus(focusedMenuElement);
+  if (isMenuFocused) putMenuElementFocus(focusedMenuElement);
 }
 
 function menuUpKey(state) {
@@ -843,4 +867,12 @@ function menuHomeKey() {
 function menuEnterKey() {
   changeState(null, focusedMenuElement);
   focusedMenuElement.onclick();  
+}
+
+function menuTabKey(state) {
+  menuDownKey(state);
+}
+
+function menuShiftTabKey(state) {
+  menuUpKey(state);
 }

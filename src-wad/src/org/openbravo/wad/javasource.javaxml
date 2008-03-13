@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,9 +40,14 @@ import java.util.StringTokenizer;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
+import java.util.*;
 
 public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private HashMap&#60;String, String&#62; usedButtonShortCuts;
+  <PARAMETER_TMP id="buttonFixed">
+  private HashMap&#60;String, String&#62; reservedButtonShortCuts;
+  </PARAMETER_TMP>
   protected static final String windowId = "<PARAMETER_TMP id="windowId">Almacen</PARAMETER_TMP>";
   protected static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
   protected static final String defaultTabView = "<PARAMETER_TMP id="defaultView">RELATION</PARAMETER_TMP>";
@@ -780,6 +785,15 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   void printPageEdit(HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,boolean boolNew, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: edit");
+    
+    usedButtonShortCuts = new HashMap&#60;String, String&#62;();
+    <PARAMETER_TMP id="buttonFixed">
+    reservedButtonShortCuts = new HashMap&#60;String, String&#62;();
+    </PARAMETER_TMP>
+    <PARAMETERS_TMP id="sectionButtonShorcuts">
+    reservedButtonShortCuts.put("<FIELD_TMP id="fieldButtonSCName"/>","");
+    </PARAMETERS_TMP>
+    
     String strOrderByFilter = vars.getSessionValue(tabId + "|orderby");
     String orderClause = "<PARAMETER_TMP id="order">orderByClause</PARAMETER_TMP>";
     if (strOrderByFilter==null || strOrderByFilter.equals("")) strOrderByFilter = orderClause;
@@ -918,6 +932,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       xmlDocument.setData("structure1",dataAux);
     }
 <PARAMATER_TMP id="fieldControlsJavaCode"></PARAMATER_TMP>
+    xmlDocument.setParameter("scriptOnLoad", getShortcutScript());
+    
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -959,6 +975,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       }
 
       <FIELD_TMP id="JavaCode2">javaCode</FIELD_TMP>
+      
       out.println(xmlDocument.print());
       out.close();
     }
@@ -1009,6 +1026,57 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       out.close();
     }
 </FIELDS_TMP>
+
+<PARAMETER_TMP id="buttonList">
+  private String getButtonName(VariablesSecureApp vars, String reference, String currentValue, String buttonId) {
+    try {
+      UtilityData[] data= UtilityData.selectReference(this, vars.getLanguage(), reference);
+      String retVal="";
+      if (currentValue.equals("--")) currentValue="CL";
+      if (data==null) return retVal;
+      for (int j=0; j&lt;data.length; j++) {
+        int i = 0;
+        String name = data[j].name;
+        while ((i&lt;name.length()) &amp;&amp;(name.substring(i,i+1).equals(" ") || reservedButtonShortCuts.containsKey(name.substring(i, i+1).toUpperCase()))) { 
+          if (data[j].value.equals(currentValue)) retVal += name.substring(i, i+1);
+          i++;
+        }
+        if ((i==name.length()) &amp;&amp; (data[j].value.equals(currentValue))) {
+          i = 1;
+          while (i&lt;=10 &amp;&amp; reservedButtonShortCuts.containsKey(new Integer(i).toString())) i++;
+          if (i&lt;10) {
+            if (data[j].value.equals(currentValue)) retVal +="&lt;span&gt;(&lt;u&gt;"+i+"&lt;/u&gt;)&lt;/span&gt;";
+            reservedButtonShortCuts.put(new Integer(i).toString(), "");
+            usedButtonShortCuts.put(new Integer(i).toString(), "executeWindowButton('"+buttonId+"');");
+          }
+        } else {
+          if (i&lt;name.length()) reservedButtonShortCuts.put(name.substring(i,i+1).toUpperCase(), "");
+          if (data[j].value.equals(currentValue)) {
+            usedButtonShortCuts.put(name.substring(i,i+1).toUpperCase(),  "executeWindowButton('"+buttonId+"');");
+            retVal += "&lt;u&gt;"+name.substring(i,i+1)+"&lt;/u&gt;"+name.substring(i+1);
+          }
+        }
+      }
+      
+      return retVal;
+    } catch(Exception e) {
+      log4j.error(e.toString());
+      return currentValue;
+    }
+  }
+ </PARAMETER_TMP>
+ 
+  private String getShortcutScript(){
+    StringBuffer shortcuts = new StringBuffer();
+    shortcuts.append(" function buttonListShorcuts() {\n");
+    Iterator&lt;String&gt; ik = usedButtonShortCuts.keySet().iterator();
+    Iterator&lt;String&gt; iv = usedButtonShortCuts.values().iterator();
+    while(ik.hasNext() &amp;&amp; iv.hasNext()){
+      shortcuts.append("  keyArray[keyArray.length] = new keyArrayItem(\"").append(ik.next()).append("\", \"").append(iv.next()).append("\", null, \"altKey\", false, \"onkeydown\");\n");
+    }
+    shortcuts.append(" return true;\n}");
+    return shortcuts.toString();
+  }
 
   public String getServletInfo() {
     return "Servlet <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>. This Servlet was made by Wad constructor";

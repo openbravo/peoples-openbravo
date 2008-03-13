@@ -290,12 +290,6 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
     xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
 
     try {
-      KeyMap key = new KeyMap(this, vars, "ReportAccountingCountDimensionalAnalyses.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportAccountingCountDimensionalAnalyses");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
@@ -385,12 +379,6 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
     xmlDocument.setData("reportMProductId_IN", "liststructure", ReportRefundInvoiceCustomerDimensionalAnalysesData.selectMproduct(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
     xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
 
-    try {
-      KeyMap key = new KeyMap(this, vars, "ReportAccountingCountDimensionalAnalyses.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportAccountingCountDimensionalAnalyses");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());

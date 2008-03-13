@@ -65,7 +65,7 @@ public class LeftTabsBar {
     text.append("        </tr>\n");
     text.append("        <tr>\n");
     text.append("          <td>\n");
-    text.append("                <A class=\"Main_LeftTabsBar_ButtonRight\" href=\"#\" onClick=\"submitCommandForm('RELATION', false, null, '").append(servlet_action).append("', '_self', null, true);return false;\">\n");
+    text.append("                <A class=\"Main_LeftTabsBar_ButtonRight\" href=\"#\" onClick=\"submitCommandForm('RELATION', false, null, '").append(servlet_action).append("', '_self', null, true);return false;\" id=\"buttonRelation\">\n");
     text.append("                  <IMG class=\"Main_LeftTabsBar_ButtonRight_Icon Main_LeftTabsBar_ButtonRight_Icon_relation\" src=\"").append(base_direction).append("/images/blank.gif\" border=\"0\"></IMG>\n");
     text.append("                </A>\n");
     text.append("          </td>\n");
@@ -108,7 +108,7 @@ public class LeftTabsBar {
     text.append("        </tr>\n");
     text.append("        <tr>\n");
     text.append("          <td>\n");
-    text.append("                <A class=\"Main_LeftTabsBar_ButtonRight\" href=\"#\" onClick=\"submitCommandForm('EDIT', true, null, '").append(servlet_action).append("', '_self', null, false);return false;\">\n");
+    text.append("                <A class=\"Main_LeftTabsBar_ButtonRight\" href=\"#\" onClick=\"submitCommandForm('EDIT', true, null, '").append(servlet_action).append("', '_self', null, false);return false;\" id=\"buttonEdition\">\n");
     text.append("                  <IMG class=\"Main_LeftTabsBar_ButtonRight_Icon Main_LeftTabsBar_ButtonRight_Icon_edition\" src=\"").append(base_direction).append("/images/blank.gif\" border=\"0\"></IMG>\n");
     text.append("                </A>\n");
     text.append("          </td>\n");

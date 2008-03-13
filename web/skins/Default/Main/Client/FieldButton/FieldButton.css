@@ -18,15 +18,19 @@
 */
 
 
-a.FieldButtonLink, a.FieldButtonLink:active, a.FieldButtonLink:hover, a.FieldButtonLink:visited, a.FieldButtonLink:link {
+a.FieldButtonLink, a.FieldButtonLink:active, a.FieldButtonLink:hover, a.FieldButtonLink:visited, a.FieldButtonLink:link, a.FieldButtonLink:focus {
   text-decoration: none;
 }
 
-a.FieldButtonLink_hover, a.FieldButtonLink_hover:active, a.FieldButtonLink_hover:hover, a.FieldButtonLink_hover:visited, a.FieldButtonLink_hover:link {
+a.FieldButtonLink_hover, a.FieldButtonLink_hover:active, a.FieldButtonLink_hover:hover, a.FieldButtonLink_hover:visited, a.FieldButtonLink_hover:link, a.FieldButtonLink_hover:focus {
   text-decoration: none;
 }
 
-a.FieldButtonLink_active, a.FieldButtonLink_active:active, a.FieldButtonLink_active:hover, a.FieldButtonLink_active:visited, a.FieldButtonLink_active:link {
+a.FieldButtonLink_active, a.FieldButtonLink_active:active, a.FieldButtonLink_active:hover, a.FieldButtonLink_active:visited, a.FieldButtonLink_active:link, a.FieldButtonLink_active:focus {
+  text-decoration: none;
+}
+
+a.FieldButtonLink_focus_alpha, a.FieldButtonLink_focus_alpha:active, a.FieldButtonLink_focus_alpha:hover, a.FieldButtonLink_focus_alpha:visited, a.FieldButtonLink_focus_alpha:link, a.FieldButtonLink_focus_alpha:focus {
   text-decoration: none;
 }
 
@@ -59,6 +63,15 @@ a.FieldButtonLink_active .FieldButton, .FieldButton_active {
 
 a.FieldButtonLink_active table.FieldButton .FieldButton_bg, table.FieldButton_active .FieldButton_bg {
   background: url(fieldButton.pressed.png) no-repeat center center;
+}
+
+a.FieldButtonLink_focus_alpha .FieldButton, .FieldButton_focus_alpha {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.FieldButtonLink_focus_alpha table.FieldButton .FieldButton_bg, table.FieldButton_focus_alpha .FieldButton_bg {
+  background: url(fieldButton.focused.png) no-repeat center center;
 }
 
 

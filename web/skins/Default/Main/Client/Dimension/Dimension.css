@@ -29,6 +29,12 @@
   _height: 71px;
 }
 
+.Dimension_LeftSelect_width:focus, .Dimension_LeftSelect_height:focus {
+  outline: none;
+  -moz-outline-style: none;
+  border: 2px solid #FCD938;
+}
+
 .Dimension_RightSelect_width {
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
@@ -38,6 +44,12 @@
 .Dimension_RightSelect_height {
   height: 70px;
   _height: 71px;
+}
+
+.Dimension_RightSelect_width:focus, .Dimension_RightSelect_height:focus {
+  outline: none;
+  -moz-outline-style: none;
+  border: 2px solid #FCD938;
 }
 
 td.Dimension_LeftRight_Button_Separator {
@@ -97,6 +109,17 @@ a.Dimension_LeftRight_Button_TopLink_active table.Dimension_LeftRight_Button_Top
   -moz-outline-style: none;
 }
 
+a.Dimension_LeftRight_Button_TopLink_focus_alpha .Dimension_LeftRight_Button_Top, .Dimension_LeftRight_Button_Top_focus_alpha {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_LeftRight_Button_TopLink_focus_alpha table.Dimension_LeftRight_Button_Top .Dimension_LeftRight_Button_Top_bg, table.Dimension_LeftRight_Button_Top_focus_alpha .Dimension_LeftRight_Button_Top_bg {
+  background: url(dimensionButtonLRTop.focused.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+
 
 
 
@@ -139,6 +162,16 @@ a.Dimension_LeftRight_Button_BottomLink_active .Dimension_LeftRight_Button_Botto
 
 a.Dimension_LeftRight_Button_BottomLink_active table.Dimension_LeftRight_Button_Bottom .Dimension_LeftRight_Button_Bottom_bg, table.Dimension_LeftRight_Button_Bottom_active .Dimension_LeftRight_Button_Bottom_bg {
   background: url(dimensionButtonLRBottom.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
+a.Dimension_LeftRight_Button_BottomLink_focus_alpha .Dimension_LeftRight_Button_Bottom, .Dimension_LeftRight_Button_Bottom_focus_alpha {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_LeftRight_Button_BottomLink_focus_alpha table.Dimension_LeftRight_Button_Bottom .Dimension_LeftRight_Button_Bottom_bg, table.Dimension_LeftRight_Button_Bottom_focus_alpha .Dimension_LeftRight_Button_Bottom_bg {
+  background: url(dimensionButtonLRBottom.focused.png) no-repeat center center;
   -moz-outline-style: none;
 }
 
@@ -210,6 +243,16 @@ a.Dimension_UpDown_Button_TopLink_active table.Dimension_UpDown_Button_Top .Dime
   -moz-outline-style: none;
 }
 
+a.Dimension_UpDown_Button_TopLink_focus_alpha .Dimension_UpDown_Button_Top, .Dimension_UpDown_Button_Top_focus_alpha {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_UpDown_Button_TopLink_focus_alpha table.Dimension_UpDown_Button_Top .Dimension_UpDown_Button_Top_bg, table.Dimension_UpDown_Button_Top_focus_alpha .Dimension_UpDown_Button_Top_bg {
+  background: url(dimensionButtonUDTop.focused.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
 
 
 
@@ -255,6 +298,15 @@ a.Dimension_UpDown_Button_BottomLink_active table.Dimension_UpDown_Button_Bottom
   -moz-outline-style: none;
 }
 
+a.Dimension_UpDown_Button_BottomLink_focus_alpha .Dimension_UpDown_Button_Bottom, .Dimension_UpDown_Button_Bottom_focus_alpha {
+  border-collapse: collapse;
+  CURSOR: pointer;
+}
+
+a.Dimension_UpDown_Button_BottomLink_focus_alpha table.Dimension_UpDown_Button_Bottom .Dimension_UpDown_Button_Bottom_bg, table.Dimension_UpDown_Button_Bottom_focus_alpha .Dimension_UpDown_Button_Bottom_bg {
+  background: url(dimensionButtonUDBottom.focused.png) no-repeat center center;
+  -moz-outline-style: none;
+}
 
 
 

@@ -32,7 +32,9 @@ var baseDirection = "../../../../../web/";
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
   var LNG_POR_DEFECTO = "en_US";
 </script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
@@ -45,7 +47,6 @@ var baseDirection = "../../../../../web/";
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" id="keyMap"></script>
 <script type="text/javascript"> 
       //all dojo.require above this line
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
@@ -71,8 +72,35 @@ function onloadFunctions() {
 	new TypeAheadCombo("inpadImpformatId");
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+		xx();
+		byDefaultAction('submitCommandForm(\'FIND\', true)');
+		resizeArea();
+		updateMenuIcon('buttonMenu');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();xx();setFocusFirstControl();byDefaultAction('submitCommandForm(\'FIND\', true)');resizeArea();updateMenuIcon('buttonMenu');" onresize="resizeArea();" id="paramMensaje">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" id="paramMensaje">
 <FORM name="frmSelector" method="POST" action="FileImport.html" enctype="multipart/form-data">
 <INPUT type="hidden" name="Command"></INPUT>
   <input type="hidden" name="inpLastFieldChanged" value="">
@@ -210,8 +238,8 @@ function onloadFunctions() {
                   </TD>
                 </TR>
                 <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Header first line</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"> <INPUT type="checkbox" name="inpFirstLineHeader" value="Y" id="paramFirstLineHeader"></INPUT></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Header first line</SPAN></TD>
+                  <TD class="Radio_Check_ContentCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpFirstLineHeader" value="Y" id="paramFirstLineHeader"></INPUT></SPAN></TD>
                   <TD class="TitleCell"></TD>
                   <TD class="ContentCell"></TD>
                   <TD class="TitleCell"></TD>
@@ -222,7 +250,7 @@ function onloadFunctions() {
                   <TD class="ContentCell"></TD>
                   <TD class="Button_RightAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Accept'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('FIND', true, null, null);return false;">
+                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true, null, null);return false;">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Accept';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                         <tr>
                           <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -235,7 +263,7 @@ function onloadFunctions() {
                   </TD>
                   <TD class="Button_LeftAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Process'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('SAVE',true, null, null);return false;">
+                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE',true, null, null);return false;">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                        <tr>
                           <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -259,7 +287,7 @@ function onloadFunctions() {
         	<TD id="fieldColumn">xxxxxxxxxxxxxxxxxx&nbsp;</TD>
     	  </TR>
     	  <TR id="paramData"> 
-      <TD  id="discard">xxxxxxxxxxxxxxxxxxxxxx&nbsp;</TD>
+      <TD id="discard">xxxxxxxxxxxxxxxxxxxxxx&nbsp;</TD>
     	  </TR>
 
         </TABLE>

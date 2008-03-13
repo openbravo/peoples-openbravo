@@ -86,12 +86,6 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
-      KeyMap key = new KeyMap(this, vars, "InitialClientSetup.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.InitialClientSetup");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
@@ -139,12 +133,6 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InitialClientSetup", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
-    try {
-      KeyMap key = new KeyMap(this, vars, "InitialClientSetup.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.InitialClientSetup");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());

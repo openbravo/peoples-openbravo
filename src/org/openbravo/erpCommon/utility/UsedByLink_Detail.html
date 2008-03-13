@@ -25,7 +25,9 @@
   <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">
     var baseDirection = "../../../../../web/";
   </SCRIPT>
-  <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+  <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
   <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">
     LNG_POR_DEFECTO = "en_US";
   </SCRIPT>
@@ -43,7 +45,21 @@
   </SCRIPT>
 
 </HEAD>
-<BODY>
+<script language="JavaScript" type="text/javascript">
+  function onLoadDo() {
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+	    
+		setWindowElementFocus('firstElement');
+  }
+
+  function onResizeDo() {
+  }
+</script>
+<BODY onload="onLoadDo();" onresize="onResizeDo();">
 
 <DIV class="Popup_ContentPane_CircleLogo">
   <DIV class="Popup_WindowLogo">
@@ -92,7 +108,7 @@
   <PARAMS_TMP id="fieldHiddens"></PARAMS_TMP>
   <TR>
     <TD>
-      <DIV class="Popup_ContentPane_Client" style="overflow: auto;">
+      <DIV class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
         <TABLE cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
 
           <TR>
@@ -133,13 +149,15 @@
             <TD></TD>
             <TD class="Button_LeftAlign_ContentCell">
               <DIV>
-                <TABLE class="Button" onclick="submitCommandForm('DEFAULT', false, null, 'UsedByLink.html', '_self');return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Back';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                  <TR>
-                    <TD class="Button_left"><img class="Button_Icon Button_Icon_back" alt="Back" title="Back" src="../../../../../web/images/blank.gif" border=0/></TD>
-                    <TD class="Button_text Button_width">Back</TD>
-                    <TD class="Button_right"></TD>
-                  </TR>
-                </TABLE>
+                <A class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Back'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('DEFAULT', false, null, 'UsedByLink.html', '_self');return false;">
+                  <TABLE class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Back';return true;" onmouseout="this.className='Button'; window.status='';return true;">
+                    <TR>
+                      <TD class="Button_left"><img class="Button_Icon Button_Icon_back" alt="Back" title="Back" src="../../../../../web/images/blank.gif" border=0/></TD>
+                      <TD class="Button_text Button_width">Back</TD>
+                      <TD class="Button_right"></TD>
+                    </TR>
+                  </TABLE>
+                </A>
               </DIV>
             </TD>
             <TD></TD>

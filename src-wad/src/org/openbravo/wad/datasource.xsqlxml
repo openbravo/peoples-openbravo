@@ -27,7 +27,7 @@ package="org.openbravo.wad.Window">
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql>&#60;&#33;[CDATA[
         SELECT <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
-        '' AS TR_BGCOLOR , 
+        '' AS TR_BGCOLOR,
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 
@@ -234,4 +234,6 @@ package="org.openbravo.wad.Window">
     <Parameter name="param1"/>
     <PARAMETER_TMP id="parent">    <Parameter name="param1" id="paramKeyParent"/></PARAMETER_TMP>
   </SqlMethod>
+  
+
 </SqlClass>

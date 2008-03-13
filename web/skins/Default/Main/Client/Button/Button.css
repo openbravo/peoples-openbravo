@@ -23,15 +23,19 @@
   width: 50px;
 }
 
-a.ButtonLink, a.ButtonLink:active, a.ButtonLink:hover, a.ButtonLink:visited, a.ButtonLink:link {
+a.ButtonLink, a.ButtonLink:active, a.ButtonLink:hover, a.ButtonLink:visited, a.ButtonLink:link, a.ButtonLink:focus {
   text-decoration: none;
 }
 
-a.ButtonLink_hover, a.ButtonLink_hover:active, a.ButtonLink_hover:hover, a.ButtonLink_hover:visited, a.ButtonLink_hover:link {
+a.ButtonLink_hover, a.ButtonLink_hover:active, a.ButtonLink_hover:hover, a.ButtonLink_hover:visited, a.ButtonLink_hover:link, a.ButtonLink_hover:focus {
   text-decoration: none;
 }
 
-a.ButtonLink_active, a.ButtonLink_active:active, a.ButtonLink_active:hover, a.ButtonLink_active:visited, a.ButtonLink_active:link {
+a.ButtonLink_active, a.ButtonLink_active:active, a.ButtonLink_active:hover, a.ButtonLink_active:visited, a.ButtonLink_active:link, a.ButtonLink_active:focus {
+  text-decoration: none;
+}
+
+a.ButtonLink_focus_alpha, a.ButtonLink_focus_alpha:active, a.ButtonLink_focus_alpha:hover, a.ButtonLink_focus_alpha:visited, a.ButtonLink_focus_alpha:link, a.ButtonLink_focus_alpha:focus {
   text-decoration: none;
 }
 
@@ -116,6 +120,32 @@ a.ButtonLink_active table.Button .Button_text, table.Button_active .Button_text 
 
 a.ButtonLink_active table.Button .Button_right, table.Button_active .Button_right {
   background: url(buttonRight.pressed.png) no-repeat center left;
+  width: 28px;
+  height: 26px;
+}
+
+a.ButtonLink_focus_alpha .Button, .Button_focus_alpha {
+  border-collapse: collapse;
+  text-align: center;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #1b4106;
+  font-weight: bold;
+  CURSOR: pointer;
+}
+
+a.ButtonLink_focus_alpha table.Button .Button_left, .Button_focus_alpha .Button_left {
+  background: url(buttonLeft.focused.png) no-repeat center right;
+  width: 35px;
+  height: 26px;
+}
+
+a.ButtonLink_focus_alpha table.Button .Button_text, table.Button_focus_alpha .Button_text {
+  background: url(buttonBody.focused.png) repeat-x center center;
+}
+
+a.ButtonLink_focus_alpha table.Button .Button_right, table.Button_focus_alpha .Button_right {
+  background: url(buttonRight.focused.png) no-repeat center left;
   width: 28px;
   height: 26px;
 }

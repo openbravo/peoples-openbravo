@@ -290,12 +290,6 @@ public class RemittanceCancel extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     // New interface paramenters
       try {
-        KeyMap key = new KeyMap(this, vars, "CashBankOperations.html");
-        xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-      try {
         WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_process.CashBankOperations");
         xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
         xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
@@ -398,12 +392,6 @@ public class RemittanceCancel extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateAcctdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateAcctsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     // New interface paramenters
-      try {
-        KeyMap key = new KeyMap(this, vars, "RemittanceCancel.html");
-        xmlDocument.setParameter("keyMap", key.getFormKeyMaps());
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
       try {
         WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.RemittanceCancel");
         xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());

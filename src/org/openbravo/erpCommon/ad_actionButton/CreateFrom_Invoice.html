@@ -31,14 +31,15 @@
   <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/calculator.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">LNG_POR_DEFECTO = "en_US";</SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
   <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
- <script language="JavaScript" type="text/javascript" id="keyMap"></script>
-  <script type="text/javascript">
+ <script type="text/javascript">
     dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
   </script>
 <SCRIPT language="JavaScript" type="text/javascript">
@@ -101,8 +102,30 @@ function onloadFunctions() {
   </script>
 
 
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client0', 'frameButton'),
+		  new windowTableId('client', 'frameButton'),
+		  new windowTableId('tdbottomButtons', 'frameButton2')
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+		
+		resizeArea();
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="resizeArea();setFocusFirstControl();onloadFunctions();" onresize="resizeArea();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="onLoadDo();" onresize="onResizeDo();">
 
 <FORM id="form" method="POST" action="../ad_actionButton/CreateFrom.html" name="frmMain">
   <INPUT type="hidden" name="Command">
@@ -243,7 +266,7 @@ function onloadFunctions() {
           </table>
         <!-- MessageBox END -->
 
-          <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector" id="tdtopTabs">
+          <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector" id="client0">
             <tr>
               <td class="TableEdition_OneCell_width"></td>
               <td class="TableEdition_OneCell_width"></td>
@@ -304,13 +327,13 @@ function onloadFunctions() {
             </tr>
 
             <tr>
-              <TD class="TitleCell"> <SPAN class="LabelText">Order</SPAN></TD>
+              <TD class="TitleCell"><SPAN class="LabelText">Order</SPAN></TD>
               <TD class="Combo_ContentCell" colspan="2">
                 <SELECT class="Combo Combo_TwoCells_width" name="inpPurchaseOrder" onchange="submitCommandForm('FIND_PO', false, null, null, '_self');return true;" id="inpPurchaseOrder">
                   <OPTION value=""></OPTION><DIV id="reportPurchaseOrder"></DIV>
                 </SELECT>
               </TD>
-              <TD class="TitleCell"> <SPAN class="LabelText">Shipment</SPAN></TD>
+              <TD class="TitleCell"><SPAN class="LabelText">Shipment</SPAN></TD>
               <TD class="Combo_ContentCell" colspan="2">
                <SELECT class="Combo Combo_OneCell_width" name="inpShipmentReciept" onchange="submitCommandForm('FIND_SHIPMENT', false, null, null, '_self');return true;" id="inpShipmentReciept">
                 <OPTION value=""></OPTION><DIV id="reportShipmentReciept"></DIV>
@@ -349,7 +372,7 @@ function onloadFunctions() {
                     <DIV id="sectionDetail">
                       <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" onclick="selectActual(this); return true;" ondblclick="checkActual(this); return true;" id="funcEvenOddRowxx"> 
                         <TD class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox">
-                          <INPUT type="checkbox"  name="inpcOrderId" value="" id="CheckNumxx"></INPUT>
+                          <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox"  name="inpcOrderId" value="" id="CheckNumxx"></INPUT></SPAN>
                         </TD>
                         <TD class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldQuantity">xxQuantity</TD>
                         <TD class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldCuomid">xx</TD>

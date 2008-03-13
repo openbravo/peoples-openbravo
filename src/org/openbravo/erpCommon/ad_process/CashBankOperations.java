@@ -262,12 +262,6 @@ public class CashBankOperations extends HttpSecureAppServlet {
       
       
       try {
-      KeyMap key = new KeyMap(this, vars, "CashBankOperations.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_process.CashBankOperations");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());

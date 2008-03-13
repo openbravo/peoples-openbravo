@@ -51,7 +51,7 @@ function onloadFunctions() {
   <INPUT type="hidden" name="inpTabId" value="" id="tab"></INPUT>
   <TABLE width="100%" cellspacing="0" cellpadding="0" border="1" >
     <TR> 
-      <TD  id="processDescription">&nbsp;</TD>
+      <TD id="processDescription">&nbsp;</TD>
     </TR>
     <TR></TR>
     <TR> 
@@ -68,8 +68,8 @@ function onloadFunctions() {
         </SELECT></TD>
     </TR>
     <TR> 
-      <TD  width="50%"> <SPAN >Delete old files:</SPAN></TD>
-      <TD width="50%"> <INPUT type="checkbox" name="inpDeleteOldImported" id="fieldSystem" value="Y"></INPUT>
+      <TD width="50%"> <SPAN >Delete old files:</SPAN></TD>
+      <TD width="50%"> <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpDeleteOldImported" id="fieldSystem" value="Y"></INPUT></SPAN>
       </TD>
     </TR>
     <TR> 
@@ -78,15 +78,15 @@ function onloadFunctions() {
   </TABLE>
   <TABLE cellspacing="0" cellpadding="0" border="0">
     <TR> 
-      <TD  id="question">&nbsp;</TD>
+      <TD id="question">&nbsp;</TD>
     </TR>
   </TABLE>
   <TABLE summary="" cellpadding="0" cellspacing="0" border="0" width="100%">
     <TR> 
       <td>&nbsp;</td>
-      <TD  width="30px"> <A href="#" onclick="closeThisPage();return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
+      <TD width="30px"> <A href="#" onclick="closeThisPage();return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
         <img src="../../../../../web/images/Cancel.jpg"  alt="Cancel" title="Cancel" border="0" id="buttonCancel"></IMG></A></TD>
-      <TD  width="30px"> <A href="#" onclick="submitThisPage('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
+      <TD width="30px"> <A href="#" onclick="submitThisPage('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
         <img src="../../../../../web/images/Ok.jpg"  alt="Accept" title="Accept" border="0" id="buttonOk"></IMG></A></TD>
       <td>&nbsp;</td>
     </TR>

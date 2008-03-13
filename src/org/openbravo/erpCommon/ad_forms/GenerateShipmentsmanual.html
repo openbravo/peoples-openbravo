@@ -33,7 +33,9 @@ var baseDirection = "../../../../../web/";
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
   var LNG_POR_DEFECTO = "en_US";
 </script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
@@ -47,17 +49,11 @@ var baseDirection = "../../../../../web/";
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" id="keyMap"></script>
 <script type="text/javascript"> 
       //all dojo.require above this line
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script> 
 <SCRIPT language="JavaScript" type="text/javascript">
-//keyArray = new Array();
-//keyArray[0] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY', 'WindowID', 'GenerateShipmentsmanual');", "inpBpartnerId_DES", "null");
-//keyArray[1] = new keyArrayItem("ENTER", "submitCommandForm('FIND');", null, null),
-//keyArray[2] = new keyArrayItem("M", "menuShowHide();", null, "ctrlKey")
-//enableShortcuts();
 
 function depurar(action) {
   var frm=document.frmMain;
@@ -80,8 +76,35 @@ function onloadFunctions() {
 	new TypeAheadCombo("inpadOrgId");
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client'),
+		  new windowTableId('tdbottomButtons')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+		xx();
+		resizeArea();
+		updateMenuIcon('buttonMenu');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
-<BODY onload="onloadFunctions();xx();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
+<BODY onload="onLoadDo();" onresize="onResizeDo();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
 
 <FORM method="POST" action="GenerateShipmentsmanual.html" name="frmMain" >
 <INPUT type="hidden" name="Command"></INPUT>
@@ -210,7 +233,7 @@ function onloadFunctions() {
                 </tr>
 
                 <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Business Partner</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Business Partner</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell" colspan="2">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
@@ -219,7 +242,7 @@ function onloadFunctions() {
                           <INPUT class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpBpartnerId_DES" maxlength="20" value="" id="paramBPartnerDescription"></INPUT>
                         </TD>
                         <TD class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Business Partner'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'WindowID', 'GenerateShipmentsmanual');return false;">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'WindowID', 'GenerateShipmentsmanual');return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Business Partner';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <TR>
                               <TD class="FieldButton_bg">
@@ -232,7 +255,7 @@ function onloadFunctions() {
                       </TR>
                     </TABLE>
                   </TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Organization</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpadOrgId" class="Combo Combo_TwoCells_width" id="inpadOrgId"><DIV id="reportOrganization_M"></DIV>
                     </SELECT></TD>
                 </TR>
@@ -246,7 +269,7 @@ function onloadFunctions() {
                           <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFrom");</script>
                         </TD>
                         <TD class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <TR>
                               <TD class="FieldButton_bg">
@@ -260,7 +283,7 @@ function onloadFunctions() {
                     </TABLE>
                   </TD>
                   <TD class="TitleCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">To Date</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">To Date</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
@@ -268,7 +291,7 @@ function onloadFunctions() {
                           <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateTo");</script>
                         </TD>
                         <TD class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <TR>
                               <TD class="FieldButton_bg">
@@ -287,7 +310,7 @@ function onloadFunctions() {
                   <TD class="TitleCell"></TD>
                   <TD class="Button_LeftAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Search'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('FIND', true);return false;">
+                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true);return false;">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                         <tr>
                           <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -313,7 +336,7 @@ function onloadFunctions() {
       <div class="Popup_ContentPane_Client" style="overflow: auto;">
         <TABLE cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table">
           <TR class="Popup_Client_Selector_DataGrid_HeaderRow"> 
-            <td width="24" class="DataGrid_Body_LineNoCell"> <INPUT type="checkbox" name="inpTodos" onclick="marcarTodos(document.frmMain.inpOrder, this.checked);return true;"></INPUT>
+            <td width="24" class="DataGrid_Body_LineNoCell"> <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpTodos" onclick="marcarTodos(document.frmMain.inpOrder, this.checked);return true;"></INPUT></SPAN>
             </td>
             <th class="DataGrid_Header_Cell" width="103">Organization</th>
             <th class="DataGrid_Header_Cell" width="157">Document type</th>
@@ -325,7 +348,7 @@ function onloadFunctions() {
           </TR>
           <DIV id="sectionDetail"> 
             <TR class="DataGrid_Body_Row DataGrid_Body_Row_xx" id="funcEvenOddRow"> 
-              <TD class="DataGrid_Body_LineNoCell"><INPUT type="checkbox" name="inpOrder" value="" id="fieldCOrderId"></INPUT></TD>
+              <TD class="DataGrid_Body_LineNoCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpOrder" value="" id="fieldCOrderId"></INPUT></SPAN></TD>
               <TD class="DataGrid_Body_Cell" id="fieldAdorgname">xxFrilac</TD>
               <TD class="DataGrid_Body_Cell" id="fieldCdoctypename">xxStandard order</TD>
               <TD class="DataGrid_Body_Cell"> <A href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpcOrderId, xx, false, document.frmMain, '../SalesOrder/Header_Relation.html', null, false, true);return false;" onmouseover="window.status='Sales Order';return true;" onmouseout="window.status='';return true;" class="Link" id="fieldId"> 
@@ -366,7 +389,7 @@ function onloadFunctions() {
                   <TD></TD>
                   <TD class="Button_LeftAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Process'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('GENERATE', true, null, null, null, true);return false;">
+                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('GENERATE', true, null, null, null, true);return false;">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Process';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                         <tr>
                           <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border=0/></td>

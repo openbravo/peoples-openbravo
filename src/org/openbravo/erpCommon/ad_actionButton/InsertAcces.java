@@ -19,7 +19,6 @@
 package org.openbravo.erpCommon.ad_actionButton;
 
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.erpCommon.utility.KeyMap;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -99,12 +98,6 @@ public class InsertAcces extends HttpSecureAppServlet {
       
       //xmlDocument.setParameter("message",strMessage.equals("")?"":"alert('" + strMessage + "');");
 
-      try {
-        KeyMap key = new KeyMap(this, vars, "InsertAcces.html");
-        xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
       {
         OBError myMessage = vars.getMessage("InsertAcces");
         vars.removeMessage("InsertAcces");

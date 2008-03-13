@@ -24,6 +24,27 @@
 
 <SqlClass name="UtilityData" package="org.openbravo.erpCommon.utility">
    <SqlClassComment></SqlClassComment>
+   <SqlMethod name="selectDummy" type="preparedStatement" return="multiple">
+     <Sql>
+       select '' as total, '' as name, '' as value from dual
+     </Sql>
+   </SqlMethod>
+   
+   <SqlMethod name="selectReference" type="preparedStatement" return="multiple">
+    <Sql>
+        SELECT R.VALUE, COALESCE(T.NAME, R.NAME) AS NAME 
+          FROM AD_REF_LIST R
+               LEFT JOIN AD_REF_LIST_TRL T ON R.AD_REF_LIST_ID = T.AD_REF_LIST_ID
+                 AND AD_LANGUAGE = ?
+         WHERE R.ISACTIVE='Y'
+           AND AD_REFERENCE_ID = ? 
+           AND R.VALUE != '--'
+          ORDER BY R.VALUE
+    </Sql>
+    <Parameter name="language"/>
+    <Parameter name="referenceId"/>
+   </SqlMethod>
+   
    <SqlMethod name="select" type="preparedStatement" return="boolean" default="false">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

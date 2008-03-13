@@ -78,12 +78,6 @@ public class PrintInvoices extends HttpSecureAppServlet {
     
     // New interface paramenters
       try {
-        KeyMap key = new KeyMap(this, vars, "PrintInvoices.html");
-        xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-      try {
         WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_process.PrintInvoices");
         xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
         xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());

@@ -47,6 +47,7 @@ var keyArray=null;
 var gAUXILIAR=0;
 var gWaitingCallOut=false;
 
+
 /**
 * Set the focus on the first visible control in the form
 * @param {Form} form Optional- Defines the form containing the field, where we want to set the focus. If is not present, the first form of the page will be used.
@@ -801,13 +802,21 @@ function byDefaultAction(action) {
 * @param {Event} evt Event handling object.
 */
 function stopKeyPressEvent(evt) {
-  if (evt.ctrlKey) {
-    evt.cancelBubble = true;
-    evt.returnValue = false;
-      if (evt.stopPropagation) {
-        evt.preventDefault();
-      }
-  }
+  try {
+    if (evt.ctrlKey) {
+      evt.cancelBubble = true;
+      evt.returnValue = false;
+        if (evt.stopPropagation) {
+          evt.preventDefault();
+        }
+    } else if (evt.altKey) {
+      evt.cancelBubble = true;
+      evt.returnValue = false;
+        if (evt.stopPropagation) {
+          evt.preventDefault();
+        }
+    }
+  } catch(e) {}
 }
 
 
@@ -920,7 +929,11 @@ function keyControl(pushedKey) {
               if (window.event && window.event.keyCode == 121) { //F10 Special case
                 window.event.keyCode = 8;
                 keyCode = 8;
-              }              
+              }
+              if (window.event && window.event.keyCode == 27) { //ESC Special case
+                window.event.keyCode = 8;
+                keyCode = 8;
+              }
             }
             if (!keyArray[i].propagateKey) 
               document.onkeypress = stopKeyPressEvent;
@@ -1006,10 +1019,21 @@ function keyControl(pushedKey) {
                 window.event.keyCode = 8;
                 keyCode = 8;
               }
+              if (window.event && window.event.keyCode == 121) { //F10 Special case
+                window.event.keyCode = 8;
+                keyCode = 8;
+              }
+              if (window.event && window.event.keyCode == 27) { //ESC Special case
+                window.event.keyCode = 8;
+                keyCode = 8;
+              }
             }
-            if (keyArray[i].field == null) {
+            if (!keyArray[i].propagateKey) 
+              document.onkeypress = stopKeyPressEvent;
+            if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
+              var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
               try {
-                eval(keyArray[i].evalfunc);
+                eval(evalfuncTrl);
                 if (!keyArray[i].propagateKey) 
                   return false; else 
                   return true;
@@ -1020,6 +1044,62 @@ function keyControl(pushedKey) {
               document.onkeypress = startKeyPressEvent;
               return true;
             }
+          }
+        } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
+          var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
+          if (!keyArray[i].propagateKey) document.onkeypress = stopKeyPressEvent;
+          if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
+            try {
+              eval(evalfuncTrl);
+              document.onkeypress = startKeyPressEvent;
+              if (!keyArray[i].propagateKey) 
+                return false; else 
+                return true;
+            } catch (e) {
+              document.onkeypress = startKeyPressEvent;
+              return true;
+            }
+            document.onkeypress = startKeyPressEvent;
+            return true;
+          } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
+            try {
+              eval(evalfuncTrl);
+              document.onkeypress = startKeyPressEvent;
+              if (!keyArray[i].propagateKey) 
+                return false; else 
+                return true;
+            } catch (e) {
+              document.onkeypress = startKeyPressEvent;
+              return true;
+            }
+            document.onkeypress = startKeyPressEvent;
+            return true;
+          } else if (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
+            try {
+              eval(evalfuncTrl);
+              document.onkeypress = startKeyPressEvent;
+              if (!keyArray[i].propagateKey) 
+                return false; else 
+                return true;
+            } catch (e) {
+              document.onkeypress = startKeyPressEvent;
+              return true;
+            }
+            document.onkeypress = startKeyPressEvent;
+            return true;
+          } else if (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
+            try {
+              eval(evalfuncTrl);
+              document.onkeypress = startKeyPressEvent;
+              if (!keyArray[i].propagateKey) 
+                return false; else 
+                return true;
+            } catch (e) {
+              document.onkeypress = startKeyPressEvent;
+              return true;
+            }
+            document.onkeypress = startKeyPressEvent;
+            return true;
           }
         }
       }
@@ -1033,13 +1113,18 @@ function keyControl(pushedKey) {
 */
 function putFocusOnMenu(){
   parent.frameMenu.focus();
+  return true;
 }
 
 /**
 * Put the focus on the Window frame
 */
 function putFocusOnWindow(){
+  parent.frameAplicacion.selectedArea = 'window'
   parent.frameAplicacion.focus();
+  parent.frameAplicacion.setWindowElementFocus(parent.frameAplicacion.focusedWindowElement);
+  return true;
+  //parent.frameAplicacion.focus();
 }
 
 /**
@@ -1048,7 +1133,24 @@ function putFocusOnWindow(){
 function enableShortcuts(type) {
   if (type!=null && type!='null' && type!='') {
     try {
-      getShortcuts(type);
+      this.keyArray = new Array();
+      if (type=='menu') {
+        getShortcuts('applicationCommonKeys');
+        getShortcuts('menuSpecificKeys');
+      } else if (type=='edition') {
+        getShortcuts('applicationCommonKeys');
+        getShortcuts('windowCommonKeys');
+        getShortcuts('editionSpecificKeys');
+      } else if (type=='relation') {
+        getShortcuts('applicationCommonKeys');
+        getShortcuts('windowCommonKeys');
+        getShortcuts('relationSpecificKeys');
+      } else if (type=='popup') {
+        getShortcuts('applicationCommonKeys');
+        getShortcuts('windowCommonKeys');
+        getShortcuts('editionSpecificKeys');
+        getShortcuts('popupSpecificKeys');
+      }
     } catch (e) {
     }
   }
@@ -1669,29 +1771,155 @@ function updateMenuIcon(id) {
 * @see #changeClass
 */
 function menuShowHide(id) {
-  if (!top.frameMenu) window.open(baseFrameServlet, "_blank");
+  if (!top.frameMenu) 
+    window.open(baseFrameServlet, "_blank");
   else {
     var frame = top.document;
     var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) return false;
+    if (!frameset) 
+      return false;
     /*try {
-      var frm2 = frame.getElementById("frameMenu");
-      var obj = document.onresize;
-      var obj2 = frm2.onresize;
-      document.onresize = null;
-      frm2.document.onresize = null;
-      progressiveHideMenu("framesetMenu", 30);
-      document.onresize = obj;
-      frm2.document.onresize = obj2;
-    } catch (e) {*/
-      if (frameset.cols.substring(0,1)=="0") frameset.cols = "25%,*";
-      else  frameset.cols = "0%,*";
-    //}
+   var frm2 = frame.getElementById("frameMenu");
+   var obj = document.onresize;
+   var obj2 = frm2.onresize;
+   document.onresize = null;
+   frm2.document.onresize = null;
+   progressiveHideMenu("framesetMenu", 30);
+   document.onresize = obj;
+   frm2.document.onresize = obj2;
+   } catch (e) {*/
+    if (frameset.cols.substring(0, 1) == "0") {
+      frameset.cols = "25%,*";
+      try {
+        putFocusOnMenu();
+      } catch(e) {
+      }
+    } else { 
+      frameset.cols = "0%,*";
+    }
+      //}
     try {
       changeClass(id, "_hide", "_show");
     } catch (e) {}
     return true;
   }
+}
+
+/**
+* Function Description
+* Expands the whole content of the menu
+* @returns True if the operation was made correctly, false if not.
+* @see #changeClass
+*/
+function menuExpand() {
+  putFocusOnMenu();
+  submitCommandForm('ALL', false, null, '../utility/VerticalMenu.html', 'frameMenu');
+  return false;
+}
+
+/**
+* Function Description
+* Collapse the whole content of the menu
+* @returns True if the operation was made correctly, false if not.
+* @see #changeClass
+*/
+function menuCollapse() {
+  putFocusOnMenu();
+  submitCommandForm('DEFAULT', false, null, '../utility/VerticalMenu.html', 'frameMenu');
+  return false;
+}
+
+/**
+* Function Description
+* Collapse the whole content of the menu if the menu is expanded
+* Expand the whole content of the menu if the menu is collapsed 
+* @param {String} id The ID of the element
+* @returns True if the operation was made correctly, false if not.
+* @see #changeClass
+*/
+function menuExpandCollapse() {
+  var menuExpandCollapse_status = getMenuExpandCollapse_status();
+  if (menuExpandCollapse_status == 'expanded') {
+    menuCollapse();
+  } else if (menuExpandCollapse_status == 'collapsed') {
+    menuExpand();
+  }
+  return false;
+}
+
+function getMenuExpandCollapse_status() {
+//  alert(top.frameMenu.getElementById('paramfieldDesplegar').getAttribute('id'));
+  var menuExpandCollapse_status;
+  if (top.frames['frameMenu'].document.getElementById('paramfieldDesplegar')) menuExpandCollapse_status = 'collapsed';
+  if (top.frames['frameMenu'].document.getElementById('paramfieldContraer')) menuExpandCollapse_status = 'expanded';
+  return menuExpandCollapse_status;
+}
+
+function menuUserOptions() {
+  openServletNewWindow('DEFAULT', false, '../ad_forms/Role.html', 'ROLE', null, null, '460', '775');
+  return true;
+}
+
+function menuQuit() {
+  submitCommandForm('DEFAULT', false, null, '../security/Logout.html', '_top');
+  return false;
+}
+
+function menuAlerts() {
+  openLink('../ad_forms/AlertManagement.html', 'frameAplicacion');
+  return true;
+}
+
+function isVisibleElement(obj, appWindow) {
+  if (appWindow == null || appWindow == 'null' || appWindow == '') {
+    appWindow = top;
+  }
+  var parentElement = obj;
+  try {
+    for(;;) {
+      if (parentElement.style.display == 'none') {
+        return false;
+      } else if (parentElement == appWindow.document.getElementsByTagName('BODY')[0]) {
+        break;
+      }
+      parentElement=parentElement.parentNode;
+    }
+  } catch(e) {
+    return false;
+  }
+  return true;
+}
+
+function executeWindowButton(id) {
+  var appWindow = top;
+  if(top.frames['frameAplicacion'] || top.frames['frameMenu']) {
+    appWindow = top.frames['frameAplicacion'];
+  } 
+  if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
+    appWindow.document.getElementById(id).onclick();
+  }
+}
+
+function executeMenuButton(id) {
+  var appWindow = top;
+  if(top.frames['frameAplicacion'] || top.frames['frameMenu']) {
+    appWindow = top.frames['frameMenu'];
+  } 
+  if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
+    appWindow.document.getElementById(id).onclick();
+  }
+}
+
+function getAppUrl() {
+  var url = window.location.href;
+  var http = url.split('//')[0];
+  var nohttp = url.split('//')[1];
+  var urlItem = nohttp.split('/')
+  var appUrl=http + '//';
+  for (var i=0; i<urlItem.length-2; i++) {
+    appUrl = appUrl + urlItem[i] + '/';
+  }
+  return appUrl;
 }
 
 /**
@@ -2057,7 +2285,7 @@ function formElementValue(Formulario, ElementName, Value) {
   } else if (ElementName=="CURSOR_FIELD") {
     var obj = eval("document." + Formulario.name + "." + Value + ";");
     if (obj==null || !obj || !obj.type || obj.type.toUpperCase()=="HIDDEN") return false;
-    obj.focus()
+    setWindowElementFocus(obj);
     if (obj.type.toUpperCase().indexOf("SELECT")==-1) obj.select();
     //document.focus();
   } else {

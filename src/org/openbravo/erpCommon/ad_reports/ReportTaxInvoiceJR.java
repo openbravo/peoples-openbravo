@@ -175,12 +175,6 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      KeyMap key = new KeyMap(this, vars, "ReportTaxInvoice.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportTaxInvoiceJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
@@ -326,12 +320,6 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     toolbar.prepareSimpleExcelToolBarTemplate("submitCommandForm('RELATION_XLS', false, null, 'ReportTaxInvoice_Excel.xls', 'EXCEL');return false;");
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
-    try {
-      KeyMap key = new KeyMap(this, vars, "ReportTaxInvoice.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportTaxInvoice");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());

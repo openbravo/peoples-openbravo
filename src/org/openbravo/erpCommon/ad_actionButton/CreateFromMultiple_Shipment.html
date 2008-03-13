@@ -23,16 +23,14 @@
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://openbravo/web/";</SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-keyArray = new Array(
-new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null"), 
-new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null")
-);
-enableShortcuts();
+
 
 function displayLogic() {
 	if (inputValue(document.frmMain.inphasseconduom) == 1) {
@@ -73,12 +71,34 @@ function depurar(action) {
 }
 
 function onloadFunctions() {
-	new TypeAheadCombo("inpmWarehouseId");
+  new TypeAheadCombo("inpmWarehouseId");
   new TypeAheadCombo("inpmInoutlineTypeId");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null"); 
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null");
+  
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client', 'frameButton'),
+		  new windowTableId('tdbottomButtons', 'frameButton2')
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+		
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="setFocusFirstControl();onloadFunctions();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="onLoadDo();" onresize="onResizeDo();" id="client">
 <FORM id="form" method="POST" action="../ad_actionButton/CreateFromMultiple_F1.html" name="frmMain">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpLastFieldChanged"></INPUT>
@@ -140,7 +160,7 @@ function onloadFunctions() {
   <HR></HR>
   <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" >
     <TR> 
-      <TH width="2%" > <INPUT type="checkbox" name="inpTodos" onclick="marcarTodosDatos(document.frmMain.inpmStorageDetailId, this.checked);return true;"></INPUT>
+      <TH width="2%" > <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpTodos" onclick="marcarTodosDatos(document.frmMain.inpmStorageDetailId, this.checked);return true;"></INPUT></SPAN>
       </TH>
       <TH width="35%">Product</TH>
       <TH width="5%">Locator</th>
@@ -152,17 +172,17 @@ function onloadFunctions() {
     </TR>
     <DIV id="sectionDetail"> 
       <TR> 
-        <TD > <INPUT type="checkbox" name="inpmStorageDetailId" value="" id="fieldmStorageDetailId" onclick="cargarDatos(this.value, this.checked);return true;"></INPUT>
+        <TD > <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpmStorageDetailId" value="" id="fieldmStorageDetailId" onclick="cargarDatos(this.value, this.checked);return true;"></INPUT></SPAN>
         </TD>
-        <TD  id="fieldProduct">xx</TD>
+        <TD id="fieldProduct">xx</TD>
     <td  id="fieldLocator">xx</td>
-        <TD  id="fieldAttribute">xx</TD>
+        <TD id="fieldAttribute">xx</TD>
         <TD > <INPUT name="inpmovementqtyxx" type="text" id="fieldMovementQty" size="8" value="0" onkeyup="auto_completar_numero(this, true, true);return true;" disabled="" ></INPUT>
         </TD>
-        <TD  id="fieldUOM">xx</TD>
+        <TD id="fieldUOM">xx</TD>
         <TD > <INPUT name="inpquantityorderxx" type="text" id="fieldQuantityOrder" size="8" value="0" onkeyup="auto_completar_numero(this, true, true);return true;" disabled="" ></INPUT>
         </TD>
-        <TD  id="fieldProductUOM">xx</TD>
+        <TD id="fieldProductUOM">xx</TD>
       </TR>
     </DIV>
   </TABLE>

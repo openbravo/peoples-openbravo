@@ -23,7 +23,6 @@
 	<PARAMETER id="paramadRoleId" name="key" default="" attribute="value"/>
 	<PARAMETER id="window" name="window" default="" attribute="value"/>
 	<PARAMETER id="tab" name="tab" default="" attribute="value"/>
-  <PARAMETER id="keyMap" name="keyMap" default=""/>
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>

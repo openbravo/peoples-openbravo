@@ -34,7 +34,9 @@
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
         var LNG_POR_DEFECTO = "en_US";
       </script>
+      <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
@@ -46,7 +48,6 @@
       <script language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-      <script language="JavaScript" type="text/javascript" id="keyMap"></script>
       <script type="text/javascript">
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
@@ -74,7 +75,8 @@ function onloadFunctions() {
  // new TypeAheadCombo("inpProjectkind");
 //  new TypeAheadCombo("inpProjectpublic");
  // new TypeAheadCombo("inpProductCategory2");
-  keyArray = new Array(new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null"),new keyArrayItem("ENTER", "openSearch(null, null, '../info/Project_FS.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', inputValue(document.frmMain.inpcProjectId_D), 'inpIDValue', 'WindowID', inputValue(document.frmMain.inpcProjectId), 'Command', 'KEY');", "inpcProjectId_D", "null"), new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null"));
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Project_FS.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', inputValue(document.frmMain.inpcProjectId_D), 'inpIDValue', 'WindowID', inputValue(document.frmMain.inpcProjectId), 'Command', 'KEY');", "inpcProjectId_D", "null"), new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null");
 }
 </SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramArrayProduct">
@@ -85,8 +87,33 @@ new Array(2,3,'F3'),
 new Array(2,4,'F4')
 );
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+		resizeArea();
+		updateMenuIcon('buttonMenu');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
-    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();">
+    <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <FORM method="POST" action="ReportSalesOrderProvidedJR.html" name="frmMain" id="form">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpcBpartnerId" value=""></INPUT>
@@ -235,7 +262,7 @@ new Array(2,4,'F4')
                           <INPUT dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFrom");</script>
                         </TD>
                         <TD class="FieldButton_bg">
-                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;" >
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;" >
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <TR>
                               <TD class="FieldButton_bg">
@@ -249,7 +276,7 @@ new Array(2,4,'F4')
                     </TABLE>
                  </TD>
                   <TD class="TitleCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">To Date</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">To Date</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
@@ -257,7 +284,7 @@ new Array(2,4,'F4')
                           <INPUT dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateTo");</script>
                         </TD>
                         <TD class="FieldButton_bg">
-                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" >
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" >
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <TR>
                               <TD class="FieldButton_bg">
@@ -273,7 +300,7 @@ new Array(2,4,'F4')
                   <TD class="ContentCell"> </TD>
                 </TR>
                 <tr>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Business Partner</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Business Partner</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell" colspan="2">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
@@ -282,7 +309,7 @@ new Array(2,4,'F4')
                           <INPUT class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpBpartnerId_DES" maxlength="20" value=""></INPUT>
                         </TD>
                         <TD class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Business Partner'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value);return false;" >
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value);return false;" >
                           <table class="FieldButton"onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <TR>
                               <TD class="FieldButton_bg">
@@ -295,7 +322,7 @@ new Array(2,4,'F4')
                       </TR>
                     </TABLE>
                   </TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Project</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Project</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell" colspan="2">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
@@ -304,7 +331,7 @@ new Array(2,4,'F4')
                           <INPUT class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpcProjectId_D" id="C_Project_ID_D" maxlength="20" value=""></INPUT>
                         </TD>
                         <TD class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Project'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="openSearch(null, null, '../info/Project_FS.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', document.frmMain.inpcProjectId_D.value, 'WindowID', '184', 'inpBPartner', document.frmMain.inpcBPartnerId.value);return false;">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Project'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/Project_FS.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', document.frmMain.inpcProjectId_D.value, 'WindowID', '184', 'inpBPartner', document.frmMain.inpcBPartnerId.value);return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <TR>
                               <TD class="FieldButton_bg">
@@ -319,21 +346,21 @@ new Array(2,4,'F4')
                   </TD>
                 </tr>
                 <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Warehouse</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Warehouse</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT  name="inpmWarehouseId" id="inpmWarehouseId" class="Combo Combo_TwoCells_width">
                       <OPTION value=""> <DIV id="reportM_WAREHOUSEID"></DIV></OPTION>
                     </SELECT></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Region</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Region</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT  name="inpcRegionId" id="inpcRegionId" class="Combo Combo_TwoCells_width">
                       <OPTION value=""> <DIV id="reportC_REGIONID"></DIV></OPTION>
                     </SELECT></TD>
                 </TR>
                   <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Product Category</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Product Category</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT  name="inpmCategoryId" onchange="cambiarListaCombo(frmMain.inpArticulo, array, frmMain.inpmCategoryId.options[frmMain.inpmCategoryId.selectedIndex].value, true);" id="inpmCategoryId" class="Combo Combo_TwoCells_width">
                       <OPTION value=""> <DIV id="reportM_WAREHOUSEID"></DIV></OPTION>
                     </SELECT></TD>
-		<TD class="TitleCell"> <SPAN class="LabelText">Product</SPAN></TD>
+		<TD class="TitleCell"><SPAN class="LabelText">Product</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell" colspan="2">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
 
@@ -343,7 +370,7 @@ new Array(2,4,'F4')
                           <INPUT class="dojoValidateValid TextBox_btn_TwoCells_width" type="text" name="inpmProductId_D" maxlength="20" value=""></INPUT>
                         </TD>
                         <TD class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Product'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="openSearch(null, null, '../info/ProductComplete_FS.html', null, true, 'frmMain', 'inpmProductId', 'inpmProductId_D', document.frmMain.inpmProductId_D.value, 'WindowID', 'MInOutTraceReports');return false;">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Product'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/ProductComplete_FS.html', null, true, 'frmMain', 'inpmProductId', 'inpmProductId_D', document.frmMain.inpmProductId_D.value, 'WindowID', 'MInOutTraceReports');return false;">
                           <table class="FieldButton" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;"> 
                             <TR>
                               <TD class="FieldButton_bg">
@@ -359,11 +386,11 @@ new Array(2,4,'F4')
                   </TD>
                 </tr>
                 <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Building Site Type</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Building Site Type</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT  name="inpProjectkind" id="inpProjectkind" class="Combo Combo_TwoCells_width">
                       <OPTION value=""> <DIV id="reportC_PROJECTKIND"></DIV></OPTION>
                     </SELECT></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Initiative Type</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Initiative Type</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT  name="inpProjectpublic" id="inpProjectpublic" class="Combo Combo_TwoCells_width">
                       <OPTION value=""> <DIV id="reportC_PROJECTPUBLIC"></DIV></OPTION>
                     </SELECT></TD>
@@ -388,7 +415,7 @@ new Array(2,4,'F4')
                     <TD class="TitleCell"></TD>
                     <TD class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='View Results in a New Window'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="openServletNewWindow('FIND', true, 'ReportSalesOrderProvidedJRPop.html', 'ReportSalesOrderProvidedJR', null, false, '700', '1000', true);return false;">
+                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('FIND', true, 'ReportSalesOrderProvidedJRPop.html', 'ReportSalesOrderProvidedJR', null, false, '700', '1000', true);return false;">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                           <tr>
                             <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>

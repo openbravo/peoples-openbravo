@@ -782,4 +782,38 @@
       ]]>
     </Sql>
     <Parameter name="tab"/>
-  </SqlMethod></SqlClass>
+  </SqlMethod>
+  <SqlMethod name="hasButtonList" type="preparedStatement" return="String" default="0">
+    <SqlMethodComment>Checks if the tab has action buttons</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+          select count(*) as total
+        from ad_field f,
+             ad_column c
+       where f.ad_tab_id = to_number(?)
+         and f.ad_column_id = c.ad_column_id
+         and ad_reference_id = 28
+         and ad_reference_value_id is not null
+         and f.isdisplayed = 'Y'
+         and f.isactive='Y'
+      ]]>
+    </Sql>
+    <Parameter name="tab"/>
+  </SqlMethod>
+  <SqlMethod name="hasButtonFixed" type="preparedStatement" return="String" default="0">
+    <SqlMethodComment>Checks if the tab has action buttons</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+          select count(*) as total
+        from ad_field f,
+             ad_column c
+       where f.ad_tab_id = to_number(?)
+         and f.ad_column_id = c.ad_column_id
+         and ad_reference_id = 28
+         and f.isdisplayed = 'Y'
+         and f.isactive='Y'
+      ]]>
+    </Sql>
+    <Parameter name="tab"/>
+  </SqlMethod>
+  </SqlClass>

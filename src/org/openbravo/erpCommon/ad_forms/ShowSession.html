@@ -32,7 +32,9 @@ var baseDirection = "../../../../../web/";
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
   var LNG_POR_DEFECTO = "en_US";
 </script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
@@ -44,7 +46,6 @@ var baseDirection = "../../../../../web/";
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" id="keyMap"></script>
 <script type="text/javascript"> 
       //all dojo.require above this line
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
@@ -67,8 +68,33 @@ function onloadFunctions() {
 	new TypeAheadCombo("inpWindow");
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+		resizeArea();
+		updateMenuIcon('buttonMenu');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="setFocusFirstControl();onloadFunctions();resizeArea();updateMenuIcon('buttonMenu');setFocusFirstControl();" onresize="resizeArea();" id="paramMessage">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" id="paramMessage">
 <FORM name="frmMain" method="post" action="Showsession.html">
               <INPUT type="hidden" name="Command"></INPUT>
               <INPUT type="hidden" name="inpSessionValue"></INPUT>
@@ -223,32 +249,32 @@ function onloadFunctions() {
                 </TR>
 
                 <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Window</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Window</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpWindow" class="Combo Combo_TwoCelss_width" id="inpWindow">
                       <OPTION value=""></OPTION><DIV id="sectionWindows_M">
                       <OPTION value="" id="fieldWindow"></OPTION></DIV>
                     </SELECT></TD>
                   <TD class="TitleCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">is global window</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"> <INPUT type="checkbox" name="inpWindowGlobal" value="Y" id="fieldWindowGCheck"></INPUT></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">is global window</SPAN></TD>
+                  <TD class="Radio_Check_ContentCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpWindowGlobal" value="Y" id="fieldWindowGCheck"></INPUT></SPAN></TD>
                 </TR>
 
                 <TR>
                   <TD class="TitleCell"> </TD>
                   <TD class="Radio_Check_ContentCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText"></SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText"></SPAN></TD>
                   <TD class="Radio_Check_ContentCell"></TD>                  
-                  <TD class="TitleCell"> <SPAN class="LabelText">is global</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"> <INPUT type="checkbox" name="inpGlobal" value="Y" id="fieldGlobalCheck"></INPUT></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">is global</SPAN></TD>
+                  <TD class="Radio_Check_ContentCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpGlobal" value="Y" id="fieldGlobalCheck"></INPUT></SPAN></TD>
                 </TR>
 
                 <TR>
                   <TD class="TitleCell"> </TD>
                   <TD class="Radio_Check_ContentCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText"></SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText"></SPAN></TD>
                   <TD class="Radio_Check_ContentCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">is preference</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"><INPUT type="checkbox" name="inpPreference" value="Y" id="fieldPreferenceCheck"></INPUT></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">is preference</SPAN></TD>
+                  <TD class="Radio_Check_ContentCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpPreference" value="Y" id="fieldPreferenceCheck"></INPUT></SPAN></TD>
                 </TR>
 
 
@@ -256,7 +282,7 @@ function onloadFunctions() {
                   <TD class="TitleCell"></TD>
                   <TD class="Button_LeftAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Search'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;"  onclick="submitCommandForm('FIND');return false;">
+                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;"  onclick="submitCommandForm('FIND');return false;">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                         <tr>
                           <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -267,10 +293,10 @@ function onloadFunctions() {
                       </a>
                     </div>
                   </TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText"></SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText"></SPAN></TD>
                   <TD class="Radio_Check_ContentCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">is accounting</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"><INPUT type="checkbox" name="inpAccounting" value="Y" id="fieldAccountingCheck"></INPUT></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">is accounting</SPAN></TD>
+                  <TD class="Radio_Check_ContentCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpAccounting" value="Y" id="fieldAccountingCheck"></INPUT></SPAN></TD>
                 </TR>
 
                 <TR>
@@ -334,15 +360,15 @@ function onloadFunctions() {
               <DIV class="Main_ContentPane_Client" style="overflow: auto; border-top: 0px none;" id="tdbottomButtons">
                 <table class="Main_Client_TableEdition" cellspacing="0" cellpadding="0" style="width: 435px">
                    <tr>
-                     <TD class="TitleCell"> <SPAN class="LabelText">Variable</SPAN></TD>
+                     <TD class="TitleCell"><SPAN class="LabelText">Variable</SPAN></TD>
                      <TD class="TextBox_ContentCell"><INPUT name="inpNombreVariable" type="text" id="inpNombreVariable2" class="dojoValidateValid TextBox_OneCell_width"></INPUT></TD>
-                     <TD class="TitleCell"> <SPAN class="LabelText">Value</SPAN></TD>
+                     <TD class="TitleCell"><SPAN class="LabelText">Value</SPAN></TD>
                      <TD class="TextBox_ContentCell"><INPUT name="inpValorVariable" type="text" id="inpValorVariable2" class="dojoValidateValid TextBox_OneCell_width"></INPUT></TD>
                     </tr>
                     <TR>
                     <TD></TD>
                     <TD class="Button_LeftAlign_ContentCell">
-                        <div><a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Process'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('SAVE_NEW', true, null, null, null, true);return false;" onmouseover="window.status='Save';return true;">
+                        <div><a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE_NEW', true, null, null, null, true);return false;" onmouseover="window.status='Save';return true;">
                              <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Process';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                              <tr>
                                 <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border=0/></td>

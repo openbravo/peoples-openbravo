@@ -128,13 +128,7 @@ public class MaterialTransactions extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString()); 
     log4j.debug("parte1");
-	try {
-      KeyMap key = new KeyMap(this, vars, "MaterialTransactions.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    log4j.debug("parte2");
+	log4j.debug("parte2");
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.MaterialTransactions");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());

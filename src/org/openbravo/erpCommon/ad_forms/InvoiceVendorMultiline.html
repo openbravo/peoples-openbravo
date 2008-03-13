@@ -30,7 +30,9 @@ var baseDirection = "../../../../../web/";
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
   LNG_POR_DEFECTO = "en_US";
 </script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
@@ -40,7 +42,6 @@ var baseDirection = "../../../../../web/";
 <SCRIPT language="JavaScript" src="../../../../../web/js/callOut.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
-<script language="JavaScript" type="text/javascript" id="keyMap"></script>
 <SCRIPT language="javascript" type="text/javascript">
 keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, true, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_D', document.frmMain.inpcBpartnerId_D.value, 'inpIDValue', document.frmMain.inpcBpartnerId.value, 'Command', 'KEY', 'WindowID', 'InvoiceVendorMultiline.html');", "inpcBpartnerId_D", "null");
 
@@ -68,8 +69,34 @@ function depurar() {
   return true;
 }
 </SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		
+		resizeArea();
+		updateMenuIcon('buttonMenu');
+		try {
+		  onloadFunctions();
+		} catch (e) {}
+		xx();
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="resizeArea();updateMenuIcon('buttonMenu');onloadFunctions();xx();setFocusFirstControl();" onresize="resizeArea();" id="paramBody">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" id="paramBody">
 <form id="form" method="POST" action="InvoiceVendorMultiline.html" name="frmMain">
   <input type="hidden" name="Command">
   <input type="hidden" name="inpCommandType" value="" id="paramCommandType">
@@ -231,7 +258,7 @@ function depurar() {
                           <TD class="FieldButton_ContentCell">
                             <INPUT type="hidden" name="inpcBpartnerId_LOC" id="C_BPartner_ID_LOC" value="" ></INPUT> 
                             <INPUT type="hidden" name="inpcBpartnerId_CON" id="C_BPartner_ID_CON" value="" ></INPUT> 
-                            <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Business Partner'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', null, true, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_D', document.frmMain.inpcBpartnerId_D.value, 'inpIDValue', document.frmMain.inpcBpartnerID.value, 'WindowID', '183');return false;">
+                            <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', null, true, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_D', document.frmMain.inpcBpartnerId_D.value, 'inpIDValue', document.frmMain.inpcBpartnerID.value, 'WindowID', '183');return false;">
                             <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Business Partner';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                               <TR>
                                 <TD class="FieldButton_bg">
@@ -244,7 +271,7 @@ function depurar() {
                         </TR>
                       </TABLE>
                     </TD>
-                    <TD class="TitleCell"> <SPAN class="LabelText"><A href="#" onclick="sendDirectLink(document.frmMain, 'C_BPartner_Location_ID', document.frmMain.inpcInvoiceId.value, '../utility/ReferencedLink.html', document.frmMain.inpcBpartnerLocationId.value, '293', '_self', true);return false;" onmouseover="window.status='Address';return true;" onmouseout="window.status='';return true;" class="LabelLink">Address</A>:&nbsp;</SPAN>
+                    <TD class="TitleCell"><SPAN class="LabelText"><A href="#" onclick="sendDirectLink(document.frmMain, 'C_BPartner_Location_ID', document.frmMain.inpcInvoiceId.value, '../utility/ReferencedLink.html', document.frmMain.inpcBpartnerLocationId.value, '293', '_self', true);return false;" onmouseover="window.status='Address';return true;" onmouseout="window.status='';return true;" class="LabelLink">Address</A>:&nbsp;</SPAN>
                     </TD>
                     <TD class="Combo_ContentCell" colspan="2"><SELECT name="inpcBpartnerLocationId" onchange="logChanges(this);return true;" class="ComboKey Combo_TwoCells_width" id="reportC_BPartner_Location_ID_S"><DIV id="reportC_BPartner_Location_ID"></DIV>
                     </SELECT></TD>
@@ -269,7 +296,7 @@ function depurar() {
                         </TR>
                       </TABLE>
                     </TD>
-                    <TD class="TitleCell"> <SPAN class="LabelText">Payment rule</SPAN></TD>
+                    <TD class="TitleCell"><SPAN class="LabelText">Payment rule</SPAN></TD>
                     <TD class="Combo_ContentCell"> <SELECT name="inppaymentrule" onchange="logChanges(this);return true;" class="ComboKey Combo_OneCell_width" id="reportPaymentRule_S"><DIV id="reportPaymentRule"></DIV>
                     </SELECT></TD>
                     <TD class="TitleCell"><SPAN class="LabelText"> <A href="#" onclick="sendDirectLink(document.frmMain, 'C_PaymentTerm_ID', document.frmMain.inpcInvoiceId.value, '../utility/ReferencedLink.html', document.frmMain.inpcPaymenttermId.value, '113', '_self', true);return false;" onmouseover="window.status='Payment term';return true;" onmouseout="window.status='';return true;" class="LabelLink">Payment term</A></SPAN></TD>
@@ -308,7 +335,7 @@ function depurar() {
                     <TD></TD>
                     <TD class=Button_CenterAlign_ContentCell>
                       <INPUT type="hidden" name="inpdocaction" id="DocAction" value="xxV"></INPUT>
-                      <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Process Order'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="openServletNewWindow('BUTTONDocAction111', false, '../xx', 'BUTTON', null, true);return false;" id="fieldButtonAction">
+                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process Order'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('BUTTONDocAction111', false, '../xx', 'BUTTON', null, true);return false;" id="fieldButtonAction">
                         <table class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Process Order'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
                           <tr>
                               <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process Order" title="Process Order" src="../../../../../web/images/blank.gif" border="0"></td>

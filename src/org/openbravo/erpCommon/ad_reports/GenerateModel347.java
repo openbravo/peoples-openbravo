@@ -68,12 +68,6 @@ public class GenerateModel347 extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString()); 
 
     try {
-      KeyMap key = new KeyMap(this, vars, "GenerateModel347.html");
-      xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.GenerateModel347");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
