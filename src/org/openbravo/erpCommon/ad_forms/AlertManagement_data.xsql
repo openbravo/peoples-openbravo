@@ -28,7 +28,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-       SELECT R.AD_ALERTRULE_ID,
+       SELECT DISTINCT R.AD_ALERTRULE_ID,
               '' as RuleName,
               A.Description as AlertDescription,
               A.AD_ALERT_ID,
@@ -82,7 +82,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-       SELECT a.AD_ALERTRULE_ID,
+       SELECT DISTINCT a.AD_ALERTRULE_ID,
               a.FILTERCLAUSE,
               AD_COLUMN_IDENTIFIER('AD_AlertRule',to_char(a.AD_ALERTRULE_ID),to_char(?)) as rulename      
          FROM AD_ALERTRULE A,

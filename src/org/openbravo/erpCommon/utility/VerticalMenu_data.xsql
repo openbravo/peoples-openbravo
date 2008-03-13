@@ -29,7 +29,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-       SELECT '' AS N,
+       SELECT DISTINCT '' AS N,
               a.AD_ALERTRULE_ID,
               a.FILTERCLAUSE
          FROM AD_ALERTRULE A,
