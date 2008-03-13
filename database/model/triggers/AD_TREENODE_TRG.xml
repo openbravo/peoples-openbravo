@@ -32,7 +32,7 @@ BEGIN
 
     SELECT TREETYPE INTO v_TreeType
     FROM AD_TREE
-    WHERE AD_TREE_ID = NEW.AD_TREE_ID;
+    WHERE AD_TREE_ID = :new.AD_TREE_ID;
  
     IF (v_TreeType='AR' AND :new.parent_id<>0) THEN
 
