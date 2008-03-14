@@ -12,7 +12,8 @@
       <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="AD_TAB_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="FILTERCLAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
-      <column name="SQL" primaryKey="false" required="true" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="SQL" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="TYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADALERTRULE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

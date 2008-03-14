@@ -66,27 +66,29 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
 
     String msg="";
     
+    if(!strSQL.equals("")) {
  
-    try {
-      PreparedStatement st = this.getPreparedStatement(strSQL);
-      ResultSet result;
-      result = st.executeQuery();
-      ResultSetMetaData rmeta=result.getMetaData();
-      if (!existsColumn(rmeta,"AD_CLIENT_ID"))    msg = "AD_CLIENT_ID ";
-      if (!existsColumn(rmeta,"AD_ORG_ID"))       msg += "AD_ORG_ID ";
-      if (!existsColumn(rmeta,"CREATED"))         msg += "CREATED ";
-      if (!existsColumn(rmeta,"CREATEDBY"))       msg += "CREATEDBY ";
-      if (!existsColumn(rmeta,"UPDATED"))         msg += "UPDATED ";
-      if (!existsColumn(rmeta,"UPDATEDBY"))       msg += "UPDATEDBY ";
-      if (!existsColumn(rmeta,"ISACTIVE"))        msg += "ISACTIVE ";
-      if (!existsColumn(rmeta,"AD_USER_ID"))      msg += "AD_USER_ID ";
-      if (!existsColumn(rmeta,"AD_ROLE_ID"))      msg += "AD_ROLE_ID ";
-      if (!existsColumn(rmeta,"RECORD_ID"))       msg += "RECORD_ID ";
-      if (!existsColumn(rmeta,"DESCRIPTION"))     msg += "DESCRIPTION ";
-      if (!existsColumn(rmeta,"REFERENCEKEY_ID")) msg += "REFERENCEKEY_ID";
-      if (!msg.equals("")) msg = Utility.messageBD(this,"notColumnInQuery",vars.getLanguage()) + msg;
-    } catch (Exception ex) {
-      msg = "error in query: " + FormatUtilities.replaceJS(ex.toString());
+	    try {
+	      PreparedStatement st = this.getPreparedStatement(strSQL);
+	      ResultSet result;
+	      result = st.executeQuery();
+	      ResultSetMetaData rmeta=result.getMetaData();
+	      if (!existsColumn(rmeta,"AD_CLIENT_ID"))    msg = "AD_CLIENT_ID ";
+	      if (!existsColumn(rmeta,"AD_ORG_ID"))       msg += "AD_ORG_ID ";
+	      if (!existsColumn(rmeta,"CREATED"))         msg += "CREATED ";
+	      if (!existsColumn(rmeta,"CREATEDBY"))       msg += "CREATEDBY ";
+	      if (!existsColumn(rmeta,"UPDATED"))         msg += "UPDATED ";
+	      if (!existsColumn(rmeta,"UPDATEDBY"))       msg += "UPDATEDBY ";
+	      if (!existsColumn(rmeta,"ISACTIVE"))        msg += "ISACTIVE ";
+	      if (!existsColumn(rmeta,"AD_USER_ID"))      msg += "AD_USER_ID ";
+	      if (!existsColumn(rmeta,"AD_ROLE_ID"))      msg += "AD_ROLE_ID ";
+	      if (!existsColumn(rmeta,"RECORD_ID"))       msg += "RECORD_ID ";
+	      if (!existsColumn(rmeta,"DESCRIPTION"))     msg += "DESCRIPTION ";
+	      if (!existsColumn(rmeta,"REFERENCEKEY_ID")) msg += "REFERENCEKEY_ID";
+	      if (!msg.equals("")) msg = Utility.messageBD(this,"notColumnInQuery",vars.getLanguage()) + msg;
+	    } catch (Exception ex) {
+	      msg = "error in query: " + FormatUtilities.replaceJS(ex.toString());
+	    }
     }
     
     StringBuffer resultado = new StringBuffer();

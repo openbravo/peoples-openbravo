@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <AD_ALERTRULE AD_ALERTRULE_ID="800001" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-05-21 10:34:58.0" CREATEDBY="100" UPDATED="2007-05-23 10:50:26.0" UPDATEDBY="100" NAME="Not used TextInterfaces" AD_TAB_ID="800167">
+  <AD_ALERTRULE AD_ALERTRULE_ID="800001" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-05-21 10:34:58.0" CREATEDBY="100" UPDATED="2007-05-23 10:50:26.0" UPDATEDBY="100" NAME="Not used TextInterfaces" AD_TAB_ID="800167" TYPE="D">
     <SQL><![CDATA[select ad_textinterfaces_id as referencekey_id,
        substr(text,1,20) as record_id,
        0 as ad_role_id,
@@ -19,7 +19,7 @@ from ad_textinterfaces
     where trunc(updated) <(select max(trunc(updated))
                           from ad_textinterfaces_trl))]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="800002" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-19 11:49:05.0" CREATEDBY="100" UPDATED="2007-06-19 11:49:05.0" UPDATEDBY="100" NAME="Tabs of a window with same seqno" AD_TAB_ID="106">
+  <AD_ALERTRULE AD_ALERTRULE_ID="800002" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-19 11:49:05.0" CREATEDBY="100" UPDATED="2007-06-19 11:49:05.0" UPDATEDBY="100" NAME="Tabs of a window with same seqno" AD_TAB_ID="106" TYPE="D">
     <SQL><![CDATA[SELECT AA.AD_WINDOW_ID AS REFERENCEKEY_ID,
        W.NAME AS RECORD_ID,
        0 AS AD_ROLE_ID,
@@ -38,7 +38,7 @@ GROUP BY AD_WINDOW_ID, SEQNO
 HAVING COUNT(*) > 1) AA, AD_WINDOW w
 WHERE w.AD_WINDOW_ID = AA.AD_WINDOW_ID]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="800003" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-08-06 17:39:54.0" CREATEDBY="100" UPDATED="2007-08-06 17:39:54.0" UPDATEDBY="100" NAME="Columns with search reference and reference value null" AD_TAB_ID="101">
+  <AD_ALERTRULE AD_ALERTRULE_ID="800003" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-08-06 17:39:54.0" CREATEDBY="100" UPDATED="2007-08-06 17:39:54.0" UPDATEDBY="100" NAME="Columns with search reference and reference value null" AD_TAB_ID="101" TYPE="D">
     <SQL><![CDATA[SELECT AD_COLUMN_ID AS referencekey_id, TABLENAME || ' - ' || COLUMNNAME AS RECORD_ID, 0 AS AD_ROLE_ID, NULL AS AD_USER_ID,
   'The column ' || COLUMNNAME || ' in table ' || TABLENAME || ' is referenced as search and doesn''t have an associated reference value while having active updateable fields.' AS DESCRIPTION,
   'Y' AS ISACTIVE, 0 AS AD_ORG_ID, 0 AS AD_CLIENT_ID, now() AS CREATED, 0 AS CREATEDBY, now() AS UPDATED, 0 AS UPDATEDBY
@@ -62,7 +62,7 @@ WHERE AD_REFERENCE_ID = 30
                 AND AD_WINDOW.ISACTIVE = 'Y'
                 AND ISDISPLAYED = 'Y')]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000004" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-05-16 16:42:58.0" CREATEDBY="100" UPDATED="2007-05-22 09:58:52.0" UPDATEDBY="100" NAME="Field with editable parent" AD_TAB_ID="107">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000004" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-05-16 16:42:58.0" CREATEDBY="100" UPDATED="2007-05-22 09:58:52.0" UPDATEDBY="100" NAME="Field with editable parent" AD_TAB_ID="107" TYPE="D">
     <SQL><![CDATA[select f.ad_field_id as referencekey_id,
        t.name||'>'||f.name as record_id,
        0 as ad_role_id,
@@ -89,7 +89,7 @@ and exists (select 1 from ad_column c1, ad_field f1, ad_tab t1
            and c1.COLUMNNAME = c.columnname
            )]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000007" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-05-22 09:42:47.0" CREATEDBY="100" UPDATED="2007-05-22 09:48:38.0" UPDATEDBY="100" NAME="TableDir Columns without correspondent table" AD_TAB_ID="101">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000007" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-05-22 09:42:47.0" CREATEDBY="100" UPDATED="2007-05-22 09:48:38.0" UPDATEDBY="100" NAME="TableDir Columns without correspondent table" AD_TAB_ID="101" TYPE="D">
     <SQL><![CDATA[select c.ad_column_id as referencekey_id,
        t.tableName||'.'||c.columnname as record_id,
        0 as ad_role_id,
@@ -110,7 +110,7 @@ and exists (select 1 from ad_column c1, ad_field f1, ad_tab t1
                     from ad_table 
                    where upper(tablename)||'_ID' = upper(c.columnname))]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000008" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-14 16:43:28.0" CREATEDBY="100" UPDATED="2007-06-14 16:43:28.0" UPDATEDBY="100" NAME="Disabled constraints">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000008" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-14 16:43:28.0" CREATEDBY="100" UPDATED="2007-06-14 16:43:28.0" UPDATEDBY="100" NAME="Disabled constraints" TYPE="D">
     <SQL><![CDATA[select constraint_name as referencekey_id,
        null as record_id,
        0 as ad_role_id,
@@ -126,7 +126,7 @@ and exists (select 1 from ad_column c1, ad_field f1, ad_tab t1
 from user_constraints
 where status!='ENABLED']]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000009" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-14 16:58:27.0" CREATEDBY="100" UPDATED="2007-06-14 16:58:27.0" UPDATEDBY="100" NAME="Disabled triggers">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000009" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-14 16:58:27.0" CREATEDBY="100" UPDATED="2007-06-14 16:58:27.0" UPDATEDBY="100" NAME="Disabled triggers" TYPE="D">
     <SQL><![CDATA[select trigger_name as referencekey_id,
        null as record_id,
        0 as ad_role_id,
@@ -142,7 +142,7 @@ where status!='ENABLED']]></SQL>
 from user_triggers
 where status!='ENABLED']]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000010" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-14 17:19:33.0" CREATEDBY="100" UPDATED="2007-06-14 17:19:33.0" UPDATEDBY="100" NAME="Old not processed Bank Statements" AD_TAB_ID="328">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000010" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-14 17:19:33.0" CREATEDBY="100" UPDATED="2007-06-14 17:19:33.0" UPDATEDBY="100" NAME="Old not processed Bank Statements" AD_TAB_ID="328" TYPE="D">
     <SQL><![CDATA[select c_bankstatement_id as referencekey_id,
        name as record_id,
        0 as ad_role_id,
@@ -159,7 +159,7 @@ where status!='ENABLED']]></SQL>
 where statementdate<now()-10
 and processed = 'N']]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000011" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 10:53:05.0" CREATEDBY="100" UPDATED="2007-06-15 10:53:05.0" UPDATEDBY="100" NAME="Old not processed Sales Invoices" AD_TAB_ID="263">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000011" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 10:53:05.0" CREATEDBY="100" UPDATED="2007-06-15 10:53:05.0" UPDATEDBY="100" NAME="Old not processed Sales Invoices" AD_TAB_ID="263" TYPE="D">
     <SQL><![CDATA[select c_invoice_id as referencekey_id,
        documentno as record_id,
        0 as ad_role_id,
@@ -177,7 +177,7 @@ where DateInvoiced<now()-10
 and processed = 'N'
 and isSOtrx='Y']]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000012" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 10:56:41.0" CREATEDBY="100" UPDATED="2007-06-15 10:56:41.0" UPDATEDBY="100" NAME="Old not processed Purchases Invoices" AD_TAB_ID="290">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000012" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 10:56:41.0" CREATEDBY="100" UPDATED="2007-06-15 10:56:41.0" UPDATEDBY="100" NAME="Old not processed Purchases Invoices" AD_TAB_ID="290" TYPE="D">
     <SQL><![CDATA[select c_invoice_id as referencekey_id,
        documentno as record_id,
        0 as ad_role_id,
@@ -195,7 +195,7 @@ where DateInvoiced<now()-10
 and processed = 'N'
 and isSOtrx='N']]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000013" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 10:59:27.0" CREATEDBY="100" UPDATED="2007-06-15 10:59:27.0" UPDATEDBY="100" NAME="Products without defined price" AD_TAB_ID="180">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000013" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 10:59:27.0" CREATEDBY="100" UPDATED="2007-06-15 10:59:27.0" UPDATEDBY="100" NAME="Products without defined price" AD_TAB_ID="180" TYPE="D">
     <SQL><![CDATA[select m_product_id as referencekey_id,
        p.name as record_id,
        0 as ad_role_id,
@@ -242,7 +242,7 @@ and not exists (select 1
                   and pv.m_pricelist_id = pl.m_pricelist_id
                   and issopricelist='Y')]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000014" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 11:00:17.0" CREATEDBY="100" UPDATED="2007-06-15 11:18:48.0" UPDATEDBY="100" NAME="Remittance types without defined parameters" AD_TAB_ID="800062">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000014" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 11:00:17.0" CREATEDBY="100" UPDATED="2007-06-15 11:18:48.0" UPDATEDBY="100" NAME="Remittance types without defined parameters" AD_TAB_ID="800062" TYPE="D">
     <SQL><![CDATA[select c_remittance_type_id as referencekey_id,
        name as record_id,
        0 as ad_role_id,
@@ -260,7 +260,7 @@ where not exists (select 1
                     from c_remittance_parameter p 
                    where p.c_remittance_type_id = t.c_remittance_type_id)]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000015" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 11:24:45.0" CREATEDBY="100" UPDATED="2007-06-15 11:26:57.0" UPDATEDBY="100" NAME="Production plans without assigned cost center" AD_TAB_ID="800117">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000015" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 11:24:45.0" CREATEDBY="100" UPDATED="2007-06-15 11:26:57.0" UPDATEDBY="100" NAME="Production plans without assigned cost center" AD_TAB_ID="800117" TYPE="D">
     <SQL><![CDATA[select m_productionplan_id as referencekey_id,
        ad_column_identifier('M_ProductionPlan',m_productionPlan_id,'en_US') as record_id,
        0 as ad_role_id,
@@ -277,7 +277,7 @@ where not exists (select 1
 where ma_costcenter_version_id is not null
 and processed = 'N']]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000016" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 11:45:07.0" CREATEDBY="100" UPDATED="2007-06-15 11:45:28.0" UPDATEDBY="100" NAME="Vendor or Customer BPs without Bill To address" AD_TAB_ID="220">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000016" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 11:45:07.0" CREATEDBY="100" UPDATED="2007-06-15 11:45:28.0" UPDATEDBY="100" NAME="Vendor or Customer BPs without Bill To address" AD_TAB_ID="220" TYPE="D">
     <SQL><![CDATA[select c_bpartner_id as referencekey_id,
        name as record_id,
        0 as ad_role_id,
@@ -297,7 +297,7 @@ and  not exists (select 1
                 where l.c_bpartner_id = l.c_bpartner_id
                 and isbillto='Y')]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000017" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 12:20:18.0" CREATEDBY="100" UPDATED="2007-06-15 12:20:18.0" UPDATEDBY="100" NAME="Customers with exceded credit" AD_TAB_ID="220">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000017" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 12:20:18.0" CREATEDBY="100" UPDATED="2007-06-15 12:20:18.0" UPDATEDBY="100" NAME="Customers with exceded credit" AD_TAB_ID="220" TYPE="D">
     <SQL><![CDATA[select c_bpartner_id as referencekey_id,
        name as record_id,
        0 as ad_role_id,
@@ -315,7 +315,7 @@ where SO_CreditLimit<SO_CreditUsed
 and iscustomer='Y'
 and SO_CreditLimit!=0]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000018" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 12:44:40.0" CREATEDBY="100" UPDATED="2007-06-15 13:05:29.0" UPDATEDBY="100" NAME="Customers that haven't made an order in the last 30 days" AD_TAB_ID="220">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000018" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 12:44:40.0" CREATEDBY="100" UPDATED="2007-06-15 13:05:29.0" UPDATEDBY="100" NAME="Customers that haven't made an order in the last 30 days" AD_TAB_ID="220" TYPE="D">
     <SQL><![CDATA[select c_bpartner_id as referencekey_id,
        name as record_id,
        0 as ad_role_id,
@@ -339,7 +339,7 @@ from (select bp.c_bpartner_id, bp.name,
       where iscustomer='Y') c
 where coalesce(lastOrder,to_date('01-01-1900','DD-MM-YYYY'))<now()-30]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000019" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 13:06:10.0" CREATEDBY="100" UPDATED="2007-06-15 16:04:55.0" UPDATEDBY="100" NAME="Not payed DPs that are over date planned ">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000019" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 13:06:10.0" CREATEDBY="100" UPDATED="2007-06-15 16:04:55.0" UPDATEDBY="100" NAME="Not payed DPs that are over date planned " TYPE="D">
     <SQL><![CDATA[select C_debt_payment_id as referencekey_id,
        null as record_id,
        0 as ad_role_id,
@@ -357,7 +357,7 @@ where trunc(dateplanned) > trunc(now())
 and ispaid='N'
 and c_settlement_cancel_id is null]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000020" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 15:22:48.0" CREATEDBY="100" UPDATED="2007-06-15 15:22:55.0" UPDATEDBY="100" NAME="Products under stock" AD_TAB_ID="180">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000020" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 15:22:48.0" CREATEDBY="100" UPDATED="2007-06-15 15:22:55.0" UPDATEDBY="100" NAME="Products under stock" AD_TAB_ID="180" TYPE="D">
     <SQL><![CDATA[select p.M_PRODUCT_ID as referencekey_id,
        p.name as record_id,
        0 as ad_role_id,
@@ -383,7 +383,7 @@ where p.m_product_id = po.m_product_id
                        where s.m_product_id = po.m_product_id
                         and ad_isOrgIncluded(s.ad_org_id,po.ad_org_id,po.ad_client_id)!=-1)]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000021" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 15:59:23.0" CREATEDBY="100" UPDATED="2007-06-15 16:10:53.0" UPDATEDBY="100" NAME="Purchase orders to be received" AD_TAB_ID="294">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000021" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 15:59:23.0" CREATEDBY="100" UPDATED="2007-06-15 16:10:53.0" UPDATEDBY="100" NAME="Purchase orders to be received" AD_TAB_ID="294" TYPE="D">
     <SQL><![CDATA[select c_order_id as referencekey_id,
        ad_column_identifier('C_Order',c_order_id,'en_US') as record_id,
        0 as ad_role_id,
@@ -412,7 +412,7 @@ and 0 != (select sum(qtyordered)
               from c_orderline ol
              where o.c_order_id = ol.c_order_id)]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000022" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 16:02:50.0" CREATEDBY="100" UPDATED="2007-06-15 16:10:37.0" UPDATEDBY="100" NAME="Sales orders to be received" AD_TAB_ID="186">
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000022" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-15 16:02:50.0" CREATEDBY="100" UPDATED="2007-06-15 16:10:37.0" UPDATEDBY="100" NAME="Sales orders to be received" AD_TAB_ID="186" TYPE="D">
     <SQL><![CDATA[select c_order_id as referencekey_id,
        ad_column_identifier('C_Order',c_order_id,'en_US') as record_id,
        0 as ad_role_id,
@@ -441,4 +441,5 @@ and 0 != (select sum(qtyordered)
               from c_orderline ol
              where o.c_order_id = ol.c_order_id)]]></SQL>
   </AD_ALERTRULE>
+  <AD_ALERTRULE AD_ALERTRULE_ID="1000300000" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-03-11 10:37:14.0" CREATEDBY="100" UPDATED="2008-03-11 12:28:21.0" UPDATEDBY="100" NAME="Updates available" TYPE="E" />
 </data>

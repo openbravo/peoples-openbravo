@@ -29,11 +29,13 @@ public class PeriodicAlert implements BackgroundProcess {
   private void processAlert(PeriodicAlertData alertRule, PeriodicBackground periodicBG) throws Exception{
     periodicBG.addLog("processing rule "+alertRule.name);
     PeriodicAlertData [] alert = null;
-    try {
-      alert = PeriodicAlertData.selectAlert(periodicBG.conn, alertRule.sql);
-    } catch (Exception ex) {
-      periodicBG.addLog("Error processing: "+ex.toString());
-      return;
+    if(!alertRule.sql.equals("")) {
+	    try {
+	      alert = PeriodicAlertData.selectAlert(periodicBG.conn, alertRule.sql);
+	    } catch (Exception ex) {
+	      periodicBG.addLog("Error processing: "+ex.toString());
+	      return;
+	    }
     }
     //insert
     if (alert!=null && alert.length!=0) {
@@ -70,11 +72,13 @@ public class PeriodicAlert implements BackgroundProcess {
     }
     
     //update
-    try {
-      Integer count = PeriodicAlertData.updateAlert(periodicBG.conn, alertRule.adAlertruleId, alertRule.sql);
-      periodicBG.addLog("updated alerts: "+count);
-    } catch (Exception ex) {
-      periodicBG.addLog("Error updating: "+ex.toString());
+    if(!alertRule.sql.equals("")) {
+	    try {
+	      Integer count = PeriodicAlertData.updateAlert(periodicBG.conn, alertRule.adAlertruleId, alertRule.sql);
+	      periodicBG.addLog("updated alerts: "+count);
+	    } catch (Exception ex) {
+	      periodicBG.addLog("Error updating: "+ex.toString());
+	    }
     }
     
   }
