@@ -53,7 +53,6 @@ build.war: build a war file in the lib directory.
 <project name="openbravo sources" default="compile" basedir=".">
   <property name="webTab" value="all"/>
   <property name="tab" value="%"/>
-  <property name="base.language" value="${base.source}/src"/>
   <property name="base.translate.structure" value="org/openbravo/erpWindows"/>
   <property name="client.web.xml" value="${base.client.src}/web.xml"/>
   <property name="package" value="/org"/>
@@ -123,9 +122,9 @@ build.war: build a war file in the lib directory.
       <arg line="${base.config}/Openbravo.properties .xsql . ${build.sqlc}/src"/>
       <classpath refid="project.class.path"/>
     </java>
-    <copy file="${base.source}/src/buildAD.xml" tofile="${base.source}/srcAD/build.xml"/>
-    <copy file="${base.source}/src/log4j.lcf" tofile="${base.source}/srcAD/log4j.lcf"/>
-    <ant dir="${base.source}/srcAD" target="buildAD" inheritAll="true" inheritRefs="true"/>
+    <copy file="${base.src}/buildAD.xml" tofile="${build.AD}/build.xml"/>
+    <copy file="${base.src}/log4j.lcf" tofile="${build.AD}/log4j.lcf"/>
+    <ant dir="${build.AD}" target="buildAD" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="compileSqlc" depends="sqlc">
@@ -142,7 +141,7 @@ build.war: build a war file in the lib directory.
 
   <target name="wad" depends="init">
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '${base.source}' '${attach.path}' '${web.url}' '${base.src}' '${complete}'"/>
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}'"/>
       <classpath refid="project.class.path"/>
     </java>
     <antcall target="postwad" inheritall="true" inheritrefs="true"/>
@@ -222,7 +221,7 @@ build.war: build a war file in the lib directory.
     </copy>
     <mkdir dir="${base.context}/web"/>
     <copy todir="${base.context}/web"  encoding="UTF-8">
-      <fileset dir="${base.source}/web/"/>
+      <fileset dir="${base.web}"/>
     </copy>
     <chmod dir="${base.context}" perm="775"/>
   </target>   

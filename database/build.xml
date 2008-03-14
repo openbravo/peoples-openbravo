@@ -43,7 +43,6 @@ compare.database.structure: Generates a diff script.
 -->
 <project name="openbravo" default="create.database" basedir=".">
   <property environment="env" />
-  <property name="database.file" value="${base.source}/database" />
   <condition property="bbdd.owner.url" value="${bbdd.url}/${bbdd.sid}" else="${bbdd.url}">
     <and>
       <equals arg1="${bbdd.rdbms}" arg2="POSTGRE"/>
@@ -95,7 +94,6 @@ compare.database.structure: Generates a diff script.
 
   <target name="create.database">
     <antcall target="clean.database.${bbdd.rdbms}"/>
-    <chmod dir="${base.source}/database" perm="755" type="both" />
     <antcall target="prepare.database"/>
     <antcall target="create.database.structure"/>
     <antcall target="import.database.data" />

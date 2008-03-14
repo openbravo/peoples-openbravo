@@ -33,12 +33,10 @@ bbdd.rdbms=ORACLE
 bbdd.sessionConfig=ALTER SESSION SET NLS_LANGUAGE='AMERICAN' NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'
 
 # build.xml properties
-base.source=/opt/openbravo
 attach.path=/opt/openbravo/attachments
 context.name=openbravo
 web.url=@actual_url_context@/web
 context.url=http://localhost:8880/openbravo
-base.temp=/tmp
 
 # Development
 bbdd.outputscript=~/databasescript.sql
