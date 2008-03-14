@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CALCULATECOST_CATSALARY">
-    <function name="C_CALCULATECOST_CATSALARY" type="VARCHAR">
+    <function name="C_CALCULATECOST_CATSALARY" type="NUMERIC">
       <parameter name="pCatSal" type="NUMERIC" mode="in"/>
       <parameter name="pDate" type="TIMESTAMP" mode="in"/>
       <body><![CDATA[/*************************************************************************
