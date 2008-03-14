@@ -68,7 +68,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 -->
 <project name="openbravo" default="compile.complete" basedir=".">
   <property environment="env"/>
-  <property file="config/Openbravo.properties"/>
+  <property name="base.config" location="config"/>
+  <property file="${base.config}/Openbravo.properties"/>
 
   <property name="base.src" location="src"/>
   <property name="base.src.core" location="src-core"/>
@@ -81,7 +82,6 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="base.context" location="WebContent"/>
   <property name="base.design" location="${base.context}/src-loc"/>
   <property name="base.lib" location="lib"/>
-  <property name="base.config" location="config"/>
   <property name="build" location="build/classes"/>
   <property name="build.AD" location="srcAD"/>
   <property name="build.sqlc" location="build/javasqlc"/>

@@ -100,12 +100,6 @@ build.war: build a war file in the lib directory.
         <contains string="${attach.path}" substring="${jakarta.context}" casesensitive="false"/>
       </and>
     </condition>
-    <delete includeEmptyDirs="true" failonerror="false">
-      <fileset dir="${jakarta.context}">
-        <exclude name="${attach.path.condition}"/>
-      </fileset>
-    </delete>
-
   </target>
 
   <target name="copy.srcClient">
