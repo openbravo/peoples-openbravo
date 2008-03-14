@@ -96,3 +96,10 @@ Calendar._TT["DEF_DATE_FORMAT"] = "%d.%m.%Y";
 Calendar._TT["TT_DATE_FORMAT"] = "%d.%m.%Y";
 
 Calendar._TT["WK"] = "Vko";
+
+Calendar._TT["WEEKEND"] = "0,6";
+
+// the following is to inform that "%s" is to be the first day of week
+// %s will be replaced with the day name.
+Calendar._TT["DAY_FIRST"] = "Näytä %s ensimmäisenä";
+
