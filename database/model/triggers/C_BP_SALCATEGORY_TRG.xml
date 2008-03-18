@@ -20,41 +20,36 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
-v_sales_cat_id NUMBER;
-v_cost NUMBER;
-v_costuom CHAR(1);
+v_isCostApplied CHAR(1);
 v_count NUMBER;
-TYPE RECORD IS REF CURSOR;
-Cur_Sal_cat_cost RECORD;
 
 BEGIN
 
-
       
   IF (UPDATING OR INSERTING)  THEN
-  
 
-  SELECT COUNT(*) INTO v_count FROM C_SALARY_CATEGORY_COST WHERE C_SALARY_CATEGORY_ID=:NEW.C_SALARY_CATEGORY_ID AND DATEFROM<=:NEW.DATEFROM;
-  
-  IF (v_count=0) THEN
-      RAISE_APPLICATION_ERROR(-20518,'@Dates inconsistency@');
-  END IF;
-  
-  FOR Cur_Sal_cat_cost IN
-      (SELECT DATEFROM, C_SALARY_CATEGORY_COST_ID, COST, COSTUOM 
-      FROM C_SALARY_CATEGORY_COST WHERE C_SALARY_CATEGORY_ID=:NEW.C_SALARY_CATEGORY_ID
-    AND DATEFROM<=:NEW.DATEFROM
-    ORDER BY DATEFROM DESC
-      )
-    LOOP
-      --v_cost := Cur_Sal_cat_cost.COST;
-   v_costuom := Cur_Sal_cat_cost.COSTUOM;
-      EXIT;
-    END LOOP;
-  
-  --:NEW.COST := v_cost;
-  :NEW.COSTUOM := v_costuom;
+    SELECT ISCOSTAPPLIED INTO v_isCostApplied
+    FROM C_SALARY_CATEGORY
+    WHERE AD_ORG_ID IN (0,:NEW.AD_ORG_ID)
+    AND AD_CLIENT_ID IN (0,:NEW.AD_CLIENT_ID)
+    AND C_SALARY_CATEGORY_ID=:NEW.C_SALARY_CATEGORY_ID;
 
+    IF (v_isCostApplied<>'Y') THEN
+      RAISE_APPLICATION_ERROR(-20519,'@Salary Category without cost@');
+    ELSE
+
+      SELECT COUNT(*) INTO v_count 
+      FROM C_SALARY_CATEGORY_COST 
+      WHERE AD_ORG_ID IN (0,:NEW.AD_ORG_ID)
+      AND AD_CLIENT_ID IN (0,:NEW.AD_CLIENT_ID)
+      AND C_SALARY_CATEGORY_ID=:NEW.C_SALARY_CATEGORY_ID 
+      AND DATEFROM<=:NEW.DATEFROM;
+      
+      IF (v_count=0) THEN
+        RAISE_APPLICATION_ERROR(-20518,'@Cost not available for Dates@');
+      END IF;
+
+    END IF;
   END IF;
   
 

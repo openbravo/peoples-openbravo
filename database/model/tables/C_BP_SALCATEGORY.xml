@@ -12,9 +12,6 @@
       <column name="C_BPARTNER_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_SALARY_CATEGORY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="DATEFROM" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
-      <column name="COST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
-      <column name="COSTUOM" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <column name="COSTBRUTO" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPEMSALCATEG">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -24,5 +21,9 @@
       <foreign-key foreignTable="C_SALARY_CATEGORY" name="CSALARYCAT_CBPEMSALCATEG">
         <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
       </foreign-key>
+      <unique name="C_BPSALCAT_SALCAT_DFROM_UN_KEY">
+        <unique-column name="C_SALARY_CATEGORY_ID"/>
+        <unique-column name="DATEFROM"/>
+      </unique>
     </table>
   </database>
