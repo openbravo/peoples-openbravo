@@ -188,8 +188,8 @@
             finish:=false;
             WHILE not finish
             LOOP
-              IF(v_COUNT=1 AND(v_BEGINING_DATE-v_FIRST_DAY_DATE<>0)) THEN
-                v_Percentage:=to_number((to_date('31-12-'||to_char(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') -v_AMORTIZATIONSTARTDATE) /to_number(to_date('31-12-'||to_char(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') -to_date('01-01-'||to_char(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY'))) * v_PercentageGeneral;
+              IF(v_COUNT=1 AND to_number(v_BEGINING_DATE-v_FIRST_DAY_DATE)<>0) THEN
+                v_Percentage:=to_number(to_number(to_date('31-12-'||to_char(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') -v_AMORTIZATIONSTARTDATE) /to_number(to_date('31-12-'||to_char(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') -to_date('01-01-'||to_char(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY'))) * v_PercentageGeneral;
                 v_USELIFEYEARS:=v_USELIFEYEARS+1;
               ELSE
                 v_Percentage:=v_PercentageGeneral;
@@ -297,8 +297,8 @@
             finish:=false;
             while not finish
             loop
-              IF(v_COUNT=1 AND(v_BEGINING_DATE-v_FIRST_DAY_DATE<>0)) THEN
-                v_Percentage:=to_number((last_day(v_BEGINING_DATE) -v_BEGINING_DATE)) /(trunc(to_number((last_day(v_BEGINING_DATE)) -(TO_DATE('01-'||to_char(to_date(v_BEGINING_DATE), 'MM-YYYY'), 'DD-MM-YYYY')))) +1) * v_PercentageGeneral;
+              IF(v_COUNT=1 AND to_number(v_BEGINING_DATE-v_FIRST_DAY_DATE)<>0) THEN
+                v_Percentage:=to_number(to_number(last_day(v_BEGINING_DATE) -v_BEGINING_DATE)) /(trunc(to_number((last_day(v_BEGINING_DATE)) -(TO_DATE('01-'||to_char(to_date(v_BEGINING_DATE), 'MM-YYYY'), 'DD-MM-YYYY')))) +1) * v_PercentageGeneral;
                 v_USELIFEMONTHS:=v_USELIFEMONTHS+1;
               ELSE
                 v_Percentage:=v_PercentageGeneral;
