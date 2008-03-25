@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION C_CURRENCY_RATE">
+    <function name="C_CURRENCY_RATE" type="NUMERIC">
+      <parameter name="p_CurFrom_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_CurTo_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_ConvDate" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_RateType" type="CHAR" mode="in"/>
+      <parameter name="p_Client_ID" type="NUMERIC" mode="in" default="0"/>
+      <parameter name="p_Org_ID" type="NUMERIC" mode="in" default="0"/>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Compiere License
+* Version 2.5.0 ("License"); You may not use this file except in
+* compliance with the License. You may obtain a copy of the License at
+* http://www.compiere.org/license.html
+* Software distributed under the License is distributed on an
+* "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+* implied. See the License for the specific language governing rights
+* and limitations under the License.
+* The Original Code is  Compiere  ERP &  Business Solution
+* The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
+Inc.
+* Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+* parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+* All Rights Reserved.
+* Contributor(s): Openbravo SL
+* Contributions are Copyright(C) 1999-2005 Openbravo, S.L
+*************************************************************************
+* $Id: C_Currency_Rate.sql,v 1.5 2003/03/17 20:32:24 jjanke Exp $
+***
+* Title: Return Conversion Rate
+* Description:
+*  from CurrencyFrom_ID to CurrencyTo_ID
+*  Returns NULL, if rate not found
+* Test
+*  SELECT C_Currency_Rate(116, 100, null, null) FROM DUAL; => .647169
+************************************************************************/
+  -- Currency From variables
+  v_cf_IsEuro      char(1);
+  v_cf_IsEMUMember char(1);
+  v_cf_EMUEntryDate DATE;
+  v_cf_EMURate NUMBER;
+  -- Currency To variables
+  v_ct_IsEuro      CHAR(1) ;
+  v_ct_IsEMUMember CHAR(1) ;
+  v_ct_EMUEntryDate DATE;
+  v_ct_EMURate NUMBER;
+  -- Triangle
+  v_CurrencyFrom NUMBER;
+  v_CurrencyTo   NUMBER;
+  v_CurrencyEuro NUMBER;
+  --
+  v_ConvDate DATE := SysDate;
+  v_RateType CHAR := 'S';
+  v_Rate     NUMBER;
+BEGIN
+  -- No Conversion
+  IF(p_CurFrom_ID = p_CurTo_ID) THEN
+    RETURN 1;
+  END IF;
+  -- Default Parameter
+  IF(p_ConvDate IS NOT NULL) THEN
+    v_ConvDate := p_ConvDate;
+  END IF;
+  IF(p_RateType IS NOT NULL) THEN
+    v_RateType := p_RateType;
+  END IF;
+  -- Get Currency Info
+  SELECT to_char(max(IsEuro)),
+    to_char(max(IsEMUMember)),
+    to_date(MAX(EMUEntryDate)),
+    MAX(EMURate)
+  INTO   v_cf_IsEuro,
+    v_cf_IsEMUMember,
+    v_cf_EMUEntryDate,
+    v_cf_EMURate
+  FROM C_Currency
+  WHERE C_Currency_ID = p_CurFrom_ID;
+  -- Not Found
+  IF(v_cf_IsEuro IS NULL) THEN
+    DBMS_OUTPUT.PUT_LINE('From Currency Not Found') ;
+    RETURN NULL;
+  END IF;
+  SELECT TO_CHAR(MAX(IsEuro)),
+    TO_CHAR(MAX(IsEMUMember)),
+    TO_DATE(MAX(EMUEntryDate)),
+    MAX(EMURate)
+  INTO v_ct_IsEuro,
+    v_ct_IsEMUMember,
+    v_ct_EMUEntryDate,
+    v_ct_EMURate
+  FROM C_Currency
+  WHERE C_Currency_ID = p_CurTo_ID;
+  -- Not Found
+  IF(v_ct_IsEuro IS NULL) THEN
+    DBMS_OUTPUT.PUT_LINE('To Currency Not Found') ;
+    RETURN NULL;
+  END IF;
+  -- Fixed - From Euro to EMU
+  IF(v_cf_IsEuro = 'Y' AND v_ct_IsEMUMember = 'Y' AND v_ConvDate >= v_ct_EMUEntryDate) THEN
+    RETURN v_ct_EMURate;
+  END IF;
+  -- Fixed - From EMU to Euro
+  IF(v_ct_IsEuro = 'Y' AND v_cf_IsEMUMember = 'Y' AND v_ConvDate >= v_cf_EMUEntryDate) THEN
+    RETURN 1 / v_cf_EMURate;
+  END IF;
+  -- Fixed - From EMU to EMU
+  IF(v_cf_IsEMUMember = 'Y' AND v_cf_IsEMUMember = 'Y'  AND v_ConvDate >= v_cf_EMUEntryDate AND v_ConvDate >= v_ct_EMUEntryDate) THEN
+    RETURN v_ct_EMURate / v_cf_EMURate;
+  END IF;
+  -- Flexible Rates
+  v_CurrencyFrom := p_CurFrom_ID;
+  v_CurrencyTo := p_CurTo_ID;
+  -- if EMU Member involved, replace From/To Currency
+  IF((v_cf_isEMUMember = 'Y' AND v_ConvDate >= v_cf_EMUEntryDate) OR(v_ct_isEMUMember = 'Y' AND v_ConvDate >= v_ct_EMUEntryDate)) THEN
+    SELECT MAX(C_Currency_ID)
+    INTO v_CurrencyEuro
+    FROM C_Currency
+    WHERE IsEuro = 'Y';
+    -- Conversion Rate not Found
+    IF(v_CurrencyEuro IS NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('Euro Not Found') ;
+      RETURN NULL;
+    END IF;
+    IF(v_cf_isEMUMember = 'Y' AND v_ConvDate >= v_cf_EMUEntryDate) THEN
+      v_CurrencyFrom := v_CurrencyEuro;
+    ELSE
+      v_CurrencyTo := v_CurrencyEuro;
+    END IF;
+  END IF;
+  -- Get Rate
+  DECLARE
+  TYPE RECORD IS REF CURSOR;
+    CUR_Rate RECORD;
+  BEGIN
+    FOR CUR_Rate IN
+      (SELECT MultiplyRate
+      FROM C_Conversion_Rate
+      WHERE C_Currency_ID = v_CurrencyFrom
+        AND C_Currency_ID_To = v_CurrencyTo
+        AND ConversionRateType = v_RateType
+        AND v_ConvDate BETWEEN ValidFrom AND ValidTo
+        AND AD_Client_ID IN(0, p_Client_ID)
+        AND AD_Org_ID IN(0, p_Org_ID)
+      ORDER BY AD_Client_ID DESC,
+        AD_Org_ID DESC,
+        ValidFrom DESC
+      )
+    LOOP
+      v_Rate := CUR_Rate.MultiplyRate;
+      EXIT; -- only first
+    END LOOP;
+  END;
+  -- Not found
+  IF(v_Rate IS NULL) THEN
+    DBMS_OUTPUT.PUT_LINE('v_CurrencyFrom:'||v_CurrencyFrom||'-v_CurrencyTo:'||v_CurrencyTo||'-v_RateType:'||v_RateType||'-v_ConvDate'||v_ConvDate||'-p_Client_ID:'||p_Client_ID||'-p_Org_ID:'||p_Org_ID) ;
+    DBMS_OUTPUT.PUT_LINE('Conversion Rate Not Found') ;
+    RETURN NULL;
+  END IF;
+  -- Currency From was EMU
+  IF(v_cf_isEMUMember = 'Y' AND v_ConvDate >= v_cf_EMUEntryDate) THEN
+    RETURN v_Rate / v_cf_EMURate;
+  END IF;
+  -- Currency To was EMU
+  IF(v_ct_isEMUMember = 'Y' AND v_ConvDate >= v_ct_EMUEntryDate) THEN
+    RETURN v_Rate * v_ct_EMURate;
+  END IF;
+  RETURN v_Rate;
+EXCEPTION
+WHEN OTHERS THEN
+  DBMS_OUTPUT.PUT_LINE(SQLERRM) ;
+  RETURN NULL;
+END C_Currency_Rate
+
+
+]]></body>
+    </function>
+  </database>

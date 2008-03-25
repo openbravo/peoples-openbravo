@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+  <database name="TABLE AD_SYSTEM">
+    <table name="AD_SYSTEM" primaryKey="AD_SYSTEM_KEY">
+      <column name="AD_SYSTEM_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="USERNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="INFO" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="RELEASENO" primaryKey="false" required="false" type="CHAR" size="3" autoIncrement="false"/>
+      <column name="SUPPORTUNITS" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="PASSWORD" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="REPLICATIONTYPE" primaryKey="false" required="false" type="CHAR" size="1" default="L" autoIncrement="false"/>
+      <column name="IDRANGESTART" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="IDRANGEEND" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="TAD_VERSION" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false"/>
+      <column name="TAD_RECORDRANGE" primaryKey="false" required="true" type="DECIMAL" default="500" autoIncrement="false"/>
+      <column name="TAD_RECORDRANGE_INFO" primaryKey="false" required="true" type="DECIMAL" default="500" autoIncrement="false"/>
+      <column name="TAD_LEVEL" primaryKey="false" required="false" type="DECIMAL" default="1" autoIncrement="false"/>
+      <column name="TAD_PARENT_VERSION" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false"/>
+      <column name="TAD_TRANSACTIONALRANGE" primaryKey="false" required="false" type="DECIMAL" default="1" autoIncrement="false"/>
+      <column name="TAD_THEME" primaryKey="false" required="false" type="VARCHAR" size="25" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADSYSTEM">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_ADSYSTEM">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <check name="AD_SYSTEM_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+    </table>
+  </database>

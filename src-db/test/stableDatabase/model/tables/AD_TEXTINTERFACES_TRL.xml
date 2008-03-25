@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+  <database name="TABLE AD_TEXTINTERFACES_TRL">
+    <table name="AD_TEXTINTERFACES_TRL" primaryKey="AD_TEXTINTERFACES_TRL_KEY">
+      <column name="AD_TEXTINTERFACES_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_LANGUAGE" primaryKey="true" required="true" type="VARCHAR" size="6" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="TEXT" primaryKey="false" required="true" type="VARCHAR" size="4000" autoIncrement="false"/>
+      <column name="ISTRANSLATED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_TEXTINTERFACESTRL">
+        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TEXTINTERFACES" name="AD_TEXTINTERFACESTRL">
+        <reference local="AD_TEXTINTERFACES_ID" foreign="AD_TEXTINTERFACES_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADTEXTINTERFACESTRL">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_ADTEXTINTERFACESTRL">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <index name="AD_TEXTINTERFACES_TRL_UN_KEY" unique="true">
+        <index-column name="AD_LANGUAGE"/>
+        <index-column name="AD_TEXTINTERFACES_ID"/>
+      </index>
+      <check name="ADTEXTTRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADTEXTTRL_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+    </table>
+  </database>

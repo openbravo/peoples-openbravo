@@ -1,0 +1,262 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION AD_DEVELOPMENT_MIGRATION">
+    <function name="AD_DEVELOPMENT_MIGRATION" type="NULL">
+      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  /*************************************************************************
+  * Title: Development Migration
+  * Description:
+  *      Migrate a development
+  ************************************************************************/
+  --  Logistice
+  v_ResultStr VARCHAR2(2000):='';
+  v_Message VARCHAR2(2000):='';
+  v_Result NUMBER:=1; -- 0=failure
+  --  Parameter
+  TYPE RECORD IS REF CURSOR;
+    Cur_Parameter RECORD;
+    Cur_Triggers RECORD;
+    Cur_Constraints RECORD;
+    Cur_ConstraintsEnable RECORD;
+    Cur_Tables RECORD;
+    Cur_TranslateData RECORD;
+    Cur_Script RECORD;
+    --
+    v_seqNo NUMBER:=0;
+    v_count NUMBER:=0;
+    v_minID NUMBER(10) ;
+    v_maxID NUMBER(10) ;
+    v_nextID NUMBER(10) ;
+    --v_strTemp   VARCHAR2(4000) := '';
+    v_strSql VARCHAR2(4000):='';
+    v_offset NUMBER;
+    v_min NUMBER;
+    v_max NUMBER;
+  BEGIN
+    IF(p_PInstance_ID IS NOT NULL) THEN
+      --  Update AD_PInstance
+      DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
+      v_ResultStr:='PInstanceNotFound';
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+      --  Get Parameters
+      v_ResultStr:='ReadingParameters';
+      FOR Cur_Parameter IN
+        (SELECT p.ParameterName, p.P_String, p.P_Number
+        FROM AD_PInstance i
+        LEFT JOIN AD_PInstance_Para p
+          ON i.AD_PInstance_ID=p.AD_PInstance_ID
+        WHERE i.AD_PInstance_ID=p_PInstance_ID
+        ORDER BY p.SeqNo
+        )
+      LOOP
+        IF(Cur_Parameter.ParameterName='Min') THEN
+          v_min:=Cur_Parameter.P_Number;
+          DBMS_OUTPUT.PUT_LINE('  Min=' || v_min) ;
+        ELSIF(Cur_Parameter.ParameterName='Max') THEN
+          v_max:=Cur_Parameter.p_Number;
+          DBMS_OUTPUT.PUT_LINE('  Max=' || v_max) ;
+        ELSE
+          DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
+        END IF;
+      END LOOP; --  Get Parameter
+    ELSE
+      v_min:=100000;
+      v_max:=199999;
+      --v_Message := '@ADPinstanceIsNull@';
+      --GOTO END_PROCESS;
+    END IF;
+  BEGIN --BODY
+    -- Update tad_level
+    UPDATE AD_System  SET tad_level=8;
+    -- Update sequence values
+    v_ResultStr:='Updating sequences';
+    AD_UPDATE_SEQUENCE() ;
+    v_ResultStr:='Deleting old data';
+    DELETE FROM AD_SCRIPT_SQL;
+    DELETE FROM AD_ID_TRANSLATION;
+    AD_DEPENDENCIES_CREATE() ;
+    v_ResultStr:='Disabling triggers';
+    FOR Cur_Triggers IN
+      (SELECT OBJECT_NAME AS NAME
+      FROM USER_OBJECTS
+      WHERE OBJECT_TYPE='TRIGGER'
+      ORDER BY OBJECT_NAME
+      )
+    LOOP
+      v_seqNo:=v_seqNo + 1;
+      INSERT
+      INTO AD_SCRIPT_SQL VALUES
+        (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' DISABLE') ;
+    END LOOP;
+    v_ResultStr:='Disabling constraints';
+    FOR Cur_Constraints IN
+      (SELECT TABLE_NAME, CONSTRAINT_NAME
+    FROM USER_CONSTRAINTS C1
+    WHERE CONSTRAINT_TYPE IN('P', 'U', 'R')
+    ORDER BY(CASE CONSTRAINT_TYPE WHEN 'R' THEN 1 WHEN 'U' THEN 2 WHEN 'P' THEN 3
+      END
+      ), TABLE_NAME, CONSTRAINT_NAME)
+    LOOP
+      v_seqNo:=v_seqNo + 1;
+      INSERT
+      INTO AD_SCRIPT_SQL VALUES
+        (v_seqNo, 'ALTER TABLE '||Cur_Constraints.TABLE_NAME||' DISABLE CONSTRAINT '||Cur_Constraints.CONSTRAINT_NAME) ;
+    END LOOP;
+    v_ResultStr:='Insert into AD_ID_Translation, update table id';
+    FOR Cur_Tables IN
+      (SELECT AD_Table_ID, UPPER(TableName) AS NAME, UPPER(TableName) || '_ID' AS COL_ID
+    FROM AD_Table
+    WHERE IsView='N'  AND UPPER(TableName) LIKE 'AD_%'  AND UPPER(TableName) NOT LIKE 'AD_%_Trl'  AND UPPER(TableName) NOT LIKE 'AD_%_Access'  AND EXISTS
+      (SELECT 1
+      FROM AD_Column
+      WHERE UPPER(AD_Column.Columnname)=UPPER(AD_Table.Tablename) || '_ID'  AND AD_Column.AD_REFERENCE_ID=13
+      )
+    ORDER BY TableName)
+    LOOP
+      EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM '||Cur_Tables.NAME||' WHERE '||Cur_Tables.COL_ID||' BETWEEN '||v_min||' AND ' ||v_max INTO v_count;
+      IF(v_count>0) THEN
+        EXECUTE IMMEDIATE 'SELECT MIN('||Cur_Tables.COL_ID||') FROM '||Cur_Tables.NAME||' WHERE '||Cur_Tables.COL_ID||' BETWEEN '||v_min||' AND ' ||v_max INTO v_minID;
+        SELECT CurrentNextSys
+        INTO v_nextID
+        FROM AD_Sequence
+        WHERE UPPER(Name)=Cur_Tables.NAME  AND IsActive='Y'  AND IsTableID='Y'  AND IsAutoSequence='Y';
+        v_Offset:=v_nextID-v_minID;
+        INSERT
+        INTO AD_ID_TRANSLATION
+          (
+            AD_TABLE, AD_COLUMN, AD_CLIENT_OLD, AD_CLIENT_NEW, "OFFSET"
+          )
+          VALUES
+          (Cur_Tables.NAME, Cur_Tables.COL_ID, v_MinID, v_NextID, v_Offset) ;
+        --UPDATE Cur_Tables.COL_ID
+        v_strSql:='UPDATE ' || Cur_Tables.NAME || ' SET ' || Cur_Tables.COL_ID || ' = ' || Cur_Tables.COL_ID || ' + ' || v_Offset;
+        v_strSql:=v_strSql || 'WHERE ' || Cur_Tables.COL_ID || ' BETWEEN ' ||v_min||' AND ' ||v_max;
+        v_seqNo:=v_seqNo + 1;
+        INSERT INTO AD_SCRIPT_SQL VALUES(v_seqNo, v_strSql) ;
+      END IF;
+    END LOOP;
+    v_ResultStr:='Updating tables';
+    FOR Cur_TranslateData IN
+      (SELECT AD_DEPENDENCIES.TABLENAME, AD_DEPENDENCIES.COLUMNNAME, AD_DEPENDENCIES.DEPENDS_ON_TABLENAME, AD_DEPENDENCIES.DEPENDS_ON_COLUMNNAME, AD_ID_TRANSLATION."OFFSET"
+    FROM AD_DEPENDENCIES, AD_ID_TRANSLATION
+    WHERE AD_DEPENDENCIES.DEPENDS_ON_TABLENAME=AD_ID_TRANSLATION.AD_TABLE  AND AD_DEPENDENCIES.DEPENDS_ON_COLUMNNAME=AD_ID_TRANSLATION.AD_COLUMN
+    ORDER BY AD_DEPENDENCIES.TABLENAME, AD_DEPENDENCIES.COLUMNNAME)
+    LOOP
+      EXECUTE IMMEDIATE 'SELECT count(*) FROM ' || Cur_TranslateData.TABLENAME || ' WHERE ' || Cur_TranslateData.COLUMNNAME || ' BETWEEN ' || v_min || ' AND ' || v_max INTO v_count;
+      IF(v_count>0) THEN
+        v_strSql:='UPDATE ' || Cur_TranslateData.TABLENAME || ' SET ' || Cur_TranslateData.COLUMNNAME || ' = ' || Cur_TranslateData.COLUMNNAME || ' + ' || Cur_TranslateData."OFFSET";
+        v_strSql:=v_strSql || 'WHERE ' || Cur_TranslateData.COLUMNNAME || ' BETWEEN ' ||v_min||' AND ' ||v_max;
+        v_seqNo:=v_seqNo + 1;
+        INSERT INTO AD_SCRIPT_SQL VALUES(v_seqNo, v_strSql) ;
+      END IF;
+    END LOOP;
+    v_ResultStr:='Updating AD_TreeNode';
+    SELECT count(*)
+    INTO v_count
+    FROM AD_Treenode
+    WHERE Node_ID BETWEEN v_min AND v_max;
+    IF(v_count>0) THEN
+      SELECT max("OFFSET")
+      INTO v_Offset
+      FROM AD_ID_TRANSLATION
+      WHERE UPPER(ad_table)='AD_MENU';
+      v_strSql:='UPDATE AD_Treenode SET Node_ID = Node_ID + ' || v_Offset;
+      v_strSql:=v_strSql || 'WHERE Node_ID BETWEEN ' ||v_min||' AND ' ||v_max;
+      v_seqNo:=v_seqNo + 1;
+      INSERT INTO AD_SCRIPT_SQL VALUES(v_seqNo, v_strSql) ;
+    END IF;
+    SELECT count(*)
+    INTO v_count
+    FROM AD_Treenode
+    WHERE Parent_ID BETWEEN v_min AND v_max;
+    IF(v_count>0) THEN
+      SELECT max("OFFSET")
+      INTO v_Offset
+      FROM AD_ID_TRANSLATION
+      WHERE UPPER(ad_table)='AD_MENU';
+      v_strSql:='UPDATE AD_Treenode SET Parent_ID = Parent_ID + ' || v_Offset;
+      v_strSql:=v_strSql || 'WHERE Parent_ID BETWEEN ' ||v_min||' AND ' ||v_max;
+      v_seqNo:=v_seqNo + 1;
+      INSERT INTO AD_SCRIPT_SQL VALUES(v_seqNo, v_strSql) ;
+    END IF;
+    v_ResultStr:='Enabling  constraints';
+    FOR Cur_ConstraintsEnable IN
+      (SELECT TABLE_NAME, CONSTRAINT_NAME
+    FROM USER_CONSTRAINTS C1
+    WHERE CONSTRAINT_TYPE IN('P', 'U', 'R')
+    ORDER BY(CASE CONSTRAINT_TYPE WHEN 'R' THEN 3 WHEN 'U' THEN 2 WHEN 'P' THEN 1
+      END
+      ), TABLE_NAME, CONSTRAINT_NAME)
+    LOOP
+      v_seqNo:=v_seqNo + 1;
+      INSERT
+      INTO AD_SCRIPT_SQL VALUES
+        (v_seqNo, 'ALTER TABLE '||Cur_ConstraintsEnable.TABLE_NAME||' ENABLE CONSTRAINT '||Cur_ConstraintsEnable.CONSTRAINT_NAME) ;
+    END LOOP;
+    v_ResultStr:='Enabling triggers';
+    FOR Cur_Triggers IN
+      (SELECT OBJECT_NAME AS NAME
+    FROM USER_OBJECTS
+    WHERE OBJECT_TYPE='TRIGGER'
+    ORDER BY OBJECT_NAME)
+    LOOP
+      v_seqNo:=v_seqNo + 1;
+      INSERT
+      INTO AD_SCRIPT_SQL VALUES
+        (v_seqNo, 'ALTER TRIGGER '||Cur_Triggers.NAME||' ENABLE') ;
+    END LOOP;
+    -- Update sequence values
+    v_ResultStr:='Updating sequences';
+    Ad_Update_Sequence_Generate() ;
+    FOR Cur_Script IN
+      (SELECT STRSQL, SEQNO FROM AD_SCRIPT_SQL ORDER BY SEQNO)
+    LOOP
+    BEGIN
+      EXECUTE IMMEDIATE(Cur_Script.STRSQL) ;
+    EXCEPTION
+    WHEN OTHERS THEN
+      v_ResultStr:=v_ResultStr || ': ' || SQLERRM || ' - ' || v_Message;
+      DBMS_OUTPUT.PUT_LINE(Cur_Script.SEQNO || ' - ' || v_ResultStr) ;
+    END;
+  END LOOP;
+  --<<END_PROCESS>>
+  IF(p_PInstance_ID IS NOT NULL) THEN
+    --  Update AD_PInstance
+    DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('Finished ' || v_Message) ;
+  END IF;
+  -- Commented by cromero 19102006 COMMIT;
+  RETURN;
+END; --BODY
+EXCEPTION
+WHEN OTHERS THEN
+  v_ResultStr:= '@ERROR=' || SQLERRM;
+  DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
+  ROLLBACK;
+  IF(p_PInstance_ID IS NOT NULL) THEN
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  END IF;
+END AD_Development_Migration
+
+
+
+]]></body>
+    </function>
+  </database>

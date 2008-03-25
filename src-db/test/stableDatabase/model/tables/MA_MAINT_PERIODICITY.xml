@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+  <database name="TABLE MA_MAINT_PERIODICITY">
+    <table name="MA_MAINT_PERIODICITY" primaryKey="MA_MAINT_PERIODICITY_KEY">
+      <column name="MA_MAINT_PERIODICITY_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="PERIODICITY_TYPE" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false"/>
+      <column name="MA_MAINTENANCE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="WEEKDAY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="MONTHDAY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="SHIFT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="INITDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="EXCLUDEWEEKEND" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAMAINT_PERIODICITY">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAMAINT_PERIODICITY">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_MAINTENANCE" name="MAMAINTENANCE_MAINTPERIODICITY">
+        <reference local="MA_MAINTENANCE_ID" foreign="MA_MAINTENANCE_ID"/>
+      </foreign-key>
+      <check name="MAINTPERIOD_EXCLUDWEEK_CHECK"><![CDATA[EXCLUDEWEEKEND IN ('Y', 'N')]]></check>
+      <check name="MAMAINTPERIOD_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+    </table>
+  </database>

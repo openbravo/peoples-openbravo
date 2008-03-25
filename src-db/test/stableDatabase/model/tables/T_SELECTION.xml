@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+  <database name="TABLE T_SELECTION">
+    <table name="T_SELECTION" primaryKey="T_SELECTION_KEY">
+      <column name="T_SELECTION_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+    </table>
+  </database>

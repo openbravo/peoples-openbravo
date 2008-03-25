@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+  <database name="SEQUENCE AD_ERROR_SEQ">
+    <sequence name="AD_ERROR_SEQ" start="1696" increment="1"/>
+  </database>

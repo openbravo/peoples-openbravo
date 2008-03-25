@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+  <database name="TABLE AD_PRINTPAPER">
+    <table name="AD_PRINTPAPER" primaryKey="AD_PRINTPAPER_KEY">
+      <column name="AD_PRINTPAPER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="ISDEFAULT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ISLANDSCAPE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CODE" primaryKey="false" required="true" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="MARGINTOP" primaryKey="false" required="true" type="DECIMAL" size="10,0" default="36" autoIncrement="false"/>
+      <column name="MARGINLEFT" primaryKey="false" required="true" type="DECIMAL" size="10,0" default="36" autoIncrement="false"/>
+      <column name="MARGINRIGHT" primaryKey="false" required="true" type="DECIMAL" size="10,0" default="36" autoIncrement="false"/>
+      <column name="MARGINBOTTOM" primaryKey="false" required="true" type="DECIMAL" size="10,0" default="36" autoIncrement="false"/>
+      <column name="PROCESSING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPRINTPAPER">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_ADPRINTPAPER">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <unique name="AD_PRINTPAPER_NAME">
+        <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="NAME"/>
+      </unique>
+      <check name="ADPRINTPAPER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADPRINTPAPER_ISLANDSCAPE_CHECK"><![CDATA[ISLANDSCAPE IN ('Y', 'N')]]></check>
+    </table>
+  </database>

@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION C_PAYMENTTERM_DISCOUNT">
+    <function name="C_PAYMENTTERM_DISCOUNT" type="NUMERIC">
+      <parameter name="p_Amount" type="NUMERIC" mode="in"/>
+      <parameter name="p_PaymentTerm_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_DocDate" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_PayDate" type="TIMESTAMP" mode="in" default="SYSDATE"/>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Compiere License
+* Version 2.5.0 ("License"); You may not use this file except in
+* compliance with the License. You may obtain a copy of the License at
+* http://www.compiere.org/license.html
+* Software distributed under the License is distributed on an
+* "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+* implied. See the License for the specific language governing rights
+* and limitations under the License.
+* The Original Code is  Compiere  ERP &  Business Solution
+* The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
+Inc.
+* Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+* parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+* All Rights Reserved.
+* Contributor(s): Openbravo SL
+* Contributions are Copyright(C) 1999-2005 Openbravo, S.L
+*************************************************************************
+* $Id: C_PaymentTerm_Discount.sql,v 1.2 2001/12/03 04:59:06 jjanke Exp $
+***
+* Title: Calculate Discount
+* Description:
+* Calculate the allowable Discount Amount of the Payment Term
+*
+* Test: SELECT C_PaymentTerm_Discount(17777, 103, '10-DEC-1999') FROM DUAL
+************************************************************************/
+  Discount NUMBER := 0;
+  TYPE RECORD IS REF CURSOR;
+    Cur_PT RECORD;
+    v_Discount1Date DATE;
+    v_Discount2Date DATE;
+    v_Add1Date NUMBER := 0;
+    v_Add2Date NUMBER := 0;
+  BEGIN
+    -- No Data - No Discount
+    IF(p_Amount IS NULL OR p_PaymentTerm_ID IS NULL OR p_DocDate IS NULL) THEN
+      RETURN 0;
+    END IF;
+    FOR Cur_PT IN
+      (SELECT *  FROM C_PaymentTerm  WHERE C_PaymentTerm_ID = p_PaymentTerm_ID)
+    LOOP -- for convineance only
+      --  DBMS_OUTPUT.PUT_LINE(Cur_PT.Name || ' - Doc = ' || TO_CHAR(p_DocDate));
+      v_Discount1Date := TRUNC(p_DocDate + Cur_PT.DiscountDays + Cur_PT.GraceDays) ;
+      v_Discount2Date := TRUNC(p_DocDate + Cur_PT.DiscountDays2 + Cur_PT.GraceDays) ;
+      -- Next Business Day
+      IF(Cur_PT.IsNextBusinessDay = 'Y') THEN
+        -- Not fully correct - only does weekends (7=Saturday, 1=Sunday)
+        SELECT(
+          CASE TO_CHAR(v_Discount1Date, 'D')
+            WHEN '7'
+            THEN 2
+            WHEN '1'
+            THEN 1
+            ELSE 0
+          END
+          ), (
+          CASE TO_CHAR(v_Discount2Date, 'D')
+            WHEN '7'
+            THEN 2
+            WHEN '1'
+            THEN 1
+            ELSE 0
+          END
+          )
+        INTO v_Add1Date,
+          v_Add2Date
+        FROM DUAL;
+        v_Discount1Date := v_Discount1Date+v_Add1Date;
+        v_Discount2Date := v_Discount2Date+v_Add2Date;
+      END IF;
+      -- Discount 1
+      IF(v_Discount1Date >= TRUNC(p_PayDate)) THEN
+        --   DBMS_OUTPUT.PUT_LINE('Discount 1 ' || TO_CHAR(v_Discount1Date) || ' ' || Cur_PT.Discount);
+        Discount := p_Amount * Cur_PT.Discount / 100;
+        -- Discount 2
+      ELSIF(v_Discount2Date >= TRUNC(p_PayDate)) THEN
+        --   DBMS_OUTPUT.PUT_LINE('Discount 2 ' || TO_CHAR(v_Discount2Date) || ' ' || Cur_PT.Discount2);
+        Discount := p_Amount * Cur_PT.Discount2 / 100;
+      END IF;
+    END LOOP;
+    --
+    RETURN ROUND(COALESCE(Discount, 0), 2) ; -- fixed rounding
+END C_PaymentTerm_Discount
+
+
+]]></body>
+    </function>
+  </database>

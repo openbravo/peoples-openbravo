@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+  <database name="TABLE S_RESOURCETYPE">
+    <table name="S_RESOURCETYPE" primaryKey="S_RESOURCETYPE_KEY">
+      <column name="S_RESOURCETYPE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="VALUE" primaryKey="false" required="true" type="NVARCHAR" size="40" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="ISSINGLEASSIGNMENT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="C_UOM_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ALLOWUOMFRACTIONS" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="TIMESLOTSTART" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="TIMESLOTEND" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="ISTIMESLOT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ISDATESLOT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ONSUNDAY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="ONMONDAY" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="ONTUESDAY" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="ONWEDNESDAY" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="ONTHURSDAY" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="ONFRIDAY" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="ONSATURDAY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="M_PRODUCT_CATEGORY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_TAXCATEGORY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="CHARGEABLEQTY" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_SRESOURCETYPE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_SRESOURCETYPE">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_SRESOURCETYPE">
+        <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="CUOM_SRESOURCETYPE">
+        <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODCATEGORY_SRESOURCETYPE">
+        <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
+      </foreign-key>
+      <check name="SRESTYPE_ALLOWU_RACTIONS_CHECK"><![CDATA[ALLOWUOMFRACTIONS IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ISDATESLOT_CHECK"><![CDATA[ISDATESLOT IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ISSING_SIGNMENT_CHECK"><![CDATA[ISSINGLEASSIGNMENT IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ISTIMESLOT_CHECK"><![CDATA[ISTIMESLOT IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONFRIDAY_CHECK"><![CDATA[ONFRIDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONMONDAY_CHECK"><![CDATA[ONMONDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONSATURDAY_CHECK"><![CDATA[ONSATURDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONSUNDAY_CHECK"><![CDATA[ONSUNDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONTHURSDAY_CHECK"><![CDATA[ONTHURSDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONTUESDAY_CHECK"><![CDATA[ONTUESDAY IN ('Y', 'N')]]></check>
+      <check name="SRESTYPE_ONWEDNESDAY_CHECK"><![CDATA[ONWEDNESDAY IN ('Y', 'N')]]></check>
+    </table>
+  </database>

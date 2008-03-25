@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER C_CASH_TRG">
+    <trigger name="C_CASH_TRG" table="C_CASH" fires="before" insert="true" update="true" delete="false" foreach="row">
+      <body><![CDATA[
+
+
+    /*************************************************************************
+    * The contents of this file are subject to the Compiere License
+    * Version 2.5.0 ("License"); You may not use this file except in
+    * compliance with the License. You may obtain a copy of the License at
+    * http://www.compiere.org/license.html
+    * Software distributed under the License is distributed on an
+    * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+    * implied. See the License for the specific language governing rights
+    * and limitations under the License.
+    * The Original Code is  Compiere  ERP &  Business Solution
+    * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
+    Inc.
+    * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+    * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+    * All Rights Reserved.
+    * Contributor(s): Openbravo SL
+    * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+    *************************************************************************
+    * $Id: C_Cash_Trg.sql,v 1.2 2002/07/06 03:01:56 jjanke Exp $
+    ***
+    * Title: Cash Trigger
+    * Description:
+    *  Truncate Statement Date
+    *  Update Statement Balances when Beginning Balance chages
+    ************************************************************************/
+    BEGIN
+    -- Truncate Statement Date
+    :new.StatementDate:=TRUNC(:new.StatementDate) ;
+  -- Update StatementDifference
+  IF UPDATING THEN
+    IF :NEW.BeginningBalance <> :OLD.BeginningBalance THEN
+      SELECT COALESCE(SUM(Amount), 0)
+      INTO :new.StatementDifference
+      FROM C_CashLine
+      WHERE C_Cash_ID=:new.C_Cash_ID;
+      -- Update Ending Balance
+      :new.EndingBalance:=:new.BeginningBalance + :new.StatementDifference;
+    END IF;
+  END IF;
+END C_Cash_Trg 
+
+
+
+]]></body>
+    </trigger>
+  </database>

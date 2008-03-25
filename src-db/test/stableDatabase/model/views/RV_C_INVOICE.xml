@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+  <database name="VIEW RV_C_INVOICE">
+    <view name="RV_C_INVOICE"><![CDATA[SELECT i.C_Invoice_ID,
+  i.AD_Client_ID,i.AD_Org_ID,i.IsActive,i.Created,i.CreatedBy,i.Updated,i.UpdatedBy,
+  i.IsSOTrx, i.DocumentNo, i.DocStatus, i.DocAction,
+  i.IsPrinted, i.IsDiscountPrinted, i.Processing, i.Processed, i.IsTransferred, i.IsPaid,
+  i.C_DocType_ID, i.C_DocTypeTarget_ID, i.C_Order_ID, i.Description, i.IsApproved,
+  i.SalesRep_ID, i.DateInvoiced, i.DatePrinted, i.DateAcct,
+  i.C_BPartner_ID, i.C_BPartner_Location_ID, i.AD_User_ID, b.C_BP_Group_ID,
+  i.PoReference, i.DateOrdered, i.C_Currency_ID, i.PaymentRule, i.C_PaymentTerm_ID,
+  i.M_PriceList_ID, i.C_Campaign_ID, i.C_Project_ID, i.C_Activity_ID,
+  --  Amounts
+  i.C_Charge_ID,
+  (CASE SUBSTR(d.DocBaseType,3) WHEN 'C' THEN i.ChargeAmt*-1 ELSE i.ChargeAmt END) AS ChargeAmt,
+  (CASE SUBSTR(d.DocBaseType,3) WHEN 'C' THEN i.TotalLines*-1 ELSE i.TotalLines END) AS TotalLines,
+  (CASE SUBSTR(d.DocBaseType,3) WHEN 'C' THEN i.GrandTotal*-1 ELSE i.GrandTotal END) AS GrandTotal,
+  (CASE SUBSTR(d.DocBaseType,3) WHEN 'C' THEN -1 ELSE 1 END) AS Multiplier
+FROM  C_Invoice i, C_DocType d, C_BPartner b
+WHERE i.C_DocType_ID=d.C_DocType_ID
+  AND i.C_BPartner_ID=b.C_BPartner_ID]]></view>
+  </database>

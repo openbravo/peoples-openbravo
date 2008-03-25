@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+  <database name="TABLE AD_TRACE">
+    <table name="AD_TRACE" primaryKey="AD_TRACE_KEY">
+      <column name="WHEN" primaryKey="true" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="NO" primaryKey="true" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
+      <column name="WHAT" primaryKey="false" required="true" type="NVARCHAR" size="2000" autoIncrement="false"/>
+    </table>
+  </database>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+  <database name="TABLE TIME_DIMENSION">
+    <table name="TIME_DIMENSION" primaryKey="TIME_DIMENSION_PK">
+      <column name="CAL_YEAR" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="CAL_YEAR_SD" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="CAL_YEAR_LD" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="END_YEAR" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="YEAR_SPAN" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="CAL_QUARTER" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="CAL_QUARTER_LD" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="CAL_QUARTER_SD" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="END_QUARTER" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="QUARTER_SPAN" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="CAL_MONTH" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="CAL_MONTH_LD" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="CAL_MONTH_SD" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="END_MONTH" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="MONTH_SPAN" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="TIME_ID" primaryKey="true" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="CAL_DAY_LD" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="CAL_DAY_SD" primaryKey="false" required="true" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="END_DAY" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="DAY_SPAN" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+    </table>
+  </database>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION AD_PARENT_TREE">
+    <function name="AD_PARENT_TREE" type="VARCHAR">
+      <parameter name="p_tree_id" type="NUMERIC" mode="in"/>
+      <parameter name="p_node_id" type="NUMERIC" mode="in"/>
+      <body><![CDATA[p VARCHAR2(32767);
+  vp NUMBER(10);
+BEGIN
+
+  SELECT parent_id
+    INTO vp
+    FROM ad_treenode
+   WHERE node_id = p_node_id
+     AND ad_tree_id = p_tree_id;
+
+
+    p := ad_parent_tree(p_tree_id, vp);
+    IF p != ' ' THEN
+      RETURN '|'||vp||'|'||p;
+    END IF;
+    RETURN '|'||vp||'|';
+  EXCEPTION WHEN OTHERS THEN RETURN ' ';
+END AD_PARENT_TREE
+
+
+]]></body>
+    </function>
+  </database>

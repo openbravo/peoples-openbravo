@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER C_ELEMENTVALUE_TRG">
+    <trigger name="C_ELEMENTVALUE_TRG" table="C_ELEMENTVALUE" fires="after" insert="true" update="true" delete="false" foreach="row">
+      <body><![CDATA[
+
+  v_xTree_ID NUMBER;
+  v_xParent_ID NUMBER;
+  v_NextNo     NUMBER;
+BEGIN
+  -- Insert C_ElementValue Trigger
+  --  for Translation
+  --  and TreeNode
+  IF INSERTING THEN
+    --  Create Translation Row
+    INSERT
+    INTO C_ElementValue_Trl
+      (
+        C_ElementValue_ID, AD_Language, AD_Client_ID,
+        AD_Org_ID, IsActive, Created,
+        CreatedBy, Updated, UpdatedBy,
+        Name, IsTranslated
+      )
+    SELECT :new.C_ElementValue_ID,
+      AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
+      :new.IsActive, :new.Created, :new.CreatedBy,
+      :new.Updated, :new.UpdatedBy, :new.Name,
+       'N'
+    FROM AD_Language
+    WHERE IsActive='Y'
+      AND IsSystemLanguage='Y';
+    --  Create TreeNode --
+    --  get AD_Tree_ID + ParentID
+    SELECT e.AD_Tree_ID,
+      n.Node_ID
+    INTO v_xTree_ID,
+      v_xParent_ID
+    FROM C_Element e,
+      AD_TreeNode n
+    WHERE e.AD_Tree_ID=n.AD_Tree_ID
+      AND n.Parent_ID IS NULL
+      AND e.C_Element_ID=:new.C_Element_ID;
+    --  DBMS_OUTPUT.PUT_LINE('Tree='||v_xTree_ID||'  Node='||:new.C_ElementValue_ID||'  Parent='||v_xParent_ID);
+    --  Insert into TreeNode
+    INSERT
+    INTO AD_TreeNode
+      (
+        AD_Client_ID, AD_Org_ID, IsActive,
+        Created, CreatedBy, Updated,
+        UpdatedBy, AD_Tree_ID, Node_ID,
+        Parent_ID, SeqNo
+      )
+      VALUES
+      (
+        :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+        :new.Created, :new.CreatedBy, :new.Updated,
+        :new.UpdatedBy, v_xTree_ID, :new.C_ElementValue_ID,
+        v_xParent_ID,(
+        CASE :new.IsSummary
+          WHEN 'Y'
+          THEN 100
+          ELSE 999
+        END
+        )
+      )
+      ;
+    -- Summary Nodes first
+  END IF;
+  -- Inserting
+  -- C_ElementValue update trigger
+  --  synchronize name,...
+  IF UPDATING THEN
+    IF COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.') THEN
+      UPDATE C_ElementValue_Trl
+        SET IsTranslated='N',
+        Updated=SysDate
+      WHERE C_ElementValue_ID=:new.C_ElementValue_ID;
+      /** Mutating Trigger
+      --   Update Valid Combination Description
+      UPDATE    C_ValidCombination
+      SET    Updated=SysDate
+      WHERE    Account_ID=:new.C_ElementValue_ID
+      OR    User1_ID=:new.C_ElementValue_ID OR User2_ID=:new.C_ElementValue_ID;
+      **/
+    END IF;
+  END IF;
+  -- Updating
+  IF DELETING THEN
+    --  Delete TreeNode --
+    --  get AD_Tree_ID
+    SELECT e.AD_Tree_ID
+    INTO v_xTree_ID
+    FROM C_Element e
+    WHERE e.C_Element_ID=:old.C_Element_ID;
+    DELETE
+    FROM AD_TREENODE
+    WHERE AD_CLIENT_ID=:old.AD_Client_ID
+      AND AD_Tree_ID=v_xTree_ID
+      AND Node_ID=:old.C_ElementValue_ID;
+  END IF;
+  -- Deleting
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+  RAISE_APPLICATION_ERROR(-20013, 'C_ElementValue InsertTrigger Error: No ClientInfo or parent TreeNode') ;
+END C_ElementValue_TI
+
+
+
+
+]]></body>
+    </trigger>
+  </database>

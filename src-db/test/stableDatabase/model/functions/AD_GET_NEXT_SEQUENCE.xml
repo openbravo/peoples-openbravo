@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION AD_GET_NEXT_SEQUENCE">
+    <function name="AD_GET_NEXT_SEQUENCE" type="NUMERIC">
+      <parameter name="p_TableName" type="VARCHAR" mode="in"/>
+      <parameter name="p_ID" type="NUMERIC" mode="in"/>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  v_NextNoSys NUMBER;
+  v_ResultStr VARCHAR(255) ;
+  v_NextNo    NUMBER;
+BEGIN
+  v_ResultStr:='Read';
+  SELECT CurrentNext, CurrentNextSys
+  INTO v_NextNo, v_NextNoSys
+  FROM AD_SEQUENCE
+  WHERE NAME=p_TableName AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y';
+  v_ResultStr:='Write';
+  IF(v_NextNoSys <> -1 AND p_ID < 1000000) THEN -- System No
+    UPDATE AD_SEQUENCE
+      SET CurrentNextSys=CurrentNextSys + IncrementNo,
+      Updated=now()
+    WHERE NAME=p_TableName;
+    v_NextNo:=v_NextNoSys;
+  ELSE -- Standard No
+    UPDATE AD_SEQUENCE
+      SET CurrentNext=CurrentNext + IncrementNo,
+      Updated=now()
+    WHERE NAME=p_TableName;
+  END IF;
+  RETURN v_NextNo;
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+  RAISE_APPLICATION_ERROR(-20516, 'Table Sequence not found ') ;
+  --   || v_ResultStr || ': ' || p_TableName);
+  RETURN 0;
+END Ad_Get_Next_Sequence
+
+
+]]></body>
+    </function>
+  </database>

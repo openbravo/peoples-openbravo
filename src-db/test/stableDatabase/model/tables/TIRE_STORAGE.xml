@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+  <database name="TABLE TIRE_STORAGE">
+    <table name="TIRE_STORAGE" primaryKey="TIRE_STORAGE_KEY">
+      <column name="TIRE_STORAGE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="REGISTRATION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="VEHICLE" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
+      <column name="TIRETYPE" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="TIRETYPE_B" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="TIRESIZE" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="TIRESIZE_B" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="TIREQUALITY" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="TIREQUALITY_B" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="RIM" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="RIM_B" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="DATERECEIVED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="ISSTORED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="M_LOCATOR_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="REMARK" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
+      <column name="ISRETURNED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="DATERETURNED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="AD_USER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_TIRESTORAGE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_TIRESTORAGE">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="ADUSER_TIRESTORAGE">
+        <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_TIRESTORAGE">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_TIRESTORAGE">
+        <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
+      </foreign-key>
+      <check name="TIRESTORAGE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="TIRESTORAGE_ISRETURNED_CHECK"><![CDATA[ISRETURNED IN ('Y', 'N')]]></check>
+      <check name="TIRESTORAGE_ISSTORED_CHECK"><![CDATA[ISSTORED IN ('Y', 'N')]]></check>
+    </table>
+  </database>

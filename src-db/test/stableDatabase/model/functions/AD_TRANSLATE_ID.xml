@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION AD_TRANSLATE_ID">
+    <function name="AD_TRANSLATE_ID" type="NUMERIC">
+      <parameter name="p_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_offset" type="NUMERIC" mode="in"/>
+      <parameter name="p_tableName" type="VARCHAR" mode="in"/>
+      <parameter name="p_columnName" type="VARCHAR" mode="in"/>
+      <parameter name="p_clientID" type="NUMERIC" mode="in"/>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+/*************************************************************************
+* Title: Return the value of the ID selected in the new client
+************************************************************************/
+  v_ID NUMBER;
+BEGIN
+  IF(p_ID IS NOT NULL) THEN
+    EXECUTE IMMEDIATE 'SELECT MAX('||p_columnName||') FROM '||p_tableName||' WHERE '||p_columnName||'='||p_ID||' AND AD_CLIENT_ID  ='||p_clientID INTO v_ID;
+    IF(v_ID IS NULL) THEN
+      v_ID:=p_ID;
+    ELSE
+      v_ID:=v_ID + p_offset;
+    END IF;
+  END IF;
+  RETURN v_ID;
+END AD_Translate_ID 
+
+
+]]></body>
+    </function>
+  </database>

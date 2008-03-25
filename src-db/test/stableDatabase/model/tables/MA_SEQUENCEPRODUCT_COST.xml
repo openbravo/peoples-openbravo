@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+  <database name="TABLE MA_SEQUENCEPRODUCT_COST">
+    <table name="MA_SEQUENCEPRODUCT_COST" primaryKey="MA_SEQUENCEPRODUCT_COST_KEY">
+      <column name="MA_SEQUENCEPRODUCT_COST_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="MA_SEQUENCEPRODUCT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="CALCULATEDCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="PRODUCTIONTYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="COMPONENTCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="DECREASE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="REJECTED" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="QUANTITY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="USEDMATERIALCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="COSTCENTERUSE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="COSTCENTERCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="MA_CALCSTD_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="RAWMATERIALCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_MASEQUENCEPRODUCTCOST">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MASEQUENCEPRODUCTCOST">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_CALCSTD" name="MA_CALCSTD_MASEQPRODCOST">
+        <reference local="MA_CALCSTD_ID" foreign="MA_CALCSTD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_SEQUENCEPRODUCT" name="MASEQUENCEPRODUCT_MASEQUENCEPR">
+        <reference local="MA_SEQUENCEPRODUCT_ID" foreign="MA_SEQUENCEPRODUCT_ID"/>
+      </foreign-key>
+      <check name="MASEQPRODCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="MASEQPRODCT_PRO_TIONTYPE_CHECK"><![CDATA[PRODUCTIONTYPE IN ('+', '-')]]></check>
+    </table>
+  </database>

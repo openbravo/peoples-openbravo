@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER M_INOUT_TRG_PROV">
+    <trigger name="M_INOUT_TRG_PROV" table="M_INOUT" fires="before" insert="true" update="true" delete="false" foreach="row">
+      <body><![CDATA[
+    /*************************************************************************
+    * The contents of this file are subject to the Openbravo  Public  License
+    * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+    * Version 1.1  with a permitted attribution clause; you may not  use this
+    * file except in compliance with the License. You  may  obtain  a copy of
+    * the License at http://www.openbravo.com/legal/license.html
+    * Software distributed under the License  is  distributed  on  an "AS IS"
+    * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+    * License for the specific  language  governing  rights  and  limitations
+    * under the License.
+    * The Original Code is Openbravo ERP.
+    * The Initial Developer of the Original Code is Openbravo SL
+    * All portions are Copyright (C) 2001-2006 Openbravo SL
+    * All Rights Reserved.
+    * Contributor(s):  ______________________________________.
+    ************************************************************************/
+    /*************************************************************************
+    * Description: Provisional. Added by Ismael Ciordia. Update movement type depending on document type
+    ************************************************************************/
+  v_docType_ID NUMBER(10) ;
+  v_movementType CHAR(2) ;
+BEGIN
+  v_docType_ID:=:NEW.C_DocType_ID;
+  SELECT(
+    CASE isSOTrx
+      WHEN 'N'
+      THEN 'V+'
+      ELSE 'C-'
+    END
+    )
+  INTO v_movementType
+  FROM C_DOCTYPE
+  WHERE C_DocType_ID=v_docType_ID;
+  :NEW.MOVEMENTTYPE:=v_movementType;
+END M_InOut_Trg_Prov]]></body>
+    </trigger>
+  </database>

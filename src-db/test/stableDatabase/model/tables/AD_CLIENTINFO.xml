@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+  <database name="TABLE AD_CLIENTINFO">
+    <table name="AD_CLIENTINFO" primaryKey="AD_CLIENTINFO_KEY">
+      <column name="AD_CLIENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISDISCOUNTLINEAMT" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="C_CALENDAR_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_ACCTSCHEMA1_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ACCT2_ACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="C_ACCTSCHEMA2_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ACCT3_ACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="C_ACCTSCHEMA3_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_UOM_VOLUME_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_UOM_WEIGHT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_UOM_LENGTH_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_UOM_TIME_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_TREE_MENU_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_TREE_ORG_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_TREE_BPARTNER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_TREE_PROJECT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_TREE_SALESREGION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_TREE_PRODUCT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="M_PRODUCTFREIGHT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_BPARTNERCASHTRX_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="PA_GOAL_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="M_PRICELIST_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ALLOWNEGATIVESTOCK" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CHECKORDERORG" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CHECKINOUTORG" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="GROUPACCTINVLINES" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_CLIENTINFO">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_ADCLIENTINFO">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="ADTREEBPARTNER_ADCLIENTINFO">
+        <reference local="AD_TREE_BPARTNER_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="ADTREEMENU_ADCLIENTINFO">
+        <reference local="AD_TREE_MENU_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="ADTREEORG_ADCLIENTINFO">
+        <reference local="AD_TREE_ORG_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="ADTREEPRODUCT_ADCLIENTINFO">
+        <reference local="AD_TREE_PRODUCT_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="ADTREEPROJECT_ADCLIENTINFO">
+        <reference local="AD_TREE_PROJECT_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_TREE" name="ADTREESALESREG_ADCLIENTINFO">
+        <reference local="AD_TREE_SALESREGION_ID" foreign="AD_TREE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="C_UOM_LENGTH_AD_CLIENTINFO">
+        <reference local="C_UOM_LENGTH_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="C_UOM_TIME_AD_CLIENTINFO">
+        <reference local="C_UOM_TIME_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="C_UOM_VOLUME_AD_CLIENTINFO">
+        <reference local="C_UOM_VOLUME_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="C_UOM_WEIGHT_AD_CLIENTINFO">
+        <reference local="C_UOM_WEIGHT_ID" foreign="C_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA1_ADCLIENTINFO">
+        <reference local="C_ACCTSCHEMA1_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA2_ADCLIENTINFO" onDelete="setnull">
+        <reference local="C_ACCTSCHEMA2_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA3_ADCLIENTINFO" onDelete="setnull">
+        <reference local="C_ACCTSCHEMA3_ID" foreign="C_ACCTSCHEMA_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_ADCLIENTINFO">
+        <reference local="C_BPARTNERCASHTRX_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CALENDAR" name="CCALENDAR_ADCLIENTINFO">
+        <reference local="C_CALENDAR_ID" foreign="C_CALENDAR_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRICELIST" name="MPRICELIST_ADCLIENTINFO">
+        <reference local="M_PRICELIST_ID" foreign="M_PRICELIST_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_ADCLIENTINFO">
+        <reference local="M_PRODUCTFREIGHT_ID" foreign="M_PRODUCT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="PA_GOAL" name="PAGOAL_AD_CLIENTINFO">
+        <reference local="PA_GOAL_ID" foreign="PA_GOAL_ID"/>
+      </foreign-key>
+      <check name="ADCLIENTINFO_ACCT2ACTIVE_CHECK"><![CDATA[ACCT2_ACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_ACCT3ACTIVE_CHECK"><![CDATA[ACCT3_ACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_ANEGATSTOCK_CHECK"><![CDATA[ALLOWNEGATIVESTOCK IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_INOUTORG_CHECK"><![CDATA[CHECKINOUTORG IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_ISDISLNAMT_CHECK"><![CDATA[ISDISCOUNTLINEAMT IN ('Y', 'N')]]></check>
+      <check name="ADCLIENTINFO_ORDERORG_CHECK"><![CDATA[CHECKORDERORG IN ('Y', 'N')]]></check>
+    </table>
+  </database>

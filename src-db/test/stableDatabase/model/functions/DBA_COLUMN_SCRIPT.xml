@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION DBA_COLUMN_SCRIPT">
+    <function name="DBA_COLUMN_SCRIPT" type="VARCHAR">
+      <parameter name="p_owner" type="VARCHAR" mode="in"/>
+      <parameter name="p_tableName" type="VARCHAR" mode="in"/>
+      <parameter name="p_columnName" type="VARCHAR" mode="in"/>
+      <parameter name="p_addType" type="CHAR" mode="in"/>
+      <parameter name="p_addDefault" type="CHAR" mode="in"/>
+      <parameter name="p_addNull" type="CHAR" mode="in"/>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  v_script    VARCHAR2(4000) ;
+  v_separator CHAR(1):=' ';
+  v_varchar2  VARCHAR2(32767) ;
+  TYPE RECORD IS REF CURSOR;
+    cur_columns RECORD;
+  BEGIN
+    FOR cur_columns IN
+      (SELECT COLUMN_NAME, (v_separator||DATA_TYPE|| (
+        CASE DATA_TYPE
+          WHEN 'NUMBER'
+          THEN (
+          CASE
+            WHEN DATA_PRECISION IS NULL
+            THEN ''
+            ELSE '('||DATA_PRECISION||','||DATA_SCALE||')'
+          END
+          )
+          WHEN  'DATE'
+          THEN ''
+          WHEN 'NVARCHAR2'
+          THEN '('||CHAR_COL_DECL_LENGTH||')'
+          ELSE (
+          CASE DATA_TYPE
+            WHEN 'BLOB'
+            THEN ''
+            ELSE(
+            CASE DATA_TYPE
+              WHEN 'LONG'
+              THEN ''
+              ELSE '('||DATA_LENGTH||')'
+            END
+            )
+          END
+          )
+        END
+        )) AS NAME_TYPE_SCRIPT,
+        DATA_DEFAULT, (
+        CASE NULLABLE
+          WHEN 'N'
+          THEN v_separator||'NOT NULL'
+          ELSE v_separator||'NULL'
+        END
+        ) AS NULL_SCRIPT
+      FROM DBA_TAB_COLUMNS
+      WHERE OWNER=p_owner
+        AND TABLE_NAME=p_tableName
+        AND COLUMN_NAME=p_columnName
+      )
+    LOOP
+      v_script := v_separator||cur_columns.COLUMN_NAME;
+      v_varchar2:=cur_columns.DATA_DEFAULT;
+      v_varchar2:=TRIM(SUBSTR(v_varchar2, 1, 2000)) ;
+      IF(v_varchar2 IS NOT NULL) THEN
+        v_varchar2:=v_separator||'DEFAULT '||v_varchar2;
+      ELSIF (p_addType='N' and p_addNull='N') THEN
+        v_varchar2:=v_separator||'DROP DEFAULT';
+      ELSE
+        v_varchar2:='';
+      END IF;
+      IF (p_addType='Y') THEN
+        v_script:=v_script||cur_columns.NAME_TYPE_SCRIPT;
+      END IF;
+      IF (p_addDefault='Y' AND v_varchar2 IS NOT NULL) THEN
+        v_script:=v_script||v_varchar2;
+      END IF;
+      IF(p_addNull='Y') THEN
+        v_script:=v_script||cur_columns.NULL_SCRIPT;
+      END IF;
+      EXIT;
+    END LOOP;
+    RETURN(REPLACE(REPLACE(v_script, CHR(10), ''), CHR(13), '')) ;
+END DBA_COLUMN_SCRIPT
+
+
+]]></body>
+    </function>
+  </database>

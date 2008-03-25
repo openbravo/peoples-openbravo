@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+  <database name="TABLE DBA_ERRORLOG">
+    <table name="DBA_ERRORLOG" primaryKey="DBA_ERRORLOG_KEY">
+      <column name="DBA_ERRORLOG_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CODE" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="MSG" primaryKey="false" required="true" type="NVARCHAR" size="2000" autoIncrement="false"/>
+      <column name="INFO" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
+    </table>
+  </database>

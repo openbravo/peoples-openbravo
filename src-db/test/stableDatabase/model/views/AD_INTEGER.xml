@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+  <database name="VIEW AD_INTEGER">
+    <view name="AD_INTEGER"><![CDATA[SELECT to_number(a.value) AS value
+   FROM ( SELECT ( SELECT count(*) AS count
+                   FROM ad_element
+                  WHERE ad_element.ad_element_id <= e.ad_element_id) AS value
+           FROM ad_element e) a
+  WHERE a.value <= 1024]]></view>
+  </database>

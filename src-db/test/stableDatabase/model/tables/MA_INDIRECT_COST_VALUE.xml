@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+  <database name="TABLE MA_INDIRECT_COST_VALUE">
+    <table name="MA_INDIRECT_COST_VALUE" primaryKey="MA_INDIRECT_COST_VALUE_KEY">
+      <column name="MA_INDIRECT_COST_VALUE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="MA_INDIRECT_COST_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="DATEFROM" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="DATETO" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="TOTAL" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="COST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="CALCULATE" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <column name="COST_UOM" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="CALCULATED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAINDIRECT_COST_VALUE">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MAINDIRECT_COST_VALUE">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MA_INDIRECT_COST" name="MAINDIRECT_COST_MA_IC_VALUE">
+        <reference local="MA_INDIRECT_COST_ID" foreign="MA_INDIRECT_COST_ID"/>
+      </foreign-key>
+      <check name="MAINDCOVAL_CALCULATE_CHECK"><![CDATA[CALCULATE IN ('Y', 'N')]]></check>
+      <check name="MAINDCOVAL_CALCULATED_CHECK"><![CDATA[CALCULATED IN ('Y', 'N')]]></check>
+      <check name="MAINDCOVAL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+    </table>
+  </database>
