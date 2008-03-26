@@ -335,7 +335,7 @@ function onloadFunctions() {
               <TD colspan="6">
 
                 <div style="height:25px;" />
-
+                <DIV id="sectionSchema"> 
                 <DIV id="sectionDateAcct"> 
                   <DIV id="sectionJournal"> 
                     <TABLE cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
@@ -344,7 +344,8 @@ function onloadFunctions() {
                           Journal entry&nbsp;<SPAN id="functionCalculateOrderJournal">xx123</SPAN></A> 
                           <INPUT type="hidden" name="inpordenJournal" id="functionOrderJournal" value=""></INPUT>
                         </TH>
-                        <TH colspan="2" class="DataGrid_Header_Cell">Date&nbsp;<SPAN id="fieldDateacct">xx12/12/2003</SPAN></TH>
+						<TH width="57%" class="DataGrid_Header_Cell">Accounting schema&nbsp;<SPAN id="fieldSchemaName">xxSchema Name</SPAN></TH>
+                        <TH width="14%" class="DataGrid_Header_Cell">Date&nbsp;<SPAN id="fieldDateacct">xx12/12/2003</SPAN></TH>
                         <TH width="8%" class="DataGrid_Header_Cell"> <A href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpFactAcctGroupId, 'yy/xx', false, document.frmMain, 'ReportGeneralLedgerJournalDetail.html', null, false, true);return false;" onmouseover="window.status='General Ledger Journal';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldIdentifier"> 
                           Detail</A></TH>
                       </TR>
@@ -365,7 +366,7 @@ function onloadFunctions() {
                     </TABLE>
                   <div style="height:15px;" />
                   </DIV>
-
+                </DIV>
                 </DIV>
 
 

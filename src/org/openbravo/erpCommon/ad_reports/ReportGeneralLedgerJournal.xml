@@ -61,6 +61,7 @@
   <structure name="structure1">
     <FIELD id="fieldRownum1">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
+    <FIELD id="fieldSchemaName">schemaName</FIELD>	
     <FIELD id="fieldIdentifier" attribute="onclick" replace="xx">identifier</FIELD>
     <FIELD id="fieldIdentifier" attribute="onclick" replace="yy">dateacct</FIELD>
     <FIELD id="fieldDateacct">dateacct</FIELD>
@@ -74,6 +75,7 @@
     <FIELD id="fieldId" attribute="onclick" replace="zz">docbasetype</FIELD>
     <FUNCTION id="functionOrderJournal" name="ORDER" attribute="value">identifier</FUNCTION>
     <FUNCTION id="functionCalculateOrderJournal" name="ADD" arg1="functionOrderJournal" arg2="paramGroupId" format="integerInform"/>
+    <SECTION id="sectionSchema" field="schemaName"/>    	
     <SECTION id="sectionDateAcct" field="dateacct"/>
     <SECTION id="sectionJournal" field="identifier"/>
     <SECTION id="sectionDetail"/>

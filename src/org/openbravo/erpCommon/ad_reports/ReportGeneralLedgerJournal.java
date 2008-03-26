@@ -144,7 +144,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       if (data!=null && data.length > 0) strPosition = ReportGeneralLedgerJournalData.selectCountDirect2(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"),strFactAcctGroupId, data[0].dateacct, data[0].identifier);
     }
     if (data==null || data.length==0) {
-      String discard[]={"sectionDateAcct"};
+      String discard[]={"sectionSchema"};
       toolbar.prepareRelationBarTemplate(false, false,"submitCommandForm('XLS', false, null, 'ReportGeneralLedgerJournal.xls', 'EXCEL');return false;");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal", discard).createXmlDocument();
       data = ReportGeneralLedgerJournalData.set("0");
