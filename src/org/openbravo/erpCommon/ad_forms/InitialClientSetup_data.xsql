@@ -797,7 +797,7 @@
     <Sql>
       INSERT INTO M_DiscountSchema (M_DiscountSchema_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,
       Updated,UpdatedBy,Name,ValidFrom,DiscountType, FlatDiscount) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,now(),'F',0)
+      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,now(),'P',0)
     </Sql>
     <Parameter name="M_DiscountSchema_ID"/>
     <Parameter name="AD_Client_ID"/>
