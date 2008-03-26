@@ -23,6 +23,7 @@ import org.openbravo.erpCommon.utility.*;
 
 import org.openbravo.erpCommon.ad_actionButton.*;
 import org.openbravo.erpCommon.ad_reports.ReportGeneralLedgerData;
+import org.openbravo.erpCommon.ad_reports.ReportTrialBalanceData;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -115,6 +116,8 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
       xmlDocument.setData("reportAD_ACCOUNTINGRPT_ELEMENT", "liststructure", CreateAccountingReportData.selectAD_Accountingrpt_Element_ID(this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), strcAcctSchemaId, ""));
       xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", ReportGeneralLedgerData.selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), strcAcctSchemaId));    
 
+      xmlDocument.setParameter("accountArray", arrayDobleEntrada("arrAccount", CreateAccountingReportData.selectAD_Accountingrpt_Element_Double_ID(this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), "")));
+      
       //xmlDocument.setData("reportPeriod", "liststructure", CreateAccountingReportData.selectPeriod(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), "800074"));
       xmlDocument.setData("reportPeriod", "liststructure", CreateAccountingReportData.selectCombo(this, Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), vars.getLanguage()));
 

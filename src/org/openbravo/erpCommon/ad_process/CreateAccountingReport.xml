@@ -43,6 +43,7 @@
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
 
+  <PARAMETER id="paramArrayAccount" name="accountArray"/>
 
     <SUBREPORT id="reportAD_ACCOUNTINGRPT_ELEMENT" name="reportAD_ACCOUNTINGRPT_ELEMENT" report="org/openbravo/erpCommon/reference/List">
       <ARGUMENT name="parameterListSelected" withId="paramAccountingrptElementId"/>
