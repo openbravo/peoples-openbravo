@@ -57,7 +57,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportInvoiceCustomerDimensionalAnalysesJR|org", "0");
       String strsalesrepId = vars.getGlobalVariable("inpSalesrepId", "ReportInvoiceCustomerDimensionalAnalysesJR|salesrep", "");
       String strcProjectId = vars.getGlobalVariable("inpcProjectId", "ReportInvoiceCustomerDimensionalAnalysesJR|project", "");
-      String strProducttype = vars.getGlobalVariable("inpProducttype", "ReportInvoiceVendorDimensionalAnalyses|producttype", "");
+      String strProducttype = vars.getGlobalVariable("inpProducttype", "ReportInvoiceCustomerDimensionalAnalysesJR|producttype", "");
       String strOrder = vars.getGlobalVariable("inpOrder","ReportInvoiceCustomerDimensionalAnalyze|order","Normal");
       String strMayor = vars.getGlobalVariable("inpMayor", "ReportInvoiceCustomerSalesDimensionalAnalyze|mayor", "");
       String strMenor = vars.getGlobalVariable("inpMenor", "ReportInvoiceCustomerDimensionalAnalyze|menor", "");
@@ -69,9 +69,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           strDateFromRef, strDateToRef, strOrg, strsalesrepId, strcProjectId, strProducttype, strOrder, strMayor, strMenor, strPartnerSalesRepId);
     }else if (vars.commandIn("EDIT_HTML", "EDIT_HTML_COMPARATIVE")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportInvoiceCustomerDimensionalAnalysesJR|dateFrom");
-      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportSInvoiceCustomerDimensionalAnalyses|dateTo");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportInvoiceCustomerDimensionalAnalysesJR|dateTo");
       String strDateFromRef = vars.getRequestGlobalVariable("inpDateFromRef", "ReportInvoiceCustomerDimensionalAnalysesJR|dateFromRef");
-      String strDateToRef = vars.getRequestGlobalVariable("inpDateToRef", "ReportSInvoiceCustomerDimensionalAnalyses|dateToRef");
+      String strDateToRef = vars.getRequestGlobalVariable("inpDateToRef", "ReportInvoiceCustomerDimensionalAnalysesJR|dateToRef");
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup", "ReportInvoiceCustomerDimensionalAnalysesJR|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportInvoiceCustomerDimensionalAnalysesJR|partner");
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory", "ReportInvoiceCustomerDimensionalAnalysesJR|productCategory");
@@ -81,7 +81,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportInvoiceCustomerDimensionalAnalysesJR|org", "0");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId", "ReportInvoiceCustomerDimensionalAnalysesJR|salesrep");
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId", "ReportInvoiceCustomerDimensionalAnalysesJR|project");
-      String strProducttype = vars.getRequestGlobalVariable("inpProducttype", "ReportInvoiceVendorDimensionalAnalyses|producttype");
+      String strProducttype = vars.getRequestGlobalVariable("inpProducttype", "ReportInvoiceCustomerDimensionalAnalysesJR|producttype");
       String strOrder = vars.getRequestGlobalVariable("inpOrder","ReportSalesDimensionalAnalyze|order");
       String strMayor = vars.getStringParameter("inpMayor", "");
       String strMenor = vars.getStringParameter("inpMenor", "");
@@ -91,9 +91,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           strDateFromRef, strDateToRef, strOrg, strsalesrepId, strcProjectId, strProducttype, strOrder, strMayor, strMenor, strPartnerSalesrepId, "html");
     }else if (vars.commandIn("EDIT_PDF", "EDIT_PDF_COMPARATIVE")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportInvoiceCustomerDimensionalAnalysesJR|dateFrom");
-      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportSInvoiceCustomerDimensionalAnalyses|dateTo");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportInvoiceCustomerDimensionalAnalysesJR|dateTo");
       String strDateFromRef = vars.getRequestGlobalVariable("inpDateFromRef", "ReportInvoiceCustomerDimensionalAnalysesJR|dateFromRef");
-      String strDateToRef = vars.getRequestGlobalVariable("inpDateToRef", "ReportSInvoiceCustomerDimensionalAnalyses|dateToRef");
+      String strDateToRef = vars.getRequestGlobalVariable("inpDateToRef", "ReportInvoiceCustomerDimensionalAnalysesJR|dateToRef");
       String strPartnerGroup = vars.getRequestGlobalVariable("inpPartnerGroup", "ReportInvoiceCustomerDimensionalAnalysesJR|partnerGroup");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportInvoiceCustomerDimensionalAnalysesJR|partner");
       String strProductCategory = vars.getRequestGlobalVariable("inpProductCategory", "ReportInvoiceCustomerDimensionalAnalysesJR|productCategory");
@@ -103,7 +103,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportInvoiceCustomerDimensionalAnalysesJR|org", "0");
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId", "ReportInvoiceCustomerDimensionalAnalysesJR|salesrep");
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId", "ReportInvoiceCustomerDimensionalAnalysesJR|project");
-      String strProducttype = vars.getRequestGlobalVariable("inpProducttype", "ReportInvoiceVendorDimensionalAnalyses|producttype");
+      String strProducttype = vars.getRequestGlobalVariable("inpProducttype", "ReportInvoiceCustomerDimensionalAnalysesJR|producttype");
       String strOrder = vars.getRequestGlobalVariable("inpOrder","ReportSalesDimensionalAnalyze|order");
       String strMayor = vars.getStringParameter("inpMayor", "");
       String strMenor = vars.getStringParameter("inpMenor", "");

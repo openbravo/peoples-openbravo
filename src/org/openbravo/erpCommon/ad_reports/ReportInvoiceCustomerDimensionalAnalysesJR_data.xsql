@@ -311,11 +311,11 @@
     <Sql>
     <![CDATA[
       SELECT ID, NAME
-      FROM (SELECT VALUE AS ID, NAME 
+      FROM (SELECT VALUE AS ID, NAME, TO_NUMBER(VALUE) AS POSITION
               FROM AD_REF_LIST 
              WHERE AD_REFERENCE_ID = 800087
              AND AD_REF_LIST.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
-             ORDER BY VALUE) AA
+             ORDER BY POSITION ASC) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="notShown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID NOT IN]]></Parameter>
