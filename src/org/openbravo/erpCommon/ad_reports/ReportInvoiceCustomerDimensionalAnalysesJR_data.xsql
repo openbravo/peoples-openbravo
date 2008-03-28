@@ -311,11 +311,11 @@
     <Sql>
     <![CDATA[
       SELECT ID, NAME
-      FROM (SELECT VALUE AS ID, NAME, TO_NUMBER(VALUE) AS POSITION
+      FROM (SELECT VALUE AS ID, NAME 
               FROM AD_REF_LIST 
              WHERE AD_REFERENCE_ID = 800087
              AND AD_REF_LIST.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
-             ORDER BY POSITION ASC) AA
+             ORDER BY TO_NUMBER(VALUE)) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="notShown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID NOT IN]]></Parameter>
@@ -325,11 +325,11 @@
     <Sql>
     <![CDATA[
       SELECT ID, NAME
-      FROM (SELECT VALUE AS ID, NAME, TO_NUMBER(VALUE) AS POSITION 
+      FROM (SELECT VALUE AS ID, NAME 
               FROM AD_REF_LIST 
              WHERE AD_REFERENCE_ID = 800087 
              AND AD_REF_LIST.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
-             ORDER BY POSITION ASC) AA
+             ORDER BY TO_NUMBER(VALUE)) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="shown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID IN]]></Parameter>
@@ -340,14 +340,14 @@
     <Sql>
     <![CDATA[
       SELECT ID, NAME
-      FROM (SELECT VALUE AS ID, T.NAME, TO_NUMBER(VALUE) AS POSITION  
+      FROM (SELECT VALUE AS ID, T.NAME 
               FROM AD_REF_LIST_trl T,
                    AD_REF_LIST     L
              WHERE l.AD_REFERENCE_ID = 800087
              AND L.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
                AND l.AD_REF_LIST_ID  = t.AD_REF_LIST_ID
                AND t.AD_LANGUAGE = ?
-             ORDER BY POSITION ASC) AA
+             ORDER BY TO_NUMBER(VALUE)) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="lang"/> 
@@ -358,14 +358,14 @@
     <Sql>
     <![CDATA[
       SELECT ID, NAME
-      FROM (SELECT VALUE AS ID, T.NAME, TO_NUMBER(VALUE) AS POSITION  
+      FROM (SELECT VALUE AS ID, T.NAME 
               FROM AD_REF_LIST_trl T,
                    AD_REF_LIST     L
              WHERE l.AD_REFERENCE_ID = 800087
                AND l.AD_REF_LIST_ID  = t.AD_REF_LIST_ID
                AND L.VALUE IN ('1', '2', '3', '4', '5', '6', '8', '9', '10', '11')
                AND t.AD_LANGUAGE = ?
-             ORDER BY POSITION ASC) AA
+             ORDER BY TO_NUMBER(VALUE)) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="lang"/> 

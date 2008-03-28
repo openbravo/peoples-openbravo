@@ -199,7 +199,7 @@
               FROM AD_REF_LIST 
              WHERE AD_REFERENCE_ID = 800086 
              AND AD_REF_LIST.VALUE IN ('1', '2', '3', '4', '5')
-             ORDER BY VALUE) AA
+             ORDER BY TO_NUMBER(VALUE)) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="notShown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID NOT IN]]></Parameter>
@@ -213,7 +213,7 @@
               FROM AD_REF_LIST 
              WHERE AD_REFERENCE_ID = 800086 
              AND AD_REF_LIST.VALUE IN ('1', '2', '3', '4', '5')
-             ORDER BY VALUE) AA
+             ORDER BY TO_NUMBER(VALUE)) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="shown" optional="true" type="argument" after="WHERE 1=1 "><![CDATA[AND ID IN]]></Parameter>
@@ -231,7 +231,7 @@
                AND l.AD_REF_LIST_ID  = t.AD_REF_LIST_ID
                AND L.VALUE IN ('1', '2', '3', '4', '5')
                AND t.AD_LANGUAGE = ?
-             ORDER BY VALUE) AA
+             ORDER BY TO_NUMBER(VALUE)) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="lang"/> 
@@ -249,7 +249,7 @@
                AND l.AD_REF_LIST_ID  = t.AD_REF_LIST_ID
                AND L.VALUE IN ('1', '2', '3', '4', '5')
                AND t.AD_LANGUAGE = ?
-             ORDER BY VALUE) AA
+             ORDER BY TO_NUMBER(VALUE)) AA
       WHERE 1=1 
      ]]></Sql>
      <Parameter name="lang"/> 
