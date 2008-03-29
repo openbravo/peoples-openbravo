@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
 
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.reference.*;
@@ -74,7 +75,8 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       if (pinstanceData!=null && pinstanceData.length>0) {
       if (!pinstanceData[0].errormsg.equals("")) {
         message = pinstanceData[0].errormsg;
-        myMessage.setType("Info");
+        myMessage.setType("Success");
+        myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
         if (message.startsWith("@") && message.endsWith("@")) {
           myMessage.setMessage(message.substring(1, message.length()-1));
           if (message.indexOf("@")==-1) 
@@ -87,15 +89,18 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       } 
       else if (!pinstanceData[0].pMsg.equals("")) {
         myMessage.setType("Success");
+        myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
         message = pinstanceData[0].pMsg;
         myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), message));
       } 
       else if (pinstanceData[0].result.equals("1")) {
         myMessage.setType("Success");
+        myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
         myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
       } 
       else {
         myMessage.setType("Error");
+        myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
         myMessage.setMessage(Utility.messageBD(this, "Error", vars.getLanguage()));
       }
      }      

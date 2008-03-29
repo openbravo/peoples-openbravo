@@ -81,7 +81,8 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
       if (pinstanceData!=null && pinstanceData.length>0) {
         if (!pinstanceData[0].errormsg.equals("")) {
           String message = pinstanceData[0].errormsg;
-          myMessage.setType("Info");
+          myMessage.setType("Success");
+          myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
           if (message.startsWith("@") && message.endsWith("@")) {
             message = message.substring(1, message.length()-1);
             if (message.indexOf("@")==-1){        
@@ -94,10 +95,12 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
              myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), message));              
           }
         } else if (pinstanceData[0].result.equals("1")) {
-        	myMessage.setType("Success");        
+        	myMessage.setType("Success");
+        	myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
             myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));	
         } else {
-          myMessage.setType("Error");        
+          myMessage.setType("Error");    
+          myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
           myMessage.setMessage(Utility.messageBD(this, "Error", vars.getLanguage()));		
         }
       }
