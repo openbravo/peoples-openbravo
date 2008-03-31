@@ -1,4 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<data>
-  <AT_TESTDOCUMENT AT_TESTDOCUMENT_ID="800000" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2005-12-16 17:19:21.0" CREATEDBY="100" UPDATED="2005-12-16 17:19:21.0" UPDATEDBY="100" NAME="Watir(es_ES)" DESCRIPTION="Archivo ruby para la ejecucin de Tests con Watir" EXTENSION="rb  " HEADER1="# feature tests for Frames&#xd;# revision: $Revision: 1.20 $&#xd;&#xd;$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..') if $0 == __FILE__&#xd;require 'unittests/setup'&#xd;&#xd;class TC_Frames &lt; Test::Unit::TestCase&#xd;&#xd;    include Watir&#xd;&#xd;    def setup()&#xd;        $ie.goto(&quot;" FOOTER="puts 'Test Succesful'&#xd;&#xd;end&#xd;end" CONTENTTYPE="text/plain" HEADER2="&quot;)&#xd;    end&#xd;&#xd;    def test_a_Login&#xd;" AD_LANGUAGE="es_ES" LINE_INTERCHANGER="Y" PREFIX="Y" INTRODUCTION="N" />
-</data>

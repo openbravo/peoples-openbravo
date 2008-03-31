@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-  <database name="TABLE AD_DEPENDENCIES">
-    <table name="AD_DEPENDENCIES">
-      <column name="TABLENAME" primaryKey="false" required="false" type="VARCHAR" size="30" autoIncrement="false"/>
-      <column name="COLUMNNAME" primaryKey="false" required="false" type="VARCHAR" size="30" autoIncrement="false"/>
-      <column name="DEPENDS_ON_TABLENAME" primaryKey="false" required="false" type="VARCHAR" size="30" autoIncrement="false"/>
-      <column name="DEPENDS_ON_COLUMNNAME" primaryKey="false" required="false" type="VARCHAR" size="30" autoIncrement="false"/>
-    </table>
-  </database>

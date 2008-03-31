@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-  <database name="VIEW AD_WINDOW_VT">
-    <view name="AD_WINDOW_VT"><![CDATA[SELECT trl.AD_Language, 
-  bt.AD_Window_ID, trl.Name, trl.Description, trl.Help, bt.WindowType, 
-  bt.AD_Color_ID, bt.AD_Image_ID, bt.IsActive
-FROM AD_Window bt
-  INNER JOIN AD_Window_Trl trl ON (bt.AD_Window_ID=trl.AD_Window_ID)
-WHERE bt.IsActive='Y']]></view>
-  </database>
