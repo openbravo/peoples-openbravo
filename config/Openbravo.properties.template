@@ -39,7 +39,7 @@ web.url=@actual_url_context@/web
 context.url=http://localhost:8880/openbravo
 
 # Development
-bbdd.outputscript=~/databasescript.sql
+bbdd.outputscript=databasescript.sql
 bbdd.verbosity=INFO
 application.version=2.35
 development.environment.id=1
