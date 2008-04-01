@@ -10,7 +10,7 @@
 # * under the License. 
 # * The Original Code is Openbravo ERP. 
 # * The Initial Developer of the Original Code is Openbravo SL 
-# * All portions are Copyright (C) 2007 Openbravo SL 
+# * All portions are Copyright (C) 2007-2008 Openbravo SL 
 # * All Rights Reserved. 
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
@@ -30,16 +30,16 @@ bbdd.password=TAD
 bbdd.driver=oracle.jdbc.driver.OracleDriver
 bbdd.url=jdbc:oracle:thin:@localhost:1521:xe
 bbdd.rdbms=ORACLE
-bbdd.sessionConfig=ALTER SESSION SET NLS_LANGUAGE='AMERICAN' NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'
+bbdd.sessionConfig=ALTER SESSION SET NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'
 
 # build.xml properties
 attach.path=/opt/openbravo/attachments
 context.name=openbravo
 web.url=@actual_url_context@/web
-context.url=http://localhost:8880/openbravo
+context.url=http://localhost:8080/openbravo
 
 # Development
 bbdd.outputscript=databasescript.sql
 bbdd.verbosity=INFO
-application.version=2.35
+application.version=2.40
 development.environment.id=1
