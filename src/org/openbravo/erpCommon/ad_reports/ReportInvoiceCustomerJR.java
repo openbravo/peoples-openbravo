@@ -39,32 +39,32 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
 
 
     if (vars.commandIn("DEFAULT")){
-      String strdateFrom = vars.getGlobalVariable("inpDateFrom", "ReportInvoiceCustomerEdition|DateFrom", "");
-      String strdateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceCustomerEdition|DateTo", "");
-      String strcProjectId = vars.getGlobalVariable("inpcProjectId", "ReportInvoiceCustomerEdition|cProjectId", "");
-      String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN", "ReportInvoiceCustomerEdition|cBPartnerId_IN", "");
-      String strmCategoryId = vars.getInGlobalVariable("inpmProductCategoryId", "ReportInvoiceCustomerEdition|mCategoryId", "");
-      String strProjectkind = vars.getInGlobalVariable("inpProjectkind", "ReportInvoiceCustomerEdition|Projectkind", "");
-      String strProjectstatus = vars.getInGlobalVariable("inpProjectstatus", "ReportInvoiceCustomerEdition|Projectstatus", "");
-      String strProjectphase = vars.getInGlobalVariable("inpProjectphase", "ReportInvoiceCustomerEdition|Projectphase", "");
-      String strProduct = vars.getInGlobalVariable("inpmProductId_IN", "ReportInvoiceCustomerEdition|mProductId_IN", "");
-      String strProjectpublic = vars.getGlobalVariable("inpProjectpublic", "ReportInvoiceCustomerEdition|Projectpublic", "");
-      String strSalesRep = vars.getGlobalVariable("inpSalesRepId", "ReportInvoiceCustomerEdition|SalesRepId", "");
-      String strcRegionId = vars.getInGlobalVariable("inpcRegionId", "ReportInvoiceCustomerEdition|cRegionId", "");
+      String strdateFrom = vars.getGlobalVariable("inpDateFrom", "ReportInvoiceCustomerJR|DateFrom", "");
+      String strdateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceCustomerJR|DateTo", "");
+      String strcProjectId = vars.getGlobalVariable("inpcProjectId", "ReportInvoiceCustomerJR|cProjectId", "");
+      String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN", "ReportInvoiceCustomerJR|cBPartnerId_IN", "");
+      String strmCategoryId = vars.getInGlobalVariable("inpmProductCategoryId", "ReportInvoiceCustomerJR|mCategoryId", "");
+      String strProjectkind = vars.getInGlobalVariable("inpProjectkind", "ReportInvoiceCustomerJR|Projectkind", "");
+      String strProjectstatus = vars.getInGlobalVariable("inpProjectstatus", "ReportInvoiceCustomerJR|Projectstatus", "");
+      String strProjectphase = vars.getInGlobalVariable("inpProjectphase", "ReportInvoiceCustomerJR|Projectphase", "");
+      String strProduct = vars.getInGlobalVariable("inpmProductId_IN", "ReportInvoiceCustomerJR|mProductId_IN", "");
+      String strProjectpublic = vars.getGlobalVariable("inpProjectpublic", "ReportInvoiceCustomerJR|Projectpublic", "");
+      String strSalesRep = vars.getGlobalVariable("inpSalesRepId", "ReportInvoiceCustomerJR|SalesRepId", "");
+      String strcRegionId = vars.getInGlobalVariable("inpcRegionId", "ReportInvoiceCustomerJR|cRegionId", "");
       printPageDataSheet(response, vars, strdateFrom, strdateTo, strcProjectId, strcBpartnerId, strmCategoryId, strProjectkind, strProjectstatus, strProjectphase, strProduct, strProjectpublic, strSalesRep, strcRegionId);
     }else if (vars.commandIn("EDIT_HTML","EDIT_PDF")) {
-      String strdateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportInvoiceCustomerEdition|DateFrom");
-      String strdateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportInvoiceCustomerEdition|DateTo");
-      String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId", "ReportInvoiceCustomerEdition|cProjectId");
-      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportInvoiceCustomerEdition|cBPartnerId_IN");
-      String strmCategoryId = vars.getRequestInGlobalVariable("inpmProductCategoryId", "ReportInvoiceCustomerEdition|mCategoryId");
-      String strProjectkind = vars.getRequestInGlobalVariable("inpProjectkind", "ReportInvoiceCustomerEdition|Projectkind");
-      String strProjectstatus = vars.getRequestInGlobalVariable("inpProjectstatus", "ReportInvoiceCustomerEdition|Projectstatus");
-      String strProjectphase = vars.getRequestInGlobalVariable("inpProjectphase", "ReportInvoiceCustomerEdition|Projectphase");
-      String strProduct = vars.getRequestInGlobalVariable("inpmProductId_IN", "ReportInvoiceCustomerEdition|mProductId_IN");
-      String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic", "ReportInvoiceCustomerEdition|Projectpublic");
-      String strSalesRep = vars.getRequestGlobalVariable("inpSalesRepId", "ReportInvoiceCustomerEdition|SalesRepId");
-      String strcRegionId = vars.getRequestInGlobalVariable("inpcRegionId", "ReportInvoiceCustomerEdition|cRegionId");
+      String strdateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportInvoiceCustomerJR|DateFrom");
+      String strdateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportInvoiceCustomerJR|DateTo");
+      String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId", "ReportInvoiceCustomerJR|cProjectId");
+      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportInvoiceCustomerJR|cBPartnerId_IN");
+      String strmCategoryId = vars.getRequestInGlobalVariable("inpmProductCategoryId", "ReportInvoiceCustomerJR|mCategoryId");
+      String strProjectkind = vars.getRequestInGlobalVariable("inpProjectkind", "ReportInvoiceCustomerJR|Projectkind");
+      String strProjectstatus = vars.getRequestInGlobalVariable("inpProjectstatus", "ReportInvoiceCustomerJR|Projectstatus");
+      String strProjectphase = vars.getRequestInGlobalVariable("inpProjectphase", "ReportInvoiceCustomerJR|Projectphase");
+      String strProduct = vars.getRequestInGlobalVariable("inpmProductId_IN", "ReportInvoiceCustomerJR|mProductId_IN");
+      String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic", "ReportInvoiceCustomerJR|Projectpublic");
+      String strSalesRep = vars.getRequestGlobalVariable("inpSalesRepId", "ReportInvoiceCustomerJR|SalesRepId");
+      String strcRegionId = vars.getRequestInGlobalVariable("inpcRegionId", "ReportInvoiceCustomerJR|cRegionId");
       printPageHtml(response, vars, strdateFrom, strdateTo, strcProjectId, strcBpartnerId, strmCategoryId, strProjectkind, strProjectstatus, strProjectphase, strProduct, strProjectpublic, strSalesRep, strcRegionId);
    } else pageErrorPopUp(response);
   }
@@ -76,25 +76,25 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     XmlDocument xmlDocument=null;
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerFilterJR").createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportInvoiceCustomerFilter", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportInvoiceCustomerFilterJR", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportInvoiceCustomerEdition");
+      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportInvoiceCustomerJR");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportInvoiceCustomerEdition.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportInvoiceCustomerFilterJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportInvoiceCustomerEdition.html", strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportInvoiceCustomerFilterJR.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
     {
-      OBError myMessage = vars.getMessage("ReportInvoiceCustomerEdition");
-      vars.removeMessage("ReportInvoiceCustomerEdition");
+      OBError myMessage = vars.getMessage("ReportInvoiceCustomerJR");
+      vars.removeMessage("ReportInvoiceCustomerJR");
       if (myMessage!=null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
@@ -119,8 +119,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("salesRep", strSalesRep);
 
     try {
-      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "Projectkind", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerEdition"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerEdition", strProjectkind);
+      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "Projectkind", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR", strProjectkind);
       xmlDocument.setData("reportC_PROJECTKIND","liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -128,8 +128,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "Projectphase", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerEdition"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerEdition", strProjectphase);
+      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "Projectphase", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR", strProjectphase);
       xmlDocument.setData("reportC_PROJECTPHASE","liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -137,8 +137,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "ProjectStatus", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerEdition"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerEdition", strProjectstatus);
+      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "ProjectStatus", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR", strProjectstatus);
       xmlDocument.setData("reportC_PROJECTSTATUS","liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -146,19 +146,19 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "PublicPrivate", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerEdition"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerEdition", strProjectpublic);
+      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "PublicPrivate", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR", strProjectpublic);
       xmlDocument.setData("reportC_PROJECTPUBLIC","liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportC_PRODUCTCATREGORY","liststructure",SubCategoryProductData.select(this,Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerEdition"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition")));
+    xmlDocument.setData("reportC_PRODUCTCATREGORY","liststructure",SubCategoryProductData.select(this,Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR")));
 
     try {
-      ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "C_REGION_ID", "", "C_Region of Country", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerEdition"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerEdition", strcRegionId);
+      ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "C_REGION_ID", "", "C_Region of Country", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR", strcRegionId);
       xmlDocument.setData("reportC_REGIONID","liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -166,8 +166,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     }
 
     try {
-      ComboTableData comboTableData = new ComboTableData(this, "TABLE", "", "190", "AD_User SalesRep", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerEdition"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerEdition"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerEdition", strSalesRep);
+      ComboTableData comboTableData = new ComboTableData(this, "TABLE", "", "190", "AD_User SalesRep", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR", strSalesRep);
       xmlDocument.setData("reportSALESREP","liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {

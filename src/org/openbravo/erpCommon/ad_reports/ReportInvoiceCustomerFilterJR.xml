@@ -17,12 +17,9 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************
 -->
-
-
 <REPORT>
   <template file="ReportInvoiceCustomerFilterJR.html"></template>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
-
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
   <PARAMETER id="paramLanguage" name="language" default=""/>
   <PARAMETER id="paramDirection" name="direction" default=""/>
@@ -75,12 +72,12 @@
   <SUBREPORT id="reportSALESREP" name="reportSALESREP" report="org/openbravo/erpCommon/reference/List">  <ARGUMENT name="parameterListSelected" withId="paramSALESREP"/></SUBREPORT>
 
   <SUBREPORT id="reportMProductId_IN" name="reportMProductId_IN" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="paramVacio"/></SUBREPORT>
-
+    <ARGUMENT name="parameterListSelected" withId="paramVacio"/>
+  </SUBREPORT>
   <SUBREPORT id="reportCBPartnerId_IN" name="reportCBPartnerId_IN" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="paramVacio"/></SUBREPORT>
+    <ARGUMENT name="parameterListSelected" withId="paramVacio"/>
+  </SUBREPORT>
 
 
   <DISCARD id="discard"/>
-
 </REPORT>
