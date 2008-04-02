@@ -137,10 +137,13 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
     
    
     InoutEditionData[] data = null;
+	String discard[] = {"discard"};
     data = InoutEditionData.select(this, Utility.getContext(this, vars, "#User_Org", "ReportMaterialTransactionEditionJR"), Utility.getContext(this, vars, "#User_Client", "ReportMaterialTransactionEditionJR"), strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId, strissotrx);
+    
     if (data.length<1)
     {
-    bdError(response, "no hay", vars.getLanguage());
+    	discard[0] = "selEliminar";
+    	data = InoutEditionData.set();
     }
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportMaterialTransactionEditionJR.jrxml";
     
