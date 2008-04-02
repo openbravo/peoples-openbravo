@@ -25,11 +25,14 @@
   v_User_ID NUMBER:=0;
   v_Client_ID NUMBER;
   v_Org_ID NUMBER;
+  v_Description0 VARCHAR(255);
   v_Description VARCHAR(255);
+  v_Count NUMBER;
 
   v_MRequisition_ID NUMBER:=NULL;
   v_MRequisitionLine_ID NUMBER;
   v_DocumentNo NVARCHAR2(60);
+  v_Line NUMBER := 0;
 
   FINISH_PROCESS BOOLEAN DEFAULT FALSE;
   --  Parameter
@@ -59,11 +62,36 @@
       v_Org_ID := Cur_Parameter.AD_Org_ID;
     END LOOP; -- Get Parameter
 
-    SELECT Description
-      INTO v_Description
-     FROM MRP_RUN_PRODUCTION
-     WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID;
+    SELECT NAME || ' ' || TO_CHAR(DATEDOC), Description
+      INTO v_Description0, v_Description
+    FROM MRP_RUN_PRODUCTION
+    WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID;
+     
+    SELECT count(*) INTO v_Count
+    FROM MRP_RUN_PRODUCTIONLINE
+    WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID
+      AND INOUTTRXTYPE = 'MP'
+      AND M_REQUISITIONLINE_ID IS NULL;
+    IF (v_Count = 0) THEN
+      v_Message := '@NoProposalsWithoutRequisitionLine@';
+      RAISE_APPLICATION_ERROR(-20000, v_Message);
+    END IF;
 
+    Ad_Sequence_Next('M_Requisition', v_Client_ID, v_MRequisition_ID);
+    Ad_Sequence_Doc('DocumentNo_M_Requisition', v_Client_ID, 'Y', v_DocumentNo);
+    
+    v_Description := 'MRP: ' || v_Description0 || CHR(10) || v_Description;
+
+    INSERT INTO M_Requisition (
+      M_REQUISITION_ID, AD_CLIENT_ID, AD_ORG_ID,
+      ISACTIVE, CREATED,  CREATEDBY,  UPDATED,  UPDATEDBY,
+      DESCRIPTION, DOCUMENTNO, AD_USER_ID
+    ) VALUES (
+      v_MRequisition_ID, v_Client_ID, v_Org_ID,
+      'Y', now(), v_User_ID, now(), v_User_ID,
+      v_Description, v_DocumentNo, v_User_ID
+    );
+    
     FOR Cur_workproposal IN (
       SELECT *
       FROM MRP_RUN_PRODUCTIONLINE
@@ -74,42 +102,46 @@
       ) LOOP
       v_ResultStr:='Create Requisition';
 
-      if (v_MRequisition_ID is null) then
-        Ad_Sequence_Next('M_Requisition', v_User_ID, v_MRequisition_ID);
-        Ad_Sequence_Doc('DocumentNo_M_Requisition', v_Client_ID, 'Y', v_DocumentNo) ;
-
-        INSERT INTO M_Requisition
-          (M_REQUISITION_ID, AD_CLIENT_ID, AD_ORG_ID,
-          ISACTIVE, CREATED,  CREATEDBY,  UPDATED,  UPDATEDBY,
-          DESCRIPTION, DOCUMENTNO, C_BPARTNER_ID,
-          M_PRICELIST_ID, C_CURRENCY_ID)
-        VALUES
-         (v_MRequisition_ID, v_Client_ID, v_Org_ID,
-          'Y', now(), v_User_ID, now(), v_User_ID,
-          v_Description, v_DocumentNo,  null,
-          null, null);
-      end if;
-
-      Ad_Sequence_Next('M_RequisitionLine', v_User_ID, v_MRequisitionLine_ID);
-      INSERT INTO M_REQUISITIONLINE
-        (M_REQUISITIONLINE_ID,  AD_CLIENT_ID, AD_ORG_ID,
+      v_Line := v_Line + 10;
+      Ad_Sequence_Next('M_RequisitionLine', v_Client_ID, v_MRequisitionLine_ID);
+      INSERT INTO M_REQUISITIONLINE (
+        M_REQUISITIONLINE_ID,  AD_CLIENT_ID, AD_ORG_ID,
         ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-        M_REQUISITION_ID,  DATEPLANNED, M_PRODUCT_ID,
-        QTY, PRICESTD, PRICELIMIT, PRICELIST,
-        C_ORDER_ID, LINENETAMT)
-      VALUES
-        (v_MRequisitionLine_ID, v_Client_ID, v_Org_ID,
-          'Y', now(), v_User_ID, now(), v_User_ID,
-          v_MRequisition_ID, Cur_workproposal.PLANNEDDATE, Cur_workproposal.M_PRODUCT_ID,
-          Cur_workproposal.QTY, NULL, NULL, NULL,
-          NULL,NULL
-        );
+        M_REQUISITION_ID,  NEEDBYDATE, M_PRODUCT_ID,
+        QTY, LINE
+      ) VALUES (
+        v_MRequisitionLine_ID, v_Client_ID, v_Org_ID,
+        'Y', now(), v_User_ID, now(), v_User_ID,
+        v_MRequisition_ID, Cur_workproposal.PLANNEDDATE, Cur_workproposal.M_PRODUCT_ID,
+        Cur_workproposal.QTY, v_Line
+      );
 
       UPDATE MRP_RUN_PRODUCTIONLINE
          SET M_REQUISITIONLINE_ID=v_MRequisitionLine_ID
-       WHERE MRP_RUN_PRODUCTIONLINE_ID = Cur_workproposal.MRP_RUN_PRODUCTIONLINE_ID;
+      WHERE MRP_RUN_PRODUCTIONLINE_ID = Cur_workproposal.MRP_RUN_PRODUCTIONLINE_ID;
     END LOOP;
   END; --BODY
+  v_Message := '@CreatedRequisition@: ' || v_DocumentNo;
+  v_ResultStr :='Set requisition lines as planned';
+  UPDATE M_RequisitionLine 
+  SET REQSTATUS = 'P'
+  WHERE M_RequisitionLine_ID IN (SELECT M_RequisitionLine_ID
+                                 FROM MRP_RUN_PRODUCTIONLINE
+                                 WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID
+                                   AND INOUTTRXTYPE = 'MF');
+  
+  UPDATE M_Requisition
+  SET DocStatus = 'CL'
+  WHERE M_Requisition_ID IN (SELECT M_Requisition_ID 
+                            FROM M_RequisitionLine 
+                            WHERE M_RequisitionLine_ID IN (SELECT M_RequisitionLine_ID
+                                                          FROM MRP_RUN_PRODUCTIONLINE
+                                                          WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID
+                                                            AND INOUTTRXTYPE = 'MF'))
+    AND NOT EXISTS (SELECT 1
+                    FROM M_RequisitionLine rl
+                    WHERE rl.REQSTATUS = 'O'
+                      AND rl.M_Requisition_ID = M_Requisition.M_Requisition_ID);
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
 EXCEPTION
 WHEN OTHERS THEN

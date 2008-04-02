@@ -234,17 +234,28 @@ BEGIN
 
           IF p_Production = 'N' THEN
             v_ResultStr := 'Inserting Requisition lines for product: ' || Cur_Product.M_Product_ID;
-            FOR Cur_RequisitionLine IN (SELECT r.M_RequisitionLine_ID, (-1)*r.qty AS qty, GREATEST(r.DatePlanned, p_PlanningDate) AS DATEPLANNED,
+            FOR Cur_RequisitionLine IN (SELECT r.M_RequisitionLine_ID, (-1)*(r.qty-r.orderedqty) AS qty, GREATEST(r.NeedByDate, p_PlanningDate) AS DATEPLANNED,
                                                Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
-                                              'MF', TO_NUMBER(r.DatePlanned - p_PlanningDate), p_TimeHorizon) AS Weighting
-                                          FROM M_REQUISITIONLINE r
+                                              'MF', TO_NUMBER(r.NeedByDate - p_PlanningDate), p_TimeHorizon) AS Weighting
+                                          FROM M_REQUISITIONLINE r, M_REQUISITION rr
                                          WHERE r.isActive = 'Y'
+                                           AND r.M_REQUISITION_ID = rr.M_REQUISITION_ID
+                                           AND rr.DOCSTATUS = 'CO'
+                                           AND r.REQSTATUS = 'O'
+                                           AND NOT (COALESCE(r.LOCKEDBY, p_User_ID) <> p_User_ID 
+                                                    AND COALESCE(r.LOCKDATE, TO_DATE('01-01-1900', 'DD-MM-YYYY')) >= (now()-3))
                                            AND Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
-                                              'MF', TO_NUMBER(r.DatePlanned - p_PlanningDate), p_TimeHorizon) <> -1
+                                              'MF', TO_NUMBER(r.NeedByDate - p_PlanningDate), p_TimeHorizon) <> -1
                                            AND r.M_Product_ID = Cur_Product.M_Product_ID
                                            AND r.C_Order_ID IS NULL
             ) LOOP
               Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run, Cur_Product.M_Product_ID, Cur_RequisitionLine.qty*Cur_RequisitionLine.Weighting, Cur_RequisitionLine.qty*Cur_RequisitionLine.Weighting, NULL, 'MF', 'Y', NULL, NULL, NULL, Cur_RequisitionLine.M_RequisitionLine_ID, NULL, Cur_RequisitionLine.DatePlanned, NULL, p_Production, CASE WHEN (Cur_RequisitionLine.Qty > 0) THEN 'N' ELSE 'Y' END, NULL, v_Aux_ID);
+              UPDATE M_REQUISITIONLINE
+              SET LOCKEDBY = p_User_ID,
+                  LOCKDATE = now(),
+                  LOCKQTY = Cur_RequisitionLine.qty,
+                  LOCKCAUSE = 'P'
+              WHERE M_REQUISITIONLINE_ID = Cur_RequisitionLine.M_RequisitionLine_ID;
             END LOOP;
           END IF;
         END IF; -- v_Count = 0

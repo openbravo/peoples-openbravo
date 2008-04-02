@@ -70,7 +70,7 @@ public class ActionButtonUtility {
         v.addElement(data1);
       }
       data1 = new SQLReturnObject();
-      if (strTable.equals("259")) {
+      if (strTable.equals("259")) { //C_Order
         if (strDocStatus.equals("DR")) {
           data1.setData("ID", "PR");
           v.addElement(data1);
@@ -78,7 +78,7 @@ public class ActionButtonUtility {
           data1.setData("ID", "RE");
           v.addElement(data1);
         }
-      } else if (strTable.equals("318")) {
+      } else if (strTable.equals("318")) { //C_Invoice
         if (strDocStatus.equals("CO")) {
           data1.setData("ID", "RC");
           v.addElement(data1);
@@ -86,12 +86,17 @@ public class ActionButtonUtility {
           data1.setData("ID", "RE");
           v.addElement(data1);
         }
-      } else if (strTable.equals("319")) {
+      } else if (strTable.equals("319")) { //M_InOut
         if (strDocStatus.equals("CO")) {
           data1.setData("ID", "RC");
           v.addElement(data1);
         }
-      } else if (strTable.equals("224")) {
+      } else if (strTable.equals("224")) { //GL_Journal
+        if (strDocStatus.equals("CO")) {
+          data1.setData("ID", "RE");
+          v.addElement(data1);
+        }
+      } else if (strTable.equals("800212")) { //M_Requisition
         if (strDocStatus.equals("CO")) {
           data1.setData("ID", "RE");
           v.addElement(data1);
