@@ -29,7 +29,7 @@
       FROM M_Requisition, M_PriceList, C_Currency 
       WHERE M_Requisition.M_PriceList_ID = M_PriceList.M_PriceList_ID
       AND M_PriceList.C_Currency_ID = C_Currency.C_Currency_ID
-      AND M_Requisition.M_Requisition_ID = ?
+      AND M_Requisition.M_Requisition_ID = to_number(?)
     </Sql>
     <Parameter name="mRequisitionId"/>
   </SqlMethod>
