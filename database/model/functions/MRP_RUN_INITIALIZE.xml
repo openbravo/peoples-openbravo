@@ -56,7 +56,9 @@ BEGIN
                         COALESCE(po.MRP_PlanningMethod_ID, p.MRP_PlanningMethod_ID) AS MRP_PlanningMethod_ID
                         FROM M_PRODUCT p LEFT JOIN M_PRODUCT_ORG po ON p.M_PRODUCT_ID = po.M_PRODUCT_ID
                                                                        AND po.AD_ORG_ID = p_Org_ID
-                                         LEFT JOIN M_STORAGE_DETAIL sd ON p.M_Product_ID = sd.M_Product_ID
+                                         LEFT JOIN (SELECT M_Product_ID, SUM(qtyonhand) as qtyonhand
+                                                    FROM M_STORAGE_DETAIL
+                                                    GROUP BY M_Product_ID) sd ON p.M_Product_ID = sd.M_Product_ID
                         WHERE (p_product_ID IS NULL OR p.M_PRODUCT_ID = p_Product_ID)
                           AND (p_Product_Category_ID IS NULL OR p.M_PRODUCT_CATEGORY_ID = p_Product_Category_ID)
                           AND (p_Planner_ID IS NULL OR COALESCE(po.MRP_PLANNER_ID, p.MRP_Planner_ID) = p_Planner_ID)
