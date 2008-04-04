@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,6 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.reference.*;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.utils.Replace;
-import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.businessUtility.*;
 import org.openbravo.erpCommon.ad_callouts.*;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -36,7 +35,6 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
-
 
 // imports for transactions
 import java.sql.Connection;
@@ -57,23 +55,24 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      printPage(response, vars, "", "", "", "");
+      printPage(response, vars, "", "", "", "","");
     } else if (vars.commandIn("SAVE")) {
       String strBPartner = vars.getStringParameter("inpcBpartnerId");
       String strDatefrom = vars.getStringParameter("inpDateFrom");
       String strDateto = vars.getStringParameter("inpDateTo");
+      String strDateOrdered = vars.getStringParameter("inpDateordered");
       String strOrganization = vars.getStringParameter("organization");
       
-      OBError myMessage = processButton(vars, strBPartner, strDatefrom, strDateto, strOrganization);
+      OBError myMessage = processButton(vars, strBPartner, strDatefrom, strDateto, strDateOrdered, strOrganization);
       vars.setMessage("ExpenseSOrder", myMessage);
       //vars.setSessionValue("ExpenseSOrder|message", messageResult);
       
-      printPage(response, vars, strDatefrom, strDateto, strBPartner, strOrganization);
+      printPage(response, vars, strDatefrom, strDateto, strDateOrdered, strBPartner, strOrganization);
     } else pageErrorPopUp(response);
   }
 
 
-  OBError processButton(VariablesSecureApp vars, String strBPartner, String strDatefrom, String strDateto, String strOrganization) {
+  OBError processButton(VariablesSecureApp vars, String strBPartner, String strDatefrom, String strDateto, String strDateOrdered, String strOrganization) {
     StringBuffer textoMensaje = new StringBuffer();
     Connection conn=null;
     
@@ -89,7 +88,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       String strOldProject = "-1";
       String strDocStatus = "DR";
       String strDocAction = "CO";
+      String strProcessing = "N";
       String strCOrderId = "";
+      String strCCurrencyId = "";
       String priceactual = "";
       String pricelist = "";
       String pricelimit = "";
@@ -102,8 +103,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 	    docTargetType = ExpenseSOrderData.cDoctypeTarget(conn, this, data[i].adClientId, data[i].adOrgId);
             if ((!data[i].cBpartnerId.equals(strOldBPartner) || !data[i].cProjectId.equals(strOldProject)|| !data[i].adOrgId.equals(strOldOrganization)) && !strCOrderId.equals("")) {
               releaseCommitConnection(conn);
+              // Automatically processes Sales Order
               String mensaje = processOrder(vars, strCOrderId);
-              if (!mensaje.equals("")) textoMensaje.append(mensaje).append("\\n");
+              if (!mensaje.equals("")) textoMensaje.append(mensaje).append("\n");
               conn = getTransactionConnection();
             }
             if (!data[i].cBpartnerId.equals(strOldBPartner) || !data[i].cProjectId.equals(strOldProject) || !data[i].adOrgId.equals(strOldOrganization)) {
@@ -116,10 +118,11 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               strOldBPartner = data[i].cBpartnerId;
               strOldProject = data[i].cProjectId;
               strOldOrganization = data[i].adOrgId;
+              strCCurrencyId = data[i].cCurrencyId.equals("")?Utility.getContext(this, vars, "$C_Currency_ID", "ExpenseSOrder"):data[i].cCurrencyId;
 
               SEOrderBPartnerData[] data1 = SEOrderBPartnerData.select(this, data[i].cBpartnerId);
 
-              ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data[i].adClientId, data[i].adOrgId, vars.getUser(), strDocumentNo, strDocStatus, strDocAction, docType, docTargetType, strDateto, strDateto, strDateto, data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId).equals("")?ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId):ExpenseSOrderData.billto(this, data[i].cBpartnerId), data[i].cCurrencyId.equals("")?Utility.getContext(this, vars, "$C_Currency_ID", "ExpenseSOrder"):data[i].cCurrencyId, data1[0].paymentrule, data1[0].cPaymenttermId.equals("")?SEOrderBPartnerData.selectPaymentTerm(this, data[i].adClientId):data1[0].cPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, data1[0].freightcostrule.equals("")?"I":data1[0].freightcostrule, data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].mPricelistId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
+              ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data[i].adClientId, data[i].adOrgId, vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType, docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId).equals("")?ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId):ExpenseSOrderData.billto(this, data[i].cBpartnerId), strCCurrencyId, data1[0].paymentrule, data1[0].cPaymenttermId.equals("")?SEOrderBPartnerData.selectPaymentTerm(this, data[i].adClientId):data1[0].cPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, data1[0].freightcostrule.equals("")?"I":data1[0].freightcostrule, data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].mPricelistId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
             }
 
             String strCOrderlineID = SequenceIdData.getSequence(this, "C_OrderLine", vars.getClient());
@@ -139,7 +142,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
                 priceactual = data3[j].pricestd;
                 pricelist = data3[j].pricelist;
                 pricelimit = data3[j].pricelimit;
-                SLOrderAmtData[] data4 = SLOrderAmtData.select(this, strCOrderId);
+                ExpenseSOrderData[] data4 = ExpenseSOrderData.selectPrecisions(this, strCCurrencyId);
                   if (data4!=null && data4.length>0) {
                   strPrecision = data4[0].stdprecision.equals("")?"0":data4[0].stdprecision;
                   strPricePrecision = data4[0].priceprecision.equals("")?"0":data4[0].priceprecision;
@@ -152,9 +155,20 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
                 priceActual = (priceactual.equals("")?ZERO:(new BigDecimal(priceactual)));
                 priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
                 priceList = (pricelist.equals("")?ZERO:new BigDecimal(pricelist));
+                
+                //Calculating discount
                 if (priceList.doubleValue() == 0.0) discount = ZERO;
-                else discount = new BigDecimal ((priceList.doubleValue() - priceActual.doubleValue()) / priceList.doubleValue() * 100.0);
-                if (discount.scale() > StdPrecision) discount = discount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+                else {
+                  if (log4j.isDebugEnabled()) log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
+                  if (log4j.isDebugEnabled()) log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
+                  discount = new BigDecimal ((priceList.doubleValue()-priceActual.doubleValue()) / priceList.doubleValue() * 100.0);
+                }
+                if (log4j.isDebugEnabled()) log4j.debug("Discount: " + discount.toString());
+                if (discount.scale() > StdPrecision){
+                	discount = discount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+                }
+                if (log4j.isDebugEnabled()) log4j.debug("Discount rounded: " + discount.toString());
+                
                 strDiscount = discount.toString();
                 priceactual = priceActual.toString();
                 pricelist = priceList.toString();
@@ -170,15 +184,15 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             }
             String strCTaxID = Tax.get(this, data[i].mProductId, DateTimeData.today(this), data[i].adOrgId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), data[i].cProjectId, true);
 
-            ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data[i].adClientId, strOrganization.equals("")?data[i].adOrgId:strOrganization, vars.getUser(), strCOrderId, Integer.toString(line), data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), DateTimeData.today(this), DateTimeData.today(this), data[i].description, data[i].mProductId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].cUomId.equals("")?Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder"):data[i].cUomId, data[i].qty, data[i].cCurrencyId.equals("")?Utility.getContext(this, vars, "$C_Currency_ID", "ExpenseSOrder"):data[i].cCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, data[i].sResourceassignmentId, strDiscount);
+            ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data[i].adClientId, strOrganization.equals("")?data[i].adOrgId:strOrganization, vars.getUser(), strCOrderId, Integer.toString(line), data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), DateTimeData.today(this), DateTimeData.today(this), data[i].description, data[i].mProductId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].cUomId.equals("")?Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder"):data[i].cUomId, data[i].qty, strCCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, data[i].sResourceassignmentId, strDiscount);
 
             ExpenseSOrderData.updateTimeExpenseLine(conn, this, strCOrderlineID, data[i].sTimeexpenselineId);
       }
       releaseCommitConnection(conn);
       if (!strCOrderId.equals("")) {
-        
+        // Automatically processes Sales Order
         String mensaje = processOrder(vars, strCOrderId);
-        if (!mensaje.equals("")) textoMensaje.append(mensaje).append("\\n");
+        if (!mensaje.equals("")) textoMensaje.append(mensaje).append("\n");
       }
       myMessage.setType("Success");
       myMessage.setMessage(textoMensaje.toString() + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));
@@ -249,62 +263,64 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     return (messageResult);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDatefrom,String strDateto,String strBPartner, String strOrganization)
-    throws IOException, ServletException {
-      if (log4j.isDebugEnabled()) log4j.debug("Output: Button process Project set Type");
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDatefrom,String strDateto,String strDateOrdered,String strBPartner, String strOrganization) throws IOException, ServletException {
+	  if (log4j.isDebugEnabled()) log4j.debug("Output: process ExpenseSOrder");
+      
+      String[] discard = {""};
+      String strHelp = ExpenseSOrderData.help(this, "S_ExpenseSOrder");
+      if (strHelp.equals("")) discard[0] = new String("helpDiscard");
 
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/ExpenseSOrder").createXmlDocument();
       
-      /*String strMessage = vars.getSessionValue("ExpenseSOrder|message");
-      vars.removeSessionValue("ExpenseSOrder|message");
-	 */
       ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ExpenseSOrder", false, "", "", "",false, "ad_actionButton",  strReplaceWith, false,  true);
       toolbar.prepareSimpleToolBarTemplate();
       xmlDocument.setParameter("toolbar", toolbar.toString()); 
-
-
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_actionButton.ExpenseSOrder");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ExpenseSOrder.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ExpenseSOrder.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    {
-      OBError myMessage = vars.getMessage("ExpenseSOrder");
-      vars.removeMessage("ExpenseSOrder");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-    }
-
+      
       xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
       xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      /*xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));*/
       xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-      
-      //xmlDocument.setParameter("paramMessage", (strMessage.equals("")?"":"alert('" + Replace.replace(strMessage, "\"", "\\'") + "');"));
-      
+      xmlDocument.setParameter("help", strHelp);
       xmlDocument.setParameter("Bpartnerdescription", ExpenseSOrderData.selectBpartner(this, strBPartner));
       xmlDocument.setParameter("BpartnerId", strBPartner);
       xmlDocument.setParameter("adOrgId", strOrganization);
 	  xmlDocument.setParameter("dateFrom", strDatefrom);
-    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-	xmlDocument.setParameter("dateTo", strDateto);
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-      //xmlDocument.setParameter("datefrom", strDatefrom);
-      //xmlDocument.setParameter("dateto", strDateto);
+      xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+	  xmlDocument.setParameter("dateTo", strDateto);
+      xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateOrdered", strDateOrdered);
+      xmlDocument.setParameter("dateOrddisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateOrdsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("description", ExpenseSOrderData.description(this, "S_ExpenseSOrder"));
       xmlDocument.setData("structureOrganizacion", OrganizationComboData.select(this, vars.getRole()));
+      
+      //New interface parameters
+      try {
+    	  WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_actionButton.ExpenseSOrder");
+    	  
+    	  xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+		  xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+		  xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+		  xmlDocument.setParameter("theme", vars.getTheme());
+		  NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ExpenseSOrder.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+		  xmlDocument.setParameter("navigationBar", nav.toString());
+		  LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ExpenseSOrder.html", strReplaceWith);
+		  xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+		} catch (Exception ex) {
+		  throw new ServletException(ex);
+		}
+		{
+		  OBError myMessage = vars.getMessage("ExpenseSOrder");
+		  vars.removeMessage("ExpenseSOrder");
+		  if (myMessage!=null) {
+		    xmlDocument.setParameter("messageType", myMessage.getType());
+		    xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+		    xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+		  }
+		}
+	   ////----
+		
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       out.println(xmlDocument.print());

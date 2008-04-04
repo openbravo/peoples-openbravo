@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -144,6 +144,12 @@ function depurar() {
           <TR id="paramChildTabContainer"></TR>
         </TABLE>
         <DIV class="Main_ContentPane_Client" style="overflow: auto;" id="client">
+                <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                  <tr>
+                    <td>
+                      <table class="dojoTabPaneWrapper" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
+                        <tr>
+                          <td>
                             <!-- MessageBox -->
 
                             <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
@@ -228,6 +234,9 @@ function depurar() {
                               </tr>
                               </TBODY>
                             </table>
+                            <!-- End MessageBox -->
+                            
+                            
         <!-- USER CONTROLS -->
               <TABLE class="Main_Client_TableEdition">
                 <tr>
@@ -238,28 +247,40 @@ function depurar() {
                   <td class="TableEdition_OneCell_width"></td>
                   <td class="TableEdition_OneCell_width"></td>
                 </tr>
-  <tr>
-    <td colspan="6">
-      <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
-        <tr>
-          <td class="Popup_InfoBar_Icon_cell"><IMG src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
-          <td class="Popup_InfoBar_text_table">
-            <table>
-              <tr>
-                <td class="Popup_InfoBar_text" id="helpDiscard"><SPAN id="paramDescription">&nbsp;</SPAN></td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="6" height="15px"></td>
-  </tr>
+                
+  				<tr>
+    			  <td colspan="6">
+                    <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
+                      <tr>
+                        <td class="Popup_InfoBar_Icon_cell"><IMG src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
+                        <td class="Popup_InfoBar_text_table">
+                          <table>
+                            <tr>
+                             <td class="Popup_InfoBar_text" id="helpDiscard"><SPAN id="paramDescription">&nbsp;</SPAN></td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="6" height="15px"></td>
+                </tr>  				
+  				
+  				<TR>
+                  <TD class="TitleCell"><SPAN class="LabelText">Employee</SPAN></TD>
+                  <td class="Combo_ContentCell" colspan="2">
+                    <select name="inpcBpartnerId" class="Combo Combo_TwoCells_width" id="paramBpartnerId">
+                    <option value=""></option>
+                    <div id="reportC_BPARTNERID"></div>
+                    </select>
+                  </td>
+                  <TD class="TitleCell"><SPAN class="LabelText"></TD>
+                  <TD class="Combo_ContentCell" colspan="2"></TD>
+                </TR>			
   
- <tr>
-
+            <tr>
             <TD class="TitleCell"><SPAN class="LabelText">From Date</SPAN></TD>
             <TD class="TextBox_btn_ContentCell">
 
@@ -291,76 +312,65 @@ function depurar() {
             <td/>
             <TD class="TitleCell"><SPAN class="LabelText">To Date</SPAN></TD>
 
-                  <TD class="TextBox_btn_ContentCell">
-                    <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
-                      <TR>
-                        <TD class="TextBox_ContentCell">
-                          <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpReportDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateTo");</SCRIPT>
-                        </TD>
-                        <TD class="FieldButton_ContentCell">
-                          <a class="FieldButtonLink" href="#"
-  onfocus="setWindowElementFocus(this); window.status='xx'; return true;"
-  onblur="window.status=''; return true;"
-  onkeypress="this.className='FieldButtonLink_active'; return true;"
-  onkeyup="this.className='FieldButtonLink_focus'; return true;">
-  <table class="FieldButton" onclick="showCalendar('frmMain.inpReportDateTo', document.frmMain.inpReportDateTo.value, false);return false;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                      <TR>
-
-                        <TD class="FieldButton_bg">
-                          <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                        </TD>
-                      </TR>
-                    </TABLE>
-                    </a>
-                        </TD>
-                      </TR>
-                    </TABLE>
-
-                  </TD>
-                  <TD/>
-
-
+           <TD class="TextBox_btn_ContentCell">
+             <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
+               <TR>
+                 <TD class="TextBox_ContentCell">
+                   <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpReportDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateTo");</SCRIPT>
+                      </TD>
+                      <TD class="FieldButton_ContentCell">
+                        <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='xx'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;">
+						<table class="FieldButton" onclick="showCalendar('frmMain.inpReportDateTo', document.frmMain.inpReportDateTo.value, false);return false;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+	                    <TR>
+	
+	                      <TD class="FieldButton_bg">
+	                        <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+	                      </TD>
+	                    </TR>
+	                  </TABLE>
+	                  </a>
+                      </TD>
+                    </TR>
+                  </TABLE>
+                </TD>
+                <TD class="ContentCell"></TD>
+                <TD class="ContentCell"></TD>   
           </tr>
+          
           <tr>
             <TD class="TitleCell"><SPAN class="LabelText">Date Invoiced</SPAN></TD>
-              <TD class="TextBox_btn_ContentCell">
-  
-                <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
-                  <TR>
-                    <TD class="TextBox_ContentCell">
-                      <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true"  type="text" name="inpDateinvoiced" id="paramDateinvoiced" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateinvoiced");</SCRIPT>
-                    </TD>
-                    <TD class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#"  onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;"  onblur="window.status=''; return true;"  onkeypress="this.className='FieldButtonLink_active'; return true;"  onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateinvoiced', document.frmMain.inpDateinvoiced.value, false);return false;" >
-                        <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                        <TR>
-  
-                          <TD class="FieldButton_bg">
-                            <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                          </TD>
-                        </TR>
-                      </TABLE>
-                      </a>
-                    </TD>
-                  </TR>
-                </TABLE>
+            <TD class="TextBox_btn_ContentCell">  
+	              <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
+	                <TR>
+	                  <TD class="TextBox_ContentCell">
+	                    <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true"  type="text" name="inpDateinvoiced" id="paramDateinvoiced" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateinvoiced");</SCRIPT>
+	                  </TD>
+	                  <TD class="FieldButton_ContentCell">
+	                    <a class="FieldButtonLink" href="#"  onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;"  onblur="window.status=''; return true;"  onkeypress="this.className='FieldButtonLink_active'; return true;"  onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateinvoiced', document.frmMain.inpDateinvoiced.value, false);return false;" >
+	                      <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+	                      <TR>
+	
+	                        <TD class="FieldButton_bg">
+	                          <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+	                        </TD>
+	                      </TR>
+	                    </TABLE>
+	                    </a>
+	                  </TD>
+	                </TR>
+	              </TABLE>
               </TD>
               <td/>
-              <TD class="TitleCell"><SPAN class="LabelText">Business Partner</SPAN>&nbsp;</TD>
-              <td class="Combo_ContentCell" colspan="2">
-                <select name="inpcBpartnerId" class="Combo Combo_TwoCells_width" id="paramBpartnerId">
-                  <option value=""></option>
-                  <div id="reportC_BPARTNERID"></div>
-                </select>
-              </td>
-          </tr>
-  
-  
-  
+              <TD class="TitleCell"></TD>
+              <TD class="TitleCell"></TD>
+              <TD class="TextBox_btn_ContentCell"></TD>
+              <TD class="ContentCell"></TD>
+          </tr>  
       
           <tr>
             <td colspan="6" height="5px"></td>
           </tr>
+          
           <tr>
             <td class="TitleCell"></td>
             <td class="ContentCell" colspan="2"><SPAN class="LabelText" id="question">&nbsp;</SPAN></td>
@@ -368,9 +378,11 @@ function depurar() {
             <td class="TitleCell"></td>
             <td class="ContentCell"></td>
           </tr>
+          
           <tr>
             <td colspan="6" height="5px"></td>
           </tr>
+          
           <tr>
             <td class="TitleCell"></td>
             <td class="Button_RightAlign_ContentCell">
@@ -379,25 +391,29 @@ function depurar() {
                 <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Accept';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                   <tr>
                     <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border=0/></td>
-                    <td class="Button_text Button_width">OK</td>
+                    <td class="Button_text Button_width">Process</td>
                     <td class="Button_right"></td>
                   </tr>
                 </table>
                 </a>
               </div>
             </td>
-            <td class="Button_LeftAlign_ContentCell">
-             
-            </td>
+            <td class="Button_LeftAlign_ContentCell"></td>
             <td class="ContentCell"></td>
             <td class="TitleCell"></td>
             <td class="ContentCell"></td>
           </tr>
               </TABLE>
- 
-
-                      <!-- USER CONTROLS -->
+                      <!--End USER CONTROLS -->
+                      
+                 </TD>
+              </TR>
+              </TABLE>
+              </TD>
+            </TR>
+          </TABLE>
         </div>
+        
         <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
           <TR>
             <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>

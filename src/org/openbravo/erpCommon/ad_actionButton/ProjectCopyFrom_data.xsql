@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,19 +28,46 @@
     <Sql>
       <![CDATA[
         SELECT P.C_PHASE_ID, P.C_PROJECTPHASE_ID, P.NAME, P.SEQNO, P.DESCRIPTION, P.HELP,
-        P.M_PRODUCT_ID, P.QTY, '' as C_TASK_ID, '' as id
+	        P.M_PRODUCT_ID, P.QTY, '' as C_TASK_ID, '' as id,
+	        '' as C_PROJECTLINE_ID, '' as LINE, '' as PLANNEDQTY, '' as M_PRODUCT_CATEGORY_ID,
+	        '' as PRODUCT_DESCRIPTION, '' as PRODUCT_NAME, '' as PRODUCT_VALUE 
         FROM C_PROJECTPHASE P 
-	WHERE P.C_PROJECT_ID = TO_NUMBER(?)
+		WHERE P.C_PROJECT_ID = TO_NUMBER(?)
         ORDER BY P.SEQNO
       ]]>
     </Sql>
     <Parameter name="c_projecttype_id"/>
+  </SqlMethod>
+  <SqlMethod name="selectServ" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT PL.C_PROJECTLINE_ID, PL.LINE, PL.DESCRIPTION,
+        	PL.PLANNEDQTY, PL.M_PRODUCT_ID, PL.M_PRODUCT_CATEGORY_ID,
+        	PL.PRODUCT_DESCRIPTION, PL.PRODUCT_NAME, PL.PRODUCT_VALUE 
+        FROM C_PROJECTLINE PL
+        WHERE PL.C_PROJECT_ID = TO_NUMBER(?)
+        ORDER BY PL.LINE
+      ]]>
+    </Sql>
+    <Parameter name="c_project_id"/>
   </SqlMethod>
   <SqlMethod name="selectProjectType" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>     
       <![CDATA[
 	SELECT C_PROJECTTYPE_ID
+	FROM C_PROJECT
+	WHERE C_PROJECT_ID = TO_NUMBER(?)
+      ]]>
+    </Sql>
+    <Parameter name="c_project_id"/>
+  </SqlMethod>
+   <SqlMethod name="selectProjCategory" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>     
+      <![CDATA[
+	SELECT PROJECTCATEGORY
 	FROM C_PROJECT
 	WHERE C_PROJECT_ID = TO_NUMBER(?)
       ]]>
@@ -124,24 +151,28 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        INSERT INTO C_PROJECTLINE (C_PROJECTLINE_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, 
-        UPDATED, UPDATEDBY, C_PROJECT_ID,LINE, DESCRIPTION, PLANNEDQTY,PLANNEDPRICE, PLANNEDAMT, PLANNEDMARGINAMT, 
-        COMMITTEDAMT, M_PRODUCT_ID, M_PRODUCT_CATEGORY_ID,INVOICEDAMT, INVOICEDQTY, COMMITTEDQTY, 
-        C_PROJECTISSUE_ID, C_ORDER_ID, C_ORDERPO_ID,ISPRINTED, PROCESSED, DOPRICING,PLANNEDPOPRICE) 
-        SELECT TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?), LINE, DESCRIPTION, PLANNEDQTY, PLANNEDPRICE, PLANNEDAMT, 
-        PLANNEDMARGINAMT, COMMITTEDAMT,M_PRODUCT_ID, M_PRODUCT_CATEGORY_ID, INVOICEDAMT, INVOICEDQTY, COMMITTEDQTY, 
-        C_PROJECTISSUE_ID,C_ORDER_ID, C_ORDERPO_ID, ISPRINTED, PROCESSED, DOPRICING, PLANNEDPRICE 
-        FROM C_PROJECTLINE
-        WHERE C_PROJECT_ID = TO_NUMBER(?)
+        INSERT INTO C_PROJECTLINE (C_PROJECTLINE_ID, C_PROJECT_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, 
+	        UPDATED, UPDATEDBY, LINE, DESCRIPTION, PLANNEDQTY, M_PRODUCT_ID, M_PRODUCT_CATEGORY_ID, 
+	        PRODUCT_DESCRIPTION, PRODUCT_NAME, PRODUCT_VALUE) 
+        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),now(),TO_NUMBER(?),
+        	now(),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
+        	?,?,?)
       ]]>
     </Sql>
-    <Parameter name="new_cprojectlineid"/>
+    <Parameter name="c_projectline_id"/>
+    <Parameter name="c_project_id"/>
     <Parameter name="ad_client_id"/>
     <Parameter name="ad_org_id"/>
     <Parameter name="user"/>
     <Parameter name="user"/>
-    <Parameter name="new_cprojectid"/>
-    <Parameter name="old_cprojectid"/>
+    <Parameter name="line"/>
+    <Parameter name="description"/>
+    <Parameter name="planned_qty"/>
+    <Parameter name="m_product_id"/>
+    <Parameter name="m_product_category_id"/>
+    <Parameter name="product_description"/>
+    <Parameter name="product_name"/>
+    <Parameter name="product_value"/>
   </SqlMethod>
   <SqlMethod name="selectProjectCategory" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
@@ -158,11 +189,13 @@
     <Sql><![CDATA[
       SELECT C_Project.C_Project_ID as id, (C_Project.Value || ' - ' || C_Project.Name) as name FROM C_Project
       WHERE C_Project.AD_Org_ID IN('1') AND C_Project.AD_Client_ID IN('1') AND C_Project.isActive = 'Y' 
-      AND C_Project.projectcategory in (select projectcategory from c_project where c_project_ID = TO_NUMBER(?))
+      AND C_Project.C_Project_ID NOT IN (SELECT C_Project_ID FROM c_project WHERE c_project_ID = TO_NUMBER(?))
+      AND C_Project.projectcategory IN (SELECT projectcategory FROM c_project WHERE c_project_ID = TO_NUMBER(?))
       ORDER BY name
     ]]></Sql>
     <Parameter name="adOrgClient" type="replace" optional="true" after="C_Project.AD_Org_ID IN(" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="C_Project.AD_Client_ID IN(" text="'1'"/>
-    <Parameter name="projectcategory"/>
+    <Parameter name="c_project_id"/>
+    <Parameter name="cprojectid"/>
   </SqlMethod>
 </SqlClass>

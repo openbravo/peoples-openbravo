@@ -75,40 +75,49 @@ public class ProjectSetType extends HttpSecureAppServlet {
   OBError processButton(VariablesSecureApp vars, String strKey, String strProjectType, String windowId) {
     Connection conn = null;
     OBError myMessage = new OBError();
-    try {
-      conn = this.getTransactionConnection();
-      ProjectSetTypeData[] data = ProjectSetTypeData.select(this, strProjectType);
-      ProjectSetTypeData[] dataProject = ProjectSetTypeData.selectProject(this, strKey);
-      String strProjectPhase = "";
-      String strProjectTask = "";
-      for (int i=0;data!=null && i<data.length;i++){
-        strProjectPhase = SequenceIdData.getSequence(this, "C_ProjectPhase", dataProject[0].adClientId);
-        if (ProjectSetTypeData.insertProjectPhase(conn, this, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cPhaseId, strProjectPhase, data[i].help, data[i].name, data[i].standardqty, data[i].seqno)==1){
-            ProjectSetTypeData[] data1 = ProjectSetTypeData.selectTask(this, data[i].cPhaseId);
-            for (int j=0;data1!=null && j<data1.length;j++){
-                strProjectTask = SequenceIdData.getSequence(this, "C_ProjectTask", dataProject[0].adClientId);
-                ProjectSetTypeData.insertProjectTask(conn, this,strProjectTask,data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data1[j].seqno, data1[j].name,data1[j].description, data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].standardqty);
-            }
-        }
-      }
-      String strProjectCategory = ProjectSetTypeData.selectProjectCategory(this, strProjectType);
-      ProjectSetTypeData.update(conn, this, vars.getUser(), strProjectType, strProjectCategory, strKey);
-      releaseCommitConnection(conn);
-      myMessage.setType("Success");
-      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-      myMessage.setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));
-      return myMessage;
-    } catch (Exception e) {
-      try {
-        releaseRollbackConnection(conn);
-      } catch (Exception ignored) {}
-      e.printStackTrace();
-      log4j.warn("Rollback in transaction");
-      myMessage.setType("Error");
-      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-      myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-      return myMessage;
-    }
+    if (strProjectType == null || strProjectType == ""){
+    	try {
+	        releaseRollbackConnection(conn);
+	      } catch (Exception ignored) {}
+	      log4j.warn("Rollback in transaction");
+	      myMessage.setType("Error");
+	      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+	      myMessage.setMessage(Utility.messageBD(this, "NoProjectTypeSelected", vars.getLanguage()));
+    } else {
+	    try {
+	      conn = this.getTransactionConnection();
+	      ProjectSetTypeData[] data = ProjectSetTypeData.select(this, strProjectType);
+	      ProjectSetTypeData[] dataProject = ProjectSetTypeData.selectProject(this, strKey);
+	      String strProjectPhase = "";
+	      String strProjectTask = "";
+	      for (int i=0;data!=null && i<data.length;i++){
+	        strProjectPhase = SequenceIdData.getSequence(this, "C_ProjectPhase", dataProject[0].adClientId);
+	        if (ProjectSetTypeData.insertProjectPhase(conn, this, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cPhaseId, strProjectPhase, data[i].help, data[i].name, data[i].standardqty, data[i].seqno)==1){
+	            ProjectSetTypeData[] data1 = ProjectSetTypeData.selectTask(this, data[i].cPhaseId);
+	            for (int j=0;data1!=null && j<data1.length;j++){
+	                strProjectTask = SequenceIdData.getSequence(this, "C_ProjectTask", dataProject[0].adClientId);
+	                ProjectSetTypeData.insertProjectTask(conn, this,strProjectTask,data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data1[j].seqno, data1[j].name,data1[j].description, data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].standardqty);
+	            }
+	        }
+	      }
+	      String strProjectCategory = ProjectSetTypeData.selectProjectCategory(this, strProjectType);
+	      ProjectSetTypeData.update(conn, this, vars.getUser(), strProjectType, strProjectCategory, strKey);
+	      releaseCommitConnection(conn);
+	      myMessage.setType("Success");
+	      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+	      myMessage.setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));
+	    } catch (Exception e) {
+	      try {
+	        releaseRollbackConnection(conn);
+	      } catch (Exception ignored) {}
+	      e.printStackTrace();
+	      log4j.warn("Rollback in transaction");
+	      myMessage.setType("Error");
+	      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+	      myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+	    }
+  	}
+    return myMessage;
   }
 
 

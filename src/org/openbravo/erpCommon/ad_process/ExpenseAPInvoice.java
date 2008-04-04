@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -113,15 +113,16 @@ String strProductRMailTextID = "";
          strcInvoiceId = SequenceIdData.getSequence(this, "C_Invoice", data[i].adClientId);
          String strDocumentno = Utility.getDocumentNo(this, vars, "", "C_Invoice", Utility.getContext(this, vars, "C_DocTypeTarget_ID", docTargetType)        , Utility.getContext(this, vars, "C_DocType_ID", docTargetType), false, true);
          //String strDocType = ExpenseAPInvoiceData.cDoctypeId(this, docTargetType);
-	 String strDocType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId, data[i].adOrgId);
+         String strDocType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId, data[i].adOrgId);
          //strcBpartnerLocationId = ExpenseAPInvoiceData.bPartnerLocation(this, data[i].cBpartnerId);
-         String strSalesrepId = ExpenseAPInvoiceData.salesrepId(this, data[i].cBpartnerId);
+         //String strSalesrepId = ExpenseAPInvoiceData.salesrepId(this, data[i].cBpartnerId);
+         String strSalesrepId = "";
          String strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
          String strPaymentterm = ExpenseAPInvoiceData.paymentterm(this, data[i].cBpartnerId);
 
          //strPricelistId = ExpenseAPInvoiceData.pricelistId(this, data[i].cBpartnerId);
 
-         ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId, strcBpartnerLocationId, vars.getUser(), strPricelistId, data[i].cCurrencyId, strSalesrepId, "N", "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
+         ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, data[i].cCurrencyId, strSalesrepId, "N", "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
         }
         else strcInvoiceId = strcInvoiceIdOld;
        }
@@ -210,6 +211,7 @@ String strProductRMailTextID = "";
       String[] discard = {""};
       String strHelp = ExpenseAPInvoiceData.help(this, "S_ExpenseAPInvoice");
       if (strHelp.equals("")) discard[0] = new String("helpDiscard");
+      
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/ExpenseAPInvoice").createXmlDocument();
       
       ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ExpenseAPInvoice", false, "", "", "",false, "ad_process",  strReplaceWith, false,  true);
@@ -223,29 +225,26 @@ String strProductRMailTextID = "";
       xmlDocument.setParameter("dateFrom", strDatereportFrom);
       xmlDocument.setParameter("dateTo", strDatereportTo);
       xmlDocument.setParameter("dateInvoiced", strDateInvoiced);
-      //xmlDocument.setParameter("partner", ExpenseAPInvoiceData.bPartnerDescription(this, strcBpartnerId));
       xmlDocument.setParameter("description", ExpenseAPInvoiceData.description(this, "S_ExpenseAPInvoice"));
 
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_BPartner_ID", "C_BPartner Employee w Address", "", Utility.getContext(this, vars, "#User_Client",""), Utility.getContext(this, vars, "#AD_Client_ID", "ExpenseAPInvoice"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ExpenseAPInvoice", "");
-        xmlDocument.setData("reportC_BPARTNERID","liststructure", comboTableData.select(false));
-        comboTableData = null;
+    	  ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_BPartner_ID", "C_BPartner Employee w Address", "", Utility.getContext(this, vars, "#User_Client",""), Utility.getContext(this, vars, "#AD_Client_ID", "ExpenseAPInvoice"), 0);
+    	  Utility.fillSQLParameters(this, vars, null, comboTableData, "ExpenseAPInvoice", "");
+    	  xmlDocument.setData("reportC_BPARTNERID","liststructure", comboTableData.select(false));
+    	  comboTableData = null;
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
-    
-
-
-    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateInvdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateInvsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      
+      xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+	  xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+	  xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+	  xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+	  xmlDocument.setParameter("dateInvdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+	  xmlDocument.setParameter("dateInvsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     
     
-                // New interface paramenters
+      // New interface parameters
       try {
         WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_process.ExpenseAPInvoice");
 
@@ -268,8 +267,7 @@ String strProductRMailTextID = "";
           xmlDocument.setParameter("messageTitle", myMessage.getTitle());
           xmlDocument.setParameter("messageMessage", myMessage.getMessage());
         }
-      }
-      
+      }      
      ////----
      
       response.setContentType("text/html; charset=UTF-8");

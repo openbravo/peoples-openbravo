@@ -18,7 +18,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+  * Contributions are Copyright (C) 1999-2008 Openbravo, S.L
   *************************************************************************
   * $Id: S_TimeExpense_Post.sql,v 1.4 2003/02/21 06:38:16 jjanke Exp $
   ***
@@ -35,6 +35,7 @@
   v_Processed CHAR;
   v_CInvoicelineId NUMBER;
   v_COrderlineId NUMBER;
+  v_ExpenseLines NUMBER;
     -- Parameter
   TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
@@ -75,21 +76,33 @@ BEGIN --BODY
     CUR_te RECORD;
     v_Hours NUMBER;
   BEGIN
+  
+  /* Check if there are expense lines to process */
+  SELECT COUNT(S_TimeExpenseLine.S_TimeExpenseLine_Id)
+  INTO v_ExpenseLines
+  FROM S_TimeExpenseLine, S_TimeExpense
+  WHERE S_TimeExpense.S_TimeExpense_ID = v_Record_ID
+    AND S_TimeExpenseLine.S_TimeExpense_Id = S_TimeExpense.S_TimeExpense_ID
+    AND S_TimeExpenseLine.IsActive = 'Y';
+  IF (v_ExpenseLines = 0) THEN
+    RAISE_APPLICATION_ERROR(-20000, '@NoExpenseLines@'||'.');
+  END IF;
+  
     -- For ease id having access to all variables
- SELECT S_TimeExpense.Processed,
- MAX(S_TimeExpenseLine.C_InvoiceLine_ID), MAX(S_TimeExpenseLine.C_OrderLine_ID)
- INTO v_Processed, v_CInvoicelineId, v_COrderlineId
- FROM S_TimeExpense LEFT JOIN S_TimeExpenseLine ON S_TimeExpense.S_TimeExpense_ID = S_TimeExpenseLine.S_TimeExpense_ID
- WHERE S_TimeExpense.S_TimeExpense_ID = v_Record_ID
- GROUP BY S_TimeExpense.PROCESSED;
- IF (v_Processed = 'Y') THEN
+  SELECT S_TimeExpense.Processed,
+  MAX(S_TimeExpenseLine.C_InvoiceLine_ID), MAX(S_TimeExpenseLine.C_OrderLine_ID)
+  INTO v_Processed, v_CInvoicelineId, v_COrderlineId
+  FROM S_TimeExpense LEFT JOIN S_TimeExpenseLine ON S_TimeExpense.S_TimeExpense_ID = S_TimeExpenseLine.S_TimeExpense_ID
+  WHERE S_TimeExpense.S_TimeExpense_ID = v_Record_ID
+  GROUP BY S_TimeExpense.PROCESSED;
+  IF (v_Processed = 'Y') THEN
     IF (v_CInvoicelineId IS NULL AND v_COrderlineId IS NULL) THEN
         UPDATE S_TimeExpense SET Processed = 'N' WHERE S_TimeExpense_ID = v_Record_ID;
     ELSE
         v_Message:='@DocumentAssociated@';
      v_Result:=0;
     END IF;
- ELSE
+  ELSE
      FOR CUR_te IN
        (SELECT te.S_TimeExpense_ID, te.DateReport, te.C_BPartner_ID, te.Description, SUM(CASE tel.ISTIMEREPORT WHEN 'Y' THEN tel.qty ELSE 0 END) AS totalhours
         FROM S_TimeExpense te, S_TimeExpenseLine tel
@@ -109,7 +122,7 @@ BEGIN --BODY
            UpdatedBy=v_AD_User_ID
          WHERE S_TimeExpense_ID=CUR_te.S_TimeExpense_ID;
      END LOOP;
- END IF;
+  END IF;
   END;
   --<<FINISH_PROCESS>>
   --  Update AD_PInstance

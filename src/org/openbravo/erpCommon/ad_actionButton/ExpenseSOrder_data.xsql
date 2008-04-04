@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,8 @@
         EL.C_PROJECT_ID, EL.C_ACTIVITY_ID, EL.C_CAMPAIGN_ID,
         EL.M_PRODUCT_ID, EL.S_RESOURCEASSIGNMENT_ID, EL.C_UOM_ID,EL.QTY, EL.DESCRIPTION, EL.NOTE, EL.INVOICEPRICE,
         COALESCE(BP.M_PRICELIST_ID, E.M_PRICELIST_ID) AS M_PRICELIST_ID, E.DOCUMENTNO, EL.S_TIMEEXPENSELINE_ID, EL.C_CURRENCY_ID,
-        '' AS DATEORDERED, '' AS DATEPROMISED, '' AS C_BPARTNER_LOCATION_ID
+        '' AS DATEORDERED, '' AS DATEPROMISED, '' AS C_BPARTNER_LOCATION_ID, '' AS PROCESSING,
+        '' AS STDPRECISION, '' AS PRICEPRECISION 
         FROM S_TIMEEXPENSELINE EL left join  S_RESOURCEASSIGNMENT RA on EL.S_RESOURCEASSIGNMENT_ID=RA.S_RESOURCEASSIGNMENT_ID,
         S_TIMEEXPENSE E,  C_BPARTNER BP
         WHERE E.S_TIMEEXPENSE_ID=EL.S_TIMEEXPENSE_ID
@@ -66,12 +67,12 @@
     <Sql>
       <![CDATA[
         INSERT INTO C_ORDER (C_ORDER_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY, DOCUMENTNO,
-        DOCSTATUS, DOCACTION, C_DOCTYPE_ID, C_DOCTYPETARGET_ID,
+        DOCSTATUS, DOCACTION, PROCESSING, C_DOCTYPE_ID, C_DOCTYPETARGET_ID,
         DATEORDERED, DATEPROMISED, DATEACCT, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID, BILLTO_ID, C_CURRENCY_ID, 
         PAYMENTRULE, C_PAYMENTTERM_ID, INVOICERULE, DELIVERYRULE, FREIGHTCOSTRULE, 
         DELIVERYVIARULE, M_WAREHOUSE_ID, M_PRICELIST_ID, 
         C_PROJECT_ID, C_ACTIVITY_ID, C_CAMPAIGN_ID, PRIORITYRULE)
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),now(),TO_NUMBER(?),now(),TO_NUMBER(?),?,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),TO_DATE(?),TO_DATE(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),?,?,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'5')
+        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),now(),TO_NUMBER(?),now(),TO_NUMBER(?),?,?,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),TO_DATE(?),TO_DATE(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),?,?,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'5')
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -82,6 +83,7 @@
     <Parameter name="documentNo"/>
     <Parameter name="docStatus"/>
     <Parameter name="docAction"/>
+    <Parameter name="processing"/>
     <Parameter name="cDoctypeId"/>
     <Parameter name="cDoctypetargetId"/>
     <Parameter name="dateordered"/>
@@ -215,5 +217,38 @@
         CALL C_Order_Post(TO_NUMBER(?))
       ]]></Sql>
       <Parameter name="adPinstanceId"/>
+   </SqlMethod>
+   <SqlMethod name="help" type="preparedStatement" return="string" default="">
+     <SqlMethodComment></SqlMethodComment>
+     <Sql>
+       <![CDATA[
+       SELECT HELP
+       FROM AD_PROCESS
+       WHERE VALUE = TO_CHAR(?)
+      ]]>
+    </Sql>
+    <Parameter name="process"/>
+  </SqlMethod>
+  <SqlMethod name="description" type="preparedStatement" return="string" default="">
+     <SqlMethodComment></SqlMethodComment>
+     <Sql>
+       <![CDATA[
+       SELECT DESCRIPTION
+       FROM AD_PROCESS
+       WHERE VALUE = TO_CHAR(?)
+      ]]>
+    </Sql>
+    <Parameter name="process"/>
+  </SqlMethod>
+  <SqlMethod name="selectPrecisions" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+          SELECT STDPRECISION, PRICEPRECISION 
+          FROM C_CURRENCY 
+          WHERE C_CURRENCY_ID = to_number(?)
+        ]]>
+      </Sql>
+      <Parameter name="cCurrencyId"/>
    </SqlMethod>
 </SqlClass>

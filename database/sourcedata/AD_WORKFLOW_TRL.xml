@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <AD_WORKFLOW_TRL AD_WORKFLOW_ID="101" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2005-06-02 11:36:21.0" CREATEDBY="0" UPDATED="2006-03-30 17:18:31.0" UPDATEDBY="0" NAME="Configuración del Proyecto y Uso" DESCRIPTION="Configuración de proyectos e Informes de Proyectos" ISTRANSLATED="N">
+  <AD_WORKFLOW_TRL AD_WORKFLOW_ID="101" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2005-06-02 11:36:21.0" CREATEDBY="0" UPDATED="2008-03-28 18:30:09.0" UPDATEDBY="100" NAME="Configuración y Uso de Proyectos" DESCRIPTION="Configuración de proyectos e Informes de Proyectos" ISTRANSLATED="N">
     <HELP><![CDATA["Proyectos" permite "monitorizar"(visualizar) el estado y progreso de las oportunidades de venta,proyectos de servicio y proyectos de inversión.Un Proyecto es un proceso "acometido" el cual puede englobar múltiples pasos o fases y requiere recursos de más de un área.]]></HELP>
   </AD_WORKFLOW_TRL>
   <AD_WORKFLOW_TRL AD_WORKFLOW_ID="103" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2005-06-02 11:36:21.0" CREATEDBY="0" UPDATED="2006-03-30 17:18:31.0" UPDATEDBY="0" NAME="Configuración de lenguaje" DESCRIPTION="Configura un nuevo lenguaje del sistema y traduce elementos." HELP="Define un nuevo lenguaje como un sistema de lenguaje" ISTRANSLATED="N" />

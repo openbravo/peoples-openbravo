@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -60,55 +60,76 @@
       v_C_UOM_ID NUMBER;
       v_C_Currency_ID NUMBER;
       v_M_PriceList_ID NUMBER;
-      v_M_PriceList_ID2 NUMBER;
-   v_Billto_ID NUMBER;
-   v_M_PriceList_Version_ID NUMBER;
+      v_Billto_ID NUMBER;
+      v_M_PriceList_Version_ID NUMBER;
+    
+      v_PriceActual NUMBER;
+      v_Discount NUMBER;
+      
     TYPE RECORD IS REF CURSOR;
       Cur_SO RECORD;
       Cur_SOLINES RECORD;
     BEGIN
       v_ResultStr:='StartLoop';
       FOR Cur_SO IN
-        (SELECT P.C_BPARTNER_ID, P.C_BPARTNER_LOCATION_ID, P.M_PRICELIST_ID, P.C_CURRENCY_ID,
-    P.PAYMENTRULE, P.C_PAYMENTTERM_ID, P.M_WAREHOUSE_ID, P.SALESREP_ID,
-    P.BILLTO_ID, P.C_CAMPAIGN_ID, P.C_PROJECT_ID, P.AD_USER_ID, P.DESCRIPTION,
+        (
+        SELECT P.C_BPARTNER_ID, P.C_BPARTNER_LOCATION_ID, P.M_PRICELIST_ID, PL.NAME AS PRICE_LIST_NAME,
+          P.C_CURRENCY_ID, P.PAYMENTRULE, P.C_PAYMENTTERM_ID, P.M_WAREHOUSE_ID, P.SALESREP_ID,
+          P.BILLTO_ID, P.C_CAMPAIGN_ID, P.C_PROJECT_ID, P.AD_USER_ID, P.DESCRIPTION, P.PROJECTSTATUS,
           PP.NAME AS PHASE_NAME, PP.AD_CLIENT_ID, PP.AD_ORG_ID
-        FROM C_PROJECT p,
-          C_PROJECTPHASE PP
+        FROM C_PROJECT P,
+          C_PROJECTPHASE PP,
+          M_PRICELIST PL
         WHERE P.C_PROJECT_ID=PP.C_PROJECT_ID
           AND PP.C_PROJECTPHASE_ID=v_Record_ID
+          AND P.M_PRICELIST_ID = PL.M_PRICELIST_ID
         )
       LOOP
         -- Check that we have some restrictions
-        /*v_ResultStr := 'CheckRestriction';
         IF (Cur_SO.PROJECTSTATUS IS NULL OR Cur_SO.PROJECTSTATUS <> 'OR') THEN
-        v_Message := 'InvalidProjectStatus';
-        v_Result := 0;
-        FINISH_PROCESS;
-        END IF;*/
-  v_Billto_ID := Cur_SO.BILLTO_ID;
-  IF (v_Billto_ID IS NULL) THEN
-    SELECT C_BPartner_Location_ID INTO v_Billto_ID FROM C_BPARTNER_LOCATION WHERE C_BPartner_ID = Cur_SO.C_BPartner_ID;
-  END IF;
-  SELECT Get_Pricelist_Version(Cur_SO.M_PriceList_ID, TRUNC(Now(), 'DD'))
-  INTO v_M_PriceList_Version_ID
-  FROM DUAL;
-
-        v_C_Order_ID:=Ad_Sequence_Nextno('C_Order') ;
+          RAISE_APPLICATION_ERROR(-20000, '@Invalidprojectstatus@'||'. '||' @ChangeToOrder@'||'.');
+        ELSIF Cur_SO.C_BPARTNER_ID IS NULL THEN
+          RAISE_APPLICATION_ERROR(-20000, '@NoprojectBusinesspartner@');
+        ELSIF Cur_SO.C_BPARTNER_LOCATION_ID IS NULL THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @ShiptoNotdefined@'||'.');
+        ELSIF Cur_SO.BILLTO_ID IS NULL THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @BillToNotdefined@'||'.');
+        ELSIF Cur_SO.C_PAYMENTTERM_ID IS NULL THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @PaymenttermNotdefined@'||'.');
+        ELSIF Cur_SO.M_PRICELIST_ID IS NULL THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @PricelistNotdefined@'||'.');
+        ELSIF Cur_SO.C_CURRENCY_ID IS NULL THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ProjectCurrencyNotFound@'||'.');
+        ELSIF Cur_SO.M_WAREHOUSE_ID IS NULL THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ProjectWarehouseNotFound@'||'.');
+        ELSIF Cur_SO.SALESREP_ID IS NULL THEN
+          RAISE_APPLICATION_ERROR(-20000, '@ProjectSalesRepNotFound@'||'.');
+        END IF;
+        
+        -- Get Business Partner Location
+        v_Billto_ID := Cur_SO.BILLTO_ID;
+        IF (v_Billto_ID IS NULL) THEN
+          v_Billto_ID := C_GetBPLocationID(Cur_SO.C_BPartner_ID, 'B') ;
+        END IF;
+      
+        -- Get next C_Order_ID
+        Ad_Sequence_Next('C_Order', Cur_SO.AD_CLIENT_ID, v_C_Order_ID) ;
         v_ResultStr:='C_ORDER_ID - ' || v_C_Order_ID;
+        
         v_C_DOCTYPE_ID:=Ad_Get_Doctype(Cur_SO.AD_Client_ID, Cur_SO.AD_Org_ID, 'SOO', 'SO') ;
         v_ResultStr:='C_DOCTYPE_ID - ' || v_C_DOCTYPE_ID;
         Ad_Sequence_Doctype(v_C_DOCTYPE_ID, Cur_SO.AD_Client_ID, 'Y', v_DocumentNo) ;
         IF(v_DocumentNo IS NULL) THEN
           Ad_Sequence_Doc('DocumentNo_C_Order', Cur_SO.AD_Client_ID, 'Y', v_DocumentNo) ;
         END IF;
-  SELECT InvoiceRule INTO v_InvoiceRule
-  FROM C_BPARTNER
-  WHERE C_BPartner_ID = Cur_SO.C_BPARTNER_ID;
-        /*SELECT M_PriceList_ID
-        INTO v_M_PriceList_ID2
-        FROM M_PRICELIST_VERSION
-        WHERE M_PriceList_Version_ID=v_M_PriceList_Version_ID;*/
+        
+        SELECT InvoiceRule INTO v_InvoiceRule
+        FROM C_BPARTNER
+        WHERE C_BPartner_ID = Cur_SO.C_BPARTNER_ID;
+        IF (v_InvoiceRule IS NULL) THEN
+           RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @InvoiceRuleNotdefined@'||'.');
+        END IF;
+
         v_ResultStr:='DocumentNo - ' || v_DocumentNo || ' m_pricelist_id - ' || Cur_SO.M_PriceList_ID;
         INSERT
         INTO C_ORDER
@@ -135,28 +156,45 @@
             0, 0, Cur_SO.M_WAREHOUSE_ID, Cur_SO.M_PRICELIST_ID,
              'N', 'N', 'N', Cur_SO.SALESREP_ID,
             v_Billto_ID, Cur_SO.C_CAMPAIGN_ID, Cur_SO.C_PROJECT_ID, Cur_SO.AD_User_ID,
-             'N', TRUNC(Now(), 'DD'), Cur_SO.DESCRIPTION || ' - '||Cur_SO.PHASE_NAME
+             'N', TRUNC(Now(), 'DD'), Cur_SO.PHASE_NAME ||' - '|| Cur_SO.DESCRIPTION
           );
         UPDATE C_PROJECTPHASE
         SET C_ORDER_ID = v_C_Order_ID
         WHERE C_PROJECTPHASE_ID = v_Record_ID;
-        FOR Cur_SOLINES IN
-          (SELECT pt.M_PRODUCT_ID,pt.QTY,pt.SEQNO,pt.DESCRIPTION, PRICEACTUAL
-          FROM C_PROJECTTASK pt, C_PROJECTPHASE pp
-          WHERE pt.C_PROJECTPHASE_ID=v_Record_ID
-            AND pt.C_PROJECTPHASE_ID=pp.C_PROJECTPHASE_ID
-            AND pt.M_Product_ID IS NOT NULL
-            --AND pp.M_Product_ID IS NULL
-          UNION
-          SELECT M_PRODUCT_ID,QTY,SEQNO,DESCRIPTION, PRICEACTUAL
-          FROM C_PROJECTPHASE
-          WHERE C_PROJECTPHASE_ID=v_Record_ID
-            AND M_Product_ID IS NOT NULL
-          )
-        LOOP
-          IF(Cur_SOLINES.M_PRODUCT_ID IS NOT NULL AND v_M_PriceList_Version_ID IS NOT NULL) THEN
-            v_ResultStr:='SOLINES1 - SO.M_PRICELIST_VERSION_ID - ' || v_M_PriceList_Version_ID || ' - ' || Cur_SOLINES.M_PRODUCT_ID;
-            SELECT COUNT(p.C_UOM_ID)
+        
+        -- Select the price list version that a applies for the price list of the header
+        SELECT Get_Pricelist_Version(Cur_SO.M_PriceList_ID, TRUNC(Now(), 'DD'))
+        INTO v_M_PriceList_Version_ID
+        FROM DUAL;        
+        IF (v_M_PriceList_Version_ID IS NULL) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@PriceListVersionNotFound@'||'.');
+        ELSE        
+         -- Select products, quantities, sequence numbers, descriptions and unit prices of the project phases and tasks
+            -- In both cases, if no unit price has been defined for a product,
+            -- price is taken from the price list of the project.
+            -- And if no price is defined in the price list, price is set to 0.
+          FOR Cur_SOLINES IN
+            (
+            SELECT 'phase' AS PROV, pp.SEQNO, pp.NAME AS LINE_NAME, pp.DESCRIPTION, pr.NAME AS PRODUCT_NAME, pp.M_PRODUCT_ID, pp.QTY, pp.PRICEACTUAL 
+            FROM C_PROJECTPHASE pp, M_PRODUCT pr
+            WHERE pp.C_PROJECTPHASE_ID = v_Record_ID
+              AND pp.M_PRODUCT_ID = pr.M_PRODUCT_ID
+              AND pp.M_Product_ID IS NOT NULL
+              AND pp.IsActive = 'Y'
+            UNION
+            SELECT 'task' as PROV, pt.SEQNO, pt.NAME AS LINE_NAME, pt.DESCRIPTION, pr.NAME AS PRODUCT_NAME, pt.M_PRODUCT_ID, pt.QTY, pt.PRICEACTUAL 
+            FROM C_PROJECTTASK pt, C_PROJECTPHASE pp, M_PRODUCT pr
+            WHERE pp.C_PROJECTPHASE_ID = v_Record_ID
+              AND pp.C_PROJECTPHASE_ID = pt.C_PROJECTPHASE_ID
+              AND pt.M_PRODUCT_ID = pr.M_PRODUCT_ID
+              AND pt.M_Product_ID IS NOT NULL
+              AND pt.IsActive = 'Y'
+            ORDER BY PROV ASC, SEQNO ASC
+            )
+          LOOP                    
+                        
+            -- Take StdPrice, PriceList and PriceLimit from Price List Version
+            SELECT COUNT(*)
             INTO v_Size
             FROM M_PRODUCT p,M_PRODUCTPRICE pp,M_PRICELIST_VERSION pv,M_PRICELIST pl
             WHERE p.M_Product_ID=pp.M_Product_ID
@@ -164,136 +202,99 @@
               AND pv.M_PriceList_ID=pl.M_PriceList_ID
               AND pv.IsActive='Y'
               AND p.M_Product_ID=Cur_SOLINES.M_PRODUCT_ID
-              AND pv.M_PriceList_Version_ID=v_M_PriceList_Version_ID;
-            IF(v_Size>0) THEN
+              AND pv.M_PriceList_Version_ID=v_M_PriceList_Version_ID
+              AND pl.C_Currency_ID=Cur_SO.C_CURRENCY_ID;
+            IF (v_Size>0) THEN 
               SELECT Bom_Pricestd(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceStd,
                 Bom_Pricelist(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceList,
                 Bom_Pricelimit(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceLimit,
-                p.C_UOM_ID,pl.C_Currency_ID
+                p.C_UOM_ID
               INTO v_PriceStd,v_PriceList,
-                v_PriceLimit,v_C_UOM_ID,v_C_Currency_ID
+                v_PriceLimit,v_C_UOM_ID
               FROM M_PRODUCT p,M_PRODUCTPRICE pp,M_PRICELIST_VERSION pv,M_PRICELIST pl
               WHERE p.M_Product_ID=pp.M_Product_ID
                 AND pp.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
                 AND pv.M_PriceList_ID=pl.M_PriceList_ID
                 AND pv.IsActive='Y'
                 AND p.M_Product_ID=Cur_SOLINES.M_PRODUCT_ID
-                AND pv.M_PriceList_Version_ID=v_M_PriceList_Version_ID;
+                AND pv.M_PriceList_Version_ID=v_M_PriceList_Version_ID
+                AND pl.C_Currency_ID=Cur_SO.C_CURRENCY_ID;
+            ELSE
+              v_PriceStd := NULL;
+              v_PriceList := NULL;
+              v_PriceLimit := NULL;
+              v_C_UOM_ID := NULL;
             END IF;
-          END IF;
-          v_ResultStr:='SOLINES - v_PriceStd - ' || v_PriceStd;
-          IF(Cur_SOLINES.M_PRODUCT_ID IS NOT NULL AND v_PriceStd IS NULL AND v_PriceList IS NULL AND v_PriceLimit IS NULL AND v_C_UOM_ID IS NULL AND v_C_Currency_ID IS NULL) THEN
-            v_ResultStr:='SOLINES2 - v_M_PriceList_ID - ' || v_M_PriceList_ID;
-            IF(Cur_SO.M_PRICELIST_ID IS NULL) THEN
-              SELECT MIN(M_PriceList_ID)
-              INTO v_M_PriceList_ID
-              FROM M_PRICELIST pl,M_PRODUCT p
-              WHERE pl.AD_Client_ID=p.AD_Client_ID
-                AND M_Product_ID=Cur_SOLINES.M_PRODUCT_ID
-              ORDER BY IsDefault DESC;
+            
+            -- Calculate Price Actual                      
+            v_PriceActual := COALESCE(Cur_SOLINES.priceactual,M_Get_Offers_Price(Now(), Cur_SO.C_BPARTNER_ID, Cur_SOLINES.M_PRODUCT_ID, v_PriceStd, Cur_SOLINES.Qty, Cur_SO.M_PRICELIST_ID),0);           
+            
+            IF (v_PriceStd IS NULL) THEN
+             v_PriceStd :=  v_PriceActual ;
             END IF;
-            v_ResultStr:='SOLINES3 - v_M_PriceList_ID - ' || v_M_PriceList_ID || ' - M_PRODUCT_ID - ' || Cur_SOLINES.M_PRODUCT_ID;
-            SELECT COUNT(v_C_Currency_ID)
-            INTO v_Size
-            FROM M_PRODUCT p,M_PRODUCTPRICE pp,M_PRICELIST_VERSION pv,M_PRICELIST pl
-            WHERE p.M_Product_ID=pp.M_Product_ID
-              AND pp.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
-              AND pv.M_PriceList_ID=pl.M_PriceList_ID
-              AND pv.IsActive='Y'
-              AND p.M_Product_ID=Cur_SOLINES.M_PRODUCT_ID
-              AND pv.M_PriceList_ID=COALESCE(Cur_SO.M_PRICELIST_ID, v_M_PriceList_ID, v_M_PriceList_ID2)
-            ORDER BY pv.ValidFrom DESC;
-            IF(v_Size>0) THEN
-              SELECT Bom_Pricestd(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceStd,
-                Bom_Pricelist(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceList,
-                Bom_Pricelimit(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceLimit,
-                p.C_UOM_ID, pl.C_Currency_ID
-              INTO v_PriceStd,v_PriceList,v_PriceLimit,v_C_UOM_ID,v_C_Currency_ID
-              FROM M_PRODUCT p,M_PRODUCTPRICE pp,M_PRICELIST_VERSION pv,M_PRICELIST pl
-              WHERE p.M_Product_ID=pp.M_Product_ID
-                AND pp.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
-                AND pv.M_PriceList_ID=pl.M_PriceList_ID
-                AND pv.IsActive='Y'
-                AND p.M_Product_ID=Cur_SOLINES.M_PRODUCT_ID
-                AND pv.M_PriceList_ID=COALESCE(Cur_SO.M_PRICELIST_ID, v_M_PriceList_ID, v_M_PriceList_ID2)
-              ORDER BY pv.ValidFrom DESC;
+            
+            IF (v_PriceList IS NULL) THEN
+              v_PriceList :=  v_PriceActual ;
             END IF;
-            v_ResultStr:='SOLINES - v_PriceStd - ' || v_PriceStd;
-          END IF;
-          v_ResultStr:='SOLINES - v_M_PriceList_ID - ' || v_M_PriceList_ID || ' - M_PRODUCT_ID - ' || Cur_SOLINES.M_PRODUCT_ID;
-          IF(Cur_SOLINES.M_PRODUCT_ID IS NOT NULL AND v_PriceStd IS NULL AND v_PriceList IS NULL AND v_PriceLimit IS NULL AND v_C_UOM_ID IS NULL AND v_C_Currency_ID IS NULL) THEN
-            DECLARE
-              Cur_CUOMCCurrency RECORD;
-            BEGIN
-              FOR Cur_CUOMCCurrency IN
-                (SELECT Bom_Pricestd(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceStd,
-                  Bom_Pricelist(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceList,
-                  Bom_Pricelimit(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceLimit,
-                  p.C_UOM_ID,pl.C_Currency_ID
-                FROM M_PRODUCT p,M_PRODUCTPRICE pp,M_PRICELIST_VERSION pv,M_PRICELIST bpl,M_PRICELIST pl
-                WHERE p.M_Product_ID=pp.M_Product_ID
-                  AND pp.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
-                  AND pv.M_PriceList_ID=bpl.M_PriceList_ID
-                  AND bpl.M_PriceList_ID=pl.BasePriceList_ID
-                  AND pv.IsActive='Y'
-                  AND pv.ValidFrom<=Now()
-                  AND p.M_Product_ID=Cur_SOLINES.M_PRODUCT_ID
-                  AND pl.M_PriceList_ID=COALESCE(Cur_SO.M_PRICELIST_ID, v_M_PriceList_ID, v_M_PriceList_ID2)
-                ORDER BY pv.ValidFrom DESC
-                )
-              LOOP
-                v_PriceStd:=Cur_CUOMCCurrency.PriceStd;
-                v_PriceList:=Cur_CUOMCCurrency.PriceList;
-                v_PriceLimit:=Cur_CUOMCCurrency.PriceLimit;
-                v_C_UOM_ID:=Cur_CUOMCCurrency.C_UOM_ID;
-                v_C_Currency_ID:=Cur_CUOMCCurrency.C_Currency_ID;
-                EXIT;
-              END LOOP;
-            END;
-          END IF;
-          v_ResultStr:='SOLINES4 - v_M_PriceList_ID - ' || COALESCE(Cur_SO.M_PRICELIST_ID, v_M_PriceList_ID, v_M_PriceList_ID2)  || ' M_Product_ID - ' || Cur_SOLINES.M_PRODUCT_ID;
-          IF (Cur_SOLINES.M_PRODUCT_ID IS NOT NULL) THEN
-            SELECT U.C_UOM_ID
-            INTO v_UOM
-            FROM C_UOM U,M_PRODUCT P
-            WHERE P.C_UOM_ID=U.C_UOM_ID
-              AND M_PRODUCT_ID=Cur_SOLINES.M_PRODUCT_ID;
-          END IF;
-          v_C_OrderLine_ID:=Ad_Sequence_Nextno('C_OrderLine') ;
-          v_ResultStr:='C_OrderLine_ID - ' || v_C_OrderLine_ID;
-          INSERT
-          INTO C_ORDERLINE
-            (
-              DateOrdered, M_Warehouse_ID, QtyOrdered, QtyDelivered,
-              QtyReserved, M_Shipper_ID, QtyInvoiced, SerNo,
-              C_Currency_ID, PriceList, DatePromised, DateDelivered,
-              DateInvoiced, Created, IsActive, Line,
-              C_OrderLine_ID, AD_Client_ID, C_Order_ID, Description,
-              M_Product_ID, C_UOM_ID, DirectShip, CreatedBy,
-              UpdatedBy, FreightAmt, C_Charge_ID, ChargeAmt,
-              Updated, AD_Org_ID, S_ResourceAssignment_ID, C_BPartner_ID,
-              PriceActual,
-              C_Tax_ID, Lot, C_BPartner_Location_ID,
-              Discount, PriceLimit, Ref_OrderLine_ID, LineNetAmt,
-              M_AttributeSetInstance_ID, IsDescription, PriceStd
-            )
-            VALUES
-            (
-              TRUNC(Now(), 'DD'), Cur_SO.M_WAREHOUSE_ID, Cur_SOLINES.Qty, 0,
-              0, NULL, 0, NULL,
-              Cur_SO.C_CURRENCY_ID, v_PriceList, TRUNC(Now(), 'DD'), NULL,
-              NULL, Now(), 'Y', Cur_SOLINES.SEQNO,
-              v_C_OrderLine_ID, Cur_SO.AD_CLIENT_ID, v_C_Order_ID, Cur_SO.DESCRIPTION || ' - '|| Cur_SO.PHASE_NAME || ' - ' || Cur_SOLINES.DESCRIPTION,
-              Cur_SOLINES.M_PRODUCT_ID, v_UOM, 'N', v_AD_User_ID,
-              v_AD_User_ID, 0, NULL, 0,
-              Now(), Cur_SO.AD_ORG_ID, NULL, Cur_SO.C_BPARTNER_ID,
-              COALESCE((CASE Cur_SOLINES.priceactual WHEN 0 THEN NULL ELSE Cur_SOLINES.priceactual END),M_Get_Offers_Price(Now(), Cur_SO.C_BPARTNER_ID, Cur_SOLINES.M_PRODUCT_ID, v_PriceStd, Cur_SOLINES.Qty, Cur_SO.M_PRICELIST_ID)),
-              C_Gettax(Cur_SOLINES.M_PRODUCT_ID, TRUNC(Now(), 'DD'), Cur_SO.AD_ORG_ID, Cur_SO.M_WAREHOUSE_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_PROJECT_ID, 'Y'), NULL, Cur_SO.C_BPARTNER_LOCATION_ID,
-              (v_PriceList-v_PriceStd) *100/v_PriceList, v_PriceLimit, NULL, (M_Get_Offers_Price(Now(), Cur_SO.C_BPARTNER_ID, Cur_SOLINES.M_PRODUCT_ID, v_PriceStd, Cur_SOLINES.Qty, Cur_SO.M_PRICELIST_ID) * Cur_SOLINES.Qty),
-              NULL, 'N', v_PriceStd
-            )
-            ;
-        END LOOP;
+            
+             IF (v_PriceLimit IS NULL) THEN
+              v_PriceLimit :=  v_PriceActual ;
+            END IF;
+            
+            IF (v_PriceList = 0) THEN
+               v_Discount := 0 ;
+            ELSE
+              -- Calculate rounded discount
+              v_Discount :=ROUND((v_PriceList-v_PriceActual) / v_PriceList*100, 2);
+            END IF;
+            
+            IF (v_C_UOM_ID IS NULL) THEN
+              SELECT P.C_UOM_ID
+              INTO v_UOM
+              FROM M_PRODUCT P
+              WHERE P.M_PRODUCT_ID=Cur_SOLINES.M_PRODUCT_ID;
+            ELSE
+              v_UOM := v_C_UOM_ID;
+            END IF;
+            
+            -- Get next C_OrderLine_ID
+            Ad_Sequence_Next('C_OrderLine', Cur_SO.AD_CLIENT_ID, v_C_OrderLine_ID) ;
+            v_ResultStr:='C_OrderLine_ID - ' || v_C_OrderLine_ID;
+            
+            INSERT
+            INTO C_ORDERLINE
+              (
+                DateOrdered, M_Warehouse_ID, QtyOrdered, QtyDelivered,
+                QtyReserved, M_Shipper_ID, QtyInvoiced, SerNo,
+                C_Currency_ID, PriceList, DatePromised, DateDelivered,
+                DateInvoiced, Created, IsActive, Line,
+                C_OrderLine_ID, AD_Client_ID, C_Order_ID, Description,
+                M_Product_ID, C_UOM_ID, DirectShip, CreatedBy,
+                UpdatedBy, FreightAmt, C_Charge_ID, ChargeAmt,
+                Updated, AD_Org_ID, S_ResourceAssignment_ID, C_BPartner_ID,
+                PriceActual,
+                C_Tax_ID, Lot, C_BPartner_Location_ID,
+                Discount, PriceLimit, Ref_OrderLine_ID, LineNetAmt,
+                M_AttributeSetInstance_ID, IsDescription, PriceStd
+              )
+              VALUES
+              (
+                TRUNC(Now(), 'DD'), Cur_SO.M_WAREHOUSE_ID, Cur_SOLINES.Qty, 0,
+                0, NULL, 0, NULL,
+                Cur_SO.C_CURRENCY_ID, v_PriceList, TRUNC(Now(), 'DD'), NULL,
+                NULL, Now(), 'Y', Cur_SOLINES.SEQNO,
+                v_C_OrderLine_ID, Cur_SO.AD_CLIENT_ID, v_C_Order_ID, Cur_SOLINES.LINE_NAME || ' - ' || Cur_SOLINES.DESCRIPTION,
+                Cur_SOLINES.M_PRODUCT_ID, v_UOM, 'N', v_AD_User_ID,
+                v_AD_User_ID, 0, NULL, 0,
+                Now(), Cur_SO.AD_ORG_ID, NULL, Cur_SO.C_BPARTNER_ID,
+                v_PriceActual,
+                C_Gettax(Cur_SOLINES.M_PRODUCT_ID, TRUNC(Now(), 'DD'), Cur_SO.AD_ORG_ID, Cur_SO.M_WAREHOUSE_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_PROJECT_ID, 'Y'), NULL, Cur_SO.C_BPARTNER_LOCATION_ID,
+                v_Discount, v_PriceLimit, NULL, v_PriceActual * Cur_SOLINES.Qty,
+                NULL, 'N', v_PriceStd
+              )
+              ;
+          END LOOP;
+        END IF;
         IF v_Message IS NOT NULL THEN
           v_Message:=v_Message || ', ';
         END IF;

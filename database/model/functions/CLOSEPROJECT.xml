@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -26,6 +26,8 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     v_ProjectStatus CHAR(2) ;
+    v_projectcategory   CHAR (2);
+    v_temppricelist     CHAR (1);
     v_Created NUMBER:=0;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
@@ -64,6 +66,12 @@
     END LOOP; -- Get Parameter
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_p_Record_ID) ;
     -- Check that we have some restrictions
+    
+    SELECT projectcategory, createtemppricelist
+    INTO v_projectcategory, v_temppricelist
+    FROM c_project
+    WHERE c_project_id = v_p_Record_ID;
+
     v_ResultStr:='CheckRestriction';
     IF(v_ProjectStatus IS NULL) THEN
       RAISE_APPLICATION_ERROR(-20000, '@Notprojectstatus@');
@@ -72,37 +80,39 @@
     END IF;
     IF(NOT FINISH_PROCESS) THEN
       v_ResultStr:='StartLoop';
-      UPDATE M_PRICELIST_VERSION
-        SET ISACTIVE='N',
-        updated=sysdate,
-        updatedby=v_AD_User_ID
-      WHERE M_PRICELIST_VERSION_ID IN
-        (  SELECT M_PRICELIST_VERSION_ID FROM C_PROJECT WHERE C_PROJECT_ID=v_p_Record_ID)
-        ;
-      UPDATE M_PRICELIST
-        SET ISACTIVE='N',
-        updated=sysdate,
-        updatedby=v_AD_User_ID
-      WHERE M_PRICELIST_ID IN
-        (  SELECT M_PRICELIST_ID FROM C_PROJECT WHERE C_PROJECT_ID=v_p_Record_ID)
-        ;
-      UPDATE M_PRICELIST_VERSION
-        SET ISACTIVE='N',
-        updated=sysdate,
-        updatedby=v_AD_User_ID
-      WHERE M_PRICELIST_VERSION_ID IN
-        ( SELECT M_PRICELIST_VERSION_ID
-        FROM C_PROJECT_VENDOR
-        WHERE C_PROJECT_ID=v_p_Record_ID
-        )
-        ;
-      UPDATE M_PRICELIST
-        SET ISACTIVE='N',
-        updated=sysdate,
-        updatedby=v_AD_User_ID
-      WHERE M_PRICELIST_ID IN
-        (  SELECT M_PRICELIST_ID FROM C_PROJECT_VENDOR WHERE C_PROJECT_ID=v_p_Record_ID)
-        ;
+      IF (v_projectcategory<>'S' AND v_temppricelist='Y') THEN
+        UPDATE M_PRICELIST_VERSION
+          SET ISACTIVE='N',
+          updated=sysdate,
+          updatedby=v_AD_User_ID
+        WHERE M_PRICELIST_VERSION_ID IN
+          (  SELECT M_PRICELIST_VERSION_ID FROM C_PROJECT WHERE C_PROJECT_ID=v_p_Record_ID)
+          ;
+        UPDATE M_PRICELIST
+          SET ISACTIVE='N',
+          updated=sysdate,
+          updatedby=v_AD_User_ID
+        WHERE M_PRICELIST_ID IN
+          (  SELECT M_PRICELIST_ID FROM C_PROJECT WHERE C_PROJECT_ID=v_p_Record_ID)
+          ;
+        UPDATE M_PRICELIST_VERSION
+          SET ISACTIVE='N',
+          updated=sysdate,
+          updatedby=v_AD_User_ID
+        WHERE M_PRICELIST_VERSION_ID IN
+          ( SELECT M_PRICELIST_VERSION_ID
+          FROM C_PROJECT_VENDOR
+          WHERE C_PROJECT_ID=v_p_Record_ID
+          )
+          ;
+        UPDATE M_PRICELIST
+          SET ISACTIVE='N',
+          updated=sysdate,
+          updatedby=v_AD_User_ID
+        WHERE M_PRICELIST_ID IN
+          (  SELECT M_PRICELIST_ID FROM C_PROJECT_VENDOR WHERE C_PROJECT_ID=v_p_Record_ID)
+          ;
+      END IF;
       UPDATE C_PROJECT
         SET projectstatus=v_ProjectStatus,
         DATEFINISH=SYSDATE,

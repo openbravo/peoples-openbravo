@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,7 @@
 <HTML>
 <HEAD>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <TITLE>Request process</TITLE>
+  <TITLE>Expense Sales Order Process</TITLE>
   <LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS"/>
@@ -62,6 +62,38 @@ var baseDirection = "../../../../../web/";
     return true;
   }
   </SCRIPT>
+  <SCRIPT language="JavaScript" type="text/javascript">
+function enableLocalShortcuts() {
+keyArray[0] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_D', document.frmMain.inpBpartnerId_D.value, 'Command', 'KEY');", "inpBpartnerId_D", "null");
+}
+function depurar() {
+	var frm = document.frmMain;
+	if (frm.inpDateFrom.value!=null && frm.inpDateFrom.value!="" && !isValidDate(frm.inpDateFrom.value, frm.inpDateFrom.displayFormat)) {
+			frm.inpDateFrom.focus();
+			frm.inpDateFrom.select();
+			mensaje(5);
+			return false;
+	} else if (frm.inpDateTo.value!=null && frm.inpDateTo.value!="" && !isValidDate(frm.inpDateTo.value, frm.inpDateTo.displayFormat)) {
+			frm.inpDateTo.focus();
+			frm.inpDateTo.select();
+			mensaje(5);
+			return false;
+	} else if (frm.inpDateordered.value!=null && frm.inpDateordered.value!="" && !isValidDate(frm.inpDateordered.value, frm.inpDateordered.displayFormat)) {
+			frm.inpDateordered.focus();
+			frm.inpDateordered.select();
+			mensaje(5);
+			return false;
+	}
+  	if ((frm.inpDateordered.value == null || frm.inpDateordered.value == "")) {
+    	frm.inpDateordered.focus();
+		frm.inpDateordered.select();
+		mensaje(1);
+		return false;
+	}
+	return true;
+}
+
+</SCRIPT>
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
@@ -203,7 +235,10 @@ var baseDirection = "../../../../../web/";
                                 <td class="MessageBox_RightMargin"></td>
                               </tr>
                               </TBODY>
-                            </table>              <!-- USER CONTROLS -->
+                            </table> 
+                             <!-- End MessageBox -->
+                                        
+              <!-- USER CONTROLS -->
               <TABLE class="Main_Client_TableEdition">
                 <tr>
                   <td class="TableEdition_OneCell_width"></td>
@@ -213,9 +248,29 @@ var baseDirection = "../../../../../web/";
                   <td class="TableEdition_OneCell_width"></td>
                   <td class="TableEdition_OneCell_width"></td>
                 </tr>
-
+                
+                <tr>
+    			  <td colspan="6">
+                    <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
+                      <tr>
+                        <td class="Popup_InfoBar_Icon_cell"><IMG src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
+                        <td class="Popup_InfoBar_text_table">
+                          <table>
+                            <tr>
+                             <td class="Popup_InfoBar_text" id="helpDiscard"><SPAN id="paramDescription">&nbsp;</SPAN></td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="6" height="15px"></td>
+                </tr>
+                
                 <TR>
-                  <TD class="TitleCell"><SPAN class="LabelText">Business Partner</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Customer</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell" colspan="2">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
@@ -288,53 +343,85 @@ var baseDirection = "../../../../../web/";
                     </TABLE>
                   </TD>
                   <TD class="ContentCell"></TD>
+                  <TD class="ContentCell"></TD>
                 </TR>
-                <tr>
-                  <td colspan="6" height="5px"></td>
-                </tr>
-                <tr>
-              <td></td>
-              <td class="Button_RightAlign_ContentCell">
-                <div>
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitThisPage('SAVE');return false;">
-            <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='OK';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                    <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border=0/></td>
-                      <td class="Button_text Button_width">OK</td>
-                      <td class="Button_right"></td>
-                    </tr>
-                  </table>
-                  </a>
-                </div>
-              </td>
-              <td class="Button_LeftAlign_ContentCell">
-                <div>
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="closeThisPage();return false;">
-            <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                    <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border=0/></td>
-                      <td class="Button_text Button_width">Cancel</td>
-                      <td class="Button_right"></td>
-                    </tr>
-                  </table>
-                  </a>
-              </td>
-              <td></td>
-            </tr>
-              </TABLE>
-
- 
-
-
-                      <!-- USER CONTROLS -->
+                
+                <TR>
+                  <TD class="TitleCell"><SPAN class="LabelText">Date Ordered</SPAN></TD>
+              	  <TD class="TextBox_btn_ContentCell">  
+                    <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
+                      <TR>
+                        <TD class="TextBox_ContentCell">
+                          <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true"  type="text" name="inpDateordered" id="paramDateordered" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateordered");</SCRIPT>
+                        </TD>
+                        <TD class="FieldButton_ContentCell">
+                          <a class="FieldButtonLink" href="#"  onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;"  onblur="window.status=''; return true;"  onkeypress="this.className='FieldButtonLink_active'; return true;"  onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateordered', document.frmMain.inpDateordered.value, false);return false;" >
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                          <TR>  
+                           <TD class="FieldButton_bg">
+                             <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+                           </TD>
+                          </TR>
+                          </TABLE>
+                          </a>
+                        </TD>
+                      </TR>
+                    </TABLE>
+                  </TD>
+                  <TD class="TitleCell"></TD>
+                  <TD class="TitleCell"></TD>
+                  <TD class="TextBox_btn_ContentCell"></TD>
+                  <TD class="ContentCell"></TD>
+                </TR>
+                
+                 <tr>
+            <td colspan="6" height="5px"></td>
+          </tr>
+          
+          <tr>
+            <td class="TitleCell"></td>
+            <td class="ContentCell" colspan="2"><SPAN class="LabelText" id="question">&nbsp;</SPAN></td>
+            <td class="ContentCell"></td>
+            <td class="TitleCell"></td>
+            <td class="ContentCell"></td>
+          </tr>
+                
+          <tr>
+            <td colspan="6" height="5px"></td>
+          </tr>
+                
+          <tr>
+            <td class="TitleCell"></td>
+            <td class="Button_RightAlign_ContentCell">
+              <div>
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE', true);return false;">
+                <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Accept';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                  <tr>
+                    <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border=0/></td>
+                    <td class="Button_text Button_width">Process</td>
+                    <td class="Button_right"></td>
+                  </tr>
+                </table>
+                </a>
+              </div>
+            </td>
+            <td class="Button_LeftAlign_ContentCell"></td>
+            <td class="ContentCell"></td>
+            <td class="TitleCell"></td>
+            <td class="ContentCell"></td>
+          </tr>
+                 
+              </TABLE>              
+               <!-- End USER CONTROLS -->
+                     
                 </TD>
               </TR>
               </TABLE>
               </TD>
             </TR>
-          </TABLE>
+          </TABLE>     
+        
         </div>
-
             
 
         <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">

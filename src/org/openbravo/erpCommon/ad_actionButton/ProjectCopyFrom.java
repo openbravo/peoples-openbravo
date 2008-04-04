@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,48 +73,67 @@ public class ProjectCopyFrom extends HttpSecureAppServlet {
   OBError processButton(VariablesSecureApp vars, String strKey, String strProject, String windowId) {
     Connection conn = null;
     OBError myMessage = new OBError();
-    try {
-      conn = this.getTransactionConnection();
-      String projectCategory = ProjectCopyFromData.selectProjectCategory(this, strKey);
-      if (projectCategory.equals("S")){
-        ProjectCopyFromData[] data = ProjectCopyFromData.select(this, strProject);
-	ProjectSetTypeData[] dataProject = ProjectSetTypeData.selectProject(this, strKey);
-        String strProjectPhase = "";
-        String strProjectTask = "";
-        for (int i=0;data!=null && i<data.length;i++){
-          strProjectPhase = SequenceIdData.getSequence(this, "C_ProjectPhase", dataProject[0].adClientId);
-          if (!ProjectCopyFromData.hasPhase(this, strKey, data[i].cPhaseId)) if (ProjectCopyFromData.insertProjectPhase(conn, this, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cPhaseId, strProjectPhase, data[i].help, data[i].name, data[i].qty, data[i].seqno)==1){
-              ProjectCopyFromData[] data1 = ProjectCopyFromData.selectTask(this, data[i].cProjectphaseId);
-              for (int j=0;data1!=null && j<data1.length;j++){
-                  strProjectTask = SequenceIdData.getSequence(this, "C_ProjectTask", dataProject[0].adClientId);
-                  ProjectCopyFromData.insertProjectTask(conn, this,strProjectTask,data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data1[j].seqno, data1[j].name,data1[j].description, data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].qty);
-              }
-          }
-        }
-      }else {
-        String strProjectLine = SequenceIdData.getSequence(this, "C_ProjectLine", vars.getClient());
-        ProjectCopyFromData.insertProjectLine(conn, this, strProjectLine, vars.getClient(), vars.getOrg(), vars.getUser(), strKey, strProject);
-      }
-      String strProjectType = ProjectCopyFromData.selectProjectType(this, strProject);
-      String strProjectCategory = ProjectSetTypeData.selectProjectCategory(this, strProjectType);
-      ProjectSetTypeData.update(conn, this, vars.getUser(), strProjectType, strProjectCategory, strKey);
-
-      releaseCommitConnection(conn);
-      myMessage.setType("Success");
-      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-      myMessage.setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));
-      return myMessage;
-    } catch (Exception e) {
-      try {
-        releaseRollbackConnection(conn);
-      } catch (Exception ignored) {}
-      e.printStackTrace();
-      log4j.warn("Rollback in transaction");
-      myMessage.setType("Error");
-      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-      myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-      return myMessage;
+    if (strProject == null || strProject == ""){
+    	try {
+	        releaseRollbackConnection(conn);
+	      } catch (Exception ignored) {}
+	      log4j.warn("Rollback in transaction");
+	      myMessage.setType("Error");
+	      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+	      myMessage.setMessage(Utility.messageBD(this, "NoProjectSelected", vars.getLanguage()));
+    } else {
+	    try {
+	      conn = this.getTransactionConnection();
+	      String projectCategory = ProjectCopyFromData.selectProjectCategory(this, strKey);
+	      ProjectSetTypeData[] dataProject = ProjectSetTypeData.selectProject(this, strKey);
+	      if (projectCategory.equals("S")){
+	        ProjectCopyFromData[] data = ProjectCopyFromData.select(this, strProject);		    
+	        String strProjectPhase = "";
+	        String strProjectTask = "";
+	        for (int i=0;data!=null && i<data.length;i++){
+	          strProjectPhase = SequenceIdData.getSequence(this, "C_ProjectPhase", dataProject[0].adClientId);
+	          if (!ProjectCopyFromData.hasPhase(this, strKey, data[i].cPhaseId)) if (ProjectCopyFromData.insertProjectPhase(conn, this, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cPhaseId, strProjectPhase, data[i].help, data[i].name, data[i].qty, data[i].seqno)==1){
+	              ProjectCopyFromData[] data1 = ProjectCopyFromData.selectTask(this, data[i].cProjectphaseId);
+	              for (int j=0;data1!=null && j<data1.length;j++){
+	                  strProjectTask = SequenceIdData.getSequence(this, "C_ProjectTask", dataProject[0].adClientId);
+	                  ProjectCopyFromData.insertProjectTask(conn, this,strProjectTask,data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data1[j].seqno, data1[j].name,data1[j].description, data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].qty);
+	              }
+	          }
+	        }
+	      }else {		        
+	    	  ProjectCopyFromData[] dataServ = ProjectCopyFromData.selectServ(this, strProject);
+		      String strProjectLine = "";
+		      for (int i=0;dataServ!=null && i<dataServ.length;i++){	      
+				strProjectLine = SequenceIdData.getSequence(this, "C_ProjectLine", dataProject[0].adClientId);
+				ProjectCopyFromData.insertProjectLine(conn, this, strProjectLine, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), dataServ[i].line, dataServ[i].description, dataServ[i].plannedqty, dataServ[i].mProductId, dataServ[i].mProductCategoryId, dataServ[i].productDescription, dataServ[i].productName, dataServ[i].productValue);
+		      }
+	      }
+	      String strProjectType = ProjectCopyFromData.selectProjectType(this, strProject);
+	      String strProjectCategory = "";
+	      if (strProjectType == null || strProjectType == ""){
+	    	  strProjectCategory = ProjectCopyFromData.selectProjCategory(this, strProject);
+	      }
+	      else {
+	    	  strProjectCategory = ProjectSetTypeData.selectProjectCategory(this, strProjectType);
+	      }
+	      ProjectSetTypeData.update(conn, this, vars.getUser(), strProjectType, strProjectCategory, strKey);
+	
+	      releaseCommitConnection(conn);
+	      myMessage.setType("Success");
+	      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+	      myMessage.setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));
+	    } catch (Exception e) {
+	      try {
+	        releaseRollbackConnection(conn);
+	      } catch (Exception ignored) {}
+	      e.printStackTrace();
+	      log4j.warn("Rollback in transaction");
+	      myMessage.setType("Error");
+	      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+	      myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+	    }
     }
+    return myMessage;
   }
 
 
@@ -144,7 +163,7 @@ public class ProjectCopyFrom extends HttpSecureAppServlet {
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
 
-      xmlDocument.setData("reportcProjectId", "liststructure", ProjectCopyFromData.selectC_Project_ID(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strKey));
+      xmlDocument.setData("reportcProjectId", "liststructure", ProjectCopyFromData.selectC_Project_ID(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strKey, strKey));
       xmlDocument.setParameter("Project", strProject);
 
       response.setContentType("text/html; charset=UTF-8");

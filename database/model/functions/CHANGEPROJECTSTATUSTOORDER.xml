@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -28,12 +28,15 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     v_ProjectStatus CHAR(2) ;
+    v_projectcategory   CHAR (2);
+    v_temppricelist     CHAR (1);
     v_Created NUMBER:=0;
     v_PriceListVersion NUMBER;
     v_PriceList NUMBER;
     v_PriceListVersionPO NUMBER;
     v_PriceListPO NUMBER;
     v_C_Currency_ID NUMBER;
+    v_TotalPhases NUMBER;
     v_TotalLines NUMBER;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
@@ -111,74 +114,29 @@
           ELSIF Cur_SO.SALESREP_ID IS NULL THEN
             RAISE_APPLICATION_ERROR(-20000, '@ProjectSalesRepNotFound@');
           END IF;
-          SELECT COUNT(*)
-          INTO v_TotalLines
-          FROM C_PROJECTLINE
-          WHERE C_PROJECT_ID=v_Record_ID;
-          IF v_TotalLines=0 THEN
-            RAISE_APPLICATION_ERROR(-20000, '@NoProjectLines@');
+          /*Added in order to work with Multiphase Project*/
+          IF Cur_SO.PROJECTCATEGORY<>'S' THEN
+            SELECT COUNT(*)
+            INTO v_TotalLines
+            FROM C_PROJECTLINE
+            WHERE C_PROJECT_ID=v_Record_ID;
+            IF v_TotalLines=0 THEN
+              RAISE_APPLICATION_ERROR(-20000, '@NoProjectLines@');
+            END IF;
+          ELSE
+            SELECT COUNT(*)
+            INTO v_TotalPhases
+            FROM C_PROJECTPHASE
+            WHERE C_PROJECT_ID=v_Record_ID;
+            IF v_TotalPhases=0 THEN
+              RAISE_APPLICATION_ERROR(-20000, '@NoProjectPhases@');
+            END IF;
           END IF;
-          v_PriceList:=Ad_Sequence_Nextno('M_PriceList') ;
-          INSERT
-          INTO m_pricelist
-            (
-              M_PRICELIST_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-              CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-              NAME, DESCRIPTION, ISSOPRICELIST, C_Currency_ID
-            )
-            VALUES
-            (
-              v_PriceList, v_AD_Client_ID, v_AD_Org_ID, 'Y',
-              now(), v_AD_User_ID, now(), v_AD_User_ID,
-              'PR-' || Cur_SO.value || '-V', '* ' || Cur_SO.VALUE || ' - *' || '-V', 'Y', Cur_SO.C_Currency_ID
-            )
-            ;
-          v_PriceListVersion:=Ad_Sequence_Nextno('M_PriceList_Version') ;
-          INSERT
-          INTO M_PRICELIST_VERSION
-            (
-              M_PRICELIST_VERSION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-              CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-              NAME, DESCRIPTION, M_PRICELIST_ID, M_DISCOUNTSCHEMA_ID,
-              VALIDFROM
-            )
-            VALUES
-            (
-              v_PriceListVersion, v_AD_Client_ID, v_AD_Org_ID, 'Y',
-              now(), v_AD_User_ID, now(), v_AD_User_ID,
-              ('PR-' || Cur_SO.VALUE || '-V'), ('PR-' || Cur_SO.VALUE || '-V'), v_PriceList, (SELECT MIN(M_DISCOUNTSCHEMA_ID) AS ID
-              FROM M_DISCOUNTSCHEMA
-              WHERE isactive='Y'
-              )
-              ,
-              TRUNC(now(), 'DD')
-            )
-            ;
-          FOR Cur_Lines IN
-            (SELECT * FROM C_PROJECTLINE WHERE C_PROJECT_ID=v_Record_ID)
-          LOOP
-            INSERT
-            INTO M_PRODUCTPRICE
-              (
-                M_PRICELIST_VERSION_ID, M_PRODUCT_ID, AD_CLIENT_ID, AD_ORG_ID,
-                ISACTIVE, CREATED, CREATEDBY, UPDATED,
-                UPDATEDBY, PRICELIST, PRICESTD, PRICELIMIT
-              )
-              VALUES
-              (
-                v_PriceListVersion, Cur_Lines.M_Product_ID, v_AD_Client_ID, v_AD_Org_ID,
-                 'Y', now(), v_AD_User_ID, now(), v_AD_User_ID,
-                Cur_Lines.PLANNEDPRICE, Cur_Lines.PLANNEDPRICE, Cur_Lines.PLANNEDPRICE
-              )
-              ;
-          END LOOP;
-          SELECT COUNT(*)
-          INTO v_TotalLines
-          FROM C_PROJECTLINE
-          WHERE C_PROJECT_ID=v_Record_ID
-            AND PLANNEDPOPRICE IS NOT NULL;
-          IF v_TotalLines>0 THEN
-            v_PriceListPO:=Ad_Sequence_Nextno('M_PriceList') ;
+          /*In order to create a particular price list for the current project, 
+            project must be a service project and Create Temporary Price List option must be checked*/
+          IF (Cur_SO.PROJECTCATEGORY<>'S' AND Cur_SO.CREATETEMPPRICELIST='Y') THEN
+            
+            Ad_Sequence_Next('M_PriceList', v_AD_Client_ID, v_PriceList) ;
             INSERT
             INTO m_pricelist
               (
@@ -188,25 +146,25 @@
               )
               VALUES
               (
-                v_PriceListPO, v_AD_Client_ID, v_AD_Org_ID, 'Y',
+                v_PriceList, v_AD_Client_ID, v_AD_Org_ID, 'Y',
                 now(), v_AD_User_ID, now(), v_AD_User_ID,
-                'PR-' || Cur_SO.value || '-C', '* ' || Cur_SO.VALUE || ' - *' || '-C', 'N', Cur_SO.C_Currency_ID
+                'PR-' || Cur_SO.value || '-V', '* ' || Cur_SO.VALUE || ' - *' || '-V', 'Y', Cur_SO.C_Currency_ID
               )
               ;
-            v_PriceListVersionPO:=Ad_Sequence_Nextno('M_PriceList_Version') ;
+            Ad_Sequence_Next('M_PriceList_Version', v_AD_Client_ID, v_PriceListVersion) ;
             INSERT
             INTO M_PRICELIST_VERSION
               (
                 M_PRICELIST_VERSION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-                CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME,
-                DESCRIPTION, M_PRICELIST_ID, M_DISCOUNTSCHEMA_ID, VALIDFROM
+                CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+                NAME, DESCRIPTION, M_PRICELIST_ID, M_DISCOUNTSCHEMA_ID,
+                VALIDFROM
               )
               VALUES
               (
-                v_PriceListVersionPO, v_AD_Client_ID, v_AD_Org_ID, 'Y',
+                v_PriceListVersion, v_AD_Client_ID, v_AD_Org_ID, 'Y',
                 now(), v_AD_User_ID, now(), v_AD_User_ID,
-                ('PR-' || Cur_SO.VALUE || '-C'), ('PR-' || Cur_SO.VALUE || '-C'), v_PriceListPO,
-                (SELECT MIN(M_DISCOUNTSCHEMA_ID) AS ID
+                ('PR-' || Cur_SO.VALUE || '-V'), ('PR-' || Cur_SO.VALUE || '-V'), v_PriceList, (SELECT MIN(M_DISCOUNTSCHEMA_ID) AS ID
                 FROM M_DISCOUNTSCHEMA
                 WHERE isactive='Y'
                 )
@@ -214,35 +172,96 @@
                 TRUNC(now(), 'DD')
               )
               ;
-            FOR Cur_LinesPO IN
-              (SELECT *
-              FROM C_PROJECTLINE
-              WHERE C_PROJECT_ID=v_Record_ID
-                AND PLANNEDPOPRICE IS NOT NULL
-              )
+            FOR Cur_Lines IN
+              (SELECT * FROM C_PROJECTLINE WHERE C_PROJECT_ID=v_Record_ID)
             LOOP
               INSERT
               INTO M_PRODUCTPRICE
                 (
-                  M_PRICELIST_VERSION_ID, M_PRODUCT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-                  CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-                  PRICELIST, PRICESTD, PRICELIMIT
+                  M_PRICELIST_VERSION_ID, M_PRODUCT_ID, AD_CLIENT_ID, AD_ORG_ID,
+                  ISACTIVE, CREATED, CREATEDBY, UPDATED,
+                  UPDATEDBY, PRICELIST, PRICESTD, PRICELIMIT
                 )
                 VALUES
                 (
-                  v_PriceListVersionPO, Cur_LinesPO.M_Product_ID, v_AD_Client_ID, v_AD_Org_ID,
-                   'Y', now(), v_AD_User_ID, now(),
-                  v_AD_User_ID, Cur_LinesPO.PLANNEDPOPRICE, Cur_LinesPO.PLANNEDPOPRICE, Cur_LinesPO.PLANNEDPOPRICE
+                  v_PriceListVersion, Cur_Lines.M_Product_ID, v_AD_Client_ID, v_AD_Org_ID,
+                   'Y', now(), v_AD_User_ID, now(), v_AD_User_ID,
+                  Cur_Lines.PLANNEDPRICE, Cur_Lines.PLANNEDPRICE, Cur_Lines.PLANNEDPRICE
                 )
                 ;
             END LOOP;
-          ELSE
-            SELECT MIN(M_PRICELIST_ID)
-            INTO v_PriceListPO
-            FROM M_PRICELIST
-            WHERE ISSOPRICELIST='N'
-              AND ISACTIVE='Y'
-              AND AD_CLIENT_ID=v_AD_Client_ID;
+            SELECT COUNT(*)
+            INTO v_TotalLines
+            FROM C_PROJECTLINE
+            WHERE C_PROJECT_ID=v_Record_ID
+              AND PLANNEDPOPRICE IS NOT NULL;
+            IF v_TotalLines>0 THEN
+              Ad_Sequence_Next('M_PriceList', v_AD_Client_ID, v_PriceListPO) ;
+              INSERT
+              INTO m_pricelist
+                (
+                  M_PRICELIST_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+                  CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+                  NAME, DESCRIPTION, ISSOPRICELIST, C_Currency_ID
+                )
+                VALUES
+                (
+                  v_PriceListPO, v_AD_Client_ID, v_AD_Org_ID, 'Y',
+                  now(), v_AD_User_ID, now(), v_AD_User_ID,
+                  'PR-' || Cur_SO.value || '-C', '* ' || Cur_SO.VALUE || ' - *' || '-C', 'N', Cur_SO.C_Currency_ID
+                )
+                ;
+              Ad_Sequence_Next('M_PriceList_Version', v_AD_Client_ID, v_PriceListVersionPO) ;
+              INSERT
+              INTO M_PRICELIST_VERSION
+                (
+                  M_PRICELIST_VERSION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+                  CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME,
+                  DESCRIPTION, M_PRICELIST_ID, M_DISCOUNTSCHEMA_ID, VALIDFROM
+                )
+                VALUES
+                (
+                  v_PriceListVersionPO, v_AD_Client_ID, v_AD_Org_ID, 'Y',
+                  now(), v_AD_User_ID, now(), v_AD_User_ID,
+                  ('PR-' || Cur_SO.VALUE || '-C'), ('PR-' || Cur_SO.VALUE || '-C'), v_PriceListPO,
+                  (SELECT MIN(M_DISCOUNTSCHEMA_ID) AS ID
+                  FROM M_DISCOUNTSCHEMA
+                  WHERE isactive='Y'
+                  )
+                  ,
+                  TRUNC(now(), 'DD')
+                )
+                ;
+              FOR Cur_LinesPO IN
+                (SELECT *
+                FROM C_PROJECTLINE
+                WHERE C_PROJECT_ID=v_Record_ID
+                  AND PLANNEDPOPRICE IS NOT NULL
+                )
+              LOOP
+                INSERT
+                INTO M_PRODUCTPRICE
+                  (
+                    M_PRICELIST_VERSION_ID, M_PRODUCT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+                    CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+                    PRICELIST, PRICESTD, PRICELIMIT
+                  )
+                  VALUES
+                  (
+                    v_PriceListVersionPO, Cur_LinesPO.M_Product_ID, v_AD_Client_ID, v_AD_Org_ID,
+                     'Y', now(), v_AD_User_ID, now(),
+                    v_AD_User_ID, Cur_LinesPO.PLANNEDPOPRICE, Cur_LinesPO.PLANNEDPOPRICE, Cur_LinesPO.PLANNEDPOPRICE
+                  )
+                  ;
+              END LOOP;
+            ELSE
+              SELECT MIN(M_PRICELIST_ID)
+              INTO v_PriceListPO
+              FROM M_PRICELIST
+              WHERE ISSOPRICELIST='N'
+                AND ISACTIVE='Y'
+                AND AD_CLIENT_ID=v_AD_Client_ID;
+            END IF;
           END IF;
         END LOOP;
         IF v_PriceListPO IS NOT NULL THEN
@@ -250,10 +269,24 @@
             SET m_pricelist_id=v_PriceListPO
           WHERE c_project_id=v_Record_ID;
         END IF;
-        UPDATE C_PROJECT
-          SET projectstatus=v_ProjectStatus,
-          m_pricelist_id=v_PriceList
-        WHERE c_project_id=v_Record_ID;
+        
+        /*In order to update the price list of the current project, 
+          project must be a service project and Create Temporary Price List option must be checked*/
+        SELECT projectcategory, createtemppricelist
+        INTO v_projectcategory, v_temppricelist
+        FROM c_project
+        WHERE c_project_id = v_Record_ID;
+        
+        IF (v_projectcategory<>'S' AND v_temppricelist='Y') THEN
+          UPDATE C_PROJECT
+            SET projectstatus=v_ProjectStatus,
+            m_pricelist_id=v_PriceList
+          WHERE c_project_id=v_Record_ID;
+        ELSE
+          UPDATE C_PROJECT
+            SET projectstatus=v_ProjectStatus
+          WHERE c_project_id=v_Record_ID;
+        END IF;
       END;
     END IF; --FINISH_PROCESS
     --<<FINISH_PROCESS>>
