@@ -210,12 +210,6 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    try {
-      KeyMap key = new KeyMap(this, vars, tabId, windowId);
-      xmlDocument.setParameter("keyMap", key.getEditionKeyMaps((strCommand.equals("NEW") || (data==null || data.length==0))));
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
     
     {
       OBError myMessage = vars.getMessage(tabId);
