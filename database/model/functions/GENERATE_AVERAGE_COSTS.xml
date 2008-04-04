@@ -75,7 +75,8 @@
     FROM M_COSTING
     WHERE ISPERMANENT='N'
       AND ISMANUAL='N'
-      AND COSTTYPE='AV';
+      AND COSTTYPE='AV'
+      AND ISPRODUCTION = 'N';
     v_rowcount:=SQL%ROWCOUNT;
     v_Deleted:=v_Deleted + v_rowcount;
     v_rowcount:=SQL%ROWCOUNT;
@@ -91,12 +92,13 @@
         AND M_INOUT.ISSOTRX='N'
         AND M_INOUT.PROCESSED='Y'
         AND M_INOUTLINE.MOVEMENTQTY>0
+        AND M_INOUT.DOCSTATUS <> 'DR' AND M_INOUT.DOCSTATUS <> 'RE'
         AND NOT EXISTS
         (SELECT 1 FROM M_COSTING WHERE M_INOUTLINE_ID=M_INOUTLINE.M_INOUTLINE_ID)
       ORDER BY M_PRODUCT.M_PRODUCT_ID, M_INOUT.MOVEMENTDATE, M_INOUTLINE.MOVEMENTQTY DESC
       )
     LOOP
-   v_ResultStr:='new albaran:   '||Cur_InOutLine.M_INOUTLINE_ID;
+      v_ResultStr:='new albaran:   '||Cur_InOutLine.M_INOUTLINE_ID;
       IF(Cur_InOutLine.MOVEMENTDATE<>v_DateOld OR Cur_InOutLine.M_PRODUCT_ID<>v_ProductOld) THEN
         v_CumQty:=0;
       END IF;
@@ -106,18 +108,23 @@
       WHERE M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID;
       IF(v_Count>0) THEN
         FOR Cur_ProdCost IN
-          (SELECT COST, DATETO
+          (SELECT COST, DATETO, M_COSTING_ID
           FROM M_COSTING
           WHERE M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID
+            AND DATEFROM <= Cur_InOutLine.MOVEMENTDATE
           ORDER BY DATETO DESC, M_COSTING_ID
           )
         LOOP
           v_Cost:=Cur_ProdCost.COST;
+          v_Date:=Cur_ProdCost.DATETO;
+          UPDATE M_COSTING
+          SET DATETO = Cur_InOutLine.MOVEMENTDATE
+          WHERE M_COSTING_ID = Cur_ProdCost.M_COSTING_ID;
           EXIT;
         END LOOP;
       ELSE
-
         v_Cost:=NULL;
+        v_Date := TO_DATE('31-12-9999', 'DD-MM-YYYY');
       END IF;
       IF(v_Cost IS NOT NULL) THEN
         SELECT COALESCE(SUM(MOVEMENTQTY), 0)
@@ -128,9 +135,9 @@
       ELSE
         v_Qty:=0;
       END IF;
-   v_ResultStr:='invoice albaran:   '||Cur_InOutLine.M_INOUTLINE_ID;
+      v_ResultStr:='invoice albaran:   '||Cur_InOutLine.M_INOUTLINE_ID;
       SELECT CASE WHEN SUM(QTYINVOICED) <=0 THEN 0 ELSE SUM(C_INVOICELINE.QTYINVOICED*C_INVOICELINE.PRICEACTUAL) /SUM(QTYINVOICED) END,
-        CASE WHEN SUM(QTYINVOICED) <=0 THEN 0 ELSE COUNT(C_INVOICELINE.C_INVOICELINE_ID) END
+             CASE WHEN SUM(QTYINVOICED) <=0 THEN 0 ELSE COUNT(C_INVOICELINE.C_INVOICELINE_ID) END
       INTO v_Price, v_Count
       FROM M_MATCHINV, C_INVOICELINE
       WHERE M_MATCHINV.C_INVOICELINE_ID=C_INVOICELINE.C_INVOICELINE_ID
@@ -138,8 +145,8 @@
         AND QTYINVOICED<>0;
       IF(v_Count=0) THEN
         v_ResultStr:='order albaran:   '||Cur_InOutLine.M_INOUTLINE_ID;
-  SELECT CASE WHEN SUM(C_ORDERLINE.QTYORDERED) <=0 THEN 0 ELSE SUM(C_ORDERLINE.QTYORDERED*C_ORDERLINE.PRICEACTUAL) /SUM(C_ORDERLINE.QTYORDERED) END,
-          CASE WHEN SUM(C_ORDERLINE.QTYORDERED) <=0 THEN 0 ELSE COUNT(C_ORDERLINE.C_ORDERLINE_ID) END
+        SELECT CASE WHEN SUM(C_ORDERLINE.QTYORDERED) <=0 THEN 0 ELSE SUM(C_ORDERLINE.QTYORDERED*C_ORDERLINE.PRICEACTUAL) /SUM(C_ORDERLINE.QTYORDERED) END,
+               CASE WHEN SUM(C_ORDERLINE.QTYORDERED) <=0 THEN 0 ELSE COUNT(C_ORDERLINE.C_ORDERLINE_ID) END
         INTO v_Price, v_Count
         FROM M_MATCHPO, C_ORDERLINE
         WHERE M_MATCHPO.C_ORDERLINE_ID=C_ORDERLINE.C_ORDERLINE_ID
@@ -168,13 +175,7 @@
           EXIT;
         END LOOP;
       END IF;
-   v_ResultStr:='update costing:   '||Cur_InOutLine.M_INOUTLINE_ID;
-      UPDATE M_COSTING
-        SET DATETO=Cur_InOutLine.MOVEMENTDATE
-      WHERE DATETO=TO_DATE('31-12-9999', 'DD-MM-YYYY')
-        AND M_PRODUCT_ID=Cur_InOutLine.M_PRODUCT_ID;
-      --AND COSTTYPE = 'AV';
-   v_ResultStr:='insert costing:   '||Cur_InOutLine.M_INOUTLINE_ID;
+      v_ResultStr:='insert costing:   '||Cur_InOutLine.M_INOUTLINE_ID;
       INSERT
       INTO M_COSTING
         (
@@ -188,7 +189,7 @@
         (
           Ad_Sequence_Nextno('M_Costing'), now(), v_User, now(),
           v_User, Cur_InOutLine.AD_CLIENT_ID, Cur_InOutLine.AD_ORG_ID, Cur_InOutLine.M_PRODUCT_ID,
-          TO_DATE('31-12-9999', 'DD-MM-YYYY'), Cur_InOutLine.MOVEMENTDATE, 'N', Cur_InOutLine.M_INOUTLINE_ID,
+          v_Date, Cur_InOutLine.MOVEMENTDATE, 'N', Cur_InOutLine.M_INOUTLINE_ID,
           NULL, Cur_InOutLine.MOVEMENTQTY, v_Price, COALESCE(v_Qty, 0) + Cur_InOutLine.MOVEMENTQTY + v_CumQty,(
           CASE
             WHEN v_Qty+v_CumQty<0 THEN v_Price
@@ -205,20 +206,18 @@
     END LOOP;
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance
-    DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-    AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User, 'N', 1, v_Message) ;
+    DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message);
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, v_User, 'N', 1, v_Message);
     RETURN;
   END; --BODY
 EXCEPTION
 WHEN OTHERS THEN
   ROLLBACK;
+  DBMS_OUTPUT.PUT_LINE(v_ResultStr);
   v_ResultStr:= '@ERROR=' || SQLERRM;
-  DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
-  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  DBMS_OUTPUT.PUT_LINE(v_ResultStr);
+  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr);
   RETURN;
-END Generate_Average_Costs
-
-
-]]></body>
+END Generate_Average_Costs]]></body>
     </function>
   </database>
