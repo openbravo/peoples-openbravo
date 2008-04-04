@@ -50,7 +50,7 @@
 				i_order_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, i_isimported,
 				issotrx, processing, processed, order_Referenceno, dateordered, datepromised, upc,
 				linedescription, qtyordered, bpartnerupc, doctypename, billto_upc, description, c_bpartner_location_upc, vendor_upc)
-				VALUES(TO_NUMBER(?) TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), ?, ?, ?, ?, ?, to_date(?, 'yyyymmdd'), to_date(?, 'yyyymmdd'), ?, ?, TO_NUMBER(?), ?, ?, ?, ?, ?, ?)
+				VALUES(TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), ?, ?, ?, ?, ?, to_date(?, 'yyyymmdd'), to_date(?, 'yyyymmdd'), ?, ?, TO_NUMBER(?), ?, ?, ?, ?, ?, ?)
 		]]>
 		</Sql>
 		<Parameter name="iOrderId"/>
