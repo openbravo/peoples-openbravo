@@ -208,14 +208,6 @@ public class FileImport extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString());
     if (log4j.isDebugEnabled()) log4j.debug("2");
 
-  	try {
-      KeyMap key = new KeyMap(this, vars, "FileImport.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      ex.printStackTrace();
-      throw new ServletException(ex);
-    }
-
     try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.FileImport");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
