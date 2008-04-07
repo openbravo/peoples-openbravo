@@ -3,6 +3,7 @@
     <function name="M_PRODUCT_CATEGORY_ACCT_COPY" type="NULL">
       <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="Product_Category_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="C_Acctschema_ID" type="NUMERIC" mode="in" default="NULL"/>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -35,6 +36,7 @@
     Cur_Parameter RECORD;
     --
     v_M_Product_Category_ID NUMBER;
+    v_C_Acctschema_ID NUMBER;
     -- Product Category is unique to Client
     Cur_Acct RECORD;
     --
@@ -68,6 +70,9 @@
       IF(Cur_Parameter.ParameterName='M_Product_Category_ID') THEN
         v_M_Product_Category_ID:=Cur_Parameter.P_Number;
         DBMS_OUTPUT.PUT_LINE('  M_Product_Category_ID=' || v_M_Product_Category_ID) ;
+      ELSIF(Cur_Parameter.ParameterName='C_Acctschema_ID') THEN
+        v_C_Acctschema_ID:=Cur_Parameter.P_Number;
+        DBMS_OUTPUT.PUT_LINE('  C_Acctschema_ID=' || v_C_Acctschema_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
       END IF;
@@ -77,6 +82,9 @@
     IF(Product_Category_ID IS NOT NULL) THEN
       v_M_Product_Category_ID:=Product_Category_ID;
       DBMS_OUTPUT.PUT_LINE('  M_Product_Category_ID=' || v_M_Product_Category_ID) ;
+    ELSIF(C_Acctschema_ID IS NOT NULL) THEN
+      v_C_Acctschema_ID:=C_Acctschema_ID;
+      DBMS_OUTPUT.PUT_LINE('  C_Acctschema_ID=' || v_C_Acctschema_ID) ;
     END IF;
     /**
     * For all Accounting Schema of the Category
@@ -85,6 +93,7 @@
       (SELECT *
       FROM M_Product_Category_Acct
       WHERE M_Product_Category_ID=v_M_Product_Category_ID
+	  AND (M_Product_Category_Acct.C_ACCTSCHEMA_ID = v_C_Acctschema_ID OR v_C_Acctschema_ID IS NULL)
       )
     LOOP
       -- Update existing Products
