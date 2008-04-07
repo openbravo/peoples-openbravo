@@ -909,10 +909,12 @@ public abstract class AcctServer  {
         //if (log4j.isDebugEnabled()) log4j.debug(" ***************************** AD_Client_ID - " + AD_Client_ID + " -- DateAcct - " + DateAcct + " -- DocumentType - " + DocumentType);
         setC_Period_ID();
         boolean open = (!C_Period_ID.equals(""));
-        if (open)
-            if (log4j.isDebugEnabled()) log4j.debug("AcctServer - isPeriodOpen - " + DocumentNo);
-        else
+        if (open) {
+            if (log4j.isDebugEnabled()) 
+            	log4j.debug("AcctServer - isPeriodOpen - " + DocumentNo);
+        } else {
             log4j.warn("AcctServer - isPeriodOpen NO - " + DocumentNo);
+        }
         return open;
     }   //  isPeriodOpen
 
