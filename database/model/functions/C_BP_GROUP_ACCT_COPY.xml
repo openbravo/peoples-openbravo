@@ -3,6 +3,7 @@
     <function name="C_BP_GROUP_ACCT_COPY" type="NULL">
       <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
       <parameter name="p_BP_Group_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_C_Acctschema_ID" type="NUMERIC" mode="in" default="NULL"/>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -40,6 +41,7 @@
     Cur_Parameter RECORD;
     --
     v_C_BP_Group_ID NUMBER;
+    v_C_AcctSchema_ID NUMBER;
     -- A Group can only have one client
     Cur_Acct RECORD;
     Cur_BPartner RECORD;
@@ -72,6 +74,9 @@
       IF(Cur_Parameter.ParameterName='C_BP_Group_ID') THEN
         v_C_BP_Group_ID:=Cur_Parameter.P_Number;
         DBMS_OUTPUT.PUT_LINE('  C_BP_Group_ID=' || v_C_BP_Group_ID) ;
+      ELSIF(Cur_Parameter.ParameterName='C_AcctSchema_ID') THEN
+        v_C_AcctSchema_ID:=Cur_Parameter.P_Number;
+        DBMS_OUTPUT.PUT_LINE('  C_AcctSchema_ID=' || v_C_AcctSchema_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
       END IF;
@@ -81,13 +86,17 @@
     IF(p_BP_Group_ID IS NOT NULL) THEN
       v_C_BP_Group_ID:=p_BP_Group_ID;
       DBMS_OUTPUT.PUT_LINE('  C_BP_Group_ID=' || v_C_BP_Group_ID) ;
+    ELSIF(p_C_AcctSchema_ID IS NOT NULL) THEN
+      v_C_AcctSchema_ID:=p_C_AcctSchema_ID;
+      DBMS_OUTPUT.PUT_LINE('  C_AcctSchema_ID=' || v_C_AcctSchema_ID) ;
     END IF;
 
    DELETE FROM C_BP_Customer_Acct
     WHERE EXISTS (SELECT 1
                     FROM C_BPartner P
                    WHERE P.C_BPartner_ID = C_BP_Customer_Acct.C_BPartner_ID
-                     AND P.C_BP_Group_ID = v_C_BP_Group_ID);
+                     AND P.C_BP_Group_ID = v_C_BP_Group_ID)
+	AND (C_BP_Customer_Acct.C_AcctSchema_ID = v_C_AcctSchema_ID OR v_C_AcctSchema_ID IS NULL);
    rowcount:=SQL%ROWCOUNT;
    v_Deleted := rowcount;
 
@@ -95,7 +104,8 @@
     WHERE EXISTS (SELECT 1
                     FROM C_BPartner P
                    WHERE P.C_BPartner_ID = C_BP_Vendor_Acct.C_BPartner_ID
-                     AND P.C_BP_Group_ID = v_C_BP_Group_ID);
+                     AND P.C_BP_Group_ID = v_C_BP_Group_ID)
+	AND (C_BP_Vendor_Acct.C_AcctSchema_ID = v_C_AcctSchema_ID OR v_C_AcctSchema_ID IS NULL);
    rowcount:=SQL%ROWCOUNT;
    v_Deleted := v_Deleted + rowcount;
 
@@ -105,7 +115,8 @@
                          C_BP_GROUP_ACCT A
                    WHERE A.C_BP_GROUP_ID = P.C_BP_GROUP_ID
                      AND P.ISCUSTOMER = 'Y'
-                     AND P.C_BP_Group_ID = v_C_BP_Group_ID) LOOP
+                     AND P.C_BP_Group_ID = v_C_BP_Group_ID
+					 AND (A.C_AcctSchema_ID = v_C_AcctSchema_ID OR v_C_AcctSchema_ID IS NULL)) LOOP
      Ad_Sequence_Next('C_BP_Customer_Acct', Cur_BP.AD_Client_ID, v_C_BP_Customer_ID);
      INSERT INTO C_BP_Customer_Acct
            (C_BP_Customer_Acct_Id, C_BPartner_ID, C_AcctSchema_ID, AD_Client_ID,
@@ -129,7 +140,8 @@
                          C_BP_GROUP_ACCT A
                    WHERE A.C_BP_GROUP_ID = P.C_BP_GROUP_ID
                      AND P.ISVENDOR = 'Y'
-                     AND P.C_BP_Group_ID = v_C_BP_Group_ID) LOOP
+                     AND P.C_BP_Group_ID = v_C_BP_Group_ID
+					 AND (A.C_AcctSchema_ID = v_C_AcctSchema_ID OR v_C_AcctSchema_ID IS NULL)) LOOP
      Ad_Sequence_Next('C_BP_Vendor_Acct', Cur_BP.AD_Client_ID, v_C_BP_Vendor_ID);
      INSERT INTO C_BP_Vendor_Acct
            (C_BP_Vendor_Acct_Id, C_BPartner_ID, C_AcctSchema_ID, AD_Client_ID,
