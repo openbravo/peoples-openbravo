@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+
+
+
+<SqlClass name="ReportParetoProductData" package="org.openbravo.erpCommon.ad_reports">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+     SELECT ORGID, SEARCHKEY, NAME, ATTRIBUTE, COST, PORCENTAJE
+     ,GET_PARETO_ABC(M_WAREHOUSE_ID, AD_ORG_ID, PORCENTAJE) AS ISABC 
+     FROM
+     (
+     SELECT 
+      AD_ORG.NAME AS ORGID,
+      PR.VALUE AS SEARCHKEY,
+      PR.NAME,
+      MAT.DESCRIPTION AS ATTRIBUTE,
+      GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV') AS COST,
+      100*(GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV')/ (SELECT SUM(GET_PRODUCT_COST(PR1.M_PRODUCT_ID,to_date(now()),'AV')) 
+                                                           from M_WAREHOUSE MW1  
+                                                           LEFT JOIN M_LOCATOR ML1 ON ML1.M_WAREHOUSE_ID=MW1.M_WAREHOUSE_ID
+                                                           LEFT JOIN M_STORAGE_DETAIL MSD1 ON ML1.M_LOCATOR_ID=MSD1.M_LOCATOR_ID
+                                                           LEFT JOIN M_ATTRIBUTESETINSTANCE MAT1 ON MAT1.M_ATTRIBUTESETINSTANCE_ID=MSD1.M_ATTRIBUTESETINSTANCE_ID
+                                                           LEFT JOIN M_PRODUCT PR1 ON MSD1.M_PRODUCT_ID=PR1.M_PRODUCT_ID   
+                                                           WHERE MSD1.QTYONHAND>0
+                                                           AND 1=1
+                                                           AND 2=2 
+                                                           ) ) as PORCENTAJE,
+      ML.X,
+      ML.Y,
+      ML.Z,
+      MW.M_WAREHOUSE_ID,
+      MSD.AD_ORG_ID
+     FROM
+     M_WAREHOUSE MW 
+       LEFT JOIN M_LOCATOR ML ON ML.M_WAREHOUSE_ID=MW.M_WAREHOUSE_ID
+       LEFT JOIN M_STORAGE_DETAIL MSD ON ML.M_LOCATOR_ID=MSD.M_LOCATOR_ID
+       LEFT JOIN M_ATTRIBUTESETINSTANCE MAT ON MAT.M_ATTRIBUTESETINSTANCE_ID=MSD.M_ATTRIBUTESETINSTANCE_ID
+       LEFT JOIN M_PRODUCT PR ON MSD.M_PRODUCT_ID=PR.M_PRODUCT_ID, AD_ORG   
+     WHERE 3=3
+       AND 4=4
+       AND MSD.QTYONHAND>0
+       AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV') IS NOT NULL
+       AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV') <> 0
+       AND MSD.AD_ORG_ID = AD_ORG.AD_ORG_ID
+     ORDER BY PORCENTAJE DESC) BBB
+    ]]></Sql>
+    <Field name="rownum" value="count"/>
+    <Parameter name="mWarehouseId" optional="true" after="1=1" text=" AND MW1.M_WAREHOUSE_ID = TO_NUMBER(?) "/>
+    <Parameter name="adOrgId" optional="true" after="2=2" text=" AND MSD1.AD_ORG_ID = TO_NUMBER(?) "/>    
+    <Parameter name="mWarehouseId" optional="true" after="3=3" text=" AND MW.M_WAREHOUSE_ID = TO_NUMBER(?) "/>    
+    <Parameter name="adOrgId" optional="true" after="4=4" text=" AND MSD.AD_ORG_ID = TO_NUMBER(?) "/>
+  </SqlMethod>
+
+  <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql></Sql>
+  </SqlMethod>
+  
+
+   
+  <SqlMethod name="mUpdateParetoProduct0" type="callableStatement" return="object" object="ReportParetoProductData">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        CALL M_UPDATE_PARETO_PRODUCT0(TO_NUMBER(?))
+      ]]></Sql>
+      <Parameter name="adPinstanceId"/>    
+   </SqlMethod> 
+    
+  <!-- SqlMethod name="updateOrgSpecific" type="callableStatement" return="object" object="ReportParetoProductData">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        CALL M_UPDATE_PARETO_PRODUCT(TO_NUMBER(?), TO_NUMBER(?))
+      ]]></Sql>
+      <Parameter name="mWarehouseId"/>    
+      <Parameter name="adOrgId"/>
+   </SqlMethod -->        
+</SqlClass>
