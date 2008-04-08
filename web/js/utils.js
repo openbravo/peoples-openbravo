@@ -2953,14 +2953,40 @@ function closeHandler(cal) {
 */
 function getDateFormat(str_format) {
   var format = "";
-  if (str_format!=null && str_format!="" && (str_format.substring(0,1) == "M" || str_format.substring(0,1) == "m")) {
-    format = "%m-%d-%Y";
-  } else if (str_format!=null && str_format!="" && (str_format.substring(0,1) == "D" || str_format.substring(0,1) == "d")) {
-    format = "%d-%m-%Y";
+  str_format = str_format.replace("mm","MM").replace("dd","DD").replace("yyyy","YYYY");
+  str_format = str_format.replace("%D","%d").replace("%M","%m").replace("%y","%Y");
+  if (str_format!=null && str_format!="" && str_format!="null") {
+         if (str_format.indexOf('DD-MM-YYYY')!=-1)  format = "%d-%m-%Y";
+    else if (str_format.indexOf('MM-DD-YYYY')!=-1)  format = "%m-%d-%Y";
+    else if (str_format.indexOf('YYYY-MM-DD')!=-1)  format = "%Y-%m-%d";
+    else if (str_format.indexOf('DD/MM/YYYY')!=-1)  format = "%d/%m/%Y";
+    else if (str_format.indexOf('MM/DD/YYYY')!=-1)  format = "%m/%d/%Y";
+    else if (str_format.indexOf('YYYY/MM/DD')!=-1)  format = "%Y/%m/%d";
+    else if (str_format.indexOf('DD.MM.YYYY')!=-1)  format = "%d.%m.%Y";
+    else if (str_format.indexOf('MM.DD.YYYY')!=-1)  format = "%m.%d.%Y";
+    else if (str_format.indexOf('YYYY.MM.DD')!=-1)  format = "%Y.%m.%d";
+    else if (str_format.indexOf('DD:MM:YYYY')!=-1)  format = "%d:%m:%Y";
+    else if (str_format.indexOf('MM:DD:YYYY')!=-1)  format = "%m:%d:%Y";
+    else if (str_format.indexOf('YYYY:MM:DD')!=-1)  format = "%Y:%m:%d";
+
+    else if (str_format.indexOf('%d-%m-%Y')!=-1)  format = "%d-%m-%Y";
+    else if (str_format.indexOf('%m-%d-%Y')!=-1)  format = "%m-%d-%Y";
+    else if (str_format.indexOf('%Y-%m-%d')!=-1)  format = "%Y-%m-%d";
+    else if (str_format.indexOf('%d/%m/%Y')!=-1)  format = "%d/%m/%Y";
+    else if (str_format.indexOf('%m/%d/%Y')!=-1)  format = "%m/%d/%Y";
+    else if (str_format.indexOf('%Y/%m/%d')!=-1)  format = "%Y/%m/%d";
+    else if (str_format.indexOf('%d.%m.%Y')!=-1)  format = "%d.%m.%Y";
+    else if (str_format.indexOf('%m.%d.%Y')!=-1)  format = "%m.%d.%Y";
+    else if (str_format.indexOf('%Y.%m.%d')!=-1)  format = "%Y.%m.%d";
+    else if (str_format.indexOf('%d:%m:%Y')!=-1)  format = "%d:%m:%Y";
+    else if (str_format.indexOf('%m:%d:%Y')!=-1)  format = "%m:%d:%Y";
+    else if (str_format.indexOf('%Y:%m:%d')!=-1)  format = "%Y:%m:%d";
   }
-  if (str_format==null || str_format=="") str_format = defaultDateFormat;
+  if (str_format==null || str_format=="" || str_format=="null") str_format = defaultDateFormat;
   else if (str_format.indexOf(" %H:%M:%S")!=-1) format += " %H:%M:%S";
   else if (str_format.indexOf(" %H:%M")!=-1) format += " %H:%M";
+  else if (str_format.indexOf(" %H.%M.%S")!=-1) format += " %H.%M.%S";
+  else if (str_format.indexOf(" %H.%M")!=-1) format += " %H.%M";
   return format;
 }
 
@@ -2983,6 +3009,7 @@ function showCalendar(id, value, debug, format, showsTime, showsOtherMonths) {
   if (format==null || format=="") format = getDateFormat(el.getAttribute("displayformat"));
   else format = getDateFormat(format);
   if (format.indexOf(" %H:%M")!=-1) showsTime = "24";
+  else if (format.indexOf(" %H.%M")!=-1) showsTime = "24";
   
   if (_dynarch_popupCalendar != null) {
     // we already have some calendar created

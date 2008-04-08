@@ -65,42 +65,33 @@ getDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {
   if (str_datetime.length == 0) return inputDate; 
   // datetime parsing and formatting routimes. modify them if you wish other datetime format 
   //function str2dt (str_datetime) { 
-  var re_date = /^(\d+)[\-|\/|\.](\d+)[\-|\/|\.](\d+)$/; 
+  var re_date = /^(\d+)[\-|\/|/|:|.|\.](\d+)[\-|\/|/|:|.|\.](\d+)$/; 
   if (!re_date.exec(str_datetime)) 
     return false; 
   if (!str_dateFormat) str_dateFormat = defaultDateFormat; 
   switch (str_dateFormat) { 
-    case "MM\/DD\/YYYY": 
-    case "MM\/DD\/YY": 
-    case "MM-DD-YYYY": 
-    case "MM-DD-YY": 
-    case "MM.DD.YYYY": 
-    case "MM.DD.YY": 
     case "%m-%d-%Y": 
+    case "%m/%d/%Y": 
+    case "%m.%d.%Y": 
+    case "%m:%d:%Y": 
       if (RegExp.$2 < 1 || RegExp.$2 > 31) return false; 
       if (RegExp.$1 < 1 || RegExp.$1 > 12) return false; 
       if (RegExp.$3 < 1 || RegExp.$3 > 9999) return false; 
       inputDate=new Date(parseFloat(RegExp.$3), parseFloat(RegExp.$1)-1, parseFloat(RegExp.$2)); 
       return inputDate; 
-    case "YYYY\/MM\/DD": 
-    case "YY\/MM\/DD": 
-    case "YYYY-MM-DD": 
-    case "YY-MM-DD": 
-    case "YYYY.MM.DD": 
-    case "YY.MM.DD": 
     case "%Y-%m-%d": 
+    case "%Y/%m/%d": 
+    case "%Y.%m.%d": 
+    case "%Y:%m:%d": 
       if (RegExp.$3 < 1 || RegExp.$3 > 31) return false; 
       if (RegExp.$2 < 1 || RegExp.$2 > 12) return false; 
       if (RegExp.$1 < 1 || RegExp.$1 > 9999) return false; 
       inputDate=new Date(parseFloat(RegExp.$1), parseFloat(RegExp.$2)-1, parseFloat(RegExp.$3)); 
       return inputDate; 
-    case "DD\/MM\/YYYY": 
-    case "DD\/MM\/YY": 
-    case "DD-MM-YYYY": 
-    case "DD-MM-YY": 
-    case "DD.MM.YYYY": 
-    case "DD.MM.YY": 
     case "%d-%m-%Y": 
+    case "%d/%m/%Y": 
+    case "%d.%m.%Y": 
+    case "%d:%m:%Y": 
     default: 
       if (RegExp.$1 < 1 || RegExp.$1 > 31) return false; 
       if (RegExp.$2 < 1 || RegExp.$2 > 12) return false; 

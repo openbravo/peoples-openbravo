@@ -12429,7 +12429,8 @@ this.messages.invalidMessage=openbravo.messages.getDataBaseMessage("Invalid");
 this.messages.missingMessage=openbravo.messages.getDataBaseMessage("Missing");
 this.messages.rangeMessage=openbravo.messages.getDataBaseMessage("Range");
 },fillInTemplate:function(args,frag){
-this.displayFormat=this.displayFormat.replace("mm","MM").replace("DD","dd").replace("YYYY","yyyy");
+this.displayFormat=this.displayFormat.replace("mm","MM").replace("dd","DD").replace("yyyy","YYYY");
+this.displayFormat=this.displayFormat.replace("MM","%m").replace("DD","%d").replace("YYYY","%Y");
 this.saveFormat=this.displayFormat;
 openbravo.widget.DateTextbox.superclass.fillInTemplate.apply(this,arguments);
 this.invalidSpan.style.display="none";
@@ -12446,7 +12447,7 @@ var _b21=new Date(0,0,0);
 if(_b1f.length==0){
 return _b21;
 }
-var _b22=/^(\d+)[\-|\/|\.](\d+)[\-|\/|\.](\d+)$/;
+var _b22=/^(\d+)[\-|\/|/|:|.|\.](\d+)[\-|\/|/|:|.|\.](\d+)$/;
 if(!_b22.exec(_b1f)){
 return false;
 }
@@ -12454,13 +12455,10 @@ if(!_b20){
 _b20=defaultDateFormat;
 }
 switch(_b20){
-case "MM/DD/YYYY":
-case "MM/DD/YY":
-case "MM-DD-YYYY":
-case "MM-DD-YY":
-case "MM.DD.YYYY":
-case "MM.DD.YY":
 case "%m-%d-%Y":
+case "%m/%d/%Y":
+case "%m.%d.%Y":
+case "%m:%d:%Y":
 if(RegExp.$2<1||RegExp.$2>31){
 return false;
 }
@@ -12472,13 +12470,10 @@ return false;
 }
 _b21=new Date(parseFloat(RegExp.$3),parseFloat(RegExp.$1)-1,parseFloat(RegExp.$2));
 return _b21;
-case "YYYY/MM/DD":
-case "YY/MM/DD":
-case "YYYY-MM-DD":
-case "YY-MM-DD":
-case "YYYY.MM.DD":
-case "YY.MM.DD":
 case "%Y-%m-%d":
+case "%Y/%m/%d":
+case "%Y.%m.%d":
+case "%Y:%m:%d":
 if(RegExp.$3<1||RegExp.$3>31){
 return false;
 }
@@ -12490,13 +12485,10 @@ return false;
 }
 _b21=new Date(parseFloat(RegExp.$1),parseFloat(RegExp.$2)-1,parseFloat(RegExp.$3));
 return _b21;
-case "DD/MM/YYYY":
-case "DD/MM/YY":
-case "DD-MM-YYYY":
-case "DD-MM-YY":
-case "DD.MM.YYYY":
-case "DD.MM.YY":
 case "%d-%m-%Y":
+case "%d/%m/%Y":
+case "%d.%m.%Y":
+case "%d:%m:%Y":
 default:
 if(RegExp.$1<1||RegExp.$1>31){
 return false;
