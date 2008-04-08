@@ -23,13 +23,12 @@
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID NUMBER;
   v_AD_User_ID NUMBER;
-  v_InvoiceRule CHAR;
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     v_C_Order_ID NUMBER;
     v_C_OrderLine_ID NUMBER;
     v_C_DOCTYPE_ID NUMBER;
-    v_DocumentNo NUMBER;
+    v_DocumentNo NVARCHAR2(30) ;
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -61,8 +60,8 @@
       v_C_Currency_ID NUMBER;
       v_M_PriceList_ID NUMBER;
       v_Billto_ID NUMBER;
-      v_M_PriceList_Version_ID NUMBER;
-    
+      v_InvoiceRule CHAR;
+      v_M_PriceList_Version_ID NUMBER;    
       v_PriceActual NUMBER;
       v_Discount NUMBER;
       
@@ -111,10 +110,13 @@
         IF (v_Billto_ID IS NULL) THEN
           v_Billto_ID := C_GetBPLocationID(Cur_SO.C_BPartner_ID, 'B') ;
         END IF;
-      
-        -- Get next C_Order_ID
-        Ad_Sequence_Next('C_Order', Cur_SO.AD_CLIENT_ID, v_C_Order_ID) ;
-        v_ResultStr:='C_ORDER_ID - ' || v_C_Order_ID;
+        
+        SELECT InvoiceRule INTO v_InvoiceRule
+        FROM C_BPARTNER
+        WHERE C_BPartner_ID = Cur_SO.C_BPARTNER_ID;
+        IF (v_InvoiceRule IS NULL) THEN
+           RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @InvoiceRuleNotdefined@'||'.');
+        END IF;
         
         v_C_DOCTYPE_ID:=Ad_Get_Doctype(Cur_SO.AD_Client_ID, Cur_SO.AD_Org_ID, 'SOO', 'SO') ;
         v_ResultStr:='C_DOCTYPE_ID - ' || v_C_DOCTYPE_ID;
@@ -123,12 +125,9 @@
           Ad_Sequence_Doc('DocumentNo_C_Order', Cur_SO.AD_Client_ID, 'Y', v_DocumentNo) ;
         END IF;
         
-        SELECT InvoiceRule INTO v_InvoiceRule
-        FROM C_BPARTNER
-        WHERE C_BPartner_ID = Cur_SO.C_BPARTNER_ID;
-        IF (v_InvoiceRule IS NULL) THEN
-           RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @InvoiceRuleNotdefined@'||'.');
-        END IF;
+        -- Get next C_Order_ID
+        Ad_Sequence_Next('C_Order', Cur_SO.AD_CLIENT_ID, v_C_Order_ID) ;
+        v_ResultStr:='C_ORDER_ID - ' || v_C_Order_ID;
 
         v_ResultStr:='DocumentNo - ' || v_DocumentNo || ' m_pricelist_id - ' || Cur_SO.M_PriceList_ID;
         INSERT
@@ -158,6 +157,7 @@
             v_Billto_ID, Cur_SO.C_CAMPAIGN_ID, Cur_SO.C_PROJECT_ID, Cur_SO.AD_User_ID,
              'N', TRUNC(Now(), 'DD'), Cur_SO.PHASE_NAME ||' - '|| Cur_SO.DESCRIPTION
           );
+          
         UPDATE C_PROJECTPHASE
         SET C_ORDER_ID = v_C_Order_ID
         WHERE C_PROJECTPHASE_ID = v_Record_ID;
