@@ -55,24 +55,26 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      printPage(response, vars, "", "", "", "","");
+      String strCompleteAuto = vars.getStringParameter("inpShowNullComplete", "Y");
+      printPage(response, vars, "", "", "", "","", strCompleteAuto);
     } else if (vars.commandIn("SAVE")) {
       String strBPartner = vars.getStringParameter("inpcBpartnerId");
       String strDatefrom = vars.getStringParameter("inpDateFrom");
       String strDateto = vars.getStringParameter("inpDateTo");
       String strDateOrdered = vars.getStringParameter("inpDateordered");
       String strOrganization = vars.getStringParameter("organization");
+      String strCompleteAuto = vars.getStringParameter("inpShowNullComplete");
       
-      OBError myMessage = processButton(vars, strBPartner, strDatefrom, strDateto, strDateOrdered, strOrganization);
+      OBError myMessage = processButton(vars, strBPartner, strDatefrom, strDateto, strDateOrdered, strOrganization, strCompleteAuto);
       vars.setMessage("ExpenseSOrder", myMessage);
       //vars.setSessionValue("ExpenseSOrder|message", messageResult);
       
-      printPage(response, vars, strDatefrom, strDateto, strDateOrdered, strBPartner, strOrganization);
+      printPage(response, vars, strDatefrom, strDateto, strDateOrdered, strBPartner, strOrganization, strCompleteAuto);
     } else pageErrorPopUp(response);
   }
 
 
-  OBError processButton(VariablesSecureApp vars, String strBPartner, String strDatefrom, String strDateto, String strDateOrdered, String strOrganization) {
+  OBError processButton(VariablesSecureApp vars, String strBPartner, String strDatefrom, String strDateto, String strDateOrdered, String strOrganization, String strCompleteAuto) {
     StringBuffer textoMensaje = new StringBuffer();
     Connection conn=null;
     
@@ -104,8 +106,10 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             if ((!data[i].cBpartnerId.equals(strOldBPartner) || !data[i].cProjectId.equals(strOldProject)|| !data[i].adOrgId.equals(strOldOrganization)) && !strCOrderId.equals("")) {
               releaseCommitConnection(conn);
               // Automatically processes Sales Order
-              String mensaje = processOrder(vars, strCOrderId);
-              if (!mensaje.equals("")) textoMensaje.append(mensaje).append("\n");
+              if (strCompleteAuto.equals("Y")) {
+	              String mensaje = processOrder(vars, strCOrderId);
+	              if (!mensaje.equals("")) textoMensaje.append(mensaje).append("\n");
+              }
               conn = getTransactionConnection();
             }
             if (!data[i].cBpartnerId.equals(strOldBPartner) || !data[i].cProjectId.equals(strOldProject) || !data[i].adOrgId.equals(strOldOrganization)) {
@@ -191,8 +195,10 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       releaseCommitConnection(conn);
       if (!strCOrderId.equals("")) {
         // Automatically processes Sales Order
-        String mensaje = processOrder(vars, strCOrderId);
-        if (!mensaje.equals("")) textoMensaje.append(mensaje).append("\n");
+    	if (strCompleteAuto.equals("Y")) {
+	        String mensaje = processOrder(vars, strCOrderId);
+	        if (!mensaje.equals("")) textoMensaje.append(mensaje).append("\n");
+    	}
       }
       myMessage.setType("Success");
       myMessage.setMessage(textoMensaje.toString() + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));
@@ -263,7 +269,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     return (messageResult);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDatefrom,String strDateto,String strDateOrdered,String strBPartner, String strOrganization) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDatefrom,String strDateto,String strDateOrdered,String strBPartner, String strOrganization, String strCompleteAuto) throws IOException, ServletException {
 	  if (log4j.isDebugEnabled()) log4j.debug("Output: process ExpenseSOrder");
       
       String[] discard = {""};
@@ -292,6 +298,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       xmlDocument.setParameter("dateOrdered", strDateOrdered);
       xmlDocument.setParameter("dateOrddisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("dateOrdsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("paramShowNullComplete", strCompleteAuto);
       xmlDocument.setParameter("description", ExpenseSOrderData.description(this, "S_ExpenseSOrder"));
       xmlDocument.setData("structureOrganizacion", OrganizationComboData.select(this, vars.getRole()));
       

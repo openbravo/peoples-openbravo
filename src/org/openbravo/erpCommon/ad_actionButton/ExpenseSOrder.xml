@@ -37,6 +37,8 @@
 	<PARAMETER id="paramDateordered" name="dateOrdered" default="" attribute="value"/>
 	<PARAMETER id="paramDateordered" name="dateOrddisplayFormat" attribute="displayformat" replace="xx"/>
 	<PARAMETER id="paramDateordered" name="dateOrdsaveFormat" attribute="saveformat" replace="yy"/>
+	<PARAMETER id="paramBoolean" name="constant" default="Y"/>
+  	<PARAMETER id="paramShowNullComplete" name="paramShowNullComplete" boolean="checked" withId="paramBoolean"/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
 	<PARAMETER id="paramParentTabContainer" name="parentTabContainer" default=" "/>
