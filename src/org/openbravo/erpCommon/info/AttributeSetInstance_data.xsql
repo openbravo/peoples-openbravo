@@ -99,7 +99,7 @@
    <SqlMethod name="selectNextLot" type="preparedStatement" return="String" default="0">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT CURRENTNEXT AS TOTAL
+        SELECT PREFIX||CURRENTNEXT||SUFFIX AS TOTAL
         FROM M_LOTCTL 
         WHERE M_LOTCTL_ID = TO_NUMBER(?)
       ]]></Sql>
@@ -228,7 +228,7 @@
    <SqlMethod name="updateHeader" type="preparedStatement" connection="true" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        UPDATE M_ATTRIBUTESETINSTANCE SET UPDATED=now(), UPDATEDBY=?, M_ATTRIBUTESET_ID = TO_NUMBER(?), SERNO=?, LOT=?, GUARANTEEDATE=?, 
+        UPDATE M_ATTRIBUTESETINSTANCE SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), M_ATTRIBUTESET_ID = TO_NUMBER(?), SERNO=?, LOT=?, GUARANTEEDATE=TO_DATE(?), 
         M_LOT_ID = TO_NUMBER(?), ISLOCKED = ?, LOCK_DESCRIPTION = ? 
         WHERE M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?)
       ]]></Sql>

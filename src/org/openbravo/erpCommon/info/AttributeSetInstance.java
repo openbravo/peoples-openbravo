@@ -108,9 +108,10 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       if (data[0].islot.equals("Y")) {
         lot = vars.getStringParameter("inplot");
         if (!data[0].mLotctlId.equals("") && strIsSOTrx.equals("N")) {
-          return "";
+          description_first += (description_first.equals("")?"":"_") + lot;//esto
         }
-        description_first += (description_first.equals("")?"":"_") + "L" + lot;
+		else
+          description_first += (description_first.equals("")?"":"_") + "L" + lot;
       } 
       if (data[0].isserno.equals("Y")) {
         serno = vars.getStringParameter("inpserno");
@@ -171,7 +172,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         if (!data[0].mLotctlId.equals("") && strIsSOTrx.equals("N")) {
           lot = AttributeSetInstanceData.selectNextLot(this, data[0].mLotctlId);
           AttributeSetInstanceData.updateLotSequence(conn, this, vars.getUser(), data[0].mLotctlId);
+		          description_first += (description_first.equals("")?"":"_") + lot;//esto
         }
+		else
         description_first += (description_first.equals("")?"":"_") + "L" + lot;
       }
       if (data[0].isserno.equals("Y")) {
