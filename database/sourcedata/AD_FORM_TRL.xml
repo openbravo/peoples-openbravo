@@ -27,5 +27,19 @@
   <AD_FORM_TRL AD_FORM_ID="800016" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-05-17 16:46:41.0" CREATEDBY="100" UPDATED="2007-07-11 18:50:54.0" UPDATEDBY="100" NAME="Gestión de Alertas" DESCRIPTION="Edita las alertas predefinidas por el usuario." ISTRANSLATED="N" />
   <AD_FORM_TRL AD_FORM_ID="800017" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-06-19 17:01:06.0" CREATEDBY="100" UPDATED="2007-06-19 17:01:06.0" UPDATEDBY="100" NAME="Logout" DESCRIPTION="Logout" HELP="Logout servlet" ISTRANSLATED="N" />
   <AD_FORM_TRL AD_FORM_ID="800018" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-06-19 17:02:06.0" CREATEDBY="100" UPDATED="2007-06-19 17:02:06.0" UPDATEDBY="100" NAME="Menu" DESCRIPTION="Menu" HELP="Menu servlet" ISTRANSLATED="N" />
-  <AD_FORM_TRL AD_FORM_ID="1004400000" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-03-05 18:28:45.0" CREATEDBY="100" UPDATED="2008-03-05 18:29:33.0" UPDATEDBY="100" NAME="Necesidad a Pedido" DESCRIPTION="Crear un pedido de compra desde líneas de necesidad de material." ISTRANSLATED="Y" />
+  <AD_FORM_TRL AD_FORM_ID="1004400000" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-03-05 18:28:45.0" CREATEDBY="100" UPDATED="2008-04-10 18:29:37.0" UPDATEDBY="100" NAME="Necesidad a Pedido" DESCRIPTION="Crear un pedido de compra desde líneas de necesidad de material." ISTRANSLATED="Y">
+    <HELP><![CDATA[En la ventana Necesidad a Pedido es posible crear Pedidos de Compra desde las líneas de necesidad deseadas.
+
+La ventana está estructurada en 2 diferentes áreas. La superior para buscar necesidades abiertas. Y la segunda para las líneas de necesidad bloqueadas.
+
+Para buscar las líneas de necesiadad hay disponibles varios filtros. El check "Añadir líneas sin proveedor" es usado cuando para incluir líneas de necesidad que no tengan un proveedor asociado cuando se ha seleccionado uno en el filtro.
+
+La relación de las líneas de necesidad encontradas muestra líneas abiertas de necesidades que han sido completadas y que no están bloqueadas.
+
+Las líneas de necesidad que se pretenden utilizar para crear el Pedido de Compra han de ser seleccionadas en esta relación y añadidas al área inferior de bloqueo.
+
+En el área de bloqueo aparecen todas las líneas de necesidad bloqueadas por el usuario, aunque no cumplan los filtros del área superior. Las líneas de necesidad que hayan estado bloqueadas más de 3 días se consideran como desbloqueadas y no aparecerían en esta relación.
+
+Cada vez que se presiona el botón Crear se abre un popup para crear un único Pedido de Compra con todas las líneas necesarias según las líneas de necesidad que estén seleccionadas en el área de bloqueo. En la relación de líneas bloqueadas es posible cambiar la cantidad que se desea que se pida para cada línea de necesidad y es posible indicar el precio.]]></HELP>
+  </AD_FORM_TRL>
 </data>

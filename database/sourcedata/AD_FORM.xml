@@ -27,5 +27,19 @@
   <AD_FORM AD_FORM_ID="800016" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-05-17 16:46:41.0" CREATEDBY="100" UPDATED="2007-05-17 16:46:41.0" UPDATEDBY="100" NAME="Alert Management" DESCRIPTION="Edit predefined alerts made by the user." ACCESSLEVEL="7" CLASSNAME="org.openbravo.erpCommon.ad_forms.AlertManagement" ENTITYTYPE="U" />
   <AD_FORM AD_FORM_ID="800017" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-06-19 17:01:06.0" CREATEDBY="100" UPDATED="2007-06-19 17:01:06.0" UPDATEDBY="100" NAME="Logout" DESCRIPTION="Logout" HELP="Logout servlet" ACCESSLEVEL="7" CLASSNAME="org.openbravo.erpCommon.security.Logout" ENTITYTYPE="U" />
   <AD_FORM AD_FORM_ID="800018" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-06-19 17:02:06.0" CREATEDBY="100" UPDATED="2007-06-19 17:02:06.0" UPDATEDBY="100" NAME="Menu" DESCRIPTION="Menu" HELP="Menu servlet" ACCESSLEVEL="7" CLASSNAME="org.openbravo.erpCommon.security.Menu" ENTITYTYPE="U" />
-  <AD_FORM AD_FORM_ID="1004400000" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-03-05 18:28:45.0" CREATEDBY="100" UPDATED="2008-03-17 19:20:17.0" UPDATEDBY="100" NAME="Requisition To Order" DESCRIPTION="Create a Purchase Order from Requisition lines." ACCESSLEVEL="3" CLASSNAME="org.openbravo.erpCommon.ad_forms.RequisitionToOrder" ENTITYTYPE="U" />
+  <AD_FORM AD_FORM_ID="1004400000" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-03-05 18:28:45.0" CREATEDBY="100" UPDATED="2008-04-10 18:16:04.0" UPDATEDBY="100" NAME="Requisition To Order" DESCRIPTION="Create a Purchase Order from Requisition lines." ACCESSLEVEL="3" CLASSNAME="org.openbravo.erpCommon.ad_forms.RequisitionToOrder" ENTITYTYPE="U">
+    <HELP><![CDATA[In the Requisition to Order window it is possible to create Purchase Order from the desired Requisition lines.
+
+The window is structured in two different areas. The upper one to search open requisitions. And the second one for locked requisitions.
+
+To search the Requisition lines there are available several filtering options. The "Add lines without vendor" checkbox is used when a Vendor has been selected to include or not Requisition lines that do not have a vendor.
+
+The relation of found Requisition lines shows the Open requisitions lines of completed requisitions and that are not locked.
+
+The Requisition lines that are intended to use to create the Purchase Order have to be selected from this relation and added to the lock area.
+
+In the lock area there are all the Requisition Lines locked by the user, even those that do not fulfill the filters of the search area. Requisition Lines that have been locked for more than 3 days are considered as not locked.
+
+Each time that is pressed the Create button is opened a popup to create a unique Purchase Order with as many lines as necessary. In the lock area it is possible to change the quantity that is desired to order for each requisition line and it is possible to set the price actual.]]></HELP>
+  </AD_FORM>
 </data>
