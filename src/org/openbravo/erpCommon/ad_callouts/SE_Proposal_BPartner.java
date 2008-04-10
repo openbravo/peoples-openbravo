@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,6 +66,8 @@ public class SE_Proposal_BPartner extends HttpSecureAppServlet {
     resultado.append("var respuesta = new Array(");
     String strPaymentRule = SEProposalBPartnerData.selectPaymentRule(this,strBPartner);
     resultado.append("new Array(\"inppaymentrule\", \"" + strPaymentRule + "\"),");
+    String strPaymentTerm = SEProposalBPartnerData.selectPaymentTerm(this,strBPartner);
+    resultado.append("new Array(\"inpcPaymenttermId\", \"" + strPaymentTerm + "\"),");
     FieldProvider [] tdv = null;
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
