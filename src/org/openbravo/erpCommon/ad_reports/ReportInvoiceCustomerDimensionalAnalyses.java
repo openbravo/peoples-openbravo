@@ -183,7 +183,7 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
     xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "SalesRep_ID", "AD_User SalesRep", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesDimensionalAnalyze"), Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyze"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesDimensionalAnalyze", strsalesrepId);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerDimensionalAnalyses", strsalesrepId);
       xmlDocument.setData("reportSalesRep_ID","liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {

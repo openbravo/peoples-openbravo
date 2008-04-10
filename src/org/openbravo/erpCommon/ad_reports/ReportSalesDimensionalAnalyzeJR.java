@@ -219,7 +219,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportSalesDimensionalAnalyzeJRData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure", ReportSalesDimensionalAnalyzeJRData.selectMproduct(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "C_BPartner SalesRep", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "", "C_BPartner SalesRep", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesDimensionalAnalyzeJR", strPartnerSalesrepId);
       xmlDocument.setData("reportPartnerSalesRep_ID","liststructure", comboTableData.select(false));
       comboTableData = null;

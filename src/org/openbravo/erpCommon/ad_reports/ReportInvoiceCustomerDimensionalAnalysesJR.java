@@ -82,7 +82,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strsalesrepId = vars.getRequestGlobalVariable("inpSalesrepId", "ReportInvoiceCustomerDimensionalAnalysesJR|salesrep");
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId", "ReportInvoiceCustomerDimensionalAnalysesJR|project");
       String strProducttype = vars.getRequestGlobalVariable("inpProducttype", "ReportInvoiceCustomerDimensionalAnalysesJR|producttype");
-      String strOrder = vars.getRequestGlobalVariable("inpOrder","ReportSalesDimensionalAnalyze|order");
+      String strOrder = vars.getRequestGlobalVariable("inpOrder","ReportInvoiceCustomerDimensionalAnalysesJR|order");
       String strMayor = vars.getStringParameter("inpMayor", "");
       String strMenor = vars.getStringParameter("inpMenor", "");
       String strComparative = vars.getStringParameter("inpComparative", "N");
@@ -210,6 +210,15 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "M_Product_ProductType", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerDimensionalAnalysesJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerDimensionalAnalysesJR", "");
       xmlDocument.setData("reportProductType","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "SalesRep_ID", "AD_User SalesRep", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesDimensionalAnalyzeJR", strsalesrepId);
+      xmlDocument.setData("reportSalesRep_ID","liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
