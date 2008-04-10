@@ -28,7 +28,6 @@
       <column name="ISENCRYPTED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" default="D" autoIncrement="false"/>
       <column name="SHOWINRELATION" primaryKey="false" required="false" type="VARCHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="ISFIRSTFOCUSEDFIELD" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_FIELD">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
