@@ -63,6 +63,20 @@ function onloadFunctions() {
   new TypeAheadCombo("inpmWarehouseId");  
 }
 </SCRIPT>	  
+
+<SCRIPT language="JavaScript" type="text/javascript">
+function refreshWarehouses() {
+  var cmbOrganization = document.frmMain.inpadOrgId;  
+  var cmbWarehouse = document.frmMain.inpmWarehouseId;  
+  cambiarListaCombo(cmbWarehouse, arrWarehouse, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);  
+  return true;
+}
+</SCRIPT>
+
+<script language="JavaScript" type="text/javascript" id="paramWarehouseArray">
+var arrWarehouse=null;
+</script>
+
     <SCRIPT language="JavaScript" type="text/javascript">
     function onLoadDo(){
         this.windowTables = new Array(
@@ -90,7 +104,12 @@ function onloadFunctions() {
 <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <FORM method="POST" action="ReportParetoProduct.html" name="frmMain" id="form">
   <INPUT type="hidden" name="Command"></INPUT>
-  <INPUT type="hidden" name="inpLastFieldChanged" id="paramChanged" value=""></INPUT>  
+  <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
+  <INPUT type="hidden" name="inpLastFieldChanged" id="paramChanged" value=""></INPUT>
+  <INPUT type="hidden" name="inpKey" value="" id="paramKey"></INPUT>
+  <INPUT type="hidden" name="inpwindowId" value="" id="window"></INPUT>
+  <INPUT type="hidden" name="inpTabId" value="" id="tab"></INPUT>
+    
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
@@ -225,13 +244,13 @@ function onloadFunctions() {
             <TR>
             <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>		
               <TD class="Combo_ContentCell" colspan="2"> 
-                <SELECT name="inpadOrgId"  id="inpadOrgId" class="Combo Combo_TwoCells_width" onchange="logChanges(this);return true;">
+                <SELECT name="inpadOrgId"  id="inpadOrgId" class="Combo Combo_TwoCells_width" onchange="refreshWarehouses();logChanges(this);return true;">
                   <OPTION value=""> <DIV id="reportAD_Org_ID"></DIV></OPTION>
                 </SELECT>
               </TD>
 	      <TD class="TitleCell"> <SPAN class="LabelText">Warehouse</SPAN></TD>
              <TD class="Combo_ContentCell" colspan="2">
-                 <SELECT  name="inpmWarehouseId" id="inpmWarehouseId" class="Combo Combo_TwoCells_width" onchange="logChanges(this);return true;">
+                 <SELECT name="inpmWarehouseId" id="inpmWarehouseId" class="Combo Combo_TwoCells_width" onchange="logChanges(this);return true;">
                   <OPTION value=""> <DIV id="reportM_Warehouse_ID"></DIV></OPTION>
                 </SELECT>
              </TD>
@@ -276,45 +295,52 @@ function onloadFunctions() {
 
           </TABLE>
           <!-- OUTPUT -->
+		  <DIV id="sectionOrg">
           <TABLE class="Main_Client_TableEdition">
             <TR>
               <TD colspan="6">
                 <div style="height:25px;" />
 				 
                 <TABLE cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar">
-				<DIV id="sectionOrg">
+				
                     
                     <TR class="DataGrid_Body_Row"> 
-                      <TH colspan="6" class="DataGrid_Header_Cell"><SPAN>Organization<span>: </span><SPAN id="fieldAdOrg">xxOrganization</SPAN></SPAN></TH>
+                      <TH colspan="9" class="DataGrid_Header_Cell"><SPAN>Organization<span>: </span><SPAN id="fieldAdOrg">xxOrganization</SPAN></SPAN></TH>
                     </TR>
 					  <DIV id="sectionPartner">
                       <TR class="DataGrid_Body_Row"> 
                         <TH class="DataGrid_Header_Cell">Search Key</TH>
-                        <TH class="DataGrid_Header_Cell">Name</TH>						
-						<TH class="DataGrid_Header_Cell">Attribute</TH>
+                        <TH class="DataGrid_Header_Cell">Name</TH>
+                        <TH class="DataGrid_Header_Cell">Quantity</TH>
+						<TH class="DataGrid_Header_Cell">Unit</TH>
 						<TH class="DataGrid_Header_Cell">Cost</TH>
+						<TH class="DataGrid_Header_Cell">Value</TH>
 						<TH class="DataGrid_Header_Cell">Percentage</TH>
 						<TH class="DataGrid_Header_Cell">Category</TH>
                       </TR>                      					  
 	                  <DIV id="sectionDetail"> 
 	                    <TR class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
 	                      <TD width="10%" class="DataGrid_Body_Cell" id="fieldSearchKey">xxName</TD>
-	                      <TD width="50%"  class="DataGrid_Body_Cell" id="fieldName">xxY</TD>
-	                      <TD width="15%"  class="DataGrid_Body_Cell" id="fieldAttribute">xxY</TD>
-	                      <TD width="9%"  class="DataGrid_Body_Cell" id="fieldCost">xxY</TD>
-	                      <TD width="8%"  class="DataGrid_Body_Cell" id="fieldPercentage">xxY</TD>
-                          <TD width="8%"  class="DataGrid_Body_Cell" id="fieldIsabc">xxY</TD>
+	                      <TD width="40%"  class="DataGrid_Body_Cell" id="fieldName">xxY</TD>
+						  <TD width="10%"  class="DataGrid_Body_Cell" id="fieldQty">xxY</TD>
+	                      <TD width="10%"  class="DataGrid_Body_Cell" id="fieldUnit">xxY</TD>
+	                      <TD width="8%"  class="DataGrid_Body_Cell" id="fieldCost">xxY</TD>
+						  <TD width="8%"  class="DataGrid_Body_Cell" id="fieldValue">xxY</TD>
+	                      <TD width="7%"  class="DataGrid_Body_Cell" id="fieldPercentage">xxY</TD>
+                          <TD width="7%"  class="DataGrid_Body_Cell" id="fieldIsabc">xxY</TD>
 	                    </TR>
 	                  </DIV>
                     </DIV>						
-                  </DIV>  
-                </TABLE>				
+                  
+                </TABLE>
+			  				
                 <!-- OUTPUT END -->
               <!-- USER CONTROLS END -->
 			  
               </TD>
             </TR>
           </TABLE>
+		  </DIV>
         </div>
 		    <div >
             <DIV class="Main_ContentPane_Client" style="overflow: auto; border-top: 0px none;" id="tdbottomButtons">
@@ -330,11 +356,11 @@ function onloadFunctions() {
                   <TD></TD>
                   <TD class="Button_LeftAlign_ContentCell">
                     <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('GENERATE', true, null, null, null, true, true);return false;">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Process';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Updates ABC Org specific property'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('GENERATE', true, null, null, null, true, true);return false;">
+                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Updates ABC Org specific property';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                         <tr>
-                          <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border=0/></td>
-                          <td class="Button_text Button_width">Process</td>
+                          <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Update ABC" title="Update ABC" src="../../../../../web/images/blank.gif" border=0/></td>
+                          <td class="Button_text Button_width">Update ABC</td>
                           <td class="Button_right"></td>
                         </tr>
                       </table>

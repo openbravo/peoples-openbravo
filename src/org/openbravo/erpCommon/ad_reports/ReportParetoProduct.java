@@ -141,7 +141,9 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-        
+
+    xmlDocument.setParameter("warehouseArray", arrayDobleEntrada("arrWarehouse", ReportParetoProductData.selectWarehouseDouble(this, Utility.getContext(this, vars, "#User_Client", "ReportParetoProduct"))));
+    
     xmlDocument.setParameter("mWarehouseId", strWarehouse);
     xmlDocument.setParameter("adOrg", strAD_Org_ID);
     

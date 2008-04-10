@@ -24,6 +24,8 @@
 v_orgList VARCHAR2(4000) ;
   VARaCUM number:=0;
   VARaCUMB number:=0;
+  v_limitA number :=80;
+  v_limitB number :=15;  
   varComprobadoA Number:=0;
   varComprobadoB Number:=0;
   TYPE RECORD IS REF CURSOR;
@@ -37,26 +39,24 @@ for Cur_Cursor in (
                                                        from M_WAREHOUSE MW1  
                                                        LEFT JOIN M_LOCATOR ML1 ON ML1.M_WAREHOUSE_ID=MW1.M_WAREHOUSE_ID
                                                        LEFT JOIN M_STORAGE_DETAIL MSD1 ON ML1.M_LOCATOR_ID=MSD1.M_LOCATOR_ID
-                                                       LEFT JOIN M_ATTRIBUTESETINSTANCE MAT1 ON MAT1.M_ATTRIBUTESETINSTANCE_ID=MSD1.M_ATTRIBUTESETINSTANCE_ID
                                                        LEFT JOIN M_PRODUCT PR1 ON MSD1.M_PRODUCT_ID=PR1.M_PRODUCT_ID   
-                                                       WHERE MW1.M_WAREHOUSE_ID=p_warehouse_ID
-                                                       AND MSD1.AD_ORG_ID=p_org_ID
+                                                       WHERE (p_warehouse_ID IS NULL OR MW1.M_WAREHOUSE_ID=p_warehouse_ID)
+                                                       AND (p_org_ID IS NULL OR MW1.AD_ORG_ID=p_org_ID)
                                                        AND MSD1.QTYONHAND>0) ) as PORCENTAJE
 FROM
  M_WAREHOUSE MW 
    LEFT JOIN M_LOCATOR ML ON ML.M_WAREHOUSE_ID=MW.M_WAREHOUSE_ID
    LEFT JOIN M_STORAGE_DETAIL MSD ON ML.M_LOCATOR_ID=MSD.M_LOCATOR_ID
-   LEFT JOIN M_ATTRIBUTESETINSTANCE MAT ON MAT.M_ATTRIBUTESETINSTANCE_ID=MSD.M_ATTRIBUTESETINSTANCE_ID
    LEFT JOIN M_PRODUCT PR ON MSD.M_PRODUCT_ID=PR.M_PRODUCT_ID   
-WHERE MW.M_WAREHOUSE_ID=p_warehouse_ID
-   AND MSD.AD_ORG_ID=p_org_ID
+WHERE (p_warehouse_ID IS NULL OR MW.M_WAREHOUSE_ID=p_warehouse_ID)
+   AND (p_org_ID IS NULL OR MW.AD_ORG_ID=p_org_ID)
    AND MSD.QTYONHAND>0
    AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV') IS NOT NULL
    AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV') <> 0
 ORDER BY PORCENTAJE DESC) loop
 varAcum := varAcum+Cur_Cursor.porcentaje;
  if(varComprobadoA=0)then
-  if (varAcum>=75) then
+  if (varAcum>=v_limitA) then
     if (p_porcentajeactual>=Cur_Cursor.porcentaje) then return 'A';
  else
    varComprobadoA:=-1;
@@ -67,7 +67,7 @@ varAcum := varAcum+Cur_Cursor.porcentaje;
 
   if (varComprobadoA=-1 and varComprobadoB=0) then
   varAcumB:=varAcumB+Cur_Cursor.porcentaje;
-   if (varAcumB>=15) then
+   if (varAcumB>=v_limitB) then
      if (p_porcentajeactual>=Cur_Cursor.porcentaje) then return 'B';
 	 else varComprobadoB:=-1;
      end if;
