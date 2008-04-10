@@ -100,9 +100,9 @@ function enableLocalShortcuts(){
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client0', 'frameButton'),
-		  new windowTableId('client', 'frameButton'),
-		  new windowTableId('tdbottomButtons', 'frameButton2')
+		  new windowTableId('client', 'frameButton', 'buttonOK', 'frameButton2'),
+		  new windowTableId('client2', 'frameButton', 'buttonOK', 'frameButton2'),
+		  new windowTableId('tdbottomButtons', 'frameButton2', 'buttonOK', 'frameButton2')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -249,7 +249,7 @@ function enableLocalShortcuts(){
 <!-- finish MessageBox -->
     <tr>
       <td>
-        <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client0">
+        <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
           <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector">
 
             <tr>
@@ -372,7 +372,7 @@ function enableLocalShortcuts(){
 
           <TR>
             <TD colspan="6">
-                            <div style="overflow: auto;" id="client">
+                            <div style="overflow: auto;" id="client2">
                   <TABLE cellspacing="0" cellpadding="0" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                     <TR class="DataGrid_Body_Row"> 
                       <TH width="29" class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox"> <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpTodos" onclick="marcarTodos(document.frmMain.inpId, this.checked);return true;"></INPUT></SPAN></TH>

@@ -77,6 +77,8 @@ function getShortcuts(type) {
         new keyArrayItem("M", "putFocusOnMenu();", null, "ctrlKey", false, 'onkeydown'),
         new keyArrayItem("F10", "swichSelectedArea();", null, null, false, 'onkeydown'),
         new keyArrayItem("N", "executeWindowButton('linkButtonNew');", null, "ctrlKey", false, 'onkeydown'),
+        new keyArrayItem("N", "executeWindowButton('linkButtonSave_Next');", null, "ctrlKey+shiftKey", false, 'onkeydown'),
+        new keyArrayItem("G", "executeWindowButton('linkButtonSave_Relation');", null, "ctrlKey+shiftKey", false, 'onkeydown'),
         new keyArrayItem("S", "executeWindowButton('linkButtonSave');", null, "ctrlKey", false, 'onkeydown'),
         new keyArrayItem("S", "executeWindowButton('linkButtonSave_New');", null, "ctrlKey+shiftKey", false, 'onkeydown'),
         new keyArrayItem("D", "executeWindowButton('linkButtonDelete');", null, "ctrlKey", false, 'onkeydown'),
@@ -95,14 +97,21 @@ function getShortcuts(type) {
         new keyArrayItem("TAB", "windowTabKey(false);", null, null, false, 'onkeyup'),
         new keyArrayItem("TAB", "windowShiftTabKey(true);", null, "shiftKey", false, 'onkeydown'),
         new keyArrayItem("TAB", "windowShiftTabKey(false);", null, "shiftKey", false, 'onkeyup'),
+        new keyArrayItem("ENTER", "windowCtrlShiftEnterKey();", null, "ctrlKey+shiftKey", false, 'onkeydown'),
+        new keyArrayItem("ENTER", "windowCtrlEnterKey();", null, "ctrlKey", false, 'onkeydown'),
         new keyArrayItem("G", "executeWindowButton('buttonRelation');", null, "ctrlKey", false, 'onkeydown')
       );
   } else if (type=='relationSpecificKeys') {
       this.keyArray.splice(keyArray.length-1, 0,
-        new keyArrayItem("TAB", "windowTabKey();", null, null, false, 'onkeydown'),
-        new keyArrayItem("TAB", "windowShiftTabKey();", null, "shiftKey", false, 'onkeydown'),
+        new keyArrayItem("TAB", "windowTabKey(true);", null, null, false, 'onkeydown'),
+        new keyArrayItem("TAB", "windowTabKey(false);", null, null, false, 'onkeyup'),
+        new keyArrayItem("TAB", "windowShiftTabKey(true);", null, "shiftKey", false, 'onkeydown'),
+        new keyArrayItem("TAB", "windowShiftTabKey(false);", null, "shiftKey", false, 'onkeyup'),
         new keyArrayItem("G", "executeWindowButton('buttonEdition');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("ENTER", "windowEnterKey();", null, null, false, 'onkeydown'),
+        new keyArrayItem("ENTER", "windowEnterKey();", null, null, false, 'onkeydown')
+      );
+  } else if (type=='gridKeys') {
+      this.keyArray.splice(keyArray.length-1, 0,
         new keyArrayItem("UPARROW", "windowUpKey();", null, null, false, 'onkeydown'),
         new keyArrayItem("RIGHTARROW", "windowRightKey();", null, null, false, 'onkeydown'),
         new keyArrayItem("DOWNARROW", "windowDownKey();", null, null, false, 'onkeydown'),

@@ -60,9 +60,9 @@ function depurar(action) {
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client0', 'frameButton'),
-		  new windowTableId('client', 'frameButton'),
-		  new windowTableId('client', 'frameButton2')
+		  new windowTableId('client0', 'frameButton', 'buttonSearch', 'frameButton'),
+		  new windowTableId('client', 'frameButton', 'buttonOK', 'frameButton2'),
+		  new windowTableId('client', 'frameButton2', 'buttonOK', 'frameButton2')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -198,11 +198,11 @@ function depurar(action) {
               <td></td>
               <td class="Button_RightAlign_ContentCell">
                 <div>
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onClick="submitCommandForm('FIND', false, null, null, '_self');return true;;">
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onClick="submitCommandForm('FIND', false, null, null, '_self');return true;;", id="buttonSearch">
             <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Results';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
                       <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border=0/></td>
-                      <td class="Button_text Button_width">OK</td>
+                      <td class="Button_text Button_width">Search</td>
                       <td class="Button_right"></td>
                     </tr>
                   </table>

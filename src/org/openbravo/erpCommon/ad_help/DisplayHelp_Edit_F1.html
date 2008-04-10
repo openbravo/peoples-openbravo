@@ -75,7 +75,7 @@
   <SCRIPT language="JavaScript" type="text/javascript">
     function onLoadDo() {
       this.windowTables = new Array(
-        new windowTableId('client')
+        new windowTableId('client', null, 'buttonOK')
       );
       setWindowTableParentElement();
       enableShortcuts('popup');
@@ -243,7 +243,7 @@
             <TD></TD>
             <TD class="Button_RightAlign_ContentCell">
               <DIV>
-                <A class="ButtonLink" href="#" onfocus="this.className='ButtonLink_focus'; window.status='OK'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE_' + document.frmMain.inpType.value, true);return false;">
+                <A class="ButtonLink" href="#" onfocus="this.className='ButtonLink_focus'; window.status='OK'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE_' + document.frmMain.inpType.value, true);return false;" id="buttonOK">
                   <TABLE class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='OK'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
                     <TR>
                       <TD class="Button_left"><IMG class="Button_Icon Button_Icon_ok" alt="OK" title="OK" src="../web/images/blank.gif" border="0/"></IMG></TD>

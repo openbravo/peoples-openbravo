@@ -35,7 +35,7 @@ function onloadFunctions() {
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonOK')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -101,7 +101,7 @@ function onloadFunctions() {
       <td width="30px" align="center" valign="top"> <A href="#" height="20" valign="top" onclick="depurarSelector('CLEAR');return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
         <img width="16" height="16" id="buttonCancel" src="../../../../../web/images/Cancel.jpg" alt="Cancel" title="Cancel" border="0"></IMG></A> 
       </td>
-      <td width="30px"> <A href="#" onclick="depurarSelector('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
+      <td width="30px"> <A href="#" onclick="depurarSelector('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" id="buttonOK"> 
         <img width="16" height="16" id="buttonOk" src="../../../../../web/images/Ok.jpg" alt="Accept" title="Accept" border="0"></IMG></A> 
       </td>
       <td>&nbsp;</td>

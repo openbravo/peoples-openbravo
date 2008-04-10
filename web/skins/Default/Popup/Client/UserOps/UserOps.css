@@ -56,7 +56,7 @@ td.Popup_Client_UserOps_SubClient_Links {
 }
 
 a.Popup_Client_UserOps_LabelLink {
-  padding-left: 0px;
+  padding-left: 6px;
   color: #2985BA;
   text-decoration: none;
   -moz-outline-style: none;
@@ -71,17 +71,18 @@ a.Popup_Client_UserOps_LabelLink:hover {
   text-decoration: underline;
 }
 
-a.Popup_Client_UserOps_LabelLink_focus_alpha {
-  font-weight: bold;
+a.Popup_Client_UserOps_LabelLink_focus {
+  padding: 0px 4px 0px 4px;
+  background-color: #C8E9F9 !important;
   color: #2985BA;
-  border-bottom-style: solid;
+  border-style: solid;
   border-width: 2px;
-  border-bottom-color: #FCD938;
+  border-color: #2985BA;
   outline: none;
 }
 
 a.Popup_Client_UserOps_LabelLink_Selected {
-  padding-left: 0px;
+  padding-left: 6px;
   color: #2985BA;
   text-decoration: none;
   font-weight:bold;
@@ -97,11 +98,13 @@ a.Popup_Client_UserOps_LabelLink_Selected:hover {
   text-decoration: underline;
 }
 
-a.Popup_Client_UserOps_LabelLink_Selected_focus_alpha {
+a.Popup_Client_UserOps_LabelLink_Selected_focus {
+  padding: 0px 4px 0px 4px;
+  background-color: #C8E9F9 !important;
   font-weight: bold;
   color: #2985BA;
-  border-bottom-style: solid;
+  border-style: solid;
   border-width: 2px;
-  border-bottom-color: #FCD938;
+  border-color: #2985BA;
   outline: none;
 }

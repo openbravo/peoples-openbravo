@@ -40,7 +40,7 @@ function enablelocalShortcuts(){
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('frmMain')
+		  new windowTableId('frmMain', null, 'buttonOK')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('edition');
@@ -109,7 +109,7 @@ function enablelocalShortcuts(){
       <td>&nbsp;</td>
       <TD width="30px"> <A href="#" onclick="submitCommandForm('ORDERBY_CLEAR', true, null, null, '_top');return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
         <img src="../../../../../web/images/Cancel.jpg" border="0" alt="Cancel" title="Cancel" id="buttonCancel"></IMG></A></td>
-      <td width="30px"><A href="#" onclick="submitCommandForm('ORDERBY', true, null, null, '_top');return false;" onmouseover="window.status='Search';return true;" onmouseout="window.status='';return true;" > 
+      <td width="30px"><A href="#" onclick="submitCommandForm('ORDERBY', true, null, null, '_top');return false;" onmouseover="window.status='Search';return true;" onmouseout="window.status='';return true;" id="buttonOK"> 
         <img src="../../../../../web/images/Aceptar.jpg" border="0" alt="Search" title="Search" id="buttonSearch"></IMG></A></TD>
       <td>&nbsp;</td>
     </TR>

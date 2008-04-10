@@ -48,7 +48,7 @@
 <script language="JavaScript" type="text/javascript">
   function onLoadDo() {
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonBack')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -141,7 +141,7 @@
           <DIV id="sectionDetail">
             <TR>
               <TD></TD>
-              <TD class="TitleCell" colspan=3 style="text-align:left;"><SPAN class="LabelText"><a class="LabelLink" href="#" onclick="windowSelect(xx);return false;" onmouseover="window.status='xx';return true;" onmouseout="window.status='';return true;" id="fieldName">xx70003 - 01 - APR - 06 - 43.85 - 10 - 37.8</a></span></TD>
+              <TD class="TitleCell" colspan=3 style="text-align:left;"><SPAN class="LabelText"><a class="LabelLink _LabelLink" href="#" onclick="windowSelect(xx);return false;" onmouseover="window.status='xx';return true;" onmouseout="window.status='';return true;" id="fieldName">xx70003 - 01 - APR - 06 - 43.85 - 10 - 37.8</a></span></TD>
             </TR>
             <TR class="Popup_Client_RelatedInfo_LineSeparator"><TD colspan=4></TD></TR>
           </DIV>
@@ -149,7 +149,7 @@
             <TD></TD>
             <TD class="Button_LeftAlign_ContentCell">
               <DIV>
-                <A class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Back'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('DEFAULT', false, null, 'UsedByLink.html', '_self');return false;">
+                <A class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Back'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('DEFAULT', false, null, 'UsedByLink.html', '_self');return false;" id="buttonBack">
                   <TABLE class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Back';return true;" onmouseout="this.className='Button'; window.status='';return true;">
                     <TR>
                       <TD class="Button_left"><img class="Button_Icon Button_Icon_back" alt="Back" title="Back" src="../../../../../web/images/blank.gif" border=0/></TD>

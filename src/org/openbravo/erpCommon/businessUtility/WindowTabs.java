@@ -221,7 +221,7 @@ public class WindowTabs {
           if (!data.adTabId.equals(this.TabID) && strShowAcct.equals("N") && data.isinfotab.equals("Y")) continue;
           else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N") && data.istranslationtab.equals("Y")) continue;
           if (!isFirstTab) text.append("<span class=\"tabSeparator\">&nbsp;</span>\n");
-          text.append((isFirstTab && !((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y"))))?"<div class=\"marginLeft1\">":"<div>").append("<span class=\"dojoTab").append(((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y"))?(isFirst?" dojoTabparentfirst":" dojoTabparent"):"")).append("\">");
+          text.append((isFirstTab && !((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y"))))?"<div class=\"marginLeft1\">":"<div>").append("<span class=\"dojoTab").append(((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y"))?(isFirst?"NULL dojoTabparentfirst":" dojoTabparent"):"")).append("\">");
           text.append("<div><span><a class=\"dojoTabLink\" href=\"#\" onclick=\"");
           text.append(getUrlCommand(data.adTabId, data.name, Integer.valueOf(data.tablevel).intValue()));
           text.append("\" onMouseOver=\"return true;\" onMouseOut=\"return true;\" id=\""+data.tabnameid+"\">").append(data.tabname).append("</a></span></div></span>\n");

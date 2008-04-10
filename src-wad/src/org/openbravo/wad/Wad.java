@@ -3063,6 +3063,19 @@ public class Wad extends DefaultHandler {
       script.append(javaScriptFunctions.getProperty(_name)).append("\n");
     }
     
+    //First focused element
+    String firstFocus;
+    EditionFieldsData[] ff = EditionFieldsData.selectFirstFocused(pool,strTab);
+    if (ff==null || ff.length==0) {
+      firstFocus = "'firstElement'";
+    } else {
+      String id= ff[0].columnname;
+      if (WadUtility.isSearchType(ff[0].reference)) id+="_R";
+      if (ff[0].reference.equals("17")||ff[0].reference.equals("18")||ff[0].reference.equals("19")) id="report"+id+"_S";
+      firstFocus = "'"+id + "', 'id'";
+    }
+       
+    
     String buttonShorcuts =  WadUtility.getbuttonShortcuts(shortcuts);
     script.append("\nfunction reloadComboReloads").append(strTab).append("(changedField) {\n");
     script.append("  submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloads' + document.frmMain.inpTabId.value + '.html', 'frameOculto', null, null, true);\n");
@@ -3093,6 +3106,10 @@ public class Wad extends DefaultHandler {
     script.append(buttonShorcuts);
 //    script.append("  setInputValue(frm.inpLastFieldChanged, \"\");\n");
     script.append("  return true;\n");
+    script.append("}\n");
+    
+    script.append("\nfunction setFocusFirstElement() {\n");
+    script.append("  setWindowElementFocus(").append(firstFocus).append(");\n");
     script.append("}\n");
 
     xmlDocument.setParameter("script", script.toString());

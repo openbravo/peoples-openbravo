@@ -66,7 +66,7 @@
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonOK')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -151,7 +151,7 @@
                 <td></td>
                 <td class="Button_RightAlign_ContentCell">
                   <div>
-                    <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitThisPage('SAVE');return false;">
+                    <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitThisPage('SAVE');return false;" id="buttonOK">
             <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='OK';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;" id="linkButtonOk">
                       <tr>
                         <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border=0/></td>

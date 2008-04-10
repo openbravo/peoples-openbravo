@@ -53,11 +53,10 @@ function buttonOK_click() {
 <SCRIPT language="JavaScript" type="text/javascript">
   function onLoadDo() {
     this.windowTables = new Array(
-      new windowTableId('client')
+      new windowTableId('client', null, 'buttonOK')
     );
     setWindowTableParentElement();
     enableShortcuts('edition');
-    fixFocus('buttonOK');
     resizeArea();
     try {
       onloadFunctions();

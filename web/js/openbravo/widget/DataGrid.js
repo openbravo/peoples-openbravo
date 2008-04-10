@@ -90,6 +90,7 @@ dojo.widget.defineWidget(
 		isFirstLoad: true,
 		hasBeenResized: false,
     offsetBeforeResize: 0,
+    multipleRowSelection: true,
 
 
 		templateString: "<div></div>",
@@ -408,9 +409,15 @@ dojo.widget.defineWidget(
 				var currentRow = this.buffer.getRow(offset + i);
 				if (!currentRow) continue;
 				if (selectedCount > 0 && this.selectedRows.contains(currentRow.getValue(this.columns.getIdentifier().index)) || currentRow.isNewRow) {
-					openbravo.html.prereplaceClass(this.tableNode.rows[i], 
-							"DataGrid_Body_Row_selected",
-							i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd");
+          if(isGridFocused) {
+  					openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+  							"DataGrid_Body_Row_focus",
+  							i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd");
+          } else {
+  					openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+  							"DataGrid_Body_Row_selected",
+  							i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd");
+          }
 					for (var j = 0; j < this.columns.count(); j++) {
 						if (!dojo.html.hasClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected")) {
 							dojo.html.prependClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected");
@@ -429,9 +436,15 @@ dojo.widget.defineWidget(
 					}
 				}
 				else {
-					openbravo.html.prereplaceClass(this.tableNode.rows[i], 
-							i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd", 
-							"DataGrid_Body_Row_selected");
+          if(isGridFocused) {
+  					openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+  							i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd", 
+  							"DataGrid_Body_Row_focus");
+          } else {
+  					openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+  							i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd", 
+  							"DataGrid_Body_Row_selected");
+          }
 					for (var j = 0; j < this.columns.count(); j++) {
 						if (dojo.html.hasClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected")) {
 							dojo.html.removeClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected");
@@ -549,7 +562,7 @@ dojo.widget.defineWidget(
 			}
 			var rowNode = cell.parentNode;
 			if (!rowNode) return;
-			if (!evt.ctrlKey && !evt.shiftKey)
+			if ((!evt.ctrlKey && !evt.shiftKey) || this.multipleRowSelection==false)
 				this.selectedRows.clear();
 			var rowNo =	this.getCurrentOffset() + rowNode.rowIndex;
 			var gridRow = this.buffer.getRow(rowNo);
@@ -596,7 +609,7 @@ dojo.widget.defineWidget(
 					}
 				}		
 			}
-			if (evt.ctrlKey && dojo.html.hasClass(rowNode, "DataGrid_Body_Row_selected")) {
+			if (evt.ctrlKey && dojo.html.hasClass(rowNode, "DataGrid_Body_Row_focus")) {
 				this.selectedRows.remove(gridRow.getValue(this.columns.getIdentifier().name));
 			}
 			else {
@@ -1004,7 +1017,7 @@ dojo.widget.defineWidget(
 
 	    	var gridId = this.widgetId;
 			var tableHeader = document.createElement("table");
-			if(isGridFocused) tableHeader.className = 'DataGrid_Header_Table_Focus';
+			if(isGridFocused) tableHeader.className = 'DataGrid_Header_Table_focus';
 			else tableHeader.className = 'DataGrid_Header_Table';
 			if (this.sortable)
 				tableHeader.id = gridId + '_table_header';
@@ -1042,7 +1055,7 @@ dojo.widget.defineWidget(
 			table.id = gridId + "_table";
 			table.cellspacing = "0";
 			table.cellpadding = "0";
-      if(isGridFocused) table.className = 'DataGrid_Body_Table_Focus';
+      if(isGridFocused) table.className = 'DataGrid_Body_Table_focus';
       else table.className = 'DataGrid_Body_Table';
 			table.style.width = totalWidth + 'px';
 	        var tbody = document.createElement("tbody");
@@ -1369,9 +1382,15 @@ dojo.widget.defineWidget(
 */
 		refreshGridData: function() {
 			for (var i = 0; i < this.numRows; i++) {
-				openbravo.html.prereplaceClass(this.tableNode.rows[i], 
-						i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd",
-						"DataGrid_Body_Row_selected");
+        if(isGridFocused) {
+          openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+              i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd",
+              "DataGrid_Body_Row_focus");
+        } else {
+          openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+              i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd",
+              "DataGrid_Body_Row_selected");
+        }
 			}
 			var contentOffset = this.getCurrentOffset();
 			if (contentOffset > this.metaData.totalRows - this.numRows)
@@ -1387,8 +1406,13 @@ dojo.widget.defineWidget(
 */
     focusGrid: function() {
       isGridFocused = true;
-      openbravo.html.prereplaceClass(this.table, 'DataGrid_Body_Table_Focus', 'DataGrid_Body_Table');
-      openbravo.html.prereplaceClass(this.tableHeader, 'DataGrid_Header_Table_Focus', 'DataGrid_Header_Table');
+      openbravo.html.prereplaceClass(this.table, 'DataGrid_Body_Table_focus', 'DataGrid_Body_Table');
+      openbravo.html.prereplaceClass(this.tableHeader, 'DataGrid_Header_Table_focus', 'DataGrid_Header_Table');
+      for (var i = 0; i < this.numRows; i++) {
+        if (this.tableNode.rows[i].className.indexOf('DataGrid_Body_Row_selected') != -1) {
+          openbravo.html.prereplaceClass(this.tableNode.rows[i], 'DataGrid_Body_Row_focus', 'DataGrid_Body_Row_selected');
+        }
+      }
       return true;
 		},
 
@@ -1397,8 +1421,13 @@ dojo.widget.defineWidget(
 */
     blurGrid: function() {
       isGridFocused = false;
-      openbravo.html.prereplaceClass(this.table, 'DataGrid_Body_Table', 'DataGrid_Body_Table_Focus');
-      openbravo.html.prereplaceClass(this.tableHeader, 'DataGrid_Header_Table', 'DataGrid_Header_Table_Focus');
+      openbravo.html.prereplaceClass(this.table, 'DataGrid_Body_Table', 'DataGrid_Body_Table_focus');
+      openbravo.html.prereplaceClass(this.tableHeader, 'DataGrid_Header_Table', 'DataGrid_Header_Table_focus');
+      for (var i = 0; i < this.numRows; i++) {
+        if (this.tableNode.rows[i].className.indexOf('DataGrid_Body_Row_focus') != -1) {
+          openbravo.html.prereplaceClass(this.tableNode.rows[i], 'DataGrid_Body_Row_selected', 'DataGrid_Body_Row_focus');
+        }
+      }
       return true;
 		},
 

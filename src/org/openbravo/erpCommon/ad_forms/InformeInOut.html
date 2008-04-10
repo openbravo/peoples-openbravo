@@ -43,7 +43,7 @@ function onloadFunctions() {
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonSearch')
 		);
 		setWindowTableParentElement();
 		this.tabsTables = new Array(
@@ -77,7 +77,7 @@ function onloadFunctions() {
       <TD width="19%"> <INPUT type="text" name="inpHasta" id="paramHasta" value="" size="10" maxlength="10"  onkeup="auto_complete_date(this);return true;"></INPUT> 
         <A href="#" onclick="showCalendar('frmMain.inpHasta', document.frmMain.inpHasta.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
         <img width="16" height="16"  alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
-      <TD width="26%"> <A href="#" onclick="submitCommandForm('FIND',true, null, null, 'EXCEL');return false;" onmouseover="window.status='Get indirect's report';return true;" onmouseout="window.status='';return true;" > 
+      <TD width="26%"> <A href="#" onclick="submitCommandForm('FIND',true, null, null, 'EXCEL');return false;" onmouseover="window.status='Get indirect's report';return true;" onmouseout="window.status='';return true;" id="buttonSearch"> 
         <img width="16" height="16" src="../../../../../web/images/Find.jpg"  alt="Search" title="Search" border="0" id="buttonSearch"></IMG></A></TD>
     </TR>
   </TABLE>

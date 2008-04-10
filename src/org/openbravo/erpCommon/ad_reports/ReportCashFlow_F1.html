@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2007 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -94,23 +94,11 @@ function displayCombos(){
   depurarCombo();
 	return true;
 }
-
-function refreshAccounts() {
-  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
-  var cmbAccount = document.frmMain.inpAccountingReportId;  
-  cambiarListaCombo(cmbAccount, arrAccount, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);  
-  return true;
-}
 </SCRIPT>
-
-<script language="JavaScript" type="text/javascript" id="paramArrayAccount">
-var arrAccount=null;
-</script>
-
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', 'frameButton', 'buttonOK', 'frameButton')
 		);
 		setWindowTableParentElement();
 		this.tabsTables = new Array(
@@ -296,7 +284,7 @@ var arrAccount=null;
 	<tr>
 		<td class="TitleCell"><span class="LabelText">Account schema&nbsp;</span></td>
 		<td class="Combo_ContentCell" colspan="2">
-			<select class="ComboKey Combo_TwoCells_width" name="inpcAcctSchemaId" id="inpcAcctSchemaId" onChange="refreshAccounts();return false;">
+			<select class="ComboKey Combo_TwoCells_width" name="inpcAcctSchemaId" id="inpcAcctSchemaId" onChange="submitCommandForm('FRAME1');return false;">
 				<option value=""></option>
 				<DIV id="reportC_ACCTSCHEMA_ID"></DIV>
 			</select>
@@ -335,7 +323,8 @@ var arrAccount=null;
                   onblur="window.status=''; return true;"
                   onkeypress="this.className='ButtonLink_active'; return true;"
                   onkeyup="this.className='ButtonLink_focus'; return true;"
-                  onclick="submitCommandForm('DEPURAR', false, null, null, 'frameOcultoButton');">
+                  onclick="submitCommandForm('DEPURAR', false, null, null, 'frameOcultoButton');"
+                  id="buttonOK">
                   <table class="Button"
                     onmousedown="this.className='Button_active'; return true;"
                     onmouseup="this.className='Button'; return true;"

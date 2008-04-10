@@ -33,6 +33,7 @@ var fixFocusedElement = null;
 var fixFocusedElementArrayPosition = null;
 
 var isTabPressed = null;
+var isFirstTime = true;
 
 var isGoingDown = null;
 var isGoingUp = null;
@@ -61,13 +62,10 @@ function disableFixFocus() {
   }
 }
 
-function fixFocus(id) {
-  fixFocusedElement = document.getElementById(id);
-  fixFocusedElementArrayPosition = keyArray.length
-  activateFixFocus();
-}
 
 function fixFocusLogic(obj) {
+  disableFixFocus();
+  fixFocusedElement = document.getElementById(windowTables[focusedWindowTable].defaultActionButtonId);
   try {
     if (obj.tagName == 'INPUT' || obj.tagName == 'SELECT') {
       activateFixFocus();
@@ -89,6 +87,19 @@ function fixFocusLogic(obj) {
   } catch(e) {}
 }
 
+function enableFixFocus() {
+  fixFocusedElement = null;
+  fixFocusedElementArrayPosition = keyArray.length
+  activateFixFocus();
+}
+
+function fixButton(fixFocusObj , fixFocusObjTableId, fixFocusObjFrameName) {
+  this.fixFocusObj = fixFocusObj;
+  this.fixFocusObjTableId = fixFocusObjTableId;
+  this.fixFocusObjFrameName = fixFocusObjFrameName;  
+}
+
+
 function activeElementFocus() {
   if (focusedWindowElement && selectedArea=='window') putWindowElementFocus(focusedWindowElement);
 }
@@ -105,15 +116,18 @@ function swichSelectedArea() {
     setActiveTab();
   } else if (selectedArea=='tabs') {
     selectedArea = 'window';
+    removeTabFocus(focusedTab);
     setWindowElementFocus(focusedWindowElement_tmp2);
   } else {
     return false;
   }
 }
 
-function windowTableId(tableId, frameName) {
+function windowTableId(tableId, frameName, defaultActionButtonId, defaultActionButtonIdFrame) {
   this.tableId = tableId;
-  this.frameName = frameName;  
+  this.frameName = frameName;
+  this.defaultActionButtonId = defaultActionButtonId;
+  this.defaultActionButtonIdFrame = defaultActionButtonIdFrame;
 }
 
 
@@ -127,16 +141,45 @@ function cursorFocus(evt, obj) {
   if(obj == null) {
     obj = (!document.all) ? evt.target : event.srcElement;
   }
+  if (obj == focusedWindowElement) return true;
+  if (navigator.userAgent.indexOf("NT") == -1 && obj.className.indexOf('Radio_Check_ContentCell') != -1) {
+    //Go to the SPAN element
+    for (;;) {
+      obj = obj.firstChild;
+      for (;;) {
+        if (obj.nodeType != '1') {
+          obj = obj.nextSibling;
+        } else {
+          break;
+        }
+      }
+      if (obj.tagName != 'DIV') break;
+    }
+
+    //Go to the INPUT element
+    obj = obj.firstChild;
+    for (;;) {
+      if (obj.nodeType != '1') {
+        obj = obj.nextSibling;
+      } else {
+        break;
+      }
+    }
+    obj.checked = !obj.checked;
+  }
   if(!isClickOnGrid==true) blurGrid();
   isClickOnGrid=false;
-  setSelectedArea('window');
+  //setSelectedArea('window');
   if (isInsideWindowTable(obj) && couldHaveFocus(obj)) {
+    removeTabFocus(focusedTab);
     frameLocked = false;
     //removeWindowElementFocus(focusedWindowElement);
+    selectedArea = 'window';
     focusedWindowElement = obj;
     setWindowElementFocus(focusedWindowElement);
   } else {
-    setWindowElementFocus(focusedWindowElement);
+    if (selectedArea == 'window') setWindowElementFocus(focusedWindowElement);
+    if (selectedArea == 'tabs') setTabFocus(focusedTab);
     //focusedWindowElement = document.getElementById(windowTables[0].tableId);
     //focusedWindowTable = 0;
     //setWindowTableParentElement();
@@ -170,7 +213,7 @@ function setWindowElementFocus(obj, type) {
     } else {
       removeWindowElementFocus(focusedWindowElement_tmp);
       focusedWindowElement = obj;
-    focusedWindowElement_tmp = focusedWindowElement;
+      focusedWindowElement_tmp = focusedWindowElement;
       if(!frameLocked)
       putWindowElementFocus(focusedWindowElement);
     }
@@ -180,7 +223,7 @@ function setWindowElementFocus(obj, type) {
     focusedWindowElement = obj;
     focusedWindowElement_tmp = focusedWindowElement;
     if(!frameLocked) putWindowElementFocus(obj);
-    putWindowElementFocus(focusedWindowElement);    
+    putWindowElementFocus(focusedWindowElement);
   }
 }
 
@@ -215,17 +258,34 @@ function drawWindowElementFocus(obj) {
         obj.className = 'Dimension_UpDown_Button_BottomLink_focus';
       } else if (obj.className.indexOf('Dimension_UpDown_Button_TopLink_focus') == -1 && obj.className.indexOf('Dimension_UpDown_Button_TopLink') != -1) {
         obj.className = 'Dimension_UpDown_Button_TopLink_focus';
+      } else if (obj.className.indexOf('Popup_Workflow_Button_focus') == -1 && obj.className.indexOf('Popup_Workflow_Button') != -1) {
+        obj.className = 'Popup_Workflow_Button_focus';
+      } else if (obj.className.indexOf('Popup_Workflow_text_focus') == -1 && obj.className.indexOf('Popup_Workflow_text') != -1) {
+        obj.className = 'Popup_Workflow_text_focus';
+      } else if (obj.className.indexOf('Popup_Client_Help_Icon_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_Help_Icon_LabelLink') != -1) {
+        obj.className = 'Popup_Client_Help_Icon_LabelLink_focus';
       }
+      isFirstTime = false;
     } else if (obj.tagName == 'SELECT') {
-      if (obj.className.indexOf(' Combo_focus') == -1) {
-        obj.className = obj.className + ' Combo_focus';
+      if (navigator.appName.toUpperCase().indexOf('MICROSOFT') == -1) { 
+        if (obj.className.indexOf(' Combo_focus') == -1) {
+          obj.className = obj.className + ' Combo_focus';
+        }
       }
+
+      isFirstTime = false;
     } else if (obj.tagName == 'INPUT') {
       if ((obj.className.indexOf(' TextBox_focus') == -1) &&
       (obj.className.indexOf('dojoValidateEmpty') != -1 ||
       obj.className.indexOf('dojoValidateValid') != -1 ||
       obj.className.indexOf('dojoValidateInvalid') != -1 ||
       obj.className.indexOf('dojoValidateRange') != -1)) {
+        obj.className = obj.className.replace('dojoValidateEmpty', 'dojoValidateEmpty_focus');
+        obj.className = obj.className.replace('dojoValidateValid', 'dojoValidateValid_focus');
+        obj.className = obj.className.replace('dojoValidateInvalid', 'dojoValidateInvalid_focus');
+        obj.className = obj.className.replace('dojoValidateRange', 'dojoValidateRange_focus');
+        obj.className = obj.className.replace('required', 'required_focus');
+        obj.className = obj.className.replace('readonly', 'readonly_focus');
         obj.className = obj.className + ' TextBox_focus';
       } else if (obj.getAttribute('type') == 'checkbox') {
         obj.className = 'Checkbox_Focused';
@@ -240,6 +300,7 @@ function drawWindowElementFocus(obj) {
             }
           }
         } catch(e) {}
+          isFirstTime = false;
       } else if (obj.getAttribute('type') == 'radio') {
         obj.className='Radio_Focused';
         var obj_tmp = obj;
@@ -253,16 +314,22 @@ function drawWindowElementFocus(obj) {
             }
           }
         } catch(e) {}
+
       }
+      isFirstTime = false;
     } else if (obj.tagName == 'TEXTAREA') {
       if ((obj.className.indexOf(' TextBox_focus') == -1)
       && (obj.className.indexOf('dojoValidateEmpty') != -1
       || obj.className.indexOf('dojoValidateValid') != -1
       || obj.className.indexOf('dojoValidateInvalid') != -1
       || obj.className.indexOf('dojoValidateRange') != -1)) {
+        obj.className = obj.className.replace('dojoValidateValid', 'dojoValidateValid_focus');
+        obj.className = obj.className.replace('required', 'required_focus');
         obj.className = obj.className + ' TextBox_focus';
       }
+      isFirstTime = false;
     } else if (currentWindowElementType == 'grid') {
+      isFirstTime = false;
     } else {
     }
   } catch (e) {
@@ -300,10 +367,19 @@ function eraseWindowElementFocus(obj) {
       obj.className = obj.className.replace('Dimension_LeftRight_Button_BottomLink_focus','Dimension_LeftRight_Button_BottomLink');
       obj.className = obj.className.replace('Dimension_UpDown_Button_BottomLink_focus','Dimension_UpDown_Button_BottomLink');
       obj.className = obj.className.replace('Dimension_UpDown_Button_TopLink_focus','Dimension_UpDown_Button_TopLink');
+      obj.className = obj.className.replace('Popup_Workflow_Button_focus','Popup_Workflow_Button');
+      obj.className = obj.className.replace('Popup_Workflow_text_focus','Popup_Workflow_text');
+      obj.className = obj.className.replace('Popup_Client_Help_Icon_LabelLink_focus','Popup_Client_Help_Icon_LabelLink');
     } else if (obj.tagName == 'SELECT') {
       obj.className = obj.className.replace(' Combo_focus','');
     } else if (obj.tagName == 'INPUT') {
       obj.className = obj.className.replace(' TextBox_focus','');
+      obj.className = obj.className.replace('dojoValidateEmpty_focus', 'dojoValidateEmpty');
+      obj.className = obj.className.replace('dojoValidateValid_focus', 'dojoValidateValid');
+      obj.className = obj.className.replace('dojoValidateInvalid_focus', 'dojoValidateInvalid');
+      obj.className = obj.className.replace('dojoValidateRange_focus', 'dojoValidateRange');
+      obj.className = obj.className.replace('required_focus', 'required');
+      obj.className = obj.className.replace('readonly_focus', 'readonly');
       if (obj.getAttribute('type')=='checkbox') {
         obj.className='Checkbox_NOT_Focused';
         var obj_tmp = obj;
@@ -333,6 +409,8 @@ function eraseWindowElementFocus(obj) {
       }
     } else if (obj.tagName == 'TEXTAREA') {
       obj.className = obj.className.replace(' TextBox_focus','');
+      obj.className = obj.className.replace('dojoValidateValid_focus', 'dojoValidateValid');
+      obj.className = obj.className.replace('required_focus', 'required');
     } else if (previousWindowElementType == 'grid') {
       blurGrid();
     } else {
@@ -361,15 +439,16 @@ function mustBeJumped(obj) {
 function mustBeIgnored(obj) {
   if (obj.style.display == 'none') return true;
   if (obj.getAttribute('type') == 'hidden') return true;
-  if (obj.getAttribute('readonly') == 'true') return true;
-  if (obj.readOnly) return true;
+  if (obj.getAttribute('readonly') == 'true' && obj.getAttribute('tabindex') != '1') return true;
+  if (obj.readOnly && obj.getAttribute('tabindex') != '1') return true;
   if (obj.getAttribute('disabled') == 'true') return true;
   if (obj.disabled) return true;
+  if (obj.className.indexOf('LabelLink')!=-1 && obj.className.indexOf('_LabelLink')==-1 && obj.className.indexOf('LabelLink_')==-1) return true;
+  if (obj.className.indexOf('FieldButtonLink')!=-1) return true;  
   return false;
 }
 
 function canHaveFocus(obj) {
-  //alert('chequeo');
   if (mustBeIgnored(obj)) return false;
   if (couldHaveFocus(obj)) return true;
   return false;
@@ -492,7 +571,12 @@ function getNextWindowElement() {
             if (nextElement==document.getElementById(windowTableParentElement) || nextElement==document.getElementsByTagName('BODY')[0]) {
               //alert('hemos llegado al padre!')
               goToNextWindowTable();
-              return getCurrentWindowTableFirstElement();
+              if (!isFirstTime) return getCurrentWindowTableFirstElement();
+              else {
+                try {
+                  setTimeout("setSelectedArea('window'); swichSelectedArea();",50);
+                } catch(e) {}
+              }
             }
           }
         }
@@ -701,6 +785,14 @@ function windowShiftTabKey(state) {
   return false;
 }
 
+function windowCtrlShiftEnterKey() {
+  executeAssociatedLink();
+}
+
+function windowCtrlEnterKey() {
+  executeAssociatedFieldButton();
+}
+
 function setFirstWindowElementFocus() {
   var obj = getFirstWindowElement();
   setWindowElementFocus(obj);
@@ -721,10 +813,197 @@ function setCurrentWindowTableLastElementFocus() {
   setWindowElementFocus(obj);
 }
 
+function getAssociatedLink() {
+  var link = null;
+  var success = true;
+  link = focusedWindowElement;
+  //Go to the TD parent
+  if (link.className.indexOf('TextBox_btn') != -1) {
+    //If is an Input Text + Field Button
+    try {
+      for (;;) {
+        link = link.parentNode;
+        if (link.tagName == 'TABLE') {
+          break;
+        } else if (link.tagName == 'BODY') {
+          success = false;
+          break;
+        }
+      }
+      for (;;) {
+        link = link.parentNode;
+        if (link.tagName == 'TABLE') {
+          break;
+        } else if (link.tagName == 'BODY') {
+          success = false;
+          break;
+        }
+      }
+      success = true;
+    } catch (e) {
+      success = false;
+    }
+  } 
+  if (success == true) {
+    try {
+      for (;;) {
+        link = link.parentNode;
+        if (link.tagName == 'TD') {
+          success = true;
+          break;
+        } else if (link.tagName == 'BODY') {
+          success = false;
+          break;
+        }
+      }
+    } catch (e) {
+      success = false;
+    }
+  }
+  if (success == true) {
+    try {
+      //Go to the TD previous sibling
+      link = link.previousSibling;
+      for (;;) {
+        if (link.nodeType != '1') {
+          link = link.previousSibling;
+        } else {
+          break;
+        }
+      }
+      //Go to the SPAN element
+      link = link.firstChild;
+      for (;;) {
+        if (link.nodeType != '1') {
+          link = link.nextSibling;
+        } else {
+          break;
+        }
+      }
+      //Go to the A element
+      link = link.firstChild;
+      for (;;) {
+        if (link.nodeType != '1') {
+          link = link.nextSibling;
+        } else {
+          break;
+        }
+      }
+      success = true;
+    } catch (e) {
+      success = false;
+    }
+  }
+  if (success == true && link.tagName == 'A') {
+    return link;
+  } else {
+    return false;
+  } 
+}
+
+function executeAssociatedLink() {
+  var link = null;
+  link = getAssociatedLink();
+  if (link != null && link != false) {
+    link.onclick();
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function getAssociatedFieldButton(type) {
+  var fieldButton = null;
+  var success = true;
+  fieldButton = focusedWindowElement;
+  //Go to the TD parent
+  if (type=='wad_window') {
+    //If is an Input Text + Dojo
+    try {
+      for (;;) {
+        fieldButton = fieldButton.parentNode;
+        if (fieldButton.tagName == 'TD') {
+          break;
+        } else if (fieldButton.tagName == 'BODY') {
+          success = false;
+          break;
+        }
+      }
+      success = true;
+    } catch (e) {
+      success = false;
+    }
+  }
+  if (success == true) {
+    try {
+      for (;;) {
+        fieldButton = fieldButton.parentNode;
+        if (fieldButton.tagName == 'TD') {
+          success = true;
+          break;
+        } else if (fieldButton.tagName == 'BODY') {
+          success = false;
+          break;
+        }
+      }
+    } catch (e) {
+      success = false;
+    }
+  }
+  if (success == true) {
+    try {
+      //Go to the TD next sibling
+      fieldButton = fieldButton.nextSibling;
+      for (;;) {
+        if (fieldButton.nodeType != '1') {
+          fieldButton = fieldButton.nextSibling;
+        } else {
+          break;
+        }
+      }
+      //Go to the A element
+      fieldButton = fieldButton.firstChild;
+      for (;;) {
+        if (fieldButton.nodeType != '1') {
+          fieldButton = fieldButton.nextSibling;
+        } else {
+          break;
+        }
+      }
+      success = true;
+    } catch (e) {
+      success = false;
+    }
+  }
+  if (success == true && fieldButton.tagName == 'A') {
+    return fieldButton;
+  } else {
+    return false;
+  } 
+}
+
+function executeAssociatedFieldButton() {
+  var fieldButton = null;
+  fieldButton = getAssociatedFieldButton('wad_window');
+  if (fieldButton != null && fieldButton != false) {
+    fieldButton.onclick();
+    return true;
+  } else {
+    fieldButton = getAssociatedFieldButton('manual_window');
+    if (fieldButton != null && fieldButton != false) {
+      fieldButton.onclick();
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
 
 // Tabs functions
 
 var focusedTab = null;
+var focusedTab_tmp = null;
 var tabTableParentElement = null;
 var focusedTabTable = 0;
 
@@ -739,6 +1018,66 @@ function isTabActive(obj) {
     return false;
   }
 }
+
+
+
+function drawTabFocus(obj) {
+  var obj_tmp = null;
+  try {
+    if(obj.tagName == 'A') {
+      if (obj.className.indexOf('dojoTabLink_focus') == -1 && obj.className.indexOf('dojoTabLink') != -1) {
+        obj_tmp = obj;
+        obj = obj.parentNode;
+        obj = obj.parentNode;
+        obj = obj.parentNode;
+        if (obj.className.indexOf('dojoTabparentfirst')!=-1) obj.className = 'dojoTabparentfirst_focus';
+        else if (obj.className.indexOf('dojoTabparent')!=-1) obj.className = 'dojoTabparent_focus';
+        else if (obj.className.indexOf('dojoTabcurrentfirst')!=-1) obj.className = 'dojoTabcurrentfirst_focus';
+        else if (obj.className.indexOf('dojoTabcurrent')!=-1) obj.className = 'dojoTabcurrent_focus';
+        else {
+          obj = obj_tmp;
+          obj.className = 'dojoTabLink_focus';
+        }
+        
+      }
+    } else {
+    }
+  } catch (e) {
+  }
+}
+
+function putTabFocus(obj) {
+  drawTabFocus(obj);
+  fixFocusLogic(obj);
+  obj.focus();
+}
+
+function eraseTabFocus(obj) {
+  var obj_tmp = null;
+  try {
+    if(obj.tagName == 'A') {
+      obj_tmp = obj;
+      obj = obj.parentNode;
+      obj = obj.parentNode;
+      obj = obj.parentNode;
+      if (obj.className.indexOf('dojoTabparentfirst_focus')!=-1) obj.className = 'dojoTabparentfirst';
+      else if (obj.className.indexOf('dojoTabparent_focus')!=-1) obj.className = 'dojoTabparent';
+      else if (obj.className.indexOf('dojoTabcurrentfirst_focus')!=-1) obj.className = 'dojoTabcurrentfirst';
+      else if (obj.className.indexOf('dojoTabcurrent_focus')!=-1) obj.className = 'dojoTabcurrent';
+      else {
+        obj = obj_tmp;
+        if (obj.className.indexOf('dojoTabLink_focus') != -1) obj.className = 'dojoTabLink';
+      }
+    }
+  } catch (e) {
+  }
+}
+
+function removeTabFocus(obj) {
+  eraseTabFocus(obj);
+  //obj.blur();
+}
+
 
 
 function getFirstTab() {
@@ -962,12 +1301,18 @@ function setTabFocus(obj, type) {
       setLastTabFocus();
     } else {
       focusedTab = obj;
-      putWindowElementFocus(obj);
+      removeTabFocus(focusedTab_tmp);
+      focusedTab_tmp = focusedTab;
+      if(!frameLocked)
+      putTabFocus(focusedTab);
     }
   } else if (type == 'id') {
     obj = document.getElementById(obj);
     focusedTab = obj;
-    putWindowElementFocus(obj);
+    removeTabFocus(focusedTab_tmp);
+    focusedTab_tmp = focusedTab;
+    if(!frameLocked) putWindowElementFocus(obj);
+    putTabFocus(focusedTab);
   }
 }
 

@@ -107,9 +107,9 @@ function enableLocalShortcuts() {
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client0', 'frameButton'),
-		  new windowTableId('client', 'frameButton'),
-		  new windowTableId('tdbottomButtons', 'frameButton2')
+		  new windowTableId('client', 'frameButton', 'buttonSearch', 'frameButton'),
+		  new windowTableId('client2', 'frameButton', 'buttonOK', 'frameButton2'),
+		  new windowTableId('tdbottomButtons', 'frameButton2', 'buttonOK', 'frameButton2')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -253,7 +253,7 @@ src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" bord
           </TBODY>
         </table>
         <!-- MessageBox END -->
-        <TABLE cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector" id="client0">
+        <TABLE cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector" id="client">
           <TR>
             <TD class="TableEdition_OneCell_width"></TD>
             <TD class="TableEdition_OneCell_width"></TD>
@@ -466,7 +466,8 @@ id="buttonCalc"></IMG>
               <div>
                 <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Results'; return true;" onblur="
 window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" 
-onclick="submitCommandForm('FIND_SETTLEMENT', true);return false;">
+onclick="submitCommandForm('FIND_SETTLEMENT', true);return false;"
+id="buttonSearch">
             <table class="Button" onmouseout="this.className='Button';window.status='';return true;" 
 onmouseover="this.className='Button_hover';window.status='Results';return true;" onmousedown="this.className='Button_active';return true;" 
 onmouseup="this.className='Button';return true;">
@@ -485,7 +486,7 @@ src="../../../../../web/images/blank.gif" border=0 id="buttonResults"/></td>
         </TABLE>
 
 
-        <div style="overflow: auto; width:895px; height: 280px;" id="client">
+        <div style="overflow: auto; width:895px; height: 280px;" id="client2">
           <TABLE cellspacing="0" cellpadding="0" class="DataGrid_Header_Table DataGrid_Body_Table">
             <TR class="Popup_Client_Selector_DataGrid_HeaderRow"> 
               <TD width="27" class="DataGrid_Body_LineNoCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpTodos" onclick="cargarDatos(this);return true;" value="Y" id="fieldMarcarTodos"></INPUT></SPAN></TD>

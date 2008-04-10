@@ -81,8 +81,8 @@
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client'),
-		  new windowTableId('tdbottomButtons')
+		  new windowTableId('client', null, 'buttonSearch'),
+		  new windowTableId('tdbottomButtons', null, 'buttonProcess')
 		);
 		setWindowTableParentElement();
 		this.tabsTables = new Array(
@@ -328,7 +328,7 @@
               <TD class="TitleCell"></TD>
               <TD class="Button_LeftAlign_ContentCell">
               <div>
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Results'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true, null, 'ChangeOrderOrg.html');return false;">
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Results'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true, null, 'ChangeOrderOrg.html');return false;" id="buttonSearch">
                 <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Results';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                   <tr>
                     <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Results" title="Results" src="../../../../../web/images/blank.gif" border=0 id="buttonResults"/></td>                    
@@ -400,7 +400,7 @@
           <TR>
             <TD class="Button_LeftAlign_ContentCell">
             <DIV>
-                <A class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE', true, null, 'ChangeOrderOrg.html');return false;">
+                <A class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE', true, null, 'ChangeOrderOrg.html');return false;" id="buttonProcess">
                 <TABLE class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Process';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <TR>                      
                       <TD class="Button_left"><IMG class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border=0/></TD>

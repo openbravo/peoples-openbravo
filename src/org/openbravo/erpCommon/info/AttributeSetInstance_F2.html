@@ -41,8 +41,8 @@ function depurarSelector(action) {
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client', 'superior'),
-		  new windowTableId('client', 'inferior')
+		  new windowTableId('client', 'superior', 'buttonOK', 'inferior'),
+		  new windowTableId('client', 'inferior', 'buttonOK', 'inferior')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -73,7 +73,7 @@ function depurarSelector(action) {
             <td class="TitleCell"></td>
             <td class="Button_RightAlign_ContentCell">
               <div>
-                <table class="Button" onclick="depurarSelector('SAVE');return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Accept';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                <table class="Button" onclick="depurarSelector('SAVE');return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Accept';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;" id="buttonOK">
                   <tr>
                     <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Results" title="Results" src="../../../../../web/images/blank.gif" border=0/></td>
                     <td class="Button_text Button_width">OK</td>

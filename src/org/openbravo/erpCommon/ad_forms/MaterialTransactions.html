@@ -88,9 +88,9 @@ function onloadFunctions() {
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client'),
-		  new windowTableId('tdbottomButtons'),
-		  new windowTableId('client2')
+		  new windowTableId('client', null, 'buttonSearch'),
+		  new windowTableId('tdbottomButtons', null, 'buttonProcess'),
+		  new windowTableId('client2', null, 'buttonResults')
 		);
 		setWindowTableParentElement();
 		this.tabsTables = new Array(
@@ -342,7 +342,7 @@ function onloadFunctions() {
                   <TD class="TitleCell"></TD>
                   <TD class="Button_LeftAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true, null, null);return false;">
+                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true, null, null);return false;" id="buttonSearch">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                         <tr>
                           <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -415,7 +415,7 @@ function onloadFunctions() {
                   <TD class="TitleCell"></TD>
                   <TD class="Button_LeftAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="depurarSelector('SAVE');return false;">
+                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Process'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="depurarSelector('SAVE');return false;" id="buttonProcess">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Process';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                         <tr>
                           <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -507,7 +507,7 @@ function onloadFunctions() {
     <TD width="13%" > <INPUT type="text" name="inpHasta" id="paramHasta" value="" size="10" maxlength="10"  onkeup="auto_complete_date(this);return true;"></INPUT> 
       <A href="#" onclick="showCalendar('frmMain.inpHasta', document.frmMain.inpHasta.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
       <img width="16" height="16"  alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
-    <TD width="14%"> <A href="#" onclick="depurarSelector('GO');return false;" onmouseover="window.status='Go to results';return true;" onmouseout="window.status='';return true;" > 
+    <TD width="14%"> <A href="#" onclick="depurarSelector('GO');return false;" onmouseover="window.status='Go to results';return true;" onmouseout="window.status='';return true;" id="buttonResults"> 
       <img width="16" height="16" src="../../../../../web/images/detalle.jpg"  alt="Go to results" title="Go to results" border="0" id="buttonDetail"></IMG></A></TD>
     </TR>
   </TABLE>

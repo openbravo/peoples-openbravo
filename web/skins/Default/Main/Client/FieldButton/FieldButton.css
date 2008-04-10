@@ -30,7 +30,7 @@ a.FieldButtonLink_active, a.FieldButtonLink_active:active, a.FieldButtonLink_act
   text-decoration: none;
 }
 
-a.FieldButtonLink_focus_alpha, a.FieldButtonLink_focus_alpha:active, a.FieldButtonLink_focus_alpha:hover, a.FieldButtonLink_focus_alpha:visited, a.FieldButtonLink_focus_alpha:link, a.FieldButtonLink_focus_alpha:focus {
+a.FieldButtonLink_focus, a.FieldButtonLink_focus:active, a.FieldButtonLink_focus:hover, a.FieldButtonLink_focus:visited, a.FieldButtonLink_focus:link, a.FieldButtonLink_focus:focus {
   text-decoration: none;
 }
 
@@ -65,12 +65,12 @@ a.FieldButtonLink_active table.FieldButton .FieldButton_bg, table.FieldButton_ac
   background: url(fieldButton.pressed.png) no-repeat center center;
 }
 
-a.FieldButtonLink_focus_alpha .FieldButton, .FieldButton_focus_alpha {
+a.FieldButtonLink_focus .FieldButton, .FieldButton_focus {
   border-collapse: collapse;
   CURSOR: pointer;
 }
 
-a.FieldButtonLink_focus_alpha table.FieldButton .FieldButton_bg, table.FieldButton_focus_alpha .FieldButton_bg {
+a.FieldButtonLink_focus table.FieldButton .FieldButton_bg, table.FieldButton_focus .FieldButton_bg {
   background: url(fieldButton.focused.png) no-repeat center center;
 }
 

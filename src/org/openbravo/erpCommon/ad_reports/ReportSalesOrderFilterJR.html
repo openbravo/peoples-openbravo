@@ -81,7 +81,7 @@ function onloadFunctions() {
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonHTML')
 		);
 		setWindowTableParentElement();
 		this.tabsTables = new Array(
@@ -548,7 +548,7 @@ function onloadFunctions() {
 
                     <TD class="Button_CenterAlign_ContentCell">
                       <DIV>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('EDIT_HTML', true, 'ReportSalesOrderFilterJR.html', 'ReportSalesOrderFilterJR', null, false, '700', '1024', true);return false;">
+                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('EDIT_HTML', true, 'ReportSalesOrderFilterJR.html', 'ReportSalesOrderFilterJR', null, false, '700', '1024', true);return false;" id="buttonHTML">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                           <TR>
                             <TD class="Button_left"><IMG class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border="0/"></IMG></TD>

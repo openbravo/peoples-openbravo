@@ -94,8 +94,7 @@
 }
 
 #Menu_Client table table tr.Focused {
-  background: url(bigbutton.opened.png) repeat-x;
-  background-color: #BDBDBD;
+  background: url(bigbutton.focused.png) repeat-x;
   color: #333333;
   font-weight: bold;
 }
@@ -144,7 +143,7 @@
 
 #Menu_Client table table table tr.Focused {
   background: none;
-  background-color: #BDBDBD;
+  background: url(smallbutton.focused.png) repeat-x;
   color: #333333;
   font-weight: normal;
 }
@@ -188,7 +187,7 @@
 
 #Menu_Client table table table table tr.Focused {
   background: none;
-  background-color: #BDBDBD;
+  background: url(smallbutton.focused.png) repeat-x;
   color: #333333;
   font-weight: normal;
 }
@@ -231,7 +230,7 @@
 
 #Menu_Client table table table table table tr.Focused {
   background: none;
-  background-color: #BDBDBD;
+  background: url(smallbutton.focused.png) repeat-x;
   color: #333333;
   font-weight: normal;
 }
@@ -274,7 +273,7 @@
 
 #Menu_Client table table table table table table tr.Focused {
   background: none;
-  background-color: #BDBDBD;
+  background: url(smallbutton.focused.png) repeat-x;
   color: #333333;
   font-weight: normal;
 }

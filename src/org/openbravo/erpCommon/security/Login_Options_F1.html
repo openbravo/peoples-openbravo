@@ -56,7 +56,7 @@ function onloadFunctions() {
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonOK')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -187,7 +187,8 @@ function onloadFunctions() {
                         onblur="window.status=''; return true;"
                         onkeypress="this.className='ButtonLink_active'; return true;"
                         onkeyup="this.className='ButtonLink_focus'; return true;"
-                        onclick="submitCommandForm('OPTIONS',false,null,'../secureApp/LoginHandler.html','_top',true);return false;">
+                        onclick="submitCommandForm('OPTIONS',false,null,'../secureApp/LoginHandler.html','_top',true);return false;"
+                        id="buttonOK">
                         <table class="Button"
                           onmousedown="this.className='Button_active'; return true;"
                           onmouseup="this.className='Button'; return true;"

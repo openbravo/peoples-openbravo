@@ -31,26 +31,17 @@ var baseDirection = "../../../../../web/";
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client')
-		);
-		setWindowTableParentElement();
-		this.tabsTables = new Array(
-		  new tabTableId('tdtopTabs')
-		);
-		setTabTableParentElement();
 		enableShortcuts('edition');
-		
 		resizeArea();
-
-		setWindowElementFocus('firstElement');
+		putFocusOnMenu();
 	}
 
 	function onResizeDo(){
+		resizeArea();
 	}
 	</SCRIPT>
 </HEAD>
-<BODY marginwidth="0" marginheight="0" onresize="resizeArea();" onload="onLoadDo();" onresize="onResizeDo();"topmargin="0" leftmargin="0">
+<BODY marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" onfocus="setTimeout('putFocusOnMenu();',50);" onclick="setTimeout('putFocusOnMenu();',50);" topmargin="0" leftmargin="0">
   <table height="100%" cellspacing="0" cellpadding="0" border="0" id="main">
     <tbody><tr>
       <td valign="top" id="tdleftTabs"/>

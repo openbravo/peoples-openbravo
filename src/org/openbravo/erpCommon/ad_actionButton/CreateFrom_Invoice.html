@@ -105,9 +105,9 @@ function onloadFunctions() {
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client0', 'frameButton'),
-		  new windowTableId('client', 'frameButton'),
-		  new windowTableId('tdbottomButtons', 'frameButton2')
+		  new windowTableId('client', 'frameButton', 'buttonOK', 'frameButton2'),
+		  new windowTableId('client2', 'frameButton', 'buttonOK', 'frameButton2'),
+		  new windowTableId('tdbottomButtons', 'frameButton2', 'buttonOK', 'frameButton2')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -266,7 +266,7 @@ function onloadFunctions() {
           </table>
         <!-- MessageBox END -->
 
-          <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector" id="client0">
+          <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector" id="client">
             <tr>
               <td class="TableEdition_OneCell_width"></td>
               <td class="TableEdition_OneCell_width"></td>
@@ -309,13 +309,15 @@ function onloadFunctions() {
                       <INPUT type="text" class="dojoValidateValid TextBox_btn_TwoCells_width" maxlength="22" name="inpBpartnerId_DES" id="paramBPartnerDescription" value=""></INPUT>
                     </td>
                     <TD class="FieldButton_ContentCell">
-                      <TABLE class="FieldButton" onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', true, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value);return false;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="fieldWindowID">
-                        <TR>
-                          <TD class="FieldButton_bg">
-                            <IMG alt="Business Partner" class="FieldButton_Icon FieldButton_Icon_BusinessPartner" title="Business Partner" src="../../../../../web/images/blank.gif" border="0" id="buttonBPartner"></IMG>
-                          </TD>
-                        </TR>
-                      </TABLE>
+                      <A class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', true, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value);return false;">
+                        <TABLE class="FieldButton" onmousedown="this.className='FieldButton_active'; return true;" onmouseup="this.className='FieldButton'; return true;" onmouseover="this.className='FieldButton_hover'; window.status='Search'; return true;" onmouseout="this.className='FieldButton'; window.status=''; return true;" id="DateInvoicedlinkCalendar">
+                          <TR>
+                            <TD class="FieldButton_bg">
+                              <IMG alt="Business Partner" class="FieldButton_Icon FieldButton_Icon_BusinessPartner" title="Business Partner" src="../../../../../web/images/blank.gif" border="0" id="buttonBPartner"></IMG>
+                            </TD>
+                          </TR>
+                        </TABLE>
+                      </A>
                     </TD>
                   </TR>
                 </TABLE>
@@ -355,7 +357,7 @@ function onloadFunctions() {
                 </table>
               </td>
               <td valign="top">
-                <div style="overflow: auto; display: none;" id="client">
+                <div style="overflow: auto; display: none;" id="client2">
                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                     <tr class="DataGrid_Body_Row">
                       <TH width="25" class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox">

@@ -60,7 +60,7 @@ END OLD KEY DEFINITION -->
    return true;
  }
 </SCRIPT>
-<script language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript" id="fieldOnLoadFocusScript">
   function onLoadDo() {
     this.windowTables = new Array(
       new windowTableId('client')
@@ -76,7 +76,7 @@ END OLD KEY DEFINITION -->
     try {
       onloadClient();
     } catch (e) {}
-    setWindowElementFocus('firstElement');
+    setFocusFirstElement();
     buttonListShorcuts();
     xx();
     

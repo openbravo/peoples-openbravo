@@ -52,7 +52,7 @@
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonOK')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -149,22 +149,21 @@
                       <INPUT type="hidden" name="inpNewcInvoiceId" value="">
                     </TD>
                     <td class="TextBox_ContentCell">
-                      <INPUT type="text" dojoType="openbravo:ValidationTextBox" class="dojoValidateValid required TextBox_btn_TwoCells_width" maxlength="22" name="inpNewcInvoiceId_DES" id="inpNewcInvoiceId_DES" value="" required="true" onkeyup="validateTextBox(this.id);"></INPUT>
+                      <INPUT dojotype="openbravo:ValidationTextbox" class="TextBox_btn_TwoCells_width required" required="true" type="text" name="inpNewcInvoiceId_DES" maxlength="22" value="" id="id_inpNewcInvoiceId_DES"></INPUT><SCRIPT>djConfig.searchIds.push("id_inpNewcInvoiceId_DES");</SCRIPT>
                     </td>
                     <TD class="FieldButton_ContentCell">
-                      <TABLE class="FieldButton" onclick="openSearch(null, null, '../info/Invoice_FS.html', 'SELECTOR_INVOICE', false, 'frmMain', 'inpNewcInvoiceId', 'inpNewcInvoiceId_DES', document.frmMain.inpNewcInvoiceId_DES.value, 'WindowID', 'xx');return false;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Invoice';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="fieldWindowID">
-                        <TR>
-                          <TD class="FieldButton_bg">
-                            <IMG alt="Invoice" class="FieldButton_Icon FieldButton_Icon_Invoice" title="Invoice" src="../../../../../web/images/blank.gif" border="0" id="buttonInvoice"></IMG>
-                          </TD>
-                        </TR>
-                      </TABLE>
+                      <A class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Invoice'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/Invoice_FS.html', 'SELECTOR_INVOICE', false, 'frmMain', 'inpNewcInvoiceId', 'inpNewcInvoiceId_DES', document.frmMain.inpNewcInvoiceId_DES.value, 'WindowID', 'xx');return false;">
+                        <TABLE class="FieldButton" onmousedown="this.className='FieldButton_active'; return true;" onmouseup="this.className='FieldButton'; return true;" onmouseover="this.className='FieldButton_hover'; window.status='Invoice'; return true;" onmouseout="this.className='FieldButton'; window.status=''; return true;" id="fieldWindowID">
+                          <TR>
+                            <TD class="FieldButton_bg">
+                              <IMG alt="Invoice" class="FieldButton_Icon FieldButton_Icon_Invoice" title="Invoice" src="../../../../../web/images/blank.gif" border="0" id="buttonInvoice"></IMG>
+                            </TD>
+                          </TR>
+                        </TABLE>
+                      </A>
                     </TD>
                   </TR>
                 </TABLE>
-                <SPAN class="invalid" id="Invoice_RinvalidSpan" style="display: none;">* The value entered is not valid.</SPAN>
-                <SPAN class="missing" id="Invoice_RmissingSpan" style="display: none;">* This value is required.</SPAN>
-                <SPAN class="range" id="Invoice_RrangeSpan" style="display: none;">* This value is out of range.</SPAN>
               </TD>
               <td></td>
               <td></td>
@@ -176,7 +175,7 @@
               <td></td>
               <td class="Button_RightAlign_ContentCell">
                 <div>
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitThisPage('SAVE');return false;">
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitThisPage('SAVE');return false;" id="buttonOK">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='OK';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
                       <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border=0/></td>

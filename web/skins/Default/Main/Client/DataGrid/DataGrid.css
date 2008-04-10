@@ -68,9 +68,9 @@ table.DataGrid_Header_Table {
 }
 
 table.DataGrid_Header_Table_focus {
-  border-top: #505050 4px solid; 
-  border-right: #505050 4px solid; 
-  border-left: #505050 4px solid; 
+  border-top: #1C4E6F 4px solid; 
+  border-right: #1C4E6F 4px solid; 
+  border-left: #1C4E6F 4px solid; 
   border-collapse: collapse;
   table-layout: fixed;
   margin: 0px; 
@@ -98,9 +98,9 @@ table.DataGrid_Body_Table {
 }
 
 table.DataGrid_Body_Table_focus {
-  border-bottom: #505050 4px solid; 
-  border-right: #505050 4px solid; 
-  border-left: #505050 4px solid; 
+  border-bottom: #1C4E6F 4px solid; 
+  border-right: #1C4E6F 4px solid; 
+  border-left: #1C4E6F 4px solid; 
   border-collapse: collapse;
   table-layout: fixed;
   margin: 0px; 
@@ -134,6 +134,13 @@ tr.DataGrid_Body_Row_Odd, tr.DataGrid_Body_Row_0 {
   background: url(backgroundRow.odd.normal.png) repeat-x;
   background-color: #C0CFDC;
   _background-color: #B9C9D8;
+}
+
+tr.DataGrid_Body_Row_focus {
+  background: none;
+  background: url(backgroundRow.focused.png) repeat-x;
+  background-color: #458CBB;
+  color: #FFFFFF;
 }
 
 tr.DataGrid_Body_Row_selected {

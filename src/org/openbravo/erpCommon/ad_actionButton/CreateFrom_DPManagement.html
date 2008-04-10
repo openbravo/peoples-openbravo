@@ -110,9 +110,9 @@ function onloadFunctions() {
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client', 'frameButton'),
-		  new windowTableId('client2', 'frameButton'),
-		  new windowTableId('tdbottomButtons', 'frameButton2')
+		  new windowTableId('client', 'frameButton', 'buttonSearch', 'frameButton'),
+		  new windowTableId('client2', 'frameButton', 'buttonOK', 'frameButton2'),
+		  new windowTableId('tdbottomButtons', 'frameButton2', 'buttonOK', 'frameButton2')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -474,7 +474,7 @@ function onloadFunctions() {
               <td></td>
               <td class="Button_RightAlign_ContentCell">
                 <div>
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND_SETTLEMENT', true);return false;">
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND_SETTLEMENT', true);return false;" id="buttonSearch">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
                       <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border=0/></td>

@@ -43,7 +43,7 @@ function submitThisPage(strCommand) {
   <SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonOK')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -83,7 +83,7 @@ function submitThisPage(strCommand) {
       <td>&nbsp;</td>
       <TD width="30px"> <A href="#" onclick="closeThisPage();return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
         <img width="16" height="16" src="../../../../../web/images/Cancel.jpg"  alt="Cancel" title="Cancel" border="0"></IMG></A></TD>
-      <TD width="30px"> <A href="#" onclick="submitThisPage('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
+      <TD width="30px"> <A href="#" onclick="submitThisPage('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" id="buttonOK"> 
         <img width="16" height="16" src="../../../../../web/images/Ok.jpg"  alt="Accept" title="Accept" border="0"></IMG></A></TD>
       <td>&nbsp;</td>
     </TR>

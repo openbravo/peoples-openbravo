@@ -57,7 +57,7 @@ var baseDirection = "../../../../../web/";
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonOK')
 		);
 		setWindowTableParentElement();
 		this.tabsTables = new Array(
@@ -248,7 +248,8 @@ var baseDirection = "../../../../../web/";
                   onblur="window.status=''; return true;"
                   onkeypress="this.className='ButtonLink_active'; return true;"
                   onkeyup="this.className='ButtonLink_focus'; return true;"
-                  onclick="submitCommandForm('FIND');return false;">
+                  onclick="submitCommandForm('FIND');return false;"
+                  id="buttonOK">
                   <table class="Button"
                     onmousedown="this.className='Button_active'; return true;"
                     onmouseup="this.className='Button'; return true;"

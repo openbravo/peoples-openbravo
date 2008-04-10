@@ -127,7 +127,7 @@ var arrAccount=null;
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonOK')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('edition');
@@ -358,7 +358,8 @@ var arrAccount=null;
                   onblur="window.status=''; return true;"
                   onkeypress="this.className='ButtonLink_active'; return true;"
                   onkeyup="this.className='ButtonLink_focus'; return true;"
-                  onclick="openServletNewWindow('FIND', false, 'CreateAccountingReport.html', 'CreateAccountingReport', null, false, '700', '1000', true)">
+                  onclick="openServletNewWindow('FIND', false, 'CreateAccountingReport.html', 'CreateAccountingReport', null, false, '700', '1000', true)"
+                  id ="buttonOK">
                   <table class="Button"
                     onmousedown="this.className='Button_active'; return true;"
                     onmouseup="this.className='Button'; return true;"

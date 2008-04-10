@@ -54,7 +54,7 @@
 <script language="JavaScript" type="text/javascript">
   function onLoadDo() {
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonCancel')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -133,29 +133,51 @@
 
           </TR>
           <DIV id="fieldElementGroup">
-          <TR>
-            <TD colspan=4>
-              <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
-                <TR class="FieldGroup_TopMargin"></TR>
-                <TR>
-                  <TD class="FieldGroupTitle_Left"><IMG class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
-                  <TD class="FieldGroupTitle" id="fieldElementName">xxSales Management</TD>
-                  <TD class="FieldGroupTitle_Right"><IMG class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
-                  <TD class="FieldGroupContent"></TD>
-
-                </TR>
-                <TR class="FieldGroup_BottomMargin"></TR>
-              </TABLE>
-            </TD>
-          </TR>
-          <DIV id="sectionDetail">
             <TR>
-              <TD></TD>
-              <TD class="TitleCell" colspan=3 style="text-align:left;"><SPAN class="LabelText"><a class="LabelLink" href="#" onclick="windowSelect('xx', 'yy', 'zz');return false;" onmouseover="window.status='xx';return true;" onmouseout="window.status='';return true;" id="fieldData"><span id="fieldWindowName">xxWindow Name</span> - <span id="fieldName">xxTab name</span>&nbsp;(<span id="fieldTotal">xx0</span>)</a></SPAN></TD>
+              <TD colspan=4>
+                <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                  <TR class="FieldGroup_TopMargin"></TR>
+                  <TR>
+                    <TD class="FieldGroupTitle_Left"><IMG class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                    <TD class="FieldGroupTitle" id="fieldElementName">xxSales Management</TD>
+                    <TD class="FieldGroupTitle_Right"><IMG class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
+                    <TD class="FieldGroupContent"></TD>
+
+                  </TR>
+                  <TR class="FieldGroup_BottomMargin"></TR>
+                </TABLE>
+              </TD>
             </TR>
-            <TR class="Popup_Client_RelatedInfo_LineSeparator"><TD colspan=4></TD></TR>
+            <DIV id="sectionDetail">
+              <TR>
+                <TD></TD>
+                <TD class="TitleCell" colspan=3 style="text-align:left;"><SPAN class="LabelText"><a class="LabelLink _LabelLink" href="#" onclick="windowSelect('xx', 'yy', 'zz');return false;" onmouseover="window.status='xx';return true;" onmouseout="window.status='';return true;" id="fieldData"><span id="fieldWindowName">xxWindow Name</span> - <span id="fieldName">xxTab name</span>&nbsp;(<span id="fieldTotal">xx0</span>)</a></SPAN></TD>
+              </TR>
+              <TR class="Popup_Client_RelatedInfo_LineSeparator"><TD colspan=4></TD></TR>
+            </DIV>
           </DIV>
-        </DIV>
+
+          <TR>
+            <TD></TD>
+            <TD class="Button_LeftAlign_ContentCell">
+              <DIV>
+                <A class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="window.close(); return false;" id="buttonCancel">
+                  <TABLE class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Process Order'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                    <TR>
+                      <TD class="Button_left"><IMG class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../web/images/blank.gif" border="0"></IMG></TD>
+
+                      <TD class="Button_text Button_width">Cancel</TD>
+                      <TD class="Button_right"></TD>
+                    </TR>
+                  </TABLE>
+                </A>
+              </DIV>
+            </TD>
+            <TD></TD>
+            <TD></TD>
+
+          </TR>
+
         </TABLE>
       </DIV>
     </TD>

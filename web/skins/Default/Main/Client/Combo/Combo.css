@@ -56,7 +56,7 @@
   border: 1px solid #888888;
   color: #303030;
   background-color: #FFF6CC !important;
-  /*background: url(required_bg.png) repeat-x top !important;*/
+  /*background: url(combo.required.background.png) repeat-x top !important;*/
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
 }
@@ -69,10 +69,11 @@
   font-size: 8pt;
 }
 
-.Combo_focus_alpha {
+.Combo_focus {
   outline: none;
   -moz-outline-style: none;
-  border: 2px solid #FCD938;
+  border: 2px solid #4D98CA;
+  background-color: #C8E9F9 !important;
 }
 
 .Combo_OneCell_width {

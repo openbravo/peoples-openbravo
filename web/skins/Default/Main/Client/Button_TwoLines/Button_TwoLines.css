@@ -35,7 +35,7 @@ a.ButtonLink_active, a.ButtonLink_active:active, a.ButtonLink_active:hover, a.Bu
   text-decoration: none;
 }
 
-a.ButtonLink_focus_alpha, a.ButtonLink_focus_alpha:active, a.ButtonLink_focus_alpha:hover, a.ButtonLink_focus_alpha:visited, a.ButtonLink_focus_alpha:link, a.ButtonLink_focus_alpha:focus {
+a.ButtonLink_focus, a.ButtonLink_focus:active, a.ButtonLink_focus:hover, a.ButtonLink_focus:visited, a.ButtonLink_focus:link, a.ButtonLink_focus:focus {
   text-decoration: none;
 }
 
@@ -124,7 +124,7 @@ a.ButtonLink_active table.Button .Button_right, table.Button_active .Button_righ
   height: 39px;
 }
 
-a.ButtonLink_focus_alpha .Button, .Button_focus_alpha {
+a.ButtonLink_focus .Button, .Button_focus {
   border-collapse: collapse;
   text-align: center;
   font-family: tahoma, arial, helvetica, sans-serif;
@@ -134,17 +134,17 @@ a.ButtonLink_focus_alpha .Button, .Button_focus_alpha {
   CURSOR: pointer;
 }
 
-a.ButtonLink_focus_alpha table.Button .Button_left, .Button_focus_alpha .Button_left {
+a.ButtonLink_focus table.Button .Button_left, .Button_focus .Button_left {
   background: url(buttonLeft.focused.png) no-repeat center right;
   width: 35px;
   height: 39px;
 }
 
-a.ButtonLink_focus_alpha table.Button .Button_text, table.Button_focus_alpha .Button_text {
+a.ButtonLink_focus table.Button .Button_text, table.Button_focus .Button_text {
   background: url(buttonBody.focused.png) repeat-x center center;
 }
 
-a.ButtonLink_focus_alpha table.Button .Button_right, table.Button_focus_alpha .Button_right {
+a.ButtonLink_focus table.Button .Button_right, table.Button_focus .Button_right {
   background: url(buttonRight.focused.png) no-repeat center left;
   width: 28px;
   height: 39px;

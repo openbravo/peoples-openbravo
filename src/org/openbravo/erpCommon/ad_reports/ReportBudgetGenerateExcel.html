@@ -58,7 +58,7 @@ var baseDirection = "../../../../../web/";
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonExcel')
 		);
 		setWindowTableParentElement();
 		this.tabsTables = new Array(
@@ -478,7 +478,7 @@ var baseDirection = "../../../../../web/";
                           <TD class="TitleCell"></TD>
                           <TD class="Button_CenterAlign_ContentCell">
                             <DIV>
-                              <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Generate Excel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('EXCEL', false, null, 'ReportBudgetGenerateExcelXLS.xls', '_blank', null, false);return false;">
+                              <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Generate Excel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('EXCEL', false, null, 'ReportBudgetGenerateExcelXLS.xls', '_blank', null, false);return false;" id="buttonExcel">
                               <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                                 <TR>
                                   <TD class="Button_left"><IMG class="Button_Icon Button_Icon_process" alt="Generate Excel" title="Generate Excel" src="../../../../../web/images/blank.gif" border="0/"></IMG></TD>

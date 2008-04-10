@@ -120,13 +120,19 @@ public class WADSearch extends WADControl {
   public String editMode() {
     String textButton = "";
     String buttonClass = "";
+    String tabIndex = "";
+    
     if (getData("IsReadOnly").equals("N") && getData("IsReadOnlyTab").equals("N") && getData("IsUpdateable").equals("Y")) {
       this.button.setReportEngine(getReportEngine());
       textButton = this.button.toString();
       buttonClass = this.button.getType();
+      if (!this.isFieldEditable) {
+        tabIndex = "1";
+      }
     }
+    
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADSearch").createXmlDocument();
-
+    xmlDocument.setParameter("tabindex", tabIndex);
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", (textButton.equals("")?"":"btn_") + getData("CssSize"));
@@ -157,13 +163,17 @@ public class WADSearch extends WADControl {
   public String newMode() {
     String textButton = "";
     String buttonClass = "";
+    String tabIndex="";
     if (getData("IsReadOnly").equals("N") && getData("IsReadOnlyTab").equals("N")) {
       this.button.setReportEngine(getReportEngine());
       textButton = this.button.toString();
       buttonClass = this.button.getType();
+      if (!this.isFieldEditable) {
+        tabIndex = "1";
+      }
     }
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADSearch").createXmlDocument();
-
+    xmlDocument.setParameter("tabindex", tabIndex);
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", (textButton.equals("")?"":"btn_") + getData("CssSize"));

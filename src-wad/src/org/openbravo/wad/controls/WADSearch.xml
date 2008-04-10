@@ -30,6 +30,7 @@
   <PARAMETER id="xx_R" name="columnNameInp" attribute="name" replace="xx"/>
   <PARAMETER id="xx_R" name="className" attribute="class" replace="xx"/>
   <PARAMETER id="xx_R" name="size" attribute="class" replace="yy"/>
+  <PARAMETER id="xx_R" name="tabindex" attribute="tabindex" default="zz"/>
   <PARAMETER id="xx_R" name="maxlength" attribute="maxlength"/>
   <PARAMETER id="xx_R" name="disabled" boolean="readonly=true" withId="paramChecked"/>
   <PARAMETER id="xx_R" name="required" attribute="required"/>

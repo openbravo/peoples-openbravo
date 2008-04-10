@@ -74,8 +74,19 @@ td.Popup_Client_Help_SubClient_Links {
   background: url(iconTop.png) no-repeat center center;
 }
 
+a.Popup_Client_Help_Icon_LabelLink {
+}
+
+a.Popup_Client_Help_Icon_LabelLink_focus {
+  background-color: #C8E9F9 !important;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #2985BA;
+  outline: none;
+}
+
 a.Popup_Client_Help_LabelLink {
-  padding-left: 0px;
+  padding-left: 6px;
   color: #2985BA;
   text-decoration: none;
 }
@@ -89,11 +100,12 @@ a.Popup_Client_Help_LabelLink:hover {
   text-decoration: underline;
 }
 
-a.Popup_Client_Help_LabelLink_focus_alpha {
-  font-weight: bold;
+a.Popup_Client_Help_LabelLink_focus {
+  padding: 0px 4px 0px 4px;
+  background-color: #C8E9F9 !important;
   color: #2985BA;
-  border-bottom-style: solid;
+  border-style: solid;
   border-width: 2px;
-  border-bottom-color: #FCD938;
-  outline:0;
+  border-color: #2985BA;
+  outline: none;
 }

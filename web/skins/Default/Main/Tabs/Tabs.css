@@ -215,6 +215,164 @@
   height: 34px;
   _width: 8px;
 }
+
+
+/*dojoTabcurrent_focus*/
+
+.dojoTabcurrent_focus {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 9pt;
+  font-weight: bold; 
+  color: #000000 !important;
+  margin: -4px 0 0px 0px;
+  position: relative;
+  float: left;
+  /*padding-left: 1px;
+  padding-right: 1px;*/
+  background: url(roundItemLeft.selected.focused.png) no-repeat left top;
+  cursor: none;
+  white-space: nowrap;
+  z-index: 5;
+  height: 31px;
+  _width: 8px;  
+}
+
+.dojoTabcurrent_focus div {
+  display: block;
+  margin-left: 8px;
+  margin-right: 10px;
+  background: url(roundItemFill.selected.focused.png) repeat-x top;
+}
+
+.dojoTabcurrent_focus div span {
+  position: relative;
+  display: block;
+  padding: 5px 10px 0 0px;
+  margin-right: -8px;
+  background: url(roundItemRight.selected.focused.png) no-repeat right top;
+  height: 31px;
+  _width:8px;
+}
+
+/*dojoTabparent_focus*/
+
+.dojoTabparent_focus {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 9pt;
+  font-weight: bold; 
+  color: #333333 !important;
+  margin: -4px 0px 0px 0px;
+  position: relative;
+  float: left;
+  /*padding-left: 1px;
+  padding-right: 1px;*/
+  background: url(roundItemLeft.normal.focused.png) no-repeat left top;
+  cursor: none;
+  white-space: nowrap;
+  z-index: 4;
+  height: 34px;
+  _width:8px;  
+}
+
+.dojoTabparent_focus div {
+  position: relative;
+  z-index: 5;
+  display: block;
+  margin-left: 8px;
+  margin-right: 16px;
+  background: url(roundItemFill.normal.focused.png) repeat top;
+  height: 34px;
+}
+
+.dojoTabparent_focus div span {
+  position: relative;
+  z-index: 4;
+  display: block;
+  padding: 5px 12px 0px 2px;
+  margin-right: -8px;
+  background: url(roundItemRight.normal.focused.png) no-repeat right top;
+  height: 34px;
+  _width: 8px;
+}
+
+/*dojoTabcurrent_focus*/
+
+.dojoTabcurrentfirst_focus {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 9pt;
+  font-weight: bold; 
+  color: #000000 !important;
+  margin: -16px 0 0px 0px;
+  position: relative;
+  float: left;
+  /*padding-left: 1px;
+  padding-right: 1px;*/
+  background: url(roundItemLeft.selected.focused.png) no-repeat left top;
+  cursor: none;
+  white-space: nowrap;
+  z-index: 5;
+  height: 31px;
+  _width: 8px;  
+}
+
+.dojoTabcurrentfirst_focus div {
+  display: block;
+  margin-left: 8px;
+  margin-right: 10px;
+  background: url(roundItemFill.selected.focused.png) repeat-x top;
+}
+
+.dojoTabcurrentfirst_focus div span {
+  position: relative;
+  display: block;
+  padding: 5px 10px 0 0px;
+  margin-right: -8px;
+  background: url(roundItemRight.selected.focused.png) no-repeat right top;
+  height: 31px;
+  _width:8px;
+}
+
+/*dojoTabparent_focus*/
+
+.dojoTabparentfirst_focus {
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 9pt;
+  font-weight: bold; 
+  color: #333333 !important;
+  margin: -16px 0px 0px 0px;
+  position: relative;
+  float: left;
+  /*padding-left: 1px;
+  padding-right: 1px;*/
+  background: url(roundItemLeft.normal.focused.png) no-repeat left top;
+  cursor: none;
+  white-space: nowrap;
+  z-index: 4;
+  height: 34px;
+  _width:8px;  
+}
+
+.dojoTabparentfirst_focus div {
+  position: relative;
+  z-index: 5;
+  display: block;
+  margin-left: 8px;
+  margin-right: 16px;
+  background: url(roundItemFill.normal.focused.png) repeat top;
+  height: 34px;
+}
+
+.dojoTabparentfirst_focus div span {
+  position: relative;
+  z-index: 4;
+  display: block;
+  padding: 5px 12px 0px 2px;
+  margin-right: -8px;
+  background: url(roundItemRight.normal.focused.png) no-repeat right top;
+  height: 34px;
+  _width: 8px;
+}
+
 /*dojoTabContainerChild*/
 /*
 .dojoTabContainerChild {
@@ -304,6 +462,8 @@
 .dojoTab {
   position : relative;
   margin-bottom : -1px;
+  margin-top : 1px;
+  _margin-top : 2px;
   float : left;
   cursor: pointer;
   white-space: nowrap;
@@ -351,13 +511,13 @@
 .tabSeparator {
   position: relative;
   float: left;
-  margin-left: 5px;  
+  margin-left: 0px;  
   padding-right: 0px;
-  padding-left : 1px;    
+  padding-left : 0px;    
   background: url(inlaySeparator.png) no-repeat;
   overflow: hidden;
   height: 15px;  
-  width: 7px;    
+  width: 2px;    
   z-index: 10;
 }
 
@@ -471,6 +631,8 @@
 }
 
 A.dojoTabLink {
+  padding-right: 5px;
+  padding-left: 5px;
   position: relative;
   color: White;
   text-decoration: none;
@@ -478,13 +640,28 @@ A.dojoTabLink {
   z-index:10;
 }
 
-A.dojoTabLink:HOVER { 
-  text-decoration: underline;
-  font-size:  8pt;  
+A.dojoTabLink_focus {
+  padding-right: 5px;
+  padding-left: 5px;
+  position: relative;
+  color: black;
+  background: url(singleTab.focused.png) repeat-x top !important;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #4D98CA;
+  text-decoration: none;
+  font-size: 8pt;
+  z-index:10;
+}
+
+A.dojoTabLink:hover { 
+  text-decoration: underline !important;
+  font-size:  8pt;
 }
 
 A.dojoTabLink:focus { 
-  text-decoration: underline;
+  color: black;
+  text-decoration: none;
   font-size: 8pt;
   outline:0;
 }

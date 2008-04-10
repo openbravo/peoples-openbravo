@@ -53,7 +53,7 @@
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('sectionPartner')
+		  new windowTableId('sectionPartner', null, 'fieldSTimeexpenselineId')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -92,8 +92,8 @@
         </TR>
         <DIV id="sectionDetail"> 
           <TR class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
-            <TD width="11%" class="DataGrid_Body_Cell"> <A href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpsTimeexpenselineId, xx, false, document.frmMain, '../ExpenseSheet/Lines_Relation.html', 'frameAplicacion', false, true);return false;" onmouseover="window.status='Expense lines';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldSTimeexpenselineId"> 
-              <DIV id="fieldDocumentno" style="overflow: hidden;">100000</DIV></A></TD>
+            <TD width="11%" class="DataGrid_Body_Cell"> <A href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpsTimeexpenselineId, xx, false, document.frmMain, '../ExpenseSheet/Lines_Relation.html', 'frameAplicacion', false, true);return false;" onmouseover="window.status='Expense lines';return true;" onmouseout="window.status='';return true;" class="LabelLink _LabelLink" id="fieldSTimeexpenselineId"> 
+              <SPAN id="fieldDocumentno" style="overflow: hidden;">100000</SPAN></A></TD>
             <TD width="65%" class="DataGrid_Body_Cell" id="fieldDescription">xxDescripcion</TD>
             <TD width="8%" class="DataGrid_Body_Cell" id="fieldDateexpense">23/10/2004</TD>
             <TD width="7%" class="DataGrid_Body_Cell"> <SPAN id="fieldQty">xx</SPAN>&nbsp;<SPAN id="fieldUomname">xxPalet</SPAN></TD>

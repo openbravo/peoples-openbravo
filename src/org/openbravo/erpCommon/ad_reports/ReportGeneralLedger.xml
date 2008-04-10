@@ -51,9 +51,6 @@
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
 
-  <PARAMETER id="paramArrayAccountFrom" name="accounFromArray"/>
-  <PARAMETER id="paramArrayAccountTo" name="accounToArray"/>
-  
   <PARAMETER id="param2" name="param2" default="2"/>
 
   <structure name="structure1">

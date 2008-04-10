@@ -17,15 +17,30 @@
 
 <LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
 <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
+<SCRIPT language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></SCRIPT>
 <script language="JavaScript" type="text/javascript" id="paramDirection">
 var baseDirection = "../../../../../web/";
 </script>
+<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client', null, 'ButtonClose', null)
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+		
+		setWindowElementFocus('firstElement');
+	}
 
+	function onResizeDo(){
+	}
+</SCRIPT>
 </head>
 
 
-<body>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="onLoadDo();" onresize="onResizeDo();">
 
 <div class="Popup_ContentPane_CircleLogo">
   <div class="Popup_WindowLogo">
@@ -62,7 +77,7 @@ var baseDirection = "../../../../../web/";
 
   <tr>
     <td>
-      <div class="Popup_ContentPane_Client" style="overflow: auto;">
+      <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
           <TABLE>
             <tr height="25px"><td></td></tr>
             <TR>
@@ -153,11 +168,13 @@ var baseDirection = "../../../../../web/";
                   <tr>
                     <td colspan="6" align="center" class="Button_CenterAlign_ContentCell">
                       <a class="ButtonLink" href="#"
+                        onfocus="setWindowElementFocus(this); window.status='Closed'; return true;"
                         onfocus="this.className='ButtonLink_hover'; window.status='Closed'; return true;"
                         onblur="this.className='ButtonLink'; window.status=''; return true;"
                         onkeypress="this.className='ButtonLink_active'; return true;"
-                        onkeyup="this.className='ButtonLink_hover'; return true;"
-                        onclick="window.close();return false;">
+                        onkeyup="this.className='ButtonLink_focus'; return true;"
+                        onclick="window.close();return false;"
+                        id="ButtonClose">
                         <table class="Button"
                           onmousedown="this.className='Button_active'; return true;"
                           onmouseup="this.className='Button'; return true;"

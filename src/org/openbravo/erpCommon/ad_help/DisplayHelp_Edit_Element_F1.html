@@ -74,7 +74,7 @@
   <SCRIPT language="JavaScript" type="text/javascript">
     function onLoadDo() {
       this.windowTables = new Array(
-        new windowTableId('client')
+        new windowTableId('client', null, 'buttonOK')
       );
       setWindowTableParentElement();
       enableShortcuts('popup');
@@ -228,7 +228,7 @@
                   <TD class="FieldGroupContent"></TD>
                   <TD class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
                   <TD class="FieldGroupTitle" style="padding-top:4px;" id="discardEdit">
-                    <a href="#" onclick="submitCommandForm('FIELD', null, null, 'DisplayHelp_Edit_Field_FS.html');return false;" onmouseover="window.status='Edit';return true;" onmouseout="window.status='';return true;"><img class="Popup_Client_Help_Icon_edit" border="0" src="../../../../../web/images/blank.gif"></img></a>
+                    <a href="#" onclick="submitCommandForm('FIELD', null, null, 'DisplayHelp_Edit_Field_FS.html');return false;" onmouseover="window.status='Edit';return true;" onmouseout="window.status='';return true;" class="Popup_Client_Help_Icon_LabelLink"><img class="Popup_Client_Help_Icon_edit" border="0" src="../../../../../web/images/blank.gif"></img></a>
                   </TD>
                   <TD class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></TD>
                 </TR>
@@ -250,7 +250,7 @@
             <TD></TD>
             <TD class="Button_RightAlign_ContentCell">
               <DIV>
-                <A class="ButtonLink" href="#" onfocus="this.className='ButtonLink_focus'; window.status='OK'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE_' + document.frmMain.inpRetype.value, true, frmMain, 'DisplayHelp.html', 'frameOculto');return false;">
+                <A class="ButtonLink" href="#" onfocus="this.className='ButtonLink_focus'; window.status='OK'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE_' + document.frmMain.inpRetype.value, true, frmMain, 'DisplayHelp.html', 'frameOculto');return false;" id="buttonOK">
                   <TABLE class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='OK'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
                     <TR>
                       <TD class="Button_left"><IMG class="Button_Icon Button_Icon_ok" alt="OK" title="OK" src="../web/images/blank.gif" border="0/"></IMG></TD>

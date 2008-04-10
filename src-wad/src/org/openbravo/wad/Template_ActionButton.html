@@ -33,7 +33,9 @@ var baseDirection = "../../../../../web/";
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
   LNG_POR_DEFECTO = "en_US";
 </script>
+<SCRIPT language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
 <FIELD_TMP id="importJS"></FIELD_TMP>
@@ -72,8 +74,23 @@ function closeThisPage() {
 	return true;
 }
 </script>
+	<script language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client', null, 'linkButtonOk', null)
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+		
+
+
+		setWindowElementFocus('firstElement');
+		onloadClient();
+	}
+
+</script>
 </head>
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="onloadClient();setFocusFirstControl();">
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="onLoadDo();">
 <form id="form" method="POST" action="Window_Edition.html" name="frmMain">
 <input type="hidden" name="Command">
 <input type="hidden" name="inpLastFieldChanged">
@@ -213,7 +230,7 @@ function closeThisPage() {
   
   <tr>
     <td>
-      <div class="Popup_ContentPane_Client" style="overflow: auto;">
+      <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
         <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
 
           <tr>
@@ -229,35 +246,71 @@ function closeThisPage() {
             <td></td>
             <td class="Button_RightAlign_ContentCell" id="fieldDiscardProcess">
               <div>
-                <table class="Button" onclick="submitThisPageJasper();return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='xx';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;" id="linkButtonOk">
-                  <tr>
-                    <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="xx" title="xx" src="../../../../../web/images/blank.gif" border=0 id="buttonOk"/></td>
-                    <td class="Button_text Button_width" id="tdButtonOk">OK</td>
-                    <td class="Button_right"></td>
-                  </tr>
-                </table>
+                <a class="ButtonLink" href="#"
+                  onfocus="setWindowElementFocus(this); window.status='xx'; return true;"
+                  onblur="window.status=''; return true;"
+                  onkeypress="this.className='ButtonLink_active'; return true;"
+                  onkeyup="this.className='ButtonLink_focus'; return true;"
+                  onclick="submitThisPageJasper();return false;"
+                  id="linkButtonOk">
+                  <table class="Button"
+                    onmousedown="this.className='Button_active'; return true;"
+                    onmouseup="this.className='Button'; return true;"
+                    onmouseover="this.className='Button_hover';window.status='OK';return true;"
+                    onmouseout="this.className='Button'; window.status=''; return true;">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="xx" title="xx" src="../../../../../web/images/blank.gif" border=0 id="buttonOk"/></td>
+                      <td class="Button_text Button_width" id="tdButtonOk">OK</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </a>
               </div>
             </td>
             <td class="Button_RightAlign_ContentCell" id="fieldDiscardJasper">
               <div>
-                <table class="Button" onclick="submitThisPage('SAVE_BUTTONxx');return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='xx';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;" id="linkButtonOk">
-                  <tr>
-                    <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="xx" title="xx" src="../../../../../web/images/blank.gif" border=0 id="buttonOk"/></td>
-                    <td class="Button_text Button_width" id="tdButtonOk">OK</td>
-                    <td class="Button_right"></td>
-                  </tr>
-                </table>
+                <a class="ButtonLink" href="#"
+                  onfocus="setWindowElementFocus(this); window.status='OK'; return true;"
+                  onblur="window.status=''; return true;"
+                  onkeypress="this.className='ButtonLink_active'; return true;"
+                  onkeyup="this.className='ButtonLink_focus'; return true;"
+                  onclick="submitThisPage('SAVE_BUTTONxx');return false;"
+                  id="linkButtonOk">
+                  <table class="Button"
+                    onmousedown="this.className='Button_active'; return true;"
+                    onmouseup="this.className='Button'; return true;"
+                    onmouseover="this.className='Button_hover';window.status='OK';return true;"
+                    onmouseout="this.className='Button'; window.status=''; return true;">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="xx" title="xx" src="../../../../../web/images/blank.gif" border=0 id="buttonOk"/></td>
+                      <td class="Button_text Button_width" id="tdButtonOk">OK</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </a>
               </div>
             </td>
             <td class="Button_LeftAlign_ContentCell">
               <div>
-                <table class="Button" onclick="closeThisPage();return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='xx';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;" id="linkButtonCancel">
-                  <tr>
-                    <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="xx" title="PDF_Report" src="../../../../../web/images/blank.gif" border=0 title="xx" id="buttonCancel"/></td>
-                    <td class="Button_text Button_width" id="tdButtonCancel">Cancel</td>
-                    <td class="Button_right"></td>
-                  </tr>
-                </table>
+                <a class="ButtonLink" href="#"
+                  onfocus="setWindowElementFocus(this); window.status='xx'; return true;"
+                  onblur="window.status=''; return true;"
+                  onkeypress="this.className='ButtonLink_active'; return true;"
+                  onkeyup="this.className='ButtonLink_focus'; return true;"
+                  onclick="closeThisPage();return false;"
+                  id="linkButtonCancel">
+                  <table class="Button"
+                    onmousedown="this.className='Button_active'; return true;"
+                    onmouseup="this.className='Button'; return true;"
+                    onmouseover="this.className='Button_hover';window.status='Cancel';return true;"
+                    onmouseout="this.className='Button'; window.status=''; return true;">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="xx" title="PDF_Report" src="../../../../../web/images/blank.gif" border=0 title="xx" id="buttonCancel"/></td>
+                      <td class="Button_text Button_width" id="tdButtonCancel">Cancel</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </a>
               </div>
             </td>
             <td></td>

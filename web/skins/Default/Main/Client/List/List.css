@@ -33,7 +33,7 @@
 .List_width:focus, .List_height:focus {
   outline: none;
   -moz-outline-style: none;
-  border: 2px solid #FCD938;
+  border: 2px solid #4D98CA;
 }
 
 td.List_Button_Separator {
@@ -87,12 +87,12 @@ a.List_Button_TopLink_active table.List_Button_Top .List_Button_Top_bg, table.Li
   -moz-outline-style: none;
 }
 
-a.List_Button_TopLink_focus_alpha .List_Button_Top, .List_Button_Top_focus_alpha {
+a.List_Button_TopLink_focus .List_Button_Top, .List_Button_Top_focus {
   border-collapse: collapse;
   CURSOR: pointer;
 }
 
-a.List_Button_TopLink_focus_alpha table.List_Button_Top .List_Button_Top_bg, table.List_Button_Top_focus_alpha .List_Button_Top_bg {
+a.List_Button_TopLink_focus table.List_Button_Top .List_Button_Top_bg, table.List_Button_Top_focus .List_Button_Top_bg {
   background: url(listButtonTop.focused.png) no-repeat center center;
   -moz-outline-style: none;
 }
@@ -141,12 +141,12 @@ a.List_Button_MiddleLink_active table.List_Button_Middle .List_Button_Middle_bg,
   -moz-outline-style: none;
 }
 
-a.List_Button_MiddleLink_focus_alpha .List_Button_Middle, .List_Button_Middle_focus_alpha {
+a.List_Button_MiddleLink_focus .List_Button_Middle, .List_Button_Middle_focus {
   border-collapse: collapse;
   CURSOR: pointer;
 }
 
-a.List_Button_MiddleLink_focus_alpha table.List_Button_Middle .List_Button_Middle_bg, table.List_Button_Middle_focus_alpha .List_Button_Middle_bg {
+a.List_Button_MiddleLink_focus table.List_Button_Middle .List_Button_Middle_bg, table.List_Button_Middle_focus .List_Button_Middle_bg {
   background: url(listButtonMiddle.focused.png) repeat-y center center;
   -moz-outline-style: none;
 }
@@ -196,12 +196,12 @@ a.List_Button_BottomLink_active table.List_Button_Bottom .List_Button_Bottom_bg,
   -moz-outline-style: none;
 }
 
-a.List_Button_BottomLink_focus_alpha .List_Button_Bottom, .List_Button_Bottom_focus_alpha {
+a.List_Button_BottomLink_focus .List_Button_Bottom, .List_Button_Bottom_focus {
   border-collapse: collapse;
   CURSOR: pointer;
 }
 
-a.List_Button_BottomLink_focus_alpha table.List_Button_Bottom .List_Button_Bottom_bg, table.List_Button_Bottom_focus_alpha .List_Button_Bottom_bg {
+a.List_Button_BottomLink_focus table.List_Button_Bottom .List_Button_Bottom_bg, table.List_Button_Bottom_focus .List_Button_Bottom_bg {
   background: url(listButtonBottom.focused.png) no-repeat center center;
   -moz-outline-style: none;
 }

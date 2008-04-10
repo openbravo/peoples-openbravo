@@ -76,7 +76,7 @@
     	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonOK')
 		);
 		setWindowTableParentElement();
 		this.tabsTables = new Array(
@@ -304,7 +304,7 @@
                                                             <TD class="TitleCell"></TD>
                                                             <TD class="Button_RightAlign_ContentCell">
                                                                 <DIV>
-                                                                    <A class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SEND', true);return false;">
+                                                                    <A class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SEND', true);return false;" id="buttonOK">
                                                                         <TABLE class="Button"  onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Accept';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                                                                             <TR>
                                                                                 <TD class="Button_left">

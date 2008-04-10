@@ -1141,15 +1141,19 @@ function enableShortcuts(type) {
         getShortcuts('applicationCommonKeys');
         getShortcuts('windowCommonKeys');
         getShortcuts('editionSpecificKeys');
+        enableFixFocus();
       } else if (type=='relation') {
         getShortcuts('applicationCommonKeys');
         getShortcuts('windowCommonKeys');
         getShortcuts('relationSpecificKeys');
+        getShortcuts('gridKeys');
       } else if (type=='popup') {
         getShortcuts('applicationCommonKeys');
         getShortcuts('windowCommonKeys');
         getShortcuts('editionSpecificKeys');
         getShortcuts('popupSpecificKeys');
+        getShortcuts('gridKeys');
+        enableFixFocus();
       }
     } catch (e) {
     }
@@ -3206,10 +3210,10 @@ function resizeAreaHelp() {
   mnu.style.display = "";
   mnuIndex.style.display = "";
 }
+
 /**
 * Function Description
 */
-
 function resizeAreaUserOps() {
   var mnu = document.getElementById("client");
   var mnuIndex = document.getElementById("clientIndex");
@@ -3229,6 +3233,26 @@ function resizeAreaUserOps() {
   mnu.style.width= w - (mVerSeparator.clientWidth + mnuIndex.clientWidth) - 2;
 
   mnu.style.display = "";
+}
+
+/**
+* Function Description
+*/
+function resizeAreaInfo(isOnResize) {
+  if (isOnResize==null) isOnResize = false;
+  var table_header = document.getElementById("table_header");
+  var client_top = document.getElementById("client_top");
+  var client_middle = document.getElementById("client_middle");
+  var client_bottom = document.getElementById("client_bottom");
+  var body = document.getElementsByTagName("BODY");
+  var h = body[0].clientHeight;
+  var w = body[0].clientWidth;
+  var name = window.navigator.appName;
+  client_middle.style.height = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+
+  try {
+    if (isOnResize) dojo.widget.byId('grid').onResize();
+  } catch (e) {}
 }
 
 /**

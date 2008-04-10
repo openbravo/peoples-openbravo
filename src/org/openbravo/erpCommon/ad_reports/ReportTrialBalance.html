@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<TITLE>Balance Sheet</TITLE>
+<TITLE>Generate Invoices manual</TITLE>
     <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Client/DataGrid/DataGrid.css" id="paramCSS" />
@@ -85,7 +85,6 @@ function displayLogic() {
   }
 }
 
-
 function onloadFunctions() {
   new TypeAheadCombo("inpOrg");
   new TypeAheadCombo("inpLevel");
@@ -119,29 +118,11 @@ function depurar() {
   return true;
 }
 
-
-function refreshAccounts() {
-  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
-  var cmbAccountFrom = document.frmMain.inpAccountFrom;  
-  var cmbAccountTo = document.frmMain.inpAccountTo;  
-  cambiarListaCombo(cmbAccountFrom, arrAccountFrom, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
-  cambiarListaCombo(cmbAccountTo, arrAccountTo, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);  
-  return true;
-}
 </SCRIPT>
-
-<script language="JavaScript" type="text/javascript" id="paramArrayAccountFrom">
-var arrAccountFrom=null;
-</script>
-
-<script language="JavaScript" type="text/javascript" id="paramArrayAccountTo">
-var arrAccountTo=null;
-</script>
-
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonHTML')
 		);
 		setWindowTableParentElement();
 		this.tabsTables = new Array(
@@ -345,7 +326,7 @@ var arrAccountTo=null;
             </TR>
             <TR>
               <TD class="TitleCell"> <SPAN class="LabelText">Accounting schema</SPAN></TD>
-              <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" required="true" onchange="refreshAccounts();">
+              <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" required="true" onchange="submitCommandForm('DEFAULT',true);">
                   <OPTION value=""> <DIV id="reportC_ACCTSCHEMA_ID"></DIV></OPTION>
                 </SELECT>
               </TD>
@@ -519,7 +500,7 @@ var arrAccountTo=null;
               <TD class="TitleCell"></TD>
               <TD class="Button_CenterAlign_ContentCell">
                 <div>
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true, frmMain, 'ReportTrialBalance.html', '_self');return false;">
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true, frmMain, 'ReportTrialBalance.html', '_self');return false;" id="buttonHTML">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
                       <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
