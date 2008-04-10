@@ -309,7 +309,32 @@ Cuando el proceso se ha ejecutado correctamente, todos los triggers y constraint
   <AD_PROCESS_TRL AD_PROCESS_ID="800205" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-07-24 18:58:26.0" CREATEDBY="100" UPDATED="2007-07-27 15:27:38.0" UPDATEDBY="100" NAME="Análisis dimensional facturas " DESCRIPTION="Análisis dimensional de factura venta " ISTRANSLATED="N" />
   <AD_PROCESS_TRL AD_PROCESS_ID="800206" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-09-17 10:41:31.0" CREATEDBY="100" UPDATED="2007-09-17 10:44:49.0" UPDATEDBY="100" NAME="ReportCashFlow" DESCRIPTION="ReportCashFlow" ISTRANSLATED="N" />
   <AD_PROCESS_TRL AD_PROCESS_ID="800207" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-09-17 10:43:37.0" CREATEDBY="100" UPDATED="2007-09-17 10:47:17.0" UPDATEDBY="100" NAME="Generar Cash Flow" DESCRIPTION="Generar Cash Flow" ISTRANSLATED="Y" />
-  <AD_PROCESS_TRL AD_PROCESS_ID="1000500000" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-04-06 20:15:26.0" CREATEDBY="100" UPDATED="2008-04-06 20:15:26.0" UPDATEDBY="100" NAME="Report Pareto Product" DESCRIPTION="Report Pareto Product" HELP="Report Pareto Product" ISTRANSLATED="N" />
+  <AD_PROCESS_TRL AD_PROCESS_ID="1000500000" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-04-06 20:15:26.0" CREATEDBY="100" UPDATED="2008-04-10 20:32:11.0" UPDATEDBY="100" NAME="Report Pareto Product" DESCRIPTION="Report Pareto Product" ISTRANSLATED="Y">
+    <HELP><![CDATA[La lógica para el Informe de Pareto normalmente dice que el 20% de nuestros productos representan el 80% del valor, por lo que estos informes normalmente se estructuran como:
+
+· Código de Producto
+
+· Descripción del Producto
+
+· Cantidad
+
+· Coste (medio o estándar)
+
+· Valor (Cantidad*Coste)
+
+· Clase (A, B o C)
+
+Despues, basándonos en la clasificación se asignan diferentes frecuencias de conteo (Productos A se cuentan semanalmente, Productos B se cuentan mensualmente y los Productos C son contados anualmente o nunca).
+
+Propósito
+
+Esta ventan puede proporcionar:
+
+* Un informe que clasifica los productos en tres clases dependiendo del coste del mismo pulsando en el botón de Buscar.
+
+* Actualiza una propiedad de la tabla Específico de la Organización para el Producto siguiendo el mismo criteriopara poder ser usado como condición de filtro en el proceso de Creación de Listado de Inventario. Este proceso es lanzado al pulsar el botón Actualiza ABC. 
+]]></HELP>
+  </AD_PROCESS_TRL>
   <AD_PROCESS_TRL AD_PROCESS_ID="1000500001" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-04-07 18:57:49.0" CREATEDBY="100" UPDATED="2008-04-07 18:57:49.0" UPDATEDBY="100" NAME="M_UPDATE_PARETO_PRODUCT" DESCRIPTION="Updates a Org specific column of the product depending on the Pareto distribution" HELP="Updates a Org specific column of the product depending on the Pareto distribution" ISTRANSLATED="N" />
   <AD_PROCESS_TRL AD_PROCESS_ID="1004400000" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-01-28 13:42:55.0" CREATEDBY="100" UPDATED="2008-03-25 17:02:28.0" UPDATEDBY="100" NAME="Crear Pedido de Compra" ISTRANSLATED="Y">
     <HELP><![CDATA[Este proceso genere diferentes Pedidos de Compra para cumplir con las líneas de la necesidad de material. Por cada línea de necesidad de material es generada una línea de Pedido de Compra con la cantidad necesaria para cumplir con la requerida. El proceso cierra la necesidad de material cuando finaliza satisfactoriamente.
