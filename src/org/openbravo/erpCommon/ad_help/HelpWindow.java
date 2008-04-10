@@ -53,7 +53,7 @@ public class HelpWindow {
         } else {
           discard[3] = new String("discardEdit");
         }
-      } else if (strType.equals("P")){
+      } else if (strType.equals("P") || strType.equals("R")){
         strCommand = "PROCESS";
         strKeyId = vars.getRequiredStringParameter("inpwindowName");
         DisplayHelpData[] dataProcess = (vars.getLanguage().equals("en_US")?DisplayHelpData.selectProcess(conn, strKeyId):DisplayHelpData.selectProcessTrl(conn, vars.getLanguage(), strKeyId));

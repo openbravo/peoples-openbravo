@@ -282,11 +282,9 @@ public class DisplayHelp extends HttpSecureAppServlet {
     } else if (strTipo.equalsIgnoreCase("EDIT_Form")) {
       data = (vars.getLanguage().equals("en_US")?DisplayHelpEditData.selectForm(this, strClave):DisplayHelpEditData.selectFormTrl(this, vars.getLanguage(), strClave));
       strTipo="Form";
-      discard[0] = new String("discardName");
     } else if (strTipo.equalsIgnoreCase("EDIT_Process")) {
       data = (vars.getLanguage().equals("en_US")?DisplayHelpEditData.selectProcess(this, strClave):DisplayHelpEditData.selectProcessTrl(this, vars.getLanguage(), strClave));
       strTipo="Process";
-      discard[0] = new String("discardName");
     } else {
       data = (vars.getLanguage().equals("en_US")?DisplayHelpEditData.selectField(this, strClave):DisplayHelpEditData.selectFieldTrl(this, vars.getLanguage(), strClave));
       strTipo="Field";
