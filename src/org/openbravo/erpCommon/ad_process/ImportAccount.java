@@ -43,7 +43,7 @@ public class ImportAccount extends ImportProcess {
 	private static final int	UPDATE_ERROR = 0;
 	private static final int	UPDATE_YES = 1;
 	private static final int	UPDATE_SAME = 2;
-
+	
 
   public ImportAccount(ConnectionProvider conn, String AD_Process_ID, boolean deleteOld, String C_Element_ID, boolean updateDefaultAccounts, boolean createNewCombination) {
     super(conn);
@@ -129,22 +129,102 @@ public class ImportAccount extends ImportProcess {
       if (log4j.isDebugEnabled()) log4j.debug("Triggers in C_ValidCombination disabled");
   
       conn.releaseCommitConnection(con);
-  
+      //Default accounts
+      String [][] defaults = null; 
+      defaults = new String [73][2];
+      
+      defaults[0][0] = "PPVOFFSET_ACCT";
+      defaults[1][0] = "USESUSPENSEBALANCING";//Never used
+      defaults[2][0] = "SUSPENSEBALANCING_ACCT";
+      defaults[3][0] = "USESUSPENSEERROR";//Never used
+      defaults[4][0] = "SUSPENSEERROR_ACCT";
+      defaults[5][0] = "USECURRENCYBALANCING";//Never used
+      defaults[6][0] = "CURRENCYBALANCING_ACCT";
+      defaults[7][0] = "RETAINEDEARNING_ACCT";
+      defaults[8][0] = "INTERCOMPANYDUETO_ACCT";
+      defaults[9][0] = "INTERCOMPANYDUEFROM_ACCT";
+      defaults[10][0] = "CFS_ORDER_ACCT";
+      defaults[11][0] = "W_INVENTORY_ACCT";
+      defaults[12][0] = "W_INVACTUALADJUST_ACCT";
+      defaults[13][0] = "W_DIFFERENCES_ACCT";
+      defaults[14][0] = "W_REVALUATION_ACCT";
+      defaults[15][0] = "P_REVENUE_ACCT";
+      defaults[16][0] = "P_EXPENSE_ACCT";
+      defaults[17][0] = "P_ASSET_ACCT";
+      defaults[18][0] = "P_INVOICEPRICEVARIANCE_ACCT";
+      defaults[19][0] = "P_TRADEDISCOUNTREC_ACCT";
+      defaults[20][0] = "P_TRADEDISCOUNTGRANT_ACCT";
+      defaults[21][0] = "P_COGS_ACCT";
+      defaults[22][0] = "C_RECEIVABLE_ACCT";
+      defaults[23][0] = "V_LIABILITY_ACCT";
+      defaults[24][0] = "V_LIABILITY_SERVICES_ACCT";
+      defaults[25][0] = "V_PREPAYMENT_ACCT";
+      defaults[26][0] = "PAYDISCOUNT_EXP_ACCT";
+      defaults[27][0] = "WRITEOFF_ACCT";
+      defaults[28][0] = "PAYDISCOUNT_REV_ACCT";
+      defaults[29][0] = "UNREALIZEDGAIN_ACCT";
+      defaults[30][0] = "UNREALIZEDLOSS_ACCT";
+      defaults[31][0] = "REALIZEDGAIN_ACCT";
+      defaults[32][0] = "REALIZEDLOSS_ACCT";
+      defaults[33][0] = "WITHHOLDING_ACCT";
+      defaults[34][0] = "E_PREPAYMENT_ACCT";
+      defaults[35][0] = "E_EXPENSE_ACCT";
+      defaults[36][0] = "PJ_ASSET_ACCT";
+      defaults[37][0] = "PJ_WIP_ACCT";
+      defaults[38][0] = "T_EXPENSE_ACCT";
+      defaults[39][0] = "T_LIABILITY_ACCT";
+      defaults[40][0] = "T_RECEIVABLES_ACCT";
+      defaults[41][0] = "T_DUE_ACCT";
+      defaults[42][0] = "T_CREDIT_ACCT";
+      defaults[43][0] = "B_INTRANSIT_ACCT";
+      defaults[44][0] = "B_ASSET_ACCT";
+      defaults[45][0] = "B_EXPENSE_ACCT";
+      defaults[46][0] = "B_INTERESTEXP_ACCT";
+      defaults[47][0] = "B_UNIDENTIFIED_ACCT";
+      defaults[48][0] = "B_UNALLOCATEDCASH_ACCT";
+      defaults[49][0] = "B_PAYMENTSELECT_ACCT";
+      defaults[50][0] = "B_SETTLEMENTGAIN_ACCT";
+      defaults[51][0] = "B_SETTLEMENTLOSS_ACCT";
+      defaults[52][0] = "B_REVALUATIONGAIN_ACCT";
+      defaults[53][0] = "B_REVALUATIONLOSS_ACCT";
+      defaults[54][0] = "CH_EXPENSE_ACCT";
+      defaults[55][0] = "CH_REVENUE_ACCT";
+      defaults[56][0] = "UNEARNEDREVENUE_ACCT";
+      defaults[57][0] = "NOTINVOICEDRECEIVABLES_ACCT";
+      defaults[58][0] = "NOTINVOICEDREVENUE_ACCT";
+      defaults[59][0] = "NOTINVOICEDRECEIPTS_ACCT";
+      defaults[60][0] = "CB_ASSET_ACCT";
+      defaults[61][0] = "CB_CASHTRANSFER_ACCT";
+      defaults[62][0] = "CB_DIFFERENCES_ACCT";
+      defaults[63][0] = "CB_RECEIPT_ACCT";
+      defaults[64][0] = "A_ACCUMDEPRECIATION_ACCT";
+      defaults[65][0] = "A_DEPRECIATION_ACCT";
+      defaults[66][0] = "A_DISPOSAL_GAIN";
+      defaults[67][0] = "INCOMESUMMARY_ACCT";
+      defaults[68][0] = "P_PURCHASEPRICEVARIANCE_ACCT";
+      defaults[69][0] = "C_PREPAYMENT_ACCT";
+      defaults[70][0] = "B_INTERESTREV_ACCT";
+      defaults[71][0] = "CB_EXPENSE_ACCT";
+      defaults[72][0] = "A_DISPOSAL_LOSS";
+      
+ 
       // till here, the edition of the I_ElementValue table
       // now, the insertion from I_ElementValue table in C_ElementValue...
   
       int noInsert = 0;
       int noUpdate = 0;
   
-      ImportAccountData[] records = ImportAccountData.selectRecords(conn, getAD_Client_ID());
       con = conn.getTransactionConnection();
+      ImportAccountData[] records = ImportAccountData.selectRecords(conn, getAD_Client_ID());
       for (int i =0;i<records.length;i++) {
         String I_ElementValue_ID = records[i].iElementvalueId;
         String C_ElementValue_ID = records[i].cElementvalueId;
+
         if (log4j.isDebugEnabled()) log4j.debug("I_ElementValue_ID=" + I_ElementValue_ID + ", C_ElementValue_ID=" + C_ElementValue_ID);
         if (C_ElementValue_ID.equals("0") || C_ElementValue_ID == null || C_ElementValue_ID.equals("")) { // insert new
           try {
             C_ElementValue_ID = SequenceIdData.getSequence(conn, "C_ElementValue", vars.getClient());
+            records[i].cElementvalueId = C_ElementValue_ID;
             no = ImportAccountData.insertElementValue(con, conn, C_ElementValue_ID, I_ElementValue_ID);
             if (log4j.isDebugEnabled()) log4j.debug("Insert ElementValue = " + no);
             noInsert+=no;
@@ -166,9 +246,19 @@ public class ImportAccount extends ImportProcess {
         }
         ImportAccountData.updateProcessing(con, conn, C_ElementValue_ID, I_ElementValue_ID);
       }
+//      records = ImportAccountData.selectRecords(con, conn, getAD_Client_ID());
+
       for (int i =0;i<records.length;i++) {
         String I_ElementValue_ID = records[i].iElementvalueId;
         String elementValue = records[i].value;
+        boolean found = false;
+        for(int j=0;j<73&&!found&&records[i].defaultAccount!=null&&!(records[i].defaultAccount).equals("");j++){
+          if(defaults[j][0].equals(records[i].defaultAccount)) {
+            defaults[j][1] = records[i].cElementvalueId;
+            found=true;
+          }
+        }
+
         if (log4j.isDebugEnabled()) log4j.debug("I_ElementValue_ID=" + I_ElementValue_ID + ", elementValue=" + elementValue);
         try {
           String [][] strOperand = operandProcess(ImportAccountData.selectOperands(conn, I_ElementValue_ID));
@@ -189,6 +279,29 @@ public class ImportAccount extends ImportProcess {
             continue;
         }
       }
+      ImportAccountData[] acctSchemas = ImportAccountData.selectAcctSchema(conn, m_C_Element_ID, getAD_Client_ID());
+      for (int g =0;g<acctSchemas.length;g++){
+        int defaultsRecordNo = ImportAccountData.selectDefaultsRecord(con, conn, acctSchemas[g].cAcctschemaId);
+        if(defaultsRecordNo==0){ 
+          String C_AcctSchema_Default_ID = SequenceIdData.getSequence(conn, "C_AcctSchema_Default", acctSchemas[g].adClientId);
+          ImportAccountData.insertDefaultsRecord(con, conn, acctSchemas[g].cAcctschemaId, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, vars.getUser(),
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[11][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[12][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[13][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[14][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[15][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[16][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[17][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[68][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[18][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[19][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[20][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[21][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[22][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[69][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[23][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[24][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[25][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[26][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[27][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[28][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[29][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[30][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[31][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[32][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[33][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[34][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[35][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[36][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[37][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[38][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[39][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[40][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[41][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[42][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[43][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[44][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[45][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[70][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[46][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[47][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[48][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[49][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[50][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[51][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[52][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[53][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[54][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[55][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[56][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[57][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[58][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[59][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[60][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[61][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[62][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[71][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[63][1], vars.getUser()), 
+              getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[64][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[65][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[66][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[72][1], vars.getUser()), C_AcctSchema_Default_ID);
+        }
+        int gLRecordNo = ImportAccountData.selectGLRecord(con, conn, acctSchemas[g].cAcctschemaId);
+        if(gLRecordNo==0) ImportAccountData.insertGLRecord(con, conn, acctSchemas[g].cAcctschemaId, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, vars.getUser(), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[2][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[4][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[6][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[7][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[67][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[8][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[9][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[0][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[10][1], vars.getUser()));
+      }      
       no = ImportAccountData.updateNotImported(con, conn);
       if (log4j.isDebugEnabled()) log4j.debug("Errors: " + no);
       if (log4j.isDebugEnabled()) log4j.debug("Inserts: " + noInsert);
@@ -347,6 +460,16 @@ public class ImportAccount extends ImportProcess {
      return strResult;
   }  //  operandProcess
   
+
+  
+  public String getValidCombination(Connection con, ConnectionProvider conn, String AD_Client_ID, String AD_Org_ID, String C_AcctSchema_ID, String Account_ID, String AD_User_ID) throws ServletException{
+    if(Account_ID==null || Account_ID.equals("")) return "";
+    RespuestaCS respuestaCS;
+    String C_ValidCombination_ID = "";
+    respuestaCS = ImportAccountData.getCValidCombination(con, conn, AD_Client_ID, AD_Org_ID, C_AcctSchema_ID, Account_ID, "", "Y", "", AD_User_ID, "", "", "", "", "", "", "", "", "", "", "");
+    if(respuestaCS!=null)C_ValidCombination_ID = respuestaCS.CValidCombinationId;
+    return C_ValidCombination_ID;
+  }  
   public String nextSeqNo(String oldSeqNo){
     BigDecimal seqNo = new BigDecimal(oldSeqNo);
     String SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
