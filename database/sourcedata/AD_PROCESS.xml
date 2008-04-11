@@ -309,8 +309,7 @@ This window can be used for two different purposes.
 
 First of them is to develop a report that classifies the products into three classes (A, B or C) depending on a concrete conditions selected by the user (Average Cost in this case) clicking on the Search button.
 
-The second one is to update one property in the product organization specific table following the same criteria so it could be used as filtering condition in the Create Inventory Count List process. This process is launched clicking on the Update ABC button. 
-]]></HELP>
+The second one is to update one property in the product organization specific table following the same criteria so it could be used as filtering condition in the Create Inventory Count List process. This process is launched clicking on the Update ABC button.]]></HELP>
   </AD_PROCESS>
   <AD_PROCESS AD_PROCESS_ID="1000500001" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-04-07 18:57:49.0" CREATEDBY="100" UPDATED="2008-04-07 18:57:49.0" UPDATEDBY="100" VALUE="M_UPDATE_PARETO_PRODUCT" NAME="M_UPDATE_PARETO_PRODUCT" DESCRIPTION="Updates a Org specific column of the product depending on the Pareto distribution" HELP="Updates a Org specific column of the product depending on the Pareto distribution" ACCESSLEVEL="1" ENTITYTYPE="U" ISUSERSTARTABLE="N" PROCEDURENAME="M_UPDATE_PARETO_PRODUCT0" ISREPORT="N" ISDIRECTPRINT="N" ISBACKGROUND="N" ISJASPER="N" />
   <AD_PROCESS AD_PROCESS_ID="1004400000" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-01-28 13:42:55.0" CREATEDBY="100" UPDATED="2008-03-25 16:52:15.0" UPDATEDBY="100" VALUE="M_Requisition_CreatePO" NAME="Create Purchase Order" ACCESSLEVEL="1" ENTITYTYPE="U" ISUSERSTARTABLE="N" PROCEDURENAME="M_Requisition_CreatePO" ISREPORT="N" ISDIRECTPRINT="N" ISBACKGROUND="N" ISJASPER="N">

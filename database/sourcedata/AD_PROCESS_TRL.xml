@@ -328,12 +328,11 @@ Despues, basándonos en la clasificación se asignan diferentes frecuencias de c
 
 Propósito
 
-Esta ventana puede proporcionar:
+Esta ventan puede proporcionar:
 
 * Un informe que clasifica los productos en tres clases dependiendo del coste del mismo pulsando en el botón de Buscar.
 
-* Actualiza una propiedad de la tabla Específico de la Organización para el Producto siguiendo el mismo criteriopara poder ser usado como condición de filtro en el proceso de Creación de Listado de Inventario. Este proceso es lanzado al pulsar el botón Actualiza ABC. 
-]]></HELP>
+* Actualiza una propiedad de la tabla Específico de la Organización para el Producto siguiendo el mismo criteriopara poder ser usado como condición de filtro en el proceso de Creación de Listado de Inventario. Este proceso es lanzado al pulsar el botón Actualiza ABC.]]></HELP>
   </AD_PROCESS_TRL>
   <AD_PROCESS_TRL AD_PROCESS_ID="1000500001" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-04-07 18:57:49.0" CREATEDBY="100" UPDATED="2008-04-07 18:57:49.0" UPDATEDBY="100" NAME="M_UPDATE_PARETO_PRODUCT" DESCRIPTION="Updates a Org specific column of the product depending on the Pareto distribution" HELP="Updates a Org specific column of the product depending on the Pareto distribution" ISTRANSLATED="N" />
   <AD_PROCESS_TRL AD_PROCESS_ID="1004400000" AD_LANGUAGE="es_ES" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-01-28 13:42:55.0" CREATEDBY="100" UPDATED="2008-03-25 17:02:28.0" UPDATEDBY="100" NAME="Crear Pedido de Compra" ISTRANSLATED="Y">
