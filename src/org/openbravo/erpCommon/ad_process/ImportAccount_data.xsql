@@ -24,7 +24,7 @@
     <Sql>
       <![CDATA[
       SELECT I_ElementValue_ID, AD_Client_ID, AD_Org_ID, IsActive, Updated, UpdatedBy, C_ElementValue_ID,
-			Description, '' as IsFullyQualified, '' as C_AcctSchema_ID, '' as M_Product_ID, '' as C_BPartner_ID,
+			Description, Default_Account, '' as IsFullyQualified, '' as C_AcctSchema_ID, '' as M_Product_ID, '' as C_BPartner_ID,
 			'' as message, ParentElementValue_ID, '' as AD_Tree_ID, '' as Info, '' as Alias, '' as Combination,
 			'' as TableName, '' as ColumnName, '' as Account_ID, '' as AD_OrgTrx_ID, '' as C_ValidCombination_ID,
 			'' as Created, '' as CreatedBy, '' as C_LocFrom_ID, '' as C_LocTo_ID, '' as C_SalesRegion_ID, '' as C_Project_ID,
@@ -326,7 +326,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT I_ElementValue_ID, C_ElementValue_ID, value
+        SELECT I_ElementValue_ID, C_ElementValue_ID, value, default_account
         FROM I_ElementValue
         WHERE I_IsImported='N'
         AND AD_Client_ID = TO_NUMBER(?)
@@ -362,6 +362,30 @@
     <Parameter name="client"/>
   </SqlMethod>
 
+  <SqlMethod name="selectDefaultsRecord" type="preparedStatement" connection="true" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT 1
+        FROM c_acctschema_default
+        WHERE c_acctschema_ID = TO_NUMBER(?)
+      ]]>
+    </Sql>
+    <Parameter name="value"/>
+  </SqlMethod>
+
+  <SqlMethod name="selectGLRecord" type="preparedStatement" connection="true" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT 1
+        FROM c_acctschema_gl
+        WHERE c_acctschema_ID = TO_NUMBER(?)
+      ]]>
+    </Sql>
+    <Parameter name="value"/>
+  </SqlMethod>
+
   <SqlMethod name="insertElementValue" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -380,6 +404,155 @@
     </Sql>
     <Parameter name="cElementvalueId"/>
     <Parameter name="iElementvalueId"/>
+  </SqlMethod>
+
+  <SqlMethod name="insertGLRecord" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        INSERT INTO C_ACCTSCHEMA_GL (C_ACCTSCHEMA_ID, AD_CLIENT_ID, AD_ORG_ID,ISACTIVE, CREATED, CREATEDBY, 
+           UPDATED, UPDATEDBY, USESUSPENSEBALANCING, SUSPENSEBALANCING_ACCT, USESUSPENSEERROR, SUSPENSEERROR_ACCT, 
+           USECURRENCYBALANCING, CURRENCYBALANCING_ACCT, RETAINEDEARNING_ACCT,INCOMESUMMARY_ACCT, INTERCOMPANYDUETO_ACCT, 
+           INTERCOMPANYDUEFROM_ACCT,PPVOFFSET_ACCT, CFS_ORDER_ACCT) 
+        VALUES ( to_number(?), to_number(?), to_number(?), 'Y', now(), to_number(?), 
+            now(), to_number(?), 'N', to_number(?), 'N', to_number(?), 
+            'N', to_number(?), to_number(?), to_number(?), to_number(?),
+            to_number(?), to_number(?), to_number(?))    
+      ]]>
+    </Sql>
+    <Parameter name="cAcctschemaId"/>
+    <Parameter name="client"/>
+    <Parameter name="org"/>
+    <Parameter name="user"/>
+    <Parameter name="user"/>
+    <!--Parameter name="USESUSPENSEBALANCING"/-->
+    <Parameter name="SUSPENSEBALANCING_ACCT"/>
+    <!--Parameter name="USESUSPENSEERROR"/-->
+    <Parameter name="SUSPENSEERROR_ACCT"/>
+    <!--Parameter name="USECURRENCYBALANCING"/-->
+    <Parameter name="CURRENCYBALANCING_ACCT"/>
+    <Parameter name="RETAINEDEARNING_ACCT"/>
+    <Parameter name="INCOMESUMMARY_ACCT"/>
+    <Parameter name="INTERCOMPANYDUETO_ACCT"/>
+    <Parameter name="INTERCOMPANYDUEFROM_ACCT"/>
+    <Parameter name="PPVOFFSET_ACCT"/>
+    <Parameter name="CFS_ORDER_ACCT"/>
+  </SqlMethod>
+
+  <SqlMethod name="insertDefaultsRecord" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+           INSERT INTO C_ACCTSCHEMA_DEFAULT (C_ACCTSCHEMA_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
+           W_INVENTORY_ACCT, W_INVACTUALADJUST_ACCT, W_DIFFERENCES_ACCT, W_REVALUATION_ACCT, 
+           P_REVENUE_ACCT, P_EXPENSE_ACCT, P_ASSET_ACCT,P_PURCHASEPRICEVARIANCE_ACCT, P_INVOICEPRICEVARIANCE_ACCT, P_TRADEDISCOUNTREC_ACCT, 
+           P_TRADEDISCOUNTGRANT_ACCT, P_COGS_ACCT, C_RECEIVABLE_ACCT,C_PREPAYMENT_ACCT, V_LIABILITY_ACCT, V_LIABILITY_SERVICES_ACCT, 
+           V_PREPAYMENT_ACCT, PAYDISCOUNT_EXP_ACCT, WRITEOFF_ACCT
+           , PAYDISCOUNT_REV_ACCT, UNREALIZEDGAIN_ACCT, UNREALIZEDLOSS_ACCT, 
+           REALIZEDGAIN_ACCT, REALIZEDLOSS_ACCT, WITHHOLDING_ACCT, E_PREPAYMENT_ACCT
+           , E_EXPENSE_ACCT, PJ_ASSET_ACCT, 
+           PJ_WIP_ACCT, T_EXPENSE_ACCT, T_LIABILITY_ACCT, T_RECEIVABLES_ACCT, T_DUE_ACCT, T_CREDIT_ACCT, 
+           B_INTRANSIT_ACCT, B_ASSET_ACCT, B_EXPENSE_ACCT,B_INTERESTREV_ACCT, B_INTERESTEXP_ACCT, B_UNIDENTIFIED_ACCT, 
+           B_UNALLOCATEDCASH_ACCT, B_PAYMENTSELECT_ACCT, B_SETTLEMENTGAIN_ACCT, B_SETTLEMENTLOSS_ACCT, B_REVALUATIONGAIN_ACCT, B_REVALUATIONLOSS_ACCT, 
+           CH_EXPENSE_ACCT, CH_REVENUE_ACCT, UNEARNEDREVENUE_ACCT, NOTINVOICEDRECEIVABLES_ACCT, NOTINVOICEDREVENUE_ACCT, NOTINVOICEDRECEIPTS_ACCT, 
+           CB_ASSET_ACCT, CB_CASHTRANSFER_ACCT, CB_DIFFERENCES_ACCT,CB_EXPENSE_ACCT, CB_RECEIPT_ACCT, PROCESSING, 
+           A_ACCUMDEPRECIATION_ACCT, A_DEPRECIATION_ACCT, A_DISPOSAL_GAIN,A_DISPOSAL_LOSS, C_ACCTSCHEMA_DEFAULT_ID, STATUS) 
+          VALUES (to_number(?), to_number(?), to_number(?), 'Y',now() ,to_number(?),now() ,to_number(?) ,
+        to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,
+        to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,
+        to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,
+        to_number(?) ,to_number(?) ,to_number(?) ,
+        to_number(?) ,to_number(?) ,to_number(?) ,
+        to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,
+        to_number(?) ,to_number(?) ,
+        to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,
+        to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) , to_number(?),
+        to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,
+        to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,
+        to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,'N' ,
+        to_number(?) ,to_number(?) ,to_number(?) ,to_number(?) ,to_number(?), 'DE' )   
+      ]]>
+    </Sql>
+    <Parameter name="cAcctschemaId"/>
+    <Parameter name="client"/>
+    <Parameter name="org"/>
+    <Parameter name="user"/>
+    <Parameter name="user"/>
+
+    <Parameter name="W_INVENTORY_ACCT"/>
+    <Parameter name="W_INVACTUALADJUST_ACCT"/>
+    <Parameter name="W_DIFFERENCES_ACCT"/>
+    <Parameter name="W_REVALUATION_ACCT"/>
+
+    <Parameter name="P_REVENUE_ACCT"/>
+    <Parameter name="P_EXPENSE_ACCT"/>
+    <Parameter name="P_ASSET_ACCT"/>
+    <Parameter name="P_PURCHASEPRICEVARIANCE_ACCT"/>
+    <Parameter name="P_INVOICEPRICEVARIANCE_ACCT"/>
+    <Parameter name="P_TRADEDISCOUNTREC_ACCT"/>
+
+    <Parameter name="P_TRADEDISCOUNTGRANT_ACCT"/>
+    <Parameter name="P_COGS_ACCT"/>
+    <Parameter name="C_RECEIVABLE_ACCT"/>
+    <Parameter name="C_PREPAYMENT_ACCT"/>
+    <Parameter name="V_LIABILITY_ACCT"/>
+    <Parameter name="V_LIABILITY_SERVICES_ACCT"/>
+
+    <Parameter name="V_PREPAYMENT_ACCT"/>
+    <Parameter name="PAYDISCOUNT_EXP_ACCT"/>
+    <Parameter name="WRITEOFF_ACCT"/>
+
+    <Parameter name="PAYDISCOUNT_REV_ACCT"/>
+    <Parameter name="UNREALIZEDGAIN_ACCT"/>
+    <Parameter name="UNREALIZEDLOSS_ACCT"/>
+
+    <Parameter name="REALIZEDGAIN_ACCT"/>
+    <Parameter name="REALIZEDLOSS_ACCT"/>
+    <Parameter name="WITHHOLDING_ACCT"/>
+    <Parameter name="E_PREPAYMENT_ACCT"/>
+
+    <Parameter name="E_EXPENSE_ACCT"/>
+    <Parameter name="PJ_ASSET_ACCT"/>
+
+    <Parameter name="PJ_WIP_ACCT"/>
+    <Parameter name="T_EXPENSE_ACCT"/>
+    <Parameter name="T_LIABILITY_ACCT"/>
+    <Parameter name="T_RECEIVABLES_ACCT"/>
+    <Parameter name="T_DUE_ACCT"/>
+    <Parameter name="T_CREDIT_ACCT"/>
+
+    <Parameter name="B_INTRANSIT_ACCT"/>
+    <Parameter name="B_ASSET_ACCT"/>
+    <Parameter name="B_EXPENSE_ACCT"/>
+    <Parameter name="B_INTERESTREV_ACCT"/>
+    <Parameter name="B_INTERESTEXP_ACCT"/>
+    <Parameter name="B_UNIDENTIFIED_ACCT"/>
+
+    <Parameter name="B_UNALLOCATEDCASH_ACCT"/>
+    <Parameter name="B_PAYMENTSELECT_ACCT"/>
+    <Parameter name="B_SETTLEMENTGAIN_ACCT"/>
+    <Parameter name="B_SETTLEMENTLOSS_ACCT"/>
+    <Parameter name="B_REVALUATIONGAIN_ACCT"/>
+    <Parameter name="B_REVALUATIONLOSS_ACCT"/>
+
+    <Parameter name="CH_EXPENSE_ACCT"/>
+    <Parameter name="CH_REVENUE_ACCT"/>
+    <Parameter name="UNEARNEDREVENUE_ACCT"/>
+    <Parameter name="NOTINVOICEDRECEIVABLES_ACCT"/>
+    <Parameter name="NOTINVOICEDREVENUE_ACCT"/>
+    <Parameter name="NOTINVOICEDRECEIPTS_ACCT"/>
+
+    <Parameter name="CB_ASSET_ACCT"/>
+    <Parameter name="CB_CASHTRANSFER_ACCT"/>
+    <Parameter name="CB_DIFFERENCES_ACCT"/>
+    <Parameter name="CB_EXPENSE_ACCT"/>
+    <Parameter name="CB_RECEIPT_ACCT"/>
+
+    <Parameter name="A_ACCUMDEPRECIATION_ACCT"/>
+    <Parameter name="A_DEPRECIATION_ACCT"/>
+    <Parameter name="A_DISPOSAL_GAIN"/>
+    <Parameter name="A_DISPOSAL_LOSS"/>
+    <Parameter name="C_ACCTSCHEMA_DEFAULT_ID"/>
   </SqlMethod>
 
   <SqlMethod name="insertOperands" type="preparedStatement" connection="true" return="rowCount">
@@ -634,10 +807,11 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_AcctSchema_ID
-        FROM C_AcctSchema_Element
-        WHERE C_Element_ID = TO_NUMBER(?)
-        AND AD_Client_ID = TO_NUMBER(?)
+        SELECT C_AcctSchema.C_AcctSchema_ID, C_AcctSchema.AD_Client_ID, C_AcctSchema.AD_Org_id
+        FROM C_AcctSchema_Element, C_AcctSchema
+        WHERE C_AcctSchema_Element.C_ACCTSCHEMA_ID = C_AcctSchema.C_ACCTSCHEMA_ID
+        AND C_AcctSchema_Element.C_Element_ID = TO_NUMBER(?)
+        AND C_AcctSchema_Element.AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="cElementId"/>
