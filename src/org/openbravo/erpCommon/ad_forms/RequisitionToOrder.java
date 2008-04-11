@@ -137,12 +137,6 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("toolbar", toolbar.toString()); 
 
     try {
-      KeyMap key = new KeyMap(this, vars, "RequisitionToOrder.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.RequisitionToOrder");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
@@ -296,12 +290,6 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("help", Replace.replace(strDescription, "\\n", "\n"));
-    try {
-      KeyMap key = new KeyMap(this, vars, "RequisitionToOrderCreate.html");
-      xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
     {
       OBError myMessage = vars.getMessage("RequisitionToOrderCreate");
       vars.removeMessage("RequisitionToOrderCreate");
