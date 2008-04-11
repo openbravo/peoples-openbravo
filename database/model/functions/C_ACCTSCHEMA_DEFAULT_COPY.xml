@@ -169,7 +169,7 @@
       INSERT
       INTO C_BP_Group_Acct
         (
-          C_BP_Group_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
+          C_BP_Group_Acct_ID, C_BP_Group_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated,
           UpdatedBy, C_Receivable_Acct, C_PrePayment_Acct, V_Liability_Acct,
           V_Liability_Services_Acct, V_PrePayment_Acct, PayDiscount_Exp_Acct, PayDiscount_Rev_Acct,
@@ -177,7 +177,7 @@
           RealizedLoss_Acct, NotInvoicedReceipts_Acct, UnEarnedRevenue_Acct, NotInvoicedRevenue_Acct,
           NotInvoicedReceivables_Acct, Status
         )
-      SELECT x.C_BP_Group_ID,
+      SELECT AD_SEQUENCE_NEXTNO('C_BP_Group_Acct'), x.C_BP_Group_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
         now(), 0, now(), 0,
         Cur_Acct.C_Receivable_Acct, Cur_Acct.C_PrePayment_Acct, Cur_Acct.V_Liability_Acct, Cur_Acct.V_Liability_Services_Acct,
