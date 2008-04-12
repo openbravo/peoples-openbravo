@@ -142,7 +142,7 @@ function cursorFocus(evt, obj) {
     obj = (!document.all) ? evt.target : event.srcElement;
   }
   if (obj == focusedWindowElement) return true;
-  if (navigator.userAgent.indexOf("NT") == -1 && obj.className.indexOf('Radio_Check_ContentCell') != -1) {
+  if (navigator.userAgent.indexOf("NT") == -1 && navigator.userAgent.toUpperCase().indexOf("FIREFOX/2") != -1 && obj.className.indexOf('Radio_Check_ContentCell') != -1) {
     //Go to the SPAN element
     for (;;) {
       obj = obj.firstChild;
@@ -165,7 +165,10 @@ function cursorFocus(evt, obj) {
         break;
       }
     }
-    obj.checked = !obj.checked;
+    if (!mustBeIgnored(obj)) {
+      obj.checked = !obj.checked;
+      if (obj.getAttribute('onclick')) obj.onclick();
+    }
   }
   if(!isClickOnGrid==true) blurGrid();
   isClickOnGrid=false;
