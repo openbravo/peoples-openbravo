@@ -165,7 +165,7 @@ CREATE OR REPLACE FUNCTION to_number
 )
 RETURNS NUMERIC AS '
 BEGIN
-RETURN to_number(extract(epoch FROM ($1))/86400, ''S99999999999999999.'');
+RETURN extract(epoch FROM ($1))/86400;
 EXCEPTION 
   WHEN OTHERS THEN 
     RETURN NULL;
@@ -498,7 +498,7 @@ language 'plpgsql'
 /-- END
 
 --DROP OPERATOR + (timestamptz, numeric) CASCADE;
-SELECT * FROM drop_operator('+','timestamptz','numeric')
+SELECT * FROM drop_operator('+'::varchar,'timestamptz'::varchar,'numeric'::varchar)
 /-- END
 
 CREATE OPERATOR +(
@@ -509,7 +509,7 @@ CREATE OPERATOR +(
 /-- END
 
 --DROP OPERATOR + (timestamptz, integer);
---SELECT * FROM drop_operator('+','timestamptz','integer');
+--SELECT * FROM drop_operator('+'::varchar,'timestamptz'::varchar,'integer'::varchar);
 --CREATE OPERATOR + (
 --   LEFTARG = timestamptz,
 --   RIGHTARG = integer,
@@ -519,7 +519,7 @@ CREATE OPERATOR +(
 --/--END
 
 --DROP OPERATOR + (date, numeric);
-SELECT * FROM drop_operator('+','date','numeric')
+SELECT * FROM drop_operator('+'::varchar,'date'::varchar,'numeric'::varchar)
 /-- END
 
 CREATE OPERATOR + (
@@ -564,7 +564,7 @@ END;
 /-- END
 
 --DROP OPERATOR - (timestamptz, integer)/-- END
---SELECT * FROM drop_operator('-','timestamptz','integer');
+--SELECT * FROM drop_operator('-'::varchar,'timestamptz'::varchar,'integer'::varchar);
 --CREATE OPERATOR - (
 --   LEFTARG = timestamp with time zone,
 --   RIGHTARG = integer,
@@ -573,7 +573,7 @@ END;
 --/-- END
 
 --DROP OPERATOR - (date, numeric);
-SELECT * FROM drop_operator('-','date','numeric')
+SELECT * FROM drop_operator('-'::varchar,'date'::varchar,'numeric'::varchar)
 /-- END
 
 CREATE OPERATOR - (
@@ -593,7 +593,7 @@ END;
 /-- END
 
 --DROP OPERATOR ! (NONE, boolean);
---SELECT * FROM drop_operator('!','NONE','boolean');
+--SELECT * FROM drop_operator('!'::varchar,'NONE'::varchar,'boolean'::varchar);
 --CREATE OPERATOR !(
 --  PROCEDURE = "negation",
 --  RIGHTARG = boolean)
@@ -608,7 +608,7 @@ END;
 /-- END
 
 --DROP OPERATOR = (numeric, varchar);
-SELECT * FROM drop_operator('=','numeric','varchar');
+SELECT * FROM drop_operator('='::varchar,'numeric'::varchar,'varchar'::varchar);
 /-- END
 
 CREATE OPERATOR =(
@@ -626,7 +626,7 @@ END;
 /-- END
 
 --DROP OPERATOR <= (numeric, varchar);
-SELECT * FROM drop_operator('<=','numeric','varchar');
+SELECT * FROM drop_operator('<='::varchar,'numeric'::varchar,'varchar'::varchar);
 /-- END
 
 CREATE OPERATOR <=(
@@ -644,7 +644,7 @@ END;
 /-- END
 
 --DROP OPERATOR <= (timestamp, varchar);
-SELECT * FROM drop_operator('<=','timestamp','varchar');
+SELECT * FROM drop_operator('<='::varchar,'timestamp'::varchar,'varchar'::varchar);
 /-- END
 
 CREATE OPERATOR <=(
@@ -662,7 +662,7 @@ END;
 /-- END
 
 --DROP OPERATOR >= (timestamp, varchar);
-SELECT * FROM drop_operator('>=','timestamp','varchar');
+SELECT * FROM drop_operator('>='::varchar,'timestamp'::varchar,'varchar'::varchar);
 /-- END
 
 CREATE OPERATOR >=(
