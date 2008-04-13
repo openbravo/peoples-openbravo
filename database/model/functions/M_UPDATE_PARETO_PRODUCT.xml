@@ -21,7 +21,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
-v_ResultStr VARCHAR2(2000):='';
+  v_ResultStr VARCHAR2(2000):='';
   v_Result NUMBER := 1;  
   v_Message VARCHAR2(2000):='';
   v_exist number:=0;
@@ -160,6 +160,6 @@ WHEN OTHERS THEN
   END IF;
   RETURN;
 
-end M_UPDATE_PARETO_PRODUCT]]></body>
+END M_UPDATE_PARETO_PRODUCT]]></body>
     </function>
   </database>

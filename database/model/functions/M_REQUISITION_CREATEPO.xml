@@ -55,7 +55,9 @@
 
   --  Parameter
   TYPE RECORD IS REF CURSOR;
-    Cur_Parameter RECORD;
+  Cur_Parameter RECORD;
+  Cur_Product RECORD;
+  Cur_Lines RECORD;	
 BEGIN
   DBMS_OUTPUT.PUT_LINE('BEGIN M_REQUISITION_ORDER ' || p_PInstance_ID) ;
   v_ResultStr:='PInstanceNotFound';
