@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
  ******************************************************************************
 -->
 
@@ -113,12 +113,12 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_Tax T
+        UPDATE I_Tax
 			  SET C_TaxCategory_ID=(
           SELECT C_TaxCategory_ID 
           FROM C_TaxCategory C
-			    WHERE T.TC_Name=C.Name
-          AND C.AD_Client_ID=T.AD_Client_ID
+			    WHERE I_Tax.TC_Name=C.Name
+          AND C.AD_Client_ID=I_Tax.AD_Client_ID
         )
 			  WHERE C_TaxCategory_ID IS NULL
         AND TC_Name IS NOT NULL
@@ -133,12 +133,12 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_Tax T
+        UPDATE I_Tax
 			  SET C_BP_TaxCategory_ID=(
           SELECT C_BP_TaxCategory_ID 
           FROM C_BP_TaxCategory C
-			    WHERE T.BPTC_Name=C.Name
-          AND C.AD_Client_ID=T.AD_Client_ID
+			    WHERE I_Tax.BPTC_Name=C.Name
+          AND C.AD_Client_ID=I_Tax.AD_Client_ID
         )
 			  WHERE C_BP_TaxCategory_ID IS NULL
         AND BPTC_Name IS NOT NULL
@@ -153,12 +153,12 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_Tax T
+        UPDATE I_Tax
 			  SET C_Tax_ID=(
           SELECT C_Tax_ID 
           FROM C_Tax C
-			    WHERE T.T_Name=C.Name
-          AND C.AD_Client_ID=T.AD_Client_ID
+			    WHERE I_Tax.T_Name=C.Name
+          AND C.AD_Client_ID=I_Tax.AD_Client_ID
         )
 			  WHERE C_Tax_ID IS NULL
         AND T_Name IS NOT NULL
@@ -173,13 +173,13 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_Tax t
+        UPDATE I_Tax
 			  SET C_Country_ID=(
           SELECT MAX(C_Country_ID) 
             FROM C_Country c
-  			   WHERE c.AD_Client_ID IN (0, t.AD_Client_ID)
-             AND  (UPPER(c.CountryCode) = UPPER(t.from_code_Country)
-               OR  UPPER(c.Name) = UPPER(t.from_code_Country)))
+  			   WHERE c.AD_Client_ID IN (0, I_Tax.AD_Client_ID)
+             AND  (UPPER(c.CountryCode) = UPPER(I_Tax.from_code_Country)
+               OR  UPPER(c.Name) = UPPER(I_Tax.from_code_Country)))
 			  WHERE C_Country_ID IS NULL
         AND from_code_Country IS NOT NULL
 			  AND I_IsImported<>'Y'
@@ -208,13 +208,13 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_Tax t
+        UPDATE I_Tax
 			  SET TO_Country_ID=(
           SELECT MAX(C_Country_ID) 
             FROM C_Country c
-  			   WHERE c.AD_Client_ID IN (0, t.AD_Client_ID)
-             AND  (UPPER(c.CountryCode) = UPPER(t.to_code_Country)
-               OR  UPPER(c.Name) = UPPER(t.to_code_Country)))
+  			   WHERE c.AD_Client_ID IN (0, I_Tax.AD_Client_ID)
+             AND  (UPPER(c.CountryCode) = UPPER(I_Tax.to_code_Country)
+               OR  UPPER(c.Name) = UPPER(I_Tax.to_code_Country)))
 			  WHERE TO_Country_ID IS NULL
         AND to_code_Country IS NOT NULL
 			  AND I_IsImported<>'Y'
@@ -243,13 +243,13 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_Tax t
+        UPDATE I_Tax
 			  SET C_Region_ID=(
           SELECT MAX(C_Region_ID) 
             FROM C_Region r
-  			   WHERE r.AD_Client_ID IN (0, t.AD_Client_ID)
-             AND  (UPPER(r.Value) = UPPER(t.from_code_region)
-               OR  UPPER(r.Name) = UPPER(t.from_code_region)))
+  			   WHERE r.AD_Client_ID IN (0, I_Tax.AD_Client_ID)
+             AND  (UPPER(r.Value) = UPPER(I_Tax.from_code_region)
+               OR  UPPER(r.Name) = UPPER(I_Tax.from_code_region)))
 			  WHERE C_Region_ID IS NULL
         AND from_code_Region IS NOT NULL
 			  AND I_IsImported<>'Y'
@@ -278,13 +278,13 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_Tax t
+        UPDATE I_Tax
 			  SET TO_Region_ID=(
           SELECT MAX(C_Region_ID) 
             FROM C_Region r
-  			   WHERE r.AD_Client_ID IN (0, t.AD_Client_ID)
-             AND  (UPPER(r.Value) = UPPER(t.to_code_region)
-               OR  UPPER(r.Name) = UPPER(t.to_code_region)))
+  			   WHERE r.AD_Client_ID IN (0, I_Tax.AD_Client_ID)
+             AND  (UPPER(r.Value) = UPPER(I_Tax.to_code_region)
+               OR  UPPER(r.Name) = UPPER(I_Tax.to_code_region)))
 			  WHERE TO_Region_ID IS NULL
         AND to_code_Region IS NOT NULL
 			  AND I_IsImported<>'Y'
@@ -447,12 +447,12 @@
                C_TaxCategory_ID   = COALESCE(TO_NUMBER(?),C_TaxCategory_ID),
                C_BP_TaxCategory_ID= COALESCE(TO_NUMBER(?),C_BP_TaxCategory_ID),
                Parent_Tax_ID      = COALESCE(TO_NUMBER(?),Parent_Tax_ID),
-               TAXINDICATOR       = COALESCE((SELECT TAXINDICATOR FROM I_Tax WHERE I_Tax = TO_NUMBER(?)),TAXINDICATOR),   
-               ISSUMMARY          = COALESCE((SELECT ISSUMMARY FROM I_Tax WHERE I_Tax = TO_NUMBER(?)),ISSUMMARY),      
-               ISTAXEXEMPT        = COALESCE((SELECT ISTAXEXEMPT FROM I_Tax WHERE I_Tax = TO_NUMBER(?)),ISTAXEXEMPT),    
-               SOPOTYPE           = COALESCE((SELECT SOPOTYPE FROM I_Tax WHERE I_Tax = TO_NUMBER(?)),SOPOTYPE),       
-               LINE               = COALESCE((SELECT LINE FROM I_Tax WHERE I_Tax = TO_NUMBER(?)),LINE),           
-               CASCADE            = COALESCE((SELECT CASCADE FROM I_Tax WHERE I_Tax = TO_NUMBER(?)),CASCADE) 
+               TAXINDICATOR       = COALESCE((SELECT TAXINDICATOR      FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),TAXINDICATOR),   
+               ISSUMMARY          = COALESCE((SELECT ISSUMMARY         FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),ISSUMMARY),      
+               ISTAXEXEMPT        = COALESCE((SELECT ISTAXEXEMPT       FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),ISTAXEXEMPT),    
+               SOPOTYPE           = COALESCE((SELECT SOPOTYPE          FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),SOPOTYPE),       
+               LINE               = COALESCE((SELECT LINE              FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),LINE),           
+               CASCADE            = COALESCE((SELECT CASCADE           FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),CASCADE) 
          WHERE C_Tax_ID = TO_NUMBER(?)
       ]]>
     </Sql>
