@@ -98,7 +98,7 @@
         AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
         and r.ad_role_id = @Default_AD_Role_ID@ 
         AND R.ISACTIVE = 'Y' 
-        AND (LPAD(R.USERLEVEL, 1, 1)='S' OR AD_ORG.AD_ORG_ID <> 0) 
+        AND (LPAD(TO_CHAR(R.USERLEVEL), 1, '1')='S' OR AD_ORG.AD_ORG_ID <> 0) 
         AND A_R_O.AD_ROLE_ID = @Default_AD_Role_ID@)]]></CODE>
   </AD_VAL_RULE>
   <AD_VAL_RULE AD_VAL_RULE_ID="800024" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-06-19 18:18:03.0" CREATEDBY="100" UPDATED="2007-06-19 18:23:41.0" UPDATEDBY="100" NAME="M_Warehouse of Role" DESCRIPTION="Filter Warehouse filter by Role" TYPE="S" CODE="M_Warehouse.AD_Client_ID = @Default_AD_Client_ID@" ENTITYTYPE="U" />
