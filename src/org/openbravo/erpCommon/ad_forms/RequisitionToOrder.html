@@ -91,51 +91,17 @@
       }
 
       function myResizeArea(isOnResize) {
-        if (isOnResize==null) isOnResize = false;
         var mnu = document.getElementById("client");
-
-        var mleft = document.getElementById("tdLeftTabsBars");
-        var mleftSeparator = document.getElementById("tdleftSeparator");
-        var mright = document.getElementById("tdrightSeparator");
-        var mtop = document.getElementById("tdtopNavButtons");
-        var mtopToolbar = document.getElementById("tdToolBar");
-        var mtopTabs = document.getElementById("tdtopTabs");
-        var mbottombut = document.getElementById("tdbottomButtons");
-        var mtopbut = document.getElementById("tdtopButtons");
-        var mbottom = document.getElementById("tdbottomSeparator");
-        var body = document.getElementsByTagName("BODY");
-        var h = body[0].clientHeight;
-        var w = body[0].clientWidth;
-        var name = window.navigator.appName;
-        var clientWidth = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("Microsoft")==-1)?2:0);
-        mnu.style.width = clientWidth;
-        var clientHeight = h -((mtop?mtop.clientHeight:0) + (mtopToolbar?mtopToolbar.clientHeight:0) + (mtopTabs?mtopTabs.clientHeight:0) + (mbottom?mbottom.clientHeight:0) + (mbottombut?mbottombut.clientHeight:0) + (mtopbut?mtopbut.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
-        mnu.style.height = clientHeight;
-        var mbottomButtons = document.getElementById("tdbottomButtons");
-        if (mbottomButtons) mbottomButtons.style.width = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("Microsoft")==-1)?2:0);
-        var mtopButtons = document.getElementById("tdbottomButtons");
-        if (mtopButtons) mtopButtons.style.width = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("Microsoft")==-1)?2:0);
-
         var filtertable = document.getElementById("filtertable");
         var linestable = document.getElementById("linestable");
         var addtable = document.getElementById("addtable");
         var selectedtable = document.getElementById("selectedtable");
 
-      /*  try {
-          dojo.addOnLoad(dojo.widget.byId('grid').onResize);
-        } catch (e) {}*/
-        try {
-          if (isOnResize) dojo.widget.byId('grid').onResize();
-        } catch (e) {}
-        mnu.style.display = "";
-        //alert("mnu height: " + clientHeight + " filtertable: " + filtertable.clientHeight + " addtable: " + addtable.clientHeight);
-
-        linestable.style.height = ((clientHeight - (filtertable?filtertable.clientHeight:0) - (addtable?addtable.clientHeight:0))/2)-1;
-        selectedtable.style.height = (clientHeight - (filtertable?filtertable.clientHeight:0) - (addtable?addtable.clientHeight:0))/2;
+        linestable.style.height = ((mnu.clientHeight - (filtertable?filtertable.clientHeight:0) - (addtable?addtable.clientHeight:0))/2)-1;
+        selectedtable.style.height = (mnu.clientHeight - (filtertable?filtertable.clientHeight:0) - (addtable?addtable.clientHeight:0))/2;
         var filtertablew = document.getElementById("filtertablew");
         linestable.style.width = filtertablew.clientWidth + 14;
         selectedtable.style.width = filtertablew.clientWidth + 14;
-        //alert(linestable.clientHeight + " calculado: " + linestable.style.height);
       }
 
       function onloadFunctions() {
@@ -163,12 +129,14 @@
           onloadFunctions();
         } catch (e) {}
         xx();
+        resizeArea();
         myResizeArea();
 
         setWindowElementFocus('firstElement');
       }
 
       function onResizeDo(){
+        resizeArea();
         myResizeArea();
       }
     </script>
@@ -305,7 +273,7 @@
                                     <input class="dojoValidateValid TextBox_btn_OneCell_width" type="text"  name="inpmProductId_DES" maxlength="20" value="" id="paramProductDescription"></input>
                                   </td>
                                   <td class="FieldButton_ContentCell">
-                                    <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Product'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="openSearch(null, null, '../info/ProductComplete_FS.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'WindowID', 'RequisitionToOrder');return false;">
+                                    <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Product'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/ProductComplete_FS.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'WindowID', 'RequisitionToOrder');return false;">
                                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Product';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                                         <tr>
                                           <td class="FieldButton_bg">
@@ -326,7 +294,7 @@
                                     <input dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="xx"  class="dojoValidateValid TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
                                   </td>
                                   <td class="FieldButton_ContentCell">
-                                    <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="showCalendar('frmMain.paramDateFrom', document.frmMain.paramDateFrom.value, false);return false;">
+                                    <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.paramDateFrom', document.frmMain.paramDateFrom.value, false);return false;">
                                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                                         <tr>
                                           <td class="FieldButton_bg">
@@ -347,7 +315,7 @@
                                     <input dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="xx"  class="dojoValidateValid TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
                                   </td>
                                   <td class="FieldButton_ContentCell">
-                                    <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">
+                                    <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">
                                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                                         <tr>
                                           <td class="FieldButton_bg">
@@ -374,7 +342,7 @@
                                     <input class="dojoValidateValid TextBox_btn_OneCell_width" type="text"  name="inpBpartnerId_DES" maxlength="20" value="" id="paramBPartnerDescription"></input>
                                   </td>
                                   <td class="FieldButton_ContentCell">
-                                    <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Business Partner'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'WindowID', 'MaterialReceiptPending');return false;">
+                                    <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'WindowID', 'MaterialReceiptPending');return false;">
                                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Business Partner';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                                         <tr>
                                           <td class="FieldButton_bg">
@@ -388,7 +356,7 @@
                               </table>
                             </td>
                             <td class="TitleCell"> <span class="LabelText">Add lines without Vendor</span></td>
-                            <td class="Radio_Check_ContentCell"> <input type="checkbox" value="Y" checked="checked" id="paramShowNullVendor" name="inpShowNullVendor"></input></td>
+                            <td class="Radio_Check_ContentCell"> <span class="Checkbox_container_NOT_Focused"><input type="checkbox" value="Y" checked="checked" id="paramShowNullVendor" name="inpShowNullVendor"></input></span></td>
                           </tr>
                           <tr>
                             <td class="TitleCell"> <span class="LabelText">Organization</span></td>
@@ -398,7 +366,7 @@
                             <td class="TitleCell"></td>
                             <td class="Button_LeftAlign_ContentCell">
                               <div>
-                                <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Search'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('FIND', true, null, null, '_self');return false;" id="buttonSearch">
+                                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true, null, null, '_self');return false;" id="buttonSearch">
                                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                                     <tr>
                                       <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -460,7 +428,7 @@
                             <td class="TitleCell"></td>
                             <td class="Button_LeftAlign_ContentCell">
                               <div>
-                                <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Add'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('ADD', true, null, null, '_self', true);return false;" id="buttonAdd">
+                                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(ths); window.status='Add'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('ADD', true, null, null, '_self', true);return false;" id="buttonAdd">
                                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Add';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                                     <tr>
                                       <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Add" title="Add" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -475,7 +443,7 @@
                             <td class="TitleCell"></td>
                             <td class="Button_LeftAlign_ContentCell">
                               <div>
-                                <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Remove'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('REMOVE', true, null, null, '_self', true);return false;">
+                                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Remove'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('REMOVE', true, null, null, '_self', true);return false;">
                                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Remove';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                                     <tr>
                                       <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Remove" title="Remove" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -553,7 +521,7 @@
                   <td class="TitleCell"></td>
                   <td class="Button_LeftAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Create'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="openServletNewWindow('OPEN_CREATE', true, 'RequisitionToOrderCreate.html', 'CreatePurchaseOrder', null, false, '600', '800');return false;" id="buttonCreate">
+                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Create'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('OPEN_CREATE', true, 'RequisitionToOrderCreate.html', 'CreatePurchaseOrder', null, false, '600', '800');return false;" id="buttonCreate">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Create';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                           <tr>
                             <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Create" title="Create" src="../../../../../web/images/blank.gif" border=0/></td>
