@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -62,7 +62,8 @@ function actualizarDatos(combo) {
 function depurar(accion) {
 	var frm = document.frmMain;
   if (frm.inpCliente.value==null || frm.inpCliente.value=="") {frm.inpCliente.focus();  mensaje(7); return false; }
-if (frm.inpMoneda.value==null || frm.inpMoneda.value=="") {frm.inpMoneda.focus();  mensaje(7); return false; }
+  if (frm.inpMoneda.value==null || frm.inpMoneda.value=="") {frm.inpMoneda.focus();  mensaje(7); return false; }
+  if (frm.inpPais.value==null || frm.inpPais.value=="") {frm.inpPais.focus();  mensaje(7); return false; }
   if (frm.inpOrganizacion.value==null || frm.inpOrganizacion.value=="") {frm.inpOrganizacion.focus(); mensaje(7); return false; }
   if (frm.inpClienteUsuario.value==null || frm.inpClienteUsuario.value=="") {frm.inpClienteUsuario.focus(); mensaje(7); return false; }
   if (frm.inpOrganizacionUsuario.value==null || frm.inpOrganizacionUsuario.value=="") {frm.inpOrganizacionUsuario.focus();  mensaje(7); return false; }
@@ -249,7 +250,7 @@ function onloadFunctions() {
                 <TR>
                   <TD class="TitleCell"><SPAN class="LabelText">Country</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2">
-                    <SELECT name="inpPais" onchange="actualizarDatos(document.frmMain.inpPais);return true;" id="inpPais" class="Combo Combo_TwoCells_width">
+                    <SELECT name="inpPais" onchange="actualizarDatos(document.frmMain.inpPais);return true;" id="inpPais" class="Combo Combo_TwoCells_width required">
                       <OPTION value=""></OPTION><DIV id="reportCountry_M"></DIV>
                     </SELECT>
                   </TD>
