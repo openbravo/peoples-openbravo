@@ -48,14 +48,14 @@ if (document.layers) {
   //window.onfocus=activeElementFocus;
 }
 
-function activateFixFocus(){
+function activateDefaultAction(){
   if (fixFocusedElement != null || fixFocusedElement != 'null' || fixFocusedElement != '') {
     keyArray[fixFocusedElementArrayPosition] = new keyArrayItem("ENTER", "executeWindowButton(fixFocusedElement.getAttribute('id'));", null, null, false, 'onkeydown');
     drawWindowElementDefaultAction(fixFocusedElement);
   }
 }
 
-function disableFixFocus() {
+function disableDefaultAction() {
   if (fixFocusedElement != null || fixFocusedElement != 'null' || fixFocusedElement != '') {
     keyArray[fixFocusedElementArrayPosition] = new keyArrayItem(null, null, null, null, false, null);
     eraseWindowElementDefaultAction(fixFocusedElement);
@@ -63,18 +63,18 @@ function disableFixFocus() {
 }
 
 
-function fixFocusLogic(obj) {
-  disableFixFocus();
+function defaultActionLogic(obj) {
+  disableDefaultAction();
   fixFocusedElement = document.getElementById(windowTables[focusedWindowTable].defaultActionButtonId);
   try {
     if (obj.tagName == 'INPUT' || obj.tagName == 'SELECT') {
-      activateFixFocus();
+      activateDefaultAction();
       for (var i = 0; i < keyArray.length; i++) {
         if (keyArray[i] != null && keyArray[i]) {
           if (keyArray[i].key == 'ENTER') {
             if (keyArray[i].auxKey == null || keyArray[i].auxKey == '' || keyArray[i].auxKey == 'null') {
               if (keyArray[i].field == obj.getAttribute('name')) {
-                disableFixFocus();
+                disableDefaultAction();
                 break;
               }
             }
@@ -82,15 +82,15 @@ function fixFocusLogic(obj) {
         }
       }
     } else {
-      disableFixFocus();
+      disableDefaultAction();
     }
   } catch(e) {}
 }
 
-function enableFixFocus() {
+function enableDefaultAction() {
   fixFocusedElement = null;
   fixFocusedElementArrayPosition = keyArray.length
-  activateFixFocus();
+  activateDefaultAction();
 }
 
 function fixButton(fixFocusObj , fixFocusObjTableId, fixFocusObjFrameName) {
@@ -362,7 +362,7 @@ function drawWindowElementFocus(obj) {
 function putWindowElementFocus(obj) {
   previousWindowElementType=currentWindowElementType;
   drawWindowElementFocus(obj);
-  fixFocusLogic(obj);
+  defaultActionLogic(obj);
   try {
     if (currentWindowElementType == 'grid') {
       focusGrid();
@@ -1071,7 +1071,7 @@ function drawTabFocus(obj) {
 
 function putTabFocus(obj) {
   drawTabFocus(obj);
-  fixFocusLogic(obj);
+  defaultActionLogic(obj);
   obj.focus();
 }
 

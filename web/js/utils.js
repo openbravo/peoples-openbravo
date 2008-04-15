@@ -1141,7 +1141,7 @@ function enableShortcuts(type) {
         getShortcuts('applicationCommonKeys');
         getShortcuts('windowCommonKeys');
         getShortcuts('editionSpecificKeys');
-        enableFixFocus();
+        enableDefaultAction();
       } else if (type=='relation') {
         getShortcuts('applicationCommonKeys');
         getShortcuts('windowCommonKeys');
@@ -1153,7 +1153,7 @@ function enableShortcuts(type) {
         getShortcuts('editionSpecificKeys');
         getShortcuts('popupSpecificKeys');
         getShortcuts('gridKeys');
-        enableFixFocus();
+        enableDefaultAction();
       }
     } catch (e) {
     }
