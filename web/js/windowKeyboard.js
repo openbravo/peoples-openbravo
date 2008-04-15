@@ -51,14 +51,14 @@ if (document.layers) {
 function activateFixFocus(){
   if (fixFocusedElement != null || fixFocusedElement != 'null' || fixFocusedElement != '') {
     keyArray[fixFocusedElementArrayPosition] = new keyArrayItem("ENTER", "executeWindowButton(fixFocusedElement.getAttribute('id'));", null, null, false, 'onkeydown');
-    drawWindowElementFocus(fixFocusedElement);
+    drawWindowElementDefaultAction(fixFocusedElement);
   }
 }
 
 function disableFixFocus() {
   if (fixFocusedElement != null || fixFocusedElement != 'null' || fixFocusedElement != '') {
     keyArray[fixFocusedElementArrayPosition] = new keyArrayItem(null, null, null, null, false, null);
-    eraseWindowElementFocus(fixFocusedElement);
+    eraseWindowElementDefaultAction(fixFocusedElement);
   }
 }
 
@@ -227,6 +227,26 @@ function setWindowElementFocus(obj, type) {
     focusedWindowElement_tmp = focusedWindowElement;
     if(!frameLocked) putWindowElementFocus(obj);
     putWindowElementFocus(focusedWindowElement);
+  }
+}
+
+function drawWindowElementDefaultAction(obj) {
+  try {
+    if(obj.tagName == 'A') {
+      if (obj.className.indexOf('ButtonLink_default') == -1 && obj.className.indexOf('ButtonLink') != -1) {
+        obj.className = 'ButtonLink_default';
+      }
+    }
+  } catch (e) {
+  }
+}
+
+function eraseWindowElementDefaultAction(obj) {
+  try {
+    if(obj.tagName == 'A') {
+      obj.className = obj.className.replace('ButtonLink_default','ButtonLink');
+    }
+  } catch (e) {
   }
 }
 

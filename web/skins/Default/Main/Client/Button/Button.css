@@ -39,6 +39,10 @@ a.ButtonLink_focus, a.ButtonLink_focus:active, a.ButtonLink_focus:hover, a.Butto
   text-decoration: none;
 }
 
+a.ButtonLink_default, a.ButtonLink_default:active, a.ButtonLink_default:hover, a.ButtonLink_default:visited, a.ButtonLink_default:link, a.ButtonLink_default:focus {
+  text-decoration: none;
+}
+
 a.ButtonLink .Button, .Button {
   border-collapse: collapse;
   font-family: tahoma, arial, helvetica, sans-serif;
@@ -67,7 +71,7 @@ a.ButtonLink table.Button .Button_text, table.Button .Button_text {
 }
 
 a.ButtonLink table.Button .Button_right, table.Button .Button_right {
-  width: 28px;
+  width: 26px;
   height: 26px;
   background: url(buttonRight.normal.png) no-repeat center left;
 }
@@ -94,7 +98,7 @@ a.ButtonLink_hover table.Button .Button_text, table.Button_hover .Button_text {
 
 a.ButtonLink_hover table.Button .Button_right, table.Button_hover .Button_right {
   background: url(buttonRight.rollover.png) no-repeat center left;
-  width: 28px;
+  width: 26px;
   height: 26px;
 }
 
@@ -120,7 +124,7 @@ a.ButtonLink_active table.Button .Button_text, table.Button_active .Button_text 
 
 a.ButtonLink_active table.Button .Button_right, table.Button_active .Button_right {
   background: url(buttonRight.pressed.png) no-repeat center left;
-  width: 28px;
+  width: 26px;
   height: 26px;
 }
 
@@ -146,7 +150,33 @@ a.ButtonLink_focus table.Button .Button_text, table.Button_focus .Button_text {
 
 a.ButtonLink_focus table.Button .Button_right, table.Button_focus .Button_right {
   background: url(buttonRight.focused.png) no-repeat center left;
-  width: 28px;
+  width: 26px;
+  height: 26px;
+}
+
+a.ButtonLink_default .Button, .Button_default {
+  border-collapse: collapse;
+  text-align: center;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #213e51;
+  font-weight: bold;
+  CURSOR: pointer;
+}
+
+a.ButtonLink_default table.Button .Button_left, .Button_default .Button_left {
+  background: url(buttonLeft.default.png) no-repeat center right;
+  width: 35px;
+  height: 26px;
+}
+
+a.ButtonLink_default table.Button .Button_text, table.Button_default .Button_text {
+  background: url(buttonBody.default.png) repeat-x center center;
+}
+
+a.ButtonLink_default table.Button .Button_right, table.Button_default .Button_right {
+  background: url(buttonRight.default.png) no-repeat center left;
+  width: 26px;
   height: 26px;
 }
 
