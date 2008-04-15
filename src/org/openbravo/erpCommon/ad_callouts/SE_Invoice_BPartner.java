@@ -169,14 +169,11 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
       resultado.append("\n)");
     } else resultado.append("null");
     resultado.append("\n),");
-      
-
-      /*if (data[0].creditavailable.equals("") || Double.valueOf(data[0].creditavailable).doubleValue() < 0) resultado.append("new Array(\"MESSAGE\", \"" + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + data[0].creditavailable + "\"),");*/
-      /*resultado.append("new Array(\"inpporeference\", \"" + data[0].poreference + "\"),");*/
-      resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(data[0].soDescription) + "\"),");
-      resultado.append("new Array(\"inpisdiscountprinted\", \"" + data[0].isdiscountprinted + "\")");
-
-      resultado.append(");");
+    resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(data[0].soDescription) + "\"),");
+    resultado.append("new Array(\"inpisdiscountprinted\", \"" + data[0].isdiscountprinted + "\")");
+    if (data!=null && data.length >0 && Double.valueOf(data[0].creditavailable).doubleValue() < 0.0) 
+        resultado.append(", new Array('MESSAGE', \"" + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + data[0].creditavailable +  "\")");
+    resultado.append(");");
     }
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "frameAplicacion");
