@@ -29,8 +29,8 @@ var previousWindowElementType = null;
 var selectedArea = 'window';
 var isGridFocused = null;
 var isClickOnGrid = null;
-var fixFocusedElement = null;
-var fixFocusedElementArrayPosition = null;
+var defaultActionElement = null;
+var defaultActionElementArrayPosition = null;
 
 var isTabPressed = null;
 var isFirstTime = true;
@@ -49,23 +49,23 @@ if (document.layers) {
 }
 
 function activateDefaultAction(){
-  if (fixFocusedElement != null || fixFocusedElement != 'null' || fixFocusedElement != '') {
-    keyArray[fixFocusedElementArrayPosition] = new keyArrayItem("ENTER", "executeWindowButton(fixFocusedElement.getAttribute('id'));", null, null, false, 'onkeydown');
-    drawWindowElementDefaultAction(fixFocusedElement);
+  if (defaultActionElement != null || defaultActionElement != 'null' || defaultActionElement != '') {
+    keyArray[defaultActionElementArrayPosition] = new keyArrayItem("ENTER", "executeWindowButton(defaultActionElement.getAttribute('id'));", null, null, false, 'onkeydown');
+    drawWindowElementDefaultAction(defaultActionElement);
   }
 }
 
 function disableDefaultAction() {
-  if (fixFocusedElement != null || fixFocusedElement != 'null' || fixFocusedElement != '') {
-    keyArray[fixFocusedElementArrayPosition] = new keyArrayItem(null, null, null, null, false, null);
-    eraseWindowElementDefaultAction(fixFocusedElement);
+  if (defaultActionElement != null || defaultActionElement != 'null' || defaultActionElement != '') {
+    keyArray[defaultActionElementArrayPosition] = new keyArrayItem(null, null, null, null, false, null);
+    eraseWindowElementDefaultAction(defaultActionElement);
   }
 }
 
 
 function defaultActionLogic(obj) {
   disableDefaultAction();
-  fixFocusedElement = document.getElementById(windowTables[focusedWindowTable].defaultActionButtonId);
+  defaultActionElement = document.getElementById(windowTables[focusedWindowTable].defaultActionButtonId);
   try {
     if (obj.tagName == 'INPUT' || obj.tagName == 'SELECT') {
       activateDefaultAction();
@@ -88,8 +88,8 @@ function defaultActionLogic(obj) {
 }
 
 function enableDefaultAction() {
-  fixFocusedElement = null;
-  fixFocusedElementArrayPosition = keyArray.length
+  defaultActionElement = null;
+  defaultActionElementArrayPosition = keyArray.length
   activateDefaultAction();
 }
 

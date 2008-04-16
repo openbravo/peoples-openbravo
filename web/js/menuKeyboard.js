@@ -117,7 +117,7 @@ if (document.layers) {
 function onFocusMenu() {
   isMenuFocused = true;
   try {
-    top.frameAplicacion.disableFixFocus();
+    top.frameAplicacion.disableDefaultAction();
     top.frameAplicacion.removeWindowElementFocus(top.frameAplicacion.focusedWindowElement);
     top.frameAplicacion.removeTabFocus(top.frameAplicacion.focusedTab);
   } catch(e) {}
