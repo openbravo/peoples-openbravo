@@ -83,6 +83,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     isHtml=fileTermination.toLowerCase().endsWith("html");
     if (isHtml) parser =  new org.cyberneko.html.parsers.SAXParser();
     else parser = new SAXParser();
+    parser.setEntityResolver(new LocalEntityResolver());
     parser.setContentHandler(this);
     fromLanguage = TranslateData.baseLanguage(pool);
     toLanguage = TranslateData.systemLanguage(pool);
