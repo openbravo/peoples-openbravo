@@ -76,6 +76,7 @@
     v_AMORTIZATIONCALCTYPE varchar2(2) ;
     v_PercentageGeneral number;
     v_TotalAmt number;
+    v_Inserted NUMBER := 0;
     finish boolean;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -146,6 +147,7 @@
       INTO v_DepreciatedLines
       FROM A_AmortizationLine al, A_Amortization am
       WHERE A_Asset_ID=V_Record_ID  AND am.A_Amortization_ID=al.A_Amortization_ID;
+
       IF(v_AMORTIZATIONTYPE='LI') THEN
         IF(v_ASSETSCHEDULE='YE') THEN
           if v_USELIFEYEARS=v_DepreciatedLines then
@@ -169,7 +171,7 @@
             else
               --  v_PercentageGeneral := 100 / v_USELIFEYEARS;
               v_PercentageGeneral:=((v_AMORTIZATIONVALUEAMT-v_DEPRECIATEDPREVIOUSAMT-v_depreciatedPlan) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEYEARS-v_DepreciatedLines) ;
-              SELECT to_number(ADD_MONTHS(v_AMORTIZATIONSTARTDATE, 12*v_USELIFEYEARS) - v_AMORTIZATIONSTARTDATE)
+              SELECT to_number(TO_DATE(ADD_MONTHS(v_AMORTIZATIONSTARTDATE, 12*v_USELIFEYEARS)) - v_AMORTIZATIONSTARTDATE)
               INTO v_TOTAL_DAYS
               FROM DUAL;
             end if;
@@ -215,7 +217,7 @@
                   (v_NEW_AMORTIZATION, v_ENDING_DATE, v_AD_CLIENT_ID, v_AD_ORG_ID,
                   now(), v_CREATEDBY, now(), v_CREATEDBY,
                   LAST_DAY(TO_DATE('01-' || TO_CHAR(v_ENDING_DATE, 'MM') || '-'|| TO_CHAR(v_ENDING_DATE, 'yyyy'),'DD-MM-YYYY')),
-                  'Y', TO_CHAR(LAST_DAY(TO_DATE('01-'|| TO_CHAR(v_ENDING_DATE, 'MM') || '-' || TO_CHAR(v_ENDING_DATE, 'yyyy'))), 'DD/MM/YYYY'), 'N',
+                  'Y', TO_CHAR(LAST_DAY(TO_DATE('01-'|| TO_CHAR(v_ENDING_DATE, 'MM') || '-' || TO_CHAR(v_ENDING_DATE, 'yyyy')))), 'N',
                   'N', 'N',
                   TO_DATE('01-' || TO_CHAR(v_ENDING_DATE, 'MM') || '-' || TO_CHAR(v_ENDING_DATE, 'yyyy'),'DD-MM-YYYY'), v_CURRENCY_ID);
               END IF;
@@ -223,7 +225,7 @@
               INTO v_LINE
               FROM A_AMORTIZATIONLINE
               WHERE A_AMORTIZATION_ID=v_NEW_AMORTIZATION;
-              IF(((v_AMORTIZATIONVALUEAMT+v_DEPRECIATEDPREVIOUSAMT) *v_PERCENTAGE/100)>(v_AMORTIZATIONVALUEAMT -v_TotalAmt)) THEN
+              IF((((v_AMORTIZATIONVALUEAMT+v_DEPRECIATEDPREVIOUSAMT) *v_PERCENTAGE/100)>(v_AMORTIZATIONVALUEAMT -v_TotalAmt))OR(v_Inserted+1>=v_USELIFEYEARS)) THEN
                 SELECT SUM(AMORTIZATIONAMT), SUM(AMORTIZATION_PORCENTAGE)
                 INTO v_AMOUNT, v_PERCENTAGE
                 FROM A_AMORTIZATIONLINE
@@ -246,6 +248,7 @@
                   )
                   VALUES
                   (v_NEW_AMORTIZATION, v_AMORTIZATIONLINE, v_Record_ID, v_AD_CLIENT_ID, v_AD_ORG_ID, now(), v_CREATEDBY, now(), v_CREATEDBY, v_PERCENTAGE, v_AMOUNT, v_C_CURRENCY_ID, 'Y', v_LINE) ;
+                 v_Inserted := v_Inserted +1;
               end if;
               v_BEGINING_DATE:=TO_DATE('31-12-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY') + 1;
               v_TotalAmt:=v_TotalAmt + v_Amount;
@@ -274,12 +277,12 @@
             v_AMORTIZATIONVALUEAMT:=v_AMORTIZATIONVALUEAMT-v_DEPRECIATEDPREVIOUSAMT;
             if v_AMORTIZATIONCALCTYPE='PE' then
               v_PercentageGeneral:=v_AMORTIZATIONPORCENTAGE/12;
-              v_UseLifeMonths:=trunc(100/v_PercentageGeneral*12) ;
+              v_UseLifeMonths:=trunc(100/v_AMORTIZATIONPORCENTAGE*12) ;
             else
               --  v_PercentageGeneral := 100 / v_USELIFEYEARS;
               v_UseLifeYears:=v_UseLifeMonths/12;
               v_PercentageGeneral:=(((v_AMORTIZATIONVALUEAMT-v_depreciatedPlan) *100/v_AMORTIZATIONVALUEAMT) /(v_USELIFEYEARS-v_DepreciatedLines)) /12;
-              SELECT to_number(ADD_MONTHS(v_AMORTIZATIONSTARTDATE, 12*v_USELIFEYEARS) - v_AMORTIZATIONSTARTDATE)
+              SELECT to_number(TO_DATE(ADD_MONTHS(v_AMORTIZATIONSTARTDATE, 12*v_USELIFEYEARS)) - TO_DATE(v_AMORTIZATIONSTARTDATE))
               INTO v_TOTAL_DAYS
               FROM DUAL;
             end if;
@@ -288,7 +291,7 @@
             v_FIRST_DAY_DATE:=TO_DATE('01-'|| TO_CHAR(v_AMORTIZATIONSTARTDATE, 'MM') || '-' || TO_CHAR(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') ;
             v_LAST_DAY_DATE:=TO_DATE('31-12-'|| TO_CHAR(v_AMORTIZATIONSTARTDATE, 'YYYY'), 'DD-MM-YYYY') ;
             if v_Count>1 then
-              v_BEGINING_DATE:=ADD_MONTHS(LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')), v_DepreciatedLines) ;
+              v_BEGINING_DATE:=TO_DATE(ADD_MONTHS(LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')), v_DepreciatedLines)) ;
               v_USELIFEMonths:=v_USELIFEMonths+1;
             end if;
             v_AUXAMT:=0;
@@ -308,6 +311,7 @@
               INTO v_NEW_AMORTIZATION
               FROM A_AMORTIZATION
               WHERE STARTDATE<=v_BEGINING_DATE  AND ENDDATE>=v_BEGINING_DATE  AND AD_CLIENT_ID=v_AD_CLIENT_ID  AND PROCESSED='N';
+              v_ENDING_DATE:= LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')) ;
               IF(v_NEW_AMORTIZATION=-1) THEN
                 Ad_Sequence_Next('A_Amortization', 1000000, v_NEW_AMORTIZATION) ;
                 INSERT
@@ -319,13 +323,13 @@
                     PROCESSED, PROCESSING, STARTDATE, C_Currency_ID
                   )
                   VALUES
-                  (v_NEW_AMORTIZATION, v_ENDING_DATE, v_AD_CLIENT_ID, v_AD_ORG_ID, now(), v_CREATEDBY, now(), v_CREATEDBY, LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')), 'Y', TO_CHAR(LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')), 'DD-MM-YYYY'), 'N', 'N', 'N', TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY'), v_CURRENCY_ID) ;
+                  (v_NEW_AMORTIZATION, v_ENDING_DATE, v_AD_CLIENT_ID, v_AD_ORG_ID, now(), v_CREATEDBY, now(), v_CREATEDBY, LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')), 'Y', TO_CHAR(LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY'))), 'N', 'N', 'N', TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY'), v_CURRENCY_ID) ;
               END IF;
               SELECT COALESCE(MAX(LINE), 0) +10
               INTO v_LINE
               FROM A_AMORTIZATIONLINE
               WHERE A_AMORTIZATION_ID=v_NEW_AMORTIZATION;
-              IF((v_AMORTIZATIONVALUEAMT*v_PERCENTAGE/100)>(v_AMORTIZATIONVALUEAMT-v_TotalAmt)) THEN
+              IF(((v_AMORTIZATIONVALUEAMT*v_PERCENTAGE/100)>(v_AMORTIZATIONVALUEAMT-v_TotalAmt))OR(v_Inserted+1>=v_USELIFEMONTHS) ) THEN
                 SELECT SUM(AMORTIZATIONAMT), SUM(AMORTIZATION_PORCENTAGE)
                 INTO v_AMOUNT, v_PERCENTAGE
                 FROM A_AMORTIZATIONLINE
@@ -346,7 +350,8 @@
                   )
                   VALUES
                   (v_NEW_AMORTIZATION, v_AMORTIZATIONLINE, v_Record_ID, v_AD_CLIENT_ID, v_AD_ORG_ID, now(), v_CREATEDBY, now(), v_CREATEDBY, v_PERCENTAGE, v_AMOUNT, v_C_CURRENCY_ID, 'Y', v_LINE) ;
-                v_BEGINING_DATE:=ADD_MONTHS(LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')), 1) ;
+                 v_Inserted := v_Inserted +1;
+                v_BEGINING_DATE:=TO_DATE(ADD_MONTHS(LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')), 1) );
                 v_TotalAmt:=v_TotalAmt + v_Amount;
               END IF;
             END LOOP;
