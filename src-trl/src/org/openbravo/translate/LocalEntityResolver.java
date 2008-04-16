@@ -14,7 +14,7 @@ public class LocalEntityResolver implements EntityResolver {
 
 	//TODO Create a system propety for this:
 	static final String C_DTD_PATH="../dtds";
-	@Override
+	//@Override
 	public InputSource resolveEntity(String publicId, String systemId)
 			throws SAXException, IOException {
 
