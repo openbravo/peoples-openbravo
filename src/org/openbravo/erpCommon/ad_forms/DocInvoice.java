@@ -295,20 +295,20 @@ public Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,Var
         for (int i = 0;m_debt_payments!=null && i < m_debt_payments.length; i++){
             Double amount = new Double(m_debt_payments[i].Amount);
             Double ZERO = new Double("0.00");
-            if((amount.compareTo(ZERO)>0 && m_debt_payments[i].isReceipt.equals("Y"))||(amount.compareTo(ZERO)<0 && m_debt_payments[i].isReceipt.equals("N"))) fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false, m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((Double)(amount*-1)).toString(),m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,DateAcct,"",conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+            if((amount.compareTo(ZERO)<0 && m_debt_payments[i].isReceipt.equals("Y"))||(amount.compareTo(ZERO)>0 && m_debt_payments[i].isReceipt.equals("N"))) fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false, m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, "", getConvertedAmt(((Double)(amount*-1)).toString(),m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,DateAcct,"",conn), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
           else fact.createLine(m_debt_payments[i], getAccountBPartner(C_BPartner_ID, as, false, m_debt_payments[i].dpStatus, conn), this.C_Currency_ID, getConvertedAmt(((Double)(amount*-1)).toString(),m_debt_payments[i].C_Currency_ID_From, this.C_Currency_ID,DateAcct,"",conn), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
 
 
         //fact.createLine (null, getAccount(AcctServer.ACCTTYPE_V_Liability, as, conn),this.C_Currency_ID,"", getAmount(AcctServer.AMTTYPE_Gross), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,conn);
         //  Charge                  CR
-        fact.createLine (null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn),this.C_Currency_ID, getAmount(AcctServer.AMTTYPE_Charge),"", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,conn);
+        fact.createLine (null, getAccount(AcctServer.ACCTTYPE_Charge, as, conn),this.C_Currency_ID,"", getAmount(AcctServer.AMTTYPE_Charge), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,conn);
         //  TaxCredit               CR
         for (int i = 0;m_taxes!=null && i < m_taxes.length; i++)
-            fact.createLine (null, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),this.C_Currency_ID, m_taxes[i].getAmount(),"", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,conn);
+            fact.createLine (null, m_taxes[i].getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn),this.C_Currency_ID, "", m_taxes[i].getAmount(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,conn);
         //  Expense                 CR
         for (int i = 0;p_lines!=null && i < p_lines.length; i++)
-            fact.createLine (p_lines[i],((DocLine_Invoice)p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense,as, conn),this.C_Currency_ID,p_lines[i].getAmount(),"", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,conn);
+            fact.createLine (p_lines[i],((DocLine_Invoice)p_lines[i]).getAccount(ProductInfo.ACCTTYPE_P_Expense,as, conn),this.C_Currency_ID, "",  p_lines[i].getAmount(),Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,conn);
         //  Set Locations
         FactLine[] fLines = fact.getLines();
         for (int i = 0;fLines !=null && i < fLines.length; i++){
