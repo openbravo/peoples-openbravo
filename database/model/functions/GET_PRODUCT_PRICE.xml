@@ -42,7 +42,7 @@ BEGIN
         AND AD_CLIENT_ID = p_AD_Client_ID
         AND ISACTIVE = 'Y'
       )
-      AND VALIDFROM <= TO_CHAR(SYSDATE, 'DD/MM/YYYY')
+      AND VALIDFROM <= now()
     )
     ;
   IF(v_M_PriceList_Version_ID IS NULL) THEN

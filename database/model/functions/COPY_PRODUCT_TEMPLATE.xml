@@ -114,7 +114,7 @@
         (SELECT MAX(VALIDFROM)
         FROM M_PRICELIST_VERSION
         WHERE ISACTIVE='Y'
-          AND VALIDFROM<=TO_CHAR(Now(), 'DD/MM/YYYY')
+          AND VALIDFROM<=now()
           AND M_PRICELIST_ID=v_Mpricelist
         )
         AND M_PRICELIST_VERSION.M_PRICELIST_ID=v_Mpricelist
