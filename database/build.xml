@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,8 @@ update.database.script: Updates the database script in the script directory.
 export.database.structure: Exports the database structure in the xml's files.
 import.database.data: Imports the data into the database.
 export.database.data: Exports the data from database to xml's files.
+import.database.masterdata: Imports the database master data from xml's files.
+export.database.masterdata: Exports the database master data to xml's files.
 import.database.sampledata: Imports the database sample data from xml's files.
 export.database.sampledata: Exports the database sample data to xml's files.
 save.database.model: Saves the model in the database.
