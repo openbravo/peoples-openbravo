@@ -403,5 +403,5 @@ and 0 != (select sum(qtyordered)
               from c_orderline ol
              where o.c_order_id = ol.c_order_id)]]></SQL>
   </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="1000300000" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-03-11 10:37:14.0" CREATEDBY="100" UPDATED="2008-03-11 12:28:21.0" UPDATEDBY="100" NAME="Updates available" TYPE="E" />
+  <AD_ALERTRULE AD_ALERTRULE_ID="1005400000" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2008-04-14 12:47:41.0" CREATEDBY="100" UPDATED="2008-04-14 12:47:41.0" UPDATEDBY="100" NAME="Updates Available" TYPE="E" />
 </data>

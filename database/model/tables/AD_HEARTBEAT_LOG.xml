@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+  <database name="TABLE AD_HEARTBEAT_LOG">
+    <table name="AD_HEARTBEAT_LOG" primaryKey="AD_HEARTBEAT_LOG_KEY">
+      <column name="AD_HEARTBEAT_LOG_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="SYSTEM_IDENTIFIER" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false"/>
+      <column name="ISHEARTBEATACTIVE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="ISPROXYREQUIRED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="PROXY_SERVER" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="PROXY_PORT" primaryKey="false" required="false" type="DECIMAL" size="4,0" autoIncrement="false"/>
+      <column name="ACTIVITY_RATE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="COMPLEXITY_RATE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="OS" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="OS_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="DB" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="DB_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="SERVLET_CONTAINER" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="SERVLET_CONTAINER_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="WEBSERVER" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="WEBSERVER_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="JAVA_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="ANT_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="OB_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="OB_INSTALLMODE" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="NUM_REGISTERED_USERS" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+    </table>
+  </database>

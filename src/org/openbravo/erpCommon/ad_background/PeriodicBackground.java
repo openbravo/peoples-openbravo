@@ -25,8 +25,8 @@ import javax.servlet.*;
 import java.io.*;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.database.ConnectionProvider;
+import java.util.TimerTask;
 
 public class PeriodicBackground implements Runnable {
   public ConnectionProvider conn;
@@ -344,6 +344,17 @@ public class PeriodicBackground implements Runnable {
   }
 
   public void doPause() throws Exception {
+    if (!isSamePID()) throw new Exception("End of thread");
+    if (!isDirectProcess() || !isFullTime) Thread.sleep((seconds*1000));
+  }
+  
+  /**
+   * Allows the background process to specify how long it will go to 
+   * sleep for. Implemente for 2.40 Heartbeat Process
+   * @param seconds
+   * @throws Exception
+   */
+  public void doPause(long seconds) throws Exception {
     if (!isSamePID()) throw new Exception("End of thread");
     if (!isDirectProcess() || !isFullTime) Thread.sleep((seconds*1000));
   }

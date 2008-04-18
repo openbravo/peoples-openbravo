@@ -19,8 +19,14 @@
 package org.openbravo.erpCommon.utility;
 
 import org.openbravo.base.secureApp.*;
+import org.openbravo.erpCommon.ad_background.PeriodicHeartbeatData;
+import org.openbravo.erpCommon.ad_process.RegisterData;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 import org.openbravo.utils.FormatUtilities;
@@ -49,7 +55,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
       printPageAlert(response, vars);
     } else throw new ServletException();
   }
-
+  
   void printPageAlert(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     
     Integer alertCount = 0;
@@ -122,6 +128,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
     xmlDocument.setParameter("menu", menu.toString());
     xmlDocument.setParameter("userName", MenuData.getUserName(this, vars.getUser()));
 
+    decidePopups(xmlDocument, vars);
+    
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -312,6 +320,58 @@ public class VerticalMenu extends HttpSecureAppServlet {
     return result.toString();
   }
 
+void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars) throws ServletException {
+    
+    // Check if the heartbeat popup needs to be displayed
+    PeriodicHeartbeatData[] hbData = PeriodicHeartbeatData.selectSystemProperties(myPool);
+    if (hbData.length > 0) {
+      String isheartbeatactive = hbData[0].isheartbeatactive;
+      String postponeDate = hbData[0].postponeDate;
+      if (isheartbeatactive == null || isheartbeatactive.equals("")) {
+        if (postponeDate == null || postponeDate.equals("")) {
+          xmlDocument.setParameter("popup", "openHeartbeat();");
+          return;
+        } else {
+          Date date = null;
+          try {
+            date = new SimpleDateFormat("dd-MM-yyyy").parse(postponeDate);
+            if (date.before(new Date())) {
+              xmlDocument.setParameter("popup", "openHeartbeat();");
+              return;
+            }
+          } catch (ParseException e) {
+            e.printStackTrace();
+          }
+        }
+      } 
+    }
+    
+    // If the heartbeat doesn't need to be displayed, check the registration popup
+    RegisterData[] rData = RegisterData.select(myPool);
+    if (rData.length > 0) {
+      String isregistrationactive = rData[0].isregistrationactive;
+      String rPostponeDate = rData[0].postponeDate;
+      if (isregistrationactive == null || isregistrationactive.equals("")) {
+        if (rPostponeDate == null || rPostponeDate.equals("")) {
+          xmlDocument.setParameter("popup", "openRegistration();");
+          return;
+        } else {
+          Date date = null;
+          try {
+            date = new SimpleDateFormat("dd-MM-yyyy").parse(rPostponeDate);
+            if (date.before(new Date())) {
+              xmlDocument.setParameter("popup", "openRegistration();");
+              return;
+            }
+          } catch (ParseException e) {
+            e.printStackTrace();
+          }
+        }
+      } 
+    }
+    xmlDocument.setParameter("popup", "");
+  }
+  
   public String getServletInfo() {
     return "Servlet that presents application's vertical menu";
   } // end of getServletInfo() method

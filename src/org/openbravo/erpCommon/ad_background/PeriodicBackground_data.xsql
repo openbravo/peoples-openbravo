@@ -35,15 +35,14 @@
    <SqlMethod name="checkPlannedRange" type="preparedStatement" return="Boolean" default="false">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        select count(*) AS TOTAL
-        from ad_process_scheduling 
-        where (weekday is null 
-        or weekday = to_char(now(), 'D')) 
-        AND to_char(timefrom, 'HH24:MI:SS')<= to_char(now(), 'HH24:MI:SS') 
-        AND (timeto is null OR
-        to_char(timeto, 'HH24:MI:SS') > to_char(now(), 'HH24:MI:SS'))
-        AND AD_Client_ID = TO_NUMBER(?) 
-        AND AD_Process_ID = TO_NUMBER(?) 
+        SELECT COUNT(*) AS TOTAL
+		  FROM AD_Process_Scheduling
+		 WHERE (Weekday IS NULL OR Weekday = TO_CHAR(NOW(), 'D'))
+		   AND TO_DATE(TO_CHAR(TRUNC(NOW()), 'DD-MM-YYYY') || ' ' || TO_CHAR(TimeFrom, 'HH24:MI:SS'),'DD-MM-YYYY HH24:MI:SS') <= NOW()
+		   AND (TimeTo IS NULL 
+		    OR  TO_DATE(TO_CHAR(TRUNC(NOW()), 'DD-MM-YYYY') || ' ' || TO_CHAR(TimeTo, 'HH24:MI:SS'),'DD-MM-YYYY HH24:MI:SS') > NOW())
+		   AND AD_Client_ID = TO_NUMBER(?) 
+		   AND AD_Process_ID = TO_NUMBER(?) 
       ]]></Sql>
       <Parameter name="adClientId"/>
       <Parameter name="adProcessId"/>

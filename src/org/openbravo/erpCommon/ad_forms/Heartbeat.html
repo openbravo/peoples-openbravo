@@ -1,0 +1,150 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+<html>
+<head>
+  <title>Heartbeat Configuration</title>
+  <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
+  <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+  <script language="JavaScript" type="text/javascript" id="paramLanguage">var LNG_POR_DEFECTO = "en_US";</script>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+  <script language="JavaScript" type="text/javascript">
+  
+  function configure() {
+  	openLink('../HeartbeatConfiguration/HeartbeatConfiguration_Relation.html', 'frameAplicacion');
+  	self.close();
+  }
+  function disable() {
+  	submitCommandForm('DISABLE', false, null);
+  	window.close();
+  }
+  function postpone() {
+  	submitCommandForm('POSTPONE', false, null);
+  	window.close();
+  }
+  </script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+
+<FORM method="POST" action="Heartbeat.html" name="frmMain">
+<INPUT type="hidden" name="Command">
+<INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
+
+<div class="Popup_ContentPane_CircleLogo">
+  <div class="Popup_WindowLogo">
+    <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_info" src="../../../../../web/images/blank.gif" border=0/></img>
+  </div>
+</div>
+
+<table cellspacing="0" cellpadding="0" width="100%">
+
+  <tr>
+    <td>
+      <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
+        <tr class="Popup_NavBar_bg"><td></td>
+          <td class="Popup_NavBar_separator_cell"></td>
+          <td class="Popup_NavBar_bg_logo_left"></td>
+          <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+          <td class="Popup_NavBar_bg_logo_right"></td>
+          <td class="Popup_NavBar_Popup_title_cell"><span>Heartbeat Configuration</span></td>
+          <td class="Popup_NavBar_separator_cell"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar">
+        <tr>
+          <td class="Popup_SeparatorBar_bg"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div class="Popup_ContentPane_Client" style="overflow: auto;">
+        <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
+
+          <tr>
+            <td>
+              <p class="Wide_Paragraph" id="paramWelcome">xxWelcome to Openbravo ERP</p>              
+        	</td>
+          </tr>
+        </table>
+      </div> 
+    </td>
+  </tr>
+  <tr>
+  	<td>
+  		<div style="overflow: auto;" class="Popup_ContentPane_Client">
+        <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
+          <tbody><tr>
+            <td class="TableEdition_OneCell_width"/>
+            <td class="TableEdition_OneCell_width"/>
+            <td class="TableEdition_OneCell_width"/>
+            <td class="TableEdition_OneCell_width"/>
+            <td class="TableEdition_OneCell_width"/>
+          </tr>
+          <tr><td height="20" colspan="5"/></tr>
+          <tr>
+            <td/>
+            <td class="Button_RightAlign_ContentCell">
+              <div>
+                <table id="linkButtonOk" onmouseup="this.className='Button';return true;" onmousedown="this.className='Button_active';return true;" onmouseover="this.className='Button_hover';window.status='OK';return true;" onmouseout="this.className='Button';window.status='';return true;" onclick="configure();return false;" class="Button">
+                  <tbody><tr>
+                    <td class="Button_left"><img border="0" id="buttonOk" src="../web/images/blank.gif" title="Register" alt="Register" class="Button_Icon Button_Icon_ok"/></td>
+                    <td id="tdButtonOk" class="Button_text Button_width">Configure</td>
+                    <td class="Button_right"/>
+                  </tr>
+                </tbody></table>
+              </div>
+            </td>
+            <td class="Button_LeftAlign_ContentCell">
+              <div>
+                <table id="linkButtonCancel" onmouseup="this.className='Button';return true;" onmousedown="this.className='Button_active';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmouseout="this.className='Button';window.status='';return true;" onclick="disable();return false;" class="Button">
+                  <tbody><tr>
+                    <td class="Button_left"><img border="0" id="buttonCancel" title="Decline" src="../web/images/blank.gif" alt="Decline" class="Button_Icon Button_Icon_cancel"/></td>
+                    <td id="tdButtonCancel" class="Button_text Button_width">Disable</td>
+                    <td class="Button_right"/>
+                  </tr>
+                </tbody></table>
+              </div>
+            </td>
+            <td class="Button_LeftAlign_ContentCell">
+              <div>
+                <table id="linkButtonCancel" onmouseup="this.className='Button';return true;" onmousedown="this.className='Button_active';return true;" onmouseover="this.className='Button_hover';window.status='Later';return true;" onmouseout="this.className='Button';window.status='';return true;" onclick="postpone();return false;" class="Button">
+                  <tbody><tr>
+                    <td class="Button_left"><img border="0" id="buttonCancel" title="Later" src="../web/images/blank.gif" alt="Later" class="Button_Icon Button_Icon_process"/></td>
+                    <td id="tdButtonCancel" class="Button_text Button_width">Later</td>
+                    <td class="Button_right"/>
+                  </tr>
+                </tbody></table>
+              </div>
+            </td>
+            <td/>
+          </tr>
+        </tbody></table>
+      </div>
+  	</td>
+  </tr>
+</table>
+</form>
+</body>
+</html>
