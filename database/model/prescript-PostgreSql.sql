@@ -227,7 +227,7 @@ CREATE OR REPLACE FUNCTION to_date
 )
   RETURNS timestamp AS '
 BEGIN
-RETURN to_timestamp(to_char($1, dateFormat()), dateFormat());
+  RETURN to_timestamp(to_char($1, dateFormat()||'' HH24:MI:SS''), dateFormat()||'' HH24:MI:SS'');
 END;
 ' LANGUAGE 'plpgsql'
 /-- END
