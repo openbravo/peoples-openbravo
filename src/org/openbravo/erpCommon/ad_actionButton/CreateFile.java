@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -374,7 +374,7 @@ public class CreateFile extends HttpSecureAppServlet {
 	int comprobacion3 = new Integer(CreateFileData.selectComprobacion3(this, strKey)).intValue();
     int comprobacion4 = new Integer(CreateFileData.selectComprobacion4(this, strKey)).intValue();
 
-    if(comprobacion1 != 0 || comprobacion2 != 1 || comprobacion3 !=1 || comprobacion4 == 0){
+    if(comprobacion1 != 0 || comprobacion2 == 0 || comprobacion3 !=1 || comprobacion4 == 0){
       if (log4j.isDebugEnabled()) log4j.debug("Error: c1:"+comprobacion1+" c2:"+comprobacion2+" c3:"+comprobacion3+" c4:"+comprobacion4);
       strMessage = Utility.messageBD(this, "CreateFileError", vars.getLanguage());
       printPage(response, vars, strKey, "", "", strMessage);
