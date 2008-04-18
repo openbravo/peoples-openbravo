@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo S.L. 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,7 +55,7 @@ var baseDirection = "../../../../../web/";
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonSave')
 		);
 		setWindowTableParentElement();
 		this.tabsTables = new Array(
@@ -76,7 +76,7 @@ var baseDirection = "../../../../../web/";
 	</SCRIPT>
 </HEAD>
 <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" id="paramMessage">
-      <FORM name="frmMain" method="post" action="ShowsessionPreferences.html">
+      <FORM name="frmMain" method="post" action="ShowSessionPreferences.html">
         <INPUT type="hidden" name="Command"></INPUT>
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
@@ -96,18 +96,6 @@ var baseDirection = "../../../../../web/";
           <TR id="paramParentTabContainer"><td class="tabBackGroundInit"><div><span class="tabTitle"><div><span>Show Session - Preferences</span></div></span></div></td></tr>
           <tr><td class="tabBackGround"></td></tr>
           </TR>
-          <TR id="paramMainTabContainer"><td class="tabBackGround">
-  <table class="tabTable"><tr>
-    <td valign="top"><span class="tabLeft">&nbsp;</span></td>
-    <td class="tabPaneBackGround">
-<div class="marginLeft1"><span class="dojoTabcurrent"><div><span><a class="dojoTabLink" href="#" onclick="return false;" onmouseover="window.status='Preferences';return true;" onMouseOut="return true;">Preferences</a></span></div></span>
-<span class="tabSeparator">&nbsp;</span>
-<div><span class="dojoTab "><div><span><a class="dojoTabLink" href="#" onclick="submitCommandForm('SESSION', false, null, 'Showsession.html', '_self');return false;" onMouseOver="window.status='Show Session';return true;" onMouseOut="window.status='';return true;">Show Session</a></span></div></span>
-  </div>
-    <td valign="top"><span class="tabRight">&nbsp;</span></td>
-  </tr></table>
-</td>
-</TR>
        </TABLE>
 
         <DIV class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
@@ -228,9 +216,11 @@ var baseDirection = "../../../../../web/";
                 </TR>
 
                 <TR>
-                  <TD class="TitleCell"><SPAN class="LabelText">Save password</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpPassword" value="Y" id="paramPassword"></INPUT></SPAN></TD>
-                  <TD class="TitleCell"><SPAN class="LabelText">Date</SPAN></TD>
+                  <TD class="TitleCell"> <SPAN class="LabelText">Show audit</SPAN></TD>
+                  <TD class="Radio_Check_ContentCell"> 
+                    <INPUT type="checkbox" name="inpAudit" value="Y" id="paramAudit"></INPUT>
+                  </TD>
+                  <TD class="TitleCell"> <SPAN class="LabelText">Date</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
@@ -322,12 +312,6 @@ var baseDirection = "../../../../../web/";
                     </TABLE>
                   </TD>
                 </TR>
-                <tr>
-                  <TD class="TitleCell"><SPAN class="LabelText">Show auditory</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"> 
-                    <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpAudit" value="Y" id="paramAudit"></INPUT></SPAN>                  </TD>
-                  <td/><td/><td/> <td/>
-                </tr>
 
 
                 <TR>
@@ -375,7 +359,7 @@ var baseDirection = "../../../../../web/";
                 <TR>
                   <TD colspan="2" class="Button_RightAlign_ContentCell">
                     <div>
-                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Save'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onmouseover="window.status='Save';return true;" onclick="submitCommandForm('SAVE_PREFERENCES', false, null, 'ShowsessionPreferences.html', '_self');return false;">
+                      <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Save'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onmouseover="window.status='Save';return true;" onclick="submitCommandForm('SAVE_PREFERENCES', false, null, 'ShowSessionPreferences.html', '_self');return false;" id="buttonSave">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Save';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                         <tr>
                           <td class="Button_left"><img class="Button_Icon Button_Icon_save" alt="Save" title="Save" src="../../../../../web/images/blank.gif" border=0/></td>

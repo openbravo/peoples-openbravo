@@ -20,6 +20,7 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
 
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -39,7 +40,8 @@ public class DebtPaymentUnapply extends HttpSecureAppServlet {
 
 
     if (vars.commandIn("DEFAULT")) {
-      printPageDataSheet(response, vars);
+      String strWindow = vars.getStringParameter("inpwindowId");
+      printPageDataSheet(response, vars, strWindow);
     } else if (vars.commandIn("PROCESS")) {
       String strCDebtPaymentId = vars.getInStringParameter("inpDebtPayment");
       if (strCDebtPaymentId.equals("")) strCDebtPaymentId = "('0')";
@@ -64,7 +66,7 @@ public class DebtPaymentUnapply extends HttpSecureAppServlet {
   }
 
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strWindow)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -72,7 +74,7 @@ public class DebtPaymentUnapply extends HttpSecureAppServlet {
     String discard[]={"sectionDetail"};
     XmlDocument xmlDocument=null;
     DebtPaymentUnapplyData[] data=null;
-    data = DebtPaymentUnapplyData.select(this, vars.getLanguage());
+    data = DebtPaymentUnapplyData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow));
     if (data==null || data.length == 0) {
      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/DebtPaymentUnapply", discard).createXmlDocument();
      data = DebtPaymentUnapplyData.set();

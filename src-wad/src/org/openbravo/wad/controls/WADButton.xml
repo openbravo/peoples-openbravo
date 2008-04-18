@@ -28,7 +28,14 @@
   <PARAMETER id="xx_linkBTN" name="action" attribute="onclick" replace="xx();"/>
   <PARAMETER id="xx_linkBTN" name="name" attribute="onfocus" replace="xx"/>
   <PARAMETER id="xx_linkBTN" name="columnName" attribute="id" replace="xx"/>
+  <PARAMETER id="xx_linkBTN" name="disabled" attribute="class" replace="xx" default=""/>
+  <PARAMETER id="xx_linkBTN" name="keypress" attribute="onkeypress" replace="xx" default="ButtonLink_active"/>
+  <PARAMETER id="xx_linkBTN" name="onkeyup" attribute="onkeyup" replace="xx" default="ButtonLink_focus"/>
   <PARAMETER id="fieldTable" name="name" attribute="onmouseover" replace="xx"/>
+  <PARAMETER id="fieldTable" name="onmousedown" attribute="onmousedown" replace="xx" default="Button_active"/>
+  <PARAMETER id="fieldTable" name="onmouseup"   attribute="onmouseup"   replace="xx" default="Button"/>
+  <PARAMETER id="fieldTable" name="onmouseover" attribute="onmouseover"  replace="yy" default="Button_hover"/>
+  <PARAMETER id="fieldTable" name="onmouseout"  attribute="onmouseout"   replace="xx" default="Button"/>
   <PARAMETER id="fieldButton" name="name" attribute="alt"/>
   <PARAMETER id="fieldButton" name="name" attribute="title"/>
 

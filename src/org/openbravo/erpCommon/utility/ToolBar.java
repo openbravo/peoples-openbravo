@@ -102,6 +102,10 @@ public class ToolBar {
       return form + ".reset();displayLogic();";
     } else if (name.equals("SEARCH")) {
       return "abrirBusqueda('../businessUtility/Buscador.html', 'BUSCADOR', " + form + ".inpTabId.value, '" + window_name + "/" + servlet_action + (isSrcWindow?"":"_Relation") + ".html', " + form + ".inpwindowId.value, " + (debug?"true":"false") + ");";
+    } else if (name.equals("AUDIT_EDITION")) {
+      return "changeAuditStatus();";
+    } else if (name.equals("AUDIT_RELATION")) {
+      return "changeAuditStatusRelation();";
     } else if (grid_id!=null && !grid_id.equals("") && name.equals("PREVIOUS")) {
       return "dojo.widget.byId('grid').goToPreviousRow();";
     } else if (grid_id!=null && !grid_id.equals("") && name.equals("NEXT")) {
@@ -143,6 +147,10 @@ public class ToolBar {
     if (pdf!=null && !pdf.equals("") && !pdf.equals("..")) buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language), getButtonScript("PRINT")));
     buttons.put("SEARCH", new ToolBar_Button(base_direction, "Search", Utility.messageBD(conn, "Search", language), getButtonScript("SEARCH")));
     buttons.put("SEARCH_FILTERED", new ToolBar_Button(base_direction, "SearchFiltered", Utility.messageBD(conn, "Search", language), getButtonScript("SEARCH")));
+    buttons.put("AUDIT_SHOW_EDITION_ENABLED", new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "HideAudit", language), getButtonScript("AUDIT_EDITION"), true));
+    buttons.put("AUDIT_SHOW_EDITION_DISABLED", new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "ShowAudit", language), getButtonScript("AUDIT_EDITION"), false));
+    buttons.put("AUDIT_SHOW_RELATION_ENABLED", new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "HideAudit", language), getButtonScript("AUDIT_RELATION"), true));
+    buttons.put("AUDIT_SHOW_RELATION_DISABLED", new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "ShowAudit", language), getButtonScript("AUDIT_RELATION"), false));
     buttons.put("SEPARATOR5", new ToolBar_Space(base_direction));
     buttons.put("FIRST", new ToolBar_Button(base_direction, "First", Utility.messageBD(conn, "GotoFirst", language), getButtonScript("FIRST")));
     buttons.put("FIRST_RELATION", new ToolBar_Button(base_direction, "First", Utility.messageBD(conn, "GotoFirst", language), getButtonScript("FIRST_RELATION")));
@@ -204,6 +212,11 @@ public class ToolBar {
     removeElement("LAST");
     removeElement("LAST_RELATION");
     removeElement("SEPARATOR6");
+    
+    removeElement("AUDIT_SHOW_EDITION_DISABLED");
+    removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    removeElement("AUDIT_SHOW_RELATION_DISABLED");
+    removeElement("AUDIT_SHOW_RELATION_ENABLED");
 
     if (!hasPrevious) removeElement("PREVIOUS_RELATION");
     else removeElement("PREVIOUS_RELATION_DISABLED");
@@ -212,7 +225,7 @@ public class ToolBar {
     if (!isTest) removeAllTests();
   }
 
-  public void prepareEditionTemplate(boolean hasTree, boolean isFiltered, boolean isTest, boolean isReadOnly) {
+  public void prepareEditionTemplate(boolean hasTree, boolean isFiltered, boolean isTest, boolean isReadOnly, boolean isAuditEnabled) {
     removeElement("EDIT");
     removeElement("RELATION");
     removeElement("DELETE_RELATION");
@@ -224,7 +237,10 @@ public class ToolBar {
     removeElement("LAST_RELATION");
     removeElement("FIND");
     
-    
+    removeElement("AUDIT_SHOW_RELATION_ENABLED");
+    removeElement("AUDIT_SHOW_RELATION_DISABLED");
+    if (isAuditEnabled) removeElement("AUDIT_SHOW_EDITION_DISABLED");
+    else removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("PREVIOUS_RELATION");
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
@@ -242,7 +258,7 @@ public class ToolBar {
     if (isReadOnly) removeReadOnly();
   }
 
-  public void prepareRelationTemplate(boolean hasTree, boolean isFiltered, boolean isTest, boolean isReadOnly) {
+  public void prepareRelationTemplate(boolean hasTree, boolean isFiltered, boolean isTest, boolean isReadOnly, boolean isAuditEnabled) {
     isRelation = true;
     removeElement("EDIT");
     removeElement("RELATION");
@@ -257,6 +273,10 @@ public class ToolBar {
     removeElement("FIND");
     removeElement("EXCEL");
     
+    removeElement("AUDIT_SHOW_EDITION_DISABLED");
+    removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    if (isAuditEnabled) removeElement("AUDIT_SHOW_RELATION_DISABLED");
+    else removeElement("AUDIT_SHOW_RELATION_ENABLED");
     removeElement("PREVIOUS_RELATION");
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
@@ -313,6 +333,11 @@ public class ToolBar {
     if (pdf!=null && !pdf.equals("") && !pdf.equals(".."))
        buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language), pdf));
     removeElement("RELATED_INFO"); 
+    
+    removeElement("AUDIT_SHOW_EDITION_DISABLED");
+    removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    removeElement("AUDIT_SHOW_RELATION_DISABLED");
+    removeElement("AUDIT_SHOW_RELATION_ENABLED");
   }
 
   //Simple toolbar with save button
@@ -355,6 +380,11 @@ public class ToolBar {
     removeElement("CHECK_ELEMENT");  
     if (pdf!=null && !pdf.equals("") && !pdf.equals(".."))
        buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language), pdf));
+    
+    removeElement("AUDIT_SHOW_EDITION_DISABLED");
+    removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    removeElement("AUDIT_SHOW_RELATION_DISABLED");
+    removeElement("AUDIT_SHOW_RELATION_ENABLED");
   }
   
   public void prepareRelationBarTemplate(boolean hasPrevious, boolean hasNext) {
@@ -402,6 +432,11 @@ public class ToolBar {
        buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language), pdf));
     if (!excelScript.equals("") && excelScript != null)
         buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel", Utility.messageBD(conn, "ExportExcel", language), excelScript));
+    
+    removeElement("AUDIT_SHOW_EDITION_DISABLED");
+    removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    removeElement("AUDIT_SHOW_RELATION_DISABLED");
+    removeElement("AUDIT_SHOW_RELATION_ENABLED");
   }
     public void prepareSimpleExcelToolBarTemplate(String excelScript) {
     removeElement("SEPARATOR1");
@@ -442,6 +477,11 @@ public class ToolBar {
 
     if (!excelScript.equals("") && excelScript != null)
         buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel", Utility.messageBD(conn, "ExportExcel", language), excelScript));
+    
+    removeElement("AUDIT_SHOW_EDITION_DISABLED");
+    removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    removeElement("AUDIT_SHOW_RELATION_DISABLED");
+    removeElement("AUDIT_SHOW_RELATION_ENABLED");
 
   }
   //GD Toolbar with Menu, Refresh and Excel buttons
@@ -480,6 +520,11 @@ public class ToolBar {
     removeElement("CAPTURE");
     removeElement("CHECK_CONTENT");
     removeElement("CHECK_ELEMENT");  
+    
+    removeElement("AUDIT_SHOW_EDITION_DISABLED");
+    removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    removeElement("AUDIT_SHOW_RELATION_DISABLED");
+    removeElement("AUDIT_SHOW_RELATION_ENABLED");
   }
 
 //AL
@@ -516,6 +561,11 @@ public class ToolBar {
     removeElement("FIND");
     removeElement("RELATED_INFO");
     if (!isTest) removeAllTests();
+    
+    removeElement("AUDIT_SHOW_EDITION_DISABLED");
+    removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    removeElement("AUDIT_SHOW_RELATION_DISABLED");
+    removeElement("AUDIT_SHOW_RELATION_ENABLED");
   }
 
   public void prepareQueryTemplate(boolean hasPrevious, boolean hasNext, boolean isTest) {
@@ -545,6 +595,11 @@ public class ToolBar {
     if (!hasNext) removeElement("NEXT_RELATION");
     else removeElement("NEXT_RELATION_DISABLED");
     if (!isTest) removeAllTests();
+    
+    removeElement("AUDIT_SHOW_EDITION_DISABLED");
+    removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    removeElement("AUDIT_SHOW_RELATION_DISABLED");
+    removeElement("AUDIT_SHOW_RELATION_ENABLED");
   }
 
   public void removeAllTests() {
@@ -620,6 +675,10 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEARCH"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEARCH_FILTERED"), lastType, false));
+      toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_EDITION_ENABLED"), lastType, false));
+      toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_ENABLED"), lastType, false));
+      toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_EDITION_DISABLED"), lastType, false));
+      toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_RELATION_DISABLED"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("ORDERBY"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("ORDERBY_FILTERED"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR5"), lastType, false));

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,15 +77,19 @@ public class TableSQLData {
    * @param _clientList: List of granted clients.
    * @throws Exception
    */
-  public TableSQLData(VariablesSecureApp _vars, ConnectionProvider _conn, String _adTabId, String _orgList, String _clientList) throws Exception {
+  public TableSQLData(VariablesSecureApp _vars, ConnectionProvider _conn, String _adTabId, String _orgList, String _clientList, boolean showAudit) throws Exception {
     if (_vars!=null) setVars(_vars);
     setPool(_conn);
     setTabID(_adTabId);
     setOrgList(_orgList);
     setClientList(_clientList);
     setWindowDefinition();
-    generateStructure();
+    generateStructure(showAudit);
     generateSQL();
+  }
+  
+  public TableSQLData(VariablesSecureApp _vars, ConnectionProvider _conn, String _adTabId, String _orgList, String _clientList) throws Exception {
+    this(_vars, _conn, _adTabId, _orgList, _clientList, _vars.getSessionValue("#ShowAudit").equals("Y"));
   }
 
   /**
@@ -567,11 +571,25 @@ public class TableSQLData {
   public Vector<Properties> getFilteredStructure(String propertyName, String propertyValue) {
     Vector<Properties> vAux = new Vector<Properties>();
     if (this.structure==null) return vAux;
+    String p="";
     for (Enumeration<Properties> e = this.structure.elements();e.hasMoreElements();) {
       Properties prop = e.nextElement();
       if (prop.getProperty(propertyName).equals(propertyValue)) vAux.addElement(prop);
     }
     return vAux;
+  }
+
+  public void addAuditFields(Vector<Properties> properties) {
+    if (this.structure==null) return;
+    String p="";
+    for (Enumeration<Properties> e = this.structure.elements();e.hasMoreElements();) {
+      Properties prop = e.nextElement();
+      if (prop.getProperty("ColumnName").equalsIgnoreCase("Created")
+          || prop.getProperty("ColumnName").equalsIgnoreCase("CreatedBy")
+          || prop.getProperty("ColumnName").equalsIgnoreCase("Updated")
+          || prop.getProperty("ColumnName").equalsIgnoreCase("UpdatedBy")
+         ) properties.addElement(prop);
+    }
   }
 
   /**
@@ -976,11 +994,49 @@ public class TableSQLData {
     return strOut.toString().replace("'?'","?");
   }
 
+  private void setProperties(Properties prop, TableSQLQueryData data){
+    prop.setProperty("ColumnName", data.columnname);
+    prop.setProperty("AD_Reference_ID", data.adReferenceId);
+    prop.setProperty("AD_Reference_Value_ID", data.adReferenceValueId);
+    prop.setProperty("AD_Val_Rule_ID", data.adValRuleId);
+    prop.setProperty("FieldLength", data.fieldlength);
+    prop.setProperty("DefaultValue", data.defaultvalue);
+    prop.setProperty("IsKey", data.iskey);
+    prop.setProperty("IsParent", data.isparent);
+    prop.setProperty("IsMandatory", data.ismandatory);
+    prop.setProperty("IsUpdateable", data.isupdateable);
+    prop.setProperty("ReadOnlyLogic", data.readonlylogic);
+    prop.setProperty("IsIdentifier", data.isidentifier);
+    prop.setProperty("SeqNo", data.seqno);
+    prop.setProperty("IsTranslated", data.istranslated);
+    prop.setProperty("IsEncrypted", data.isencrypted);
+    prop.setProperty("VFormat", data.vformat);
+    prop.setProperty("ValueMin", data.valuemin);
+    prop.setProperty("ValueMax", data.valuemax);
+    prop.setProperty("IsSelectionColumn", data.isselectioncolumn);
+    prop.setProperty("AD_Process_ID", data.adProcessId);
+    prop.setProperty("IsSessionAttr", data.issessionattr);
+    prop.setProperty("IsSecondaryKey", data.issecondarykey);
+    prop.setProperty("IsDesencryptable", data.isdesencryptable);
+    prop.setProperty("AD_CallOut_ID", data.adCalloutId);
+    prop.setProperty("Name", data.name);
+    prop.setProperty("AD_FieldGroup_ID", data.adFieldgroupId);
+    prop.setProperty("IsDisplayed", data.isdisplayed);
+    prop.setProperty("DisplayLogic", data.displaylogic);
+    prop.setProperty("DisplayLength", data.displaylength);
+    prop.setProperty("IsReadOnly", data.isreadonly);
+    prop.setProperty("SortNo", data.sortno);
+    prop.setProperty("IsSameLine", data.issameline);
+    prop.setProperty("IsHeading", data.isheading);
+    prop.setProperty("IsFieldOnly", data.isfieldonly);
+    prop.setProperty("ShowInRelation", data.showinrelation);
+    prop.setProperty("ColumnNameSearch", data.columnnameSearch);
+  }
   /**
    * Generates the needed information of the tab. The columns, the ids...
    * @throws Exception
    */
-  private void generateStructure() throws Exception {
+  private void generateStructure(boolean showAudit) throws Exception {
     if (getPool()==null) throw new Exception("No pool defined for database connection");
     else if (getTabID().equals("")) throw new Exception("No Tab defined");
     
@@ -990,42 +1046,8 @@ public class TableSQLData {
     String secondaryKey = "";
     for (int i=0;i<data.length;i++) {
       Properties prop = new Properties();
-      prop.setProperty("ColumnName", data[i].columnname);
-      prop.setProperty("AD_Reference_ID", data[i].adReferenceId);
-      prop.setProperty("AD_Reference_Value_ID", data[i].adReferenceValueId);
-      prop.setProperty("AD_Val_Rule_ID", data[i].adValRuleId);
-      prop.setProperty("FieldLength", data[i].fieldlength);
-      prop.setProperty("DefaultValue", data[i].defaultvalue);
-      prop.setProperty("IsKey", data[i].iskey);
-      prop.setProperty("IsParent", data[i].isparent);
-      prop.setProperty("IsMandatory", data[i].ismandatory);
-      prop.setProperty("IsUpdateable", data[i].isupdateable);
-      prop.setProperty("ReadOnlyLogic", data[i].readonlylogic);
-      prop.setProperty("IsIdentifier", data[i].isidentifier);
-      prop.setProperty("SeqNo", data[i].seqno);
-      prop.setProperty("IsTranslated", data[i].istranslated);
-      prop.setProperty("IsEncrypted", data[i].isencrypted);
-      prop.setProperty("VFormat", data[i].vformat);
-      prop.setProperty("ValueMin", data[i].valuemin);
-      prop.setProperty("ValueMax", data[i].valuemax);
-      prop.setProperty("IsSelectionColumn", data[i].isselectioncolumn);
-      prop.setProperty("AD_Process_ID", data[i].adProcessId);
-      prop.setProperty("IsSessionAttr", data[i].issessionattr);
-      prop.setProperty("IsSecondaryKey", data[i].issecondarykey);
-      prop.setProperty("IsDesencryptable", data[i].isdesencryptable);
-      prop.setProperty("AD_CallOut_ID", data[i].adCalloutId);
-      prop.setProperty("Name", data[i].name);
-      prop.setProperty("AD_FieldGroup_ID", data[i].adFieldgroupId);
-      prop.setProperty("IsDisplayed", data[i].isdisplayed);
-      prop.setProperty("DisplayLogic", data[i].displaylogic);
-      prop.setProperty("DisplayLength", data[i].displaylength);
-      prop.setProperty("IsReadOnly", data[i].isreadonly);
-      prop.setProperty("SortNo", data[i].sortno);
-      prop.setProperty("IsSameLine", data[i].issameline);
-      prop.setProperty("IsHeading", data[i].isheading);
-      prop.setProperty("IsFieldOnly", data[i].isfieldonly);
-      prop.setProperty("ShowInRelation", data[i].showinrelation);
-      prop.setProperty("ColumnNameSearch", data[i].columnnameSearch);
+      
+      setProperties(prop, data[i]);
       addStructure(prop);
       String parentKey = getParentColumnName();
       if (parentKey==null) parentKey = "";
@@ -1035,6 +1057,19 @@ public class TableSQLData {
         secondaryKey = data[i].columnname;
       }
     }
+    
+    if (showAudit){
+      TableSQLQueryData[] dataAudit = TableSQLQueryData.selectRelationStructureAudit(getPool(), getVars().getLanguage(), getTabID());
+      if (dataAudit!=null){
+        for (int i=0;i<dataAudit.length;i++) {
+          Properties prop = new Properties();
+          
+          setProperties(prop, dataAudit[i]);
+          addStructure(prop);
+        }
+      }
+    }
+    
     if (!primaryKey.equals("")) setParameter(internalPrefix + "KeyColumn", primaryKey);
     else if (!secondaryKey.equals("")) setParameter(internalPrefix + "KeyColumn", secondaryKey);
     else {

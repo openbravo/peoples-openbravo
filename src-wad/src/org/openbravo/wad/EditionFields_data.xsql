@@ -66,7 +66,7 @@
              (case when upper(columnname) in ('CREATED', 'UPDATED') then 'N'
                    else 'Y'
                end), 'Y', 'N', 'N', c.FIELDLENGTH, c.name, null, 
-             null, 'Y', '@#ShowAudit@=''Y''', 'N', 1000100001 as fieldgroup, tb.ad_tab_id, null, null, null, null, null, null, null, c.columnname, 
+             null, 'Y', '@ShowAudit@=''Y''', 'N', 1000100001 as fieldgroup, tb.ad_tab_id, null, null, null, null, null, null, null, c.columnname, 
              null, null, null, 'N', 'N', r.name, r.name, null, null, null, null, null, null, 'Y', null
        from ad_column c, ad_tab tb, ad_reference r
       where c.ad_table_id = tb.ad_table_id
@@ -130,7 +130,7 @@
                    else 'Y'
                end) as issameline, 'Y' as isdisplayed, 'N' as isupdateable, 
       'Y', c.FIELDLENGTH, (CASE WHEN (c.AD_REFERENCE_ID<>30 OR AD_REFERENCE_VALUE_ID IS NULL) THEN REPLACE(REPLACE(REPLACE(ad_element.name, 'Substitute', 'Product'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') ELSE (SELECT NAME FROM AD_REFERENCE WHERE r.AD_REFERENCE_ID=c.AD_REFERENCE_VALUE_ID) END) as searchName, c.ad_callout_id, 
-      c.ad_process_id, 'Y', '@#ShowAudit@=''Y''' as displaylogic, 'N', 1000100001 AS FieldGroup,
+      c.ad_process_id, 'Y', '@ShowAudit@=''Y''' as displaylogic, 'N', 1000100001 AS FieldGroup,
       tb.ad_tab_id as tabid, c.ValueMin, c.ValueMax, REPLACE(REPLACE(REPLACE(REPLACE(c.columnname, 'Substitute', 'M_Product'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM', ''), 'M_LocatorTo_ID', 'M_Locator_ID') as realName,null as java_class_name, c.isEncrypted AS isColumnEncrypted, c.isDesencryptable, 
       r.name as reference_name, c.ad_val_rule_id, 
       (CASE WHEN ad_reference_trl.ad_reference_id IS NULL THEN r.name ELSE ad_reference_trl.name END) as reference_name_trl, null as calloutname, 
@@ -199,7 +199,7 @@
               end), columnname,  columnname, c.name, 'N', 
              c.ad_reference_value_id, c.ad_reference_id, 44, 'x', 
              'N', 'Y', 'N', 'N', c.FIELDLENGTH, c.name, null, 
-             null, 'Y', '@#ShowAudit@=''Y''', tb.ad_tab_id, null, null, null
+             null, 'Y', '@ShowAudit@=''Y''', tb.ad_tab_id, null, null, null
        from ad_column c, ad_tab tb, ad_reference r
       where c.ad_table_id = tb.ad_table_id
         and upper(columnname) in ('CREATED', 'CREATEDBY', 'UPDATED', 'UPDATEDBY')
@@ -245,7 +245,7 @@
               end), columnname,  columnname, c.name, 'N', 
              c.ad_reference_value_id, c.ad_reference_id, 44, 'x', 
              'N', 'Y', 'N', 'N', c.FIELDLENGTH, c.name, null, 
-             null, 'Y', '@#ShowAudit@=''Y''', tb.ad_tab_id, null, null, null
+             null, 'Y', '@ShowAudit@=''Y''', tb.ad_tab_id, null, null, null
        from ad_column c, ad_tab tb, ad_reference r
       where c.ad_table_id = tb.ad_table_id
         and upper(columnname) in ('CREATED', 'CREATEDBY', 'UPDATED', 'UPDATEDBY')

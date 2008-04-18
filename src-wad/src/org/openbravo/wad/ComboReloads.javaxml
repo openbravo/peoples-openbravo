@@ -46,10 +46,10 @@ public class ComboReloads<PARAMETER_TMP id="paramTabId">xx</PARAMETER_TMP> exten
     if (vars.commandIn(<FIELD_TMP id="fieldColumnsName">"xx"</FIELD_TMP>)) {
       try {
         if (!isFirst) resultado.append(", \n");
-        comboTableData = new ComboTableData(vars, this, "<FIELD_TMP id="fieldReference1">17</FIELD_TMP>", "<FIELD_TMP id="fieldColumnName1">name</FIELD_TMP>", "<FIELD_TMP id="fieldReferenceValue1">name</FIELD_TMP>", "<FIELD_TMP id="fieldValidation1">name</FIELD_TMP>", Utility.getContext(this, vars, "#User_Org", windowId), Utility.getContext(this, vars, "#User_Client", windowId), 0);
+        comboTableData = new ComboTableData(vars, this, "<FIELD_TMP id="fieldReference1">17</FIELD_TMP>", "<FIELD_TMP id="fieldColumnName1">name</FIELD_TMP>", "<FIELD_TMP id="fieldReferenceValue1">name</FIELD_TMP>", "<FIELD_TMP id="fieldValidation1">name</FIELD_TMP>", <FIELD_TMP id="fieldOrgCode">xxorgcode</FIELD_TMP>, Utility.getContext(this, vars, "#User_Client", windowId), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, windowId, "");
         resultado.append("new Array(\"<FIELD_TMP id="fieldColumnChange">xx</FIELD_TMP>\", ");
-        resultado.append(generateArray(comboTableData.select(false)));
+        resultado.append(generateArray(comboTableData.select(false), vars.getStringParameter("<FIELD_TMP id="fieldColumnChange">xx</FIELD_TMP>")));
         comboTableData = null;
         resultado.append(")");
         isFirst=false;

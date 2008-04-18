@@ -26,9 +26,15 @@ public class ToolBar_Button implements HTMLElement {
   String href = "#";
   ToolBar_Image image;
   String base_direction;
+  boolean selected=false;
 
   public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick) {
     this(_base_direction, _name, _description, _onclick, "#");
+  }
+  
+  public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick, boolean _selected) {
+    this(_base_direction, _name, _description, _onclick, "#");
+    this.selected = _selected;
   }
 
   public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick, String _href) {
@@ -56,7 +62,7 @@ public class ToolBar_Button implements HTMLElement {
     toolbar.append(click);
     if ((click!=null && !click.equals("")) || href==null || href.equals("") || href.equals("#")) toolbar.append("return false;");
     toolbar.append("\" ");
-    toolbar.append("class=\"Main_ToolBar_Button\" onMouseOver=\"window.status='");
+    toolbar.append("class=\"Main_ToolBar_Button").append(selected?"_Selected":"").append("\" onMouseOver=\"window.status='");
     toolbar.append(description);
     toolbar.append("';return true;\" ");
     toolbar.append("onMouseOut=\"window.status='';return true;\" onclick=\"this.hideFocus=true\" onblur=\"this.hideFocus=false\" ");

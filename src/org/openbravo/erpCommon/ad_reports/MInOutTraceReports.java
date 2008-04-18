@@ -74,7 +74,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     if (strmProductIdGlobal.equals("")) {
       data = new MInOutTraceReportsData[0];
     } else {
-      data = MInOutTraceReportsData.select(this, strmProductIdGlobal, strmAttributesetinstanceIdGlobal);
+      data = MInOutTraceReportsData.select(this, strmProductIdGlobal, strmAttributesetinstanceIdGlobal, Utility.getContext(this, vars, "#User_Org", "MInOutTraceReports"), Utility.getContext(this, vars, "#User_Client", "MInOutTraceReports"));
     }
     
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");

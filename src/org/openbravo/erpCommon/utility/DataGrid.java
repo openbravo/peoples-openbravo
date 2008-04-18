@@ -50,12 +50,13 @@ public class DataGrid extends HttpSecureAppServlet {
     String action = vars.getStringParameter("action");
     String TabId = vars.getStringParameter("inpadTabId");
     String WindowId = vars.getStringParameter("inpadWindowId");
+    int accessLevel = new Integer(vars.getStringParameter("inpAccessLevel")).intValue();
     if (log4j.isDebugEnabled()) log4j.debug("action: " + action);
     if (log4j.isDebugEnabled()) log4j.debug("TabId: " + TabId);
     if (log4j.isDebugEnabled()) log4j.debug("WindowId: " + WindowId);
     TableSQLData tableSQL = null;
     try {
-      tableSQL = new TableSQLData(vars, this, TabId, Utility.getContext(this, vars, "#User_Org", WindowId), Utility.getContext(this, vars, "#User_Client", WindowId));
+      tableSQL = new TableSQLData(vars, this, TabId, Utility.getContext(this, vars, "#AccessibleOrgTree", WindowId, accessLevel), Utility.getContext(this, vars, "#User_Client", WindowId), Utility.getContext(this, vars, "ShowAudit", WindowId, accessLevel).equals("Y"));
     } catch (Exception ex) {
       ex.printStackTrace();
     }
@@ -361,7 +362,12 @@ public class DataGrid extends HttpSecureAppServlet {
       result=0;
       type="Error";
       title="Error";
-      description=Utility.messageBD(this,"AccessCannotDelete", vars.getLanguage());;
+      description=Utility.messageBD(this,"AccessCannotDelete", vars.getLanguage());
+    } else if (WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), strTab))  {
+      result=0;
+      type="Error";
+      title="Error";
+      description=Utility.messageBD(this,"NoWriteAccess", vars.getLanguage());
     } else {    
 	    Vector<String> parametersData = null;
 	    String rows = vars.getInStringParameter("rows");
@@ -375,6 +381,8 @@ public class DataGrid extends HttpSecureAppServlet {
 	      if (parametersData==null) parametersData = new Vector<String>();
 	      parametersData.addElement(vars.getGlobalVariable("inpParentKey", tableSQL.getWindowID() + "|" + parentKey));
 	    }
+	    SqlDataBuffer.append(" AND AD_Client_ID IN (").append(Utility.getContext(this, vars, "#User_Client", "win")).append(")");
+	    SqlDataBuffer.append(" AND AD_Org_ID IN (").append(Utility.getContext(this, vars, "#User_Org", "win")).append(")");
 	    if (log4j.isDebugEnabled()) log4j.debug(SqlDataBuffer.toString());
 	    
 	    try{

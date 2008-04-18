@@ -44,13 +44,16 @@ public abstract class CalloutHelper extends HttpSecureAppServlet {
   }
 
   String generateArray(FieldProvider[] data) {
+    return generateArray(data, "");
+  }
+  String generateArray(FieldProvider[] data, String selected) {
     StringBuffer strArray = new StringBuffer();
     if (data==null || data.length==0)
       strArray.append("null");
     else {
       strArray.append("new Array(");
       for (int i=0;i<data.length;i++) {
-        strArray.append("\nnew Array(\"").append(data[i].getField("id")).append("\", \"").append(FormatUtilities.replaceJS(data[i].getField("name"))).append("\")");
+        strArray.append("\nnew Array(\"").append(data[i].getField("id")).append("\", \"").append(FormatUtilities.replaceJS(data[i].getField("name"))).append("\",").append(data[i].getField("id").equals(selected)?"\"true\"":"\"false\"").append(")");
         if (i<data.length-1) strArray.append(", \n");
       }
       strArray.append(")");

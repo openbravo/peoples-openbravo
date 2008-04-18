@@ -69,7 +69,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     String discard[]={"discard"};
     strTreeOrg = strOrg;
     if (strExpand.equals("Y")) treeOrg(vars, strOrg);
-    ReportProjectProfitabilityData[] data= ReportProjectProfitabilityData.select(this, strTreeOrg, strDateFrom , DateTimeData.nDaysAfter(this, strDateTo,"1"), strProjectType, strProject, strResponsible, strPartner);
+    ReportProjectProfitabilityData[] data= ReportProjectProfitabilityData.select(this, strTreeOrg, Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), strDateFrom , DateTimeData.nDaysAfter(this, strDateTo,"1"), strProjectType, strProject, strResponsible, strPartner);
 
     if (data == null || data.length == 0) {
       data = ReportProjectProfitabilityData.set("1","1","1","1","1","1","1","1","1","1","1");

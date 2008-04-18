@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,7 @@ package="org.openbravo.wad.Window">
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, ? AS LANGUAGE  
+        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, ? AS LANGUAGE, '' AS AD_USER_CLIENT, '' AS AD_ORG_CLIENT
         FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP><PARAMETER_TMP id="tables">tables</PARAMETER_TMP>
         WHERE 2=2 <PARAMETER_TMP id="where">tablesWhere</PARAMETER_TMP>
         AND 1=1 
@@ -71,11 +71,15 @@ package="org.openbravo.wad.Window">
 <PARAMETER_TMP id="where">tablesWhere</PARAMETER_TMP>
         AND 1=1 
         AND <PARAMETER_TMP id="key">table</PARAMETER_TMP> = ? 
+        <PARAMETER_TMP id="client">AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN ('1') </PARAMETER_TMP>
+        <PARAMETER_TMP id="org">   AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN ('1') </PARAMETER_TMP>
     ]]&#62;</Sql>
     <Parameter name="paramLanguage"/>
 <PARAMETER_TMP id="parameters">xx</PARAMETER_TMP>
 <PARAMETER_TMP id="parent">    <Parameter name="param1" optional="true" after="AND 1=1 " id="paramKeyParent"> AND <PARAMETER_TMP id="keyParent">xx</PARAMETER_TMP> = ? </Parameter></PARAMETER_TMP>
     <Parameter name="key"/>
+    <PARAMETER_TMP id="client">    &#60;Parameter name="adUserClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
+    <PARAMETER_TMP id="org">    &#60;Parameter name="adOrgClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">
@@ -197,11 +201,15 @@ package="org.openbravo.wad.Window">
         SET <FIELDS_TMP id="sectionDetailColumns3"><FIELD_TMP id="fieldName3">column_a</FIELD_TMP> = <FIELD_TMP id="fieldFormat3">?</FIELD_TMP> </FIELDS_TMP>, updated = now(), updatedby = to_number(?) 
         WHERE <PARAMETER_TMP id="key">table</PARAMETER_TMP> = ? 
         <PARAMETER_TMP id="parent">         AND <PARAMETER_TMP id="keyParent">xx</PARAMETER_TMP> = ? </PARAMETER_TMP>
+        <PARAMETER_TMP id="client">AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN ('1') </PARAMETER_TMP>
+        <PARAMETER_TMP id="org">AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN ('1') </PARAMETER_TMP>
     ]]&#62;</Sql>
     <FIELDS_TMP id="sectionDetailColumns4"><Parameter id="fieldName4" name="param1"/> </FIELDS_TMP>
     <Parameter name="updatedby"/>
     <Parameter id="paramKey" name="param1"/>
     <PARAMETER_TMP id="parent">    <Parameter name="param1" id="paramKeyParent"/></PARAMETER_TMP>
+    <PARAMETER_TMP id="client">    &#60;Parameter name="adUserClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
+    <PARAMETER_TMP id="org">    &#60;Parameter name="adOrgClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
   </SqlMethod>
 
   <SqlMethod name="insert" type="preparedStatement" return="rowCount" static="false">
@@ -220,9 +228,13 @@ package="org.openbravo.wad.Window">
         DELETE FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP>
         WHERE <PARAMETER_TMP id="key">key</PARAMETER_TMP> = ? 
         <PARAMETER_TMP id="parent">         AND <PARAMETER_TMP id="keyParent">xx</PARAMETER_TMP> = ? </PARAMETER_TMP>
+        <PARAMETER_TMP id="client">AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN ('1') </PARAMETER_TMP>
+        <PARAMETER_TMP id="org">AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN ('1') </PARAMETER_TMP>
     ]]&#62;</Sql>
     <Parameter name="param1"/>
     <PARAMETER_TMP id="parent">    <Parameter name="param1" id="paramKeyParent"/></PARAMETER_TMP>
+    <PARAMETER_TMP id="client">    &#60;Parameter name="adUserClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
+    <PARAMETER_TMP id="org">    &#60;Parameter name="adOrgClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
   </SqlMethod>
 
   <SqlMethod name="deleteTransactional" connection="true" type="preparedStatement" return="rowCount">

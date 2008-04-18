@@ -75,11 +75,13 @@ public class UsedByLink extends HttpSecureAppServlet {
     xmlDocument.setParameter("keyId", keyId);
     xmlDocument.setParameter("recordIdentifier", UsedByLinkData.selectIdentifier(this, keyId, vars.getLanguage(), tableId));
 
+    boolean nonAccessible = false;
+    
     UsedByLinkData[] data = null;
 
     if (vars.getLanguage().equals("en_US")) data = UsedByLinkData.select(this, vars.getClient(), vars.getLanguage(), keyColumn);
     else data = UsedByLinkData.selectLanguage(this, vars.getClient(), vars.getLanguage(), keyColumn);
-
+    
     if (data!=null && data.length>0) {
       Vector<Object> vecTotal = new Vector<Object>();
       for (int i=0;i<data.length;i++) {
@@ -90,6 +92,11 @@ public class UsedByLink extends HttpSecureAppServlet {
         if (log4j.isDebugEnabled()) log4j.debug("***   Referenced where clause (1): " + strWhereClause);
         strWhereClause += getAditionalWhereClause(vars, strWindow, data[i].adTabId, data[i].tablename, keyColumn, data[i].columnname, UsedByLinkData.getTabTableName(this, tableId));
         if (log4j.isDebugEnabled()) log4j.debug("***   Referenced where clause (2): " + strWhereClause);
+        if (!nonAccessible) {
+          String strNonAccessibleWhere = strWhereClause + " AND AD_ORG_ID NOT IN ("+ vars.getUserOrg()+")";
+          if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId, strNonAccessibleWhere).equals("0"))
+            nonAccessible = true;
+        }
         strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN (" + vars.getUserClient() + ")";
         int total = Integer.valueOf(UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId, strWhereClause)).intValue();
         if (log4j.isDebugEnabled()) log4j.debug("***   Count: " + total);
@@ -101,7 +108,7 @@ public class UsedByLink extends HttpSecureAppServlet {
       data = new UsedByLinkData[vecTotal.size()];
       vecTotal.copyInto(data);
     }
-
+    if (nonAccessible) xmlDocument.setParameter("fieldMessage", Utility.messageBD(this, "NonAccessibleRecords", vars.getLanguage()));
     xmlDocument.setData("structure1", data);
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

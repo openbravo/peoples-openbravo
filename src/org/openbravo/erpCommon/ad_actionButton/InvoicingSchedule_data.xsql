@@ -150,15 +150,17 @@
   <SqlMethod name="selectPeriods" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT p.M_WH_PERIOD_ID AS ID, p.STARTDATE, p.ENDDATE FROM M_WH_PERIOD p 
+      SELECT p.M_WH_PERIOD_ID AS ID, p.STARTDATE, p.ENDDATE 
+      FROM M_WH_PERIOD p 
       WHERE p.M_WH_SCHEDULE_ID = TO_NUMBER(?) 
       AND p.STARTDATE >= TO_DATE(?)
       AND p.ENDDATE <= TO_DATE(?)
-      AND NOT EXISTS (SELECT 1 FROM M_WH_PERIOD_INVOICED i 
-      WHERE i.M_WH_PERIOD_ID = p.M_WH_PERIOD_ID 
-      AND i.C_BPARTNER_ID = TO_NUMBER(?)
-      AND i.AD_ORG_ID = TO_NUMBER(?) )
-      ORDER BY p.STARTDATE
+      AND NOT EXISTS (SELECT 1 
+                       FROM M_WH_PERIOD_INVOICED i 
+								      WHERE i.M_WH_PERIOD_ID = p.M_WH_PERIOD_ID 
+								      AND i.C_BPARTNER_ID = TO_NUMBER(?)
+								      AND i.AD_ORG_ID = TO_NUMBER(?) )
+			ORDER BY p.STARTDATE
     ]]></Sql>
     <Parameter name="mWhScheduleId"/>
     <Parameter name="periodfrom"/>

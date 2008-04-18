@@ -70,16 +70,7 @@ public class WADButton extends WADControl {
         shortcut=name.substring(i,i+1).toUpperCase();
         retVal += "<u>"+name.substring(i,i+1)+"</u>"+name.substring(i+1);
       }
-    } /*else {
-      int i = 1;
-      while (i<=10 && sc.containsKey(new Integer(i).toString())) i++;
-      retVal=name;
-      if (i<10) {
-        retVal +="<span>(<u>"+i+"</u>)</span>";
-        sc.put(new Integer(i).toString(), "executeWindowButton('"+buttonId+"');"); 
-      }
-    }*/
-      
+    }       
     return retVal;
   }
 
@@ -89,17 +80,22 @@ public class WADButton extends WADControl {
 
   private StringBuffer getAction(){
     StringBuffer text = new StringBuffer();
-    if (getData("MappingName").equals("")) {
-      text.append("openServletNewWindow('BUTTON").append(FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
-      text.append("', false, '").append(getData("TabName")).append("_Edition.html', 'BUTTON', null, true");
-      if (getData("ColumnName").equalsIgnoreCase("CreateFrom")) text.append(",600, 900");
-      else text.append(", 600, 900");
-      text.append(");");
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
+    if (isDisabled) {
+      text.append("return true;");
     } else {
-      text.append("openServletNewWindow('DEFAULT', false, '..");
-      if (!getData("MappingName").startsWith("/")) text.append('/');
-      text.append(getData("MappingName")).append("', 'BUTTON', '").append(getData("AD_Process_ID")).append("', true");
-      text.append(",600, 900);");
+      if (getData("MappingName").equals("")) {
+        text.append("openServletNewWindow('BUTTON").append(FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
+        text.append("', false, '").append(getData("TabName")).append("_Edition.html', 'BUTTON', null, true");
+        if (getData("ColumnName").equalsIgnoreCase("CreateFrom")) text.append(",600, 900");
+        else text.append(", 600, 900");
+        text.append(");");
+      } else {
+        text.append("openServletNewWindow('DEFAULT', false, '..");
+        if (!getData("MappingName").startsWith("/")) text.append('/');
+        text.append(getData("MappingName")).append("', 'BUTTON', '").append(getData("AD_Process_ID")).append("', true");
+        text.append(",600, 900);");
+      }
     }
     return text;
   }
@@ -115,6 +111,17 @@ public class WADButton extends WADControl {
     xmlDocument.setParameter("callout", getOnChangeCode());
     
     xmlDocument.setParameter("action", getAction().toString());
+    
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
+    if (isDisabled) {
+      xmlDocument.setParameter("disabled", "_disabled");
+      xmlDocument.setParameter("keypress", "ButtonLink_disabled");
+      xmlDocument.setParameter("onkeyup","ButtonLink_disabled");
+      xmlDocument.setParameter("onmousedown","ButtonLink_disabled");
+      xmlDocument.setParameter("onmouseup"  ,"ButtonLink_disabled");
+      xmlDocument.setParameter("onmouseover","ButtonLink_disabled");
+      xmlDocument.setParameter("onmouseout" ,"ButtonLink_disabled");
+    }
     return replaceHTML(xmlDocument.print());
   }
 
@@ -130,6 +137,16 @@ public class WADButton extends WADControl {
     xmlDocument.setParameter("callout", getOnChangeCode());
     
     xmlDocument.setParameter("action", getAction().toString());
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
+    if (isDisabled) {
+      xmlDocument.setParameter("disabled", "_disabled");
+      xmlDocument.setParameter("keypress", "ButtonLink_disabled");
+      xmlDocument.setParameter("onkeyup","ButtonLink_disabled");
+      xmlDocument.setParameter("onmousedown","ButtonLink_disabled");
+      xmlDocument.setParameter("onmouseup"  ,"ButtonLink_disabled");
+      xmlDocument.setParameter("onmouseover","ButtonLink_disabled");
+      xmlDocument.setParameter("onmouseout" ,"ButtonLink_disabled");
+    }
     return replaceHTML(xmlDocument.print());
   }
 

@@ -36,9 +36,9 @@ new Array (0,31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31) //Leap year
 );
 
 /**
-* Esta librer√≠a JavaScript contiene las funciones y procedimientos b√°sicos que se utilizan en
-* todas las p√°ginas html. Son elementos b√°sicos como el posicionamiento del foco en un control
-* de la p√°gina, control de campos num√©ricos...
+* Esta librerÌa JavaScript contiene las funciones y procedimientos b·sicos que se utilizan en
+* todas las p·ginas html. Son elementos b·sicos como el posicionamiento del foco en un control
+* de la p·gina, control de campos numÈricos...
 */
 
 var gByDefaultAction;
@@ -3263,7 +3263,34 @@ function calculateMsgBoxWidth() {
   var msgbox_table = document.getElementById("messageBoxID");
   msgbox_table.style.width = client_width;
  }
+ 
+/**
+* Change the status for show audit in Edition mode, in local javascript variable and in session value (with ajax)
+**/
+function changeAuditStatus() {
+  if (strShowAudit=="Y") strShowAudit="N";
+  else strShowAudit="Y";
+  displayLogic();
+  changeAuditIcon(strShowAudit);
+  submitXmlHttpRequest(xx, null, 'CHANGE', "../utility/ChangeAudit", false);
+  return true;
+}
 
+/**
+* Change the status for show audit in Relation mode, in local javascript variable and in session value (with ajax)
+**/
+function changeAuditStatusRelation() {
+  
+  submitXmlHttpRequest(document.getElementById("buttonRefresh").onclick, null, 'CHANGE', "../utility/ChangeAudit", false);
+  return true;
+}
+
+function changeAuditIcon(newStatus) {
+  obj = document.getElementById("linkButtonAudit");
+  if (obj == null) return false;
+  obj.className="Main_ToolBar_Button"+(newStatus=="Y"?"_Selected":"");
+  obj.title=""; //TODO: get the correct title depending on the language
+}
 /*if (!document.all)
   document.captureEvents(Event.MOUSEDOWN);
 document.onmousedown=menuContextual;*/

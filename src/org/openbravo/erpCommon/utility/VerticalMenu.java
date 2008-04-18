@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import org.openbravo.utils.FormatUtilities;
+import org.openbravo.erpCommon.security.AccessData;
 
 
 
@@ -276,35 +277,37 @@ public class VerticalMenu extends HttpSecureAppServlet {
     MenuData[] data = MenuData.selectSearchs(this, vars.getLanguage());
     if (data==null || data.length==0) return "";
     for (int i=0;i<data.length;i++) {
-      result.append("<tr>\n");
-      result.append("  <td>\n");
-      result.append("    <table cellspacing=\"0\" cellpadding=\"0\" onmouseover=\"window.status='");
-      result.append(FormatUtilities.replaceJS(data[i].description));
-      result.append("';return true;\"");
-      result.append(" onmouseout=\"window.status='';return true;\"");
-      result.append(" id=\"info").append(FormatUtilities.replace(data[i].name)).append("\"");
-      result.append(">\n");
-      result.append("      <tr");
-      result.append(" class=\"Normal NOT_Opened NOT_Hover NOT_Selected NOT_Pressed NOT_Focused\"");
-      result.append(" id=\"childinfo").append(FormatUtilities.replace(data[i].name)).append("\"");
-      result.append(" onclick=\"checkSelected('childinfo").append(FormatUtilities.replace(data[i].name)).append("');openSearch(null, null, '");
-      String javaClassName = data[i].classname.trim();
-      if (data[i].nodeId.equals("800011")) javaClassName = "/info/ProductComplete_FS.html";
-      else if (data[i].nodeId.equals("21")) javaClassName = "/info/Location_FS.html";
-      else if (data[i].nodeId.equals("25")) javaClassName = "/info/Account_FS.html";
-      else if (data[i].nodeId.equals("800013")) javaClassName = "/info/Locator_Detail_FS.html";
-      else if (data[i].nodeId.equals("31")) javaClassName = "/info/Locator_FS.html";
-      result.append(direccion).append(javaClassName);
-      result.append("', null, false);return false;\" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
-      result.append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");
-      result.append("        <td width=\"5px\"><img src=\"").append(strReplaceWith).append("/images/blank.gif\" class=\"Menu_Client_Button_Icon Menu_Client_Button_Icon_childInfo\"></td>\n");
-      result.append("        <td nowrap=\"\">");
-      result.append(data[i].name);
-      result.append("        </td>\n");
-      result.append("      </tr>\n");
-      result.append("    </table>\n");
-      result.append("  </td>\n");
-      result.append("</tr>\n");
+      if (!AccessData.selectAccessSearch(this, vars.getRole(), data[i].nodeId).equals("0")) {
+        result.append("<tr>\n");
+        result.append("  <td>\n");
+        result.append("    <table cellspacing=\"0\" cellpadding=\"0\" onmouseover=\"window.status='");
+        result.append(FormatUtilities.replaceJS(data[i].description));
+        result.append("';return true;\"");
+        result.append(" onmouseout=\"window.status='';return true;\"");
+        result.append(" id=\"info").append(FormatUtilities.replace(data[i].name)).append("\"");
+        result.append(">\n");
+        result.append("      <tr");
+        result.append(" class=\"Normal NOT_Opened NOT_Hover NOT_Selected NOT_Pressed NOT_Focused\"");
+        result.append(" id=\"childinfo").append(FormatUtilities.replace(data[i].name)).append("\"");
+        result.append(" onclick=\"checkSelected('childinfo").append(FormatUtilities.replace(data[i].name)).append("');openSearch(null, null, '");
+        String javaClassName = data[i].classname.trim();
+        if (data[i].nodeId.equals("800011")) javaClassName = "/info/ProductComplete_FS.html";
+        else if (data[i].nodeId.equals("21")) javaClassName = "/info/Location_FS.html";
+        else if (data[i].nodeId.equals("25")) javaClassName = "/info/Account_FS.html";
+        else if (data[i].nodeId.equals("800013")) javaClassName = "/info/Locator_Detail_FS.html";
+        else if (data[i].nodeId.equals("31")) javaClassName = "/info/Locator_FS.html";
+        result.append(direccion).append(javaClassName);
+        result.append("', null, false);return false;\" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
+        result.append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");
+        result.append("        <td width=\"5px\"><img src=\"").append(strReplaceWith).append("/images/blank.gif\" class=\"Menu_Client_Button_Icon Menu_Client_Button_Icon_childInfo\"></td>\n");
+        result.append("        <td nowrap=\"\">");
+        result.append(data[i].name);
+        result.append("        </td>\n");
+        result.append("      </tr>\n");
+        result.append("    </table>\n");
+        result.append("  </td>\n");
+        result.append("</tr>\n");
+      }
     }
     return result.toString();
   }

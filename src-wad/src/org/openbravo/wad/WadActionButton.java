@@ -273,7 +273,9 @@ public class WadActionButton {
             html.append(data[i].columnname).append("\", \"");
             html.append(data[i].adReferenceValueId).append("\", \"");
             html.append(data[i].adValRuleId).append("\", ");
-            html.append("Utility.getContext(this, vars, \"#User_Org\", \"\"), ");
+            
+            html.append("Utility.getContext(this, vars, \"#AccessibleOrgTree\", \"\"), ");
+            
             html.append("Utility.getContext(this, vars, \"#User_Client\", \"\"), 0");
             html.append(");\n");
             html.append("    Utility.fillSQLParameters(this, vars, null, comboTableData, \"\", ").append(strDefault).append(");\n");

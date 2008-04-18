@@ -24,6 +24,7 @@ import org.openbravo.utils.DirFilter;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.data.FieldProvider;
 
+
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
 
@@ -809,7 +810,7 @@ public class Wad extends DefaultHandler {
         /************************************************
         *        JAVA of the combo reloads
         *************************************************/
-        processTabComboReloads(fileFinReloads, tabsData.tabid, parentsFieldsData, vecFields, isSOTrx);
+        processTabComboReloads(fileFinReloads, tabsData.tabid, parentsFieldsData, vecFields, isSOTrx, tabsData.accesslevel);
 
 
         /************************************************
@@ -820,17 +821,19 @@ public class Wad extends DefaultHandler {
         /************************************************
         *             HTML in Relation view
         *************************************************/
-        processTabHtmlRelation(parentsFieldsData, fileDir, tabsData.tabid, tabName, keyColumnName, tabsData.isreadonly.equals("Y"), strParentNameDescription, gridControl, false, "", tabNamePresentation, tabsData.tableId);
+        processTabHtmlRelation(parentsFieldsData, fileDir, tabsData.tabid, tabName, keyColumnName, tabsData.isreadonly.equals("Y"), strParentNameDescription, gridControl, false, "", tabNamePresentation, tabsData.tableId, tabsData.accesslevel);
 
         /************************************************
         *             XML in Edition view
         *************************************************/
-        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.isreadonly.equals("Y"), efd, efdauxiliar);
+        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.isreadonly.equals("Y"), efd, efdauxiliar, true);
+        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.isreadonly.equals("Y"), efd, efdauxiliar, false);
 
         /************************************************
         *             HTML in Edition view
         *************************************************/
-        processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "");
+        processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "",true);
+        processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "",false);
       }
 
       LanguagesData[] dataLang = LanguagesData.select(pool);
@@ -879,14 +882,12 @@ public class Wad extends DefaultHandler {
             // ************************************************
             // *             HTML of the Relation view
             //*************************************************
-            processTabHtmlRelation(parentsFieldsData, fileDirTrl, tabsData.tabid, tabName, keyColumnName, tabsData.isreadonly.equals("Y"), strParentNameDescription, gridControl, true, dataLang[pos].adLanguage, tabNamePresentation, tabsData.tableId);
+            processTabHtmlRelation(parentsFieldsData, fileDirTrl, tabsData.tabid, tabName, keyColumnName, tabsData.isreadonly.equals("Y"), strParentNameDescription, gridControl, true, dataLang[pos].adLanguage, tabNamePresentation, tabsData.tableId, tabsData.accesslevel);
 
             // ************************************************
             // *             HTML of the Edition view
             // *************************************************
-            processTabHtmlEdition(efdTRL, efdauxiliar, fileDirTrl, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, dataLang[pos].adLanguage);
-
-            //processTabHtmlEditionTrl(efd, efdTRL, efdauxiliar, fileDirTrl, tabsData.tabid, tabName, realWindowName, keyColumnName, tabNamePresentation, tab1trl, tab2trl, allTabstrl, selectedTabtrl, tabsData.key, parentsFieldsData, vecFields, strProcess, strDirectPrint, tabsData.isreadonly.equals("Y"), tabsData.tablevel, dataLang[pos].adLanguage, windowName, isSOTrx, tabsData.tableId, pixelSize);
+            processTabHtmlEdition(efdTRL, efdauxiliar, fileDirTrl, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, dataLang[pos].adLanguage, true);
           }
           File languageBase = new File(fileTrl, dataLang[pos].adLanguage);
           languageBase.mkdir();
@@ -1265,6 +1266,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("key", keyColumnName);
     xmlDocument.setParameter("grandfatherName", grandfatherField);
     xmlDocument.setParameter("ShowName", FieldsData.columnName(pool, strColumnSortOrderId));
+    xmlDocument.setParameter("accessLevel", accesslevel);
     if (parentsFieldsData.length > 0) {
       xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
       xmlDocument.setParameter("keyParentINP", Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
@@ -1449,7 +1451,7 @@ public class Wad extends DefaultHandler {
       }
     }
     
-    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", "", "", ""};
+    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", "", "", "", ""};
     if (parentsFieldsData==null || parentsFieldsData.length == 0) {
       discard[0] = "parent";  // remove the parent tags
       hasParentsFields=false;
@@ -1485,6 +1487,7 @@ public class Wad extends DefaultHandler {
     if (noActionButton) discard[23]="hasAdActionButton";
     if (FieldsData.hasButtonList(pool, strTab).equals("0")) discard[25]="buttonList";
     if (FieldsData.hasButtonFixed(pool, strTab).equals("0")) discard[26]="buttonFixed";
+    if (strWindow.equals("110")) discard[27]="sectionOrganizationCheck";
     
     
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard).createXmlDocument();
@@ -1522,6 +1525,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
     xmlDocument.setParameter("table", tableName);
     xmlDocument.setParameter("windowId", strWindow);
+    xmlDocument.setParameter("accessLevel", accesslevel);
     xmlDocument.setParameter("tabId", strTab);
     xmlDocument.setParameter("tableId", tableId);
     xmlDocument.setParameter("createFromProcessId", ((Integer.valueOf(createFromProcess).intValue()>0)?createFromProcess:""));
@@ -2468,7 +2472,7 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabComboReloads(File fileDir, String strTab, FieldsData[] parentsFieldsData, Vector<Object> vecFields, String isSOTrx) throws ServletException, IOException {
+  private void processTabComboReloads(File fileDir, String strTab, FieldsData[] parentsFieldsData, Vector<Object> vecFields, String isSOTrx, String accesslevel) throws ServletException, IOException {
     log4j.debug("Procesig combo reloads java for tab: " + strTab);
     FieldsData[] data = FieldsData.selectValidationTab(pool, strTab);
     if (data==null || data.length==0) return;
@@ -2481,7 +2485,14 @@ public class Wad extends DefaultHandler {
       String code = data[i].whereclause + ((!data[i].whereclause.equals("") && !data[i].referencevalue.equals(""))?" AND ":"") + data[i].referencevalue;
       data[i].columnname = "inp" + Sqlc.TransformaNombreColumna(data[i].columnname);
       data[i].whereclause=WadUtility.getComboReloadText(code, vecFields, parentsFieldsData, vecReloads, "inp");
+      if (data[i].whereclause.equals("") && data[i].type.equals("R")) 
+        data[i].whereclause="\"inpadOrgId\"";
       if (!data[i].whereclause.equals("") && data[i].isdisplayed.equals("Y") && (data[i].reference.equals("17") || data[i].reference.equals("18") || data[i].reference.equals("19"))) {
+        if (data[i].name.equalsIgnoreCase("AD_Org_ID"))
+          data[i].orgcode = "Utility.getContext(this, vars, \"#AccessibleOrgTree\", windowId, "+accesslevel+")";
+        else
+          data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
+        
         if (data[i].reference.equals("17")) { //List
           data[i].tablename = "List";
           data[i].tablenametrl = "List";
@@ -2686,7 +2697,7 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabHtmlRelation(FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String keyColumnName, boolean isreadonly, String strParentNameDescription, WADControl control, boolean isTranslated, String adLanguage, String tabNamePresentation, String strTable) throws ServletException, IOException {
+  private void processTabHtmlRelation(FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String keyColumnName, boolean isreadonly, String strParentNameDescription, WADControl control, boolean isTranslated, String adLanguage, String tabNamePresentation, String strTable, String accessLevel) throws ServletException, IOException {
     log4j.debug("Procesig relation html" + (isTranslated?" translated":"") + ": " + strTab + ", " + tabName);
     String[] discard = new String[1];
     if (parentsFieldsData.length == 0) discard[0] = new String("parent");
@@ -2699,6 +2710,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("keyId", keyColumnName);
     xmlDocument.setParameter("tabId", strTab);
     xmlDocument.setParameter("tableId", strTable);
+    xmlDocument.setParameter("accesslevel",accessLevel);
     if (parentsFieldsData.length > 0) {
       xmlDocument.setParameter("keyParent", "inp" + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
       xmlDocument.setParameter("parentKeyNameDescription", strParentNameDescription);
@@ -2714,6 +2726,7 @@ public class Wad extends DefaultHandler {
     script.append("  return true;\n");
     script.append("}\n");
     xmlDocument.setParameter("script", script.toString());
+    control.setData("accesslevel",accessLevel);
     xmlDocument.setParameter("controlDesign", control.toString());
     WadUtility.writeFile(fileDir, tabName + "_Relation.html", xmlDocument.print());
   }
@@ -2772,11 +2785,15 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabXmlEdition(File fileDir, String strTab, String tabName, String windowId, boolean isreadonly, FieldProvider[] efd, FieldProvider[] efdauxiliar) throws ServletException, IOException {
+  private void processTabXmlEdition(File fileDir, String strTab, String tabName, String windowId, boolean isreadonly, FieldProvider[] efd, FieldProvider[] efdauxiliar, boolean editable) throws ServletException, IOException {
     if (log4j.isDebugEnabled()) log4j.debug("Processing edition xml: " + strTab + ", " + tabName);
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/Configuration_Edition").createXmlDocument();
-    xmlDocument.setParameter("class", tabName + "_Edition.html");
+    if (editable)
+      xmlDocument.setParameter("class", tabName + "_Edition.html");
+    else
+      xmlDocument.setParameter("class", tabName + "_NonEditable.html");
     StringBuffer htmlHidden = new StringBuffer();
+    if (!editable) isreadonly = false;
     if (efdauxiliar!=null) {
       for (int i=0;i< efdauxiliar.length; i++) {
         WADControl auxControl = new WADHidden(efdauxiliar[i].getField("columnname"), Sqlc.TransformaNombreColumna(efdauxiliar[i].getField("columnname")), "", true);
@@ -2798,7 +2815,10 @@ public class Wad extends DefaultHandler {
     }
 
     xmlDocument.setParameter("fields", html.toString());
-    WadUtility.writeFile(fileDir, tabName + "_Edition.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print());
+    if (editable)
+      WadUtility.writeFile(fileDir, tabName + "_Edition.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print());
+    else
+      WadUtility.writeFile(fileDir, tabName + "_NonEditable.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print());
   }
 
   /**
@@ -2821,12 +2841,14 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabHtmlEdition(FieldProvider[] efd, FieldProvider[] efdauxiliar, File fileDir, String strTab, String tabName, String keyColumnName, String tabNamePresentation, String windowId, FieldsData[] parentsFieldsData, Vector<Object> vecFields, boolean isreadonly, String isSOTrx, String strTable, double pixelSize, String strLanguage) throws ServletException, IOException {
+  private void processTabHtmlEdition(FieldProvider[] efd, FieldProvider[] efdauxiliar, File fileDir, String strTab, String tabName, String keyColumnName, String tabNamePresentation, String windowId, FieldsData[] parentsFieldsData, Vector<Object> vecFields, boolean isreadonly, String isSOTrx, String strTable, double pixelSize, String strLanguage, boolean editable) throws ServletException, IOException {
     if (log4j.isDebugEnabled()) log4j.debug("Procesig edition html" + (strLanguage.equals("")?"":" translated") + ": " + strTab + ", " + tabName);
+    
+    if (!editable) isreadonly = true;
     
     HashMap<String, String> shortcuts = new HashMap<String, String>();
     
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/Template_Edition").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/Template_Edition").createXmlDocument();;
     xmlDocument.setParameter("tab", tabNamePresentation);
     xmlDocument.setParameter("form", tabName+ "_Relation.html");
     xmlDocument.setParameter("key", "inp" + Sqlc.TransformaNombreColumna(keyColumnName));
@@ -2862,10 +2884,14 @@ public class Wad extends DefaultHandler {
     }
 
     FieldsData[] dataReload = FieldsData.selectValidationTab(pool, strTab);
+    
     Vector<Object> vecReloads = new Vector<Object>();
     if (dataReload!=null && dataReload.length>0) {
       for (int z=0;z<dataReload.length;z++) {
         String code = dataReload[z].whereclause + ((!dataReload[z].whereclause.equals("") && !dataReload[z].referencevalue.equals(""))?" AND ":"") + dataReload[z].referencevalue;
+        
+        if (code.equals("") && dataReload[z].type.equals("R"))
+          code = "@AD_Org_ID@";
         WadUtility.getComboReloadText(code, vecFields, parentsFieldsData, vecReloads, "", dataReload[z].columnname);
       }
     }
@@ -2892,12 +2918,14 @@ public class Wad extends DefaultHandler {
     html.append("</tr>\n");
     for (int i=0;i< efd.length; i++) {
       WADControl auxControl = null;
+      
       try {
         auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, strLanguage, xmlEngine, (WadUtility.isInVector(vecDisplayLogic, efd[i].getField("columnname"))), WadUtility.isInVector(vecReloads, efd[i].getField("columnname")), WadUtility.isInVector(vecReadOnlyLogic, efd[i].getField("columnname")));
         
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
+      
       
       if (WadUtility.isNewGroup(auxControl, strFieldGroup)) {
         if (fieldGroupHasDisplayLogic && (fieldGroupElements!=0)) {
@@ -3024,7 +3052,8 @@ public class Wad extends DefaultHandler {
         if (!auxControl.getValidation().equals("")) validations.append(auxControl.getValidation()).append("\n");
         if (!auxControl.getOnLoad().equals("")) onload.append(auxControl.getOnLoad()).append("\n");
         displayLogicFunction.append(WadUtility.getDisplayLogic(auxControl, new Vector<Object>(), parentsFieldsData, vecAuxiliar, vecFields, windowId, new Vector<Object>(), isreadonly));
-        readOnlyLogicFunction.append(WadUtility.getReadOnlyLogic(auxControl, new Vector<Object>(), parentsFieldsData, vecAuxiliar, vecFields, windowId, new Vector<Object>(), isreadonly));
+        if (!isreadonly) 
+          readOnlyLogicFunction.append(WadUtility.getReadOnlyLogic(auxControl, new Vector<Object>(), parentsFieldsData, vecAuxiliar, vecFields, windowId, new Vector<Object>(), isreadonly));
       }
     }
     
@@ -3113,7 +3142,10 @@ public class Wad extends DefaultHandler {
     script.append("}\n");
 
     xmlDocument.setParameter("script", script.toString());
-    WadUtility.writeFile(fileDir, tabName + "_Edition.html", xmlDocument.print());
+    if (editable)
+      WadUtility.writeFile(fileDir, tabName + "_Edition.html", xmlDocument.print());
+    else
+      WadUtility.writeFile(fileDir, tabName + "_NonEditable.html", xmlDocument.print());
   }
 
 /*#############################################################################################################################

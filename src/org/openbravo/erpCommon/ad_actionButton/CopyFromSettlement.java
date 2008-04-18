@@ -19,7 +19,6 @@
 package org.openbravo.erpCommon.ad_actionButton;
 
 import org.openbravo.erpCommon.utility.*;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -57,21 +56,24 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
       String strDateTo = vars.getStringParameter("inpDateTo");
       String strDocumentNo = vars.getStringParameter("inpDocumentNo");
       String strDescription = vars.getStringParameter("inpDescription");
+      String strWindow = vars.getStringParameter("inpwindowId");
       String strSettlement = vars.getGlobalVariable("inpcSettlementId", "CopyFromSettlement|C_Settlement_ID");
-      printPageFrame1(response, vars, strDescription, strDocumentNo, strDateFrom, strDateTo, strSettlement);
+      printPageFrame1(response, vars, strDescription, strDocumentNo, strDateFrom, strDateTo, strSettlement, strWindow);
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getStringParameter("inpDateFrom");
       String strDateTo = vars.getStringParameter("inpDateTo");
       String strDocumentNo = vars.getStringParameter("inpDocumentNo");
       String strDescription = vars.getStringParameter("inpDescription");
       String strSettlement = vars.getGlobalVariable("inpcSettlementId", "CopyFromSettlement|C_Settlement_ID");
-      printPageFrame1(response, vars, strDescription, strDocumentNo, strDateFrom, strDateTo, strSettlement);
+      String strWindow = vars.getStringParameter("inpwindowId");
+      printPageFrame1(response, vars, strDescription, strDocumentNo, strDateFrom, strDateTo, strSettlement, strWindow);
     } else if (vars.commandIn("FRAME3")) {
       printPageFrame3(response, vars);
     } else if (vars.commandIn("FRAME4")) {
       String strSettlement = vars.getGlobalVariable("inpcSettlementId", "CopyFromSettlement|C_Settlement_ID");
       String strSettlementFrom = vars.getStringParameter("inpcSettlementFromFrame4");
-      printPageFrame1(response, vars, strSettlement, strSettlementFrom);
+      String strWindow = vars.getStringParameter("inpwindowId");
+      printPageFrame1(response, vars, strSettlement, strSettlementFrom, strWindow);
     }else if (vars.commandIn("SAVE")) {
       vars.getGlobalVariable("inpProcessId", "CopyFromSettlement|AD_Process_ID");
       vars.getGlobalVariable("inpwindowId", "CopyFromSettlement|Window_ID");
@@ -176,11 +178,11 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strSetDescription, String strDocumentNo, String strDateFrom, String strDateTo, String strSettlement) throws IOException, ServletException {
+  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strSetDescription, String strDocumentNo, String strDateFrom, String strDateTo, String strSettlement, String strWindow) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Button process Copy from Settlement");
     
     String[] discard = {"",""};
-    CopyFromSettlementData [] data = CopyFromSettlementData.selectRelation(this, "%"+strSetDescription+"%","%"+strDocumentNo+"%", strDateFrom, strDateTo);
+    CopyFromSettlementData [] data = CopyFromSettlementData.selectRelation(this, "%"+strSetDescription+"%","%"+strDocumentNo+"%", Utility.getContext(this, vars, "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow), strDateFrom, strDateTo);
     
     if(data == null || data.length == 0) discard[0] = new String("sectionDetail");
     discard[1] = new String("sectionDetail2");
@@ -216,7 +218,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strSettlement, String strSettlementFrom) throws IOException, ServletException {
+  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strSettlement, String strSettlementFrom, String strWindow) throws IOException, ServletException {
     
     String strDateFrom = vars.getStringParameter("inpDateFrom");
     String strDateTo = vars.getStringParameter("inpDateTo");
@@ -226,7 +228,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     
     String[] discard = {"",""};
     
-    CopyFromSettlementData [] data = CopyFromSettlementData.selectRelation(this, "%"+strDescription+"%","%"+strDocumentNo+"%", strDateFrom, strDateTo);
+    CopyFromSettlementData [] data = CopyFromSettlementData.selectRelation(this, "%"+strDescription+"%","%"+strDocumentNo+"%", Utility.getContext(this, vars, "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow), strDateFrom, strDateTo);
     
     if(data == null || data.length == 0) discard[0] = new String("sectionDetail");    
     

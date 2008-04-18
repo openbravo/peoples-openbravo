@@ -18,6 +18,7 @@
 */
 package org.openbravo.erpCommon.ad_forms;
 
+
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -185,6 +186,7 @@ public class Role extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
+
 
   public String getServletInfo() {
     return "Servlet for the media reports generation";

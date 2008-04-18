@@ -123,13 +123,13 @@ public class WADGrid extends WADControl {
     text.append("<div id=\"").append(getData("id")).append("\" dojoType=\"openbravo:DataGrid\"\n");
     text.append("      structureUrl=\"../utility/DataGrid.html?Command=STRUCTURE&inpadTabId=");
     text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
-    text.append(getData("AD_Window_ID")).append("\" \n");
+    text.append(getData("AD_Window_ID")).append("&inpAccessLevel=").append(getData("accessLevel")).append("\" \n");
     text.append("      dataUrl=\"../utility/DataGrid.html?Command=DATA&inpadTabId=");
     text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
-    text.append(getData("AD_Window_ID")).append("\" \n");
+    text.append(getData("AD_Window_ID")).append("&inpAccessLevel=").append(getData("accessLevel")).append("\" \n");
     text.append("      updatesUrl=\"../utility/DataGrid.html?Command=UPDATE&inpadTabId=");
     text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
-    text.append(getData("AD_Window_ID")).append("\" \n");
+    text.append(getData("AD_Window_ID")).append("&inpAccessLevel=").append(getData("accessLevel")).append("\" \n");
     //text.append("      numRows=\"").append(getData("NumRows")).append("\" \n");
     text.append("      calculateNumRows=\"true\" \n");
     text.append("      editable=\"").append(getData("editable")).append("\" sortable=\"").append(getData("sortable")).append("\" \n");

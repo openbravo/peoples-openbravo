@@ -26,6 +26,7 @@
 <PARAMETER id="package" name = "package" default=" "/>
 <PARAMETER id="key" name = "key" default=" "/>
 <PARAMETER id="windowId" name = "windowId" default=" "/>
+<PARAMETER id="accessLevel" name = "accessLevel" default=" "/>
 <PARAMETER id="tabId" name = "tabId" default=" "/>
 <PARAMETER id="keyParent" name = "keyParent" default=" "/>
 <PARAMETER id="keyParentINP" name = "keyParentINP" default=" "/>

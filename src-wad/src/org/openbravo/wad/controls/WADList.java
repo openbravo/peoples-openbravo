@@ -19,6 +19,7 @@
 package org.openbravo.wad.controls;
 
 import java.util.*;
+
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADList extends WADControl {
@@ -149,12 +150,28 @@ public class WADList extends WADControl {
   public String toJava() {
     StringBuffer text = new StringBuffer();
     if (getData("IsDisplayed").equals("Y")) {
+      if (getData("ColumnName").equalsIgnoreCase("AD_Org_ID")) {
+        text.append("String userOrgList = \"\";\n");
+        text.append("if (currentOrg.equals(\"\") || Utility.isElementInList(Utility.getContext(this, vars, \"#User_Org\", windowId, accesslevel),currentOrg)) \n");
+        text.append("  userOrgList=Utility.getContext(this, vars, \"#User_Org\", windowId, accesslevel); //editable record \n");
+        text.append("else \n");
+        text.append("  userOrgList=currentOrg;\n");
+      }
       text.append("comboTableData = new ComboTableData(vars, this, \"").append(getData("AD_Reference_ID")).append("\", ");
       text.append("\"").append(getData("ColumnName")).append("\", \"");
       text.append(getData("AD_Reference_Value_ID")).append("\", ");
       text.append("\"").append(getData("AD_Val_Rule_ID")).append("\", ");
-      text.append("Utility.getContext(this, vars, \"#User_Org\", windowId), ");
-      text.append("Utility.getContext(this, vars, \"#User_Client\", windowId), 0);\n");
+      
+      if (getData("ColumnName").equalsIgnoreCase("AD_Org_ID")) 
+        text.append("userOrgList, ");
+      else
+        text.append("Utility.getReferenceableOrg(vars, (dataField!=null?dataField.getField(\"adOrgId\"):data[0].getField(\"adOrgId\").equals(\"\")?vars.getOrg():data[0].getField(\"adOrgId\"))), ");
+      
+      if (getData("ColumnName").equalsIgnoreCase("AD_Client_ID"))
+        text.append("Utility.getContext(this, vars, \"#User_Client\", windowId, accesslevel), 0);\n");
+      else
+        text.append("Utility.getContext(this, vars, \"#User_Client\", windowId), 0);\n");
+      
       text.append("Utility.fillSQLParameters(this, vars, (dataField==null?data[0]:dataField), comboTableData, windowId, (dataField==null?data[0].getField(\"");
       text.append(getData("ColumnNameInp")).append("\"):dataField.getField(\"");
       text.append(getData("ColumnNameInp")).append("\")));\n");

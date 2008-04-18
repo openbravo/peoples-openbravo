@@ -140,6 +140,31 @@ a.Main_ToolBar_Button:active {
   -moz-outline-style: none;
 }
 
+/* Buttons definition for ToolBar */
+a.Main_ToolBar_Button_Selected {
+  display:block;
+  margin-left:0px;
+  margin-right:0px;
+  width:26px;
+  height:26px;
+  border:0px;
+  vertical-align: middle;
+  -moz-outline-style: none;
+  background: url(button.selected.png) no-repeat center center;
+}
+
+a.Main_ToolBar_Button_Selected:visited { 
+}
+
+a.Main_ToolBar_Button_Selected:hover {
+  background: url(button.selected.rollover.png) no-repeat center center;
+}
+
+a.Main_ToolBar_Button_Selected:active {
+  background: url(button.pressed.png) no-repeat center center;
+  -moz-outline-style: none;
+}
+
 
 
 
@@ -242,4 +267,8 @@ a.Main_ToolBar_Button:active {
 
 .Main_ToolBar_Button_Icon_RelatedInfo {
   background: url(iconRelatedInfo.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Audit {
+  background: url(iconAudit.png) no-repeat center center;
 }

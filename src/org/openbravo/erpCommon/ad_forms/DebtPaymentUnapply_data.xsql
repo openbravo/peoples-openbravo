@@ -45,12 +45,16 @@
       AND c_debt_payment.ispaid = 'Y'
       AND c_debt_payment.c_cashline_id IS NULL
       AND c_debt_payment.c_bankstatementline_id IS NULL
+      AND c_debt_payment.AD_ORG_ID IN ('1')
+      AND c_debt_payment.AD_CLIENT_ID IN ('1') 
       ORDER BY c_debt_payment.DATEPLANNED
       ]]></Sql>
    <Field name="rownum" value="count"/>
    <Parameter name="language"/>
    <Parameter name="language"/>
    <Parameter name="language"/>
+   <Parameter name="adOrgClient" type="replace" optional="true" after="AND c_debt_payment.AD_ORG_ID IN (" text="'1'"/>
+   <Parameter name="adUserClient" type="replace" optional="true" after="AND c_debt_payment.AD_CLIENT_ID IN (" text="'1'"/>   
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

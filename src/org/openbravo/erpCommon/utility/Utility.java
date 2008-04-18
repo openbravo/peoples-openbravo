@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.utility;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.reference.*;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -174,7 +175,8 @@ public class Utility {
   }
 
   /**
-   * Gets a value from the context.
+   * Gets a value from the context. For client 0 is always added (used for references), to check if it must by added
+   * or not use the getContext with accesslevel method.
    * 
    * @param conn: Handler for the database connection.
    * @param vars: Handler for the session info.
@@ -196,17 +198,140 @@ public class Utility {
         if (context.equalsIgnoreCase("#Date")) return DateTimeData.today(conn);
       } catch (ServletException e) {}
       retValue = vars.getSessionValue(context);
-      if (context.equalsIgnoreCase("#User_Org") || context.equalsIgnoreCase("#User_Client")) {
+      
+      String userLevel = vars.getSessionValue("#User_Level");
+      
+      if (context.equalsIgnoreCase("#AccessibleOrgTree") || context.equalsIgnoreCase("#User_Org") ) {
+        if (userLevel.contains("S")||userLevel.equals(" C ")) return "0"; //force org *
+        
+        if (userLevel.equals("  O")) { // remove *
+          if (retValue.equals("0")) 
+            retValue="";
+          else if (retValue.startsWith("0,"))
+            retValue = retValue.substring(2);
+          else
+            retValue = retValue.replace(",0","");
+        } else { // add *
+          if (!retValue.equals("0") && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {// Any: current list and *
+            retValue = "0" + (retValue.equals("")?"":",") + retValue;
+          }
+        }
+      }
+      
+      if (context.equalsIgnoreCase("#User_Client")) {
         if (retValue!="0" && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {
           retValue = "0" + (retValue.equals("")?"":",") + retValue;
         }
-        log4j.debug("getContext(" + context + "):.. " + retValue);
       }
     }
 
     return retValue;
   }
+  
+  /**
+   * Gets a value from the context.
+   * Access level values:
+   * 1  Organization
+   * 3  Client/Organization
+   * 4  System only
+   * 6  System/Client
+   * 7  All
+   * @param conn: Handler for the database connection.
+   * @param vars: Handler for the session info.
+   * @param context: String with the parameter to search.
+   * @param window: String with the window id.
+   * @param accessLevel
+   * @return String with the value.
+   */
+  public static String getContext(ConnectionProvider conn, VariablesSecureApp vars, String context, String window, int accessLevel) {
+    if (context==null || context.equals("")) throw new IllegalArgumentException("getContext - require context");
+    String retValue="";
 
+    if (!context.startsWith("#") && !context.startsWith("$")) {
+      retValue = getPreference(vars, context, window);
+      if (!window.equals("") && retValue.equals("")) retValue = vars.getSessionValue(window + "|" + context);
+      if (retValue.equals("")) retValue = vars.getSessionValue("#" + context);
+      if (retValue.equals("")) retValue = vars.getSessionValue("$" + context);
+    } else {
+      try {
+        if (context.equalsIgnoreCase("#Date")) return DateTimeData.today(conn);
+      } catch (ServletException e) {}
+      
+      retValue = vars.getSessionValue(context);
+      
+      String userLevel = vars.getSessionValue("#User_Level");
+      if (context.equalsIgnoreCase("#AccessibleOrgTree") || context.equalsIgnoreCase("#User_Org") ) {
+        if (accessLevel==4||accessLevel==6) return "0"; //force to be org *
+      
+        if ((accessLevel==1) || (userLevel.equals("  O"))) { //No *: remove 0 from current list
+          if (retValue.equals("0")) 
+            retValue="";
+          else if (retValue.startsWith("0,"))
+            retValue = retValue.substring(2);
+          else
+            retValue = retValue.replace(",0","");
+        } else {// Any: add 0 to current list 
+          if (!retValue.equals("0") && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {// Any: current list and *
+            retValue = "0" + (retValue.equals("")?"":",") + retValue;
+          } 
+        }
+      }
+      
+      if (context.equalsIgnoreCase("#User_Client")) {
+        if (accessLevel==4) {
+          if (userLevel.contains("S")) return "0"; //force client 0
+          else return "";
+        }
+        
+        if ((accessLevel==1)||(accessLevel==3))  { //No 0
+          if (userLevel.contains("S")) return "";
+          if (retValue.equals("0")) 
+            retValue="";
+          else if (retValue.startsWith("0,"))
+            retValue = retValue.substring(2);
+          else
+            retValue = retValue.replace(",0","");
+        } else if (userLevel.contains("S")){ //Any: add 0
+          if (retValue!="0" && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {
+            retValue = "0" + (retValue.equals("")?"":",") + retValue;
+          }
+        }
+      }
+    }
+    log4j.debug("getContext(" + context + "):.. " + retValue);
+    return retValue;
+   }
+
+  /**
+   * Returns the list of referenceables organizations from the current one. 
+   * This includes all its ancestors and descendants. 
+   * @param vars
+   * @param currentOrg
+   * @return
+   */
+  public static String getReferenceableOrg(VariablesSecureApp vars, String currentOrg) {
+    OrgTree tree = (OrgTree) vars.getSessionObject("#CompleteOrgTree");
+    return tree.getLogicPath(currentOrg).toString();
+  }
+  
+  /**
+   * Returns the organization list for selectors, two cases are possible: <br>
+   *   <li>Organization is empty (null or ""): accessible list of organizations will be returned. 
+   *   This case is used in calls from filters to selectors.
+   *   <li>Organization is not empty: referenceable from current organization list of organizations will be returned.
+   *   This is the way it is called from wad windows. 
+   *   
+   * @param conn: Handler for the database connection
+   * @param vars
+   * @param currentOrg
+   * @return
+   */
+  public static String  getSelectorOrgs(ConnectionProvider conn, VariablesSecureApp vars, String currentOrg) {
+    if ((currentOrg == null) || (currentOrg.equals("")))
+       return getContext(conn, vars, "#AccessibleOrgTree", "Selectors");
+    else
+      return getReferenceableOrg(vars, currentOrg);
+  }
   /**
    * Gets a default value.
    * 
@@ -814,4 +939,131 @@ public class Utility {
   public String getServletInfo() {
     return "This servlet add some functions";
   }
+
+  
+  /**
+   * Checks if an element is in a list. List is an string like "(e1, e2, e3,...)" where en are elements. 
+   * It is inteeded to be used for checking user client and organizations.
+   * 
+   * @param strList: List to check in
+   * @param strClient: Element to check in the list
+   * @return true in case the element is in the list
+   */
+  public static boolean isElementInList(String strList, String strElement){
+    strList = strList.replace("(", "").replace(")", "");
+    StringTokenizer st = new StringTokenizer(strList, ",", false);
+    
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken().trim();
+      if (token.equals(strElement)) return true;
+    }
+    return false;
+  }
+  
+  @Deprecated
+  public static boolean hasFormAccess (ConnectionProvider conn, VariablesSecureApp vars, String process) {
+  	return hasFormAccess (conn, vars, process, "");
+  }
+	   
+  @Deprecated
+  public static boolean hasFormAccess (ConnectionProvider conn, VariablesSecureApp vars, String process, String processName) {
+  	try {
+  		if (process.equals("") && processName.equals("")) return true;
+  		else if (!process.equals("")) {
+	  
+  		if (!WindowAccessData.hasFormAccess(conn, vars.getRole(), process)) return false;
+  		} else {
+  			if (!WindowAccessData.hasFormAccessName(conn, vars.getRole(), processName)) return false;
+  		}
+  	} catch (ServletException e) {
+  		return false;
+	  }
+	  	return true;
+  }
+	   
+  @Deprecated
+  public static boolean hasProcessAccess (ConnectionProvider conn, VariablesSecureApp vars, String process) {
+  	return hasProcessAccess (conn, vars, process, "");
+  }
+	   
+  @Deprecated
+  public static boolean hasProcessAccess (ConnectionProvider conn, VariablesSecureApp vars, String process, String processName) {
+  	try {
+  		if (process.equals("") && processName.equals("")) return true;
+  		else if (!process.equals("")) {
+  			if (!WindowAccessData.hasProcessAccess(conn, vars.getRole(), process)) return false;
+  		} else {
+  			if (!WindowAccessData.hasProcessAccessName(conn, vars.getRole(), processName)) return false;
+  		}
+  	} catch (ServletException e) {
+  		return false;
+	  }
+	  return true;
+  }
+	   
+  @Deprecated
+  public static boolean hasTaskAccess (ConnectionProvider conn, VariablesSecureApp vars, String task) {
+  	return hasTaskAccess(conn, vars, task, "");
+	}
+	   
+  @Deprecated
+	public static boolean hasTaskAccess (ConnectionProvider conn, VariablesSecureApp vars, String task, String taskName) {
+	  try {
+	  	if (task.equals("") && taskName.equals("")) return true;
+	  	else if (!task.equals("")) {
+	  		if (!WindowAccessData.hasTaskAccess(conn, vars.getRole(), task)) return false;
+	  	} else if (!WindowAccessData.hasTaskAccessName(conn, vars.getRole(), taskName)) return false;
+	  } catch (ServletException e) {
+	  	return false;
+	  }
+	  return true;
+	}
+	   
+  @Deprecated
+	public static boolean hasWorkflowAccess (ConnectionProvider conn, VariablesSecureApp vars, String workflow) {
+	  try {
+	  	if (workflow.equals("")) return true;
+	  	else {
+	  		if (!WindowAccessData.hasWorkflowAccess(conn, vars.getRole(), workflow)) return false;
+	  	}
+	  } catch (ServletException e) {
+	  	return false;
+	  }
+	  return true;
+	}
+	   
+  @Deprecated
+	public static boolean hasAccess (ConnectionProvider conn, VariablesSecureApp vars, String TableLevel, String AD_Client_ID, String AD_Org_ID, String window, String tab) {
+	  String command = vars.getCommand();
+	  try {
+	  	if (!canViewInsert(conn, vars, TableLevel, window)) return false;
+	  	else if (!WindowAccessData.hasWindowAccess(conn, vars.getRole(), window)) return false;
+	  	else if (WindowAccessData.hasNoTableAccess(conn, vars.getRole(), tab)) return false;
+	  	else if (command.toUpperCase().startsWith("SAVE")) {
+	  		if (!canUpdate (conn, vars, AD_Client_ID, AD_Org_ID, window)) return false;
+	  	} else if (command.toUpperCase().startsWith("DELETE")) {
+	  		if (!canUpdate (conn, vars, AD_Client_ID, AD_Org_ID, window)) return false;
+	  	}
+	  } catch (ServletException e) {
+	  	return false;
+	  }
+	  return true;
+	}
+	  
+  @Deprecated
+	public static boolean canViewInsert(ConnectionProvider conn, VariablesSecureApp vars, String TableLevel, String window) {
+		String User_Level = getContext(conn, vars, "#User_Level", window);
+		   
+		boolean retValue = true;
+		   
+		if (TableLevel.equals("4") && User_Level.indexOf("S") == -1) retValue = false;
+		else if (TableLevel.equals("1") && User_Level.indexOf("O") == -1) retValue = false;
+		else if (TableLevel.equals("3") && (!(User_Level.indexOf("C")!=-1 || User_Level.indexOf("O")!=-1)) ) retValue = false;
+		else if (TableLevel.equals("6") && (!(User_Level.indexOf("S")!=-1 || User_Level.indexOf("C")!=-1)) ) retValue = false;
+		   
+		if (retValue) return retValue;
+		   
+		return retValue;
+	}
+
 }

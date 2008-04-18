@@ -32,6 +32,7 @@
   <FIELD id="fieldMethod1">htmltext</FIELD>
   <FIELD id="fieldMethod2">htmltexttrl</FIELD>
   <FIELD id="fieldSelectFields1">xmltext</FIELD>
+  <FIELD id="fieldOrgCode">orgcode</FIELD>
   <FIELD id="fieldSelectFields2">xmltexttrl</FIELD>
   <FIELD id="fieldReference1">reference</FIELD>
   <FIELD id="fieldColumnName1">name</FIELD>

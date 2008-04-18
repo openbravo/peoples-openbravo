@@ -195,7 +195,7 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
     xmlDocument.setParameter("windowPath", FormatUtilities.replace(windowNameEnUS) + "/" + FormatUtilities.replace(tabNameEnUS) + "_Edition.html");
     
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "Expenseinvoice", (strCommand.equals("NEW") || (data==null || data.length==0)), "document.frmMain.inpcInvoiceId", "", "", "".equals("Y"), "ExpenseInvoice", strReplaceWith, true);
-    toolbar.prepareEditionTemplate("N".equals("Y"), false, vars.getSessionValue("#ShowTest", "N").equals("Y"), "N".equals("Y"));
+    toolbar.prepareEditionTemplate("N".equals("Y"), false, vars.getSessionValue("#ShowTest", "N").equals("Y"), "N".equals("Y"), false);
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {

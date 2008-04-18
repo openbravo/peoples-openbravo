@@ -1,43 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <AD_ALERTRULE AD_ALERTRULE_ID="800001" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-05-21 10:34:58.0" CREATEDBY="100" UPDATED="2007-05-23 10:50:26.0" UPDATEDBY="100" NAME="Not used TextInterfaces" AD_TAB_ID="800167" TYPE="D">
-    <SQL><![CDATA[select ad_textinterfaces_id as referencekey_id,
-       substr(text,1,20) as record_id,
-       0 as ad_role_id,
-       null as ad_user_id,
-       'Not used textinterface' as description,
-       'Y' as isActive,
-        0 as ad_org_id, 
-        0 as ad_client_id, 
-        now() as created,  
-        0 as createdBy,  
-        now() as updated,
-        0 as updatedBy
-from ad_textinterfaces
-          where ad_textinterfaces_id in( select ad_textinterfaces_id
-          from ad_textinterfaces_trl
-    where trunc(updated) <(select max(trunc(updated))
-                          from ad_textinterfaces_trl))]]></SQL>
-  </AD_ALERTRULE>
-  <AD_ALERTRULE AD_ALERTRULE_ID="800002" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2007-06-19 11:49:05.0" CREATEDBY="100" UPDATED="2007-06-19 11:49:05.0" UPDATEDBY="100" NAME="Tabs of a window with same seqno" AD_TAB_ID="106" TYPE="D">
-    <SQL><![CDATA[SELECT AA.AD_WINDOW_ID AS REFERENCEKEY_ID,
-       W.NAME AS RECORD_ID,
-       0 AS AD_ROLE_ID,
-       NULL AS AD_USER_ID,
-       'The window ' || W.NAME || ' has tabs with the same sequence number.' AS DESCRIPTION,
-       'Y' AS ISACTIVE,
-       0 AS AD_ORG_ID,
-       0 AS AD_CLIENT_ID,
-       now() AS CREATED,
-       0 AS CREATEDBY,
-       now() AS UPDATED,
-       0 AS UPDATEDBY
-FROM (SELECT COUNT(*), AD_WINDOW_ID
-FROM AD_TAB
-GROUP BY AD_WINDOW_ID, SEQNO
-HAVING COUNT(*) > 1) AA, AD_WINDOW w
-WHERE w.AD_WINDOW_ID = AA.AD_WINDOW_ID]]></SQL>
-  </AD_ALERTRULE>
   <AD_ALERTRULE AD_ALERTRULE_ID="800003" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2007-08-06 17:39:54.0" CREATEDBY="100" UPDATED="2007-08-06 17:39:54.0" UPDATEDBY="100" NAME="Columns with search reference and reference value null" AD_TAB_ID="101" TYPE="D">
     <SQL><![CDATA[SELECT AD_COLUMN_ID AS referencekey_id, TABLENAME || ' - ' || COLUMNNAME AS RECORD_ID, 0 AS AD_ROLE_ID, NULL AS AD_USER_ID,
   'The column ' || COLUMNNAME || ' in table ' || TABLENAME || ' is referenced as search and doesn''t have an associated reference value while having active updateable fields.' AS DESCRIPTION,

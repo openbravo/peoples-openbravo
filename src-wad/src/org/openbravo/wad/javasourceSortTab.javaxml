@@ -40,6 +40,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   protected static final String windowId = "<PARAMETER_TMP id="windowId">Almacen</PARAMETER_TMP>";
   protected static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
   protected static final double SUBTABS_COL_SIZE = 15;
+  protected static final int accesslevel = <PARAMETER_TMP id="accessLevel">xx</PARAMETER_TMP>;
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -128,7 +129,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   }
 
   <PARAMETER_TMP id="parent">  void refreshParentSession(VariablesSecureApp vars, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>) throws IOException,ServletException {
-      <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data[] data = <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectEdit(this, vars.getLanguage(), strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP><PARAMETER_TMP id="grandfather">, vars.getSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>")</PARAMETER_TMP>);
+      <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data[] data = <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectEdit(this, vars.getLanguage(), strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP><PARAMETER_TMP id="grandfather">, vars.getSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>")</PARAMETER_TMP>, Utility.getContext(this, vars, "#User_Client", windowId, accesslevel), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel));
       if (data==null || data.length==0) return;
       <FIELDS_TMP id="sectionDetailParentSession">    vars.setSessionValue(windowId + "|<FIELD_TMP id="fieldRealName8">claveAlmacen</FIELD_TMP>", data[0].<FIELD_TMP id="fieldName8">claveAlmacen</FIELD_TMP>);</FIELDS_TMP>
       <LISTS_TMP id="sectionDetailParentParams">      
@@ -142,9 +143,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument=null;
 
-      <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", windowId)<PARAMETER_TMP id="org">, Utility.getContext(this, vars, "#User_Org", windowId)</PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+      <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", windowId, accesslevel)<PARAMETER_TMP id="org">, Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
 
-      <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data2 = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectNotShown(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", windowId)<PARAMETER_TMP id="org">, Utility.getContext(this, vars, "#User_Org", windowId)</PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+      <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data2 = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectNotShown(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", windowId, accesslevel)<PARAMETER_TMP id="org">, Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
 
       String[] discard={"isNotTest"};
       if (vars.getSessionValue("#ShowTest", "N").equals("Y")) discard[0] = new String("isTest");

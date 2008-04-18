@@ -31,7 +31,7 @@ public class LoginUtils {
     
     public static boolean fillSessionArguments(ConnectionProvider conn, VariablesSecureApp vars, String strUserAuth, String strLanguage, String strRol, String strCliente, String strOrg, String strAlmacen)  throws ServletException {
 
-         // Check session options
+         // Check session options 
         if (!RoleComboData.isUserRole(conn, strUserAuth, strRol)) {
             log4j.error("Login role is not in user roles list");
             log4j.error("User: " + strUserAuth);
@@ -61,6 +61,18 @@ public class LoginUtils {
         vars.setSessionValue("#M_Warehouse_ID", strAlmacen);
 
         vars.setSessionValue("#StdPrecision", "2");    
+        
+        //Organizations tree
+        try {
+          OrgTree tree = new OrgTree(conn, strCliente);
+          vars.setSessionObject("#CompleteOrgTree", tree);
+          OrgTree accessibleTree = tree.getAccessibleTree(conn, strRol); 
+          vars.setSessionValue("#AccessibleOrgTree", accessibleTree.toString());
+        } catch (Exception e) {
+          log4j.warn("Error while setting Organzation tree to session " + e);
+          return false;
+        }
+        
 
         try {
           SeguridadData[] data = SeguridadData.select(conn, strRol, strUserAuth);
@@ -72,6 +84,7 @@ public class LoginUtils {
           vars.setSessionValue("#Approval_Amt", data[0].amtapproval);
           vars.setSessionValue("#Client_Value", data[0].value);
           vars.setSessionValue("#Client_SMTP", data[0].smtphost);
+                   
           data=null;
           AttributeData[] attr = AttributeData.select(conn, Utility.getContext(conn, vars, "#User_Client", "LoginHandler"), Utility.getContext(conn, vars, "#User_Org", "LoginHandler"));
           if (attr!=null && attr.length>0) {
@@ -108,7 +121,7 @@ public class LoginUtils {
           vars.setSessionValue("#Date", Utility.getContext(conn, vars, "#Date", "LoginHandler"));
           vars.setSessionValue("#ShowTrl", Utility.getPreference(vars, "ShowTrl", ""));
           vars.setSessionValue("#ShowAcct", Utility.getPreference(vars, "ShowAcct", ""));
-          vars.setSessionValue("#ShowAudit", Utility.getPreference(vars, "ShowAudit", ""));
+          vars.setSessionValue("#ShowAudit", Utility.getPreference(vars, "ShowAuditDefault", ""));
           SystemPreferencesData[] dataSystem = SystemPreferencesData.select(conn);
           if (dataSystem!=null && dataSystem.length>0) {
             vars.setSessionValue("#RecordRange", dataSystem[0].tadRecordrange);

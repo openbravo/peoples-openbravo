@@ -62,12 +62,16 @@
         and upper(coalesce(description,' ')) like upper(?)
         and upper(documentno) like upper(?)
         and coalesce(IsTemplate,'N') = 'Y'
+        AND AD_ORG_ID IN ('1')
+        AND AD_CLIENT_ID IN ('1') 
         AND 1=1 
       ]]>
     </Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="description"/>
     <Parameter name="documentno"/>
+    <Parameter name="adOrgClient" type="replace" optional="true" after="AND AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1 "><![CDATA[AND datetrx >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1 "><![CDATA[AND datetrx < TO_DATE(?)]]></Parameter>
   </SqlMethod>

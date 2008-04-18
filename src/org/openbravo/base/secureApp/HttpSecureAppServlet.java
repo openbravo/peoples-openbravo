@@ -244,8 +244,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
       if (vars1.getRole().equals("") || hasAccess(vars1))
         super.serviceInitialized(request,response);
-      else
-        bdError(response, "AccessTableNoView", vars1.getLanguage());
+      else  {
+       if ((strPopUp!=null && !strPopUp.equals(""))||(classInfo.type.equals("S")))  
+         bdErrorGeneralPopUp(response, Utility.messageBD(this, "Error", variables.getLanguage()), Utility.messageBD(this, "AccessTableNoView", variables.getLanguage()));
+       else bdError(response, "AccessTableNoView", vars1.getLanguage());
+      }
     } catch (ServletException ex) {
       log4j.error("Error captured: " + ex);
       ex.printStackTrace();
@@ -272,14 +275,19 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
    */
   protected boolean hasGeneralAccess(VariablesSecureApp vars, String type, String id){
     try {
-      if (type.equals("W"))
-        return hasLevelAccess(vars,AccessData.selectAccessLevel(this, type, id))
+      String accessLevel = AccessData.selectAccessLevel(this, type, id);
+      vars.setSessionValue("#CurrentAccessLevel", accessLevel);
+      if (type.equals("W")) {
+        return hasLevelAccess(vars, accessLevel)
             && AccessData.selectAccess(this, vars.getRole(), "TABLE", id).equals("0")
             && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
+      } else if (type.equals("S")) {
+        return !AccessData.selectAccessSearch(this, vars.getRole(), id).equals("0");
+      }
       else if (type.equals("S")||type.equals("C")||type.equals("P"))
         return true;
       else
-        return hasLevelAccess(vars,AccessData.selectAccessLevel(this, type, id))
+        return hasLevelAccess(vars, accessLevel)
             && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
     } catch (Exception e) {
       log4j.error("Error checking access: " + e.toString());

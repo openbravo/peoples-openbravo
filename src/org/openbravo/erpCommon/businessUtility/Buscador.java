@@ -48,8 +48,12 @@ public class Buscador extends HttpSecureAppServlet {
       String strWindow = vars.getRequiredStringParameter("inpWindow");
       String strWindowId = vars.getStringParameter("inpWindowId");
       String strIsSOTrx = vars.getSessionValue(strWindowId + "|issotrxtab");
-      BuscadorData[] data = BuscadorData.select(this, vars.getLanguage(), strTab);
-      if (data==null || data.length==0) data = BuscadorData.selectIdentifiers(this, vars.getLanguage(), strTab);
+      String strShowAudit = Utility.getContext(this, vars, "ShowAudit", strWindowId);
+      BuscadorData[] data;
+      
+      if (!BuscadorData.hasSelectionColumns(this,strTab).equals("0")) data = BuscadorData.select(this, vars.getLanguage(), strTab, strShowAudit);
+      else data = BuscadorData.selectIdentifiers(this, vars.getLanguage(), strTab, strShowAudit);
+      
       if (data==null || data.length==0) {
         if (log4j.isDebugEnabled()) log4j.debug("there're no selection columns and no identifiers defined for this table");
         bdError(response,"SearchNothing" ,vars.getLanguage());
@@ -295,7 +299,7 @@ public class Buscador extends HttpSecureAppServlet {
           throw new ServletException(ex);
         }
         strHtml.append("</select>\n");
-      } else if (fields[i].reference.equals("15")) { //DATE
+      } else if (fields[i].reference.equals("15") || fields[i].reference.equals("16")) { //DATE || Date-time
         scriptCalendar = true;
         strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");
         strHtml.append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\"  style=\"padding-top: 0px;\">\n");
@@ -471,7 +475,7 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("<SPAN class=\"missing\" style=\"display: none;\">* This value is required.</SPAN>");
           strHtml.append("<SPAN class=\"range\" style=\"display: none;\">* This value is out of range.</SPAN>");
           strHtml.append("</td>");
-        } else if (fields[i].reference.equals("15")) { //DATE
+        } else if (fields[i].reference.equals("15")||fields[i].reference.equals("16")) { //DATE
           strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");
           strHtml.append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\"  style=\"padding-top: 0px;\">\n");
           strHtml.append("<tr>\n");

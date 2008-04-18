@@ -31,6 +31,7 @@ public class VariablesSecureApp extends VariablesBase {
   private String javaDateFormat;
   private String jsDateFormat;
   private String sqlDateFormat;
+  private String accessLevel;
 
   public VariablesSecureApp(String strUser, String strClient, String strOrganization) {
     this.user = strUser;
@@ -47,28 +48,20 @@ public class VariablesSecureApp extends VariablesBase {
     this.javaDateFormat = "";
     this.jsDateFormat = "";
     this.sqlDateFormat = "";
+    this.accessLevel = "";
   }
 
   public VariablesSecureApp(HttpServletRequest request) {
     super(request);
-    this.user = getSessionValue("#AD_User_ID");
-    this.role = getSessionValue("#AD_Role_ID");
-    this.language = getSessionValue("#AD_Language");
-    this.theme = getSessionValue("#Theme");
-    this.client = getSessionValue("#AD_Client_ID");
-    this.organization = getSessionValue("#AD_Org_ID");
-    this.userClient = getSessionValue("#User_Client");
-    this.userOrganization = getSessionValue("#User_Org");
-    this.warehouse = getSessionValue("#M_Warehouse_ID");
-    this.dbSessionID = getSessionValue("#AD_Session_ID");
-    this.command = getStringParameter("Command", "DEFAULT");
-    this.javaDateFormat = getSessionValue("#AD_JavaDateFormat");
-    this.jsDateFormat = getSessionValue("#AD_JsDateFormat");
-    this.sqlDateFormat = getSessionValue("#AD_SqlDateFormat");
+    setValues();
   }
   
   public VariablesSecureApp(HttpServletRequest request, boolean f) {
     super(request,f);
+    setValues(); 
+  }
+  
+  private void setValues(){
     this.user = getSessionValue("#AD_User_ID");
     this.role = getSessionValue("#AD_Role_ID");
     this.language = getSessionValue("#AD_Language");
@@ -83,6 +76,7 @@ public class VariablesSecureApp extends VariablesBase {
     this.javaDateFormat = getSessionValue("#AD_JavaDateFormat");
     this.jsDateFormat = getSessionValue("#AD_JsDateFormat");
     this.sqlDateFormat = getSessionValue("#AD_SqlDateFormat");
+    this.accessLevel = getSessionValue("#CurrentAccessLevel");
   }
 
   public String getUser() {
@@ -114,8 +108,9 @@ public class VariablesSecureApp extends VariablesBase {
   }
 
   public String getUserOrg() {
-    return userOrganization;
+    return getSessionValue("#AccessibleOrgTree");
   }
+  
 
   public String getWarehouse() {
     return warehouse;
@@ -127,6 +122,10 @@ public class VariablesSecureApp extends VariablesBase {
 
   public String getCommand() {
     return command;
+  }
+  
+  public String getAccessLevel() {
+    return accessLevel;
   }
 
   public boolean commandIn(String inKey1) {

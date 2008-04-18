@@ -98,6 +98,7 @@ public class ModelSQLGeneration {
     Vector<Properties> filters = tableSQL.getFilteredStructure("IsSelectionColumn", "Y");
     if (filters==null || filters.size()==0) filters = tableSQL.getFilteredStructure("IsIdentifier", "Y");
     if (filters==null || filters.size()==0) return result;
+    tableSQL.addAuditFields(filters);
     if (isNewFilter) {
       for (Enumeration<Properties> e = filters.elements();e.hasMoreElements();) {
         Properties prop = e.nextElement();

@@ -91,11 +91,13 @@
         WHERE p.C_BPartner_ID = bpclient.C_BPartner_ID
           AND p.AD_Org_ID = org.AD_Org_ID
           AND p.AD_Org_ID IN ('1')
+          AND p.AD_Client_ID IN ('1')
           AND 1=1
         ORDER BY orgname, partner, initdate
       ]]>
     </Sql>
     <Parameter name="org" optional="true" type="replace" after="AND p.AD_Org_ID IN (" text="'1'"/>
+    <Parameter name="client" optional="true" type="replace" after="AND p.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND p.Datecontract > to_date(?) ]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND p.Datecontract < to_date(?) ]]></Parameter>
     <Parameter name="projecttype" optional="true" after="AND 1=1"><![CDATA[ AND p.C_Projecttype_ID = TO_NUMBER(?) ]]></Parameter>

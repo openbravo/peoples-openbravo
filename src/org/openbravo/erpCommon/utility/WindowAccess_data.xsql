@@ -18,19 +18,174 @@
  ************************************************************************
 -->
 
+  
+ 
 <SqlClass name="WindowAccessData" package="org.openbravo.erpCommon.utility">
   <SqlClassComment></SqlClassComment>
+  
+	<SqlMethod name="hasWindowAccess" type="preparedStatement" return="boolean">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql>
+			select Count(*) AS TOTAL
+			FROM AD_Window_Access
+			WHERE AD_Role_ID = ?
+			AND AD_Window_ID = ?
+			AND IsActive = 'Y'
+		</Sql>
+		<Parameter name="adRoleId"/>
+		<Parameter name="adWindowId"/>
+	</SqlMethod>
+	
+	<SqlMethod name="hasNoTableAccess" type="preparedStatement" return="boolean">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql>
+			select Count(*) AS TOTAL
+			FROM AD_Table_Access t, AD_Tab tb
+			WHERE t.AD_Table_ID = tb.AD_Table_ID
+			AND t.AD_Role_ID = ?
+			AND tb.AD_Tab_ID = ?
+			AND t.IsActive = 'Y'
+			AND t.IsExclude = 'Y'
+		</Sql>
+		<Parameter name="adRoleId"/>
+		<Parameter name="adTabId"/>
+	</SqlMethod>
+	
+	 <SqlMethod name="hasReadOnlyAccess" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT COUNT(*) AS TOTAL
+      FROM (
+         SELECT 1 
+           FROM AD_Table_Access t, 
+                AD_Tab tb
+          WHERE t.AD_Table_ID = tb.AD_Table_ID
+            AND t.AD_Role_ID = ?
+            AND tb.AD_Tab_ID = ?
+            AND t.IsActive = 'Y'
+            AND t.IsExclude = 'N'
+            AND t.IsReadOnly = 'Y'
+        UNION
+        SELECT 1
+          FROM AD_Window_Access w,
+               AD_Tab t
+         WHERE w.IsActive='Y'
+           AND w.AD_Window_ID = t.AD_Window_ID
+           AND w.AD_Role_ID = ?
+           AND t.AD_Tab_ID = ?
+           AND w.isReadWrite = 'N'
+           AND w.isActive='Y')
+    </Sql>
+    <Parameter name="adRoleId"/>
+    <Parameter name="adTabId"/>
+    <Parameter name="adRoleId"/>
+    <Parameter name="adTabId"/>
+  </SqlMethod>
+  
+	<SqlMethod name="hasProcessAccess" type="preparedStatement" return="boolean">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql>
+			select Count(*) AS TOTAL
+			FROM AD_Process_Access
+			WHERE AD_Role_ID = ?
+			AND AD_Process_ID = ?
+			AND IsActive = 'Y'
+		</Sql>
+		<Parameter name="adRoleId"/>
+		<Parameter name="adProcessId"/>
+	</SqlMethod>
+	
+	<SqlMethod name="hasProcessAccessName" type="preparedStatement" return="boolean">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql>
+			select Count(*) AS TOTAL
+			FROM AD_Process_Access a, AD_Process p
+			WHERE a.AD_Role_ID = ?
+			AND a.AD_Process_ID = p.AD_Process_ID
+			AND UPPER(p.Value) = UPPER(?)
+			AND a.IsActive = 'Y'
+		</Sql>
+		<Parameter name="adRoleId"/>
+		<Parameter name="name"/>
+	</SqlMethod>
+	
+	<SqlMethod name="hasWorkflowAccess" type="preparedStatement" return="boolean">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql>
+			select Count(*) AS TOTAL
+			FROM AD_Workflow_Access
+			WHERE AD_Role_ID = ?
+			AND AD_Workflow_ID = ?
+			AND IsActive = 'Y'
+		</Sql>
+		<Parameter name="adRoleId"/>
+		<Parameter name="adWorkflowId"/>
+	</SqlMethod>
+	
+	<SqlMethod name="hasFormAccess" type="preparedStatement" return="boolean">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql>
+			select Count(*) AS TOTAL
+			FROM AD_Form_Access
+			WHERE AD_Role_ID = ?
+			AND AD_Form_ID = ?
+			AND IsActive = 'Y'
+		</Sql>
+		<Parameter name="adRoleId"/>
+		<Parameter name="adFormId"/>
+	</SqlMethod>
+	
+	<SqlMethod name="hasFormAccessName" type="preparedStatement" return="boolean">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql>
+			select Count(*) AS TOTAL
+			FROM AD_Form_Access a, AD_Form f
+			WHERE a.AD_Role_ID = ?
+			AND a.AD_Form_ID = f.AD_Form_ID
+			AND UPPER(f.ClassName) = UPPER(?)
+			AND a.IsActive = 'Y'
+		</Sql>
+		<Parameter name="adRoleId"/>
+		<Parameter name="name"/>
+	</SqlMethod>
+	
+	<SqlMethod name="hasTaskAccess" type="preparedStatement" return="boolean">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql>
+			select Count(*) AS TOTAL
+			FROM AD_Task_Access
+			WHERE AD_Role_ID = ?
+			AND AD_Task_ID = ?
+			AND IsActive = 'Y'
+		</Sql>
+		<Parameter name="adRoleId"/>
+		<Parameter name="adTaskId"/>
+	</SqlMethod>
+	
+	<SqlMethod name="hasTaskAccessName" type="preparedStatement" return="boolean">
+		<SqlMethodComment></SqlMethodComment>
+		<Sql>
+			select Count(*) AS TOTAL
+			FROM AD_Task t, AD_Task_Access ta
+			WHERE ta.AD_Role_ID = ?
+			AND t.AD_Task_ID = ta.AD_Task_ID
+			AND ta.IsActive = 'Y'
+			AND UPPER(t.ClassName) = UPPER(?)
+		</Sql>
+		<Parameter name="adRoleId"/>
+		<Parameter name="taskName"/>
+	</SqlMethod>
 
-   <SqlMethod name="hasWriteAccess" type="preparedStatement" return="boolean">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        select Count(*) AS TOTAL 
-        FROM AD_Window_Access 
-        WHERE AD_Window_ID = TO_NUMBER(?)
-        AND AD_Role_ID = TO_NUMBER(?) 
-        AND IsActive = 'Y' 
-      </Sql>
-      <Parameter name="adWindowId"/>
-      <Parameter name="adRoleId"/>
-   </SqlMethod>
+	<SqlMethod name="hasWriteAccess" type="preparedStatement" return="boolean">
+	   <SqlMethodComment></SqlMethodComment>
+	   <Sql>
+	     select Count(*) AS TOTAL 
+	     FROM AD_Window_Access 
+	     WHERE AD_Window_ID = TO_NUMBER(?)
+	     AND AD_Role_ID = TO_NUMBER(?) 
+	     AND IsActive = 'Y' 
+	   </Sql>
+	   <Parameter name="adWindowId"/>
+	   <Parameter name="adRoleId"/>
+	</SqlMethod>
 </SqlClass>
