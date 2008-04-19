@@ -3612,6 +3612,10 @@ dojo.declare("openbravo.widget.DataGrid.ViewPort", null,
          this.clearRows();
          return;
       }
+      try {
+        setGridRefreshing(true);
+      }
+      catch (e) {}
       this.isBlank = false;
       var viewPrecedesBuffer = this.buffer.startPos > startPos
       var contentStartPos = viewPrecedesBuffer ? this.buffer.startPos: startPos; 
@@ -3641,7 +3645,10 @@ dojo.declare("openbravo.widget.DataGrid.ViewPort", null,
            		onRefreshComplete[i]();
 			}
        }
-       
+      try {
+        setTimeout('setGridRefreshing(false);',50);
+      }
+      catch (e) {}
    },
 
 /**

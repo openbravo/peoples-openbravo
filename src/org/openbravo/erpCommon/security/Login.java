@@ -70,6 +70,7 @@ public class Login extends HttpBaseServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS").createXmlDocument();
 
     xmlDocument.setParameter("frameMenu", strMenu);
+    xmlDocument.setParameter("frameMenuLoading", strMenu);
     xmlDocument.setParameter("frame1", strDetalle);
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

@@ -44,20 +44,54 @@
   _width: 14px;
 }
 
-.tabTitle div {
+.tabTitle_background {
   display: block;
   margin-left: 13px;
   margin-right: 14px;
   background: url(titleFill.png) repeat-x top;
 }
 
-.tabTitle div span {
+.tabTitle_elements_container {
   display: block;
-  padding: 0px 21px 0px 10px;
+  padding: 5px 60px 0px 10px;
+  _padding: 0px 60px 0px 10px;
   margin-right: -14px;
   background: url(titleRight.png) no-repeat right top;
   height: 18px;
   _width: 14px;
+}
+
+.tabTitle_elements_text {
+}
+
+.tabTitle_elements_separator {
+  padding: 0px 0px 0px 10px;
+  _padding: 5x 0px 0px 10px;
+  position: absolute;
+}
+
+.tabTitle_elements_separator_icon {
+  background: url(tabTitle.separator.png) no-repeat center center;
+  width: 2px;
+  height: 19px;
+}
+
+.tabTitle_elements_image {
+  padding: 0px 0px 0px 20px;
+  _padding: 5px 0px 0px 20px;
+  position: absolute;
+}
+
+.tabTitle_elements_image_normal_icon {
+  background: url(icon.tabTitle.normal.gif) no-repeat center center;
+  width: 19px;
+  height: 19px;
+}
+
+.tabTitle_elements_image_processing_icon {
+  background: url(icon.tabTitle.processing.gif) no-repeat center center;
+  width: 19px;
+  height: 19px;
 }
 
 /*dojoTabcurrent*/

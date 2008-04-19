@@ -207,7 +207,21 @@ public class WindowTabs {
       Stack<WindowTabsData> aux = this.tabs.get(Integer.toString(i));
       if (aux==null) continue;
       if (!isFirst) text.append("</tr>\n<tr>\n");
-      if (isFirst) text.append("<td class=\"tabBackGroundInit\"><div><span class=\"tabTitle\"><div><span>").append(this.Title).append("</span></div></span></div></td></tr><tr><td class=\"tabBackGround\">");
+
+      if (isFirst) text.append("<td class=\"tabBackGroundInit\">\n");
+      if (isFirst) text.append("  <div>\n");
+      if (isFirst) text.append("  <span class=\"tabTitle\">\n");
+      if (isFirst) text.append("    <div class=\"tabTitle_background\">\n");
+      if (isFirst) text.append("      <span class=\"tabTitle_elements_container\">\n");
+      if (isFirst) text.append("        <span class=\"tabTitle_elements_text\">").append(this.Title).append("</span>\n");
+      if (isFirst) text.append("        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
+      if (isFirst) text.append("        <span class=\"tabTitle_elements_image\"><div class=\"tabTitle_elements_image_normal_icon\" id=\"TabStatusIcon\"></div></span>\n");
+      if (isFirst) text.append("      </span>\n");
+      if (isFirst) text.append("    </div>\n");
+      if (isFirst) text.append("  </span>\n");
+      if (isFirst) text.append("</div>\n");
+      if (isFirst) text.append("</td></tr><tr><td class=\"tabBackGround\">");
+
       else  text.append("<td class=\"tabBackGround\">");
       if (isFirst) text.append("  <div class=\"marginLeft\">\n");
       else {
@@ -260,7 +274,20 @@ public class WindowTabs {
     boolean hasParent = (this.level>0);
     Stack<WindowTabsData> aux = this.tabs.get(Integer.toString(this.level));
     if (aux==null) return text.toString();
-    if (!hasParent) text.append("<td class=\"tabBackGroundInit\"><div><span class=\"tabTitle\"><div><span>").append(this.Title).append("</span></div></span></div></td></tr><tr>");
+ 
+    if (!hasParent) text.append("<td class=\"tabBackGroundInit\">\n");
+    if (!hasParent) text.append("  <div>\n");
+    if (!hasParent) text.append("  <span class=\"tabTitle\">\n");
+    if (!hasParent) text.append("    <div class=\"tabTitle_background\">\n");
+    if (!hasParent) text.append("      <span class=\"tabTitle_elements_container\">\n");
+    if (!hasParent) text.append("        <span class=\"tabTitle_elements_text\">").append(this.Title).append("</span>\n");
+    if (!hasParent) text.append("        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
+    if (!hasParent) text.append("        <span class=\"tabTitle_elements_image\"><div class=\"tabTitle_elements_image_normal_icon\" id=\"TabStatusIcon\"></div></span>\n");
+    if (!hasParent) text.append("      </span>\n");
+    if (!hasParent) text.append("    </div>\n");
+    if (!hasParent) text.append("  </span>\n");
+    if (!hasParent) text.append("</div>\n");
+    if (!hasParent) text.append("</td></tr><tr>");
     text.append("<td class=\"tabBackGround\">\n");
     if (!hasParent) text.append("  <div class=\"marginLeft\">\n");
     else {

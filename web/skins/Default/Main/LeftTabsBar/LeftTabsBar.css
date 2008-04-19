@@ -161,6 +161,11 @@ a.Main_LeftTabsBar_ButtonRight:active .Main_LeftTabsBar_ButtonRight_Icon_edition
   background: url(iconEditView.selected.png) no-repeat center center;
 }
 
+.Main_LeftTabsBar_ButtonRight_Icon_edition_new_selected {
+  background: url(iconNewView.selected.png) no-repeat center center;
+}
+
+
 
 .Main_LeftTabsBar_ButtonRight_Icon_relation {
   background: url(iconRelationalView.normal.png) no-repeat center center;

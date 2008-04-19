@@ -36,6 +36,7 @@ var baseDirection = "../../../../../web/";
 <SCRIPT language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></SCRIPT>
+<SCRIPT language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
 <FIELD_TMP id="importJS"></FIELD_TMP>
@@ -75,6 +76,9 @@ END OLD KEY DEFINITION -->
     updateMenuIcon('buttonMenu');
     try {
       onloadClient();
+    } catch (e) {}
+    try {
+      setWindowEditing(false);
     } catch (e) {}
     setFocusFirstElement();
     buttonListShorcuts();

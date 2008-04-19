@@ -26,6 +26,8 @@
 @import url(./InfoBar/InfoBar.css);
 @import url(./Client/Client.css);
 @import url(./Calendar/Calendar.css);
+@import url(./Status/Status.css);
+
 
 
 * {margin: 0px; padding: 0px;}

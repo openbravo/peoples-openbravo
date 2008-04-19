@@ -1,0 +1,96 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+
+.Popup_Status_Loading_Container {
+  position: absolute;
+  overflow: none;
+  width: 100%;
+  height: 100%;
+  background-color: #505050;
+  text-align: center;
+  z-index: 99;
+}
+
+.Popup_Status_Loading_Elements_Container {
+  position: relative;
+  width: 100%;
+  top: 50%;
+  margin-top: -35px;
+
+}
+
+.Popup_Status_Loading_logo {
+  position: relative;
+  vertical-align: middle;
+  background: url(windowLoading.gif) no-repeat center center;
+}
+
+.Popup_Status_Loading_logo_dimension {
+  width: 70px;
+  height: 70px;
+}
+
+.Popup_Status_Loading_text {
+  color: #d4d4d4;
+  text-align: center;
+  font-weight: bold !important;
+  font-size: 11p !important;
+  padding-top: 10px;
+}
+
+
+
+
+.Popup_Status_Processing_Container {
+  position: absolute;
+  overflow: none;
+  width: 100%;
+  height: 100%;
+  background: url(processingBackground.png);
+  text-align: center;
+  z-index: 99;
+}
+
+.Popup_Status_Processing_Elements_Container {
+  position: relative;
+  width: 100%;
+  top: 50%;
+  margin-top: -35px;
+
+}
+
+.Popup_Status_Processing_logo {
+  position: relative;
+  vertical-align: middle;
+  background: url(windowLoading.gif) no-repeat center center;
+}
+
+.Popup_Status_Processing_logo_dimension {
+  width: 70px;
+  height: 70px;
+}
+
+.Popup_Status_Processing_text {
+  color: #d4d4d4;
+  text-align: center;
+  font-weight: bold !important;
+  font-size: 11p !important;
+  padding-top: 10px;
+}

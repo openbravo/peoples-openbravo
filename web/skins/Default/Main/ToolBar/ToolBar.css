@@ -153,6 +153,34 @@ a.Main_ToolBar_Button_Selected {
   background: url(button.selected.png) no-repeat center center;
 }
 
+
+/* Disabled buttons definition for ToolBar */
+a.Main_ToolBar_Button_disabled {
+  display:block;
+  margin-left:0px;
+  margin-right:0px;
+  width:26px;
+  height:26px;
+  border:0px;
+  vertical-align: middle;
+  cursor: default;
+  -moz-outline-style: none;
+}
+
+a.Main_ToolBar_Button_disabled:visited { 
+  cursor: default;
+}
+
+a.Main_ToolBar_Button_disabled:hover {
+  cursor: default;
+}
+
+a.Main_ToolBar_Button_disabled:active {
+  cursor: default;
+  -moz-outline-style: none;
+}
+
+/* Selected buttons definition for ToolBar */
 a.Main_ToolBar_Button_Selected:visited { 
 }
 
@@ -164,8 +192,6 @@ a.Main_ToolBar_Button_Selected:active {
   background: url(button.pressed.png) no-repeat center center;
   -moz-outline-style: none;
 }
-
-
 
 
 /* Icons definition for ToolBar */
@@ -268,6 +294,46 @@ a.Main_ToolBar_Button_Selected:active {
 .Main_ToolBar_Button_Icon_RelatedInfo {
   background: url(iconRelatedInfo.png) no-repeat center center;
 }
+
+
+
+.Main_ToolBar_Button_Icon_Save_Relation_disabled {
+  background: url(iconSaveAndRelation.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Save_New_disabled {
+  background: url(iconSaveAndNew.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Save_disabled {
+  background: url(iconSave.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Save_Next_disabled {
+  background: url(iconSaveAndNext.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Undo_disabled {
+  background: url(iconUndo.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_First_disabled {
+  background: url(iconFirst.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Previous_disabled {
+  background: url(iconPrevious.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Next_disabled {
+  background: url(iconNext.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Last_disabled {
+  background: url(iconLast.disabled.png) no-repeat center center;
+}
+
+
 
 .Main_ToolBar_Button_Icon_Audit {
   background: url(iconAudit.png) no-repeat center center;

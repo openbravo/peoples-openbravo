@@ -36,15 +36,14 @@ public class Menu extends HttpSecureAppServlet {
     }
     
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        
         VariablesSecureApp vars = new VariablesSecureApp(request);
         String targetmenu = vars.getSessionValue("targetmenu");
-        printPageFrameIdentificacion(response, "../utility/VerticalMenu.html", (targetmenu.equals("") ? "../utility/Home.html" : targetmenu));
+        printPageFrameIdentificacion(response, "../utility/VerticalMenu.html", (targetmenu.equals("") ? "../utility/Home.html" : targetmenu), "../utility/VerticalMenu.html?Command=LOADING");
     }
 
-    private void printPageFrameIdentificacion(HttpServletResponse response, String strMenu, String strDetalle) throws IOException, ServletException {
+    private void printPageFrameIdentificacion(HttpServletResponse response, String strMenu, String strDetalle, String strMenuLoading) throws IOException, ServletException {
         XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS").createXmlDocument();
-
+        xmlDocument.setParameter("frameMenuLoading", strMenuLoading);
         xmlDocument.setParameter("frameMenu", strMenu);
         xmlDocument.setParameter("frame1", strDetalle);
         response.setContentType("text/html; charset=UTF-8");

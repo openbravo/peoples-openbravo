@@ -53,6 +53,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, "0", true);
     } else if (vars.commandIn("ALERT")) {
       printPageAlert(response, vars);
+    } else if (vars.commandIn("LOADING")) {
+      printPageLoadingMenu(response, vars);
     } else throw new ServletException();
   }
   
@@ -131,6 +133,16 @@ public class VerticalMenu extends HttpSecureAppServlet {
     decidePopups(xmlDocument, vars);
     
     response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  public void printPageLoadingMenu(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/VerticalMenuLoading").createXmlDocument();
+    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();

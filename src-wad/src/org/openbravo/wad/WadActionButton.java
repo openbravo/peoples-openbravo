@@ -594,6 +594,7 @@ public class WadActionButton {
       script.append("\nfunction depurarClient(action, Formulario, valor) {\n");
       script.append("  var frm=document.frmMain;\n");
       script.append(validations);
+      script.append("  setProcessingMode('popup', true);\n");
       script.append("  return true;\n");
       script.append("}\n");
       

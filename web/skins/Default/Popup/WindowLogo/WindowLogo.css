@@ -23,6 +23,7 @@
   width: 70px;
   height: 70px;
   background: url(background.png) no-repeat;
+  z-index: 50;
 }
 
 .Popup_WindowLogo_Icon {

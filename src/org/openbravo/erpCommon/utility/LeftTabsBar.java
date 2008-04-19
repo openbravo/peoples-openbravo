@@ -34,8 +34,12 @@ public class LeftTabsBar {
     this.servlet_action = _action;
     this.base_direction = _baseDirection;
   }
-
-  public String editionTemplate() {
+  
+  public String editionTemplate(){
+	  return editionTemplate(false);
+  }
+  public String editionTemplate(boolean isNew) {
+	String strClassEdition = "Main_LeftTabsBar_ButtonRight_Icon_edition"+(isNew?"_new":"")+"_selected";
     StringBuffer text = new StringBuffer();
     text.append("<table cellpadding=\"0\" cellspacing=\"0\" class=\"Main_ContentPane_LeftTabsBar\" id=\"tdLeftTabsBars\">\n");
     text.append("  <tr>\n");
@@ -59,7 +63,7 @@ public class LeftTabsBar {
     text.append("        <tr>\n");
     text.append("          <td>\n");
     text.append("                <DIV class=\"Main_LeftTabsBar_ButtonRight_selected\">\n");
-    text.append("                  <IMG class=\"Main_LeftTabsBar_ButtonRight_Icon Main_LeftTabsBar_ButtonRight_Icon_edition_selected\" src=\"").append(base_direction).append("/images/blank.gif\" border=\"0\"></IMG>\n");
+    text.append("                  <IMG class=\"Main_LeftTabsBar_ButtonRight_Icon ").append(strClassEdition).append("\" src=\"").append(base_direction).append("/images/blank.gif\" border=\"0\" id=\"linkButtonEdition\"></IMG>\n");
     text.append("                </DIV>\n");
     text.append("          </td>\n");
     text.append("        </tr>\n");

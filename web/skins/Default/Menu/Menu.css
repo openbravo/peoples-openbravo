@@ -22,6 +22,7 @@
 @import url(./ToolBar/ToolBar.css);
 @import url(./Client/Client.css);
 @import url(./Bottom/Bottom.css);
+@import url(./Status/Status.css);
 
 * {margin: 0px; padding: 0px;}
 

@@ -99,7 +99,7 @@ public class ToolBar {
     } else if (name.equals("PRINT")) {
       return "abrirPDFSession('" + pdf + "', '" + (isDirectPrint?"Printing":"") + "', " + keyfield + ".name, " + ((grid_id==null || grid_id.equals(""))?"null":"dojo.widget.byId('" + grid_id + "').getSelectedRows()") + ", " + ((grid_id==null || grid_id.equals(""))?"true":"null") + ");";
     } else if (name.equals("UNDO")) {
-      return form + ".reset();displayLogic();";
+      return "windowUndo(" + form + ");";
     } else if (name.equals("SEARCH")) {
       return "abrirBusqueda('../businessUtility/Buscador.html', 'BUSCADOR', " + form + ".inpTabId.value, '" + window_name + "/" + servlet_action + (isSrcWindow?"":"_Relation") + ".html', " + form + ".inpwindowId.value, " + (debug?"true":"false") + ");";
     } else if (name.equals("AUDIT_EDITION")) {
