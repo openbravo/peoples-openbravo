@@ -537,19 +537,18 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   if (doSubmit && (getArrayValue(parameters, "debug", false)==true)) {
     if (!depurar(getArrayValue(parameters, "Command", "DEFAULT"), null, "")) return false;
   }
-//  if (isPopup == true && hasLoading == true) {
-//    isPopupLoadingWindowLoaded=false;
-//    var urlLoading = '../utility/PopupLoading.html'
-//    var winPopUp = window.open((doSubmit?urlLoading:url), _name, adds);
-//  } else {
+  if (isPopup == true && hasLoading == true) {
+    isPopupLoadingWindowLoaded=false;
+    var urlLoading = '../utility/PopupLoading.html'
+    var winPopUp = window.open((doSubmit?urlLoading:url), _name, adds);
+  } else {
     var winPopUp = window.open((doSubmit?"":url), _name, adds);
-//  }
+  }
 
   if (closeControl) window.onunload = function(){winPopUp.close();}
   if (doSubmit) {
-//    if (isPopup==true && hasLoading == true) synchronizedSubmitCommandForm(getArrayValue(parameters, "Command", "DEFAULT"), (getArrayValue(parameters, "debug", false)==true), null, url, _name, target, checkChanges);
-//    else 
-        submitCommandForm(getArrayValue(parameters, "Command", "DEFAULT"), (getArrayValue(parameters, "debug", false)==true), null, url, _name, target, checkChanges);
+    if (isPopup==true && hasLoading == true) synchronizedSubmitCommandForm(getArrayValue(parameters, "Command", "DEFAULT"), (getArrayValue(parameters, "debug", false)==true), null, url, _name, target, checkChanges);
+    else submitCommandForm(getArrayValue(parameters, "Command", "DEFAULT"), (getArrayValue(parameters, "debug", false)==true), null, url, _name, target, checkChanges);
   }
   winPopUp.focus();
   return winPopUp;
