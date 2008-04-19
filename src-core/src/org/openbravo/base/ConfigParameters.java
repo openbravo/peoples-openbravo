@@ -200,12 +200,14 @@ public class ConfigParameters {
                 // Configure using resource url.. That way we don't need to worry about
                 // the real path
                 InputStream resource = context.getResourceAsStream("/" + strBaseConfigPath + "/" + file);
-                Properties config = new Properties();
-                config.load(resource);
-                resource.close();
-                config.setProperty("application_context", getApplicationContext());
-                config.setProperty("actual_path_context", getActualPathContext());
-                PropertyConfigurator.configure(config);
+                if (resource != null) {
+                  Properties config = new Properties();
+                  config.load(resource);
+                  resource.close();
+                  config.setProperty("application_context", getApplicationContext());
+                  config.setProperty("actual_path_context", getActualPathContext());
+                  PropertyConfigurator.configure(config);
+                }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
