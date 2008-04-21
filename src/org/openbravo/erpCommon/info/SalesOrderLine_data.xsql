@@ -28,9 +28,11 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
+      SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (  
           SELECT ol.C_ORDERLINE_ID, b.NAME AS BPARTNER_NAME, p.NAME AS PRODUCT_NAME, o.DATEORDERED, o.DOCUMENTNO, 
           o.ISSOTRX, ol.QTYORDERED AS QTY, ol.PRICEACTUAL, ol.LINENETAMT, 
-          (o.DOCUMENTNO || ' - ' || o.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT) AS LINE_TEXT
+          (o.DOCUMENTNO || ' - ' || o.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT) AS LINE_TEXT,
+			 ol.C_ORDERLINE_ID || '#' || o.DOCUMENTNO || ' - ' || o.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT as rowkey
           FROM C_ORDER o, C_ORDERLINE ol, M_PRODUCT p, C_BPARTNER b
           WHERE o.C_ORDER_ID = ol.C_ORDER_ID 
           AND o.C_BPARTNER_ID = b.C_BPARTNER_ID 
@@ -39,10 +41,13 @@
           AND o.AD_ORG_ID IN ('1') 
           AND o.IsActive='Y' 
           AND o.ISSOTRX = 'Y'
-          ORDER BY b.NAME, o.DATEORDERED, o.DOCUMENTNO, ol.LINE
+          ORDER BY ol.C_ORDERLINE_ID
+		) A ) B
+		WHERE 1=1
         ]]>
         </Sql>
         <Field name="position" value="count"/>
+			<Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
@@ -56,6 +61,9 @@
         <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="isdelivered" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYDELIVERED, 0)) <> 0 ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYINVOICED, 0)) <> 0 ]]></Parameter>
+			<Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ol.C_ORDERLINE_ID" />
+        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
+        <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -65,9 +73,11 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
+      SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (  
           SELECT ol.C_ORDERLINE_ID, b.NAME AS BPARTNER_NAME, p.NAME AS PRODUCT_NAME, o.DATEORDERED, o.DOCUMENTNO, 
           o.ISSOTRX, ol.QTYORDERED AS QTY, ol.PRICEACTUAL, ol.LINENETAMT, 
-          (o.DOCUMENTNO || ' - ' || o.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT) AS LINE_TEXT
+          (o.DOCUMENTNO || ' - ' || o.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT) AS LINE_TEXT,
+			  ol.C_ORDERLINE_ID || '#' || o.DOCUMENTNO || ' - ' || o.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT as rowkey
           FROM C_ORDERLINE ol left join M_MATCHPO mp on ol.C_ORDERLINE_ID = mp.C_ORDERLINE_ID 
                                                     AND mp.C_INVOICELINE_ID IS NOT NULL
                               left join M_MATCHPO mp2 on ol.C_ORDERLINE_ID = mp2.C_ORDERLINE_ID
@@ -83,10 +93,13 @@
           GROUP BY ol.C_ORDERLINE_ID, b.NAME, p.NAME, o.DATEORDERED, o.DOCUMENTNO, 
           o.ISSOTRX, ol.QTYORDERED, ol.PRICEACTUAL, ol.LINENETAMT, o.GRANDTOTAL, ol.LINE, ol.LINENETAMT
           HAVING 1=1 
-          ORDER BY b.NAME, o.DATEORDERED, o.DOCUMENTNO, ol.LINE
+          ORDER BY ol.C_ORDERLINE_ID
+		) A ) B
+		WHERE 1=1
         ]]>
         </Sql>
         <Field name="position" value="count"/>
+			<Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_CLIENT_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="documentno" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
@@ -100,6 +113,9 @@
         <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID = TO_NUMBER(?) ]]></Parameter>
         <Parameter name="isdelivered" optional="true" type="none" after="HAVING 1=1 "><![CDATA[ AND (ol.QTYORDERED - COALESCE(SUM(mp2.QTY), 0)) <> 0 ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="none" after="HAVING 1=1 "><![CDATA[ AND (ol.QTYORDERED - COALESCE(SUM(mp.QTY),0)) <> 0 ]]></Parameter>
+			<Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ol.C_ORDERLINE_ID" />
+        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
+        <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -122,8 +138,8 @@
         ORDER BY b.NAME, o.DATEORDERED, o.DOCUMENTNO, ol.LINE
       ]]>
       </Sql>
-        <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
-        <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="AND o.AD_CLIENT_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="AND o.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="key"/>
    </SqlMethod>
    <SqlMethod name="selectKeySOTrx" type="preparedStatement" return="multiple">
@@ -153,8 +169,8 @@
         ORDER BY b.NAME, o.DATEORDERED, o.DOCUMENTNO, ol.LINE
       ]]>
       </Sql>
-        <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
-        <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="AND o.AD_CLIENT_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="AND o.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="key"/>
    </SqlMethod>
    <SqlMethod name="selectBPartner" type="preparedStatement" return="String" default="">

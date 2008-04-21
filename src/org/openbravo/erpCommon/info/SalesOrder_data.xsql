@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,20 +28,25 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
+	    SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (
         SELECT o.C_Order_ID,
         (SELECT Name FROM C_BPartner bp WHERE bp.C_BPartner_ID=o.C_BPartner_ID) AS BPartnerName,
         o.DateOrdered, o.DocumentNo,
         (SELECT ISO_Code FROM C_Currency c WHERE c.C_Currency_ID=o.C_Currency_ID) AS Currency,
         o.GrandTotal,
-        C_Base_Convert(o.GrandTotal,o.C_Currency_ID,o.AD_Client_ID,o.DateAcct, 0) as Converted, o.IsSOTrx, o.Description, o.POReference
+        C_Base_Convert(o.GrandTotal,o.C_Currency_ID,o.AD_Client_ID,o.DateAcct, 0) as Converted, o.IsSOTrx, o.Description, o.POReference,
+				o.C_Order_ID || '#' || o.DocumentNo as rowkey
         FROM C_Order o
         WHERE o.AD_Client_ID IN ('1') 
         AND o.AD_Org_ID IN ('1') 
         AND o.IsActive='Y'
-        ORDER BY 2,3,4
+        ORDER BY o.C_Order_ID
+	    ) A ) B
+	    WHERE 1=1
         ]]>
         </Sql>
         <Field name="position" value="count"/>
+		    <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="key" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
@@ -52,6 +57,9 @@
         <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
         <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= ? ]]></Parameter>
         <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal <= ? ]]></Parameter>
+		    <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="o.C_Order_ID" />
+        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
+        <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

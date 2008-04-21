@@ -310,12 +310,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
         result.append(" class=\"Normal NOT_Opened NOT_Hover NOT_Selected NOT_Pressed NOT_Focused\"");
         result.append(" id=\"childinfo").append(FormatUtilities.replace(data[i].name)).append("\"");
         result.append(" onclick=\"checkSelected('childinfo").append(FormatUtilities.replace(data[i].name)).append("');openSearch(null, null, '");
-        String javaClassName = data[i].classname.trim();
-        if (data[i].nodeId.equals("800011")) javaClassName = "/info/ProductComplete_FS.html";
-        else if (data[i].nodeId.equals("21")) javaClassName = "/info/Location_FS.html";
-        else if (data[i].nodeId.equals("25")) javaClassName = "/info/Account_FS.html";
-        else if (data[i].nodeId.equals("800013")) javaClassName = "/info/Locator_Detail_FS.html";
-        else if (data[i].nodeId.equals("31")) javaClassName = "/info/Locator_FS.html";
+        String javaClassName = data[i].classname.trim();        
         result.append(direccion).append(javaClassName);
         result.append("', null, false);return false;\" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
         result.append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");

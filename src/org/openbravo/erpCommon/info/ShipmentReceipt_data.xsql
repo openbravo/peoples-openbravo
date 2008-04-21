@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,17 +28,22 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
+      SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (    
         SELECT MI.M_INOUT_ID AS CLAVE, CB.NAME AS BPARTNER_NAME, MI.MOVEMENTDATE, MI.DOCUMENTNO, MI.DESCRIPTION, MI.POREFERENCE AS ORDER_REFERENCE,
-        MI.ISSOTRX AS SALES_TRANSACTION
+        MI.ISSOTRX AS SALES_TRANSACTION,
+			MI.M_INOUT_ID || '#' || MI.DOCUMENTNO as rowkey
         FROM M_INOUT MI, C_BPARTNER CB
         WHERE MI.C_BPARTNER_ID = CB.C_BPARTNER_ID
         AND MI.AD_Client_ID IN ('1') 
         AND MI.AD_Org_ID IN ('1') 
         AND MI.ISACTIVE = 'Y'
         ORDER BY CB.NAME
+		) A ) B
+		WHERE 1=1
         ]]>
         </Sql>
         <Field name="position" value="count"/>
+        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="MI.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="MI.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="key" optional="true" after="AND MI.ISACTIVE = 'Y'"><![CDATA[ AND UPPER(MI.DOCUMENTNO) LIKE UPPER(?) ]]></Parameter>
@@ -48,6 +53,9 @@
         <Parameter name="dateFrom" optional="true" after="AND MI.ISACTIVE = 'Y'"><![CDATA[ AND MI.MOVEMENTDATE >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND MI.ISACTIVE = 'Y'"><![CDATA[ AND MI.MOVEMENTDATE < to_date(?) ]]></Parameter>
         <Parameter name="salesTransaction" optional="true" after="AND MI.ISACTIVE = 'Y'"><![CDATA[ AND MI.ISSOTRX=? ]]></Parameter>
+			  <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="CB.NAME" />
+        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
+        <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

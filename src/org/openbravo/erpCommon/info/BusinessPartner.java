@@ -20,10 +20,16 @@ package org.openbravo.erpCommon.info;
 
 import org.openbravo.base.secureApp.*;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.Utility;
 import java.io.*;
+import java.util.Vector;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
+
 import org.openbravo.utils.Replace;
 
 
@@ -43,11 +49,15 @@ public class BusinessPartner extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("WindowID");
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue", "BusinessPartner.name");
       String strIDValue = vars.getStringParameter("inpIDValue");
+      String strKeyValue = vars.getGlobalVariable("inpKey", "BusinessPartner.key", "");
+      String strBpartners = vars.getGlobalVariable("inpBpartner", "BusinessPartner.bpartner", "all");
       if (!strIDValue.equals("")) {
         String strNameAux = BusinessPartnerData.existsActual(this, strNameValue, strIDValue);
         if (!strNameAux.equals("")) strNameValue = strNameAux;
       }
+      
       vars.removeSessionValue("BusinessPartner.key");
+           
       String strIsSOTrxTab = vars.getStringParameter("inpisSOTrxTab");
       String strBpartner = strIsSOTrxTab;
       if (strIsSOTrxTab.equals("")) strBpartner = Utility.getContext(this, vars, "isSOTrx", strWindowId);
@@ -57,12 +67,13 @@ public class BusinessPartner extends HttpSecureAppServlet {
       else strSelected = "all";
       vars.setSessionValue("BusinessPartner.bpartner", strSelected);
       if (!strNameValue.equals("")) vars.setSessionValue("BusinessPartner.name", strNameValue + "%");
-      printPageFS(response, vars);
+      printPage(response, vars, strKeyValue, strNameValue.concat("%"), strBpartners);
     } else if (vars.commandIn("KEY")) {
       String strWindowId = vars.getStringParameter("WindowID");
       String strIsSOTrxTab = vars.getStringParameter("inpisSOTrxTab");
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "BusinessPartner.key");
       String strIDValue = vars.getStringParameter("inpIDValue");
+      String strOrg = vars.getStringParameter("inpAD_Org_ID");
       if (!strIDValue.equals("")) {
         String strNameAux = BusinessPartnerData.existsActualValue(this, strKeyValue, strIDValue);
         if (!strNameAux.equals("")) strKeyValue = strNameAux;
@@ -76,73 +87,68 @@ public class BusinessPartner extends HttpSecureAppServlet {
       else if (strBpartner.equals("N")) strSelected = "vendor";
       else strSelected = "all";
       vars.setSessionValue("BusinessPartner.bpartner", strSelected);
-      BusinessPartnerData[] data = BusinessPartnerData.selectKey(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getContext(this, vars, "#User_Org", "BusinessPartner"), (strSelected.equals("costumer")?"clients":""), (strSelected.equals("vendor")?"vendors":""), strKeyValue + "%");
+      BusinessPartnerData[] data = BusinessPartnerData.selectKey(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strSelected.equals("costumer")?"clients":""), (strSelected.equals("vendor")?"vendors":""), strKeyValue + "%");
       if (data!=null && data.length==1) {
         printPageKey(response, vars, data);
-      } else printPageFS(response, vars);
-    } else if (vars.commandIn("FRAME1")) {
-      String strKeyValue = vars.getGlobalVariable("inpKey", "BusinessPartner.key", "");
-      String strNameValue = vars.getGlobalVariable("inpName", "BusinessPartner.name", "");
-      String strBpartners = vars.getGlobalVariable("inpBpartner", "BusinessPartner.bpartner", "all");
-      printPageFrame1(response, vars, strKeyValue, strNameValue, strBpartners);
-    } else if (vars.commandIn("FRAME2")) {
-      String strKey = vars.getGlobalVariable("inpKey", "BusinessPartner.key", "");
-      String strName = vars.getGlobalVariable("inpName", "BusinessPartner.name", "");
-      String strContact = vars.getStringParameter("inpContact");
-      String strZIP = vars.getStringParameter("inpZIP");
-      String strProvincia = vars.getStringParameter("inpProvincia");
-      String strBpartners = vars.getGlobalVariable("inpBpartner", "BusinessPartner.bpartner", "all");
-      String strCity = vars.getStringParameter("inpCity");
-      printPageFrame2(response, vars, strKey, strName, strContact, strZIP, strProvincia, strBpartners, strCity);
-    } else if (vars.commandIn("FIND")) {
-      String strKey = vars.getRequestGlobalVariable("inpKey", "BusinessPartner.key");
-      String strName = vars.getRequestGlobalVariable("inpName", "BusinessPartner.name");
-      String strContact = vars.getStringParameter("inpContact");
-      String strZIP = vars.getStringParameter("inpZIP");
-      String strProvincia = vars.getStringParameter("inpProvincia");
-      String strBpartners = vars.getStringParameter("inpBpartner");
-      String strCity = vars.getStringParameter("inpCity");
-
-      vars.setSessionValue("BusinessPartner.initRecordNumber", "0");
-
-      printPageFrame2(response, vars, strKey, strName, strContact, strZIP, strProvincia, strBpartners, strCity);
-    } else if (vars.commandIn("FRAME3")) {
-      printPageFrame3(response, vars);
-    } else if (vars.commandIn("PREVIOUS")) {
-      String strInitRecord = vars.getSessionValue("BusinessPartner.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "BusinessPartner");
-      int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
-      if (strInitRecord.equals("") || strInitRecord.equals("0")) vars.setSessionValue("BusinessPartner.initRecordNumber", "0");
-      else {
-        int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-        initRecord -= intRecordRange;
-        strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
-        vars.setSessionValue("BusinessPartner.initRecordNumber", strInitRecord);
-      }
-
-      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
-    } else if (vars.commandIn("NEXT")) {
-      String strInitRecord = vars.getSessionValue("BusinessPartner.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "BusinessPartner");
-      int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
-      int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-      if (initRecord==0) initRecord=1;
-      initRecord += intRecordRange;
-      strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
-      vars.setSessionValue("BusinessPartner.initRecordNumber", strInitRecord);
-
-      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
+      } else printPage(response, vars,"","","");
+    } else if(vars.commandIn("STRUCTURE")) {
+    	printGridStructure(response, vars);
+    } else if(vars.commandIn("DATA")) {
+    	if(vars.getStringParameter("clear").equals("true")){
+    		vars.removeSessionValue("BusinessPartner.key");
+    		vars.removeSessionValue("BusinessPartner.name");
+    		vars.removeSessionValue("BusinessPartner.adorgid");
+    		vars.removeSessionValue("BusinessPartner.contact");
+    		vars.removeSessionValue("BusinessPartner.zip");
+    		vars.removeSessionValue("BusinessPartner.provincia");
+    		vars.removeSessionValue("BusinessPartner.bpartner");
+    		vars.removeSessionValue("BusinessPartner.city");
+    	}
+    	String strKey = vars.getGlobalVariable("inpKey" , "BusinessPartner.key", "");
+        String strName = vars.getGlobalVariable("inpName", "BusinessPartner.name", "");
+        String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "BusinessPartner.adorgid", "");
+        String strContact = vars.getGlobalVariable("inpContact", "BusinessPartner.contact", "");
+        String strZIP = vars.getGlobalVariable("inpZIP", "BusinessPartner.zip", "");
+        String strProvincia = vars.getGlobalVariable("inpProvincia", "BusinessPartner.provincia", "");
+        String strBpartners = vars.getGlobalVariable("inpBpartner" , "BusinessPartner.bpartner", "all"); //all
+        String strCity = vars.getGlobalVariable("inpCity", "BusinessPartner.city", "");
+        String strNewFilter = vars.getStringParameter("newFilter");
+        String strOffset = vars.getStringParameter("offset");
+        String strPageSize = vars.getStringParameter("page_size");
+        String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
+        String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+    	printGridData(response, vars, strKey, strName, strOrg, strContact, strZIP, strProvincia, strBpartners, strCity, strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
     } else pageError(response);
   }
-
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: business partners seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartner_FS").createXmlDocument();
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+  
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strBpartners) throws IOException, ServletException {
+   	  
+	  if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of business partners seeker");
+	    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartner").createXmlDocument();
+	    if (strKeyValue.equals("") && strNameValue.equals("")) {
+	      xmlDocument.setParameter("key", "%");
+	    } else {
+	      xmlDocument.setParameter("key", strKeyValue);
+	    }
+	    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+	    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+	    xmlDocument.setParameter("theme", vars.getTheme());
+	    xmlDocument.setParameter("name", strNameValue);
+	    xmlDocument.setParameter("clients", strBpartners);
+	    xmlDocument.setParameter("vendors", strBpartners);
+	    xmlDocument.setParameter("all", strBpartners);
+	    xmlDocument.setParameter("orgs", vars.getStringParameter("inpAD_Org_ID"));
+	    
+	    xmlDocument.setParameter("grid", "20");
+	    xmlDocument.setParameter("grid_Offset", "");
+	    xmlDocument.setParameter("grid_SortCols", "1");
+	    xmlDocument.setParameter("grid_SortDirs", "ASC");
+	    xmlDocument.setParameter("grid_Default", "0");
+	    
+	    response.setContentType("text/html; charset=UTF-8");
+	    PrintWriter out = response.getWriter();
+	    out.println(xmlDocument.print());
+	    out.close();
   }
 
   void printPageKey(HttpServletResponse response, VariablesSecureApp vars, BusinessPartnerData[] data) throws IOException, ServletException {
@@ -171,74 +177,147 @@ public class BusinessPartner extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strBpartners) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of business partners seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartner_F1").createXmlDocument();
-    if (strKeyValue.equals("") && strNameValue.equals("")) {
-      xmlDocument.setParameter("key", "%");
-    } else {
-      xmlDocument.setParameter("key", strKeyValue);
+  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
+	  if (log4j.isDebugEnabled()) log4j.debug("Output: print page structure");
+	    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+	    
+	    SQLReturnObject[] data = getHeaders(vars);
+	    String type = "Hidden";
+	    String title = "";
+	    String description = "";
+	   	    
+	    xmlDocument.setParameter("type", type);
+	    xmlDocument.setParameter("title", title);
+	    xmlDocument.setParameter("description", description);
+	    xmlDocument.setData("structure1", data);
+	    response.setContentType("text/xml; charset=UTF-8");
+	    response.setHeader("Cache-Control", "no-cache");
+	    PrintWriter out = response.getWriter();
+	    if (log4j.isDebugEnabled()) log4j.debug(xmlDocument.print());
+	    out.println(xmlDocument.print());
+	    out.close();
+  }
+  
+  private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
+	  SQLReturnObject[] data = null;
+	  Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();	  
+	  String[] colNames = {"value", "name","so_creditavailable","so_creditused", "contact", "phone", "pc", "city", "income", "c_bpartner_id", "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey"};
+	  String[] colWidths = {"98", "172", "50", "83", "104", "63", "43", "100", "63", "0", "0", "0", "0"};
+	  for(int i=0; i < colNames.length; i++) {
+		  SQLReturnObject dataAux = new SQLReturnObject();
+		  dataAux.setData("columnname", colNames[i]);
+	      dataAux.setData("gridcolumnname", colNames[i]);
+	      dataAux.setData("adReferenceId", "AD_Reference_ID");
+	      dataAux.setData("adReferenceValueId", "AD_ReferenceValue_ID");	      
+	      dataAux.setData("isidentifier", (colNames[i].equals("rowkey")?"true":"false"));
+	      dataAux.setData("iskey", (colNames[i].equals("rowkey")?"true":"false"));
+	      dataAux.setData("isvisible", (colNames[i].endsWith("_id") || colNames[i].equals("rowkey")?"false":"true"));
+	      String name = Utility.messageBD(this, "BPS_" + colNames[i].toUpperCase(), vars.getLanguage());
+	      dataAux.setData("name", (name.startsWith("BPS_")?colNames[i]:name));
+	      dataAux.setData("type", "string");
+	      dataAux.setData("width", colWidths[i]);
+	      vAux.addElement(dataAux);
+	  }
+	  data = new SQLReturnObject[vAux.size()];
+	  vAux.copyInto(data);
+	  return data;
+  }
+  
+  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strName, String strOrg, String strContact, String strZIP, String strProvincia, String strBpartners, String strCity, String strOrderBy, String strOffset, String strPageSize, String strNewFilter ) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: print page rows");
+    
+    SQLReturnObject[] headers = getHeaders(vars);
+    FieldProvider[] data = null;
+    String type = "Hidden";
+    String title = "";
+    String description = "";
+    String strNumRows = "0";
+    
+    if (headers!=null) {
+      try{
+	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load    	
+	  		data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, strOrderBy, "", "");
+	  		strNumRows = String.valueOf(data.length);
+	  		vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
+	  	}
+  		else {
+  			strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
+  		}
+	  			
+  		// Filtering result
+    	if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+    		String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));    		
+    		data = BusinessPartnerData.select(this, "ROWNUM", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, strOrderBy, oraLimit, "");
+    	}
+    	else {
+    		String pgLimit = strPageSize + " OFFSET " + strOffset;
+    		data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, strOrderBy, "", pgLimit);
+    	}    	
+      } catch (ServletException e) {
+        log4j.error("Error in print page data: " + e);
+        e.printStackTrace();
+        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+        if (!myError.isConnectionAvailable()) {
+          bdErrorAjax(response, "Error", "Connection Error", "No database connection");
+          return;
+        } else {
+          type = myError.getType();
+          title = myError.getTitle();
+          if (!myError.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + myError.getMessage() + "]]>";
+          else description = myError.getMessage();
+        }
+      } catch (Exception e) { 
+        if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
+        type = "Error";
+        title = "Error";
+        if (e.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + e.getMessage() + "]]>";
+        else description = e.getMessage();
+        e.printStackTrace();
+      }
     }
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("name", strNameValue);
-    xmlDocument.setParameter("clients", strBpartners);
-    xmlDocument.setParameter("vendors", strBpartners);
-    xmlDocument.setParameter("all", strBpartners);
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  void printPageFrame2(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strName, String strContact, String strZIP, String strProvincia, String strBpartners, String strCity) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 2 of the business partners seeker");
-    XmlDocument xmlDocument;
-
-    String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "BusinessPartner");
-    int intRecordRange = (strRecordRange.equals("")?0:Integer.parseInt(strRecordRange));
-    String strInitRecord = vars.getSessionValue("BusinessPartner.initRecordNumber");
-    int initRecordNumber = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-
-    if (strKey.equals("") && strName.equals("") && strContact.equals("") && strZIP.equals("") && strProvincia.equals("") && strCity.equals("")) {
-      String[] discard = {"sectionDetail", "hasPrevious", "hasNext"};
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartner_F2", discard).createXmlDocument();
-      xmlDocument.setData("structure1", BusinessPartnerData.set());
-    } else {
-      String[] discard = {"withoutPrevious", "withoutNext"};
-      BusinessPartnerData[] data = BusinessPartnerData.select(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getContext(this, vars, "#User_Org", "BusinessPartner"), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, initRecordNumber, intRecordRange);
-      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
-      if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartner_F2", discard).createXmlDocument();
-      xmlDocument.setData("structure1", data);
+    
+    if (!type.startsWith("<![CDATA[")) type = "<![CDATA[" + type + "]]>";
+    if (!title.startsWith("<![CDATA[")) title = "<![CDATA[" + title + "]]>";
+    if (!description.startsWith("<![CDATA[")) description = "<![CDATA[" + description + "]]>";
+    StringBuffer strRowsData = new StringBuffer();
+    strRowsData.append("<xml-data>\n");
+    strRowsData.append("  <status>\n");
+    strRowsData.append("    <type>").append(type).append("</type>\n");
+    strRowsData.append("    <title>").append(title).append("</title>\n");
+    strRowsData.append("    <description>").append(description).append("</description>\n");
+    strRowsData.append("  </status>\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\">\n");
+    if (data!=null && data.length>0) {
+      for (int j=0;j<data.length;j++) {
+        strRowsData.append("    <tr>\n");
+        for (int k=0;k<headers.length;k++) {
+          strRowsData.append("      <td><![CDATA[");
+          String columnname = headers[k].getField("columnname");
+          
+          if ((data[j].getField(columnname)) != null) {
+            if (headers[k].getField("adReferenceId").equals("32")) strRowsData.append(strReplaceWith).append("/images/");
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>","").replaceAll("<B>","").replaceAll("</b>","").replaceAll("</B>","").replaceAll("<i>","").replaceAll("<I>","").replaceAll("</i>","").replaceAll("</I>","").replaceAll("<p>","&nbsp;").replaceAll("<P>","&nbsp;").replaceAll("<br>","&nbsp;").replaceAll("<BR>","&nbsp;"));
+          } else {
+            if (headers[k].getField("adReferenceId").equals("32")) {
+              strRowsData.append(strReplaceWith).append("/images/blank.gif");
+            } else strRowsData.append("&nbsp;");
+          }
+          strRowsData.append("]]></td>\n");
+        }
+        strRowsData.append("    </tr>\n");
+      }
     }
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-
-    response.setContentType("text/html; charset=UTF-8");
+    strRowsData.append("  </rows>\n");
+    strRowsData.append("</xml-data>\n");
+        
+    response.setContentType("text/xml; charset=UTF-8");
+    response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
+    if (log4j.isDebugEnabled()) log4j.debug(strRowsData.toString());  
+    out.print(strRowsData.toString());
     out.close();
   }
-
-  void printPageFrame3(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 3 of the business partners seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartner_F3").createXmlDocument();
-
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-
-    response.setContentType("text/html; charset=UTF-8");
-
-
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
+  
   public String getServletInfo() {
     return "Servlet that presents the business partners seeker";
   } // end of getServletInfo() method

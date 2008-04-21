@@ -20,11 +20,16 @@ package org.openbravo.erpCommon.info;
 
 import org.openbravo.base.secureApp.*;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.erpCommon.utility.ToolBar;
 import java.io.*;
+import java.util.Vector;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
+
 import org.openbravo.utils.Replace;
 
 
@@ -41,85 +46,80 @@ public class Project extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      vars.getRequestGlobalVariable("WindowID", "Project.windowId");
-      vars.getRequestGlobalVariable("inpBpartnerId", "Project.bpartner");
-      String strNameValue = vars.getRequestGlobalVariable("inpNameValue", "Project.name");
+      removePageSessionVariables(vars);
+      String strKey = "";
+      String strWindow = vars.getGlobalVariable("WindowID", "Project.windowId", "");
+      String strBpartner = vars.getGlobalVariable("inpBpartnerId", "Project.bpartner", "");
+      String strNameValue = vars.getGlobalVariable("inpNameValue", "Project.key", "");
       vars.removeSessionValue("Project.key");
       if (!strNameValue.equals("")) {
         int guion = strNameValue.indexOf(" - ");
         if (guion!=-1) {
-          String strKey = strNameValue.substring(0, guion).trim();
+          strKey = strNameValue.substring(0, guion).trim();
           strNameValue = strNameValue.substring(guion+3).trim();
           vars.setSessionValue("Project.key", strKey);
         }
         vars.setSessionValue("Project.name", strNameValue + "%");
       }
-      printPageFS(response, vars);
+      printPage(response, vars, strKey, strNameValue + "%", strBpartner, strWindow);
     } else if (vars.commandIn("KEY")) {
-      vars.getRequestGlobalVariable("WindowID", "Project.windowId");
-      String strBparnter = vars.getRequestGlobalVariable("inpBpartnerId", "Project.bpartner");
-      String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Project.key");
-      vars.removeSessionValue("Project.name");
+      removePageSessionVariables(vars);
+      String strWindow = vars.getGlobalVariable("WindowID", "Project.windowId", "");
+      String strBpartner = vars.getGlobalVariable("inpBpartnerId", "Project.bpartner", "");
+      String strKeyValue = vars.getGlobalVariable("inpNameValue", "Project.key", "");
       vars.setSessionValue("Project.key", strKeyValue + "%");
-      ProjectData[] data = ProjectData.selectKey(this, Utility.getContext(this, vars, "#User_Client", "Project"), Utility.getContext(this, vars, "#User_Org", "Project"), strBparnter, strKeyValue + "%");
+      ProjectData[] data = ProjectData.selectKey(this, Utility.getContext(this, vars, "#User_Client", "Project"), Utility.getContext(this, vars, "#User_Org", "Project"), strBpartner, strKeyValue + "%");
       if (data!=null && data.length==1) {
         printPageKey(response, vars, data);
-      } else printPageFS(response, vars);
-    } else if (vars.commandIn("FRAME1")) {
-      String strWindowId = vars.getGlobalVariable("WindowID", "Project.windowId", "Project");
-      String strKeyValue = vars.getGlobalVariable("inpKey", "Project.key", "");
-      String strNameValue = vars.getGlobalVariable("inpName", "Project.name", "");
-      String strBpartners = vars.getGlobalVariable("inpBpartnerId", "Project.bpartner", "");
-      printPageFrame1(response, vars, strKeyValue, strNameValue, strBpartners, strWindowId);
-    } else if (vars.commandIn("FRAME2")) {
-      String strWindowId = vars.getGlobalVariable("inpWindowID", "Project.windowId", "Project");
+      } else printPage(response, vars, strKeyValue + "%", "", strBpartner, strWindow);
+    }   else if(vars.commandIn("STRUCTURE")) {
+    	printGridStructure(response, vars);
+    } else if(vars.commandIn("DATA")) {
+    	if(vars.getStringParameter("newFilter").equals("1")){
+    	  removePageSessionVariables(vars);
+    	}
+      String strWindowId = vars.getGlobalVariable("inpWindowId", "Project.windowId", "");
       String strKey = vars.getGlobalVariable("inpKey", "Project.key", "");
       String strName = vars.getGlobalVariable("inpName", "Project.name", "");
       String strBpartners = vars.getGlobalVariable("inpBpartnerId", "Project.bpartner", "");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      printPageFrame2(response, vars, strKey, strName, strBpartners, strIsSOTrx);
-    } else if (vars.commandIn("FIND")) {
-      String strWindowId = vars.getRequestGlobalVariable("inpWindowId", "Project.windowId");
-      String strKey = vars.getRequestGlobalVariable("inpKey", "Project.key");
-      String strName = vars.getRequestGlobalVariable("inpName", "Project.name");
-      String strBpartners = vars.getRequestGlobalVariable("inpBpartnerId", "Project.bpartner");
-      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
 
-      vars.setSessionValue("Project.initRecordNumber", "0");
-
-      printPageFrame2(response, vars, strKey, strName, strBpartners, strIsSOTrx);
-    } else if (vars.commandIn("FRAME3")) {
-      printPageFrame3(response, vars);
-    } else if (vars.commandIn("PREVIOUS")) {
-      String strInitRecord = vars.getSessionValue("Project.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Project");
-      int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
-      if (strInitRecord.equals("") || strInitRecord.equals("0")) vars.setSessionValue("Project.initRecordNumber", "0");
-      else {
-        int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-        initRecord -= intRecordRange;
-        strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
-        vars.setSessionValue("Project.initRecordNumber", strInitRecord);
-      }
-
-      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
-    } else if (vars.commandIn("NEXT")) {
-      String strInitRecord = vars.getSessionValue("Project.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Project");
-      int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
-      int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-      if (initRecord==0) initRecord=1;
-      initRecord += intRecordRange;
-      strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
-      vars.setSessionValue("Project.initRecordNumber", strInitRecord);
-
-      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
+        String strNewFilter = vars.getStringParameter("newFilter");
+        String strOffset = vars.getStringParameter("offset");
+        String strPageSize = vars.getStringParameter("page_size");
+        String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
+        String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+    	printGridData(response, vars, strKey, strName, strBpartners, strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
     } else pageError(response);
   }
+  
+  private void removePageSessionVariables(VariablesSecureApp vars){
+    vars.removeSessionValue("Project.key");
+    vars.removeSessionValue("Project.name");
+    vars.removeSessionValue("Project.bpartner");
+  }
 
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Project seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Project_FS").createXmlDocument();
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strBpartners, String strWindow) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the projects seeker");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Project").createXmlDocument();
+    if (strKeyValue.equals("") && strNameValue.equals("")) {
+      xmlDocument.setParameter("key", "%");
+    } else {
+      xmlDocument.setParameter("key", strKeyValue);
+    }
+    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("windowId", strWindow);
+    xmlDocument.setParameter("name", strNameValue);
+    xmlDocument.setParameter("claveTercero", strBpartners);
+    xmlDocument.setParameter("tercero", ProjectData.selectTercero(this, strBpartners));
+
+	    xmlDocument.setParameter("grid", "20");
+	    xmlDocument.setParameter("grid_Offset", "");
+	    xmlDocument.setParameter("grid_SortCols", "1");
+	    xmlDocument.setParameter("grid_SortDirs", "ASC");
+	    xmlDocument.setParameter("grid_Default", "0");
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -149,73 +149,153 @@ public class Project extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strBpartners, String strWindow) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the projects seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Project_F1").createXmlDocument();
-    if (strKeyValue.equals("") && strNameValue.equals("")) {
-      xmlDocument.setParameter("key", "%");
-    } else {
-      xmlDocument.setParameter("key", strKeyValue);
-    }
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("windowId", strWindow);
-    xmlDocument.setParameter("name", strNameValue);
-    xmlDocument.setParameter("claveTercero", strBpartners);
-    xmlDocument.setParameter("tercero", ProjectData.selectTercero(this, strBpartners));
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
+	  if (log4j.isDebugEnabled()) log4j.debug("Output: print page structure");
+	    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+	    
+	    SQLReturnObject[] data = getHeaders(vars);
+	    String type = "Hidden";
+	    String title = "";
+	    String description = "";
+	   	    
+	    xmlDocument.setParameter("type", type);
+	    xmlDocument.setParameter("title", title);
+	    xmlDocument.setParameter("description", description);
+	    xmlDocument.setData("structure1", data);
+	    response.setContentType("text/xml; charset=UTF-8");
+	    response.setHeader("Cache-Control", "no-cache");
+	    PrintWriter out = response.getWriter();
+	    if (log4j.isDebugEnabled()) log4j.debug(xmlDocument.print());
+	    out.println(xmlDocument.print());
+	    out.close();
   }
-
-  void printPageFrame2(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strName, String strBpartners, String strIsSOTrx) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 2 of the projects seeker");
-    XmlDocument xmlDocument;
-
-    String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Project");
-    int intRecordRange = (strRecordRange.equals("")?0:Integer.parseInt(strRecordRange));
-    String strInitRecord = vars.getSessionValue("Project.initRecordNumber");
-    int initRecordNumber = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-   // if (!strIsSOTrx.equals("Y")) strBpartners="";
-    boolean hasPrevious=false, hasNext=false;
-    if (strKey.equals("") && strName.equals("") && strBpartners.equals("")) {
-      String[] discard = {"sectionDetail", "hasPrevious", "hasNext"};
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Project_F2", discard).createXmlDocument();
-      xmlDocument.setData("structure1", ProjectData.set());
-    } else {
-      String[] discard = {"withoutPrevious", "withoutNext"};
-      ProjectData[] data = ProjectData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "Project"), Utility.getContext(this, vars, "#User_Org", "Project"), strKey, strName, strBpartners, initRecordNumber, intRecordRange);
-      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
-      if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Project_F2", discard).createXmlDocument();
-      xmlDocument.setData("structure1", data);
-    }
-
-    /*
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "Project_F2", false, "document.frmMain.inpClave", "", "", false, "info", strReplaceWith, false, true);
-    toolbar.prepareInfoTemplate(hasPrevious, hasNext, vars.getSessionValue("#ShowTest", "N").equals("Y"));
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-    */
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+  
+  private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
+	  SQLReturnObject[] data = null;
+	  Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();	  
+	  String[] colNames = {"value", "name","bpartner","projectstatus", "rowkey"};
+//	  String[] gridNames = {"Key", "Name","Disp. Credit","Credit used", "Contact", "Phone no.", "Zip", "City", "Income", "c_bpartner_id", "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey"};
+	  String[] colWidths = {"98", "300", "250", "120", "0"};
+	  for(int i=0; i < colNames.length; i++) {
+		  SQLReturnObject dataAux = new SQLReturnObject();
+		  dataAux.setData("columnname", colNames[i]);
+	      dataAux.setData("gridcolumnname", colNames[i]);
+	      dataAux.setData("adReferenceId", "AD_Reference_ID");
+	      dataAux.setData("adReferenceValueId", "AD_ReferenceValue_ID");	      
+	      dataAux.setData("isidentifier", (colNames[i].equals("rowkey")?"true":"false"));
+	      dataAux.setData("iskey", (colNames[i].equals("rowkey")?"true":"false"));
+	      dataAux.setData("isvisible", (colNames[i].endsWith("_id") || colNames[i].equals("rowkey")?"false":"true"));
+	      String name = Utility.messageBD(this, "PJS_" + colNames[i].toUpperCase(), vars.getLanguage());
+	      dataAux.setData("name", (name.startsWith("PJS_")?colNames[i]:name));
+	      dataAux.setData("type", "string");
+	      dataAux.setData("width", colWidths[i]);
+	      vAux.addElement(dataAux);
+	  }
+	  data = new SQLReturnObject[vAux.size()];
+	  vAux.copyInto(data);
+	  return data;
   }
-
-  void printPageFrame3(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 3 of the projects seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Project_F3").createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
+  
+  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strName, String strBpartners, String strOrderBy, String strOffset, String strPageSize, String strNewFilter ) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: print page rows");
+    
+    SQLReturnObject[] headers = getHeaders(vars);
+    FieldProvider[] data = null;
+    String type = "Hidden";
+    String title = "";
+    String description = "";
+    String strNumRows = "0";
+    
+    if (headers!=null) {
+      try{
+	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load    	
+	  		data = ProjectData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "Project"), Utility.getContext(this, vars, "#User_Org", "Project"), strKey, strName, strBpartners, strOrderBy, "", "");
+	  		strNumRows = String.valueOf(data.length);
+	  		vars.setSessionValue("ProjectData.numrows", strNumRows);
+	  	}
+  		else {
+  			strNumRows = vars.getSessionValue("ProjectData.numrows");
+  		}
+	  			
+  		// Filtering result
+    	if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+    		String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));    		
+    		data = ProjectData.select(this, "ROWNUM", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "Project"), Utility.getContext(this, vars, "#User_Org", "Project"), strKey, strName, strBpartners, strOrderBy, oraLimit, "");
+    	}
+    	else {
+    		String pgLimit = strPageSize + " OFFSET " + strOffset;
+    		data = ProjectData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "Project"), Utility.getContext(this, vars, "#User_Org", "Project"), strKey, strName, strBpartners, strOrderBy, "", pgLimit);
+    	}    	
+      } catch (ServletException e) {
+        log4j.error("Error in print page data: " + e);
+        e.printStackTrace();
+        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+        if (!myError.isConnectionAvailable()) {
+          bdErrorAjax(response, "Error", "Connection Error", "No database connection");
+          return;
+        } else {
+          type = myError.getType();
+          title = myError.getTitle();
+          if (!myError.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + myError.getMessage() + "]]>";
+          else description = myError.getMessage();
+        }
+      } catch (Exception e) { 
+        if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
+        type = "Error";
+        title = "Error";
+        if (e.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + e.getMessage() + "]]>";
+        else description = e.getMessage();
+        e.printStackTrace();
+      }
+    }
+    
+    if (!type.startsWith("<![CDATA[")) type = "<![CDATA[" + type + "]]>";
+    if (!title.startsWith("<![CDATA[")) title = "<![CDATA[" + title + "]]>";
+    if (!description.startsWith("<![CDATA[")) description = "<![CDATA[" + description + "]]>";
+    StringBuffer strRowsData = new StringBuffer();
+    strRowsData.append("<xml-data>\n");
+    strRowsData.append("  <status>\n");
+    strRowsData.append("    <type>").append(type).append("</type>\n");
+    strRowsData.append("    <title>").append(title).append("</title>\n");
+    strRowsData.append("    <description>").append(description).append("</description>\n");
+    strRowsData.append("  </status>\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\">\n");
+    if (data!=null && data.length>0) {
+      for (int j=0;j<data.length;j++) {
+        strRowsData.append("    <tr>\n");
+        for (int k=0;k<headers.length;k++) {
+          strRowsData.append("      <td><![CDATA[");
+          String columnname = headers[k].getField("columnname");
+          
+          /*
+          if ((
+        	   (headers[k].getField("iskey").equals("false") 
+        	&& !headers[k].getField("gridcolumnname").equalsIgnoreCase("keyname"))
+        	 || !headers[k].getField("iskey").equals("true")) && !tableSQL.getSelectField(columnname + "_R").equals("")) {
+        	  columnname += "_R";
+          }*/
+          
+          if ((data[j].getField(columnname)) != null) {
+            if (headers[k].getField("adReferenceId").equals("32")) strRowsData.append(strReplaceWith).append("/images/");
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>","").replaceAll("<B>","").replaceAll("</b>","").replaceAll("</B>","").replaceAll("<i>","").replaceAll("<I>","").replaceAll("</i>","").replaceAll("</I>","").replaceAll("<p>","&nbsp;").replaceAll("<P>","&nbsp;").replaceAll("<br>","&nbsp;").replaceAll("<BR>","&nbsp;"));
+          } else {
+            if (headers[k].getField("adReferenceId").equals("32")) {
+              strRowsData.append(strReplaceWith).append("/images/blank.gif");
+            } else strRowsData.append("&nbsp;");
+          }
+          strRowsData.append("]]></td>\n");
+        }
+        strRowsData.append("    </tr>\n");
+      }
+    }
+    strRowsData.append("  </rows>\n");
+    strRowsData.append("</xml-data>\n");
+        
+    response.setContentType("text/xml; charset=UTF-8");
+    response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
+    if (log4j.isDebugEnabled()) log4j.debug(strRowsData.toString());  
+    out.print(strRowsData.toString());
     out.close();
   }
 

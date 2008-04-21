@@ -28,42 +28,51 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        SELECT DP.C_DEBT_PAYMENT_ID, Ad_Column_Identifier(TO_CHAR('C_Debt_Payment'), TO_CHAR(dp.C_DEBT_PAYMENT_ID), TO_CHAR(?)) AS NAME, B.NAME AS BPARTNER, I.DOCUMENTNO AS INVOICE, DP.DATEPLANNED,
-        O.DOCUMENTNO AS ORDERNO, DP.AMOUNT, DP.WRITEOFFAMT, C.ISO_CODE AS CURRENCY,
-        S1.DOCUMENTNO AS DEBTCANCEL, S2.DOCUMENTNO AS DEBTGENERATE, COALESCE(RLT.NAME, RL.NAME) AS PAYMENTRULE
-        FROM C_DEBT_PAYMENT DP left join C_BPARTNER B on DP.C_BPARTNER_ID = B.C_BPARTNER_ID
-                               left join C_INVOICE I  on DP.C_INVOICE_ID = I.C_INVOICE_ID
-                               left join C_SETTLEMENT S1 on DP.C_SETTLEMENT_CANCEL_ID = S1.C_SETTLEMENT_ID
-                               left join C_ORDER    O on DP.C_ORDER_ID = O.C_ORDER_ID
-                               left join C_SETTLEMENT S2 on DP.C_SETTLEMENT_GENERATE_ID = S2.C_SETTLEMENT_ID,
-             AD_REF_LIST RL    left join AD_REF_LIST_TRL RLT on RL.AD_REF_LIST_ID = RLT.AD_REF_LIST_ID
-                                                            AND RLT.AD_LANGUAGE  = ?,
-            C_CURRENCY C
-        WHERE DP.C_CURRENCY_ID = C.C_CURRENCY_ID 
-        AND DP.PAYMENTRULE = RL.VALUE
-        AND RL.AD_REFERENCE_ID = 195       
-        AND DP.AD_Client_ID IN ('1') 
-        AND DP.AD_Org_ID IN ('1') 
-        AND DP.IsActive='Y'
-        AND DP.IsValid='Y'
+      	SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (
+	        SELECT DP.C_DEBT_PAYMENT_ID, B.NAME AS BPARTNER, I.DOCUMENTNO AS INVOICE, DP.DATEPLANNED,
+	        O.DOCUMENTNO AS ORDERNO, DP.AMOUNT, DP.WRITEOFFAMT, C.ISO_CODE AS CURRENCY,
+	        S1.DOCUMENTNO AS DEBTCANCEL, S2.DOCUMENTNO AS DEBTGENERATE, COALESCE(RLT.NAME, RL.NAME) AS PAYMENTRULE,
+	        DP.C_DEBT_PAYMENT_ID || '#' || Ad_Column_Identifier(TO_CHAR('C_Debt_Payment'), TO_CHAR(dp.C_DEBT_PAYMENT_ID), TO_CHAR(?)) AS ROWKEY
+	        FROM C_DEBT_PAYMENT DP left join C_BPARTNER B on DP.C_BPARTNER_ID = B.C_BPARTNER_ID
+	                               left join C_INVOICE I  on DP.C_INVOICE_ID = I.C_INVOICE_ID
+	                               left join C_SETTLEMENT S1 on DP.C_SETTLEMENT_CANCEL_ID = S1.C_SETTLEMENT_ID
+	                               left join C_ORDER    O on DP.C_ORDER_ID = O.C_ORDER_ID
+	                               left join C_SETTLEMENT S2 on DP.C_SETTLEMENT_GENERATE_ID = S2.C_SETTLEMENT_ID,
+	             AD_REF_LIST RL    left join AD_REF_LIST_TRL RLT on RL.AD_REF_LIST_ID = RLT.AD_REF_LIST_ID
+	                                                            AND RLT.AD_LANGUAGE  = ?,
+	            C_CURRENCY C
+	        WHERE DP.C_CURRENCY_ID = C.C_CURRENCY_ID 
+	        AND DP.PAYMENTRULE = RL.VALUE
+	        AND RL.AD_REFERENCE_ID = 195       
+	        AND DP.AD_Client_ID IN ('1') 
+	        AND DP.AD_Org_ID IN ('1') 
+	        AND DP.IsActive='Y'
+	        AND DP.IsValid='Y'
+	        ORDER BY DP.C_DEBT_PAYMENT_ID
+	        ) A ) B
+		WHERE 1=1
         ]]>
         </Sql>
         <Field name="position" value="count"/>
+        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />        
         <Parameter name="language"/>
         <Parameter name="language"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="DP.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="DP.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
-        <Parameter name="dateFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned >= to_date(?) ]]></Parameter>
-        <Parameter name="dateTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned < to_date(?) ]]></Parameter>
-        <Parameter name="AmountFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount >= ? ]]></Parameter>
-        <Parameter name="AmountTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount <= ? ]]></Parameter>
+        <Parameter name="dateFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned >= TO_DATE(?) ]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned < TO_DATE(?) ]]></Parameter>
+        <Parameter name="AmountFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount >= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="AmountTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount <= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="paymentRule" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.paymentrule = ? ]]></Parameter>
-        <Parameter name="isPaid" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.ispaid=? ]]></Parameter>
-        <Parameter name="isReceipt" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.isreceipt=? ]]></Parameter>
+        <Parameter name="isPaid" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.ispaid = ? ]]></Parameter>
+        <Parameter name="isReceipt" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.isreceipt = ? ]]></Parameter>
         <Parameter name="isPending" optional="true" after="DP.IsValid='Y'" text="AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, DP.C_CASHLINE_ID, DP.C_BANKSTATEMENTLINE_ID) = ?"/>
         <Parameter name="invoiceId" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND i.documentno like ? ]]></Parameter>
         <Parameter name="orderId" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND o.documentno like ? ]]></Parameter>
+        <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="DP.C_DEBT_PAYMENT_ID" />
+        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
+        <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
         
    <SqlMethod name="set" type="constant" return="multiple">

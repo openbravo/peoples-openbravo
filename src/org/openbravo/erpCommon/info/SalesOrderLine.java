@@ -20,18 +20,24 @@ package org.openbravo.erpCommon.info;
 
 import org.openbravo.base.secureApp.*;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.Utility;
 import java.io.*;
+import java.util.Vector;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.openbravo.utils.Replace;
 
+import org.openbravo.utils.Replace;
 import org.openbravo.erpCommon.utility.DateTimeData;
+
 
 
 public class SalesOrderLine extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  
+
   public void init (ServletConfig config) {
     super.init(config);
     boolHist = false;
@@ -41,13 +47,20 @@ public class SalesOrderLine extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
+      removePageSessionVariables(vars);
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue", "SalesOrderLine.name");
       String windowId = vars.getRequestGlobalVariable("WindowID", "SalesOrderLine.windowId");
       String strSOTrx = vars.getStringParameter("inpisSOTrxTab");
       if (strSOTrx.equals("")) strSOTrx = Utility.getContext(this, vars, "isSOTrx", windowId);
       vars.setSessionValue("SalesOrderLine.isSOTrx", strSOTrx);
-      vars.getRequestGlobalVariable("inpmProductId", "SalesOrderLine.product");
-      vars.getRequestGlobalVariable("inpcBpartnerId", "SalesOrderLine.bpartner");
+      String strProduct = vars.getRequestGlobalVariable("inpmProductId", "SalesOrderLine.product");
+      String strBpartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "SalesOrderLine.bpartner");
+      String strDocumentNo = "";
+      String strDateFrom = "";
+      String strDateTo = "";
+      String strCal1 = "";
+      String strCal2 = "";
+      
       if (!strNameValue.equals("")) {
         int i=0, count=1, inicio=0;
         String search = " - ", token="";
@@ -62,13 +75,18 @@ public class SalesOrderLine extends HttpSecureAppServlet {
 
           switch (count) {
             case 1: 
-              vars.setSessionValue("SalesOrderLine.documentno", token);
+              strDocumentNo = token+"%"; 
+              vars.setSessionValue("SalesOrderLine.documentno", strDocumentNo);
               break;
             case 2: 
+              strDateFrom = token;
+              strDateTo = token;
               vars.setSessionValue("SalesOrderLine.datefrom", token);
               vars.setSessionValue("SalesOrderLine.dateto", token);
               break;
             case 3: 
+              strCal1 = token;
+              strCal2 = token;
               vars.setSessionValue("SalesOrderLine.grandtotalfrom", token);
               vars.setSessionValue("SalesOrderLine.grandtotalto", token);
               break;
@@ -82,89 +100,93 @@ public class SalesOrderLine extends HttpSecureAppServlet {
           count++;
         } while (i!=-1);
       }
-      printPageFS(response, vars);
+      printPage(response, vars, strBpartnerId, strProduct, strDocumentNo, strDateFrom, strDateTo, strCal1, strCal2);
     } else if (vars.commandIn("KEY")) {
-      String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "SalesOrderLine.key");
+      removePageSessionVariables(vars);
+      String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "SalesOrderLine.documentno");
       String windowId = vars.getRequestGlobalVariable("WindowID", "SalesOrderLine.windowId");
       String strSOTrx = vars.getStringParameter("inpisSOTrxTab");
       if (strSOTrx.equals("")) strSOTrx = Utility.getContext(this, vars, "isSOTrx", windowId);
       vars.setSessionValue("SalesOrderLine.isSOTrx", strSOTrx);
-      vars.setSessionValue("SalesOrderLine.documentno", strKeyValue + "%");
+      strKeyValue = strKeyValue + "%";
+      vars.setSessionValue("SalesOrderLine.documentno", strKeyValue);
       SalesOrderLineData[] data = null;
-      if (strSOTrx.equals("Y")) data = SalesOrderLineData.selectKey(this, Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strKeyValue + "%");
-      else data = SalesOrderLineData.selectKeySOTrx(this, Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strKeyValue + "%");
+      if (strSOTrx.equals("Y")) data = SalesOrderLineData.selectKey(this, Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strKeyValue);
+      else data = SalesOrderLineData.selectKeySOTrx(this, Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strKeyValue);
       if (data!=null && data.length==1) printPageKey(response, vars, data);
-      else printPageFS(response, vars);
-    } else if (vars.commandIn("FRAME1")) {
-      String strBPartner = vars.getGlobalVariable("inpcBpartnerId", "SalesOrderLine.bpartner", "");
+      else printPage(response, vars, "", "", strKeyValue, "", "", "", "");
+    } else if(vars.commandIn("STRUCTURE")) {
+    	printGridStructure(response, vars);
+    } else if(vars.commandIn("DATA")) {
+        String strSOTrx = vars.getSessionValue("SalesOrderLine.isSOTrx");
+    	if(vars.getStringParameter("newFilter").equals("1")){
+    	  removePageSessionVariables(vars);
+    	}
+      String strBpartnerId = vars.getGlobalVariable("inpBpartnerId", "SalesOrderLine.bpartner", "");
       String strProduct = vars.getGlobalVariable("inpmProductId", "SalesOrderLine.product", "");
       String strDocumentNo = vars.getGlobalVariable("inpdocumentno", "SalesOrderLine.documentno", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "SalesOrderLine.datefrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "SalesOrderLine.dateto", "");
+      String strDescription = vars.getGlobalVariable("inpDescription", "SalesOrderLine.description", "");
       String strCal1 = vars.getGlobalVariable("inpCal1", "SalesOrderLine.grandtotalfrom", "");
-      String strCal2 = vars.getGlobalVariable("inpCalc2", "SalesOrderLine.grandtotalto", "");
-      printPageFrame1(response, vars, strBPartner, strProduct, strDocumentNo, strDateFrom, strDateTo, strCal1, strCal2);
-    } else if (vars.commandIn("FRAME2")) {
-      String strBpartnerId = vars.getGlobalVariable("inpcBpartnerId", "SalesOrderLine.bpartner", "");
-      String strProduct = vars.getGlobalVariable("inpmProductId", "SalesOrderLine.product", "");
-      String strDocumentNo = vars.getGlobalVariable("inpdocumentno", "SalesOrderLine.documentno", "");
-      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "SalesOrderLine.datefrom", "");
-      String strDateTo = vars.getGlobalVariable("inpDateTo", "SalesOrderLine.dateto", "");
-      String strDescription = vars.getStringParameter("inpDescription");
-      String strCal1 = vars.getGlobalVariable("inpCal1", "SalesOrderLine.grandtotalfrom", "");
-      String strCal2 = vars.getGlobalVariable("inpCalc2", "SalesOrderLine.grandtotalto", "");
-      String strOrder = vars.getStringParameter("inpOrder");
-      String strDelivered = vars.getStringParameter("inpdelivered", "N");
-      String strInvoiced = vars.getStringParameter("inpinvoiced", "N");
-      printPageFrame2(response, vars, strDocumentNo, strBpartnerId, strDateFrom, strDateTo, strDescription, strCal1, strCal2, strOrder, strProduct, strDelivered, strInvoiced);
-    } else if (vars.commandIn("FIND")) {
-      String strBpartnerId = vars.getRequestGlobalVariable("inpcBpartnerId", "SalesOrderLine.bpartner");
-      String strProduct = vars.getRequestGlobalVariable("inpmProductId", "SalesOrderLine.product");
-      String strDocumentNo = vars.getRequestGlobalVariable("inpdocumentno", "SalesOrderLine.documentno");
-      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "SalesOrderLine.datefrom");
-      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "SalesOrderLine.dateto");
-      String strDescription = vars.getStringParameter("inpDescription");
-      String strCal1 = vars.getRequestGlobalVariable("inpCal1", "SalesOrderLine.grandtotalfrom");
-      String strCal2 = vars.getRequestGlobalVariable("inpCalc2", "SalesOrderLine.grandtotalto");
-      String strOrder = vars.getStringParameter("inpOrder");
-      String strDelivered = vars.getStringParameter("inpdelivered", "N");
-      String strInvoiced = vars.getStringParameter("inpinvoiced", "N");
-
-      vars.setSessionValue("SalesOrderLine.initRecordNumber", "0");
-
-      printPageFrame2(response, vars, strDocumentNo, strBpartnerId, strDateFrom, strDateTo, strDescription, strCal1, strCal2, strOrder, strProduct, strDelivered, strInvoiced);
-    } else if (vars.commandIn("FRAME3")) {
-      printPageFrame3(response, vars);
-    } else if (vars.commandIn("PREVIOUS")) {
-      String strInitRecord = vars.getSessionValue("SalesOrderLine.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "SalesOrderLine");
-      int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
-      if (strInitRecord.equals("") || strInitRecord.equals("0")) vars.setSessionValue("SalesOrderLine.initRecordNumber", "0");
-      else {
-        int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-        initRecord -= intRecordRange;
-        strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
-        vars.setSessionValue("SalesOrderLine.initRecordNumber", strInitRecord);
-      }
-
-      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
-    } else if (vars.commandIn("NEXT")) {
-      String strInitRecord = vars.getSessionValue("SalesOrderLine.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "SalesOrderLine");
-      int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
-      int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-      if (initRecord==0) initRecord=1;
-      initRecord += intRecordRange;
-      strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
-      vars.setSessionValue("SalesOrderLine.initRecordNumber", strInitRecord);
-
-      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
+      String strCal2 = vars.getGlobalVariable("inpCal2", "SalesOrderLine.grandtotalto", "");
+      String strOrder = vars.getGlobalVariable("inpOrder", "SalesOrderLine.order", "");
+      String strDelivered = vars.getGlobalVariable("inpdelivered",  "SalesOrderLine.deliverd", "N");
+      String strInvoiced = vars.getGlobalVariable("inpinvoiced", "SalesOrderLine.invoiced", "N");
+        String strNewFilter = vars.getStringParameter("newFilter");
+        String strOffset = vars.getStringParameter("offset");
+        String strPageSize = vars.getStringParameter("page_size");
+        String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
+        String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+    	printGridData(response, vars, strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, strDateTo, strCal1,  strCal2, strProduct, strDelivered, strInvoiced, strSOTrx, strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
     } else pageError(response);
   }
+  
+  private void removePageSessionVariables(VariablesSecureApp vars){
+    vars.removeSessionValue("SalesOrderLine.bpartner");
+    vars.removeSessionValue("SalesOrderLine.product");
+    vars.removeSessionValue("SalesOrderLine.documentno");
+    vars.removeSessionValue("SalesOrderLine.datefrom");
+    vars.removeSessionValue("SalesOrderLine.dateto");
+    vars.removeSessionValue("SalesOrderLine.description");
+    vars.removeSessionValue("SalesOrderLine.grandtotalfrom");
+    vars.removeSessionValue("SalesOrderLine.grandtotalto");
+  vars.removeSessionValue("SalesOrderLine.order");
+  vars.removeSessionValue("SalesOrderLine.deliverd");
+  vars.removeSessionValue("SalesOrderLine.invoiced");
+  }
+  
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner, String strProduct, String strDocumentNo, String strDateFrom, String strDateTo, String strCal1, String strCal2) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of sale-order-lines seeker");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/SalesOrderLine").createXmlDocument();
+    if (strBPartner.equals("") && strProduct.equals("") && strDocumentNo.equals("") && strDateFrom.equals("") && strDateTo.equals("") && strCal1.equals("") && strCal2.equals("")) {
+      strDocumentNo = "%";
+    }
+    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
+    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
 
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: sale-order-lines seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/SalesOrderLine_FS").createXmlDocument();
+    xmlDocument.setParameter("documentno", strDocumentNo);
+    xmlDocument.setParameter("datefrom", strDateFrom);
+    xmlDocument.setParameter("dateto", strDateTo);
+    xmlDocument.setParameter("grandtotalfrom", strCal1);
+    xmlDocument.setParameter("grandtotalto", strCal2);
+    xmlDocument.setParameter("cBpartnerId", strBPartner);
+    xmlDocument.setParameter("cBpartnerId_DES", SalesOrderLineData.selectBPartner(this, strBPartner));
+    xmlDocument.setParameter("mProductId", strProduct);
+    xmlDocument.setParameter("mProductId_DES", SalesOrderLineData.selectProduct(this, strProduct));
+
+      xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+
+	    xmlDocument.setParameter("grid", "20");
+	    xmlDocument.setParameter("grid_Offset", "");
+	    xmlDocument.setParameter("grid_SortCols", "1");
+	    xmlDocument.setParameter("grid_SortDirs", "ASC");
+	    xmlDocument.setParameter("grid_Default", "0");
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -194,84 +216,159 @@ public class SalesOrderLine extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strBPartner, String strProduct, String strDocumentNo, String strDateFrom, String strDateTo, String strCal1, String strCal2) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of sale-order-lines seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/SalesOrderLine_F1").createXmlDocument();
-    if (strBPartner.equals("") && strProduct.equals("") && strDocumentNo.equals("") && strDateFrom.equals("") && strDateTo.equals("") && strCal1.equals("") && strCal2.equals("")) {
-      strDocumentNo = "%";
-    }
-    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("documentno", strDocumentNo);
-    xmlDocument.setParameter("datefrom", strDateFrom);
-    xmlDocument.setParameter("dateto", strDateTo);
-    xmlDocument.setParameter("grandtotalfrom", strCal1);
-    xmlDocument.setParameter("grandtotalto", strCal2);
-    xmlDocument.setParameter("cBpartnerId", strBPartner);
-    xmlDocument.setParameter("cBpartnerId_DES", SalesOrderLineData.selectBPartner(this, strBPartner));
-    xmlDocument.setParameter("mProductId", strProduct);
-    xmlDocument.setParameter("mProductId_DES", SalesOrderLineData.selectProduct(this, strProduct));
-      xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
+	  if (log4j.isDebugEnabled()) log4j.debug("Output: print page structure");
+	    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+	    
+	    SQLReturnObject[] data = getHeaders(vars);
+	    String type = "Hidden";
+	    String title = "";
+	    String description = "";
+	   	    
+	    xmlDocument.setParameter("type", type);
+	    xmlDocument.setParameter("title", title);
+	    xmlDocument.setParameter("description", description);
+	    xmlDocument.setData("structure1", data);
+	    response.setContentType("text/xml; charset=UTF-8");
+	    response.setHeader("Cache-Control", "no-cache");
+	    PrintWriter out = response.getWriter();
+	    if (log4j.isDebugEnabled()) log4j.debug(xmlDocument.print());
+	    out.println(xmlDocument.print());
+	    out.close();
   }
-
-  void printPageFrame2(HttpServletResponse response, VariablesSecureApp vars, String strDocumentNo, String strBpartnerId, String strDateFrom, String strDateTo, String strDescription, String strCal1, String strCalc2, String strOrder, String strProduct, String strDelivered, String strInvoiced) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 2 of the sale-order-lines seeker");
-    XmlDocument xmlDocument;
-    String strSOTrx = vars.getSessionValue("SalesOrderLine.isSOTrx");
-    SalesOrderLineData[] data = null;
-
-    String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "SalesOrderLine");
-    int intRecordRange = (strRecordRange.equals("")?0:Integer.parseInt(strRecordRange));
-    String strInitRecord = vars.getSessionValue("SalesOrderLine.initRecordNumber");
-    int initRecordNumber = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-
-    if (strDocumentNo.equals("") && strBpartnerId.equals("") && strDateFrom.equals("") && strDateTo.equals("") && strDescription.equals("") && strCal1.equals("") && strCalc2.equals("") && strOrder.equals("") && strProduct.equals("")) {
-      String[] discard = {"sectionDetail", "hasPrevious", "hasNext"};
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/SalesOrderLine_F2", discard).createXmlDocument();
-      data = SalesOrderLineData.set();
-    } else {
-      String[] discard = {"withoutPrevious", "withoutNext"};
-      if (strSOTrx.equals("Y")) {
-        data = SalesOrderLineData.select(this, Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""), initRecordNumber, intRecordRange);
-      } else {
-        data = SalesOrderLineData.selectSOTrx(this, Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""), initRecordNumber, intRecordRange);
+  
+  private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
+	  SQLReturnObject[] data = null;
+	  Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();	  
+	  String[] colNames = {"bpartner_name", "dateordered","documentno","issotrx", "product_name", "qty", "priceactual", "linenetamt", "rowkey"};
+	  String[] colWidths = {"200", "70", "110", "40", "170", "63", "52", "68", "0"};
+	  for(int i=0; i < colNames.length; i++) {
+		  SQLReturnObject dataAux = new SQLReturnObject();
+		  dataAux.setData("columnname", colNames[i]);
+	      dataAux.setData("gridcolumnname", colNames[i]);
+	      dataAux.setData("adReferenceId", "AD_Reference_ID");
+	      dataAux.setData("adReferenceValueId", "AD_ReferenceValue_ID");	      
+	      dataAux.setData("isidentifier", (colNames[i].equals("rowkey")?"true":"false"));
+	      dataAux.setData("iskey", (colNames[i].equals("rowkey")?"true":"false"));
+	      dataAux.setData("isvisible", (colNames[i].endsWith("_id") || colNames[i].equals("rowkey")?"false":"true"));
+	      String name = Utility.messageBD(this, "SOLS_" + colNames[i].toUpperCase(), vars.getLanguage());
+	      dataAux.setData("name", (name.startsWith("SOLS_")?colNames[i]:name));
+	      dataAux.setData("type", "string");
+	      dataAux.setData("width", colWidths[i]);
+	      vAux.addElement(dataAux);
+	  }
+	  data = new SQLReturnObject[vAux.size()];
+	  vAux.copyInto(data);
+	  return data;
+  }
+  
+  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strDocumentNo, String strDescription, String strOrder, String strBpartnerId, String strDateFrom, String strDateTo, String strCal1,  String strCalc2, String strProduct, String strDelivered, String strInvoiced, String strSOTrx, String strOrderBy, String strOffset, String strPageSize, String strNewFilter ) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: print page rows");
+    
+    SQLReturnObject[] headers = getHeaders(vars);
+    FieldProvider[] data = null;
+    String type = "Hidden";
+    String title = "";
+    String description = "";
+    String strNumRows = "0";
+    
+    if (headers!=null) {
+      try{
+	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load    	
+	  		if (strSOTrx.equals("Y")) {
+        		data = SalesOrderLineData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""), strOrderBy, "", "");
+      	   } else {
+        		data = SalesOrderLineData.selectSOTrx(this, "1", Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""), strOrderBy, "", "");
+      	   }
+	  		strNumRows = String.valueOf(data.length);
+	  		vars.setSessionValue("SalesOrderLine.numrows", strNumRows);
+	  	}
+  		else {
+  			strNumRows = vars.getSessionValue("SalesOrderLine.numrows");
+  		}
+	  			
+  		// Filtering result
+    	if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+    		String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));    		
+	  		if (strSOTrx.equals("Y")) {
+        		data = SalesOrderLineData.select(this, "ROWNUM", Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""), strOrderBy, oraLimit, "");
+      	   } else {
+        		data = SalesOrderLineData.selectSOTrx(this, "ROWNUM", Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""), strOrderBy, oraLimit, "");
+      	   }
+    	}
+    	else {
+    		String pgLimit = strPageSize + " OFFSET " + strOffset;
+	  		if (strSOTrx.equals("Y")) {
+        		data = SalesOrderLineData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""), strOrderBy, "", pgLimit);
+      	   } else {
+        		data = SalesOrderLineData.selectSOTrx(this, "1", Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""), strOrderBy, "", pgLimit);
+      	   }
+    	}    	
+      } catch (ServletException e) {
+        log4j.error("Error in print page data: " + e);
+        e.printStackTrace();
+        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+        if (!myError.isConnectionAvailable()) {
+          bdErrorAjax(response, "Error", "Connection Error", "No database connection");
+          return;
+        } else {
+          type = myError.getType();
+          title = myError.getTitle();
+          if (!myError.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + myError.getMessage() + "]]>";
+          else description = myError.getMessage();
+        }
+      } catch (Exception e) { 
+        if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
+        type = "Error";
+        title = "Error";
+        if (e.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + e.getMessage() + "]]>";
+        else description = e.getMessage();
+        e.printStackTrace();
       }
-      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
-      if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/SalesOrderLine_F2", discard).createXmlDocument();
     }
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setData("structure1", data);
-
-    response.setContentType("text/html; charset=UTF-8");
+    
+    if (!type.startsWith("<![CDATA[")) type = "<![CDATA[" + type + "]]>";
+    if (!title.startsWith("<![CDATA[")) title = "<![CDATA[" + title + "]]>";
+    if (!description.startsWith("<![CDATA[")) description = "<![CDATA[" + description + "]]>";
+    StringBuffer strRowsData = new StringBuffer();
+    strRowsData.append("<xml-data>\n");
+    strRowsData.append("  <status>\n");
+    strRowsData.append("    <type>").append(type).append("</type>\n");
+    strRowsData.append("    <title>").append(title).append("</title>\n");
+    strRowsData.append("    <description>").append(description).append("</description>\n");
+    strRowsData.append("  </status>\n");
+    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\">\n");
+    if (data!=null && data.length>0) {
+      for (int j=0;j<data.length;j++) {
+        strRowsData.append("    <tr>\n");
+        for (int k=0;k<headers.length;k++) {
+          strRowsData.append("      <td><![CDATA[");
+          String columnname = headers[k].getField("columnname");
+          
+          if ((data[j].getField(columnname)) != null) {
+            if (headers[k].getField("adReferenceId").equals("32")) strRowsData.append(strReplaceWith).append("/images/");
+            strRowsData.append(data[j].getField(columnname).replaceAll("<b>","").replaceAll("<B>","").replaceAll("</b>","").replaceAll("</B>","").replaceAll("<i>","").replaceAll("<I>","").replaceAll("</i>","").replaceAll("</I>","").replaceAll("<p>","&nbsp;").replaceAll("<P>","&nbsp;").replaceAll("<br>","&nbsp;").replaceAll("<BR>","&nbsp;"));
+          } else {
+            if (headers[k].getField("adReferenceId").equals("32")) {
+              strRowsData.append(strReplaceWith).append("/images/blank.gif");
+            } else strRowsData.append("&nbsp;");
+          }
+          strRowsData.append("]]></td>\n");
+        }
+        strRowsData.append("    </tr>\n");
+      }
+    }
+    strRowsData.append("  </rows>\n");
+    strRowsData.append("</xml-data>\n");
+        
+    response.setContentType("text/xml; charset=UTF-8");
+    response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
+    if (log4j.isDebugEnabled()) log4j.debug(strRowsData.toString());  
+    out.print(strRowsData.toString());
     out.close();
   }
-
-  void printPageFrame3(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 3 of the sale-order-lines seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/SalesOrderLine_F3").createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
+  
   public String getServletInfo() {
     return "Servlet that presents que sale-orders lines seeker";
   } // end of getServletInfo() method

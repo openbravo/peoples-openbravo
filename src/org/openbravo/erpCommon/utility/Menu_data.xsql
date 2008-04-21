@@ -245,24 +245,10 @@
         AND MO.ISDEFAULT = 'Y'
         AND MOM.ISACTIVE = 'Y'
         AND MOM.ISDEFAULT = 'Y' 
-        UNION
-        SELECT R.AD_REFERENCE_ID AS NODE_ID, (case when RT.AD_REFERENCE_ID IS NULL then R.NAME else RT.NAME end) AS NAME, 
-        (case when RT.AD_REFERENCE_ID IS NULL then  R.DESCRIPTION else  RT.DESCRIPTION end) AS DESCRIPTION, TO_CHAR(R.NAME) AS ClassName
-        FROM AD_REFERENCE R left join AD_REFERENCE_TRL RT on R.AD_REFERENCE_ID = RT.AD_REFERENCE_ID 
-                                                          AND RT.AD_LANGUAGE = ? 
-                                                          AND RT.ISACTIVE = 'Y'
-        WHERE R.AD_REFERENCE_ID IN (31,25,800011,800013,31)
-        AND R.ISACTIVE = 'Y' 
-        AND EXISTS (SELECT 1 FROM AD_FIELD F, AD_COLUMN C 
-          WHERE C.AD_REFERENCE_ID = R.AD_REFERENCE_ID 
-          AND C.AD_COLUMN_ID = F.AD_COLUMN_ID 
-          AND C.ISACTIVE = 'Y' 
-          AND F.ISACTIVE = 'Y')
         ) AA
         ORDER BY NAME
       </Sql>
-        <Parameter name="adLanguage"/>
-        <Parameter name="adLanguage"/>
+        <Parameter name="adLanguage"/>        
    </SqlMethod>
    <SqlMethod name="getUserName" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>

@@ -11,102 +11,322 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<HTML>
-<HEAD>
-<TITLE>Location selector</TITLE>
-<LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></LINK> 
-<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<html>
+<head>
+<title>Locator selector</title>
+
+<link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></link>
+
+<script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript">
-function onloadFunctions() {
-	new TypeAheadCombo("inpWarehouse");
-}
-</SCRIPT>
-	<SCRIPT language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client', null, 'buttonOK')
-		);
-		setWindowTableParentElement();
-		enableShortcuts('popup');
-		
-		try {
-		  onloadFunctions();
-		} catch (e) {}
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/openbravo/core.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/openbravo/widget/DataGrid.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+<script type="text/javascript">
+  dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+</script>
 
-		setWindowElementFocus('firstElement');
-	}
 
-	function onResizeDo(){
-	}
-	</SCRIPT>
-</HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-<FORM name="frmLocalizador" method="POST" action="" id="client">
-  <INPUT type="hidden" name="Command"></INPUT>
-  <BR></BR>
-  <TABLE width="50%" border="0" cellspacing="0" cellpadding="0">
-    <TR> 
-      <TD width="47%"> <SPAN >Localizator</SPAN></TD>
-      <TD width="53%"> <SELECT name="inpWarehouse" id="inpWarehouse">
-          <OPTION value="">Standard</OPTION>
-        </SELECT></TD>
-    </TR>
-    <TR> 
-      <TD width="47%"> <SPAN >Warehouse / 
-        Point of service</SPAN></TD>
-      <TD width="53%"> <INPUT type="text" name="inpKey" value="Standard"></INPUT>
-      </TD>
-    </TR>
-    <TR> 
-      <TD width="47%" > <SPAN >Create new record</SPAN></TD>
-      <TD width="53%"> <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="checkbox" value="checkbox"></INPUT></SPAN>
-      </TD>
-    </TR>
-    <TR> 
-      <TD width="47%"> <SPAN >Corridor(X)</SPAN></TD>
-      <TD width="53%"> <INPUT type="text" name="inpKey"></INPUT>
-      </TD>
-    </TR>
-    <TR> 
-      <TD width="47%"> <SPAN >Containing(Y)</SPAN></TD>
-      <TD width="53%"> <INPUT type="text" name="inpKey"></INPUT>
-      </TD>
-    </TR>
-    <TR> 
-      <TD width="47%"> <SPAN >Level(Z)</SPAN></TD>
-      <TD width="53%"> <INPUT type="text" name="inpKey"></INPUT>
-      </TD>
-    </TR>
-    <TR> 
-      <TD width="47%"> <SPAN >Key</SPAN></TD>
-      <TD width="53%"> <INPUT type="text" name="inpKey" value="Standard"></INPUT>
-      </TD>
-    </TR>
-  </TABLE>
-  <BR></BR>
-  <table width="100%">
+<link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></link> 
+<script language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://yourSite/web/";</script>
+<script language="JavaScript" type="text/javascript" id="paramLanguage">  LNG_POR_DEFECTO = "en_US";</script>
+
+<script language="JavaScript" type="text/javascript">
+  function depurar() {
+    var frm = document.frmSelector;
+    if ((frm.inpKey.value==null || frm.inpKey.value=="") && (frm.inpName.value==null || frm.inpName.value=="") && (frm.inpContact.value==null || frm.inpContact.value=="") && (frm.inpZIP.value==null || frm.inpZIP.value=="") && (frm.inpPhone.value==null || frm.inpPhone.value=="") && !frm.inpClients.checked) {
+      frm.inpKey.focus();
+      mensaje(7);
+      return false;
+    }
+    return true;
+  }
+</script>
+<script type="text/javascript">    
+  function depurarSelector(action) {
+    var pos; var keys;  var clave; var texto; var parameter;
+    if(action == "SAVE") {
+      pos = getSelectedPos();
+      keys = getSelectedValues().split("#")
+      clave = keys[0];
+      texto = keys[1];
+    }    
+    parent.opener.closeSearch(action, clave, texto);
+  }
+</script>
+<script language="JavaScript" type="text/javascript" id="selectedColumn">
+  
+  dojo.require("openbravo.widget.DataGrid");
+  var selectedRow = 0;
+  var orderByPositions = new Array("1");
+  var orderByDirections = new Array("ASC");
+</script>
+<script language="JavaScript" type="text/javascript">
+  
+  function onLoadDo(){
+    this.windowTables = new Array(
+      new windowTableId('client_top', null, 'buttonSearch', null),
+      new windowTableId('client_middle', null, 'buttonOK', null),
+      new windowTableId('client_bottom', null, 'buttonOK', null)
+    );
+    setWindowTableParentElement();
+    enableShortcuts('popup');
+
+    try {
+      onloadFunctions();
+    } catch (e) {}
+
+    setWindowElementFocus('firstElement');
+    resizeAreaInfo();
+  }
+
+  function onResizeDo(){
+    resizeAreaInfo(true);
+  }
+</script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+<form name="frmSelector" method="POST" action="Locator.html">
+  <input type="hidden" name="Command" />
+  <input type="hidden" name="IsPopUpCall" value="1" />
+  <div class="Popup_ContentPane_CircleLogo">
+    <div class="Popup_WindowLogo">
+      <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_locator" src="../../../../../web/images/blank.gif" border=0/></img>
+    </div>
+  </div>
+  <table cellspacing="0" cellpadding="0" width="100%" id="table_header">
+
     <tr>
-      <td>&nbsp;</td>
-      <td width="30px" align="center" valign="top"> <A href="#" height="20" valign="top" onclick="depurarSelector('CLEAR');return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
-        <img width="16" height="16" id="buttonCancel" src="../../../../../web/images/Cancel.jpg" alt="Cancel" title="Cancel" border="0"></IMG></A> 
+      <td>
+        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
+          <tr class="Popup_NavBar_bg"><td></td>
+            <td class="Popup_NavBar_separator_cell"></td>
+            <td class="Popup_NavBar_bg_logo_left"></td>
+            <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+            <td class="Popup_NavBar_bg_logo_right"></td>
+            <td class="Popup_NavBar_Popup_title_cell"><span>Locator selector</span></td>
+            <td class="Popup_NavBar_separator_cell"></td>
+          </tr>
+        </table>
       </td>
-      <td width="30px"> <A href="#" onclick="depurarSelector('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" id="buttonOK"> 
-        <img width="16" height="16" id="buttonOk" src="../../../../../web/images/Ok.jpg" alt="Accept" title="Accept" border="0"></IMG></A> 
+    </tr>
+
+    <tr>
+      <td>
+        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar">
+          <tr>
+            <td class="Popup_SeparatorBar_bg"></td>
+          </tr>
+        </table>
       </td>
-      <td>&nbsp;</td>
+    </tr>
+
+  </table>
+
+  <table cellspacing="0" cellpadding="0" width="100%">
+
+    <tr>
+      <td>
+        <div class="Popup_ContentPane_Client" style="overflow: auto; height: 185px;" id="client_top">
+          <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector">
+
+            <tr>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+            </tr>
+
+            <tr>
+              <td colspan="6">
+                <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                  <tr class="FieldGroup_TopMargin"></tr>
+                  <tr>
+                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></img></td>
+                    <td class="FieldGroupTitle">Primary Filters</td>
+                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></td>
+                    <td class="FieldGroupContent"></td>
+
+                  </tr>
+                  <tr class="FieldGroup_BottomMargin"></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+             <td class="TitleCell" width="28%"> <span class="LabelText">Alias</span></td>
+              <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpKey" value="" id="fieldKey"></input>
+              </td>
+              <td class="TitleCell" width="28%"> <span class="LabelText">Warehouse / 
+                Point of service</span></td>
+              <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpWarehouse" value="" id="paramWarehouse"></input>
+              </td>
+              
+            </tr>
+            <tr> 
+              <td class="TitleCell" width="17%"> <span class="LabelText">Corridor(X)</span></td>
+              <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpAisle"/> </td>
+              <td class="TitleCell" width="28%"> <span class="LabelText">Shelves(Y)</span></td>
+              <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpBin"></input></td>
+              <td class="TitleCell" width="17%"> <span class="LabelText">Height(Z)</span></td>
+              <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpLevel"></input></td>
+            </tr>
+
+            <tr>
+              <td></td>
+              <td class="Button_LeftAlign_ContentCell">
+                <div>
+                  <a class="ButtonLink" href="#"
+                    onfocus="setWindowElementFocus(this); window.status='Search'; return true;"
+                    onblur="window.status=''; return true;"
+                    onkeypress="this.className='ButtonLink_active'; return true;"
+                    onkeyup="this.className='ButtonLink_focus'; return true;"
+                    onclick="setFilters();return false;"
+                    id="buttonSearch">
+                    <table class="Button"
+                      onmousedown="this.className='Button_active'; return true;"
+                      onmouseup="this.className='Button'; return true;"
+                      onmouseover="this.className='Button_hover'; window.status='Search'; return true;"
+                      onmouseout="this.className='Button'; window.status=''; return true;">
+                      <tr>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border=0/></td>
+                        <td class="Button_text Button_width">Search</td>
+                        <td class="Button_right"></td>
+                      </tr>
+                    </table>
+                  </a>
+                </div>
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <div class="Popup_ContentPane_Client" style="overflow: hidden; height: 0px;" id="client_middle">
+          <table summary="" id="sectionDetail">
+            <tr>
+              <td>
+                <table cellspacing="0" cellpadding="0" width="10px" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="grid_sample">
+                  <tr class="DataGrid_Body_Row" id="grid_sample_header">
+                    <th width="10px" class="DataGrid_Header_Cell">DataGrid</th>
+                  </tr>
+                  <tr class="DataGrid_Body_Row DataGrid_Body_Row_1" onclick="selectActual(this); loadData('BBAccountingUser', '1000012', '', '1'); return true;" id="grid_sample_row">
+                    <td class="DataGrid_Body_Cell">Loading...</td>
+                  </tr>
+                </table>
+                <table width="100%" cellspacing="0" cellpadding="0" border="0" class="Main_Client_TableRelation" id="grid_table">
+                  <tr>
+                    <td>
+                      <div id="grid" dojotype="openbravo:DataGrid"
+                        structureurl="../info/Locator.html?Command=STRUCTURE"
+                        dataurl="../info/Locator.html?Command=DATA"
+                        updatesurl="../info/Locator.html?Command=DATA"
+                        calculatenumrows="true" editable="false" sortable="true"
+                        deleteable="true" oninvalidvalue="alert" onscroll="updateHeader"
+                        ongridload="onGridLoadDo" buffersize="3.0" showlinenumbers="true"
+                        offset="0" sortcols="1" sortdirs="ASC" defaultrow="0"
+                        maxwidth="99%" percentagewidthrelativetoid="client_middle"
+                        multipleRowSelection="false"
+                        preventcache="true" usecache="true" cachecontent="false">
+                      </div>
+                      <script>djConfig.searchIds.push("grid");</script>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div class="Popup_ContentPane_Client" style="overflow: auto; height: 50px;" id="client_bottom">
+          <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector">
+
+            <tr>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td class="Button_RightAlign_ContentCell">
+                <div>
+                  <a class="ButtonLink" href="#"
+                    onfocus="setWindowElementFocus(this); window.status='OK'; return true;"
+                    onblur="window.status=''; return true;"
+                    onkeypress="this.className='ButtonLink_active'; return true;"
+                    onkeyup="this.className='ButtonLink_focus'; return true;"
+                    onclick="depurarSelector('SAVE');return false;"
+                    id="buttonOK">
+                    <table class="Button"
+                      onmousedown="this.className='Button_active'; return true;"
+                      onmouseup="this.className='Button'; return true;"
+                      onmouseover="this.className='Button_hover'; window.status='OK'; return true;"
+                      onmouseout="this.className='Button'; window.status=''; return true;">
+                      <tr>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="OK" title="OK" src="../../../../../web/images/blank.gif" border=0/></td>
+                        <td class="Button_text Button_width">OK</td>
+                        <td class="Button_right"></td>
+                      </tr>
+                    </table>
+                  </a>
+                </div>
+              </td>
+              <td class="Button_LeftAlign_ContentCell">
+                <div>
+                  <a class="ButtonLink" href="#"
+                    onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;"
+                    onblur="window.status=''; return true;"
+                    onkeypress="this.className='ButtonLink_active'; return true;"
+                    onkeyup="this.className='ButtonLink_focus'; return true;"
+                    onclick="depurarSelector('CLEAR');return false;">
+                    <table class="Button"
+                      onmousedown="this.className='Button_active'; return true;"
+                      onmouseup="this.className='Button'; return true;"
+                      onmouseover="this.className='Button_hover'; window.status='Cancel'; return true;"
+                      onmouseout="this.className='Button'; window.status=''; return true;">
+                      <tr>
+                        <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border=0/></td>
+                        <td class="Button_text Button_width">Cancel</td>
+                        <td class="Button_right"></td>
+                      </tr>
+                    </table>
+                  </a>
+                </div>
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
+        </div>
+      </td>
     </tr>
   </table>
-</FORM>
-</BODY>
-</HTML>
+</form>
+</body>
+</html>

@@ -28,9 +28,10 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
+        SELECT * FROM ( SELECT '0' AS RN1, A.* FROM ( 
           SELECT
-          i.C_Invoice_ID, i.DocumentNo||' - '||TO_DATE(i.DateInvoiced,to_char(?))||' - '||i.GrandTotal AS Name,
-          REPLACE((i.DocumentNo||' - '||TO_DATE(i.DateInvoiced,to_char(?))||' - '||i.GrandTotal), '''', CHR(92) || '''') AS Name_HIDDEN,
+          i.C_Invoice_ID, i.DocumentNo||' - '||TO_CHAR(i.DateInvoiced,to_char(?))||' - '||i.GrandTotal AS Name,
+          REPLACE((i.DocumentNo||' - '||TO_CHAR(i.DateInvoiced,to_char(?))||' - '||i.GrandTotal), '''', CHR(92) || '''') AS Name_HIDDEN,
           (SELECT Name FROM C_BPartner bp WHERE bp.C_BPartner_ID=i.C_BPartner_ID) AS BPartnerName,
           i.DateInvoiced,
           i.DocumentNo,
@@ -41,30 +42,38 @@
           i.IsPaid,
           i.IsSOTrx,
           i.Description,
-          i.POReference
+          i.POReference,
+          i.C_Invoice_ID || '#' || i.DocumentNo || ' - ' || TO_CHAR(i.DateInvoiced, TO_CHAR(?)) as RowKey
           FROM C_Invoice_v i
           WHERE i.AD_Client_ID IN ('1') 
           AND i.AD_Org_ID IN ('1') 
           AND i.IsActive='Y'
           AND i.IsPaid = ?
-          ORDER BY 2,3,4
+          ORDER BY 2
+        ) A ) B
+        WHERE 1=1
         ]]>
         </Sql>
         <Field name="position" value="count"/>
+        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="dateFormat"/>
         <Parameter name="dateFormat"/>
+        <Parameter name="dateFormat"/>        
         <Parameter name="adUserClient" type="replace" optional="true" after="i.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="i.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="key" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND UPPER(i.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND UPPER(i.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="businesPartner" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
-        <Parameter name="order" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.C_Order_ID = TO_NUMBER(?) ]]></Parameter>
-        <Parameter name="dateFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced >= to_date(?) ]]></Parameter>
-        <Parameter name="dateTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced < to_date(?) ]]></Parameter>
-        <Parameter name="grandTotalFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal >= ? ]]></Parameter>
-        <Parameter name="grandTotalTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal <= ? ]]></Parameter>
+        <Parameter name="order" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.POReference = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="dateFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced >= TO_DATE(?) ]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced < TO_DATE(?) ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal <= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="sotrx" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.IsSOTrx = ? ]]></Parameter>
         <Parameter name="paid"/>
+        <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="2" />
+        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
+        <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

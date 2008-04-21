@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,38 +27,46 @@
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT DISTINCT bp.C_BPartner_ID, bp.value, bp.name as name, 
-        bp.name as name_hidden, 
-        (bp.SO_CreditLimit-bp.SO_CreditUsed) AS SO_CreditAvailable, bp.SO_CreditUsed, 
-        COALESCE(c.name,u.name) AS Contact, COALESCE(c.ad_user_id,u.ad_user_id) as C_BPartner_Contact_ID, bpl.Phone, l.Postal, 
-        bpl.c_bpartner_location_id as C_BPartner_Location_ID,
-        l.City, bp.ActualLifetimeValue
-        FROM C_BPARTNER bp left join C_BPARTNER_LOCATION bpl on bp.c_bpartner_id = bpl.c_bpartner_id
-                                                             and bpl.IsActive = 'Y'
-                           left join AD_USER c on bpl.c_bpartner_location_id = c.C_BPartner_Location_ID
-                                                             and c.IsActive ='Y'
-                           left join C_LOCATION l on bpl.c_location_id=l.C_Location_ID 
-                           left join  C_REGION r on l.c_region_id = r.c_region_id 
-                           left join
-                (SELECT c_bpartner_id, ad_user_id, name from ad_user where c_bpartner_id is not null 
-                and c_bpartner_location_id is null and isactive='Y') u on bp.c_bpartner_id = u.c_bpartner_id
-        WHERE bp.AD_Client_ID IN ('1') 
-        AND bp.AD_Org_ID IN ('1') 
-        AND bp.IsSummary='N' 
-        AND bp.IsActive='Y'
-        ORDER BY bp.name, contact
+      		SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (      				   
+					SELECT DISTINCT bp.C_BPartner_ID, bp.value, bp.name as name, 
+					        bp.name as name_hidden, 
+					        (bp.SO_CreditLimit-bp.SO_CreditUsed) AS SO_CreditAvailable, bp.SO_CreditUsed, 
+					        COALESCE(c.name,u.name) AS Contact, COALESCE(c.ad_user_id,u.ad_user_id) as C_BPartner_Contact_ID, bpl.Phone, l.Postal AS PC, 
+					        bpl.c_bpartner_location_id as C_BPartner_Location_ID,
+					        l.City, bp.ActualLifetimeValue AS Income, 
+					        bp.C_BPartner_ID || '#' || COALESCE(TO_CHAR(c.ad_user_id), TO_CHAR(u.ad_user_id), '') || '#' || COALESCE(TO_CHAR(bpl.c_bpartner_location_id),'') || '#' || bp.name AS rowKey  
+					        FROM C_BPARTNER bp left join C_BPARTNER_LOCATION bpl on bp.c_bpartner_id = bpl.c_bpartner_id
+					                                                             and bpl.IsActive = 'Y'
+					                           left join AD_USER c on bpl.c_bpartner_location_id = c.C_BPartner_Location_ID
+					                                                             and c.IsActive ='Y'
+					                           left join C_LOCATION l on bpl.c_location_id=l.C_Location_ID 
+					                           left join  C_REGION r on l.c_region_id = r.c_region_id 
+					                           left join
+					                (SELECT c_bpartner_id, ad_user_id, name from ad_user where c_bpartner_id is not null 
+					                and c_bpartner_location_id is null and isactive='Y') u on bp.c_bpartner_id = u.c_bpartner_id
+					        WHERE bp.AD_Client_ID IN ('1') 
+					        AND bp.AD_Org_ID IN ('1') 
+					        AND bp.IsSummary='N' 
+					        AND bp.IsActive='Y'
+					        ORDER BY bp.value
+					) A ) B
+			WHERE 1=1
       ]]></Sql>
         <Field name="position" value="count"/>
+        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="adUserClient" type="replace" optional="true" after="bp.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="bp.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="key" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(bp.Value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(bp.Name) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="contact" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(c.Name) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="contact" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(COALESCE(c.name,u.name)) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="codigoPostal" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.Postal) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="provincia" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(r.NAME) LIKE UPPER(?)]]></Parameter>
         <Parameter name="clients" optional="true" type="none" after="AND bp.IsActive='Y'"><![CDATA[AND ISCUSTOMER = 'Y' ]]></Parameter>
         <Parameter name="vendors" optional="true" type="none" after="AND bp.IsActive='Y'"><![CDATA[AND ISVENDOR ='Y']]></Parameter>
         <Parameter name="ciudad" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.City) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="bp.value" />
+        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
+        <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

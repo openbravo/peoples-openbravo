@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,12 +20,18 @@ package org.openbravo.erpCommon.info;
 
 import org.openbravo.base.secureApp.*;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 
 import java.io.*;
+import java.util.Vector;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
+
 import org.openbravo.utils.Replace;
 
 
@@ -50,10 +56,29 @@ public class Account extends HttpSecureAppServlet {
       }
       vars.removeSessionValue("Account.alias");
       if (!strNameValue.equals("")) vars.setSessionValue("Account.combination", strNameValue + "%");
-      printPageFS(response, vars);
-    } else if (vars.commandIn("LOAD_FIELD")) {
-      String strClave = vars.getStringParameter("inpClave");
-      printPageFrame1(response, vars, "", "", strClave, false);
+      
+      String strAlias = vars.getGlobalVariable("inpAlias", "Account.alias", "");
+      String strCombination = vars.getGlobalVariable("inpCombination", "Account.combination", "");
+      printPage(response, vars, strAlias, strCombination, "", true);      
+    } else if(vars.commandIn("STRUCTURE")) {
+    	printGridStructure(response, vars);
+    } else if(vars.commandIn("DATA")) {
+        if(vars.getStringParameter("newFilter").equals("1"))
+          clearSessionValues(vars);
+    	  String strAlias = vars.getGlobalVariable("inpAlias", "Account.alias", "");
+        String strCombination = vars.getGlobalVariable("inpCombination", "Account.combination", "");
+        String strOrganization = vars.getStringParameter("inpOrganization");
+        String strAccount = vars.getStringParameter("inpAccount");
+        String strProduct = vars.getStringParameter("inpProduct");
+        String strBPartner = vars.getStringParameter("inpBPartner");
+        String strProject = vars.getStringParameter("inpProject");
+        String strCampaign = vars.getStringParameter("inpCampaign");
+        String strNewFilter = vars.getStringParameter("newFilter");
+        String strOffset = vars.getStringParameter("offset");
+        String strPageSize = vars.getStringParameter("page_size");
+        String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
+        String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+        printGridData(response, vars, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
     } else if (vars.commandIn("KEY")) {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Account.alias");
       String strAcctSchema = vars.getRequestGlobalVariable("inpAcctSchema", "Account.cAcctschemaId");
@@ -66,35 +91,7 @@ public class Account extends HttpSecureAppServlet {
       AccountData[] data = AccountData.selectKey(this, strAcctSchema, Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strKeyValue + "%");
       if (data!=null && data.length==1) {
         printPageKey(response, vars, data);
-      } else printPageFS(response, vars);
-    } else if (vars.commandIn("FRAME1")) {
-      String strAlias = vars.getGlobalVariable("inpAlias", "Account.alias", "");
-      String strCombination = vars.getGlobalVariable("inpCombination", "Account.combination", "");
-      printPageFrame1(response, vars, strAlias, strCombination, "", true);
-    } else if (vars.commandIn("FRAME2")) {
-      String strAlias = vars.getGlobalVariable("inpAlias", "Account.alias", "");
-      String strCombination = vars.getGlobalVariable("inpCombination", "Account.combination", "");
-      String strOrganization = vars.getStringParameter("inpOrganization");
-      String strAccount = vars.getStringParameter("inpAccount");
-      String strProduct = vars.getStringParameter("inpProduct");
-      String strBPartner = vars.getStringParameter("inpBPartner");
-      String strProject = vars.getStringParameter("inpProject");
-      String strCampaign = vars.getStringParameter("inpCampaign");
-      printPageFrame2(response, vars, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign);
-    } else if (vars.commandIn("FIND")) {
-      String strAlias = vars.getRequestGlobalVariable("inpAlias", "Account.alias");
-      String strCombination = vars.getRequestGlobalVariable("inpCombination", "Account.combination");
-      String strOrganization = vars.getStringParameter("inpOrganization");
-      String strAccount = vars.getStringParameter("inpAccount");
-      String strProduct = vars.getStringParameter("inpProduct");
-      String strBPartner = vars.getStringParameter("inpBPartner");
-      String strProject = vars.getStringParameter("inpProject");
-      String strCampaign = vars.getStringParameter("inpCampaign");
-
-      vars.setSessionValue("Account.initRecordNumber", "0");
-      printPageFrame2(response, vars, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign);
-    } else if (vars.commandIn("FRAME3")) {
-      printPageFrame3(response, vars);
+      } else printPage(response, vars, strKeyValue + "%", "", "", true);
     } else if (vars.commandIn("SAVE")) {
       String strAcctSchema = vars.getSessionValue("Account.cAcctschemaId");
       String strClave = vars.getStringParameter("inpValidCombination");
@@ -109,41 +106,15 @@ public class Account extends HttpSecureAppServlet {
       if (data!=null) strClave = data.cValidcombinationId;
       vars.removeSessionValue("Account.alias");
       vars.setSessionValue("Account.combination", AccountData.combination(this, strClave));
-      printPageFS(response, vars);
-    } else if (vars.commandIn("PREVIOUS")) {
-      String strInitRecord = vars.getSessionValue("Account.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Account");
-      int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
-      if (strInitRecord.equals("") || strInitRecord.equals("0")) vars.setSessionValue("Account.initRecordNumber", "0");
-      else {
-        int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-        initRecord -= intRecordRange;
-        strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
-        vars.setSessionValue("Account.initRecordNumber", strInitRecord);
-      }
-
-      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
-    } else if (vars.commandIn("NEXT")) {
-      String strInitRecord = vars.getSessionValue("Account.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Account");
-      int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
-      int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-      if (initRecord==0) initRecord=1;
-      initRecord += intRecordRange;
-      strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
-      vars.setSessionValue("Account.initRecordNumber", strInitRecord);
-
-      request.getRequestDispatcher(request.getServletPath() + "?Command=FRAME2").forward(request, response);
+      printPageSave(response, vars, data);
     } else pageError(response);
   }
 
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Account seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Account_FS").createXmlDocument();
-
+  void printPageSave(HttpServletResponse response, VariablesSecureApp vars, AccountData data) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Output: Saved");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
+    out.println(data.combination);
     out.close();
   }
 
@@ -169,15 +140,15 @@ public class Account extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strAlias, String strCombination, String strValidCombination, boolean isDefault) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAlias, String strCombination, String strValidCombination, boolean isDefault) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the accounts seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Account_F1").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Account").createXmlDocument();
     AccountData[] data = null;
     if (isDefault) {
       if (strAlias.equals("") && strCombination.equals("")) strAlias = "%";
       data = AccountData.set(strAlias, strCombination);
     } else {
-      data = AccountData.select(this, "", "", "", "", "", "", "", "", "", strValidCombination, Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"));
+      data = AccountData.select(this, "1", "", "", "", "", "", "", "", "", "", strValidCombination, Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), "1 ASC", "", "");
     }
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
@@ -203,6 +174,7 @@ public class Account extends HttpSecureAppServlet {
 
 
     try {
+      // Utility.getContext(conn, vars, "#AccessibleOrgTree", windowId, accesslevel)
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "AD_Org_ID", "AD_Org (Trx)", "", Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "Account", "");
       xmlDocument.setData("reportAD_Org_ID","liststructure", comboTableData.select(false));
@@ -240,58 +212,167 @@ public class Account extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
+    
+    xmlDocument.setParameter("orgs", vars.getStringParameter("inpAD_Org_ID"));
+    
+    xmlDocument.setParameter("grid", "20");
+    xmlDocument.setParameter("grid_Offset", "");
+    xmlDocument.setParameter("grid_SortCols", "1");
+    xmlDocument.setParameter("grid_SortDirs", "ASC");
+    xmlDocument.setParameter("grid_Default", "0");
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
-
-  void printPageFrame2(HttpServletResponse response, VariablesSecureApp vars, String strAlias, String strCombination, String strOrganization, String strAccount, String strProduct, String strBPartner, String strProject, String strCampaign) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 2 of the accounts seeker");
-    XmlDocument xmlDocument;
-    String strAcctSchema = vars.getSessionValue("Account.cAcctschemaId");
-
-    String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "Account");
-    int intRecordRange = (strRecordRange.equals("")?0:Integer.parseInt(strRecordRange));
-    String strInitRecord = vars.getSessionValue("Account.initRecordNumber");
-    int initRecordNumber = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-
-    if (strAlias.equals("") && strCombination.equals("") && strOrganization.equals("") && strAccount.equals("") && strProduct.equals("") && strBPartner.equals("") && strProject.equals("") && strCampaign.equals("")) {
-      String[] discard = {"sectionDetail", "hasPrevious", "hasNext"};
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Account_F2", discard).createXmlDocument();
-      xmlDocument.setData("structure1", AccountData.set(strAlias, strCombination));
-    } else {
-      String[] discard = {"withoutPrevious", "withoutNext"};
-      AccountData[] data = AccountData.select(this, strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), initRecordNumber, intRecordRange);
-      if (data==null || initRecordNumber<=1) discard[0] = new String("hasPrevious");
-      if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Account_F2", discard).createXmlDocument();
-      xmlDocument.setData("structure1", data);
-    }
-
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+  
+  void printGridStructure(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
+	  if (log4j.isDebugEnabled()) log4j.debug("Output: print page structure");
+	    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+	    
+	    SQLReturnObject[] data = getHeaders(vars);
+	    String type = "Hidden";
+	    String title = "";
+	    String description = "";
+	   	    
+	    xmlDocument.setParameter("type", type);
+	    xmlDocument.setParameter("title", title);
+	    xmlDocument.setParameter("description", description);
+	    xmlDocument.setData("structure1", data);
+	    response.setContentType("text/xml; charset=UTF-8");
+	    response.setHeader("Cache-Control", "no-cache");
+	    PrintWriter out = response.getWriter();
+	    if (log4j.isDebugEnabled()) log4j.debug(xmlDocument.print());
+	    out.println(xmlDocument.print());
+	    out.close();
   }
-
-  void printPageFrame3(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 3 of the business partners seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Account_F3").createXmlDocument();
-
-    response.setContentType("text/html; charset=UTF-8");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+  
+  private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
+	  SQLReturnObject[] data = null;
+	  Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();	  
+	  String[] colNames = {"ALIAS","COMBINATION","DESCRIPTION", "AD_ORG_ID_D", "ACCOUNT_ID_D", "M_PRODUCT_ID_D", "C_BPARTNER_ID_D", "C_PROJECT_ID_D", "C_CAMPAIGN_ID_D", "C_VALIDCOMBINATION_ID", "ROWKEY"};
+	  String[] colWidths = {"43", "193", "151", "105", "123", "71", "101", "43", "59", "0", "0"};
+	  for(int i=0; i < colNames.length; i++) {
+		  SQLReturnObject dataAux = new SQLReturnObject();
+		  dataAux.setData("columnname", colNames[i]);
+	      dataAux.setData("gridcolumnname", colNames[i]);
+	      dataAux.setData("adReferenceId", "AD_Reference_ID");
+	      dataAux.setData("adReferenceValueId", "AD_ReferenceValue_ID");	      
+	      dataAux.setData("isidentifier", (colNames[i].equals("ROWKEY")?"true":"false"));
+	      dataAux.setData("iskey", (colNames[i].equals("ROWKEY")?"true":"false"));
+	      dataAux.setData("isvisible", (colNames[i].endsWith("_ID")?"false":"true"));
+	      String name = Utility.messageBD(this, "ACCS_" + colNames[i].toUpperCase(), vars.getLanguage());
+	      dataAux.setData("name", (name.startsWith("ACCS_")?colNames[i]:name));
+	      dataAux.setData("type", "string");
+	      dataAux.setData("width", colWidths[i]);
+	      vAux.addElement(dataAux);
+	  }
+	  data = new SQLReturnObject[vAux.size()];
+	  vAux.copyInto(data);
+	  return data;
   }
-
+  
+  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strAlias, String strCombination, String strOrganization, String strAccount, String strProduct, String strBPartner, String strProject, String strCampaign, String strOrderBy, String strOffset, String strPageSize, String strNewFilter ) throws IOException, ServletException {
+	    if (log4j.isDebugEnabled()) log4j.debug("Output: print page rows");
+	    
+	    SQLReturnObject[] headers = getHeaders(vars);
+	    FieldProvider[] data = null;
+	    String type = "Hidden";
+	    String title = "";
+	    String description = "";
+	    String strNumRows = "0";
+	    String strAcctSchema = vars.getSessionValue("Account.cAcctschemaId");
+	    
+	    if (headers!=null) {
+	      try{
+		  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load    	
+		  		data = AccountData.select(this, "1", strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", "");
+		  		strNumRows = String.valueOf(data.length);
+		  		vars.setSessionValue("AccountInfo.numrows", strNumRows);
+		  	}
+	  		else {
+	  			strNumRows = vars.getSessionValue("AccountInfo.numrows");
+	  		}
+		  			
+	  		// Filtering result
+	    	if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+	    		String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+	    		data = AccountData.select(this, "1", strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, oraLimit, "");
+	    	}
+	    	else {
+	    		String pgLimit = strPageSize + " OFFSET " + strOffset;
+	    		data = AccountData.select(this, "1", strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", pgLimit);
+	    	}    	
+	      } catch (ServletException e) {
+	        log4j.error("Error in print page data: " + e);
+	        e.printStackTrace();
+	        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+	        if (!myError.isConnectionAvailable()) {
+	          bdErrorAjax(response, "Error", "Connection Error", "No database connection");
+	          return;
+	        } else {
+	          type = myError.getType();
+	          title = myError.getTitle();
+	          if (!myError.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + myError.getMessage() + "]]>";
+	          else description = myError.getMessage();
+	        }
+	      } catch (Exception e) { 
+	        if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
+	        type = "Error";
+	        title = "Error";
+	        if (e.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + e.getMessage() + "]]>";
+	        else description = e.getMessage();
+	        e.printStackTrace();
+	      }
+	    }
+	    
+	    if (!type.startsWith("<![CDATA[")) type = "<![CDATA[" + type + "]]>";
+	    if (!title.startsWith("<![CDATA[")) title = "<![CDATA[" + title + "]]>";
+	    if (!description.startsWith("<![CDATA[")) description = "<![CDATA[" + description + "]]>";
+	    StringBuffer strRowsData = new StringBuffer();
+	    strRowsData.append("<xml-data>\n");
+	    strRowsData.append("  <status>\n");
+	    strRowsData.append("    <type>").append(type).append("</type>\n");
+	    strRowsData.append("    <title>").append(title).append("</title>\n");
+	    strRowsData.append("    <description>").append(description).append("</description>\n");
+	    strRowsData.append("  </status>\n");
+	    strRowsData.append("  <rows numRows=\"").append(strNumRows).append("\">\n");
+	    if (data!=null && data.length>0) {
+	      for (int j=0;j<data.length;j++) {
+	        strRowsData.append("    <tr>\n");
+	        for (int k=0;k<headers.length;k++) {
+	          strRowsData.append("      <td><![CDATA[");
+	          String columnname = headers[k].getField("columnname");
+	          
+	          if ((data[j].getField(columnname)) != null) {
+	            if (headers[k].getField("adReferenceId").equals("32")) strRowsData.append(strReplaceWith).append("/images/");
+	            strRowsData.append(data[j].getField(columnname).replaceAll("<b>","").replaceAll("<B>","").replaceAll("</b>","").replaceAll("</B>","").replaceAll("<i>","").replaceAll("<I>","").replaceAll("</i>","").replaceAll("</I>","").replaceAll("<p>","&nbsp;").replaceAll("<P>","&nbsp;").replaceAll("<br>","&nbsp;").replaceAll("<BR>","&nbsp;"));
+	          } else {
+	            if (headers[k].getField("adReferenceId").equals("32")) {
+	              strRowsData.append(strReplaceWith).append("/images/blank.gif");
+	            } else strRowsData.append("&nbsp;");
+	          }
+	          strRowsData.append("]]></td>\n");
+	        }
+	        strRowsData.append("    </tr>\n");
+	      }
+	    }
+	    strRowsData.append("  </rows>\n");
+	    strRowsData.append("</xml-data>\n");
+	        
+	    response.setContentType("text/xml; charset=UTF-8");
+	    response.setHeader("Cache-Control", "no-cache");
+	    PrintWriter out = response.getWriter();
+	    if (log4j.isDebugEnabled()) log4j.debug(strRowsData.toString());  
+	    out.print(strRowsData.toString());
+	    out.close();
+	  }
+  
+  private void clearSessionValues(VariablesSecureApp vars) {
+    vars.removeSessionValue("");
+  }
+  
   public String getServletInfo() {
     return "Servlet that presents que accounts seeker";
   } // end of getServletInfo() method

@@ -46,7 +46,7 @@
 
 function onloadFunctions() {
 	new TypeAheadCombo("sectionCashBook");
-	keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/DebtPayment_FS.html', 'SELECTOR_DEBT', false, 'frmCash', 'inpcDebtPaymentId',  'inpcDebtPaymentId_DES', document.frmCash.inpcDebtPaymentId_DES.value, 'Command', 'KEY');", "inpcInvoiceId_DES", "null");
+	keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/DebtPayment.html', 'SELECTOR_DEBT', false, 'frmCash', 'inpcDebtPaymentId',  'inpcDebtPaymentId_DES', document.frmCash.inpcDebtPaymentId_DES.value, 'Command', 'KEY');", "inpcInvoiceId_DES", "null");
 	keyArray[keyArray.length] = new keyArrayItem("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey");
 	
 }
@@ -318,7 +318,7 @@ function onloadFunctions() {
                       onblur="window.status=''; return true;"
                       onkeypress="this.className='FieldButtonLink_active'; return true;"
                       onkeyup="this.className='FieldButtonLink_focus'; return true;"
-                      onclick="openSearch(null, null, '../info/DebtPayment_FS.html', 'SELECTOR_DEBT', false, 'frmCash', 'inpcDebtPaymentId',  'inpcDebtPaymentId_DES', document.frmCash.inpcDebtPaymentId_DES.value);return false;">
+                      onclick="openSearch(null, null, '../info/DebtPayment.html', 'SELECTOR_DEBT', false, 'frmCash', 'inpcDebtPaymentId',  'inpcDebtPaymentId_DES', document.frmCash.inpcDebtPaymentId_DES.value);return false;">
                       <table class="FieldButton"
                         onmousedown="this.className='FieldButton_active'; return true;"
                         onmouseup="this.className='FieldButton'; return true;"
