@@ -489,8 +489,8 @@ public class WadUtility {
       html.append(" name=\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + completeName);
       html.append("\" id=\"" + efd.columnname + completeID + "\" value=\"");
       if (!isdesigne) html.append("xxV");
-      if (isDecimalNumber(efd.reference) || isPriceNumber(efd.reference) || isGeneralNumber(efd.reference) || isQtyNumber(efd.reference)) html.append("\" onkeydown=\"auto_completar_numero(this, true, true);return true;");
-      else if (isIntegerNumber(efd.reference)) html.append("\" onkeydown=\"auto_completar_numero(this, false, true);return true;");
+      if (isDecimalNumber(efd.reference) || isPriceNumber(efd.reference) || isGeneralNumber(efd.reference) || isQtyNumber(efd.reference)) html.append("\" onkeydown=\"auto_complete_number(this, true, true);return true;");
+      else if (isIntegerNumber(efd.reference)) html.append("\" onkeydown=\"auto_complete_number(this, false, true);return true;");
       html.append("\"");
       html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
       html.append(" ></INPUT>");
@@ -621,8 +621,8 @@ public class WadUtility {
       } else {
         if (efd.isencrypted.equals("Y") || efd.iscolumnencrypted.equals("Y")) html.append("password\"");
         else html.append("text\"");
-        if (isDecimalNumber(efd.reference) || isPriceNumber(efd.reference) || isGeneralNumber(efd.reference) || isQtyNumber(efd.reference)) html.append(" onkeydown=\"auto_completar_numero(this, true, true);return true;\"");
-        else if (isIntegerNumber(efd.reference)) html.append(" onkeydown=\"auto_completar_numero(this, false, true);return true;\"");
+        if (isDecimalNumber(efd.reference) || isPriceNumber(efd.reference) || isGeneralNumber(efd.reference) || isQtyNumber(efd.reference)) html.append(" onkeydown=\"auto_complete_number(this, true, true);return true;\"");
+        else if (isIntegerNumber(efd.reference)) html.append(" onkeydown=\"auto_complete_number(this, false, true);return true;\"");
         html.append(" size=\"" + efd.displaysize + "\" ");
         html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
         if (!isSearchType(efd.reference)) html.append(" maxlength=\"" + efd.fieldlength + "\"");
