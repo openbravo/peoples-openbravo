@@ -47,7 +47,7 @@
                 c.Ad_Reference_Id as reference, c.ad_reference_value_id  as referencevalue, c.ad_val_rule_id, 44, 44,
                 c.columnname, to_char('') as value, tb.ad_window_id, to_char('') as code,
                 to_char(e.name) as searchname, '' as COLUMNNAMEINP, '' as classname, 
-                '' as mappingname, '' as COLUMNNAME_END, 'Y' ISSELECTIONCOLUMN,
+                '' as mappingname, '' as COLUMNNAME_END, 'Y' as ISSELECTIONCOLUMN,
                 null as seq1,
                 (case when upper(c.columnname)='CREATED' then 10000 
                    when upper(c.columnname)='CREATEDBY' then 10001
