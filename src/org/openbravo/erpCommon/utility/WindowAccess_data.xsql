@@ -74,7 +74,7 @@
            AND w.AD_Role_ID = ?
            AND t.AD_Tab_ID = ?
            AND w.isReadWrite = 'N'
-           AND w.isActive='Y')
+           AND w.isActive='Y') AS t
     </Sql>
     <Parameter name="adRoleId"/>
     <Parameter name="adTabId"/>
@@ -154,9 +154,9 @@
 		<Sql>
 			select Count(*) AS TOTAL
 			FROM AD_Task_Access
-			WHERE AD_Role_ID = ?
-			AND AD_Task_ID = ?
-			AND IsActive = 'Y'
+			WHERE AD_Role_ID = to_number(?)
+			AND AD_Task_ID = to_number(?)
+			AND IsActive = to_char('Y')
 		</Sql>
 		<Parameter name="adRoleId"/>
 		<Parameter name="adTaskId"/>

@@ -61,7 +61,7 @@
           WHERE TB.AD_Tab_ID = to_number(?)
             AND C.AD_Table_ID = TB.AD_Table_ID
             AND UPPER(c.columnname) in ('CREATED', 'CREATEDBY', 'UPDATED', 'UPDATEDBY')
-            AND 'Y' = ?
+            AND to_char('Y') = to_char(?)  
           order by seq1, seq2
       ]]></Sql>
         <Parameter name="adLanguage"/>
