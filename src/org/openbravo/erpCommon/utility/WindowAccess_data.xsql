@@ -74,7 +74,7 @@
            AND w.AD_Role_ID = ?
            AND t.AD_Tab_ID = ?
            AND w.isReadWrite = 'N'
-           AND w.isActive='Y') AS t
+           AND w.isActive='Y') t
     </Sql>
     <Parameter name="adRoleId"/>
     <Parameter name="adTabId"/>
