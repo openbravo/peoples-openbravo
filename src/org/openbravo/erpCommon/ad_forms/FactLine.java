@@ -572,7 +572,7 @@ public class FactLine {
         cuenta[0].description,DateDoc,DateAcct,C_Period_ID,m_AD_Table_ID,m_Record_ID,m_Line_ID,m_GL_Category_ID,m_GL_Budget_ID,C_Tax_ID,
         m_PostingType,m_C_Currency_ID,m_AmtSourceDr,m_AmtSourceCr,m_AmtAcctDr,m_AmtAcctCr,C_UOM_ID,Qty,m_M_Locator_ID,
         M_Product_ID,C_BPartner_ID,AD_OrgTrx_ID,C_LocFrom_ID,C_LocTo_ID,C_SalesRegion_ID,C_Project_ID,C_Campaign_ID,
-        C_Activity_ID,User1_ID,User2_ID,description.toString(), m_Fact_Acct_Group_ID, m_SeqNo, m_DocBaseType, Record_ID2);
+        C_Activity_ID,User1_ID,User2_ID,description.toString(), m_Fact_Acct_Group_ID, m_SeqNo, m_DocBaseType, Record_ID2, m_docLine.m_A_Asset_ID);
       if(m_docVO.m_IsOpening.equals("Y")) FactLineData.updateFactAcct(con,conn,m_AD_Table_ID,m_Record_ID);
     }catch(ServletException e){
       log4jFactLine.warn(e);

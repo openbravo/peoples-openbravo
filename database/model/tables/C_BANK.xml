@@ -19,6 +19,7 @@
       <column name="DIGITCONTROL" primaryKey="false" required="false" type="NVARCHAR" size="1" autoIncrement="false"/>
       <column name="INE_NUMBER" primaryKey="false" required="false" type="NVARCHAR" size="9" autoIncrement="false"/>
       <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_COUNTRY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBANK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -27,6 +28,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CBANK">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="CCOUNTRY_CBANK">
+        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_LOCATION" name="CLOCATION_CBANK">
         <reference local="C_LOCATION_ID" foreign="C_LOCATION_ID"/>

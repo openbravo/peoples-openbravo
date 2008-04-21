@@ -62,6 +62,10 @@
 
   <PARAMETER id="param2" name="param2" default="2"/>
 
+  <SUBREPORT id="reportCBPartnerId_IN" name="reportCBPartnerId_IN" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected"/>
+  </SUBREPORT>
+
   <structure name="structure1">
     <FIELD id="fieldRownum1">rownum</FIELD>
     <FUNCTION id="funcEvenOddRow1xx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>

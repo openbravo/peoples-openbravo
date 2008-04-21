@@ -71,7 +71,8 @@
       <Parameter name="adLanguage"/>
       <Parameter name="adUserClient" type="replace" optional="true" after="DP.AD_Client_ID IN (" text="'1'"/>
       <Parameter name="adUserOrg" type="replace" optional="true" after="DP.AD_Org_ID IN (" text="'1'"/>
-      <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
+      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND DP.IsValid='Y'"><![CDATA[ AND dp.C_BPARTNER_ID IN ]]></Parameter>
+      <!-- <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>  -->
       <Parameter name="dateFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned >= to_date(?) ]]></Parameter>
       <Parameter name="dateTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned < to_date(?) ]]></Parameter>
       <Parameter name="AmountFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount >= ? ]]></Parameter>
@@ -130,7 +131,8 @@
       <Parameter name="adLanguage"/>
       <Parameter name="adUserClient" type="replace" optional="true" after="DP.AD_Client_ID IN (" text="'1'"/>
       <Parameter name="adUserOrg" type="replace" optional="true" after="DP.AD_Org_ID IN (" text="'1'"/>
-      <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
+      <Parameter name="cBpartnerId" optional="true" type="argument" after="AND DP.IsValid='Y'"><![CDATA[ AND dp.C_BPARTNER_ID IN ]]></Parameter>
+      <!-- <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>  -->
       <Parameter name="dateFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned >= to_date(?) ]]></Parameter>
       <Parameter name="dateTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned < to_date(?) ]]></Parameter>
       <Parameter name="AmountFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount >= ? ]]></Parameter>

@@ -126,11 +126,17 @@ public class ImportBudget extends ImportProcess {
       no = ImportBudgetData.updateActivityError(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("Invalid Activity = " + no);
 
-      //  Valid Combination
-      no = ImportBudgetData.updateValidCombinationId(con, conn, vars.getLanguage(), getAD_Client_ID());
-      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Valid Combination = " + no);
-      no = ImportBudgetData.updateValidCombinationError(con, conn, getAD_Client_ID());
-      if (log4j.isDebugEnabled()) log4j.debug("Invalid ValidCombination = " + no);
+      //  Account ID
+      no = ImportBudgetData.updateAccountId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget AccountID = " + no);
+      no = ImportBudgetData.updateAccountIdError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid AccountID = " + no);
+
+      //  Account Schema
+      no = ImportBudgetData.updateAcctSchemaId(con, conn, vars.getLanguage(), getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Account Schema = " + no);
+      no = ImportBudgetData.updateAcctSchemaError(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Invalid Account Schema = " + no);
 
       //  Period
       no = ImportBudgetData.updatePeriodId(con, conn, m_Budget_ID, getAD_Client_ID());

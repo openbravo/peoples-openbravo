@@ -33,6 +33,11 @@
       <column name="A_COUNTRY" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
       <column name="AD_USER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="BANK_NAME" primaryKey="false" required="false" type="VARCHAR" size="50" autoIncrement="false"/>
+      <column name="IBAN" primaryKey="false" required="false" type="NVARCHAR" size="34" autoIncrement="false"/>
+      <column name="SHOWACCOUNTNO" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="SHOWIBAN" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="DISPLAYEDACCOUNT" primaryKey="false" required="false" type="NVARCHAR" size="34" autoIncrement="false"/>
+      <column name="C_COUNTRY_ID" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPBANKACCOUNT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -51,6 +56,8 @@
       <index name="C_BPBANKACCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
+      <check name="C_BP_BACC_COUNTRY_CHECK"><![CDATA[IBAN IS NULL OR C_COUNTRY_ID IS NOT NULL]]></check>
+      <check name="C_BP_BACC_IBAN_CHECK"><![CDATA[(SHOWIBAN = 'Y' AND SHOWACCOUNTNO = 'N' AND IBAN IS NOT NULL) OR (SHOWIBAN = 'N' AND SHOWACCOUNTNO = 'Y' AND ACCOUNTNO IS NOT NULL)]]></check>
       <check name="CBPBANKACCOUNT_ISACH_CHECK"><![CDATA[ISACH IN ('Y', 'N')]]></check>
       <check name="CBPBANKACCOUNT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

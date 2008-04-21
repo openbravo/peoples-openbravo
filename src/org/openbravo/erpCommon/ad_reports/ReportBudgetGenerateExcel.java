@@ -25,6 +25,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -38,7 +39,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
 
 
     if (vars.commandIn("DEFAULT")){
-      printPageDataSheet(response, vars);
+      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId", "ReportGeneralLedger|cAcctSchemaId", "");  
+      printPageDataSheet(response, vars, strcAcctSchemaId);
     }else if(vars.commandIn("EXCEL")){
 
       vars.removeSessionValue("ReportBudgetGenerateExcel|inpTabId");
@@ -54,12 +56,15 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       String strProject = vars.getRequestInGlobalVariable("inpcProjectId", "ReportBudgetGenerateExcel|inpcProjectId");
       String strTrxOrg = vars.getRequestInGlobalVariable("inpTrxOrg", "ReportBudgetGenerateExcel|inpTrxOrg");
       String strMonth = vars.getRequestInGlobalVariable("inpMonth", "ReportBudgetGenerateExcel|inpMonthId");
-      String strValidcombination = vars.getRequestGlobalVariable("inpcValidcombinationId", "ReportBudgetGenerateExcel|inpcValidcombinationId");
-      printPageDataExcel(response, vars, strBPartner, strBPGroup, strProduct, strProdCategory, /*strUser1, strUser2,*/ strSalesRegion, strCampaign, strActivity, strProject, strTrxOrg, strMonth, strValidcombination);
+      String strAccount = vars.getRequestGlobalVariable("paramAccountSelect", "ReportBudgetGenerateExcel|cAccountId");
+      String strcAcctSchemaId = vars.getStringParameter("inpcAcctSchemaId","");
+//      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId", "ReportTrialBalance|cAcctSchemaId", "");
+//      String strValidcombination = vars.getRequestGlobalVariable("inpcValidcombinationId", "ReportBudgetGenerateExcel|inpcValidcombinationId");
+      printPageDataExcel(response, vars, strBPartner, strBPGroup, strProduct, strProdCategory, /*strUser1, strUser2,*/ strSalesRegion, strCampaign, strActivity, strProject, strTrxOrg, strMonth, strcAcctSchemaId, strAccount);
     } else pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars/*, String strdateFrom, String strdateTo, String strcBpartnerId, String strcProjectId, String strmCategoryId, String strProjectkind, String strProjectphase, String strProjectstatus, String strProjectpublic,String strcRegionId, String strSalesRep, String strProduct*/) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strcAcctSchemaId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument=null;
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcel").createXmlDocument();
@@ -92,7 +97,19 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
 
+    //When showing window, field "accounts" is empty
+    xmlDocument.setData("cAccount","liststructure", ReportBudgetGenerateExcelData.set());
+    xmlDocument.setParameter("accounts", arrayDobleEntrada("arrAccounts", ReportBudgetGenerateExcelData.selectAccounts(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility.getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"))));
     //    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportBudgetGenerateExcelData.selectBpartner(this));
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_ACCTSCHEMA_ID", "", "C_AcctSchema validation", Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility.getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
+      xmlDocument.setData("reportC_ACCTSCHEMA_ID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility.getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
@@ -111,26 +128,6 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-
-    /*	try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_ElementValue_ID(this, vars.getLanguage", "", "", Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility.getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
-        xmlDocument.setData("reportUser1","liststructure", comboTableData.select(false));
-        comboTableData = null;
-        } catch (Exception ex) {
-        throw new ServletException(ex);
-        }*/
-
-
-    /*	try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_ElementValue_ID(this, vars.getLanguage", "", "", Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility.getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
-        xmlDocument.setData("reportUser2","liststructure", comboTableData.select(false));
-        comboTableData = null;
-        } catch (Exception ex) {
-        throw new ServletException(ex);
-        }*/
 
 
     try {
@@ -183,14 +180,6 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("reportMonth","liststructure",ReportBudgetGenerateExcelData.selectMonth(this));
-    /*try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_ValidCombination_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportBudgetGenerateExcel"), Utility.getContext(this, vars, "#User_Client", "ReportBudgetGenerateExcel"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportBudgetGenerateExcel", "");
-      xmlDocument.setData("reportCValidCombinationId","liststructure", comboTableData.select(false));
-      comboTableData = null;
-      } catch (Exception ex) {
-      throw new ServletException(ex);
-      }*/
      //added by gro 03/06/2007
         OBError myMessage = vars.getMessage("ReportBudgetGenerateExcel");
         vars.removeMessage("ReportBudgetGenerateExcel");
@@ -208,7 +197,7 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataExcel(HttpServletResponse response, VariablesSecureApp vars, String strBPartner, String strBPGroup, String strProduct, String strProdCategory, /*String strUser1, String strUser2,*/ String strSalesRegion, String strCampaign, String strActivity,String strProject, String strTrxOrg, String strMonth, String strValidcombination) throws IOException, ServletException {
+  void printPageDataExcel(HttpServletResponse response, VariablesSecureApp vars, String strBPartner, String strBPGroup, String strProduct, String strProdCategory, /*String strUser1, String strUser2,*/ String strSalesRegion, String strCampaign, String strActivity,String strProject, String strTrxOrg, String strMonth, String strcAcctSchemaId, String strAccount) throws IOException, ServletException {
 
     if (log4j.isDebugEnabled()) log4j.debug("Output: EXCEL");
     StringBuffer columns= new StringBuffer();
@@ -262,13 +251,18 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
       columns.append("MONTH, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('AD_MONTH', TO_CHAR(AD_MONTH_ID), '" ).append( vars.getLanguage() ).append( "') AS MONTH FROM AD_MONTH WHERE  AD_MONTH_ID IN").append( strMonth ).append( ")");
     } else columns.append("' ' AS MONTH, ");
-    if (strValidcombination != null && strValidcombination != "") {
+    // Although is called Valid Combination, it refers to accounts (c_elementvalue)
+    if (strAccount != null && strAccount != "") {
       columns.append("VALIDCOMBINATION, ");
-      tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_VALIDCOMBINATION', TO_CHAR(C_VALIDCOMBINATION_ID), '" ).append( vars.getLanguage() ).append( "' ) AS VALIDCOMBINATION FROM C_VALIDCOMBINATION WHERE C_VALIDCOMBINATION_ID = ").append( strValidcombination ).append( ")");
+      tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(C_ELEMENTVALUE_ID), '" ).append( vars.getLanguage() ).append( "' ) AS VALIDCOMBINATION FROM C_ELEMENTVALUE WHERE C_ELEMENTVALUE_ID = ").append( strAccount ).append( ")");
     } else columns.append("' ' AS VALIDCOMBINATION, ");
-
-    //Adds currency to the excel sheet, Euro is default currency
-    columns.append(" 'EUR' AS CURRENCY ");
+    if (strcAcctSchemaId != null && strcAcctSchemaId != "") {
+      columns.append("ACCOUNTSCHEMA, CURRENCY ");
+      tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_ACCTSCHEMA', TO_CHAR(C_ACCTSCHEMA_ID), '" ).append( vars.getLanguage() ).append( "' ) AS ACCOUNTSCHEMA, ISO_CODE AS CURRENCY FROM C_ACCTSCHEMA, C_CURRENCY WHERE C_ACCTSCHEMA.C_CURRENCY_ID=C_CURRENCY.C_CURRENCY_ID AND C_ACCTSCHEMA_ID = ").append( strcAcctSchemaId ).append( ")");
+    } else {
+      columns.append("' ' AS ACCOUNTSCHEMA, CURRENCY");
+      tables.append(", (SELECT ISO_CODE AS CURRENCY FROM C_CURRENCY WHERE C_CURRENCY_ID = ").append(vars.getSessionValue("$C_CURRENCY_ID")).append( ")");
+    }
 
     response.setContentType("application/xls");
     PrintWriter out = response.getWriter();
@@ -277,7 +271,8 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     ReportBudgetGenerateExcelData[] data=null;
     data = ReportBudgetGenerateExcelData.select(this, columns.toString(), tables.toString());
 
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelXLS").createXmlDocument();
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelExportXLS").createXmlDocument();
+
 
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
@@ -286,9 +281,4 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  public String getServletInfo() {
-    return "Servlet ReportBudgetGenerateExcel.";
-  } // end of getServletInfo() method
-}
+  }}

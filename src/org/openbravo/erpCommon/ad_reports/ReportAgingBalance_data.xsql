@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<SqlClass name="ReportAgingBalanceData" package="org.openbravo.erpCommon.ad_reports">
+  <SqlClassComment>Clase ReportAgingBalanceData</SqlClassComment>
+  <SqlMethod name="selectInitClassHeader" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT ' ' AS AD_ORG_ID, ' ' AS BPARTNER_ID, ' ' AS BPARTNER, ' ' AS ISRECEIPT, ' ' AS ZERO, ' ' AS ONE, ' ' AS TWO, ' ' AS THREE, ' ' AS FOUR, ' ' AS FIVE, ' ' AS TOTAL, ' ' AS ID, ' ' AS NAME, ' ' AS pagebreak , ' ' AS AD_TREE_ORG_ID
+      FROM DUAL
+     ]]></Sql>
+  </SqlMethod>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Select for relation</SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        SELECT BPARTNER AS BPARTNER_ID, AD_COLUMN_IDENTIFIER('C_Bpartner',BPARTNER,'es_ES') AS BPARTNER, ISRECEIPT,
+        SUM(CASE(SCOPE) WHEN 0 THEN AMOUNT ELSE 0 END) AS ZERO,
+        SUM(CASE(SCOPE) WHEN 1 THEN AMOUNT ELSE 0 END) AS ONE,
+        SUM(CASE(SCOPE) WHEN 2 THEN AMOUNT ELSE 0 END) AS TWO,
+        SUM(CASE(SCOPE) WHEN 3 THEN AMOUNT ELSE 0 END) AS THREE,
+        SUM(CASE(SCOPE) WHEN 4 THEN AMOUNT ELSE 0 END) AS FOUR,
+        SUM(CASE(SCOPE) WHEN 5 THEN AMOUNT ELSE 0 END) AS FIVE,
+        SUM(AMOUNT) AS TOTAL, ? AS AD_ORG_ID
+        FROM(
+          SELECT C_BPARTNER_ID AS BPARTNER, AMOUNT, ISRECEIPT, DATEPLANNED,
+          AGING_GET_SCOPE(DATEPLANNED, ?, ?, ?, ?) AS SCOPE, C_DEBT_PAYMENT_ID
+          FROM  C_DEBT_PAYMENT
+          WHERE C_DEBT_PAYMENT_STATUS(C_SETTLEMENT_CANCEL_ID, CANCEL_PROCESSED, GENERATE_PROCESSED,ISPAID,ISVALID,C_CASHLINE_ID,C_BANKSTATEMENTLINE_ID) = 'P'
+          AND ISRECEIPT = ?
+          AND 1=1
+          AND AD_ORG_ID IN('2')
+          AND AD_CLIENT_ID IN ('1')
+          AND AD_ORG_ID IN ('1')
+          )
+        GROUP BY BPARTNER, ISRECEIPT
+      ]]></Sql>
+    <Parameter name="orgTrx"></Parameter>
+    <Parameter name="one"></Parameter>
+    <Parameter name="two"></Parameter>
+    <Parameter name="three"></Parameter>
+    <Parameter name="four"></Parameter>
+    <Parameter name="isreceipt"></Parameter>
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER_ID IN ]]></Parameter>
+    <Parameter name="orgFamily" type="replace" optional="true" after="AD_ORG_ID IN(" text="'2'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AD_ORG_ID IN (" text="'1'"/>
+  </SqlMethod>
+  <SqlMethod name="treeOrg" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+        SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
+        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+    </Sql>
+    <Parameter name="client"/>
+  </SqlMethod>
+  <SqlMethod name="selectCombo" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME, '' as pagebreak 
+        FROM AD_ORG A_O, AD_ROLE_ORGACCESS A_R_O, AD_ROLE R
+        WHERE A_R_O.AD_ORG_ID = A_O.AD_ORG_ID 
+        AND A_R_O.ISACTIVE = 'Y' 
+        AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
+        AND R.ISACTIVE = 'Y' 
+        AND A_R_O.AD_ROLE_ID = TO_NUMBER(?) 
+        ORDER BY A_O.NAME
+      ]]></Sql>
+        <Parameter name="rol"/>
+   </SqlMethod>
+  <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment>Create a registry</SqlMethodComment>
+      <Sql></Sql>
+  </SqlMethod>
+</SqlClass>

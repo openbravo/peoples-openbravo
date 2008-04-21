@@ -410,18 +410,18 @@
     <Parameter name="ad_client_id"/>
   </SqlMethod>
 
-  <SqlMethod name="updateValidCombinationId" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="updateAccountId" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         UPDATE I_BudgetLine 
-			  SET C_ValidCombination_ID=(
-          SELECT C_ValidCombination_ID FROM C_ValidCombination p
-			    WHERE I_BudgetLine.ValidCombinationIdent=AD_COLUMN_IDENTIFIER('C_VALIDCOMBINATION', TO_CHAR(p.C_ValidCombination_ID), ?)
-          AND p.AD_Client_ID=I_BudgetLine.AD_Client_ID
+			  SET C_ELEMENTVALUE_ID=(
+          SELECT C_ELEMENTVALUE_ID FROM C_ELEMENTVALUE v
+			    WHERE I_BudgetLine.ELEMENTVALUEIDENT=AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(v.C_ELEMENTVALUE_ID), ?)
+          AND v.AD_Client_ID=I_BudgetLine.AD_Client_ID
         )
-			  WHERE C_ValidCombination_ID IS NULL
-        AND ValidCombinationIdent IS NOT NULL
+			  WHERE C_ELEMENTVALUE_ID IS NULL
+        AND ELEMENTVALUEIDENT IS NOT NULL
 			  AND I_IsImported<>'Y'
         AND AD_Client_ID = TO_NUMBER(?)
       ]]>
@@ -430,20 +430,66 @@
     <Parameter name="ad_client_id"/>
   </SqlMethod>
 
-  <SqlMethod name="updateValidCombinationError" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="updateAccountIdError" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         UPDATE I_BudgetLine
-        SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid ValidCombination, ' 
-        WHERE C_ValidCombination_ID IS NULL
-        AND ValidCombinationIdent IS NOT NULL
+        SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid Account ID, ' 
+        WHERE C_ELEMENTVALUE_ID IS NULL
+        AND ELEMENTVALUEIDENT IS NOT NULL
         AND I_IsImported<>'Y'
         AND AD_Client_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
   </SqlMethod>
+
+
+
+
+
+
+  <SqlMethod name="updateAcctSchemaId" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE I_BudgetLine 
+			  SET C_ACCTSCHEMA_ID=(
+          SELECT C_ACCTSCHEMA_ID FROM C_ACCTSCHEMA p
+			    WHERE I_BudgetLine.ACCTSCHEMAIDENT=AD_COLUMN_IDENTIFIER('C_ACCTSCHEMA', TO_CHAR(p.C_ACCTSCHEMA_ID), ?)
+          AND p.AD_Client_ID=I_BudgetLine.AD_Client_ID
+        )
+			  WHERE C_ACCTSCHEMA_ID IS NULL
+        AND ACCTSCHEMAIDENT IS NOT NULL
+			  AND I_IsImported<>'Y'
+        AND AD_Client_ID = TO_NUMBER(?)
+      ]]>
+    </Sql>
+    <Parameter name="adlanguage"/>
+    <Parameter name="ad_client_id"/>
+  </SqlMethod>
+
+  <SqlMethod name="updateAcctSchemaError" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE I_BudgetLine
+        SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid Account Schema, ' 
+        WHERE C_ACCTSCHEMA_ID IS NULL
+        AND ACCTSCHEMAIDENT IS NOT NULL
+        AND I_IsImported<>'Y'
+        AND AD_Client_ID = TO_NUMBER(?)
+      ]]>
+    </Sql>
+    <Parameter name="ad_client_id"/>
+  </SqlMethod>
+
+
+
+
+
+
 
   <SqlMethod name="updatePeriodId" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
@@ -523,7 +569,7 @@
         UPDATE I_BudgetLine 
         SET C_BudgetLine_ID=(
             SELECT MIN(C_BudgetLine_ID) FROM C_BudgetLine bl
-            WHERE COALESCE(I_BudgetLine.C_ValidCombination_ID,-1) = COALESCE(bl.C_ValidCombination_ID,-1)
+            WHERE COALESCE(I_BudgetLine.C_ELEMENTVALUE_ID,-1) = COALESCE(bl.C_ELEMENTVALUE_ID,-1)
               AND COALESCE(I_BudgetLine.C_Period_ID,-1) = COALESCE(bl.C_Period_ID,-1)
               AND COALESCE(I_BudgetLine.C_Bpartner_ID,-1) = COALESCE(bl.C_Bpartner_ID,-1)
               AND COALESCE(I_BudgetLine.AD_OrgTrx_ID,-1) = COALESCE(bl.AD_OrgTrx_ID,-1)
@@ -551,11 +597,11 @@
     <Sql>
       <![CDATA[
         INSERT INTO C_BudgetLine (C_Budgetline_ID, AD_Client_ID, AD_Org_ID, Isactive, Created, Createdby, 
-            Updated, Updatedby, C_ValidCombination_ID, C_Period_ID, C_Currency_ID, C_Uom_ID, Qty, M_Product_ID, 
+            Updated, Updatedby, C_ELEMENTVALUE_ID, C_ACCTSCHEMA_ID, C_Period_ID, C_Currency_ID, C_Uom_ID, Qty, M_Product_ID, 
             C_Bpartner_ID, AD_Orgtrx_ID, C_Salesregion_ID, C_Project_ID, C_Campaign_ID, C_Activity_ID, Description, 
             Seqno, C_Bp_Group_ID, M_Product_Category_ID, C_Budget_ID, Amount, Price)
             SELECT TO_NUMBER(?), AD_Client_ID, AD_Org_ID, 'Y',now(),CreatedBy,
-            now(),UpdatedBy,C_ValidCombination_ID, C_Period_ID, C_Currency_ID, C_Uom_ID, Qty, M_Product_ID, 
+            now(),UpdatedBy, C_ELEMENTVALUE_ID, C_ACCTSCHEMA_ID, C_Period_ID, C_Currency_ID, C_Uom_ID, Qty, M_Product_ID, 
             C_Bpartner_ID, AD_Orgtrx_ID, C_Salesregion_ID, C_Project_ID, C_Campaign_ID, C_Activity_ID, Description, 
             TO_NUMBER(?), C_Bp_Group_ID, M_Product_Category_ID, C_Budget_ID, Amount, Price
             FROM I_BudgetLine

@@ -40,9 +40,29 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT", "DIRECT")) {
       String strcbankaccount = vars.getGlobalVariable("inpmProductId", "ReportDebtPayment|C_Bankaccount_ID", "");
-      String strC_BPartner_ID = vars.getGlobalVariable("inpBpartnerId", "ReportDebtPayment|C_BPartner_ID", "");
-      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportDebtPayment|DateFrom", "");
-      String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportDebtPayment|DateTo", "");
+      String strC_BPartner_ID;
+      String strDateFrom;
+      String strDateTo;
+      // When the Business Partner Multiple Selector is added to this report, it will continue supporting the previous BP selector
+      String strcBpartnerId;  //BP Multiple Selector Variable
+      // If this report is reached through the AgingBalance Report, some session variables are ignored, so Aging Balance data is readden
+      if (vars.getStringParameter("inpFlagFromAging").equals("Y")) {
+        strC_BPartner_ID = vars.getStringParameter("inpBpartnerId");
+        strDateFrom = vars.getStringParameter("inpDateFrom");
+        strDateTo = vars.getStringParameter("inpDateTo");
+        if (strC_BPartner_ID.length()>0) {
+          strcBpartnerId = "('"+strC_BPartner_ID+"')";
+        } else {
+//          strcBpartnerId = vars.getInStringParameter("inpcBPartnerId_IN");
+          strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN", "ReportAgingBalance|cBpartnerId", "");
+          vars.setSessionValue("ReportDebtPayment|C_BPartner_ID", strcBpartnerId);
+        }
+      } else {
+        strC_BPartner_ID = vars.getGlobalVariable("inpBpartnerId", "ReportDebtPayment|C_BPartner_ID", "");
+        strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportDebtPayment|DateFrom", "");
+        strDateTo = vars.getGlobalVariable("inpDateTo", "ReportDebtPayment|DateTo", "");
+        strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN", "ReportDebtPayment|cBpartnerId", "");
+      }
       String strCal1 = vars.getGlobalVariable("inpCal1", "ReportDebtPayment|Cal1", "");
       String strCalc2 = vars.getGlobalVariable("inpCalc2", "ReportDebtPayment|Cal2", "");
       String strPaymentRule = vars.getGlobalVariable("inpCPaymentRuleId", "ReportDebtPayment|PaymentRule", "");
@@ -62,10 +82,11 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       }
       //String strEntry = vars.getGlobalVariable("inpEntry", "ReportDebtPayment|Entry","0");
       setHistoryCommand(request, "DIRECT");
-      printPageDataSheet(response, vars, strC_BPartner_ID, strDateFrom, strDateTo, strCal1, strCalc2, strPaymentRule, strSettle, strConciliate, strReceipt, strPending, strcbankaccount, strStatus, strGroup);
+      printPageDataSheet(response, vars, strcBpartnerId, strDateFrom, strDateTo, strCal1, strCalc2, strPaymentRule, strSettle, strConciliate, strReceipt, strPending, strcbankaccount, strStatus, strGroup);
     } else if (vars.commandIn("FIND")) {
       String strcbankaccount = vars.getRequestGlobalVariable("inpcBankAccountId", "ReportDebtPayment|C_Bankaccount_ID");
-      String strC_BPartner_ID = vars.getRequestGlobalVariable("inpBpartnerId", "ReportDebtPayment|C_BPartner_ID");
+      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportDebtPayment|inpcBPartnerId_IN");
+//      String strC_BPartner_ID = vars.getRequestGlobalVariable("inpBpartnerId", "ReportDebtPayment|C_BPartner_ID");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportDebtPayment|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportDebtPayment|DateTo");
       String strCal1 = vars.getRequestGlobalVariable("inpCal1", "ReportDebtPayment|Cal1");
@@ -81,7 +102,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
       vars.setSessionValue("ReportDebtPayment|Receipt", strReceipt);
       //String strEntry = vars.getGlobalVariable("inpEntry", "ReportDebtPayment|Entry","1");
       setHistoryCommand(request, "DIRECT");
-      printPageDataSheet(response, vars, strC_BPartner_ID, strDateFrom, strDateTo, strCal1, strCalc2, strPaymentRule, strSettle, strConciliate, strReceipt, strPending, strcbankaccount, strStatus, strGroup);
+      printPageDataSheet(response, vars, strcBpartnerId, strDateFrom, strDateTo, strCal1, strCalc2, strPaymentRule, strSettle, strConciliate, strReceipt, strPending, strcbankaccount, strStatus, strGroup);
     } else pageError(response);
   }
 
@@ -181,7 +202,8 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("cBankAccount", strcbankaccount);
     xmlDocument.setData("reportC_ACCOUNTNUMBER","liststructure",AccountNumberComboData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), Utility.getContext(this, vars, "#User_Org", "ReportDebtPayment")));
-    xmlDocument.setParameter("paramBPartnerId", strC_BPartner_ID);
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInOutData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strC_BPartner_ID));
+//    xmlDocument.setParameter("paramBPartnerId", strC_BPartner_ID);
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -199,7 +221,7 @@ public class ReportDebtPayment extends HttpSecureAppServlet {
     xmlDocument.setParameter("status", strStatus);
     xmlDocument.setParameter("group", strGroup);
     if (log4j.isDebugEnabled()) log4j.debug("diacard = " + discard[0] + " - " + discard[1] + " - " + discard[2]);
-    xmlDocument.setParameter("paramBPartnerDescription", ReportDebtPaymentData.bPartnerDescription(this, strC_BPartner_ID));
+//    xmlDocument.setParameter("paramBPartnerDescription", ReportDebtPaymentData.bPartnerDescription(this, strC_BPartner_ID));
     if (log4j.isDebugEnabled()) log4j.debug("ListData.select PaymentRule:"+strPaymentRule);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "All_Payment Rule", "", Utility.getContext(this, vars, "#User_Org", "ReportDebtPayment"), Utility.getContext(this, vars, "#User_Client", "ReportDebtPayment"), 0);

@@ -15,6 +15,7 @@
       <column name="COPYBUDGET" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <column name="BUDGET_TYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false"/>
       <column name="EXPORTEXCEL" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="EXPORTACTUAL" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="BUDGETCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

@@ -1,0 +1,74 @@
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<TITLE>Generate budget excel report</TITLE>
+<link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Report.css" id="paramCSS" />
+      <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
+      <script language="JavaScript" type="text/javascript" id="paramLanguage">var LNG_POR_DEFECTO = "en_US";</script>
+</HEAD>
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  bgcolor="#FFFFFF">
+  <TABLE width="90%" class="Border" border="1" cellspacing="0" cellpadding="0">
+  	<TR class="Border TableDetailHeader">
+	  <TD>Qty</TD>
+	  <TD>Price</TD>
+	  <TD>Amount</TD>
+      <TD>Period</TD>
+	  <TD>Business Partner</TD>
+	  <TD>BP Group</TD>
+	  <TD>Product</TD>
+	  <TD>Prod Category</TD>
+	  <TD>AccountSchema</TD>
+	  <TD>Account</TD>
+	  <!--TH>User1</TD>
+	  <TD>User2</TH-->
+	  <TD>Sales Region</TD>
+	  <TD>Campaign</TD>
+	  <TD>Activity</TD>
+	  <TD>Project</TD>
+	  <TD>Trx Org</TD>
+	  <TD width="180">Description</TD>
+	  <TD>Currency</TD>
+  </TR>
+	<DIV id="sectionDetail">
+    <TR class="Border TableDetailRowEven">
+      <TD  id="fieldQty">xxQty</TD>
+      <TD  id="fieldPrice">xxPrice</TD>
+      <TD  id="fieldAmount">xxAmount</TD>
+      <TD  id="fieldPeriod">xxPeriod</TD>
+      <TD  id="fieldcBPartner">xxBusiness Partner</TD>
+      <TD  id="fieldcBPGroup">xxBP Group</TD>
+      <TD  id="fieldmProduct">xxProduct</TD>
+      <TD  id="fieldmProductCategory">xxProd Category</TD>
+      <TD id="fieldcAcctSchema" >xxAccountSchema</TD>
+      <TD id="fieldcValidCombination" >xxAccount</TD>
+      <!--TD  id="fieldUser1">xxUser1</TD>
+      <TD  id="fieldUser2">xxUser2</TD-->
+      <TD  id="fieldcSalesRegion">xxSales Region</TD>
+      <TD  id="fieldcCampaign">xxCampaign</TD>
+      <TD  id="fieldcActivity">xxActivity</TD>
+      <TD  id="fieldcProject">xxProject</TD>
+      <TD  id="fieldTrxOrg">xxTrx_Org</TD>
+      <TD  id="fieldDescription">xxDescription</TD>
+      <TD  id="fieldCurrency">xxEur</TD>
+    </TR>
+  </DIV>
+  </TABLE>
+</BODY>
+</HTML>

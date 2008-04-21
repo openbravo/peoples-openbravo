@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER C_BP_BANKACCOUNTIBAN_TRG">
+    <trigger name="C_BP_BANKACCOUNTIBAN_TRG" table="C_BP_BANKACCOUNT" fires="before" insert="true" update="true" delete="false" foreach="row">
+      <body><![CDATA[
+    /*************************************************************************
+    * The contents of this file are subject to the Compiere License
+    * Version 2.5.0 ("License"); You may not use this file except in
+    * compliance with the License. You may obtain a copy of the License at
+    * http://www.compiere.org/license.html
+    * Software distributed under the License is distributed on an
+    * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+    * implied. See the License for the specific language governing rights
+    * and limitations under the License.
+    * The Original Code is  Compiere  ERP &  Business Solution
+    * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
+    Inc.
+    * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+    * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+    * All Rights Reserved.
+    * Contributor(s): Openbravo SL
+    * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+    *************************************************************************
+    * $Id: A_ASSET_Trg.sql,v 1.4 2002/10/23 03:16:57 jjanke Exp $
+    ***
+    * Title: Asset new necord
+    * Description:
+    *    - create default Account records
+    ************************************************************************/
+
+  v_IBAN_check NUMBER;
+  v_Bank NVARCHAR2(4);
+  v_Branch NVARCHAR2(4);
+  v_DigitBank NVARCHAR2(1);
+  v_CountryId NVARCHAR2(2);
+  v_Length NUMBER;  
+BEGIN
+  --  Default Accounts for all AcctSchema
+  IF(INSERTING OR UPDATING) THEN
+    IF (:NEW.IBAN IS NOT NULL) THEN
+        SELECT MOD(CONCAT(
+                 CONCAT(
+                   CONCAT(
+                     SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4),
+                     ASCII(SUBSTR(:NEW.IBAN,1,1))-55
+                   ),
+                   ASCII(SUBSTR(:NEW.IBAN,2,1))-55),
+                 SUBSTR(:NEW.IBAN,3,2)),97) AS DC
+                 INTO v_IBAN_check
+        FROM DUAL;
+        IF (v_IBAN_check <> 1) THEN
+          RAISE_APPLICATION_ERROR(-20257, 'Incorrect IBAN Code.');
+        END IF;
+        SELECT IBANCOUNTRY, IBANNODIGITS
+        INTO v_CountryId, v_Length
+        FROM C_COUNTRY
+        WHERE C_COUNTRY_ID=:NEW.C_COUNTRY_ID;
+        IF (v_CountryId <> SUBSTR(:NEW.IBAN,1,2) OR v_Length <> LENGTH(:NEW.IBAN)) THEN
+          RAISE_APPLICATION_ERROR(-20259, 'The IBAN number entered does not fit the IBAN data of the country defined in the Bank tab.');
+        END IF;
+      END IF;
+    IF (:NEW.SHOWIBAN='Y') THEN
+      :NEW.DISPLAYEDACCOUNT:=SUBSTR(:NEW.IBAN,1,4) || '-' || SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4);
+    ELSE
+      :NEW.DISPLAYEDACCOUNT:=:NEW.ACCOUNTNO;
+    END IF;
+  END IF;
+EXCEPTION WHEN NO_DATA_FOUND THEN
+  RAISE_APPLICATION_ERROR(-20257, 'Incorrect IBAN Code.') ;
+END C_BANKACCOUNTIBAN_TRG
+
+
+]]></body>
+    </trigger>
+  </database>

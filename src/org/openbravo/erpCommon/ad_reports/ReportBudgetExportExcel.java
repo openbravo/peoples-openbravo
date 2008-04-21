@@ -52,7 +52,12 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
     ReportBudgetGenerateExcelData[] data=null;
     data = ReportBudgetGenerateExcelData.selectLines(this, vars.getLanguage(), strBudgetId);
 
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelXLS").createXmlDocument();
+    if (data[0].exportactual.equals("Y")) 
+    {    
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelXLS").createXmlDocument();
+    } else{
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelExportXLS").createXmlDocument();
+    }
 
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");

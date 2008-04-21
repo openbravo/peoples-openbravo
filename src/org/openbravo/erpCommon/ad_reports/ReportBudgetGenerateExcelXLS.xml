@@ -26,12 +26,11 @@
     <FIELD id="fieldQty">qty</FIELD>
     <FIELD id="fieldPrice">price</FIELD>
     <FIELD id="fieldAmount">amount</FIELD>
+    <FIELD id="fieldActual">actual</FIELD>
     <FIELD id="fieldcBPartner">partner</FIELD>
     <FIELD id="fieldcBPGroup">partnergroup</FIELD>
     <FIELD id="fieldmProduct">product</FIELD>
     <FIELD id="fieldmProductCategory">prodcategory</FIELD>
-    <!--FIELD id="fieldUser1">user1</FIELD>
-    <FIELD id="fieldUser2">user2</FIELD-->
     <FIELD id="fieldcSalesRegion">salesregion</FIELD>
     <FIELD id="fieldcCampaign">campaign</FIELD>
     <FIELD id="fieldcActivity">activity</FIELD>
@@ -39,6 +38,7 @@
     <FIELD id="fieldTrxOrg">trxorg</FIELD>
     <FIELD id="fieldPeriod">month</FIELD>
     <FIELD id="fieldcValidCombination">validcombination</FIELD>
+    <FIELD id="fieldcAcctSchema">accountschema</FIELD>
     <FIELD id="fieldDescription">description</FIELD>
     <FIELD id="fieldCurrency">currency</FIELD>
 

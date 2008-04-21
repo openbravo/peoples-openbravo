@@ -1,4 +1,8 @@
 <?xml version="1.0"?>
   <database name="SEQUENCE AD_PINSTANCE_SEQ">
+<<<<<<< .copia-de-trabajo
     <sequence name="AD_PINSTANCE_SEQ" start="5602" increment="1"/>
+=======
+    <sequence name="AD_PINSTANCE_SEQ" start="5622" increment="1"/>
+>>>>>>> .derecha-combinacion.r3623
   </database>

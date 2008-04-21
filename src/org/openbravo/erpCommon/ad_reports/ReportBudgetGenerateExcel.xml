@@ -34,6 +34,9 @@
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <PARAMETER id="paramVacio" name="paramVacio" default=""/>
+  <PARAMETER id="paramAccountId" name="cAccountId"/>
+  <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>  
+  <PARAMETER id="paramArrayAccounts" name="accounts"/>
   <PARAMETER id="paramCBPGroupID" name="cBPGroupId" attribute="" default=""/>
   <PARAMETER id="paramM_PRODUCTCATEGORY_ID" name="mProductCatId" attribute="" default=""/>
   <!--PARAMETER id="paramUser1" name="user1" attribute="" default=""/>
@@ -44,7 +47,7 @@
   <PARAMETER id="paramCProjectID" name="cProjectId" attribute="" default=""/>
   <PARAMETER id="paramTrxOrg" name="trxOrg" attribute="" default=""/>
   <PARAMETER id="paramMonth" name="month" attribute="" default=""/>
-  <PARAMETER id="paramC_ValidCombination_ID" name="cValidcombinationId" attribute="" default=""/>
+<!--  <PARAMETER id="paramC_ValidCombination_ID" name="cValidcombinationId" attribute="" default=""/> -->
 
   <!--SUBREPORT id="reportMProductId_IN" name="reportMProductId_IN" report="org/openbravo/erpCommon/reference/List">
   <ARGUMENT name="parameterListSelected" withId="paramVacio"/>
@@ -53,6 +56,12 @@
   <ARGUMENT name="parameterListSelected" withId="paramVacio"/>
 </SUBREPORT-->
 
+<SUBREPORT id="reportC_ACCTSCHEMA_ID" name="reportC_ACCTSCHEMA_ID" report="org/openbravo/erpCommon/reference/List">
+  <ARGUMENT name="parameterListSelected" withId="paramC_ACCTSCHEMA_ID"/>
+</SUBREPORT>
+<SUBREPORT id="paramAccount" name="cAccount" report="org/openbravo/erpCommon/reference/List">
+  <ARGUMENT name="parameterListSelected" withId="paramAccountId"/>
+</SUBREPORT>
 <SUBREPORT id="reportCBPGroupId" name="reportCBPGroupId" report="org/openbravo/erpCommon/reference/List">
   <ARGUMENT name="parameterListSelected" withId="paramCBPGroupID"/>
 </SUBREPORT>

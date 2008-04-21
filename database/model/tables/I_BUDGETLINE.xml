@@ -10,8 +10,8 @@
       <column name="UPDATED" primaryKey="false" required="false" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
       <column name="UPDATEDBY" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_BUDGETLINE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="C_VALIDCOMBINATION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="VALIDCOMBINATIONIDENT" primaryKey="false" required="false" type="NVARCHAR" size="100" autoIncrement="false"/>
+      <column name="C_ELEMENTVALUE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ELEMENTVALUEIDENT" primaryKey="false" required="false" type="NVARCHAR" size="100" autoIncrement="false"/>
       <column name="C_PERIOD_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="PERIODIDENT" primaryKey="false" required="false" type="NVARCHAR" size="100" autoIncrement="false"/>
       <column name="C_CURRENCY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -45,6 +45,8 @@
       <column name="I_ERRORMSG" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
       <column name="I_ISIMPORTED" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="CURRENCYIDENT" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false"/>
+      <column name="C_ACCTSCHEMA_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ACCTSCHEMAIDENT" primaryKey="false" required="false" type="NVARCHAR" size="100" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="AC_CLIENT_I_BUDGETLINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -53,6 +55,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_ORGTRX_I_BUDGETLINE">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ACCTSCHEMA" name="C_ACCTSCHEMA_IBUDGETLINE">
+        <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BP_GROUP" name="C_BP_GROUP_I_BUDGETLINE">
         <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
@@ -66,6 +71,9 @@
       <foreign-key foreignTable="C_CURRENCY" name="C_CURRENCY_I_BUDGETLINE">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_ELEMENTVALUE_IBUDGETLINE">
+        <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_PROJECT" name="C_PROJECT_I_BUDGETLINE">
         <reference local="C_PROJECT_ID" foreign="C_PROJECT_ID"/>
       </foreign-key>
@@ -74,9 +82,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_UOM" name="C_UOM_I_BUDGETLINE">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_VALIDCOMBINATION_IBUDGETLINE">
-        <reference local="C_VALIDCOMBINATION_ID" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_I_BUDGETLINE">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>

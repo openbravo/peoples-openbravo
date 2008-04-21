@@ -19,6 +19,12 @@
       <column name="STMTPROCESSORCLASS" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
       <column name="CODEACCOUNT" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false"/>
       <column name="DIGITCONTROL" primaryKey="false" required="false" type="NVARCHAR" size="1" autoIncrement="false"/>
+      <column name="IBAN" primaryKey="false" required="false" type="NVARCHAR" size="34" autoIncrement="false"/>
+      <column name="GENERICACCOUNT" primaryKey="false" required="false" type="NVARCHAR" size="50" autoIncrement="false"/>
+      <column name="SHOWGENERIC" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="SHOWSPANISH" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="SHOWIBAN" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="DISPLAYEDACCOUNT" primaryKey="false" required="false" type="NVARCHAR" size="50" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBANKACCOUNT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -34,6 +40,11 @@
       <index name="C_BANKACCT_BANK" unique="false">
         <index-column name="C_BANK_ID"/>
       </index>
+      <check name="C_BANKACC_SHOWGENERIC_CHECK"><![CDATA[GENERICACCOUNT IS NOT NULL OR SHOWGENERIC='N']]></check>
+      <check name="C_BANKACC_SHOWIBAN_CHECK"><![CDATA[IBAN IS NOT NULL OR SHOWIBAN='N']]></check>
+      <check name="C_BANKACC_SHOWONE_CHECK"><![CDATA[(SHOWSPANISH='Y' AND SHOWGENERIC='N' AND SHOWIBAN='N') OR (SHOWSPANISH='N' AND SHOWGENERIC='Y' AND SHOWIBAN='N') OR (SHOWSPANISH='N' AND SHOWGENERIC='N' AND SHOWIBAN='Y')]]></check>
+      <check name="C_BANKACC_SHOWSPANISH_CHECK"><![CDATA[(DIGITCONTROL IS NOT NULL AND CODEACCOUNT IS NOT NULL) OR SHOWSPANISH='N']]></check>
+      <check name="C_BANKACCOUNT_ACCOUNTNO_CHECK"><![CDATA[GENERICACCOUNT IS NOT NULL OR IBAN IS NOT NULL OR (CODEACCOUNT IS NOT NULL AND DIGITCONTROL IS NOT NULL)]]></check>
       <check name="C_BANKACCOUNT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
