@@ -98,7 +98,7 @@
       		SELECT TO_CHAR(created, 'DD-MM-YYYY HH24:MI:SS') AS created
       		FROM ad_heartbeat_log
       		ORDER BY created DESC
-    	) as t
+    	)  t
     	where rownum <= 1
     ]]></Sql>
    </SqlMethod>
