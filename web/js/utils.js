@@ -3405,3 +3405,253 @@ function changeAuditIcon(newStatus) {
 document.onmousedown=menuContextual;*/
 
 //-->
+
+
+
+
+
+
+
+
+
+/**
+* Start of deprecated functions in 2.40
+*/
+
+var gBotonPorDefecto;
+var arrTeclas=null;
+
+/**
+* Deprecated in 2.40: Set the focus on the first visible control in the form
+* @param {Form} Formulario Optional- Defines the form containing the field, where we want to set the focus. If is not present, the first form of the page will be used.
+* @param {String} Campo Optional - Name of the control where we want to set the focus. If is not present the first field will be used.
+*/
+function focoPrimerControl(Formulario, Campo) {
+  var encontrado = false;
+  if (Formulario==null) Formulario=document.forms[0];
+  var total = Formulario.length;
+  for(var i=0;i<total; i++)
+  {
+    if ((Formulario.elements[i].type != "hidden") && (Formulario.elements[i].type != "button") && (Formulario.elements[i].type != "submit") && (Formulario.elements[i].type != "image") && (Formulario.elements[i].type != "reset")) 
+    { 
+      if(Campo!=null) {
+        if (Campo == Formulario.elements[i].name && !Formulario.elements[i].readonly && !Formulario.elements[i].disabled) {
+          Formulario.elements[i].focus();
+          encontrado=true;
+          break;
+        }
+      } else if (!Formulario.elements[i].readonly && !Formulario.elements[i].disabled) {
+        try {
+          Formulario.elements[i].focus();
+          encontrado=true;
+          break;
+        } catch (ignore) {}
+      }
+    }
+  }
+  if (encontrado && Formulario.elements[i].type && Formulario.elements[i].type.indexOf("select")==-1)
+    Formulario.elements[i].select();
+}
+
+/**
+* Deprecated in 2.40: Handles window events. This function handles events such as KeyDown; when a user hit the ENTER key to do somethig by default.
+* @param {Number} CodigoTecla ASCII code of the key pressed.
+* @returns True if the key pressed is not ment to be handled. False if is a handled key. 
+* @type Boolean
+*/
+function pulsarTecla(CodigoTecla) {
+  if (gBotonPorDefecto!=null)
+  {
+    var tecla = (!CodigoTecla) ? window.event.keyCode : CodigoTecla.which;
+    if (tecla == 13)
+    {
+      eval(gBotonPorDefecto);
+      return false;
+    }
+  }
+  return true;
+}
+
+
+/**
+* Deprecated in 2.40: Defines a defult action on each page, the one that will be executed when the user hit the ENTER key. This function is shared in pages containing frames.
+* @param {String} accion Default command to be executed when the user hit the ENTER key.
+* @returns Always retrun true.
+* @type Boolean
+* @see #pulsarTecla
+*/
+function porDefecto(accion) {
+  gBotonPorDefecto = accion;
+  if (!document.all)
+  {
+    document.captureEvents(Event.KEYDOWN);
+  }
+  document.onkeydown=pulsarTecla;
+  return true;
+}
+
+
+/**
+* Deprecated in 2.40: Builds the keys array on each screen. Each key that we want to use should have this structure.
+* @param {Sting} tecla A text version of the handled key.
+* @param {String} evento Event that we want to fire when the key is is pressed.
+* @param {String} campo Name of the field on the window. If is null, is a global event, for the hole window.
+* @param {String} teclaAuxiliar Text defining the auxiliar key. The value could be CTRL for the Control key, ALT for the Alt, null if we don't have to use an auxiliar key.
+*/
+function Teclas(tecla, evento, campo, teclaAuxiliar) {
+  this.tecla = tecla;
+  this.evento = evento;
+  this.campo = campo;
+  this.teclaAuxiliar = teclaAuxiliar;
+}
+
+
+/**
+* Deprecated in 2.40: Returns the ASCII code of the given key
+* @param {String} codigo Text version of a key
+* @returns The ASCII code of the key
+* @type Number
+*/
+function obtenerCodigoTecla(codigo) {
+  if (codigo==null) return 0;
+  else if (codigo.length==1) return codigo.toUpperCase().charCodeAt(0);
+  switch (codigo.toUpperCase()) {
+    case "BACKSPACE": return 8;
+    case "TAB": return 9;
+    case "ENTER": return 13;
+    case "SPACE": return 32;
+    case "DELETE": return 46;
+    case "INSERT": return 45;
+    case "END": return 35;
+    case "HOME": return 36;
+    case "REPAGE": return 33;
+    case "AVPAGE": return 34;
+    case "LEFTARROW": return 37;
+    case "RIGHTARROW": return 39;
+    case "UPARROW": return 38;
+    case "DOWNARROW": return 40;
+    case "NEGATIVE": return 189;
+    case "NUMBERNEGATIVE": return 109;
+    case "DECIMAL": return 190;
+    case "NUMBERDECIMAL": return 110;
+    case "ESCAPE": return 27;
+    case "F1": return 112;
+    case "F2": return 113;
+    case "F3": return 114;
+    case "F4": return 115;
+    case "F5": return 116;
+    case "F6": return 117;
+    case "F7": return 118;
+    case "F8": return 119;
+    case "F9": return 120;
+    case "F10": return 121;
+    case "F11": return 122;
+    case "F12": return 123;
+    case "P": return 80;
+/*    case "shiftKey": return 16;
+    case "ctrlKey": return 17;
+    case "altKey": return 18;*/
+    default: return 0;
+  }
+}
+
+
+/**
+* Deprecated in 2.40: Handles the events execution of keys pressed, based on the events registered in the arrTeclas global array.   
+* @param {Event} CodigoTecla Code of the key pressed.
+* @returns True if the key is not registered in the array, false if a event for this key is registered in arrTeclas array.
+* @type Boolean
+* @see #obtenerCodigoTecla
+*/
+function controlTecla(CodigoTecla) {
+  if (arrTeclas==null || arrTeclas.length==0) return true;
+  if (!CodigoTecla) CodigoTecla = window.event;
+  var tecla = window.event ? CodigoTecla.keyCode : CodigoTecla.which;
+  var target = (CodigoTecla.target?CodigoTecla.target: CodigoTecla.srcElement);
+  //var target = (document.layers) ? CodigoTecla.target : CodigoTecla.srcElement;
+  var total = arrTeclas.length;
+  for (var i=0;i<total;i++) {
+    if (arrTeclas[i]!=null && arrTeclas[i]) {
+      if (tecla == obtenerCodigoTecla(arrTeclas[i].tecla)) {
+        if (arrTeclas[i].teclaAuxiliar==null || arrTeclas[i].teclaAuxiliar=="" || arrTeclas[i].teclaAuxiliar=="null") {
+          if (arrTeclas[i].campo==null || (target!=null && target.name!=null && isIdenticalField(arrTeclas[i].campo, target.name))) {
+            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
+            eval(eventoTrl);
+            return false;
+          }
+        } else if (arrTeclas[i].campo==null || (target!=null && target.name!=null && isIdenticalField(arrTeclas[i].campo, target.name))) {
+          if (arrTeclas[i].teclaAuxiliar=="ctrlKey" && CodigoTecla.ctrlKey && !CodigoTecla.altKey && !CodigoTecla.shiftKey) {
+            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
+            eval(eventoTrl);
+            return false;
+          } else if (arrTeclas[i].teclaAuxiliar=="altKey" && !CodigoTecla.ctrlKey && CodigoTecla.altKey && !CodigoTecla.shiftKey) {
+            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
+            eval(eventoTrl);
+            return false;
+          } else if (arrTeclas[i].teclaAuxiliar=="shiftKey" && !CodigoTecla.ctrlKey && !CodigoTecla.altKey && CodigoTecla.shiftKey) {
+            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
+            eval(eventoTrl);
+            return false;
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
+
+
+/**
+* Deprecated in 2.40: Used to activate the key-press handling. Must be called after set the keys global array <em>arraTeclas</em>.
+*/
+function activarControlTeclas() {
+  if (arrTeclas==null || arrTeclas.length==0) return true;
+
+    var agt=navigator.userAgent.toLowerCase();
+
+/*   if (agt.indexOf('gecko') != -1) { 
+        document.releaseEvents(Event.KEYDOWN);
+     }
+  if (agt.indexOf('gecko') != -1)
+    document.captureEvents(Event.KEYDOWN);*/
+  
+  document.onkeydown=controlTecla;
+  return true;
+}
+
+/**
+* Deprecated in 2.40: Function Description
+* Shows or hides a window in the application
+* @param {String} id The ID of the element
+* @returns True if the operation was made correctly, false if not.
+* @see #changeClass
+*/
+function mostrarMenu(id) {
+  if (!top.frameMenu) window.open(baseFrameServlet, "_blank");
+  else {
+    var frame = top.document;
+    var frameset = frame.getElementById("framesetMenu");
+    if (!frameset) return false;
+    /*try {
+      var frm2 = frame.getElementById("frameMenu");
+      var obj = document.onresize;
+      var obj2 = frm2.onresize;
+      document.onresize = null;
+      frm2.document.onresize = null;
+      progressiveHideMenu("framesetMenu", 30);
+      document.onresize = obj;
+      frm2.document.onresize = obj2;
+    } catch (e) {*/
+      if (frameset.cols.substring(0,1)=="0") frameset.cols = "25%,*";
+      else  frameset.cols = "0%,*";
+    //}
+    try {
+      changeClass(id, "_hide", "_show");
+    } catch (e) {}
+    return true;
+  }
+}
+
+/**
+* End of deprecated functions in 2.40
+*/
