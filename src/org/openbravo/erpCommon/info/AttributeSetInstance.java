@@ -380,7 +380,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       strHtml.append("name=\"inplot\" ");
       strHtml.append("maxlength=\"20\" ");
       strHtml.append("class=\"dojoValidateValid TextBox_OneCell_width");
-      //strHtml.append("onkeydown=\"auto_completar_numero(this, true, true);return true;\" ");
+      //strHtml.append("onkeydown=\"auto_complete_number(this, true, true);return true;\" ");
       if (!fields[0].mLotctlId.equals("") && strIsSOTrx.equals("N")) {
         strHtml.append(" readonly\" readonly=true ");
       } else {
@@ -399,7 +399,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       strHtml.append("name=\"inpserno\" ");
       strHtml.append("maxlength=\"20\" ");
       strHtml.append("class=\"dojoValidateValid TextBox_OneCell_width");
-      //strHtml.append("onkeydown=\"auto_completar_numero(this, true, true);return true;\" ");
+      //strHtml.append("onkeydown=\"auto_complete_number(this, true, true);return true;\" ");
       if (!fields[0].mSernoctlId.equals("") && strIsSOTrx.equals("N")) {
         strHtml.append(" readonly\" readonly=true ");
       } else {

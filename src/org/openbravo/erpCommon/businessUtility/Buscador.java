@@ -400,8 +400,8 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("\" ");
         strHtml.append("maxlength=\"").append(fields[i].fieldlength).append("\" ");
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
-        if (Utility.isDecimalNumber(fields[i].reference)) strHtml.append("onkeydown=\"validateNumberBox(this.id);auto_completar_numero(this, true, true);return true;\" ");
-        else if (Utility.isIntegerNumber(fields[i].reference)) strHtml.append("onkeydown=\"validateNumberBox(this.id);auto_completar_numero(this, false, false);return true;\" ");
+        if (Utility.isDecimalNumber(fields[i].reference)) strHtml.append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, true, true);return true;\" ");
+        else if (Utility.isIntegerNumber(fields[i].reference)) strHtml.append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, false, false);return true;\" ");
         strHtml.append(">");
         if (Utility.isDecimalNumber(fields[i].reference) || Utility.isIntegerNumber(fields[i].reference)) {
           strHtml.append("<td class=\"FieldButton_ContentCell\">\n");
@@ -435,10 +435,10 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
         if (Utility.isDecimalNumber(fields[i].reference)) {
           scriptCalculator = true;
-          strHtml.append("onkeydown=\"auto_completar_numero(this, true, true);return true;\" ");
+          strHtml.append("onkeydown=\"auto_complete_number(this, true, true);return true;\" ");
         } else if (Utility.isIntegerNumber(fields[i].reference)) {
           scriptCalculator = true;
-          strHtml.append("onkeydown=\"auto_completar_numero(this, false, false);return true;\" ");
+          strHtml.append("onkeydown=\"auto_complete_number(this, false, false);return true;\" ");
         }
         strHtml.append(">");
         strHtml.append("</td>");//<td class=\"FieldButton_bg\">");
@@ -460,8 +460,8 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f\" ");
           strHtml.append("maxlength=\"").append(fields[i].fieldlength).append("\" ");
           strHtml.append("value=\"").append(value).append("\" ");
-          if (Utility.isDecimalNumber(fields[i].reference)) strHtml.append("onkeydown=\"validateNumberBox(this.id);auto_completar_numero(this, true, true);return true;\" ");
-          else if (Utility.isIntegerNumber(fields[i].reference)) strHtml.append("onkeydown=\"validateNumberBox(this.id);auto_completar_numero(this, false, false);return true;\" ");
+          if (Utility.isDecimalNumber(fields[i].reference)) strHtml.append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, true, true);return true;\" ");
+          else if (Utility.isIntegerNumber(fields[i].reference)) strHtml.append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, false, false);return true;\" ");
           strHtml.append(">");
 
           strHtml.append("<td class=\"FieldButton_ContentCell\">\n<TABLE class=\"FieldButton\" onclick=\"calculator('frmMain.");

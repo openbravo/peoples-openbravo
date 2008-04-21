@@ -2790,25 +2790,25 @@ function estaEnCombo(combo, clave) {
 * @type Boolean
 * @see #obtainKeyCode
 */
-function auto_completar_numero(obj, bolDecimal, bolNegativo, evt) {
-  var numero;
+function auto_complete_number(obj, bolDecimal, bolNegativo, evt) {
+  var number;
   if (document.all) evt = window.event;
-  if (document.layers) { numero = evt.which; }
-  if (document.all)    { numero = evt.keyCode;}
-  if (numero != obtainKeyCode("ENTER") && numero != obtainKeyCode("LEFTARROW") && numero != obtainKeyCode("RIGHTARROW") && numero != obtainKeyCode("UPARROW") && numero != obtainKeyCode("DOWNARROW") && numero != obtainKeyCode("DELETE") && numero != obtainKeyCode("BACKSPACE") && numero != obtainKeyCode("END") && numero != obtainKeyCode("HOME") && !evt["ctrlKey"]) {
-    if (numero>95 && numero <106) { //Teclado numérico
-      numero = numero - 96;
-      if(isNaN(numero)) {
+  if (document.layers) { number = evt.which; }
+  if (document.all)    { number = evt.keyCode;}
+  if (number != obtainKeyCode("ENTER") && number != obtainKeyCode("LEFTARROW") && number != obtainKeyCode("RIGHTARROW") && number != obtainKeyCode("UPARROW") && number != obtainKeyCode("DOWNARROW") && number != obtainKeyCode("DELETE") && number != obtainKeyCode("BACKSPACE") && number != obtainKeyCode("END") && number != obtainKeyCode("HOME") && !evt["ctrlKey"]) {
+    if (number>95 && number <106) { //Teclado numérico
+      number = number - 96;
+      if(isNaN(number)) {
         if (document.all) evt.returnValue = false;
         return false;
       }
-    } else if (numero!=obtainKeyCode("DECIMAL") && numero != obtainKeyCode("NUMBERDECIMAL") && numero != obtainKeyCode("NEGATIVE") && numero != obtainKeyCode("NUMBERNEGATIVE")) { //No es "-" ni "."
-      numero = String.fromCharCode(numero);
-      if(isNaN(numero)) {
+    } else if (number!=obtainKeyCode("DECIMAL") && number != obtainKeyCode("NUMBERDECIMAL") && number != obtainKeyCode("NEGATIVE") && number != obtainKeyCode("NUMBERNEGATIVE")) { //No es "-" ni "."
+      number = String.fromCharCode(number);
+      if(isNaN(number)) {
         if (document.all) evt.returnValue = false;
         return false;
       }
-    } else if (numero==obtainKeyCode("DECIMAL") || numero==obtainKeyCode("NUMBERDECIMAL")) { //Es "."
+    } else if (number==obtainKeyCode("DECIMAL") || number==obtainKeyCode("NUMBERDECIMAL")) { //Es "."
       if (bolDecimal) {
         if (obj.value==null || obj.value=="") return true;
         else {
@@ -3472,7 +3472,6 @@ function pulsarTecla(CodigoTecla) {
   return true;
 }
 
-
 /**
 * Deprecated in 2.40: Defines a defult action on each page, the one that will be executed when the user hit the ENTER key. This function is shared in pages containing frames.
 * @param {String} accion Default command to be executed when the user hit the ENTER key.
@@ -3490,7 +3489,6 @@ function porDefecto(accion) {
   return true;
 }
 
-
 /**
 * Deprecated in 2.40: Builds the keys array on each screen. Each key that we want to use should have this structure.
 * @param {Sting} tecla A text version of the handled key.
@@ -3504,7 +3502,6 @@ function Teclas(tecla, evento, campo, teclaAuxiliar) {
   this.campo = campo;
   this.teclaAuxiliar = teclaAuxiliar;
 }
-
 
 /**
 * Deprecated in 2.40: Returns the ASCII code of the given key
@@ -3554,7 +3551,6 @@ function obtenerCodigoTecla(codigo) {
     default: return 0;
   }
 }
-
 
 /**
 * Deprecated in 2.40: Handles the events execution of keys pressed, based on the events registered in the arrTeclas global array.   
@@ -3650,6 +3646,56 @@ function mostrarMenu(id) {
     } catch (e) {}
     return true;
   }
+}
+
+/**
+* Deprecated in 2.40: Handles the onKeyDown and onKeyUp event, for an specific numeric typing control.
+* @param {Object} obj Field where the numeric typing will be evaluated.
+* @param {Boolean} bolDecimal Defines if a float number is allowed.
+* @param {Boolean} bolNegativo Defines if a negative number is allowed.
+* @param {Event} evt The event handling object associated with the field.
+* @returns True if is an allowed number, otherwise false.
+* @type Boolean
+* @see #obtenerCodigoTecla
+*/
+function auto_completar_numero(obj, bolDecimal, bolNegativo, evt) {
+  var numero;
+  if (document.all) evt = window.event;
+  if (document.layers) { numero = evt.which; }
+  if (document.all)    { numero = evt.keyCode;}
+  if (numero != obtenerCodigoTecla("ENTER") && numero != obtenerCodigoTecla("LEFTARROW") && numero != obtenerCodigoTecla("RIGHTARROW") && numero != obtenerCodigoTecla("UPARROW") && numero != obtenerCodigoTecla("DOWNARROW") && numero != obtenerCodigoTecla("DELETE") && numero != obtenerCodigoTecla("BACKSPACE") && numero != obtenerCodigoTecla("END") && numero != obtenerCodigoTecla("HOME") && !evt["ctrlKey"]) {
+    if (numero>95 && numero <106) { //Teclado num�rico
+      numero = numero - 96;
+      if(isNaN(numero)) {
+        if (document.all) evt.returnValue = false;
+        return false;
+      }
+    } else if (numero!=obtenerCodigoTecla("DECIMAL") && numero != obtenerCodigoTecla("NUMBERDECIMAL") && numero != obtenerCodigoTecla("NEGATIVE") && numero != obtenerCodigoTecla("NUMBERNEGATIVE")) { //No es "-" ni "."
+      numero = String.fromCharCode(numero);
+      if(isNaN(numero)) {
+        if (document.all) evt.returnValue = false;
+        return false;
+      }
+    } else if (numero==obtenerCodigoTecla("DECIMAL") || numero==obtenerCodigoTecla("NUMBERDECIMAL")) { //Es "."
+      if (bolDecimal) {
+        if (obj.value==null || obj.value=="") return true;
+        else {
+          var point = obj.value.indexOf(".");
+          if (point != -1) {
+            point = obj.value.indexOf(".", point+1);
+            if (point==-1) return true;
+          } else return true;
+        }
+      }
+      if (document.all) evt.returnValue = false;
+      return false;
+    } else { //Es "-"
+      if (bolNegativo && (obj.value==null || obj.value.indexOf("-")==-1)) return true;
+      if (document.all) evt.returnValue = false;
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
