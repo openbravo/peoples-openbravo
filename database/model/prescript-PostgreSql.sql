@@ -1106,6 +1106,16 @@ CREATE OR REPLACE VIEW user_tab_columns AS
   WHERE pg_attribute.attrelid = pg_class.oid AND pg_attribute.atttypid = pg_type.oid AND pg_class.relnamespace = pg_namespace.oid AND pg_namespace.nspname = current_schema() AND pg_attribute.attnum > 0
 /-- END
 
+SELECT * FROM drop_view('v$version')
+/-- END
+
+CREATE OR REPLACE VIEW v$version
+AS 
+ SELECT setting as banner
+   FROM pg_settings
+  WHERE name = 'server_version';
+/-- END
+
 --DROP VIEW USER_TRIGGERS
 --/--END
 
