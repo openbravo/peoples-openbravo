@@ -28,6 +28,14 @@ function disableToolBarButton(id) {
       link.className = link.className.replace('Main_ToolBar_Button', 'Main_ToolBar_Button_disabled');
       if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
         link.setAttribute('onclick', 'return true; tmp_water_mark; ' + link.getAttribute('onclick'));
+      } else {
+        var link_onclick = link.getAttribute('onclick').toString();
+        link_onclick = link_onclick.replace("function anonymous()","");
+        link_onclick = link_onclick.replace("{\n","");
+        link_onclick = link_onclick.replace("\n","");
+        link_onclick = link_onclick.replace("}","");
+        link_onclick = 'return true; tmp_water_mark; ' + link_onclick;
+        link['onclick']=new Function(link_onclick);
       }
       link.setAttribute('id', link.getAttribute('id') + '_disabled');
       img.className = img.className + ('_disabled tmp_water_mark');
@@ -48,6 +56,14 @@ function enableToolBarButton(id) {
       link.className = link.className.replace('Main_ToolBar_Button_disabled', 'Main_ToolBar_Button');
       if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
         link.setAttribute('onclick', link.getAttribute('onclick').replace('return true; tmp_water_mark; ', ''));
+      } else {
+        var link_onclick = link.getAttribute('onclick').toString();
+        link_onclick = link_onclick.replace("function anonymous()","");
+        link_onclick = link_onclick.replace("{\n","");
+        link_onclick = link_onclick.replace("\n","");
+        link_onclick = link_onclick.replace("}","");
+        link_onclick = link_onclick.replace('return true; tmp_water_mark; ', '');
+        link['onclick']=new Function(link_onclick);
       }
       link.setAttribute('id', link.getAttribute('id').replace('_disabled', ''));
       img.className = img.className.replace('_disabled tmp_water_mark', '');
