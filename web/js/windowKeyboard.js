@@ -168,6 +168,7 @@ function cursorFocus(evt, obj) {
     if (!mustBeIgnored(obj)) {
       obj.checked = !obj.checked;
       if (obj.getAttribute('onclick')) obj.onclick();
+      if (obj.getAttribute('onchange')) obj.onchange();
     }
   }
   if(!isClickOnGrid==true) blurGrid();
