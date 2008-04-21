@@ -1854,6 +1854,7 @@ function menuShowHide(id) {
   if (!top.frameMenu)
     window.open(baseFrameServlet, "_blank");
   else {
+    if (id==null) id = 'buttonMenu';
     var frame = top.document;
     var frameset = frame.getElementById("framesetMenu");
     if (!frameset) 
