@@ -26,7 +26,9 @@ function disableToolBarButton(id) {
     img = getObjChild(link);
     if (link.className.indexOf('Main_ToolBar_Button') != -1 && link.className.indexOf('Main_ToolBar_Button_disabled') == -1) {
       link.className = link.className.replace('Main_ToolBar_Button', 'Main_ToolBar_Button_disabled');
-      link.setAttribute('onclick', 'return true; tmp_water_mark; ' + link.getAttribute('onclick'));
+      if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+        link.setAttribute('onclick', 'return true; tmp_water_mark; ' + link.getAttribute('onclick'));
+      }
       link.setAttribute('id', link.getAttribute('id') + '_disabled');
       img.className = img.className + ('_disabled tmp_water_mark');
     }
@@ -44,7 +46,9 @@ function enableToolBarButton(id) {
     img = getObjChild(link);
     if (link.className.indexOf('Main_ToolBar_Button_disabled') != -1) {
       link.className = link.className.replace('Main_ToolBar_Button_disabled', 'Main_ToolBar_Button');
-      link.setAttribute('onclick', link.getAttribute('onclick').replace('return true; tmp_water_mark; ', ''));
+      if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+        link.setAttribute('onclick', link.getAttribute('onclick').replace('return true; tmp_water_mark; ', ''));
+      }
       link.setAttribute('id', link.getAttribute('id').replace('_disabled', ''));
       img.className = img.className.replace('_disabled tmp_water_mark', '');
     }
