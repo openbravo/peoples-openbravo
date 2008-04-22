@@ -32,11 +32,7 @@ BEGIN
      OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
-END M_Inventory_Trg
-
-
-
-
+END M_INVENTORY_TRG
 ]]></body>
     </trigger>
   </database>

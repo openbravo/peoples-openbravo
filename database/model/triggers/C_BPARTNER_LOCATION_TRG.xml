@@ -72,10 +72,7 @@ EXCEPTION
 WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE('Not unique - ' || SQLERRM) ;
   :new.Name:=C_Location_Name(:new.C_Location_ID) ||'('||:new.C_Location_ID||')';
-END C_BPartner_Location_Trg
-
-
-
+END C_BPARTNER_LOCATION_TRG
 ]]></body>
     </trigger>
   </database>

@@ -60,9 +60,7 @@ BEGIN
       ActualQty=ActualQty + :new.ActualQty
     WHERE C_CommissionAmt_ID=:new.C_CommissionAmt_ID;
   END IF;
-END C_CommissionDetail_Trg 
-
-
+END C_COMMISSIONDETAIL_TRG
 ]]></body>
     </trigger>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION COPY_PRODUCT_TEMPLATE">
     <function name="COPY_PRODUCT_TEMPLATE" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -53,7 +55,7 @@
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || PInstance_ID) ;
     v_ResultStr:='PInstanceNotFound';
-    Ad_Update_Pinstance(PInstance_ID, NULL, 'Y', NULL, NULL) ;
+    AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'Y', NULL, NULL) ;
   BEGIN --BODY
     -- Get Parameters
     v_ResultStr:='ReadingParameters';
@@ -119,7 +121,7 @@
         )
         AND M_PRICELIST_VERSION.M_PRICELIST_ID=v_Mpricelist
         AND M_PRODUCTPRICE.M_PRODUCT_ID=Cur_ProductTemplate.M_PRODUCT_ID;
-      v_Linenetamount:=C_Currency_Round(M_Get_Offers_Price(Now(), v_Bpartner, Cur_ProductTemplate.M_Product_ID, v_Pricestd,Cur_ProductTemplate.QTY,v_Mpricelist ) *Cur_ProductTemplate.QTY, v_Currency, NULL) ;
+      v_Linenetamount:=C_Currency_Round(M_Get_Offers_Price(now(), v_Bpartner, Cur_ProductTemplate.M_Product_ID, v_Pricestd,Cur_ProductTemplate.QTY,v_Mpricelist ) *Cur_ProductTemplate.QTY, v_Currency, NULL) ;
       SELECT C_Gettax(Cur_ProductTemplate.M_PRODUCT_ID, v_Dateordered, v_org, v_Warehouse, v_BillTo, v_BpartnerLocation, v_projectID, v_Issotrx)
       INTO v_tax
       FROM DUAL;
@@ -146,13 +148,13 @@
         VALUES
         (
           v_CorderId, v_client, v_org, 'Y',
-          Now(), v_Createdby, Now(), v_Createdby,
+          now(), v_Createdby, now(), v_Createdby,
           v_Record_ID, v_SeqNo, v_Bpartner, v_BpartnerLocation,
           v_Dateordered, NULL, NULL, NULL,
           NULL, Cur_ProductTemplate.M_PRODUCT_ID, v_Warehouse, 'N',
           Cur_ProductTemplate.C_UOM_ID, Cur_ProductTemplate.QTY, 0, 0,
           0, NULL, v_Currency, v_Pricelist,
-          M_Get_Offers_Price(Now(), v_Bpartner, Cur_ProductTemplate.M_Product_ID, v_Pricestd, Cur_ProductTemplate.QTY, v_Mpricelist), v_Pricelimit, v_Linenetamount, v_Discount,
+          M_Get_Offers_Price(now(), v_Bpartner, Cur_ProductTemplate.M_Product_ID, v_Pricestd, Cur_ProductTemplate.QTY, v_Mpricelist), v_Pricelimit, v_Linenetamount, v_Discount,
           0, NULL, 0, v_tax,
           NULL, NULL, NULL, NULL,
           NULL, 'N', NULL, NULL,
@@ -168,18 +170,16 @@
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-    Ad_Update_Pinstance(PInstance_ID, NULL, 'N', 1, v_Message) ;
+    AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 1, v_Message) ;
     RETURN;
   END; --BODY
 EXCEPTION
 WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
-  Ad_Update_Pinstance(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END Copy_Product_Template
-
-
+END COPY_PRODUCT_TEMPLATE
 ]]></body>
     </function>
   </database>

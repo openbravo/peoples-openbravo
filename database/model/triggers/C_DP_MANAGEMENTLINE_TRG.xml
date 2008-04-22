@@ -39,9 +39,7 @@ BEGIN
 EXCEPTION
   WHEN OTHERS THEN
     NULL;
-END c_dp_managementline_trg 
-
-
+END C_DP_MANAGEMENTLINE_TRG
 ]]></body>
     </trigger>
   </database>

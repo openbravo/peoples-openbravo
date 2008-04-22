@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_SETTLEMENT_POST">
     <function name="C_SETTLEMENT_POST" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Settlement_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_settlement_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -30,7 +34,7 @@
   v_Processed CHAR(1) ;
   v_Currency NUMBER;
   v_Date DATE;
-  v_DateAcct date;
+  v_DateAcct DATE;
   v_CashBook_ISO_Code VARCHAR(10) ;
   v_Record_Description VARCHAR2(2000):='';
   v_Debt_Payment_ID NUMBER(10) ;
@@ -172,18 +176,18 @@
         ELSE
           UPDATE C_SETTLEMENT
             SET Processed='N',
-            UPDATED=SYSDATE,
+            UPDATED=now(),
             UPDATEDBY=v_AD_User_ID
           WHERE C_Settlement_ID=v_Record_ID;
           UPDATE C_DEBT_PAYMENT
             SET Cancel_Processed='N',
-            UPDATED=SYSDATE,
+            UPDATED=now(),
             UPDATEDBY=v_AD_User_ID
           WHERE C_Settlement_Cancel_ID=v_Record_ID;
           UPDATE C_DEBT_PAYMENT
             SET Generate_Processed='N',
             isValid='N',
-            UPDATED=SYSDATE,
+            UPDATED=now(),
             UPDATEDBY=v_AD_User_ID
           WHERE C_Settlement_Generate_ID=v_Record_ID;
           IF v_IsGenerated='N' THEN
@@ -316,7 +320,7 @@
         AND isPaid='Y';
       v_ResultStr:='UpdatingSettlementAmounts';
       UPDATE C_SETTLEMENT
-        SET Updated=SYSDATE,
+        SET Updated=now(),
         UpdatedBy=v_AD_User_ID,
         CanceledNotChargeAmt=v_CanceledNotChargeAmt,
         GeneratedAmt=v_GeneratedAmt,
@@ -356,14 +360,14 @@
     IF(NOT FINISH_PROCESS) THEN
       v_ResultStr:='UpdatingCancelLines';
       UPDATE C_DEBT_PAYMENT
-        SET Updated=SYSDATE,
+        SET Updated=now(),
         UpdatedBy=v_AD_User_ID,
         Cancel_Processed='Y'
       WHERE isActive='Y'
         AND C_Settlement_Cancel_ID=v_Record_ID;
       v_ResultStr:='UpdatingGenerateLines';
       UPDATE C_DEBT_PAYMENT
-        SET Updated=SYSDATE,
+        SET Updated=now(),
         UpdatedBy=v_AD_User_ID,
         Generate_Processed='Y',
         isValid='Y'
@@ -381,7 +385,7 @@
             OR C_Settlement_Generate_ID=v_Record_ID
           )
         LOOP
-          C_Bp_Socreditused_Refresh(Cur_Debts.C_BPartner_ID) ;
+          C_BP_SOCREDITUSED_REFRESH(Cur_Debts.C_BPartner_ID) ;
         END LOOP;
       END;
       v_ResultStr:='CreatingCashLines';
@@ -493,7 +497,7 @@
     IF(NOT FINISH_PROCESS) THEN
       v_ResultStr:='UpdatingSettlement';
       UPDATE C_SETTLEMENT
-        SET Updated=SYSDATE,
+        SET Updated=now(),
         UpdatedBy=v_AD_User_ID,
         Processed='Y'
       WHERE C_Settlement_ID=v_Record_ID;
@@ -536,8 +540,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   RETURN;
-END C_Settlement_Post
-
+END C_SETTLEMENT_POST
 ]]></body>
     </function>
   </database>

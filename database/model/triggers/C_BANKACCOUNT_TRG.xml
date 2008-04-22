@@ -59,8 +59,8 @@ BEGIN
       VALUES
       (
         :new.C_BankAccount_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-        :new.AD_ORG_ID,  'Y', SysDate,
-        :new.CreatedBy, SysDate, :new.UpdatedBy,
+        :new.AD_ORG_ID,  'Y', now(),
+        :new.CreatedBy, now(), :new.UpdatedBy,
         Cur_Defaults.B_InTransit_Acct, Cur_Defaults.B_Asset_Acct, Cur_Defaults.B_Expense_Acct,
         Cur_Defaults.B_InterestRev_Acct, Cur_Defaults.B_InterestExp_Acct, Cur_Defaults.B_UnIdentified_Acct,
         Cur_Defaults.B_SettlementGain_Acct, Cur_Defaults.B_SettlementLoss_Acct, Cur_Defaults.B_RevaluationGain_Acct,
@@ -68,9 +68,7 @@ BEGIN
       )
       ;
   END LOOP;
-END C_BankAccount_Trg 
-
-
+END C_BANKACCOUNT_TRG
 ]]></body>
     </trigger>
   </database>

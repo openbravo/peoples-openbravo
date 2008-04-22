@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_SEQUENCE_NEXT">
     <function name="AD_SEQUENCE_NEXT" type="NULL">
-      <parameter name="p_TableName" type="VARCHAR" mode="in"/>
-      <parameter name="p_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_NextNo" type="NUMERIC" mode="out"/>
+      <parameter name="p_tablename" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_nextno" type="NUMERIC" mode="out">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -54,9 +60,7 @@ EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20000, '@NoIDsequence@') ;
   --   || v_ResultStr || ': ' || p_TableName);
-END AD_Sequence_Next
-
-
+END AD_SEQUENCE_NEXT
 ]]></body>
     </function>
   </database>

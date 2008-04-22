@@ -55,16 +55,14 @@ BEGIN
       VALUES
       (
         :new.M_Warehouse_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-        :new.AD_ORG_ID,  'Y', SysDate,
-        :new.CreatedBy, SysDate, :new.UpdatedBy,
+        :new.AD_ORG_ID,  'Y', now(),
+        :new.CreatedBy, now(), :new.UpdatedBy,
         Cur_Defaults.W_Inventory_Acct, Cur_Defaults.W_Differences_Acct, Cur_Defaults.W_Revaluation_Acct,
         Cur_Defaults.W_InvActualAdjust_Acct
       )
       ;
   END LOOP;
-END M_Warehouse_Trg 
-
-
+END M_WAREHOUSE_TRG
 ]]></body>
     </trigger>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_MAPPING_FORMAT">
     <function name="AD_MAPPING_FORMAT" type="VARCHAR">
-      <parameter name="p_str" type="VARCHAR"/>
+      <parameter name="p_str" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -46,7 +48,6 @@ BEGIN
   v_str:=replace(v_str, ')', '') ;
   RETURN(v_str) ;
 END AD_MAPPING_FORMAT
-
 ]]></body>
     </function>
   </database>

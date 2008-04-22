@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_WORKREQUIREMENT_CLOSE">
     <function name="MA_WORKREQUIREMENT_CLOSE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -94,7 +96,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   ELSE
     DECLARE
-      v_Code NUMBER:=SQLCode;
+      v_Code NUMBER:=SQLCODE;
     BEGIN
       INSERT
       INTO DBA_ErrorLog
@@ -114,9 +116,7 @@ WHEN OTHERS THEN
   END IF;
   --p_Invoice_ID := 0;        --  Error Indicator
   RETURN;
-END MA_WorkRequirement_Close
-
-
+END MA_WORKREQUIREMENT_CLOSE
 ]]></body>
     </function>
   </database>

@@ -26,9 +26,7 @@
   :new.AD_CLIENT_CODE:=:new.AD_CLIENT_ID;
   :new.AD_ORGANIZATION_CODE:=:new.AD_ORG_ID;
  END IF;
-END C_ExternalPOS_Trg 
-
-
+END C_EXTERNALPOS_TRG
 ]]></body>
     </trigger>
   </database>

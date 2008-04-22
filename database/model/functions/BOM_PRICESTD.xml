@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION BOM_PRICESTD">
     <function name="BOM_PRICESTD" type="NUMERIC">
-      <parameter name="Product_ID" type="NUMERIC" mode="in"/>
-      <parameter name="PriceList_Version_ID" type="NUMERIC" mode="in"/>
+      <parameter name="product_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="pricelist_version_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/******************************************************************************
 * The contents of this file are subject to the   Compiere License  Version 1.1
 * ("License"); You may not use this file except in compliance with the License
@@ -50,8 +54,7 @@
     END IF;
     --
     RETURN v_Price;
-END BOM_PriceStd 
-
+END BOM_PRICESTD
 ]]></body>
     </function>
   </database>

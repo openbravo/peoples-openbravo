@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_WORKEFFORT_VALIDATE">
     <function name="MA_WORKEFFORT_VALIDATE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -61,7 +63,7 @@
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
       v_ResultStr:='PInstanceNotFound';
-      Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
       -- Get Parameters
       v_ResultStr:='ReadingParameters';
       FOR Cur_Parameter IN
@@ -127,7 +129,7 @@
         AND wp.GROUPUSE='Y';
       IF(v_count<>0) THEN
         v_ResultStr:='Distributing product of global use';
-        Ma_Globaluse_Distribute(v_Client_ID, v_Org_ID, v_User_ID, v_Record_ID) ;
+        MA_GLOBALUSE_DISTRIBUTE(v_Client_ID, v_Org_ID, v_User_ID, v_Record_ID) ;
       END IF;
     END IF; --FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
@@ -244,7 +246,7 @@
           VALUES
           (
             v_NextNo, CUR_PL_Post.M_ProductionLine_ID, CUR_PL_Post.AD_Client_ID, CUR_PL_Post.AD_Org_ID,
-             'Y', Now(), v_User_ID, Now(),
+             'Y', now(), v_User_ID, now(),
             v_User_ID, 'P+', CUR_PL_Post.M_Locator_ID, CUR_PL_Post.M_Product_ID,
             COALESCE(CUR_PL_Post.M_AttributeSetInstance_ID, 0), -- not distinguishing between assemby/disassembly
             CUR_PL_Post.MovementDate,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.MovementQty ELSE -CUR_PL_Post.MOVEMENTQTY END), CUR_PL_Post.M_Product_UOM_ID,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.QUANTITYORDER ELSE -CUR_PL_Post.QuantityOrder END), CUR_PL_Post.C_UOM_ID
@@ -277,7 +279,7 @@
       -- Indicate that we are done
       UPDATE M_PRODUCTION
         SET Processed='Y',
-        updated=Now(),
+        updated=now(),
         updatedby=v_User_ID
       WHERE M_Production_ID=v_Record_ID;
     END IF; --FINISH_PROCESS
@@ -297,7 +299,7 @@
     --v_Message := v_Message || '@Created@: ' || v_NoRecords;
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-      Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
     RETURN;
   END; --BODY
 EXCEPTION
@@ -306,11 +308,9 @@ WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   ROLLBACK;
-  Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END Ma_Workeffort_Validate
-
-
+END MA_WORKEFFORT_VALIDATE
 ]]></body>
     </function>
   </database>

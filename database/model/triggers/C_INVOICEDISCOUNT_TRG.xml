@@ -51,9 +51,7 @@ BEGIN
   IF(v_RO > 0) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
-END C_InvoiceDiscount_Trg 
-
-
+END C_INVOICEDISCOUNT_TRG
 ]]></body>
     </trigger>
   </database>

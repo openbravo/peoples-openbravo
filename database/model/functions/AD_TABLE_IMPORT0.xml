@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_TABLE_IMPORT0">
     <function name="AD_TABLE_IMPORT0" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -26,10 +28,8 @@
   * Description:
   ************************************************************************/
 BEGIN
-  AD_Table_Import(p_PInstance_ID, NULL) ;
-END AD_Table_Import0
-
-
+  AD_TABLE_IMPORT(p_PInstance_ID, NULL) ;
+END AD_TABLE_IMPORT0
 ]]></body>
     </function>
   </database>

@@ -85,11 +85,7 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;
-END GL_JL_Chk_Restrictions_Trg
-
-
-
-
+END GL_JL_CHK_RESTRICTIONS_TRG
 ]]></body>
     </trigger>
   </database>

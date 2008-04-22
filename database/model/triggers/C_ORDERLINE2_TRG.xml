@@ -50,10 +50,7 @@ BEGIN
       END IF;
     END IF;
   END IF;
-END C_OrderLine2_Trg
-
-
-
+END C_ORDERLINE2_TRG
 ]]></body>
     </trigger>
   </database>

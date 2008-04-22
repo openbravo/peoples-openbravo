@@ -50,39 +50,36 @@ BEGIN
    Ad_Sequence_Next('AD_Model_Object', :new.AD_Client_ID, v_ID);
    INSERT INTO AD_MODEL_OBJECT (AD_MODEL_OBJECT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
    UPDATED, UPDATEDBY, ACTION, AD_REFERENCE_ID, CLASSNAME, ISDEFAULT)
-   VALUES (v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', SYSDATE, :new.CREATEDBY,
-   SYSDATE, :new.UPDATEDBY, 'S', :new.AD_REFERENCE_ID, 'org.openbravo.erpCommon.' || v_WindowName || '.' || v_ClassName, 'Y');
+   VALUES (v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', now(), :new.CREATEDBY,
+   now(), :new.UPDATEDBY, 'S', :new.AD_REFERENCE_ID, 'org.openbravo.erpCommon.' || v_WindowName || '.' || v_ClassName, 'Y');
 
    Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
    INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
    ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
-   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', SYSDATE, :new.CREATEDBY,
-   SYSDATE, :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_FS.html'), 'Y');
+   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', now(), :new.CREATEDBY,
+   now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_FS.html'), 'Y');
 
    Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
    INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
    ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
-   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', SYSDATE, :new.CREATEDBY,
-   SYSDATE, :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_F1.html'), 'N');
+   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', now(), :new.CREATEDBY,
+   now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_F1.html'), 'N');
 
    Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
    INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
    ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
-   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', SYSDATE, :new.CREATEDBY,
-   SYSDATE, :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_F2.html'), 'N');
+   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', now(), :new.CREATEDBY,
+   now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_F2.html'), 'N');
 
    Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
    INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
    ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
-   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', SYSDATE, :new.CREATEDBY,
-   SYSDATE, :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_F3.html'), 'N');
+   VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, 'Y', now(), :new.CREATEDBY,
+   now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_F3.html'), 'N');
   END IF;
  END IF;
 
-END AD_Reference_Trg2
-
-
-
+END AD_REFERENCE_TRG2
 ]]></body>
     </trigger>
   </database>

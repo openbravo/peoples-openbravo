@@ -1,24 +1,78 @@
 <?xml version="1.0"?>
   <database name="TABLE AD_ACCOUNTINGRPT_ELEMENT">
     <table name="AD_ACCOUNTINGRPT_ELEMENT" primaryKey="PK_AD_ACCOUNTINGRPT_ELEMENT">
-      <column name="AD_ACCOUNTINGRPT_ELEMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="ISACTIVE" primaryKey="false" required="false" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="NAME" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false"/>
-      <column name="DESCRIPTION" primaryKey="false" required="false" type="VARCHAR" size="510" autoIncrement="false"/>
-      <column name="ISSUMMARY" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="ISSHOWN" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="FILTEREDBYORGANIZATION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <column name="TEMPORARYFILTERTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <column name="ACCOUNT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="C_ACCTSCHEMA_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="ISREPORT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <column name="REPORT_TYPE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false"/>
+      <column name="AD_ACCOUNTINGRPT_ELEMENT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="NAME" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="VARCHAR" size="510" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISSUMMARY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISSHOWN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="FILTEREDBYORGANIZATION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TEMPORARYFILTERTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ACCOUNT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_ACCTSCHEMA_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISREPORT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="REPORT_TYPE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_ELEMENTVALUE" name="ADACCOUNTRPT_FK_ACCOUNT">
         <reference local="ACCOUNT_ID" foreign="C_ELEMENTVALUE_ID"/>
       </foreign-key>

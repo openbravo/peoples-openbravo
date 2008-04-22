@@ -102,11 +102,7 @@
       ;
   END IF;
  END IF;
-END AD_PrintFormatItem_Trg
-
-
-
-
+END AD_PRINTFORMATITEM_TRG
 ]]></body>
     </trigger>
   </database>

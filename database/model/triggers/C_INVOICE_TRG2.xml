@@ -51,15 +51,13 @@ BEGIN
       VALUES
       (
         v_Key, :NEW.AD_Client_ID, :NEW.AD_Org_ID,
-         'Y', SYSDATE,  :NEW.CREATEDBY,
-        SYSDATE, :NEW.UPDATEDBY, :NEW.C_INVOICE_ID,
+         'Y', now(),  :NEW.CREATEDBY,
+        now(), :NEW.UPDATEDBY, :NEW.C_INVOICE_ID,
         Cur_Discounts.C_DISCOUNT_ID, Cur_Discounts.LINE, Cur_Discounts.CASCADE
       )
       ;
   END LOOP;
-END C_Invoice_Trg2 
-
-
+END C_INVOICE_TRG2
 ]]></body>
     </trigger>
   </database>

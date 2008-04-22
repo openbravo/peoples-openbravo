@@ -85,10 +85,7 @@ BEGIN
     **/
     END IF;
   END IF;
-END AD_Element_Trl_Trg
-
-
-
+END AD_ELEMENT_TRL_TRG
 ]]></body>
     </trigger>
   </database>

@@ -55,15 +55,12 @@ BEGIN
     THEN
       UPDATE AD_Message_Trl
          SET IsTranslated = 'N',
-             Updated = SYSDATE
+             Updated = now()
        WHERE AD_Message_ID = :NEW.AD_Message_ID;
     END IF;
   END IF;
 -- Updating
-END AD_Message_Trg
-
-
-
+END AD_MESSAGE_TRG
 ]]></body>
     </trigger>
   </database>

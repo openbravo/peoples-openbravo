@@ -60,15 +60,12 @@
     -- Translation
     UPDATE C_UOM_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE C_UOM_ID=:new.C_UOM_ID;
   END IF;
  END IF;
 -- Updating
-END C_UOM_Trg
-
-
-
+END C_UOM_TRG
 ]]></body>
     </trigger>
   </database>

@@ -93,9 +93,7 @@ BEGIN
       Description=:new.Description
     WHERE S_Resource_ID=:new.S_Resource_ID;
   END IF;
-END S_Resource_Trg 
-
-
+END S_RESOURCE_TRG
 ]]></body>
     </trigger>
   </database>

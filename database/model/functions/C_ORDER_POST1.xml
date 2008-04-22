@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ORDER_POST1">
     <function name="C_ORDER_POST1" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Order_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_order_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -91,7 +95,7 @@
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
       v_ResultStr:='PInstanceNotFound';
-      Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
       -- Get Parameters
       v_ResultStr:='ReadingParameters';
       FOR Cur_Parameter IN
@@ -166,7 +170,7 @@
         UPDATE C_ORDER
           SET Processing='N',
           DocAction='--',
-          Updated=Now()
+          Updated=now()
         WHERE C_Order_ID=v_Record_ID;
         FINISH_PROCESS:=TRUE;
       END IF;
@@ -221,9 +225,9 @@
           DBMS_OUTPUT.PUT_LINE('Re-Activating ' || v_DocSubTypeSO || ': ' || v_Record_ID) ;
           IF(v_DocSubTypeSO IN('WI', 'WP', 'WR')) THEN
             -- Cancel existing Deli very + Invoice Documents
-            M_Inout_Cancel(NULL, v_Record_ID) ;
+            M_INOUT_CANCEL(NULL, v_Record_ID) ;
             IF(v_DocSubTypeSO<>'WP') THEN
-              C_Invoice_Cancel(NULL, v_Record_ID);
+              C_INVOICE_CANCEL(NULL, v_Record_ID);
             END IF;
           END IF;
           -- Update Order
@@ -233,7 +237,7 @@
             DocAction='CO',
             Processing='N',
             Processed='N',
-            Updated=Now()
+            Updated=now()
           WHERE C_Order_ID=v_Record_ID;
           --ADDED BY E.ARGAL
           --Invalidate debt payments added by ALO
@@ -289,7 +293,7 @@
                 v_QtyPO:=-Cur_ResLine.Qty;
                 v_QtyOrderPO:=-Cur_ResLine.QuantityOrder;
               END IF;
-              M_Update_Storage_Pending(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO) ;
+              M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO) ;
             END LOOP;
           END;
         END IF;--FINISH_PROCESS
@@ -371,7 +375,7 @@
             SET DocStatus='DR', -- Draft
             DocAction='CO',
             Processing='N',
-            Updated=Now()
+            Updated=now()
           WHERE C_Order_ID=v_Record_ID;
         FINISH_PROCESS:=TRUE;
 
@@ -408,7 +412,7 @@
             linenetamt=QtyDelivered*priceactual,
             --MODIFIED BY F.IRIAZABAL
             QuantityOrder=QuantityOrder,
-            Updated=Now()
+            Updated=now()
           WHERE C_Order_ID=v_Record_ID
             AND QtyOrdered<>QtyDelivered;
           -- For Purchase orders, M_MatchPO table used. Notice that only delivered lines(C_Invoiceline_Id is null) using
@@ -425,7 +429,7 @@
             )
             ,
             QuantityOrder=C_ORDERLINE.QuantityOrder,
-            Updated=Now(),
+            Updated=now(),
             linenetamt=COALESCE
             (
               (SELECT SUM(M_MATCHPO.QTY)
@@ -457,7 +461,7 @@
           END
           ,
           LineNetAmt=0,
-          Updated=Now()
+          Updated=now()
         WHERE C_Order_ID=v_Record_ID
           AND QtyOrdered<>0;
       END IF;
@@ -696,7 +700,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
             VALUES
             (
               NextNo, CUR_BOM_Line.AD_Client_ID, CUR_BOM_Line.AD_Org_ID, CUR_BOM_Line.IsActive,
-              Now(), 0, Now(), 0,
+              now(), 0, now(), 0,
               CUR_BOM_Line.C_Order_ID, v_Line, CUR_BOM_Line.C_BPartner_ID, CUR_BOM_Line.C_BPartner_Location_ID,
               CUR_BOM_Line.DateOrdered, CUR_BOM_Line.DatePromised, CUR_BOM_Line.DateDelivered, CUR_BOM_Line.DateInvoiced,
               CUR_BOM.Description, CUR_BOM.M_ProductBOM_ID, CUR_BOM_Line.M_Warehouse_ID, CUR_BOM_Line.DirectShip,
@@ -788,7 +792,7 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
        v_QtyOrderPO := C_Uom_Convert(v_QtyPO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
     END IF;
    END IF;
-   M_Update_Storage_Pending(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID,
+   M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_ResLine.M_Product_ID, Cur_ResLine.M_Warehouse_ID, Cur_ResLine.M_AttributeSetInstance_ID,
           Cur_ResLine.C_UOM_ID, Cur_ResLine.M_PRODUCT_UOM_ID, v_QtySO, v_QtyOrderSO, v_QtyPO, v_QtyOrderPO);
    DBMS_OUTPUT.PUT_LINE('Reserved Warehouse=' || Cur_ResLine.M_Warehouse_ID || ', Product=' || Cur_ResLine.M_Product_ID || ', Attrib=' || Cur_ResLine.M_AttributeSetInstance_ID || ', Qty=' || v_QtySO || '/' || v_QtyPO);
 
@@ -828,7 +832,7 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
     HeaderNotAdded BOOLEAN:=TRUE;
     v_FirstLine BOOLEAN;
     v_ActualBaseAmt NUMBER;
-    v_lineNo NUMBER := 0;
+    v_lineNo NUMBER:= 0;
   BEGIN
     v_ResultStr:='DeleteOldTaxes';
     DELETE FROM C_ORDERTAX  WHERE C_Order_ID=v_Record_ID;
@@ -875,7 +879,7 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
           VALUES
           (
             v_Record_ID, Cur_Tax.C_Tax_ID, v_Client_ID, v_Org_ID,
-             'Y', Now(), v_UpdatedBy, Now(),
+             'Y', now(), v_UpdatedBy, now(),
             v_UpdatedBy, v_TaxBaseAmt, xTaxAmt, v_LineNo
           )
           ;
@@ -907,7 +911,7 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
             VALUES
             (
               v_Record_ID, Cur_MultiTax.C_Tax_ID, v_Client_ID, v_Org_ID,
-               'Y', Now(), v_UpdatedBy, Now(),
+               'Y', now(), v_UpdatedBy, now(),
               v_UpdatedBy, v_ActualBaseAmt, xTaxAmt, v_LineNo
             );
         END LOOP;
@@ -950,7 +954,7 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
           SET DocStatus='VO',
           DocAction='--',
           Processed='Y',
-          Updated=Now()
+          Updated=now()
         WHERE C_Order_ID=v_Record_ID;
 		END_PROCESSING:=TRUE;
       ELSE
@@ -958,7 +962,7 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
           SET DocStatus='CO',
           DocAction='--',
           Processed='Y',
-          Updated=Now()
+          Updated=now()
         WHERE C_Order_ID=v_Record_ID;
 		END_PROCESSING:=TRUE;
       END IF;
@@ -975,7 +979,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
   UPDATE C_ORDER
     SET DocStatus='IP',
     DateAcct=DateOrdered,
-    Updated=Now()
+    Updated=now()
   WHERE C_Order_ID=v_Record_ID;
   IF(p_PInstance_ID IS NOT NULL) THEN
     COMMIT;
@@ -999,7 +1003,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
           SET DocStatus='NA',
           DocAction='AP',
           Processed='N',
-          Updated=Now()
+          Updated=now()
         WHERE C_Order_ID=v_Record_ID;
         DBMS_OUTPUT.PUT_LINE('Approval needed') ;
         RAISE_APPLICATION_ERROR(-20000, '@NotApprovedOrder@');
@@ -1019,7 +1023,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       SET DocStatus='IP',
       DocAction='CO',
       Processed='N',
-      Updated=Now()
+      Updated=now()
     WHERE C_Order_ID=v_Record_ID;
     -- C_Order_PickList(NULL, v_Record_ID);  -- Print PickList
     END_PROCESSING:=TRUE;
@@ -1038,13 +1042,13 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       RAISE_APPLICATION_ERROR(-20000, '@PreInvoiceCreateFailed@');
     END IF;
     IF(NOT END_PROCESSING) THEN
-      C_Invoice_Post(NULL, Invoice_ID) ;
+      C_INVOICE_POST(NULL, Invoice_ID) ;
       --
       UPDATE C_ORDER
         SET DocStatus='WP',
         DocAction='--',
         Processed='Y',
-        Updated=Now()
+        Updated=now()
       WHERE C_Order_ID=v_Record_ID;
       --
     END IF;--END_PROCESSING
@@ -1074,7 +1078,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     */
     DBMS_OUTPUT.PUT_LINE('Create Shipment - ' || v_Record_ID) ;
     v_ResultStr:='CreateShipment';
-    M_Inout_Create(NULL,InOut_ID, v_Record_ID, NULL, 'Y') ; -- Force Delivery
+    M_Inout_Create(NULL, InOut_ID, v_Record_ID, NULL, 'Y') ; -- Force Delivery
     DBMS_OUTPUT.PUT_LINE('  Shipment - ' || InOut_ID) ;
     IF(InOut_ID=0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@InOutCreateFailed@');
@@ -1092,7 +1096,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
         */
         DBMS_OUTPUT.PUT_LINE('Create Invoice - ' || v_Record_ID) ;
         v_ResultStr:='CreateInvoice';
-        C_Invoice_Create(NULL,Invoice_ID, v_Record_ID) ;
+        C_Invoice_Create(NULL, Invoice_ID, v_Record_ID) ;
         DBMS_OUTPUT.PUT_LINE('  Invoice - ' || Invoice_ID) ;
         IF(Invoice_ID IS NULL OR Invoice_ID=0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@InvoiceCreateFailed@');
@@ -1128,7 +1132,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       IsDelivered='Y',
       IsInvoiced='Y',
       Processed='Y',
-      Updated=Now()
+      Updated=now()
     WHERE C_Order_ID=v_Record_ID;
     DBMS_OUTPUT.PUT_LINE('DocAction - ' || v_DocAction) ;
     IF(v_DocAction='VO') THEN
@@ -1142,7 +1146,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       DocAction='--',
       IsDelivered='Y',
       Processed='Y',
-      Updated=Now()
+      Updated=now()
     WHERE C_Order_ID=v_Record_ID;
     IF(v_DocAction='VO') THEN
       UPDATE C_ORDER  SET DocStatus='VO'  WHERE C_Order_ID=v_Record_ID;
@@ -1154,7 +1158,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       SET DocStatus='CO',
       DocAction='--',
       Processed='Y',
-      Updated=Now()
+      Updated=now()
     WHERE C_Order_ID=v_Record_ID;
   END IF;
   -- Purchase Orders
@@ -1163,7 +1167,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       SET DocStatus='CO',
       DocAction='--',
       Processed='Y',
-      Updated=Now()
+      Updated=now()
     WHERE C_Order_ID=v_Record_ID;
   END IF;
   -- Only create cash entry if docAction is Complete
@@ -1180,7 +1184,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     CUR_CB RECORD;
     v_debtPaymentID NUMBER;
     v_totalCash NUMBER;
-  v_CB_Curr number;
+  v_CB_Curr NUMBER;
   BEGIN
     /* ALO
     */
@@ -1292,7 +1296,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
           VALUES
           (
             v_Cash_ID, v_Client_ID, v_Org_ID, 'Y',
-            Now(), v_UpdatedBy, Now(), v_UpdatedBy,
+            now(), v_UpdatedBy, now(), v_UpdatedBy,
             v_CashBook_ID, TO_CHAR(v_Date, 'YYYY-MM-DD') || ' ' || v_ISO_Code, v_Date, v_Date,
             0, 0, 0, 'N',
              'N', 'N'
@@ -1341,7 +1345,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
           GENERATE_PROCESSED, c_project_id,IsAutomaticGenerated, STATUS_INITIAL)
         VALUES
          (v_debtPaymentID, v_Client_ID, v_Org_ID, 'Y',
-          Now(), v_UpdatedBy, Now(), v_UpdatedBy,
+          now(), v_UpdatedBy, now(), v_UpdatedBy,
           v_isSoTrx, NULL, NULL, '',
           v_Record_ID, v_c_Bpartner_Id, v_c_currency_id, null,
           NULL, v_CashBook_ID, 'C', 'N',
@@ -1372,7 +1376,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
         VALUES
         (
           v_CashLine_ID, v_Client_ID, v_Org_ID, 'Y',
-          Now(), v_UpdatedBy, Now(), v_UpdatedBy,
+          now(), v_UpdatedBy, now(), v_UpdatedBy,
           v_Cash_ID, v_debtPaymentID, v_Line, v_DocumentNo,
           (v_GrandTotal-v_totalCash) * (CASE WHEN v_isSoTrx='N' THEN -1 ELSE 1 END), 'P', 0, 0,
            'Y'
@@ -1400,7 +1404,7 @@ IF(NOT FINISH_PROCESS) THEN
     v_ResultStr:='UnLockingOrder';
     UPDATE C_ORDER
       SET Processing='N',
-      Updated=Now(),
+      Updated=now(),
       UpdatedBy=v_User
     WHERE C_Order_ID=v_Record_ID;
     COMMIT;
@@ -1410,7 +1414,7 @@ END IF;--FINISH_PROCESS
 IF(p_PInstance_ID IS NOT NULL) THEN
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
-  Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
+  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
 END IF;
 RETURN;
 END; --BODY
@@ -1423,7 +1427,7 @@ WHEN OTHERS THEN
     --Inserted by Carlos Romero 062706
     UPDATE C_ORDER  SET Processing='N'  WHERE C_Order_ID=v_Record_ID;
     DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   ELSE
     DECLARE
       v_Code NUMBER:=SQLCODE;
@@ -1437,7 +1441,7 @@ WHEN OTHERS THEN
         )
         VALUES
         (
-          DBA_ErrorLog_Seq.NEXTVAL, Now(),
+          DBA_ErrorLog_Seq.NEXTVAL, now(),
           v_Code, v_ResultStr,
            'C_Order_Post'
         )
@@ -1446,8 +1450,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   RETURN;
-END C_Order_Post1
-
+END C_ORDER_POST1
 ]]></body>
     </function>
   </database>

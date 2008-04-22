@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_ISMEMBERINCLUDED">
     <function name="AD_ISMEMBERINCLUDED" type="NUMERIC">
-      <parameter name="p_nodeID" type="NUMERIC" mode="in"/>
-      <parameter name="p_parentID" type="NUMERIC" mode="in"/>
-      <parameter name="p_treeID" type="NUMERIC" mode="in"/>
+      <parameter name="p_nodeid" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_parentid" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_treeid" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -24,7 +30,7 @@
 * Title: Return 'Tree Level' if nodeID is a leaf of the tree
 *    where parentID is the root. Else return -1
 ************************************************************************/
-  v_Level  NUMBER:=0;
+  v_Level NUMBER:=0;
   v_Parent NUMBER(10) ;
   v_Node   NUMBER(10) ;
 BEGIN
@@ -44,8 +50,7 @@ BEGIN
     END IF;
   END LOOP;
   RETURN(-1) ;
-END AD_IsMemberIncluded
-
+END AD_ISMEMBERINCLUDED
 ]]></body>
     </function>
   </database>

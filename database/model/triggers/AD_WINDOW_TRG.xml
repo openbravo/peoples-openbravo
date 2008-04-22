@@ -68,8 +68,8 @@
     )
   SELECT DISTINCT :new.AD_Window_ID,
     r.AD_Role_ID, r.AD_CLIENT_ID, r.AD_ORG_ID,
-     'Y', SysDate, 0,
-    SysDate, 0,  'Y'
+     'Y', now(), 0,
+    now(), 0,  'Y'
   FROM AD_Role r
    WHERE isManual='N';
  END IF;
@@ -103,16 +103,12 @@
     -- Translation
     UPDATE AD_Window_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE AD_Window_ID=:new.AD_Window_ID;
   END IF;
  END IF;
 -- Updating
-END AD_Window_Trg
-
-
-
-
+END AD_WINDOW_TRG
 ]]></body>
     </trigger>
   </database>

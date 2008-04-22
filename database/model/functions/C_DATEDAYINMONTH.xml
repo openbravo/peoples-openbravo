@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_DATEDAYINMONTH">
     <function name="C_DATEDAYINMONTH" type="TIMESTAMP">
-      <parameter name="p_Day" type="NUMERIC" mode="in"/>
-      <parameter name="p_Date" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_day" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_date" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -20,7 +24,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 /*************************************************************************
-* Description: return the last date that is allowed to invoice orders
+* Description: return the last DATE that is allowed to invoice orders
 ************************************************************************/
   v_DateAux DATE;
 BEGIN
@@ -29,8 +33,7 @@ BEGIN
     v_DateAux := TO_DATE(LPAD(TO_CHAR(p_Day), 2, '0') ||'/'||TO_CHAR(p_Date, 'MM/YYYY'), 'DD/MM/YYYY') ;
   END IF;
   RETURN v_DateAux;
-END C_DateDayInMonth
-
+END C_DATEDAYINMONTH
 ]]></body>
     </function>
   </database>

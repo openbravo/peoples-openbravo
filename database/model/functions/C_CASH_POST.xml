@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CASH_POST">
     <function name="C_CASH_POST" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   License
@@ -112,7 +114,7 @@
     WHERE C_CASH_ID = v_Record_ID
     AND C_ORDER_ID IS NOT NULL
     AND C_DEBT_PAYMENT_ID IS NOT NULL;
-    DBMS_OUTPUT.PUT_LINE ('  Record_ID=' || v_Record_ID);
+    DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID);
     IF (v_Processed = 'Y' AND v_Count>0) THEN
     v_Message := '@AlreadyPosted@';
     v_Result := 0;
@@ -165,7 +167,7 @@
 
       UPDATE C_Settlement set posted='N' where c_Settlement_ID= v_Settlement_Cancel;
 
-            C_Settlement_Post(NULL, v_Settlement_Cancel) ;
+            C_SETTLEMENT_POST(NULL, v_Settlement_Cancel) ;
             UPDATE C_DEBT_PAYMENT
               SET C_SETTLEMENT_CANCEL_ID=NULL,
               CANCEL_PROCESSED='N',
@@ -501,7 +503,7 @@
         WHERE C_DEBT_PAYMENT.C_Debt_Payment_ID IN
           (SELECT C_Debt_Payment_ID FROM C_CASHLINE WHERE C_Cash_ID=v_Record_ID)
           AND C_Debt_Payment_Status(C_DEBT_PAYMENT.C_SETTLEMENT_CANCEL_ID, C_DEBT_PAYMENT.Cancel_Processed, C_DEBT_PAYMENT.Generate_Processed, C_DEBT_PAYMENT.IsPaid, C_DEBT_PAYMENT.IsValid, C_DEBT_PAYMENT.C_CashLine_ID, C_DEBT_PAYMENT.C_BankStatementLine_ID)='P';
-        C_Settlement_Post(NULL, v_settlementID) ;
+        C_SETTLEMENT_POST(NULL, v_settlementID) ;
       END IF;
     END IF;--FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
@@ -574,8 +576,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END C_Cash_Post
-
+END C_CASH_POST
 ]]></body>
     </function>
   </database>

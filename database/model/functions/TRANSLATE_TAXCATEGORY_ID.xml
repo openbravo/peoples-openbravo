@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION TRANSLATE_TAXCATEGORY_ID">
     <function name="TRANSLATE_TAXCATEGORY_ID" type="NUMERIC">
-      <parameter name="p_TaxcategoryId" type="NUMERIC" mode="in"/>
+      <parameter name="p_taxcategoryid" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -40,8 +42,7 @@ BEGIN
   ELSE
     RETURN 1;
   END IF;
-END Translate_TaxCategory_ID
-
+END TRANSLATE_TAXCATEGORY_ID
 ]]></body>
     </function>
   </database>

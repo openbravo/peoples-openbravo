@@ -95,8 +95,6 @@ EXCEPTION
  WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20257, 'Incorrect IBAN Code.') ;
 END C_BANKACCOUNTIBAN_TRG
-
-
 ]]></body>
     </trigger>
   </database>

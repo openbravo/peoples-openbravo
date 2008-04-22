@@ -25,7 +25,7 @@
     ************************************************************************/
   v_Processed CHAR(1) ;
   v_C_Remittance_ID NUMBER(10) ;
-  v_Prec            NUMBER:=2;
+  v_Prec NUMBER:=2;
   v_Currency        NUMBER;
 BEGIN
   IF INSERTING THEN
@@ -53,10 +53,7 @@ BEGIN
   IF((DELETING OR INSERTING) AND v_Processed='Y') THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
-END C_RemittanceLine_Trg 
-
-
-
+END C_REMITTANCELINE_TRG
 ]]></body>
     </trigger>
   </database>

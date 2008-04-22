@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_DISPLAY_LIST">
     <function name="AD_DISPLAY_LIST" type="NVARCHAR">
-      <parameter name="p_ReferenceValue_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Value" type="NVARCHAR" mode="in"/>
-      <parameter name="p_AD_Language" type="VARCHAR" mode="in"/>
+      <parameter name="p_referencevalue_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_value" type="NVARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_language" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -43,8 +49,7 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN 'Not found!!!';
-END AD_Display_List
-
+END AD_DISPLAY_LIST
 ]]></body>
     </function>
   </database>

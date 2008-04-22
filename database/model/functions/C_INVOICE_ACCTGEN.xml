@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_ACCTGEN">
     <function name="C_INVOICE_ACCTGEN" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Invoice_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_invoice_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -121,7 +125,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   ELSE
     DECLARE
-      v_Code NUMBER:=SQLCode;
+      v_Code NUMBER:=SQLCODE;
     BEGIN
       INSERT
       INTO DBA_ErrorLog
@@ -138,9 +142,7 @@ WHEN OTHERS THEN
     END;
   END IF;
   RETURN;
-END C_Invoice_AcctGen
-
-
+END C_INVOICE_ACCTGEN
 ]]></body>
     </function>
   </database>

@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_DP_MANAGEMENT_POST">
     <function name="C_DP_MANAGEMENT_POST" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_DP_Management_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_dp_management_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -330,9 +334,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   RETURN;
-END C_DP_Management_Post
-
-
+END C_DP_MANAGEMENT_POST
 ]]></body>
     </function>
   </database>

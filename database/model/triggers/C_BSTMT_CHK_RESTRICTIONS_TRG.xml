@@ -23,7 +23,7 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-v_Count number;
+v_Count NUMBER;
 v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
     BEGIN
     IF UPDATING THEN
@@ -33,7 +33,7 @@ v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
         OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
         OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0))))
       THEN
-      RAISE_APPLICATION_ERROR ( -20501, 'Document processed/posted');
+      RAISE_APPLICATION_ERROR( -20501, 'Document processed/posted');
      END IF;
      begin
       SELECT COUNT(*)
@@ -64,10 +64,7 @@ v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
        RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
      END IF;
    END IF;
-END C_BStmt_Chk_Restrictions_Trg 
-
-
-
+END C_BSTMT_CHK_RESTRICTIONS_TRG
 ]]></body>
     </trigger>
   </database>

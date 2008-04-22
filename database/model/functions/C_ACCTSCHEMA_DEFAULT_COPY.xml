@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ACCTSCHEMA_DEFAULT_COPY">
     <function name="C_ACCTSCHEMA_DEFAULT_COPY" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Client_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_client_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -95,7 +99,7 @@
         P_InvoicePriceVariance_Acct=Cur_Acct.P_InvoicePriceVariance_Acct,
         P_TradeDiscountRec_Acct=Cur_Acct.P_TradeDiscountRec_Acct,
         P_TradeDiscountGrant_Acct=Cur_Acct.P_TradeDiscountGrant_Acct,
-        Updated=SysDate,
+        Updated=now(),
         UpdatedBy=0
       WHERE M_Product_Category_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
@@ -153,7 +157,7 @@
         UnEarnedRevenue_Acct=Cur_Acct.UnEarnedRevenue_Acct,
         NotInvoicedRevenue_Acct=Cur_Acct.NotInvoicedRevenue_Acct,
         NotInvoicedReceivables_Acct=Cur_Acct.NotInvoicedReceivables_Acct,
-        Updated=SysDate,
+        Updated=now(),
         UpdatedBy=0,
         Status=Cur_Acct.Status
       WHERE C_BP_Group_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
@@ -203,7 +207,7 @@
       UPDATE C_BP_Employee_Acct
         SET E_Expense_Acct=Cur_Acct.E_Expense_Acct,
         E_PrePayment_Acct=Cur_Acct.E_PrePayment_Acct,
-        Updated=SysDate,
+        Updated=now(),
         UpdatedBy=0
       WHERE C_BP_Employee_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
@@ -246,7 +250,7 @@
         W_Differences_Acct=Cur_Acct.W_Differences_Acct,
         W_Revaluation_Acct=Cur_Acct.W_Revaluation_Acct,
         W_InvActualAdjust_Acct=Cur_Acct.W_InvActualAdjust_Acct,
-        Updated=SysDate,
+        Updated=now(),
         UpdatedBy=0
       WHERE M_Warehouse_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
@@ -288,7 +292,7 @@
       UPDATE C_Project_Acct
         SET PJ_Asset_Acct=Cur_Acct.PJ_Asset_Acct,
         PJ_WIP_Acct=Cur_Acct.PJ_Asset_Acct,
-        Updated=SysDate,
+        Updated=now(),
         UpdatedBy=0
       WHERE C_Project_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
@@ -332,7 +336,7 @@
         T_Credit_Acct=Cur_Acct.T_Credit_Acct,
         T_Receivables_Acct=Cur_Acct.T_Receivables_Acct,
         T_Expense_Acct=Cur_Acct.T_Expense_Acct,
-        Updated=SysDate,
+        Updated=now(),
         UpdatedBy=0
       WHERE C_Tax_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
@@ -381,7 +385,7 @@
         B_SettlementLoss_Acct=Cur_Acct.B_SettlementLoss_Acct,
         B_RevaluationGain_Acct=Cur_Acct.B_RevaluationGain_Acct,
         B_RevaluationLoss_Acct=Cur_Acct.B_RevaluationLoss_Acct,
-        Updated=SysDate,
+        Updated=now(),
         UpdatedBy=0
       WHERE C_BankAccount_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
@@ -425,7 +429,7 @@
       -- Withholding
       UPDATE C_Withholding_Acct
         SET Withholding_Acct=Cur_Acct.Withholding_Acct,
-        Updated=SysDate,
+        Updated=now(),
         UpdatedBy=0
       WHERE C_Withholding_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
@@ -465,7 +469,7 @@
       UPDATE C_Charge_Acct
         SET Ch_Expense_Acct=Cur_Acct.Ch_Expense_Acct,
         Ch_Revenue_Acct=Cur_Acct.Ch_Revenue_Acct,
-        Updated=SysDate,
+        Updated=now(),
         UpdatedBy=0
       WHERE C_Charge_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
@@ -506,7 +510,7 @@
         CB_CashTransfer_Acct=Cur_Acct.CB_CashTransfer_Acct,
         CB_Expense_Acct=Cur_Acct.CB_Expense_Acct,
         CB_Receipt_Acct=Cur_Acct.CB_Receipt_Acct,
-        Updated=SysDate,
+        Updated=now(),
         UpdatedBy=0
       WHERE C_Cashbook_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
@@ -559,9 +563,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END C_AcctSchema_Default_Copy
-
-
+END C_ACCTSCHEMA_DEFAULT_COPY
 ]]></body>
     </function>
   </database>

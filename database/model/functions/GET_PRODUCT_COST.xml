@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GET_PRODUCT_COST">
     <function name="GET_PRODUCT_COST" type="NUMERIC">
-      <parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_MovementDate" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_CostType" type="CHAR" mode="in"/>
+      <parameter name="p_product_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_movementdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_costtype" type="CHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -65,8 +71,7 @@
       END LOOP;
       RETURN v_Cost;
     END IF;
-END Get_Product_Cost
-
+END GET_PRODUCT_COST
 ]]></body>
     </function>
   </database>

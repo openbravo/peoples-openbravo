@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_DEBT_PAYMENT_CHANGE">
     <function name="C_DEBT_PAYMENT_CHANGE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -86,7 +88,7 @@
     IF(NOT FINISH_PROCESS) THEN
       IF(v_GetOutSettlement='Y') THEN
         UPDATE C_DEBT_PAYMENT
-          SET UPDATED=SYSDATE,
+          SET UPDATED=now(),
           UPDATEDBY=v_AD_User_ID,
           ISPAID='N',
           C_SETTLEMENT_CANCEL_ID=NULL,
@@ -94,7 +96,7 @@
         WHERE C_Debt_Payment_ID=v_Record_ID;
       ELSE
         UPDATE C_DEBT_PAYMENT
-          SET UPDATED=SYSDATE,
+          SET UPDATED=now(),
           UPDATEDBY=v_AD_User_ID,
           ISPAID=v_IsPaid,
           WRITEOFFAMT=v_WriteOffAmt
@@ -114,9 +116,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END C_Debt_Payment_Change
-
-
+END C_DEBT_PAYMENT_CHANGE
 ]]></body>
     </function>
   </database>

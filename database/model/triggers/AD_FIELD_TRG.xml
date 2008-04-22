@@ -63,10 +63,7 @@
   END IF;
  END IF;
 -- Updating
-END AD_Field_Trg
-
-
-
+END AD_FIELD_TRG
 ]]></body>
     </trigger>
   </database>

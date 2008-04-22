@@ -1,10 +1,18 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_CHECK_PLANNINGMETHOD">
     <function name="MRP_CHECK_PLANNINGMETHOD" type="NUMERIC">
-      <parameter name="p_PlanningMethod_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Type" type="CHAR" mode="in"/>
-      <parameter name="p_Days" type="NUMERIC" mode="in"/>
-      <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
+      <parameter name="p_planningmethod_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_type" type="CHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_days" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_timehorizon" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -21,8 +29,8 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  p_Days_Aux NUMBER := 0;
-  v_Return NUMBER := -1;
+  p_Days_Aux NUMBER:= 0;
+  v_Return NUMBER:= -1;
 BEGIN
     if p_Days < 0 THEN
       p_Days_Aux := 0;
@@ -42,7 +50,6 @@ EXCEPTION
   WHEN OTHERS THEN
     RETURN -1;
 END MRP_CHECK_PLANNINGMETHOD
-
 ]]></body>
     </function>
   </database>

@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_PRODUCTION_COST">
     <function name="MA_PRODUCTION_COST" type="NULL">
-      <parameter name="p_Production_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_User_ID" type="NUMERIC" mode="in"/>
-      <parameter name="v_Message" type="VARCHAR" mode="out"/>
+      <parameter name="p_production_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_user_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="v_message" type="VARCHAR" mode="out">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -33,7 +39,7 @@
   v_countAux                            NUMBER;
   v_count2                              NUMBER;
   v_ProductionDate                      DATE;
-  v_Result                              NUMBER := 1;
+  v_Result NUMBER:= 1;
   v_ProductionCost                      NUMBER;
   v_ProductionCost_Tmp                  NUMBER;
   v_ProducedKg                          NUMBER;
@@ -394,7 +400,7 @@ BEGIN
                             M_PRODUCTIONLINE_ID, QTY,
                             PRICE,  CUMQTY,
                             COST, ISPERMANENT, ISPRODUCTION, COSTTYPE)
-                     VALUES (v_NextNo,Now(), p_User_ID, Now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
+                     VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, TO_DATE('31-12-9999','DD-MM-YYYY'), v_ProductionDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4), COALESCE(v_Qty,0) + Cur_ProductionLine.MOVEMENTQTY,
@@ -452,7 +458,7 @@ BEGIN
                             PRICE, CUMQTY,
                             COST,
                             ISPERMANENT, ISPRODUCTION, COSTTYPE)
-                       VALUES (v_NextNo,Now(), p_User_ID, Now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
+                       VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_ProductionDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4), COALESCE(v_Qty,0) + Cur_ProductionLine.MOVEMENTQTY,
@@ -482,7 +488,7 @@ BEGIN
                             PRICE, CUMQTY,
                             COST,
                             ISPERMANENT, ISPRODUCTION, COSTTYPE)
-                       VALUES (v_NextNo,Now(), p_User_ID, Now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
+                       VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_ProductionDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4), COALESCE(v_Qty,0) + Cur_ProductionLine.MOVEMENTQTY,
@@ -538,15 +544,13 @@ EXCEPTION
     DBMS_OUTPUT.PUT_LINE(v_ResultStr);*/
     RAISE;
     DECLARE
-        v_Code NUMBER   := SQLCODE;
+        v_Code NUMBER:= SQLCODE;
     BEGIN
         INSERT INTO DBA_ERRORLOG (DBA_ErrorLog_ID,Created,Code,Msg,Info)
-        VALUES (DBA_ErrorLog_Seq.NEXTVAL,Now(),v_Code,v_ResultStr,'MA_Production_Cost');
+        VALUES (DBA_ErrorLog_Seq.NEXTVAL,now(),v_Code,v_ResultStr,'MA_Production_Cost');
     END;
     RETURN;
-END Ma_Production_Cost
-
-
+END MA_PRODUCTION_COST
 ]]></body>
     </function>
   </database>

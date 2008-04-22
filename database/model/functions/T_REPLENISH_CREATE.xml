@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION T_REPLENISH_CREATE">
     <function name="T_REPLENISH_CREATE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -171,9 +173,7 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('Set Order Order Pack=' || rowcount) ;
   --
   -- Commented by cromero 19102006 COMMIT;
-END T_Replenish_Create
-
-
+END T_REPLENISH_CREATE
 ]]></body>
     </function>
   </database>

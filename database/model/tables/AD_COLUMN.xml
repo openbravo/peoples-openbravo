@@ -1,48 +1,174 @@
 <?xml version="1.0"?>
   <database name="TABLE AD_COLUMN">
     <table name="AD_COLUMN" primaryKey="AD_COLUMN_KEY">
-      <column name="AD_COLUMN_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
-      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
-      <column name="HELP" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
-      <column name="VERSION" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
-      <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" default="D" autoIncrement="false"/>
-      <column name="COLUMNNAME" primaryKey="false" required="true" type="VARCHAR" size="40" autoIncrement="false"/>
-      <column name="AD_TABLE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_REFERENCE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_REFERENCE_VALUE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_VAL_RULE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="FIELDLENGTH" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="DEFAULTVALUE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
-      <column name="ISKEY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <column name="ISPARENT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <column name="ISMANDATORY" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <column name="ISUPDATEABLE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="READONLYLOGIC" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false"/>
-      <column name="ISIDENTIFIER" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <column name="SEQNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="ISTRANSLATED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <column name="ISENCRYPTED" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <column name="CALLOUT" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
-      <column name="VFORMAT" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
-      <column name="VALUEMIN" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
-      <column name="VALUEMAX" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
-      <column name="ISSELECTIONCOLUMN" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <column name="AD_ELEMENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_PROCESS_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="ISSYNCDATABASE" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <column name="ISSESSIONATTR" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <column name="ISSECONDARYKEY" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <column name="ISDESENCRYPTABLE" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
-      <column name="AD_CALLOUT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="DEVELOPMENTSTATUS" primaryKey="false" required="false" type="VARCHAR" size="2" default="RE" autoIncrement="false"/>
+      <column name="AD_COLUMN_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="HELP" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="VERSION" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[D]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="COLUMNNAME" primaryKey="false" required="true" type="VARCHAR" size="40" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_TABLE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_REFERENCE_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_REFERENCE_VALUE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_VAL_RULE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="FIELDLENGTH" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DEFAULTVALUE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISKEY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISPARENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISMANDATORY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISUPDATEABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="READONLYLOGIC" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISIDENTIFIER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="SEQNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISTRANSLATED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISENCRYPTED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CALLOUT" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="VFORMAT" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="VALUEMIN" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="VALUEMAX" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISSELECTIONCOLUMN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ELEMENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_PROCESS_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISSYNCDATABASE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISSESSIONATTR" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISSECONDARYKEY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISDESENCRYPTABLE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CALLOUT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DEVELOPMENTSTATUS" primaryKey="false" required="false" type="VARCHAR" size="2" autoIncrement="false">
+        <default><![CDATA[RE]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ELEMENT" name="AD_ELEMENT_AD_COLUMN">
         <reference local="AD_ELEMENT_ID" foreign="AD_ELEMENT_ID"/>
       </foreign-key>

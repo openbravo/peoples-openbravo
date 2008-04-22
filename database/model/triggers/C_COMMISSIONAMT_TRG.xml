@@ -76,9 +76,7 @@ BEGIN
       SET GrandTotal=GrandTotal + :new.CommissionAmt
     WHERE C_CommissionRun_ID=:new.C_CommissionRun_ID;
   END IF;
-END C_CommissionAmt_Trg 
-
-
+END C_COMMISSIONAMT_TRG
 ]]></body>
     </trigger>
   </database>

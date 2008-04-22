@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_PAYMENTTERM_DUEDAYS">
     <function name="C_PAYMENTTERM_DUEDAYS" type="NUMERIC">
-      <parameter name="p_PaymentTerm_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_DocDate" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_PayDate" type="TIMESTAMP" mode="in" default="SYSDATE"/>
+      <parameter name="p_paymentterm_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_docdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_paydate" type="TIMESTAMP" mode="in">
+        <default><![CDATA[now()]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -34,8 +40,7 @@ Inc.
 ************************************************************************/
 BEGIN
   RETURN TRUNC(p_PayDate) - C_PAYMENTTERM_DUEDATE(p_PaymentTerm_ID, p_DocDate, NULL) ;
-END C_PaymentTerm_DueDays
-
+END C_PAYMENTTERM_DUEDAYS
 ]]></body>
     </function>
   </database>

@@ -77,9 +77,7 @@
           ; 
       END IF; 
     END LOOP; 
-END Ad_Update_Sequence_Generate
-
-
+END AD_UPDATE_SEQUENCE_GENERATE
 ]]></body>
     </function>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION A_AMORTIZATION_PROCESS">
     <function name="A_AMORTIZATION_PROCESS" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -118,9 +120,7 @@ WHEN OTHERS THEN
   END IF;
   RAISE_APPLICATION_ERROR(-20100, v_ResultStr) ;
 --  RETURN;
-END a_Amortization_Process
-
-
+END A_AMORTIZATION_PROCESS
 ]]></body>
     </function>
   </database>

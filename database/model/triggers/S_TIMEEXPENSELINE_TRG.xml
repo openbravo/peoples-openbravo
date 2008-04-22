@@ -80,9 +80,7 @@ BEGIN
     END IF;
   END IF;
 
-END S_TimeExpenseLine_Trg 
-
-
+END S_TIMEEXPENSELINE_TRG
 ]]></body>
     </trigger>
   </database>

@@ -37,10 +37,7 @@
       END IF;
 --      UPDATE C_Period  SET EndDate= ADD_MONTHS(TRUNC(StartDate, 'MM'), 1) -1;
       :new.EndDate:= ADD_MONTHS(TRUNC(:new.StartDate, 'MM'), 1) -1;
-END C_Period_Trg2
-
-
-
+END C_PERIOD_TRG2
 ]]></body>
     </trigger>
   </database>

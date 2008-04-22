@@ -80,10 +80,7 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;
-END C_Order_Chk_Restrinctions_Trg 
-
-
-
+END C_ORDER_CHK_RESTRINCTIONS_TRG
 ]]></body>
     </trigger>
   </database>

@@ -1,29 +1,98 @@
 <?xml version="1.0"?>
   <database name="TABLE M_FREIGHT">
     <table name="M_FREIGHT" primaryKey="M_FREIGHT_KEY">
-      <column name="M_FREIGHT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="M_SHIPPER_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="M_FREIGHTCATEGORY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="VALIDFROM" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false"/>
-      <column name="C_COUNTRY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="TO_COUNTRY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="C_REGION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="TO_REGION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="C_CURRENCY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="FREIGHTAMT" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
-      <column name="FREIGHT_UNIT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <column name="ISPRICE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <column name="LINE_ROUND" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <column name="QTYFROM" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
-      <column name="QTYTO" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
-      <column name="TOTAL_ROUND" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="M_FREIGHT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="M_SHIPPER_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="M_FREIGHTCATEGORY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="VALIDFROM" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_COUNTRY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TO_COUNTRY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_REGION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TO_REGION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_CURRENCY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="FREIGHTAMT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[0]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="FREIGHT_UNIT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISPRICE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="LINE_ROUND" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="QTYFROM" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="QTYTO" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TOTAL_ROUND" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_MFREIGHT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

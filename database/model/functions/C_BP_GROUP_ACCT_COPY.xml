@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_BP_GROUP_ACCT_COPY">
     <function name="C_BP_GROUP_ACCT_COPY" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_BP_Group_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_C_Acctschema_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_bp_group_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_c_acctschema_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -170,9 +176,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END C_BP_Group_Acct_Copy
-
-
+END C_BP_GROUP_ACCT_COPY
 ]]></body>
     </function>
   </database>

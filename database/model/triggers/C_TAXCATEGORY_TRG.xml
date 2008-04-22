@@ -54,15 +54,12 @@
     -- Translation
     UPDATE C_TaxCategory_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE C_TaxCategory_ID=:new.C_TaxCategory_ID;
   END IF;
  END IF;
 -- Updating
-END C_TaxCategory_Trg
-
-
-
+END C_TAXCATEGORY_TRG
 ]]></body>
     </trigger>
   </database>

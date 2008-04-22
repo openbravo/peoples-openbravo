@@ -53,15 +53,13 @@ BEGIN
       VALUES
       (
         :new.C_Charge_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-        :new.AD_ORG_ID,  'Y', SysDate,
-        :new.CreatedBy, SysDate, :new.UpdatedBy,
+        :new.AD_ORG_ID,  'Y', now(),
+        :new.CreatedBy, now(), :new.UpdatedBy,
         Cur_Defaults.CH_Expense_Acct, Cur_Defaults.CH_Revenue_Acct
       )
       ;
   END LOOP;
-END C_Charge_Trg 
-
-
+END C_CHARGE_TRG
 ]]></body>
     </trigger>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INOUT_POST0">
     <function name="M_INOUT_POST0" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -26,10 +28,8 @@
   * Description:
   ************************************************************************/
 BEGIN
-  M_InOut_Post(PInstance_ID, NULL) ;
-END M_InOut_Post0
-
-
+  M_INOUT_POST(PInstance_ID, NULL) ;
+END M_INOUT_POST0
 ]]></body>
     </function>
   </database>

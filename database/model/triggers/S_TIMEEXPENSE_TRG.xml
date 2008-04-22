@@ -39,9 +39,7 @@ BEGIN
   END IF;
  END IF;
 
-END S_TIMEEXPENSE_TRG 
-
-
+END S_TIMEEXPENSE_TRG
 ]]></body>
     </trigger>
   </database>

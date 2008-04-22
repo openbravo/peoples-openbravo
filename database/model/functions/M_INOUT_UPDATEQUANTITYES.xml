@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INOUT_UPDATEQUANTITYES">
     <function name="M_INOUT_UPDATEQUANTITYES" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -145,7 +147,7 @@
           ELSE
             v_Lines:=v_Lines || ', ' || v_Lines_Aux;
           END IF;
-          DBMS_OUTPUT.PUT('LINES EXECUTED: ' || v_Lines || ' - ACTUAL LINE: ' || v_Lines_Aux) ;
+          DBMS_OUTPUT.PUT_LINE('LINES EXECUTED: ' || v_Lines || ' - ACTUAL LINE: ' || v_Lines_Aux) ;
           UPDATE M_INOUTLINE
             SET M_ATTRIBUTESETINSTANCE_ID=Cur_Lines.M_ATTRIBUTESETINSTANCE_ID
           WHERE M_INOUTLINE.M_INOUTLINE_ID=v_Lines_Aux;
@@ -164,9 +166,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END M_InOut_UpdateQuantityes
-
-
+END M_INOUT_UPDATEQUANTITYES
 ]]></body>
     </function>
   </database>

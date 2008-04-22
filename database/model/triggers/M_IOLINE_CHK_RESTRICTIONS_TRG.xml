@@ -53,10 +53,7 @@ BEGIN
   IF((DELETING OR INSERTING) AND v_Processed='Y') THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
-END M_IOLine_Chk_Restrictions_Trg 
-
-
-
+END M_IOLINE_CHK_RESTRICTIONS_TRG
 ]]></body>
     </trigger>
   </database>

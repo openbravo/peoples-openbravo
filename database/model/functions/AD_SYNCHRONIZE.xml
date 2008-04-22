@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_SYNCHRONIZE">
     <function name="AD_SYNCHRONIZE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -46,7 +48,7 @@
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
       v_ResultStr:='PInstanceNotFound';
-      Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
       -- Get Parameters
       v_ResultStr:='ReadingParameters';
       FOR Cur_Parameter IN
@@ -90,7 +92,7 @@
           )
           VALUES
           (NextNo, 0, 0, 'Y',
-          Now(), 0, Now(), 0,
+          now(), 0, now(), 0,
           Cur_Column.ColumnName, Cur_Column.NAME, Cur_Column.NAME, Cur_Column.Description,
           Cur_Column.Help) ;
         DBMS_OUTPUT.PUT_LINE('  added ' || Cur_Column.ColumnName) ;
@@ -115,7 +117,7 @@
           )
           VALUES
           (NextNo, 0, 0, 'Y',
-          Now(), 0, Now(), 0,
+          now(), 0, now(), 0,
           Cur_Process.ColumnName, Cur_Process.NAME, Cur_Process.NAME, Cur_Process.Description,
           Cur_Process.Help) ;
         DBMS_OUTPUT.PUT_LINE('  added ' || Cur_Process.ColumnName) ;
@@ -206,7 +208,7 @@
       )
       , Help=
       (SELECT Help FROM AD_ELEMENT e WHERE AD_COLUMN.AD_Element_ID=e.AD_Element_ID)
-      , Updated=Now()
+      , Updated=now()
     WHERE EXISTS
       (SELECT *
       FROM AD_ELEMENT e
@@ -235,7 +237,7 @@
       FROM AD_ELEMENT e, AD_COLUMN c
       WHERE e.AD_Element_ID=c.AD_Element_ID AND c.AD_Column_ID=AD_FIELD.AD_Column_ID
       )
-      , Updated=Now()
+      , Updated=now()
     WHERE AD_FIELD.IsCentrallyMaintained='Y' AND AD_FIELD.IsActive='Y'  AND EXISTS
       (SELECT *
       FROM AD_ELEMENT e, AD_COLUMN c
@@ -276,7 +278,7 @@
       WHERE e.AD_LANGUAGE=AD_FIELD_TRL.AD_LANGUAGE AND e.AD_Element_ID=c.AD_Element_ID
       AND c.AD_Column_ID=f.AD_Column_ID AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
       )
-      , Updated=Now()
+      , Updated=now()
     WHERE EXISTS
       (SELECT *
       FROM AD_FIELD f, AD_ELEMENT_TRL e, AD_COLUMN c
@@ -312,7 +314,7 @@
       FROM AD_ELEMENT e, AD_COLUMN c
       WHERE e.AD_Element_ID=c.AD_Element_ID AND c.AD_Column_ID=AD_FIELD.AD_Column_ID
       )
-      , Updated=Now()
+      , Updated=now()
     WHERE AD_FIELD.IsCentrallyMaintained='Y' AND AD_FIELD.IsActive='Y'  AND EXISTS
       (SELECT *
       FROM AD_ELEMENT e, AD_COLUMN c
@@ -355,7 +357,7 @@
       WHERE e.AD_LANGUAGE=AD_FIELD_TRL.AD_LANGUAGE AND e.AD_Element_ID=c.AD_Element_ID
       AND c.AD_Column_ID=f.AD_Column_ID AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
       )
-      , Updated=Now()
+      , Updated=now()
     WHERE EXISTS
       (SELECT *
       FROM AD_FIELD f, AD_ELEMENT_TRL e, AD_COLUMN c
@@ -392,7 +394,7 @@
       FROM AD_PROCESS p, AD_COLUMN c
       WHERE p.AD_Process_ID=c.AD_Process_ID  AND c.AD_Column_ID=AD_FIELD.AD_Column_ID
       )
-      , Updated=Now()
+      , Updated=now()
     WHERE AD_FIELD.IsCentrallyMaintained='Y' AND AD_FIELD.IsActive='Y'  AND EXISTS
       (SELECT *
       FROM AD_PROCESS p, AD_COLUMN c
@@ -430,7 +432,7 @@
       WHERE p.AD_Process_ID=c.AD_Process_ID AND c.AD_Column_ID=f.AD_Column_ID  AND f.AD_Field_ID=AD_FIELD_TRL.AD_Field_ID
       AND p.AD_LANGUAGE=AD_FIELD_TRL.AD_LANGUAGE
       )
-      , Updated=Now()
+      , Updated=now()
     WHERE EXISTS
       (SELECT *
       FROM AD_PROCESS_TRL p, AD_COLUMN c, AD_FIELD f
@@ -475,7 +477,7 @@
       FROM AD_ELEMENT e
       WHERE e.AD_Element_ID=AD_PROCESS_PARA.AD_Element_ID
       )
-      , Updated=Now()
+      , Updated=now()
     WHERE AD_PROCESS_PARA.IsCentrallyMaintained='Y' AND AD_PROCESS_PARA.IsActive='Y'  AND EXISTS
       (SELECT *
       FROM AD_ELEMENT e
@@ -513,7 +515,7 @@
       WHERE et.AD_LANGUAGE=AD_PROCESS_PARA_TRL.AD_LANGUAGE AND f.AD_Element_ID=et.AD_Element_ID
       AND f.AD_Process_Para_ID=AD_PROCESS_PARA_TRL.AD_Process_Para_ID
       )
-      , Updated=Now()
+      , Updated=now()
     WHERE EXISTS
       (SELECT *
       FROM AD_ELEMENT_TRL et, AD_PROCESS_PARA f
@@ -940,7 +942,7 @@
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-      Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
     END IF;
     RETURN;
   END; --BODY
@@ -950,12 +952,10 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   ROLLBACK;
   IF(p_PInstance_ID IS NOT NULL) THEN
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   END IF;
   RETURN;
-END Ad_Synchronize
-
-
+END AD_SYNCHRONIZE
 ]]></body>
     </function>
   </database>

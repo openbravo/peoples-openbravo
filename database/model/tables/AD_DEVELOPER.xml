@@ -1,19 +1,58 @@
 <?xml version="1.0"?>
   <database name="TABLE AD_DEVELOPER">
     <table name="AD_DEVELOPER" primaryKey="AD_DEVELOPER_KEY">
-      <column name="AD_DEVELOPER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false"/>
-      <column name="NICKNAME" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
-      <column name="EMAIL" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
-      <column name="COMPANY" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
-      <column name="SVNUSER" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false"/>
+      <column name="AD_DEVELOPER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="NICKNAME" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EMAIL" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANY" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="SVNUSER" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_DEVELOPER_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

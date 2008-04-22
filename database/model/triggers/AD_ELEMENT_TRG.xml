@@ -96,11 +96,7 @@
     AND IsCentrallyMaintained='Y';
  END IF;
 -- UPDATING
-END AD_Element_TRG
-
-
-
-
+END AD_ELEMENT_TRG
 ]]></body>
     </trigger>
   </database>

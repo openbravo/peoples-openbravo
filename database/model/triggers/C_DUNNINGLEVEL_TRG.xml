@@ -54,15 +54,12 @@
     -- Translation
     UPDATE C_DunningLevel_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE C_DunningLevel_ID=:new.C_DunningLevel_ID;
   END IF;
  END IF;
 -- Updating
-END C_DunningLevel_Trg
-
-
-
+END C_DUNNINGLEVEL_TRG
 ]]></body>
     </trigger>
   </database>

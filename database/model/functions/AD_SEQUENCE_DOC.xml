@@ -1,10 +1,18 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_SEQUENCE_DOC">
     <function name="AD_SEQUENCE_DOC" type="NULL">
-      <parameter name="p_SequenceName" type="VARCHAR" mode="in"/>
-      <parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Update_Next" type="CHAR" mode="in"/>
-      <parameter name="p_DocumentNo" type="VARCHAR" mode="out"/>
+      <parameter name="p_sequencename" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_update_next" type="CHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_documentno" type="VARCHAR" mode="out">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -57,9 +65,7 @@ BEGIN
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20000, '@DocumentSequenceNotFound@' || p_SequenceName) ;
-END AD_Sequence_Doc
-
-
+END AD_SEQUENCE_DOC
 ]]></body>
     </function>
   </database>

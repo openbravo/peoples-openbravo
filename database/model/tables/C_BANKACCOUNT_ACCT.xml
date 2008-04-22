@@ -1,27 +1,90 @@
 <?xml version="1.0"?>
   <database name="TABLE C_BANKACCOUNT_ACCT">
     <table name="C_BANKACCOUNT_ACCT" primaryKey="C_BANKACCOUNT_ACCT_KEY">
-      <column name="C_BANKACCOUNT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="C_ACCTSCHEMA_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_INTRANSIT_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_ASSET_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_EXPENSE_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_INTERESTREV_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_INTERESTEXP_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_UNIDENTIFIED_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_UNALLOCATEDCASH_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_PAYMENTSELECT_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_SETTLEMENTGAIN_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_SETTLEMENTLOSS_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_REVALUATIONGAIN_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="B_REVALUATIONLOSS_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="C_BANKACCOUNT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_ACCTSCHEMA_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_INTRANSIT_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_ASSET_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_EXPENSE_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_INTERESTREV_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_INTERESTEXP_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_UNIDENTIFIED_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_UNALLOCATEDCASH_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_PAYMENTSELECT_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_SETTLEMENTGAIN_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_SETTLEMENTLOSS_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_REVALUATIONGAIN_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="B_REVALUATIONLOSS_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBANKACCOUNTACCT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

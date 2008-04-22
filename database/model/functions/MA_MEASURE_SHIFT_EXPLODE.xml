@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_MEASURE_SHIFT_EXPLODE">
     <function name="MA_MEASURE_SHIFT_EXPLODE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -132,7 +134,7 @@
               v_Measure_Group, v_Time, 'Y', 'N'
             )
             ;
-          MA_Measure_Time_Explode(p_PInstance_ID, v_Measure_Time) ;
+          MA_MEASURE_TIME_EXPLODE(p_PInstance_ID, v_Measure_Time) ;
           --Frecuency is stored in date/time format. Convert to hours is needed
           v_Time:=v_Time +(Cur_CCP_Group.FRECUENCY - TRUNC(Cur_CCP_Group.FRECUENCY)) ;
         END LOOP;
@@ -156,9 +158,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END MA_Measure_Shift_Explode
-
-
+END MA_MEASURE_SHIFT_EXPLODE
 ]]></body>
     </function>
   </database>

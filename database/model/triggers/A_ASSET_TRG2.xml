@@ -24,9 +24,7 @@
 ************************************************************************/
     BEGIN
   DELETE FROM A_Asset_Acct  WHERE A_Asset_ID=:old.A_Asset_ID;
-END A_ASSET_Trg2 
-
-
+END A_ASSET_TRG2
 ]]></body>
     </trigger>
   </database>

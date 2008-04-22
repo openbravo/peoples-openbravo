@@ -31,7 +31,7 @@
     *         Where lines were updated in the last minute
     ************************************************************************/
   UPDATE C_Project
-    SET Updated=SysDate
+    SET Updated=now()
   WHERE EXISTS
     (
     SELECT *
@@ -40,9 +40,7 @@
       AND Updated > now() -1/1440
     )
     ;
-END C_ProjectLine_Trg2 
-
-
+END C_PROJECTLINE_TRG2
 ]]></body>
     </trigger>
   </database>

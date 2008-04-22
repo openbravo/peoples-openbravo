@@ -55,17 +55,15 @@ BEGIN
       VALUES
       (
         :new.M_Product_Category_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-        :new.AD_ORG_ID,  'Y', SysDate,
-        :new.CreatedBy, SysDate, :new.UpdatedBy,
+        :new.AD_ORG_ID,  'Y', now(),
+        :new.CreatedBy, now(), :new.UpdatedBy,
         Cur_Defaults.P_Revenue_Acct, Cur_Defaults.P_Expense_Acct, Cur_Defaults.P_Asset_Acct,
         Cur_Defaults.P_COGS_Acct, Cur_Defaults.P_PurchasePriceVariance_Acct, Cur_Defaults.P_InvoicePriceVariance_Acct,
         Cur_Defaults.P_TradeDiscountRec_Acct, Cur_Defaults.P_TradeDiscountGrant_Acct
       )
       ;
   END LOOP;
-END M_Product_Category_Trg 
-
-
+END M_PRODUCT_CATEGORY_TRG
 ]]></body>
     </trigger>
   </database>

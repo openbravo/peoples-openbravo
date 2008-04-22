@@ -46,17 +46,15 @@
         VALUES
         (
           v_NextNo, :new.AD_Client_ID, :new.AD_Org_ID,
-           'Y', SysDate,  0,
-          SysDate, 0, :new.C_Period_ID,
+           'Y', now(),  0,
+          now(), 0, :new.C_Period_ID,
           CUR_DocType.Value, 'N', 'N',
           NULL
         )
         ;
       -- NeverOpened, NoAction
     END LOOP;
-END C_Period_Trg 
-
-
+END C_PERIOD_TRG
 ]]></body>
     </trigger>
   </database>

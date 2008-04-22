@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_DISCOUNT_OLD">
     <function name="C_INVOICE_DISCOUNT_OLD" type="NUMERIC">
-      <parameter name="p_C_Invoice_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_PayDate" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_c_invoice_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_paydate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -25,7 +29,7 @@
   v_TotalLines        NUMBER;
   v_C_PaymentTerm_ID  NUMBER(10) ;
   v_DocDate DATE;
-  v_PayDate DATE := SYSDATE;
+  v_PayDate DATE := now();
 BEGIN
   SELECT ci.IsDiscountLineAmt,
     i.GrandTotal,
@@ -60,8 +64,7 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN NULL;
-END C_Invoice_Discount_Old
-
+END C_INVOICE_DISCOUNT_OLD
 ]]></body>
     </function>
   </database>

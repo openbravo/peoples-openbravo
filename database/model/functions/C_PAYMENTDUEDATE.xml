@@ -1,16 +1,36 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_PAYMENTDUEDATE">
     <function name="C_PAYMENTDUEDATE" type="TIMESTAMP">
-      <parameter name="p_bPartner_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_isSoTrx" type="CHAR" mode="in"/>
-      <parameter name="p_fixMonthDay1" type="NUMERIC" mode="in"/>
-      <parameter name="p_fixMonthDay2" type="NUMERIC" mode="in"/>
-      <parameter name="p_fixMonthDay3" type="NUMERIC" mode="in"/>
-      <parameter name="p_netDays" type="NUMERIC" mode="in"/>
-      <parameter name="p_fixMonthOffset" type="NUMERIC" mode="in"/>
-      <parameter name="p_netDay" type="CHAR" mode="in"/>
-      <parameter name="p_isNextbusinessday" type="CHAR" mode="in"/>
-      <parameter name="p_DocDate" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_bpartner_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_issotrx" type="CHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_fixmonthday1" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_fixmonthday2" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_fixmonthday3" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_netdays" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_fixmonthoffset" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_netday" type="CHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_isnextbusinessday" type="CHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_docdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -28,7 +48,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 /*************************************************************************
-* Title: Get Payment Due Date
+* Title: Get Payment Due DATE
 ************************************************************************/
   v_docDate DATE;
   v_DueDate DATE;
@@ -75,7 +95,7 @@ BEGIN
         v_docDate := ADD_MONTHS(v_docDate, 1) ;
       END IF;
     END IF;
-    v_DueDate := C_Datedayinmonth(v_FixMonthDay, to_date(v_docDate)) ;
+    v_DueDate := C_Datedayinmonth(v_FixMonthDay, TO_DATE(v_docDate)) ;
   ELSE
     v_DueDate := TRUNC(p_DocDate) + COALESCE(p_netDays, 0) ;
     v_DueDate := ADD_MONTHS(v_DueDate, COALESCE(p_fixMonthOffset, 0)) ;
@@ -91,8 +111,7 @@ BEGIN
     END LOOP;
   END IF;
   RETURN COALESCE(v_DueDate, TRUNC(p_DocDate)) ;
-END C_PaymentDueDate
-
+END C_PAYMENTDUEDATE
 ]]></body>
     </function>
   </database>

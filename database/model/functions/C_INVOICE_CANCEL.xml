@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_CANCEL">
     <function name="C_INVOICE_CANCEL" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Order_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_order_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -79,7 +83,7 @@
         Processed='N',
         Updated=now()
       WHERE C_Invoice.C_Invoice_ID=Cur_Invoice.C_Invoice_ID ;
-      C_Invoice_Post(NULL, Cur_Invoice.C_Invoice_ID) ;
+      C_INVOICE_POST(NULL, Cur_Invoice.C_Invoice_ID) ;
     END LOOP; -- Order Loop
     --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -98,7 +102,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   ELSE
     DECLARE
-      v_Code NUMBER:=SQLCode;
+      v_Code NUMBER:=SQLCODE;
     BEGIN
       INSERT
       INTO DBA_ErrorLog
@@ -116,9 +120,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   RETURN;
-END C_Invoice_Cancel
-
-
+END C_INVOICE_CANCEL
 ]]></body>
     </function>
   </database>

@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_GET_NEXT_SEQUENCE">
     <function name="AD_GET_NEXT_SEQUENCE" type="NUMERIC">
-      <parameter name="p_TableName" type="VARCHAR" mode="in"/>
-      <parameter name="p_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_tablename" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -47,8 +51,7 @@ WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20516, 'Table Sequence not found ') ;
   --   || v_ResultStr || ': ' || p_TableName);
   RETURN 0;
-END Ad_Get_Next_Sequence
-
+END AD_GET_NEXT_SEQUENCE
 ]]></body>
     </function>
   </database>

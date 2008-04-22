@@ -56,15 +56,12 @@ BEGIN
     THEN
       UPDATE AD_Reference_Trl
          SET IsTranslated = 'N',
-             Updated = SYSDATE
+             Updated = now()
        WHERE AD_Reference_ID = :NEW.AD_Reference_ID;
     END IF;
   END IF;
 -- Updating
-END AD_Reference_Trg
-
-
-
+END AD_REFERENCE_TRG
 ]]></body>
     </trigger>
   </database>

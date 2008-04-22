@@ -45,10 +45,7 @@ BEGIN
     :new.XSpace:=0;
     :new.YSpace:=0;
   END IF;
-END AD_PrintFormatItem_BTrg
-
-
-
+END AD_PRINTFORMATITEM_BTRG
 ]]></body>
     </trigger>
   </database>

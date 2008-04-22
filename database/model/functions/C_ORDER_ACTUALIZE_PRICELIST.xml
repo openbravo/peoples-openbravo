@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ORDER_ACTUALIZE_PRICELIST">
     <function name="C_ORDER_ACTUALIZE_PRICELIST" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -41,7 +43,7 @@
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || PInstance_ID) ;
 
 
-    Ad_Update_Pinstance(PInstance_ID, NULL, 'Y', NULL, NULL) ;
+    AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'Y', NULL, NULL) ;
   BEGIN --BODY
     -- Get Parameters
     v_ResultStr_aux:='ReadingParameters';
@@ -95,7 +97,7 @@
           VALUES
           (
             v_pinstance, 104, Cur_PEDIDOS.C_Order_ID, 'N',
-            Now(), 100, Now(), NULL,
+            now(), 100, now(), NULL,
             NULL, Cur_PEDIDOS.Ad_Client_ID, 0, 100,
             100, 'Y'
           )
@@ -106,7 +108,7 @@
       END;--FOR  COMMIT
 
 
-       C_Order_Post(v_pinstance) ;
+       C_ORDER_POST(v_pinstance) ;
        SELECT Result,
          ErrorMsg
        INTO v_Result,
@@ -172,7 +174,7 @@
              VALUES
              (
                v_pinstance, 104, Cur_PEDIDOS.C_Order_ID, 'N',
-               Now(), 100, Now(), NULL,
+               now(), 100, now(), NULL,
                NULL, Cur_PEDIDOS.Ad_Client_ID, 0, 100,
                100, 'Y'
              )
@@ -182,7 +184,7 @@
            EXCEPTION WHEN OTHERS THEN RAISE NO_DATA_FOUND;
            END; -- FOR COMMIT
            BEGIN -- FOR COMMIT
-             C_Order_Post(v_pinstance) ;
+             C_ORDER_POST(v_pinstance) ;
              DBMS_OUTPUT.PUT_LINE('Reactivating c_order_id: ' || Cur_PEDIDOS.C_Order_ID || ' Result: ' || v_result || ' Message: '|| v_ResultStr) ;
            EXCEPTION WHEN OTHERS THEN RAISE NO_DATA_FOUND;
            END; -- FOR COMMIT
@@ -191,7 +193,7 @@
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
-    Ad_Update_Pinstance(PInstance_ID, NULL, 'N', v_Result, v_ResultStr) ;
+    AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', v_Result, v_ResultStr) ;
     RETURN;
   END; --BODY
 EXCEPTION
@@ -199,10 +201,9 @@ WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   ROLLBACK;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
-  Ad_Update_Pinstance(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END C_Order_Actualize_Pricelist
-
+END C_ORDER_ACTUALIZE_PRICELIST
 ]]></body>
     </function>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION FACT_ACCT_BALANCE_UPDATE">
     <function name="FACT_ACCT_BALANCE_UPDATE" type="NULL">
-      <parameter name="p_DeleteFirst" type="VARCHAR" mode="in" default="N"/>
+      <parameter name="p_deletefirst" type="VARCHAR" mode="in">
+        <default><![CDATA[N]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -264,9 +266,7 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('  Inserts=' || rowcount) ;
   -----------------------
   -- Commented by cromero 19102006 COMMIT;
-END Fact_Acct_Balance_Update
-
-
+END FACT_ACCT_BALANCE_UPDATE
 ]]></body>
     </function>
   </database>

@@ -1,19 +1,45 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_UPDATE_INVENTORY">
     <function name="M_UPDATE_INVENTORY" type="NULL">
-      <parameter name="p_client" type="NUMERIC"/>
-      <parameter name="p_org" type="NUMERIC"/>
-      <parameter name="p_user" type="NUMERIC"/>
-      <parameter name="p_product" type="NUMERIC"/>
-      <parameter name="p_locator" type="NUMERIC"/>
-      <parameter name="p_attributesetinstance" type="NUMERIC"/>
-      <parameter name="p_uom" type="NUMERIC"/>
-      <parameter name="p_product_uom" type="NUMERIC"/>
-      <parameter name="p_qty" type="NUMERIC"/>
-      <parameter name="p_qtyorder" type="NUMERIC"/>
-      <parameter name="p_datelastinventory" type="TIMESTAMP"/>
-      <parameter name="p_preqty" type="NUMERIC"/>
-      <parameter name="p_preqtyorder" type="NUMERIC"/>
+      <parameter name="p_client" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_org" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_user" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_product" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_locator" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_attributesetinstance" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_uom" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_product_uom" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_qty" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_qtyorder" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_datelastinventory" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_preqty" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_preqtyorder" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -92,8 +118,6 @@ BEGIN
       AND COALESCE(M_PRODUCT_UOM_ID, -1)=COALESCE(p_product_uom, -1) ;
   END IF;
 END M_UPDATE_INVENTORY
-
-
 ]]></body>
     </function>
   </database>

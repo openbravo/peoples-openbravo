@@ -42,9 +42,7 @@
     WHERE S_ResourceType_ID=:new.S_ResourceType_ID
     )
     ;
-END S_ResourceType_Trg
-
-
+END S_RESOURCETYPE_TRG
 ]]></body>
     </trigger>
   </database>

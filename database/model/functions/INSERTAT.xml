@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION INSERTAT">
     <function name="INSERTAT" type="VARCHAR">
-      <parameter name="s" type="VARCHAR" mode="in"/>
+      <parameter name="s" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -24,8 +26,7 @@ BEGIN
     r := r||substr(s,i,1)||'@';
   END LOOP;
   RETURN r;
-END INSERTAT 
-
+END INSERTAT
 ]]></body>
     </function>
   </database>

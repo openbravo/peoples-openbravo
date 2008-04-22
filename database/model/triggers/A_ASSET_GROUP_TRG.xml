@@ -64,9 +64,7 @@ BEGIN
       )
       ;
   END LOOP;
-END A_Asset_Group_Trg 
-
-
+END A_ASSET_GROUP_TRG
 ]]></body>
     </trigger>
   </database>

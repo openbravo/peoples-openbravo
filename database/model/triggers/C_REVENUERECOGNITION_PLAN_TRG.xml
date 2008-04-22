@@ -63,16 +63,14 @@ BEGIN
       VALUES
       (
         v_NextNo, :new.C_RevenueRecognition_Plan_ID, :new.AD_Client_ID,
-        :new.AD_Org_ID,  'Y', SysDate,
-        :new.CreatedBy, SysDate, :new.UpdatedBy,
+        :new.AD_Org_ID,  'Y', now(),
+        :new.CreatedBy, now(), :new.UpdatedBy,
         v_M_Product_ID, NULL, v_Qty,
         0, 'N',  'N'
       )
       ;
   END IF;
-END C_RevenueRecognition_Plan_Trg 
-
-
+END C_REVENUERECOGNITION_PLAN_TRG
 ]]></body>
     </trigger>
   </database>

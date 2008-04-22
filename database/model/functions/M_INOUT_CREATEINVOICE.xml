@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INOUT_CREATEINVOICE">
     <function name="M_INOUT_CREATEINVOICE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -38,7 +40,7 @@
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
     v_ResultStr:='PInstanceNotFound';
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
   BEGIN --BODY
     -- Get Parameters
     v_ResultStr:='ReadingParameters';
@@ -218,12 +220,12 @@
             VALUES
             (
               v_Invoice_ID, CUR_Shipment.C_Order_ID, CUR_Shipment.AD_Client_ID, CUR_Shipment.AD_Org_ID,
-               'Y', Now(), 0, Now(),
+               'Y', now(), 0, now(),
               0, 'N', v_DocumentNo, 'DR',
                'CO', 'N', 'N', v_DocType_ID,
               v_DocType_ID, CUR_Shipment.Description, v_Approved, 'N',
-              NULL, Now(), NULL, 'N',
-              Now(), v_C_PaymentTerm_ID, CUR_Shipment.C_BPartner_ID, CUR_Shipment.C_BPartner_Location_ID,
+              NULL, now(), NULL, 'N',
+              now(), v_C_PaymentTerm_ID, CUR_Shipment.C_BPartner_ID, CUR_Shipment.C_BPartner_Location_ID,
               CUR_Shipment.AD_User_ID, NULL, CUR_Shipment.DateOrdered, v_IsDiscountPrinted,
               v_C_Currency_ID, v_PaymentRule, NULL, 0,
               0, 0, v_M_PriceList_ID, CUR_Shipment.C_Campaign_ID,
@@ -269,7 +271,7 @@
             -- v_UOM_ID, v_Tax_ID
             v_ResultStr:='InsertInvoiceLine';
             Ad_Sequence_Next('C_InvoiceLine', CUR_Shipment.C_Order_ID, v_NextNo) ;
-            v_LineNetAmt:=ROUND(M_Get_Offers_Price(Now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID) *CUR_ShipmentLines.MovementQty, 2) ;
+            v_LineNetAmt:=ROUND(M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID) *CUR_ShipmentLines.MovementQty, 2) ;
             INSERT
             INTO C_INVOICELINE
               (
@@ -285,10 +287,10 @@
               VALUES
               (
                 v_NextNo, CUR_Shipment.AD_Client_ID, CUR_ShipmentLines.AD_Org_ID, 'Y',
-                Now(), 100, Now(), 0, -- LineTrigger reqirement
+                now(), 100, now(), 0, -- LineTrigger reqirement
                 v_Invoice_ID, CUR_ShipmentLines.C_OrderLine_ID, CUR_ShipmentLines.M_InOutLine_ID, CUR_ShipmentLines.Line,
                 CUR_ShipmentLines.Description, CUR_ShipmentLines.M_Product_ID, CUR_ShipmentLines.MovementQty, v_PriceList,
-                M_Get_Offers_Price(Now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID), v_PriceLimit, v_LineNetAmt, NULL,
+                M_Get_Offers_Price(now(), CUR_Shipment.C_BPartner_ID, CUR_ShipmentLines.M_Product_ID, v_PriceActual, CUR_ShipmentLines.MovementQty, v_M_PriceList_ID), v_PriceLimit, v_LineNetAmt, NULL,
                 0, v_C_UOM_ID,
                 v_C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                 CUR_ShipmentLines.QuantityOrder, CUR_ShipmentLines.M_Product_Uom_ID, v_PriceActual
@@ -302,7 +304,7 @@
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
     RETURN;
   END; --BODY
 EXCEPTION
@@ -310,11 +312,9 @@ WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   ROLLBACK;
-  Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END M_Inout_Createinvoice
-
-
+END M_INOUT_CREATEINVOICE
 ]]></body>
     </function>
   </database>

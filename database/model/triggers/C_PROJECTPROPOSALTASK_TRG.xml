@@ -31,9 +31,7 @@ BEGIN
   UPDATE C_PROJECT
     SET LASTPLANNEDPROPOSALDATE=:NEW.UPDATED
   WHERE C_PROJECT_ID=v_Project;
-END C_ProjectProposalTask_Trg 
-
-
+END C_PROJECTPROPOSALTASK_TRG
 ]]></body>
     </trigger>
   </database>

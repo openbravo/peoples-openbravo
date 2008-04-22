@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_GET_OFFER_PRICE">
     <function name="M_GET_OFFER_PRICE" type="NUMERIC">
-      <parameter name="p_Offer_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_PriceStd" type="NUMERIC" mode="in"/>
+      <parameter name="p_offer_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_pricestd" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -51,8 +55,7 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN NULL;
-END M_Get_Offer_Price 
-
+END M_GET_OFFER_PRICE
 ]]></body>
     </function>
   </database>

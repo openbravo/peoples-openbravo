@@ -50,11 +50,7 @@
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
  END IF;
-END GL_Journal_Chk_Restrict_Trg
-
-
-
-
+END GL_JOURNAL_CHK_RESTRICT_TRG
 ]]></body>
     </trigger>
   </database>

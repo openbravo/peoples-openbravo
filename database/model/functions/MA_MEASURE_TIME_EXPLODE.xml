@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_MEASURE_TIME_EXPLODE">
     <function name="MA_MEASURE_TIME_EXPLODE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Measure_Time_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_measure_time_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -164,9 +168,7 @@ WHEN OTHERS THEN
     END;
     RAISE;
   END IF;
-END MA_Measure_Time_Explode
-
-
+END MA_MEASURE_TIME_EXPLODE
 ]]></body>
     </function>
   </database>

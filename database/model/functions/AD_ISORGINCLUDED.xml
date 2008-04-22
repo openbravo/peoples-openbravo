@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_ISORGINCLUDED">
     <function name="AD_ISORGINCLUDED" type="NUMERIC">
-      <parameter name="p_orgID" type="NUMERIC" mode="in"/>
-      <parameter name="p_parentOrgID" type="NUMERIC" mode="in"/>
-      <parameter name="p_clientID" type="NUMERIC" mode="in"/>
+      <parameter name="p_orgid" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_parentorgid" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_clientid" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -24,7 +30,7 @@
 * Title: Return 'Org Level' if orgID is a leaf of the org tree
 *    where parentOrgID is the root. Else return -1
 ************************************************************************/
-  v_Level  NUMBER:=0;
+  v_Level NUMBER:=0;
   v_treeID NUMBER(10) ;
   v_Parent NUMBER(10) ;
   v_Node   NUMBER(10) ;
@@ -49,8 +55,7 @@ BEGIN
     END IF;
   END LOOP;
   RETURN(-1) ;
-END AD_IsOrgIncluded 
-
+END AD_ISORGINCLUDED
 ]]></body>
     </function>
   </database>

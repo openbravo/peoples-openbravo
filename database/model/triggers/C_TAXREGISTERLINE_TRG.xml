@@ -38,12 +38,6 @@ V_PROCESSING VARCHAR2(1);
    END IF;
   END IF;
 END C_TAXREGISTERLINE_TRG
-
-
-
-
-
-
 ]]></body>
     </trigger>
   </database>

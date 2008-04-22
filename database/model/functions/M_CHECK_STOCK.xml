@@ -1,11 +1,21 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_CHECK_STOCK">
     <function name="M_CHECK_STOCK" type="NULL">
-      <parameter name="p_M_Product_ID" type="NUMERIC"/>
-      <parameter name="p_AD_Client_ID" type="NUMERIC"/>
-      <parameter name="p_AD_Org_ID" type="NUMERIC"/>
-      <parameter name="p_Result" type="NUMERIC" mode="out"/>
-      <parameter name="p_Message" type="VARCHAR" mode="out"/>
+      <parameter name="p_m_product_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_org_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_result" type="NUMERIC" mode="out">
+        <default/>
+      </parameter>
+      <parameter name="p_message" type="VARCHAR" mode="out">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -58,7 +68,7 @@ WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   DECLARE
-    v_Code NUMBER:=SQLCode;
+    v_Code NUMBER:=SQLCODE;
   BEGIN
     INSERT
     INTO DBA_ERRORLOG
@@ -77,9 +87,7 @@ WHEN OTHERS THEN
   END;
   RAISE;
   RETURN;
-END M_Check_Stock
-
-
+END M_CHECK_STOCK
 ]]></body>
     </function>
   </database>

@@ -61,15 +61,12 @@ BEGIN
     THEN
       UPDATE AD_Process_Para_Trl
          SET IsTranslated = 'N',
-             Updated = SYSDATE
+             Updated = now()
        WHERE AD_Process_Para_ID = :NEW.AD_Process_Para_ID;
     END IF;
   END IF;
 -- Updating
-END AD_Process_Para_Trg
-
-
-
+END AD_PROCESS_PARA_TRG
 ]]></body>
     </trigger>
   </database>

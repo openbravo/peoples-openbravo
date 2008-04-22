@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_SEQUENCE_NEXTNO">
     <function name="AD_SEQUENCE_NEXTNO" type="NUMERIC">
-      <parameter name="p_TableName" type="VARCHAR" mode="in"/>
+      <parameter name="p_tablename" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/******************************************************************************
 * The contents of this file are subject to the   Compiere License  Version 1.1
 * ("License"); You may not use this file except in compliance with the License
@@ -32,8 +34,7 @@ BEGIN
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20516, 'Table Sequence not found') ;
-END AD_Sequence_NextNo 
-
+END AD_SEQUENCE_NEXTNO
 ]]></body>
     </function>
   </database>

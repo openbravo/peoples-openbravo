@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
   <database name="SEQUENCE C_ALLOCATION_SEQ">
-    <sequence name="C_ALLOCATION_SEQ" start="14450" increment="1"/>
+    <sequence name="C_ALLOCATION_SEQ" start="1" increment="1"/>
   </database>

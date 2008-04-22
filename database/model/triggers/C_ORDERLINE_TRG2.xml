@@ -28,7 +28,7 @@
    Cur_Offer RECORD;
 
   v_OrderLine_Offer_Id NUMBER;
-  v_lineno NUMBER :=0;
+  v_lineno NUMBER:=0;
   v_Price NUMBER;
   v_PriceNew NUMBER;
   v_Amt NUMBER;
@@ -170,15 +170,13 @@ BEGIN
       C_ORDERLINE_ID, LINE, M_OFFER_ID, PRICEOFFER, AMTOFFER)
    VALUES
        (v_OrderLine_Offer_ID, :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
-      Now(),:NEW.CreatedBy, Now(),:NEW.UpdatedBy,
+      now(),:NEW.CreatedBy, now(),:NEW.UpdatedBy,
      :NEW.C_OrderLine_ID, v_lineno, Cur_Offer.M_Offer_Id, ROUND(v_Price,v_Precision), ROUND(v_Amt,v_Precision));
     v_Price := v_PriceNew;
   END LOOP;
  END IF;
 
-END C_OrderLine_Trg2 
-
-
+END C_ORDERLINE_TRG2
 ]]></body>
     </trigger>
   </database>

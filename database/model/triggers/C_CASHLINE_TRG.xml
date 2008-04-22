@@ -45,7 +45,7 @@ Inc.
  v_CB_Currency_ID  NUMBER(10);
  v_CB_Date    DATE;
  --
- v_Difference   NUMBER := 0;
+ v_Difference NUMBER:= 0;
  v_Client_ID   NUMBER(10);
  v_Org_ID    NUMBER(10);
  v_Cash_ID    NUMBER(10);
@@ -132,9 +132,7 @@ BEGIN
 -- v_Trace := v_Trace || ' > ' || SQL%ROWCOUNT || ' < Difference=' || v_Difference;
 -- INSERT INTO AD_TRACE (What) VALUES (v_Trace);
 
-END C_CashLine_Trg 
-
-
+END C_CASHLINE_TRG
 ]]></body>
     </trigger>
   </database>

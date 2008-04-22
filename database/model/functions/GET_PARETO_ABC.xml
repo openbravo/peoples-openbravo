@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GET_PARETO_ABC">
     <function name="GET_PARETO_ABC" type="VARCHAR">
-      <parameter name="p_warehouse_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_org_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_porcentajeactual" type="NUMERIC" mode="in"/>
+      <parameter name="p_warehouse_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_org_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_porcentajeactual" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -22,12 +28,12 @@
 ************************************************************************/
 
   v_orgList VARCHAR2(4000) ;
-  VARaCUM number:=0;
-  VARaCUMB number:=0;
-  v_limitA number :=80;
-  v_limitB number :=15;  
-  varComprobadoA Number:=0;
-  varComprobadoB Number:=0;
+  VARaCUM NUMBER:=0;
+  VARaCUMB NUMBER:=0;
+  v_limitA NUMBER:=80;
+  v_limitB NUMBER:=15;  
+  varComprobadoA NUMBER:=0;
+  varComprobadoB NUMBER:=0;
   TYPE RECORD IS REF CURSOR;
   Cur_Cursor RECORD;
 BEGIN
@@ -35,7 +41,7 @@ BEGIN
   varComprobadoA := 0;
   for Cur_Cursor in (
    SELECT 
-  100*(GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV')/ (select SUM(GET_PRODUCT_COST(PR1.M_PRODUCT_ID,to_date(now()),'AV')) 
+  100*(GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV')/ (select SUM(GET_PRODUCT_COST(PR1.M_PRODUCT_ID,TO_DATE(now()),'AV')) 
                                                        from M_WAREHOUSE MW1  
                                                        LEFT JOIN M_LOCATOR ML1 ON ML1.M_WAREHOUSE_ID=MW1.M_WAREHOUSE_ID
                                                        LEFT JOIN M_STORAGE_DETAIL MSD1 ON ML1.M_LOCATOR_ID=MSD1.M_LOCATOR_ID
@@ -51,8 +57,8 @@ BEGIN
   WHERE (p_warehouse_ID IS NULL OR MW.M_WAREHOUSE_ID=p_warehouse_ID)
      AND (p_org_ID IS NULL OR MW.AD_ORG_ID=p_org_ID)
      AND MSD.QTYONHAND>0
-     AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV') IS NOT NULL
-     AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV') <> 0
+     AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV') IS NOT NULL
+     AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV') <> 0
   ORDER BY PORCENTAJE DESC) loop
   varAcum := varAcum+Cur_Cursor.porcentaje;
    if(varComprobadoA=0)then
@@ -77,7 +83,7 @@ BEGIN
 
  end loop;
  return 'C';
-
-END GET_PARETO_ABC]]></body>
+END GET_PARETO_ABC
+]]></body>
     </function>
   </database>

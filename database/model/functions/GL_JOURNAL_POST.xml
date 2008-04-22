@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GL_JOURNAL_POST">
     <function name="GL_JOURNAL_POST" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_GL_Journal_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_gl_journal_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -234,9 +238,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   RETURN;
-END GL_Journal_Post
-
-
+END GL_JOURNAL_POST
 ]]></body>
     </function>
   </database>

@@ -82,9 +82,7 @@ BEGIN
       C_TaxCategory_ID=:new.C_TaxCategory_ID
     WHERE S_ExpenseType_ID=:new.S_ExpenseType_ID;
   END IF;
-END S_ExpenseType_Trg 
-
-
+END S_EXPENSETYPE_TRG
 ]]></body>
     </trigger>
   </database>

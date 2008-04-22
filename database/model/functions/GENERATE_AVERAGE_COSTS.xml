@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GENERATE_AVERAGE_COSTS">
     <function name="GENERATE_AVERAGE_COSTS" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -218,6 +220,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr);
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr);
   RETURN;
-END Generate_Average_Costs]]></body>
+END GENERATE_AVERAGE_COSTS
+]]></body>
     </function>
   </database>

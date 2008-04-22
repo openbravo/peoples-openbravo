@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_PROJECT_GENERATE">
     <function name="C_PROJECT_GENERATE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -42,7 +44,7 @@
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
     v_ResultStr:='PInstanceNotFound';
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
   BEGIN --BODY
     -- Get Parameters
     v_ResultStr:='ReadingParameters';
@@ -140,7 +142,7 @@
           VALUES
           (
             v_C_Order_ID, v_DocumentNo, CUR_Project.AD_Client_ID, CUR_Project.AD_Org_ID,
-             'Y', Now(), 0, Now(),
+             'Y', now(), 0, now(),
             0, 'Y', 'DR', 'CO',
              'N', v_C_DocType_ID, v_C_DocType_ID, CUR_Project.Description,
             CUR_Project.AD_User_ID, CUR_Project.DateContract, CUR_Project.DateContract, CUR_Project.POReference,
@@ -214,7 +216,7 @@
             VALUES
             (
               v_NextNo, v_C_Order_ID, CUR_PLines.AD_Client_ID, CUR_PLines.AD_Org_ID,
-               'Y', Now(), 0, Now(),
+               'Y', now(), 0, now(),
               0, v_Line, CUR_Project.C_BPartner_ID, CUR_Project.C_BPartner_Location_ID,
               CUR_Project.DateContract, CUR_PLines.Description, v_M_Warehouse_ID, CUR_PLines.M_Product_ID,
                'N', v_C_UOM_ID, CUR_Project.C_Currency_ID, CUR_PLines.PlannedQty,
@@ -235,7 +237,7 @@
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
     RETURN;
   END; --BODY
 EXCEPTION
@@ -243,11 +245,9 @@ WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   ROLLBACK;
-  Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END C_Project_Generate
-
-
+END C_PROJECT_GENERATE
 ]]></body>
     </function>
   </database>

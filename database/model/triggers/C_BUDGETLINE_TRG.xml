@@ -40,8 +40,6 @@ BEGIN
 EXCEPTION WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20270, 'Accounting information missing.') ;
 END C_BUDGETLINE_TRG
-
-
 ]]></body>
     </trigger>
   </database>

@@ -40,9 +40,7 @@ BEGIN
   FROM C_DOCTYPE
   WHERE C_DocType_ID=v_docType_ID;
   :NEW.MOVEMENTTYPE:=v_movementType;
-END M_InOut_Trg_Prov 
-
-
+END M_INOUT_TRG_PROV
 ]]></body>
     </trigger>
   </database>

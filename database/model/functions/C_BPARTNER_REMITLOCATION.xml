@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_BPARTNER_REMITLOCATION">
     <function name="C_BPARTNER_REMITLOCATION" type="NUMERIC">
-      <parameter name="p_C_BPartner_ID" type="NUMERIC"/>
+      <parameter name="p_c_bpartner_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -43,8 +45,7 @@ BEGIN
       END IF;
     END LOOP;
     RETURN v_C_Location_ID;
-END C_BPartner_RemitLocation
-
+END C_BPARTNER_REMITLOCATION
 ]]></body>
     </function>
   </database>

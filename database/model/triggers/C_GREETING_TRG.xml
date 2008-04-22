@@ -49,15 +49,12 @@ BEGIN
       -- Translation
       UPDATE C_GREETING_TRL
          SET ISTRANSLATED = 'N',
-             UPDATED = SYSDATE
+             UPDATED = now()
        WHERE C_GREETING_ID = :NEW.C_GREETING_ID;
     END IF;
   END IF;
 -- Updating
 END C_GREETING_TRG
-
-
-
 ]]></body>
     </trigger>
   </database>

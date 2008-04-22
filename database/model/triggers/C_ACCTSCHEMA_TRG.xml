@@ -52,8 +52,8 @@ BEGIN
       )
       VALUES
       (
-        :new.UPDATEDBY, SYSDATE, 'N',
-        :new.CREATEDBY, SYSDATE, v_AcctSchema_Table_ID,
+        :new.UPDATEDBY, now(), 'N',
+        :new.CREATEDBY, now(), v_AcctSchema_Table_ID,
         :new.C_ACCTSCHEMA_ID, cur_tables.id, :new.AD_ORG_ID,
         :new.AD_CLIENT_ID
       )
@@ -64,9 +64,7 @@ BEGIN
   WHERE AD_TABLE_ID IN
     (SELECT AD_TABLE_ID FROM AD_TABLE WHERE ISDEFAULTACCT='Y')
     ;
-END C_AcctSchema_Trg 
-
-
+END C_ACCTSCHEMA_TRG
 ]]></body>
     </trigger>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INOUT_CREATE0">
     <function name="M_INOUT_CREATE0" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -27,10 +29,8 @@
   Dummy NUMBER;
 BEGIN
   -- No forced Delivery
-  M_InOut_Create(PInstance_ID,Dummy, NULL, NULL, 'N') ;
-END M_InOut_Create0
-
-
+  M_InOut_Create(PInstance_ID, Dummy, NULL, NULL, 'N') ;
+END M_INOUT_CREATE0
 ]]></body>
     </function>
   </database>

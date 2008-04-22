@@ -72,10 +72,7 @@
   END IF;
  END IF;
 -- UPDATING
-END AD_Workbench_Trg 
-
-
-
+END AD_WORKBENCH_TRG
 ]]></body>
     </trigger>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_COMMISSION_PROCESS">
     <function name="C_COMMISSION_PROCESS" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/******************************************************************************
   * The contents of this file are subject to the   Compiere License  Version 1.1
   * ("License"); You may not use this file except in compliance with the License
@@ -71,7 +73,7 @@
     END LOOP; -- Get Parameter
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     /**
-    * Create Header + Determine Date Range
+    * Create Header + Determine DATE Range
     */
     v_ResultStr:='ReadingRecord';
     SELECT AD_Client_ID,
@@ -146,7 +148,7 @@
     DECLARE
       CUR_CLine RECORD;
     TYPE TYPE_Ref IS REF CURSOR;
-      v_rc TYPE_Ref;
+      v_rc TYPE_REF;
       --
       v_Cmd VARCHAR2(2000):='';
       v_C_CommissionAmt_ID NUMBER(10) ;
@@ -347,9 +349,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END C_Commission_Process
-
-
+END C_COMMISSION_PROCESS
 ]]></body>
     </function>
   </database>

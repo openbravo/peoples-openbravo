@@ -66,10 +66,7 @@
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;
-END M_InOut_Chk_Restrictions_Trg 
-
-
-
+END M_INOUT_CHK_RESTRICTIONS_TRG
 ]]></body>
     </trigger>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_SHORTNAME">
     <function name="AD_SHORTNAME" type="NVARCHAR">
-      <parameter name="p_Name" type="NVARCHAR" mode="in"/>
+      <parameter name="p_name" type="NVARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -34,8 +36,7 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN TO_CHAR(v_pos) ;
-END AD_ShortName
-
+END AD_SHORTNAME
 ]]></body>
     </function>
   </database>

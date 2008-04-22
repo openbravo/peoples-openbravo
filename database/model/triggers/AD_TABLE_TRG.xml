@@ -92,7 +92,7 @@ BEGIN
          IsAudited, IsTableID, StartNewYear) 
      VALUES 
          (v_NextNo, :new.AD_Client_ID, :new.AD_Org_ID, 
-         'Y', SysDate, 0, SysDate, 0, 
+         'Y', now(), 0, now(), 0, 
          :new.TableName, :new.TableName, 
          'Y', 1000000, 1, v_CurrentNextSys, v_CurrentNext, 
          'N', 'Y', 'N'); 
@@ -108,7 +108,7 @@ BEGIN
                  IsActive, Created, CreatedBy, Updated, UpdatedBy, 
                     AD_ReplicationStrategy_ID, AD_TABLE_ID, REPLICATIONTYPE, EntityType) 
                 VALUES (v_NextNo, :new.AD_Client_ID, :new.AD_Org_ID, 
-                 'Y', SysDate, 0, SysDate, 0, 
+                 'Y', now(), 0, now(), 0, 
                     CUR_Replication.AD_ReplicationStrategy_ID, :new.AD_Table_ID, 'L', :new.EntityType); 
             END LOOP; 
         END; 
@@ -120,16 +120,13 @@ BEGIN
    IF (COALESCE(:old.TableName,'.')<>COALESCE(:NEW.TableName,'.')) THEN 
      UPDATE  AD_Sequence 
      SET     Name = :new.TableName, 
-    Updated=SysDate 
+    Updated=now() 
      WHERE   UPPER(Name) = UPPER(:old.TableName) 
        AND   IsTableID='Y'; 
    END IF; 
  END IF; -- Updating 
  
-END AD_Table_Trg
-
-
-
+END AD_TABLE_TRG
 ]]></body>
     </trigger>
   </database>

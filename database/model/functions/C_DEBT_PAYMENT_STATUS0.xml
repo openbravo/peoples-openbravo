@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_DEBT_PAYMENT_STATUS0">
     <function name="C_DEBT_PAYMENT_STATUS0" type="CHAR">
-      <parameter name="p_Debt_Payment_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_debt_payment_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -35,7 +37,6 @@ BEGIN
 
   RETURN v_Display;
 END C_DEBT_PAYMENT_STATUS0
-
 ]]></body>
     </function>
   </database>

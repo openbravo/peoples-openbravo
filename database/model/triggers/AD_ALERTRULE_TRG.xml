@@ -25,7 +25,7 @@
     ************************************************************************/
       TYPE RECORD IS REF CURSOR;
       Cur_Role RECORD;
-      recipient_id number(10);
+      recipient_id NUMBER(10);
     BEGIN
 
     IF INSERTING THEN
@@ -77,10 +77,7 @@
      DELETE FROM AD_AlertRecipient
       WHERE AD_AlertRule_ID=:old.AD_AlertRule_ID;
    END IF;
-END AD_AlertRule_Trg 
-
-
-
+END AD_ALERTRULE_TRG
 ]]></body>
     </trigger>
   </database>

@@ -58,9 +58,7 @@ BEGIN
       SET GLItemAmt=COALESCE(GLItemAmt, 0) + v_Qty
     WHERE C_Debt_Payment_ID=:old.C_Debt_Payment_ID;
   END IF;
-END C_Debt_Payment_Bal_Trg 
-
-
+END C_DEBT_PAYMENT_BAL_TRG
 ]]></body>
     </trigger>
   </database>

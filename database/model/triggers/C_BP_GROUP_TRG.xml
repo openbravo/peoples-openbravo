@@ -31,7 +31,7 @@
     ************************************************************************/
     TYPE RECORD IS REF CURSOR;
   Cur_Defaults RECORD;
-  v_acc_id number(10) ;
+  v_acc_id NUMBER(10) ;
 BEGIN
   FOR Cur_Defaults IN
     (
@@ -64,7 +64,7 @@ BEGIN
       (
         v_acc_id, :new.C_BP_Group_ID, Cur_Defaults.C_AcctSchema_ID,
         :new.AD_Client_ID, :new.AD_ORG_ID, 'Y',
-        SysDate, :new.CreatedBy, SysDate,
+        now(), :new.CreatedBy, now(),
         :new.UpdatedBy, Cur_Defaults.C_Receivable_Acct, Cur_Defaults.C_PrePayment_Acct,
         Cur_Defaults.V_Liability_Acct, Cur_Defaults.V_Liability_Services_Acct, Cur_Defaults.V_PrePayment_Acct,
         Cur_Defaults.PayDiscount_Exp_Acct, Cur_Defaults.PayDiscount_Rev_Acct, Cur_Defaults.WriteOff_Acct,
@@ -74,9 +74,7 @@ BEGIN
       )
       ;
   END LOOP;
-END C_BP_Group_Trg 
-
-
+END C_BP_GROUP_TRG
 ]]></body>
     </trigger>
   </database>

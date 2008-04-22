@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_BP_SOCREDITUSED_REFRESH">
     <function name="C_BP_SOCREDITUSED_REFRESH" type="NULL">
-      <parameter name="p_BPartner_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_bpartner_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -28,8 +30,6 @@ BEGIN
     )
   WHERE C_BPartner_ID=p_BPartner_ID;
 END C_BP_SOCREDITUSED_REFRESH
-
-
 ]]></body>
     </function>
   </database>

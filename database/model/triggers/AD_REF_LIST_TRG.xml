@@ -61,15 +61,12 @@
  THEN
     UPDATE AD_Ref_List_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE AD_Ref_List_ID=:new.AD_Ref_List_ID;
   END IF;
  END IF;
 -- Updating
-END AD_Ref_List_Trg
-
-
-
+END AD_REF_LIST_TRG
 ]]></body>
     </trigger>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_TAXPAYMENT_POST">
     <function name="C_TAXPAYMENT_POST" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -21,12 +23,12 @@
 v_resultstr VARCHAR2(2000) := '';
 v_message VARCHAR2(200) := '';
 v_record_id NUMBER;
-v_result NUMBER := 1;
+v_result NUMBER:= 1;
 -- Success
 v_total NUMBER;
 v_c_settlement_cancel_id NUMBER;
 -- Parameter
-TYPE record IS ref CURSOR;
+TYPE record IS REF CURSOR;
 cur_parameter record;
 cur_registertype record;
 cur_line record;
@@ -37,51 +39,51 @@ v_updatedby c_taxpayment.updatedby%TYPE;
 v_createdby c_taxpayment.createdby%TYPE;
 v_processed c_taxpayment.processed%TYPE;
 
-v_taxtotalamt number;
-v_prevvatcredit number;
-v_paymentamt number;
-v_paymentcreditamt number;
-v_paymentdebitamt number;
+v_taxtotalamt NUMBER;
+v_prevvatcredit NUMBER;
+v_paymentamt NUMBER;
+v_paymentcreditamt NUMBER;
+v_paymentdebitamt NUMBER;
 v_isreceipt VARCHAR2(1);
 v_ispayment VARCHAR2(1);
 
-v_taxamtfromreglines number;
+v_taxamtfromreglines NUMBER;
 
-v_taxregistertotal number;
+v_taxregistertotal NUMBER;
 
 v_date DATE;
-v_settlementid number;
+v_settlementid NUMBER;
 v_settlementdoctype_id NUMBER;
 v_sdocumentno NUMBER;
-v_debtpaymentid number;
-v_debtpaymentbalancingid number;
+v_debtpaymentid NUMBER;
+v_debtpaymentbalancingid NUMBER;
 v_paymentrule VARCHAR2(30);
-v_bpartner_id number;
+v_bpartner_id NUMBER;
 
 
-v_gl_journalbatchid number;
-v_gljbdocumentno number;
-v_gl_journaldoctype_id number;
-v_gl_journalid number;
-v_gljdocumentno number;
-v_gl_journallineid number;
-v_line number;
-v_validcombination_id number;
+v_gl_journalbatchid NUMBER;
+v_gljbdocumentno NUMBER;
+v_gl_journaldoctype_id NUMBER;
+v_gl_journalid NUMBER;
+v_gljdocumentno NUMBER;
+v_gl_journallineid NUMBER;
+v_line NUMBER;
+v_validcombination_id NUMBER;
 
-v_glitem_acct number;
-v_glitem_id number;
+v_glitem_acct NUMBER;
+v_glitem_id NUMBER;
 
-v_debit number;
-v_credit number;
- v_totaldebit number;
-v_totalcredit number;
+v_debit NUMBER;
+v_credit NUMBER;
+ v_totaldebit NUMBER;
+v_totalcredit NUMBER;
 
 
-v_acctschema_id number; 
-v_currency_id number; 
+v_acctschema_id NUMBER; 
+v_currency_id NUMBER; 
 v_currencyratetype VARCHAR2(30); 
-v_gl_category_id number;
-v_period_id number; 
+v_gl_category_id NUMBER;
+v_period_id NUMBER; 
 
 v_name NVARCHAR2(255); 
 
@@ -93,7 +95,7 @@ BEGIN
   --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_pinstance_id);
     v_resultstr := 'PInstanceNotFound';
-    ad_update_pinstance(p_pinstance_id,   NULL,   'Y',   NULL,   NULL);
+    AD_UPDATE_PINSTANCE(p_pinstance_id,   NULL,   'Y',   NULL,   NULL);
     -- Get Parameters
     v_resultstr := 'ReadingParameters';
     FOR cur_parameter IN
@@ -170,16 +172,16 @@ BEGIN
    if v_processed='N' then
    begin
       --gl journal 
-        ad_sequence_next('GL_JournalBatch',   v_record_id,   v_gl_journalbatchid);
-        ad_sequence_doc('DocumentNo_GL_JournalBatch',   v_client_id,   'Y',   v_gljbdocumentno);
+        ad_sequence_next('GL_JournalBatch', v_record_id, v_gl_journalbatchid);
+        ad_sequence_doc('DocumentNo_GL_JournalBatch', v_client_id, 'Y', v_gljbdocumentno);
         
         insert 
         into gl_journalbatch (gl_journalbatch_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby,   documentno, description, postingtype,   datedoc,   dateacct, c_period_id, c_currency_id)
         values (v_gl_journalbatchid, v_client_id, v_org_id,'Y', now(), v_createdby, now(), v_updatedby, v_gljbdocumentno, v_name, 'A', v_date, v_date, v_period_id, v_currency_id); 
       
         v_gl_journaldoctype_id := ad_get_doctype(v_client_id,   v_org_id,   to_char('GLJ'));
-        ad_sequence_next('GL_Journal',   v_record_id,   v_gl_journalid);
-        ad_sequence_doctype(v_gl_journaldoctype_id,   v_record_id,   'Y',   v_gljdocumentno);
+        ad_sequence_next('GL_Journal', v_record_id, v_gl_journalid);
+        ad_sequence_doctype(v_gl_journaldoctype_id, v_record_id, 'Y', v_gljdocumentno);
       
         insert 
         into gl_journal (gl_journal_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby, c_acctschema_id, c_doctype_id, documentno, docstatus, docaction, isapproved,description, postingtype, gl_category_id,   datedoc,   dateacct, c_period_id, c_currency_id, currencyratetype, gl_journalbatch_id)
@@ -211,7 +213,7 @@ BEGIN
       and trt.issotrx=cur_line.issotrx
       and tr.c_taxpayment_id=v_record_id;
       
-      ad_sequence_next('GL_JournalLine',   v_record_id,   v_gl_journallineid);
+      ad_sequence_next('GL_JournalLine', v_record_id, v_gl_journallineid);
       
          
       if v_taxamtfromreglines is null then
@@ -258,7 +260,7 @@ BEGIN
         end if;
       
       v_line := v_line + 10;
-      ad_sequence_next('GL_JournalLine',   v_record_id,   v_gl_journallineid);
+      ad_sequence_next('GL_JournalLine', v_record_id, v_gl_journallineid);
      insert 
      into gl_journalline(gl_journalline_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby, gl_journal_id,    line, c_currency_id, currencyratetype, dateacct, c_validcombination_id, AMTSOURCEDR, AMTSOURCECR, AMTACCTDR, AMTACCTCR)
                  values (v_gl_journallineid,   v_client_id,      v_org_id,        'Y',     now(), v_createdby,   now(), v_updatedby, v_gl_journalid, v_line, v_currency_id, v_currencyratetype, v_date, v_glitem_acct, v_totaldebit, v_totalcredit, v_totaldebit, v_totalcredit);
@@ -275,11 +277,11 @@ BEGIN
       if v_ispayment='Y' then
       
         v_settlementdoctype_id := ad_get_doctype(v_client_id,   v_org_id,   to_char('STM'));
-        ad_sequence_next('C_Settlement',   v_record_id,   v_settlementid);
-        ad_sequence_doctype(v_settlementdoctype_id,   v_record_id,   'Y',   v_sdocumentno);
+        ad_sequence_next('C_Settlement', v_record_id, v_settlementid);
+        ad_sequence_doctype(v_settlementdoctype_id, v_record_id, 'Y', v_sdocumentno);
 
         IF(v_sdocumentno IS NULL) THEN --to do send by mail
-        ad_sequence_doc('DocumentNo_C_Settlement',   v_client_id,   'Y',   v_sdocumentno);
+        ad_sequence_doc('DocumentNo_C_Settlement', v_client_id, 'Y', v_sdocumentno);
         END IF;
       
         INSERT
@@ -341,14 +343,14 @@ BEGIN
       end if;
     
       
-        ad_sequence_next('C_Debt_Payment',   v_record_id,   v_debtpaymentid);
+        ad_sequence_next('C_Debt_Payment', v_record_id, v_debtpaymentid);
       
         INSERT
          INTO c_debt_payment(c_debt_payment_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby,   isreceipt,   c_settlement_cancel_id,   c_settlement_generate_id,   description,   c_invoice_id,   c_bpartner_id,   c_currency_id,   c_cashline_id,   c_bankaccount_id,   c_cashbook_id,   paymentrule,   ispaid,   amount,   writeoffamt,   dateplanned,   ismanual,   isvalid,   c_bankstatementline_id,   changesettlementcancel,   cancel_processed,   generate_processed,   c_project_id,   status,   status_initial)
           VALUES(v_debtpaymentid,   v_client_id,   v_org_id,   'Y',   now(),   v_createdby,   now(),   v_updatedby,   v_isreceipt,   NULL,   v_settlementid, v_name,   NULL,   v_bpartner_id,   v_currency_id,   NULL,   NULL,   NULL,   v_paymentrule,   'N',  v_paymentamt ,   0,   v_date,   'Y',   'Y',   NULL,   'N',   'N',   'Y',   null,   'DE',   'DE');
       
  
-      ad_sequence_next('C_Debt_Payment_Balancing',   v_record_id,   v_debtpaymentbalancingid);
+      ad_sequence_next('C_Debt_Payment_Balancing', v_record_id, v_debtpaymentbalancingid);
       
        insert
        into c_debt_payment_balancing(c_debt_payment_balancing_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby, c_debt_payment_id, AMOUNTDEBIT, AMOUNTCREDIT, C_GLITEM_ID)
@@ -382,18 +384,13 @@ BEGIN
      IF(p_pinstance_id IS NOT NULL) THEN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished');
-    ad_update_pinstance(p_pinstance_id,   v_updatedby,   'N',   v_result,   v_message);
+    AD_UPDATE_PINSTANCE(p_pinstance_id,   v_updatedby,   'N',   v_result,   v_message);
     ELSE
     DBMS_OUTPUT.PUT_LINE('--<<C_TaxPayment_Post finished>> ' || v_message);
     END IF;
      
      RETURN;
-     
 END C_TAXPAYMENT_POST
-
-
-
-
 ]]></body>
     </function>
   </database>

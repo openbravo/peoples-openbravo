@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_INDIRECT_COST_CALCULATE">
     <function name="MA_INDIRECT_COST_CALCULATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -21,7 +23,7 @@
 -- Logistice
 v_record_id NUMBER;
 v_resultstr VARCHAR2(2000);
-v_result NUMBER := 1;
+v_result NUMBER:= 1;
 v_message VARCHAR2(2000);
 p_user NUMBER;
 v_total NUMBER;
@@ -33,7 +35,7 @@ BEGIN
 
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_pinstance_id);
-  ad_update_pinstance(p_pinstance_id,   NULL,   'Y',   NULL,   NULL);
+  AD_UPDATE_PINSTANCE(p_pinstance_id,   NULL,   'Y',   NULL,   NULL);
 
   BEGIN
     --BODY
@@ -78,7 +80,7 @@ BEGIN
   --<<FINISH_PROCESS>>
   --  Update AD_PInstance
   DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_message);
-  ad_update_pinstance(p_pinstance_id,   p_user,   'N',   v_result,   v_message);
+  AD_UPDATE_PINSTANCE(p_pinstance_id,   p_user,   'N',   v_result,   v_message);
   RETURN;
 
 END;
@@ -89,12 +91,9 @@ WHEN others THEN
   ROLLBACK;
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_resultstr);
-  ad_update_pinstance(p_pinstance_id,   NULL,   'N',   0,   v_resultstr);
+  AD_UPDATE_PINSTANCE(p_pinstance_id,   NULL,   'N',   0,   v_resultstr);
   RETURN;
-
-END ma_indirect_cost_calculate
-
-
+END MA_INDIRECT_COST_CALCULATE
 ]]></body>
     </function>
   </database>

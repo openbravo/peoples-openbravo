@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION FRIE_NAME">
     <function name="FRIE_NAME" type="VARCHAR">
-      <parameter name="p_Name" type="VARCHAR" mode="in"/>
+      <parameter name="p_name" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -78,8 +80,7 @@ BEGIN
   END IF;
   --
   RETURN TRIM(v_RetValue) ;
-END FRIE_Name
-
+END FRIE_NAME
 ]]></body>
     </function>
   </database>

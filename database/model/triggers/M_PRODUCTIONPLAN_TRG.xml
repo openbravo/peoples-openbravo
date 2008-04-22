@@ -65,9 +65,7 @@ BEGIN
       END IF;
     END IF;
   END IF;
-END M_ProductionPlan_Trg 
-
-
+END M_PRODUCTIONPLAN_TRG
 ]]></body>
     </trigger>
   </database>

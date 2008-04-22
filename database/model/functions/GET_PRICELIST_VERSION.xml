@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GET_PRICELIST_VERSION">
     <function name="GET_PRICELIST_VERSION" type="NUMERIC">
-      <parameter name="p_Pricelist_Id" type="NUMERIC" mode="in"/>
-      <parameter name="p_Date" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_pricelist_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_date" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -38,8 +42,7 @@
       EXIT;
     END LOOP;
     RETURN v_M_PriceList_Version_ID;
-END Get_Pricelist_Version 
-
+END GET_PRICELIST_VERSION
 ]]></body>
     </function>
   </database>

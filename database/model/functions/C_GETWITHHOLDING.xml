@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_GETWITHHOLDING">
     <function name="C_GETWITHHOLDING" type="NUMERIC">
-      <parameter name="id_invoice_in" type="NUMERIC" mode="in"/>
+      <parameter name="id_invoice_in" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[-- Creata da Francesco Finamore il 03/12/2007 per il calcolo della ritenuta di acconto
 
 --Cursori usati
@@ -13,23 +15,23 @@ TYPE RECORD IS REF CURSOR;
     curTaxInps     RECORD;
 
 --Business Partner
-IdBusPart Number;
+IdBusPart NUMBER;
 --Business Partner WithHolding
-IdWithHolding Number;
+IdWithHolding NUMBER;
 IsIncludedTax char(1);
-IdTax Number;
+IdTax NUMBER;
 IsPercentWh char(1);
-baseamountpercent Number;
+baseamountpercent NUMBER;
 --WithHolding
-withpercent number;
+withpercent NUMBER;
 --Tax
 IsWithHoldingTax char(1);
 
-TotCompensi number;
-base_amount number;
-Withholding number;
-TaxInps number;
-TaxAmount number;
+TotCompensi NUMBER;
+base_amount NUMBER;
+Withholding NUMBER;
+TaxInps NUMBER;
+TaxAmount NUMBER;
 
 BEGIN
 Withholding:=0;
@@ -125,12 +127,7 @@ Withholding:=(withpercent*base_amount)/100;
 
 
 Return Withholding;
-
-
 END C_GETWITHHOLDING
-
-
-
 ]]></body>
     </function>
   </database>

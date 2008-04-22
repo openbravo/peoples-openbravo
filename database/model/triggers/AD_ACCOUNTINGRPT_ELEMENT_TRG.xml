@@ -102,9 +102,7 @@ BEGIN
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20002, 'AD_AccountingRpt_Element InsertTrigger Error: No ClientInfo or parent TreeNode') ;
   */
-END AD_Accountingrpt_Element_Trg
-
-
+END AD_ACCOUNTINGRPT_ELEMENT_TRG
 ]]></body>
     </trigger>
   </database>

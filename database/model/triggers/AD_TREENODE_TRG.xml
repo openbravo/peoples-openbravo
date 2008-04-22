@@ -47,9 +47,7 @@ BEGIN
       END IF;
     END IF;
   END IF;
-END AD_TreeNode_Trg 
-
-
+END AD_TREENODE_TRG
 ]]></body>
     </trigger>
   </database>

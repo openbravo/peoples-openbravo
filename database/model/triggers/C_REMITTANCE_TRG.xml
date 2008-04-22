@@ -42,25 +42,22 @@ BEGIN
              OR (COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0))
             )
        ) THEN
-      RAISE_APPLICATION_ERROR (-20501, 'Document processed/posted');
+      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
     END IF;
   END IF;
 
   IF (INSERTING) THEN
     IF (:NEW.processed = 'Y') THEN
-      RAISE_APPLICATION_ERROR (-20501, 'Document processed/posted');
+      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
     END IF;
   END IF;
 
   IF (DELETING) THEN
     IF (:OLD.processed = 'Y') THEN
-      RAISE_APPLICATION_ERROR (-20501, 'Document processed/posted');
+      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
     END IF;
   END IF;
-END c_remittance_trg 
-
-
-
+END C_REMITTANCE_TRG
 ]]></body>
     </trigger>
   </database>

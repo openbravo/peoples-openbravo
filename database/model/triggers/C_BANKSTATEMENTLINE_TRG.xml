@@ -56,9 +56,7 @@ BEGIN
     SET StatementDifference=StatementDifference + v_Difference,
     EndingBalance=EndingBalance + v_Difference
   WHERE C_BankStatement_ID=v_ID;
-END C_BankStatementLine_Trg 
-
-
+END C_BANKSTATEMENTLINE_TRG
 ]]></body>
     </trigger>
   </database>

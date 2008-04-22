@@ -1,12 +1,24 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CURRENCY_RATE">
     <function name="C_CURRENCY_RATE" type="NUMERIC">
-      <parameter name="p_CurFrom_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_CurTo_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_ConvDate" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_RateType" type="CHAR" mode="in"/>
-      <parameter name="p_Client_ID" type="NUMERIC" mode="in" default="0"/>
-      <parameter name="p_Org_ID" type="NUMERIC" mode="in" default="0"/>
+      <parameter name="p_curfrom_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_curto_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_convdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ratetype" type="CHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_client_id" type="NUMERIC" mode="in">
+        <default><![CDATA[0]]></default>
+      </parameter>
+      <parameter name="p_org_id" type="NUMERIC" mode="in">
+        <default><![CDATA[0]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -49,7 +61,7 @@ Inc.
   v_CurrencyTo   NUMBER;
   v_CurrencyEuro NUMBER;
   --
-  v_ConvDate DATE := SysDate;
+  v_ConvDate DATE := now();
   v_RateType CHAR := 'S';
   v_Rate     NUMBER;
 BEGIN
@@ -67,7 +79,7 @@ BEGIN
   -- Get Currency Info
   SELECT to_char(max(IsEuro)),
     to_char(max(IsEMUMember)),
-    to_date(MAX(EMUEntryDate)),
+    TO_DATE(MAX(EMUEntryDate)),
     MAX(EMURate)
   INTO   v_cf_IsEuro,
     v_cf_IsEMUMember,
@@ -169,8 +181,7 @@ EXCEPTION
 WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(SQLERRM) ;
   RETURN NULL;
-END C_Currency_Rate
-
+END C_CURRENCY_RATE
 ]]></body>
     </function>
   </database>

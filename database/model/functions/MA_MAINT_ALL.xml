@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_MAINT_ALL">
     <function name="MA_MAINT_ALL" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -87,7 +89,7 @@
       )
     LOOP
       DBMS_OUTPUT.PUT_LINE('  MA_Maintenance_ID=' || Cur_Maintenance.MA_Maintenance_ID) ;
-      MA_Maintenance_Schedule(NULL, Cur_Maintenance.MA_Maintenance_ID, v_InitDate, v_EndDate, v_Client_ID, v_Org_ID, v_AD_User_ID) ;
+      MA_MAINTENANCE_SCHEDULE(NULL, Cur_Maintenance.MA_Maintenance_ID, v_InitDate, v_EndDate, v_Client_ID, v_Org_ID, v_AD_User_ID) ;
     END LOOP;
     --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -128,9 +130,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   RETURN;
-END MA_Maint_All
-
-
+END MA_MAINT_ALL
 ]]></body>
     </function>
   </database>

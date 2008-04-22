@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INVENTORY_LISTCREATE">
     <function name="M_INVENTORY_LISTCREATE" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -193,7 +195,7 @@
   END IF;--END_PROCESS
   IF(NOT END_PROCESS) THEN
     v_ResultStr:='ReadingInventoryLine';
-    SELECT COALESCE(MAX(Line)+10, 10) -- BugFix: [1788358] On Inventory the \"create count\" may repeat line numbers
+    SELECT COALESCE(MAX(Line)+10, 10) -- BugFix: [1788358] On Inventory the "create count" may repeat line numbers
     INTO v_NextLine
     FROM M_InventoryLine
     WHERE M_Inventory_ID=v_Record_ID;
@@ -283,7 +285,7 @@
             QUANTITYORDER=Cur_Storage.QtyOnHandOrder,
             QUANTITYORDERBOOK=Cur_Storage.QtyOnHandOrder,
             M_Product_UOM_ID=Cur_Storage.M_Product_UOM_ID,
-            Updated=SysDate,
+            Updated=now(),
             UpdatedBy=0
           WHERE M_Inventory_ID=v_Record_ID
             AND M_Product_ID=Cur_Storage.M_Product_ID
@@ -312,9 +314,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END M_Inventory_ListCreate
-
-
+END M_INVENTORY_LISTCREATE
 ]]></body>
     </function>
   </database>

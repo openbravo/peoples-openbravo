@@ -55,16 +55,12 @@
     -- Translation
     UPDATE C_CURRENCY_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE C_CURRENCY_ID=:new.C_CURRENCY_ID;
   END IF;
  END IF;
 -- Updating
-END C_CURRENCY_Trg
-
-
-
-
+END C_CURRENCY_TRG
 ]]></body>
     </trigger>
   </database>

@@ -19,13 +19,14 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_Count NUMBER := 0;
+  v_Count NUMBER:= 0;
 BEGIN
 
   SELECT COUNT(*) INTO v_Count FROM AD_REGISTRATION_INFO;
   IF (v_Count <> 0) THEN
     RAISE_APPLICATION_ERROR(-20528,'Only one registration permitted.');
   END IF;
-END AD_REGISTRATION_INFO_TRG]]></body>
+END AD_REGISTRATION_INFO_TRG
+]]></body>
     </trigger>
   </database>

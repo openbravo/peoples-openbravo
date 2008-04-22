@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION R_REQUEST_REOPEN">
     <function name="R_REQUEST_REOPEN" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -111,9 +113,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END R_Request_ReOpen
-
-
+END R_REQUEST_REOPEN
 ]]></body>
     </function>
   </database>

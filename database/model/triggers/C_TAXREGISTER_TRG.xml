@@ -34,13 +34,7 @@ V_PROCESSING VARCHAR2(1);
      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
    END IF;
   END IF;
-END C_TAXREGISTER_TRG 
-
-
-
-
-
-
+END C_TAXREGISTER_TRG
 ]]></body>
     </trigger>
   </database>

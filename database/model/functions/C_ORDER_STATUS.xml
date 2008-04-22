@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ORDER_STATUS">
     <function name="C_ORDER_STATUS" type="CHAR">
-      <parameter name="p_OrderID" type="NUMERIC" mode="in"/>
+      <parameter name="p_orderid" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -73,7 +75,7 @@ BEGIN
       FROM C_Order
       WHERE C_Order_ID = p_OrderID
         AND grandtotal <>
-        (SELECT SUM(C_Currency_Convert(Amount, C_Debt_Payment.C_Currency_ID, C_Order.C_Currency_ID, to_date(now()), null, null, null))
+        (SELECT SUM(C_Currency_Convert(Amount, C_Debt_Payment.C_Currency_ID, C_Order.C_Currency_ID, TO_DATE(now()), null, null, null))
         FROM C_Debt_Payment
         WHERE C_Order_ID = p_OrderID
           AND C_Debt_Payment_Paid(C_Debt_Payment_ID) = 'Y'
@@ -95,8 +97,7 @@ BEGIN
     END IF;
   END IF;
   RETURN v_Status;
-END C_Order_Status
-
+END C_ORDER_STATUS
 ]]></body>
     </function>
   </database>

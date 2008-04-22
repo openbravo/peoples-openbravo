@@ -24,9 +24,7 @@
 
 BEGIN
   DELETE FROM C_ACCTSCHEMA_TABLE WHERE C_ACCTSCHEMA_ID=:old.C_ACCTSCHEMA_ID;
-END C_AcctSchemaDel_Trg 
-
-
+END C_ACCTSCHEMADEL_TRG
 ]]></body>
     </trigger>
   </database>

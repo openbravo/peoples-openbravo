@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GET_PURCHASE_PRICE">
     <function name="GET_PURCHASE_PRICE" type="NUMERIC">
-      <parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_product_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -84,8 +86,7 @@
       v_Price := 0;
     END IF;
     RETURN v_Price;
-END Get_Purchase_Price
-
+END GET_PURCHASE_PRICE
 ]]></body>
     </function>
   </database>

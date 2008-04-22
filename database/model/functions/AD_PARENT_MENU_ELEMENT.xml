@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_PARENT_MENU_ELEMENT">
     <function name="AD_PARENT_MENU_ELEMENT" type="VARCHAR">
-      <parameter name="p_NodeID" type="NUMERIC" mode="in"/>
-      <parameter name="p_clientID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Language" type="VARCHAR" mode="in"/>
+      <parameter name="p_nodeid" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_clientid" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_language" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -59,7 +65,6 @@ BEGIN
   END LOOP;
   RETURN(v_Name) ;
 END AD_PARENT_MENU_ELEMENT
-
 ]]></body>
     </function>
   </database>

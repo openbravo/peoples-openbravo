@@ -35,10 +35,7 @@
     :NEW.QuantityOrderBook:=NULL;
   END IF;
  END IF;
-END M_InventoryLine2_Trg
-
-
-
+END M_INVENTORYLINE2_TRG
 ]]></body>
     </trigger>
   </database>

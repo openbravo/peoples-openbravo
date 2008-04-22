@@ -55,11 +55,7 @@
   END IF;
  END IF;
 -- UPDATING
-END AD_Desktop_Trg
-
-
-
-
+END AD_DESKTOP_TRG
 ]]></body>
     </trigger>
   </database>

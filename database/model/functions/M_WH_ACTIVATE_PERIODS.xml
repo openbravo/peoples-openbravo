@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_WH_ACTIVATE_PERIODS">
     <function name="M_WH_ACTIVATE_PERIODS" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -108,9 +110,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   END IF;
   RETURN;
-END M_Wh_Activate_Periods
-
-
+END M_WH_ACTIVATE_PERIODS
 ]]></body>
     </function>
   </database>

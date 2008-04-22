@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_DELETE_CLIENT">
     <function name="AD_DELETE_CLIENT" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/************************************************************************* 
 * The contents of this file are subject to the Openbravo  Public  License 
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License 
@@ -131,7 +135,7 @@
     v_seqNo := ad_script_enable_triggers(v_seqNo);
     -- Update sequence values 
     v_ResultStr:='Updating sequences'; 
-    Ad_Update_Sequence_Generate() ; 
+    AD_UPDATE_SEQUENCE_GENERATE() ; 
     v_ResultStr:='Executing';
     v_ResultStr := ad_script_execute(v_ResultStr);
 
@@ -177,9 +181,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   END IF;
 --  RETURN;
-END AD_Delete_Client
-
-
+END AD_DELETE_CLIENT
 ]]></body>
     </function>
   </database>

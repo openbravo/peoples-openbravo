@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_REQUISITIONLINE_STATUS">
     <function name="M_REQUISITIONLINE_STATUS" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_RequisitionLine_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_User_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_requisitionline_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_user_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -91,6 +97,7 @@ WHEN OTHERS THEN
   ELSE
     RAISE;
   END IF;
-END M_REQUISITIONLINE_STATUS]]></body>
+END M_REQUISITIONLINE_STATUS
+]]></body>
     </function>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION CHANGEPROJECTSTATUS">
     <function name="CHANGEPROJECTSTATUS" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -20,7 +22,7 @@
 ************************************************************************/
   v_resultstr         VARCHAR2 (2000) := '';
   v_message           VARCHAR2 (2000) := '';
-  v_result            NUMBER          := 1;                      -- 0=failure
+  v_result NUMBER:= 1;                      -- 0=failure
   v_record_id         NUMBER;
   v_ad_user_id        NUMBER;
 
@@ -29,7 +31,7 @@
   cur_parameter       RECORD;
   v_p_projectstatus   CHAR (2);
   v_projectstatus     CHAR (2);
-  v_created           NUMBER          := 0;
+  v_created NUMBER:= 0;
   finish_process      BOOLEAN         := FALSE;
 BEGIN
   -- Get Parameters
@@ -49,13 +51,13 @@ BEGIN
     IF (cur_parameter.parametername = 'ChangeProjectStatus')
     THEN
       v_p_projectstatus := cur_parameter.p_string;
-      DBMS_OUTPUT.PUT_LINE ('  ChangeProjectStatus=' || v_p_projectstatus);
+      DBMS_OUTPUT.PUT_LINE('  ChangeProjectStatus=' || v_p_projectstatus);
     ELSE
-      DBMS_OUTPUT.PUT_LINE ('*** Unknown Parameter='|| cur_parameter.parametername);
+      DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter='|| cur_parameter.parametername);
     END IF;
   END LOOP;                                                   -- Get Parameter
 
-  DBMS_OUTPUT.PUT_LINE ('  Record_ID=' || v_record_id);
+  DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_record_id);
   -- Check that we have some restrictions
   v_resultstr := 'CheckRestriction';
 
@@ -98,10 +100,10 @@ BEGIN
   THEN
     IF v_p_projectstatus = 'OR'
     THEN
-      changeprojectstatustoorder (p_pinstance_id);
+      CHANGEPROJECTSTATUSTOORDER(p_pinstance_id);
     ELSIF v_p_projectstatus = 'OC'
     THEN
-      closeproject (p_pinstance_id);
+      CLOSEPROJECT(p_pinstance_id);
     ELSE
       UPDATE c_project
          SET projectstatus = v_p_projectstatus
@@ -115,20 +117,18 @@ BEGIN
 
   --<<FINISH_PROCESS>>
   --  Update AD_PInstance
-  DBMS_OUTPUT.PUT_LINE ('Updating PInstance - Finished ' || v_message);
-  ad_update_pinstance (p_pinstance_id, NULL, 'N', v_result, v_message);
+  DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_message);
+  AD_UPDATE_PINSTANCE(p_pinstance_id, NULL, 'N', v_result, v_message);
   RETURN;
 EXCEPTION
   WHEN OTHERS
   THEN
     v_resultstr:= '@ERROR=' || SQLERRM;
-    DBMS_OUTPUT.PUT_LINE (v_resultstr);
+    DBMS_OUTPUT.PUT_LINE(v_resultstr);
     ROLLBACK;
-    ad_update_pinstance (p_pinstance_id, NULL, 'N', 0, v_resultstr);
+    AD_UPDATE_PINSTANCE(p_pinstance_id, NULL, 'N', 0, v_resultstr);
 -- Commented by cromero 19102006 RETURN;
-END changeprojectstatus
-
-
+END CHANGEPROJECTSTATUS
 ]]></body>
     </function>
   </database>

@@ -68,7 +68,7 @@ BEGIN
         VALUES
         (
           v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID,  'Y',
-          SYSDATE, :new.CREATEDBY, SYSDATE,
+          now(), :new.CREATEDBY, now(),
           :new.UPDATEDBY,  'C', :new.AD_CALLOUT_ID,
            'org.openbravo.erpCommon.' || v_WindowName || '.' || v_ClassName, 'Y'
         )
@@ -85,16 +85,14 @@ BEGIN
         VALUES
         (
           v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID,
-           'Y', SYSDATE, :new.CREATEDBY,
-          SYSDATE, :new.UPDATEDBY, v_ID,
+           'Y', now(), :new.CREATEDBY,
+          now(), :new.UPDATEDBY, v_ID,
           ('/' || v_WindowName || '/' || v_ClassName || '.html'), 'Y'
         )
         ;
     END IF;
   END IF;
-END AD_Callout_Trg
-
-
+END AD_CALLOUT_TRG
 ]]></body>
     </trigger>
   </database>

@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION BOM_QTY_ONHAND">
     <function name="BOM_QTY_ONHAND" type="NUMERIC">
-      <parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Warehouse_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Locator_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_product_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_warehouse_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_locator_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -136,8 +142,7 @@ Inc.
     RETURN ROUND(v_Quantity, v_StdPrecision) ;
   END IF;
   RETURN 0;
-END Bom_Qty_Onhand 
-
+END BOM_QTY_ONHAND
 ]]></body>
     </function>
   </database>

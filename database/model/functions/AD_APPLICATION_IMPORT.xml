@@ -1,21 +1,51 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_APPLICATION_IMPORT">
     <function name="AD_APPLICATION_IMPORT" type="NULL">
-      <parameter name="p_tableIdFrom" type="NUMERIC" mode="in"/>
-      <parameter name="p_tableIdTo" type="NUMERIC" mode="in"/>
-      <parameter name="p_windowIdFrom" type="NUMERIC" mode="in"/>
-      <parameter name="p_windowIdTo" type="NUMERIC" mode="in"/>
-      <parameter name="p_referenceIdFrom" type="NUMERIC" mode="in"/>
-      <parameter name="p_referenceIdTo" type="NUMERIC" mode="in"/>
-      <parameter name="p_valruleIdFrom" type="NUMERIC" mode="in"/>
-      <parameter name="p_valruleIdTo" type="NUMERIC" mode="in"/>
-      <parameter name="p_elementIdFrom" type="NUMERIC" mode="in"/>
-      <parameter name="p_elementIdTo" type="NUMERIC" mode="in"/>
-      <parameter name="p_menuIdFrom" type="NUMERIC" mode="in"/>
-      <parameter name="p_menuIdTo" type="NUMERIC" mode="in"/>
-      <parameter name="p_sequenceIdFrom" type="NUMERIC" mode="in"/>
-      <parameter name="p_sequenceIdTo" type="NUMERIC" mode="in"/>
-      <parameter name="p_baseinstalation" type="CHAR" mode="in"/>
+      <parameter name="p_tableidfrom" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_tableidto" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_windowidfrom" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_windowidto" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_referenceidfrom" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_referenceidto" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_valruleidfrom" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_valruleidto" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_elementidfrom" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_elementidto" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_menuidfrom" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_menuidto" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_sequenceidfrom" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_sequenceidto" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_baseinstalation" type="CHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/************************************************************************* 
 * The contents of this file are subject to the Openbravo  Public  License 
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License 
@@ -64,7 +94,7 @@ BEGIN
  --Next sequence number (blocking for update) 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_Table' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  --Mininum and maximum values of ID in TAX_AUX 
  SELECT MIN(AD_TABLE_ID)--, MAX(AD_TABLE_ID) 
  INTO v_minId--, v_maxId 
@@ -77,7 +107,7 @@ BEGIN
 --AD_Column 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_Column' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  SELECT MIN(AD_COLUMN_ID)--, MAX(AD_COLUMN_ID) 
  INTO v_minId--, v_maxId 
  FROM TAD_AUX.AD_COLUMN WHERE AD_TABLE_ID BETWEEN p_tableIdFrom AND p_tableIdTo; 
@@ -89,7 +119,7 @@ BEGIN
 --AD_Tab 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_Tab' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  SELECT MIN(AD_TAB_ID)--, MAX(AD_TAB_ID) 
  INTO v_minId--, v_maxId 
  FROM TAD_AUX.AD_TAB WHERE AD_TABLE_ID BETWEEN p_tableIdFrom AND p_tableIdTo; 
@@ -99,7 +129,7 @@ BEGIN
 --AD_Window 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_Window' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  SELECT MIN(AD_WINDOW_ID)--, MAX(AD_WINDOW_ID) 
  INTO v_minId--, v_maxId 
  FROM TAD_AUX.AD_WINDOW WHERE AD_WINDOW_ID IN 
@@ -111,7 +141,7 @@ BEGIN
 --AD_Field 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_Field' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  SELECT MIN(AD_FIELD_ID)--, MAX(AD_FIELD_ID) 
  INTO v_minId--, v_maxId 
  FROM TAD_AUX.AD_FIELD WHERE AD_TAB_ID IN 
@@ -122,7 +152,7 @@ BEGIN
 --AD_FieldGroup 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_FieldGroup' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  SELECT MIN(AD_FIELDGROUP_ID)--, MAX(AD_FIELDGROUP_ID) 
  INTO v_minId--, v_maxId 
  FROM TAD_AUX.AD_FIELDGROUP WHERE AD_FIELDGROUP_ID IN 
@@ -134,7 +164,7 @@ BEGIN
 --AD_Reference 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_Reference' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  SELECT MIN(AD_REFERENCE_ID)--, MAX(AD_REFERENCE_ID) 
  INTO v_minId--, v_maxId 
  FROM TAD_AUX.AD_REFERENCE WHERE AD_REFERENCE_ID BETWEEN p_referenceIdFrom AND p_referenceIdTo; 
@@ -144,7 +174,7 @@ BEGIN
 --AD_Ref_List 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_Ref_List' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  SELECT MIN(AD_REF_LIST_ID)--, MAX(AD_REF_LIST_ID) 
  INTO v_minId--, v_maxId 
  FROM TAD_AUX.AD_REF_LIST WHERE AD_REFERENCE_ID BETWEEN p_referenceIdFrom AND p_referenceIdTo; 
@@ -154,7 +184,7 @@ BEGIN
 --AD_Val_Rule 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_Val_Rule' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  SELECT MIN(AD_VAL_RULE_ID)--, MAX(AD_VAL_RULE_ID) 
  INTO v_minId--, v_maxId 
  FROM TAD_AUX.AD_VAL_RULE WHERE AD_VAL_RULE_ID BETWEEN p_valruleIdFrom AND p_valruleIdTo; 
@@ -164,7 +194,7 @@ BEGIN
 --AD_Element 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_Element' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  SELECT MIN(AD_ELEMENT_ID)--, MAX(AD_ELEMENT_ID) 
  INTO v_minId--, v_maxId 
  FROM TAD_AUX.AD_ELEMENT WHERE AD_ELEMENT_ID BETWEEN p_elementIdFrom AND p_elementIdTo; 
@@ -174,7 +204,7 @@ BEGIN
 --AD_Menu 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_Menu' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  SELECT MIN(AD_MENU_ID)--, MAX(AD_MENU_ID) 
  INTO v_minId--, v_maxId 
  FROM TAD_AUX.AD_MENU WHERE AD_MENU_ID BETWEEN p_menuIdFrom AND p_menuIdTo; 
@@ -184,7 +214,7 @@ BEGIN
 --AD_Sequence 
  SELECT CurrentNextSys INTO v_nextNo FROM AD_Sequence 
  WHERE Name='AD_Sequence' AND IsActive='Y' AND IsTableID='Y' AND IsAutoSequence='Y' 
- FOR UPDATE OF CurrentNextSys; 
+ FOR UPDATE OF CurrentNextSys;
  SELECT MIN(AD_SEQUENCE_ID)--, MAX(AD_SEQUENCE_ID) 
  INTO v_minId--, v_maxId 
  FROM TAD_AUX.AD_SEQUENCE WHERE AD_SEQUENCE_ID BETWEEN p_sequenceIdFrom AND p_sequenceIdTo; 
@@ -545,11 +575,7 @@ BEGIN
  
  --Se ejecuta el proceso AD_UPDATE_SEQUENCE 
  --AD_UPDATE_SEQUENCE(p_baseinstalation);  --mirar 
- 
- 
-END AD_Application_Import
-
-
+END AD_APPLICATION_IMPORT
 ]]></body>
     </function>
   </database>

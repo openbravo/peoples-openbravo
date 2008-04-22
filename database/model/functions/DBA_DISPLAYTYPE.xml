@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION DBA_DISPLAYTYPE">
     <function name="DBA_DISPLAYTYPE" type="VARCHAR">
-      <parameter name="p_AD_Reference_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_ad_reference_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[BEGIN
 /*************************************************************************
 * The contents of this file are subject to the Compiere License
@@ -77,8 +79,7 @@ Inc.
   ELSE
     RETURN 'Unknown ('||p_AD_Reference_ID||')';
   END IF;
-END DBA_DisplayType
-
+END DBA_DISPLAYTYPE
 ]]></body>
     </function>
   </database>

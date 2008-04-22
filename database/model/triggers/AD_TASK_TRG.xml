@@ -54,15 +54,12 @@
     -- Translation
     UPDATE AD_Task_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE AD_Task_ID=:new.AD_Task_ID;
   END IF;
  END IF;
 -- Updating
-END AD_Task_Trg
-
-
-
+END AD_TASK_TRG
 ]]></body>
     </trigger>
   </database>

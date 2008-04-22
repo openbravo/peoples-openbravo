@@ -49,10 +49,7 @@
         AND IsCentrallyMaintained='Y';
       END IF;
     END IF;
-END AD_Column_Trg
-
-
-
+END AD_COLUMN_TRG
 ]]></body>
     </trigger>
   </database>

@@ -63,15 +63,12 @@
  THEN
     UPDATE AD_Tab_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE AD_Tab_ID=:new.AD_Tab_ID;
   END IF;
  END IF;
 -- Updating
-END AD_Tab_Trg
-
-
-
+END AD_TAB_TRG
 ]]></body>
     </trigger>
   </database>

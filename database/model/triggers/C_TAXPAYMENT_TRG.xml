@@ -40,13 +40,7 @@
      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
    END IF;
   END IF;
-END C_TAXPAYMENT_TRG 
-
-
-
-
-
-
+END C_TAXPAYMENT_TRG
 ]]></body>
     </trigger>
   </database>

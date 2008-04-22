@@ -58,10 +58,7 @@ BEGIN
   :NEW.AMTACCTCR:=ROUND(COALESCE(:NEW.AMTSOURCECR, 0) *v_rate, v_StdPrecision) ;
   :NEW.CURRENCYRATE:=v_rate;
   :NEW.CURRENCYRATETYPE:=v_CurrencyRateType;
-END GL_JournalLine2_Trg
-
-
-
+END GL_JOURNALLINE2_TRG
 ]]></body>
     </trigger>
   </database>

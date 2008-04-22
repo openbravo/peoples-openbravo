@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_COPY_CLIENT">
     <function name="AD_COPY_CLIENT" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -62,7 +64,7 @@
     v_oldId NUMBER:=0;
     v_dynamic_select VARCHAR2(4000):='';
   TYPE TYPE_Ref IS REF CURSOR;
-    v_rc TYPE_Ref;
+    v_rc TYPE_REF;
     v_Tree_ID NUMBER;
     v_offset NUMBER;
     v_offset2 NUMBER;
@@ -456,7 +458,7 @@
     v_seqNo:= ad_script_enable_triggers(v_seqNo);
     -- Update sequence values
     v_ResultStr:='Updating sequences';
-    Ad_Update_Sequence_Generate() ;
+    AD_UPDATE_SEQUENCE_GENERATE() ;
 
  v_ResultStr := ad_script_execute(v_ResultStr);
 
@@ -505,9 +507,7 @@ WHEN OTHERS THEN
   IF(p_PInstance_ID IS NOT NULL) THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   END IF;
-END AD_Copy_Client
-
-
+END AD_COPY_CLIENT
 ]]></body>
     </function>
   </database>

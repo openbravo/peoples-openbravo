@@ -62,10 +62,7 @@ BEGIN
         AND MAPPINGNAME LIKE '%_Excel.xls';
     END LOOP;
   END IF;
-END AD_Window_Trg2
-
-
-
+END AD_WINDOW_TRG2
 ]]></body>
     </trigger>
   </database>

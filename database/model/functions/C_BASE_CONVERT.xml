@@ -1,11 +1,21 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_BASE_CONVERT">
     <function name="C_BASE_CONVERT" type="NUMERIC">
-      <parameter name="p_Amount" type="NUMERIC" mode="in"/>
-      <parameter name="p_CurFrom_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Client_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_ConvDate" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_Org_ID" type="NUMERIC" mode="in" default="0"/>
+      <parameter name="p_amount" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_curfrom_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_client_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_convdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_org_id" type="NUMERIC" mode="in">
+        <default><![CDATA[0]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -52,8 +62,7 @@ Inc.
       RETURN p_Amount;
     END IF;
     RETURN C_Currency_Round(  C_Currency_Convert(p_Amount, p_CurFrom_ID, v_CurTo_ID, p_ConvDate, null, p_Client_ID, p_Org_ID), v_CurTo_ID, null) ;
-END C_Base_Convert
-
+END C_BASE_CONVERT
 ]]></body>
     </function>
   </database>

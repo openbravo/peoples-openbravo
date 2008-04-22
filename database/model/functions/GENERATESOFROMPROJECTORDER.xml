@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GENERATESOFROMPROJECTORDER">
     <function name="GENERATESOFROMPROJECTORDER" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -34,7 +36,7 @@
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
     v_ResultStr:='PInstanceNotFound';
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
   BEGIN --BODY
     -- Get PARAMETERS
     v_ResultStr:='ReadingParameters';
@@ -106,14 +108,14 @@
             (
               v_C_Order_ID, Cur_SO.AD_CLIENT_ID, Cur_SO.AD_ORG_ID, v_AD_User_ID,
               v_AD_User_ID, 'Y', v_DocumentNo, 'DR',
-               'CO', 0, v_C_DOCTYPE_ID, TRUNC(Now(), 'DD'),
-              TRUNC(Now(), 'DD'), Cur_SO.C_BPARTNER_ID, Cur_SO.C_BPARTNER_LOCATION_ID, 'N',
+               'CO', 0, v_C_DOCTYPE_ID, TRUNC(now(), 'DD'),
+              TRUNC(now(), 'DD'), Cur_SO.C_BPARTNER_ID, Cur_SO.C_BPARTNER_LOCATION_ID, 'N',
               Cur_SO.C_CURRENCY_ID, COALESCE(Cur_SO.PAYMENTRULE, 'P'), Cur_SO.C_PAYMENTTERM_ID, 'D',
                'A', 'I', 'D', '5',
               0, 0, Cur_SO.M_WAREHOUSE_ID, COALESCE(Cur_SO.M_PRICELIST_ID, v_M_PriceList_ID2),
                'N', 'N', 'N', Cur_SO.SALESREP_ID,
               Cur_SO.BILLTO_ID, Cur_SO.C_CAMPAIGN_ID, Cur_SO.C_PROJECT_ID, Cur_SO.AD_User_ID,
-               'N', TRUNC(Now(), 'DD')
+               'N', TRUNC(now(), 'DD')
             )
             ;
           FOR SOLINES IN
@@ -215,17 +217,17 @@
               )
               VALUES
               (
-                TRUNC(Now(), 'DD'), Cur_SO.M_WAREHOUSE_ID, SOLINES.InvoicedQty, 0,
+                TRUNC(now(), 'DD'), Cur_SO.M_WAREHOUSE_ID, SOLINES.InvoicedQty, 0,
                 0, NULL, 0, NULL,
-                Cur_SO.C_CURRENCY_ID, v_PriceList, TRUNC(Now(), 'DD'), NULL,
-                NULL, Now(), 'Y', SOLINES.LINE,
+                Cur_SO.C_CURRENCY_ID, v_PriceList, TRUNC(now(), 'DD'), NULL,
+                NULL, now(), 'Y', SOLINES.LINE,
                 v_C_OrderLine_ID, Cur_SO.AD_CLIENT_ID, v_C_Order_ID, SOLINES.DESCRIPTION,
                 SOLINES.M_PRODUCT_ID, v_UOM, 'N', v_AD_User_ID,
                 v_AD_User_ID, 0, NULL, 0,
-                Now(), Cur_SO.AD_ORG_ID, NULL, Cur_SO.C_BPARTNER_ID,
-                M_Get_Offers_Price(Now(), Cur_SO.C_BPARTNER_ID, SOLINES.M_PRODUCT_ID, v_PriceStd, SOLINES.InvoicedQty,  v_M_PriceList_ID),
-    C_Gettax(SOLINES.M_PRODUCT_ID, TRUNC(Now(), 'DD'), Cur_SO.AD_ORG_ID, Cur_SO.M_WAREHOUSE_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_PROJECT_ID, 'Y'), NULL, Cur_SO.C_BPARTNER_LOCATION_ID,
-                (v_PriceList-v_PriceStd) *100/v_PriceList, v_PriceLimit, NULL, (M_Get_Offers_Price(Now(), Cur_SO.C_BPARTNER_ID, SOLINES.M_PRODUCT_ID, v_PriceStd, SOLINES.InvoicedQty,  v_M_PriceList_ID) * SOLINES.InvoicedQty),
+                now(), Cur_SO.AD_ORG_ID, NULL, Cur_SO.C_BPARTNER_ID,
+                M_Get_Offers_Price(now(), Cur_SO.C_BPARTNER_ID, SOLINES.M_PRODUCT_ID, v_PriceStd, SOLINES.InvoicedQty,  v_M_PriceList_ID),
+    C_Gettax(SOLINES.M_PRODUCT_ID, TRUNC(now(), 'DD'), Cur_SO.AD_ORG_ID, Cur_SO.M_WAREHOUSE_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_PROJECT_ID, 'Y'), NULL, Cur_SO.C_BPARTNER_LOCATION_ID,
+                (v_PriceList-v_PriceStd) *100/v_PriceList, v_PriceLimit, NULL, (M_Get_Offers_Price(now(), Cur_SO.C_BPARTNER_ID, SOLINES.M_PRODUCT_ID, v_PriceStd, SOLINES.InvoicedQty,  v_M_PriceList_ID) * SOLINES.InvoicedQty),
                 NULL, 'N', v_PriceStd
               )
               ;
@@ -241,7 +243,7 @@
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
     RETURN;
   END; --BODY
 EXCEPTION
@@ -249,11 +251,9 @@ WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   ROLLBACK;
-  Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END Generatesofromprojectorder
-
-
+END GENERATESOFROMPROJECTORDER
 ]]></body>
     </function>
   </database>

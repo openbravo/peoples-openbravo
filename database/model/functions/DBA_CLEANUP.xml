@@ -65,9 +65,7 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE(' Processed AD_Note=' || v_rowcount) ;
   --
   -- Commented by cromero 19102006 COMMIT;
-END DBA_Cleanup
-
-
+END DBA_CLEANUP
 ]]></body>
     </function>
   </database>

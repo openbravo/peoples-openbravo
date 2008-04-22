@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_PURCHASEORDER">
     <function name="MRP_PURCHASEORDER" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -21,7 +23,7 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Result NUMBER := 1;
+  v_Result NUMBER:= 1;
   v_Record_ID NUMBER;
   v_User_ID NUMBER:=0;
   v_Client_ID NUMBER;
@@ -34,20 +36,20 @@
   v_created BOOLEAN := FALSE;
   FINISH_PROCESS BOOLEAN DEFAULT FALSE;
 
-  v_M_Warehouse_ID number;
+  v_M_Warehouse_ID NUMBER;
   v_Description nvarchar2(255);
-  v_DateDoc date;
-  v_PriceList number;
-  v_PriceActual number;
-  v_PriceLimit number;
-  LastCBPartner_ID number(10);
-  v_Line number;
-  v_CDocTypeID number(10);
-  v_BPartner_Location_ID number(10);
-  v_BillTo_ID number(10);
-  v_PriceListVersion number;
-  v_PriceStd number;
-  v_TaxId number(10);
+  v_DateDoc DATE;
+  v_PriceList NUMBER;
+  v_PriceActual NUMBER;
+  v_PriceLimit NUMBER;
+  LastCBPartner_ID NUMBER(10);
+  v_Line NUMBER;
+  v_CDocTypeID NUMBER(10);
+  v_BPartner_Location_ID NUMBER(10);
+  v_BillTo_ID NUMBER(10);
+  v_PriceListVersion NUMBER;
+  v_PriceStd NUMBER;
+  v_TaxId NUMBER(10);
   v_ProductName NVARCHAR2(90);
 
   v_Count NUMBER;
@@ -265,8 +267,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
 --  RETURN;
 END MRP_PURCHASEORDER
-
-
 ]]></body>
     </function>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_PURCHASE_RUN">
     <function name="MRP_PURCHASE_RUN" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -72,7 +74,7 @@
                        v_Product_Category_ID, v_BPartner_ID, v_BP_Group_ID, v_Vendor_ID, v_TimeHorizon,
                        v_PlanningDate, 'N');
 
-    Mrp_Purchaseplan(v_User_ID, v_Org_ID, v_Client_ID, v_Record_ID, v_Planner_ID, v_Vendor_ID, v_TimeHorizon,
+    MRP_PURCHASEPLAN(v_User_ID, v_Org_ID, v_Client_ID, v_Record_ID, v_Planner_ID, v_Vendor_ID, v_TimeHorizon,
                     v_PlanningDate, v_SecurityMargin);
 
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
@@ -85,8 +87,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
 --  RETURN;
-END Mrp_Purchase_Run
-
+END MRP_PURCHASE_RUN
 ]]></body>
     </function>
   </database>

@@ -52,11 +52,7 @@ BEGIN
   IF((DELETING OR INSERTING) AND v_Processed='Y') THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
-END C_CashLine_Chk_Restrict_Trg
-
-
-
-
+END C_CASHLINE_CHK_RESTRICT_TRG
 ]]></body>
     </trigger>
   </database>

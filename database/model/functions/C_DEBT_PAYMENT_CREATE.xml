@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_DEBT_PAYMENT_CREATE">
     <function name="C_DEBT_PAYMENT_CREATE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -190,7 +192,7 @@
         'N', 'N', 'Y', 'DE'
       )
       ;
-    c_settlement_post(null, v_settlementID);
+    C_SETTLEMENT_POST(null, v_settlementID);
 
   SELECT ba.C_Currency_ID, bs.STATEMENTDATE
     INTO v_C_BankCurrency, v_BS_Date
@@ -227,8 +229,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END c_debt_payment_Create
-
+END C_DEBT_PAYMENT_CREATE
 ]]></body>
     </function>
   </database>

@@ -58,8 +58,8 @@
     )
   SELECT :new.AD_Form_ID,
     r.AD_Role_ID,  r.AD_CLIENT_ID, r.AD_ORG_ID,
-     'Y', SysDate, 0,
-    SysDate, 0,  'Y'
+     'Y', now(), 0,
+    now(), 0,  'Y'
   FROM AD_Role r
   where ismanual = 'N';
  END IF;
@@ -73,15 +73,12 @@
  THEN
     UPDATE AD_Form_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE AD_Form_ID=:new.AD_Form_ID;
   END IF;
  END IF;
 -- Updating
-END AD_Form_Trg
-
-
-
+END AD_FORM_TRG
 ]]></body>
     </trigger>
   </database>

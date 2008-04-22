@@ -139,15 +139,13 @@
         'Y', 1000000, 1, 0, 0,
         'N', 'Y', 'N');
    END LOOP;                DELETE FROM AD_SCRIPT_SQL;
-   Ad_Update_Sequence_Generate() ;
+   AD_UPDATE_SEQUENCE_GENERATE() ;
    FOR Cur_Script IN
      (SELECT STRSQL FROM AD_SCRIPT_SQL)
    LOOP
      EXECUTE IMMEDIATE(Cur_Script.STRSQL) ;
    END LOOP;
-END Ad_Update_Sequence
-
-
+END AD_UPDATE_SEQUENCE
 ]]></body>
     </function>
   </database>

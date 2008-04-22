@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_STANDARD_COST">
     <function name="MA_STANDARD_COST" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -20,7 +22,7 @@
  ************************************************************************/
   v_ResultStr             VARCHAR2(2000) := '';
   v_Message               VARCHAR2(2000) := '';
-  v_Result                NUMBER := 1;
+  v_Result NUMBER:= 1;
 
   p_User                  NUMBER;
   p_CalcDate              DATE;
@@ -102,15 +104,13 @@ EXCEPTION
     DBMS_OUTPUT.PUT_LINE(v_ResultStr);
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
     DECLARE
-      v_Code NUMBER := SQLCODE;
+      v_Code NUMBER:= SQLCODE;
     BEGIN
       INSERT INTO DBA_ERRORLOG (DBA_ErrorLog_ID,Created,Code,Msg,Info)
-      VALUES (DBA_ErrorLog_Seq.NEXTVAL,Now(),v_Code,v_ResultStr,'MA_Standard_Cost');
+      VALUES (DBA_ErrorLog_Seq.NEXTVAL,now(),v_Code,v_ResultStr,'MA_Standard_Cost');
     END;
     RETURN;
-END Ma_Standard_Cost
-
-
+END MA_STANDARD_COST
 ]]></body>
     </function>
   </database>

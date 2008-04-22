@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_REMITTANCE_POST">
     <function name="C_REMITTANCE_POST" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Remittance_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_remittance_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -80,7 +84,7 @@
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
       v_ResultStr:='PInstanceNotFound';
-      Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
       --  Get Parameters
       v_ResultStr:='ReadingParameters';
       FOR Cur_Parameter IN
@@ -153,14 +157,14 @@
       IF NOT FINISH_PROCESS THEN
         -- Unprocessing...
         UPDATE C_REMITTANCE  SET Processed='N'  WHERE C_Remittance_ID=v_Record_ID;
-        C_Dp_Management_Post(NULL, v_vDPManagementID) ;
+        C_DP_MANAGEMENT_POST(NULL, v_vDPManagementID) ;
         SELECT COUNT(*)
         INTO v_Aux
         FROM C_REMITTANCE r
         WHERE r.C_Remittance_ID=v_Record_ID
           AND C_SETTLEMENT_ID IS NOT NULL;
         IF v_Aux=1 THEN
-          C_Settlement_Post(NULL, v_vSettlementId) ;
+          C_SETTLEMENT_POST(NULL, v_vSettlementId) ;
           UPDATE C_REMITTANCELINE
             SET C_DEBT_PAYMENT_CANCELLED=NULL
           WHERE C_Remittance_ID=v_Record_ID;
@@ -257,7 +261,7 @@
           VALUES
           (
             v_SettlementID, v_AD_Client_Id, v_AD_Org_Id, 'Y',
-            Now(), v_AD_User_ID, Now(), v_AD_User_ID,
+            now(), v_AD_User_ID, now(), v_AD_User_ID,
             '*RT*'||v_DocumentNo, v_dateTrx, v_dateTrx, 'C',
             v_SettlementDocType_ID, v_Currency, 'Y'
           )
@@ -280,7 +284,7 @@
           VALUES
           (
             v_DPMId, v_ad_Client_Id, v_AD_Org_Id, 'Y',
-            Now(), v_AD_User_ID, Now(), v_AD_User_ID,
+            now(), v_AD_User_ID, now(), v_AD_User_ID,
             v_DocumentNo, v_DateTrx, v_DPManagementDocType_ID, v_DateTrx,
             v_Currency
           )
@@ -336,7 +340,7 @@
             VALUES
             (
               v_DPID, Cur_RemittanceLines.ad_Client_Id, Cur_RemittanceLines.AD_Org_Id, 'Y',
-              Now(), v_AD_User_ID, Now(), v_AD_User_ID,
+              now(), v_AD_User_ID, now(), v_AD_User_ID,
               Cur_RemittanceLines.ISRECEIPT, Cur_RemittanceLines.C_CURRENCY_ID, Cur_RemittanceLines.PAYMENTRULE, Cur_RemittanceLines.ISPAID,
               -Cur_RemittanceLines.AMOUNT, Cur_RemittanceLines.DATEPLANNED, 'N', Cur_RemittanceLines.STATUS,
               v_SettlementID, 'Y', v_BankPartner, 'Y',
@@ -359,7 +363,7 @@
             VALUES
             (
               v_DPMLineId, v_ad_Client_Id, v_AD_Org_Id, 'Y',
-              Now(), v_AD_User_ID, Now(), v_AD_User_ID,
+              now(), v_AD_User_ID, now(), v_AD_User_ID,
               v_DPMId, Cur_RemittanceLines.Status, v_Status_To, v_DPId,
               v_line
             )
@@ -377,7 +381,7 @@
             VALUES
             (
               v_DPMLineId, v_aD_Client_Id, v_AD_Org_Id, 'Y',
-              Now(), v_AD_User_ID, Now(), v_AD_User_ID,
+              now(), v_AD_User_ID, now(), v_AD_User_ID,
               v_DPMId, Cur_RemittanceLines.Status, v_Status_To, Cur_RemittanceLines.c_Debt_Payment_ID,
               v_line
             )
@@ -392,7 +396,7 @@
           AND isActive='Y'
           AND isManual='N';
         --Post DPManagement
-        C_Dp_Management_Post(NULL, v_DPMId) ;
+        C_DP_MANAGEMENT_POST(NULL, v_DPMId) ;
         IF v_GeneratedAmt>0 THEN
           v_IsReceipt:='N';
         ELSE
@@ -413,7 +417,7 @@
           VALUES
           (
             v_DPID, v_AD_Client_Id, v_AD_Org_Id, 'Y',
-            Now(), v_AD_User_ID, Now(), v_AD_User_ID,
+            now(), v_AD_User_ID, now(), v_AD_User_ID,
             v_ISRECEIPT, v_Currency, v_PaymetRule, 'N',
             ABS(v_GeneratedAmt), v_DueDate, 'N', 'DE',
             v_SettlementID, 'Y', v_BankPartner, 'Y',
@@ -421,7 +425,7 @@
           )
           ;
         --Post Settlement
-        C_Settlement_Post(NULL, v_SettlementID) ;
+        C_SETTLEMENT_POST(NULL, v_SettlementID) ;
         UPDATE C_REMITTANCE
           SET C_Settlement_ID=v_SettlementID,
           C_DP_Management_ID=v_DPMId,
@@ -454,7 +458,7 @@
           VALUES
           (
             v_DPMId, v_ad_Client_Id, v_AD_Org_Id, 'Y',
-            Now(), v_AD_User_ID, Now(), v_AD_User_ID,
+            now(), v_AD_User_ID, now(), v_AD_User_ID,
             v_DocumentNo, v_DateTrx, v_DPManagementDocType_ID, v_DueDate,
             v_Currency
           )
@@ -499,14 +503,14 @@
             VALUES
             (
               v_DPMLineId, v_aD_Client_Id, v_AD_Org_Id, 'Y',
-              Now(), v_AD_User_ID, Now(), v_AD_User_ID,
+              now(), v_AD_User_ID, now(), v_AD_User_ID,
               v_DPMId, Cur_RemittanceLines.Status, v_Status_To, Cur_RemittanceLines.c_Debt_Payment_ID,
               v_line
             )
             ;
         END LOOP;
         --Post DPManagement
-        C_Dp_Management_Post(NULL, v_DPMId) ;
+        C_DP_MANAGEMENT_POST(NULL, v_DPMId) ;
         UPDATE C_REMITTANCE
           SET C_DP_Management_ID=v_DPMId,
           Processed='Y'
@@ -526,7 +530,7 @@
     UPDATE C_REMITTANCE SET Processing = 'N' WHERE C_Remittance_ID = v_Record_ID;
     IF(p_PInstance_ID IS NOT NULL) THEN
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-      Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
     ELSE
       DBMS_OUTPUT.PUT_LINE('--<<C_DP_Management_Post finished>> ' || v_Message) ;
       IF(v_Result=0) THEN
@@ -542,7 +546,7 @@ WHEN OTHERS THEN
   UPDATE C_REMITTANCE SET Processing = 'N' WHERE C_Remittance_ID = v_Record_ID;
   IF(p_PInstance_ID IS NOT NULL) THEN
     ROLLBACK;
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   ELSE
     DECLARE
       v_Code NUMBER:=SQLCODE;
@@ -556,7 +560,7 @@ WHEN OTHERS THEN
         )
         VALUES
         (
-          DBA_ErrorLog_Seq.NEXTVAL, Now(),
+          DBA_ErrorLog_Seq.NEXTVAL, now(),
           v_Code, v_ResultStr,
            'C_DP_Management_Post'
         )
@@ -565,8 +569,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   RETURN;
-END C_Remittance_Post
-
+END C_REMITTANCE_POST
 ]]></body>
     </function>
   </database>

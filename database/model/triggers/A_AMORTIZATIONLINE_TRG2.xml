@@ -14,9 +14,7 @@
   where  A_AmortizationLine_ID=:new.A_AmortizationLine_ID)
   where a_Asset_ID=:new.A_Asset_ID:
    exception when others then null; */
-END a_AmortizationLine_Trg2 
-
-
+END A_AMORTIZATIONLINE_TRG2
 ]]></body>
     </trigger>
   </database>

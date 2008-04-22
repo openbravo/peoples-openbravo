@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CALCULATECOST_CATSALARY">
     <function name="C_CALCULATECOST_CATSALARY" type="NUMERIC">
-      <parameter name="pCatSal" type="NUMERIC" mode="in"/>
-      <parameter name="pDate" type="TIMESTAMP" mode="in"/>
+      <parameter name="pcatsal" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="pdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -34,7 +38,6 @@ BEGIN
 
  RETURN vResult;
 END C_CALCULATECOST_CATSALARY
-
 ]]></body>
     </function>
   </database>

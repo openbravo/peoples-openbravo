@@ -30,10 +30,7 @@ BEGIN
      OR (COALESCE(:old.DOCUMENTNO, '0') <> COALESCE(:new.DOCUMENTNO, '0')))) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
-END M_PRODUCTION_Trg
-
-
-
+END M_PRODUCTION_TRG
 ]]></body>
     </trigger>
   </database>

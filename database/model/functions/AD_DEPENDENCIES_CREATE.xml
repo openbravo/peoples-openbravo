@@ -142,10 +142,7 @@ BEGIN
 
   -- Update sequence values
   v_ResultStr:='Updating sequences';
-
-END AD_Dependencies_Create
-
-
+END AD_DEPENDENCIES_CREATE
 ]]></body>
     </function>
   </database>

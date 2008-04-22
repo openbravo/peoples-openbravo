@@ -59,15 +59,12 @@
  THEN
     UPDATE C_PaymentTerm_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE C_PaymentTerm_ID=:new.C_PaymentTerm_ID;
   END IF;
  END IF;
 -- Updating
-END C_PaymentTerm_Trg
-
-
-
+END C_PAYMENTTERM_TRG
 ]]></body>
     </trigger>
   </database>

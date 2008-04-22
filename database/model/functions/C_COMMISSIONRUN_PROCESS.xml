@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_COMMISSIONRUN_PROCESS">
     <function name="C_COMMISSIONRUN_PROCESS" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/******************************************************************************
   * The contents of this file are subject to the   Compiere License  Version 1.1
   * ("License"); You may not use this file except in compliance with the License
@@ -132,7 +134,7 @@ BEGIN
   Ad_Sequence_Next('C_Invoice', CUR_ComRun.AD_Client_ID, v_C_Invoice_ID);
    Ad_Sequence_Doctype(v_C_DocType_ID, CUR_ComRun.AD_Client_ID, 'Y', v_DocumentNo);
    IF (v_DocumentNo IS NULL) THEN
-      Ad_Sequence_Doc('DocumentNo_C_Invoice',CUR_ComRun.AD_Client_ID, 'Y',v_DocumentNo);
+      Ad_Sequence_Doc('DocumentNo_C_Invoice', CUR_ComRun.AD_Client_ID, 'Y', v_DocumentNo);
    END IF;
   IF (v_DocumentNo IS NULL) THEN
    v_DocumentNo := CUR_ComRun.DocumentNo;
@@ -214,10 +216,7 @@ EXCEPTION
   ROLLBACK;
         AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr);
         RETURN;
-
-END C_Commissionrun_Process
-
-
+END C_COMMISSIONRUN_PROCESS
 ]]></body>
     </function>
   </database>

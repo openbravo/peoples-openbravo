@@ -80,8 +80,8 @@ BEGIN
       VALUES
       (
         v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID,
-        :new.ISACTIVE, SYSDATE, :new.CREATEDBY,
-        SYSDATE, :new.UPDATEDBY, 'X',
+        :new.ISACTIVE, now(), :new.CREATEDBY,
+        now(), :new.UPDATEDBY, 'X',
         :new.AD_FORM_ID, v_ClassName, 'Y'
       )
       ;
@@ -97,16 +97,13 @@ BEGIN
       VALUES
       (
         v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID,
-        :new.ISACTIVE, SYSDATE, :new.CREATEDBY,
-        SYSDATE, :new.UPDATEDBY, v_ID,
+        :new.ISACTIVE, now(), :new.CREATEDBY,
+        now(), :new.UPDATEDBY, v_ID,
         ('/' || v_WindowName || '/' || AD_MAPPING_FORMAT(:NEW.NAME) || '.html'), 'Y'
       )
       ;
   END IF;
-END AD_Form_Trg2
-
-
-
+END AD_FORM_TRG2
 ]]></body>
     </trigger>
   </database>

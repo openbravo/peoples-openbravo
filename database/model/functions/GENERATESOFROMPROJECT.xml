@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GENERATESOFROMPROJECT">
     <function name="GENERATESOFROMPROJECT" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -157,7 +159,7 @@
           ;
         
         -- Select the price list version that a applies for the price list of the header
-        SELECT Get_Pricelist_Version(Cur_SO.M_PriceList_ID, TRUNC(Now(), 'DD'))
+        SELECT Get_Pricelist_Version(Cur_SO.M_PriceList_ID, TRUNC(now(), 'DD'))
         INTO v_M_PriceList_Version_ID
         FROM DUAL;        
         IF (v_M_PriceList_Version_ID IS NULL) THEN
@@ -216,7 +218,7 @@
             IF (Cur_SOLINES.priceactual=0) THEN
               Cur_SOLINES.priceactual:=NULL;
             END IF;
-            v_PriceActual := COALESCE(Cur_SOLINES.priceactual,M_Get_Offers_Price(Now(), Cur_SO.C_BPARTNER_ID, Cur_SOLINES.M_PRODUCT_ID, v_PriceStd, Cur_SOLINES.Qty, Cur_SO.M_PRICELIST_ID),0);           
+            v_PriceActual := COALESCE(Cur_SOLINES.priceactual,M_Get_Offers_Price(now(), Cur_SO.C_BPARTNER_ID, Cur_SOLINES.M_PRODUCT_ID, v_PriceStd, Cur_SOLINES.Qty, Cur_SO.M_PRICELIST_ID),0);           
             
             IF (v_PriceStd IS NULL) THEN
              v_PriceStd :=  v_PriceActual ;
@@ -247,7 +249,7 @@
             END IF;
             
             IF (Cur_SOLINES.C_TAX_ID IS NULL) THEN
-              v_Tax_ID:= C_Gettax(Cur_SOLINES.M_PRODUCT_ID, TRUNC(Now(), 'DD'), Cur_SO.AD_ORG_ID, Cur_SO.M_WAREHOUSE_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_PROJECT_ID, 'Y') ;
+              v_Tax_ID:= C_Gettax(Cur_SOLINES.M_PRODUCT_ID, TRUNC(now(), 'DD'), Cur_SO.AD_ORG_ID, Cur_SO.M_WAREHOUSE_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_PROJECT_ID, 'Y') ;
             ELSE
               v_Tax_ID:=Cur_SOLINES.C_TAX_ID;
             END IF;
@@ -274,14 +276,14 @@
               )
               VALUES
               (
-                TRUNC(Now(), 'DD'), Cur_SO.M_WAREHOUSE_ID, Cur_SOLINES.Qty, 0,
+                TRUNC(now(), 'DD'), Cur_SO.M_WAREHOUSE_ID, Cur_SOLINES.Qty, 0,
                 0, NULL, 0, NULL,
-                Cur_SO.C_CURRENCY_ID, v_PriceList, TRUNC(Now(), 'DD'), NULL,
-                NULL, Now(), 'Y', Cur_SOLINES.SEQNO,
+                Cur_SO.C_CURRENCY_ID, v_PriceList, TRUNC(now(), 'DD'), NULL,
+                NULL, now(), 'Y', Cur_SOLINES.SEQNO,
                 v_C_OrderLine_ID, Cur_SO.AD_CLIENT_ID, v_C_Order_ID, Cur_SOLINES.DESCRIPTION,
                 Cur_SOLINES.M_PRODUCT_ID, v_UOM, 'N', v_AD_User_ID,
                 v_AD_User_ID, 0, NULL, 0,
-                Now(), Cur_SO.AD_ORG_ID, NULL, Cur_SO.C_BPARTNER_ID,
+                now(), Cur_SO.AD_ORG_ID, NULL, Cur_SO.C_BPARTNER_ID,
                 v_PriceActual,
                 v_Tax_ID, NULL, Cur_SO.C_BPARTNER_LOCATION_ID,
                 v_Discount, v_PriceLimit, NULL, v_PriceActual * Cur_SOLINES.Qty,
@@ -311,9 +313,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END GenerateSOFromProject
-
-
+END GENERATESOFROMPROJECT
 ]]></body>
     </function>
   </database>

@@ -78,10 +78,7 @@
      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
    END IF;
   END IF;
-END C_Invoice_Trg 
-
-
-
+END C_INVOICE_TRG
 ]]></body>
     </trigger>
   </database>

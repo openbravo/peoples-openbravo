@@ -84,10 +84,7 @@ BEGIN
       END IF;
     END IF;
   END IF;
-END M_MatchPO_Trg
-
-
-
+END M_MATCHPO_TRG
 ]]></body>
     </trigger>
   </database>

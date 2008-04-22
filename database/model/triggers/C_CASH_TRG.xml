@@ -45,9 +45,7 @@
       :new.EndingBalance:=:new.BeginningBalance + :new.StatementDifference;
     END IF;
   END IF;
-END C_Cash_Trg 
-
-
+END C_CASH_TRG
 ]]></body>
     </trigger>
   </database>

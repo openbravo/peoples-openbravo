@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_PROCESSPLAN_RECALCULATE0">
     <function name="MRP_PROCESSPLAN_RECALCULATE0" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -59,7 +61,7 @@
     WHERE MRP_RUN_PRODUCTION.MRP_RUN_PRODUCTION_ID = MRP_RUN_PRODUCTIONLINE.MRP_RUN_PRODUCTION_ID
       AND MRP_RUN_PRODUCTIONLINE_ID=v_Record_ID;
 
-    Mrp_Processplan_Recalculate(v_User_ID, v_Record_ID, v_TimeHorizon,
+    MRP_PROCESSPLAN_RECALCULATE(v_User_ID, v_Record_ID, v_TimeHorizon,
                                     v_PlanningDate, v_SecurityMargin);
 
   END; --BODY
@@ -72,8 +74,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
 --  RETURN;
 END MRP_PROCESSPLAN_RECALCULATE0
-
-
 ]]></body>
     </function>
   </database>

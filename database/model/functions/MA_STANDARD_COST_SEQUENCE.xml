@@ -1,11 +1,21 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_STANDARD_COST_SEQUENCE">
     <function name="MA_STANDARD_COST_SEQUENCE" type="NULL">
-      <parameter name="p_Sequence_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Budget_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_CalcDate" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_User" type="NUMERIC" mode="in"/>
-      <parameter name="p_Message" type="VARCHAR" mode="out"/>
+      <parameter name="p_sequence_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_budget_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_calcdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_user" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_message" type="VARCHAR" mode="out">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -23,7 +33,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************/
   v_ResultStr             VARCHAR2(2000) := '';
-  v_Result                NUMBER := 1;
+  v_Result NUMBER:= 1;
 
   v_CostCenterUse         NUMBER;
   v_Multiplier            NUMBER;
@@ -217,7 +227,7 @@ BEGIN --BODY
         ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, MA_SEQUENCE_ID,
         C_SALARY_CATEGORY_ID, CALCCOST)
       VALUES (v_ID, Cur_SequenceEmployee_In.AD_Client_ID, Cur_SequenceEmployee_In.AD_Org_ID,
-        'Y', NOW(), p_User, NOW(), p_User, p_Sequence_ID,
+        'Y', now(), p_User, now(), p_User, p_Sequence_ID,
         Cur_SequenceEmployee_In.C_Salary_Category_ID, v_SequenceCost_Tmp);
 
       v_SequenceCost := v_SequenceCost + COALESCE(v_SequenceCost_Tmp, 0);
@@ -253,7 +263,7 @@ BEGIN --BODY
         ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, MA_SEQUENCE_ID,
         MA_MACHINE_ID, CALCCOST)
       VALUES (v_ID, Cur_SequenceMachine_In.AD_Client_ID, Cur_SequenceMachine_In.AD_Org_ID,
-        'Y', NOW(), p_User, NOW(), p_User, p_Sequence_ID,
+        'Y', now(), p_User, now(), p_User, p_Sequence_ID,
         Cur_SequenceMachine_In.MA_Machine_ID, v_SequenceCost_Tmp);
 
       v_SequenceCost := v_SequenceCost + COALESCE(v_SequenceCost_Tmp, 0);
@@ -289,7 +299,7 @@ BEGIN --BODY
         ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, MA_SEQUENCE_ID,
         MA_INDIRECT_COST_ID, CALCCOST)
       VALUES (v_ID, Cur_SequenceIC_In.AD_Client_ID, Cur_SequenceIC_In.AD_Org_ID,
-        'Y', NOW(), p_User, NOW(), p_User, p_Sequence_ID,
+        'Y', now(), p_User, now(), p_User, p_Sequence_ID,
         Cur_SequenceIC_In.MA_INDIRECT_COST_ID, v_SequenceCost_Tmp);
 
       v_SequenceCost := v_SequenceCost + COALESCE(v_SequenceCost_Tmp, 0);
@@ -321,7 +331,7 @@ BEGIN --BODY
         ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, MA_SEQUENCE_ID,
         MA_INDIRECT_COST_ID, CALCCOST)
       VALUES (v_ID, Cur_SequencePIC_In.AD_Client_ID, Cur_SequencePIC_In.AD_Org_ID,
-        'Y', NOW(), p_User, NOW(), p_User, p_Sequence_ID,
+        'Y', now(), p_User, now(), p_User, p_Sequence_ID,
         Cur_SequencePIC_In.MA_INDIRECT_COST_ID, v_SequenceCost_Tmp);
 
       v_SequenceCost := v_SequenceCost + COALESCE(v_SequenceCost_Tmp, 0);
@@ -364,9 +374,7 @@ EXCEPTION
   WHEN OTHERS THEN
     DBMS_OUTPUT.PUT_LINE('ERROR MA_Standard_Cost_Sequence, sequence_ID '|| p_Sequence_ID || ', date ' || p_CalcDate || ' at ' ||v_ResultStr);
     RAISE;
-END Ma_Standard_Cost_Sequence
-
-
+END MA_STANDARD_COST_SEQUENCE
 ]]></body>
     </function>
   </database>

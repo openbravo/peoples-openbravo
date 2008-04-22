@@ -87,9 +87,7 @@ BEGIN
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20010, 'C_SalesRegion InsertTrigger Error: No ClientInfo or parent TreeNode') ;
-END C_SalesRegion_Trg 
-
-
+END C_SALESREGION_TRG
 ]]></body>
     </trigger>
   </database>

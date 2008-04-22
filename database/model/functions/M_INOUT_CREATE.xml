@@ -1,12 +1,24 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INOUT_CREATE">
     <function name="M_INOUT_CREATE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_InOut_ID" type="NUMERIC" mode="out"/>
-      <parameter name="p_Order_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_Invoice_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_ForceDelivery" type="CHAR" mode="in" default="N"/>
-      <parameter name="p_Locator_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_inout_id" type="NUMERIC" mode="out">
+        <default/>
+      </parameter>
+      <parameter name="p_order_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_invoice_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_forcedelivery" type="CHAR" mode="in">
+        <default><![CDATA[N]]></default>
+      </parameter>
+      <parameter name="p_locator_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -276,7 +288,7 @@
             IF(v_DocumentNo IS NULL) THEN
               Ad_Sequence_Doc('DocumentNo_M_InOut', Cur_Order.AD_Client_ID, 'Y', v_DocumentNo) ;
             END IF;
-            --raise_application_error(-20100,'el numero documento es:'||COALESCE(v_DocumentNo,0)||' El doctypeId es: '||COALESCE(v_DocType_ID,0)||' El cOrderId es: '||COALESCE(Cur_Order.C_Order_ID,0));
+            --RAISE_APPLICATION_ERROR(-20100,'el numero documento es:'||COALESCE(v_DocumentNo,0)||' El doctypeId es: '||COALESCE(v_DocType_ID,0)||' El cOrderId es: '||COALESCE(Cur_Order.C_Order_ID,0));
             --
             DBMS_OUTPUT.PUT_LINE('  InOut_ID=' || p_InOut_ID || ', DocumentNo=' || v_DocumentNo || ', Ship_DocType_ID=' || v_DocType_ID || ', Order_DocType_ID=' || Cur_Order.C_DocType_ID) ;
             v_ResultStr:='InsertInOut ' || p_InOut_ID;
@@ -529,7 +541,7 @@
                   );
               END IF;
               -- Post Shipment
-              M_Inout_Post(NULL, p_InOut_ID) ;
+              M_INOUT_POST(NULL, p_InOut_ID) ;
             END IF;
           END IF;--Next_Order
           --<<Next_Order>>
@@ -657,7 +669,7 @@
             END LOOP; -- InvoiceLines
           END LOOP; -- Invoices
           -- Post Shipment
-          M_Inout_Post(NULL, p_InOut_ID) ;
+          M_INOUT_POST(NULL, p_InOut_ID) ;
 		  --ADDED BY P.SAROBE
 		  SELECT documentno
 		  INTO v_DocumentNo
@@ -712,9 +724,7 @@ WHEN OTHERS THEN
 END IF;
 p_InOut_ID:=0; -- Error Indicator
 RETURN;
-END M_Inout_Create 
-
-
+END M_INOUT_CREATE
 ]]></body>
     </function>
   </database>

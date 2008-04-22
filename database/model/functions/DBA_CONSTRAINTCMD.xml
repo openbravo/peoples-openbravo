@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION DBA_CONSTRAINTCMD">
     <function name="DBA_CONSTRAINTCMD" type="VARCHAR">
-      <parameter name="p_ConstraintName" type="VARCHAR" mode="in"/>
+      <parameter name="p_constraintname" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -68,8 +70,7 @@ BEGIN
   END IF;
   -- DBMS_OUTPUT.PUT_LINE(v_Result);
   RETURN v_Result;
-END DBA_ConstraintCmd
-
+END DBA_CONSTRAINTCMD
 ]]></body>
     </function>
   </database>

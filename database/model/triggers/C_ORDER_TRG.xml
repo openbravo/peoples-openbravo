@@ -58,11 +58,7 @@
   WHERE C_Order_ID=:new.C_Order_ID;
   END IF;
  END IF;
-END C_Order_Trg
-
-
-
-
+END C_ORDER_TRG
 ]]></body>
     </trigger>
   </database>

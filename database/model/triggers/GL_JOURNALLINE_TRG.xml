@@ -67,9 +67,7 @@ BEGIN
       WHERE GL_Journal_ID=:new.GL_Journal_ID;
     END IF;
   END IF;
-END GL_JournalLine_Trg 
-
-
+END GL_JOURNALLINE_TRG
 ]]></body>
     </trigger>
   </database>

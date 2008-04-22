@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CURRENCY_ROUND">
     <function name="C_CURRENCY_ROUND" type="NUMERIC">
-      <parameter name="p_Amount" type="NUMERIC" mode="in"/>
-      <parameter name="p_CurTo_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Costing" type="VARCHAR" mode="in"/>
+      <parameter name="p_amount" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_curto_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_costing" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -53,8 +59,7 @@ BEGIN
     RETURN ROUND(p_Amount, v_CostPrecision) ;
   END IF;
   RETURN ROUND(p_Amount, v_StdPrecision) ;
-END C_Currency_Round 
-
+END C_CURRENCY_ROUND
 ]]></body>
     </function>
   </database>

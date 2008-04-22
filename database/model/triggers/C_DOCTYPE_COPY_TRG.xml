@@ -51,10 +51,7 @@
   END IF;
  END IF;
  -- Updating
-END C_DOCTYPE_COPY_Trg
-
-
-
+END C_DOCTYPE_COPY_TRG
 ]]></body>
     </trigger>
   </database>

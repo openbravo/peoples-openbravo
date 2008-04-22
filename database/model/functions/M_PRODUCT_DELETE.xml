@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_PRODUCT_DELETE">
     <function name="M_PRODUCT_DELETE" type="NULL">
-      <parameter name="whereClause" type="VARCHAR" mode="in" default="NULL"/>
+      <parameter name="whereclause" type="VARCHAR" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -35,7 +37,7 @@
         (SELECT M_Product_ID, Value, Name  FROM M_Product  WHERE IsActive='N')
       LOOP
       BEGIN
-        DBMS_OUTPUT.PUT('Deleting ' || CUR_DEL.Name || ' - ') ;
+        DBMS_OUTPUT.PUT_LINE('Deleting ' || CUR_DEL.Name || ' - ') ;
         DELETE FROM M_Product  WHERE M_Product_ID=CUR_DEL.M_Product_ID;
         DBMS_OUTPUT.PUT_LINE('OK') ;
       EXCEPTION
@@ -44,9 +46,7 @@
       END;
     END LOOP;
   END IF;
-END M_Product_Delete
-
-
+END M_PRODUCT_DELETE
 ]]></body>
     </function>
   </database>

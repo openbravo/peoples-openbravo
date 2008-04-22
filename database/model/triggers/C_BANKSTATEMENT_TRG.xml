@@ -32,9 +32,7 @@
     BEGIN  IF(:old.Processed='Y')
     THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
-END C_BankStatement_Trg 
-
-
+END C_BANKSTATEMENT_TRG
 ]]></body>
     </trigger>
   </database>

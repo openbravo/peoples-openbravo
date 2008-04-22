@@ -56,10 +56,7 @@
     END IF;
   END IF;
  END IF;
-END GL_Journal_Trg
-
-
-
+END GL_JOURNAL_TRG
 ]]></body>
     </trigger>
   </database>

@@ -59,9 +59,7 @@ BEGIN
   AND (Description <> v_Description OR QtyInvoiced <> :new.Qty);
   END IF;
   **/
-END S_ResourceAssignment_Trg 
-
-
+END S_RESOURCEASSIGNMENT_TRG
 ]]></body>
     </trigger>
   </database>

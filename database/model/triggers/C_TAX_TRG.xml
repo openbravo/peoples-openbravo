@@ -61,8 +61,8 @@ BEGIN
         VALUES
         (
           :new.C_Tax_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-          :new.AD_ORG_ID,  'Y', SysDate,
-          :new.CreatedBy, SysDate, :new.UpdatedBy,
+          :new.AD_ORG_ID,  'Y', now(),
+          :new.CreatedBy, now(), :new.UpdatedBy,
           Cur_Defaults.T_Due_Acct, Cur_Defaults.T_Liability_Acct, Cur_Defaults.T_Credit_Acct,
           Cur_Defaults.T_Receivables_Acct, Cur_Defaults.T_Expense_Acct
         )
@@ -95,15 +95,12 @@ BEGIN
   THEN
       UPDATE C_Tax_Trl
         SET IsTranslated='N',
-        Updated=SysDate
+        Updated=now()
       WHERE C_Tax_ID=:new.C_Tax_ID;
     END IF;
   END IF;
   -- Updating
-END C_Tax_Trg
-
-
-
+END C_TAX_TRG
 ]]></body>
     </trigger>
   </database>

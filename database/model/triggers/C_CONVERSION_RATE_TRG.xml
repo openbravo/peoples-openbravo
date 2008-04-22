@@ -30,7 +30,7 @@
     * Description: 
     * If there is no valid ToDate set it to arbitrary end date 
     ************************************************************************/ 
-      v_Count number; 
+      v_Count NUMBER; 
   BEGIN   
   --RAISE_APPLICATION_ERROR (-20506, 'Cannot modify used rate'); 
   IF(:new.ValidTo IS NULL) THEN 
@@ -39,7 +39,7 @@
   END IF; 
   --Check for invalid dates 
   IF :new.ValidTo < :new.ValidFrom THEN 
-    RAISE_APPLICATION_ERROR (-20505, 'Date To is lower than Date From'); 
+    RAISE_APPLICATION_ERROR(-20505, 'Date To is lower than Date From');
   END IF; 
    
   IF UPDATING THEN 
@@ -76,7 +76,7 @@
       ); 
         
     IF v_count>0 THEN 
-      RAISE_APPLICATION_ERROR (-20506, 'Cannot modify used rate'); 
+      RAISE_APPLICATION_ERROR(-20506, 'Cannot modify used rate');
     END IF;     
   END IF; 
   IF DELETING THEN 
@@ -100,13 +100,11 @@
      and s.c_currency_id = :old.C_Currency_ID_TO 
      and f.dateacct between :old.ValidFrom and :old.ValidTo; 
     IF v_count>0 THEN 
-      RAISE_APPLICATION_ERROR (-20506, 'Cannot modify used rate'); 
+      RAISE_APPLICATION_ERROR(-20506, 'Cannot modify used rate');
     END IF;   
   END IF; 
  
-END C_Conversion_Rate_Trg 
-
-
+END C_CONVERSION_RATE_TRG
 ]]></body>
     </trigger>
   </database>

@@ -56,10 +56,7 @@
   END IF;
  END IF;
 -- Updating
-END AD_FieldGroup_Trg
-
-
-
+END AD_FIELDGROUP_TRG
 ]]></body>
     </trigger>
   </database>

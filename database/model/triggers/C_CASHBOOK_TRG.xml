@@ -57,16 +57,14 @@ BEGIN
       VALUES
       (
         :new.C_Cashbook_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-        :new.AD_ORG_ID,  'Y', SysDate,
-        :new.CreatedBy, SysDate, :new.UpdatedBy,
+        :new.AD_ORG_ID,  'Y', now(),
+        :new.CreatedBy, now(), :new.UpdatedBy,
         Cur_Defaults.CB_Asset_Acct, Cur_Defaults.CB_Differences_Acct, Cur_Defaults.CB_Expense_Acct,
         Cur_Defaults.CB_Receipt_Acct, Cur_Defaults.CB_CashTransfer_Acct
       )
       ;
   END LOOP;
-END C_Cashbook_Trg 
-
-
+END C_CASHBOOK_TRG
 ]]></body>
     </trigger>
   </database>

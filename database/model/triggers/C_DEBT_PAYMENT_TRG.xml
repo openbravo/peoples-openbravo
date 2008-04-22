@@ -24,17 +24,17 @@
     ************************************************************************/
 
  v_IsProcessed CHAR(1);
- v_Canceled NUMBER :=0;
- v_Generated NUMBER :=0;
- v_Applied  NUMBER :=0;
+ v_Canceled NUMBER:=0;
+ v_Generated NUMBER:=0;
+ v_Applied NUMBER:=0;
  v_Settlement_ID NUMBER(10);
  v_Currency_ID NUMBER(10);
  v_S_Currency_ID NUMBER(10);
  v_S_Date  DATE;
  v_Client_ID NUMBER(10);
  v_Org_ID NUMBER(10);
- v_multiplier NUMBER :=1;
- v_Oldmultiplier NUMBER :=1;
+ v_multiplier NUMBER:=1;
+ v_Oldmultiplier NUMBER:=1;
  v_Processed CHAR(1);
  v_Aux NUMBER;
 BEGIN
@@ -77,7 +77,7 @@ BEGIN
             from c_orderline
            where c_order_id = :NEW.C_Order_ID;
            if v_Aux>0 then
-             RAISE_APPLICATION_ERROR(-20000, '@OrderCompletelyInvoiced@');          
+             RAISE_APPLICATION_ERROR(-20000, '@OrderCompletelyInvoiced@');
            end if;
         END IF;
         
@@ -249,9 +249,7 @@ BEGIN
   ChargedAmt = COALESCE(ChargedAmt, 0) + COALESCE(v_Applied, 0)
     WHERE C_Settlement_ID = v_Settlement_ID;
  END IF;
-END C_Debt_Payment_Trg 
-
-
+END C_DEBT_PAYMENT_TRG
 ]]></body>
     </trigger>
   </database>

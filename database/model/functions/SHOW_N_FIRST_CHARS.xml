@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION SHOW_N_FIRST_CHARS">
     <function name="SHOW_N_FIRST_CHARS" type="VARCHAR">
-      <parameter name="p_text" type="VARCHAR"/>
-      <parameter name="p_numChar" type="NUMERIC"/>
+      <parameter name="p_text" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_numchar" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -26,7 +30,6 @@ BEGIN
   END IF;
   RETURN(SUBSTR(p_text, 1, p_numChar) || v_Auxtext) ;
 END SHOW_N_FIRST_CHARS
-
 ]]></body>
     </function>
   </database>

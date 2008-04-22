@@ -1,13 +1,27 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CURRENCY_CONVERT0">
     <function name="C_CURRENCY_CONVERT0" type="NUMERIC">
-      <parameter name="p_Amount" type="NUMERIC" mode="in"/>
-      <parameter name="p_CurFrom" type="VARCHAR" mode="in"/>
-      <parameter name="p_CurTo" type="VARCHAR" mode="in"/>
-      <parameter name="p_ConvDate" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_RateType" type="CHAR" mode="in"/>
-      <parameter name="p_Client_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Org_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_amount" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_curfrom" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_curto" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_convdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ratetype" type="CHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_client_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_org_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -58,8 +72,7 @@ BEGIN
   END IF;
   -- Convert it
   RETURN C_Currency_Convert(p_amount, v_CurFrom_ID, v_CurTo_ID, p_ConvDate, p_RateType, p_Client_ID, p_Org_ID) ;
-END C_Currency_Convert0
-
+END C_CURRENCY_CONVERT0
 ]]></body>
     </function>
   </database>

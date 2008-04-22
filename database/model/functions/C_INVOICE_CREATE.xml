@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_CREATE">
     <function name="C_INVOICE_CREATE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Invoice_ID" type="NUMERIC" mode="out"/>
-      <parameter name="p_Order_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_invoice_id" type="NUMERIC" mode="out">
+        <default/>
+      </parameter>
+      <parameter name="p_order_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -128,7 +134,7 @@
           --  Update AD_PInstance
           DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
           v_ResultStr:='PInstanceNotFound';
-          Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+          AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
           -- Get Parameters
           v_ResultStr:='ReadingParameters';
           v_C_Order_ID:=NULL;
@@ -398,7 +404,7 @@
                 VALUES
                 (
                   p_Invoice_ID, Cur_Order.C_Order_ID, Cur_Order.AD_Client_ID, Cur_Order.AD_Org_ID,
-                   'Y', Now(), 0, Now(),
+                   'Y', now(), 0, now(),
                   0, Cur_Order.IsSOTrx, v_DocumentNo, 'DR',
                    'CO', 'N', 'N', v_DocType_ID,
                   v_DocType_ID, Cur_Order.Description, v_Approved, 'N',
@@ -448,7 +454,7 @@
                   VALUES
                   (
                     v_NextNo, Cur_Order.AD_Client_ID, Cur_Order.AD_Org_ID, 'Y',
-                    Now(), 0, Now(), 0,
+                    now(), 0, now(), 0,
                     p_Invoice_ID, NULL, NULL, v_LineNo,
                     v_Reference, NULL, 0, 0,
                     0, 0, 0, NULL,
@@ -497,7 +503,7 @@
                       VALUES
                       (
                         v_NextNo, ptr_ol.AD_Client_ID, ptr_ol.AD_Org_ID, 'Y',
-                        Now(), 0, Now(), 0,
+                        now(), 0, now(), 0,
                         p_Invoice_ID, ptr_ol.C_OrderLine_ID, NULL, v_LineNo,
                         ptr_ol.Description, ptr_ol.M_Product_ID, v_Qty, ptr_ol.PriceList,
                         ptr_ol.PriceActual, ptr_ol.PriceLimit, C_Currency_Round(v_Qty*ptr_ol.PriceActual, Cur_Order.C_Currency_ID, NULL), ptr_ol.C_Charge_ID,
@@ -545,7 +551,7 @@
                       VALUES
                       (
                         v_NextNo, ptr_sl.AD_Client_ID, ptr_sl.AD_Org_ID, 'Y',
-                        Now(), 0, Now(), 0,
+                        now(), 0, now(), 0,
                         p_Invoice_ID, ptr_sl.C_OrderLine_ID, ptr_sl.M_InOutLine_ID, v_LineNo,
                         ptr_sl.Description, ptr_sl.M_Product_ID, ptr_sl.MovementQty, ptr_sl.PriceList,
                         ptr_sl.PriceActual, ptr_sl.PriceLimit, C_Currency_Round(ptr_sl.MovementQty*ptr_sl.PriceActual, Cur_Order.C_Currency_ID, NULL), ptr_sl.C_Charge_ID,
@@ -563,7 +569,7 @@
                 END LOOP;
               END IF;
               -- Post it
-              C_Invoice_Post(NULL, p_Invoice_ID) ;
+              C_INVOICE_POST(NULL, p_Invoice_ID) ;
 			  --Added by p.Sarobe
 			  IF(p_Invoice_ID=0) THEN
           	  	  RAISE_APPLICATION_ERROR(-20000, '@InvoiceCreateFailed@');
@@ -693,7 +699,7 @@
                     THEN TO_NUMBER(InvoiceWeekDayCutoff)
                     ELSE InvoiceDayCutoff
                   END
-                  ), Now()) AS DateLimit
+                  ), now()) AS DateLimit
                 FROM C_INVOICESCHEDULE
                 )
                 si
@@ -819,7 +825,7 @@
               )
             LOOP
               -- Invoice Date from Parameter                  -- or Order
-              v_DateInvoiced:=COALESCE(v_DateInvoiced_aux, COALESCE(v_DateOrdered, Now())) ; -- si.DateOrdered);
+              v_DateInvoiced:=COALESCE(v_DateInvoiced_aux, COALESCE(v_DateOrdered, now())) ; -- si.DateOrdered);
               --  Summary Invoice only if BP has Schedule setup and selected in invoice
               IF(NOT(Cur_InvoiceSchedule.C_InvoiceSchedule_ID IS NOT NULL AND Cur_InvoiceSchedule.InvoiceRule='S') AND v_InOut_ID<>Cur_InvoiceSchedule.M_InOut_ID) THEN -- and new document
                 v_Partner_ID:=-2; -- indicate BP change to force new invoice
@@ -873,7 +879,7 @@
                     SET DateInvoiced=v_DateInvoiced,
                     DateAcct=v_DateInvoiced
                   WHERE C_Invoice_ID=p_Invoice_ID;
-                  C_Invoice_Post(NULL, p_Invoice_ID) ;
+                  C_INVOICE_POST(NULL, p_Invoice_ID) ;
                 END IF;
                 -- Get Document Type for Invoice
                 v_ResultStr:='GetDocumentType';
@@ -941,7 +947,7 @@
                     VALUES
                     (
                       p_Invoice_ID, Cur_InvoiceSchedule.C_Order_ID, Cur_InvoiceSchedule.AD_Client_ID, Cur_InvoiceSchedule.AD_Org_ID,
-                       'Y', Now(), 0, Now(),
+                       'Y', now(), 0, now(),
                       0, 'Y', v_DocumentNo, 'DR',
                        'CO', 'N', 'N', v_DocType_ID,
                       v_DocType_ID, v_description, v_Approved, 'N',
@@ -1006,7 +1012,7 @@
                     VALUES
                     (
                       v_NextNo, Cur_InvoiceSchedule.AD_Client_ID, Cur_InvoiceSchedule.AD_Org_ID, 'Y',
-                      Now(), 0, Now(), 0,
+                      now(), 0, now(), 0,
                       p_Invoice_ID, NULL, NULL, v_LineNo,
                       v_Reference, NULL, 0, 0,
                       0, 0, 0, Cur_InvoiceSchedule.C_Charge_ID,
@@ -1036,7 +1042,7 @@
                   VALUES
                   (
                     v_NextNo, Cur_InvoiceSchedule.AD_Client_ID, Cur_InvoiceSchedule.Line_AD_Org_ID, 'Y',
-                    Now(), 0, Now(), 0,
+                    now(), 0, now(), 0,
                     p_Invoice_ID, Cur_InvoiceSchedule.C_OrderLine_ID, Cur_InvoiceSchedule.M_InOutLine_ID, v_LineNo,
                     Cur_InvoiceSchedule.Line_Description, Cur_InvoiceSchedule.M_Product_ID, Cur_InvoiceSchedule.MovementQty, Cur_InvoiceSchedule.PriceList,
                     Cur_InvoiceSchedule.PriceActual, Cur_InvoiceSchedule.PriceLimit, C_Currency_Round(Cur_InvoiceSchedule.MovementQty*Cur_InvoiceSchedule.PriceActual, Cur_InvoiceSchedule.C_Currency_ID, NULL), Cur_InvoiceSchedule.Line_C_Charge_ID,
@@ -1045,18 +1051,18 @@
                     Cur_InvoiceSchedule.QuantityOrder, Cur_InvoiceSchedule.M_Product_Uom_ID, Cur_InvoiceSchedule.PriceStd
                   )
                   ;
-                v_DateOrdered:=COALESCE(Cur_InvoiceSchedule.movementDate, COALESCE(Cur_InvoiceSchedule.DateOrdered, Now())) ;
+                v_DateOrdered:=COALESCE(Cur_InvoiceSchedule.movementDate, COALESCE(Cur_InvoiceSchedule.DateOrdered, now())) ;
               END IF;--
             END LOOP; -- Invoice Schedule
             IF(NOT FINISH_PROCESS) THEN
               -- Post last invoice, if exists
               IF(p_Invoice_ID<>-1) THEN
-                v_DateInvoiced:=COALESCE(v_DateInvoiced_aux, COALESCE(v_DateOrdered, Now())) ;
+                v_DateInvoiced:=COALESCE(v_DateInvoiced_aux, COALESCE(v_DateOrdered, now())) ;
                 UPDATE C_INVOICE
                   SET DateInvoiced=v_DateInvoiced,
                   DateAcct=v_DateInvoiced
                 WHERE C_Invoice_ID=p_Invoice_ID;
-                C_Invoice_Post(NULL, p_Invoice_ID) ;
+                C_INVOICE_POST(NULL, p_Invoice_ID) ;
               END IF;
             END IF;--FINISH_PROCESS
           END; -- Block
@@ -1066,7 +1072,7 @@
         IF(p_PInstance_ID IS NOT NULL) THEN
           --  Update AD_PInstance
           DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-          Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
+          AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
         ELSE
           DBMS_OUTPUT.PUT_LINE('--<<C_Invoive_Create finished>> ' || v_Message) ;
         END IF;
@@ -1078,7 +1084,7 @@
       DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
       IF(p_PInstance_ID IS NOT NULL) THEN
         ROLLBACK;
-        Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+        AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
       ELSE
         DECLARE
           v_Code NUMBER:=SQLCODE;
@@ -1092,7 +1098,7 @@
             )
             VALUES
             (
-              DBA_ErrorLog_Seq.NEXTVAL, Now(),
+              DBA_ErrorLog_Seq.NEXTVAL, now(),
               v_Code, v_ResultStr,
                'C_Invoice_Post'
             )
@@ -1102,9 +1108,7 @@
       END IF;
       p_Invoice_ID:=0; -- Error Indicator
       RETURN;
-END C_Invoice_Create
-
-
+END C_INVOICE_CREATE
 ]]></body>
     </function>
   </database>

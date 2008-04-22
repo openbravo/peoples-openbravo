@@ -1,10 +1,18 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GL_PERIOD_OPEN">
     <function name="GL_PERIOD_OPEN" type="NUMERIC">
-      <parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_DateAcct" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_DocBaseType" type="CHAR" mode="in"/>
-      <parameter name="p_C_AcctSchema_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_dateacct" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_docbasetype" type="CHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_c_acctschema_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -68,11 +76,11 @@ Inc.
       DBMS_OUTPUT.PUT_LINE('AcctSchema - Auto=' || CUR_AS.AutoPeriodControl) ;
       v_C_Period_ID := 1;
       IF(CUR_AS.AutoPeriodControl = 'Y') THEN
-        IF(p_DateAcct  BETWEEN(TRUNC(SysDate, 'MM') -CUR_AS.Period_OpenHistory) AND(ADD_MONTHS(TRUNC(SysDate, 'MM'), 1) +CUR_AS.Period_OpenFuture)) THEN
-          DBMS_OUTPUT.PUT_LINE('Open(A) ' ||(TRUNC(SysDate, 'MM') -CUR_AS.Period_OpenHistory) || ' - ' ||(ADD_MONTHS(TRUNC(SysDate, 'MM'), 1) +CUR_AS.Period_OpenFuture)) ;
+        IF(p_DateAcct  BETWEEN(TRUNC(now(), 'MM') -CUR_AS.Period_OpenHistory) AND(ADD_MONTHS(TRUNC(now(), 'MM'), 1) +CUR_AS.Period_OpenFuture)) THEN
+          DBMS_OUTPUT.PUT_LINE('Open(A) ' ||(TRUNC(now(), 'MM') -CUR_AS.Period_OpenHistory) || ' - ' ||(ADD_MONTHS(TRUNC(now(), 'MM'), 1) +CUR_AS.Period_OpenFuture)) ;
           v_C_Period_ID := 0; -- open
         ELSE
-          DBMS_OUTPUT.PUT_LINE('Not in Limits (A) ' ||(TRUNC(SysDate, 'MM') -CUR_AS.Period_OpenHistory) || ' - ' ||(ADD_MONTHS(TRUNC(SysDate, 'MM'), 1) +CUR_AS.Period_OpenFuture)) ;
+          DBMS_OUTPUT.PUT_LINE('Not in Limits (A) ' ||(TRUNC(now(), 'MM') -CUR_AS.Period_OpenHistory) || ' - ' ||(ADD_MONTHS(TRUNC(now(), 'MM'), 1) +CUR_AS.Period_OpenFuture)) ;
           v_C_Period_ID := -1; -- closed
         END IF;
       END IF; -- No AutoPeriodControl --
@@ -112,8 +120,7 @@ Inc.
     END LOOP;
     DBMS_OUTPUT.PUT_LINE('Period_ID=' || v_C_Period_ID) ;
     RETURN v_C_Period_ID;
-END GL_Period_Open
-
+END GL_PERIOD_OPEN
 ]]></body>
     </function>
   </database>

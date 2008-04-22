@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_COMMISSION_COPY">
     <function name="C_COMMISSION_COPY" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -125,9 +127,7 @@ WHEN OTHERS THEN
   ROLLBACK;
   AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END C_Commission_Copy
-
-
+END C_COMMISSION_COPY
 ]]></body>
     </function>
   </database>

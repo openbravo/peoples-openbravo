@@ -25,7 +25,7 @@
 
   v_desc     varchar2(500);
   v_desc_aux varchar2(500);
-  pos        number;
+  pos        NUMBER;
   TYPE RECORD IS REF CURSOR;
   CurSetInstance RECORD;
 BEGIN
@@ -63,9 +63,7 @@ BEGIN
        WHERE M_AttributeSetInstance_ID = CurSetInstance.M_AttributeSetInstance_ID;
     END LOOP;
   END IF;
-END M_ATRIBUTEVALUE_TRG 
-
-
+END M_ATTRIBUTEVALUE_TRG
 ]]></body>
     </trigger>
   </database>

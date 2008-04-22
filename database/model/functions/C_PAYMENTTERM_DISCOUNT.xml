@@ -1,10 +1,18 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_PAYMENTTERM_DISCOUNT">
     <function name="C_PAYMENTTERM_DISCOUNT" type="NUMERIC">
-      <parameter name="p_Amount" type="NUMERIC" mode="in"/>
-      <parameter name="p_PaymentTerm_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_DocDate" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_PayDate" type="TIMESTAMP" mode="in" default="SYSDATE"/>
+      <parameter name="p_amount" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_paymentterm_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_docdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_paydate" type="TIMESTAMP" mode="in">
+        <default><![CDATA[now()]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -31,13 +39,13 @@ Inc.
 *
 * Test: SELECT C_PaymentTerm_Discount(17777, 103, '10-DEC-1999') FROM DUAL
 ************************************************************************/
-  Discount NUMBER := 0;
+  Discount NUMBER:= 0;
   TYPE RECORD IS REF CURSOR;
     Cur_PT RECORD;
     v_Discount1Date DATE;
     v_Discount2Date DATE;
-    v_Add1Date NUMBER := 0;
-    v_Add2Date NUMBER := 0;
+    v_Add1Date NUMBER:= 0;
+    v_Add2Date NUMBER:= 0;
   BEGIN
     -- No Data - No Discount
     IF(p_Amount IS NULL OR p_PaymentTerm_ID IS NULL OR p_DocDate IS NULL) THEN
@@ -87,8 +95,7 @@ Inc.
     END LOOP;
     --
     RETURN ROUND(COALESCE(Discount, 0), 2) ; -- fixed rounding
-END C_PaymentTerm_Discount
-
+END C_PAYMENTTERM_DISCOUNT
 ]]></body>
     </function>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CREATE_PINVOICE_FROM_OUTS">
     <function name="C_CREATE_PINVOICE_FROM_OUTS" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -62,7 +64,7 @@
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
     v_ResultStr:='PInstanceNotFound';
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
   BEGIN --BODY
     -- Get Parameters
     v_ResultStr:='ReadingParameters';
@@ -207,7 +209,7 @@
           VALUES
           (
             v_Invoice_ID, Cur_Outs.AD_Client_ID, Cur_Outs.AD_Org_ID, 'Y',
-            Now(), v_User_ID, Now(), v_User_ID,
+            now(), v_User_ID, now(), v_User_ID,
              'N', v_DocumentNo, 'DR', 'CO',
              'N', 'N', 'N', 0,
             v_DocType_ID, NULL, NULL, 'Y',
@@ -283,7 +285,7 @@
           VALUES
           (
             v_InvoiceLine_ID, Cur_Outs.AD_Client_ID, Cur_Outs.AD_Org_ID, 'Y',
-            Now(), v_User_ID, Now(), v_User_ID,
+            now(), v_User_ID, now(), v_User_ID,
             v_Invoice_ID, Cur_Pend.C_OrderLine_ID, Cur_Pend.M_InOutLine_ID,
             v_line, NULL, Cur_Outs.M_Product_ID, v_auxQty,
             v_priceList, M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, Cur_Outs.M_Product_ID, v_priceActual, v_auxQty, Cur_Outs.M_PriceList_ID),
@@ -317,7 +319,7 @@
           VALUES
           (
             v_InvoiceLine_ID, Cur_Outs.AD_Client_ID, Cur_Outs.AD_Org_ID, 'Y',
-            Now(), v_User_ID, Now(), v_User_ID,
+            now(), v_User_ID, now(), v_User_ID,
             v_Invoice_ID, NULL, NULL, v_line,
             NULL, Cur_Outs.M_Product_ID, v_auxQty, v_priceList,
             M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, Cur_Outs.M_Product_ID, v_priceActual, v_auxQty, Cur_Outs.M_PriceList_ID), v_priceLimit,
@@ -333,7 +335,7 @@
     v_Message:=v_Message || '@Created@: ' || v_NoRecords;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 1, v_Message) ;
     RETURN;
   END; --BODY
 EXCEPTION
@@ -341,10 +343,8 @@ WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_Message) ;
   ROLLBACK;
-  Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_Message) ;
-END C_Create_Pinvoice_From_Outs
-
-
+  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_Message) ;
+END C_CREATE_PINVOICE_FROM_OUTS
 ]]></body>
     </function>
   </database>

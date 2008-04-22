@@ -1,29 +1,101 @@
 <?xml version="1.0"?>
   <database name="TABLE AD_REGISTRATION_INFO">
     <table name="AD_REGISTRATION_INFO" primaryKey="AD_REGISTRATION_INFO_KEY">
-      <column name="AD_REGISTRATION_INFO_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" default="SYSDATE" autoIncrement="false"/>
-      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="REGISTRATION_ID" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false"/>
-      <column name="ISREGISTRATIONACTIVE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
-      <column name="POSTPONE_DATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
-      <column name="REGISTERNOW" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="COMPANYNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
-      <column name="COMPANYADDRESS" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false"/>
-      <column name="CONTACTNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
-      <column name="CONTACTTITLE" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false"/>
-      <column name="CONTACTEMAIL" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
-      <column name="CONTACTPHONE" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
-      <column name="COMPANYINDUSTRY" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false"/>
-      <column name="COMPANYREVENUE" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false"/>
-      <column name="COMPANYNUM_EMPLOYEES" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
-      <column name="ISSUBSCRIBECOMMERCIAL" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="ISSUBSCRIBEDEVELOPMENT" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
-      <column name="ISCOMMERCIALCONTACT" primaryKey="false" required="true" type="CHAR" size="1" default="Y" autoIncrement="false"/>
+      <column name="AD_REGISTRATION_INFO_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="REGISTRATION_ID" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISREGISTRATIONACTIVE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="POSTPONE_DATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="REGISTERNOW" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANYNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANYADDRESS" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CONTACTNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CONTACTTITLE" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CONTACTEMAIL" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CONTACTPHONE" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANYINDUSTRY" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANYREVENUE" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANYNUM_EMPLOYEES" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISSUBSCRIBECOMMERCIAL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISSUBSCRIBEDEVELOPMENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISCOMMERCIALCONTACT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
     </table>
   </database>

@@ -213,11 +213,9 @@ BEGIN
 
 EXCEPTION
  WHEN Not_Fully_Qualified THEN
-  RAISE_APPLICATION_ERROR (-20101, 'Not fully Qualified: ' || v_Combination || '(' || :new.C_ValidCombination_ID || ')');
+  RAISE_APPLICATION_ERROR(-20101, 'Not fully Qualified: ' || v_Combination || '(' || :new.C_ValidCombination_ID || ')');
 
-END C_ValidCombination_Trg 
-
-
+END C_VALIDCOMBINATION_TRG
 ]]></body>
     </trigger>
   </database>

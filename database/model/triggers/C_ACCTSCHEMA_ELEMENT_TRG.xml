@@ -87,9 +87,7 @@ BEGIN
     END IF;
   END IF;
   --
-END C_AcctSchema_Element_Trg 
-
-
+END C_ACCTSCHEMA_ELEMENT_TRG
 ]]></body>
     </trigger>
   </database>

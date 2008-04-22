@@ -147,9 +147,7 @@
    END IF;
     END IF;
   END IF;
-END M_InOutLine_Trg 
-
-
+END M_INOUTLINE_TRG
 ]]></body>
     </trigger>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION FRIE_VALUE2">
     <function name="FRIE_VALUE2" type="NVARCHAR">
-      <parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_product_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -126,8 +128,7 @@ Inc.
     -- DBMS_OUTPUT.PUT_LINE(' - ' || Value);
     --
     RETURN v_Value;
-END FRIE_Value2
-
+END FRIE_VALUE2
 ]]></body>
     </function>
   </database>

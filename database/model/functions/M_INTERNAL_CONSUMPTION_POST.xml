@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INTERNAL_CONSUMPTION_POST">
     <function name="M_INTERNAL_CONSUMPTION_POST" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -183,9 +185,7 @@ WHEN OTHERS THEN
   -- Commented by cromero 19102006 COMMIT;
   AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END M_Internal_Consumption_Post
-
-
+END M_INTERNAL_CONSUMPTION_POST
 ]]></body>
     </function>
   </database>

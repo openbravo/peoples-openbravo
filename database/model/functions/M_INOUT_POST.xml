@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INOUT_POST">
     <function name="M_INOUT_POST" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_InOut_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_inout_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -244,7 +248,7 @@
             END IF;
             -- Create Asset
             IF(Cur_InOutLine.M_Product_ID IS NOT NULL AND Cur_InOut.IsSOTrx='Y') THEN
-              A_Asset_Create(NULL, Cur_InOutLine.M_InOutLine_ID) ;
+              A_ASSET_CREATE(NULL, Cur_InOutLine.M_InOutLine_ID) ;
             END IF;
             v_ResultStr:='UpdateOrderLine';
             IF(Cur_InOutLine.C_OrderLine_ID IS NOT NULL) THEN
@@ -500,7 +504,7 @@
           END IF;
           -- Post Reversal
           v_ResultStr:='PostReversal';
-          M_Inout_Post(NULL, v_RInOut_ID) ;
+          M_INOUT_POST(NULL, v_RInOut_ID) ;
           -- Indicate as Reversal Transaction
           v_ResultStr:='IndicateReversal';
           UPDATE M_INOUT
@@ -534,7 +538,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   ELSE
     DECLARE
-      v_Code NUMBER:=SQLCode;
+      v_Code NUMBER:=SQLCODE;
     BEGIN
       INSERT
       INTO DBA_ERRORLOG
@@ -554,9 +558,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   RETURN;
-END M_Inout_Post
-
-
+END M_INOUT_POST
 ]]></body>
     </function>
   </database>

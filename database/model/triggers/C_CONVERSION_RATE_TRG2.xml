@@ -22,7 +22,7 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_Count number;
+  v_Count NUMBER;
    BEGIN
      --check for repeated dates
    select count(*)
@@ -36,14 +36,12 @@
     and r1.c_Conversion_Rate_ID != r2.c_Conversion_Rate_ID;
 
    if v_Count > 0 then
-     RAISE_APPLICATION_ERROR (-20504, 'There are different conversion rates with same dates');
+     RAISE_APPLICATION_ERROR(-20504, 'There are different conversion rates with same dates');
    end if;
 
 
 
-END C_Conversion_Rate_Trg2 
-
-
+END C_CONVERSION_RATE_TRG2
 ]]></body>
     </trigger>
   </database>

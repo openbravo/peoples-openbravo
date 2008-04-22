@@ -31,7 +31,7 @@
     *      Set Line PlannedAmt, PlannedMarginAmt
     ************************************************************************/
     v_PriceLimit NUMBER:=NULL;
-  v_PriceStd      NUMBER:=NULL;
+  v_PriceStd NUMBER:=NULL;
   v_PlannedMargin NUMBER:=NULL;
 BEGIN
   -- Calculate PlannedAmt
@@ -66,9 +66,7 @@ BEGIN
       :new.PlannedMarginAmt:=:new.PlannedAmt * v_PlannedMargin;
     END IF;
   END IF;
-END C_ProjectLine_Trg 
-
-
+END C_PROJECTLINE_TRG
 ]]></body>
     </trigger>
   </database>

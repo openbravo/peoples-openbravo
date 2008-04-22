@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_REQUISITION">
     <function name="MRP_REQUISITION" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -32,7 +34,7 @@
   v_MRequisition_ID NUMBER:=NULL;
   v_MRequisitionLine_ID NUMBER;
   v_DocumentNo NVARCHAR2(60);
-  v_Line NUMBER := 0;
+  v_Line NUMBER:= 0;
 
   FINISH_PROCESS BOOLEAN DEFAULT FALSE;
   --  Parameter
@@ -153,8 +155,6 @@ WHEN OTHERS THEN
   END IF;
 --  RETURN;
 END MRP_REQUISITION
-
-
 ]]></body>
     </function>
   </database>

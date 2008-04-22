@@ -41,6 +41,7 @@
     END IF;
   END IF;
 
-END M_REQUISITION_TRG]]></body>
+END M_REQUISITION_TRG
+]]></body>
     </trigger>
   </database>

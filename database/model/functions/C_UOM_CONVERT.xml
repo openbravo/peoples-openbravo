@@ -1,10 +1,18 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_UOM_CONVERT">
     <function name="C_UOM_CONVERT" type="NUMERIC">
-      <parameter name="p_Qty" type="NUMERIC" mode="in"/>
-      <parameter name="p_UOMFrom_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_UOMTo_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_StdPrecision" type="VARCHAR" mode="in"/>
+      <parameter name="p_qty" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_uomfrom_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_uomto_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_stdprecision" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -32,8 +40,8 @@ Inc.
 * Test:
 *  SELECT C_UOM_Convert (11,101,102, 'Y') FROM DUAL => 1.38
 ************************************************************************/
-  v_Result           NUMBER := NULL;
-  v_Rate             NUMBER := NULL;
+  v_Result NUMBER:= NULL;
+  v_Rate NUMBER:= NULL;
   v_StdPrecision     NUMBER;
   v_CostingPrecision NUMBER;
 BEGIN
@@ -90,8 +98,7 @@ BEGIN
     END;
   END IF;
 RETURN v_Result;
-END C_UOM_Convert 
-
+END C_UOM_CONVERT
 ]]></body>
     </function>
   </database>

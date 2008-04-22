@@ -43,10 +43,7 @@
   IF(:new.DateFrom > :new.DateTo) THEN
     RAISE_APPLICATION_ERROR(-20403, 'End Date greater than Start Date') ;
   END IF;
-END S_ResourceUnavailable_Trg
-
-
-
+END S_RESOURCEUNAVAILABLE_TRG
 ]]></body>
     </trigger>
   </database>

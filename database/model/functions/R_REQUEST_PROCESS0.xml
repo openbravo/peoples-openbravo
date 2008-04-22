@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION R_REQUEST_PROCESS0">
     <function name="R_REQUEST_PROCESS0" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -25,10 +27,8 @@
   * Title: Request Processing
   ************************************************************************/
 BEGIN
-  R_Request_Process(p_PInstance_ID, NULL) ;
-END R_Request_Process0
-
-
+  R_REQUEST_PROCESS(p_PInstance_ID, NULL) ;
+END R_REQUEST_PROCESS0
 ]]></body>
     </function>
   </database>

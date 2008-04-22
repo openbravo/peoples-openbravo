@@ -31,7 +31,7 @@
     *    - create default Account records
     ************************************************************************/
 
-  Cur_Defaults A_Asset_Group_Acct%rowtype;
+  Cur_Defaults A_Asset_Group_Acct%ROWTYPE;
   v_Acct_ID NUMBER;
 BEGIN
   --  Default Accounts for all AcctSchema
@@ -55,8 +55,8 @@ BEGIN
         VALUES
         (
           :new.A_Asset_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-          :new.AD_Org_ID,  'Y', SysDate,
-          :new.CreatedBy, SysDate, :new.UpdatedBy,
+          :new.AD_Org_ID,  'Y', now(),
+          :new.CreatedBy, now(), :new.UpdatedBy,
           Cur_Defaults.A_DEPRECIATION_ACCT, Cur_Defaults.A_ACCUMDEPRECIATION_ACCT, Cur_Defaults.A_DISPOSAL_LOSS,
           Cur_Defaults.A_DISPOSAL_LOSS
         )
@@ -66,9 +66,7 @@ BEGIN
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20008, 'The asset group for this asset has no accounts') ;
-END A_ASSET_Trg 
-
-
+END A_ASSET_TRG
 ]]></body>
     </trigger>
   </database>

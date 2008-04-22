@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_PRICELIST_CREATE">
     <function name="M_PRICELIST_CREATE" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -473,8 +475,7 @@ EXCEPTION
     DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
     AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
     RETURN;
-END M_PriceList_Create
-
+END M_PRICELIST_CREATE
 ]]></body>
     </function>
   </database>

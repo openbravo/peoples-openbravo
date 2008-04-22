@@ -20,7 +20,6 @@
 BEGIN
   RETURN(NULL) ;
 END DATE_NULO
-
 ]]></body>
     </function>
   </database>

@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_GET_OFFERS_APPLIED">
     <function name="M_GET_OFFERS_APPLIED" type="VARCHAR">
-      <parameter name="p_Id" type="NUMERIC"/>
-      <parameter name="p_Type" type="VARCHAR"/>
+      <parameter name="p_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_type" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -94,8 +98,7 @@ BEGIN
     END LOOP;
   END IF;
   RETURN v_Offers;
-END M_Get_Offers_Applied 
-
+END M_GET_OFFERS_APPLIED
 ]]></body>
     </function>
   </database>

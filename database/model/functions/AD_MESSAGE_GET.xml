@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_MESSAGE_GET">
     <function name="AD_MESSAGE_GET" type="NVARCHAR">
-      <parameter name="p_Value" type="NVARCHAR" mode="in"/>
-      <parameter name="p_AD_Language" type="VARCHAR" mode="in"/>
+      <parameter name="p_value" type="NVARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_language" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/******************************************************************************
 * The contents of this file are subject to the   Compiere License  Version 1.1
 * ("License"); You may not use this file except in compliance with the License
@@ -37,8 +41,7 @@ WHEN OTHERS THEN
 END;
 --
 RETURN v_RetValue;
-END AD_Message_Get
-
+END AD_MESSAGE_GET
 ]]></body>
     </function>
   </database>

@@ -37,10 +37,7 @@
     AND DocStatus NOT IN('RE', 'CL', 'CO') ;
   END IF;
  END IF;
-END C_Order_Trg2
-
-
-
+END C_ORDER_TRG2
 ]]></body>
     </trigger>
   </database>

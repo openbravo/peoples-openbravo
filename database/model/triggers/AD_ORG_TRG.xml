@@ -46,8 +46,8 @@ BEGIN
         Updated, UpdatedBy
       )
     SELECT AD_Role_ID, :new.AD_Client_ID, :new.AD_Org_ID,
-       'Y', SysDate, :new.CreatedBy,
-      SysDate, :new.CreatedBy
+       'Y', now(), :new.CreatedBy,
+      now(), :new.CreatedBy
     FROM AD_Role
     WHERE AD_Client_ID=:new.AD_Client_ID;
     --  Create TreeNode --
@@ -98,7 +98,7 @@ BEGIN
       VALUES
       (
         :new.AD_Org_ID, :new.AD_Client_ID, 'Y',
-        SysDate, :new.CreatedBy, SysDate,
+        now(), :new.CreatedBy, now(),
         :new.CreatedBy, NULL, '?',
          '?', NULL
       )
@@ -120,9 +120,7 @@ BEGIN
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20014, 'AD_Org InsertTrigger Error: No ClientInfo or parent TreeNode') ;
-END AD_Org_Trg 
-
-
+END AD_ORG_TRG
 ]]></body>
     </trigger>
   </database>

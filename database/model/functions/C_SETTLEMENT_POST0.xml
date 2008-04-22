@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_SETTLEMENT_POST0">
     <function name="C_SETTLEMENT_POST0" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -19,9 +21,8 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 BEGIN
-  C_Settlement_Post(p_PInstance_ID, NULL) ;
-END C_Settlement_Post0
-
+  C_SETTLEMENT_POST(p_PInstance_ID, NULL) ;
+END C_SETTLEMENT_POST0
 ]]></body>
     </function>
   </database>

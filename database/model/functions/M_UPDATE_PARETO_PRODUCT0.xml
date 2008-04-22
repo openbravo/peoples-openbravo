@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_UPDATE_PARETO_PRODUCT0">
     <function name="M_UPDATE_PARETO_PRODUCT0" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -19,7 +21,8 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 BEGIN
-  M_Update_Pareto_Product(PInstance_ID, NULL, NULL) ;
-END M_Update_Pareto_Product0]]></body>
+  M_UPDATE_PARETO_PRODUCT(PInstance_ID, NULL, NULL) ;
+END M_UPDATE_PARETO_PRODUCT0
+]]></body>
     </function>
   </database>

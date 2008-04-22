@@ -59,15 +59,12 @@
  THEN
     UPDATE AT_Command_Trl
       SET IsTranslated='N',
-      Updated=SYSDATE
+      Updated=now()
     WHERE AT_Command_ID=:NEW.AT_Command_ID;
   END IF;
  END IF;
 -- Updating
-END AT_Command_Trg
-
-
-
+END AT_COMMAND_TRG
 ]]></body>
     </trigger>
   </database>

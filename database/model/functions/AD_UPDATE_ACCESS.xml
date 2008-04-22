@@ -150,7 +150,6 @@ BEGIN
       (AD_ROLE.USERLEVEL = '  O' AND AD_WORKFLOW.ACCESSLEVEL IN ('3','1','7'))
     );
 END AD_UPDATE_ACCESS
-
 ]]></body>
     </function>
   </database>

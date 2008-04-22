@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_PAYMENTTERM_DUEDATE">
     <function name="C_PAYMENTTERM_DUEDATE" type="TIMESTAMP">
-      <parameter name="p_PaymentTerm_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_DocDate" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_BPartner_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_paymentterm_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_docdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_bpartner_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -21,7 +27,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 /*************************************************************************
-* Title: Get Due Date
+* Title: Get Due DATE
 * Description:
 * Grace days are not considered!
 ************************************************************************/
@@ -37,8 +43,7 @@
       v_DueDate := C_PaymentDueDate(p_BPartner_ID, 'Y', Cur_PT.FixMonthDay, Cur_PT.FixMonthDay2, Cur_PT.FixMonthDay3, Cur_PT.NetDays, Cur_PT.FixMonthOffset, Cur_PT.NetDay, Cur_PT.IsNextbusinessday, p_DocDate) ;
     END LOOP;
     RETURN COALESCE(v_DueDate, TRUNC(p_DocDate)) ;
-END C_PaymentTerm_DueDate
-
+END C_PAYMENTTERM_DUEDATE
 ]]></body>
     </function>
   </database>

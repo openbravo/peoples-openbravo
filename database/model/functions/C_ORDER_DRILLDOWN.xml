@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ORDER_DRILLDOWN">
     <function name="C_ORDER_DRILLDOWN" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -258,8 +260,6 @@ EXCEPTION
     AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
     RETURN;
 END C_ORDER_DRILLDOWN
-
-
 ]]></body>
     </function>
   </database>

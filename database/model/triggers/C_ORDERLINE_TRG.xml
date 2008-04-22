@@ -8,9 +8,9 @@
 
   v_newTaxBaseAmt NUMBER;
   v_oldTaxBaseAmt NUMBER;
-  v_oldLine   NUMBER := 0;
-  v_newLine   NUMBER := 0;
-  v_taxAmt   NUMBER := 0;
+  v_oldLine NUMBER:= 0;
+  v_newLine NUMBER:= 0;
+  v_taxAmt NUMBER:= 0;
   v_HasTaxLine  BOOLEAN := FALSE;
   v_Prec   NUMBER;
   v_ID   NUMBER;
@@ -109,7 +109,7 @@ IF (UPDATING) THEN
    UPDATE C_OrderTax
      SET TaxAmt = (SELECT ROUND(C_OrderTax.TaxBaseAmt * t.Rate / 100, v_Prec)
        FROM C_Tax t WHERE C_OrderTax.C_Tax_ID=t.C_Tax_ID),
-     Updated = SysDate,
+     Updated = now(),
      UpdatedBy = 0
    WHERE C_Order_ID=:old.C_Order_ID
      AND C_Tax_ID=:old.C_Tax_ID;
@@ -132,7 +132,7 @@ IF (UPDATING) THEN
      (AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
      C_Order_ID, C_Tax_ID, TaxBaseAmt, taxAmt)
     VALUES
-     (:new.AD_Client_ID, :new.AD_Org_ID, 'Y', SysDate, :new.UpdatedBy, SysDate, :new.UpdatedBy,
+     (:new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.UpdatedBy, now(), :new.UpdatedBy,
      :new.C_Order_ID, :new.C_Tax_ID, v_newLine, 0);
    ELSE
    -- DBMS_OUTPUT.PUT_LINE('Update NewLineAmt += ' || v_newLine);
@@ -146,7 +146,7 @@ IF (UPDATING) THEN
    UPDATE C_OrderTax
      SET TaxAmt = (SELECT ROUND(C_OrderTax.TaxBaseAmt * t.Rate / 100, v_Prec)
        FROM C_Tax t WHERE C_OrderTax.C_Tax_ID=t.C_Tax_ID),
-     Updated = SysDate,
+     Updated = now(),
      UpdatedBy = :new.UpdatedBy
    WHERE C_Order_ID=:new.C_Order_ID
      AND C_Tax_ID=:new.C_Tax_ID;
@@ -182,10 +182,7 @@ IF (UPDATING) THEN
   END IF;
  END IF;
 
-END C_OrderLine_Trg
-
-
-
+END C_ORDERLINE_TRG
 ]]></body>
     </trigger>
   </database>

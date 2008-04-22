@@ -100,10 +100,6 @@
   END IF;
  END IF;
 END AD_PRINTLABELLINE_TRG
-
-
-
-
 ]]></body>
     </trigger>
   </database>

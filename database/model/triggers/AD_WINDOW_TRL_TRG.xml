@@ -67,10 +67,7 @@
       END IF;
     END IF;
   --
-END AD_Window_Trl_Trg
-
-
-
+END AD_WINDOW_TRL_TRG
 ]]></body>
     </trigger>
   </database>

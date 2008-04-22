@@ -43,7 +43,7 @@ BEGIN
              Description = :NEW.Description,
              HELP = :NEW.HELP,
              IsTranslated = :NEW.IsTranslated,
-             Updated = SYSDATE
+             Updated = now()
        WHERE AD_Language = :NEW.AD_Language
          AND AD_Field_ID IN (
                SELECT F.AD_Field_ID
@@ -53,10 +53,7 @@ BEGIN
                   AND F.IsCentrallyMaintained = 'Y');
     END IF;
   END IF;
-END AD_Process_Trl_Trg
-
-
-
+END AD_PROCESS_TRL_TRG
 ]]></body>
     </trigger>
   </database>

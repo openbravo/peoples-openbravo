@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION FRIE_VALUE">
     <function name="FRIE_VALUE" type="VARCHAR">
-      <parameter name="p_ValueName" type="VARCHAR" mode="in"/>
+      <parameter name="p_valuename" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -53,8 +55,7 @@ BEGIN
   v_RetValue:=REPLACE(v_RetValue, ' ', '') ;
   --
   RETURN TRIM(v_RetValue) || v_AddOn;
-END FRIE_Value
-
+END FRIE_VALUE
 ]]></body>
     </function>
   </database>

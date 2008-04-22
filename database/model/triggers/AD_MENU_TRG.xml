@@ -100,7 +100,7 @@ BEGIN
       ELSE
         UPDATE AD_Menu_Trl
           SET IsTranslated='N',
-          Updated=SysDate
+          Updated=now()
         WHERE AD_Menu_ID=:new.AD_Menu_ID;
       END IF;
     END IF;
@@ -132,9 +132,7 @@ BEGIN
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20005, 'AD_Menu InsertTrigger Error: No ClientInfo or parent TreeNode') ;
-END AD_Menu_Trg
-
-
+END AD_MENU_TRG
 ]]></body>
     </trigger>
   </database>

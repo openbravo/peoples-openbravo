@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_PAYMENTTERM_NOTE">
     <function name="C_PAYMENTTERM_NOTE" type="NVARCHAR">
-      <parameter name="p_PaymentTerm_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_TermDate" type="TIMESTAMP" mode="in"/>
+      <parameter name="p_paymentterm_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_termdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -34,8 +38,7 @@ BEGIN
   FROM C_PaymentTerm
   WHERE C_PaymentTerm_ID = p_PaymentTerm_ID;
   RETURN v_DocNote;
-END C_PaymentTerm_Note
-
+END C_PAYMENTTERM_NOTE
 ]]></body>
     </function>
   </database>

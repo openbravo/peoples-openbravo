@@ -24,7 +24,7 @@
     ************************************************************************/
   v_Processed CHAR(1) ;
   v_C_INVOICE_ID NUMBER(10) ;
-  v_Prec         NUMBER:=2;
+  v_Prec NUMBER:=2;
   v_Currency     NUMBER;
 BEGIN
   IF INSERTING THEN
@@ -74,9 +74,7 @@ BEGIN
     :NEW.LineNetAmt:=ROUND(:NEW.LineNetAmt, v_Prec) ;
     :NEW.ChargeAmt:=ROUND(:NEW.ChargeAmt, v_Prec) ;
   END IF;
-END C_InvLine_Chk_Restrictions_Trg 
-
-
+END C_INVLINE_CHK_RESTRICTIONS_TRG
 ]]></body>
     </trigger>
   </database>

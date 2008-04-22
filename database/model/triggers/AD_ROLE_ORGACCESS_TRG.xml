@@ -35,7 +35,7 @@
   Cur_Org RECORD;
   v_ClientList VARCHAR2(2000):='';
   v_OrgList    VARCHAR2(2000):='';
-  v_Client_ID  NUMBER:=-1;
+  v_Client_ID NUMBER:=-1;
 BEGIN
   -- For each Role
   FOR CUR_Role IN
@@ -85,9 +85,7 @@ BEGIN
     WHERE AD_ROLE.AD_ROLE_ID=CUR_Role.AD_ROLE_ID;
   END LOOP;
   -- Role
-END AD_Role_OrgAccess_Trg 
-
-
+END AD_ROLE_ORGACCESS_TRG
 ]]></body>
     </trigger>
   </database>

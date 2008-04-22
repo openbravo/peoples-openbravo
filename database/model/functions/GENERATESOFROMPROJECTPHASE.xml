@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GENERATESOFROMPROJECTPHASE">
     <function name="GENERATESOFROMPROJECTPHASE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -33,7 +35,7 @@
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
     v_ResultStr:='PInstanceNotFound';
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
   BEGIN --BODY
     -- Get PARAMETERS
     v_ResultStr:='ReadingParameters';
@@ -148,14 +150,14 @@
           (
             v_C_Order_ID, Cur_SO.AD_CLIENT_ID, Cur_SO.AD_ORG_ID, v_AD_User_ID,
             v_AD_User_ID, 'Y', v_DocumentNo, 'DR',
-             'CO', 0, v_C_DOCTYPE_ID, TRUNC(Now(), 'DD'),
-            TRUNC(Now(), 'DD'), Cur_SO.C_BPARTNER_ID, Cur_SO.C_BPARTNER_LOCATION_ID, 'N',
+             'CO', 0, v_C_DOCTYPE_ID, TRUNC(now(), 'DD'),
+            TRUNC(now(), 'DD'), Cur_SO.C_BPARTNER_ID, Cur_SO.C_BPARTNER_LOCATION_ID, 'N',
             Cur_SO.C_CURRENCY_ID, COALESCE(Cur_SO.PAYMENTRULE, 'P'), Cur_SO.C_PAYMENTTERM_ID, v_InvoiceRule,
              'A', 'I', 'D', '5',
             0, 0, Cur_SO.M_WAREHOUSE_ID, Cur_SO.M_PRICELIST_ID,
              'N', 'N', 'N', Cur_SO.SALESREP_ID,
             v_Billto_ID, Cur_SO.C_CAMPAIGN_ID, Cur_SO.C_PROJECT_ID, Cur_SO.AD_User_ID,
-             'N', TRUNC(Now(), 'DD'), Cur_SO.PHASE_NAME ||' - '|| Cur_SO.DESCRIPTION
+             'N', TRUNC(now(), 'DD'), Cur_SO.PHASE_NAME ||' - '|| Cur_SO.DESCRIPTION
           );
           
         UPDATE C_PROJECTPHASE
@@ -163,7 +165,7 @@
         WHERE C_PROJECTPHASE_ID = v_Record_ID;
         
         -- Select the price list version that a applies for the price list of the header
-        SELECT Get_Pricelist_Version(Cur_SO.M_PriceList_ID, TRUNC(Now(), 'DD'))
+        SELECT Get_Pricelist_Version(Cur_SO.M_PriceList_ID, TRUNC(now(), 'DD'))
         INTO v_M_PriceList_Version_ID
         FROM DUAL;        
         IF (v_M_PriceList_Version_ID IS NULL) THEN
@@ -227,7 +229,7 @@
             END IF;
             
             -- Calculate Price Actual                      
-            v_PriceActual := COALESCE(Cur_SOLINES.priceactual,M_Get_Offers_Price(Now(), Cur_SO.C_BPARTNER_ID, Cur_SOLINES.M_PRODUCT_ID, v_PriceStd, Cur_SOLINES.Qty, Cur_SO.M_PRICELIST_ID),0);           
+            v_PriceActual := COALESCE(Cur_SOLINES.priceactual,M_Get_Offers_Price(now(), Cur_SO.C_BPARTNER_ID, Cur_SOLINES.M_PRODUCT_ID, v_PriceStd, Cur_SOLINES.Qty, Cur_SO.M_PRICELIST_ID),0);           
             
             IF (v_PriceStd IS NULL) THEN
              v_PriceStd :=  v_PriceActual ;
@@ -279,16 +281,16 @@
               )
               VALUES
               (
-                TRUNC(Now(), 'DD'), Cur_SO.M_WAREHOUSE_ID, Cur_SOLINES.Qty, 0,
+                TRUNC(now(), 'DD'), Cur_SO.M_WAREHOUSE_ID, Cur_SOLINES.Qty, 0,
                 0, NULL, 0, NULL,
-                Cur_SO.C_CURRENCY_ID, v_PriceList, TRUNC(Now(), 'DD'), NULL,
-                NULL, Now(), 'Y', Cur_SOLINES.SEQNO,
+                Cur_SO.C_CURRENCY_ID, v_PriceList, TRUNC(now(), 'DD'), NULL,
+                NULL, now(), 'Y', Cur_SOLINES.SEQNO,
                 v_C_OrderLine_ID, Cur_SO.AD_CLIENT_ID, v_C_Order_ID, Cur_SOLINES.LINE_NAME || ' - ' || Cur_SOLINES.DESCRIPTION,
                 Cur_SOLINES.M_PRODUCT_ID, v_UOM, 'N', v_AD_User_ID,
                 v_AD_User_ID, 0, NULL, 0,
-                Now(), Cur_SO.AD_ORG_ID, NULL, Cur_SO.C_BPARTNER_ID,
+                now(), Cur_SO.AD_ORG_ID, NULL, Cur_SO.C_BPARTNER_ID,
                 v_PriceActual,
-                C_Gettax(Cur_SOLINES.M_PRODUCT_ID, TRUNC(Now(), 'DD'), Cur_SO.AD_ORG_ID, Cur_SO.M_WAREHOUSE_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_PROJECT_ID, 'Y'), NULL, Cur_SO.C_BPARTNER_LOCATION_ID,
+                C_Gettax(Cur_SOLINES.M_PRODUCT_ID, TRUNC(now(), 'DD'), Cur_SO.AD_ORG_ID, Cur_SO.M_WAREHOUSE_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_PROJECT_ID, 'Y'), NULL, Cur_SO.C_BPARTNER_LOCATION_ID,
                 v_Discount, v_PriceLimit, NULL, v_PriceActual * Cur_SOLINES.Qty,
                 NULL, 'N', v_PriceStd
               )
@@ -305,7 +307,7 @@
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
     RETURN;
   END; --BODY
 EXCEPTION
@@ -313,11 +315,9 @@ WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   ROLLBACK;
-  Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END Generatesofromprojectphase
-
-
+END GENERATESOFROMPROJECTPHASE
 ]]></body>
     </function>
   </database>

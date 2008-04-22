@@ -60,8 +60,8 @@
     )
   SELECT :new.AD_WorkFlow_ID,
     r.AD_Role_ID, r.AD_CLIENT_ID, r.AD_ORG_ID,
-     'Y', SysDate, 0,
-    SysDate, 0, 'Y'
+     'Y', now(), 0,
+    now(), 0, 'Y'
   FROM AD_Role r
    WHERE isManual='N';
  END IF;
@@ -74,15 +74,12 @@
  THEN
     UPDATE AD_Workflow_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE AD_Workflow_ID=:new.AD_Workflow_ID;
   END IF;
  END IF;
 -- Updating
-END AD_Workflow_Trg
-
-
-
+END AD_WORKFLOW_TRG
 ]]></body>
     </trigger>
   </database>

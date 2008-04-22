@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INOUT_CANCEL">
     <function name="M_INOUT_CANCEL" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Order_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_order_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -80,7 +84,7 @@
         Processed='N',
         Updated=now()
       WHERE M_InOut_ID=Cur_InOut.M_InOut_ID;
-      M_InOut_Post(NULL, Cur_InOut.M_InOut_ID) ;
+      M_INOUT_POST(NULL, Cur_InOut.M_InOut_ID) ;
     END LOOP;
     --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -99,7 +103,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   ELSE
     DECLARE
-      v_Code NUMBER:=SQLCode;
+      v_Code NUMBER:=SQLCODE;
     BEGIN
       INSERT
       INTO DBA_ErrorLog
@@ -119,9 +123,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   RETURN;
-END M_InOut_Cancel
-
-
+END M_INOUT_CANCEL
 ]]></body>
     </function>
   </database>

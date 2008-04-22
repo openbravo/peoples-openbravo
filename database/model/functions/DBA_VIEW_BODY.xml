@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION DBA_VIEW_BODY">
     <function name="DBA_VIEW_BODY" type="VARCHAR">
-      <parameter name="p_owner" type="VARCHAR" mode="in"/>
-      <parameter name="p_viewName" type="VARCHAR" mode="in"/>
+      <parameter name="p_owner" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_viewname" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -36,7 +40,6 @@ BEGIN
     END LOOP;
     RETURN(v_varchar2) ;
 END DBA_VIEW_BODY
-
 ]]></body>
     </function>
   </database>

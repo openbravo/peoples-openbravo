@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION A_ASSET_POST">
     <function name="A_ASSET_POST" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Asset_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_asset_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -69,16 +73,16 @@
     v_AMOUNT NUMBER;
     v_CURRENCY_ID NUMBER;
     FINISH_PROCESS BOOLEAN:=false;
-    v_DepreciatedLines number;
-    v_DepreciatedPlan number;
-    v_depreciatedValue number;
-    v_Period number;
-    v_DEPRECIATEDPREVIOUSAMT number;
+    v_DepreciatedLines NUMBER;
+    v_DepreciatedPlan NUMBER;
+    v_depreciatedValue NUMBER;
+    v_Period NUMBER;
+    v_DEPRECIATEDPREVIOUSAMT NUMBER;
     v_AMORTIZATIONCALCTYPE varchar2(2) ;
-    v_PercentageGeneral number;
-    v_TotalAmt number;
-    v_Currency_Pre NUMBER := 0;
-    v_Inserted NUMBER := 0;
+    v_PercentageGeneral NUMBER;
+    v_TotalAmt NUMBER;
+    v_Currency_Pre NUMBER:= 0;
+    v_Inserted NUMBER:= 0;
     finish boolean;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -417,6 +421,7 @@ WHEN OTHERS THEN
   END IF;
   RAISE_APPLICATION_ERROR(-20100, v_ResultStr) ;
 -- Commented by cromero 19102006 RETURN;
-END A_Asset_Post]]></body>
+END A_ASSET_POST
+]]></body>
     </function>
   </database>

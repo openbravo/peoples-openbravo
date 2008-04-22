@@ -79,10 +79,7 @@ BEGIN
   RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
   END IF;
   **/
-END C_OrderTax_Trg 
-
-
-
+END C_ORDERTAX_TRG
 ]]></body>
     </trigger>
   </database>

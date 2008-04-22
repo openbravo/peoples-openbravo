@@ -70,7 +70,7 @@ BEGIN
       VALUES
       (
         v_NextNo, :NEW.AD_Client_ID, 0,  'Y',
-        SYSDATE, 0, SYSDATE,
+        now(), 0, now(),
         0, 'DocumentNo_' || CUR_DSequence.TableName,  'DocumentNo/Value for Table ' || CUR_DSequence.TableName,
         NULL,  'Y', 1,
         10000000, 10000000, 10000000,
@@ -80,9 +80,7 @@ BEGIN
       ;
   END LOOP;
   -- Sequences
-END AD_Client_Trg 
-
-
+END AD_CLIENT_TRG
 ]]></body>
     </trigger>
   </database>

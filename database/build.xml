@@ -69,6 +69,10 @@ compare.database.structure: Generates a diff script.
            classname="org.openbravo.ddlutils.task.AlterDatabase">
     <classpath refid="runtime-classpath" />
   </taskdef>
+  <taskdef name="alterdatabasedata"
+	       classname="org.openbravo.ddlutils.task.AlterDatabaseData">
+	<classpath refid="runtime-classpath" />
+  </taskdef>
   <taskdef name="alterscript"
            classname="org.openbravo.ddlutils.task.AlterXML2SQL">
     <classpath refid="runtime-classpath" />
@@ -104,8 +108,17 @@ compare.database.structure: Generates a diff script.
   </target>
 
     <target name="update.database">
-    <antcall target="update.database.structure"/>
-        <antcall target="import.database.data" />      
+        <alterdatabasedata driver="${bbdd.driver}"
+                       url="${bbdd.owner.url}"
+                       user="${bbdd.user}"
+                       password="${bbdd.password}"
+                       excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
+                       model="model"
+            		   filter="com.openbravo.db.OpenbravoMetadataFilter"   
+           			   input="sourcedata"
+                       object="${bbdd.object}"
+                       failonerror="false"
+                       verbosity="${bbdd.verbosity}" />  
     </target>
 
   <target name="clean.database.ORACLE">

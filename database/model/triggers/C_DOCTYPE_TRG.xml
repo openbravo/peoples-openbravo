@@ -62,15 +62,12 @@
       Name=:new.Name,
       PrintName=:new.PrintName,
       DocumentNote=:new.DocumentNote,
-      Updated=SysDate
+      Updated=now()
     WHERE C_DocType_ID=:new.C_DocType_ID;
   END IF;
  END IF;
 -- Updating
-END C_DocType_Trg
-
-
-
+END C_DOCTYPE_TRG
 ]]></body>
     </trigger>
   </database>

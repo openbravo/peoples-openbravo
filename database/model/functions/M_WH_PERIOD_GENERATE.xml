@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_WH_PERIOD_GENERATE">
     <function name="M_WH_PERIOD_GENERATE" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -165,9 +167,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   END IF;
   RETURN;
-END M_WH_Period_Generate
-
-
+END M_WH_PERIOD_GENERATE
 ]]></body>
     </function>
   </database>

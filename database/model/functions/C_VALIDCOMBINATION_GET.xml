@@ -1,26 +1,66 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_VALIDCOMBINATION_GET">
     <function name="C_VALIDCOMBINATION_GET" type="NULL">
-      <parameter name="p_C_ValidCombination_ID" type="NUMERIC" mode="out"/>
-      <parameter name="p_AD_Client_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_AD_Org_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_C_AcctSchema_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Account_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_b_C_ValidCombination_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_MustBeFullyQualified" type="CHAR" mode="in" default="N"/>
-      <parameter name="p_Alias" type="VARCHAR" mode="in" default="NULL"/>
-      <parameter name="p_CreatedBy" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_M_Product_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_C_BPartner_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_AD_OrgTrx_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_C_LocFrom_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_C_LocTo_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_C_SalesRegion_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_C_Project_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_C_Campaign_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_C_Activity_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_User1_ID" type="NUMERIC" mode="in" default="NULL"/>
-      <parameter name="p_User2_ID" type="NUMERIC" mode="in" default="NULL"/>
+      <parameter name="p_c_validcombination_id" type="NUMERIC" mode="out">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_org_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_c_acctschema_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_account_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_b_c_validcombination_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_mustbefullyqualified" type="CHAR" mode="in">
+        <default><![CDATA[N]]></default>
+      </parameter>
+      <parameter name="p_alias" type="VARCHAR" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_createdby" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_m_product_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_c_bpartner_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_ad_orgtrx_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_c_locfrom_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_c_locto_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_c_salesregion_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_c_project_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_c_campaign_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_c_activity_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_user1_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_user2_id" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -257,9 +297,7 @@
         p_C_ValidCombination_ID:=NULL;
       END IF;
     END IF;
-END C_ValidCombination_Get
-
-
+END C_VALIDCOMBINATION_GET
 ]]></body>
     </function>
   </database>

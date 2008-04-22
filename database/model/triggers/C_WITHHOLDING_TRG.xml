@@ -53,15 +53,13 @@ BEGIN
       VALUES
       (
         :new.C_Withholding_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-        :new.AD_ORG_ID,  'Y', SysDate,
-        :new.CreatedBy, SysDate, :new.UpdatedBy,
+        :new.AD_ORG_ID,  'Y', now(),
+        :new.CreatedBy, now(), :new.UpdatedBy,
         Cur_Defaults.Withholding_Acct
       )
       ;
   END LOOP;
-END C_Withholding_Trg 
-
-
+END C_WITHHOLDING_TRG
 ]]></body>
     </trigger>
   </database>

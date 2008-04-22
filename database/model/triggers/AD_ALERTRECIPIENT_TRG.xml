@@ -22,7 +22,7 @@
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
-      n number;
+      n NUMBER;
     BEGIN
 
    IF INSERTING or UPDATING THEN
@@ -35,9 +35,7 @@
        RAISE_APPLICATION_ERROR(-20515, 'User not in role') ;
      end if;
    END IF;
-END AD_AlertRecipient_Trg 
-
-
+END AD_ALERTRECIPIENT_TRG
 ]]></body>
     </trigger>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_PRODUCTION_COST_GENERATE">
     <function name="MA_PRODUCTION_COST_GENERATE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -20,7 +22,7 @@
  ************************************************************************/
  -- Logistice
  v_ResultStr      VARCHAR2(2000);
- v_Result         NUMBER := 1;
+ v_Result NUMBER:= 1;
  v_Message        VARCHAR2(2000);
  p_User           NUMBER;
  v_Deleted        NUMBER;
@@ -32,10 +34,10 @@ TYPE RECORD IS REF CURSOR;
 BEGIN
 
   --  Update AD_PInstance
-  DBMS_OUTPUT.PUT_LINE ('Updating PInstance - Processing ' || p_PInstance_ID);
+  DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID);
   v_ResultStr := 'PInstanceNotFound';
 
-  Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL);
+  AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL);
   BEGIN --BODY
     --  Get Parameters
     v_ResultStr := 'ReadingParameters';
@@ -96,7 +98,7 @@ BEGIN
         v_Message := '@Success@<br>' || v_Message;
       END IF;
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message);
-      Ad_Update_Pinstance(p_PInstance_ID, p_User, 'N', v_Result, v_Message);
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, p_User, 'N', v_Result, v_Message);
       RETURN;
 
   END; --BODY
@@ -105,11 +107,9 @@ EXCEPTION
     ROLLBACK;
     v_ResultStr:= '@ERROR=' || SQLERRM;
     DBMS_OUTPUT.PUT_LINE(v_ResultStr);
-    Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr);
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr);
     RETURN;
-
-END Ma_Production_Cost_Generate
-
+END MA_PRODUCTION_COST_GENERATE
 ]]></body>
     </function>
   </database>

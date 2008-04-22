@@ -53,10 +53,7 @@
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
    END IF;
-  END C_Cash_Chk_Restrictions_Trg 
-
-
-
+  END C_CASH_CHK_RESTRICTIONS_TRG
 ]]></body>
     </trigger>
   </database>

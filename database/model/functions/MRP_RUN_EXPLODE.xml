@@ -1,14 +1,30 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_RUN_EXPLODE">
     <function name="MRP_RUN_EXPLODE" type="NULL">
-      <parameter name="p_User_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Org_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Client_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Run_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Planner_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
-      <parameter name="p_PlanningDate" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_SecurityMargin" type="NUMERIC" mode="in"/>
+      <parameter name="p_user_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_org_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_client_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_run_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_planner_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_timehorizon" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_planningdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_securitymargin" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -120,8 +136,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE('MRP_RUN_EXPLODE exception: ' || v_ResultStr);
   RAISE;
 --  RETURN;
-END Mrp_Run_EXPLODE
-
+END MRP_RUN_EXPLODE
 ]]></body>
     </function>
   </database>

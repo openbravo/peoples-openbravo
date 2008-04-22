@@ -59,15 +59,12 @@
  THEN
     UPDATE AD_WF_Node_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE AD_WF_Node_ID=:new.AD_WF_Node_ID;
   END IF;
  END IF;
 -- Updating
-END AD_WF_Node_Trg
-
-
-
+END AD_WF_NODE_TRG
 ]]></body>
     </trigger>
   </database>

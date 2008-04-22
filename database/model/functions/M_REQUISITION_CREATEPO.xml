@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_REQUISITION_CREATEPO">
     <function name="M_REQUISITION_CREATEPO" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -145,7 +147,7 @@ BEGIN
       IF (v_C_Order_ID IS NULL OR v_Vendor_Old <> Cur_Lines.Vendor_ID OR v_PriceList_Old <> Cur_Lines.PriceList_ID) THEN
         IF (v_C_Order_ID IS NOT NULL) THEN
           v_ResultStr := 'Post Order ' || v_C_Order_ID;
-          C_Order_Post1(null, v_C_Order_ID);
+          C_ORDER_POST1(null, v_C_Order_ID);
           v_Message := v_Message || ', ' || '@OrderDocumentno@ ' || v_DocumentNo;
         END IF;
         v_ResultStr := 'Create new C_Order';
@@ -269,7 +271,7 @@ BEGIN
     END LOOP;
         
     v_ResultStr := 'Post last Order ' || v_C_Order_ID;
-    C_Order_Post1(null, v_C_Order_ID);
+    C_ORDER_POST1(null, v_C_Order_ID);
     v_Message := v_Message || ', ' || '@OrderDocumentno@ ' || v_DocumentNo;
     
     
@@ -291,6 +293,7 @@ WHEN OTHERS THEN
   ELSE
     RAISE;
   END IF;
-END M_REQUISITION_CREATEPO]]></body>
+END M_REQUISITION_CREATEPO
+]]></body>
     </function>
   </database>

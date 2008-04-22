@@ -45,7 +45,7 @@ BEGIN
              OR (COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0))
             )
        ) THEN
-      RAISE_APPLICATION_ERROR (-20501, 'Document processed/posted');
+      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
     END IF;
 
     IF (    :OLD.posted = 'Y'
@@ -63,25 +63,22 @@ BEGIN
                 )
             )
        ) THEN
-      RAISE_APPLICATION_ERROR (-20501, 'Document processed/posted');
+      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
     END IF;
   END IF;
 
   IF (INSERTING) THEN
     IF (:NEW.processed = 'Y') THEN
-      RAISE_APPLICATION_ERROR (-20501, 'Document processed/posted');
+      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
  END IF;
   END IF;
 
   IF (DELETING) THEN
     IF (:OLD.processed = 'Y') THEN
-      RAISE_APPLICATION_ERROR (-20501, 'Document processed/posted');
+      RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
  END IF;
   END IF;
-END c_dp_management_chk_restr_trg 
-
-
-
+END C_DP_MANAGEMENT_CHK_RESTR_TRG
 ]]></body>
     </trigger>
   </database>

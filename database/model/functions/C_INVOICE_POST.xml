@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_POST">
     <function name="C_INVOICE_POST" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Invoice_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_invoice_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -135,7 +139,7 @@ cWithHoldId NUMBER;
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
       v_ResultStr:='PInstanceNotFound';
-      Ad_Update_Pinstance(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
       -- Get Parameters
       v_ResultStr:='ReadingParameters';
       FOR Cur_Parameter IN
@@ -217,7 +221,7 @@ cWithHoldId NUMBER;
         UPDATE C_INVOICE
           SET Processing='N',
           DocAction='--',
-          Updated=Now()
+          Updated=now()
         WHERE C_Invoice_ID=v_Record_ID;
         FINISH_PROCESS:=TRUE;
       END IF;
@@ -286,7 +290,7 @@ cWithHoldId NUMBER;
             SET DocStatus='VO',
             DocAction='--',
             Processed='Y',
-            Updated=Now()
+            Updated=now()
           WHERE C_Invoice_ID=v_Record_ID;
           --
         END IF;
@@ -366,7 +370,7 @@ cWithHoldId NUMBER;
               User2_ID
             )
           SELECT v_RInvoice_ID, C_Order_ID, AD_Client_ID, AD_Org_ID,
-            IsActive, Now(), UpdatedBy, Now(),
+            IsActive, now(), UpdatedBy, now(),
             UpdatedBy, IsSOTrx, v_RDocumentNo, 'DR',
              'CO', 'N', 'N', v_DoctypeReversed_ID,
             v_DoctypeReversed_ID, '(*R*: ' || DocumentNo || ') ' || Description, IsApproved, 'N',
@@ -400,7 +404,7 @@ cWithHoldId NUMBER;
               VALUES
               (
                 v_NextNo, Cur_Discount.AD_Client_ID, Cur_Discount.AD_Org_ID, 'Y',
-                Now(), v_UpdatedBy, Now(), v_UpdatedBy,
+                now(), v_UpdatedBy, now(), v_UpdatedBy,
                 v_RInvoice_ID, Cur_Discount.C_Discount_ID, Cur_Discount.Line, Cur_Discount.CASCADE
               )
               ;
@@ -427,7 +431,7 @@ cWithHoldId NUMBER;
               VALUES
               (
                 v_NextNo, Cur_InvoiceLine.AD_Client_ID, Cur_InvoiceLine.AD_Org_ID, 'Y',
-                Now(), v_UpdatedBy, Now(), v_UpdatedBy,
+                now(), v_UpdatedBy, now(), v_UpdatedBy,
                 v_RInvoice_ID, Cur_InvoiceLine.C_OrderLine_ID, Cur_InvoiceLine.M_InoutLine_ID, Cur_InvoiceLine.Line,
                  '*R*: ' || Cur_InvoiceLine.Description, Cur_InvoiceLine.M_Product_ID, Cur_InvoiceLine.QtyInvoiced * -1, Cur_InvoiceLine.PriceList,
                 Cur_InvoiceLine.PriceActual, Cur_InvoiceLine.LineNetAmt * -1, Cur_InvoiceLine.C_Charge_ID, Cur_InvoiceLine.ChargeAmt * -1,
@@ -445,10 +449,10 @@ cWithHoldId NUMBER;
             Description=COALESCE(TO_CHAR(Description), '') || ' (*R* -> ' || v_RDocumentNo || ')',
             DocAction='--',
             Processed='Y',
-            Updated=Now()
+            Updated=now()
           WHERE C_Invoice_ID=v_Record_ID;
           -- Post Reversal
-          C_Invoice_Post(NULL, v_RInvoice_ID) ;
+          C_INVOICE_POST(NULL, v_RInvoice_ID) ;
           -- Reversal Transaction is closed
           UPDATE C_INVOICE
             SET DocStatus='CL', -- the reversal transaction
@@ -487,8 +491,8 @@ cWithHoldId NUMBER;
                   USER1_ID, USER2_ID, CREATEFROM, ISGENERATED
                 )
               SELECT v_settlementID, AD_Client_ID, AD_Org_ID, 'Y',
-                Now(), UpdatedBy, Now(), UpdatedBy,
-                '*RE*'||v_SDocumentNo, TRUNC(Now()), TRUNC(Now()), 'C',
+                now(), UpdatedBy, now(), UpdatedBy,
+                '*RE*'||v_SDocumentNo, TRUNC(now()), TRUNC(now()), 'C',
                 v_SettlementDocType_ID, 'N', 'N', 'N',
                 C_Currency_ID, C_PROJECT_ID, C_CAMPAIGN_ID, C_ACTIVITY_ID,
                 USER1_ID, USER2_ID, 'N', 'Y'
@@ -496,11 +500,11 @@ cWithHoldId NUMBER;
               WHERE C_Invoice_ID=v_Record_ID;
               UPDATE C_DEBT_PAYMENT
                 SET C_Settlement_Cancel_id=v_settlementID,
-                UPDATED=Now(),
+                UPDATED=now(),
                 UPDATEDBY=v_UpdatedBy
               WHERE C_DEBT_PAYMENT.C_Invoice_ID=v_Record_ID
                 OR C_DEBT_PAYMENT.C_Invoice_ID=v_RInvoice_ID;
-              C_Settlement_Post(NULL, v_settlementID) ;
+              C_SETTLEMENT_POST(NULL, v_settlementID) ;
             END IF;
           END IF;
           END_PROCESSING:=TRUE;
@@ -717,7 +721,7 @@ cWithHoldId NUMBER;
             WHERE C_Invoice_ID=v_Record_ID
               AND COALESCE(IsAutomaticGenerated, 'Y')='N'
               AND C_ORDER_ID IS NULL;
-            C_Bp_Socreditused_Refresh(v_BPartner_ID) ;
+            C_BP_SOCREDITUSED_REFRESH(v_BPartner_ID) ;
             DELETE
             FROM C_INVOICELINE
             WHERE C_INVOICE_DISCOUNT_ID IS NOT NULL
@@ -901,7 +905,7 @@ cWithHoldId NUMBER;
                   VALUES
                   (
                     v_NextNo, CUR_BOM_Line.AD_Client_ID, CUR_BOM_Line.AD_Org_ID, CUR_BOM_Line.IsActive,
-                    Now(), v_UpdatedBy, Now(), v_UpdatedBy,
+                    now(), v_UpdatedBy, now(), v_UpdatedBy,
                     CUR_BOM_Line.C_Invoice_ID, v_Line, CUR_BOM.Description, CUR_BOM.M_ProductBOM_ID,
                     CUR_BOM.C_UOM_ID, CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, Bom_Pricelist(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
                     M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, CUR_BOM.M_ProductBOM_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID),
@@ -996,7 +1000,7 @@ cWithHoldId NUMBER;
               VALUES
               (
                 v_InvoiceLine, v_Client_ID, v_Org_ID, 'Y',
-                Now(), v_UpdatedBy, Now(), v_UpdatedBy,
+                now(), v_UpdatedBy, now(), v_UpdatedBy,
                 v_Record_ID, NULL, NULL, v_InvoiceLineSeqNo,
                  Cur_CInvoiceDiscount.NAME, Cur_CInvoiceDiscount.M_PRODUCT_ID, 1, v_Discount,
                 v_Discount, v_Discount, v_Discount, NULL,
@@ -1081,7 +1085,7 @@ cWithHoldId NUMBER;
                 VALUES
                 (
                   v_C_InvoiceTax_ID, v_Record_ID, Cur_Tax.C_Tax_ID, v_Client_ID, v_Org_ID,
-                   'Y', Now(), v_UpdatedBy, Now(),
+                   'Y', now(), v_UpdatedBy, now(),
                   v_UpdatedBy, xTaxBaseAmt, xTaxAmt, v_LineNo,'Y'
                 )
                 ;
@@ -1116,7 +1120,7 @@ cWithHoldId NUMBER;
                   VALUES
                   (
                     v_C_InvoiceTax_ID, v_Record_ID, Cur_MultiTax.C_Tax_ID, v_Client_ID, v_Org_ID,
-                     'Y', Now(), v_UpdatedBy, Now(),
+                     'Y', now(), v_UpdatedBy, now(),
                     v_UpdatedBy, v_ActualBaseAmt, xTaxAmt, v_LineNo, 'Y'
                   )
                   ;
@@ -1192,7 +1196,7 @@ cWithHoldId NUMBER;
           AND FirstSale IS NULL;
         -- Last Contact, Result
         UPDATE AD_USER
-          SET LastContact=Now(),
+          SET LastContact=now(),
           LastResult=v_DocumentNo
         WHERE AD_User_ID=v_BPartner_User_ID;
         -- Update total revenue and credit limit
@@ -1256,7 +1260,7 @@ cWithHoldId NUMBER;
                 VALUES
                 (
                   v_MatchInv_ID, Cur_ILines_Receipt.AD_Client_ID, Cur_ILines_Receipt.AD_Org_ID, 'Y',
-                  Now(), 0, Now(), 0,
+                  now(), 0, now(), 0,
                   Cur_ILines_Receipt.M_InOutLine_ID, Cur_ILines_Receipt.C_InvoiceLine_ID, Cur_ILines_Receipt.M_Product_ID, Cur_ILines_Receipt.DateAcct,
                   v_Qty, 'N', 'Y', 'N'
                 )
@@ -1303,7 +1307,7 @@ cWithHoldId NUMBER;
                 VALUES
                 (
                   v_MatchPO_ID, Cur_ILines_PO.AD_Client_ID, Cur_ILines_PO.AD_Org_ID, 'Y',
-                  Now(), 0, Now(), 0,
+                  now(), 0, now(), 0,
                   Cur_ILines_PO.C_OrderLine_ID, NULL, Cur_ILines_PO.C_InvoiceLine_ID, Cur_ILines_PO.M_Product_ID,
                   Cur_ILines_PO.DateAcct, v_Qty, 'N', 'Y',
                    'N'
@@ -1330,7 +1334,7 @@ cWithHoldId NUMBER;
                 UPDATE C_ORDERLINE
                   SET QtyInvoiced=QtyInvoiced + CurLines.QtyInvoiced,
                   DateInvoiced=p_DateInvoiced,
-                  Updated=Now()
+                  Updated=now()
                 WHERE C_OrderLine_ID=CurLines.C_OrderLine_ID;
               END IF;
               IF(CurLines.M_InOutLine_ID IS NOT NULL) THEN
@@ -1524,7 +1528,7 @@ cWithHoldId NUMBER;
                   VALUES
                   (
                     v_debtPaymentID, v_Client_ID, v_Org_ID, 'Y',
-                    Now(), v_UpdatedBy, Now(), v_UpdatedBy,
+                    now(), v_UpdatedBy, now(), v_UpdatedBy,
                     v_IsSOTrx, NULL, NULL, '* ' || v_DocumentNo || ' * (' || v_BPartnerName ||( CASE WHEN v_POReference IS NULL THEN '' ELSE ' .Ref:'||TO_CHAR(v_POReference) END) || ' )',
                     v_Record_ID, v_BPartner_ID, v_Currency_ID, NULL,
                     v_bankAccount, v_cashBook, CUR_PAYMENTS.PaymentRule, 'N',
@@ -1574,18 +1578,18 @@ cWithHoldId NUMBER;
                     VALUES
                     (
                       v_Settlement_ID, v_Client_ID, v_GenDP_Org, 'Y',
-                      Now(), v_UpdatedBy, Now(), v_UpdatedBy,
-                      '*C*'||v_SDocument_No, TRUNC(Now()), TRUNC(Now()), 'C',
+                      now(), v_UpdatedBy, now(), v_UpdatedBy,
+                      '*C*'||v_SDocument_No, TRUNC(now()), TRUNC(now()), 'C',
                       v_SettlementDocTypeID, 'N', 'N', 'N',
                       v_Currency_ID, 'Y'
                     )
                     ;
                   UPDATE C_DEBT_PAYMENT
                     SET C_Settlement_Cancel_Id=v_Settlement_ID,
-                    Updated=Now(),
+                    Updated=now(),
                     UpdatedBy=v_UpdatedBy
                   WHERE c_Debt_Payment_ID IN(v_genDebt_PaymentID, v_debtPaymentID) ;
-                  C_Settlement_Post(NULL, v_Settlement_ID) ;
+                  C_SETTLEMENT_POST(NULL, v_Settlement_ID) ;
                 END IF;
                 --If Invoice.paymentRule = 'B', insert de cashline de tipo efecto apuntando al efecto
                 IF(v_cashBook IS NOT NULL AND CUR_PAYMENTS.PaymentRule='B') THEN
@@ -1616,7 +1620,7 @@ cWithHoldId NUMBER;
                         BeginningBalance, EndingBalance, StatementDifference, Processing,
                         Processed, Posted )
                       VALUES (v_Cash, v_Client_ID, v_Org_ID, 'Y',
-                        Now(), v_UpdatedBy, Now(), v_UpdatedBy,
+                        now(), v_UpdatedBy, now(), v_UpdatedBy,
                         v_cashBook, (TO_CHAR(v_DateAcct, 'YYYY-MM-DD') || ' ' || v_IsoCode), v_DateAcct, v_DateAcct,
                         0, 0, 0, 'N',
                          'N', 'N');
@@ -1642,7 +1646,7 @@ cWithHoldId NUMBER;
                     VALUES
                     (
                       v_CashLine, v_Client_ID, v_Org_ID, 'Y',
-                      Now(), v_UpdatedBy, Now(), v_UpdatedBy,
+                      now(), v_UpdatedBy, now(), v_UpdatedBy,
                       v_Cash, v_debtPaymentID, v_line, v_BPartnerName,
                       C_Currency_Convert((CASE v_IsSOTrx WHEN 'Y' THEN v_paymentAmount ELSE -v_paymentAmount END), v_Currency_ID, v_CB_Curr,v_DateAcct,NULL,v_Client_ID, v_Org_ID), 'P', v_Currency_ID, 0,
                       0, 'Y'
@@ -1654,7 +1658,7 @@ cWithHoldId NUMBER;
           END IF; -- v_GrandTotal <> v_totalCash
         END;
         IF(NOT FINISH_PROCESS) THEN
-          C_Bp_Socreditused_Refresh(v_BPartner_ID) ;
+          C_BP_SOCREDITUSED_REFRESH(v_BPartner_ID) ;
         END IF;
       END IF;--FINISH_PROCESS
       IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
@@ -1663,11 +1667,11 @@ cWithHoldId NUMBER;
           SET DocStatus='CO',
           Processed='Y',
           DocAction='RE',
-          Updated=Now()
+          Updated=now()
         WHERE C_Invoice_ID=v_Record_ID;
         -- Post it
         IF(v_IsTransferred='N') THEN
-          C_Invoice_Acctgen(NULL, v_Record_ID) ;
+          C_INVOICE_ACCTGEN(NULL, v_Record_ID) ;
         END IF;
       END IF;--FINISH_PROCESS
       IF(NOT FINISH_PROCESS) THEN
@@ -1676,7 +1680,7 @@ cWithHoldId NUMBER;
         v_ResultStr:='UnLockingInvoice';
         UPDATE C_INVOICE
           SET Processing='N',
-          Updated=Now(),
+          Updated=now(),
           UpdatedBy=v_UpdatedBy
         WHERE C_Invoice_ID=v_Record_ID;
         -- Commented by cromero 19102006 IF(p_PInstance_ID IS NOT NULL) THEN
@@ -1687,7 +1691,7 @@ cWithHoldId NUMBER;
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished - ' || v_Message) ;
-      Ad_Update_Pinstance(p_PInstance_ID, v_UpdatedBy, 'N', v_Result, v_Message) ;
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, v_UpdatedBy, 'N', v_Result, v_Message) ;
     ELSE
       DBMS_OUTPUT.PUT_LINE('--<<C_Invoive_Post finished>> ' || v_Message) ;
     END IF;
@@ -1700,7 +1704,7 @@ WHEN OTHERS THEN
       DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
       IF(p_PInstance_ID IS NOT NULL) THEN
         ROLLBACK;
-        Ad_Update_Pinstance(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+        AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
       ELSE
         DECLARE
           v_Code NUMBER:=SQLCODE;
@@ -1714,7 +1718,7 @@ WHEN OTHERS THEN
             )
             VALUES
             (
-              DBA_ErrorLog_Seq.NEXTVAL, Now(),
+              DBA_ErrorLog_Seq.NEXTVAL, now(),
               v_Code, v_ResultStr,
                'C_Invoice_Post'
             )
@@ -1723,8 +1727,7 @@ WHEN OTHERS THEN
     RAISE;
   END IF;
   -- Commented by cromero 19102006 RETURN;
-END C_Invoice_Post
-
+END C_INVOICE_POST
 ]]></body>
     </function>
   </database>

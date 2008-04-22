@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_TABLE_IMPORT">
     <function name="AD_TABLE_IMPORT" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_AD_Table_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ad_table_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -263,9 +267,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   END IF;
 --  RETURN;
-END AD_Table_Import
-
-
+END AD_TABLE_IMPORT
 ]]></body>
     </function>
   </database>

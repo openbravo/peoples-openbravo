@@ -56,7 +56,6 @@ BEGIN
   
 
 END C_BP_SALCATEGORY_TRG
-
 ]]></body>
     </trigger>
   </database>

@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ORDER_POST">
     <function name="C_ORDER_POST" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/******************************************************************************
   * The contents of this file are subject to the   Compiere License  Version 1.1
   * ("License"); You may not use this file except in compliance with the License
@@ -17,9 +19,8 @@
   * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
   ******************************************************************************/
 BEGIN
-  C_Order_Post1(p_PInstance_ID, NULL) ;
-END C_Order_Post
-
+  C_ORDER_POST1(p_PInstance_ID, NULL) ;
+END C_ORDER_POST
 ]]></body>
     </function>
   </database>

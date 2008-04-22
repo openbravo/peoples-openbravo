@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION R_REQUEST_DUETYPE">
     <function name="R_REQUEST_DUETYPE" type="VARCHAR">
-      <parameter name="p_ActionDate" type="TIMESTAMP"/>
-      <parameter name="p_ToleranceDays" type="NUMERIC" default="1"/>
+      <parameter name="p_actiondate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_tolerancedays" type="NUMERIC" mode="in">
+        <default><![CDATA[1]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Compiere License
 * Version 2.5.0 ("License"); You may not use this file except in
@@ -29,16 +33,15 @@ Inc.
 ************************************************************************/
 BEGIN
   -- scheduled
-  IF(TRUNC(p_ActionDate) > TRUNC(SysDate)) THEN
+  IF(TRUNC(p_ActionDate) > TRUNC(now())) THEN
     RETURN '7';
     -- overdue
-  ELSIF(TRUNC(p_ActionDate) < TRUNC(SysDate+p_ToleranceDays)) THEN
+  ELSIF(TRUNC(p_ActionDate) < TRUNC(now()+p_ToleranceDays)) THEN
     RETURN '3';
   END IF;
   --
   RETURN '5';
-END R_Request_DueType
-
+END R_REQUEST_DUETYPE
 ]]></body>
     </function>
   </database>

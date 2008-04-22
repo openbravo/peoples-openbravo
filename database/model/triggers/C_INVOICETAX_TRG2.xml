@@ -114,7 +114,6 @@ BEGIN
   END IF;
 
     END C_INVOICETAX_TRG2
-    
 ]]></body>
     </trigger>
   </database>

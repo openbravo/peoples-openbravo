@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_REQUISITIONLINE_STATUS0">
     <function name="M_REQUISITIONLINE_STATUS0" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -20,6 +22,7 @@
 ************************************************************************/
 BEGIN
   M_REQUISITIONLINE_STATUS(PInstance_ID, NULL, NULL);
-END M_REQUISITIONLINE_STATUS0]]></body>
+END M_REQUISITIONLINE_STATUS0
+]]></body>
     </function>
   </database>

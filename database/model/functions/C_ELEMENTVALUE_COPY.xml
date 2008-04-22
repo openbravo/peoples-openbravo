@@ -1,8 +1,12 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ELEMENTVALUE_COPY">
     <function name="C_ELEMENTVALUE_COPY" type="NULL">
-      <parameter name="p_Source_Element_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Target_Element_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_source_element_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_target_element_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -73,9 +77,7 @@
         ;
     END LOOP;
     -- Commented by cromero 19102006 COMMIT;
-END C_ElementValue_Copy
-
-
+END C_ELEMENTVALUE_COPY
 ]]></body>
     </function>
   </database>

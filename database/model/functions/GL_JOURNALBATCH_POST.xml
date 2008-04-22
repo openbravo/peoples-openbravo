@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GL_JOURNALBATCH_POST">
     <function name="GL_JOURNALBATCH_POST" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -71,7 +73,7 @@
           AND Processed='N'
         )
       LOOP
-        GL_Journal_Post(NULL, CUR_Journal.GL_Journal_ID) ;
+        GL_JOURNAL_POST(NULL, CUR_Journal.GL_Journal_ID) ;
       END LOOP;
       -- Are all Journals Posted:1
       UPDATE GL_JournalBatch
@@ -99,9 +101,7 @@ EXCEPTION
     ROLLBACK;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
     RETURN;
-END GL_JournalBatch_Post
-
-
+END GL_JOURNALBATCH_POST
 ]]></body>
     </function>
   </database>

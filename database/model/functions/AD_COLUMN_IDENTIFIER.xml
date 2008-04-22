@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_COLUMN_IDENTIFIER">
     <function name="AD_COLUMN_IDENTIFIER" type="VARCHAR">
-      <parameter name="p_TableName" type="VARCHAR" mode="in"/>
-      <parameter name="p_Record_ID" type="VARCHAR" mode="in"/>
-      <parameter name="p_Language" type="VARCHAR" mode="in"/>
+      <parameter name="p_tablename" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_record_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_language" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -36,8 +42,7 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN '**';
-END AD_COLUMN_IDENTIFIER 
-
+END AD_COLUMN_IDENTIFIER
 ]]></body>
     </function>
   </database>

@@ -62,8 +62,8 @@
         VALUES
         (
           :new.C_Project_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-          :new.AD_ORG_ID,  'Y', SysDate,
-          :new.CreatedBy, SysDate, :new.UpdatedBy,
+          :new.AD_ORG_ID,  'Y', now(),
+          :new.CreatedBy, now(), :new.UpdatedBy,
           Cur_Defaults.PJ_Asset_Acct, Cur_Defaults.PJ_WIP_Acct
         )
         ;
@@ -107,9 +107,7 @@
 EXCEPTION
   WHEN NO_DATA_FOUND THEN
     RAISE_APPLICATION_ERROR(-20001, 'C_Project InsertTrigger Error: No ClientInfo or parent TreeNode') ;
-END C_Project_Trg 
-
-
+END C_PROJECT_TRG
 ]]></body>
     </trigger>
   </database>

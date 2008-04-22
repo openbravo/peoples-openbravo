@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_CREATE0">
     <function name="C_INVOICE_CREATE0" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -28,8 +30,7 @@
   v_Dummy NUMBER;
 BEGIN
   C_Invoice_Create(p_PInstance_ID, v_Dummy, NULL) ;
-END C_Invoice_Create0
-
+END C_INVOICE_CREATE0
 ]]></body>
     </function>
   </database>

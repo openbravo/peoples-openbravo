@@ -40,10 +40,7 @@
       AND IsVerified='Y';
   END IF;
  END IF;
-END M_Product_BOM_Trg
-
-
-
+END M_PRODUCT_BOM_TRG
 ]]></body>
     </trigger>
   </database>

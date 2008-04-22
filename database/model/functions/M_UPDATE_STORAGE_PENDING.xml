@@ -1,18 +1,42 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_UPDATE_STORAGE_PENDING">
     <function name="M_UPDATE_STORAGE_PENDING" type="NULL">
-      <parameter name="p_client" type="NUMERIC"/>
-      <parameter name="p_org" type="NUMERIC"/>
-      <parameter name="p_user" type="NUMERIC"/>
-      <parameter name="p_product" type="NUMERIC"/>
-      <parameter name="p_warehouse" type="NUMERIC"/>
-      <parameter name="p_attributesetinstance" type="NUMERIC"/>
-      <parameter name="p_uom" type="NUMERIC"/>
-      <parameter name="p_product_uom" type="NUMERIC"/>
-      <parameter name="p_qtyreserved" type="NUMERIC"/>
-      <parameter name="p_qtyorderreserved" type="NUMERIC"/>
-      <parameter name="p_qtyordered" type="NUMERIC"/>
-      <parameter name="p_qtyorderordered" type="NUMERIC"/>
+      <parameter name="p_client" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_org" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_user" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_product" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_warehouse" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_attributesetinstance" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_uom" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_product_uom" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_qtyreserved" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_qtyorderreserved" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_qtyordered" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_qtyorderordered" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -90,8 +114,6 @@ BEGIN
       AND COALESCE(M_PRODUCT_UOM_ID, -1)=COALESCE(p_product_uom, -1) ;
   END IF;
 END M_UPDATE_STORAGE_PENDING
-
-
 ]]></body>
     </function>
   </database>

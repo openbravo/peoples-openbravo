@@ -59,16 +59,12 @@
     -- Translation
     UPDATE C_COUNTRY_Trl
       SET IsTranslated='N',
-      Updated=SysDate
+      Updated=now()
     WHERE C_COUNTRY_ID=:new.C_COUNTRY_ID;
   END IF;
  END IF;
 -- Updating
-END C_COUNTRY_Trg
-
-
-
-
+END C_COUNTRY_TRG
 ]]></body>
     </trigger>
   </database>

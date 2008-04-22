@@ -56,7 +56,7 @@ BEGIN
                  IsActive, Created, CreatedBy, Updated, UpdatedBy,
                  IsReadWrite)
       SELECT :NEW.AD_Process_ID, r.AD_Role_ID, r.AD_CLIENT_ID, r.AD_ORG_ID,
-             'Y', SYSDATE, 0, SYSDATE, 0, 'Y'
+             'Y', now(), 0, now(), 0, 'Y'
         FROM AD_Role r
        where isManual='N';
   END IF;
@@ -74,21 +74,21 @@ BEGIN
     THEN
         UPDATE AD_Process_Trl
              SET IsTranslated = 'N',
-            Updated = SYSDATE
+            Updated = now()
          WHERE AD_Process_ID = :NEW.AD_Process_ID;
 
       UPDATE AD_Column
          SET NAME = :NEW.NAME,
              Description = :NEW.Description,
              HELP = :NEW.HELP,
-             Updated = SYSDATE
+             Updated = now()
        WHERE AD_Process_ID = :NEW.AD_Process_ID;
 
       UPDATE AD_Field
          SET NAME = :NEW.NAME,
              Description = :NEW.Description,
              HELP = :NEW.HELP,
-             Updated = SYSDATE
+             Updated = now()
        WHERE EXISTS (
                SELECT *
                  FROM AD_Column c
@@ -126,11 +126,7 @@ BEGIN
       END IF;
     END IF;
   END IF;
-END AD_Process_Trg
-
-
-
-
+END AD_PROCESS_TRG
 ]]></body>
     </trigger>
   </database>

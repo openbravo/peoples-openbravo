@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_GET_OFFERS_NAME">
     <function name="M_GET_OFFERS_NAME" type="VARCHAR">
-      <parameter name="p_Date" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_BPartner_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_date" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_bpartner_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_product_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -107,8 +113,7 @@
 EXCEPTION
   WHEN OTHERS THEN
     RETURN NULL;
-END M_GET_OFFERS_NAME 
-
+END M_GET_OFFERS_NAME
 ]]></body>
     </function>
   </database>

@@ -100,10 +100,7 @@ BEGIN
       END IF;
     END IF;
   END IF;
-END M_ProductionLine_Trg
-
-
-
+END M_PRODUCTIONLINE_TRG
 ]]></body>
     </trigger>
   </database>

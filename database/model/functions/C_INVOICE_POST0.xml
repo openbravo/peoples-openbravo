@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_POST0">
     <function name="C_INVOICE_POST0" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere License
   * Version 2.5.0 ("License"); You may not use this file except in
@@ -25,9 +27,8 @@
   * Title:  Post single Invoice
   *************************************************************************/
 BEGIN
-  C_Invoice_Post(p_PInstance_ID, NULL) ;
-END C_Invoice_Post0
-
+  C_INVOICE_POST(p_PInstance_ID, NULL) ;
+END C_INVOICE_POST0
 ]]></body>
     </function>
   </database>

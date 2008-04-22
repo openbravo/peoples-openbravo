@@ -75,12 +75,12 @@ BEGIN
     IF COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.') THEN
       UPDATE C_ElementValue_Trl
         SET IsTranslated='N',
-        Updated=SysDate
+        Updated=now()
       WHERE C_ElementValue_ID=:new.C_ElementValue_ID;
       /** Mutating Trigger
       --   Update Valid Combination Description
       UPDATE    C_ValidCombination
-      SET    Updated=SysDate
+      SET    Updated=now()
       WHERE    Account_ID=:new.C_ElementValue_ID
       OR    User1_ID=:new.C_ElementValue_ID OR User2_ID=:new.C_ElementValue_ID;
       **/
@@ -104,10 +104,7 @@ BEGIN
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20013, 'C_ElementValue InsertTrigger Error: No ClientInfo or parent TreeNode') ;
-END C_ElementValue_TI
-
-
-
+END C_ELEMENTVALUE_TRG
 ]]></body>
     </trigger>
   </database>

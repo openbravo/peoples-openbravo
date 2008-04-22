@@ -1,14 +1,30 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_GETTAX">
     <function name="C_GETTAX" type="NUMERIC">
-      <parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_shipDate" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_Org_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Warehouse_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_billBPartnerLoc_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_shipBPartnerLoc_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Project_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_IsSOTrx" type="CHAR" mode="in"/>
+      <parameter name="p_product_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_shipdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_org_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_warehouse_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_billbpartnerloc_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_shipbpartnerloc_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_project_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_issotrx" type="CHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -230,8 +246,7 @@
       END;
     END IF;
     RETURN v_TaxID;
-END C_GetTax 
-
+END C_GETTAX
 ]]></body>
     </function>
   </database>

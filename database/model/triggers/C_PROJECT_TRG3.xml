@@ -41,9 +41,7 @@ BEGIN
     WHERE AD_TREE_ID=v_Tree_ID
       AND NODE_ID=:OLD.C_Project_ID;
   END IF;
-END C_Project_Trg3 
-
-
+END C_PROJECT_TRG3
 ]]></body>
     </trigger>
   </database>

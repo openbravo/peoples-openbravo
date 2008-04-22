@@ -59,10 +59,7 @@
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
  END IF;
-END A_AMORTIZATION_TRG 
-
-
-
+END A_AMORTIZATION_TRG
 ]]></body>
     </trigger>
   </database>

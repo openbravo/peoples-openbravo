@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_RAPPEL_INVOICE_CREATE">
     <function name="M_RAPPEL_INVOICE_CREATE" type="NULL">
-      <parameter name="p_PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -26,7 +28,7 @@
     Cur_Parameter RECORD;
     v_Record_ID NUMBER:=NULL;
     v_AD_User_ID NUMBER:=NULL;
-    v_LimitDate date;
+    v_LimitDate DATE;
     --
     v_invoiceId NUMBER:=NULL;
     v_rappelInvoiceId NUMBER:=NULL;
@@ -40,14 +42,14 @@
     v_paymenttermId NUMBER(10) ;
     v_pricelistId NUMBER(10) ;
     v_description VARCHAR2(100) ;
-    v_validTo date;
-    v_TotalLines number;
-    v_RappelID number;
+    v_validTo DATE;
+    v_TotalLines NUMBER;
+    v_RappelID NUMBER;
     v_Scaled char(1) ;
-    v_Discount number;
-    v_Discount1 number;
-    v_From number;
-    v_AppliedDiscount number;
+    v_Discount NUMBER;
+    v_Discount1 NUMBER;
+    v_From NUMBER;
+    v_AppliedDiscount NUMBER;
     CUR_SCALES RECORD;
     CUR_INVOICE RECORD;
     FINISH_PROCESS BOOLEAN:=FALSE;
@@ -351,12 +353,12 @@
           VALUES
           (
             v_invoiceId, CUR_INVOICE.AD_CLIENT_ID, CUR_INVOICE.AD_ORG_ID, 'Y',
-            NOW(), v_AD_User_ID, NOW(), v_AD_User_ID,
+            now(), v_AD_User_ID, now(), v_AD_User_ID,
             CUR_INVOICE.ISSOTRX, v_DocumentNo, 'DR', 'CO',
              'N', 'N', 'N', CUR_INVOICE.C_DOCTYPE_ID,
             CUR_INVOICE.C_DOCTYPETARGET_ID, NULL, NULL, 'N',
-             'N', 'N', NULL, NOW(),
-            NULL, NOW(), CUR_INVOICE.C_BPARTNER_ID, CUR_INVOICE.C_BPARTNER_LOCATION_ID,
+             'N', 'N', NULL, now(),
+            NULL, now(), CUR_INVOICE.C_BPARTNER_ID, CUR_INVOICE.C_BPARTNER_LOCATION_ID,
             NULL, 'N', NULL, CUR_INVOICE.C_CURRENCY_ID,
             v_paymentRule, v_paymenttermId, NULL, 0,
             0, 0, v_pricelistId, 'N',
@@ -382,7 +384,7 @@
           VALUES
           (
             v_rappelInvoiceId, CUR_INVOICE.AD_CLIENT_ID, CUR_INVOICE.AD_ORG_ID, 'Y',
-            NOW(), v_AD_User_ID, NOW(), v_AD_User_ID,
+            now(), v_AD_User_ID, now(), v_AD_User_ID,
             v_Record_ID, v_invoiceId, v_seqno)
           ;
       END IF;
@@ -404,7 +406,7 @@
         VALUES
         (
           v_invoicelineId, CUR_INVOICE.AD_CLIENT_ID, CUR_INVOICE.AD_ORG_ID, 'Y',
-          NOW(), v_AD_User_ID, NOW(), v_AD_User_ID,
+          now(), v_AD_User_ID, now(), v_AD_User_ID,
           v_invoiceId, NULL, NULL, v_line,
           v_description, CUR_INVOICE.M_PRODUCT_ID, 0, 0,
           0, 0, CUR_INVOICE.LINENET, NULL,
@@ -429,8 +431,6 @@ WHEN OTHERS THEN
   AD_UPDATE_PINSTANCE(P_PINSTANCE_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
 END M_RAPPEL_INVOICE_CREATE
-
-
 ]]></body>
     </function>
   </database>

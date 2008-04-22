@@ -54,7 +54,7 @@ BEGIN
              C_Receivable_Acct, C_Prepayment_Acct, Status)
          VALUES
              (v_BP_Acct_ID,:new.C_BPartner_ID, Cur_Defaults.C_AcctSchema_ID,
-             :new.AD_Client_ID, :new.AD_Org_ID, 'Y', SysDate, :new.CreatedBy, SysDate, :new.UpdatedBy,
+             :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
              Cur_Defaults.C_Receivable_Acct, Cur_Defaults.C_Prepayment_Acct, Cur_Defaults.Status);
    --  Vendor
 
@@ -65,7 +65,7 @@ BEGIN
              V_Liability_Acct, V_Liability_Services_Acct, V_Prepayment_Acct, Status)
          VALUES
              (v_BP_Acct_ID,:new.C_BPartner_ID, Cur_Defaults.C_AcctSchema_ID,
-             :new.AD_Client_ID, :new.AD_Org_ID, 'Y', SysDate, :new.CreatedBy, SysDate, :new.UpdatedBy,
+             :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
              Cur_Defaults.V_Liability_Acct, Cur_Defaults.V_Liability_Services_Acct, Cur_Defaults.V_Prepayment_Acct, Cur_Defaults.Status);
   END LOOP;
   FOR Cur_Defaults2 IN (SELECT * FROM C_AcctSchema_Default d2
@@ -79,7 +79,7 @@ BEGIN
              E_Expense_Acct, E_Prepayment_Acct)
          VALUES
              (:new.C_BPartner_ID, Cur_Defaults2.C_AcctSchema_ID,
-             :new.AD_Client_ID, :new.AD_Org_ID, 'Y', SysDate, :new.CreatedBy, SysDate, :new.UpdatedBy,
+             :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
              Cur_Defaults2.E_Expense_Acct, Cur_Defaults2.E_Prepayment_Acct);
      END LOOP;
 
@@ -110,11 +110,9 @@ BEGIN
   END IF;
 EXCEPTION
  WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR (-20004, 'C_BPartner InsertTrigger Error: No ClientInfo or parent TreeNode');
+  RAISE_APPLICATION_ERROR(-20004, 'C_BPartner InsertTrigger Error: No ClientInfo or parent TreeNode');
 
-END C_BPartner_Trg 
-
-
+END C_BPARTNER_TRG
 ]]></body>
     </trigger>
   </database>

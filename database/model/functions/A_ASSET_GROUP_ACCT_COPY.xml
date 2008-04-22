@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
   <database name="FUNCTION A_ASSET_GROUP_ACCT_COPY">
     <function name="A_ASSET_GROUP_ACCT_COPY" type="NULL">
-      <parameter name="PInstance_ID" type="NUMERIC" mode="in"/>
+      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -113,9 +115,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   RETURN;
-END A_Asset_Group_Acct_Copy
-
-
+END A_ASSET_GROUP_ACCT_COPY
 ]]></body>
     </function>
   </database>

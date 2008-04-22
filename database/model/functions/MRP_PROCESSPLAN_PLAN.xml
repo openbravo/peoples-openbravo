@@ -1,12 +1,24 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_PROCESSPLAN_PLAN">
     <function name="MRP_PROCESSPLAN_PLAN" type="NULL">
-      <parameter name="p_User_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Run_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_Product_ID" type="NUMERIC" mode="in"/>
-      <parameter name="p_TimeHorizon" type="NUMERIC" mode="in"/>
-      <parameter name="p_PlanningDate" type="TIMESTAMP" mode="in"/>
-      <parameter name="p_SecurityMargin" type="NUMERIC" mode="in"/>
+      <parameter name="p_user_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_run_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_product_id" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_timehorizon" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_planningdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_securitymargin" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -28,7 +40,7 @@
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
 
-  v_Stock NUMBER := 0;
+  v_Stock NUMBER:= 0;
   v_Qty_New NUMBER;
   v_NeededQty_New NUMBER;
   v_PlannedOrderDate_New DATE;
@@ -87,7 +99,7 @@ BEGIN
 
         IF (Cur_Lines.qty <> v_qty_new
             OR Cur_Lines.plannedorderdate <> v_plannedorderdate_new) THEN
-          Mrp_Processplan_Recalculate(p_User_ID, Cur_Lines.MRP_Run_ProductionLine_ID, p_TimeHorizon,
+          MRP_PROCESSPLAN_RECALCULATE(p_User_ID, Cur_Lines.MRP_Run_ProductionLine_ID, p_TimeHorizon,
                                     p_PlanningDate, p_SecurityMargin);
         END IF;
       END IF;
@@ -103,9 +115,7 @@ WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE('MRP_PROCESSPLAN_PLAN exception: ' || v_ResultStr);
   RAISE;
 --  RETURN;
-END Mrp_Processplan_Plan
-
-
+END MRP_PROCESSPLAN_PLAN
 ]]></body>
     </function>
   </database>
