@@ -249,7 +249,7 @@ cWithHoldId NUMBER;
         WHERE it.c_invoice_id = v_record_id
         and tp.processed='Y';
       IF v_aux > 0 THEN
-          raise_application_error(-20615,   '@InvoiceInTaxRegister@');
+          RAISE_APPLICATION_ERROR(-20615,   '@InvoiceInTaxRegister@');
       ELSE    
         delete from c_taxregisterline trl where trl.c_invoicetax_id in
         (select trl.c_invoicetax_id
