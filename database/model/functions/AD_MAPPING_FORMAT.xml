@@ -25,16 +25,16 @@ BEGIN
   END IF;
   v_str:=p_str;
   --Replace Accents
-  v_str:=replace(v_str, '·', 'a') ;
-  v_str:=replace(v_str, 'È', 'e') ;
-  v_str:=replace(v_str, 'Ì', 'i') ;
-  v_str:=replace(v_str, 'Û', 'o') ;
-  v_str:=replace(v_str, '˙', 'u') ;
-  v_str:=replace(v_str, '¡', 'A') ;
-  v_str:=replace(v_str, '…', 'E') ;
-  v_str:=replace(v_str, 'Õ', 'I') ;
-  v_str:=replace(v_str, '”', 'O') ;
-  v_str:=replace(v_str, '⁄', 'U') ;
+  v_str:=replace(v_str, '√°', 'a') ;
+  v_str:=replace(v_str, '√©', 'e') ;
+  v_str:=replace(v_str, '√≠', 'i') ;
+  v_str:=replace(v_str, '√≥', 'o') ;
+  v_str:=replace(v_str, '√∫', 'u') ;
+  v_str:=replace(v_str, '√Å', 'A') ;
+  v_str:=replace(v_str, '√â', 'E') ;
+  v_str:=replace(v_str, '√ç', 'I') ;
+  v_str:=replace(v_str, '√ì', 'O') ;
+  v_str:=replace(v_str, '√ö', 'U') ;
   --Replace special characters
   v_str:=replace(v_str, '-', '') ;
   v_str:=replace(v_str, '/', '') ;

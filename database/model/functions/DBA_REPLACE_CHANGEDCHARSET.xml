@@ -25,24 +25,24 @@ BEGIN
   END IF;
   v_str:=p_str;
   --Replace modified characters . Set the appropiate values:
-  v_str := REPLACE(v_str, '�?¿n', '�n') ;
-  v_str := REPLACE(v_str, '�?¿l', '�l') ;
-  v_str := REPLACE(v_str, '�?¿', '�') ;
-  v_str := REPLACE(v_str, '�?¡', '�') ;
-  v_str := REPLACE(v_str, 'á', '�') ;
-  v_str := REPLACE(v_str, '�?©', '�') ;
-  v_str := REPLACE(v_str, 'é', '�') ;
-  v_str := REPLACE(v_str, '�?­', '�') ;
-  v_str := REPLACE(v_str, 'í', '�') ;
-  v_str := REPLACE(v_str, '�?³', '�') ;
-  v_str := REPLACE(v_str, 'ó', '�') ;
-  v_str := REPLACE(v_str, '�?º', '�') ;
-  v_str := REPLACE(v_str, 'ú', '�') ;
-  v_str := REPLACE(v_str, '�?±', '�') ;
-  v_str := REPLACE(v_str, 'ñ', '�') ;
-  v_str := REPLACE(v_str, '�? ', ' ') ;
-  v_str := REPLACE(v_str, 'º', '�') ;
-  v_str := REPLACE(v_str, '�?', '�') ;
+  v_str := REPLACE(v_str, 'Ã?Â¿n', 'Ín') ;
+  v_str := REPLACE(v_str, 'Ã?Â¿l', 'Úl') ;
+  v_str := REPLACE(v_str, 'Ã?Â¿', 'Á') ;
+  v_str := REPLACE(v_str, 'Ã?Â¡', 'á') ;
+  v_str := REPLACE(v_str, 'Ã¡', 'á') ;
+  v_str := REPLACE(v_str, 'Ã?Â©', 'é') ;
+  v_str := REPLACE(v_str, 'Ã©', 'é') ;
+  v_str := REPLACE(v_str, 'Ã?Â­', 'í') ;
+  v_str := REPLACE(v_str, 'Ã­', 'í') ;
+  v_str := REPLACE(v_str, 'Ã?Â³', 'ó') ;
+  v_str := REPLACE(v_str, 'Ã³', 'ó') ;
+  v_str := REPLACE(v_str, 'Ã?Âº', 'ú') ;
+  v_str := REPLACE(v_str, 'Ãº', 'ú') ;
+  v_str := REPLACE(v_str, 'Ã?Â±', 'ñ') ;
+  v_str := REPLACE(v_str, 'Ã±', 'ñ') ;
+  v_str := REPLACE(v_str, 'Ã?Â ', ' ') ;
+  v_str := REPLACE(v_str, 'Âº', 'º') ;
+  v_str := REPLACE(v_str, 'Ã?', 'Ó') ;
   RETURN(v_str) ;
 END Dba_Replace_Changedcharset
 
