@@ -26,14 +26,14 @@
     * Description:
     *    - create default Account records
     ************************************************************************/
-  v_TYPE NUMBER;  
+  v_Type NUMBER;  
 BEGIN
   IF(INSERTING OR UPDATING) THEN
     SELECT BUDGET_TYPE
-    INTO v_TYPE
+    INTO v_Type
     FROM C_BUDGET
     WHERE C_BUDGET_ID=:NEW.C_BUDGET_ID;
-    IF (v_TYPE ='F' AND (:NEW.C_ACCTSCHEMA_ID IS NULL OR :NEW.C_ELEMENTVALUE_ID IS NULL)) THEN
+    IF (v_Type ='F' AND (:NEW.C_ACCTSCHEMA_ID IS NULL OR :NEW.C_ELEMENTVALUE_ID IS NULL)) THEN
       RAISE_APPLICATION_ERROR(-20270, 'Accounting information missing.');
     END IF;
   END IF;
