@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION C_GETWITHHOLDING">
+    <function name="C_GETWITHHOLDING" type="NUMERIC">
+      <parameter name="id_invoice_in" type="NUMERIC" mode="in"/>
+      <body><![CDATA[-- Creata da Francesco Finamore il 03/12/2007 per il calcolo della ritenuta di acconto
+
+--Cursori usati
+TYPE RECORD IS REF CURSOR;
+    curInvoice     RECORD;
+    curBusPart     RECORD;
+    curBP_WithHold RECORD;
+    curWithHold    RECORD;
+    curTaxInps     RECORD;
+
+--Business Partner
+IdBusPart Number;
+--Business Partner WithHolding
+IdWithHolding Number;
+IsIncludedTax char(1);
+IdTax Number;
+IsPercentWh char(1);
+baseamountpercent Number;
+--WithHolding
+withpercent number;
+--Tax
+IsWithHoldingTax char(1);
+
+TotCompensi number;
+base_amount number;
+Withholding number;
+TaxInps number;
+TaxAmount number;
+
+BEGIN
+Withholding:=0;
+-- Fattura
+FOR curInvoice IN
+    (SELECT *
+        FROM C_INVOICE
+        WHERE C_INVOICE_ID = id_invoice_in
+    )
+    LOOP
+        IdBusPart:=curInvoice.C_BPARTNER_ID;
+        IdWithHolding:=curInvoice.C_WITHHOLDING_ID;
+    EXIT;
+END LOOP;
+
+-- Compensi da linee di fattura
+select sum(LINENETAMT) into TotCompensi from C_INVOICELINE
+where C_INVOICE_ID= id_invoice_in
+and COALESCE(EXCLUDEFORWITHHOLDING,'N') <> 'Y' ;
+
+-- Dati del Businness Partner
+FOR curBusPart IN
+    (SELECT *
+        FROM C_BPARTNER
+        WHERE C_BPARTNER_ID = IdBusPart
+    )
+    LOOP
+        -- IdBusPart:=curBusPart.C_BPARTNER_ID;
+    EXIT;
+END LOOP;
+-- WithHolding del Businness Partner
+FOR curBP_WithHold IN
+    (SELECT *
+        FROM C_BP_WITHHOLDING
+        WHERE C_BPARTNER_ID = IdBusPart
+        and C_WITHHOLDING_ID = IdWithHolding
+    )
+    LOOP
+        IsIncludedTax := curBP_WithHold.INCLUDE_TAX;
+        IdTax := curBP_WithHold.C_TAX_ID;
+        -- This parameters is for manage the agents, for the other is 100%
+        IsPercentWh := curBP_WithHold.IS_PERCENT_WH;
+        if IsPercentWh ='Y' then
+            baseamountpercent := curBP_WithHold.WH_PERCENT;
+         else
+            baseamountpercent := 100;
+         end if;
+    EXIT;
+END LOOP;
+
+if (IdWithHolding is null) then
+  return 0;
+end if;
+-- 1) Calcolo la %ritenuta
+FOR curWithHold IN
+    (SELECT *
+        FROM C_WITHHOLDING
+        WHERE C_WITHHOLDING_ID = IdWithHolding
+    )
+    LOOP
+        withpercent:=curWithHold.RATE;
+    EXIT;
+END LOOP;
+
+-- 1) Calcolo la %inps
+if IsIncludedTax = 'Y' then
+   select coalesce(sum(TAXAMT),0) into  TaxAmount from C_invoicetax  
+   where C_TAX_ID= IdTax and C_INVOICE_ID = id_invoice_in;
+      
+   FOR curTaxInps IN
+    (SELECT *
+        FROM C_TAX
+        WHERE C_TAX_ID = IdTax
+    )
+    LOOP
+        IsWithHoldingTax:=curTaxInps.is_withholdingtax;
+    EXIT;
+    END LOOP;
+  
+     if not (IsWithHoldingTax='Y') then
+      TaxAmount := 0;
+     end if;
+else
+  TaxInps :=0 ;
+  TaxAmount := 0;
+end if;
+-- 3) base imponibile
+base_amount:=TotCompensi*baseamountpercent/100 ;
+--TaxAmount := TaxInps*base_amount/100;
+base_amount := base_amount + TaxAmount ;
+-- 4) Calcolo finale
+Withholding:=(withpercent*base_amount)/100;
+
+
+Return Withholding;
+
+
+END C_GETWITHHOLDING
+
+
+
+]]></body>
+    </function>
+  </database>

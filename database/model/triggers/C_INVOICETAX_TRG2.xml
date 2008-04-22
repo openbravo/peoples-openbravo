@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER C_INVOICETAX_TRG2">
+    <trigger name="C_INVOICETAX_TRG2" table="C_INVOICETAX" fires="after" insert="true" update="true" delete="true" foreach="row">
+      <body><![CDATA[
+-- Invoice
+v_buspartid NUMBER;
+vIsSalesInvoice CHAR(1);
+whamountold NUMBER;
+inpsamountold NUMBER;
+vProcessed  CHAR(1);
+-- InvoiceTax
+v_invoiceid NUMBER;
+v_taxid NUMBER;
+taxamountnew NUMBER;
+taxamountold NUMBER;
+-- BP_Withholding
+isbaseamountpercent CHAR(1);
+baseamountpercent NUMBER;
+includetaxinps CHAR(1);
+taxinps_id NUMBER;
+-- Withholding
+withpercent NUMBER;
+-- Tax
+v_IsWithTax CHAR(1);
+-- Calculated Variables
+baseamount  NUMBER;
+whamountnew NUMBER;
+inpsamountnew NUMBER;
+vwithid NUMBER;
+BEGIN
+  IF(inserting) THEN
+    v_invoiceid := :NEW.c_invoice_id;
+    v_taxid := :NEW.c_tax_id;
+    taxamountnew := :NEW.taxamt;
+    taxamountold := 0;
+    ELSIF(updating) THEN
+      v_invoiceid := :NEW.c_invoice_id;
+      v_taxid := :NEW.c_tax_id;
+      taxamountnew := :NEW.taxamt;
+      taxamountold := :OLD.taxamt;
+      ELSIF(deleting) THEN
+        v_invoiceid := :OLD.c_invoice_id;
+        v_taxid := :OLD.c_tax_id;
+        taxamountnew := 0;
+        taxamountold := :OLD.taxamt;
+      END IF;
+     -- Read data from invoice 
+     select c_bpartner_id,withholdingamount,inpsamt,issotrx , coalesce(processed,'N') ,c_withholding_id
+     into v_buspartid, whamountold, inpsamountold, vissalesinvoice, vProcessed   ,vwithid
+     from c_invoice 
+     where c_invoice_id=v_invoiceid;
+     -- Se the invoice isn't purchase exit from trigger
+     if (vIsSalesInvoice <> 'N') then
+        return;
+     end if; 
+     -- Read data from tax
+     select is_withholdingtax into v_IsWithTax from c_tax where c_tax_id=v_taxid;
+     
+     -- Read data from Withholding 
+     BEGIN
+       select bpwh.is_percent_wh, bpwh.wh_percent, bpwh.include_tax, bpwh.c_tax_id , wh.rate 
+	into isbaseamountpercent, baseamountpercent,  includetaxinps, taxinps_id, withpercent
+       from c_bp_withholding bpwh ,c_withholding wh 
+       where bpwh.c_bpartner_id  = v_buspartid 
+       and bpwh.c_withholding_id = wh.c_withholding_id
+        and bpwh.c_withholding_id = vwithid;
+
+     EXCEPTION 
+      when NO_DATA_FOUND THEN
+        return;
+     end;
+      IF(isbaseamountpercent <> 'Y') THEN
+        baseamountpercent := 100;
+      END IF;
+     
+   -- ReadOnly Check    
+  IF (vProcessed = 'N') THEN
+      -- Is the tax is for WithHolding and the BP have the flag activate it add the tax amount 
+      IF (v_IsWithTax= 'Y') and (includetaxinps = 'Y') THEN
+        baseamount := baseamountpercent * (taxamountnew-taxamountold)/100;
+        whamountnew := whamountold + withpercent*baseamount/100 ;
+        inpsamountnew :=inpsamountold + taxamountnew-taxamountold;
+        if (v_taxid<>taxinps_id)  then
+          whamountnew:=whamountold;
+        end if;
+        UPDATE c_invoice
+        SET withholdingamount = whamountnew,
+        inpsamt=inpsamountnew
+        WHERE c_invoice_id = v_invoiceid;
+      END IF;
+
+  END IF;
+        NULL;
+
+    END C_INVOICETAX_TRG2
+    
+]]></body>
+    </trigger>
+  </database>
