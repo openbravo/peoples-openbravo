@@ -1,42 +1,296 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="1" CREATED="2003-11-02 22:20:55.0" CODE="-1400" MSG="InsertInOut 132: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_INOUT&quot;.&quot;DOCUMENTNO&quot;) - " INFO="M_InOut_Create" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="21" CREATED="2003-11-03 17:44:50.0" CODE="-1400" MSG="InsertInOut 135: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_INOUT&quot;.&quot;DOCUMENTNO&quot;) - " INFO="M_InOut_Create" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="41" CREATED="2003-11-23 12:08:10.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;C_UOM_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="42" CREATED="2003-11-23 12:08:30.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;C_UOM_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="61" CREATED="2003-11-25 16:30:03.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;C_UOM_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="62" CREATED="2003-11-25 16:30:12.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;C_UOM_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="63" CREATED="2003-11-25 16:45:08.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;C_UOM_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="81" CREATED="2003-11-26 10:48:57.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;C_UOM_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="101" CREATED="2003-11-27 10:33:08.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;C_UOM_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="121" CREATED="2003-11-28 10:09:47.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;C_UOM_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="122" CREATED="2003-11-28 10:10:17.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;C_UOM_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="123" CREATED="2003-11-28 10:10:49.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;C_UOM_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="124" CREATED="2003-11-28 10:14:36.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;C_UOM_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="141" CREATED="2004-01-14 11:12:31.0" CODE="-1400" MSG="InsertInOut 190: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_INOUT&quot;.&quot;DOCUMENTNO&quot;) - " INFO="M_InOut_Create" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="161" CREATED="2004-01-19 08:55:22.0" CODE="-1400" MSG="CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_TRANSACTION&quot;.&quot;M_LOCATOR_ID&quot;) - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="181" CREATED="2004-02-26 11:17:07.0" CODE="-2290" MSG="CreateInOutLine: ORA-02290: restricción de control (TAD.M_INOUTLINE) violada - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="182" CREATED="2004-02-26 11:17:07.0" CODE="-1002" MSG=": ORA-01002: recuperación fuera de secuencia - " INFO="M_InOut_Cancel" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="183" CREATED="2004-02-26 11:30:59.0" CODE="-2290" MSG="CreateInOutLine: ORA-02290: restricción de control (TAD.M_INOUTLINE) violada - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="184" CREATED="2004-02-26 11:30:59.0" CODE="-1002" MSG=": ORA-01002: recuperación fuera de secuencia - " INFO="M_InOut_Cancel" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="201" CREATED="2004-03-02 11:43:01.0" CODE="-1400" MSG="InsertInOut 219: ORA-01400: no se puede realizar una inserción NULL en (&quot;TAD&quot;.&quot;M_INOUT&quot;.&quot;DOCUMENTNO&quot;) - " INFO="M_InOut_Create" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="241" CREATED="2004-09-02 19:51:49.0" CODE="100" MSG="Checking stock: ORA-01403: no se han encontrado datos - " INFO="M_Check_Stock" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="242" CREATED="2004-09-02 19:51:49.0" CODE="100" MSG="UpdateOrderLine: ORA-01403: no se han encontrado datos - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="243" CREATED="2004-09-02 19:51:49.0" CODE="100" MSG="CreateInOutLine*2 289-30-170: ORA-01403: no se han encontrado datos - @C_Order_ID@ 70154 -> @M_InOut_ID@ 500081; " INFO="C_Invoice_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="244" CREATED="2004-09-02 19:51:49.0" CODE="100" MSG="Checking stock: ORA-01403: no se han encontrado datos - " INFO="M_Check_Stock" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="245" CREATED="2004-09-02 19:51:49.0" CODE="100" MSG="UpdateOrderLine: ORA-01403: no se han encontrado datos - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="246" CREATED="2004-09-02 19:51:49.0" CODE="100" MSG="CreateInOutLine*2 290-10-170: ORA-01403: no se han encontrado datos - @C_Order_ID@ 70155 -> @M_InOut_ID@ 500082; " INFO="C_Invoice_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="247" CREATED="2004-09-02 19:51:49.0" CODE="100" MSG="Checking stock: ORA-01403: no se han encontrado datos - " INFO="M_Check_Stock" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="248" CREATED="2004-09-02 19:51:49.0" CODE="100" MSG="UpdateOrderLine: ORA-01403: no se han encontrado datos - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="249" CREATED="2004-09-02 19:51:49.0" CODE="100" MSG="CreateInOutLine*2 291-10-170: ORA-01403: no se han encontrado datos - @C_Order_ID@ 70156 -> @M_InOut_ID@ 500083; " INFO="C_Invoice_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="250" CREATED="2004-09-03 09:31:47.0" CODE="100" MSG="Checking stock: ORA-01403: no se han encontrado datos - " INFO="M_Check_Stock" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="251" CREATED="2004-09-03 09:31:47.0" CODE="100" MSG="UpdateOrderLine: ORA-01403: no se han encontrado datos - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="252" CREATED="2004-09-03 09:31:47.0" CODE="100" MSG="CreateInOutLine*2 289-30-170: ORA-01403: no se han encontrado datos - @C_Order_ID@ 70154 -> @M_InOut_ID@ 500084; " INFO="C_Invoice_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="254" CREATED="2004-09-03 10:05:15.0" CODE="100" MSG="Checking stock: ORA-01403: no se han encontrado datos - " INFO="M_Check_Stock" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="255" CREATED="2004-09-03 10:05:15.0" CODE="100" MSG="UpdateOrderLine: ORA-01403: no se han encontrado datos - " INFO="M_InOut_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="256" CREATED="2004-09-03 10:05:15.0" CODE="100" MSG="CreateInOutLine*2 289-30-170: ORA-01403: no se han encontrado datos - @C_Order_ID@ 70154 -> @M_InOut_ID@ 500085; " INFO="C_Invoice_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="281" CREATED="2005-03-09 19:49:19.0" CODE="-1" MSG="Updating BPartners: ORA-00001: restricción única (TAD.C_DEBT_PAYMENT_KEY) violada - " INFO="C_Invoice_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="282" CREATED="2005-03-09 19:49:19.0" CODE="-1" MSG="Fetching_ShipmentLine(*)" INFO="C_Invoice_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="321" CREATED="2005-04-27 10:36:52.0" CODE="-1" MSG="Updating BPartners: ORA-00001: restricción única (TAD.C_DEBT_PAYMENT_KEY) violada - " INFO="C_Invoice_Post" />
-  <DBA_ERRORLOG DBA_ERRORLOG_ID="322" CREATED="2005-04-27 10:36:52.0" CODE="-1" MSG="Fetching_ShipmentLine(*)" INFO="C_Invoice_Post" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=1-->
+    <DBA_ERRORLOG_ID>1</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=1-->
+    <CREATED>2003-11-02 22:20:55.0</CREATED><!--DBA_ERRORLOG_ID=1-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=1-->
+    <MSG>InsertInOut 132: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_INOUT"."DOCUMENTNO") - </MSG><!--DBA_ERRORLOG_ID=1-->
+    <INFO>M_InOut_Create</INFO><!--DBA_ERRORLOG_ID=1-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=1-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=21-->
+    <DBA_ERRORLOG_ID>21</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=21-->
+    <CREATED>2003-11-03 17:44:50.0</CREATED><!--DBA_ERRORLOG_ID=21-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=21-->
+    <MSG>InsertInOut 135: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_INOUT"."DOCUMENTNO") - </MSG><!--DBA_ERRORLOG_ID=21-->
+    <INFO>M_InOut_Create</INFO><!--DBA_ERRORLOG_ID=21-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=21-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=41-->
+    <DBA_ERRORLOG_ID>41</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=41-->
+    <CREATED>2003-11-23 12:08:10.0</CREATED><!--DBA_ERRORLOG_ID=41-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=41-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."C_UOM_ID") - </MSG><!--DBA_ERRORLOG_ID=41-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=41-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=41-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=42-->
+    <DBA_ERRORLOG_ID>42</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=42-->
+    <CREATED>2003-11-23 12:08:30.0</CREATED><!--DBA_ERRORLOG_ID=42-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=42-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."C_UOM_ID") - </MSG><!--DBA_ERRORLOG_ID=42-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=42-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=42-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=61-->
+    <DBA_ERRORLOG_ID>61</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=61-->
+    <CREATED>2003-11-25 16:30:03.0</CREATED><!--DBA_ERRORLOG_ID=61-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=61-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."C_UOM_ID") - </MSG><!--DBA_ERRORLOG_ID=61-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=61-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=61-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=62-->
+    <DBA_ERRORLOG_ID>62</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=62-->
+    <CREATED>2003-11-25 16:30:12.0</CREATED><!--DBA_ERRORLOG_ID=62-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=62-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."C_UOM_ID") - </MSG><!--DBA_ERRORLOG_ID=62-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=62-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=62-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=63-->
+    <DBA_ERRORLOG_ID>63</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=63-->
+    <CREATED>2003-11-25 16:45:08.0</CREATED><!--DBA_ERRORLOG_ID=63-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=63-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."C_UOM_ID") - </MSG><!--DBA_ERRORLOG_ID=63-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=63-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=63-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=81-->
+    <DBA_ERRORLOG_ID>81</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=81-->
+    <CREATED>2003-11-26 10:48:57.0</CREATED><!--DBA_ERRORLOG_ID=81-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=81-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."C_UOM_ID") - </MSG><!--DBA_ERRORLOG_ID=81-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=81-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=81-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=101-->
+    <DBA_ERRORLOG_ID>101</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=101-->
+    <CREATED>2003-11-27 10:33:08.0</CREATED><!--DBA_ERRORLOG_ID=101-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=101-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."C_UOM_ID") - </MSG><!--DBA_ERRORLOG_ID=101-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=101-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=101-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=121-->
+    <DBA_ERRORLOG_ID>121</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=121-->
+    <CREATED>2003-11-28 10:09:47.0</CREATED><!--DBA_ERRORLOG_ID=121-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=121-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."C_UOM_ID") - </MSG><!--DBA_ERRORLOG_ID=121-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=121-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=121-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=122-->
+    <DBA_ERRORLOG_ID>122</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=122-->
+    <CREATED>2003-11-28 10:10:17.0</CREATED><!--DBA_ERRORLOG_ID=122-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=122-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."C_UOM_ID") - </MSG><!--DBA_ERRORLOG_ID=122-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=122-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=122-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=123-->
+    <DBA_ERRORLOG_ID>123</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=123-->
+    <CREATED>2003-11-28 10:10:49.0</CREATED><!--DBA_ERRORLOG_ID=123-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=123-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."C_UOM_ID") - </MSG><!--DBA_ERRORLOG_ID=123-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=123-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=123-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=124-->
+    <DBA_ERRORLOG_ID>124</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=124-->
+    <CREATED>2003-11-28 10:14:36.0</CREATED><!--DBA_ERRORLOG_ID=124-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=124-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."C_UOM_ID") - </MSG><!--DBA_ERRORLOG_ID=124-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=124-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=124-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=141-->
+    <DBA_ERRORLOG_ID>141</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=141-->
+    <CREATED>2004-01-14 11:12:31.0</CREATED><!--DBA_ERRORLOG_ID=141-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=141-->
+    <MSG>InsertInOut 190: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_INOUT"."DOCUMENTNO") - </MSG><!--DBA_ERRORLOG_ID=141-->
+    <INFO>M_InOut_Create</INFO><!--DBA_ERRORLOG_ID=141-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=141-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=161-->
+    <DBA_ERRORLOG_ID>161</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=161-->
+    <CREATED>2004-01-19 08:55:22.0</CREATED><!--DBA_ERRORLOG_ID=161-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=161-->
+    <MSG>CreateTransaction: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_TRANSACTION"."M_LOCATOR_ID") - </MSG><!--DBA_ERRORLOG_ID=161-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=161-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=161-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=181-->
+    <DBA_ERRORLOG_ID>181</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=181-->
+    <CREATED>2004-02-26 11:17:07.0</CREATED><!--DBA_ERRORLOG_ID=181-->
+    <CODE>-2290</CODE><!--DBA_ERRORLOG_ID=181-->
+    <MSG>CreateInOutLine: ORA-02290: restricción de control (TAD.M_INOUTLINE) violada - </MSG><!--DBA_ERRORLOG_ID=181-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=181-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=181-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=182-->
+    <DBA_ERRORLOG_ID>182</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=182-->
+    <CREATED>2004-02-26 11:17:07.0</CREATED><!--DBA_ERRORLOG_ID=182-->
+    <CODE>-1002</CODE><!--DBA_ERRORLOG_ID=182-->
+    <MSG>: ORA-01002: recuperación fuera de secuencia - </MSG><!--DBA_ERRORLOG_ID=182-->
+    <INFO>M_InOut_Cancel</INFO><!--DBA_ERRORLOG_ID=182-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=182-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=183-->
+    <DBA_ERRORLOG_ID>183</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=183-->
+    <CREATED>2004-02-26 11:30:59.0</CREATED><!--DBA_ERRORLOG_ID=183-->
+    <CODE>-2290</CODE><!--DBA_ERRORLOG_ID=183-->
+    <MSG>CreateInOutLine: ORA-02290: restricción de control (TAD.M_INOUTLINE) violada - </MSG><!--DBA_ERRORLOG_ID=183-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=183-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=183-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=184-->
+    <DBA_ERRORLOG_ID>184</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=184-->
+    <CREATED>2004-02-26 11:30:59.0</CREATED><!--DBA_ERRORLOG_ID=184-->
+    <CODE>-1002</CODE><!--DBA_ERRORLOG_ID=184-->
+    <MSG>: ORA-01002: recuperación fuera de secuencia - </MSG><!--DBA_ERRORLOG_ID=184-->
+    <INFO>M_InOut_Cancel</INFO><!--DBA_ERRORLOG_ID=184-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=184-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=201-->
+    <DBA_ERRORLOG_ID>201</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=201-->
+    <CREATED>2004-03-02 11:43:01.0</CREATED><!--DBA_ERRORLOG_ID=201-->
+    <CODE>-1400</CODE><!--DBA_ERRORLOG_ID=201-->
+    <MSG>InsertInOut 219: ORA-01400: no se puede realizar una inserción NULL en ("TAD"."M_INOUT"."DOCUMENTNO") - </MSG><!--DBA_ERRORLOG_ID=201-->
+    <INFO>M_InOut_Create</INFO><!--DBA_ERRORLOG_ID=201-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=201-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=241-->
+    <DBA_ERRORLOG_ID>241</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=241-->
+    <CREATED>2004-09-02 19:51:49.0</CREATED><!--DBA_ERRORLOG_ID=241-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=241-->
+    <MSG>Checking stock: ORA-01403: no se han encontrado datos - </MSG><!--DBA_ERRORLOG_ID=241-->
+    <INFO>M_Check_Stock</INFO><!--DBA_ERRORLOG_ID=241-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=241-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=242-->
+    <DBA_ERRORLOG_ID>242</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=242-->
+    <CREATED>2004-09-02 19:51:49.0</CREATED><!--DBA_ERRORLOG_ID=242-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=242-->
+    <MSG>UpdateOrderLine: ORA-01403: no se han encontrado datos - </MSG><!--DBA_ERRORLOG_ID=242-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=242-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=242-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=243-->
+    <DBA_ERRORLOG_ID>243</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=243-->
+    <CREATED>2004-09-02 19:51:49.0</CREATED><!--DBA_ERRORLOG_ID=243-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=243-->
+    <MSG>CreateInOutLine*2 289-30-170: ORA-01403: no se han encontrado datos - @C_Order_ID@ 70154 -> @M_InOut_ID@ 500081; </MSG><!--DBA_ERRORLOG_ID=243-->
+    <INFO>C_Invoice_Post</INFO><!--DBA_ERRORLOG_ID=243-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=243-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=244-->
+    <DBA_ERRORLOG_ID>244</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=244-->
+    <CREATED>2004-09-02 19:51:49.0</CREATED><!--DBA_ERRORLOG_ID=244-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=244-->
+    <MSG>Checking stock: ORA-01403: no se han encontrado datos - </MSG><!--DBA_ERRORLOG_ID=244-->
+    <INFO>M_Check_Stock</INFO><!--DBA_ERRORLOG_ID=244-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=244-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=245-->
+    <DBA_ERRORLOG_ID>245</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=245-->
+    <CREATED>2004-09-02 19:51:49.0</CREATED><!--DBA_ERRORLOG_ID=245-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=245-->
+    <MSG>UpdateOrderLine: ORA-01403: no se han encontrado datos - </MSG><!--DBA_ERRORLOG_ID=245-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=245-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=245-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=246-->
+    <DBA_ERRORLOG_ID>246</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=246-->
+    <CREATED>2004-09-02 19:51:49.0</CREATED><!--DBA_ERRORLOG_ID=246-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=246-->
+    <MSG>CreateInOutLine*2 290-10-170: ORA-01403: no se han encontrado datos - @C_Order_ID@ 70155 -> @M_InOut_ID@ 500082; </MSG><!--DBA_ERRORLOG_ID=246-->
+    <INFO>C_Invoice_Post</INFO><!--DBA_ERRORLOG_ID=246-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=246-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=247-->
+    <DBA_ERRORLOG_ID>247</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=247-->
+    <CREATED>2004-09-02 19:51:49.0</CREATED><!--DBA_ERRORLOG_ID=247-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=247-->
+    <MSG>Checking stock: ORA-01403: no se han encontrado datos - </MSG><!--DBA_ERRORLOG_ID=247-->
+    <INFO>M_Check_Stock</INFO><!--DBA_ERRORLOG_ID=247-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=247-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=248-->
+    <DBA_ERRORLOG_ID>248</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=248-->
+    <CREATED>2004-09-02 19:51:49.0</CREATED><!--DBA_ERRORLOG_ID=248-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=248-->
+    <MSG>UpdateOrderLine: ORA-01403: no se han encontrado datos - </MSG><!--DBA_ERRORLOG_ID=248-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=248-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=248-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=249-->
+    <DBA_ERRORLOG_ID>249</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=249-->
+    <CREATED>2004-09-02 19:51:49.0</CREATED><!--DBA_ERRORLOG_ID=249-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=249-->
+    <MSG>CreateInOutLine*2 291-10-170: ORA-01403: no se han encontrado datos - @C_Order_ID@ 70156 -> @M_InOut_ID@ 500083; </MSG><!--DBA_ERRORLOG_ID=249-->
+    <INFO>C_Invoice_Post</INFO><!--DBA_ERRORLOG_ID=249-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=249-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=250-->
+    <DBA_ERRORLOG_ID>250</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=250-->
+    <CREATED>2004-09-03 09:31:47.0</CREATED><!--DBA_ERRORLOG_ID=250-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=250-->
+    <MSG>Checking stock: ORA-01403: no se han encontrado datos - </MSG><!--DBA_ERRORLOG_ID=250-->
+    <INFO>M_Check_Stock</INFO><!--DBA_ERRORLOG_ID=250-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=250-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=251-->
+    <DBA_ERRORLOG_ID>251</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=251-->
+    <CREATED>2004-09-03 09:31:47.0</CREATED><!--DBA_ERRORLOG_ID=251-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=251-->
+    <MSG>UpdateOrderLine: ORA-01403: no se han encontrado datos - </MSG><!--DBA_ERRORLOG_ID=251-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=251-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=251-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=252-->
+    <DBA_ERRORLOG_ID>252</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=252-->
+    <CREATED>2004-09-03 09:31:47.0</CREATED><!--DBA_ERRORLOG_ID=252-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=252-->
+    <MSG>CreateInOutLine*2 289-30-170: ORA-01403: no se han encontrado datos - @C_Order_ID@ 70154 -> @M_InOut_ID@ 500084; </MSG><!--DBA_ERRORLOG_ID=252-->
+    <INFO>C_Invoice_Post</INFO><!--DBA_ERRORLOG_ID=252-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=252-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=254-->
+    <DBA_ERRORLOG_ID>254</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=254-->
+    <CREATED>2004-09-03 10:05:15.0</CREATED><!--DBA_ERRORLOG_ID=254-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=254-->
+    <MSG>Checking stock: ORA-01403: no se han encontrado datos - </MSG><!--DBA_ERRORLOG_ID=254-->
+    <INFO>M_Check_Stock</INFO><!--DBA_ERRORLOG_ID=254-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=254-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=255-->
+    <DBA_ERRORLOG_ID>255</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=255-->
+    <CREATED>2004-09-03 10:05:15.0</CREATED><!--DBA_ERRORLOG_ID=255-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=255-->
+    <MSG>UpdateOrderLine: ORA-01403: no se han encontrado datos - </MSG><!--DBA_ERRORLOG_ID=255-->
+    <INFO>M_InOut_Post</INFO><!--DBA_ERRORLOG_ID=255-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=255-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=256-->
+    <DBA_ERRORLOG_ID>256</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=256-->
+    <CREATED>2004-09-03 10:05:15.0</CREATED><!--DBA_ERRORLOG_ID=256-->
+    <CODE>100</CODE><!--DBA_ERRORLOG_ID=256-->
+    <MSG>CreateInOutLine*2 289-30-170: ORA-01403: no se han encontrado datos - @C_Order_ID@ 70154 -> @M_InOut_ID@ 500085; </MSG><!--DBA_ERRORLOG_ID=256-->
+    <INFO>C_Invoice_Post</INFO><!--DBA_ERRORLOG_ID=256-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=256-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=281-->
+    <DBA_ERRORLOG_ID>281</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=281-->
+    <CREATED>2005-03-09 19:49:19.0</CREATED><!--DBA_ERRORLOG_ID=281-->
+    <CODE>-1</CODE><!--DBA_ERRORLOG_ID=281-->
+    <MSG>Updating BPartners: ORA-00001: restricción única (TAD.C_DEBT_PAYMENT_KEY) violada - </MSG><!--DBA_ERRORLOG_ID=281-->
+    <INFO>C_Invoice_Post</INFO><!--DBA_ERRORLOG_ID=281-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=281-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=282-->
+    <DBA_ERRORLOG_ID>282</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=282-->
+    <CREATED>2005-03-09 19:49:19.0</CREATED><!--DBA_ERRORLOG_ID=282-->
+    <CODE>-1</CODE><!--DBA_ERRORLOG_ID=282-->
+    <MSG>Fetching_ShipmentLine(*)</MSG><!--DBA_ERRORLOG_ID=282-->
+    <INFO>C_Invoice_Post</INFO><!--DBA_ERRORLOG_ID=282-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=282-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=321-->
+    <DBA_ERRORLOG_ID>321</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=321-->
+    <CREATED>2005-04-27 10:36:52.0</CREATED><!--DBA_ERRORLOG_ID=321-->
+    <CODE>-1</CODE><!--DBA_ERRORLOG_ID=321-->
+    <MSG>Updating BPartners: ORA-00001: restricción única (TAD.C_DEBT_PAYMENT_KEY) violada - </MSG><!--DBA_ERRORLOG_ID=321-->
+    <INFO>C_Invoice_Post</INFO><!--DBA_ERRORLOG_ID=321-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=321-->
+  <DBA_ERRORLOG><!--DBA_ERRORLOG_ID=322-->
+    <DBA_ERRORLOG_ID>322</DBA_ERRORLOG_ID><!--DBA_ERRORLOG_ID=322-->
+    <CREATED>2005-04-27 10:36:52.0</CREATED><!--DBA_ERRORLOG_ID=322-->
+    <CODE>-1</CODE><!--DBA_ERRORLOG_ID=322-->
+    <MSG>Fetching_ShipmentLine(*)</MSG><!--DBA_ERRORLOG_ID=322-->
+    <INFO>C_Invoice_Post</INFO><!--DBA_ERRORLOG_ID=322-->
+  </DBA_ERRORLOG><!--DBA_ERRORLOG_ID=322-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

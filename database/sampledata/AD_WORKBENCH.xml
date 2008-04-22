@@ -1,4 +1,36 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <AD_WORKBENCH AD_WORKBENCH_ID="100" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2001-09-08 14:11:43.0" CREATEDBY="0" UPDATED="2003-02-22 02:20:12.0" UPDATEDBY="0" NAME="Sales" AD_COLUMN_ID="109" ENTITYTYPE="D" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <AD_WORKBENCH><!--AD_WORKBENCH_ID=100-->
+    <AD_WORKBENCH_ID>100</AD_WORKBENCH_ID><!--AD_WORKBENCH_ID=100-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKBENCH_ID=100-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKBENCH_ID=100-->
+    <ISACTIVE>N</ISACTIVE><!--AD_WORKBENCH_ID=100-->
+    <CREATED>2001-09-08 14:11:43.0</CREATED><!--AD_WORKBENCH_ID=100-->
+    <CREATEDBY>0</CREATEDBY><!--AD_WORKBENCH_ID=100-->
+    <UPDATED>2003-02-22 02:20:12.0</UPDATED><!--AD_WORKBENCH_ID=100-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_WORKBENCH_ID=100-->
+    <NAME>Sales</NAME><!--AD_WORKBENCH_ID=100-->
+    <AD_COLUMN_ID>109</AD_COLUMN_ID><!--AD_WORKBENCH_ID=100-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKBENCH_ID=100-->
+  </AD_WORKBENCH><!--AD_WORKBENCH_ID=100-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

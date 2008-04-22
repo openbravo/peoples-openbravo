@@ -1,4 +1,36 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <PA_REPORTCOLUMNSET PA_REPORTCOLUMNSET_ID="100" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2003-02-08 11:55:35.0" CREATEDBY="100" UPDATED="2003-02-10 22:43:39.0" UPDATEDBY="0" NAME="Actual Current Month" DESCRIPTION="Actual Current Month Balances" PROCESSING="N" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <PA_REPORTCOLUMNSET><!--PA_REPORTCOLUMNSET_ID=100-->
+    <PA_REPORTCOLUMNSET_ID>100</PA_REPORTCOLUMNSET_ID><!--PA_REPORTCOLUMNSET_ID=100-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--PA_REPORTCOLUMNSET_ID=100-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--PA_REPORTCOLUMNSET_ID=100-->
+    <ISACTIVE>Y</ISACTIVE><!--PA_REPORTCOLUMNSET_ID=100-->
+    <CREATED>2003-02-08 11:55:35.0</CREATED><!--PA_REPORTCOLUMNSET_ID=100-->
+    <CREATEDBY>100</CREATEDBY><!--PA_REPORTCOLUMNSET_ID=100-->
+    <UPDATED>2003-02-10 22:43:39.0</UPDATED><!--PA_REPORTCOLUMNSET_ID=100-->
+    <UPDATEDBY>0</UPDATEDBY><!--PA_REPORTCOLUMNSET_ID=100-->
+    <NAME>Actual Current Month</NAME><!--PA_REPORTCOLUMNSET_ID=100-->
+    <DESCRIPTION>Actual Current Month Balances</DESCRIPTION><!--PA_REPORTCOLUMNSET_ID=100-->
+    <PROCESSING>N</PROCESSING><!--PA_REPORTCOLUMNSET_ID=100-->
+  </PA_REPORTCOLUMNSET><!--PA_REPORTCOLUMNSET_ID=100-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

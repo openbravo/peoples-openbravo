@@ -1,4 +1,62 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <AT_TESTDOCUMENT AT_TESTDOCUMENT_ID="800000" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2005-12-16 17:19:21.0" CREATEDBY="100" UPDATED="2005-12-16 17:19:21.0" UPDATEDBY="100" NAME="Watir(es_ES)" DESCRIPTION="Archivo ruby para la ejecucin de Tests con Watir" EXTENSION="rb  " HEADER1="# feature tests for Frames&#xa;# revision: $Revision: 1.20 $&#xa;&#xa;$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..') if $0 == __FILE__&#xa;require 'unittests/setup'&#xa;&#xa;class TC_Frames &lt; Test::Unit::TestCase&#xa;&#xa;    include Watir&#xa;&#xa;    def setup()&#xa;        $ie.goto(&quot;" FOOTER="puts 'Test Succesful'&#xa;&#xa;end&#xa;end" CONTENTTYPE="text/plain" HEADER2="&quot;)&#xa;    end&#xa;&#xa;    def test_a_Login&#xa;" AD_LANGUAGE="es_ES" LINE_INTERCHANGER="Y" PREFIX="Y" INTRODUCTION="N" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <AT_TESTDOCUMENT><!--AT_TESTDOCUMENT_ID=800000-->
+    <AT_TESTDOCUMENT_ID>800000</AT_TESTDOCUMENT_ID><!--AT_TESTDOCUMENT_ID=800000-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AT_TESTDOCUMENT_ID=800000-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AT_TESTDOCUMENT_ID=800000-->
+    <ISACTIVE>Y</ISACTIVE><!--AT_TESTDOCUMENT_ID=800000-->
+    <CREATED>2005-12-16 17:19:21.0</CREATED><!--AT_TESTDOCUMENT_ID=800000-->
+    <CREATEDBY>100</CREATEDBY><!--AT_TESTDOCUMENT_ID=800000-->
+    <UPDATED>2005-12-16 17:19:21.0</UPDATED><!--AT_TESTDOCUMENT_ID=800000-->
+    <UPDATEDBY>100</UPDATEDBY><!--AT_TESTDOCUMENT_ID=800000-->
+    <NAME>Watir(es_ES)</NAME><!--AT_TESTDOCUMENT_ID=800000-->
+    <DESCRIPTION>Archivo ruby para la ejecucin de Tests con Watir</DESCRIPTION><!--AT_TESTDOCUMENT_ID=800000-->
+    <EXTENSION>rb  </EXTENSION><!--AT_TESTDOCUMENT_ID=800000-->
+    <HEADER1># feature tests for Frames
+# revision: $Revision: 1.20 $
+
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..') if $0 == __FILE__
+require 'unittests/setup'
+
+class TC_Frames &lt; Test::Unit::TestCase
+
+    include Watir
+
+    def setup()
+        $ie.goto("</HEADER1><!--AT_TESTDOCUMENT_ID=800000-->
+    <FOOTER>puts 'Test Succesful'
+
+end
+end</FOOTER><!--AT_TESTDOCUMENT_ID=800000-->
+    <CONTENTTYPE>text/plain</CONTENTTYPE><!--AT_TESTDOCUMENT_ID=800000-->
+    <HEADER2>")
+    end
+
+    def test_a_Login
+</HEADER2><!--AT_TESTDOCUMENT_ID=800000-->
+    <AD_LANGUAGE>es_ES</AD_LANGUAGE><!--AT_TESTDOCUMENT_ID=800000-->
+    <LINE_INTERCHANGER>Y</LINE_INTERCHANGER><!--AT_TESTDOCUMENT_ID=800000-->
+    <PREFIX>Y</PREFIX><!--AT_TESTDOCUMENT_ID=800000-->
+    <INTRODUCTION>N</INTRODUCTION><!--AT_TESTDOCUMENT_ID=800000-->
+  </AT_TESTDOCUMENT><!--AT_TESTDOCUMENT_ID=800000-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

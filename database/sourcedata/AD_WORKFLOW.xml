@@ -1,22 +1,230 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <AD_WORKFLOW AD_WORKFLOW_ID="101" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="1999-12-05 23:51:01.0" CREATEDBY="0" UPDATED="2003-02-22 02:20:12.0" UPDATEDBY="0" NAME="Project Setup and Use" DESCRIPTION="Setup of projects and project reporting" HELP="Projects allow to monitor the status and progress of sales opportunities, service projects and investment projects. A Project is a process that is undertaken which can involve multiple steps or phases and require resources from more than one area." ACCESSLEVEL="3" AD_WF_NODE_ID="108" ENTITYTYPE="D" />
-  <AD_WORKFLOW AD_WORKFLOW_ID="103" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2000-09-10 22:43:01.0" CREATEDBY="100" UPDATED="2007-02-20 17:34:09.0" UPDATEDBY="100" NAME="Language Setup" DESCRIPTION="Setup a new Language of the system and translate elements" HELP="Define a new language as a system language." ACCESSLEVEL="4" AD_WF_NODE_ID="107" ENTITYTYPE="D" />
-  <AD_WORKFLOW AD_WORKFLOW_ID="104" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2000-09-24 18:54:54.0" CREATEDBY="100" UPDATED="2007-02-20 17:24:31.0" UPDATEDBY="100" NAME="Initial Client Setup Review" DESCRIPTION="Review of system level setup of a new  Client" ACCESSLEVEL="3" AD_WF_NODE_ID="110" ENTITYTYPE="D">
-    <HELP><![CDATA[This workflow reviews the system setup of a new client as performed by the automatic Initial Client Setup.|You may want to check also the following Workflows:|- Accounting Setup|- Business Partner Setup|- Product Setup|- Price list Setup|- Warehouse Setup|- Tax Setup|]]></HELP>
-  </AD_WORKFLOW>
-  <AD_WORKFLOW AD_WORKFLOW_ID="105" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2001-04-05 21:04:04.0" CREATEDBY="100" UPDATED="2003-02-22 02:20:12.0" UPDATEDBY="0" NAME="Accounting Setup" DESCRIPTION="Review and change Accounting Setup" HELP="This workflow allows you to review and change your Accounting Rules. " ACCESSLEVEL="3" AD_WF_NODE_ID="125" ENTITYTYPE="D" />
-  <AD_WORKFLOW AD_WORKFLOW_ID="106" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2001-04-05 21:05:17.0" CREATEDBY="100" UPDATED="2003-02-22 02:20:12.0" UPDATEDBY="0" NAME="Business Partner Setup" DESCRIPTION="Setup Business Partner Rules" HELP="This workflow defines the Business Partners and the supporting rules." ACCESSLEVEL="3" AD_WF_NODE_ID="131" ENTITYTYPE="D" />
-  <AD_WORKFLOW AD_WORKFLOW_ID="107" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2001-04-05 21:05:36.0" CREATEDBY="100" UPDATED="2003-02-22 02:20:12.0" UPDATEDBY="0" NAME="Product Setup" DESCRIPTION="Set up Products" HELP="Define your products manually. You should verify the settings especially if you import your products." ACCESSLEVEL="3" AD_WF_NODE_ID="158" ENTITYTYPE="D" />
-  <AD_WORKFLOW AD_WORKFLOW_ID="108" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2001-04-05 21:05:50.0" CREATEDBY="100" UPDATED="2003-02-22 02:20:12.0" UPDATEDBY="0" NAME="Price List Setup" DESCRIPTION="Define your Price Lists and Discounts" HELP="You define your price lists after entering or importing your products" ACCESSLEVEL="3" AD_WF_NODE_ID="162" ENTITYTYPE="D" />
-  <AD_WORKFLOW AD_WORKFLOW_ID="109" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2001-04-05 21:06:17.0" CREATEDBY="100" UPDATED="2003-08-03 17:21:33.0" UPDATEDBY="0" NAME="Replication Setup" DESCRIPTION="Setup of data replication" ACCESSLEVEL="6" AD_WF_NODE_ID="174" ENTITYTYPE="D">
-    <HELP><![CDATA[Data Replication allows you to synchronize data of remote instances with a central office.  All actions are initialized from the central office.<p>|<b>Central System:</b><BR>|- setup system with all organizations, roles, etc.<BR>|- run the migration to make sure that it is up-to-date<BR>|- export the central system|<p>|<b>Remote System:</b>|- install the exact version as Central System<BR>|- import data from Central System in the remote locations|<p>|<b>Central System:</b>|- Define Replication per Remote<BR>|- Make sure that the ID range is unique per remote - otherwise you will loose transactions!<BR>|- Initially Start the Replication Run to setup Remote|<p>|** Enter Transactions **|<p>|<b>Central System:</b><BR>|- Start the Replication Run when required|]]></HELP>
-  </AD_WORKFLOW>
-  <AD_WORKFLOW AD_WORKFLOW_ID="110" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2001-04-05 21:06:30.0" CREATEDBY="100" UPDATED="2003-02-22 02:20:12.0" UPDATEDBY="0" NAME="Tax Setup" DESCRIPTION="Setup tax calculation" HELP="Setup the tax calculation for products, services and charges" ACCESSLEVEL="3" AD_WF_NODE_ID="166" ENTITYTYPE="D" />
-  <AD_WORKFLOW AD_WORKFLOW_ID="111" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2001-04-05 21:45:37.0" CREATEDBY="100" UPDATED="2003-02-22 02:20:12.0" UPDATEDBY="0" NAME="Sales Setup" DESCRIPTION="Setup Sales" HELP="Setting up Sales Representatives, Commissions as well as Marketing Channels and Campaigns." ACCESSLEVEL="3" AD_WF_NODE_ID="141" ENTITYTYPE="D" />
-  <AD_WORKFLOW AD_WORKFLOW_ID="112" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2001-04-24 18:06:49.0" CREATEDBY="100" UPDATED="2003-02-22 02:20:12.0" UPDATEDBY="0" NAME="Performance Measurement Setup" DESCRIPTION="Setup your Performance Measurement" ACCESSLEVEL="3" AD_WF_NODE_ID="147" ENTITYTYPE="D">
-    <HELP><![CDATA[This workflow guides you through setting up your performance measurement based on Key Performance Indicators, Balanced Scorecard, etc.||Most important: Do your analysis first!|- What are your goals and how do you measure it?||When you are setting up the system, you do it in reverse:|First you define how you measure it and last you define the goals for the measurements.|You have three ways measuring performance:|- via quantifiable measures (e.g. sales of $3 million in Q1)|- via manual measures|- via achievements (tasks)||The system converts the measures into percentages (based on the target and achieved measure - or number of total and reached achievements)]]></HELP>
-  </AD_WORKFLOW>
-  <AD_WORKFLOW AD_WORKFLOW_ID="113" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2001-12-08 21:07:39.0" CREATEDBY="100" UPDATED="2007-06-12 10:51:39.0" UPDATEDBY="100" NAME="Request Setup" DESCRIPTION="Set up the client to process requests" ACCESSLEVEL="6" AD_WF_NODE_ID="152" ENTITYTYPE="D" />
-  <AD_WORKFLOW AD_WORKFLOW_ID="800000" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2006-01-03 18:02:54.0" CREATEDBY="100" UPDATED="2006-01-09 10:26:05.0" UPDATEDBY="100" NAME="Production Setup" DESCRIPTION="Set up Production module." HELP="Set up Production module." ACCESSLEVEL="3" AD_WF_NODE_ID="800003" ENTITYTYPE="U" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=101-->
+    <AD_WORKFLOW_ID>101</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=101-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=101-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=101-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_WORKFLOW_ID=101-->
+    <CREATED>1999-12-05 23:51:01.0</CREATED><!--AD_WORKFLOW_ID=101-->
+    <CREATEDBY>0</CREATEDBY><!--AD_WORKFLOW_ID=101-->
+    <UPDATED>2003-02-22 02:20:12.0</UPDATED><!--AD_WORKFLOW_ID=101-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_WORKFLOW_ID=101-->
+    <NAME>Project Setup and Use</NAME><!--AD_WORKFLOW_ID=101-->
+    <DESCRIPTION>Setup of projects and project reporting</DESCRIPTION><!--AD_WORKFLOW_ID=101-->
+    <HELP>Projects allow to monitor the status and progress of sales opportunities, service projects and investment projects. A Project is a process that is undertaken which can involve multiple steps or phases and require resources from more than one area.</HELP><!--AD_WORKFLOW_ID=101-->
+    <ACCESSLEVEL>3</ACCESSLEVEL><!--AD_WORKFLOW_ID=101-->
+    <AD_WF_NODE_ID>108</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=101-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=101-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=101-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=103-->
+    <AD_WORKFLOW_ID>103</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=103-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=103-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=103-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_WORKFLOW_ID=103-->
+    <CREATED>2000-09-10 22:43:01.0</CREATED><!--AD_WORKFLOW_ID=103-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=103-->
+    <UPDATED>2007-02-20 17:34:09.0</UPDATED><!--AD_WORKFLOW_ID=103-->
+    <UPDATEDBY>100</UPDATEDBY><!--AD_WORKFLOW_ID=103-->
+    <NAME>Language Setup</NAME><!--AD_WORKFLOW_ID=103-->
+    <DESCRIPTION>Setup a new Language of the system and translate elements</DESCRIPTION><!--AD_WORKFLOW_ID=103-->
+    <HELP>Define a new language as a system language.</HELP><!--AD_WORKFLOW_ID=103-->
+    <ACCESSLEVEL>4</ACCESSLEVEL><!--AD_WORKFLOW_ID=103-->
+    <AD_WF_NODE_ID>107</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=103-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=103-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=103-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=104-->
+    <AD_WORKFLOW_ID>104</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=104-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=104-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=104-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_WORKFLOW_ID=104-->
+    <CREATED>2000-09-24 18:54:54.0</CREATED><!--AD_WORKFLOW_ID=104-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=104-->
+    <UPDATED>2007-02-20 17:24:31.0</UPDATED><!--AD_WORKFLOW_ID=104-->
+    <UPDATEDBY>100</UPDATEDBY><!--AD_WORKFLOW_ID=104-->
+    <NAME>Initial Client Setup Review</NAME><!--AD_WORKFLOW_ID=104-->
+    <DESCRIPTION>Review of system level setup of a new  Client</DESCRIPTION><!--AD_WORKFLOW_ID=104-->
+    <HELP><![CDATA[This workflow reviews the system setup of a new client as performed by the automatic Initial Client Setup.|You may want to check also the following Workflows:|- Accounting Setup|- Business Partner Setup|- Product Setup|- Price list Setup|- Warehouse Setup|- Tax Setup|]]></HELP><!--AD_WORKFLOW_ID=104-->
+    <ACCESSLEVEL>3</ACCESSLEVEL><!--AD_WORKFLOW_ID=104-->
+    <AD_WF_NODE_ID>110</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=104-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=104-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=104-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=105-->
+    <AD_WORKFLOW_ID>105</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=105-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=105-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=105-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_WORKFLOW_ID=105-->
+    <CREATED>2001-04-05 21:04:04.0</CREATED><!--AD_WORKFLOW_ID=105-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=105-->
+    <UPDATED>2003-02-22 02:20:12.0</UPDATED><!--AD_WORKFLOW_ID=105-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_WORKFLOW_ID=105-->
+    <NAME>Accounting Setup</NAME><!--AD_WORKFLOW_ID=105-->
+    <DESCRIPTION>Review and change Accounting Setup</DESCRIPTION><!--AD_WORKFLOW_ID=105-->
+    <HELP>This workflow allows you to review and change your Accounting Rules. </HELP><!--AD_WORKFLOW_ID=105-->
+    <ACCESSLEVEL>3</ACCESSLEVEL><!--AD_WORKFLOW_ID=105-->
+    <AD_WF_NODE_ID>125</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=105-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=105-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=105-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=106-->
+    <AD_WORKFLOW_ID>106</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=106-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=106-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=106-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_WORKFLOW_ID=106-->
+    <CREATED>2001-04-05 21:05:17.0</CREATED><!--AD_WORKFLOW_ID=106-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=106-->
+    <UPDATED>2003-02-22 02:20:12.0</UPDATED><!--AD_WORKFLOW_ID=106-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_WORKFLOW_ID=106-->
+    <NAME>Business Partner Setup</NAME><!--AD_WORKFLOW_ID=106-->
+    <DESCRIPTION>Setup Business Partner Rules</DESCRIPTION><!--AD_WORKFLOW_ID=106-->
+    <HELP>This workflow defines the Business Partners and the supporting rules.</HELP><!--AD_WORKFLOW_ID=106-->
+    <ACCESSLEVEL>3</ACCESSLEVEL><!--AD_WORKFLOW_ID=106-->
+    <AD_WF_NODE_ID>131</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=106-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=106-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=106-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=107-->
+    <AD_WORKFLOW_ID>107</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=107-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=107-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=107-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_WORKFLOW_ID=107-->
+    <CREATED>2001-04-05 21:05:36.0</CREATED><!--AD_WORKFLOW_ID=107-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=107-->
+    <UPDATED>2003-02-22 02:20:12.0</UPDATED><!--AD_WORKFLOW_ID=107-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_WORKFLOW_ID=107-->
+    <NAME>Product Setup</NAME><!--AD_WORKFLOW_ID=107-->
+    <DESCRIPTION>Set up Products</DESCRIPTION><!--AD_WORKFLOW_ID=107-->
+    <HELP>Define your products manually. You should verify the settings especially if you import your products.</HELP><!--AD_WORKFLOW_ID=107-->
+    <ACCESSLEVEL>3</ACCESSLEVEL><!--AD_WORKFLOW_ID=107-->
+    <AD_WF_NODE_ID>158</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=107-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=107-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=107-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=108-->
+    <AD_WORKFLOW_ID>108</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=108-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=108-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=108-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_WORKFLOW_ID=108-->
+    <CREATED>2001-04-05 21:05:50.0</CREATED><!--AD_WORKFLOW_ID=108-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=108-->
+    <UPDATED>2003-02-22 02:20:12.0</UPDATED><!--AD_WORKFLOW_ID=108-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_WORKFLOW_ID=108-->
+    <NAME>Price List Setup</NAME><!--AD_WORKFLOW_ID=108-->
+    <DESCRIPTION>Define your Price Lists and Discounts</DESCRIPTION><!--AD_WORKFLOW_ID=108-->
+    <HELP>You define your price lists after entering or importing your products</HELP><!--AD_WORKFLOW_ID=108-->
+    <ACCESSLEVEL>3</ACCESSLEVEL><!--AD_WORKFLOW_ID=108-->
+    <AD_WF_NODE_ID>162</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=108-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=108-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=108-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=109-->
+    <AD_WORKFLOW_ID>109</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=109-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=109-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=109-->
+    <ISACTIVE>N</ISACTIVE><!--AD_WORKFLOW_ID=109-->
+    <CREATED>2001-04-05 21:06:17.0</CREATED><!--AD_WORKFLOW_ID=109-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=109-->
+    <UPDATED>2003-08-03 17:21:33.0</UPDATED><!--AD_WORKFLOW_ID=109-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_WORKFLOW_ID=109-->
+    <NAME>Replication Setup</NAME><!--AD_WORKFLOW_ID=109-->
+    <DESCRIPTION>Setup of data replication</DESCRIPTION><!--AD_WORKFLOW_ID=109-->
+    <HELP><![CDATA[Data Replication allows you to synchronize data of remote instances with a central office.  All actions are initialized from the central office.<p>|<b>Central System:</b><BR>|- setup system with all organizations, roles, etc.<BR>|- run the migration to make sure that it is up-to-date<BR>|- export the central system|<p>|<b>Remote System:</b>|- install the exact version as Central System<BR>|- import data from Central System in the remote locations|<p>|<b>Central System:</b>|- Define Replication per Remote<BR>|- Make sure that the ID range is unique per remote - otherwise you will loose transactions!<BR>|- Initially Start the Replication Run to setup Remote|<p>|** Enter Transactions **|<p>|<b>Central System:</b><BR>|- Start the Replication Run when required|]]></HELP><!--AD_WORKFLOW_ID=109-->
+    <ACCESSLEVEL>6</ACCESSLEVEL><!--AD_WORKFLOW_ID=109-->
+    <AD_WF_NODE_ID>174</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=109-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=109-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=109-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=110-->
+    <AD_WORKFLOW_ID>110</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=110-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=110-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=110-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_WORKFLOW_ID=110-->
+    <CREATED>2001-04-05 21:06:30.0</CREATED><!--AD_WORKFLOW_ID=110-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=110-->
+    <UPDATED>2003-02-22 02:20:12.0</UPDATED><!--AD_WORKFLOW_ID=110-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_WORKFLOW_ID=110-->
+    <NAME>Tax Setup</NAME><!--AD_WORKFLOW_ID=110-->
+    <DESCRIPTION>Setup tax calculation</DESCRIPTION><!--AD_WORKFLOW_ID=110-->
+    <HELP>Setup the tax calculation for products, services and charges</HELP><!--AD_WORKFLOW_ID=110-->
+    <ACCESSLEVEL>3</ACCESSLEVEL><!--AD_WORKFLOW_ID=110-->
+    <AD_WF_NODE_ID>166</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=110-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=110-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=110-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=111-->
+    <AD_WORKFLOW_ID>111</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=111-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=111-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=111-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_WORKFLOW_ID=111-->
+    <CREATED>2001-04-05 21:45:37.0</CREATED><!--AD_WORKFLOW_ID=111-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=111-->
+    <UPDATED>2003-02-22 02:20:12.0</UPDATED><!--AD_WORKFLOW_ID=111-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_WORKFLOW_ID=111-->
+    <NAME>Sales Setup</NAME><!--AD_WORKFLOW_ID=111-->
+    <DESCRIPTION>Setup Sales</DESCRIPTION><!--AD_WORKFLOW_ID=111-->
+    <HELP>Setting up Sales Representatives, Commissions as well as Marketing Channels and Campaigns.</HELP><!--AD_WORKFLOW_ID=111-->
+    <ACCESSLEVEL>3</ACCESSLEVEL><!--AD_WORKFLOW_ID=111-->
+    <AD_WF_NODE_ID>141</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=111-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=111-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=111-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=112-->
+    <AD_WORKFLOW_ID>112</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=112-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=112-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=112-->
+    <ISACTIVE>N</ISACTIVE><!--AD_WORKFLOW_ID=112-->
+    <CREATED>2001-04-24 18:06:49.0</CREATED><!--AD_WORKFLOW_ID=112-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=112-->
+    <UPDATED>2003-02-22 02:20:12.0</UPDATED><!--AD_WORKFLOW_ID=112-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_WORKFLOW_ID=112-->
+    <NAME>Performance Measurement Setup</NAME><!--AD_WORKFLOW_ID=112-->
+    <DESCRIPTION>Setup your Performance Measurement</DESCRIPTION><!--AD_WORKFLOW_ID=112-->
+    <HELP><![CDATA[This workflow guides you through setting up your performance measurement based on Key Performance Indicators, Balanced Scorecard, etc.||Most important: Do your analysis first!|- What are your goals and how do you measure it?||When you are setting up the system, you do it in reverse:|First you define how you measure it and last you define the goals for the measurements.|You have three ways measuring performance:|- via quantifiable measures (e.g. sales of $3 million in Q1)|- via manual measures|- via achievements (tasks)||The system converts the measures into percentages (based on the target and achieved measure - or number of total and reached achievements)]]></HELP><!--AD_WORKFLOW_ID=112-->
+    <ACCESSLEVEL>3</ACCESSLEVEL><!--AD_WORKFLOW_ID=112-->
+    <AD_WF_NODE_ID>147</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=112-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=112-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=112-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=113-->
+    <AD_WORKFLOW_ID>113</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=113-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=113-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=113-->
+    <ISACTIVE>N</ISACTIVE><!--AD_WORKFLOW_ID=113-->
+    <CREATED>2001-12-08 21:07:39.0</CREATED><!--AD_WORKFLOW_ID=113-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=113-->
+    <UPDATED>2007-06-12 10:51:39.0</UPDATED><!--AD_WORKFLOW_ID=113-->
+    <UPDATEDBY>100</UPDATEDBY><!--AD_WORKFLOW_ID=113-->
+    <NAME>Request Setup</NAME><!--AD_WORKFLOW_ID=113-->
+    <DESCRIPTION>Set up the client to process requests</DESCRIPTION><!--AD_WORKFLOW_ID=113-->
+    <ACCESSLEVEL>6</ACCESSLEVEL><!--AD_WORKFLOW_ID=113-->
+    <AD_WF_NODE_ID>152</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=113-->
+    <ENTITYTYPE>D</ENTITYTYPE><!--AD_WORKFLOW_ID=113-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=113-->
+  <AD_WORKFLOW><!--AD_WORKFLOW_ID=800000-->
+    <AD_WORKFLOW_ID>800000</AD_WORKFLOW_ID><!--AD_WORKFLOW_ID=800000-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_WORKFLOW_ID=800000-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_WORKFLOW_ID=800000-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_WORKFLOW_ID=800000-->
+    <CREATED>2006-01-03 18:02:54.0</CREATED><!--AD_WORKFLOW_ID=800000-->
+    <CREATEDBY>100</CREATEDBY><!--AD_WORKFLOW_ID=800000-->
+    <UPDATED>2006-01-09 10:26:05.0</UPDATED><!--AD_WORKFLOW_ID=800000-->
+    <UPDATEDBY>100</UPDATEDBY><!--AD_WORKFLOW_ID=800000-->
+    <NAME>Production Setup</NAME><!--AD_WORKFLOW_ID=800000-->
+    <DESCRIPTION>Set up Production module.</DESCRIPTION><!--AD_WORKFLOW_ID=800000-->
+    <HELP>Set up Production module.</HELP><!--AD_WORKFLOW_ID=800000-->
+    <ACCESSLEVEL>3</ACCESSLEVEL><!--AD_WORKFLOW_ID=800000-->
+    <AD_WF_NODE_ID>800003</AD_WF_NODE_ID><!--AD_WORKFLOW_ID=800000-->
+    <ENTITYTYPE>U</ENTITYTYPE><!--AD_WORKFLOW_ID=800000-->
+  </AD_WORKFLOW><!--AD_WORKFLOW_ID=800000-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

@@ -1,4 +1,36 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <GL_CATEGORY GL_CATEGORY_ID="0" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2000-01-29 18:31:50.0" CREATEDBY="100" UPDATED="2000-01-29 18:31:50.0" UPDATEDBY="0" NAME="None" CATEGORYTYPE="M" ISDEFAULT="N" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <GL_CATEGORY><!--GL_CATEGORY_ID=0-->
+    <GL_CATEGORY_ID>0</GL_CATEGORY_ID><!--GL_CATEGORY_ID=0-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--GL_CATEGORY_ID=0-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--GL_CATEGORY_ID=0-->
+    <ISACTIVE>Y</ISACTIVE><!--GL_CATEGORY_ID=0-->
+    <CREATED>2000-01-29 18:31:50.0</CREATED><!--GL_CATEGORY_ID=0-->
+    <CREATEDBY>100</CREATEDBY><!--GL_CATEGORY_ID=0-->
+    <UPDATED>2000-01-29 18:31:50.0</UPDATED><!--GL_CATEGORY_ID=0-->
+    <UPDATEDBY>0</UPDATEDBY><!--GL_CATEGORY_ID=0-->
+    <NAME>None</NAME><!--GL_CATEGORY_ID=0-->
+    <CATEGORYTYPE>M</CATEGORYTYPE><!--GL_CATEGORY_ID=0-->
+    <ISDEFAULT>N</ISDEFAULT><!--GL_CATEGORY_ID=0-->
+  </GL_CATEGORY><!--GL_CATEGORY_ID=0-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

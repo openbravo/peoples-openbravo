@@ -1,4 +1,33 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <AD_ROLE_ORGACCESS AD_ROLE_ID="0" AD_ORG_ID="0" AD_CLIENT_ID="0" ISACTIVE="Y" CREATED="2001-04-05 18:32:31.0" CREATEDBY="0" UPDATED="2001-04-05 18:32:31.0" UPDATEDBY="0" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <AD_ROLE_ORGACCESS><!--AD_ROLE_ID=0 AD_ORG_ID=0-->
+    <AD_ROLE_ID>0</AD_ROLE_ID><!--AD_ROLE_ID=0 AD_ORG_ID=0-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_ROLE_ID=0 AD_ORG_ID=0-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_ROLE_ID=0 AD_ORG_ID=0-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_ROLE_ID=0 AD_ORG_ID=0-->
+    <CREATED>2001-04-05 18:32:31.0</CREATED><!--AD_ROLE_ID=0 AD_ORG_ID=0-->
+    <CREATEDBY>0</CREATEDBY><!--AD_ROLE_ID=0 AD_ORG_ID=0-->
+    <UPDATED>2001-04-05 18:32:31.0</UPDATED><!--AD_ROLE_ID=0 AD_ORG_ID=0-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_ROLE_ID=0 AD_ORG_ID=0-->
+  </AD_ROLE_ORGACCESS><!--AD_ROLE_ID=0 AD_ORG_ID=0-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

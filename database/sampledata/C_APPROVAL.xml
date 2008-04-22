@@ -1,4 +1,37 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <C_APPROVAL C_APPROVAL_ID="100" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="1999-12-05 23:23:28.0" CREATEDBY="0" UPDATED="1999-12-09 21:43:11.0" UPDATEDBY="0" NAME="Amount Approval" ISAMOUNTAPPROVED="Y" ISWORKFLOWAPPROVED="N" ISPRODUCTATTRIBUTEAPPROVED="N" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <C_APPROVAL><!--C_APPROVAL_ID=100-->
+    <C_APPROVAL_ID>100</C_APPROVAL_ID><!--C_APPROVAL_ID=100-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--C_APPROVAL_ID=100-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--C_APPROVAL_ID=100-->
+    <ISACTIVE>Y</ISACTIVE><!--C_APPROVAL_ID=100-->
+    <CREATED>1999-12-05 23:23:28.0</CREATED><!--C_APPROVAL_ID=100-->
+    <CREATEDBY>0</CREATEDBY><!--C_APPROVAL_ID=100-->
+    <UPDATED>1999-12-09 21:43:11.0</UPDATED><!--C_APPROVAL_ID=100-->
+    <UPDATEDBY>0</UPDATEDBY><!--C_APPROVAL_ID=100-->
+    <NAME>Amount Approval</NAME><!--C_APPROVAL_ID=100-->
+    <ISAMOUNTAPPROVED>Y</ISAMOUNTAPPROVED><!--C_APPROVAL_ID=100-->
+    <ISWORKFLOWAPPROVED>N</ISWORKFLOWAPPROVED><!--C_APPROVAL_ID=100-->
+    <ISPRODUCTATTRIBUTEAPPROVED>N</ISPRODUCTATTRIBUTEAPPROVED><!--C_APPROVAL_ID=100-->
+  </C_APPROVAL><!--C_APPROVAL_ID=100-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

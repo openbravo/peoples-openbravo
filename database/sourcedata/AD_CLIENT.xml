@@ -1,4 +1,49 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <AD_CLIENT AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="1999-11-12 20:25:28.0" CREATEDBY="0" UPDATED="2003-01-28 19:49:52.0" UPDATEDBY="0" VALUE="SYSTEM" NAME="System" DESCRIPTION="System Client" SMTPHOST="localhost" REQUESTEMAIL="you@company.org" REQUESTUSER="you" REQUESTUSERPW="yourpwd" REQUESTFOLDER="request" AD_LANGUAGE="en_US" WEBDIR="compiere" ISMULTILINGUALDOCUMENT="Y" ISSMTPAUTHORIZATION="N" DOCUMENTDIR="documents" WEBPARAM2="Parameter2" WEBPARAM3="Parameter3" WEBPARAM4="Parameter4" WEBORDEREMAIL="you@company.com" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <AD_CLIENT><!--AD_CLIENT_ID=0-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_CLIENT_ID=0-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_CLIENT_ID=0-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_CLIENT_ID=0-->
+    <CREATED>1999-11-12 20:25:28.0</CREATED><!--AD_CLIENT_ID=0-->
+    <CREATEDBY>0</CREATEDBY><!--AD_CLIENT_ID=0-->
+    <UPDATED>2003-01-28 19:49:52.0</UPDATED><!--AD_CLIENT_ID=0-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_CLIENT_ID=0-->
+    <VALUE>SYSTEM</VALUE><!--AD_CLIENT_ID=0-->
+    <NAME>System</NAME><!--AD_CLIENT_ID=0-->
+    <DESCRIPTION>System Client</DESCRIPTION><!--AD_CLIENT_ID=0-->
+    <SMTPHOST>localhost</SMTPHOST><!--AD_CLIENT_ID=0-->
+    <REQUESTEMAIL>you@company.org</REQUESTEMAIL><!--AD_CLIENT_ID=0-->
+    <REQUESTUSER>you</REQUESTUSER><!--AD_CLIENT_ID=0-->
+    <REQUESTUSERPW>yourpwd</REQUESTUSERPW><!--AD_CLIENT_ID=0-->
+    <REQUESTFOLDER>request</REQUESTFOLDER><!--AD_CLIENT_ID=0-->
+    <AD_LANGUAGE>en_US</AD_LANGUAGE><!--AD_CLIENT_ID=0-->
+    <WEBDIR>compiere</WEBDIR><!--AD_CLIENT_ID=0-->
+    <ISMULTILINGUALDOCUMENT>Y</ISMULTILINGUALDOCUMENT><!--AD_CLIENT_ID=0-->
+    <ISSMTPAUTHORIZATION>N</ISSMTPAUTHORIZATION><!--AD_CLIENT_ID=0-->
+    <DOCUMENTDIR>documents</DOCUMENTDIR><!--AD_CLIENT_ID=0-->
+    <WEBPARAM2>Parameter2</WEBPARAM2><!--AD_CLIENT_ID=0-->
+    <WEBPARAM3>Parameter3</WEBPARAM3><!--AD_CLIENT_ID=0-->
+    <WEBPARAM4>Parameter4</WEBPARAM4><!--AD_CLIENT_ID=0-->
+    <WEBORDEREMAIL>you@company.com</WEBORDEREMAIL><!--AD_CLIENT_ID=0-->
+  </AD_CLIENT><!--AD_CLIENT_ID=0-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

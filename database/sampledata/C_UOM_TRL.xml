@@ -1,4 +1,37 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <C_UOM_TRL C_UOM_ID="1000002" AD_LANGUAGE="eu_ES" AD_CLIENT_ID="1000000" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2005-10-14 12:04:18.0" CREATEDBY="1000004" UPDATED="2007-04-13 11:42:31.0" UPDATEDBY="1000004" UOMSYMBOL="Bl " NAME="Bolsa" ISTRANSLATED="N" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+  <C_UOM_TRL><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <C_UOM_ID>1000002</C_UOM_ID><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <AD_LANGUAGE>eu_ES</AD_LANGUAGE><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <AD_CLIENT_ID>1000000</AD_CLIENT_ID><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <ISACTIVE>Y</ISACTIVE><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <CREATED>2005-10-14 12:04:18.0</CREATED><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <CREATEDBY>1000004</CREATEDBY><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <UPDATED>2007-04-13 11:42:31.0</UPDATED><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <UPDATEDBY>1000004</UPDATEDBY><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <UOMSYMBOL>Bl </UOMSYMBOL><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <NAME>Bolsa</NAME><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+    <ISTRANSLATED>N</ISTRANSLATED><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+  </C_UOM_TRL><!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

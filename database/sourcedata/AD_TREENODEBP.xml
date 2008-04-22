@@ -1,4 +1,35 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <AD_TREENODEBP AD_TREE_ID="40" NODE_ID="0" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="1999-11-16 14:57:10.0" CREATEDBY="0" UPDATED="1999-12-09 20:37:27.0" UPDATEDBY="0" SEQNO="0" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <AD_TREENODEBP><!--AD_TREE_ID=40 NODE_ID=0-->
+    <AD_TREE_ID>40</AD_TREE_ID><!--AD_TREE_ID=40 NODE_ID=0-->
+    <NODE_ID>0</NODE_ID><!--AD_TREE_ID=40 NODE_ID=0-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_TREE_ID=40 NODE_ID=0-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_TREE_ID=40 NODE_ID=0-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_TREE_ID=40 NODE_ID=0-->
+    <CREATED>1999-11-16 14:57:10.0</CREATED><!--AD_TREE_ID=40 NODE_ID=0-->
+    <CREATEDBY>0</CREATEDBY><!--AD_TREE_ID=40 NODE_ID=0-->
+    <UPDATED>1999-12-09 20:37:27.0</UPDATED><!--AD_TREE_ID=40 NODE_ID=0-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_TREE_ID=40 NODE_ID=0-->
+    <SEQNO>0</SEQNO><!--AD_TREE_ID=40 NODE_ID=0-->
+  </AD_TREENODEBP><!--AD_TREE_ID=40 NODE_ID=0-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

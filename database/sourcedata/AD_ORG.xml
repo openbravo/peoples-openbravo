@@ -1,4 +1,36 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <AD_ORG AD_ORG_ID="0" AD_CLIENT_ID="0" ISACTIVE="Y" CREATED="1999-11-12 20:28:56.0" CREATEDBY="0" UPDATED="2000-04-15 11:00:47.0" UPDATEDBY="0" VALUE="0" NAME="*" DESCRIPTION="All Organizations" ISSUMMARY="N" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <AD_ORG><!--AD_ORG_ID=0-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_ORG_ID=0-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_ORG_ID=0-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_ORG_ID=0-->
+    <CREATED>1999-11-12 20:28:56.0</CREATED><!--AD_ORG_ID=0-->
+    <CREATEDBY>0</CREATEDBY><!--AD_ORG_ID=0-->
+    <UPDATED>2000-04-15 11:00:47.0</UPDATED><!--AD_ORG_ID=0-->
+    <UPDATEDBY>0</UPDATEDBY><!--AD_ORG_ID=0-->
+    <VALUE>0</VALUE><!--AD_ORG_ID=0-->
+    <NAME>*</NAME><!--AD_ORG_ID=0-->
+    <DESCRIPTION>All Organizations</DESCRIPTION><!--AD_ORG_ID=0-->
+    <ISSUMMARY>N</ISSUMMARY><!--AD_ORG_ID=0-->
+  </AD_ORG><!--AD_ORG_ID=0-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

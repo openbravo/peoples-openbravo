@@ -1,5 +1,61 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <TEST TEST_ID="100" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2002-07-24 17:21:55.0" CREATEDBY="0" UPDATED="2002-07-24 17:21:55.0" UPDATEDBY="0" NAME="Test-Name" T_INTEGER="0" T_NUMBER="0" T_DATE="2002-07-24 00:00:00.0" T_DATETIME="2002-07-24 17:21:00.0" C_UOM_ID="100" T_QTY="0" T_AMOUNT="0" PROCESSING="N" PROCESSED="N" />
-  <TEST TEST_ID="101" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2002-07-24 17:22:10.0" CREATEDBY="0" UPDATED="2002-07-24 17:22:10.0" UPDATEDBY="0" NAME="Null-Test" T_INTEGER="0" T_NUMBER="0" C_UOM_ID="100" T_QTY="0" T_AMOUNT="0" PROCESSING="N" PROCESSED="N" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <TEST><!--TEST_ID=100-->
+    <TEST_ID>100</TEST_ID><!--TEST_ID=100-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--TEST_ID=100-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--TEST_ID=100-->
+    <ISACTIVE>Y</ISACTIVE><!--TEST_ID=100-->
+    <CREATED>2002-07-24 17:21:55.0</CREATED><!--TEST_ID=100-->
+    <CREATEDBY>0</CREATEDBY><!--TEST_ID=100-->
+    <UPDATED>2002-07-24 17:21:55.0</UPDATED><!--TEST_ID=100-->
+    <UPDATEDBY>0</UPDATEDBY><!--TEST_ID=100-->
+    <NAME>Test-Name</NAME><!--TEST_ID=100-->
+    <T_INTEGER>0</T_INTEGER><!--TEST_ID=100-->
+    <T_NUMBER>0</T_NUMBER><!--TEST_ID=100-->
+    <T_DATE>2002-07-24 00:00:00.0</T_DATE><!--TEST_ID=100-->
+    <T_DATETIME>2002-07-24 17:21:00.0</T_DATETIME><!--TEST_ID=100-->
+    <C_UOM_ID>100</C_UOM_ID><!--TEST_ID=100-->
+    <T_QTY>0</T_QTY><!--TEST_ID=100-->
+    <T_AMOUNT>0</T_AMOUNT><!--TEST_ID=100-->
+    <PROCESSING>N</PROCESSING><!--TEST_ID=100-->
+    <PROCESSED>N</PROCESSED><!--TEST_ID=100-->
+  </TEST><!--TEST_ID=100-->
+  <TEST><!--TEST_ID=101-->
+    <TEST_ID>101</TEST_ID><!--TEST_ID=101-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--TEST_ID=101-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--TEST_ID=101-->
+    <ISACTIVE>Y</ISACTIVE><!--TEST_ID=101-->
+    <CREATED>2002-07-24 17:22:10.0</CREATED><!--TEST_ID=101-->
+    <CREATEDBY>0</CREATEDBY><!--TEST_ID=101-->
+    <UPDATED>2002-07-24 17:22:10.0</UPDATED><!--TEST_ID=101-->
+    <UPDATEDBY>0</UPDATEDBY><!--TEST_ID=101-->
+    <NAME>Null-Test</NAME><!--TEST_ID=101-->
+    <T_INTEGER>0</T_INTEGER><!--TEST_ID=101-->
+    <T_NUMBER>0</T_NUMBER><!--TEST_ID=101-->
+    <C_UOM_ID>100</C_UOM_ID><!--TEST_ID=101-->
+    <T_QTY>0</T_QTY><!--TEST_ID=101-->
+    <T_AMOUNT>0</T_AMOUNT><!--TEST_ID=101-->
+    <PROCESSING>N</PROCESSING><!--TEST_ID=101-->
+    <PROCESSED>N</PROCESSED><!--TEST_ID=101-->
+  </TEST><!--TEST_ID=101-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

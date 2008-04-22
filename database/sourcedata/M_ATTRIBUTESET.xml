@@ -1,4 +1,39 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <M_ATTRIBUTESET M_ATTRIBUTESET_ID="0" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="N" CREATED="2003-05-26 00:14:07.0" CREATEDBY="0" UPDATED="2007-05-21 11:44:37.0" UPDATEDBY="100" NAME="STANDARD" ISSERNO="N" ISLOT="Y" ISGUARANTEEDATE="N" GUARANTEEDAYS="0" ISLOCKABLE="N" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <M_ATTRIBUTESET><!--M_ATTRIBUTESET_ID=0-->
+    <M_ATTRIBUTESET_ID>0</M_ATTRIBUTESET_ID><!--M_ATTRIBUTESET_ID=0-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--M_ATTRIBUTESET_ID=0-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--M_ATTRIBUTESET_ID=0-->
+    <ISACTIVE>N</ISACTIVE><!--M_ATTRIBUTESET_ID=0-->
+    <CREATED>2003-05-26 00:14:07.0</CREATED><!--M_ATTRIBUTESET_ID=0-->
+    <CREATEDBY>0</CREATEDBY><!--M_ATTRIBUTESET_ID=0-->
+    <UPDATED>2007-05-21 11:44:37.0</UPDATED><!--M_ATTRIBUTESET_ID=0-->
+    <UPDATEDBY>100</UPDATEDBY><!--M_ATTRIBUTESET_ID=0-->
+    <NAME>STANDARD</NAME><!--M_ATTRIBUTESET_ID=0-->
+    <ISSERNO>N</ISSERNO><!--M_ATTRIBUTESET_ID=0-->
+    <ISLOT>Y</ISLOT><!--M_ATTRIBUTESET_ID=0-->
+    <ISGUARANTEEDATE>N</ISGUARANTEEDATE><!--M_ATTRIBUTESET_ID=0-->
+    <GUARANTEEDAYS>0</GUARANTEEDAYS><!--M_ATTRIBUTESET_ID=0-->
+    <ISLOCKABLE>N</ISLOCKABLE><!--M_ATTRIBUTESET_ID=0-->
+  </M_ATTRIBUTESET><!--M_ATTRIBUTESET_ID=0-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

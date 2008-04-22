@@ -1,5 +1,53 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <AD_USER AD_USER_ID="0" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="1999-11-12 20:41:43.0" CREATEDBY="0" UPDATED="2005-07-04 16:59:10.0" UPDATEDBY="100" NAME="System" PASSWORD="vAeS2NyB6KowuYckalzpfEDNaDM=" SUPERVISOR_ID="100" USERNAME="System" />
-  <AD_USER AD_USER_ID="100" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="1999-12-09 18:15:00.0" CREATEDBY="0" UPDATED="2007-07-20 12:16:40.0" UPDATEDBY="100" NAME="Openbravo" PASSWORD="PwOd6SgWF74HY4u51bfrUxjtB9g=" EMAILUSER="info" FIRSTNAME="Openbravo" USERNAME="Openbravo" DEFAULT_AD_LANGUAGE="en_US" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <AD_USER><!--AD_USER_ID=0-->
+    <AD_USER_ID>0</AD_USER_ID><!--AD_USER_ID=0-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_USER_ID=0-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_USER_ID=0-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_USER_ID=0-->
+    <CREATED>1999-11-12 20:41:43.0</CREATED><!--AD_USER_ID=0-->
+    <CREATEDBY>0</CREATEDBY><!--AD_USER_ID=0-->
+    <UPDATED>2005-07-04 16:59:10.0</UPDATED><!--AD_USER_ID=0-->
+    <UPDATEDBY>100</UPDATEDBY><!--AD_USER_ID=0-->
+    <NAME>System</NAME><!--AD_USER_ID=0-->
+    <PASSWORD>vAeS2NyB6KowuYckalzpfEDNaDM=</PASSWORD><!--AD_USER_ID=0-->
+    <SUPERVISOR_ID>100</SUPERVISOR_ID><!--AD_USER_ID=0-->
+    <USERNAME>System</USERNAME><!--AD_USER_ID=0-->
+  </AD_USER><!--AD_USER_ID=0-->
+  <AD_USER><!--AD_USER_ID=100-->
+    <AD_USER_ID>100</AD_USER_ID><!--AD_USER_ID=100-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_USER_ID=100-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--AD_USER_ID=100-->
+    <ISACTIVE>Y</ISACTIVE><!--AD_USER_ID=100-->
+    <CREATED>1999-12-09 18:15:00.0</CREATED><!--AD_USER_ID=100-->
+    <CREATEDBY>0</CREATEDBY><!--AD_USER_ID=100-->
+    <UPDATED>2007-07-20 12:16:40.0</UPDATED><!--AD_USER_ID=100-->
+    <UPDATEDBY>100</UPDATEDBY><!--AD_USER_ID=100-->
+    <NAME>Openbravo</NAME><!--AD_USER_ID=100-->
+    <PASSWORD>PwOd6SgWF74HY4u51bfrUxjtB9g=</PASSWORD><!--AD_USER_ID=100-->
+    <EMAILUSER>info</EMAILUSER><!--AD_USER_ID=100-->
+    <FIRSTNAME>Openbravo</FIRSTNAME><!--AD_USER_ID=100-->
+    <USERNAME>Openbravo</USERNAME><!--AD_USER_ID=100-->
+    <DEFAULT_AD_LANGUAGE>en_US</DEFAULT_AD_LANGUAGE><!--AD_USER_ID=100-->
+  </AD_USER><!--AD_USER_ID=100-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

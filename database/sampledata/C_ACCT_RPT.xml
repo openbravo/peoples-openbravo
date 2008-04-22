@@ -1,4 +1,34 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <C_ACCT_RPT C_ACCT_RPT_ID="1000000" AD_CLIENT_ID="1000001" AD_ORG_ID="1000001" ISACTIVE="Y" CREATED="2007-12-11 12:19:11.0" CREATEDBY="100" UPDATED="2007-12-11 12:19:11.0" UPDATEDBY="100" NAME="Balance" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+  <C_ACCT_RPT><!--C_ACCT_RPT_ID=1000000-->
+    <C_ACCT_RPT_ID>1000000</C_ACCT_RPT_ID><!--C_ACCT_RPT_ID=1000000-->
+    <AD_CLIENT_ID>1000001</AD_CLIENT_ID><!--C_ACCT_RPT_ID=1000000-->
+    <AD_ORG_ID>1000001</AD_ORG_ID><!--C_ACCT_RPT_ID=1000000-->
+    <ISACTIVE>Y</ISACTIVE><!--C_ACCT_RPT_ID=1000000-->
+    <CREATED>2007-12-11 12:19:11.0</CREATED><!--C_ACCT_RPT_ID=1000000-->
+    <CREATEDBY>100</CREATEDBY><!--C_ACCT_RPT_ID=1000000-->
+    <UPDATED>2007-12-11 12:19:11.0</UPDATED><!--C_ACCT_RPT_ID=1000000-->
+    <UPDATEDBY>100</UPDATEDBY><!--C_ACCT_RPT_ID=1000000-->
+    <NAME>Balance</NAME><!--C_ACCT_RPT_ID=1000000-->
+  </C_ACCT_RPT><!--C_ACCT_RPT_ID=1000000-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>

@@ -1,4 +1,37 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-  <C_CITY C_CITY_ID="100" AD_CLIENT_ID="0" AD_ORG_ID="0" ISACTIVE="Y" CREATED="2002-08-10 16:51:00.0" CREATEDBY="100" UPDATED="2002-08-10 16:51:00.0" UPDATEDBY="0" NAME="Monroe" POSTAL="06468" AREACODE="203" C_COUNTRY_ID="100" />
+<!--
+************************
+0. Core Range.
+************************
+-->
+  <C_CITY><!--C_CITY_ID=100-->
+    <C_CITY_ID>100</C_CITY_ID><!--C_CITY_ID=100-->
+    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--C_CITY_ID=100-->
+    <AD_ORG_ID>0</AD_ORG_ID><!--C_CITY_ID=100-->
+    <ISACTIVE>Y</ISACTIVE><!--C_CITY_ID=100-->
+    <CREATED>2002-08-10 16:51:00.0</CREATED><!--C_CITY_ID=100-->
+    <CREATEDBY>100</CREATEDBY><!--C_CITY_ID=100-->
+    <UPDATED>2002-08-10 16:51:00.0</UPDATED><!--C_CITY_ID=100-->
+    <UPDATEDBY>0</UPDATEDBY><!--C_CITY_ID=100-->
+    <NAME>Monroe</NAME><!--C_CITY_ID=100-->
+    <POSTAL>06468</POSTAL><!--C_CITY_ID=100-->
+    <AREACODE>203</AREACODE><!--C_CITY_ID=100-->
+    <C_COUNTRY_ID>100</C_COUNTRY_ID><!--C_CITY_ID=100-->
+  </C_CITY><!--C_CITY_ID=100-->
+<!--
+************************
+0. End of Core Range.
+************************
+-->
+<!--
+************************
+1. Custom Range.
+************************
+-->
+<!--
+************************
+1. End of Custom Range.
+************************
+-->
 </data>
