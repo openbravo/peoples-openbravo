@@ -72,7 +72,7 @@ public class ProductComplete extends HttpSecureAppServlet {
         String strStore = vars.getStringParameter("inpWithStoreLines", isSOTrx);
         vars.setSessionValue("ProductComplete.inpWithStoreLines", strStore);
 
-      printPage(response, vars, "", strNameValue, strWarehouse, "", strBpartner, "", "");
+      printPage(response, vars, "", strNameValue, strWarehouse, strStore, strBpartner, "", "");
     } else if (vars.commandIn("KEY")) {
         removePageSessionVariables(vars);
         String windowId = vars.getRequestGlobalVariable("WindowID", "ProductComplete.windowId");
