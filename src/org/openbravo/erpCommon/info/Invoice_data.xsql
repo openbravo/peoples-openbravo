@@ -84,7 +84,7 @@
       <Sql> 
       <![CDATA[
         SELECT
-          i.C_Invoice_ID, i.DocumentNo||' - '||TO_DATE(i.DateInvoiced,to_char(?))||' - '||i.GrandTotal AS Name,
+          i.C_Invoice_ID, i.DocumentNo||' - '||TO_CHAR(i.DateInvoiced,to_char(?))||' - '||i.GrandTotal AS Name,
           (SELECT Name FROM C_BPartner bp WHERE bp.C_BPartner_ID=i.C_BPartner_ID) AS BPartnerName,
           i.DateInvoiced,
           i.DocumentNo,

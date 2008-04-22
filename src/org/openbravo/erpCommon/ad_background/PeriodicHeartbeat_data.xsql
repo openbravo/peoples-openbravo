@@ -93,13 +93,9 @@
    <SqlMethod name="selectLastHeartbeat" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	SELECT created 
-      	FROM (
-      		SELECT TO_CHAR(created, 'DD-MM-YYYY HH24:MI:SS') AS created
-      		FROM ad_heartbeat_log
-      		ORDER BY created DESC
-    	)  t
-    	where rownum <= 1
+        SELECT TO_CHAR(MAX(created), 'DD-MM-YYYY HH24:MI:SS') AS created
+        FROM ad_heartbeat_log
+        ORDER BY created DESC
     ]]></Sql>
    </SqlMethod>
    <SqlMethod name="updateSystemIdentifier" type="preparedStatement" return="rowCount">
