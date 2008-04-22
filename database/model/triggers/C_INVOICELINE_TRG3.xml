@@ -1,7 +1,22 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_INVOICELINE_TRG3">
     <trigger name="C_INVOICELINE_TRG3" table="C_INVOICELINE" fires="after" insert="true" update="true" delete="true" foreach="row">
-      <body><![CDATA[
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
 --Invoice
 vwithholdingtotal NUMBER;
 vBusPartId NUMBER;
@@ -27,6 +42,7 @@ vwithholdingold NUMBER;
 taxamountwith  NUMBER;
 vwithholdingtax NUMBER;
 vwithid NUMBER;
+finish_process BOOLEAN := FALSE;
 BEGIN
   IF(INSERTING) THEN
     v_invoiceid := :NEW.c_invoice_id;
@@ -50,22 +66,24 @@ BEGIN
 
       -- If The lines is excluded for calculate the witholding --> exit 
       IF vexcludeforwh = 'Y' THEN
-        return;
+        finish_process:= true;
       END IF;
-
+  IF (NOT finish_process) THEN
       SELECT COALESCE(withholdingamount,   0), c_bpartner_id, IsSOTrx , coalesce(processed,'N') ,c_withholding_id
       INTO vwithholdingtotal,vBusPartId, vIsSalesInvoice, vProcessed  ,vwithid
       FROM c_invoice
       WHERE c_invoice_id = v_invoiceid;
-
+  END IF;
+  IF (NOT finish_process) THEN
       -- Se the invoice isn't purchase exit from trigger
       if (vIsSalesInvoice <> 'N') then
-        return;
+        finish_process:= true;
       end if; 
-    
+  END IF;
+  IF (NOT finish_process) THEN
     BEGIN
       select bpwh.is_percent_wh, bpwh.wh_percent, bpwh.include_tax, bpwh.c_tax_id,wh.rate
-	into isbaseamountpercent, baseamountpercent,  includetaxinps, taxinps_id,withpercent
+      into isbaseamountpercent, baseamountpercent,  includetaxinps, taxinps_id,withpercent
         from c_bp_withholding bpwh, c_withholding wh
        where bpwh.c_bpartner_id = vBusPartId 
        and bpwh.c_withholding_id = wh.c_withholding_id 
@@ -73,12 +91,13 @@ BEGIN
 
     EXCEPTION 
     When NO_DATA_FOUND THEN
-      return;
+      finish_process:= true;
     end;
-      
+  END IF;
+  IF (NOT finish_process) THEN
    -- ReadOnly Check    
-  IF (vProcessed = 'N') THEN
-  
+    IF (vProcessed = 'N') THEN
+    
       IF(isbaseamountpercent <> 'Y') THEN
         baseamountpercent := 100;
       END IF;
@@ -111,6 +130,7 @@ BEGIN
       SET withholdingamount = vwithholdingtotal,
       inpsamt=vTaxAmount
       WHERE c_invoice_id = v_invoiceid;
+    END IF;
   END IF;
   
 END C_INVOICELINE_TRG3
