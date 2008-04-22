@@ -94,7 +94,7 @@ public class ProductComplete extends HttpSecureAppServlet {
         vars.removeSessionValue("ProductComplete.name");
         if (!strKeyValue.equals("")) strKeyValue = strKeyValue + "%";
         vars.setSessionValue("ProductComplete.key", strKeyValue);
-        vars.setSessionValue("ProductComplete.inpWithStoreLines", strStore);
+        vars.setSessionValue("ProductComplete.withstorelines", strStore);
         
         ProductCompleteData[] data = null;
         String strClients = Utility.getContext(this, vars, "#User_Client", "ProductComplete");
