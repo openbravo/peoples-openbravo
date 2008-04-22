@@ -73,24 +73,29 @@ function depurarSelector(action) {
             <td class="TitleCell"></td>
             <td class="Button_RightAlign_ContentCell">
               <div>
-                <table class="Button" onclick="depurarSelector('SAVE');return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Accept';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;" id="buttonOK">
-                  <tr>
-                    <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Results" title="Results" src="../../../../../web/images/blank.gif" border=0/></td>
-                    <td class="Button_text Button_width">OK</td>
-                    <td class="Button_right"></td>
-                  </tr>
-                </table>
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='OK'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="depurarSelector('SAVE');return false;" id="buttonOK">
+                  <table class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='OK'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="OK" title="OK" src="../web/images/blank.gif" border="0"></img></td>
+                      <td class="Button_text Button_width">OK</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </a>
               </div>
             </td>
             <td class="Button_LeftAlign_ContentCell">
               <div>
-                <table class="Button" onclick="depurarSelector('CLEAR');return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                  <tr>
-                    <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border=0/></td>
-                    <td class="Button_text Button_width">Cancel</td>
-                    <td class="Button_right"></td>
-                  </tr>
-                </table>
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="depurarSelector('CLEAR');return false;">
+                  <table class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Cancel'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                    <tr>
+
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../web/images/blank.gif" border="0"></img></td>
+                      <td class="Button_text Button_width">Cancel</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </a>
               </div>
             </td>
             <td class="TitleCell"></td>
