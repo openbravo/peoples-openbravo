@@ -352,3 +352,122 @@ function desactivarEventos() {
   document.onmousedown=function(){};
   window.onunload=function(){};
 }
+
+function selectFilters(params) {
+    setGridFilters(params);
+    updateGridDataAfterFilter();
+    dojo.widget.byId('grid').requestParams["newFilter"] = "0";
+    return true;
+}
+
+function updateHeader(liveGrid, offset) {
+      return true;
+  }
+
+  function onRowDblClick(cell) {
+    var value = dojo.widget.byId('grid').getSelectedRows();
+    if (value==null || value=="" || value.length>1) return false;    
+    depurarSelector('SAVE');
+  }
+
+  function getSelectedValues() {
+    var value = dojo.widget.byId('grid').getSelectedRows();
+    if (value==null || value.length==0) return "";
+    return value[0];
+  }
+
+  function getSelectdText() {
+    var value = dojo.widget.byId('grid').getSelectedRows();
+    if (value==null || value.length==0) return "";
+    return value[0];
+  }
+
+  function getSelectedPos() {
+    var value = dojo.widget.byId('grid').getSelectedRowsPos();
+    if (value==null || value.length==0) return "";
+    return value[0];
+  }
+
+  function isMultipleSelected() {
+    var value = dojo.widget.byId('grid').getSelectedRows();
+    if (value==null || value=="") return false;
+    return (value.length>1);
+  }
+
+  function onGridLoadDo() {
+    if (selectedRow==null) return true;
+    if (selectedRow<=0) dojo.widget.byId('grid').goToFirstRow();
+    else dojo.widget.byId('grid').goToRow(selectedRow);
+    // Set off numRows calculation
+    var params = new Array();
+    params["newFilter"] = "0";
+    dojo.widget.byId('grid').setRequestParams(params);
+    return true;
+  }
+
+ function setGridFilters(newparams) {
+   var params = [];
+   params["newFilter"] = "1";
+   if (newparams!=null && newparams.length>0) {
+     var total = newparams.length;
+     for (var i=0;i<total;i++) {
+       params[newparams[i][0]] = newparams[i][1];
+     }
+   }
+   dojo.widget.byId('grid').setRequestParams(params);
+   return true;
+ }
+
+ function updateGridData() {
+   dojo.widget.byId('grid').refreshGridData();
+   return true;
+ }
+
+ function updateGridDataAfterFilter() {
+   dojo.widget.byId('grid').refreshGridDataAfterFilter();
+   return true;
+ }
+ 
+ function setFilters() {
+  	var frm = document.forms[0];
+  	var paramsData = new Array();
+  	var count = 0;
+    paramsData[count++] = new Array("clear","true");
+  	var tags = frm.getElementsByTagName('INPUT');
+  	for(var i=0; i < tags.length; i++) {
+  		if(tags[i].name.toUpperCase() != "COMMAND" &&
+  		   tags[i].name.toUpperCase() != "ISPOPUPCALL") {
+  		   if(tags[i].type.toUpperCase() == "RADIO") {
+  		   		if(tags[i].checked)
+  		   			paramsData[count++] = new Array(tags[i].name, tags[i].value);
+  		   }else if(tags[i].type.toUpperCase() == "CHECKBOX") {
+            if(tags[i].checked) paramsData[count++] = new Array(tags[i].name, tags[i].value);
+            else paramsData[count++] = new Array(tags[i].name, "N");
+         }
+  		   else
+  		   		paramsData[count++] = new Array(tags[i].name, tags[i].value);
+  		}
+  	}
+  	var selects = frm.getElementsByTagName('SELECT');
+  	for(var i=0; i < selects.length; i++) {
+  		paramsData[count++] = new Array(selects[i].name, selects[i].options[selects[i].selectedIndex].value);
+  	}
+  	selectFilters(paramsData);
+  }
+  
+function calculateNumRows() {
+   resizeAreaInfo();
+   document.getElementById("grid_sample").style.display = "block";
+   var grid_header_height = document.getElementById("grid_sample_header").clientHeight + 1;
+   var grid_row_height = document.getElementById("grid_sample_row").clientHeight + 1;
+   var messagebox_cont = document.getElementById("messageBoxID");
+   var related_info_cont = document.getElementById("related_info_cont");
+   var client_height = document.getElementById("client_middle").clientHeight;
+   client_height = client_height - grid_header_height - (related_info_cont?related_info_cont.clientHeight:0) - (messagebox_cont?messagebox_cont.clientHeight:0);
+   client_height = client_height - 20;
+   var numRows = (client_height)/(grid_row_height);
+   numRows = parseInt(numRows);
+   document.getElementById("grid_sample").style.display = "none";
+   return numRows;
+ }
+
