@@ -1451,7 +1451,7 @@ public class Wad extends DefaultHandler {
       }
     }
     
-    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", "", "", "", ""};
+    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", "", "", "", "", ""};
     if (parentsFieldsData==null || parentsFieldsData.length == 0) {
       discard[0] = "parent";  // remove the parent tags
       hasParentsFields=false;
@@ -1488,7 +1488,8 @@ public class Wad extends DefaultHandler {
     if (FieldsData.hasButtonList(pool, strTab).equals("0")) discard[25]="buttonList";
     if (FieldsData.hasButtonFixed(pool, strTab).equals("0")) discard[26]="buttonFixed";
     if (strWindow.equals("110")) discard[27]="sectionOrganizationCheck";
-    
+    discard[28]="sameParent";
+    if (!(parentsFieldsData==null || parentsFieldsData.length == 0)&&(keyColumnName.equals(parentsFieldsData[0].name))) discard[28]="";
     
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard).createXmlDocument();
     

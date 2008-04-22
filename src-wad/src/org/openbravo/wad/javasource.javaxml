@@ -125,8 +125,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     } else if (vars.commandIn("TAB")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
       vars.removeSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
-     /* no need of refreshing parent for tab command 
-     refreshParentSession(vars, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);*/
+     <PARAMETER_TMP id="sameParent">refreshParentSession(vars, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
 </PARAMETER_TMP>
 
       String strView = vars.getSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view");
