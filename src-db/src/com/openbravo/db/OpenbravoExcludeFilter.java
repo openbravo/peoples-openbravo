@@ -37,7 +37,8 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "USER_IND_COLUMNS", 
             "USER_OBJECTS",
             "USER_TAB_COLUMNS", 
-            "USER_TRIGGERS" };
+            "USER_TRIGGERS",
+            "V$VERSION"};
     }
 
     public String[] getExcludedFunctions() {
