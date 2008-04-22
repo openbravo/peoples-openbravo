@@ -270,7 +270,7 @@ BEGIN
                                            AND r.M_REQUISITION_ID = rr.M_REQUISITION_ID
                                            AND rr.DOCSTATUS = 'CO'
                                            AND r.REQSTATUS = 'O'
-                                           AND NOT (COALESCE(r.LOCKEDBY, p_User_ID) <> p_User_ID 
+                                           AND NOT (COALESCE(r.LOCKEDBY, p_User_ID) <> p_User_ID
                                                     AND COALESCE(r.LOCKDATE, TO_DATE('01-01-1900', 'DD-MM-YYYY')) >= (now()-3))
                                            AND Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
                                               'MF', TO_NUMBER(r.NeedByDate - p_PlanningDate), p_TimeHorizon) <> -1

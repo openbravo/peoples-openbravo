@@ -240,7 +240,7 @@ cWithHoldId NUMBER;
       END IF;
     END IF;--FINISH_PROCESS
     --cbt taxpayment
-    
+
     IF(NOT finish_process) THEN
     IF(v_docaction IN ('VO', 'RE', 'RC')
        AND v_docstatus IN('CO',   'CL')) THEN
@@ -254,7 +254,7 @@ cWithHoldId NUMBER;
         and tp.processed='Y';
       IF v_aux > 0 THEN
           RAISE_APPLICATION_ERROR(-20615,   '@InvoiceInTaxRegister@');
-      ELSE    
+      ELSE
         delete from c_taxregisterline trl where trl.c_invoicetax_id in
         (select trl.c_invoicetax_id
         FROM c_taxregisterline trl
@@ -262,11 +262,11 @@ cWithHoldId NUMBER;
         inner join c_taxregister tr on tr.c_taxregister_id= trl.c_taxregister_id
         inner join c_taxpayment tp on tr.c_taxpayment_id=tp.c_taxpayment_id
         WHERE it.c_invoice_id = v_record_id
-        and tp.processed='N');  
+        and tp.processed='N');
       end if;
       end if;
       end if;
-      
+
     --end cbt taxpaymant
     IF(NOT FINISH_PROCESS) THEN
       /**
@@ -1405,7 +1405,7 @@ cWithHoldId NUMBER;
             SET IsValid='Y'
           WHERE C_INVOICE_ID=v_Record_ID
             AND IsValid!='Y';
-            
+
             -- Is it a Credit Memo:4
           SELECT DocBaseType
           INTO v_TargetDocBaseType
@@ -1413,8 +1413,8 @@ cWithHoldId NUMBER;
           WHERE C_DocType_ID=v_DocTypeTarget_ID;
           IF v_TargetDocBaseType in ('ARC','APC') THEN
             v_MultiplierARC:=-1;
-          END IF;  
-            
+          END IF;
+
           --Sums debt payments from the order and the ones that have been inserted manually, added by ALO
           SELECT COALESCE(SUM(C_Currency_Round(C_Currency_Convert((Amount + WriteOffAmt)*v_MultiplierARC, C_Currency_ID, v_Currency_ID, v_DateInvoiced, NULL, v_Client_ID, v_Org_ID), v_Currency_ID, NULL)), 0)
           INTO v_totalCash

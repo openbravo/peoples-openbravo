@@ -41,7 +41,7 @@
   SELECT :new.C_CURRENCY_ID,
     AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
-    :new.Updated, :new.UpdatedBy, 
+    :new.Updated, :new.UpdatedBy,
     'N', :new.CurSymbol, :new.Description
   FROM AD_Language
   WHERE IsActive='Y'

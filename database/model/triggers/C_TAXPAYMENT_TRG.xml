@@ -2,7 +2,7 @@
   <database name="TRIGGER C_TAXPAYMENT_TRG">
     <trigger name="C_TAXPAYMENT_TRG" table="C_TAXPAYMENT" fires="before" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
-      
+
     /*************************************************************************
     * The contents of this file are subject to the Compiere License
     * Version 2.5.0 ("License"); You may not use this file except in
@@ -22,8 +22,8 @@
     * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
     *************************************************************************
     * Insert Translation
-    */  
-      
+    */
+
     BEGIN
     IF UPDATING
     THEN  IF (:OLD.PROCESSED)='Y' AND (:OLD.processing) = 'N' and (:OLD.processing)=(:new.processing)

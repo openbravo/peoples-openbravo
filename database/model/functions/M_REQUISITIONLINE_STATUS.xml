@@ -67,13 +67,13 @@ BEGIN
                     WHEN 'P' THEN 'P'
                     WHEN 'C' THEN 'O'
                     WHEN 'D' THEN 'O'
-                    ELSE (CASE OrderedQty 
+                    ELSE (CASE OrderedQty
                          WHEN 0 THEN 'D'
                          ELSE 'C' END) END),
         Updated = now(),
         UpdatedBy = v_User_ID
     WHERE M_RequisitionLine_ID = v_Record_ID;
-    
+
     UPDATE M_Requisition
     SET DocStatus = 'CL'
     WHERE M_Requisition_ID = (SELECT M_Requisition_ID FROM M_RequisitionLine WHERE M_RequisitionLine_ID = v_Record_ID)

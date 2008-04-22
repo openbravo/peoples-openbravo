@@ -52,7 +52,7 @@ BEGIN
       v_Record_ID:=Cur_Parameter.Record_ID;
       v_User_ID:=Cur_Parameter.AD_User_ID;
     END LOOP; -- Get Parameter
-    
+
     SELECT DocAction, DocStatus INTO v_DocAction, v_DocStatus
     FROM M_REQUISITION
     WHERE M_REquisition_ID = v_Record_ID;

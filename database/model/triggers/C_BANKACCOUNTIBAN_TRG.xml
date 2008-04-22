@@ -33,7 +33,7 @@
   v_DigitBank NVARCHAR2(1);
   v_Country NUMBER;
   v_CountryId NVARCHAR2(2);
-  v_Length NUMBER;  
+  v_Length NUMBER;
 BEGIN
   --  Default Accounts for all AcctSchema
   IF(INSERTING OR UPDATING) THEN
@@ -79,7 +79,7 @@ BEGIN
           RAISE_APPLICATION_ERROR(-20259, 'The IBAN number defined in the bank account tab, must fit the IBAN data of the country defined in the bank tab.');
         END IF;
       END IF;
-    IF (:NEW.SHOWSPANISH='Y') THEN 
+    IF (:NEW.SHOWSPANISH='Y') THEN
       SELECT CODEBANK, CODEBRANCH, DIGITCONTROL
       INTO v_Bank, v_Branch, v_DigitBank
       FROM C_BANK

@@ -56,7 +56,7 @@
       LOOP
         v_Price := Cur_Orderline.PRICE;
         EXIT;
-      END LOOP;          
+      END LOOP;
     END IF;
     IF(v_Price IS NULL) THEN
       FOR Cur_Pricelist_Version IN

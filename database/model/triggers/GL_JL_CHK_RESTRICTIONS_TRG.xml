@@ -42,22 +42,22 @@ BEGIN
         v_Posted
       FROM GL_JOURNAL
       WHERE GL_JOURNAL_ID=v_GL_JOURNAL_ID;
-      IF(v_Processed='Y' 
-        AND ((COALESCE(:old.LINE, 0) <> COALESCE(:new.LINE, 0)) 
-        OR (COALESCE(:old.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:new.C_DEBT_PAYMENT_ID, 0)) 
-        OR(COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:new.AMTSOURCEDR, 0)) 
-        OR(COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:new.AMTSOURCECR, 0)) 
-        OR(COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:new.C_CURRENCY_ID, 0)) 
+      IF(v_Processed='Y'
+        AND ((COALESCE(:old.LINE, 0) <> COALESCE(:new.LINE, 0))
+        OR (COALESCE(:old.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:new.C_DEBT_PAYMENT_ID, 0))
+        OR(COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:new.AMTSOURCEDR, 0))
+        OR(COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:new.AMTSOURCECR, 0))
+        OR(COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:new.C_CURRENCY_ID, 0))
         OR(COALESCE(:old.C_UOM_ID, 0) <> COALESCE(:new.C_UOM_ID, 0))
         OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
         OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN
         RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
       END IF;
 
-      IF(v_Posted='Y' 
-        AND ((COALESCE(:old.DATEACCT, v_DateNull) <> COALESCE(:new.DATEACCT, v_DateNull)) 
-        OR(COALESCE(:old.C_VALIDCOMBINATION_ID, 0) <> COALESCE(:new.C_VALIDCOMBINATION_ID, 0)) 
-        OR(COALESCE(:old.AMTACCTDR, 0) <> COALESCE(:new.AMTACCTDR, 0)) 
+      IF(v_Posted='Y'
+        AND ((COALESCE(:old.DATEACCT, v_DateNull) <> COALESCE(:new.DATEACCT, v_DateNull))
+        OR(COALESCE(:old.C_VALIDCOMBINATION_ID, 0) <> COALESCE(:new.C_VALIDCOMBINATION_ID, 0))
+        OR(COALESCE(:old.AMTACCTDR, 0) <> COALESCE(:new.AMTACCTDR, 0))
         OR(COALESCE(:old.AMTACCTCR, 0) <> COALESCE(:new.AMTACCTCR, 0)))) THEN
         RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
       END IF;
@@ -80,7 +80,7 @@ BEGIN
     INTO v_Processed,
       v_Posted
     FROM GL_JOURNAL
-    WHERE GL_JOURNAL_ID=v_GL_JOURNAL_ID;  
+    WHERE GL_JOURNAL_ID=v_GL_JOURNAL_ID;
     IF (v_Processed='Y') THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;

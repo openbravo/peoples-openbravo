@@ -7,114 +7,114 @@
       <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
         <default/>
       </parameter>
-      <body><![CDATA[/************************************************************************* 
-* The contents of this file are subject to the Openbravo  Public  License 
-* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License 
-* Version 1.1  with a permitted attribution clause; you may not  use this 
-* file except in compliance with the License. You  may  obtain  a copy of 
-* the License at http://www.openbravo.com/legal/license.html 
-* Software distributed under the License  is  distributed  on  an "AS IS" 
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the 
-* License for the specific  language  governing  rights  and  limitations 
-* under the License. 
-* The Original Code is Openbravo ERP. 
-* The Initial Developer of the Original Code is Openbravo SL 
-* All portions are Copyright (C) 2001-2008 Openbravo SL 
-* All Rights Reserved. 
-* Contributor(s):  ______________________________________. 
-************************************************************************/ 
-  /************************************************************************* 
-  * Title: Delete client 
-  * Description: 
-  *   Delete data (for every table in TAD schema) from the client selected 
-  ************************************************************************/ 
-  -- Logistice 
-  v_ResultStr VARCHAR2(4000):=''; 
-  v_Message VARCHAR2(4000):=''; 
-  v_Result NUMBER:=1; -- 0=failure 
-  -- Parameter 
-  TYPE RECORD IS REF CURSOR; 
-    Cur_Parameter RECORD; 
-    -- Parameter Variables 
-    v_AD_Client_ID NUMBER(10) ; 
-    p_NewClientValue VARCHAR2(80) ; 
-    -- 
-    Cur_Triggers RECORD; 
-    Cur_Constraints RECORD; 
-    Cur_ConstraintsEnable RECORD; 
-    Cur_Tables RECORD; 
-    Cur_Script RECORD; 
-    -- 
-    v_seqNo NUMBER:=0; 
-    v_NextNo NUMBER(10):=1000000; 
-    v_count NUMBER:=0; 
-    v_ID_Column VARCHAR2(30) ; 
-    v_minID NUMBER(10) ; 
-    v_maxID NUMBER(10) ; 
-    v_nextID NUMBER(10) ; 
-    v_strTemp VARCHAR2(4000):=''; 
-    v_strSql VARCHAR2(4000):=''; 
-    v_tableActual VARCHAR2(30) ; 
-  BEGIN 
-    IF(p_PInstance_ID IS NOT NULL) THEN 
-      --  Update AD_PInstance 
-      DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ; 
-      v_ResultStr:='PInstanceNotFound'; 
-      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ; 
-      -- Get Parameters 
-      v_ResultStr:='ReadingParameters'; 
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  /*************************************************************************
+  * Title: Delete client
+  * Description:
+  *   Delete data (for every table in TAD schema) from the client selected
+  ************************************************************************/
+  -- Logistice
+  v_ResultStr VARCHAR2(4000):='';
+  v_Message VARCHAR2(4000):='';
+  v_Result NUMBER:=1; -- 0=failure
+  -- Parameter
+  TYPE RECORD IS REF CURSOR;
+    Cur_Parameter RECORD;
+    -- Parameter Variables
+    v_AD_Client_ID NUMBER(10) ;
+    p_NewClientValue VARCHAR2(80) ;
+    --
+    Cur_Triggers RECORD;
+    Cur_Constraints RECORD;
+    Cur_ConstraintsEnable RECORD;
+    Cur_Tables RECORD;
+    Cur_Script RECORD;
+    --
+    v_seqNo NUMBER:=0;
+    v_NextNo NUMBER(10):=1000000;
+    v_count NUMBER:=0;
+    v_ID_Column VARCHAR2(30) ;
+    v_minID NUMBER(10) ;
+    v_maxID NUMBER(10) ;
+    v_nextID NUMBER(10) ;
+    v_strTemp VARCHAR2(4000):='';
+    v_strSql VARCHAR2(4000):='';
+    v_tableActual VARCHAR2(30) ;
+  BEGIN
+    IF(p_PInstance_ID IS NOT NULL) THEN
+      --  Update AD_PInstance
+      DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
+      v_ResultStr:='PInstanceNotFound';
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+      -- Get Parameters
+      v_ResultStr:='ReadingParameters';
 
-      FOR Cur_Parameter IN 
-        (SELECT p.ParameterName, p.P_String, p.P_Number 
-        FROM AD_PInstance i 
-        LEFT JOIN AD_PInstance_Para p 
-          ON i.AD_PInstance_ID=p.AD_PInstance_ID 
-        WHERE i.AD_PInstance_ID=p_PInstance_ID 
-        ORDER BY p.SeqNo 
-        ) 
-      LOOP 
-        IF(Cur_Parameter.ParameterName='AD_Client_ID') THEN 
-          v_AD_Client_ID:=Cur_Parameter.P_Number; 
-          DBMS_OUTPUT.PUT_LINE('  AD_Client_ID=' || v_AD_Client_ID) ; 
-        ELSE 
-          DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ; 
-        END IF; 
-      END LOOP; -- Get Parameter 
-    ELSE 
-      v_AD_Client_ID:=p_AD_Client_ID; 
-      --v_Message := '@ADPinstanceIsNull@'; 
-      --GOTO END_PROCESS; 
-    END IF; 
-  BEGIN --BODY 
+      FOR Cur_Parameter IN
+        (SELECT p.ParameterName, p.P_String, p.P_Number
+        FROM AD_PInstance i
+        LEFT JOIN AD_PInstance_Para p
+          ON i.AD_PInstance_ID=p.AD_PInstance_ID
+        WHERE i.AD_PInstance_ID=p_PInstance_ID
+        ORDER BY p.SeqNo
+        )
+      LOOP
+        IF(Cur_Parameter.ParameterName='AD_Client_ID') THEN
+          v_AD_Client_ID:=Cur_Parameter.P_Number;
+          DBMS_OUTPUT.PUT_LINE('  AD_Client_ID=' || v_AD_Client_ID) ;
+        ELSE
+          DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
+        END IF;
+      END LOOP; -- Get Parameter
+    ELSE
+      v_AD_Client_ID:=p_AD_Client_ID;
+      --v_Message := '@ADPinstanceIsNull@';
+      --GOTO END_PROCESS;
+    END IF;
+  BEGIN --BODY
     IF (v_AD_Client_ID = 0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@DeletingSystemClient@') ;
     END IF;
-    
-    DELETE FROM AD_SCRIPT_SQL; 
+
+    DELETE FROM AD_SCRIPT_SQL;
     v_ResultStr := 'Disabling  triggers';
     v_seqNo := ad_script_disable_triggers(v_seqNo);
-    v_ResultStr:='Disabling constraints'; 
+    v_ResultStr:='Disabling constraints';
     v_seqNo := ad_script_disable_constraints(v_seqNo);
-    AD_Sequence_Next('AD_Client', 1000000, v_NextNo) ; 
-    FOR Cur_Tables IN 
-      (SELECT AD_Table_ID, UPPER(TableName) AS NAME 
-    FROM AD_Table 
-    WHERE IsView='N'  AND UPPER(TableName)<>'AD_CLIENT'  AND EXISTS 
-      (SELECT 1 
-      FROM AD_Column 
-      WHERE AD_Table_ID=AD_Table.AD_Table_ID  AND UPPER(ColumnName)='AD_CLIENT_ID' 
-      ) 
-    ORDER BY TableName) 
-    LOOP 
-      v_seqNo:=v_seqNo + 1; 
-      INSERT 
-      INTO AD_SCRIPT_SQL VALUES 
-        (v_seqNo, 'DELETE FROM '||Cur_Tables.NAME||' WHERE AD_Client_ID = '||v_AD_Client_ID) ; 
-    END LOOP; 
-    v_seqNo:=v_seqNo + 1; 
-    INSERT 
-    INTO AD_SCRIPT_SQL VALUES 
-      (v_seqNo, 'DELETE FROM AD_Client WHERE AD_Client_ID = '||v_AD_Client_ID) ; 
+    AD_Sequence_Next('AD_Client', 1000000, v_NextNo) ;
+    FOR Cur_Tables IN
+      (SELECT AD_Table_ID, UPPER(TableName) AS NAME
+    FROM AD_Table
+    WHERE IsView='N'  AND UPPER(TableName)<>'AD_CLIENT'  AND EXISTS
+      (SELECT 1
+      FROM AD_Column
+      WHERE AD_Table_ID=AD_Table.AD_Table_ID  AND UPPER(ColumnName)='AD_CLIENT_ID'
+      )
+    ORDER BY TableName)
+    LOOP
+      v_seqNo:=v_seqNo + 1;
+      INSERT
+      INTO AD_SCRIPT_SQL VALUES
+        (v_seqNo, 'DELETE FROM '||Cur_Tables.NAME||' WHERE AD_Client_ID = '||v_AD_Client_ID) ;
+    END LOOP;
+    v_seqNo:=v_seqNo + 1;
+    INSERT
+    INTO AD_SCRIPT_SQL VALUES
+      (v_seqNo, 'DELETE FROM AD_Client WHERE AD_Client_ID = '||v_AD_Client_ID) ;
 -- Deal with users that have defaults set to the deleted client
  v_seqNo := v_seqNo + 1;
  INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'UPDATE AD_USER SET DEFAULT_AD_CLIENT_ID=null where DEFAULT_AD_CLIENT_ID NOT IN (SELECT AD_Client_ID from AD_Client)');
@@ -129,13 +129,13 @@
  INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'UPDATE AD_USER SET DEFAULT_AD_CLIENT_ID=0, DEFAULT_AD_ORG_ID=0, DEFAULT_AD_ROLE_ID=0 where AD_USER_ID=100 AND DEFAULT_AD_CLIENT_ID is null and DEFAULT_AD_ORG_ID is null and DEFAULT_AD_ROLE_ID is null');
 
 
-    v_ResultStr:='Enabling  constraints'; 
+    v_ResultStr:='Enabling  constraints';
     v_seqNo := ad_script_enable_constraints(v_seqNo);
     v_ResultStr := 'Enabling  triggers';
     v_seqNo := ad_script_enable_triggers(v_seqNo);
-    -- Update sequence values 
-    v_ResultStr:='Updating sequences'; 
-    AD_UPDATE_SEQUENCE_GENERATE() ; 
+    -- Update sequence values
+    v_ResultStr:='Updating sequences';
+    AD_UPDATE_SEQUENCE_GENERATE() ;
     v_ResultStr:='Executing';
     v_ResultStr := ad_script_execute(v_ResultStr);
 

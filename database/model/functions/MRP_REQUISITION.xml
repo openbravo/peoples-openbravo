@@ -68,7 +68,7 @@
       INTO v_Description0, v_Description
     FROM MRP_RUN_PRODUCTION
     WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID;
-     
+
     SELECT count(*) INTO v_Count
     FROM MRP_RUN_PRODUCTIONLINE
     WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID
@@ -81,7 +81,7 @@
 
     Ad_Sequence_Next('M_Requisition', v_Client_ID, v_MRequisition_ID);
     Ad_Sequence_Doc('DocumentNo_M_Requisition', v_Client_ID, 'Y', v_DocumentNo);
-    
+
     v_Description := 'MRP: ' || v_Description0 || CHR(10) || v_Description;
 
     INSERT INTO M_Requisition (
@@ -93,7 +93,7 @@
       'Y', now(), v_User_ID, now(), v_User_ID,
       v_Description, v_DocumentNo, v_User_ID
     );
-    
+
     FOR Cur_workproposal IN (
       SELECT *
       FROM MRP_RUN_PRODUCTIONLINE
@@ -125,17 +125,17 @@
   END; --BODY
   v_Message := '@CreatedRequisition@: ' || v_DocumentNo;
   v_ResultStr :='Set requisition lines as planned';
-  UPDATE M_RequisitionLine 
+  UPDATE M_RequisitionLine
   SET REQSTATUS = 'P'
   WHERE M_RequisitionLine_ID IN (SELECT M_RequisitionLine_ID
                                  FROM MRP_RUN_PRODUCTIONLINE
                                  WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID
                                    AND INOUTTRXTYPE = 'MF');
-  
+
   UPDATE M_Requisition
   SET DocStatus = 'CL'
-  WHERE M_Requisition_ID IN (SELECT M_Requisition_ID 
-                            FROM M_RequisitionLine 
+  WHERE M_Requisition_ID IN (SELECT M_Requisition_ID
+                            FROM M_RequisitionLine
                             WHERE M_RequisitionLine_ID IN (SELECT M_RequisitionLine_ID
                                                           FROM MRP_RUN_PRODUCTIONLINE
                                                           WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID

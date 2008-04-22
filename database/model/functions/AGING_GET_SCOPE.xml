@@ -49,7 +49,7 @@ BEGIN
     return 3;
   elsif (pDate<=now()+pCol4) then
     return 4;
-  else 
+  else
     return 5;
   end if;
 END AGING_GET_SCOPE

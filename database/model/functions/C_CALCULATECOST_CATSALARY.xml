@@ -28,12 +28,12 @@ vResult NUMBER;
 BEGIN
 
  SELECT COST into vResult
-         FROM  c_salary_category_cost, (SELECT MAX(datefrom) AS datefrom 
+         FROM  c_salary_category_cost, (SELECT MAX(datefrom) AS datefrom
 		                                from c_salary_category_cost
-										where c_salary_category_id= pCatSal 
+										where c_salary_category_id= pCatSal
                                         and datefrom<=pDate
 										order by datefrom desc ) AAA
- WHERE c_salary_category_cost.c_salary_category_id = pCatSal 
+ WHERE c_salary_category_cost.c_salary_category_id = pCatSal
  AND c_salary_category_cost.datefrom = aaa.datefrom;
 
  RETURN vResult;

@@ -98,9 +98,9 @@ END LOOP;
 
 -- 1) Calcolo la %inps
 if IsIncludedTax = 'Y' then
-   select coalesce(sum(TAXAMT),0) into  TaxAmount from C_invoicetax  
+   select coalesce(sum(TAXAMT),0) into  TaxAmount from C_invoicetax
    where C_TAX_ID= IdTax and C_INVOICE_ID = id_invoice_in;
-      
+
    FOR curTaxInps IN
     (SELECT *
         FROM C_TAX
@@ -110,7 +110,7 @@ if IsIncludedTax = 'Y' then
         IsWithHoldingTax:=curTaxInps.is_withholdingtax;
     EXIT;
     END LOOP;
-  
+
      if not (IsWithHoldingTax='Y') then
       TaxAmount := 0;
      end if;

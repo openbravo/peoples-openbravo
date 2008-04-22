@@ -161,7 +161,7 @@
               ELSE
                 v_DateColumn:='DATEACCT';
               END IF;
-              v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='  || Cur_Clients.AD_Client_ID  
+              v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='  || Cur_Clients.AD_Client_ID
         || ' AND (Posted<>''N'' OR Posted IS NULL OR Processing<>''N'' OR Processing IS NULL) AND '   ||
         Cur_Tables.TableName||'_ID = '||Cur_Fact_Acct.Record_ID;
               -- DBMS_OUTPUT.PUT_LINE('  executing: ' || v_Cmd);
@@ -192,7 +192,7 @@
               v_Deleted:=v_Deleted + v_rowcount;
               DBMS_OUTPUT.PUT_LINE('  deleted=' || v_rowcount) ;
             END LOOP;
-        v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='  || Cur_Clients.AD_Client_ID  
+        v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='  || Cur_Clients.AD_Client_ID
         || ' AND (Posted=''Y'' OR Processing<>''N'' OR Processing IS NULL) AND NOT EXISTS (SELECT 1 FROM FACT_ACCT WHERE AD_TABLE_ID =' || Cur_Tables.AD_Table_ID ||
         ' AND RECORD_ID = ' || Cur_Tables.TableName || '_ID AND AD_CLIENT_ID =' || Cur_Clients.AD_Client_ID || ' )';
             -- DBMS_OUTPUT.PUT_LINE('  executing: ' || v_Cmd);

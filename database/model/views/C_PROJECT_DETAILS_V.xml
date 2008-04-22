@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW C_PROJECT_DETAILS_V">
-    <view name="C_PROJECT_DETAILS_V"><![CDATA[SELECT pl.ad_client_id, pl.ad_org_id, pl.isactive, pl.created, pl.createdby, pl.updated, pl.updatedby, to_char('en_US') AS ad_language, pj.c_project_id, pl.c_projectline_id, pl.line, pl.plannedqty, pl.plannedprice, pl.plannedamt, pl.plannedmarginamt, pl.committedamt, pl.m_product_id, COALESCE(p.name, pl.description) AS name, 
+    <view name="C_PROJECT_DETAILS_V"><![CDATA[SELECT pl.ad_client_id, pl.ad_org_id, pl.isactive, pl.created, pl.createdby, pl.updated, pl.updatedby, to_char('en_US') AS ad_language, pj.c_project_id, pl.c_projectline_id, pl.line, pl.plannedqty, pl.plannedprice, pl.plannedamt, pl.plannedmarginamt, pl.committedamt, pl.m_product_id, COALESCE(p.name, pl.description) AS name,
         CASE
             WHEN p.name IS NOT NULL THEN pl.description
             ELSE NULL

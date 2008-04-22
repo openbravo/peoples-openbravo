@@ -74,7 +74,7 @@
       v_Discount NUMBER;
       v_Tax_ID NUMBER;
       v_M_PriceList_Version_ID NUMBER;
-      
+
     TYPE RECORD IS REF CURSOR;
       Cur_SO RECORD;
       Cur_SOLINES RECORD;
@@ -128,29 +128,29 @@
         ELSIF Cur_SO.SALESREP_ID IS NULL THEN
           RAISE_APPLICATION_ERROR(-20000, '@ProjectSalesRepNotFound@'||'.');
         END IF;
-        
+
         v_C_DOCTYPE_ID:=Ad_Get_DocType(Cur_SO.AD_Client_ID, Cur_SO.AD_Org_ID, 'POO') ;
         AD_Sequence_DocType(v_C_DOCTYPE_ID, Cur_SO.AD_Client_ID, 'Y', v_DocumentNo) ;
         IF(v_DocumentNo IS NULL) THEN
           AD_Sequence_Doc('DocumentNo_C_Order', Cur_SO.AD_Client_ID, 'Y', v_DocumentNo) ;
         END IF;
-        
+
         -- Get Business Partner Ship Location
         v_BPartner_Location_ID := C_GetBPLocationID(Cur_SO.C_BPartner_ID, 'S') ;
         IF (v_BPartner_Location_ID IS NULL) THEN
           RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @ShiptoNotdefined@'||'.');
         END IF;
-        
+
         -- Get Business Partner Bill Location
         v_Billto_ID := C_GetBPLocationID(Cur_SO.C_BPartner_ID, 'B') ;
         IF (v_Billto_ID IS NULL) THEN
           RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @BillToNotdefined@'||'.');
         END IF;
-        
+
         -- Get next C_Order_ID
         Ad_Sequence_Next('C_Order', Cur_SO.AD_CLIENT_ID, v_C_Order_ID) ;
         v_ResultStr:='C_ORDER_ID - ' || v_C_Order_ID;
-        
+
         INSERT
         INTO C_ORDER
           (
@@ -181,21 +181,21 @@
             TRUNC(now(), 'DD'), Cur_SO.DESCRIPTION
           )
           ;
-        
+
         -- Select the price list version that a applies for the price list of the header
         SELECT Get_Pricelist_Version(Cur_SO.M_PriceList_ID, TRUNC(now(), 'DD'))
         INTO v_M_PriceList_Version_ID
-        FROM DUAL;        
+        FROM DUAL;
         IF (v_M_PriceList_Version_ID IS NULL) THEN
           RAISE_APPLICATION_ERROR(-20000, '@PriceListVersionNotFound@'||'.');
-        ELSE        
+        ELSE
          -- Select products, quantities, sequence numbers, descriptions and unit prices of the project
             -- In both cases, if no unit price has been defined for a product,
             -- price is taken from the price list of the project.
             -- And if no price is defined in the price list, price is set to 0.
           FOR Cur_SOLINES IN
             (
-            SELECT pl.LINE AS SEQNO, pl.PRODUCT_DESCRIPTION AS DESCRIPTION, pl.M_PRODUCT_ID, 
+            SELECT pl.LINE AS SEQNO, pl.PRODUCT_DESCRIPTION AS DESCRIPTION, pl.M_PRODUCT_ID,
               pl.PLANNEDQTY AS QTY, pl.PLANNEDPOPRICE AS PRICEACTUAL, pl.C_TAX_ID
             FROM C_PROJECTLINE pl, C_PROJECT_VENDOR  pv
             WHERE pv.C_PROJECT_VENDOR_ID = v_Record_ID
@@ -204,8 +204,8 @@
               AND pl.IsActive = 'Y'
             ORDER BY SEQNO ASC
             )
-          LOOP                    
-            
+          LOOP
+
             -- Take StdPrice, PriceList and PriceLimit from Price List Version
             SELECT COUNT(*)
             INTO v_Size
@@ -217,7 +217,7 @@
               AND p.M_Product_ID=Cur_SOLINES.M_PRODUCT_ID
               AND pv.M_PriceList_Version_ID=v_M_PriceList_Version_ID
               AND pl.C_Currency_ID=Cur_SO.C_CURRENCY_ID;
-            IF (v_Size>0) THEN 
+            IF (v_Size>0) THEN
               SELECT Bom_Pricestd(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceStd,
                 Bom_Pricelist(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceList,
                 Bom_Pricelimit(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceLimit,
@@ -238,32 +238,32 @@
               v_PriceLimit := NULL;
               v_C_UOM_ID := NULL;
             END IF;
-            
+
             -- Calculate Price Actual
             IF (Cur_SOLINES.priceactual=0) THEN
               Cur_SOLINES.priceactual:=NULL;
             END IF;
-            v_PriceActual := COALESCE(Cur_SOLINES.priceactual,M_Get_Offers_Price(now(), Cur_SO.C_BPARTNER_ID, Cur_SOLINES.M_PRODUCT_ID, v_PriceStd, Cur_SOLINES.Qty, Cur_SO.M_PRICELIST_ID),0);           
-            
+            v_PriceActual := COALESCE(Cur_SOLINES.priceactual,M_Get_Offers_Price(now(), Cur_SO.C_BPARTNER_ID, Cur_SOLINES.M_PRODUCT_ID, v_PriceStd, Cur_SOLINES.Qty, Cur_SO.M_PRICELIST_ID),0);
+
             IF (v_PriceStd IS NULL) THEN
              v_PriceStd :=  v_PriceActual ;
             END IF;
-            
+
             IF (v_PriceList IS NULL) THEN
               v_PriceList :=  v_PriceActual ;
             END IF;
-            
+
             IF (v_PriceLimit IS NULL) THEN
               v_PriceLimit :=  v_PriceActual ;
             END IF;
-            
+
             IF (v_PriceList = 0) THEN
                v_Discount := 0 ;
             ELSE
               -- Calculate rounded discount
               v_Discount :=ROUND((v_PriceList-v_PriceActual) / v_PriceList*100, 2);
             END IF;
-            
+
             IF (v_C_UOM_ID IS NULL) THEN
               SELECT P.C_UOM_ID
               INTO v_UOM
@@ -272,17 +272,17 @@
             ELSE
               v_UOM := v_C_UOM_ID;
             END IF;
-            
+
             IF (Cur_SOLINES.C_TAX_ID IS NULL) THEN
               v_Tax_ID:= C_Gettax(Cur_SOLINES.M_PRODUCT_ID, TRUNC(now(), 'DD'), Cur_SO.AD_ORG_ID, Cur_SO.M_WAREHOUSE_ID, v_BPartner_Location_ID, v_BPartner_Location_ID, Cur_SO.C_PROJECT_ID, 'Y') ;
             ELSE
               v_Tax_ID:=Cur_SOLINES.C_TAX_ID;
             END IF;
-            
+
             -- Get next C_OrderLine_ID
             Ad_Sequence_Next('C_OrderLine', Cur_SO.AD_CLIENT_ID, v_C_OrderLine_ID) ;
             v_ResultStr:='C_OrderLine_ID - ' || v_C_OrderLine_ID;
-            
+
             INSERT
             INTO C_ORDERLINE
               (
@@ -314,10 +314,10 @@
                 v_Discount, v_PriceLimit, NULL, v_PriceActual * Cur_SOLINES.Qty,
                 NULL, 'N', v_PriceStd
               )
-              ;              
+              ;
           END LOOP;
         END IF;
-        
+
         IF v_Message IS NOT NULL THEN
           v_Message:=v_Message || ', ';
         END IF;

@@ -105,17 +105,17 @@ BEGIN
       END IF;
     END IF;
   END IF;
-  -- Updating 
+  -- Updating
   IF DELETING THEN
     --  Delete TreeNode
-    --  get AD_Tree_ID, AD_Menu_ID    
+    --  get AD_Tree_ID, AD_Menu_ID
     SELECT c.AD_Tree_Menu_ID
       INTO v_xTree_ID
       FROM AD_ClientInfo c,
         AD_TreeNode n
       WHERE c.AD_Tree_Menu_ID=n.AD_Tree_ID
         AND n.Parent_ID IS NULL
-        AND c.AD_Client_ID=:old.AD_Client_ID;    
+        AND c.AD_Client_ID=:old.AD_Client_ID;
     --Assign children to principal node
     UPDATE AD_Treenode
       SET Parent_ID=0
@@ -126,7 +126,7 @@ BEGIN
       FROM AD_Treenode
       WHERE AD_Client_ID=:old.AD_Client_ID
         AND AD_Tree_ID=v_xTree_ID
-        AND Node_ID=:old.AD_Menu_ID;   
+        AND Node_ID=:old.AD_Menu_ID;
   END IF;
   -- Deleting
 EXCEPTION

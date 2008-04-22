@@ -5,127 +5,127 @@
 
 
 
- 
-/************************************************************************* 
- * The contents of this file are subject to the Compiere License 
- * Version 2.5.0 ("License"); You may not use this file except in 
- * compliance with the License. You may obtain a copy of the License at 
- * http://www.compiere.org/license.html 
- * Software distributed under the License is distributed on an 
- * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or 
- * implied. See the License for the specific language governing rights 
- * and limitations under the License. 
- * The Original Code is  Compiere  ERP &  Business Solution 
- * The Initial Developer of the Original Code is Jorg Janke  and ComPiere, 
-Inc. 
- * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, 
- * parts created by ComPiere are Copyright (C) ComPiere, Inc.; 
- * All Rights Reserved. 
- * Contributor(s): Openbravo SL 
- * Contributions are Copyright (C) 1999-2005 Openbravo, S.L 
- ************************************************************************* 
- * $Id: AD_Table_Trg.sql,v 1.2 2003/07/26 04:29:44 jjanke Exp $ 
- *** 
- * Title:   Synchronize with AD_Sequence and AD_Replication 
- * Description: 
- ************************************************************************/ 
- 
-   TYPE RECORD IS REF CURSOR; 
-   CUR_Replication RECORD; 
- 
-  v_NextNo      NUMBER; 
-  v_CurrentNext    NUMBER; 
-  v_CurrentNextSys NUMBER; 
-  v_StartWith     VARCHAR(7); 
-  v_StartWithSys    VARCHAR(7); 
- 
- 
-BEGIN 
- -- Insert new Key Sequence 
- IF INSERTING THEN 
- 
-  --try to get CurrentNext 
-  BEGIN 
-   EXECUTE IMMEDIATE 'SELECT 1 + COALESCE((SELECT MAX('||:new.tableName||'_id)'|| 
-                                'FROM '||:new.tableName|| 
-                     ' WHERE '||:new.tableName||'_ID>=1000000),1000000-1)'|| 
-            ' from dual' into v_CurrentNext; 
- 
-   Exception WHEN OTHERS THEN 
-     v_CurrentNext := 1000000; 
-  END; 
- 
-  --try to get CurrentNextSys 
-  BEGIN 
-    SELECT TAD_LEVEL INTO v_StartWithSys 
-    FROM AD_SYSTEM 
-    WHERE AD_SYSTEM_ID=0; 
- 
-   v_StartWith    := TO_CHAR(TO_NUMBER(v_StartWithSys)+1) || '00000'; 
-   v_StartWithSys := v_StartWithSys || '00000'; 
- 
-   IF (UPPER(:new.TableName) LIKE 'AD_%') THEN 
-       EXECUTE IMMEDIATE ' SELECT 1 + (CASE SIGN(COALESCE((SELECT MAX(' || :new.tableName ||'_ID) FROM '||:new.tableName|| 
-             ' WHERE ' ||:new.tableName || '_ID<' || v_StartWith ||'),0)-' || v_StartWithSys || ') WHEN -1 THEN '||v_StartWithSys || '-1 ELSE ' || '(SELECT MAX(' ||:new.Name || '_ID) FROM ' ||:new.Name|| 
-             ' WHERE ' ||:new.tableName ||'_ID<' || v_StartWith || ') END) AS SEQUENCE '|| 
-             ' FROM dual' INTO v_CurrentNextSys; 
-   ELSE 
-     EXECUTE IMMEDIATE ' SELECT 1 + COALESCE((SELECT MAX('||:new.tableName||'_ID) FROM ' ||:new.tableName||' WHERE ' ||:new.tableName||'_ID<' || v_StartWith ||'),(' || v_StartWithSys || '-1))' || 
-             ' FROM dual' INTO v_CurrentNextSys; 
-   END IF; 
-   Exception WHEN OTHERS THEN v_CurrentNextSys := 100; 
-  END; 
- 
-  -- Make sure that we can insert 
-  DELETE FROM AD_Sequence 
-  WHERE  UPPER(Name) = UPPER(:new.TableName); 
-     --  Get next number 
-     AD_Sequence_Next('AD_Sequence', :new.AD_Table_ID, v_NextNo); 
- 
- 
-   --  Insert 
-     INSERT INTO AD_Sequence 
-         (AD_Sequence_ID, AD_Client_ID, AD_Org_ID, 
-         IsActive, Created, CreatedBy, Updated, UpdatedBy, 
-         Name, Description, 
-         IsAutoSequence, StartNo, IncrementNo, CurrentNextSys, CurrentNext, 
-         IsAudited, IsTableID, StartNewYear) 
-     VALUES 
-         (v_NextNo, :new.AD_Client_ID, :new.AD_Org_ID, 
-         'Y', now(), 0, now(), 0, 
-         :new.TableName, :new.TableName, 
-         'Y', 1000000, 1, v_CurrentNextSys, v_CurrentNext, 
-         'N', 'Y', 'N'); 
-        -- 
-        DECLARE 
- 
-        BEGIN 
-            FOR CUR_Replication IN (SELECT  AD_ReplicationStrategy_ID 
-                            FROM    AD_ReplicationStrategy) LOOP 
-             AD_Sequence_Next('AD_ReplicationTable', :new.AD_Table_ID, v_NextNo); 
-                INSERT INTO AD_ReplicationTable 
-                    (AD_ReplicationTable_ID, AD_Client_ID, AD_Org_ID, 
-                 IsActive, Created, CreatedBy, Updated, UpdatedBy, 
-                    AD_ReplicationStrategy_ID, AD_TABLE_ID, REPLICATIONTYPE, EntityType) 
-                VALUES (v_NextNo, :new.AD_Client_ID, :new.AD_Org_ID, 
-                 'Y', now(), 0, now(), 0, 
-                    CUR_Replication.AD_ReplicationStrategy_ID, :new.AD_Table_ID, 'L', :new.EntityType); 
-            END LOOP; 
-        END; 
- END IF; -- Inserting 
- 
- -- Update TableName 
- --  Sync TableName 
- IF UPDATING THEN 
-   IF (COALESCE(:old.TableName,'.')<>COALESCE(:NEW.TableName,'.')) THEN 
-     UPDATE  AD_Sequence 
-     SET     Name = :new.TableName, 
-    Updated=now() 
-     WHERE   UPPER(Name) = UPPER(:old.TableName) 
-       AND   IsTableID='Y'; 
-   END IF; 
- END IF; -- Updating 
- 
+
+/*************************************************************************
+ * The contents of this file are subject to the Compiere License
+ * Version 2.5.0 ("License"); You may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.compiere.org/license.html
+ * Software distributed under the License is distributed on an
+ * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ * The Original Code is  Compiere  ERP &  Business Solution
+ * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
+Inc.
+ * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+ * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+ * All Rights Reserved.
+ * Contributor(s): Openbravo SL
+ * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+ *************************************************************************
+ * $Id: AD_Table_Trg.sql,v 1.2 2003/07/26 04:29:44 jjanke Exp $
+ ***
+ * Title:   Synchronize with AD_Sequence and AD_Replication
+ * Description:
+ ************************************************************************/
+
+   TYPE RECORD IS REF CURSOR;
+   CUR_Replication RECORD;
+
+  v_NextNo      NUMBER;
+  v_CurrentNext    NUMBER;
+  v_CurrentNextSys NUMBER;
+  v_StartWith     VARCHAR(7);
+  v_StartWithSys    VARCHAR(7);
+
+
+BEGIN
+ -- Insert new Key Sequence
+ IF INSERTING THEN
+
+  --try to get CurrentNext
+  BEGIN
+   EXECUTE IMMEDIATE 'SELECT 1 + COALESCE((SELECT MAX('||:new.tableName||'_id)'||
+                                'FROM '||:new.tableName||
+                     ' WHERE '||:new.tableName||'_ID>=1000000),1000000-1)'||
+            ' from dual' into v_CurrentNext;
+
+   Exception WHEN OTHERS THEN
+     v_CurrentNext := 1000000;
+  END;
+
+  --try to get CurrentNextSys
+  BEGIN
+    SELECT TAD_LEVEL INTO v_StartWithSys
+    FROM AD_SYSTEM
+    WHERE AD_SYSTEM_ID=0;
+
+   v_StartWith    := TO_CHAR(TO_NUMBER(v_StartWithSys)+1) || '00000';
+   v_StartWithSys := v_StartWithSys || '00000';
+
+   IF (UPPER(:new.TableName) LIKE 'AD_%') THEN
+       EXECUTE IMMEDIATE ' SELECT 1 + (CASE SIGN(COALESCE((SELECT MAX(' || :new.tableName ||'_ID) FROM '||:new.tableName||
+             ' WHERE ' ||:new.tableName || '_ID<' || v_StartWith ||'),0)-' || v_StartWithSys || ') WHEN -1 THEN '||v_StartWithSys || '-1 ELSE ' || '(SELECT MAX(' ||:new.Name || '_ID) FROM ' ||:new.Name||
+             ' WHERE ' ||:new.tableName ||'_ID<' || v_StartWith || ') END) AS SEQUENCE '||
+             ' FROM dual' INTO v_CurrentNextSys;
+   ELSE
+     EXECUTE IMMEDIATE ' SELECT 1 + COALESCE((SELECT MAX('||:new.tableName||'_ID) FROM ' ||:new.tableName||' WHERE ' ||:new.tableName||'_ID<' || v_StartWith ||'),(' || v_StartWithSys || '-1))' ||
+             ' FROM dual' INTO v_CurrentNextSys;
+   END IF;
+   Exception WHEN OTHERS THEN v_CurrentNextSys := 100;
+  END;
+
+  -- Make sure that we can insert
+  DELETE FROM AD_Sequence
+  WHERE  UPPER(Name) = UPPER(:new.TableName);
+     --  Get next number
+     AD_Sequence_Next('AD_Sequence', :new.AD_Table_ID, v_NextNo);
+
+
+   --  Insert
+     INSERT INTO AD_Sequence
+         (AD_Sequence_ID, AD_Client_ID, AD_Org_ID,
+         IsActive, Created, CreatedBy, Updated, UpdatedBy,
+         Name, Description,
+         IsAutoSequence, StartNo, IncrementNo, CurrentNextSys, CurrentNext,
+         IsAudited, IsTableID, StartNewYear)
+     VALUES
+         (v_NextNo, :new.AD_Client_ID, :new.AD_Org_ID,
+         'Y', now(), 0, now(), 0,
+         :new.TableName, :new.TableName,
+         'Y', 1000000, 1, v_CurrentNextSys, v_CurrentNext,
+         'N', 'Y', 'N');
+        --
+        DECLARE
+
+        BEGIN
+            FOR CUR_Replication IN (SELECT  AD_ReplicationStrategy_ID
+                            FROM    AD_ReplicationStrategy) LOOP
+             AD_Sequence_Next('AD_ReplicationTable', :new.AD_Table_ID, v_NextNo);
+                INSERT INTO AD_ReplicationTable
+                    (AD_ReplicationTable_ID, AD_Client_ID, AD_Org_ID,
+                 IsActive, Created, CreatedBy, Updated, UpdatedBy,
+                    AD_ReplicationStrategy_ID, AD_TABLE_ID, REPLICATIONTYPE, EntityType)
+                VALUES (v_NextNo, :new.AD_Client_ID, :new.AD_Org_ID,
+                 'Y', now(), 0, now(), 0,
+                    CUR_Replication.AD_ReplicationStrategy_ID, :new.AD_Table_ID, 'L', :new.EntityType);
+            END LOOP;
+        END;
+ END IF; -- Inserting
+
+ -- Update TableName
+ --  Sync TableName
+ IF UPDATING THEN
+   IF (COALESCE(:old.TableName,'.')<>COALESCE(:NEW.TableName,'.')) THEN
+     UPDATE  AD_Sequence
+     SET     Name = :new.TableName,
+    Updated=now()
+     WHERE   UPPER(Name) = UPPER(:old.TableName)
+       AND   IsTableID='Y';
+   END IF;
+ END IF; -- Updating
+
 END AD_TABLE_TRG
 ]]></body>
     </trigger>

@@ -33,7 +33,7 @@ BEGIN
     IF NOT((COALESCE(:old.NAME,'.')<>COALESCE(:NEW.NAME,'.') OR COALESCE(:old.IsActive,'.')<>COALESCE(:NEW.IsActive,'.'))) THEN
       RETURN;
     END IF;
-    
+
     SELECT MAX(TO_CHAR(ISACTIVE)) INTO v_IsActive
     FROM AD_WINDOW
     WHERE AD_WINDOW_ID = :NEW.AD_WINDOW_ID;
@@ -41,24 +41,24 @@ BEGIN
     IF v_IsActive <> 'Y' THEN
       v_IsActive := :NEW.ISACTIVE;
     END IF;
-    
+
     SELECT AD_MAPPING_FORMAT(TO_CHAR(W.NAME)), AD_MAPPING_FORMAT(TO_CHAR(:new.NAME))
     INTO v_WindowName, v_ClassName
     FROM AD_WINDOW W
     WHERE W.AD_WINDOW_ID = :new.AD_WINDOW_ID;
-    
-    SELECT COUNT(*) INTO v_Count 
+
+    SELECT COUNT(*) INTO v_Count
     FROM AD_MODEL_OBJECT
     WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
     AND CLASSNAME LIKE 'org.openbravo.erpWindows.%';
-    
+
     IF v_Count > 0 THEN
-      SELECT AD_MODEL_OBJECT_ID INTO v_ID 
+      SELECT AD_MODEL_OBJECT_ID INTO v_ID
       FROM AD_MODEL_OBJECT
       WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
       AND CLASSNAME LIKE 'org.openbravo.erpWindows.%';
-    
-      UPDATE AD_MODEL_OBJECT 
+
+      UPDATE AD_MODEL_OBJECT
       SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
         AD_ORG_ID = :new.AD_ORG_ID,
         ISACTIVE = v_IsActive,
@@ -66,23 +66,23 @@ BEGIN
         UPDATEDBY = :new.UPDATEDBY,
         CLASSNAME = 'org.openbravo.erpWindows.' || v_WindowName || '.' || v_ClassName
       WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
-      AND CLASSNAME LIKE 'org.openbravo.erpWindows.%'; 
-      
+      AND CLASSNAME LIKE 'org.openbravo.erpWindows.%';
+
     ELSE
       Ad_Sequence_Next('AD_Model_Object', :new.AD_Client_ID, v_ID);
       INSERT INTO AD_MODEL_OBJECT (AD_MODEL_OBJECT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
       UPDATED, UPDATEDBY, ACTION, AD_TAB_ID, CLASSNAME, ISDEFAULT)
       VALUES (v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
       now(), :new.UPDATEDBY, 'W', :new.AD_TAB_ID, 'org.openbravo.erpWindows.' || v_WindowName || '.' || v_ClassName, 'Y');
-      
-    END IF; 
 
-    SELECT COUNT(*) INTO v_Count 
+    END IF;
+
+    SELECT COUNT(*) INTO v_Count
     FROM AD_MODEL_OBJECT_MAPPING
     WHERE AD_MODEL_OBJECT_ID IN (
       SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
     AND MAPPINGNAME LIKE '/%/%_Relation.html';
-    
+
     IF v_Count > 0 THEN
       UPDATE AD_MODEL_OBJECT_MAPPING
       SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
@@ -94,22 +94,22 @@ BEGIN
       WHERE AD_MODEL_OBJECT_ID IN (
         SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
       AND MAPPINGNAME LIKE '/%/%_Relation.html';
-      
+
     ELSE
       Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
       INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
       ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
       VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
       now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_Relation.html'), 'Y');
-      
+
     END IF;
-  
-    SELECT COUNT(*) INTO v_Count 
+
+    SELECT COUNT(*) INTO v_Count
     FROM AD_MODEL_OBJECT_MAPPING
     WHERE AD_MODEL_OBJECT_ID IN (
       SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
     AND MAPPINGNAME LIKE '/%/%_Edition.html';
-    
+
     IF v_Count > 0 THEN
       UPDATE AD_MODEL_OBJECT_MAPPING
       SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
@@ -121,23 +121,23 @@ BEGIN
       WHERE AD_MODEL_OBJECT_ID IN (
         SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
       AND MAPPINGNAME LIKE '/%/%_Edition.html';
-      
+
     ELSE
       Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
       INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
       ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
       VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
       now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_Edition.html'), 'N');
-      
+
     END IF;
-  
-    SELECT COUNT(*) INTO v_Count 
+
+    SELECT COUNT(*) INTO v_Count
     FROM AD_MODEL_OBJECT_MAPPING
     WHERE AD_MODEL_OBJECT_ID IN (
       SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
-    AND MAPPINGNAME LIKE '/%/%_Excel.xls';  
-    
-    IF v_Count > 0 THEN  
+    AND MAPPINGNAME LIKE '/%/%_Excel.xls';
+
+    IF v_Count > 0 THEN
       UPDATE AD_MODEL_OBJECT_MAPPING
       SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
         AD_ORG_ID = :new.AD_ORG_ID,
@@ -147,24 +147,24 @@ BEGIN
         MAPPINGNAME = ('/' || v_WindowName || '/' || v_ClassName || '_Excel.xls')
       WHERE AD_MODEL_OBJECT_ID IN (
         SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
-      AND MAPPINGNAME LIKE '/%/%_Excel.xls';  
-      
+      AND MAPPINGNAME LIKE '/%/%_Excel.xls';
+
     ELSE
       Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
       INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
       ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
       VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
       now(), :new.UPDATEDBY, v_ID, ('/' || v_WindowName || '/' || v_ClassName || '_Excel.xls'), 'N');
-      
+
     END IF;
-  
-    SELECT COUNT(*) INTO v_Count 
+
+    SELECT COUNT(*) INTO v_Count
     FROM AD_MODEL_OBJECT
     WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
     AND CLASSNAME LIKE 'org.openbravo.erpCommon.ad_callouts.ComboReloads%';
-    
+
     IF v_Count > 0 THEN
-      UPDATE AD_MODEL_OBJECT 
+      UPDATE AD_MODEL_OBJECT
       SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
         AD_ORG_ID = :new.AD_ORG_ID,
         ISACTIVE = v_IsActive,
@@ -172,24 +172,24 @@ BEGIN
         UPDATEDBY = :new.UPDATEDBY,
         CLASSNAME = 'org.openbravo.erpCommon.ad_callouts.ComboReloads' || :new.ad_tab_id
       WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
-      AND CLASSNAME LIKE 'org.openbravo.erpCommon.ad_callouts.ComboReloads%';  
-      
+      AND CLASSNAME LIKE 'org.openbravo.erpCommon.ad_callouts.ComboReloads%';
+
     ELSE
       Ad_Sequence_Next('AD_Model_Object', :new.AD_Client_ID, v_ID);
       INSERT INTO AD_MODEL_OBJECT (AD_MODEL_OBJECT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
       UPDATED, UPDATEDBY, ACTION, AD_TAB_ID, CLASSNAME, ISDEFAULT)
       VALUES (v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
       now(), :new.UPDATEDBY, 'W', :new.AD_TAB_ID, 'org.openbravo.erpCommon.ad_callouts.ComboReloads' || :new.ad_tab_id, 'N');
-      
+
     END IF;
- 
-    SELECT COUNT(*) INTO v_Count 
+
+    SELECT COUNT(*) INTO v_Count
     FROM AD_MODEL_OBJECT_MAPPING
     WHERE AD_MODEL_OBJECT_ID IN (
       SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
     AND MAPPINGNAME LIKE '/ad_callouts/ComboReloads%.html';
-    
-    IF v_Count > 0 THEN  
+
+    IF v_Count > 0 THEN
       UPDATE AD_MODEL_OBJECT_MAPPING
       SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
         AD_ORG_ID = :new.AD_ORG_ID,
@@ -200,18 +200,18 @@ BEGIN
       WHERE AD_MODEL_OBJECT_ID IN (
         SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
       AND MAPPINGNAME LIKE '/ad_callouts/ComboReloads%.html';
-    
+
     ELSE
       Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
       INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,
       ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_MODEL_OBJECT_ID, MAPPINGNAME, ISDEFAULT)
       VALUES (v_ID_MAP, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
       now(), :new.UPDATEDBY, v_ID, ('/ad_callouts/ComboReloads' || :new.ad_tab_id || '.html'), 'N');
-      
+
     END IF;
-  
+
  END IF;
- 
+
  IF (DELETING) THEN
   DELETE FROM AD_MODEL_OBJECT_MAPPING WHERE AD_MODEL_OBJECT_ID IN (
       SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W');

@@ -32,7 +32,7 @@ BEGIN
   ELSE
     v_AmortizationID := :OLD.A_Amortization_ID;
   END IF;
-  
+
     begin
       SELECT processed,
              POSTED

@@ -49,8 +49,8 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20400, 'Product has active Inventory');
    END IF;
   END IF;
-  
-  IF( COALESCE(:old.Name,'.') <> COALESCE(:new.Name,'.') 
+
+  IF( COALESCE(:old.Name,'.') <> COALESCE(:new.Name,'.')
   OR COALESCE(:old.documentnote,'.') <> COALESCE(:new.documentnote,'.') ) THEN
     UPDATE M_PRODUCT_Trl
       SET IsTranslated='N'

@@ -63,7 +63,7 @@
     Description=:new.Description
   WHERE AD_Workbench_ID=:new.AD_Workbench_ID;
   -- reset Translation flag
-  IF( COALESCE(:old.Name,'.') <> COALESCE(:new.Name,'.') 
+  IF( COALESCE(:old.Name,'.') <> COALESCE(:new.Name,'.')
   OR COALESCE(:old.Description,'.') <> COALESCE(:new.Description,'.')
   OR COALESCE(:old.Help,'.') <> COALESCE(:new.Help,'.') ) THEN
     UPDATE AD_Workbench_Trl

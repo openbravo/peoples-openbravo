@@ -19,18 +19,18 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_DocStatus CHAR(2);
-  BEGIN  
+  BEGIN
   IF INSERTING THEN
     v_DocStatus := :new.DocStatus;
   ELSE
     v_DocStatus := :old.DocStatus;
   END IF;
-  
+
   IF ((v_DocStatus = 'CL')
       OR ((v_DocStatus = 'CO') AND NOT UPDATING)) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
   END IF;
-  
+
   IF (v_DocStatus = 'CO' AND UPDATING) THEN
     IF ((COALESCE(:old.DocumentNo, '.') <> COALESCE(:new.DocumentNo,'.'))
        OR (COALESCE(:old.C_BPartner_ID, 0) <> COALESCE(:new.C_BPartner_ID, 0))

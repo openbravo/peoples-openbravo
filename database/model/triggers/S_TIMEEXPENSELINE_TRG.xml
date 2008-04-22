@@ -29,9 +29,9 @@ BEGIN
       v_need_verification := false;
     END IF;
    END IF;
-   
+
    IF (v_need_verification) THEN
-   -- ReadOnly Check   
+   -- ReadOnly Check
     SELECT  COUNT(*)
      INTO v_RO
     FROM S_TIMEEXPENSE

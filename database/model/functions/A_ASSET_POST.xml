@@ -154,7 +154,7 @@
       FROM A_AmortizationLine al, A_Amortization am
       WHERE A_Asset_ID=V_Record_ID  AND am.A_Amortization_ID=al.A_Amortization_ID;
       --we get the standard precision for the selected currency
-      SELECT STDPRECISION 
+      SELECT STDPRECISION
       INTO v_Currency_Pre
       FROM C_CURRENCY
       WHERE C_CURRENCY_ID = v_C_CURRENCY_ID;

@@ -34,7 +34,7 @@
       IF UPDATING THEN
        IF(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
        OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
-       OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.')) 
+       OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.'))
        THEN
     -- Update Menu
   UPDATE AD_Menu_Trl

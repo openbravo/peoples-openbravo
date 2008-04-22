@@ -58,10 +58,10 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20510, 'The settlement is processed');
       END IF;
     END IF;
-  
+
   IF (COALESCE(:NEW.IsAutomaticGenerated,'Y')='N' AND :NEW.C_Order_ID IS NOT NULL) THEN
       -- Check if it is totally invoiced
-      SELECT COALESCE(SUM(NOTINVOICED),0)  
+      SELECT COALESCE(SUM(NOTINVOICED),0)
         INTO v_Aux
         FROM (SELECT (O.QTYORDERED- COALESCE(LL.QTYINVOICED,0)) AS NOTINVOICED
                 FROM C_ORDERLINE O LEFT JOIN (SELECT IL.C_INVOICELINE_ID, IL.QTYINVOICED, IL.C_ORDERLINE_ID
@@ -80,7 +80,7 @@ BEGIN
              RAISE_APPLICATION_ERROR(-20000, '@OrderCompletelyInvoiced@');
            end if;
         END IF;
-        
+
       -- If Order is processed, DP should be valid
       SELECT PROCESSED
        INTO v_IsProcessed
@@ -90,7 +90,7 @@ BEGIN
          :NEW.IsValid:='Y';
       END IF;
     END IF;
-  
+
   IF (COALESCE(:new.IsAutomaticGenerated,'Y')='N' AND :new.C_Invoice_ID IS NOT NULL) THEN
       SELECT Processed
      INTO v_IsProcessed

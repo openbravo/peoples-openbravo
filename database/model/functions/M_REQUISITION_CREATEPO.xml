@@ -41,14 +41,14 @@
   v_NoRecords NUMBER:=0;
   v_RequisitionOrder_ID NUMBER;
   v_PaymentTerm_ID NUMBER;
-  
+
   v_PriceList NUMBER;
   v_PriceLimit NUMBER;
   v_PriceStd NUMBER;
   v_PriceActual NUMBER;
   v_Discount NUMBER;
   v_Tax_ID NUMBER;
-  
+
   p_OrderDate DATE;
   p_Vendor_ID NUMBER;
   p_PriceList_ID NUMBER;
@@ -59,7 +59,7 @@
   TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
   Cur_Product RECORD;
-  Cur_Lines RECORD;	
+  Cur_Lines RECORD;
 BEGIN
   DBMS_OUTPUT.PUT_LINE('BEGIN M_REQUISITION_ORDER ' || p_PInstance_ID) ;
   v_ResultStr:='PInstanceNotFound';
@@ -91,7 +91,7 @@ BEGIN
       v_User_ID:=Cur_Parameter.AD_User_ID;
       v_Client_ID := Cur_Parameter.AD_Client_ID;
     END LOOP; -- Get Parameter
-    
+
     v_ResultStr := 'Checking vendor';
     IF (p_Vendor_ID IS NULL OR p_Vendor_ID = '') THEN
       FOR Cur_Product IN (
@@ -114,8 +114,8 @@ BEGIN
     END IF;
 
     v_ResultStr:='Start lines cursor';
-    FOR Cur_Lines IN 
-      (SELECT A.*, 
+    FOR Cur_Lines IN
+      (SELECT A.*,
            COALESCE(A.A_PRICELIST_ID, C_BPARTNER.PO_PRICELIST_ID) AS PRICELIST_ID,
            C_BPARTNER.PAYMENTRULEPO AS PAYMENTRULE, C_BPARTNER.PO_PAYMENTTERM_ID AS C_PAYMENTTERM_ID,
            C_BPARTNER.DELIVERYRULE, C_BPARTNER.FREIGHTCOSTRULE, C_BPARTNER.DELIVERYVIARULE
@@ -123,7 +123,7 @@ BEGIN
                  COALESCE(p_PriceList_ID, M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID) AS A_PRICELIST_ID,
                  M_REQUISITIONLINE.*
               FROM M_REQUISITION, M_REQUISITIONLINE LEFT JOIN (SELECT MAX(C_BPARTNER_ID) AS C_BPARTNER_ID, M_PRODUCT_ID
-                                                               FROM M_PRODUCT_PO 
+                                                               FROM M_PRODUCT_PO
                                                                WHERE ISCURRENTVENDOR = 'Y'
                                                                  AND ISACTIVE = 'Y'
                                                                  AND DISCONTINUED = 'N'
@@ -132,18 +132,18 @@ BEGIN
               WHERE M_REQUISITION.M_REQUISITION_ID = M_REQUISITIONLINE.M_REQUISITION_ID
                 AND M_REQUISITION.M_REQUISITION_ID = v_Record_ID
                 AND M_REQUISITIONLINE.REQSTATUS = 'O'
-                AND NOT (COALESCE(M_REQUISITIONLINE.LOCKEDBY, v_User_ID) <> v_User_ID 
+                AND NOT (COALESCE(M_REQUISITIONLINE.LOCKEDBY, v_User_ID) <> v_User_ID
                          AND COALESCE(M_REQUISITIONLINE.LOCKDATE, TO_DATE('01-01-1900', 'DD-MM-YYYY')) >= (now()-3))
               ) A, C_BPARTNER
        WHERE A.VENDOR_ID = C_BPARTNER.C_BPARTNER_ID
        ORDER BY A.VENDOR_ID, COALESCE(A.A_PRICELIST_ID, C_BPARTNER.PO_PRICELIST_ID)) LOOP
       v_ResultStr:='Line start';
-      
+
       IF (Cur_Lines.PRICELIST_ID IS NULL ) THEN
         v_Message := '@PriceListVersionNotFound@';
         RAISE_APPLICATION_ERROR(-20000, v_Message);
       END IF;
-      
+
       IF (v_C_Order_ID IS NULL OR v_Vendor_Old <> Cur_Lines.Vendor_ID OR v_PriceList_Old <> Cur_Lines.PriceList_ID) THEN
         IF (v_C_Order_ID IS NOT NULL) THEN
           v_ResultStr := 'Post Order ' || v_C_Order_ID;
@@ -171,16 +171,16 @@ BEGIN
         WHERE ISACTIVE='Y'
           AND ISBILLTO='Y'
           AND C_BPARTNER_ID=Cur_Lines.Vendor_ID;
-        
+
         SELECT C_CURRENCY_ID INTO v_Currency_ID
         FROM M_PRICELIST
         WHERE M_PRICELIST_ID = Cur_Lines.Pricelist_ID;
-        
+
         IF(Cur_Lines.C_PAYMENTTERM_ID IS NULL) THEN
           SELECT c_paymentterm_id INTO v_PaymentTerm_ID
-          FROM c_paymentterm 
-          WHERE isactive='Y' 
-            AND isdefault='Y' 
+          FROM c_paymentterm
+          WHERE isactive='Y'
+            AND isdefault='Y'
             AND AD_Client_ID = v_Client_ID;
         END IF;
 
@@ -208,7 +208,7 @@ BEGIN
             NULL, 'N', p_OrderDate
         );
       END IF;
-      
+
       v_ResultStr := 'Create C_Order_Line';
       v_Line := v_Line + 10;
       Ad_Sequence_Next('C_OrderLine', v_Client_ID, v_COrderLine_ID);
@@ -218,21 +218,21 @@ BEGIN
              ROUND((COALESCE(pp.PRICELIST, Cur_Lines.PRICELIST, Cur_Lines.PRICEACTUAL) - COALESCE(Cur_Lines.PRICEACTUAL, pp.PRICESTD))/
                  COALESCE(pp.PRICELIST, Cur_Lines.PRICELIST, Cur_Lines.PRICEACTUAL)*100,CUR.PRICEPRECISION)
         INTO v_PriceList, v_PriceLimit, v_PriceStd, v_PriceActual, v_Discount
-      FROM 
+      FROM
         (SELECT COALESCE(MAX(M_PRODUCTPRICE.PRICELIST), Cur_Lines.PRICELIST, Cur_Lines.PRICEACTUAL) AS PRICELIST,
              COALESCE(MAX(M_PRODUCTPRICE.PRICELIMIT), Cur_Lines.PRICEACTUAL) AS PRICELIMIT,
              COALESCE(MAX(M_PRODUCTPRICE.PRICESTD), Cur_Lines.PRICEACTUAL) AS PRICESTD
          FROM M_PRODUCTPRICE
          WHERE M_PRICELIST_VERSION_ID = GET_PRICELIST_VERSION(Cur_Lines.PRICELIST_ID, p_OrderDate)
            AND M_PRODUCT_ID = Cur_Lines.M_PRODUCT_ID) pp, (SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = v_Currency_ID) CUR;
-        
+
       IF (v_PriceActual IS NULL) THEN
         v_Message := '@PriceNotFound@';
         RAISE_APPLICATION_ERROR(-20000, v_Message);
       END IF;
-      
+
       v_Tax_ID := C_GetTax(Cur_Lines.M_Product_ID, p_OrderDate, p_Org_ID, p_Warehouse_ID, v_BillTo_ID, v_BPartner_Location_ID, null, 'N');
-      
+
       v_ResultStr:='Insert order line';
       INSERT INTO C_OrderLine (
           C_ORDERLINE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
@@ -255,11 +255,11 @@ BEGIN
           v_PriceStd, v_PriceActual*(Cur_Lines.QTY - Cur_Lines.ORDEREDQTY),v_Discount,
           v_Tax_ID
       );
-      
+
       Ad_Sequence_Next('M_RequisitionOrder', v_User_ID, v_RequisitionOrder_ID);
-      
+
       INSERT INTO M_REQUISITIONORDER (
-        M_REQUISITIONORDER_ID, AD_CLIENT_ID, AD_ORG_ID, 
+        M_REQUISITIONORDER_ID, AD_CLIENT_ID, AD_ORG_ID,
         CREATED, CREATEDBY, UPDATED, UPDATEDBY, ISACTIVE,
         M_REQUISITIONLINE_ID, C_ORDERLINE_ID, QTY
       ) VALUES (
@@ -269,14 +269,14 @@ BEGIN
       );
       M_REQUISITIONLINE_STATUS(NULL, Cur_Lines.M_RequisitionLine_ID, v_User_ID);
     END LOOP;
-        
+
     v_ResultStr := 'Post last Order ' || v_C_Order_ID;
     C_ORDER_POST1(null, v_C_Order_ID);
     v_Message := v_Message || ', ' || '@OrderDocumentno@ ' || v_DocumentNo;
-    
-    
-    
-    
+
+
+
+
 
   END; --BODY
   v_Message:='@Created@: ' || v_NoRecords || v_Message;

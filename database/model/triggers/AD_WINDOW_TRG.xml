@@ -99,7 +99,7 @@
         WHERE AD_Window_ID=:new.AD_Window_ID
           AND IsCentrallyMaintained='Y';
     END IF;
-    
+
     -- Translation
     UPDATE AD_Window_Trl
       SET IsTranslated='N',

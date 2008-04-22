@@ -42,7 +42,7 @@
   SELECT :new.C_COUNTRY_ID,
     AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
-    :new.Updated, :new.UpdatedBy, 
+    :new.Updated, :new.UpdatedBy,
     'N', :new.Name, :new.Description,
     :new.RegionName, :new.DisplaySequence
   FROM AD_Language

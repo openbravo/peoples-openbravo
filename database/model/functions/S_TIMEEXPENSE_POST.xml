@@ -78,7 +78,7 @@ BEGIN --BODY
     CUR_te RECORD;
     v_Hours NUMBER;
   BEGIN
-  
+
   /* Check if there are expense lines to process */
   SELECT COUNT(S_TimeExpenseLine.S_TimeExpenseLine_Id)
   INTO v_ExpenseLines
@@ -89,7 +89,7 @@ BEGIN --BODY
   IF (v_ExpenseLines = 0) THEN
     RAISE_APPLICATION_ERROR(-20000, '@NoExpenseLines@'||'.');
   END IF;
-  
+
     -- For ease id having access to all variables
   SELECT S_TimeExpense.Processed,
   MAX(S_TimeExpenseLine.C_InvoiceLine_ID), MAX(S_TimeExpenseLine.C_OrderLine_ID)

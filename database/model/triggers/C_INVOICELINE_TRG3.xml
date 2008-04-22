@@ -22,7 +22,7 @@ vwithholdingtotal NUMBER;
 vBusPartId NUMBER;
 vIsSalesInvoice CHAR(1);
 vProcessed  CHAR(1);
---InvoiceLine 
+--InvoiceLine
 v_invoiceid NUMBER;
 vexcludeforwh CHAR(1);
 vlinebaseamountnew NUMBER;
@@ -32,11 +32,11 @@ isbaseamountpercent CHAR(1);
 baseamountpercent NUMBER;
 includetaxinps CHAR(1);
 taxinps_id NUMBER;
--- Tax 
+-- Tax
 vTaxAmount  NUMBER;
 -- Withholding
 withpercent NUMBER;
---Calculated Variable 
+--Calculated Variable
 vwithholdingnew NUMBER;
 vwithholdingold NUMBER;
 taxamountwith  NUMBER;
@@ -49,22 +49,22 @@ BEGIN
     vexcludeforwh := :NEW.excludeforwithholding;
     vlinebaseamountnew := :NEW.linenetamt;
     vlinebaseamountold := 0;
-    
+
     ELSIF(UPDATING) THEN
       v_invoiceid := :NEW.c_invoice_id;
       vexcludeforwh := :NEW.excludeforwithholding;
       vlinebaseamountnew := :NEW.linenetamt;
       vlinebaseamountold := :OLD.linenetamt;
-      
+
       ELSIF(DELETING) THEN
         v_invoiceid := :OLD.c_invoice_id;
         vexcludeforwh := :OLD.excludeforwithholding;
         vlinebaseamountnew := 0;
         vlinebaseamountold := :OLD.linenetamt;
-        
+
       END IF;
 
-      -- If The lines is excluded for calculate the witholding --> exit 
+      -- If The lines is excluded for calculate the witholding --> exit
       IF vexcludeforwh = 'Y' THEN
         finish_process:= true;
       END IF;
@@ -78,26 +78,26 @@ BEGIN
       -- Se the invoice isn't purchase exit from trigger
       if (vIsSalesInvoice <> 'N') then
         finish_process:= true;
-      end if; 
+      end if;
   END IF;
   IF (NOT finish_process) THEN
     BEGIN
       select bpwh.is_percent_wh, bpwh.wh_percent, bpwh.include_tax, bpwh.c_tax_id,wh.rate
       into isbaseamountpercent, baseamountpercent,  includetaxinps, taxinps_id,withpercent
         from c_bp_withholding bpwh, c_withholding wh
-       where bpwh.c_bpartner_id = vBusPartId 
-       and bpwh.c_withholding_id = wh.c_withholding_id 
+       where bpwh.c_bpartner_id = vBusPartId
+       and bpwh.c_withholding_id = wh.c_withholding_id
        and bpwh.c_withholding_id = vwithid;
 
-    EXCEPTION 
+    EXCEPTION
     When NO_DATA_FOUND THEN
       finish_process:= true;
     end;
   END IF;
   IF (NOT finish_process) THEN
-   -- ReadOnly Check    
+   -- ReadOnly Check
     IF (vProcessed = 'N') THEN
-    
+
       IF(isbaseamountpercent <> 'Y') THEN
         baseamountpercent := 100;
       END IF;
@@ -109,17 +109,17 @@ BEGIN
       vwithholdingold :=(withpercent *vlinebaseamountold) / 100;
 
 
-      -- WithHolding Tax  
+      -- WithHolding Tax
       vTaxAmount := 0;
       IF (includetaxinps = 'Y') THEN
        select coalesce(sum(taxamt),0) into vTaxAmount
-        from c_invoicetax invtax , c_tax tax 
+        from c_invoicetax invtax , c_tax tax
        where tax.c_tax_id = invtax.c_tax_id
         and tax.is_withholdingtax='Y'
         and invtax.c_invoice_id = v_invoiceid
         and tax.c_tax_id=taxinps_id;
       END IF;
-      
+
       taxamountwith := baseamountpercent * (vTaxAmount)/100;
       vwithholdingtax :=  withpercent*taxamountwith/100 ;
 
@@ -132,7 +132,7 @@ BEGIN
       WHERE c_invoice_id = v_invoiceid;
     END IF;
   END IF;
-  
+
 END C_INVOICELINE_TRG3
 ]]></body>
     </trigger>

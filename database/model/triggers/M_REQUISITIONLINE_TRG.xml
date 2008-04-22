@@ -21,8 +21,8 @@
   v_DocStatus CHAR(2);
   v_ReqStatus CHAR(1);
   v_OrderedQty NUMBER;
-  
-  BEGIN  
+
+  BEGIN
   IF INSERTING THEN
     SELECT DocStatus, :new.ReqStatus, 0 INTO v_DocStatus, v_ReqStatus, v_OrderedQty
     FROM M_Requisition
@@ -32,11 +32,11 @@
     FROM M_Requisition
     WHERE M_Requisition_ID = :old.M_Requisition_ID;
   END IF;
-  
+
   IF (v_DocStatus = 'CL') THEN
     RAISE_APPLICATION_ERROR(-20527, 'It is not possible to modify a closed requisition');
   END IF;
-  
+
   IF (v_DocStatus = 'CO' AND INSERTING) THEN
     RAISE_APPLICATION_ERROR(-20525, 'It is not possible insert a new line in a completed requisition');
   END IF;
@@ -44,7 +44,7 @@
   IF (v_ReqStatus = 'P') THEN
     RAISE_APPLICATION_ERROR(-20526, 'It is not possible to modify planned requisition lines');
   END IF;
-  
+
   IF (v_ReqStatus <> 'O') THEN
     RAISE_APPLICATION_ERROR(-20520, 'It is not possible to modify closed or cancelled requisition lines');
   END IF;

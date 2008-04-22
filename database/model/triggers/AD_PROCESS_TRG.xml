@@ -67,7 +67,7 @@ BEGIN
 --      update AD_Column/AD_Field Name
   IF UPDATING
   THEN
-  
+
     IF(    COALESCE (:OLD.NAME, '.') <> COALESCE (:NEW.NAME, '.')
         OR COALESCE (:OLD.Description, '.') <> COALESCE (:NEW.Description, '.')
         OR COALESCE (:OLD.HELP, '.') <> COALESCE (:NEW.HELP, '.') )

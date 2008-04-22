@@ -28,17 +28,17 @@
 ************************************************************************/
 
   v_ResultStr VARCHAR2(2000):='';
-  v_Result NUMBER:= 1;  
+  v_Result NUMBER:= 1;
   v_Message VARCHAR2(2000):='';
   v_exist NUMBER:=0;
   v_M_Product_Org_ID NUMBER(10);
   v_warehouse_ID NUMBER(10);
   v_org_ID NUMBER(10);
   v_count_update NUMBER:= 0;
-  v_count_insert NUMBER:= 0;  
+  v_count_insert NUMBER:= 0;
   TYPE RECORD IS REF CURSOR;
   Cur_Cursor RECORD;
-  Cur_Parameter RECORD;  
+  Cur_Parameter RECORD;
 BEGIN
 
   IF(p_PInstance_ID IS NOT NULL) THEN
@@ -64,58 +64,58 @@ BEGIN
     ELSE
       DBMS_OUTPUT.PUT_LINE('--<<M_UPDATE_PARETO_PRODUCT>>') ;
       v_warehouse_ID:=p_warehouse_ID;
-      v_org_ID:=p_org_ID;    
+      v_org_ID:=p_org_ID;
     END IF;
     BEGIN --BODY
-    
+
   for Cur_Cursor in (
      SELECT ORGID, SEARCHKEY, NAME, COST, PORCENTAJE,
      GET_PARETO_ABC(v_warehouse_ID, v_org_ID, PORCENTAJE) AS ISABC,
      AD_ORG_ID, AD_CLIENT_ID, M_PRODUCT_ID
      FROM
      (
-     SELECT 
+     SELECT
       AD_ORG.NAME AS ORGID,
       PR.VALUE AS SEARCHKEY,
       PR.NAME,
       GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV') AS COST,
-      100*(GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV')/ (SELECT SUM(GET_PRODUCT_COST(PR1.M_PRODUCT_ID,TO_DATE(now()),'AV')) 
-                                                           from M_WAREHOUSE MW1  
+      100*(GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV')/ (SELECT SUM(GET_PRODUCT_COST(PR1.M_PRODUCT_ID,TO_DATE(now()),'AV'))
+                                                           from M_WAREHOUSE MW1
                                                            LEFT JOIN M_LOCATOR ML1 ON ML1.M_WAREHOUSE_ID=MW1.M_WAREHOUSE_ID
                                                            LEFT JOIN M_STORAGE_DETAIL MSD1 ON ML1.M_LOCATOR_ID=MSD1.M_LOCATOR_ID
-                                                           LEFT JOIN M_PRODUCT PR1 ON MSD1.M_PRODUCT_ID=PR1.M_PRODUCT_ID   
+                                                           LEFT JOIN M_PRODUCT PR1 ON MSD1.M_PRODUCT_ID=PR1.M_PRODUCT_ID
                                                            WHERE MSD1.QTYONHAND>0
                                                            AND (v_warehouse_ID IS NULL OR MW1.M_WAREHOUSE_ID = TO_NUMBER(v_warehouse_ID))
-                                                           AND (v_org_ID IS NULL OR MW1.AD_ORG_ID = TO_NUMBER(v_org_ID)) 
+                                                           AND (v_org_ID IS NULL OR MW1.AD_ORG_ID = TO_NUMBER(v_org_ID))
                                                            ) ) as PORCENTAJE,
       MW.AD_ORG_ID,
       MW.AD_CLIENT_ID,
       PR.M_PRODUCT_ID
      FROM
-     M_WAREHOUSE MW 
+     M_WAREHOUSE MW
        LEFT JOIN M_LOCATOR ML ON ML.M_WAREHOUSE_ID=MW.M_WAREHOUSE_ID
        LEFT JOIN M_STORAGE_DETAIL MSD ON ML.M_LOCATOR_ID=MSD.M_LOCATOR_ID
-       LEFT JOIN M_PRODUCT PR ON MSD.M_PRODUCT_ID=PR.M_PRODUCT_ID, AD_ORG   
+       LEFT JOIN M_PRODUCT PR ON MSD.M_PRODUCT_ID=PR.M_PRODUCT_ID, AD_ORG
      WHERE (v_warehouse_ID IS NULL OR MW.M_WAREHOUSE_ID = TO_NUMBER(v_warehouse_ID))
        AND (v_org_ID IS NULL OR MW.AD_ORG_ID = TO_NUMBER(v_org_ID))
        AND MSD.QTYONHAND>0
        AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV') IS NOT NULL
        AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,TO_DATE(now()),'AV') <> 0
        AND MSD.AD_ORG_ID = AD_ORG.AD_ORG_ID
-     GROUP BY AD_ORG.NAME ,PR.VALUE, PR.NAME, MW.AD_ORG_ID, MW.AD_CLIENT_ID, PR.M_PRODUCT_ID    
+     GROUP BY AD_ORG.NAME ,PR.VALUE, PR.NAME, MW.AD_ORG_ID, MW.AD_CLIENT_ID, PR.M_PRODUCT_ID
      ORDER BY PORCENTAJE DESC) BBB) loop
-     
-     SELECT COUNT(*) 
-     INTO v_exist 
+
+     SELECT COUNT(*)
+     INTO v_exist
      FROM M_PRODUCT_ORG
      WHERE M_PRODUCT_ID = Cur_Cursor.M_PRODUCT_ID
-     AND AD_ORG_ID = Cur_Cursor.AD_ORG_ID; 
-     
+     AND AD_ORG_ID = Cur_Cursor.AD_ORG_ID;
+
      IF (v_exist > 0) THEN
        UPDATE M_PRODUCT_ORG SET
        ABC = Cur_Cursor.ISABC
        WHERE M_PRODUCT_ID = Cur_Cursor.M_PRODUCT_ID
-       AND AD_ORG_ID = Cur_Cursor.AD_ORG_ID; 
+       AND AD_ORG_ID = Cur_Cursor.AD_ORG_ID;
        v_count_update := v_count_update + 1;
      ELSE
        AD_Sequence_Next('M_Product_Org', Cur_Cursor.AD_CLIENT_ID, v_M_Product_Org_ID) ;

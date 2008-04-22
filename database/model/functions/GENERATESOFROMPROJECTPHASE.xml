@@ -63,10 +63,10 @@
       v_M_PriceList_ID NUMBER;
       v_Billto_ID NUMBER;
       v_InvoiceRule CHAR;
-      v_M_PriceList_Version_ID NUMBER;    
+      v_M_PriceList_Version_ID NUMBER;
       v_PriceActual NUMBER;
       v_Discount NUMBER;
-      
+
     TYPE RECORD IS REF CURSOR;
       Cur_SO RECORD;
       Cur_SOLINES RECORD;
@@ -106,27 +106,27 @@
         ELSIF Cur_SO.SALESREP_ID IS NULL THEN
           RAISE_APPLICATION_ERROR(-20000, '@ProjectSalesRepNotFound@'||'.');
         END IF;
-        
+
         -- Get Business Partner Location
         v_Billto_ID := Cur_SO.BILLTO_ID;
         IF (v_Billto_ID IS NULL) THEN
           v_Billto_ID := C_GetBPLocationID(Cur_SO.C_BPartner_ID, 'B') ;
         END IF;
-        
+
         SELECT InvoiceRule INTO v_InvoiceRule
         FROM C_BPARTNER
         WHERE C_BPartner_ID = Cur_SO.C_BPARTNER_ID;
         IF (v_InvoiceRule IS NULL) THEN
            RAISE_APPLICATION_ERROR(-20000, '@ThebusinessPartner@'||' '||' @InvoiceRuleNotdefined@'||'.');
         END IF;
-        
+
         v_C_DOCTYPE_ID:=Ad_Get_Doctype(Cur_SO.AD_Client_ID, Cur_SO.AD_Org_ID, 'SOO', 'SO') ;
         v_ResultStr:='C_DOCTYPE_ID - ' || v_C_DOCTYPE_ID;
         Ad_Sequence_Doctype(v_C_DOCTYPE_ID, Cur_SO.AD_Client_ID, 'Y', v_DocumentNo) ;
         IF(v_DocumentNo IS NULL) THEN
           Ad_Sequence_Doc('DocumentNo_C_Order', Cur_SO.AD_Client_ID, 'Y', v_DocumentNo) ;
         END IF;
-        
+
         -- Get next C_Order_ID
         Ad_Sequence_Next('C_Order', Cur_SO.AD_CLIENT_ID, v_C_Order_ID) ;
         v_ResultStr:='C_ORDER_ID - ' || v_C_Order_ID;
@@ -159,32 +159,32 @@
             v_Billto_ID, Cur_SO.C_CAMPAIGN_ID, Cur_SO.C_PROJECT_ID, Cur_SO.AD_User_ID,
              'N', TRUNC(now(), 'DD'), Cur_SO.PHASE_NAME ||' - '|| Cur_SO.DESCRIPTION
           );
-          
+
         UPDATE C_PROJECTPHASE
         SET C_ORDER_ID = v_C_Order_ID
         WHERE C_PROJECTPHASE_ID = v_Record_ID;
-        
+
         -- Select the price list version that a applies for the price list of the header
         SELECT Get_Pricelist_Version(Cur_SO.M_PriceList_ID, TRUNC(now(), 'DD'))
         INTO v_M_PriceList_Version_ID
-        FROM DUAL;        
+        FROM DUAL;
         IF (v_M_PriceList_Version_ID IS NULL) THEN
           RAISE_APPLICATION_ERROR(-20000, '@PriceListVersionNotFound@'||'.');
-        ELSE        
+        ELSE
          -- Select products, quantities, sequence numbers, descriptions and unit prices of the project phases and tasks
             -- In both cases, if no unit price has been defined for a product,
             -- price is taken from the price list of the project.
             -- And if no price is defined in the price list, price is set to 0.
           FOR Cur_SOLINES IN
             (
-            SELECT 'phase' AS PROV, pp.SEQNO, pp.NAME AS LINE_NAME, pp.DESCRIPTION, pr.NAME AS PRODUCT_NAME, pp.M_PRODUCT_ID, pp.QTY, pp.PRICEACTUAL 
+            SELECT 'phase' AS PROV, pp.SEQNO, pp.NAME AS LINE_NAME, pp.DESCRIPTION, pr.NAME AS PRODUCT_NAME, pp.M_PRODUCT_ID, pp.QTY, pp.PRICEACTUAL
             FROM C_PROJECTPHASE pp, M_PRODUCT pr
             WHERE pp.C_PROJECTPHASE_ID = v_Record_ID
               AND pp.M_PRODUCT_ID = pr.M_PRODUCT_ID
               AND pp.M_Product_ID IS NOT NULL
               AND pp.IsActive = 'Y'
             UNION
-            SELECT 'task' as PROV, pt.SEQNO, pt.NAME AS LINE_NAME, pt.DESCRIPTION, pr.NAME AS PRODUCT_NAME, pt.M_PRODUCT_ID, pt.QTY, pt.PRICEACTUAL 
+            SELECT 'task' as PROV, pt.SEQNO, pt.NAME AS LINE_NAME, pt.DESCRIPTION, pr.NAME AS PRODUCT_NAME, pt.M_PRODUCT_ID, pt.QTY, pt.PRICEACTUAL
             FROM C_PROJECTTASK pt, C_PROJECTPHASE pp, M_PRODUCT pr
             WHERE pp.C_PROJECTPHASE_ID = v_Record_ID
               AND pp.C_PROJECTPHASE_ID = pt.C_PROJECTPHASE_ID
@@ -193,8 +193,8 @@
               AND pt.IsActive = 'Y'
             ORDER BY PROV ASC, SEQNO ASC
             )
-          LOOP                    
-                        
+          LOOP
+
             -- Take StdPrice, PriceList and PriceLimit from Price List Version
             SELECT COUNT(*)
             INTO v_Size
@@ -206,7 +206,7 @@
               AND p.M_Product_ID=Cur_SOLINES.M_PRODUCT_ID
               AND pv.M_PriceList_Version_ID=v_M_PriceList_Version_ID
               AND pl.C_Currency_ID=Cur_SO.C_CURRENCY_ID;
-            IF (v_Size>0) THEN 
+            IF (v_Size>0) THEN
               SELECT Bom_Pricestd(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceStd,
                 Bom_Pricelist(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceList,
                 Bom_Pricelimit(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceLimit,
@@ -227,29 +227,29 @@
               v_PriceLimit := NULL;
               v_C_UOM_ID := NULL;
             END IF;
-            
-            -- Calculate Price Actual                      
-            v_PriceActual := COALESCE(Cur_SOLINES.priceactual,M_Get_Offers_Price(now(), Cur_SO.C_BPARTNER_ID, Cur_SOLINES.M_PRODUCT_ID, v_PriceStd, Cur_SOLINES.Qty, Cur_SO.M_PRICELIST_ID),0);           
-            
+
+            -- Calculate Price Actual
+            v_PriceActual := COALESCE(Cur_SOLINES.priceactual,M_Get_Offers_Price(now(), Cur_SO.C_BPARTNER_ID, Cur_SOLINES.M_PRODUCT_ID, v_PriceStd, Cur_SOLINES.Qty, Cur_SO.M_PRICELIST_ID),0);
+
             IF (v_PriceStd IS NULL) THEN
              v_PriceStd :=  v_PriceActual ;
             END IF;
-            
+
             IF (v_PriceList IS NULL) THEN
               v_PriceList :=  v_PriceActual ;
             END IF;
-            
+
              IF (v_PriceLimit IS NULL) THEN
               v_PriceLimit :=  v_PriceActual ;
             END IF;
-            
+
             IF (v_PriceList = 0) THEN
                v_Discount := 0 ;
             ELSE
               -- Calculate rounded discount
               v_Discount :=ROUND((v_PriceList-v_PriceActual) / v_PriceList*100, 2);
             END IF;
-            
+
             IF (v_C_UOM_ID IS NULL) THEN
               SELECT P.C_UOM_ID
               INTO v_UOM
@@ -258,11 +258,11 @@
             ELSE
               v_UOM := v_C_UOM_ID;
             END IF;
-            
+
             -- Get next C_OrderLine_ID
             Ad_Sequence_Next('C_OrderLine', Cur_SO.AD_CLIENT_ID, v_C_OrderLine_ID) ;
             v_ResultStr:='C_OrderLine_ID - ' || v_C_OrderLine_ID;
-            
+
             INSERT
             INTO C_ORDERLINE
               (

@@ -32,7 +32,7 @@
   v_Branch NVARCHAR2(4);
   v_DigitBank NVARCHAR2(1);
   v_CountryId NVARCHAR2(2);
-  v_Length NUMBER;  
+  v_Length NUMBER;
 BEGIN
   --  Default Accounts for all AcctSchema
   IF(INSERTING OR UPDATING) THEN

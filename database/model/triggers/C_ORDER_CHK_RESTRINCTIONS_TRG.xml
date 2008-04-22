@@ -17,8 +17,8 @@ v_DateNull DATE := TO_DATE('01-01-1900','DD-MM-YYYY');
 
 BEGIN
   IF UPDATING THEN
-    IF(:OLD.Processed='Y' AND :OLD.Docaction <> 'CL' 
-          AND( 
+    IF(:OLD.Processed='Y' AND :OLD.Docaction <> 'CL'
+          AND(
                (COALESCE(:OLD.C_BPartner_ID, 0) <> COALESCE(:NEW.C_BPartner_ID, 0))
                OR(COALESCE(:OLD.DOCUMENTNO, '.') <> COALESCE(:NEW.DOCUMENTNO, '.'))
                OR(COALESCE(:OLD.C_DOCTYPE_ID, 0) <> COALESCE(:NEW.C_DOCTYPE_ID, 0))

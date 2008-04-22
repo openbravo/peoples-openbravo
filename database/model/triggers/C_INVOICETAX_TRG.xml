@@ -39,9 +39,9 @@ BEGIN
     INTO v_Processed
     FROM C_INVOICE
     WHERE C_INVOICE_ID=:old.C_INVOICE_ID;
-    IF(v_Processed='Y' 
-    AND ((COALESCE(:old.TAXBASEAMT, 0) <> COALESCE(:new.TAXBASEAMT, 0)) 
-    OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0)) 
+    IF(v_Processed='Y'
+    AND ((COALESCE(:old.TAXBASEAMT, 0) <> COALESCE(:new.TAXBASEAMT, 0))
+    OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0))
     OR(COALESCE(:old.C_TAX_ID, 0) <> COALESCE(:new.C_TAX_ID, 0))
     OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
     OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN

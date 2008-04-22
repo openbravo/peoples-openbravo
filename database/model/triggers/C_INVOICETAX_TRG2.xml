@@ -60,30 +60,30 @@ BEGIN
         taxamountnew := 0;
         taxamountold := :OLD.taxamt;
       END IF;
-     -- Read data from invoice 
+     -- Read data from invoice
      select c_bpartner_id,withholdingamount,inpsamt,issotrx , coalesce(processed,'N') ,c_withholding_id
      into v_buspartid, whamountold, inpsamountold, vissalesinvoice, vProcessed   ,vwithid
-     from c_invoice 
+     from c_invoice
      where c_invoice_id=v_invoiceid;
      -- Se the invoice isn't purchase exit from trigger
      if (vIsSalesInvoice <> 'N') then
         finish_process:= true;
-     end if; 
+     end if;
 
   IF (NOT finish_process) THEN
      -- Read data from tax
      select is_withholdingtax into v_IsWithTax from c_tax where c_tax_id=v_taxid;
-     
-     -- Read data from Withholding 
+
+     -- Read data from Withholding
      BEGIN
-       select bpwh.is_percent_wh, bpwh.wh_percent, bpwh.include_tax, bpwh.c_tax_id , wh.rate 
+       select bpwh.is_percent_wh, bpwh.wh_percent, bpwh.include_tax, bpwh.c_tax_id , wh.rate
        into isbaseamountpercent, baseamountpercent,  includetaxinps, taxinps_id, withpercent
-       from c_bp_withholding bpwh ,c_withholding wh 
-       where bpwh.c_bpartner_id  = v_buspartid 
+       from c_bp_withholding bpwh ,c_withholding wh
+       where bpwh.c_bpartner_id  = v_buspartid
        and bpwh.c_withholding_id = wh.c_withholding_id
         and bpwh.c_withholding_id = vwithid;
 
-     EXCEPTION 
+     EXCEPTION
       when NO_DATA_FOUND THEN
         finish_process:= true;
      end;
@@ -94,9 +94,9 @@ BEGIN
       END IF;
   END IF;
   IF (NOT finish_process) THEN
-   -- ReadOnly Check    
+   -- ReadOnly Check
     IF (vProcessed = 'N') THEN
-      -- Is the tax is for WithHolding and the BP have the flag activate it add the tax amount 
+      -- Is the tax is for WithHolding and the BP have the flag activate it add the tax amount
       IF (v_IsWithTax= 'Y') and (includetaxinps = 'Y') THEN
         baseamount := baseamountpercent * (taxamountnew-taxamountold)/100;
         whamountnew := whamountold + withpercent*baseamount/100 ;

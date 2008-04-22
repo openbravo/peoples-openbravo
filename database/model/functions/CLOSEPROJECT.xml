@@ -68,7 +68,7 @@
     END LOOP; -- Get Parameter
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_p_Record_ID) ;
     -- Check that we have some restrictions
-    
+
     SELECT projectcategory, createtemppricelist
     INTO v_projectcategory, v_temppricelist
     FROM c_project

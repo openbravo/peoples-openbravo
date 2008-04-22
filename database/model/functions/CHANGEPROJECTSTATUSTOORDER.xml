@@ -134,10 +134,10 @@
               RAISE_APPLICATION_ERROR(-20000, '@NoProjectPhases@');
             END IF;
           END IF;
-          /*In order to create a particular price list for the current project, 
+          /*In order to create a particular price list for the current project,
             project must be a service project and Create Temporary Price List option must be checked*/
           IF (Cur_SO.PROJECTCATEGORY<>'S' AND Cur_SO.CREATETEMPPRICELIST='Y') THEN
-            
+
             Ad_Sequence_Next('M_PriceList', v_AD_Client_ID, v_PriceList) ;
             INSERT
             INTO m_pricelist
@@ -271,14 +271,14 @@
             SET m_pricelist_id=v_PriceListPO
           WHERE c_project_id=v_Record_ID;
         END IF;
-        
-        /*In order to update the price list of the current project, 
+
+        /*In order to update the price list of the current project,
           project must be a service project and Create Temporary Price List option must be checked*/
         SELECT projectcategory, createtemppricelist
         INTO v_projectcategory, v_temppricelist
         FROM c_project
         WHERE c_project_id = v_Record_ID;
-        
+
         IF (v_projectcategory<>'S' AND v_temppricelist='Y') THEN
           UPDATE C_PROJECT
             SET projectstatus=v_ProjectStatus,

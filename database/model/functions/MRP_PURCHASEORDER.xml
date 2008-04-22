@@ -235,17 +235,17 @@
 
     END LOOP;
   v_ResultStr :='Set requisition lines as planned';
-  UPDATE M_RequisitionLine 
+  UPDATE M_RequisitionLine
   SET REQSTATUS = 'P'
   WHERE M_RequisitionLine_ID IN (SELECT M_RequisitionLine_ID
                                  FROM MRP_RUN_PURCHASELINE
                                  WHERE MRP_RUN_PURCHASE_ID = v_Record_ID
                                    AND INOUTTRXTYPE = 'MF');
-  
+
   UPDATE M_Requisition
   SET DocStatus = 'CL'
-  WHERE M_Requisition_ID IN (SELECT M_Requisition_ID 
-                            FROM M_RequisitionLine 
+  WHERE M_Requisition_ID IN (SELECT M_Requisition_ID
+                            FROM M_RequisitionLine
                             WHERE M_RequisitionLine_ID IN (SELECT M_RequisitionLine_ID
                                                           FROM MRP_RUN_PURCHASELINE
                                                           WHERE MRP_RUN_PURCHASE_ID = v_Record_ID
@@ -253,7 +253,7 @@
     AND NOT EXISTS (SELECT 1
                     FROM M_RequisitionLine rl
                     WHERE rl.REQSTATUS = 'O'
-                      AND rl.M_Requisition_ID = M_Requisition.M_Requisition_ID);    
+                      AND rl.M_Requisition_ID = M_Requisition.M_Requisition_ID);
   END;--BODY
   IF(p_PInstance_ID IS NOT NULL) THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
