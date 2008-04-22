@@ -1973,13 +1973,16 @@ function isVisibleElement(obj, appWindow) {
   return true;
 }
 
-function executeWindowButton(id) {
+function executeWindowButton(id,focus) {
+  if (focus==null) focus=false;
   var appWindow = top;
   if(top.frames['frameAplicacion'] || top.frames['frameMenu']) {
     appWindow = top.frames['frameAplicacion'];
   } 
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
+    if (focus==true) appWindow.document.getElementById(id).focus();
     appWindow.document.getElementById(id).onclick();
+    if (focus==true) putWindowElementFocus(focusedWindowElement);
   }
 }
 
