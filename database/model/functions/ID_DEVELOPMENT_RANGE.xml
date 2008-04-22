@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION ID_DEVELOPMENT_RANGE">
     <function name="ID_DEVELOPMENT_RANGE" type="NUMERIC">
-      <parameter name="theid" type="NUMERIC" mode="in">
-        <default/>
-      </parameter>
+      <parameter name="theid" type="NUMERIC" mode="in"/>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License

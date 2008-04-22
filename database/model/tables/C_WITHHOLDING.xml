@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TABLE C_WITHHOLDING">
-    <table name="C_WITHHOLDING" primaryKey="C_WITHHOLDING_KEY">
+    <table name="C_WITHHOLDING" primaryKey="SYS_C00158929">
       <column name="C_WITHHOLDING_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -23,6 +23,7 @@
       <column name="THRESHOLDMAX" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="MINAMT" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
       <column name="MAXAMT" primaryKey="false" required="false" type="DECIMAL" default="0" autoIncrement="false"/>
+      <column name="RATE" primaryKey="false" required="false" type="DECIMAL" size="4,2" default="0" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CWITHHOLDING">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -35,10 +36,10 @@
       <foreign-key foreignTable="C_PAYMENTTERM" name="CPAYMENTTERM_CWITHHOLDING">
         <reference local="C_PAYMENTTERM_ID" foreign="C_PAYMENTTERM_ID"/>
       </foreign-key>
-      <check name="C_WITHHOLDING_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="CWITHHOLD_ISTAXPRORAT_CHECK"><![CDATA[ISTAXPRORATED IN ('Y', 'N')]]></check>
-      <check name="CWITHOLD_ISPAIDTO3PART_CHECK"><![CDATA[ISPAIDTO3PARTY IN ('Y', 'N')]]></check>
-      <check name="CWITHOLD_ISPNTWITHOLD_CHECK"><![CDATA[ISPERCENTWITHHOLDING IN ('Y', 'N')]]></check>
-      <check name="CWITHOLD_ISTAXWITHHOLD_CHECK"><![CDATA[ISTAXWITHHOLDING IN ('Y', 'N')]]></check>
+      <check name="C_WITHHOLDING_ISACTIVE_CHECK"><![CDATA[IsActive in ('Y','N')]]></check>
+      <check name="CWITHHOLD_ISTAXPRORAT_CHECK"><![CDATA[IsTaxProrated in ('Y','N')]]></check>
+      <check name="CWITHOLD_ISPAIDTO3PART_CHECK"><![CDATA[IsPaidTo3Party in ('Y','N')]]></check>
+      <check name="CWITHOLD_ISPNTWITHOLD_CHECK"><![CDATA[IsPercentWithholding in ('Y','N')]]></check>
+      <check name="CWITHOLD_ISTAXWITHHOLD_CHECK"><![CDATA[IsTaxWithholding in ('Y','N')]]></check>
     </table>
   </database>

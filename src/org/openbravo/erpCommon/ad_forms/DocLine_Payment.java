@@ -36,6 +36,10 @@ public class DocLine_Payment extends DocLine {
     String dpStatus = "";
     String C_Currency_ID_From; 
     String conversionDate; 
+    String C_INVOICE_ID="";
+    String C_BPARTNER_ID="";
+    String C_WITHHOLDING_ID="";
+    String WithHoldAmt="";
     public DocLine_Payment (String DocumentType, String TrxHeader_ID, String TrxLine_ID){
         super(DocumentType, TrxHeader_ID, TrxLine_ID);
         Line_ID = TrxLine_ID;

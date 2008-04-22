@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TABLE C_BP_WITHHOLDING">
-    <table name="C_BP_WITHHOLDING" primaryKey="C_BO_WITHHOLDING_KEY">
+    <table name="C_BP_WITHHOLDING" primaryKey="SYS_C00157063">
       <column name="C_BPARTNER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_WITHHOLDING_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
@@ -13,6 +13,11 @@
       <column name="ISMANDATORYWITHHOLDING" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="ISTEMPORARYEXEMPT" primaryKey="false" required="true" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <column name="EXEMPTREASON" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false"/>
+      <column name="IS_PERCENT_WH" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="WH_PERCENT" primaryKey="false" required="false" type="DECIMAL" size="4,2" autoIncrement="false"/>
+      <column name="INCLUDE_TAX" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
+      <column name="C_TAX_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="ISDEFAULT" primaryKey="false" required="false" type="CHAR" size="1" default="N" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CBPWITHHOLDING">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -22,11 +27,14 @@
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CBPWITHHOLDING" onDelete="cascade">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_TAX" name="CTAX_CBPWITHHOLDING">
+        <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_WITHHOLDING" name="CWITHHOLDING_CBPWITHHOLDING">
         <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
       </foreign-key>
-      <check name="CBPWITHHOLDING_DHOLDING_CHECK"><![CDATA[ISMANDATORYWITHHOLDING IN ('Y', 'N')]]></check>
-      <check name="CBPWITHHOLDING_EMEXEMPT_CHECK"><![CDATA[ISTEMPORARYEXEMPT IN ('Y', 'N')]]></check>
-      <check name="CBPWITHHOLDING_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="CBPWITHHOLDING_DHOLDING_CHECK"><![CDATA[IsMandatoryWithholding in ('Y','N')]]></check>
+      <check name="CBPWITHHOLDING_EMEXEMPT_CHECK"><![CDATA[IsTemporaryExempt in ('Y','N')]]></check>
+      <check name="CBPWITHHOLDING_ISACTIVE_CHECK"><![CDATA[IsActive in ('Y','N')]]></check>
     </table>
   </database>

@@ -34,6 +34,8 @@
   *   - C_Allocation_Trg decreases C_BPartner.SO_CreditUsed
   *
   ************************************************************************/
+withholdamount NUMBER(10,2);
+cWithHoldId NUMBER;
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
@@ -190,14 +192,14 @@
       AD_Client_ID, AD_Org_ID, UpdatedBy, DocumentNo,
       C_Order_ID, IsSOTrx, C_BPartner_ID, AD_User_ID,
       C_Currency_ID, AD_Org_ID, POReference, Posted,
-      c_Project_Id
+      c_Project_Id, C_WithHolding_ID
     INTO v_Processing, v_Processed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID, v_IsApproved, v_IsTransferred,
       v_PaymentRule, v_PaymentTerm, v_DateAcct, v_DateInvoiced,
       v_Client_ID, v_Org_ID, v_UpdatedBy, v_DocumentNo,
       v_Order_ID, v_IsSOTrx, v_BPartner_ID, v_BPartner_User_ID,
       v_Currency_ID, v_AD_Org_ID, v_POReference, v_Posted,
-      v_C_Project_Id
+      v_C_Project_Id, cWithHoldID
     FROM C_INVOICE
     WHERE C_Invoice_ID=v_Record_ID  FOR UPDATE;
     DBMS_OUTPUT.PUT_LINE('Invoice_ID=' || v_Record_ID ||', DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID || ', IsApproved=' || v_IsApproved) ;
@@ -233,6 +235,35 @@
     RAISE_APPLICATION_ERROR(-20000, '@AlreadyPosted@');
       END IF;
     END IF;--FINISH_PROCESS
+    --cbt taxpayment
+    
+    IF(NOT finish_process) THEN
+    IF(v_docaction IN ('VO', 'RE', 'RC')
+       AND v_docstatus IN('CO',   'CL')) THEN
+       SELECT COUNT(*)
+        INTO v_aux
+        FROM c_taxregisterline trl
+        inner join c_invoicetax it on trl.c_invoicetax_id = it.c_invoicetax_id
+        inner join c_taxregister tr on tr.c_taxregister_id= trl.c_taxregister_id
+        inner join c_taxpayment tp on tr.c_taxpayment_id=tp.c_taxpayment_id
+        WHERE it.c_invoice_id = v_record_id
+        and tp.processed='Y';
+      IF v_aux > 0 THEN
+          raise_application_error(-20615,   '@InvoiceInTaxRegister@');
+      ELSE    
+        delete from c_taxregisterline trl where trl.c_invoicetax_id in
+        (select trl.c_invoicetax_id
+        FROM c_taxregisterline trl
+        inner join c_invoicetax it on trl.c_invoicetax_id = it.c_invoicetax_id
+        inner join c_taxregister tr on tr.c_taxregister_id= trl.c_taxregister_id
+        inner join c_taxpayment tp on tr.c_taxpayment_id=tp.c_taxpayment_id
+        WHERE it.c_invoice_id = v_record_id
+        and tp.processed='N');  
+      end if;
+      end if;
+      end if;
+      
+    --end cbt taxpaymant
     IF(NOT FINISH_PROCESS) THEN
       /**
       * Void if Document not processed
@@ -1098,12 +1129,17 @@
             FROM C_INVOICETAX
            WHERE C_Invoice_ID = v_Record_ID
              AND Recalculate = 'N';
+    SELECT c_getwithholding(v_record_id)
+    INTO withholdamount
+    FROM dual;
 
           v_GrandTotal:=C_Currency_Round(v_GrandTotal+v_TaxNoRecalculable, v_Currency_ID, NULL) ;
           UPDATE C_INVOICE
             SET TotalLines=v_TotalLines,
-            GrandTotal=v_GrandTotal
+            GrandTotal=v_GrandTotal,
+      withholdingamount = withholdamount
           WHERE C_Invoice_ID=v_Record_ID;
+    DBMS_OUTPUT.PUT_LINE('withholdingamount=' || withholdamount);
           DBMS_OUTPUT.PUT_LINE('GrandTotal=' || v_GrandTotal) ;
         END; -- Calculate Tax and Totals
         -- Synchronize Client/Org Ownership
@@ -1483,7 +1519,7 @@
                     C_BANKACCOUNT_ID, C_CASHBOOK_ID, PAYMENTRULE, ISPAID,
                     AMOUNT, WRITEOFFAMT, DATEPLANNED, ISMANUAL,
                     ISVALID, C_BANKSTATEMENTLINE_ID, CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED,
-                    GENERATE_PROCESSED, c_project_id, status, status_initial
+                    GENERATE_PROCESSED, c_project_id, status, status_initial,   withholdingamount,C_WITHHOLDING_ID
                   )
                   VALUES
                   (
@@ -1492,9 +1528,9 @@
                     v_IsSOTrx, NULL, NULL, '* ' || v_DocumentNo || ' * (' || v_BPartnerName ||( CASE WHEN v_POReference IS NULL THEN '' ELSE ' .Ref:'||TO_CHAR(v_POReference) END) || ' )',
                     v_Record_ID, v_BPartner_ID, v_Currency_ID, NULL,
                     v_bankAccount, v_cashBook, CUR_PAYMENTS.PaymentRule, 'N',
-                    v_paymentAmount*v_MultiplierARC, 0, v_plannedDate, 'N',
+                    (v_paymentamount *v_multiplierarc) -withholdamount *(v_paymentamount *v_multiplierarc / v_grandtotal), 0, v_plannedDate, 'N',
                     'Y', NULL, 'N', 'N',
-                    'N', v_C_Project_Id, 'DE', 'DE'
+                    'N', v_C_Project_Id, 'DE', 'DE',   withholdamount *(v_paymentamount *v_multiplierarc / v_grandtotal),cWithHoldId
                   )
                   ;
                 --AL

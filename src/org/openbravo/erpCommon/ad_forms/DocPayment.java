@@ -91,6 +91,10 @@ private DocLine[] loadLines(ConnectionProvider conn){
         docLine.IsDirectPosting = data[i].getField("isdirectposting");
         docLine.C_Currency_ID_From = data[i].getField("cCurrencyId");
         docLine.conversionDate = data[i].getField("conversiondate");
+        docLine.C_INVOICE_ID = data[i].getField("C_INVOICE_ID");
+        docLine.C_BPARTNER_ID = data[i].getField("C_BPARTNER_ID");
+        docLine.C_WITHHOLDING_ID= data[i].getField("C_WITHHOLDING_ID");
+        docLine.WithHoldAmt = data[i].getField("withholdingamount");
         try{
           docLine.dpStatus = DocLinePaymentData.getDPStatus(connectionProvider, Record_ID, data[i].getField("cDebtPaymentId"));
         } catch(ServletException e) {
@@ -149,12 +153,14 @@ public BigDecimal getBalance(){
       if (log4j.isDebugEnabled()) log4j.debug("DocPayment - createFact - line.conversionDate - " + line.conversionDate);
       //1* Amount is calculated and if there is currency conversion variations between dates this change is accounted
       String convertedAmt = convertAmount(line.Amount,line.isReceipt.equals("Y"),DateAcct, line.conversionDate, line.C_Currency_ID_From, C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, conn);
+      String convertWithHold = convertAmount(line.WithHoldAmt,line.isReceipt.equals("Y"),DateAcct, line.conversionDate, line.C_Currency_ID_From, C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, conn);
+      Double convertTotal = new Double(convertedAmt)+ new Double(convertWithHold);
            
       if(line.isManual.equals("N")) { //2* Normal debt-payments
         if (!line.C_Settlement_Generate_ID.equals(Record_ID)) { //2.1* Cancelled DP
           fact.createLine(line, getAccountBPartner(line.m_C_BPartner_ID, as, line.isReceipt.equals("Y"), line.dpStatus, conn),C_Currency_ID,
-                                   (line.isReceipt.equals("Y")?"":convertedAmt), 
-                                   (line.isReceipt.equals("Y")?convertedAmt:""), 
+                                   (line.isReceipt.equals("Y")?"":convertTotal.toString()), 
+                                   (line.isReceipt.equals("Y")?convertTotal.toString():""), 
                                    Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,conn);
         } else { //2.2* Generated DP
           if (log4j.isDebugEnabled()) log4j.debug("Genenarted DP");
@@ -217,6 +223,14 @@ public BigDecimal getBalance(){
       //6* PPA - Bank in transit default, paid DPs, (non manual and manual non direct posting) 
       if(line.isPaid.equals("Y")&&((line.C_Settlement_Cancel_ID == null || line.C_Settlement_Cancel_ID.equals(""))||(line.C_Settlement_Cancel_ID.equals(Record_ID)))){
         BigDecimal finalLineAmt = new BigDecimal(line.Amount);
+        String idSchema =as.getC_AcctSchema_ID();
+        String IdAccount =  WithholdingManualData.select_accounts(conn, line.C_WITHHOLDING_ID, idSchema); 
+        //
+        String sWithHoldAmt = line.WithHoldAmt;
+        
+            fact.createLine(line, Account.getAccount(conn, IdAccount),C_Currency_ID, 
+                    (line.isReceipt.equals("Y")?sWithHoldAmt:""), 
+                    (line.isReceipt.equals("Y")?"":sWithHoldAmt), Fact_Acct_Group_ID, "999999", DocumentType,conn);
         if (line.WriteOffAmt!=null && !line.WriteOffAmt.equals("") && !line.WriteOffAmt.equals("0")) finalLineAmt = finalLineAmt.subtract(new BigDecimal(line.WriteOffAmt));
         String finalAmtTo = getConvertedAmt (finalLineAmt.toString(), line.C_Currency_ID_From, C_Currency_ID, DateAcct, "", AD_Client_ID,AD_Org_ID,conn);  
         finalLineAmt = new BigDecimal(finalAmtTo);
@@ -232,7 +246,7 @@ public BigDecimal getBalance(){
 
   public String convertAmount(String Amount,boolean isReceipt, String DateAcct, String conversionDate, String C_Currency_ID_From, String C_Currency_ID, DocLine line, AcctSchema as, Fact fact, String Fact_Acct_Group_ID, ConnectionProvider conn) throws ServletException{
     if (log4j.isDebugEnabled()) log4j.debug("Amount:"+Amount+" curr from:"+C_Currency_ID_From+" Curr to:"+C_Currency_ID+" convDate:"+conversionDate+" DateAcct:"+DateAcct);
-    
+    if (Amount==null || Amount.equals("")) Amount = "0";
     String Amt = getConvertedAmt (Amount, C_Currency_ID_From, C_Currency_ID,conversionDate, "", AD_Client_ID,AD_Org_ID,conn);
     if (log4j.isDebugEnabled()) log4j.debug("Amt:"+Amt);
     

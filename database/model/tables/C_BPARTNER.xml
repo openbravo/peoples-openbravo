@@ -84,6 +84,8 @@
       <column name="PO_FIXMONTHDAY3" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="SO_BANKACCOUNT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="SO_BP_TAXCATEGORY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="FISCALCODE" primaryKey="false" required="false" type="NVARCHAR" size="16" autoIncrement="false"/>
+      <column name="ISOFISCALCODE" primaryKey="false" required="false" type="NVARCHAR" size="2" autoIncrement="false"/>
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>

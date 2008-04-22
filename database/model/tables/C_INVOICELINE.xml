@@ -35,6 +35,7 @@
       <column name="C_PROJECTLINE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="M_OFFER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="PRICESTD" primaryKey="false" required="true" type="DECIMAL" default="0" autoIncrement="false"/>
+      <column name="EXCLUDEFORWITHHOLDING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false"/>
       <foreign-key foreignTable="A_ASSET" name="AASSET_CINVOICELINE">
         <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
       </foreign-key>

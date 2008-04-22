@@ -170,6 +170,8 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
     } else resultado.append("null");
     resultado.append("\n),");
     resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(data[0].soDescription) + "\"),");
+    String strWithHolding = SEInvoiceBPartnerData.WithHolding(this,strBPartner);
+    resultado.append("new Array(\"inpcWithholdingId\", \"" + strWithHolding + "\"),");
     resultado.append("new Array(\"inpisdiscountprinted\", \"" + data[0].isdiscountprinted + "\")");
     if (data!=null && data.length >0 && Double.valueOf(data[0].creditavailable).doubleValue() < 0.0) 
         resultado.append(", new Array('MESSAGE', \"" + Utility.messageBD(this, "CreditLimitOver", vars.getLanguage()) + data[0].creditavailable +  "\")");

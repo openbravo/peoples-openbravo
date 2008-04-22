@@ -54,6 +54,10 @@
       <column name="AD_ORGTRX_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="USER1_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="USER2_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
+      <column name="INPSAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="WITHHOLDINGAMOUNT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false"/>
+      <column name="TAXDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false"/>
+      <column name="C_WITHHOLDING_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CINVOICE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
