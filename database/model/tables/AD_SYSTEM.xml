@@ -89,7 +89,7 @@
         <default><![CDATA[1]]></default>
         <onCreateDefault/>
       </column>
-      <column name="TAD_PARENT_VERSION" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false">
+      <column name="TAD_PARENT_VERSION" primaryKey="false" required="false" type="VARCHAR" size="14" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
