@@ -91,6 +91,7 @@ function refreshEntity() {
 }
 function saveOptions() {
   submitCommandForm("SAVE", false);
+  window.opener.setMenuLoading(true);
   return false;
 }
 </script>
