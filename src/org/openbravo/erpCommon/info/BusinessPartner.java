@@ -46,6 +46,9 @@ public class BusinessPartner extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
+      
+      clearSessionValue(vars);
+      
       String strWindowId = vars.getStringParameter("WindowID");
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue", "BusinessPartner.name");
       String strIDValue = vars.getStringParameter("inpIDValue");
@@ -67,7 +70,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       else strSelected = "all";
       vars.setSessionValue("BusinessPartner.bpartner", strSelected);
       if (!strNameValue.equals("")) vars.setSessionValue("BusinessPartner.name", strNameValue + "%");
-      printPage(response, vars, strKeyValue, strNameValue.concat("%"), strBpartners);
+      printPage(response, vars, strKeyValue, strNameValue.concat("%"), strSelected);
     } else if (vars.commandIn("KEY")) {
       String strWindowId = vars.getStringParameter("WindowID");
       String strIsSOTrxTab = vars.getStringParameter("inpisSOTrxTab");
@@ -90,19 +93,12 @@ public class BusinessPartner extends HttpSecureAppServlet {
       BusinessPartnerData[] data = BusinessPartnerData.selectKey(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strSelected.equals("costumer")?"clients":""), (strSelected.equals("vendor")?"vendors":""), strKeyValue + "%");
       if (data!=null && data.length==1) {
         printPageKey(response, vars, data);
-      } else printPage(response, vars,"","","");
+      } else printPage(response, vars, strKeyValue + "%","", strSelected);
     } else if(vars.commandIn("STRUCTURE")) {
     	printGridStructure(response, vars);
     } else if(vars.commandIn("DATA")) {
     	if(vars.getStringParameter("clear").equals("true")){
-    		vars.removeSessionValue("BusinessPartner.key");
-    		vars.removeSessionValue("BusinessPartner.name");
-    		vars.removeSessionValue("BusinessPartner.adorgid");
-    		vars.removeSessionValue("BusinessPartner.contact");
-    		vars.removeSessionValue("BusinessPartner.zip");
-    		vars.removeSessionValue("BusinessPartner.provincia");
-    		vars.removeSessionValue("BusinessPartner.bpartner");
-    		vars.removeSessionValue("BusinessPartner.city");
+    		clearSessionValue(vars);
     	}
     	String strKey = vars.getGlobalVariable("inpKey" , "BusinessPartner.key", "");
         String strName = vars.getGlobalVariable("inpName", "BusinessPartner.name", "");
@@ -316,6 +312,17 @@ public class BusinessPartner extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug(strRowsData.toString());  
     out.print(strRowsData.toString());
     out.close();
+  }
+  
+  private void clearSessionValue(VariablesSecureApp vars) {
+	  vars.removeSessionValue("BusinessPartner.key");
+	  vars.removeSessionValue("BusinessPartner.name");
+	  vars.removeSessionValue("BusinessPartner.adorgid");
+	  vars.removeSessionValue("BusinessPartner.contact");
+	  vars.removeSessionValue("BusinessPartner.zip");
+	  vars.removeSessionValue("BusinessPartner.provincia");
+	  vars.removeSessionValue("BusinessPartner.bpartner");
+	  vars.removeSessionValue("BusinessPartner.city");
   }
   
   public String getServletInfo() {
