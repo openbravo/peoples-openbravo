@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TABLE C_BP_WITHHOLDING">
-    <table name="C_BP_WITHHOLDING" primaryKey="SYS_C00157063">
+    <table name="C_BP_WITHHOLDING" primaryKey="C_BP_WITHHOLDING_KEY">
       <column name="C_BPARTNER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="C_WITHHOLDING_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
       <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false"/>
