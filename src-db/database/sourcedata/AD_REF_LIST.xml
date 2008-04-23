@@ -2342,7 +2342,7 @@
 <!--180 NAME-->
 <!--180-->              <NAME><![CDATA[Reject]]></NAME>
 <!--180 DESCRIPTION-->
-<!--180-->              <DESCRIPTION><![CDATA[Reject the approval of the document. ]]></DESCRIPTION>
+<!--180-->              <DESCRIPTION><![CDATA[Reject the approval of the document.]]></DESCRIPTION>
 <!--180 AD_REFERENCE_ID-->
 <!--180-->              <AD_REFERENCE_ID><![CDATA[135]]></AD_REFERENCE_ID>
 <!--180 ENTITYTYPE-->
@@ -2543,7 +2543,7 @@
 <!--188 NAME-->
 <!--188-->              <NAME><![CDATA[Reactivate]]></NAME>
 <!--188 DESCRIPTION-->
-<!--188-->              <DESCRIPTION><![CDATA[Reverse documents/inventory and allow changes; You need to Complete the transaction after the change. ]]></DESCRIPTION>
+<!--188-->              <DESCRIPTION><![CDATA[Reverse documents/inventory and allow changes; You need to Complete the transaction after the change.]]></DESCRIPTION>
 <!--188 AD_REFERENCE_ID-->
 <!--188-->              <AD_REFERENCE_ID><![CDATA[135]]></AD_REFERENCE_ID>
 <!--188 ENTITYTYPE-->
@@ -6301,7 +6301,7 @@
 <!--352 VALUE-->
 <!--352-->              <VALUE><![CDATA[X]]></VALUE>
 <!--352 NAME-->
-<!--352-->              <NAME><![CDATA[ASC X12 ]]></NAME>
+<!--352-->              <NAME><![CDATA[ASC X12]]></NAME>
 <!--352 AD_REFERENCE_ID-->
 <!--352-->              <AD_REFERENCE_ID><![CDATA[201]]></AD_REFERENCE_ID>
 <!--352 ENTITYTYPE-->
@@ -6681,7 +6681,7 @@
 <!--366 VALUE-->
 <!--366-->              <VALUE><![CDATA[==]]></VALUE>
 <!--366 NAME-->
-<!--366-->              <NAME><![CDATA[ =]]></NAME>
+<!--366-->              <NAME><![CDATA[=]]></NAME>
 <!--366 AD_REFERENCE_ID-->
 <!--366-->              <AD_REFERENCE_ID><![CDATA[205]]></AD_REFERENCE_ID>
 <!--366 ENTITYTYPE-->
@@ -6789,7 +6789,7 @@
 <!--370 VALUE-->
 <!--370-->              <VALUE><![CDATA[~~]]></VALUE>
 <!--370 NAME-->
-<!--370-->              <NAME><![CDATA[ ~]]></NAME>
+<!--370-->              <NAME><![CDATA[~]]></NAME>
 <!--370 AD_REFERENCE_ID-->
 <!--370-->              <AD_REFERENCE_ID><![CDATA[205]]></AD_REFERENCE_ID>
 <!--370 ENTITYTYPE-->
@@ -8924,7 +8924,7 @@
 <!--451 UPDATEDBY-->
 <!--451-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--451 VALUE-->
-<!--451-->              <VALUE><![CDATA[S  ]]></VALUE>
+<!--451-->              <VALUE><![CDATA[S]]></VALUE>
 <!--451 NAME-->
 <!--451-->              <NAME><![CDATA[System]]></NAME>
 <!--451 AD_REFERENCE_ID-->
@@ -8951,7 +8951,7 @@
 <!--452 UPDATEDBY-->
 <!--452-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--452 VALUE-->
-<!--452-->              <VALUE><![CDATA[ C ]]></VALUE>
+<!--452-->              <VALUE><![CDATA[C]]></VALUE>
 <!--452 NAME-->
 <!--452-->              <NAME><![CDATA[Client]]></NAME>
 <!--452 AD_REFERENCE_ID-->
@@ -8978,7 +8978,7 @@
 <!--453 UPDATEDBY-->
 <!--453-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--453 VALUE-->
-<!--453-->              <VALUE><![CDATA[  O]]></VALUE>
+<!--453-->              <VALUE><![CDATA[O]]></VALUE>
 <!--453 NAME-->
 <!--453-->              <NAME><![CDATA[Organization]]></NAME>
 <!--453 AD_REFERENCE_ID-->
@@ -9005,7 +9005,7 @@
 <!--454 UPDATEDBY-->
 <!--454-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--454 VALUE-->
-<!--454-->              <VALUE><![CDATA[ CO]]></VALUE>
+<!--454-->              <VALUE><![CDATA[CO]]></VALUE>
 <!--454 NAME-->
 <!--454-->              <NAME><![CDATA[Client+Organization]]></NAME>
 <!--454 AD_REFERENCE_ID-->

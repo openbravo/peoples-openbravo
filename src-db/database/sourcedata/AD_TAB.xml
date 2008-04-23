@@ -888,7 +888,8 @@
 <!--118 ENTITYTYPE-->
 <!--118-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--118 FILTERCLAUSE-->
-<!--118-->              <FILTERCLAUSE><![CDATA[(EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND (bp.IsEmployee='Y' OR bp.IsSalesRep='Y')) OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
+<!--118-->              <FILTERCLAUSE><![CDATA[(EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND (bp.IsEmployee='Y' OR bp.IsSalesRep='Y')) 
+OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--118**************--></AD_TAB>
 
 <!--119**************--><AD_TAB>
@@ -1354,9 +1355,9 @@
 <!--128 NAME-->
 <!--128-->              <NAME><![CDATA[Calendar]]></NAME>
 <!--128 DESCRIPTION-->
-<!--128-->              <DESCRIPTION><![CDATA[Create multiple fiscal calendars to be used by one or all your organizations. ]]></DESCRIPTION>
+<!--128-->              <DESCRIPTION><![CDATA[Create multiple fiscal calendars to be used by one or all your organizations.]]></DESCRIPTION>
 <!--128 HELP-->
-<!--128-->              <HELP><![CDATA[Create multiple fiscal calendars to be used by one or all your organizations. ]]></HELP>
+<!--128-->              <HELP><![CDATA[Create multiple fiscal calendars to be used by one or all your organizations.]]></HELP>
 <!--128 AD_TABLE_ID-->
 <!--128-->              <AD_TABLE_ID><![CDATA[139]]></AD_TABLE_ID>
 <!--128 AD_WINDOW_ID-->
@@ -1403,9 +1404,9 @@
 <!--129 NAME-->
 <!--129-->              <NAME><![CDATA[Year]]></NAME>
 <!--129 DESCRIPTION-->
-<!--129-->              <DESCRIPTION><![CDATA[Create fiscal years with the possibility of automatically adding fiscal periods. ]]></DESCRIPTION>
+<!--129-->              <DESCRIPTION><![CDATA[Create fiscal years with the possibility of automatically adding fiscal periods.]]></DESCRIPTION>
 <!--129 HELP-->
-<!--129-->              <HELP><![CDATA[Create fiscal years with the possibility of automatically adding fiscal periods. ]]></HELP>
+<!--129-->              <HELP><![CDATA[Create fiscal years with the possibility of automatically adding fiscal periods.]]></HELP>
 <!--129 AD_TABLE_ID-->
 <!--129-->              <AD_TABLE_ID><![CDATA[177]]></AD_TABLE_ID>
 <!--129 AD_WINDOW_ID-->
@@ -1452,9 +1453,9 @@
 <!--130 NAME-->
 <!--130-->              <NAME><![CDATA[Period]]></NAME>
 <!--130 DESCRIPTION-->
-<!--130-->              <DESCRIPTION><![CDATA[Create and edit fiscal periods according to your needs, as well as open/close selected periods. ]]></DESCRIPTION>
+<!--130-->              <DESCRIPTION><![CDATA[Create and edit fiscal periods according to your needs, as well as open/close selected periods.]]></DESCRIPTION>
 <!--130 HELP-->
-<!--130-->              <HELP><![CDATA[Create and edit fiscal periods according to your needs, as well as open/close selected periods. ]]></HELP>
+<!--130-->              <HELP><![CDATA[Create and edit fiscal periods according to your needs, as well as open/close selected periods.]]></HELP>
 <!--130 AD_TABLE_ID-->
 <!--130-->              <AD_TABLE_ID><![CDATA[145]]></AD_TABLE_ID>
 <!--130 AD_WINDOW_ID-->
@@ -1501,9 +1502,9 @@
 <!--131 NAME-->
 <!--131-->              <NAME><![CDATA[Non Business Day]]></NAME>
 <!--131 DESCRIPTION-->
-<!--131-->              <DESCRIPTION><![CDATA[Define non business days for a selected fiscal calendar. ]]></DESCRIPTION>
+<!--131-->              <DESCRIPTION><![CDATA[Define non business days for a selected fiscal calendar.]]></DESCRIPTION>
 <!--131 HELP-->
-<!--131-->              <HELP><![CDATA[Define non business days for a selected fiscal calendar. ]]></HELP>
+<!--131-->              <HELP><![CDATA[Define non business days for a selected fiscal calendar.]]></HELP>
 <!--131 AD_TABLE_ID-->
 <!--131-->              <AD_TABLE_ID><![CDATA[163]]></AD_TABLE_ID>
 <!--131 AD_WINDOW_ID-->
@@ -2489,9 +2490,9 @@
 <!--160 NAME-->
 <!--160-->              <NAME><![CDATA[Header]]></NAME>
 <!--160 DESCRIPTION-->
-<!--160-->              <DESCRIPTION><![CDATA[Create G/L Journals for specified fiscal periods. ]]></DESCRIPTION>
+<!--160-->              <DESCRIPTION><![CDATA[Create G/L Journals for specified fiscal periods.]]></DESCRIPTION>
 <!--160 HELP-->
-<!--160-->              <HELP><![CDATA[Create G/L Journals for specified fiscal periods. ]]></HELP>
+<!--160-->              <HELP><![CDATA[Create G/L Journals for specified fiscal periods.]]></HELP>
 <!--160 AD_TABLE_ID-->
 <!--160-->              <AD_TABLE_ID><![CDATA[224]]></AD_TABLE_ID>
 <!--160 AD_WINDOW_ID-->
@@ -2685,9 +2686,9 @@
 <!--169 NAME-->
 <!--169-->              <NAME><![CDATA[Information]]></NAME>
 <!--169 DESCRIPTION-->
-<!--169-->              <DESCRIPTION><![CDATA[Add client's advanced settings to be used in the application. ]]></DESCRIPTION>
+<!--169-->              <DESCRIPTION><![CDATA[Add client's advanced settings to be used in the application.]]></DESCRIPTION>
 <!--169 HELP-->
-<!--169-->              <HELP><![CDATA[Add client's advanced settings to be used in the application. ]]></HELP>
+<!--169-->              <HELP><![CDATA[Add client's advanced settings to be used in the application.]]></HELP>
 <!--169 AD_TABLE_ID-->
 <!--169-->              <AD_TABLE_ID><![CDATA[227]]></AD_TABLE_ID>
 <!--169 AD_WINDOW_ID-->
@@ -3126,9 +3127,9 @@
 <!--179 NAME-->
 <!--179-->              <NAME><![CDATA[Bin Contents]]></NAME>
 <!--179 DESCRIPTION-->
-<!--179-->              <DESCRIPTION><![CDATA[View the stored products of a selected storage bin. ]]></DESCRIPTION>
+<!--179-->              <DESCRIPTION><![CDATA[View the stored products of a selected storage bin.]]></DESCRIPTION>
 <!--179 HELP-->
-<!--179-->              <HELP><![CDATA[View the stored products of a selected storage bin. ]]></HELP>
+<!--179-->              <HELP><![CDATA[View the stored products of a selected storage bin.]]></HELP>
 <!--179 AD_TABLE_ID-->
 <!--179-->              <AD_TABLE_ID><![CDATA[800036]]></AD_TABLE_ID>
 <!--179 AD_WINDOW_ID-->
@@ -3724,9 +3725,9 @@
 <!--193 NAME-->
 <!--193-->              <NAME><![CDATA[Invoice Schedule]]></NAME>
 <!--193 DESCRIPTION-->
-<!--193-->              <DESCRIPTION><![CDATA[Create invoice schedules to be used for business partners. ]]></DESCRIPTION>
+<!--193-->              <DESCRIPTION><![CDATA[Create invoice schedules to be used for business partners.]]></DESCRIPTION>
 <!--193 HELP-->
-<!--193-->              <HELP><![CDATA[Create invoice schedules to be used for business partners. ]]></HELP>
+<!--193-->              <HELP><![CDATA[Create invoice schedules to be used for business partners.]]></HELP>
 <!--193 AD_TABLE_ID-->
 <!--193-->              <AD_TABLE_ID><![CDATA[257]]></AD_TABLE_ID>
 <!--193 AD_WINDOW_ID-->
@@ -3822,9 +3823,9 @@
 <!--199 NAME-->
 <!--199-->              <NAME><![CDATA[Accounting Schema]]></NAME>
 <!--199 DESCRIPTION-->
-<!--199-->              <DESCRIPTION><![CDATA[Create multiple accounting schemas. ]]></DESCRIPTION>
+<!--199-->              <DESCRIPTION><![CDATA[Create multiple accounting schemas.]]></DESCRIPTION>
 <!--199 HELP-->
-<!--199-->              <HELP><![CDATA[Create multiple accounting schemas. ]]></HELP>
+<!--199-->              <HELP><![CDATA[Create multiple accounting schemas.]]></HELP>
 <!--199 AD_TABLE_ID-->
 <!--199-->              <AD_TABLE_ID><![CDATA[265]]></AD_TABLE_ID>
 <!--199 AD_WINDOW_ID-->
@@ -4122,9 +4123,9 @@
 <!--205 NAME-->
 <!--205-->              <NAME><![CDATA[Period Control]]></NAME>
 <!--205 DESCRIPTION-->
-<!--205-->              <DESCRIPTION><![CDATA[Add and edit document types to be included in the accounting process during the selected fiscal period. ]]></DESCRIPTION>
+<!--205-->              <DESCRIPTION><![CDATA[Add and edit document types to be included in the accounting process during the selected fiscal period.]]></DESCRIPTION>
 <!--205 HELP-->
-<!--205-->              <HELP><![CDATA[Add and edit document types to be included in the accounting process during the selected fiscal period. ]]></HELP>
+<!--205-->              <HELP><![CDATA[Add and edit document types to be included in the accounting process during the selected fiscal period.]]></HELP>
 <!--205 AD_TABLE_ID-->
 <!--205-->              <AD_TABLE_ID><![CDATA[229]]></AD_TABLE_ID>
 <!--205 AD_WINDOW_ID-->
@@ -5019,9 +5020,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--227 NAME-->
 <!--227-->              <NAME><![CDATA[Bank]]></NAME>
 <!--227 DESCRIPTION-->
-<!--227-->              <DESCRIPTION><![CDATA[Create your banks to be used in application transactions. ]]></DESCRIPTION>
+<!--227-->              <DESCRIPTION><![CDATA[Create your banks to be used in application transactions.]]></DESCRIPTION>
 <!--227 HELP-->
-<!--227-->              <HELP><![CDATA[Create your banks to be used in application transactions. ]]></HELP>
+<!--227-->              <HELP><![CDATA[Create your banks to be used in application transactions.]]></HELP>
 <!--227 AD_TABLE_ID-->
 <!--227-->              <AD_TABLE_ID><![CDATA[296]]></AD_TABLE_ID>
 <!--227 AD_WINDOW_ID-->
@@ -5662,9 +5663,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--242 NAME-->
 <!--242-->              <NAME><![CDATA[Header]]></NAME>
 <!--242 DESCRIPTION-->
-<!--242-->              <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period. ]]></DESCRIPTION>
+<!--242-->              <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period.]]></DESCRIPTION>
 <!--242 HELP-->
-<!--242-->              <HELP><![CDATA[View detailed general ledger entries for a specified time period. ]]></HELP>
+<!--242-->              <HELP><![CDATA[View detailed general ledger entries for a specified time period.]]></HELP>
 <!--242 AD_TABLE_ID-->
 <!--242-->              <AD_TABLE_ID><![CDATA[270]]></AD_TABLE_ID>
 <!--242 AD_WINDOW_ID-->
@@ -6003,9 +6004,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--252 NAME-->
 <!--252-->              <NAME><![CDATA[Defaults]]></NAME>
 <!--252 DESCRIPTION-->
-<!--252-->              <DESCRIPTION><![CDATA[Add and edit detailed G/L accounts to be used by default in the application. ]]></DESCRIPTION>
+<!--252-->              <DESCRIPTION><![CDATA[Add and edit detailed G/L accounts to be used by default in the application.]]></DESCRIPTION>
 <!--252 HELP-->
-<!--252-->              <HELP><![CDATA[Add and edit detailed G/L accounts to be used by default in the application. ]]></HELP>
+<!--252-->              <HELP><![CDATA[Add and edit detailed G/L accounts to be used by default in the application.]]></HELP>
 <!--252 AD_TABLE_ID-->
 <!--252-->              <AD_TABLE_ID><![CDATA[315]]></AD_TABLE_ID>
 <!--252 AD_WINDOW_ID-->
@@ -6303,9 +6304,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--259 NAME-->
 <!--259-->              <NAME><![CDATA[Header]]></NAME>
 <!--259 DESCRIPTION-->
-<!--259-->              <DESCRIPTION><![CDATA[Create and edit inventory internal movements. ]]></DESCRIPTION>
+<!--259-->              <DESCRIPTION><![CDATA[Create and edit inventory internal movements.]]></DESCRIPTION>
 <!--259 HELP-->
-<!--259-->              <HELP><![CDATA[Create and edit inventory internal movements. ]]></HELP>
+<!--259-->              <HELP><![CDATA[Create and edit inventory internal movements.]]></HELP>
 <!--259 AD_TABLE_ID-->
 <!--259-->              <AD_TABLE_ID><![CDATA[323]]></AD_TABLE_ID>
 <!--259 AD_WINDOW_ID-->
@@ -6405,9 +6406,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--262 NAME-->
 <!--262-->              <NAME><![CDATA[Product Transactions]]></NAME>
 <!--262 DESCRIPTION-->
-<!--262-->              <DESCRIPTION><![CDATA[View all products transactions related to the selected warehouse.  ]]></DESCRIPTION>
+<!--262-->              <DESCRIPTION><![CDATA[View all products transactions related to the selected warehouse.]]></DESCRIPTION>
 <!--262 HELP-->
-<!--262-->              <HELP><![CDATA[View all products transactions related to the selected warehouse.  ]]></HELP>
+<!--262-->              <HELP><![CDATA[View all products transactions related to the selected warehouse.]]></HELP>
 <!--262 AD_TABLE_ID-->
 <!--262-->              <AD_TABLE_ID><![CDATA[329]]></AD_TABLE_ID>
 <!--262 AD_WINDOW_ID-->
@@ -8591,9 +8592,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--319 NAME-->
 <!--319-->              <NAME><![CDATA[BOM Production]]></NAME>
 <!--319 DESCRIPTION-->
-<!--319-->              <DESCRIPTION><![CDATA[Create production processes to run using the previously defined bills of materials. ]]></DESCRIPTION>
+<!--319-->              <DESCRIPTION><![CDATA[Create production processes to run using the previously defined bills of materials.]]></DESCRIPTION>
 <!--319 HELP-->
-<!--319-->              <HELP><![CDATA[Create production processes to run using the previously defined bills of materials. ]]></HELP>
+<!--319-->              <HELP><![CDATA[Create production processes to run using the previously defined bills of materials.]]></HELP>
 <!--319 AD_TABLE_ID-->
 <!--319-->              <AD_TABLE_ID><![CDATA[325]]></AD_TABLE_ID>
 <!--319 AD_WINDOW_ID-->
@@ -8989,9 +8990,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--328 NAME-->
 <!--328-->              <NAME><![CDATA[Header]]></NAME>
 <!--328 DESCRIPTION-->
-<!--328-->              <DESCRIPTION><![CDATA[Add received bank statements to compare the completed financial transaction with application transactions. ]]></DESCRIPTION>
+<!--328-->              <DESCRIPTION><![CDATA[Add received bank statements to compare the completed financial transaction with application transactions.]]></DESCRIPTION>
 <!--328 HELP-->
-<!--328-->              <HELP><![CDATA[Add received bank statements to compare the completed financial transaction with application transactions. ]]></HELP>
+<!--328-->              <HELP><![CDATA[Add received bank statements to compare the completed financial transaction with application transactions.]]></HELP>
 <!--328 AD_TABLE_ID-->
 <!--328-->              <AD_TABLE_ID><![CDATA[392]]></AD_TABLE_ID>
 <!--328 AD_WINDOW_ID-->
@@ -9038,9 +9039,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--329 NAME-->
 <!--329-->              <NAME><![CDATA[Lines]]></NAME>
 <!--329 DESCRIPTION-->
-<!--329-->              <DESCRIPTION><![CDATA[Add bank statement lines. Each line represents a particular transaction included in the received bank statement. ]]></DESCRIPTION>
+<!--329-->              <DESCRIPTION><![CDATA[Add bank statement lines. Each line represents a particular transaction included in the received bank statement.]]></DESCRIPTION>
 <!--329 HELP-->
-<!--329-->              <HELP><![CDATA[Add bank statement lines. Each line represents a particular transaction included in the received bank statement. ]]></HELP>
+<!--329-->              <HELP><![CDATA[Add bank statement lines. Each line represents a particular transaction included in the received bank statement.]]></HELP>
 <!--329 AD_TABLE_ID-->
 <!--329-->              <AD_TABLE_ID><![CDATA[393]]></AD_TABLE_ID>
 <!--329 AD_WINDOW_ID-->
@@ -10463,7 +10464,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--369 DESCRIPTION-->
 <!--369-->              <DESCRIPTION><![CDATA[Maintain your Performance Measure Calculation]]></DESCRIPTION>
 <!--369 HELP-->
-<!--369-->              <HELP><![CDATA[The Performance Measure Calculation defines how performance measures will be calculated.  Please test the statement in SQL*Plus first.The select statement needs to return a single value!Any restrictions for Date range, Organizations, Business Partners, ]]></HELP>
+<!--369-->              <HELP><![CDATA[The Performance Measure Calculation defines how performance measures will be calculated.  Please test the statement in SQL*Plus first.The select statement needs to return a single value!Any restrictions for Date range, Organizations, Business Partners,]]></HELP>
 <!--369 AD_TABLE_ID-->
 <!--369-->              <AD_TABLE_ID><![CDATA[442]]></AD_TABLE_ID>
 <!--369 AD_WINDOW_ID-->
@@ -10845,7 +10846,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--377 NAME-->
 <!--377-->              <NAME><![CDATA[Report Source]]></NAME>
 <!--377 DESCRIPTION-->
-<!--377-->              <DESCRIPTION><![CDATA[Maintain Segment Values of Report Line Source ]]></DESCRIPTION>
+<!--377-->              <DESCRIPTION><![CDATA[Maintain Segment Values of Report Line Source]]></DESCRIPTION>
 <!--377 AD_TABLE_ID-->
 <!--377-->              <AD_TABLE_ID><![CDATA[450]]></AD_TABLE_ID>
 <!--377 AD_WINDOW_ID-->
@@ -14012,9 +14013,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--445 NAME-->
 <!--445-->              <NAME><![CDATA[Language]]></NAME>
 <!--445 DESCRIPTION-->
-<!--445-->              <DESCRIPTION><![CDATA[Edit an application language translation by selecting it. ]]></DESCRIPTION>
+<!--445-->              <DESCRIPTION><![CDATA[Edit an application language translation by selecting it.]]></DESCRIPTION>
 <!--445 HELP-->
-<!--445-->              <HELP><![CDATA[Edit an application language translation by selecting it. ]]></HELP>
+<!--445-->              <HELP><![CDATA[Edit an application language translation by selecting it.]]></HELP>
 <!--445 AD_TABLE_ID-->
 <!--445-->              <AD_TABLE_ID><![CDATA[111]]></AD_TABLE_ID>
 <!--445 AD_WINDOW_ID-->
@@ -14063,11 +14064,11 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--446 UPDATEDBY-->
 <!--446-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--446 NAME-->
-<!--446-->              <NAME><![CDATA[Element ]]></NAME>
+<!--446-->              <NAME><![CDATA[Element]]></NAME>
 <!--446 DESCRIPTION-->
-<!--446-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected element. ]]></DESCRIPTION>
+<!--446-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected element.]]></DESCRIPTION>
 <!--446 HELP-->
-<!--446-->              <HELP><![CDATA[Add and edit translations of a selected element. ]]></HELP>
+<!--446-->              <HELP><![CDATA[Add and edit translations of a selected element.]]></HELP>
 <!--446 AD_TABLE_ID-->
 <!--446-->              <AD_TABLE_ID><![CDATA[277]]></AD_TABLE_ID>
 <!--446 AD_WINDOW_ID-->
@@ -14116,7 +14117,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--447 UPDATEDBY-->
 <!--447-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--447 NAME-->
-<!--447-->              <NAME><![CDATA[Message  ]]></NAME>
+<!--447-->              <NAME><![CDATA[Message]]></NAME>
 <!--447 DESCRIPTION-->
 <!--447-->              <DESCRIPTION><![CDATA[Add and edit translations of a specified message.]]></DESCRIPTION>
 <!--447 HELP-->
@@ -14169,7 +14170,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--448 UPDATEDBY-->
 <!--448-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--448 NAME-->
-<!--448-->              <NAME><![CDATA[Window ]]></NAME>
+<!--448-->              <NAME><![CDATA[Window]]></NAME>
 <!--448 DESCRIPTION-->
 <!--448-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected window.]]></DESCRIPTION>
 <!--448 HELP-->
@@ -14222,7 +14223,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--449 UPDATEDBY-->
 <!--449-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--449 NAME-->
-<!--449-->              <NAME><![CDATA[Process ]]></NAME>
+<!--449-->              <NAME><![CDATA[Process]]></NAME>
 <!--449 DESCRIPTION-->
 <!--449-->              <DESCRIPTION><![CDATA[Add and edit translations of a specified process.]]></DESCRIPTION>
 <!--449 HELP-->
@@ -15144,7 +15145,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--468 NAME-->
 <!--468-->              <NAME><![CDATA[Attribute Search]]></NAME>
 <!--468 DESCRIPTION-->
-<!--468-->              <DESCRIPTION><![CDATA[Common Search Attribute ]]></DESCRIPTION>
+<!--468-->              <DESCRIPTION><![CDATA[Common Search Attribute]]></DESCRIPTION>
 <!--468 HELP-->
 <!--468-->              <HELP><![CDATA[Attributes are specific to a Product Attribute Set (e.g. Size for T-Shirts: S,M,L). If you have multiple attributes and want to search under a common sttribute, you define a search sttribute. Example: have one Size search attribute combining the values of]]></HELP>
 <!--468 AD_TABLE_ID-->
@@ -15870,7 +15871,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--484 NAME-->
 <!--484-->              <NAME><![CDATA[Column Access]]></NAME>
 <!--484 DESCRIPTION-->
-<!--484-->              <DESCRIPTION><![CDATA[Create or edit access to DB columns for a selected role. ]]></DESCRIPTION>
+<!--484-->              <DESCRIPTION><![CDATA[Create or edit access to DB columns for a selected role.]]></DESCRIPTION>
 <!--484 HELP-->
 <!--484-->              <HELP><![CDATA[If listed here, the Role can(not) access the column of this table, even if the role has access to the functionality]]></HELP>
 <!--484 AD_TABLE_ID-->
@@ -15923,9 +15924,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--485 NAME-->
 <!--485-->              <NAME><![CDATA[Role]]></NAME>
 <!--485 DESCRIPTION-->
-<!--485-->              <DESCRIPTION><![CDATA[Edit a role for which you want to give or withhold tables and columns tables. ]]></DESCRIPTION>
+<!--485-->              <DESCRIPTION><![CDATA[Edit a role for which you want to give or withhold tables and columns tables.]]></DESCRIPTION>
 <!--485 HELP-->
-<!--485-->              <HELP><![CDATA[Edit a role for which you want to give or withhold tables and columns tables. ]]></HELP>
+<!--485-->              <HELP><![CDATA[Edit a role for which you want to give or withhold tables and columns tables.]]></HELP>
 <!--485 AD_TABLE_ID-->
 <!--485-->              <AD_TABLE_ID><![CDATA[156]]></AD_TABLE_ID>
 <!--485 AD_WINDOW_ID-->
@@ -16433,9 +16434,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--496 NAME-->
 <!--496-->              <NAME><![CDATA[Contact]]></NAME>
 <!--496 DESCRIPTION-->
-<!--496-->              <DESCRIPTION><![CDATA[Define contacts for dealing with a selected business partner. ]]></DESCRIPTION>
+<!--496-->              <DESCRIPTION><![CDATA[Define contacts for dealing with a selected business partner.]]></DESCRIPTION>
 <!--496 HELP-->
-<!--496-->              <HELP><![CDATA[Define contacts for dealing with a selected business partner. ]]></HELP>
+<!--496-->              <HELP><![CDATA[Define contacts for dealing with a selected business partner.]]></HELP>
 <!--496 AD_TABLE_ID-->
 <!--496-->              <AD_TABLE_ID><![CDATA[114]]></AD_TABLE_ID>
 <!--496 AD_WINDOW_ID-->
@@ -17133,9 +17134,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--515 NAME-->
 <!--515-->              <NAME><![CDATA[Business Partner Dimension]]></NAME>
 <!--515 DESCRIPTION-->
-<!--515-->              <DESCRIPTION><![CDATA[Create and edit business partner dimensions to be used in the dimensional reports. ]]></DESCRIPTION>
+<!--515-->              <DESCRIPTION><![CDATA[Create and edit business partner dimensions to be used in the dimensional reports.]]></DESCRIPTION>
 <!--515 HELP-->
-<!--515-->              <HELP><![CDATA[Create and edit business partner dimensions to be used in the dimensional reports. ]]></HELP>
+<!--515-->              <HELP><![CDATA[Create and edit business partner dimensions to be used in the dimensional reports.]]></HELP>
 <!--515 AD_TABLE_ID-->
 <!--515-->              <AD_TABLE_ID><![CDATA[291]]></AD_TABLE_ID>
 <!--515 AD_WINDOW_ID-->
@@ -17184,9 +17185,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--516 NAME-->
 <!--516-->              <NAME><![CDATA[Product Dimension]]></NAME>
 <!--516 DESCRIPTION-->
-<!--516-->              <DESCRIPTION><![CDATA[Create and edit products dimensions to be used in the dimensional reports. ]]></DESCRIPTION>
+<!--516-->              <DESCRIPTION><![CDATA[Create and edit products dimensions to be used in the dimensional reports.]]></DESCRIPTION>
 <!--516 HELP-->
-<!--516-->              <HELP><![CDATA[Create and edit products dimensions to be used in the dimensional reports. ]]></HELP>
+<!--516-->              <HELP><![CDATA[Create and edit products dimensions to be used in the dimensional reports.]]></HELP>
 <!--516 AD_TABLE_ID-->
 <!--516-->              <AD_TABLE_ID><![CDATA[208]]></AD_TABLE_ID>
 <!--516 AD_WINDOW_ID-->
@@ -17286,9 +17287,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--518 NAME-->
 <!--518-->              <NAME><![CDATA[Project Dimension]]></NAME>
 <!--518 DESCRIPTION-->
-<!--518-->              <DESCRIPTION><![CDATA[Create and edit projects dimensions to be used in the dimensional reports. ]]></DESCRIPTION>
+<!--518-->              <DESCRIPTION><![CDATA[Create and edit projects dimensions to be used in the dimensional reports.]]></DESCRIPTION>
 <!--518 HELP-->
-<!--518-->              <HELP><![CDATA[Create and edit projects dimensions to be used in the dimensional reports. ]]></HELP>
+<!--518-->              <HELP><![CDATA[Create and edit projects dimensions to be used in the dimensional reports.]]></HELP>
 <!--518 AD_TABLE_ID-->
 <!--518-->              <AD_TABLE_ID><![CDATA[203]]></AD_TABLE_ID>
 <!--518 AD_WINDOW_ID-->
@@ -17337,9 +17338,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--519 NAME-->
 <!--519-->              <NAME><![CDATA[Organization Dimension]]></NAME>
 <!--519 DESCRIPTION-->
-<!--519-->              <DESCRIPTION><![CDATA[Create and edit organizational dimensions to be used in the dimensional reports. ]]></DESCRIPTION>
+<!--519-->              <DESCRIPTION><![CDATA[Create and edit organizational dimensions to be used in the dimensional reports.]]></DESCRIPTION>
 <!--519 HELP-->
-<!--519-->              <HELP><![CDATA[Create and edit organizational dimensions to be used in the dimensional reports. ]]></HELP>
+<!--519-->              <HELP><![CDATA[Create and edit organizational dimensions to be used in the dimensional reports.]]></HELP>
 <!--519 AD_TABLE_ID-->
 <!--519-->              <AD_TABLE_ID><![CDATA[155]]></AD_TABLE_ID>
 <!--519 AD_WINDOW_ID-->
@@ -17388,9 +17389,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--520 NAME-->
 <!--520-->              <NAME><![CDATA[Sales Region Dimension]]></NAME>
 <!--520 DESCRIPTION-->
-<!--520-->              <DESCRIPTION><![CDATA[Create and edit sales regions dimensions to be used in the dimensional reports. ]]></DESCRIPTION>
+<!--520-->              <DESCRIPTION><![CDATA[Create and edit sales regions dimensions to be used in the dimensional reports.]]></DESCRIPTION>
 <!--520 HELP-->
-<!--520-->              <HELP><![CDATA[Create and edit sales regions dimensions to be used in the dimensional reports. ]]></HELP>
+<!--520-->              <HELP><![CDATA[Create and edit sales regions dimensions to be used in the dimensional reports.]]></HELP>
 <!--520 AD_TABLE_ID-->
 <!--520-->              <AD_TABLE_ID><![CDATA[230]]></AD_TABLE_ID>
 <!--520 AD_WINDOW_ID-->
@@ -17743,7 +17744,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--527 UPDATEDBY-->
 <!--527-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--527 NAME-->
-<!--527-->              <NAME><![CDATA[Tab ]]></NAME>
+<!--527-->              <NAME><![CDATA[Tab]]></NAME>
 <!--527 DESCRIPTION-->
 <!--527-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected tab.]]></DESCRIPTION>
 <!--527 HELP-->
@@ -17796,7 +17797,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--528 UPDATEDBY-->
 <!--528-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--528 NAME-->
-<!--528-->              <NAME><![CDATA[Reference List  ]]></NAME>
+<!--528-->              <NAME><![CDATA[Reference List]]></NAME>
 <!--528 DESCRIPTION-->
 <!--528-->              <DESCRIPTION><![CDATA[Add and edit translations of a specified reference list.]]></DESCRIPTION>
 <!--528 HELP-->
@@ -17849,11 +17850,11 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--529 UPDATEDBY-->
 <!--529-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--529 NAME-->
-<!--529-->              <NAME><![CDATA[Field ]]></NAME>
+<!--529-->              <NAME><![CDATA[Field]]></NAME>
 <!--529 DESCRIPTION-->
-<!--529-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected field. ]]></DESCRIPTION>
+<!--529-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected field.]]></DESCRIPTION>
 <!--529 HELP-->
-<!--529-->              <HELP><![CDATA[Add and edit translations of a selected field. ]]></HELP>
+<!--529-->              <HELP><![CDATA[Add and edit translations of a selected field.]]></HELP>
 <!--529 AD_TABLE_ID-->
 <!--529-->              <AD_TABLE_ID><![CDATA[127]]></AD_TABLE_ID>
 <!--529 AD_WINDOW_ID-->
@@ -17902,11 +17903,11 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--530 UPDATEDBY-->
 <!--530-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--530 NAME-->
-<!--530-->              <NAME><![CDATA[Field Category  ]]></NAME>
+<!--530-->              <NAME><![CDATA[Field Category]]></NAME>
 <!--530 DESCRIPTION-->
-<!--530-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected field category. ]]></DESCRIPTION>
+<!--530-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected field category.]]></DESCRIPTION>
 <!--530 HELP-->
-<!--530-->              <HELP><![CDATA[Add and edit translations of a selected field category. ]]></HELP>
+<!--530-->              <HELP><![CDATA[Add and edit translations of a selected field category.]]></HELP>
 <!--530 AD_TABLE_ID-->
 <!--530-->              <AD_TABLE_ID><![CDATA[415]]></AD_TABLE_ID>
 <!--530 AD_WINDOW_ID-->
@@ -17957,9 +17958,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--531 NAME-->
 <!--531-->              <NAME><![CDATA[Form]]></NAME>
 <!--531 DESCRIPTION-->
-<!--531-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected form. ]]></DESCRIPTION>
+<!--531-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected form.]]></DESCRIPTION>
 <!--531 HELP-->
-<!--531-->              <HELP><![CDATA[Add and edit translations of a selected form. ]]></HELP>
+<!--531-->              <HELP><![CDATA[Add and edit translations of a selected form.]]></HELP>
 <!--531 AD_TABLE_ID-->
 <!--531-->              <AD_TABLE_ID><![CDATA[377]]></AD_TABLE_ID>
 <!--531 AD_WINDOW_ID-->
@@ -18008,7 +18009,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--532 UPDATEDBY-->
 <!--532-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--532 NAME-->
-<!--532-->              <NAME><![CDATA[Task ]]></NAME>
+<!--532-->              <NAME><![CDATA[Task]]></NAME>
 <!--532 DESCRIPTION-->
 <!--532-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected task.]]></DESCRIPTION>
 <!--532 HELP-->
@@ -18114,7 +18115,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--534 UPDATEDBY-->
 <!--534-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--534 NAME-->
-<!--534-->              <NAME><![CDATA[Workflow Node  ]]></NAME>
+<!--534-->              <NAME><![CDATA[Workflow Node]]></NAME>
 <!--534 DESCRIPTION-->
 <!--534-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected workflow node.]]></DESCRIPTION>
 <!--534 HELP-->
@@ -18167,11 +18168,11 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--535 UPDATEDBY-->
 <!--535-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--535 NAME-->
-<!--535-->              <NAME><![CDATA[Menu ]]></NAME>
+<!--535-->              <NAME><![CDATA[Menu]]></NAME>
 <!--535 DESCRIPTION-->
-<!--535-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected menu element. ]]></DESCRIPTION>
+<!--535-->              <DESCRIPTION><![CDATA[Add and edit translations of a selected menu element.]]></DESCRIPTION>
 <!--535 HELP-->
-<!--535-->              <HELP><![CDATA[Add and edit translations of a selected menu element. ]]></HELP>
+<!--535-->              <HELP><![CDATA[Add and edit translations of a selected menu element.]]></HELP>
 <!--535 AD_TABLE_ID-->
 <!--535-->              <AD_TABLE_ID><![CDATA[120]]></AD_TABLE_ID>
 <!--535 AD_WINDOW_ID-->
@@ -20543,9 +20544,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800025 NAME-->
 <!--800025-->              <NAME><![CDATA[Settlement]]></NAME>
 <!--800025 DESCRIPTION-->
-<!--800025-->              <DESCRIPTION><![CDATA[Create settlements for selected payments. ]]></DESCRIPTION>
+<!--800025-->              <DESCRIPTION><![CDATA[Create settlements for selected payments.]]></DESCRIPTION>
 <!--800025 HELP-->
-<!--800025-->              <HELP><![CDATA[Create settlements for selected payments. ]]></HELP>
+<!--800025-->              <HELP><![CDATA[Create settlements for selected payments.]]></HELP>
 <!--800025 AD_TABLE_ID-->
 <!--800025-->              <AD_TABLE_ID><![CDATA[800019]]></AD_TABLE_ID>
 <!--800025 AD_WINDOW_ID-->
@@ -20600,9 +20601,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800026 NAME-->
 <!--800026-->              <NAME><![CDATA[Cancelled Payments]]></NAME>
 <!--800026 DESCRIPTION-->
-<!--800026-->              <DESCRIPTION><![CDATA[View cancelled payments.  ]]></DESCRIPTION>
+<!--800026-->              <DESCRIPTION><![CDATA[View cancelled payments.]]></DESCRIPTION>
 <!--800026 HELP-->
-<!--800026-->              <HELP><![CDATA[View cancelled payments.  ]]></HELP>
+<!--800026-->              <HELP><![CDATA[View cancelled payments.]]></HELP>
 <!--800026 AD_TABLE_ID-->
 <!--800026-->              <AD_TABLE_ID><![CDATA[800020]]></AD_TABLE_ID>
 <!--800026 AD_WINDOW_ID-->
@@ -20810,9 +20811,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800031 NAME-->
 <!--800031-->              <NAME><![CDATA[Create Payment]]></NAME>
 <!--800031 DESCRIPTION-->
-<!--800031-->              <DESCRIPTION><![CDATA[Create manual settlement lines.  Each line represents one payment. ]]></DESCRIPTION>
+<!--800031-->              <DESCRIPTION><![CDATA[Create manual settlement lines.  Each line represents one payment.]]></DESCRIPTION>
 <!--800031 HELP-->
-<!--800031-->              <HELP><![CDATA[Create manual settlement lines.  Each line represents one payment. ]]></HELP>
+<!--800031-->              <HELP><![CDATA[Create manual settlement lines.  Each line represents one payment.]]></HELP>
 <!--800031 AD_TABLE_ID-->
 <!--800031-->              <AD_TABLE_ID><![CDATA[800021]]></AD_TABLE_ID>
 <!--800031 AD_WINDOW_ID-->
@@ -22577,9 +22578,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800070 NAME-->
 <!--800070-->              <NAME><![CDATA[Lines]]></NAME>
 <!--800070 DESCRIPTION-->
-<!--800070-->              <DESCRIPTION><![CDATA[Add instruction lines.  Each line corresponds to one instruction. ]]></DESCRIPTION>
+<!--800070-->              <DESCRIPTION><![CDATA[Add instruction lines.  Each line corresponds to one instruction.]]></DESCRIPTION>
 <!--800070 HELP-->
-<!--800070-->              <HELP><![CDATA[Add instruction lines.  Each line corresponds to one instruction. ]]></HELP>
+<!--800070-->              <HELP><![CDATA[Add instruction lines.  Each line corresponds to one instruction.]]></HELP>
 <!--800070 AD_TABLE_ID-->
 <!--800070-->              <AD_TABLE_ID><![CDATA[800055]]></AD_TABLE_ID>
 <!--800070 AD_WINDOW_ID-->
@@ -22881,7 +22882,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800076 UPDATEDBY-->
 <!--800076-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800076 NAME-->
-<!--800076-->              <NAME><![CDATA[Header ]]></NAME>
+<!--800076-->              <NAME><![CDATA[Header]]></NAME>
 <!--800076 DESCRIPTION-->
 <!--800076-->              <DESCRIPTION><![CDATA[Create amortizations for particular periods.]]></DESCRIPTION>
 <!--800076 HELP-->
@@ -22934,9 +22935,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800077 NAME-->
 <!--800077-->              <NAME><![CDATA[Lines]]></NAME>
 <!--800077 DESCRIPTION-->
-<!--800077-->              <DESCRIPTION><![CDATA[Add amortized assets and details of amortization. ]]></DESCRIPTION>
+<!--800077-->              <DESCRIPTION><![CDATA[Add amortized assets and details of amortization.]]></DESCRIPTION>
 <!--800077 HELP-->
-<!--800077-->              <HELP><![CDATA[Add amortized assets and details of amortization. ]]></HELP>
+<!--800077-->              <HELP><![CDATA[Add amortized assets and details of amortization.]]></HELP>
 <!--800077 AD_TABLE_ID-->
 <!--800077-->              <AD_TABLE_ID><![CDATA[800061]]></AD_TABLE_ID>
 <!--800077 AD_WINDOW_ID-->
@@ -23293,9 +23294,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800084 NAME-->
 <!--800084-->              <NAME><![CDATA[Section]]></NAME>
 <!--800084 DESCRIPTION-->
-<!--800084-->              <DESCRIPTION><![CDATA[Create a production plant section to assign work centers to it. ]]></DESCRIPTION>
+<!--800084-->              <DESCRIPTION><![CDATA[Create a production plant section to assign work centers to it.]]></DESCRIPTION>
 <!--800084 HELP-->
-<!--800084-->              <HELP><![CDATA[Create a production plant section to assign work centers to it. ]]></HELP>
+<!--800084-->              <HELP><![CDATA[Create a production plant section to assign work centers to it.]]></HELP>
 <!--800084 AD_TABLE_ID-->
 <!--800084-->              <AD_TABLE_ID><![CDATA[800067]]></AD_TABLE_ID>
 <!--800084 AD_WINDOW_ID-->
@@ -23395,9 +23396,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800086 NAME-->
 <!--800086-->              <NAME><![CDATA[Machine]]></NAME>
 <!--800086 DESCRIPTION-->
-<!--800086-->              <DESCRIPTION><![CDATA[Add machines to be used in production processes. ]]></DESCRIPTION>
+<!--800086-->              <DESCRIPTION><![CDATA[Add machines to be used in production processes.]]></DESCRIPTION>
 <!--800086 HELP-->
-<!--800086-->              <HELP><![CDATA[Add machines to be used in production processes. ]]></HELP>
+<!--800086-->              <HELP><![CDATA[Add machines to be used in production processes.]]></HELP>
 <!--800086 AD_TABLE_ID-->
 <!--800086-->              <AD_TABLE_ID><![CDATA[800069]]></AD_TABLE_ID>
 <!--800086 AD_WINDOW_ID-->
@@ -23548,9 +23549,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800089 NAME-->
 <!--800089-->              <NAME><![CDATA[Process]]></NAME>
 <!--800089 DESCRIPTION-->
-<!--800089-->              <DESCRIPTION><![CDATA[View the process related to a selected work center. ]]></DESCRIPTION>
+<!--800089-->              <DESCRIPTION><![CDATA[View the process related to a selected work center.]]></DESCRIPTION>
 <!--800089 HELP-->
-<!--800089-->              <HELP><![CDATA[View the process related to a selected work center. ]]></HELP>
+<!--800089-->              <HELP><![CDATA[View the process related to a selected work center.]]></HELP>
 <!--800089 AD_TABLE_ID-->
 <!--800089-->              <AD_TABLE_ID><![CDATA[800072]]></AD_TABLE_ID>
 <!--800089 AD_WINDOW_ID-->
@@ -23958,9 +23959,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800111 NAME-->
 <!--800111-->              <NAME><![CDATA[Header]]></NAME>
 <!--800111 DESCRIPTION-->
-<!--800111-->              <DESCRIPTION><![CDATA[Create production orders by choosing dates and the previously defined work requirement model. ]]></DESCRIPTION>
+<!--800111-->              <DESCRIPTION><![CDATA[Create production orders by choosing dates and the previously defined work requirement model.]]></DESCRIPTION>
 <!--800111 HELP-->
-<!--800111-->              <HELP><![CDATA[Create production orders by choosing dates and the previously defined work requirement model. ]]></HELP>
+<!--800111-->              <HELP><![CDATA[Create production orders by choosing dates and the previously defined work requirement model.]]></HELP>
 <!--800111 AD_TABLE_ID-->
 <!--800111-->              <AD_TABLE_ID><![CDATA[800098]]></AD_TABLE_ID>
 <!--800111 AD_WINDOW_ID-->
@@ -24013,9 +24014,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800112 NAME-->
 <!--800112-->              <NAME><![CDATA[Operation]]></NAME>
 <!--800112 DESCRIPTION-->
-<!--800112-->              <DESCRIPTION><![CDATA[Add or edit operations and activities to be performed for the related work requirement. ]]></DESCRIPTION>
+<!--800112-->              <DESCRIPTION><![CDATA[Add or edit operations and activities to be performed for the related work requirement.]]></DESCRIPTION>
 <!--800112 HELP-->
-<!--800112-->              <HELP><![CDATA[Add or edit operations and activities to be performed for the related work requirement. ]]></HELP>
+<!--800112-->              <HELP><![CDATA[Add or edit operations and activities to be performed for the related work requirement.]]></HELP>
 <!--800112 AD_TABLE_ID-->
 <!--800112-->              <AD_TABLE_ID><![CDATA[800099]]></AD_TABLE_ID>
 <!--800112 AD_WINDOW_ID-->
@@ -24064,9 +24065,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800113 NAME-->
 <!--800113-->              <NAME><![CDATA[Product]]></NAME>
 <!--800113 DESCRIPTION-->
-<!--800113-->              <DESCRIPTION><![CDATA[Add or edit I/O products to be used for the selected operation of the work requirement. ]]></DESCRIPTION>
+<!--800113-->              <DESCRIPTION><![CDATA[Add or edit I/O products to be used for the selected operation of the work requirement.]]></DESCRIPTION>
 <!--800113 HELP-->
-<!--800113-->              <HELP><![CDATA[Add or edit I/O products to be used for the selected operation of the work requirement. ]]></HELP>
+<!--800113-->              <HELP><![CDATA[Add or edit I/O products to be used for the selected operation of the work requirement.]]></HELP>
 <!--800113 AD_TABLE_ID-->
 <!--800113-->              <AD_TABLE_ID><![CDATA[800100]]></AD_TABLE_ID>
 <!--800113 AD_WINDOW_ID-->
@@ -24115,9 +24116,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800114 NAME-->
 <!--800114-->              <NAME><![CDATA[Work Effort]]></NAME>
 <!--800114 DESCRIPTION-->
-<!--800114-->              <DESCRIPTION><![CDATA[Create a report for the completed work requirement for a desired date and time. ]]></DESCRIPTION>
+<!--800114-->              <DESCRIPTION><![CDATA[Create a report for the completed work requirement for a desired date and time.]]></DESCRIPTION>
 <!--800114 HELP-->
-<!--800114-->              <HELP><![CDATA[Create a report for the completed work requirement for a desired date and time. ]]></HELP>
+<!--800114-->              <HELP><![CDATA[Create a report for the completed work requirement for a desired date and time.]]></HELP>
 <!--800114 AD_TABLE_ID-->
 <!--800114-->              <AD_TABLE_ID><![CDATA[325]]></AD_TABLE_ID>
 <!--800114 AD_WINDOW_ID-->
@@ -24533,9 +24534,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800143 NAME-->
 <!--800143-->              <NAME><![CDATA[Activity]]></NAME>
 <!--800143 DESCRIPTION-->
-<!--800143-->              <DESCRIPTION><![CDATA[Create activities to be used in the production process. ]]></DESCRIPTION>
+<!--800143-->              <DESCRIPTION><![CDATA[Create activities to be used in the production process.]]></DESCRIPTION>
 <!--800143 HELP-->
-<!--800143-->              <HELP><![CDATA[Create activities to be used in the production process. ]]></HELP>
+<!--800143-->              <HELP><![CDATA[Create activities to be used in the production process.]]></HELP>
 <!--800143 AD_TABLE_ID-->
 <!--800143-->              <AD_TABLE_ID><![CDATA[800072]]></AD_TABLE_ID>
 <!--800143 AD_WINDOW_ID-->
@@ -24680,7 +24681,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800146 UPDATEDBY-->
 <!--800146-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800146 NAME-->
-<!--800146-->              <NAME><![CDATA[Version ]]></NAME>
+<!--800146-->              <NAME><![CDATA[Version]]></NAME>
 <!--800146 DESCRIPTION-->
 <!--800146-->              <DESCRIPTION><![CDATA[Create process plans valid for a specified time period.]]></DESCRIPTION>
 <!--800146 HELP-->
@@ -24788,9 +24789,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800151 NAME-->
 <!--800151-->              <NAME><![CDATA[Check Point Set]]></NAME>
 <!--800151 DESCRIPTION-->
-<!--800151-->              <DESCRIPTION><![CDATA[Create check point sets and define tests frequencies. ]]></DESCRIPTION>
+<!--800151-->              <DESCRIPTION><![CDATA[Create check point sets and define tests frequencies.]]></DESCRIPTION>
 <!--800151 HELP-->
-<!--800151-->              <HELP><![CDATA[Create check point sets and define tests frequencies. ]]></HELP>
+<!--800151-->              <HELP><![CDATA[Create check point sets and define tests frequencies.]]></HELP>
 <!--800151 AD_TABLE_ID-->
 <!--800151-->              <AD_TABLE_ID><![CDATA[800131]]></AD_TABLE_ID>
 <!--800151 AD_WINDOW_ID-->
@@ -24998,9 +24999,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800155 NAME-->
 <!--800155-->              <NAME><![CDATA[Values]]></NAME>
 <!--800155 DESCRIPTION-->
-<!--800155-->              <DESCRIPTION><![CDATA[Create and edit values for a related measurement. ]]></DESCRIPTION>
+<!--800155-->              <DESCRIPTION><![CDATA[Create and edit values for a related measurement.]]></DESCRIPTION>
 <!--800155 HELP-->
-<!--800155-->              <HELP><![CDATA[Create and edit values for a related measurement. ]]></HELP>
+<!--800155-->              <HELP><![CDATA[Create and edit values for a related measurement.]]></HELP>
 <!--800155 AD_TABLE_ID-->
 <!--800155-->              <AD_TABLE_ID><![CDATA[800135]]></AD_TABLE_ID>
 <!--800155 AD_WINDOW_ID-->
@@ -25259,9 +25260,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800160 NAME-->
 <!--800160-->              <NAME><![CDATA[Check Point]]></NAME>
 <!--800160 DESCRIPTION-->
-<!--800160-->              <DESCRIPTION><![CDATA[Add quality tests to be taken for a specified checkpoint.   ]]></DESCRIPTION>
+<!--800160-->              <DESCRIPTION><![CDATA[Add quality tests to be taken for a specified checkpoint.]]></DESCRIPTION>
 <!--800160 HELP-->
-<!--800160-->              <HELP><![CDATA[Add quality tests to be taken for a specified checkpoint.   ]]></HELP>
+<!--800160-->              <HELP><![CDATA[Add quality tests to be taken for a specified checkpoint.]]></HELP>
 <!--800160 AD_TABLE_ID-->
 <!--800160-->              <AD_TABLE_ID><![CDATA[800140]]></AD_TABLE_ID>
 <!--800160 AD_WINDOW_ID-->
@@ -25361,9 +25362,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800162 NAME-->
 <!--800162-->              <NAME><![CDATA[Result]]></NAME>
 <!--800162 DESCRIPTION-->
-<!--800162-->              <DESCRIPTION><![CDATA[Create and edit quality tests for a specified checkpoint, and add test results of the performed tests. ]]></DESCRIPTION>
+<!--800162-->              <DESCRIPTION><![CDATA[Create and edit quality tests for a specified checkpoint, and add test results of the performed tests.]]></DESCRIPTION>
 <!--800162 HELP-->
-<!--800162-->              <HELP><![CDATA[Create and edit quality tests for a specified checkpoint, and add test results of the performed tests. ]]></HELP>
+<!--800162-->              <HELP><![CDATA[Create and edit quality tests for a specified checkpoint, and add test results of the performed tests.]]></HELP>
 <!--800162 AD_TABLE_ID-->
 <!--800162-->              <AD_TABLE_ID><![CDATA[800142]]></AD_TABLE_ID>
 <!--800162 AD_WINDOW_ID-->
@@ -25618,9 +25619,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800170 NAME-->
 <!--800170-->              <NAME><![CDATA[Tax Zone]]></NAME>
 <!--800170 DESCRIPTION-->
-<!--800170-->              <DESCRIPTION><![CDATA[Create tax zones to which the selected tax zone will be applied. ]]></DESCRIPTION>
+<!--800170-->              <DESCRIPTION><![CDATA[Create tax zones to which the selected tax zone will be applied.]]></DESCRIPTION>
 <!--800170 HELP-->
-<!--800170-->              <HELP><![CDATA[Create tax zones to which the selected tax zone will be applied. ]]></HELP>
+<!--800170-->              <HELP><![CDATA[Create tax zones to which the selected tax zone will be applied.]]></HELP>
 <!--800170 AD_TABLE_ID-->
 <!--800170-->              <AD_TABLE_ID><![CDATA[800150]]></AD_TABLE_ID>
 <!--800170 AD_WINDOW_ID-->
@@ -25671,9 +25672,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800171 NAME-->
 <!--800171-->              <NAME><![CDATA[Shift]]></NAME>
 <!--800171 DESCRIPTION-->
-<!--800171-->              <DESCRIPTION><![CDATA[Define shifts when the tests for a related group will be performed. ]]></DESCRIPTION>
+<!--800171-->              <DESCRIPTION><![CDATA[Define shifts when the tests for a related group will be performed.]]></DESCRIPTION>
 <!--800171 HELP-->
-<!--800171-->              <HELP><![CDATA[Define shifts when the tests for a related group will be performed. ]]></HELP>
+<!--800171-->              <HELP><![CDATA[Define shifts when the tests for a related group will be performed.]]></HELP>
 <!--800171 AD_TABLE_ID-->
 <!--800171-->              <AD_TABLE_ID><![CDATA[800152]]></AD_TABLE_ID>
 <!--800171 AD_WINDOW_ID-->
@@ -26185,9 +26186,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800181 NAME-->
 <!--800181-->              <NAME><![CDATA[Maintenance]]></NAME>
 <!--800181 DESCRIPTION-->
-<!--800181-->              <DESCRIPTION><![CDATA[Define maintenance types needed for a specific machine. ]]></DESCRIPTION>
+<!--800181-->              <DESCRIPTION><![CDATA[Define maintenance types needed for a specific machine.]]></DESCRIPTION>
 <!--800181 HELP-->
-<!--800181-->              <HELP><![CDATA[Define maintenance types needed for a specific machine. ]]></HELP>
+<!--800181-->              <HELP><![CDATA[Define maintenance types needed for a specific machine.]]></HELP>
 <!--800181 AD_TABLE_ID-->
 <!--800181-->              <AD_TABLE_ID><![CDATA[800159]]></AD_TABLE_ID>
 <!--800181 AD_WINDOW_ID-->
@@ -26491,9 +26492,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800188 NAME-->
 <!--800188-->              <NAME><![CDATA[Maintenance]]></NAME>
 <!--800188 DESCRIPTION-->
-<!--800188-->              <DESCRIPTION><![CDATA[Create and edit maintenance tasks for a specific date. ]]></DESCRIPTION>
+<!--800188-->              <DESCRIPTION><![CDATA[Create and edit maintenance tasks for a specific date.]]></DESCRIPTION>
 <!--800188 HELP-->
-<!--800188-->              <HELP><![CDATA[Create and edit maintenance tasks for a specific date. ]]></HELP>
+<!--800188-->              <HELP><![CDATA[Create and edit maintenance tasks for a specific date.]]></HELP>
 <!--800188 AD_TABLE_ID-->
 <!--800188-->              <AD_TABLE_ID><![CDATA[800161]]></AD_TABLE_ID>
 <!--800188 AD_WINDOW_ID-->
@@ -27162,9 +27163,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800203 NAME-->
 <!--800203-->              <NAME><![CDATA[Lines]]></NAME>
 <!--800203 DESCRIPTION-->
-<!--800203-->              <DESCRIPTION><![CDATA[Add internal consumption lines. Each line corresponds to one product. ]]></DESCRIPTION>
+<!--800203-->              <DESCRIPTION><![CDATA[Add internal consumption lines. Each line corresponds to one product.]]></DESCRIPTION>
 <!--800203 HELP-->
-<!--800203-->              <HELP><![CDATA[Add internal consumption lines. Each line corresponds to one product. ]]></HELP>
+<!--800203-->              <HELP><![CDATA[Add internal consumption lines. Each line corresponds to one product.]]></HELP>
 <!--800203 AD_TABLE_ID-->
 <!--800203-->              <AD_TABLE_ID><![CDATA[800169]]></AD_TABLE_ID>
 <!--800203 AD_WINDOW_ID-->
@@ -27264,9 +27265,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800205 NAME-->
 <!--800205-->              <NAME><![CDATA[Header]]></NAME>
 <!--800205 DESCRIPTION-->
-<!--800205-->              <DESCRIPTION><![CDATA[Create budgets for a selected year to be used for informative purposes. ]]></DESCRIPTION>
+<!--800205-->              <DESCRIPTION><![CDATA[Create budgets for a selected year to be used for informative purposes.]]></DESCRIPTION>
 <!--800205 HELP-->
-<!--800205-->              <HELP><![CDATA[Create budgets for a selected year to be used for informative purposes. ]]></HELP>
+<!--800205-->              <HELP><![CDATA[Create budgets for a selected year to be used for informative purposes.]]></HELP>
 <!--800205 AD_TABLE_ID-->
 <!--800205-->              <AD_TABLE_ID><![CDATA[800173]]></AD_TABLE_ID>
 <!--800205 AD_WINDOW_ID-->
@@ -27517,9 +27518,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800210 NAME-->
 <!--800210-->              <NAME><![CDATA[Lines]]></NAME>
 <!--800210 DESCRIPTION-->
-<!--800210-->              <DESCRIPTION><![CDATA[Create and edit payment lines by changing payments status. ]]></DESCRIPTION>
+<!--800210-->              <DESCRIPTION><![CDATA[Create and edit payment lines by changing payments status.]]></DESCRIPTION>
 <!--800210 HELP-->
-<!--800210-->              <HELP><![CDATA[Create and edit payment lines by changing payments status. ]]></HELP>
+<!--800210-->              <HELP><![CDATA[Create and edit payment lines by changing payments status.]]></HELP>
 <!--800210 AD_TABLE_ID-->
 <!--800210-->              <AD_TABLE_ID><![CDATA[800177]]></AD_TABLE_ID>
 <!--800210 AD_WINDOW_ID-->
@@ -27621,9 +27622,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800212 NAME-->
 <!--800212-->              <NAME><![CDATA[Accounting Report]]></NAME>
 <!--800212 DESCRIPTION-->
-<!--800212-->              <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period. ]]></DESCRIPTION>
+<!--800212-->              <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period.]]></DESCRIPTION>
 <!--800212 HELP-->
-<!--800212-->              <HELP><![CDATA[View detailed general ledger entries for a specified time period. ]]></HELP>
+<!--800212-->              <HELP><![CDATA[View detailed general ledger entries for a specified time period.]]></HELP>
 <!--800212 AD_TABLE_ID-->
 <!--800212-->              <AD_TABLE_ID><![CDATA[800178]]></AD_TABLE_ID>
 <!--800212 AD_WINDOW_ID-->
@@ -27672,11 +27673,11 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800213 UPDATEDBY-->
 <!--800213-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800213 NAME-->
-<!--800213-->              <NAME><![CDATA[Header ]]></NAME>
+<!--800213-->              <NAME><![CDATA[Header]]></NAME>
 <!--800213 DESCRIPTION-->
-<!--800213-->              <DESCRIPTION><![CDATA[Create remittances by including specified payments. ]]></DESCRIPTION>
+<!--800213-->              <DESCRIPTION><![CDATA[Create remittances by including specified payments.]]></DESCRIPTION>
 <!--800213 HELP-->
-<!--800213-->              <HELP><![CDATA[Create remittances by including specified payments. ]]></HELP>
+<!--800213-->              <HELP><![CDATA[Create remittances by including specified payments.]]></HELP>
 <!--800213 AD_TABLE_ID-->
 <!--800213-->              <AD_TABLE_ID><![CDATA[800179]]></AD_TABLE_ID>
 <!--800213 AD_WINDOW_ID-->
@@ -28710,9 +28711,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800233 NAME-->
 <!--800233-->              <NAME><![CDATA[Outsourced]]></NAME>
 <!--800233 DESCRIPTION-->
-<!--800233-->              <DESCRIPTION><![CDATA[Add invoices corresponding to the outsourced part of a completed work requirement. ]]></DESCRIPTION>
+<!--800233-->              <DESCRIPTION><![CDATA[Add invoices corresponding to the outsourced part of a completed work requirement.]]></DESCRIPTION>
 <!--800233 HELP-->
-<!--800233-->              <HELP><![CDATA[Add invoices corresponding to the outsourced part of a completed work requirement. ]]></HELP>
+<!--800233-->              <HELP><![CDATA[Add invoices corresponding to the outsourced part of a completed work requirement.]]></HELP>
 <!--800233 AD_TABLE_ID-->
 <!--800233-->              <AD_TABLE_ID><![CDATA[800195]]></AD_TABLE_ID>
 <!--800233 AD_WINDOW_ID-->
@@ -28761,9 +28762,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800234 NAME-->
 <!--800234-->              <NAME><![CDATA[Version]]></NAME>
 <!--800234 DESCRIPTION-->
-<!--800234-->              <DESCRIPTION><![CDATA[Create cost center versions to be used with specified time periods. ]]></DESCRIPTION>
+<!--800234-->              <DESCRIPTION><![CDATA[Create cost center versions to be used with specified time periods.]]></DESCRIPTION>
 <!--800234 HELP-->
-<!--800234-->              <HELP><![CDATA[Create cost center versions to be used with specified time periods. ]]></HELP>
+<!--800234-->              <HELP><![CDATA[Create cost center versions to be used with specified time periods.]]></HELP>
 <!--800234 AD_TABLE_ID-->
 <!--800234-->              <AD_TABLE_ID><![CDATA[800197]]></AD_TABLE_ID>
 <!--800234 AD_WINDOW_ID-->
@@ -29171,9 +29172,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800243 NAME-->
 <!--800243-->              <NAME><![CDATA[Machine]]></NAME>
 <!--800243 DESCRIPTION-->
-<!--800243-->              <DESCRIPTION><![CDATA[Define machines that are used for a specific process. ]]></DESCRIPTION>
+<!--800243-->              <DESCRIPTION><![CDATA[Define machines that are used for a specific process.]]></DESCRIPTION>
 <!--800243 HELP-->
-<!--800243-->              <HELP><![CDATA[Define machines that are used for a specific process. ]]></HELP>
+<!--800243-->              <HELP><![CDATA[Define machines that are used for a specific process.]]></HELP>
 <!--800243 AD_TABLE_ID-->
 <!--800243-->              <AD_TABLE_ID><![CDATA[800207]]></AD_TABLE_ID>
 <!--800243 AD_WINDOW_ID-->
@@ -30097,9 +30098,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800265 NAME-->
 <!--800265-->              <NAME><![CDATA[Alert Rule]]></NAME>
 <!--800265 DESCRIPTION-->
-<!--800265-->              <DESCRIPTION><![CDATA[Define the alert rule in the SQL format. ]]></DESCRIPTION>
+<!--800265-->              <DESCRIPTION><![CDATA[Define the alert rule in the SQL format.]]></DESCRIPTION>
 <!--800265 HELP-->
-<!--800265-->              <HELP><![CDATA[Define the alert rule in the SQL format. ]]></HELP>
+<!--800265-->              <HELP><![CDATA[Define the alert rule in the SQL format.]]></HELP>
 <!--800265 AD_TABLE_ID-->
 <!--800265-->              <AD_TABLE_ID><![CDATA[593]]></AD_TABLE_ID>
 <!--800265 AD_WINDOW_ID-->

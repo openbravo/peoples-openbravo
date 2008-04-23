@@ -1102,7 +1102,7 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--148 TYPE-->
 <!--148-->              <TYPE><![CDATA[S]]></TYPE>
 <!--148 CODE-->
-<!--148-->              <CODE><![CDATA[(AD_Org.AD_Client_ID=TO_NUMBER(@AD_Client_ID@) OR AD_Org.AD_Org_ID=0) ]]></CODE>
+<!--148-->              <CODE><![CDATA[(AD_Org.AD_Client_ID=TO_NUMBER(@AD_Client_ID@) OR AD_Org.AD_Org_ID=0)]]></CODE>
 <!--148 ENTITYTYPE-->
 <!--148-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--148**************--></AD_VAL_RULE>
@@ -1756,7 +1756,7 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--172 NAME-->
 <!--172-->              <NAME><![CDATA[C_DocType Orders]]></NAME>
 <!--172 DESCRIPTION-->
-<!--172-->              <DESCRIPTION><![CDATA[Document Tpe for SO/PO ]]></DESCRIPTION>
+<!--172-->              <DESCRIPTION><![CDATA[Document Tpe for SO/PO]]></DESCRIPTION>
 <!--172 TYPE-->
 <!--172-->              <TYPE><![CDATA[S]]></TYPE>
 <!--172 CODE-->
@@ -2086,7 +2086,9 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--800006 TYPE-->
 <!--800006-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800006 CODE-->
-<!--800006-->              <CODE><![CDATA[MA_WRPhase.Closed = 'N'AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
+<!--800006-->              <CODE><![CDATA[MA_WRPhase.Closed = 'N'
+
+AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800006 ENTITYTYPE-->
 <!--800006-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800006**************--></AD_VAL_RULE>
@@ -2499,7 +2501,11 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--800021 TYPE-->
 <!--800021-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800021 CODE-->
-<!--800021-->              <CODE><![CDATA[EXISTS ( SELECT 1        FROM  AD_USER_ROLES A_U_R         WHERE A_U_R.AD_ROLE_ID = AD_Role.AD_Role_ID        AND A_U_R.ISACTIVE = 'Y'         AND A_U_R.AD_USER_ID = TO_NUMBER(@AD_User_ID@))]]></CODE>
+<!--800021-->              <CODE><![CDATA[EXISTS ( SELECT 1
+        FROM  AD_USER_ROLES A_U_R 
+        WHERE A_U_R.AD_ROLE_ID = AD_Role.AD_Role_ID
+        AND A_U_R.ISACTIVE = 'Y' 
+        AND A_U_R.AD_USER_ID = TO_NUMBER(@AD_User_ID@))]]></CODE>
 <!--800021 ENTITYTYPE-->
 <!--800021-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800021**************--></AD_VAL_RULE>

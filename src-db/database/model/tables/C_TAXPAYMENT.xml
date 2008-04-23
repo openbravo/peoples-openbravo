@@ -65,7 +65,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="STAMPAREGISTRIIVA" primaryKey="false" required="false" type="VARCHAR" size="1" autoIncrement="false">
+      <column name="CREATEFROM" primaryKey="false" required="false" type="VARCHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

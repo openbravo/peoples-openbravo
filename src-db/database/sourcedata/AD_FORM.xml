@@ -609,9 +609,9 @@
 <!--800013 UPDATEDBY-->
 <!--800013-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800013 NAME-->
-<!--800013-->              <NAME><![CDATA[Remittance Cancellation/Return ]]></NAME>
+<!--800013-->              <NAME><![CDATA[Remittance Cancellation/Return]]></NAME>
 <!--800013 DESCRIPTION-->
-<!--800013-->              <DESCRIPTION><![CDATA[Edit pending remittances by cancelling or returning them. ]]></DESCRIPTION>
+<!--800013-->              <DESCRIPTION><![CDATA[Edit pending remittances by cancelling or returning them.]]></DESCRIPTION>
 <!--800013 ACCESSLEVEL-->
 <!--800013-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800013 CLASSNAME-->

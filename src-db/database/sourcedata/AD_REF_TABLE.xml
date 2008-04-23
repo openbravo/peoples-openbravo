@@ -1519,8 +1519,7 @@
 <!--190 ISVALUEDISPLAYED-->
 <!--190-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--190 WHERECLAUSE-->
-<!--190-->              <WHERECLAUSE><![CDATA[EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND bp.IsSalesRep='Y')
-]]></WHERECLAUSE>
+<!--190-->              <WHERECLAUSE><![CDATA[EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND bp.IsSalesRep='Y')]]></WHERECLAUSE>
 <!--190 ENTITYTYPE-->
 <!--190-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--190**************--></AD_REF_TABLE>
@@ -2073,7 +2072,7 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--242 ISVALUEDISPLAYED-->
 <!--242-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--242 WHERECLAUSE-->
-<!--242-->              <WHERECLAUSE><![CDATA[PA_ReportLine.IsSummary='Y' ]]></WHERECLAUSE>
+<!--242-->              <WHERECLAUSE><![CDATA[PA_ReportLine.IsSummary='Y']]></WHERECLAUSE>
 <!--242 ENTITYTYPE-->
 <!--242-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--242**************--></AD_REF_TABLE>
@@ -2385,8 +2384,7 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--263 ISVALUEDISPLAYED-->
 <!--263-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--263 WHERECLAUSE-->
-<!--263-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.AD_Table_ID=500
-]]></WHERECLAUSE>
+<!--263-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.AD_Table_ID=500]]></WHERECLAUSE>
 <!--263 ENTITYTYPE-->
 <!--263-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--263**************--></AD_REF_TABLE>
@@ -2754,8 +2752,7 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--277 WHERECLAUSE-->
 <!--277-->              <WHERECLAUSE><![CDATA[C_BPartner.IsEmployee='Y' 
 AND EXISTS (SELECT * FROM C_BPartner_Location l WHERE C_BPartner.C_BPartner_ID=l.C_BPartner_ID AND l.C_Location_ID IS NOT NULL)
-AND EXISTS (SELECT * FROM AD_User u WHERE C_BPartner.C_BPartner_ID=u.C_BPartner_ID)
-]]></WHERECLAUSE>
+AND EXISTS (SELECT * FROM AD_User u WHERE C_BPartner.C_BPartner_ID=u.C_BPartner_ID)]]></WHERECLAUSE>
 <!--277 ENTITYTYPE-->
 <!--277-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--277**************--></AD_REF_TABLE>
@@ -2875,7 +2872,8 @@ AND EXISTS (SELECT * FROM AD_User u WHERE C_BPartner.C_BPartner_ID=u.C_BPartner_
 <!--286 ISVALUEDISPLAYED-->
 <!--286-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--286 WHERECLAUSE-->
-<!--286-->              <WHERECLAUSE><![CDATA[(EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND (bp.IsEmployee='Y')) OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
+<!--286-->              <WHERECLAUSE><![CDATA[(EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND (bp.IsEmployee='Y')) 
+OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--286 ORDERBYCLAUSE-->
 <!--286-->              <ORDERBYCLAUSE><![CDATA[Name]]></ORDERBYCLAUSE>
 <!--286 ENTITYTYPE-->
@@ -3431,7 +3429,8 @@ AND EXISTS (SELECT * FROM AD_User u WHERE C_BPartner.C_BPartner_ID=u.C_BPartner_
 <!--800106 ISVALUEDISPLAYED-->
 <!--800106-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--800106 WHERECLAUSE-->
-<!--800106-->              <WHERECLAUSE><![CDATA[(IsSystemLanguage='Y' OR isBaseLanguage='Y')AND isActive='Y']]></WHERECLAUSE>
+<!--800106-->              <WHERECLAUSE><![CDATA[(IsSystemLanguage='Y' OR isBaseLanguage='Y')
+AND isActive='Y']]></WHERECLAUSE>
 <!--800106 ENTITYTYPE-->
 <!--800106-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800106**************--></AD_REF_TABLE>

@@ -78,12 +78,10 @@
 <!--101 NAME-->
 <!--101-->              <NAME><![CDATA[AD_Column]]></NAME>
 <!--101 DESCRIPTION-->
-<!--101-->              <DESCRIPTION><![CDATA[
-Table Column definitions
+<!--101-->              <DESCRIPTION><![CDATA[Table Column definitions
 Used  in Column]]></DESCRIPTION>
 <!--101 HELP-->
-<!--101-->              <HELP><![CDATA[
-Defines the columns of a table
+<!--101-->              <HELP><![CDATA[Defines the columns of a table
 The Used in Column Tab defines the table and column this element resides in.]]></HELP>
 <!--101 TABLENAME-->
 <!--101-->              <TABLENAME><![CDATA[AD_Column]]></TABLENAME>
@@ -135,11 +133,9 @@ The Used in Column Tab defines the table and column this element resides in.]]><
 <!--102 NAME-->
 <!--102-->              <NAME><![CDATA[AD_Reference]]></NAME>
 <!--102 DESCRIPTION-->
-<!--102-->              <DESCRIPTION><![CDATA[
-Reference header definitions]]></DESCRIPTION>
+<!--102-->              <DESCRIPTION><![CDATA[Reference header definitions]]></DESCRIPTION>
 <!--102 HELP-->
-<!--102-->              <HELP><![CDATA[
-The Reference Tab defines the references that are used to validate data]]></HELP>
+<!--102-->              <HELP><![CDATA[The Reference Tab defines the references that are used to validate data]]></HELP>
 <!--102 TABLENAME-->
 <!--102-->              <TABLENAME><![CDATA[AD_Reference]]></TABLENAME>
 <!--102 ISVIEW-->
@@ -190,11 +186,9 @@ The Reference Tab defines the references that are used to validate data]]></HELP
 <!--103 NAME-->
 <!--103-->              <NAME><![CDATA[AD_Ref_Table]]></NAME>
 <!--103 DESCRIPTION-->
-<!--103-->              <DESCRIPTION><![CDATA[
-Table validation]]></DESCRIPTION>
+<!--103-->              <DESCRIPTION><![CDATA[Table validation]]></DESCRIPTION>
 <!--103 HELP-->
-<!--103-->              <HELP><![CDATA[
-The Table Validation Tab defines tables to validate data]]></HELP>
+<!--103-->              <HELP><![CDATA[The Table Validation Tab defines tables to validate data]]></HELP>
 <!--103 TABLENAME-->
 <!--103-->              <TABLENAME><![CDATA[AD_Ref_Table]]></TABLENAME>
 <!--103 ISVIEW-->
@@ -245,11 +239,9 @@ The Table Validation Tab defines tables to validate data]]></HELP>
 <!--104 NAME-->
 <!--104-->              <NAME><![CDATA[AD_Ref_List]]></NAME>
 <!--104 DESCRIPTION-->
-<!--104-->              <DESCRIPTION><![CDATA[
-Reference List]]></DESCRIPTION>
+<!--104-->              <DESCRIPTION><![CDATA[Reference List]]></DESCRIPTION>
 <!--104 HELP-->
-<!--104-->              <HELP><![CDATA[
-The List Validation Tab defines lists to validate data]]></HELP>
+<!--104-->              <HELP><![CDATA[The List Validation Tab defines lists to validate data]]></HELP>
 <!--104 TABLENAME-->
 <!--104-->              <TABLENAME><![CDATA[AD_Ref_List]]></TABLENAME>
 <!--104 ISVIEW-->
@@ -353,11 +345,9 @@ The List Validation Tab defines lists to validate data]]></HELP>
 <!--106 NAME-->
 <!--106-->              <NAME><![CDATA[AD_Tab]]></NAME>
 <!--106 DESCRIPTION-->
-<!--106-->              <DESCRIPTION><![CDATA[
-Tab definition within a window holds fields]]></DESCRIPTION>
+<!--106-->              <DESCRIPTION><![CDATA[Tab definition within a window holds fields]]></DESCRIPTION>
 <!--106 HELP-->
-<!--106-->              <HELP><![CDATA[
-The Tab Tab defines each Tab within a Window.  Each Tab contains a discrete selection of fields.]]></HELP>
+<!--106-->              <HELP><![CDATA[The Tab Tab defines each Tab within a Window.  Each Tab contains a discrete selection of fields.]]></HELP>
 <!--106 TABLENAME-->
 <!--106-->              <TABLENAME><![CDATA[AD_Tab]]></TABLENAME>
 <!--106 ISVIEW-->
@@ -461,11 +451,9 @@ The Tab Tab defines each Tab within a Window.  Each Tab contains a discrete sele
 <!--108 NAME-->
 <!--108-->              <NAME><![CDATA[AD_Val_Rule]]></NAME>
 <!--108 DESCRIPTION-->
-<!--108-->              <DESCRIPTION><![CDATA[
-Validation Rules]]></DESCRIPTION>
+<!--108-->              <DESCRIPTION><![CDATA[Validation Rules]]></DESCRIPTION>
 <!--108 HELP-->
-<!--108-->              <HELP><![CDATA[
-The Validation Rules Tab defines all dynamic rules used when entering and maintaining columns and fields.]]></HELP>
+<!--108-->              <HELP><![CDATA[The Validation Rules Tab defines all dynamic rules used when entering and maintaining columns and fields.]]></HELP>
 <!--108 TABLENAME-->
 <!--108-->              <TABLENAME><![CDATA[AD_Val_Rule]]></TABLENAME>
 <!--108 ISVIEW-->
@@ -516,11 +504,9 @@ The Validation Rules Tab defines all dynamic rules used when entering and mainta
 <!--109 NAME-->
 <!--109-->              <NAME><![CDATA[AD_Message]]></NAME>
 <!--109 DESCRIPTION-->
-<!--109-->              <DESCRIPTION><![CDATA[
-Information Error and Menu Messages]]></DESCRIPTION>
+<!--109-->              <DESCRIPTION><![CDATA[Information Error and Menu Messages]]></DESCRIPTION>
 <!--109 HELP-->
-<!--109-->              <HELP><![CDATA[
-The Message Tab displays error message text and menu messages]]></HELP>
+<!--109-->              <HELP><![CDATA[The Message Tab displays error message text and menu messages]]></HELP>
 <!--109 TABLENAME-->
 <!--109-->              <TABLENAME><![CDATA[AD_Message]]></TABLENAME>
 <!--109 ISVIEW-->
@@ -571,12 +557,10 @@ The Message Tab displays error message text and menu messages]]></HELP>
 <!--111 NAME-->
 <!--111-->              <NAME><![CDATA[AD_Language]]></NAME>
 <!--111 DESCRIPTION-->
-<!--111-->              <DESCRIPTION><![CDATA[
-System and User Languages
+<!--111-->              <DESCRIPTION><![CDATA[System and User Languages
 Select your Language]]></DESCRIPTION>
 <!--111 HELP-->
-<!--111-->              <HELP><![CDATA[
-If you want to add an additional User Interface language, select "System Language". Otherwise, the system allows you to just translate elements for printing documents.
+<!--111-->              <HELP><![CDATA[If you want to add an additional User Interface language, select "System Language". Otherwise, the system allows you to just translate elements for printing documents.
 The Language needs to be a (verified) System Language]]></HELP>
 <!--111 TABLENAME-->
 <!--111-->              <TABLENAME><![CDATA[AD_Language]]></TABLENAME>
@@ -628,11 +612,9 @@ The Language needs to be a (verified) System Language]]></HELP>
 <!--112 NAME-->
 <!--112-->              <NAME><![CDATA[AD_Client]]></NAME>
 <!--112 DESCRIPTION-->
-<!--112-->              <DESCRIPTION><![CDATA[
-Client Definition]]></DESCRIPTION>
+<!--112-->              <DESCRIPTION><![CDATA[Client Definition]]></DESCRIPTION>
 <!--112 HELP-->
-<!--112-->              <HELP><![CDATA[
-The Client Definition Tab defines a unique client.Do not create a new client in this window, but use "Initial Client Setup" (System Administrator Role) to set up the required security and access rules. If you create a new client here, you will not be abl]]></HELP>
+<!--112-->              <HELP><![CDATA[The Client Definition Tab defines a unique client.Do not create a new client in this window, but use "Initial Client Setup" (System Administrator Role) to set up the required security and access rules. If you create a new client here, you will not be abl]]></HELP>
 <!--112 TABLENAME-->
 <!--112-->              <TABLENAME><![CDATA[AD_Client]]></TABLENAME>
 <!--112 ISVIEW-->
@@ -736,12 +718,10 @@ The Client Definition Tab defines a unique client.Do not create a new client in 
 <!--114 NAME-->
 <!--114-->              <NAME><![CDATA[AD_User]]></NAME>
 <!--114 DESCRIPTION-->
-<!--114-->              <DESCRIPTION><![CDATA[
-User
+<!--114-->              <DESCRIPTION><![CDATA[User
 Maintain User within the system - Internal or Business Partner Contact]]></DESCRIPTION>
 <!--114 HELP-->
-<!--114-->              <HELP><![CDATA[
-The User Tab defines the log in for Users who have access to the system.
+<!--114-->              <HELP><![CDATA[The User Tab defines the log in for Users who have access to the system.
 The User identifies a unique user in the system. This could be an internal user or a business partner contact]]></HELP>
 <!--114 TABLENAME-->
 <!--114-->              <TABLENAME><![CDATA[AD_User]]></TABLENAME>
@@ -793,11 +773,9 @@ The User identifies a unique user in the system. This could be an internal user 
 <!--115 NAME-->
 <!--115-->              <NAME><![CDATA[AD_Sequence]]></NAME>
 <!--115 DESCRIPTION-->
-<!--115-->              <DESCRIPTION><![CDATA[
-Sequence Definition]]></DESCRIPTION>
+<!--115-->              <DESCRIPTION><![CDATA[Sequence Definition]]></DESCRIPTION>
 <!--115 HELP-->
-<!--115-->              <HELP><![CDATA[
-The Sequence Tab defines the numeric sequencing to use for documents.  These can also include a alpha suffix and / or prefix.]]></HELP>
+<!--115-->              <HELP><![CDATA[The Sequence Tab defines the numeric sequencing to use for documents.  These can also include a alpha suffix and / or prefix.]]></HELP>
 <!--115 TABLENAME-->
 <!--115-->              <TABLENAME><![CDATA[AD_Sequence]]></TABLENAME>
 <!--115 ISVIEW-->
@@ -848,11 +826,9 @@ The Sequence Tab defines the numeric sequencing to use for documents.  These can
 <!--116 NAME-->
 <!--116-->              <NAME><![CDATA[AD_Menu]]></NAME>
 <!--116 DESCRIPTION-->
-<!--116-->              <DESCRIPTION><![CDATA[
-Maintain Menu]]></DESCRIPTION>
+<!--116-->              <DESCRIPTION><![CDATA[Maintain Menu]]></DESCRIPTION>
 <!--116 HELP-->
-<!--116-->              <HELP><![CDATA[
-The Menu Tab defines the tree structured menu which will be used for the selected Organization.]]></HELP>
+<!--116-->              <HELP><![CDATA[The Menu Tab defines the tree structured menu which will be used for the selected Organization.]]></HELP>
 <!--116 TABLENAME-->
 <!--116-->              <TABLENAME><![CDATA[AD_Menu]]></TABLENAME>
 <!--116 ISVIEW-->
@@ -903,11 +879,9 @@ The Menu Tab defines the tree structured menu which will be used for the selecte
 <!--117 NAME-->
 <!--117-->              <NAME><![CDATA[AD_Workflow]]></NAME>
 <!--117 DESCRIPTION-->
-<!--117-->              <DESCRIPTION><![CDATA[
-Define Workflow]]></DESCRIPTION>
+<!--117-->              <DESCRIPTION><![CDATA[Define Workflow]]></DESCRIPTION>
 <!--117 HELP-->
-<!--117-->              <HELP><![CDATA[
-The Workflow Tab defines Workflows in the system.]]></HELP>
+<!--117-->              <HELP><![CDATA[The Workflow Tab defines Workflows in the system.]]></HELP>
 <!--117 TABLENAME-->
 <!--117-->              <TABLENAME><![CDATA[AD_Workflow]]></TABLENAME>
 <!--117 ISVIEW-->
@@ -958,11 +932,9 @@ The Workflow Tab defines Workflows in the system.]]></HELP>
 <!--118 NAME-->
 <!--118-->              <NAME><![CDATA[AD_Task]]></NAME>
 <!--118 DESCRIPTION-->
-<!--118-->              <DESCRIPTION><![CDATA[
-Task]]></DESCRIPTION>
+<!--118-->              <DESCRIPTION><![CDATA[Task]]></DESCRIPTION>
 <!--118 HELP-->
-<!--118-->              <HELP><![CDATA[
-The Task Tab defines the unique tasks that will be used.]]></HELP>
+<!--118-->              <HELP><![CDATA[The Task Tab defines the unique tasks that will be used.]]></HELP>
 <!--118 TABLENAME-->
 <!--118-->              <TABLENAME><![CDATA[AD_Task]]></TABLENAME>
 <!--118 ISVIEW-->
@@ -1013,11 +985,9 @@ The Task Tab defines the unique tasks that will be used.]]></HELP>
 <!--119 NAME-->
 <!--119-->              <NAME><![CDATA[AD_Message_Trl]]></NAME>
 <!--119 DESCRIPTION-->
-<!--119-->              <DESCRIPTION><![CDATA[
-Message Translation]]></DESCRIPTION>
+<!--119-->              <DESCRIPTION><![CDATA[Message Translation]]></DESCRIPTION>
 <!--119 HELP-->
-<!--119-->              <HELP><![CDATA[
-This tab contains the messages translation to different languages.  It is important to check the translated option.]]></HELP>
+<!--119-->              <HELP><![CDATA[This tab contains the messages translation to different languages.  It is important to check the translated option.]]></HELP>
 <!--119 TABLENAME-->
 <!--119-->              <TABLENAME><![CDATA[AD_Message_Trl]]></TABLENAME>
 <!--119 ISVIEW-->
@@ -1068,12 +1038,10 @@ This tab contains the messages translation to different languages.  It is import
 <!--120 NAME-->
 <!--120-->              <NAME><![CDATA[AD_Menu_Trl]]></NAME>
 <!--120 DESCRIPTION-->
-<!--120-->              <DESCRIPTION><![CDATA[
-Menu Translation - May not need to be translated
+<!--120-->              <DESCRIPTION><![CDATA[Menu Translation - May not need to be translated
 Please note, that most of the menu translations are derived from Window/Form/.. translation!]]></DESCRIPTION>
 <!--120 HELP-->
-<!--120-->              <HELP><![CDATA[
-Menu translations are derived from Window,  Process, etc. You only need to translate Summary level items.
+<!--120-->              <HELP><![CDATA[Menu translations are derived from Window,  Process, etc. You only need to translate Summary level items.
 Run Synchronize Terminology to update menu translation.]]></HELP>
 <!--120 TABLENAME-->
 <!--120-->              <TABLENAME><![CDATA[AD_Menu_Trl]]></TABLENAME>
@@ -1219,11 +1187,9 @@ Run Synchronize Terminology to update menu translation.]]></HELP>
 <!--123 NAME-->
 <!--123-->              <NAME><![CDATA[AD_Tab_Trl]]></NAME>
 <!--123 DESCRIPTION-->
-<!--123-->              <DESCRIPTION><![CDATA[
-Allows the translation of any tab of the application]]></DESCRIPTION>
+<!--123-->              <DESCRIPTION><![CDATA[Allows the translation of any tab of the application]]></DESCRIPTION>
 <!--123 HELP-->
-<!--123-->              <HELP><![CDATA[
-Allows the translation of any tab of the application.After the edition, the window must be regenerated.]]></HELP>
+<!--123-->              <HELP><![CDATA[Allows the translation of any tab of the application.After the edition, the window must be regenerated.]]></HELP>
 <!--123 TABLENAME-->
 <!--123-->              <TABLENAME><![CDATA[AD_Tab_Trl]]></TABLENAME>
 <!--123 ISVIEW-->
@@ -1274,11 +1240,9 @@ Allows the translation of any tab of the application.After the edition, the wind
 <!--124 NAME-->
 <!--124-->              <NAME><![CDATA[AD_Task_Trl]]></NAME>
 <!--124 DESCRIPTION-->
-<!--124-->              <DESCRIPTION><![CDATA[
-Allows the translation of any task of the application.]]></DESCRIPTION>
+<!--124-->              <DESCRIPTION><![CDATA[Allows the translation of any task of the application.]]></DESCRIPTION>
 <!--124 HELP-->
-<!--124-->              <HELP><![CDATA[
-Allows the translation of any task of the application. After the edition, the window must be regenerated.]]></HELP>
+<!--124-->              <HELP><![CDATA[Allows the translation of any task of the application. After the edition, the window must be regenerated.]]></HELP>
 <!--124 TABLENAME-->
 <!--124-->              <TABLENAME><![CDATA[AD_Task_Trl]]></TABLENAME>
 <!--124 ISVIEW-->
@@ -1425,12 +1389,10 @@ Allows the translation of any task of the application. After the edition, the wi
 <!--127 NAME-->
 <!--127-->              <NAME><![CDATA[AD_Field_Trl]]></NAME>
 <!--127 DESCRIPTION-->
-<!--127-->              <DESCRIPTION><![CDATA[
-Menu Translation - May not need to be translated
+<!--127-->              <DESCRIPTION><![CDATA[Menu Translation - May not need to be translated
 Allows the translation of any field of the application. Please note, that most of the fields translations are derived from Element!]]></DESCRIPTION>
 <!--127 HELP-->
-<!--127-->              <HELP><![CDATA[
-Fields are automatically translated, if centrally maintained.  You only need to translate not centrally maintained Fields.
+<!--127-->              <HELP><![CDATA[Fields are automatically translated, if centrally maintained.  You only need to translate not centrally maintained Fields.
 Allows the translation of any field of the application. After the edition, the window must be regenerated.]]></HELP>
 <!--127 TABLENAME-->
 <!--127-->              <TABLENAME><![CDATA[AD_Field_Trl]]></TABLENAME>
@@ -1529,11 +1491,9 @@ Allows the translation of any field of the application. After the edition, the w
 <!--129 NAME-->
 <!--129-->              <NAME><![CDATA[AD_WF_Node]]></NAME>
 <!--129 DESCRIPTION-->
-<!--129-->              <DESCRIPTION><![CDATA[
-Define workflow nodes]]></DESCRIPTION>
+<!--129-->              <DESCRIPTION><![CDATA[Define workflow nodes]]></DESCRIPTION>
 <!--129 HELP-->
-<!--129-->              <HELP><![CDATA[
-The Node Tab defines each Node or step in this Workflow.]]></HELP>
+<!--129-->              <HELP><![CDATA[The Node Tab defines each Node or step in this Workflow.]]></HELP>
 <!--129 TABLENAME-->
 <!--129-->              <TABLENAME><![CDATA[AD_WF_Node]]></TABLENAME>
 <!--129 ISVIEW-->
@@ -1584,11 +1544,9 @@ The Node Tab defines each Node or step in this Workflow.]]></HELP>
 <!--130 NAME-->
 <!--130-->              <NAME><![CDATA[AD_WF_Node_Trl]]></NAME>
 <!--130 DESCRIPTION-->
-<!--130-->              <DESCRIPTION><![CDATA[
-Allows the translation of any workflow node of the application.]]></DESCRIPTION>
+<!--130-->              <DESCRIPTION><![CDATA[Allows the translation of any workflow node of the application.]]></DESCRIPTION>
 <!--130 HELP-->
-<!--130-->              <HELP><![CDATA[
-Allows the translation of any workflow node of the application. After the edition, the window must be regenerated.]]></HELP>
+<!--130-->              <HELP><![CDATA[Allows the translation of any workflow node of the application. After the edition, the window must be regenerated.]]></HELP>
 <!--130 TABLENAME-->
 <!--130-->              <TABLENAME><![CDATA[AD_WF_Node_Trl]]></TABLENAME>
 <!--130 ISVIEW-->
@@ -1639,11 +1597,9 @@ Allows the translation of any workflow node of the application. After the editio
 <!--131 NAME-->
 <!--131-->              <NAME><![CDATA[AD_WF_NodeNext]]></NAME>
 <!--131 DESCRIPTION-->
-<!--131-->              <DESCRIPTION><![CDATA[
-Next Nodes]]></DESCRIPTION>
+<!--131-->              <DESCRIPTION><![CDATA[Next Nodes]]></DESCRIPTION>
 <!--131 HELP-->
-<!--131-->              <HELP><![CDATA[
-The Next Nodes Tab defines the order or Nodes or Steps in a Workflow.]]></HELP>
+<!--131-->              <HELP><![CDATA[The Next Nodes Tab defines the order or Nodes or Steps in a Workflow.]]></HELP>
 <!--131 TABLENAME-->
 <!--131-->              <TABLENAME><![CDATA[AD_WF_NodeNext]]></TABLENAME>
 <!--131 ISVIEW-->
@@ -1694,11 +1650,9 @@ The Next Nodes Tab defines the order or Nodes or Steps in a Workflow.]]></HELP>
 <!--132 NAME-->
 <!--132-->              <NAME><![CDATA[AD_Window_Trl]]></NAME>
 <!--132 DESCRIPTION-->
-<!--132-->              <DESCRIPTION><![CDATA[
-Window Translation]]></DESCRIPTION>
+<!--132-->              <DESCRIPTION><![CDATA[Window Translation]]></DESCRIPTION>
 <!--132 HELP-->
-<!--132-->              <HELP><![CDATA[
-This tab contains the windows translation to different languages. It is important to check the translated option.]]></HELP>
+<!--132-->              <HELP><![CDATA[This tab contains the windows translation to different languages. It is important to check the translated option.]]></HELP>
 <!--132 TABLENAME-->
 <!--132-->              <TABLENAME><![CDATA[AD_Window_Trl]]></TABLENAME>
 <!--132 ISVIEW-->
@@ -1749,11 +1703,9 @@ This tab contains the windows translation to different languages. It is importan
 <!--133 NAME-->
 <!--133-->              <NAME><![CDATA[AD_Workflow_Trl]]></NAME>
 <!--133 DESCRIPTION-->
-<!--133-->              <DESCRIPTION><![CDATA[
-Allows the translation of any workflow of the application.]]></DESCRIPTION>
+<!--133-->              <DESCRIPTION><![CDATA[Allows the translation of any workflow of the application.]]></DESCRIPTION>
 <!--133 HELP-->
-<!--133-->              <HELP><![CDATA[
-Allows the translation of any workflow of the application. After the edition, the window must be regenerated.]]></HELP>
+<!--133-->              <HELP><![CDATA[Allows the translation of any workflow of the application. After the edition, the window must be regenerated.]]></HELP>
 <!--133 TABLENAME-->
 <!--133-->              <TABLENAME><![CDATA[AD_Workflow_Trl]]></TABLENAME>
 <!--133 ISVIEW-->
@@ -1853,11 +1805,9 @@ Allows the translation of any workflow of the application. After the edition, th
 <!--136 NAME-->
 <!--136-->              <NAME><![CDATA[AD_Ref_List_Trl]]></NAME>
 <!--136 DESCRIPTION-->
-<!--136-->              <DESCRIPTION><![CDATA[
-Allows the translation of any reference list of the application]]></DESCRIPTION>
+<!--136-->              <DESCRIPTION><![CDATA[Allows the translation of any reference list of the application]]></DESCRIPTION>
 <!--136 HELP-->
-<!--136-->              <HELP><![CDATA[
-Allows the translation of any reference list of the application. After the edition, the window must be regenerated.]]></HELP>
+<!--136-->              <HELP><![CDATA[Allows the translation of any reference list of the application. After the edition, the window must be regenerated.]]></HELP>
 <!--136 TABLENAME-->
 <!--136-->              <TABLENAME><![CDATA[AD_Ref_List_Trl]]></TABLENAME>
 <!--136 ISVIEW-->
@@ -1908,11 +1858,9 @@ Allows the translation of any reference list of the application. After the editi
 <!--139 NAME-->
 <!--139-->              <NAME><![CDATA[C_Calendar]]></NAME>
 <!--139 DESCRIPTION-->
-<!--139-->              <DESCRIPTION><![CDATA[
-Define your calendar]]></DESCRIPTION>
+<!--139-->              <DESCRIPTION><![CDATA[Define your calendar]]></DESCRIPTION>
 <!--139 HELP-->
-<!--139-->              <HELP><![CDATA[
-The Calendar Tab defines each calendar that will be used by an Organization.]]></HELP>
+<!--139-->              <HELP><![CDATA[The Calendar Tab defines each calendar that will be used by an Organization.]]></HELP>
 <!--139 TABLENAME-->
 <!--139-->              <TABLENAME><![CDATA[C_Calendar]]></TABLENAME>
 <!--139 ISVIEW-->
@@ -1963,7 +1911,8 @@ The Calendar Tab defines each calendar that will be used by an Organization.]]><
 <!--140 NAME-->
 <!--140-->              <NAME><![CDATA[C_Conversion_Rate]]></NAME>
 <!--140 DESCRIPTION-->
-<!--140-->              <DESCRIPTION><![CDATA[Define currency conversion ratesDefine Currency Conversion Rates]]></DESCRIPTION>
+<!--140-->              <DESCRIPTION><![CDATA[Define currency conversion rates
+Define Currency Conversion Rates]]></DESCRIPTION>
 <!--140 HELP-->
 <!--140-->              <HELP><![CDATA[The Conversion Rate defines the rates to use when converting a source currency to an accounting or reporting currency.
 The Conversion Rates tab is used to define conversion rates to be used when converting document amounts from one currency to another.  Conversion rates can be defined for multiple rate types.  They can also be effective for a defined range of dates.]]></HELP>
@@ -2123,11 +2072,9 @@ The Conversion Rates tab is used to define conversion rates to be used when conv
 <!--145 NAME-->
 <!--145-->              <NAME><![CDATA[C_Period]]></NAME>
 <!--145 DESCRIPTION-->
-<!--145-->              <DESCRIPTION><![CDATA[
-Define Calendar Periods]]></DESCRIPTION>
+<!--145-->              <DESCRIPTION><![CDATA[Define Calendar Periods]]></DESCRIPTION>
 <!--145 HELP-->
-<!--145-->              <HELP><![CDATA[
-The Period Tab defines a Period No, Name and Start Date for each Calendar Year.  Each period begins on the defined Start Date and ends one day prior to the next period's Start Date.]]></HELP>
+<!--145-->              <HELP><![CDATA[The Period Tab defines a Period No, Name and Start Date for each Calendar Year.  Each period begins on the defined Start Date and ends one day prior to the next period's Start Date.]]></HELP>
 <!--145 TABLENAME-->
 <!--145-->              <TABLENAME><![CDATA[C_Period]]></TABLENAME>
 <!--145 ISVIEW-->
@@ -2231,8 +2178,7 @@ The Period Tab defines a Period No, Name and Start Date for each Calendar Year. 
 <!--155 NAME-->
 <!--155-->              <NAME><![CDATA[AD_Org]]></NAME>
 <!--155 DESCRIPTION-->
-<!--155-->              <DESCRIPTION><![CDATA[
-Define Organizations
+<!--155-->              <DESCRIPTION><![CDATA[Define Organizations
 Maintain Organizationt Accounting Dimension Tree]]></DESCRIPTION>
 <!--155 HELP-->
 <!--155-->              <HELP><![CDATA[The Organization Tab is used to define an Organization.  Each Organization has a Key and Name and optionally a Description.  When adding a new organization, you must re-login to be able to access the new organization.
@@ -2287,8 +2233,7 @@ Please note that you will not be able to create new entities in this window if y
 <!--156 NAME-->
 <!--156-->              <NAME><![CDATA[AD_Role]]></NAME>
 <!--156 DESCRIPTION-->
-<!--156-->              <DESCRIPTION><![CDATA[
-Define responsibility roles
+<!--156-->              <DESCRIPTION><![CDATA[Define responsibility roles
 Role with Data Access Restriction]]></DESCRIPTION>
 <!--156 HELP-->
 <!--156-->              <HELP><![CDATA[Define the role and add the client and organizations the role has access to. You can give users access to this role and modify the access of this role to windows, forms, processes and reports as well as tasks. <BR>If the Role User Level is Manual, the as
@@ -2343,12 +2288,10 @@ Select Role for with Data Access Restrictions]]></HELP>
 <!--157 NAME-->
 <!--157-->              <NAME><![CDATA[AD_User_Roles]]></NAME>
 <!--157 DESCRIPTION-->
-<!--157-->              <DESCRIPTION><![CDATA[
-User Roles
+<!--157-->              <DESCRIPTION><![CDATA[User Roles
 Users with this Role]]></DESCRIPTION>
 <!--157 HELP-->
-<!--157-->              <HELP><![CDATA[
-The User Roles Tab define the Roles each user may have.  The Roles will determine what windows, tasks, processes and workflows that a User has access to.
+<!--157-->              <HELP><![CDATA[The User Roles Tab define the Roles each user may have.  The Roles will determine what windows, tasks, processes and workflows that a User has access to.
 The User Assignment Tab displays Users who have been defined for this Role.]]></HELP>
 <!--157 TABLENAME-->
 <!--157-->              <TABLENAME><![CDATA[AD_User_Roles]]></TABLENAME>
@@ -2400,11 +2343,9 @@ The User Assignment Tab displays Users who have been defined for this Role.]]></
 <!--162 NAME-->
 <!--162-->              <NAME><![CDATA[C_Location]]></NAME>
 <!--162 DESCRIPTION-->
-<!--162-->              <DESCRIPTION><![CDATA[
-Define Location]]></DESCRIPTION>
+<!--162-->              <DESCRIPTION><![CDATA[Define Location]]></DESCRIPTION>
 <!--162 HELP-->
-<!--162-->              <HELP><![CDATA[
-The Location Tab defines the location of an Organization.]]></HELP>
+<!--162-->              <HELP><![CDATA[The Location Tab defines the location of an Organization.]]></HELP>
 <!--162 TABLENAME-->
 <!--162-->              <TABLENAME><![CDATA[C_Location]]></TABLENAME>
 <!--162 ISVIEW-->
@@ -2455,8 +2396,7 @@ The Location Tab defines the location of an Organization.]]></HELP>
 <!--163 NAME-->
 <!--163-->              <NAME><![CDATA[C_NonBusinessDay]]></NAME>
 <!--163 DESCRIPTION-->
-<!--163-->              <DESCRIPTION><![CDATA[
-Define Non Business Days]]></DESCRIPTION>
+<!--163-->              <DESCRIPTION><![CDATA[Define Non Business Days]]></DESCRIPTION>
 <!--163 HELP-->
 <!--163-->              <HELP><![CDATA[The Non Business Days Tab defines those days to exclude when calculating the due date for given payment terms.  For example, if an invoice terms was Net 10 days and the Invoice Date was 2/17/2000 the due date would be 2/27/2000.  If 2/27/2000 was defined]]></HELP>
 <!--163 TABLENAME-->
@@ -2509,11 +2449,9 @@ Define Non Business Days]]></DESCRIPTION>
 <!--164 NAME-->
 <!--164-->              <NAME><![CDATA[C_Region]]></NAME>
 <!--164 DESCRIPTION-->
-<!--164-->              <DESCRIPTION><![CDATA[
-Define Regions]]></DESCRIPTION>
+<!--164-->              <DESCRIPTION><![CDATA[Define Regions]]></DESCRIPTION>
 <!--164 HELP-->
-<!--164-->              <HELP><![CDATA[
-The Region Tab  defines a Region within a Country.  This tab is enabled only if the Has Region checkbox is selected for the Country.]]></HELP>
+<!--164-->              <HELP><![CDATA[The Region Tab  defines a Region within a Country.  This tab is enabled only if the Has Region checkbox is selected for the Country.]]></HELP>
 <!--164 TABLENAME-->
 <!--164-->              <TABLENAME><![CDATA[C_Region]]></TABLENAME>
 <!--164 ISVIEW-->
@@ -2564,11 +2502,9 @@ The Region Tab  defines a Region within a Country.  This tab is enabled only if 
 <!--170 NAME-->
 <!--170-->              <NAME><![CDATA[C_Country]]></NAME>
 <!--170 DESCRIPTION-->
-<!--170-->              <DESCRIPTION><![CDATA[
-Define Country]]></DESCRIPTION>
+<!--170-->              <DESCRIPTION><![CDATA[Define Country]]></DESCRIPTION>
 <!--170 HELP-->
-<!--170-->              <HELP><![CDATA[
-The Country Tab defines any country in which you do business.  Values entered here are referenced in location records for Business Partners.]]></HELP>
+<!--170-->              <HELP><![CDATA[The Country Tab defines any country in which you do business.  Values entered here are referenced in location records for Business Partners.]]></HELP>
 <!--170 TABLENAME-->
 <!--170-->              <TABLENAME><![CDATA[C_Country]]></TABLENAME>
 <!--170 ISVIEW-->
@@ -2672,11 +2608,9 @@ The Country Tab defines any country in which you do business.  Values entered he
 <!--176 NAME-->
 <!--176-->              <NAME><![CDATA[C_ValidCombination]]></NAME>
 <!--176 DESCRIPTION-->
-<!--176-->              <DESCRIPTION><![CDATA[
-Valid Account Combinations]]></DESCRIPTION>
+<!--176-->              <DESCRIPTION><![CDATA[Valid Account Combinations]]></DESCRIPTION>
 <!--176 HELP-->
-<!--176-->              <HELP><![CDATA[
-The Account Combination Tab defines and displays valid account combination.  An Alias can be defined to facilitate document entry.]]></HELP>
+<!--176-->              <HELP><![CDATA[The Account Combination Tab defines and displays valid account combination.  An Alias can be defined to facilitate document entry.]]></HELP>
 <!--176 TABLENAME-->
 <!--176-->              <TABLENAME><![CDATA[C_ValidCombination]]></TABLENAME>
 <!--176 ISVIEW-->
@@ -2727,11 +2661,9 @@ The Account Combination Tab defines and displays valid account combination.  An 
 <!--177 NAME-->
 <!--177-->              <NAME><![CDATA[C_Year]]></NAME>
 <!--177 DESCRIPTION-->
-<!--177-->              <DESCRIPTION><![CDATA[
-Define Calendar Year]]></DESCRIPTION>
+<!--177-->              <DESCRIPTION><![CDATA[Define Calendar Year]]></DESCRIPTION>
 <!--177 HELP-->
-<!--177-->              <HELP><![CDATA[
-The Year Window is used to define each year for the specified calendar.]]></HELP>
+<!--177-->              <HELP><![CDATA[The Year Window is used to define each year for the specified calendar.]]></HELP>
 <!--177 TABLENAME-->
 <!--177-->              <TABLENAME><![CDATA[C_Year]]></TABLENAME>
 <!--177 ISVIEW-->
@@ -2941,11 +2873,9 @@ The Year Window is used to define each year for the specified calendar.]]></HELP
 <!--186 NAME-->
 <!--186-->              <NAME><![CDATA[C_City]]></NAME>
 <!--186 DESCRIPTION-->
-<!--186-->              <DESCRIPTION><![CDATA[
-Define Cities]]></DESCRIPTION>
+<!--186-->              <DESCRIPTION><![CDATA[Define Cities]]></DESCRIPTION>
 <!--186 HELP-->
-<!--186-->              <HELP><![CDATA[
-The Cities Tab defines Cities within a Country or Region.  Cities entered here are not referenced when entering the address.]]></HELP>
+<!--186-->              <HELP><![CDATA[The Cities Tab defines Cities within a Country or Region.  Cities entered here are not referenced when entering the address.]]></HELP>
 <!--186 TABLENAME-->
 <!--186-->              <TABLENAME><![CDATA[C_City]]></TABLENAME>
 <!--186 ISVIEW-->
@@ -3206,12 +3136,10 @@ The Cities Tab defines Cities within a Country or Region.  Cities entered here a
 <!--197 NAME-->
 <!--197-->              <NAME><![CDATA[AD_Process_Access]]></NAME>
 <!--197 DESCRIPTION-->
-<!--197-->              <DESCRIPTION><![CDATA[
-Process Access
+<!--197-->              <DESCRIPTION><![CDATA[Process Access
 Report Access]]></DESCRIPTION>
 <!--197 HELP-->
-<!--197-->              <HELP><![CDATA[
-The Process Access Tab defines the Processes and type of access that this Role is granted.
+<!--197-->              <HELP><![CDATA[The Process Access Tab defines the Processes and type of access that this Role is granted.
 The Report Access Tab determines who can access a report or process]]></HELP>
 <!--197 TABLENAME-->
 <!--197-->              <TABLENAME><![CDATA[AD_Process_Access]]></TABLENAME>
@@ -3263,12 +3191,10 @@ The Report Access Tab determines who can access a report or process]]></HELP>
 <!--199 NAME-->
 <!--199-->              <NAME><![CDATA[AD_Task_Access]]></NAME>
 <!--199 DESCRIPTION-->
-<!--199-->              <DESCRIPTION><![CDATA[
-Task Access
+<!--199-->              <DESCRIPTION><![CDATA[Task Access
 Task Access]]></DESCRIPTION>
 <!--199 HELP-->
-<!--199-->              <HELP><![CDATA[
-The Task Access Tab defines the Task and type of access that this Role is granted.
+<!--199-->              <HELP><![CDATA[The Task Access Tab defines the Task and type of access that this Role is granted.
 The Task Access Tab defines the Roles that will have access to this task and the type of access each Role is granted.]]></HELP>
 <!--199 TABLENAME-->
 <!--199-->              <TABLENAME><![CDATA[AD_Task_Access]]></TABLENAME>
@@ -3320,12 +3246,10 @@ The Task Access Tab defines the Roles that will have access to this task and the
 <!--201 NAME-->
 <!--201-->              <NAME><![CDATA[AD_Window_Access]]></NAME>
 <!--201 DESCRIPTION-->
-<!--201-->              <DESCRIPTION><![CDATA[
-Window Access
+<!--201-->              <DESCRIPTION><![CDATA[Window Access
 Window Access]]></DESCRIPTION>
 <!--201 HELP-->
-<!--201-->              <HELP><![CDATA[
-The Window Access Tab defines the Roles which have access to this Window.
+<!--201-->              <HELP><![CDATA[The Window Access Tab defines the Roles which have access to this Window.
 The Window Access Tab defines the Windows and type of access that this Role is granted.]]></HELP>
 <!--201 TABLENAME-->
 <!--201-->              <TABLENAME><![CDATA[AD_Window_Access]]></TABLENAME>
@@ -3377,13 +3301,11 @@ The Window Access Tab defines the Windows and type of access that this Role is g
 <!--202 NAME-->
 <!--202-->              <NAME><![CDATA[AD_Workflow_Access]]></NAME>
 <!--202 DESCRIPTION-->
-<!--202-->              <DESCRIPTION><![CDATA[
-Workflow Access
+<!--202-->              <DESCRIPTION><![CDATA[Workflow Access
 Workflow Access]]></DESCRIPTION>
 <!--202 HELP-->
-<!--202-->              <HELP><![CDATA[
-The Workflow Access Tab defines the Workflows and type of access that this Role is granted.
-The Workflow Access Tab defines the Roles who have access to this Workflow. ]]></HELP>
+<!--202-->              <HELP><![CDATA[The Workflow Access Tab defines the Workflows and type of access that this Role is granted.
+The Workflow Access Tab defines the Roles who have access to this Workflow.]]></HELP>
 <!--202 TABLENAME-->
 <!--202-->              <TABLENAME><![CDATA[AD_Workflow_Access]]></TABLENAME>
 <!--202 ISVIEW-->
@@ -3487,12 +3409,10 @@ The Workflow Access Tab defines the Roles who have access to this Workflow. ]]><
 <!--204 NAME-->
 <!--204-->              <NAME><![CDATA[C_Project_Acct]]></NAME>
 <!--204 DESCRIPTION-->
-<!--204-->              <DESCRIPTION><![CDATA[
-Define Project Accounting
+<!--204-->              <DESCRIPTION><![CDATA[Define Project Accounting
 Define Project Accounting]]></DESCRIPTION>
 <!--204 HELP-->
-<!--204-->              <HELP><![CDATA[
-The Accounting Tab is used to define the Asset Account to use when a project is completed and the associated asset realized.
+<!--204-->              <HELP><![CDATA[The Accounting Tab is used to define the Asset Account to use when a project is completed and the associated asset realized.
 The Accounting Tab is used to define the Asset Account to use when a project is completed and the associated asset realized.]]></HELP>
 <!--204 TABLENAME-->
 <!--204-->              <TABLENAME><![CDATA[C_Project_Acct]]></TABLENAME>
@@ -3650,11 +3570,9 @@ The Accounting Tab is used to define the Asset Account to use when a project is 
 <!--209 NAME-->
 <!--209-->              <NAME><![CDATA[M_Product_Category]]></NAME>
 <!--209 DESCRIPTION-->
-<!--209-->              <DESCRIPTION><![CDATA[
-Define Product Category]]></DESCRIPTION>
+<!--209-->              <DESCRIPTION><![CDATA[Define Product Category]]></DESCRIPTION>
 <!--209 HELP-->
-<!--209-->              <HELP><![CDATA[
-The Product Category defines unique groupings of products.  Product categories can be used in building price lists.]]></HELP>
+<!--209-->              <HELP><![CDATA[The Product Category defines unique groupings of products.  Product categories can be used in building price lists.]]></HELP>
 <!--209 TABLENAME-->
 <!--209-->              <TABLENAME><![CDATA[M_Product_Category]]></TABLENAME>
 <!--209 ISVIEW-->
@@ -3705,9 +3623,11 @@ The Product Category defines unique groupings of products.  Product categories c
 <!--210 NAME-->
 <!--210-->              <NAME><![CDATA[M_Product_PO]]></NAME>
 <!--210 DESCRIPTION-->
-<!--210-->              <DESCRIPTION><![CDATA[PurchasingProduct Details]]></DESCRIPTION>
+<!--210-->              <DESCRIPTION><![CDATA[Purchasing
+Product Details]]></DESCRIPTION>
 <!--210 HELP-->
-<!--210-->              <HELP><![CDATA[The Purchasing defines the pricing and rules ( pack quantity, UPC, minimum order quantity) for each product.The Product Details allows you to display and maintain all products for a selected Vendor.]]></HELP>
+<!--210-->              <HELP><![CDATA[The Purchasing defines the pricing and rules ( pack quantity, UPC, minimum order quantity) for each product.
+The Product Details allows you to display and maintain all products for a selected Vendor.]]></HELP>
 <!--210 TABLENAME-->
 <!--210-->              <TABLENAME><![CDATA[M_Product_PO]]></TABLENAME>
 <!--210 ISVIEW-->
@@ -3758,11 +3678,9 @@ The Product Category defines unique groupings of products.  Product categories c
 <!--213 NAME-->
 <!--213-->              <NAME><![CDATA[M_Substitute]]></NAME>
 <!--213 DESCRIPTION-->
-<!--213-->              <DESCRIPTION><![CDATA[
-Define Substitute]]></DESCRIPTION>
+<!--213-->              <DESCRIPTION><![CDATA[Define Substitute]]></DESCRIPTION>
 <!--213 HELP-->
-<!--213-->              <HELP><![CDATA[
-The Substitute Tab defines products which may be used as a replacement for the selected product.]]></HELP>
+<!--213-->              <HELP><![CDATA[The Substitute Tab defines products which may be used as a replacement for the selected product.]]></HELP>
 <!--213 TABLENAME-->
 <!--213-->              <TABLENAME><![CDATA[M_Substitute]]></TABLENAME>
 <!--213 ISVIEW-->
@@ -3813,11 +3731,9 @@ The Substitute Tab defines products which may be used as a replacement for the s
 <!--216 NAME-->
 <!--216-->              <NAME><![CDATA[C_Approval]]></NAME>
 <!--216 DESCRIPTION-->
-<!--216-->              <DESCRIPTION><![CDATA[
-Defines approval types]]></DESCRIPTION>
+<!--216-->              <DESCRIPTION><![CDATA[Defines approval types]]></DESCRIPTION>
 <!--216 HELP-->
-<!--216-->              <HELP><![CDATA[
-The Approval Tab defines the approval types to be used in documents.]]></HELP>
+<!--216-->              <HELP><![CDATA[The Approval Tab defines the approval types to be used in documents.]]></HELP>
 <!--216 TABLENAME-->
 <!--216-->              <TABLENAME><![CDATA[C_Approval]]></TABLENAME>
 <!--216 ISVIEW-->
@@ -3868,11 +3784,9 @@ The Approval Tab defines the approval types to be used in documents.]]></HELP>
 <!--217 NAME-->
 <!--217-->              <NAME><![CDATA[C_DocType]]></NAME>
 <!--217 DESCRIPTION-->
-<!--217-->              <DESCRIPTION><![CDATA[
-Define a Document Type]]></DESCRIPTION>
+<!--217-->              <DESCRIPTION><![CDATA[Define a Document Type]]></DESCRIPTION>
 <!--217 HELP-->
-<!--217-->              <HELP><![CDATA[
-The Document Definition Tab defines the processing parameters and controls for the document.  ]]></HELP>
+<!--217-->              <HELP><![CDATA[The Document Definition Tab defines the processing parameters and controls for the document.]]></HELP>
 <!--217 TABLENAME-->
 <!--217-->              <TABLENAME><![CDATA[C_DocType]]></TABLENAME>
 <!--217 ISVIEW-->
@@ -3923,11 +3837,9 @@ The Document Definition Tab defines the processing parameters and controls for t
 <!--218 NAME-->
 <!--218-->              <NAME><![CDATA[GL_Category]]></NAME>
 <!--218 DESCRIPTION-->
-<!--218-->              <DESCRIPTION><![CDATA[
-Define General Ledger Categories]]></DESCRIPTION>
+<!--218-->              <DESCRIPTION><![CDATA[Define General Ledger Categories]]></DESCRIPTION>
 <!--218 HELP-->
-<!--218-->              <HELP><![CDATA[
-The GL Category Tab defines optional identifiers for a document or journal.  Each Category may be used on a document, manual journal or import]]></HELP>
+<!--218-->              <HELP><![CDATA[The GL Category Tab defines optional identifiers for a document or journal.  Each Category may be used on a document, manual journal or import]]></HELP>
 <!--218 TABLENAME-->
 <!--218-->              <TABLENAME><![CDATA[GL_Category]]></TABLENAME>
 <!--218 ISVIEW-->
@@ -3978,11 +3890,9 @@ The GL Category Tab defines optional identifiers for a document or journal.  Eac
 <!--224 NAME-->
 <!--224-->              <NAME><![CDATA[GL_Journal]]></NAME>
 <!--224 DESCRIPTION-->
-<!--224-->              <DESCRIPTION><![CDATA[
-General Ledger Journal]]></DESCRIPTION>
+<!--224-->              <DESCRIPTION><![CDATA[General Ledger Journal]]></DESCRIPTION>
 <!--224 HELP-->
-<!--224-->              <HELP><![CDATA[
-The GL Journal Tab defines the control parameters for a single GL Journal.]]></HELP>
+<!--224-->              <HELP><![CDATA[The GL Journal Tab defines the control parameters for a single GL Journal.]]></HELP>
 <!--224 TABLENAME-->
 <!--224-->              <TABLENAME><![CDATA[GL_Journal]]></TABLENAME>
 <!--224 ISVIEW-->
@@ -4033,11 +3943,9 @@ The GL Journal Tab defines the control parameters for a single GL Journal.]]></H
 <!--225 NAME-->
 <!--225-->              <NAME><![CDATA[GL_JournalBatch]]></NAME>
 <!--225 DESCRIPTION-->
-<!--225-->              <DESCRIPTION><![CDATA[
-General Ledger Journal Batch]]></DESCRIPTION>
+<!--225-->              <DESCRIPTION><![CDATA[General Ledger Journal Batch]]></DESCRIPTION>
 <!--225 HELP-->
-<!--225-->              <HELP><![CDATA[
-The GL Journal Batch Tab defines the control parameters for a Journal Batch.  A Batch can consist of multiple Journals.]]></HELP>
+<!--225-->              <HELP><![CDATA[The GL Journal Batch Tab defines the control parameters for a Journal Batch.  A Batch can consist of multiple Journals.]]></HELP>
 <!--225 TABLENAME-->
 <!--225-->              <TABLENAME><![CDATA[GL_JournalBatch]]></TABLENAME>
 <!--225 ISVIEW-->
@@ -4088,11 +3996,9 @@ The GL Journal Batch Tab defines the control parameters for a Journal Batch.  A 
 <!--226 NAME-->
 <!--226-->              <NAME><![CDATA[GL_JournalLine]]></NAME>
 <!--226 DESCRIPTION-->
-<!--226-->              <DESCRIPTION><![CDATA[
-General Ledger Journal Line]]></DESCRIPTION>
+<!--226-->              <DESCRIPTION><![CDATA[General Ledger Journal Line]]></DESCRIPTION>
 <!--226 HELP-->
-<!--226-->              <HELP><![CDATA[
-The GL Journal Line Tab defines the individual debit and credit transactions that comprise a journal.]]></HELP>
+<!--226-->              <HELP><![CDATA[The GL Journal Line Tab defines the individual debit and credit transactions that comprise a journal.]]></HELP>
 <!--226 TABLENAME-->
 <!--226-->              <TABLENAME><![CDATA[GL_JournalLine]]></TABLENAME>
 <!--226 ISVIEW-->
@@ -4143,11 +4049,9 @@ The GL Journal Line Tab defines the individual debit and credit transactions tha
 <!--227 NAME-->
 <!--227-->              <NAME><![CDATA[AD_ClientInfo]]></NAME>
 <!--227 DESCRIPTION-->
-<!--227-->              <DESCRIPTION><![CDATA[
-Client Info]]></DESCRIPTION>
+<!--227-->              <DESCRIPTION><![CDATA[Client Info]]></DESCRIPTION>
 <!--227 HELP-->
-<!--227-->              <HELP><![CDATA[
-The Client Info Tab defines the details for each client.  The accounting rules and high level defaults are defined here. The Calendar is used to determine if a period is open or closed.]]></HELP>
+<!--227-->              <HELP><![CDATA[The Client Info Tab defines the details for each client.  The accounting rules and high level defaults are defined here. The Calendar is used to determine if a period is open or closed.]]></HELP>
 <!--227 TABLENAME-->
 <!--227-->              <TABLENAME><![CDATA[AD_ClientInfo]]></TABLENAME>
 <!--227 ISVIEW-->
@@ -4198,11 +4102,9 @@ The Client Info Tab defines the details for each client.  The accounting rules a
 <!--228 NAME-->
 <!--228-->              <NAME><![CDATA[AD_OrgInfo]]></NAME>
 <!--228 DESCRIPTION-->
-<!--228-->              <DESCRIPTION><![CDATA[
-Organization Detail Information]]></DESCRIPTION>
+<!--228-->              <DESCRIPTION><![CDATA[Organization Detail Information]]></DESCRIPTION>
 <!--228 HELP-->
-<!--228-->              <HELP><![CDATA[
-The Organization Info Tab is used to define an Organization's address, DUNS number and Tax Identification number]]></HELP>
+<!--228-->              <HELP><![CDATA[The Organization Info Tab is used to define an Organization's address, DUNS number and Tax Identification number]]></HELP>
 <!--228 TABLENAME-->
 <!--228-->              <TABLENAME><![CDATA[AD_OrgInfo]]></TABLENAME>
 <!--228 ISVIEW-->
@@ -4255,7 +4157,7 @@ The Organization Info Tab is used to define an Organization's address, DUNS numb
 <!--229 DESCRIPTION-->
 <!--229-->              <DESCRIPTION><![CDATA[Define Period Control]]></DESCRIPTION>
 <!--229 HELP-->
-<!--229-->              <HELP><![CDATA[The Period Control records the status of a Period (Never Opened, Opened, Closed) for each of the DocBaseTypes.  ]]></HELP>
+<!--229-->              <HELP><![CDATA[The Period Control records the status of a Period (Never Opened, Opened, Closed) for each of the DocBaseTypes.]]></HELP>
 <!--229 TABLENAME-->
 <!--229-->              <TABLENAME><![CDATA[C_PeriodControl]]></TABLENAME>
 <!--229 ISVIEW-->
@@ -4306,7 +4208,8 @@ The Organization Info Tab is used to define an Organization's address, DUNS numb
 <!--230 NAME-->
 <!--230-->              <NAME><![CDATA[C_SalesRegion]]></NAME>
 <!--230 DESCRIPTION-->
-<!--230-->              <DESCRIPTION><![CDATA[Sales RegionMaintain Sales Region Accounting Dimension Tree]]></DESCRIPTION>
+<!--230-->              <DESCRIPTION><![CDATA[Sales Region
+Maintain Sales Region Accounting Dimension Tree]]></DESCRIPTION>
 <!--230 HELP-->
 <!--230-->              <HELP><![CDATA[The Sales Region defines the different regions where you do business.  Sales Regions can be used when generating reports or calculating commissions.]]></HELP>
 <!--230 TABLENAME-->
@@ -4412,7 +4315,10 @@ The Organization Info Tab is used to define an Organization's address, DUNS numb
 <!--251 NAME-->
 <!--251-->              <NAME><![CDATA[M_ProductPrice]]></NAME>
 <!--251 DESCRIPTION-->
-<!--251-->              <DESCRIPTION><![CDATA[Product PricingMaintain Product PricesExpense Type PricingResource Pricing]]></DESCRIPTION>
+<!--251-->              <DESCRIPTION><![CDATA[Product Pricing
+Maintain Product Prices
+Expense Type Pricing
+Resource Pricing]]></DESCRIPTION>
 <!--251 HELP-->
 <!--251-->              <HELP><![CDATA[The Pricing displays the List, Standard and Limit prices for each price list a product is contained in.
 The Price List displays the prices for a product based on the selected price list.
@@ -4573,11 +4479,9 @@ The Pricing Tab displays the List, Standard and Limit prices for each price list
 <!--254 NAME-->
 <!--254-->              <NAME><![CDATA[AD_Attachment]]></NAME>
 <!--254 DESCRIPTION-->
-<!--254-->              <DESCRIPTION><![CDATA[
-Attachment]]></DESCRIPTION>
+<!--254-->              <DESCRIPTION><![CDATA[Attachment]]></DESCRIPTION>
 <!--254 HELP-->
-<!--254-->              <HELP><![CDATA[
-The Attachment tab displays the attributes of an attachment.]]></HELP>
+<!--254-->              <HELP><![CDATA[The Attachment tab displays the attributes of an attachment.]]></HELP>
 <!--254 TABLENAME-->
 <!--254-->              <TABLENAME><![CDATA[AD_Attachment]]></TABLENAME>
 <!--254 ISVIEW-->
@@ -4628,11 +4532,9 @@ The Attachment tab displays the attributes of an attachment.]]></HELP>
 <!--255 NAME-->
 <!--255-->              <NAME><![CDATA[M_PriceList]]></NAME>
 <!--255 DESCRIPTION-->
-<!--255-->              <DESCRIPTION><![CDATA[
-Define Price Lists]]></DESCRIPTION>
+<!--255-->              <DESCRIPTION><![CDATA[Define Price Lists]]></DESCRIPTION>
 <!--255 HELP-->
-<!--255-->              <HELP><![CDATA[
-Price lists determine currency of the document as well as tax treatment.]]></HELP>
+<!--255-->              <HELP><![CDATA[Price lists determine currency of the document as well as tax treatment.]]></HELP>
 <!--255 TABLENAME-->
 <!--255-->              <TABLENAME><![CDATA[M_PriceList]]></TABLENAME>
 <!--255 ISVIEW-->
@@ -4683,11 +4585,9 @@ Price lists determine currency of the document as well as tax treatment.]]></HEL
 <!--257 NAME-->
 <!--257-->              <NAME><![CDATA[C_InvoiceSchedule]]></NAME>
 <!--257 DESCRIPTION-->
-<!--257-->              <DESCRIPTION><![CDATA[
-Define Invoice Schedule]]></DESCRIPTION>
+<!--257-->              <DESCRIPTION><![CDATA[Define Invoice Schedule]]></DESCRIPTION>
 <!--257 HELP-->
-<!--257-->              <HELP><![CDATA[
-The Invoice Schedule Tab defines the frequency for which batch invoices will be generated for a Business Partner.]]></HELP>
+<!--257-->              <HELP><![CDATA[The Invoice Schedule Tab defines the frequency for which batch invoices will be generated for a Business Partner.]]></HELP>
 <!--257 TABLENAME-->
 <!--257-->              <TABLENAME><![CDATA[C_InvoiceSchedule]]></TABLENAME>
 <!--257 ISVIEW-->
@@ -4846,11 +4746,9 @@ The Invoice Schedule Tab defines the frequency for which batch invoices will be 
 <!--261 NAME-->
 <!--261-->              <NAME><![CDATA[C_Tax]]></NAME>
 <!--261 DESCRIPTION-->
-<!--261-->              <DESCRIPTION><![CDATA[
-Tax definition]]></DESCRIPTION>
+<!--261-->              <DESCRIPTION><![CDATA[Tax definition]]></DESCRIPTION>
 <!--261 HELP-->
-<!--261-->              <HELP><![CDATA[
-The Tax Rate Window defines the different taxes used for each tax category.]]></HELP>
+<!--261-->              <HELP><![CDATA[The Tax Rate Window defines the different taxes used for each tax category.]]></HELP>
 <!--261 TABLENAME-->
 <!--261-->              <TABLENAME><![CDATA[C_Tax]]></TABLENAME>
 <!--261 ISVIEW-->
@@ -4901,11 +4799,9 @@ The Tax Rate Window defines the different taxes used for each tax category.]]></
 <!--265 NAME-->
 <!--265-->              <NAME><![CDATA[C_AcctSchema]]></NAME>
 <!--265 DESCRIPTION-->
-<!--265-->              <DESCRIPTION><![CDATA[
-Define your Account Schema Structure]]></DESCRIPTION>
+<!--265-->              <DESCRIPTION><![CDATA[Define your Account Schema Structure]]></DESCRIPTION>
 <!--265 HELP-->
-<!--265-->              <HELP><![CDATA[
-The Accounting Schema Tab defines the controls used for accounting.  Each Organization will select an Accounting Schema to use.]]></HELP>
+<!--265-->              <HELP><![CDATA[The Accounting Schema Tab defines the controls used for accounting.  Each Organization will select an Accounting Schema to use.]]></HELP>
 <!--265 TABLENAME-->
 <!--265-->              <TABLENAME><![CDATA[C_AcctSchema]]></TABLENAME>
 <!--265 ISVIEW-->
@@ -4958,7 +4854,7 @@ The Accounting Schema Tab defines the controls used for accounting.  Each Organi
 <!--266 DESCRIPTION-->
 <!--266-->              <DESCRIPTION><![CDATA[Accounts for GL]]></DESCRIPTION>
 <!--266 HELP-->
-<!--266-->              <HELP><![CDATA[The General Ledger defines error and balance handling to use as well as  the necessary accounts for posting to General Ledger.  ]]></HELP>
+<!--266-->              <HELP><![CDATA[The General Ledger defines error and balance handling to use as well as  the necessary accounts for posting to General Ledger.]]></HELP>
 <!--266 TABLENAME-->
 <!--266-->              <TABLENAME><![CDATA[C_AcctSchema_GL]]></TABLENAME>
 <!--266 ISVIEW-->
@@ -5062,11 +4958,9 @@ The Accounting Schema Tab defines the controls used for accounting.  Each Organi
 <!--271 NAME-->
 <!--271-->              <NAME><![CDATA[GL_Budget]]></NAME>
 <!--271 DESCRIPTION-->
-<!--271-->              <DESCRIPTION><![CDATA[
-The GL Budget Tab defines a General Ledger Budget]]></DESCRIPTION>
+<!--271-->              <DESCRIPTION><![CDATA[The GL Budget Tab defines a General Ledger Budget]]></DESCRIPTION>
 <!--271 HELP-->
-<!--271-->              <HELP><![CDATA[
-The GL Budgets are used to define the anticipated costs of doing business.  They are used in reporting as a comparison to actual amounts.]]></HELP>
+<!--271-->              <HELP><![CDATA[The GL Budgets are used to define the anticipated costs of doing business.  They are used in reporting as a comparison to actual amounts.]]></HELP>
 <!--271 TABLENAME-->
 <!--271-->              <TABLENAME><![CDATA[GL_Budget]]></TABLENAME>
 <!--271 ISVIEW-->
@@ -5170,7 +5064,8 @@ The GL Budgets are used to define the anticipated costs of doing business.  They
 <!--274 NAME-->
 <!--274-->              <NAME><![CDATA[C_Campaign]]></NAME>
 <!--274 DESCRIPTION-->
-<!--274-->              <DESCRIPTION><![CDATA[Marketing CampaignMaintain Marketing Campaign Accounting Dimension Tree]]></DESCRIPTION>
+<!--274-->              <DESCRIPTION><![CDATA[Marketing Campaign
+Maintain Marketing Campaign Accounting Dimension Tree]]></DESCRIPTION>
 <!--274 HELP-->
 <!--274-->              <HELP><![CDATA[The Marketing Campaign defines the parameters for a Campaign.  These include a start and end date as well as the amount of any invoices that have been processed which reference this campaign.
 Please note that you will not be able to create new entities in this window if you have not default set for all mandatory values!]]></HELP>
@@ -5224,11 +5119,9 @@ Please note that you will not be able to create new entities in this window if y
 <!--275 NAME-->
 <!--275-->              <NAME><![CDATA[C_Channel]]></NAME>
 <!--275 DESCRIPTION-->
-<!--275-->              <DESCRIPTION><![CDATA[
-Distribution Channel]]></DESCRIPTION>
+<!--275-->              <DESCRIPTION><![CDATA[Distribution Channel]]></DESCRIPTION>
 <!--275 HELP-->
-<!--275-->              <HELP><![CDATA[
-The Marketing Channel Tab defines the different methods or processes through which customers are obtained.]]></HELP>
+<!--275-->              <HELP><![CDATA[The Marketing Channel Tab defines the different methods or processes through which customers are obtained.]]></HELP>
 <!--275 TABLENAME-->
 <!--275-->              <TABLENAME><![CDATA[C_Channel]]></TABLENAME>
 <!--275 ISVIEW-->
@@ -5279,11 +5172,9 @@ The Marketing Channel Tab defines the different methods or processes through whi
 <!--276 NAME-->
 <!--276-->              <NAME><![CDATA[AD_Element]]></NAME>
 <!--276 DESCRIPTION-->
-<!--276-->              <DESCRIPTION><![CDATA[
-Element]]></DESCRIPTION>
+<!--276-->              <DESCRIPTION><![CDATA[Element]]></DESCRIPTION>
 <!--276 HELP-->
-<!--276-->              <HELP><![CDATA[
-The Element Tab defines each system level element.]]></HELP>
+<!--276-->              <HELP><![CDATA[The Element Tab defines each system level element.]]></HELP>
 <!--276 TABLENAME-->
 <!--276-->              <TABLENAME><![CDATA[AD_Element]]></TABLENAME>
 <!--276 ISVIEW-->
@@ -5334,11 +5225,9 @@ The Element Tab defines each system level element.]]></HELP>
 <!--277 NAME-->
 <!--277-->              <NAME><![CDATA[AD_Element_Trl]]></NAME>
 <!--277 DESCRIPTION-->
-<!--277-->              <DESCRIPTION><![CDATA[
-Element Translation]]></DESCRIPTION>
+<!--277-->              <DESCRIPTION><![CDATA[Element Translation]]></DESCRIPTION>
 <!--277 HELP-->
-<!--277-->              <HELP><![CDATA[
-This tab contains the elements translation to different languages. It is important to check the translated option.]]></HELP>
+<!--277-->              <HELP><![CDATA[This tab contains the elements translation to different languages. It is important to check the translated option.]]></HELP>
 <!--277 TABLENAME-->
 <!--277-->              <TABLENAME><![CDATA[AD_Element_Trl]]></TABLENAME>
 <!--277 ISVIEW-->
@@ -5544,11 +5433,9 @@ This tab contains the elements translation to different languages. It is importa
 <!--284 NAME-->
 <!--284-->              <NAME><![CDATA[AD_Process]]></NAME>
 <!--284 DESCRIPTION-->
-<!--284-->              <DESCRIPTION><![CDATA[
-Define Report & Process]]></DESCRIPTION>
+<!--284-->              <DESCRIPTION><![CDATA[Define Report & Process]]></DESCRIPTION>
 <!--284 HELP-->
-<!--284-->              <HELP><![CDATA[
-The Report and Process Tab defines each report and process run in the system.]]></HELP>
+<!--284-->              <HELP><![CDATA[The Report and Process Tab defines each report and process run in the system.]]></HELP>
 <!--284 TABLENAME-->
 <!--284-->              <TABLENAME><![CDATA[AD_Process]]></TABLENAME>
 <!--284 ISVIEW-->
@@ -5652,11 +5539,9 @@ The Report and Process Tab defines each report and process run in the system.]]>
 <!--286 NAME-->
 <!--286-->              <NAME><![CDATA[AD_Process_Para_Trl]]></NAME>
 <!--286 DESCRIPTION-->
-<!--286-->              <DESCRIPTION><![CDATA[
-Parameter Translation]]></DESCRIPTION>
+<!--286-->              <DESCRIPTION><![CDATA[Parameter Translation]]></DESCRIPTION>
 <!--286 HELP-->
-<!--286-->              <HELP><![CDATA[
-Shows parameter tab translation for several languages]]></HELP>
+<!--286-->              <HELP><![CDATA[Shows parameter tab translation for several languages]]></HELP>
 <!--286 TABLENAME-->
 <!--286-->              <TABLENAME><![CDATA[AD_Process_Para_Trl]]></TABLENAME>
 <!--286 ISVIEW-->
@@ -5707,12 +5592,10 @@ Shows parameter tab translation for several languages]]></HELP>
 <!--287 NAME-->
 <!--287-->              <NAME><![CDATA[AD_Process_Trl]]></NAME>
 <!--287 DESCRIPTION-->
-<!--287-->              <DESCRIPTION><![CDATA[
-Report Translation
+<!--287-->              <DESCRIPTION><![CDATA[Report Translation
 Process Translation]]></DESCRIPTION>
 <!--287 HELP-->
-<!--287-->              <HELP><![CDATA[
-Shows report tab translation for several languages
+<!--287-->              <HELP><![CDATA[Shows report tab translation for several languages
 This tab contains the process translation to different languages. It is important to check the translated option.]]></HELP>
 <!--287 TABLENAME-->
 <!--287-->              <TABLENAME><![CDATA[AD_Process_Trl]]></TABLENAME>
@@ -5977,11 +5860,9 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--295 NAME-->
 <!--295-->              <NAME><![CDATA[M_PriceList_Version]]></NAME>
 <!--295 DESCRIPTION-->
-<!--295-->              <DESCRIPTION><![CDATA[
-Maintain price list versions]]></DESCRIPTION>
+<!--295-->              <DESCRIPTION><![CDATA[Maintain price list versions]]></DESCRIPTION>
 <!--295 HELP-->
-<!--295-->              <HELP><![CDATA[
-Price lists are automatically created based on Product Purchasing Information and the Vendor Category Discount.The other alternative is to copy them from existing pricelists and the re-calculate them.You can also re-calculate the pricelist by referencin]]></HELP>
+<!--295-->              <HELP><![CDATA[Price lists are automatically created based on Product Purchasing Information and the Vendor Category Discount.The other alternative is to copy them from existing pricelists and the re-calculate them.You can also re-calculate the pricelist by referencin]]></HELP>
 <!--295 TABLENAME-->
 <!--295-->              <TABLENAME><![CDATA[M_PriceList_Version]]></TABLENAME>
 <!--295 ISVIEW-->
@@ -6087,7 +5968,7 @@ Price lists are automatically created based on Product Purchasing Information an
 <!--297 DESCRIPTION-->
 <!--297-->              <DESCRIPTION><![CDATA[Maintain Account]]></DESCRIPTION>
 <!--297 HELP-->
-<!--297-->              <HELP><![CDATA[Used to define one or more accounts for a Bank.  Each account has a unique Account No and Currency.  ]]></HELP>
+<!--297-->              <HELP><![CDATA[Used to define one or more accounts for a Bank.  Each account has a unique Account No and Currency.]]></HELP>
 <!--297 TABLENAME-->
 <!--297-->              <TABLENAME><![CDATA[C_BankAccount]]></TABLENAME>
 <!--297 ISVIEW-->
@@ -6138,11 +6019,9 @@ Price lists are automatically created based on Product Purchasing Information an
 <!--298 NAME-->
 <!--298-->              <NAME><![CDATA[C_BP_BankAccount]]></NAME>
 <!--298 DESCRIPTION-->
-<!--298-->              <DESCRIPTION><![CDATA[
-Define Bank Account]]></DESCRIPTION>
+<!--298-->              <DESCRIPTION><![CDATA[Define Bank Account]]></DESCRIPTION>
 <!--298 HELP-->
-<!--298-->              <HELP><![CDATA[
-The Define Bank Account Tab defines the banking information for this business partner.  This data is used for processing payments and remittances.]]></HELP>
+<!--298-->              <HELP><![CDATA[The Define Bank Account Tab defines the banking information for this business partner.  This data is used for processing payments and remittances.]]></HELP>
 <!--298 TABLENAME-->
 <!--298-->              <TABLENAME><![CDATA[C_BP_BankAccount]]></TABLENAME>
 <!--298 ISVIEW-->
@@ -6193,11 +6072,9 @@ The Define Bank Account Tab defines the banking information for this business pa
 <!--299 NAME-->
 <!--299-->              <NAME><![CDATA[C_BP_Withholding]]></NAME>
 <!--299 DESCRIPTION-->
-<!--299-->              <DESCRIPTION><![CDATA[
-Define Withholding]]></DESCRIPTION>
+<!--299-->              <DESCRIPTION><![CDATA[Define Withholding]]></DESCRIPTION>
 <!--299 HELP-->
-<!--299-->              <HELP><![CDATA[
-The Withholding Tab defines any withholding information for this business partner.]]></HELP>
+<!--299-->              <HELP><![CDATA[The Withholding Tab defines any withholding information for this business partner.]]></HELP>
 <!--299 TABLENAME-->
 <!--299-->              <TABLENAME><![CDATA[C_BP_Withholding]]></TABLENAME>
 <!--299 ISVIEW-->
@@ -6248,11 +6125,9 @@ The Withholding Tab defines any withholding information for this business partne
 <!--300 NAME-->
 <!--300-->              <NAME><![CDATA[C_DocType_Trl]]></NAME>
 <!--300 DESCRIPTION-->
-<!--300-->              <DESCRIPTION><![CDATA[
-Translation ]]></DESCRIPTION>
+<!--300-->              <DESCRIPTION><![CDATA[Translation]]></DESCRIPTION>
 <!--300 HELP-->
-<!--300-->              <HELP><![CDATA[
-The Translation Tab defines a Document Type in an alternate language.]]></HELP>
+<!--300-->              <HELP><![CDATA[The Translation Tab defines a Document Type in an alternate language.]]></HELP>
 <!--300 TABLENAME-->
 <!--300-->              <TABLENAME><![CDATA[C_DocType_Trl]]></TABLENAME>
 <!--300 ISVIEW-->
@@ -6303,11 +6178,9 @@ The Translation Tab defines a Document Type in an alternate language.]]></HELP>
 <!--301 NAME-->
 <!--301-->              <NAME><![CDATA[C_Dunning]]></NAME>
 <!--301 DESCRIPTION-->
-<!--301-->              <DESCRIPTION><![CDATA[
-Maintain Dunning Rules]]></DESCRIPTION>
+<!--301-->              <DESCRIPTION><![CDATA[Maintain Dunning Rules]]></DESCRIPTION>
 <!--301 HELP-->
-<!--301-->              <HELP><![CDATA[
-The Dunning Tab defines the parameters for a dunning level.]]></HELP>
+<!--301-->              <HELP><![CDATA[The Dunning Tab defines the parameters for a dunning level.]]></HELP>
 <!--301 TABLENAME-->
 <!--301-->              <TABLENAME><![CDATA[C_Dunning]]></TABLENAME>
 <!--301 ISVIEW-->
@@ -6464,11 +6337,9 @@ The Dunning Tab defines the parameters for a dunning level.]]></HELP>
 <!--304 NAME-->
 <!--304-->              <NAME><![CDATA[C_Withholding]]></NAME>
 <!--304 DESCRIPTION-->
-<!--304-->              <DESCRIPTION><![CDATA[
-Withholding Rules]]></DESCRIPTION>
+<!--304-->              <DESCRIPTION><![CDATA[Withholding Rules]]></DESCRIPTION>
 <!--304 HELP-->
-<!--304-->              <HELP><![CDATA[
-The Withholding Rules Tab define the rules governing the withholding of amounts.]]></HELP>
+<!--304-->              <HELP><![CDATA[The Withholding Rules Tab define the rules governing the withholding of amounts.]]></HELP>
 <!--304 TABLENAME-->
 <!--304-->              <TABLENAME><![CDATA[C_Withholding]]></TABLENAME>
 <!--304 ISVIEW-->
@@ -6733,7 +6604,8 @@ The Withholding Rules Tab define the rules governing the withholding of amounts.
 <!--316 NAME-->
 <!--316-->              <NAME><![CDATA[C_Activity]]></NAME>
 <!--316 DESCRIPTION-->
-<!--316-->              <DESCRIPTION><![CDATA[Activity for Activity Based CostingMaintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
+<!--316-->              <DESCRIPTION><![CDATA[Activity for Activity Based Costing
+Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--316 HELP-->
 <!--316-->              <HELP><![CDATA[Defines tasks that are preformed and in Activity Based Costing.]]></HELP>
 <!--316 TABLENAME-->
@@ -7273,11 +7145,9 @@ The Withholding Rules Tab define the rules governing the withholding of amounts.
 <!--327 NAME-->
 <!--327-->              <NAME><![CDATA[M_Product_Costing]]></NAME>
 <!--327 DESCRIPTION-->
-<!--327-->              <DESCRIPTION><![CDATA[
-Define Costing]]></DESCRIPTION>
+<!--327-->              <DESCRIPTION><![CDATA[Define Costing]]></DESCRIPTION>
 <!--327 HELP-->
-<!--327-->              <HELP><![CDATA[
-Define Costing]]></HELP>
+<!--327-->              <HELP><![CDATA[Define Costing]]></HELP>
 <!--327 TABLENAME-->
 <!--327-->              <TABLENAME><![CDATA[M_Product_Costing]]></TABLENAME>
 <!--327 ISVIEW-->
@@ -7381,11 +7251,9 @@ Define Costing]]></HELP>
 <!--331 NAME-->
 <!--331-->              <NAME><![CDATA[C_DunningLevel]]></NAME>
 <!--331 DESCRIPTION-->
-<!--331-->              <DESCRIPTION><![CDATA[
-Maintain Dunning Level]]></DESCRIPTION>
+<!--331-->              <DESCRIPTION><![CDATA[Maintain Dunning Level]]></DESCRIPTION>
 <!--331 HELP-->
-<!--331-->              <HELP><![CDATA[
-The Dunning Level Tab defines the timing and frequency of the dunning notices.]]></HELP>
+<!--331-->              <HELP><![CDATA[The Dunning Level Tab defines the timing and frequency of the dunning notices.]]></HELP>
 <!--331 TABLENAME-->
 <!--331-->              <TABLENAME><![CDATA[C_DunningLevel]]></TABLENAME>
 <!--331 ISVIEW-->
@@ -7436,11 +7304,9 @@ The Dunning Level Tab defines the timing and frequency of the dunning notices.]]
 <!--332 NAME-->
 <!--332-->              <NAME><![CDATA[C_DunningLevel_Trl]]></NAME>
 <!--332 DESCRIPTION-->
-<!--332-->              <DESCRIPTION><![CDATA[
-Dunning Level Translation]]></DESCRIPTION>
+<!--332-->              <DESCRIPTION><![CDATA[Dunning Level Translation]]></DESCRIPTION>
 <!--332 HELP-->
-<!--332-->              <HELP><![CDATA[
-Dunning Level Translation contains the tab translation to different languages]]></HELP>
+<!--332-->              <HELP><![CDATA[Dunning Level Translation contains the tab translation to different languages]]></HELP>
 <!--332 TABLENAME-->
 <!--332-->              <TABLENAME><![CDATA[C_DunningLevel_Trl]]></TABLENAME>
 <!--332 ISVIEW-->
@@ -7601,11 +7467,9 @@ Dunning Level Translation contains the tab translation to different languages]]>
 <!--336 NAME-->
 <!--336-->              <NAME><![CDATA[C_RevenueRecognition]]></NAME>
 <!--336 DESCRIPTION-->
-<!--336-->              <DESCRIPTION><![CDATA[
-Revenue Recognition]]></DESCRIPTION>
+<!--336-->              <DESCRIPTION><![CDATA[Revenue Recognition]]></DESCRIPTION>
 <!--336 HELP-->
-<!--336-->              <HELP><![CDATA[
-The Revenue Recognition Tab defines the intervals at which revenue will be recognized.  You can also base the revenue recognition on provided Service Levels.]]></HELP>
+<!--336-->              <HELP><![CDATA[The Revenue Recognition Tab defines the intervals at which revenue will be recognized.  You can also base the revenue recognition on provided Service Levels.]]></HELP>
 <!--336 TABLENAME-->
 <!--336-->              <TABLENAME><![CDATA[C_RevenueRecognition]]></TABLENAME>
 <!--336 ISVIEW-->
@@ -7656,11 +7520,9 @@ The Revenue Recognition Tab defines the intervals at which revenue will be recog
 <!--337 NAME-->
 <!--337-->              <NAME><![CDATA[C_ServiceLevel]]></NAME>
 <!--337 DESCRIPTION-->
-<!--337-->              <DESCRIPTION><![CDATA[
-View Service Level]]></DESCRIPTION>
+<!--337-->              <DESCRIPTION><![CDATA[View Service Level]]></DESCRIPTION>
 <!--337 HELP-->
-<!--337-->              <HELP><![CDATA[
-The service level is automatically created when creating an invoice with products using revenue recognition based on service levels.]]></HELP>
+<!--337-->              <HELP><![CDATA[The service level is automatically created when creating an invoice with products using revenue recognition based on service levels.]]></HELP>
 <!--337 TABLENAME-->
 <!--337-->              <TABLENAME><![CDATA[C_ServiceLevel]]></TABLENAME>
 <!--337 ISVIEW-->
@@ -7711,11 +7573,9 @@ The service level is automatically created when creating an invoice with product
 <!--338 NAME-->
 <!--338-->              <NAME><![CDATA[C_ServiceLevelLine]]></NAME>
 <!--338 DESCRIPTION-->
-<!--338-->              <DESCRIPTION><![CDATA[
-Maintain Service Levels]]></DESCRIPTION>
+<!--338-->              <DESCRIPTION><![CDATA[Maintain Service Levels]]></DESCRIPTION>
 <!--338 HELP-->
-<!--338-->              <HELP><![CDATA[
-Add new service level lines to change the recognized amount]]></HELP>
+<!--338-->              <HELP><![CDATA[Add new service level lines to change the recognized amount]]></HELP>
 <!--338 TABLENAME-->
 <!--338-->              <TABLENAME><![CDATA[C_ServiceLevelLine]]></TABLENAME>
 <!--338 ISVIEW-->
@@ -8074,11 +7934,9 @@ Add new service level lines to change the recognized amount]]></HELP>
 <!--361 NAME-->
 <!--361-->              <NAME><![CDATA[AD_ReportView]]></NAME>
 <!--361 DESCRIPTION-->
-<!--361-->              <DESCRIPTION><![CDATA[
-Define Report View]]></DESCRIPTION>
+<!--361-->              <DESCRIPTION><![CDATA[Define Report View]]></DESCRIPTION>
 <!--361 HELP-->
-<!--361-->              <HELP><![CDATA[
-The Define Report View defines the views used in report generation]]></HELP>
+<!--361-->              <HELP><![CDATA[The Define Report View defines the views used in report generation]]></HELP>
 <!--361 TABLENAME-->
 <!--361-->              <TABLENAME><![CDATA[AD_ReportView]]></TABLENAME>
 <!--361 ISVIEW-->
@@ -8343,7 +8201,7 @@ The Define Report View defines the views used in report generation]]></HELP>
 <!--367 ISDEFAULTACCT-->
 <!--367-->              <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--367 SQL_RECORD_IDENTIFIER-->
-<!--367-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.Line),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_EDI T WHERE M_EDI_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
+<!--367-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Line),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_EDI T WHERE M_EDI_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
 <!--367 DEVELOPMENTSTATUS-->
 <!--367-->              <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
 <!--367**************--></AD_TABLE>
@@ -8392,7 +8250,7 @@ The Define Report View defines the views used in report generation]]></HELP>
 <!--368 ISDEFAULTACCT-->
 <!--368-->              <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--368 SQL_RECORD_IDENTIFIER-->
-<!--368-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT (SELECT TO_CHAR(COALESCE(TO_CHAR(TT.DocumentNo),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(TT.Line),'')) FROM M_EDI TT WHERE TT.M_EDI_ID=T.M_EDI_ID) ||' - '||TO_CHAR(COALESCE(TO_CHAR(T.Created),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_EDI_Info T WHERE M_EDI_Info_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
+<!--368-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT (SELECT TO_CHAR(COALESCE(TO_CHAR(TT.Line),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(TT.DocumentNo),'')) FROM M_EDI TT WHERE TT.M_EDI_ID=T.M_EDI_ID) ||' - '||TO_CHAR(COALESCE(TO_CHAR(T.Created),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_EDI_Info T WHERE M_EDI_Info_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
 <!--368 DEVELOPMENTSTATUS-->
 <!--368-->              <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
 <!--368**************--></AD_TABLE>
@@ -8699,11 +8557,9 @@ The Define Report View defines the views used in report generation]]></HELP>
 <!--376 NAME-->
 <!--376-->              <NAME><![CDATA[AD_Form]]></NAME>
 <!--376 DESCRIPTION-->
-<!--376-->              <DESCRIPTION><![CDATA[
-Special Form]]></DESCRIPTION>
+<!--376-->              <DESCRIPTION><![CDATA[Special Form]]></DESCRIPTION>
 <!--376 HELP-->
-<!--376-->              <HELP><![CDATA[
-The Forms Tab defines any window which is not automatically generated.  For System Admin use only.]]></HELP>
+<!--376-->              <HELP><![CDATA[The Forms Tab defines any window which is not automatically generated.  For System Admin use only.]]></HELP>
 <!--376 TABLENAME-->
 <!--376-->              <TABLENAME><![CDATA[AD_Form]]></TABLENAME>
 <!--376 ISVIEW-->
@@ -8754,12 +8610,10 @@ The Forms Tab defines any window which is not automatically generated.  For Syst
 <!--377 NAME-->
 <!--377-->              <NAME><![CDATA[AD_Form_Trl]]></NAME>
 <!--377 DESCRIPTION-->
-<!--377-->              <DESCRIPTION><![CDATA[
-Form translation
+<!--377-->              <DESCRIPTION><![CDATA[Form translation
 Allows the translation of any form of the application.]]></DESCRIPTION>
 <!--377 HELP-->
-<!--377-->              <HELP><![CDATA[
-This tab contains form tab data translation to different languages
+<!--377-->              <HELP><![CDATA[This tab contains form tab data translation to different languages
 Allows the translation of any form of the application.After the edition, the window must be regenerated.]]></HELP>
 <!--377 TABLENAME-->
 <!--377-->              <TABLENAME><![CDATA[AD_Form_Trl]]></TABLENAME>
@@ -8811,12 +8665,10 @@ Allows the translation of any form of the application.After the edition, the win
 <!--378 NAME-->
 <!--378-->              <NAME><![CDATA[AD_Form_Access]]></NAME>
 <!--378 DESCRIPTION-->
-<!--378-->              <DESCRIPTION><![CDATA[
-Form Access
+<!--378-->              <DESCRIPTION><![CDATA[Form Access
 Form Access]]></DESCRIPTION>
 <!--378 HELP-->
-<!--378-->              <HELP><![CDATA[
-The Form Access Tab defines the Forms and type of access that this Role is granted.
+<!--378-->              <HELP><![CDATA[The Form Access Tab defines the Forms and type of access that this Role is granted.
 The Forms Access Tab defines the access rules for this form]]></HELP>
 <!--378 TABLENAME-->
 <!--378-->              <TABLENAME><![CDATA[AD_Form_Access]]></TABLENAME>
@@ -8868,11 +8720,9 @@ The Forms Access Tab defines the access rules for this form]]></HELP>
 <!--380 NAME-->
 <!--380-->              <NAME><![CDATA[AD_Error]]></NAME>
 <!--380 DESCRIPTION-->
-<!--380-->              <DESCRIPTION><![CDATA[
-Error Message]]></DESCRIPTION>
+<!--380-->              <DESCRIPTION><![CDATA[Error Message]]></DESCRIPTION>
 <!--380 HELP-->
-<!--380-->              <HELP><![CDATA[
-The Error Message Tab displays error messages that have been generated.  They can be deleted with an automated clean up process.]]></HELP>
+<!--380-->              <HELP><![CDATA[The Error Message Tab displays error messages that have been generated.  They can be deleted with an automated clean up process.]]></HELP>
 <!--380 TABLENAME-->
 <!--380-->              <TABLENAME><![CDATA[AD_Error]]></TABLENAME>
 <!--380 ISVIEW-->
@@ -8923,11 +8773,9 @@ The Error Message Tab displays error messages that have been generated.  They ca
 <!--381 NAME-->
 <!--381-->              <NAME><![CDATA[AD_ImpFormat]]></NAME>
 <!--381 DESCRIPTION-->
-<!--381-->              <DESCRIPTION><![CDATA[
-Import Format]]></DESCRIPTION>
+<!--381-->              <DESCRIPTION><![CDATA[Import Format]]></DESCRIPTION>
 <!--381 HELP-->
-<!--381-->              <HELP><![CDATA[
-The Import Format tab contains each record parameter configuration for each data import type.]]></HELP>
+<!--381-->              <HELP><![CDATA[The Import Format tab contains each record parameter configuration for each data import type.]]></HELP>
 <!--381 TABLENAME-->
 <!--381-->              <TABLENAME><![CDATA[AD_ImpFormat]]></TABLENAME>
 <!--381 ISVIEW-->
@@ -9289,11 +9137,9 @@ Available Quantity:
 <!--389 NAME-->
 <!--389-->              <NAME><![CDATA[AD_Note]]></NAME>
 <!--389 DESCRIPTION-->
-<!--389-->              <DESCRIPTION><![CDATA[
-System Notice]]></DESCRIPTION>
+<!--389-->              <DESCRIPTION><![CDATA[System Notice]]></DESCRIPTION>
 <!--389 HELP-->
-<!--389-->              <HELP><![CDATA[
-The Notice Tab provides a method of viewing messages that are generated by this system when performing processes.]]></HELP>
+<!--389-->              <HELP><![CDATA[The Notice Tab provides a method of viewing messages that are generated by this system when performing processes.]]></HELP>
 <!--389 TABLENAME-->
 <!--389-->              <TABLENAME><![CDATA[AD_Note]]></TABLENAME>
 <!--389 ISVIEW-->
@@ -9397,11 +9243,9 @@ The Notice Tab provides a method of viewing messages that are generated by this 
 <!--392 NAME-->
 <!--392-->              <NAME><![CDATA[C_BankStatement]]></NAME>
 <!--392 DESCRIPTION-->
-<!--392-->              <DESCRIPTION><![CDATA[
-Bank Statement]]></DESCRIPTION>
+<!--392-->              <DESCRIPTION><![CDATA[Bank Statement]]></DESCRIPTION>
 <!--392 HELP-->
-<!--392-->              <HELP><![CDATA[
-The Bank Statement Tab defines the Bank Statement to be reconciled.]]></HELP>
+<!--392-->              <HELP><![CDATA[The Bank Statement Tab defines the Bank Statement to be reconciled.]]></HELP>
 <!--392 TABLENAME-->
 <!--392-->              <TABLENAME><![CDATA[C_BankStatement]]></TABLENAME>
 <!--392 ISVIEW-->
@@ -9452,11 +9296,9 @@ The Bank Statement Tab defines the Bank Statement to be reconciled.]]></HELP>
 <!--393 NAME-->
 <!--393-->              <NAME><![CDATA[C_BankStatementLine]]></NAME>
 <!--393 DESCRIPTION-->
-<!--393-->              <DESCRIPTION><![CDATA[
-Statement Line]]></DESCRIPTION>
+<!--393-->              <DESCRIPTION><![CDATA[Statement Line]]></DESCRIPTION>
 <!--393 HELP-->
-<!--393-->              <HELP><![CDATA[
-The Statement Line Tab defines the individual line items on the Bank Statement.  They can be entered manually or generated from payments entered.]]></HELP>
+<!--393-->              <HELP><![CDATA[The Statement Line Tab defines the individual line items on the Bank Statement.  They can be entered manually or generated from payments entered.]]></HELP>
 <!--393 TABLENAME-->
 <!--393-->              <TABLENAME><![CDATA[C_BankStatementLine]]></TABLENAME>
 <!--393 ISVIEW-->
@@ -9666,11 +9508,9 @@ The Statement Line Tab defines the individual line items on the Bank Statement. 
 <!--397 NAME-->
 <!--397-->              <NAME><![CDATA[C_InterOrg_Acct]]></NAME>
 <!--397 DESCRIPTION-->
-<!--397-->              <DESCRIPTION><![CDATA[
-Organization Accounting]]></DESCRIPTION>
+<!--397-->              <DESCRIPTION><![CDATA[Organization Accounting]]></DESCRIPTION>
 <!--397 HELP-->
-<!--397-->              <HELP><![CDATA[
-The Organization Accounting Tab defines the default accounting parameters to be used by this Organization.]]></HELP>
+<!--397-->              <HELP><![CDATA[The Organization Accounting Tab defines the default accounting parameters to be used by this Organization.]]></HELP>
 <!--397 TABLENAME-->
 <!--397-->              <TABLENAME><![CDATA[C_InterOrg_Acct]]></TABLENAME>
 <!--397 ISVIEW-->
@@ -9774,11 +9614,9 @@ The Organization Accounting Tab defines the default accounting parameters to be 
 <!--400 NAME-->
 <!--400-->              <NAME><![CDATA[C_Withholding_Acct]]></NAME>
 <!--400 DESCRIPTION-->
-<!--400-->              <DESCRIPTION><![CDATA[
-Withholding Accounting]]></DESCRIPTION>
+<!--400-->              <DESCRIPTION><![CDATA[Withholding Accounting]]></DESCRIPTION>
 <!--400 HELP-->
-<!--400-->              <HELP><![CDATA[
-The Withholding Accounting Tab defines the accounting parameters for Withholding.]]></HELP>
+<!--400-->              <HELP><![CDATA[The Withholding Accounting Tab defines the accounting parameters for Withholding.]]></HELP>
 <!--400 TABLENAME-->
 <!--400-->              <TABLENAME><![CDATA[C_Withholding_Acct]]></TABLENAME>
 <!--400 ISVIEW-->
@@ -10025,11 +9863,9 @@ The Withholding Accounting Tab defines the accounting parameters for Withholding
 <!--405 NAME-->
 <!--405-->              <NAME><![CDATA[AD_Attribute]]></NAME>
 <!--405 DESCRIPTION-->
-<!--405-->              <DESCRIPTION><![CDATA[
-Define Custom Attribute]]></DESCRIPTION>
+<!--405-->              <DESCRIPTION><![CDATA[Define Custom Attribute]]></DESCRIPTION>
 <!--405 HELP-->
-<!--405-->              <HELP><![CDATA[
-The Custom Attribute Tab defines additional attributes or information for a product or entity.]]></HELP>
+<!--405-->              <HELP><![CDATA[The Custom Attribute Tab defines additional attributes or information for a product or entity.]]></HELP>
 <!--405 TABLENAME-->
 <!--405-->              <TABLENAME><![CDATA[AD_Attribute]]></TABLENAME>
 <!--405 ISVIEW-->
@@ -10129,11 +9965,9 @@ The Custom Attribute Tab defines additional attributes or information for a prod
 <!--407 NAME-->
 <!--407-->              <NAME><![CDATA[C_Cash]]></NAME>
 <!--407 DESCRIPTION-->
-<!--407-->              <DESCRIPTION><![CDATA[
-Cash Journal]]></DESCRIPTION>
+<!--407-->              <DESCRIPTION><![CDATA[Cash Journal]]></DESCRIPTION>
 <!--407 HELP-->
-<!--407-->              <HELP><![CDATA[
-The Cash Journal Tab defines the parameters for this journal.]]></HELP>
+<!--407-->              <HELP><![CDATA[The Cash Journal Tab defines the parameters for this journal.]]></HELP>
 <!--407 TABLENAME-->
 <!--407-->              <TABLENAME><![CDATA[C_Cash]]></TABLENAME>
 <!--407 ISVIEW-->
@@ -10184,11 +10018,9 @@ The Cash Journal Tab defines the parameters for this journal.]]></HELP>
 <!--408 NAME-->
 <!--408-->              <NAME><![CDATA[C_CashBook]]></NAME>
 <!--408 DESCRIPTION-->
-<!--408-->              <DESCRIPTION><![CDATA[
-Maintain Cashbook]]></DESCRIPTION>
+<!--408-->              <DESCRIPTION><![CDATA[Maintain Cashbook]]></DESCRIPTION>
 <!--408 HELP-->
-<!--408-->              <HELP><![CDATA[
-The Cashbook Tab defines a unique cashbook for an organization.]]></HELP>
+<!--408-->              <HELP><![CDATA[The Cashbook Tab defines a unique cashbook for an organization.]]></HELP>
 <!--408 TABLENAME-->
 <!--408-->              <TABLENAME><![CDATA[C_CashBook]]></TABLENAME>
 <!--408 ISVIEW-->
@@ -10292,11 +10124,9 @@ The Cashbook Tab defines a unique cashbook for an organization.]]></HELP>
 <!--410 NAME-->
 <!--410-->              <NAME><![CDATA[C_CashLine]]></NAME>
 <!--410 DESCRIPTION-->
-<!--410-->              <DESCRIPTION><![CDATA[
-Cash Line]]></DESCRIPTION>
+<!--410-->              <DESCRIPTION><![CDATA[Cash Line]]></DESCRIPTION>
 <!--410 HELP-->
-<!--410-->              <HELP><![CDATA[
-The Cash Line Tab defines the individual lines for this journal.]]></HELP>
+<!--410-->              <HELP><![CDATA[The Cash Line Tab defines the individual lines for this journal.]]></HELP>
 <!--410 TABLENAME-->
 <!--410-->              <TABLENAME><![CDATA[C_CashLine]]></TABLENAME>
 <!--410 ISVIEW-->
@@ -10347,11 +10177,9 @@ The Cash Line Tab defines the individual lines for this journal.]]></HELP>
 <!--414 NAME-->
 <!--414-->              <NAME><![CDATA[AD_FieldGroup]]></NAME>
 <!--414 DESCRIPTION-->
-<!--414-->              <DESCRIPTION><![CDATA[
-System Admin use only.  Field Groups allow for grouping of fields within a window]]></DESCRIPTION>
+<!--414-->              <DESCRIPTION><![CDATA[System Admin use only.  Field Groups allow for grouping of fields within a window]]></DESCRIPTION>
 <!--414 HELP-->
-<!--414-->              <HELP><![CDATA[
-A field group is defined as a fields agrupation inside a tab.]]></HELP>
+<!--414-->              <HELP><![CDATA[A field group is defined as a fields agrupation inside a tab.]]></HELP>
 <!--414 TABLENAME-->
 <!--414-->              <TABLENAME><![CDATA[AD_FieldGroup]]></TABLENAME>
 <!--414 ISVIEW-->
@@ -10402,12 +10230,10 @@ A field group is defined as a fields agrupation inside a tab.]]></HELP>
 <!--415 NAME-->
 <!--415-->              <NAME><![CDATA[AD_FieldGroup_Trl]]></NAME>
 <!--415 DESCRIPTION-->
-<!--415-->              <DESCRIPTION><![CDATA[
-Field group translation
+<!--415-->              <DESCRIPTION><![CDATA[Field group translation
 Allows the translation of any field group of the application.]]></DESCRIPTION>
 <!--415 HELP-->
-<!--415-->              <HELP><![CDATA[
-This tab contains field group translations to different languages
+<!--415-->              <HELP><![CDATA[This tab contains field group translations to different languages
 Run Synchronize Terminology to update menu translation. You need only to translate Fields, which are not centrally maintained. After the edition, the window must be regenerated.]]></HELP>
 <!--415 TABLENAME-->
 <!--415-->              <TABLENAME><![CDATA[AD_FieldGroup_Trl]]></TABLENAME>
@@ -10459,11 +10285,9 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--416 NAME-->
 <!--416-->              <NAME><![CDATA[R_MailText]]></NAME>
 <!--416 DESCRIPTION-->
-<!--416-->              <DESCRIPTION><![CDATA[
-Mail template configuration]]></DESCRIPTION>
+<!--416-->              <DESCRIPTION><![CDATA[Mail template configuration]]></DESCRIPTION>
 <!--416 HELP-->
-<!--416-->              <HELP><![CDATA[
-The mail template configuration includes all template parameter configurations for the use.]]></HELP>
+<!--416-->              <HELP><![CDATA[The mail template configuration includes all template parameter configurations for the use.]]></HELP>
 <!--416 TABLENAME-->
 <!--416-->              <TABLENAME><![CDATA[R_MailText]]></TABLENAME>
 <!--416 ISVIEW-->
@@ -10514,13 +10338,11 @@ The mail template configuration includes all template parameter configurations f
 <!--417 NAME-->
 <!--417-->              <NAME><![CDATA[R_Request]]></NAME>
 <!--417 DESCRIPTION-->
-<!--417-->              <DESCRIPTION><![CDATA[
-Define Request
+<!--417-->              <DESCRIPTION><![CDATA[Define Request
 Define Request
 Business Partner Requests]]></DESCRIPTION>
 <!--417 HELP-->
-<!--417-->              <HELP><![CDATA[
-The Request Tab defines any Request submitted by a Business Partner.
+<!--417-->              <HELP><![CDATA[The Request Tab defines any Request submitted by a Business Partner.
 The Request Tab defines any Request submitted by a Business Partner.
 Shows all the resquests  of the partner selected.]]></HELP>
 <!--417 TABLENAME-->
@@ -10573,12 +10395,10 @@ Shows all the resquests  of the partner selected.]]></HELP>
 <!--418 NAME-->
 <!--418-->              <NAME><![CDATA[R_RequestAction]]></NAME>
 <!--418 DESCRIPTION-->
-<!--418-->              <DESCRIPTION><![CDATA[
-Action History
+<!--418-->              <DESCRIPTION><![CDATA[Action History
 Action History]]></DESCRIPTION>
 <!--418 HELP-->
-<!--418-->              <HELP><![CDATA[
-The Action History Tab displays any actions which have been taken for a Request.
+<!--418-->              <HELP><![CDATA[The Action History Tab displays any actions which have been taken for a Request.
 The Action History Tab displays any actions which have been taken for a Request.]]></HELP>
 <!--418 TABLENAME-->
 <!--418-->              <TABLENAME><![CDATA[R_RequestAction]]></TABLENAME>
@@ -10630,11 +10450,9 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--420 NAME-->
 <!--420-->              <NAME><![CDATA[R_RequestProcessor]]></NAME>
 <!--420 DESCRIPTION-->
-<!--420-->              <DESCRIPTION><![CDATA[
-Request Processor]]></DESCRIPTION>
+<!--420-->              <DESCRIPTION><![CDATA[Request Processor]]></DESCRIPTION>
 <!--420 HELP-->
-<!--420-->              <HELP><![CDATA[
-The Request Processor Tab allows you to define processes that you want to occur and the frequency and timing of these processes. If no other user is found, the items are assigned to the supervisor.]]></HELP>
+<!--420-->              <HELP><![CDATA[The Request Processor Tab allows you to define processes that you want to occur and the frequency and timing of these processes. If no other user is found, the items are assigned to the supervisor.]]></HELP>
 <!--420 TABLENAME-->
 <!--420-->              <TABLENAME><![CDATA[R_RequestProcessor]]></TABLENAME>
 <!--420 ISVIEW-->
@@ -10685,11 +10503,9 @@ The Request Processor Tab allows you to define processes that you want to occur 
 <!--422 NAME-->
 <!--422-->              <NAME><![CDATA[AD_Role_OrgAccess]]></NAME>
 <!--422 DESCRIPTION-->
-<!--422-->              <DESCRIPTION><![CDATA[
-Maintain Org Access]]></DESCRIPTION>
+<!--422-->              <DESCRIPTION><![CDATA[Maintain Org Access]]></DESCRIPTION>
 <!--422 HELP-->
-<!--422-->              <HELP><![CDATA[
-Add the client organizations the user has access to.]]></HELP>
+<!--422-->              <HELP><![CDATA[Add the client organizations the user has access to.]]></HELP>
 <!--422 TABLENAME-->
 <!--422-->              <TABLENAME><![CDATA[AD_Role_OrgAccess]]></TABLENAME>
 <!--422 ISVIEW-->
@@ -10881,11 +10697,9 @@ Add the client organizations the user has access to.]]></HELP>
 <!--428 NAME-->
 <!--428-->              <NAME><![CDATA[AD_ReportView_Col]]></NAME>
 <!--428 DESCRIPTION-->
-<!--428-->              <DESCRIPTION><![CDATA[
-Report View Column]]></DESCRIPTION>
+<!--428-->              <DESCRIPTION><![CDATA[Report View Column]]></DESCRIPTION>
 <!--428 HELP-->
-<!--428-->              <HELP><![CDATA[
-The Report View Column Tab defines any columns which will be overridden in the generation of the select SQL]]></HELP>
+<!--428-->              <HELP><![CDATA[The Report View Column Tab defines any columns which will be overridden in the generation of the select SQL]]></HELP>
 <!--428 TABLENAME-->
 <!--428-->              <TABLENAME><![CDATA[AD_ReportView_Col]]></TABLENAME>
 <!--428 ISVIEW-->
@@ -11095,11 +10909,9 @@ The Report View Column Tab defines any columns which will be overridden in the g
 <!--432 NAME-->
 <!--432-->              <NAME><![CDATA[C_Cycle]]></NAME>
 <!--432 DESCRIPTION-->
-<!--432-->              <DESCRIPTION><![CDATA[
-Define Project Report Cycle]]></DESCRIPTION>
+<!--432-->              <DESCRIPTION><![CDATA[Define Project Report Cycle]]></DESCRIPTION>
 <!--432 HELP-->
-<!--432-->              <HELP><![CDATA[
-Define the currency that projects Project are reported. The projects themselves could be in a different currency.]]></HELP>
+<!--432-->              <HELP><![CDATA[Define the currency that projects Project are reported. The projects themselves could be in a different currency.]]></HELP>
 <!--432 TABLENAME-->
 <!--432-->              <TABLENAME><![CDATA[C_Cycle]]></TABLENAME>
 <!--432 ISVIEW-->
@@ -11150,11 +10962,9 @@ Define the currency that projects Project are reported. The projects themselves 
 <!--433 NAME-->
 <!--433-->              <NAME><![CDATA[C_CyclePhase]]></NAME>
 <!--433 DESCRIPTION-->
-<!--433-->              <DESCRIPTION><![CDATA[
-Link Cycle Step with Project Phases]]></DESCRIPTION>
+<!--433-->              <DESCRIPTION><![CDATA[Link Cycle Step with Project Phases]]></DESCRIPTION>
 <!--433 HELP-->
-<!--433-->              <HELP><![CDATA[
-Link similar Project Phases to a Cycle Step]]></HELP>
+<!--433-->              <HELP><![CDATA[Link similar Project Phases to a Cycle Step]]></HELP>
 <!--433 TABLENAME-->
 <!--433-->              <TABLENAME><![CDATA[C_CyclePhase]]></TABLENAME>
 <!--433 ISVIEW-->
@@ -11364,11 +11174,9 @@ Link similar Project Phases to a Cycle Step]]></HELP>
 <!--438 NAME-->
 <!--438-->              <NAME><![CDATA[PA_Achievement]]></NAME>
 <!--438 DESCRIPTION-->
-<!--438-->              <DESCRIPTION><![CDATA[
-Performance Achievement]]></DESCRIPTION>
+<!--438-->              <DESCRIPTION><![CDATA[Performance Achievement]]></DESCRIPTION>
 <!--438 HELP-->
-<!--438-->              <HELP><![CDATA[
-The Performance Achievement Tab defines the Tasks to be achieved.  The performance is measured by the percentage of reached achievements.]]></HELP>
+<!--438-->              <HELP><![CDATA[The Performance Achievement Tab defines the Tasks to be achieved.  The performance is measured by the percentage of reached achievements.]]></HELP>
 <!--438 TABLENAME-->
 <!--438-->              <TABLENAME><![CDATA[PA_Achievement]]></TABLENAME>
 <!--438 ISVIEW-->
@@ -11419,11 +11227,9 @@ The Performance Achievement Tab defines the Tasks to be achieved.  The performan
 <!--439 NAME-->
 <!--439-->              <NAME><![CDATA[PA_Color]]></NAME>
 <!--439 DESCRIPTION-->
-<!--439-->              <DESCRIPTION><![CDATA[
-Color for Performance Analysis]]></DESCRIPTION>
+<!--439-->              <DESCRIPTION><![CDATA[Color for Performance Analysis]]></DESCRIPTION>
 <!--439 HELP-->
-<!--439-->              <HELP><![CDATA[
-The Performance Color Tab allows you to alter the system default colors to indicate a performance level.]]></HELP>
+<!--439-->              <HELP><![CDATA[The Performance Color Tab allows you to alter the system default colors to indicate a performance level.]]></HELP>
 <!--439 TABLENAME-->
 <!--439-->              <TABLENAME><![CDATA[PA_Color]]></TABLENAME>
 <!--439 ISVIEW-->
@@ -11474,11 +11280,9 @@ The Performance Color Tab allows you to alter the system default colors to indic
 <!--440 NAME-->
 <!--440-->              <NAME><![CDATA[PA_Goal]]></NAME>
 <!--440 DESCRIPTION-->
-<!--440-->              <DESCRIPTION><![CDATA[
-Performance Goal]]></DESCRIPTION>
+<!--440-->              <DESCRIPTION><![CDATA[Performance Goal]]></DESCRIPTION>
 <!--440 HELP-->
-<!--440-->              <HELP><![CDATA[
-The Performance Goal Tab defines specific goals for performance.]]></HELP>
+<!--440-->              <HELP><![CDATA[The Performance Goal Tab defines specific goals for performance.]]></HELP>
 <!--440 TABLENAME-->
 <!--440-->              <TABLENAME><![CDATA[PA_Goal]]></TABLENAME>
 <!--440 ISVIEW-->
@@ -11529,11 +11333,9 @@ The Performance Goal Tab defines specific goals for performance.]]></HELP>
 <!--441 NAME-->
 <!--441-->              <NAME><![CDATA[PA_Measure]]></NAME>
 <!--441 DESCRIPTION-->
-<!--441-->              <DESCRIPTION><![CDATA[
-Performance Measure]]></DESCRIPTION>
+<!--441-->              <DESCRIPTION><![CDATA[Performance Measure]]></DESCRIPTION>
 <!--441 HELP-->
-<!--441-->              <HELP><![CDATA[
-The Performance Measure Tab defines the date range and method to be used for measuring performance.]]></HELP>
+<!--441-->              <HELP><![CDATA[The Performance Measure Tab defines the date range and method to be used for measuring performance.]]></HELP>
 <!--441 TABLENAME-->
 <!--441-->              <TABLENAME><![CDATA[PA_Measure]]></TABLENAME>
 <!--441 ISVIEW-->
@@ -11584,11 +11386,9 @@ The Performance Measure Tab defines the date range and method to be used for mea
 <!--442 NAME-->
 <!--442-->              <NAME><![CDATA[PA_MeasureCalc]]></NAME>
 <!--442 DESCRIPTION-->
-<!--442-->              <DESCRIPTION><![CDATA[
-Maintain your Performance Measure Calculation]]></DESCRIPTION>
+<!--442-->              <DESCRIPTION><![CDATA[Maintain your Performance Measure Calculation]]></DESCRIPTION>
 <!--442 HELP-->
-<!--442-->              <HELP><![CDATA[
-The Performance Measure Calculation defines how performance measures will be calculated.  Please test the statement in SQL*Plus first.The select statement needs to return a single value!Any restrictions for Date range, Organizations, Business Partners, ]]></HELP>
+<!--442-->              <HELP><![CDATA[The Performance Measure Calculation defines how performance measures will be calculated.  Please test the statement in SQL*Plus first.The select statement needs to return a single value!Any restrictions for Date range, Organizations, Business Partners,]]></HELP>
 <!--442 TABLENAME-->
 <!--442-->              <TABLENAME><![CDATA[PA_MeasureCalc]]></TABLENAME>
 <!--442 ISVIEW-->
@@ -11639,11 +11439,9 @@ The Performance Measure Calculation defines how performance measures will be cal
 <!--443 NAME-->
 <!--443-->              <NAME><![CDATA[C_RevenueRecognition_Plan]]></NAME>
 <!--443 DESCRIPTION-->
-<!--443-->              <DESCRIPTION><![CDATA[
-View Revenue Recognition Plan]]></DESCRIPTION>
+<!--443-->              <DESCRIPTION><![CDATA[View Revenue Recognition Plan]]></DESCRIPTION>
 <!--443 HELP-->
-<!--443-->              <HELP><![CDATA[
-The Revenue Recognition plan is generated then invoicing a product with revenue recognition.  With Revenue Recognition, the amount is posted to the Unrecognized revenue and over time or based on Service Level booked to Earned Revenue.]]></HELP>
+<!--443-->              <HELP><![CDATA[The Revenue Recognition plan is generated then invoicing a product with revenue recognition.  With Revenue Recognition, the amount is posted to the Unrecognized revenue and over time or based on Service Level booked to Earned Revenue.]]></HELP>
 <!--443 TABLENAME-->
 <!--443-->              <TABLENAME><![CDATA[C_RevenueRecognition_Plan]]></TABLENAME>
 <!--443 ISVIEW-->
@@ -11792,11 +11590,9 @@ The Revenue Recognition plan is generated then invoicing a product with revenue 
 <!--446 NAME-->
 <!--446-->              <NAME><![CDATA[PA_ReportColumn]]></NAME>
 <!--446 DESCRIPTION-->
-<!--446-->              <DESCRIPTION><![CDATA[
-Maintain Financial Report Column]]></DESCRIPTION>
+<!--446-->              <DESCRIPTION><![CDATA[Maintain Financial Report Column]]></DESCRIPTION>
 <!--446 HELP-->
-<!--446-->              <HELP><![CDATA[
-A column represents a column in a Financial Report]]></HELP>
+<!--446-->              <HELP><![CDATA[A column represents a column in a Financial Report]]></HELP>
 <!--446 TABLENAME-->
 <!--446-->              <TABLENAME><![CDATA[PA_ReportColumn]]></TABLENAME>
 <!--446 ISVIEW-->
@@ -11847,11 +11643,9 @@ A column represents a column in a Financial Report]]></HELP>
 <!--447 NAME-->
 <!--447-->              <NAME><![CDATA[PA_ReportColumnSet]]></NAME>
 <!--447 DESCRIPTION-->
-<!--447-->              <DESCRIPTION><![CDATA[
-Maintain Financial Report Column Sets]]></DESCRIPTION>
+<!--447-->              <DESCRIPTION><![CDATA[Maintain Financial Report Column Sets]]></DESCRIPTION>
 <!--447 HELP-->
-<!--447-->              <HELP><![CDATA[
-Column Sets are the combination of Columns to be included in a Financial Report]]></HELP>
+<!--447-->              <HELP><![CDATA[Column Sets are the combination of Columns to be included in a Financial Report]]></HELP>
 <!--447 TABLENAME-->
 <!--447-->              <TABLENAME><![CDATA[PA_ReportColumnSet]]></TABLENAME>
 <!--447 ISVIEW-->
@@ -12202,11 +11996,9 @@ Column Sets are the combination of Columns to be included in a Financial Report]
 <!--454 NAME-->
 <!--454-->              <NAME><![CDATA[AD_PrintForm]]></NAME>
 <!--454 DESCRIPTION-->
-<!--454-->              <DESCRIPTION><![CDATA[
-Maintain Print Form (Invoices, Checks, ..) information]]></DESCRIPTION>
+<!--454-->              <DESCRIPTION><![CDATA[Maintain Print Form (Invoices, Checks, ..) information]]></DESCRIPTION>
 <!--454 HELP-->
-<!--454-->              <HELP><![CDATA[
-The selection determines what Print Format is used to print a particular Form for your Organization.]]></HELP>
+<!--454-->              <HELP><![CDATA[The selection determines what Print Format is used to print a particular Form for your Organization.]]></HELP>
 <!--454 TABLENAME-->
 <!--454-->              <TABLENAME><![CDATA[AD_PrintForm]]></TABLENAME>
 <!--454 ISVIEW-->
@@ -12257,11 +12049,9 @@ The selection determines what Print Format is used to print a particular Form fo
 <!--455 NAME-->
 <!--455-->              <NAME><![CDATA[C_BankAccountDoc]]></NAME>
 <!--455 DESCRIPTION-->
-<!--455-->              <DESCRIPTION><![CDATA[
-Maintain Bank Account Documents]]></DESCRIPTION>
+<!--455-->              <DESCRIPTION><![CDATA[Maintain Bank Account Documents]]></DESCRIPTION>
 <!--455 HELP-->
-<!--455-->              <HELP><![CDATA[
-In this tab, you define the documents used for this bank account.  You define your check and other payment document (sequence) number as well as format.]]></HELP>
+<!--455-->              <HELP><![CDATA[In this tab, you define the documents used for this bank account.  You define your check and other payment document (sequence) number as well as format.]]></HELP>
 <!--455 TABLENAME-->
 <!--455-->              <TABLENAME><![CDATA[C_BankAccountDoc]]></TABLENAME>
 <!--455 ISVIEW-->
@@ -12412,11 +12202,9 @@ In this tab, you define the documents used for this bank account.  You define yo
 <!--458 NAME-->
 <!--458-->              <NAME><![CDATA[AD_Desktop]]></NAME>
 <!--458 DESCRIPTION-->
-<!--458-->              <DESCRIPTION><![CDATA[
-Desktop is a collection of Workbenches]]></DESCRIPTION>
+<!--458-->              <DESCRIPTION><![CDATA[Desktop is a collection of Workbenches]]></DESCRIPTION>
 <!--458 HELP-->
-<!--458-->              <HELP><![CDATA[
-Desktop is a collection of Workbenches]]></HELP>
+<!--458-->              <HELP><![CDATA[Desktop is a collection of Workbenches]]></HELP>
 <!--458 TABLENAME-->
 <!--458-->              <TABLENAME><![CDATA[AD_Desktop]]></TABLENAME>
 <!--458 ISVIEW-->
@@ -13061,11 +12849,9 @@ Desktop is a collection of Workbenches]]></HELP>
 <!--474 NAME-->
 <!--474-->              <NAME><![CDATA[R_RequestProcessor_Route]]></NAME>
 <!--474 DESCRIPTION-->
-<!--474-->              <DESCRIPTION><![CDATA[
-Request Routing]]></DESCRIPTION>
+<!--474-->              <DESCRIPTION><![CDATA[Request Routing]]></DESCRIPTION>
 <!--474 HELP-->
-<!--474-->              <HELP><![CDATA[
-Define the sequence of keywords and to whom the web and mail requests should be routed to.]]></HELP>
+<!--474-->              <HELP><![CDATA[Define the sequence of keywords and to whom the web and mail requests should be routed to.]]></HELP>
 <!--474 TABLENAME-->
 <!--474-->              <TABLENAME><![CDATA[R_RequestProcessor_Route]]></TABLENAME>
 <!--474 ISVIEW-->
@@ -13116,11 +12902,9 @@ Define the sequence of keywords and to whom the web and mail requests should be 
 <!--475 NAME-->
 <!--475-->              <NAME><![CDATA[M_DiscountSchema]]></NAME>
 <!--475 DESCRIPTION-->
-<!--475-->              <DESCRIPTION><![CDATA[
-Trade Discount Schema]]></DESCRIPTION>
+<!--475-->              <DESCRIPTION><![CDATA[Trade Discount Schema]]></DESCRIPTION>
 <!--475 HELP-->
-<!--475-->              <HELP><![CDATA[
-Trade discount schema calculates the trade discount percentage]]></HELP>
+<!--475-->              <HELP><![CDATA[Trade discount schema calculates the trade discount percentage]]></HELP>
 <!--475 TABLENAME-->
 <!--475-->              <TABLENAME><![CDATA[M_DiscountSchema]]></TABLENAME>
 <!--475 ISVIEW-->
@@ -13220,11 +13004,9 @@ Trade discount schema calculates the trade discount percentage]]></HELP>
 <!--477 NAME-->
 <!--477-->              <NAME><![CDATA[M_DiscountSchemaLine]]></NAME>
 <!--477 DESCRIPTION-->
-<!--477-->              <DESCRIPTION><![CDATA[
-Trade Discount Price List Lines]]></DESCRIPTION>
+<!--477-->              <DESCRIPTION><![CDATA[Trade Discount Price List Lines]]></DESCRIPTION>
 <!--477 HELP-->
-<!--477-->              <HELP><![CDATA[
-Pricelists are created based on Product Purchase and Category Discounts.The parameters listed here allow to copy and calculate pricelists.<BR>The calculation:<UL><LI>Copy and convert price from referenced price list<LI>result plus Surcharge Amount<L]]></HELP>
+<!--477-->              <HELP><![CDATA[Pricelists are created based on Product Purchase and Category Discounts.The parameters listed here allow to copy and calculate pricelists.<BR>The calculation:<UL><LI>Copy and convert price from referenced price list<LI>result plus Surcharge Amount<L]]></HELP>
 <!--477 TABLENAME-->
 <!--477-->              <TABLENAME><![CDATA[M_DiscountSchemaLine]]></TABLENAME>
 <!--477 ISVIEW-->
@@ -13369,11 +13151,9 @@ Pricelists are created based on Product Purchase and Category Discounts.The para
 <!--480 NAME-->
 <!--480-->              <NAME><![CDATA[S_ResourceType]]></NAME>
 <!--480 DESCRIPTION-->
-<!--480-->              <DESCRIPTION><![CDATA[
-Maintain Resource Types]]></DESCRIPTION>
+<!--480-->              <DESCRIPTION><![CDATA[Maintain Resource Types]]></DESCRIPTION>
 <!--480 HELP-->
-<!--480-->              <HELP><![CDATA[
-Maintain Resource types and their principal availability.]]></HELP>
+<!--480-->              <HELP><![CDATA[Maintain Resource types and their principal availability.]]></HELP>
 <!--480 TABLENAME-->
 <!--480-->              <TABLENAME><![CDATA[S_ResourceType]]></TABLENAME>
 <!--480 ISVIEW-->
@@ -13475,11 +13255,9 @@ Maintain Resource types and their principal availability.]]></HELP>
 <!--482 NAME-->
 <!--482-->              <NAME><![CDATA[S_ResourceUnAvailable]]></NAME>
 <!--482 DESCRIPTION-->
-<!--482-->              <DESCRIPTION><![CDATA[
-Resource unavailability]]></DESCRIPTION>
+<!--482-->              <DESCRIPTION><![CDATA[Resource unavailability]]></DESCRIPTION>
 <!--482 HELP-->
-<!--482-->              <HELP><![CDATA[
-Dates, when the resource is not available (e.g. vacation)]]></HELP>
+<!--482-->              <HELP><![CDATA[Dates, when the resource is not available (e.g. vacation)]]></HELP>
 <!--482 TABLENAME-->
 <!--482-->              <TABLENAME><![CDATA[S_ResourceUnAvailable]]></TABLENAME>
 <!--482 ISVIEW-->
@@ -13530,11 +13308,9 @@ Dates, when the resource is not available (e.g. vacation)]]></HELP>
 <!--485 NAME-->
 <!--485-->              <NAME><![CDATA[S_ResourceAssignment]]></NAME>
 <!--485 DESCRIPTION-->
-<!--485-->              <DESCRIPTION><![CDATA[
-Resource Assignments]]></DESCRIPTION>
+<!--485-->              <DESCRIPTION><![CDATA[Resource Assignments]]></DESCRIPTION>
 <!--485 HELP-->
-<!--485-->              <HELP><![CDATA[
-History of Assignments]]></HELP>
+<!--485-->              <HELP><![CDATA[History of Assignments]]></HELP>
 <!--485 TABLENAME-->
 <!--485-->              <TABLENAME><![CDATA[S_ResourceAssignment]]></TABLENAME>
 <!--485 ISVIEW-->
@@ -13638,11 +13414,9 @@ History of Assignments]]></HELP>
 <!--487 NAME-->
 <!--487-->              <NAME><![CDATA[S_Resource]]></NAME>
 <!--487 DESCRIPTION-->
-<!--487-->              <DESCRIPTION><![CDATA[
-Maintain Resources]]></DESCRIPTION>
+<!--487-->              <DESCRIPTION><![CDATA[Maintain Resources]]></DESCRIPTION>
 <!--487 HELP-->
-<!--487-->              <HELP><![CDATA[
-Maintain Resources]]></HELP>
+<!--487-->              <HELP><![CDATA[Maintain Resources]]></HELP>
 <!--487 TABLENAME-->
 <!--487-->              <TABLENAME><![CDATA[S_Resource]]></TABLENAME>
 <!--487 ISVIEW-->
@@ -13746,13 +13520,11 @@ Maintain Resources]]></HELP>
 <!--489 NAME-->
 <!--489-->              <NAME><![CDATA[AD_PrintFormatItem]]></NAME>
 <!--489 DESCRIPTION-->
-<!--489-->              <DESCRIPTION><![CDATA[
-Display Order of the Print Format Items
+<!--489-->              <DESCRIPTION><![CDATA[Display Order of the Print Format Items
 Sort Order of the Print Format Items
 Print Format Item]]></DESCRIPTION>
 <!--489 HELP-->
-<!--489-->              <HELP><![CDATA[
-Display Order of the Print Format Items
+<!--489-->              <HELP><![CDATA[Display Order of the Print Format Items
 Sort Order of the Print Format Items
 Item in the print format maintaining layout information]]></HELP>
 <!--489 TABLENAME-->
@@ -13805,11 +13577,9 @@ Item in the print format maintaining layout information]]></HELP>
 <!--490 NAME-->
 <!--490-->              <NAME><![CDATA[AD_PrintColor]]></NAME>
 <!--490 DESCRIPTION-->
-<!--490-->              <DESCRIPTION><![CDATA[
-Maintain Print Color]]></DESCRIPTION>
+<!--490-->              <DESCRIPTION><![CDATA[Maintain Print Color]]></DESCRIPTION>
 <!--490 HELP-->
-<!--490-->              <HELP><![CDATA[
-Colors used for printing]]></HELP>
+<!--490-->              <HELP><![CDATA[Colors used for printing]]></HELP>
 <!--490 TABLENAME-->
 <!--490-->              <TABLENAME><![CDATA[AD_PrintColor]]></TABLENAME>
 <!--490 ISVIEW-->
@@ -13860,11 +13630,9 @@ Colors used for printing]]></HELP>
 <!--491 NAME-->
 <!--491-->              <NAME><![CDATA[AD_PrintFont]]></NAME>
 <!--491 DESCRIPTION-->
-<!--491-->              <DESCRIPTION><![CDATA[
-Maintain Print Font]]></DESCRIPTION>
+<!--491-->              <DESCRIPTION><![CDATA[Maintain Print Font]]></DESCRIPTION>
 <!--491 HELP-->
-<!--491-->              <HELP><![CDATA[
-Font used for printing]]></HELP>
+<!--491-->              <HELP><![CDATA[Font used for printing]]></HELP>
 <!--491 TABLENAME-->
 <!--491-->              <TABLENAME><![CDATA[AD_PrintFont]]></TABLENAME>
 <!--491 ISVIEW-->
@@ -13915,11 +13683,9 @@ Font used for printing]]></HELP>
 <!--492 NAME-->
 <!--492-->              <NAME><![CDATA[AD_PrintPaper]]></NAME>
 <!--492 DESCRIPTION-->
-<!--492-->              <DESCRIPTION><![CDATA[
-Maintain Print Paper]]></DESCRIPTION>
+<!--492-->              <DESCRIPTION><![CDATA[Maintain Print Paper]]></DESCRIPTION>
 <!--492 HELP-->
-<!--492-->              <HELP><![CDATA[
-Printer Paper Size, Orientation and Margins. The Validation Code contains the Media Size name. The names of the media sizes correspond to those in the IPP 1.1 RFC 2911 - http://www.ietf.org/rfc/rfc2911.txt]]></HELP>
+<!--492-->              <HELP><![CDATA[Printer Paper Size, Orientation and Margins. The Validation Code contains the Media Size name. The names of the media sizes correspond to those in the IPP 1.1 RFC 2911 - http://www.ietf.org/rfc/rfc2911.txt]]></HELP>
 <!--492 TABLENAME-->
 <!--492-->              <TABLENAME><![CDATA[AD_PrintPaper]]></TABLENAME>
 <!--492 ISVIEW-->
@@ -13970,11 +13736,9 @@ Printer Paper Size, Orientation and Margins. The Validation Code contains the Me
 <!--493 NAME-->
 <!--493-->              <NAME><![CDATA[AD_PrintFormat]]></NAME>
 <!--493 DESCRIPTION-->
-<!--493-->              <DESCRIPTION><![CDATA[
-Maintain Print Format]]></DESCRIPTION>
+<!--493-->              <DESCRIPTION><![CDATA[Maintain Print Format]]></DESCRIPTION>
 <!--493 HELP-->
-<!--493-->              <HELP><![CDATA[
-The print format determines how data is rendered for print.]]></HELP>
+<!--493-->              <HELP><![CDATA[The print format determines how data is rendered for print.]]></HELP>
 <!--493 TABLENAME-->
 <!--493-->              <TABLENAME><![CDATA[AD_PrintFormat]]></TABLENAME>
 <!--493 ISVIEW-->
@@ -14401,11 +14165,9 @@ The print format determines how data is rendered for print.]]></HELP>
 <!--521 NAME-->
 <!--521-->              <NAME><![CDATA[AD_PrintGraph]]></NAME>
 <!--521 DESCRIPTION-->
-<!--521-->              <DESCRIPTION><![CDATA[
-Define Graph to be included]]></DESCRIPTION>
+<!--521-->              <DESCRIPTION><![CDATA[Define Graph to be included]]></DESCRIPTION>
 <!--521 HELP-->
-<!--521-->              <HELP><![CDATA[
-Define Graph to be included]]></HELP>
+<!--521-->              <HELP><![CDATA[Define Graph to be included]]></HELP>
 <!--521 TABLENAME-->
 <!--521-->              <TABLENAME><![CDATA[AD_PrintGraph]]></TABLENAME>
 <!--521 ISVIEW-->
@@ -14456,11 +14218,9 @@ Define Graph to be included]]></HELP>
 <!--522 NAME-->
 <!--522-->              <NAME><![CDATA[AD_PrintFormatItem_Trl]]></NAME>
 <!--522 DESCRIPTION-->
-<!--522-->              <DESCRIPTION><![CDATA[
-Print Format Translation]]></DESCRIPTION>
+<!--522-->              <DESCRIPTION><![CDATA[Print Format Translation]]></DESCRIPTION>
 <!--522 HELP-->
-<!--522-->              <HELP><![CDATA[
-Print Format Translation]]></HELP>
+<!--522-->              <HELP><![CDATA[Print Format Translation]]></HELP>
 <!--522 TABLENAME-->
 <!--522-->              <TABLENAME><![CDATA[AD_PrintFormatItem_Trl]]></TABLENAME>
 <!--522 ISVIEW-->
@@ -14511,11 +14271,9 @@ Print Format Translation]]></HELP>
 <!--523 NAME-->
 <!--523-->              <NAME><![CDATA[AD_PrintTableFormat]]></NAME>
 <!--523 DESCRIPTION-->
-<!--523-->              <DESCRIPTION><![CDATA[
-Define Report Table Format]]></DESCRIPTION>
+<!--523-->              <DESCRIPTION><![CDATA[Define Report Table Format]]></DESCRIPTION>
 <!--523 HELP-->
-<!--523-->              <HELP><![CDATA[
-The Print Table Format lets you define how table header, etc. is printed. If you leave the entries empty, the default colors and fonts are used:<BR>Fonts are based on the Font used in the Report; Page Header and Table Header will be bold, the Function Fo]]></HELP>
+<!--523-->              <HELP><![CDATA[The Print Table Format lets you define how table header, etc. is printed. If you leave the entries empty, the default colors and fonts are used:<BR>Fonts are based on the Font used in the Report; Page Header and Table Header will be bold, the Function Fo]]></HELP>
 <!--523 TABLENAME-->
 <!--523-->              <TABLENAME><![CDATA[AD_PrintTableFormat]]></TABLENAME>
 <!--523 ISVIEW-->
@@ -14660,9 +14418,11 @@ The Print Table Format lets you define how table header, etc. is printed. If you
 <!--528 NAME-->
 <!--528-->              <NAME><![CDATA[R_ContactInterest]]></NAME>
 <!--528 DESCRIPTION-->
-<!--528-->              <DESCRIPTION><![CDATA[Business Partner Contact Interest AreaInterest Area suscription]]></DESCRIPTION>
+<!--528-->              <DESCRIPTION><![CDATA[Business Partner Contact Interest Area
+Interest Area suscription]]></DESCRIPTION>
 <!--528 HELP-->
-<!--528-->              <HELP><![CDATA[Interest Area can be used for Marketing CampaignsThe subscription is used to follow up the contacts which are subscribed to an specific area of interest and also add new subscribers.]]></HELP>
+<!--528-->              <HELP><![CDATA[Interest Area can be used for Marketing Campaigns
+The subscription is used to follow up the contacts which are subscribed to an specific area of interest and also add new subscribers.]]></HELP>
 <!--528 TABLENAME-->
 <!--528-->              <TABLENAME><![CDATA[R_ContactInterest]]></TABLENAME>
 <!--528 ISVIEW-->
@@ -14713,11 +14473,9 @@ The Print Table Format lets you define how table header, etc. is printed. If you
 <!--529 NAME-->
 <!--529-->              <NAME><![CDATA[R_RequestType]]></NAME>
 <!--529 DESCRIPTION-->
-<!--529-->              <DESCRIPTION><![CDATA[
-Type of request (e.g. Inquiry, Complaint, ..)]]></DESCRIPTION>
+<!--529-->              <DESCRIPTION><![CDATA[Type of request (e.g. Inquiry, Complaint, ..)]]></DESCRIPTION>
 <!--529 HELP-->
-<!--529-->              <HELP><![CDATA[
-Request Types are used for processing and categorizing requests. Options are Account Inquiry, Warranty Issue, etc.]]></HELP>
+<!--529-->              <HELP><![CDATA[Request Types are used for processing and categorizing requests. Options are Account Inquiry, Warranty Issue, etc.]]></HELP>
 <!--529 TABLENAME-->
 <!--529-->              <TABLENAME><![CDATA[R_RequestType]]></TABLENAME>
 <!--529 ISVIEW-->
@@ -14821,11 +14579,9 @@ Request Types are used for processing and categorizing requests. Options are Acc
 <!--531 NAME-->
 <!--531-->              <NAME><![CDATA[AD_System]]></NAME>
 <!--531 DESCRIPTION-->
-<!--531-->              <DESCRIPTION><![CDATA[
-System Definition]]></DESCRIPTION>
+<!--531-->              <DESCRIPTION><![CDATA[System Definition]]></DESCRIPTION>
 <!--531 HELP-->
-<!--531-->              <HELP><![CDATA[
-Common System Definition. Do NOT create additional records!!]]></HELP>
+<!--531-->              <HELP><![CDATA[Common System Definition. Do NOT create additional records!!]]></HELP>
 <!--531 TABLENAME-->
 <!--531-->              <TABLENAME><![CDATA[AD_System]]></TABLENAME>
 <!--531 ISVIEW-->
@@ -14876,8 +14632,7 @@ Common System Definition. Do NOT create additional records!!]]></HELP>
 <!--532 NAME-->
 <!--532-->              <NAME><![CDATA[I_Product]]></NAME>
 <!--532 DESCRIPTION-->
-<!--532-->              <DESCRIPTION><![CDATA[
-Import Products]]></DESCRIPTION>
+<!--532-->              <DESCRIPTION><![CDATA[Import Products]]></DESCRIPTION>
 <!--532 HELP-->
 <!--532-->              <HELP><![CDATA[Before importing, Openbravo checks the Unit of Measure (default if not set), the Product Category (default if not set), the Business Partner, the Currency (defaults to accounting currency if not set), the Product Type (only Items and Services), the uniquen]]></HELP>
 <!--532 TABLENAME-->
@@ -14981,11 +14736,9 @@ Import Products]]></DESCRIPTION>
 <!--534 NAME-->
 <!--534-->              <NAME><![CDATA[I_ElementValue]]></NAME>
 <!--534 DESCRIPTION-->
-<!--534-->              <DESCRIPTION><![CDATA[
-Accounting account importation]]></DESCRIPTION>
+<!--534-->              <DESCRIPTION><![CDATA[Accounting account importation]]></DESCRIPTION>
 <!--534 HELP-->
-<!--534-->              <HELP><![CDATA[
-This process imports the accounting accounts tree into the organization]]></HELP>
+<!--534-->              <HELP><![CDATA[This process imports the accounting accounts tree into the organization]]></HELP>
 <!--534 TABLENAME-->
 <!--534-->              <TABLENAME><![CDATA[I_ElementValue]]></TABLENAME>
 <!--534 ISVIEW-->
@@ -15085,11 +14838,9 @@ This process imports the accounting accounts tree into the organization]]></HELP
 <!--537 NAME-->
 <!--537-->              <NAME><![CDATA[S_Training_Class]]></NAME>
 <!--537 DESCRIPTION-->
-<!--537-->              <DESCRIPTION><![CDATA[
-The actual training class instance]]></DESCRIPTION>
+<!--537-->              <DESCRIPTION><![CDATA[The actual training class instance]]></DESCRIPTION>
 <!--537 HELP-->
-<!--537-->              <HELP><![CDATA[
-A scheduled class]]></HELP>
+<!--537-->              <HELP><![CDATA[A scheduled class]]></HELP>
 <!--537 TABLENAME-->
 <!--537-->              <TABLENAME><![CDATA[S_Training_Class]]></TABLENAME>
 <!--537 ISVIEW-->
@@ -15140,11 +14891,9 @@ A scheduled class]]></HELP>
 <!--538 NAME-->
 <!--538-->              <NAME><![CDATA[S_Training]]></NAME>
 <!--538 DESCRIPTION-->
-<!--538-->              <DESCRIPTION><![CDATA[
-Repeated Training]]></DESCRIPTION>
+<!--538-->              <DESCRIPTION><![CDATA[Repeated Training]]></DESCRIPTION>
 <!--538 HELP-->
-<!--538-->              <HELP><![CDATA[
-The training may have multiple actual classes. New Classes are created here.]]></HELP>
+<!--538-->              <HELP><![CDATA[The training may have multiple actual classes. New Classes are created here.]]></HELP>
 <!--538 TABLENAME-->
 <!--538-->              <TABLENAME><![CDATA[S_Training]]></TABLENAME>
 <!--538 ISVIEW-->
@@ -15295,11 +15044,9 @@ The training may have multiple actual classes. New Classes are created here.]]><
 <!--541 NAME-->
 <!--541-->              <NAME><![CDATA[A_Asset_Delivery]]></NAME>
 <!--541 DESCRIPTION-->
-<!--541-->              <DESCRIPTION><![CDATA[
-Delivery or availability]]></DESCRIPTION>
+<!--541-->              <DESCRIPTION><![CDATA[Delivery or availability]]></DESCRIPTION>
 <!--541 HELP-->
-<!--541-->              <HELP><![CDATA[
-Record of delivery or availability]]></HELP>
+<!--541-->              <HELP><![CDATA[Record of delivery or availability]]></HELP>
 <!--541 TABLENAME-->
 <!--541-->              <TABLENAME><![CDATA[A_Asset_Delivery]]></TABLENAME>
 <!--541 ISVIEW-->
@@ -15350,11 +15097,9 @@ Record of delivery or availability]]></HELP>
 <!--542 NAME-->
 <!--542-->              <NAME><![CDATA[A_Asset_Group]]></NAME>
 <!--542 DESCRIPTION-->
-<!--542-->              <DESCRIPTION><![CDATA[
-Group of Assets]]></DESCRIPTION>
+<!--542-->              <DESCRIPTION><![CDATA[Group of Assets]]></DESCRIPTION>
 <!--542 HELP-->
-<!--542-->              <HELP><![CDATA[
-The group of assets determines default accounts.  If a asset group is selected in the product category, assets are created when delivering the asset.]]></HELP>
+<!--542-->              <HELP><![CDATA[The group of assets determines default accounts.  If a asset group is selected in the product category, assets are created when delivering the asset.]]></HELP>
 <!--542 TABLENAME-->
 <!--542-->              <TABLENAME><![CDATA[A_Asset_Group]]></TABLENAME>
 <!--542 ISVIEW-->
@@ -16097,11 +15842,9 @@ The group of assets determines default accounts.  If a asset group is selected i
 <!--558 NAME-->
 <!--558-->              <NAME><![CDATA[M_AttributeValue]]></NAME>
 <!--558 DESCRIPTION-->
-<!--558-->              <DESCRIPTION><![CDATA[
-Product Attribute Value]]></DESCRIPTION>
+<!--558-->              <DESCRIPTION><![CDATA[Product Attribute Value]]></DESCRIPTION>
 <!--558 HELP-->
-<!--558-->              <HELP><![CDATA[
-Individual value of a product attribute (e.g. green, large, ..)]]></HELP>
+<!--558-->              <HELP><![CDATA[Individual value of a product attribute (e.g. green, large, ..)]]></HELP>
 <!--558 TABLENAME-->
 <!--558-->              <TABLENAME><![CDATA[M_AttributeValue]]></TABLENAME>
 <!--558 ISVIEW-->
@@ -16201,11 +15944,9 @@ Individual value of a product attribute (e.g. green, large, ..)]]></HELP>
 <!--560 NAME-->
 <!--560-->              <NAME><![CDATA[M_AttributeSet]]></NAME>
 <!--560 DESCRIPTION-->
-<!--560-->              <DESCRIPTION><![CDATA[
-Maintain Product Attribute Set]]></DESCRIPTION>
+<!--560-->              <DESCRIPTION><![CDATA[Maintain Product Attribute Set]]></DESCRIPTION>
 <!--560 HELP-->
-<!--560-->              <HELP><![CDATA[
-Define Product Attribute Sets to add additional attributes and values to the product. You need to define a Attribute Set if you want to enable Serial and Lot Number tracking.]]></HELP>
+<!--560-->              <HELP><![CDATA[Define Product Attribute Sets to add additional attributes and values to the product. You need to define a Attribute Set if you want to enable Serial and Lot Number tracking.]]></HELP>
 <!--560 TABLENAME-->
 <!--560-->              <TABLENAME><![CDATA[M_AttributeSet]]></TABLENAME>
 <!--560 ISVIEW-->
@@ -16305,11 +16046,9 @@ Define Product Attribute Sets to add additional attributes and values to the pro
 <!--562 NAME-->
 <!--562-->              <NAME><![CDATA[M_Attribute]]></NAME>
 <!--562 DESCRIPTION-->
-<!--562-->              <DESCRIPTION><![CDATA[
-Product Attribute]]></DESCRIPTION>
+<!--562-->              <DESCRIPTION><![CDATA[Product Attribute]]></DESCRIPTION>
 <!--562 HELP-->
-<!--562-->              <HELP><![CDATA[
-Product Attribute like Color, Size, etc.  If it is an Instance Attribute, all products have the same value.]]></HELP>
+<!--562-->              <HELP><![CDATA[Product Attribute like Color, Size, etc.  If it is an Instance Attribute, all products have the same value.]]></HELP>
 <!--562 TABLENAME-->
 <!--562-->              <TABLENAME><![CDATA[M_Attribute]]></TABLENAME>
 <!--562 ISVIEW-->
@@ -16360,11 +16099,9 @@ Product Attribute like Color, Size, etc.  If it is an Instance Attribute, all pr
 <!--563 NAME-->
 <!--563-->              <NAME><![CDATA[M_AttributeUse]]></NAME>
 <!--563 DESCRIPTION-->
-<!--563-->              <DESCRIPTION><![CDATA[
-Attributes Used for the Product Attribute Set]]></DESCRIPTION>
+<!--563-->              <DESCRIPTION><![CDATA[Attributes Used for the Product Attribute Set]]></DESCRIPTION>
 <!--563 HELP-->
-<!--563-->              <HELP><![CDATA[
-Attributes and Attribute Values used for the product]]></HELP>
+<!--563-->              <HELP><![CDATA[Attributes and Attribute Values used for the product]]></HELP>
 <!--563 TABLENAME-->
 <!--563-->              <TABLENAME><![CDATA[M_AttributeUse]]></TABLENAME>
 <!--563 ISVIEW-->
@@ -16415,8 +16152,7 @@ Attributes and Attribute Values used for the product]]></HELP>
 <!--564 NAME-->
 <!--564-->              <NAME><![CDATA[M_AttributeSearch]]></NAME>
 <!--564 DESCRIPTION-->
-<!--564-->              <DESCRIPTION><![CDATA[
-Common Search Attribute ]]></DESCRIPTION>
+<!--564-->              <DESCRIPTION><![CDATA[Common Search Attribute]]></DESCRIPTION>
 <!--564 HELP-->
 <!--564-->              <HELP><![CDATA[Attributes are specific to a Product Attribute Set (e.g. Size for T-Shirts: S,M,L). If you have multiple attributes and want to search under a common sttribute, you define a search sttribute. Example: have one Size search attribute combining the values of]]></HELP>
 <!--564 TABLENAME-->
@@ -16469,11 +16205,9 @@ Common Search Attribute ]]></DESCRIPTION>
 <!--565 NAME-->
 <!--565-->              <NAME><![CDATA[AD_Table_Access]]></NAME>
 <!--565 DESCRIPTION-->
-<!--565-->              <DESCRIPTION><![CDATA[
-Maintain Table Access]]></DESCRIPTION>
+<!--565-->              <DESCRIPTION><![CDATA[Maintain Table Access]]></DESCRIPTION>
 <!--565 HELP-->
-<!--565-->              <HELP><![CDATA[
-If listed here, the Role can(not) access all data of this table, even if the role has access to the functionality]]></HELP>
+<!--565-->              <HELP><![CDATA[If listed here, the Role can(not) access all data of this table, even if the role has access to the functionality]]></HELP>
 <!--565 TABLENAME-->
 <!--565-->              <TABLENAME><![CDATA[AD_Table_Access]]></TABLENAME>
 <!--565 ISVIEW-->
@@ -16524,11 +16258,9 @@ If listed here, the Role can(not) access all data of this table, even if the rol
 <!--566 NAME-->
 <!--566-->              <NAME><![CDATA[AD_Session]]></NAME>
 <!--566 DESCRIPTION-->
-<!--566-->              <DESCRIPTION><![CDATA[
-List of User Sessions]]></DESCRIPTION>
+<!--566-->              <DESCRIPTION><![CDATA[List of User Sessions]]></DESCRIPTION>
 <!--566 HELP-->
-<!--566-->              <HELP><![CDATA[
-History of Online or Web Sessions]]></HELP>
+<!--566-->              <HELP><![CDATA[History of Online or Web Sessions]]></HELP>
 <!--566 TABLENAME-->
 <!--566-->              <TABLENAME><![CDATA[AD_Session]]></TABLENAME>
 <!--566 ISVIEW-->
@@ -16579,11 +16311,9 @@ History of Online or Web Sessions]]></HELP>
 <!--567 NAME-->
 <!--567-->              <NAME><![CDATA[AD_Record_Access]]></NAME>
 <!--567 DESCRIPTION-->
-<!--567-->              <DESCRIPTION><![CDATA[
-Maintain Record Access]]></DESCRIPTION>
+<!--567-->              <DESCRIPTION><![CDATA[Maintain Record Access]]></DESCRIPTION>
 <!--567 HELP-->
-<!--567-->              <HELP><![CDATA[
-If listed here, the Role can(not) access the data records of this table, even if the role has access to the functionality]]></HELP>
+<!--567-->              <HELP><![CDATA[If listed here, the Role can(not) access the data records of this table, even if the role has access to the functionality]]></HELP>
 <!--567 TABLENAME-->
 <!--567-->              <TABLENAME><![CDATA[AD_Record_Access]]></TABLENAME>
 <!--567 ISVIEW-->
@@ -16634,11 +16364,9 @@ If listed here, the Role can(not) access the data records of this table, even if
 <!--568 NAME-->
 <!--568-->              <NAME><![CDATA[AD_PrintLabelLine_Trl]]></NAME>
 <!--568 DESCRIPTION-->
-<!--568-->              <DESCRIPTION><![CDATA[
-Print Label Line Translation]]></DESCRIPTION>
+<!--568-->              <DESCRIPTION><![CDATA[Print Label Line Translation]]></DESCRIPTION>
 <!--568 HELP-->
-<!--568-->              <HELP><![CDATA[
-Maintain the translation for Label Line formats]]></HELP>
+<!--568-->              <HELP><![CDATA[Maintain the translation for Label Line formats]]></HELP>
 <!--568 TABLENAME-->
 <!--568-->              <TABLENAME><![CDATA[AD_PrintLabelLine_Trl]]></TABLENAME>
 <!--568 ISVIEW-->
@@ -16689,11 +16417,9 @@ Maintain the translation for Label Line formats]]></HELP>
 <!--569 NAME-->
 <!--569-->              <NAME><![CDATA[AD_PrintLabelLine]]></NAME>
 <!--569 DESCRIPTION-->
-<!--569-->              <DESCRIPTION><![CDATA[
-Print Label Line]]></DESCRIPTION>
+<!--569-->              <DESCRIPTION><![CDATA[Print Label Line]]></DESCRIPTION>
 <!--569 HELP-->
-<!--569-->              <HELP><![CDATA[
-Maintain Format of the line on a Label]]></HELP>
+<!--569-->              <HELP><![CDATA[Maintain Format of the line on a Label]]></HELP>
 <!--569 TABLENAME-->
 <!--569-->              <TABLENAME><![CDATA[AD_PrintLabelLine]]></TABLENAME>
 <!--569 ISVIEW-->
@@ -16744,11 +16470,9 @@ Maintain Format of the line on a Label]]></HELP>
 <!--570 NAME-->
 <!--570-->              <NAME><![CDATA[AD_PrintLabel]]></NAME>
 <!--570 DESCRIPTION-->
-<!--570-->              <DESCRIPTION><![CDATA[
-Print Label]]></DESCRIPTION>
+<!--570-->              <DESCRIPTION><![CDATA[Print Label]]></DESCRIPTION>
 <!--570 HELP-->
-<!--570-->              <HELP><![CDATA[
-Maintain the Format for printing Labels]]></HELP>
+<!--570-->              <HELP><![CDATA[Maintain the Format for printing Labels]]></HELP>
 <!--570 TABLENAME-->
 <!--570-->              <TABLENAME><![CDATA[AD_PrintLabel]]></TABLENAME>
 <!--570 ISVIEW-->
@@ -16799,11 +16523,9 @@ Maintain the Format for printing Labels]]></HELP>
 <!--571 NAME-->
 <!--571-->              <NAME><![CDATA[AD_Column_Access]]></NAME>
 <!--571 DESCRIPTION-->
-<!--571-->              <DESCRIPTION><![CDATA[
-Maintain Column Access]]></DESCRIPTION>
+<!--571-->              <DESCRIPTION><![CDATA[Maintain Column Access]]></DESCRIPTION>
 <!--571 HELP-->
-<!--571-->              <HELP><![CDATA[
-If listed here, the Role can(not) access the column of this table, even if the role has access to the functionality]]></HELP>
+<!--571-->              <HELP><![CDATA[If listed here, the Role can(not) access the column of this table, even if the role has access to the functionality]]></HELP>
 <!--571 TABLENAME-->
 <!--571-->              <TABLENAME><![CDATA[AD_Column_Access]]></TABLENAME>
 <!--571 ISVIEW-->
@@ -16854,11 +16576,9 @@ If listed here, the Role can(not) access the column of this table, even if the r
 <!--572 NAME-->
 <!--572-->              <NAME><![CDATA[I_Inventory]]></NAME>
 <!--572 DESCRIPTION-->
-<!--572-->              <DESCRIPTION><![CDATA[
-Import Inventory]]></DESCRIPTION>
+<!--572-->              <DESCRIPTION><![CDATA[Import Inventory]]></DESCRIPTION>
 <!--572 HELP-->
-<!--572-->              <HELP><![CDATA[
-Validate and Import Inventory Transactions. The Locator is primarily determined by the Locator Key, then the Warehouse and X,Y,Z fields.<p>A Physical Inventory is created per Warehouse and Movement Date.]]></HELP>
+<!--572-->              <HELP><![CDATA[Validate and Import Inventory Transactions. The Locator is primarily determined by the Locator Key, then the Warehouse and X,Y,Z fields.<p>A Physical Inventory is created per Warehouse and Movement Date.]]></HELP>
 <!--572 TABLENAME-->
 <!--572-->              <TABLENAME><![CDATA[I_Inventory]]></TABLENAME>
 <!--572 ISVIEW-->
@@ -16962,11 +16682,9 @@ Validate and Import Inventory Transactions. The Locator is primarily determined 
 <!--576 NAME-->
 <!--576-->              <NAME><![CDATA[C_ProjectPhase]]></NAME>
 <!--576 DESCRIPTION-->
-<!--576-->              <DESCRIPTION><![CDATA[
-Actual Project Phase]]></DESCRIPTION>
+<!--576-->              <DESCRIPTION><![CDATA[Actual Project Phase]]></DESCRIPTION>
 <!--576 HELP-->
-<!--576-->              <HELP><![CDATA[
-Actual Phase of the Project with Status information - generated from Phase of Project Type.]]></HELP>
+<!--576-->              <HELP><![CDATA[Actual Phase of the Project with Status information - generated from Phase of Project Type.]]></HELP>
 <!--576 TABLENAME-->
 <!--576-->              <TABLENAME><![CDATA[C_ProjectPhase]]></TABLENAME>
 <!--576 ISVIEW-->
@@ -17017,11 +16735,9 @@ Actual Phase of the Project with Status information - generated from Phase of Pr
 <!--577 NAME-->
 <!--577-->              <NAME><![CDATA[C_Phase]]></NAME>
 <!--577 DESCRIPTION-->
-<!--577-->              <DESCRIPTION><![CDATA[
-Maintain Standard Project Phase]]></DESCRIPTION>
+<!--577-->              <DESCRIPTION><![CDATA[Maintain Standard Project Phase]]></DESCRIPTION>
 <!--577 HELP-->
-<!--577-->              <HELP><![CDATA[
-Standard Phase of the project with performance information]]></HELP>
+<!--577-->              <HELP><![CDATA[Standard Phase of the project with performance information]]></HELP>
 <!--577 TABLENAME-->
 <!--577-->              <TABLENAME><![CDATA[C_Phase]]></TABLENAME>
 <!--577 ISVIEW-->
@@ -17123,11 +16839,9 @@ Standard Phase of the project with performance information]]></HELP>
 <!--579 NAME-->
 <!--579-->              <NAME><![CDATA[W_Advertisement]]></NAME>
 <!--579 DESCRIPTION-->
-<!--579-->              <DESCRIPTION><![CDATA[
-Web Advertisement]]></DESCRIPTION>
+<!--579-->              <DESCRIPTION><![CDATA[Web Advertisement]]></DESCRIPTION>
 <!--579 HELP-->
-<!--579-->              <HELP><![CDATA[
-Advertisement on the Web]]></HELP>
+<!--579-->              <HELP><![CDATA[Advertisement on the Web]]></HELP>
 <!--579 TABLENAME-->
 <!--579-->              <TABLENAME><![CDATA[W_Advertisement]]></TABLENAME>
 <!--579 ISVIEW-->
@@ -17178,12 +16892,10 @@ Advertisement on the Web]]></HELP>
 <!--580 NAME-->
 <!--580-->              <NAME><![CDATA[AD_ChangeLog]]></NAME>
 <!--580 DESCRIPTION-->
-<!--580-->              <DESCRIPTION><![CDATA[
-Data Changes
+<!--580-->              <DESCRIPTION><![CDATA[Data Changes
 Log of data changes]]></DESCRIPTION>
 <!--580 HELP-->
-<!--580-->              <HELP><![CDATA[
-Log of data changes
+<!--580-->              <HELP><![CDATA[Log of data changes
 Log of data changes]]></HELP>
 <!--580 TABLENAME-->
 <!--580-->              <TABLENAME><![CDATA[AD_ChangeLog]]></TABLENAME>
@@ -17288,11 +17000,9 @@ Log of data changes]]></HELP>
 <!--582 NAME-->
 <!--582-->              <NAME><![CDATA[R_ResourcePlanCost]]></NAME>
 <!--582 DESCRIPTION-->
-<!--582-->              <DESCRIPTION><![CDATA[
-Planned Costs of the Resource]]></DESCRIPTION>
+<!--582-->              <DESCRIPTION><![CDATA[Planned Costs of the Resource]]></DESCRIPTION>
 <!--582 HELP-->
-<!--582-->              <HELP><![CDATA[
-Planned (budgeted) Costs of the Resource]]></HELP>
+<!--582-->              <HELP><![CDATA[Planned (budgeted) Costs of the Resource]]></HELP>
 <!--582 TABLENAME-->
 <!--582-->              <TABLENAME><![CDATA[R_ResourcePlanCost]]></TABLENAME>
 <!--582 ISVIEW-->
@@ -17343,11 +17053,9 @@ Planned (budgeted) Costs of the Resource]]></HELP>
 <!--583 NAME-->
 <!--583-->              <NAME><![CDATA[C_Task]]></NAME>
 <!--583 DESCRIPTION-->
-<!--583-->              <DESCRIPTION><![CDATA[
-Maintain Standard Project Task]]></DESCRIPTION>
+<!--583-->              <DESCRIPTION><![CDATA[Maintain Standard Project Task]]></DESCRIPTION>
 <!--583 HELP-->
-<!--583-->              <HELP><![CDATA[
-Standard Project Task]]></HELP>
+<!--583-->              <HELP><![CDATA[Standard Project Task]]></HELP>
 <!--583 TABLENAME-->
 <!--583-->              <TABLENAME><![CDATA[C_Task]]></TABLENAME>
 <!--583 ISVIEW-->
@@ -17398,11 +17106,9 @@ Standard Project Task]]></HELP>
 <!--584 NAME-->
 <!--584-->              <NAME><![CDATA[C_ProjectTask]]></NAME>
 <!--584 DESCRIPTION-->
-<!--584-->              <DESCRIPTION><![CDATA[
-Actual Project Task]]></DESCRIPTION>
+<!--584-->              <DESCRIPTION><![CDATA[Actual Project Task]]></DESCRIPTION>
 <!--584 HELP-->
-<!--584-->              <HELP><![CDATA[
-A Project Task in a Project Phase represents the actual work.]]></HELP>
+<!--584-->              <HELP><![CDATA[A Project Task in a Project Phase represents the actual work.]]></HELP>
 <!--584 TABLENAME-->
 <!--584-->              <TABLENAME><![CDATA[C_ProjectTask]]></TABLENAME>
 <!--584 ISVIEW-->
@@ -17549,11 +17255,9 @@ A Project Task in a Project Phase represents the actual work.]]></HELP>
 <!--590 NAME-->
 <!--590-->              <NAME><![CDATA[C_CycleStep]]></NAME>
 <!--590 DESCRIPTION-->
-<!--590-->              <DESCRIPTION><![CDATA[
-Project Cycle Step]]></DESCRIPTION>
+<!--590-->              <DESCRIPTION><![CDATA[Project Cycle Step]]></DESCRIPTION>
 <!--590 HELP-->
-<!--590-->              <HELP><![CDATA[
-The Cycle Step determines the logical sequence of events within your cycle. It is the common of similar Project Phases making different project types comparable.]]></HELP>
+<!--590-->              <HELP><![CDATA[The Cycle Step determines the logical sequence of events within your cycle. It is the common of similar Project Phases making different project types comparable.]]></HELP>
 <!--590 TABLENAME-->
 <!--590-->              <TABLENAME><![CDATA[C_CycleStep]]></TABLENAME>
 <!--590 ISVIEW-->
@@ -17604,8 +17308,7 @@ The Cycle Step determines the logical sequence of events within your cycle. It i
 <!--591 NAME-->
 <!--591-->              <NAME><![CDATA[I_Order]]></NAME>
 <!--591 DESCRIPTION-->
-<!--591-->              <DESCRIPTION><![CDATA[
-Import Orders]]></DESCRIPTION>
+<!--591-->              <DESCRIPTION><![CDATA[Import Orders]]></DESCRIPTION>
 <!--591 HELP-->
 <!--591-->              <HELP><![CDATA[You should supply the Document Type Name (or ID). The Document Type is on purpose not fully derived as it has too many consequences if it's wrong.  The best way is to set the Document Type Name as a Constant in your Import File Format or as an imported fi]]></HELP>
 <!--591 TABLENAME-->
@@ -17817,11 +17520,9 @@ Import Orders]]></DESCRIPTION>
 <!--595 NAME-->
 <!--595-->              <NAME><![CDATA[M_FreightCategory]]></NAME>
 <!--595 DESCRIPTION-->
-<!--595-->              <DESCRIPTION><![CDATA[
-Category of the Freight]]></DESCRIPTION>
+<!--595-->              <DESCRIPTION><![CDATA[Category of the Freight]]></DESCRIPTION>
 <!--595 HELP-->
-<!--595-->              <HELP><![CDATA[
-Freight Categories are used to calculate the Freight for the Shipper selected]]></HELP>
+<!--595-->              <HELP><![CDATA[Freight Categories are used to calculate the Freight for the Shipper selected]]></HELP>
 <!--595 TABLENAME-->
 <!--595-->              <TABLENAME><![CDATA[M_FreightCategory]]></TABLENAME>
 <!--595 ISVIEW-->
@@ -17872,11 +17573,9 @@ Freight Categories are used to calculate the Freight for the Shipper selected]]>
 <!--596 NAME-->
 <!--596-->              <NAME><![CDATA[M_Freight]]></NAME>
 <!--596 DESCRIPTION-->
-<!--596-->              <DESCRIPTION><![CDATA[
-Freight Rates]]></DESCRIPTION>
+<!--596-->              <DESCRIPTION><![CDATA[Freight Rates]]></DESCRIPTION>
 <!--596 HELP-->
-<!--596-->              <HELP><![CDATA[
-Freight Rates for Shipper]]></HELP>
+<!--596-->              <HELP><![CDATA[Freight Rates for Shipper]]></HELP>
 <!--596 TABLENAME-->
 <!--596-->              <TABLENAME><![CDATA[M_Freight]]></TABLENAME>
 <!--596 ISVIEW-->
@@ -17927,8 +17626,7 @@ Freight Rates for Shipper]]></HELP>
 <!--598 NAME-->
 <!--598-->              <NAME><![CDATA[I_Invoice]]></NAME>
 <!--598 DESCRIPTION-->
-<!--598-->              <DESCRIPTION><![CDATA[
-Import Invoices]]></DESCRIPTION>
+<!--598-->              <DESCRIPTION><![CDATA[Import Invoices]]></DESCRIPTION>
 <!--598 HELP-->
 <!--598-->              <HELP><![CDATA[You should supply the Document Type Name (or ID). The Document Type is on purpose not fully derived as it has too many consequences if it's wrong.  The best way is to set the Document Type Name as a Constant in your Import File Format or as an imported fi]]></HELP>
 <!--598 TABLENAME-->
@@ -17981,11 +17679,9 @@ Import Invoices]]></DESCRIPTION>
 <!--599 NAME-->
 <!--599-->              <NAME><![CDATA[I_GLJournal]]></NAME>
 <!--599 DESCRIPTION-->
-<!--599-->              <DESCRIPTION><![CDATA[
-Import General Ledger]]></DESCRIPTION>
+<!--599-->              <DESCRIPTION><![CDATA[Import General Ledger]]></DESCRIPTION>
 <!--599 HELP-->
-<!--599-->              <HELP><![CDATA[
-A new Journal Batch is created, if the Batch Document No is different. A new Journal is created, if the Document No, Accounting Schema, Currency, Document Type, GL Category, Posting Type or Accounting type is different.<p>Please note that there are three]]></HELP>
+<!--599-->              <HELP><![CDATA[A new Journal Batch is created, if the Batch Document No is different. A new Journal is created, if the Document No, Accounting Schema, Currency, Document Type, GL Category, Posting Type or Accounting type is different.<p>Please note that there are three]]></HELP>
 <!--599 TABLENAME-->
 <!--599-->              <TABLENAME><![CDATA[I_GLJournal]]></TABLENAME>
 <!--599 ISVIEW-->
@@ -18087,11 +17783,9 @@ A new Journal Batch is created, if the Batch Document No is different. A new Jou
 <!--601 NAME-->
 <!--601-->              <NAME><![CDATA[AD_ReplicationTable]]></NAME>
 <!--601 DESCRIPTION-->
-<!--601-->              <DESCRIPTION><![CDATA[
-Data Replication Strategy Table Info]]></DESCRIPTION>
+<!--601-->              <DESCRIPTION><![CDATA[Data Replication Strategy Table Info]]></DESCRIPTION>
 <!--601 HELP-->
-<!--601-->              <HELP><![CDATA[
-Determines how the table is replicated. You have full access to Local tables, Reference tables are on Remote systems and are read-only. The data of Merge tables on Remote systems is copied to the central system.]]></HELP>
+<!--601-->              <HELP><![CDATA[Determines how the table is replicated. You have full access to Local tables, Reference tables are on Remote systems and are read-only. The data of Merge tables on Remote systems is copied to the central system.]]></HELP>
 <!--601 TABLENAME-->
 <!--601-->              <TABLENAME><![CDATA[AD_ReplicationTable]]></TABLENAME>
 <!--601 ISVIEW-->
@@ -18140,11 +17834,9 @@ Determines how the table is replicated. You have full access to Local tables, Re
 <!--602 NAME-->
 <!--602-->              <NAME><![CDATA[AD_ReplicationStrategy]]></NAME>
 <!--602 DESCRIPTION-->
-<!--602-->              <DESCRIPTION><![CDATA[
-Data Replication Strategy]]></DESCRIPTION>
+<!--602-->              <DESCRIPTION><![CDATA[Data Replication Strategy]]></DESCRIPTION>
 <!--602 HELP-->
-<!--602-->              <HELP><![CDATA[
-The Data Replication Strategy determines which tables and how they are replicated. Note that the migration does not syncronize Application Dictionary items.]]></HELP>
+<!--602-->              <HELP><![CDATA[The Data Replication Strategy determines which tables and how they are replicated. Note that the migration does not syncronize Application Dictionary items.]]></HELP>
 <!--602 TABLENAME-->
 <!--602-->              <TABLENAME><![CDATA[AD_ReplicationStrategy]]></TABLENAME>
 <!--602 ISVIEW-->
@@ -18193,11 +17885,9 @@ The Data Replication Strategy determines which tables and how they are replicate
 <!--603 NAME-->
 <!--603-->              <NAME><![CDATA[AD_Replication_Run]]></NAME>
 <!--603 DESCRIPTION-->
-<!--603-->              <DESCRIPTION><![CDATA[
-Data Replication Run]]></DESCRIPTION>
+<!--603-->              <DESCRIPTION><![CDATA[Data Replication Run]]></DESCRIPTION>
 <!--603 HELP-->
-<!--603-->              <HELP><![CDATA[
-Historic Info]]></HELP>
+<!--603-->              <HELP><![CDATA[Historic Info]]></HELP>
 <!--603 TABLENAME-->
 <!--603-->              <TABLENAME><![CDATA[AD_Replication_Run]]></TABLENAME>
 <!--603 ISVIEW-->
@@ -18246,11 +17936,9 @@ Historic Info]]></HELP>
 <!--604 NAME-->
 <!--604-->              <NAME><![CDATA[AD_Replication_Log]]></NAME>
 <!--604 DESCRIPTION-->
-<!--604-->              <DESCRIPTION><![CDATA[
-Data Replication Run Log]]></DESCRIPTION>
+<!--604-->              <DESCRIPTION><![CDATA[Data Replication Run Log]]></DESCRIPTION>
 <!--604 HELP-->
-<!--604-->              <HELP><![CDATA[
-Detail Info]]></HELP>
+<!--604-->              <HELP><![CDATA[Detail Info]]></HELP>
 <!--604 TABLENAME-->
 <!--604-->              <TABLENAME><![CDATA[AD_Replication_Log]]></TABLENAME>
 <!--604 ISVIEW-->
@@ -18299,11 +17987,9 @@ Detail Info]]></HELP>
 <!--605 NAME-->
 <!--605-->              <NAME><![CDATA[AD_Replication]]></NAME>
 <!--605 DESCRIPTION-->
-<!--605-->              <DESCRIPTION><![CDATA[
-Data Replication Target]]></DESCRIPTION>
+<!--605-->              <DESCRIPTION><![CDATA[Data Replication Target]]></DESCRIPTION>
 <!--605 HELP-->
-<!--605-->              <HELP><![CDATA[
-Data Replication Target Details. Maintained on the central server. Make sure that the IP range is unique for every remote system - Otherwise you will loose data!!]]></HELP>
+<!--605-->              <HELP><![CDATA[Data Replication Target Details. Maintained on the central server. Make sure that the IP range is unique for every remote system - Otherwise you will loose data!!]]></HELP>
 <!--605 TABLENAME-->
 <!--605-->              <TABLENAME><![CDATA[AD_Replication]]></TABLENAME>
 <!--605 ISVIEW-->
@@ -18352,11 +18038,9 @@ Data Replication Target Details. Maintained on the central server. Make sure tha
 <!--606 NAME-->
 <!--606-->              <NAME><![CDATA[K_Type]]></NAME>
 <!--606 DESCRIPTION-->
-<!--606-->              <DESCRIPTION><![CDATA[
-Knowledge Type]]></DESCRIPTION>
+<!--606-->              <DESCRIPTION><![CDATA[Knowledge Type]]></DESCRIPTION>
 <!--606 HELP-->
-<!--606-->              <HELP><![CDATA[
-Area of knowlege - A Type has multiple Topics]]></HELP>
+<!--606-->              <HELP><![CDATA[Area of knowlege - A Type has multiple Topics]]></HELP>
 <!--606 TABLENAME-->
 <!--606-->              <TABLENAME><![CDATA[K_Type]]></TABLENAME>
 <!--606 ISVIEW-->
@@ -18407,11 +18091,9 @@ Area of knowlege - A Type has multiple Topics]]></HELP>
 <!--607 NAME-->
 <!--607-->              <NAME><![CDATA[K_Topic]]></NAME>
 <!--607 DESCRIPTION-->
-<!--607-->              <DESCRIPTION><![CDATA[
-Knowledge Topic]]></DESCRIPTION>
+<!--607-->              <DESCRIPTION><![CDATA[Knowledge Topic]]></DESCRIPTION>
 <!--607 HELP-->
-<!--607-->              <HELP><![CDATA[
-Topic or Discussion Thead]]></HELP>
+<!--607-->              <HELP><![CDATA[Topic or Discussion Thead]]></HELP>
 <!--607 TABLENAME-->
 <!--607-->              <TABLENAME><![CDATA[K_Topic]]></TABLENAME>
 <!--607 ISVIEW-->
@@ -18462,11 +18144,9 @@ Topic or Discussion Thead]]></HELP>
 <!--608 NAME-->
 <!--608-->              <NAME><![CDATA[K_Synonym]]></NAME>
 <!--608 DESCRIPTION-->
-<!--608-->              <DESCRIPTION><![CDATA[
-Knowlege Keyword Synonym]]></DESCRIPTION>
+<!--608-->              <DESCRIPTION><![CDATA[Knowlege Keyword Synonym]]></DESCRIPTION>
 <!--608 HELP-->
-<!--608-->              <HELP><![CDATA[
-Search Synonyms for Knowledge Keywords; Example: Product = Item]]></HELP>
+<!--608-->              <HELP><![CDATA[Search Synonyms for Knowledge Keywords; Example: Product = Item]]></HELP>
 <!--608 TABLENAME-->
 <!--608-->              <TABLENAME><![CDATA[K_Synonym]]></TABLENAME>
 <!--608 ISVIEW-->
@@ -18517,11 +18197,9 @@ Search Synonyms for Knowledge Keywords; Example: Product = Item]]></HELP>
 <!--609 NAME-->
 <!--609-->              <NAME><![CDATA[K_Source]]></NAME>
 <!--609 DESCRIPTION-->
-<!--609-->              <DESCRIPTION><![CDATA[
-Source of Knowledge Entries]]></DESCRIPTION>
+<!--609-->              <DESCRIPTION><![CDATA[Source of Knowledge Entries]]></DESCRIPTION>
 <!--609 HELP-->
-<!--609-->              <HELP><![CDATA[
-The Source of a Knowlegde Entry is a pointer to the originating system. The Knowledge Entry has an additional entry (Description URL)  for more detailed info.]]></HELP>
+<!--609-->              <HELP><![CDATA[The Source of a Knowlegde Entry is a pointer to the originating system. The Knowledge Entry has an additional entry (Description URL)  for more detailed info.]]></HELP>
 <!--609 TABLENAME-->
 <!--609-->              <TABLENAME><![CDATA[K_Source]]></TABLENAME>
 <!--609 ISVIEW-->
@@ -18572,11 +18250,9 @@ The Source of a Knowlegde Entry is a pointer to the originating system. The Know
 <!--610 NAME-->
 <!--610-->              <NAME><![CDATA[K_EntryRelated]]></NAME>
 <!--610 DESCRIPTION-->
-<!--610-->              <DESCRIPTION><![CDATA[
-Related Knowlege Entry]]></DESCRIPTION>
+<!--610-->              <DESCRIPTION><![CDATA[Related Knowlege Entry]]></DESCRIPTION>
 <!--610 HELP-->
-<!--610-->              <HELP><![CDATA[
-Related Knowlege Entry for this Knowledge Entry]]></HELP>
+<!--610-->              <HELP><![CDATA[Related Knowlege Entry for this Knowledge Entry]]></HELP>
 <!--610 TABLENAME-->
 <!--610-->              <TABLENAME><![CDATA[K_EntryRelated]]></TABLENAME>
 <!--610 ISVIEW-->
@@ -18627,11 +18303,9 @@ Related Knowlege Entry for this Knowledge Entry]]></HELP>
 <!--611 NAME-->
 <!--611-->              <NAME><![CDATA[K_EntryCategory]]></NAME>
 <!--611 DESCRIPTION-->
-<!--611-->              <DESCRIPTION><![CDATA[
-Knowledge Category]]></DESCRIPTION>
+<!--611-->              <DESCRIPTION><![CDATA[Knowledge Category]]></DESCRIPTION>
 <!--611 HELP-->
-<!--611-->              <HELP><![CDATA[
-Assiged Category - Value for the Knowlede Entry]]></HELP>
+<!--611-->              <HELP><![CDATA[Assiged Category - Value for the Knowlede Entry]]></HELP>
 <!--611 TABLENAME-->
 <!--611-->              <TABLENAME><![CDATA[K_EntryCategory]]></TABLENAME>
 <!--611 ISVIEW-->
@@ -18682,11 +18356,9 @@ Assiged Category - Value for the Knowlede Entry]]></HELP>
 <!--612 NAME-->
 <!--612-->              <NAME><![CDATA[K_Entry]]></NAME>
 <!--612 DESCRIPTION-->
-<!--612-->              <DESCRIPTION><![CDATA[
-Knowledge Entry]]></DESCRIPTION>
+<!--612-->              <DESCRIPTION><![CDATA[Knowledge Entry]]></DESCRIPTION>
 <!--612 HELP-->
-<!--612-->              <HELP><![CDATA[
-The searchable Knowledge Entry]]></HELP>
+<!--612-->              <HELP><![CDATA[The searchable Knowledge Entry]]></HELP>
 <!--612 TABLENAME-->
 <!--612-->              <TABLENAME><![CDATA[K_Entry]]></TABLENAME>
 <!--612 ISVIEW-->
@@ -18737,11 +18409,9 @@ The searchable Knowledge Entry]]></HELP>
 <!--613 NAME-->
 <!--613-->              <NAME><![CDATA[K_Comment]]></NAME>
 <!--613 DESCRIPTION-->
-<!--613-->              <DESCRIPTION><![CDATA[
-Knowledge Entry Comment]]></DESCRIPTION>
+<!--613-->              <DESCRIPTION><![CDATA[Knowledge Entry Comment]]></DESCRIPTION>
 <!--613 HELP-->
-<!--613-->              <HELP><![CDATA[
-Comment regarding a knowledge entry]]></HELP>
+<!--613-->              <HELP><![CDATA[Comment regarding a knowledge entry]]></HELP>
 <!--613 TABLENAME-->
 <!--613-->              <TABLENAME><![CDATA[K_Comment]]></TABLENAME>
 <!--613 ISVIEW-->
@@ -18792,11 +18462,9 @@ Comment regarding a knowledge entry]]></HELP>
 <!--614 NAME-->
 <!--614-->              <NAME><![CDATA[K_CategoryValue]]></NAME>
 <!--614 DESCRIPTION-->
-<!--614-->              <DESCRIPTION><![CDATA[
-The value of the category is a keyword]]></DESCRIPTION>
+<!--614-->              <DESCRIPTION><![CDATA[The value of the category is a keyword]]></DESCRIPTION>
 <!--614 HELP-->
-<!--614-->              <HELP><![CDATA[
-The value of the category is a keyword]]></HELP>
+<!--614-->              <HELP><![CDATA[The value of the category is a keyword]]></HELP>
 <!--614 TABLENAME-->
 <!--614-->              <TABLENAME><![CDATA[K_CategoryValue]]></TABLENAME>
 <!--614 ISVIEW-->
@@ -18847,11 +18515,9 @@ The value of the category is a keyword]]></HELP>
 <!--615 NAME-->
 <!--615-->              <NAME><![CDATA[K_Category]]></NAME>
 <!--615 DESCRIPTION-->
-<!--615-->              <DESCRIPTION><![CDATA[
-Maintain Knoweledge Categories and Values]]></DESCRIPTION>
+<!--615-->              <DESCRIPTION><![CDATA[Maintain Knoweledge Categories and Values]]></DESCRIPTION>
 <!--615 HELP-->
-<!--615-->              <HELP><![CDATA[
-Set up knowledge categories and values as a search aid. Examples are Release Version, Product Area, etc. Knowledge Category values act like keyworks.]]></HELP>
+<!--615-->              <HELP><![CDATA[Set up knowledge categories and values as a search aid. Examples are Release Version, Product Area, etc. Knowledge Category values act like keyworks.]]></HELP>
 <!--615 TABLENAME-->
 <!--615-->              <TABLENAME><![CDATA[K_Category]]></TABLENAME>
 <!--615 ISVIEW-->
@@ -18902,11 +18568,9 @@ Set up knowledge categories and values as a search aid. Examples are Release Ver
 <!--616 NAME-->
 <!--616-->              <NAME><![CDATA[C_Country_Trl]]></NAME>
 <!--616 DESCRIPTION-->
-<!--616-->              <DESCRIPTION><![CDATA[
-Translation]]></DESCRIPTION>
+<!--616-->              <DESCRIPTION><![CDATA[Translation]]></DESCRIPTION>
 <!--616 HELP-->
-<!--616-->              <HELP><![CDATA[
-Translation]]></HELP>
+<!--616-->              <HELP><![CDATA[Translation]]></HELP>
 <!--616 TABLENAME-->
 <!--616-->              <TABLENAME><![CDATA[C_Country_Trl]]></TABLENAME>
 <!--616 ISVIEW-->
@@ -19245,11 +18909,9 @@ Translation]]></HELP>
 <!--623 NAME-->
 <!--623-->              <NAME><![CDATA[C_ProjectIssue]]></NAME>
 <!--623 DESCRIPTION-->
-<!--623-->              <DESCRIPTION><![CDATA[
-Issues to the Project]]></DESCRIPTION>
+<!--623-->              <DESCRIPTION><![CDATA[Issues to the Project]]></DESCRIPTION>
 <!--623 HELP-->
-<!--623-->              <HELP><![CDATA[
-The lab lists the Issues to the project initiated by the "Issue to Project" process. You can issue Receipts, Time and Expenses, or Stock.]]></HELP>
+<!--623-->              <HELP><![CDATA[The lab lists the Issues to the project initiated by the "Issue to Project" process. You can issue Receipts, Time and Expenses, or Stock.]]></HELP>
 <!--623 TABLENAME-->
 <!--623-->              <TABLENAME><![CDATA[C_ProjectIssue]]></TABLENAME>
 <!--623 ISVIEW-->
@@ -19616,8 +19278,7 @@ The lab lists the Issues to the project initiated by the "Issue to Project" proc
 <!--800006 NAME-->
 <!--800006-->              <NAME><![CDATA[C_Incoterms]]></NAME>
 <!--800006 DESCRIPTION-->
-<!--800006-->              <DESCRIPTION><![CDATA[
-Incoterms definition]]></DESCRIPTION>
+<!--800006-->              <DESCRIPTION><![CDATA[Incoterms definition]]></DESCRIPTION>
 <!--800006 HELP-->
 <!--800006-->              <HELP><![CDATA[EXW Ex-works, ex-factory, ex-warehouse, ex-mill. 
 FCA Free carrier (Franco Transportista) 
@@ -20040,11 +19701,9 @@ CIP (Carriage and Insurance Paid to)]]></HELP>
 <!--800016 NAME-->
 <!--800016-->              <NAME><![CDATA[C_DocType_Copy]]></NAME>
 <!--800016 DESCRIPTION-->
-<!--800016-->              <DESCRIPTION><![CDATA[
-Document copy number configuration]]></DESCRIPTION>
+<!--800016-->              <DESCRIPTION><![CDATA[Document copy number configuration]]></DESCRIPTION>
 <!--800016 HELP-->
-<!--800016-->              <HELP><![CDATA[
-This tab sets number of copies for each document by default.]]></HELP>
+<!--800016-->              <HELP><![CDATA[This tab sets number of copies for each document by default.]]></HELP>
 <!--800016 TABLENAME-->
 <!--800016-->              <TABLENAME><![CDATA[C_DocType_Copy]]></TABLENAME>
 <!--800016 ISVIEW-->
@@ -20253,8 +19912,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800020 NAME-->
 <!--800020-->              <NAME><![CDATA[C_Debt_Payment_Cancel_V]]></NAME>
 <!--800020 DESCRIPTION-->
-<!--800020-->              <DESCRIPTION><![CDATA[
-Debt payment cancel]]></DESCRIPTION>
+<!--800020-->              <DESCRIPTION><![CDATA[Debt payment cancel]]></DESCRIPTION>
 <!--800020 HELP-->
 <!--800020-->              <HELP><![CDATA[Canceled debt paymet tab allows the debt paymet transformation into a generated debt payment. If you want to add new records in this tab, you must use the Create from button on the settlement tab. Once you have a cancelled debt payment, the only way to ed]]></HELP>
 <!--800020 TABLENAME-->
@@ -20305,11 +19963,9 @@ Debt payment cancel]]></DESCRIPTION>
 <!--800021 NAME-->
 <!--800021-->              <NAME><![CDATA[C_Debt_Payment_Generate_V]]></NAME>
 <!--800021 DESCRIPTION-->
-<!--800021-->              <DESCRIPTION><![CDATA[
-Debt payment generate]]></DESCRIPTION>
+<!--800021-->              <DESCRIPTION><![CDATA[Debt payment generate]]></DESCRIPTION>
 <!--800021 HELP-->
-<!--800021-->              <HELP><![CDATA[
-Using this tab we can generate new debt payments. The cancelled ones and the generated ones must have the same amount. Otherwise it is not possible to process it.]]></HELP>
+<!--800021-->              <HELP><![CDATA[Using this tab we can generate new debt payments. The cancelled ones and the generated ones must have the same amount. Otherwise it is not possible to process it.]]></HELP>
 <!--800021 TABLENAME-->
 <!--800021-->              <TABLENAME><![CDATA[C_Debt_Payment_Generate]]></TABLENAME>
 <!--800021 ISVIEW-->
@@ -20764,7 +20420,7 @@ Using this tab we can generate new debt payments. The cancelled ones and the gen
 <!--800031 NAME-->
 <!--800031-->              <NAME><![CDATA[M_WH_Period]]></NAME>
 <!--800031 HELP-->
-<!--800031-->              <HELP><![CDATA[Contains all the periods  for the schedule ]]></HELP>
+<!--800031-->              <HELP><![CDATA[Contains all the periods  for the schedule]]></HELP>
 <!--800031 TABLENAME-->
 <!--800031-->              <TABLENAME><![CDATA[M_WH_Period]]></TABLENAME>
 <!--800031 ISVIEW-->
@@ -20813,7 +20469,7 @@ Using this tab we can generate new debt payments. The cancelled ones and the gen
 <!--800032 NAME-->
 <!--800032-->              <NAME><![CDATA[M_WH_Period_Invoiced]]></NAME>
 <!--800032 HELP-->
-<!--800032-->              <HELP><![CDATA[Contains all the invoices generated due based on the rented locators for that period ]]></HELP>
+<!--800032-->              <HELP><![CDATA[Contains all the invoices generated due based on the rented locators for that period]]></HELP>
 <!--800032 TABLENAME-->
 <!--800032-->              <TABLENAME><![CDATA[M_WH_Period_Invoiced]]></TABLENAME>
 <!--800032 ISVIEW-->
@@ -21109,7 +20765,7 @@ Using this tab we can generate new debt payments. The cancelled ones and the gen
 <!--800039 UPDATEDBY-->
 <!--800039-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800039 NAME-->
-<!--800039-->              <NAME><![CDATA[AD_Table_Post_V ]]></NAME>
+<!--800039-->              <NAME><![CDATA[AD_Table_Post_V]]></NAME>
 <!--800039 TABLENAME-->
 <!--800039-->              <TABLENAME><![CDATA[AD_Table_Post_V]]></TABLENAME>
 <!--800039 ISVIEW-->
@@ -21570,11 +21226,9 @@ Using this tab we can generate new debt payments. The cancelled ones and the gen
 <!--800048 NAME-->
 <!--800048-->              <NAME><![CDATA[C_Remittance_Type]]></NAME>
 <!--800048 DESCRIPTION-->
-<!--800048-->              <DESCRIPTION><![CDATA[
-Type remittance]]></DESCRIPTION>
+<!--800048-->              <DESCRIPTION><![CDATA[Type remittance]]></DESCRIPTION>
 <!--800048 HELP-->
-<!--800048-->              <HELP><![CDATA[
-Definition of types of remittances.]]></HELP>
+<!--800048-->              <HELP><![CDATA[Definition of types of remittances.]]></HELP>
 <!--800048 TABLENAME-->
 <!--800048-->              <TABLENAME><![CDATA[C_Remittance_Type]]></TABLENAME>
 <!--800048 ISVIEW-->
@@ -21625,11 +21279,9 @@ Definition of types of remittances.]]></HELP>
 <!--800049 NAME-->
 <!--800049-->              <NAME><![CDATA[AD_Month]]></NAME>
 <!--800049 DESCRIPTION-->
-<!--800049-->              <DESCRIPTION><![CDATA[
-Month of the year]]></DESCRIPTION>
+<!--800049-->              <DESCRIPTION><![CDATA[Month of the year]]></DESCRIPTION>
 <!--800049 HELP-->
-<!--800049-->              <HELP><![CDATA[
-It is necessary to configurate the months of the year to the terms of the year.]]></HELP>
+<!--800049-->              <HELP><![CDATA[It is necessary to configurate the months of the year to the terms of the year.]]></HELP>
 <!--800049 TABLENAME-->
 <!--800049-->              <TABLENAME><![CDATA[AD_Month]]></TABLENAME>
 <!--800049 ISVIEW-->
@@ -21731,11 +21383,9 @@ It is necessary to configurate the months of the year to the terms of the year.]
 <!--800051 NAME-->
 <!--800051-->              <NAME><![CDATA[AT_Test]]></NAME>
 <!--800051 DESCRIPTION-->
-<!--800051-->              <DESCRIPTION><![CDATA[
-This window contains all the instructions of the applicaction.]]></DESCRIPTION>
+<!--800051-->              <DESCRIPTION><![CDATA[This window contains all the instructions of the applicaction.]]></DESCRIPTION>
 <!--800051 HELP-->
-<!--800051-->              <HELP><![CDATA[
-This window contains all the instructions of the applicaction.]]></HELP>
+<!--800051-->              <HELP><![CDATA[This window contains all the instructions of the applicaction.]]></HELP>
 <!--800051 TABLENAME-->
 <!--800051-->              <TABLENAME><![CDATA[AT_Test]]></TABLENAME>
 <!--800051 ISVIEW-->
@@ -21786,11 +21436,9 @@ This window contains all the instructions of the applicaction.]]></HELP>
 <!--800052 NAME-->
 <!--800052-->              <NAME><![CDATA[AT_TestDocument]]></NAME>
 <!--800052 DESCRIPTION-->
-<!--800052-->              <DESCRIPTION><![CDATA[
-This window contiains different instructions' documents. Is based on AT_Document table.]]></DESCRIPTION>
+<!--800052-->              <DESCRIPTION><![CDATA[This window contiains different instructions' documents. Is based on AT_Document table.]]></DESCRIPTION>
 <!--800052 HELP-->
-<!--800052-->              <HELP><![CDATA[
-This window contiains different instructions' documents.]]></HELP>
+<!--800052-->              <HELP><![CDATA[This window contiains different instructions' documents.]]></HELP>
 <!--800052 TABLENAME-->
 <!--800052-->              <TABLENAME><![CDATA[AT_TestDocument]]></TABLENAME>
 <!--800052 ISVIEW-->
@@ -21841,11 +21489,9 @@ This window contiains different instructions' documents.]]></HELP>
 <!--800053 NAME-->
 <!--800053-->              <NAME><![CDATA[AT_Command]]></NAME>
 <!--800053 DESCRIPTION-->
-<!--800053-->              <DESCRIPTION><![CDATA[
-Test command configuration]]></DESCRIPTION>
+<!--800053-->              <DESCRIPTION><![CDATA[Test command configuration]]></DESCRIPTION>
 <!--800053 HELP-->
-<!--800053-->              <HELP><![CDATA[
-This tab contains de test instruction commands.]]></HELP>
+<!--800053-->              <HELP><![CDATA[This tab contains de test instruction commands.]]></HELP>
 <!--800053 TABLENAME-->
 <!--800053-->              <TABLENAME><![CDATA[AT_Command]]></TABLENAME>
 <!--800053 ISVIEW-->
@@ -21896,11 +21542,9 @@ This tab contains de test instruction commands.]]></HELP>
 <!--800054 NAME-->
 <!--800054-->              <NAME><![CDATA[AT_Command_Trl]]></NAME>
 <!--800054 DESCRIPTION-->
-<!--800054-->              <DESCRIPTION><![CDATA[
-Test command translation]]></DESCRIPTION>
+<!--800054-->              <DESCRIPTION><![CDATA[Test command translation]]></DESCRIPTION>
 <!--800054 HELP-->
-<!--800054-->              <HELP><![CDATA[
-This tab contains de command translation]]></HELP>
+<!--800054-->              <HELP><![CDATA[This tab contains de command translation]]></HELP>
 <!--800054 TABLENAME-->
 <!--800054-->              <TABLENAME><![CDATA[AT_Command_Trl]]></TABLENAME>
 <!--800054 ISVIEW-->
@@ -21951,11 +21595,9 @@ This tab contains de command translation]]></HELP>
 <!--800055 NAME-->
 <!--800055-->              <NAME><![CDATA[AT_Line]]></NAME>
 <!--800055 DESCRIPTION-->
-<!--800055-->              <DESCRIPTION><![CDATA[
-This tab contains instructions lines. Is based on AT_Line]]></DESCRIPTION>
+<!--800055-->              <DESCRIPTION><![CDATA[This tab contains instructions lines. Is based on AT_Line]]></DESCRIPTION>
 <!--800055 HELP-->
-<!--800055-->              <HELP><![CDATA[
-This tab contains instructions lines.]]></HELP>
+<!--800055-->              <HELP><![CDATA[This tab contains instructions lines.]]></HELP>
 <!--800055 TABLENAME-->
 <!--800055-->              <TABLENAME><![CDATA[AT_Line]]></TABLENAME>
 <!--800055 ISVIEW-->
@@ -22006,11 +21648,9 @@ This tab contains instructions lines.]]></HELP>
 <!--800056 NAME-->
 <!--800056-->              <NAME><![CDATA[AT_RolLogin]]></NAME>
 <!--800056 DESCRIPTION-->
-<!--800056-->              <DESCRIPTION><![CDATA[
-This window defines different ways of login in the application for tests. Is based on AT_Rollogin.]]></DESCRIPTION>
+<!--800056-->              <DESCRIPTION><![CDATA[This window defines different ways of login in the application for tests. Is based on AT_Rollogin.]]></DESCRIPTION>
 <!--800056 HELP-->
-<!--800056-->              <HELP><![CDATA[
-This window defines different ways of login in the application for tests.]]></HELP>
+<!--800056-->              <HELP><![CDATA[This window defines different ways of login in the application for tests.]]></HELP>
 <!--800056 TABLENAME-->
 <!--800056-->              <TABLENAME><![CDATA[AT_Rollogin]]></TABLENAME>
 <!--800056 ISVIEW-->
@@ -22061,11 +21701,9 @@ This window defines different ways of login in the application for tests.]]></HE
 <!--800057 NAME-->
 <!--800057-->              <NAME><![CDATA[AT_TestDocumentLine]]></NAME>
 <!--800057 DESCRIPTION-->
-<!--800057-->              <DESCRIPTION><![CDATA[
-Document text configuration]]></DESCRIPTION>
+<!--800057-->              <DESCRIPTION><![CDATA[Document text configuration]]></DESCRIPTION>
 <!--800057 HELP-->
-<!--800057-->              <HELP><![CDATA[
-This tab contains the document text configuration]]></HELP>
+<!--800057-->              <HELP><![CDATA[This tab contains the document text configuration]]></HELP>
 <!--800057 TABLENAME-->
 <!--800057-->              <TABLENAME><![CDATA[AT_TestDocumentLine]]></TABLENAME>
 <!--800057 ISVIEW-->
@@ -22169,11 +21807,9 @@ This tab contains the document text configuration]]></HELP>
 <!--800059 NAME-->
 <!--800059-->              <NAME><![CDATA[C_InvoiceLine_AcctDimension]]></NAME>
 <!--800059 DESCRIPTION-->
-<!--800059-->              <DESCRIPTION><![CDATA[
-Accounting dimension]]></DESCRIPTION>
+<!--800059-->              <DESCRIPTION><![CDATA[Accounting dimension]]></DESCRIPTION>
 <!--800059 HELP-->
-<!--800059-->              <HELP><![CDATA[
-Accounting dimension]]></HELP>
+<!--800059-->              <HELP><![CDATA[Accounting dimension]]></HELP>
 <!--800059 TABLENAME-->
 <!--800059-->              <TABLENAME><![CDATA[C_InvoiceLine_AcctDimension]]></TABLENAME>
 <!--800059 ISVIEW-->
@@ -22328,11 +21964,9 @@ Accounting dimension]]></HELP>
 <!--800062 NAME-->
 <!--800062-->              <NAME><![CDATA[M_Offer]]></NAME>
 <!--800062 DESCRIPTION-->
-<!--800062-->              <DESCRIPTION><![CDATA[
-Price Adjustments configuration]]></DESCRIPTION>
+<!--800062-->              <DESCRIPTION><![CDATA[Price Adjustments configuration]]></DESCRIPTION>
 <!--800062 HELP-->
-<!--800062-->              <HELP><![CDATA[
-The Price Adjustments has a vigence period and are applicated for the configurated business partners, products, product categorys and partners groups. The offer can be percentual, fixed or set.]]></HELP>
+<!--800062-->              <HELP><![CDATA[The Price Adjustments has a vigence period and are applicated for the configurated business partners, products, product categorys and partners groups. The offer can be percentual, fixed or set.]]></HELP>
 <!--800062 TABLENAME-->
 <!--800062-->              <TABLENAME><![CDATA[M_Offer]]></TABLENAME>
 <!--800062 ISVIEW-->
@@ -22383,11 +22017,9 @@ The Price Adjustments has a vigence period and are applicated for the configurat
 <!--800063 NAME-->
 <!--800063-->              <NAME><![CDATA[M_Offer_BPartner]]></NAME>
 <!--800063 DESCRIPTION-->
-<!--800063-->              <DESCRIPTION><![CDATA[
-Business partner configuration]]></DESCRIPTION>
+<!--800063-->              <DESCRIPTION><![CDATA[Business partner configuration]]></DESCRIPTION>
 <!--800063 HELP-->
-<!--800063-->              <HELP><![CDATA[
-Used to select the business partners related to the Price Adjustment.]]></HELP>
+<!--800063-->              <HELP><![CDATA[Used to select the business partners related to the Price Adjustment.]]></HELP>
 <!--800063 TABLENAME-->
 <!--800063-->              <TABLENAME><![CDATA[M_Offer_BPartner]]></TABLENAME>
 <!--800063 ISVIEW-->
@@ -22438,11 +22070,9 @@ Used to select the business partners related to the Price Adjustment.]]></HELP>
 <!--800064 NAME-->
 <!--800064-->              <NAME><![CDATA[M_Offer_BP_Group]]></NAME>
 <!--800064 DESCRIPTION-->
-<!--800064-->              <DESCRIPTION><![CDATA[
-Business partner group configuration]]></DESCRIPTION>
+<!--800064-->              <DESCRIPTION><![CDATA[Business partner group configuration]]></DESCRIPTION>
 <!--800064 HELP-->
-<!--800064-->              <HELP><![CDATA[
-Used to select the groups of business partners related to the price adjustment.]]></HELP>
+<!--800064-->              <HELP><![CDATA[Used to select the groups of business partners related to the price adjustment.]]></HELP>
 <!--800064 TABLENAME-->
 <!--800064-->              <TABLENAME><![CDATA[M_Offer_BP_Group]]></TABLENAME>
 <!--800064 ISVIEW-->
@@ -22493,11 +22123,9 @@ Used to select the groups of business partners related to the price adjustment.]
 <!--800065 NAME-->
 <!--800065-->              <NAME><![CDATA[M_Offer_Product]]></NAME>
 <!--800065 DESCRIPTION-->
-<!--800065-->              <DESCRIPTION><![CDATA[
-Product configuration]]></DESCRIPTION>
+<!--800065-->              <DESCRIPTION><![CDATA[Product configuration]]></DESCRIPTION>
 <!--800065 HELP-->
-<!--800065-->              <HELP><![CDATA[
-Used to select the different products related to the Price Adjustment.]]></HELP>
+<!--800065-->              <HELP><![CDATA[Used to select the different products related to the Price Adjustment.]]></HELP>
 <!--800065 TABLENAME-->
 <!--800065-->              <TABLENAME><![CDATA[M_Offer_Product]]></TABLENAME>
 <!--800065 ISVIEW-->
@@ -22548,11 +22176,9 @@ Used to select the different products related to the Price Adjustment.]]></HELP>
 <!--800066 NAME-->
 <!--800066-->              <NAME><![CDATA[M_Offer_Product_Cat]]></NAME>
 <!--800066 DESCRIPTION-->
-<!--800066-->              <DESCRIPTION><![CDATA[
-Product category configuration]]></DESCRIPTION>
+<!--800066-->              <DESCRIPTION><![CDATA[Product category configuration]]></DESCRIPTION>
 <!--800066 HELP-->
-<!--800066-->              <HELP><![CDATA[
-Used to select the different categories of products related to the Price Adjustments.]]></HELP>
+<!--800066-->              <HELP><![CDATA[Used to select the different categories of products related to the Price Adjustments.]]></HELP>
 <!--800066 TABLENAME-->
 <!--800066-->              <TABLENAME><![CDATA[M_Offer_Prod_Cat]]></TABLENAME>
 <!--800066 ISVIEW-->
@@ -22656,11 +22282,9 @@ Used to select the different categories of products related to the Price Adjustm
 <!--800069 NAME-->
 <!--800069-->              <NAME><![CDATA[MA_Machine]]></NAME>
 <!--800069 DESCRIPTION-->
-<!--800069-->              <DESCRIPTION><![CDATA[
-Machine configuration]]></DESCRIPTION>
+<!--800069-->              <DESCRIPTION><![CDATA[Machine configuration]]></DESCRIPTION>
 <!--800069 HELP-->
-<!--800069-->              <HELP><![CDATA[
-In this tab is defined each machine of the enterprise.]]></HELP>
+<!--800069-->              <HELP><![CDATA[In this tab is defined each machine of the enterprise.]]></HELP>
 <!--800069 TABLENAME-->
 <!--800069-->              <TABLENAME><![CDATA[MA_Machine]]></TABLENAME>
 <!--800069 ISVIEW-->
@@ -22817,7 +22441,8 @@ In this tab is defined each machine of the enterprise.]]></HELP>
 <!--800072 NAME-->
 <!--800072-->              <NAME><![CDATA[MA_Process]]></NAME>
 <!--800072 DESCRIPTION-->
-<!--800072-->              <DESCRIPTION><![CDATA[Process configurationProduction process configuration]]></DESCRIPTION>
+<!--800072-->              <DESCRIPTION><![CDATA[Process configuration
+Production process configuration]]></DESCRIPTION>
 <!--800072 HELP-->
 <!--800072-->              <HELP><![CDATA[In this table are described the diferent process that are done in the work station.]]></HELP>
 <!--800072 TABLENAME-->
@@ -22870,11 +22495,9 @@ In this tab is defined each machine of the enterprise.]]></HELP>
 <!--800079 NAME-->
 <!--800079-->              <NAME><![CDATA[MA_Toolset_Type]]></NAME>
 <!--800079 DESCRIPTION-->
-<!--800079-->              <DESCRIPTION><![CDATA[
-Toolset type configuration]]></DESCRIPTION>
+<!--800079-->              <DESCRIPTION><![CDATA[Toolset type configuration]]></DESCRIPTION>
 <!--800079 HELP-->
-<!--800079-->              <HELP><![CDATA[
-The Toolset Type tab is used to detail the different types of toolsets that exist.]]></HELP>
+<!--800079-->              <HELP><![CDATA[The Toolset Type tab is used to detail the different types of toolsets that exist.]]></HELP>
 <!--800079 TABLENAME-->
 <!--800079-->              <TABLENAME><![CDATA[MA_Toolset_Type]]></TABLENAME>
 <!--800079 ISVIEW-->
@@ -22927,11 +22550,9 @@ The Toolset Type tab is used to detail the different types of toolsets that exis
 <!--800080 NAME-->
 <!--800080-->              <NAME><![CDATA[MA_Toolset]]></NAME>
 <!--800080 DESCRIPTION-->
-<!--800080-->              <DESCRIPTION><![CDATA[
-Toolset configuration]]></DESCRIPTION>
+<!--800080-->              <DESCRIPTION><![CDATA[Toolset configuration]]></DESCRIPTION>
 <!--800080 HELP-->
-<!--800080-->              <HELP><![CDATA[
-The Toolset tab is used to detail the different types of toolsets that each company has.]]></HELP>
+<!--800080-->              <HELP><![CDATA[The Toolset tab is used to detail the different types of toolsets that each company has.]]></HELP>
 <!--800080 TABLENAME-->
 <!--800080-->              <TABLENAME><![CDATA[MA_Toolset]]></TABLENAME>
 <!--800080 ISVIEW-->
@@ -22984,12 +22605,10 @@ The Toolset tab is used to detail the different types of toolsets that each comp
 <!--800081 NAME-->
 <!--800081-->              <NAME><![CDATA[MA_ToolsetProcess]]></NAME>
 <!--800081 DESCRIPTION-->
-<!--800081-->              <DESCRIPTION><![CDATA[
-Toolset process configuration
+<!--800081-->              <DESCRIPTION><![CDATA[Toolset process configuration
 Toolset configuratio for process use.]]></DESCRIPTION>
 <!--800081 HELP-->
-<!--800081-->              <HELP><![CDATA[
-In case that are needed in this tab are introduced the diferent toolset used in the selected process.
+<!--800081-->              <HELP><![CDATA[In case that are needed in this tab are introduced the diferent toolset used in the selected process.
 In case that are needed in this tab are introduced the diferent toolset used in the selected process.]]></HELP>
 <!--800081 TABLENAME-->
 <!--800081-->              <TABLENAME><![CDATA[MA_ToolsetProcess]]></TABLENAME>
@@ -23361,11 +22980,9 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800100 NAME-->
 <!--800100-->              <NAME><![CDATA[MA_WRPhaseProduct]]></NAME>
 <!--800100 DESCRIPTION-->
-<!--800100-->              <DESCRIPTION><![CDATA[
-Production products]]></DESCRIPTION>
+<!--800100-->              <DESCRIPTION><![CDATA[Production products]]></DESCRIPTION>
 <!--800100 HELP-->
-<!--800100-->              <HELP><![CDATA[
-In this tab there are defined all the products involved in the work requirement phase. There must be defined both the raw materials and the generated products.]]></HELP>
+<!--800100-->              <HELP><![CDATA[In this tab there are defined all the products involved in the work requirement phase. There must be defined both the raw materials and the generated products.]]></HELP>
 <!--800100 TABLENAME-->
 <!--800100-->              <TABLENAME><![CDATA[MA_WRPhaseProduct]]></TABLENAME>
 <!--800100 ISVIEW-->
@@ -23522,11 +23139,9 @@ In this tab there are defined all the products involved in the work requirement 
 <!--800105 NAME-->
 <!--800105-->              <NAME><![CDATA[MA_ToolsetUsed]]></NAME>
 <!--800105 DESCRIPTION-->
-<!--800105-->              <DESCRIPTION><![CDATA[
-Toolset registration on the application]]></DESCRIPTION>
+<!--800105-->              <DESCRIPTION><![CDATA[Toolset registration on the application]]></DESCRIPTION>
 <!--800105 HELP-->
-<!--800105-->              <HELP><![CDATA[
-In this tab are introduced the diferent toolset used in the production run.]]></HELP>
+<!--800105-->              <HELP><![CDATA[In this tab are introduced the diferent toolset used in the production run.]]></HELP>
 <!--800105 TABLENAME-->
 <!--800105-->              <TABLENAME><![CDATA[MA_ToolsetUsed]]></TABLENAME>
 <!--800105 ISVIEW-->
@@ -23579,11 +23194,11 @@ In this tab are introduced the diferent toolset used in the production run.]]></
 <!--800108 NAME-->
 <!--800108-->              <NAME><![CDATA[MA_WETechnicalSupport]]></NAME>
 <!--800108 DESCRIPTION-->
-<!--800108-->              <DESCRIPTION><![CDATA[
-Technical support configuration]]></DESCRIPTION>
+<!--800108-->              <DESCRIPTION><![CDATA[Technical support configuration]]></DESCRIPTION>
 <!--800108 HELP-->
-<!--800108-->              <HELP><![CDATA[
-In this tab are introduced all the technical supports done during the work effort.]]></HELP>
+<!--800108-->              <HELP><![CDATA[In this tab are introduced all the technical supports done during the work 
+
+effort.]]></HELP>
 <!--800108 TABLENAME-->
 <!--800108-->              <TABLENAME><![CDATA[MA_WETechnicalSupport]]></TABLENAME>
 <!--800108 ISVIEW-->
@@ -23683,11 +23298,9 @@ In this tab are introduced all the technical supports done during the work effor
 <!--800122 NAME-->
 <!--800122-->              <NAME><![CDATA[MA_ProductType]]></NAME>
 <!--800122 DESCRIPTION-->
-<!--800122-->              <DESCRIPTION><![CDATA[
-Product Type]]></DESCRIPTION>
+<!--800122-->              <DESCRIPTION><![CDATA[Product Type]]></DESCRIPTION>
 <!--800122 HELP-->
-<!--800122-->              <HELP><![CDATA[
-The product type defines any products role at any production chain: raw material, intermediate product, final product, consume product,...]]></HELP>
+<!--800122-->              <HELP><![CDATA[The product type defines any products role at any production chain: raw material, intermediate product, final product, consume product,...]]></HELP>
 <!--800122 TABLENAME-->
 <!--800122-->              <TABLENAME><![CDATA[MA_ProductType]]></TABLENAME>
 <!--800122 ISVIEW-->
@@ -23791,11 +23404,9 @@ The product type defines any products role at any production chain: raw material
 <!--800124 NAME-->
 <!--800124-->              <NAME><![CDATA[MA_SequenceProduct_Cost]]></NAME>
 <!--800124 DESCRIPTION-->
-<!--800124-->              <DESCRIPTION><![CDATA[
-Production costs configuration]]></DESCRIPTION>
+<!--800124-->              <DESCRIPTION><![CDATA[Production costs configuration]]></DESCRIPTION>
 <!--800124 HELP-->
-<!--800124-->              <HELP><![CDATA[
-This tab contins de production costs configuration]]></HELP>
+<!--800124-->              <HELP><![CDATA[This tab contins de production costs configuration]]></HELP>
 <!--800124 TABLENAME-->
 <!--800124-->              <TABLENAME><![CDATA[MA_SequenceProduct_Cost]]></TABLENAME>
 <!--800124 ISVIEW-->
@@ -23899,11 +23510,9 @@ This tab contins de production costs configuration]]></HELP>
 <!--800130 NAME-->
 <!--800130-->              <NAME><![CDATA[MA_CalcStd]]></NAME>
 <!--800130 DESCRIPTION-->
-<!--800130-->              <DESCRIPTION><![CDATA[
-Standard calculated costs]]></DESCRIPTION>
+<!--800130-->              <DESCRIPTION><![CDATA[Standard calculated costs]]></DESCRIPTION>
 <!--800130 HELP-->
-<!--800130-->              <HELP><![CDATA[
-Standard calculation costs registration is generated automatically]]></HELP>
+<!--800130-->              <HELP><![CDATA[Standard calculation costs registration is generated automatically]]></HELP>
 <!--800130 TABLENAME-->
 <!--800130-->              <TABLENAME><![CDATA[MA_CalcStd]]></TABLENAME>
 <!--800130 ISVIEW-->
@@ -23954,11 +23563,9 @@ Standard calculation costs registration is generated automatically]]></HELP>
 <!--800131 NAME-->
 <!--800131-->              <NAME><![CDATA[MA_CCP_Group]]></NAME>
 <!--800131 DESCRIPTION-->
-<!--800131-->              <DESCRIPTION><![CDATA[
-CCP groups configuration]]></DESCRIPTION>
+<!--800131-->              <DESCRIPTION><![CDATA[CCP groups configuration]]></DESCRIPTION>
 <!--800131 HELP-->
-<!--800131-->              <HELP><![CDATA[
-Allows the CCP grouping]]></HELP>
+<!--800131-->              <HELP><![CDATA[Allows the CCP grouping]]></HELP>
 <!--800131 TABLENAME-->
 <!--800131-->              <TABLENAME><![CDATA[MA_CCP_Group]]></TABLENAME>
 <!--800131 ISVIEW-->
@@ -24011,11 +23618,9 @@ Allows the CCP grouping]]></HELP>
 <!--800132 NAME-->
 <!--800132-->              <NAME><![CDATA[MA_CCP]]></NAME>
 <!--800132 DESCRIPTION-->
-<!--800132-->              <DESCRIPTION><![CDATA[
-CCP Point configuration]]></DESCRIPTION>
+<!--800132-->              <DESCRIPTION><![CDATA[CCP Point configuration]]></DESCRIPTION>
 <!--800132 HELP-->
-<!--800132-->              <HELP><![CDATA[
-This tab contains each of the measures that will be controled.]]></HELP>
+<!--800132-->              <HELP><![CDATA[This tab contains each of the measures that will be controled.]]></HELP>
 <!--800132 TABLENAME-->
 <!--800132-->              <TABLENAME><![CDATA[MA_CCP]]></TABLENAME>
 <!--800132 ISVIEW-->
@@ -24068,11 +23673,9 @@ This tab contains each of the measures that will be controled.]]></HELP>
 <!--800133 NAME-->
 <!--800133-->              <NAME><![CDATA[MA_Measure_Group]]></NAME>
 <!--800133 DESCRIPTION-->
-<!--800133-->              <DESCRIPTION><![CDATA[
-Group data registration]]></DESCRIPTION>
+<!--800133-->              <DESCRIPTION><![CDATA[Group data registration]]></DESCRIPTION>
 <!--800133 HELP-->
-<!--800133-->              <HELP><![CDATA[
-This tab contains the CCP data registered on this group]]></HELP>
+<!--800133-->              <HELP><![CDATA[This tab contains the CCP data registered on this group]]></HELP>
 <!--800133 TABLENAME-->
 <!--800133-->              <TABLENAME><![CDATA[MA_Measure_Group]]></TABLENAME>
 <!--800133 ISVIEW-->
@@ -24125,11 +23728,9 @@ This tab contains the CCP data registered on this group]]></HELP>
 <!--800134 NAME-->
 <!--800134-->              <NAME><![CDATA[MA_Measure_Time]]></NAME>
 <!--800134 DESCRIPTION-->
-<!--800134-->              <DESCRIPTION><![CDATA[
-Time registration]]></DESCRIPTION>
+<!--800134-->              <DESCRIPTION><![CDATA[Time registration]]></DESCRIPTION>
 <!--800134 HELP-->
-<!--800134-->              <HELP><![CDATA[
-This tab defines the time of the gathering.]]></HELP>
+<!--800134-->              <HELP><![CDATA[This tab defines the time of the gathering.]]></HELP>
 <!--800134 TABLENAME-->
 <!--800134-->              <TABLENAME><![CDATA[MA_Measure_Time]]></TABLENAME>
 <!--800134 ISVIEW-->
@@ -24237,11 +23838,9 @@ This tab defines the time of the gathering.]]></HELP>
 <!--800136 NAME-->
 <!--800136-->              <NAME><![CDATA[MA_consumeProduct]]></NAME>
 <!--800136 DESCRIPTION-->
-<!--800136-->              <DESCRIPTION><![CDATA[
-Product configuration]]></DESCRIPTION>
+<!--800136-->              <DESCRIPTION><![CDATA[Product configuration]]></DESCRIPTION>
 <!--800136 HELP-->
-<!--800136-->              <HELP><![CDATA[
-The Product tab is used to detail the product which at the same time needs to be activated in the Product window.]]></HELP>
+<!--800136-->              <HELP><![CDATA[The Product tab is used to detail the product which at the same time needs to be activated in the Product window.]]></HELP>
 <!--800136 TABLENAME-->
 <!--800136-->              <TABLENAME><![CDATA[MA_ConsumeProduct]]></TABLENAME>
 <!--800136 ISVIEW-->
@@ -24294,11 +23893,9 @@ The Product tab is used to detail the product which at the same time needs to be
 <!--800137 NAME-->
 <!--800137-->              <NAME><![CDATA[MA_ConsumeRM]]></NAME>
 <!--800137 DESCRIPTION-->
-<!--800137-->              <DESCRIPTION><![CDATA[
-Raw material configuration]]></DESCRIPTION>
+<!--800137-->              <DESCRIPTION><![CDATA[Raw material configuration]]></DESCRIPTION>
 <!--800137 HELP-->
-<!--800137-->              <HELP><![CDATA[
-The Raw Materials tab is used to detail the raw materials which compose a product,]]></HELP>
+<!--800137-->              <HELP><![CDATA[The Raw Materials tab is used to detail the raw materials which compose a product,]]></HELP>
 <!--800137 TABLENAME-->
 <!--800137-->              <TABLENAME><![CDATA[MA_ConsumeRM]]></TABLENAME>
 <!--800137 ISVIEW-->
@@ -24351,11 +23948,9 @@ The Raw Materials tab is used to detail the raw materials which compose a produc
 <!--800138 NAME-->
 <!--800138-->              <NAME><![CDATA[MA_Measure_Shift]]></NAME>
 <!--800138 DESCRIPTION-->
-<!--800138-->              <DESCRIPTION><![CDATA[
-CCP data registration]]></DESCRIPTION>
+<!--800138-->              <DESCRIPTION><![CDATA[CCP data registration]]></DESCRIPTION>
 <!--800138 HELP-->
-<!--800138-->              <HELP><![CDATA[
-This tab defines the shift and date in which the gathering is done]]></HELP>
+<!--800138-->              <HELP><![CDATA[This tab defines the shift and date in which the gathering is done]]></HELP>
 <!--800138 TABLENAME-->
 <!--800138-->              <TABLENAME><![CDATA[MA_Measure_Shift]]></TABLENAME>
 <!--800138 ISVIEW-->
@@ -24408,11 +24003,9 @@ This tab defines the shift and date in which the gathering is done]]></HELP>
 <!--800139 NAME-->
 <!--800139-->              <NAME><![CDATA[MA_Periodic_Control]]></NAME>
 <!--800139 DESCRIPTION-->
-<!--800139-->              <DESCRIPTION><![CDATA[
-Periodic control configuration]]></DESCRIPTION>
+<!--800139-->              <DESCRIPTION><![CDATA[Periodic control configuration]]></DESCRIPTION>
 <!--800139 HELP-->
-<!--800139-->              <HELP><![CDATA[
-This tab is used for periodic control definition.]]></HELP>
+<!--800139-->              <HELP><![CDATA[This tab is used for periodic control definition.]]></HELP>
 <!--800139 TABLENAME-->
 <!--800139-->              <TABLENAME><![CDATA[MA_Periodic_Control]]></TABLENAME>
 <!--800139 ISVIEW-->
@@ -24463,11 +24056,9 @@ This tab is used for periodic control definition.]]></HELP>
 <!--800140 NAME-->
 <!--800140-->              <NAME><![CDATA[MA_PC_Test]]></NAME>
 <!--800140 DESCRIPTION-->
-<!--800140-->              <DESCRIPTION><![CDATA[
-Test configuration]]></DESCRIPTION>
+<!--800140-->              <DESCRIPTION><![CDATA[Test configuration]]></DESCRIPTION>
 <!--800140 HELP-->
-<!--800140-->              <HELP><![CDATA[
-This tab contains each of the test that conforms the periodic control]]></HELP>
+<!--800140-->              <HELP><![CDATA[This tab contains each of the test that conforms the periodic control]]></HELP>
 <!--800140 TABLENAME-->
 <!--800140-->              <TABLENAME><![CDATA[MA_PC_Test]]></TABLENAME>
 <!--800140 ISVIEW-->
@@ -24518,11 +24109,9 @@ This tab contains each of the test that conforms the periodic control]]></HELP>
 <!--800141 NAME-->
 <!--800141-->              <NAME><![CDATA[MA_PC_Case]]></NAME>
 <!--800141 DESCRIPTION-->
-<!--800141-->              <DESCRIPTION><![CDATA[
-Periodic control registration]]></DESCRIPTION>
+<!--800141-->              <DESCRIPTION><![CDATA[Periodic control registration]]></DESCRIPTION>
 <!--800141 HELP-->
-<!--800141-->              <HELP><![CDATA[
-This tab contains each periodic control realized.]]></HELP>
+<!--800141-->              <HELP><![CDATA[This tab contains each periodic control realized.]]></HELP>
 <!--800141 TABLENAME-->
 <!--800141-->              <TABLENAME><![CDATA[MA_PC_Case]]></TABLENAME>
 <!--800141 ISVIEW-->
@@ -24573,11 +24162,9 @@ This tab contains each periodic control realized.]]></HELP>
 <!--800142 NAME-->
 <!--800142-->              <NAME><![CDATA[MA_PC_Value]]></NAME>
 <!--800142 DESCRIPTION-->
-<!--800142-->              <DESCRIPTION><![CDATA[
-Value registration]]></DESCRIPTION>
+<!--800142-->              <DESCRIPTION><![CDATA[Value registration]]></DESCRIPTION>
 <!--800142 HELP-->
-<!--800142-->              <HELP><![CDATA[
-This tab registrates the planned periodic control values]]></HELP>
+<!--800142-->              <HELP><![CDATA[This tab registrates the planned periodic control values]]></HELP>
 <!--800142 TABLENAME-->
 <!--800142-->              <TABLENAME><![CDATA[MA_PC_Value]]></TABLENAME>
 <!--800142 ISVIEW-->
@@ -24628,11 +24215,9 @@ This tab registrates the planned periodic control values]]></HELP>
 <!--800143 NAME-->
 <!--800143-->              <NAME><![CDATA[MA_GlobalUse]]></NAME>
 <!--800143 DESCRIPTION-->
-<!--800143-->              <DESCRIPTION><![CDATA[
-Global use configuration]]></DESCRIPTION>
+<!--800143-->              <DESCRIPTION><![CDATA[Global use configuration]]></DESCRIPTION>
 <!--800143 HELP-->
-<!--800143-->              <HELP><![CDATA[
-This tabs contains global consume products. When the work effort is processed the global use products are distributed proportionaly.]]></HELP>
+<!--800143-->              <HELP><![CDATA[This tabs contains global consume products. When the work effort is processed the global use products are distributed proportionaly.]]></HELP>
 <!--800143 TABLENAME-->
 <!--800143-->              <TABLENAME><![CDATA[MA_GlobalUse]]></TABLENAME>
 <!--800143 ISVIEW-->
@@ -24983,11 +24568,9 @@ This tabs contains global consume products. When the work effort is processed th
 <!--800152 NAME-->
 <!--800152-->              <NAME><![CDATA[MA_CCP_Shift]]></NAME>
 <!--800152 DESCRIPTION-->
-<!--800152-->              <DESCRIPTION><![CDATA[
-Defines the intervals where the control points are measured for each shift.]]></DESCRIPTION>
+<!--800152-->              <DESCRIPTION><![CDATA[Defines the intervals where the control points are measured for each shift.]]></DESCRIPTION>
 <!--800152 HELP-->
-<!--800152-->              <HELP><![CDATA[
-Defines the intervals where the control points are measured for each shift.]]></HELP>
+<!--800152-->              <HELP><![CDATA[Defines the intervals where the control points are measured for each shift.]]></HELP>
 <!--800152 TABLENAME-->
 <!--800152-->              <TABLENAME><![CDATA[MA_CCP_Shift]]></TABLENAME>
 <!--800152 ISVIEW-->
@@ -25652,11 +25235,9 @@ Defines the intervals where the control points are measured for each shift.]]></
 <!--800167 NAME-->
 <!--800167-->              <NAME><![CDATA[M_Rappel_Scale]]></NAME>
 <!--800167 DESCRIPTION-->
-<!--800167-->              <DESCRIPTION><![CDATA[
-Scales]]></DESCRIPTION>
+<!--800167-->              <DESCRIPTION><![CDATA[Scales]]></DESCRIPTION>
 <!--800167 HELP-->
-<!--800167-->              <HELP><![CDATA[
-Defines the scales where the discounts will be applied]]></HELP>
+<!--800167-->              <HELP><![CDATA[Defines the scales where the discounts will be applied]]></HELP>
 <!--800167 TABLENAME-->
 <!--800167-->              <TABLENAME><![CDATA[M_Rappel_Scale]]></TABLENAME>
 <!--800167 ISVIEW-->
@@ -26384,11 +25965,9 @@ Defines the scales where the discounts will be applied]]></HELP>
 <!--800181 NAME-->
 <!--800181-->              <NAME><![CDATA[C_ExternalPOS]]></NAME>
 <!--800181 DESCRIPTION-->
-<!--800181-->              <DESCRIPTION><![CDATA[
-External Point of Sales]]></DESCRIPTION>
+<!--800181-->              <DESCRIPTION><![CDATA[External Point of Sales]]></DESCRIPTION>
 <!--800181 HELP-->
-<!--800181-->              <HELP><![CDATA[
-External Point of Sales]]></HELP>
+<!--800181-->              <HELP><![CDATA[External Point of Sales]]></HELP>
 <!--800181 TABLENAME-->
 <!--800181-->              <TABLENAME><![CDATA[C_ExternalPOS]]></TABLENAME>
 <!--800181 ISVIEW-->
@@ -26439,11 +26018,9 @@ External Point of Sales]]></HELP>
 <!--800182 NAME-->
 <!--800182-->              <NAME><![CDATA[C_ExternalPOS_Product]]></NAME>
 <!--800182 DESCRIPTION-->
-<!--800182-->              <DESCRIPTION><![CDATA[
-Products]]></DESCRIPTION>
+<!--800182-->              <DESCRIPTION><![CDATA[Products]]></DESCRIPTION>
 <!--800182 HELP-->
-<!--800182-->              <HELP><![CDATA[
-Products]]></HELP>
+<!--800182-->              <HELP><![CDATA[Products]]></HELP>
 <!--800182 TABLENAME-->
 <!--800182-->              <TABLENAME><![CDATA[C_ExternalPOS_Product]]></TABLENAME>
 <!--800182 ISVIEW-->
@@ -26494,11 +26071,9 @@ Products]]></HELP>
 <!--800183 NAME-->
 <!--800183-->              <NAME><![CDATA[C_ExternalPOS_Category]]></NAME>
 <!--800183 DESCRIPTION-->
-<!--800183-->              <DESCRIPTION><![CDATA[
-Product Categories]]></DESCRIPTION>
+<!--800183-->              <DESCRIPTION><![CDATA[Product Categories]]></DESCRIPTION>
 <!--800183 HELP-->
-<!--800183-->              <HELP><![CDATA[
-Product Categories]]></HELP>
+<!--800183-->              <HELP><![CDATA[Product Categories]]></HELP>
 <!--800183 TABLENAME-->
 <!--800183-->              <TABLENAME><![CDATA[C_ExternalPOS_Category]]></TABLENAME>
 <!--800183 ISVIEW-->
@@ -27010,11 +26585,9 @@ Product Categories]]></HELP>
 <!--800193 NAME-->
 <!--800193-->              <NAME><![CDATA[C_BP_TaxCategory]]></NAME>
 <!--800193 DESCRIPTION-->
-<!--800193-->              <DESCRIPTION><![CDATA[
-Defines Tax Categories for bussines partners]]></DESCRIPTION>
+<!--800193-->              <DESCRIPTION><![CDATA[Defines Tax Categories for bussines partners]]></DESCRIPTION>
 <!--800193 HELP-->
-<!--800193-->              <HELP><![CDATA[
-Defines Tax Categories for bussines partners. These categories are used in order to choose which tax will be applied.]]></HELP>
+<!--800193-->              <HELP><![CDATA[Defines Tax Categories for bussines partners. These categories are used in order to choose which tax will be applied.]]></HELP>
 <!--800193 TABLENAME-->
 <!--800193-->              <TABLENAME><![CDATA[C_BP_TaxCategory]]></TABLENAME>
 <!--800193 ISVIEW-->
@@ -27467,11 +27040,9 @@ Defines Tax Categories for bussines partners. These categories are used in order
 <!--800204 NAME-->
 <!--800204-->              <NAME><![CDATA[S_TimeExpenseLine_V]]></NAME>
 <!--800204 DESCRIPTION-->
-<!--800204-->              <DESCRIPTION><![CDATA[
-Time and Expense Report Line (not reimbursed)]]></DESCRIPTION>
+<!--800204-->              <DESCRIPTION><![CDATA[Time and Expense Report Line (not reimbursed)]]></DESCRIPTION>
 <!--800204 HELP-->
-<!--800204-->              <HELP><![CDATA[
-View and modify Time and Expense Report Lines. It lists expense items for the business partner on the expense header where the expense lines were not invoiced yet.]]></HELP>
+<!--800204-->              <HELP><![CDATA[View and modify Time and Expense Report Lines. It lists expense items for the business partner on the expense header where the expense lines were not invoiced yet.]]></HELP>
 <!--800204 TABLENAME-->
 <!--800204-->              <TABLENAME><![CDATA[S_TimeExpenseLine_V]]></TABLENAME>
 <!--800204 ISVIEW-->
@@ -28632,7 +28203,7 @@ View and modify Time and Expense Report Lines. It lists expense items for the bu
 <!--1002100000 NAME-->
 <!--1002100000-->              <NAME><![CDATA[C_TaxRegister_Type]]></NAME>
 <!--1002100000 DESCRIPTION-->
-<!--1002100000-->              <DESCRIPTION><![CDATA[Type of Tax Register ]]></DESCRIPTION>
+<!--1002100000-->              <DESCRIPTION><![CDATA[Type of Tax Register]]></DESCRIPTION>
 <!--1002100000 HELP-->
 <!--1002100000-->              <HELP><![CDATA[Type of Tax Register]]></HELP>
 <!--1002100000 TABLENAME-->

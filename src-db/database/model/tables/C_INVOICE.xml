@@ -213,10 +213,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="INPSAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="WITHHOLDINGAMOUNT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>

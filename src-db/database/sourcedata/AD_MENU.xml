@@ -165,7 +165,7 @@
 <!--105 UPDATEDBY-->
 <!--105-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--105 DESCRIPTION-->
-<!--105-->              <DESCRIPTION><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees. ]]></DESCRIPTION>
+<!--105-->              <DESCRIPTION><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees.]]></DESCRIPTION>
 <!--105 ISSUMMARY-->
 <!--105-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--105 ISSOTRX-->
@@ -270,7 +270,7 @@
 <!--108 UPDATEDBY-->
 <!--108-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--108 DESCRIPTION-->
-<!--108-->              <DESCRIPTION><![CDATA[Define addresses or service points of your organizations. ]]></DESCRIPTION>
+<!--108-->              <DESCRIPTION><![CDATA[Define addresses or service points of your organizations.]]></DESCRIPTION>
 <!--108 ISSUMMARY-->
 <!--108-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--108 ISSOTRX-->
@@ -375,7 +375,7 @@
 <!--111 UPDATEDBY-->
 <!--111-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--111 DESCRIPTION-->
-<!--111-->              <DESCRIPTION><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ]]></DESCRIPTION>
+<!--111-->              <DESCRIPTION><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default.]]></DESCRIPTION>
 <!--111 ISSUMMARY-->
 <!--111-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--111 ISSOTRX-->
@@ -410,7 +410,7 @@
 <!--113 UPDATEDBY-->
 <!--113-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--113 DESCRIPTION-->
-<!--113-->              <DESCRIPTION><![CDATA[View an example of a window that shows fields with all possible references or data types. ]]></DESCRIPTION>
+<!--113-->              <DESCRIPTION><![CDATA[View an example of a window that shows fields with all possible references or data types.]]></DESCRIPTION>
 <!--113 ISSUMMARY-->
 <!--113-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--113 ISSOTRX-->
@@ -655,7 +655,7 @@
 <!--121 UPDATEDBY-->
 <!--121-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--121 DESCRIPTION-->
-<!--121-->              <DESCRIPTION><![CDATA[Create and manage document types to be used for all application transactions. ]]></DESCRIPTION>
+<!--121-->              <DESCRIPTION><![CDATA[Create and manage document types to be used for all application transactions.]]></DESCRIPTION>
 <!--121 ISSUMMARY-->
 <!--121-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--121 ISSOTRX-->
@@ -795,7 +795,7 @@
 <!--125 UPDATEDBY-->
 <!--125-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--125 DESCRIPTION-->
-<!--125-->              <DESCRIPTION><![CDATA[Create warehouses and organize them using storage bins. ]]></DESCRIPTION>
+<!--125-->              <DESCRIPTION><![CDATA[Create warehouses and organize them using storage bins.]]></DESCRIPTION>
 <!--125 ISSUMMARY-->
 <!--125-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--125 ISSOTRX-->
@@ -900,7 +900,7 @@
 <!--128 UPDATEDBY-->
 <!--128-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--128 DESCRIPTION-->
-<!--128-->              <DESCRIPTION><![CDATA[Create shipping companies and define freight costs to be used in products logistics. ]]></DESCRIPTION>
+<!--128-->              <DESCRIPTION><![CDATA[Create shipping companies and define freight costs to be used in products logistics.]]></DESCRIPTION>
 <!--128 ISSUMMARY-->
 <!--128-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--128 ISSOTRX-->
@@ -1005,7 +1005,7 @@
 <!--132 UPDATEDBY-->
 <!--132-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--132 DESCRIPTION-->
-<!--132-->              <DESCRIPTION><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.  ]]></DESCRIPTION>
+<!--132-->              <DESCRIPTION><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.]]></DESCRIPTION>
 <!--132 ISSUMMARY-->
 <!--132-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--132 ISSOTRX-->
@@ -1040,7 +1040,7 @@
 <!--133 UPDATEDBY-->
 <!--133-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--133 DESCRIPTION-->
-<!--133-->              <DESCRIPTION><![CDATA[Define invoice schedules to be used for business partners. ]]></DESCRIPTION>
+<!--133-->              <DESCRIPTION><![CDATA[Define invoice schedules to be used for business partners.]]></DESCRIPTION>
 <!--133 ISSUMMARY-->
 <!--133-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--133 ISSOTRX-->
@@ -1250,7 +1250,7 @@
 <!--139 UPDATEDBY-->
 <!--139-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--139 DESCRIPTION-->
-<!--139-->              <DESCRIPTION><![CDATA[Edit tables and columns so that Openbravo can access the database, as well as control the role access. ]]></DESCRIPTION>
+<!--139-->              <DESCRIPTION><![CDATA[Edit tables and columns so that Openbravo can access the database, as well as control the role access.]]></DESCRIPTION>
 <!--139 ISSUMMARY-->
 <!--139-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--139 ISSOTRX-->
@@ -1495,7 +1495,7 @@
 <!--147 UPDATEDBY-->
 <!--147-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--147 DESCRIPTION-->
-<!--147-->              <DESCRIPTION><![CDATA[Create users and manage user roles to give access permissions. ]]></DESCRIPTION>
+<!--147-->              <DESCRIPTION><![CDATA[Create users and manage user roles to give access permissions.]]></DESCRIPTION>
 <!--147 ISSUMMARY-->
 <!--147-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--147 ISSOTRX-->
@@ -1565,7 +1565,7 @@
 <!--149 UPDATEDBY-->
 <!--149-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--149 DESCRIPTION-->
-<!--149-->              <DESCRIPTION><![CDATA[Create organizations and manage the organizational structure according to your business necessities. ]]></DESCRIPTION>
+<!--149-->              <DESCRIPTION><![CDATA[Create organizations and manage the organizational structure according to your business necessities.]]></DESCRIPTION>
 <!--149 ISSUMMARY-->
 <!--149-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--149 ISSOTRX-->
@@ -2104,7 +2104,7 @@
 <!--169 UPDATEDBY-->
 <!--169-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--169 DESCRIPTION-->
-<!--169-->              <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period. ]]></DESCRIPTION>
+<!--169-->              <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period.]]></DESCRIPTION>
 <!--169 ISSUMMARY-->
 <!--169-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--169 ISSOTRX-->
@@ -2174,7 +2174,7 @@
 <!--171 UPDATEDBY-->
 <!--171-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--171 DESCRIPTION-->
-<!--171-->              <DESCRIPTION><![CDATA[Define banks and the related accounts. ]]></DESCRIPTION>
+<!--171-->              <DESCRIPTION><![CDATA[Define banks and the related accounts.]]></DESCRIPTION>
 <!--171 ISSUMMARY-->
 <!--171-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--171 ISSOTRX-->
@@ -2380,7 +2380,7 @@
 <!--178 UPDATEDBY-->
 <!--178-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--178 DESCRIPTION-->
-<!--178-->              <DESCRIPTION><![CDATA[Create and edit sales invoices for your customers. ]]></DESCRIPTION>
+<!--178-->              <DESCRIPTION><![CDATA[Create and edit sales invoices for your customers.]]></DESCRIPTION>
 <!--178 ISSUMMARY-->
 <!--178-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--178 ISSOTRX-->
@@ -2485,7 +2485,7 @@
 <!--181 UPDATEDBY-->
 <!--181-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--181 DESCRIPTION-->
-<!--181-->              <DESCRIPTION><![CDATA[Create and edit internal inventory movements among warehouses and storage bins. ]]></DESCRIPTION>
+<!--181-->              <DESCRIPTION><![CDATA[Create and edit internal inventory movements among warehouses and storage bins.]]></DESCRIPTION>
 <!--181 ISSUMMARY-->
 <!--181-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--181 ISSOTRX-->
@@ -2724,7 +2724,7 @@
 <!--192 UPDATEDBY-->
 <!--192-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--192 DESCRIPTION-->
-<!--192-->              <DESCRIPTION><![CDATA[Generate Invoices ]]></DESCRIPTION>
+<!--192-->              <DESCRIPTION><![CDATA[Generate Invoices]]></DESCRIPTION>
 <!--192 ISSUMMARY-->
 <!--192-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--192 ISSOTRX-->
@@ -2794,7 +2794,7 @@
 <!--194 UPDATEDBY-->
 <!--194-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--194 DESCRIPTION-->
-<!--194-->              <DESCRIPTION><![CDATA[Sales Order Transaction Report ]]></DESCRIPTION>
+<!--194-->              <DESCRIPTION><![CDATA[Sales Order Transaction Report]]></DESCRIPTION>
 <!--194 ISSUMMARY-->
 <!--194-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--194 ISSOTRX-->
@@ -3105,7 +3105,7 @@
 <!--204 UPDATEDBY-->
 <!--204-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--204 DESCRIPTION-->
-<!--204-->              <DESCRIPTION><![CDATA[Create and edit goods receipts from your vendors and create invoices from these receipts. ]]></DESCRIPTION>
+<!--204-->              <DESCRIPTION><![CDATA[Create and edit goods receipts from your vendors and create invoices from these receipts.]]></DESCRIPTION>
 <!--204 ISSUMMARY-->
 <!--204-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--204 ISSOTRX-->
@@ -3488,7 +3488,7 @@
 <!--216 UPDATEDBY-->
 <!--216-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--216 DESCRIPTION-->
-<!--216-->              <DESCRIPTION><![CDATA[Create and edit forms (manual windows) to be used in the application. ]]></DESCRIPTION>
+<!--216-->              <DESCRIPTION><![CDATA[Create and edit forms (manual windows) to be used in the application.]]></DESCRIPTION>
 <!--216 ISSUMMARY-->
 <!--216-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--216 ISSOTRX-->
@@ -3902,7 +3902,7 @@
 <!--228 UPDATEDBY-->
 <!--228-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--228 DESCRIPTION-->
-<!--228-->              <DESCRIPTION><![CDATA[Create and run production processes using the previously defined bills of materials. ]]></DESCRIPTION>
+<!--228-->              <DESCRIPTION><![CDATA[Create and run production processes using the previously defined bills of materials.]]></DESCRIPTION>
 <!--228 ISSUMMARY-->
 <!--228-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--228 ISSOTRX-->
@@ -4112,7 +4112,7 @@
 <!--234 UPDATEDBY-->
 <!--234-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--234 DESCRIPTION-->
-<!--234-->              <DESCRIPTION><![CDATA[View your bank statements against transactions created and edited in the application. ]]></DESCRIPTION>
+<!--234-->              <DESCRIPTION><![CDATA[View your bank statements against transactions created and edited in the application.]]></DESCRIPTION>
 <!--234 ISSUMMARY-->
 <!--234-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--234 ISSOTRX-->
@@ -5247,7 +5247,7 @@
 <!--280 UPDATEDBY-->
 <!--280-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--280 DESCRIPTION-->
-<!--280-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data. ]]></DESCRIPTION>
+<!--280-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--280 ISSUMMARY-->
 <!--280-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--280 ISSOTRX-->
@@ -5593,7 +5593,7 @@
 <!--292 UPDATEDBY-->
 <!--292-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--292 DESCRIPTION-->
-<!--292-->              <DESCRIPTION><![CDATA[View all goods transactions carried out  in the application. ]]></DESCRIPTION>
+<!--292-->              <DESCRIPTION><![CDATA[View all goods transactions carried out  in the application.]]></DESCRIPTION>
 <!--292 ISSUMMARY-->
 <!--292-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--292 ISSOTRX-->
@@ -6643,7 +6643,7 @@
 <!--326 UPDATEDBY-->
 <!--326-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--326 DESCRIPTION-->
-<!--326-->              <DESCRIPTION><![CDATA[Open a folder where you can define printing formats . ]]></DESCRIPTION>
+<!--326-->              <DESCRIPTION><![CDATA[Open a folder where you can define printing formats .]]></DESCRIPTION>
 <!--326 ISSUMMARY-->
 <!--326-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--326 ISSOTRX-->
@@ -7506,7 +7506,7 @@
 <!--354 UPDATED-->
 <!--354-->              <UPDATED><![CDATA[2003-05-05 21:14:34.0]]></UPDATED>
 <!--354 NAME-->
-<!--354-->              <NAME><![CDATA[Serial Number Sequence ]]></NAME>
+<!--354-->              <NAME><![CDATA[Serial Number Sequence]]></NAME>
 <!--354 UPDATEDBY-->
 <!--354-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--354 DESCRIPTION-->
@@ -7646,7 +7646,7 @@
 <!--358 UPDATEDBY-->
 <!--358-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--358 DESCRIPTION-->
-<!--358-->              <DESCRIPTION><![CDATA[Common Search Attribute ]]></DESCRIPTION>
+<!--358-->              <DESCRIPTION><![CDATA[Common Search Attribute]]></DESCRIPTION>
 <!--358 ISSUMMARY-->
 <!--358-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--358 ISSOTRX-->
@@ -7712,7 +7712,7 @@
 <!--360 UPDATED-->
 <!--360-->              <UPDATED><![CDATA[2007-09-05 13:11:19.0]]></UPDATED>
 <!--360 NAME-->
-<!--360-->              <NAME><![CDATA[Vendor Expense Invoice ]]></NAME>
+<!--360-->              <NAME><![CDATA[Vendor Expense Invoice]]></NAME>
 <!--360 UPDATEDBY-->
 <!--360-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--360 DESCRIPTION-->
@@ -7926,7 +7926,7 @@
 <!--367 UPDATEDBY-->
 <!--367-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--367 DESCRIPTION-->
-<!--367-->              <DESCRIPTION><![CDATA[Open a folder where you can see session logs and monitor modifications made by each user. ]]></DESCRIPTION>
+<!--367-->              <DESCRIPTION><![CDATA[Open a folder where you can see session logs and monitor modifications made by each user.]]></DESCRIPTION>
 <!--367 ISSUMMARY-->
 <!--367-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--367 ISSOTRX-->
@@ -8441,7 +8441,7 @@
 <!--384 UPDATEDBY-->
 <!--384-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--384 DESCRIPTION-->
-<!--384-->              <DESCRIPTION><![CDATA[Create and edit accounting dimensions to be used in dimensional reports. ]]></DESCRIPTION>
+<!--384-->              <DESCRIPTION><![CDATA[Create and edit accounting dimensions to be used in dimensional reports.]]></DESCRIPTION>
 <!--384 ISSUMMARY-->
 <!--384-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--384 ISSOTRX-->
@@ -9448,7 +9448,7 @@
 <!--800010 UPDATEDBY-->
 <!--800010-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800010 DESCRIPTION-->
-<!--800010-->              <DESCRIPTION><![CDATA[Report bank ]]></DESCRIPTION>
+<!--800010-->              <DESCRIPTION><![CDATA[Report bank]]></DESCRIPTION>
 <!--800010 ISSUMMARY-->
 <!--800010-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800010 ISSOTRX-->
@@ -9479,11 +9479,11 @@
 <!--800011 UPDATED-->
 <!--800011-->              <UPDATED><![CDATA[2007-07-24 19:36:03.0]]></UPDATED>
 <!--800011 NAME-->
-<!--800011-->              <NAME><![CDATA[Cash Report ]]></NAME>
+<!--800011-->              <NAME><![CDATA[Cash Report]]></NAME>
 <!--800011 UPDATEDBY-->
 <!--800011-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800011 DESCRIPTION-->
-<!--800011-->              <DESCRIPTION><![CDATA[Report cash ]]></DESCRIPTION>
+<!--800011-->              <DESCRIPTION><![CDATA[Report cash]]></DESCRIPTION>
 <!--800011 ISSUMMARY-->
 <!--800011-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800011 ISSOTRX-->
@@ -9514,11 +9514,11 @@
 <!--800015 UPDATED-->
 <!--800015-->              <UPDATED><![CDATA[2007-07-11 19:01:13.0]]></UPDATED>
 <!--800015 NAME-->
-<!--800015-->              <NAME><![CDATA[Shipment Report ]]></NAME>
+<!--800015-->              <NAME><![CDATA[Shipment Report]]></NAME>
 <!--800015 UPDATEDBY-->
 <!--800015-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800015 DESCRIPTION-->
-<!--800015-->              <DESCRIPTION><![CDATA[Shipment Report ]]></DESCRIPTION>
+<!--800015-->              <DESCRIPTION><![CDATA[Shipment Report]]></DESCRIPTION>
 <!--800015 ISSUMMARY-->
 <!--800015-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800015 ISSOTRX-->
@@ -9728,7 +9728,7 @@
 <!--800026 UPDATEDBY-->
 <!--800026-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800026 DESCRIPTION-->
-<!--800026-->              <DESCRIPTION><![CDATA[Create sales orders quickly using predefined product templates.  ]]></DESCRIPTION>
+<!--800026-->              <DESCRIPTION><![CDATA[Create sales orders quickly using predefined product templates.]]></DESCRIPTION>
 <!--800026 ISSUMMARY-->
 <!--800026-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800026 ISSOTRX-->
@@ -9763,7 +9763,7 @@
 <!--800027 UPDATEDBY-->
 <!--800027-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800027 DESCRIPTION-->
-<!--800027-->              <DESCRIPTION><![CDATA[Edit payments by summing one or many into one or by dividing one into many.  Here you manage payments that come from invoices generated in the application. ]]></DESCRIPTION>
+<!--800027-->              <DESCRIPTION><![CDATA[Edit payments by summing one or many into one or by dividing one into many.  Here you manage payments that come from invoices generated in the application.]]></DESCRIPTION>
 <!--800027 ISSUMMARY-->
 <!--800027-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800027 ISSOTRX-->
@@ -9899,11 +9899,11 @@
 <!--800031 UPDATED-->
 <!--800031-->              <UPDATED><![CDATA[2007-07-11 19:30:53.0]]></UPDATED>
 <!--800031 NAME-->
-<!--800031-->              <NAME><![CDATA[Delivered Sales Order Report ]]></NAME>
+<!--800031-->              <NAME><![CDATA[Delivered Sales Order Report]]></NAME>
 <!--800031 UPDATEDBY-->
 <!--800031-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800031 DESCRIPTION-->
-<!--800031-->              <DESCRIPTION><![CDATA[Delivered Sales Order Report ]]></DESCRIPTION>
+<!--800031-->              <DESCRIPTION><![CDATA[Delivered Sales Order Report]]></DESCRIPTION>
 <!--800031 ISSUMMARY-->
 <!--800031-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800031 ISSOTRX-->
@@ -10451,11 +10451,11 @@
 <!--800060 UPDATED-->
 <!--800060-->              <UPDATED><![CDATA[2007-07-27 16:29:35.0]]></UPDATED>
 <!--800060 NAME-->
-<!--800060-->              <NAME><![CDATA[Invoice (customer) Dimensional Report ]]></NAME>
+<!--800060-->              <NAME><![CDATA[Invoice (customer) Dimensional Report]]></NAME>
 <!--800060 UPDATEDBY-->
 <!--800060-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800060 DESCRIPTION-->
-<!--800060-->              <DESCRIPTION><![CDATA[Invoice customer dimensional analyses ]]></DESCRIPTION>
+<!--800060-->              <DESCRIPTION><![CDATA[Invoice customer dimensional analyses]]></DESCRIPTION>
 <!--800060 ISSUMMARY-->
 <!--800060-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800060 ISSOTRX-->
@@ -10624,11 +10624,11 @@
 <!--800067 UPDATED-->
 <!--800067-->              <UPDATED><![CDATA[2004-10-19 20:01:41.0]]></UPDATED>
 <!--800067 NAME-->
-<!--800067-->              <NAME><![CDATA[Shipments Dimensional Report ]]></NAME>
+<!--800067-->              <NAME><![CDATA[Shipments Dimensional Report]]></NAME>
 <!--800067 UPDATEDBY-->
 <!--800067-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800067 DESCRIPTION-->
-<!--800067-->              <DESCRIPTION><![CDATA[Shipment dimensional analyze ]]></DESCRIPTION>
+<!--800067-->              <DESCRIPTION><![CDATA[Shipment dimensional analyze]]></DESCRIPTION>
 <!--800067 ISSUMMARY-->
 <!--800067-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800067 ISSOTRX-->
@@ -10659,11 +10659,11 @@
 <!--800069 UPDATED-->
 <!--800069-->              <UPDATED><![CDATA[2007-07-23 10:56:23.0]]></UPDATED>
 <!--800069 NAME-->
-<!--800069-->              <NAME><![CDATA[Invoiced Sales Order Report ]]></NAME>
+<!--800069-->              <NAME><![CDATA[Invoiced Sales Order Report]]></NAME>
 <!--800069 UPDATEDBY-->
 <!--800069-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800069 DESCRIPTION-->
-<!--800069-->              <DESCRIPTION><![CDATA[Invoiced Sales Order Report ]]></DESCRIPTION>
+<!--800069-->              <DESCRIPTION><![CDATA[Invoiced Sales Order Report]]></DESCRIPTION>
 <!--800069 ISSUMMARY-->
 <!--800069-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800069 ISSOTRX-->
@@ -10873,7 +10873,7 @@
 <!--800075 UPDATEDBY-->
 <!--800075-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800075 DESCRIPTION-->
-<!--800075-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data. ]]></DESCRIPTION>
+<!--800075-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800075 ISSUMMARY-->
 <!--800075-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800075 ISSOTRX-->
@@ -10904,7 +10904,7 @@
 <!--800076 UPDATEDBY-->
 <!--800076-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800076 DESCRIPTION-->
-<!--800076-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data. ]]></DESCRIPTION>
+<!--800076-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800076 ISSUMMARY-->
 <!--800076-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800076 ISSOTRX-->
@@ -10935,7 +10935,7 @@
 <!--800077 UPDATEDBY-->
 <!--800077-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800077 DESCRIPTION-->
-<!--800077-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data. ]]></DESCRIPTION>
+<!--800077-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800077 ISSUMMARY-->
 <!--800077-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800077 ISSOTRX-->
@@ -10966,7 +10966,7 @@
 <!--800078 UPDATEDBY-->
 <!--800078-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800078 DESCRIPTION-->
-<!--800078-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data. ]]></DESCRIPTION>
+<!--800078-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800078 ISSUMMARY-->
 <!--800078-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800078 ISSOTRX-->
@@ -10997,7 +10997,7 @@
 <!--800079 UPDATEDBY-->
 <!--800079-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800079 DESCRIPTION-->
-<!--800079-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data. ]]></DESCRIPTION>
+<!--800079-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800079 ISSUMMARY-->
 <!--800079-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800079 ISSOTRX-->
@@ -11057,7 +11057,7 @@
 <!--800081 UPDATEDBY-->
 <!--800081-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800081 DESCRIPTION-->
-<!--800081-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data. ]]></DESCRIPTION>
+<!--800081-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800081 ISSUMMARY-->
 <!--800081-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800081 ISSOTRX-->
@@ -11543,7 +11543,7 @@
 <!--800096 UPDATEDBY-->
 <!--800096-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800096 DESCRIPTION-->
-<!--800096-->              <DESCRIPTION><![CDATA[Create and edit product price percentage discounts. ]]></DESCRIPTION>
+<!--800096-->              <DESCRIPTION><![CDATA[Create and edit product price percentage discounts.]]></DESCRIPTION>
 <!--800096 ISSUMMARY-->
 <!--800096-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800096 ISSOTRX-->
@@ -12099,7 +12099,7 @@
 <!--800115 UPDATEDBY-->
 <!--800115-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800115 DESCRIPTION-->
-<!--800115-->              <DESCRIPTION><![CDATA[Create and edit amortization for a selected year. ]]></DESCRIPTION>
+<!--800115-->              <DESCRIPTION><![CDATA[Create and edit amortization for a selected year.]]></DESCRIPTION>
 <!--800115 ISSUMMARY-->
 <!--800115-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800115 ISSOTRX-->
@@ -12134,7 +12134,7 @@
 <!--800117 UPDATEDBY-->
 <!--800117-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800117 DESCRIPTION-->
-<!--800117-->              <DESCRIPTION><![CDATA[Create and edit price adjustments to be applied to business partners, products, or price lists.  ]]></DESCRIPTION>
+<!--800117-->              <DESCRIPTION><![CDATA[Create and edit price adjustments to be applied to business partners, products, or price lists.]]></DESCRIPTION>
 <!--800117 ISSUMMARY-->
 <!--800117-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800117 ISSOTRX-->
@@ -12585,7 +12585,7 @@
 <!--800141 UPDATEDBY-->
 <!--800141-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800141 DESCRIPTION-->
-<!--800141-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data. ]]></DESCRIPTION>
+<!--800141-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports and tools to analyze data.]]></DESCRIPTION>
 <!--800141 ISSUMMARY-->
 <!--800141-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800141 ISSOTRX-->
@@ -13382,7 +13382,7 @@
 <!--800190 UPDATEDBY-->
 <!--800190-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800190 DESCRIPTION-->
-<!--800190-->              <DESCRIPTION><![CDATA[Create and edit budgets to be used for informative purposes. ]]></DESCRIPTION>
+<!--800190-->              <DESCRIPTION><![CDATA[Create and edit budgets to be used for informative purposes.]]></DESCRIPTION>
 <!--800190 ISSUMMARY-->
 <!--800190-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800190 ISSOTRX-->
@@ -13588,11 +13588,11 @@
 <!--800196 UPDATED-->
 <!--800196-->              <UPDATED><![CDATA[2006-06-14 13:35:25.0]]></UPDATED>
 <!--800196 NAME-->
-<!--800196-->              <NAME><![CDATA[Remittance Cancellation/Return ]]></NAME>
+<!--800196-->              <NAME><![CDATA[Remittance Cancellation/Return]]></NAME>
 <!--800196 UPDATEDBY-->
 <!--800196-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800196 DESCRIPTION-->
-<!--800196-->              <DESCRIPTION><![CDATA[Edit pending remittances by cancelling or returning them. ]]></DESCRIPTION>
+<!--800196-->              <DESCRIPTION><![CDATA[Edit pending remittances by cancelling or returning them.]]></DESCRIPTION>
 <!--800196 ISSUMMARY-->
 <!--800196-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800196 ISSOTRX-->
@@ -14008,11 +14008,11 @@
 <!--800208 UPDATED-->
 <!--800208-->              <UPDATED><![CDATA[2007-07-11 15:56:44.0]]></UPDATED>
 <!--800208 NAME-->
-<!--800208-->              <NAME><![CDATA[Project Profitability ]]></NAME>
+<!--800208-->              <NAME><![CDATA[Project Profitability]]></NAME>
 <!--800208 UPDATEDBY-->
 <!--800208-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800208 DESCRIPTION-->
-<!--800208-->              <DESCRIPTION><![CDATA[Project Profitability ]]></DESCRIPTION>
+<!--800208-->              <DESCRIPTION><![CDATA[Project Profitability]]></DESCRIPTION>
 <!--800208 ISSUMMARY-->
 <!--800208-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800208 ISSOTRX-->
@@ -14601,11 +14601,11 @@
 <!--800229 UPDATED-->
 <!--800229-->              <UPDATED><![CDATA[2007-05-15 19:02:04.0]]></UPDATED>
 <!--800229 NAME-->
-<!--800229-->              <NAME><![CDATA[Purchase Order Report ]]></NAME>
+<!--800229-->              <NAME><![CDATA[Purchase Order Report]]></NAME>
 <!--800229 UPDATEDBY-->
 <!--800229-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800229 DESCRIPTION-->
-<!--800229-->              <DESCRIPTION><![CDATA[Purchase Order Report ]]></DESCRIPTION>
+<!--800229-->              <DESCRIPTION><![CDATA[Purchase Order Report]]></DESCRIPTION>
 <!--800229 ISSUMMARY-->
 <!--800229-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800229 ISSOTRX-->
@@ -15171,7 +15171,7 @@
 <!--800252 UPDATEDBY-->
 <!--800252-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800252 DESCRIPTION-->
-<!--800252-->              <DESCRIPTION><![CDATA[Open a folder where you can define accounting settings such as the fiscal calendar, account elements, accounting schemas, and document types.  ]]></DESCRIPTION>
+<!--800252-->              <DESCRIPTION><![CDATA[Open a folder where you can define accounting settings such as the fiscal calendar, account elements, accounting schemas, and document types.]]></DESCRIPTION>
 <!--800252 ISSUMMARY-->
 <!--800252-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800252 ISSOTRX-->
@@ -15326,7 +15326,7 @@
 <!--800257 UPDATEDBY-->
 <!--800257-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800257 DESCRIPTION-->
-<!--800257-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports , windows, forma that are goign to be deprecated ]]></DESCRIPTION>
+<!--800257-->              <DESCRIPTION><![CDATA[Open a folder where you can find reports , windows, forma that are goign to be deprecated]]></DESCRIPTION>
 <!--800257 ISSUMMARY-->
 <!--800257-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
 <!--800257 ISSOTRX-->
@@ -15353,11 +15353,11 @@
 <!--800258 UPDATED-->
 <!--800258-->              <UPDATED><![CDATA[2007-07-06 09:17:09.0]]></UPDATED>
 <!--800258 NAME-->
-<!--800258-->              <NAME><![CDATA[Production Run Status Report ]]></NAME>
+<!--800258-->              <NAME><![CDATA[Production Run Status Report]]></NAME>
 <!--800258 UPDATEDBY-->
 <!--800258-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800258 DESCRIPTION-->
-<!--800258-->              <DESCRIPTION><![CDATA[Production Run Status Report ]]></DESCRIPTION>
+<!--800258-->              <DESCRIPTION><![CDATA[Production Run Status Report]]></DESCRIPTION>
 <!--800258 ISSUMMARY-->
 <!--800258-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800258 ISSOTRX-->
@@ -15423,11 +15423,11 @@
 <!--800260 UPDATED-->
 <!--800260-->              <UPDATED><![CDATA[2007-07-06 12:56:23.0]]></UPDATED>
 <!--800260 NAME-->
-<!--800260-->              <NAME><![CDATA[Invoice Customer Report ]]></NAME>
+<!--800260-->              <NAME><![CDATA[Invoice Customer Report]]></NAME>
 <!--800260 UPDATEDBY-->
 <!--800260-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800260 DESCRIPTION-->
-<!--800260-->              <DESCRIPTION><![CDATA[Invoice Customer Report ]]></DESCRIPTION>
+<!--800260-->              <DESCRIPTION><![CDATA[Invoice Customer Report]]></DESCRIPTION>
 <!--800260 ISSUMMARY-->
 <!--800260-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800260 ISSOTRX-->
@@ -15458,11 +15458,11 @@
 <!--800261 UPDATED-->
 <!--800261-->              <UPDATED><![CDATA[2007-07-23 10:52:08.0]]></UPDATED>
 <!--800261 NAME-->
-<!--800261-->              <NAME><![CDATA[Sales Order Report ]]></NAME>
+<!--800261-->              <NAME><![CDATA[Sales Order Report]]></NAME>
 <!--800261 UPDATEDBY-->
 <!--800261-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800261 DESCRIPTION-->
-<!--800261-->              <DESCRIPTION><![CDATA[Sales Order Report ]]></DESCRIPTION>
+<!--800261-->              <DESCRIPTION><![CDATA[Sales Order Report]]></DESCRIPTION>
 <!--800261 ISSUMMARY-->
 <!--800261-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800261 ISSOTRX-->
@@ -15493,7 +15493,7 @@
 <!--800262 UPDATED-->
 <!--800262-->              <UPDATED><![CDATA[2007-07-06 16:09:35.0]]></UPDATED>
 <!--800262 NAME-->
-<!--800262-->              <NAME><![CDATA[Pending Work Requirement ]]></NAME>
+<!--800262-->              <NAME><![CDATA[Pending Work Requirement]]></NAME>
 <!--800262 UPDATEDBY-->
 <!--800262-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800262 DESCRIPTION-->
@@ -15528,11 +15528,11 @@
 <!--800263 UPDATED-->
 <!--800263-->              <UPDATED><![CDATA[2007-07-23 10:57:11.0]]></UPDATED>
 <!--800263 NAME-->
-<!--800263-->              <NAME><![CDATA[Orders Awaiting Invoice Report ]]></NAME>
+<!--800263-->              <NAME><![CDATA[Orders Awaiting Invoice Report]]></NAME>
 <!--800263 UPDATEDBY-->
 <!--800263-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800263 DESCRIPTION-->
-<!--800263-->              <DESCRIPTION><![CDATA[Orders Awaiting Invoice Report ]]></DESCRIPTION>
+<!--800263-->              <DESCRIPTION><![CDATA[Orders Awaiting Invoice Report]]></DESCRIPTION>
 <!--800263 ISSUMMARY-->
 <!--800263-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800263 ISSOTRX-->
@@ -15563,11 +15563,11 @@
 <!--800264 UPDATED-->
 <!--800264-->              <UPDATED><![CDATA[2007-07-23 11:22:50.0]]></UPDATED>
 <!--800264 NAME-->
-<!--800264-->              <NAME><![CDATA[Expiration Date Report ]]></NAME>
+<!--800264-->              <NAME><![CDATA[Expiration Date Report]]></NAME>
 <!--800264 UPDATEDBY-->
 <!--800264-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800264 DESCRIPTION-->
-<!--800264-->              <DESCRIPTION><![CDATA[Expiration Date Report ]]></DESCRIPTION>
+<!--800264-->              <DESCRIPTION><![CDATA[Expiration Date Report]]></DESCRIPTION>
 <!--800264 ISSUMMARY-->
 <!--800264-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800264 ISSOTRX-->
@@ -15598,11 +15598,11 @@
 <!--800265 UPDATED-->
 <!--800265-->              <UPDATED><![CDATA[2007-07-09 12:16:02.0]]></UPDATED>
 <!--800265 NAME-->
-<!--800265-->              <NAME><![CDATA[Vendor Invoice Report ]]></NAME>
+<!--800265-->              <NAME><![CDATA[Vendor Invoice Report]]></NAME>
 <!--800265 UPDATEDBY-->
 <!--800265-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800265 DESCRIPTION-->
-<!--800265-->              <DESCRIPTION><![CDATA[Report Invoice Vendor ]]></DESCRIPTION>
+<!--800265-->              <DESCRIPTION><![CDATA[Report Invoice Vendor]]></DESCRIPTION>
 <!--800265 ISSUMMARY-->
 <!--800265-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800265 ISSOTRX-->
@@ -15633,11 +15633,11 @@
 <!--800266 UPDATED-->
 <!--800266-->              <UPDATED><![CDATA[2007-07-09 12:22:45.0]]></UPDATED>
 <!--800266 NAME-->
-<!--800266-->              <NAME><![CDATA[Purchase Dimensional Report ]]></NAME>
+<!--800266-->              <NAME><![CDATA[Purchase Dimensional Report]]></NAME>
 <!--800266 UPDATEDBY-->
 <!--800266-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800266 DESCRIPTION-->
-<!--800266-->              <DESCRIPTION><![CDATA[Purchase dimensional analyses ]]></DESCRIPTION>
+<!--800266-->              <DESCRIPTION><![CDATA[Purchase dimensional analyses]]></DESCRIPTION>
 <!--800266 ISSUMMARY-->
 <!--800266-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800266 ISSOTRX-->
@@ -15668,11 +15668,11 @@
 <!--800267 UPDATED-->
 <!--800267-->              <UPDATED><![CDATA[2007-07-09 12:23:16.0]]></UPDATED>
 <!--800267 NAME-->
-<!--800267-->              <NAME><![CDATA[Material Receipts Dimensional Report ]]></NAME>
+<!--800267-->              <NAME><![CDATA[Material Receipts Dimensional Report]]></NAME>
 <!--800267 UPDATEDBY-->
 <!--800267-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800267 DESCRIPTION-->
-<!--800267-->              <DESCRIPTION><![CDATA[Material receipt dimensional analyses ]]></DESCRIPTION>
+<!--800267-->              <DESCRIPTION><![CDATA[Material receipt dimensional analyses]]></DESCRIPTION>
 <!--800267 ISSUMMARY-->
 <!--800267-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800267 ISSOTRX-->
@@ -15703,11 +15703,11 @@
 <!--800268 UPDATED-->
 <!--800268-->              <UPDATED><![CDATA[2007-07-09 12:23:38.0]]></UPDATED>
 <!--800268 NAME-->
-<!--800268-->              <NAME><![CDATA[Purchase Invoice Dimensional Report ]]></NAME>
+<!--800268-->              <NAME><![CDATA[Purchase Invoice Dimensional Report]]></NAME>
 <!--800268 UPDATEDBY-->
 <!--800268-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800268 DESCRIPTION-->
-<!--800268-->              <DESCRIPTION><![CDATA[Invoice vendor dimensional analyses ]]></DESCRIPTION>
+<!--800268-->              <DESCRIPTION><![CDATA[Invoice vendor dimensional analyses]]></DESCRIPTION>
 <!--800268 ISSUMMARY-->
 <!--800268-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800268 ISSOTRX-->
@@ -15738,11 +15738,11 @@
 <!--800269 UPDATED-->
 <!--800269-->              <UPDATED><![CDATA[2007-07-09 13:38:33.0]]></UPDATED>
 <!--800269 NAME-->
-<!--800269-->              <NAME><![CDATA[Sales Dimensional Report ]]></NAME>
+<!--800269-->              <NAME><![CDATA[Sales Dimensional Report]]></NAME>
 <!--800269 UPDATEDBY-->
 <!--800269-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800269 DESCRIPTION-->
-<!--800269-->              <DESCRIPTION><![CDATA[Sales dimensional analyze ]]></DESCRIPTION>
+<!--800269-->              <DESCRIPTION><![CDATA[Sales dimensional analyze]]></DESCRIPTION>
 <!--800269 ISSUMMARY-->
 <!--800269-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800269 ISSOTRX-->
@@ -15773,11 +15773,11 @@
 <!--800270 UPDATED-->
 <!--800270-->              <UPDATED><![CDATA[2007-07-09 14:07:15.0]]></UPDATED>
 <!--800270 NAME-->
-<!--800270-->              <NAME><![CDATA[Customer Stock Report ]]></NAME>
+<!--800270-->              <NAME><![CDATA[Customer Stock Report]]></NAME>
 <!--800270 UPDATEDBY-->
 <!--800270-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800270 DESCRIPTION-->
-<!--800270-->              <DESCRIPTION><![CDATA[Customer Stock Report ]]></DESCRIPTION>
+<!--800270-->              <DESCRIPTION><![CDATA[Customer Stock Report]]></DESCRIPTION>
 <!--800270 ISSUMMARY-->
 <!--800270-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800270 ISSOTRX-->
@@ -15808,11 +15808,11 @@
 <!--800277 UPDATED-->
 <!--800277-->              <UPDATED><![CDATA[2007-07-09 21:33:37.0]]></UPDATED>
 <!--800277 NAME-->
-<!--800277-->              <NAME><![CDATA[Detailed Warehouse Inventory ]]></NAME>
+<!--800277-->              <NAME><![CDATA[Detailed Warehouse Inventory]]></NAME>
 <!--800277 UPDATEDBY-->
 <!--800277-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800277 DESCRIPTION-->
-<!--800277-->              <DESCRIPTION><![CDATA[Detailed Warehouse Inventory ]]></DESCRIPTION>
+<!--800277-->              <DESCRIPTION><![CDATA[Detailed Warehouse Inventory]]></DESCRIPTION>
 <!--800277 ISSUMMARY-->
 <!--800277-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800277 ISSOTRX-->
@@ -15843,7 +15843,7 @@
 <!--800279 UPDATED-->
 <!--800279-->              <UPDATED><![CDATA[2007-07-23 10:55:16.0]]></UPDATED>
 <!--800279 NAME-->
-<!--800279-->              <NAME><![CDATA[Discount Invoice Report ]]></NAME>
+<!--800279-->              <NAME><![CDATA[Discount Invoice Report]]></NAME>
 <!--800279 UPDATEDBY-->
 <!--800279-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800279 DESCRIPTION-->
@@ -15913,7 +15913,7 @@
 <!--800282 UPDATED-->
 <!--800282-->              <UPDATED><![CDATA[2007-07-11 17:19:53.0]]></UPDATED>
 <!--800282 NAME-->
-<!--800282-->              <NAME><![CDATA[Pending Production ]]></NAME>
+<!--800282-->              <NAME><![CDATA[Pending Production]]></NAME>
 <!--800282 UPDATEDBY-->
 <!--800282-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800282 DESCRIPTION-->
@@ -15948,11 +15948,11 @@
 <!--800285 UPDATED-->
 <!--800285-->              <UPDATED><![CDATA[2007-07-11 13:09:26.0]]></UPDATED>
 <!--800285 NAME-->
-<!--800285-->              <NAME><![CDATA[Invoice Detail ]]></NAME>
+<!--800285-->              <NAME><![CDATA[Invoice Detail]]></NAME>
 <!--800285 UPDATEDBY-->
 <!--800285-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800285 DESCRIPTION-->
-<!--800285-->              <DESCRIPTION><![CDATA[Invoice Detail ]]></DESCRIPTION>
+<!--800285-->              <DESCRIPTION><![CDATA[Invoice Detail]]></DESCRIPTION>
 <!--800285 ISSUMMARY-->
 <!--800285-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800285 ISSOTRX-->
@@ -15983,7 +15983,7 @@
 <!--800287 UPDATED-->
 <!--800287-->              <UPDATED><![CDATA[2007-07-19 18:07:40.0]]></UPDATED>
 <!--800287 NAME-->
-<!--800287-->              <NAME><![CDATA[Standard Costs Report ]]></NAME>
+<!--800287-->              <NAME><![CDATA[Standard Costs Report]]></NAME>
 <!--800287 UPDATEDBY-->
 <!--800287-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800287 DESCRIPTION-->
@@ -16372,7 +16372,7 @@
 <!--1003100001 UPDATEDBY-->
 <!--1003100001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1003100001 DESCRIPTION-->
-<!--1003100001-->              <DESCRIPTION><![CDATA[View and set session variables]]></DESCRIPTION>
+<!--1003100001-->              <DESCRIPTION><![CDATA[View and set session variables.]]></DESCRIPTION>
 <!--1003100001 ISSUMMARY-->
 <!--1003100001-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--1003100001 ISSOTRX-->

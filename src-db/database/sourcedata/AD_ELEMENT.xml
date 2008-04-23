@@ -560,7 +560,7 @@
 <!--121 DESCRIPTION-->
 <!--121-->              <DESCRIPTION><![CDATA[The exact reference specification for a list or a table.]]></DESCRIPTION>
 <!--121 HELP-->
-<!--121-->              <HELP><![CDATA[The Reference Value indicates where the reference values are stored.  It must be specified if the data type is Table or List.  ]]></HELP>
+<!--121-->              <HELP><![CDATA[The Reference Value indicates where the reference values are stored.  It must be specified if the data type is Table or List.]]></HELP>
 <!--121**************--></AD_ELEMENT>
 
 <!--123**************--><AD_ELEMENT>
@@ -833,7 +833,7 @@
 <!--133 PRINTNAME-->
 <!--133-->              <PRINTNAME><![CDATA[Primary Tree Menu]]></PRINTNAME>
 <!--133 DESCRIPTION-->
-<!--133-->              <DESCRIPTION><![CDATA[Tree Menu ]]></DESCRIPTION>
+<!--133-->              <DESCRIPTION><![CDATA[Tree Menu]]></DESCRIPTION>
 <!--133 HELP-->
 <!--133-->              <HELP><![CDATA[Tree Menu]]></HELP>
 <!--133**************--></AD_ELEMENT>
@@ -984,7 +984,7 @@
 <!--138 PRINTNAME-->
 <!--138-->              <PRINTNAME><![CDATA[User]]></PRINTNAME>
 <!--138 DESCRIPTION-->
-<!--138-->              <DESCRIPTION><![CDATA[An acquaintance to reach for information related to the business partner. ]]></DESCRIPTION>
+<!--138-->              <DESCRIPTION><![CDATA[An acquaintance to reach for information related to the business partner.]]></DESCRIPTION>
 <!--138 HELP-->
 <!--138-->              <HELP><![CDATA[The User identifies a unique user in the system. This could be an internal user or a business partner contact]]></HELP>
 <!--138**************--></AD_ELEMENT>
@@ -1017,7 +1017,7 @@
 <!--139 DESCRIPTION-->
 <!--139-->              <DESCRIPTION><![CDATA[A validation rule that defines how an entry is determined to be valid or invalid.]]></DESCRIPTION>
 <!--139 HELP-->
-<!--139-->              <HELP><![CDATA[The Validation Rule indicates a unique validation rule.  These rules define how an entry is determined to valid or invalid. ]]></HELP>
+<!--139-->              <HELP><![CDATA[The Validation Rule indicates a unique validation rule.  These rules define how an entry is determined to valid or invalid.]]></HELP>
 <!--139**************--></AD_ELEMENT>
 
 <!--140**************--><AD_ELEMENT>
@@ -1327,7 +1327,7 @@
 <!--149 DESCRIPTION-->
 <!--149-->              <DESCRIPTION><![CDATA[For parallel reporting using different accounting currency or field selection]]></DESCRIPTION>
 <!--149 HELP-->
-<!--149-->              <HELP><![CDATA[The Second Accounting Schema indicates an alternate set of rules to use for generating reports.  ]]></HELP>
+<!--149-->              <HELP><![CDATA[The Second Accounting Schema indicates an alternate set of rules to use for generating reports.]]></HELP>
 <!--149**************--></AD_ELEMENT>
 
 <!--150**************--><AD_ELEMENT>
@@ -1358,7 +1358,7 @@
 <!--150 DESCRIPTION-->
 <!--150-->              <DESCRIPTION><![CDATA[For parallel reporting using different accounting currency or field selection]]></DESCRIPTION>
 <!--150 HELP-->
-<!--150-->              <HELP><![CDATA[The Third Accounting Schema indicates an alternate set of rules to use for generating reports.  ]]></HELP>
+<!--150-->              <HELP><![CDATA[The Third Accounting Schema indicates an alternate set of rules to use for generating reports.]]></HELP>
 <!--150**************--></AD_ELEMENT>
 
 <!--151**************--><AD_ELEMENT>
@@ -1790,7 +1790,7 @@
 <!--164 PRINTNAME-->
 <!--164-->              <PRINTNAME><![CDATA[Source Credit]]></PRINTNAME>
 <!--164 DESCRIPTION-->
-<!--164-->              <DESCRIPTION><![CDATA[The amount credited from the account, given in provider currency. ]]></DESCRIPTION>
+<!--164-->              <DESCRIPTION><![CDATA[The amount credited from the account, given in provider currency.]]></DESCRIPTION>
 <!--164 HELP-->
 <!--164-->              <HELP><![CDATA[The Source Credit Amount indicates the credit amount for this line in the source currency.]]></HELP>
 <!--164**************--></AD_ELEMENT>
@@ -1821,7 +1821,7 @@
 <!--165 PRINTNAME-->
 <!--165-->              <PRINTNAME><![CDATA[Source Debit]]></PRINTNAME>
 <!--165 DESCRIPTION-->
-<!--165-->              <DESCRIPTION><![CDATA[The amount debited from the account, given in provider currency. ]]></DESCRIPTION>
+<!--165-->              <DESCRIPTION><![CDATA[The amount debited from the account, given in provider currency.]]></DESCRIPTION>
 <!--165 HELP-->
 <!--165-->              <HELP><![CDATA[The Source Debit Amount indicates the credit amount for this line in the source currency.]]></HELP>
 <!--165**************--></AD_ELEMENT>
@@ -1945,7 +1945,7 @@
 <!--173 PRINTNAME-->
 <!--173-->              <PRINTNAME><![CDATA[Invoice To]]></PRINTNAME>
 <!--173 DESCRIPTION-->
-<!--173-->              <DESCRIPTION><![CDATA[The location where the invoice payment request will be sent. ]]></DESCRIPTION>
+<!--173-->              <DESCRIPTION><![CDATA[The location where the invoice payment request will be sent.]]></DESCRIPTION>
 <!--173 HELP-->
 <!--173-->              <HELP><![CDATA[An indication of the address to use in the invoice.<br />]]></HELP>
 <!--173 PO_NAME-->
@@ -2228,9 +2228,9 @@
 <!--187 ENTITYTYPE-->
 <!--187-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--187 NAME-->
-<!--187-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--187-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--187 PRINTNAME-->
-<!--187-->              <PRINTNAME><![CDATA[Business Partner ]]></PRINTNAME>
+<!--187-->              <PRINTNAME><![CDATA[Business Partner]]></PRINTNAME>
 <!--187 DESCRIPTION-->
 <!--187-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--187 HELP-->
@@ -2707,7 +2707,7 @@
 <!--204 DESCRIPTION-->
 <!--204-->              <DESCRIPTION><![CDATA[The setup and timing defined to complete a specified payment.]]></DESCRIPTION>
 <!--204 HELP-->
-<!--204-->              <HELP><![CDATA[Payment Terms identify the method and timing of payment for this transaction.  ]]></HELP>
+<!--204-->              <HELP><![CDATA[Payment Terms identify the method and timing of payment for this transaction.]]></HELP>
 <!--204**************--></AD_ELEMENT>
 
 <!--205**************--><AD_ELEMENT>
@@ -2738,7 +2738,7 @@
 <!--205 DESCRIPTION-->
 <!--205-->              <DESCRIPTION><![CDATA[Period Control]]></DESCRIPTION>
 <!--205 HELP-->
-<!--205-->              <HELP><![CDATA[The Period Control shows the status of a Period (Never Opened, Opened, Closed) for each of the DocBaseTypes. ]]></HELP>
+<!--205-->              <HELP><![CDATA[The Period Control shows the status of a Period (Never Opened, Opened, Closed) for each of the DocBaseTypes.]]></HELP>
 <!--205**************--></AD_ELEMENT>
 
 <!--206**************--><AD_ELEMENT>
@@ -3232,7 +3232,7 @@
 <!--224 PRINTNAME-->
 <!--224-->              <PRINTNAME><![CDATA[Callout]]></PRINTNAME>
 <!--224 DESCRIPTION-->
-<!--224-->              <DESCRIPTION><![CDATA[ A series of actions that occur when data is modified.]]></DESCRIPTION>
+<!--224-->              <DESCRIPTION><![CDATA[A series of actions that occur when data is modified.]]></DESCRIPTION>
 <!--224 HELP-->
 <!--224-->              <HELP><![CDATA[Function Calls separated by semicolons; SE_/SL_/UE_/UL_ - 1st: System/User; 2nd: Enter/Leave; 3rd: _ Underscore, - then Function Name]]></HELP>
 <!--224**************--></AD_ELEMENT>
@@ -3821,7 +3821,7 @@
 <!--249 PRINTNAME-->
 <!--249-->              <PRINTNAME><![CDATA[Number]]></PRINTNAME>
 <!--249 DESCRIPTION-->
-<!--249-->              <DESCRIPTION><![CDATA[Credit Card Number ]]></DESCRIPTION>
+<!--249-->              <DESCRIPTION><![CDATA[Credit Card Number]]></DESCRIPTION>
 <!--249 HELP-->
 <!--249-->              <HELP><![CDATA[The Credit Card number indicates the number on the credit card, without blanks or spaces.]]></HELP>
 <!--249**************--></AD_ELEMENT>
@@ -4443,7 +4443,7 @@
 <!--281 DESCRIPTION-->
 <!--281-->              <DESCRIPTION><![CDATA[Number of days from invoice date to be eligible for discount]]></DESCRIPTION>
 <!--281 HELP-->
-<!--281-->              <HELP><![CDATA[The Discount Days indicates the number of days that payment must be received in to be eligible for the stated discount.  ]]></HELP>
+<!--281-->              <HELP><![CDATA[The Discount Days indicates the number of days that payment must be received in to be eligible for the stated discount.]]></HELP>
 <!--281**************--></AD_ELEMENT>
 
 <!--282**************--><AD_ELEMENT>
@@ -4720,7 +4720,7 @@
 <!--290 PRINTNAME-->
 <!--290-->              <PRINTNAME><![CDATA[Document No]]></PRINTNAME>
 <!--290 DESCRIPTION-->
-<!--290-->              <DESCRIPTION><![CDATA[An often automatically generated identifier for all documents. ]]></DESCRIPTION>
+<!--290-->              <DESCRIPTION><![CDATA[An often automatically generated identifier for all documents.]]></DESCRIPTION>
 <!--290 HELP-->
 <!--290-->              <HELP><![CDATA[The document number is usually automatically generated by the system and determined by the document type of the document. If the document is not saved, the preliminary number is displayed in "<>".If the document type of your document has no automatic document sequence defined, the field is empty if you create a new document. This is for documents which usually have an external number (like vendor invoice).  If you leave the field empty, the system will generate a document number for you. The document sequence used for this fallback number is defined in the "Maintain Sequence" window with the name "DocumentNo_<TableName>", where TableName is the actual name of the table (e.g. C_Order).]]></HELP>
 <!--290**************--></AD_ELEMENT>
@@ -4815,7 +4815,7 @@
 <!--293 DESCRIPTION-->
 <!--293-->              <DESCRIPTION><![CDATA[A distinct item characteristic used for processes and sometimes grouped within a category.]]></DESCRIPTION>
 <!--293 HELP-->
-<!--293-->              <HELP><![CDATA[The Element Type indicates if this element is the Account element or is a User Defined element.  ]]></HELP>
+<!--293-->              <HELP><![CDATA[The Element Type indicates if this element is the Account element or is a User Defined element.]]></HELP>
 <!--293**************--></AD_ELEMENT>
 
 <!--294**************--><AD_ELEMENT>
@@ -5557,7 +5557,7 @@
 <!--333 PRINTNAME-->
 <!--333-->              <PRINTNAME><![CDATA[Income Summary Acct]]></PRINTNAME>
 <!--333 DESCRIPTION-->
-<!--333-->              <DESCRIPTION><![CDATA[Income Summary Account ]]></DESCRIPTION>
+<!--333-->              <DESCRIPTION><![CDATA[Income Summary Account]]></DESCRIPTION>
 <!--333 HELP-->
 <!--333-->              <HELP><![CDATA[Account used for income summary]]></HELP>
 <!--333**************--></AD_ELEMENT>
@@ -5615,7 +5615,7 @@
 <!--337 ENTITYTYPE-->
 <!--337-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--337 NAME-->
-<!--337-->              <NAME><![CDATA[Due from Intercompany ]]></NAME>
+<!--337-->              <NAME><![CDATA[Due from Intercompany]]></NAME>
 <!--337 PRINTNAME-->
 <!--337-->              <PRINTNAME><![CDATA[Intercompany Due From Acct]]></PRINTNAME>
 <!--337 DESCRIPTION-->
@@ -5646,7 +5646,7 @@
 <!--338 ENTITYTYPE-->
 <!--338-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--338 NAME-->
-<!--338-->              <NAME><![CDATA[Due to Intercompany ]]></NAME>
+<!--338-->              <NAME><![CDATA[Due to Intercompany]]></NAME>
 <!--338 PRINTNAME-->
 <!--338-->              <PRINTNAME><![CDATA[Intercompany Due To Acct]]></PRINTNAME>
 <!--338 DESCRIPTION-->
@@ -5838,7 +5838,7 @@
 <!--349 DESCRIPTION-->
 <!--349-->              <DESCRIPTION><![CDATA[Send invoices only if the amount exceeds the limit]]></DESCRIPTION>
 <!--349 HELP-->
-<!--349-->              <HELP><![CDATA[The Amount Limit checkbox indicates if invoices will be sent out if they are below the entered limit.   ]]></HELP>
+<!--349-->              <HELP><![CDATA[The Amount Limit checkbox indicates if invoices will be sent out if they are below the entered limit.]]></HELP>
 <!--349**************--></AD_ELEMENT>
 
 <!--350**************--><AD_ELEMENT>
@@ -6266,7 +6266,7 @@
 <!--366 ENTITYTYPE-->
 <!--366-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--366 NAME-->
-<!--366-->              <NAME><![CDATA[Deletable Records ]]></NAME>
+<!--366-->              <NAME><![CDATA[Deletable Records]]></NAME>
 <!--366 PRINTNAME-->
 <!--366-->              <PRINTNAME><![CDATA[Records deleteable]]></PRINTNAME>
 <!--366 DESCRIPTION-->
@@ -6671,7 +6671,7 @@
 <!--382 DESCRIPTION-->
 <!--382-->              <DESCRIPTION><![CDATA[This column is part of the record identifier]]></DESCRIPTION>
 <!--382 HELP-->
-<!--382-->              <HELP><![CDATA[The Identifier checkbox indicates that this column is part of the identifier or key for this table.  ]]></HELP>
+<!--382-->              <HELP><![CDATA[The Identifier checkbox indicates that this column is part of the identifier or key for this table.]]></HELP>
 <!--382**************--></AD_ELEMENT>
 
 <!--385**************--><AD_ELEMENT>
@@ -7849,7 +7849,7 @@
 <!--441 ENTITYTYPE-->
 <!--441-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--441 NAME-->
-<!--441-->              <NAME><![CDATA[Line Net Amount ]]></NAME>
+<!--441-->              <NAME><![CDATA[Line Net Amount]]></NAME>
 <!--441 PRINTNAME-->
 <!--441-->              <PRINTNAME><![CDATA[Line Net]]></PRINTNAME>
 <!--441 DESCRIPTION-->
@@ -8165,7 +8165,7 @@
 <!--463 DESCRIPTION-->
 <!--463-->              <DESCRIPTION><![CDATA[The text/content of the spplication initiated message.]]></DESCRIPTION>
 <!--463 HELP-->
-<!--463-->              <HELP><![CDATA[The Message Text indicates the message that will display ]]></HELP>
+<!--463-->              <HELP><![CDATA[The Message Text indicates the message that will display]]></HELP>
 <!--463**************--></AD_ELEMENT>
 
 <!--464**************--><AD_ELEMENT>
@@ -9554,7 +9554,7 @@
 <!--530 ENTITYTYPE-->
 <!--530-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--530 NAME-->
-<!--530-->              <NAME><![CDATA[Quantity on Hand ]]></NAME>
+<!--530-->              <NAME><![CDATA[Quantity on Hand]]></NAME>
 <!--530 PRINTNAME-->
 <!--530-->              <PRINTNAME><![CDATA[On Hand Qty]]></PRINTNAME>
 <!--530 DESCRIPTION-->
@@ -9926,7 +9926,7 @@
 <!--547 ENTITYTYPE-->
 <!--547-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--547 NAME-->
-<!--547-->              <NAME><![CDATA[Retained Earning ]]></NAME>
+<!--547-->              <NAME><![CDATA[Retained Earning]]></NAME>
 <!--547 PRINTNAME-->
 <!--547-->              <PRINTNAME><![CDATA[Retained Earning Acct]]></PRINTNAME>
 <!--547 DESCRIPTION-->
@@ -10186,7 +10186,7 @@
 <!--559 PRINTNAME-->
 <!--559-->              <PRINTNAME><![CDATA[Invoice Rule]]></PRINTNAME>
 <!--559 DESCRIPTION-->
-<!--559-->              <DESCRIPTION><![CDATA[Frequency and method of invoicing ]]></DESCRIPTION>
+<!--559-->              <DESCRIPTION><![CDATA[Frequency and method of invoicing]]></DESCRIPTION>
 <!--559 HELP-->
 <!--559-->              <HELP><![CDATA[The Invoice Rule defines how a Business Partner is invoiced and the frequency of invoicing.]]></HELP>
 <!--559**************--></AD_ELEMENT>
@@ -10444,7 +10444,7 @@
 <!--570 DESCRIPTION-->
 <!--570-->              <DESCRIPTION><![CDATA[Shelf depth required]]></DESCRIPTION>
 <!--570 HELP-->
-<!--570-->              <HELP><![CDATA[The Shelf Depth indicates the depth dimension required on a shelf for a product ]]></HELP>
+<!--570-->              <HELP><![CDATA[The Shelf Depth indicates the depth dimension required on a shelf for a product]]></HELP>
 <!--570**************--></AD_ELEMENT>
 
 <!--571**************--><AD_ELEMENT>
@@ -10779,7 +10779,7 @@
 <!--581 ENTITYTYPE-->
 <!--581-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--581 NAME-->
-<!--581-->              <NAME><![CDATA[Suspense Error ]]></NAME>
+<!--581-->              <NAME><![CDATA[Suspense Error]]></NAME>
 <!--581 PRINTNAME-->
 <!--581-->              <PRINTNAME><![CDATA[Suspense Error Acct]]></PRINTNAME>
 <!--581 DESCRIPTION-->
@@ -12282,7 +12282,7 @@
 <!--836 PRINTNAME-->
 <!--836-->              <PRINTNAME><![CDATA[Bank Account]]></PRINTNAME>
 <!--836 DESCRIPTION-->
-<!--836-->              <DESCRIPTION><![CDATA[A monetary account of funds held in a recognized banking institution. ]]></DESCRIPTION>
+<!--836-->              <DESCRIPTION><![CDATA[A monetary account of funds held in a recognized banking institution.]]></DESCRIPTION>
 <!--836 HELP-->
 <!--836-->              <HELP><![CDATA[The Bank Account identifies an account at this Bank.]]></HELP>
 <!--836**************--></AD_ELEMENT>
@@ -12749,7 +12749,7 @@
 <!--864 DESCRIPTION-->
 <!--864-->              <DESCRIPTION><![CDATA[Number of days from invoice date to be eligible for discount]]></DESCRIPTION>
 <!--864 HELP-->
-<!--864-->              <HELP><![CDATA[The Discount Days indicates the number of days that payment must be received in to be eligible for the stated discount.  ]]></HELP>
+<!--864-->              <HELP><![CDATA[The Discount Days indicates the number of days that payment must be received in to be eligible for the stated discount.]]></HELP>
 <!--864**************--></AD_ELEMENT>
 
 <!--865**************--><AD_ELEMENT>
@@ -12778,7 +12778,7 @@
 <!--865 PRINTNAME-->
 <!--865-->              <PRINTNAME><![CDATA[Doc BaseType]]></PRINTNAME>
 <!--865 DESCRIPTION-->
-<!--865-->              <DESCRIPTION><![CDATA[A classification of document types that are shown and processed in the same window. ]]></DESCRIPTION>
+<!--865-->              <DESCRIPTION><![CDATA[A classification of document types that are shown and processed in the same window.]]></DESCRIPTION>
 <!--865 HELP-->
 <!--865-->              <HELP><![CDATA[The Document Base Type identifies the base or starting point for a document.  Multiple document types may share a single document base type.]]></HELP>
 <!--865**************--></AD_ELEMENT>
@@ -12873,7 +12873,7 @@
 <!--881 DESCRIPTION-->
 <!--881-->              <DESCRIPTION><![CDATA[An email address for a specified business partner.]]></DESCRIPTION>
 <!--881 HELP-->
-<!--881-->              <HELP><![CDATA[The Email Address is the Electronic Mail ID for this User and should be fully qualified (e.g. joe.smith@company.com). ]]></HELP>
+<!--881-->              <HELP><![CDATA[The Email Address is the Electronic Mail ID for this User and should be fully qualified (e.g. joe.smith@company.com).]]></HELP>
 <!--881**************--></AD_ELEMENT>
 
 <!--882**************--><AD_ELEMENT>
@@ -13334,7 +13334,7 @@
 <!--918 DESCRIPTION-->
 <!--918-->              <DESCRIPTION><![CDATA[Payment is due on a fixed date]]></DESCRIPTION>
 <!--918 HELP-->
-<!--918-->              <HELP><![CDATA[The Fixed Due Date checkbox indicates if invoices using this payment term will be due on a fixed day of the month.  ]]></HELP>
+<!--918-->              <HELP><![CDATA[The Fixed Due Date checkbox indicates if invoices using this payment term will be due on a fixed day of the month.]]></HELP>
 <!--918**************--></AD_ELEMENT>
 
 <!--919**************--><AD_ELEMENT>
@@ -14227,7 +14227,7 @@
 <!--968 PRINTNAME-->
 <!--968-->              <PRINTNAME><![CDATA[Charge]]></PRINTNAME>
 <!--968 DESCRIPTION-->
-<!--968-->              <DESCRIPTION><![CDATA[A cost or expense incurred during business activity. ]]></DESCRIPTION>
+<!--968-->              <DESCRIPTION><![CDATA[A cost or expense incurred during business activity.]]></DESCRIPTION>
 <!--968 HELP-->
 <!--968-->              <HELP><![CDATA[The Charge indicates a type of Charge (Handling, Shipping, Restocking)]]></HELP>
 <!--968**************--></AD_ELEMENT>
@@ -15033,7 +15033,7 @@
 <!--1031 PRINTNAME-->
 <!--1031-->              <PRINTNAME><![CDATA[Movement Line]]></PRINTNAME>
 <!--1031 DESCRIPTION-->
-<!--1031-->              <DESCRIPTION><![CDATA[An often automatically generated identifier for a movement line. ]]></DESCRIPTION>
+<!--1031-->              <DESCRIPTION><![CDATA[An often automatically generated identifier for a movement line.]]></DESCRIPTION>
 <!--1031 HELP-->
 <!--1031-->              <HELP><![CDATA[The Movement Line indicates the inventory movement document line (if applicable) for this transaction]]></HELP>
 <!--1031**************--></AD_ELEMENT>
@@ -15752,7 +15752,7 @@
 <!--1065 PRINTNAME-->
 <!--1065-->              <PRINTNAME><![CDATA[Price includes Tax]]></PRINTNAME>
 <!--1065 DESCRIPTION-->
-<!--1065-->              <DESCRIPTION><![CDATA[Tax is included in the price ]]></DESCRIPTION>
+<!--1065-->              <DESCRIPTION><![CDATA[Tax is included in the price]]></DESCRIPTION>
 <!--1065 HELP-->
 <!--1065-->              <HELP><![CDATA[The Tax Included checkbox indicates if the prices include tax.  This is also known as the gross price.]]></HELP>
 <!--1065**************--></AD_ELEMENT>
@@ -16089,7 +16089,7 @@
 <!--1079 PRINTNAME-->
 <!--1079-->              <PRINTNAME><![CDATA[Service Level]]></PRINTNAME>
 <!--1079 DESCRIPTION-->
-<!--1079-->              <DESCRIPTION><![CDATA[Product Revenue Recognition Service Level ]]></DESCRIPTION>
+<!--1079-->              <DESCRIPTION><![CDATA[Product Revenue Recognition Service Level]]></DESCRIPTION>
 <!--1079 HELP-->
 <!--1079-->              <HELP><![CDATA[The Service Level defines a unique Service Level.]]></HELP>
 <!--1079**************--></AD_ELEMENT>
@@ -16643,7 +16643,7 @@
 <!--1100 PRINTNAME-->
 <!--1100-->              <PRINTNAME><![CDATA[Bank Account]]></PRINTNAME>
 <!--1100 DESCRIPTION-->
-<!--1100-->              <DESCRIPTION><![CDATA[A monetary account of funds held in a recognized banking institution. ]]></DESCRIPTION>
+<!--1100-->              <DESCRIPTION><![CDATA[A monetary account of funds held in a recognized banking institution.]]></DESCRIPTION>
 <!--1100 HELP-->
 <!--1100-->              <HELP><![CDATA[The Bank Account checkbox indicates if this is account is the bank account.]]></HELP>
 <!--1100**************--></AD_ELEMENT>
@@ -16829,9 +16829,9 @@
 <!--1108 PRINTNAME-->
 <!--1108-->              <PRINTNAME><![CDATA[ISO Language Code]]></PRINTNAME>
 <!--1108 DESCRIPTION-->
-<!--1108-->              <DESCRIPTION><![CDATA[Lower-case two-letter ISO-3166 code - http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt ]]></DESCRIPTION>
+<!--1108-->              <DESCRIPTION><![CDATA[Lower-case two-letter ISO-3166 code - http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt]]></DESCRIPTION>
 <!--1108 HELP-->
-<!--1108-->              <HELP><![CDATA[The ISO Language Code indicates the standard ISO code for a language in lower case.  Information can be found at http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt ]]></HELP>
+<!--1108-->              <HELP><![CDATA[The ISO Language Code indicates the standard ISO code for a language in lower case.  Information can be found at http://www.ics.uci.edu/pub/ietf/http/related/iso639.txt]]></HELP>
 <!--1108**************--></AD_ELEMENT>
 
 <!--1109**************--><AD_ELEMENT>
@@ -16918,7 +16918,7 @@
 <!--1111 PRINTNAME-->
 <!--1111-->              <PRINTNAME><![CDATA[Name 2]]></PRINTNAME>
 <!--1111 DESCRIPTION-->
-<!--1111-->              <DESCRIPTION><![CDATA[Additional space to write the name of a business partner. ]]></DESCRIPTION>
+<!--1111-->              <DESCRIPTION><![CDATA[Additional space to write the name of a business partner.]]></DESCRIPTION>
 <!--1111 HELP-->
 <!--1111-->              <HELP><![CDATA[Additional Name]]></HELP>
 <!--1111**************--></AD_ELEMENT>
@@ -17985,7 +17985,7 @@
 <!--1188 PRINTNAME-->
 <!--1188-->              <PRINTNAME><![CDATA[BOM Line]]></PRINTNAME>
 <!--1188 HELP-->
-<!--1188-->              <HELP><![CDATA[The Bill of Materials defines each product that are generated from other products. ]]></HELP>
+<!--1188-->              <HELP><![CDATA[The Bill of Materials defines each product that are generated from other products.]]></HELP>
 <!--1188**************--></AD_ELEMENT>
 
 <!--1196**************--><AD_ELEMENT>
@@ -18103,7 +18103,7 @@
 <!--1216 ENTITYTYPE-->
 <!--1216-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--1216 NAME-->
-<!--1216-->              <NAME><![CDATA[Base Limit Price ]]></NAME>
+<!--1216-->              <NAME><![CDATA[Base Limit Price]]></NAME>
 <!--1216 PRINTNAME-->
 <!--1216-->              <PRINTNAME><![CDATA[Limit price Base]]></PRINTNAME>
 <!--1216 DESCRIPTION-->
@@ -18444,7 +18444,7 @@
 <!--1230 ENTITYTYPE-->
 <!--1230-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--1230 NAME-->
-<!--1230-->              <NAME><![CDATA[Standard Base Price ]]></NAME>
+<!--1230-->              <NAME><![CDATA[Standard Base Price]]></NAME>
 <!--1230 PRINTNAME-->
 <!--1230-->              <PRINTNAME><![CDATA[Standard price Base]]></PRINTNAME>
 <!--1230 DESCRIPTION-->
@@ -19149,9 +19149,9 @@
 <!--1261 PRINTNAME-->
 <!--1261-->              <PRINTNAME><![CDATA[Customer No]]></PRINTNAME>
 <!--1261 DESCRIPTION-->
-<!--1261-->              <DESCRIPTION><![CDATA[EDI Identification Number ]]></DESCRIPTION>
+<!--1261-->              <DESCRIPTION><![CDATA[EDI Identification Number]]></DESCRIPTION>
 <!--1261 HELP-->
-<!--1261-->              <HELP><![CDATA[EDI Identification Number ]]></HELP>
+<!--1261-->              <HELP><![CDATA[EDI Identification Number]]></HELP>
 <!--1261**************--></AD_ELEMENT>
 
 <!--1262**************--><AD_ELEMENT>
@@ -19389,9 +19389,9 @@
 <!--1269 PRINTNAME-->
 <!--1269-->              <PRINTNAME><![CDATA[To Email]]></PRINTNAME>
 <!--1269 DESCRIPTION-->
-<!--1269-->              <DESCRIPTION><![CDATA[Email address to send requests to - e.g. edi@manufacturer.com ]]></DESCRIPTION>
+<!--1269-->              <DESCRIPTION><![CDATA[Email address to send requests to - e.g. edi@manufacturer.com]]></DESCRIPTION>
 <!--1269 HELP-->
-<!--1269-->              <HELP><![CDATA[Email address to send requests to - e.g. edi@manufacturer.com ]]></HELP>
+<!--1269-->              <HELP><![CDATA[Email address to send requests to - e.g. edi@manufacturer.com]]></HELP>
 <!--1269**************--></AD_ELEMENT>
 
 <!--1270**************--><AD_ELEMENT>
@@ -20276,7 +20276,7 @@
 <!--1308 DESCRIPTION-->
 <!--1308-->              <DESCRIPTION><![CDATA[An accounting status noting if a specified transaction was added to the general ledger.]]></DESCRIPTION>
 <!--1308 HELP-->
-<!--1308-->              <HELP><![CDATA[The Posted field indicates the status of the Generation of General Ledger Accounting Lines ]]></HELP>
+<!--1308-->              <HELP><![CDATA[The Posted field indicates the status of the Generation of General Ledger Accounting Lines]]></HELP>
 <!--1308**************--></AD_ELEMENT>
 
 <!--1309**************--><AD_ELEMENT>
@@ -21266,7 +21266,7 @@
 <!--1344 PRINTNAME-->
 <!--1344-->              <PRINTNAME><![CDATA[Web Directory]]></PRINTNAME>
 <!--1344 DESCRIPTION-->
-<!--1344-->              <DESCRIPTION><![CDATA[Web Interface ]]></DESCRIPTION>
+<!--1344-->              <DESCRIPTION><![CDATA[Web Interface]]></DESCRIPTION>
 <!--1344 HELP-->
 <!--1344-->              <HELP><![CDATA[The Web Directory defines the look and feel for the Web interface.]]></HELP>
 <!--1344**************--></AD_ELEMENT>
@@ -21572,7 +21572,7 @@
 <!--1356 ENTITYTYPE-->
 <!--1356-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--1356 NAME-->
-<!--1356-->              <NAME><![CDATA[Street ]]></NAME>
+<!--1356-->              <NAME><![CDATA[Street]]></NAME>
 <!--1356 PRINTNAME-->
 <!--1356-->              <PRINTNAME><![CDATA[Street]]></PRINTNAME>
 <!--1356 DESCRIPTION-->
@@ -21605,7 +21605,7 @@
 <!--1357 NAME-->
 <!--1357-->              <NAME><![CDATA[Postal Code]]></NAME>
 <!--1357 PRINTNAME-->
-<!--1357-->              <PRINTNAME><![CDATA[Zip ]]></PRINTNAME>
+<!--1357-->              <PRINTNAME><![CDATA[Zip]]></PRINTNAME>
 <!--1357 DESCRIPTION-->
 <!--1357-->              <DESCRIPTION><![CDATA[Zip Code of the Credit Card or Account Holder]]></DESCRIPTION>
 <!--1357 HELP-->
@@ -24663,7 +24663,7 @@
 <!--1525 PRINTNAME-->
 <!--1525-->              <PRINTNAME><![CDATA[Multiplier]]></PRINTNAME>
 <!--1525 HELP-->
-<!--1525-->              <HELP><![CDATA[  <p>Number of times needed to run this&nbsp;sequence in order to satisfy the complete process plan.</p>]]></HELP>
+<!--1525-->              <HELP><![CDATA[<p>Number of times needed to run this&nbsp;sequence in order to satisfy the complete process plan.</p>]]></HELP>
 <!--1525**************--></AD_ELEMENT>
 
 <!--1527**************--><AD_ELEMENT>
@@ -24874,7 +24874,7 @@
 <!--1541 PRINTNAME-->
 <!--1541-->              <PRINTNAME><![CDATA[Function column]]></PRINTNAME>
 <!--1541 DESCRIPTION-->
-<!--1541-->              <DESCRIPTION><![CDATA[Overwrite Column with Function ]]></DESCRIPTION>
+<!--1541-->              <DESCRIPTION><![CDATA[Overwrite Column with Function]]></DESCRIPTION>
 <!--1541 HELP-->
 <!--1541-->              <HELP><![CDATA[The Function Column indicates that the column will be overridden with a function]]></HELP>
 <!--1541**************--></AD_ELEMENT>
@@ -25060,7 +25060,7 @@
 <!--1548 PRINTNAME-->
 <!--1548-->              <PRINTNAME><![CDATA[Commission Amt]]></PRINTNAME>
 <!--1548 DESCRIPTION-->
-<!--1548-->              <DESCRIPTION><![CDATA[Generated Commission Amount ]]></DESCRIPTION>
+<!--1548-->              <DESCRIPTION><![CDATA[Generated Commission Amount]]></DESCRIPTION>
 <!--1548 HELP-->
 <!--1548-->              <HELP><![CDATA[The Commission Amount indicates the resulting amount from a Commission Run.]]></HELP>
 <!--1548**************--></AD_ELEMENT>
@@ -25341,7 +25341,7 @@
 <!--1558 DESCRIPTION-->
 <!--1558-->              <DESCRIPTION><![CDATA[Basis for the calculation the commission]]></DESCRIPTION>
 <!--1558 HELP-->
-<!--1558-->              <HELP><![CDATA[The Calculation Basis indicates the basis to be used for the commission calculation. ]]></HELP>
+<!--1558-->              <HELP><![CDATA[The Calculation Basis indicates the basis to be used for the commission calculation.]]></HELP>
 <!--1558**************--></AD_ELEMENT>
 
 <!--1560**************--><AD_ELEMENT>
@@ -25990,7 +25990,7 @@
 <!--1582 PRINTNAME-->
 <!--1582-->              <PRINTNAME><![CDATA[Date To]]></PRINTNAME>
 <!--1582 DESCRIPTION-->
-<!--1582-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc. ]]></DESCRIPTION>
+<!--1582-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc.]]></DESCRIPTION>
 <!--1582 HELP-->
 <!--1582-->              <HELP><![CDATA[The Date To indicates the end date of a range (inclusive)]]></HELP>
 <!--1582**************--></AD_ELEMENT>
@@ -27868,9 +27868,9 @@
 <!--1654 PRINTNAME-->
 <!--1654-->              <PRINTNAME><![CDATA[Green]]></PRINTNAME>
 <!--1654 DESCRIPTION-->
-<!--1654-->              <DESCRIPTION><![CDATA[RGB value ]]></DESCRIPTION>
+<!--1654-->              <DESCRIPTION><![CDATA[RGB value]]></DESCRIPTION>
 <!--1654 HELP-->
-<!--1654-->              <HELP><![CDATA[RGB value ]]></HELP>
+<!--1654-->              <HELP><![CDATA[RGB value]]></HELP>
 <!--1654**************--></AD_ELEMENT>
 
 <!--1655**************--><AD_ELEMENT>
@@ -28524,7 +28524,9 @@
 <!--1682 DESCRIPTION-->
 <!--1682-->              <DESCRIPTION><![CDATA[Dictionary Entity Type; Determines ownership and synchronization]]></DESCRIPTION>
 <!--1682 HELP-->
-<!--1682-->              <HELP><![CDATA[The Entity Types "Dictionary", "Core" and "Application" might be automatically synchronized and customizations deleted or overwritten.  For customizations, copy the entity and select "User"!]]></HELP>
+<!--1682-->              <HELP><![CDATA[The Entity Types "Dictionary", "Core" and "Application" might be automatically synchronized and customizations deleted or overwritten.  
+
+For customizations, copy the entity and select "User"!]]></HELP>
 <!--1682**************--></AD_ELEMENT>
 
 <!--1683**************--><AD_ELEMENT>
@@ -29328,9 +29330,9 @@
 <!--1712 PRINTNAME-->
 <!--1712-->              <PRINTNAME><![CDATA[Flat Discount]]></PRINTNAME>
 <!--1712 DESCRIPTION-->
-<!--1712-->              <DESCRIPTION><![CDATA[Flat discount percentage ]]></DESCRIPTION>
+<!--1712-->              <DESCRIPTION><![CDATA[Flat discount percentage]]></DESCRIPTION>
 <!--1712 HELP-->
-<!--1712-->              <HELP><![CDATA[Flat discount percentage ]]></HELP>
+<!--1712-->              <HELP><![CDATA[Flat discount percentage]]></HELP>
 <!--1712**************--></AD_ELEMENT>
 
 <!--1713**************--><AD_ELEMENT>
@@ -29541,7 +29543,7 @@
 <!--1719 ENTITYTYPE-->
 <!--1719-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--1719 NAME-->
-<!--1719-->              <NAME><![CDATA[Image Alpha ]]></NAME>
+<!--1719-->              <NAME><![CDATA[Image Alpha]]></NAME>
 <!--1719 PRINTNAME-->
 <!--1719-->              <PRINTNAME><![CDATA[Image Alpha]]></PRINTNAME>
 <!--1719 DESCRIPTION-->
@@ -32807,7 +32809,7 @@
 <!--1832 PRINTNAME-->
 <!--1832-->              <PRINTNAME><![CDATA[Locode]]></PRINTNAME>
 <!--1832 DESCRIPTION-->
-<!--1832-->              <DESCRIPTION><![CDATA[Location code - UN/LOCODE ]]></DESCRIPTION>
+<!--1832-->              <DESCRIPTION><![CDATA[Location code - UN/LOCODE]]></DESCRIPTION>
 <!--1832 HELP-->
 <!--1832-->              <HELP><![CDATA[UN/Locode is a combination of a 2-character country code and a 3-character location code, e.g. BEANR is known as the city of Antwerp (ANR) which is located in Belgium (BE).<p>See: http://www.unece.org/cefact/locode/service/main.htm]]></HELP>
 <!--1832**************--></AD_ELEMENT>
@@ -38163,7 +38165,7 @@
 <!--2025 PRINTNAME-->
 <!--2025-->              <PRINTNAME><![CDATA[Attribute Search]]></PRINTNAME>
 <!--2025 DESCRIPTION-->
-<!--2025-->              <DESCRIPTION><![CDATA[Common Search Attribute ]]></DESCRIPTION>
+<!--2025-->              <DESCRIPTION><![CDATA[Common Search Attribute]]></DESCRIPTION>
 <!--2025 HELP-->
 <!--2025-->              <HELP><![CDATA[Attributes are specific to a Product Attribute Set (e.g. Size for T-Shirts: S,M,L). If you have multiple attributes and want to search under a common sttribute, you define a search sttribute. Example: have one Size search attribute combining the values of all different sizes (Size for Dress Shirt  XL,L,M,S,XS). The Attribute Search allows you to have all values available for selection.  This eases the maintenance of the individual product attribute.]]></HELP>
 <!--2025**************--></AD_ELEMENT>
@@ -38223,7 +38225,7 @@
 <!--2027 NAME-->
 <!--2027-->              <NAME><![CDATA[Print Label]]></NAME>
 <!--2027 PRINTNAME-->
-<!--2027-->              <PRINTNAME><![CDATA[Print Label ]]></PRINTNAME>
+<!--2027-->              <PRINTNAME><![CDATA[Print Label]]></PRINTNAME>
 <!--2027 DESCRIPTION-->
 <!--2027-->              <DESCRIPTION><![CDATA[Label Format to print]]></DESCRIPTION>
 <!--2027 HELP-->
@@ -40920,7 +40922,7 @@
 <!--2133 DESCRIPTION-->
 <!--2133-->              <DESCRIPTION><![CDATA[Data Replication Strategy]]></DESCRIPTION>
 <!--2133 HELP-->
-<!--2133-->              <HELP><![CDATA[The Data Replication Strategy determines what and how tables are replicated ]]></HELP>
+<!--2133-->              <HELP><![CDATA[The Data Replication Strategy determines what and how tables are replicated]]></HELP>
 <!--2133**************--></AD_ELEMENT>
 
 <!--2134**************--><AD_ELEMENT>
@@ -41416,7 +41418,7 @@
 <!--2150 DESCRIPTION-->
 <!--2150-->              <DESCRIPTION><![CDATA[List of Keywords - separated by space, comma or semicolon]]></DESCRIPTION>
 <!--2150 HELP-->
-<!--2150-->              <HELP><![CDATA[List if individual keywords for search relevancy. The keywords are separated by space, comma or semicolon. ]]></HELP>
+<!--2150-->              <HELP><![CDATA[List if individual keywords for search relevancy. The keywords are separated by space, comma or semicolon.]]></HELP>
 <!--2150**************--></AD_ELEMENT>
 
 <!--2151**************--><AD_ELEMENT>
@@ -45071,7 +45073,7 @@
 <!--800103 DESCRIPTION-->
 <!--800103-->              <DESCRIPTION><![CDATA[Show Value Condition]]></DESCRIPTION>
 <!--800103 HELP-->
-<!--800103-->              <HELP><![CDATA[Condition to show value. when algebraic it is always dilplayed, when positive it is shown only if the amount is positive and when negative it is shown only if the amount is negative. ]]></HELP>
+<!--800103-->              <HELP><![CDATA[Condition to show value. when algebraic it is always dilplayed, when positive it is shown only if the amount is positive and when negative it is shown only if the amount is negative.]]></HELP>
 <!--800103**************--></AD_ELEMENT>
 
 <!--800104**************--><AD_ELEMENT>
@@ -47995,7 +47997,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800211 ENTITYTYPE-->
 <!--800211-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800211 NAME-->
-<!--800211-->              <NAME><![CDATA[Test ]]></NAME>
+<!--800211-->              <NAME><![CDATA[Test]]></NAME>
 <!--800211 PRINTNAME-->
 <!--800211-->              <PRINTNAME><![CDATA[AT_Test_ID]]></PRINTNAME>
 <!--800211**************--></AD_ELEMENT>
@@ -49509,7 +49511,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800267 NAME-->
 <!--800267-->              <NAME><![CDATA[Discount Amount]]></NAME>
 <!--800267 PRINTNAME-->
-<!--800267-->              <PRINTNAME><![CDATA[Discount Amt ]]></PRINTNAME>
+<!--800267-->              <PRINTNAME><![CDATA[Discount Amt]]></PRINTNAME>
 <!--800267 DESCRIPTION-->
 <!--800267-->              <DESCRIPTION><![CDATA[Fixed discount amount]]></DESCRIPTION>
 <!--800267 HELP-->
@@ -50856,7 +50858,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800348 PRINTNAME-->
 <!--800348-->              <PRINTNAME><![CDATA[Launch Date]]></PRINTNAME>
 <!--800348 HELP-->
-<!--800348-->              <HELP><![CDATA[The Launch Date indicates the date that the work requiremente was made. ]]></HELP>
+<!--800348-->              <HELP><![CDATA[The Launch Date indicates the date that the work requiremente was made.]]></HELP>
 <!--800348**************--></AD_ELEMENT>
 
 <!--800349**************--><AD_ELEMENT>
@@ -51779,7 +51781,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800456 DESCRIPTION-->
 <!--800456-->              <DESCRIPTION><![CDATA[The amount of time a process takes to complete.]]></DESCRIPTION>
 <!--800456 HELP-->
-<!--800456-->              <HELP><![CDATA[  <p>The duration of this sequence in hours.</p>]]></HELP>
+<!--800456-->              <HELP><![CDATA[<p>The duration of this sequence in hours.</p>]]></HELP>
 <!--800456**************--></AD_ELEMENT>
 
 <!--800457**************--><AD_ELEMENT>
@@ -51980,7 +51982,9 @@ For example, if you want to create different invoices for each ship location for
 <!--800469 DESCRIPTION-->
 <!--800469-->              <DESCRIPTION><![CDATA[The amount or quantity at which one unit of measure is changed to another.]]></DESCRIPTION>
 <!--800469 HELP-->
-<!--800469-->              <HELP><![CDATA[It is the rate between primary unit and secondary unit. Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
+<!--800469-->              <HELP><![CDATA[It is the rate between primary unit and secondary unit. 
+
+Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800469**************--></AD_ELEMENT>
 
 <!--800470**************--><AD_ELEMENT>
@@ -52904,7 +52908,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800502 PRINTNAME-->
 <!--800502-->              <PRINTNAME><![CDATA[Hassecproduct]]></PRINTNAME>
 <!--800502 HELP-->
-<!--800502-->              <HELP><![CDATA[Indicates that the group has a secondary product. ]]></HELP>
+<!--800502-->              <HELP><![CDATA[Indicates that the group has a secondary product.]]></HELP>
 <!--800502**************--></AD_ELEMENT>
 
 <!--800503**************--><AD_ELEMENT>
@@ -53668,7 +53672,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800528 PRINTNAME-->
 <!--800528-->              <PRINTNAME><![CDATA[Callout]]></PRINTNAME>
 <!--800528 DESCRIPTION-->
-<!--800528-->              <DESCRIPTION><![CDATA[ A series of actions that occur when data is modified.]]></DESCRIPTION>
+<!--800528-->              <DESCRIPTION><![CDATA[A series of actions that occur when data is modified.]]></DESCRIPTION>
 <!--800528 HELP-->
 <!--800528-->              <HELP><![CDATA[The callout that will be fired when the content of a is modified.]]></HELP>
 <!--800528**************--></AD_ELEMENT>
@@ -57013,7 +57017,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800651 ENTITYTYPE-->
 <!--800651-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800651 NAME-->
-<!--800651-->              <NAME><![CDATA[Payment Cancelled ]]></NAME>
+<!--800651-->              <NAME><![CDATA[Payment Cancelled]]></NAME>
 <!--800651 PRINTNAME-->
 <!--800651-->              <PRINTNAME><![CDATA[Debt Payment Cancelled]]></PRINTNAME>
 <!--800651 DESCRIPTION-->
@@ -57112,7 +57116,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800654 DESCRIPTION-->
 <!--800654-->              <DESCRIPTION><![CDATA[Acctschema default]]></DESCRIPTION>
 <!--800654 HELP-->
-<!--800654-->              <HELP><![CDATA[Default accounts for an Accounting Schema. ]]></HELP>
+<!--800654-->              <HELP><![CDATA[Default accounts for an Accounting Schema.]]></HELP>
 <!--800654**************--></AD_ELEMENT>
 
 <!--800655**************--><AD_ELEMENT>
@@ -58111,7 +58115,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800693 PRINTNAME-->
 <!--800693-->              <PRINTNAME><![CDATA[Responsible]]></PRINTNAME>
 <!--800693 HELP-->
-<!--800693-->              <HELP><![CDATA[An employee that is the responsible of the project. ]]></HELP>
+<!--800693-->              <HELP><![CDATA[An employee that is the responsible of the project.]]></HELP>
 <!--800693**************--></AD_ELEMENT>
 
 <!--800694**************--><AD_ELEMENT>
@@ -58759,7 +58763,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800717 PRINTNAME-->
 <!--800717-->              <PRINTNAME><![CDATA[Outsourcing cost]]></PRINTNAME>
 <!--800717 HELP-->
-<!--800717-->              <HELP><![CDATA[  <p>If the sequence of a Process Plan is outsourced, you need to input the standard outsourcing cost here.</p>]]></HELP>
+<!--800717-->              <HELP><![CDATA[<p>If the sequence of a Process Plan is outsourced, you need to input the standard outsourcing cost here.</p>]]></HELP>
 <!--800717**************--></AD_ELEMENT>
 
 <!--800718**************--><AD_ELEMENT>
@@ -59600,7 +59604,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800749 ENTITYTYPE-->
 <!--800749-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800749 NAME-->
-<!--800749-->              <NAME><![CDATA[Standard Quantity ]]></NAME>
+<!--800749-->              <NAME><![CDATA[Standard Quantity]]></NAME>
 <!--800749 PRINTNAME-->
 <!--800749-->              <PRINTNAME><![CDATA[Qty. Std]]></PRINTNAME>
 <!--800749 DESCRIPTION-->
@@ -61881,35 +61885,6 @@ For example, if you want to create different invoices for each ship location for
 <!--1002100005-->              <DESCRIPTION><![CDATA[Withholding amount]]></DESCRIPTION>
 <!--1002100005**************--></AD_ELEMENT>
 
-<!--1002100006**************--><AD_ELEMENT>
-<!--1002100006 AD_ELEMENT_ID-->
-<!--1002100006-->              <AD_ELEMENT_ID><![CDATA[1002100006]]></AD_ELEMENT_ID>
-<!--1002100006 AD_CLIENT_ID-->
-<!--1002100006-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1002100006 AD_ORG_ID-->
-<!--1002100006-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1002100006 ISACTIVE-->
-<!--1002100006-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1002100006 CREATED-->
-<!--1002100006-->              <CREATED><![CDATA[2007-12-13 09:58:17.0]]></CREATED>
-<!--1002100006 CREATEDBY-->
-<!--1002100006-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1002100006 UPDATED-->
-<!--1002100006-->              <UPDATED><![CDATA[2008-01-14 16:29:11.0]]></UPDATED>
-<!--1002100006 UPDATEDBY-->
-<!--1002100006-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1002100006 COLUMNNAME-->
-<!--1002100006-->              <COLUMNNAME><![CDATA[Inpsamt]]></COLUMNNAME>
-<!--1002100006 ENTITYTYPE-->
-<!--1002100006-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--1002100006 NAME-->
-<!--1002100006-->              <NAME><![CDATA[Inpsamt]]></NAME>
-<!--1002100006 PRINTNAME-->
-<!--1002100006-->              <PRINTNAME><![CDATA[Inps amount]]></PRINTNAME>
-<!--1002100006 DESCRIPTION-->
-<!--1002100006-->              <DESCRIPTION><![CDATA[Inps amount total]]></DESCRIPTION>
-<!--1002100006**************--></AD_ELEMENT>
-
 <!--1002100007**************--><AD_ELEMENT>
 <!--1002100007 AD_ELEMENT_ID-->
 <!--1002100007-->              <AD_ELEMENT_ID><![CDATA[1002100007]]></AD_ELEMENT_ID>
@@ -61953,21 +61928,21 @@ For example, if you want to create different invoices for each ship location for
 <!--1002100008 CREATEDBY-->
 <!--1002100008-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1002100008 UPDATED-->
-<!--1002100008-->              <UPDATED><![CDATA[2008-04-04 10:23:11.0]]></UPDATED>
+<!--1002100008-->              <UPDATED><![CDATA[2008-04-22 23:46:38.0]]></UPDATED>
 <!--1002100008 UPDATEDBY-->
 <!--1002100008-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100008 COLUMNNAME-->
-<!--1002100008-->              <COLUMNNAME><![CDATA[IS_Withholdingtax]]></COLUMNNAME>
+<!--1002100008-->              <COLUMNNAME><![CDATA[IsWithholdingTax]]></COLUMNNAME>
 <!--1002100008 ENTITYTYPE-->
 <!--1002100008-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--1002100008 NAME-->
-<!--1002100008-->              <NAME><![CDATA[IS_Withholdingtax]]></NAME>
+<!--1002100008-->              <NAME><![CDATA[Withholding tax]]></NAME>
 <!--1002100008 PRINTNAME-->
-<!--1002100008-->              <PRINTNAME><![CDATA[Withholdingtax]]></PRINTNAME>
+<!--1002100008-->              <PRINTNAME><![CDATA[Withholding tax]]></PRINTNAME>
 <!--1002100008 DESCRIPTION-->
-<!--1002100008-->              <DESCRIPTION><![CDATA[IS Withholdingtax]]></DESCRIPTION>
+<!--1002100008-->              <DESCRIPTION><![CDATA[Is withholding tax]]></DESCRIPTION>
 <!--1002100008 HELP-->
-<!--1002100008-->              <HELP><![CDATA[Describe if the tax is included in the Withholding's Calculation , it is used for the calculate Inps.]]></HELP>
+<!--1002100008-->              <HELP><![CDATA[Describe if the tax is included in the Withholding's Calculation.]]></HELP>
 <!--1002100008**************--></AD_ELEMENT>
 
 <!--1002100009**************--><AD_ELEMENT>
@@ -62265,11 +62240,11 @@ For example, if you want to create different invoices for each ship location for
 <!--1002100019 NAME-->
 <!--1002100019-->              <NAME><![CDATA[Tax Register]]></NAME>
 <!--1002100019 PRINTNAME-->
-<!--1002100019-->              <PRINTNAME><![CDATA[Tax Register ]]></PRINTNAME>
+<!--1002100019-->              <PRINTNAME><![CDATA[Tax Register]]></PRINTNAME>
 <!--1002100019 DESCRIPTION-->
-<!--1002100019-->              <DESCRIPTION><![CDATA[Tax register ]]></DESCRIPTION>
+<!--1002100019-->              <DESCRIPTION><![CDATA[Tax register]]></DESCRIPTION>
 <!--1002100019 HELP-->
-<!--1002100019-->              <HELP><![CDATA[Tax register ]]></HELP>
+<!--1002100019-->              <HELP><![CDATA[Tax register]]></HELP>
 <!--1002100019**************--></AD_ELEMENT>
 
 <!--1002100020**************--><AD_ELEMENT>
@@ -62317,17 +62292,17 @@ For example, if you want to create different invoices for each ship location for
 <!--1002100021 CREATEDBY-->
 <!--1002100021-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1002100021 UPDATED-->
-<!--1002100021-->              <UPDATED><![CDATA[2008-02-05 17:21:03.0]]></UPDATED>
+<!--1002100021-->              <UPDATED><![CDATA[2008-04-22 22:18:12.0]]></UPDATED>
 <!--1002100021 UPDATEDBY-->
 <!--1002100021-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100021 COLUMNNAME-->
-<!--1002100021-->              <COLUMNNAME><![CDATA[Isnotaxable]]></COLUMNNAME>
+<!--1002100021-->              <COLUMNNAME><![CDATA[IsNoTaxable]]></COLUMNNAME>
 <!--1002100021 ENTITYTYPE-->
 <!--1002100021-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--1002100021 NAME-->
-<!--1002100021-->              <NAME><![CDATA[Isnotaxable]]></NAME>
+<!--1002100021-->              <NAME><![CDATA[IsNoTaxable]]></NAME>
 <!--1002100021 PRINTNAME-->
-<!--1002100021-->              <PRINTNAME><![CDATA[Is not taxable]]></PRINTNAME>
+<!--1002100021-->              <PRINTNAME><![CDATA[Not taxable]]></PRINTNAME>
 <!--1002100021 DESCRIPTION-->
 <!--1002100021-->              <DESCRIPTION><![CDATA[Is not taxable]]></DESCRIPTION>
 <!--1002100021 HELP-->
@@ -62487,37 +62462,6 @@ For example, if you want to create different invoices for each ship location for
 <!--1002100026-->              <DESCRIPTION><![CDATA[Invoice Date]]></DESCRIPTION>
 <!--1002100026**************--></AD_ELEMENT>
 
-<!--1002100027**************--><AD_ELEMENT>
-<!--1002100027 AD_ELEMENT_ID-->
-<!--1002100027-->              <AD_ELEMENT_ID><![CDATA[1002100027]]></AD_ELEMENT_ID>
-<!--1002100027 AD_CLIENT_ID-->
-<!--1002100027-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1002100027 AD_ORG_ID-->
-<!--1002100027-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1002100027 ISACTIVE-->
-<!--1002100027-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1002100027 CREATED-->
-<!--1002100027-->              <CREATED><![CDATA[2008-01-24 11:20:54.0]]></CREATED>
-<!--1002100027 CREATEDBY-->
-<!--1002100027-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1002100027 UPDATED-->
-<!--1002100027-->              <UPDATED><![CDATA[2008-04-21 15:56:17.0]]></UPDATED>
-<!--1002100027 UPDATEDBY-->
-<!--1002100027-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1002100027 COLUMNNAME-->
-<!--1002100027-->              <COLUMNNAME><![CDATA[StampaRegistriIva]]></COLUMNNAME>
-<!--1002100027 ENTITYTYPE-->
-<!--1002100027-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--1002100027 NAME-->
-<!--1002100027-->              <NAME><![CDATA[Create VAT Registers]]></NAME>
-<!--1002100027 PRINTNAME-->
-<!--1002100027-->              <PRINTNAME><![CDATA[StampaRegistriIva]]></PRINTNAME>
-<!--1002100027 DESCRIPTION-->
-<!--1002100027-->              <DESCRIPTION><![CDATA[Create Vat Registers]]></DESCRIPTION>
-<!--1002100027 HELP-->
-<!--1002100027-->              <HELP><![CDATA[Create VAT Registers]]></HELP>
-<!--1002100027**************--></AD_ELEMENT>
-
 <!--1002100028**************--><AD_ELEMENT>
 <!--1002100028 AD_ELEMENT_ID-->
 <!--1002100028-->              <AD_ELEMENT_ID><![CDATA[1002100028]]></AD_ELEMENT_ID>
@@ -62532,21 +62476,21 @@ For example, if you want to create different invoices for each ship location for
 <!--1002100028 CREATEDBY-->
 <!--1002100028-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1002100028 UPDATED-->
-<!--1002100028-->              <UPDATED><![CDATA[2008-01-24 11:22:52.0]]></UPDATED>
+<!--1002100028-->              <UPDATED><![CDATA[2008-04-23 00:26:30.0]]></UPDATED>
 <!--1002100028 UPDATEDBY-->
 <!--1002100028-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100028 COLUMNNAME-->
-<!--1002100028-->              <COLUMNNAME><![CDATA[IsTaxUndeduc]]></COLUMNNAME>
+<!--1002100028-->              <COLUMNNAME><![CDATA[IsTaxUndeductable]]></COLUMNNAME>
 <!--1002100028 ENTITYTYPE-->
 <!--1002100028-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--1002100028 NAME-->
-<!--1002100028-->              <NAME><![CDATA[IsTaxUndeduc]]></NAME>
+<!--1002100028-->              <NAME><![CDATA[Tax Undeductable]]></NAME>
 <!--1002100028 PRINTNAME-->
-<!--1002100028-->              <PRINTNAME><![CDATA[Is Tax Undeductable]]></PRINTNAME>
+<!--1002100028-->              <PRINTNAME><![CDATA[Tax Undeductable]]></PRINTNAME>
 <!--1002100028 DESCRIPTION-->
-<!--1002100028-->              <DESCRIPTION><![CDATA[Is Tax Undeductable]]></DESCRIPTION>
+<!--1002100028-->              <DESCRIPTION><![CDATA[Is Tax Undeductable.]]></DESCRIPTION>
 <!--1002100028 HELP-->
-<!--1002100028-->              <HELP><![CDATA[Is Tax Undeductable]]></HELP>
+<!--1002100028-->              <HELP><![CDATA[Is Tax Undeductable.]]></HELP>
 <!--1002100028**************--></AD_ELEMENT>
 
 <!--1002100029**************--><AD_ELEMENT>
@@ -62625,17 +62569,21 @@ For example, if you want to create different invoices for each ship location for
 <!--1002100032 CREATEDBY-->
 <!--1002100032-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1002100032 UPDATED-->
-<!--1002100032-->              <UPDATED><![CDATA[2008-04-04 09:54:38.0]]></UPDATED>
+<!--1002100032-->              <UPDATED><![CDATA[2008-04-22 22:59:41.0]]></UPDATED>
 <!--1002100032 UPDATEDBY-->
-<!--1002100032-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1002100032-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100032 COLUMNNAME-->
-<!--1002100032-->              <COLUMNNAME><![CDATA[Isnovat]]></COLUMNNAME>
+<!--1002100032-->              <COLUMNNAME><![CDATA[IsNoVAT]]></COLUMNNAME>
 <!--1002100032 ENTITYTYPE-->
 <!--1002100032-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--1002100032 NAME-->
-<!--1002100032-->              <NAME><![CDATA[Isnovat]]></NAME>
+<!--1002100032-->              <NAME><![CDATA[No VAT]]></NAME>
 <!--1002100032 PRINTNAME-->
-<!--1002100032-->              <PRINTNAME><![CDATA[Isnovat]]></PRINTNAME>
+<!--1002100032-->              <PRINTNAME><![CDATA[No VAT]]></PRINTNAME>
+<!--1002100032 DESCRIPTION-->
+<!--1002100032-->              <DESCRIPTION><![CDATA[Is no VAT tax]]></DESCRIPTION>
+<!--1002100032 HELP-->
+<!--1002100032-->              <HELP><![CDATA[Is no VAT]]></HELP>
 <!--1002100032**************--></AD_ELEMENT>
 
 <!--1003900000**************--><AD_ELEMENT>
@@ -64659,7 +64607,9 @@ For example, if you want to create different invoices for each ship location for
 <!--1005900000 NAME-->
 <!--1005900000-->              <NAME><![CDATA[Create Temporary Price List]]></NAME>
 <!--1005900000 PRINTNAME-->
-<!--1005900000-->              <PRINTNAME><![CDATA[Hi,Create Temporary Price List]]></PRINTNAME>
+<!--1005900000-->              <PRINTNAME><![CDATA[Hi,
+
+Create Temporary Price List]]></PRINTNAME>
 <!--1005900000 DESCRIPTION-->
 <!--1005900000-->              <DESCRIPTION><![CDATA[This options permits to indicate if a temporary price list will be created.]]></DESCRIPTION>
 <!--1005900000 HELP-->

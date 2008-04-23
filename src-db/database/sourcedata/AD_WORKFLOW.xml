@@ -120,7 +120,7 @@
 <!--105 DESCRIPTION-->
 <!--105-->              <DESCRIPTION><![CDATA[Review and change Accounting Setup]]></DESCRIPTION>
 <!--105 HELP-->
-<!--105-->              <HELP><![CDATA[This workflow allows you to review and change your Accounting Rules. ]]></HELP>
+<!--105-->              <HELP><![CDATA[This workflow allows you to review and change your Accounting Rules.]]></HELP>
 <!--105 ACCESSLEVEL-->
 <!--105-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--105 AD_WF_NODE_ID-->

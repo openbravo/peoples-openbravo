@@ -107,7 +107,7 @@ if IsIncludedTax = 'Y' then
         WHERE C_TAX_ID = IdTax
     )
     LOOP
-        IsWithHoldingTax:=curTaxInps.is_withholdingtax;
+        IsWithHoldingTax:=curTaxInps.ISWITHHOLDINGTAX;
     EXIT;
     END LOOP;
 

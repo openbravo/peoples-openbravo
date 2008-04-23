@@ -115,7 +115,7 @@ BEGIN
        select coalesce(sum(taxamt),0) into vTaxAmount
         from c_invoicetax invtax , c_tax tax
        where tax.c_tax_id = invtax.c_tax_id
-        and tax.is_withholdingtax='Y'
+        and tax.iswithholdingtax='Y'
         and invtax.c_invoice_id = v_invoiceid
         and tax.c_tax_id=taxinps_id;
       END IF;
@@ -127,8 +127,7 @@ BEGIN
       vwithholdingtotal := vwithholdingtotal + vwithholdingnew -vwithholdingold+ vwithholdingtax;
 
       UPDATE c_invoice
-      SET withholdingamount = vwithholdingtotal,
-      inpsamt=vTaxAmount
+      SET withholdingamount = vwithholdingtotal
       WHERE c_invoice_id = v_invoiceid;
     END IF;
   END IF;

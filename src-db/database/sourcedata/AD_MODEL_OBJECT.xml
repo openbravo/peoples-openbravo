@@ -40474,13 +40474,13 @@
 <!--1002100040 CREATEDBY-->
 <!--1002100040-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1002100040 UPDATED-->
-<!--1002100040-->              <UPDATED><![CDATA[2008-01-28 09:34:11.0]]></UPDATED>
+<!--1002100040-->              <UPDATED><![CDATA[2008-04-23 00:50:59.0]]></UPDATED>
 <!--1002100040 UPDATEDBY-->
 <!--1002100040-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100040 ACTION-->
 <!--1002100040-->              <ACTION><![CDATA[P]]></ACTION>
 <!--1002100040 CLASSNAME-->
-<!--1002100040-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_actionButton.PrintVatRegisters]]></CLASSNAME>
+<!--1002100040-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_actionButton.CreateVatRegistersData]]></CLASSNAME>
 <!--1002100040 ISDEFAULT-->
 <!--1002100040-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1002100040 AD_PROCESS_ID-->

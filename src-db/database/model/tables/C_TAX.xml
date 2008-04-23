@@ -117,7 +117,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="IS_WITHHOLDINGTAX" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ISWITHHOLDINGTAX" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -133,7 +133,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISTAXUNDEDUC" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ISTAXUNDEDUCTABLE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>

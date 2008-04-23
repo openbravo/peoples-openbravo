@@ -264,8 +264,7 @@
 <!--133 DESCRIPTION-->
 <!--133-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--133 HELP-->
-<!--133-->              <HELP><![CDATA[
-The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
+<!--133-->              <HELP><![CDATA[The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
 <!--133 AD_PROCESS_ID-->
 <!--133-->              <AD_PROCESS_ID><![CDATA[124]]></AD_PROCESS_ID>
 <!--133 SEQNO-->
@@ -357,8 +356,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--135 DESCRIPTION-->
 <!--135-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--135 HELP-->
-<!--135-->              <HELP><![CDATA[
-The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
+<!--135-->              <HELP><![CDATA[The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
 <!--135 AD_PROCESS_ID-->
 <!--135-->              <AD_PROCESS_ID><![CDATA[125]]></AD_PROCESS_ID>
 <!--135 SEQNO-->
@@ -399,7 +397,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--136 UPDATEDBY-->
 <!--136-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--136 NAME-->
-<!--136-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--136-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--136 DESCRIPTION-->
 <!--136-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--136 HELP-->
@@ -771,7 +769,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--144 UPDATEDBY-->
 <!--144-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--144 NAME-->
-<!--144-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--144-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--144 DESCRIPTION-->
 <!--144-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--144 HELP-->
@@ -1374,8 +1372,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--158 DESCRIPTION-->
 <!--158-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--158 HELP-->
-<!--158-->              <HELP><![CDATA[
-The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
+<!--158-->              <HELP><![CDATA[The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
 <!--158 AD_PROCESS_ID-->
 <!--158-->              <AD_PROCESS_ID><![CDATA[105]]></AD_PROCESS_ID>
 <!--158 SEQNO-->
@@ -1463,7 +1460,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--161 UPDATEDBY-->
 <!--161-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--161 NAME-->
-<!--161-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--161-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--161 DESCRIPTION-->
 <!--161-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--161 HELP-->
@@ -1555,7 +1552,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--163 UPDATEDBY-->
 <!--163-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--163 NAME-->
-<!--163-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--163-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--163 DESCRIPTION-->
 <!--163-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--163 HELP-->
@@ -1835,7 +1832,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--176 UPDATEDBY-->
 <!--176-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--176 NAME-->
-<!--176-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--176-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--176 DESCRIPTION-->
 <!--176-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--176 HELP-->
@@ -1927,7 +1924,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--178 UPDATEDBY-->
 <!--178-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--178 NAME-->
-<!--178-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--178-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--178 DESCRIPTION-->
 <!--178-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--178 HELP-->
@@ -2293,7 +2290,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--190 UPDATEDBY-->
 <!--190-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--190 NAME-->
-<!--190-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--190-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--190 DESCRIPTION-->
 <!--190-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--190 HELP-->
@@ -2432,7 +2429,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--193 NAME-->
 <!--193-->              <NAME><![CDATA[User/Contact]]></NAME>
 <!--193 DESCRIPTION-->
-<!--193-->              <DESCRIPTION><![CDATA[An acquaintance to reach for information related to the business partner. ]]></DESCRIPTION>
+<!--193-->              <DESCRIPTION><![CDATA[An acquaintance to reach for information related to the business partner.]]></DESCRIPTION>
 <!--193 HELP-->
 <!--193-->              <HELP><![CDATA[The User identifies a unique user in the system. This could be an internal user or a business partner contact]]></HELP>
 <!--193 AD_PROCESS_ID-->
@@ -2520,7 +2517,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--195 UPDATEDBY-->
 <!--195-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--195 NAME-->
-<!--195-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--195-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--195 DESCRIPTION-->
 <!--195-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--195 HELP-->
@@ -2708,8 +2705,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--199 DESCRIPTION-->
 <!--199-->              <DESCRIPTION><![CDATA[The date that a task, process, or action is to be completed or delivered by.]]></DESCRIPTION>
 <!--199 HELP-->
-<!--199-->              <HELP><![CDATA[
-The finish date is used to indicate when the project is expected to be completed or has been completed.]]></HELP>
+<!--199-->              <HELP><![CDATA[The finish date is used to indicate when the project is expected to be completed or has been completed.]]></HELP>
 <!--199 AD_PROCESS_ID-->
 <!--199-->              <AD_PROCESS_ID><![CDATA[162]]></AD_PROCESS_ID>
 <!--199 SEQNO-->
@@ -3617,8 +3613,7 @@ The finish date is used to indicate when the project is expected to be completed
 <!--230 DESCRIPTION-->
 <!--230-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--230 HELP-->
-<!--230-->              <HELP><![CDATA[
-The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
+<!--230-->              <HELP><![CDATA[The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
 <!--230 AD_PROCESS_ID-->
 <!--230-->              <AD_PROCESS_ID><![CDATA[180]]></AD_PROCESS_ID>
 <!--230 SEQNO-->
@@ -4064,7 +4059,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--240 UPDATEDBY-->
 <!--240-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--240 NAME-->
-<!--240-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--240-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--240 DESCRIPTION-->
 <!--240-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--240 HELP-->
@@ -4252,7 +4247,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--245 UPDATEDBY-->
 <!--245-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--245 NAME-->
-<!--245-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--245-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--245 DESCRIPTION-->
 <!--245-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--245 HELP-->
@@ -4344,7 +4339,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--247 UPDATEDBY-->
 <!--247-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--247 NAME-->
-<!--247-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--247-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--247 DESCRIPTION-->
 <!--247-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--247 HELP-->
@@ -4661,7 +4656,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--255 UPDATEDBY-->
 <!--255-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--255 NAME-->
-<!--255-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--255-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--255 DESCRIPTION-->
 <!--255-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--255 HELP-->
@@ -5479,7 +5474,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--277 UPDATEDBY-->
 <!--277-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--277 NAME-->
-<!--277-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--277-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--277 DESCRIPTION-->
 <!--277-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--277 HELP-->
@@ -5800,7 +5795,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--287 UPDATEDBY-->
 <!--287-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--287 NAME-->
-<!--287-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--287-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--287 DESCRIPTION-->
 <!--287-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--287 HELP-->
@@ -6215,7 +6210,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--296 UPDATEDBY-->
 <!--296-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--296 NAME-->
-<!--296-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--296-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--296 DESCRIPTION-->
 <!--296-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--296 HELP-->
@@ -6442,7 +6437,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--301 NAME-->
 <!--301-->              <NAME><![CDATA[Document No.]]></NAME>
 <!--301 DESCRIPTION-->
-<!--301-->              <DESCRIPTION><![CDATA[An often automatically generated identifier for all documents. ]]></DESCRIPTION>
+<!--301-->              <DESCRIPTION><![CDATA[An often automatically generated identifier for all documents.]]></DESCRIPTION>
 <!--301 HELP-->
 <!--301-->              <HELP><![CDATA[The document number is usually automatically generated by the system and determined by the document type of the document. If the document is not saved, the preliminary number is displayed in "<>".If the document type of your document has no automatic document sequence defined, the field is empty if you create a new document. This is for documents which usually have an external number (like vendor invoice).  If you leave the field empty, the system will generate a document number for you. The document sequence used for this fallback number is defined in the "Maintain Sequence" window with the name "DocumentNo_<TableName>", where TableName is the actual name of the table (e.g. C_Order).]]></HELP>
 <!--301 AD_PROCESS_ID-->
@@ -7047,7 +7042,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--315 NAME-->
 <!--315-->              <NAME><![CDATA[User/Contact]]></NAME>
 <!--315 DESCRIPTION-->
-<!--315-->              <DESCRIPTION><![CDATA[An acquaintance to reach for information related to the business partner. ]]></DESCRIPTION>
+<!--315-->              <DESCRIPTION><![CDATA[An acquaintance to reach for information related to the business partner.]]></DESCRIPTION>
 <!--315 HELP-->
 <!--315-->              <HELP><![CDATA[The User identifies a unique user in the system. This could be an internal user or a business partner contact]]></HELP>
 <!--315 AD_PROCESS_ID-->
@@ -7924,7 +7919,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--335 NAME-->
 <!--335-->              <NAME><![CDATA[Bank Account]]></NAME>
 <!--335 DESCRIPTION-->
-<!--335-->              <DESCRIPTION><![CDATA[A monetary account of funds held in a recognized banking institution. ]]></DESCRIPTION>
+<!--335-->              <DESCRIPTION><![CDATA[A monetary account of funds held in a recognized banking institution.]]></DESCRIPTION>
 <!--335 HELP-->
 <!--335-->              <HELP><![CDATA[The Bank Account identifies an account at this Bank.]]></HELP>
 <!--335 AD_PROCESS_ID-->
@@ -8198,7 +8193,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--342 UPDATEDBY-->
 <!--342-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--342 NAME-->
-<!--342-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--342-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--342 DESCRIPTION-->
 <!--342-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--342 HELP-->
@@ -8247,7 +8242,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--343 NAME-->
 <!--343-->              <NAME><![CDATA[User/Contact]]></NAME>
 <!--343 DESCRIPTION-->
-<!--343-->              <DESCRIPTION><![CDATA[An acquaintance to reach for information related to the business partner. ]]></DESCRIPTION>
+<!--343-->              <DESCRIPTION><![CDATA[An acquaintance to reach for information related to the business partner.]]></DESCRIPTION>
 <!--343 HELP-->
 <!--343-->              <HELP><![CDATA[The User identifies a unique user in the system. This could be an internal user or a business partner contact]]></HELP>
 <!--343 AD_PROCESS_ID-->
@@ -8476,10 +8471,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--348 DESCRIPTION-->
 <!--348-->              <DESCRIPTION><![CDATA[An item which is owned and exchangeable for cash.]]></DESCRIPTION>
 <!--348 HELP-->
-<!--348-->              <HELP><![CDATA[Any item of economic value owned by the corporation, especially that which could be converted to cash.
-
-
-]]></HELP>
+<!--348-->              <HELP><![CDATA[Any item of economic value owned by the corporation, especially that which could be converted to cash.]]></HELP>
 <!--348 AD_PROCESS_ID-->
 <!--348-->              <AD_PROCESS_ID><![CDATA[223]]></AD_PROCESS_ID>
 <!--348 SEQNO-->
@@ -8520,7 +8512,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--349 UPDATEDBY-->
 <!--349-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--349 NAME-->
-<!--349-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--349-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--349 DESCRIPTION-->
 <!--349-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--349 HELP-->
@@ -8569,7 +8561,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--350 NAME-->
 <!--350-->              <NAME><![CDATA[User/Contact]]></NAME>
 <!--350 DESCRIPTION-->
-<!--350-->              <DESCRIPTION><![CDATA[An acquaintance to reach for information related to the business partner. ]]></DESCRIPTION>
+<!--350-->              <DESCRIPTION><![CDATA[An acquaintance to reach for information related to the business partner.]]></DESCRIPTION>
 <!--350 HELP-->
 <!--350-->              <HELP><![CDATA[The User identifies a unique user in the system. This could be an internal user or a business partner contact]]></HELP>
 <!--350 AD_PROCESS_ID-->
@@ -9902,7 +9894,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800012 UPDATEDBY-->
 <!--800012-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800012 NAME-->
-<!--800012-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--800012-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--800012 DESCRIPTION-->
 <!--800012-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800012 HELP-->
@@ -10084,7 +10076,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800016 NAME-->
 <!--800016-->              <NAME><![CDATA[Ending Date]]></NAME>
 <!--800016 DESCRIPTION-->
-<!--800016-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc. ]]></DESCRIPTION>
+<!--800016-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc.]]></DESCRIPTION>
 <!--800016 HELP-->
 <!--800016-->              <HELP><![CDATA[The Date To indicates the end date of a range (inclusive)]]></HELP>
 <!--800016 AD_PROCESS_ID-->
@@ -10174,7 +10166,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800018 NAME-->
 <!--800018-->              <NAME><![CDATA[Ending Date]]></NAME>
 <!--800018 DESCRIPTION-->
-<!--800018-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc. ]]></DESCRIPTION>
+<!--800018-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc.]]></DESCRIPTION>
 <!--800018 HELP-->
 <!--800018-->              <HELP><![CDATA[The Date To indicates the end date of a range (inclusive)]]></HELP>
 <!--800018 AD_PROCESS_ID-->
@@ -10350,7 +10342,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800023 NAME-->
 <!--800023-->              <NAME><![CDATA[Ending Date]]></NAME>
 <!--800023 DESCRIPTION-->
-<!--800023-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc. ]]></DESCRIPTION>
+<!--800023-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc.]]></DESCRIPTION>
 <!--800023 HELP-->
 <!--800023-->              <HELP><![CDATA[The Date To indicates the end date of a range (inclusive)]]></HELP>
 <!--800023 AD_PROCESS_ID-->
@@ -10397,8 +10389,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800024 DESCRIPTION-->
 <!--800024-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--800024 HELP-->
-<!--800024-->              <HELP><![CDATA[
-The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
+<!--800024-->              <HELP><![CDATA[The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
 <!--800024 AD_PROCESS_ID-->
 <!--800024-->              <AD_PROCESS_ID><![CDATA[800075]]></AD_PROCESS_ID>
 <!--800024 SEQNO-->
@@ -10625,7 +10616,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800029 NAME-->
 <!--800029-->              <NAME><![CDATA[Ending Date]]></NAME>
 <!--800029 DESCRIPTION-->
-<!--800029-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc. ]]></DESCRIPTION>
+<!--800029-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc.]]></DESCRIPTION>
 <!--800029 HELP-->
 <!--800029-->              <HELP><![CDATA[The Date To indicates the end date of a range (inclusive)]]></HELP>
 <!--800029 AD_PROCESS_ID-->
@@ -10668,7 +10659,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800030 UPDATEDBY-->
 <!--800030-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800030 NAME-->
-<!--800030-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--800030-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--800030 DESCRIPTION-->
 <!--800030-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800030 HELP-->
@@ -10758,7 +10749,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800032 UPDATEDBY-->
 <!--800032-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800032 NAME-->
-<!--800032-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--800032-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--800032 DESCRIPTION-->
 <!--800032-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800032 HELP-->
@@ -11699,8 +11690,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800053 DESCRIPTION-->
 <!--800053-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--800053 HELP-->
-<!--800053-->              <HELP><![CDATA[
-The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
+<!--800053-->              <HELP><![CDATA[The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
 <!--800053 AD_PROCESS_ID-->
 <!--800053-->              <AD_PROCESS_ID><![CDATA[800163]]></AD_PROCESS_ID>
 <!--800053 SEQNO-->
@@ -11741,7 +11731,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800054 UPDATEDBY-->
 <!--800054-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800054 NAME-->
-<!--800054-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--800054-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--800054 DESCRIPTION-->
 <!--800054-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800054 HELP-->
@@ -11925,7 +11915,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800058 NAME-->
 <!--800058-->              <NAME><![CDATA[Ending Date]]></NAME>
 <!--800058 DESCRIPTION-->
-<!--800058-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc. ]]></DESCRIPTION>
+<!--800058-->              <DESCRIPTION><![CDATA[A parameter stating the ending time range related for a specified request, query, etc.]]></DESCRIPTION>
 <!--800058 HELP-->
 <!--800058-->              <HELP><![CDATA[The Date To indicates the end date of a range (inclusive)]]></HELP>
 <!--800058 AD_PROCESS_ID-->
@@ -12019,8 +12009,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--800060 DESCRIPTION-->
 <!--800060-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--800060 HELP-->
-<!--800060-->              <HELP><![CDATA[
-The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
+<!--800060-->              <HELP><![CDATA[The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
 <!--800060 AD_PROCESS_ID-->
 <!--800060-->              <AD_PROCESS_ID><![CDATA[800171]]></AD_PROCESS_ID>
 <!--800060 SEQNO-->
@@ -12057,7 +12046,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--1000500000 CREATEDBY-->
 <!--1000500000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1000500000 UPDATED-->
-<!--1000500000-->              <UPDATED><![CDATA[2008-04-06 16:09:11.0]]></UPDATED>
+<!--1000500000-->              <UPDATED><![CDATA[2008-04-22 22:15:57.0]]></UPDATED>
 <!--1000500000 UPDATEDBY-->
 <!--1000500000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1000500000 NAME-->
@@ -12104,11 +12093,15 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--1000600000 CREATEDBY-->
 <!--1000600000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1000600000 UPDATED-->
-<!--1000600000-->              <UPDATED><![CDATA[2008-04-07 12:51:22.0]]></UPDATED>
+<!--1000600000-->              <UPDATED><![CDATA[2008-04-22 22:15:57.0]]></UPDATED>
 <!--1000600000 UPDATEDBY-->
 <!--1000600000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1000600000 NAME-->
 <!--1000600000-->              <NAME><![CDATA[Accounting schema]]></NAME>
+<!--1000600000 DESCRIPTION-->
+<!--1000600000-->              <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
+<!--1000600000 HELP-->
+<!--1000600000-->              <HELP><![CDATA[An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar]]></HELP>
 <!--1000600000 AD_PROCESS_ID-->
 <!--1000600000-->              <AD_PROCESS_ID><![CDATA[140]]></AD_PROCESS_ID>
 <!--1000600000 SEQNO-->
@@ -12147,11 +12140,15 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--1000600001 CREATEDBY-->
 <!--1000600001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1000600001 UPDATED-->
-<!--1000600001-->              <UPDATED><![CDATA[2008-04-07 16:58:33.0]]></UPDATED>
+<!--1000600001-->              <UPDATED><![CDATA[2008-04-22 22:15:57.0]]></UPDATED>
 <!--1000600001 UPDATEDBY-->
 <!--1000600001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1000600001 NAME-->
-<!--1000600001-->              <NAME><![CDATA[Accounting schema]]></NAME>
+<!--1000600001-->              <NAME><![CDATA[Accounting Schema]]></NAME>
+<!--1000600001 DESCRIPTION-->
+<!--1000600001-->              <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
+<!--1000600001 HELP-->
+<!--1000600001-->              <HELP><![CDATA[An Accounting Schema defines the rules used in accounting such as costing method, currency and calendar]]></HELP>
 <!--1000600001 AD_PROCESS_ID-->
 <!--1000600001-->              <AD_PROCESS_ID><![CDATA[112]]></AD_PROCESS_ID>
 <!--1000600001 SEQNO-->
@@ -12170,6 +12167,8 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--1000600001-->              <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--1000600001 DEFAULTVALUE-->
 <!--1000600001-->              <DEFAULTVALUE><![CDATA[@C_AcctSchema_ID@]]></DEFAULTVALUE>
+<!--1000600001 AD_ELEMENT_ID-->
+<!--1000600001-->              <AD_ELEMENT_ID><![CDATA[181]]></AD_ELEMENT_ID>
 <!--1000600001 ENTITYTYPE-->
 <!--1000600001-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1000600001**************--></AD_PROCESS_PARA>
@@ -12237,7 +12236,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--1004400001 UPDATEDBY-->
 <!--1004400001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400001 NAME-->
-<!--1004400001-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--1004400001-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--1004400001 DESCRIPTION-->
 <!--1004400001-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--1004400001 HELP-->
@@ -12382,8 +12381,7 @@ The Warehouse identifies a unique Warehouse where products are stored or Service
 <!--1004400004 DESCRIPTION-->
 <!--1004400004-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--1004400004 HELP-->
-<!--1004400004-->              <HELP><![CDATA[
-The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
+<!--1004400004-->              <HELP><![CDATA[The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
 <!--1004400004 AD_PROCESS_ID-->
 <!--1004400004-->              <AD_PROCESS_ID><![CDATA[1004400000]]></AD_PROCESS_ID>
 <!--1004400004 SEQNO-->

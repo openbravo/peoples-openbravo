@@ -54,7 +54,7 @@
 <!--2 DESCRIPTION-->
 <!--2-->              <DESCRIPTION><![CDATA[Reference Validation Type list]]></DESCRIPTION>
 <!--2 HELP-->
-<!--2-->              <HELP><![CDATA[e.g. I - Independent ]]></HELP>
+<!--2-->              <HELP><![CDATA[e.g. I - Independent]]></HELP>
 <!--2 VALIDATIONTYPE-->
 <!--2-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--2 VFORMAT-->
@@ -2422,7 +2422,7 @@
 <!--163 UPDATEDBY-->
 <!--163-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--163 NAME-->
-<!--163-->              <NAME><![CDATA[M_Product Category ]]></NAME>
+<!--163-->              <NAME><![CDATA[M_Product Category]]></NAME>
 <!--163 VALIDATIONTYPE-->
 <!--163-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
 <!--163 ENTITYTYPE-->
@@ -3036,8 +3036,6 @@
 <!--189-->              <NAME><![CDATA[M_Transaction Movement Type]]></NAME>
 <!--189 VALIDATIONTYPE-->
 <!--189-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--189 VFORMAT-->
-<!--189-->              <VFORMAT><![CDATA[ ]]></VFORMAT>
 <!--189 ENTITYTYPE-->
 <!--189-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--189**************--></AD_REFERENCE>
@@ -6717,7 +6715,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800057 UPDATEDBY-->
 <!--800057-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800057 NAME-->
-<!--800057-->              <NAME><![CDATA[Business Partner ]]></NAME>
+<!--800057-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--800057 VALIDATIONTYPE-->
 <!--800057-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800057 VFORMAT-->
@@ -8017,7 +8015,11 @@ For example, if you want to create different invoices for each ship location for
 <!--1004400000 NAME-->
 <!--1004400000-->              <NAME><![CDATA[Requisition status]]></NAME>
 <!--1004400000 HELP-->
-<!--1004400000-->              <HELP><![CDATA[List of the possible status of a requisition:-O: Open-P: Planned-C: Closed-D: Cancelled]]></HELP>
+<!--1004400000-->              <HELP><![CDATA[List of the possible status of a requisition:
+-O: Open
+-P: Planned
+-C: Closed
+-D: Cancelled]]></HELP>
 <!--1004400000 VALIDATIONTYPE-->
 <!--1004400000-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--1004400000 ENTITYTYPE-->

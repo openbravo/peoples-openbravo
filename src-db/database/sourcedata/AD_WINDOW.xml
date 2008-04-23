@@ -25,9 +25,9 @@
 <!--100 NAME-->
 <!--100-->              <NAME><![CDATA[Tables and Columns]]></NAME>
 <!--100 DESCRIPTION-->
-<!--100-->              <DESCRIPTION><![CDATA[Edit tables and columns so that Openbravo can access the database, as well as control the role access. ]]></DESCRIPTION>
+<!--100-->              <DESCRIPTION><![CDATA[Edit tables and columns so that Openbravo can access the database, as well as control the role access.]]></DESCRIPTION>
 <!--100 HELP-->
-<!--100-->              <HELP><![CDATA[Edit tables and columns so that Openbravo can access the database, as well as control the role access. ]]></HELP>
+<!--100-->              <HELP><![CDATA[Edit tables and columns so that Openbravo can access the database, as well as control the role access.]]></HELP>
 <!--100 WINDOWTYPE-->
 <!--100-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--100 ISSOTRX-->
@@ -305,9 +305,9 @@
 <!--108 NAME-->
 <!--108-->              <NAME><![CDATA[User]]></NAME>
 <!--108 DESCRIPTION-->
-<!--108-->              <DESCRIPTION><![CDATA[Create users and manage user roles to give access permissions. ]]></DESCRIPTION>
+<!--108-->              <DESCRIPTION><![CDATA[Create users and manage user roles to give access permissions.]]></DESCRIPTION>
 <!--108 HELP-->
-<!--108-->              <HELP><![CDATA[Create users and manage user roles to give access permissions. ]]></HELP>
+<!--108-->              <HELP><![CDATA[Create users and manage user roles to give access permissions.]]></HELP>
 <!--108 WINDOWTYPE-->
 <!--108-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--108 ISSOTRX-->
@@ -375,9 +375,9 @@
 <!--110 NAME-->
 <!--110-->              <NAME><![CDATA[Organization]]></NAME>
 <!--110 DESCRIPTION-->
-<!--110-->              <DESCRIPTION><![CDATA[Create organizations and manage the organizational structure according to your business necessities. ]]></DESCRIPTION>
+<!--110-->              <DESCRIPTION><![CDATA[Create organizations and manage the organizational structure according to your business necessities.]]></DESCRIPTION>
 <!--110 HELP-->
-<!--110-->              <HELP><![CDATA[Create organizations and manage the organizational structure according to your business necessities. ]]></HELP>
+<!--110-->              <HELP><![CDATA[Create organizations and manage the organizational structure according to your business necessities.]]></HELP>
 <!--110 WINDOWTYPE-->
 <!--110-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--110 ISSOTRX-->
@@ -655,9 +655,9 @@
 <!--118 NAME-->
 <!--118-->              <NAME><![CDATA[Account Tree]]></NAME>
 <!--118 DESCRIPTION-->
-<!--118-->              <DESCRIPTION><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees. ]]></DESCRIPTION>
+<!--118-->              <DESCRIPTION><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees.]]></DESCRIPTION>
 <!--118 HELP-->
-<!--118-->              <HELP><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees. ]]></HELP>
+<!--118-->              <HELP><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees.]]></HELP>
 <!--118 WINDOWTYPE-->
 <!--118-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--118 ISSOTRX-->
@@ -725,9 +725,9 @@
 <!--121 NAME-->
 <!--121-->              <NAME><![CDATA[Location]]></NAME>
 <!--121 DESCRIPTION-->
-<!--121-->              <DESCRIPTION><![CDATA[Define addresses or service points of your organizations. ]]></DESCRIPTION>
+<!--121-->              <DESCRIPTION><![CDATA[Define addresses or service points of your organizations.]]></DESCRIPTION>
 <!--121 HELP-->
-<!--121-->              <HELP><![CDATA[Define addresses or service points of your organizations. ]]></HELP>
+<!--121-->              <HELP><![CDATA[Define addresses or service points of your organizations.]]></HELP>
 <!--121 WINDOWTYPE-->
 <!--121-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--121 ISSOTRX-->
@@ -830,9 +830,9 @@
 <!--125 NAME-->
 <!--125-->              <NAME><![CDATA[Accounting Schema]]></NAME>
 <!--125 DESCRIPTION-->
-<!--125-->              <DESCRIPTION><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ]]></DESCRIPTION>
+<!--125-->              <DESCRIPTION><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default.]]></DESCRIPTION>
 <!--125 HELP-->
-<!--125-->              <HELP><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ]]></HELP>
+<!--125-->              <HELP><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default.]]></HELP>
 <!--125 WINDOWTYPE-->
 <!--125-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--125 ISSOTRX-->
@@ -865,9 +865,9 @@
 <!--127 NAME-->
 <!--127-->              <NAME><![CDATA[Test]]></NAME>
 <!--127 DESCRIPTION-->
-<!--127-->              <DESCRIPTION><![CDATA[View an example of a window that shows fields with all possible references or data types. ]]></DESCRIPTION>
+<!--127-->              <DESCRIPTION><![CDATA[View an example of a window that shows fields with all possible references or data types.]]></DESCRIPTION>
 <!--127 HELP-->
-<!--127-->              <HELP><![CDATA[View an example of a window that shows fields with all possible references or data types. ]]></HELP>
+<!--127-->              <HELP><![CDATA[View an example of a window that shows fields with all possible references or data types.]]></HELP>
 <!--127 WINDOWTYPE-->
 <!--127-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--127 ISSOTRX-->
@@ -1110,9 +1110,9 @@
 <!--135 NAME-->
 <!--135-->              <NAME><![CDATA[Document Type]]></NAME>
 <!--135 DESCRIPTION-->
-<!--135-->              <DESCRIPTION><![CDATA[Create and manage document types to be used for all application transactions. ]]></DESCRIPTION>
+<!--135-->              <DESCRIPTION><![CDATA[Create and manage document types to be used for all application transactions.]]></DESCRIPTION>
 <!--135 HELP-->
-<!--135-->              <HELP><![CDATA[Create and manage document types to be used for all application transactions. ]]></HELP>
+<!--135-->              <HELP><![CDATA[Create and manage document types to be used for all application transactions.]]></HELP>
 <!--135 WINDOWTYPE-->
 <!--135-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--135 ISSOTRX-->
@@ -1250,9 +1250,9 @@
 <!--139 NAME-->
 <!--139-->              <NAME><![CDATA[Warehouse and Storage Bins]]></NAME>
 <!--139 DESCRIPTION-->
-<!--139-->              <DESCRIPTION><![CDATA[Create warehouses and organize them using storage bins. ]]></DESCRIPTION>
+<!--139-->              <DESCRIPTION><![CDATA[Create warehouses and organize them using storage bins.]]></DESCRIPTION>
 <!--139 HELP-->
-<!--139-->              <HELP><![CDATA[Create warehouses and organize them using storage bins. ]]></HELP>
+<!--139-->              <HELP><![CDATA[Create warehouses and organize them using storage bins.]]></HELP>
 <!--139 WINDOWTYPE-->
 <!--139-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--139 ISSOTRX-->
@@ -1355,9 +1355,9 @@
 <!--142 NAME-->
 <!--142-->              <NAME><![CDATA[Shipping Company]]></NAME>
 <!--142 DESCRIPTION-->
-<!--142-->              <DESCRIPTION><![CDATA[Create shipping companies and define freight costs to be used in products logistics. ]]></DESCRIPTION>
+<!--142-->              <DESCRIPTION><![CDATA[Create shipping companies and define freight costs to be used in products logistics.]]></DESCRIPTION>
 <!--142 HELP-->
-<!--142-->              <HELP><![CDATA[Create shipping companies and define freight costs to be used in products logistics. ]]></HELP>
+<!--142-->              <HELP><![CDATA[Create shipping companies and define freight costs to be used in products logistics.]]></HELP>
 <!--142 WINDOWTYPE-->
 <!--142-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--142 ISSOTRX-->
@@ -1460,9 +1460,9 @@
 <!--146 NAME-->
 <!--146-->              <NAME><![CDATA[Price List]]></NAME>
 <!--146 DESCRIPTION-->
-<!--146-->              <DESCRIPTION><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.  ]]></DESCRIPTION>
+<!--146-->              <DESCRIPTION><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.]]></DESCRIPTION>
 <!--146 HELP-->
-<!--146-->              <HELP><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.  ]]></HELP>
+<!--146-->              <HELP><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.]]></HELP>
 <!--146 WINDOWTYPE-->
 <!--146-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--146 ISSOTRX-->
@@ -1495,9 +1495,9 @@
 <!--147 NAME-->
 <!--147-->              <NAME><![CDATA[Invoice Schedule]]></NAME>
 <!--147 DESCRIPTION-->
-<!--147-->              <DESCRIPTION><![CDATA[Define invoice schedules to be used for business partners. ]]></DESCRIPTION>
+<!--147-->              <DESCRIPTION><![CDATA[Define invoice schedules to be used for business partners.]]></DESCRIPTION>
 <!--147 HELP-->
-<!--147-->              <HELP><![CDATA[Define invoice schedules to be used for business partners. ]]></HELP>
+<!--147-->              <HELP><![CDATA[Define invoice schedules to be used for business partners.]]></HELP>
 <!--147 WINDOWTYPE-->
 <!--147-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--147 ISSOTRX-->
@@ -1738,9 +1738,9 @@
 <!--158 NAME-->
 <!--158-->              <NAME><![CDATA[Bank]]></NAME>
 <!--158 DESCRIPTION-->
-<!--158-->              <DESCRIPTION><![CDATA[Define banks and the related accounts. ]]></DESCRIPTION>
+<!--158-->              <DESCRIPTION><![CDATA[Define banks and the related accounts.]]></DESCRIPTION>
 <!--158 HELP-->
-<!--158-->              <HELP><![CDATA[Define banks and the related accounts. ]]></HELP>
+<!--158-->              <HELP><![CDATA[Define banks and the related accounts.]]></HELP>
 <!--158 WINDOWTYPE-->
 <!--158-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--158 ISSOTRX-->
@@ -1775,7 +1775,7 @@
 <!--159 DESCRIPTION-->
 <!--159-->              <DESCRIPTION><![CDATA[Maintain Dunning Levels]]></DESCRIPTION>
 <!--159 HELP-->
-<!--159-->              <HELP><![CDATA[The Dunning Window defines the parameters that will be used when generating Dunning Letters.  Each customer can be associated with a Dunning Code.  ]]></HELP>
+<!--159-->              <HELP><![CDATA[The Dunning Window defines the parameters that will be used when generating Dunning Letters.  Each customer can be associated with a Dunning Code.]]></HELP>
 <!--159 WINDOWTYPE-->
 <!--159-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--159 ISSOTRX-->
@@ -1878,9 +1878,9 @@
 <!--162 NAME-->
 <!--162-->              <NAME><![CDATA[Accounting Transaction Details]]></NAME>
 <!--162 DESCRIPTION-->
-<!--162-->              <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period. ]]></DESCRIPTION>
+<!--162-->              <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period.]]></DESCRIPTION>
 <!--162 HELP-->
-<!--162-->              <HELP><![CDATA[View detailed general ledger entries for a specified time period. ]]></HELP>
+<!--162-->              <HELP><![CDATA[View detailed general ledger entries for a specified time period.]]></HELP>
 <!--162 WINDOWTYPE-->
 <!--162-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--162 ISSOTRX-->
@@ -1983,9 +1983,9 @@
 <!--167 NAME-->
 <!--167-->              <NAME><![CDATA[Sales Invoice]]></NAME>
 <!--167 DESCRIPTION-->
-<!--167-->              <DESCRIPTION><![CDATA[Create and edit sales invoices for your customers. ]]></DESCRIPTION>
+<!--167-->              <DESCRIPTION><![CDATA[Create and edit sales invoices for your customers.]]></DESCRIPTION>
 <!--167 HELP-->
-<!--167-->              <HELP><![CDATA[Create and edit sales invoices for your customers. ]]></HELP>
+<!--167-->              <HELP><![CDATA[Create and edit sales invoices for your customers.]]></HELP>
 <!--167 WINDOWTYPE-->
 <!--167-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--167 ISSOTRX-->
@@ -2088,9 +2088,9 @@
 <!--170 NAME-->
 <!--170-->              <NAME><![CDATA[Goods Movements]]></NAME>
 <!--170 DESCRIPTION-->
-<!--170-->              <DESCRIPTION><![CDATA[Create and edit internal inventory movements among warehouses and storage bins. ]]></DESCRIPTION>
+<!--170-->              <DESCRIPTION><![CDATA[Create and edit internal inventory movements among warehouses and storage bins.]]></DESCRIPTION>
 <!--170 HELP-->
-<!--170-->              <HELP><![CDATA[Create and edit internal inventory movements among warehouses and storage bins. ]]></HELP>
+<!--170-->              <HELP><![CDATA[Create and edit internal inventory movements among warehouses and storage bins.]]></HELP>
 <!--170 WINDOWTYPE-->
 <!--170-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--170 ISSOTRX-->
@@ -2401,9 +2401,9 @@
 <!--184 NAME-->
 <!--184-->              <NAME><![CDATA[Goods Receipt]]></NAME>
 <!--184 DESCRIPTION-->
-<!--184-->              <DESCRIPTION><![CDATA[Create and edit goods receipts from your vendors and create invoices from these receipts. ]]></DESCRIPTION>
+<!--184-->              <DESCRIPTION><![CDATA[Create and edit goods receipts from your vendors and create invoices from these receipts.]]></DESCRIPTION>
 <!--184 HELP-->
-<!--184-->              <HELP><![CDATA[Create and edit goods receipts from your vendors and create invoices from these receipts. ]]></HELP>
+<!--184-->              <HELP><![CDATA[Create and edit goods receipts from your vendors and create invoices from these receipts.]]></HELP>
 <!--184 WINDOWTYPE-->
 <!--184-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--184 ISSOTRX-->
@@ -2502,9 +2502,9 @@
 <!--187 NAME-->
 <!--187-->              <NAME><![CDATA[Form]]></NAME>
 <!--187 DESCRIPTION-->
-<!--187-->              <DESCRIPTION><![CDATA[Create and edit forms (manual windows) to be used in the application. ]]></DESCRIPTION>
+<!--187-->              <DESCRIPTION><![CDATA[Create and edit forms (manual windows) to be used in the application.]]></DESCRIPTION>
 <!--187 HELP-->
-<!--187-->              <HELP><![CDATA[Create and edit forms (manual windows) to be used in the application. ]]></HELP>
+<!--187-->              <HELP><![CDATA[Create and edit forms (manual windows) to be used in the application.]]></HELP>
 <!--187 WINDOWTYPE-->
 <!--187-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--187 ISSOTRX-->
@@ -2640,9 +2640,9 @@
 <!--191 NAME-->
 <!--191-->              <NAME><![CDATA[Bill of Materials Production]]></NAME>
 <!--191 DESCRIPTION-->
-<!--191-->              <DESCRIPTION><![CDATA[Create and run production processes using the previously defined bills of materials. ]]></DESCRIPTION>
+<!--191-->              <DESCRIPTION><![CDATA[Create and run production processes using the previously defined bills of materials.]]></DESCRIPTION>
 <!--191 HELP-->
-<!--191-->              <HELP><![CDATA[Create and run production processes using the previously defined bills of materials. ]]></HELP>
+<!--191-->              <HELP><![CDATA[Create and run production processes using the previously defined bills of materials.]]></HELP>
 <!--191 WINDOWTYPE-->
 <!--191-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--191 ISSOTRX-->
@@ -2745,9 +2745,9 @@
 <!--194 NAME-->
 <!--194-->              <NAME><![CDATA[Bank Statement]]></NAME>
 <!--194 DESCRIPTION-->
-<!--194-->              <DESCRIPTION><![CDATA[View your bank statements against transactions created and edited in the application. ]]></DESCRIPTION>
+<!--194-->              <DESCRIPTION><![CDATA[View your bank statements against transactions created and edited in the application.]]></DESCRIPTION>
 <!--194 HELP-->
-<!--194-->              <HELP><![CDATA[View your bank statements against transactions created and edited in the application. ]]></HELP>
+<!--194-->              <HELP><![CDATA[View your bank statements against transactions created and edited in the application.]]></HELP>
 <!--194 WINDOWTYPE-->
 <!--194-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--194 ISSOTRX-->
@@ -3509,9 +3509,9 @@
 <!--223 NAME-->
 <!--223-->              <NAME><![CDATA[Goods Transaction]]></NAME>
 <!--223 DESCRIPTION-->
-<!--223-->              <DESCRIPTION><![CDATA[View all goods transactions carried out  in the application. ]]></DESCRIPTION>
+<!--223-->              <DESCRIPTION><![CDATA[View all goods transactions carried out  in the application.]]></DESCRIPTION>
 <!--223 HELP-->
-<!--223-->              <HELP><![CDATA[View all goods transactions carried out  in the application. ]]></HELP>
+<!--223-->              <HELP><![CDATA[View all goods transactions carried out  in the application.]]></HELP>
 <!--223 WINDOWTYPE-->
 <!--223-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--223 ISSOTRX-->
@@ -4732,7 +4732,7 @@
 <!--259 UPDATEDBY-->
 <!--259-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--259 NAME-->
-<!--259-->              <NAME><![CDATA[Serial Number Sequence ]]></NAME>
+<!--259-->              <NAME><![CDATA[Serial Number Sequence]]></NAME>
 <!--259 DESCRIPTION-->
 <!--259-->              <DESCRIPTION><![CDATA[Define a serial number sequence to assign serial numbers to products.]]></DESCRIPTION>
 <!--259 HELP-->
@@ -4804,9 +4804,9 @@
 <!--261 NAME-->
 <!--261-->              <NAME><![CDATA[Attribute Search]]></NAME>
 <!--261 DESCRIPTION-->
-<!--261-->              <DESCRIPTION><![CDATA[Common Search Attribute ]]></DESCRIPTION>
+<!--261-->              <DESCRIPTION><![CDATA[Common Search Attribute]]></DESCRIPTION>
 <!--261 HELP-->
-<!--261-->              <HELP><![CDATA[Common Search Attribute ]]></HELP>
+<!--261-->              <HELP><![CDATA[Common Search Attribute]]></HELP>
 <!--261 WINDOWTYPE-->
 <!--261-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--261 ISSOTRX-->
@@ -4837,7 +4837,7 @@
 <!--262 UPDATEDBY-->
 <!--262-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--262 NAME-->
-<!--262-->              <NAME><![CDATA[Vendor Expense Invoice ]]></NAME>
+<!--262-->              <NAME><![CDATA[Vendor Expense Invoice]]></NAME>
 <!--262 DESCRIPTION-->
 <!--262-->              <DESCRIPTION><![CDATA[Create and edit vendor invoices.]]></DESCRIPTION>
 <!--262 HELP-->
@@ -5498,9 +5498,9 @@
 <!--283 NAME-->
 <!--283-->              <NAME><![CDATA[Accounting Dimension]]></NAME>
 <!--283 DESCRIPTION-->
-<!--283-->              <DESCRIPTION><![CDATA[Create and edit accounting dimensions to be used in dimensional reports. ]]></DESCRIPTION>
+<!--283-->              <DESCRIPTION><![CDATA[Create and edit accounting dimensions to be used in dimensional reports.]]></DESCRIPTION>
 <!--283 HELP-->
-<!--283-->              <HELP><![CDATA[Create and edit accounting dimensions to be used in dimensional reports. ]]></HELP>
+<!--283-->              <HELP><![CDATA[Create and edit accounting dimensions to be used in dimensional reports.]]></HELP>
 <!--283 WINDOWTYPE-->
 <!--283-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--283 ISSOTRX-->
@@ -5953,9 +5953,9 @@
 <!--800004 NAME-->
 <!--800004-->              <NAME><![CDATA[Simple Sales Order]]></NAME>
 <!--800004 DESCRIPTION-->
-<!--800004-->              <DESCRIPTION><![CDATA[Create sales orders quickly using predefined product templates.  ]]></DESCRIPTION>
+<!--800004-->              <DESCRIPTION><![CDATA[Create sales orders quickly using predefined product templates.]]></DESCRIPTION>
 <!--800004 HELP-->
-<!--800004-->              <HELP><![CDATA[Create sales orders quickly using predefined product templates.  ]]></HELP>
+<!--800004-->              <HELP><![CDATA[Create sales orders quickly using predefined product templates.]]></HELP>
 <!--800004 WINDOWTYPE-->
 <!--800004-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800004 ISSOTRX-->
@@ -5988,9 +5988,9 @@
 <!--800005 NAME-->
 <!--800005-->              <NAME><![CDATA[Settlement]]></NAME>
 <!--800005 DESCRIPTION-->
-<!--800005-->              <DESCRIPTION><![CDATA[Edit payments by summing one or many into one or by dividing one into many.  Here you manage payments that come from invoices generated in the application. ]]></DESCRIPTION>
+<!--800005-->              <DESCRIPTION><![CDATA[Edit payments by summing one or many into one or by dividing one into many.  Here you manage payments that come from invoices generated in the application.]]></DESCRIPTION>
 <!--800005 HELP-->
-<!--800005-->              <HELP><![CDATA[Edit payments by summing one or many into one or by dividing one into many.  Here you manage payments that come from invoices generated in the application. ]]></HELP>
+<!--800005-->              <HELP><![CDATA[Edit payments by summing one or many into one or by dividing one into many.  Here you manage payments that come from invoices generated in the application.]]></HELP>
 <!--800005 WINDOWTYPE-->
 <!--800005-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800005 ISSOTRX-->
@@ -6365,9 +6365,9 @@
 <!--800017 NAME-->
 <!--800017-->              <NAME><![CDATA[Discount]]></NAME>
 <!--800017 DESCRIPTION-->
-<!--800017-->              <DESCRIPTION><![CDATA[Create and edit product price percentage discounts. ]]></DESCRIPTION>
+<!--800017-->              <DESCRIPTION><![CDATA[Create and edit product price percentage discounts.]]></DESCRIPTION>
 <!--800017 HELP-->
-<!--800017-->              <HELP><![CDATA[Create and edit product price percentage discounts. ]]></HELP>
+<!--800017-->              <HELP><![CDATA[Create and edit product price percentage discounts.]]></HELP>
 <!--800017 WINDOWTYPE-->
 <!--800017-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800017 ISSOTRX-->
@@ -6680,9 +6680,9 @@
 <!--800026 NAME-->
 <!--800026-->              <NAME><![CDATA[Amortization]]></NAME>
 <!--800026 DESCRIPTION-->
-<!--800026-->              <DESCRIPTION><![CDATA[Create and edit amortization for a selected year. ]]></DESCRIPTION>
+<!--800026-->              <DESCRIPTION><![CDATA[Create and edit amortization for a selected year.]]></DESCRIPTION>
 <!--800026 HELP-->
-<!--800026-->              <HELP><![CDATA[Create and edit amortization for a selected year. ]]></HELP>
+<!--800026-->              <HELP><![CDATA[Create and edit amortization for a selected year.]]></HELP>
 <!--800026 WINDOWTYPE-->
 <!--800026-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800026 ISSOTRX-->
@@ -6750,9 +6750,9 @@
 <!--800028 NAME-->
 <!--800028-->              <NAME><![CDATA[Price Adjustments]]></NAME>
 <!--800028 DESCRIPTION-->
-<!--800028-->              <DESCRIPTION><![CDATA[Create and edit price adjustments to be applied to business partners, products, or price lists.  ]]></DESCRIPTION>
+<!--800028-->              <DESCRIPTION><![CDATA[Create and edit price adjustments to be applied to business partners, products, or price lists.]]></DESCRIPTION>
 <!--800028 HELP-->
-<!--800028-->              <HELP><![CDATA[Create and edit price adjustments to be applied to business partners, products, or price lists.  ]]></HELP>
+<!--800028-->              <HELP><![CDATA[Create and edit price adjustments to be applied to business partners, products, or price lists.]]></HELP>
 <!--800028 WINDOWTYPE-->
 <!--800028-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800028 ISSOTRX-->
@@ -7623,9 +7623,9 @@
 <!--800077 NAME-->
 <!--800077-->              <NAME><![CDATA[Budget]]></NAME>
 <!--800077 DESCRIPTION-->
-<!--800077-->              <DESCRIPTION><![CDATA[Create and edit budgets to be used for informative purposes. ]]></DESCRIPTION>
+<!--800077-->              <DESCRIPTION><![CDATA[Create and edit budgets to be used for informative purposes.]]></DESCRIPTION>
 <!--800077 HELP-->
-<!--800077-->              <HELP><![CDATA[Create and edit budgets to be used for informative purposes. ]]></HELP>
+<!--800077-->              <HELP><![CDATA[Create and edit budgets to be used for informative purposes.]]></HELP>
 <!--800077 WINDOWTYPE-->
 <!--800077-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800077 ISSOTRX-->
@@ -8315,7 +8315,7 @@
 <!--1002100003 UPDATEDBY-->
 <!--1002100003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100003 NAME-->
-<!--1002100003-->              <NAME><![CDATA[Tax Register Type ]]></NAME>
+<!--1002100003-->              <NAME><![CDATA[Tax Register Type]]></NAME>
 <!--1002100003 DESCRIPTION-->
 <!--1002100003-->              <DESCRIPTION><![CDATA[Tax Register Type]]></DESCRIPTION>
 <!--1002100003 HELP-->

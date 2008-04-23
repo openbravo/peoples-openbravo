@@ -21,7 +21,6 @@
 v_buspartid NUMBER;
 vIsSalesInvoice CHAR(1);
 whamountold NUMBER;
-inpsamountold NUMBER;
 vProcessed  CHAR(1);
 -- InvoiceTax
 v_invoiceid NUMBER;
@@ -40,7 +39,6 @@ v_IsWithTax CHAR(1);
 -- Calculated Variables
 baseamount  NUMBER;
 whamountnew NUMBER;
-inpsamountnew NUMBER;
 vwithid NUMBER;
 finish_process BOOLEAN := FALSE;
 BEGIN
@@ -61,8 +59,8 @@ BEGIN
         taxamountold := :OLD.taxamt;
       END IF;
      -- Read data from invoice
-     select c_bpartner_id,withholdingamount,inpsamt,issotrx , coalesce(processed,'N') ,c_withholding_id
-     into v_buspartid, whamountold, inpsamountold, vissalesinvoice, vProcessed   ,vwithid
+     select c_bpartner_id,withholdingamount,issotrx , coalesce(processed,'N') ,c_withholding_id
+     into v_buspartid, whamountold, vissalesinvoice, vProcessed   ,vwithid
      from c_invoice
      where c_invoice_id=v_invoiceid;
      -- Se the invoice isn't purchase exit from trigger
@@ -72,7 +70,7 @@ BEGIN
 
   IF (NOT finish_process) THEN
      -- Read data from tax
-     select is_withholdingtax into v_IsWithTax from c_tax where c_tax_id=v_taxid;
+     select iswithholdingtax into v_IsWithTax from c_tax where c_tax_id=v_taxid;
 
      -- Read data from Withholding
      BEGIN
@@ -100,13 +98,11 @@ BEGIN
       IF (v_IsWithTax= 'Y') and (includetaxinps = 'Y') THEN
         baseamount := baseamountpercent * (taxamountnew-taxamountold)/100;
         whamountnew := whamountold + withpercent*baseamount/100 ;
-        inpsamountnew :=inpsamountold + taxamountnew-taxamountold;
         if (v_taxid<>taxinps_id)  then
           whamountnew:=whamountold;
         end if;
         UPDATE c_invoice
-        SET withholdingamount = whamountnew,
-        inpsamt=inpsamountnew
+        SET withholdingamount = whamountnew
         WHERE c_invoice_id = v_invoiceid;
       END IF;
 
