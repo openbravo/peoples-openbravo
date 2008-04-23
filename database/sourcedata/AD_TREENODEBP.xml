@@ -5,18 +5,28 @@
 0. Core Range.
 ************************
 -->
-  <AD_TREENODEBP><!--AD_TREE_ID=40 NODE_ID=0-->
-    <AD_TREE_ID>40</AD_TREE_ID><!--AD_TREE_ID=40 NODE_ID=0-->
-    <NODE_ID>0</NODE_ID><!--AD_TREE_ID=40 NODE_ID=0-->
-    <AD_CLIENT_ID>0</AD_CLIENT_ID><!--AD_TREE_ID=40 NODE_ID=0-->
-    <AD_ORG_ID>0</AD_ORG_ID><!--AD_TREE_ID=40 NODE_ID=0-->
-    <ISACTIVE>Y</ISACTIVE><!--AD_TREE_ID=40 NODE_ID=0-->
-    <CREATED>1999-11-16 14:57:10.0</CREATED><!--AD_TREE_ID=40 NODE_ID=0-->
-    <CREATEDBY>0</CREATEDBY><!--AD_TREE_ID=40 NODE_ID=0-->
-    <UPDATED>1999-12-09 20:37:27.0</UPDATED><!--AD_TREE_ID=40 NODE_ID=0-->
-    <UPDATEDBY>0</UPDATEDBY><!--AD_TREE_ID=40 NODE_ID=0-->
-    <SEQNO>0</SEQNO><!--AD_TREE_ID=40 NODE_ID=0-->
-  </AD_TREENODEBP><!--AD_TREE_ID=40 NODE_ID=0-->
+<!--AD_TREE_ID=40 NODE_ID=0-->                    <AD_TREENODEBP>
+<!--AD_TREE_ID=40 NODE_ID=0 AD_TREE_ID-->
+<!--AD_TREE_ID=40 NODE_ID=0-->                        <AD_TREE_ID><![CDATA[40]]></AD_TREE_ID>
+<!--AD_TREE_ID=40 NODE_ID=0 NODE_ID-->
+<!--AD_TREE_ID=40 NODE_ID=0-->                        <NODE_ID><![CDATA[0]]></NODE_ID>
+<!--AD_TREE_ID=40 NODE_ID=0 AD_CLIENT_ID-->
+<!--AD_TREE_ID=40 NODE_ID=0-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--AD_TREE_ID=40 NODE_ID=0 AD_ORG_ID-->
+<!--AD_TREE_ID=40 NODE_ID=0-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--AD_TREE_ID=40 NODE_ID=0 ISACTIVE-->
+<!--AD_TREE_ID=40 NODE_ID=0-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--AD_TREE_ID=40 NODE_ID=0 CREATED-->
+<!--AD_TREE_ID=40 NODE_ID=0-->                        <CREATED><![CDATA[1999-11-16 14:57:10.0]]></CREATED>
+<!--AD_TREE_ID=40 NODE_ID=0 CREATEDBY-->
+<!--AD_TREE_ID=40 NODE_ID=0-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--AD_TREE_ID=40 NODE_ID=0 UPDATED-->
+<!--AD_TREE_ID=40 NODE_ID=0-->                        <UPDATED><![CDATA[1999-12-09 20:37:27.0]]></UPDATED>
+<!--AD_TREE_ID=40 NODE_ID=0 UPDATEDBY-->
+<!--AD_TREE_ID=40 NODE_ID=0-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--AD_TREE_ID=40 NODE_ID=0 SEQNO-->
+<!--AD_TREE_ID=40 NODE_ID=0-->                        <SEQNO><![CDATA[0]]></SEQNO>
+<!--AD_TREE_ID=40 NODE_ID=0-->                    </AD_TREENODEBP>
 <!--
 ************************
 0. End of Core Range.
