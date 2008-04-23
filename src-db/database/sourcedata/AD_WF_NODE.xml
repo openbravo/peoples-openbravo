@@ -177,9 +177,9 @@
 <!--112 NAME-->
 <!--112-->              <NAME><![CDATA[User]]></NAME>
 <!--112 DESCRIPTION-->
-<!--112-->              <DESCRIPTION><![CDATA[Create users and manage user roles to give access permissions. ]]></DESCRIPTION>
+<!--112-->              <DESCRIPTION><![CDATA[Create users and manage user roles to give access permissions.]]></DESCRIPTION>
 <!--112 HELP-->
-<!--112-->              <HELP><![CDATA[Create users and manage user roles to give access permissions. ]]></HELP>
+<!--112-->              <HELP><![CDATA[Create users and manage user roles to give access permissions.]]></HELP>
 <!--112 AD_WORKFLOW_ID-->
 <!--112-->              <AD_WORKFLOW_ID><![CDATA[104]]></AD_WORKFLOW_ID>
 <!--112 ISCENTRALLYMAINTAINED-->
@@ -216,9 +216,9 @@
 <!--113 NAME-->
 <!--113-->              <NAME><![CDATA[Organization]]></NAME>
 <!--113 DESCRIPTION-->
-<!--113-->              <DESCRIPTION><![CDATA[Create organizations and manage the organizational structure according to your business necessities. ]]></DESCRIPTION>
+<!--113-->              <DESCRIPTION><![CDATA[Create organizations and manage the organizational structure according to your business necessities.]]></DESCRIPTION>
 <!--113 HELP-->
-<!--113-->              <HELP><![CDATA[Create organizations and manage the organizational structure according to your business necessities. ]]></HELP>
+<!--113-->              <HELP><![CDATA[Create organizations and manage the organizational structure according to your business necessities.]]></HELP>
 <!--113 AD_WORKFLOW_ID-->
 <!--113-->              <AD_WORKFLOW_ID><![CDATA[104]]></AD_WORKFLOW_ID>
 <!--113 ISCENTRALLYMAINTAINED-->
@@ -563,9 +563,9 @@
 <!--126 NAME-->
 <!--126-->              <NAME><![CDATA[Account Tree]]></NAME>
 <!--126 DESCRIPTION-->
-<!--126-->              <DESCRIPTION><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees. ]]></DESCRIPTION>
+<!--126-->              <DESCRIPTION><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees.]]></DESCRIPTION>
 <!--126 HELP-->
-<!--126-->              <HELP><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees. ]]></HELP>
+<!--126-->              <HELP><![CDATA[Create and edit account elements and add them to your defined chart of accounts or account trees.]]></HELP>
 <!--126 AD_WORKFLOW_ID-->
 <!--126-->              <AD_WORKFLOW_ID><![CDATA[105]]></AD_WORKFLOW_ID>
 <!--126 ISCENTRALLYMAINTAINED-->
@@ -602,9 +602,9 @@
 <!--127 NAME-->
 <!--127-->              <NAME><![CDATA[Accounting Schema]]></NAME>
 <!--127 DESCRIPTION-->
-<!--127-->              <DESCRIPTION><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ]]></DESCRIPTION>
+<!--127-->              <DESCRIPTION><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default.]]></DESCRIPTION>
 <!--127 HELP-->
-<!--127-->              <HELP><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ]]></HELP>
+<!--127-->              <HELP><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default.]]></HELP>
 <!--127 AD_WORKFLOW_ID-->
 <!--127-->              <AD_WORKFLOW_ID><![CDATA[105]]></AD_WORKFLOW_ID>
 <!--127 ISCENTRALLYMAINTAINED-->
@@ -680,9 +680,9 @@
 <!--129 NAME-->
 <!--129-->              <NAME><![CDATA[Document Type]]></NAME>
 <!--129 DESCRIPTION-->
-<!--129-->              <DESCRIPTION><![CDATA[Create and manage document types to be used for all application transactions. ]]></DESCRIPTION>
+<!--129-->              <DESCRIPTION><![CDATA[Create and manage document types to be used for all application transactions.]]></DESCRIPTION>
 <!--129 HELP-->
-<!--129-->              <HELP><![CDATA[Create and manage document types to be used for all application transactions. ]]></HELP>
+<!--129-->              <HELP><![CDATA[Create and manage document types to be used for all application transactions.]]></HELP>
 <!--129 AD_WORKFLOW_ID-->
 <!--129-->              <AD_WORKFLOW_ID><![CDATA[105]]></AD_WORKFLOW_ID>
 <!--129 ISCENTRALLYMAINTAINED-->
@@ -875,9 +875,9 @@
 <!--134 NAME-->
 <!--134-->              <NAME><![CDATA[Invoice Schedule]]></NAME>
 <!--134 DESCRIPTION-->
-<!--134-->              <DESCRIPTION><![CDATA[Define invoice schedules to be used for business partners. ]]></DESCRIPTION>
+<!--134-->              <DESCRIPTION><![CDATA[Define invoice schedules to be used for business partners.]]></DESCRIPTION>
 <!--134 HELP-->
-<!--134-->              <HELP><![CDATA[Define invoice schedules to be used for business partners. ]]></HELP>
+<!--134-->              <HELP><![CDATA[Define invoice schedules to be used for business partners.]]></HELP>
 <!--134 AD_WORKFLOW_ID-->
 <!--134-->              <AD_WORKFLOW_ID><![CDATA[106]]></AD_WORKFLOW_ID>
 <!--134 ISCENTRALLYMAINTAINED-->
@@ -1674,9 +1674,9 @@
 <!--158 NAME-->
 <!--158-->              <NAME><![CDATA[Warehouse and Storage Bins]]></NAME>
 <!--158 DESCRIPTION-->
-<!--158-->              <DESCRIPTION><![CDATA[Create warehouses and organize them using storage bins. ]]></DESCRIPTION>
+<!--158-->              <DESCRIPTION><![CDATA[Create warehouses and organize them using storage bins.]]></DESCRIPTION>
 <!--158 HELP-->
-<!--158-->              <HELP><![CDATA[Create warehouses and organize them using storage bins. ]]></HELP>
+<!--158-->              <HELP><![CDATA[Create warehouses and organize them using storage bins.]]></HELP>
 <!--158 AD_WORKFLOW_ID-->
 <!--158-->              <AD_WORKFLOW_ID><![CDATA[107]]></AD_WORKFLOW_ID>
 <!--158 ISCENTRALLYMAINTAINED-->
@@ -1869,9 +1869,9 @@
 <!--163 NAME-->
 <!--163-->              <NAME><![CDATA[Price List]]></NAME>
 <!--163 DESCRIPTION-->
-<!--163-->              <DESCRIPTION><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.  ]]></DESCRIPTION>
+<!--163-->              <DESCRIPTION><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.]]></DESCRIPTION>
 <!--163 HELP-->
-<!--163-->              <HELP><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.  ]]></HELP>
+<!--163-->              <HELP><![CDATA[Create and edit price lists and versions to optionally apply specified product prices to individual business partners.]]></HELP>
 <!--163 AD_WORKFLOW_ID-->
 <!--163-->              <AD_WORKFLOW_ID><![CDATA[108]]></AD_WORKFLOW_ID>
 <!--163 ISCENTRALLYMAINTAINED-->
@@ -2103,9 +2103,9 @@
 <!--170 NAME-->
 <!--170-->              <NAME><![CDATA[Accounting Schema]]></NAME>
 <!--170 DESCRIPTION-->
-<!--170-->              <DESCRIPTION><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ]]></DESCRIPTION>
+<!--170-->              <DESCRIPTION><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default.]]></DESCRIPTION>
 <!--170 HELP-->
-<!--170-->              <HELP><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default. ]]></HELP>
+<!--170-->              <HELP><![CDATA[Create and edit multiple accounting schemas and assign them account elements; define DB tables to be included in the accounting processes, and define the GL accounts to be used by default.]]></HELP>
 <!--170 AD_WORKFLOW_ID-->
 <!--170-->              <AD_WORKFLOW_ID><![CDATA[110]]></AD_WORKFLOW_ID>
 <!--170 ISCENTRALLYMAINTAINED-->
