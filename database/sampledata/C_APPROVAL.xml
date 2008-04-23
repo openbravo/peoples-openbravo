@@ -5,32 +5,33 @@
 0. Core Range.
 ************************
 -->
-<!--C_APPROVAL_ID=100-->                    <C_APPROVAL>
-<!--C_APPROVAL_ID=100 C_APPROVAL_ID-->
-<!--C_APPROVAL_ID=100-->                        <C_APPROVAL_ID><![CDATA[100]]></C_APPROVAL_ID>
-<!--C_APPROVAL_ID=100 AD_CLIENT_ID-->
-<!--C_APPROVAL_ID=100-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_APPROVAL_ID=100 AD_ORG_ID-->
-<!--C_APPROVAL_ID=100-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_APPROVAL_ID=100 ISACTIVE-->
-<!--C_APPROVAL_ID=100-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_APPROVAL_ID=100 CREATED-->
-<!--C_APPROVAL_ID=100-->                        <CREATED><![CDATA[1999-12-05 23:23:28.0]]></CREATED>
-<!--C_APPROVAL_ID=100 CREATEDBY-->
-<!--C_APPROVAL_ID=100-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_APPROVAL_ID=100 UPDATED-->
-<!--C_APPROVAL_ID=100-->                        <UPDATED><![CDATA[1999-12-09 21:43:11.0]]></UPDATED>
-<!--C_APPROVAL_ID=100 UPDATEDBY-->
-<!--C_APPROVAL_ID=100-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_APPROVAL_ID=100 NAME-->
-<!--C_APPROVAL_ID=100-->                        <NAME><![CDATA[Amount Approval]]></NAME>
-<!--C_APPROVAL_ID=100 ISAMOUNTAPPROVED-->
-<!--C_APPROVAL_ID=100-->                        <ISAMOUNTAPPROVED><![CDATA[Y]]></ISAMOUNTAPPROVED>
-<!--C_APPROVAL_ID=100 ISWORKFLOWAPPROVED-->
-<!--C_APPROVAL_ID=100-->                        <ISWORKFLOWAPPROVED><![CDATA[N]]></ISWORKFLOWAPPROVED>
-<!--C_APPROVAL_ID=100 ISPRODUCTATTRIBUTEAPPROVED-->
-<!--C_APPROVAL_ID=100-->                        <ISPRODUCTATTRIBUTEAPPROVED><![CDATA[N]]></ISPRODUCTATTRIBUTEAPPROVED>
-<!--C_APPROVAL_ID=100-->                    </C_APPROVAL>
+<!--100**************--><C_APPROVAL>
+<!--100 C_APPROVAL_ID-->
+<!--100-->              <C_APPROVAL_ID><![CDATA[100]]></C_APPROVAL_ID>
+<!--100 AD_CLIENT_ID-->
+<!--100-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100 AD_ORG_ID-->
+<!--100-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100 ISACTIVE-->
+<!--100-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100 CREATED-->
+<!--100-->              <CREATED><![CDATA[1999-12-05 23:23:28.0]]></CREATED>
+<!--100 CREATEDBY-->
+<!--100-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--100 UPDATED-->
+<!--100-->              <UPDATED><![CDATA[1999-12-09 21:43:11.0]]></UPDATED>
+<!--100 UPDATEDBY-->
+<!--100-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100 NAME-->
+<!--100-->              <NAME><![CDATA[Amount Approval]]></NAME>
+<!--100 ISAMOUNTAPPROVED-->
+<!--100-->              <ISAMOUNTAPPROVED><![CDATA[Y]]></ISAMOUNTAPPROVED>
+<!--100 ISWORKFLOWAPPROVED-->
+<!--100-->              <ISWORKFLOWAPPROVED><![CDATA[N]]></ISWORKFLOWAPPROVED>
+<!--100 ISPRODUCTATTRIBUTEAPPROVED-->
+<!--100-->              <ISPRODUCTATTRIBUTEAPPROVED><![CDATA[N]]></ISPRODUCTATTRIBUTEAPPROVED>
+<!--100**************--></C_APPROVAL>
+
 <!--
 ************************
 0. End of Core Range.

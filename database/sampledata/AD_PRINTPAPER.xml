@@ -5,150 +5,154 @@
 0. Core Range.
 ************************
 -->
-<!--AD_PRINTPAPER_ID=100-->                    <AD_PRINTPAPER>
-<!--AD_PRINTPAPER_ID=100 AD_PRINTPAPER_ID-->
-<!--AD_PRINTPAPER_ID=100-->                        <AD_PRINTPAPER_ID><![CDATA[100]]></AD_PRINTPAPER_ID>
-<!--AD_PRINTPAPER_ID=100 AD_CLIENT_ID-->
-<!--AD_PRINTPAPER_ID=100-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_PRINTPAPER_ID=100 AD_ORG_ID-->
-<!--AD_PRINTPAPER_ID=100-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_PRINTPAPER_ID=100 ISACTIVE-->
-<!--AD_PRINTPAPER_ID=100-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_PRINTPAPER_ID=100 CREATED-->
-<!--AD_PRINTPAPER_ID=100-->                        <CREATED><![CDATA[2002-07-11 22:07:58.0]]></CREATED>
-<!--AD_PRINTPAPER_ID=100 CREATEDBY-->
-<!--AD_PRINTPAPER_ID=100-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_PRINTPAPER_ID=100 UPDATED-->
-<!--AD_PRINTPAPER_ID=100-->                        <UPDATED><![CDATA[2002-09-14 19:46:06.0]]></UPDATED>
-<!--AD_PRINTPAPER_ID=100 UPDATEDBY-->
-<!--AD_PRINTPAPER_ID=100-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_PRINTPAPER_ID=100 NAME-->
-<!--AD_PRINTPAPER_ID=100-->                        <NAME><![CDATA[Letter Landscape]]></NAME>
-<!--AD_PRINTPAPER_ID=100 DESCRIPTION-->
-<!--AD_PRINTPAPER_ID=100-->                        <DESCRIPTION><![CDATA[1/2 inch margin on all sides]]></DESCRIPTION>
-<!--AD_PRINTPAPER_ID=100 ISDEFAULT-->
-<!--AD_PRINTPAPER_ID=100-->                        <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
-<!--AD_PRINTPAPER_ID=100 ISLANDSCAPE-->
-<!--AD_PRINTPAPER_ID=100-->                        <ISLANDSCAPE><![CDATA[Y]]></ISLANDSCAPE>
-<!--AD_PRINTPAPER_ID=100 CODE-->
-<!--AD_PRINTPAPER_ID=100-->                        <CODE><![CDATA[na-letter]]></CODE>
-<!--AD_PRINTPAPER_ID=100 MARGINTOP-->
-<!--AD_PRINTPAPER_ID=100-->                        <MARGINTOP><![CDATA[36]]></MARGINTOP>
-<!--AD_PRINTPAPER_ID=100 MARGINLEFT-->
-<!--AD_PRINTPAPER_ID=100-->                        <MARGINLEFT><![CDATA[36]]></MARGINLEFT>
-<!--AD_PRINTPAPER_ID=100 MARGINRIGHT-->
-<!--AD_PRINTPAPER_ID=100-->                        <MARGINRIGHT><![CDATA[36]]></MARGINRIGHT>
-<!--AD_PRINTPAPER_ID=100 MARGINBOTTOM-->
-<!--AD_PRINTPAPER_ID=100-->                        <MARGINBOTTOM><![CDATA[36]]></MARGINBOTTOM>
-<!--AD_PRINTPAPER_ID=100-->                    </AD_PRINTPAPER>
-<!--AD_PRINTPAPER_ID=101-->                    <AD_PRINTPAPER>
-<!--AD_PRINTPAPER_ID=101 AD_PRINTPAPER_ID-->
-<!--AD_PRINTPAPER_ID=101-->                        <AD_PRINTPAPER_ID><![CDATA[101]]></AD_PRINTPAPER_ID>
-<!--AD_PRINTPAPER_ID=101 AD_CLIENT_ID-->
-<!--AD_PRINTPAPER_ID=101-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_PRINTPAPER_ID=101 AD_ORG_ID-->
-<!--AD_PRINTPAPER_ID=101-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_PRINTPAPER_ID=101 ISACTIVE-->
-<!--AD_PRINTPAPER_ID=101-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_PRINTPAPER_ID=101 CREATED-->
-<!--AD_PRINTPAPER_ID=101-->                        <CREATED><![CDATA[2002-07-24 16:22:48.0]]></CREATED>
-<!--AD_PRINTPAPER_ID=101 CREATEDBY-->
-<!--AD_PRINTPAPER_ID=101-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_PRINTPAPER_ID=101 UPDATED-->
-<!--AD_PRINTPAPER_ID=101-->                        <UPDATED><![CDATA[2002-09-14 19:46:11.0]]></UPDATED>
-<!--AD_PRINTPAPER_ID=101 UPDATEDBY-->
-<!--AD_PRINTPAPER_ID=101-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_PRINTPAPER_ID=101 NAME-->
-<!--AD_PRINTPAPER_ID=101-->                        <NAME><![CDATA[Letter Portrait]]></NAME>
-<!--AD_PRINTPAPER_ID=101 DESCRIPTION-->
-<!--AD_PRINTPAPER_ID=101-->                        <DESCRIPTION><![CDATA[1/2 inch margin on all sides]]></DESCRIPTION>
-<!--AD_PRINTPAPER_ID=101 ISDEFAULT-->
-<!--AD_PRINTPAPER_ID=101-->                        <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--AD_PRINTPAPER_ID=101 ISLANDSCAPE-->
-<!--AD_PRINTPAPER_ID=101-->                        <ISLANDSCAPE><![CDATA[N]]></ISLANDSCAPE>
-<!--AD_PRINTPAPER_ID=101 CODE-->
-<!--AD_PRINTPAPER_ID=101-->                        <CODE><![CDATA[na-letter]]></CODE>
-<!--AD_PRINTPAPER_ID=101 MARGINTOP-->
-<!--AD_PRINTPAPER_ID=101-->                        <MARGINTOP><![CDATA[36]]></MARGINTOP>
-<!--AD_PRINTPAPER_ID=101 MARGINLEFT-->
-<!--AD_PRINTPAPER_ID=101-->                        <MARGINLEFT><![CDATA[36]]></MARGINLEFT>
-<!--AD_PRINTPAPER_ID=101 MARGINRIGHT-->
-<!--AD_PRINTPAPER_ID=101-->                        <MARGINRIGHT><![CDATA[36]]></MARGINRIGHT>
-<!--AD_PRINTPAPER_ID=101 MARGINBOTTOM-->
-<!--AD_PRINTPAPER_ID=101-->                        <MARGINBOTTOM><![CDATA[36]]></MARGINBOTTOM>
-<!--AD_PRINTPAPER_ID=101-->                    </AD_PRINTPAPER>
-<!--AD_PRINTPAPER_ID=102-->                    <AD_PRINTPAPER>
-<!--AD_PRINTPAPER_ID=102 AD_PRINTPAPER_ID-->
-<!--AD_PRINTPAPER_ID=102-->                        <AD_PRINTPAPER_ID><![CDATA[102]]></AD_PRINTPAPER_ID>
-<!--AD_PRINTPAPER_ID=102 AD_CLIENT_ID-->
-<!--AD_PRINTPAPER_ID=102-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_PRINTPAPER_ID=102 AD_ORG_ID-->
-<!--AD_PRINTPAPER_ID=102-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_PRINTPAPER_ID=102 ISACTIVE-->
-<!--AD_PRINTPAPER_ID=102-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_PRINTPAPER_ID=102 CREATED-->
-<!--AD_PRINTPAPER_ID=102-->                        <CREATED><![CDATA[2002-09-14 17:48:44.0]]></CREATED>
-<!--AD_PRINTPAPER_ID=102 CREATEDBY-->
-<!--AD_PRINTPAPER_ID=102-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_PRINTPAPER_ID=102 UPDATED-->
-<!--AD_PRINTPAPER_ID=102-->                        <UPDATED><![CDATA[2002-09-14 19:45:56.0]]></UPDATED>
-<!--AD_PRINTPAPER_ID=102 UPDATEDBY-->
-<!--AD_PRINTPAPER_ID=102-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_PRINTPAPER_ID=102 NAME-->
-<!--AD_PRINTPAPER_ID=102-->                        <NAME><![CDATA[A4 Landscape]]></NAME>
-<!--AD_PRINTPAPER_ID=102 DESCRIPTION-->
-<!--AD_PRINTPAPER_ID=102-->                        <DESCRIPTION><![CDATA[1/2 inch margin on all sides]]></DESCRIPTION>
-<!--AD_PRINTPAPER_ID=102 ISDEFAULT-->
-<!--AD_PRINTPAPER_ID=102-->                        <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--AD_PRINTPAPER_ID=102 ISLANDSCAPE-->
-<!--AD_PRINTPAPER_ID=102-->                        <ISLANDSCAPE><![CDATA[Y]]></ISLANDSCAPE>
-<!--AD_PRINTPAPER_ID=102 CODE-->
-<!--AD_PRINTPAPER_ID=102-->                        <CODE><![CDATA[iso-a4]]></CODE>
-<!--AD_PRINTPAPER_ID=102 MARGINTOP-->
-<!--AD_PRINTPAPER_ID=102-->                        <MARGINTOP><![CDATA[36]]></MARGINTOP>
-<!--AD_PRINTPAPER_ID=102 MARGINLEFT-->
-<!--AD_PRINTPAPER_ID=102-->                        <MARGINLEFT><![CDATA[36]]></MARGINLEFT>
-<!--AD_PRINTPAPER_ID=102 MARGINRIGHT-->
-<!--AD_PRINTPAPER_ID=102-->                        <MARGINRIGHT><![CDATA[36]]></MARGINRIGHT>
-<!--AD_PRINTPAPER_ID=102 MARGINBOTTOM-->
-<!--AD_PRINTPAPER_ID=102-->                        <MARGINBOTTOM><![CDATA[36]]></MARGINBOTTOM>
-<!--AD_PRINTPAPER_ID=102-->                    </AD_PRINTPAPER>
-<!--AD_PRINTPAPER_ID=103-->                    <AD_PRINTPAPER>
-<!--AD_PRINTPAPER_ID=103 AD_PRINTPAPER_ID-->
-<!--AD_PRINTPAPER_ID=103-->                        <AD_PRINTPAPER_ID><![CDATA[103]]></AD_PRINTPAPER_ID>
-<!--AD_PRINTPAPER_ID=103 AD_CLIENT_ID-->
-<!--AD_PRINTPAPER_ID=103-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_PRINTPAPER_ID=103 AD_ORG_ID-->
-<!--AD_PRINTPAPER_ID=103-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_PRINTPAPER_ID=103 ISACTIVE-->
-<!--AD_PRINTPAPER_ID=103-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_PRINTPAPER_ID=103 CREATED-->
-<!--AD_PRINTPAPER_ID=103-->                        <CREATED><![CDATA[2002-09-14 17:49:00.0]]></CREATED>
-<!--AD_PRINTPAPER_ID=103 CREATEDBY-->
-<!--AD_PRINTPAPER_ID=103-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_PRINTPAPER_ID=103 UPDATED-->
-<!--AD_PRINTPAPER_ID=103-->                        <UPDATED><![CDATA[2002-09-14 19:46:02.0]]></UPDATED>
-<!--AD_PRINTPAPER_ID=103 UPDATEDBY-->
-<!--AD_PRINTPAPER_ID=103-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_PRINTPAPER_ID=103 NAME-->
-<!--AD_PRINTPAPER_ID=103-->                        <NAME><![CDATA[A4 Portrait]]></NAME>
-<!--AD_PRINTPAPER_ID=103 DESCRIPTION-->
-<!--AD_PRINTPAPER_ID=103-->                        <DESCRIPTION><![CDATA[1/2 inch margin on all sides]]></DESCRIPTION>
-<!--AD_PRINTPAPER_ID=103 ISDEFAULT-->
-<!--AD_PRINTPAPER_ID=103-->                        <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--AD_PRINTPAPER_ID=103 ISLANDSCAPE-->
-<!--AD_PRINTPAPER_ID=103-->                        <ISLANDSCAPE><![CDATA[N]]></ISLANDSCAPE>
-<!--AD_PRINTPAPER_ID=103 CODE-->
-<!--AD_PRINTPAPER_ID=103-->                        <CODE><![CDATA[iso-a4]]></CODE>
-<!--AD_PRINTPAPER_ID=103 MARGINTOP-->
-<!--AD_PRINTPAPER_ID=103-->                        <MARGINTOP><![CDATA[36]]></MARGINTOP>
-<!--AD_PRINTPAPER_ID=103 MARGINLEFT-->
-<!--AD_PRINTPAPER_ID=103-->                        <MARGINLEFT><![CDATA[36]]></MARGINLEFT>
-<!--AD_PRINTPAPER_ID=103 MARGINRIGHT-->
-<!--AD_PRINTPAPER_ID=103-->                        <MARGINRIGHT><![CDATA[36]]></MARGINRIGHT>
-<!--AD_PRINTPAPER_ID=103 MARGINBOTTOM-->
-<!--AD_PRINTPAPER_ID=103-->                        <MARGINBOTTOM><![CDATA[36]]></MARGINBOTTOM>
-<!--AD_PRINTPAPER_ID=103-->                    </AD_PRINTPAPER>
+<!--100**************--><AD_PRINTPAPER>
+<!--100 AD_PRINTPAPER_ID-->
+<!--100-->              <AD_PRINTPAPER_ID><![CDATA[100]]></AD_PRINTPAPER_ID>
+<!--100 AD_CLIENT_ID-->
+<!--100-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100 AD_ORG_ID-->
+<!--100-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100 ISACTIVE-->
+<!--100-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100 CREATED-->
+<!--100-->              <CREATED><![CDATA[2002-07-11 22:07:58.0]]></CREATED>
+<!--100 CREATEDBY-->
+<!--100-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--100 UPDATED-->
+<!--100-->              <UPDATED><![CDATA[2002-09-14 19:46:06.0]]></UPDATED>
+<!--100 UPDATEDBY-->
+<!--100-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100 NAME-->
+<!--100-->              <NAME><![CDATA[Letter Landscape]]></NAME>
+<!--100 DESCRIPTION-->
+<!--100-->              <DESCRIPTION><![CDATA[1/2 inch margin on all sides]]></DESCRIPTION>
+<!--100 ISDEFAULT-->
+<!--100-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!--100 ISLANDSCAPE-->
+<!--100-->              <ISLANDSCAPE><![CDATA[Y]]></ISLANDSCAPE>
+<!--100 CODE-->
+<!--100-->              <CODE><![CDATA[na-letter]]></CODE>
+<!--100 MARGINTOP-->
+<!--100-->              <MARGINTOP><![CDATA[36]]></MARGINTOP>
+<!--100 MARGINLEFT-->
+<!--100-->              <MARGINLEFT><![CDATA[36]]></MARGINLEFT>
+<!--100 MARGINRIGHT-->
+<!--100-->              <MARGINRIGHT><![CDATA[36]]></MARGINRIGHT>
+<!--100 MARGINBOTTOM-->
+<!--100-->              <MARGINBOTTOM><![CDATA[36]]></MARGINBOTTOM>
+<!--100**************--></AD_PRINTPAPER>
+
+<!--101**************--><AD_PRINTPAPER>
+<!--101 AD_PRINTPAPER_ID-->
+<!--101-->              <AD_PRINTPAPER_ID><![CDATA[101]]></AD_PRINTPAPER_ID>
+<!--101 AD_CLIENT_ID-->
+<!--101-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--101 AD_ORG_ID-->
+<!--101-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--101 ISACTIVE-->
+<!--101-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--101 CREATED-->
+<!--101-->              <CREATED><![CDATA[2002-07-24 16:22:48.0]]></CREATED>
+<!--101 CREATEDBY-->
+<!--101-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--101 UPDATED-->
+<!--101-->              <UPDATED><![CDATA[2002-09-14 19:46:11.0]]></UPDATED>
+<!--101 UPDATEDBY-->
+<!--101-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--101 NAME-->
+<!--101-->              <NAME><![CDATA[Letter Portrait]]></NAME>
+<!--101 DESCRIPTION-->
+<!--101-->              <DESCRIPTION><![CDATA[1/2 inch margin on all sides]]></DESCRIPTION>
+<!--101 ISDEFAULT-->
+<!--101-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+<!--101 ISLANDSCAPE-->
+<!--101-->              <ISLANDSCAPE><![CDATA[N]]></ISLANDSCAPE>
+<!--101 CODE-->
+<!--101-->              <CODE><![CDATA[na-letter]]></CODE>
+<!--101 MARGINTOP-->
+<!--101-->              <MARGINTOP><![CDATA[36]]></MARGINTOP>
+<!--101 MARGINLEFT-->
+<!--101-->              <MARGINLEFT><![CDATA[36]]></MARGINLEFT>
+<!--101 MARGINRIGHT-->
+<!--101-->              <MARGINRIGHT><![CDATA[36]]></MARGINRIGHT>
+<!--101 MARGINBOTTOM-->
+<!--101-->              <MARGINBOTTOM><![CDATA[36]]></MARGINBOTTOM>
+<!--101**************--></AD_PRINTPAPER>
+
+<!--102**************--><AD_PRINTPAPER>
+<!--102 AD_PRINTPAPER_ID-->
+<!--102-->              <AD_PRINTPAPER_ID><![CDATA[102]]></AD_PRINTPAPER_ID>
+<!--102 AD_CLIENT_ID-->
+<!--102-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--102 AD_ORG_ID-->
+<!--102-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--102 ISACTIVE-->
+<!--102-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--102 CREATED-->
+<!--102-->              <CREATED><![CDATA[2002-09-14 17:48:44.0]]></CREATED>
+<!--102 CREATEDBY-->
+<!--102-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--102 UPDATED-->
+<!--102-->              <UPDATED><![CDATA[2002-09-14 19:45:56.0]]></UPDATED>
+<!--102 UPDATEDBY-->
+<!--102-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--102 NAME-->
+<!--102-->              <NAME><![CDATA[A4 Landscape]]></NAME>
+<!--102 DESCRIPTION-->
+<!--102-->              <DESCRIPTION><![CDATA[1/2 inch margin on all sides]]></DESCRIPTION>
+<!--102 ISDEFAULT-->
+<!--102-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+<!--102 ISLANDSCAPE-->
+<!--102-->              <ISLANDSCAPE><![CDATA[Y]]></ISLANDSCAPE>
+<!--102 CODE-->
+<!--102-->              <CODE><![CDATA[iso-a4]]></CODE>
+<!--102 MARGINTOP-->
+<!--102-->              <MARGINTOP><![CDATA[36]]></MARGINTOP>
+<!--102 MARGINLEFT-->
+<!--102-->              <MARGINLEFT><![CDATA[36]]></MARGINLEFT>
+<!--102 MARGINRIGHT-->
+<!--102-->              <MARGINRIGHT><![CDATA[36]]></MARGINRIGHT>
+<!--102 MARGINBOTTOM-->
+<!--102-->              <MARGINBOTTOM><![CDATA[36]]></MARGINBOTTOM>
+<!--102**************--></AD_PRINTPAPER>
+
+<!--103**************--><AD_PRINTPAPER>
+<!--103 AD_PRINTPAPER_ID-->
+<!--103-->              <AD_PRINTPAPER_ID><![CDATA[103]]></AD_PRINTPAPER_ID>
+<!--103 AD_CLIENT_ID-->
+<!--103-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--103 AD_ORG_ID-->
+<!--103-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--103 ISACTIVE-->
+<!--103-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--103 CREATED-->
+<!--103-->              <CREATED><![CDATA[2002-09-14 17:49:00.0]]></CREATED>
+<!--103 CREATEDBY-->
+<!--103-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--103 UPDATED-->
+<!--103-->              <UPDATED><![CDATA[2002-09-14 19:46:02.0]]></UPDATED>
+<!--103 UPDATEDBY-->
+<!--103-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--103 NAME-->
+<!--103-->              <NAME><![CDATA[A4 Portrait]]></NAME>
+<!--103 DESCRIPTION-->
+<!--103-->              <DESCRIPTION><![CDATA[1/2 inch margin on all sides]]></DESCRIPTION>
+<!--103 ISDEFAULT-->
+<!--103-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+<!--103 ISLANDSCAPE-->
+<!--103-->              <ISLANDSCAPE><![CDATA[N]]></ISLANDSCAPE>
+<!--103 CODE-->
+<!--103-->              <CODE><![CDATA[iso-a4]]></CODE>
+<!--103 MARGINTOP-->
+<!--103-->              <MARGINTOP><![CDATA[36]]></MARGINTOP>
+<!--103 MARGINLEFT-->
+<!--103-->              <MARGINLEFT><![CDATA[36]]></MARGINLEFT>
+<!--103 MARGINRIGHT-->
+<!--103-->              <MARGINRIGHT><![CDATA[36]]></MARGINRIGHT>
+<!--103 MARGINBOTTOM-->
+<!--103-->              <MARGINBOTTOM><![CDATA[36]]></MARGINBOTTOM>
+<!--103**************--></AD_PRINTPAPER>
+
 <!--
 ************************
 0. End of Core Range.

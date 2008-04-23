@@ -5,38 +5,39 @@
 0. Core Range.
 ************************
 -->
-<!--AD_ROLE_ID=0-->                    <AD_ROLE>
-<!--AD_ROLE_ID=0 AD_ROLE_ID-->
-<!--AD_ROLE_ID=0-->                        <AD_ROLE_ID><![CDATA[0]]></AD_ROLE_ID>
-<!--AD_ROLE_ID=0 AD_CLIENT_ID-->
-<!--AD_ROLE_ID=0-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_ROLE_ID=0 AD_ORG_ID-->
-<!--AD_ROLE_ID=0-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_ROLE_ID=0 ISACTIVE-->
-<!--AD_ROLE_ID=0-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_ROLE_ID=0 CREATED-->
-<!--AD_ROLE_ID=0-->                        <CREATED><![CDATA[1999-11-14 16:14:40.0]]></CREATED>
-<!--AD_ROLE_ID=0 CREATEDBY-->
-<!--AD_ROLE_ID=0-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_ROLE_ID=0 UPDATED-->
-<!--AD_ROLE_ID=0-->                        <UPDATED><![CDATA[2003-09-06 02:00:08.0]]></UPDATED>
-<!--AD_ROLE_ID=0 NAME-->
-<!--AD_ROLE_ID=0-->                        <NAME><![CDATA[System Administrator]]></NAME>
-<!--AD_ROLE_ID=0 UPDATEDBY-->
-<!--AD_ROLE_ID=0-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_ROLE_ID=0 DESCRIPTION-->
-<!--AD_ROLE_ID=0-->                        <DESCRIPTION><![CDATA[System Administrator Role]]></DESCRIPTION>
-<!--AD_ROLE_ID=0 USERLEVEL-->
-<!--AD_ROLE_ID=0-->                        <USERLEVEL><![CDATA[S  ]]></USERLEVEL>
-<!--AD_ROLE_ID=0 CLIENTLIST-->
-<!--AD_ROLE_ID=0-->                        <CLIENTLIST><![CDATA[0]]></CLIENTLIST>
-<!--AD_ROLE_ID=0 ORGLIST-->
-<!--AD_ROLE_ID=0-->                        <ORGLIST><![CDATA[0]]></ORGLIST>
-<!--AD_ROLE_ID=0 AMTAPPROVAL-->
-<!--AD_ROLE_ID=0-->                        <AMTAPPROVAL><![CDATA[0]]></AMTAPPROVAL>
-<!--AD_ROLE_ID=0 ISMANUAL-->
-<!--AD_ROLE_ID=0-->                        <ISMANUAL><![CDATA[N]]></ISMANUAL>
-<!--AD_ROLE_ID=0-->                    </AD_ROLE>
+<!--0**************--><AD_ROLE>
+<!--0 AD_ROLE_ID-->
+<!--0-->              <AD_ROLE_ID><![CDATA[0]]></AD_ROLE_ID>
+<!--0 AD_CLIENT_ID-->
+<!--0-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0 AD_ORG_ID-->
+<!--0-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0 ISACTIVE-->
+<!--0-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0 CREATED-->
+<!--0-->              <CREATED><![CDATA[1999-11-14 16:14:40.0]]></CREATED>
+<!--0 CREATEDBY-->
+<!--0-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--0 UPDATED-->
+<!--0-->              <UPDATED><![CDATA[2003-09-06 02:00:08.0]]></UPDATED>
+<!--0 NAME-->
+<!--0-->              <NAME><![CDATA[System Administrator]]></NAME>
+<!--0 UPDATEDBY-->
+<!--0-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--0 DESCRIPTION-->
+<!--0-->              <DESCRIPTION><![CDATA[System Administrator Role]]></DESCRIPTION>
+<!--0 USERLEVEL-->
+<!--0-->              <USERLEVEL><![CDATA[S  ]]></USERLEVEL>
+<!--0 CLIENTLIST-->
+<!--0-->              <CLIENTLIST><![CDATA[0]]></CLIENTLIST>
+<!--0 ORGLIST-->
+<!--0-->              <ORGLIST><![CDATA[0]]></ORGLIST>
+<!--0 AMTAPPROVAL-->
+<!--0-->              <AMTAPPROVAL><![CDATA[0]]></AMTAPPROVAL>
+<!--0 ISMANUAL-->
+<!--0-->              <ISMANUAL><![CDATA[N]]></ISMANUAL>
+<!--0**************--></AD_ROLE>
+
 <!--
 ************************
 0. End of Core Range.

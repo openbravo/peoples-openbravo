@@ -5,146 +5,151 @@
 0. Core Range.
 ************************
 -->
-<!--AD_IMPFORMAT_ID=102-->                    <AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=102 AD_IMPFORMAT_ID-->
-<!--AD_IMPFORMAT_ID=102-->                        <AD_IMPFORMAT_ID><![CDATA[102]]></AD_IMPFORMAT_ID>
-<!--AD_IMPFORMAT_ID=102 AD_CLIENT_ID-->
-<!--AD_IMPFORMAT_ID=102-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_IMPFORMAT_ID=102 AD_ORG_ID-->
-<!--AD_IMPFORMAT_ID=102-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_IMPFORMAT_ID=102 ISACTIVE-->
-<!--AD_IMPFORMAT_ID=102-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_IMPFORMAT_ID=102 CREATED-->
-<!--AD_IMPFORMAT_ID=102-->                        <CREATED><![CDATA[2003-01-14 16:29:34.0]]></CREATED>
-<!--AD_IMPFORMAT_ID=102 CREATEDBY-->
-<!--AD_IMPFORMAT_ID=102-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_IMPFORMAT_ID=102 UPDATED-->
-<!--AD_IMPFORMAT_ID=102-->                        <UPDATED><![CDATA[2003-01-20 20:06:08.0]]></UPDATED>
-<!--AD_IMPFORMAT_ID=102 UPDATEDBY-->
-<!--AD_IMPFORMAT_ID=102-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_IMPFORMAT_ID=102 NAME-->
-<!--AD_IMPFORMAT_ID=102-->                        <NAME><![CDATA[Accounting - Accounts]]></NAME>
-<!--AD_IMPFORMAT_ID=102 DESCRIPTION-->
-<!--AD_IMPFORMAT_ID=102-->                        <DESCRIPTION><![CDATA[Based on the format of AccountingUS.cvs import natural Accounts]]></DESCRIPTION>
-<!--AD_IMPFORMAT_ID=102 AD_TABLE_ID-->
-<!--AD_IMPFORMAT_ID=102-->                        <AD_TABLE_ID><![CDATA[534]]></AD_TABLE_ID>
-<!--AD_IMPFORMAT_ID=102 FORMATTYPE-->
-<!--AD_IMPFORMAT_ID=102-->                        <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
-<!--AD_IMPFORMAT_ID=102 PROCESSING-->
-<!--AD_IMPFORMAT_ID=102-->                        <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--AD_IMPFORMAT_ID=102-->                    </AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=103-->                    <AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=103 AD_IMPFORMAT_ID-->
-<!--AD_IMPFORMAT_ID=103-->                        <AD_IMPFORMAT_ID><![CDATA[103]]></AD_IMPFORMAT_ID>
-<!--AD_IMPFORMAT_ID=103 AD_CLIENT_ID-->
-<!--AD_IMPFORMAT_ID=103-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_IMPFORMAT_ID=103 AD_ORG_ID-->
-<!--AD_IMPFORMAT_ID=103-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_IMPFORMAT_ID=103 ISACTIVE-->
-<!--AD_IMPFORMAT_ID=103-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_IMPFORMAT_ID=103 CREATED-->
-<!--AD_IMPFORMAT_ID=103-->                        <CREATED><![CDATA[2003-01-14 22:39:49.0]]></CREATED>
-<!--AD_IMPFORMAT_ID=103 CREATEDBY-->
-<!--AD_IMPFORMAT_ID=103-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_IMPFORMAT_ID=103 UPDATED-->
-<!--AD_IMPFORMAT_ID=103-->                        <UPDATED><![CDATA[2003-01-20 20:08:53.0]]></UPDATED>
-<!--AD_IMPFORMAT_ID=103 UPDATEDBY-->
-<!--AD_IMPFORMAT_ID=103-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_IMPFORMAT_ID=103 NAME-->
-<!--AD_IMPFORMAT_ID=103-->                        <NAME><![CDATA[Accounting - Balance Sheet]]></NAME>
-<!--AD_IMPFORMAT_ID=103 DESCRIPTION-->
-<!--AD_IMPFORMAT_ID=103-->                        <DESCRIPTION><![CDATA[US Balance Sheet info in the format of AccountingUS.cvs]]></DESCRIPTION>
-<!--AD_IMPFORMAT_ID=103 AD_TABLE_ID-->
-<!--AD_IMPFORMAT_ID=103-->                        <AD_TABLE_ID><![CDATA[535]]></AD_TABLE_ID>
-<!--AD_IMPFORMAT_ID=103 FORMATTYPE-->
-<!--AD_IMPFORMAT_ID=103-->                        <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
-<!--AD_IMPFORMAT_ID=103 PROCESSING-->
-<!--AD_IMPFORMAT_ID=103-->                        <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--AD_IMPFORMAT_ID=103-->                    </AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=104-->                    <AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=104 AD_IMPFORMAT_ID-->
-<!--AD_IMPFORMAT_ID=104-->                        <AD_IMPFORMAT_ID><![CDATA[104]]></AD_IMPFORMAT_ID>
-<!--AD_IMPFORMAT_ID=104 AD_CLIENT_ID-->
-<!--AD_IMPFORMAT_ID=104-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_IMPFORMAT_ID=104 AD_ORG_ID-->
-<!--AD_IMPFORMAT_ID=104-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_IMPFORMAT_ID=104 ISACTIVE-->
-<!--AD_IMPFORMAT_ID=104-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_IMPFORMAT_ID=104 CREATED-->
-<!--AD_IMPFORMAT_ID=104-->                        <CREATED><![CDATA[2003-01-14 22:45:59.0]]></CREATED>
-<!--AD_IMPFORMAT_ID=104 CREATEDBY-->
-<!--AD_IMPFORMAT_ID=104-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_IMPFORMAT_ID=104 UPDATED-->
-<!--AD_IMPFORMAT_ID=104-->                        <UPDATED><![CDATA[2003-01-20 20:08:25.0]]></UPDATED>
-<!--AD_IMPFORMAT_ID=104 UPDATEDBY-->
-<!--AD_IMPFORMAT_ID=104-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_IMPFORMAT_ID=104 NAME-->
-<!--AD_IMPFORMAT_ID=104-->                        <NAME><![CDATA[Accounting - Tax  Balance Sheet]]></NAME>
-<!--AD_IMPFORMAT_ID=104 DESCRIPTION-->
-<!--AD_IMPFORMAT_ID=104-->                        <DESCRIPTION><![CDATA[US Tax (1120) Balance Sheet info in the format of AccountingUS.cvs]]></DESCRIPTION>
-<!--AD_IMPFORMAT_ID=104 AD_TABLE_ID-->
-<!--AD_IMPFORMAT_ID=104-->                        <AD_TABLE_ID><![CDATA[535]]></AD_TABLE_ID>
-<!--AD_IMPFORMAT_ID=104 FORMATTYPE-->
-<!--AD_IMPFORMAT_ID=104-->                        <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
-<!--AD_IMPFORMAT_ID=104 PROCESSING-->
-<!--AD_IMPFORMAT_ID=104-->                        <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--AD_IMPFORMAT_ID=104-->                    </AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=105-->                    <AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=105 AD_IMPFORMAT_ID-->
-<!--AD_IMPFORMAT_ID=105-->                        <AD_IMPFORMAT_ID><![CDATA[105]]></AD_IMPFORMAT_ID>
-<!--AD_IMPFORMAT_ID=105 AD_CLIENT_ID-->
-<!--AD_IMPFORMAT_ID=105-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_IMPFORMAT_ID=105 AD_ORG_ID-->
-<!--AD_IMPFORMAT_ID=105-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_IMPFORMAT_ID=105 ISACTIVE-->
-<!--AD_IMPFORMAT_ID=105-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_IMPFORMAT_ID=105 CREATED-->
-<!--AD_IMPFORMAT_ID=105-->                        <CREATED><![CDATA[2003-01-14 22:49:21.0]]></CREATED>
-<!--AD_IMPFORMAT_ID=105 CREATEDBY-->
-<!--AD_IMPFORMAT_ID=105-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_IMPFORMAT_ID=105 UPDATED-->
-<!--AD_IMPFORMAT_ID=105-->                        <UPDATED><![CDATA[2003-01-20 20:08:39.0]]></UPDATED>
-<!--AD_IMPFORMAT_ID=105 UPDATEDBY-->
-<!--AD_IMPFORMAT_ID=105-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_IMPFORMAT_ID=105 NAME-->
-<!--AD_IMPFORMAT_ID=105-->                        <NAME><![CDATA[Accounting - Profit&Loss Statement]]></NAME>
-<!--AD_IMPFORMAT_ID=105 DESCRIPTION-->
-<!--AD_IMPFORMAT_ID=105-->                        <DESCRIPTION><![CDATA[US Profit & Loss Statement info in the format of AccountingUS.cvs]]></DESCRIPTION>
-<!--AD_IMPFORMAT_ID=105 AD_TABLE_ID-->
-<!--AD_IMPFORMAT_ID=105-->                        <AD_TABLE_ID><![CDATA[535]]></AD_TABLE_ID>
-<!--AD_IMPFORMAT_ID=105 FORMATTYPE-->
-<!--AD_IMPFORMAT_ID=105-->                        <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
-<!--AD_IMPFORMAT_ID=105 PROCESSING-->
-<!--AD_IMPFORMAT_ID=105-->                        <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--AD_IMPFORMAT_ID=105-->                    </AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=106-->                    <AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=106 AD_IMPFORMAT_ID-->
-<!--AD_IMPFORMAT_ID=106-->                        <AD_IMPFORMAT_ID><![CDATA[106]]></AD_IMPFORMAT_ID>
-<!--AD_IMPFORMAT_ID=106 AD_CLIENT_ID-->
-<!--AD_IMPFORMAT_ID=106-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_IMPFORMAT_ID=106 AD_ORG_ID-->
-<!--AD_IMPFORMAT_ID=106-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_IMPFORMAT_ID=106 ISACTIVE-->
-<!--AD_IMPFORMAT_ID=106-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_IMPFORMAT_ID=106 CREATED-->
-<!--AD_IMPFORMAT_ID=106-->                        <CREATED><![CDATA[2003-01-14 22:50:17.0]]></CREATED>
-<!--AD_IMPFORMAT_ID=106 CREATEDBY-->
-<!--AD_IMPFORMAT_ID=106-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_IMPFORMAT_ID=106 UPDATED-->
-<!--AD_IMPFORMAT_ID=106-->                        <UPDATED><![CDATA[2003-01-20 20:08:14.0]]></UPDATED>
-<!--AD_IMPFORMAT_ID=106 UPDATEDBY-->
-<!--AD_IMPFORMAT_ID=106-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_IMPFORMAT_ID=106 NAME-->
-<!--AD_IMPFORMAT_ID=106-->                        <NAME><![CDATA[Accounting - Tax Profit&Loss Statement]]></NAME>
-<!--AD_IMPFORMAT_ID=106 DESCRIPTION-->
-<!--AD_IMPFORMAT_ID=106-->                        <DESCRIPTION><![CDATA[US Tax (1120) Profit & Loss Statement info in the format of AccountingUS.cvs]]></DESCRIPTION>
-<!--AD_IMPFORMAT_ID=106 AD_TABLE_ID-->
-<!--AD_IMPFORMAT_ID=106-->                        <AD_TABLE_ID><![CDATA[535]]></AD_TABLE_ID>
-<!--AD_IMPFORMAT_ID=106 FORMATTYPE-->
-<!--AD_IMPFORMAT_ID=106-->                        <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
-<!--AD_IMPFORMAT_ID=106 PROCESSING-->
-<!--AD_IMPFORMAT_ID=106-->                        <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--AD_IMPFORMAT_ID=106-->                    </AD_IMPFORMAT>
+<!--102**************--><AD_IMPFORMAT>
+<!--102 AD_IMPFORMAT_ID-->
+<!--102-->              <AD_IMPFORMAT_ID><![CDATA[102]]></AD_IMPFORMAT_ID>
+<!--102 AD_CLIENT_ID-->
+<!--102-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--102 AD_ORG_ID-->
+<!--102-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--102 ISACTIVE-->
+<!--102-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--102 CREATED-->
+<!--102-->              <CREATED><![CDATA[2003-01-14 16:29:34.0]]></CREATED>
+<!--102 CREATEDBY-->
+<!--102-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--102 UPDATED-->
+<!--102-->              <UPDATED><![CDATA[2003-01-20 20:06:08.0]]></UPDATED>
+<!--102 UPDATEDBY-->
+<!--102-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--102 NAME-->
+<!--102-->              <NAME><![CDATA[Accounting - Accounts]]></NAME>
+<!--102 DESCRIPTION-->
+<!--102-->              <DESCRIPTION><![CDATA[Based on the format of AccountingUS.cvs import natural Accounts]]></DESCRIPTION>
+<!--102 AD_TABLE_ID-->
+<!--102-->              <AD_TABLE_ID><![CDATA[534]]></AD_TABLE_ID>
+<!--102 FORMATTYPE-->
+<!--102-->              <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
+<!--102 PROCESSING-->
+<!--102-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--102**************--></AD_IMPFORMAT>
+
+<!--103**************--><AD_IMPFORMAT>
+<!--103 AD_IMPFORMAT_ID-->
+<!--103-->              <AD_IMPFORMAT_ID><![CDATA[103]]></AD_IMPFORMAT_ID>
+<!--103 AD_CLIENT_ID-->
+<!--103-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--103 AD_ORG_ID-->
+<!--103-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--103 ISACTIVE-->
+<!--103-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--103 CREATED-->
+<!--103-->              <CREATED><![CDATA[2003-01-14 22:39:49.0]]></CREATED>
+<!--103 CREATEDBY-->
+<!--103-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--103 UPDATED-->
+<!--103-->              <UPDATED><![CDATA[2003-01-20 20:08:53.0]]></UPDATED>
+<!--103 UPDATEDBY-->
+<!--103-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--103 NAME-->
+<!--103-->              <NAME><![CDATA[Accounting - Balance Sheet]]></NAME>
+<!--103 DESCRIPTION-->
+<!--103-->              <DESCRIPTION><![CDATA[US Balance Sheet info in the format of AccountingUS.cvs]]></DESCRIPTION>
+<!--103 AD_TABLE_ID-->
+<!--103-->              <AD_TABLE_ID><![CDATA[535]]></AD_TABLE_ID>
+<!--103 FORMATTYPE-->
+<!--103-->              <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
+<!--103 PROCESSING-->
+<!--103-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--103**************--></AD_IMPFORMAT>
+
+<!--104**************--><AD_IMPFORMAT>
+<!--104 AD_IMPFORMAT_ID-->
+<!--104-->              <AD_IMPFORMAT_ID><![CDATA[104]]></AD_IMPFORMAT_ID>
+<!--104 AD_CLIENT_ID-->
+<!--104-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--104 AD_ORG_ID-->
+<!--104-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--104 ISACTIVE-->
+<!--104-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--104 CREATED-->
+<!--104-->              <CREATED><![CDATA[2003-01-14 22:45:59.0]]></CREATED>
+<!--104 CREATEDBY-->
+<!--104-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--104 UPDATED-->
+<!--104-->              <UPDATED><![CDATA[2003-01-20 20:08:25.0]]></UPDATED>
+<!--104 UPDATEDBY-->
+<!--104-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--104 NAME-->
+<!--104-->              <NAME><![CDATA[Accounting - Tax  Balance Sheet]]></NAME>
+<!--104 DESCRIPTION-->
+<!--104-->              <DESCRIPTION><![CDATA[US Tax (1120) Balance Sheet info in the format of AccountingUS.cvs]]></DESCRIPTION>
+<!--104 AD_TABLE_ID-->
+<!--104-->              <AD_TABLE_ID><![CDATA[535]]></AD_TABLE_ID>
+<!--104 FORMATTYPE-->
+<!--104-->              <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
+<!--104 PROCESSING-->
+<!--104-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--104**************--></AD_IMPFORMAT>
+
+<!--105**************--><AD_IMPFORMAT>
+<!--105 AD_IMPFORMAT_ID-->
+<!--105-->              <AD_IMPFORMAT_ID><![CDATA[105]]></AD_IMPFORMAT_ID>
+<!--105 AD_CLIENT_ID-->
+<!--105-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--105 AD_ORG_ID-->
+<!--105-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--105 ISACTIVE-->
+<!--105-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--105 CREATED-->
+<!--105-->              <CREATED><![CDATA[2003-01-14 22:49:21.0]]></CREATED>
+<!--105 CREATEDBY-->
+<!--105-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--105 UPDATED-->
+<!--105-->              <UPDATED><![CDATA[2003-01-20 20:08:39.0]]></UPDATED>
+<!--105 UPDATEDBY-->
+<!--105-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--105 NAME-->
+<!--105-->              <NAME><![CDATA[Accounting - Profit&Loss Statement]]></NAME>
+<!--105 DESCRIPTION-->
+<!--105-->              <DESCRIPTION><![CDATA[US Profit & Loss Statement info in the format of AccountingUS.cvs]]></DESCRIPTION>
+<!--105 AD_TABLE_ID-->
+<!--105-->              <AD_TABLE_ID><![CDATA[535]]></AD_TABLE_ID>
+<!--105 FORMATTYPE-->
+<!--105-->              <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
+<!--105 PROCESSING-->
+<!--105-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--105**************--></AD_IMPFORMAT>
+
+<!--106**************--><AD_IMPFORMAT>
+<!--106 AD_IMPFORMAT_ID-->
+<!--106-->              <AD_IMPFORMAT_ID><![CDATA[106]]></AD_IMPFORMAT_ID>
+<!--106 AD_CLIENT_ID-->
+<!--106-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--106 AD_ORG_ID-->
+<!--106-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--106 ISACTIVE-->
+<!--106-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--106 CREATED-->
+<!--106-->              <CREATED><![CDATA[2003-01-14 22:50:17.0]]></CREATED>
+<!--106 CREATEDBY-->
+<!--106-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--106 UPDATED-->
+<!--106-->              <UPDATED><![CDATA[2003-01-20 20:08:14.0]]></UPDATED>
+<!--106 UPDATEDBY-->
+<!--106-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--106 NAME-->
+<!--106-->              <NAME><![CDATA[Accounting - Tax Profit&Loss Statement]]></NAME>
+<!--106 DESCRIPTION-->
+<!--106-->              <DESCRIPTION><![CDATA[US Tax (1120) Profit & Loss Statement info in the format of AccountingUS.cvs]]></DESCRIPTION>
+<!--106 AD_TABLE_ID-->
+<!--106-->              <AD_TABLE_ID><![CDATA[535]]></AD_TABLE_ID>
+<!--106 FORMATTYPE-->
+<!--106-->              <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
+<!--106 PROCESSING-->
+<!--106-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--106**************--></AD_IMPFORMAT>
+
 <!--
 ************************
 0. End of Core Range.
@@ -155,58 +160,60 @@
 1. Custom Range.
 ************************
 -->
-<!--AD_IMPFORMAT_ID=1000004-->                    <AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=1000004 AD_IMPFORMAT_ID-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <AD_IMPFORMAT_ID><![CDATA[1000004]]></AD_IMPFORMAT_ID>
-<!--AD_IMPFORMAT_ID=1000004 AD_CLIENT_ID-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_IMPFORMAT_ID=1000004 AD_ORG_ID-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_IMPFORMAT_ID=1000004 ISACTIVE-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_IMPFORMAT_ID=1000004 CREATED-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <CREATED><![CDATA[2007-02-23 11:34:57.0]]></CREATED>
-<!--AD_IMPFORMAT_ID=1000004 CREATEDBY-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_IMPFORMAT_ID=1000004 UPDATED-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <UPDATED><![CDATA[2007-02-23 11:34:57.0]]></UPDATED>
-<!--AD_IMPFORMAT_ID=1000004 UPDATEDBY-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AD_IMPFORMAT_ID=1000004 NAME-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <NAME><![CDATA[Taxes: Complete]]></NAME>
-<!--AD_IMPFORMAT_ID=1000004 AD_TABLE_ID-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <AD_TABLE_ID><![CDATA[800222]]></AD_TABLE_ID>
-<!--AD_IMPFORMAT_ID=1000004 FORMATTYPE-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
-<!--AD_IMPFORMAT_ID=1000004 PROCESSING-->
-<!--AD_IMPFORMAT_ID=1000004-->                        <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--AD_IMPFORMAT_ID=1000004-->                    </AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=1000007-->                    <AD_IMPFORMAT>
-<!--AD_IMPFORMAT_ID=1000007 AD_IMPFORMAT_ID-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <AD_IMPFORMAT_ID><![CDATA[1000007]]></AD_IMPFORMAT_ID>
-<!--AD_IMPFORMAT_ID=1000007 AD_CLIENT_ID-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_IMPFORMAT_ID=1000007 AD_ORG_ID-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_IMPFORMAT_ID=1000007 ISACTIVE-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_IMPFORMAT_ID=1000007 CREATED-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <CREATED><![CDATA[2008-03-28 11:03:33.0]]></CREATED>
-<!--AD_IMPFORMAT_ID=1000007 CREATEDBY-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_IMPFORMAT_ID=1000007 UPDATED-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <UPDATED><![CDATA[2008-04-05 11:00:16.0]]></UPDATED>
-<!--AD_IMPFORMAT_ID=1000007 UPDATEDBY-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AD_IMPFORMAT_ID=1000007 NAME-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <NAME><![CDATA[Accounting - Budget]]></NAME>
-<!--AD_IMPFORMAT_ID=1000007 AD_TABLE_ID-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <AD_TABLE_ID><![CDATA[800175]]></AD_TABLE_ID>
-<!--AD_IMPFORMAT_ID=1000007 FORMATTYPE-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
-<!--AD_IMPFORMAT_ID=1000007 PROCESSING-->
-<!--AD_IMPFORMAT_ID=1000007-->                        <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--AD_IMPFORMAT_ID=1000007-->                    </AD_IMPFORMAT>
+<!--1000004**************--><AD_IMPFORMAT>
+<!--1000004 AD_IMPFORMAT_ID-->
+<!--1000004-->              <AD_IMPFORMAT_ID><![CDATA[1000004]]></AD_IMPFORMAT_ID>
+<!--1000004 AD_CLIENT_ID-->
+<!--1000004-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000004 AD_ORG_ID-->
+<!--1000004-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000004 ISACTIVE-->
+<!--1000004-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000004 CREATED-->
+<!--1000004-->              <CREATED><![CDATA[2007-02-23 11:34:57.0]]></CREATED>
+<!--1000004 CREATEDBY-->
+<!--1000004-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000004 UPDATED-->
+<!--1000004-->              <UPDATED><![CDATA[2007-02-23 11:34:57.0]]></UPDATED>
+<!--1000004 UPDATEDBY-->
+<!--1000004-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000004 NAME-->
+<!--1000004-->              <NAME><![CDATA[Taxes: Complete]]></NAME>
+<!--1000004 AD_TABLE_ID-->
+<!--1000004-->              <AD_TABLE_ID><![CDATA[800222]]></AD_TABLE_ID>
+<!--1000004 FORMATTYPE-->
+<!--1000004-->              <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
+<!--1000004 PROCESSING-->
+<!--1000004-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--1000004**************--></AD_IMPFORMAT>
+
+<!--1000007**************--><AD_IMPFORMAT>
+<!--1000007 AD_IMPFORMAT_ID-->
+<!--1000007-->              <AD_IMPFORMAT_ID><![CDATA[1000007]]></AD_IMPFORMAT_ID>
+<!--1000007 AD_CLIENT_ID-->
+<!--1000007-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000007 AD_ORG_ID-->
+<!--1000007-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000007 ISACTIVE-->
+<!--1000007-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000007 CREATED-->
+<!--1000007-->              <CREATED><![CDATA[2008-03-28 11:03:33.0]]></CREATED>
+<!--1000007 CREATEDBY-->
+<!--1000007-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000007 UPDATED-->
+<!--1000007-->              <UPDATED><![CDATA[2008-04-05 11:00:16.0]]></UPDATED>
+<!--1000007 UPDATEDBY-->
+<!--1000007-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000007 NAME-->
+<!--1000007-->              <NAME><![CDATA[Accounting - Budget]]></NAME>
+<!--1000007 AD_TABLE_ID-->
+<!--1000007-->              <AD_TABLE_ID><![CDATA[800175]]></AD_TABLE_ID>
+<!--1000007 FORMATTYPE-->
+<!--1000007-->              <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
+<!--1000007 PROCESSING-->
+<!--1000007-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--1000007**************--></AD_IMPFORMAT>
+
 <!--
 ************************
 1. End of Custom Range.

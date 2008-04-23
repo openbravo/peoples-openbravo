@@ -5,48 +5,49 @@
 0. Core Range.
 ************************
 -->
-<!--AD_CLIENT_ID=0-->                    <AD_CLIENTINFO>
-<!--AD_CLIENT_ID=0 AD_CLIENT_ID-->
-<!--AD_CLIENT_ID=0-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_CLIENT_ID=0 AD_ORG_ID-->
-<!--AD_CLIENT_ID=0-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_CLIENT_ID=0 ISACTIVE-->
-<!--AD_CLIENT_ID=0-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_CLIENT_ID=0 CREATED-->
-<!--AD_CLIENT_ID=0-->                        <CREATED><![CDATA[1999-12-30 10:28:05.0]]></CREATED>
-<!--AD_CLIENT_ID=0 CREATEDBY-->
-<!--AD_CLIENT_ID=0-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_CLIENT_ID=0 UPDATED-->
-<!--AD_CLIENT_ID=0-->                        <UPDATED><![CDATA[2000-09-24 19:37:09.0]]></UPDATED>
-<!--AD_CLIENT_ID=0 UPDATEDBY-->
-<!--AD_CLIENT_ID=0-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_CLIENT_ID=0 ISDISCOUNTLINEAMT-->
-<!--AD_CLIENT_ID=0-->                        <ISDISCOUNTLINEAMT><![CDATA[Y]]></ISDISCOUNTLINEAMT>
-<!--AD_CLIENT_ID=0 ACCT2_ACTIVE-->
-<!--AD_CLIENT_ID=0-->                        <ACCT2_ACTIVE><![CDATA[N]]></ACCT2_ACTIVE>
-<!--AD_CLIENT_ID=0 ACCT3_ACTIVE-->
-<!--AD_CLIENT_ID=0-->                        <ACCT3_ACTIVE><![CDATA[N]]></ACCT3_ACTIVE>
-<!--AD_CLIENT_ID=0 AD_TREE_MENU_ID-->
-<!--AD_CLIENT_ID=0-->                        <AD_TREE_MENU_ID><![CDATA[10]]></AD_TREE_MENU_ID>
-<!--AD_CLIENT_ID=0 AD_TREE_ORG_ID-->
-<!--AD_CLIENT_ID=0-->                        <AD_TREE_ORG_ID><![CDATA[50]]></AD_TREE_ORG_ID>
-<!--AD_CLIENT_ID=0 AD_TREE_BPARTNER_ID-->
-<!--AD_CLIENT_ID=0-->                        <AD_TREE_BPARTNER_ID><![CDATA[40]]></AD_TREE_BPARTNER_ID>
-<!--AD_CLIENT_ID=0 AD_TREE_PROJECT_ID-->
-<!--AD_CLIENT_ID=0-->                        <AD_TREE_PROJECT_ID><![CDATA[60]]></AD_TREE_PROJECT_ID>
-<!--AD_CLIENT_ID=0 AD_TREE_SALESREGION_ID-->
-<!--AD_CLIENT_ID=0-->                        <AD_TREE_SALESREGION_ID><![CDATA[100]]></AD_TREE_SALESREGION_ID>
-<!--AD_CLIENT_ID=0 AD_TREE_PRODUCT_ID-->
-<!--AD_CLIENT_ID=0-->                        <AD_TREE_PRODUCT_ID><![CDATA[30]]></AD_TREE_PRODUCT_ID>
-<!--AD_CLIENT_ID=0 ALLOWNEGATIVESTOCK-->
-<!--AD_CLIENT_ID=0-->                        <ALLOWNEGATIVESTOCK><![CDATA[Y]]></ALLOWNEGATIVESTOCK>
-<!--AD_CLIENT_ID=0 CHECKORDERORG-->
-<!--AD_CLIENT_ID=0-->                        <CHECKORDERORG><![CDATA[Y]]></CHECKORDERORG>
-<!--AD_CLIENT_ID=0 CHECKINOUTORG-->
-<!--AD_CLIENT_ID=0-->                        <CHECKINOUTORG><![CDATA[Y]]></CHECKINOUTORG>
-<!--AD_CLIENT_ID=0 GROUPACCTINVLINES-->
-<!--AD_CLIENT_ID=0-->                        <GROUPACCTINVLINES><![CDATA[N]]></GROUPACCTINVLINES>
-<!--AD_CLIENT_ID=0-->                    </AD_CLIENTINFO>
+<!--0**************--><AD_CLIENTINFO>
+<!--0 AD_CLIENT_ID-->
+<!--0-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0 AD_ORG_ID-->
+<!--0-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0 ISACTIVE-->
+<!--0-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0 CREATED-->
+<!--0-->              <CREATED><![CDATA[1999-12-30 10:28:05.0]]></CREATED>
+<!--0 CREATEDBY-->
+<!--0-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--0 UPDATED-->
+<!--0-->              <UPDATED><![CDATA[2000-09-24 19:37:09.0]]></UPDATED>
+<!--0 UPDATEDBY-->
+<!--0-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--0 ISDISCOUNTLINEAMT-->
+<!--0-->              <ISDISCOUNTLINEAMT><![CDATA[Y]]></ISDISCOUNTLINEAMT>
+<!--0 ACCT2_ACTIVE-->
+<!--0-->              <ACCT2_ACTIVE><![CDATA[N]]></ACCT2_ACTIVE>
+<!--0 ACCT3_ACTIVE-->
+<!--0-->              <ACCT3_ACTIVE><![CDATA[N]]></ACCT3_ACTIVE>
+<!--0 AD_TREE_MENU_ID-->
+<!--0-->              <AD_TREE_MENU_ID><![CDATA[10]]></AD_TREE_MENU_ID>
+<!--0 AD_TREE_ORG_ID-->
+<!--0-->              <AD_TREE_ORG_ID><![CDATA[50]]></AD_TREE_ORG_ID>
+<!--0 AD_TREE_BPARTNER_ID-->
+<!--0-->              <AD_TREE_BPARTNER_ID><![CDATA[40]]></AD_TREE_BPARTNER_ID>
+<!--0 AD_TREE_PROJECT_ID-->
+<!--0-->              <AD_TREE_PROJECT_ID><![CDATA[60]]></AD_TREE_PROJECT_ID>
+<!--0 AD_TREE_SALESREGION_ID-->
+<!--0-->              <AD_TREE_SALESREGION_ID><![CDATA[100]]></AD_TREE_SALESREGION_ID>
+<!--0 AD_TREE_PRODUCT_ID-->
+<!--0-->              <AD_TREE_PRODUCT_ID><![CDATA[30]]></AD_TREE_PRODUCT_ID>
+<!--0 ALLOWNEGATIVESTOCK-->
+<!--0-->              <ALLOWNEGATIVESTOCK><![CDATA[Y]]></ALLOWNEGATIVESTOCK>
+<!--0 CHECKORDERORG-->
+<!--0-->              <CHECKORDERORG><![CDATA[Y]]></CHECKORDERORG>
+<!--0 CHECKINOUTORG-->
+<!--0-->              <CHECKINOUTORG><![CDATA[Y]]></CHECKINOUTORG>
+<!--0 GROUPACCTINVLINES-->
+<!--0-->              <GROUPACCTINVLINES><![CDATA[N]]></GROUPACCTINVLINES>
+<!--0**************--></AD_CLIENTINFO>
+
 <!--
 ************************
 0. End of Core Range.

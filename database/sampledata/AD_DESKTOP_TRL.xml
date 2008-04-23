@@ -5,32 +5,33 @@
 0. Core Range.
 ************************
 -->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                    <AD_DESKTOP_TRL>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES AD_DESKTOP_ID-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <AD_DESKTOP_ID><![CDATA[100]]></AD_DESKTOP_ID>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES CREATED-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:17.0]]></CREATED>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES UPDATED-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2005-06-02 11:36:17.0]]></UPDATED>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES NAME-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[FrontOffice]]></NAME>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES DESCRIPTION-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <DESCRIPTION><![CDATA[Front Office Desktop]]></DESCRIPTION>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--AD_DESKTOP_ID=100 AD_LANGUAGE=es_ES-->                    </AD_DESKTOP_TRL>
+<!--100 es_ES**************--><AD_DESKTOP_TRL>
+<!--100 es_ES AD_DESKTOP_ID-->
+<!--100 es_ES-->              <AD_DESKTOP_ID><![CDATA[100]]></AD_DESKTOP_ID>
+<!--100 es_ES AD_LANGUAGE-->
+<!--100 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--100 es_ES AD_CLIENT_ID-->
+<!--100 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100 es_ES AD_ORG_ID-->
+<!--100 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100 es_ES ISACTIVE-->
+<!--100 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100 es_ES CREATED-->
+<!--100 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:17.0]]></CREATED>
+<!--100 es_ES CREATEDBY-->
+<!--100 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--100 es_ES UPDATED-->
+<!--100 es_ES-->              <UPDATED><![CDATA[2005-06-02 11:36:17.0]]></UPDATED>
+<!--100 es_ES UPDATEDBY-->
+<!--100 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100 es_ES NAME-->
+<!--100 es_ES-->              <NAME><![CDATA[FrontOffice]]></NAME>
+<!--100 es_ES DESCRIPTION-->
+<!--100 es_ES-->              <DESCRIPTION><![CDATA[Front Office Desktop]]></DESCRIPTION>
+<!--100 es_ES ISTRANSLATED-->
+<!--100 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--100 es_ES**************--></AD_DESKTOP_TRL>
+
 <!--
 ************************
 0. End of Core Range.

@@ -5,248 +5,257 @@
 0. Core Range.
 ************************
 -->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                    <C_UOM_TRL>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES C_UOM_ID-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <C_UOM_ID><![CDATA[100]]></C_UOM_ID>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES CREATED-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES UPDATED-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES UOMSYMBOL-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <UOMSYMBOL><![CDATA[Ud ]]></UOMSYMBOL>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES NAME-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[Unidad]]></NAME>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_UOM_ID=100 AD_LANGUAGE=es_ES-->                    </C_UOM_TRL>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                    <C_UOM_TRL>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES C_UOM_ID-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <C_UOM_ID><![CDATA[101]]></C_UOM_ID>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES CREATED-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES UPDATED-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES UOMSYMBOL-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <UOMSYMBOL><![CDATA[h  ]]></UOMSYMBOL>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES NAME-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[Hora]]></NAME>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_UOM_ID=101 AD_LANGUAGE=es_ES-->                    </C_UOM_TRL>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                    <C_UOM_TRL>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES C_UOM_ID-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <C_UOM_ID><![CDATA[102]]></C_UOM_ID>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES CREATED-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES UPDATED-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES UOMSYMBOL-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <UOMSYMBOL><![CDATA[d  ]]></UOMSYMBOL>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES NAME-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[Día]]></NAME>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_UOM_ID=102 AD_LANGUAGE=es_ES-->                    </C_UOM_TRL>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                    <C_UOM_TRL>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES C_UOM_ID-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <C_UOM_ID><![CDATA[103]]></C_UOM_ID>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES CREATED-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES UPDATED-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES UOMSYMBOL-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <UOMSYMBOL><![CDATA[min]]></UOMSYMBOL>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES NAME-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[Minutos]]></NAME>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES DESCRIPTION-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <DESCRIPTION><![CDATA[(lowest unit for resorce assigments)]]></DESCRIPTION>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_UOM_ID=103 AD_LANGUAGE=es_ES-->                    </C_UOM_TRL>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                    <C_UOM_TRL>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES C_UOM_ID-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <C_UOM_ID><![CDATA[104]]></C_UOM_ID>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES CREATED-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES UPDATED-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES UOMSYMBOL-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <UOMSYMBOL><![CDATA[D  ]]></UOMSYMBOL>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES NAME-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[Día laboral]]></NAME>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES DESCRIPTION-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <DESCRIPTION><![CDATA[8 horas]]></DESCRIPTION>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_UOM_ID=104 AD_LANGUAGE=es_ES-->                    </C_UOM_TRL>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                    <C_UOM_TRL>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES C_UOM_ID-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <C_UOM_ID><![CDATA[105]]></C_UOM_ID>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES CREATED-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES UPDATED-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES UOMSYMBOL-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <UOMSYMBOL><![CDATA[s  ]]></UOMSYMBOL>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES NAME-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[Semana]]></NAME>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_UOM_ID=105 AD_LANGUAGE=es_ES-->                    </C_UOM_TRL>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                    <C_UOM_TRL>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES C_UOM_ID-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <C_UOM_ID><![CDATA[106]]></C_UOM_ID>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES CREATED-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES UPDATED-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES UOMSYMBOL-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <UOMSYMBOL><![CDATA[m  ]]></UOMSYMBOL>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES NAME-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[Mes]]></NAME>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES DESCRIPTION-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <DESCRIPTION><![CDATA[30 días]]></DESCRIPTION>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_UOM_ID=106 AD_LANGUAGE=es_ES-->                    </C_UOM_TRL>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                    <C_UOM_TRL>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES C_UOM_ID-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <C_UOM_ID><![CDATA[107]]></C_UOM_ID>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES CREATED-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES UPDATED-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES UOMSYMBOL-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <UOMSYMBOL><![CDATA[M  ]]></UOMSYMBOL>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES NAME-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[Mes laboral]]></NAME>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES DESCRIPTION-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <DESCRIPTION><![CDATA[20 días]]></DESCRIPTION>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_UOM_ID=107 AD_LANGUAGE=es_ES-->                    </C_UOM_TRL>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                    <C_UOM_TRL>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES C_UOM_ID-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <C_UOM_ID><![CDATA[108]]></C_UOM_ID>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES CREATED-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES UPDATED-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES UOMSYMBOL-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <UOMSYMBOL><![CDATA[a  ]]></UOMSYMBOL>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES NAME-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[Año]]></NAME>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_UOM_ID=108 AD_LANGUAGE=es_ES-->                    </C_UOM_TRL>
+<!--100 es_ES**************--><C_UOM_TRL>
+<!--100 es_ES C_UOM_ID-->
+<!--100 es_ES-->              <C_UOM_ID><![CDATA[100]]></C_UOM_ID>
+<!--100 es_ES AD_LANGUAGE-->
+<!--100 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--100 es_ES AD_CLIENT_ID-->
+<!--100 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100 es_ES AD_ORG_ID-->
+<!--100 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100 es_ES ISACTIVE-->
+<!--100 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100 es_ES CREATED-->
+<!--100 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
+<!--100 es_ES CREATEDBY-->
+<!--100 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--100 es_ES UPDATED-->
+<!--100 es_ES-->              <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
+<!--100 es_ES UPDATEDBY-->
+<!--100 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100 es_ES UOMSYMBOL-->
+<!--100 es_ES-->              <UOMSYMBOL><![CDATA[Ud ]]></UOMSYMBOL>
+<!--100 es_ES NAME-->
+<!--100 es_ES-->              <NAME><![CDATA[Unidad]]></NAME>
+<!--100 es_ES ISTRANSLATED-->
+<!--100 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--100 es_ES**************--></C_UOM_TRL>
+
+<!--101 es_ES**************--><C_UOM_TRL>
+<!--101 es_ES C_UOM_ID-->
+<!--101 es_ES-->              <C_UOM_ID><![CDATA[101]]></C_UOM_ID>
+<!--101 es_ES AD_LANGUAGE-->
+<!--101 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--101 es_ES AD_CLIENT_ID-->
+<!--101 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--101 es_ES AD_ORG_ID-->
+<!--101 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--101 es_ES ISACTIVE-->
+<!--101 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--101 es_ES CREATED-->
+<!--101 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
+<!--101 es_ES CREATEDBY-->
+<!--101 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--101 es_ES UPDATED-->
+<!--101 es_ES-->              <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
+<!--101 es_ES UPDATEDBY-->
+<!--101 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--101 es_ES UOMSYMBOL-->
+<!--101 es_ES-->              <UOMSYMBOL><![CDATA[h  ]]></UOMSYMBOL>
+<!--101 es_ES NAME-->
+<!--101 es_ES-->              <NAME><![CDATA[Hora]]></NAME>
+<!--101 es_ES ISTRANSLATED-->
+<!--101 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--101 es_ES**************--></C_UOM_TRL>
+
+<!--102 es_ES**************--><C_UOM_TRL>
+<!--102 es_ES C_UOM_ID-->
+<!--102 es_ES-->              <C_UOM_ID><![CDATA[102]]></C_UOM_ID>
+<!--102 es_ES AD_LANGUAGE-->
+<!--102 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--102 es_ES AD_CLIENT_ID-->
+<!--102 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--102 es_ES AD_ORG_ID-->
+<!--102 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--102 es_ES ISACTIVE-->
+<!--102 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--102 es_ES CREATED-->
+<!--102 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
+<!--102 es_ES CREATEDBY-->
+<!--102 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--102 es_ES UPDATED-->
+<!--102 es_ES-->              <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
+<!--102 es_ES UPDATEDBY-->
+<!--102 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--102 es_ES UOMSYMBOL-->
+<!--102 es_ES-->              <UOMSYMBOL><![CDATA[d  ]]></UOMSYMBOL>
+<!--102 es_ES NAME-->
+<!--102 es_ES-->              <NAME><![CDATA[Día]]></NAME>
+<!--102 es_ES ISTRANSLATED-->
+<!--102 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--102 es_ES**************--></C_UOM_TRL>
+
+<!--103 es_ES**************--><C_UOM_TRL>
+<!--103 es_ES C_UOM_ID-->
+<!--103 es_ES-->              <C_UOM_ID><![CDATA[103]]></C_UOM_ID>
+<!--103 es_ES AD_LANGUAGE-->
+<!--103 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--103 es_ES AD_CLIENT_ID-->
+<!--103 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--103 es_ES AD_ORG_ID-->
+<!--103 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--103 es_ES ISACTIVE-->
+<!--103 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--103 es_ES CREATED-->
+<!--103 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
+<!--103 es_ES CREATEDBY-->
+<!--103 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--103 es_ES UPDATED-->
+<!--103 es_ES-->              <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
+<!--103 es_ES UPDATEDBY-->
+<!--103 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--103 es_ES UOMSYMBOL-->
+<!--103 es_ES-->              <UOMSYMBOL><![CDATA[min]]></UOMSYMBOL>
+<!--103 es_ES NAME-->
+<!--103 es_ES-->              <NAME><![CDATA[Minutos]]></NAME>
+<!--103 es_ES DESCRIPTION-->
+<!--103 es_ES-->              <DESCRIPTION><![CDATA[(lowest unit for resorce assigments)]]></DESCRIPTION>
+<!--103 es_ES ISTRANSLATED-->
+<!--103 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--103 es_ES**************--></C_UOM_TRL>
+
+<!--104 es_ES**************--><C_UOM_TRL>
+<!--104 es_ES C_UOM_ID-->
+<!--104 es_ES-->              <C_UOM_ID><![CDATA[104]]></C_UOM_ID>
+<!--104 es_ES AD_LANGUAGE-->
+<!--104 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--104 es_ES AD_CLIENT_ID-->
+<!--104 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--104 es_ES AD_ORG_ID-->
+<!--104 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--104 es_ES ISACTIVE-->
+<!--104 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--104 es_ES CREATED-->
+<!--104 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
+<!--104 es_ES CREATEDBY-->
+<!--104 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--104 es_ES UPDATED-->
+<!--104 es_ES-->              <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
+<!--104 es_ES UPDATEDBY-->
+<!--104 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--104 es_ES UOMSYMBOL-->
+<!--104 es_ES-->              <UOMSYMBOL><![CDATA[D  ]]></UOMSYMBOL>
+<!--104 es_ES NAME-->
+<!--104 es_ES-->              <NAME><![CDATA[Día laboral]]></NAME>
+<!--104 es_ES DESCRIPTION-->
+<!--104 es_ES-->              <DESCRIPTION><![CDATA[8 horas]]></DESCRIPTION>
+<!--104 es_ES ISTRANSLATED-->
+<!--104 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--104 es_ES**************--></C_UOM_TRL>
+
+<!--105 es_ES**************--><C_UOM_TRL>
+<!--105 es_ES C_UOM_ID-->
+<!--105 es_ES-->              <C_UOM_ID><![CDATA[105]]></C_UOM_ID>
+<!--105 es_ES AD_LANGUAGE-->
+<!--105 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--105 es_ES AD_CLIENT_ID-->
+<!--105 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--105 es_ES AD_ORG_ID-->
+<!--105 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--105 es_ES ISACTIVE-->
+<!--105 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--105 es_ES CREATED-->
+<!--105 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
+<!--105 es_ES CREATEDBY-->
+<!--105 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--105 es_ES UPDATED-->
+<!--105 es_ES-->              <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
+<!--105 es_ES UPDATEDBY-->
+<!--105 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--105 es_ES UOMSYMBOL-->
+<!--105 es_ES-->              <UOMSYMBOL><![CDATA[s  ]]></UOMSYMBOL>
+<!--105 es_ES NAME-->
+<!--105 es_ES-->              <NAME><![CDATA[Semana]]></NAME>
+<!--105 es_ES ISTRANSLATED-->
+<!--105 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--105 es_ES**************--></C_UOM_TRL>
+
+<!--106 es_ES**************--><C_UOM_TRL>
+<!--106 es_ES C_UOM_ID-->
+<!--106 es_ES-->              <C_UOM_ID><![CDATA[106]]></C_UOM_ID>
+<!--106 es_ES AD_LANGUAGE-->
+<!--106 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--106 es_ES AD_CLIENT_ID-->
+<!--106 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--106 es_ES AD_ORG_ID-->
+<!--106 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--106 es_ES ISACTIVE-->
+<!--106 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--106 es_ES CREATED-->
+<!--106 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
+<!--106 es_ES CREATEDBY-->
+<!--106 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--106 es_ES UPDATED-->
+<!--106 es_ES-->              <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
+<!--106 es_ES UPDATEDBY-->
+<!--106 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--106 es_ES UOMSYMBOL-->
+<!--106 es_ES-->              <UOMSYMBOL><![CDATA[m  ]]></UOMSYMBOL>
+<!--106 es_ES NAME-->
+<!--106 es_ES-->              <NAME><![CDATA[Mes]]></NAME>
+<!--106 es_ES DESCRIPTION-->
+<!--106 es_ES-->              <DESCRIPTION><![CDATA[30 días]]></DESCRIPTION>
+<!--106 es_ES ISTRANSLATED-->
+<!--106 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--106 es_ES**************--></C_UOM_TRL>
+
+<!--107 es_ES**************--><C_UOM_TRL>
+<!--107 es_ES C_UOM_ID-->
+<!--107 es_ES-->              <C_UOM_ID><![CDATA[107]]></C_UOM_ID>
+<!--107 es_ES AD_LANGUAGE-->
+<!--107 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--107 es_ES AD_CLIENT_ID-->
+<!--107 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--107 es_ES AD_ORG_ID-->
+<!--107 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--107 es_ES ISACTIVE-->
+<!--107 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--107 es_ES CREATED-->
+<!--107 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
+<!--107 es_ES CREATEDBY-->
+<!--107 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--107 es_ES UPDATED-->
+<!--107 es_ES-->              <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
+<!--107 es_ES UPDATEDBY-->
+<!--107 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--107 es_ES UOMSYMBOL-->
+<!--107 es_ES-->              <UOMSYMBOL><![CDATA[M  ]]></UOMSYMBOL>
+<!--107 es_ES NAME-->
+<!--107 es_ES-->              <NAME><![CDATA[Mes laboral]]></NAME>
+<!--107 es_ES DESCRIPTION-->
+<!--107 es_ES-->              <DESCRIPTION><![CDATA[20 días]]></DESCRIPTION>
+<!--107 es_ES ISTRANSLATED-->
+<!--107 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--107 es_ES**************--></C_UOM_TRL>
+
+<!--108 es_ES**************--><C_UOM_TRL>
+<!--108 es_ES C_UOM_ID-->
+<!--108 es_ES-->              <C_UOM_ID><![CDATA[108]]></C_UOM_ID>
+<!--108 es_ES AD_LANGUAGE-->
+<!--108 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--108 es_ES AD_CLIENT_ID-->
+<!--108 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--108 es_ES AD_ORG_ID-->
+<!--108 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--108 es_ES ISACTIVE-->
+<!--108 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--108 es_ES CREATED-->
+<!--108 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
+<!--108 es_ES CREATEDBY-->
+<!--108 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--108 es_ES UPDATED-->
+<!--108 es_ES-->              <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
+<!--108 es_ES UPDATEDBY-->
+<!--108 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--108 es_ES UOMSYMBOL-->
+<!--108 es_ES-->              <UOMSYMBOL><![CDATA[a  ]]></UOMSYMBOL>
+<!--108 es_ES NAME-->
+<!--108 es_ES-->              <NAME><![CDATA[Año]]></NAME>
+<!--108 es_ES ISTRANSLATED-->
+<!--108 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--108 es_ES**************--></C_UOM_TRL>
+
 <!--
 ************************
 0. End of Core Range.

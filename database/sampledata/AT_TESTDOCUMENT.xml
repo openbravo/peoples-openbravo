@@ -5,31 +5,31 @@
 0. Core Range.
 ************************
 -->
-<!--AT_TESTDOCUMENT_ID=800000-->                    <AT_TESTDOCUMENT>
-<!--AT_TESTDOCUMENT_ID=800000 AT_TESTDOCUMENT_ID-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <AT_TESTDOCUMENT_ID><![CDATA[800000]]></AT_TESTDOCUMENT_ID>
-<!--AT_TESTDOCUMENT_ID=800000 AD_CLIENT_ID-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AT_TESTDOCUMENT_ID=800000 AD_ORG_ID-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AT_TESTDOCUMENT_ID=800000 ISACTIVE-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AT_TESTDOCUMENT_ID=800000 CREATED-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <CREATED><![CDATA[2005-12-16 17:19:21.0]]></CREATED>
-<!--AT_TESTDOCUMENT_ID=800000 CREATEDBY-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AT_TESTDOCUMENT_ID=800000 UPDATED-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <UPDATED><![CDATA[2005-12-16 17:19:21.0]]></UPDATED>
-<!--AT_TESTDOCUMENT_ID=800000 UPDATEDBY-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AT_TESTDOCUMENT_ID=800000 NAME-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <NAME><![CDATA[Watir(es_ES)]]></NAME>
-<!--AT_TESTDOCUMENT_ID=800000 DESCRIPTION-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <DESCRIPTION><![CDATA[Archivo ruby para la ejecucin de Tests con Watir]]></DESCRIPTION>
-<!--AT_TESTDOCUMENT_ID=800000 EXTENSION-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <EXTENSION><![CDATA[rb  ]]></EXTENSION>
-<!--AT_TESTDOCUMENT_ID=800000 HEADER1-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <HEADER1><![CDATA[# feature tests for Frames
+<!--800000**************--><AT_TESTDOCUMENT>
+<!--800000 AT_TESTDOCUMENT_ID-->
+<!--800000-->              <AT_TESTDOCUMENT_ID><![CDATA[800000]]></AT_TESTDOCUMENT_ID>
+<!--800000 AD_CLIENT_ID-->
+<!--800000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800000 AD_ORG_ID-->
+<!--800000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800000 ISACTIVE-->
+<!--800000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800000 CREATED-->
+<!--800000-->              <CREATED><![CDATA[2005-12-16 17:19:21.0]]></CREATED>
+<!--800000 CREATEDBY-->
+<!--800000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--800000 UPDATED-->
+<!--800000-->              <UPDATED><![CDATA[2005-12-16 17:19:21.0]]></UPDATED>
+<!--800000 UPDATEDBY-->
+<!--800000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--800000 NAME-->
+<!--800000-->              <NAME><![CDATA[Watir(es_ES)]]></NAME>
+<!--800000 DESCRIPTION-->
+<!--800000-->              <DESCRIPTION><![CDATA[Archivo ruby para la ejecucin de Tests con Watir]]></DESCRIPTION>
+<!--800000 EXTENSION-->
+<!--800000-->              <EXTENSION><![CDATA[rb  ]]></EXTENSION>
+<!--800000 HEADER1-->
+<!--800000-->              <HEADER1><![CDATA[# feature tests for Frames
 # revision: $Revision: 1.20 $
 
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..') if $0 == __FILE__
@@ -41,28 +41,29 @@ class TC_Frames < Test::Unit::TestCase
 
     def setup()
         $ie.goto("]]></HEADER1>
-<!--AT_TESTDOCUMENT_ID=800000 FOOTER-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <FOOTER><![CDATA[puts 'Test Succesful'
+<!--800000 FOOTER-->
+<!--800000-->              <FOOTER><![CDATA[puts 'Test Succesful'
 
 end
 end]]></FOOTER>
-<!--AT_TESTDOCUMENT_ID=800000 CONTENTTYPE-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <CONTENTTYPE><![CDATA[text/plain]]></CONTENTTYPE>
-<!--AT_TESTDOCUMENT_ID=800000 HEADER2-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <HEADER2><![CDATA[")
+<!--800000 CONTENTTYPE-->
+<!--800000-->              <CONTENTTYPE><![CDATA[text/plain]]></CONTENTTYPE>
+<!--800000 HEADER2-->
+<!--800000-->              <HEADER2><![CDATA[")
     end
 
     def test_a_Login
 ]]></HEADER2>
-<!--AT_TESTDOCUMENT_ID=800000 AD_LANGUAGE-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--AT_TESTDOCUMENT_ID=800000 LINE_INTERCHANGER-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <LINE_INTERCHANGER><![CDATA[Y]]></LINE_INTERCHANGER>
-<!--AT_TESTDOCUMENT_ID=800000 PREFIX-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <PREFIX><![CDATA[Y]]></PREFIX>
-<!--AT_TESTDOCUMENT_ID=800000 INTRODUCTION-->
-<!--AT_TESTDOCUMENT_ID=800000-->                        <INTRODUCTION><![CDATA[N]]></INTRODUCTION>
-<!--AT_TESTDOCUMENT_ID=800000-->                    </AT_TESTDOCUMENT>
+<!--800000 AD_LANGUAGE-->
+<!--800000-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--800000 LINE_INTERCHANGER-->
+<!--800000-->              <LINE_INTERCHANGER><![CDATA[Y]]></LINE_INTERCHANGER>
+<!--800000 PREFIX-->
+<!--800000-->              <PREFIX><![CDATA[Y]]></PREFIX>
+<!--800000 INTRODUCTION-->
+<!--800000-->              <INTRODUCTION><![CDATA[N]]></INTRODUCTION>
+<!--800000**************--></AT_TESTDOCUMENT>
+
 <!--
 ************************
 0. End of Core Range.

@@ -5,78 +5,81 @@
 0. Core Range.
 ************************
 -->
-<!--PA_COLOR_ID=100-->                    <PA_COLOR>
-<!--PA_COLOR_ID=100 PA_COLOR_ID-->
-<!--PA_COLOR_ID=100-->                        <PA_COLOR_ID><![CDATA[100]]></PA_COLOR_ID>
-<!--PA_COLOR_ID=100 AD_CLIENT_ID-->
-<!--PA_COLOR_ID=100-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--PA_COLOR_ID=100 AD_ORG_ID-->
-<!--PA_COLOR_ID=100-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--PA_COLOR_ID=100 ISACTIVE-->
-<!--PA_COLOR_ID=100-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--PA_COLOR_ID=100 CREATED-->
-<!--PA_COLOR_ID=100-->                        <CREATED><![CDATA[2001-04-26 18:28:08.0]]></CREATED>
-<!--PA_COLOR_ID=100 CREATEDBY-->
-<!--PA_COLOR_ID=100-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--PA_COLOR_ID=100 UPDATED-->
-<!--PA_COLOR_ID=100-->                        <UPDATED><![CDATA[2001-04-26 18:29:39.0]]></UPDATED>
-<!--PA_COLOR_ID=100 UPDATEDBY-->
-<!--PA_COLOR_ID=100-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--PA_COLOR_ID=100 NAME-->
-<!--PA_COLOR_ID=100-->                        <NAME><![CDATA[Green]]></NAME>
-<!--PA_COLOR_ID=100 UPTOPERCENT-->
-<!--PA_COLOR_ID=100-->                        <UPTOPERCENT><![CDATA[100]]></UPTOPERCENT>
-<!--PA_COLOR_ID=100 JAVACOLORCLASS-->
-<!--PA_COLOR_ID=100-->                        <JAVACOLORCLASS><![CDATA[java.awt.Color.green]]></JAVACOLORCLASS>
-<!--PA_COLOR_ID=100-->                    </PA_COLOR>
-<!--PA_COLOR_ID=101-->                    <PA_COLOR>
-<!--PA_COLOR_ID=101 PA_COLOR_ID-->
-<!--PA_COLOR_ID=101-->                        <PA_COLOR_ID><![CDATA[101]]></PA_COLOR_ID>
-<!--PA_COLOR_ID=101 AD_CLIENT_ID-->
-<!--PA_COLOR_ID=101-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--PA_COLOR_ID=101 AD_ORG_ID-->
-<!--PA_COLOR_ID=101-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--PA_COLOR_ID=101 ISACTIVE-->
-<!--PA_COLOR_ID=101-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--PA_COLOR_ID=101 CREATED-->
-<!--PA_COLOR_ID=101-->                        <CREATED><![CDATA[2001-04-26 18:28:44.0]]></CREATED>
-<!--PA_COLOR_ID=101 CREATEDBY-->
-<!--PA_COLOR_ID=101-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--PA_COLOR_ID=101 UPDATED-->
-<!--PA_COLOR_ID=101-->                        <UPDATED><![CDATA[2001-04-26 18:28:44.0]]></UPDATED>
-<!--PA_COLOR_ID=101 UPDATEDBY-->
-<!--PA_COLOR_ID=101-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--PA_COLOR_ID=101 NAME-->
-<!--PA_COLOR_ID=101-->                        <NAME><![CDATA[Red]]></NAME>
-<!--PA_COLOR_ID=101 UPTOPERCENT-->
-<!--PA_COLOR_ID=101-->                        <UPTOPERCENT><![CDATA[50]]></UPTOPERCENT>
-<!--PA_COLOR_ID=101 JAVACOLORCLASS-->
-<!--PA_COLOR_ID=101-->                        <JAVACOLORCLASS><![CDATA[java.awt.Color.red]]></JAVACOLORCLASS>
-<!--PA_COLOR_ID=101-->                    </PA_COLOR>
-<!--PA_COLOR_ID=102-->                    <PA_COLOR>
-<!--PA_COLOR_ID=102 PA_COLOR_ID-->
-<!--PA_COLOR_ID=102-->                        <PA_COLOR_ID><![CDATA[102]]></PA_COLOR_ID>
-<!--PA_COLOR_ID=102 AD_CLIENT_ID-->
-<!--PA_COLOR_ID=102-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--PA_COLOR_ID=102 AD_ORG_ID-->
-<!--PA_COLOR_ID=102-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--PA_COLOR_ID=102 ISACTIVE-->
-<!--PA_COLOR_ID=102-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--PA_COLOR_ID=102 CREATED-->
-<!--PA_COLOR_ID=102-->                        <CREATED><![CDATA[2001-04-26 18:29:24.0]]></CREATED>
-<!--PA_COLOR_ID=102 CREATEDBY-->
-<!--PA_COLOR_ID=102-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--PA_COLOR_ID=102 UPDATED-->
-<!--PA_COLOR_ID=102-->                        <UPDATED><![CDATA[2001-04-26 18:29:24.0]]></UPDATED>
-<!--PA_COLOR_ID=102 UPDATEDBY-->
-<!--PA_COLOR_ID=102-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--PA_COLOR_ID=102 NAME-->
-<!--PA_COLOR_ID=102-->                        <NAME><![CDATA[Yellow]]></NAME>
-<!--PA_COLOR_ID=102 UPTOPERCENT-->
-<!--PA_COLOR_ID=102-->                        <UPTOPERCENT><![CDATA[90]]></UPTOPERCENT>
-<!--PA_COLOR_ID=102 JAVACOLORCLASS-->
-<!--PA_COLOR_ID=102-->                        <JAVACOLORCLASS><![CDATA[java.awt.Color.yellow]]></JAVACOLORCLASS>
-<!--PA_COLOR_ID=102-->                    </PA_COLOR>
+<!--100**************--><PA_COLOR>
+<!--100 PA_COLOR_ID-->
+<!--100-->              <PA_COLOR_ID><![CDATA[100]]></PA_COLOR_ID>
+<!--100 AD_CLIENT_ID-->
+<!--100-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100 AD_ORG_ID-->
+<!--100-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100 ISACTIVE-->
+<!--100-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100 CREATED-->
+<!--100-->              <CREATED><![CDATA[2001-04-26 18:28:08.0]]></CREATED>
+<!--100 CREATEDBY-->
+<!--100-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--100 UPDATED-->
+<!--100-->              <UPDATED><![CDATA[2001-04-26 18:29:39.0]]></UPDATED>
+<!--100 UPDATEDBY-->
+<!--100-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100 NAME-->
+<!--100-->              <NAME><![CDATA[Green]]></NAME>
+<!--100 UPTOPERCENT-->
+<!--100-->              <UPTOPERCENT><![CDATA[100]]></UPTOPERCENT>
+<!--100 JAVACOLORCLASS-->
+<!--100-->              <JAVACOLORCLASS><![CDATA[java.awt.Color.green]]></JAVACOLORCLASS>
+<!--100**************--></PA_COLOR>
+
+<!--101**************--><PA_COLOR>
+<!--101 PA_COLOR_ID-->
+<!--101-->              <PA_COLOR_ID><![CDATA[101]]></PA_COLOR_ID>
+<!--101 AD_CLIENT_ID-->
+<!--101-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--101 AD_ORG_ID-->
+<!--101-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--101 ISACTIVE-->
+<!--101-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--101 CREATED-->
+<!--101-->              <CREATED><![CDATA[2001-04-26 18:28:44.0]]></CREATED>
+<!--101 CREATEDBY-->
+<!--101-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--101 UPDATED-->
+<!--101-->              <UPDATED><![CDATA[2001-04-26 18:28:44.0]]></UPDATED>
+<!--101 UPDATEDBY-->
+<!--101-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--101 NAME-->
+<!--101-->              <NAME><![CDATA[Red]]></NAME>
+<!--101 UPTOPERCENT-->
+<!--101-->              <UPTOPERCENT><![CDATA[50]]></UPTOPERCENT>
+<!--101 JAVACOLORCLASS-->
+<!--101-->              <JAVACOLORCLASS><![CDATA[java.awt.Color.red]]></JAVACOLORCLASS>
+<!--101**************--></PA_COLOR>
+
+<!--102**************--><PA_COLOR>
+<!--102 PA_COLOR_ID-->
+<!--102-->              <PA_COLOR_ID><![CDATA[102]]></PA_COLOR_ID>
+<!--102 AD_CLIENT_ID-->
+<!--102-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--102 AD_ORG_ID-->
+<!--102-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--102 ISACTIVE-->
+<!--102-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--102 CREATED-->
+<!--102-->              <CREATED><![CDATA[2001-04-26 18:29:24.0]]></CREATED>
+<!--102 CREATEDBY-->
+<!--102-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--102 UPDATED-->
+<!--102-->              <UPDATED><![CDATA[2001-04-26 18:29:24.0]]></UPDATED>
+<!--102 UPDATEDBY-->
+<!--102-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--102 NAME-->
+<!--102-->              <NAME><![CDATA[Yellow]]></NAME>
+<!--102 UPTOPERCENT-->
+<!--102-->              <UPTOPERCENT><![CDATA[90]]></UPTOPERCENT>
+<!--102 JAVACOLORCLASS-->
+<!--102-->              <JAVACOLORCLASS><![CDATA[java.awt.Color.yellow]]></JAVACOLORCLASS>
+<!--102**************--></PA_COLOR>
+
 <!--
 ************************
 0. End of Core Range.

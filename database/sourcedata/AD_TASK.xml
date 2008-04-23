@@ -5,222 +5,230 @@
 0. Core Range.
 ************************
 -->
-<!--AD_TASK_ID=102-->                    <AD_TASK>
-<!--AD_TASK_ID=102 AD_TASK_ID-->
-<!--AD_TASK_ID=102-->                        <AD_TASK_ID><![CDATA[102]]></AD_TASK_ID>
-<!--AD_TASK_ID=102 AD_CLIENT_ID-->
-<!--AD_TASK_ID=102-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TASK_ID=102 AD_ORG_ID-->
-<!--AD_TASK_ID=102-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TASK_ID=102 ISACTIVE-->
-<!--AD_TASK_ID=102-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TASK_ID=102 CREATED-->
-<!--AD_TASK_ID=102-->                        <CREATED><![CDATA[1999-12-05 23:21:20.0]]></CREATED>
-<!--AD_TASK_ID=102 CREATEDBY-->
-<!--AD_TASK_ID=102-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_TASK_ID=102 UPDATED-->
-<!--AD_TASK_ID=102-->                        <UPDATED><![CDATA[2007-01-23 13:42:05.0]]></UPDATED>
-<!--AD_TASK_ID=102 UPDATEDBY-->
-<!--AD_TASK_ID=102-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AD_TASK_ID=102 NAME-->
-<!--AD_TASK_ID=102-->                        <NAME><![CDATA[Java Version]]></NAME>
-<!--AD_TASK_ID=102 DESCRIPTION-->
-<!--AD_TASK_ID=102-->                        <DESCRIPTION><![CDATA[Displays the version of the default Java VM]]></DESCRIPTION>
-<!--AD_TASK_ID=102 HELP-->
-<!--AD_TASK_ID=102-->                        <HELP><![CDATA[The java version used by the application might be different.]]></HELP>
-<!--AD_TASK_ID=102 ACCESSLEVEL-->
-<!--AD_TASK_ID=102-->                        <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--AD_TASK_ID=102 OS_COMMAND-->
-<!--AD_TASK_ID=102-->                        <OS_COMMAND><![CDATA[java -version]]></OS_COMMAND>
-<!--AD_TASK_ID=102 ENTITYTYPE-->
-<!--AD_TASK_ID=102-->                        <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--AD_TASK_ID=102-->                    </AD_TASK>
-<!--AD_TASK_ID=103-->                    <AD_TASK>
-<!--AD_TASK_ID=103 AD_TASK_ID-->
-<!--AD_TASK_ID=103-->                        <AD_TASK_ID><![CDATA[103]]></AD_TASK_ID>
-<!--AD_TASK_ID=103 AD_CLIENT_ID-->
-<!--AD_TASK_ID=103-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TASK_ID=103 AD_ORG_ID-->
-<!--AD_TASK_ID=103-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TASK_ID=103 ISACTIVE-->
-<!--AD_TASK_ID=103-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TASK_ID=103 CREATED-->
-<!--AD_TASK_ID=103-->                        <CREATED><![CDATA[2001-10-17 17:45:58.0]]></CREATED>
-<!--AD_TASK_ID=103 CREATEDBY-->
-<!--AD_TASK_ID=103-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_TASK_ID=103 UPDATED-->
-<!--AD_TASK_ID=103-->                        <UPDATED><![CDATA[2004-07-12 18:22:16.0]]></UPDATED>
-<!--AD_TASK_ID=103 UPDATEDBY-->
-<!--AD_TASK_ID=103-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AD_TASK_ID=103 NAME-->
-<!--AD_TASK_ID=103-->                        <NAME><![CDATA[Database Export]]></NAME>
-<!--AD_TASK_ID=103 DESCRIPTION-->
-<!--AD_TASK_ID=103-->                        <DESCRIPTION><![CDATA[Export (save) the database]]></DESCRIPTION>
-<!--AD_TASK_ID=103 HELP-->
-<!--AD_TASK_ID=103-->                        <HELP><![CDATA[Run this command from the server]]></HELP>
-<!--AD_TASK_ID=103 ACCESSLEVEL-->
-<!--AD_TASK_ID=103-->                        <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--AD_TASK_ID=103 OS_COMMAND-->
-<!--AD_TASK_ID=103-->                        <OS_COMMAND><![CDATA[exp TAD/TAD FILE=C:\TAD.DMP LOG=C:\TAD.LOG OWNER=TAD]]></OS_COMMAND>
-<!--AD_TASK_ID=103 ENTITYTYPE-->
-<!--AD_TASK_ID=103-->                        <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--AD_TASK_ID=103-->                    </AD_TASK>
-<!--AD_TASK_ID=104-->                    <AD_TASK>
-<!--AD_TASK_ID=104 AD_TASK_ID-->
-<!--AD_TASK_ID=104-->                        <AD_TASK_ID><![CDATA[104]]></AD_TASK_ID>
-<!--AD_TASK_ID=104 AD_CLIENT_ID-->
-<!--AD_TASK_ID=104-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TASK_ID=104 AD_ORG_ID-->
-<!--AD_TASK_ID=104-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TASK_ID=104 ISACTIVE-->
-<!--AD_TASK_ID=104-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TASK_ID=104 CREATED-->
-<!--AD_TASK_ID=104-->                        <CREATED><![CDATA[2001-10-17 17:46:51.0]]></CREATED>
-<!--AD_TASK_ID=104 CREATEDBY-->
-<!--AD_TASK_ID=104-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_TASK_ID=104 UPDATED-->
-<!--AD_TASK_ID=104-->                        <UPDATED><![CDATA[2003-02-22 02:20:10.0]]></UPDATED>
-<!--AD_TASK_ID=104 UPDATEDBY-->
-<!--AD_TASK_ID=104-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_TASK_ID=104 NAME-->
-<!--AD_TASK_ID=104-->                        <NAME><![CDATA[Database Transfer]]></NAME>
-<!--AD_TASK_ID=104 DESCRIPTION-->
-<!--AD_TASK_ID=104-->                        <DESCRIPTION><![CDATA[Transfer the database]]></DESCRIPTION>
-<!--AD_TASK_ID=104 HELP-->
-<!--AD_TASK_ID=104-->                        <HELP><![CDATA[Run this command from the server]]></HELP>
-<!--AD_TASK_ID=104 ACCESSLEVEL-->
-<!--AD_TASK_ID=104-->                        <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--AD_TASK_ID=104 ENTITYTYPE-->
-<!--AD_TASK_ID=104-->                        <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--AD_TASK_ID=104-->                    </AD_TASK>
-<!--AD_TASK_ID=800000-->                    <AD_TASK>
-<!--AD_TASK_ID=800000 AD_TASK_ID-->
-<!--AD_TASK_ID=800000-->                        <AD_TASK_ID><![CDATA[800000]]></AD_TASK_ID>
-<!--AD_TASK_ID=800000 AD_CLIENT_ID-->
-<!--AD_TASK_ID=800000-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TASK_ID=800000 AD_ORG_ID-->
-<!--AD_TASK_ID=800000-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TASK_ID=800000 ISACTIVE-->
-<!--AD_TASK_ID=800000-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TASK_ID=800000 CREATED-->
-<!--AD_TASK_ID=800000-->                        <CREATED><![CDATA[2004-07-12 18:22:40.0]]></CREATED>
-<!--AD_TASK_ID=800000 CREATEDBY-->
-<!--AD_TASK_ID=800000-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_TASK_ID=800000 UPDATED-->
-<!--AD_TASK_ID=800000-->                        <UPDATED><![CDATA[2004-07-12 18:38:20.0]]></UPDATED>
-<!--AD_TASK_ID=800000 UPDATEDBY-->
-<!--AD_TASK_ID=800000-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AD_TASK_ID=800000 NAME-->
-<!--AD_TASK_ID=800000-->                        <NAME><![CDATA[Merge Script]]></NAME>
-<!--AD_TASK_ID=800000 ACCESSLEVEL-->
-<!--AD_TASK_ID=800000-->                        <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--AD_TASK_ID=800000 ENTITYTYPE-->
-<!--AD_TASK_ID=800000-->                        <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
-<!--AD_TASK_ID=800000 CLASSNAME-->
-<!--AD_TASK_ID=800000-->                        <CLASSNAME><![CDATA[ad_tasks/MergeScript.html]]></CLASSNAME>
-<!--AD_TASK_ID=800000-->                    </AD_TASK>
-<!--AD_TASK_ID=800001-->                    <AD_TASK>
-<!--AD_TASK_ID=800001 AD_TASK_ID-->
-<!--AD_TASK_ID=800001-->                        <AD_TASK_ID><![CDATA[800001]]></AD_TASK_ID>
-<!--AD_TASK_ID=800001 AD_CLIENT_ID-->
-<!--AD_TASK_ID=800001-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TASK_ID=800001 AD_ORG_ID-->
-<!--AD_TASK_ID=800001-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TASK_ID=800001 ISACTIVE-->
-<!--AD_TASK_ID=800001-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TASK_ID=800001 CREATED-->
-<!--AD_TASK_ID=800001-->                        <CREATED><![CDATA[2004-07-12 18:23:31.0]]></CREATED>
-<!--AD_TASK_ID=800001 CREATEDBY-->
-<!--AD_TASK_ID=800001-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_TASK_ID=800001 UPDATED-->
-<!--AD_TASK_ID=800001-->                        <UPDATED><![CDATA[2004-07-12 18:24:18.0]]></UPDATED>
-<!--AD_TASK_ID=800001 UPDATEDBY-->
-<!--AD_TASK_ID=800001-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AD_TASK_ID=800001 NAME-->
-<!--AD_TASK_ID=800001-->                        <NAME><![CDATA[Preinstall]]></NAME>
-<!--AD_TASK_ID=800001 ACCESSLEVEL-->
-<!--AD_TASK_ID=800001-->                        <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--AD_TASK_ID=800001 ENTITYTYPE-->
-<!--AD_TASK_ID=800001-->                        <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
-<!--AD_TASK_ID=800001 CLASSNAME-->
-<!--AD_TASK_ID=800001-->                        <CLASSNAME><![CDATA[ad_tasks/Preinstall.html]]></CLASSNAME>
-<!--AD_TASK_ID=800001-->                    </AD_TASK>
-<!--AD_TASK_ID=800002-->                    <AD_TASK>
-<!--AD_TASK_ID=800002 AD_TASK_ID-->
-<!--AD_TASK_ID=800002-->                        <AD_TASK_ID><![CDATA[800002]]></AD_TASK_ID>
-<!--AD_TASK_ID=800002 AD_CLIENT_ID-->
-<!--AD_TASK_ID=800002-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TASK_ID=800002 AD_ORG_ID-->
-<!--AD_TASK_ID=800002-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TASK_ID=800002 ISACTIVE-->
-<!--AD_TASK_ID=800002-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TASK_ID=800002 CREATED-->
-<!--AD_TASK_ID=800002-->                        <CREATED><![CDATA[2004-07-12 18:24:54.0]]></CREATED>
-<!--AD_TASK_ID=800002 CREATEDBY-->
-<!--AD_TASK_ID=800002-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_TASK_ID=800002 UPDATED-->
-<!--AD_TASK_ID=800002-->                        <UPDATED><![CDATA[2004-07-12 18:24:54.0]]></UPDATED>
-<!--AD_TASK_ID=800002 UPDATEDBY-->
-<!--AD_TASK_ID=800002-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AD_TASK_ID=800002 NAME-->
-<!--AD_TASK_ID=800002-->                        <NAME><![CDATA[Version]]></NAME>
-<!--AD_TASK_ID=800002 ACCESSLEVEL-->
-<!--AD_TASK_ID=800002-->                        <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--AD_TASK_ID=800002 ENTITYTYPE-->
-<!--AD_TASK_ID=800002-->                        <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
-<!--AD_TASK_ID=800002 CLASSNAME-->
-<!--AD_TASK_ID=800002-->                        <CLASSNAME><![CDATA[ad_tasks/Version.html]]></CLASSNAME>
-<!--AD_TASK_ID=800002-->                    </AD_TASK>
-<!--AD_TASK_ID=800003-->                    <AD_TASK>
-<!--AD_TASK_ID=800003 AD_TASK_ID-->
-<!--AD_TASK_ID=800003-->                        <AD_TASK_ID><![CDATA[800003]]></AD_TASK_ID>
-<!--AD_TASK_ID=800003 AD_CLIENT_ID-->
-<!--AD_TASK_ID=800003-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TASK_ID=800003 AD_ORG_ID-->
-<!--AD_TASK_ID=800003-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TASK_ID=800003 ISACTIVE-->
-<!--AD_TASK_ID=800003-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TASK_ID=800003 CREATED-->
-<!--AD_TASK_ID=800003-->                        <CREATED><![CDATA[2006-08-02 00:00:00.0]]></CREATED>
-<!--AD_TASK_ID=800003 CREATEDBY-->
-<!--AD_TASK_ID=800003-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_TASK_ID=800003 UPDATED-->
-<!--AD_TASK_ID=800003-->                        <UPDATED><![CDATA[2006-08-16 12:00:26.0]]></UPDATED>
-<!--AD_TASK_ID=800003 UPDATEDBY-->
-<!--AD_TASK_ID=800003-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AD_TASK_ID=800003 NAME-->
-<!--AD_TASK_ID=800003-->                        <NAME><![CDATA[External Point of Sales]]></NAME>
-<!--AD_TASK_ID=800003 ACCESSLEVEL-->
-<!--AD_TASK_ID=800003-->                        <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--AD_TASK_ID=800003 ENTITYTYPE-->
-<!--AD_TASK_ID=800003-->                        <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
-<!--AD_TASK_ID=800003 CLASSNAME-->
-<!--AD_TASK_ID=800003-->                        <CLASSNAME><![CDATA[org.openbravo.erpCommon.ws.externalSales.ExternalSales]]></CLASSNAME>
-<!--AD_TASK_ID=800003-->                    </AD_TASK>
-<!--AD_TASK_ID=800004-->                    <AD_TASK>
-<!--AD_TASK_ID=800004 AD_TASK_ID-->
-<!--AD_TASK_ID=800004-->                        <AD_TASK_ID><![CDATA[800004]]></AD_TASK_ID>
-<!--AD_TASK_ID=800004 AD_CLIENT_ID-->
-<!--AD_TASK_ID=800004-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TASK_ID=800004 AD_ORG_ID-->
-<!--AD_TASK_ID=800004-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TASK_ID=800004 ISACTIVE-->
-<!--AD_TASK_ID=800004-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TASK_ID=800004 CREATED-->
-<!--AD_TASK_ID=800004-->                        <CREATED><![CDATA[2006-08-07 14:13:18.0]]></CREATED>
-<!--AD_TASK_ID=800004 CREATEDBY-->
-<!--AD_TASK_ID=800004-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_TASK_ID=800004 UPDATED-->
-<!--AD_TASK_ID=800004-->                        <UPDATED><![CDATA[2006-08-07 14:13:18.0]]></UPDATED>
-<!--AD_TASK_ID=800004 UPDATEDBY-->
-<!--AD_TASK_ID=800004-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AD_TASK_ID=800004 NAME-->
-<!--AD_TASK_ID=800004-->                        <NAME><![CDATA[fdd]]></NAME>
-<!--AD_TASK_ID=800004 ACCESSLEVEL-->
-<!--AD_TASK_ID=800004-->                        <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--AD_TASK_ID=800004 ENTITYTYPE-->
-<!--AD_TASK_ID=800004-->                        <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
-<!--AD_TASK_ID=800004-->                    </AD_TASK>
+<!--102**************--><AD_TASK>
+<!--102 AD_TASK_ID-->
+<!--102-->              <AD_TASK_ID><![CDATA[102]]></AD_TASK_ID>
+<!--102 AD_CLIENT_ID-->
+<!--102-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--102 AD_ORG_ID-->
+<!--102-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--102 ISACTIVE-->
+<!--102-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--102 CREATED-->
+<!--102-->              <CREATED><![CDATA[1999-12-05 23:21:20.0]]></CREATED>
+<!--102 CREATEDBY-->
+<!--102-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--102 UPDATED-->
+<!--102-->              <UPDATED><![CDATA[2007-01-23 13:42:05.0]]></UPDATED>
+<!--102 UPDATEDBY-->
+<!--102-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--102 NAME-->
+<!--102-->              <NAME><![CDATA[Java Version]]></NAME>
+<!--102 DESCRIPTION-->
+<!--102-->              <DESCRIPTION><![CDATA[Displays the version of the default Java VM]]></DESCRIPTION>
+<!--102 HELP-->
+<!--102-->              <HELP><![CDATA[The java version used by the application might be different.]]></HELP>
+<!--102 ACCESSLEVEL-->
+<!--102-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--102 OS_COMMAND-->
+<!--102-->              <OS_COMMAND><![CDATA[java -version]]></OS_COMMAND>
+<!--102 ENTITYTYPE-->
+<!--102-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--102**************--></AD_TASK>
+
+<!--103**************--><AD_TASK>
+<!--103 AD_TASK_ID-->
+<!--103-->              <AD_TASK_ID><![CDATA[103]]></AD_TASK_ID>
+<!--103 AD_CLIENT_ID-->
+<!--103-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--103 AD_ORG_ID-->
+<!--103-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--103 ISACTIVE-->
+<!--103-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--103 CREATED-->
+<!--103-->              <CREATED><![CDATA[2001-10-17 17:45:58.0]]></CREATED>
+<!--103 CREATEDBY-->
+<!--103-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--103 UPDATED-->
+<!--103-->              <UPDATED><![CDATA[2004-07-12 18:22:16.0]]></UPDATED>
+<!--103 UPDATEDBY-->
+<!--103-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--103 NAME-->
+<!--103-->              <NAME><![CDATA[Database Export]]></NAME>
+<!--103 DESCRIPTION-->
+<!--103-->              <DESCRIPTION><![CDATA[Export (save) the database]]></DESCRIPTION>
+<!--103 HELP-->
+<!--103-->              <HELP><![CDATA[Run this command from the server]]></HELP>
+<!--103 ACCESSLEVEL-->
+<!--103-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--103 OS_COMMAND-->
+<!--103-->              <OS_COMMAND><![CDATA[exp TAD/TAD FILE=C:\TAD.DMP LOG=C:\TAD.LOG OWNER=TAD]]></OS_COMMAND>
+<!--103 ENTITYTYPE-->
+<!--103-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--103**************--></AD_TASK>
+
+<!--104**************--><AD_TASK>
+<!--104 AD_TASK_ID-->
+<!--104-->              <AD_TASK_ID><![CDATA[104]]></AD_TASK_ID>
+<!--104 AD_CLIENT_ID-->
+<!--104-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--104 AD_ORG_ID-->
+<!--104-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--104 ISACTIVE-->
+<!--104-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--104 CREATED-->
+<!--104-->              <CREATED><![CDATA[2001-10-17 17:46:51.0]]></CREATED>
+<!--104 CREATEDBY-->
+<!--104-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--104 UPDATED-->
+<!--104-->              <UPDATED><![CDATA[2003-02-22 02:20:10.0]]></UPDATED>
+<!--104 UPDATEDBY-->
+<!--104-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--104 NAME-->
+<!--104-->              <NAME><![CDATA[Database Transfer]]></NAME>
+<!--104 DESCRIPTION-->
+<!--104-->              <DESCRIPTION><![CDATA[Transfer the database]]></DESCRIPTION>
+<!--104 HELP-->
+<!--104-->              <HELP><![CDATA[Run this command from the server]]></HELP>
+<!--104 ACCESSLEVEL-->
+<!--104-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--104 ENTITYTYPE-->
+<!--104-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--104**************--></AD_TASK>
+
+<!--800000**************--><AD_TASK>
+<!--800000 AD_TASK_ID-->
+<!--800000-->              <AD_TASK_ID><![CDATA[800000]]></AD_TASK_ID>
+<!--800000 AD_CLIENT_ID-->
+<!--800000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800000 AD_ORG_ID-->
+<!--800000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800000 ISACTIVE-->
+<!--800000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800000 CREATED-->
+<!--800000-->              <CREATED><![CDATA[2004-07-12 18:22:40.0]]></CREATED>
+<!--800000 CREATEDBY-->
+<!--800000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--800000 UPDATED-->
+<!--800000-->              <UPDATED><![CDATA[2004-07-12 18:38:20.0]]></UPDATED>
+<!--800000 UPDATEDBY-->
+<!--800000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--800000 NAME-->
+<!--800000-->              <NAME><![CDATA[Merge Script]]></NAME>
+<!--800000 ACCESSLEVEL-->
+<!--800000-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--800000 ENTITYTYPE-->
+<!--800000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
+<!--800000 CLASSNAME-->
+<!--800000-->              <CLASSNAME><![CDATA[ad_tasks/MergeScript.html]]></CLASSNAME>
+<!--800000**************--></AD_TASK>
+
+<!--800001**************--><AD_TASK>
+<!--800001 AD_TASK_ID-->
+<!--800001-->              <AD_TASK_ID><![CDATA[800001]]></AD_TASK_ID>
+<!--800001 AD_CLIENT_ID-->
+<!--800001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800001 AD_ORG_ID-->
+<!--800001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800001 ISACTIVE-->
+<!--800001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800001 CREATED-->
+<!--800001-->              <CREATED><![CDATA[2004-07-12 18:23:31.0]]></CREATED>
+<!--800001 CREATEDBY-->
+<!--800001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--800001 UPDATED-->
+<!--800001-->              <UPDATED><![CDATA[2004-07-12 18:24:18.0]]></UPDATED>
+<!--800001 UPDATEDBY-->
+<!--800001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--800001 NAME-->
+<!--800001-->              <NAME><![CDATA[Preinstall]]></NAME>
+<!--800001 ACCESSLEVEL-->
+<!--800001-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--800001 ENTITYTYPE-->
+<!--800001-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
+<!--800001 CLASSNAME-->
+<!--800001-->              <CLASSNAME><![CDATA[ad_tasks/Preinstall.html]]></CLASSNAME>
+<!--800001**************--></AD_TASK>
+
+<!--800002**************--><AD_TASK>
+<!--800002 AD_TASK_ID-->
+<!--800002-->              <AD_TASK_ID><![CDATA[800002]]></AD_TASK_ID>
+<!--800002 AD_CLIENT_ID-->
+<!--800002-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800002 AD_ORG_ID-->
+<!--800002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800002 ISACTIVE-->
+<!--800002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800002 CREATED-->
+<!--800002-->              <CREATED><![CDATA[2004-07-12 18:24:54.0]]></CREATED>
+<!--800002 CREATEDBY-->
+<!--800002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--800002 UPDATED-->
+<!--800002-->              <UPDATED><![CDATA[2004-07-12 18:24:54.0]]></UPDATED>
+<!--800002 UPDATEDBY-->
+<!--800002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--800002 NAME-->
+<!--800002-->              <NAME><![CDATA[Version]]></NAME>
+<!--800002 ACCESSLEVEL-->
+<!--800002-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--800002 ENTITYTYPE-->
+<!--800002-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
+<!--800002 CLASSNAME-->
+<!--800002-->              <CLASSNAME><![CDATA[ad_tasks/Version.html]]></CLASSNAME>
+<!--800002**************--></AD_TASK>
+
+<!--800003**************--><AD_TASK>
+<!--800003 AD_TASK_ID-->
+<!--800003-->              <AD_TASK_ID><![CDATA[800003]]></AD_TASK_ID>
+<!--800003 AD_CLIENT_ID-->
+<!--800003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800003 AD_ORG_ID-->
+<!--800003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800003 ISACTIVE-->
+<!--800003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800003 CREATED-->
+<!--800003-->              <CREATED><![CDATA[2006-08-02 00:00:00.0]]></CREATED>
+<!--800003 CREATEDBY-->
+<!--800003-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--800003 UPDATED-->
+<!--800003-->              <UPDATED><![CDATA[2006-08-16 12:00:26.0]]></UPDATED>
+<!--800003 UPDATEDBY-->
+<!--800003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--800003 NAME-->
+<!--800003-->              <NAME><![CDATA[External Point of Sales]]></NAME>
+<!--800003 ACCESSLEVEL-->
+<!--800003-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--800003 ENTITYTYPE-->
+<!--800003-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
+<!--800003 CLASSNAME-->
+<!--800003-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ws.externalSales.ExternalSales]]></CLASSNAME>
+<!--800003**************--></AD_TASK>
+
+<!--800004**************--><AD_TASK>
+<!--800004 AD_TASK_ID-->
+<!--800004-->              <AD_TASK_ID><![CDATA[800004]]></AD_TASK_ID>
+<!--800004 AD_CLIENT_ID-->
+<!--800004-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800004 AD_ORG_ID-->
+<!--800004-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800004 ISACTIVE-->
+<!--800004-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800004 CREATED-->
+<!--800004-->              <CREATED><![CDATA[2006-08-07 14:13:18.0]]></CREATED>
+<!--800004 CREATEDBY-->
+<!--800004-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--800004 UPDATED-->
+<!--800004-->              <UPDATED><![CDATA[2006-08-07 14:13:18.0]]></UPDATED>
+<!--800004 UPDATEDBY-->
+<!--800004-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--800004 NAME-->
+<!--800004-->              <NAME><![CDATA[fdd]]></NAME>
+<!--800004 ACCESSLEVEL-->
+<!--800004-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--800004 ENTITYTYPE-->
+<!--800004-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
+<!--800004**************--></AD_TASK>
+
 <!--
 ************************
 0. End of Core Range.

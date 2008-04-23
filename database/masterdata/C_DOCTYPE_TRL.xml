@@ -5,62 +5,64 @@
 0. Core Range.
 ************************
 -->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                    <C_DOCTYPE_TRL>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES C_DOCTYPE_ID-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <C_DOCTYPE_ID><![CDATA[0]]></C_DOCTYPE_ID>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES CREATED-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES UPDATED-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2007-04-13 13:17:33.0]]></UPDATED>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES NAME-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[** New **]]></NAME>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES PRINTNAME-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <PRINTNAME><![CDATA[** New **]]></PRINTNAME>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES DOCUMENTNOTE-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <DOCUMENTNOTE><![CDATA[** NO INVOICE **]]></DOCUMENTNOTE>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=es_ES-->                    </C_DOCTYPE_TRL>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                    <C_DOCTYPE_TRL>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES C_DOCTYPE_ID-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <C_DOCTYPE_ID><![CDATA[0]]></C_DOCTYPE_ID>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES AD_LANGUAGE-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <AD_LANGUAGE><![CDATA[eu_ES]]></AD_LANGUAGE>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES AD_CLIENT_ID-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES AD_ORG_ID-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES ISACTIVE-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES CREATED-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES CREATEDBY-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES UPDATED-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <UPDATED><![CDATA[2007-04-13 13:17:33.0]]></UPDATED>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES UPDATEDBY-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES NAME-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <NAME><![CDATA[** New **]]></NAME>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES PRINTNAME-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <PRINTNAME><![CDATA[** New **]]></PRINTNAME>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES DOCUMENTNOTE-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <DOCUMENTNOTE><![CDATA[** NO INVOICE **]]></DOCUMENTNOTE>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES ISTRANSLATED-->
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_DOCTYPE_ID=0 AD_LANGUAGE=eu_ES-->                    </C_DOCTYPE_TRL>
+<!--0 es_ES**************--><C_DOCTYPE_TRL>
+<!--0 es_ES C_DOCTYPE_ID-->
+<!--0 es_ES-->              <C_DOCTYPE_ID><![CDATA[0]]></C_DOCTYPE_ID>
+<!--0 es_ES AD_LANGUAGE-->
+<!--0 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--0 es_ES AD_CLIENT_ID-->
+<!--0 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0 es_ES AD_ORG_ID-->
+<!--0 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0 es_ES ISACTIVE-->
+<!--0 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0 es_ES CREATED-->
+<!--0 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
+<!--0 es_ES CREATEDBY-->
+<!--0 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--0 es_ES UPDATED-->
+<!--0 es_ES-->              <UPDATED><![CDATA[2007-04-13 13:17:33.0]]></UPDATED>
+<!--0 es_ES UPDATEDBY-->
+<!--0 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--0 es_ES NAME-->
+<!--0 es_ES-->              <NAME><![CDATA[** New **]]></NAME>
+<!--0 es_ES PRINTNAME-->
+<!--0 es_ES-->              <PRINTNAME><![CDATA[** New **]]></PRINTNAME>
+<!--0 es_ES DOCUMENTNOTE-->
+<!--0 es_ES-->              <DOCUMENTNOTE><![CDATA[** NO INVOICE **]]></DOCUMENTNOTE>
+<!--0 es_ES ISTRANSLATED-->
+<!--0 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--0 es_ES**************--></C_DOCTYPE_TRL>
+
+<!--0 eu_ES**************--><C_DOCTYPE_TRL>
+<!--0 eu_ES C_DOCTYPE_ID-->
+<!--0 eu_ES-->              <C_DOCTYPE_ID><![CDATA[0]]></C_DOCTYPE_ID>
+<!--0 eu_ES AD_LANGUAGE-->
+<!--0 eu_ES-->              <AD_LANGUAGE><![CDATA[eu_ES]]></AD_LANGUAGE>
+<!--0 eu_ES AD_CLIENT_ID-->
+<!--0 eu_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0 eu_ES AD_ORG_ID-->
+<!--0 eu_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0 eu_ES ISACTIVE-->
+<!--0 eu_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0 eu_ES CREATED-->
+<!--0 eu_ES-->              <CREATED><![CDATA[2005-06-02 11:36:22.0]]></CREATED>
+<!--0 eu_ES CREATEDBY-->
+<!--0 eu_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--0 eu_ES UPDATED-->
+<!--0 eu_ES-->              <UPDATED><![CDATA[2007-04-13 13:17:33.0]]></UPDATED>
+<!--0 eu_ES UPDATEDBY-->
+<!--0 eu_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--0 eu_ES NAME-->
+<!--0 eu_ES-->              <NAME><![CDATA[** New **]]></NAME>
+<!--0 eu_ES PRINTNAME-->
+<!--0 eu_ES-->              <PRINTNAME><![CDATA[** New **]]></PRINTNAME>
+<!--0 eu_ES DOCUMENTNOTE-->
+<!--0 eu_ES-->              <DOCUMENTNOTE><![CDATA[** NO INVOICE **]]></DOCUMENTNOTE>
+<!--0 eu_ES ISTRANSLATED-->
+<!--0 eu_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--0 eu_ES**************--></C_DOCTYPE_TRL>
+
 <!--
 ************************
 0. End of Core Range.

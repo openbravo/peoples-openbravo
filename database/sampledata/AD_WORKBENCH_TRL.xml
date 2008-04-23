@@ -5,30 +5,31 @@
 0. Core Range.
 ************************
 -->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                    <AD_WORKBENCH_TRL>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES AD_WORKBENCH_ID-->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                        <AD_WORKBENCH_ID><![CDATA[100]]></AD_WORKBENCH_ID>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES AD_LANGUAGE-->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                        <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES AD_CLIENT_ID-->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES AD_ORG_ID-->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES ISACTIVE-->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES CREATED-->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                        <CREATED><![CDATA[2005-06-02 11:36:21.0]]></CREATED>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES CREATEDBY-->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES UPDATED-->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                        <UPDATED><![CDATA[2005-06-02 11:36:21.0]]></UPDATED>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES UPDATEDBY-->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES NAME-->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                        <NAME><![CDATA[Sales]]></NAME>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES ISTRANSLATED-->
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--AD_WORKBENCH_ID=100 AD_LANGUAGE=es_ES-->                    </AD_WORKBENCH_TRL>
+<!--100 es_ES**************--><AD_WORKBENCH_TRL>
+<!--100 es_ES AD_WORKBENCH_ID-->
+<!--100 es_ES-->              <AD_WORKBENCH_ID><![CDATA[100]]></AD_WORKBENCH_ID>
+<!--100 es_ES AD_LANGUAGE-->
+<!--100 es_ES-->              <AD_LANGUAGE><![CDATA[es_ES]]></AD_LANGUAGE>
+<!--100 es_ES AD_CLIENT_ID-->
+<!--100 es_ES-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100 es_ES AD_ORG_ID-->
+<!--100 es_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100 es_ES ISACTIVE-->
+<!--100 es_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100 es_ES CREATED-->
+<!--100 es_ES-->              <CREATED><![CDATA[2005-06-02 11:36:21.0]]></CREATED>
+<!--100 es_ES CREATEDBY-->
+<!--100 es_ES-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--100 es_ES UPDATED-->
+<!--100 es_ES-->              <UPDATED><![CDATA[2005-06-02 11:36:21.0]]></UPDATED>
+<!--100 es_ES UPDATEDBY-->
+<!--100 es_ES-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100 es_ES NAME-->
+<!--100 es_ES-->              <NAME><![CDATA[Sales]]></NAME>
+<!--100 es_ES ISTRANSLATED-->
+<!--100 es_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--100 es_ES**************--></AD_WORKBENCH_TRL>
+
 <!--
 ************************
 0. End of Core Range.

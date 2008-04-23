@@ -5,46 +5,48 @@
 0. Core Range.
 ************************
 -->
-<!--AD_USER_ID=0 AD_ROLE_ID=0-->                    <AD_USER_ROLES>
-<!--AD_USER_ID=0 AD_ROLE_ID=0 AD_USER_ID-->
-<!--AD_USER_ID=0 AD_ROLE_ID=0-->                        <AD_USER_ID><![CDATA[0]]></AD_USER_ID>
-<!--AD_USER_ID=0 AD_ROLE_ID=0 AD_ROLE_ID-->
-<!--AD_USER_ID=0 AD_ROLE_ID=0-->                        <AD_ROLE_ID><![CDATA[0]]></AD_ROLE_ID>
-<!--AD_USER_ID=0 AD_ROLE_ID=0 AD_CLIENT_ID-->
-<!--AD_USER_ID=0 AD_ROLE_ID=0-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_USER_ID=0 AD_ROLE_ID=0 AD_ORG_ID-->
-<!--AD_USER_ID=0 AD_ROLE_ID=0-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_USER_ID=0 AD_ROLE_ID=0 ISACTIVE-->
-<!--AD_USER_ID=0 AD_ROLE_ID=0-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_USER_ID=0 AD_ROLE_ID=0 CREATED-->
-<!--AD_USER_ID=0 AD_ROLE_ID=0-->                        <CREATED><![CDATA[1999-11-14 16:17:08.0]]></CREATED>
-<!--AD_USER_ID=0 AD_ROLE_ID=0 CREATEDBY-->
-<!--AD_USER_ID=0 AD_ROLE_ID=0-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_USER_ID=0 AD_ROLE_ID=0 UPDATED-->
-<!--AD_USER_ID=0 AD_ROLE_ID=0-->                        <UPDATED><![CDATA[1999-11-14 16:17:08.0]]></UPDATED>
-<!--AD_USER_ID=0 AD_ROLE_ID=0 UPDATEDBY-->
-<!--AD_USER_ID=0 AD_ROLE_ID=0-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_USER_ID=0 AD_ROLE_ID=0-->                    </AD_USER_ROLES>
-<!--AD_USER_ID=100 AD_ROLE_ID=0-->                    <AD_USER_ROLES>
-<!--AD_USER_ID=100 AD_ROLE_ID=0 AD_USER_ID-->
-<!--AD_USER_ID=100 AD_ROLE_ID=0-->                        <AD_USER_ID><![CDATA[100]]></AD_USER_ID>
-<!--AD_USER_ID=100 AD_ROLE_ID=0 AD_ROLE_ID-->
-<!--AD_USER_ID=100 AD_ROLE_ID=0-->                        <AD_ROLE_ID><![CDATA[0]]></AD_ROLE_ID>
-<!--AD_USER_ID=100 AD_ROLE_ID=0 AD_CLIENT_ID-->
-<!--AD_USER_ID=100 AD_ROLE_ID=0-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_USER_ID=100 AD_ROLE_ID=0 AD_ORG_ID-->
-<!--AD_USER_ID=100 AD_ROLE_ID=0-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_USER_ID=100 AD_ROLE_ID=0 ISACTIVE-->
-<!--AD_USER_ID=100 AD_ROLE_ID=0-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_USER_ID=100 AD_ROLE_ID=0 CREATED-->
-<!--AD_USER_ID=100 AD_ROLE_ID=0-->                        <CREATED><![CDATA[1999-12-09 21:18:41.0]]></CREATED>
-<!--AD_USER_ID=100 AD_ROLE_ID=0 CREATEDBY-->
-<!--AD_USER_ID=100 AD_ROLE_ID=0-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_USER_ID=100 AD_ROLE_ID=0 UPDATED-->
-<!--AD_USER_ID=100 AD_ROLE_ID=0-->                        <UPDATED><![CDATA[1999-12-09 21:18:41.0]]></UPDATED>
-<!--AD_USER_ID=100 AD_ROLE_ID=0 UPDATEDBY-->
-<!--AD_USER_ID=100 AD_ROLE_ID=0-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_USER_ID=100 AD_ROLE_ID=0-->                    </AD_USER_ROLES>
+<!--0 0**************--><AD_USER_ROLES>
+<!--0 0 AD_USER_ID-->
+<!--0 0-->              <AD_USER_ID><![CDATA[0]]></AD_USER_ID>
+<!--0 0 AD_ROLE_ID-->
+<!--0 0-->              <AD_ROLE_ID><![CDATA[0]]></AD_ROLE_ID>
+<!--0 0 AD_CLIENT_ID-->
+<!--0 0-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0 0 AD_ORG_ID-->
+<!--0 0-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0 0 ISACTIVE-->
+<!--0 0-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0 0 CREATED-->
+<!--0 0-->              <CREATED><![CDATA[1999-11-14 16:17:08.0]]></CREATED>
+<!--0 0 CREATEDBY-->
+<!--0 0-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--0 0 UPDATED-->
+<!--0 0-->              <UPDATED><![CDATA[1999-11-14 16:17:08.0]]></UPDATED>
+<!--0 0 UPDATEDBY-->
+<!--0 0-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--0 0**************--></AD_USER_ROLES>
+
+<!--100 0**************--><AD_USER_ROLES>
+<!--100 0 AD_USER_ID-->
+<!--100 0-->              <AD_USER_ID><![CDATA[100]]></AD_USER_ID>
+<!--100 0 AD_ROLE_ID-->
+<!--100 0-->              <AD_ROLE_ID><![CDATA[0]]></AD_ROLE_ID>
+<!--100 0 AD_CLIENT_ID-->
+<!--100 0-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100 0 AD_ORG_ID-->
+<!--100 0-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100 0 ISACTIVE-->
+<!--100 0-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100 0 CREATED-->
+<!--100 0-->              <CREATED><![CDATA[1999-12-09 21:18:41.0]]></CREATED>
+<!--100 0 CREATEDBY-->
+<!--100 0-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--100 0 UPDATED-->
+<!--100 0-->              <UPDATED><![CDATA[1999-12-09 21:18:41.0]]></UPDATED>
+<!--100 0 UPDATEDBY-->
+<!--100 0-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100 0**************--></AD_USER_ROLES>
+
 <!--
 ************************
 0. End of Core Range.

@@ -15,26 +15,27 @@
 1. Custom Range.
 ************************
 -->
-<!--MA_SECTION_ID=1000001-->                    <MA_SECTION>
-<!--MA_SECTION_ID=1000001 MA_SECTION_ID-->
-<!--MA_SECTION_ID=1000001-->                        <MA_SECTION_ID><![CDATA[1000001]]></MA_SECTION_ID>
-<!--MA_SECTION_ID=1000001 AD_CLIENT_ID-->
-<!--MA_SECTION_ID=1000001-->                        <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
-<!--MA_SECTION_ID=1000001 AD_ORG_ID-->
-<!--MA_SECTION_ID=1000001-->                        <AD_ORG_ID><![CDATA[1000000]]></AD_ORG_ID>
-<!--MA_SECTION_ID=1000001 ISACTIVE-->
-<!--MA_SECTION_ID=1000001-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--MA_SECTION_ID=1000001 CREATED-->
-<!--MA_SECTION_ID=1000001-->                        <CREATED><![CDATA[2007-03-08 12:00:25.0]]></CREATED>
-<!--MA_SECTION_ID=1000001 CREATEDBY-->
-<!--MA_SECTION_ID=1000001-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--MA_SECTION_ID=1000001 UPDATED-->
-<!--MA_SECTION_ID=1000001-->                        <UPDATED><![CDATA[2007-03-08 12:00:25.0]]></UPDATED>
-<!--MA_SECTION_ID=1000001 UPDATEDBY-->
-<!--MA_SECTION_ID=1000001-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--MA_SECTION_ID=1000001 NAME-->
-<!--MA_SECTION_ID=1000001-->                        <NAME><![CDATA[Main floor]]></NAME>
-<!--MA_SECTION_ID=1000001-->                    </MA_SECTION>
+<!--1000001**************--><MA_SECTION>
+<!--1000001 MA_SECTION_ID-->
+<!--1000001-->              <MA_SECTION_ID><![CDATA[1000001]]></MA_SECTION_ID>
+<!--1000001 AD_CLIENT_ID-->
+<!--1000001-->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!--1000001 AD_ORG_ID-->
+<!--1000001-->              <AD_ORG_ID><![CDATA[1000000]]></AD_ORG_ID>
+<!--1000001 ISACTIVE-->
+<!--1000001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000001 CREATED-->
+<!--1000001-->              <CREATED><![CDATA[2007-03-08 12:00:25.0]]></CREATED>
+<!--1000001 CREATEDBY-->
+<!--1000001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000001 UPDATED-->
+<!--1000001-->              <UPDATED><![CDATA[2007-03-08 12:00:25.0]]></UPDATED>
+<!--1000001 UPDATEDBY-->
+<!--1000001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000001 NAME-->
+<!--1000001-->              <NAME><![CDATA[Main floor]]></NAME>
+<!--1000001**************--></MA_SECTION>
+
 <!--
 ************************
 1. End of Custom Range.

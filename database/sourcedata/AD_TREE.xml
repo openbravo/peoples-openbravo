@@ -5,236 +5,245 @@
 0. Core Range.
 ************************
 -->
-<!--AD_TREE_ID=10-->                    <AD_TREE>
-<!--AD_TREE_ID=10 AD_TREE_ID-->
-<!--AD_TREE_ID=10-->                        <AD_TREE_ID><![CDATA[10]]></AD_TREE_ID>
-<!--AD_TREE_ID=10 AD_CLIENT_ID-->
-<!--AD_TREE_ID=10-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TREE_ID=10 AD_ORG_ID-->
-<!--AD_TREE_ID=10-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TREE_ID=10 CREATED-->
-<!--AD_TREE_ID=10-->                        <CREATED><![CDATA[1999-11-16 14:55:07.0]]></CREATED>
-<!--AD_TREE_ID=10 CREATEDBY-->
-<!--AD_TREE_ID=10-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_TREE_ID=10 UPDATED-->
-<!--AD_TREE_ID=10-->                        <UPDATED><![CDATA[2001-07-30 05:39:20.0]]></UPDATED>
-<!--AD_TREE_ID=10 UPDATEDBY-->
-<!--AD_TREE_ID=10-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_TREE_ID=10 ISACTIVE-->
-<!--AD_TREE_ID=10-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TREE_ID=10 NAME-->
-<!--AD_TREE_ID=10-->                        <NAME><![CDATA[Menu]]></NAME>
-<!--AD_TREE_ID=10 DESCRIPTION-->
-<!--AD_TREE_ID=10-->                        <DESCRIPTION><![CDATA[Primary Menu]]></DESCRIPTION>
-<!--AD_TREE_ID=10 TREETYPE-->
-<!--AD_TREE_ID=10-->                        <TREETYPE><![CDATA[MM]]></TREETYPE>
-<!--AD_TREE_ID=10 ISALLNODES-->
-<!--AD_TREE_ID=10-->                        <ISALLNODES><![CDATA[Y]]></ISALLNODES>
-<!--AD_TREE_ID=10-->                    </AD_TREE>
-<!--AD_TREE_ID=20-->                    <AD_TREE>
-<!--AD_TREE_ID=20 AD_TREE_ID-->
-<!--AD_TREE_ID=20-->                        <AD_TREE_ID><![CDATA[20]]></AD_TREE_ID>
-<!--AD_TREE_ID=20 AD_CLIENT_ID-->
-<!--AD_TREE_ID=20-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TREE_ID=20 AD_ORG_ID-->
-<!--AD_TREE_ID=20-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TREE_ID=20 CREATED-->
-<!--AD_TREE_ID=20-->                        <CREATED><![CDATA[1999-11-16 14:56:00.0]]></CREATED>
-<!--AD_TREE_ID=20 CREATEDBY-->
-<!--AD_TREE_ID=20-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_TREE_ID=20 UPDATED-->
-<!--AD_TREE_ID=20-->                        <UPDATED><![CDATA[1999-12-09 20:37:12.0]]></UPDATED>
-<!--AD_TREE_ID=20 UPDATEDBY-->
-<!--AD_TREE_ID=20-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_TREE_ID=20 ISACTIVE-->
-<!--AD_TREE_ID=20-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TREE_ID=20 NAME-->
-<!--AD_TREE_ID=20-->                        <NAME><![CDATA[Primary Account Element Value]]></NAME>
-<!--AD_TREE_ID=20 DESCRIPTION-->
-<!--AD_TREE_ID=20-->                        <DESCRIPTION><![CDATA[Primary Account Element Value]]></DESCRIPTION>
-<!--AD_TREE_ID=20 TREETYPE-->
-<!--AD_TREE_ID=20-->                        <TREETYPE><![CDATA[EV]]></TREETYPE>
-<!--AD_TREE_ID=20 ISALLNODES-->
-<!--AD_TREE_ID=20-->                        <ISALLNODES><![CDATA[Y]]></ISALLNODES>
-<!--AD_TREE_ID=20-->                    </AD_TREE>
-<!--AD_TREE_ID=30-->                    <AD_TREE>
-<!--AD_TREE_ID=30 AD_TREE_ID-->
-<!--AD_TREE_ID=30-->                        <AD_TREE_ID><![CDATA[30]]></AD_TREE_ID>
-<!--AD_TREE_ID=30 AD_CLIENT_ID-->
-<!--AD_TREE_ID=30-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TREE_ID=30 AD_ORG_ID-->
-<!--AD_TREE_ID=30-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TREE_ID=30 CREATED-->
-<!--AD_TREE_ID=30-->                        <CREATED><![CDATA[1999-11-16 14:56:39.0]]></CREATED>
-<!--AD_TREE_ID=30 CREATEDBY-->
-<!--AD_TREE_ID=30-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_TREE_ID=30 UPDATED-->
-<!--AD_TREE_ID=30-->                        <UPDATED><![CDATA[1999-12-09 20:36:26.0]]></UPDATED>
-<!--AD_TREE_ID=30 UPDATEDBY-->
-<!--AD_TREE_ID=30-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_TREE_ID=30 ISACTIVE-->
-<!--AD_TREE_ID=30-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TREE_ID=30 NAME-->
-<!--AD_TREE_ID=30-->                        <NAME><![CDATA[Primary Product]]></NAME>
-<!--AD_TREE_ID=30 DESCRIPTION-->
-<!--AD_TREE_ID=30-->                        <DESCRIPTION><![CDATA[Primary Product]]></DESCRIPTION>
-<!--AD_TREE_ID=30 TREETYPE-->
-<!--AD_TREE_ID=30-->                        <TREETYPE><![CDATA[PR]]></TREETYPE>
-<!--AD_TREE_ID=30 ISALLNODES-->
-<!--AD_TREE_ID=30-->                        <ISALLNODES><![CDATA[Y]]></ISALLNODES>
-<!--AD_TREE_ID=30-->                    </AD_TREE>
-<!--AD_TREE_ID=40-->                    <AD_TREE>
-<!--AD_TREE_ID=40 AD_TREE_ID-->
-<!--AD_TREE_ID=40-->                        <AD_TREE_ID><![CDATA[40]]></AD_TREE_ID>
-<!--AD_TREE_ID=40 AD_CLIENT_ID-->
-<!--AD_TREE_ID=40-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TREE_ID=40 AD_ORG_ID-->
-<!--AD_TREE_ID=40-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TREE_ID=40 CREATED-->
-<!--AD_TREE_ID=40-->                        <CREATED><![CDATA[1999-11-16 14:57:10.0]]></CREATED>
-<!--AD_TREE_ID=40 CREATEDBY-->
-<!--AD_TREE_ID=40-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_TREE_ID=40 UPDATED-->
-<!--AD_TREE_ID=40-->                        <UPDATED><![CDATA[1999-12-09 20:37:27.0]]></UPDATED>
-<!--AD_TREE_ID=40 UPDATEDBY-->
-<!--AD_TREE_ID=40-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_TREE_ID=40 ISACTIVE-->
-<!--AD_TREE_ID=40-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TREE_ID=40 NAME-->
-<!--AD_TREE_ID=40-->                        <NAME><![CDATA[Primary Business Partner]]></NAME>
-<!--AD_TREE_ID=40 DESCRIPTION-->
-<!--AD_TREE_ID=40-->                        <DESCRIPTION><![CDATA[Primary Business Partner]]></DESCRIPTION>
-<!--AD_TREE_ID=40 TREETYPE-->
-<!--AD_TREE_ID=40-->                        <TREETYPE><![CDATA[BP]]></TREETYPE>
-<!--AD_TREE_ID=40 ISALLNODES-->
-<!--AD_TREE_ID=40-->                        <ISALLNODES><![CDATA[Y]]></ISALLNODES>
-<!--AD_TREE_ID=40-->                    </AD_TREE>
-<!--AD_TREE_ID=50-->                    <AD_TREE>
-<!--AD_TREE_ID=50 AD_TREE_ID-->
-<!--AD_TREE_ID=50-->                        <AD_TREE_ID><![CDATA[50]]></AD_TREE_ID>
-<!--AD_TREE_ID=50 AD_CLIENT_ID-->
-<!--AD_TREE_ID=50-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TREE_ID=50 AD_ORG_ID-->
-<!--AD_TREE_ID=50-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TREE_ID=50 CREATED-->
-<!--AD_TREE_ID=50-->                        <CREATED><![CDATA[1999-11-16 14:57:44.0]]></CREATED>
-<!--AD_TREE_ID=50 CREATEDBY-->
-<!--AD_TREE_ID=50-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_TREE_ID=50 UPDATED-->
-<!--AD_TREE_ID=50-->                        <UPDATED><![CDATA[1999-12-09 20:36:42.0]]></UPDATED>
-<!--AD_TREE_ID=50 UPDATEDBY-->
-<!--AD_TREE_ID=50-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_TREE_ID=50 ISACTIVE-->
-<!--AD_TREE_ID=50-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TREE_ID=50 NAME-->
-<!--AD_TREE_ID=50-->                        <NAME><![CDATA[Primary Organization]]></NAME>
-<!--AD_TREE_ID=50 DESCRIPTION-->
-<!--AD_TREE_ID=50-->                        <DESCRIPTION><![CDATA[Primary Organization]]></DESCRIPTION>
-<!--AD_TREE_ID=50 TREETYPE-->
-<!--AD_TREE_ID=50-->                        <TREETYPE><![CDATA[OO]]></TREETYPE>
-<!--AD_TREE_ID=50 ISALLNODES-->
-<!--AD_TREE_ID=50-->                        <ISALLNODES><![CDATA[Y]]></ISALLNODES>
-<!--AD_TREE_ID=50-->                    </AD_TREE>
-<!--AD_TREE_ID=60-->                    <AD_TREE>
-<!--AD_TREE_ID=60 AD_TREE_ID-->
-<!--AD_TREE_ID=60-->                        <AD_TREE_ID><![CDATA[60]]></AD_TREE_ID>
-<!--AD_TREE_ID=60 AD_CLIENT_ID-->
-<!--AD_TREE_ID=60-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TREE_ID=60 AD_ORG_ID-->
-<!--AD_TREE_ID=60-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TREE_ID=60 CREATED-->
-<!--AD_TREE_ID=60-->                        <CREATED><![CDATA[1999-11-16 14:58:45.0]]></CREATED>
-<!--AD_TREE_ID=60 CREATEDBY-->
-<!--AD_TREE_ID=60-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_TREE_ID=60 UPDATED-->
-<!--AD_TREE_ID=60-->                        <UPDATED><![CDATA[1999-12-09 20:36:12.0]]></UPDATED>
-<!--AD_TREE_ID=60 UPDATEDBY-->
-<!--AD_TREE_ID=60-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_TREE_ID=60 ISACTIVE-->
-<!--AD_TREE_ID=60-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TREE_ID=60 NAME-->
-<!--AD_TREE_ID=60-->                        <NAME><![CDATA[Primary Project]]></NAME>
-<!--AD_TREE_ID=60 DESCRIPTION-->
-<!--AD_TREE_ID=60-->                        <DESCRIPTION><![CDATA[Primary Project]]></DESCRIPTION>
-<!--AD_TREE_ID=60 TREETYPE-->
-<!--AD_TREE_ID=60-->                        <TREETYPE><![CDATA[PJ]]></TREETYPE>
-<!--AD_TREE_ID=60 ISALLNODES-->
-<!--AD_TREE_ID=60-->                        <ISALLNODES><![CDATA[Y]]></ISALLNODES>
-<!--AD_TREE_ID=60-->                    </AD_TREE>
-<!--AD_TREE_ID=100-->                    <AD_TREE>
-<!--AD_TREE_ID=100 AD_TREE_ID-->
-<!--AD_TREE_ID=100-->                        <AD_TREE_ID><![CDATA[100]]></AD_TREE_ID>
-<!--AD_TREE_ID=100 AD_CLIENT_ID-->
-<!--AD_TREE_ID=100-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TREE_ID=100 AD_ORG_ID-->
-<!--AD_TREE_ID=100-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TREE_ID=100 CREATED-->
-<!--AD_TREE_ID=100-->                        <CREATED><![CDATA[1999-12-09 20:35:07.0]]></CREATED>
-<!--AD_TREE_ID=100 CREATEDBY-->
-<!--AD_TREE_ID=100-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_TREE_ID=100 UPDATED-->
-<!--AD_TREE_ID=100-->                        <UPDATED><![CDATA[1999-12-09 20:35:57.0]]></UPDATED>
-<!--AD_TREE_ID=100 UPDATEDBY-->
-<!--AD_TREE_ID=100-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_TREE_ID=100 ISACTIVE-->
-<!--AD_TREE_ID=100-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TREE_ID=100 NAME-->
-<!--AD_TREE_ID=100-->                        <NAME><![CDATA[Primary Sales Region]]></NAME>
-<!--AD_TREE_ID=100 DESCRIPTION-->
-<!--AD_TREE_ID=100-->                        <DESCRIPTION><![CDATA[Primary Sales Region]]></DESCRIPTION>
-<!--AD_TREE_ID=100 TREETYPE-->
-<!--AD_TREE_ID=100-->                        <TREETYPE><![CDATA[SR]]></TREETYPE>
-<!--AD_TREE_ID=100 ISALLNODES-->
-<!--AD_TREE_ID=100-->                        <ISALLNODES><![CDATA[Y]]></ISALLNODES>
-<!--AD_TREE_ID=100-->                    </AD_TREE>
-<!--AD_TREE_ID=800001-->                    <AD_TREE>
-<!--AD_TREE_ID=800001 AD_TREE_ID-->
-<!--AD_TREE_ID=800001-->                        <AD_TREE_ID><![CDATA[800001]]></AD_TREE_ID>
-<!--AD_TREE_ID=800001 AD_CLIENT_ID-->
-<!--AD_TREE_ID=800001-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TREE_ID=800001 AD_ORG_ID-->
-<!--AD_TREE_ID=800001-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TREE_ID=800001 CREATED-->
-<!--AD_TREE_ID=800001-->                        <CREATED><![CDATA[2006-06-13 17:00:44.0]]></CREATED>
-<!--AD_TREE_ID=800001 CREATEDBY-->
-<!--AD_TREE_ID=800001-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_TREE_ID=800001 UPDATED-->
-<!--AD_TREE_ID=800001-->                        <UPDATED><![CDATA[2006-06-13 17:00:44.0]]></UPDATED>
-<!--AD_TREE_ID=800001 UPDATEDBY-->
-<!--AD_TREE_ID=800001-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AD_TREE_ID=800001 ISACTIVE-->
-<!--AD_TREE_ID=800001-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TREE_ID=800001 NAME-->
-<!--AD_TREE_ID=800001-->                        <NAME><![CDATA[Accounting report]]></NAME>
-<!--AD_TREE_ID=800001 TREETYPE-->
-<!--AD_TREE_ID=800001-->                        <TREETYPE><![CDATA[AR]]></TREETYPE>
-<!--AD_TREE_ID=800001 ISALLNODES-->
-<!--AD_TREE_ID=800001-->                        <ISALLNODES><![CDATA[Y]]></ISALLNODES>
-<!--AD_TREE_ID=800001-->                    </AD_TREE>
-<!--AD_TREE_ID=800003-->                    <AD_TREE>
-<!--AD_TREE_ID=800003 AD_TREE_ID-->
-<!--AD_TREE_ID=800003-->                        <AD_TREE_ID><![CDATA[800003]]></AD_TREE_ID>
-<!--AD_TREE_ID=800003 AD_CLIENT_ID-->
-<!--AD_TREE_ID=800003-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_TREE_ID=800003 AD_ORG_ID-->
-<!--AD_TREE_ID=800003-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_TREE_ID=800003 CREATED-->
-<!--AD_TREE_ID=800003-->                        <CREATED><![CDATA[2006-06-13 17:00:44.0]]></CREATED>
-<!--AD_TREE_ID=800003 CREATEDBY-->
-<!--AD_TREE_ID=800003-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AD_TREE_ID=800003 UPDATED-->
-<!--AD_TREE_ID=800003-->                        <UPDATED><![CDATA[2006-06-13 17:00:44.0]]></UPDATED>
-<!--AD_TREE_ID=800003 UPDATEDBY-->
-<!--AD_TREE_ID=800003-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AD_TREE_ID=800003 ISACTIVE-->
-<!--AD_TREE_ID=800003-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_TREE_ID=800003 NAME-->
-<!--AD_TREE_ID=800003-->                        <NAME><![CDATA[Tax report]]></NAME>
-<!--AD_TREE_ID=800003 TREETYPE-->
-<!--AD_TREE_ID=800003-->                        <TREETYPE><![CDATA[TR]]></TREETYPE>
-<!--AD_TREE_ID=800003 ISALLNODES-->
-<!--AD_TREE_ID=800003-->                        <ISALLNODES><![CDATA[Y]]></ISALLNODES>
-<!--AD_TREE_ID=800003-->                    </AD_TREE>
+<!--10**************--><AD_TREE>
+<!--10 AD_TREE_ID-->
+<!--10-->              <AD_TREE_ID><![CDATA[10]]></AD_TREE_ID>
+<!--10 AD_CLIENT_ID-->
+<!--10-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10 AD_ORG_ID-->
+<!--10-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10 CREATED-->
+<!--10-->              <CREATED><![CDATA[1999-11-16 14:55:07.0]]></CREATED>
+<!--10 CREATEDBY-->
+<!--10-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--10 UPDATED-->
+<!--10-->              <UPDATED><![CDATA[2001-07-30 05:39:20.0]]></UPDATED>
+<!--10 UPDATEDBY-->
+<!--10-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--10 ISACTIVE-->
+<!--10-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10 NAME-->
+<!--10-->              <NAME><![CDATA[Menu]]></NAME>
+<!--10 DESCRIPTION-->
+<!--10-->              <DESCRIPTION><![CDATA[Primary Menu]]></DESCRIPTION>
+<!--10 TREETYPE-->
+<!--10-->              <TREETYPE><![CDATA[MM]]></TREETYPE>
+<!--10 ISALLNODES-->
+<!--10-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
+<!--10**************--></AD_TREE>
+
+<!--20**************--><AD_TREE>
+<!--20 AD_TREE_ID-->
+<!--20-->              <AD_TREE_ID><![CDATA[20]]></AD_TREE_ID>
+<!--20 AD_CLIENT_ID-->
+<!--20-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--20 AD_ORG_ID-->
+<!--20-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--20 CREATED-->
+<!--20-->              <CREATED><![CDATA[1999-11-16 14:56:00.0]]></CREATED>
+<!--20 CREATEDBY-->
+<!--20-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--20 UPDATED-->
+<!--20-->              <UPDATED><![CDATA[1999-12-09 20:37:12.0]]></UPDATED>
+<!--20 UPDATEDBY-->
+<!--20-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--20 ISACTIVE-->
+<!--20-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--20 NAME-->
+<!--20-->              <NAME><![CDATA[Primary Account Element Value]]></NAME>
+<!--20 DESCRIPTION-->
+<!--20-->              <DESCRIPTION><![CDATA[Primary Account Element Value]]></DESCRIPTION>
+<!--20 TREETYPE-->
+<!--20-->              <TREETYPE><![CDATA[EV]]></TREETYPE>
+<!--20 ISALLNODES-->
+<!--20-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
+<!--20**************--></AD_TREE>
+
+<!--30**************--><AD_TREE>
+<!--30 AD_TREE_ID-->
+<!--30-->              <AD_TREE_ID><![CDATA[30]]></AD_TREE_ID>
+<!--30 AD_CLIENT_ID-->
+<!--30-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--30 AD_ORG_ID-->
+<!--30-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--30 CREATED-->
+<!--30-->              <CREATED><![CDATA[1999-11-16 14:56:39.0]]></CREATED>
+<!--30 CREATEDBY-->
+<!--30-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--30 UPDATED-->
+<!--30-->              <UPDATED><![CDATA[1999-12-09 20:36:26.0]]></UPDATED>
+<!--30 UPDATEDBY-->
+<!--30-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--30 ISACTIVE-->
+<!--30-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--30 NAME-->
+<!--30-->              <NAME><![CDATA[Primary Product]]></NAME>
+<!--30 DESCRIPTION-->
+<!--30-->              <DESCRIPTION><![CDATA[Primary Product]]></DESCRIPTION>
+<!--30 TREETYPE-->
+<!--30-->              <TREETYPE><![CDATA[PR]]></TREETYPE>
+<!--30 ISALLNODES-->
+<!--30-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
+<!--30**************--></AD_TREE>
+
+<!--40**************--><AD_TREE>
+<!--40 AD_TREE_ID-->
+<!--40-->              <AD_TREE_ID><![CDATA[40]]></AD_TREE_ID>
+<!--40 AD_CLIENT_ID-->
+<!--40-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--40 AD_ORG_ID-->
+<!--40-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--40 CREATED-->
+<!--40-->              <CREATED><![CDATA[1999-11-16 14:57:10.0]]></CREATED>
+<!--40 CREATEDBY-->
+<!--40-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--40 UPDATED-->
+<!--40-->              <UPDATED><![CDATA[1999-12-09 20:37:27.0]]></UPDATED>
+<!--40 UPDATEDBY-->
+<!--40-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--40 ISACTIVE-->
+<!--40-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--40 NAME-->
+<!--40-->              <NAME><![CDATA[Primary Business Partner]]></NAME>
+<!--40 DESCRIPTION-->
+<!--40-->              <DESCRIPTION><![CDATA[Primary Business Partner]]></DESCRIPTION>
+<!--40 TREETYPE-->
+<!--40-->              <TREETYPE><![CDATA[BP]]></TREETYPE>
+<!--40 ISALLNODES-->
+<!--40-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
+<!--40**************--></AD_TREE>
+
+<!--50**************--><AD_TREE>
+<!--50 AD_TREE_ID-->
+<!--50-->              <AD_TREE_ID><![CDATA[50]]></AD_TREE_ID>
+<!--50 AD_CLIENT_ID-->
+<!--50-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--50 AD_ORG_ID-->
+<!--50-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--50 CREATED-->
+<!--50-->              <CREATED><![CDATA[1999-11-16 14:57:44.0]]></CREATED>
+<!--50 CREATEDBY-->
+<!--50-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--50 UPDATED-->
+<!--50-->              <UPDATED><![CDATA[1999-12-09 20:36:42.0]]></UPDATED>
+<!--50 UPDATEDBY-->
+<!--50-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--50 ISACTIVE-->
+<!--50-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--50 NAME-->
+<!--50-->              <NAME><![CDATA[Primary Organization]]></NAME>
+<!--50 DESCRIPTION-->
+<!--50-->              <DESCRIPTION><![CDATA[Primary Organization]]></DESCRIPTION>
+<!--50 TREETYPE-->
+<!--50-->              <TREETYPE><![CDATA[OO]]></TREETYPE>
+<!--50 ISALLNODES-->
+<!--50-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
+<!--50**************--></AD_TREE>
+
+<!--60**************--><AD_TREE>
+<!--60 AD_TREE_ID-->
+<!--60-->              <AD_TREE_ID><![CDATA[60]]></AD_TREE_ID>
+<!--60 AD_CLIENT_ID-->
+<!--60-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--60 AD_ORG_ID-->
+<!--60-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--60 CREATED-->
+<!--60-->              <CREATED><![CDATA[1999-11-16 14:58:45.0]]></CREATED>
+<!--60 CREATEDBY-->
+<!--60-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--60 UPDATED-->
+<!--60-->              <UPDATED><![CDATA[1999-12-09 20:36:12.0]]></UPDATED>
+<!--60 UPDATEDBY-->
+<!--60-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--60 ISACTIVE-->
+<!--60-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--60 NAME-->
+<!--60-->              <NAME><![CDATA[Primary Project]]></NAME>
+<!--60 DESCRIPTION-->
+<!--60-->              <DESCRIPTION><![CDATA[Primary Project]]></DESCRIPTION>
+<!--60 TREETYPE-->
+<!--60-->              <TREETYPE><![CDATA[PJ]]></TREETYPE>
+<!--60 ISALLNODES-->
+<!--60-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
+<!--60**************--></AD_TREE>
+
+<!--100**************--><AD_TREE>
+<!--100 AD_TREE_ID-->
+<!--100-->              <AD_TREE_ID><![CDATA[100]]></AD_TREE_ID>
+<!--100 AD_CLIENT_ID-->
+<!--100-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100 AD_ORG_ID-->
+<!--100-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100 CREATED-->
+<!--100-->              <CREATED><![CDATA[1999-12-09 20:35:07.0]]></CREATED>
+<!--100 CREATEDBY-->
+<!--100-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--100 UPDATED-->
+<!--100-->              <UPDATED><![CDATA[1999-12-09 20:35:57.0]]></UPDATED>
+<!--100 UPDATEDBY-->
+<!--100-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100 ISACTIVE-->
+<!--100-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100 NAME-->
+<!--100-->              <NAME><![CDATA[Primary Sales Region]]></NAME>
+<!--100 DESCRIPTION-->
+<!--100-->              <DESCRIPTION><![CDATA[Primary Sales Region]]></DESCRIPTION>
+<!--100 TREETYPE-->
+<!--100-->              <TREETYPE><![CDATA[SR]]></TREETYPE>
+<!--100 ISALLNODES-->
+<!--100-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
+<!--100**************--></AD_TREE>
+
+<!--800001**************--><AD_TREE>
+<!--800001 AD_TREE_ID-->
+<!--800001-->              <AD_TREE_ID><![CDATA[800001]]></AD_TREE_ID>
+<!--800001 AD_CLIENT_ID-->
+<!--800001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800001 AD_ORG_ID-->
+<!--800001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800001 CREATED-->
+<!--800001-->              <CREATED><![CDATA[2006-06-13 17:00:44.0]]></CREATED>
+<!--800001 CREATEDBY-->
+<!--800001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--800001 UPDATED-->
+<!--800001-->              <UPDATED><![CDATA[2006-06-13 17:00:44.0]]></UPDATED>
+<!--800001 UPDATEDBY-->
+<!--800001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--800001 ISACTIVE-->
+<!--800001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800001 NAME-->
+<!--800001-->              <NAME><![CDATA[Accounting report]]></NAME>
+<!--800001 TREETYPE-->
+<!--800001-->              <TREETYPE><![CDATA[AR]]></TREETYPE>
+<!--800001 ISALLNODES-->
+<!--800001-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
+<!--800001**************--></AD_TREE>
+
+<!--800003**************--><AD_TREE>
+<!--800003 AD_TREE_ID-->
+<!--800003-->              <AD_TREE_ID><![CDATA[800003]]></AD_TREE_ID>
+<!--800003 AD_CLIENT_ID-->
+<!--800003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800003 AD_ORG_ID-->
+<!--800003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800003 CREATED-->
+<!--800003-->              <CREATED><![CDATA[2006-06-13 17:00:44.0]]></CREATED>
+<!--800003 CREATEDBY-->
+<!--800003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--800003 UPDATED-->
+<!--800003-->              <UPDATED><![CDATA[2006-06-13 17:00:44.0]]></UPDATED>
+<!--800003 UPDATEDBY-->
+<!--800003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--800003 ISACTIVE-->
+<!--800003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800003 NAME-->
+<!--800003-->              <NAME><![CDATA[Tax report]]></NAME>
+<!--800003 TREETYPE-->
+<!--800003-->              <TREETYPE><![CDATA[TR]]></TREETYPE>
+<!--800003 ISALLNODES-->
+<!--800003-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
+<!--800003**************--></AD_TREE>
+
 <!--
 ************************
 0. End of Core Range.

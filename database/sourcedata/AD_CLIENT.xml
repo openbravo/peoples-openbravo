@@ -5,56 +5,57 @@
 0. Core Range.
 ************************
 -->
-<!--AD_CLIENT_ID=0-->                    <AD_CLIENT>
-<!--AD_CLIENT_ID=0 AD_CLIENT_ID-->
-<!--AD_CLIENT_ID=0-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AD_CLIENT_ID=0 AD_ORG_ID-->
-<!--AD_CLIENT_ID=0-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AD_CLIENT_ID=0 ISACTIVE-->
-<!--AD_CLIENT_ID=0-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AD_CLIENT_ID=0 CREATED-->
-<!--AD_CLIENT_ID=0-->                        <CREATED><![CDATA[1999-11-12 20:25:28.0]]></CREATED>
-<!--AD_CLIENT_ID=0 CREATEDBY-->
-<!--AD_CLIENT_ID=0-->                        <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--AD_CLIENT_ID=0 UPDATED-->
-<!--AD_CLIENT_ID=0-->                        <UPDATED><![CDATA[2003-01-28 19:49:52.0]]></UPDATED>
-<!--AD_CLIENT_ID=0 UPDATEDBY-->
-<!--AD_CLIENT_ID=0-->                        <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--AD_CLIENT_ID=0 VALUE-->
-<!--AD_CLIENT_ID=0-->                        <VALUE><![CDATA[SYSTEM]]></VALUE>
-<!--AD_CLIENT_ID=0 NAME-->
-<!--AD_CLIENT_ID=0-->                        <NAME><![CDATA[System]]></NAME>
-<!--AD_CLIENT_ID=0 DESCRIPTION-->
-<!--AD_CLIENT_ID=0-->                        <DESCRIPTION><![CDATA[System Client]]></DESCRIPTION>
-<!--AD_CLIENT_ID=0 SMTPHOST-->
-<!--AD_CLIENT_ID=0-->                        <SMTPHOST><![CDATA[localhost]]></SMTPHOST>
-<!--AD_CLIENT_ID=0 REQUESTEMAIL-->
-<!--AD_CLIENT_ID=0-->                        <REQUESTEMAIL><![CDATA[you@company.org]]></REQUESTEMAIL>
-<!--AD_CLIENT_ID=0 REQUESTUSER-->
-<!--AD_CLIENT_ID=0-->                        <REQUESTUSER><![CDATA[you]]></REQUESTUSER>
-<!--AD_CLIENT_ID=0 REQUESTUSERPW-->
-<!--AD_CLIENT_ID=0-->                        <REQUESTUSERPW><![CDATA[yourpwd]]></REQUESTUSERPW>
-<!--AD_CLIENT_ID=0 REQUESTFOLDER-->
-<!--AD_CLIENT_ID=0-->                        <REQUESTFOLDER><![CDATA[request]]></REQUESTFOLDER>
-<!--AD_CLIENT_ID=0 AD_LANGUAGE-->
-<!--AD_CLIENT_ID=0-->                        <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
-<!--AD_CLIENT_ID=0 WEBDIR-->
-<!--AD_CLIENT_ID=0-->                        <WEBDIR><![CDATA[compiere]]></WEBDIR>
-<!--AD_CLIENT_ID=0 ISMULTILINGUALDOCUMENT-->
-<!--AD_CLIENT_ID=0-->                        <ISMULTILINGUALDOCUMENT><![CDATA[Y]]></ISMULTILINGUALDOCUMENT>
-<!--AD_CLIENT_ID=0 ISSMTPAUTHORIZATION-->
-<!--AD_CLIENT_ID=0-->                        <ISSMTPAUTHORIZATION><![CDATA[N]]></ISSMTPAUTHORIZATION>
-<!--AD_CLIENT_ID=0 DOCUMENTDIR-->
-<!--AD_CLIENT_ID=0-->                        <DOCUMENTDIR><![CDATA[documents]]></DOCUMENTDIR>
-<!--AD_CLIENT_ID=0 WEBPARAM2-->
-<!--AD_CLIENT_ID=0-->                        <WEBPARAM2><![CDATA[Parameter2]]></WEBPARAM2>
-<!--AD_CLIENT_ID=0 WEBPARAM3-->
-<!--AD_CLIENT_ID=0-->                        <WEBPARAM3><![CDATA[Parameter3]]></WEBPARAM3>
-<!--AD_CLIENT_ID=0 WEBPARAM4-->
-<!--AD_CLIENT_ID=0-->                        <WEBPARAM4><![CDATA[Parameter4]]></WEBPARAM4>
-<!--AD_CLIENT_ID=0 WEBORDEREMAIL-->
-<!--AD_CLIENT_ID=0-->                        <WEBORDEREMAIL><![CDATA[you@company.com]]></WEBORDEREMAIL>
-<!--AD_CLIENT_ID=0-->                    </AD_CLIENT>
+<!--0**************--><AD_CLIENT>
+<!--0 AD_CLIENT_ID-->
+<!--0-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0 AD_ORG_ID-->
+<!--0-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0 ISACTIVE-->
+<!--0-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0 CREATED-->
+<!--0-->              <CREATED><![CDATA[1999-11-12 20:25:28.0]]></CREATED>
+<!--0 CREATEDBY-->
+<!--0-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--0 UPDATED-->
+<!--0-->              <UPDATED><![CDATA[2003-01-28 19:49:52.0]]></UPDATED>
+<!--0 UPDATEDBY-->
+<!--0-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--0 VALUE-->
+<!--0-->              <VALUE><![CDATA[SYSTEM]]></VALUE>
+<!--0 NAME-->
+<!--0-->              <NAME><![CDATA[System]]></NAME>
+<!--0 DESCRIPTION-->
+<!--0-->              <DESCRIPTION><![CDATA[System Client]]></DESCRIPTION>
+<!--0 SMTPHOST-->
+<!--0-->              <SMTPHOST><![CDATA[localhost]]></SMTPHOST>
+<!--0 REQUESTEMAIL-->
+<!--0-->              <REQUESTEMAIL><![CDATA[you@company.org]]></REQUESTEMAIL>
+<!--0 REQUESTUSER-->
+<!--0-->              <REQUESTUSER><![CDATA[you]]></REQUESTUSER>
+<!--0 REQUESTUSERPW-->
+<!--0-->              <REQUESTUSERPW><![CDATA[yourpwd]]></REQUESTUSERPW>
+<!--0 REQUESTFOLDER-->
+<!--0-->              <REQUESTFOLDER><![CDATA[request]]></REQUESTFOLDER>
+<!--0 AD_LANGUAGE-->
+<!--0-->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--0 WEBDIR-->
+<!--0-->              <WEBDIR><![CDATA[compiere]]></WEBDIR>
+<!--0 ISMULTILINGUALDOCUMENT-->
+<!--0-->              <ISMULTILINGUALDOCUMENT><![CDATA[Y]]></ISMULTILINGUALDOCUMENT>
+<!--0 ISSMTPAUTHORIZATION-->
+<!--0-->              <ISSMTPAUTHORIZATION><![CDATA[N]]></ISSMTPAUTHORIZATION>
+<!--0 DOCUMENTDIR-->
+<!--0-->              <DOCUMENTDIR><![CDATA[documents]]></DOCUMENTDIR>
+<!--0 WEBPARAM2-->
+<!--0-->              <WEBPARAM2><![CDATA[Parameter2]]></WEBPARAM2>
+<!--0 WEBPARAM3-->
+<!--0-->              <WEBPARAM3><![CDATA[Parameter3]]></WEBPARAM3>
+<!--0 WEBPARAM4-->
+<!--0-->              <WEBPARAM4><![CDATA[Parameter4]]></WEBPARAM4>
+<!--0 WEBORDEREMAIL-->
+<!--0-->              <WEBORDEREMAIL><![CDATA[you@company.com]]></WEBORDEREMAIL>
+<!--0**************--></AD_CLIENT>
+
 <!--
 ************************
 0. End of Core Range.

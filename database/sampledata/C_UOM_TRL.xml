@@ -15,32 +15,33 @@
 1. Custom Range.
 ************************
 -->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                    <C_UOM_TRL>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES C_UOM_ID-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <C_UOM_ID><![CDATA[1000002]]></C_UOM_ID>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES AD_LANGUAGE-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <AD_LANGUAGE><![CDATA[eu_ES]]></AD_LANGUAGE>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES AD_CLIENT_ID-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES AD_ORG_ID-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES ISACTIVE-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES CREATED-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <CREATED><![CDATA[2005-10-14 12:04:18.0]]></CREATED>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES CREATEDBY-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <CREATEDBY><![CDATA[1000004]]></CREATEDBY>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES UPDATED-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES UPDATEDBY-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <UPDATEDBY><![CDATA[1000004]]></UPDATEDBY>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES UOMSYMBOL-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <UOMSYMBOL><![CDATA[Bl ]]></UOMSYMBOL>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES NAME-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <NAME><![CDATA[Bolsa]]></NAME>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES ISTRANSLATED-->
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                        <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
-<!--C_UOM_ID=1000002 AD_LANGUAGE=eu_ES-->                    </C_UOM_TRL>
+<!--1000002 eu_ES**************--><C_UOM_TRL>
+<!--1000002 eu_ES C_UOM_ID-->
+<!--1000002 eu_ES-->              <C_UOM_ID><![CDATA[1000002]]></C_UOM_ID>
+<!--1000002 eu_ES AD_LANGUAGE-->
+<!--1000002 eu_ES-->              <AD_LANGUAGE><![CDATA[eu_ES]]></AD_LANGUAGE>
+<!--1000002 eu_ES AD_CLIENT_ID-->
+<!--1000002 eu_ES-->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!--1000002 eu_ES AD_ORG_ID-->
+<!--1000002 eu_ES-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000002 eu_ES ISACTIVE-->
+<!--1000002 eu_ES-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000002 eu_ES CREATED-->
+<!--1000002 eu_ES-->              <CREATED><![CDATA[2005-10-14 12:04:18.0]]></CREATED>
+<!--1000002 eu_ES CREATEDBY-->
+<!--1000002 eu_ES-->              <CREATEDBY><![CDATA[1000004]]></CREATEDBY>
+<!--1000002 eu_ES UPDATED-->
+<!--1000002 eu_ES-->              <UPDATED><![CDATA[2007-04-13 11:42:31.0]]></UPDATED>
+<!--1000002 eu_ES UPDATEDBY-->
+<!--1000002 eu_ES-->              <UPDATEDBY><![CDATA[1000004]]></UPDATEDBY>
+<!--1000002 eu_ES UOMSYMBOL-->
+<!--1000002 eu_ES-->              <UOMSYMBOL><![CDATA[Bl ]]></UOMSYMBOL>
+<!--1000002 eu_ES NAME-->
+<!--1000002 eu_ES-->              <NAME><![CDATA[Bolsa]]></NAME>
+<!--1000002 eu_ES ISTRANSLATED-->
+<!--1000002 eu_ES-->              <ISTRANSLATED><![CDATA[N]]></ISTRANSLATED>
+<!--1000002 eu_ES**************--></C_UOM_TRL>
+
 <!--
 ************************
 1. End of Custom Range.

@@ -5,112 +5,115 @@
 0. Core Range.
 ************************
 -->
-<!--AT_TEST_ID=100-->                    <AT_TEST>
-<!--AT_TEST_ID=100 AT_TEST_ID-->
-<!--AT_TEST_ID=100-->                        <AT_TEST_ID><![CDATA[100]]></AT_TEST_ID>
-<!--AT_TEST_ID=100 AD_CLIENT_ID-->
-<!--AT_TEST_ID=100-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AT_TEST_ID=100 AD_ORG_ID-->
-<!--AT_TEST_ID=100-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AT_TEST_ID=100 ISACTIVE-->
-<!--AT_TEST_ID=100-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AT_TEST_ID=100 CREATED-->
-<!--AT_TEST_ID=100-->                        <CREATED><![CDATA[2006-02-06 17:13:04.0]]></CREATED>
-<!--AT_TEST_ID=100 CREATEDBY-->
-<!--AT_TEST_ID=100-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AT_TEST_ID=100 UPDATED-->
-<!--AT_TEST_ID=100-->                        <UPDATED><![CDATA[2006-02-06 17:13:04.0]]></UPDATED>
-<!--AT_TEST_ID=100 UPDATEDBY-->
-<!--AT_TEST_ID=100-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AT_TEST_ID=100 NAME-->
-<!--AT_TEST_ID=100-->                        <NAME><![CDATA[Prueba multipart]]></NAME>
-<!--AT_TEST_ID=100 TYPE-->
-<!--AT_TEST_ID=100-->                        <TYPE><![CDATA[N]]></TYPE>
-<!--AT_TEST_ID=100 FILENAME-->
-<!--AT_TEST_ID=100-->                        <FILENAME><![CDATA[multipart.rb]]></FILENAME>
-<!--AT_TEST_ID=100 IMPORTTEST-->
-<!--AT_TEST_ID=100-->                        <IMPORTTEST><![CDATA[N]]></IMPORTTEST>
-<!--AT_TEST_ID=100 COPYLINES-->
-<!--AT_TEST_ID=100-->                        <COPYLINES><![CDATA[N]]></COPYLINES>
-<!--AT_TEST_ID=100 DELETING-->
-<!--AT_TEST_ID=100-->                        <DELETING><![CDATA[N]]></DELETING>
-<!--AT_TEST_ID=100 ISSUMMARY-->
-<!--AT_TEST_ID=100-->                        <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--AT_TEST_ID=100 ACTION-->
-<!--AT_TEST_ID=100-->                        <ACTION><![CDATA[T]]></ACTION>
-<!--AT_TEST_ID=100-->                    </AT_TEST>
-<!--AT_TEST_ID=800000-->                    <AT_TEST>
-<!--AT_TEST_ID=800000 AT_TEST_ID-->
-<!--AT_TEST_ID=800000-->                        <AT_TEST_ID><![CDATA[800000]]></AT_TEST_ID>
-<!--AT_TEST_ID=800000 AD_CLIENT_ID-->
-<!--AT_TEST_ID=800000-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AT_TEST_ID=800000 AD_ORG_ID-->
-<!--AT_TEST_ID=800000-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AT_TEST_ID=800000 ISACTIVE-->
-<!--AT_TEST_ID=800000-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AT_TEST_ID=800000 CREATED-->
-<!--AT_TEST_ID=800000-->                        <CREATED><![CDATA[2005-12-16 17:22:16.0]]></CREATED>
-<!--AT_TEST_ID=800000 CREATEDBY-->
-<!--AT_TEST_ID=800000-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AT_TEST_ID=800000 UPDATED-->
-<!--AT_TEST_ID=800000-->                        <UPDATED><![CDATA[2005-12-16 17:22:16.0]]></UPDATED>
-<!--AT_TEST_ID=800000 UPDATEDBY-->
-<!--AT_TEST_ID=800000-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AT_TEST_ID=800000 NAME-->
-<!--AT_TEST_ID=800000-->                        <NAME><![CDATA[Primero]]></NAME>
-<!--AT_TEST_ID=800000 DESCRIPTION-->
-<!--AT_TEST_ID=800000-->                        <DESCRIPTION><![CDATA[Primer test de prueba]]></DESCRIPTION>
-<!--AT_TEST_ID=800000 TYPE-->
-<!--AT_TEST_ID=800000-->                        <TYPE><![CDATA[M]]></TYPE>
-<!--AT_TEST_ID=800000 FILENAME-->
-<!--AT_TEST_ID=800000-->                        <FILENAME><![CDATA[Test.rb]]></FILENAME>
-<!--AT_TEST_ID=800000 IMPORTTEST-->
-<!--AT_TEST_ID=800000-->                        <IMPORTTEST><![CDATA[N]]></IMPORTTEST>
-<!--AT_TEST_ID=800000 COPYLINES-->
-<!--AT_TEST_ID=800000-->                        <COPYLINES><![CDATA[N]]></COPYLINES>
-<!--AT_TEST_ID=800000 DELETING-->
-<!--AT_TEST_ID=800000-->                        <DELETING><![CDATA[N]]></DELETING>
-<!--AT_TEST_ID=800000 ISSUMMARY-->
-<!--AT_TEST_ID=800000-->                        <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--AT_TEST_ID=800000 ACTION-->
-<!--AT_TEST_ID=800000-->                        <ACTION><![CDATA[T]]></ACTION>
-<!--AT_TEST_ID=800000-->                    </AT_TEST>
-<!--AT_TEST_ID=800001-->                    <AT_TEST>
-<!--AT_TEST_ID=800001 AT_TEST_ID-->
-<!--AT_TEST_ID=800001-->                        <AT_TEST_ID><![CDATA[800001]]></AT_TEST_ID>
-<!--AT_TEST_ID=800001 AD_CLIENT_ID-->
-<!--AT_TEST_ID=800001-->                        <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--AT_TEST_ID=800001 AD_ORG_ID-->
-<!--AT_TEST_ID=800001-->                        <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--AT_TEST_ID=800001 ISACTIVE-->
-<!--AT_TEST_ID=800001-->                        <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--AT_TEST_ID=800001 CREATED-->
-<!--AT_TEST_ID=800001-->                        <CREATED><![CDATA[2005-12-16 17:25:05.0]]></CREATED>
-<!--AT_TEST_ID=800001 CREATEDBY-->
-<!--AT_TEST_ID=800001-->                        <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--AT_TEST_ID=800001 UPDATED-->
-<!--AT_TEST_ID=800001-->                        <UPDATED><![CDATA[2005-12-16 17:25:05.0]]></UPDATED>
-<!--AT_TEST_ID=800001 UPDATEDBY-->
-<!--AT_TEST_ID=800001-->                        <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--AT_TEST_ID=800001 NAME-->
-<!--AT_TEST_ID=800001-->                        <NAME><![CDATA[LoginSystem]]></NAME>
-<!--AT_TEST_ID=800001 DESCRIPTION-->
-<!--AT_TEST_ID=800001-->                        <DESCRIPTION><![CDATA[Login as System Administrator]]></DESCRIPTION>
-<!--AT_TEST_ID=800001 TYPE-->
-<!--AT_TEST_ID=800001-->                        <TYPE><![CDATA[M]]></TYPE>
-<!--AT_TEST_ID=800001 FILENAME-->
-<!--AT_TEST_ID=800001-->                        <FILENAME><![CDATA[LoginSystem]]></FILENAME>
-<!--AT_TEST_ID=800001 IMPORTTEST-->
-<!--AT_TEST_ID=800001-->                        <IMPORTTEST><![CDATA[N]]></IMPORTTEST>
-<!--AT_TEST_ID=800001 COPYLINES-->
-<!--AT_TEST_ID=800001-->                        <COPYLINES><![CDATA[N]]></COPYLINES>
-<!--AT_TEST_ID=800001 DELETING-->
-<!--AT_TEST_ID=800001-->                        <DELETING><![CDATA[N]]></DELETING>
-<!--AT_TEST_ID=800001 ISSUMMARY-->
-<!--AT_TEST_ID=800001-->                        <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--AT_TEST_ID=800001 ACTION-->
-<!--AT_TEST_ID=800001-->                        <ACTION><![CDATA[T]]></ACTION>
-<!--AT_TEST_ID=800001-->                    </AT_TEST>
+<!--100**************--><AT_TEST>
+<!--100 AT_TEST_ID-->
+<!--100-->              <AT_TEST_ID><![CDATA[100]]></AT_TEST_ID>
+<!--100 AD_CLIENT_ID-->
+<!--100-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100 AD_ORG_ID-->
+<!--100-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100 ISACTIVE-->
+<!--100-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100 CREATED-->
+<!--100-->              <CREATED><![CDATA[2006-02-06 17:13:04.0]]></CREATED>
+<!--100 CREATEDBY-->
+<!--100-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--100 UPDATED-->
+<!--100-->              <UPDATED><![CDATA[2006-02-06 17:13:04.0]]></UPDATED>
+<!--100 UPDATEDBY-->
+<!--100-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--100 NAME-->
+<!--100-->              <NAME><![CDATA[Prueba multipart]]></NAME>
+<!--100 TYPE-->
+<!--100-->              <TYPE><![CDATA[N]]></TYPE>
+<!--100 FILENAME-->
+<!--100-->              <FILENAME><![CDATA[multipart.rb]]></FILENAME>
+<!--100 IMPORTTEST-->
+<!--100-->              <IMPORTTEST><![CDATA[N]]></IMPORTTEST>
+<!--100 COPYLINES-->
+<!--100-->              <COPYLINES><![CDATA[N]]></COPYLINES>
+<!--100 DELETING-->
+<!--100-->              <DELETING><![CDATA[N]]></DELETING>
+<!--100 ISSUMMARY-->
+<!--100-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--100 ACTION-->
+<!--100-->              <ACTION><![CDATA[T]]></ACTION>
+<!--100**************--></AT_TEST>
+
+<!--800000**************--><AT_TEST>
+<!--800000 AT_TEST_ID-->
+<!--800000-->              <AT_TEST_ID><![CDATA[800000]]></AT_TEST_ID>
+<!--800000 AD_CLIENT_ID-->
+<!--800000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800000 AD_ORG_ID-->
+<!--800000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800000 ISACTIVE-->
+<!--800000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800000 CREATED-->
+<!--800000-->              <CREATED><![CDATA[2005-12-16 17:22:16.0]]></CREATED>
+<!--800000 CREATEDBY-->
+<!--800000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--800000 UPDATED-->
+<!--800000-->              <UPDATED><![CDATA[2005-12-16 17:22:16.0]]></UPDATED>
+<!--800000 UPDATEDBY-->
+<!--800000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--800000 NAME-->
+<!--800000-->              <NAME><![CDATA[Primero]]></NAME>
+<!--800000 DESCRIPTION-->
+<!--800000-->              <DESCRIPTION><![CDATA[Primer test de prueba]]></DESCRIPTION>
+<!--800000 TYPE-->
+<!--800000-->              <TYPE><![CDATA[M]]></TYPE>
+<!--800000 FILENAME-->
+<!--800000-->              <FILENAME><![CDATA[Test.rb]]></FILENAME>
+<!--800000 IMPORTTEST-->
+<!--800000-->              <IMPORTTEST><![CDATA[N]]></IMPORTTEST>
+<!--800000 COPYLINES-->
+<!--800000-->              <COPYLINES><![CDATA[N]]></COPYLINES>
+<!--800000 DELETING-->
+<!--800000-->              <DELETING><![CDATA[N]]></DELETING>
+<!--800000 ISSUMMARY-->
+<!--800000-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--800000 ACTION-->
+<!--800000-->              <ACTION><![CDATA[T]]></ACTION>
+<!--800000**************--></AT_TEST>
+
+<!--800001**************--><AT_TEST>
+<!--800001 AT_TEST_ID-->
+<!--800001-->              <AT_TEST_ID><![CDATA[800001]]></AT_TEST_ID>
+<!--800001 AD_CLIENT_ID-->
+<!--800001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800001 AD_ORG_ID-->
+<!--800001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800001 ISACTIVE-->
+<!--800001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800001 CREATED-->
+<!--800001-->              <CREATED><![CDATA[2005-12-16 17:25:05.0]]></CREATED>
+<!--800001 CREATEDBY-->
+<!--800001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--800001 UPDATED-->
+<!--800001-->              <UPDATED><![CDATA[2005-12-16 17:25:05.0]]></UPDATED>
+<!--800001 UPDATEDBY-->
+<!--800001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--800001 NAME-->
+<!--800001-->              <NAME><![CDATA[LoginSystem]]></NAME>
+<!--800001 DESCRIPTION-->
+<!--800001-->              <DESCRIPTION><![CDATA[Login as System Administrator]]></DESCRIPTION>
+<!--800001 TYPE-->
+<!--800001-->              <TYPE><![CDATA[M]]></TYPE>
+<!--800001 FILENAME-->
+<!--800001-->              <FILENAME><![CDATA[LoginSystem]]></FILENAME>
+<!--800001 IMPORTTEST-->
+<!--800001-->              <IMPORTTEST><![CDATA[N]]></IMPORTTEST>
+<!--800001 COPYLINES-->
+<!--800001-->              <COPYLINES><![CDATA[N]]></COPYLINES>
+<!--800001 DELETING-->
+<!--800001-->              <DELETING><![CDATA[N]]></DELETING>
+<!--800001 ISSUMMARY-->
+<!--800001-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--800001 ACTION-->
+<!--800001-->              <ACTION><![CDATA[T]]></ACTION>
+<!--800001**************--></AT_TEST>
+
 <!--
 ************************
 0. End of Core Range.
