@@ -566,13 +566,43 @@ public class FactLine {
        */
       log4jFactLine.debug("FactLine - save - m_Record_ID = " + m_Record_ID + " - Account_ID = " + Account_ID + " - m_Fact_Acct_Group_ID = " + m_Fact_Acct_Group_ID + " - m_SeqNo = " + m_SeqNo);
       FactLineData [] cuenta = FactLineData.selectAccountValue(conn, Account_ID);
+      log4jFactLine.debug("FactLine - After selectAccountValue - cuenta.length - " + cuenta.length);
       BigDecimal zero = new BigDecimal("0.0");
-      if(zero.compareTo(new BigDecimal(m_AmtSourceDr))==0 && zero.compareTo(new BigDecimal(m_AmtSourceCr))==0 && zero.compareTo(new BigDecimal(m_AmtAcctDr))==0 && zero.compareTo(new BigDecimal(m_AmtAcctCr))==0) return true; 
-      else no = FactLineData.insertFactAct(con,conn,m_Fact_Acct_ID,AD_Client_ID,AD_Org_ID,m_C_AcctSchema_ID,Account_ID, cuenta[0].value, 
+      log4jFactLine.debug("FactLine - m_AmtSourceDr " + m_AmtSourceDr + " - m_AmtSourceDr " + m_AmtSourceDr);
+      log4jFactLine.debug("FactLine - m_AmtAcctDr " + m_AmtAcctDr + " - m_AmtSourceDr " + m_AmtAcctCr);
+      if(zero.compareTo(new BigDecimal(m_AmtSourceDr))==0 && zero.compareTo(new BigDecimal(m_AmtSourceDr))==0 && zero.compareTo(new BigDecimal(m_AmtAcctDr))==0 && zero.compareTo(new BigDecimal(m_AmtAcctCr))==0){
+        log4jFactLine.debug("FactLine - zero.compareTo");
+        return true; 
+      }else {
+        log4jFactLine.debug("FactLine - Before insertFactAct");
+        log4jFactLine.debug("FactLine - m_Fact_Acct_ID " + m_Fact_Acct_ID + " - AD_Client_ID " + AD_Client_ID);
+        log4jFactLine.debug("FactLine - m_C_AcctSchema_ID " + m_C_AcctSchema_ID + " - Account_ID " + Account_ID);
+        log4jFactLine.debug("FactLine - cuenta[0].value " + cuenta[0].value + " - cuenta[0].description " + cuenta[0].description);
+        log4jFactLine.debug("FactLine - DateDoc " + DateDoc + " - DateAcct " + DateAcct);
+        log4jFactLine.debug("FactLine - C_Period_ID " + C_Period_ID + " - m_AD_Table_ID " + m_AD_Table_ID);
+        log4jFactLine.debug("FactLine - m_Record_ID " + m_Record_ID + " - m_Line_ID " + m_Line_ID);
+        log4jFactLine.debug("FactLine - m_GL_Category_ID " + m_GL_Category_ID + " - m_GL_Budget_ID " + m_GL_Budget_ID);
+        log4jFactLine.debug("FactLine - C_Tax_ID " + C_Tax_ID + " - m_PostingType " + m_PostingType);
+        log4jFactLine.debug("FactLine - m_C_Currency_ID " + m_C_Currency_ID + " - m_AmtSourceDr " + m_AmtSourceDr);
+        log4jFactLine.debug("FactLine - m_AmtSourceCr " + m_AmtSourceCr + " - m_AmtAcctDr " + m_AmtAcctDr);
+        log4jFactLine.debug("FactLine - m_AmtAcctCr " + m_AmtAcctCr + " - C_UOM_ID " + C_UOM_ID);
+        log4jFactLine.debug("FactLine - Qty " + Qty + " - m_M_Locator_ID " + m_M_Locator_ID);
+        log4jFactLine.debug("FactLine - M_Product_ID " + M_Product_ID + " - C_BPartner_ID " + C_BPartner_ID);
+        log4jFactLine.debug("FactLine - AD_OrgTrx_ID " + AD_OrgTrx_ID + " - C_LocFrom_ID " + C_LocFrom_ID);
+        log4jFactLine.debug("FactLine - C_LocTo_ID " + C_LocTo_ID + " - C_SalesRegion_ID " + C_SalesRegion_ID);
+        log4jFactLine.debug("FactLine - C_Project_ID " + C_Project_ID + " - C_Campaign_ID " + C_Campaign_ID);
+        log4jFactLine.debug("FactLine - C_Activity_ID " + C_Activity_ID + " - User1_ID " + User1_ID);
+        log4jFactLine.debug("FactLine - User2_ID " + User2_ID + " - description " + description.toString());
+        log4jFactLine.debug("FactLine - m_Fact_Acct_Group_ID " + m_Fact_Acct_Group_ID + " - m_SeqNo " + m_SeqNo);
+        log4jFactLine.debug("FactLine - m_DocBaseType " + m_DocBaseType + " - Record_ID2 " + Record_ID2);
+        log4jFactLine.debug("FactLine - m_A_Asset_ID " + ((m_docLine!=null)? m_docLine.m_A_Asset_ID:""));
+        no = FactLineData.insertFactAct(con,conn,m_Fact_Acct_ID,AD_Client_ID,AD_Org_ID,m_C_AcctSchema_ID,Account_ID, cuenta[0].value, 
         cuenta[0].description,DateDoc,DateAcct,C_Period_ID,m_AD_Table_ID,m_Record_ID,m_Line_ID,m_GL_Category_ID,m_GL_Budget_ID,C_Tax_ID,
         m_PostingType,m_C_Currency_ID,m_AmtSourceDr,m_AmtSourceCr,m_AmtAcctDr,m_AmtAcctCr,C_UOM_ID,Qty,m_M_Locator_ID,
         M_Product_ID,C_BPartner_ID,AD_OrgTrx_ID,C_LocFrom_ID,C_LocTo_ID,C_SalesRegion_ID,C_Project_ID,C_Campaign_ID,
-        C_Activity_ID,User1_ID,User2_ID,description.toString(), m_Fact_Acct_Group_ID, m_SeqNo, m_DocBaseType, Record_ID2, m_docLine.m_A_Asset_ID);
+        C_Activity_ID,User1_ID,User2_ID,description.toString(), m_Fact_Acct_Group_ID, m_SeqNo, m_DocBaseType, Record_ID2, (m_docLine!=null)? m_docLine.m_A_Asset_ID:"");
+        log4jFactLine.debug("FactLine - After insertFactAct");
+      }
       if(m_docVO.m_IsOpening.equals("Y")) FactLineData.updateFactAcct(con,conn,m_AD_Table_ID,m_Record_ID);
     }catch(ServletException e){
       log4jFactLine.warn(e);
