@@ -19,10 +19,21 @@
 
 package org.openbravo.erpCommon.ws.externalSales;
 
-public interface ExternalSales {
+import java.io.Serializable;
 
-    public Product[] getProductsCatalog( int entityId, int organizationId, int salesChannel, String username, String password);
-    public ProductPlus[] getProductsPlusCatalog( int entityId, int organizationId, int salesChannel, String username, String password);
-    public void uploadOrders(int entityId, int organizationId, int salesChannel, Order[] newOrders, String username, String password);
-    public Order[] getOrders(int entityId, int organizationId, OrderIdentifier[] orderIds, String username, String password);
+public class ProductPlus extends Product implements Serializable {
+	
+    private static final long serialVersionUID = 12L;
+
+    private double qtyonhand;
+  
+    public double getQtyonhand(){
+        return qtyonhand;
+    }
+    
+    public void setQtyonhand(double qtyonhand) {
+        this.qtyonhand = qtyonhand;
+    }
 }
+
+

@@ -1,4 +1,5 @@
-/*
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -11,18 +12,25 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+-->
 
-package org.openbravo.erpCommon.ws.externalSales;
 
-public interface ExternalSales {
-
-    public Product[] getProductsCatalog( int entityId, int organizationId, int salesChannel, String username, String password);
-    public ProductPlus[] getProductsPlusCatalog( int entityId, int organizationId, int salesChannel, String username, String password);
-    public void uploadOrders(int entityId, int organizationId, int salesChannel, Order[] newOrders, String username, String password);
-    public Order[] getOrders(int entityId, int organizationId, OrderIdentifier[] orderIds, String username, String password);
-}
+<SqlClass name="WebServicesData" package="org.openbravo.erpCommon.ws.services">
+    <SqlMethod name="hasAccess" type="preparedStatement" return="String">
+    <SqlMethodComment></SqlMethodComment>
+	    <Sql>
+	      <![CDATA[
+	         SELECT COUNT(*) AS AUTH
+		       FROM AD_USER  U						      
+			  WHERE U.USERNAME = ? 
+	            AND U.PASSWORD = ?				
+	      ]]>
+	    </Sql>
+    	<Parameter name="username"/>
+    	<Parameter name="password"/>
+  	</SqlMethod>  	
+</SqlClass>

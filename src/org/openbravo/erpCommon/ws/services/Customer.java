@@ -11,18 +11,17 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 
-package org.openbravo.erpCommon.ws.externalSales;
+package org.openbravo.erpCommon.ws.services;
 
-public interface ExternalSales {
+public class Customer extends BusinessPartner {
 
-    public Product[] getProductsCatalog( int entityId, int organizationId, int salesChannel, String username, String password);
-    public ProductPlus[] getProductsPlusCatalog( int entityId, int organizationId, int salesChannel, String username, String password);
-    public void uploadOrders(int entityId, int organizationId, int salesChannel, Order[] newOrders, String username, String password);
-    public Order[] getOrders(int entityId, int organizationId, OrderIdentifier[] orderIds, String username, String password);
+	public Customer() {
+		setCustomer(true);
+	}
 }

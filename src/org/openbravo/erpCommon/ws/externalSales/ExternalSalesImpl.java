@@ -22,7 +22,6 @@ package org.openbravo.erpCommon.ws.externalSales;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
 
-import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.base.ConnectionProviderContextListener;
@@ -57,70 +56,140 @@ public class ExternalSalesImpl implements ExternalSales{
 
     }
 
-		// FIXME: This should be removed
-   public String test2(String p){
-    return p;
-    }
-   public String test(){
-     return "testing...";
-   }
 
-    public Product[] getProductsCatalog( int ClientID, int organizationId, int salesChannel, String username, String password)
-    {
-    if (!access(username, password)) {
-      if (log4j.isDebugEnabled()) log4j.debug("Access denied for user: " + username + " - password: " + password);
-       return null;
-    }
-    if (log4j.isDebugEnabled()) log4j.debug("getProductsCatalog"+" ClientID "+ClientID+" organizationId "+organizationId+" salesChannel "+ salesChannel);
-      try {
+    public Product[] getProductsCatalog( int ClientID, int organizationId, int salesChannel, String username, String password) {   	
+    	
+        if (!access(username, password)) {
+			if (log4j.isDebugEnabled()) {
+				log4j.debug("Access denied for user: " + username + " - password: " + password);
+			}
+			return null;
+    	}
+        
+    	if (log4j.isDebugEnabled()) {
+    		log4j.debug("getProductsCatalog"+" ClientID "+ClientID+" organizationId "+organizationId+" salesChannel "+ salesChannel);
+    	}
+    	
+		try {
 
-        //Select
-        ExternalSalesProductData[] data = ExternalSalesProductData.select(pool,  Integer.toString(ClientID), Integer.toString(salesChannel), Integer.toString(organizationId));
+			//Select
+			ExternalSalesProductData[] data = ExternalSalesProductData.select(pool,  Integer.toString(ClientID), Integer.toString(salesChannel), Integer.toString(organizationId));
 
+			if (data != null && data.length > 0){
+				int i = 0;
+				if (log4j.isDebugEnabled()) {
+					log4j.debug("data.length "+data.length);
+				}
+				Product [] products = new Product[data.length];
 
-        if (data != null && data.length > 0){
-          int i = 0;
-          if (log4j.isDebugEnabled()) log4j.debug("data.length "+data.length);
-          Product [] products = new org.openbravo.erpCommon.ws.externalSales.Product[data.length];
-
-          while (i<data.length) {
-            if (log4j.isDebugEnabled()) log4j.debug("getProductsCatalog data[i].id "+data[i].id+" data[i].name "+data[i].name);
-            products[i] = new org.openbravo.erpCommon.ws.externalSales.Product();
-            products[i].setId((Integer.valueOf(data[i].id)).intValue());
-            products[i].setName(data[i].name);
-            products[i].setNumber(data[i].number1);
-            products[i].setDescription(data[i].description);
-            products[i].setListPrice((Double.valueOf(data[i].listPrice)).doubleValue());
-            products[i].setPurchasePrice((Double.valueOf(data[i].purchasePrice)).doubleValue());
-            Tax tax = new org.openbravo.erpCommon.ws.externalSales.Tax();
-            tax.setId((Integer.valueOf(data[i].taxId)).intValue());
-            tax.setName(data[i].taxName);
-            tax.setPercentage((Double.valueOf(data[i].percentage)).doubleValue());
-            products[i].setTax(tax);
-            products[i].setImageUrl(data[i].imageUrl);
-            products[i].setEan(data[i].ean);
-            Category category = new org.openbravo.erpCommon.ws.externalSales.Category();
-            category.setId((Integer.valueOf(data[i].mProductCategoryId)).intValue());
-            category.setName(data[i].mProductCategoryName);
-            category.setDescription(data[i].mProductCategoryDescription);
-            products[i].setCategory(category);
-            i++;
-          }
-          return products;
+				while (i < data.length) {
+					if (log4j.isDebugEnabled()) {
+						log4j.debug("getProductsCatalog data[i].id "+data[i].id+" data[i].name "+data[i].name);
+					}						
+					products[i] = new Product();
+					products[i].setId((Integer.valueOf(data[i].id)).intValue());
+					products[i].setName(data[i].name);
+					products[i].setNumber(data[i].number1);
+					products[i].setDescription(data[i].description);
+					products[i].setListPrice(parseDouble(data[i].listPrice));
+					products[i].setPurchasePrice(parseDouble(data[i].purchasePrice));
+					Tax tax = new org.openbravo.erpCommon.ws.externalSales.Tax();
+					tax.setId((Integer.valueOf(data[i].taxId)).intValue());
+					tax.setName(data[i].taxName);
+					tax.setPercentage(parseDouble(data[i].percentage));
+					products[i].setTax(tax);
+					products[i].setImageUrl(data[i].imageUrl);
+					products[i].setEan(data[i].ean);
+					Category category = new org.openbravo.erpCommon.ws.externalSales.Category();
+					category.setId((Integer.valueOf(data[i].mProductCategoryId)).intValue());
+					category.setName(data[i].mProductCategoryName);
+					category.setDescription(data[i].mProductCategoryDescription);
+					products[i].setCategory(category);
+					i++;
+				}
+				return products;
+			} else if (data != null && data.length == 0){ //In case that don't return data, return an empty array
+				if (log4j.isDebugEnabled()) {
+					log4j.debug("data.length "+data.length);
+				}
+				return new Product[0];
+			}
+        } catch (Exception e) {
+            log4j.error("Error : getProductsCatalog");
+            e.printStackTrace();
         }
-        else if (data != null && data.length == 0){ //In case that don't return data, return an empty array
-          if (log4j.isDebugEnabled()) log4j.debug("data.length "+data.length);
-          Product [] products = new org.openbravo.erpCommon.ws.externalSales.Product[0];
-          return products;
-        }
-      } catch (Exception e) {
-          log4j.error("Error : getProductsCatalog");
-          e.printStackTrace();
-      }
 
-      destroyPool();
-      return null;
+        destroyPool();
+        return null;
     }
+    
+    public ProductPlus[] getProductsPlusCatalog( int ClientID, int organizationId, int salesChannel, String username, String password) {
+    	
+        if (!access(username, password)) {
+			if (log4j.isDebugEnabled()) {
+				log4j.debug("Access denied for user: " + username + " - password: " + password);
+			}
+			return null;
+    	}
+        
+    	if (log4j.isDebugEnabled()) {
+    		log4j.debug("getProductsCatalog"+" ClientID "+ClientID+" organizationId "+organizationId+" salesChannel "+ salesChannel);
+    	}
+    	
+		try {
+
+			//Select
+			ExternalSalesProductData[] data = ExternalSalesProductData.select(pool,  Integer.toString(ClientID), Integer.toString(salesChannel), Integer.toString(organizationId));
+
+			if (data != null && data.length > 0){
+				int i = 0;
+				if (log4j.isDebugEnabled()) {
+					log4j.debug("data.length "+data.length);
+				}
+				ProductPlus [] products = new ProductPlus[data.length];
+
+				while (i < data.length) {
+					if (log4j.isDebugEnabled()) {
+						log4j.debug("getProductsCatalog data[i].id "+data[i].id+" data[i].name "+data[i].name);
+					}						
+					products[i] = new ProductPlus();
+					products[i].setId((Integer.valueOf(data[i].id)).intValue());
+					products[i].setName(data[i].name);
+					products[i].setNumber(data[i].number1);
+					products[i].setDescription(data[i].description);
+					products[i].setListPrice(parseDouble(data[i].listPrice));
+					products[i].setPurchasePrice(parseDouble(data[i].purchasePrice));
+					Tax tax = new org.openbravo.erpCommon.ws.externalSales.Tax();
+					tax.setId((Integer.valueOf(data[i].taxId)).intValue());
+					tax.setName(data[i].taxName);
+					tax.setPercentage(parseDouble(data[i].percentage));
+					products[i].setTax(tax);
+					products[i].setImageUrl(data[i].imageUrl);
+					products[i].setEan(data[i].ean);
+					Category category = new org.openbravo.erpCommon.ws.externalSales.Category();
+					category.setId((Integer.valueOf(data[i].mProductCategoryId)).intValue());
+					category.setName(data[i].mProductCategoryName);
+					category.setDescription(data[i].mProductCategoryDescription);
+					products[i].setCategory(category);
+					products[i].setQtyonhand(parseDouble(data[i].qtyonhand));
+					i++;
+				}
+				return products;
+			} else if (data != null && data.length == 0){ //In case that don't return data, return an empty array
+				if (log4j.isDebugEnabled()) {
+					log4j.debug("data.length "+data.length);
+				}
+				return new ProductPlus[0];
+			}
+        } catch (Exception e) {
+            log4j.error("Error : getProductsCatalog");
+            e.printStackTrace();
+        }
+
+        destroyPool();
+        return null;
+    }
+
 
     public void uploadOrders(int ClientID, int organizationId, int salesChannel, Order[] newOrders, String username, String password)
     {
@@ -133,16 +202,16 @@ public class ExternalSalesImpl implements ExternalSales{
 
     if (log4j.isDebugEnabled()) log4j.debug("uploadOrders"+" ClientID "+ClientID+"organizationId "+organizationId+" sales channel"+salesChannel+" order 1 "+newOrders[0].getOrderId());
       initPool();
+      
+      //Reading default parameters
+      ExternalSalesData[] externalPOS = ExternalSalesData.select(pool, Integer.toString(ClientID), Integer.toString(organizationId), Integer.toString(salesChannel));
+      
       int i = 0;
       while (newOrders != null && i < newOrders.length) {
 
           ExternalSalesIOrderData[] data = ExternalSalesIOrderData.set();
-
-          //Reading default parameters
-          ExternalSalesData[] externalPOS = ExternalSalesData.select(pool, Integer.toString(ClientID), Integer.toString(organizationId), Integer.toString(salesChannel));
-
           String defaultBPvalue = "";
-
+          
           if (externalPOS != null && externalPOS.length >0) {
             data[0].adClientId = externalPOS[0].adClientId;
             data[0].adOrgId = externalPOS[0].adOrgId;
@@ -356,5 +425,12 @@ public class ExternalSalesImpl implements ExternalSales{
     private void destroyPool() {
       if (log4j.isDebugEnabled()) log4j.debug("destroy");
     }
-
+    
+    protected final double parseDouble(String value) {
+    	try {
+    		return Double.valueOf(value).doubleValue();
+    	} catch (NumberFormatException e) {
+    		return 0.0;
+    	}
+    }
 }
