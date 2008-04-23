@@ -77,7 +77,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="base.src.trl" location="src-trl"/>
   <property name="base.src.wad" location="src-wad"/>
   <property name="base.client.src" location="srcClient"/>
-  <property name="base.db" location="database"/>
+  <property name="base.db" location="src-db/database"/>
   <property name="base.web" location="web"/>
   <property name="base.context" location="WebContent"/>
   <property name="base.design" location="${base.context}/src-loc"/>
