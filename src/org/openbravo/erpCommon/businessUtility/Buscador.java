@@ -560,7 +560,7 @@ public class Buscador extends HttpSecureAppServlet {
   public String locationCommands(BuscadorData efd) {
     StringBuffer html = new StringBuffer();
 
-    html.append("openLocation(null, null, '../info/Location_FS.html', null, false, 'frmMain', 'inpParam").append(FormatUtilities.replace(efd.columnname)).append("', 'inpParam").append(FormatUtilities.replace(efd.columnname)).append("_DES', document.frmMain.inpParam").append(FormatUtilities.replace(efd.columnname)).append(".value, 'inpwindowId', document.frmMain.inpwindowId.value);");
+    html.append("openLocation(null, null, '../info/Location.html', null, false, 'frmMain', 'inpParam").append(FormatUtilities.replace(efd.columnname)).append("', 'inpParam").append(FormatUtilities.replace(efd.columnname)).append("_DES', document.frmMain.inpParam").append(FormatUtilities.replace(efd.columnname)).append(".value, 'inpwindowId', document.frmMain.inpwindowId.value);");
     return html.toString();
   }
 
@@ -589,7 +589,7 @@ public class Buscador extends HttpSecureAppServlet {
       params.append(", 'inpisSOTrxTab'");
       params.append(", '").append(strIsSOTrx).append("'");
     }
-    String searchName = (efd.reference.equals("25")?"/info/Account":("/info/" + (efd.reference.equals("800011")?"ProductComplete":FormatUtilities.replace(efd.searchname.trim())))) + "_FS.html";
+    String searchName = (efd.reference.equals("25")?"/info/Account":("/info/" + (efd.reference.equals("800011")?"ProductComplete":FormatUtilities.replace(efd.searchname.trim())))) + ".html";
     BuscadorData[] data = null;
     try {
       data = BuscadorData.selectSearchs(this, "I", efd.referencevalue);
@@ -646,7 +646,7 @@ public class Buscador extends HttpSecureAppServlet {
     }
     params.append(", 'WindowID'");
     params.append(", '").append(windowId).append("'");
-    html.append("openSearch(null, null, '../info/Locator_FS.html', null, false, 'frmMain', 'inpParam").append(FormatUtilities.replace(efd.columnname)).append("', 'inpParam").append(FormatUtilities.replace(efd.columnname)).append("_DES', document.frmMain.inpParam").append(FormatUtilities.replace(efd.columnname)).append("_DES.value").append(params.toString()).append(");");
+    html.append("openSearch(null, null, '../info/Locator.html', null, false, 'frmMain', 'inpParam").append(FormatUtilities.replace(efd.columnname)).append("', 'inpParam").append(FormatUtilities.replace(efd.columnname)).append("_DES', document.frmMain.inpParam").append(FormatUtilities.replace(efd.columnname)).append("_DES.value").append(params.toString()).append(");");
     return html.toString();
   }
 

@@ -59,7 +59,7 @@
 
 function onloadFunctions() {
   new TypeAheadCombo("inpCPaymentRuleId");
-  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', null, false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', null, false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
 }
 function depurar(){
   seleccionarListCompleto(document.frmMain.inpcBPartnerId_IN);
@@ -236,7 +236,7 @@ function depurar(){
                           <TR>
                             <TD>
                               <A class="List_Button_TopLink" href="#"
-                                onclick="openMultiSearch(null, null, '../info/BusinessPartnerMultiple_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId_IN');return false;"
+                                onclick="openMultiSearch(null, null, '../info/BusinessPartnerMultiple.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId_IN');return false;"
                                 onfocus="this.className='List_Button_TopLink_hover'; window.status='Add'; return true;"
                                 onblur="this.className='List_Button_TopLink'; window.status=''; return true;"
                                 onkeypress="this.className='List_Button_TopLink_active'; return true;"

@@ -58,8 +58,8 @@ function depurar() {
 function onloadFunctions() {
   new TypeAheadCombo("inpadOrgId");
   new TypeAheadCombo("inpmovementType");
-  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Locator_FS.html', null, false, 'frmMain', 'inpmLocatorId', 'inpmLocatorId_DES', document.frmMain.inpmLocatorId_DES.value, 'Command', 'KEY', 'WindowID', '168');", "inpmLocatorId_DES", "null"); 
-  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY', 'WindowID', '168');", "inpmProductId_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Locator.html', null, false, 'frmMain', 'inpmLocatorId', 'inpmLocatorId_DES', document.frmMain.inpmLocatorId_DES.value, 'Command', 'KEY', 'WindowID', '168');", "inpmLocatorId_DES", "null"); 
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Product.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY', 'WindowID', '168');", "inpmProductId_DES", "null");
   
 }
 </SCRIPT>
@@ -112,7 +112,7 @@ function onloadFunctions() {
           <!-- <TD width="15%" > -->
           <INPUT type="hidden" name="inpmLocatorId" id="paramM_Locator_ID" value=""></INPUT> 
           <INPUT type="text"  size="20" maxlength="22" name="inpmLocatorId_DES" id="paramM_Locator_ID_DES" value=""></INPUT> 
-          <A href="#" onclick="openSearch(null, null, '../info/Locator_FS.html', null, false, 'frmMain', 'inpmLocatorId', 'inpmLocatorId_DES', document.frmMain.inpmLocatorId_DES.value, 'WindowID', 'CreateFrom_Shipment');return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Locator';return true;" > 
+          <A href="#" onclick="openSearch(null, null, '../info/Locator.html', null, false, 'frmMain', 'inpmLocatorId', 'inpmLocatorId_DES', document.frmMain.inpmLocatorId_DES.value, 'WindowID', 'CreateFrom_Shipment');return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Locator';return true;" > 
           <img width="16" height="16"  alt="Locator" title="Locator"  border="0" src="../../../../../web/images/Locator.jpg" id="LocationSelection"></IMG></A></TD></td></tr>
     </table></TD>
     <TD width="14%"> <SPAN >Product</SPAN></TD>
@@ -121,7 +121,7 @@ function onloadFunctions() {
           <TD > <INPUT type="hidden"  name="inpmProductId" id="M_Product_ID" value=""></INPUT> 
             <INPUT type="text"  size="26" maxlength="22" name="inpmProductId_DES" id="M_Product_ID_DES" value=""></INPUT>
           </TD>
-          <TD > <A href="#" onclick="openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId',         'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'WindowID', '235');return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
+          <TD > <A href="#" onclick="openSearch(null, null, '../info/Product.html', null, false, 'frmMain', 'inpmProductId',         'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'WindowID', '235');return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
             <img width="16" height="16"  alt="Product" title="Product"  border="0" src="../../../../../web/images/Product.jpg" id="buttonProduct"></IMG></A></TD>
         </TR>
       </TABLE></TD>

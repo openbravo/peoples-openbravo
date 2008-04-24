@@ -46,7 +46,7 @@
 
 
 function enableLocalShortcuts() {
-  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
+  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
 }
 
 function debugSearch(strClave, strTexto, gCampoClave) {
@@ -309,7 +309,7 @@ function onloadFunctions() {
                       <INPUT type="text" class="dojoValidateValid TextBox_btn_TwoCells_width" maxlength="22" name="inpBpartnerId_DES" id="paramBPartnerDescription" value=""></INPUT>
                     </td>
                     <TD class="FieldButton_ContentCell">
-                      <A class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', true, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value);return false;">
+                      <A class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Search'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', true, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value);return false;">
                         <TABLE class="FieldButton" onmousedown="this.className='FieldButton_active'; return true;" onmouseup="this.className='FieldButton'; return true;" onmouseover="this.className='FieldButton_hover'; window.status='Search'; return true;" onmouseout="this.className='FieldButton'; window.status=''; return true;" id="DateInvoicedlinkCalendar">
                           <TR>
                             <TD class="FieldButton_bg">

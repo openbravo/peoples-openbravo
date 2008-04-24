@@ -32,8 +32,8 @@
 <SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY', 'WindowID', 'MatchingPO');", "inpmProductId_DES", "null");
-keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null");
+keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Product.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY', 'WindowID', 'MatchingPO');", "inpmProductId_DES", "null");
+keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null");
 
 
 var arrFinalDocs = new Array(
@@ -112,7 +112,7 @@ function onloadFunctions() {
       <TD width="9%"> <SPAN >Business Partner</SPAN></TD>
       <TD width="21%" > <INPUT type="hidden" name="inpcBpartnerId" value="" id="paramBpartner"></INPUT> 
         <INPUT type="text" name="inpcBpartnerId_DES" size="20" maxlength="20" value="" id="paramBpartnerDes"></INPUT> 
-        <A href="#" onclick="openSearch(null, null, '../info/BusinessPartner_FS.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
+        <A href="#" onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
         <img width="16" height="16"  alt="Business Partner" title="Business Partner" border="0" src="../../../../../web/images/BusinessPartner.jpg" id="buttonBPartner"></IMG></A></TD>
       <TD rowspan="3" width="4%"> <A href="#" onclick="submitCommandForm('FIND');return false;" onmouseover="window.status='Results';return true;" onmouseout="window.status='';return true;" > 
         <img width="16" height="16" src="../../../../../web/images/Find.jpg"  alt="Results" title="Results" border="0" id="buttonResults"></IMG></A></TD>
@@ -129,7 +129,7 @@ function onloadFunctions() {
       <TD > <SPAN >Product</SPAN></TD>
       <TD colspan="2" > <INPUT type="hidden" name="inpmProductId" value="" id="paramProduct"></INPUT> 
         <INPUT type="text" size="26" maxlength="22" name="inpmProductId_DES" value="" id="paramProductDes"></INPUT> 
-        <A href="#" onclick="openSearch(null, null, '../info/Product_FS.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'WindowID', 'MatchingPO');return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
+        <A href="#" onclick="openSearch(null, null, '../info/Product.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'WindowID', 'MatchingPO');return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
         <img width="16" height="16"  alt="Product" title="Product" border="0" src="../../../../../web/images/Product.jpg" id="buttonProduct"></IMG></A></TD>
     </TR>
   </TABLE>
