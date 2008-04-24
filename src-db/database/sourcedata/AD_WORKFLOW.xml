@@ -222,6 +222,37 @@
 <!--108-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--108**************--></AD_WORKFLOW>
 
+<!--109**************--><AD_WORKFLOW>
+<!--109 AD_WORKFLOW_ID-->
+<!--109-->              <AD_WORKFLOW_ID><![CDATA[109]]></AD_WORKFLOW_ID>
+<!--109 AD_CLIENT_ID-->
+<!--109-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--109 AD_ORG_ID-->
+<!--109-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--109 ISACTIVE-->
+<!--109-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--109 CREATED-->
+<!--109-->              <CREATED><![CDATA[2001-04-05 21:06:17.0]]></CREATED>
+<!--109 CREATEDBY-->
+<!--109-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--109 UPDATED-->
+<!--109-->              <UPDATED><![CDATA[2003-08-03 17:21:33.0]]></UPDATED>
+<!--109 UPDATEDBY-->
+<!--109-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--109 NAME-->
+<!--109-->              <NAME><![CDATA[Replication Setup]]></NAME>
+<!--109 DESCRIPTION-->
+<!--109-->              <DESCRIPTION><![CDATA[Setup of data replication]]></DESCRIPTION>
+<!--109 HELP-->
+<!--109-->              <HELP><![CDATA[Data Replication allows you to synchronize data of remote instances with a central office.  All actions are initialized from the central office.<p>|<b>Central System:</b><BR>|- setup system with all organizations, roles, etc.<BR>|- run the migration to make sure that it is up-to-date<BR>|- export the central system|<p>|<b>Remote System:</b>|- install the exact version as Central System<BR>|- import data from Central System in the remote locations|<p>|<b>Central System:</b>|- Define Replication per Remote<BR>|- Make sure that the ID range is unique per remote - otherwise you will loose transactions!<BR>|- Initially Start the Replication Run to setup Remote|<p>|** Enter Transactions **|<p>|<b>Central System:</b><BR>|- Start the Replication Run when required|]]></HELP>
+<!--109 ACCESSLEVEL-->
+<!--109-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--109 AD_WF_NODE_ID-->
+<!--109-->              <AD_WF_NODE_ID><![CDATA[174]]></AD_WF_NODE_ID>
+<!--109 ENTITYTYPE-->
+<!--109-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--109**************--></AD_WORKFLOW>
+
 <!--110**************--><AD_WORKFLOW>
 <!--110 AD_WORKFLOW_ID-->
 <!--110-->              <AD_WORKFLOW_ID><![CDATA[110]]></AD_WORKFLOW_ID>
@@ -283,6 +314,37 @@
 <!--111 ENTITYTYPE-->
 <!--111-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--111**************--></AD_WORKFLOW>
+
+<!--112**************--><AD_WORKFLOW>
+<!--112 AD_WORKFLOW_ID-->
+<!--112-->              <AD_WORKFLOW_ID><![CDATA[112]]></AD_WORKFLOW_ID>
+<!--112 AD_CLIENT_ID-->
+<!--112-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--112 AD_ORG_ID-->
+<!--112-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--112 ISACTIVE-->
+<!--112-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--112 CREATED-->
+<!--112-->              <CREATED><![CDATA[2001-04-24 18:06:49.0]]></CREATED>
+<!--112 CREATEDBY-->
+<!--112-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--112 UPDATED-->
+<!--112-->              <UPDATED><![CDATA[2003-02-22 02:20:12.0]]></UPDATED>
+<!--112 UPDATEDBY-->
+<!--112-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--112 NAME-->
+<!--112-->              <NAME><![CDATA[Performance Measurement Setup]]></NAME>
+<!--112 DESCRIPTION-->
+<!--112-->              <DESCRIPTION><![CDATA[Setup your Performance Measurement]]></DESCRIPTION>
+<!--112 HELP-->
+<!--112-->              <HELP><![CDATA[This workflow guides you through setting up your performance measurement based on Key Performance Indicators, Balanced Scorecard, etc.||Most important: Do your analysis first!|- What are your goals and how do you measure it?||When you are setting up the system, you do it in reverse:|First you define how you measure it and last you define the goals for the measurements.|You have three ways measuring performance:|- via quantifiable measures (e.g. sales of $3 million in Q1)|- via manual measures|- via achievements (tasks)||The system converts the measures into percentages (based on the target and achieved measure - or number of total and reached achievements)]]></HELP>
+<!--112 ACCESSLEVEL-->
+<!--112-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--112 AD_WF_NODE_ID-->
+<!--112-->              <AD_WF_NODE_ID><![CDATA[147]]></AD_WF_NODE_ID>
+<!--112 ENTITYTYPE-->
+<!--112-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--112**************--></AD_WORKFLOW>
 
 <!--113**************--><AD_WORKFLOW>
 <!--113 AD_WORKFLOW_ID-->

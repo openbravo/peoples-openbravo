@@ -1584,6 +1584,35 @@
 <!--192-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--192**************--></AD_REF_TABLE>
 
+<!--193**************--><AD_REF_TABLE>
+<!--193 AD_REFERENCE_ID-->
+<!--193-->              <AD_REFERENCE_ID><![CDATA[193]]></AD_REFERENCE_ID>
+<!--193 AD_CLIENT_ID-->
+<!--193-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--193 AD_ORG_ID-->
+<!--193-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--193 ISACTIVE-->
+<!--193-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--193 CREATED-->
+<!--193-->              <CREATED><![CDATA[2000-01-25 20:37:28.0]]></CREATED>
+<!--193 CREATEDBY-->
+<!--193-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--193 UPDATED-->
+<!--193-->              <UPDATED><![CDATA[2000-01-25 20:43:17.0]]></UPDATED>
+<!--193 UPDATEDBY-->
+<!--193-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--193 AD_TABLE_ID-->
+<!--193-->              <AD_TABLE_ID><![CDATA[297]]></AD_TABLE_ID>
+<!--193 AD_KEY-->
+<!--193-->              <AD_KEY><![CDATA[3077]]></AD_KEY>
+<!--193 AD_DISPLAY-->
+<!--193-->              <AD_DISPLAY><![CDATA[3074]]></AD_DISPLAY>
+<!--193 ISVALUEDISPLAYED-->
+<!--193-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--193 ENTITYTYPE-->
+<!--193-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--193**************--></AD_REF_TABLE>
+
 <!--197**************--><AD_REF_TABLE>
 <!--197 AD_REFERENCE_ID-->
 <!--197-->              <AD_REFERENCE_ID><![CDATA[197]]></AD_REFERENCE_ID>
@@ -1804,6 +1833,97 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--227-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--227**************--></AD_REF_TABLE>
 
+<!--228**************--><AD_REF_TABLE>
+<!--228 AD_REFERENCE_ID-->
+<!--228-->              <AD_REFERENCE_ID><![CDATA[228]]></AD_REFERENCE_ID>
+<!--228 AD_CLIENT_ID-->
+<!--228-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--228 AD_ORG_ID-->
+<!--228-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--228 ISACTIVE-->
+<!--228-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--228 CREATED-->
+<!--228-->              <CREATED><![CDATA[2001-04-17 22:27:43.0]]></CREATED>
+<!--228 CREATEDBY-->
+<!--228-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--228 UPDATED-->
+<!--228-->              <UPDATED><![CDATA[2001-04-17 22:27:43.0]]></UPDATED>
+<!--228 UPDATEDBY-->
+<!--228-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--228 AD_TABLE_ID-->
+<!--228-->              <AD_TABLE_ID><![CDATA[440]]></AD_TABLE_ID>
+<!--228 AD_KEY-->
+<!--228-->              <AD_KEY><![CDATA[5884]]></AD_KEY>
+<!--228 AD_DISPLAY-->
+<!--228-->              <AD_DISPLAY><![CDATA[5892]]></AD_DISPLAY>
+<!--228 ISVALUEDISPLAYED-->
+<!--228-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--228 ENTITYTYPE-->
+<!--228-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--228**************--></AD_REF_TABLE>
+
+<!--229**************--><AD_REF_TABLE>
+<!--229 AD_REFERENCE_ID-->
+<!--229-->              <AD_REFERENCE_ID><![CDATA[229]]></AD_REFERENCE_ID>
+<!--229 AD_CLIENT_ID-->
+<!--229-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--229 AD_ORG_ID-->
+<!--229-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--229 ISACTIVE-->
+<!--229-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--229 CREATED-->
+<!--229-->              <CREATED><![CDATA[2001-04-17 23:13:28.0]]></CREATED>
+<!--229 CREATEDBY-->
+<!--229-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--229 UPDATED-->
+<!--229-->              <UPDATED><![CDATA[2001-04-17 23:13:28.0]]></UPDATED>
+<!--229 UPDATEDBY-->
+<!--229-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--229 AD_TABLE_ID-->
+<!--229-->              <AD_TABLE_ID><![CDATA[438]]></AD_TABLE_ID>
+<!--229 AD_KEY-->
+<!--229-->              <AD_KEY><![CDATA[5856]]></AD_KEY>
+<!--229 AD_DISPLAY-->
+<!--229-->              <AD_DISPLAY><![CDATA[5864]]></AD_DISPLAY>
+<!--229 ISVALUEDISPLAYED-->
+<!--229-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--229 WHERECLAUSE-->
+<!--229-->              <WHERECLAUSE><![CDATA[PA_Achievement.IsSummary='Y']]></WHERECLAUSE>
+<!--229 ENTITYTYPE-->
+<!--229-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--229**************--></AD_REF_TABLE>
+
+<!--230**************--><AD_REF_TABLE>
+<!--230 AD_REFERENCE_ID-->
+<!--230-->              <AD_REFERENCE_ID><![CDATA[230]]></AD_REFERENCE_ID>
+<!--230 AD_CLIENT_ID-->
+<!--230-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--230 AD_ORG_ID-->
+<!--230-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--230 ISACTIVE-->
+<!--230-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--230 CREATED-->
+<!--230-->              <CREATED><![CDATA[2001-04-17 23:18:38.0]]></CREATED>
+<!--230 CREATEDBY-->
+<!--230-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--230 UPDATED-->
+<!--230-->              <UPDATED><![CDATA[2001-04-17 23:18:38.0]]></UPDATED>
+<!--230 UPDATEDBY-->
+<!--230-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--230 AD_TABLE_ID-->
+<!--230-->              <AD_TABLE_ID><![CDATA[440]]></AD_TABLE_ID>
+<!--230 AD_KEY-->
+<!--230-->              <AD_KEY><![CDATA[5884]]></AD_KEY>
+<!--230 AD_DISPLAY-->
+<!--230-->              <AD_DISPLAY><![CDATA[5892]]></AD_DISPLAY>
+<!--230 ISVALUEDISPLAYED-->
+<!--230-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--230 WHERECLAUSE-->
+<!--230-->              <WHERECLAUSE><![CDATA[PA_Goal.IsSummary='Y']]></WHERECLAUSE>
+<!--230 ENTITYTYPE-->
+<!--230-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--230**************--></AD_REF_TABLE>
+
 <!--232**************--><AD_REF_TABLE>
 <!--232 AD_REFERENCE_ID-->
 <!--232-->              <AD_REFERENCE_ID><![CDATA[232]]></AD_REFERENCE_ID>
@@ -1867,6 +1987,95 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--233 ENTITYTYPE-->
 <!--233-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--233**************--></AD_REF_TABLE>
+
+<!--239**************--><AD_REF_TABLE>
+<!--239 AD_REFERENCE_ID-->
+<!--239-->              <AD_REFERENCE_ID><![CDATA[239]]></AD_REFERENCE_ID>
+<!--239 AD_CLIENT_ID-->
+<!--239-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--239 AD_ORG_ID-->
+<!--239-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--239 ISACTIVE-->
+<!--239-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--239 CREATED-->
+<!--239-->              <CREATED><![CDATA[2001-05-13 10:07:57.0]]></CREATED>
+<!--239 CREATEDBY-->
+<!--239-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--239 UPDATED-->
+<!--239-->              <UPDATED><![CDATA[2001-05-13 10:07:57.0]]></UPDATED>
+<!--239 UPDATEDBY-->
+<!--239-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--239 AD_TABLE_ID-->
+<!--239-->              <AD_TABLE_ID><![CDATA[446]]></AD_TABLE_ID>
+<!--239 AD_KEY-->
+<!--239-->              <AD_KEY><![CDATA[5999]]></AD_KEY>
+<!--239 AD_DISPLAY-->
+<!--239-->              <AD_DISPLAY><![CDATA[6008]]></AD_DISPLAY>
+<!--239 ISVALUEDISPLAYED-->
+<!--239-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--239 ENTITYTYPE-->
+<!--239-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--239**************--></AD_REF_TABLE>
+
+<!--240**************--><AD_REF_TABLE>
+<!--240 AD_REFERENCE_ID-->
+<!--240-->              <AD_REFERENCE_ID><![CDATA[240]]></AD_REFERENCE_ID>
+<!--240 AD_CLIENT_ID-->
+<!--240-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--240 AD_ORG_ID-->
+<!--240-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--240 ISACTIVE-->
+<!--240-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--240 CREATED-->
+<!--240-->              <CREATED><![CDATA[2001-05-13 10:18:21.0]]></CREATED>
+<!--240 CREATEDBY-->
+<!--240-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--240 UPDATED-->
+<!--240-->              <UPDATED><![CDATA[2001-05-13 10:18:21.0]]></UPDATED>
+<!--240 UPDATEDBY-->
+<!--240-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--240 AD_TABLE_ID-->
+<!--240-->              <AD_TABLE_ID><![CDATA[448]]></AD_TABLE_ID>
+<!--240 AD_KEY-->
+<!--240-->              <AD_KEY><![CDATA[6045]]></AD_KEY>
+<!--240 AD_DISPLAY-->
+<!--240-->              <AD_DISPLAY><![CDATA[6054]]></AD_DISPLAY>
+<!--240 ISVALUEDISPLAYED-->
+<!--240-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--240 ENTITYTYPE-->
+<!--240-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--240**************--></AD_REF_TABLE>
+
+<!--242**************--><AD_REF_TABLE>
+<!--242 AD_REFERENCE_ID-->
+<!--242-->              <AD_REFERENCE_ID><![CDATA[242]]></AD_REFERENCE_ID>
+<!--242 AD_CLIENT_ID-->
+<!--242-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--242 AD_ORG_ID-->
+<!--242-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--242 ISACTIVE-->
+<!--242-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--242 CREATED-->
+<!--242-->              <CREATED><![CDATA[2001-05-13 10:46:26.0]]></CREATED>
+<!--242 CREATEDBY-->
+<!--242-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--242 UPDATED-->
+<!--242-->              <UPDATED><![CDATA[2003-01-16 16:28:13.0]]></UPDATED>
+<!--242 UPDATEDBY-->
+<!--242-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--242 AD_TABLE_ID-->
+<!--242-->              <AD_TABLE_ID><![CDATA[448]]></AD_TABLE_ID>
+<!--242 AD_KEY-->
+<!--242-->              <AD_KEY><![CDATA[6045]]></AD_KEY>
+<!--242 AD_DISPLAY-->
+<!--242-->              <AD_DISPLAY><![CDATA[6054]]></AD_DISPLAY>
+<!--242 ISVALUEDISPLAYED-->
+<!--242-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--242 WHERECLAUSE-->
+<!--242-->              <WHERECLAUSE><![CDATA[PA_ReportLine.IsSummary='Y']]></WHERECLAUSE>
+<!--242 ENTITYTYPE-->
+<!--242-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--242**************--></AD_REF_TABLE>
 
 <!--244**************--><AD_REF_TABLE>
 <!--244 AD_REFERENCE_ID-->
@@ -2057,6 +2266,279 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--258 ENTITYTYPE-->
 <!--258-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--258**************--></AD_REF_TABLE>
+
+<!--259**************--><AD_REF_TABLE>
+<!--259 AD_REFERENCE_ID-->
+<!--259-->              <AD_REFERENCE_ID><![CDATA[259]]></AD_REFERENCE_ID>
+<!--259 AD_CLIENT_ID-->
+<!--259-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--259 AD_ORG_ID-->
+<!--259-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--259 ISACTIVE-->
+<!--259-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--259 CREATED-->
+<!--259-->              <CREATED><![CDATA[2002-07-11 21:41:19.0]]></CREATED>
+<!--259 CREATEDBY-->
+<!--259-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--259 UPDATED-->
+<!--259-->              <UPDATED><![CDATA[2002-07-11 21:41:19.0]]></UPDATED>
+<!--259 UPDATEDBY-->
+<!--259-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--259 AD_TABLE_ID-->
+<!--259-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
+<!--259 AD_KEY-->
+<!--259-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
+<!--259 AD_DISPLAY-->
+<!--259-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
+<!--259 ISVALUEDISPLAYED-->
+<!--259-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--259 ENTITYTYPE-->
+<!--259-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--259**************--></AD_REF_TABLE>
+
+<!--261**************--><AD_REF_TABLE>
+<!--261 AD_REFERENCE_ID-->
+<!--261-->              <AD_REFERENCE_ID><![CDATA[261]]></AD_REFERENCE_ID>
+<!--261 AD_CLIENT_ID-->
+<!--261-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--261 AD_ORG_ID-->
+<!--261-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--261 ISACTIVE-->
+<!--261-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--261 CREATED-->
+<!--261-->              <CREATED><![CDATA[2002-08-04 19:25:06.0]]></CREATED>
+<!--261 CREATEDBY-->
+<!--261-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--261 UPDATED-->
+<!--261-->              <UPDATED><![CDATA[2002-08-24 18:13:49.0]]></UPDATED>
+<!--261 UPDATEDBY-->
+<!--261-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--261 AD_TABLE_ID-->
+<!--261-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
+<!--261 AD_KEY-->
+<!--261-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
+<!--261 AD_DISPLAY-->
+<!--261-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
+<!--261 ISVALUEDISPLAYED-->
+<!--261-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--261 WHERECLAUSE-->
+<!--261-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.AD_Table_ID=516]]></WHERECLAUSE>
+<!--261 ENTITYTYPE-->
+<!--261-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--261**************--></AD_REF_TABLE>
+
+<!--262**************--><AD_REF_TABLE>
+<!--262 AD_REFERENCE_ID-->
+<!--262-->              <AD_REFERENCE_ID><![CDATA[262]]></AD_REFERENCE_ID>
+<!--262 AD_CLIENT_ID-->
+<!--262-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--262 AD_ORG_ID-->
+<!--262-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--262 ISACTIVE-->
+<!--262-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--262 CREATED-->
+<!--262-->              <CREATED><![CDATA[2002-08-04 19:26:41.0]]></CREATED>
+<!--262 CREATEDBY-->
+<!--262-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--262 UPDATED-->
+<!--262-->              <UPDATED><![CDATA[2002-08-24 18:14:08.0]]></UPDATED>
+<!--262 UPDATEDBY-->
+<!--262-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--262 AD_TABLE_ID-->
+<!--262-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
+<!--262 AD_KEY-->
+<!--262-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
+<!--262 AD_DISPLAY-->
+<!--262-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
+<!--262 ISVALUEDISPLAYED-->
+<!--262-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--262 WHERECLAUSE-->
+<!--262-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.AD_Table_ID=496]]></WHERECLAUSE>
+<!--262 ENTITYTYPE-->
+<!--262-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--262**************--></AD_REF_TABLE>
+
+<!--263**************--><AD_REF_TABLE>
+<!--263 AD_REFERENCE_ID-->
+<!--263-->              <AD_REFERENCE_ID><![CDATA[263]]></AD_REFERENCE_ID>
+<!--263 AD_CLIENT_ID-->
+<!--263-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--263 AD_ORG_ID-->
+<!--263-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--263 ISACTIVE-->
+<!--263-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--263 CREATED-->
+<!--263-->              <CREATED><![CDATA[2002-08-04 19:27:46.0]]></CREATED>
+<!--263 CREATEDBY-->
+<!--263-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--263 UPDATED-->
+<!--263-->              <UPDATED><![CDATA[2002-08-24 18:14:33.0]]></UPDATED>
+<!--263 UPDATEDBY-->
+<!--263-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--263 AD_TABLE_ID-->
+<!--263-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
+<!--263 AD_KEY-->
+<!--263-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
+<!--263 AD_DISPLAY-->
+<!--263-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
+<!--263 ISVALUEDISPLAYED-->
+<!--263-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--263 WHERECLAUSE-->
+<!--263-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.AD_Table_ID=500]]></WHERECLAUSE>
+<!--263 ENTITYTYPE-->
+<!--263-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--263**************--></AD_REF_TABLE>
+
+<!--264**************--><AD_REF_TABLE>
+<!--264 AD_REFERENCE_ID-->
+<!--264-->              <AD_REFERENCE_ID><![CDATA[264]]></AD_REFERENCE_ID>
+<!--264 AD_CLIENT_ID-->
+<!--264-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--264 AD_ORG_ID-->
+<!--264-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--264 ISACTIVE-->
+<!--264-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--264 CREATED-->
+<!--264-->              <CREATED><![CDATA[2002-08-24 16:12:17.0]]></CREATED>
+<!--264 CREATEDBY-->
+<!--264-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--264 UPDATED-->
+<!--264-->              <UPDATED><![CDATA[2002-08-24 16:12:17.0]]></UPDATED>
+<!--264 UPDATEDBY-->
+<!--264-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--264 AD_TABLE_ID-->
+<!--264-->              <AD_TABLE_ID><![CDATA[489]]></AD_TABLE_ID>
+<!--264 AD_KEY-->
+<!--264-->              <AD_KEY><![CDATA[6954]]></AD_KEY>
+<!--264 AD_DISPLAY-->
+<!--264-->              <AD_DISPLAY><![CDATA[6940]]></AD_DISPLAY>
+<!--264 ISVALUEDISPLAYED-->
+<!--264-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--264 ENTITYTYPE-->
+<!--264-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--264**************--></AD_REF_TABLE>
+
+<!--266**************--><AD_REF_TABLE>
+<!--266 AD_REFERENCE_ID-->
+<!--266-->              <AD_REFERENCE_ID><![CDATA[266]]></AD_REFERENCE_ID>
+<!--266 AD_CLIENT_ID-->
+<!--266-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--266 AD_ORG_ID-->
+<!--266-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--266 ISACTIVE-->
+<!--266-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--266 CREATED-->
+<!--266-->              <CREATED><![CDATA[2002-08-24 16:30:19.0]]></CREATED>
+<!--266 CREATEDBY-->
+<!--266-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--266 UPDATED-->
+<!--266-->              <UPDATED><![CDATA[2002-08-24 16:30:19.0]]></UPDATED>
+<!--266 UPDATEDBY-->
+<!--266-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--266 AD_TABLE_ID-->
+<!--266-->              <AD_TABLE_ID><![CDATA[490]]></AD_TABLE_ID>
+<!--266 AD_KEY-->
+<!--266-->              <AD_KEY><![CDATA[6975]]></AD_KEY>
+<!--266 AD_DISPLAY-->
+<!--266-->              <AD_DISPLAY><![CDATA[6979]]></AD_DISPLAY>
+<!--266 ISVALUEDISPLAYED-->
+<!--266-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--266 ENTITYTYPE-->
+<!--266-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--266**************--></AD_REF_TABLE>
+
+<!--267**************--><AD_REF_TABLE>
+<!--267 AD_REFERENCE_ID-->
+<!--267-->              <AD_REFERENCE_ID><![CDATA[267]]></AD_REFERENCE_ID>
+<!--267 AD_CLIENT_ID-->
+<!--267-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--267 AD_ORG_ID-->
+<!--267-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--267 ISACTIVE-->
+<!--267-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--267 CREATED-->
+<!--267-->              <CREATED><![CDATA[2002-08-24 16:40:35.0]]></CREATED>
+<!--267 CREATEDBY-->
+<!--267-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--267 UPDATED-->
+<!--267-->              <UPDATED><![CDATA[2002-08-24 16:40:35.0]]></UPDATED>
+<!--267 UPDATEDBY-->
+<!--267-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--267 AD_TABLE_ID-->
+<!--267-->              <AD_TABLE_ID><![CDATA[491]]></AD_TABLE_ID>
+<!--267 AD_KEY-->
+<!--267-->              <AD_KEY><![CDATA[6989]]></AD_KEY>
+<!--267 AD_DISPLAY-->
+<!--267-->              <AD_DISPLAY><![CDATA[6983]]></AD_DISPLAY>
+<!--267 ISVALUEDISPLAYED-->
+<!--267-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--267 ENTITYTYPE-->
+<!--267-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--267**************--></AD_REF_TABLE>
+
+<!--268**************--><AD_REF_TABLE>
+<!--268 AD_REFERENCE_ID-->
+<!--268-->              <AD_REFERENCE_ID><![CDATA[268]]></AD_REFERENCE_ID>
+<!--268 AD_CLIENT_ID-->
+<!--268-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--268 AD_ORG_ID-->
+<!--268-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--268 ISACTIVE-->
+<!--268-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--268 CREATED-->
+<!--268-->              <CREATED><![CDATA[2002-08-24 18:16:01.0]]></CREATED>
+<!--268 CREATEDBY-->
+<!--268-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--268 UPDATED-->
+<!--268-->              <UPDATED><![CDATA[2002-08-24 18:16:01.0]]></UPDATED>
+<!--268 UPDATEDBY-->
+<!--268-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--268 AD_TABLE_ID-->
+<!--268-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
+<!--268 AD_KEY-->
+<!--268-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
+<!--268 AD_DISPLAY-->
+<!--268-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
+<!--268 ISVALUEDISPLAYED-->
+<!--268-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--268 WHERECLAUSE-->
+<!--268-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.AD_Table_ID=498]]></WHERECLAUSE>
+<!--268 ENTITYTYPE-->
+<!--268-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--268**************--></AD_REF_TABLE>
+
+<!--269**************--><AD_REF_TABLE>
+<!--269 AD_REFERENCE_ID-->
+<!--269-->              <AD_REFERENCE_ID><![CDATA[269]]></AD_REFERENCE_ID>
+<!--269 AD_CLIENT_ID-->
+<!--269-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--269 AD_ORG_ID-->
+<!--269-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--269 ISACTIVE-->
+<!--269-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--269 CREATED-->
+<!--269-->              <CREATED><![CDATA[2002-09-14 15:16:37.0]]></CREATED>
+<!--269 CREATEDBY-->
+<!--269-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--269 UPDATED-->
+<!--269-->              <UPDATED><![CDATA[2002-09-14 15:16:37.0]]></UPDATED>
+<!--269 UPDATEDBY-->
+<!--269-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--269 AD_TABLE_ID-->
+<!--269-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
+<!--269 AD_KEY-->
+<!--269-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
+<!--269 AD_DISPLAY-->
+<!--269-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
+<!--269 ISVALUEDISPLAYED-->
+<!--269-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--269 WHERECLAUSE-->
+<!--269-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.IsTableBased='N']]></WHERECLAUSE>
+<!--269 ORDERBYCLAUSE-->
+<!--269-->              <ORDERBYCLAUSE><![CDATA[AD_PrintFormat.Name]]></ORDERBYCLAUSE>
+<!--269 ENTITYTYPE-->
+<!--269-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--269**************--></AD_REF_TABLE>
 
 <!--271**************--><AD_REF_TABLE>
 <!--271 AD_REFERENCE_ID-->
@@ -2334,6 +2816,35 @@ AND EXISTS (SELECT * FROM AD_User u WHERE C_BPartner.C_BPartner_ID=u.C_BPartner_
 <!--284 ENTITYTYPE-->
 <!--284-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--284**************--></AD_REF_TABLE>
+
+<!--285**************--><AD_REF_TABLE>
+<!--285 AD_REFERENCE_ID-->
+<!--285-->              <AD_REFERENCE_ID><![CDATA[285]]></AD_REFERENCE_ID>
+<!--285 AD_CLIENT_ID-->
+<!--285-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--285 AD_ORG_ID-->
+<!--285-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--285 ISACTIVE-->
+<!--285-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--285 CREATED-->
+<!--285-->              <CREATED><![CDATA[2003-07-10 21:23:56.0]]></CREATED>
+<!--285 CREATEDBY-->
+<!--285-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--285 UPDATED-->
+<!--285-->              <UPDATED><![CDATA[2003-07-10 21:23:56.0]]></UPDATED>
+<!--285 UPDATEDBY-->
+<!--285-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--285 AD_TABLE_ID-->
+<!--285-->              <AD_TABLE_ID><![CDATA[612]]></AD_TABLE_ID>
+<!--285 AD_KEY-->
+<!--285-->              <AD_KEY><![CDATA[9498]]></AD_KEY>
+<!--285 AD_DISPLAY-->
+<!--285-->              <AD_DISPLAY><![CDATA[9491]]></AD_DISPLAY>
+<!--285 ISVALUEDISPLAYED-->
+<!--285-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
+<!--285 ENTITYTYPE-->
+<!--285-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
+<!--285**************--></AD_REF_TABLE>
 
 <!--286**************--><AD_REF_TABLE>
 <!--286 AD_REFERENCE_ID-->
