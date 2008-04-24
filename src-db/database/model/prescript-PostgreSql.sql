@@ -290,6 +290,17 @@ END;
 
 CREATE OR REPLACE FUNCTION to_char
 (
+date
+)
+RETURNS  VARCHAR AS '
+BEGIN
+RETURN to_char(to_date($1), dateFormat());
+END;
+' LANGUAGE 'plpgsql'
+/-- END
+
+CREATE OR REPLACE FUNCTION to_char
+(
 VARCHAR
 )
 RETURNS  VARCHAR AS '
