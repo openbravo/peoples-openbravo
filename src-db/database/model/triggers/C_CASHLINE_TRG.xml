@@ -2,38 +2,40 @@
   <database name="TRIGGER C_CASHLINE_TRG">
     <trigger name="C_CASHLINE_TRG" table="C_CASHLINE" fires="before" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
+  /*************************************************************************
+  * The contents of this file are subject to the Compiere Public
+  * License 1.1 ("License"); You may not use this file except in
+  * compliance with the License. You may obtain a copy of the License in
+  * the legal folder of your Openbravo installation.
 
+  * Software distributed under the License is distributed on an
+  * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  * implied. See the License for the specific language governing rights
 
+  * and limitations under the License.
+  * The Original Code is  Compiere  ERP \&  Business Solution
+  * The Initial Developer of the Original Code is Jorg Janke and ComPiere, Inc.
 
+  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+  * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+  * All Rights Reserved.
+  * Contributor(s): Openbravo SL
 
-/*************************************************************************
- * The contents of this file are subject to the Compiere License
- * Version 2.5.0 ("License"); You may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.compiere.org/license.html
- * Software distributed under the License is distributed on an
- * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
- * implied. See the License for the specific language governing rights
- * and limitations under the License.
- * The Original Code is  Compiere  ERP &  Business Solution
- * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
-Inc.
- * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
- * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
- * All Rights Reserved.
- * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
- *************************************************************************
- * $Id: C_CashLine_Trg.sql,v 1.18 2003/03/17 20:32:24 jjanke Exp $
- ***
- * Title:  Manage Allocations
- * Description:
- *  Prevent changing invoice lines
- *  When Inserting and we have an invoice
- *   Create Allocation Line (Trigger updates C_BPartner.SO_CreditUsed)
- *  Update C_Currency_ID of line
- *  Update Cash Balance (Header)
- ****
+  * Contributions are Copyright (C) 1999-2008 Openbravo, S.L
+  *
+  * Specifically, this derivative work is based upon the following Compiere
+  * file and version.
+  *************************************************************************
+  * $Id: C_CashLine_Trg.sql,v 1.18 2003/03/17 20:32:24 jjanke Exp $
+  ***
+  * Title:  Manage Allocations
+  * Description:
+  *  Prevent changing invoice lines
+  *  When Inserting and we have an invoice
+  *   Create Allocation Line (Trigger updates C_BPartner.SO_CreditUsed)
+  *  Update C_Currency_ID of line
+  *  Update Cash Balance (Header)
+  ****
  UPDATE C_CashLine cl SET C_Currency_ID = (SELECT C_Currency_ID FROM C_Invoice i WHERE i.C_Invoice_ID=cl.C_Invoice_ID) WHERE C_Currency_ID IS NULL AND C_Invoice_ID IS NOT NULL;
  UPDATE C_CashLine cl SET C_Currency_ID = (SELECT C_Currency_ID FROM C_BankAccount b WHERE b.C_BankAccount_ID=cl.C_BankAccount_ID) WHERE C_Currency_ID IS NULL AND C_BankAccount_ID IS NOT NULL;
  UPDATE C_CashLine cl SET C_Currency_ID = (SELECT b.C_Currency_ID FROM C_Cash c, C_CashBook b WHERE c.C_Cash_ID=cl.C_Cash_ID AND c.C_CashBook_ID=b.C_CashBook_ID) WHERE C_Currency_ID IS NULL;

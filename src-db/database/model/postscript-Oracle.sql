@@ -183,22 +183,28 @@ END ad_script_drop_recreate_index;
 CREATE OR REPLACE PROCEDURE DBA_RECOMPILE(p_PInstance_ID IN NUMBER) 
 AS
 /*************************************************************************
-  * The contents of this file are subject to the Compiere License
-  * Version 2.5.0 ("License"); You may not use this file except in
-  * compliance with the License. You may obtain a copy of the License at
-  * http://www.compiere.org/license.html
+  * The contents of this file are subject to the Compiere Public
+  * License 1.1 ("License"); You may not use this file except in
+  * compliance with the License. You may obtain a copy of the License in
+  * the legal folder of your Openbravo installation.
+
   * Software distributed under the License is distributed on an
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
+
   * and limitations under the License.
   * The Original Code is  Compiere  ERP &  Business Solution
-  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
-  Inc.
+  * The Initial Developer of the Original Code is Jorg Janke and ComPiere, Inc.
+
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
+
   * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+  *
+  * Specifically, this derivative work is based upon the following Compiere
+  * file and version.
   *************************************************************************
   * $Id: DBA_Recompile.sql,v 1.7 2003/03/14 06:11:21 jjanke Exp $
   ***
@@ -327,22 +333,28 @@ END DBA_Recompile;
 CREATE OR REPLACE PROCEDURE DBA_AFTERIMPORT
 AS
 /*************************************************************************
-  * The contents of this file are subject to the Compiere License
-  * Version 2.5.0 ("License"); You may not use this file except in
-  * compliance with the License. You may obtain a copy of the License at
-  * http://www.compiere.org/license.html
+  * The contents of this file are subject to the Compiere Public
+  * License 1.1 ("License"); You may not use this file except in
+  * compliance with the License. You may obtain a copy of the License in
+  * the legal folder of your Openbravo installation.
+
   * Software distributed under the License is distributed on an
   * "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
   * implied. See the License for the specific language governing rights
+
   * and limitations under the License.
   * The Original Code is  Compiere  ERP &  Business Solution
-  * The Initial Developer of the Original Code is Jorg Janke  and ComPiere,
-  Inc.
+  * The Initial Developer of the Original Code is Jorg Janke and ComPiere, Inc.
+
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
+
   * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+  *
+  * Specifically, this derivative work is based upon the following Compiere
+  * file and version.
   *************************************************************************
   * $Id: DBA_AfterImport.sql,v 1.5 2002/10/21 04:49:46 jjanke Exp $
   * $Source: /cvsroot/compiere/db/database/Procedures/DBA_AfterImport.sql,v $
