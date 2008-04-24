@@ -351,7 +351,7 @@ AS
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
 
-  * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+  * Contributions are Copyright (C) 1999-2008 Openbravo, S.L
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
