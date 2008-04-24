@@ -2058,6 +2058,35 @@
 <!--10071-->              <SVNUSER><![CDATA[azabaleta]]></SVNUSER>
 <!--10071**************--></AD_DEVELOPER>
 
+<!--10072**************--><AD_DEVELOPER>
+<!--10072 AD_DEVELOPER_ID-->
+<!--10072-->              <AD_DEVELOPER_ID><![CDATA[10072]]></AD_DEVELOPER_ID>
+<!--10072 AD_CLIENT_ID-->
+<!--10072-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10072 AD_ORG_ID-->
+<!--10072-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10072 ISACTIVE-->
+<!--10072-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10072 CREATED-->
+<!--10072-->              <CREATED><![CDATA[2008-04-24 10:16:00.0]]></CREATED>
+<!--10072 CREATEDBY-->
+<!--10072-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10072 UPDATED-->
+<!--10072-->              <UPDATED><![CDATA[2008-04-24 10:16:00.0]]></UPDATED>
+<!--10072 UPDATEDBY-->
+<!--10072-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10072 NAME-->
+<!--10072-->              <NAME><![CDATA[Gonzalo Ramos]]></NAME>
+<!--10072 NICKNAME-->
+<!--10072-->              <NICKNAME><![CDATA[gonzalo.ramos]]></NICKNAME>
+<!--10072 EMAIL-->
+<!--10072-->              <EMAIL><![CDATA[gonzalo.ramos@bbvaglobalnet.com]]></EMAIL>
+<!--10072 COMPANY-->
+<!--10072-->              <COMPANY><![CDATA[BBVAGlobalNet]]></COMPANY>
+<!--10072 SVNUSER-->
+<!--10072-->              <SVNUSER><![CDATA[gonzalo.ramos]]></SVNUSER>
+<!--10072**************--></AD_DEVELOPER>
+
 <!--
 ************************
 0. End of Core Range.
