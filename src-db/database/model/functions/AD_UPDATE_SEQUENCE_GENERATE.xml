@@ -43,7 +43,7 @@
           )
           ,
            'UPDATE AD_SEQUENCE SET CURRENTNEXT=(SELECT AD_SEQUENCE.INCREMENTNO + ' ||  'COALESCE((SELECT MAX(t.' || Cur_Tables.NAME || '_ID) FROM ' || Cur_Tables.NAME ||
-           ' t WHERE t.' || Cur_Tables.NAME || '_ID>=AD_SEQUENCE.STARTNO),' ||  'AD_SEQUENCE.STARTNO-AD_SEQUENCE.INCREMENTNO) AS SEQUENCE FROM AD_SEQUENCE WHERE UPPER(NAME) = '||''''||Cur_Tables.NAME||''''||
+           ' t WHERE t.' || Cur_Tables.NAME || '_ID>=AD_SEQUENCE.STARTNO AND t.' || Cur_Tables.NAME || '_ID<AD_SEQUENCE.STARTNO*1000),' ||  'AD_SEQUENCE.STARTNO-AD_SEQUENCE.INCREMENTNO) AS SEQUENCE FROM AD_SEQUENCE WHERE UPPER(NAME) = '||''''||Cur_Tables.NAME||''''||
            ') WHERE UPPER(NAME) = '||''''||Cur_Tables.NAME||''''
         )
         ;
