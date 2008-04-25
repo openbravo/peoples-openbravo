@@ -21,7 +21,7 @@ All these files are copyright © 2001-2006 Openbravo SL.
 C) Third party code
 Some portions of the Openbravo Software are provided by third parties and thus are not available under the Openbravo Public License, but are available under  other licensing terms. In this distribution, they are: 
 
--Compiere metadata dictionary, available  at www.compiere.org, licensed under the terms of the Compiere Public License (license available at www.compiere.org/license.html)
+-Compiere metadata dictionary licensed under the terms of the Compiere Public License 1.1 (license available in the legal folder of your Openbravo installation)
 -Tigra Calculator under its own license; Copyright © 2003-2004 Softcomplex Inc. (license available at http://www.softcomplex.com/)
 -Eclipse icons under the Eclipse Public License (license available at http://www.eclipse.org/legal/epl-v10.html
 -CyberNeko HTML Parser, under the CyberNeko Software License, Version 1.0 (license available at http://people.apache.org/~andyc/neko/doc/html/
