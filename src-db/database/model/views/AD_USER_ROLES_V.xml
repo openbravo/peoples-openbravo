@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
   <database name="VIEW AD_USER_ROLES_V">
     <view name="AD_USER_ROLES_V"><![CDATA[SELECT u.name, r.name AS rolename
-   FROM ad_user_roles ur
-   JOIN ad_user u ON ur.ad_user_id = u.ad_user_id
-   JOIN ad_role r ON ur.ad_role_id = r.ad_role_id]]></view>
+FROM ad_user_roles ur
+JOIN ad_user u ON ur.ad_user_id = u.ad_user_id
+JOIN ad_role r ON ur.ad_role_id = r.ad_role_id
+]]></view>
   </database>
