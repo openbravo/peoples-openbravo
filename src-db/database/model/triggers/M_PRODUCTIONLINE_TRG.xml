@@ -34,7 +34,7 @@
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
-  *************************************************************************
+  *************************************************************************/
 BEGIN
   IF INSERTING OR UPDATING THEN
     v_ID:=:new.M_ProductionPlan_ID;

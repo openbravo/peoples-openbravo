@@ -25,7 +25,7 @@
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
-  *************************************************************************
+  *************************************************************************/
   v_xTree_ID NUMBER;
   v_xParent_ID NUMBER;
 BEGIN
