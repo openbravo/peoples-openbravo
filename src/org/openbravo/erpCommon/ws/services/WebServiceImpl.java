@@ -53,7 +53,9 @@ public class WebServiceImpl implements WebService {
 	       return null;
 	    }
 		try {
-			WebServicesCustomerData[] data = WebServicesCustomerData.select(pool, Integer.toString(clientId));
+		  
+			WebServicesCustomerData[] data = WebServicesCustomerData.select(pool, Integer.toString(clientId), username);
+		  
 			customers = new Customer[data.length];
 
 			for(int i=0; i < data.length; i++) {
@@ -83,7 +85,7 @@ public class WebServiceImpl implements WebService {
 	    }
 		try {
 			
-			WebServicesCustomerData[] data = WebServicesCustomerData.selectCustomerById(pool, String.valueOf(clientId), String.valueOf(customerId));
+			WebServicesCustomerData[] data = WebServicesCustomerData.selectCustomerById(pool, String.valueOf(clientId), String.valueOf(customerId), username);
 
 			if(data.length > 0) {
 				customer = new Customer();
@@ -111,7 +113,7 @@ public class WebServiceImpl implements WebService {
 	    }
 		try {
 			
-			WebServicesCustomerData[] data = WebServicesCustomerData.selectCustomer(pool, String.valueOf(clientId), name, searchKey);
+			WebServicesCustomerData[] data = WebServicesCustomerData.selectCustomer(pool, String.valueOf(clientId), username, (name==null?"":name), (searchKey==null?"":searchKey));
 
 			if(data.length == 1) {
 				customer = new Customer();
@@ -138,7 +140,7 @@ public class WebServiceImpl implements WebService {
 	       return null;
 	    }
 		try {
-			updated = WebServicesCustomerData.updateCustomer(pool, customer.getName(), customer.getSearchKey(), String.valueOf(customer.getClientId()), String.valueOf(customer.getId()));			
+			updated = WebServicesCustomerData.updateCustomer(pool, customer.getName(), customer.getSearchKey(), String.valueOf(customer.getClientId()), String.valueOf(customer.getId()), username);			
 		}
 		catch(Exception e) {
 			log4j.error(e.getMessage());

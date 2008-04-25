@@ -24,58 +24,78 @@
     <SqlMethodComment></SqlMethodComment>
 	    <Sql>
 	      <![CDATA[
-	         SELECT C_BPARTNER_ID AS ID, AD_CLIENT_ID AS CLIENT_ID, 
-	         		VALUE AS SEARCHKEY, NAME, DESCRIPTION
-          	   FROM C_BPARTNER
-         	  WHERE AD_CLIENT_ID = TO_NUMBER(?)
-                AND ISCUSTOMER = 'Y'	
+	         SELECT BP.C_BPARTNER_ID AS ID, BP.AD_CLIENT_ID AS CLIENT_ID, 
+       				BP.VALUE AS SEARCHKEY, BP.NAME, BP.DESCRIPTION 
+  			   FROM C_BPARTNER BP
+ 			  WHERE BP.AD_CLIENT_ID = TO_NUMBER(?)
+   				AND BP.ISACTIVE = 'Y'
+   				AND BP.AD_CLIENT_ID IN (SELECT DISTINCT AR.AD_CLIENT_ID 
+                			              FROM AD_USER_ROLES AR, AD_USER U 
+                            			 WHERE U.NAME = ? 
+                              			   AND AR.AD_USER_ID = U.AD_USER_ID)
 	      ]]>
 	    </Sql>
-    	<Parameter name="adClientId"/>    	
+    	<Parameter name="adClientId"/>
+    	<Parameter name="adUser"/>
   	</SqlMethod>
   	<SqlMethod name="selectCustomerById" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
 	    <Sql>
 	      <![CDATA[
-	         SELECT C_BPARTNER_ID AS ID, AD_CLIENT_ID AS CLIENT_ID, 
-	         		VALUE AS SEARCHKEY, NAME
-          	   FROM C_BPARTNER
-         	  WHERE AD_CLIENT_ID = TO_NUMBER(?)
-         	    AND C_BPARTNER_ID = TO_NUMBER(?)
-                AND ISCUSTOMER = 'Y'     
+	         SELECT BP.C_BPARTNER_ID AS ID, BP.AD_CLIENT_ID AS CLIENT_ID, 
+	         		BP.VALUE AS SEARCHKEY, BP.NAME
+          	   FROM C_BPARTNER BP
+         	  WHERE BP.AD_CLIENT_ID = TO_NUMBER(?)
+         	    AND BP.C_BPARTNER_ID = TO_NUMBER(?)
+                AND BP.ISCUSTOMER = 'Y'
+                AND BP.AD_CLIENT_ID IN (SELECT DISTINCT AR.AD_CLIENT_ID 
+                			              FROM AD_USER_ROLES AR, AD_USER U 
+                            			 WHERE U.NAME = ? 
+                              			   AND AR.AD_USER_ID = U.AD_USER_ID)
 	      ]]>
 	    </Sql>
     	<Parameter name="adClientId"/>
-    	<Parameter name="adCustomerId"/>    	
+    	<Parameter name="adCustomerId"/>
+    	<Parameter name="adUser"/>
   	</SqlMethod>
   	<SqlMethod name="selectCustomer" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
 	    <Sql>
 	      <![CDATA[
-	         SELECT C_BPARTNER_ID AS ID, AD_CLIENT_ID AS CLIENT_ID, 
-	         		VALUE AS SEARCHKEY, NAME
-          	   FROM C_BPARTNER
-         	  WHERE AD_CLIENT_ID = TO_NUMBER(?)         	    
-                AND ISCUSTOMER = 'Y'
+	         SELECT BP.C_BPARTNER_ID AS ID, BP.AD_CLIENT_ID AS CLIENT_ID, 
+	         		BP.VALUE AS SEARCHKEY, BP.NAME
+          	   FROM C_BPARTNER BP
+         	  WHERE BP.AD_CLIENT_ID = TO_NUMBER(?)         	    
+                AND BP.ISCUSTOMER = 'Y'
+                AND BP.AD_CLIENT_ID IN (SELECT DISTINCT AR.AD_CLIENT_ID 
+                			              FROM AD_USER_ROLES AR, AD_USER U 
+                            			 WHERE U.NAME = ? 
+                              			   AND AR.AD_USER_ID = U.AD_USER_ID)
                 AND 1 = 1
 	      ]]>
 	    </Sql>
-    	<Parameter name="adClientId"/>
-    	<Parameter name="name" optional="true" after="AND 1 = 1"><![CDATA[ AND NAME = ?]]></Parameter>
-    	<Parameter name="seachKey" optional="true" after="AND 1 = 1"><![CDATA[ AND VALUE = ?]]></Parameter>	
+    	<Parameter name="adClientId" />
+    	<Parameter name="adUser" />
+    	<Parameter name="name" optional="true" after="AND 1 = 1"><![CDATA[ AND BP.NAME = ?]]></Parameter>
+    	<Parameter name="seachKey" optional="true" after="AND 1 = 1"><![CDATA[ AND BP.VALUE = ?]]></Parameter>	
   	</SqlMethod>  	
   	<SqlMethod name="updateCustomer" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
 	        UPDATE C_BPARTNER SET 
-	               NAME = ?,
-	               VALUE = ?            
-	         WHERE AD_CLIENT_ID = TO_NUMBER(?)
-	           AND C_BPARTNER_ID = TO_NUMBER(?)
+ 				   NAME = ?,
+ 				   VALUE = ?   
+ 			 WHERE AD_CLIENT_ID = TO_NUMBER(?)
+               AND C_BPARTNER_ID = TO_NUMBER(?)
+               AND AD_CLIENT_ID IN (SELECT DISTINCT AR.AD_CLIENT_ID 
+                			          FROM AD_USER_ROLES AR, AD_USER U 
+                            		 WHERE U.NAME = ? 
+                              		   AND AR.AD_USER_ID = U.AD_USER_ID)
       ]]></Sql>
       <Parameter name="name"/>
       <Parameter name="searchKey"/>
       <Parameter name="clientId"/>
-      <Parameter name="customerId"/>      
+      <Parameter name="customerId"/>
+      <Parameter name="adUser"/>
    </SqlMethod>
 </SqlClass>
