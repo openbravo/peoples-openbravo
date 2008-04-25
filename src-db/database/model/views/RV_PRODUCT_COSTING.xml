@@ -1,19 +1,18 @@
 <?xml version="1.0"?>
   <database name="VIEW RV_PRODUCT_COSTING">
     <view name="RV_PRODUCT_COSTING"><![CDATA[SELECT pc.m_product_id, pc.c_acctschema_id, p.value, p.name, p.m_product_category_id, pc.ad_client_id, pc.ad_org_id, pc.isactive, pc.created, pc.createdby, pc.updated, pc.updatedby, pc.currentcostprice, pc.futurecostprice, pc.coststandard, pc.coststandardpoqty, pc.coststandardpoamt, 
-CASE pc.coststandardpoqty
-WHEN 0 THEN 0
-ELSE pc.coststandardpoamt / pc.coststandardpoqty
-END AS coststandardpodiff, pc.coststandardcumqty, pc.coststandardcumamt, 
-CASE pc.coststandardcumqty
-WHEN 0 THEN 0
-ELSE pc.coststandardcumamt / pc.coststandardcumqty
-END AS coststandardinvdiff, pc.costaverage, pc.costaveragecumqty, pc.costaveragecumamt, pc.totalinvqty, pc.totalinvamt, 
-CASE pc.totalinvqty
-WHEN 0 THEN 0
-ELSE pc.totalinvamt / pc.totalinvqty
-END AS totalinvcost, pc.pricelastpo, pc.pricelastinv
-FROM m_product_costing pc, m_product p
-WHERE pc.m_product_id = p.m_product_id
-]]></view>
+        CASE pc.coststandardpoqty
+            WHEN 0 THEN 0
+            ELSE pc.coststandardpoamt / pc.coststandardpoqty
+        END AS coststandardpodiff, pc.coststandardcumqty, pc.coststandardcumamt, 
+        CASE pc.coststandardcumqty
+            WHEN 0 THEN 0
+            ELSE pc.coststandardcumamt / pc.coststandardcumqty
+        END AS coststandardinvdiff, pc.costaverage, pc.costaveragecumqty, pc.costaveragecumamt, pc.totalinvqty, pc.totalinvamt, 
+        CASE pc.totalinvqty
+            WHEN 0 THEN 0
+            ELSE pc.totalinvamt / pc.totalinvqty
+        END AS totalinvcost, pc.pricelastpo, pc.pricelastinv
+   FROM m_product_costing pc, m_product p
+  WHERE pc.m_product_id = p.m_product_id]]></view>
   </database>
