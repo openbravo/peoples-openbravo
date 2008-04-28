@@ -86,7 +86,7 @@ BEGIN
       INTO v_Bank, v_Branch, v_DigitBank
       FROM C_BANK
       WHERE C_BANK_ID=:NEW.C_BANK_ID;
-      :NEW.DISPLAYEDACCOUNT:=v_Bank || '-' || v_Branch || '-' || v_DigitBank || '-' || :NEW.DIGITCONTROL || '-' || :NEW.CODEACCOUNT;
+      :NEW.DISPLAYEDACCOUNT:=v_Bank || '-' || v_Branch || '-' || v_DigitBank || :NEW.DIGITCONTROL || '-' || :NEW.CODEACCOUNT;
     ELSIF (:NEW.SHOWIBAN='Y') THEN
       :NEW.DISPLAYEDACCOUNT:=SUBSTR(:NEW.IBAN,1,4) || '-' || SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4);
     ELSE
