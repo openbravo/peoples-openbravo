@@ -19,6 +19,8 @@
 package org.openbravo.translate;
 
 import org.openbravo.database.CPStandAlone;
+import org.openbravo.utils.DirFilter;
+
 import java.io.*;
 import org.apache.xerces.parsers.*;
 import org.xml.sax.XMLReader;
