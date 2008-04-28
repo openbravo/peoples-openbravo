@@ -353,7 +353,7 @@ function desactivarEventos() {
   window.onunload=function(){};
 }
 
-function selectFilters(params) {
+function infoSelectFilters(params) {
     setGridFilters(params);
     updateGridDataAfterFilter();
     dojo.widget.byId('grid').requestParams["newFilter"] = "0";
@@ -452,7 +452,7 @@ function updateHeader(liveGrid, offset) {
   	for(var i=0; i < selects.length; i++) {
   		paramsData[count++] = new Array(selects[i].name, selects[i].options[selects[i].selectedIndex].value);
   	}
-  	selectFilters(paramsData);
+  	infoSelectFilters(paramsData);
   }
   
 function calculateNumRows() {
