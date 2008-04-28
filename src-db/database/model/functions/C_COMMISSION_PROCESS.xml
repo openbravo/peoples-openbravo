@@ -30,7 +30,7 @@
     --
     v_AD_Client_ID NUMBER;
     v_AD_Org_ID NUMBER;
-    v_Name VARCHAR2(60) ;
+    v_Name VARCHAR2(90) ;
     v_Currency VARCHAR2(10) ;
     v_FrequencyType CHAR(1) ;
     v_DocBasisType CHAR(1) ;
