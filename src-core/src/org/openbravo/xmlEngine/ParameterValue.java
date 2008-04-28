@@ -13,8 +13,6 @@ package org.openbravo.xmlEngine;
 
 import org.openbravo.utils.Replace;
 
-import java.util.Enumeration;
-
 class ParameterValue implements XmlComponentValue {
   String strValue = null;
   ParameterTemplate parameterTemplate;
@@ -34,8 +32,7 @@ class ParameterValue implements XmlComponentValue {
   private String replace(String strIni) {
     if (parameterTemplate.vecReplace != null) {
       String strFin = strIni;
-      for (Enumeration<ReplaceElement> e = parameterTemplate.vecReplace.elements() ; e.hasMoreElements();) {
-        ReplaceElement replaceElement = e.nextElement();
+      for (ReplaceElement replaceElement : parameterTemplate.vecReplace) {
         strFin = Replace.replace(strFin, replaceElement.replaceWhat, replaceElement.replaceWith);
       }
       return strFin;

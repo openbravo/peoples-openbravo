@@ -12,7 +12,6 @@
 package org.openbravo.xmlEngine;
 
 import java.util.Vector;
-import java.util.Enumeration;
 
 import org.xml.sax.Attributes;
 
@@ -65,8 +64,7 @@ class TagTemplate implements XmlComponentTemplate {
   public void setAttribute(AttributeComponentTemplate attributeComponentTemplate) {
     // attribute for value or replace
     if (attributeComponentTemplate.attributeName() != null) {
-      for (Enumeration<AttributeItemTemplate> e = attributeVectorTemplate.elements() ; e.hasMoreElements() ;) {
-        AttributeItemTemplate attribute = e.nextElement();
+      for (AttributeItemTemplate attribute : attributeVectorTemplate) {
         if (attribute.name.equals(attributeComponentTemplate.attributeName())) {
           if (attributeComponentTemplate.replace() != null) {
             attribute.valueTemplate.replace(attributeComponentTemplate);
@@ -78,8 +76,7 @@ class TagTemplate implements XmlComponentTemplate {
     }
     // attribute boolean
     if (attributeComponentTemplate.attributeBooleanName() != null) {
-      for (Enumeration<AttributeItemTemplate> e = attributeVectorTemplate.elements() ; e.hasMoreElements() ;) {
-        AttributeItemTemplate attribute = e.nextElement();
+      for (AttributeItemTemplate attribute : attributeVectorTemplate) {
         if (attribute.name.equals(attributeComponentTemplate.attributeBooleanName())) {
           attribute.valueTemplate = new XmlThreeTemplate(attributeComponentTemplate.xmlComponentTemplate());
           attribute.attributeBoolean = true;

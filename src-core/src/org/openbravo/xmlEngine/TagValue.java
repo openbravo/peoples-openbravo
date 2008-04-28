@@ -12,7 +12,6 @@
 package org.openbravo.xmlEngine;
 
 import java.util.Vector;
-import java.util.Enumeration;
 
 import org.apache.log4j.Logger ;
 
@@ -25,8 +24,7 @@ class TagValue implements XmlComponentValue {
   public TagValue(TagTemplate tagTemplate, XmlDocument xmlDocument) {
     this.tagTemplate = tagTemplate;
     attributeVectorValue = new Vector<AttributeItemValue>();
-    for (Enumeration<AttributeItemTemplate> e1 = tagTemplate.attributeVectorTemplate.elements() ; e1.hasMoreElements();) {
-      AttributeItemTemplate attributeItemTemplate = e1.nextElement();
+    for (AttributeItemTemplate attributeItemTemplate : tagTemplate.attributeVectorTemplate) {
       AttributeItemValue attributeItemValue = attributeItemTemplate.createAttributeItemValue(xmlDocument);
       attributeVectorValue.addElement(attributeItemValue);
       log4jTagValue.debug("TagValue: " + attributeItemValue.attributeItemTemplate.name);
@@ -38,8 +36,7 @@ class TagValue implements XmlComponentValue {
     String character = "";
     if (tagTemplate.tag().equals("DIVFO") || tagTemplate.tag().endsWith("_TMP")) return "";
     character = "<" + tagTemplate.tag();
-    for (Enumeration<AttributeItemValue> e = attributeVectorValue.elements() ; e.hasMoreElements() ;) {
-      AttributeItemValue attribute = e.nextElement();
+    for (AttributeItemValue attribute : attributeVectorValue) {
       if (attribute.attributeItemTemplate.attributeBoolean) {
         String myValue = "";
         try {
@@ -61,8 +58,7 @@ class TagValue implements XmlComponentValue {
   public String printPrevious() {
     if (tagTemplate.tag().equals("DIVFO")) return "";
     String character = "<" + tagTemplate.tag();
-    for (Enumeration<AttributeItemValue> e = attributeVectorValue.elements() ; e.hasMoreElements() ;) {
-      AttributeItemValue attribute = e.nextElement();
+    for (AttributeItemValue attribute : attributeVectorValue) {
       character = character + attribute.printPrevious();
     }
     character = character + ">";

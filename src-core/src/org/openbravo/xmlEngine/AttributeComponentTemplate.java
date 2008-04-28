@@ -85,8 +85,7 @@ class AttributeComponentTemplate implements XmlComponentTemplate, IDComponent {
 
   // XmlEngineNP: XmlComponentTemplate is used as FieldTemplate. It must be made based in the original Id's
   public FieldValue createAttributeComponentValue(XmlDocument xmlDocument) {
-    for (Enumeration<DataValue> e1 = xmlDocument.hasDataValue.elements() ; e1.hasMoreElements();) {
-      DataValue dataValue = e1.nextElement();
+    for (DataValue dataValue : xmlDocument.hasDataValue.values()) {
       for (Enumeration<Object> e2 = dataValue.vecFieldValue.elements() ; e2.hasMoreElements();) {
         FieldValue fieldValue = (FieldValue)e2.nextElement();
         log4jAttributeComponentTemplate.debug("Comparing: " + ((FieldTemplate)xmlComponentTemplate).name() + " & " + fieldValue.fieldTemplate.name());

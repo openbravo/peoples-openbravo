@@ -51,8 +51,7 @@ public class XmlDocument implements XmlComponentValue {
 
     //  vector of Parameters (not for the SQL query's)
     hasParameterValue = new Hashtable<String, ParameterValue>();
-    for (Enumeration<ParameterTemplate> e1 = xmlTemplate.hasParameterTemplate.elements() ; e1.hasMoreElements();) {
-      ParameterTemplate parameterTemplate = e1.nextElement();
+    for (ParameterTemplate parameterTemplate : xmlTemplate.hasParameterTemplate.values()) {
       ParameterValue parameterValue = parameterTemplate.createParameterValue(this);
       parameterValue.strValue = parameterTemplate.strDefault;
       hasParameterValue.put(parameterTemplate.strName, parameterValue);
@@ -72,8 +71,7 @@ public class XmlDocument implements XmlComponentValue {
 
     //parameters of vector of Subdocuments
     log4jXmlDocument.debug("parameters of subdocuments: ");
-    for (Enumeration<XmlDocument> e1 = hasSubXmlDocuments.elements() ; e1.hasMoreElements();) {
-      XmlDocument subXmlDocument = e1.nextElement();
+    for (XmlDocument subXmlDocument : hasSubXmlDocuments.values()) {
       log4jXmlDocument.debug("parameters of subdocument: " + subXmlDocument.xmlTemplate.strName);
       subXmlDocument.setXmlComponentValueParameters();
       log4jXmlDocument.debug("parameters of data values of subdocument: " + subXmlDocument.xmlTemplate.strName);
@@ -98,16 +96,14 @@ public XmlDocument() {
 }
 
 private void setXmlComponentValueParameters() {
-  for (Enumeration<ParameterValue> e1 = hasParameterValue.elements() ; e1.hasMoreElements();) {
-    ParameterValue parameterValue = e1.nextElement();
+  for (ParameterValue parameterValue : hasParameterValue.values()) {
     parameterValue.setXmlComponentValue(this);
     log4jXmlDocument.debug("setXmlComponentValue: " + parameterValue.parameterTemplate.strName);
   }
 }
 
 private void setXmlComponentValueParametersOfDataValues() {
-  for (Enumeration<DataValue> e1 = hasDataValue.elements() ; e1.hasMoreElements();) {
-    DataValue dataValue = e1.nextElement();
+  for (DataValue dataValue : hasDataValue.values()) {
     for (Enumeration<Object> e2 = dataValue.vecParameterValue.elements() ; e2.hasMoreElements();) {
       ParameterValue parameter = (ParameterValue)e2.nextElement();
       parameter.setXmlComponentValue(this);
@@ -166,8 +162,7 @@ public String print() {
 public String print(String strBlank) {
   if(log4jXmlDocument.isDebugEnabled()) log4jXmlDocument.debug("Start of print of: "+ xmlTemplate.strName);
 
-  for (Enumeration<DataValue> e = hasDataValue.elements() ; e.hasMoreElements();) {
-    DataValue elementDataValue = e.nextElement();
+  for (DataValue elementDataValue : hasDataValue.values()) {
     if (strBlank != null) {
       elementDataValue.executeBlank(strBlank);
     } else {
@@ -196,8 +191,7 @@ public String printPreviousSimple() {
 }
 
 public void connect() {
-  for (Enumeration<DataValue> e = hasDataValue.elements() ; e.hasMoreElements();) {
-    DataValue elementDataValue = e.nextElement();
+  for (DataValue elementDataValue : hasDataValue.values()) {
     elementDataValue.connect();
   }
 }

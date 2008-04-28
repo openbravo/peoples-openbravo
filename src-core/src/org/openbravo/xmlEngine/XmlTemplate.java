@@ -12,7 +12,6 @@
 package org.openbravo.xmlEngine;
 
 import java.util.Vector;
-import java.util.Enumeration;
 import java.util.Stack;
 import java.util.Hashtable;
 
@@ -148,8 +147,7 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
       IDComponent iDComponent = null;
       int i = 0;
       boolean tagAdded = false;
-      for (Enumeration<String> e = configuration.hashtable.vecKeys.elements() ; e.hasMoreElements() ;) {
-        String strKey = e.nextElement();
+      for (String strKey : configuration.hashtable.vecKeys) {
         if (strKey.equals(id) || strKey.equals(strClass)) {
           iDComponent = (IDComponent)configuration.hashtable.vecObjects.elementAt(i);
 

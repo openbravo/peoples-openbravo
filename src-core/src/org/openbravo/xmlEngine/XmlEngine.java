@@ -373,8 +373,7 @@ public class XmlEngine extends HttpServlet {
     }
     Report report = readReportConfiguration(strReportName);
     //SQL    connect();
-    for (Enumeration<DataValue> e1 = report.xmlDocument.hasDataValue.elements() ; e1.hasMoreElements();) {
-      DataValue elementDataValue = e1.nextElement();
+    for (DataValue elementDataValue : report.xmlDocument.hasDataValue.values()) {
       elementDataValue.connect(); //SQL
       for (Enumeration<Object> e2 = elementDataValue.vecParameterValue.elements() ; e2.hasMoreElements();) {
         ParameterValue parameter = (ParameterValue)e2.nextElement();
@@ -388,17 +387,14 @@ public class XmlEngine extends HttpServlet {
     }
 
     //  Connection of the subreports
-    for (Enumeration<XmlDocument> e1 = report.xmlDocument.hasSubXmlDocuments.elements() ; e1.hasMoreElements();) {
-      XmlDocument subXmlDocument = e1.nextElement();
-      for (Enumeration<DataValue> e2 = subXmlDocument.hasDataValue.elements() ; e2.hasMoreElements();) {
-        DataValue elementDataValue = e2.nextElement();
+    for (XmlDocument subXmlDocument : report.xmlDocument.hasSubXmlDocuments.values()) {
+      for (DataValue elementDataValue : subXmlDocument.hasDataValue.values()) {
         elementDataValue.connect(); //SQL
       }
     }
 
     //  Parameter of the report (not for the SQL query's)
-    for (Enumeration<ParameterValue> e3 = report.xmlDocument.hasParameterValue.elements() ; e3.hasMoreElements();) {
-      ParameterValue parameter = e3.nextElement();
+    for (ParameterValue parameter : report.xmlDocument.hasParameterValue.values()) {
       parameter.strValue = request.getParameter(parameter.parameterTemplate.strName);
       if (parameter.strValue == null) {
         log4jXmlEngine.debug("getParameter of: " + parameter.parameterTemplate.strName + " default assigned");
@@ -433,8 +429,7 @@ public void connect(){
 public void closeConnections () {
     for (Enumeration e1 = hasXmlTemplate.elements() ; e1.hasMoreElements() ;) {
       Report report = (Report)e1.nextElement();
-      for (Enumeration<DataValue> e2 = report.xmlDocument.hasDataValue.elements() ; e2.hasMoreElements();) {
-        DataValue elementDataValue = e2.nextElement();
+      for (DataValue elementDataValue : report.xmlDocument.hasDataValue.values()) {
         elementDataValue.closeConnection();
       }
     }
@@ -473,8 +468,7 @@ public void closeConnections () {
 
     xmlEngine.initialize();
     Report report = xmlEngine.readReportConfiguration(strFile);
-    for (Enumeration<DataValue> e1 = report.xmlDocument.hasDataValue.elements() ; e1.hasMoreElements();) {
-      DataValue elementDataValue = e1.nextElement();
+    for (DataValue elementDataValue : report.xmlDocument.hasDataValue.values()) {
       for (Enumeration<Object> e2 = elementDataValue.vecParameterValue.elements() ; e2.hasMoreElements();) {
         ParameterValue parameter = (ParameterValue)e2.nextElement();
         i++;
@@ -488,8 +482,7 @@ public void closeConnections () {
     }
 
     if(log4jXmlEngine.isDebugEnabled()) log4jXmlEngine.debug("Hashtable: ");
-    for (Enumeration<String> e = report.xmlDocument.xmlTemplate.configuration.hashtable.vecKeys.elements() ; e.hasMoreElements() ;) {
-      String id = e.nextElement();
+    for (String id : report.xmlDocument.xmlTemplate.configuration.hashtable.vecKeys) {
       IDComponent iDComponent = (IDComponent)report.xmlDocument.xmlTemplate.configuration.hashtable.get(id);
       if(log4jXmlEngine.isDebugEnabled()) log4jXmlEngine.debug("id: " + id + " type: "+ iDComponent.type());
     }

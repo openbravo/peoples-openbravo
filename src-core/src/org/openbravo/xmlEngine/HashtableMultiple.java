@@ -12,7 +12,6 @@
 package org.openbravo.xmlEngine;
 
 import java.util.Vector;
-import java.util.Enumeration;
 
 public class HashtableMultiple { // class to simulate a Hashtable but with various keys of the same value
   // get returns the first key find but you can iterate to find all.
@@ -31,8 +30,7 @@ public class HashtableMultiple { // class to simulate a Hashtable but with vario
   public Object get(String id) {
     Object ob = null;
     int i = 0;
-    for (Enumeration<String> e = vecKeys.elements() ; e.hasMoreElements() ;) {
-      String strKey = e.nextElement();
+    for (String strKey : vecKeys) {
       if (strKey.equals(id)) {
         return vecObjects.elementAt(i);
       }

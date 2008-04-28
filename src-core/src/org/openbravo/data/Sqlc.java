@@ -477,8 +477,7 @@ public class Sqlc extends DefaultHandler {
       if (log4j.isDebugEnabled()) log4j.debug("number of columns in PS: " + numColsPS);
       */
       int i = 1;
-      for (Enumeration<Parameter> e = sql.vecParameter.elements() ; e.hasMoreElements() ;) {
-        Parameter parameter = e.nextElement();
+      for (Parameter parameter : sql.vecParameter) {
         if (!parameter.boolOptional) {
           if (parameter.type == java.sql.Types.INTEGER) {
             if (parameter.strDefault == null) {
@@ -670,8 +669,7 @@ public class Sqlc extends DefaultHandler {
         out2.append("    object" + sqlcName + "[0]." +
             TransformaNombreColumna(strNameLabel) + " = ");
         boolean printedParameter = false;
-        for (Enumeration<Parameter> e = sql.vecParameter.elements() ; e.hasMoreElements() ;) {
-          Parameter parameter = e.nextElement();
+        for (Parameter parameter : sql.vecParameter) {
           if (parameter.strName.equals(TransformaNombreColumna(strNameLabel)) && !printedParameter) {
             out2.append(TransformaNombreColumna(strNameLabel) + ";\n");
             printedParameter = true;
@@ -692,8 +690,7 @@ public class Sqlc extends DefaultHandler {
     // codigo para imprimir trozos de Sql opcionales
     int posSQL = 0;
     out2.append("    String strSql = \"\";\n");
-    for (Enumeration<Parameter> e = sql.vecParameter.elements() ; e.hasMoreElements() ;) {
-      Parameter parameter = e.nextElement();
+    for (Parameter parameter : sql.vecParameter) {
       if (parameter.boolOptional){
         if (parameter.strAfter == null) {
           parameter.strAfter = "WHERE";
@@ -800,8 +797,7 @@ public class Sqlc extends DefaultHandler {
       aux.append("strSql);\n");
     }
     // set value of parameters
-    for (Enumeration<Parameter> e = sql.vecParameter.elements() ; e.hasMoreElements() ;) {
-      Parameter parameter = e.nextElement();
+    for (Parameter parameter : sql.vecParameter) {
       if (parameter.boolSequence){
         declareiParameter = true;
         aux.append("      iParameter++; st.setLong(iParameter, keySequence);\n");
@@ -1047,8 +1043,7 @@ public class Sqlc extends DefaultHandler {
     } else if (sql.executeType.equals("execute")) {
       out2.append("      st." + sql.executeType + "();\n");
       if (sql.sqlReturn.equalsIgnoreCase("OBJECT")) {
-        for (Enumeration<Parameter> e = sql.vecParameter.elements() ; e.hasMoreElements() ;) {
-          Parameter parameter = e.nextElement();
+        for (Parameter parameter : sql.vecParameter) {
           if (!parameter.boolSequence && parameter.strName != null) {
             if (parameter.strInOut.equals("out") || parameter.strInOut.equals("inOut")) {
               out2.append("      object" + sql.sqlObject + "." + parameter.strName);
@@ -1088,8 +1083,7 @@ public class Sqlc extends DefaultHandler {
       int outParams = 0;
       String outParamName = "";
       StringBuffer paramsReceipt = new StringBuffer();
-      for (Enumeration<Parameter> eparams = sql.vecParameter.elements() ; eparams.hasMoreElements() ;) {
-        Parameter parameter = eparams.nextElement();
+      for (Parameter parameter : sql.vecParameter) {
         if (!parameter.strInOut.equals("none") && !parameter.strInOut.equals("argument") && !parameter.strInOut.equals("replace")) {
           out2.append("      parametersData.addElement(" + (parameter.strInOut.equalsIgnoreCase("out")?"\"" + parameter.strName + "\"":parameter.strName) + ");\n");
           out2.append("      parametersTypes.addElement(\"" + parameter.strInOut + "\");\n");
@@ -1196,8 +1190,7 @@ public class Sqlc extends DefaultHandler {
       out2.append("ConnectionProvider connectionProvider");
     }
     if (log4j.isDebugEnabled()) log4j.debug("Parameters numbering");
-    for (Enumeration<Parameter> e = sql.vecParameter.elements() ; e.hasMoreElements() ;) {
-      Parameter parameter = e.nextElement();
+    for (Parameter parameter : sql.vecParameter) {
       if (sql.sqlStatic.equals("true")) {
         if (parameter.strName != null && !parameter.boolRepeated && !parameter.boolSequence && !parameter.strInOut.equals("out")) {
           if (firstParameter) {
@@ -1246,8 +1239,7 @@ public class Sqlc extends DefaultHandler {
       out2.append("connectionProvider");
     }
     if (log4j.isDebugEnabled()) log4j.debug("Parameters numbering");
-    for (Enumeration<Parameter> e = sql.vecParameter.elements() ; e.hasMoreElements() ;) {
-      Parameter parameter = e.nextElement();
+    for (Parameter parameter : sql.vecParameter) {
       if (sql.sqlStatic.equals("true")) {
         if (parameter.strName != null && !parameter.boolRepeated && !parameter.boolSequence && !parameter.strInOut.equals("out")) {
           if (firstParameter) {

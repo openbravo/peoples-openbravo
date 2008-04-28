@@ -13,7 +13,6 @@ package org.openbravo.xmlEngine;
 
 import org.openbravo.utils.Replace;
 import java.sql.*;
-import java.util.Enumeration;
 
 import org.apache.log4j.Logger ;
 
@@ -31,8 +30,7 @@ class FieldValue implements XmlComponentValue {
   private String replace(String strIni) { // repeated in Parameter
     if (fieldTemplate.vecReplace != null) {
       String strFin = strIni;
-      for (Enumeration<ReplaceElement> e = fieldTemplate.vecReplace.elements() ; e.hasMoreElements();) {
-        ReplaceElement replaceElement = e.nextElement();
+      for (ReplaceElement replaceElement : fieldTemplate.vecReplace) {
         strFin = Replace.replace(strFin, replaceElement.replaceWhat, replaceElement.replaceWith);
       }
       return strFin;
