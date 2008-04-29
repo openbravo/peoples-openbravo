@@ -87,6 +87,11 @@
                  AND IsActive = 'Y'
                UNION
                SELECT COUNT(*) AS TOTAL 
+                FROM DUAL 
+                WHERE TO_NUMBER('800017') = TO_NUMBER(?) 
+                   OR TO_NUMBER('800018') = TO_NUMBER(?) 
+               UNION
+               SELECT COUNT(*) AS TOTAL 
                  FROM AD_Window_Access 
                 WHERE AD_Role_ID = TO_NUMBER(?) 
                   AND TO_CHAR('W') = TO_CHAR(?)
@@ -126,6 +131,9 @@
       
       <Parameter name="role"/>
       <Parameter name="type"/>
+      <Parameter name="id"/>
+      
+      <Parameter name="id"/>
       <Parameter name="id"/>
       
       <Parameter name="role"/>
