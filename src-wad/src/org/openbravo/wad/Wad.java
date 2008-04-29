@@ -1078,7 +1078,7 @@ public class Wad extends DefaultHandler {
             } else {
               strFields.append(" || ' - ' || ");
             }
-            strFields.append("TO_CHAR(").append(tableField).append(") ");
+            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
           }
           strOrder = strFields.toString() + ")";
           vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name + "R");
@@ -1096,7 +1096,7 @@ public class Wad extends DefaultHandler {
             } else {
               strFields.append(" || ' - ' || ");
             }
-            strFields.append("TO_CHAR(").append(tableField).append(") ");
+            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
           }
           strOrder = strFields.toString() + ")";
           vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name + "R");
@@ -1114,7 +1114,7 @@ public class Wad extends DefaultHandler {
             } else {
               strFields.append(" || ' - ' || ");
             }
-            strFields.append("TO_CHAR(").append(tableField).append(") ");
+            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
           }
           strOrder = strFields.toString() + ")";
           vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name + "R");
@@ -1132,7 +1132,7 @@ public class Wad extends DefaultHandler {
             } else {
               strFields.append(" || ' - ' || ");
             }
-            strFields.append("TO_CHAR(").append(tableField).append(") ");
+            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
           }
           strOrder = strFields.toString() + ")";
           vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name + " IS NULL THEN '" + IMAGE_DEFAULT + "' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name + "R");
@@ -1151,7 +1151,7 @@ public class Wad extends DefaultHandler {
             } else {
               strFields.append(" || ' - ' || ");
             }
-            strFields.append("TO_CHAR(").append(tableField).append(") ");
+            strFields.append("COALESCE(TO_CHAR(").append(tableField).append("),'') ");
           }
           strOrder = strFields.toString() + ")";
           vecFields.addElement("(CASE WHEN " + tableName + "." + fieldsData[i].name + " IS NULL THEN '' ELSE " + strFields.toString() + ") END) AS " + fieldsData[i].name + "R");
