@@ -18,7 +18,7 @@
     <property name="build.db.src" value="${basedir}/src"/>
  
     <path id="db.class.path">
-        <fileset dir="${basedir}/lib">
+      <fileset dir="${basedir}/database/lib">
             <include name="**/*.jar"/>
         </fileset>
     </path>
