@@ -222,7 +222,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateClientFailed", vars.getLanguage())).append(SALTO_LINEA);
       strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateClientFailed", vars.getLanguage())).append(SALTO_LINEA);
       strError = err.toString();
-      strError = strError.substring( strError.lastIndexOf("@ORA-") ,strError.length());
+      strError = strError.substring( (strError.lastIndexOf("@ORA-")>0?strError.lastIndexOf("@ORA-"):0) ,strError.length());
       isOK = false;
       log4j.warn(err);
       try {
@@ -248,7 +248,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 	      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
 	      strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
 	      strError = err.toString();
-	      strError = strError.substring( strError.lastIndexOf("@ORA-") ,strError.length());
+	      strError = strError.substring( (strError.lastIndexOf("@ORA-")>0?strError.lastIndexOf("@ORA-"):0) ,strError.length());
 	      log4j.debug("InitialClientSetup - after strError: " + strError);
 	      isOK = false;
 	      try {
@@ -271,7 +271,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateDocumentTypesFailed", vars.getLanguage())).append(SALTO_LINEA);
       strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateDocumentTypesFailed", vars.getLanguage())).append(SALTO_LINEA);
       strError = err.toString();
-      strError = strError.substring( strError.lastIndexOf("@ORA-") ,strError.length());
+      strError = strError.substring( (strError.lastIndexOf("@ORA-")>0?strError.lastIndexOf("@ORA-"):0) ,strError.length());
       log4j.debug("InitialClientSetup - after strError: " + strError);
       isOK = false;
       try {
@@ -293,7 +293,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateMasterDataFailed", vars.getLanguage())).append(SALTO_LINEA);
       strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateMasterDataFailed", vars.getLanguage())).append(SALTO_LINEA);
       strError = err.toString();
-      strError = strError.substring( strError.lastIndexOf("@ORA-") ,strError.length());
+      strError = strError.substring( (strError.lastIndexOf("@ORA-")>0?strError.lastIndexOf("@ORA-"):0) ,strError.length());
       isOK = false;
       try {
         releaseRollbackConnection(conn);
