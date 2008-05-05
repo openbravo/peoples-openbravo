@@ -162,6 +162,8 @@ public class WADList extends WADControl {
       
       if (getData("ColumnName").equalsIgnoreCase("AD_Org_ID")) 
         text.append("userOrgList, ");
+      else if  (getData("ColumnName").equalsIgnoreCase("AD_Client_ID"))
+    	  text.append("null, ");
       else
         text.append("Utility.getReferenceableOrg(vars, (dataField!=null?dataField.getField(\"adOrgId\"):data[0].getField(\"adOrgId\").equals(\"\")?vars.getOrg():data[0].getField(\"adOrgId\"))), ");
       

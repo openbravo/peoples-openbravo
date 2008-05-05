@@ -609,7 +609,7 @@ public class ComboTableData {
       tables += "AND td" + myIndex + ".AD_Org_ID IN (" + getOrgList() + ")";
     } else {
       addWhereField("td" + myIndex + ".AD_Client_ID IN (" + getClientList() + ")", "CLIENT_LIST");
-      addWhereField("td" + myIndex + ".AD_Org_ID IN (" + getOrgList() + ")", "ORG_LIST");
+      if (getOrgList()!=null) addWhereField("td" + myIndex + ".AD_Org_ID IN (" + getOrgList() + ")", "ORG_LIST");
     }
     addFromField(tables, "td" + myIndex);
     String strSQL = trd[0].whereclause;
@@ -652,7 +652,7 @@ public class ComboTableData {
       tables += "AND td" + myIndex + ".AD_Org_ID IN (" + getOrgList() + ")";
     } else {
       addWhereField("td" + myIndex + ".AD_Client_ID IN (" + getClientList() + ")", "CLIENT_LIST");
-      addWhereField("td" + myIndex + ".AD_Org_ID IN (" + getOrgList() + ")", "ORG_LIST");
+      if (getOrgList()!=null) addWhereField("td" + myIndex + ".AD_Org_ID IN (" + getOrgList() + ")", "ORG_LIST");
     }
     addFromField(tables, "td" + myIndex);
     if (tableName==null || tableName.equals("")) {
