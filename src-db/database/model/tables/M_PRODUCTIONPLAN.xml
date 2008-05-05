@@ -77,10 +77,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REALCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="REJECTEDQUANTITY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>

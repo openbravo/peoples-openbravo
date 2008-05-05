@@ -462,8 +462,8 @@
         INSERT INTO C_DocType(C_DocType_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
         Name,PrintName,DocBaseType,DocSubTypeSO,
         C_DocTypeShipment_ID,C_DocTypeInvoice_ID,IsDocNoControlled,DocNoSequence_ID,GL_Category_ID,
-        IsPrinted,IsTransferred,DocumentCopies,IsSOTrx, ad_table_id)
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,?,?,TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),'Y',?,0,?,TO_NUMBER(?))
+        DocumentCopies,IsSOTrx, ad_table_id)
+        VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,?,?,TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),0,?,TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="C_DocType_ID"/>
@@ -477,7 +477,6 @@
     <Parameter name="IsDocNoControlled"/>
     <Parameter name="AD_Sequence_ID"/>
     <Parameter name="GL_Category_ID"/>
-    <Parameter name="IsTransferred"/>
     <Parameter name="IsSOTrx"/>
     <Parameter name="adTableId"/>
   </SqlMethod>
@@ -865,9 +864,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO C_PaymentTerm (C_PaymentTerm_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,
-      CreatedBy,Updated,UpdatedBy,Value,Name,NetDays,GraceDays,
-      DiscountDays,Discount,DiscountDays2,Discount2,IsDefault) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,'Immediate','Immediate',0,0,0,0,0,0,'Y')
+      CreatedBy,Updated,UpdatedBy,Value,Name,NetDays,IsDefault) 
+      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,'Immediate','Immediate',0,'Y')
     </Sql>
     <Parameter name="C_PaymentTerm_ID"/>
     <Parameter name="AD_Client_ID"/>

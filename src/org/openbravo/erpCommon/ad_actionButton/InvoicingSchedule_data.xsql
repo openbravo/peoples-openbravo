@@ -23,134 +23,11 @@
 
 
 <SqlClass name="InvoicingScheduleData" package="org.openbravo.erpCommon.ad_actionButton">
-  <SqlMethod name="select" type="preparedStatement" connection="true" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT IO.AD_ORG_ID, (CASE IO.MOVEMENTTYPE WHEN'V+' THEN IOLT.IN_PRODUCT_ID ELSE IOLT.OUT_PRODUCT_ID END) AS M_PRODUCT_ID,
-      (CASE IOLT.INVOICINGMODE WHEN 'C' THEN COUNT(DISTINCT IO.M_INOUT_ID || '*' || IOL.M_LOCATOR_ID) WHEN 'W' THEN SUM(IOL.MOVEMENTQTY*P.WEIGHT) ELSE 0 END) AS QTY,
-      '' AS ID, '' AS NAME, '' AS C_BPARTNER_ID, '' AS STARTDATE, '' AS ENDDATE 
-      FROM M_INOUTLINE IOL left join  M_PRODUCT P on IOL.M_PRODUCT_ID = P.M_PRODUCT_ID,
-      M_INOUT IO,  M_INOUTLINE_TYPE IOLT
-      WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID
-      AND IOL.M_INOUTLINE_TYPE_ID = IOLT.M_INOUTLINE_TYPE_ID 
-      AND IO.AD_ORG_ID IN ('1')
-      AND IO.AD_CLIENT_ID IN ('1') 
-      AND IO.ISLOGISTIC  = 'Y'
-      AND IO.DOCSTATUS = 'CO'
-      AND IOL.ISINVOICED = 'N'
-      AND IO.MOVEMENTDATE >= TO_DATE(?)
-      AND IO.MOVEMENTDATE < TO_DATE(?)
-      AND IO.C_BPARTNER_ID = TO_NUMBER(?)
-      GROUP BY IO.AD_ORG_ID, IO.MOVEMENTTYPE, IOLT.INVOICINGMODE,IOLT.IN_PRODUCT_ID, IOLT.OUT_PRODUCT_ID
-      ORDER BY IO.AD_ORG_ID
-    ]]></Sql>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="AND IO.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND IO.AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="periodfrom"/>
-    <Parameter name="periodto"/>
-    <Parameter name="cBpartnerId"/>
-  </SqlMethod>
-  <SqlMethod name="selectEstancias" type="preparedStatement" connection="true" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT AD_ORG_ID, M_PRODUCT_ID, (CASE ? WHEN 'P' THEN ROUND((MAX_LOCATORS + SUM_LOCATORS/TO_NUMBER(TO_DATE(?) - TO_DATE(?)))/2,(select MAX(STDPRECISION) from c_uom, m_product m where m.c_uom_id = c_uom.C_UOM_ID and m.m_product_id=M_PRODUCT_ID)) ELSE MAX_LOCATORS END) AS QTY FROM
-      (SELECT AD_ORG_ID, M_PRODUCT_ID, MAX(LOCATORS) AS MAX_LOCATORS,SUM(LOCATORS) AS SUM_LOCATORS
-      FROM (
-      SELECT ST.AD_ORG_ID, M_WH_SCHEDULE_PRODUCT.M_PRODUCT_ID,  ST.DAY, COUNT(DISTINCT ST.M_LOCATOR_ID) AS LOCATORS
-      FROM M_LOCATOR, M_PRODUCT, M_WH_SCHEDULE_PRODUCT,
-      (
-      SELECT M_WAREHOUSE.AD_ORG_ID, DAYS.NUM AS DAY, M_TRANSACTION.M_LOCATOR_ID, M_TRANSACTION.M_PRODUCT_ID, SUM(M_TRANSACTION.MOVEMENTQTY) AS QTY
-      FROM M_TRANSACTION, M_LOCATOR, M_WAREHOUSE,
-      (SELECT VALUE AS NUM FROM AD_INTEGER WHERE VALUE <= TO_NUMBER(TO_DATE(?) - TO_DATE(?))) DAYS
-      WHERE (CASE MOVEMENTTYPE WHEN 'C-' THEN MOVEMENTDATE+1 ELSE MOVEMENTDATE END) < TO_DATE(?) + DAYS.NUM
-      AND M_TRANSACTION.M_LOCATOR_ID = M_LOCATOR.M_LOCATOR_ID
-      AND M_LOCATOR.M_WAREHOUSE_ID = M_WAREHOUSE.M_WAREHOUSE_ID
-      AND M_WAREHOUSE.AD_ORG_ID IN ('1') 
-      AND M_WAREHOUSE.AD_CLIENT_ID IN ('1') 
-      GROUP BY M_WAREHOUSE.AD_ORG_ID, DAYS.NUM, M_TRANSACTION.M_LOCATOR_ID, M_TRANSACTION.M_PRODUCT_ID
-      HAVING SUM(MOVEMENTQTY) <> 0
-      ) ST
-      WHERE ST.M_LOCATOR_ID = M_LOCATOR.M_LOCATOR_ID
-      AND ST.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-      AND M_PRODUCT.C_BPARTNER_ID = TO_NUMBER(?)
-      AND M_WH_SCHEDULE_PRODUCT.INVOICINGTYPE = M_LOCATOR.INVOICINGTYPE
-      AND M_WH_SCHEDULE_PRODUCT.M_WH_SCHEDULE_ID = TO_NUMBER(?)
-      GROUP BY ST.AD_ORG_ID, M_WH_SCHEDULE_PRODUCT.M_PRODUCT_ID,  ST.DAY) AAA
-      GROUP BY AD_ORG_ID, M_PRODUCT_ID) AA
-      ORDER BY AD_ORG_ID
-    ]]></Sql>
-    <Parameter name="selectinvoicetype"/>
-    <Parameter name="periodto"/>
-    <Parameter name="periodfrom"/>
-    <Parameter name="periodto"/>
-    <Parameter name="periodfrom"/>
-    <Parameter name="periodfrom"/>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_WAREHOUSE.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND M_WAREHOUSE.AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="cBpartnerId"/>
-    <Parameter name="mWhScheduleId"/>
-  </SqlMethod>
-  <SqlMethod name="selectBPartners" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT C_BPARTNER_ID 
-      FROM (
-      SELECT DISTINCT IO.C_BPARTNER_ID
-      FROM M_INOUT IO, M_INOUTLINE IOL, M_INOUTLINE_TYPE IOLT
-      WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID 
-      AND IOL.M_INOUTLINE_TYPE_ID = IOLT.M_INOUTLINE_TYPE_ID
-      AND IO.ISLOGISTIC  = 'Y'
-      AND IOL.ISINVOICED = 'N' 
-      AND IO.DOCSTATUS = 'CO'
-      AND IO.AD_ORG_ID IN ('1') 
-      AND IO.AD_CLIENT_ID IN ('1') 
-      AND IO.MOVEMENTDATE >= TO_DATE(?) 
-      AND IO.MOVEMENTDATE < TO_DATE(?) 
-      GROUP BY IO.AD_ORG_ID, IO.C_BPARTNER_ID, IO.MOVEMENTTYPE, IOLT.INVOICINGMODE,IOLT.IN_PRODUCT_ID, IOLT.OUT_PRODUCT_ID
-      HAVING SUM(IOL.MOVEMENTQTY) <> 0
-      UNION
-      SELECT DISTINCT C_BPARTNER_ID
-      FROM M_PRODUCT 
-      WHERE M_PRODUCT_ID IN (
-      SELECT DISTINCT M_PRODUCT_ID
-      FROM M_TRANSACTION, M_LOCATOR, M_WAREHOUSE 
-      WHERE M_TRANSACTION.M_LOCATOR_ID = M_LOCATOR.M_LOCATOR_ID
-      AND M_LOCATOR.M_WAREHOUSE_ID = M_WAREHOUSE.M_WAREHOUSE_ID
-      AND (CASE M_TRANSACTION.MOVEMENTTYPE WHEN 'C-' THEN M_TRANSACTION.MOVEMENTDATE+1 ELSE M_TRANSACTION.MOVEMENTDATE END) < TO_DATE(?) + 1
-      AND M_WAREHOUSE.AD_ORG_ID IN ('1') 
-      AND M_WAREHOUSE.AD_CLIENT_ID IN ('1') 
-      GROUP BY M_WAREHOUSE.AD_ORG_ID, M_TRANSACTION.M_LOCATOR_ID, M_TRANSACTION.M_PRODUCT_ID
-      HAVING SUM(M_TRANSACTION.MOVEMENTQTY) <> 0) 
-      AND 1=1 
-      AND EXISTS (SELECT p.M_WH_PERIOD_ID FROM M_WH_PERIOD p 
-      WHERE p.M_WH_SCHEDULE_ID = TO_NUMBER(?) 
-      AND p.STARTDATE >= TO_DATE(?)
-      AND p.ENDDATE < TO_DATE(?)
-      AND NOT EXISTS (SELECT 1 FROM M_WH_PERIOD_INVOICED i 
-      WHERE i.M_WH_PERIOD_ID = p.M_WH_PERIOD_ID 
-      AND i.C_BPARTNER_ID = M_PRODUCT.C_BPARTNER_ID
-      AND i.AD_ORG_ID = TO_NUMBER(?)))) A
-      WHERE EXISTS (SELECT 1 FROM C_BPARTNER bp WHERE bp.M_WH_SCHEDULE_ID = TO_NUMBER(?) AND bp.C_BPARTNER_ID = A.C_BPARTNER_ID)
-    ]]></Sql>
-    <Parameter name="cBpartnerId" optional="true" after="AND IOL.ISINVOICED = 'N' " text=" AND IO.C_BPARTNER_ID = TO_NUMBER(?) "/>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="AND IO.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND IO.AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="periodfrom"/>
-    <Parameter name="periodto"/>
-    <Parameter name="periodfrom"/>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_WAREHOUSE.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND M_WAREHOUSE.AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="cBpartnerId" optional="true" after="AND 1=1 " text=" AND M_PRODUCT.C_BPARTNER_ID = TO_NUMBER(?) "/>
-    <Parameter name="mWhScheduleId"/>
-    <Parameter name="periodfrom"/>
-    <Parameter name="periodto"/>
-    <Parameter name="adOrgId"/>
-    <Parameter name="mWhScheduleId"/>
-  </SqlMethod>
   <SqlMethod name="selectPeriods" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT p.M_WH_PERIOD_ID AS ID, p.STARTDATE, p.ENDDATE 
+      SELECT p.M_WH_PERIOD_ID AS ID, p.STARTDATE, p.ENDDATE, 
+             '' as name, '' as AD_ORG_ID
       FROM M_WH_PERIOD p 
       WHERE p.M_WH_SCHEDULE_ID = TO_NUMBER(?) 
       AND p.STARTDATE >= TO_DATE(?)
@@ -237,15 +114,6 @@
     ]]></Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>
-  <SqlMethod name="selectInvoiceType" type="preparedStatement" connection="true" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT STORAGEPAYMENTRULE
-      FROM C_Bpartner 
-      WHERE C_Bpartner_ID = TO_NUMBER(?) 
-    ]]></Sql>
-    <Parameter name="cBpartnerId"/>
-  </SqlMethod>
   <SqlMethod name="selectBpartner" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
@@ -278,9 +146,8 @@
     <Sql><![CDATA[
       UPDATE M_INOUTLINE SET ISINVOICED='Y' WHERE M_INOUT_ID IN (
       SELECT IO.M_INOUT_ID
-      FROM M_INOUT IO, M_INOUTLINE IOL, M_INOUTLINE_TYPE IOLT
+      FROM M_INOUT IO, M_INOUTLINE IOL
       WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID
-      AND IOL.M_INOUTLINE_TYPE_ID = IOLT.M_INOUTLINE_TYPE_ID 
       AND IO.C_BPARTNER_ID = TO_NUMBER(?)
       AND IO.AD_ORG_ID IN ('1')
       AND IO.AD_CLIENT_ID IN ('1') 

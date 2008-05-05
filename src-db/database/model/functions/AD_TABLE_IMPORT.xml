@@ -63,6 +63,8 @@
     v_LastColumnName VARCHAR2(40) ;
     v_varchar2 VARCHAR2(32767) ;
     v_FieldLength NUMBER(10) ;
+    v_PInstance_Log_ID NUMBER;
+    v_Client_ID NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -72,7 +74,7 @@
       -- Get Parameters
       v_ResultStr:='ReadingParameters';
       FOR Cur_Parameter IN
-        (SELECT i.Record_ID, i.AD_User_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date
+        (SELECT i.Record_ID, i.AD_User_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date, p.AD_CLIENT_ID
         FROM AD_PInstance i
         LEFT JOIN AD_PInstance_Para p
           ON i.AD_PInstance_ID=p.AD_PInstance_ID
@@ -82,6 +84,7 @@
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
         v_AD_User_ID:=Cur_Parameter.AD_User_ID;
+        v_Client_ID:=Cur_Parameter.AD_CLIENT_ID;
       END LOOP; -- Get Parameter
     ELSE
       v_Record_ID:=p_AD_Table_ID;
@@ -98,7 +101,7 @@
     END IF;
     FOR Cur_Column IN
       (SELECT Column_Name, Data_Type, Data_Length, Nullable, AD_Table_ID, -- added by Ismael Ciordia
-        uc.DATA_PRECISION, uc.DATA_SCALE, DATA_DEFAULT, Table_Name, t.EntityType
+        uc.DATA_PRECISION, uc.DATA_SCALE, DATA_DEFAULT, Table_Name
       FROM User_Tab_Columns uc, AD_Table t
       WHERE uc.Table_Name=UPPER(t.TableName) AND NOT EXISTS
         (SELECT *
@@ -216,19 +219,19 @@
         (
           AD_COLUMN_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
           CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-          NAME, VERSION, COLUMNNAME, AD_TABLE_ID,
+          NAME, COLUMNNAME, AD_TABLE_ID,
           AD_REFERENCE_ID, FIELDLENGTH, ISKEY, ISPARENT,
           ISMANDATORY, ISIDENTIFIER, SEQNO, ISTRANSLATED,
-          ISENCRYPTED, EntityType, ISUPDATEABLE, AD_REFERENCE_VALUE_ID,
+          ISENCRYPTED, ISUPDATEABLE, AD_REFERENCE_VALUE_ID,
           AD_VAL_RULE_ID, DEFAULTVALUE, ISSESSIONATTR
         )
         VALUES
         (v_NextNo, 0, 0, 'Y',
         now(), 0, now(), 0,
-        v_columnName, 1, v_columnName, Cur_Column.AD_Table_ID,
+        v_columnName, v_columnName, Cur_Column.AD_Table_ID,
         v_AD_Reference_ID, v_FieldLength, v_IsKey, v_IsParent,
        (CASE Cur_Column.Nullable WHEN 'Y' THEN 'N' ELSE 'Y' END),
-        v_IsIdentifier, v_SeqNo, 'N', 'N', Cur_Column.EntityType, v_IsUpdateable, v_AD_Reference_Value_ID, v_AD_Val_Rule_ID, v_DefaultValue, v_IsSessionAttr) ;
+        v_IsIdentifier, v_SeqNo, 'N', 'N', v_IsUpdateable, v_AD_Reference_Value_ID, v_AD_Val_Rule_ID, v_DefaultValue, v_IsSessionAttr) ;
       --
       v_count:=v_count + 1;
       -- Added by Ismael Ciordia
@@ -236,13 +239,14 @@
       v_LastColumnName:=Cur_Column.Column_Name;
       -- Falta: insert de AD_Element
       IF(p_PInstance_ID IS NOT NULL) THEN
+        AD_SEQUENCE_NEXT('AD_PInstance_Log', v_Client_ID, v_PInstance_Log_ID);
         INSERT
         INTO AD_PInstance_Log
           (
             AD_PInstance_ID, Log_ID, P_Msg
           )
           VALUES
-          (p_PInstance_ID, AD_PInstance_Seq.NextVal, '@Created@ @AD_Column_ID@ ' || InitCap(Cur_Column.Table_Name) || '.' || InitCap(Cur_Column.Column_Name)) ;
+          (p_PInstance_ID, v_PInstance_Log_ID, '@Created@ @AD_Column_ID@ ' || InitCap(Cur_Column.Table_Name) || '.' || InitCap(Cur_Column.Column_Name)) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('adding Table ' || InitCap(Cur_Column.Table_Name) || ' Column ' || InitCap(Cur_Column.Column_Name)) ;
       END IF;

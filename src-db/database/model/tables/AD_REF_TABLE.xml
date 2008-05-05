@@ -57,10 +57,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[D]]></default>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_REFTABLE_DISPLAY">
         <reference local="AD_DISPLAY" foreign="AD_COLUMN_ID"/>
       </foreign-key>

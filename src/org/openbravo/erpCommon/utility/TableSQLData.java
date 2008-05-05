@@ -1027,7 +1027,6 @@ public class TableSQLData {
     prop.setProperty("IsReadOnly", data.isreadonly);
     prop.setProperty("SortNo", data.sortno);
     prop.setProperty("IsSameLine", data.issameline);
-    prop.setProperty("IsHeading", data.isheading);
     prop.setProperty("IsFieldOnly", data.isfieldonly);
     prop.setProperty("ShowInRelation", data.showinrelation);
     prop.setProperty("ColumnNameSearch", data.columnnameSearch);

@@ -59,6 +59,8 @@
     v_columnName VARCHAR2(40) ;
     v_LastColumnName VARCHAR2(40) ;
     v_DisplayLength NUMBER(10) ;
+    v_PInstance_Log_ID NUMBER;
+    v_Client_ID NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -68,7 +70,7 @@
       -- Get Parameters
       v_ResultStr:='ReadingParameters';
       FOR Cur_Parameter IN
-        (SELECT i.Record_ID, i.AD_User_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date
+        (SELECT i.Record_ID, i.AD_User_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date, p.AD_CLIENT_ID
         FROM AD_PInstance i
         LEFT JOIN AD_PInstance_Para p
           ON i.AD_PInstance_ID=p.AD_PInstance_ID
@@ -78,6 +80,7 @@
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
         v_AD_User_ID:=Cur_Parameter.AD_User_ID;
+        v_Client_ID:=Cur_Parameter.AD_CLIENT_ID;
       END LOOP; -- Get Parameter
     ELSE
       v_Record_ID:=p_AD_Tab_ID;
@@ -89,7 +92,7 @@
     FROM AD_Tab
     WHERE AD_Tab_ID=v_Record_ID  AND AD_Table_ID!=291; -- C_BPartner (multiple tabs)
     FOR Cur_Column IN(-- added by Pablo Sarobe
-    SELECT c.Columnname, c.Name, c.Description, c.AD_Column_ID, c.FieldLength, c.EntityType, t.tablename
+    SELECT c.Columnname, c.Name, c.Description, c.AD_Column_ID, c.FieldLength, t.tablename
     FROM AD_Column c, AD_Table t
     WHERE NOT EXISTS
       (SELECT *
@@ -140,14 +143,14 @@
           ad_field_id, ad_client_id, ad_org_id, isactive,
           created, createdby, updated, updatedby,
           name, description, seqno, AD_Tab_ID,
-          AD_Column_ID, DisplayLength, IsCentrallyMaintained, EntityType,
+          AD_Column_ID, DisplayLength, IsCentrallyMaintained,
           isdisplayed, isreadonly, sortno, issameline, showinrelation
         )
         VALUES
         (v_NextNo, 0, 0, 'Y',
         now(), 0, now(), 0,
         Cur_Column.Name, Cur_Column.Description, v_SeqNo, v_Record_ID,
-        Cur_Column.AD_Column_ID, v_DisplayLength, 'Y', Cur_Column.EntityType,
+        Cur_Column.AD_Column_ID, v_DisplayLength, 'Y', 
         v_isDisplayed, v_isReadOnly, v_sortNo, v_sameLine, v_showInRelation) ;
       --
       v_count:=v_count + 1;
@@ -160,7 +163,7 @@
             AD_PInstance_ID, Log_ID, P_Msg
           )
           VALUES
-          (p_PInstance_ID, AD_PInstance_Seq.NextVal, '@Created@ @AD_Field_ID@ ' || Cur_Column.Name) ;
+          (p_PInstance_ID, v_PInstance_Log_ID, '@Created@ @AD_Field_ID@ ' || Cur_Column.Name) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE(' adding ' || Cur_Column.Name) ;
       END IF;

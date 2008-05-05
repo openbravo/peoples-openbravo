@@ -21,7 +21,6 @@
 	<template file="InformeInOut_Excel.html"/>
 	<structure name="structure1">
 		<FIELD id="fieldReferencia">articulo</FIELD>
-		<FIELD id="fieldCodigo">codigo</FIELD>
 		<FIELD id="fieldCantidad">cantidad</FIELD>
 		<FIELD id="fieldFechaEntrada">fechaEntrada</FIELD>
 		<FIELD id="fieldFechaSalida">fechaSalida</FIELD>

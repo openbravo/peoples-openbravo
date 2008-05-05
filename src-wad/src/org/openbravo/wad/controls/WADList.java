@@ -34,7 +34,6 @@ public class WADList extends WADControl {
 
   public void initialize() {
     addImport("String", "../../../../../web/js/String.js");
-    addImport("TypeAheadCombo", "../../../../../web/js/TypeAheadCombo.js");
     generateJSCode();
   }
 
@@ -51,7 +50,6 @@ public class WADList extends WADControl {
       text.append("  }");
       setValidation(replaceHTML(text.toString()));
     }
-    setOnLoad("new TypeAheadCombo(\"report" + getData("ColumnName") + "_S\");\nif (inputValue(key)==\"0\") updateOnChange(frm.inp" + getData("ColumnNameInp") + ");");
     setCalloutJS();
   }
 

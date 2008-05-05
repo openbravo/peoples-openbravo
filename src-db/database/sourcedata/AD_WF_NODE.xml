@@ -36,8 +36,6 @@
 <!--107-->              <ACTION><![CDATA[W]]></ACTION>
 <!--107 AD_WINDOW_ID-->
 <!--107-->              <AD_WINDOW_ID><![CDATA[106]]></AD_WINDOW_ID>
-<!--107 ENTITYTYPE-->
-<!--107-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--107 XPOSITION-->
 <!--107-->              <XPOSITION><![CDATA[22]]></XPOSITION>
 <!--107 YPOSITION-->
@@ -75,8 +73,6 @@
 <!--108-->              <ACTION><![CDATA[W]]></ACTION>
 <!--108 AD_WINDOW_ID-->
 <!--108-->              <AD_WINDOW_ID><![CDATA[265]]></AD_WINDOW_ID>
-<!--108 ENTITYTYPE-->
-<!--108-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--108**************--></AD_WF_NODE>
 
 <!--110**************--><AD_WF_NODE>
@@ -110,8 +106,6 @@
 <!--110-->              <ACTION><![CDATA[W]]></ACTION>
 <!--110 AD_WINDOW_ID-->
 <!--110-->              <AD_WINDOW_ID><![CDATA[109]]></AD_WINDOW_ID>
-<!--110 ENTITYTYPE-->
-<!--110-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--110 XPOSITION-->
 <!--110-->              <XPOSITION><![CDATA[13]]></XPOSITION>
 <!--110 YPOSITION-->
@@ -149,8 +143,6 @@
 <!--111-->              <ACTION><![CDATA[W]]></ACTION>
 <!--111 AD_WINDOW_ID-->
 <!--111-->              <AD_WINDOW_ID><![CDATA[111]]></AD_WINDOW_ID>
-<!--111 ENTITYTYPE-->
-<!--111-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--111 XPOSITION-->
 <!--111-->              <XPOSITION><![CDATA[209]]></XPOSITION>
 <!--111 YPOSITION-->
@@ -188,8 +180,6 @@
 <!--112-->              <ACTION><![CDATA[W]]></ACTION>
 <!--112 AD_WINDOW_ID-->
 <!--112-->              <AD_WINDOW_ID><![CDATA[108]]></AD_WINDOW_ID>
-<!--112 ENTITYTYPE-->
-<!--112-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--112 XPOSITION-->
 <!--112-->              <XPOSITION><![CDATA[208]]></XPOSITION>
 <!--112 YPOSITION-->
@@ -227,8 +217,6 @@
 <!--113-->              <ACTION><![CDATA[W]]></ACTION>
 <!--113 AD_WINDOW_ID-->
 <!--113-->              <AD_WINDOW_ID><![CDATA[110]]></AD_WINDOW_ID>
-<!--113 ENTITYTYPE-->
-<!--113-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--113 XPOSITION-->
 <!--113-->              <XPOSITION><![CDATA[90]]></XPOSITION>
 <!--113 YPOSITION-->
@@ -266,8 +254,6 @@
 <!--114-->              <ACTION><![CDATA[W]]></ACTION>
 <!--114 AD_WINDOW_ID-->
 <!--114-->              <AD_WINDOW_ID><![CDATA[130]]></AD_WINDOW_ID>
-<!--114 ENTITYTYPE-->
-<!--114-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--114**************--></AD_WF_NODE>
 
 <!--118**************--><AD_WF_NODE>
@@ -301,8 +287,6 @@
 <!--118-->              <ACTION><![CDATA[W]]></ACTION>
 <!--118 AD_WINDOW_ID-->
 <!--118-->              <AD_WINDOW_ID><![CDATA[151]]></AD_WINDOW_ID>
-<!--118 ENTITYTYPE-->
-<!--118-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--118 XPOSITION-->
 <!--118-->              <XPOSITION><![CDATA[96]]></XPOSITION>
 <!--118 YPOSITION-->
@@ -340,8 +324,6 @@
 <!--119-->              <ACTION><![CDATA[W]]></ACTION>
 <!--119 AD_WINDOW_ID-->
 <!--119-->              <AD_WINDOW_ID><![CDATA[104]]></AD_WINDOW_ID>
-<!--119 ENTITYTYPE-->
-<!--119-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--119 XPOSITION-->
 <!--119-->              <XPOSITION><![CDATA[225]]></XPOSITION>
 <!--119 YPOSITION-->
@@ -379,8 +361,6 @@
 <!--120-->              <ACTION><![CDATA[W]]></ACTION>
 <!--120 AD_WINDOW_ID-->
 <!--120-->              <AD_WINDOW_ID><![CDATA[101]]></AD_WINDOW_ID>
-<!--120 ENTITYTYPE-->
-<!--120-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--120 XPOSITION-->
 <!--120-->              <XPOSITION><![CDATA[225]]></XPOSITION>
 <!--120 YPOSITION-->
@@ -418,8 +398,6 @@
 <!--121-->              <ACTION><![CDATA[W]]></ACTION>
 <!--121 AD_WINDOW_ID-->
 <!--121-->              <AD_WINDOW_ID><![CDATA[102]]></AD_WINDOW_ID>
-<!--121 ENTITYTYPE-->
-<!--121-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--121 XPOSITION-->
 <!--121-->              <XPOSITION><![CDATA[115]]></XPOSITION>
 <!--121 YPOSITION-->
@@ -457,8 +435,6 @@
 <!--122-->              <ACTION><![CDATA[W]]></ACTION>
 <!--122 AD_WINDOW_ID-->
 <!--122-->              <AD_WINDOW_ID><![CDATA[187]]></AD_WINDOW_ID>
-<!--122 ENTITYTYPE-->
-<!--122-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--122 XPOSITION-->
 <!--122-->              <XPOSITION><![CDATA[35]]></XPOSITION>
 <!--122 YPOSITION-->
@@ -496,8 +472,6 @@
 <!--123-->              <ACTION><![CDATA[W]]></ACTION>
 <!--123 AD_WINDOW_ID-->
 <!--123-->              <AD_WINDOW_ID><![CDATA[165]]></AD_WINDOW_ID>
-<!--123 ENTITYTYPE-->
-<!--123-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--123 XPOSITION-->
 <!--123-->              <XPOSITION><![CDATA[15]]></XPOSITION>
 <!--123 YPOSITION-->
@@ -535,8 +509,6 @@
 <!--125-->              <ACTION><![CDATA[W]]></ACTION>
 <!--125 AD_WINDOW_ID-->
 <!--125-->              <AD_WINDOW_ID><![CDATA[117]]></AD_WINDOW_ID>
-<!--125 ENTITYTYPE-->
-<!--125-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--125 XPOSITION-->
 <!--125-->              <XPOSITION><![CDATA[8]]></XPOSITION>
 <!--125 YPOSITION-->
@@ -574,8 +546,6 @@
 <!--126-->              <ACTION><![CDATA[W]]></ACTION>
 <!--126 AD_WINDOW_ID-->
 <!--126-->              <AD_WINDOW_ID><![CDATA[118]]></AD_WINDOW_ID>
-<!--126 ENTITYTYPE-->
-<!--126-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--126 XPOSITION-->
 <!--126-->              <XPOSITION><![CDATA[169]]></XPOSITION>
 <!--126 YPOSITION-->
@@ -613,8 +583,6 @@
 <!--127-->              <ACTION><![CDATA[W]]></ACTION>
 <!--127 AD_WINDOW_ID-->
 <!--127-->              <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
-<!--127 ENTITYTYPE-->
-<!--127-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--127 XPOSITION-->
 <!--127-->              <XPOSITION><![CDATA[161]]></XPOSITION>
 <!--127 YPOSITION-->
@@ -652,8 +620,6 @@
 <!--128-->              <ACTION><![CDATA[W]]></ACTION>
 <!--128 AD_WINDOW_ID-->
 <!--128-->              <AD_WINDOW_ID><![CDATA[131]]></AD_WINDOW_ID>
-<!--128 ENTITYTYPE-->
-<!--128-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--128 XPOSITION-->
 <!--128-->              <XPOSITION><![CDATA[41]]></XPOSITION>
 <!--128 YPOSITION-->
@@ -691,8 +657,6 @@
 <!--129-->              <ACTION><![CDATA[W]]></ACTION>
 <!--129 AD_WINDOW_ID-->
 <!--129-->              <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
-<!--129 ENTITYTYPE-->
-<!--129-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--129 XPOSITION-->
 <!--129-->              <XPOSITION><![CDATA[187]]></XPOSITION>
 <!--129 YPOSITION-->
@@ -730,8 +694,6 @@
 <!--130-->              <ACTION><![CDATA[W]]></ACTION>
 <!--130 AD_WINDOW_ID-->
 <!--130-->              <AD_WINDOW_ID><![CDATA[112]]></AD_WINDOW_ID>
-<!--130 ENTITYTYPE-->
-<!--130-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--130 XPOSITION-->
 <!--130-->              <XPOSITION><![CDATA[18]]></XPOSITION>
 <!--130 YPOSITION-->
@@ -769,8 +731,6 @@
 <!--131-->              <ACTION><![CDATA[W]]></ACTION>
 <!--131 AD_WINDOW_ID-->
 <!--131-->              <AD_WINDOW_ID><![CDATA[192]]></AD_WINDOW_ID>
-<!--131 ENTITYTYPE-->
-<!--131-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--131 XPOSITION-->
 <!--131-->              <XPOSITION><![CDATA[5]]></XPOSITION>
 <!--131 YPOSITION-->
@@ -808,8 +768,6 @@
 <!--132-->              <ACTION><![CDATA[W]]></ACTION>
 <!--132 AD_WINDOW_ID-->
 <!--132-->              <AD_WINDOW_ID><![CDATA[178]]></AD_WINDOW_ID>
-<!--132 ENTITYTYPE-->
-<!--132-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--132 XPOSITION-->
 <!--132-->              <XPOSITION><![CDATA[154]]></XPOSITION>
 <!--132 YPOSITION-->
@@ -847,8 +805,6 @@
 <!--133-->              <ACTION><![CDATA[W]]></ACTION>
 <!--133 AD_WINDOW_ID-->
 <!--133-->              <AD_WINDOW_ID><![CDATA[141]]></AD_WINDOW_ID>
-<!--133 ENTITYTYPE-->
-<!--133-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--133 XPOSITION-->
 <!--133-->              <XPOSITION><![CDATA[240]]></XPOSITION>
 <!--133 YPOSITION-->
@@ -886,8 +842,6 @@
 <!--134-->              <ACTION><![CDATA[W]]></ACTION>
 <!--134 AD_WINDOW_ID-->
 <!--134-->              <AD_WINDOW_ID><![CDATA[147]]></AD_WINDOW_ID>
-<!--134 ENTITYTYPE-->
-<!--134-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--134 XPOSITION-->
 <!--134-->              <XPOSITION><![CDATA[234]]></XPOSITION>
 <!--134 YPOSITION-->
@@ -925,8 +879,6 @@
 <!--137-->              <ACTION><![CDATA[W]]></ACTION>
 <!--137 AD_WINDOW_ID-->
 <!--137-->              <AD_WINDOW_ID><![CDATA[174]]></AD_WINDOW_ID>
-<!--137 ENTITYTYPE-->
-<!--137-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--137 XPOSITION-->
 <!--137-->              <XPOSITION><![CDATA[9]]></XPOSITION>
 <!--137 YPOSITION-->
@@ -964,8 +916,6 @@
 <!--138-->              <ACTION><![CDATA[W]]></ACTION>
 <!--138 AD_WINDOW_ID-->
 <!--138-->              <AD_WINDOW_ID><![CDATA[172]]></AD_WINDOW_ID>
-<!--138 ENTITYTYPE-->
-<!--138-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--138 XPOSITION-->
 <!--138-->              <XPOSITION><![CDATA[174]]></XPOSITION>
 <!--138 YPOSITION-->
@@ -1003,8 +953,6 @@
 <!--139-->              <ACTION><![CDATA[W]]></ACTION>
 <!--139 AD_WINDOW_ID-->
 <!--139-->              <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
-<!--139 ENTITYTYPE-->
-<!--139-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--139 XPOSITION-->
 <!--139-->              <XPOSITION><![CDATA[105]]></XPOSITION>
 <!--139 YPOSITION-->
@@ -1042,8 +990,6 @@
 <!--140-->              <ACTION><![CDATA[W]]></ACTION>
 <!--140 AD_WINDOW_ID-->
 <!--140-->              <AD_WINDOW_ID><![CDATA[108]]></AD_WINDOW_ID>
-<!--140 ENTITYTYPE-->
-<!--140-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--140 XPOSITION-->
 <!--140-->              <XPOSITION><![CDATA[141]]></XPOSITION>
 <!--140 YPOSITION-->
@@ -1081,8 +1027,6 @@
 <!--141-->              <ACTION><![CDATA[W]]></ACTION>
 <!--141 AD_WINDOW_ID-->
 <!--141-->              <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
-<!--141 ENTITYTYPE-->
-<!--141-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--141 XPOSITION-->
 <!--141-->              <XPOSITION><![CDATA[6]]></XPOSITION>
 <!--141 YPOSITION-->
@@ -1120,8 +1064,6 @@
 <!--142-->              <ACTION><![CDATA[W]]></ACTION>
 <!--142 AD_WINDOW_ID-->
 <!--142-->              <AD_WINDOW_ID><![CDATA[152]]></AD_WINDOW_ID>
-<!--142 ENTITYTYPE-->
-<!--142-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--142 XPOSITION-->
 <!--142-->              <XPOSITION><![CDATA[212]]></XPOSITION>
 <!--142 YPOSITION-->
@@ -1159,8 +1101,6 @@
 <!--143-->              <ACTION><![CDATA[W]]></ACTION>
 <!--143 AD_WINDOW_ID-->
 <!--143-->              <AD_WINDOW_ID><![CDATA[207]]></AD_WINDOW_ID>
-<!--143 ENTITYTYPE-->
-<!--143-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--143 XPOSITION-->
 <!--143-->              <XPOSITION><![CDATA[213]]></XPOSITION>
 <!--143 YPOSITION-->
@@ -1198,8 +1138,6 @@
 <!--144-->              <ACTION><![CDATA[W]]></ACTION>
 <!--144 AD_WINDOW_ID-->
 <!--144-->              <AD_WINDOW_ID><![CDATA[150]]></AD_WINDOW_ID>
-<!--144 ENTITYTYPE-->
-<!--144-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--144 XPOSITION-->
 <!--144-->              <XPOSITION><![CDATA[94]]></XPOSITION>
 <!--144 YPOSITION-->
@@ -1237,8 +1175,6 @@
 <!--145-->              <ACTION><![CDATA[W]]></ACTION>
 <!--145 AD_WINDOW_ID-->
 <!--145-->              <AD_WINDOW_ID><![CDATA[149]]></AD_WINDOW_ID>
-<!--145 ENTITYTYPE-->
-<!--145-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--145 XPOSITION-->
 <!--145-->              <XPOSITION><![CDATA[88]]></XPOSITION>
 <!--145 YPOSITION-->
@@ -1276,188 +1212,11 @@
 <!--146-->              <ACTION><![CDATA[W]]></ACTION>
 <!--146 AD_WINDOW_ID-->
 <!--146-->              <AD_WINDOW_ID><![CDATA[113]]></AD_WINDOW_ID>
-<!--146 ENTITYTYPE-->
-<!--146-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--146 XPOSITION-->
 <!--146-->              <XPOSITION><![CDATA[129]]></XPOSITION>
 <!--146 YPOSITION-->
 <!--146-->              <YPOSITION><![CDATA[189]]></YPOSITION>
 <!--146**************--></AD_WF_NODE>
-
-<!--147**************--><AD_WF_NODE>
-<!--147 AD_WF_NODE_ID-->
-<!--147-->              <AD_WF_NODE_ID><![CDATA[147]]></AD_WF_NODE_ID>
-<!--147 AD_CLIENT_ID-->
-<!--147-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--147 AD_ORG_ID-->
-<!--147-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--147 ISACTIVE-->
-<!--147-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--147 CREATED-->
-<!--147-->              <CREATED><![CDATA[2001-04-24 20:11:35.0]]></CREATED>
-<!--147 CREATEDBY-->
-<!--147-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--147 UPDATED-->
-<!--147-->              <UPDATED><![CDATA[2001-04-24 20:32:39.0]]></UPDATED>
-<!--147 UPDATEDBY-->
-<!--147-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--147 NAME-->
-<!--147-->              <NAME><![CDATA[Performance Color]]></NAME>
-<!--147 DESCRIPTION-->
-<!--147-->              <DESCRIPTION><![CDATA[Color used for Performance Analysis]]></DESCRIPTION>
-<!--147 HELP-->
-<!--147-->              <HELP><![CDATA[The Performance Color Window allows you to define the color schema to be used to indicate current performance.  The system has predefined Red (below 50%), Yellow (below 100%) and green above 100.  If you want to define your own color schema, do it here.]]></HELP>
-<!--147 AD_WORKFLOW_ID-->
-<!--147-->              <AD_WORKFLOW_ID><![CDATA[112]]></AD_WORKFLOW_ID>
-<!--147 ISCENTRALLYMAINTAINED-->
-<!--147-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--147 ACTION-->
-<!--147-->              <ACTION><![CDATA[W]]></ACTION>
-<!--147 AD_WINDOW_ID-->
-<!--147-->              <AD_WINDOW_ID><![CDATA[211]]></AD_WINDOW_ID>
-<!--147 ENTITYTYPE-->
-<!--147-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--147**************--></AD_WF_NODE>
-
-<!--148**************--><AD_WF_NODE>
-<!--148 AD_WF_NODE_ID-->
-<!--148-->              <AD_WF_NODE_ID><![CDATA[148]]></AD_WF_NODE_ID>
-<!--148 AD_CLIENT_ID-->
-<!--148-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--148 AD_ORG_ID-->
-<!--148-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--148 ISACTIVE-->
-<!--148-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--148 CREATED-->
-<!--148-->              <CREATED><![CDATA[2001-04-24 20:22:17.0]]></CREATED>
-<!--148 CREATEDBY-->
-<!--148-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--148 UPDATED-->
-<!--148-->              <UPDATED><![CDATA[2001-04-24 20:22:17.0]]></UPDATED>
-<!--148 UPDATEDBY-->
-<!--148-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--148 NAME-->
-<!--148-->              <NAME><![CDATA[Performance Measure Calculation]]></NAME>
-<!--148 DESCRIPTION-->
-<!--148-->              <DESCRIPTION><![CDATA[Define how you calculate your performance measures]]></DESCRIPTION>
-<!--148 HELP-->
-<!--148-->              <HELP><![CDATA[Please test the statement in SQL*Plus first.The select statement needs to return a single value!Any restrictions for Date range, Organizations, Business Partners, Products should be done via the "Performance Measure" window.  This is the generic calculation.As this tends to be somewhat technical, the system has a few examples predefined.]]></HELP>
-<!--148 AD_WORKFLOW_ID-->
-<!--148-->              <AD_WORKFLOW_ID><![CDATA[112]]></AD_WORKFLOW_ID>
-<!--148 ISCENTRALLYMAINTAINED-->
-<!--148-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--148 ACTION-->
-<!--148-->              <ACTION><![CDATA[W]]></ACTION>
-<!--148 AD_WINDOW_ID-->
-<!--148-->              <AD_WINDOW_ID><![CDATA[213]]></AD_WINDOW_ID>
-<!--148 ENTITYTYPE-->
-<!--148-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--148**************--></AD_WF_NODE>
-
-<!--149**************--><AD_WF_NODE>
-<!--149 AD_WF_NODE_ID-->
-<!--149-->              <AD_WF_NODE_ID><![CDATA[149]]></AD_WF_NODE_ID>
-<!--149 AD_CLIENT_ID-->
-<!--149-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--149 AD_ORG_ID-->
-<!--149-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--149 ISACTIVE-->
-<!--149-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--149 CREATED-->
-<!--149-->              <CREATED><![CDATA[2001-04-24 20:25:30.0]]></CREATED>
-<!--149 CREATEDBY-->
-<!--149-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--149 UPDATED-->
-<!--149-->              <UPDATED><![CDATA[2001-04-24 20:33:42.0]]></UPDATED>
-<!--149 UPDATEDBY-->
-<!--149-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--149 NAME-->
-<!--149-->              <NAME><![CDATA[Performance Measure]]></NAME>
-<!--149 DESCRIPTION-->
-<!--149-->              <DESCRIPTION><![CDATA[Define your Performance Measures]]></DESCRIPTION>
-<!--149 HELP-->
-<!--149-->              <HELP><![CDATA[The Performance Measure Window allows you to define the rules and restrictions for performance measurement.  You can, for example, restrict performance measurement to sales for a certain product category for a defined time frame.]]></HELP>
-<!--149 AD_WORKFLOW_ID-->
-<!--149-->              <AD_WORKFLOW_ID><![CDATA[112]]></AD_WORKFLOW_ID>
-<!--149 ISCENTRALLYMAINTAINED-->
-<!--149-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--149 ACTION-->
-<!--149-->              <ACTION><![CDATA[W]]></ACTION>
-<!--149 AD_WINDOW_ID-->
-<!--149-->              <AD_WINDOW_ID><![CDATA[215]]></AD_WINDOW_ID>
-<!--149 ENTITYTYPE-->
-<!--149-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--149**************--></AD_WF_NODE>
-
-<!--150**************--><AD_WF_NODE>
-<!--150 AD_WF_NODE_ID-->
-<!--150-->              <AD_WF_NODE_ID><![CDATA[150]]></AD_WF_NODE_ID>
-<!--150 AD_CLIENT_ID-->
-<!--150-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--150 AD_ORG_ID-->
-<!--150-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--150 ISACTIVE-->
-<!--150-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--150 CREATED-->
-<!--150-->              <CREATED><![CDATA[2001-04-24 20:26:26.0]]></CREATED>
-<!--150 CREATEDBY-->
-<!--150-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--150 UPDATED-->
-<!--150-->              <UPDATED><![CDATA[2001-04-24 20:26:26.0]]></UPDATED>
-<!--150 UPDATEDBY-->
-<!--150-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--150 NAME-->
-<!--150-->              <NAME><![CDATA[Performance Achievement]]></NAME>
-<!--150 DESCRIPTION-->
-<!--150-->              <DESCRIPTION><![CDATA[Define Performance Achievements]]></DESCRIPTION>
-<!--150 HELP-->
-<!--150-->              <HELP><![CDATA[The Performance Achievement Window allows you to define Tasks to be achieved.  The performance is measured by the percentage of reached achievements.]]></HELP>
-<!--150 AD_WORKFLOW_ID-->
-<!--150-->              <AD_WORKFLOW_ID><![CDATA[112]]></AD_WORKFLOW_ID>
-<!--150 ISCENTRALLYMAINTAINED-->
-<!--150-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--150 ACTION-->
-<!--150-->              <ACTION><![CDATA[W]]></ACTION>
-<!--150 AD_WINDOW_ID-->
-<!--150-->              <AD_WINDOW_ID><![CDATA[214]]></AD_WINDOW_ID>
-<!--150 ENTITYTYPE-->
-<!--150-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--150**************--></AD_WF_NODE>
-
-<!--151**************--><AD_WF_NODE>
-<!--151 AD_WF_NODE_ID-->
-<!--151-->              <AD_WF_NODE_ID><![CDATA[151]]></AD_WF_NODE_ID>
-<!--151 AD_CLIENT_ID-->
-<!--151-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--151 AD_ORG_ID-->
-<!--151-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--151 ISACTIVE-->
-<!--151-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--151 CREATED-->
-<!--151-->              <CREATED><![CDATA[2001-04-24 20:36:06.0]]></CREATED>
-<!--151 CREATEDBY-->
-<!--151-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--151 UPDATED-->
-<!--151-->              <UPDATED><![CDATA[2001-04-24 20:38:18.0]]></UPDATED>
-<!--151 UPDATEDBY-->
-<!--151-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--151 NAME-->
-<!--151-->              <NAME><![CDATA[Performance Color]]></NAME>
-<!--151 DESCRIPTION-->
-<!--151-->              <DESCRIPTION><![CDATA[Color used for Performance Analysis]]></DESCRIPTION>
-<!--151 HELP-->
-<!--151-->              <HELP><![CDATA[The Performance Color Window allows you to define the color schema to be used to indicate current performance.  The system has predefined Red (below 50%), Yellow (below 100%) and green above 100.  If you want to define your own color schema, do it here.]]></HELP>
-<!--151 AD_WORKFLOW_ID-->
-<!--151-->              <AD_WORKFLOW_ID><![CDATA[112]]></AD_WORKFLOW_ID>
-<!--151 ISCENTRALLYMAINTAINED-->
-<!--151-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--151 ACTION-->
-<!--151-->              <ACTION><![CDATA[W]]></ACTION>
-<!--151 AD_WINDOW_ID-->
-<!--151-->              <AD_WINDOW_ID><![CDATA[211]]></AD_WINDOW_ID>
-<!--151 ENTITYTYPE-->
-<!--151-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--151**************--></AD_WF_NODE>
 
 <!--152**************--><AD_WF_NODE>
 <!--152 AD_WF_NODE_ID-->
@@ -1490,8 +1249,6 @@
 <!--152-->              <ACTION><![CDATA[W]]></ACTION>
 <!--152 AD_WINDOW_ID-->
 <!--152-->              <AD_WINDOW_ID><![CDATA[109]]></AD_WINDOW_ID>
-<!--152 ENTITYTYPE-->
-<!--152-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--152 XPOSITION-->
 <!--152-->              <XPOSITION><![CDATA[7]]></XPOSITION>
 <!--152 YPOSITION-->
@@ -1529,8 +1286,6 @@
 <!--153-->              <ACTION><![CDATA[W]]></ACTION>
 <!--153 AD_WINDOW_ID-->
 <!--153-->              <AD_WINDOW_ID><![CDATA[108]]></AD_WINDOW_ID>
-<!--153 ENTITYTYPE-->
-<!--153-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--153 XPOSITION-->
 <!--153-->              <XPOSITION><![CDATA[126]]></XPOSITION>
 <!--153 YPOSITION-->
@@ -1568,8 +1323,6 @@
 <!--155-->              <ACTION><![CDATA[W]]></ACTION>
 <!--155 AD_WINDOW_ID-->
 <!--155-->              <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
-<!--155 ENTITYTYPE-->
-<!--155-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--155 XPOSITION-->
 <!--155-->              <XPOSITION><![CDATA[228]]></XPOSITION>
 <!--155 YPOSITION-->
@@ -1607,8 +1360,6 @@
 <!--156-->              <ACTION><![CDATA[W]]></ACTION>
 <!--156 AD_WINDOW_ID-->
 <!--156-->              <AD_WINDOW_ID><![CDATA[203]]></AD_WINDOW_ID>
-<!--156 ENTITYTYPE-->
-<!--156-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--156 XPOSITION-->
 <!--156-->              <XPOSITION><![CDATA[245]]></XPOSITION>
 <!--156 YPOSITION-->
@@ -1646,8 +1397,6 @@
 <!--157-->              <ACTION><![CDATA[W]]></ACTION>
 <!--157 AD_WINDOW_ID-->
 <!--157-->              <AD_WINDOW_ID><![CDATA[201]]></AD_WINDOW_ID>
-<!--157 ENTITYTYPE-->
-<!--157-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--157 XPOSITION-->
 <!--157-->              <XPOSITION><![CDATA[146]]></XPOSITION>
 <!--157 YPOSITION-->
@@ -1685,8 +1434,6 @@
 <!--158-->              <ACTION><![CDATA[W]]></ACTION>
 <!--158 AD_WINDOW_ID-->
 <!--158-->              <AD_WINDOW_ID><![CDATA[139]]></AD_WINDOW_ID>
-<!--158 ENTITYTYPE-->
-<!--158-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--158 XPOSITION-->
 <!--158-->              <XPOSITION><![CDATA[7]]></XPOSITION>
 <!--158 YPOSITION-->
@@ -1724,8 +1471,6 @@
 <!--159-->              <ACTION><![CDATA[W]]></ACTION>
 <!--159 AD_WINDOW_ID-->
 <!--159-->              <AD_WINDOW_ID><![CDATA[120]]></AD_WINDOW_ID>
-<!--159 ENTITYTYPE-->
-<!--159-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--159 XPOSITION-->
 <!--159-->              <XPOSITION><![CDATA[143]]></XPOSITION>
 <!--159 YPOSITION-->
@@ -1763,8 +1508,6 @@
 <!--160-->              <ACTION><![CDATA[W]]></ACTION>
 <!--160 AD_WINDOW_ID-->
 <!--160-->              <AD_WINDOW_ID><![CDATA[144]]></AD_WINDOW_ID>
-<!--160 ENTITYTYPE-->
-<!--160-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--160 XPOSITION-->
 <!--160-->              <XPOSITION><![CDATA[138]]></XPOSITION>
 <!--160 YPOSITION-->
@@ -1802,8 +1545,6 @@
 <!--161-->              <ACTION><![CDATA[W]]></ACTION>
 <!--161 AD_WINDOW_ID-->
 <!--161-->              <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--161 ENTITYTYPE-->
-<!--161-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--161 XPOSITION-->
 <!--161-->              <XPOSITION><![CDATA[42]]></XPOSITION>
 <!--161 YPOSITION-->
@@ -1841,8 +1582,6 @@
 <!--162-->              <ACTION><![CDATA[W]]></ACTION>
 <!--162 AD_WINDOW_ID-->
 <!--162-->              <AD_WINDOW_ID><![CDATA[233]]></AD_WINDOW_ID>
-<!--162 ENTITYTYPE-->
-<!--162-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--162 XPOSITION-->
 <!--162-->              <XPOSITION><![CDATA[7]]></XPOSITION>
 <!--162 YPOSITION-->
@@ -1880,8 +1619,6 @@
 <!--163-->              <ACTION><![CDATA[W]]></ACTION>
 <!--163 AD_WINDOW_ID-->
 <!--163-->              <AD_WINDOW_ID><![CDATA[146]]></AD_WINDOW_ID>
-<!--163 ENTITYTYPE-->
-<!--163-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--163 XPOSITION-->
 <!--163-->              <XPOSITION><![CDATA[137]]></XPOSITION>
 <!--163 YPOSITION-->
@@ -1919,8 +1656,6 @@
 <!--164-->              <ACTION><![CDATA[W]]></ACTION>
 <!--164 AD_WINDOW_ID-->
 <!--164-->              <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
-<!--164 ENTITYTYPE-->
-<!--164-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--164 XPOSITION-->
 <!--164-->              <XPOSITION><![CDATA[212]]></XPOSITION>
 <!--164 YPOSITION-->
@@ -1958,8 +1693,6 @@
 <!--166-->              <ACTION><![CDATA[W]]></ACTION>
 <!--166 AD_WINDOW_ID-->
 <!--166-->              <AD_WINDOW_ID><![CDATA[138]]></AD_WINDOW_ID>
-<!--166 ENTITYTYPE-->
-<!--166-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--166 XPOSITION-->
 <!--166-->              <XPOSITION><![CDATA[8]]></XPOSITION>
 <!--166 YPOSITION-->
@@ -1997,8 +1730,6 @@
 <!--167-->              <ACTION><![CDATA[W]]></ACTION>
 <!--167 AD_WINDOW_ID-->
 <!--167-->              <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--167 ENTITYTYPE-->
-<!--167-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--167 XPOSITION-->
 <!--167-->              <XPOSITION><![CDATA[108]]></XPOSITION>
 <!--167 YPOSITION-->
@@ -2036,8 +1767,6 @@
 <!--168-->              <ACTION><![CDATA[W]]></ACTION>
 <!--168 AD_WINDOW_ID-->
 <!--168-->              <AD_WINDOW_ID><![CDATA[161]]></AD_WINDOW_ID>
-<!--168 ENTITYTYPE-->
-<!--168-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--168 XPOSITION-->
 <!--168-->              <XPOSITION><![CDATA[191]]></XPOSITION>
 <!--168 YPOSITION-->
@@ -2075,8 +1804,6 @@
 <!--169-->              <ACTION><![CDATA[W]]></ACTION>
 <!--169 AD_WINDOW_ID-->
 <!--169-->              <AD_WINDOW_ID><![CDATA[137]]></AD_WINDOW_ID>
-<!--169 ENTITYTYPE-->
-<!--169-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--169 XPOSITION-->
 <!--169-->              <XPOSITION><![CDATA[187]]></XPOSITION>
 <!--169 YPOSITION-->
@@ -2114,8 +1841,6 @@
 <!--170-->              <ACTION><![CDATA[W]]></ACTION>
 <!--170 AD_WINDOW_ID-->
 <!--170-->              <AD_WINDOW_ID><![CDATA[125]]></AD_WINDOW_ID>
-<!--170 ENTITYTYPE-->
-<!--170-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--170 XPOSITION-->
 <!--170-->              <XPOSITION><![CDATA[36]]></XPOSITION>
 <!--170 YPOSITION-->
@@ -2153,8 +1878,6 @@
 <!--171-->              <ACTION><![CDATA[W]]></ACTION>
 <!--171 AD_WINDOW_ID-->
 <!--171-->              <AD_WINDOW_ID><![CDATA[138]]></AD_WINDOW_ID>
-<!--171 ENTITYTYPE-->
-<!--171-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--171 XPOSITION-->
 <!--171-->              <XPOSITION><![CDATA[29]]></XPOSITION>
 <!--171 YPOSITION-->
@@ -2192,8 +1915,6 @@
 <!--172-->              <ACTION><![CDATA[X]]></ACTION>
 <!--172 AD_FORM_ID-->
 <!--172-->              <AD_FORM_ID><![CDATA[101]]></AD_FORM_ID>
-<!--172 ENTITYTYPE-->
-<!--172-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--172 XPOSITION-->
 <!--172-->              <XPOSITION><![CDATA[75]]></XPOSITION>
 <!--172 YPOSITION-->
@@ -2231,91 +1952,11 @@
 <!--173-->              <ACTION><![CDATA[W]]></ACTION>
 <!--173 AD_WINDOW_ID-->
 <!--173-->              <AD_WINDOW_ID><![CDATA[248]]></AD_WINDOW_ID>
-<!--173 ENTITYTYPE-->
-<!--173-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--173 XPOSITION-->
 <!--173-->              <XPOSITION><![CDATA[85]]></XPOSITION>
 <!--173 YPOSITION-->
 <!--173-->              <YPOSITION><![CDATA[188]]></YPOSITION>
 <!--173**************--></AD_WF_NODE>
-
-<!--174**************--><AD_WF_NODE>
-<!--174 AD_WF_NODE_ID-->
-<!--174-->              <AD_WF_NODE_ID><![CDATA[174]]></AD_WF_NODE_ID>
-<!--174 AD_CLIENT_ID-->
-<!--174-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--174 AD_ORG_ID-->
-<!--174-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--174 ISACTIVE-->
-<!--174-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--174 CREATED-->
-<!--174-->              <CREATED><![CDATA[2003-08-03 17:03:26.0]]></CREATED>
-<!--174 CREATEDBY-->
-<!--174-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--174 UPDATED-->
-<!--174-->              <UPDATED><![CDATA[2003-08-03 17:04:13.0]]></UPDATED>
-<!--174 UPDATEDBY-->
-<!--174-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--174 NAME-->
-<!--174-->              <NAME><![CDATA[Replication Strategy]]></NAME>
-<!--174 DESCRIPTION-->
-<!--174-->              <DESCRIPTION><![CDATA[Maintain Data Replication Strategy]]></DESCRIPTION>
-<!--174 HELP-->
-<!--174-->              <HELP><![CDATA[The Data Replication Strategy determines which tables and how they are replicated. Note that the migration does not syncronize Application Dictionary items.]]></HELP>
-<!--174 AD_WORKFLOW_ID-->
-<!--174-->              <AD_WORKFLOW_ID><![CDATA[109]]></AD_WORKFLOW_ID>
-<!--174 ISCENTRALLYMAINTAINED-->
-<!--174-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--174 ACTION-->
-<!--174-->              <ACTION><![CDATA[W]]></ACTION>
-<!--174 AD_WINDOW_ID-->
-<!--174-->              <AD_WINDOW_ID><![CDATA[285]]></AD_WINDOW_ID>
-<!--174 ENTITYTYPE-->
-<!--174-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--174 XPOSITION-->
-<!--174-->              <XPOSITION><![CDATA[11]]></XPOSITION>
-<!--174 YPOSITION-->
-<!--174-->              <YPOSITION><![CDATA[5]]></YPOSITION>
-<!--174**************--></AD_WF_NODE>
-
-<!--175**************--><AD_WF_NODE>
-<!--175 AD_WF_NODE_ID-->
-<!--175-->              <AD_WF_NODE_ID><![CDATA[175]]></AD_WF_NODE_ID>
-<!--175 AD_CLIENT_ID-->
-<!--175-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--175 AD_ORG_ID-->
-<!--175-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--175 ISACTIVE-->
-<!--175-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--175 CREATED-->
-<!--175-->              <CREATED><![CDATA[2003-08-03 17:12:56.0]]></CREATED>
-<!--175 CREATEDBY-->
-<!--175-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--175 UPDATED-->
-<!--175-->              <UPDATED><![CDATA[2003-08-03 17:12:56.0]]></UPDATED>
-<!--175 UPDATEDBY-->
-<!--175-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--175 NAME-->
-<!--175-->              <NAME><![CDATA[Replication]]></NAME>
-<!--175 DESCRIPTION-->
-<!--175-->              <DESCRIPTION><![CDATA[Maintain Data Replication Targets]]></DESCRIPTION>
-<!--175 HELP-->
-<!--175-->              <HELP><![CDATA[Data Replication Target Details. Set up your system completely on the central system, before setting up the replication. Define the Replication target here and export the database and import it on the remote system.<p>Before(!) entering transactions, Start the Replication Run to set up the remote system.]]></HELP>
-<!--175 AD_WORKFLOW_ID-->
-<!--175-->              <AD_WORKFLOW_ID><![CDATA[109]]></AD_WORKFLOW_ID>
-<!--175 ISCENTRALLYMAINTAINED-->
-<!--175-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--175 ACTION-->
-<!--175-->              <ACTION><![CDATA[W]]></ACTION>
-<!--175 AD_WINDOW_ID-->
-<!--175-->              <AD_WINDOW_ID><![CDATA[284]]></AD_WINDOW_ID>
-<!--175 ENTITYTYPE-->
-<!--175-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--175 XPOSITION-->
-<!--175-->              <XPOSITION><![CDATA[150]]></XPOSITION>
-<!--175 YPOSITION-->
-<!--175-->              <YPOSITION><![CDATA[5]]></YPOSITION>
-<!--175**************--></AD_WF_NODE>
 
 <!--800000**************--><AD_WF_NODE>
 <!--800000 AD_WF_NODE_ID-->
@@ -2348,8 +1989,6 @@
 <!--800000-->              <ACTION><![CDATA[W]]></ACTION>
 <!--800000 AD_WINDOW_ID-->
 <!--800000-->              <AD_WINDOW_ID><![CDATA[800060]]></AD_WINDOW_ID>
-<!--800000 ENTITYTYPE-->
-<!--800000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800000**************--></AD_WF_NODE>
 
 <!--800001**************--><AD_WF_NODE>
@@ -2383,8 +2022,6 @@
 <!--800001-->              <ACTION><![CDATA[W]]></ACTION>
 <!--800001 AD_WINDOW_ID-->
 <!--800001-->              <AD_WINDOW_ID><![CDATA[800030]]></AD_WINDOW_ID>
-<!--800001 ENTITYTYPE-->
-<!--800001-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800001**************--></AD_WF_NODE>
 
 <!--800003**************--><AD_WF_NODE>
@@ -2418,8 +2055,6 @@
 <!--800003-->              <ACTION><![CDATA[W]]></ACTION>
 <!--800003 AD_WINDOW_ID-->
 <!--800003-->              <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--800003 ENTITYTYPE-->
-<!--800003-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800003**************--></AD_WF_NODE>
 
 <!--1005900000**************--><AD_WF_NODE>
@@ -2453,8 +2088,6 @@
 <!--1005900000-->              <ACTION><![CDATA[W]]></ACTION>
 <!--1005900000 AD_WINDOW_ID-->
 <!--1005900000-->              <AD_WINDOW_ID><![CDATA[235]]></AD_WINDOW_ID>
-<!--1005900000 ENTITYTYPE-->
-<!--1005900000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1005900000**************--></AD_WF_NODE>
 
 <!--1005900001**************--><AD_WF_NODE>
@@ -2488,8 +2121,6 @@
 <!--1005900001-->              <ACTION><![CDATA[W]]></ACTION>
 <!--1005900001 AD_WINDOW_ID-->
 <!--1005900001-->              <AD_WINDOW_ID><![CDATA[242]]></AD_WINDOW_ID>
-<!--1005900001 ENTITYTYPE-->
-<!--1005900001-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1005900001**************--></AD_WF_NODE>
 
 <!--1005900002**************--><AD_WF_NODE>
@@ -2523,8 +2154,6 @@
 <!--1005900002-->              <ACTION><![CDATA[P]]></ACTION>
 <!--1005900002 AD_PROCESS_ID-->
 <!--1005900002-->              <AD_PROCESS_ID><![CDATA[186]]></AD_PROCESS_ID>
-<!--1005900002 ENTITYTYPE-->
-<!--1005900002-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1005900002**************--></AD_WF_NODE>
 
 <!--1005900003**************--><AD_WF_NODE>
@@ -2558,8 +2187,6 @@
 <!--1005900003-->              <ACTION><![CDATA[P]]></ACTION>
 <!--1005900003 AD_PROCESS_ID-->
 <!--1005900003-->              <AD_PROCESS_ID><![CDATA[187]]></AD_PROCESS_ID>
-<!--1005900003 ENTITYTYPE-->
-<!--1005900003-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1005900003**************--></AD_WF_NODE>
 
 <!--1005900004**************--><AD_WF_NODE>
@@ -2593,8 +2220,6 @@
 <!--1005900004-->              <ACTION><![CDATA[W]]></ACTION>
 <!--1005900004 AD_WINDOW_ID-->
 <!--1005900004-->              <AD_WINDOW_ID><![CDATA[254]]></AD_WINDOW_ID>
-<!--1005900004 ENTITYTYPE-->
-<!--1005900004-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1005900004**************--></AD_WF_NODE>
 
 <!--

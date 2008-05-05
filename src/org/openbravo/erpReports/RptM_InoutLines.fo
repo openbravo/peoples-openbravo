@@ -24,7 +24,6 @@
 			<fo:table-column column-width="8.5cm"/>
 			<fo:table-column column-width="2.5cm"/>
 			<fo:table-column column-width="2cm"/>
-      <fo:table-column column-width="2cm"/>
 			<fo:table-header>
 				<fo:table-row>
 					<fo:table-cell border-bottom-width="0.5pt" border-bottom-style="solid">
@@ -39,9 +38,6 @@
 					<fo:table-cell border-bottom-width="0.5pt" border-bottom-style="solid">
 						<fo:block text-align="end" end-indent="2pt" padding-bottom="2pt" font-weight="bold">QUANTITY</fo:block>
 					</fo:table-cell>
-					<fo:table-cell border-bottom-width="0.5pt" border-bottom-style="solid">
-						<fo:block text-align="end" end-indent="2pt" padding-bottom="2pt" font-weight="bold">PACKAGES</fo:block>
-          </fo:table-cell>
 				</fo:table-row>
 			</fo:table-header>
 			<fo:table-body>
@@ -65,9 +61,6 @@
 							<fo:table-cell>
 								<fo:block text-align="end" end-indent="2pt" padding-top="2pt" id="fieldMovementqty"/>
 							</fo:table-cell>
-							<fo:table-cell>
-								<fo:block text-align="end" end-indent="2pt" padding-top="2pt" id="fieldBundle"/>
-              </fo:table-cell>
             </fo:table-row>
             <fo:table-row>
               <fo:table-cell>

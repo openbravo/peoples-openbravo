@@ -45,14 +45,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ISSOTRX" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="ISREADONLY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="ACTION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -77,14 +69,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_WORKBENCH_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[D]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="URL" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -97,9 +81,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_FORM" name="ADFORM_ADMENU">
         <reference local="AD_FORM_ID" foreign="AD_FORM_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_WORKBENCH" name="ADMENU_ADWORKBENCH">
-        <reference local="AD_WORKBENCH_ID" foreign="AD_WORKBENCH_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADMENU">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
@@ -114,7 +95,5 @@
         <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>
       </foreign-key>
       <check name="ADMENU_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="ADMENU_ISREADONLY_CHECK"><![CDATA[ISREADONLY IN ('Y', 'N')]]></check>
-      <check name="ADMENU_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
     </table>
   </database>

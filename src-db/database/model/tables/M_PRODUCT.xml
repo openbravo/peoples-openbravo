@@ -101,10 +101,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="C_REVENUERECOGNITION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="M_PRODUCT_CATEGORY_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -177,10 +173,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="R_MAILTEXT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="VERSIONNO" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -237,27 +229,11 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="BUNDLE_UOM" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="GREENPOINT_UOM" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="UPC2" primaryKey="false" required="false" type="VARCHAR" size="30" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="CALCULATED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="MA_PROCESSPLAN_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="MA_PRODUCTTYPE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -313,9 +289,6 @@
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_MPRODUCT">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_REVENUERECOGNITION" name="CREVRECOGNITION_MPRODUCT">
-        <reference local="C_REVENUERECOGNITION_ID" foreign="C_REVENUERECOGNITION_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_MPRODUCT">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
       </foreign-key>
@@ -324,9 +297,6 @@
       </foreign-key>
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MPRODUCT">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="MA_PRODUCTTYPE" name="MA_PRODUCTTYPE_MPRODUCT">
-        <reference local="MA_PRODUCTTYPE_ID" foreign="MA_PRODUCTTYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_ATTRIBUTESET" name="MATTRIBUTESET_MPRODUCT" onDelete="cascade">
         <reference local="M_ATTRIBUTESET_ID" foreign="M_ATTRIBUTESET_ID"/>
@@ -342,9 +312,6 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="MPRODUCT_MPRODUCTCATEGORY">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="R_MAILTEXT" name="RMAILTEXT_MPRODUCT">
-        <reference local="R_MAILTEXT_ID" foreign="R_MAILTEXT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="S_EXPENSETYPE" name="SEXPENSETYPE_MPRODUCT">
         <reference local="S_EXPENSETYPE_ID" foreign="S_EXPENSETYPE_ID"/>

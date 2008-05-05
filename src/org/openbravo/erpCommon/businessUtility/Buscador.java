@@ -169,7 +169,6 @@ public class Buscador extends HttpSecureAppServlet {
           params.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(".options[");
           params.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(".selectedIndex].value:");
           params.append("\"\")");
-          strCombo.append("  new TypeAheadCombo(\"idParam").append(FormatUtilities.replace(fields[i].columnname)).append("\");\n");
         } else if (Utility.isDecimalNumber(fields[i].reference) || Utility.isIntegerNumber(fields[i].reference) || Utility.isDateTime(fields[i].reference)) {
           paramsData.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(".value").append(");\n");
           paramsData.append("paramsData[count++] = new Array(\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f\", ");
@@ -221,7 +220,6 @@ public class Buscador extends HttpSecureAppServlet {
           params.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(".options[");
           params.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(".selectedIndex].value:");
           params.append("\"\")");
-          strCombo.append("  new TypeAheadCombo(\"idParam").append(FormatUtilities.replace(fields[i].columnname)).append("\");\n");
         } else if (Utility.isDecimalNumber(fields[i].reference) || Utility.isIntegerNumber(fields[i].reference) || Utility.isDateTime(fields[i].reference)) {
           paramsData.append("frm.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(".value);\n");
           paramsData.append("paramsData[count++] = new Array(\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f\", ");
@@ -551,7 +549,6 @@ public class Buscador extends HttpSecureAppServlet {
     }
     if (scriptSelect) {
       scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/String.js\" type=\"text/javascript\"></SCRIPT>");
-      scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/TypeAheadCombo.js\" type=\"text/javascript\"></SCRIPT>");
     }
     vecScript.addElement(scrScr);
     return strHtml.toString();

@@ -65,52 +65,12 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="WEBDIR" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="ISMULTILINGUALDOCUMENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="ISSMTPAUTHORIZATION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="DOCUMENTDIR" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="WEBPARAM1" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="WEBPARAM2" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="WEBPARAM3" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="WEBPARAM4" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="WEBORDEREMAIL" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="WEBINFO" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="WEBPARAM6" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="WEBPARAM5" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
-        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADCLIENT">

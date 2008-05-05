@@ -381,12 +381,7 @@ public class ImportOrder extends ImportProcess {
               corder.deliveryviarule = (defaultDeliveryViaRule.equals(""))?"S":defaultDeliveryViaRule; // S = shipper
             }
             if (log4j.isDebugEnabled()) log4j.debug("corder.deliveryviarule = " + corder.deliveryviarule);
-            if (data1[0].freightcostrule != null && !data1[0].freightcostrule.equals("")) {
-              corder.freightcostrule = data1[0].freightcostrule;
-            } else {
-              String defaultFreightcostRule = ImportOrderData.defaultValue(con, conn, "C_Order", "FreightCostRule");
-              corder.freightcostrule = (defaultFreightcostRule.equals(""))?"I":defaultFreightcostRule; // I = included
-            }
+            corder.freightcostrule = "I"; // I = included
             if (log4j.isDebugEnabled()) log4j.debug("corder.freightcostrule = " + corder.freightcostrule);
             if (data1[0].cPaymenttermId != null && !data1[0].cPaymenttermId.equals("")) {
               corder.cPaymenttermId = data1[0].cPaymenttermId;
@@ -476,8 +471,7 @@ public class ImportOrder extends ImportProcess {
           if (line.cTaxId == null || line.cTaxId.equals(""))
             line.cTaxId = ProductPriceData.selectCTaxId(conn, vars.getClient());
           data[i].cTaxId = line.cTaxId;
-          if (data[i].freightamt != null && !data[i].freightamt.equals(""))
-            line.freightamt = data[i].freightamt;
+          
           line.dateordered = data[i].dateordered;
           line.mWarehouseId = (data[i].mWarehouseId == null || data[i].mWarehouseId.equals("")) ? vars.getWarehouse() : data[i].mWarehouseId;
           if (line.cUomId == null || line.cUomId.equals(""))  line.cUomId = ProductPriceData.selectCUomIdByProduct(conn, line.mProductId);

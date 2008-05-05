@@ -34,15 +34,19 @@
   Cur_Parameter RECORD;
   Cur_Sequences RECORD;
 
+  v_DBA_ErrorLog_ID       NUMBER;
+  v_Client_ID             NUMBER;
+
 
 BEGIN
 BEGIN --BODY
-  FOR Cur_Parameter IN (SELECT i.Record_ID, i.AD_User_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date, i.UpdatedBy
+  FOR Cur_Parameter IN (SELECT i.ad_client_id, i.Record_ID, i.AD_User_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date, i.UpdatedBy
                         FROM AD_PINSTANCE i LEFT JOIN AD_PINSTANCE_PARA p ON i.AD_PInstance_ID=p.AD_PInstance_ID
                         WHERE i.AD_PInstance_ID=p_PInstance_ID
                         ORDER BY p.SeqNo) LOOP
     p_User := Cur_Parameter.AD_User_ID;
     p_CalcDate := now();
+    v_Client_ID:=Cur_Parameter.AD_Client_ID;
     IF (Cur_Parameter.ParameterName = 'C_Budget_ID') THEN
       p_Budget_ID := Cur_Parameter.P_Number;
     ELSIF (Cur_Parameter.ParameterName = 'MA_ProcessPlan_ID') THEN
@@ -106,8 +110,9 @@ EXCEPTION
     DECLARE
       v_Code NUMBER:= SQLCODE;
     BEGIN
+      AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_Client_ID, v_DBA_ErrorLog_ID);
       INSERT INTO DBA_ERRORLOG (DBA_ErrorLog_ID,Created,Code,Msg,Info)
-      VALUES (DBA_ErrorLog_Seq.NEXTVAL,now(),v_Code,v_ResultStr,'MA_Standard_Cost');
+      VALUES (v_DBA_ErrorLog_ID,now(),v_Code,v_ResultStr,'MA_Standard_Cost');
     END;
     RETURN;
 END MA_STANDARD_COST

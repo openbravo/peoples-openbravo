@@ -36,13 +36,13 @@
         IsActive, Created, CreatedBy, Updated, UpdatedBy,
         Name, Description,
         IsAutoSequence, StartNo, IncrementNo, CurrentNextSys, CurrentNext,
-        IsAudited, IsTableID, StartNewYear)
+        IsTableID, StartNewYear)
      VALUES
         (1, 0, 0,
         'Y', now(), 0, now(), 0,
         'AD_Sequence', 'AD_Sequence',
         'Y', 1000000, 1, 2, 0,
-        'N', 'Y', 'N');
+        'Y', 'N');
 
     end if;
 
@@ -88,7 +88,7 @@
         Name, Description,
         IsAutoSequence, IncrementNo, StartNo,
         CurrentNextSys, CurrentNext,
-        IsAudited, IsTableID, StartNewYear)
+        IsTableID, StartNewYear)
      VALUES
         (v_NextNo, 0, 0,
         'Y', now(), 0, now(), 0,
@@ -111,7 +111,7 @@
                  END) AS SEQUENCE
          FROM AD_SEQUENCE
         WHERE UPPER(NAME) = 'AD_SEQUENCE'),
-        'N', 'Y', 'N');
+        'Y', 'N');
     end if;
 
      FOR Cur_Tables IN (
@@ -131,13 +131,13 @@
         IsActive, Created, CreatedBy, Updated, UpdatedBy,
         Name, Description,
         IsAutoSequence, StartNo, IncrementNo, CurrentNextSys, CurrentNext,
-        IsAudited, IsTableID, StartNewYear)
+        IsTableID, StartNewYear)
      VALUES
         (v_NextNo, 0, 0,
         'Y', now(), 0, now(), 0,
         Cur_Tables.TABLENAME, Cur_Tables.TABLENAME,
         'Y', 1000000, 1, 0, 0,
-        'N', 'Y', 'N');
+        'Y', 'N');
    END LOOP;                DELETE FROM AD_SCRIPT_SQL;
    AD_UPDATE_SEQUENCE_GENERATE() ;
    FOR Cur_Script IN

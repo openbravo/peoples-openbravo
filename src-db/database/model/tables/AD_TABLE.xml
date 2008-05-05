@@ -57,19 +57,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[D]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="AD_WINDOW_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="AD_VAL_RULE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="LOADSEQ" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -93,10 +81,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="REPLICATIONTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[L]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="PO_WINDOW_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -113,9 +97,6 @@
         <default><![CDATA[RE]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_VAL_RULE" name="AD_VALRULE_TABLE">
-        <reference local="AD_VAL_RULE_ID" foreign="AD_VAL_RULE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TABLE" onDelete="setnull">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>

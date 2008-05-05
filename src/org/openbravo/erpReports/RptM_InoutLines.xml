@@ -26,7 +26,6 @@
 		<FIELD id="fieldLot" replaceCharacters="fo">lot</FIELD>
 		<FIELD id="fieldDescription" replaceCharacters="fo">description</FIELD>
 		<FIELD id="fieldMovementqty" replaceCharacters="fo" format="euroInform">movementqty</FIELD>
-    <FIELD id="fieldBundle" replaceCharacters="fo" format="euroInform">bundle</FIELD>
     <!-- <FIELD id="fieldUPC" replaceCharacters="fo" attribute="message" replace="xxx">upc</FIELD> -->
 		<SECTION id="sectionOrder" field="documentno"/>
 		<SECTION id="sectionDetailLines"/>

@@ -28,7 +28,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        select s.Product, s.Measuredate as measuredate, s.Lot, s.sellbydate, TO_CHAR(cg.frecuency, 'HH:MI') as frecuency, s.MA_MEASURE_SHIFT_ID as shiftid, g.MA_MEASURE_GROUP_ID as groupid, g.MA_CCP_GROUP_ID, cg.NAME as grupo, (CASE s.shift WHEN 'M' THEN 'Mañana' ELSE 'Tarde' END) as shift, cg.seqno, REPLACE(s.observation, CHR(10), '') AS observation, (CASE WHEN s.AD_User_ID IS NULL THEN ' ' ELSE TO_CHAR(u.Name) END) as uname
+        select s.Measuredate as measuredate, TO_CHAR(cg.frecuency, 'HH:MI') as frecuency, s.MA_MEASURE_SHIFT_ID as shiftid, g.MA_MEASURE_GROUP_ID as groupid, g.MA_CCP_GROUP_ID, cg.NAME as grupo, (CASE s.shift WHEN 'M' THEN 'Mañana' ELSE 'Tarde' END) as shift, cg.seqno, REPLACE(s.observation, CHR(10), '') AS observation, (CASE WHEN s.AD_User_ID IS NULL THEN ' ' ELSE TO_CHAR(u.Name) END) as uname
         from AD_User u right join MA_Measure_Shift s on u.AD_User_ID  = s.AD_User_ID, MA_Measure_Group g, MA_CCP_Group cg
         where s.MA_MEASURE_SHIFT_ID = g.MA_MEASURE_SHIFT_ID
           and g.MA_CCP_GROUP_ID = cg.MA_CCP_GROUP_ID

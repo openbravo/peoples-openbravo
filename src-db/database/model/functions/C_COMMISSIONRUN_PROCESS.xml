@@ -31,7 +31,6 @@ TYPE RECORD IS REF CURSOR;
   CUR_ComRun RECORD;
  --
  v_C_DocType_ID     NUMBER;
- v_Approved      CHAR(1);
  v_C_Invoice_ID     NUMBER;
  v_NextNo      NUMBER;
  v_DocumentNo     VARCHAR2(40);
@@ -81,11 +80,6 @@ BEGIN
    */
    v_ResultStr := 'GetDocTypeInfo';
   v_C_DocType_ID := Ad_Get_DocType(CUR_ComRun.AD_Client_ID,CUR_ComRun.AD_Org_ID, 'API');
-  SELECT (CASE IsApproved WHEN 'Y' THEN 'N' ELSE 'Y' END)
-    INTO v_Approved
-  FROM C_DOCTYPE
-  WHERE C_DocType_ID = v_C_DocType_ID;
-  --
 
     DECLARE
       Cur_Data RECORD;
@@ -148,7 +142,7 @@ BEGIN
    AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
    IsSOTrx, DocumentNo, DocStatus, DocAction, Processing, Processed,
    C_DocType_ID, C_DocTypeTarget_ID, Description,
-   IsApproved, IsTransferred, SalesRep_ID,
+   SalesRep_ID,
    DateInvoiced, DatePrinted, IsPrinted, DateAcct,
    C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID,
    POReference, DateOrdered, IsDiscountPrinted,
@@ -160,7 +154,7 @@ BEGIN
    CUR_ComRun.AD_Client_ID, CUR_ComRun.AD_Org_ID, 'Y', now(), 0, now(), 0,
    'N', v_DocumentNo, 'DR', 'CO', 'N', 'N',
    v_C_DocType_ID, v_C_DocType_ID, CUR_ComRun.Description,
-   v_Approved, 'N', v_SalesRep_ID,
+   v_SalesRep_ID,
    CUR_ComRun.Updated, NULL, 'N', CUR_ComRun.Updated, -- DateInvoiced=DateAcct
    v_C_PaymentTerm_ID, v_C_BPartner_ID, v_C_BPartner_Location_ID, NULL,
    v_POReference, CUR_ComRun.Updated, v_IsDiscountPrinted,

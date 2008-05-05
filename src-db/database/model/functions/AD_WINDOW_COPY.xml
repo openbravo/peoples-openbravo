@@ -42,7 +42,6 @@
     v_NextNo_F NUMBER;
     v_NoOfTabs NUMBER:=0;
     v_NoOfFields NUMBER:=0;
-    v_EntityType CHAR(1) ;
     Cur_Tabs RECORD;
     Cur_Fields RECORD;
   BEGIN
@@ -76,10 +75,7 @@
     END LOOP; -- Get Parameter
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     v_ResultStr:='GetEntityType';
-    SELECT EntityType
-    INTO v_EntityType
-    FROM AD_Window
-    WHERE AD_Window_ID=v_Record_ID;
+    
     -- Record_ID is the Window_ID to copy to
     FOR Cur_Tabs IN
       (SELECT *  FROM AD_Tab  WHERE AD_Window_ID=v_AD_Window_ID)
@@ -95,7 +91,7 @@
           NAME, DESCRIPTION, HELP, AD_TABLE_ID, TabLevel,
           SEQNO, ISSINGLEROW, ISINFOTAB, ISTRANSLATIONTAB, ISREADONLY,
           AD_COLUMN_ID, HASTREE, WHERECLAUSE, ORDERBYCLAUSE, COMMITWARNING,
-          EntityType, AD_PROCESS_ID, PROCESSING
+          AD_PROCESS_ID, PROCESSING
         )
         VALUES
         (
@@ -104,7 +100,7 @@
           Cur_Tabs.NAME, Cur_Tabs.DESCRIPTION, Cur_Tabs.HELP, Cur_Tabs.AD_TABLE_ID, Cur_Tabs.TabLevel,
           Cur_Tabs.SEQNO, Cur_Tabs.ISSINGLEROW, Cur_Tabs.ISINFOTAB, Cur_Tabs.ISTRANSLATIONTAB, Cur_Tabs.ISREADONLY,
           Cur_Tabs.AD_COLUMN_ID, Cur_Tabs.HASTREE, Cur_Tabs.WHERECLAUSE, Cur_Tabs.ORDERBYCLAUSE, Cur_Tabs.COMMITWARNING,
-          v_EntityType, Cur_Tabs.AD_PROCESS_ID, Cur_Tabs.PROCESSING
+          Cur_Tabs.AD_PROCESS_ID, Cur_Tabs.PROCESSING
         )
         ;
       --  Translate
@@ -144,7 +140,7 @@
             AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
             Name, Description, Help, IsCentrallyMaintained, AD_Column_ID, AD_FieldGroup_ID,
             ISDISPLAYED, DISPLAYLOGIC, DISPLAYLENGTH, ISREADONLY, SEQNO, SORTNO,
-            ISSAMELINE, ISHEADING, ISFIELDONLY, ISENCRYPTED, EntityType
+            ISSAMELINE, ISFIELDONLY, ISENCRYPTED
           )
           VALUES
           (
@@ -152,7 +148,7 @@
             Cur_Fields.AD_Client_ID, Cur_Fields.AD_Org_ID, Cur_Fields.IsActive, now(), 0, now(), 0,
             Cur_Fields.Name, Cur_Fields.Description, Cur_Fields.Help, Cur_Fields.IsCentrallyMaintained, Cur_Fields.AD_Column_ID, Cur_Fields.AD_FieldGroup_ID,
             Cur_Fields.ISDISPLAYED, Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY, Cur_Fields.SEQNO, Cur_Fields.SORTNO,
-            Cur_Fields.ISSAMELINE, Cur_Fields.ISHEADING, Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_EntityType
+            Cur_Fields.ISSAMELINE, Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED
           )
           ;
         -- update translation

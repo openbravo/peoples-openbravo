@@ -134,7 +134,6 @@ public class WindowTreeUtility {
     aux.adFormId = data.getField("adFormId");
     aux.adWorkflowId = data.getField("adWorkflowId");
     aux.adTaskId = data.getField("adTaskId");
-    aux.adWorkbenchId = data.getField("adWorkbenchId");
     return aux;
   }
 

@@ -63,13 +63,6 @@ public class SL_Invoice_DocType extends HttpSecureAppServlet {
       resultado.append("var calloutName='SL_Invoice_DocType';\n\n");
       resultado.append("var respuesta = new Array(");
 
-      resultado.append("new Array(\"inphascharges\", \"" + data[0].hascharges + "\"),");
-      String strIsApproved;
-      if (data[0].isapproved.equals("Y")) strIsApproved="N";
-      else strIsApproved = "Y";
-      resultado.append("new Array(\"inpisapproved\", \"" + strIsApproved + "\"),");
-      
-
        // check if doc type target is different, in this case assing new documentno otherwise matain the previous one 
       String strDoctypetargetinvoice = SEInOutDocTypeData.selectDoctypetargetinvoice(this, strCInvoiceId);
 

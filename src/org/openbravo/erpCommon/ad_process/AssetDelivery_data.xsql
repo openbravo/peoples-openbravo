@@ -93,28 +93,6 @@
     </Sql>
     <Parameter name="adClientId"/>
   </SqlMethod>
-  <SqlMethod name="documentDir" type="preparedStatement" return="String">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT DOCUMENTDIR FROM AD_CLIENT
-      WHERE AD_CLIENT_ID = TO_NUMBER(?)
-      ]]>
-    </Sql>
-    <Parameter name="AdClientId"/>
-  </SqlMethod>
-  <SqlMethod name="selectProductRMailTextID" type="preparedStatement" return="String">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT P.R_MAILTEXT_ID 
-      FROM M_PRODUCT P, A_ASSET A
-      WHERE P.M_PRODUCT_ID = A.M_PRODUCT_ID
-      AND A. A_ASSET_ID = TO_NUMBER(?)
-      ]]>
-    </Sql>
-    <Parameter name="aAssetId"/>
-  </SqlMethod>
   <SqlMethod name="selectAssetHelp" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -161,7 +139,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT P.DOWNLOADURL, P.VERSIONNO, P.R_MAILTEXT_ID, P.M_PRODUCT_ID
+      SELECT P.DOWNLOADURL, P.VERSIONNO, P.M_PRODUCT_ID
       FROM M_PRODUCT P, A_ASSET A
       WHERE P.M_PRODUCT_ID = A.M_PRODUCT_ID
       AND A.A_ASSET_ID = TO_NUMBER(?)

@@ -88,26 +88,6 @@
         v_Count:=v_Count + 1;
       END LOOP;
     END; -- Line
-    -- Break
-    v_ResultStr:='ResequenceBreak';
-    DECLARE
-      Cur_Break RECORD;
-    BEGIN
-      v_NextNo:=10;
-      FOR Cur_Break IN
-        (SELECT M_DiscountSchemaBreak_ID
-        FROM M_DiscountSchemaBreak
-        WHERE M_DiscountSchema_ID=v_Record_ID
-        ORDER BY SeqNo  FOR UPDATE OF SeqNo
-        )
-      LOOP
-        UPDATE M_DiscountSchemaLine
-          SET SeqNo=v_NextNo
-        WHERE M_DiscountSchemaLine.M_DiscountSchemaLine_ID=Cur_Break.M_DiscountSchemaBreak_ID;
-        v_NextNo:=v_NextNo + 10;
-        v_Count:=v_Count + 1;
-      END LOOP;
-    END; -- Line
     v_Message:='@Updated@ ' || v_Count;
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance

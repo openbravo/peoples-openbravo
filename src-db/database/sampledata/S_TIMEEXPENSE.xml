@@ -42,8 +42,6 @@
 <!--1000004-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1000004 PROCESSED-->
 <!--1000004-->              <PROCESSED><![CDATA[Y]]></PROCESSED>
-<!--1000004 ISAPPROVED-->
-<!--1000004-->              <ISAPPROVED><![CDATA[N]]></ISAPPROVED>
 <!--1000004**************--></S_TIMEEXPENSE>
 
 <!--1000005**************--><S_TIMEEXPENSE>
@@ -73,8 +71,6 @@
 <!--1000005-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1000005 PROCESSED-->
 <!--1000005-->              <PROCESSED><![CDATA[Y]]></PROCESSED>
-<!--1000005 ISAPPROVED-->
-<!--1000005-->              <ISAPPROVED><![CDATA[N]]></ISAPPROVED>
 <!--1000005**************--></S_TIMEEXPENSE>
 
 <!--1000006**************--><S_TIMEEXPENSE>
@@ -104,8 +100,6 @@
 <!--1000006-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1000006 PROCESSED-->
 <!--1000006-->              <PROCESSED><![CDATA[Y]]></PROCESSED>
-<!--1000006 ISAPPROVED-->
-<!--1000006-->              <ISAPPROVED><![CDATA[N]]></ISAPPROVED>
 <!--1000006**************--></S_TIMEEXPENSE>
 
 <!--1000007**************--><S_TIMEEXPENSE>
@@ -135,8 +129,6 @@
 <!--1000007-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1000007 PROCESSED-->
 <!--1000007-->              <PROCESSED><![CDATA[Y]]></PROCESSED>
-<!--1000007 ISAPPROVED-->
-<!--1000007-->              <ISAPPROVED><![CDATA[N]]></ISAPPROVED>
 <!--1000007**************--></S_TIMEEXPENSE>
 
 <!--

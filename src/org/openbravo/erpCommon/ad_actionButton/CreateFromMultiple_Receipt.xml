@@ -39,9 +39,6 @@
 	<SUBREPORT id="reportM_LOCATOR_X" name="reportM_LOCATOR_X" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected" withId="paramVacio"/>
 	</SUBREPORT>
-	<SUBREPORT id="reportM_INOUTLINETYPE_ID" name="reportM_INOUTLINETYPE_ID" report="org/openbravo/erpCommon/reference/List">
-		<ARGUMENT name="parameterListSelected" withId="paramVacio"/></SUBREPORT>
-
 <SUBREPORT id="reportM_LOCATOR_TYPE" name="reportM_LOCATOR_TYPE" report="org/openbravo/erpCommon/reference/List">
 <ARGUMENT name="parameterListSelected" withId="paramVacio"/></SUBREPORT>
 

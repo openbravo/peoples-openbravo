@@ -30,106 +30,6 @@
 <!--1-->              <CODE><![CDATA[@M_PRICELIST_ID@]]></CODE>
 <!--1**************--></AD_AUXILIARINPUT>
 
-<!--2**************--><AD_AUXILIARINPUT>
-<!--2 AD_AUXILIARINPUT_ID-->
-<!--2-->              <AD_AUXILIARINPUT_ID><![CDATA[2]]></AD_AUXILIARINPUT_ID>
-<!--2 AD_CLIENT_ID-->
-<!--2-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2 AD_ORG_ID-->
-<!--2-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2 ISACTIVE-->
-<!--2-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2 CREATED-->
-<!--2-->              <CREATED><![CDATA[2003-04-25 00:00:00.0]]></CREATED>
-<!--2 CREATEDBY-->
-<!--2-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--2 UPDATED-->
-<!--2-->              <UPDATED><![CDATA[2003-04-25 00:00:00.0]]></UPDATED>
-<!--2 UPDATEDBY-->
-<!--2-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--2 AD_TAB_ID-->
-<!--2-->              <AD_TAB_ID><![CDATA[186]]></AD_TAB_ID>
-<!--2 NAME-->
-<!--2-->              <NAME><![CDATA[HASCHARGES]]></NAME>
-<!--2 CODE-->
-<!--2-->              <CODE><![CDATA[@SQL=SELECT HASCHARGES FROM C_DOCTYPE WHERE C_DOCTYPE_ID=@C_DOCTYPE_ID@]]></CODE>
-<!--2**************--></AD_AUXILIARINPUT>
-
-<!--3**************--><AD_AUXILIARINPUT>
-<!--3 AD_AUXILIARINPUT_ID-->
-<!--3-->              <AD_AUXILIARINPUT_ID><![CDATA[3]]></AD_AUXILIARINPUT_ID>
-<!--3 AD_CLIENT_ID-->
-<!--3-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--3 AD_ORG_ID-->
-<!--3-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--3 ISACTIVE-->
-<!--3-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--3 CREATED-->
-<!--3-->              <CREATED><![CDATA[2003-04-25 00:00:00.0]]></CREATED>
-<!--3 CREATEDBY-->
-<!--3-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--3 UPDATED-->
-<!--3-->              <UPDATED><![CDATA[2003-04-25 00:00:00.0]]></UPDATED>
-<!--3 UPDATEDBY-->
-<!--3-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--3 AD_TAB_ID-->
-<!--3-->              <AD_TAB_ID><![CDATA[294]]></AD_TAB_ID>
-<!--3 NAME-->
-<!--3-->              <NAME><![CDATA[HASCHARGES]]></NAME>
-<!--3 CODE-->
-<!--3-->              <CODE><![CDATA[@SQL=SELECT HASCHARGES FROM C_DOCTYPE WHERE C_DOCTYPE_ID=@C_DOCTYPE_ID@]]></CODE>
-<!--3**************--></AD_AUXILIARINPUT>
-
-<!--4**************--><AD_AUXILIARINPUT>
-<!--4 AD_AUXILIARINPUT_ID-->
-<!--4-->              <AD_AUXILIARINPUT_ID><![CDATA[4]]></AD_AUXILIARINPUT_ID>
-<!--4 AD_CLIENT_ID-->
-<!--4-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--4 AD_ORG_ID-->
-<!--4-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--4 ISACTIVE-->
-<!--4-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--4 CREATED-->
-<!--4-->              <CREATED><![CDATA[2003-04-25 00:00:00.0]]></CREATED>
-<!--4 CREATEDBY-->
-<!--4-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--4 UPDATED-->
-<!--4-->              <UPDATED><![CDATA[2003-04-25 00:00:00.0]]></UPDATED>
-<!--4 UPDATEDBY-->
-<!--4-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--4 AD_TAB_ID-->
-<!--4-->              <AD_TAB_ID><![CDATA[263]]></AD_TAB_ID>
-<!--4 NAME-->
-<!--4-->              <NAME><![CDATA[HASCHARGES]]></NAME>
-<!--4 CODE-->
-<!--4-->              <CODE><![CDATA[@SQL=SELECT HASCHARGES FROM C_DOCTYPE WHERE C_DOCTYPE_ID=@C_DOCTYPE_ID@]]></CODE>
-<!--4**************--></AD_AUXILIARINPUT>
-
-<!--5**************--><AD_AUXILIARINPUT>
-<!--5 AD_AUXILIARINPUT_ID-->
-<!--5-->              <AD_AUXILIARINPUT_ID><![CDATA[5]]></AD_AUXILIARINPUT_ID>
-<!--5 AD_CLIENT_ID-->
-<!--5-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--5 AD_ORG_ID-->
-<!--5-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--5 ISACTIVE-->
-<!--5-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--5 CREATED-->
-<!--5-->              <CREATED><![CDATA[2003-04-25 00:00:00.0]]></CREATED>
-<!--5 CREATEDBY-->
-<!--5-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--5 UPDATED-->
-<!--5-->              <UPDATED><![CDATA[2003-04-25 00:00:00.0]]></UPDATED>
-<!--5 UPDATEDBY-->
-<!--5-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--5 AD_TAB_ID-->
-<!--5-->              <AD_TAB_ID><![CDATA[290]]></AD_TAB_ID>
-<!--5 NAME-->
-<!--5-->              <NAME><![CDATA[HASCHARGES]]></NAME>
-<!--5 CODE-->
-<!--5-->              <CODE><![CDATA[@SQL=SELECT HASCHARGES FROM C_DOCTYPE WHERE C_DOCTYPE_ID=@C_DOCTYPE_ID@]]></CODE>
-<!--5**************--></AD_AUXILIARINPUT>
-
 <!--6**************--><AD_AUXILIARINPUT>
 <!--6 AD_AUXILIARINPUT_ID-->
 <!--6-->              <AD_AUXILIARINPUT_ID><![CDATA[6]]></AD_AUXILIARINPUT_ID>
@@ -154,31 +54,6 @@
 <!--6 CODE-->
 <!--6-->              <CODE><![CDATA[@SQL=SELECT DOCSUBTYPESO FROM C_DOCTYPE WHERE C_DOCTYPE_ID = @C_DOCTYPETARGET_ID@]]></CODE>
 <!--6**************--></AD_AUXILIARINPUT>
-
-<!--7**************--><AD_AUXILIARINPUT>
-<!--7 AD_AUXILIARINPUT_ID-->
-<!--7-->              <AD_AUXILIARINPUT_ID><![CDATA[7]]></AD_AUXILIARINPUT_ID>
-<!--7 AD_CLIENT_ID-->
-<!--7-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--7 AD_ORG_ID-->
-<!--7-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--7 ISACTIVE-->
-<!--7-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--7 CREATED-->
-<!--7-->              <CREATED><![CDATA[2003-07-28 00:00:00.0]]></CREATED>
-<!--7 CREATEDBY-->
-<!--7-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--7 UPDATED-->
-<!--7-->              <UPDATED><![CDATA[2003-07-28 00:00:00.0]]></UPDATED>
-<!--7 UPDATEDBY-->
-<!--7-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--7 AD_TAB_ID-->
-<!--7-->              <AD_TAB_ID><![CDATA[257]]></AD_TAB_ID>
-<!--7 NAME-->
-<!--7-->              <NAME><![CDATA[HASCHARGES]]></NAME>
-<!--7 CODE-->
-<!--7-->              <CODE><![CDATA[@SQL=SELECT HASCHARGES FROM C_DOCTYPE WHERE C_DOCTYPE_ID=@C_DOCTYPE_ID@]]></CODE>
-<!--7**************--></AD_AUXILIARINPUT>
 
 <!--8**************--><AD_AUXILIARINPUT>
 <!--8 AD_AUXILIARINPUT_ID-->
@@ -205,81 +80,6 @@
 <!--8-->              <CODE><![CDATA[@SQL=SELECT DOCSUBTYPESO FROM C_DOCTYPE WHERE C_DOCTYPE_ID = @C_DOCTYPETARGET_ID@]]></CODE>
 <!--8**************--></AD_AUXILIARINPUT>
 
-<!--9**************--><AD_AUXILIARINPUT>
-<!--9 AD_AUXILIARINPUT_ID-->
-<!--9-->              <AD_AUXILIARINPUT_ID><![CDATA[9]]></AD_AUXILIARINPUT_ID>
-<!--9 AD_CLIENT_ID-->
-<!--9-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--9 AD_ORG_ID-->
-<!--9-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--9 ISACTIVE-->
-<!--9-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--9 CREATED-->
-<!--9-->              <CREATED><![CDATA[2003-04-25 00:00:00.0]]></CREATED>
-<!--9 CREATEDBY-->
-<!--9-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--9 UPDATED-->
-<!--9-->              <UPDATED><![CDATA[2003-04-25 00:00:00.0]]></UPDATED>
-<!--9 UPDATEDBY-->
-<!--9-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--9 AD_TAB_ID-->
-<!--9-->              <AD_TAB_ID><![CDATA[186]]></AD_TAB_ID>
-<!--9 NAME-->
-<!--9-->              <NAME><![CDATA[HASCHARGE]]></NAME>
-<!--9 CODE-->
-<!--9-->              <CODE><![CDATA[@SQL=SELECT HASCHARGES FROM C_DOCTYPE WHERE C_DOCTYPE_ID=@C_DOCTYPE_ID@]]></CODE>
-<!--9**************--></AD_AUXILIARINPUT>
-
-<!--10**************--><AD_AUXILIARINPUT>
-<!--10 AD_AUXILIARINPUT_ID-->
-<!--10-->              <AD_AUXILIARINPUT_ID><![CDATA[10]]></AD_AUXILIARINPUT_ID>
-<!--10 AD_CLIENT_ID-->
-<!--10-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--10 AD_ORG_ID-->
-<!--10-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--10 ISACTIVE-->
-<!--10-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--10 CREATED-->
-<!--10-->              <CREATED><![CDATA[2003-04-25 00:00:00.0]]></CREATED>
-<!--10 CREATEDBY-->
-<!--10-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--10 UPDATED-->
-<!--10-->              <UPDATED><![CDATA[2003-04-25 00:00:00.0]]></UPDATED>
-<!--10 UPDATEDBY-->
-<!--10-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--10 AD_TAB_ID-->
-<!--10-->              <AD_TAB_ID><![CDATA[263]]></AD_TAB_ID>
-<!--10 NAME-->
-<!--10-->              <NAME><![CDATA[HASCHARGE]]></NAME>
-<!--10 CODE-->
-<!--10-->              <CODE><![CDATA[@SQL=SELECT HASCHARGES FROM C_DOCTYPE WHERE C_DOCTYPE_ID=@C_DOCTYPE_ID@]]></CODE>
-<!--10**************--></AD_AUXILIARINPUT>
-
-<!--11**************--><AD_AUXILIARINPUT>
-<!--11 AD_AUXILIARINPUT_ID-->
-<!--11-->              <AD_AUXILIARINPUT_ID><![CDATA[11]]></AD_AUXILIARINPUT_ID>
-<!--11 AD_CLIENT_ID-->
-<!--11-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--11 AD_ORG_ID-->
-<!--11-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--11 ISACTIVE-->
-<!--11-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--11 CREATED-->
-<!--11-->              <CREATED><![CDATA[2003-04-25 00:00:00.0]]></CREATED>
-<!--11 CREATEDBY-->
-<!--11-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--11 UPDATED-->
-<!--11-->              <UPDATED><![CDATA[2003-04-25 00:00:00.0]]></UPDATED>
-<!--11 UPDATEDBY-->
-<!--11-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--11 AD_TAB_ID-->
-<!--11-->              <AD_TAB_ID><![CDATA[294]]></AD_TAB_ID>
-<!--11 NAME-->
-<!--11-->              <NAME><![CDATA[HASCHARGE]]></NAME>
-<!--11 CODE-->
-<!--11-->              <CODE><![CDATA[@SQL=SELECT HASCHARGES FROM C_DOCTYPE WHERE C_DOCTYPE_ID=@C_DOCTYPE_ID@]]></CODE>
-<!--11**************--></AD_AUXILIARINPUT>
-
 <!--12**************--><AD_AUXILIARINPUT>
 <!--12 AD_AUXILIARINPUT_ID-->
 <!--12-->              <AD_AUXILIARINPUT_ID><![CDATA[12]]></AD_AUXILIARINPUT_ID>
@@ -304,31 +104,6 @@
 <!--12 CODE-->
 <!--12-->              <CODE><![CDATA[@SQL=SELECT DESCRIPTION FROM GL_JOURNALBATCH WHERE GL_JOURNALBATCH_ID=@GL_JOURNALBATCH_ID@]]></CODE>
 <!--12**************--></AD_AUXILIARINPUT>
-
-<!--13**************--><AD_AUXILIARINPUT>
-<!--13 AD_AUXILIARINPUT_ID-->
-<!--13-->              <AD_AUXILIARINPUT_ID><![CDATA[13]]></AD_AUXILIARINPUT_ID>
-<!--13 AD_CLIENT_ID-->
-<!--13-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--13 AD_ORG_ID-->
-<!--13-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--13 ISACTIVE-->
-<!--13-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--13 CREATED-->
-<!--13-->              <CREATED><![CDATA[2003-04-25 00:00:00.0]]></CREATED>
-<!--13 CREATEDBY-->
-<!--13-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--13 UPDATED-->
-<!--13-->              <UPDATED><![CDATA[2003-04-25 00:00:00.0]]></UPDATED>
-<!--13 UPDATEDBY-->
-<!--13-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--13 AD_TAB_ID-->
-<!--13-->              <AD_TAB_ID><![CDATA[470]]></AD_TAB_ID>
-<!--13 NAME-->
-<!--13-->              <NAME><![CDATA[HASCHARGES]]></NAME>
-<!--13 CODE-->
-<!--13-->              <CODE><![CDATA[@SQL=SELECT HASCHARGES FROM C_DOCTYPE WHERE C_DOCTYPE_ID=@C_DOCTYPE_ID@]]></CODE>
-<!--13**************--></AD_AUXILIARINPUT>
 
 <!--14**************--><AD_AUXILIARINPUT>
 <!--14 AD_AUXILIARINPUT_ID-->

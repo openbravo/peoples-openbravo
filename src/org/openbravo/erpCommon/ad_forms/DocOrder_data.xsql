@@ -28,7 +28,7 @@
       <![CDATA[
         SELECT it.C_Tax_ID, t.Name, t.Rate, it.TaxBaseAmt, it.TaxAmt, '' AS C_ORDER_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID, '' AS ISACTIVE,
         '' AS CREATED, '' AS CREATEDBY, '' AS UPDATED, '' AS UPDATEDBY, '' AS ISSOTRX, '' AS DOCUMENTNO, '' AS DOCSTATUS, '' AS DOCACTION,
-        '' AS PROCESSING, '' AS PROCESSED, '' AS C_DOCTYPE_ID, '' AS C_DOCTYPETARGET_ID, '' AS DESCRIPTION, '' AS ISAPPROVED, '' AS ISCREDITAPPROVED,
+        '' AS PROCESSING, '' AS PROCESSED, '' AS C_DOCTYPE_ID, '' AS C_DOCTYPETARGET_ID, '' AS DESCRIPTION, 
         '' AS ISDELIVERED, '' AS ISPRINTED, '' AS ISSELECTED, '' AS SALESREP_ID, '' AS DATEORDERED, '' AS DATEPROMISED, '' AS DATEPRINTED,
         '' AS DATEACCT, '' AS C_BPARTNER_ID, '' AS BILLTO_ID, '' AS C_BPARTNER_LOCATION_ID, '' AS POREFERENCE, '' AS ISDISCOUNTPRINTED,
         '' AS C_CURRENCY_ID, '' AS PAYMENTRULE, '' AS C_PAYMENTTERM_ID, '' AS INVOICERULE, '' AS DELIVERYRULE, '' AS FREIGHTCOSTRULE,
@@ -75,29 +75,6 @@
      ]]>
      </Sql>
      <Parameter name="Record_ID"/>
-     <Parameter name="Record_ID"/>
-   </SqlMethod>
-  <SqlMethod name="updateProductCosting" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        UPDATE M_Product_Costing 
-        SET PriceLastPO = (SELECT AVG(C_Currency_Convert(to_number(ol.PriceActual),to_number(ol.C_Currency_ID),to_number(a.C_Currency_ID),to_date(o.DateOrdered),to_char(null),to_number(o.AD_Client_ID),to_number(o.AD_Org_ID)))
-                FROM C_Order o, C_OrderLine ol, C_AcctSchema a 
-                WHERE o.C_Order_ID=ol.C_Order_ID
-                AND M_Product_Costing.M_Product_ID=ol.M_Product_ID AND M_Product_Costing.C_AcctSchema_ID=a.C_AcctSchema_ID
-                AND M_Product_Costing.C_AcctSchema_ID = TO_NUMBER(?)
-                AND o.C_Order_ID = TO_NUMBER(?))
-        WHERE EXISTS (SELECT * FROM C_Order o, C_OrderLine ol, C_AcctSchema a 
-                WHERE o.C_Order_ID = ol.C_Order_ID
-                AND M_Product_Costing.M_Product_ID=ol.M_Product_ID AND M_Product_Costing.C_AcctSchema_ID=a.C_AcctSchema_ID
-                AND M_Product_Costing.C_AcctSchema_ID = TO_NUMBER(?)
-                AND o.C_Order_ID = TO_NUMBER(?))
-     ]]>
-     </Sql>
-     <Parameter name="C_AcctSchema_ID"/>
-     <Parameter name="Record_ID"/>
-     <Parameter name="C_AcctSchema_ID"/>
      <Parameter name="Record_ID"/>
    </SqlMethod>
    </SqlClass>

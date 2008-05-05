@@ -82,14 +82,14 @@ BEGIN
         AD_Org_ID, AD_Client_ID, IsActive,
         Created, CreatedBy, Updated,
         UpdatedBy, C_Location_ID, Duns,
-        TaxID, PA_Goal_ID
+        TaxID
       )
       VALUES
       (
         :new.AD_Org_ID, :new.AD_Client_ID, 'Y',
         now(), :new.CreatedBy, now(),
         :new.CreatedBy, NULL, '?',
-         '?', NULL
+         '?'
       )
       ;
   ELSIF(DELETING) THEN

@@ -105,10 +105,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PA_GOAL_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="M_PRICELIST_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -185,9 +181,6 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT" name="MPRODUCT_ADCLIENTINFO">
         <reference local="M_PRODUCTFREIGHT_ID" foreign="M_PRODUCT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="PA_GOAL" name="PAGOAL_AD_CLIENTINFO">
-        <reference local="PA_GOAL_ID" foreign="PA_GOAL_ID"/>
       </foreign-key>
       <check name="ADCLIENTINFO_ACCT2ACTIVE_CHECK"><![CDATA[ACCT2_ACTIVE IN ('Y', 'N')]]></check>
       <check name="ADCLIENTINFO_ACCT3ACTIVE_CHECK"><![CDATA[ACCT3_ACTIVE IN ('Y', 'N')]]></check>

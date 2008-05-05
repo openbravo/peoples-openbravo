@@ -41,7 +41,6 @@ var baseDirection = "../../../../../web/";
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/callOut.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="javascript" type="text/javascript">
 keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', null, true, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_D', document.frmMain.inpcBpartnerId_D.value, 'inpIDValue', document.frmMain.inpcBpartnerId.value, 'Command', 'KEY', 'WindowID', 'InvoiceVendorMultiline.html');", "inpcBpartnerId_D", "null");
 
@@ -58,10 +57,6 @@ return true;
 }
 
 function onloadFunctions() {
-  new TypeAheadCombo("reportAD_Org_ID_S");
-  new TypeAheadCombo("reportC_BPartner_Location_ID_S");
-  new TypeAheadCombo("reportPaymentRule_S");
-  new TypeAheadCombo("reportC_PaymentTerm_ID_S");
   enableLocalShortcuts();
 }
 

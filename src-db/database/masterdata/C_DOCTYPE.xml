@@ -30,36 +30,16 @@
 <!--0-->              <DOCBASETYPE><![CDATA[   ]]></DOCBASETYPE>
 <!--0 ISSOTRX-->
 <!--0-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--0 HASPROFORMA-->
-<!--0-->              <HASPROFORMA><![CDATA[N]]></HASPROFORMA>
-<!--0 CREATEPICKLIST-->
-<!--0-->              <CREATEPICKLIST><![CDATA[N]]></CREATEPICKLIST>
-<!--0 ISAPPROVED-->
-<!--0-->              <ISAPPROVED><![CDATA[N]]></ISAPPROVED>
 <!--0 ISDOCNOCONTROLLED-->
 <!--0-->              <ISDOCNOCONTROLLED><![CDATA[N]]></ISDOCNOCONTROLLED>
-<!--0 ISBATCHED-->
-<!--0-->              <ISBATCHED><![CDATA[N]]></ISBATCHED>
-<!--0 ISBATCHCONTROLENFORCED-->
-<!--0-->              <ISBATCHCONTROLENFORCED><![CDATA[N]]></ISBATCHCONTROLENFORCED>
-<!--0 ISBATCHDOCNOCONTROLLED-->
-<!--0-->              <ISBATCHDOCNOCONTROLLED><![CDATA[N]]></ISBATCHDOCNOCONTROLLED>
 <!--0 GL_CATEGORY_ID-->
 <!--0-->              <GL_CATEGORY_ID><![CDATA[0]]></GL_CATEGORY_ID>
-<!--0 ISPRINTED-->
-<!--0-->              <ISPRINTED><![CDATA[Y]]></ISPRINTED>
-<!--0 ISTRANSFERRED-->
-<!--0-->              <ISTRANSFERRED><![CDATA[Y]]></ISTRANSFERRED>
-<!--0 HASCHARGES-->
-<!--0-->              <HASCHARGES><![CDATA[N]]></HASCHARGES>
 <!--0 DOCUMENTNOTE-->
 <!--0-->              <DOCUMENTNOTE><![CDATA[** NO INVOICE **]]></DOCUMENTNOTE>
 <!--0 ISDEFAULT-->
 <!--0-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--0 DOCUMENTCOPIES-->
 <!--0-->              <DOCUMENTCOPIES><![CDATA[1]]></DOCUMENTCOPIES>
-<!--0 ISMAXTABLE-->
-<!--0-->              <ISMAXTABLE><![CDATA[N]]></ISMAXTABLE>
 <!--0 ORGFILTERED-->
 <!--0-->              <ORGFILTERED><![CDATA[N]]></ORGFILTERED>
 <!--0**************--></C_DOCTYPE>

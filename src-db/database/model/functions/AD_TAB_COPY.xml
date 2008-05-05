@@ -70,7 +70,7 @@
     END LOOP; -- Get Parameter
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     v_ResultStr:='GetEntityType';
-    SELECT EntityType  INTO v_EntityType  FROM AD_Tab  WHERE AD_Tab_ID=v_Record_ID;
+    
     -- Record_ID is the Tab_ID to copy to
     v_ResultStr:='Copying';
     FOR Cur_Fields IN
@@ -87,8 +87,8 @@
           UpdatedBy, Name, Description, Help,
           IsCentrallyMaintained, AD_Column_ID, AD_FieldGroup_ID, ISDISPLAYED,
           DISPLAYLOGIC, DISPLAYLENGTH, ISREADONLY,
-          SEQNO, SORTNO, ISSAMELINE, ISHEADING,
-          ISFIELDONLY, ISENCRYPTED, EntityType
+          SEQNO, SORTNO, ISSAMELINE,
+          ISFIELDONLY, ISENCRYPTED
         )
         VALUES
         (v_NextNo, v_Record_ID, Cur_Fields.AD_Client_ID, Cur_Fields.AD_Org_ID,
@@ -96,8 +96,8 @@
         0, Cur_Fields.Name, Cur_Fields.Description, Cur_Fields.Help,
         Cur_Fields.IsCentrallyMaintained, Cur_Fields.AD_Column_ID, Cur_Fields.AD_FieldGroup_ID, Cur_Fields.ISDISPLAYED,
         Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY,
-        Cur_Fields.SEQNO, Cur_Fields.SORTNO, Cur_Fields.ISSAMELINE, Cur_Fields.ISHEADING,
-        Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_EntityType) ;
+        Cur_Fields.SEQNO, Cur_Fields.SORTNO, Cur_Fields.ISSAMELINE, 
+        Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED) ;
       -- update translation
       UPDATE AD_Field_Trl
         SET Name=

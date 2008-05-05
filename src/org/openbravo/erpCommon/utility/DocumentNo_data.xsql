@@ -25,13 +25,9 @@
 <SqlClass name="DocumentNoData" package="org.openbravo.erpCommon.utility">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT ISMAXTABLE 
-        FROM C_DOCTYPE 
-        WHERE C_DOCTYPE_ID = TO_NUMBER(?) 
-      ]]></Sql>
-      <Parameter name="cDoctypeId"/>
+     <Sql>
+       select 1 as a from dual
+     </Sql>
    </SqlMethod>
    <SqlMethod name="nextDocType" type="callableStatement" return="object" object="CSResponse">
       <SqlMethodComment></SqlMethodComment>

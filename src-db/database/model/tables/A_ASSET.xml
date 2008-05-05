@@ -201,10 +201,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CAUSE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="DOCUMENTNO" primaryKey="false" required="false" type="NVARCHAR" size="30" autoIncrement="false">
         <default/>
         <onCreateDefault/>

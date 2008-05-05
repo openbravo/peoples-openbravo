@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,7 @@
 				C_Region_ID, RegionName, C_Country_ID, CountryCode, AD_User_ID, Phone, C_Project_ID, C_Activity_ID,
 				C_DocType_ID, DocTypeName, C_PaymentTerm_ID, PaymentTermValue, C_Order_ID, DocumentNo, Description,
 				M_Product_ID, ProductValue, UPC, SKU, C_Tax_ID, TaxIndicator, TaxAmt, C_OrderLine_ID, LineDescription,
-				C_UOM_ID, QtyOrdered, PriceActual, FreightAmt, C_Campaign_ID, DateOrdered, DatePromised, Order_ReferenceNo,
+				C_UOM_ID, QtyOrdered, PriceActual, C_Campaign_ID, DateOrdered, DatePromised, Order_ReferenceNo,
 				BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Vendor_UPC, Perform_Post, Paymentamount1, Paymentrule1, Paymentamount2, Paymentrule2, '' AS Date_Time_Format
 				FROM I_Order
 				WHERE I_IsImported='N'

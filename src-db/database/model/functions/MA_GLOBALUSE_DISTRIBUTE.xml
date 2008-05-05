@@ -48,6 +48,8 @@
     v_ProductName VARCHAR2(100);
     Cur_GlobalUse RECORD;
     Cur_ProductionPlan RECORD;
+    v_AD_Client_ID NUMBER;
+    v_DBA_ErrorLog_ID NUMBER;
   BEGIN
     --  Get Parameters
     v_ResultStr:='ReadingParameters';
@@ -154,6 +156,7 @@ WHEN OTHERS THEN
     DECLARE
       v_Code NUMBER:=SQLCODE;
     BEGIN
+      AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_AD_Client_ID, v_DBA_ErrorLog_ID);
       INSERT
       INTO DBA_ERRORLOG
         (
@@ -163,7 +166,7 @@ WHEN OTHERS THEN
         )
         VALUES
         (
-          DBA_ErrorLog_Seq.NEXTVAL, now(),
+          v_DBA_ErrorLog_ID, now(),
           v_Code, v_ResultStr,
            'MA_GlobalUse_Distribute'
         )

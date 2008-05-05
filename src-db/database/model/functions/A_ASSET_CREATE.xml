@@ -87,7 +87,7 @@
     IF(p_InOutLine_ID IS NOT NULL) THEN
       FOR Cur_ShipLine IN
         (SELECT s.AD_Client_ID, s.AD_Org_ID, s.DocumentNo, s.MovementDate, s.C_BPartner_ID, s.C_BPartner_Location_ID, s.AD_User_ID, bp.Value AS BP_Value, bp.Name AS BP_Name, p.Value, p.Name, p.Description, p.Help, p.VersionNo, pc.A_Asset_Group_ID, CASE WHEN p.GuaranteeDays IS NOT NULL THEN s.MovementDate+p.GuaranteeDays ELSE NULL
-          END AS GuaranteeDate, sl.M_Product_ID, sl.SerNo, sl.Lot, sl.Description AS LineDescription, sl.MovementQty
+          END AS GuaranteeDate, sl.M_Product_ID, sl.Description AS LineDescription, sl.MovementQty
         FROM M_InOut s
         INNER JOIN M_InOutLine sl
           ON(s.M_InOut_ID=sl.M_InOut_ID)
@@ -115,27 +115,15 @@
           INTO A_Asset
             (
               A_Asset_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
-              Value, Name, Description, Help, A_Asset_Group_ID, M_Product_ID, SerNo, Lot, VersionNo,
+              Value, Name, Description, Help, A_Asset_Group_ID, M_Product_ID, VersionNo,
               GuaranteeDate, AssetServiceDate, IsOwned, IsDepreciated, AssetDepreciationDate, IsInPosession,
               LocationComment, C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID
             )
             VALUES
             (v_A_Asset_ID, Cur_Shipline.AD_Client_ID, Cur_Shipline.AD_Org_ID, 'Y', now(), 0, now(), 0, SUBSTR(Cur_Shipline.BP_Value, 1, 40-LENGTH(v_Value)) || v_Value, SUBSTR(Cur_Shipline.BP_Name, 1,
             60-LENGTH(v_Name)) || v_Name, SUBSTR(Cur_Shipline.Description || ' ' || Cur_Shipline.LineDescription, 1, 255), Cur_Shipline.Help, Cur_Shipline.A_Asset_Group_ID, Cur_Shipline.M_Product_ID,
-            Cur_Shipline.SerNo, Cur_Shipline.Lot, Cur_Shipline.VersionNo, Cur_Shipline.GuaranteeDate, Cur_Shipline.MovementDate, 'N', 'N', null, 'N', v_DocumentNo, Cur_Shipline.C_BPartner_ID, Cur_Shipline.C_BPartner_Location_ID, Cur_Shipline.AD_User_ID) ;
+            Cur_Shipline.VersionNo, Cur_Shipline.GuaranteeDate, Cur_Shipline.MovementDate, 'N', 'N', null, 'N', v_DocumentNo, Cur_Shipline.C_BPartner_ID, Cur_Shipline.C_BPartner_Location_ID, Cur_Shipline.AD_User_ID) ;
             DBMS_OUTPUT.PUT_LINE('A_Asset_ID=' || v_A_Asset_ID || ' - ' || Cur_Shipline.Value||v_DocumentNo) ;
-          ----
-          v_ResultStr:='InsertingAssetDelivery';
-          AD_Sequence_Next('A_Asset_Delivery', Cur_Shipline.AD_Client_ID, v_A_Asset_Delivery_ID) ;
-          --
-          INSERT
-          INTO A_Asset_Delivery
-            (
-              A_Asset_Delivery_ID, A_Asset_ID, AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy, MovementDate, SerNo, Lot, VersionNo, M_InOutLine_ID, AD_User_ID
-            )
-            VALUES
-            (v_A_Asset_Delivery_ID, v_A_Asset_ID, Cur_Shipline.AD_Client_ID, Cur_Shipline.AD_Org_ID, 'Y', now(), 0, now(), 0, Cur_Shipline.MovementDate, Cur_Shipline.SerNo, Cur_Shipline.Lot, Cur_Shipline.VersionNo, p_InOutLine_ID, Cur_Shipline.AD_User_ID) ;
-          DBMS_OUTPUT.PUT_LINE('  Delivery_ID=' || v_A_Asset_Delivery_ID) ;
         END LOOP;
         v_count:=v_count + 1;
 		v_Message:='@Created@: ' || v_count;

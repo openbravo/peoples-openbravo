@@ -32,7 +32,6 @@
               s.SEQNO, AD_MESSAGE_GET2(s.GROUPUSE, to_char(?)) as groupuse, AD_MESSAGE_GET2(s.NOQTY, to_char(?)) as vacio,
               p.name as producto, sp.PRODUCTIONTYPE as tipo, AD_MESSAGE_GET2(sp.PRODUCTIONTYPE, to_char(?)) as bold,
               sp.QUANTITY, c.UOMSYMBOL as ud, sp.COMPONENTCOST, sp.DECREASE, sp.REJECTED,
-              AD_MESSAGE_GET2(sp.CONSUMERM, to_char(?)) as consumerm, AD_MESSAGE_GET2(sp.DECREASEIND, to_char(?)) as decreaseind, 
               pp.MA_ProcessPlan_ID, s.MA_Sequence_ID, AD_MESSAGE_GET2(pp.EXPLODEPHASES, to_char(?)) as explodephases
           FROM MA_Processplan pp, MA_processplan_version v, ma_sequence s, ma_sequenceproduct sp, 
               m_product p, ma_process pr, C_UOM c
@@ -48,8 +47,6 @@
           order by pp.ma_processplan_id, pp.NAME, s.seqno, sp.productiontype, p.name
         ]]>
       </Sql>
-      <Parameter name="language"/>
-      <Parameter name="language"/>
       <Parameter name="language"/>
       <Parameter name="language"/>
       <Parameter name="language"/>

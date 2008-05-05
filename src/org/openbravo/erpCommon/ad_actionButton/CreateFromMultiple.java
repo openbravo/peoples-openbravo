@@ -182,31 +182,6 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     if (strmWarehouseId.equals("") && dataW!=null && dataW.length>0) strmWarehouseId = dataW[0].mWarehouseId;
     xmlDocument.setData("reportM_LOCATOR_X", "liststructure", CreateFromMultipleReceiptData.selectM_Locator_X(this,strmWarehouseId));
 
-
-if (vars.getLanguage().equals("en_US")) {
-
-	try {
-		ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Inoutline_Type_ID", "", "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
-		Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
-		xmlDocument.setData("reportM_INOUTLINETYPE_ID","liststructure", comboTableData.select(false));
-		comboTableData = null;
-	} catch (Exception ex) {
-		throw new ServletException(ex);
-	}
-
-    } else {
-
-	try {
-		ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Inoutline_Type_ID", "", "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
-		Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
-		xmlDocument.setData("reportM_INOUTLINETYPE_ID","liststructure", comboTableData.select(false));
-		comboTableData = null;
-	} catch (Exception ex) {
-		throw new ServletException(ex);
-	}
-
-    }
-
 	try {
 		ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Locator_Type_ID", "", "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
 		Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
@@ -265,17 +240,6 @@ if (vars.getLanguage().equals("en_US")) {
 		throw new ServletException(ex);
 	}
 
-
-
-	try {
-		ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Inoutline_Type_ID", "", "", Utility.getContext(this, vars, "#User_Org", strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
-		Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, "");
-		xmlDocument.setData("reportM_INOUTLINETYPE_ID","liststructure", comboTableData.select(false));
-		comboTableData = null;
-	} catch (Exception ex) {
-		throw new ServletException(ex);
-	}
-
     xmlDocument.setData("structure1", data);
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -298,7 +262,6 @@ if (vars.getLanguage().equals("en_US")) {
     String strQuantityOrder = vars.getStringParameter("inpquantityorder");
     String strProductUOM = vars.getStringParameter("inpmProductUomId");
     String strWarehouse = vars.getRequiredStringParameter("inpmWarehouseId");
-    String strInoutlineType = vars.getStringParameter("inpmInoutlineTypeId");
     String strLocator = vars.getStringParameter("inpmLocatorX");
     String strNumero = vars.getRequiredStringParameter("inpnumerolineas");
     String strLocatorType = vars.getStringParameter("inpmLocatorType");
@@ -315,7 +278,7 @@ if (vars.getLanguage().equals("en_US")) {
           String strM_Locator_ID = (count>locators.length-1)?"":locators[count].mLocatorId;
           if (strM_Locator_ID.equals("")) break;
           String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
-          CreateFromMultipleReceiptData.insert(conn, this, strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strKey, strM_Locator_ID, strProduct, strUOM, strQty, strAtributo, strQuantityOrder, strProductUOM, strInoutlineType);
+          CreateFromMultipleReceiptData.insert(conn, this, strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strKey, strM_Locator_ID, strProduct, strUOM, strQty, strAtributo, strQuantityOrder, strProductUOM);
         }
       }
       strMessage = Utility.messageBD(this, "Success", vars.getLanguage()) + " - " + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + count;
@@ -335,7 +298,6 @@ if (vars.getLanguage().equals("en_US")) {
   String saveShipment(VariablesSecureApp vars, String strKey, String strWindowId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Save: Shipment");
     String strStorageDetail = vars.getInStringParameter("inpmStorageDetailId");
-    String strInoutlineType = vars.getStringParameter("inpmInoutlineTypeId");
     if (strStorageDetail.equals("")) return "";
     Connection conn = null;
     try {
@@ -350,7 +312,7 @@ if (vars.getLanguage().equals("en_US")) {
           String strQtyOrder = vars.getStringParameter("inpquantityorder" + strStorageDetailId);
           
           String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
-          CreateFromMultipleShipmentData.insert(conn, this, strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strKey, strQty, strQtyOrder, strInoutlineType, strStorageDetailId);
+          CreateFromMultipleShipmentData.insert(conn, this, strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strKey, strQty, strQtyOrder, strStorageDetailId);
         }
       }
       releaseCommitConnection(conn);

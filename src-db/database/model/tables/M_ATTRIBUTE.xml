@@ -49,10 +49,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="M_ATTRIBUTESEARCH_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="ISLIST" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
@@ -62,9 +58,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_MATTRIBUTE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="M_ATTRIBUTESEARCH" name="MATTRIBUTESEARCH_MATTRIBUTE">
-        <reference local="M_ATTRIBUTESEARCH_ID" foreign="M_ATTRIBUTESEARCH_ID"/>
       </foreign-key>
       <check name="M_ATTRIBUTE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_ATTRIBUTE_ISMANDATORY_CHECK"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>

@@ -64,8 +64,10 @@
     Cur_Parameter RECORD;
     -- Record Info
     v_AD_Org_ID NUMBER;
+    v_AD_Client_ID NUMBER;
     v_Record_ID NUMBER:=NULL;
     v_Selection VARCHAR2(1):='N';
+    v_DBA_ErrorLog_ID NUMBER;
     -- Orders to process  - one per warehouse
     Cur_Order RECORD;
     -- Order Lines per Warehouse
@@ -148,6 +150,7 @@
     FINISH_PROCESS BOOLEAN:=false;
     Cur_Storage_ISOPEN BOOLEAN:=false;
     Cur_OrderLine_ISOPEN BOOLEAN:=false;
+    v_PInstance_Log_ID NUMBER;
   BEGIN
     -- Process Parameters
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -169,7 +172,7 @@
       -- Get Parameters
       v_ResultStr:='ReadingParameters';
       FOR Cur_Parameter IN
-        (SELECT i.Record_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date
+        (SELECT i.Record_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date, p.AD_CLIENT_ID
         FROM AD_PInstance i LEFT JOIN AD_PInstance_Para p ON i.AD_PInstance_ID=p.AD_PInstance_ID
         WHERE i.AD_PInstance_ID=p_PInstance_ID
         ORDER BY p.SeqNo) LOOP
@@ -182,6 +185,7 @@
         ELSE
           DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
         END IF;
+        v_AD_Client_ID:=Cur_Parameter.AD_CLIENT_ID;
         v_Record_ID:=Cur_Parameter.Record_ID;
       END LOOP; -- Get Parameter
       DBMS_OUTPUT.PUT_LINE('  v_Record_ID=' || v_Record_ID) ;
@@ -428,7 +432,7 @@
                               AD_Client_ID, AD_Org_ID, IsActive, Created,
                               CreatedBy, Updated, UpdatedBy, M_Product_ID,
                               C_UOM_ID, M_Locator_ID, MovementQty, Description,
-                              IsInvoiced, Lot, SerNo,
+                              IsInvoiced,
                               --MODIFIED BY F.IRIAZABAL
                               QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID)
                             VALUES
@@ -436,7 +440,7 @@
                               ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
                               0, now(), 0, ol.M_Product_ID,
                               v_storage.C_UOM_ID, v_storage.M_Locator_ID, v_LocatorQty, ol.Description,
-                              'N', ol.Lot, ol.SerNo,
+                              'N',
                               --MODIFIED BY F.IRIAZABAL
                               v_ActualQty, v_storage.M_PRODUCT_UOM_ID, v_storage.M_AttributeSetInstance_ID);
                             v_lines:=v_lines + 10;
@@ -475,7 +479,7 @@
                           AD_Client_ID, AD_Org_ID, IsActive, Created,
                           CreatedBy, Updated, UpdatedBy, M_Product_ID,
                           C_UOM_ID, M_Locator_ID, MovementQty, Description,
-                          IsInvoiced, Lot, SerNo,
+                          IsInvoiced,
                           --MODIFIED BY F.IRIAZABAL   ,
                           QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID)
                         VALUES
@@ -483,7 +487,7 @@
                           ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
                           0, now(), 0, ol.M_Product_ID,
                           ol.C_UOM_ID, v_Locator_ID, v_Qty, ol.Description,
-                          'N', ol.Lot, ol.SerNo,
+                          'N',
                           --MODIFIED BY F.IRIAZABAL
                           v_ActualQty, ol.M_PRODUCT_UOM_ID, ol.M_AttributeSetInstance_ID);
                       END IF;
@@ -499,7 +503,7 @@
                         AD_Client_ID, AD_Org_ID, IsActive, Created,
                         CreatedBy, Updated, UpdatedBy, M_Product_ID,
                         C_UOM_ID, M_Locator_ID, MovementQty, Description,
-                        IsInvoiced, Lot, SerNo,
+                        IsInvoiced,
                         --MODIFIED BY F.IRIAZABAL
                         QuantityOrder, M_Product_Uom_ID)
                       VALUES
@@ -507,7 +511,7 @@
                         ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
                         0, now(), 0, ol.M_Product_ID,
                         ol.C_UOM_ID, NULL, v_Qty, ol.Description,
-                        'N', ol.Lot, ol.SerNo,
+                        'N',
                         --MODIFIED BY F.IRIAZABAL
                         v_QtyOrder, ol.M_PRODUCT_UOM_ID);
                       v_lines:=v_lines + 10;
@@ -527,6 +531,7 @@
               ROLLBACK TO SAVEPOINT sp_new_shipment;
             ELSE
               v_Message:=v_Message || '@OrderDocumentno@ ' || Cur_Order.DocumentNo || ' -> @InoutDocumentno@ ' || v_DocumentNo || '; ';
+              AD_SEQUENCE_NEXT('AD_PInstance_Log', v_AD_Client_ID, v_PInstance_Log_ID);
               IF(p_PInstance_ID IS NOT NULL) THEN
                 v_ResultStr:='InsertLog';
                 INSERT INTO AD_PINSTANCE_LOG
@@ -537,7 +542,7 @@
                   )
                 VALUES
                   (p_PInstance_ID,
-                  AD_PInstance_Seq.NEXTVAL,
+                  v_PInstance_Log_ID,
                   p_InOut_ID,
                   v_DocumentNo
                   );
@@ -652,7 +657,7 @@
                 AD_Client_ID, AD_Org_ID, IsActive, Created,
                 CreatedBy, Updated, UpdatedBy, M_Product_ID,
                 C_UOM_ID, M_Locator_ID, MovementQty, Description,
-                IsInvoiced, Lot, SerNo,
+                IsInvoiced,
                 --MODIFIED BY F.IRIAZABAL
                 QuantityOrder, M_Product_Uom_ID
                 )
@@ -661,7 +666,7 @@
                 Cur_Lines.AD_Client_ID, Cur_Lines.AD_Org_ID, 'Y', now(),
                 0, now(), 0, Cur_Lines.M_Product_ID,
                 Cur_Lines.C_UOM_ID, p_Locator_ID, Cur_Lines.QtyInvoiced, Cur_Lines.Description,
-                'Y', NULL, NULL,
+                'Y',
                 --MODIFIED BY F.IRIAZABAL
                 Cur_Lines.QuantityOrder, Cur_Lines.M_Product_Uom_ID
                 );
@@ -703,6 +708,7 @@ WHEN OTHERS THEN
     DECLARE
       v_Code NUMBER:=SQLCODE;
     BEGIN
+    AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_AD_Client_ID, v_DBA_ErrorLog_ID);
     INSERT
     INTO DBA_ERRORLOG
       (
@@ -714,7 +720,7 @@ WHEN OTHERS THEN
       )
       VALUES
       (
-        DBA_ErrorLog_Seq.NEXTVAL,
+        v_DBA_ErrorLog_ID,
         now(),
         v_Code,
         v_ResultStr,

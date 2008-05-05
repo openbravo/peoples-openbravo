@@ -123,7 +123,6 @@ private DocLine[] loadLines(ConnectionProvider conn){
         docLine.m_DateDoc = data[i].getField("VALUTADATE");
         docLine.m_C_Payment_ID = data[i].getField("C_DEBT_PAYMENT_ID");
         docLine.m_Record_Id2 = data[i].getField("C_DEBT_PAYMENT_ID");
-        docLine.m_IsReversal = data[i].getField("ISREVERSAL");
         docLine.chargeAmt = data[i].getField("CHARGEAMT");
         docLine.isManual = data[i].getField("ISMANUAL");
         docLine.setAmount(data[i].getField("STMTAMT")/*, data[i].getField("INTERESTAMT")*/, data[i].getField("TRXAMT"));

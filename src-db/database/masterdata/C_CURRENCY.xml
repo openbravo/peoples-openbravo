@@ -32,12 +32,6 @@
 <!--100-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--100 COSTINGPRECISION-->
 <!--100-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--100 ISEURO-->
-<!--100-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--100 ISEMUMEMBER-->
-<!--100-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
-<!--100 EMURATE-->
-<!--100-->              <EMURATE><![CDATA[0]]></EMURATE>
 <!--100 PRICEPRECISION-->
 <!--100-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--100**************--></C_CURRENCY>
@@ -69,12 +63,6 @@
 <!--102-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--102 COSTINGPRECISION-->
 <!--102-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--102 ISEURO-->
-<!--102-->              <ISEURO><![CDATA[Y]]></ISEURO>
-<!--102 ISEMUMEMBER-->
-<!--102-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
-<!--102 EMURATE-->
-<!--102-->              <EMURATE><![CDATA[0]]></EMURATE>
 <!--102 PRICEPRECISION-->
 <!--102-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--102**************--></C_CURRENCY>
@@ -106,14 +94,6 @@
 <!--103-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--103 COSTINGPRECISION-->
 <!--103-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--103 ISEURO-->
-<!--103-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--103 ISEMUMEMBER-->
-<!--103-->              <ISEMUMEMBER><![CDATA[Y]]></ISEMUMEMBER>
-<!--103 EMUENTRYDATE-->
-<!--103-->              <EMUENTRYDATE><![CDATA[1999-01-01 00:00:00.0]]></EMUENTRYDATE>
-<!--103 EMURATE-->
-<!--103-->              <EMURATE><![CDATA[1.95583]]></EMURATE>
 <!--103 PRICEPRECISION-->
 <!--103-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--103**************--></C_CURRENCY>
@@ -145,14 +125,6 @@
 <!--104-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--104 COSTINGPRECISION-->
 <!--104-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--104 ISEURO-->
-<!--104-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--104 ISEMUMEMBER-->
-<!--104-->              <ISEMUMEMBER><![CDATA[Y]]></ISEMUMEMBER>
-<!--104 EMUENTRYDATE-->
-<!--104-->              <EMUENTRYDATE><![CDATA[1999-01-01 00:00:00.0]]></EMUENTRYDATE>
-<!--104 EMURATE-->
-<!--104-->              <EMURATE><![CDATA[13.7603]]></EMURATE>
 <!--104 PRICEPRECISION-->
 <!--104-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--104**************--></C_CURRENCY>
@@ -184,14 +156,6 @@
 <!--105-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--105 COSTINGPRECISION-->
 <!--105-->              <COSTINGPRECISION><![CDATA[0]]></COSTINGPRECISION>
-<!--105 ISEURO-->
-<!--105-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--105 ISEMUMEMBER-->
-<!--105-->              <ISEMUMEMBER><![CDATA[Y]]></ISEMUMEMBER>
-<!--105 EMUENTRYDATE-->
-<!--105-->              <EMUENTRYDATE><![CDATA[1999-01-01 00:00:00.0]]></EMUENTRYDATE>
-<!--105 EMURATE-->
-<!--105-->              <EMURATE><![CDATA[40.3399]]></EMURATE>
 <!--105 PRICEPRECISION-->
 <!--105-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--105**************--></C_CURRENCY>
@@ -223,14 +187,6 @@
 <!--106-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--106 COSTINGPRECISION-->
 <!--106-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--106 ISEURO-->
-<!--106-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--106 ISEMUMEMBER-->
-<!--106-->              <ISEMUMEMBER><![CDATA[Y]]></ISEMUMEMBER>
-<!--106 EMUENTRYDATE-->
-<!--106-->              <EMUENTRYDATE><![CDATA[1999-01-01 00:00:00.0]]></EMUENTRYDATE>
-<!--106 EMURATE-->
-<!--106-->              <EMURATE><![CDATA[5.94573]]></EMURATE>
 <!--106 PRICEPRECISION-->
 <!--106-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--106**************--></C_CURRENCY>
@@ -262,14 +218,6 @@
 <!--107-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--107 COSTINGPRECISION-->
 <!--107-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--107 ISEURO-->
-<!--107-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--107 ISEMUMEMBER-->
-<!--107-->              <ISEMUMEMBER><![CDATA[Y]]></ISEMUMEMBER>
-<!--107 EMUENTRYDATE-->
-<!--107-->              <EMUENTRYDATE><![CDATA[1999-01-01 00:00:00.0]]></EMUENTRYDATE>
-<!--107 EMURATE-->
-<!--107-->              <EMURATE><![CDATA[0.787564]]></EMURATE>
 <!--107 PRICEPRECISION-->
 <!--107-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--107**************--></C_CURRENCY>
@@ -301,14 +249,6 @@
 <!--108-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--108 COSTINGPRECISION-->
 <!--108-->              <COSTINGPRECISION><![CDATA[0]]></COSTINGPRECISION>
-<!--108 ISEURO-->
-<!--108-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--108 ISEMUMEMBER-->
-<!--108-->              <ISEMUMEMBER><![CDATA[Y]]></ISEMUMEMBER>
-<!--108 EMUENTRYDATE-->
-<!--108-->              <EMUENTRYDATE><![CDATA[1999-01-01 00:00:00.0]]></EMUENTRYDATE>
-<!--108 EMURATE-->
-<!--108-->              <EMURATE><![CDATA[1936.27]]></EMURATE>
 <!--108 PRICEPRECISION-->
 <!--108-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--108**************--></C_CURRENCY>
@@ -340,14 +280,6 @@
 <!--109-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--109 COSTINGPRECISION-->
 <!--109-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--109 ISEURO-->
-<!--109-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--109 ISEMUMEMBER-->
-<!--109-->              <ISEMUMEMBER><![CDATA[Y]]></ISEMUMEMBER>
-<!--109 EMUENTRYDATE-->
-<!--109-->              <EMUENTRYDATE><![CDATA[1999-01-01 00:00:00.0]]></EMUENTRYDATE>
-<!--109 EMURATE-->
-<!--109-->              <EMURATE><![CDATA[2.20371]]></EMURATE>
 <!--109 PRICEPRECISION-->
 <!--109-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--109**************--></C_CURRENCY>
@@ -379,14 +311,6 @@
 <!--110-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--110 COSTINGPRECISION-->
 <!--110-->              <COSTINGPRECISION><![CDATA[0]]></COSTINGPRECISION>
-<!--110 ISEURO-->
-<!--110-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--110 ISEMUMEMBER-->
-<!--110-->              <ISEMUMEMBER><![CDATA[Y]]></ISEMUMEMBER>
-<!--110 EMUENTRYDATE-->
-<!--110-->              <EMUENTRYDATE><![CDATA[1999-01-01 00:00:00.0]]></EMUENTRYDATE>
-<!--110 EMURATE-->
-<!--110-->              <EMURATE><![CDATA[200.482]]></EMURATE>
 <!--110 PRICEPRECISION-->
 <!--110-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--110**************--></C_CURRENCY>
@@ -418,14 +342,6 @@
 <!--111-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--111 COSTINGPRECISION-->
 <!--111-->              <COSTINGPRECISION><![CDATA[0]]></COSTINGPRECISION>
-<!--111 ISEURO-->
-<!--111-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--111 ISEMUMEMBER-->
-<!--111-->              <ISEMUMEMBER><![CDATA[Y]]></ISEMUMEMBER>
-<!--111 EMUENTRYDATE-->
-<!--111-->              <EMUENTRYDATE><![CDATA[1999-01-01 00:00:00.0]]></EMUENTRYDATE>
-<!--111 EMURATE-->
-<!--111-->              <EMURATE><![CDATA[166.386]]></EMURATE>
 <!--111 PRICEPRECISION-->
 <!--111-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--111**************--></C_CURRENCY>
@@ -457,14 +373,6 @@
 <!--112-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--112 COSTINGPRECISION-->
 <!--112-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--112 ISEURO-->
-<!--112-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--112 ISEMUMEMBER-->
-<!--112-->              <ISEMUMEMBER><![CDATA[Y]]></ISEMUMEMBER>
-<!--112 EMUENTRYDATE-->
-<!--112-->              <EMUENTRYDATE><![CDATA[1999-01-01 00:00:00.0]]></EMUENTRYDATE>
-<!--112 EMURATE-->
-<!--112-->              <EMURATE><![CDATA[6.55957]]></EMURATE>
 <!--112 PRICEPRECISION-->
 <!--112-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--112**************--></C_CURRENCY>
@@ -496,12 +404,6 @@
 <!--113-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--113 COSTINGPRECISION-->
 <!--113-->              <COSTINGPRECISION><![CDATA[0]]></COSTINGPRECISION>
-<!--113 ISEURO-->
-<!--113-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--113 ISEMUMEMBER-->
-<!--113-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
-<!--113 EMURATE-->
-<!--113-->              <EMURATE><![CDATA[0]]></EMURATE>
 <!--113 PRICEPRECISION-->
 <!--113-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--113**************--></C_CURRENCY>
@@ -533,12 +435,6 @@
 <!--114-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--114 COSTINGPRECISION-->
 <!--114-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--114 ISEURO-->
-<!--114-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--114 ISEMUMEMBER-->
-<!--114-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
-<!--114 EMURATE-->
-<!--114-->              <EMURATE><![CDATA[0]]></EMURATE>
 <!--114 PRICEPRECISION-->
 <!--114-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--114**************--></C_CURRENCY>
@@ -570,12 +466,6 @@
 <!--115-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--115 COSTINGPRECISION-->
 <!--115-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--115 ISEURO-->
-<!--115-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--115 ISEMUMEMBER-->
-<!--115-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
-<!--115 EMURATE-->
-<!--115-->              <EMURATE><![CDATA[0]]></EMURATE>
 <!--115 PRICEPRECISION-->
 <!--115-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--115**************--></C_CURRENCY>
@@ -607,12 +497,6 @@
 <!--116-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--116 COSTINGPRECISION-->
 <!--116-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--116 ISEURO-->
-<!--116-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--116 ISEMUMEMBER-->
-<!--116-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
-<!--116 EMURATE-->
-<!--116-->              <EMURATE><![CDATA[0]]></EMURATE>
 <!--116 PRICEPRECISION-->
 <!--116-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--116**************--></C_CURRENCY>
@@ -644,10 +528,6 @@
 <!--118-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--118 COSTINGPRECISION-->
 <!--118-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--118 ISEURO-->
-<!--118-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--118 ISEMUMEMBER-->
-<!--118-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--118 PRICEPRECISION-->
 <!--118-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--118**************--></C_CURRENCY>
@@ -679,10 +559,6 @@
 <!--120-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--120 COSTINGPRECISION-->
 <!--120-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--120 ISEURO-->
-<!--120-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--120 ISEMUMEMBER-->
-<!--120-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--120 PRICEPRECISION-->
 <!--120-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--120**************--></C_CURRENCY>
@@ -714,10 +590,6 @@
 <!--121-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--121 COSTINGPRECISION-->
 <!--121-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--121 ISEURO-->
-<!--121-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--121 ISEMUMEMBER-->
-<!--121-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--121 PRICEPRECISION-->
 <!--121-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--121**************--></C_CURRENCY>
@@ -749,10 +621,6 @@
 <!--127-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--127 COSTINGPRECISION-->
 <!--127-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--127 ISEURO-->
-<!--127-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--127 ISEMUMEMBER-->
-<!--127-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--127 PRICEPRECISION-->
 <!--127-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--127**************--></C_CURRENCY>
@@ -784,10 +652,6 @@
 <!--130-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--130 COSTINGPRECISION-->
 <!--130-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--130 ISEURO-->
-<!--130-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--130 ISEMUMEMBER-->
-<!--130-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--130 PRICEPRECISION-->
 <!--130-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--130**************--></C_CURRENCY>
@@ -819,10 +683,6 @@
 <!--142-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--142 COSTINGPRECISION-->
 <!--142-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--142 ISEURO-->
-<!--142-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--142 ISEMUMEMBER-->
-<!--142-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--142 PRICEPRECISION-->
 <!--142-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--142**************--></C_CURRENCY>
@@ -852,10 +712,6 @@
 <!--143-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--143 COSTINGPRECISION-->
 <!--143-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--143 ISEURO-->
-<!--143-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--143 ISEMUMEMBER-->
-<!--143-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--143 PRICEPRECISION-->
 <!--143-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--143**************--></C_CURRENCY>
@@ -885,10 +741,6 @@
 <!--144-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--144 COSTINGPRECISION-->
 <!--144-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--144 ISEURO-->
-<!--144-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--144 ISEMUMEMBER-->
-<!--144-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--144 PRICEPRECISION-->
 <!--144-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--144**************--></C_CURRENCY>
@@ -918,10 +770,6 @@
 <!--145-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--145 COSTINGPRECISION-->
 <!--145-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--145 ISEURO-->
-<!--145-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--145 ISEMUMEMBER-->
-<!--145-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--145 PRICEPRECISION-->
 <!--145-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--145**************--></C_CURRENCY>
@@ -951,10 +799,6 @@
 <!--146-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--146 COSTINGPRECISION-->
 <!--146-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--146 ISEURO-->
-<!--146-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--146 ISEMUMEMBER-->
-<!--146-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--146 PRICEPRECISION-->
 <!--146-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--146**************--></C_CURRENCY>
@@ -984,10 +828,6 @@
 <!--147-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--147 COSTINGPRECISION-->
 <!--147-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--147 ISEURO-->
-<!--147-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--147 ISEMUMEMBER-->
-<!--147-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--147 PRICEPRECISION-->
 <!--147-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--147**************--></C_CURRENCY>
@@ -1017,10 +857,6 @@
 <!--148-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--148 COSTINGPRECISION-->
 <!--148-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--148 ISEURO-->
-<!--148-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--148 ISEMUMEMBER-->
-<!--148-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--148 PRICEPRECISION-->
 <!--148-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--148**************--></C_CURRENCY>
@@ -1050,10 +886,6 @@
 <!--149-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--149 COSTINGPRECISION-->
 <!--149-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--149 ISEURO-->
-<!--149-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--149 ISEMUMEMBER-->
-<!--149-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--149 PRICEPRECISION-->
 <!--149-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--149**************--></C_CURRENCY>
@@ -1083,10 +915,6 @@
 <!--150-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--150 COSTINGPRECISION-->
 <!--150-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--150 ISEURO-->
-<!--150-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--150 ISEMUMEMBER-->
-<!--150-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--150 PRICEPRECISION-->
 <!--150-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--150**************--></C_CURRENCY>
@@ -1116,10 +944,6 @@
 <!--151-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--151 COSTINGPRECISION-->
 <!--151-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--151 ISEURO-->
-<!--151-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--151 ISEMUMEMBER-->
-<!--151-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--151 PRICEPRECISION-->
 <!--151-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--151**************--></C_CURRENCY>
@@ -1149,10 +973,6 @@
 <!--152-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--152 COSTINGPRECISION-->
 <!--152-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--152 ISEURO-->
-<!--152-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--152 ISEMUMEMBER-->
-<!--152-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--152 PRICEPRECISION-->
 <!--152-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--152**************--></C_CURRENCY>
@@ -1182,10 +1002,6 @@
 <!--153-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--153 COSTINGPRECISION-->
 <!--153-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--153 ISEURO-->
-<!--153-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--153 ISEMUMEMBER-->
-<!--153-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--153 PRICEPRECISION-->
 <!--153-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--153**************--></C_CURRENCY>
@@ -1215,10 +1031,6 @@
 <!--154-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--154 COSTINGPRECISION-->
 <!--154-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--154 ISEURO-->
-<!--154-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--154 ISEMUMEMBER-->
-<!--154-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--154 PRICEPRECISION-->
 <!--154-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--154**************--></C_CURRENCY>
@@ -1248,10 +1060,6 @@
 <!--155-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--155 COSTINGPRECISION-->
 <!--155-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--155 ISEURO-->
-<!--155-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--155 ISEMUMEMBER-->
-<!--155-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--155 PRICEPRECISION-->
 <!--155-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--155**************--></C_CURRENCY>
@@ -1281,10 +1089,6 @@
 <!--156-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--156 COSTINGPRECISION-->
 <!--156-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--156 ISEURO-->
-<!--156-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--156 ISEMUMEMBER-->
-<!--156-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--156 PRICEPRECISION-->
 <!--156-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--156**************--></C_CURRENCY>
@@ -1314,10 +1118,6 @@
 <!--157-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--157 COSTINGPRECISION-->
 <!--157-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--157 ISEURO-->
-<!--157-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--157 ISEMUMEMBER-->
-<!--157-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--157 PRICEPRECISION-->
 <!--157-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--157**************--></C_CURRENCY>
@@ -1347,10 +1147,6 @@
 <!--158-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--158 COSTINGPRECISION-->
 <!--158-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--158 ISEURO-->
-<!--158-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--158 ISEMUMEMBER-->
-<!--158-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--158 PRICEPRECISION-->
 <!--158-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--158**************--></C_CURRENCY>
@@ -1380,10 +1176,6 @@
 <!--159-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--159 COSTINGPRECISION-->
 <!--159-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--159 ISEURO-->
-<!--159-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--159 ISEMUMEMBER-->
-<!--159-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--159 PRICEPRECISION-->
 <!--159-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--159**************--></C_CURRENCY>
@@ -1413,10 +1205,6 @@
 <!--160-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--160 COSTINGPRECISION-->
 <!--160-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--160 ISEURO-->
-<!--160-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--160 ISEMUMEMBER-->
-<!--160-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--160 PRICEPRECISION-->
 <!--160-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--160**************--></C_CURRENCY>
@@ -1446,10 +1234,6 @@
 <!--161-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--161 COSTINGPRECISION-->
 <!--161-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--161 ISEURO-->
-<!--161-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--161 ISEMUMEMBER-->
-<!--161-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--161 PRICEPRECISION-->
 <!--161-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--161**************--></C_CURRENCY>
@@ -1481,10 +1265,6 @@
 <!--163-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--163 COSTINGPRECISION-->
 <!--163-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--163 ISEURO-->
-<!--163-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--163 ISEMUMEMBER-->
-<!--163-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--163 PRICEPRECISION-->
 <!--163-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--163**************--></C_CURRENCY>
@@ -1516,10 +1296,6 @@
 <!--164-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--164 COSTINGPRECISION-->
 <!--164-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--164 ISEURO-->
-<!--164-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--164 ISEMUMEMBER-->
-<!--164-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--164 PRICEPRECISION-->
 <!--164-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--164**************--></C_CURRENCY>
@@ -1551,10 +1327,6 @@
 <!--165-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--165 COSTINGPRECISION-->
 <!--165-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--165 ISEURO-->
-<!--165-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--165 ISEMUMEMBER-->
-<!--165-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--165 PRICEPRECISION-->
 <!--165-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--165**************--></C_CURRENCY>
@@ -1586,10 +1358,6 @@
 <!--166-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--166 COSTINGPRECISION-->
 <!--166-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--166 ISEURO-->
-<!--166-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--166 ISEMUMEMBER-->
-<!--166-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--166 PRICEPRECISION-->
 <!--166-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--166**************--></C_CURRENCY>
@@ -1621,10 +1389,6 @@
 <!--167-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--167 COSTINGPRECISION-->
 <!--167-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--167 ISEURO-->
-<!--167-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--167 ISEMUMEMBER-->
-<!--167-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--167 PRICEPRECISION-->
 <!--167-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--167**************--></C_CURRENCY>
@@ -1656,10 +1420,6 @@
 <!--168-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--168 COSTINGPRECISION-->
 <!--168-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--168 ISEURO-->
-<!--168-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--168 ISEMUMEMBER-->
-<!--168-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--168 PRICEPRECISION-->
 <!--168-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--168**************--></C_CURRENCY>
@@ -1691,10 +1451,6 @@
 <!--170-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--170 COSTINGPRECISION-->
 <!--170-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--170 ISEURO-->
-<!--170-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--170 ISEMUMEMBER-->
-<!--170-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--170 PRICEPRECISION-->
 <!--170-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--170**************--></C_CURRENCY>
@@ -1726,10 +1482,6 @@
 <!--171-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--171 COSTINGPRECISION-->
 <!--171-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--171 ISEURO-->
-<!--171-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--171 ISEMUMEMBER-->
-<!--171-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--171 PRICEPRECISION-->
 <!--171-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--171**************--></C_CURRENCY>
@@ -1761,10 +1513,6 @@
 <!--195-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--195 COSTINGPRECISION-->
 <!--195-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--195 ISEURO-->
-<!--195-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--195 ISEMUMEMBER-->
-<!--195-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--195 PRICEPRECISION-->
 <!--195-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--195**************--></C_CURRENCY>
@@ -1796,10 +1544,6 @@
 <!--196-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--196 COSTINGPRECISION-->
 <!--196-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--196 ISEURO-->
-<!--196-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--196 ISEMUMEMBER-->
-<!--196-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--196 PRICEPRECISION-->
 <!--196-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--196**************--></C_CURRENCY>
@@ -1831,10 +1575,6 @@
 <!--197-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--197 COSTINGPRECISION-->
 <!--197-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--197 ISEURO-->
-<!--197-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--197 ISEMUMEMBER-->
-<!--197-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--197 PRICEPRECISION-->
 <!--197-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--197**************--></C_CURRENCY>
@@ -1866,10 +1606,6 @@
 <!--198-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--198 COSTINGPRECISION-->
 <!--198-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--198 ISEURO-->
-<!--198-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--198 ISEMUMEMBER-->
-<!--198-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--198 PRICEPRECISION-->
 <!--198-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--198**************--></C_CURRENCY>
@@ -1901,10 +1637,6 @@
 <!--199-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--199 COSTINGPRECISION-->
 <!--199-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--199 ISEURO-->
-<!--199-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--199 ISEMUMEMBER-->
-<!--199-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--199 PRICEPRECISION-->
 <!--199-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--199**************--></C_CURRENCY>
@@ -1936,10 +1668,6 @@
 <!--200-->              <STDPRECISION><![CDATA[3]]></STDPRECISION>
 <!--200 COSTINGPRECISION-->
 <!--200-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
-<!--200 ISEURO-->
-<!--200-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--200 ISEMUMEMBER-->
-<!--200-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--200 PRICEPRECISION-->
 <!--200-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--200**************--></C_CURRENCY>
@@ -1971,10 +1699,6 @@
 <!--201-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--201 COSTINGPRECISION-->
 <!--201-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--201 ISEURO-->
-<!--201-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--201 ISEMUMEMBER-->
-<!--201-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--201 PRICEPRECISION-->
 <!--201-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--201**************--></C_CURRENCY>
@@ -2006,10 +1730,6 @@
 <!--202-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--202 COSTINGPRECISION-->
 <!--202-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--202 ISEURO-->
-<!--202-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--202 ISEMUMEMBER-->
-<!--202-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--202 PRICEPRECISION-->
 <!--202-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--202**************--></C_CURRENCY>
@@ -2041,10 +1761,6 @@
 <!--203-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--203 COSTINGPRECISION-->
 <!--203-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--203 ISEURO-->
-<!--203-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--203 ISEMUMEMBER-->
-<!--203-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--203 PRICEPRECISION-->
 <!--203-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--203**************--></C_CURRENCY>
@@ -2076,10 +1792,6 @@
 <!--204-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--204 COSTINGPRECISION-->
 <!--204-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--204 ISEURO-->
-<!--204-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--204 ISEMUMEMBER-->
-<!--204-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--204 PRICEPRECISION-->
 <!--204-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--204**************--></C_CURRENCY>
@@ -2111,10 +1823,6 @@
 <!--205-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--205 COSTINGPRECISION-->
 <!--205-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--205 ISEURO-->
-<!--205-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--205 ISEMUMEMBER-->
-<!--205-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--205 PRICEPRECISION-->
 <!--205-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--205**************--></C_CURRENCY>
@@ -2146,10 +1854,6 @@
 <!--206-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--206 COSTINGPRECISION-->
 <!--206-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--206 ISEURO-->
-<!--206-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--206 ISEMUMEMBER-->
-<!--206-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--206 PRICEPRECISION-->
 <!--206-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--206**************--></C_CURRENCY>
@@ -2181,10 +1885,6 @@
 <!--207-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--207 COSTINGPRECISION-->
 <!--207-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--207 ISEURO-->
-<!--207-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--207 ISEMUMEMBER-->
-<!--207-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--207 PRICEPRECISION-->
 <!--207-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--207**************--></C_CURRENCY>
@@ -2216,10 +1916,6 @@
 <!--209-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--209 COSTINGPRECISION-->
 <!--209-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--209 ISEURO-->
-<!--209-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--209 ISEMUMEMBER-->
-<!--209-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--209 PRICEPRECISION-->
 <!--209-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--209**************--></C_CURRENCY>
@@ -2251,10 +1947,6 @@
 <!--210-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--210 COSTINGPRECISION-->
 <!--210-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--210 ISEURO-->
-<!--210-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--210 ISEMUMEMBER-->
-<!--210-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--210 PRICEPRECISION-->
 <!--210-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--210**************--></C_CURRENCY>
@@ -2286,10 +1978,6 @@
 <!--211-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--211 COSTINGPRECISION-->
 <!--211-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--211 ISEURO-->
-<!--211-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--211 ISEMUMEMBER-->
-<!--211-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--211 PRICEPRECISION-->
 <!--211-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--211**************--></C_CURRENCY>
@@ -2321,10 +2009,6 @@
 <!--212-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--212 COSTINGPRECISION-->
 <!--212-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--212 ISEURO-->
-<!--212-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--212 ISEMUMEMBER-->
-<!--212-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--212 PRICEPRECISION-->
 <!--212-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--212**************--></C_CURRENCY>
@@ -2356,10 +2040,6 @@
 <!--214-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--214 COSTINGPRECISION-->
 <!--214-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--214 ISEURO-->
-<!--214-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--214 ISEMUMEMBER-->
-<!--214-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--214 PRICEPRECISION-->
 <!--214-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--214**************--></C_CURRENCY>
@@ -2391,10 +2071,6 @@
 <!--225-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--225 COSTINGPRECISION-->
 <!--225-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--225 ISEURO-->
-<!--225-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--225 ISEMUMEMBER-->
-<!--225-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--225 PRICEPRECISION-->
 <!--225-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--225**************--></C_CURRENCY>
@@ -2426,10 +2102,6 @@
 <!--228-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--228 COSTINGPRECISION-->
 <!--228-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--228 ISEURO-->
-<!--228-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--228 ISEMUMEMBER-->
-<!--228-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--228 PRICEPRECISION-->
 <!--228-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--228**************--></C_CURRENCY>
@@ -2461,10 +2133,6 @@
 <!--229-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--229 COSTINGPRECISION-->
 <!--229-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--229 ISEURO-->
-<!--229-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--229 ISEMUMEMBER-->
-<!--229-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--229 PRICEPRECISION-->
 <!--229-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--229**************--></C_CURRENCY>
@@ -2496,10 +2164,6 @@
 <!--230-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--230 COSTINGPRECISION-->
 <!--230-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--230 ISEURO-->
-<!--230-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--230 ISEMUMEMBER-->
-<!--230-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--230 PRICEPRECISION-->
 <!--230-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--230**************--></C_CURRENCY>
@@ -2531,10 +2195,6 @@
 <!--231-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--231 COSTINGPRECISION-->
 <!--231-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--231 ISEURO-->
-<!--231-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--231 ISEMUMEMBER-->
-<!--231-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--231 PRICEPRECISION-->
 <!--231-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--231**************--></C_CURRENCY>
@@ -2566,10 +2226,6 @@
 <!--232-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--232 COSTINGPRECISION-->
 <!--232-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--232 ISEURO-->
-<!--232-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--232 ISEMUMEMBER-->
-<!--232-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--232 PRICEPRECISION-->
 <!--232-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--232**************--></C_CURRENCY>
@@ -2601,10 +2257,6 @@
 <!--233-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--233 COSTINGPRECISION-->
 <!--233-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--233 ISEURO-->
-<!--233-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--233 ISEMUMEMBER-->
-<!--233-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--233 PRICEPRECISION-->
 <!--233-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--233**************--></C_CURRENCY>
@@ -2636,10 +2288,6 @@
 <!--234-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--234 COSTINGPRECISION-->
 <!--234-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--234 ISEURO-->
-<!--234-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--234 ISEMUMEMBER-->
-<!--234-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--234 PRICEPRECISION-->
 <!--234-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--234**************--></C_CURRENCY>
@@ -2671,10 +2319,6 @@
 <!--235-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--235 COSTINGPRECISION-->
 <!--235-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--235 ISEURO-->
-<!--235-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--235 ISEMUMEMBER-->
-<!--235-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--235 PRICEPRECISION-->
 <!--235-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--235**************--></C_CURRENCY>
@@ -2706,10 +2350,6 @@
 <!--236-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--236 COSTINGPRECISION-->
 <!--236-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--236 ISEURO-->
-<!--236-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--236 ISEMUMEMBER-->
-<!--236-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--236 PRICEPRECISION-->
 <!--236-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--236**************--></C_CURRENCY>
@@ -2741,10 +2381,6 @@
 <!--237-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--237 COSTINGPRECISION-->
 <!--237-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--237 ISEURO-->
-<!--237-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--237 ISEMUMEMBER-->
-<!--237-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--237 PRICEPRECISION-->
 <!--237-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--237**************--></C_CURRENCY>
@@ -2776,10 +2412,6 @@
 <!--238-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--238 COSTINGPRECISION-->
 <!--238-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--238 ISEURO-->
-<!--238-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--238 ISEMUMEMBER-->
-<!--238-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--238 PRICEPRECISION-->
 <!--238-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--238**************--></C_CURRENCY>
@@ -2811,10 +2443,6 @@
 <!--239-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--239 COSTINGPRECISION-->
 <!--239-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--239 ISEURO-->
-<!--239-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--239 ISEMUMEMBER-->
-<!--239-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--239 PRICEPRECISION-->
 <!--239-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--239**************--></C_CURRENCY>
@@ -2846,10 +2474,6 @@
 <!--240-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--240 COSTINGPRECISION-->
 <!--240-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--240 ISEURO-->
-<!--240-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--240 ISEMUMEMBER-->
-<!--240-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--240 PRICEPRECISION-->
 <!--240-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--240**************--></C_CURRENCY>
@@ -2881,10 +2505,6 @@
 <!--241-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--241 COSTINGPRECISION-->
 <!--241-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--241 ISEURO-->
-<!--241-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--241 ISEMUMEMBER-->
-<!--241-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--241 PRICEPRECISION-->
 <!--241-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--241**************--></C_CURRENCY>
@@ -2916,10 +2536,6 @@
 <!--244-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--244 COSTINGPRECISION-->
 <!--244-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--244 ISEURO-->
-<!--244-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--244 ISEMUMEMBER-->
-<!--244-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--244 PRICEPRECISION-->
 <!--244-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--244**************--></C_CURRENCY>
@@ -2951,10 +2567,6 @@
 <!--252-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--252 COSTINGPRECISION-->
 <!--252-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--252 ISEURO-->
-<!--252-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--252 ISEMUMEMBER-->
-<!--252-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--252 PRICEPRECISION-->
 <!--252-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--252**************--></C_CURRENCY>
@@ -2986,10 +2598,6 @@
 <!--253-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--253 COSTINGPRECISION-->
 <!--253-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--253 ISEURO-->
-<!--253-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--253 ISEMUMEMBER-->
-<!--253-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--253 PRICEPRECISION-->
 <!--253-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--253**************--></C_CURRENCY>
@@ -3021,10 +2629,6 @@
 <!--254-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--254 COSTINGPRECISION-->
 <!--254-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--254 ISEURO-->
-<!--254-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--254 ISEMUMEMBER-->
-<!--254-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--254 PRICEPRECISION-->
 <!--254-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--254**************--></C_CURRENCY>
@@ -3056,10 +2660,6 @@
 <!--255-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--255 COSTINGPRECISION-->
 <!--255-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--255 ISEURO-->
-<!--255-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--255 ISEMUMEMBER-->
-<!--255-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--255 PRICEPRECISION-->
 <!--255-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--255**************--></C_CURRENCY>
@@ -3091,10 +2691,6 @@
 <!--256-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--256 COSTINGPRECISION-->
 <!--256-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--256 ISEURO-->
-<!--256-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--256 ISEMUMEMBER-->
-<!--256-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--256 PRICEPRECISION-->
 <!--256-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--256**************--></C_CURRENCY>
@@ -3126,10 +2722,6 @@
 <!--257-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--257 COSTINGPRECISION-->
 <!--257-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--257 ISEURO-->
-<!--257-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--257 ISEMUMEMBER-->
-<!--257-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--257 PRICEPRECISION-->
 <!--257-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--257**************--></C_CURRENCY>
@@ -3161,10 +2753,6 @@
 <!--258-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--258 COSTINGPRECISION-->
 <!--258-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--258 ISEURO-->
-<!--258-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--258 ISEMUMEMBER-->
-<!--258-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--258 PRICEPRECISION-->
 <!--258-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--258**************--></C_CURRENCY>
@@ -3196,10 +2784,6 @@
 <!--259-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--259 COSTINGPRECISION-->
 <!--259-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--259 ISEURO-->
-<!--259-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--259 ISEMUMEMBER-->
-<!--259-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--259 PRICEPRECISION-->
 <!--259-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--259**************--></C_CURRENCY>
@@ -3231,10 +2815,6 @@
 <!--260-->              <STDPRECISION><![CDATA[3]]></STDPRECISION>
 <!--260 COSTINGPRECISION-->
 <!--260-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
-<!--260 ISEURO-->
-<!--260-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--260 ISEMUMEMBER-->
-<!--260-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--260 PRICEPRECISION-->
 <!--260-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--260**************--></C_CURRENCY>
@@ -3266,10 +2846,6 @@
 <!--261-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--261 COSTINGPRECISION-->
 <!--261-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--261 ISEURO-->
-<!--261-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--261 ISEMUMEMBER-->
-<!--261-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--261 PRICEPRECISION-->
 <!--261-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--261**************--></C_CURRENCY>
@@ -3301,10 +2877,6 @@
 <!--262-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--262 COSTINGPRECISION-->
 <!--262-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--262 ISEURO-->
-<!--262-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--262 ISEMUMEMBER-->
-<!--262-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--262 PRICEPRECISION-->
 <!--262-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--262**************--></C_CURRENCY>
@@ -3336,10 +2908,6 @@
 <!--263-->              <STDPRECISION><![CDATA[3]]></STDPRECISION>
 <!--263 COSTINGPRECISION-->
 <!--263-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
-<!--263 ISEURO-->
-<!--263-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--263 ISEMUMEMBER-->
-<!--263-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--263 PRICEPRECISION-->
 <!--263-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--263**************--></C_CURRENCY>
@@ -3371,10 +2939,6 @@
 <!--264-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--264 COSTINGPRECISION-->
 <!--264-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--264 ISEURO-->
-<!--264-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--264 ISEMUMEMBER-->
-<!--264-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--264 PRICEPRECISION-->
 <!--264-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--264**************--></C_CURRENCY>
@@ -3406,10 +2970,6 @@
 <!--265-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--265 COSTINGPRECISION-->
 <!--265-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--265 ISEURO-->
-<!--265-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--265 ISEMUMEMBER-->
-<!--265-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--265 PRICEPRECISION-->
 <!--265-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--265**************--></C_CURRENCY>
@@ -3441,10 +3001,6 @@
 <!--266-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--266 COSTINGPRECISION-->
 <!--266-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--266 ISEURO-->
-<!--266-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--266 ISEMUMEMBER-->
-<!--266-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--266 PRICEPRECISION-->
 <!--266-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--266**************--></C_CURRENCY>
@@ -3476,10 +3032,6 @@
 <!--267-->              <STDPRECISION><![CDATA[3]]></STDPRECISION>
 <!--267 COSTINGPRECISION-->
 <!--267-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
-<!--267 ISEURO-->
-<!--267-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--267 ISEMUMEMBER-->
-<!--267-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--267 PRICEPRECISION-->
 <!--267-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--267**************--></C_CURRENCY>
@@ -3511,10 +3063,6 @@
 <!--268-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--268 COSTINGPRECISION-->
 <!--268-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--268 ISEURO-->
-<!--268-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--268 ISEMUMEMBER-->
-<!--268-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--268 PRICEPRECISION-->
 <!--268-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--268**************--></C_CURRENCY>
@@ -3546,10 +3094,6 @@
 <!--269-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--269 COSTINGPRECISION-->
 <!--269-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--269 ISEURO-->
-<!--269-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--269 ISEMUMEMBER-->
-<!--269-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--269 PRICEPRECISION-->
 <!--269-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--269**************--></C_CURRENCY>
@@ -3581,10 +3125,6 @@
 <!--270-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--270 COSTINGPRECISION-->
 <!--270-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--270 ISEURO-->
-<!--270-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--270 ISEMUMEMBER-->
-<!--270-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--270 PRICEPRECISION-->
 <!--270-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--270**************--></C_CURRENCY>
@@ -3616,10 +3156,6 @@
 <!--271-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--271 COSTINGPRECISION-->
 <!--271-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--271 ISEURO-->
-<!--271-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--271 ISEMUMEMBER-->
-<!--271-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--271 PRICEPRECISION-->
 <!--271-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--271**************--></C_CURRENCY>
@@ -3651,10 +3187,6 @@
 <!--272-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--272 COSTINGPRECISION-->
 <!--272-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--272 ISEURO-->
-<!--272-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--272 ISEMUMEMBER-->
-<!--272-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--272 PRICEPRECISION-->
 <!--272-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--272**************--></C_CURRENCY>
@@ -3686,10 +3218,6 @@
 <!--273-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--273 COSTINGPRECISION-->
 <!--273-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--273 ISEURO-->
-<!--273-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--273 ISEMUMEMBER-->
-<!--273-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--273 PRICEPRECISION-->
 <!--273-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--273**************--></C_CURRENCY>
@@ -3721,10 +3249,6 @@
 <!--274-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--274 COSTINGPRECISION-->
 <!--274-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--274 ISEURO-->
-<!--274-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--274 ISEMUMEMBER-->
-<!--274-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--274 PRICEPRECISION-->
 <!--274-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--274**************--></C_CURRENCY>
@@ -3756,10 +3280,6 @@
 <!--275-->              <STDPRECISION><![CDATA[3]]></STDPRECISION>
 <!--275 COSTINGPRECISION-->
 <!--275-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
-<!--275 ISEURO-->
-<!--275-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--275 ISEMUMEMBER-->
-<!--275-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--275 PRICEPRECISION-->
 <!--275-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--275**************--></C_CURRENCY>
@@ -3791,10 +3311,6 @@
 <!--276-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--276 COSTINGPRECISION-->
 <!--276-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--276 ISEURO-->
-<!--276-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--276 ISEMUMEMBER-->
-<!--276-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--276 PRICEPRECISION-->
 <!--276-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--276**************--></C_CURRENCY>
@@ -3826,10 +3342,6 @@
 <!--277-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--277 COSTINGPRECISION-->
 <!--277-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--277 ISEURO-->
-<!--277-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--277 ISEMUMEMBER-->
-<!--277-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--277 PRICEPRECISION-->
 <!--277-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--277**************--></C_CURRENCY>
@@ -3861,10 +3373,6 @@
 <!--278-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--278 COSTINGPRECISION-->
 <!--278-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--278 ISEURO-->
-<!--278-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--278 ISEMUMEMBER-->
-<!--278-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--278 PRICEPRECISION-->
 <!--278-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--278**************--></C_CURRENCY>
@@ -3896,10 +3404,6 @@
 <!--279-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--279 COSTINGPRECISION-->
 <!--279-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--279 ISEURO-->
-<!--279-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--279 ISEMUMEMBER-->
-<!--279-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--279 PRICEPRECISION-->
 <!--279-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--279**************--></C_CURRENCY>
@@ -3931,10 +3435,6 @@
 <!--280-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--280 COSTINGPRECISION-->
 <!--280-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--280 ISEURO-->
-<!--280-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--280 ISEMUMEMBER-->
-<!--280-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--280 PRICEPRECISION-->
 <!--280-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--280**************--></C_CURRENCY>
@@ -3966,10 +3466,6 @@
 <!--281-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--281 COSTINGPRECISION-->
 <!--281-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--281 ISEURO-->
-<!--281-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--281 ISEMUMEMBER-->
-<!--281-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--281 PRICEPRECISION-->
 <!--281-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--281**************--></C_CURRENCY>
@@ -4001,10 +3497,6 @@
 <!--282-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--282 COSTINGPRECISION-->
 <!--282-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--282 ISEURO-->
-<!--282-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--282 ISEMUMEMBER-->
-<!--282-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--282 PRICEPRECISION-->
 <!--282-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--282**************--></C_CURRENCY>
@@ -4036,10 +3528,6 @@
 <!--283-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--283 COSTINGPRECISION-->
 <!--283-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--283 ISEURO-->
-<!--283-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--283 ISEMUMEMBER-->
-<!--283-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--283 PRICEPRECISION-->
 <!--283-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--283**************--></C_CURRENCY>
@@ -4071,10 +3559,6 @@
 <!--284-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--284 COSTINGPRECISION-->
 <!--284-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--284 ISEURO-->
-<!--284-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--284 ISEMUMEMBER-->
-<!--284-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--284 PRICEPRECISION-->
 <!--284-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--284**************--></C_CURRENCY>
@@ -4106,10 +3590,6 @@
 <!--285-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--285 COSTINGPRECISION-->
 <!--285-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--285 ISEURO-->
-<!--285-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--285 ISEMUMEMBER-->
-<!--285-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--285 PRICEPRECISION-->
 <!--285-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--285**************--></C_CURRENCY>
@@ -4141,10 +3621,6 @@
 <!--286-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--286 COSTINGPRECISION-->
 <!--286-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--286 ISEURO-->
-<!--286-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--286 ISEMUMEMBER-->
-<!--286-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--286 PRICEPRECISION-->
 <!--286-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--286**************--></C_CURRENCY>
@@ -4176,10 +3652,6 @@
 <!--287-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--287 COSTINGPRECISION-->
 <!--287-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--287 ISEURO-->
-<!--287-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--287 ISEMUMEMBER-->
-<!--287-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--287 PRICEPRECISION-->
 <!--287-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--287**************--></C_CURRENCY>
@@ -4211,10 +3683,6 @@
 <!--288-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--288 COSTINGPRECISION-->
 <!--288-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--288 ISEURO-->
-<!--288-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--288 ISEMUMEMBER-->
-<!--288-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--288 PRICEPRECISION-->
 <!--288-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--288**************--></C_CURRENCY>
@@ -4246,10 +3714,6 @@
 <!--289-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--289 COSTINGPRECISION-->
 <!--289-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--289 ISEURO-->
-<!--289-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--289 ISEMUMEMBER-->
-<!--289-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--289 PRICEPRECISION-->
 <!--289-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--289**************--></C_CURRENCY>
@@ -4281,10 +3745,6 @@
 <!--290-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--290 COSTINGPRECISION-->
 <!--290-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--290 ISEURO-->
-<!--290-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--290 ISEMUMEMBER-->
-<!--290-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--290 PRICEPRECISION-->
 <!--290-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--290**************--></C_CURRENCY>
@@ -4316,10 +3776,6 @@
 <!--291-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--291 COSTINGPRECISION-->
 <!--291-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--291 ISEURO-->
-<!--291-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--291 ISEMUMEMBER-->
-<!--291-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--291 PRICEPRECISION-->
 <!--291-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--291**************--></C_CURRENCY>
@@ -4351,10 +3807,6 @@
 <!--292-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--292 COSTINGPRECISION-->
 <!--292-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--292 ISEURO-->
-<!--292-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--292 ISEMUMEMBER-->
-<!--292-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--292 PRICEPRECISION-->
 <!--292-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--292**************--></C_CURRENCY>
@@ -4386,10 +3838,6 @@
 <!--293-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--293 COSTINGPRECISION-->
 <!--293-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--293 ISEURO-->
-<!--293-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--293 ISEMUMEMBER-->
-<!--293-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--293 PRICEPRECISION-->
 <!--293-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--293**************--></C_CURRENCY>
@@ -4421,10 +3869,6 @@
 <!--294-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--294 COSTINGPRECISION-->
 <!--294-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--294 ISEURO-->
-<!--294-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--294 ISEMUMEMBER-->
-<!--294-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--294 PRICEPRECISION-->
 <!--294-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--294**************--></C_CURRENCY>
@@ -4456,10 +3900,6 @@
 <!--297-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--297 COSTINGPRECISION-->
 <!--297-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--297 ISEURO-->
-<!--297-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--297 ISEMUMEMBER-->
-<!--297-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--297 PRICEPRECISION-->
 <!--297-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--297**************--></C_CURRENCY>
@@ -4491,10 +3931,6 @@
 <!--298-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--298 COSTINGPRECISION-->
 <!--298-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--298 ISEURO-->
-<!--298-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--298 ISEMUMEMBER-->
-<!--298-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--298 PRICEPRECISION-->
 <!--298-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--298**************--></C_CURRENCY>
@@ -4526,10 +3962,6 @@
 <!--299-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--299 COSTINGPRECISION-->
 <!--299-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--299 ISEURO-->
-<!--299-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--299 ISEMUMEMBER-->
-<!--299-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--299 PRICEPRECISION-->
 <!--299-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--299**************--></C_CURRENCY>
@@ -4561,10 +3993,6 @@
 <!--300-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--300 COSTINGPRECISION-->
 <!--300-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--300 ISEURO-->
-<!--300-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--300 ISEMUMEMBER-->
-<!--300-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--300 PRICEPRECISION-->
 <!--300-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--300**************--></C_CURRENCY>
@@ -4596,10 +4024,6 @@
 <!--301-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--301 COSTINGPRECISION-->
 <!--301-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--301 ISEURO-->
-<!--301-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--301 ISEMUMEMBER-->
-<!--301-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--301 PRICEPRECISION-->
 <!--301-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--301**************--></C_CURRENCY>
@@ -4631,10 +4055,6 @@
 <!--302-->              <STDPRECISION><![CDATA[3]]></STDPRECISION>
 <!--302 COSTINGPRECISION-->
 <!--302-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
-<!--302 ISEURO-->
-<!--302-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--302 ISEMUMEMBER-->
-<!--302-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--302 PRICEPRECISION-->
 <!--302-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--302**************--></C_CURRENCY>
@@ -4666,10 +4086,6 @@
 <!--303-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--303 COSTINGPRECISION-->
 <!--303-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--303 ISEURO-->
-<!--303-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--303 ISEMUMEMBER-->
-<!--303-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--303 PRICEPRECISION-->
 <!--303-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--303**************--></C_CURRENCY>
@@ -4701,10 +4117,6 @@
 <!--304-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--304 COSTINGPRECISION-->
 <!--304-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--304 ISEURO-->
-<!--304-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--304 ISEMUMEMBER-->
-<!--304-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--304 PRICEPRECISION-->
 <!--304-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--304**************--></C_CURRENCY>
@@ -4736,10 +4148,6 @@
 <!--306-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--306 COSTINGPRECISION-->
 <!--306-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--306 ISEURO-->
-<!--306-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--306 ISEMUMEMBER-->
-<!--306-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--306 PRICEPRECISION-->
 <!--306-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--306**************--></C_CURRENCY>
@@ -4771,10 +4179,6 @@
 <!--307-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--307 COSTINGPRECISION-->
 <!--307-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--307 ISEURO-->
-<!--307-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--307 ISEMUMEMBER-->
-<!--307-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--307 PRICEPRECISION-->
 <!--307-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--307**************--></C_CURRENCY>
@@ -4806,10 +4210,6 @@
 <!--308-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--308 COSTINGPRECISION-->
 <!--308-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--308 ISEURO-->
-<!--308-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--308 ISEMUMEMBER-->
-<!--308-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--308 PRICEPRECISION-->
 <!--308-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--308**************--></C_CURRENCY>
@@ -4841,10 +4241,6 @@
 <!--309-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--309 COSTINGPRECISION-->
 <!--309-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--309 ISEURO-->
-<!--309-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--309 ISEMUMEMBER-->
-<!--309-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--309 PRICEPRECISION-->
 <!--309-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--309**************--></C_CURRENCY>
@@ -4876,10 +4272,6 @@
 <!--310-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--310 COSTINGPRECISION-->
 <!--310-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--310 ISEURO-->
-<!--310-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--310 ISEMUMEMBER-->
-<!--310-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--310 PRICEPRECISION-->
 <!--310-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--310**************--></C_CURRENCY>
@@ -4911,10 +4303,6 @@
 <!--311-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--311 COSTINGPRECISION-->
 <!--311-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--311 ISEURO-->
-<!--311-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--311 ISEMUMEMBER-->
-<!--311-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--311 PRICEPRECISION-->
 <!--311-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--311**************--></C_CURRENCY>
@@ -4946,10 +4334,6 @@
 <!--312-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--312 COSTINGPRECISION-->
 <!--312-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--312 ISEURO-->
-<!--312-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--312 ISEMUMEMBER-->
-<!--312-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--312 PRICEPRECISION-->
 <!--312-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--312**************--></C_CURRENCY>
@@ -4981,10 +4365,6 @@
 <!--313-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--313 COSTINGPRECISION-->
 <!--313-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--313 ISEURO-->
-<!--313-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--313 ISEMUMEMBER-->
-<!--313-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--313 PRICEPRECISION-->
 <!--313-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--313**************--></C_CURRENCY>
@@ -5016,10 +4396,6 @@
 <!--315-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--315 COSTINGPRECISION-->
 <!--315-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--315 ISEURO-->
-<!--315-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--315 ISEMUMEMBER-->
-<!--315-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--315 PRICEPRECISION-->
 <!--315-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--315**************--></C_CURRENCY>
@@ -5051,10 +4427,6 @@
 <!--316-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--316 COSTINGPRECISION-->
 <!--316-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--316 ISEURO-->
-<!--316-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--316 ISEMUMEMBER-->
-<!--316-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--316 PRICEPRECISION-->
 <!--316-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--316**************--></C_CURRENCY>
@@ -5086,10 +4458,6 @@
 <!--317-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--317 COSTINGPRECISION-->
 <!--317-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--317 ISEURO-->
-<!--317-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--317 ISEMUMEMBER-->
-<!--317-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--317 PRICEPRECISION-->
 <!--317-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--317**************--></C_CURRENCY>
@@ -5121,10 +4489,6 @@
 <!--318-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--318 COSTINGPRECISION-->
 <!--318-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--318 ISEURO-->
-<!--318-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--318 ISEMUMEMBER-->
-<!--318-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--318 PRICEPRECISION-->
 <!--318-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--318**************--></C_CURRENCY>
@@ -5156,10 +4520,6 @@
 <!--320-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--320 COSTINGPRECISION-->
 <!--320-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--320 ISEURO-->
-<!--320-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--320 ISEMUMEMBER-->
-<!--320-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--320 PRICEPRECISION-->
 <!--320-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--320**************--></C_CURRENCY>
@@ -5191,10 +4551,6 @@
 <!--321-->              <STDPRECISION><![CDATA[3]]></STDPRECISION>
 <!--321 COSTINGPRECISION-->
 <!--321-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
-<!--321 ISEURO-->
-<!--321-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--321 ISEMUMEMBER-->
-<!--321-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--321 PRICEPRECISION-->
 <!--321-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--321**************--></C_CURRENCY>
@@ -5226,10 +4582,6 @@
 <!--322-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--322 COSTINGPRECISION-->
 <!--322-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--322 ISEURO-->
-<!--322-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--322 ISEMUMEMBER-->
-<!--322-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--322 PRICEPRECISION-->
 <!--322-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--322**************--></C_CURRENCY>
@@ -5261,10 +4613,6 @@
 <!--323-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--323 COSTINGPRECISION-->
 <!--323-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--323 ISEURO-->
-<!--323-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--323 ISEMUMEMBER-->
-<!--323-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--323 PRICEPRECISION-->
 <!--323-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--323**************--></C_CURRENCY>
@@ -5296,10 +4644,6 @@
 <!--324-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--324 COSTINGPRECISION-->
 <!--324-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--324 ISEURO-->
-<!--324-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--324 ISEMUMEMBER-->
-<!--324-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--324 PRICEPRECISION-->
 <!--324-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--324**************--></C_CURRENCY>
@@ -5331,10 +4675,6 @@
 <!--325-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--325 COSTINGPRECISION-->
 <!--325-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--325 ISEURO-->
-<!--325-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--325 ISEMUMEMBER-->
-<!--325-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--325 PRICEPRECISION-->
 <!--325-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--325**************--></C_CURRENCY>
@@ -5366,10 +4706,6 @@
 <!--326-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--326 COSTINGPRECISION-->
 <!--326-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--326 ISEURO-->
-<!--326-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--326 ISEMUMEMBER-->
-<!--326-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--326 PRICEPRECISION-->
 <!--326-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--326**************--></C_CURRENCY>
@@ -5401,10 +4737,6 @@
 <!--327-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--327 COSTINGPRECISION-->
 <!--327-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--327 ISEURO-->
-<!--327-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--327 ISEMUMEMBER-->
-<!--327-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--327 PRICEPRECISION-->
 <!--327-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--327**************--></C_CURRENCY>
@@ -5436,10 +4768,6 @@
 <!--328-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--328 COSTINGPRECISION-->
 <!--328-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--328 ISEURO-->
-<!--328-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--328 ISEMUMEMBER-->
-<!--328-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--328 PRICEPRECISION-->
 <!--328-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--328**************--></C_CURRENCY>
@@ -5471,10 +4799,6 @@
 <!--329-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--329 COSTINGPRECISION-->
 <!--329-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--329 ISEURO-->
-<!--329-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--329 ISEMUMEMBER-->
-<!--329-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--329 PRICEPRECISION-->
 <!--329-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--329**************--></C_CURRENCY>
@@ -5506,10 +4830,6 @@
 <!--330-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--330 COSTINGPRECISION-->
 <!--330-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--330 ISEURO-->
-<!--330-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--330 ISEMUMEMBER-->
-<!--330-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--330 PRICEPRECISION-->
 <!--330-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--330**************--></C_CURRENCY>
@@ -5541,10 +4861,6 @@
 <!--331-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--331 COSTINGPRECISION-->
 <!--331-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--331 ISEURO-->
-<!--331-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--331 ISEMUMEMBER-->
-<!--331-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--331 PRICEPRECISION-->
 <!--331-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--331**************--></C_CURRENCY>
@@ -5576,10 +4892,6 @@
 <!--332-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--332 COSTINGPRECISION-->
 <!--332-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--332 ISEURO-->
-<!--332-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--332 ISEMUMEMBER-->
-<!--332-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--332 PRICEPRECISION-->
 <!--332-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--332**************--></C_CURRENCY>
@@ -5611,10 +4923,6 @@
 <!--333-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--333 COSTINGPRECISION-->
 <!--333-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--333 ISEURO-->
-<!--333-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--333 ISEMUMEMBER-->
-<!--333-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--333 PRICEPRECISION-->
 <!--333-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--333**************--></C_CURRENCY>
@@ -5646,10 +4954,6 @@
 <!--334-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--334 COSTINGPRECISION-->
 <!--334-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--334 ISEURO-->
-<!--334-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--334 ISEMUMEMBER-->
-<!--334-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--334 PRICEPRECISION-->
 <!--334-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--334**************--></C_CURRENCY>
@@ -5681,10 +4985,6 @@
 <!--335-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--335 COSTINGPRECISION-->
 <!--335-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--335 ISEURO-->
-<!--335-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--335 ISEMUMEMBER-->
-<!--335-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--335 PRICEPRECISION-->
 <!--335-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--335**************--></C_CURRENCY>
@@ -5714,10 +5014,6 @@
 <!--336-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--336 COSTINGPRECISION-->
 <!--336-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--336 ISEURO-->
-<!--336-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--336 ISEMUMEMBER-->
-<!--336-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--336 PRICEPRECISION-->
 <!--336-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--336**************--></C_CURRENCY>
@@ -5747,10 +5043,6 @@
 <!--337-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--337 COSTINGPRECISION-->
 <!--337-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--337 ISEURO-->
-<!--337-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--337 ISEMUMEMBER-->
-<!--337-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--337 PRICEPRECISION-->
 <!--337-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--337**************--></C_CURRENCY>
@@ -5780,10 +5072,6 @@
 <!--338-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--338 COSTINGPRECISION-->
 <!--338-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--338 ISEURO-->
-<!--338-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--338 ISEMUMEMBER-->
-<!--338-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--338 PRICEPRECISION-->
 <!--338-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--338**************--></C_CURRENCY>
@@ -5813,10 +5101,6 @@
 <!--339-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--339 COSTINGPRECISION-->
 <!--339-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--339 ISEURO-->
-<!--339-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--339 ISEMUMEMBER-->
-<!--339-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--339 PRICEPRECISION-->
 <!--339-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--339**************--></C_CURRENCY>
@@ -5846,10 +5130,6 @@
 <!--340-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--340 COSTINGPRECISION-->
 <!--340-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--340 ISEURO-->
-<!--340-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--340 ISEMUMEMBER-->
-<!--340-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--340 PRICEPRECISION-->
 <!--340-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--340**************--></C_CURRENCY>
@@ -5879,10 +5159,6 @@
 <!--341-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--341 COSTINGPRECISION-->
 <!--341-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--341 ISEURO-->
-<!--341-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--341 ISEMUMEMBER-->
-<!--341-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--341 PRICEPRECISION-->
 <!--341-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--341**************--></C_CURRENCY>
@@ -5912,10 +5188,6 @@
 <!--342-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--342 COSTINGPRECISION-->
 <!--342-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--342 ISEURO-->
-<!--342-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--342 ISEMUMEMBER-->
-<!--342-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--342 PRICEPRECISION-->
 <!--342-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--342**************--></C_CURRENCY>
@@ -5945,10 +5217,6 @@
 <!--343-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--343 COSTINGPRECISION-->
 <!--343-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--343 ISEURO-->
-<!--343-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--343 ISEMUMEMBER-->
-<!--343-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--343 PRICEPRECISION-->
 <!--343-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--343**************--></C_CURRENCY>
@@ -5978,10 +5246,6 @@
 <!--344-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--344 COSTINGPRECISION-->
 <!--344-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
-<!--344 ISEURO-->
-<!--344-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--344 ISEMUMEMBER-->
-<!--344-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
 <!--344 PRICEPRECISION-->
 <!--344-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--344**************--></C_CURRENCY>
@@ -6011,12 +5275,6 @@
 <!--345-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--345 COSTINGPRECISION-->
 <!--345-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
-<!--345 ISEURO-->
-<!--345-->              <ISEURO><![CDATA[N]]></ISEURO>
-<!--345 ISEMUMEMBER-->
-<!--345-->              <ISEMUMEMBER><![CDATA[N]]></ISEMUMEMBER>
-<!--345 EMURATE-->
-<!--345-->              <EMURATE><![CDATA[0]]></EMURATE>
 <!--345 PRICEPRECISION-->
 <!--345-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
 <!--345**************--></C_CURRENCY>

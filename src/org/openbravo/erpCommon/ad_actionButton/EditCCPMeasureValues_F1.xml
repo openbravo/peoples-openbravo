@@ -37,8 +37,6 @@
     <FIELD id="fieldGroupId" attribute="value">groupid</FIELD>
     <FIELD id="fieldProduct" attribute="value">product</FIELD>
     <FIELD id="fieldProduct" attribute="name" replace="xx">groupid</FIELD>
-    <!--FIELD id="fieldProduct" boolean="disabled class='CampoReadOnly'" withId="paramCheckN">hassecproduct</FIELD-->
-    <FIELD id="fieldProduct" boolean="class='readonly'" withId="paramCheckN">hassecproduct</FIELD>
     <SUBREPORT id="reportHours" name="reportHours" report="org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues_Hours"/>
     <SUBREPORT id="reportValues" name="reportValues" report="org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues_Values"/>
     <SECTION id="sectionDetail"/>

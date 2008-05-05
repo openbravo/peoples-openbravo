@@ -48,6 +48,7 @@
     Cur_SeqProduct RECORD;
     --ptr_sp  Cur_SeqProduct%ROWTYPE;
     FINISH_PROCESS BOOLEAN:=false;
+    v_DBA_ErrorLog_ID NUMBER;
   BEGIN
     --  Process Parameters
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -170,7 +171,7 @@
                 MA_Wrphaseproduct_ID, MA_Wrphase_ID, AD_Client_ID, AD_Org_ID,
                 Isactive, Created, Createdby, Updated,
                 Updatedby, M_Product_ID, Productiontype, MovementQty,
-                ComponentCost, C_UOM_ID, consumeRM, decreaseInd,
+                ComponentCost, C_UOM_ID,
                 quantityorder, M_Product_UOM_ID
               )
               VALUES
@@ -178,7 +179,7 @@
                 v_WrPhaseProd_ID, v_WrPhase_ID, v_Client_ID, v_Org_ID,
                  'Y', now(), v_User_ID, now(),
                 v_User_ID, Cur_SeqProduct.M_Product_ID, Cur_SeqProduct.Productiontype, Cur_SeqProduct.Quantity,
-                Cur_SeqProduct.ComponentCost, Cur_SeqProduct.C_UOM_ID, Cur_SeqProduct.consumeRM, Cur_SeqProduct.decreaseInd,
+                Cur_SeqProduct.ComponentCost, Cur_SeqProduct.C_UOM_ID,
                 Cur_SeqProduct.quantityorder, Cur_SeqProduct.M_Product_UOM_ID
               )
               ;
@@ -210,7 +211,7 @@
                 MA_Wrphaseproduct_ID, MA_Wrphase_ID, AD_Client_ID, AD_Org_ID,
                 Isactive, Created, Createdby, Updated,
                 Updatedby, M_Product_ID, Productiontype, MovementQty,
-                ComponentCost, C_UOM_ID, consumeRM, decreaseInd,
+                ComponentCost, C_UOM_ID,
                 QUANTITYORDER, M_PRODUCT_UOM_ID
               )
               VALUES
@@ -218,7 +219,7 @@
                 v_WrPhaseProd_ID, Cur_WRPhase.MA_WrPhase_ID, v_Client_ID, v_Org_ID,
                  'Y', now(), v_User_ID, now(),
                 v_User_ID, Cur_SeqProduct.M_Product_ID, Cur_SeqProduct.Productiontype, Cur_SeqProduct.Quantity,
-                Cur_SeqProduct.ComponentCost, Cur_SeqProduct.C_UOM_ID, Cur_SeqProduct.consumeRM, Cur_SeqProduct.decreaseInd,
+                Cur_SeqProduct.ComponentCost, Cur_SeqProduct.C_UOM_ID,
                 Cur_SeqProduct.quantityorder, Cur_SeqProduct.M_Product_UOM_ID
               )
               ;
@@ -253,6 +254,7 @@ WHEN OTHERS THEN
     DECLARE
       v_Code NUMBER:=SQLCODE;
     BEGIN
+      AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_Client_ID, v_DBA_ErrorLog_ID);
       INSERT
       INTO DBA_ErrorLog
         (
@@ -262,7 +264,7 @@ WHEN OTHERS THEN
         )
         VALUES
         (
-          DBA_ErrorLog_Seq.NextVal, now(),
+          v_DBA_ErrorLog_ID, now(),
           v_Code, v_ResultStr,
            'MA_WorkRequirement_Post'
         )

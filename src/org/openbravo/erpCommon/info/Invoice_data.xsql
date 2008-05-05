@@ -39,7 +39,6 @@
           i.GrandTotal,
           C_Base_Convert(i.GrandTotal, i.C_Currency_ID, i.AD_Client_ID, i.DateAcct, 0) AS ConvertedAmount,
           0 AS OpenAmt,
-          i.IsPaid,
           i.IsSOTrx,
           i.Description,
           i.POReference,
@@ -48,7 +47,6 @@
           WHERE i.AD_Client_ID IN ('1') 
           AND i.AD_Org_ID IN ('1') 
           AND i.IsActive='Y'
-          AND i.IsPaid = ?
           ORDER BY 2
         ) A ) B
         WHERE 1=1
@@ -70,7 +68,6 @@
         <Parameter name="grandTotalFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="grandTotalTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal <= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="sotrx" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.IsSOTrx = ? ]]></Parameter>
-        <Parameter name="paid"/>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="2" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
@@ -92,7 +89,6 @@
           i.GrandTotal,
           C_Base_Convert(i.GrandTotal, i.C_Currency_ID, i.AD_Client_ID, i.DateAcct, 0) AS ConvertedAmount,
           0 AS OpenAmt,
-          i.IsPaid,
           i.IsSOTrx,
           i.Description,
           i.POReference

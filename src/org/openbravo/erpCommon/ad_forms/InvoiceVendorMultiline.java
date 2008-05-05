@@ -105,14 +105,10 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
 
     data.processing = vars.getStringParameter("inpprocessing", "N");
     data.issotrx = vars.getRequiredInputGlobalVariable("inpissotrx", windowId + "|IsSOTrx", "N");
-    data.sendemail = vars.getStringParameter("inpsendemail", "N");
-    data.ispaid = vars.getStringParameter("inpispaid", "N");
     data.cInvoiceId = vars.getRequestGlobalVariable("inpcInvoiceId", windowId + "|C_Invoice_ID");
-    data.isapproved = vars.getRequiredInputGlobalVariable("inpisapproved", windowId + "|IsApproved", "N");
     data.dateprinted = vars.getStringParameter("inpdateprinted");
     data.isprinted = vars.getStringParameter("inpisprinted", "N");
     data.isselfservice = vars.getStringParameter("inpisselfservice", "N");
-    data.istransferred = vars.getStringParameter("inpistransferred", "N");
     data.processed = vars.getStringParameter("inpprocessed", "N");
     data.istaxincluded = vars.getStringParameter("inpistaxincluded", "N");
     data.adClientId = vars.getGlobalVariable("inpadClientId", windowId + "|AD_Client_ID", vars.getClient());

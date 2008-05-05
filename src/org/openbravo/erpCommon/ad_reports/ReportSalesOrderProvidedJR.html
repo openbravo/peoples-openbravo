@@ -45,7 +45,6 @@
       <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
       <script language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></script>
-      <script language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
       <script type="text/javascript">
@@ -67,14 +66,6 @@ function depurar()
 	return true;
 }
 function onloadFunctions() {
-	new TypeAheadCombo("inpmWarehouseId");
-  new TypeAheadCombo("inpcRegionId");
- // new TypeAheadCombo("inpProductCategory");
- // new TypeAheadCombo("inpmCategoryId");
-  //new TypeAheadCombo("inpArticulo");
- // new TypeAheadCombo("inpProjectkind");
-//  new TypeAheadCombo("inpProjectpublic");
- // new TypeAheadCombo("inpProductCategory2");
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', null, false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Project.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', inputValue(document.frmMain.inpcProjectId_D), 'inpIDValue', 'WindowID', inputValue(document.frmMain.inpcProjectId), 'Command', 'KEY');", "inpcProjectId_D", "null"), new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null");
 }

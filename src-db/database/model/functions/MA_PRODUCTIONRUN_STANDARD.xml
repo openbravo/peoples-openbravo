@@ -377,10 +377,10 @@
         INSERT INTO MA_PL_EMPLOYEE
         (MA_PL_EMPLOYEE_ID,
          CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-         M_PRODUCTIONPLAN_ID, C_SALARY_CATEGORY_ID, QUANTITY, COSTUOM)
+         M_PRODUCTIONPLAN_ID, C_SALARY_CATEGORY_ID, QUANTITY)
         SELECT AD_Get_Next_Sequence('MA_PL_Employee', v_Client_ID),
          now(), v_User_ID, now(), v_User_ID, v_Client_ID, v_Org_ID, 'Y',
-         v_Record_ID, C_Salary_Category_ID, Quantity, costuom
+         v_Record_ID, C_Salary_Category_ID, Quantity
         FROM MA_COSTCENTER_EMPLOYEE cce, M_ProductionPlan pp
         WHERE cce.MA_Costcenter_version_ID = pp.MA_COstCenter_Version_ID
           AND pp.M_ProductionPlan_ID = v_Record_ID

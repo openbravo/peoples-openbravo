@@ -101,7 +101,7 @@
             (C_BankStatementLine_ID, AD_Client_ID,AD_Org_ID,
             IsActive,Created,CreatedBy,
             Updated,UpdatedBy, C_BankStatement_ID,
-            DateAcct,ValutaDate, Line,IsReversal, 
+            DateAcct,ValutaDate,
             C_Debt_Payment_ID, Description, 
             TrxAmt,
             ChargeAmt, 

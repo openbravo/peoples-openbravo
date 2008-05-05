@@ -45,10 +45,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISREVERSAL" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="VALUTADATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -126,6 +122,5 @@
         <index-column name="C_BANKSTATEMENT_ID"/>
       </index>
       <check name="C_BANKSTATLN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_BANKSTATLN_ISREVERSAL_CHECK"><![CDATA[ISREVERSAL IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -77,6 +77,7 @@
     v_Count NUMBER:=0;
     v_Line VARCHAR2(10) ;
     FINISH_PROCESS BOOLEAN:=false;
+    v_DBA_ErrorLog_ID NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -465,7 +466,7 @@
                 AD_Client_ID, AD_Org_ID, IsActive, Created,
                 CreatedBy, Updated, UpdatedBy, M_Product_ID,
                 M_AttributeSetInstance_ID, C_UOM_ID, M_Locator_ID, MovementQty,
-                Description, IsInvoiced, Lot, SerNo,  --MODIFIED BY F.IRIAZABAL
+                Description, IsInvoiced,  --MODIFIED BY F.IRIAZABAL
                 QuantityOrder, M_Product_UOM_ID
               )
               VALUES
@@ -474,7 +475,7 @@
                 Cur_InOut.AD_Client_ID, Cur_InOut.AD_Org_ID, 'Y', now(),
                 0, now(), 0, Cur_InOutLine.M_Product_ID,
                 Cur_InOutLine.M_AttributeSetInstance_ID, Cur_InOutLine.C_UOM_ID, Cur_InOutLine.M_Locator_ID, Cur_InOutLine.MovementQty * -1,
-                 '*R*: ' || Cur_InOutLine.Description, Cur_InOutLine.IsInvoiced, Cur_InOutLine.Lot, Cur_InOutLine.SerNo,  --MODIFIED BY F.IRIAZABAL
+                 '*R*: ' || Cur_InOutLine.Description, Cur_InOutLine.IsInvoiced, --MODIFIED BY F.IRIAZABAL
                 Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID
               )
               ;
@@ -542,6 +543,7 @@ WHEN OTHERS THEN
     DECLARE
       v_Code NUMBER:=SQLCODE;
     BEGIN
+      AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_AD_Client_ID, v_DBA_ErrorLog_ID);
       INSERT
       INTO DBA_ERRORLOG
         (
@@ -551,7 +553,7 @@ WHEN OTHERS THEN
         )
         VALUES
         (
-          DBA_ErrorLog_Seq.NEXTVAL, now(),
+          v_DBA_ErrorLog_ID, now(),
           v_Code, v_ResultStr,
            'M_InOut_Post'
         )

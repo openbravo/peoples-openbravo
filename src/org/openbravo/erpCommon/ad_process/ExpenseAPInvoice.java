@@ -122,7 +122,7 @@ String strProductRMailTextID = "";
 
          //strPricelistId = ExpenseAPInvoiceData.pricelistId(this, data[i].cBpartnerId);
 
-         ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, data[i].cCurrencyId, strSalesrepId, "N", "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
+         ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, data[i].cCurrencyId, strSalesrepId, "N", "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
         }
         else strcInvoiceId = strcInvoiceIdOld;
        }

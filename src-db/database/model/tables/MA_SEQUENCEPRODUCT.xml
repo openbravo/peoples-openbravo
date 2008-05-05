@@ -65,24 +65,12 @@
         <default><![CDATA[1]]></default>
         <onCreateDefault/>
       </column>
-      <column name="RMINPUT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="DECREASE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
       <column name="REJECTED" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="CONSUMERM" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="DECREASEIND" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="COST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">

@@ -42,6 +42,9 @@
     -- Parameter Variables
     --
     Cur_InOut RECORD;
+    v_AD_Client_ID NUMBER;
+    v_DBA_ErrorLog_ID NUMBER;
+    
   BEGIN
     --  Update AD_PInstance
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -107,6 +110,7 @@ WHEN OTHERS THEN
     DECLARE
       v_Code NUMBER:=SQLCODE;
     BEGIN
+      AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_AD_Client_ID, v_DBA_ErrorLog_ID);
       INSERT
       INTO DBA_ErrorLog
         (
@@ -116,7 +120,7 @@ WHEN OTHERS THEN
         )
         VALUES
         (
-          DBA_ErrorLog_Seq.NextVal, now(),
+          v_DBA_ErrorLog_ID, now(),
           v_Code, v_ResultStr,
            'M_InOut_Cancel'
         )

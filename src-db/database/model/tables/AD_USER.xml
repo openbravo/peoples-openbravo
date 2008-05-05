@@ -53,14 +53,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PA_GOAL_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="PA_GOALPRIVATE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -188,12 +180,6 @@
       </foreign-key>
       <foreign-key foreignTable="M_WAREHOUSE" name="MWAREHOUSE_ADUSERDEFAULT">
         <reference local="DEFAULT_M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="PA_GOAL" name="PAGOAL_ADUSER">
-        <reference local="PA_GOAL_ID" foreign="PA_GOAL_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="PA_GOAL" name="PAGOALPRIVATE_ADUSER">
-        <reference local="PA_GOALPRIVATE_ID" foreign="PA_GOAL_ID"/>
       </foreign-key>
       <index name="AD_USER_EMAIL" unique="false">
         <index-column name="EMAIL"/>

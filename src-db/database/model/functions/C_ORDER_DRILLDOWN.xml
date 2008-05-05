@@ -36,6 +36,8 @@
     C_Order_ID NUMBER;
     --
     Cur_Order RECORD;
+    v_T_Spool_ID NUMBER;
+    v_Client_ID NUMBER;
   BEGIN
     -- No locking or Updating
     -- Get Parameters
@@ -45,7 +47,8 @@
         p.ParameterName,
         p.P_String,
         p.P_Number,
-        p.P_Date
+        p.P_Date,
+        p.AD_CLIENT_ID
       FROM AD_PInstance i
       LEFT JOIN AD_PInstance_Para p
         ON i.AD_PInstance_ID=p.AD_PInstance_ID
@@ -54,6 +57,7 @@
       )
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
+      v_Client_ID:=Cur_Parameter.AD_CLIENT_ID;
       IF(Cur_Parameter.ParameterName='C_Order_ID') THEN
         C_Order_ID:=Cur_Parameter.P_Number;
         DBMS_OUTPUT.PUT_LINE('  C_Order_ID=' || C_Order_ID) ;
@@ -89,7 +93,7 @@
         VALUES
         (
           PInstance_ID,
-          T_Spool_Seq.NEXTVAL,
+          v_T_Spool_ID,
           Cur_Order.NAME || ' ' || Cur_Order.DocumentNo || ':  @DocStatus@=' || Cur_Order.DocStatus  || ', @DocAction@=' || Cur_Order.DocAction || ', @Processed@=' || Cur_Order.Processed
         )
         ;
@@ -104,6 +108,7 @@
           ORDER BY Line
           )
         LOOP
+          AD_SEQUENCE_NEXT('T_Spool', v_Client_ID, v_T_Spool_ID);
           INSERT
           INTO T_SPOOL
             (
@@ -114,7 +119,7 @@
             VALUES
             (
               PInstance_ID,
-              T_Spool_Seq.NEXTVAL,
+              v_T_Spool_ID,
               '   @QtyOrdered@=' || Cur_OrderLine.QtyOrdered || ', @QtyReserved@=' || Cur_OrderLine.QtyReserved  || ', @QtyDelivered@=' || Cur_OrderLine.QtyDelivered || ', @QtyInvoiced@=' || Cur_OrderLine.QtyInvoiced  --MODIFIED BY F.IRIAZABAL
               || ', @QuantityOrder@=' || Cur_OrderLine.QuantityOrder  || ' - Wh=' || Cur_OrderLine.M_Warehouse_ID || ', Dir=' || Cur_OrderLine.DirectShip  || ', Prd=' || Cur_OrderLine.M_Product_ID
             )
@@ -138,6 +143,7 @@
             AND s.C_DocType_ID=d.C_DocType_ID
           )
         LOOP
+          AD_SEQUENCE_NEXT('T_Spool', v_Client_ID, v_T_Spool_ID);
           INSERT
           INTO T_SPOOL
             (
@@ -148,7 +154,7 @@
             VALUES
             (
               PInstance_ID,
-              T_Spool_Seq.NEXTVAL,
+              v_T_Spool_ID,
               '> ' || Cur_InOut.NAME || ' ' || Cur_InOut.DocumentNo || ':  @DocStatus@=' || Cur_InOut.DocStatus  || ', @Processed@=' || Cur_InOut.Processed || ', Wh=' || Cur_InOut.M_Warehouse_ID
             )
             ;
@@ -163,6 +169,7 @@
               ORDER BY Line
               )
             LOOP
+              AD_SEQUENCE_NEXT('T_Spool', v_Client_ID, v_T_Spool_ID);
               INSERT
               INTO T_SPOOL
                 (
@@ -173,7 +180,7 @@
                 VALUES
                 (
                   PInstance_ID,
-                  T_Spool_Seq.NEXTVAL,
+                  v_T_Spool_ID,
                   '   @QtyDelivered@=' || Cur_InOutLine.MovementQty || ', Prd=' || Cur_InOutLine.M_Product_ID  --MODIFIED BY F.IRIAZABAL
                   || ', @QuantityOrder@=' || Cur_InOutLine.QUANTITYORDER
                 )
@@ -205,6 +212,7 @@
             )
           )
         LOOP
+          AD_SEQUENCE_NEXT('T_Spool', v_Client_ID, v_T_Spool_ID);
           INSERT
           INTO T_SPOOL
             (
@@ -215,7 +223,7 @@
             VALUES
             (
               PInstance_ID,
-              T_Spool_Seq.NEXTVAL,
+              v_T_Spool_ID,
               '> ' || Cur_Invoice.NAME || ' ' || Cur_Invoice.DocumentNo || ':  @DocStatus@=' || Cur_Invoice.DocStatus  || ', @Processed@=' || Cur_Invoice.Processed
             )
             ;
@@ -230,6 +238,7 @@
               ORDER BY Line
               )
             LOOP
+              AD_SEQUENCE_NEXT('T_Spool', v_Client_ID, v_T_Spool_ID);
               INSERT
               INTO T_SPOOL
                 (
@@ -240,7 +249,7 @@
                 VALUES
                 (
                   PInstance_ID,
-                  T_Spool_Seq.NEXTVAL,
+                  v_T_Spool_ID,
                   '   @QtyInvoiced@=' || Cur_InvoiceLine.QtyInvoiced || ', Prd=' || Cur_InvoiceLine.M_Product_ID  --MODIFIED BY F.IRIAZABAL
                   || ', @QuantityOrder@=' || Cur_InvoiceLine.QuantityOrder
                 )

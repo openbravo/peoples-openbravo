@@ -37,14 +37,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_BANK_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="ISACH" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="BANKACCOUNTTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -62,10 +54,6 @@
         <onCreateDefault/>
       </column>
       <column name="CREDITCARDNUMBER" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="CREDITCARDVV" primaryKey="false" required="false" type="VARCHAR" size="4" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -106,10 +94,6 @@
         <onCreateDefault/>
       </column>
       <column name="A_IDENT_SSN" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="R_AVSADDR" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -158,9 +142,6 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_CBPBANKACCOUNT">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_BANK" name="CBANK_CBPBANKACCOUNT" onDelete="setnull">
-        <reference local="C_BANK_ID" foreign="C_BANK_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CBPBANKACCOUNT" onDelete="cascade">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>
@@ -169,7 +150,6 @@
       </index>
       <check name="C_BP_BACC_COUNTRY_CHECK"><![CDATA[(IBAN IS NULL) OR (C_COUNTRY_ID IS NOT NULL)]]></check>
       <check name="C_BP_BACC_IBAN_CHECK"><![CDATA[(((SHOWIBAN = 'Y') AND (SHOWACCOUNTNO = 'N')) AND (IBAN IS NOT NULL)) OR (((SHOWIBAN = 'N') AND (SHOWACCOUNTNO = 'Y')) AND (ACCOUNTNO IS NOT NULL))]]></check>
-      <check name="CBPBANKACCOUNT_ISACH_CHECK"><![CDATA[ISACH IN ('Y', 'N')]]></check>
       <check name="CBPBANKACCOUNT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

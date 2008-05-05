@@ -27,7 +27,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT seqno, hassecproduct 
+      SELECT seqno
       FROM MA_CCP_Group
       WHERE MA_CCP_Group_ID = TO_NUMBER(?)
       ]]>

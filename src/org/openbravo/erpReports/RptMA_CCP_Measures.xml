@@ -20,10 +20,7 @@
 <REPORT>
   <template file="RptMA_CCP_Measures.fo"/>
   <structure name="structure1">
-    <FIELD id="fieldProduct" replaceCharacters="fo">product</FIELD>
     <FIELD id="fieldDate" replaceCharacters="fo">measuredate</FIELD>
-    <FIELD id="fieldLot" replaceCharacters="fo">lot</FIELD>
-    <FIELD id="fieldSellByDate" replaceCharacters="fo">sellbydate</FIELD>
     <FIELD id="fieldGroup" replaceCharacters="fo">grupo</FIELD>
     <FIELD id="fieldFrecuency" replaceCharacters="fo">frecuency</FIELD>
     <FIELD id="fieldShift" replaceCharacters="fo">shift</FIELD>

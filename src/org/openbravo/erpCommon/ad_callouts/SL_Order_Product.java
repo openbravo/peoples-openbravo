@@ -76,11 +76,9 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     
-    String strLastPriceSO = "";
     String strPriceActual = "";
 
     if (!strMProductID.equals("")) {
-      strLastPriceSO = SLOrderProductData.lastPriceSo(this, strCBpartnerID, strMProductID);
       SLOrderProductData[] dataOrder = SLOrderProductData.select(this, strCOrderId);
       
       if (log4j.isDebugEnabled()) log4j.debug("get Offers date: "+dataOrder[0].dateordered+" partner:" +dataOrder[0].cBpartnerId+" prod:"+ strMProductID +" std:"+strPriceStd.replace("\"", ""));
@@ -112,7 +110,6 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inppricelimit\", " + (strPriceLimit.equals("")?"\"0\"":strPriceLimit) + "),");
     resultado.append("new Array(\"inppricestd\", " + (strPriceStd.equals("")?"\"0\"":strPriceStd) + "),");
     resultado.append("new Array(\"inppriceactual\", " + (strPriceActual.equals("")?"\"0\"":strPriceActual) + "),");
-    resultado.append("new Array(\"inplastpriceso\", \"" + strLastPriceSO + "\"),");
     resultado.append("new Array(\"inpcCurrencyId\", " + (strCurrency.equals("")?"\"\"":strCurrency) + "),");
     resultado.append("new Array(\"inpdiscount\", \"" + discount.toString() + "\"),");
     if (!strMProductID.equals("")) {

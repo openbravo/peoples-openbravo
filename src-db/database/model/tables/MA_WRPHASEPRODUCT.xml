@@ -69,14 +69,6 @@
         <default><![CDATA[1]]></default>
         <onCreateDefault/>
       </column>
-      <column name="CONSUMERM" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="DECREASEIND" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MAWRPHASEPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>

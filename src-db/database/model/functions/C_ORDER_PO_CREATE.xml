@@ -47,6 +47,9 @@
     --
     v_Created NUMBER:=0;
     FINISH_PROCESS BOOLEAN:=false;
+    v_PInstance_Log_ID NUMBER;
+    v_Client_ID NUMBER;
+    
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -272,9 +275,8 @@
               CreatedBy, Updated, UpdatedBy, C_Order_ID,
               IsSOTrx, DocumentNo, DocStatus, DocAction,
               Processing, Processed, C_DocType_ID, C_DocTypeTarget_ID,
-              Description, IsApproved,
-              IsCreditApproved,
-              IsDelivered, IsInvoiced, IsPrinted, IsTransferred,
+              Description,
+              IsDelivered, IsInvoiced, IsPrinted,
               IsSelected, SalesRep_ID, DateOrdered, DatePromised,
               DatePrinted, DateAcct, C_BPartner_ID, BillTo_ID,
               C_BPartner_Location_ID, AD_User_ID, POReference, IsDiscountPrinted,
@@ -291,9 +293,8 @@
               Cur_SO.UpdatedBy, now(), Cur_SO.UpdatedBy, v_PO_Order_ID,
                'N', v_DocumentNo, 'DR', 'CO',
                'N', 'N', 0, v_C_DocType_ID,
-              Cur_SO.DocumentNo || ': ' || Cur_SO.Description, 'Y',
-               'N', -- 0=new
-              'N', 'N', 'N', 'N',
+              Cur_SO.DocumentNo || ': ' || Cur_SO.Description,
+              'N', 'N', 'N',
                'N', Cur_SO.SalesRep_ID, Cur_SO.DateOrdered, Cur_SO.DatePromised,
               NULL, Cur_SO.DateAcct, Cur_SO.C_BPartner_ID, v_BillTo_ID,
               v_C_BPartner_Location_ID, NULL, Cur_SO.POReference, 'Y',
@@ -369,7 +370,7 @@
                 QtyDelivered, QtyInvoiced, M_Shipper_ID, C_Currency_ID,
                 PriceList, PriceActual, PriceLimit, LineNetAmt,
                 Discount, FreightAmt, C_Charge_ID, ChargeAmt,
-                C_Tax_ID, Lot, SerNo, S_ResourceAssignment_ID,
+                C_Tax_ID, S_ResourceAssignment_ID,
                 Ref_OrderLine_ID,  --MODIFIED BY F.IRIAZABAL
                 QuantityOrder, M_Product_UOM_ID, PriceStd, M_Offer_ID
               )
@@ -384,7 +385,7 @@
                 0, 0, NULL, Cur_SO.C_Currency_ID,
                 Cur_SOL.PriceList, Cur_SOL.PriceStd, Cur_SOL.PriceLimit, ROUND(Cur_SOL.QtyOrdered*Cur_SOL.PriceStd, 2),
                 NULL, 0, NULL, 0,
-                v_C_Tax_ID, NULL, NULL, NULL,
+                v_C_Tax_ID, NULL,
                 Cur_SOL.C_OrderLine_ID,  --MODIFIED BY F.IRIAZABAL
                 Cur_SOL.QUANTITYORDER, Cur_SOL.M_PRODUCT_UOM_ID, Cur_SOL.PriceStd, NULL
               )
@@ -397,6 +398,7 @@
             v_Lines:=v_Lines + 1;
           END LOOP; -- For all SO Lines
           -- Log info - Log_ID must be unique in instance
+          AD_SEQUENCE_NEXT('AD_PInstance_Log', v_Client_ID, v_PInstance_Log_ID);
           INSERT
           INTO AD_PINSTANCE_LOG
             (
@@ -406,7 +408,7 @@
             )
             VALUES
             (
-              p_PInstance_ID, AD_PInstance_Seq.NEXTVAL,
+              p_PInstance_ID,v_PInstance_Log_ID,
               v_PO_Order_ID, v_Lines,
               Cur_SO.DocumentNo || ': @Created@ ' || v_DocumentNo
             )

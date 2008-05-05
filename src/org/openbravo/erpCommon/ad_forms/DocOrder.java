@@ -214,11 +214,6 @@ public Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,Var
 			int no = DocOrderData.updateProductPO(con, conn, Record_ID);
 			log4jDocOrder.debug("M_Product_PO - Updated=" + no);
 
-			//  update Product Costing
-			//  requires existence of currency conversion !!
-			//  if there are multiple lines of the same product last price uses first
-			no = DocOrderData.updateProductCosting(con, conn, C_AcctSchema_ID, Record_ID);
-			log4jDocOrder.debug("M_Product_Costing - Updated=" + no);
 		}
 		catch (ServletException e){
 			log4jDocOrder.warn(e);

@@ -45,14 +45,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="VERSION" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[D]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="COLUMNNAME" primaryKey="false" required="true" type="VARCHAR" size="40" autoIncrement="false">
         <default/>
         <onCreateDefault/>

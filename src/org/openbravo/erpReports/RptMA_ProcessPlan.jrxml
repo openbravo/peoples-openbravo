@@ -130,7 +130,6 @@
               s.SEQNO, (CASE s.GROUPUSE WHEN 'Y' THEN 'SI' ELSE 'NO' END) as groupuse, (CASE s.NOQTY WHEN 'Y' THEN 'SI' ELSE 'NO' END) as vacio,
               p.name as producto, sp.PRODUCTIONTYPE as tipo, (CASE sp.PRODUCTIONTYPE WHEN '+' THEN 'bold' ELSE 'normal' END) as bold,
               sp.QUANTITY, c.UOMSYMBOL as ud, sp.COMPONENTCOST, sp.DECREASE, sp.REJECTED,
-              (CASE sp.CONSUMERM WHEN 'Y' THEN 'SI' ELSE 'NO' END) as consumerm, (CASE sp.DECREASEIND WHEN 'Y' THEN 'SI' ELSE 'NO' END) as decreaseind, 
               pp.MA_ProcessPlan_ID, s.MA_Sequence_ID, AD_MESSAGE_GET2(pp.EXPLODEPHASES, 'es_ES') as explodephases
           FROM MA_Processplan pp, MA_processplan_version v, ma_sequence s, ma_sequenceproduct sp, 
               m_product p, ma_process pr, C_UOM c
@@ -165,8 +164,6 @@
 	<field name="COMPONENTCOST" class="java.math.BigDecimal"/>
 	<field name="DECREASE" class="java.math.BigDecimal"/>
 	<field name="REJECTED" class="java.math.BigDecimal"/>
-	<field name="CONSUMERM" class="java.lang.String"/>
-	<field name="DECREASEIND" class="java.lang.String"/>
 	<field name="MA_PROCESSPLAN_ID" class="java.math.BigDecimal"/>
 	<field name="MA_SEQUENCE_ID" class="java.math.BigDecimal"/>
 	<field name="EXPLODEPHASES" class="java.lang.String"/>
@@ -620,34 +617,6 @@
 					</textElement>
 				<text><![CDATA[Rejected]]></text>
 				</staticText>
-				<staticText>
-					<reportElement
-						style="Detail_Header"
-						x="414"
-						y="0"
-						width="61"
-						height="18"
-						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#CCCCCC" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[Consum M.]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="Detail_Header"
-						x="475"
-						y="0"
-						width="47"
-						height="18"
-						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#CCCCCC" leftPadding="5" rightBorder="Thin" rightBorderColor="#CCCCCC" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[Decre.ind.]]></text>
-				</staticText>
 				<line direction="TopDown">
 					<reportElement
 						style="default"
@@ -795,36 +764,6 @@
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{REJECTED}!=null)?$P{NUMBERFORMAT}.format($F{REJECTED}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="default"
-						x="404"
-						y="0"
-						width="61"
-						height="16"
-						key="textField-7"
-						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#666666" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONSUMERM}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="default"
-						x="465"
-						y="0"
-						width="47"
-						height="16"
-						key="textField-8"
-						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#666666" leftPadding="2" rightBorder="Thin" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DECREASEIND}]]></textFieldExpression>
 				</textField>
 				</frame>				<line direction="TopDown">
 					<reportElement

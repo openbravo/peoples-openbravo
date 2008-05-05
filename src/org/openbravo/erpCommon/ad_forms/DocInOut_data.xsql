@@ -55,25 +55,4 @@
      <Parameter name="client"/>
      <Parameter name="id"/>
    </SqlMethod>
-  <SqlMethod name="updateProductCosting" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        UPDATE M_Product_Costing 
-        SET CostAverageCumQty=(SELECT CostAverageCumQty - SUM(il.MovementQty)
-                               FROM M_InOutLine il 
-                               WHERE M_Product_Costing.M_Product_ID=il.M_Product_ID
-                               AND il.M_InOut_ID = TO_NUMBER(?)), 
-            CostAverageCumAmt=(SELECT CostAverageCumAmt - SUM(il.MovementQty*CurrentCostPrice) FROM M_InOutLine il 
-                                WHERE M_Product_Costing.M_Product_ID=il.M_Product_ID
-                                AND il.M_InOut_ID = TO_NUMBER(?))
-        WHERE EXISTS (SELECT * FROM M_InOutLine il 
-                                 WHERE M_Product_Costing.M_Product_ID=il.M_Product_ID
-                                 AND il.M_InOut_ID = TO_NUMBER(?))
-     ]]>
-     </Sql>
-     <Parameter name="M_InOut_ID"/>
-     <Parameter name="M_InOut_ID"/>
-     <Parameter name="M_InOut_ID"/>
-   </SqlMethod>
    </SqlClass>

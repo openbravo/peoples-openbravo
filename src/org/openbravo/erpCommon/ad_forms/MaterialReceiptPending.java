@@ -207,7 +207,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               return myMessage;
               //return(Utility.messageBD(this, "DateReceipt", vars.getLanguage()) + " " + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
             }
-            MaterialReceiptPendingData.insert(conn, this, strmInoutId, vars.getClient(), data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), "N", strDocumentno, "CO", "DR", "N", "N", "N", docTargetType, data[0].description, data[0].cOrderId, data[0].dateordered, "N", "V+", strDateReceipt, strDateReceipt, data[0].cBpartnerId, data[0].cBpartnerLocationId, data[0].mWarehouseId, data[0].poreference, data[0].deliveryrule, data[0].freightcostrule, data[0].freightamt, data[0].deliveryviarule, data[0].mShipperId, data[0].cChargeId, data[0].chargeamt, data[0].priorityrule, "N", "N", "N", data[0].adUserId, data[0].salesrepId, data[0].adOrgtrxId, data[0].cProjectId, data[0].cCampaignId, data[0].cActivityId, data[0].user1Id, data[0].user2Id, "N", "N", "N");
+            MaterialReceiptPendingData.insert(conn, this, strmInoutId, vars.getClient(), data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), "N", strDocumentno, "CO", "DR", "N", "N", "N", docTargetType, data[0].description, data[0].cOrderId, data[0].dateordered, "N", "V+", strDateReceipt, strDateReceipt, data[0].cBpartnerId, data[0].cBpartnerLocationId, data[0].mWarehouseId, data[0].poreference, data[0].deliveryrule, data[0].freightcostrule, data[0].freightamt, data[0].deliveryviarule, data[0].mShipperId, data[0].cChargeId, data[0].chargeamt, data[0].priorityrule, "N", "N", data[0].adUserId, data[0].salesrepId, data[0].adOrgtrxId, data[0].cProjectId, data[0].cCampaignId, data[0].cActivityId, data[0].user1Id, data[0].user2Id, "N", "N", "N");
           }
           strLastBpartnerId = data[0].cBpartnerId;
           strLastOrgId = data[0].adOrgId;
@@ -216,7 +216,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           String strSequenceLine = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
           MaterialReceiptPendingLinesData[] dataLine = MaterialReceiptPendingLinesData.select(this, strOrderlineId);
 
-          MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(), data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line), dataLine[0].description, strmInoutId, strOrderlineId, strLocator, dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N", dataLine[0].lot, dataLine[0].serno, dataLine[0].mAttributesetinstanceId, "N", dataLine[0].quantityorder, dataLine[0].mProductUomId);
+          MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(), data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line), dataLine[0].description, strmInoutId, strOrderlineId, strLocator, dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N", dataLine[0].mAttributesetinstanceId, "N", dataLine[0].quantityorder, dataLine[0].mProductUomId);
           line += 10;
         }
         myMessageAux = mInoutPost(conn, vars, strmInoutId);

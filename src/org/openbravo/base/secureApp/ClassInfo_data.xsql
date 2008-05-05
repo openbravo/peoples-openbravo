@@ -24,7 +24,6 @@
                               WHEN 'T' THEN MO.AD_TASK_ID 
                               WHEN 'S' THEN MO.AD_REFERENCE_ID
                               WHEN 'F' THEN MO.AD_WORKFLOW_ID 
-                              WHEN 'B' THEN MO.AD_WORKBENCH_ID 
                               WHEN 'C' THEN MO.AD_CALLOUT_ID 
                               ELSE MO.AD_TAB_ID END) AS ID, 
         MOM.MAPPINGNAME, COALESCE(mt.name, m.name) AS NAME

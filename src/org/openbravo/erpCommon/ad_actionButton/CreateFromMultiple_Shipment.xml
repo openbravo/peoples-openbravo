@@ -37,9 +37,6 @@
 	<SUBREPORT id="reportM_WAREHOUSE_ID" name="reportM_WAREHOUSE_ID" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected" withId="paramM_Warehouse_ID"/>
 	</SUBREPORT>
-	<SUBREPORT id="reportM_INOUTLINETYPE_ID" name="reportM_INOUTLINETYPE_ID" report="org/openbravo/erpCommon/reference/List">
-		<ARGUMENT name="parameterListSelected" withId="paramVacio"/>
-	</SUBREPORT>
 	<structure name="structure1">
 		<FIELD id="fieldmStorageDetailId" attribute="value">mStorageDetailId</FIELD>
 		<FIELD id="fieldProduct">name</FIELD>

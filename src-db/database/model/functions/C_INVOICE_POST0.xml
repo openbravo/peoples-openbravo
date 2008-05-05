@@ -29,7 +29,7 @@
   * Title:  Post single Invoice
   *************************************************************************/
 BEGIN
-  C_INVOICE_POST(p_PInstance_ID, NULL) ;
+  C_INVOICE_POST(p_PInstance_ID, NULL);
 END C_INVOICE_POST0
 ]]></body>
     </function>

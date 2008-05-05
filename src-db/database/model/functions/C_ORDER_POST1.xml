@@ -31,6 +31,7 @@
   v_IsProcessing CHAR(1) ;
   v_IsProcessed CHAR(1) ;
   v_Result NUMBER:=1; -- Success
+  v_DBA_ErrorLog_ID NUMBER;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -47,7 +48,6 @@
     v_DocTypeTarget_ID NUMBER;
     v_DocSubTypeSO CHAR(2) ;
     v_IsBinding CHAR(1):='Y';
-    v_IsApproved CHAR(1) ;
     --
     ToDeliver NUMBER;
     ToInvoice NUMBER;
@@ -126,12 +126,12 @@
     */
     v_ResultStr:='ReadingOrder';
     SELECT Processing, Processed, DocAction, DocStatus,
-      C_DocType_ID, C_DocTypeTarget_ID, IsApproved, AD_Client_ID,
+      C_DocType_ID, C_DocTypeTarget_ID, AD_Client_ID,
       AD_Org_ID, UpdatedBy, M_Warehouse_ID, TRUNC(DateOrdered),
       Issotrx, c_Bpartner_Id, c_currency_id, C_PROJECT_ID,
       C_BPartner_ID, M_PriceList_ID, invoicerule
     INTO v_IsProcessing, v_IsProcessed, v_DocAction, v_DocStatus,
-      v_DocType_ID, v_DocTypeTarget_ID, v_IsApproved, v_Client_ID,
+      v_DocType_ID, v_DocTypeTarget_ID, v_Client_ID,
       v_Org_ID, v_UpdatedBy, v_M_Warehouse_ID, v_Date,
       v_isSoTrx, v_c_Bpartner_Id, v_c_currency_id, v_C_PROJECT_ID,
       v_CBPartner_ID, v_PriceList_ID, v_invoicerule
@@ -144,7 +144,7 @@
     WHERE C_DocType_ID=v_DocType_ID;
 	-- Get the name of the org of the Order. Added by P.Sarobe
 	SELECT name INTO v_Org_Name FROM AD_ORG WHERE ad_org_id = v_Org_ID;
-    DBMS_OUTPUT.PUT_LINE('DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID || ', IsApproved=' || v_IsApproved || ', DocSubTypeSO=' || v_DocSubTypeSO) ;
+    DBMS_OUTPUT.PUT_LINE('DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID || ', DocSubTypeSO=' || v_DocSubTypeSO) ;
     /**
     * Order Closed, Voided or Reversed - No action possible
     */
@@ -693,8 +693,6 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
      PriceLimit,
      LineNetAmt, Discount,
               FreightAmt, C_Charge_ID, ChargeAmt, C_Tax_ID,
-              Lot,
-              SerNo,  --MODIFIED BY F.IRIAZABAL
               QuantityOrder, M_Product_Uom_ID, PriceStd
             )
             VALUES
@@ -710,8 +708,6 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
               M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID), Bom_Pricelimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
      M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID) * CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty, CUR_BOM_Line.Discount,
               v_FreightAmt, CUR_BOM_Line.C_Charge_ID, v_ChargeAmt, CUR_BOM_Line.C_Tax_ID,
-              NULL,
-              NULL,  --MODIFIED BY F.IRIAZABAL
               CUR_BOM_Line.QuantityOrder, CUR_BOM_Line.M_Product_UOM_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID)
             )
             ; -- no Lot/SerNo for BOMs
@@ -983,34 +979,6 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
   WHERE C_Order_ID=v_Record_ID;
   IF(p_PInstance_ID IS NOT NULL) THEN
     COMMIT;
-  END IF;
-  /************
-  * Is Approved:7
-  ***********/
-  DBMS_OUTPUT.PUT_LINE('Approval - IsApproved=' || v_IsApproved) ;
-  v_ResultStr:='Approval';
-  IF(v_IsApproved='N') THEN
-    -- Check if it needs to be approved
-    v_ResultStr:='TestApproval DocType_ID=' || v_DocType_ID;
-    SELECT IsApproved
-    INTO v_IsApproved
-    FROM C_DOCTYPE
-    WHERE C_DocType_ID=v_DocType_ID;
-    DBMS_OUTPUT.PUT_LINE('IsApproved=' || v_IsApproved) ;
-    IF(v_IsApproved<>'N') THEN -- Approval needed
-      IF(v_DocAction<>'AP') THEN
-        UPDATE C_ORDER
-          SET DocStatus='NA',
-          DocAction='AP',
-          Processed='N',
-          Updated=now()
-        WHERE C_Order_ID=v_Record_ID;
-        DBMS_OUTPUT.PUT_LINE('Approval needed') ;
-        RAISE_APPLICATION_ERROR(-20000, '@NotApprovedOrder@');
-      END IF;
-    ELSE
-      UPDATE C_ORDER  SET IsApproved='Y'  WHERE C_Order_ID=v_Record_ID;
-    END IF;
   END IF;
 END IF;--FINISH_PROCESS
 IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
@@ -1432,6 +1400,7 @@ WHEN OTHERS THEN
     DECLARE
       v_Code NUMBER:=SQLCODE;
     BEGIN
+      AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_Client_ID, v_DBA_ErrorLog_ID);
       INSERT
       INTO DBA_ERRORLOG
         (
@@ -1441,7 +1410,7 @@ WHEN OTHERS THEN
         )
         VALUES
         (
-          DBA_ErrorLog_Seq.NEXTVAL, now(),
+          v_DBA_ErrorLog_ID, now(),
           v_Code, v_ResultStr,
            'C_Order_Post'
         )

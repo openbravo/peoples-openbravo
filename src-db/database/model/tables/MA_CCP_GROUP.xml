@@ -49,10 +49,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="HASSECPRODUCT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MACCPGROUP">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -60,6 +56,5 @@
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <check name="MA_CCP_GROUP_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MACCPGR_HASSECPRODUCT_CHECK"><![CDATA[HASSECPRODUCT IN ('Y', 'N')]]></check>
     </table>
   </database>

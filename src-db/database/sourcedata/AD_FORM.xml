@@ -30,8 +30,6 @@
 <!--100-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--100 CLASSNAME-->
 <!--100-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.GenerateInvoicesmanual]]></CLASSNAME>
-<!--100 ENTITYTYPE-->
-<!--100-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--100**************--></AD_FORM>
 
 <!--101**************--><AD_FORM>
@@ -61,8 +59,6 @@
 <!--101-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
 <!--101 CLASSNAME-->
 <!--101-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.FileImport]]></CLASSNAME>
-<!--101 ENTITYTYPE-->
-<!--101-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--101**************--></AD_FORM>
 
 <!--102**************--><AD_FORM>
@@ -90,8 +86,6 @@
 <!--102-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--102 CLASSNAME-->
 <!--102-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.InitialClientSetup]]></CLASSNAME>
-<!--102 ENTITYTYPE-->
-<!--102-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--102**************--></AD_FORM>
 
 <!--103**************--><AD_FORM>
@@ -119,8 +113,6 @@
 <!--103-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--103 CLASSNAME-->
 <!--103-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.MaterialTransactions]]></CLASSNAME>
-<!--103 ENTITYTYPE-->
-<!--103-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--103**************--></AD_FORM>
 
 <!--105**************--><AD_FORM>
@@ -148,8 +140,6 @@
 <!--105-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--105 CLASSNAME-->
 <!--105-->              <CLASSNAME><![CDATA[org.openbravo.VCharge]]></CLASSNAME>
-<!--105 ENTITYTYPE-->
-<!--105-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--105**************--></AD_FORM>
 
 <!--106**************--><AD_FORM>
@@ -177,8 +167,6 @@
 <!--106-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--106 CLASSNAME-->
 <!--106-->              <CLASSNAME><![CDATA[org.openbravo.VPayPrint]]></CLASSNAME>
-<!--106 ENTITYTYPE-->
-<!--106-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--106**************--></AD_FORM>
 
 <!--107**************--><AD_FORM>
@@ -206,8 +194,6 @@
 <!--107-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--107 CLASSNAME-->
 <!--107-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.PaymentSelectionmanual]]></CLASSNAME>
-<!--107 ENTITYTYPE-->
-<!--107-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--107**************--></AD_FORM>
 
 <!--108**************--><AD_FORM>
@@ -235,8 +221,6 @@
 <!--108-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--108 CLASSNAME-->
 <!--108-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.MatchingPOReceiptInvoice]]></CLASSNAME>
-<!--108 ENTITYTYPE-->
-<!--108-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--108**************--></AD_FORM>
 
 <!--110**************--><AD_FORM>
@@ -266,8 +250,6 @@
 <!--110-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--110 CLASSNAME-->
 <!--110-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.GenerateShipmentsmanual]]></CLASSNAME>
-<!--110 ENTITYTYPE-->
-<!--110-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--110**************--></AD_FORM>
 
 <!--111**************--><AD_FORM>
@@ -297,8 +279,6 @@
 <!--111-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
 <!--111 CLASSNAME-->
 <!--111-->              <CLASSNAME><![CDATA[org.openbravo.VPassword]]></CLASSNAME>
-<!--111 ENTITYTYPE-->
-<!--111-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--111**************--></AD_FORM>
 
 <!--112**************--><AD_FORM>
@@ -328,8 +308,6 @@
 <!--112-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
 <!--112 CLASSNAME-->
 <!--112-->              <CLASSNAME><![CDATA[org.openbravo.VMerge]]></CLASSNAME>
-<!--112 ENTITYTYPE-->
-<!--112-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--112**************--></AD_FORM>
 
 <!--800000**************--><AD_FORM>
@@ -355,8 +333,6 @@
 <!--800000-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800000 CLASSNAME-->
 <!--800000-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.InformeInOut]]></CLASSNAME>
-<!--800000 ENTITYTYPE-->
-<!--800000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800000**************--></AD_FORM>
 
 <!--800002**************--><AD_FORM>
@@ -382,8 +358,6 @@
 <!--800002-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--800002 CLASSNAME-->
 <!--800002-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.PaymentsSelectionBank]]></CLASSNAME>
-<!--800002 ENTITYTYPE-->
-<!--800002-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800002**************--></AD_FORM>
 
 <!--800003**************--><AD_FORM>
@@ -411,8 +385,6 @@
 <!--800003-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800003 CLASSNAME-->
 <!--800003-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.CallAcctServer]]></CLASSNAME>
-<!--800003 ENTITYTYPE-->
-<!--800003-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800003**************--></AD_FORM>
 
 <!--800007**************--><AD_FORM>
@@ -440,8 +412,6 @@
 <!--800007-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800007 CLASSNAME-->
 <!--800007-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.BackgroundProcessList]]></CLASSNAME>
-<!--800007 ENTITYTYPE-->
-<!--800007-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800007**************--></AD_FORM>
 
 <!--800008**************--><AD_FORM>
@@ -469,8 +439,6 @@
 <!--800008-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800008 CLASSNAME-->
 <!--800008-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.DebtPaymentUnapply]]></CLASSNAME>
-<!--800008 ENTITYTYPE-->
-<!--800008-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800008**************--></AD_FORM>
 
 <!--800009**************--><AD_FORM>
@@ -498,8 +466,6 @@
 <!--800009-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800009 CLASSNAME-->
 <!--800009-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.MaterialReceiptPending]]></CLASSNAME>
-<!--800009 ENTITYTYPE-->
-<!--800009-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800009**************--></AD_FORM>
 
 <!--800010**************--><AD_FORM>
@@ -527,8 +493,6 @@
 <!--800010-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800010 CLASSNAME-->
 <!--800010-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.InvoiceVendorMultiline]]></CLASSNAME>
-<!--800010 ENTITYTYPE-->
-<!--800010-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800010**************--></AD_FORM>
 
 <!--800011**************--><AD_FORM>
@@ -556,8 +520,6 @@
 <!--800011-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--800011 CLASSNAME-->
 <!--800011-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.SQLExecutor]]></CLASSNAME>
-<!--800011 ENTITYTYPE-->
-<!--800011-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800011**************--></AD_FORM>
 
 <!--800012**************--><AD_FORM>
@@ -587,8 +549,6 @@
 <!--800012-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800012 CLASSNAME-->
 <!--800012-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.EdiFileImport]]></CLASSNAME>
-<!--800012 ENTITYTYPE-->
-<!--800012-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800012**************--></AD_FORM>
 
 <!--800013**************--><AD_FORM>
@@ -616,8 +576,6 @@
 <!--800013-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800013 CLASSNAME-->
 <!--800013-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.RemittanceCancel]]></CLASSNAME>
-<!--800013 ENTITYTYPE-->
-<!--800013-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800013**************--></AD_FORM>
 
 <!--800014**************--><AD_FORM>
@@ -645,8 +603,6 @@
 <!--800014-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--800014 CLASSNAME-->
 <!--800014-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.Translation]]></CLASSNAME>
-<!--800014 ENTITYTYPE-->
-<!--800014-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800014**************--></AD_FORM>
 
 <!--800015**************--><AD_FORM>
@@ -672,8 +628,6 @@
 <!--800015-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--800015 CLASSNAME-->
 <!--800015-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.About]]></CLASSNAME>
-<!--800015 ENTITYTYPE-->
-<!--800015-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800015**************--></AD_FORM>
 
 <!--800016**************--><AD_FORM>
@@ -701,8 +655,6 @@
 <!--800016-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--800016 CLASSNAME-->
 <!--800016-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.AlertManagement]]></CLASSNAME>
-<!--800016 ENTITYTYPE-->
-<!--800016-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800016**************--></AD_FORM>
 
 <!--800017**************--><AD_FORM>
@@ -732,8 +684,6 @@
 <!--800017-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--800017 CLASSNAME-->
 <!--800017-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.security.Logout]]></CLASSNAME>
-<!--800017 ENTITYTYPE-->
-<!--800017-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800017**************--></AD_FORM>
 
 <!--800018**************--><AD_FORM>
@@ -763,8 +713,6 @@
 <!--800018-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--800018 CLASSNAME-->
 <!--800018-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.security.Menu]]></CLASSNAME>
-<!--800018 ENTITYTYPE-->
-<!--800018-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800018**************--></AD_FORM>
 
 <!--1003100000**************--><AD_FORM>
@@ -792,8 +740,6 @@
 <!--1003100000-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--1003100000 CLASSNAME-->
 <!--1003100000-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.ShowSessionPreferences]]></CLASSNAME>
-<!--1003100000 ENTITYTYPE-->
-<!--1003100000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1003100000**************--></AD_FORM>
 
 <!--1003100002**************--><AD_FORM>
@@ -821,8 +767,6 @@
 <!--1003100002-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--1003100002 CLASSNAME-->
 <!--1003100002-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.ShowSessionVariables]]></CLASSNAME>
-<!--1003100002 ENTITYTYPE-->
-<!--1003100002-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1003100002**************--></AD_FORM>
 
 <!--1004400000**************--><AD_FORM>
@@ -864,8 +808,6 @@ Each time that is pressed the Create button is opened a popup to create a unique
 <!--1004400000-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--1004400000 CLASSNAME-->
 <!--1004400000-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.RequisitionToOrder]]></CLASSNAME>
-<!--1004400000 ENTITYTYPE-->
-<!--1004400000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1004400000**************--></AD_FORM>
 
 <!--1005800000**************--><AD_FORM>
@@ -893,8 +835,6 @@ Each time that is pressed the Create button is opened a popup to create a unique
 <!--1005800000-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--1005800000 CLASSNAME-->
 <!--1005800000-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.Registration]]></CLASSNAME>
-<!--1005800000 ENTITYTYPE-->
-<!--1005800000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1005800000**************--></AD_FORM>
 
 <!--1005800001**************--><AD_FORM>
@@ -922,8 +862,6 @@ Each time that is pressed the Create button is opened a popup to create a unique
 <!--1005800001-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--1005800001 CLASSNAME-->
 <!--1005800001-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.Heartbeat]]></CLASSNAME>
-<!--1005800001 ENTITYTYPE-->
-<!--1005800001-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1005800001**************--></AD_FORM>
 
 <!--

@@ -14,7 +14,6 @@
   (CASE WHEN AD_OrgInfo.C_Location_ID IS NULL THEN '' ELSE  (TO_CHAR(loc.Address1)  || ' - ' || TO_CHAR(loc.Address2)  || ' - ' || TO_CHAR(loc.Postal)  || ' - ' || TO_CHAR(loc.City)  || ' - ' || TO_CHAR(reg.Name)  || ' - ' || TO_CHAR((CASE WHEN countryTrl.Name IS NULL THEN TO_CHAR(country.Name) ELSE TO_CHAR(countryTrl.Name) END)) ) END) AS C_Location_IDR, 
   AD_OrgInfo.DUNS, 
   AD_OrgInfo.TaxID, 
-  AD_OrgInfo.PA_Goal_ID, 
   AD_OrgInfo.C_BPartner_ID, 
   (CASE WHEN AD_OrgInfo.C_BPartner_ID IS NULL THEN '' ELSE  (TO_CHAR(bpart.Name) ) END) AS C_BPartner_IDR, 
   AD_OrgInfo.Logo, 

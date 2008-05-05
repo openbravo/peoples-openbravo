@@ -135,7 +135,7 @@
             Created, Createdby, Updated, Updatedby,
             MA_Sequence_ID, M_Product_ID, Quantity, Productiontype,
             C_Uom_ID, Quantityorder, M_Product_Uom_ID, Componentcost,
-            Rminput, Decrease, Rejected
+            Decrease, Rejected
           )
           VALUES
           (
@@ -143,7 +143,7 @@
             now(), COALESCE(v_User_ID, 0), now(), COALESCE(v_User_ID, 0),
             v_Sequence_ID, Cur_Product.M_Product_ID, Cur_Product.Quantity, Cur_Product.Productiontype,
             Cur_Product.C_Uom_ID, Cur_Product.Quantityorder, Cur_Product.M_Product_Uom_ID, Cur_Product.Componentcost,
-            Cur_Product.Rminput, Cur_Product.Decrease, Cur_Product.Rejected
+            Cur_Product.Decrease, Cur_Product.Rejected
           )
           ;
       END LOOP;

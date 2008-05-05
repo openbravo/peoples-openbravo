@@ -18,8 +18,7 @@
  ************************************************************************
 -->
 <DIVFO xmlns:fo="http://www.w3.org/1999/XSL/Format">
-	<DIVFO id="sectionEjemplar">
-		<fo:page-sequence master-reference="first">
+			<fo:page-sequence master-reference="first">
 			<fo:static-content flow-name="xsl-region-before">
 				<fo:block font-size="9pt" font-family="Helvetica">
 					<fo:table table-layout="fixed">
@@ -92,9 +91,6 @@
 				</fo:table>
 			</fo:static-content>
 			<fo:static-content text-align="center" flow-name="xsl-region-after">
-				<fo:block font-family="Helvetica" font-size="7pt" text-align="end" end-indent="3pt">
-					<fo:inline id="fieldEjemplar">xxx</fo:inline>
-				</fo:block>
 				<fo:block font-family="Helvetica" font-size="9pt">
 					<fo:leader leader-length="19cm" leader-pattern="rule" leader-pattern-width="0.1pt"/>
 				</fo:block>
@@ -262,5 +258,4 @@
 				</fo:table>
 			</fo:flow>
 		</fo:page-sequence>
-	</DIVFO>
 </DIVFO>

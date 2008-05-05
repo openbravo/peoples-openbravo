@@ -41,18 +41,6 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="LOT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="PRODUCT" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="SELLBYDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="OBSERVATION" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
         <default/>
         <onCreateDefault/>

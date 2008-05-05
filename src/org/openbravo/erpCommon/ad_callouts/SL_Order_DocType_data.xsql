@@ -27,12 +27,12 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT COALESCE(d.DocSubTypeSO, '--') as DocSubTypeSO, d.HasCharges, d.IsApproved, 
+        SELECT COALESCE(d.DocSubTypeSO, '--') as DocSubTypeSO,
         d.IsDocNoControlled, s.CurrentNext, s.CurrentNextSys, 
         s.AD_Sequence_ID, d.IsSOTrx, 
         '' as PaymentRule, '' as C_PaymentTerm_ID,
         '' as InvoiceRule, '' as DeliveryRule,
-        '' as FreightCostRule, '' as DeliveryViaRule,
+        '' as DeliveryViaRule,
         '' as PaymentRulePO, '' as PO_PaymentTerm_ID
         FROM C_DocType d left join AD_Sequence s on d.DocNoSequence_ID=s.AD_Sequence_ID
         WHERE C_DocType_ID = TO_NUMBER(?) 
@@ -46,7 +46,7 @@
       <![CDATA[
         SELECT PaymentRule,C_PaymentTerm_ID,
         InvoiceRule,DeliveryRule,
-        FreightCostRule,DeliveryViaRule,
+        DeliveryViaRule,
         PaymentRulePO,PO_PaymentTerm_ID
         FROM C_BPartner
         WHERE C_BPartner_ID = TO_NUMBER(?)

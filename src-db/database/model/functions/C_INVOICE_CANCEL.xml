@@ -33,6 +33,8 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Record_ID NUMBER;
+  v_AD_Client_ID NUMBER;
+  v_DBA_ErrorLog_ID NUMBER;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -52,7 +54,8 @@
           p.ParameterName,
           p.P_String,
           p.P_Number,
-          p.P_Date
+          p.P_Date,
+          p.AD_Client_ID
         FROM AD_PInstance i
         LEFT JOIN AD_PInstance_Para p
           ON i.AD_PInstance_ID=p.AD_PInstance_ID
@@ -61,6 +64,7 @@
         )
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
+        v_AD_Client_ID:=Cur_Parameter.AD_Client_ID;
       END LOOP; -- Get Parameter
       DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     ELSE
@@ -106,6 +110,7 @@ WHEN OTHERS THEN
     DECLARE
       v_Code NUMBER:=SQLCODE;
     BEGIN
+      AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_AD_Client_ID, v_DBA_ErrorLog_ID);
       INSERT
       INTO DBA_ErrorLog
         (
@@ -114,7 +119,7 @@ WHEN OTHERS THEN
         )
         VALUES
         (
-          DBA_ErrorLog_Seq.NextVal, now(), v_Code,
+          v_DBA_ErrorLog_ID, now(), v_Code,
           v_ResultStr, 'C_Invoice_Cancel'
         )
         ;

@@ -24,8 +24,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT g.MA_MEASURE_GROUP_ID as groupid, cg.NAME as groupname, '' AS name, '' as Type,
-          g.HASSECPRODUCT, g.PRODUCT
+        SELECT g.MA_MEASURE_GROUP_ID as groupid, cg.NAME as groupname, '' AS name, '' as Type
         FROM MA_Measure_Shift s, MA_Measure_Group g, MA_CCP_Group cg
         WHERE g.MA_CCP_GROUP_ID = cg.MA_CCP_GROUP_ID
           AND s.MA_Measure_Shift_ID = g.MA_Measure_Shift_ID
@@ -88,17 +87,4 @@
     <Parameter name="vchar"/>
     <Parameter name="maMeasureValueId"/>
   </SqlMethod>
-  <SqlMethod name="updateSecProduct" connection="true" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        UPDATE MA_MEASURE_GROUP
-        SET PRODUCT = ?
-        WHERE MA_MEASURE_GROUP_ID = TO_NUMBER(?)
-      ]]>
-    </Sql>
-    <Parameter name="product"/>
-    <Parameter name="maMeasureGroupId"/>
-  </SqlMethod>
-
-  </SqlClass>
+</SqlClass>

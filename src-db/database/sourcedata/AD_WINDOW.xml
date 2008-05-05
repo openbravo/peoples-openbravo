@@ -32,8 +32,6 @@
 <!--100-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--100 ISSOTRX-->
 <!--100-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--100 ENTITYTYPE-->
-<!--100-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--100 PROCESSING-->
 <!--100-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--100 ISDEFAULT-->
@@ -67,8 +65,6 @@
 <!--101-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--101 ISSOTRX-->
 <!--101-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--101 ENTITYTYPE-->
-<!--101-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--101 PROCESSING-->
 <!--101-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--101 ISDEFAULT-->
@@ -102,8 +98,6 @@
 <!--102-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--102 ISSOTRX-->
 <!--102-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--102 ENTITYTYPE-->
-<!--102-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--102 PROCESSING-->
 <!--102-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--102 ISDEFAULT-->
@@ -137,8 +131,6 @@
 <!--103-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--103 ISSOTRX-->
 <!--103-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--103 ENTITYTYPE-->
-<!--103-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--103 PROCESSING-->
 <!--103-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--103 ISDEFAULT-->
@@ -172,8 +164,6 @@
 <!--104-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--104 ISSOTRX-->
 <!--104-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--104 ENTITYTYPE-->
-<!--104-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--104 PROCESSING-->
 <!--104-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--104 ISDEFAULT-->
@@ -207,8 +197,6 @@
 <!--105-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--105 ISSOTRX-->
 <!--105-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--105 ENTITYTYPE-->
-<!--105-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--105 PROCESSING-->
 <!--105-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--105 ISDEFAULT-->
@@ -242,8 +230,6 @@
 <!--106-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--106 ISSOTRX-->
 <!--106-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--106 ENTITYTYPE-->
-<!--106-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--106 PROCESSING-->
 <!--106-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--106 ISDEFAULT-->
@@ -277,8 +263,6 @@
 <!--107-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--107 ISSOTRX-->
 <!--107-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--107 ENTITYTYPE-->
-<!--107-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--107 PROCESSING-->
 <!--107-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--107 ISDEFAULT-->
@@ -312,8 +296,6 @@
 <!--108-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--108 ISSOTRX-->
 <!--108-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--108 ENTITYTYPE-->
-<!--108-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--108 PROCESSING-->
 <!--108-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--108 ISDEFAULT-->
@@ -347,8 +329,6 @@
 <!--109-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--109 ISSOTRX-->
 <!--109-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--109 ENTITYTYPE-->
-<!--109-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--109 PROCESSING-->
 <!--109-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--109 ISDEFAULT-->
@@ -382,8 +362,6 @@
 <!--110-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--110 ISSOTRX-->
 <!--110-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--110 ENTITYTYPE-->
-<!--110-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--110 PROCESSING-->
 <!--110-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--110 ISDEFAULT-->
@@ -417,8 +395,6 @@
 <!--111-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--111 ISSOTRX-->
 <!--111-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--111 ENTITYTYPE-->
-<!--111-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--111 PROCESSING-->
 <!--111-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--111 ISDEFAULT-->
@@ -452,8 +428,6 @@
 <!--112-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--112 ISSOTRX-->
 <!--112-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--112 ENTITYTYPE-->
-<!--112-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--112 PROCESSING-->
 <!--112-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--112 ISDEFAULT-->
@@ -487,8 +461,6 @@
 <!--113-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--113 ISSOTRX-->
 <!--113-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--113 ENTITYTYPE-->
-<!--113-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--113 PROCESSING-->
 <!--113-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--113 ISDEFAULT-->
@@ -522,8 +494,6 @@
 <!--114-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--114 ISSOTRX-->
 <!--114-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--114 ENTITYTYPE-->
-<!--114-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--114 PROCESSING-->
 <!--114-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--114 ISDEFAULT-->
@@ -557,8 +527,6 @@
 <!--115-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--115 ISSOTRX-->
 <!--115-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--115 ENTITYTYPE-->
-<!--115-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--115 PROCESSING-->
 <!--115-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--115 ISDEFAULT-->
@@ -592,8 +560,6 @@
 <!--116-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--116 ISSOTRX-->
 <!--116-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--116 ENTITYTYPE-->
-<!--116-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--116 PROCESSING-->
 <!--116-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--116 ISDEFAULT-->
@@ -627,8 +593,6 @@
 <!--117-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--117 ISSOTRX-->
 <!--117-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--117 ENTITYTYPE-->
-<!--117-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--117 PROCESSING-->
 <!--117-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--117 ISDEFAULT-->
@@ -662,8 +626,6 @@
 <!--118-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--118 ISSOTRX-->
 <!--118-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--118 ENTITYTYPE-->
-<!--118-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--118 PROCESSING-->
 <!--118-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--118 ISDEFAULT-->
@@ -697,8 +659,6 @@
 <!--120-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--120 ISSOTRX-->
 <!--120-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--120 ENTITYTYPE-->
-<!--120-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--120 PROCESSING-->
 <!--120-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--120 ISDEFAULT-->
@@ -732,8 +692,6 @@
 <!--121-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--121 ISSOTRX-->
 <!--121-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--121 ENTITYTYPE-->
-<!--121-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--121 PROCESSING-->
 <!--121-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--121 ISDEFAULT-->
@@ -767,8 +725,6 @@
 <!--122-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--122 ISSOTRX-->
 <!--122-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--122 ENTITYTYPE-->
-<!--122-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--122 PROCESSING-->
 <!--122-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--122 ISDEFAULT-->
@@ -802,8 +758,6 @@
 <!--123-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--123 ISSOTRX-->
 <!--123-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--123 ENTITYTYPE-->
-<!--123-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--123 PROCESSING-->
 <!--123-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--123 ISDEFAULT-->
@@ -837,8 +791,6 @@
 <!--125-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--125 ISSOTRX-->
 <!--125-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--125 ENTITYTYPE-->
-<!--125-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--125 PROCESSING-->
 <!--125-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--125 ISDEFAULT-->
@@ -872,8 +824,6 @@
 <!--127-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--127 ISSOTRX-->
 <!--127-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--127 ENTITYTYPE-->
-<!--127-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--127 PROCESSING-->
 <!--127-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--127 ISDEFAULT-->
@@ -907,8 +857,6 @@
 <!--128-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--128 ISSOTRX-->
 <!--128-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--128 ENTITYTYPE-->
-<!--128-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--128 PROCESSING-->
 <!--128-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--128 ISDEFAULT-->
@@ -942,8 +890,6 @@
 <!--129-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--129 ISSOTRX-->
 <!--129-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--129 ENTITYTYPE-->
-<!--129-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--129 PROCESSING-->
 <!--129-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--129 ISDEFAULT-->
@@ -977,8 +923,6 @@
 <!--130-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--130 ISSOTRX-->
 <!--130-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--130 ENTITYTYPE-->
-<!--130-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--130 PROCESSING-->
 <!--130-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--130 ISDEFAULT-->
@@ -1012,8 +956,6 @@
 <!--131-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--131 ISSOTRX-->
 <!--131-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--131 ENTITYTYPE-->
-<!--131-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--131 PROCESSING-->
 <!--131-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--131 ISDEFAULT-->
@@ -1047,8 +989,6 @@
 <!--132-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--132 ISSOTRX-->
 <!--132-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--132 ENTITYTYPE-->
-<!--132-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--132 PROCESSING-->
 <!--132-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--132 ISDEFAULT-->
@@ -1082,8 +1022,6 @@
 <!--134-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--134 ISSOTRX-->
 <!--134-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--134 ENTITYTYPE-->
-<!--134-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--134 PROCESSING-->
 <!--134-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--134 ISDEFAULT-->
@@ -1117,48 +1055,11 @@
 <!--135-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--135 ISSOTRX-->
 <!--135-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--135 ENTITYTYPE-->
-<!--135-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--135 PROCESSING-->
 <!--135-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--135 ISDEFAULT-->
 <!--135-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--135**************--></AD_WINDOW>
-
-<!--136**************--><AD_WINDOW>
-<!--136 AD_WINDOW_ID-->
-<!--136-->              <AD_WINDOW_ID><![CDATA[136]]></AD_WINDOW_ID>
-<!--136 AD_CLIENT_ID-->
-<!--136-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--136 AD_ORG_ID-->
-<!--136-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--136 ISACTIVE-->
-<!--136-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--136 CREATED-->
-<!--136-->              <CREATED><![CDATA[0099-06-29 00:00:00.0]]></CREATED>
-<!--136 CREATEDBY-->
-<!--136-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--136 UPDATED-->
-<!--136-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--136 UPDATEDBY-->
-<!--136-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--136 NAME-->
-<!--136-->              <NAME><![CDATA[Approval]]></NAME>
-<!--136 DESCRIPTION-->
-<!--136-->              <DESCRIPTION><![CDATA[Maintain Approvals]]></DESCRIPTION>
-<!--136 HELP-->
-<!--136-->              <HELP><![CDATA[The Maintain Approvals Window is used to define the different approvals that are used in workflows.]]></HELP>
-<!--136 WINDOWTYPE-->
-<!--136-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--136 ISSOTRX-->
-<!--136-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--136 ENTITYTYPE-->
-<!--136-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--136 PROCESSING-->
-<!--136-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--136 ISDEFAULT-->
-<!--136-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--136**************--></AD_WINDOW>
 
 <!--137**************--><AD_WINDOW>
 <!--137 AD_WINDOW_ID-->
@@ -1187,8 +1088,6 @@
 <!--137-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--137 ISSOTRX-->
 <!--137-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--137 ENTITYTYPE-->
-<!--137-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--137 PROCESSING-->
 <!--137-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--137 ISDEFAULT-->
@@ -1222,8 +1121,6 @@
 <!--138-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--138 ISSOTRX-->
 <!--138-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--138 ENTITYTYPE-->
-<!--138-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--138 PROCESSING-->
 <!--138-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--138 ISDEFAULT-->
@@ -1257,8 +1154,6 @@
 <!--139-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--139 ISSOTRX-->
 <!--139-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--139 ENTITYTYPE-->
-<!--139-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--139 PROCESSING-->
 <!--139-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--139 ISDEFAULT-->
@@ -1292,8 +1187,6 @@
 <!--140-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--140 ISSOTRX-->
 <!--140-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--140 ENTITYTYPE-->
-<!--140-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--140 PROCESSING-->
 <!--140-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--140 ISDEFAULT-->
@@ -1327,8 +1220,6 @@
 <!--141-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--141 ISSOTRX-->
 <!--141-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--141 ENTITYTYPE-->
-<!--141-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--141 PROCESSING-->
 <!--141-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--141 ISDEFAULT-->
@@ -1362,8 +1253,6 @@
 <!--142-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--142 ISSOTRX-->
 <!--142-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--142 ENTITYTYPE-->
-<!--142-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--142 PROCESSING-->
 <!--142-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--142 ISDEFAULT-->
@@ -1397,8 +1286,6 @@
 <!--143-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--143 ISSOTRX-->
 <!--143-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--143 ENTITYTYPE-->
-<!--143-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--143 PROCESSING-->
 <!--143-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--143 ISDEFAULT-->
@@ -1432,8 +1319,6 @@
 <!--144-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--144 ISSOTRX-->
 <!--144-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--144 ENTITYTYPE-->
-<!--144-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--144 PROCESSING-->
 <!--144-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--144 ISDEFAULT-->
@@ -1467,8 +1352,6 @@
 <!--146-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--146 ISSOTRX-->
 <!--146-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--146 ENTITYTYPE-->
-<!--146-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--146 PROCESSING-->
 <!--146-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--146 ISDEFAULT-->
@@ -1502,8 +1385,6 @@
 <!--147-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--147 ISSOTRX-->
 <!--147-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--147 ENTITYTYPE-->
-<!--147-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--147 PROCESSING-->
 <!--147-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--147 ISDEFAULT-->
@@ -1537,8 +1418,6 @@
 <!--149-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--149 ISSOTRX-->
 <!--149-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--149 ENTITYTYPE-->
-<!--149-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--149 PROCESSING-->
 <!--149-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--149 ISDEFAULT-->
@@ -1572,8 +1451,6 @@
 <!--150-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--150 ISSOTRX-->
 <!--150-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--150 ENTITYTYPE-->
-<!--150-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--150 PROCESSING-->
 <!--150-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--150 ISDEFAULT-->
@@ -1607,8 +1484,6 @@
 <!--151-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--151 ISSOTRX-->
 <!--151-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--151 ENTITYTYPE-->
-<!--151-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--151 PROCESSING-->
 <!--151-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--151 ISDEFAULT-->
@@ -1642,8 +1517,6 @@
 <!--152-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--152 ISSOTRX-->
 <!--152-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--152 ENTITYTYPE-->
-<!--152-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--152 PROCESSING-->
 <!--152-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--152 ISDEFAULT-->
@@ -1677,46 +1550,11 @@
 <!--153-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--153 ISSOTRX-->
 <!--153-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--153 ENTITYTYPE-->
-<!--153-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--153 PROCESSING-->
 <!--153-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--153 ISDEFAULT-->
 <!--153-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--153**************--></AD_WINDOW>
-
-<!--154**************--><AD_WINDOW>
-<!--154 AD_WINDOW_ID-->
-<!--154-->              <AD_WINDOW_ID><![CDATA[154]]></AD_WINDOW_ID>
-<!--154 AD_CLIENT_ID-->
-<!--154-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--154 AD_ORG_ID-->
-<!--154-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--154 ISACTIVE-->
-<!--154-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--154 CREATED-->
-<!--154-->              <CREATED><![CDATA[0099-09-26 00:00:00.0]]></CREATED>
-<!--154 CREATEDBY-->
-<!--154-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--154 UPDATED-->
-<!--154-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--154 UPDATEDBY-->
-<!--154-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--154 NAME-->
-<!--154-->              <NAME><![CDATA[GL Budget]]></NAME>
-<!--154 DESCRIPTION-->
-<!--154-->              <DESCRIPTION><![CDATA[Maintain General Ledger Budgets]]></DESCRIPTION>
-<!--154 WINDOWTYPE-->
-<!--154-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--154 ISSOTRX-->
-<!--154-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--154 ENTITYTYPE-->
-<!--154-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--154 PROCESSING-->
-<!--154-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--154 ISDEFAULT-->
-<!--154-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--154**************--></AD_WINDOW>
 
 <!--158**************--><AD_WINDOW>
 <!--158 AD_WINDOW_ID-->
@@ -1745,48 +1583,11 @@
 <!--158-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--158 ISSOTRX-->
 <!--158-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--158 ENTITYTYPE-->
-<!--158-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--158 PROCESSING-->
 <!--158-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--158 ISDEFAULT-->
 <!--158-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--158**************--></AD_WINDOW>
-
-<!--159**************--><AD_WINDOW>
-<!--159 AD_WINDOW_ID-->
-<!--159-->              <AD_WINDOW_ID><![CDATA[159]]></AD_WINDOW_ID>
-<!--159 AD_CLIENT_ID-->
-<!--159-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--159 AD_ORG_ID-->
-<!--159-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--159 ISACTIVE-->
-<!--159-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--159 CREATED-->
-<!--159-->              <CREATED><![CDATA[1999-12-04 21:34:10.0]]></CREATED>
-<!--159 CREATEDBY-->
-<!--159-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--159 UPDATED-->
-<!--159-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--159 UPDATEDBY-->
-<!--159-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--159 NAME-->
-<!--159-->              <NAME><![CDATA[Dunning]]></NAME>
-<!--159 DESCRIPTION-->
-<!--159-->              <DESCRIPTION><![CDATA[Maintain Dunning Levels]]></DESCRIPTION>
-<!--159 HELP-->
-<!--159-->              <HELP><![CDATA[The Dunning Window defines the parameters that will be used when generating Dunning Letters.  Each customer can be associated with a Dunning Code.]]></HELP>
-<!--159 WINDOWTYPE-->
-<!--159-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--159 ISSOTRX-->
-<!--159-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--159 ENTITYTYPE-->
-<!--159-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--159 PROCESSING-->
-<!--159-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--159 ISDEFAULT-->
-<!--159-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--159**************--></AD_WINDOW>
 
 <!--160**************--><AD_WINDOW>
 <!--160 AD_WINDOW_ID-->
@@ -1815,8 +1616,6 @@
 <!--160-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--160 ISSOTRX-->
 <!--160-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--160 ENTITYTYPE-->
-<!--160-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--160 PROCESSING-->
 <!--160-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--160 ISDEFAULT-->
@@ -1850,8 +1649,6 @@
 <!--161-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--161 ISSOTRX-->
 <!--161-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--161 ENTITYTYPE-->
-<!--161-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--161 PROCESSING-->
 <!--161-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--161 ISDEFAULT-->
@@ -1885,8 +1682,6 @@
 <!--162-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--162 ISSOTRX-->
 <!--162-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--162 ENTITYTYPE-->
-<!--162-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--162 PROCESSING-->
 <!--162-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--162 ISDEFAULT-->
@@ -1920,8 +1715,6 @@
 <!--163-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--163 ISSOTRX-->
 <!--163-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--163 ENTITYTYPE-->
-<!--163-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--163 PROCESSING-->
 <!--163-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--163 ISDEFAULT-->
@@ -1955,8 +1748,6 @@
 <!--165-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--165 ISSOTRX-->
 <!--165-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--165 ENTITYTYPE-->
-<!--165-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--165 PROCESSING-->
 <!--165-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--165 ISDEFAULT-->
@@ -1990,8 +1781,6 @@
 <!--167-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--167 ISSOTRX-->
 <!--167-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--167 ENTITYTYPE-->
-<!--167-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--167 PROCESSING-->
 <!--167-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--167 ISDEFAULT-->
@@ -2025,8 +1814,6 @@
 <!--168-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--168 ISSOTRX-->
 <!--168-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--168 ENTITYTYPE-->
-<!--168-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--168 PROCESSING-->
 <!--168-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--168 ISDEFAULT-->
@@ -2060,8 +1847,6 @@
 <!--169-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--169 ISSOTRX-->
 <!--169-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--169 ENTITYTYPE-->
-<!--169-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--169 PROCESSING-->
 <!--169-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--169 ISDEFAULT-->
@@ -2095,8 +1880,6 @@
 <!--170-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--170 ISSOTRX-->
 <!--170-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--170 ENTITYTYPE-->
-<!--170-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--170 PROCESSING-->
 <!--170-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--170 ISDEFAULT-->
@@ -2130,8 +1913,6 @@
 <!--172-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--172 ISSOTRX-->
 <!--172-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--172 ENTITYTYPE-->
-<!--172-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--172 PROCESSING-->
 <!--172-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--172 ISDEFAULT-->
@@ -2165,8 +1946,6 @@
 <!--174-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--174 ISSOTRX-->
 <!--174-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--174 ENTITYTYPE-->
-<!--174-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--174 PROCESSING-->
 <!--174-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--174 ISDEFAULT-->
@@ -2200,8 +1979,6 @@
 <!--175-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--175 ISSOTRX-->
 <!--175-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--175 ENTITYTYPE-->
-<!--175-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--175 PROCESSING-->
 <!--175-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--175 ISDEFAULT-->
@@ -2235,8 +2012,6 @@
 <!--176-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--176 ISSOTRX-->
 <!--176-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--176 ENTITYTYPE-->
-<!--176-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--176 PROCESSING-->
 <!--176-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--176 ISDEFAULT-->
@@ -2270,46 +2045,9 @@
 <!--178-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--178 ISSOTRX-->
 <!--178-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--178 ENTITYTYPE-->
-<!--178-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--178 ISDEFAULT-->
 <!--178-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--178**************--></AD_WINDOW>
-
-<!--180**************--><AD_WINDOW>
-<!--180 AD_WINDOW_ID-->
-<!--180-->              <AD_WINDOW_ID><![CDATA[180]]></AD_WINDOW_ID>
-<!--180 AD_CLIENT_ID-->
-<!--180-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--180 AD_ORG_ID-->
-<!--180-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--180 ISACTIVE-->
-<!--180-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--180 CREATED-->
-<!--180-->              <CREATED><![CDATA[2000-05-15 21:52:14.0]]></CREATED>
-<!--180 CREATEDBY-->
-<!--180-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--180 UPDATED-->
-<!--180-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--180 UPDATEDBY-->
-<!--180-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--180 NAME-->
-<!--180-->              <NAME><![CDATA[Report View]]></NAME>
-<!--180 DESCRIPTION-->
-<!--180-->              <DESCRIPTION><![CDATA[Maintain Report Views]]></DESCRIPTION>
-<!--180 HELP-->
-<!--180-->              <HELP><![CDATA[The Report View Window defines the views used when generating reports.  This window is for System Admin use only.]]></HELP>
-<!--180 WINDOWTYPE-->
-<!--180-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--180 ISSOTRX-->
-<!--180-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--180 ENTITYTYPE-->
-<!--180-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--180 PROCESSING-->
-<!--180-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--180 ISDEFAULT-->
-<!--180-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--180**************--></AD_WINDOW>
 
 <!--181**************--><AD_WINDOW>
 <!--181 AD_WINDOW_ID-->
@@ -2338,8 +2076,6 @@
 <!--181-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--181 ISSOTRX-->
 <!--181-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--181 ENTITYTYPE-->
-<!--181-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--181 PROCESSING-->
 <!--181-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--181 ISDEFAULT-->
@@ -2373,8 +2109,6 @@
 <!--183-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--183 ISSOTRX-->
 <!--183-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--183 ENTITYTYPE-->
-<!--183-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--183 PROCESSING-->
 <!--183-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--183 ISDEFAULT-->
@@ -2408,79 +2142,11 @@
 <!--184-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--184 ISSOTRX-->
 <!--184-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--184 ENTITYTYPE-->
-<!--184-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--184 PROCESSING-->
 <!--184-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--184 ISDEFAULT-->
 <!--184-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--184**************--></AD_WINDOW>
-
-<!--185**************--><AD_WINDOW>
-<!--185 AD_WINDOW_ID-->
-<!--185-->              <AD_WINDOW_ID><![CDATA[185]]></AD_WINDOW_ID>
-<!--185 AD_CLIENT_ID-->
-<!--185-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--185 AD_ORG_ID-->
-<!--185-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--185 ISACTIVE-->
-<!--185-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--185 CREATED-->
-<!--185-->              <CREATED><![CDATA[2000-06-01 14:38:37.0]]></CREATED>
-<!--185 CREATEDBY-->
-<!--185-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--185 UPDATED-->
-<!--185-->              <UPDATED><![CDATA[2003-08-17 13:01:38.0]]></UPDATED>
-<!--185 UPDATEDBY-->
-<!--185-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--185 NAME-->
-<!--185-->              <NAME><![CDATA[EDI Definition]]></NAME>
-<!--185 DESCRIPTION-->
-<!--185-->              <DESCRIPTION><![CDATA[Maintain EDI Definition]]></DESCRIPTION>
-<!--185 HELP-->
-<!--185-->              <HELP><![CDATA[The EDI Definition Window defines the parameters to be used when processing EDI Transactions]]></HELP>
-<!--185 WINDOWTYPE-->
-<!--185-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--185 ISSOTRX-->
-<!--185-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--185 ENTITYTYPE-->
-<!--185-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--185 PROCESSING-->
-<!--185-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--185 ISDEFAULT-->
-<!--185-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--185**************--></AD_WINDOW>
-
-<!--186**************--><AD_WINDOW>
-<!--186 AD_WINDOW_ID-->
-<!--186-->              <AD_WINDOW_ID><![CDATA[186]]></AD_WINDOW_ID>
-<!--186 AD_CLIENT_ID-->
-<!--186-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--186 AD_ORG_ID-->
-<!--186-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--186 ISACTIVE-->
-<!--186-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--186 CREATED-->
-<!--186-->              <CREATED><![CDATA[2000-06-01 14:40:45.0]]></CREATED>
-<!--186 CREATEDBY-->
-<!--186-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--186 UPDATED-->
-<!--186-->              <UPDATED><![CDATA[2003-08-17 13:01:43.0]]></UPDATED>
-<!--186 UPDATEDBY-->
-<!--186-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--186 NAME-->
-<!--186-->              <NAME><![CDATA[EDI Transaction]]></NAME>
-<!--186 WINDOWTYPE-->
-<!--186-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--186 ISSOTRX-->
-<!--186-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--186 ENTITYTYPE-->
-<!--186-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--186 PROCESSING-->
-<!--186-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--186 ISDEFAULT-->
-<!--186-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--186**************--></AD_WINDOW>
 
 <!--187**************--><AD_WINDOW>
 <!--187 AD_WINDOW_ID-->
@@ -2509,48 +2175,11 @@
 <!--187-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--187 ISSOTRX-->
 <!--187-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--187 ENTITYTYPE-->
-<!--187-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--187 PROCESSING-->
 <!--187-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--187 ISDEFAULT-->
 <!--187-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--187**************--></AD_WINDOW>
-
-<!--188**************--><AD_WINDOW>
-<!--188 AD_WINDOW_ID-->
-<!--188-->              <AD_WINDOW_ID><![CDATA[188]]></AD_WINDOW_ID>
-<!--188 AD_CLIENT_ID-->
-<!--188-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--188 AD_ORG_ID-->
-<!--188-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--188 ISACTIVE-->
-<!--188-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--188 CREATED-->
-<!--188-->              <CREATED><![CDATA[2000-09-15 14:51:56.0]]></CREATED>
-<!--188 CREATEDBY-->
-<!--188-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--188 UPDATED-->
-<!--188-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--188 UPDATEDBY-->
-<!--188-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--188 NAME-->
-<!--188-->              <NAME><![CDATA[Error Message]]></NAME>
-<!--188 DESCRIPTION-->
-<!--188-->              <DESCRIPTION><![CDATA[Display Error Messages]]></DESCRIPTION>
-<!--188 HELP-->
-<!--188-->              <HELP><![CDATA[The Error Message Window displays all error messages generated.  This is for System Admin use only.  The records must be manually deleted.]]></HELP>
-<!--188 WINDOWTYPE-->
-<!--188-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--188 ISSOTRX-->
-<!--188-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--188 ENTITYTYPE-->
-<!--188-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--188 PROCESSING-->
-<!--188-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--188 ISDEFAULT-->
-<!--188-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--188**************--></AD_WINDOW>
 
 <!--189**************--><AD_WINDOW>
 <!--189 AD_WINDOW_ID-->
@@ -2579,46 +2208,11 @@
 <!--189-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--189 ISSOTRX-->
 <!--189-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--189 ENTITYTYPE-->
-<!--189-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--189 PROCESSING-->
 <!--189-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--189 ISDEFAULT-->
 <!--189-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--189**************--></AD_WINDOW>
-
-<!--190**************--><AD_WINDOW>
-<!--190 AD_WINDOW_ID-->
-<!--190-->              <AD_WINDOW_ID><![CDATA[190]]></AD_WINDOW_ID>
-<!--190 AD_CLIENT_ID-->
-<!--190-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--190 AD_ORG_ID-->
-<!--190-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--190 ISACTIVE-->
-<!--190-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--190 CREATED-->
-<!--190-->              <CREATED><![CDATA[2000-10-11 21:54:51.0]]></CREATED>
-<!--190 CREATEDBY-->
-<!--190-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--190 UPDATED-->
-<!--190-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--190 UPDATEDBY-->
-<!--190-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--190 NAME-->
-<!--190-->              <NAME><![CDATA[Tire Storage]]></NAME>
-<!--190 DESCRIPTION-->
-<!--190-->              <DESCRIPTION><![CDATA[Maintain storage of tires]]></DESCRIPTION>
-<!--190 WINDOWTYPE-->
-<!--190-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--190 ISSOTRX-->
-<!--190-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--190 ENTITYTYPE-->
-<!--190-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--190 PROCESSING-->
-<!--190-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--190 ISDEFAULT-->
-<!--190-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--190**************--></AD_WINDOW>
 
 <!--191**************--><AD_WINDOW>
 <!--191 AD_WINDOW_ID-->
@@ -2647,8 +2241,6 @@
 <!--191-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--191 ISSOTRX-->
 <!--191-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--191 ENTITYTYPE-->
-<!--191-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--191 PROCESSING-->
 <!--191-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--191 ISDEFAULT-->
@@ -2682,8 +2274,6 @@
 <!--192-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--192 ISSOTRX-->
 <!--192-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--192 ENTITYTYPE-->
-<!--192-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--192 PROCESSING-->
 <!--192-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--192 ISDEFAULT-->
@@ -2717,8 +2307,6 @@
 <!--193-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--193 ISSOTRX-->
 <!--193-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--193 ENTITYTYPE-->
-<!--193-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--193 PROCESSING-->
 <!--193-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--193 ISDEFAULT-->
@@ -2752,48 +2340,11 @@
 <!--194-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--194 ISSOTRX-->
 <!--194-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--194 ENTITYTYPE-->
-<!--194-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--194 PROCESSING-->
 <!--194-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--194 ISDEFAULT-->
 <!--194-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--194**************--></AD_WINDOW>
-
-<!--196**************--><AD_WINDOW>
-<!--196 AD_WINDOW_ID-->
-<!--196-->              <AD_WINDOW_ID><![CDATA[196]]></AD_WINDOW_ID>
-<!--196 AD_CLIENT_ID-->
-<!--196-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--196 AD_ORG_ID-->
-<!--196-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--196 ISACTIVE-->
-<!--196-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--196 CREATED-->
-<!--196-->              <CREATED><![CDATA[2000-12-22 22:30:55.0]]></CREATED>
-<!--196 CREATEDBY-->
-<!--196-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--196 UPDATED-->
-<!--196-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--196 UPDATEDBY-->
-<!--196-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--196 NAME-->
-<!--196-->              <NAME><![CDATA[Custom Attribute]]></NAME>
-<!--196 DESCRIPTION-->
-<!--196-->              <DESCRIPTION><![CDATA[Maintain custom entity attributes]]></DESCRIPTION>
-<!--196 HELP-->
-<!--196-->              <HELP><![CDATA[This is a System only Window.  Customer Attributes allow the entry of additional information to an entity.]]></HELP>
-<!--196 WINDOWTYPE-->
-<!--196-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--196 ISSOTRX-->
-<!--196-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--196 ENTITYTYPE-->
-<!--196-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--196 PROCESSING-->
-<!--196-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--196 ISDEFAULT-->
-<!--196-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--196**************--></AD_WINDOW>
 
 <!--197**************--><AD_WINDOW>
 <!--197 AD_WINDOW_ID-->
@@ -2822,8 +2373,6 @@
 <!--197-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--197 ISSOTRX-->
 <!--197-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--197 ENTITYTYPE-->
-<!--197-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--197 PROCESSING-->
 <!--197-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--197 ISDEFAULT-->
@@ -2857,8 +2406,6 @@
 <!--198-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--198 ISSOTRX-->
 <!--198-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--198 ENTITYTYPE-->
-<!--198-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--198 PROCESSING-->
 <!--198-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--198 ISDEFAULT-->
@@ -2892,8 +2439,6 @@
 <!--200-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--200 ISSOTRX-->
 <!--200-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--200 ENTITYTYPE-->
-<!--200-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--200 PROCESSING-->
 <!--200-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--200 ISDEFAULT-->
@@ -2927,8 +2472,6 @@
 <!--201-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--201 ISSOTRX-->
 <!--201-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--201 ENTITYTYPE-->
-<!--201-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--201 PROCESSING-->
 <!--201-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--201 ISDEFAULT-->
@@ -2962,8 +2505,6 @@
 <!--203-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--203 ISSOTRX-->
 <!--203-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--203 ENTITYTYPE-->
-<!--203-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--203 PROCESSING-->
 <!--203-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--203 ISDEFAULT-->
@@ -2995,8 +2536,6 @@
 <!--204-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--204 ISSOTRX-->
 <!--204-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--204 ENTITYTYPE-->
-<!--204-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--204 PROCESSING-->
 <!--204-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--204 ISDEFAULT-->
@@ -3030,48 +2569,11 @@
 <!--207-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--207 ISSOTRX-->
 <!--207-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--207 ENTITYTYPE-->
-<!--207-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--207 PROCESSING-->
 <!--207-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--207 ISDEFAULT-->
 <!--207-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--207**************--></AD_WINDOW>
-
-<!--208**************--><AD_WINDOW>
-<!--208 AD_WINDOW_ID-->
-<!--208-->              <AD_WINDOW_ID><![CDATA[208]]></AD_WINDOW_ID>
-<!--208 AD_CLIENT_ID-->
-<!--208-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--208 AD_ORG_ID-->
-<!--208-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--208 ISACTIVE-->
-<!--208-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--208 CREATED-->
-<!--208-->              <CREATED><![CDATA[2001-03-11 17:44:08.0]]></CREATED>
-<!--208 CREATEDBY-->
-<!--208-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--208 UPDATED-->
-<!--208-->              <UPDATED><![CDATA[2003-08-17 16:16:53.0]]></UPDATED>
-<!--208 UPDATEDBY-->
-<!--208-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--208 NAME-->
-<!--208-->              <NAME><![CDATA[Project Reporting]]></NAME>
-<!--208 DESCRIPTION-->
-<!--208-->              <DESCRIPTION><![CDATA[Maintain Project Reporting Cycles]]></DESCRIPTION>
-<!--208 HELP-->
-<!--208-->              <HELP><![CDATA[The Project Cycle Window defines the steps associated with a specific Project.You may want to define several Project cycles to differentiate the different types of projects. Project cycles may use all or a subset of the used Project Status (e.g. Your opportunity project cycle may include the steps from prospect to contract - the service cycle may include steps from installation to customer acceptance.]]></HELP>
-<!--208 WINDOWTYPE-->
-<!--208-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--208 ISSOTRX-->
-<!--208-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--208 ENTITYTYPE-->
-<!--208-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--208 PROCESSING-->
-<!--208-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--208 ISDEFAULT-->
-<!--208-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--208**************--></AD_WINDOW>
 
 <!--210**************--><AD_WINDOW>
 <!--210 AD_WINDOW_ID-->
@@ -3100,326 +2602,11 @@
 <!--210-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--210 ISSOTRX-->
 <!--210-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--210 ENTITYTYPE-->
-<!--210-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--210 PROCESSING-->
 <!--210-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--210 ISDEFAULT-->
 <!--210-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--210**************--></AD_WINDOW>
-
-<!--211**************--><AD_WINDOW>
-<!--211 AD_WINDOW_ID-->
-<!--211-->              <AD_WINDOW_ID><![CDATA[211]]></AD_WINDOW_ID>
-<!--211 AD_CLIENT_ID-->
-<!--211-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--211 AD_ORG_ID-->
-<!--211-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--211 ISACTIVE-->
-<!--211-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--211 CREATED-->
-<!--211-->              <CREATED><![CDATA[2001-04-24 17:52:27.0]]></CREATED>
-<!--211 CREATEDBY-->
-<!--211-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--211 UPDATED-->
-<!--211-->              <UPDATED><![CDATA[2007-02-15 11:37:53.0]]></UPDATED>
-<!--211 UPDATEDBY-->
-<!--211-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--211 NAME-->
-<!--211-->              <NAME><![CDATA[Performance Color]]></NAME>
-<!--211 DESCRIPTION-->
-<!--211-->              <DESCRIPTION><![CDATA[Color used for Performance Analysis]]></DESCRIPTION>
-<!--211 HELP-->
-<!--211-->              <HELP><![CDATA[The Performance Color Window allows you to define the color schema to be used to indicate current performance.  The system has predefined Red (below 50%), Yellow (below 100%) and green above 100.  If you want to define your own color schema, do it here.]]></HELP>
-<!--211 WINDOWTYPE-->
-<!--211-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--211 ISSOTRX-->
-<!--211-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--211 ENTITYTYPE-->
-<!--211-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--211 PROCESSING-->
-<!--211-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--211 ISDEFAULT-->
-<!--211-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--211**************--></AD_WINDOW>
-
-<!--212**************--><AD_WINDOW>
-<!--212 AD_WINDOW_ID-->
-<!--212-->              <AD_WINDOW_ID><![CDATA[212]]></AD_WINDOW_ID>
-<!--212 AD_CLIENT_ID-->
-<!--212-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--212 AD_ORG_ID-->
-<!--212-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--212 ISACTIVE-->
-<!--212-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--212 CREATED-->
-<!--212-->              <CREATED><![CDATA[2001-04-24 17:54:57.0]]></CREATED>
-<!--212 CREATEDBY-->
-<!--212-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--212 UPDATED-->
-<!--212-->              <UPDATED><![CDATA[2007-02-15 11:37:56.0]]></UPDATED>
-<!--212 UPDATEDBY-->
-<!--212-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--212 NAME-->
-<!--212-->              <NAME><![CDATA[Performance Goal]]></NAME>
-<!--212 DESCRIPTION-->
-<!--212-->              <DESCRIPTION><![CDATA[Define Performance Goals]]></DESCRIPTION>
-<!--212 HELP-->
-<!--212-->              <HELP><![CDATA[The Performance Goal Window allows you to define performance goals]]></HELP>
-<!--212 WINDOWTYPE-->
-<!--212-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--212 ISSOTRX-->
-<!--212-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--212 ENTITYTYPE-->
-<!--212-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--212 PROCESSING-->
-<!--212-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--212 ISDEFAULT-->
-<!--212-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--212**************--></AD_WINDOW>
-
-<!--213**************--><AD_WINDOW>
-<!--213 AD_WINDOW_ID-->
-<!--213-->              <AD_WINDOW_ID><![CDATA[213]]></AD_WINDOW_ID>
-<!--213 AD_CLIENT_ID-->
-<!--213-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--213 AD_ORG_ID-->
-<!--213-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--213 ISACTIVE-->
-<!--213-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--213 CREATED-->
-<!--213-->              <CREATED><![CDATA[2001-04-24 17:57:06.0]]></CREATED>
-<!--213 CREATEDBY-->
-<!--213-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--213 UPDATED-->
-<!--213-->              <UPDATED><![CDATA[2007-02-15 11:38:00.0]]></UPDATED>
-<!--213 UPDATEDBY-->
-<!--213-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--213 NAME-->
-<!--213-->              <NAME><![CDATA[Performance Measure Calculation]]></NAME>
-<!--213 DESCRIPTION-->
-<!--213-->              <DESCRIPTION><![CDATA[Define how you calculate your performance measures]]></DESCRIPTION>
-<!--213 HELP-->
-<!--213-->              <HELP><![CDATA[Please test the statement in SQL*Plus first.The select statement needs to return a single value!Any restrictions for Date range, Organizations, Business Partners, Products should be done via the "Performance Measure" window.  This is the generic calculation.As this tends to be somewhat technical, the system has a few examples predefined.]]></HELP>
-<!--213 WINDOWTYPE-->
-<!--213-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--213 ISSOTRX-->
-<!--213-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--213 ENTITYTYPE-->
-<!--213-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--213 PROCESSING-->
-<!--213-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--213 ISDEFAULT-->
-<!--213-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--213**************--></AD_WINDOW>
-
-<!--214**************--><AD_WINDOW>
-<!--214 AD_WINDOW_ID-->
-<!--214-->              <AD_WINDOW_ID><![CDATA[214]]></AD_WINDOW_ID>
-<!--214 AD_CLIENT_ID-->
-<!--214-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--214 AD_ORG_ID-->
-<!--214-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--214 ISACTIVE-->
-<!--214-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--214 CREATED-->
-<!--214-->              <CREATED><![CDATA[2001-04-24 17:58:07.0]]></CREATED>
-<!--214 CREATEDBY-->
-<!--214-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--214 UPDATED-->
-<!--214-->              <UPDATED><![CDATA[2007-02-15 11:37:50.0]]></UPDATED>
-<!--214 UPDATEDBY-->
-<!--214-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--214 NAME-->
-<!--214-->              <NAME><![CDATA[Performance Achievement]]></NAME>
-<!--214 DESCRIPTION-->
-<!--214-->              <DESCRIPTION><![CDATA[Define Performance Achievements]]></DESCRIPTION>
-<!--214 HELP-->
-<!--214-->              <HELP><![CDATA[The Performance Achievement Window allows you to define Tasks to be achieved.  The performance is measured by the percentage of reached achievements.]]></HELP>
-<!--214 WINDOWTYPE-->
-<!--214-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--214 ISSOTRX-->
-<!--214-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--214 ENTITYTYPE-->
-<!--214-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--214 PROCESSING-->
-<!--214-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--214 ISDEFAULT-->
-<!--214-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--214**************--></AD_WINDOW>
-
-<!--215**************--><AD_WINDOW>
-<!--215 AD_WINDOW_ID-->
-<!--215-->              <AD_WINDOW_ID><![CDATA[215]]></AD_WINDOW_ID>
-<!--215 AD_CLIENT_ID-->
-<!--215-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--215 AD_ORG_ID-->
-<!--215-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--215 ISACTIVE-->
-<!--215-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--215 CREATED-->
-<!--215-->              <CREATED><![CDATA[2001-04-24 18:53:57.0]]></CREATED>
-<!--215 CREATEDBY-->
-<!--215-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--215 UPDATED-->
-<!--215-->              <UPDATED><![CDATA[2007-02-15 11:37:58.0]]></UPDATED>
-<!--215 UPDATEDBY-->
-<!--215-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--215 NAME-->
-<!--215-->              <NAME><![CDATA[Performance Measure]]></NAME>
-<!--215 DESCRIPTION-->
-<!--215-->              <DESCRIPTION><![CDATA[Define your Performance Measures]]></DESCRIPTION>
-<!--215 HELP-->
-<!--215-->              <HELP><![CDATA[The Performance Measure Window allows you to define the rules and restrictions for performance measurement.  You can, for example, restrict performance measurement to sales for a certain product category for a defined time frame.]]></HELP>
-<!--215 WINDOWTYPE-->
-<!--215-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--215 ISSOTRX-->
-<!--215-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--215 ENTITYTYPE-->
-<!--215-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--215 PROCESSING-->
-<!--215-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--215 ISDEFAULT-->
-<!--215-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--215**************--></AD_WINDOW>
-
-<!--216**************--><AD_WINDOW>
-<!--216 AD_WINDOW_ID-->
-<!--216-->              <AD_WINDOW_ID><![CDATA[216]]></AD_WINDOW_ID>
-<!--216 AD_CLIENT_ID-->
-<!--216-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--216 AD_ORG_ID-->
-<!--216-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--216 ISACTIVE-->
-<!--216-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--216 CREATED-->
-<!--216-->              <CREATED><![CDATA[2001-05-13 09:38:47.0]]></CREATED>
-<!--216 CREATEDBY-->
-<!--216-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--216 UPDATED-->
-<!--216-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--216 UPDATEDBY-->
-<!--216-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--216 NAME-->
-<!--216-->              <NAME><![CDATA[Financial Report]]></NAME>
-<!--216 DESCRIPTION-->
-<!--216-->              <DESCRIPTION><![CDATA[Maintain Financial Reports]]></DESCRIPTION>
-<!--216 HELP-->
-<!--216-->              <HELP><![CDATA[Financial Reports are the combination of a Report Column Set and Line Set.]]></HELP>
-<!--216 WINDOWTYPE-->
-<!--216-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--216 ISSOTRX-->
-<!--216-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--216 ENTITYTYPE-->
-<!--216-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--216 PROCESSING-->
-<!--216-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--216 ISDEFAULT-->
-<!--216-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--216**************--></AD_WINDOW>
-
-<!--217**************--><AD_WINDOW>
-<!--217 AD_WINDOW_ID-->
-<!--217-->              <AD_WINDOW_ID><![CDATA[217]]></AD_WINDOW_ID>
-<!--217 AD_CLIENT_ID-->
-<!--217-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--217 AD_ORG_ID-->
-<!--217-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--217 ISACTIVE-->
-<!--217-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--217 CREATED-->
-<!--217-->              <CREATED><![CDATA[2001-05-13 09:43:25.0]]></CREATED>
-<!--217 CREATEDBY-->
-<!--217-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--217 UPDATED-->
-<!--217-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--217 UPDATEDBY-->
-<!--217-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--217 NAME-->
-<!--217-->              <NAME><![CDATA[Report Column Set]]></NAME>
-<!--217 DESCRIPTION-->
-<!--217-->              <DESCRIPTION><![CDATA[Maintain Financial Report Column Sets]]></DESCRIPTION>
-<!--217 HELP-->
-<!--217-->              <HELP><![CDATA[The Report Column Set defines what data is printed in the columns of a report.]]></HELP>
-<!--217 WINDOWTYPE-->
-<!--217-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--217 ISSOTRX-->
-<!--217-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--217 ENTITYTYPE-->
-<!--217-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--217 PROCESSING-->
-<!--217-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--217 ISDEFAULT-->
-<!--217-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--217**************--></AD_WINDOW>
-
-<!--218**************--><AD_WINDOW>
-<!--218 AD_WINDOW_ID-->
-<!--218-->              <AD_WINDOW_ID><![CDATA[218]]></AD_WINDOW_ID>
-<!--218 AD_CLIENT_ID-->
-<!--218-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--218 AD_ORG_ID-->
-<!--218-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--218 ISACTIVE-->
-<!--218-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--218 CREATED-->
-<!--218-->              <CREATED><![CDATA[2001-05-13 09:44:54.0]]></CREATED>
-<!--218 CREATEDBY-->
-<!--218-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--218 UPDATED-->
-<!--218-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--218 UPDATEDBY-->
-<!--218-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--218 NAME-->
-<!--218-->              <NAME><![CDATA[Report Line Set]]></NAME>
-<!--218 DESCRIPTION-->
-<!--218-->              <DESCRIPTION><![CDATA[Maintain Financial Report Line Sets]]></DESCRIPTION>
-<!--218 HELP-->
-<!--218-->              <HELP><![CDATA[The Line Set determines, which lines are printed in a Financial Report]]></HELP>
-<!--218 WINDOWTYPE-->
-<!--218-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--218 ISSOTRX-->
-<!--218-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--218 ENTITYTYPE-->
-<!--218-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--218 PROCESSING-->
-<!--218-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--218 ISDEFAULT-->
-<!--218-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--218**************--></AD_WINDOW>
-
-<!--219**************--><AD_WINDOW>
-<!--219 AD_WINDOW_ID-->
-<!--219-->              <AD_WINDOW_ID><![CDATA[219]]></AD_WINDOW_ID>
-<!--219 AD_CLIENT_ID-->
-<!--219-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--219 AD_ORG_ID-->
-<!--219-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--219 ISACTIVE-->
-<!--219-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--219 CREATED-->
-<!--219-->              <CREATED><![CDATA[2001-05-13 12:17:26.0]]></CREATED>
-<!--219 CREATEDBY-->
-<!--219-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--219 UPDATED-->
-<!--219-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--219 UPDATEDBY-->
-<!--219-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--219 NAME-->
-<!--219-->              <NAME><![CDATA[Revenue Recognition Run]]></NAME>
-<!--219 DESCRIPTION-->
-<!--219-->              <DESCRIPTION><![CDATA[Start Revenue Recognition]]></DESCRIPTION>
-<!--219 WINDOWTYPE-->
-<!--219-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
-<!--219 ISSOTRX-->
-<!--219-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--219 ENTITYTYPE-->
-<!--219-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--219 PROCESSING-->
-<!--219-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--219 ISDEFAULT-->
-<!--219-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--219**************--></AD_WINDOW>
 
 <!--220**************--><AD_WINDOW>
 <!--220 AD_WINDOW_ID-->
@@ -3448,46 +2635,11 @@
 <!--220-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--220 ISSOTRX-->
 <!--220-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--220 ENTITYTYPE-->
-<!--220-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--220 PROCESSING-->
 <!--220-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--220 ISDEFAULT-->
 <!--220-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--220**************--></AD_WINDOW>
-
-<!--221**************--><AD_WINDOW>
-<!--221 AD_WINDOW_ID-->
-<!--221-->              <AD_WINDOW_ID><![CDATA[221]]></AD_WINDOW_ID>
-<!--221 AD_CLIENT_ID-->
-<!--221-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--221 AD_ORG_ID-->
-<!--221-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--221 ISACTIVE-->
-<!--221-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--221 CREATED-->
-<!--221-->              <CREATED><![CDATA[2001-07-22 11:16:07.0]]></CREATED>
-<!--221 CREATEDBY-->
-<!--221-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--221 UPDATED-->
-<!--221-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--221 UPDATEDBY-->
-<!--221-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--221 NAME-->
-<!--221-->              <NAME><![CDATA[Find (indirect use)]]></NAME>
-<!--221 DESCRIPTION-->
-<!--221-->              <DESCRIPTION><![CDATA[Find Dialog (indirect use)]]></DESCRIPTION>
-<!--221 WINDOWTYPE-->
-<!--221-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--221 ISSOTRX-->
-<!--221-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--221 ENTITYTYPE-->
-<!--221-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--221 PROCESSING-->
-<!--221-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--221 ISDEFAULT-->
-<!--221-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--221**************--></AD_WINDOW>
 
 <!--223**************--><AD_WINDOW>
 <!--223 AD_WINDOW_ID-->
@@ -3516,118 +2668,11 @@
 <!--223-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--223 ISSOTRX-->
 <!--223-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--223 ENTITYTYPE-->
-<!--223-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--223 PROCESSING-->
 <!--223-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--223 ISDEFAULT-->
 <!--223-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--223**************--></AD_WINDOW>
-
-<!--224**************--><AD_WINDOW>
-<!--224 AD_WINDOW_ID-->
-<!--224-->              <AD_WINDOW_ID><![CDATA[224]]></AD_WINDOW_ID>
-<!--224 AD_CLIENT_ID-->
-<!--224-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--224 AD_ORG_ID-->
-<!--224-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--224 ISACTIVE-->
-<!--224-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--224 CREATED-->
-<!--224-->              <CREATED><![CDATA[2001-07-28 19:50:25.0]]></CREATED>
-<!--224 CREATEDBY-->
-<!--224-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--224 UPDATED-->
-<!--224-->              <UPDATED><![CDATA[2003-08-17 12:29:47.0]]></UPDATED>
-<!--224 UPDATEDBY-->
-<!--224-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--224 NAME-->
-<!--224-->              <NAME><![CDATA[Print Form]]></NAME>
-<!--224 DESCRIPTION-->
-<!--224-->              <DESCRIPTION><![CDATA[Maintain Print Forms (Invoices, Checks, ..) used]]></DESCRIPTION>
-<!--224 HELP-->
-<!--224-->              <HELP><![CDATA[Define the documents you use for this Client/Organnization.  Note that the check format is defined in the Bank (Account) Window.<p>The highest priotity has the Print Format, you define on a Document Type (example specific Export Invoice format). The next level is the set of Print Formats, you defined for the organziation of the document printed. The default is the set of Print Formats defines for all organizations of the Client (Organization=*).]]></HELP>
-<!--224 WINDOWTYPE-->
-<!--224-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--224 ISSOTRX-->
-<!--224-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--224 ENTITYTYPE-->
-<!--224-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--224 PROCESSING-->
-<!--224-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--224 ISDEFAULT-->
-<!--224-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--224**************--></AD_WINDOW>
-
-<!--225**************--><AD_WINDOW>
-<!--225 AD_WINDOW_ID-->
-<!--225-->              <AD_WINDOW_ID><![CDATA[225]]></AD_WINDOW_ID>
-<!--225 AD_CLIENT_ID-->
-<!--225-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--225 AD_ORG_ID-->
-<!--225-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--225 ISACTIVE-->
-<!--225-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--225 CREATED-->
-<!--225-->              <CREATED><![CDATA[2001-09-05 21:23:37.0]]></CREATED>
-<!--225 CREATEDBY-->
-<!--225-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--225 UPDATED-->
-<!--225-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--225 UPDATEDBY-->
-<!--225-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--225 NAME-->
-<!--225-->              <NAME><![CDATA[System Color]]></NAME>
-<!--225 DESCRIPTION-->
-<!--225-->              <DESCRIPTION><![CDATA[Maintain System Colors]]></DESCRIPTION>
-<!--225 HELP-->
-<!--225-->              <HELP><![CDATA[System colors are used for background and indicators]]></HELP>
-<!--225 WINDOWTYPE-->
-<!--225-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--225 ISSOTRX-->
-<!--225-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--225 ENTITYTYPE-->
-<!--225-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--225 PROCESSING-->
-<!--225-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--225 ISDEFAULT-->
-<!--225-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--225**************--></AD_WINDOW>
-
-<!--226**************--><AD_WINDOW>
-<!--226 AD_WINDOW_ID-->
-<!--226-->              <AD_WINDOW_ID><![CDATA[226]]></AD_WINDOW_ID>
-<!--226 AD_CLIENT_ID-->
-<!--226-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--226 AD_ORG_ID-->
-<!--226-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--226 ISACTIVE-->
-<!--226-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--226 CREATED-->
-<!--226-->              <CREATED><![CDATA[2001-09-05 21:39:45.0]]></CREATED>
-<!--226 CREATEDBY-->
-<!--226-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--226 UPDATED-->
-<!--226-->              <UPDATED><![CDATA[2004-04-07 19:55:37.0]]></UPDATED>
-<!--226 UPDATEDBY-->
-<!--226-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--226 NAME-->
-<!--226-->              <NAME><![CDATA[Desktop]]></NAME>
-<!--226 DESCRIPTION-->
-<!--226-->              <DESCRIPTION><![CDATA[Maintain Desktop]]></DESCRIPTION>
-<!--226 HELP-->
-<!--226-->              <HELP><![CDATA[Desktop is a collection of Workbenches]]></HELP>
-<!--226 WINDOWTYPE-->
-<!--226-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--226 ISSOTRX-->
-<!--226-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--226 ENTITYTYPE-->
-<!--226-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--226 PROCESSING-->
-<!--226-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--226 ISDEFAULT-->
-<!--226-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--226**************--></AD_WINDOW>
 
 <!--227**************--><AD_WINDOW>
 <!--227 AD_WINDOW_ID-->
@@ -3656,8 +2701,6 @@
 <!--227-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--227 ISSOTRX-->
 <!--227-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--227 ENTITYTYPE-->
-<!--227-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--227 PROCESSING-->
 <!--227-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--227 ISDEFAULT-->
@@ -3691,83 +2734,11 @@
 <!--228-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--228 ISSOTRX-->
 <!--228-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--228 ENTITYTYPE-->
-<!--228-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--228 PROCESSING-->
 <!--228-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--228 ISDEFAULT-->
 <!--228-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--228**************--></AD_WINDOW>
-
-<!--229**************--><AD_WINDOW>
-<!--229 AD_WINDOW_ID-->
-<!--229-->              <AD_WINDOW_ID><![CDATA[229]]></AD_WINDOW_ID>
-<!--229 AD_CLIENT_ID-->
-<!--229-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--229 AD_ORG_ID-->
-<!--229-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--229 ISACTIVE-->
-<!--229-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--229 CREATED-->
-<!--229-->              <CREATED><![CDATA[2001-09-05 21:59:41.0]]></CREATED>
-<!--229 CREATEDBY-->
-<!--229-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--229 UPDATED-->
-<!--229-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--229 UPDATEDBY-->
-<!--229-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--229 NAME-->
-<!--229-->              <NAME><![CDATA[User Window]]></NAME>
-<!--229 DESCRIPTION-->
-<!--229-->              <DESCRIPTION><![CDATA[Define User Window Customization]]></DESCRIPTION>
-<!--229 HELP-->
-<!--229-->              <HELP><![CDATA[Customization]]></HELP>
-<!--229 WINDOWTYPE-->
-<!--229-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--229 ISSOTRX-->
-<!--229-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--229 ENTITYTYPE-->
-<!--229-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--229 PROCESSING-->
-<!--229-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--229 ISDEFAULT-->
-<!--229-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--229**************--></AD_WINDOW>
-
-<!--231**************--><AD_WINDOW>
-<!--231 AD_WINDOW_ID-->
-<!--231-->              <AD_WINDOW_ID><![CDATA[231]]></AD_WINDOW_ID>
-<!--231 AD_CLIENT_ID-->
-<!--231-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--231 AD_ORG_ID-->
-<!--231-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--231 ISACTIVE-->
-<!--231-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--231 CREATED-->
-<!--231-->              <CREATED><![CDATA[2001-09-05 22:13:18.0]]></CREATED>
-<!--231 CREATEDBY-->
-<!--231-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--231 UPDATED-->
-<!--231-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--231 UPDATEDBY-->
-<!--231-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--231 NAME-->
-<!--231-->              <NAME><![CDATA[Workbench]]></NAME>
-<!--231 DESCRIPTION-->
-<!--231-->              <DESCRIPTION><![CDATA[Maintain Workbench]]></DESCRIPTION>
-<!--231 HELP-->
-<!--231-->              <HELP><![CDATA[Workbenches are a collection of Windows]]></HELP>
-<!--231 WINDOWTYPE-->
-<!--231-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--231 ISSOTRX-->
-<!--231-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--231 ENTITYTYPE-->
-<!--231-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--231 PROCESSING-->
-<!--231-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--231 ISDEFAULT-->
-<!--231-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--231**************--></AD_WINDOW>
 
 <!--232**************--><AD_WINDOW>
 <!--232 AD_WINDOW_ID-->
@@ -3796,8 +2767,6 @@
 <!--232-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--232 ISSOTRX-->
 <!--232-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--232 ENTITYTYPE-->
-<!--232-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--232 PROCESSING-->
 <!--232-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--232 ISDEFAULT-->
@@ -3831,8 +2800,6 @@
 <!--233-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--233 ISSOTRX-->
 <!--233-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--233 ENTITYTYPE-->
-<!--233-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--233 PROCESSING-->
 <!--233-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--233 ISDEFAULT-->
@@ -3866,8 +2833,6 @@
 <!--234-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--234 ISSOTRX-->
 <!--234-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--234 ENTITYTYPE-->
-<!--234-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--234 PROCESSING-->
 <!--234-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--234 ISDEFAULT-->
@@ -3901,8 +2866,6 @@
 <!--235-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--235 ISSOTRX-->
 <!--235-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--235 ENTITYTYPE-->
-<!--235-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--235 PROCESSING-->
 <!--235-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--235 ISDEFAULT-->
@@ -3936,8 +2899,6 @@
 <!--236-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--236 ISSOTRX-->
 <!--236-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--236 ENTITYTYPE-->
-<!--236-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--236 PROCESSING-->
 <!--236-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--236 ISDEFAULT-->
@@ -3971,153 +2932,11 @@
 <!--237-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--237 ISSOTRX-->
 <!--237-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--237 ENTITYTYPE-->
-<!--237-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--237 PROCESSING-->
 <!--237-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--237 ISDEFAULT-->
 <!--237-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--237**************--></AD_WINDOW>
-
-<!--238**************--><AD_WINDOW>
-<!--238 AD_WINDOW_ID-->
-<!--238-->              <AD_WINDOW_ID><![CDATA[238]]></AD_WINDOW_ID>
-<!--238 AD_CLIENT_ID-->
-<!--238-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--238 AD_ORG_ID-->
-<!--238-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--238 ISACTIVE-->
-<!--238-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--238 CREATED-->
-<!--238-->              <CREATED><![CDATA[2002-07-11 18:51:42.0]]></CREATED>
-<!--238 CREATEDBY-->
-<!--238-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--238 UPDATED-->
-<!--238-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--238 UPDATEDBY-->
-<!--238-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--238 NAME-->
-<!--238-->              <NAME><![CDATA[Print Color]]></NAME>
-<!--238 DESCRIPTION-->
-<!--238-->              <DESCRIPTION><![CDATA[Maintain Print Color]]></DESCRIPTION>
-<!--238 HELP-->
-<!--238-->              <HELP><![CDATA[Colors used for printing]]></HELP>
-<!--238 WINDOWTYPE-->
-<!--238-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--238 ISSOTRX-->
-<!--238-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--238 ENTITYTYPE-->
-<!--238-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--238 PROCESSING-->
-<!--238-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--238 ISDEFAULT-->
-<!--238-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--238**************--></AD_WINDOW>
-
-<!--239**************--><AD_WINDOW>
-<!--239 AD_WINDOW_ID-->
-<!--239-->              <AD_WINDOW_ID><![CDATA[239]]></AD_WINDOW_ID>
-<!--239 AD_CLIENT_ID-->
-<!--239-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--239 AD_ORG_ID-->
-<!--239-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--239 ISACTIVE-->
-<!--239-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--239 CREATED-->
-<!--239-->              <CREATED><![CDATA[2002-07-11 18:57:07.0]]></CREATED>
-<!--239 CREATEDBY-->
-<!--239-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--239 UPDATED-->
-<!--239-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--239 UPDATEDBY-->
-<!--239-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--239 NAME-->
-<!--239-->              <NAME><![CDATA[Print Font]]></NAME>
-<!--239 DESCRIPTION-->
-<!--239-->              <DESCRIPTION><![CDATA[Maintain Print Font]]></DESCRIPTION>
-<!--239 HELP-->
-<!--239-->              <HELP><![CDATA[Font used for printing]]></HELP>
-<!--239 WINDOWTYPE-->
-<!--239-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--239 ISSOTRX-->
-<!--239-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--239 ENTITYTYPE-->
-<!--239-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--239 PROCESSING-->
-<!--239-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--239 ISDEFAULT-->
-<!--239-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--239**************--></AD_WINDOW>
-
-<!--240**************--><AD_WINDOW>
-<!--240 AD_WINDOW_ID-->
-<!--240-->              <AD_WINDOW_ID><![CDATA[240]]></AD_WINDOW_ID>
-<!--240 AD_CLIENT_ID-->
-<!--240-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--240 AD_ORG_ID-->
-<!--240-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--240 ISACTIVE-->
-<!--240-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--240 CREATED-->
-<!--240-->              <CREATED><![CDATA[2002-07-11 19:01:44.0]]></CREATED>
-<!--240 CREATEDBY-->
-<!--240-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--240 UPDATED-->
-<!--240-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--240 UPDATEDBY-->
-<!--240-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--240 NAME-->
-<!--240-->              <NAME><![CDATA[Print Format]]></NAME>
-<!--240 DESCRIPTION-->
-<!--240-->              <DESCRIPTION><![CDATA[Maintain Print Format]]></DESCRIPTION>
-<!--240 HELP-->
-<!--240-->              <HELP><![CDATA[The print format determines how data is rendered for print.]]></HELP>
-<!--240 WINDOWTYPE-->
-<!--240-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--240 ISSOTRX-->
-<!--240-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--240 ENTITYTYPE-->
-<!--240-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--240 PROCESSING-->
-<!--240-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--240 ISDEFAULT-->
-<!--240-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--240**************--></AD_WINDOW>
-
-<!--241**************--><AD_WINDOW>
-<!--241 AD_WINDOW_ID-->
-<!--241-->              <AD_WINDOW_ID><![CDATA[241]]></AD_WINDOW_ID>
-<!--241 AD_CLIENT_ID-->
-<!--241-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--241 AD_ORG_ID-->
-<!--241-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--241 ISACTIVE-->
-<!--241-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--241 CREATED-->
-<!--241-->              <CREATED><![CDATA[2002-07-11 19:15:33.0]]></CREATED>
-<!--241 CREATEDBY-->
-<!--241-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--241 UPDATED-->
-<!--241-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--241 UPDATEDBY-->
-<!--241-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--241 NAME-->
-<!--241-->              <NAME><![CDATA[Print Paper]]></NAME>
-<!--241 DESCRIPTION-->
-<!--241-->              <DESCRIPTION><![CDATA[Maintain Print Paper]]></DESCRIPTION>
-<!--241 HELP-->
-<!--241-->              <HELP><![CDATA[Printer Paper Size, Orientation and Margins]]></HELP>
-<!--241 WINDOWTYPE-->
-<!--241-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--241 ISSOTRX-->
-<!--241-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--241 ENTITYTYPE-->
-<!--241-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--241 PROCESSING-->
-<!--241-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--241 ISDEFAULT-->
-<!--241-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--241**************--></AD_WINDOW>
 
 <!--242**************--><AD_WINDOW>
 <!--242 AD_WINDOW_ID-->
@@ -4146,48 +2965,11 @@
 <!--242-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--242 ISSOTRX-->
 <!--242-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--242 ENTITYTYPE-->
-<!--242-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--242 PROCESSING-->
 <!--242-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--242 ISDEFAULT-->
 <!--242-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--242**************--></AD_WINDOW>
-
-<!--243**************--><AD_WINDOW>
-<!--243 AD_WINDOW_ID-->
-<!--243-->              <AD_WINDOW_ID><![CDATA[243]]></AD_WINDOW_ID>
-<!--243 AD_CLIENT_ID-->
-<!--243-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--243 AD_ORG_ID-->
-<!--243-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--243 ISACTIVE-->
-<!--243-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--243 CREATED-->
-<!--243-->              <CREATED><![CDATA[2002-08-24 16:57:43.0]]></CREATED>
-<!--243 CREATEDBY-->
-<!--243-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--243 UPDATED-->
-<!--243-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--243 UPDATEDBY-->
-<!--243-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--243 NAME-->
-<!--243-->              <NAME><![CDATA[Print Table Format]]></NAME>
-<!--243 DESCRIPTION-->
-<!--243-->              <DESCRIPTION><![CDATA[Define Report Table Format]]></DESCRIPTION>
-<!--243 HELP-->
-<!--243-->              <HELP><![CDATA[The Print Table Format lets you define how table header, etc. is printed]]></HELP>
-<!--243 WINDOWTYPE-->
-<!--243-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--243 ISSOTRX-->
-<!--243-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--243 ENTITYTYPE-->
-<!--243-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--243 PROCESSING-->
-<!--243-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--243 ISDEFAULT-->
-<!--243-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--243**************--></AD_WINDOW>
 
 <!--244**************--><AD_WINDOW>
 <!--244 AD_WINDOW_ID-->
@@ -4216,8 +2998,6 @@
 <!--244-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--244 ISSOTRX-->
 <!--244-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--244 ENTITYTYPE-->
-<!--244-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--244 PROCESSING-->
 <!--244-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--244 ISDEFAULT-->
@@ -4251,8 +3031,6 @@
 <!--245-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--245 ISSOTRX-->
 <!--245-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--245 ENTITYTYPE-->
-<!--245-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--245 PROCESSING-->
 <!--245-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--245 ISDEFAULT-->
@@ -4286,8 +3064,6 @@
 <!--246-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--246 ISSOTRX-->
 <!--246-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--246 ENTITYTYPE-->
-<!--246-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--246 PROCESSING-->
 <!--246-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--246 ISDEFAULT-->
@@ -4321,8 +3097,6 @@
 <!--247-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--247 ISSOTRX-->
 <!--247-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--247 ENTITYTYPE-->
-<!--247-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--247 PROCESSING-->
 <!--247-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--247 ISDEFAULT-->
@@ -4356,48 +3130,11 @@
 <!--248-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--248 ISSOTRX-->
 <!--248-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--248 ENTITYTYPE-->
-<!--248-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--248 PROCESSING-->
 <!--248-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--248 ISDEFAULT-->
 <!--248-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--248**************--></AD_WINDOW>
-
-<!--249**************--><AD_WINDOW>
-<!--249 AD_WINDOW_ID-->
-<!--249-->              <AD_WINDOW_ID><![CDATA[249]]></AD_WINDOW_ID>
-<!--249 AD_CLIENT_ID-->
-<!--249-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--249 AD_ORG_ID-->
-<!--249-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--249 ISACTIVE-->
-<!--249-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--249 CREATED-->
-<!--249-->              <CREATED><![CDATA[2003-01-11 16:30:16.0]]></CREATED>
-<!--249 CREATEDBY-->
-<!--249-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--249 UPDATED-->
-<!--249-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--249 UPDATEDBY-->
-<!--249-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--249 NAME-->
-<!--249-->              <NAME><![CDATA[Import Report Line Set]]></NAME>
-<!--249 DESCRIPTION-->
-<!--249-->              <DESCRIPTION><![CDATA[Import report line sets in .csv format from previously used databases/applications and past business operations.]]></DESCRIPTION>
-<!--249 HELP-->
-<!--249-->              <HELP><![CDATA[The Import Report Line Set Window is an interim table which is used when importing external data into the system.  Selecting the 'Process' button will either add or modify the appropriate records.]]></HELP>
-<!--249 WINDOWTYPE-->
-<!--249-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--249 ISSOTRX-->
-<!--249-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--249 ENTITYTYPE-->
-<!--249-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--249 PROCESSING-->
-<!--249-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--249 ISDEFAULT-->
-<!--249-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--249**************--></AD_WINDOW>
 
 <!--250**************--><AD_WINDOW>
 <!--250 AD_WINDOW_ID-->
@@ -4426,8 +3163,6 @@
 <!--250-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--250 ISSOTRX-->
 <!--250-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--250 ENTITYTYPE-->
-<!--250-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--250 PROCESSING-->
 <!--250-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--250 ISDEFAULT-->
@@ -4461,8 +3196,6 @@
 <!--251-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--251 ISSOTRX-->
 <!--251-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--251 ENTITYTYPE-->
-<!--251-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--251 PROCESSING-->
 <!--251-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--251 ISDEFAULT-->
@@ -4496,48 +3229,11 @@
 <!--252-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--252 ISSOTRX-->
 <!--252-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--252 ENTITYTYPE-->
-<!--252-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--252 PROCESSING-->
 <!--252-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--252 ISDEFAULT-->
 <!--252-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--252**************--></AD_WINDOW>
-
-<!--253**************--><AD_WINDOW>
-<!--253 AD_WINDOW_ID-->
-<!--253-->              <AD_WINDOW_ID><![CDATA[253]]></AD_WINDOW_ID>
-<!--253 AD_CLIENT_ID-->
-<!--253-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--253 AD_ORG_ID-->
-<!--253-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--253 ISACTIVE-->
-<!--253-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--253 CREATED-->
-<!--253-->              <CREATED><![CDATA[2003-01-23 01:10:53.0]]></CREATED>
-<!--253 CREATEDBY-->
-<!--253-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--253 UPDATED-->
-<!--253-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
-<!--253 UPDATEDBY-->
-<!--253-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--253 NAME-->
-<!--253-->              <NAME><![CDATA[Training]]></NAME>
-<!--253 DESCRIPTION-->
-<!--253-->              <DESCRIPTION><![CDATA[Repeated Training]]></DESCRIPTION>
-<!--253 HELP-->
-<!--253-->              <HELP><![CDATA[The training may have multiple actual classes]]></HELP>
-<!--253 WINDOWTYPE-->
-<!--253-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--253 ISSOTRX-->
-<!--253-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--253 ENTITYTYPE-->
-<!--253-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--253 PROCESSING-->
-<!--253-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--253 ISDEFAULT-->
-<!--253-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--253**************--></AD_WINDOW>
 
 <!--254**************--><AD_WINDOW>
 <!--254 AD_WINDOW_ID-->
@@ -4566,48 +3262,11 @@
 <!--254-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--254 ISSOTRX-->
 <!--254-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--254 ENTITYTYPE-->
-<!--254-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--254 PROCESSING-->
 <!--254-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--254 ISDEFAULT-->
 <!--254-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--254**************--></AD_WINDOW>
-
-<!--255**************--><AD_WINDOW>
-<!--255 AD_WINDOW_ID-->
-<!--255-->              <AD_WINDOW_ID><![CDATA[255]]></AD_WINDOW_ID>
-<!--255 AD_CLIENT_ID-->
-<!--255-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--255 AD_ORG_ID-->
-<!--255-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--255 ISACTIVE-->
-<!--255-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--255 CREATED-->
-<!--255-->              <CREATED><![CDATA[2003-04-18 15:39:50.0]]></CREATED>
-<!--255 CREATEDBY-->
-<!--255-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--255 UPDATED-->
-<!--255-->              <UPDATED><![CDATA[2003-04-18 15:39:50.0]]></UPDATED>
-<!--255 UPDATEDBY-->
-<!--255-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--255 NAME-->
-<!--255-->              <NAME><![CDATA[Accounting Fact Balances]]></NAME>
-<!--255 DESCRIPTION-->
-<!--255-->              <DESCRIPTION><![CDATA[Query Accounting Daily Balances]]></DESCRIPTION>
-<!--255 HELP-->
-<!--255-->              <HELP><![CDATA[Query daily account balances]]></HELP>
-<!--255 WINDOWTYPE-->
-<!--255-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
-<!--255 ISSOTRX-->
-<!--255-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--255 ENTITYTYPE-->
-<!--255-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--255 PROCESSING-->
-<!--255-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--255 ISDEFAULT-->
-<!--255-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--255**************--></AD_WINDOW>
 
 <!--256**************--><AD_WINDOW>
 <!--256 AD_WINDOW_ID-->
@@ -4636,8 +3295,6 @@
 <!--256-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--256 ISSOTRX-->
 <!--256-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--256 ENTITYTYPE-->
-<!--256-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--256 PROCESSING-->
 <!--256-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--256 ISDEFAULT-->
@@ -4671,8 +3328,6 @@
 <!--257-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--257 ISSOTRX-->
 <!--257-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--257 ENTITYTYPE-->
-<!--257-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--257 PROCESSING-->
 <!--257-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--257 ISDEFAULT-->
@@ -4706,8 +3361,6 @@
 <!--258-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--258 ISSOTRX-->
 <!--258-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--258 ENTITYTYPE-->
-<!--258-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--258 PROCESSING-->
 <!--258-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--258 ISDEFAULT-->
@@ -4741,8 +3394,6 @@
 <!--259-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--259 ISSOTRX-->
 <!--259-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--259 ENTITYTYPE-->
-<!--259-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--259 PROCESSING-->
 <!--259-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--259 ISDEFAULT-->
@@ -4776,48 +3427,11 @@
 <!--260-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--260 ISSOTRX-->
 <!--260-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--260 ENTITYTYPE-->
-<!--260-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--260 PROCESSING-->
 <!--260-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--260 ISDEFAULT-->
 <!--260-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--260**************--></AD_WINDOW>
-
-<!--261**************--><AD_WINDOW>
-<!--261 AD_WINDOW_ID-->
-<!--261-->              <AD_WINDOW_ID><![CDATA[261]]></AD_WINDOW_ID>
-<!--261 AD_CLIENT_ID-->
-<!--261-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--261 AD_ORG_ID-->
-<!--261-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--261 ISACTIVE-->
-<!--261-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--261 CREATED-->
-<!--261-->              <CREATED><![CDATA[2003-05-06 15:16:42.0]]></CREATED>
-<!--261 CREATEDBY-->
-<!--261-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--261 UPDATED-->
-<!--261-->              <UPDATED><![CDATA[2003-05-06 15:22:44.0]]></UPDATED>
-<!--261 UPDATEDBY-->
-<!--261-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--261 NAME-->
-<!--261-->              <NAME><![CDATA[Attribute Search]]></NAME>
-<!--261 DESCRIPTION-->
-<!--261-->              <DESCRIPTION><![CDATA[Common Search Attribute]]></DESCRIPTION>
-<!--261 HELP-->
-<!--261-->              <HELP><![CDATA[Common Search Attribute]]></HELP>
-<!--261 WINDOWTYPE-->
-<!--261-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--261 ISSOTRX-->
-<!--261-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--261 ENTITYTYPE-->
-<!--261-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--261 PROCESSING-->
-<!--261-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--261 ISDEFAULT-->
-<!--261-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--261**************--></AD_WINDOW>
 
 <!--262**************--><AD_WINDOW>
 <!--262 AD_WINDOW_ID-->
@@ -4846,48 +3460,11 @@
 <!--262-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--262 ISSOTRX-->
 <!--262-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--262 ENTITYTYPE-->
-<!--262-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--262 PROCESSING-->
 <!--262-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--262 ISDEFAULT-->
 <!--262-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--262**************--></AD_WINDOW>
-
-<!--263**************--><AD_WINDOW>
-<!--263 AD_WINDOW_ID-->
-<!--263-->              <AD_WINDOW_ID><![CDATA[263]]></AD_WINDOW_ID>
-<!--263 AD_CLIENT_ID-->
-<!--263-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--263 AD_ORG_ID-->
-<!--263-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--263 ISACTIVE-->
-<!--263-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--263 CREATED-->
-<!--263-->              <CREATED><![CDATA[2003-05-28 21:46:04.0]]></CREATED>
-<!--263 CREATEDBY-->
-<!--263-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--263 UPDATED-->
-<!--263-->              <UPDATED><![CDATA[2003-06-16 18:20:05.0]]></UPDATED>
-<!--263 UPDATEDBY-->
-<!--263-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--263 NAME-->
-<!--263-->              <NAME><![CDATA[Print Label]]></NAME>
-<!--263 DESCRIPTION-->
-<!--263-->              <DESCRIPTION><![CDATA[Print Label Format]]></DESCRIPTION>
-<!--263 HELP-->
-<!--263-->              <HELP><![CDATA[Maintain Format to print Labels]]></HELP>
-<!--263 WINDOWTYPE-->
-<!--263-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--263 ISSOTRX-->
-<!--263-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--263 ENTITYTYPE-->
-<!--263-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--263 PROCESSING-->
-<!--263-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--263 ISDEFAULT-->
-<!--263-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--263**************--></AD_WINDOW>
 
 <!--264**************--><AD_WINDOW>
 <!--264 AD_WINDOW_ID-->
@@ -4916,8 +3493,6 @@
 <!--264-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--264 ISSOTRX-->
 <!--264-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--264 ENTITYTYPE-->
-<!--264-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--264 PROCESSING-->
 <!--264-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--264 ISDEFAULT-->
@@ -4951,8 +3526,6 @@
 <!--265-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--265 ISSOTRX-->
 <!--265-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--265 ENTITYTYPE-->
-<!--265-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--265 PROCESSING-->
 <!--265-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--265 ISDEFAULT-->
@@ -4986,8 +3559,6 @@
 <!--267-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--267 ISSOTRX-->
 <!--267-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--267 ENTITYTYPE-->
-<!--267-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--267 PROCESSING-->
 <!--267-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--267 ISDEFAULT-->
@@ -5021,48 +3592,11 @@
 <!--268-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--268 ISSOTRX-->
 <!--268-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--268 ENTITYTYPE-->
-<!--268-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--268 PROCESSING-->
 <!--268-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--268 ISDEFAULT-->
 <!--268-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--268**************--></AD_WINDOW>
-
-<!--269**************--><AD_WINDOW>
-<!--269 AD_WINDOW_ID-->
-<!--269-->              <AD_WINDOW_ID><![CDATA[269]]></AD_WINDOW_ID>
-<!--269 AD_CLIENT_ID-->
-<!--269-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--269 AD_ORG_ID-->
-<!--269-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--269 ISACTIVE-->
-<!--269-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--269 CREATED-->
-<!--269-->              <CREATED><![CDATA[2003-05-29 22:15:51.0]]></CREATED>
-<!--269 CREATEDBY-->
-<!--269-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--269 UPDATED-->
-<!--269-->              <UPDATED><![CDATA[2003-05-29 22:15:51.0]]></UPDATED>
-<!--269 UPDATEDBY-->
-<!--269-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--269 NAME-->
-<!--269-->              <NAME><![CDATA[Advertisement]]></NAME>
-<!--269 DESCRIPTION-->
-<!--269-->              <DESCRIPTION><![CDATA[Web Advertisement]]></DESCRIPTION>
-<!--269 HELP-->
-<!--269-->              <HELP><![CDATA[Maintain Advertisements on the Web]]></HELP>
-<!--269 WINDOWTYPE-->
-<!--269-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--269 ISSOTRX-->
-<!--269-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--269 ENTITYTYPE-->
-<!--269-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--269 PROCESSING-->
-<!--269-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--269 ISDEFAULT-->
-<!--269-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--269**************--></AD_WINDOW>
 
 <!--270**************--><AD_WINDOW>
 <!--270 AD_WINDOW_ID-->
@@ -5091,46 +3625,11 @@
 <!--270-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--270 ISSOTRX-->
 <!--270-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--270 ENTITYTYPE-->
-<!--270-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--270 PROCESSING-->
 <!--270-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--270 ISDEFAULT-->
 <!--270-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--270**************--></AD_WINDOW>
-
-<!--271**************--><AD_WINDOW>
-<!--271 AD_WINDOW_ID-->
-<!--271-->              <AD_WINDOW_ID><![CDATA[271]]></AD_WINDOW_ID>
-<!--271 AD_CLIENT_ID-->
-<!--271-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--271 AD_ORG_ID-->
-<!--271-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--271 ISACTIVE-->
-<!--271-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--271 CREATED-->
-<!--271-->              <CREATED><![CDATA[2003-06-01 23:19:56.0]]></CREATED>
-<!--271 CREATEDBY-->
-<!--271-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--271 UPDATED-->
-<!--271-->              <UPDATED><![CDATA[2003-06-01 23:20:02.0]]></UPDATED>
-<!--271 UPDATEDBY-->
-<!--271-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--271 NAME-->
-<!--271-->              <NAME><![CDATA[Cost Type]]></NAME>
-<!--271 DESCRIPTION-->
-<!--271-->              <DESCRIPTION><![CDATA[Maintain Cost Types]]></DESCRIPTION>
-<!--271 WINDOWTYPE-->
-<!--271-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--271 ISSOTRX-->
-<!--271-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--271 ENTITYTYPE-->
-<!--271-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--271 PROCESSING-->
-<!--271-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--271 ISDEFAULT-->
-<!--271-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--271**************--></AD_WINDOW>
 
 <!--272**************--><AD_WINDOW>
 <!--272 AD_WINDOW_ID-->
@@ -5159,79 +3658,11 @@
 <!--272-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--272 ISSOTRX-->
 <!--272-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--272 ENTITYTYPE-->
-<!--272-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--272 PROCESSING-->
 <!--272-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--272 ISDEFAULT-->
 <!--272-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--272**************--></AD_WINDOW>
-
-<!--273**************--><AD_WINDOW>
-<!--273 AD_WINDOW_ID-->
-<!--273-->              <AD_WINDOW_ID><![CDATA[273]]></AD_WINDOW_ID>
-<!--273 AD_CLIENT_ID-->
-<!--273-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--273 AD_ORG_ID-->
-<!--273-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--273 ISACTIVE-->
-<!--273-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--273 CREATED-->
-<!--273-->              <CREATED><![CDATA[2003-06-03 01:44:54.0]]></CREATED>
-<!--273 CREATEDBY-->
-<!--273-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--273 UPDATED-->
-<!--273-->              <UPDATED><![CDATA[2003-06-03 01:44:54.0]]></UPDATED>
-<!--273 UPDATEDBY-->
-<!--273-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--273 NAME-->
-<!--273-->              <NAME><![CDATA[Click]]></NAME>
-<!--273 DESCRIPTION-->
-<!--273-->              <DESCRIPTION><![CDATA[Maintain Web Click]]></DESCRIPTION>
-<!--273 WINDOWTYPE-->
-<!--273-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--273 ISSOTRX-->
-<!--273-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--273 ENTITYTYPE-->
-<!--273-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--273 PROCESSING-->
-<!--273-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--273 ISDEFAULT-->
-<!--273-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--273**************--></AD_WINDOW>
-
-<!--274**************--><AD_WINDOW>
-<!--274 AD_WINDOW_ID-->
-<!--274-->              <AD_WINDOW_ID><![CDATA[274]]></AD_WINDOW_ID>
-<!--274 AD_CLIENT_ID-->
-<!--274-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--274 AD_ORG_ID-->
-<!--274-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--274 ISACTIVE-->
-<!--274-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--274 CREATED-->
-<!--274-->              <CREATED><![CDATA[2003-06-03 01:46:49.0]]></CREATED>
-<!--274 CREATEDBY-->
-<!--274-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--274 UPDATED-->
-<!--274-->              <UPDATED><![CDATA[2003-06-03 01:46:49.0]]></UPDATED>
-<!--274 UPDATEDBY-->
-<!--274-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--274 NAME-->
-<!--274-->              <NAME><![CDATA[Counter]]></NAME>
-<!--274 DESCRIPTION-->
-<!--274-->              <DESCRIPTION><![CDATA[Web Counter]]></DESCRIPTION>
-<!--274 WINDOWTYPE-->
-<!--274-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--274 ISSOTRX-->
-<!--274-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--274 ENTITYTYPE-->
-<!--274-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--274 PROCESSING-->
-<!--274-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--274 ISDEFAULT-->
-<!--274-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--274**************--></AD_WINDOW>
 
 <!--275**************--><AD_WINDOW>
 <!--275 AD_WINDOW_ID-->
@@ -5260,8 +3691,6 @@
 <!--275-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--275 ISSOTRX-->
 <!--275-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--275 ENTITYTYPE-->
-<!--275-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--275 PROCESSING-->
 <!--275-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--275 ISDEFAULT-->
@@ -5295,8 +3724,6 @@
 <!--276-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--276 ISSOTRX-->
 <!--276-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--276 ENTITYTYPE-->
-<!--276-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--276 PROCESSING-->
 <!--276-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--276 ISDEFAULT-->
@@ -5330,8 +3757,6 @@
 <!--277-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--277 ISSOTRX-->
 <!--277-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--277 ENTITYTYPE-->
-<!--277-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--277 PROCESSING-->
 <!--277-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--277 ISDEFAULT-->
@@ -5365,8 +3790,6 @@
 <!--278-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--278 ISSOTRX-->
 <!--278-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--278 ENTITYTYPE-->
-<!--278-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--278 PROCESSING-->
 <!--278-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--278 ISDEFAULT-->
@@ -5400,8 +3823,6 @@
 <!--279-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--279 ISSOTRX-->
 <!--279-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--279 ENTITYTYPE-->
-<!--279-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--279 PROCESSING-->
 <!--279-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--279 ISDEFAULT-->
@@ -5435,8 +3856,6 @@
 <!--281-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--281 ISSOTRX-->
 <!--281-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--281 ENTITYTYPE-->
-<!--281-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--281 PROCESSING-->
 <!--281-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--281 ISDEFAULT-->
@@ -5470,8 +3889,6 @@
 <!--282-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--282 ISSOTRX-->
 <!--282-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--282 ENTITYTYPE-->
-<!--282-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--282 PROCESSING-->
 <!--282-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--282 ISDEFAULT-->
@@ -5505,83 +3922,11 @@
 <!--283-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--283 ISSOTRX-->
 <!--283-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--283 ENTITYTYPE-->
-<!--283-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--283 PROCESSING-->
 <!--283-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--283 ISDEFAULT-->
 <!--283-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--283**************--></AD_WINDOW>
-
-<!--284**************--><AD_WINDOW>
-<!--284 AD_WINDOW_ID-->
-<!--284-->              <AD_WINDOW_ID><![CDATA[284]]></AD_WINDOW_ID>
-<!--284 AD_CLIENT_ID-->
-<!--284-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--284 AD_ORG_ID-->
-<!--284-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--284 ISACTIVE-->
-<!--284-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--284 CREATED-->
-<!--284-->              <CREATED><![CDATA[2003-06-19 16:25:17.0]]></CREATED>
-<!--284 CREATEDBY-->
-<!--284-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--284 UPDATED-->
-<!--284-->              <UPDATED><![CDATA[2003-08-03 17:18:19.0]]></UPDATED>
-<!--284 UPDATEDBY-->
-<!--284-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--284 NAME-->
-<!--284-->              <NAME><![CDATA[Replication]]></NAME>
-<!--284 DESCRIPTION-->
-<!--284-->              <DESCRIPTION><![CDATA[Maintain Data Replication Targets]]></DESCRIPTION>
-<!--284 HELP-->
-<!--284-->              <HELP><![CDATA[Data Replication Target Details. Set up your system completely on the central system, before setting up the replication. Define the Replication target here and export the database and import it on the remote system.<p>Before(!) entering transactions, Start the Replication Run to set up the remote system.]]></HELP>
-<!--284 WINDOWTYPE-->
-<!--284-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--284 ISSOTRX-->
-<!--284-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--284 ENTITYTYPE-->
-<!--284-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--284 PROCESSING-->
-<!--284-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--284 ISDEFAULT-->
-<!--284-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--284**************--></AD_WINDOW>
-
-<!--285**************--><AD_WINDOW>
-<!--285 AD_WINDOW_ID-->
-<!--285-->              <AD_WINDOW_ID><![CDATA[285]]></AD_WINDOW_ID>
-<!--285 AD_CLIENT_ID-->
-<!--285-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--285 AD_ORG_ID-->
-<!--285-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--285 ISACTIVE-->
-<!--285-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--285 CREATED-->
-<!--285-->              <CREATED><![CDATA[2003-06-19 16:30:38.0]]></CREATED>
-<!--285 CREATEDBY-->
-<!--285-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--285 UPDATED-->
-<!--285-->              <UPDATED><![CDATA[2003-08-03 17:10:10.0]]></UPDATED>
-<!--285 UPDATEDBY-->
-<!--285-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--285 NAME-->
-<!--285-->              <NAME><![CDATA[Replication Strategy]]></NAME>
-<!--285 DESCRIPTION-->
-<!--285-->              <DESCRIPTION><![CDATA[Maintain Data Replication Strategy]]></DESCRIPTION>
-<!--285 HELP-->
-<!--285-->              <HELP><![CDATA[The Data Replication Strategy determines which tables and how they are replicated. Note that the migration does not syncronize Application Dictionary items.]]></HELP>
-<!--285 WINDOWTYPE-->
-<!--285-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--285 ISSOTRX-->
-<!--285-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--285 ENTITYTYPE-->
-<!--285-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--285 PROCESSING-->
-<!--285-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--285 ISDEFAULT-->
-<!--285-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--285**************--></AD_WINDOW>
 
 <!--286**************--><AD_WINDOW>
 <!--286 AD_WINDOW_ID-->
@@ -5610,153 +3955,11 @@
 <!--286-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--286 ISSOTRX-->
 <!--286-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--286 ENTITYTYPE-->
-<!--286-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--286 PROCESSING-->
 <!--286-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--286 ISDEFAULT-->
 <!--286-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--286**************--></AD_WINDOW>
-
-<!--287**************--><AD_WINDOW>
-<!--287 AD_WINDOW_ID-->
-<!--287-->              <AD_WINDOW_ID><![CDATA[287]]></AD_WINDOW_ID>
-<!--287 AD_CLIENT_ID-->
-<!--287-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--287 AD_ORG_ID-->
-<!--287-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--287 ISACTIVE-->
-<!--287-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--287 CREATED-->
-<!--287-->              <CREATED><![CDATA[2003-07-10 20:17:58.0]]></CREATED>
-<!--287 CREATEDBY-->
-<!--287-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--287 UPDATED-->
-<!--287-->              <UPDATED><![CDATA[2003-07-10 20:36:35.0]]></UPDATED>
-<!--287 UPDATEDBY-->
-<!--287-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--287 NAME-->
-<!--287-->              <NAME><![CDATA[Knowledge Category]]></NAME>
-<!--287 DESCRIPTION-->
-<!--287-->              <DESCRIPTION><![CDATA[Maintain Knoweledge Categories and Values]]></DESCRIPTION>
-<!--287 HELP-->
-<!--287-->              <HELP><![CDATA[Set up knowledge categories and values as a search aid. Examples are Release Version, Product Area, etc. Knowledge Category values act like keyworks.]]></HELP>
-<!--287 WINDOWTYPE-->
-<!--287-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--287 ISSOTRX-->
-<!--287-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--287 ENTITYTYPE-->
-<!--287-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--287 PROCESSING-->
-<!--287-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--287 ISDEFAULT-->
-<!--287-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--287**************--></AD_WINDOW>
-
-<!--288**************--><AD_WINDOW>
-<!--288 AD_WINDOW_ID-->
-<!--288-->              <AD_WINDOW_ID><![CDATA[288]]></AD_WINDOW_ID>
-<!--288 AD_CLIENT_ID-->
-<!--288-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--288 AD_ORG_ID-->
-<!--288-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--288 ISACTIVE-->
-<!--288-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--288 CREATED-->
-<!--288-->              <CREATED><![CDATA[2003-07-10 20:19:05.0]]></CREATED>
-<!--288 CREATEDBY-->
-<!--288-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--288 UPDATED-->
-<!--288-->              <UPDATED><![CDATA[2003-07-10 21:47:05.0]]></UPDATED>
-<!--288 UPDATEDBY-->
-<!--288-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--288 NAME-->
-<!--288-->              <NAME><![CDATA[Knowledge Base]]></NAME>
-<!--288 DESCRIPTION-->
-<!--288-->              <DESCRIPTION><![CDATA[Maintain Knowledge Base]]></DESCRIPTION>
-<!--288 HELP-->
-<!--288-->              <HELP><![CDATA[Maintain Type, Topics, Entries and theit Comments, Categories, Related Entries]]></HELP>
-<!--288 WINDOWTYPE-->
-<!--288-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--288 ISSOTRX-->
-<!--288-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--288 ENTITYTYPE-->
-<!--288-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--288 PROCESSING-->
-<!--288-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--288 ISDEFAULT-->
-<!--288-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--288**************--></AD_WINDOW>
-
-<!--289**************--><AD_WINDOW>
-<!--289 AD_WINDOW_ID-->
-<!--289-->              <AD_WINDOW_ID><![CDATA[289]]></AD_WINDOW_ID>
-<!--289 AD_CLIENT_ID-->
-<!--289-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--289 AD_ORG_ID-->
-<!--289-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--289 ISACTIVE-->
-<!--289-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--289 CREATED-->
-<!--289-->              <CREATED><![CDATA[2003-07-10 20:24:31.0]]></CREATED>
-<!--289 CREATEDBY-->
-<!--289-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--289 UPDATED-->
-<!--289-->              <UPDATED><![CDATA[2003-07-22 01:35:10.0]]></UPDATED>
-<!--289 UPDATEDBY-->
-<!--289-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--289 NAME-->
-<!--289-->              <NAME><![CDATA[Knowledge Source]]></NAME>
-<!--289 DESCRIPTION-->
-<!--289-->              <DESCRIPTION><![CDATA[Source of Knowledge Entries]]></DESCRIPTION>
-<!--289 HELP-->
-<!--289-->              <HELP><![CDATA[The Source of a Knowlegde Entry is a pointer to the originating system. The Knowledge Entry has an additional entry (Description URL)  for more detailed info.]]></HELP>
-<!--289 WINDOWTYPE-->
-<!--289-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--289 ISSOTRX-->
-<!--289-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--289 ENTITYTYPE-->
-<!--289-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--289 PROCESSING-->
-<!--289-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--289 ISDEFAULT-->
-<!--289-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--289**************--></AD_WINDOW>
-
-<!--290**************--><AD_WINDOW>
-<!--290 AD_WINDOW_ID-->
-<!--290-->              <AD_WINDOW_ID><![CDATA[290]]></AD_WINDOW_ID>
-<!--290 AD_CLIENT_ID-->
-<!--290-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--290 AD_ORG_ID-->
-<!--290-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--290 ISACTIVE-->
-<!--290-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--290 CREATED-->
-<!--290-->              <CREATED><![CDATA[2003-07-10 20:25:08.0]]></CREATED>
-<!--290 CREATEDBY-->
-<!--290-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--290 UPDATED-->
-<!--290-->              <UPDATED><![CDATA[2003-07-10 20:49:59.0]]></UPDATED>
-<!--290 UPDATEDBY-->
-<!--290-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--290 NAME-->
-<!--290-->              <NAME><![CDATA[Knowledge Synonym]]></NAME>
-<!--290 DESCRIPTION-->
-<!--290-->              <DESCRIPTION><![CDATA[Knowlege Keyword Synonym]]></DESCRIPTION>
-<!--290 HELP-->
-<!--290-->              <HELP><![CDATA[Search Synonyms for Knowledge Keywords; Example: Product = Item]]></HELP>
-<!--290 WINDOWTYPE-->
-<!--290-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--290 ISSOTRX-->
-<!--290-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--290 ENTITYTYPE-->
-<!--290-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--290 PROCESSING-->
-<!--290-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--290 ISDEFAULT-->
-<!--290-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--290**************--></AD_WINDOW>
 
 <!--291**************--><AD_WINDOW>
 <!--291 AD_WINDOW_ID-->
@@ -5785,8 +3988,6 @@
 <!--291-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--291 ISSOTRX-->
 <!--291-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--291 ENTITYTYPE-->
-<!--291-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--291 PROCESSING-->
 <!--291-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--291 ISDEFAULT-->
@@ -5820,8 +4021,6 @@
 <!--800000-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800000 ISSOTRX-->
 <!--800000-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800000 ENTITYTYPE-->
-<!--800000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800000 PROCESSING-->
 <!--800000-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800000 ISDEFAULT-->
@@ -5855,8 +4054,6 @@
 <!--800001-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800001 ISSOTRX-->
 <!--800001-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800001 ENTITYTYPE-->
-<!--800001-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800001 PROCESSING-->
 <!--800001-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800001 ISDEFAULT-->
@@ -5890,8 +4087,6 @@
 <!--800002-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800002 ISSOTRX-->
 <!--800002-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800002 ENTITYTYPE-->
-<!--800002-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800002 PROCESSING-->
 <!--800002-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800002 ISDEFAULT-->
@@ -5925,8 +4120,6 @@
 <!--800003-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800003 ISSOTRX-->
 <!--800003-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800003 ENTITYTYPE-->
-<!--800003-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800003 PROCESSING-->
 <!--800003-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800003 ISDEFAULT-->
@@ -5960,8 +4153,6 @@
 <!--800004-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800004 ISSOTRX-->
 <!--800004-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800004 ENTITYTYPE-->
-<!--800004-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800004 PROCESSING-->
 <!--800004-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800004 ISDEFAULT-->
@@ -5995,8 +4186,6 @@
 <!--800005-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800005 ISSOTRX-->
 <!--800005-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800005 ENTITYTYPE-->
-<!--800005-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800005 PROCESSING-->
 <!--800005-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800005 ISDEFAULT-->
@@ -6030,8 +4219,6 @@
 <!--800006-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800006 ISSOTRX-->
 <!--800006-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800006 ENTITYTYPE-->
-<!--800006-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800006 PROCESSING-->
 <!--800006-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800006 ISDEFAULT-->
@@ -6065,8 +4252,6 @@
 <!--800007-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800007 ISSOTRX-->
 <!--800007-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800007 ENTITYTYPE-->
-<!--800007-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800007 PROCESSING-->
 <!--800007-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800007 ISDEFAULT-->
@@ -6100,8 +4285,6 @@
 <!--800008-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800008 ISSOTRX-->
 <!--800008-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800008 ENTITYTYPE-->
-<!--800008-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800008 PROCESSING-->
 <!--800008-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800008 ISDEFAULT-->
@@ -6131,44 +4314,11 @@
 <!--800010-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800010 ISSOTRX-->
 <!--800010-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800010 ENTITYTYPE-->
-<!--800010-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800010 PROCESSING-->
 <!--800010-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800010 ISDEFAULT-->
 <!--800010-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--800010**************--></AD_WINDOW>
-
-<!--800011**************--><AD_WINDOW>
-<!--800011 AD_WINDOW_ID-->
-<!--800011-->              <AD_WINDOW_ID><![CDATA[800011]]></AD_WINDOW_ID>
-<!--800011 AD_CLIENT_ID-->
-<!--800011-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800011 AD_ORG_ID-->
-<!--800011-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800011 ISACTIVE-->
-<!--800011-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800011 CREATED-->
-<!--800011-->              <CREATED><![CDATA[2004-10-04 13:45:14.0]]></CREATED>
-<!--800011 CREATEDBY-->
-<!--800011-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800011 UPDATED-->
-<!--800011-->              <UPDATED><![CDATA[2004-10-08 12:36:40.0]]></UPDATED>
-<!--800011 UPDATEDBY-->
-<!--800011-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800011 NAME-->
-<!--800011-->              <NAME><![CDATA[In-Out Line Type]]></NAME>
-<!--800011 WINDOWTYPE-->
-<!--800011-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800011 ISSOTRX-->
-<!--800011-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--800011 ENTITYTYPE-->
-<!--800011-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
-<!--800011 PROCESSING-->
-<!--800011-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800011 ISDEFAULT-->
-<!--800011-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800011**************--></AD_WINDOW>
 
 <!--800012**************--><AD_WINDOW>
 <!--800012 AD_WINDOW_ID-->
@@ -6197,8 +4347,6 @@
 <!--800012-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800012 ISSOTRX-->
 <!--800012-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800012 ENTITYTYPE-->
-<!--800012-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800012 PROCESSING-->
 <!--800012-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800012 ISDEFAULT-->
@@ -6232,8 +4380,6 @@
 <!--800013-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800013 ISSOTRX-->
 <!--800013-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--800013 ENTITYTYPE-->
-<!--800013-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800013 PROCESSING-->
 <!--800013-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800013 ISDEFAULT-->
@@ -6267,8 +4413,6 @@
 <!--800014-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800014 ISSOTRX-->
 <!--800014-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800014 ENTITYTYPE-->
-<!--800014-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800014 PROCESSING-->
 <!--800014-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800014 ISDEFAULT-->
@@ -6302,8 +4446,6 @@
 <!--800015-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800015 ISSOTRX-->
 <!--800015-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--800015 ENTITYTYPE-->
-<!--800015-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800015 PROCESSING-->
 <!--800015-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800015 ISDEFAULT-->
@@ -6337,8 +4479,6 @@
 <!--800016-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800016 ISSOTRX-->
 <!--800016-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800016 ENTITYTYPE-->
-<!--800016-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800016 PROCESSING-->
 <!--800016-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800016 ISDEFAULT-->
@@ -6372,8 +4512,6 @@
 <!--800017-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800017 ISSOTRX-->
 <!--800017-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--800017 ENTITYTYPE-->
-<!--800017-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800017 PROCESSING-->
 <!--800017-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800017 ISDEFAULT-->
@@ -6407,8 +4545,6 @@
 <!--800018-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800018 ISSOTRX-->
 <!--800018-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800018 ENTITYTYPE-->
-<!--800018-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800018 PROCESSING-->
 <!--800018-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800018 ISDEFAULT-->
@@ -6442,8 +4578,6 @@
 <!--800019-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800019 ISSOTRX-->
 <!--800019-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800019 ENTITYTYPE-->
-<!--800019-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800019 PROCESSING-->
 <!--800019-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800019 ISDEFAULT-->
@@ -6477,8 +4611,6 @@
 <!--800020-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800020 ISSOTRX-->
 <!--800020-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800020 ENTITYTYPE-->
-<!--800020-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800020 PROCESSING-->
 <!--800020-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800020 ISDEFAULT-->
@@ -6512,8 +4644,6 @@
 <!--800021-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800021 ISSOTRX-->
 <!--800021-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800021 ENTITYTYPE-->
-<!--800021-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800021 PROCESSING-->
 <!--800021-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800021 ISDEFAULT-->
@@ -6547,8 +4677,6 @@
 <!--800022-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800022 ISSOTRX-->
 <!--800022-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800022 ENTITYTYPE-->
-<!--800022-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800022 PROCESSING-->
 <!--800022-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800022 ISDEFAULT-->
@@ -6582,8 +4710,6 @@
 <!--800023-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800023 ISSOTRX-->
 <!--800023-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800023 ENTITYTYPE-->
-<!--800023-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800023 PROCESSING-->
 <!--800023-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800023 ISDEFAULT-->
@@ -6617,8 +4743,6 @@
 <!--800024-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800024 ISSOTRX-->
 <!--800024-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800024 ENTITYTYPE-->
-<!--800024-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800024 PROCESSING-->
 <!--800024-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800024 ISDEFAULT-->
@@ -6652,8 +4776,6 @@
 <!--800025-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800025 ISSOTRX-->
 <!--800025-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800025 ENTITYTYPE-->
-<!--800025-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800025 PROCESSING-->
 <!--800025-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800025 ISDEFAULT-->
@@ -6687,8 +4809,6 @@
 <!--800026-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800026 ISSOTRX-->
 <!--800026-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800026 ENTITYTYPE-->
-<!--800026-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800026 PROCESSING-->
 <!--800026-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800026 ISDEFAULT-->
@@ -6722,8 +4842,6 @@
 <!--800027-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800027 ISSOTRX-->
 <!--800027-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800027 ENTITYTYPE-->
-<!--800027-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800027 PROCESSING-->
 <!--800027-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800027 ISDEFAULT-->
@@ -6757,8 +4875,6 @@
 <!--800028-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800028 ISSOTRX-->
 <!--800028-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800028 ENTITYTYPE-->
-<!--800028-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800028 PROCESSING-->
 <!--800028-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800028 ISDEFAULT-->
@@ -6792,8 +4908,6 @@
 <!--800029-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800029 ISSOTRX-->
 <!--800029-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800029 ENTITYTYPE-->
-<!--800029-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800029 PROCESSING-->
 <!--800029-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800029 ISDEFAULT-->
@@ -6827,8 +4941,6 @@
 <!--800030-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800030 ISSOTRX-->
 <!--800030-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800030 ENTITYTYPE-->
-<!--800030-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800030 PROCESSING-->
 <!--800030-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800030 ISDEFAULT-->
@@ -6862,8 +4974,6 @@
 <!--800031-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800031 ISSOTRX-->
 <!--800031-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800031 ENTITYTYPE-->
-<!--800031-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800031 PROCESSING-->
 <!--800031-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800031 ISDEFAULT-->
@@ -6897,8 +5007,6 @@
 <!--800032-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800032 ISSOTRX-->
 <!--800032-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--800032 ENTITYTYPE-->
-<!--800032-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800032 PROCESSING-->
 <!--800032-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800032 ISDEFAULT-->
@@ -6932,8 +5040,6 @@
 <!--800035-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800035 ISSOTRX-->
 <!--800035-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800035 ENTITYTYPE-->
-<!--800035-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800035 PROCESSING-->
 <!--800035-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800035 ISDEFAULT-->
@@ -6967,8 +5073,6 @@
 <!--800048-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800048 ISSOTRX-->
 <!--800048-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800048 ENTITYTYPE-->
-<!--800048-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800048 PROCESSING-->
 <!--800048-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800048 ISDEFAULT-->
@@ -7002,8 +5106,6 @@
 <!--800051-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800051 ISSOTRX-->
 <!--800051-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800051 ENTITYTYPE-->
-<!--800051-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800051 PROCESSING-->
 <!--800051-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800051 ISDEFAULT-->
@@ -7037,8 +5139,6 @@
 <!--800052-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800052 ISSOTRX-->
 <!--800052-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800052 ENTITYTYPE-->
-<!--800052-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800052 PROCESSING-->
 <!--800052-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800052 ISDEFAULT-->
@@ -7072,48 +5172,11 @@
 <!--800053-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800053 ISSOTRX-->
 <!--800053-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--800053 ENTITYTYPE-->
-<!--800053-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800053 PROCESSING-->
 <!--800053-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800053 ISDEFAULT-->
 <!--800053-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--800053**************--></AD_WINDOW>
-
-<!--800059**************--><AD_WINDOW>
-<!--800059 AD_WINDOW_ID-->
-<!--800059-->              <AD_WINDOW_ID><![CDATA[800059]]></AD_WINDOW_ID>
-<!--800059 AD_CLIENT_ID-->
-<!--800059-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800059 AD_ORG_ID-->
-<!--800059-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800059 ISACTIVE-->
-<!--800059-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800059 CREATED-->
-<!--800059-->              <CREATED><![CDATA[2005-11-07 18:20:21.0]]></CREATED>
-<!--800059 CREATEDBY-->
-<!--800059-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--800059 UPDATED-->
-<!--800059-->              <UPDATED><![CDATA[2005-12-23 18:51:31.0]]></UPDATED>
-<!--800059 UPDATEDBY-->
-<!--800059-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800059 NAME-->
-<!--800059-->              <NAME><![CDATA[Product Type]]></NAME>
-<!--800059 DESCRIPTION-->
-<!--800059-->              <DESCRIPTION><![CDATA[Product type]]></DESCRIPTION>
-<!--800059 HELP-->
-<!--800059-->              <HELP><![CDATA[Product Type]]></HELP>
-<!--800059 WINDOWTYPE-->
-<!--800059-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800059 ISSOTRX-->
-<!--800059-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800059 ENTITYTYPE-->
-<!--800059-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
-<!--800059 PROCESSING-->
-<!--800059-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800059 ISDEFAULT-->
-<!--800059-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800059**************--></AD_WINDOW>
 
 <!--800060**************--><AD_WINDOW>
 <!--800060 AD_WINDOW_ID-->
@@ -7142,8 +5205,6 @@
 <!--800060-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800060 ISSOTRX-->
 <!--800060-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800060 ENTITYTYPE-->
-<!--800060-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800060 PROCESSING-->
 <!--800060-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800060 ISDEFAULT-->
@@ -7177,8 +5238,6 @@
 <!--800063-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800063 ISSOTRX-->
 <!--800063-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800063 ENTITYTYPE-->
-<!--800063-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800063 PROCESSING-->
 <!--800063-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800063 ISDEFAULT-->
@@ -7212,46 +5271,11 @@
 <!--800064-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800064 ISSOTRX-->
 <!--800064-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800064 ENTITYTYPE-->
-<!--800064-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800064 PROCESSING-->
 <!--800064-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800064 ISDEFAULT-->
 <!--800064-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--800064**************--></AD_WINDOW>
-
-<!--800065**************--><AD_WINDOW>
-<!--800065 AD_WINDOW_ID-->
-<!--800065-->              <AD_WINDOW_ID><![CDATA[800065]]></AD_WINDOW_ID>
-<!--800065 AD_CLIENT_ID-->
-<!--800065-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800065 AD_ORG_ID-->
-<!--800065-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800065 ISACTIVE-->
-<!--800065-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800065 CREATED-->
-<!--800065-->              <CREATED><![CDATA[2006-02-02 17:33:31.0]]></CREATED>
-<!--800065 CREATEDBY-->
-<!--800065-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800065 UPDATED-->
-<!--800065-->              <UPDATED><![CDATA[2006-02-02 17:33:31.0]]></UPDATED>
-<!--800065 UPDATEDBY-->
-<!--800065-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800065 NAME-->
-<!--800065-->              <NAME><![CDATA[Product Consumption]]></NAME>
-<!--800065 DESCRIPTION-->
-<!--800065-->              <DESCRIPTION><![CDATA[Define checkpoints and their frequencies to be used in the Quality Control Report.]]></DESCRIPTION>
-<!--800065 WINDOWTYPE-->
-<!--800065-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800065 ISSOTRX-->
-<!--800065-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800065 ENTITYTYPE-->
-<!--800065-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
-<!--800065 PROCESSING-->
-<!--800065-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800065 ISDEFAULT-->
-<!--800065-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800065**************--></AD_WINDOW>
 
 <!--800066**************--><AD_WINDOW>
 <!--800066 AD_WINDOW_ID-->
@@ -7280,8 +5304,6 @@
 <!--800066-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800066 ISSOTRX-->
 <!--800066-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800066 ENTITYTYPE-->
-<!--800066-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800066 PROCESSING-->
 <!--800066-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800066 ISDEFAULT-->
@@ -7315,8 +5337,6 @@
 <!--800067-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800067 ISSOTRX-->
 <!--800067-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800067 ENTITYTYPE-->
-<!--800067-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800067 PROCESSING-->
 <!--800067-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800067 ISDEFAULT-->
@@ -7350,8 +5370,6 @@
 <!--800068-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800068 ISSOTRX-->
 <!--800068-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800068 ENTITYTYPE-->
-<!--800068-->              <ENTITYTYPE><![CDATA[C]]></ENTITYTYPE>
 <!--800068 PROCESSING-->
 <!--800068-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800068 ISDEFAULT-->
@@ -7385,8 +5403,6 @@
 <!--800069-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800069 ISSOTRX-->
 <!--800069-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800069 ENTITYTYPE-->
-<!--800069-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800069 PROCESSING-->
 <!--800069-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800069 ISDEFAULT-->
@@ -7420,8 +5436,6 @@
 <!--800070-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800070 ISSOTRX-->
 <!--800070-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800070 ENTITYTYPE-->
-<!--800070-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800070 PROCESSING-->
 <!--800070-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800070 ISDEFAULT-->
@@ -7455,8 +5469,6 @@
 <!--800071-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800071 ISSOTRX-->
 <!--800071-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800071 ENTITYTYPE-->
-<!--800071-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800071 PROCESSING-->
 <!--800071-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800071 ISDEFAULT-->
@@ -7490,8 +5502,6 @@
 <!--800072-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800072 ISSOTRX-->
 <!--800072-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800072 ENTITYTYPE-->
-<!--800072-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800072 PROCESSING-->
 <!--800072-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800072 ISDEFAULT-->
@@ -7525,8 +5535,6 @@
 <!--800074-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800074 ISSOTRX-->
 <!--800074-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800074 ENTITYTYPE-->
-<!--800074-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800074 PROCESSING-->
 <!--800074-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800074 ISDEFAULT-->
@@ -7560,8 +5568,6 @@
 <!--800075-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800075 ISSOTRX-->
 <!--800075-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800075 ENTITYTYPE-->
-<!--800075-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800075 PROCESSING-->
 <!--800075-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800075 ISDEFAULT-->
@@ -7595,8 +5601,6 @@
 <!--800076-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800076 ISSOTRX-->
 <!--800076-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800076 ENTITYTYPE-->
-<!--800076-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800076 PROCESSING-->
 <!--800076-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800076 ISDEFAULT-->
@@ -7630,44 +5634,11 @@
 <!--800077-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800077 ISSOTRX-->
 <!--800077-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800077 ENTITYTYPE-->
-<!--800077-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800077 PROCESSING-->
 <!--800077-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800077 ISDEFAULT-->
 <!--800077-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--800077**************--></AD_WINDOW>
-
-<!--800078**************--><AD_WINDOW>
-<!--800078 AD_WINDOW_ID-->
-<!--800078-->              <AD_WINDOW_ID><![CDATA[800078]]></AD_WINDOW_ID>
-<!--800078 AD_CLIENT_ID-->
-<!--800078-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800078 AD_ORG_ID-->
-<!--800078-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800078 ISACTIVE-->
-<!--800078-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--800078 CREATED-->
-<!--800078-->              <CREATED><![CDATA[2006-06-01 11:01:43.0]]></CREATED>
-<!--800078 CREATEDBY-->
-<!--800078-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800078 UPDATED-->
-<!--800078-->              <UPDATED><![CDATA[2006-06-01 11:01:43.0]]></UPDATED>
-<!--800078 UPDATEDBY-->
-<!--800078-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800078 NAME-->
-<!--800078-->              <NAME><![CDATA[Depreciation]]></NAME>
-<!--800078 WINDOWTYPE-->
-<!--800078-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--800078 ISSOTRX-->
-<!--800078-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800078 ENTITYTYPE-->
-<!--800078-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
-<!--800078 PROCESSING-->
-<!--800078-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--800078 ISDEFAULT-->
-<!--800078-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--800078**************--></AD_WINDOW>
 
 <!--800079**************--><AD_WINDOW>
 <!--800079 AD_WINDOW_ID-->
@@ -7696,8 +5667,6 @@
 <!--800079-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800079 ISSOTRX-->
 <!--800079-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800079 ENTITYTYPE-->
-<!--800079-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800079 PROCESSING-->
 <!--800079-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800079 ISDEFAULT-->
@@ -7731,8 +5700,6 @@
 <!--800080-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800080 ISSOTRX-->
 <!--800080-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800080 ENTITYTYPE-->
-<!--800080-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800080 PROCESSING-->
 <!--800080-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800080 ISDEFAULT-->
@@ -7766,8 +5733,6 @@
 <!--800081-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800081 ISSOTRX-->
 <!--800081-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800081 ENTITYTYPE-->
-<!--800081-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800081 PROCESSING-->
 <!--800081-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800081 ISDEFAULT-->
@@ -7801,8 +5766,6 @@
 <!--800082-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800082 ISSOTRX-->
 <!--800082-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800082 ENTITYTYPE-->
-<!--800082-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800082 PROCESSING-->
 <!--800082-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800082 ISDEFAULT-->
@@ -7836,8 +5799,6 @@
 <!--800083-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800083 ISSOTRX-->
 <!--800083-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800083 ENTITYTYPE-->
-<!--800083-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800083 PROCESSING-->
 <!--800083-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800083 ISDEFAULT-->
@@ -7871,8 +5832,6 @@
 <!--800084-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800084 ISSOTRX-->
 <!--800084-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800084 ENTITYTYPE-->
-<!--800084-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800084 PROCESSING-->
 <!--800084-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800084 ISDEFAULT-->
@@ -7906,8 +5865,6 @@
 <!--800085-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800085 ISSOTRX-->
 <!--800085-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800085 ENTITYTYPE-->
-<!--800085-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800085 PROCESSING-->
 <!--800085-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800085 ISDEFAULT-->
@@ -7941,8 +5898,6 @@
 <!--800086-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800086 ISSOTRX-->
 <!--800086-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800086 ENTITYTYPE-->
-<!--800086-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800086 PROCESSING-->
 <!--800086-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800086 ISDEFAULT-->
@@ -7976,8 +5931,6 @@
 <!--800088-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800088 ISSOTRX-->
 <!--800088-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800088 ENTITYTYPE-->
-<!--800088-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800088 PROCESSING-->
 <!--800088-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800088 ISDEFAULT-->
@@ -8011,8 +5964,6 @@
 <!--800090-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800090 ISSOTRX-->
 <!--800090-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800090 ENTITYTYPE-->
-<!--800090-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800090 PROCESSING-->
 <!--800090-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800090 ISDEFAULT-->
@@ -8046,8 +5997,6 @@
 <!--800092-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800092 ISSOTRX-->
 <!--800092-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--800092 ENTITYTYPE-->
-<!--800092-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800092 PROCESSING-->
 <!--800092-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800092 ISDEFAULT-->
@@ -8081,8 +6030,6 @@
 <!--800094-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800094 ISSOTRX-->
 <!--800094-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800094 ENTITYTYPE-->
-<!--800094-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800094 PROCESSING-->
 <!--800094-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800094 ISDEFAULT-->
@@ -8116,8 +6063,6 @@
 <!--800096-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800096 ISSOTRX-->
 <!--800096-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800096 ENTITYTYPE-->
-<!--800096-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800096 PROCESSING-->
 <!--800096-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800096 ISDEFAULT-->
@@ -8151,8 +6096,6 @@
 <!--800097-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800097 ISSOTRX-->
 <!--800097-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800097 ENTITYTYPE-->
-<!--800097-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800097 PROCESSING-->
 <!--800097-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800097 ISDEFAULT-->
@@ -8186,8 +6129,6 @@
 <!--800098-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800098 ISSOTRX-->
 <!--800098-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800098 ENTITYTYPE-->
-<!--800098-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800098 PROCESSING-->
 <!--800098-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800098 ISDEFAULT-->
@@ -8221,8 +6162,6 @@
 <!--800099-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800099 ISSOTRX-->
 <!--800099-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800099 ENTITYTYPE-->
-<!--800099-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800099 PROCESSING-->
 <!--800099-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800099 ISDEFAULT-->
@@ -8256,8 +6195,6 @@
 <!--800100-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800100 ISSOTRX-->
 <!--800100-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--800100 ENTITYTYPE-->
-<!--800100-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800100 PROCESSING-->
 <!--800100-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800100 ISDEFAULT-->
@@ -8289,8 +6226,6 @@
 <!--1002100000-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1002100000 ISSOTRX-->
 <!--1002100000-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--1002100000 ENTITYTYPE-->
-<!--1002100000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1002100000 PROCESSING-->
 <!--1002100000-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1002100000 ISDEFAULT-->
@@ -8324,8 +6259,6 @@
 <!--1002100003-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1002100003 ISSOTRX-->
 <!--1002100003-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--1002100003 ENTITYTYPE-->
-<!--1002100003-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1002100003 PROCESSING-->
 <!--1002100003-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1002100003 ISDEFAULT-->
@@ -8359,8 +6292,6 @@
 <!--1002100004-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1002100004 ISSOTRX-->
 <!--1002100004-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--1002100004 ENTITYTYPE-->
-<!--1002100004-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1002100004 PROCESSING-->
 <!--1002100004-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1002100004 ISDEFAULT-->
@@ -8390,8 +6321,6 @@
 <!--1004400000-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1004400000 ISSOTRX-->
 <!--1004400000-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
-<!--1004400000 ENTITYTYPE-->
-<!--1004400000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1004400000 PROCESSING-->
 <!--1004400000-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1004400000 ISDEFAULT-->
@@ -8423,8 +6352,6 @@
 <!--1005400002-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1005400002 ISSOTRX-->
 <!--1005400002-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--1005400002 ENTITYTYPE-->
-<!--1005400002-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1005400002 PROCESSING-->
 <!--1005400002-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1005400002 ISDEFAULT-->
@@ -8456,8 +6383,6 @@
 <!--1005400003-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1005400003 ISSOTRX-->
 <!--1005400003-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--1005400003 ENTITYTYPE-->
-<!--1005400003-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1005400003 PROCESSING-->
 <!--1005400003-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--1005400003 ISDEFAULT-->

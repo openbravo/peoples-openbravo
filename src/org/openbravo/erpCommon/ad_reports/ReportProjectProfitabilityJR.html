@@ -46,7 +46,6 @@
       <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
       <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/String.js" type="text/javascript"></script>
-      <script language="JavaScript" src="../../../../../web/js/TypeAheadCombo.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
       <script type="text/javascript">
@@ -68,7 +67,6 @@ function depurar()
 	return true;
 }
 function onloadFunctions() {
-  //new TypeAheadCombo("paramOrg");
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', null, false, 'frmMain', 'inpcBPartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Project.html', null, false, 'frmMain', 'inpcProjectId', 'inpcProjectId_D', inputValue(document.frmMain.inpcProjectId_D), 'inpIDValue', inputValue(document.frmMain.inpcProjectId), 'WindowID', inputValue(document.frmMain.inpwindowId), 'inpc_bpartner_id', inputValue(document.frmMain.inpcBPartnerId), 'Command', 'KEY');", "inpcProjectId_D", "null");
 }

@@ -90,14 +90,10 @@ public class SL_Order_DocType extends HttpSecureAppServlet {
           String strOldDocNo = SLOrderDocTypeData.selectOldDocNo(this, strOrder);
           resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS("Presupuesto Nº: " + strOldDocNo + ". " + strDescription) + "\"),\n");
         }
-        resultado.append("new Array(\"inpordertype\", \"" + DocSubTypeSO + "\"),\n");
+        resultado.append("new Array(\"inpordertype\", \"" + DocSubTypeSO + "\")\n");
         PaymentRule="P";
         InvoiceRule=(DocSubTypeSO.equals("PR")?"I":"D");
         DeliveryRule="A";
-        resultado.append("new Array(\"inphascharges\", \"" + dataNew[0].hascharges + "\"),\n");
-        String YN = "Y";
-        if (dataNew[0].isapproved.equals("Y")) YN = "N";
-        resultado.append("new Array(\"inpisapproved\", \"" + YN + "\")\n");
         if (dataNew[0].isdocnocontrolled.equals("Y")) {
           if (!newDocNo && !AD_Sequence_ID.equals(dataNew[0].adSequenceId)) newDocNo = true;
           if (newDocNo) {
@@ -121,7 +117,6 @@ public class SL_Order_DocType extends HttpSecureAppServlet {
           }
           InvoiceRule = (DocSubTypeSO.equals("PR")?"I":dataBP[0].invoicerule);
           DeliveryRule= dataBP[0].deliveryrule;
-          if (!dataBP[0].freightcostrule.equals("")) resultado.append(", new Array(\"inpfreightcostrule\", \"" + dataBP[0].freightcostrule + "\")\n");
           if (!dataBP[0].deliveryviarule.equals("")) resultado.append(", new Array(\"inpdeliveryviarule\", \"" + dataBP[0].deliveryviarule + "\")\n");
         }
       }

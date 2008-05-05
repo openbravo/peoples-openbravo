@@ -26,7 +26,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-  SELECT P.PRODUCTTYPE, PC.VALUE,P.C_REVENUERECOGNITION_ID,P.C_UOM_ID,P.AD_CLIENT_ID,P.AD_ORG_ID,
+  SELECT P.PRODUCTTYPE, PC.VALUE,P.C_UOM_ID,P.AD_CLIENT_ID,P.AD_ORG_ID,
   '' AS REVENUE, '' AS EXPENSE, '' AS ASSET, '' AS COGS, '' AS PURCHASEPRICEVARIANCE, '' AS INVOICEPRICEVARIANCE,
   '' AS DISCOUNTREC, '' AS DISCOUNTGRANT, '' AS CONVERTED, '' AS CURRENTCOSTPRICE, '' AS COSTAVERAGE, '' AS PRICELASTPO,
   '' AS COSTSTANDARD, '' AS C_CURRENCY_ID, '' AS PRICELIST, '' AS PRICESTD, '' AS PRICELIMIT, '' AS PRICEPO
@@ -77,17 +77,6 @@
       <Parameter name="C_UOM_To_ID"/>
       <Parameter name="StdPrecision"/>
    </SqlMethod>
-   <SqlMethod name="selectProductCost" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-  SELECT CURRENTCOSTPRICE,COSTAVERAGE,PRICELASTPO,COSTSTANDARD
-  FROM M_PRODUCT_COSTING 
-  WHERE M_PRODUCT_ID = TO_NUMBER(?) 
-  AND C_ACCTSCHEMA_ID = TO_NUMBER(?)
-      </Sql>
-      <Parameter name="M_Product_ID"/>
-      <Parameter name="C_AcctSchema_ID"/>
-   </SqlMethod>
    <SqlMethod name="selectProductAverageCost" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -95,23 +84,6 @@
       </Sql>
       <Parameter name="M_Product_ID"/>
       <Parameter name="date"/>
-   </SqlMethod>
-  <SqlMethod name="insertProductCosting" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-  INSERT INTO M_Product_Costing (M_Product_ID,C_AcctSchema_ID,AD_Client_ID,AD_Org_ID,IsActive,
-  Created,CreatedBy,Updated,UpdatedBy,CurrentCostPrice,CostStandard,FutureCostPrice,CostStandardPOQty,
-  CostStandardPOAmt,CostStandardCumQty,CostStandardCumAmt,CostAverage,CostAverageCumQty,
-  CostAverageCumAmt,PriceLastPO,PriceLastInv, TotalInvQty,TotalInvAmt) 
-  VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y',now(),0,
-  now(),0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-     ]]>
-     </Sql>
-     <Parameter name="M_Product_ID"/>
-     <Parameter name="C_AcctSchema_ID"/>
-     <Parameter name="AD_Client_ID"/>
-     <Parameter name="AD_Org_ID"/>
    </SqlMethod>
    <SqlMethod name="selectPriceList" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -126,19 +98,6 @@
       </Sql>
       <Parameter name="M_Product_ID"/>
       <Parameter name="onlyPOPriceList" optional="true" type="none" after="AND 1=1" text=" AND pl.IsSOPriceList='N'"/>
-   </SqlMethod>
-  <SqlMethod name="updateProductCosting" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-  UPDATE M_Product_Costing SET CurrentCostPrice = TO_NUMBER(?)
-  WHERE M_Product_ID = TO_NUMBER(?)
-  AND C_AcctSchema_ID = TO_NUMBER(?)
-     ]]>
-     </Sql>
-     <Parameter name="cost"/>
-     <Parameter name="M_Product_ID"/>
-     <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
    <SqlMethod name="selectPOCost" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

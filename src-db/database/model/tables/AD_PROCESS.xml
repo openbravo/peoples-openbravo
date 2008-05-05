@@ -53,10 +53,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[D]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="ISUSERSTARTABLE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
@@ -73,23 +69,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="AD_REPORTVIEW_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="CLASSNAME" primaryKey="false" required="false" type="NVARCHAR" size="200" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="STATISTIC_COUNT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="STATISTIC_SECONDS" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="AD_PRINTFORMAT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -110,12 +90,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADPROCESS">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_PRINTFORMAT" name="ADPRINTFORMAT_ADPROCESS">
-        <reference local="AD_PRINTFORMAT_ID" foreign="AD_PRINTFORMAT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_REPORTVIEW" name="ADREPORTVIEW_ADPROCESS">
-        <reference local="AD_REPORTVIEW_ID" foreign="AD_REPORTVIEW_ID"/>
       </foreign-key>
       <check name="ADPROCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="ADPROCESS_ISBACKGROUND_CHECK"><![CDATA[ISBACKGROUND IN ('Y', 'N')]]></check>

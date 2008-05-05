@@ -41,7 +41,6 @@
         AND sp.M_Product_ID = wpp.M_Product_ID
         AND pp.M_ProductionPlan_ID = TO_NUMBER(?)
         AND pl.Productiontype = '-'
-        AND sp.DecreaseInd = 'N'
     ]]></Sql>
     <Parameter name="productionplan"/>
   </SqlMethod>

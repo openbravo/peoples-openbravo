@@ -49,7 +49,6 @@ public class FactLine {
   private String  m_AmtAcctDr = "";
   private String  m_AmtAcctCr = "";
   //  Journal Info
-  private String    m_GL_Budget_ID = "";
   private String    m_GL_Category_ID = "";
   private String    m_PostingType = "";
   //  Direstly set
@@ -152,11 +151,9 @@ public class FactLine {
 
   /**
    *  Set Journal Info
-   *  @param GL_Budget_ID budget
    *  @param GL_Category_ID category
    */
-  public void setJournalInfo(String GL_Budget_ID, String GL_Category_ID){
-    m_GL_Budget_ID = GL_Budget_ID;
+  public void setJournalInfo(String GL_Category_ID){
     m_GL_Category_ID = GL_Category_ID;
   }   //  setJournalInfo
 
@@ -543,15 +540,7 @@ public class FactLine {
       User2_ID = m_acct.User2_ID;
     if (User2_ID==null) User2_ID="";
 
-    log4jFactLine.debug("FactLine - save - antes de Revenue Recognition for AR Invoices");
-
-    //  Revenue Recognition for AR Invoices
-    if (m_docVO.DocumentType.equals(AcctServer.DOCTYPE_ARInvoice) &&
-      m_docLine != null && m_docLine.p_productInfo!=null && m_docLine.getC_RevenueRecognition_ID() != null && !m_docLine.getC_RevenueRecognition_ID().equals("")){
-      Account_ID = createRevenueRecognition(con,conn,m_docLine.getC_RevenueRecognition_ID(), m_docLine.m_TrxLine_ID,AD_Client_ID, AD_Org_ID, "0", Account_ID,
-        M_Product_ID, C_BPartner_ID, AD_OrgTrx_ID,C_LocFrom_ID, C_LocTo_ID, C_SalesRegion_ID, C_Project_ID,C_Campaign_ID, C_Activity_ID, User1_ID, User2_ID, vars);
-    }
-    log4jFactLine.debug("FactLine - save - despues de Revenue Recognition for AR Invoices");
+    
     //  Description
     StringBuffer description = new StringBuffer();
     description = getDescription(conn , C_BPartner_ID,m_C_AcctSchema_ID,m_AD_Table_ID, m_Record_ID, (m_docLine!=null?m_docLine.m_TrxLine_ID:null));
@@ -581,7 +570,7 @@ public class FactLine {
         log4jFactLine.debug("FactLine - DateDoc " + DateDoc + " - DateAcct " + DateAcct);
         log4jFactLine.debug("FactLine - C_Period_ID " + C_Period_ID + " - m_AD_Table_ID " + m_AD_Table_ID);
         log4jFactLine.debug("FactLine - m_Record_ID " + m_Record_ID + " - m_Line_ID " + m_Line_ID);
-        log4jFactLine.debug("FactLine - m_GL_Category_ID " + m_GL_Category_ID + " - m_GL_Budget_ID " + m_GL_Budget_ID);
+        log4jFactLine.debug("FactLine - m_GL_Category_ID " + m_GL_Category_ID);
         log4jFactLine.debug("FactLine - C_Tax_ID " + C_Tax_ID + " - m_PostingType " + m_PostingType);
         log4jFactLine.debug("FactLine - m_C_Currency_ID " + m_C_Currency_ID + " - m_AmtSourceDr " + m_AmtSourceDr);
         log4jFactLine.debug("FactLine - m_AmtSourceCr " + m_AmtSourceCr + " - m_AmtAcctDr " + m_AmtAcctDr);
@@ -597,7 +586,7 @@ public class FactLine {
         log4jFactLine.debug("FactLine - m_DocBaseType " + m_DocBaseType + " - Record_ID2 " + Record_ID2);
         log4jFactLine.debug("FactLine - m_A_Asset_ID " + ((m_docLine!=null)? m_docLine.m_A_Asset_ID:""));
         no = FactLineData.insertFactAct(con,conn,m_Fact_Acct_ID,AD_Client_ID,AD_Org_ID,m_C_AcctSchema_ID,Account_ID, cuenta[0].value, 
-        cuenta[0].description,DateDoc,DateAcct,C_Period_ID,m_AD_Table_ID,m_Record_ID,m_Line_ID,m_GL_Category_ID,m_GL_Budget_ID,C_Tax_ID,
+        cuenta[0].description,DateDoc,DateAcct,C_Period_ID,m_AD_Table_ID,m_Record_ID,m_Line_ID,m_GL_Category_ID,C_Tax_ID,
         m_PostingType,m_C_Currency_ID,m_AmtSourceDr,m_AmtSourceCr,m_AmtAcctDr,m_AmtAcctCr,C_UOM_ID,Qty,m_M_Locator_ID,
         M_Product_ID,C_BPartner_ID,AD_OrgTrx_ID,C_LocFrom_ID,C_LocTo_ID,C_SalesRegion_ID,C_Project_ID,C_Campaign_ID,
         C_Activity_ID,User1_ID,User2_ID,description.toString(), m_Fact_Acct_Group_ID, m_SeqNo, m_DocBaseType, Record_ID2, (m_docLine!=null)? m_docLine.m_A_Asset_ID:"");
@@ -659,86 +648,7 @@ public class FactLine {
   } //  getC_SalesRegion_ID
 
   /**
-   *  Revenue Recognition.
-   *  Called from FactLine.save
-   *  <p>
-   *  Create Revenue recognition plan and return Unearned Revenue account
-   *  to be used instead of Revenue Account. If not found, it returns
-   *  the revenue account.
-   *
-   *  @param con connection
-   *  @param C_RevenueRecognition_ID revenue recognition
-   *  @param C_InvoiceLine_ID invoice line
-   *  @param AD_Client_ID client
-   *  @param AD_Org_ID org
-   *  @param AD_User_ID user
-   *  @param Account_ID of Revenue Account
-   *  @param M_Product_ID product
-   *  @param C_BPartner_ID bpartner
-   *  @param AD_OrgTrx_ID trx org
-   *  @param C_LocFrom_ID loc from
-   *  @param C_LocTo_ID loc to
-   *  @param C_SRegion_ID sales region
-   *  @param C_Project_ID project
-   *  @param C_Campaign_ID campaign
-   *  @param C_Activity_ID activity
-   *  @param User1_ID user1
-   *  @param User2_ID user2
-   *  @return Account_ID for Unearned Revenue or Revenue Account if not found
-   */
-  private String createRevenueRecognition (Connection con,ConnectionProvider conn,
-    String C_RevenueRecognition_ID, String C_InvoiceLine_ID,
-    String AD_Client_ID, String AD_Org_ID, String AD_User_ID, String Account_ID,
-    String M_Product_ID, String C_BPartner_ID, String AD_OrgTrx_ID,
-    String C_LocFrom_ID, String C_LocTo_ID, String C_SRegion_ID, String C_Project_ID,
-    String C_Campaign_ID, String C_Activity_ID, String User1_ID, String User2_ID,VariablesSecureApp vars){
-    //  get VC for P_Revenue (from Product)
-    log4jFactLine.debug("FactLine - createRevenueRecognition START");
-    String P_Revenue_Acct = AcctServer.getValidCombination(AD_Client_ID, AD_Org_ID,
-      m_C_AcctSchema_ID, Account_ID,"0", "", AD_User_ID,
-      M_Product_ID, C_BPartner_ID, AD_OrgTrx_ID,
-      C_LocFrom_ID, C_LocTo_ID, C_SRegion_ID, C_Project_ID,
-      C_Campaign_ID, C_Activity_ID, User1_ID, User2_ID,conn);
-    log4jFactLine.debug("FactLine - createRevenueRecognition end");
-    if (P_Revenue_Acct.equals("")){
-      log4jFactLine.warn("FactLine - createRevenueRecognition - Revenue_Acct not found");
-      return Account_ID;
-    }
-
-    //  get Unearned Revenue Acct from BPartner Group
-    String UnearnedRevenue_Acct = "";
-    String new_Account_ID = "";
-    FactLineData[] data = null;
-    try{
-      data = FactLineData.selectUnearnedRevenue(conn, m_C_AcctSchema_ID, C_BPartner_ID);
-
-      if (data.length>0){
-        UnearnedRevenue_Acct = data[0].unearnedrevenue;
-        new_Account_ID = data[0].account;
-      }
-      if (new_Account_ID.equals("")){
-        log4jFactLine.warn ("createRevenueRecognition - UnearnedRevenue_Acct not found");
-        return Account_ID;
-      }
-
-      //  Insert record in C_RevenueRecognition_Plan to start batch process generation
-      String C_RevenueRecognition_Plan_ID = SequenceIdData.getSequence(conn, "C_RevenueRecognition_Plan", vars.getClient());
-      int no = FactLineData.insertRevenueRecognitionPlan(con,conn, C_RevenueRecognition_Plan_ID, C_RevenueRecognition_ID, 
-      m_C_AcctSchema_ID, AD_Client_ID, AD_Org_ID, AD_User_ID, C_InvoiceLine_ID, UnearnedRevenue_Acct, P_Revenue_Acct, m_C_Currency_ID,
-      getAcctBalance());
-      if (no != 1){
-        log4jFactLine.warn ("createRevenueRecognition - Plan NOT created");
-        return Account_ID;
-      }
-    }catch(ServletException e){
-      log4jFactLine.warn(e);
-    }
-    log4jFactLine.debug ("createRevenueRecognition From Acctount_ID=" + Account_ID + " to " + new_Account_ID
-      + " - Plan from UnearnedRevenue_Acct=" + UnearnedRevenue_Acct + " to Revenue_Acct=" + P_Revenue_Acct);
-    return new_Account_ID;
-  }   //  createRevenueRecognition
-
-  /**
+   /**
    *  Get Accounted Balance
    *  @return accounting balance
    */

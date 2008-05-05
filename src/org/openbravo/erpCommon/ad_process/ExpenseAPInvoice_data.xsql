@@ -286,8 +286,6 @@
 C_Invoice_ID
 , Processing
 , DatePrinted
-, IsApproved
-, IsPaid
 , IsPrinted
 , Processed
 , SendEMail
@@ -345,8 +343,6 @@ TO_NUMBER(?)
 , (?)
 , (?)
 , (?)
-, (?)
-, (?)
 , TO_NUMBER(?)
 , TO_NUMBER(?)
 , TO_NUMBER(?)
@@ -391,8 +387,6 @@ TO_NUMBER(?)
 <Parameter name="cInvoiceId"/>
 <Parameter name="processing"/>
 <Parameter name="dateprinted"/>
-<Parameter name="isapproved"/>
-<Parameter name="ispaid"/>
 <Parameter name="isprinted"/>
 <Parameter name="processed"/>
 <Parameter name="sendemail"/>

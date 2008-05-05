@@ -89,14 +89,12 @@
         or m.ad_form_ID = TO_NUMBER(?) 
         or m.ad_task_ID = TO_NUMBER(?) 
         or m.ad_workflow_ID = TO_NUMBER(?) 
-        and m.ad_workbench_ID = TO_NUMBER(?)
         )
        ]]>
       </Sql>
       <Parameter name="adLanguage"/>
       <Parameter name="action"/>
       <Parameter name="action"/>
-      <Parameter name="adTabId"/>
       <Parameter name="adTabId"/>
       <Parameter name="adTabId"/>
       <Parameter name="adTabId"/>
@@ -111,7 +109,6 @@
                    WHEN 'P' THEN mo.AD_Process_ID
                    WHEN 'R' THEN mo.AD_Process_ID
                    WHEN 'C' THEN mo.AD_CallOut_ID
-                   WHEN 'B' THEN mo.AD_WorkBench_ID
                    WHEN 'T' THEN mo.AD_Task_ID
                    WHEN 'S' THEN mo.AD_Reference_ID
                    ELSE mo.AD_Tab_ID END) AS AD_Tab_ID, 

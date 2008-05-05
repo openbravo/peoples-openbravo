@@ -35,6 +35,7 @@
     Cur_Parameter RECORD;
     --  Record Info
     Cur_Maintenance RECORD;
+    v_DBA_ErrorLog_ID NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -112,6 +113,7 @@ WHEN OTHERS THEN
     DECLARE
       v_Code NUMBER:=SQLCODE;
     BEGIN
+      AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_Client_ID, v_DBA_ErrorLog_ID);
       INSERT
       INTO DBA_ERRORLOG
         (
@@ -121,7 +123,7 @@ WHEN OTHERS THEN
         )
         VALUES
         (
-          DBA_ErrorLog_Seq.NEXTVAL, now(),
+          v_DBA_ErrorLog_ID, now(),
           v_Code, v_ResultStr,
            'MA_Maint_All'
         )

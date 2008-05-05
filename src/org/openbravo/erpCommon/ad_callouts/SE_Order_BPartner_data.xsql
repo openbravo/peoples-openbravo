@@ -30,7 +30,7 @@
       SELECT p.C_PaymentTerm_ID,
       p.M_PriceList_ID,p.PaymentRule,p.POReference,
       p.SO_Description,COALESCE(p.IsDiscountPrinted,'N') AS IsDiscountPrinted,
-      p.InvoiceRule,p.DeliveryRule,p.FreightCostRule,DeliveryViaRule,
+      p.InvoiceRule,p.DeliveryRule,DeliveryViaRule,
       COALESCE(p.SO_CreditLimit-p.SO_CreditUsed,-1) AS CreditAvailable,
       p.PO_PriceList_ID, p.PaymentRulePO, p.PO_PaymentTerm_ID, p.salesrep_Id
       FROM C_BPartner p

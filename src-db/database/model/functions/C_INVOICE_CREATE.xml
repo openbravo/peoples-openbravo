@@ -63,7 +63,6 @@
     v_Qty NUMBER;
     --MODIFIED BY F.IRIAZABAL
     v_QtyOrder NUMBER;
-    v_Approved CHAR(1) ;
     v_Reference VARCHAR2(256):='';
     v_ReferenceOrder CHAR(1) ;
     v_DocSubTypeSO CHAR(2) ;
@@ -72,6 +71,8 @@
     v_count NUMBER:=0;
     Cur_OrderLine_ISOPEN BOOLEAN:=false;
     Cur_InOutLine_ISOPEN BOOLEAN:=false;
+    v_AD_Client_ID NUMBER;
+    v_DBA_ErrorLog_ID NUMBER;
     -- Order Lines not invoiced   Invoice Rule: Immediate
     CURSOR Cur_OrderLine (Order_ID NUMBER) IS
       SELECT *
@@ -364,15 +365,8 @@
               */
               -- Get Order DocType Info - approved from Invoice DocType
               v_ResultStr:='GetDocTypeInfo - ' || Cur_Order.C_DocType_ID;  SELECT od.C_DocTypeInvoice_ID,
-                CASE ID.IsApproved
-                  WHEN 'Y'
-                  THEN 'N'
-                  ELSE 'Y'
-                END
-                ,
                 od.DocSubTypeSO
               INTO v_DocType_ID,
-                v_Approved,
                 v_DocSubTypeSO
               FROM C_DOCTYPE od,
                 C_DOCTYPE ID
@@ -394,7 +388,7 @@
                   IsActive, Created, CreatedBy, Updated, UpdatedBy,
                   IsSOTrx, DocumentNo, DocStatus, DocAction,
                   Processing, Processed, C_DocType_ID, C_DocTypeTarget_ID,
-                  Description, IsApproved, IsTransferred, SalesRep_ID,
+                  Description, SalesRep_ID,
                   DateInvoiced,
                   DatePrinted, IsPrinted, DateAcct, C_PaymentTerm_ID,
                   C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID, POReference,
@@ -409,7 +403,7 @@
                    'Y', now(), 0, now(),
                   0, Cur_Order.IsSOTrx, v_DocumentNo, 'DR',
                    'CO', 'N', 'N', v_DocType_ID,
-                  v_DocType_ID, Cur_Order.Description, v_Approved, 'N',
+                  v_DocType_ID, Cur_Order.Description,
                   Cur_Order.SalesRep_ID, v_DateInvoiced, NULL, 'N',
                   v_DateInvoiced, -- DateInvoiced=DateAcct
                   Cur_Order.C_PaymentTerm_ID, Cur_Order.C_BPartner_ID, Cur_Order.BillTo_ID, Cur_Order.AD_User_ID,
@@ -887,31 +881,14 @@
                 v_ResultStr:='GetDocumentType';
                 IF(Cur_InvoiceSchedule.C_Order_ID IS NULL) THEN
                   BEGIN
-                    v_DocType_ID:=Ad_Get_Doctype(Cur_InvoiceSchedule.AD_Client_ID, Cur_InvoiceSchedule.AD_Org_ID, 'ARI') ;
-                    SELECT
-                      CASE IsApproved
-                        WHEN 'Y'
-                        THEN 'N'
-                        ELSE 'Y'
-                      END
-                    INTO v_Approved
-                    FROM C_DOCTYPE
-                    WHERE C_DOCTYPE_ID=v_DocType_ID;
-                    --
+                    v_DocType_ID:=Ad_Get_Doctype(Cur_InvoiceSchedule.AD_Client_ID, Cur_InvoiceSchedule.AD_Org_ID, 'ARI') ;                    --
                   EXCEPTION
                   WHEN OTHERS THEN
                     RAISE_APPLICATION_ERROR(-20000, '@NoDefaultInvoice@') ;
                   END;
                 ELSE
-                  SELECT od.C_DocTypeInvoice_ID,(
-                    CASE ID.IsApproved
-                      WHEN 'Y'
-                      THEN 'N'
-                      ELSE 'Y'
-                    END
-                    )
-                  INTO v_DocType_ID,
-                    v_Approved
+                  SELECT od.C_DocTypeInvoice_ID
+                  INTO v_DocType_ID
                   FROM C_DOCTYPE od,
                     C_DOCTYPE ID,
                     C_ORDER o
@@ -936,7 +913,7 @@
                       IsActive, Created, CreatedBy, Updated,
                       UpdatedBy, IsSOTrx, DocumentNo, DocStatus,
                       DocAction, Processing, Processed, C_DocType_ID,
-                      C_DocTypeTarget_ID, Description, IsApproved, IsTransferred,
+                      C_DocTypeTarget_ID, Description,
                       SalesRep_ID, DateInvoiced, DatePrinted, IsPrinted,
                       DateAcct,
                       C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID,
@@ -952,7 +929,7 @@
                        'Y', now(), 0, now(),
                       0, 'Y', v_DocumentNo, 'DR',
                        'CO', 'N', 'N', v_DocType_ID,
-                      v_DocType_ID, v_description, v_Approved, 'N',
+                      v_DocType_ID, v_description,
                       Cur_InvoiceSchedule.SalesRep_ID, v_DateInvoiced, NULL, 'N',
                       v_DateInvoiced, -- DateInvoiced=DateAcct
                       Cur_InvoiceSchedule.C_PaymentTerm_ID, Cur_InvoiceSchedule.C_BPartner_ID, Cur_InvoiceSchedule.BillTo_ID, Cur_InvoiceSchedule.AD_User_ID,
@@ -1091,6 +1068,7 @@
         DECLARE
           v_Code NUMBER:=SQLCODE;
         BEGIN
+          AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_AD_Client_ID, v_DBA_ErrorLog_ID);
           INSERT
           INTO DBA_ERRORLOG
             (
@@ -1100,7 +1078,7 @@
             )
             VALUES
             (
-              DBA_ErrorLog_Seq.NEXTVAL, now(),
+              v_DBA_ErrorLog_ID, now(),
               v_Code, v_ResultStr,
                'C_Invoice_Post'
             )

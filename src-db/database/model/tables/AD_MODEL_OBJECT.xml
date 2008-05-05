@@ -61,10 +61,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_WORKBENCH_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="AD_FORM_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -100,9 +96,6 @@
       </foreign-key>
       <foreign-key foreignTable="AD_TASK" name="MODELOBJECT_FK_TASK">
         <reference local="AD_TASK_ID" foreign="AD_TASK_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_WORKBENCH" name="MODELOBJECT_FK_WORKBENCH">
-        <reference local="AD_WORKBENCH_ID" foreign="AD_WORKBENCH_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_WORKFLOW" name="MODELOBJECT_FK_WORKFLOW">
         <reference local="AD_WORKFLOW_ID" foreign="AD_WORKFLOW_ID"/>

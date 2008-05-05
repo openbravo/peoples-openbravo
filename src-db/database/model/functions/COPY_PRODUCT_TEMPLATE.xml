@@ -141,7 +141,7 @@
           QTYINVOICED, M_SHIPPER_ID, C_CURRENCY_ID, PRICELIST,
           PRICEACTUAL, PRICELIMIT, LINENETAMT, DISCOUNT,
           FREIGHTAMT, C_CHARGE_ID, CHARGEAMT, C_TAX_ID,
-          LOT, SERNO, S_RESOURCEASSIGNMENT_ID, REF_ORDERLINE_ID,
+          S_RESOURCEASSIGNMENT_ID, REF_ORDERLINE_ID,
           M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID,
           PriceStd
         )
@@ -156,7 +156,7 @@
           0, NULL, v_Currency, v_Pricelist,
           M_Get_Offers_Price(now(), v_Bpartner, Cur_ProductTemplate.M_Product_ID, v_Pricestd, Cur_ProductTemplate.QTY, v_Mpricelist), v_Pricelimit, v_Linenetamount, v_Discount,
           0, NULL, 0, v_tax,
-          NULL, NULL, NULL, NULL,
+          NULL, NULL,
           NULL, 'N', NULL, NULL,
           v_Pricestd
         )

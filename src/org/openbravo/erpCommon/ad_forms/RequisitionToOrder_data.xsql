@@ -222,7 +222,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT p.InvoiceRule, p.DeliveryRule, p.FreightCostRule, DeliveryViaRule,
+      SELECT p.InvoiceRule, p.DeliveryRule, DeliveryViaRule,
         p.PaymentRulePO, p.PO_PaymentTerm_ID
       FROM C_BPartner p
       WHERE p.C_BPartner_ID = TO_NUMBER(?)

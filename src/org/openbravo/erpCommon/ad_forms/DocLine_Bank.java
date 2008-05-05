@@ -23,7 +23,6 @@ import org.apache.log4j.Logger ;
 public class DocLine_Bank extends DocLine {
   static Logger log4jDocLine_Bank = Logger.getLogger(DocLine_Bank.class);
 
-  	public String     m_IsReversal = "N";
 
 	public String         m_C_Payment_ID = "";
 	public String         isManual = "";

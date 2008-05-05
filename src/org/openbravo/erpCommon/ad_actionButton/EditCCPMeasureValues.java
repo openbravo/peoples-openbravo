@@ -48,7 +48,6 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
       vars.getGlobalVariable("inpwindowId", "EditCCPMeasureValues|windowId", "");
       vars.getGlobalVariable("inpTabId", "EditCCPMeasureValues|adTabId", "");
       vars.getRequestGlobalVariable("inpmeasuredate", "EditCCPMeasureValues|inpmeasuredate");
-      vars.getRequestGlobalVariable("inpproduct", "EditCCPMeasureValues|inpproduct");
       vars.getRequestGlobalVariable("inpshift", "EditCCPMeasureValues|inpshift");
 
       vars.setSessionValue("EditCCPMeasureValues|adProcessId", "800062");
@@ -62,13 +61,12 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
       String strTabId = vars.getGlobalVariable("inpTabId", "EditCCPMeasureValues|adTabId");
       String strProcessId = vars.getGlobalVariable("inpadProcessId", "EditCCPMeasureValues|adProcessId");
       String strMeasureDate = vars.getGlobalVariable("inpmeasuredate", "EditCCPMeasureValues|inpmeasuredate", "");
-      String strProduct = vars.getGlobalVariable("inpproduct", "EditCCPMeasureValues|inpproduct", "");
       String strShift = vars.getGlobalVariable("inpshift", "EditCCPMeasureValues|inpshift", "");
       vars.removeSessionValue("EditCCPMeasureValues|windowId");
       vars.removeSessionValue("EditCCPMeasureValues|adTabId");
       vars.removeSessionValue("EditCCPMeasureValues|adProcessId");
 
-      printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strProcessId, strMeasureDate, strProduct, strShift);
+      printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strProcessId, strMeasureDate, strShift);
     } else if (vars.commandIn("SAVE")) {
       String strKey = vars.getStringParameter("inpmaMeasureShiftId");
       String strWindowId = vars.getStringParameter("inpWindowId");
@@ -101,7 +99,7 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame2 - Out");
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strWindowId, String strTabId, String strProcessId, String strMeasureDate, String strProduct, String strShift) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strWindowId, String strTabId, String strProcessId, String strMeasureDate, String strShift) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: values ");
     String[] discard = {""};
     EditCCPMeasureValuesData[] data = null;
@@ -122,10 +120,9 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("measureDate", strMeasureDate);
     xmlDocument.setParameter("shift", shift);
-    if (strProduct == null) strProduct = "";
-    xmlDocument.setParameter("product", strProduct);
+    
 
-    if (log4j.isDebugEnabled()) log4j.debug("Param: " + vars.getLanguage() + " " + strReplaceWith + " " + strKey + " " + strWindowId + " " + strTabId + " " + strMeasureDate + " shift: " + shift + " " + strShift + " " + strProduct);
+    if (log4j.isDebugEnabled()) log4j.debug("Param: " + vars.getLanguage() + " " + strReplaceWith + " " + strKey + " " + strWindowId + " " + strTabId + " " + strMeasureDate + " shift: " + shift + " " + strShift);
     EditCCPMeasureValuesHoursData[][] dataHours = new EditCCPMeasureValuesHoursData[data.length][10];
     EditCCPMeasureValuesValuesData[][] dataValues = new EditCCPMeasureValuesValuesData[data.length][];
 
@@ -182,15 +179,6 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
             if (log4j.isDebugEnabled()) log4j.debug("Values to update: " + strValueId[i] + ", " + numeric + ", " + text + ", " + check);
             total = EditCCPMeasureValuesData.update(conn, this, numeric, text, check.equals("Y")?"Y":"N", strValueId[i]);
             if (total == 0) error =true;
-          }
-        }
-        for (int i=0; i<strGroupId.length; i++) {
-          if (log4j.isDebugEnabled()) log4j.debug("*****strGroupId[i]=" + strGroupId[i]);
-          if (!strGroupId[i].equals("0")) {
-            String secProduct = vars. getStringParameter("strProduct"+strGroupId[i]);
-            if (log4j.isDebugEnabled()) log4j.debug("Values to update: " + strGroupId[i] + ", " + secProduct);
-            total = EditCCPMeasureValuesData.updateSecProduct(conn, this, secProduct, strGroupId[i]);
-            if (total == 0) error = true;
           }
         }
         releaseCommitConnection(conn);

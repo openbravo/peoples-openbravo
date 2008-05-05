@@ -152,7 +152,6 @@ public Fact createFact(AcctSchema as,ConnectionProvider conn,Connection con,Vari
             cr.setLocationFromLocator(line.m_M_Locator_ID, true, conn);    // from Loc
             cr.setLocationFromBPartner(C_BPartner_Location_ID, false, conn);  // to Loc
         }
-        updateProductInfo(as.getC_AcctSchema_ID(), conn, con);     //  only for SO!
     }
     //  Purchasing
     else if (DocumentType.equals(AcctServer.DOCTYPE_MatReceipt)){
@@ -182,26 +181,6 @@ public Fact createFact(AcctSchema as,ConnectionProvider conn,Connection con,Vari
     SeqNo = "0";
     return fact;
 }   //  createFact
-
-/**
- *  Update Sales Order Costing Product Info.
- *  Purchase side handeled in Invoice Matching.
- *  <br>
- *  decrease average cumulatives
- *
- *  @param C_AcctSchema_ID accounting schema
- */
-private void updateProductInfo (String C_AcctSchema_ID,ConnectionProvider conn,Connection con){
-    log4jDocInOut.debug("updateProductInfo - M_InOut_ID=" + Record_ID);
-
-    int no = 0;
-    try{
-        no = DocInOutData.updateProductCosting(con, conn, Record_ID);
-    }catch(ServletException e){
-        log4jDocInOut.warn(e);
-    }
-    log4jDocInOut.debug("M_Product_Costing - Updated=" + no);
-}   //  updateProductInfo
 
     public String nextSeqNo(String oldSeqNo){
       log4jDocInOut.debug("DocInOut - oldSeqNo = " + oldSeqNo);

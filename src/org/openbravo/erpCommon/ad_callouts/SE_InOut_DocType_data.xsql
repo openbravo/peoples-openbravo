@@ -27,7 +27,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT d.HasCharges,d.IsApproved,d.IsDocNoControlled,
+        SELECT d.IsDocNoControlled,
         s.CurrentNext, d.DocBaseType
         FROM C_DocType d left join AD_Sequence s on d.DocNoSequence_ID=s.AD_Sequence_ID
         WHERE C_DocType_ID = TO_NUMBER(?)

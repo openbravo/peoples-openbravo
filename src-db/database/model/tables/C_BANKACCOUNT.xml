@@ -61,10 +61,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="STMTPROCESSORCLASS" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="CODEACCOUNT" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false">
         <default/>
         <onCreateDefault/>

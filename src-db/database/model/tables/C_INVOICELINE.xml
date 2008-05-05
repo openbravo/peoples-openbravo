@@ -97,10 +97,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="A_ASSET_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="TAXAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
@@ -141,9 +137,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="A_ASSET" name="AASSET_CINVOICELINE">
-        <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CINVOICELINE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

@@ -88,10 +88,6 @@
             <fo:table-body>
               <fo:table-row>
                 <fo:table-cell>
-                  <fo:block>PRODUCT:<fo:inline id="fieldProduct">xxproduct</fo:inline>
-                  </fo:block>
-                </fo:table-cell>
-                <fo:table-cell>
                   <fo:block>
                     <fo:table table-layout="fixed">
                       <fo:table-column column-width="2cm"/>
@@ -103,22 +99,6 @@
                           </fo:table-cell>
                           <fo:table-cell border-style="solid" border-width="0.5pt">
                             <fo:block id="fieldDate" padding-left="0.5cm">&#160;</fo:block>
-                          </fo:table-cell>
-                        </fo:table-row>
-                        <fo:table-row>
-                          <fo:table-cell>
-                            <fo:block>LOT:</fo:block>
-                          </fo:table-cell>
-                          <fo:table-cell border-style="solid" border-width="0.5pt">
-                            <fo:block id="fieldLot" padding-left="0.5cm">&#160;</fo:block>
-                          </fo:table-cell>
-                        </fo:table-row>
-                        <fo:table-row>
-                          <fo:table-cell>
-                            <fo:block>SELL-BY DATE:</fo:block>
-                          </fo:table-cell>
-                          <fo:table-cell border-style="solid" border-width="0.5pt">
-                            <fo:block id="fieldSellByDate" padding-left="0.5cm">&#160;</fo:block>
                           </fo:table-cell>
                         </fo:table-row>
                       </fo:table-body>

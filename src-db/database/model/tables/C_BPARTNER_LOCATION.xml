@@ -65,10 +65,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISDN" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="C_SALESREGION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>

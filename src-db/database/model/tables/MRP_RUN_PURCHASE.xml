@@ -85,10 +85,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="RECALCULATESTOCK" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLIENT_RUN_PURCHASE">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -115,7 +111,6 @@
       </foreign-key>
       <check name="MRPRUNPURCHASE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="MRPRUNPURCHASE_LAUNCHPO_CHECK"><![CDATA[LAUNCHPO IN ('Y', 'N')]]></check>
-      <check name="MRPRUNPURCHASE_RECAL_CHECK"><![CDATA[RECALCULATESTOCK IN ('Y', 'N')]]></check>
       <check name="MRPRUNPURCHASE_SIMULATE_CHECK"><![CDATA[SIMULATE IN ('Y', 'N')]]></check>
     </table>
   </database>

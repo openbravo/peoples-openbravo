@@ -69,10 +69,10 @@
         INSERT INTO C_ORDER (C_ORDER_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY, DOCUMENTNO,
         DOCSTATUS, DOCACTION, PROCESSING, C_DOCTYPE_ID, C_DOCTYPETARGET_ID,
         DATEORDERED, DATEPROMISED, DATEACCT, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID, BILLTO_ID, C_CURRENCY_ID, 
-        PAYMENTRULE, C_PAYMENTTERM_ID, INVOICERULE, DELIVERYRULE, FREIGHTCOSTRULE, 
+        PAYMENTRULE, C_PAYMENTTERM_ID, INVOICERULE, DELIVERYRULE,
         DELIVERYVIARULE, M_WAREHOUSE_ID, M_PRICELIST_ID, 
         C_PROJECT_ID, C_ACTIVITY_ID, C_CAMPAIGN_ID, PRIORITYRULE)
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),now(),TO_NUMBER(?),now(),TO_NUMBER(?),?,?,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),TO_DATE(?),TO_DATE(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),?,?,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'5')
+        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),now(),TO_NUMBER(?),now(),TO_NUMBER(?),?,?,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),TO_DATE(?),TO_DATE(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),?,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'5')
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -97,7 +97,6 @@
     <Parameter name="cPaymenttermId"/>
     <Parameter name="invoicerule"/>
     <Parameter name="deliveryrule"/>
-    <Parameter name="freightcostrule"/>
     <Parameter name="deliveryviarule"/>
     <Parameter name="mWarehouseId"/>
     <Parameter name="mPricelistId"/>

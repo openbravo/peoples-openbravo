@@ -275,7 +275,6 @@ BEGIN
                                            AND Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
                                               'MF', TO_NUMBER(r.NeedByDate - p_PlanningDate), p_TimeHorizon) <> -1
                                            AND r.M_Product_ID = Cur_Product.M_Product_ID
-                                           AND r.C_Order_ID IS NULL
             ) LOOP
               Mrp_Run_Insertlines(p_Client_ID, p_Org_ID, p_User_ID, p_Run, Cur_Product.M_Product_ID, Cur_RequisitionLine.qty*Cur_RequisitionLine.Weighting, Cur_RequisitionLine.qty*Cur_RequisitionLine.Weighting, NULL, 'MF', 'Y', NULL, NULL, NULL, Cur_RequisitionLine.M_RequisitionLine_ID, NULL, Cur_RequisitionLine.DatePlanned, NULL, p_Production, CASE WHEN (Cur_RequisitionLine.Qty > 0) THEN 'N' ELSE 'Y' END, NULL, v_Aux_ID);
               UPDATE M_REQUISITIONLINE

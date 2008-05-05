@@ -34,8 +34,6 @@
 <!--1-->              <WHERECLAUSE><![CDATA[AD_Reference.ValidationType='D']]></WHERECLAUSE>
 <!--1 ORDERBYCLAUSE-->
 <!--1-->              <ORDERBYCLAUSE><![CDATA[2]]></ORDERBYCLAUSE>
-<!--1 ENTITYTYPE-->
-<!--1-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--1**************--></AD_REF_TABLE>
 
 <!--3**************--><AD_REF_TABLE>
@@ -65,8 +63,6 @@
 <!--3-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--3 ORDERBYCLAUSE-->
 <!--3-->              <ORDERBYCLAUSE><![CDATA[AD_Column.AD_Table_ID,AD_Column.ColumnName]]></ORDERBYCLAUSE>
-<!--3 ENTITYTYPE-->
-<!--3-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--3**************--></AD_REF_TABLE>
 
 <!--4**************--><AD_REF_TABLE>
@@ -98,8 +94,6 @@
 <!--4-->              <WHERECLAUSE><![CDATA[AD_Reference.ValidationType in ('T','L','S')]]></WHERECLAUSE>
 <!--4 ORDERBYCLAUSE-->
 <!--4-->              <ORDERBYCLAUSE><![CDATA[AD_Reference.ValidationType, 2]]></ORDERBYCLAUSE>
-<!--4 ENTITYTYPE-->
-<!--4-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--4**************--></AD_REF_TABLE>
 
 <!--100**************--><AD_REF_TABLE>
@@ -129,8 +123,6 @@
 <!--100-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--100 ORDERBYCLAUSE-->
 <!--100-->              <ORDERBYCLAUSE><![CDATA[AD_Val_Rule.Name]]></ORDERBYCLAUSE>
-<!--100 ENTITYTYPE-->
-<!--100-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--100**************--></AD_REF_TABLE>
 
 <!--102**************--><AD_REF_TABLE>
@@ -160,8 +152,6 @@
 <!--102-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--102 ORDERBYCLAUSE-->
 <!--102-->              <ORDERBYCLAUSE><![CDATA[2]]></ORDERBYCLAUSE>
-<!--102 ENTITYTYPE-->
-<!--102-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--102**************--></AD_REF_TABLE>
 
 <!--105**************--><AD_REF_TABLE>
@@ -191,8 +181,6 @@
 <!--105-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--105 WHERECLAUSE-->
 <!--105-->              <WHERECLAUSE><![CDATA[AD_Menu.IsSummary='Y']]></WHERECLAUSE>
-<!--105 ENTITYTYPE-->
-<!--105-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--105**************--></AD_REF_TABLE>
 
 <!--106**************--><AD_REF_TABLE>
@@ -220,8 +208,6 @@
 <!--106-->              <AD_DISPLAY><![CDATA[204]]></AD_DISPLAY>
 <!--106 ISVALUEDISPLAYED-->
 <!--106-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--106 ENTITYTYPE-->
-<!--106-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--106**************--></AD_REF_TABLE>
 
 <!--109**************--><AD_REF_TABLE>
@@ -249,8 +235,6 @@
 <!--109-->              <AD_DISPLAY><![CDATA[294]]></AD_DISPLAY>
 <!--109 ISVALUEDISPLAYED-->
 <!--109-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--109 ENTITYTYPE-->
-<!--109-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--109**************--></AD_REF_TABLE>
 
 <!--110**************--><AD_REF_TABLE>
@@ -280,8 +264,6 @@
 <!--110-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--110 ORDERBYCLAUSE-->
 <!--110-->              <ORDERBYCLAUSE><![CDATA[AD_User.Name]]></ORDERBYCLAUSE>
-<!--110 ENTITYTYPE-->
-<!--110-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--110**************--></AD_REF_TABLE>
 
 <!--112**************--><AD_REF_TABLE>
@@ -313,8 +295,6 @@
 <!--112-->              <WHERECLAUSE><![CDATA[C_Currency.IsEMUMember='N']]></WHERECLAUSE>
 <!--112 ORDERBYCLAUSE-->
 <!--112-->              <ORDERBYCLAUSE><![CDATA[C_Currency.ISO_Code]]></ORDERBYCLAUSE>
-<!--112 ENTITYTYPE-->
-<!--112-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--112**************--></AD_REF_TABLE>
 
 <!--113**************--><AD_REF_TABLE>
@@ -346,8 +326,6 @@
 <!--113-->              <WHERECLAUSE><![CDATA[EXISTS (SELECT * FROM AD_OrgInfo WHERE AD_Org.AD_Org_ID=AD_OrgInfo.AD_Org_ID)]]></WHERECLAUSE>
 <!--113 ORDERBYCLAUSE-->
 <!--113-->              <ORDERBYCLAUSE><![CDATA[AD_Org.Name]]></ORDERBYCLAUSE>
-<!--113 ENTITYTYPE-->
-<!--113-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--113**************--></AD_REF_TABLE>
 
 <!--114**************--><AD_REF_TABLE>
@@ -375,8 +353,6 @@
 <!--114-->              <AD_DISPLAY><![CDATA[486]]></AD_DISPLAY>
 <!--114 ISVALUEDISPLAYED-->
 <!--114-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--114 ENTITYTYPE-->
-<!--114-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--114**************--></AD_REF_TABLE>
 
 <!--124**************--><AD_REF_TABLE>
@@ -406,8 +382,6 @@
 <!--124-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--124 WHERECLAUSE-->
 <!--124-->              <WHERECLAUSE><![CDATA[C_BPartner.IsSummary='Y']]></WHERECLAUSE>
-<!--124 ENTITYTYPE-->
-<!--124-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--124**************--></AD_REF_TABLE>
 
 <!--128**************--><AD_REF_TABLE>
@@ -439,8 +413,6 @@
 <!--128-->              <WHERECLAUSE><![CDATA[AD_Sequence.IsTableID='N']]></WHERECLAUSE>
 <!--128 ORDERBYCLAUSE-->
 <!--128-->              <ORDERBYCLAUSE><![CDATA[AD_Sequence.Name]]></ORDERBYCLAUSE>
-<!--128 ENTITYTYPE-->
-<!--128-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--128**************--></AD_REF_TABLE>
 
 <!--129**************--><AD_REF_TABLE>
@@ -470,8 +442,6 @@
 <!--129-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--129 ORDERBYCLAUSE-->
 <!--129-->              <ORDERBYCLAUSE><![CDATA[AD_Client.Name]]></ORDERBYCLAUSE>
-<!--129 ENTITYTYPE-->
-<!--129-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--129**************--></AD_REF_TABLE>
 
 <!--130**************--><AD_REF_TABLE>
@@ -503,8 +473,6 @@
 <!--130-->              <WHERECLAUSE><![CDATA[AD_Org.IsSummary='N' AND AD_Org_ID <> 0]]></WHERECLAUSE>
 <!--130 ORDERBYCLAUSE-->
 <!--130-->              <ORDERBYCLAUSE><![CDATA[AD_Org.Name]]></ORDERBYCLAUSE>
-<!--130 ENTITYTYPE-->
-<!--130-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--130**************--></AD_REF_TABLE>
 
 <!--132**************--><AD_REF_TABLE>
@@ -536,8 +504,6 @@
 <!--132-->              <WHERECLAUSE><![CDATA[C_ElementValue.IsSummary='N']]></WHERECLAUSE>
 <!--132 ORDERBYCLAUSE-->
 <!--132-->              <ORDERBYCLAUSE><![CDATA[C_ElementValue.Value]]></ORDERBYCLAUSE>
-<!--132 ENTITYTYPE-->
-<!--132-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--132**************--></AD_REF_TABLE>
 
 <!--133**************--><AD_REF_TABLE>
@@ -565,8 +531,6 @@
 <!--133-->              <AD_DISPLAY><![CDATA[819]]></AD_DISPLAY>
 <!--133 ISVALUEDISPLAYED-->
 <!--133-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--133 ENTITYTYPE-->
-<!--133-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--133**************--></AD_REF_TABLE>
 
 <!--134**************--><AD_REF_TABLE>
@@ -596,8 +560,6 @@
 <!--134-->              <ISVALUEDISPLAYED><![CDATA[Y]]></ISVALUEDISPLAYED>
 <!--134 WHERECLAUSE-->
 <!--134-->              <WHERECLAUSE><![CDATA[C_ElementValue.IsSummary='N']]></WHERECLAUSE>
-<!--134 ENTITYTYPE-->
-<!--134-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--134**************--></AD_REF_TABLE>
 
 <!--136**************--><AD_REF_TABLE>
@@ -625,8 +587,6 @@
 <!--136-->              <AD_DISPLAY><![CDATA[2471]]></AD_DISPLAY>
 <!--136 ISVALUEDISPLAYED-->
 <!--136-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--136 ENTITYTYPE-->
-<!--136-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--136**************--></AD_REF_TABLE>
 
 <!--137**************--><AD_REF_TABLE>
@@ -658,8 +618,6 @@
 <!--137-->              <WHERECLAUSE><![CDATA[C_ElementValue.IsSummary='N']]></WHERECLAUSE>
 <!--137 ORDERBYCLAUSE-->
 <!--137-->              <ORDERBYCLAUSE><![CDATA[C_ElementValue.Value]]></ORDERBYCLAUSE>
-<!--137 ENTITYTYPE-->
-<!--137-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--137**************--></AD_REF_TABLE>
 
 <!--138**************--><AD_REF_TABLE>
@@ -689,8 +647,6 @@
 <!--138-->              <ISVALUEDISPLAYED><![CDATA[Y]]></ISVALUEDISPLAYED>
 <!--138 WHERECLAUSE-->
 <!--138-->              <WHERECLAUSE><![CDATA[C_BPartner.IsSummary='N']]></WHERECLAUSE>
-<!--138 ENTITYTYPE-->
-<!--138-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--138**************--></AD_REF_TABLE>
 
 <!--140**************--><AD_REF_TABLE>
@@ -718,8 +674,6 @@
 <!--140-->              <AD_DISPLAY><![CDATA[1410]]></AD_DISPLAY>
 <!--140 ISVALUEDISPLAYED-->
 <!--140-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--140 ENTITYTYPE-->
-<!--140-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--140**************--></AD_REF_TABLE>
 
 <!--141**************--><AD_REF_TABLE>
@@ -749,8 +703,6 @@
 <!--141-->              <ISVALUEDISPLAYED><![CDATA[Y]]></ISVALUEDISPLAYED>
 <!--141 WHERECLAUSE-->
 <!--141-->              <WHERECLAUSE><![CDATA[C_Project.IsSummary='N']]></WHERECLAUSE>
-<!--141 ENTITYTYPE-->
-<!--141-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--141**************--></AD_REF_TABLE>
 
 <!--142**************--><AD_REF_TABLE>
@@ -778,8 +730,6 @@
 <!--142-->              <AD_DISPLAY><![CDATA[3465]]></AD_DISPLAY>
 <!--142 ISVALUEDISPLAYED-->
 <!--142-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--142 ENTITYTYPE-->
-<!--142-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--142**************--></AD_REF_TABLE>
 
 <!--143**************--><AD_REF_TABLE>
@@ -807,8 +757,6 @@
 <!--143-->              <AD_DISPLAY><![CDATA[2578]]></AD_DISPLAY>
 <!--143 ISVALUEDISPLAYED-->
 <!--143-->              <ISVALUEDISPLAYED><![CDATA[Y]]></ISVALUEDISPLAYED>
-<!--143 ENTITYTYPE-->
-<!--143-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--143**************--></AD_REF_TABLE>
 
 <!--144**************--><AD_REF_TABLE>
@@ -838,8 +786,6 @@
 <!--144-->              <ISVALUEDISPLAYED><![CDATA[Y]]></ISVALUEDISPLAYED>
 <!--144 WHERECLAUSE-->
 <!--144-->              <WHERECLAUSE><![CDATA[C_SalesRegion.IsSummary='N']]></WHERECLAUSE>
-<!--144 ENTITYTYPE-->
-<!--144-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--144**************--></AD_REF_TABLE>
 
 <!--145**************--><AD_REF_TABLE>
@@ -867,8 +813,6 @@
 <!--145-->              <AD_DISPLAY><![CDATA[466]]></AD_DISPLAY>
 <!--145 ISVALUEDISPLAYED-->
 <!--145-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--145 ENTITYTYPE-->
-<!--145-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--145**************--></AD_REF_TABLE>
 
 <!--156**************--><AD_REF_TABLE>
@@ -898,8 +842,6 @@
 <!--156-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--156 ORDERBYCLAUSE-->
 <!--156-->              <ORDERBYCLAUSE><![CDATA[2]]></ORDERBYCLAUSE>
-<!--156 ENTITYTYPE-->
-<!--156-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--156**************--></AD_REF_TABLE>
 
 <!--157**************--><AD_REF_TABLE>
@@ -927,8 +869,6 @@
 <!--157-->              <AD_DISPLAY><![CDATA[864]]></AD_DISPLAY>
 <!--157 ISVALUEDISPLAYED-->
 <!--157-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--157 ENTITYTYPE-->
-<!--157-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--157**************--></AD_REF_TABLE>
 
 <!--158**************--><AD_REF_TABLE>
@@ -960,8 +900,6 @@
 <!--158-->              <WHERECLAUSE><![CDATA[C_Tax.Parent_Tax_ID IS NULL]]></WHERECLAUSE>
 <!--158 ORDERBYCLAUSE-->
 <!--158-->              <ORDERBYCLAUSE><![CDATA[2]]></ORDERBYCLAUSE>
-<!--158 ENTITYTYPE-->
-<!--158-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--158**************--></AD_REF_TABLE>
 
 <!--159**************--><AD_REF_TABLE>
@@ -989,8 +927,6 @@
 <!--159-->              <AD_DISPLAY><![CDATA[2960]]></AD_DISPLAY>
 <!--159 ISVALUEDISPLAYED-->
 <!--159-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--159 ENTITYTYPE-->
-<!--159-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--159**************--></AD_REF_TABLE>
 
 <!--161**************--><AD_REF_TABLE>
@@ -1022,8 +958,6 @@
 <!--161-->              <WHERECLAUSE><![CDATA[M_Product.IsSummary='Y']]></WHERECLAUSE>
 <!--161 ORDERBYCLAUSE-->
 <!--161-->              <ORDERBYCLAUSE><![CDATA[M_Product.Value]]></ORDERBYCLAUSE>
-<!--161 ENTITYTYPE-->
-<!--161-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--161**************--></AD_REF_TABLE>
 
 <!--162**************--><AD_REF_TABLE>
@@ -1055,8 +989,6 @@
 <!--162-->              <WHERECLAUSE><![CDATA[M_Product.IsSummary='N']]></WHERECLAUSE>
 <!--162 ORDERBYCLAUSE-->
 <!--162-->              <ORDERBYCLAUSE><![CDATA[M_Product.Value]]></ORDERBYCLAUSE>
-<!--162 ENTITYTYPE-->
-<!--162-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--162**************--></AD_REF_TABLE>
 
 <!--163**************--><AD_REF_TABLE>
@@ -1086,8 +1018,6 @@
 <!--163-->              <ISVALUEDISPLAYED><![CDATA[Y]]></ISVALUEDISPLAYED>
 <!--163 ORDERBYCLAUSE-->
 <!--163-->              <ORDERBYCLAUSE><![CDATA[M_Product_Category.Name]]></ORDERBYCLAUSE>
-<!--163 ENTITYTYPE-->
-<!--163-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--163**************--></AD_REF_TABLE>
 
 <!--166**************--><AD_REF_TABLE>
@@ -1117,8 +1047,6 @@
 <!--166-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--166 WHERECLAUSE-->
 <!--166-->              <WHERECLAUSE><![CDATA[M_PRICELIST.ISSOPRICELIST='Y']]></WHERECLAUSE>
-<!--166 ENTITYTYPE-->
-<!--166-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--166**************--></AD_REF_TABLE>
 
 <!--169**************--><AD_REF_TABLE>
@@ -1150,8 +1078,6 @@
 <!--169-->              <WHERECLAUSE><![CDATA[C_Project.IsSummary='Y']]></WHERECLAUSE>
 <!--169 ORDERBYCLAUSE-->
 <!--169-->              <ORDERBYCLAUSE><![CDATA[C_Project.Value]]></ORDERBYCLAUSE>
-<!--169 ENTITYTYPE-->
-<!--169-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--169**************--></AD_REF_TABLE>
 
 <!--170**************--><AD_REF_TABLE>
@@ -1181,8 +1107,6 @@
 <!--170-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--170 WHERECLAUSE-->
 <!--170-->              <WHERECLAUSE><![CDATA[C_DocType.AD_Client_ID=@#AD_Client_ID@]]></WHERECLAUSE>
-<!--170 ENTITYTYPE-->
-<!--170-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--170**************--></AD_REF_TABLE>
 
 <!--171**************--><AD_REF_TABLE>
@@ -1214,8 +1138,6 @@
 <!--171-->              <WHERECLAUSE><![CDATA[M_Product.IsStocked='Y']]></WHERECLAUSE>
 <!--171 ORDERBYCLAUSE-->
 <!--171-->              <ORDERBYCLAUSE><![CDATA[M_Product.Value]]></ORDERBYCLAUSE>
-<!--171 ENTITYTYPE-->
-<!--171-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--171**************--></AD_REF_TABLE>
 
 <!--172**************--><AD_REF_TABLE>
@@ -1245,8 +1167,6 @@
 <!--172-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--172 WHERECLAUSE-->
 <!--172-->              <WHERECLAUSE><![CDATA[C_DocType.DocBaseType='SOO' AND C_DocType.AD_Client_ID=@#AD_Client_ID@]]></WHERECLAUSE>
-<!--172 ENTITYTYPE-->
-<!--172-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--172**************--></AD_REF_TABLE>
 
 <!--173**************--><AD_REF_TABLE>
@@ -1276,8 +1196,6 @@
 <!--173-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--173 WHERECLAUSE-->
 <!--173-->              <WHERECLAUSE><![CDATA[C_BPartner.IsCustomer='Y']]></WHERECLAUSE>
-<!--173 ENTITYTYPE-->
-<!--173-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--173**************--></AD_REF_TABLE>
 
 <!--174**************--><AD_REF_TABLE>
@@ -1305,8 +1223,6 @@
 <!--174-->              <AD_DISPLAY><![CDATA[236]]></AD_DISPLAY>
 <!--174 ISVALUEDISPLAYED-->
 <!--174-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--174 ENTITYTYPE-->
-<!--174-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--174**************--></AD_REF_TABLE>
 
 <!--175**************--><AD_REF_TABLE>
@@ -1334,8 +1250,6 @@
 <!--175-->              <AD_DISPLAY><![CDATA[1746]]></AD_DISPLAY>
 <!--175 ISVALUEDISPLAYED-->
 <!--175-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--175 ENTITYTYPE-->
-<!--175-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--175**************--></AD_REF_TABLE>
 
 <!--179**************--><AD_REF_TABLE>
@@ -1365,8 +1279,6 @@
 <!--179-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--179 WHERECLAUSE-->
 <!--179-->              <WHERECLAUSE><![CDATA[C_SalesRegion.IsSummary='Y']]></WHERECLAUSE>
-<!--179 ENTITYTYPE-->
-<!--179-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--179**************--></AD_REF_TABLE>
 
 <!--182**************--><AD_REF_TABLE>
@@ -1396,8 +1308,6 @@
 <!--182-->              <ISVALUEDISPLAYED><![CDATA[Y]]></ISVALUEDISPLAYED>
 <!--182 ORDERBYCLAUSE-->
 <!--182-->              <ORDERBYCLAUSE><![CDATA[C_ElementValue.Value]]></ORDERBYCLAUSE>
-<!--182 ENTITYTYPE-->
-<!--182-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--182**************--></AD_REF_TABLE>
 
 <!--184**************--><AD_REF_TABLE>
@@ -1425,8 +1335,6 @@
 <!--184-->              <AD_DISPLAY><![CDATA[2864]]></AD_DISPLAY>
 <!--184 ISVALUEDISPLAYED-->
 <!--184-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--184 ENTITYTYPE-->
-<!--184-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--184**************--></AD_REF_TABLE>
 
 <!--187**************--><AD_REF_TABLE>
@@ -1458,8 +1366,6 @@
 <!--187-->              <WHERECLAUSE><![CDATA[C_BPartner.IsSalesRep='Y']]></WHERECLAUSE>
 <!--187 ORDERBYCLAUSE-->
 <!--187-->              <ORDERBYCLAUSE><![CDATA[C_BPartner.Name]]></ORDERBYCLAUSE>
-<!--187 ENTITYTYPE-->
-<!--187-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--187**************--></AD_REF_TABLE>
 
 <!--188**************--><AD_REF_TABLE>
@@ -1489,8 +1395,6 @@
 <!--188-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--188 ORDERBYCLAUSE-->
 <!--188-->              <ORDERBYCLAUSE><![CDATA[M_PriceList_Version.Name]]></ORDERBYCLAUSE>
-<!--188 ENTITYTYPE-->
-<!--188-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--188**************--></AD_REF_TABLE>
 
 <!--190**************--><AD_REF_TABLE>
@@ -1520,8 +1424,6 @@
 <!--190-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--190 WHERECLAUSE-->
 <!--190-->              <WHERECLAUSE><![CDATA[EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND bp.IsSalesRep='Y')]]></WHERECLAUSE>
-<!--190 ENTITYTYPE-->
-<!--190-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--190**************--></AD_REF_TABLE>
 
 <!--191**************--><AD_REF_TABLE>
@@ -1549,8 +1451,6 @@
 <!--191-->              <AD_DISPLAY><![CDATA[3012]]></AD_DISPLAY>
 <!--191 ISVALUEDISPLAYED-->
 <!--191-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--191 ENTITYTYPE-->
-<!--191-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--191**************--></AD_REF_TABLE>
 
 <!--192**************--><AD_REF_TABLE>
@@ -1580,38 +1480,7 @@
 <!--192-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--192 WHERECLAUSE-->
 <!--192-->              <WHERECLAUSE><![CDATA[C_BPartner.IsVendor='Y']]></WHERECLAUSE>
-<!--192 ENTITYTYPE-->
-<!--192-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--192**************--></AD_REF_TABLE>
-
-<!--193**************--><AD_REF_TABLE>
-<!--193 AD_REFERENCE_ID-->
-<!--193-->              <AD_REFERENCE_ID><![CDATA[193]]></AD_REFERENCE_ID>
-<!--193 AD_CLIENT_ID-->
-<!--193-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--193 AD_ORG_ID-->
-<!--193-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--193 ISACTIVE-->
-<!--193-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--193 CREATED-->
-<!--193-->              <CREATED><![CDATA[2000-01-25 20:37:28.0]]></CREATED>
-<!--193 CREATEDBY-->
-<!--193-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--193 UPDATED-->
-<!--193-->              <UPDATED><![CDATA[2000-01-25 20:43:17.0]]></UPDATED>
-<!--193 UPDATEDBY-->
-<!--193-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--193 AD_TABLE_ID-->
-<!--193-->              <AD_TABLE_ID><![CDATA[297]]></AD_TABLE_ID>
-<!--193 AD_KEY-->
-<!--193-->              <AD_KEY><![CDATA[3077]]></AD_KEY>
-<!--193 AD_DISPLAY-->
-<!--193-->              <AD_DISPLAY><![CDATA[3074]]></AD_DISPLAY>
-<!--193 ISVALUEDISPLAYED-->
-<!--193-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--193 ENTITYTYPE-->
-<!--193-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--193**************--></AD_REF_TABLE>
 
 <!--197**************--><AD_REF_TABLE>
 <!--197 AD_REFERENCE_ID-->
@@ -1640,8 +1509,6 @@
 <!--197-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--197 WHERECLAUSE-->
 <!--197-->              <WHERECLAUSE><![CDATA[M_Warehouse.AD_Client_ID=@#AD_Client_ID@]]></WHERECLAUSE>
-<!--197 ENTITYTYPE-->
-<!--197-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--197**************--></AD_REF_TABLE>
 
 <!--199**************--><AD_REF_TABLE>
@@ -1671,8 +1538,6 @@
 <!--199-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--199 WHERECLAUSE-->
 <!--199-->              <WHERECLAUSE><![CDATA[M_PriceList_Version.AD_Client_ID=@#AD_Client_ID@]]></WHERECLAUSE>
-<!--199 ENTITYTYPE-->
-<!--199-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--199**************--></AD_REF_TABLE>
 
 <!--200**************--><AD_REF_TABLE>
@@ -1702,8 +1567,6 @@
 <!--200-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--200 WHERECLAUSE-->
 <!--200-->              <WHERECLAUSE><![CDATA[C_Charge.AD_Client_ID IN (@#User_Client@)]]></WHERECLAUSE>
-<!--200 ENTITYTYPE-->
-<!--200-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--200**************--></AD_REF_TABLE>
 
 <!--206**************--><AD_REF_TABLE>
@@ -1733,8 +1596,6 @@
 <!--206-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--206 WHERECLAUSE-->
 <!--206-->              <WHERECLAUSE><![CDATA[EXISTS (SELECT * FROM AD_Column c WHERE AD_Table.AD_Table_ID=c.AD_Table_ID AND c.ColumnName='Posted')]]></WHERECLAUSE>
-<!--206 ENTITYTYPE-->
-<!--206-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--206**************--></AD_REF_TABLE>
 
 <!--211**************--><AD_REF_TABLE>
@@ -1766,8 +1627,6 @@
 <!--211-->              <WHERECLAUSE><![CDATA[M_Product.IsBOM='Y' AND M_Product.IsStocked='Y']]></WHERECLAUSE>
 <!--211 ORDERBYCLAUSE-->
 <!--211-->              <ORDERBYCLAUSE><![CDATA[M_Product.Value]]></ORDERBYCLAUSE>
-<!--211 ENTITYTYPE-->
-<!--211-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--211**************--></AD_REF_TABLE>
 
 <!--223**************--><AD_REF_TABLE>
@@ -1798,8 +1657,6 @@
 <!--223 WHERECLAUSE-->
 <!--223-->              <WHERECLAUSE><![CDATA[C_BPartner.IsVendor='Y' AND EXISTS (SELECT * FROM M_Product_PO po 
 WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
-<!--223 ENTITYTYPE-->
-<!--223-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--223**************--></AD_REF_TABLE>
 
 <!--227**************--><AD_REF_TABLE>
@@ -1829,100 +1686,7 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--227-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--227 ORDERBYCLAUSE-->
 <!--227-->              <ORDERBYCLAUSE><![CDATA[2]]></ORDERBYCLAUSE>
-<!--227 ENTITYTYPE-->
-<!--227-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--227**************--></AD_REF_TABLE>
-
-<!--228**************--><AD_REF_TABLE>
-<!--228 AD_REFERENCE_ID-->
-<!--228-->              <AD_REFERENCE_ID><![CDATA[228]]></AD_REFERENCE_ID>
-<!--228 AD_CLIENT_ID-->
-<!--228-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--228 AD_ORG_ID-->
-<!--228-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--228 ISACTIVE-->
-<!--228-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--228 CREATED-->
-<!--228-->              <CREATED><![CDATA[2001-04-17 22:27:43.0]]></CREATED>
-<!--228 CREATEDBY-->
-<!--228-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--228 UPDATED-->
-<!--228-->              <UPDATED><![CDATA[2001-04-17 22:27:43.0]]></UPDATED>
-<!--228 UPDATEDBY-->
-<!--228-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--228 AD_TABLE_ID-->
-<!--228-->              <AD_TABLE_ID><![CDATA[440]]></AD_TABLE_ID>
-<!--228 AD_KEY-->
-<!--228-->              <AD_KEY><![CDATA[5884]]></AD_KEY>
-<!--228 AD_DISPLAY-->
-<!--228-->              <AD_DISPLAY><![CDATA[5892]]></AD_DISPLAY>
-<!--228 ISVALUEDISPLAYED-->
-<!--228-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--228 ENTITYTYPE-->
-<!--228-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--228**************--></AD_REF_TABLE>
-
-<!--229**************--><AD_REF_TABLE>
-<!--229 AD_REFERENCE_ID-->
-<!--229-->              <AD_REFERENCE_ID><![CDATA[229]]></AD_REFERENCE_ID>
-<!--229 AD_CLIENT_ID-->
-<!--229-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--229 AD_ORG_ID-->
-<!--229-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--229 ISACTIVE-->
-<!--229-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--229 CREATED-->
-<!--229-->              <CREATED><![CDATA[2001-04-17 23:13:28.0]]></CREATED>
-<!--229 CREATEDBY-->
-<!--229-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--229 UPDATED-->
-<!--229-->              <UPDATED><![CDATA[2001-04-17 23:13:28.0]]></UPDATED>
-<!--229 UPDATEDBY-->
-<!--229-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--229 AD_TABLE_ID-->
-<!--229-->              <AD_TABLE_ID><![CDATA[438]]></AD_TABLE_ID>
-<!--229 AD_KEY-->
-<!--229-->              <AD_KEY><![CDATA[5856]]></AD_KEY>
-<!--229 AD_DISPLAY-->
-<!--229-->              <AD_DISPLAY><![CDATA[5864]]></AD_DISPLAY>
-<!--229 ISVALUEDISPLAYED-->
-<!--229-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--229 WHERECLAUSE-->
-<!--229-->              <WHERECLAUSE><![CDATA[PA_Achievement.IsSummary='Y']]></WHERECLAUSE>
-<!--229 ENTITYTYPE-->
-<!--229-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--229**************--></AD_REF_TABLE>
-
-<!--230**************--><AD_REF_TABLE>
-<!--230 AD_REFERENCE_ID-->
-<!--230-->              <AD_REFERENCE_ID><![CDATA[230]]></AD_REFERENCE_ID>
-<!--230 AD_CLIENT_ID-->
-<!--230-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--230 AD_ORG_ID-->
-<!--230-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--230 ISACTIVE-->
-<!--230-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--230 CREATED-->
-<!--230-->              <CREATED><![CDATA[2001-04-17 23:18:38.0]]></CREATED>
-<!--230 CREATEDBY-->
-<!--230-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--230 UPDATED-->
-<!--230-->              <UPDATED><![CDATA[2001-04-17 23:18:38.0]]></UPDATED>
-<!--230 UPDATEDBY-->
-<!--230-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--230 AD_TABLE_ID-->
-<!--230-->              <AD_TABLE_ID><![CDATA[440]]></AD_TABLE_ID>
-<!--230 AD_KEY-->
-<!--230-->              <AD_KEY><![CDATA[5884]]></AD_KEY>
-<!--230 AD_DISPLAY-->
-<!--230-->              <AD_DISPLAY><![CDATA[5892]]></AD_DISPLAY>
-<!--230 ISVALUEDISPLAYED-->
-<!--230-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--230 WHERECLAUSE-->
-<!--230-->              <WHERECLAUSE><![CDATA[PA_Goal.IsSummary='Y']]></WHERECLAUSE>
-<!--230 ENTITYTYPE-->
-<!--230-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--230**************--></AD_REF_TABLE>
 
 <!--232**************--><AD_REF_TABLE>
 <!--232 AD_REFERENCE_ID-->
@@ -1951,8 +1715,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--232-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--232 WHERECLAUSE-->
 <!--232-->              <WHERECLAUSE><![CDATA[(C_BPartner.IsSalesRep='Y' OR C_BPartner.IsVendor='Y')]]></WHERECLAUSE>
-<!--232 ENTITYTYPE-->
-<!--232-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--232**************--></AD_REF_TABLE>
 
 <!--233**************--><AD_REF_TABLE>
@@ -1984,98 +1746,7 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--233-->              <WHERECLAUSE><![CDATA[EXISTS (SELECT * FROM C_PeriodControl pc WHERE C_Period.C_Period_ID=pc.C_Period_ID AND pc.PeriodStatus='O')]]></WHERECLAUSE>
 <!--233 ORDERBYCLAUSE-->
 <!--233-->              <ORDERBYCLAUSE><![CDATA[C_Period.StartDate]]></ORDERBYCLAUSE>
-<!--233 ENTITYTYPE-->
-<!--233-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--233**************--></AD_REF_TABLE>
-
-<!--239**************--><AD_REF_TABLE>
-<!--239 AD_REFERENCE_ID-->
-<!--239-->              <AD_REFERENCE_ID><![CDATA[239]]></AD_REFERENCE_ID>
-<!--239 AD_CLIENT_ID-->
-<!--239-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--239 AD_ORG_ID-->
-<!--239-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--239 ISACTIVE-->
-<!--239-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--239 CREATED-->
-<!--239-->              <CREATED><![CDATA[2001-05-13 10:07:57.0]]></CREATED>
-<!--239 CREATEDBY-->
-<!--239-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--239 UPDATED-->
-<!--239-->              <UPDATED><![CDATA[2001-05-13 10:07:57.0]]></UPDATED>
-<!--239 UPDATEDBY-->
-<!--239-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--239 AD_TABLE_ID-->
-<!--239-->              <AD_TABLE_ID><![CDATA[446]]></AD_TABLE_ID>
-<!--239 AD_KEY-->
-<!--239-->              <AD_KEY><![CDATA[5999]]></AD_KEY>
-<!--239 AD_DISPLAY-->
-<!--239-->              <AD_DISPLAY><![CDATA[6008]]></AD_DISPLAY>
-<!--239 ISVALUEDISPLAYED-->
-<!--239-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--239 ENTITYTYPE-->
-<!--239-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--239**************--></AD_REF_TABLE>
-
-<!--240**************--><AD_REF_TABLE>
-<!--240 AD_REFERENCE_ID-->
-<!--240-->              <AD_REFERENCE_ID><![CDATA[240]]></AD_REFERENCE_ID>
-<!--240 AD_CLIENT_ID-->
-<!--240-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--240 AD_ORG_ID-->
-<!--240-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--240 ISACTIVE-->
-<!--240-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--240 CREATED-->
-<!--240-->              <CREATED><![CDATA[2001-05-13 10:18:21.0]]></CREATED>
-<!--240 CREATEDBY-->
-<!--240-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--240 UPDATED-->
-<!--240-->              <UPDATED><![CDATA[2001-05-13 10:18:21.0]]></UPDATED>
-<!--240 UPDATEDBY-->
-<!--240-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--240 AD_TABLE_ID-->
-<!--240-->              <AD_TABLE_ID><![CDATA[448]]></AD_TABLE_ID>
-<!--240 AD_KEY-->
-<!--240-->              <AD_KEY><![CDATA[6045]]></AD_KEY>
-<!--240 AD_DISPLAY-->
-<!--240-->              <AD_DISPLAY><![CDATA[6054]]></AD_DISPLAY>
-<!--240 ISVALUEDISPLAYED-->
-<!--240-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--240 ENTITYTYPE-->
-<!--240-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--240**************--></AD_REF_TABLE>
-
-<!--242**************--><AD_REF_TABLE>
-<!--242 AD_REFERENCE_ID-->
-<!--242-->              <AD_REFERENCE_ID><![CDATA[242]]></AD_REFERENCE_ID>
-<!--242 AD_CLIENT_ID-->
-<!--242-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--242 AD_ORG_ID-->
-<!--242-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--242 ISACTIVE-->
-<!--242-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--242 CREATED-->
-<!--242-->              <CREATED><![CDATA[2001-05-13 10:46:26.0]]></CREATED>
-<!--242 CREATEDBY-->
-<!--242-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--242 UPDATED-->
-<!--242-->              <UPDATED><![CDATA[2003-01-16 16:28:13.0]]></UPDATED>
-<!--242 UPDATEDBY-->
-<!--242-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--242 AD_TABLE_ID-->
-<!--242-->              <AD_TABLE_ID><![CDATA[448]]></AD_TABLE_ID>
-<!--242 AD_KEY-->
-<!--242-->              <AD_KEY><![CDATA[6045]]></AD_KEY>
-<!--242 AD_DISPLAY-->
-<!--242-->              <AD_DISPLAY><![CDATA[6054]]></AD_DISPLAY>
-<!--242 ISVALUEDISPLAYED-->
-<!--242-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--242 WHERECLAUSE-->
-<!--242-->              <WHERECLAUSE><![CDATA[PA_ReportLine.IsSummary='Y']]></WHERECLAUSE>
-<!--242 ENTITYTYPE-->
-<!--242-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--242**************--></AD_REF_TABLE>
 
 <!--244**************--><AD_REF_TABLE>
 <!--244 AD_REFERENCE_ID-->
@@ -2106,8 +1777,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--244-->              <WHERECLAUSE><![CDATA[AD_Column.IsKey='Y']]></WHERECLAUSE>
 <!--244 ORDERBYCLAUSE-->
 <!--244-->              <ORDERBYCLAUSE><![CDATA[AD_Column.ColumnName]]></ORDERBYCLAUSE>
-<!--244 ENTITYTYPE-->
-<!--244-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--244**************--></AD_REF_TABLE>
 
 <!--249**************--><AD_REF_TABLE>
@@ -2135,8 +1804,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--249-->              <AD_DISPLAY><![CDATA[6589]]></AD_DISPLAY>
 <!--249 ISVALUEDISPLAYED-->
 <!--249-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--249 ENTITYTYPE-->
-<!--249-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--249**************--></AD_REF_TABLE>
 
 <!--251**************--><AD_REF_TABLE>
@@ -2166,8 +1833,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--251-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--251 ORDERBYCLAUSE-->
 <!--251-->              <ORDERBYCLAUSE><![CDATA[AD_Column.Name]]></ORDERBYCLAUSE>
-<!--251 ENTITYTYPE-->
-<!--251-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--251**************--></AD_REF_TABLE>
 
 <!--252**************--><AD_REF_TABLE>
@@ -2197,8 +1862,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--252-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--252 WHERECLAUSE-->
 <!--252-->              <WHERECLAUSE><![CDATA[C_BPartner.IsEmployee='Y']]></WHERECLAUSE>
-<!--252 ENTITYTYPE-->
-<!--252-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--252**************--></AD_REF_TABLE>
 
 <!--257**************--><AD_REF_TABLE>
@@ -2230,8 +1893,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--257-->              <WHERECLAUSE><![CDATA[AD_Column.AD_Reference_ID=11]]></WHERECLAUSE>
 <!--257 ORDERBYCLAUSE-->
 <!--257-->              <ORDERBYCLAUSE><![CDATA[AD_Column.Name]]></ORDERBYCLAUSE>
-<!--257 ENTITYTYPE-->
-<!--257-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--257**************--></AD_REF_TABLE>
 
 <!--258**************--><AD_REF_TABLE>
@@ -2263,282 +1924,7 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--258-->              <WHERECLAUSE><![CDATA[AD_Column.AD_Reference_ID=20]]></WHERECLAUSE>
 <!--258 ORDERBYCLAUSE-->
 <!--258-->              <ORDERBYCLAUSE><![CDATA[AD_Column.Name]]></ORDERBYCLAUSE>
-<!--258 ENTITYTYPE-->
-<!--258-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--258**************--></AD_REF_TABLE>
-
-<!--259**************--><AD_REF_TABLE>
-<!--259 AD_REFERENCE_ID-->
-<!--259-->              <AD_REFERENCE_ID><![CDATA[259]]></AD_REFERENCE_ID>
-<!--259 AD_CLIENT_ID-->
-<!--259-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--259 AD_ORG_ID-->
-<!--259-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--259 ISACTIVE-->
-<!--259-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--259 CREATED-->
-<!--259-->              <CREATED><![CDATA[2002-07-11 21:41:19.0]]></CREATED>
-<!--259 CREATEDBY-->
-<!--259-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--259 UPDATED-->
-<!--259-->              <UPDATED><![CDATA[2002-07-11 21:41:19.0]]></UPDATED>
-<!--259 UPDATEDBY-->
-<!--259-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--259 AD_TABLE_ID-->
-<!--259-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
-<!--259 AD_KEY-->
-<!--259-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
-<!--259 AD_DISPLAY-->
-<!--259-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
-<!--259 ISVALUEDISPLAYED-->
-<!--259-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--259 ENTITYTYPE-->
-<!--259-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--259**************--></AD_REF_TABLE>
-
-<!--261**************--><AD_REF_TABLE>
-<!--261 AD_REFERENCE_ID-->
-<!--261-->              <AD_REFERENCE_ID><![CDATA[261]]></AD_REFERENCE_ID>
-<!--261 AD_CLIENT_ID-->
-<!--261-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--261 AD_ORG_ID-->
-<!--261-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--261 ISACTIVE-->
-<!--261-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--261 CREATED-->
-<!--261-->              <CREATED><![CDATA[2002-08-04 19:25:06.0]]></CREATED>
-<!--261 CREATEDBY-->
-<!--261-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--261 UPDATED-->
-<!--261-->              <UPDATED><![CDATA[2002-08-24 18:13:49.0]]></UPDATED>
-<!--261 UPDATEDBY-->
-<!--261-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--261 AD_TABLE_ID-->
-<!--261-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
-<!--261 AD_KEY-->
-<!--261-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
-<!--261 AD_DISPLAY-->
-<!--261-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
-<!--261 ISVALUEDISPLAYED-->
-<!--261-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--261 WHERECLAUSE-->
-<!--261-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.AD_Table_ID=516]]></WHERECLAUSE>
-<!--261 ENTITYTYPE-->
-<!--261-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--261**************--></AD_REF_TABLE>
-
-<!--262**************--><AD_REF_TABLE>
-<!--262 AD_REFERENCE_ID-->
-<!--262-->              <AD_REFERENCE_ID><![CDATA[262]]></AD_REFERENCE_ID>
-<!--262 AD_CLIENT_ID-->
-<!--262-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--262 AD_ORG_ID-->
-<!--262-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--262 ISACTIVE-->
-<!--262-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--262 CREATED-->
-<!--262-->              <CREATED><![CDATA[2002-08-04 19:26:41.0]]></CREATED>
-<!--262 CREATEDBY-->
-<!--262-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--262 UPDATED-->
-<!--262-->              <UPDATED><![CDATA[2002-08-24 18:14:08.0]]></UPDATED>
-<!--262 UPDATEDBY-->
-<!--262-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--262 AD_TABLE_ID-->
-<!--262-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
-<!--262 AD_KEY-->
-<!--262-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
-<!--262 AD_DISPLAY-->
-<!--262-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
-<!--262 ISVALUEDISPLAYED-->
-<!--262-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--262 WHERECLAUSE-->
-<!--262-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.AD_Table_ID=496]]></WHERECLAUSE>
-<!--262 ENTITYTYPE-->
-<!--262-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--262**************--></AD_REF_TABLE>
-
-<!--263**************--><AD_REF_TABLE>
-<!--263 AD_REFERENCE_ID-->
-<!--263-->              <AD_REFERENCE_ID><![CDATA[263]]></AD_REFERENCE_ID>
-<!--263 AD_CLIENT_ID-->
-<!--263-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--263 AD_ORG_ID-->
-<!--263-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--263 ISACTIVE-->
-<!--263-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--263 CREATED-->
-<!--263-->              <CREATED><![CDATA[2002-08-04 19:27:46.0]]></CREATED>
-<!--263 CREATEDBY-->
-<!--263-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--263 UPDATED-->
-<!--263-->              <UPDATED><![CDATA[2002-08-24 18:14:33.0]]></UPDATED>
-<!--263 UPDATEDBY-->
-<!--263-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--263 AD_TABLE_ID-->
-<!--263-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
-<!--263 AD_KEY-->
-<!--263-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
-<!--263 AD_DISPLAY-->
-<!--263-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
-<!--263 ISVALUEDISPLAYED-->
-<!--263-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--263 WHERECLAUSE-->
-<!--263-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.AD_Table_ID=500]]></WHERECLAUSE>
-<!--263 ENTITYTYPE-->
-<!--263-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--263**************--></AD_REF_TABLE>
-
-<!--264**************--><AD_REF_TABLE>
-<!--264 AD_REFERENCE_ID-->
-<!--264-->              <AD_REFERENCE_ID><![CDATA[264]]></AD_REFERENCE_ID>
-<!--264 AD_CLIENT_ID-->
-<!--264-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--264 AD_ORG_ID-->
-<!--264-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--264 ISACTIVE-->
-<!--264-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--264 CREATED-->
-<!--264-->              <CREATED><![CDATA[2002-08-24 16:12:17.0]]></CREATED>
-<!--264 CREATEDBY-->
-<!--264-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--264 UPDATED-->
-<!--264-->              <UPDATED><![CDATA[2002-08-24 16:12:17.0]]></UPDATED>
-<!--264 UPDATEDBY-->
-<!--264-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--264 AD_TABLE_ID-->
-<!--264-->              <AD_TABLE_ID><![CDATA[489]]></AD_TABLE_ID>
-<!--264 AD_KEY-->
-<!--264-->              <AD_KEY><![CDATA[6954]]></AD_KEY>
-<!--264 AD_DISPLAY-->
-<!--264-->              <AD_DISPLAY><![CDATA[6940]]></AD_DISPLAY>
-<!--264 ISVALUEDISPLAYED-->
-<!--264-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--264 ENTITYTYPE-->
-<!--264-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--264**************--></AD_REF_TABLE>
-
-<!--266**************--><AD_REF_TABLE>
-<!--266 AD_REFERENCE_ID-->
-<!--266-->              <AD_REFERENCE_ID><![CDATA[266]]></AD_REFERENCE_ID>
-<!--266 AD_CLIENT_ID-->
-<!--266-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--266 AD_ORG_ID-->
-<!--266-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--266 ISACTIVE-->
-<!--266-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--266 CREATED-->
-<!--266-->              <CREATED><![CDATA[2002-08-24 16:30:19.0]]></CREATED>
-<!--266 CREATEDBY-->
-<!--266-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--266 UPDATED-->
-<!--266-->              <UPDATED><![CDATA[2002-08-24 16:30:19.0]]></UPDATED>
-<!--266 UPDATEDBY-->
-<!--266-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--266 AD_TABLE_ID-->
-<!--266-->              <AD_TABLE_ID><![CDATA[490]]></AD_TABLE_ID>
-<!--266 AD_KEY-->
-<!--266-->              <AD_KEY><![CDATA[6975]]></AD_KEY>
-<!--266 AD_DISPLAY-->
-<!--266-->              <AD_DISPLAY><![CDATA[6979]]></AD_DISPLAY>
-<!--266 ISVALUEDISPLAYED-->
-<!--266-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--266 ENTITYTYPE-->
-<!--266-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--266**************--></AD_REF_TABLE>
-
-<!--267**************--><AD_REF_TABLE>
-<!--267 AD_REFERENCE_ID-->
-<!--267-->              <AD_REFERENCE_ID><![CDATA[267]]></AD_REFERENCE_ID>
-<!--267 AD_CLIENT_ID-->
-<!--267-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--267 AD_ORG_ID-->
-<!--267-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--267 ISACTIVE-->
-<!--267-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--267 CREATED-->
-<!--267-->              <CREATED><![CDATA[2002-08-24 16:40:35.0]]></CREATED>
-<!--267 CREATEDBY-->
-<!--267-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--267 UPDATED-->
-<!--267-->              <UPDATED><![CDATA[2002-08-24 16:40:35.0]]></UPDATED>
-<!--267 UPDATEDBY-->
-<!--267-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--267 AD_TABLE_ID-->
-<!--267-->              <AD_TABLE_ID><![CDATA[491]]></AD_TABLE_ID>
-<!--267 AD_KEY-->
-<!--267-->              <AD_KEY><![CDATA[6989]]></AD_KEY>
-<!--267 AD_DISPLAY-->
-<!--267-->              <AD_DISPLAY><![CDATA[6983]]></AD_DISPLAY>
-<!--267 ISVALUEDISPLAYED-->
-<!--267-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--267 ENTITYTYPE-->
-<!--267-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--267**************--></AD_REF_TABLE>
-
-<!--268**************--><AD_REF_TABLE>
-<!--268 AD_REFERENCE_ID-->
-<!--268-->              <AD_REFERENCE_ID><![CDATA[268]]></AD_REFERENCE_ID>
-<!--268 AD_CLIENT_ID-->
-<!--268-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--268 AD_ORG_ID-->
-<!--268-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--268 ISACTIVE-->
-<!--268-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--268 CREATED-->
-<!--268-->              <CREATED><![CDATA[2002-08-24 18:16:01.0]]></CREATED>
-<!--268 CREATEDBY-->
-<!--268-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--268 UPDATED-->
-<!--268-->              <UPDATED><![CDATA[2002-08-24 18:16:01.0]]></UPDATED>
-<!--268 UPDATEDBY-->
-<!--268-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--268 AD_TABLE_ID-->
-<!--268-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
-<!--268 AD_KEY-->
-<!--268-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
-<!--268 AD_DISPLAY-->
-<!--268-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
-<!--268 ISVALUEDISPLAYED-->
-<!--268-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--268 WHERECLAUSE-->
-<!--268-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.AD_Table_ID=498]]></WHERECLAUSE>
-<!--268 ENTITYTYPE-->
-<!--268-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--268**************--></AD_REF_TABLE>
-
-<!--269**************--><AD_REF_TABLE>
-<!--269 AD_REFERENCE_ID-->
-<!--269-->              <AD_REFERENCE_ID><![CDATA[269]]></AD_REFERENCE_ID>
-<!--269 AD_CLIENT_ID-->
-<!--269-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--269 AD_ORG_ID-->
-<!--269-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--269 ISACTIVE-->
-<!--269-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--269 CREATED-->
-<!--269-->              <CREATED><![CDATA[2002-09-14 15:16:37.0]]></CREATED>
-<!--269 CREATEDBY-->
-<!--269-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--269 UPDATED-->
-<!--269-->              <UPDATED><![CDATA[2002-09-14 15:16:37.0]]></UPDATED>
-<!--269 UPDATEDBY-->
-<!--269-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--269 AD_TABLE_ID-->
-<!--269-->              <AD_TABLE_ID><![CDATA[493]]></AD_TABLE_ID>
-<!--269 AD_KEY-->
-<!--269-->              <AD_KEY><![CDATA[7026]]></AD_KEY>
-<!--269 AD_DISPLAY-->
-<!--269-->              <AD_DISPLAY><![CDATA[7019]]></AD_DISPLAY>
-<!--269 ISVALUEDISPLAYED-->
-<!--269-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--269 WHERECLAUSE-->
-<!--269-->              <WHERECLAUSE><![CDATA[AD_PrintFormat.IsTableBased='N']]></WHERECLAUSE>
-<!--269 ORDERBYCLAUSE-->
-<!--269-->              <ORDERBYCLAUSE><![CDATA[AD_PrintFormat.Name]]></ORDERBYCLAUSE>
-<!--269 ENTITYTYPE-->
-<!--269-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--269**************--></AD_REF_TABLE>
 
 <!--271**************--><AD_REF_TABLE>
 <!--271 AD_REFERENCE_ID-->
@@ -2565,8 +1951,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--271-->              <AD_DISPLAY><![CDATA[2214]]></AD_DISPLAY>
 <!--271 ISVALUEDISPLAYED-->
 <!--271-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--271 ENTITYTYPE-->
-<!--271-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--271**************--></AD_REF_TABLE>
 
 <!--272**************--><AD_REF_TABLE>
@@ -2598,8 +1982,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--272-->              <WHERECLAUSE><![CDATA[AD_Column.AD_Table_ID IN (315,266) AND AD_Column.AD_Reference_ID=25]]></WHERECLAUSE>
 <!--272 ORDERBYCLAUSE-->
 <!--272-->              <ORDERBYCLAUSE><![CDATA[AD_Column.ColumnName]]></ORDERBYCLAUSE>
-<!--272 ENTITYTYPE-->
-<!--272-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--272**************--></AD_REF_TABLE>
 
 <!--273**************--><AD_REF_TABLE>
@@ -2629,8 +2011,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--273-->              <ISVALUEDISPLAYED><![CDATA[Y]]></ISVALUEDISPLAYED>
 <!--273 WHERECLAUSE-->
 <!--273-->              <WHERECLAUSE><![CDATA[C_ElementValue.IsSummary='Y']]></WHERECLAUSE>
-<!--273 ENTITYTYPE-->
-<!--273-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--273**************--></AD_REF_TABLE>
 
 <!--274**************--><AD_REF_TABLE>
@@ -2658,8 +2038,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--274-->              <AD_DISPLAY><![CDATA[5411]]></AD_DISPLAY>
 <!--274 ISVALUEDISPLAYED-->
 <!--274-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--274 ENTITYTYPE-->
-<!--274-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--274**************--></AD_REF_TABLE>
 
 <!--275**************--><AD_REF_TABLE>
@@ -2689,8 +2067,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--275-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--275 ORDERBYCLAUSE-->
 <!--275-->              <ORDERBYCLAUSE><![CDATA[C_Period.StartDate]]></ORDERBYCLAUSE>
-<!--275 ENTITYTYPE-->
-<!--275-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--275**************--></AD_REF_TABLE>
 
 <!--276**************--><AD_REF_TABLE>
@@ -2720,8 +2096,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--276-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--276 ORDERBYCLAUSE-->
 <!--276-->              <ORDERBYCLAUSE><![CDATA[AD_Org.Value]]></ORDERBYCLAUSE>
-<!--276 ENTITYTYPE-->
-<!--276-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--276**************--></AD_REF_TABLE>
 
 <!--277**************--><AD_REF_TABLE>
@@ -2753,8 +2127,6 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--277-->              <WHERECLAUSE><![CDATA[C_BPartner.IsEmployee='Y' 
 AND EXISTS (SELECT * FROM C_BPartner_Location l WHERE C_BPartner.C_BPartner_ID=l.C_BPartner_ID AND l.C_Location_ID IS NOT NULL)
 AND EXISTS (SELECT * FROM AD_User u WHERE C_BPartner.C_BPartner_ID=u.C_BPartner_ID)]]></WHERECLAUSE>
-<!--277 ENTITYTYPE-->
-<!--277-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--277**************--></AD_REF_TABLE>
 
 <!--278**************--><AD_REF_TABLE>
@@ -2782,8 +2154,6 @@ AND EXISTS (SELECT * FROM AD_User u WHERE C_BPartner.C_BPartner_ID=u.C_BPartner_
 <!--278-->              <AD_DISPLAY><![CDATA[161]]></AD_DISPLAY>
 <!--278 ISVALUEDISPLAYED-->
 <!--278-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--278 ENTITYTYPE-->
-<!--278-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--278**************--></AD_REF_TABLE>
 
 <!--284**************--><AD_REF_TABLE>
@@ -2813,38 +2183,7 @@ AND EXISTS (SELECT * FROM AD_User u WHERE C_BPartner.C_BPartner_ID=u.C_BPartner_
 <!--284-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--284 ORDERBYCLAUSE-->
 <!--284-->              <ORDERBYCLAUSE><![CDATA[2]]></ORDERBYCLAUSE>
-<!--284 ENTITYTYPE-->
-<!--284-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--284**************--></AD_REF_TABLE>
-
-<!--285**************--><AD_REF_TABLE>
-<!--285 AD_REFERENCE_ID-->
-<!--285-->              <AD_REFERENCE_ID><![CDATA[285]]></AD_REFERENCE_ID>
-<!--285 AD_CLIENT_ID-->
-<!--285-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--285 AD_ORG_ID-->
-<!--285-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--285 ISACTIVE-->
-<!--285-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--285 CREATED-->
-<!--285-->              <CREATED><![CDATA[2003-07-10 21:23:56.0]]></CREATED>
-<!--285 CREATEDBY-->
-<!--285-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--285 UPDATED-->
-<!--285-->              <UPDATED><![CDATA[2003-07-10 21:23:56.0]]></UPDATED>
-<!--285 UPDATEDBY-->
-<!--285-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--285 AD_TABLE_ID-->
-<!--285-->              <AD_TABLE_ID><![CDATA[612]]></AD_TABLE_ID>
-<!--285 AD_KEY-->
-<!--285-->              <AD_KEY><![CDATA[9498]]></AD_KEY>
-<!--285 AD_DISPLAY-->
-<!--285-->              <AD_DISPLAY><![CDATA[9491]]></AD_DISPLAY>
-<!--285 ISVALUEDISPLAYED-->
-<!--285-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--285 ENTITYTYPE-->
-<!--285-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
-<!--285**************--></AD_REF_TABLE>
 
 <!--286**************--><AD_REF_TABLE>
 <!--286 AD_REFERENCE_ID-->
@@ -2876,8 +2215,6 @@ AND EXISTS (SELECT * FROM AD_User u WHERE C_BPartner.C_BPartner_ID=u.C_BPartner_
 OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--286 ORDERBYCLAUSE-->
 <!--286-->              <ORDERBYCLAUSE><![CDATA[Name]]></ORDERBYCLAUSE>
-<!--286 ENTITYTYPE-->
-<!--286-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--286**************--></AD_REF_TABLE>
 
 <!--290**************--><AD_REF_TABLE>
@@ -2907,8 +2244,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--290-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--290 ORDERBYCLAUSE-->
 <!--290-->              <ORDERBYCLAUSE><![CDATA[C_Order.DocumentNo]]></ORDERBYCLAUSE>
-<!--290 ENTITYTYPE-->
-<!--290-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--290**************--></AD_REF_TABLE>
 
 <!--800000**************--><AD_REF_TABLE>
@@ -2940,8 +2275,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800000-->              <WHERECLAUSE><![CDATA[M_Product_UOM.M_Product_ID = @M_Product_ID@]]></WHERECLAUSE>
 <!--800000 ORDERBYCLAUSE-->
 <!--800000-->              <ORDERBYCLAUSE><![CDATA[2]]></ORDERBYCLAUSE>
-<!--800000 ENTITYTYPE-->
-<!--800000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800000**************--></AD_REF_TABLE>
 
 <!--800001**************--><AD_REF_TABLE>
@@ -2973,8 +2306,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800001-->              <WHERECLAUSE><![CDATA[C_Tax.IsSummary = 'Y']]></WHERECLAUSE>
 <!--800001 ORDERBYCLAUSE-->
 <!--800001-->              <ORDERBYCLAUSE><![CDATA[2]]></ORDERBYCLAUSE>
-<!--800001 ENTITYTYPE-->
-<!--800001-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800001**************--></AD_REF_TABLE>
 
 <!--800022**************--><AD_REF_TABLE>
@@ -3006,8 +2337,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800022-->              <WHERECLAUSE><![CDATA[AD_Table_Post_V.ad_language = @#AD_LANGUAGE@]]></WHERECLAUSE>
 <!--800022 ORDERBYCLAUSE-->
 <!--800022-->              <ORDERBYCLAUSE><![CDATA[AD_Table_Post_V.Name]]></ORDERBYCLAUSE>
-<!--800022 ENTITYTYPE-->
-<!--800022-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800022**************--></AD_REF_TABLE>
 
 <!--800028**************--><AD_REF_TABLE>
@@ -3037,8 +2366,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800028-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--800028 WHERECLAUSE-->
 <!--800028-->              <WHERECLAUSE><![CDATA[AD_Form.isActive = 'Y']]></WHERECLAUSE>
-<!--800028 ENTITYTYPE-->
-<!--800028-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800028**************--></AD_REF_TABLE>
 
 <!--800030**************--><AD_REF_TABLE>
@@ -3068,8 +2395,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800030-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--800030 WHERECLAUSE-->
 <!--800030-->              <WHERECLAUSE><![CDATA[C_BPartner.Ismanager = 'Y']]></WHERECLAUSE>
-<!--800030 ENTITYTYPE-->
-<!--800030-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800030**************--></AD_REF_TABLE>
 
 <!--800031**************--><AD_REF_TABLE>
@@ -3099,8 +2424,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800031-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--800031 WHERECLAUSE-->
 <!--800031-->              <WHERECLAUSE><![CDATA[M_PRICELIST.ISSOPRICELIST='N']]></WHERECLAUSE>
-<!--800031 ENTITYTYPE-->
-<!--800031-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800031**************--></AD_REF_TABLE>
 
 <!--800032**************--><AD_REF_TABLE>
@@ -3128,8 +2451,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800032-->              <AD_DISPLAY><![CDATA[802074]]></AD_DISPLAY>
 <!--800032 ISVALUEDISPLAYED-->
 <!--800032-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--800032 ENTITYTYPE-->
-<!--800032-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800032**************--></AD_REF_TABLE>
 
 <!--800035**************--><AD_REF_TABLE>
@@ -3159,8 +2480,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800035-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--800035 WHERECLAUSE-->
 <!--800035-->              <WHERECLAUSE><![CDATA[C_BPartner.IsEmployee = 'Y' AND C_BPartner.IsWorker = 'Y']]></WHERECLAUSE>
-<!--800035 ENTITYTYPE-->
-<!--800035-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800035**************--></AD_REF_TABLE>
 
 <!--800046**************--><AD_REF_TABLE>
@@ -3188,8 +2507,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800046-->              <AD_DISPLAY><![CDATA[1005500015]]></AD_DISPLAY>
 <!--800046 ISVALUEDISPLAYED-->
 <!--800046-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--800046 ENTITYTYPE-->
-<!--800046-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800046**************--></AD_REF_TABLE>
 
 <!--800073**************--><AD_REF_TABLE>
@@ -3217,8 +2534,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800073-->              <AD_DISPLAY><![CDATA[800310]]></AD_DISPLAY>
 <!--800073 ISVALUEDISPLAYED-->
 <!--800073-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--800073 ENTITYTYPE-->
-<!--800073-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800073**************--></AD_REF_TABLE>
 
 <!--800079**************--><AD_REF_TABLE>
@@ -3250,8 +2565,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800079-->              <WHERECLAUSE><![CDATA[AT_Test.type='M']]></WHERECLAUSE>
 <!--800079 ORDERBYCLAUSE-->
 <!--800079-->              <ORDERBYCLAUSE><![CDATA[AT_Test.name]]></ORDERBYCLAUSE>
-<!--800079 ENTITYTYPE-->
-<!--800079-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800079**************--></AD_REF_TABLE>
 
 <!--800082**************--><AD_REF_TABLE>
@@ -3281,8 +2594,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800082-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--800082 WHERECLAUSE-->
 <!--800082-->              <WHERECLAUSE><![CDATA[AD_Language.IsBaseLanguage = 'Y' OR AD_Language.IsSystemLanguage = 'Y']]></WHERECLAUSE>
-<!--800082 ENTITYTYPE-->
-<!--800082-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800082**************--></AD_REF_TABLE>
 
 <!--800090**************--><AD_REF_TABLE>
@@ -3310,8 +2621,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800090-->              <AD_DISPLAY><![CDATA[803232]]></AD_DISPLAY>
 <!--800090 ISVALUEDISPLAYED-->
 <!--800090-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--800090 ENTITYTYPE-->
-<!--800090-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800090**************--></AD_REF_TABLE>
 
 <!--800093**************--><AD_REF_TABLE>
@@ -3341,8 +2650,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800093-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--800093 WHERECLAUSE-->
 <!--800093-->              <WHERECLAUSE><![CDATA[C_BPartner.IsEmployee = 'Y']]></WHERECLAUSE>
-<!--800093 ENTITYTYPE-->
-<!--800093-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800093**************--></AD_REF_TABLE>
 
 <!--800100**************--><AD_REF_TABLE>
@@ -3370,8 +2677,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800100-->              <AD_DISPLAY><![CDATA[803632]]></AD_DISPLAY>
 <!--800100 ISVALUEDISPLAYED-->
 <!--800100-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--800100 ENTITYTYPE-->
-<!--800100-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800100**************--></AD_REF_TABLE>
 
 <!--800105**************--><AD_REF_TABLE>
@@ -3399,8 +2704,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800105-->              <AD_DISPLAY><![CDATA[532]]></AD_DISPLAY>
 <!--800105 ISVALUEDISPLAYED-->
 <!--800105-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--800105 ENTITYTYPE-->
-<!--800105-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800105**************--></AD_REF_TABLE>
 
 <!--800106**************--><AD_REF_TABLE>
@@ -3431,8 +2734,6 @@ OR AD_User.C_BPartner_ID IS NULL)]]></WHERECLAUSE>
 <!--800106 WHERECLAUSE-->
 <!--800106-->              <WHERECLAUSE><![CDATA[(IsSystemLanguage='Y' OR isBaseLanguage='Y')
 AND isActive='Y']]></WHERECLAUSE>
-<!--800106 ENTITYTYPE-->
-<!--800106-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800106**************--></AD_REF_TABLE>
 
 <!--

@@ -262,7 +262,7 @@
             INTO C_ORDERLINE
               (
                 DateOrdered, M_Warehouse_ID, QtyOrdered, QtyDelivered,
-                QtyReserved, M_Shipper_ID, QtyInvoiced, SerNo,
+                QtyReserved, M_Shipper_ID, QtyInvoiced,
                 C_Currency_ID, PriceList, DatePromised, DateDelivered,
                 DateInvoiced, Created, IsActive, Line,
                 C_OrderLine_ID, AD_Client_ID, C_Order_ID, Description,
@@ -270,14 +270,14 @@
                 UpdatedBy, FreightAmt, C_Charge_ID, ChargeAmt,
                 Updated, AD_Org_ID, S_ResourceAssignment_ID, C_BPartner_ID,
                 PriceActual,
-                C_Tax_ID, Lot, C_BPartner_Location_ID,
+                C_Tax_ID, C_BPartner_Location_ID,
                 Discount, PriceLimit, Ref_OrderLine_ID, LineNetAmt,
                 M_AttributeSetInstance_ID, IsDescription, PriceStd
               )
               VALUES
               (
                 TRUNC(now(), 'DD'), Cur_SO.M_WAREHOUSE_ID, Cur_SOLINES.Qty, 0,
-                0, NULL, 0, NULL,
+                0, NULL, 0,
                 Cur_SO.C_CURRENCY_ID, v_PriceList, TRUNC(now(), 'DD'), NULL,
                 NULL, now(), 'Y', Cur_SOLINES.SEQNO,
                 v_C_OrderLine_ID, Cur_SO.AD_CLIENT_ID, v_C_Order_ID, Cur_SOLINES.DESCRIPTION,
@@ -285,7 +285,7 @@
                 v_AD_User_ID, 0, NULL, 0,
                 now(), Cur_SO.AD_ORG_ID, NULL, Cur_SO.C_BPARTNER_ID,
                 v_PriceActual,
-                v_Tax_ID, NULL, Cur_SO.C_BPARTNER_LOCATION_ID,
+                v_Tax_ID, Cur_SO.C_BPARTNER_LOCATION_ID,
                 v_Discount, v_PriceLimit, NULL, v_PriceActual * Cur_SOLINES.Qty,
                 NULL, 'N', v_PriceStd
               )

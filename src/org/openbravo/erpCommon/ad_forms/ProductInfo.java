@@ -42,7 +42,6 @@ public class ProductInfo{
   public String     m_productType = "";
   public String          m_ProductCategory = "";
 
-  public String             m_C_RevenueRecognition_ID = "";
 
   public String             m_C_UOM_ID = "";
   public String     m_qty = "0";
@@ -66,7 +65,6 @@ public class ProductInfo{
     if (data.length==1){
       m_productType = data[0].producttype;
       m_ProductCategory = data[0].value;
-      m_C_RevenueRecognition_ID = data[0].cRevenuerecognitionId;
       m_C_UOM_ID = data[0].cUomId;
       //  reference
       m_AD_Client_ID = data[0].adClientId;
@@ -206,74 +204,6 @@ public static String getConvertedQty (String qty,String C_UOM_From_ID, String C_
  *  @param as accounting schema
  *  @return     cost or null, if qty or costs cannot be determined
  */
-public String getProductCosts (AcctSchema as, ConnectionProvider conn, Connection con){
-  if (m_qty == null || m_qty.equals("")){
-    log4jProductInfo.debug("getProductCosts - No Qty");
-    return null;
-  }
-  BigDecimal cost = new BigDecimal(getProductItemCost(as, "", conn, con));
-  if (cost == null)
-  {
-    log4jProductInfo.debug("getProductCosts - No Costs");
-    return null;
-  }
-  log4jProductInfo.debug("getProductCosts - qty = " + m_qty);
-  BigDecimal qty = new BigDecimal(m_qty);
-  log4jProductInfo.debug("getProductCosts - Qty(" + m_qty + ") * Cost(" + cost + ") = " + qty.multiply(cost));
-  return qty.multiply(cost).toString();
-}   //  getProductCosts
-
-/**
- *  Get Product Costs per UOM for Accounting Schema in Accounting Schema Currency.
- *  - if costType defined - cost
- *  - else CurrentCosts
- *  @param as accounting schema
- *  @param costType - if null uses Accounting Schema Costs - see AcctSchema.COSTING_*
- *  @return product costs
- */
-public String getProductItemCost(AcctSchema as, String costType, ConnectionProvider conn, Connection con){
-  String current = "";
-  String cost = "";
-  String cm = as.m_CostingMethod;
-  ProductInfoData [] data = null;
-  try{
-    data = ProductInfoData.selectProductCost(conn, m_M_Product_ID, as.getC_AcctSchema_ID());
-  }catch(ServletException e){
-    log4jProductInfo.warn(e);
-  }
-  //
-  if ((costType.equals("") && AcctSchema.COSTING_AVERAGE.equals(cm)) || AcctSchema.COSTING_AVERAGE.equals(costType))
-    cost = data[0].getField("costaverage");                   //  2
-//  else if (AcctSchema.COSTING_FIFO.equals(cm))
-//    cost = data[0].getField("costfifo");
-//  else if (AcctSchema.COSTING_LIFO.equals(cm))
-//    cost = data[0].getField("costlifo");
-  else if ((costType.equals("") && AcctSchema.COSTING_LASTPO.equals(cm)) || AcctSchema.COSTING_LASTPO.equals(costType))
-    cost = data[0].getField("pricelastpo");
-  else    //  AcctSchema.COSTING_STANDARD
-    cost = data[0].getField("coststandard");
-  current = data[0].getField("currentcostprice");
-
-  //  Return Costs
-  if (costType.equals("") && !cost.equals("") && !cost.equals(ZERO.toString())){
-    log4jProductInfo.debug("getProductItemCosts = " + cost);
-    return cost;
-  }
-  else if (!current.equals("") && !current.equals(ZERO.toString())){
-    log4jProductInfo.debug("getProductItemCosts - Current=" + current);
-    return current;
-  }
-
-  //  Create/Update Cost Record
-  boolean create = (cost.equals("") && current.equals(""));
-  return updateCosts(as, create, conn, con);
-}   //  getProductCost
-
-/**
- *  Get Total Costs in Accounting Schema Currency
- *  @param as accounting schema
- *  @return     cost or null, if qty or costs cannot be determined
- */
 public String getProductCosts (String date, String strQty, AcctSchema as, ConnectionProvider conn, Connection con){
   if (m_qty == null || m_qty.equals("")){
     log4jProductInfo.debug("getProductCosts - No Qty");
@@ -304,59 +234,6 @@ public String getProductItemCost(String date, AcctSchema as, String costType, Co
   }
   return cost;
 }
-
-/**
- *  Update/Create initial Cost Record.
- *  Check first for     Purchase Price List,
- *      then Product    Purchase Costs
- *      and then        Price List
- *  @param as accounting schema
- *  @param create create record
- *  @return costs
- */
-private String updateCosts (AcctSchema as, boolean create, ConnectionProvider conn, Connection con)
-{
-  //  Create Zero Record
-  if (create){
-    int no = 0;
-    try{
-      no = ProductInfoData.insertProductCosting(con,conn,m_M_Product_ID,as.getC_AcctSchema_ID(),m_AD_Client_ID,m_AD_Org_ID);
-    }catch(ServletException e){
-      log4jProductInfo.warn(e);
-    }
-    if (no == 1)
-      log4jProductInfo.debug("updateCosts - CostingCreated");
-  }
-
-  //  Try to find non ZERO Price
-  String costSource = "PriceList-PO";
-  String costs = getPriceList (as, true, conn);
-  if (costs.equals("") || costs.equals(ZERO.toString())){
-    costSource = "PO Cost";
-    costs = getPOCost(as, conn);
-  }
-  if (costs == null || costs.equals("") || costs.equals(ZERO.toString())){
-    costSource = "PriceList";
-    costs = getPriceList(as, false,conn);
-  }
-
-  //  if not found use $1 (to be able to do material transactions)
-  if (costs == null || costs.equals("") || costs.equals(ZERO.toString())){
-    costSource = "Not Found";
-    costs = "1";
-  }
-
-  //  update current costs
-  int no = 0;
-  try{
-    no = ProductInfoData.updateProductCosting(con, conn, costs, m_M_Product_ID, as.getC_AcctSchema_ID());
-  }catch(ServletException e){
-    log4jProductInfo.debug(e);
-  }
-  if (no == 1)
-    log4jProductInfo.debug("updateCosts - " + costSource + " - " + costs);
-  return costs;
-}   //  createCosts
 
 /**
  *  Get PO Cost from Purchase Info - and convert it to AcctSchema Currency

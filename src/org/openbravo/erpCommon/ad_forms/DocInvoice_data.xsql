@@ -29,7 +29,7 @@
         SELECT it.C_Tax_ID, t.Name, t.Rate, it.TaxBaseAmt, it.TaxAmt, '' AS C_INVOICE_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID,
         '' AS ISACTIVE, '' AS CREATED, '' AS CREATEDBY, '' AS UPDATED, '' AS UPDATEDBY, '' AS ISSOTRX, '' AS DOCUMENTNO,
         '' AS DOCSTATUS, '' AS DOCACTION, '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED, '' AS C_DOCTYPE_ID, '' AS C_DOCTYPETARGET_ID,
-        '' AS C_ORDER_ID, '' AS DESCRIPTION, '' AS ISAPPROVED, '' AS ISTRANSFERRED, '' AS ISPRINTED, '' AS SALESREP_ID, '' AS DATEINVOICED,
+        '' AS C_ORDER_ID, '' AS DESCRIPTION, '' AS ISTRANSFERRED, '' AS ISPRINTED, '' AS SALESREP_ID, '' AS DATEINVOICED,
         '' AS DATEPRINTED, '' AS DATEACCT, '' AS C_BPARTNER_ID, '' AS C_BPARTNER_LOCATION_ID, '' AS POREFERENCE, '' AS ISDISCOUNTPRINTED,
         '' AS DATEORDERED, '' AS C_CURRENCY_ID, '' AS PAYMENTRULE, '' AS C_PAYMENTTERM_ID, '' AS C_CHARGE_ID, '' AS CHARGEAMT, '' AS TOTALLINES,
         '' AS GRANDTOTAL, '' AS M_PRICELIST_ID, '' AS ISTAXINCLUDED, '' AS C_CAMPAIGN_ID, '' AS C_PROJECT_ID, '' AS C_ACTIVITY_ID,
@@ -90,45 +90,5 @@
      </Sql>
      <Parameter name="invoice"/>
      <Parameter name="invoice"/>
-   </SqlMethod>
-  <SqlMethod name="updateProductCosting" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        UPDATE M_Product_Costing SET 
-          PriceLastInv = (SELECT AVG(C_Currency_Convert(il.PriceActual,i.C_Currency_ID,a.C_Currency_ID,i.DateInvoiced,null,i.AD_Client_ID,i.AD_Org_ID)) 
-                FROM C_Invoice i, C_InvoiceLine il, C_AcctSchema a 
-                WHERE i.C_Invoice_ID=il.C_Invoice_ID
-                AND M_Product_Costing.M_Product_ID=il.M_Product_ID AND M_Product_Costing.C_AcctSchema_ID=a.C_AcctSchema_ID
-                AND M_Product_Costing.C_AcctSchema_ID = TO_NUMBER(?)
-                AND i.C_Invoice_ID = TO_NUMBER(?)), 
-          TotalInvAmt = (SELECT SUM(C_Currency_Convert(il.LineNetAmt,i.C_Currency_ID,a.C_Currency_ID,i.DateInvoiced,null))
-                FROM C_Invoice i, C_InvoiceLine il, C_AcctSchema a 
-                WHERE i.C_Invoice_ID=il.C_Invoice_ID
-                AND M_Product_Costing.M_Product_ID=il.M_Product_ID AND M_Product_Costing.C_AcctSchema_ID=a.C_AcctSchema_ID
-                AND M_Product_Costing.C_AcctSchema_ID = TO_NUMBER(?)
-                AND i.C_Invoice_ID = TO_NUMBER(?)),
-          TotalInvQty = (SELECT SUM(il.QtyInvoiced) 
-                FROM C_Invoice i, C_InvoiceLine il, C_AcctSchema a 
-                WHERE i.C_Invoice_ID=il.C_Invoice_ID
-                AND M_Product_Costing.M_Product_ID=il.M_Product_ID AND M_Product_Costing.C_AcctSchema_ID=a.C_AcctSchema_ID
-                AND M_Product_Costing.C_AcctSchema_ID = TO_NUMBER(?)
-                AND i.C_Invoice_ID = TO_NUMBER(?))
-        WHERE EXISTS (SELECT * FROM C_Invoice i, C_InvoiceLine il, C_AcctSchema a 
-                WHERE i.C_Invoice_ID=il.C_Invoice_ID
-                AND M_Product_Costing.M_Product_ID=il.M_Product_ID 
-                AND M_Product_Costing.C_AcctSchema_ID=a.C_AcctSchema_ID
-                AND M_Product_Costing.C_AcctSchema_ID = TO_NUMBER(?)
-                AND i.C_Invoice_ID = TO_NUMBER(?))
-     ]]>
-     </Sql>
-     <Parameter name="C_AcctSchema_ID"/>
-     <Parameter name="C_Invoice_ID"/>
-     <Parameter name="C_AcctSchema_ID"/>
-     <Parameter name="C_Invoice_ID"/>
-     <Parameter name="C_AcctSchema_ID"/>
-     <Parameter name="C_Invoice_ID"/>
-     <Parameter name="C_AcctSchema_ID"/>
-     <Parameter name="C_Invoice_ID"/>
    </SqlMethod>
    </SqlClass>

@@ -233,10 +233,6 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="FREIGHTAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[0]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="C_CAMPAIGN_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>

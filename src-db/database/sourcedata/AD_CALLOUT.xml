@@ -740,27 +740,6 @@
 <!--134-->              <NAME><![CDATA[SL_Journal_Period]]></NAME>
 <!--134**************--></AD_CALLOUT>
 
-<!--135**************--><AD_CALLOUT>
-<!--135 AD_CALLOUT_ID-->
-<!--135-->              <AD_CALLOUT_ID><![CDATA[135]]></AD_CALLOUT_ID>
-<!--135 AD_CLIENT_ID-->
-<!--135-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--135 AD_ORG_ID-->
-<!--135-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--135 ISACTIVE-->
-<!--135-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--135 CREATED-->
-<!--135-->              <CREATED><![CDATA[2006-05-09 16:27:07.0]]></CREATED>
-<!--135 CREATEDBY-->
-<!--135-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--135 UPDATED-->
-<!--135-->              <UPDATED><![CDATA[2006-05-09 16:27:07.0]]></UPDATED>
-<!--135 UPDATEDBY-->
-<!--135-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--135 NAME-->
-<!--135-->              <NAME><![CDATA[SL_Locator_Renting]]></NAME>
-<!--135**************--></AD_CALLOUT>
-
 <!--136**************--><AD_CALLOUT>
 <!--136 AD_CALLOUT_ID-->
 <!--136-->              <AD_CALLOUT_ID><![CDATA[136]]></AD_CALLOUT_ID>
@@ -1391,48 +1370,6 @@
 <!--800005-->              <NAME><![CDATA[SL_Budget_Product]]></NAME>
 <!--800005**************--></AD_CALLOUT>
 
-<!--800007**************--><AD_CALLOUT>
-<!--800007 AD_CALLOUT_ID-->
-<!--800007-->              <AD_CALLOUT_ID><![CDATA[800007]]></AD_CALLOUT_ID>
-<!--800007 AD_CLIENT_ID-->
-<!--800007-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800007 AD_ORG_ID-->
-<!--800007-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800007 ISACTIVE-->
-<!--800007-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800007 CREATED-->
-<!--800007-->              <CREATED><![CDATA[2006-07-14 18:57:20.0]]></CREATED>
-<!--800007 CREATEDBY-->
-<!--800007-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800007 UPDATED-->
-<!--800007-->              <UPDATED><![CDATA[2006-07-14 18:57:20.0]]></UPDATED>
-<!--800007 UPDATEDBY-->
-<!--800007-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800007 NAME-->
-<!--800007-->              <NAME><![CDATA[SL_MInOutTraceReports]]></NAME>
-<!--800007**************--></AD_CALLOUT>
-
-<!--800008**************--><AD_CALLOUT>
-<!--800008 AD_CALLOUT_ID-->
-<!--800008-->              <AD_CALLOUT_ID><![CDATA[800008]]></AD_CALLOUT_ID>
-<!--800008 AD_CLIENT_ID-->
-<!--800008-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800008 AD_ORG_ID-->
-<!--800008-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800008 ISACTIVE-->
-<!--800008-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800008 CREATED-->
-<!--800008-->              <CREATED><![CDATA[2006-09-25 19:16:58.0]]></CREATED>
-<!--800008 CREATEDBY-->
-<!--800008-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800008 UPDATED-->
-<!--800008-->              <UPDATED><![CDATA[2006-09-25 19:16:58.0]]></UPDATED>
-<!--800008 UPDATEDBY-->
-<!--800008-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800008 NAME-->
-<!--800008-->              <NAME><![CDATA[SL_CreateFromMultiple_Warehouse]]></NAME>
-<!--800008**************--></AD_CALLOUT>
-
 <!--800009**************--><AD_CALLOUT>
 <!--800009 AD_CALLOUT_ID-->
 <!--800009-->              <AD_CALLOUT_ID><![CDATA[800009]]></AD_CALLOUT_ID>
@@ -1453,27 +1390,6 @@
 <!--800009 NAME-->
 <!--800009-->              <NAME><![CDATA[SL_CostcenterEmployee_SalaryCategory]]></NAME>
 <!--800009**************--></AD_CALLOUT>
-
-<!--800010**************--><AD_CALLOUT>
-<!--800010 AD_CALLOUT_ID-->
-<!--800010-->              <AD_CALLOUT_ID><![CDATA[800010]]></AD_CALLOUT_ID>
-<!--800010 AD_CLIENT_ID-->
-<!--800010-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800010 AD_ORG_ID-->
-<!--800010-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800010 ISACTIVE-->
-<!--800010-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800010 CREATED-->
-<!--800010-->              <CREATED><![CDATA[2006-11-30 11:20:55.0]]></CREATED>
-<!--800010 CREATEDBY-->
-<!--800010-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800010 UPDATED-->
-<!--800010-->              <UPDATED><![CDATA[2006-12-01 14:11:04.0]]></UPDATED>
-<!--800010 UPDATEDBY-->
-<!--800010-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800010 NAME-->
-<!--800010-->              <NAME><![CDATA[SE_Expense_Producttype]]></NAME>
-<!--800010**************--></AD_CALLOUT>
 
 <!--800011**************--><AD_CALLOUT>
 <!--800011 AD_CALLOUT_ID-->

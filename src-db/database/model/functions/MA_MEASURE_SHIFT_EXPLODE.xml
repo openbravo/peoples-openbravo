@@ -104,15 +104,13 @@
           (
             MA_Measure_Group_ID, AD_Client_ID, AD_Org_ID, Isactive,
             Created, Createdby, Updated, Updatedby,
-            MA_CCP_Group_ID, MA_Measure_Shift_ID, Product, Seqno,
-            Hassecproduct
+            MA_CCP_Group_ID, MA_Measure_Shift_ID, Seqno
           )
           VALUES
           (
             v_Measure_Group, v_Client_ID, v_Org_ID, 'Y',
             now(), v_User_ID, now(), v_User_ID,
-            Cur_CCP_Group.MA_CCP_Group_ID, v_Record_ID, '', Cur_CCP_Group.SEQNO,
-            Cur_CCP_Group.HASSECPRODUCT
+            Cur_CCP_Group.MA_CCP_Group_ID, v_Record_ID, Cur_CCP_Group.SEQNO
           )
           ;
         -- v_time is equal to now() at starttime

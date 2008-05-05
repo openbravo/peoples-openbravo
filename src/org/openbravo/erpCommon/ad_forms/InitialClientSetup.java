@@ -1103,19 +1103,14 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
         IsDocNoControlled = "N";
       else
         IsDocNoControlled = "Y";
-      String IsTransferred = "";
-      if (DocBaseType.equals("SOO"))
-        IsTransferred = "N";
-      else
-        IsTransferred = "Y";
       if (DocBaseType.startsWith("AR") || DocBaseType.equals("MMS") || DocBaseType.equals("SOO"))
         IsSOTrx = "Y";
       else
         IsSOTrx = "N";
-      if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createDocType - C_DocType_ID: " + C_DocType_ID + ", AD_Client_ID: " + AD_Client_ID + ", Name: " + Name + ", PrintName: " + PrintName + "DocBaseType: " + DocBaseType + ", DocSubTypeSO: " + DocSubTypeSO + ", C_DocTypeShipment_ID: " + C_DocTypeShipment_ID + ", C_DocTypeInvoice_ID: " + C_DocTypeInvoice_ID + ", IsDocNoControlled: " + IsDocNoControlled + ", AD_Sequence_ID: " + AD_Sequence_ID + ", GL_Category_ID: " + GL_Category_ID + ", IsTransferred: " + IsTransferred + ", IsSOTrx: " + IsSOTrx);
+      if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createDocType - C_DocType_ID: " + C_DocType_ID + ", AD_Client_ID: " + AD_Client_ID + ", Name: " + Name + ", PrintName: " + PrintName + "DocBaseType: " + DocBaseType + ", DocSubTypeSO: " + DocSubTypeSO + ", C_DocTypeShipment_ID: " + C_DocTypeShipment_ID + ", C_DocTypeInvoice_ID: " + C_DocTypeInvoice_ID + ", IsDocNoControlled: " + IsDocNoControlled + ", AD_Sequence_ID: " + AD_Sequence_ID + ", GL_Category_ID: " + GL_Category_ID + ", IsSOTrx: " + IsSOTrx);
       if (InitialClientSetupData.insertDocType(conn ,this,C_DocType_ID, AD_Client_ID, Name, PrintName,DocBaseType,
       DocSubTypeSO, C_DocTypeShipment_ID, C_DocTypeInvoice_ID, IsDocNoControlled, AD_Sequence_ID, GL_Category_ID,
-      IsTransferred, IsSOTrx, strTableId) != 1)
+      IsSOTrx, strTableId) != 1)
       log4j.warn("InitialClientSetup - createDocType - DocType NOT created - " + Name);
       //
       m_info.append(Utility.messageBD(this, "C_DocType", vars.getLanguage())).append("=").append(Name).append(SALTO_LINEA);
@@ -1366,13 +1361,6 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_PaymentTerm_ID: " + C_PaymentTerm_ID);
     if (InitialClientSetupData.insertPaymentTerm(conn ,this, C_PaymentTerm_ID,AD_Client_ID) != 1)
       log4j.warn("InitialClientSetup - createEntities - PaymentTerm NOT inserted");
-  
-    //  Project Cycle
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_Cycle: ");
-    C_Cycle_ID = SequenceIdData.getSequence(this, "C_Cycle", client);
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_Cycle_ID: " + C_Cycle_ID);
-    if (InitialClientSetupData.insertCycle(conn ,this, C_Cycle_ID,AD_Client_ID, defaultName, C_Currency_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - Cycle NOT inserted");
   
     releaseCommitConnection(conn);
     conn = this.getTransactionConnection();

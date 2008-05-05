@@ -66,9 +66,6 @@
       <foreign-key foreignTable="C_ACCTSCHEMA" name="REFC_ACCTSCHEMA1891">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_COSTTYPE" name="REFC_COSTTYPE1890">
-        <reference local="C_COSTTYPE_ID" foreign="C_COSTTYPE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="S_RESOURCE" name="SRESOURCE_RRESOURCEPLANCOST">
         <reference local="S_RESOURCE_ID" foreign="S_RESOURCE_ID"/>
       </foreign-key>

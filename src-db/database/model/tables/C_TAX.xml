@@ -45,19 +45,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISDOCUMENTLEVEL" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="VALIDFROM" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
       <column name="ISSUMMARY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="REQUIRESTAXCERTIFICATE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
@@ -99,10 +91,6 @@
       </column>
       <column name="SOPOTYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[B]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="ISPRINTTAX" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <column name="CASCADE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
@@ -174,8 +162,5 @@
         <unique-column name="PARENT_TAX_ID"/>
       </unique>
       <check name="C_TAX_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_TAX_ISDOCUMENTLEVEL_CHECK"><![CDATA[ISDOCUMENTLEVEL IN ('Y', 'N')]]></check>
-      <check name="C_TAX_ISPRINTTAX_CHECK"><![CDATA[ISPRINTTAX IN ('Y', 'N')]]></check>
-      <check name="CTAX_REQTAXCERTIFIC_CHECK"><![CDATA[REQUIRESTAXCERTIFICATE IN ('Y', 'N')]]></check>
     </table>
   </database>

@@ -61,15 +61,6 @@ public class DocLine_Material extends DocLine {
         }   //  getProductCosts
 
         /**
-         *  Get Total Product Costs
-         *  @param as accounting schema
-         *  @return costs
-         */
-        public String getProductCosts (AcctSchema as, ConnectionProvider conn, Connection con){
-                return p_productInfo.getProductCosts(as, conn, con);
-        }   //  getProductCosts
-
-        /**
          *  Line Account from Product
          *
          *  @param  AcctType see ProoductInfo.ACCTTYPE_* (0..3)

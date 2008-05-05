@@ -77,14 +77,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISAPPROVED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="ISTRANSFERRED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="ISPRINTED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
@@ -173,20 +165,12 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISPAID" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="CREATEFROM" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
       <column name="GENERATETO" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="SENDEMAIL" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="AD_USER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
@@ -294,12 +278,9 @@
       <check name="C_INVOICE_CREATEFROM_CHECK"><![CDATA[CREATEFROM IN ('Y', 'N')]]></check>
       <check name="C_INVOICE_GENERATETO_CHECK"><![CDATA[GENERATETO IN ('Y', 'N')]]></check>
       <check name="C_INVOICE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_INVOICE_ISAPPROVED_CHECK"><![CDATA[ISAPPROVED IN ('Y', 'N')]]></check>
-      <check name="C_INVOICE_ISPAID_CHECK"><![CDATA[ISPAID IN ('Y', 'N')]]></check>
       <check name="C_INVOICE_ISPRINTED_CHECK"><![CDATA[ISPRINTED IN ('Y', 'N')]]></check>
       <check name="C_INVOICE_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
       <check name="C_INVOICE_ISTAXINCLUDED_CHECK"><![CDATA[ISTAXINCLUDED IN ('Y', 'N')]]></check>
-      <check name="C_INVOICE_ISTRANSFERRED_CHECK"><![CDATA[ISTRANSFERRED IN ('Y', 'N')]]></check>
       <check name="C_INVOICE_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
       <check name="CINV_ISDISCOUNTPRINT_CHECK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
     </table>

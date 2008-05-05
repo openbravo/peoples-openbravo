@@ -317,11 +317,6 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     if (fields==null || fields.length==0) return "";
     StringBuffer strHtml = new StringBuffer();
     strHtml.append("function onloadFunctions() {\n");
-    if (!fields[0].elementname.equals("")) {
-      for (int i=0;i<fields.length;i++) {
-        if (fields[i].islist.equals("Y")) strHtml.append("  new TypeAheadCombo(\"").append(replace(fields[i].elementname)).append("\");\n");
-      }
-    }
     strHtml.append("  return true;\n");
     strHtml.append("}\n");
     return strHtml.toString();

@@ -204,21 +204,21 @@
             INTO C_ORDERLINE
               (
                 DateOrdered, M_Warehouse_ID, QtyOrdered, QtyDelivered,
-                QtyReserved, M_Shipper_ID, QtyInvoiced, SerNo,
+                QtyReserved, M_Shipper_ID, QtyInvoiced,
                 C_Currency_ID, PriceList, DatePromised, DateDelivered,
                 DateInvoiced, Created, IsActive, Line,
                 C_OrderLine_ID, AD_Client_ID, C_Order_ID, Description,
                 M_Product_ID, C_UOM_ID, DirectShip, CreatedBy,
                 UpdatedBy, FreightAmt, C_Charge_ID, ChargeAmt,
                 Updated, AD_Org_ID, S_ResourceAssignment_ID, C_BPartner_ID,
-                PriceActual, C_Tax_ID, Lot, C_BPartner_Location_ID,
+                PriceActual, C_Tax_ID, C_BPartner_Location_ID,
                 Discount, PriceLimit, Ref_OrderLine_ID, LineNetAmt,
                 M_AttributeSetInstance_ID, IsDescription, PriceStd
               )
               VALUES
               (
                 TRUNC(now(), 'DD'), Cur_SO.M_WAREHOUSE_ID, SOLINES.InvoicedQty, 0,
-                0, NULL, 0, NULL,
+                0, NULL, 0,
                 Cur_SO.C_CURRENCY_ID, v_PriceList, TRUNC(now(), 'DD'), NULL,
                 NULL, now(), 'Y', SOLINES.LINE,
                 v_C_OrderLine_ID, Cur_SO.AD_CLIENT_ID, v_C_Order_ID, SOLINES.DESCRIPTION,
@@ -226,7 +226,7 @@
                 v_AD_User_ID, 0, NULL, 0,
                 now(), Cur_SO.AD_ORG_ID, NULL, Cur_SO.C_BPARTNER_ID,
                 M_Get_Offers_Price(now(), Cur_SO.C_BPARTNER_ID, SOLINES.M_PRODUCT_ID, v_PriceStd, SOLINES.InvoicedQty,  v_M_PriceList_ID),
-    C_Gettax(SOLINES.M_PRODUCT_ID, TRUNC(now(), 'DD'), Cur_SO.AD_ORG_ID, Cur_SO.M_WAREHOUSE_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_PROJECT_ID, 'Y'), NULL, Cur_SO.C_BPARTNER_LOCATION_ID,
+    C_Gettax(SOLINES.M_PRODUCT_ID, TRUNC(now(), 'DD'), Cur_SO.AD_ORG_ID, Cur_SO.M_WAREHOUSE_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_BPARTNER_LOCATION_ID, Cur_SO.C_PROJECT_ID, 'Y'), Cur_SO.C_BPARTNER_LOCATION_ID,
                 (v_PriceList-v_PriceStd) *100/v_PriceList, v_PriceLimit, NULL, (M_Get_Offers_Price(now(), Cur_SO.C_BPARTNER_ID, SOLINES.M_PRODUCT_ID, v_PriceStd, SOLINES.InvoicedQty,  v_M_PriceList_ID) * SOLINES.InvoicedQty),
                 NULL, 'N', v_PriceStd
               )

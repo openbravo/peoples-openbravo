@@ -237,18 +237,6 @@ public class DocLine {
         return m_AmtSourceCr;
     }   //  getAmtSourceCr
 
-    /**
-     *  Get Revenue Recognition
-     *  @return C_RevenueRecognition_ID
-     */
-    public String getC_RevenueRecognition_ID(){
-      try {
-        return (p_productInfo.m_C_RevenueRecognition_ID==null)?"":p_productInfo.m_C_RevenueRecognition_ID;
-      } catch (Exception e) {
-        log4jDocLine.error("getC_RevenueRecognition_ID Error:"+e.toString());
-        return "";
-      }
-    }   //  getC_RevenueRecognition_ID
 
     /**
      *  Quantity

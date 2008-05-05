@@ -28,8 +28,6 @@
 <!--1-->              <DESCRIPTION><![CDATA[Data Type selection]]></DESCRIPTION>
 <!--1 VALIDATIONTYPE-->
 <!--1-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--1 ENTITYTYPE-->
-<!--1-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--1**************--></AD_REFERENCE>
 
 <!--2**************--><AD_REFERENCE>
@@ -59,8 +57,6 @@
 <!--2-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--2 VFORMAT-->
 <!--2-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--2 ENTITYTYPE-->
-<!--2-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--2**************--></AD_REFERENCE>
 
 <!--3**************--><AD_REFERENCE>
@@ -86,8 +82,6 @@
 <!--3-->              <DESCRIPTION><![CDATA[Column selection]]></DESCRIPTION>
 <!--3 VALIDATIONTYPE-->
 <!--3-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--3 ENTITYTYPE-->
-<!--3-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--3**************--></AD_REFERENCE>
 
 <!--4**************--><AD_REFERENCE>
@@ -115,8 +109,6 @@
 <!--4-->              <HELP><![CDATA[(not DataType and Independent)]]></HELP>
 <!--4 VALIDATIONTYPE-->
 <!--4-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--4 ENTITYTYPE-->
-<!--4-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--4**************--></AD_REFERENCE>
 
 <!--5**************--><AD_REFERENCE>
@@ -144,8 +136,6 @@
 <!--5-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--5 VFORMAT-->
 <!--5-->              <VFORMAT><![CDATA[0]]></VFORMAT>
-<!--5 ENTITYTYPE-->
-<!--5-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--5**************--></AD_REFERENCE>
 
 <!--10**************--><AD_REFERENCE>
@@ -171,8 +161,6 @@
 <!--10-->              <DESCRIPTION><![CDATA[Character String]]></DESCRIPTION>
 <!--10 VALIDATIONTYPE-->
 <!--10-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--10 ENTITYTYPE-->
-<!--10-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--10**************--></AD_REFERENCE>
 
 <!--11**************--><AD_REFERENCE>
@@ -198,8 +186,6 @@
 <!--11-->              <DESCRIPTION><![CDATA[10 Digit numeric]]></DESCRIPTION>
 <!--11 VALIDATIONTYPE-->
 <!--11-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--11 ENTITYTYPE-->
-<!--11-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--11**************--></AD_REFERENCE>
 
 <!--12**************--><AD_REFERENCE>
@@ -225,8 +211,6 @@
 <!--12-->              <DESCRIPTION><![CDATA[Number with 4 decimals]]></DESCRIPTION>
 <!--12 VALIDATIONTYPE-->
 <!--12-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--12 ENTITYTYPE-->
-<!--12-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--12**************--></AD_REFERENCE>
 
 <!--13**************--><AD_REFERENCE>
@@ -252,8 +236,6 @@
 <!--13-->              <DESCRIPTION><![CDATA[10 Digit Identifier]]></DESCRIPTION>
 <!--13 VALIDATIONTYPE-->
 <!--13-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--13 ENTITYTYPE-->
-<!--13-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--13**************--></AD_REFERENCE>
 
 <!--14**************--><AD_REFERENCE>
@@ -279,8 +261,6 @@
 <!--14-->              <DESCRIPTION><![CDATA[Character String up to 2000 characters]]></DESCRIPTION>
 <!--14 VALIDATIONTYPE-->
 <!--14-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--14 ENTITYTYPE-->
-<!--14-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--14**************--></AD_REFERENCE>
 
 <!--15**************--><AD_REFERENCE>
@@ -306,8 +286,6 @@
 <!--15-->              <DESCRIPTION><![CDATA[Date mm/dd/yyyy]]></DESCRIPTION>
 <!--15 VALIDATIONTYPE-->
 <!--15-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--15 ENTITYTYPE-->
-<!--15-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--15**************--></AD_REFERENCE>
 
 <!--16**************--><AD_REFERENCE>
@@ -333,8 +311,6 @@
 <!--16-->              <DESCRIPTION><![CDATA[Date with time]]></DESCRIPTION>
 <!--16 VALIDATIONTYPE-->
 <!--16-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--16 ENTITYTYPE-->
-<!--16-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--16**************--></AD_REFERENCE>
 
 <!--17**************--><AD_REFERENCE>
@@ -360,8 +336,6 @@
 <!--17-->              <DESCRIPTION><![CDATA[Reference List]]></DESCRIPTION>
 <!--17 VALIDATIONTYPE-->
 <!--17-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--17 ENTITYTYPE-->
-<!--17-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--17**************--></AD_REFERENCE>
 
 <!--18**************--><AD_REFERENCE>
@@ -387,8 +361,6 @@
 <!--18-->              <DESCRIPTION><![CDATA[Table List]]></DESCRIPTION>
 <!--18 VALIDATIONTYPE-->
 <!--18-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--18 ENTITYTYPE-->
-<!--18-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--18**************--></AD_REFERENCE>
 
 <!--19**************--><AD_REFERENCE>
@@ -414,8 +386,6 @@
 <!--19-->              <DESCRIPTION><![CDATA[Direct Table Access]]></DESCRIPTION>
 <!--19 VALIDATIONTYPE-->
 <!--19-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--19 ENTITYTYPE-->
-<!--19-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--19**************--></AD_REFERENCE>
 
 <!--20**************--><AD_REFERENCE>
@@ -441,8 +411,6 @@
 <!--20-->              <DESCRIPTION><![CDATA[CheckBox]]></DESCRIPTION>
 <!--20 VALIDATIONTYPE-->
 <!--20-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--20 ENTITYTYPE-->
-<!--20-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--20**************--></AD_REFERENCE>
 
 <!--21**************--><AD_REFERENCE>
@@ -468,8 +436,6 @@
 <!--21-->              <DESCRIPTION><![CDATA[Location/Address]]></DESCRIPTION>
 <!--21 VALIDATIONTYPE-->
 <!--21-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
-<!--21 ENTITYTYPE-->
-<!--21-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--21**************--></AD_REFERENCE>
 
 <!--22**************--><AD_REFERENCE>
@@ -495,8 +461,6 @@
 <!--22-->              <DESCRIPTION><![CDATA[Float Number]]></DESCRIPTION>
 <!--22 VALIDATIONTYPE-->
 <!--22-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--22 ENTITYTYPE-->
-<!--22-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--22**************--></AD_REFERENCE>
 
 <!--23**************--><AD_REFERENCE>
@@ -522,8 +486,6 @@
 <!--23-->              <DESCRIPTION><![CDATA[Binary Data]]></DESCRIPTION>
 <!--23 VALIDATIONTYPE-->
 <!--23-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--23 ENTITYTYPE-->
-<!--23-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--23**************--></AD_REFERENCE>
 
 <!--24**************--><AD_REFERENCE>
@@ -549,8 +511,6 @@
 <!--24-->              <DESCRIPTION><![CDATA[Time]]></DESCRIPTION>
 <!--24 VALIDATIONTYPE-->
 <!--24-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--24 ENTITYTYPE-->
-<!--24-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--24**************--></AD_REFERENCE>
 
 <!--25**************--><AD_REFERENCE>
@@ -576,8 +536,6 @@
 <!--25-->              <DESCRIPTION><![CDATA[Account Element]]></DESCRIPTION>
 <!--25 VALIDATIONTYPE-->
 <!--25-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
-<!--25 ENTITYTYPE-->
-<!--25-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--25**************--></AD_REFERENCE>
 
 <!--26**************--><AD_REFERENCE>
@@ -603,8 +561,6 @@
 <!--26-->              <DESCRIPTION><![CDATA[Row ID Data Type]]></DESCRIPTION>
 <!--26 VALIDATIONTYPE-->
 <!--26-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--26 ENTITYTYPE-->
-<!--26-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--26**************--></AD_REFERENCE>
 
 <!--27**************--><AD_REFERENCE>
@@ -630,8 +586,6 @@
 <!--27-->              <DESCRIPTION><![CDATA[Color element]]></DESCRIPTION>
 <!--27 VALIDATIONTYPE-->
 <!--27-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--27 ENTITYTYPE-->
-<!--27-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--27**************--></AD_REFERENCE>
 
 <!--28**************--><AD_REFERENCE>
@@ -657,8 +611,6 @@
 <!--28-->              <DESCRIPTION><![CDATA[Command Button - starts a process]]></DESCRIPTION>
 <!--28 VALIDATIONTYPE-->
 <!--28-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--28 ENTITYTYPE-->
-<!--28-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--28**************--></AD_REFERENCE>
 
 <!--29**************--><AD_REFERENCE>
@@ -684,8 +636,6 @@
 <!--29-->              <DESCRIPTION><![CDATA[Quantity data type]]></DESCRIPTION>
 <!--29 VALIDATIONTYPE-->
 <!--29-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--29 ENTITYTYPE-->
-<!--29-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--29**************--></AD_REFERENCE>
 
 <!--30**************--><AD_REFERENCE>
@@ -711,8 +661,6 @@
 <!--30-->              <DESCRIPTION><![CDATA[Search Field]]></DESCRIPTION>
 <!--30 VALIDATIONTYPE-->
 <!--30-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--30 ENTITYTYPE-->
-<!--30-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--30**************--></AD_REFERENCE>
 
 <!--31**************--><AD_REFERENCE>
@@ -738,8 +686,6 @@
 <!--31-->              <DESCRIPTION><![CDATA[Warehouse Locator Data type]]></DESCRIPTION>
 <!--31 VALIDATIONTYPE-->
 <!--31-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
-<!--31 ENTITYTYPE-->
-<!--31-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--31**************--></AD_REFERENCE>
 
 <!--32**************--><AD_REFERENCE>
@@ -765,8 +711,6 @@
 <!--32-->              <DESCRIPTION><![CDATA[Binary Image Data]]></DESCRIPTION>
 <!--32 VALIDATIONTYPE-->
 <!--32-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--32 ENTITYTYPE-->
-<!--32-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--32**************--></AD_REFERENCE>
 
 <!--33**************--><AD_REFERENCE>
@@ -792,8 +736,6 @@
 <!--33-->              <DESCRIPTION><![CDATA[Resource Assignment]]></DESCRIPTION>
 <!--33 VALIDATIONTYPE-->
 <!--33-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--33 ENTITYTYPE-->
-<!--33-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--33**************--></AD_REFERENCE>
 
 <!--34**************--><AD_REFERENCE>
@@ -819,8 +761,6 @@
 <!--34-->              <DESCRIPTION><![CDATA[Large Text - Character String up to 2000 characters]]></DESCRIPTION>
 <!--34 VALIDATIONTYPE-->
 <!--34-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--34 ENTITYTYPE-->
-<!--34-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--34**************--></AD_REFERENCE>
 
 <!--35**************--><AD_REFERENCE>
@@ -846,8 +786,6 @@
 <!--35-->              <DESCRIPTION><![CDATA[Product Attribute]]></DESCRIPTION>
 <!--35 VALIDATIONTYPE-->
 <!--35-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--35 ENTITYTYPE-->
-<!--35-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--35**************--></AD_REFERENCE>
 
 <!--100**************--><AD_REFERENCE>
@@ -873,8 +811,6 @@
 <!--100-->              <DESCRIPTION><![CDATA[Validation rule Parent selection]]></DESCRIPTION>
 <!--100 VALIDATIONTYPE-->
 <!--100-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--100 ENTITYTYPE-->
-<!--100-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--100**************--></AD_REFERENCE>
 
 <!--101**************--><AD_REFERENCE>
@@ -904,8 +840,6 @@
 <!--101-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--101 VFORMAT-->
 <!--101-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--101 ENTITYTYPE-->
-<!--101-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--101**************--></AD_REFERENCE>
 
 <!--102**************--><AD_REFERENCE>
@@ -931,8 +865,6 @@
 <!--102-->              <DESCRIPTION><![CDATA[Message selection]]></DESCRIPTION>
 <!--102 VALIDATIONTYPE-->
 <!--102-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--102 ENTITYTYPE-->
-<!--102-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--102**************--></AD_REFERENCE>
 
 <!--103**************--><AD_REFERENCE>
@@ -960,8 +892,6 @@
 <!--103-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--103 VFORMAT-->
 <!--103-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--103 ENTITYTYPE-->
-<!--103-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--103**************--></AD_REFERENCE>
 
 <!--104**************--><AD_REFERENCE>
@@ -989,8 +919,6 @@
 <!--104-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--104 VFORMAT-->
 <!--104-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--104 ENTITYTYPE-->
-<!--104-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--104**************--></AD_REFERENCE>
 
 <!--105**************--><AD_REFERENCE>
@@ -1016,8 +944,6 @@
 <!--105-->              <DESCRIPTION><![CDATA[Menu Parent selection]]></DESCRIPTION>
 <!--105 VALIDATIONTYPE-->
 <!--105-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--105 ENTITYTYPE-->
-<!--105-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--105**************--></AD_REFERENCE>
 
 <!--106**************--><AD_REFERENCE>
@@ -1043,8 +969,6 @@
 <!--106-->              <DESCRIPTION><![CDATA[Language selection]]></DESCRIPTION>
 <!--106 VALIDATIONTYPE-->
 <!--106-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--106 ENTITYTYPE-->
-<!--106-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--106**************--></AD_REFERENCE>
 
 <!--108**************--><AD_REFERENCE>
@@ -1074,8 +998,6 @@
 <!--108-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--108 VFORMAT-->
 <!--108-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--108 ENTITYTYPE-->
-<!--108-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--108**************--></AD_REFERENCE>
 
 <!--109**************--><AD_REFERENCE>
@@ -1101,8 +1023,6 @@
 <!--109-->              <DESCRIPTION><![CDATA[Next workflow node selection]]></DESCRIPTION>
 <!--109 VALIDATIONTYPE-->
 <!--109-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--109 ENTITYTYPE-->
-<!--109-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--109**************--></AD_REFERENCE>
 
 <!--110**************--><AD_REFERENCE>
@@ -1128,8 +1048,6 @@
 <!--110-->              <DESCRIPTION><![CDATA[User selection]]></DESCRIPTION>
 <!--110 VALIDATIONTYPE-->
 <!--110-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--110 ENTITYTYPE-->
-<!--110-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--110**************--></AD_REFERENCE>
 
 <!--111**************--><AD_REFERENCE>
@@ -1157,8 +1075,6 @@
 <!--111-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--111 VFORMAT-->
 <!--111-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--111 ENTITYTYPE-->
-<!--111-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--111**************--></AD_REFERENCE>
 
 <!--112**************--><AD_REFERENCE>
@@ -1184,8 +1100,6 @@
 <!--112-->              <DESCRIPTION><![CDATA[Currencies with dynamic exchange rate selection]]></DESCRIPTION>
 <!--112 VALIDATIONTYPE-->
 <!--112-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--112 ENTITYTYPE-->
-<!--112-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--112**************--></AD_REFERENCE>
 
 <!--113**************--><AD_REFERENCE>
@@ -1211,8 +1125,6 @@
 <!--113-->              <DESCRIPTION><![CDATA[Organization Parent selection]]></DESCRIPTION>
 <!--113 VALIDATIONTYPE-->
 <!--113-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--113 ENTITYTYPE-->
-<!--113-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--113**************--></AD_REFERENCE>
 
 <!--114**************--><AD_REFERENCE>
@@ -1238,8 +1150,6 @@
 <!--114-->              <DESCRIPTION><![CDATA[Unit of Measure selection]]></DESCRIPTION>
 <!--114 VALIDATIONTYPE-->
 <!--114-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--114 ENTITYTYPE-->
-<!--114-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--114**************--></AD_REFERENCE>
 
 <!--115**************--><AD_REFERENCE>
@@ -1267,8 +1177,6 @@
 <!--115-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--115 VFORMAT-->
 <!--115-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--115 ENTITYTYPE-->
-<!--115-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--115**************--></AD_REFERENCE>
 
 <!--116**************--><AD_REFERENCE>
@@ -1296,8 +1204,6 @@
 <!--116-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--116 VFORMAT-->
 <!--116-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--116 ENTITYTYPE-->
-<!--116-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--116**************--></AD_REFERENCE>
 
 <!--117**************--><AD_REFERENCE>
@@ -1325,8 +1231,6 @@
 <!--117-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--117 VFORMAT-->
 <!--117-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--117 ENTITYTYPE-->
-<!--117-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--117**************--></AD_REFERENCE>
 
 <!--118**************--><AD_REFERENCE>
@@ -1354,8 +1258,6 @@
 <!--118-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--118 VFORMAT-->
 <!--118-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--118 ENTITYTYPE-->
-<!--118-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--118**************--></AD_REFERENCE>
 
 <!--120**************--><AD_REFERENCE>
@@ -1385,8 +1287,6 @@
 <!--120-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--120 VFORMAT-->
 <!--120-->              <VFORMAT><![CDATA[LL]]></VFORMAT>
-<!--120 ENTITYTYPE-->
-<!--120-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--120**************--></AD_REFERENCE>
 
 <!--121**************--><AD_REFERENCE>
@@ -1416,8 +1316,6 @@
 <!--121-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--121 VFORMAT-->
 <!--121-->              <VFORMAT><![CDATA[AA]]></VFORMAT>
-<!--121 ENTITYTYPE-->
-<!--121-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--121**************--></AD_REFERENCE>
 
 <!--122**************--><AD_REFERENCE>
@@ -1445,8 +1343,6 @@
 <!--122-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--122 VFORMAT-->
 <!--122-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--122 ENTITYTYPE-->
-<!--122-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--122**************--></AD_REFERENCE>
 
 <!--123**************--><AD_REFERENCE>
@@ -1474,8 +1370,6 @@
 <!--123-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--123 VFORMAT-->
 <!--123-->              <VFORMAT><![CDATA[LL]]></VFORMAT>
-<!--123 ENTITYTYPE-->
-<!--123-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--123**************--></AD_REFERENCE>
 
 <!--124**************--><AD_REFERENCE>
@@ -1501,8 +1395,6 @@
 <!--124-->              <DESCRIPTION><![CDATA[Business Partner Parent selection]]></DESCRIPTION>
 <!--124 VALIDATIONTYPE-->
 <!--124-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--124 ENTITYTYPE-->
-<!--124-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--124**************--></AD_REFERENCE>
 
 <!--125**************--><AD_REFERENCE>
@@ -1530,8 +1422,6 @@
 <!--125-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--125 VFORMAT-->
 <!--125-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--125 ENTITYTYPE-->
-<!--125-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--125**************--></AD_REFERENCE>
 
 <!--126**************--><AD_REFERENCE>
@@ -1559,8 +1449,6 @@
 <!--126-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--126 VFORMAT-->
 <!--126-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--126 ENTITYTYPE-->
-<!--126-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--126**************--></AD_REFERENCE>
 
 <!--128**************--><AD_REFERENCE>
@@ -1586,8 +1474,6 @@
 <!--128-->              <DESCRIPTION><![CDATA[Sequence for Document selection]]></DESCRIPTION>
 <!--128 VALIDATIONTYPE-->
 <!--128-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--128 ENTITYTYPE-->
-<!--128-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--128**************--></AD_REFERENCE>
 
 <!--129**************--><AD_REFERENCE>
@@ -1613,8 +1499,6 @@
 <!--129-->              <DESCRIPTION><![CDATA[Client selection]]></DESCRIPTION>
 <!--129 VALIDATIONTYPE-->
 <!--129-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--129 ENTITYTYPE-->
-<!--129-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--129**************--></AD_REFERENCE>
 
 <!--130**************--><AD_REFERENCE>
@@ -1640,8 +1524,6 @@
 <!--130-->              <DESCRIPTION><![CDATA[Organization selection, no summary, no 0]]></DESCRIPTION>
 <!--130 VALIDATIONTYPE-->
 <!--130-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--130 ENTITYTYPE-->
-<!--130-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--130**************--></AD_REFERENCE>
 
 <!--131**************--><AD_REFERENCE>
@@ -1669,8 +1551,6 @@
 <!--131-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--131 VFORMAT-->
 <!--131-->              <VFORMAT><![CDATA[LL]]></VFORMAT>
-<!--131 ENTITYTYPE-->
-<!--131-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--131**************--></AD_REFERENCE>
 
 <!--132**************--><AD_REFERENCE>
@@ -1696,8 +1576,6 @@
 <!--132-->              <DESCRIPTION><![CDATA[Account selection]]></DESCRIPTION>
 <!--132 VALIDATIONTYPE-->
 <!--132-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--132 ENTITYTYPE-->
-<!--132-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--132**************--></AD_REFERENCE>
 
 <!--133**************--><AD_REFERENCE>
@@ -1723,8 +1601,6 @@
 <!--133-->              <DESCRIPTION><![CDATA[Location selection]]></DESCRIPTION>
 <!--133 VALIDATIONTYPE-->
 <!--133-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--133 ENTITYTYPE-->
-<!--133-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--133**************--></AD_REFERENCE>
 
 <!--134**************--><AD_REFERENCE>
@@ -1750,8 +1626,6 @@
 <!--134-->              <DESCRIPTION><![CDATA[User1 selection]]></DESCRIPTION>
 <!--134 VALIDATIONTYPE-->
 <!--134-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--134 ENTITYTYPE-->
-<!--134-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--134**************--></AD_REFERENCE>
 
 <!--135**************--><AD_REFERENCE>
@@ -1779,8 +1653,6 @@
 <!--135-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--135 VFORMAT-->
 <!--135-->              <VFORMAT><![CDATA[LL]]></VFORMAT>
-<!--135 ENTITYTYPE-->
-<!--135-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--135**************--></AD_REFERENCE>
 
 <!--136**************--><AD_REFERENCE>
@@ -1806,8 +1678,6 @@
 <!--136-->              <DESCRIPTION><![CDATA[Accounting Schema selection]]></DESCRIPTION>
 <!--136 VALIDATIONTYPE-->
 <!--136-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--136 ENTITYTYPE-->
-<!--136-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--136**************--></AD_REFERENCE>
 
 <!--137**************--><AD_REFERENCE>
@@ -1833,8 +1703,6 @@
 <!--137-->              <DESCRIPTION><![CDATA[User2 selection]]></DESCRIPTION>
 <!--137 VALIDATIONTYPE-->
 <!--137-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--137 ENTITYTYPE-->
-<!--137-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--137**************--></AD_REFERENCE>
 
 <!--138**************--><AD_REFERENCE>
@@ -1860,8 +1728,6 @@
 <!--138-->              <DESCRIPTION><![CDATA[Business Partner selection (no Summary)]]></DESCRIPTION>
 <!--138 VALIDATIONTYPE-->
 <!--138-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--138 ENTITYTYPE-->
-<!--138-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--138**************--></AD_REFERENCE>
 
 <!--140**************--><AD_REFERENCE>
@@ -1887,8 +1753,6 @@
 <!--140-->              <DESCRIPTION><![CDATA[Product selection]]></DESCRIPTION>
 <!--140 VALIDATIONTYPE-->
 <!--140-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--140 ENTITYTYPE-->
-<!--140-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--140**************--></AD_REFERENCE>
 
 <!--141**************--><AD_REFERENCE>
@@ -1914,8 +1778,6 @@
 <!--141-->              <DESCRIPTION><![CDATA[Project selection]]></DESCRIPTION>
 <!--141 VALIDATIONTYPE-->
 <!--141-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--141 ENTITYTYPE-->
-<!--141-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--141**************--></AD_REFERENCE>
 
 <!--142**************--><AD_REFERENCE>
@@ -1941,8 +1803,6 @@
 <!--142-->              <DESCRIPTION><![CDATA[Activity selection]]></DESCRIPTION>
 <!--142 VALIDATIONTYPE-->
 <!--142-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--142 ENTITYTYPE-->
-<!--142-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--142**************--></AD_REFERENCE>
 
 <!--143**************--><AD_REFERENCE>
@@ -1968,8 +1828,6 @@
 <!--143-->              <DESCRIPTION><![CDATA[Campaign selection]]></DESCRIPTION>
 <!--143 VALIDATIONTYPE-->
 <!--143-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--143 ENTITYTYPE-->
-<!--143-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--143**************--></AD_REFERENCE>
 
 <!--144**************--><AD_REFERENCE>
@@ -1995,8 +1853,6 @@
 <!--144-->              <DESCRIPTION><![CDATA[Sales Region selection]]></DESCRIPTION>
 <!--144 VALIDATIONTYPE-->
 <!--144-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--144 ENTITYTYPE-->
-<!--144-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--144**************--></AD_REFERENCE>
 
 <!--145**************--><AD_REFERENCE>
@@ -2022,8 +1878,6 @@
 <!--145-->              <DESCRIPTION><![CDATA[Element selection]]></DESCRIPTION>
 <!--145 VALIDATIONTYPE-->
 <!--145-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--145 ENTITYTYPE-->
-<!--145-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--145**************--></AD_REFERENCE>
 
 <!--148**************--><AD_REFERENCE>
@@ -2049,8 +1903,6 @@
 <!--148-->              <DESCRIPTION><![CDATA[Order Types list]]></DESCRIPTION>
 <!--148 VALIDATIONTYPE-->
 <!--148-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--148 ENTITYTYPE-->
-<!--148-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--148**************--></AD_REFERENCE>
 
 <!--149**************--><AD_REFERENCE>
@@ -2078,8 +1930,6 @@
 <!--149-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--149 VFORMAT-->
 <!--149-->              <VFORMAT><![CDATA[A]]></VFORMAT>
-<!--149 ENTITYTYPE-->
-<!--149-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--149**************--></AD_REFERENCE>
 
 <!--150**************--><AD_REFERENCE>
@@ -2105,8 +1955,6 @@
 <!--150-->              <DESCRIPTION><![CDATA[Invoicing Rules list]]></DESCRIPTION>
 <!--150 VALIDATIONTYPE-->
 <!--150-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--150 ENTITYTYPE-->
-<!--150-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--150**************--></AD_REFERENCE>
 
 <!--151**************--><AD_REFERENCE>
@@ -2132,8 +1980,6 @@
 <!--151-->              <DESCRIPTION><![CDATA[Delivery Rules list]]></DESCRIPTION>
 <!--151 VALIDATIONTYPE-->
 <!--151-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--151 ENTITYTYPE-->
-<!--151-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--151**************--></AD_REFERENCE>
 
 <!--152**************--><AD_REFERENCE>
@@ -2159,8 +2005,6 @@
 <!--152-->              <DESCRIPTION><![CDATA[Delivery via Rule list]]></DESCRIPTION>
 <!--152 VALIDATIONTYPE-->
 <!--152-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--152 ENTITYTYPE-->
-<!--152-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--152**************--></AD_REFERENCE>
 
 <!--153**************--><AD_REFERENCE>
@@ -2186,8 +2030,6 @@
 <!--153-->              <DESCRIPTION><![CDATA[Freight cost Rule list]]></DESCRIPTION>
 <!--153 VALIDATIONTYPE-->
 <!--153-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--153 ENTITYTYPE-->
-<!--153-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--153**************--></AD_REFERENCE>
 
 <!--154**************--><AD_REFERENCE>
@@ -2213,8 +2055,6 @@
 <!--154-->              <DESCRIPTION><![CDATA[Priority scale list]]></DESCRIPTION>
 <!--154 VALIDATIONTYPE-->
 <!--154-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--154 ENTITYTYPE-->
-<!--154-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--154**************--></AD_REFERENCE>
 
 <!--155**************--><AD_REFERENCE>
@@ -2240,8 +2080,6 @@
 <!--155-->              <DESCRIPTION><![CDATA[Price Rounding Rule list]]></DESCRIPTION>
 <!--155 VALIDATIONTYPE-->
 <!--155-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--155 ENTITYTYPE-->
-<!--155-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--155**************--></AD_REFERENCE>
 
 <!--156**************--><AD_REFERENCE>
@@ -2267,8 +2105,6 @@
 <!--156-->              <DESCRIPTION><![CDATA[Country selection]]></DESCRIPTION>
 <!--156 VALIDATIONTYPE-->
 <!--156-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--156 ENTITYTYPE-->
-<!--156-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--156**************--></AD_REFERENCE>
 
 <!--157**************--><AD_REFERENCE>
@@ -2294,8 +2130,6 @@
 <!--157-->              <DESCRIPTION><![CDATA[Region selection]]></DESCRIPTION>
 <!--157 VALIDATIONTYPE-->
 <!--157-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--157 ENTITYTYPE-->
-<!--157-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--157**************--></AD_REFERENCE>
 
 <!--158**************--><AD_REFERENCE>
@@ -2321,8 +2155,6 @@
 <!--158-->              <DESCRIPTION><![CDATA[Tax selection]]></DESCRIPTION>
 <!--158 VALIDATIONTYPE-->
 <!--158-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--158 ENTITYTYPE-->
-<!--158-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--158**************--></AD_REFERENCE>
 
 <!--159**************--><AD_REFERENCE>
@@ -2348,8 +2180,6 @@
 <!--159-->              <DESCRIPTION><![CDATA[Locations of a Business Partner]]></DESCRIPTION>
 <!--159 VALIDATIONTYPE-->
 <!--159-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--159 ENTITYTYPE-->
-<!--159-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--159**************--></AD_REFERENCE>
 
 <!--161**************--><AD_REFERENCE>
@@ -2373,8 +2203,6 @@
 <!--161-->              <NAME><![CDATA[M_Product Parent]]></NAME>
 <!--161 VALIDATIONTYPE-->
 <!--161-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--161 ENTITYTYPE-->
-<!--161-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--161**************--></AD_REFERENCE>
 
 <!--162**************--><AD_REFERENCE>
@@ -2400,8 +2228,6 @@
 <!--162-->              <DESCRIPTION><![CDATA[Product selection, no summary]]></DESCRIPTION>
 <!--162 VALIDATIONTYPE-->
 <!--162-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--162 ENTITYTYPE-->
-<!--162-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--162**************--></AD_REFERENCE>
 
 <!--163**************--><AD_REFERENCE>
@@ -2425,8 +2251,6 @@
 <!--163-->              <NAME><![CDATA[M_Product Category]]></NAME>
 <!--163 VALIDATIONTYPE-->
 <!--163-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--163 ENTITYTYPE-->
-<!--163-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--163**************--></AD_REFERENCE>
 
 <!--164**************--><AD_REFERENCE>
@@ -2450,8 +2274,6 @@
 <!--164-->              <NAME><![CDATA[M_Replenish Type]]></NAME>
 <!--164 VALIDATIONTYPE-->
 <!--164-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--164 ENTITYTYPE-->
-<!--164-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--164**************--></AD_REFERENCE>
 
 <!--166**************--><AD_REFERENCE>
@@ -2475,8 +2297,6 @@
 <!--166-->              <NAME><![CDATA[M_PriceListForSale]]></NAME>
 <!--166 VALIDATIONTYPE-->
 <!--166-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--166 ENTITYTYPE-->
-<!--166-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--166**************--></AD_REFERENCE>
 
 <!--167**************--><AD_REFERENCE>
@@ -2502,8 +2322,6 @@
 <!--167-->              <DESCRIPTION><![CDATA[List of days]]></DESCRIPTION>
 <!--167 VALIDATIONTYPE-->
 <!--167-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--167 ENTITYTYPE-->
-<!--167-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--167**************--></AD_REFERENCE>
 
 <!--168**************--><AD_REFERENCE>
@@ -2527,8 +2345,6 @@
 <!--168-->              <NAME><![CDATA[C_InvoiceSchedule InvoiceFrequency]]></NAME>
 <!--168 VALIDATIONTYPE-->
 <!--168-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--168 ENTITYTYPE-->
-<!--168-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--168**************--></AD_REFERENCE>
 
 <!--169**************--><AD_REFERENCE>
@@ -2552,8 +2368,6 @@
 <!--169-->              <NAME><![CDATA[C_Project Parent]]></NAME>
 <!--169 VALIDATIONTYPE-->
 <!--169-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--169 ENTITYTYPE-->
-<!--169-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--169**************--></AD_REFERENCE>
 
 <!--170**************--><AD_REFERENCE>
@@ -2577,8 +2391,6 @@
 <!--170-->              <NAME><![CDATA[C_DocType]]></NAME>
 <!--170 VALIDATIONTYPE-->
 <!--170-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--170 ENTITYTYPE-->
-<!--170-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--170**************--></AD_REFERENCE>
 
 <!--171**************--><AD_REFERENCE>
@@ -2602,8 +2414,6 @@
 <!--171-->              <NAME><![CDATA[M_Product (stocked)]]></NAME>
 <!--171 VALIDATIONTYPE-->
 <!--171-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--171 ENTITYTYPE-->
-<!--171-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--171**************--></AD_REFERENCE>
 
 <!--172**************--><AD_REFERENCE>
@@ -2627,8 +2437,6 @@
 <!--172-->              <NAME><![CDATA[C_DocType SO]]></NAME>
 <!--172 VALIDATIONTYPE-->
 <!--172-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--172 ENTITYTYPE-->
-<!--172-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--172**************--></AD_REFERENCE>
 
 <!--173**************--><AD_REFERENCE>
@@ -2654,8 +2462,6 @@
 <!--173-->              <DESCRIPTION><![CDATA[Customer selection]]></DESCRIPTION>
 <!--173 VALIDATIONTYPE-->
 <!--173-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--173 ENTITYTYPE-->
-<!--173-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--173**************--></AD_REFERENCE>
 
 <!--174**************--><AD_REFERENCE>
@@ -2681,8 +2487,6 @@
 <!--174-->              <DESCRIPTION><![CDATA[Workflows]]></DESCRIPTION>
 <!--174 VALIDATIONTYPE-->
 <!--174-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--174 ENTITYTYPE-->
-<!--174-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--174**************--></AD_REFERENCE>
 
 <!--175**************--><AD_REFERENCE>
@@ -2708,8 +2512,6 @@
 <!--175-->              <DESCRIPTION><![CDATA[Valid Account combinations]]></DESCRIPTION>
 <!--175 VALIDATIONTYPE-->
 <!--175-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--175 ENTITYTYPE-->
-<!--175-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--175**************--></AD_REFERENCE>
 
 <!--176**************--><AD_REFERENCE>
@@ -2735,8 +2537,6 @@
 <!--176-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--176 VFORMAT-->
 <!--176-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--176 ENTITYTYPE-->
-<!--176-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--176**************--></AD_REFERENCE>
 
 <!--177**************--><AD_REFERENCE>
@@ -2762,8 +2562,6 @@
 <!--177-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--177 VFORMAT-->
 <!--177-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--177 ENTITYTYPE-->
-<!--177-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--177**************--></AD_REFERENCE>
 
 <!--178**************--><AD_REFERENCE>
@@ -2789,8 +2587,6 @@
 <!--178-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--178 VFORMAT-->
 <!--178-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--178 ENTITYTYPE-->
-<!--178-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--178**************--></AD_REFERENCE>
 
 <!--179**************--><AD_REFERENCE>
@@ -2814,8 +2610,6 @@
 <!--179-->              <NAME><![CDATA[C_SalesRegion Parent]]></NAME>
 <!--179 VALIDATIONTYPE-->
 <!--179-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--179 ENTITYTYPE-->
-<!--179-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--179**************--></AD_REFERENCE>
 
 <!--180**************--><AD_REFERENCE>
@@ -2843,8 +2637,6 @@
 <!--180-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--180 VFORMAT-->
 <!--180-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--180 ENTITYTYPE-->
-<!--180-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--180**************--></AD_REFERENCE>
 
 <!--181**************--><AD_REFERENCE>
@@ -2874,8 +2666,6 @@
 <!--181-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--181 VFORMAT-->
 <!--181-->              <VFORMAT><![CDATA[AA]]></VFORMAT>
-<!--181 ENTITYTYPE-->
-<!--181-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--181**************--></AD_REFERENCE>
 
 <!--182**************--><AD_REFERENCE>
@@ -2901,8 +2691,6 @@
 <!--182-->              <DESCRIPTION><![CDATA[Element Values]]></DESCRIPTION>
 <!--182 VALIDATIONTYPE-->
 <!--182-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--182 ENTITYTYPE-->
-<!--182-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--182**************--></AD_REFERENCE>
 
 <!--183**************--><AD_REFERENCE>
@@ -2930,8 +2718,6 @@
 <!--183-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--183 VFORMAT-->
 <!--183-->              <VFORMAT><![CDATA[LLL]]></VFORMAT>
-<!--183 ENTITYTYPE-->
-<!--183-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--183**************--></AD_REFERENCE>
 
 <!--184**************--><AD_REFERENCE>
@@ -2957,8 +2743,6 @@
 <!--184-->              <DESCRIPTION><![CDATA[Tree selection]]></DESCRIPTION>
 <!--184 VALIDATIONTYPE-->
 <!--184-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--184 ENTITYTYPE-->
-<!--184-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--184**************--></AD_REFERENCE>
 
 <!--187**************--><AD_REFERENCE>
@@ -2986,8 +2770,6 @@
 <!--187-->              <HELP><![CDATA[SalesRep_ID is synonym of AD_User_ID]]></HELP>
 <!--187 VALIDATIONTYPE-->
 <!--187-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--187 ENTITYTYPE-->
-<!--187-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--187**************--></AD_REFERENCE>
 
 <!--188**************--><AD_REFERENCE>
@@ -3011,8 +2793,6 @@
 <!--188-->              <NAME><![CDATA[M_PriceList Version]]></NAME>
 <!--188 VALIDATIONTYPE-->
 <!--188-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--188 ENTITYTYPE-->
-<!--188-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--188**************--></AD_REFERENCE>
 
 <!--189**************--><AD_REFERENCE>
@@ -3036,8 +2816,6 @@
 <!--189-->              <NAME><![CDATA[M_Transaction Movement Type]]></NAME>
 <!--189 VALIDATIONTYPE-->
 <!--189-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--189 ENTITYTYPE-->
-<!--189-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--189**************--></AD_REFERENCE>
 
 <!--190**************--><AD_REFERENCE>
@@ -3063,8 +2841,6 @@
 <!--190-->              <DESCRIPTION><![CDATA[Sales Representative]]></DESCRIPTION>
 <!--190 VALIDATIONTYPE-->
 <!--190-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--190 ENTITYTYPE-->
-<!--190-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--190**************--></AD_REFERENCE>
 
 <!--191**************--><AD_REFERENCE>
@@ -3090,8 +2866,6 @@
 <!--191-->              <DESCRIPTION><![CDATA[Warehouse Locator]]></DESCRIPTION>
 <!--191 VALIDATIONTYPE-->
 <!--191-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--191 ENTITYTYPE-->
-<!--191-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--191**************--></AD_REFERENCE>
 
 <!--192**************--><AD_REFERENCE>
@@ -3117,8 +2891,6 @@
 <!--192-->              <DESCRIPTION><![CDATA[Vendor selection]]></DESCRIPTION>
 <!--192 VALIDATIONTYPE-->
 <!--192-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--192 ENTITYTYPE-->
-<!--192-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--192**************--></AD_REFERENCE>
 
 <!--193**************--><AD_REFERENCE>
@@ -3142,8 +2914,6 @@
 <!--193-->              <NAME><![CDATA[C_BankAccount for Credit Card]]></NAME>
 <!--193 VALIDATIONTYPE-->
 <!--193-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--193 ENTITYTYPE-->
-<!--193-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--193**************--></AD_REFERENCE>
 
 <!--194**************--><AD_REFERENCE>
@@ -3167,8 +2937,6 @@
 <!--194-->              <NAME><![CDATA[M_DiscountPriceList Base]]></NAME>
 <!--194 VALIDATIONTYPE-->
 <!--194-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--194 ENTITYTYPE-->
-<!--194-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--194**************--></AD_REFERENCE>
 
 <!--195**************--><AD_REFERENCE>
@@ -3194,8 +2962,6 @@
 <!--195-->              <DESCRIPTION><![CDATA[In & Out Payment Options]]></DESCRIPTION>
 <!--195 VALIDATIONTYPE-->
 <!--195-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--195 ENTITYTYPE-->
-<!--195-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--195**************--></AD_REFERENCE>
 
 <!--196**************--><AD_REFERENCE>
@@ -3221,8 +2987,6 @@
 <!--196-->              <DESCRIPTION><![CDATA[Frequency of Revenue Recognition]]></DESCRIPTION>
 <!--196 VALIDATIONTYPE-->
 <!--196-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--196 ENTITYTYPE-->
-<!--196-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--196**************--></AD_REFERENCE>
 
 <!--197**************--><AD_REFERENCE>
@@ -3246,8 +3010,6 @@
 <!--197-->              <NAME><![CDATA[M_Warehouse of Client]]></NAME>
 <!--197 VALIDATIONTYPE-->
 <!--197-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--197 ENTITYTYPE-->
-<!--197-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--197**************--></AD_REFERENCE>
 
 <!--198**************--><AD_REFERENCE>
@@ -3271,8 +3033,6 @@
 <!--198-->              <NAME><![CDATA[M_Inventory ReportType]]></NAME>
 <!--198 VALIDATIONTYPE-->
 <!--198-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--198 ENTITYTYPE-->
-<!--198-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--198**************--></AD_REFERENCE>
 
 <!--199**************--><AD_REFERENCE>
@@ -3296,8 +3056,6 @@
 <!--199-->              <NAME><![CDATA[M_PriceList_Version for Client]]></NAME>
 <!--199 VALIDATIONTYPE-->
 <!--199-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--199 ENTITYTYPE-->
-<!--199-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--199**************--></AD_REFERENCE>
 
 <!--200**************--><AD_REFERENCE>
@@ -3321,8 +3079,6 @@
 <!--200-->              <NAME><![CDATA[C_Charge]]></NAME>
 <!--200 VALIDATIONTYPE-->
 <!--200-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--200 ENTITYTYPE-->
-<!--200-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--200**************--></AD_REFERENCE>
 
 <!--201**************--><AD_REFERENCE>
@@ -3346,8 +3102,6 @@
 <!--201-->              <NAME><![CDATA[C_BP_EDI EDI Type]]></NAME>
 <!--201 VALIDATIONTYPE-->
 <!--201-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--201 ENTITYTYPE-->
-<!--201-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--201**************--></AD_REFERENCE>
 
 <!--202**************--><AD_REFERENCE>
@@ -3371,8 +3125,6 @@
 <!--202-->              <NAME><![CDATA[M_EDI Status]]></NAME>
 <!--202 VALIDATIONTYPE-->
 <!--202-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--202 ENTITYTYPE-->
-<!--202-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--202**************--></AD_REFERENCE>
 
 <!--203**************--><AD_REFERENCE>
@@ -3396,8 +3148,6 @@
 <!--203-->              <NAME><![CDATA[M_EDI Trx Type]]></NAME>
 <!--203 VALIDATIONTYPE-->
 <!--203-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--203 ENTITYTYPE-->
-<!--203-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--203**************--></AD_REFERENCE>
 
 <!--204**************--><AD_REFERENCE>
@@ -3423,8 +3173,6 @@
 <!--204-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--204 VFORMAT-->
 <!--204-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--204 ENTITYTYPE-->
-<!--204-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--204**************--></AD_REFERENCE>
 
 <!--205**************--><AD_REFERENCE>
@@ -3450,8 +3198,6 @@
 <!--205-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--205 VFORMAT-->
 <!--205-->              <VFORMAT><![CDATA[CC]]></VFORMAT>
-<!--205 ENTITYTYPE-->
-<!--205-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--205**************--></AD_REFERENCE>
 
 <!--206**************--><AD_REFERENCE>
@@ -3477,8 +3223,6 @@
 <!--206-->              <DESCRIPTION><![CDATA[Posting Tables]]></DESCRIPTION>
 <!--206 VALIDATIONTYPE-->
 <!--206-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--206 ENTITYTYPE-->
-<!--206-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--206**************--></AD_REFERENCE>
 
 <!--207**************--><AD_REFERENCE>
@@ -3502,8 +3246,6 @@
 <!--207-->              <NAME><![CDATA[GL Category Type]]></NAME>
 <!--207 VALIDATIONTYPE-->
 <!--207-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--207 ENTITYTYPE-->
-<!--207-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--207**************--></AD_REFERENCE>
 
 <!--208**************--><AD_REFERENCE>
@@ -3529,8 +3271,6 @@
 <!--208-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--208 VFORMAT-->
 <!--208-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--208 ENTITYTYPE-->
-<!--208-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--208**************--></AD_REFERENCE>
 
 <!--209**************--><AD_REFERENCE>
@@ -3556,8 +3296,6 @@
 <!--209-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--209 VFORMAT-->
 <!--209-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--209 ENTITYTYPE-->
-<!--209-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--209**************--></AD_REFERENCE>
 
 <!--210**************--><AD_REFERENCE>
@@ -3583,8 +3321,6 @@
 <!--210-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--210 VFORMAT-->
 <!--210-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--210 ENTITYTYPE-->
-<!--210-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--210**************--></AD_REFERENCE>
 
 <!--211**************--><AD_REFERENCE>
@@ -3610,8 +3346,6 @@
 <!--211-->              <DESCRIPTION><![CDATA[Products that are BOMs and stocked]]></DESCRIPTION>
 <!--211 VALIDATIONTYPE-->
 <!--211-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--211 ENTITYTYPE-->
-<!--211-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--211**************--></AD_REFERENCE>
 
 <!--212**************--><AD_REFERENCE>
@@ -3637,8 +3371,6 @@
 <!--212-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--212 VFORMAT-->
 <!--212-->              <VFORMAT><![CDATA[c]]></VFORMAT>
-<!--212 ENTITYTYPE-->
-<!--212-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--212**************--></AD_REFERENCE>
 
 <!--213**************--><AD_REFERENCE>
@@ -3662,8 +3394,6 @@
 <!--213-->              <NAME><![CDATA[C_Payment AVS]]></NAME>
 <!--213 VALIDATIONTYPE-->
 <!--213-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--213 ENTITYTYPE-->
-<!--213-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--213**************--></AD_REFERENCE>
 
 <!--214**************--><AD_REFERENCE>
@@ -3687,8 +3417,6 @@
 <!--214-->              <NAME><![CDATA[C_Payment Tender Type]]></NAME>
 <!--214 VALIDATIONTYPE-->
 <!--214-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--214 ENTITYTYPE-->
-<!--214-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--214**************--></AD_REFERENCE>
 
 <!--215**************--><AD_REFERENCE>
@@ -3712,8 +3440,6 @@
 <!--215-->              <NAME><![CDATA[C_Payment Trx Type]]></NAME>
 <!--215 VALIDATIONTYPE-->
 <!--215-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--215 ENTITYTYPE-->
-<!--215-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--215**************--></AD_REFERENCE>
 
 <!--216**************--><AD_REFERENCE>
@@ -3737,8 +3463,6 @@
 <!--216-->              <NAME><![CDATA[C_Bank Account Type]]></NAME>
 <!--216 VALIDATIONTYPE-->
 <!--216-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--216 ENTITYTYPE-->
-<!--216-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--216**************--></AD_REFERENCE>
 
 <!--217**************--><AD_REFERENCE>
@@ -3762,8 +3486,6 @@
 <!--217-->              <NAME><![CDATA[C_Cash Trx Type]]></NAME>
 <!--217 VALIDATIONTYPE-->
 <!--217-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--217 ENTITYTYPE-->
-<!--217-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--217**************--></AD_REFERENCE>
 
 <!--218**************--><AD_REFERENCE>
@@ -3789,8 +3511,6 @@
 <!--218-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--218 VFORMAT-->
 <!--218-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--218 ENTITYTYPE-->
-<!--218-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--218**************--></AD_REFERENCE>
 
 <!--219**************--><AD_REFERENCE>
@@ -3816,8 +3536,6 @@
 <!--219-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--219 VFORMAT-->
 <!--219-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--219 ENTITYTYPE-->
-<!--219-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--219**************--></AD_REFERENCE>
 
 <!--220**************--><AD_REFERENCE>
@@ -3841,8 +3559,6 @@
 <!--220-->              <NAME><![CDATA[R_Request Action Type]]></NAME>
 <!--220 VALIDATIONTYPE-->
 <!--220-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--220 ENTITYTYPE-->
-<!--220-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--220**************--></AD_REFERENCE>
 
 <!--221**************--><AD_REFERENCE>
@@ -3868,8 +3584,6 @@
 <!--221-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--221 VFORMAT-->
 <!--221-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--221 ENTITYTYPE-->
-<!--221-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--221**************--></AD_REFERENCE>
 
 <!--222**************--><AD_REFERENCE>
@@ -3895,8 +3609,6 @@
 <!--222-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--222 VFORMAT-->
 <!--222-->              <VFORMAT><![CDATA[9]]></VFORMAT>
-<!--222 ENTITYTYPE-->
-<!--222-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--222**************--></AD_REFERENCE>
 
 <!--223**************--><AD_REFERENCE>
@@ -3922,8 +3634,6 @@
 <!--223-->              <DESCRIPTION><![CDATA[Vendor selection]]></DESCRIPTION>
 <!--223 VALIDATIONTYPE-->
 <!--223-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--223 ENTITYTYPE-->
-<!--223-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--223**************--></AD_REFERENCE>
 
 <!--224**************--><AD_REFERENCE>
@@ -3949,8 +3659,6 @@
 <!--224-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--224 VFORMAT-->
 <!--224-->              <VFORMAT><![CDATA[A]]></VFORMAT>
-<!--224 ENTITYTYPE-->
-<!--224-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--224**************--></AD_REFERENCE>
 
 <!--225**************--><AD_REFERENCE>
@@ -3976,8 +3684,6 @@
 <!--225-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--225 VFORMAT-->
 <!--225-->              <VFORMAT><![CDATA[A]]></VFORMAT>
-<!--225 ENTITYTYPE-->
-<!--225-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--225**************--></AD_REFERENCE>
 
 <!--226**************--><AD_REFERENCE>
@@ -4001,8 +3707,6 @@
 <!--226-->              <NAME><![CDATA[AD_Role User Level]]></NAME>
 <!--226 VALIDATIONTYPE-->
 <!--226-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--226 ENTITYTYPE-->
-<!--226-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--226**************--></AD_REFERENCE>
 
 <!--227**************--><AD_REFERENCE>
@@ -4026,8 +3730,6 @@
 <!--227-->              <NAME><![CDATA[C_PaymentTerm]]></NAME>
 <!--227 VALIDATIONTYPE-->
 <!--227-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--227 ENTITYTYPE-->
-<!--227-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--227**************--></AD_REFERENCE>
 
 <!--228**************--><AD_REFERENCE>
@@ -4051,8 +3753,6 @@
 <!--228-->              <NAME><![CDATA[PA_Goal]]></NAME>
 <!--228 VALIDATIONTYPE-->
 <!--228-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--228 ENTITYTYPE-->
-<!--228-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--228**************--></AD_REFERENCE>
 
 <!--229**************--><AD_REFERENCE>
@@ -4076,8 +3776,6 @@
 <!--229-->              <NAME><![CDATA[PA_Achievement Parent]]></NAME>
 <!--229 VALIDATIONTYPE-->
 <!--229-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--229 ENTITYTYPE-->
-<!--229-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--229**************--></AD_REFERENCE>
 
 <!--230**************--><AD_REFERENCE>
@@ -4101,8 +3799,6 @@
 <!--230-->              <NAME><![CDATA[PA_Goal Parent]]></NAME>
 <!--230 VALIDATIONTYPE-->
 <!--230-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--230 ENTITYTYPE-->
-<!--230-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--230**************--></AD_REFERENCE>
 
 <!--231**************--><AD_REFERENCE>
@@ -4126,8 +3822,6 @@
 <!--231-->              <NAME><![CDATA[PA_Measure Type]]></NAME>
 <!--231 VALIDATIONTYPE-->
 <!--231-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--231 ENTITYTYPE-->
-<!--231-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--231**************--></AD_REFERENCE>
 
 <!--232**************--><AD_REFERENCE>
@@ -4153,8 +3847,6 @@
 <!--232-->              <DESCRIPTION><![CDATA[Vendor or SalesRep selection]]></DESCRIPTION>
 <!--232 VALIDATIONTYPE-->
 <!--232-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--232 ENTITYTYPE-->
-<!--232-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--232**************--></AD_REFERENCE>
 
 <!--233**************--><AD_REFERENCE>
@@ -4180,8 +3872,6 @@
 <!--233-->              <DESCRIPTION><![CDATA[Periods Sorted by Date]]></DESCRIPTION>
 <!--233 VALIDATIONTYPE-->
 <!--233-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--233 ENTITYTYPE-->
-<!--233-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--233**************--></AD_REFERENCE>
 
 <!--234**************--><AD_REFERENCE>
@@ -4211,8 +3901,6 @@
 <!--234-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--234 VFORMAT-->
 <!--234-->              <VFORMAT><![CDATA[c]]></VFORMAT>
-<!--234 ENTITYTYPE-->
-<!--234-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--234**************--></AD_REFERENCE>
 
 <!--235**************--><AD_REFERENCE>
@@ -4236,8 +3924,6 @@
 <!--235-->              <NAME><![CDATA[PA_Report AmountType]]></NAME>
 <!--235 VALIDATIONTYPE-->
 <!--235-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--235 ENTITYTYPE-->
-<!--235-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--235**************--></AD_REFERENCE>
 
 <!--236**************--><AD_REFERENCE>
@@ -4261,8 +3947,6 @@
 <!--236-->              <NAME><![CDATA[PA_Report CalculationType]]></NAME>
 <!--236 VALIDATIONTYPE-->
 <!--236-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--236 ENTITYTYPE-->
-<!--236-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--236**************--></AD_REFERENCE>
 
 <!--237**************--><AD_REFERENCE>
@@ -4286,8 +3970,6 @@
 <!--237-->              <NAME><![CDATA[PA_Report ColumnType]]></NAME>
 <!--237 VALIDATIONTYPE-->
 <!--237-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--237 ENTITYTYPE-->
-<!--237-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--237**************--></AD_REFERENCE>
 
 <!--238**************--><AD_REFERENCE>
@@ -4311,8 +3993,6 @@
 <!--238-->              <NAME><![CDATA[PA_Report CurrencyType]]></NAME>
 <!--238 VALIDATIONTYPE-->
 <!--238-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--238 ENTITYTYPE-->
-<!--238-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--238**************--></AD_REFERENCE>
 
 <!--239**************--><AD_REFERENCE>
@@ -4336,8 +4016,6 @@
 <!--239-->              <NAME><![CDATA[PA_ReportColumn]]></NAME>
 <!--239 VALIDATIONTYPE-->
 <!--239-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--239 ENTITYTYPE-->
-<!--239-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--239**************--></AD_REFERENCE>
 
 <!--240**************--><AD_REFERENCE>
@@ -4361,8 +4039,6 @@
 <!--240-->              <NAME><![CDATA[PA_ReportLine]]></NAME>
 <!--240 VALIDATIONTYPE-->
 <!--240-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--240 ENTITYTYPE-->
-<!--240-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--240**************--></AD_REFERENCE>
 
 <!--241**************--><AD_REFERENCE>
@@ -4386,8 +4062,6 @@
 <!--241-->              <NAME><![CDATA[PA_Report LineType]]></NAME>
 <!--241 VALIDATIONTYPE-->
 <!--241-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--241 ENTITYTYPE-->
-<!--241-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--241**************--></AD_REFERENCE>
 
 <!--242**************--><AD_REFERENCE>
@@ -4411,8 +4085,6 @@
 <!--242-->              <NAME><![CDATA[PA_ReportLine Parent]]></NAME>
 <!--242 VALIDATIONTYPE-->
 <!--242-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--242 ENTITYTYPE-->
-<!--242-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--242**************--></AD_REFERENCE>
 
 <!--243**************--><AD_REFERENCE>
@@ -4436,8 +4108,6 @@
 <!--243-->              <NAME><![CDATA[AD_Color Type]]></NAME>
 <!--243 VALIDATIONTYPE-->
 <!--243-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--243 ENTITYTYPE-->
-<!--243-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--243**************--></AD_REFERENCE>
 
 <!--244**************--><AD_REFERENCE>
@@ -4461,8 +4131,6 @@
 <!--244-->              <NAME><![CDATA[AD_Column Key ColumnNames]]></NAME>
 <!--244 VALIDATIONTYPE-->
 <!--244-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--244 ENTITYTYPE-->
-<!--244-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--244**************--></AD_REFERENCE>
 
 <!--245**************--><AD_REFERENCE>
@@ -4490,8 +4158,6 @@
 <!--245-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--245 VFORMAT-->
 <!--245-->              <VFORMAT><![CDATA[A]]></VFORMAT>
-<!--245 ENTITYTYPE-->
-<!--245-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--245**************--></AD_REFERENCE>
 
 <!--246**************--><AD_REFERENCE>
@@ -4517,8 +4183,6 @@
 <!--246-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--246 VFORMAT-->
 <!--246-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--246 ENTITYTYPE-->
-<!--246-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--246**************--></AD_REFERENCE>
 
 <!--247**************--><AD_REFERENCE>
@@ -4544,8 +4208,6 @@
 <!--247-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--247 VFORMAT-->
 <!--247-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--247 ENTITYTYPE-->
-<!--247-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--247**************--></AD_REFERENCE>
 
 <!--248**************--><AD_REFERENCE>
@@ -4571,8 +4233,6 @@
 <!--248-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--248 VFORMAT-->
 <!--248-->              <VFORMAT><![CDATA[0]]></VFORMAT>
-<!--248 ENTITYTYPE-->
-<!--248-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--248**************--></AD_REFERENCE>
 
 <!--249**************--><AD_REFERENCE>
@@ -4596,8 +4256,6 @@
 <!--249-->              <NAME><![CDATA[M_DiscountSchema]]></NAME>
 <!--249 VALIDATIONTYPE-->
 <!--249-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--249 ENTITYTYPE-->
-<!--249-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--249**************--></AD_REFERENCE>
 
 <!--250**************--><AD_REFERENCE>
@@ -4621,8 +4279,6 @@
 <!--250-->              <NAME><![CDATA[M_Product_Costing Source]]></NAME>
 <!--250 VALIDATIONTYPE-->
 <!--250-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--250 ENTITYTYPE-->
-<!--250-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--250**************--></AD_REFERENCE>
 
 <!--251**************--><AD_REFERENCE>
@@ -4648,8 +4304,6 @@
 <!--251-->              <DESCRIPTION><![CDATA[Column selection]]></DESCRIPTION>
 <!--251 VALIDATIONTYPE-->
 <!--251-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--251 ENTITYTYPE-->
-<!--251-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--251**************--></AD_REFERENCE>
 
 <!--252**************--><AD_REFERENCE>
@@ -4675,8 +4329,6 @@
 <!--252-->              <DESCRIPTION><![CDATA[Business Partners who are Employee]]></DESCRIPTION>
 <!--252 VALIDATIONTYPE-->
 <!--252-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--252 ENTITYTYPE-->
-<!--252-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--252**************--></AD_REFERENCE>
 
 <!--253**************--><AD_REFERENCE>
@@ -4700,8 +4352,6 @@
 <!--253-->              <NAME><![CDATA[AD_Print Field Alignment]]></NAME>
 <!--253 VALIDATIONTYPE-->
 <!--253-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--253 ENTITYTYPE-->
-<!--253-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--253**************--></AD_REFERENCE>
 
 <!--254**************--><AD_REFERENCE>
@@ -4725,8 +4375,6 @@
 <!--254-->              <NAME><![CDATA[AD_Print Line Alignment]]></NAME>
 <!--254 VALIDATIONTYPE-->
 <!--254-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--254 ENTITYTYPE-->
-<!--254-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--254**************--></AD_REFERENCE>
 
 <!--255**************--><AD_REFERENCE>
@@ -4750,8 +4398,6 @@
 <!--255-->              <NAME><![CDATA[AD_Print Format Type]]></NAME>
 <!--255 VALIDATIONTYPE-->
 <!--255-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--255 ENTITYTYPE-->
-<!--255-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--255**************--></AD_REFERENCE>
 
 <!--256**************--><AD_REFERENCE>
@@ -4775,8 +4421,6 @@
 <!--256-->              <NAME><![CDATA[AD_Print Area]]></NAME>
 <!--256 VALIDATIONTYPE-->
 <!--256-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--256 ENTITYTYPE-->
-<!--256-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--256**************--></AD_REFERENCE>
 
 <!--257**************--><AD_REFERENCE>
@@ -4802,8 +4446,6 @@
 <!--257-->              <DESCRIPTION><![CDATA[Integer Type only (Name)]]></DESCRIPTION>
 <!--257 VALIDATIONTYPE-->
 <!--257-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--257 ENTITYTYPE-->
-<!--257-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--257**************--></AD_REFERENCE>
 
 <!--258**************--><AD_REFERENCE>
@@ -4829,8 +4471,6 @@
 <!--258-->              <DESCRIPTION><![CDATA[Coluns YesNo (Name)]]></DESCRIPTION>
 <!--258 VALIDATIONTYPE-->
 <!--258-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--258 ENTITYTYPE-->
-<!--258-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--258**************--></AD_REFERENCE>
 
 <!--259**************--><AD_REFERENCE>
@@ -4854,8 +4494,6 @@
 <!--259-->              <NAME><![CDATA[AD_PrintFormat]]></NAME>
 <!--259 VALIDATIONTYPE-->
 <!--259-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--259 ENTITYTYPE-->
-<!--259-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--259**************--></AD_REFERENCE>
 
 <!--261**************--><AD_REFERENCE>
@@ -4879,8 +4517,6 @@
 <!--261-->              <NAME><![CDATA[AD_PrintFormat Invoice]]></NAME>
 <!--261 VALIDATIONTYPE-->
 <!--261-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--261 ENTITYTYPE-->
-<!--261-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--261**************--></AD_REFERENCE>
 
 <!--262**************--><AD_REFERENCE>
@@ -4904,8 +4540,6 @@
 <!--262-->              <NAME><![CDATA[AD_PrintFormat Order]]></NAME>
 <!--262 VALIDATIONTYPE-->
 <!--262-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--262 ENTITYTYPE-->
-<!--262-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--262**************--></AD_REFERENCE>
 
 <!--263**************--><AD_REFERENCE>
@@ -4929,8 +4563,6 @@
 <!--263-->              <NAME><![CDATA[AD_PrintFormat Shipment]]></NAME>
 <!--263 VALIDATIONTYPE-->
 <!--263-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--263 ENTITYTYPE-->
-<!--263-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--263**************--></AD_REFERENCE>
 
 <!--264**************--><AD_REFERENCE>
@@ -4954,8 +4586,6 @@
 <!--264-->              <NAME><![CDATA[AD_PrintFormatItem]]></NAME>
 <!--264 VALIDATIONTYPE-->
 <!--264-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--264 ENTITYTYPE-->
-<!--264-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--264**************--></AD_REFERENCE>
 
 <!--265**************--><AD_REFERENCE>
@@ -4979,8 +4609,6 @@
 <!--265-->              <NAME><![CDATA[AD_Print Graph Type]]></NAME>
 <!--265 VALIDATIONTYPE-->
 <!--265-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--265 ENTITYTYPE-->
-<!--265-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--265**************--></AD_REFERENCE>
 
 <!--266**************--><AD_REFERENCE>
@@ -5004,8 +4632,6 @@
 <!--266-->              <NAME><![CDATA[AD_PrintColor]]></NAME>
 <!--266 VALIDATIONTYPE-->
 <!--266-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--266 ENTITYTYPE-->
-<!--266-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--266**************--></AD_REFERENCE>
 
 <!--267**************--><AD_REFERENCE>
@@ -5029,8 +4655,6 @@
 <!--267-->              <NAME><![CDATA[AD_PrintFont]]></NAME>
 <!--267 VALIDATIONTYPE-->
 <!--267-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--267 ENTITYTYPE-->
-<!--267-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--267**************--></AD_REFERENCE>
 
 <!--268**************--><AD_REFERENCE>
@@ -5054,8 +4678,6 @@
 <!--268-->              <NAME><![CDATA[AD_PrintFormat Check]]></NAME>
 <!--268 VALIDATIONTYPE-->
 <!--268-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--268 ENTITYTYPE-->
-<!--268-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--268**************--></AD_REFERENCE>
 
 <!--269**************--><AD_REFERENCE>
@@ -5079,8 +4701,6 @@
 <!--269-->              <NAME><![CDATA[AD_PrintFormat Not TableBased]]></NAME>
 <!--269 VALIDATIONTYPE-->
 <!--269-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--269 ENTITYTYPE-->
-<!--269-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--269**************--></AD_REFERENCE>
 
 <!--270**************--><AD_REFERENCE>
@@ -5104,8 +4724,6 @@
 <!--270-->              <NAME><![CDATA[M_Product_ProductType]]></NAME>
 <!--270 VALIDATIONTYPE-->
 <!--270-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--270 ENTITYTYPE-->
-<!--270-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--270**************--></AD_REFERENCE>
 
 <!--271**************--><AD_REFERENCE>
@@ -5131,8 +4749,6 @@
 <!--271-->              <DESCRIPTION><![CDATA[Order Line]]></DESCRIPTION>
 <!--271 VALIDATIONTYPE-->
 <!--271-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--271 ENTITYTYPE-->
-<!--271-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--271**************--></AD_REFERENCE>
 
 <!--272**************--><AD_REFERENCE>
@@ -5156,8 +4772,6 @@
 <!--272-->              <NAME><![CDATA[I_ElementValue Column]]></NAME>
 <!--272 VALIDATIONTYPE-->
 <!--272-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--272 ENTITYTYPE-->
-<!--272-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--272**************--></AD_REFERENCE>
 
 <!--273**************--><AD_REFERENCE>
@@ -5183,8 +4797,6 @@
 <!--273-->              <DESCRIPTION><![CDATA[Account selection]]></DESCRIPTION>
 <!--273 VALIDATIONTYPE-->
 <!--273-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--273 ENTITYTYPE-->
-<!--273-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--273**************--></AD_REFERENCE>
 
 <!--274**************--><AD_REFERENCE>
@@ -5210,8 +4822,6 @@
 <!--274-->              <DESCRIPTION><![CDATA[Mail Text]]></DESCRIPTION>
 <!--274 VALIDATIONTYPE-->
 <!--274-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--274 ENTITYTYPE-->
-<!--274-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--274**************--></AD_REFERENCE>
 
 <!--275**************--><AD_REFERENCE>
@@ -5237,8 +4847,6 @@
 <!--275-->              <DESCRIPTION><![CDATA[Periods Sorted by Date]]></DESCRIPTION>
 <!--275 VALIDATIONTYPE-->
 <!--275-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--275 ENTITYTYPE-->
-<!--275-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--275**************--></AD_REFERENCE>
 
 <!--276**************--><AD_REFERENCE>
@@ -5264,8 +4872,6 @@
 <!--276-->              <DESCRIPTION><![CDATA[Organization selection]]></DESCRIPTION>
 <!--276 VALIDATIONTYPE-->
 <!--276-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--276 ENTITYTYPE-->
-<!--276-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--276**************--></AD_REFERENCE>
 
 <!--277**************--><AD_REFERENCE>
@@ -5291,8 +4897,6 @@
 <!--277-->              <DESCRIPTION><![CDATA[Business Partners who are Employee and have addresses]]></DESCRIPTION>
 <!--277 VALIDATIONTYPE-->
 <!--277-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--277 ENTITYTYPE-->
-<!--277-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--277**************--></AD_REFERENCE>
 
 <!--278**************--><AD_REFERENCE>
@@ -5316,8 +4920,6 @@
 <!--278-->              <NAME><![CDATA[AD_Tab]]></NAME>
 <!--278 VALIDATIONTYPE-->
 <!--278-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--278 ENTITYTYPE-->
-<!--278-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--278**************--></AD_REFERENCE>
 
 <!--279**************--><AD_REFERENCE>
@@ -5341,8 +4943,6 @@
 <!--279-->              <NAME><![CDATA[M_Product BOM Type]]></NAME>
 <!--279 VALIDATIONTYPE-->
 <!--279-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--279 ENTITYTYPE-->
-<!--279-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--279**************--></AD_REFERENCE>
 
 <!--280**************--><AD_REFERENCE>
@@ -5366,8 +4966,6 @@
 <!--280-->              <NAME><![CDATA[AD_Print Label Line Type]]></NAME>
 <!--280 VALIDATIONTYPE-->
 <!--280-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--280 ENTITYTYPE-->
-<!--280-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--280**************--></AD_REFERENCE>
 
 <!--282**************--><AD_REFERENCE>
@@ -5391,8 +4989,6 @@
 <!--282-->              <NAME><![CDATA[C_Recurring Type]]></NAME>
 <!--282 VALIDATIONTYPE-->
 <!--282-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--282 ENTITYTYPE-->
-<!--282-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--282**************--></AD_REFERENCE>
 
 <!--283**************--><AD_REFERENCE>
@@ -5416,8 +5012,6 @@
 <!--283-->              <NAME><![CDATA[C_Recurring Frequency]]></NAME>
 <!--283 VALIDATIONTYPE-->
 <!--283-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--283 ENTITYTYPE-->
-<!--283-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--283**************--></AD_REFERENCE>
 
 <!--284**************--><AD_REFERENCE>
@@ -5441,8 +5035,6 @@
 <!--284-->              <NAME><![CDATA[AD_Window]]></NAME>
 <!--284 VALIDATIONTYPE-->
 <!--284-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--284 ENTITYTYPE-->
-<!--284-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--284**************--></AD_REFERENCE>
 
 <!--285**************--><AD_REFERENCE>
@@ -5466,8 +5058,6 @@
 <!--285-->              <NAME><![CDATA[K_Entry Related]]></NAME>
 <!--285 VALIDATIONTYPE-->
 <!--285-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--285 ENTITYTYPE-->
-<!--285-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--285**************--></AD_REFERENCE>
 
 <!--286**************--><AD_REFERENCE>
@@ -5493,8 +5083,6 @@
 <!--286-->              <DESCRIPTION><![CDATA[Employee or SalesRep]]></DESCRIPTION>
 <!--286 VALIDATIONTYPE-->
 <!--286-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--286 ENTITYTYPE-->
-<!--286-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--286**************--></AD_REFERENCE>
 
 <!--287**************--><AD_REFERENCE>
@@ -5518,8 +5106,6 @@
 <!--287-->              <NAME><![CDATA[C_Tax SPPOType]]></NAME>
 <!--287 VALIDATIONTYPE-->
 <!--287-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--287 ENTITYTYPE-->
-<!--287-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--287**************--></AD_REFERENCE>
 
 <!--288**************--><AD_REFERENCE>
@@ -5543,8 +5129,6 @@
 <!--288-->              <NAME><![CDATA[C_ProjectType Category]]></NAME>
 <!--288 VALIDATIONTYPE-->
 <!--288-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--288 ENTITYTYPE-->
-<!--288-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--288**************--></AD_REFERENCE>
 
 <!--289**************--><AD_REFERENCE>
@@ -5570,8 +5154,6 @@
 <!--289-->              <DESCRIPTION><![CDATA[Sales Credit Status]]></DESCRIPTION>
 <!--289 VALIDATIONTYPE-->
 <!--289-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--289 ENTITYTYPE-->
-<!--289-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--289**************--></AD_REFERENCE>
 
 <!--290**************--><AD_REFERENCE>
@@ -5597,8 +5179,6 @@
 <!--290-->              <DESCRIPTION><![CDATA[Purchase orders]]></DESCRIPTION>
 <!--290 VALIDATIONTYPE-->
 <!--290-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--290 ENTITYTYPE-->
-<!--290-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--290**************--></AD_REFERENCE>
 
 <!--800000**************--><AD_REFERENCE>
@@ -5624,8 +5204,6 @@
 <!--800000-->              <DESCRIPTION><![CDATA[UOM order]]></DESCRIPTION>
 <!--800000 VALIDATIONTYPE-->
 <!--800000-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800000 ENTITYTYPE-->
-<!--800000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800000**************--></AD_REFERENCE>
 
 <!--800001**************--><AD_REFERENCE>
@@ -5653,8 +5231,6 @@
 <!--800001-->              <HELP><![CDATA[Parent Taxes]]></HELP>
 <!--800001 VALIDATIONTYPE-->
 <!--800001-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800001 ENTITYTYPE-->
-<!--800001-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800001**************--></AD_REFERENCE>
 
 <!--800002**************--><AD_REFERENCE>
@@ -5678,8 +5254,6 @@
 <!--800002-->              <NAME><![CDATA[ProjectStatus]]></NAME>
 <!--800002 VALIDATIONTYPE-->
 <!--800002-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800002 ENTITYTYPE-->
-<!--800002-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800002**************--></AD_REFERENCE>
 
 <!--800003**************--><AD_REFERENCE>
@@ -5703,8 +5277,6 @@
 <!--800003-->              <NAME><![CDATA[Projectphase]]></NAME>
 <!--800003 VALIDATIONTYPE-->
 <!--800003-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800003 ENTITYTYPE-->
-<!--800003-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800003**************--></AD_REFERENCE>
 
 <!--800004**************--><AD_REFERENCE>
@@ -5728,8 +5300,6 @@
 <!--800004-->              <NAME><![CDATA[Projectkind]]></NAME>
 <!--800004 VALIDATIONTYPE-->
 <!--800004-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800004 ENTITYTYPE-->
-<!--800004-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800004**************--></AD_REFERENCE>
 
 <!--800005**************--><AD_REFERENCE>
@@ -5753,8 +5323,6 @@
 <!--800005-->              <NAME><![CDATA[PublicPrivate]]></NAME>
 <!--800005 VALIDATIONTYPE-->
 <!--800005-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800005 ENTITYTYPE-->
-<!--800005-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800005**************--></AD_REFERENCE>
 
 <!--800007**************--><AD_REFERENCE>
@@ -5778,8 +5346,6 @@
 <!--800007-->              <NAME><![CDATA[Print Format Invoice]]></NAME>
 <!--800007 VALIDATIONTYPE-->
 <!--800007-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800007 ENTITYTYPE-->
-<!--800007-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800007**************--></AD_REFERENCE>
 
 <!--800008**************--><AD_REFERENCE>
@@ -5807,8 +5373,6 @@
 <!--800008-->              <HELP><![CDATA[Price]]></HELP>
 <!--800008 VALIDATIONTYPE-->
 <!--800008-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--800008 ENTITYTYPE-->
-<!--800008-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800008**************--></AD_REFERENCE>
 
 <!--800009**************--><AD_REFERENCE>
@@ -5832,8 +5396,6 @@
 <!--800009-->              <NAME><![CDATA[Product_Template_Type]]></NAME>
 <!--800009 VALIDATIONTYPE-->
 <!--800009-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800009 ENTITYTYPE-->
-<!--800009-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800009**************--></AD_REFERENCE>
 
 <!--800010**************--><AD_REFERENCE>
@@ -5857,8 +5419,6 @@
 <!--800010-->              <NAME><![CDATA[Settlement type]]></NAME>
 <!--800010 VALIDATIONTYPE-->
 <!--800010-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800010 ENTITYTYPE-->
-<!--800010-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800010**************--></AD_REFERENCE>
 
 <!--800011**************--><AD_REFERENCE>
@@ -5882,8 +5442,6 @@
 <!--800011-->              <NAME><![CDATA[Product Complete]]></NAME>
 <!--800011 VALIDATIONTYPE-->
 <!--800011-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
-<!--800011 ENTITYTYPE-->
-<!--800011-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800011**************--></AD_REFERENCE>
 
 <!--800012**************--><AD_REFERENCE>
@@ -5907,8 +5465,6 @@
 <!--800012-->              <NAME><![CDATA[Type maintenance]]></NAME>
 <!--800012 VALIDATIONTYPE-->
 <!--800012-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800012 ENTITYTYPE-->
-<!--800012-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800012**************--></AD_REFERENCE>
 
 <!--800014**************--><AD_REFERENCE>
@@ -5934,8 +5490,6 @@
 <!--800014-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--800014 VFORMAT-->
 <!--800014-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800014 ENTITYTYPE-->
-<!--800014-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800014**************--></AD_REFERENCE>
 
 <!--800015**************--><AD_REFERENCE>
@@ -5961,8 +5515,6 @@
 <!--800015-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--800015 VFORMAT-->
 <!--800015-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800015 ENTITYTYPE-->
-<!--800015-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800015**************--></AD_REFERENCE>
 
 <!--800016**************--><AD_REFERENCE>
@@ -5988,8 +5540,6 @@
 <!--800016-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--800016 VFORMAT-->
 <!--800016-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800016 ENTITYTYPE-->
-<!--800016-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800016**************--></AD_REFERENCE>
 
 <!--800017**************--><AD_REFERENCE>
@@ -6013,8 +5563,6 @@
 <!--800017-->              <NAME><![CDATA[Strorage Payment Rule]]></NAME>
 <!--800017 VALIDATIONTYPE-->
 <!--800017-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800017 ENTITYTYPE-->
-<!--800017-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800017**************--></AD_REFERENCE>
 
 <!--800018**************--><AD_REFERENCE>
@@ -6038,8 +5586,6 @@
 <!--800018-->              <NAME><![CDATA[DocumentDocTypeCopy]]></NAME>
 <!--800018 VALIDATIONTYPE-->
 <!--800018-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800018 ENTITYTYPE-->
-<!--800018-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800018**************--></AD_REFERENCE>
 
 <!--800019**************--><AD_REFERENCE>
@@ -6065,8 +5611,6 @@
 <!--800019-->              <DESCRIPTION><![CDATA[General Quantity]]></DESCRIPTION>
 <!--800019 VALIDATIONTYPE-->
 <!--800019-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--800019 ENTITYTYPE-->
-<!--800019-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800019**************--></AD_REFERENCE>
 
 <!--800020**************--><AD_REFERENCE>
@@ -6090,8 +5634,6 @@
 <!--800020-->              <NAME><![CDATA[Invoicingmode]]></NAME>
 <!--800020 VALIDATIONTYPE-->
 <!--800020-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800020 ENTITYTYPE-->
-<!--800020-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800020**************--></AD_REFERENCE>
 
 <!--800021**************--><AD_REFERENCE>
@@ -6115,8 +5657,6 @@
 <!--800021-->              <NAME><![CDATA[Invoicingtype]]></NAME>
 <!--800021 VALIDATIONTYPE-->
 <!--800021-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800021 ENTITYTYPE-->
-<!--800021-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800021**************--></AD_REFERENCE>
 
 <!--800022**************--><AD_REFERENCE>
@@ -6140,8 +5680,6 @@
 <!--800022-->              <NAME><![CDATA[AD_Table Posting TRL]]></NAME>
 <!--800022 VALIDATIONTYPE-->
 <!--800022-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800022 ENTITYTYPE-->
-<!--800022-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800022**************--></AD_REFERENCE>
 
 <!--800023**************--><AD_REFERENCE>
@@ -6165,8 +5703,6 @@
 <!--800023-->              <NAME><![CDATA[Bankingrule]]></NAME>
 <!--800023 VALIDATIONTYPE-->
 <!--800023-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800023 ENTITYTYPE-->
-<!--800023-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800023**************--></AD_REFERENCE>
 
 <!--800024**************--><AD_REFERENCE>
@@ -6190,8 +5726,6 @@
 <!--800024-->              <NAME><![CDATA[All_Processed_Status]]></NAME>
 <!--800024 VALIDATIONTYPE-->
 <!--800024-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800024 ENTITYTYPE-->
-<!--800024-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800024**************--></AD_REFERENCE>
 
 <!--800025**************--><AD_REFERENCE>
@@ -6215,8 +5749,6 @@
 <!--800025-->              <NAME><![CDATA[Cost Type]]></NAME>
 <!--800025 VALIDATIONTYPE-->
 <!--800025-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800025 ENTITYTYPE-->
-<!--800025-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800025**************--></AD_REFERENCE>
 
 <!--800026**************--><AD_REFERENCE>
@@ -6261,8 +5793,6 @@
 For example, if you want to create different invoices for each ship location for a customer, use the value "By ship location" (000010000000000)]]></HELP>
 <!--800026 VALIDATIONTYPE-->
 <!--800026-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800026 ENTITYTYPE-->
-<!--800026-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800026**************--></AD_REFERENCE>
 
 <!--800027**************--><AD_REFERENCE>
@@ -6288,8 +5818,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800027-->              <DESCRIPTION><![CDATA[Quarter o trimester year]]></DESCRIPTION>
 <!--800027 VALIDATIONTYPE-->
 <!--800027-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800027 ENTITYTYPE-->
-<!--800027-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800027**************--></AD_REFERENCE>
 
 <!--800028**************--><AD_REFERENCE>
@@ -6315,8 +5843,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800028-->              <DESCRIPTION><![CDATA[List of all forms]]></DESCRIPTION>
 <!--800028 VALIDATIONTYPE-->
 <!--800028-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800028 ENTITYTYPE-->
-<!--800028-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800028**************--></AD_REFERENCE>
 
 <!--800029**************--><AD_REFERENCE>
@@ -6340,8 +5866,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800029-->              <NAME><![CDATA[Offers]]></NAME>
 <!--800029 VALIDATIONTYPE-->
 <!--800029-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800029 ENTITYTYPE-->
-<!--800029-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800029**************--></AD_REFERENCE>
 
 <!--800030**************--><AD_REFERENCE>
@@ -6365,8 +5889,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800030-->              <NAME><![CDATA[IsManager]]></NAME>
 <!--800030 VALIDATIONTYPE-->
 <!--800030-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800030 ENTITYTYPE-->
-<!--800030-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800030**************--></AD_REFERENCE>
 
 <!--800031**************--><AD_REFERENCE>
@@ -6392,8 +5914,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800031-->              <DESCRIPTION><![CDATA[Purchase order price lists.]]></DESCRIPTION>
 <!--800031 VALIDATIONTYPE-->
 <!--800031-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800031 ENTITYTYPE-->
-<!--800031-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800031**************--></AD_REFERENCE>
 
 <!--800032**************--><AD_REFERENCE>
@@ -6419,8 +5939,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800032-->              <DESCRIPTION><![CDATA[Cost Centers]]></DESCRIPTION>
 <!--800032 VALIDATIONTYPE-->
 <!--800032-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800032 ENTITYTYPE-->
-<!--800032-->              <ENTITYTYPE><![CDATA[A]]></ENTITYTYPE>
 <!--800032**************--></AD_REFERENCE>
 
 <!--800033**************--><AD_REFERENCE>
@@ -6448,8 +5966,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800033-->              <HELP><![CDATA[Maintenance type]]></HELP>
 <!--800033 VALIDATIONTYPE-->
 <!--800033-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800033 ENTITYTYPE-->
-<!--800033-->              <ENTITYTYPE><![CDATA[A]]></ENTITYTYPE>
 <!--800033**************--></AD_REFERENCE>
 
 <!--800034**************--><AD_REFERENCE>
@@ -6477,8 +5993,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800034-->              <HELP><![CDATA[Production types]]></HELP>
 <!--800034 VALIDATIONTYPE-->
 <!--800034-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800034 ENTITYTYPE-->
-<!--800034-->              <ENTITYTYPE><![CDATA[A]]></ENTITYTYPE>
 <!--800034**************--></AD_REFERENCE>
 
 <!--800035**************--><AD_REFERENCE>
@@ -6506,8 +6020,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800035-->              <HELP><![CDATA[Partners that are Workers]]></HELP>
 <!--800035 VALIDATIONTYPE-->
 <!--800035-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800035 ENTITYTYPE-->
-<!--800035-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800035**************--></AD_REFERENCE>
 
 <!--800037**************--><AD_REFERENCE>
@@ -6533,8 +6045,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800037-->              <DESCRIPTION><![CDATA[Work Requirement type list]]></DESCRIPTION>
 <!--800037 VALIDATIONTYPE-->
 <!--800037-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800037 ENTITYTYPE-->
-<!--800037-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800037**************--></AD_REFERENCE>
 
 <!--800038**************--><AD_REFERENCE>
@@ -6562,8 +6072,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800038-->              <HELP><![CDATA[Work shift]]></HELP>
 <!--800038 VALIDATIONTYPE-->
 <!--800038-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800038 ENTITYTYPE-->
-<!--800038-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800038**************--></AD_REFERENCE>
 
 <!--800039**************--><AD_REFERENCE>
@@ -6591,8 +6099,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800039-->              <HELP><![CDATA[Indicates the value type that it's going to be entered]]></HELP>
 <!--800039 VALIDATIONTYPE-->
 <!--800039-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800039 ENTITYTYPE-->
-<!--800039-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800039**************--></AD_REFERENCE>
 
 <!--800040**************--><AD_REFERENCE>
@@ -6618,8 +6124,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800040-->              <DESCRIPTION><![CDATA[It shows the different types of amortization.]]></DESCRIPTION>
 <!--800040 VALIDATIONTYPE-->
 <!--800040-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800040 ENTITYTYPE-->
-<!--800040-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800040**************--></AD_REFERENCE>
 
 <!--800041**************--><AD_REFERENCE>
@@ -6643,8 +6147,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800041-->              <NAME><![CDATA[Amortization schedule]]></NAME>
 <!--800041 VALIDATIONTYPE-->
 <!--800041-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800041 ENTITYTYPE-->
-<!--800041-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800041**************--></AD_REFERENCE>
 
 <!--800042**************--><AD_REFERENCE>
@@ -6668,8 +6170,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800042-->              <NAME><![CDATA[Create/recalculate amortization]]></NAME>
 <!--800042 VALIDATIONTYPE-->
 <!--800042-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800042 ENTITYTYPE-->
-<!--800042-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800042**************--></AD_REFERENCE>
 
 <!--800046**************--><AD_REFERENCE>
@@ -6693,8 +6193,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800046-->              <NAME><![CDATA[C_BankAccount]]></NAME>
 <!--800046 VALIDATIONTYPE-->
 <!--800046-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800046 ENTITYTYPE-->
-<!--800046-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800046**************--></AD_REFERENCE>
 
 <!--800057**************--><AD_REFERENCE>
@@ -6720,8 +6218,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800057-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800057 VFORMAT-->
 <!--800057-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800057 ENTITYTYPE-->
-<!--800057-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800057**************--></AD_REFERENCE>
 
 <!--800058**************--><AD_REFERENCE>
@@ -6747,8 +6243,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800058-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800058 VFORMAT-->
 <!--800058-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800058 ENTITYTYPE-->
-<!--800058-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800058**************--></AD_REFERENCE>
 
 <!--800059**************--><AD_REFERENCE>
@@ -6774,8 +6268,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800059-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800059 VFORMAT-->
 <!--800059-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800059 ENTITYTYPE-->
-<!--800059-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800059**************--></AD_REFERENCE>
 
 <!--800060**************--><AD_REFERENCE>
@@ -6801,8 +6293,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800060-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800060 VFORMAT-->
 <!--800060-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800060 ENTITYTYPE-->
-<!--800060-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800060**************--></AD_REFERENCE>
 
 <!--800061**************--><AD_REFERENCE>
@@ -6828,8 +6318,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800061-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800061 VFORMAT-->
 <!--800061-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800061 ENTITYTYPE-->
-<!--800061-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800061**************--></AD_REFERENCE>
 
 <!--800062**************--><AD_REFERENCE>
@@ -6855,8 +6343,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800062-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800062 VFORMAT-->
 <!--800062-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800062 ENTITYTYPE-->
-<!--800062-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800062**************--></AD_REFERENCE>
 
 <!--800063**************--><AD_REFERENCE>
@@ -6882,8 +6368,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800063-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800063 VFORMAT-->
 <!--800063-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800063 ENTITYTYPE-->
-<!--800063-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800063**************--></AD_REFERENCE>
 
 <!--800064**************--><AD_REFERENCE>
@@ -6909,8 +6393,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800064-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800064 VFORMAT-->
 <!--800064-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800064 ENTITYTYPE-->
-<!--800064-->              <ENTITYTYPE><![CDATA[D]]></ENTITYTYPE>
 <!--800064**************--></AD_REFERENCE>
 
 <!--800065**************--><AD_REFERENCE>
@@ -6934,8 +6416,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800065-->              <NAME><![CDATA[Maintenance Periodicity]]></NAME>
 <!--800065 VALIDATIONTYPE-->
 <!--800065-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800065 ENTITYTYPE-->
-<!--800065-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800065**************--></AD_REFERENCE>
 
 <!--800066**************--><AD_REFERENCE>
@@ -6961,8 +6441,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800066-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--800066 VFORMAT-->
 <!--800066-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800066 ENTITYTYPE-->
-<!--800066-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800066**************--></AD_REFERENCE>
 
 <!--800067**************--><AD_REFERENCE>
@@ -6990,8 +6468,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800067-->              <HELP><![CDATA[Types of rappels]]></HELP>
 <!--800067 VALIDATIONTYPE-->
 <!--800067-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800067 ENTITYTYPE-->
-<!--800067-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800067**************--></AD_REFERENCE>
 
 <!--800068**************--><AD_REFERENCE>
@@ -7015,8 +6491,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800068-->              <NAME><![CDATA[AmortizationCalcType]]></NAME>
 <!--800068 VALIDATIONTYPE-->
 <!--800068-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800068 ENTITYTYPE-->
-<!--800068-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800068**************--></AD_REFERENCE>
 
 <!--800069**************--><AD_REFERENCE>
@@ -7040,8 +6514,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800069-->              <NAME><![CDATA[Budget_Type]]></NAME>
 <!--800069 VALIDATIONTYPE-->
 <!--800069-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800069 ENTITYTYPE-->
-<!--800069-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800069**************--></AD_REFERENCE>
 
 <!--800070**************--><AD_REFERENCE>
@@ -7065,8 +6537,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800070-->              <NAME><![CDATA[C_DP_Management_Status]]></NAME>
 <!--800070 VALIDATIONTYPE-->
 <!--800070-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800070 ENTITYTYPE-->
-<!--800070-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800070**************--></AD_REFERENCE>
 
 <!--800071**************--><AD_REFERENCE>
@@ -7090,8 +6560,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800071-->              <NAME><![CDATA[Freight_Unit]]></NAME>
 <!--800071 VALIDATIONTYPE-->
 <!--800071-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800071 ENTITYTYPE-->
-<!--800071-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800071**************--></AD_REFERENCE>
 
 <!--800072**************--><AD_REFERENCE>
@@ -7115,8 +6583,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800072-->              <NAME><![CDATA[Freight round]]></NAME>
 <!--800072 VALIDATIONTYPE-->
 <!--800072-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800072 ENTITYTYPE-->
-<!--800072-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800072**************--></AD_REFERENCE>
 
 <!--800073**************--><AD_REFERENCE>
@@ -7140,8 +6606,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800073-->              <NAME><![CDATA[C_Debt_Payment]]></NAME>
 <!--800073 VALIDATIONTYPE-->
 <!--800073-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800073 ENTITYTYPE-->
-<!--800073-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800073**************--></AD_REFERENCE>
 
 <!--800074**************--><AD_REFERENCE>
@@ -7167,8 +6631,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800074-->              <DESCRIPTION><![CDATA[Accounting model period]]></DESCRIPTION>
 <!--800074 VALIDATIONTYPE-->
 <!--800074-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800074 ENTITYTYPE-->
-<!--800074-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800074**************--></AD_REFERENCE>
 
 <!--800075**************--><AD_REFERENCE>
@@ -7194,8 +6656,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800075-->              <DESCRIPTION><![CDATA[State of one order]]></DESCRIPTION>
 <!--800075 VALIDATIONTYPE-->
 <!--800075-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800075 ENTITYTYPE-->
-<!--800075-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800075**************--></AD_REFERENCE>
 
 <!--800076**************--><AD_REFERENCE>
@@ -7219,8 +6679,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800076-->              <NAME><![CDATA[C_Remittance no canceled or returned]]></NAME>
 <!--800076 VALIDATIONTYPE-->
 <!--800076-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800076 ENTITYTYPE-->
-<!--800076-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800076**************--></AD_REFERENCE>
 
 <!--800078**************--><AD_REFERENCE>
@@ -7244,8 +6702,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800078-->              <NAME><![CDATA[Order status]]></NAME>
 <!--800078 VALIDATIONTYPE-->
 <!--800078-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800078 ENTITYTYPE-->
-<!--800078-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800078**************--></AD_REFERENCE>
 
 <!--800079**************--><AD_REFERENCE>
@@ -7269,8 +6725,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800079-->              <NAME><![CDATA[AT_Test]]></NAME>
 <!--800079 VALIDATIONTYPE-->
 <!--800079-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800079 ENTITYTYPE-->
-<!--800079-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800079**************--></AD_REFERENCE>
 
 <!--800080**************--><AD_REFERENCE>
@@ -7296,8 +6750,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800080-->              <DESCRIPTION><![CDATA[Defines if the Test Line is a command line or a reference to execute another Test.]]></DESCRIPTION>
 <!--800080 VALIDATIONTYPE-->
 <!--800080-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800080 ENTITYTYPE-->
-<!--800080-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800080**************--></AD_REFERENCE>
 
 <!--800081**************--><AD_REFERENCE>
@@ -7323,8 +6775,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800081-->              <DESCRIPTION><![CDATA[It defines the category of the test. It can be individual, module or application.]]></DESCRIPTION>
 <!--800081 VALIDATIONTYPE-->
 <!--800081-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800081 ENTITYTYPE-->
-<!--800081-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800081**************--></AD_REFERENCE>
 
 <!--800082**************--><AD_REFERENCE>
@@ -7348,8 +6798,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800082-->              <NAME><![CDATA[AD_Language_Using]]></NAME>
 <!--800082 VALIDATIONTYPE-->
 <!--800082-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800082 ENTITYTYPE-->
-<!--800082-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800082**************--></AD_REFERENCE>
 
 <!--800083**************--><AD_REFERENCE>
@@ -7373,8 +6821,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800083-->              <NAME><![CDATA[Argument Type]]></NAME>
 <!--800083 VALIDATIONTYPE-->
 <!--800083-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800083 ENTITYTYPE-->
-<!--800083-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800083**************--></AD_REFERENCE>
 
 <!--800084**************--><AD_REFERENCE>
@@ -7398,8 +6844,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800084-->              <NAME><![CDATA[Arguments]]></NAME>
 <!--800084 VALIDATIONTYPE-->
 <!--800084-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800084 ENTITYTYPE-->
-<!--800084-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800084**************--></AD_REFERENCE>
 
 <!--800085**************--><AD_REFERENCE>
@@ -7425,8 +6869,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800085-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--800085 VFORMAT-->
 <!--800085-->              <VFORMAT><![CDATA[LL]]></VFORMAT>
-<!--800085 ENTITYTYPE-->
-<!--800085-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800085**************--></AD_REFERENCE>
 
 <!--800086**************--><AD_REFERENCE>
@@ -7450,8 +6892,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800086-->              <NAME><![CDATA[DimensionalFilterPurchase]]></NAME>
 <!--800086 VALIDATIONTYPE-->
 <!--800086-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800086 ENTITYTYPE-->
-<!--800086-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800086**************--></AD_REFERENCE>
 
 <!--800087**************--><AD_REFERENCE>
@@ -7475,8 +6915,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800087-->              <NAME><![CDATA[DimensionalFilterSale]]></NAME>
 <!--800087 VALIDATIONTYPE-->
 <!--800087-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800087 ENTITYTYPE-->
-<!--800087-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800087**************--></AD_REFERENCE>
 
 <!--800088**************--><AD_REFERENCE>
@@ -7500,8 +6938,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800088-->              <NAME><![CDATA[Cost Uom]]></NAME>
 <!--800088 VALIDATIONTYPE-->
 <!--800088-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800088 ENTITYTYPE-->
-<!--800088-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800088**************--></AD_REFERENCE>
 
 <!--800089**************--><AD_REFERENCE>
@@ -7525,8 +6961,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800089-->              <NAME><![CDATA[Cost type]]></NAME>
 <!--800089 VALIDATIONTYPE-->
 <!--800089-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800089 ENTITYTYPE-->
-<!--800089-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800089**************--></AD_REFERENCE>
 
 <!--800090**************--><AD_REFERENCE>
@@ -7550,8 +6984,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800090-->              <NAME><![CDATA[C_BP_TaxCategory]]></NAME>
 <!--800090 VALIDATIONTYPE-->
 <!--800090-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800090 ENTITYTYPE-->
-<!--800090-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800090**************--></AD_REFERENCE>
 
 <!--800092**************--><AD_REFERENCE>
@@ -7575,8 +7007,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800092-->              <NAME><![CDATA[Locator search]]></NAME>
 <!--800092 VALIDATIONTYPE-->
 <!--800092-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
-<!--800092 ENTITYTYPE-->
-<!--800092-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800092**************--></AD_REFERENCE>
 
 <!--800093**************--><AD_REFERENCE>
@@ -7600,8 +7030,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800093-->              <NAME><![CDATA[Responsible employee]]></NAME>
 <!--800093 VALIDATIONTYPE-->
 <!--800093-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800093 ENTITYTYPE-->
-<!--800093-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800093**************--></AD_REFERENCE>
 
 <!--800095**************--><AD_REFERENCE>
@@ -7625,8 +7053,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800095-->              <NAME><![CDATA[Shipment/Receipt]]></NAME>
 <!--800095 VALIDATIONTYPE-->
 <!--800095-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
-<!--800095 ENTITYTYPE-->
-<!--800095-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800095**************--></AD_REFERENCE>
 
 <!--800096**************--><AD_REFERENCE>
@@ -7650,8 +7076,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800096-->              <NAME><![CDATA[Invoice Line]]></NAME>
 <!--800096 VALIDATIONTYPE-->
 <!--800096-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
-<!--800096 ENTITYTYPE-->
-<!--800096-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800096**************--></AD_REFERENCE>
 
 <!--800097**************--><AD_REFERENCE>
@@ -7675,8 +7099,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800097-->              <NAME><![CDATA[Class format type]]></NAME>
 <!--800097 VALIDATIONTYPE-->
 <!--800097-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800097 ENTITYTYPE-->
-<!--800097-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800097**************--></AD_REFERENCE>
 
 <!--800098**************--><AD_REFERENCE>
@@ -7700,8 +7122,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800098-->              <NAME><![CDATA[In/out transaction types for planning]]></NAME>
 <!--800098 VALIDATIONTYPE-->
 <!--800098-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800098 ENTITYTYPE-->
-<!--800098-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800098**************--></AD_REFERENCE>
 
 <!--800099**************--><AD_REFERENCE>
@@ -7725,8 +7145,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800099-->              <NAME><![CDATA[Quantity type]]></NAME>
 <!--800099 VALIDATIONTYPE-->
 <!--800099-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800099 ENTITYTYPE-->
-<!--800099-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800099**************--></AD_REFERENCE>
 
 <!--800100**************--><AD_REFERENCE>
@@ -7750,8 +7168,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800100-->              <NAME><![CDATA[MRP_ProductionLine]]></NAME>
 <!--800100 VALIDATIONTYPE-->
 <!--800100-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800100 ENTITYTYPE-->
-<!--800100-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800100**************--></AD_REFERENCE>
 
 <!--800101**************--><AD_REFERENCE>
@@ -7777,8 +7193,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800101-->              <DESCRIPTION><![CDATA[Link]]></DESCRIPTION>
 <!--800101 VALIDATIONTYPE-->
 <!--800101-->              <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--800101 ENTITYTYPE-->
-<!--800101-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800101**************--></AD_REFERENCE>
 
 <!--800102**************--><AD_REFERENCE>
@@ -7804,8 +7218,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800102-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
 <!--800102 VFORMAT-->
 <!--800102-->              <VFORMAT><![CDATA[L]]></VFORMAT>
-<!--800102 ENTITYTYPE-->
-<!--800102-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800102**************--></AD_REFERENCE>
 
 <!--800103**************--><AD_REFERENCE>
@@ -7829,8 +7241,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800103-->              <NAME><![CDATA[Development Status]]></NAME>
 <!--800103 VALIDATIONTYPE-->
 <!--800103-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800103 ENTITYTYPE-->
-<!--800103-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800103**************--></AD_REFERENCE>
 
 <!--800104**************--><AD_REFERENCE>
@@ -7854,8 +7264,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800104-->              <NAME><![CDATA[Output format]]></NAME>
 <!--800104 VALIDATIONTYPE-->
 <!--800104-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--800104 ENTITYTYPE-->
-<!--800104-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800104**************--></AD_REFERENCE>
 
 <!--800105**************--><AD_REFERENCE>
@@ -7881,8 +7289,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800105-->              <DESCRIPTION><![CDATA[User Role]]></DESCRIPTION>
 <!--800105 VALIDATIONTYPE-->
 <!--800105-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800105 ENTITYTYPE-->
-<!--800105-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800105**************--></AD_REFERENCE>
 
 <!--800106**************--><AD_REFERENCE>
@@ -7906,8 +7312,6 @@ For example, if you want to create different invoices for each ship location for
 <!--800106-->              <NAME><![CDATA[AD_Language system]]></NAME>
 <!--800106 VALIDATIONTYPE-->
 <!--800106-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
-<!--800106 ENTITYTYPE-->
-<!--800106-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--800106**************--></AD_REFERENCE>
 
 <!--1000300000**************--><AD_REFERENCE>
@@ -7935,8 +7339,6 @@ For example, if you want to create different invoices for each ship location for
 <!--1000300000-->              <HELP><![CDATA[Type of an Alert Rule. Data driven (check for a valid SQL clause) or External (not check the SQL clause).]]></HELP>
 <!--1000300000 VALIDATIONTYPE-->
 <!--1000300000-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--1000300000 ENTITYTYPE-->
-<!--1000300000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1000300000**************--></AD_REFERENCE>
 
 <!--1000500000**************--><AD_REFERENCE>
@@ -7964,8 +7366,6 @@ For example, if you want to create different invoices for each ship location for
 <!--1000500000-->              <HELP><![CDATA[ABC classification according to a Pareto distribution]]></HELP>
 <!--1000500000 VALIDATIONTYPE-->
 <!--1000500000-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--1000500000 ENTITYTYPE-->
-<!--1000500000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1000500000**************--></AD_REFERENCE>
 
 <!--1002100000**************--><AD_REFERENCE>
@@ -7991,8 +7391,6 @@ For example, if you want to create different invoices for each ship location for
 <!--1002100000-->              <DESCRIPTION><![CDATA[Report Type General Ledger]]></DESCRIPTION>
 <!--1002100000 VALIDATIONTYPE-->
 <!--1002100000-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--1002100000 ENTITYTYPE-->
-<!--1002100000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1002100000**************--></AD_REFERENCE>
 
 <!--1004400000**************--><AD_REFERENCE>
@@ -8022,8 +7420,6 @@ For example, if you want to create different invoices for each ship location for
 -D: Cancelled]]></HELP>
 <!--1004400000 VALIDATIONTYPE-->
 <!--1004400000-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--1004400000 ENTITYTYPE-->
-<!--1004400000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1004400000**************--></AD_REFERENCE>
 
 <!--1004400001**************--><AD_REFERENCE>
@@ -8047,8 +7443,6 @@ For example, if you want to create different invoices for each ship location for
 <!--1004400001-->              <NAME><![CDATA[Requisition lock cause]]></NAME>
 <!--1004400001 VALIDATIONTYPE-->
 <!--1004400001-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--1004400001 ENTITYTYPE-->
-<!--1004400001-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1004400001**************--></AD_REFERENCE>
 
 <!--1005900000**************--><AD_REFERENCE>
@@ -8072,8 +7466,6 @@ For example, if you want to create different invoices for each ship location for
 <!--1005900000-->              <NAME><![CDATA[All_Processed_Status_Expenses]]></NAME>
 <!--1005900000 VALIDATIONTYPE-->
 <!--1005900000-->              <VALIDATIONTYPE><![CDATA[L]]></VALIDATIONTYPE>
-<!--1005900000 ENTITYTYPE-->
-<!--1005900000-->              <ENTITYTYPE><![CDATA[U]]></ENTITYTYPE>
 <!--1005900000**************--></AD_REFERENCE>
 
 <!--

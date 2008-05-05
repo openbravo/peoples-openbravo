@@ -87,29 +87,15 @@ BEGIN
          IsActive, Created, CreatedBy, Updated, UpdatedBy,
          Name, Description,
          IsAutoSequence, StartNo, IncrementNo, CurrentNextSys, CurrentNext,
-         IsAudited, IsTableID, StartNewYear)
+         IsTableID, StartNewYear)
      VALUES
          (v_NextNo, :new.AD_Client_ID, :new.AD_Org_ID,
          'Y', now(), 0, now(), 0,
          :new.TableName, :new.TableName,
          'Y', 1000000, 1, v_CurrentNextSys, v_CurrentNext,
-         'N', 'Y', 'N');
+         'Y', 'N');
         --
-        DECLARE
-
-        BEGIN
-            FOR CUR_Replication IN (SELECT  AD_ReplicationStrategy_ID
-                            FROM    AD_ReplicationStrategy) LOOP
-             AD_Sequence_Next('AD_ReplicationTable', :new.AD_Table_ID, v_NextNo);
-                INSERT INTO AD_ReplicationTable
-                    (AD_ReplicationTable_ID, AD_Client_ID, AD_Org_ID,
-                 IsActive, Created, CreatedBy, Updated, UpdatedBy,
-                    AD_ReplicationStrategy_ID, AD_TABLE_ID, REPLICATIONTYPE, EntityType)
-                VALUES (v_NextNo, :new.AD_Client_ID, :new.AD_Org_ID,
-                 'Y', now(), 0, now(), 0,
-                    CUR_Replication.AD_ReplicationStrategy_ID, :new.AD_Table_ID, 'L', :new.EntityType);
-            END LOOP;
-        END;
+ 
  END IF; -- Inserting
 
  -- Update TableName

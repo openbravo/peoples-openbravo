@@ -20,7 +20,6 @@
 <REPORT>
 	<template file="RptM_MovementLines.fo"/>
 	<structure name="structure1">
-		<FIELD id="fieldEjemplar" replaceCharacters="fo">ejemplar</FIELD>
 		<FIELD id="fieldPartnername" replaceCharacters="fo">partnername</FIELD>
 		<FIELD id="fieldAddress1" replaceCharacters="fo">address1</FIELD>
 		<FIELD id="fieldAddress2" replaceCharacters="fo">address2</FIELD>
@@ -37,7 +36,6 @@
 		<FUNCTION id="fieldTotalMovementqty" name="SUM" format="euroInform">movementqty</FUNCTION>
 		<FUNCTION id="fieldTotalQuantorder1" name="SUM" format="euroInform">quantityorder</FUNCTION>
 		<FUNCTION id="fieldTotalMovementqty1" name="SUM" format="euroInform">movementqty</FUNCTION>
-		<SECTION id="sectionEjemplar" field="ejemplar"/>
 		<SECTION id="sectionProduct" field="productname"/>
 		<SECTION id="sectionDetailLines"/>
 	</structure>

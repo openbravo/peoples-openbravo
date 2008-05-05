@@ -81,22 +81,7 @@
     FROM AD_Language
     WHERE IsActive='Y'  AND IsSystemLanguage='Y';
     DBMS_OUTPUT.PUT_LINE('Number of active Languages=' || v_Languages) ;
-    -- Desktop
-    INSERT
-    INTO AD_Desktop_Trl
-      (
-        AD_Desktop_ID, AD_Language, Name, Description,
-        Help, IsTranslated, Createdby, UpdatedBy,
-        AD_Client_ID, AD_Org_ID
-      )
-    SELECT AD_Desktop_ID, AD_Language, AD_Desktop.Name, AD_Desktop.Description, AD_Desktop.Help, 'N', 0, 0, 0, 0
-    FROM AD_Desktop, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Desktop_ID, AD_Language) NOT IN
-      (SELECT AD_Desktop_ID, AD_Language FROM AD_Desktop_Trl)
-      ;
-    v_rowcount:=SQL%ROWCOUNT;
-    v_Created:=v_Created + v_rowcount;
-    DBMS_OUTPUT.PUT_LINE('- AD_Desktop ' || v_rowcount) ;
+    
     -- Element
     INSERT
     INTO AD_Element_Trl
@@ -188,20 +173,7 @@
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Message ' || v_rowcount) ;
-    -- PrintFormatItem
-    INSERT
-    INTO AD_PrintFormatItem_Trl
-      (
-        AD_PrintFormatItem_ID, AD_Language, PrintName, PrintNameSuffix, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
-      )
-    SELECT AD_PrintFormatItem_ID, AD_Language, PrintName, PrintNameSuffix, 'N', 0, 0, 0, 0
-    FROM AD_PrintFormatItem, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_PrintFormatItem_ID, AD_Language) NOT IN
-      (SELECT AD_PrintFormatItem_ID, AD_Language FROM AD_PrintFormatItem_Trl)
-      ;
-    v_rowcount:=SQL%ROWCOUNT;
-    v_Created:=v_Created + v_rowcount;
-    DBMS_OUTPUT.PUT_LINE('- AD_PrintFormatItem ' || v_rowcount) ;
+   
     -- Process
     INSERT
     INTO AD_Process_Trl
@@ -339,21 +311,7 @@
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Window ' || v_rowcount) ;
-    INSERT
-    INTO AD_Workbench_Trl
-      (
-        AD_Workbench_ID, AD_Language, Name, Description,
-        Help, IsTranslated, Createdby, UpdatedBy,
-        AD_Client_ID, AD_Org_ID
-      )
-    SELECT AD_Workbench_ID, AD_Language, AD_Workbench.Name, AD_Workbench.Description, AD_Workbench.Help, 'N', 0, 0, 0, 0
-    FROM AD_Workbench, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Workbench_ID, AD_Language) NOT IN
-      (SELECT AD_Workbench_ID, AD_Language FROM AD_Workbench_Trl)
-      ;
-    v_rowcount:=SQL%ROWCOUNT;
-    v_Created:=v_Created + v_rowcount;
-    DBMS_OUTPUT.PUT_LINE('- AD_Workbench ' || v_rowcount) ;
+    
     INSERT
     INTO C_Country_Trl
       (
@@ -401,19 +359,7 @@
     v_rowcount:=SQL%ROWCOUNT;
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- C_DocType ' || v_rowcount) ;
-    INSERT
-    INTO C_DunningLevel_Trl
-      (
-        C_DunningLevel_ID, AD_Language, PrintName, Note, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
-      )
-    SELECT C_DunningLevel_ID, AD_Language, C_DunningLevel.PrintName, C_DunningLevel.Note, 'N', 0, 0, C_DunningLevel.AD_Client_ID, C_DunningLevel.AD_Org_ID
-    FROM C_DunningLevel, AD_Language
-    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_DunningLevel_ID, AD_Language) NOT IN
-      (SELECT C_DunningLevel_ID, AD_Language FROM C_DunningLevel_Trl)
-      ;
-    v_rowcount:=SQL%ROWCOUNT;
-    v_Created:=v_Created + v_rowcount;
-    DBMS_OUTPUT.PUT_LINE('- C_DunningLevel ' || v_rowcount) ;
+    
     INSERT
     INTO C_ElementValue_Trl
       (

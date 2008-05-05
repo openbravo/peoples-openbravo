@@ -150,7 +150,6 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
     data.cUomId = vars.getStringParameter("inpcUomId");
     data.cTaxId = vars.getStringParameter("inpcTaxId");
     data.sResourceassignmentId = vars.getStringParameter("inpsResourceassignmentId");
-    data.aAssetId = vars.getStringParameter("inpaAssetId");
     data.taxamt = vars.getStringParameter("inptaxamt", "0");
     data.mAttributesetinstanceId = vars.getStringParameter("inpmAttributesetinstanceId");
     data.isdescription = vars.getStringParameter("inpisdescription", "N");
@@ -182,7 +181,6 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("C_UOM_ID: " + data.cUomId);
     if (log4j.isDebugEnabled()) log4j.debug("C_Tax_ID: " + data.cTaxId);
     if (log4j.isDebugEnabled()) log4j.debug("S_ResourceAssignment_ID: " + data.sResourceassignmentId);
-    if (log4j.isDebugEnabled()) log4j.debug("A_Asset_ID: " + data.aAssetId);
     if (log4j.isDebugEnabled()) log4j.debug("TaxAmt: " + data.taxamt);
     if (log4j.isDebugEnabled()) log4j.debug("M_AttributeSetInstance_ID: " + data.mAttributesetinstanceId);
     if (log4j.isDebugEnabled()) log4j.debug("IsDescription: " + data.isdescription);

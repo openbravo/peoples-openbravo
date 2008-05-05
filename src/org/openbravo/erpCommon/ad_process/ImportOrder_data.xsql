@@ -32,7 +32,7 @@
 				C_Region_ID, RegionName, C_Country_ID, CountryCode, AD_User_ID, Phone, C_Project_ID, C_Activity_ID,
 				C_DocType_ID, DocTypeName, C_PaymentTerm_ID, PaymentTermValue, C_Order_ID, DocumentNo, Description,
 				M_Product_ID, ProductValue, UPC, SKU, C_Tax_ID, TaxIndicator, TaxAmt, C_OrderLine_ID, LineDescription,
-				C_UOM_ID, QtyOrdered, PriceActual, FreightAmt, C_Campaign_ID, DateOrdered, DatePromised, Order_ReferenceNo,
+				C_UOM_ID, QtyOrdered, PriceActual, C_Campaign_ID, DateOrdered, DatePromised, Order_ReferenceNo,
 				BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Vendor_UPC, Perform_Post, Paymentrule1, Paymentamount1, Paymentrule2, Paymentamount2
 				FROM I_Order
 				WHERE I_IsImported='N'
@@ -94,7 +94,7 @@
           C_Region_ID, RegionName, C_Country_ID, CountryCode, AD_User_ID, Phone, C_Project_ID, C_Activity_ID,
           C_DocType_ID, DocTypeName, C_PaymentTerm_ID, PaymentTermValue, C_Order_ID, DocumentNo, Description,
           M_Product_ID, ProductValue, UPC, SKU, C_Tax_ID, TaxIndicator, TaxAmt, C_OrderLine_ID, LineDescription,
-          C_UOM_ID, QtyOrdered, PriceActual, FreightAmt, C_Campaign_ID, DateOrdered, DatePromised, Order_ReferenceNo,
+          C_UOM_ID, QtyOrdered, PriceActual, C_Campaign_ID, DateOrdered, DatePromised, Order_ReferenceNo,
           BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Perform_Post, Paymentrule1, Paymentamount1, Paymentrule2, Paymentamount2
         FROM I_Order
 				WHERE I_IsImported='N'
@@ -1234,7 +1234,7 @@
           C_Region_ID, RegionName, C_Country_ID, CountryCode, AD_User_ID, Phone, C_Project_ID, C_Activity_ID,
           C_DocType_ID, DocTypeName, C_PaymentTerm_ID, PaymentTermValue, C_Order_ID, DocumentNo, Description,
           M_Product_ID, ProductValue, UPC, SKU, C_Tax_ID, TaxIndicator, TaxAmt, C_OrderLine_ID, LineDescription,
-          C_UOM_ID, QtyOrdered, PriceActual, FreightAmt, C_Campaign_ID, DateOrdered, DatePromised, Order_ReferenceNo,
+          C_UOM_ID, QtyOrdered, PriceActual, C_Campaign_ID, DateOrdered, DatePromised, Order_ReferenceNo,
           BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Perform_Post, Paymentrule1, Paymentamount1, Paymentrule2, Paymentamount2
         FROM I_Order
 				WHERE I_IsImported='N'

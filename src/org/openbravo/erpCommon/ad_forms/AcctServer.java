@@ -78,7 +78,6 @@ public abstract class AcctServer  {
     public String           DocumentType = "";
     public String           TaxIncluded = "";
     public String           GL_Category_ID = "";
-    public String           GL_Budget_ID = "";
     public String           Record_ID = "";
     /** No Currency in Document Indicator       */
     protected static final String      NO_CURRENCY = "-1";

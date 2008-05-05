@@ -62,7 +62,7 @@ BEGIN
         Updated, UpdatedBy, Name,
         Description, VFormat, IsAutoSequence,
         IncrementNo, StartNo, CurrentNext,
-        CurrentNextSys, IsAudited, IsTableID,
+        CurrentNextSys, IsTableID,
         Prefix, Suffix, StartNewYear
       )
       VALUES
@@ -72,7 +72,7 @@ BEGIN
         0, 'DocumentNo_' || CUR_DSequence.TableName,  'DocumentNo/Value for Table ' || CUR_DSequence.TableName,
         NULL,  'Y', 1,
         10000000, 10000000, 10000000,
-        'N',  'N', NULL,
+        'N',  NULL,
         NULL,  'N'
       )
       ;

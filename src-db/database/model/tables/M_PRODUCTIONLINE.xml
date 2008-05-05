@@ -73,10 +73,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PRINTLABEL" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="CALCULATED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
@@ -87,10 +83,6 @@
       </column>
       <column name="REJECTEDQUANTITY" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="SECQUALITY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
         <onCreateDefault/>
       </column>
       <column name="CALCCOST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
@@ -130,6 +122,5 @@
       </index>
       <check name="M_PRODUCTIONLINE_CHECK1"><![CDATA[((QUANTITYORDER IS NULL) AND (M_PRODUCT_UOM_ID IS NULL)) OR ((QUANTITYORDER IS NOT NULL) AND (M_PRODUCT_UOM_ID IS NOT NULL))]]></check>
       <check name="MPRODUCTLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MPRODUCTLINE_PRINTLABEL_CHECK"><![CDATA[PRINTLABEL IN ('Y', 'N')]]></check>
     </table>
   </database>

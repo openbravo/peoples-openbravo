@@ -75,7 +75,6 @@
       v_Invoice_ID NUMBER(10) ;
       v_NextNo NUMBER(10) ;
       v_DocType_ID NUMBER(10) ;
-      v_Approved CHAR(1) ;
       v_InvoiceNo NUMBER(10) ;
       v_DocumentNo C_INVOICE.DocumentNo%TYPE;
       v_IsDiscountPrinted CHAR(1) ;
@@ -183,13 +182,6 @@
           --
           v_ResultStr:='GetDocTypeInfo';
           v_DocType_ID:=Ad_Get_Doctype(CUR_Shipment.AD_Client_ID, CUR_Shipment.AD_Org_ID, 'API') ;
-          SELECT(
-            CASE IsApproved WHEN 'Y' THEN 'N' ELSE 'Y'
-            END
-            )
-          INTO v_Approved
-          FROM C_DOCTYPE
-          WHERE C_DOCTYPE_ID=v_DocType_ID;
           --
           Ad_Sequence_Next('C_Invoice', CUR_Shipment.AD_Client_ID, v_Invoice_ID) ;
           Ad_Sequence_Doctype(v_DocType_ID, CUR_Shipment.AD_Client_ID, 'Y', v_DocumentNo) ;
@@ -210,7 +202,7 @@
               IsActive, Created, CreatedBy, Updated,
               UpdatedBy, IsSOTrx, DocumentNo, DocStatus,
               DocAction, Processing, Processed, C_DocType_ID,
-              C_DocTypeTarget_ID, Description, IsApproved, IsTransferred,
+              C_DocTypeTarget_ID, Description,
               SalesRep_ID, DateInvoiced, DatePrinted, IsPrinted,
               DateAcct, C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID,
               AD_User_ID, POReference, DateOrdered, IsDiscountPrinted,
@@ -225,7 +217,7 @@
                'Y', now(), 0, now(),
               0, 'N', v_DocumentNo, 'DR',
                'CO', 'N', 'N', v_DocType_ID,
-              v_DocType_ID, CUR_Shipment.Description, v_Approved, 'N',
+              v_DocType_ID, CUR_Shipment.Description,
               NULL, now(), NULL, 'N',
               now(), v_C_PaymentTerm_ID, CUR_Shipment.C_BPartner_ID, CUR_Shipment.C_BPartner_Location_ID,
               CUR_Shipment.AD_User_ID, NULL, CUR_Shipment.DateOrdered, v_IsDiscountPrinted,

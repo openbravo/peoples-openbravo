@@ -76,7 +76,6 @@ public class Invoice extends HttpSecureAppServlet {
          vars.getStringParameter("newFilter").equals("")){
         vars.removeSessionValue("Invoice.key");
         vars.removeSessionValue("Invoice.name");
-        vars.removeSessionValue("Invoice.inpPaid");
         vars.removeSessionValue("Invoice.inpBpartnerId");
         vars.removeSessionValue("Invoice.inpDateFrom");
         vars.removeSessionValue("Invoice.inpDateTo");
@@ -89,7 +88,6 @@ public class Invoice extends HttpSecureAppServlet {
       }
       
       String strName = vars.getGlobalVariable("inpKey", "Invoice.name", "");
-      String strPaid = vars.getGlobalVariable("inpPaid", "Invoice.inpPaid", "N");
       String strBpartnerId = vars.getGlobalVariable("inpBpartnerId", "Invoice.inpBpartnerId", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "Invoice.inpDateFrom", "");
       String strFechaTo = vars.getGlobalVariable("inpDateTo", "Invoice.inpDateTo", "");
@@ -106,7 +104,7 @@ public class Invoice extends HttpSecureAppServlet {
       String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
       String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
       
-      printGridData(response, vars, strName, strPaid, strBpartnerId, strDateFrom, strFechaTo, strDescription, strCal1, strCalc2, strOrder, strSOTrx, strOrg, 
+      printGridData(response, vars, strName, strBpartnerId, strDateFrom, strFechaTo, strDescription, strCal1, strCalc2, strOrder, strSOTrx, strOrg, 
                                     strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
           
     } else pageError(response);
@@ -193,8 +191,8 @@ public class Invoice extends HttpSecureAppServlet {
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();   
-    String[] colNames = {"bpartnername", "dateinvoiced", "documentno", "currency", "grandtotal", "convertedamount", "openamt", "ispaid", "issOtrx", "description", "poreference", "rowkey"};
-    String[] colWidths = {"160", "58", "65", "65", "70", "60", "55", "45", "65", "90", "40" ,"0"};
+    String[] colNames = {"bpartnername", "dateinvoiced", "documentno", "currency", "grandtotal", "convertedamount", "openamt", "issOtrx", "description", "poreference", "rowkey"};
+    String[] colWidths = {"160", "58", "65", "65", "70", "60", "55", "65", "90", "40" ,"0"};
 
     for(int i=0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -227,7 +225,7 @@ public class Invoice extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName, String strPaid, String strBpartnerId, String strDateFrom, String strFechaTo, String strDescription, String strCal1, String strCalc2, String strOrder, String strSOTrx, String strOrg, String strOrderBy, String strOffset, String strPageSize, String strNewFilter) throws IOException, ServletException {
+  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName, String strBpartnerId, String strDateFrom, String strFechaTo, String strDescription, String strCal1, String strCalc2, String strOrder, String strSOTrx, String strOrg, String strOrderBy, String strOffset, String strPageSize, String strNewFilter) throws IOException, ServletException {
   
     if (log4j.isDebugEnabled()) log4j.debug("Output: pint page rows");
         
@@ -241,7 +239,7 @@ public class Invoice extends HttpSecureAppServlet {
     if (headers != null) {
       try {
         if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load     
-          data = InvoiceData.select(this, "1", vars.getSqlDateFormat(), Utility.getContext(this, vars, "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData.nDaysAfter(this,strFechaTo, "1"), strCal1,  strCalc2, strSOTrx, strPaid, strOrderBy, "", "");
+          data = InvoiceData.select(this, "1", vars.getSqlDateFormat(), Utility.getContext(this, vars, "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData.nDaysAfter(this,strFechaTo, "1"), strCal1,  strCalc2, strSOTrx, strOrderBy, "", "");
           strNumRows = String.valueOf(data.length);
           vars.setSessionValue("Invoice.numrows", strNumRows);
         }
@@ -252,11 +250,11 @@ public class Invoice extends HttpSecureAppServlet {
         // Filtering result
         if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));       
-          data = InvoiceData.select(this, "ROWNUM", vars.getSqlDateFormat(), Utility.getContext(this, vars, "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData.nDaysAfter(this,strFechaTo, "1"), strCal1,  strCalc2, strSOTrx, strPaid, strOrderBy, oraLimit, "");
+          data = InvoiceData.select(this, "ROWNUM", vars.getSqlDateFormat(), Utility.getContext(this, vars, "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData.nDaysAfter(this,strFechaTo, "1"), strCal1,  strCalc2, strSOTrx, strOrderBy, oraLimit, "");
         }
         else {
           String pgLimit = strPageSize + " OFFSET " + strOffset;
-          data = InvoiceData.select(this, "1", vars.getSqlDateFormat(), Utility.getContext(this, vars, "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData.nDaysAfter(this,strFechaTo, "1"), strCal1,  strCalc2, strSOTrx, strPaid, strOrderBy, "", pgLimit);
+          data = InvoiceData.select(this, "1", vars.getSqlDateFormat(), Utility.getContext(this, vars, "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData.nDaysAfter(this,strFechaTo, "1"), strCal1,  strCalc2, strSOTrx, strOrderBy, "", pgLimit);
         }     
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);

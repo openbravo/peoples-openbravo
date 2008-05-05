@@ -58,12 +58,10 @@ public class SL_CCPMeasure_Group extends HttpSecureAppServlet {
     SLCCPMeasureGroupData[] data = SLCCPMeasureGroupData.select(this, strMACCPGroupID);
 
     String strSeqNo = data[0].seqno;
-    String strHasSecProduct = data[0].hassecproduct;
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_CCPMeasure_Group';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpseqno\", \"" + FormatUtilities.replaceJS((strSeqNo.equals("")?"\"\"":strSeqNo)) + "\"),");
-    resultado.append("new Array(\"inphassecproduct\", \"" + FormatUtilities.replaceJS((strHasSecProduct.equals("")?"\"\"":strHasSecProduct)) + "\")");
+    resultado.append("new Array(\"inpseqno\", \"" + FormatUtilities.replaceJS((strSeqNo.equals("")?"\"\"":strSeqNo)) + "\")");
     resultado.append(");\n");
 
     xmlDocument.setParameter("array", resultado.toString());

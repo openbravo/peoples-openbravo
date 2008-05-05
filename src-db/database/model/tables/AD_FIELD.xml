@@ -89,20 +89,12 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ISHEADING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="ISFIELDONLY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="ISENCRYPTED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="ENTITYTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[D]]></default>
         <onCreateDefault/>
       </column>
       <column name="SHOWINRELATION" primaryKey="false" required="false" type="VARCHAR" size="1" autoIncrement="false">
@@ -139,7 +131,6 @@
       <check name="ADFIELD_ISDISPLAYED_CHECK"><![CDATA[ISDISPLAYED IN ('Y', 'N')]]></check>
       <check name="ADFIELD_ISENCRYPTED_CHECK"><![CDATA[ISENCRYPTED IN ('Y', 'N')]]></check>
       <check name="ADFIELD_ISFIELDONLY_CHECK"><![CDATA[ISFIELDONLY IN ('Y', 'N')]]></check>
-      <check name="ADFIELD_ISHEADING_CHECK"><![CDATA[ISHEADING IN ('Y', 'N')]]></check>
       <check name="ADFIELD_ISREADONLY_CHECK"><![CDATA[ISREADONLY IN ('Y', 'N')]]></check>
       <check name="ADFIELD_ISSAMELINE_CHECK"><![CDATA[ISSAMELINE IN ('Y', 'N')]]></check>
     </table>

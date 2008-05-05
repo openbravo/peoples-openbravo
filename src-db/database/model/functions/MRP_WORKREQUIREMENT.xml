@@ -83,14 +83,14 @@
         MA_PROCESSPLAN_ID, QUANTITY,
         LAUNCHDATE, STARTDATE, ENDDATE,
         CLOSED, EXPLOTE, PROCESSED, DOCUMENTNO, EXPLODEPHASES,
-        SECONDARYQTY, SECONDARYUNIT, CONVERSIONRATE, WRTYPE
+        SECONDARYQTY, SECONDARYUNIT, CONVERSIONRATE
       ) VALUES (
         v_WR_ID, v_Client_ID, v_Org_ID, 'Y',
         now(), v_User_ID, now(), v_User_ID, null,
         Cur_workproposal.MA_PROCESSPLAN_ID, Cur_workproposal.qty,
         now(), Cur_workproposal.plannedorderdate, Cur_workproposal.planneddate,
         'N', 'N', 'N', v_DocumentNo, Cur_workproposal.explodephases,
-        null, null, null, 'C'
+        null, null, null
       );
       UPDATE MRP_RUN_PRODUCTIONLINE
          SET MA_WORKREQUIREMENT_ID=v_WR_ID

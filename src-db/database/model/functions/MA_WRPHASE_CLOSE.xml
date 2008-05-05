@@ -30,6 +30,8 @@
     v_Record_ID NUMBER:=NULL;
     v_WorkRequirement_ID NUMBER;
     v_Count NUMBER;
+    v_Client_ID NUMBER;
+    v_DBA_ErrorLog_ID NUMBER;
   BEGIN
     --  Process Parameters
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -56,6 +58,7 @@
         )
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
+        v_Client_ID:=Cur_Parameter.AD_Client_ID;
       END LOOP; --  Get Parameter
     ELSE
       DBMS_OUTPUT.PUT_LINE('--<<MA_WorkRequirement_Close>>') ;
@@ -99,6 +102,7 @@ WHEN OTHERS THEN
     DECLARE
       v_Code NUMBER:=SQLCODE;
     BEGIN
+      AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_Client_ID, v_DBA_ErrorLog_ID);
       INSERT
       INTO DBA_ErrorLog
         (
@@ -110,7 +114,7 @@ WHEN OTHERS THEN
         )
         VALUES
         (
-          DBA_ErrorLog_Seq.NextVal,
+          v_DBA_ErrorLog_ID,
           now(),
           v_Code,
           v_ResultStr,

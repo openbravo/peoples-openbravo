@@ -145,14 +145,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="LOT" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="SERNO" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="S_RESOURCEASSIGNMENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -174,10 +166,6 @@
         <onCreateDefault/>
       </column>
       <column name="M_PRODUCT_UOM_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="LASTPRICESO" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

@@ -124,7 +124,7 @@ public  class Fact {
         if (docLine != null && !docLine.m_AmtAcctDr.equals("") && !docLine.m_AmtAcctCr.equals(""))
             line.setAmtAcct(docLine.m_AmtAcctDr, docLine.m_AmtAcctCr);
         //  Info
-        line.setJournalInfo(m_doc.GL_Budget_ID, m_doc.GL_Category_ID);
+        line.setJournalInfo(m_doc.GL_Category_ID);
         line.setPostingType(m_postingType);
         //  Set Info
         line.setDocumentInfo(m_doc, docLine);
@@ -243,7 +243,7 @@ public  class Fact {
         //  new line
         FactLine line = new FactLine (m_doc.AD_Table_ID, m_doc.Record_ID, "", fl.m_Fact_Acct_Group_ID, fl.m_SeqNo, fl.m_DocBaseType);//antes "0".
         line.setDocumentInfo(m_doc, null);
-        line.setJournalInfo(m_doc.GL_Budget_ID, m_doc.GL_Category_ID);
+        line.setJournalInfo(m_doc.GL_Category_ID);
         line.setPostingType(m_postingType);
         //  Amount
         if (diff.compareTo(ZERO) < 0)   //  negative balance => DR
@@ -405,7 +405,7 @@ public  class Fact {
                     FactLine fl = (FactLine)m_lines.get(0);
                     FactLine line = new FactLine (m_doc.AD_Table_ID, m_doc.Record_ID, "", fl.m_Fact_Acct_Group_ID, fl.m_SeqNo, fl.m_DocBaseType);
                     line.setDocumentInfo(m_doc, null);
-                    line.setJournalInfo(m_doc.GL_Budget_ID, m_doc.GL_Category_ID);
+                    line.setJournalInfo(m_doc.GL_Category_ID);
                     line.setPostingType(m_postingType);
                     //  Amount & Account
                     if (diff.compareTo(ZERO) < 0){
@@ -480,7 +480,7 @@ public  class Fact {
             FactLine fl = (FactLine)m_lines.get(0);
             line = new FactLine (m_doc.AD_Table_ID, m_doc.Record_ID, "", fl.m_Fact_Acct_Group_ID, fl.m_SeqNo, fl.m_DocBaseType);
             line.setDocumentInfo(m_doc, null);
-            line.setJournalInfo(m_doc.GL_Budget_ID, m_doc.GL_Category_ID);
+            line.setJournalInfo(m_doc.GL_Category_ID);
             line.setPostingType(m_postingType);
 
             //  Amount
