@@ -141,6 +141,9 @@ function cursorFocus(evt, obj) {
   if(obj == null) {
     obj = (!document.all) ? evt.target : event.srcElement;
   }
+  if(obj.tagName == 'OPTION'){
+  	while(obj.tagName != 'SELECT') obj = obj.parentNode;
+  }
   if (obj == focusedWindowElement) return true;
   if (navigator.userAgent.indexOf("NT") == -1 && (navigator.userAgent.toUpperCase().indexOf("FIREFOX/2") != -1 || navigator.userAgent.toUpperCase().indexOf("ICEWEASEL/2") != -1) && (obj.className.indexOf('Radio_Check_ContentCell') != -1 || obj.className.indexOf('DataGrid_Body_LineNoCell') != -1)) {
     //Go to the SPAN element
