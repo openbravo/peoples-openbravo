@@ -22825,11 +22825,11 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800231 CREATEDBY-->
 <!--800231-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800231 UPDATED-->
-<!--800231-->              <UPDATED><![CDATA[2006-10-26 17:26:32.0]]></UPDATED>
+<!--800231-->              <UPDATED><![CDATA[2008-05-05 18:13:18.0]]></UPDATED>
 <!--800231 UPDATEDBY-->
 <!--800231-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800231 NAME-->
-<!--800231-->              <NAME><![CDATA[Bussines Partner Tax Category]]></NAME>
+<!--800231-->              <NAME><![CDATA[Business Partner Tax Category]]></NAME>
 <!--800231 DESCRIPTION-->
 <!--800231-->              <DESCRIPTION><![CDATA[Create tax categories to be applied to one or a group of business partners.]]></DESCRIPTION>
 <!--800231 HELP-->

@@ -45944,13 +45944,13 @@
 <!--807963 CREATEDBY-->
 <!--807963-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--807963 UPDATED-->
-<!--807963-->              <UPDATED><![CDATA[2007-07-25 18:29:00.0]]></UPDATED>
+<!--807963-->              <UPDATED><![CDATA[2008-05-05 18:13:18.0]]></UPDATED>
 <!--807963 UPDATEDBY-->
 <!--807963-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--807963 AD_MODEL_OBJECT_ID-->
 <!--807963-->              <AD_MODEL_OBJECT_ID><![CDATA[804100]]></AD_MODEL_OBJECT_ID>
 <!--807963 MAPPINGNAME-->
-<!--807963-->              <MAPPINGNAME><![CDATA[/BusinessPartnerTaxCategory/BussinesPartnerTaxCategory_Relation.html]]></MAPPINGNAME>
+<!--807963-->              <MAPPINGNAME><![CDATA[/BusinessPartnerTaxCategory/BusinessPartnerTaxCategory_Relation.html]]></MAPPINGNAME>
 <!--807963 ISDEFAULT-->
 <!--807963-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--807963**************--></AD_MODEL_OBJECT_MAPPING>
@@ -45969,13 +45969,13 @@
 <!--807964 CREATEDBY-->
 <!--807964-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--807964 UPDATED-->
-<!--807964-->              <UPDATED><![CDATA[2007-07-25 18:29:00.0]]></UPDATED>
+<!--807964-->              <UPDATED><![CDATA[2008-05-05 18:13:18.0]]></UPDATED>
 <!--807964 UPDATEDBY-->
 <!--807964-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--807964 AD_MODEL_OBJECT_ID-->
 <!--807964-->              <AD_MODEL_OBJECT_ID><![CDATA[804100]]></AD_MODEL_OBJECT_ID>
 <!--807964 MAPPINGNAME-->
-<!--807964-->              <MAPPINGNAME><![CDATA[/BusinessPartnerTaxCategory/BussinesPartnerTaxCategory_Edition.html]]></MAPPINGNAME>
+<!--807964-->              <MAPPINGNAME><![CDATA[/BusinessPartnerTaxCategory/BusinessPartnerTaxCategory_Edition.html]]></MAPPINGNAME>
 <!--807964 ISDEFAULT-->
 <!--807964-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--807964**************--></AD_MODEL_OBJECT_MAPPING>
@@ -45994,13 +45994,13 @@
 <!--807965 CREATEDBY-->
 <!--807965-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--807965 UPDATED-->
-<!--807965-->              <UPDATED><![CDATA[2007-07-25 18:29:00.0]]></UPDATED>
+<!--807965-->              <UPDATED><![CDATA[2008-05-05 18:13:18.0]]></UPDATED>
 <!--807965 UPDATEDBY-->
 <!--807965-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--807965 AD_MODEL_OBJECT_ID-->
 <!--807965-->              <AD_MODEL_OBJECT_ID><![CDATA[804100]]></AD_MODEL_OBJECT_ID>
 <!--807965 MAPPINGNAME-->
-<!--807965-->              <MAPPINGNAME><![CDATA[/BusinessPartnerTaxCategory/BussinesPartnerTaxCategory_Excel.xls]]></MAPPINGNAME>
+<!--807965-->              <MAPPINGNAME><![CDATA[/BusinessPartnerTaxCategory/BusinessPartnerTaxCategory_Excel.xls]]></MAPPINGNAME>
 <!--807965 ISDEFAULT-->
 <!--807965-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--807965**************--></AD_MODEL_OBJECT_MAPPING>
@@ -46019,7 +46019,7 @@
 <!--807966 CREATEDBY-->
 <!--807966-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--807966 UPDATED-->
-<!--807966-->              <UPDATED><![CDATA[2007-07-25 18:29:00.0]]></UPDATED>
+<!--807966-->              <UPDATED><![CDATA[2008-05-05 18:13:18.0]]></UPDATED>
 <!--807966 UPDATEDBY-->
 <!--807966-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--807966 AD_MODEL_OBJECT_ID-->

@@ -27300,7 +27300,7 @@
 <!--804100 CREATEDBY-->
 <!--804100-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--804100 UPDATED-->
-<!--804100-->              <UPDATED><![CDATA[2007-07-25 18:29:00.0]]></UPDATED>
+<!--804100-->              <UPDATED><![CDATA[2008-05-05 18:13:18.0]]></UPDATED>
 <!--804100 UPDATEDBY-->
 <!--804100-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--804100 ACTION-->
@@ -27308,7 +27308,7 @@
 <!--804100 AD_TAB_ID-->
 <!--804100-->              <AD_TAB_ID><![CDATA[800231]]></AD_TAB_ID>
 <!--804100 CLASSNAME-->
-<!--804100-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.BusinessPartnerTaxCategory.BussinesPartnerTaxCategory]]></CLASSNAME>
+<!--804100-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.BusinessPartnerTaxCategory.BusinessPartnerTaxCategory]]></CLASSNAME>
 <!--804100 ISDEFAULT-->
 <!--804100-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--804100**************--></AD_MODEL_OBJECT>
@@ -27327,7 +27327,7 @@
 <!--804101 CREATEDBY-->
 <!--804101-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--804101 UPDATED-->
-<!--804101-->              <UPDATED><![CDATA[2007-07-25 18:29:00.0]]></UPDATED>
+<!--804101-->              <UPDATED><![CDATA[2008-05-05 18:13:18.0]]></UPDATED>
 <!--804101 UPDATEDBY-->
 <!--804101-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--804101 ACTION-->
