@@ -64,6 +64,13 @@
     return true;
   }
 </script>
+<SCRIPT language="JavaScript" type="text/javascript">
+	function onloadFunctions(){
+	keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'BPARTNER_SELECTOR', false, 'frmSelector', 'inpBpartnerId', 'inpBpartnerId_DES', document.frmSelector.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
+	keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Product.html', 'SELECTOR_PRODUCT', false, 'frmSelector', 'inpmProductId', 'inpmProductId_DES', document.frmSelector.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null");
+}
+</SCRIPT>
+
 <script type="text/javascript">    
   function depurarSelector(action) {
   	var pos; var keys;  var clave; var texto; var parameter;

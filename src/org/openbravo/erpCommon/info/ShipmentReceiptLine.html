@@ -48,6 +48,13 @@
 <script language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://yourSite/web/";</script>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">  LNG_POR_DEFECTO = "en_US";</script>
 
+<SCRIPT language="JavaScript" type="text/javascript">
+	function onloadFunctions(){
+	keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'BPARTNER_SELECTOR', false, 'frmSelector', 'inpBpartnerId', 'inpBpartnerId_DES', document.frmSelector.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
+	keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Product.html', 'SELECTOR_PRODUCT', false, 'frmSelector', 'inpmProductId', 'inpmProductId_DES', document.frmSelector.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null");
+}
+</SCRIPT>
+
 <script language="JavaScript" type="text/javascript">
   function depurar() {
     var frm = document.frmSelector;
