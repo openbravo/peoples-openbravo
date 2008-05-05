@@ -155,7 +155,7 @@ public class ExecuteQuery {
     boolean hasRangeLimit = !(rangeLength==0);
     if (hasRange) {
       if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
-        addParameter(Integer.toString(startPosition));
+        addParameter(Integer.toString(startPosition+1));
         if (hasRangeLimit) addParameter(Integer.toString(startPosition+rangeLength));
       } else {
         if (hasRangeLimit) addParameter(Integer.toString(rangeLength));
