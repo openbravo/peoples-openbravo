@@ -2121,7 +2121,6 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setParameter("paramKeyParent", Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
       if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) {
         xmlDocumentXsql.setParameter("paramKeyParentOrg", "currentAdOrgId");
-        System.out.println("kp:"+Sqlc.TransformaNombreColumna(parentsFieldsData[0].name)); //ALO
       }
     }
 
