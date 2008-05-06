@@ -804,7 +804,7 @@ public class Wad extends DefaultHandler {
         /************************************************
         *                     XSQL
         *************************************************/
-        processTabXSQL(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName, strFields.toString(), strTables.toString(), strOrder.toString(), strWhere.toString(), vecParameters, tabsData.filterclause, selCol, tabsData.tablevel, tabsData.windowtype, vecTableParameters, fieldsData);
+        processTabXSQL(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName, strFields.toString(), strTables.toString(), strOrder.toString(), strWhere.toString(), vecParameters, tabsData.filterclause, selCol, tabsData.tablevel, tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey);
 
 
         /************************************************
@@ -826,14 +826,14 @@ public class Wad extends DefaultHandler {
         /************************************************
         *             XML in Edition view
         *************************************************/
-        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.isreadonly.equals("Y"), efd, efdauxiliar, true);
-        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.isreadonly.equals("Y"), efd, efdauxiliar, false);
+        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.isreadonly.equals("Y"), efd, efdauxiliar, true, isSecondaryKey);
+        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.isreadonly.equals("Y"), efd, efdauxiliar, false, isSecondaryKey);
 
         /************************************************
         *             HTML in Edition view
         *************************************************/
-        processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "",true);
-        processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "",false);
+        processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "",true, isSecondaryKey);
+        processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "",false, isSecondaryKey);
       }
 
       LanguagesData[] dataLang = LanguagesData.select(pool);
@@ -887,7 +887,7 @@ public class Wad extends DefaultHandler {
             // ************************************************
             // *             HTML of the Edition view
             // *************************************************
-            processTabHtmlEdition(efdTRL, efdauxiliar, fileDirTrl, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, dataLang[pos].adLanguage, true);
+            processTabHtmlEdition(efdTRL, efdauxiliar, fileDirTrl, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, dataLang[pos].adLanguage, true, isSecondaryKey);
           }
           File languageBase = new File(fileTrl, dataLang[pos].adLanguage);
           languageBase.mkdir();
@@ -1451,7 +1451,9 @@ public class Wad extends DefaultHandler {
       }
     }
     
-    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", "", "", "", "", ""};
+    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey"};
+    
+    
     if (parentsFieldsData==null || parentsFieldsData.length == 0) {
       discard[0] = "parent";  // remove the parent tags
       hasParentsFields=false;
@@ -1490,6 +1492,7 @@ public class Wad extends DefaultHandler {
     if (strWindow.equals("110")) discard[27]="sectionOrganizationCheck";
     discard[28]="sameParent";
     if (!(parentsFieldsData==null || parentsFieldsData.length == 0)&&(keyColumnName.equals(parentsFieldsData[0].name))) discard[28]="";
+    if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) discard[29] = "";
     
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard).createXmlDocument();
     
@@ -1928,7 +1931,7 @@ public class Wad extends DefaultHandler {
   private void processTabXSQLSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName, String windowName, String keyColumnName, String strColumnSortOrderId, String strColumnSortYNId, Vector<Object> vecParametersTop, Vector<Object> vecTableParametersTop) throws ServletException, IOException {
     log4j.debug("Processing Sort Tab xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
-    String[] discard = {"", ""};
+    String[] discard = {"", "", "hasOrgKey"};
     if (parentsFieldsData==null || parentsFieldsData.length == 0) discard[0] = "parent";  // remove the parent tags
     xmlDocumentXsql = xmlEngine.readXmlTemplate("org/openbravo/wad/datasourceSortTab", discard).createXmlDocument();
     
@@ -2085,10 +2088,11 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabXSQL(FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName, String windowName, String keyColumnName, String strFields, String strTables, String strOrder, String strWhere, Vector<Object> vecParametersTop, String strFilter, EditionFieldsData[] selCol, String tablevel, String windowType, Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux) throws ServletException, IOException {
+  private void processTabXSQL(FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName, String windowName, String keyColumnName, String strFields, String strTables, String strOrder, String strWhere, Vector<Object> vecParametersTop, String strFilter, EditionFieldsData[] selCol, String tablevel, String windowType, Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux, boolean isSecondaryKey) throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
-    String[] discard = {"", "", "", "", "", "", ""};
+    String[] discard = {"", "", "", "", "", "", "", ""};
+    
     if (parentsFieldsData==null || parentsFieldsData.length == 0) discard[0] = "parent";  // remove the parent tags
     if (tableName.toUpperCase().endsWith("_ACCESS")) {
       discard[6] = "client";
@@ -2100,6 +2104,9 @@ public class Wad extends DefaultHandler {
     }
     if (!(windowType.equalsIgnoreCase("T") && tablevel.equals("0"))) discard[4] = "sectionTransactional";
     if (strFilter.trim().equals("")) discard[5] = "sectionFilter";
+    if (!(isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) discard[7] = "hasOrgKey";
+    else discard[7] = "hasNoOrgKey";
+    
     xmlDocumentXsql = xmlEngine.readXmlTemplate("org/openbravo/wad/datasource", discard).createXmlDocument();
     
     xmlDocumentXsql.setParameter("class", tabName + "Data");
@@ -2112,6 +2119,10 @@ public class Wad extends DefaultHandler {
     xmlDocumentXsql.setParameter("paramKey", Sqlc.TransformaNombreColumna(keyColumnName));
     if (parentsFieldsData.length > 0) {
       xmlDocumentXsql.setParameter("paramKeyParent", Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
+      if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) {
+        xmlDocumentXsql.setParameter("paramKeyParentOrg", "currentAdOrgId");
+        System.out.println("kp:"+Sqlc.TransformaNombreColumna(parentsFieldsData[0].name)); //ALO
+      }
     }
 
     xmlDocumentXsql.setParameter("fields", strFields);
@@ -2786,9 +2797,13 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabXmlEdition(File fileDir, String strTab, String tabName, String windowId, boolean isreadonly, FieldProvider[] efd, FieldProvider[] efdauxiliar, boolean editable) throws ServletException, IOException {
+  private void processTabXmlEdition(File fileDir, String strTab, String tabName, String windowId, boolean isreadonly, FieldProvider[] efd, FieldProvider[] efdauxiliar, boolean editable, boolean isSecondaryKey) throws ServletException, IOException {
     if (log4j.isDebugEnabled()) log4j.debug("Processing edition xml: " + strTab + ", " + tabName);
+    String[] discard = {"hasOrgKey"};
+    if (isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0")) discard[0] = "";
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/Configuration_Edition").createXmlDocument();
+    
+    
     if (editable)
       xmlDocument.setParameter("class", tabName + "_Edition.html");
     else
@@ -2842,14 +2857,18 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabHtmlEdition(FieldProvider[] efd, FieldProvider[] efdauxiliar, File fileDir, String strTab, String tabName, String keyColumnName, String tabNamePresentation, String windowId, FieldsData[] parentsFieldsData, Vector<Object> vecFields, boolean isreadonly, String isSOTrx, String strTable, double pixelSize, String strLanguage, boolean editable) throws ServletException, IOException {
+  private void processTabHtmlEdition(FieldProvider[] efd, FieldProvider[] efdauxiliar, File fileDir, String strTab, String tabName, String keyColumnName, String tabNamePresentation, String windowId, FieldsData[] parentsFieldsData, Vector<Object> vecFields, boolean isreadonly, String isSOTrx, String strTable, double pixelSize, String strLanguage, boolean editable, boolean isSecondaryKey) throws ServletException, IOException {
     if (log4j.isDebugEnabled()) log4j.debug("Procesig edition html" + (strLanguage.equals("")?"":" translated") + ": " + strTab + ", " + tabName);
     
     if (!editable) isreadonly = true;
     
     HashMap<String, String> shortcuts = new HashMap<String, String>();
     
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/Template_Edition").createXmlDocument();;
+    String[] discard = {"hasOrgKey"};
+    
+    if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) discard[0] = "";
+    
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/Template_Edition", discard).createXmlDocument();;
     xmlDocument.setParameter("tab", tabNamePresentation);
     xmlDocument.setParameter("form", tabName+ "_Relation.html");
     xmlDocument.setParameter("key", "inp" + Sqlc.TransformaNombreColumna(keyColumnName));

@@ -41,6 +41,7 @@ package="org.openbravo.wad.Window">
         ORDER BY 1, 1
 <!--PARAMETER_TMP id="order">tablesOrder</PARAMETER_TMP-->
     ]]&#62;</Sql>
+    <PARAMETER_TMP id="hasOrgKey"><Field name="currentAdOrgId" value=""/></PARAMETER_TMP>
     <Parameter name="paramLanguage"/>
     <PARAMETER_TMP id="parameters">xx</PARAMETER_TMP>
 <FIELDS_TMP id="sectionTransactional">    &#60;Parameter name="paramTransactional" optional="true" after="1=1 "&#62; AND (<PARAMETER_TMP id="table">table</PARAMETER_TMP>.Processed='N' OR <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated&#62;now()-TO_NUMBER(?)) &#60;/Parameter&#62;</FIELDS_TMP>
@@ -206,8 +207,9 @@ package="org.openbravo.wad.Window">
     ]]&#62;</Sql>
     <FIELDS_TMP id="sectionDetailColumns4"><Parameter id="fieldName4" name="param1"/> </FIELDS_TMP>
     <Parameter name="updatedby"/>
-    <Parameter id="paramKey" name="param1"/>
-    <PARAMETER_TMP id="parent">    <Parameter name="param1" id="paramKeyParent"/></PARAMETER_TMP>
+    <PARAMETER_TMP id="hasNoOrgKey"><Parameter id="paramKey" name="param1"/></PARAMETER_TMP>
+    <PARAMETER_TMP id="hasOrgKey">    <Parameter name="param1" id="paramKeyParentOrg"/></PARAMETER_TMP>
+    <PARAMETER_TMP id="parent"><Parameter name="param1" id="paramKeyParent"/></PARAMETER_TMP>
     <PARAMETER_TMP id="client">    &#60;Parameter name="adUserClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
     <PARAMETER_TMP id="org">    &#60;Parameter name="adOrgClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
   </SqlMethod>

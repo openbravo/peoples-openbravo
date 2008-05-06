@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -422,6 +422,19 @@
           and f.ad_tab_id = to_number(?)
           and f.isfirstFocusedField='Y'
         order by f.seqno
+    ]]></Sql>
+    <Parameter name="adTabId"/>
+  </SqlMethod>
+  
+  <SqlMethod name="isOrgKey" type="preparedStatement" return="string">
+    <Sql><![CDATA[
+        select count(*) as reference
+          from ad_column c,
+               ad_tab t
+        where ad_tab_id = to_number(?)
+          and c.ad_table_id = t.ad_table_id
+          and c.isSecondaryKey = 'Y'
+          and upper(c.columnname)='AD_ORG_ID'
     ]]></Sql>
     <Parameter name="adTabId"/>
   </SqlMethod>
