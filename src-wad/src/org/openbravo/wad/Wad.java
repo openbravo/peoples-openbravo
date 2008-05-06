@@ -828,8 +828,7 @@ public class Wad extends DefaultHandler {
         /************************************************
         *             XML in Edition view
         *************************************************/
-        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.isreadonly.equals("Y"), efd, efdauxiliar, true, isSecondaryKey);
-        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.isreadonly.equals("Y"), efd, efdauxiliar, false, isSecondaryKey);
+        processTabXmlEdition(fileDir, tabsData.tabid, tabName, tabsData.key, tabsData.isreadonly.equals("Y"), efd, efdauxiliar, isSecondaryKey);
 
         /************************************************
         *             HTML in Edition view
@@ -2799,19 +2798,13 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabXmlEdition(File fileDir, String strTab, String tabName, String windowId, boolean isreadonly, FieldProvider[] efd, FieldProvider[] efdauxiliar, boolean editable, boolean isSecondaryKey) throws ServletException, IOException {
+  private void processTabXmlEdition(File fileDir, String strTab, String tabName, String windowId, boolean isreadonly, FieldProvider[] efd, FieldProvider[] efdauxiliar, boolean isSecondaryKey) throws ServletException, IOException {
     if (log4j.isDebugEnabled()) log4j.debug("Processing edition xml: " + strTab + ", " + tabName);
     String[] discard = {"hasOrgKey"};
     if (isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0")) discard[0] = "";
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/Configuration_Edition").createXmlDocument();
-    
-    
-    if (editable)
-      xmlDocument.setParameter("class", tabName + "_Edition.html");
-    else
-      xmlDocument.setParameter("class", tabName + "_NonEditable.html");
+
     StringBuffer htmlHidden = new StringBuffer();
-    if (!editable) isreadonly = false;
     if (efdauxiliar!=null) {
       for (int i=0;i< efdauxiliar.length; i++) {
         WADControl auxControl = new WADHidden(efdauxiliar[i].getField("columnname"), Sqlc.TransformaNombreColumna(efdauxiliar[i].getField("columnname")), "", true);
@@ -2833,10 +2826,13 @@ public class Wad extends DefaultHandler {
     }
 
     xmlDocument.setParameter("fields", html.toString());
-    if (editable)
-      WadUtility.writeFile(fileDir, tabName + "_Edition.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print());
-    else
-      WadUtility.writeFile(fileDir, tabName + "_NonEditable.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print());
+    
+    xmlDocument.setParameter("class", tabName + "_Edition.html");
+    WadUtility.writeFile(fileDir, tabName + "_Edition.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print());
+    
+    xmlDocument.setParameter("class", tabName + "_NonEditable.html");
+    WadUtility.writeFile(fileDir, tabName + "_NonEditable.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print());
+    
   }
 
   /**
