@@ -150,10 +150,16 @@ public class WADList extends WADControl {
     if (getData("IsDisplayed").equals("Y")) {
       if (getData("ColumnName").equalsIgnoreCase("AD_Org_ID")) {
         text.append("String userOrgList = \"\";\n");
-        text.append("if (currentOrg.equals(\"\") || Utility.isElementInList(Utility.getContext(this, vars, \"#User_Org\", windowId, accesslevel),currentOrg)) \n");
+        text.append("if (editableTab) \n");
         text.append("  userOrgList=Utility.getContext(this, vars, \"#User_Org\", windowId, accesslevel); //editable record \n");
         text.append("else \n");
         text.append("  userOrgList=currentOrg;\n");
+      } else if (getData("ColumnName").equalsIgnoreCase("AD_Client_ID")) {
+        text.append("String userClientList = \"\";\n");
+        text.append("if (editableTab) \n");
+        text.append("  userClientList=Utility.getContext(this, vars, \"#User_Client\", windowId, accesslevel); //editable record \n");
+        text.append("else \n");
+        text.append("  userClientList=currentClient;\n");
       }
       text.append("comboTableData = new ComboTableData(vars, this, \"").append(getData("AD_Reference_ID")).append("\", ");
       text.append("\"").append(getData("ColumnName")).append("\", \"");
@@ -168,7 +174,7 @@ public class WADList extends WADControl {
         text.append("Utility.getReferenceableOrg(vars, (dataField!=null?dataField.getField(\"adOrgId\"):data[0].getField(\"adOrgId\").equals(\"\")?vars.getOrg():data[0].getField(\"adOrgId\"))), ");
       
       if (getData("ColumnName").equalsIgnoreCase("AD_Client_ID"))
-        text.append("Utility.getContext(this, vars, \"#User_Client\", windowId, accesslevel), 0);\n");
+        text.append("userClientList, 0);\n");
       else
         text.append("Utility.getContext(this, vars, \"#User_Client\", windowId), 0);\n");
       
