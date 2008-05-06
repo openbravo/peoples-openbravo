@@ -31,7 +31,7 @@
       SELECT c_debt_payment.c_debt_payment_id, c_debt_payment.c_settlement_cancel_id, 
       c_debt_payment.c_settlement_generate_id, AD_Column_Identifier(TO_CHAR('C_Settlement'),TO_CHAR(s1.C_Settlement_Id),TO_CHAR(?)) AS settlement_cancel, 
       AD_Column_Identifier(TO_CHAR('C_Settlement'),TO_CHAR(s2.C_Settlement_Id),TO_CHAR(?)) AS settlement_generate,AD_Column_Identifier(TO_CHAR('C_Invoice'),TO_CHAR(c_invoice.c_invoice_id),TO_CHAR(?)) AS invoice, c_debt_payment.DATEPLANNED,
-      c_bpartner.NAME AS bpartner, c_debt_payment.AMOUNT|| ' ' ||c_currency.ISO_CODE AS amount, ad_ref_list_v.NAME AS paymentrule,
+      c_bpartner.NAME AS bpartner, c_debt_payment.AMOUNT AS amount, c_currency.ISO_CODE AS currency, ad_ref_list_v.NAME AS paymentrule,
       '' as iscancel
       FROM c_debt_payment left join c_settlement s1 on s1.c_settlement_id = c_debt_payment.c_settlement_cancel_id
                           left join c_settlement s2 on s2.c_settlement_id = c_debt_payment.c_settlement_generate_id
@@ -53,6 +53,7 @@
    <Parameter name="language"/>
    <Parameter name="language"/>
    <Parameter name="language"/>
+   <Parameter name="language" type="replace" optional="true" after="AND ad_ref_list_v.ad_language = '" text="es_ES"/>
    <Parameter name="adOrgClient" type="replace" optional="true" after="AND c_debt_payment.AD_ORG_ID IN (" text="'1'"/>
    <Parameter name="adUserClient" type="replace" optional="true" after="AND c_debt_payment.AD_CLIENT_ID IN (" text="'1'"/>   
   </SqlMethod>

@@ -215,12 +215,13 @@ function depurar(action) {
             <td class="DataGrid_Body_LineNoCell" width="24"> <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpTodos" onclick="marcarTodos(document.frmMain.inpDebtPayment, this.checked);return true;"></INPUT></SPAN>
             </td>
             <th class="DataGrid_Header_Cell" width="153">Business Partner</th>
-            <th class="DataGrid_Header_Cell" width="107">Expiration date</th>
+            <th class="DataGrid_Header_Cell" width="100">Expiration date</th>
             <th class="DataGrid_Header_Cell" width="87">Invoice</th>
-            <th class="DataGrid_Header_Cell" width="154">Settlement cancelation</th>
-            <th class="DataGrid_Header_Cell">Settlement generation</th>
-            <th class="DataGrid_Header_Cell" width="175">Payment rule</th>
-            <th class="DataGrid_Header_Cell" width="181">Lines amt</th>			
+            <th class="DataGrid_Header_Cell" width="145">Settlement cancelation</th>
+            <th class="DataGrid_Header_Cell" width="145">Settlement generation</th>
+            <th class="DataGrid_Header_Cell" width="165">Payment rule</th>
+            <th class="DataGrid_Header_Cell" width="120">Lines amt</th>	
+			<th class="DataGrid_Header_Cell" width="61">Currency</th>		
           </TR>
           
           <DIV id="sectionDetail"> 
@@ -229,10 +230,11 @@ function depurar(action) {
               <TD class="DataGrid_Body_Cell" id="fieldCbpartnername">xxFrilac</TD>
               <TD class="DataGrid_Body_Cell" id="fieldDateordered">xxStandard order</TD>
               <TD class="DataGrid_Body_Cell" id="fieldInvoice">xx1000000</TD>
-              <TD class="DataGrid_Body_Cell" id="fieldCancel">xxHuesker</TD>
+              <TD class="DataGrid_Body_Cell" id="fieldCancel">xx12/03/2004</TD>
               <TD class="DataGrid_Body_Cell" id="fieldGenerate">xx12/03/2004</TD>
               <TD class="DataGrid_Body_Cell" id="fieldPaymentrule">xx3</TD>
               <TD class="DataGrid_Body_Cell" id="fieldAmount">xx3</TD>
+			  <TD class="DataGrid_Body_Cell" id="fieldCurrency">xxEUR</TD>
             </TR>
           </DIV>
         </TABLE>
@@ -276,19 +278,6 @@ function depurar(action) {
                         <tr>
                           <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Process" title="Process" src="../../../../../web/images/blank.gif" border=0/></td>
                           <td class="Button_text Button_width">Process</td>
-                          <td class="Button_right"></td>
-                        </tr>
-                      </table>
-                      </a>
-                    </div>
-                  </TD>
-                  <TD class="Button_LeftAlign_ContentCell">
-                   <div>
-                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('CANCELAR');return false;">
-                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                        <tr>
-                          <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border=0/></td>
-                          <td class="Button_text Button_width">Cancel</td>
                           <td class="Button_right"></td>
                         </tr>
                       </table>

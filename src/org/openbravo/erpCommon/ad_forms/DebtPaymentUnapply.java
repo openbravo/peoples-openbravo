@@ -19,6 +19,7 @@
 
 package org.openbravo.erpCommon.ad_forms;
 
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 
@@ -44,9 +45,20 @@ public class DebtPaymentUnapply extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strWindow);
     } else if (vars.commandIn("PROCESS")) {
       String strCDebtPaymentId = vars.getInStringParameter("inpDebtPayment");
-      if (strCDebtPaymentId.equals("")) strCDebtPaymentId = "('0')";
-      int i = updateSelection(strCDebtPaymentId);
-      vars.setSessionValue("DebtPaymentUnapply|message", "Updated = " + Integer.toString(i));
+      OBError myMessage = new OBError();
+      String message = "";
+      if (strCDebtPaymentId.equals("")) {
+        myMessage.setType("Info");
+        myMessage.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
+        message = "No records selected";
+      } else {
+        int i = updateSelection(strCDebtPaymentId);
+        myMessage.setType("Success");
+        myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+        message = "Updated = " + Integer.toString(i);
+      }
+      myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), message));
+      vars.setMessage("DebtPaymentUnapply", myMessage);
       response.sendRedirect(strDireccion + request.getServletPath());
      } else pageError(response);
   }
@@ -74,6 +86,11 @@ public class DebtPaymentUnapply extends HttpSecureAppServlet {
     String discard[]={"sectionDetail"};
     XmlDocument xmlDocument=null;
     DebtPaymentUnapplyData[] data=null;
+//    if (log4j.isDebugEnabled()) log4j.debug("Language: " + vars.getLanguage());
+//    String language = vars.getLanguage();
+//    String lang = language.substring(0, 2);
+//    String country = language.substring(3, 5);
+//    language = lang + "_" + country;
     data = DebtPaymentUnapplyData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow));
     if (data==null || data.length == 0) {
      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/DebtPaymentUnapply", discard).createXmlDocument();
@@ -100,7 +117,7 @@ public class DebtPaymentUnapply extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
     {
-      OBError myMessage = vars.getMessage("DebtPaymentUnapply");
+    	OBError myMessage = vars.getMessage("DebtPaymentUnapply");
       vars.removeMessage("DebtPaymentUnapply");
       if (myMessage!=null) {
         xmlDocument.setParameter("messageType", myMessage.getType());

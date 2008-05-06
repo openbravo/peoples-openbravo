@@ -44,6 +44,7 @@
 		<FIELD id="fieldGenerate">settlementGenerate</FIELD>
 		<FIELD id="fieldPaymentrule">paymentrule</FIELD>
 		<FIELD id="fieldAmount" format="euroRelation">amount</FIELD>
+		<FIELD id="fieldCurrency">currency</FIELD>
 		<SECTION id="sectionDetail"/>
 	</structure>
 </REPORT>
