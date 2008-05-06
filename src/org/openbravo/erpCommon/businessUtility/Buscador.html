@@ -49,20 +49,22 @@
         return true;
       }
     </script>
-  	<SCRIPT language="JavaScript" type="text/javascript">
+
+<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', null, 'buttonOK')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
-
+    resizePopup();
 		setWindowElementFocus('firstElement');
 	}
 
 	function onResizeDo(){
+    resizePopup();
 	}
-	</SCRIPT>
+	</script>
 </HEAD>
 
 
@@ -79,7 +81,7 @@
       </div>
     </div>
 
-    <table cellspacing="0" cellpadding="0" width="100%">
+    <table cellspacing="0" cellpadding="0" width="100%" id="table_header">
 
       <tr>
         <td>
@@ -106,9 +108,12 @@
         </td>
       </tr>
 
+    </table>
+    <table cellspacing="0" cellpadding="0" width="100%">
+
       <tr>
         <td>
-          <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
+          <div class="Popup_ContentPane_Client" style="overflow: auto; display: none;" id="client">
           <!-- MessageBox -->
                 <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
   <TBODY>
@@ -192,7 +197,7 @@
   </tr>
   </TBODY>
 </table>
-            <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopupp">
+            <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
 
               <tr>
                 <td class="TableEdition_OneCell_width"></td>
@@ -200,8 +205,6 @@
                 <td class="TableEdition_OneCell_width"></td>
                 <td class="TableEdition_OneCell_width"></td>
               </tr>
-
-              <tr><td height="20px"></td></tr>
 
               <div id="paramData"></div>
 

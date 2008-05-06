@@ -3371,6 +3371,21 @@ function resizeAreaInfo(isOnResize) {
 /**
 * Function Description
 */
+function resizePopup() {
+  var mnu = document.getElementById("client");
+  var table_header = document.getElementById("table_header");
+  var body = document.getElementsByTagName("BODY");
+  var h = body[0].clientHeight;
+  var w = body[0].clientWidth;
+  var name = window.navigator.appName;
+  mnu.style.height = h -(table_header?table_header.clientHeight:0);
+  mnu.style.width = w;
+  mnu.style.display = "";
+}
+
+/**
+* Function Description
+*/
 function calculateMsgBoxWidth() {
   var client_width = document.getElementById("client").clientWidth;
   var msgbox_table = document.getElementById("messageBoxID");
