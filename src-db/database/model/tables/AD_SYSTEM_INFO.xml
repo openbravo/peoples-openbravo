@@ -45,7 +45,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISPROXYREQUIRED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="ISPROXYREQUIRED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
@@ -57,11 +57,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TESTPROXY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="TESTPROXY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ANT_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
+      <column name="ANT_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -71,6 +71,10 @@
       </column>
       <column name="OB_INSTALLMODE" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
         <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CODE_REVISION" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
       <column name="SERVLET_CONTAINER" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">

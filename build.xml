@@ -122,10 +122,24 @@ compare.database.structure: refer to compare.database.structure target of databa
       <include name="openbravo-wad.jar"/>
     </fileset>
   </path>
-
+  
   <target name="init">
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set."/>
   </target>
+
+ 
+ <target name="code.rev">
+  <loadfile property="svn.entries" srcFile=".svn/entries" failonerror="false">
+    <filterchain>
+      <filterreader classname="org.apache.tools.ant.filters.HeadFilter">
+        <param name="skip" value="3"/>
+        <param name="lines" value="1"/>
+      </filterreader>
+    </filterchain>
+  </loadfile>
+  <property name="code.revision" value="${svn.entries}" />
+ </target>
+
 
   <target name="compile.complete" depends="init">
     <ant dir="${base.src}" target="compile.complete" inheritAll="true" inheritRefs="true"/>
@@ -248,7 +262,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="compile.complete"/>
   </target>
 
-  <target name="create.database" depends="init">
+  <target name="create.database" depends="init,code.rev">
     <antcall target="database.lib"/>
     <ant dir="${base.db}" target="create.database" inheritAll="true" inheritRefs="true"/>
   </target>
