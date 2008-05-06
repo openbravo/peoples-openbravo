@@ -75,6 +75,19 @@
       )
     LOOP
       v_PriceList_Version_ID:=Cur_Parameter.Record_ID;
+	  
+	  SELECT M_PriceList_Version_Base_ID
+      INTO v_PriceList_Version_Base_ID
+      FROM M_PriceList p,
+        M_PriceList_Version v,
+        C_Currency c
+      WHERE p.M_PriceList_ID=v.M_PriceList_ID
+        AND p.C_Currency_ID=c.C_Currency_ID
+        AND v.M_PriceList_Version_ID=v_PriceList_Version_ID;
+      IF (v_PriceList_Version_Base_ID IS NULL OR v_PriceList_Version_Base_ID='') THEN
+	    RAISE_APPLICATION_ERROR(-20102, 'Base Pricelist Version required to complete Create PriceList process.');
+      END IF;
+	
       IF(Cur_Parameter.ParameterName='DeleteOld') THEN
         v_DeleteOld:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  DeleteOld=' || v_DeleteOld) ;
