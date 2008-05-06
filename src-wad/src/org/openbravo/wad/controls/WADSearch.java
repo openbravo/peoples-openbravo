@@ -42,7 +42,6 @@ public class WADSearch extends WADControl {
   public void initialize() {
     addImport("ValidationTextBox", "../../../../../web/js/default/ValidationTextBox.js");
     addImport("searchs", "../../../../../web/js/searchs.js");
-    generateMessages();
     generateJSCode();
     this.button = new WADFieldButton(this.imageName, getData("ColumnName"), getData("ColumnNameInp"), this.searchName, this.command);
     if (getData("AD_Reference_Value_ID").equals("21")) this.isFieldEditable = false;

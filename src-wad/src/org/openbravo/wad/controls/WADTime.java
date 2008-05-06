@@ -38,7 +38,6 @@ public class WADTime extends WADControl {
   private void generateJSCode() {
     addImport("TimeTextBox", "../../../../../web/js/default/TimeTextBox.js");
     //addImport("time", "../../../../../web/js/time.js");
-    generateMessages();
     StringBuffer validation = new StringBuffer();
     if (getData("IsMandatory").equals("Y")) {
       validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==\"\") {\n");

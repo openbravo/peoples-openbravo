@@ -37,7 +37,6 @@ public class WADMemo extends WADControl {
 
   private void generateJSCode() {
     addImport("ValidationTextArea", "../../../../../web/js/default/ValidationTextArea.js");
-    generateMessages();
     if (getData("IsMandatory").equals("Y")) {
       XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADMemoJSValidation").createXmlDocument();
 

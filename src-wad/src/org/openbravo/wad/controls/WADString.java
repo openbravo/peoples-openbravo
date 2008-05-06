@@ -39,7 +39,6 @@ public class WADString extends WADControl {
 
   private void generateJSCode() {
     addImport("ValidationTextBox", "../../../../../web/js/default/ValidationTextBox.js");
-    generateMessages();
     StringBuffer validation = new StringBuffer();
     if (getData("IsMandatory").equals("Y")) {
       validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==\"\") {\n");

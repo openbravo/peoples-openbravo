@@ -31,4 +31,13 @@
       and issystemlanguage='Y'
     </Sql>
   </SqlMethod>
+  <SqlMethod name="selectBase" type="preparedStatement" return="String">
+    <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
+    <Sql>
+      SELECT ad_Language, name 
+      from ad_language 
+      where isactive='Y' 
+      and isbaselanguage='Y' 
+    </Sql>
+  </SqlMethod>
 </SqlClass>

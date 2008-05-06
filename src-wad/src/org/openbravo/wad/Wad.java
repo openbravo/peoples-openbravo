@@ -42,6 +42,7 @@ import java.util.Properties;
 
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -610,6 +611,7 @@ public class Wad extends DefaultHandler {
       String windowName = FormatUtilities.replace(tabsData.windowname);
       String tableName = FieldsData.tableName(pool, tabsData.tabid);
       String isSOTrx = FieldsData.isSOTrx(pool, tabsData.tabid);
+      WADControl.initMessages(pool, LanguagesData.selectBase(pool));
       TabsData[] allTabs = getPrimaryTabs(tabsData.key, tabsData.tabid, Integer.valueOf(tabsData.tablevel).intValue(), HEIGHT_TABS, INCR_TABS, "");
       FieldsData[] fieldsData = FieldsData.select(pool, tabsData.tabid);
       EditionFieldsData efd[] = EditionFieldsData.select(pool, tabsData.tabid);
@@ -839,6 +841,7 @@ public class Wad extends DefaultHandler {
       LanguagesData[] dataLang = LanguagesData.select(pool);
       if (dataLang!=null && dataLang.length>0) {
         for (int pos=0;pos<dataLang.length;pos++) {
+          WADControl.initMessages(pool, dataLang[pos].adLanguage);
           FieldsData parentsFieldsNameLngData[]=null;
           if (tabsData.issorttab.equals("Y")) {
             parentsFieldsNameLngData = FieldsData.parentsColumnDisplayNameSortTab(pool, dataLang[pos].adLanguage, tabsData.tableId);
@@ -2883,11 +2886,14 @@ public class Wad extends DefaultHandler {
       }
     }
     
+    //ReadOnly logic
     Vector<Object> vecReadOnlyLogic = new Vector<Object>();
-    EditionFieldsData efdReadOnlyLogic[] = EditionFieldsData.selectReadOnlyLogic(pool, strTab);
-    if (efdReadOnlyLogic!=null) {
-      for (int i=0;i< efdReadOnlyLogic.length; i++) {
-        WadUtility.displayLogic(efdReadOnlyLogic[i].readonlylogic, vecReadOnlyLogic, parentsFieldsData, new Vector<Object>(), vecFields, windowId, new Vector<Object>());
+    if (!isreadonly) {
+      EditionFieldsData efdReadOnlyLogic[] = EditionFieldsData.selectReadOnlyLogic(pool, strTab);
+      if (efdReadOnlyLogic!=null) {
+        for (int i=0;i< efdReadOnlyLogic.length; i++) {
+          WadUtility.displayLogic(efdReadOnlyLogic[i].readonlylogic, vecReadOnlyLogic, parentsFieldsData, new Vector<Object>(), vecFields, windowId, new Vector<Object>());
+        }
       }
     }
     

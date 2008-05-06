@@ -32,9 +32,9 @@ public class WADControl {
   private String validation = "";
   private String onload = "";
   private ConnectionProvider conn = null;
-  public String invalid = "";
-  public String range = "";
-  public String missing = "";
+  public static String invalid = "";
+  public static String range = "";
+  public static String missing = "";
 
   public WADControl() {
   }
@@ -142,6 +142,16 @@ public class WADControl {
     return text;
   }
   
+  public static void initMessages(ConnectionProvider conn, String strLang) {
+	try {
+	   invalid = WADControlData.getMessage(conn, strLang, "JSInvalid");
+	   missing = WADControlData.getMessage(conn, strLang, "JSMissing");
+	   range = WADControlData.getMessage(conn, strLang, "JSRange");
+	 } catch (Exception ex) {
+	   ex.printStackTrace();
+	 }
+  }
+  
   public void generateMessages() {
     try {
       invalid = WADControlData.getMessage(getConnection(), getData("AD_Language"), "JSInvalid");
@@ -154,7 +164,6 @@ public class WADControl {
 
   private void generateJSCode() {
     addImport("ValidationTextBox", "../../../../../web/js/default/ValidationTextBox.js");
-    generateMessages();
     if (getData("IsMandatory").equals("Y")) {
       XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADControlJSValidation").createXmlDocument();
       xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -191,9 +200,9 @@ public class WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("invalid", this.invalid);
-    xmlDocument.setParameter("missing", this.missing);
-    xmlDocument.setParameter("range", this.range);
+    xmlDocument.setParameter("invalid", invalid);
+    xmlDocument.setParameter("missing", missing);
+    xmlDocument.setParameter("range", range);
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
     xmlDocument.setParameter("disabled", (isDisabled?"Y":"N"));
 
@@ -217,9 +226,9 @@ public class WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("invalid", this.invalid);
-    xmlDocument.setParameter("missing", this.missing);
-    xmlDocument.setParameter("range", this.range);
+    xmlDocument.setParameter("invalid", invalid);
+    xmlDocument.setParameter("missing", missing);
+    xmlDocument.setParameter("range", range);
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
     xmlDocument.setParameter("disabled", (isDisabled?"Y":"N"));

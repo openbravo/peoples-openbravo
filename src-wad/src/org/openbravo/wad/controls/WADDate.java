@@ -43,7 +43,6 @@ public class WADDate extends WADControl {
     if (!getData("AD_Language").equals(""))
       addImport("calendarLang", "../../../../../web/js/jscalendar/lang/calendar-" + getData("AD_Language").substring(0, 2) + ".js");
     else addImport("calendarLang", "../../../../../web/js/jscalendar/lang/calendar-en.js");
-    generateMessages();
     generateValidation();
     setCalloutJS();
   }

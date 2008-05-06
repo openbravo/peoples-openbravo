@@ -40,7 +40,6 @@ public class WADNumber extends WADControl {
   private void generateJSCode() {
     addImport("ValidationNumberBox", "../../../../../web/js/default/ValidationNumberBox.js");
     addImport("calculator", "../../../../../web/js/calculator.js");
-    generateMessages();
     generateValidation();
     setCalloutJS();
   }

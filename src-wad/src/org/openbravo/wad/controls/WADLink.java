@@ -39,7 +39,6 @@ public class WADLink extends WADControl {
 
   private void generateJSCode() {
     addImport("UrlTextBox", "../../../../../web/js/default/UrlTextBox.js");
-    generateMessages();
     if (getData("IsMandatory").equals("Y")) {
       XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADLinkJSValidation").createXmlDocument();
       xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
