@@ -119,7 +119,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
         strCBPartnerId = vars.getStringParameter("inpcBpartnerId"+data[i].cDebtPaymentId);
         strDate = vars.getStringParameter("inpDate"+data[i].cDebtPaymentId);
         strImporte = vars.getStringParameter("inpAmount"+data[i].cDebtPaymentId);
-        CopyFromSettlementData.insertDebtPayment(conn,this, strDebtPayment, to[0].client, to[0].org, vars.getUser(), data[i].isreceipt, strSettlement, data[i].description, strCBPartnerId, data[i].cCurrencyId, data[i].cBankaccountId, data[i].cCashbookId, data[i].paymentrule, strImporte, data[i].writeoffamt, strDate, data[i].ismanual, data[i].cGlitemId, data[i].isdirectposting);
+        CopyFromSettlementData.insertDebtPayment(conn,this, strDebtPayment, to[0].client, to[0].org, vars.getUser(), data[i].isreceipt, strSettlement, data[i].description, strCBPartnerId, data[i].cCurrencyId, data[i].cBankaccountId, data[i].cCashbookId, data[i].paymentrule, strImporte, data[i].writeoffamt, strDate, data[i].ismanual, data[i].cGlitemId, data[i].isdirectposting, data[i].status);
         for (int j=0;j<data1.length;j++){
           strDebe = vars.getStringParameter("inpDebe"+data1[j].cDebtPaymentBalancingId);
           strHaber = vars.getStringParameter("inpHaber"+data1[j].cDebtPaymentBalancingId);

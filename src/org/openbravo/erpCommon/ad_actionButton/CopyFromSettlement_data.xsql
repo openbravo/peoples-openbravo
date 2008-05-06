@@ -28,7 +28,7 @@
     <Sql>
       <![CDATA[
         SELECT c_debt_payment_id,isreceipt, description, c_bpartner_id, c_cashbook_id, paymentrule,
-        amount, writeoffamt, glitemamt, c_glitem_id, isdirectposting, 0 as amountdebit, 
+        amount, writeoffamt, glitemamt, c_glitem_id, isdirectposting, 0 as amountdebit, status_initial as status, 
         0 as amountcredit, c_currency_id, c_bankaccount_id, ismanual, '' as client, '' as org, '' as datetrx,
         '' as c_settlement_id, '' as documentno,  '' AS C_DEBT_PAYMENT_BALANCING_ID, '' AS TERCERO, '' AS EFECTO,
         '' AS CONCEPTO, '' AS DATEPLANNED, '' AS DATEFORMAT
@@ -81,8 +81,8 @@
       <![CDATA[
       INSERT INTO C_DEBT_PAYMENT ( C_DEBT_PAYMENT_ID, AD_CLIENT_ID, AD_ORG_ID,CREATEDBY, UPDATEDBY, ISRECEIPT, 
       C_SETTLEMENT_GENERATE_ID,DESCRIPTION, C_BPARTNER_ID, C_CURRENCY_ID, C_BANKACCOUNT_ID,C_CASHBOOK_ID, 
-      PAYMENTRULE, AMOUNT, WRITEOFFAMT, DATEPLANNED, ISMANUAL,GLITEMAMT,C_GLITEM_ID, ISDIRECTPOSTING, ISPAID,ISVALID) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),?,0,TO_NUMBER(?),?,'N','N')
+      PAYMENTRULE, AMOUNT, WRITEOFFAMT, DATEPLANNED, ISMANUAL,GLITEMAMT,C_GLITEM_ID, ISDIRECTPOSTING, ISPAID,ISVALID, STATUS, STATUS_INITIAL) 
+      VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),?,0,TO_NUMBER(?),?,'N','N',?,?)
       ]]>
     </Sql>
     <Parameter name="cDebtPeymentId"/>
@@ -104,6 +104,8 @@
     <Parameter name="ismanual"/>
     <Parameter name="glitemid"/>
     <Parameter name="isdirectposting"/>
+    <Parameter name="status"/>
+    <Parameter name="status"/>
   </SqlMethod>
   <SqlMethod name="selectDebtPaymentBalancing" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
