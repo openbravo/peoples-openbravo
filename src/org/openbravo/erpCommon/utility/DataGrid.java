@@ -86,7 +86,7 @@ public class DataGrid extends HttpSecureAppServlet {
       try {
         if (action.equalsIgnoreCase("deleteRow")) { //Deleting
           if (log4j.isDebugEnabled()) log4j.debug(">>>>deleteRow");
-          delete(response, vars, tableSQL, TabId);
+          delete(response, vars, tableSQL, TabId, WindowId, accessLevel);
         } else { //Inserting or updating
           save(response, vars);
         }
@@ -351,7 +351,7 @@ public class DataGrid extends HttpSecureAppServlet {
    * @throws IOException
    * @throws ServletException
    */
-  private void delete(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL, String strTab) throws IOException, ServletException {
+  private void delete(HttpServletResponse response, VariablesSecureApp vars, TableSQLData tableSQL, String strTab, String WindowId, int accessLevel) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Delete record");
     
     int result = 1;
@@ -381,8 +381,8 @@ public class DataGrid extends HttpSecureAppServlet {
 	      if (parametersData==null) parametersData = new Vector<String>();
 	      parametersData.addElement(vars.getGlobalVariable("inpParentKey", tableSQL.getWindowID() + "|" + parentKey));
 	    }
-	    SqlDataBuffer.append(" AND AD_Client_ID IN (").append(Utility.getContext(this, vars, "#User_Client", "win")).append(")");
-	    SqlDataBuffer.append(" AND AD_Org_ID IN (").append(Utility.getContext(this, vars, "#User_Org", "win")).append(")");
+	    SqlDataBuffer.append(" AND AD_Client_ID IN (").append(Utility.getContext(this, vars, "#User_Client", WindowId, accessLevel)).append(")");
+	    SqlDataBuffer.append(" AND AD_Org_ID IN (").append(Utility.getContext(this, vars, "#User_Org", WindowId, accessLevel)).append(")");
 	    if (log4j.isDebugEnabled()) log4j.debug(SqlDataBuffer.toString());
 	    
 	    try{
