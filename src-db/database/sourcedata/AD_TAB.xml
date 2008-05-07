@@ -1681,7 +1681,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--136 DESCRIPTION-->
 <!--136-->              <DESCRIPTION><![CDATA[Define regions to be used in the application.]]></DESCRIPTION>
 <!--136 HELP-->
-<!--136-->              <HELP><![CDATA[Define regions to be used in the application.]]></HELP>
+<!--136-->              <HELP><![CDATA[Define regions to be used in the application. In order to add regions please select the 'Has Regions' field in the Country tab.]]></HELP>
 <!--136 AD_TABLE_ID-->
 <!--136-->              <AD_TABLE_ID><![CDATA[164]]></AD_TABLE_ID>
 <!--136 AD_WINDOW_ID-->
