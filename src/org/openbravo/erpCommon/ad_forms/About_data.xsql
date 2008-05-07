@@ -27,8 +27,8 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-        SELECT COALESCE(CASE TAD_VERSION WHEN '' THEN null ELSE TAD_VERSION END, TAD_PARENT_VERSION) AS VER, '' as LANG, '' as TRANSLATEDBY
-          FROM AD_SYSTEM
+        SELECT AD_SYSTEM_INFO.OB_VERSION || ' (r' || AD_SYSTEM_INFO.CODE_REVISION || ')' AS VER, '' as LANG, '' as TRANSLATEDBY
+          FROM AD_SYSTEM_INFO
      </Sql>
    </SqlMethod>
    <SqlMethod name="selectTranslators" type="preparedStatement" return="multiple">
