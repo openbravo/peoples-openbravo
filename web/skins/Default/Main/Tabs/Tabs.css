@@ -496,8 +496,6 @@
 .dojoTab {
   position : relative;
   margin-bottom : -1px;
-  margin-top : 1px;
-  _margin-top : 2px;
   float : left;
   cursor: pointer;
   white-space: nowrap;
@@ -524,7 +522,7 @@
   border-left: 1px solid Black;
   border-right: 1px solid Black;
   margin-left: 7px;
-  overflow: hidden;
+  overflow-y: hidden;
   height: 17px;
 }
 
@@ -537,7 +535,7 @@
   background: url(inlayFill.png) repeat-x;
   margin-left: 0px;
   padding-left: 2px;
-  overflow: hidden;
+  overflow-y: hidden;
   height: 17px;
   width: 100%;
 }
