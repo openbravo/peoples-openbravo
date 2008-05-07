@@ -25,7 +25,8 @@
     <Sql>
       <![CDATA[
         SELECT I_BPartner_ID, C_BPartner_ID, C_BPartner_Location_ID,
-        COALESCE (Address1,Address2,City) AS Addr, AD_User_ID, ContactName
+        COALESCE (Address1,Address2,City) AS Addr, AD_User_ID, ContactName,
+		Address1, Address2, City, Postal, RegionName
 			  FROM I_BPartner
 			  WHERE I_IsImported='N'
         AND AD_Client_ID = TO_NUMBER(?)
@@ -470,15 +471,18 @@
       <![CDATA[
 				INSERT INTO C_BPartner_Location (
           C_BPartner_Location_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
-				  Name,IsBillTo,IsShipTo,IsPayFrom,IsRemitTo,Phone,Phone2,Fax, C_BPartner_ID,C_Location_ID
+				  Name,
+				  IsBillTo,IsShipTo,IsPayFrom,IsRemitTo,Phone,Phone2,Fax, C_BPartner_ID,C_Location_ID
         )
 				SELECT TO_NUMBER(?),AD_Client_ID,AD_Org_ID,'Y',now(),CreatedBy,now(),UpdatedBy,
-				City,'Y','Y','Y','Y',Phone,Phone2,Fax, TO_NUMBER(?),TO_NUMBER(?)
+				TO_CHAR(?),
+				'Y','Y','Y','Y',Phone,Phone2,Fax, TO_NUMBER(?),TO_NUMBER(?)
 				FROM I_BPartner
 				WHERE I_BPartner_ID = TO_NUMBER(?)
       ]]>
     </Sql>
     <Parameter name="CBPLocationID"/>
+	<Parameter name="locationName"/>
     <Parameter name="CBPartnerID"/>
     <Parameter name="CLocationID"/>
     <Parameter name="IBPartnerID"/>

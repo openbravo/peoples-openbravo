@@ -181,7 +181,9 @@ public class ImportBPartner extends ImportProcess {
 					}
 					C_BPartner_Location_ID = SequenceIdData.getSequence(conn, "C_BPartner_Location", vars.getClient());
 					try	{
-						no = ImportBPartnerData.insertBPLocation(con, conn, C_BPartner_Location_ID, C_BPartner_ID, C_Location_ID, I_BPartner_ID);
+					  String locationName = parseAddressName(data[i]);
+					  
+						no = ImportBPartnerData.insertBPLocation(con, conn, C_BPartner_Location_ID, locationName, C_BPartner_ID, C_Location_ID, I_BPartner_ID);
 						if (log4j.isDebugEnabled()) log4j.debug("Insert BP Location = " + no);
 					}	catch (ServletException ex)	{
 						if (log4j.isDebugEnabled()) log4j.debug("Insert BP Location - " + ex.toString());
@@ -249,4 +251,35 @@ public class ImportBPartner extends ImportProcess {
     return true;
 
   } // doIt
+  
+  private String parseAddressName(ImportBPartnerData addressData) {
+    String result = ".";
+    
+    String locationNameA = "";
+    if (!addressData.city.equals("") && !addressData.city.equals(null)) {
+      locationNameA = addressData.city;
+    } else if (!addressData.regionname.equals("") && !addressData.regionname.equals(null)) {
+      locationNameA = addressData.regionname;
+    } else if (!addressData.postal.equals("") && !addressData.postal.equals(null)) {
+      locationNameA = addressData.postal;
+    }
+
+    String locationNameB = "";
+    if (!addressData.address1.equals("") && !addressData.address1.equals(null)) locationNameB = addressData.address1;
+    else if (!addressData.address2.equals("") && !addressData.address2.equals(null)) locationNameB = addressData.address2;
+    
+    StringBuffer locationName = new StringBuffer();
+    if (!locationNameA.equals("")) {
+      locationName.append(locationNameA);
+      if (!locationNameB.equals("")) {
+        locationName.append(", " + locationNameB);
+        result =  locationName.toString();
+      } else result = locationName.toString();
+    } else if (!locationNameB.equals("")) {
+        locationName.append(locationNameB);
+        result = locationName.toString();
+      }
+    return result;
+  }
+
 }
