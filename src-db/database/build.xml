@@ -126,7 +126,7 @@ compare.database.structure: Generates a diff script.
          url="${bbdd.url}"
          userid="${bbdd.systemUser}"
          password="${bbdd.systemPassword}"
-         onerror="abort">
+         onerror="continue">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
