@@ -71,8 +71,8 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="F.AD_ORG_ID IN(" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT < TO_DATE(?)]]></Parameter>
-    <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= TO_NUMBER(?)]]></Parameter>
-    <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= TO_NUMBER(?)]]></Parameter>
+    <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND TO_NUMBER(EV.VALUE) >= TO_NUMBER(?)]]></Parameter>
+    <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND TO_NUMBER(EV.VALUE) <= TO_NUMBER(?)]]></Parameter>
     <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[ AND F.C_ACCTSCHEMA_ID = to_number(?)]]></Parameter>    
   </SqlMethod>
   
@@ -112,8 +112,8 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="F.AD_ORG_ID IN(" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT < TO_DATE(?)]]></Parameter>
-    <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= TO_NUMBER(?)]]></Parameter>
-    <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= TO_NUMBER(?)]]></Parameter>
+    <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND TO_NUMBER(EV.VALUE) >= TO_NUMBER(?)]]></Parameter>
+    <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND TO_NUMBER(EV.VALUE) <= TO_NUMBER(?)]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND F.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[ AND F.C_ACCTSCHEMA_ID = to_number(?)]]></Parameter>        
   </SqlMethod>
