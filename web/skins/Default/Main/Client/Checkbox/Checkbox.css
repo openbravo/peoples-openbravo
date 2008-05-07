@@ -28,51 +28,35 @@
 
 
 .Checkbox_NOT_focused, .Radio_NOT_focused {
-  padding: 0px;
-  margin: 0px;
-  outline: 0;
-  text-decoration: none;
-  -moz-outline-style: none;
-  border-style: solid;
-  border-width: 2px;
-  border-color: transparent;
+
+
 }
 
 .Checkbox_container_NOT_focused, .Radio_container_NOT_focused {
-  display: table-cell;
-  display: -moz-inline-box;
   padding: 0px;
   margin: 0px;
   width: 0px;
   height: 0px;
   border-style: solid;
-  _border-style: none;
   border-width: 2px;
   border-color: transparent;
-  outline:0;
+
 }
 
 .Checkbox_focused, .Radio_focused {
-  padding: 0px;
-  margin: 0px;
-  outline: 0;
-  text-decoration: none;
-  -moz-outline-style: none;
-  border-style: solid;
-  border-width: 2px;
-  border-color: #4D98CA;
+
+  border:2px solid #4D98CA;
+  
+  outline-style:solid;
+  outline-width: 2px;
+  outline-color: #4D98CA;
+
 }
 
 .Checkbox_container_focused, .Radio_container_focused {
-  display: table-cell;
-  display: -moz-inline-box;
-  padding: 0px;
-  margin: 0px;
-  width: 0px;
-  height: 0px;
+
   border-style: solid;
-  _border-style: none;
   border-width: 2px;
-  border-color: #4D98CA;
-  outline:0;
+  border-color: transparent;
+
 }
