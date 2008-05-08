@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,6 +50,7 @@ public class WADList extends WADControl {
       text.append("  }");
       setValidation(replaceHTML(text.toString()));
     }
+    setOnLoad("if (inputValue(key)==\"0\") updateOnChange(frm.inp" + getData("ColumnNameInp") + ");");
     setCalloutJS();
   }
 
