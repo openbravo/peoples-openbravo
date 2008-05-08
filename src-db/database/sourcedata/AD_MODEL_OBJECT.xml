@@ -4009,33 +4009,6 @@
 <!--800801-->              <AD_PROCESS_ID><![CDATA[180]]></AD_PROCESS_ID>
 <!--800801**************--></AD_MODEL_OBJECT>
 
-<!--800802**************--><AD_MODEL_OBJECT>
-<!--800802 AD_MODEL_OBJECT_ID-->
-<!--800802-->              <AD_MODEL_OBJECT_ID><![CDATA[800802]]></AD_MODEL_OBJECT_ID>
-<!--800802 AD_CLIENT_ID-->
-<!--800802-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800802 AD_ORG_ID-->
-<!--800802-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800802 ISACTIVE-->
-<!--800802-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800802 CREATED-->
-<!--800802-->              <CREATED><![CDATA[2006-05-22 17:58:47.0]]></CREATED>
-<!--800802 CREATEDBY-->
-<!--800802-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800802 UPDATED-->
-<!--800802-->              <UPDATED><![CDATA[2006-05-22 17:58:47.0]]></UPDATED>
-<!--800802 UPDATEDBY-->
-<!--800802-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800802 ACTION-->
-<!--800802-->              <ACTION><![CDATA[P]]></ACTION>
-<!--800802 CLASSNAME-->
-<!--800802-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportProductCosting]]></CLASSNAME>
-<!--800802 ISDEFAULT-->
-<!--800802-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
-<!--800802 AD_PROCESS_ID-->
-<!--800802-->              <AD_PROCESS_ID><![CDATA[183]]></AD_PROCESS_ID>
-<!--800802**************--></AD_MODEL_OBJECT>
-
 <!--800803**************--><AD_MODEL_OBJECT>
 <!--800803 AD_MODEL_OBJECT_ID-->
 <!--800803-->              <AD_MODEL_OBJECT_ID><![CDATA[800803]]></AD_MODEL_OBJECT_ID>

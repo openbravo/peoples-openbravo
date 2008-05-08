@@ -4313,35 +4313,6 @@
 <!--312-->              <AD_FORM_ID><![CDATA[108]]></AD_FORM_ID>
 <!--312**************--></AD_MENU>
 
-<!--314**************--><AD_MENU>
-<!--314 AD_MENU_ID-->
-<!--314-->              <AD_MENU_ID><![CDATA[314]]></AD_MENU_ID>
-<!--314 AD_CLIENT_ID-->
-<!--314-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--314 AD_ORG_ID-->
-<!--314-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--314 ISACTIVE-->
-<!--314-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--314 CREATED-->
-<!--314-->              <CREATED><![CDATA[2002-02-23 19:37:55.0]]></CREATED>
-<!--314 CREATEDBY-->
-<!--314-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--314 UPDATED-->
-<!--314-->              <UPDATED><![CDATA[2002-02-23 19:37:55.0]]></UPDATED>
-<!--314 NAME-->
-<!--314-->              <NAME><![CDATA[Product Costing Report]]></NAME>
-<!--314 UPDATEDBY-->
-<!--314-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--314 DESCRIPTION-->
-<!--314-->              <DESCRIPTION><![CDATA[Product Cost Report]]></DESCRIPTION>
-<!--314 ISSUMMARY-->
-<!--314-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--314 ACTION-->
-<!--314-->              <ACTION><![CDATA[R]]></ACTION>
-<!--314 AD_PROCESS_ID-->
-<!--314-->              <AD_PROCESS_ID><![CDATA[183]]></AD_PROCESS_ID>
-<!--314**************--></AD_MENU>
-
 <!--315**************--><AD_MENU>
 <!--315 AD_MENU_ID-->
 <!--315-->              <AD_MENU_ID><![CDATA[315]]></AD_MENU_ID>
