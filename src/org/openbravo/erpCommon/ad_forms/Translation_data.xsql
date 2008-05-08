@@ -50,7 +50,7 @@
 
   <SqlMethod name="centrallyMaintained" type="preparedStatement" return="string">     
       <Sql>
-         select count(*)
+         select count(*) AS c
            from AD_Table t,
                 AD_Column c
           where c.AD_Table_ID=t.AD_Table_ID 
