@@ -38,6 +38,8 @@ public class ExportGrid extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String strTabId = vars.getRequiredStringParameter("inpTabId");
+    String strWindowId = vars.getRequiredStringParameter("inpWindowId");
+    String strAccessLevel = vars.getRequiredStringParameter("inpAccessLevel");
     if (log4j.isDebugEnabled()) log4j.debug("Export grid, tabID: " + strTabId);
     ServletOutputStream os=null;
     InputStream is = null;
@@ -47,7 +49,7 @@ public class ExportGrid extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("*********************Base design path: " + strBaseDesign);
 
     try {
-      GridReportVO gridReportVO = createGridReport(vars, strTabId);
+      GridReportVO gridReportVO = createGridReport(vars, strTabId, strWindowId, strAccessLevel);
       os = response.getOutputStream();
       is = getInputStream(strBaseDesign+"/org/openbravo/erpCommon/utility/"+gridReportVO.getJrxmlTemplate());
       gridBO = new GridBO();
@@ -75,13 +77,13 @@ public class ExportGrid extends HttpSecureAppServlet {
       os.close();
     }
   }
-  GridReportVO createGridReport(VariablesSecureApp vars, String strTabId) throws ServletException{
+  GridReportVO createGridReport(VariablesSecureApp vars, String strTabId, String strWindowId, String strAccessLevel) throws ServletException{
     if (log4j.isDebugEnabled()) log4j.debug("Create Grid Report, tabID: " + strTabId);
     LinkedList<GridColumnVO> columns = new LinkedList<GridColumnVO>();
     FieldProvider[] data = null;
     TableSQLData tableSQL = null;
-    try {
-      tableSQL = new TableSQLData(vars, this, strTabId, Utility.getContext(this, vars, "#User_Org", "ExportGrid"), Utility.getContext(this, vars, "#User_Client", "ExportGrid"));
+    try {      
+      tableSQL = new TableSQLData(vars, this, strTabId, Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId, Integer.valueOf(strAccessLevel).intValue()), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "ShowAudit", strWindowId).equals("Y"));
     } catch (Exception ex) {
       ex.printStackTrace();
       log4j.error(ex.getMessage());

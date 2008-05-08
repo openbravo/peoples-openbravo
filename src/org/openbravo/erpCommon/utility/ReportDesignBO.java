@@ -20,11 +20,13 @@ package org.openbravo.erpCommon.utility;
 
 import java.util.Iterator;
 
+import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.design.JRDesignBand;
 import net.sf.jasperreports.engine.design.JRDesignExpression;
 import net.sf.jasperreports.engine.design.JRDesignExpressionChunk;
 import net.sf.jasperreports.engine.design.JRDesignField;
+import net.sf.jasperreports.engine.design.JRDesignLine;
 import net.sf.jasperreports.engine.design.JRDesignStaticText;
 import net.sf.jasperreports.engine.design.JRDesignTextField;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -42,6 +44,7 @@ public class ReportDesignBO {
     super();
     this.jasperDesign = jasperDesign;
     this.gridReportVO = gridReportVO;
+    this.jasperDesign.setPageWidth(gridReportVO.getTotalWidth());
     this.pageWidth = jasperDesign.getPageWidth()
         - jasperDesign.getLeftMargin() - jasperDesign.getRightMargin();
   }
@@ -54,7 +57,7 @@ public class ReportDesignBO {
 
   private void addFieldHeader(GridColumnVO columnVO) {
     JRDesignBand bHeader = (JRDesignBand) jasperDesign.getColumnHeader();
-    JRDesignStaticText text = new JRDesignStaticText();
+    JRDesignStaticText text = new JRDesignStaticText();    
     text.setText(columnVO.getTitle());
     text.setWidth(calcPorc(columnVO.getWidth()));
     text.setHeight(bHeader.getHeight());
@@ -109,6 +112,7 @@ public class ReportDesignBO {
 
   public void define() throws JRException {
     defineTitle(gridReportVO.getTitle());
+    defineLineWidth();
     Iterator<?> it = gridReportVO.getColumns().iterator();
     //jasperDesign.getTitle().setPrintWhenExpression(false);
     while (it.hasNext()) {
@@ -122,5 +126,20 @@ public class ReportDesignBO {
         .getElementByKey("staticTitle");
     text.setText(title);
   }
-
+  
+  private void defineLineWidth() throws JRException {
+    JRDesignBand bTitulo = (JRDesignBand) jasperDesign.getTitle();
+    JRDesignLine line = (JRDesignLine) bTitulo.getElementByKey("title-top-line");
+    line.setWidth(this.pageWidth);
+    line = (JRDesignLine) bTitulo.getElementByKey("title-bottom-line");
+    line.setWidth(this.pageWidth);
+    bTitulo = (JRDesignBand) jasperDesign.getColumnHeader();
+    line = (JRDesignLine) bTitulo.getElementByKey("columnHeader-top-line");
+    line.setWidth(this.pageWidth);
+    line = (JRDesignLine) bTitulo.getElementByKey("columnHeader-bottom-line");
+    line.setWidth(this.pageWidth);
+    bTitulo = (JRDesignBand) jasperDesign.getPageFooter();
+    line = (JRDesignLine) bTitulo.getElementByKey("pageFooter-top-line");
+    line.setWidth(this.pageWidth);
+  }
 }
