@@ -64,8 +64,12 @@ function imprimir()
 }
 
 function CALLOUT_ELEMENTVALUE() {
-submitCommandForm('DEFAULT');
-return true;
+  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
+  var cmbAccountFrom = document.frmMain.inpcElementValueIdFrom;  
+  var cmbAccountTo = document.frmMain.inpcElementValueIdTo;  
+  cambiarListaCombo(cmbAccountFrom, arrAccountFrom, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
+  cambiarListaCombo(cmbAccountTo, arrAccountTo, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);  
+  return true;
 }
 
 function depurar(){
@@ -89,7 +93,9 @@ function depurar(){
 
 function onloadFunctions() {
 }
+
 </SCRIPT>
+
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
@@ -112,6 +118,18 @@ function onloadFunctions() {
 		resizeArea();
 	}
 	</SCRIPT>
+
+
+<script language="JavaScript" type="text/javascript" id="paramArrayAccountFrom">
+var arrAccountFrom=null;
+</script>
+
+<script language="JavaScript" type="text/javascript" id="paramArrayAccountTo">
+var arrAccountTo=null;
+</script>
+
+
+
 </HEAD>
 <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <FORM method="POST" action="ReportGeneralLedger.html" name="frmMain" target="_self" id="form">
