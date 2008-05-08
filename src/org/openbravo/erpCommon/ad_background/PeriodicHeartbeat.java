@@ -41,7 +41,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
-import org.openbravo.erpCommon.utility.Utility;
 
 public class PeriodicHeartbeat implements BackgroundProcess {
   
@@ -174,7 +173,7 @@ public class PeriodicHeartbeat implements BackgroundProcess {
       
       systemInfo.put("servletContainer", data[0].servletContainer);
       systemInfo.put("servletContainerVersion", data[0].servletContainerVersion);
-      systemInfo.put("antVersion", data[0].antVersion);
+      systemInfo.put("antVersion", getVersion(data[0].antVersion));
       systemInfo.put("obVersion", data[0].obVersion);
       systemInfo.put("obInstallMode", data[0].obInstallmode);
       systemInfo.put("webserver", data[0].webserver);
@@ -324,6 +323,10 @@ public class PeriodicHeartbeat implements BackgroundProcess {
   }
   
   /**
+   * Returns the string representation of a numerical version from a
+   * longer string. For example, given the string:
+   * 'Apache Ant version 1.7.0 compiled on August 29 2007' getVersion() will
+   * return '1.7.0'
    * @param str
    * @return
    */
@@ -338,5 +341,4 @@ public class PeriodicHeartbeat implements BackgroundProcess {
     }
     return version;
   }
-  
 }
