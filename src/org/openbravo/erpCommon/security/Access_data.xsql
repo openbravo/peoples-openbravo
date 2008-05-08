@@ -155,7 +155,7 @@
    
    <SqlMethod name="selectAccessSearch" type="preparedStatement" return="string">
      <Sql><![CDATA[
-          select count(*)
+          select count(*) AS TOTAL
             from ad_column c,
                  ad_field f,
                  ad_tab tb,
