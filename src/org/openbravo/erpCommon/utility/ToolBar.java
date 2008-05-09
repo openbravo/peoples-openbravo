@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,16 +40,28 @@ public class ToolBar {
   boolean isSrcWindow = false;
   boolean isFrame = false;
   boolean isRelation = false;
+  boolean isEditable = false;
   Hashtable<String, HTMLElement> buttons = new Hashtable<String, HTMLElement>();
 
   public ToolBar(ConnectionProvider _conn, String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug) {
-    this(_conn, _language, _action, _isNew,  _keyINP,  _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, false);
+    this(_conn, true, _language, _action, _isNew,  _keyINP,  _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, false);
   }
 
-  public ToolBar(ConnectionProvider _conn, String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow){
-    this(_conn, _language, _action, _isNew,  _keyINP,  _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, false);
+  public ToolBar(ConnectionProvider _conn,  String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow){
+    this(_conn, true, _language, _action, _isNew,  _keyINP,  _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, false);
   }
   public ToolBar(ConnectionProvider _conn, String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow, boolean _isFrame) {
+    this(_conn, true, _language, _action, _isNew, _keyINP, _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, _isFrame);
+  }
+  
+  public ToolBar(ConnectionProvider _conn, boolean _isEditable, String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug) {
+    this(_conn, _isEditable, _language, _action, _isNew,  _keyINP,  _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, false);
+  }
+
+  public ToolBar(ConnectionProvider _conn, boolean _isEditable, String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow){
+    this(_conn, _isEditable, _language, _action, _isNew,  _keyINP,  _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, false);
+  }
+  public ToolBar(ConnectionProvider _conn, boolean _isEditable, String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow, boolean _isFrame) {
     this.conn = _conn;
     this.language = _language;
     this.servlet_action = _action;
@@ -62,6 +74,7 @@ public class ToolBar {
     this.base_direction = _baseDirection;
     this.debug = _debug;
     this.isFrame = _isFrame;
+    this.isEditable = _isEditable;
     int i=this.keyfield.lastIndexOf(".");
     if (i!=-1) this.form = this.keyfield.substring(0, i);
     this.isSrcWindow = _isSrcWindow;
@@ -87,7 +100,7 @@ public class ToolBar {
     } else if (name.equals("TREE")) {
       return "openServletNewWindow('DEFAULT', false, '../utility/WindowTree.html', 'TREE', null, null,625, 750, true, false, false);";
     } else if (name.equals("ATTACHMENT")) {
-      return "openServletNewWindow('DEFAULT', false, '../businessUtility/TabAttachments_FS.html?inpKey=' + " + ((grid_id==null || grid_id.equals(""))?keyfield + ".value":"dojo.widget.byId('" + grid_id + "').getSelectedRows()") + ", 'ATTACHMENT', null, true, 600, 700, true);";
+      return "openServletNewWindow('DEFAULT', false, '../businessUtility/TabAttachments_FS.html?inpKey=' + " + ((grid_id==null || grid_id.equals(""))?keyfield + ".value":"dojo.widget.byId('" + grid_id + "').getSelectedRows()") + "+'&inpEditable="+ (isEditable?"Y":"N") +"', 'ATTACHMENT', null, true, 600, 700, true);";
     } else if (name.equals("EXCEL")) {
       return "abrirExcel('" + servlet_action + "_Excel.xls?Command=RELATION_XLS', '_blank');";
     } else if (name.equals("GRIDEXCEL")) {

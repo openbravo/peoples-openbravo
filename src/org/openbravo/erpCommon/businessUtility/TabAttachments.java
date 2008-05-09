@@ -134,12 +134,14 @@ public class TabAttachments extends HttpSecureAppServlet {
       vars.getGlobalVariable("inpTabId", "TabAttachments.tabId");
       vars.getGlobalVariable("inpwindowId", "TabAttachments.windowId");
       vars.getGlobalVariable("inpKey", "TabAttachments.key");
+      vars.getGlobalVariable("inpEditable", "TabAttachments.editable");
       printPageFS(response, vars);
     } else if (vars.commandIn("FRAME1", "RELATION")) {
       String strTab = vars.getGlobalVariable("inpTabId", "TabAttachments.tabId");
       String strWindow = vars.getGlobalVariable("inpwindowId", "TabAttachments.windowId");
       String key = vars.getGlobalVariable("inpKey", "TabAttachments.key");
-      printPage(response, vars, strTab, strWindow, key);
+      boolean editable = vars.getGlobalVariable("inpEditable","TabAttachments.editable").equals("Y");
+      printPage(response, vars, strTab, strWindow, key, editable);
     } else if (vars.commandIn("FRAME2")) {
       whitePage(response);
     } else if (vars.commandIn("EDIT")) {
@@ -264,9 +266,10 @@ public class TabAttachments extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTab, String strWindow, String key) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTab, String strWindow, String key, boolean editable) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the attachments relations");
-    String[] discard = {"noData"};
+    String[] discard = {"noData" ,""};
+    if (!editable) discard[1] = "editable";
     TabAttachmentsData[] data = TabAttachmentsData.selectTabInfo(this, strTab);
     String tableId = "";
     if (data==null || data.length==0) throw new ServletException("Tab not found: " + strTab);

@@ -252,7 +252,7 @@
 
           <tr>
             <td class="Button_RightAlign_ContentCell">
-              <div>
+              <div id="editable">
                 <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Add'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('NEW', false, null, 'TabAttachments_F1.html', '_self');return false;">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Add';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
@@ -265,16 +265,18 @@
               </div>
             </td>
             <td class="Button_RightAlign_ContentCell">
-              <div id="widthData">
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Edit'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('EDIT', false, null, 'TabAttachments_F1.html', '_self');return false;">
-                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Edit';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                    <tr>
-                      <td class="Button_left"></td>
-                      <td class="Button_text Button_width">Edit</td>
-                      <td class="Button_right"></td>
-                    </tr>
-                  </table>
-                </a>
+              <div id="editable">
+	              <div id="widthData">
+	                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Edit'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('EDIT', false, null, 'TabAttachments_F1.html', '_self');return false;">
+	                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Edit';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+	                    <tr>
+	                      <td class="Button_left"></td>
+	                      <td class="Button_text Button_width">Edit</td>
+	                      <td class="Button_right"></td>
+	                    </tr>
+	                  </table>
+	                </a>
+                </div>
               </div>
             </td>
             <td class="Button_LeftAlign_ContentCell">
@@ -291,16 +293,18 @@
               </div>
             </td>
             <td class="Button_RightAlign_ContentCell">
-              <div id="widthData">
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Delete'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('DELETE', false, null, 'TabAttachments_F1.html', '_self');return false;">
-                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Delete';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                    <tr>
-                      <td class="Button_left"></td>
-                      <td class="Button_text Button_width">Delete</td>
-                      <td class="Button_right"></td>
-                    </tr>
-                  </table>
-                </a>
+              <div id="editable">
+	              <div id="widthData">
+	                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Delete'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('DELETE', false, null, 'TabAttachments_F1.html', '_self');return false;">
+	                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Delete';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+	                    <tr>
+	                      <td class="Button_left"></td>
+	                      <td class="Button_text Button_width">Delete</td>
+	                      <td class="Button_right"></td>
+	                    </tr>
+	                  </table>
+	                </a>
+	              </div>
               </div>
             </td>
           </tr>

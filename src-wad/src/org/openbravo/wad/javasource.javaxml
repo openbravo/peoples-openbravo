@@ -911,9 +911,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       }
     }
    
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", (boolNew || (dataField==null &amp;&amp; (data==null || data.length==0))), "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="package">Window</PARAMETER_TMP>", strReplaceWith, true);
-    toolbar.prepareEditionTemplate("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, vars.getSessionValue("#ShowTest", "N").equals("Y"), "<PARAMETER_TMP id="paramIsReadOnly">readonly</PARAMETER_TMP>".equals("Y"), Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
-   
     if (dataField==null) {
       if (boolNew || data==null || data.length==0) {
         refreshSessionNew(vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
@@ -930,7 +927,10 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     else
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpWindows/<PARAMETER_TMP id="package">Window</PARAMETER_TMP>/<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_NonEditable",discard).createXmlDocument();
 
-      xmlDocument.setParameter("toolbar", toolbar.toString());
+    
+    ToolBar toolbar = new ToolBar(this, editableTab, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", (boolNew || (dataField==null &amp;&amp; (data==null || data.length==0))), "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="package">Window</PARAMETER_TMP>", strReplaceWith, true);
+    toolbar.prepareEditionTemplate("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, vars.getSessionValue("#ShowTest", "N").equals("Y"), "<PARAMETER_TMP id="paramIsReadOnly">readonly</PARAMETER_TMP>".equals("Y"), Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
+    xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
       WindowTabs tabs = new WindowTabs(this, vars, tabId, windowId);
