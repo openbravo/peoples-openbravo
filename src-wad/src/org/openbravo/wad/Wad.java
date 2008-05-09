@@ -2279,7 +2279,7 @@ public class Wad extends DefaultHandler {
             } else {
               strFields2.append(" || ' - ' || ");
             }
-            strFields2.append(tableField).append(" ");
+            strFields2.append("COALESCE(TO_CHAR(").append(tableField).append("), '') ");
           }
           strFields2.append(") as ").append(fieldsDef[i].columnname);
           StringBuffer fields = new StringBuffer();
