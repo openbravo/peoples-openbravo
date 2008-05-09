@@ -296,10 +296,10 @@ public class WADControl {
     if (getData("IsParameter").equals("Y")) {
       text.append("<PARAMETER id=\"").append(getData("ColumnName"));
       text.append("\" name=\"").append(getData("ColumnName"));
-      text.append("\" attribute=\"value\" default=\"N\"/>");
+      text.append("\" attribute=\"value\" default=\"N\" replaceCharacters=\"htmlPreformated\"/>");
     } else {
       text.append("<FIELD id=\"").append(getData("ColumnName"));
-      text.append("\" attribute=\"value\" default=\"N\">");
+      text.append("\" attribute=\"value\" replaceCharacters=\"htmlPreformated\" default=\"N\">");
       text.append(getData("ColumnName")).append("</FIELD>");
     }
     return text.toString();
