@@ -1673,9 +1673,9 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--136 CREATEDBY-->
 <!--136-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--136 UPDATED-->
-<!--136-->              <UPDATED><![CDATA[2003-02-22 02:20:07.0]]></UPDATED>
+<!--136-->              <UPDATED><![CDATA[2008-05-07 17:17:16.0]]></UPDATED>
 <!--136 UPDATEDBY-->
-<!--136-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--136-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--136 NAME-->
 <!--136-->              <NAME><![CDATA[Region]]></NAME>
 <!--136 DESCRIPTION-->
@@ -5856,7 +5856,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--259 CREATEDBY-->
 <!--259-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--259 UPDATED-->
-<!--259-->              <UPDATED><![CDATA[2004-09-03 11:52:14.0]]></UPDATED>
+<!--259-->              <UPDATED><![CDATA[2008-05-09 14:01:40.0]]></UPDATED>
 <!--259 UPDATEDBY-->
 <!--259-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--259 NAME-->
@@ -5876,15 +5876,13 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--259 ISSINGLEROW-->
 <!--259-->              <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
 <!--259 ISINFOTAB-->
-<!--259-->              <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
+<!--259-->              <ISINFOTAB><![CDATA[Y]]></ISINFOTAB>
 <!--259 ISTRANSLATIONTAB-->
 <!--259-->              <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--259 ISREADONLY-->
 <!--259-->              <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--259 HASTREE-->
 <!--259-->              <HASTREE><![CDATA[N]]></HASTREE>
-<!--259 AD_PROCESS_ID-->
-<!--259-->              <AD_PROCESS_ID><![CDATA[800050]]></AD_PROCESS_ID>
 <!--259 PROCESSING-->
 <!--259-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--259 ISSORTTAB-->
