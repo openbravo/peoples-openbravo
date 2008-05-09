@@ -27,7 +27,7 @@ var baseDirection = "../../../../../web/";
 
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="resizeArea();" onresize="resizeArea();">
-<FORM name="form1" method="post" action="" >
+<FORM name="form1" method="post" action="../security/Login_FS.html" >
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top">
@@ -148,11 +148,12 @@ var baseDirection = "../../../../../web/";
                   <tr>
                     <td colspan="6" align="center" class="Button_CenterAlign_ContentCell">
 
-                      <a class="ButtonLink" href="../security/Login_FS.html"
+                      <a class="ButtonLink" href="#"
                         onfocus="this.className='ButtonLink_hover'; window.status='Back'; return true;"
                         onblur="this.className='ButtonLink'; window.status=''; return true;"
                         onkeypress="this.className='ButtonLink_active'; return true;"
                         onkeyup="this.className='ButtonLink_hover'; return true;"
+                        onclick="document.form1.submit();"
                         >
                         <table class="Button"
                           onmousedown="this.className='Button_active'; return true;"
