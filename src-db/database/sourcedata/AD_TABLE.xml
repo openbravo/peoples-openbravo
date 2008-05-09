@@ -634,7 +634,7 @@ The Language needs to be a (verified) System Language]]></HELP>
 <!--114 CREATEDBY-->
 <!--114-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--114 UPDATED-->
-<!--114-->              <UPDATED><![CDATA[2005-01-27 16:57:20.0]]></UPDATED>
+<!--114-->              <UPDATED><![CDATA[2008-05-09 15:46:10.0]]></UPDATED>
 <!--114 UPDATEDBY-->
 <!--114-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--114 NAME-->
@@ -652,7 +652,7 @@ The User identifies a unique user in the system. This could be an internal user 
 <!--114 ACCESSLEVEL-->
 <!--114-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--114 AD_WINDOW_ID-->
-<!--114-->              <AD_WINDOW_ID><![CDATA[123]]></AD_WINDOW_ID>
+<!--114-->              <AD_WINDOW_ID><![CDATA[108]]></AD_WINDOW_ID>
 <!--114 ISSECURITYENABLED-->
 <!--114-->              <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--114 ISDELETEABLE-->
