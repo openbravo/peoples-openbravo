@@ -979,7 +979,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    <FIELDS_TMP id="selDisplayLogic">xmlDocument.setParameter("displayLogic", getDisplayLogicContext(vars));</FIELDS_TMP>
+    <FIELDS_TMP id="selDisplayLogic">xmlDocument.setParameter("displayLogic", getDisplayLogicContext(vars, boolNew));</FIELDS_TMP>
     <FIELDS_TMP id="encryptionsFields">
     //Encrypted fields
     if (data!=null &amp;&amp; data.length&#62;0) {
@@ -1045,7 +1045,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     }
 </FIELDS_TMP>
 
-<FIELDS_TMP id="selDisplayLogic">    String getDisplayLogicContext(VariablesSecureApp vars) throws IOException, ServletException {
+<FIELDS_TMP id="selDisplayLogic">    String getDisplayLogicContext(VariablesSecureApp vars, boolean isNew) throws IOException, ServletException {
       log4j.debug("Output: Display logic context fields");
       String result = "<PARAMETER_TMP id="paramDisplayLogic">xx</PARAMETER_TMP>";
       return result;

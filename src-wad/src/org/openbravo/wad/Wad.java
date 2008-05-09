@@ -1430,9 +1430,14 @@ public class Wad extends DefaultHandler {
       for (int i=0;i<vecContext.size();i++) {
         dl.append("var str");
         dl.append(FormatUtilities.replace(vecContext.elementAt(i).toString()));
-        dl.append("=\\\"\" + Utility.getContext(this, vars, \"");
-        dl.append(vecContext.elementAt(i).toString());
-        dl.append("\", windowId) + \"\\\";\\n");
+        
+        
+        dl.append("=\\\"\" +");
+        if (vecContext.elementAt(i).toString().equals("ShowAudit")) dl.append("(isNew?\"N\":");
+        dl.append("Utility.getContext(this, vars, \"").append(vecContext.elementAt(i).toString()).append("\", windowId)");
+        if (vecContext.elementAt(i).toString().equals("ShowAudit")) dl.append(")");
+
+        dl.append(" + \"\\\";\\n");
       }
     }
     
