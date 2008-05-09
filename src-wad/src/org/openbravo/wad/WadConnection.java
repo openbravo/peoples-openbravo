@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,9 +23,6 @@ import java.sql.*;
 import java.util.Properties;
 import java.io.*;
 
-import org.apache.xerces.parsers.DOMParser;
-import org.xml.sax.*;
-import org.w3c.dom.*;
 import org.openbravo.exception.*;
 import org.openbravo.database.*;
 import org.apache.log4j.Logger;
@@ -59,98 +56,25 @@ public class WadConnection implements ConnectionProvider {
     double maxConnTime = 0.5;
     String dbSessionConfig = null;
     
-    if (file.endsWith(".properties")) {
-      Properties properties = new Properties();
-      try {
-        properties.load(new FileInputStream(file));
-        this.defaultPoolName = properties.getProperty("bbdd.poolName","myPool");
-        dbDriver = properties.getProperty("bbdd.driver");
-        this.bbdd = properties.getProperty("bbdd.url");
-        dbLogin = properties.getProperty("bbdd.user");
-        dbPassword = properties.getProperty("bbdd.password");
-        minConns = new Integer(properties.getProperty("bbdd.minConns","1"));
-        maxConns = new Integer(properties.getProperty("bbdd.maxConns","10"));
-        maxConnTime = new Double(properties.getProperty("maxConnTime","0.5"));
-        dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
-        this.rdbms = properties.getProperty("bbdd.rdbms");
-        if (this.rdbms.equalsIgnoreCase("POSTGRE")) 
-          this.bbdd += '/'+properties.getProperty("bbdd.sid");
-      } catch (IOException e) { 
-       e.printStackTrace();
-      }
-    } else { //xml file
-      try {
-        DOMParser parser = new DOMParser();
-        try {
-            parser.parse((file.toUpperCase().startsWith("FILE:///")?"":"file:///") + file);
-        } catch (SAXException se) {
-          log4j.error(se);
-          throw new SQLException("Couldn't load parse for pool file " + file);
-        } catch (IOException ioe) {
-          log4j.error(ioe);
-          throw new SQLException("Couldn't load pool file " + file + " for input/output operations");
-        }
-        Document xmlPool = parser.getDocument();
-        NodeList nodeList = xmlPool.getElementsByTagName("pool");
-        log4j.debug("Pool's elements: " + nodeList.getLength());
-        Node child = null;
-        for (int i=0;i<nodeList.getLength();i++) {
-          Node pool = nodeList.item(i);
-          NamedNodeMap atributos = pool.getAttributes();
-          this.defaultPoolName = atributos.item(0).getNodeValue();
-          
-  
-          child = pool.getFirstChild();
-          child = child.getNextSibling();
-          dbDriver = ((Text)child.getFirstChild()).getData();
-          
-          
-          child = child.getNextSibling();
-          child = child.getNextSibling();
-          this.bbdd = ((Text)child.getFirstChild()).getData();
-         
-          child = child.getNextSibling();
-          child = child.getNextSibling();
-          Text textDbLogin = (Text)child.getFirstChild();
-          if (textDbLogin != null) {
-            dbLogin  = textDbLogin.getData();
-            
-          } else dbLogin = null;
-          child = child.getNextSibling();
-          child = child.getNextSibling();
-          Text textDbPassword = (Text)child.getFirstChild();
-          if (textDbPassword != null) {
-            dbPassword = textDbPassword.getData();
-            
-          } else dbPassword = null;
-          
-          child = child.getNextSibling();
-          child = child.getNextSibling();
-          minConns   = Integer.valueOf(((Text)child.getFirstChild()).getData()).intValue();
-          
-          child = child.getNextSibling();
-          child = child.getNextSibling();
-          maxConns   = Integer.valueOf(((Text)child.getFirstChild()).getData()).intValue();
-          
-          child = child.getNextSibling();
-          child = child.getNextSibling();
-          maxConnTime   = Double.valueOf(((Text)child.getFirstChild()).getData()).doubleValue();
-          
-          child = child.getNextSibling();
-          child = child.getNextSibling();
-          dbSessionConfig  = ((Text)child.getFirstChild()).getData();
-          
-          child = child.getNextSibling();
-          child = child.getNextSibling();
-          this.rdbms  = ((Text)child.getFirstChild()).getData();
-          
-        }
-      }
-      catch (Exception e) {
-        log4j.error(e);
-        throw new SQLException("Failed when creating database connections pool");
-      }
-    } //end if
+    Properties properties = new Properties();
+    try {
+      properties.load(new FileInputStream(file));
+      this.defaultPoolName = properties.getProperty("bbdd.poolName","myPool");
+      dbDriver = properties.getProperty("bbdd.driver");
+      this.bbdd = properties.getProperty("bbdd.url");
+      dbLogin = properties.getProperty("bbdd.user");
+      dbPassword = properties.getProperty("bbdd.password");
+      minConns = new Integer(properties.getProperty("bbdd.minConns","1"));
+      maxConns = new Integer(properties.getProperty("bbdd.maxConns","10"));
+      maxConnTime = new Double(properties.getProperty("maxConnTime","0.5"));
+      dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
+      this.rdbms = properties.getProperty("bbdd.rdbms");
+      if (this.rdbms.equalsIgnoreCase("POSTGRE")) 
+        this.bbdd += '/'+properties.getProperty("bbdd.sid");
+    } catch (IOException e) { 
+     e.printStackTrace();
+    }
+    
     if (log4j.isDebugEnabled()) log4j.debug("poolName: " + this.defaultPoolName); {
        log4j.debug("dbDriver: " + dbDriver);
        log4j.debug("dbServer: " + this.bbdd);
