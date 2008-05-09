@@ -27,7 +27,7 @@ package="org.openbravo.wad.Window">
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql>&#60;&#33;[CDATA[
         SELECT <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
-        '' AS TR_BGCOLOR,
+        '' AS TR_BGCOLOR, '' total_count
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 
@@ -177,7 +177,7 @@ package="org.openbravo.wad.Window">
   
   <SqlMethod id="fieldRealNameEncrypted" name="checkxx" type="preparedStatement" return="string">
     <Sql>&#60;&#33;[CDATA[
-        SELECT COUNT(*)
+        SELECT COUNT(*) as total_count
           FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP>
          WHERE <PARAMETER_TMP id="key">table</PARAMETER_TMP> = ? 
     ]]&#62;</Sql>
