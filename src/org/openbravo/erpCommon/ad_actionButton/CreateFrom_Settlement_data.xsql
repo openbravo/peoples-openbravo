@@ -78,7 +78,7 @@
   <SqlMethod name="NotIsCancelled" type="preparedStatement" connection="true" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT COUNT(*) 
+      SELECT COUNT(*) AS TOTAL
       FROM C_DEBT_PAYMENT DP 
       WHERE DP.C_DEBT_PAYMENT_ID = TO_NUMBER(?) 
       AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.Cancel_Processed, DP.Generate_Processed, 
