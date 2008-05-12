@@ -6317,33 +6317,6 @@
 <!--801258-->              <AD_CALLOUT_ID><![CDATA[800009]]></AD_CALLOUT_ID>
 <!--801258**************--></AD_MODEL_OBJECT>
 
-<!--801259**************--><AD_MODEL_OBJECT>
-<!--801259 AD_MODEL_OBJECT_ID-->
-<!--801259-->              <AD_MODEL_OBJECT_ID><![CDATA[801259]]></AD_MODEL_OBJECT_ID>
-<!--801259 AD_CLIENT_ID-->
-<!--801259-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801259 AD_ORG_ID-->
-<!--801259-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801259 ISACTIVE-->
-<!--801259-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801259 CREATED-->
-<!--801259-->              <CREATED><![CDATA[2006-10-16 10:54:03.0]]></CREATED>
-<!--801259 CREATEDBY-->
-<!--801259-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801259 UPDATED-->
-<!--801259-->              <UPDATED><![CDATA[2006-10-16 10:54:03.0]]></UPDATED>
-<!--801259 UPDATEDBY-->
-<!--801259-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801259 ACTION-->
-<!--801259-->              <ACTION><![CDATA[P]]></ACTION>
-<!--801259 CLASSNAME-->
-<!--801259-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_actionButton.ClearSession]]></CLASSNAME>
-<!--801259 ISDEFAULT-->
-<!--801259-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
-<!--801259 AD_PROCESS_ID-->
-<!--801259-->              <AD_PROCESS_ID><![CDATA[800150]]></AD_PROCESS_ID>
-<!--801259**************--></AD_MODEL_OBJECT>
-
 <!--801262**************--><AD_MODEL_OBJECT>
 <!--801262 AD_MODEL_OBJECT_ID-->
 <!--801262-->              <AD_MODEL_OBJECT_ID><![CDATA[801262]]></AD_MODEL_OBJECT_ID>

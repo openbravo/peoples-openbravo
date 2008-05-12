@@ -9092,45 +9092,6 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800148-->              <ISJASPER><![CDATA[N]]></ISJASPER>
 <!--800148**************--></AD_PROCESS>
 
-<!--800150**************--><AD_PROCESS>
-<!--800150 AD_PROCESS_ID-->
-<!--800150-->              <AD_PROCESS_ID><![CDATA[800150]]></AD_PROCESS_ID>
-<!--800150 AD_CLIENT_ID-->
-<!--800150-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800150 AD_ORG_ID-->
-<!--800150-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800150 ISACTIVE-->
-<!--800150-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800150 CREATED-->
-<!--800150-->              <CREATED><![CDATA[2006-10-16 10:52:52.0]]></CREATED>
-<!--800150 CREATEDBY-->
-<!--800150-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800150 UPDATED-->
-<!--800150-->              <UPDATED><![CDATA[2006-10-16 10:52:52.0]]></UPDATED>
-<!--800150 UPDATEDBY-->
-<!--800150-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800150 VALUE-->
-<!--800150-->              <VALUE><![CDATA[Clear Session]]></VALUE>
-<!--800150 NAME-->
-<!--800150-->              <NAME><![CDATA[Clear Session]]></NAME>
-<!--800150 DESCRIPTION-->
-<!--800150-->              <DESCRIPTION><![CDATA[Clear Session]]></DESCRIPTION>
-<!--800150 HELP-->
-<!--800150-->              <HELP><![CDATA[This process deletes all session data so the application is in the same status as when login is done.]]></HELP>
-<!--800150 ACCESSLEVEL-->
-<!--800150-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800150 ISUSERSTARTABLE-->
-<!--800150-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800150 ISREPORT-->
-<!--800150-->              <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800150 ISDIRECTPRINT-->
-<!--800150-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800150 ISBACKGROUND-->
-<!--800150-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800150 ISJASPER-->
-<!--800150-->              <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800150**************--></AD_PROCESS>
-
 <!--800151**************--><AD_PROCESS>
 <!--800151 AD_PROCESS_ID-->
 <!--800151-->              <AD_PROCESS_ID><![CDATA[800151]]></AD_PROCESS_ID>
