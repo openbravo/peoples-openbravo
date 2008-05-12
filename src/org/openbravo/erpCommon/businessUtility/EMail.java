@@ -17,6 +17,9 @@
 package org.openbravo.erpCommon.businessUtility;
 
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.utils.CryptoUtility;
+import org.openbravo.utils.FormatUtilities;
+
 import java.util.*;
 import java.io.*;
 import java.net.*;
@@ -60,6 +63,7 @@ public class EMail {
     g_vars=vars;
     g_valid = isValid(true);
   }
+
   /* never used
   private void dumpMessage() {
     if (g_smtpMsg == null) return;
@@ -67,7 +71,7 @@ public class EMail {
       Enumeration<?> e = g_smtpMsg.getAllHeaderLines ();
       while (e.hasMoreElements ()) if (log4j.isDebugEnabled()) log4j.debug("- " + e.nextElement ());
     } catch (MessagingException ex) {
-      log4j.error("dumpMessage" + ex);
+      if (log4j.isDebugEnabled()) log4j.error("dumpMessage" + ex);
     }
   } */
 
@@ -108,6 +112,7 @@ public class EMail {
     props.put("mail.host", g_smtpHost);
 
     setEMailUser();
+    if(g_auth != null) log4j.debug("g_auth is not null, setting prop auth to true");
     if(g_auth != null) props.put("mail.smtp.auth", "true");
 
     Session session = Session.getInstance(props, g_auth);
@@ -131,10 +136,16 @@ public class EMail {
       g_smtpMsg.setNotifyOptions(SMTPMessage.NOTIFY_FAILURE | SMTPMessage.NOTIFY_SUCCESS);
       g_smtpMsg.setReturnOption(SMTPMessage.RETURN_HDRS);
       setContent();
-      g_smtpMsg.saveChanges();
       Transport t = session.getTransport("smtp");
-      t.connect();
-      Transport.send(g_smtpMsg);
+      g_smtpMsg.saveChanges();
+      if (log4j.isDebugEnabled()) log4j.debug("send() - transport obtained: " + t.toString());
+      String username = g_auth.getPasswordAuthentication().getUserName();
+      String password = g_auth.getPasswordAuthentication().getPassword();
+      if (log4j.isDebugEnabled()) log4j.debug("send() - username and password set, username: " + username + ", password: " + password);
+      t.connect(g_smtpHost, username, password);
+      if (log4j.isDebugEnabled()) log4j.debug("send() - transport connected: " + t.isConnected() + ", now to try and send....");
+      t.sendMessage(g_smtpMsg, g_smtpMsg.getAllRecipients());
+      t.close();
     } catch (MessagingException mex) {
       log4j.error("Exception handling in EMail.java: " + mex.toString());
       sb.append("Exception handling in EMail.java\n");

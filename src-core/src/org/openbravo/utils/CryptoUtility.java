@@ -12,9 +12,12 @@
 
 package org.openbravo.utils;
 
-import javax.servlet.ServletException;
+import java.io.IOException;
 import javax.crypto.*;
 import javax.crypto.spec.*;
+import javax.servlet.ServletException;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 public class CryptoUtility {
   private static Cipher s_cipher = null;
@@ -51,14 +54,16 @@ public class CryptoUtility {
     if(clearText == null) clearText = "";
     if(s_cipher == null) initCipher();
     if(s_cipher == null) throw new ServletException("CryptoUtility.encrypt() - Can't load cipher");
+    String result = "";
     try {
       s_cipher.init(Cipher.ENCRYPT_MODE, s_key);
       encString = s_cipher.doFinal(clearText.getBytes());
+      result = new BASE64Encoder().encode(encString);
     } catch (Exception ex) {
       ex.printStackTrace();
       throw new ServletException("CryptoUtility.encrypt() - Can't init cipher");
     }
-    return new String(encString);
+    return result;
   }
 
   public static String decrypt(String value) throws ServletException {
@@ -67,9 +72,11 @@ public class CryptoUtility {
     if(s_cipher == null) initCipher();
     if(s_cipher == null || value == null || value.length() <= 0) throw new ServletException("CryptoUtility.decrypt() - Can't load cipher");
     byte out[];
+    byte decode[];
     try {
-      s_cipher.init(Cipher.DECRYPT_MODE, s_key);
-      out = s_cipher.doFinal(value.getBytes());
+      decode = new BASE64Decoder().decodeBuffer(value);
+      s_cipher.init(Cipher.DECRYPT_MODE, s_key, s_cipher.getParameters());
+      out = s_cipher.doFinal(decode);
     } catch (Exception ex) {
       ex.printStackTrace();
       throw new ServletException("CryptoUtility.decrypt() - Can't init cipher");

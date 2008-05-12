@@ -17,6 +17,7 @@
 package org.openbravo.erpCommon.ad_process;
 
 import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.KeyMap;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -27,6 +28,7 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.businessUtility.*;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
 import javax.servlet.*;
@@ -39,11 +41,16 @@ import java.sql.Connection;
 public class SendMailText extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   protected String g_log = "";
-
+  private int counter;
+  private int errors;
+  
+  private enum resultEnum {SUCCESS, INFO, ERRORS};
+  private resultEnum mailResult = resultEnum.SUCCESS;
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    OBError myMessage = null;
+    OBError myMessage = new OBError();
+    vars.setMessage("SendMailText", myMessage);
 
 
     if (vars.commandIn("DEFAULT")) {
@@ -58,11 +65,13 @@ public class SendMailText extends HttpSecureAppServlet {
       String strBPGroup = vars.getRequestGlobalVariable("inpBPGroup", "SendMailText|bpGroup");
       String strUser = vars.getRequestGlobalVariable("inpUser", "SendMailText|user");
 
+      vars.removeMessage("SendMailText");
       String strMessage = processSend(vars, strMailTemplate, strInterestArea, strBPGroup, strUser);
 //    New message system
       myMessage = new OBError();
-      myMessage.setType("Error");
-      myMessage.setTitle("");
+      String result = getResult();
+      myMessage.setType(result);
+      myMessage.setTitle(result);
       myMessage.setMessage(strMessage);
       vars.setMessage("SendMailText", myMessage);
      
@@ -172,8 +181,9 @@ public class SendMailText extends HttpSecureAppServlet {
   protected String processSend(VariablesSecureApp vars, String strMailTemplate, String strInterestArea, String strBPGroup, String strUser) throws IOException, ServletException {
     String client = vars.getClient();
     long start = 0;
-    int counter = 0;
-    int errors = 0;
+    counter = 0;
+    errors = 0;
+    g_log = "";
     String language = vars.getLanguage();
     Connection conn = null;
     try {
@@ -198,39 +208,56 @@ public class SendMailText extends HttpSecureAppServlet {
         if (mails==null || mails.length==0) return ("From EMail not complete - " + from + "(" + fromID + "/" + fromPW + ")");
         from = mails[0].email;
         from = from.trim().toLowerCase();
-        for(int pos = from.indexOf(" "); pos != -1; pos = from.indexOf(" "))
+        for(int pos = from.indexOf(" "); pos != -1; pos = from.indexOf(" ")) {
           from = from.substring(0, pos) + from.substring(pos + 1);
+        }
         fromID = mails[0].emailuser;
-        fromPW = mails[0].emailuserpw;
+        fromPW = FormatUtilities.encryptDecrypt(mails[0].emailuserpw, false);
       } else {
         mails= RequestActionData.selectEmailRequest(conn, this, client);
-        if (mails==null || mails.length==0) return ("From EMail not complete - " + from + "(" + fromID + "/" + fromPW + ")");
+        if (mails==null || mails.length==0) return ("From EMail not complete - " + from + "(" + fromID + "/" + fromPW + ")" + " - selectEmailRequest");
         from = mails[0].email;
         from = from.trim().toLowerCase();
-        for(int pos = from.indexOf(" "); pos != -1; pos = from.indexOf(" "))
+        for(int pos = from.indexOf(" "); pos != -1; pos = from.indexOf(" ")) {
           from = from.substring(0, pos) + from.substring(pos + 1);
+        }
         fromID = mails[0].emailuser;
-        fromPW = mails[0].emailuserpw;
+        fromPW = FormatUtilities.encryptDecrypt(mails[0].emailuserpw, false);
       }
-      if (from.equals("") || fromID.equals("") || fromPW.equals("")) return ("From EMail not complete - " + from + "(" + fromID + "/" + fromPW + ")");
+      if (from.equals("") || fromID.equals("") || fromPW.equals("")) return ("From EMail not complete - " + from + "(" + fromID + "/" + fromPW + ")" + " - from/fromId/fromPW is empty.");
       if (log4j.isDebugEnabled()) log4j.debug("processSend - from " + from + "(" + fromID + "/" + fromPW + ")");
 
+      SendMailTextData[] mailData;
       start = System.currentTimeMillis();
-      log4j.info("processSend - Send to R_InterestArea_ID=" + strInterestArea);
-      SendMailTextData[] mailData = SendMailTextData.select(conn, this, strInterestArea);
-      if (mailData!=null && mailData.length>0) {
-        for(int i=0;i<mailData.length;i++)
-          if(sendIndividualMail(conn, vars, smtpHost, from, subject, message, mailData[i].name, mailData[i].email, mailData[i].adUserId, fromID, fromPW)) counter++;
-          else errors++;
+      if (strInterestArea != null && !strInterestArea.equals("")) {
+        log4j.info("processSend - Send to R_InterestArea_ID=" + strInterestArea);
+        mailData = SendMailTextData.select(conn, this, strInterestArea);
+        if (mailData!=null && mailData.length>0) {
+          if (log4j.isDebugEnabled()) log4j.debug("number of emails to send: " + mailData.length);
+          for(int i=0;i<mailData.length;i++) {
+            if (log4j.isDebugEnabled()) log4j.debug("attempt to send email to: " + mailData[i].email);
+            if(sendIndividualMail(conn, vars, smtpHost, from, subject, message, mailData[i].name, mailData[i].email, mailData[i].adUserId, fromID, fromPW)) counter++;
+            else {
+              errors++;
+              mailResult = resultEnum.ERRORS;
+            }
+          }
+        }
       }
-      log4j.info("processSend - Send to M_BP_Group_ID=" + strBPGroup);
-      mailData = SendMailTextData.selectBPGroup(conn, this, strBPGroup);
-      if (mailData!=null && mailData.length>0) {
-        for(int i=0;i<mailData.length;i++)
-          if(sendIndividualMail(conn, vars, smtpHost, from, subject, message, mailData[i].name, mailData[i].email, mailData[i].adUserId, fromID, fromPW)) counter++;
-          else errors++;
+      if (strBPGroup != null && !strBPGroup.equals("")) {
+        log4j.info("processSend - Send to M_BP_Group_ID=" + strBPGroup);
+        mailData = SendMailTextData.selectBPGroup(conn, this, strBPGroup);
+        if (mailData!=null && mailData.length>0) {
+          for(int i=0;i<mailData.length;i++) {
+            if(sendIndividualMail(conn, vars, smtpHost, from, subject, message, mailData[i].name, mailData[i].email, mailData[i].adUserId, fromID, fromPW)) counter++;
+            else {
+              errors++;
+              mailResult = resultEnum.ERRORS;
+            }
+          }
+        }
       }
-
+      if (counter > 0 && errors > 0) mailResult = resultEnum.INFO;
       releaseCommitConnection(conn);
     } catch (Exception e) {
       try {
@@ -238,9 +265,10 @@ public class SendMailText extends HttpSecureAppServlet {
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
+      mailResult = resultEnum.ERRORS;
       return(Utility.messageBD(this, "ProcessRunError", language));
     }
-    return(g_log + "\\n" + Utility.messageBD(this, "Created", language) + "=" + counter + ", " + Utility.messageBD(this, "Errors", language) + "=" + errors + " - " + (System.currentTimeMillis() - start) + "ms");
+    return(g_log + "\n" + Utility.messageBD(this, "Created", language) + "=" + counter + ", " + Utility.messageBD(this, "Errors", language) + "=" + errors + " - " + (System.currentTimeMillis() - start) + "ms");
   }
 
   private boolean sendIndividualMail(Connection conn, VariablesSecureApp vars, String smtpHost, String from, String subject, String message, String name, String EMailAddress, String AD_User_ID, String fromID, String fromPW) throws IOException, ServletException {
@@ -249,7 +277,7 @@ public class SendMailText extends HttpSecureAppServlet {
       log4j.warn("sendIndividualMail NOT VALID - " + EMailAddress);
       try {
         SendMailTextData.update(conn, this, AD_User_ID);
-        g_log += Utility.messageBD(this, "AD_User_ID", vars.getLanguage()) + ": " + AD_User_ID + " " + Utility.messageBD(this, "Deactivated", vars.getLanguage()) + "\\n";
+        g_log += Utility.messageBD(this, "AD_User_ID", vars.getLanguage()) + ": " + AD_User_ID + " " + Utility.messageBD(this, "Deactivated", vars.getLanguage()) + "<br>";
       } catch (ServletException e) {
         e.printStackTrace();
         log4j.warn("Rollback in transaction");
@@ -258,10 +286,22 @@ public class SendMailText extends HttpSecureAppServlet {
     }
     email.setEMailUser(fromID, fromPW);
     boolean OK = "OK".equals(email.send());
-    if(OK) if (log4j.isDebugEnabled()) log4j.debug("sendIndividualMail - " + EMailAddress);
-    else log4j.warn("sendIndividualMail FAILURE - " + EMailAddress);
-    g_log += Utility.messageBD(this, "EMailAddress", vars.getLanguage()) + ": " + EMailAddress + " " + Utility.messageBD(this, (OK ? "OK" : "ERROR"), vars.getLanguage()) + "\\n";
+    if(OK) {
+      if (log4j.isDebugEnabled()) log4j.debug("sendIndividualMail OK - " + EMailAddress);
+    } else log4j.warn("sendIndividualMail FAILURE - " + EMailAddress);
+    if (log4j.isDebugEnabled()) log4j.debug("adding log message to strMessage for " + EMailAddress);
+    g_log += Utility.messageBD(this, "EMailAddress", vars.getLanguage()) + ": " + EMailAddress + " " + Utility.messageBD(this, (OK ? "OK" : "ERROR"), vars.getLanguage()) + "<br>";
     return OK;
+  }
+  
+  private String getResult() {
+    String result = "Success";
+    if (mailResult == resultEnum.INFO) {
+      result = "Info";
+    } else if (mailResult == resultEnum.ERRORS) {
+      result = "Error";
+    }
+    return result;
   }
 
 
