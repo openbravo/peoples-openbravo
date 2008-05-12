@@ -70,7 +70,7 @@ public class ProductComplete extends HttpSecureAppServlet {
         if (strIsSOTrxTab.equals("")) isSOTrx = Utility.getContext(this, vars, "isSOTrx", windowId);
         vars.setSessionValue("ProductComplete.isSOTrx", isSOTrx);
         String strStore = vars.getStringParameter("inpWithStoreLines", isSOTrx);
-        vars.setSessionValue("ProductComplete.inpWithStoreLines", strStore);
+        vars.setSessionValue("ProductComplete.withstorelines", strStore);
 
       printPage(response, vars, "", strNameValue, strWarehouse, strStore, strBpartner, "", "");
     } else if (vars.commandIn("KEY")) {
