@@ -44,7 +44,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT max(C_WithHolding_Id) FROM C_BP_WithHolding WHERE IsDefault='Y' and C_BPartner_ID=to_number(?) 
+      SELECT max(C_WithHolding_Id) AS ID FROM C_BP_WithHolding WHERE IsDefault='Y' and C_BPartner_ID=to_number(?) 
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
