@@ -304,10 +304,10 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("<tr>\n");
         strHtml.append("<TD class=\"TextBox_ContentCell\">\n");
         strHtml.append("<input dojoType=\"openbravo:DateTextbox\" type=\"text\" class=\"TextBox_btn_OneCell_width\" ");
-        strHtml.append("displayFormat=\"").append(FormatUtilities.replace(vars.getSessionValue("#AD_SqlDateFormat"))).append("\" ");
-        strHtml.append("saveFormat=\"").append(FormatUtilities.replace(vars.getSessionValue("#AD_SqlDateFormat"))).append("\" ");
+        strHtml.append("displayFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append("\" ");
+        strHtml.append("saveFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append("\" ");
         strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("\" ");
-        strHtml.append("maxlength=\"").append(fields[i].fieldlength).append("\" ");
+        strHtml.append("maxlength=\"").append(vars.getSessionValue("#AD_SqlDateFormat").length()).append("\" ");
         strHtml.append("value=\"").append(fields[i].value).append("\" ");
         strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("\" ");
         strHtml.append("onkeyup=\"auto_complete_date(this.textbox);\"></input> ");
@@ -315,7 +315,7 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("</td>\n");
         strHtml.append("<td class=\"FieldButton_ContentCell\">");
         strHtml.append("<a href=\"#\" class=\"FieldButtonLink\" onclick=\"showCalendar('frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("', ");
-        strHtml.append("document.frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(".value, false, '").append(FormatUtilities.replace(vars.getSessionValue("#AD_SqlDateFormat"))).append("');");
+        strHtml.append("document.frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append(".value, false, '").append(vars.getSessionValue("#AD_SqlDateFormat")).append("');");
         strHtml.append("return false;\" onfocus=\"setWindowElementFocus(this); window.status='Calendar'; return true;\" onblur=\"window.status=''; return true;\" onkeypress=\"this.className='FieldButtonLink_active'; return true;\" onkeyup=\"this.className='FieldButtonLink_focus'; return true;\">\n");
         strHtml.append("<table class=\"FieldButton\" onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Show calendar';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n");
         strHtml.append("<tr>\n");
@@ -479,10 +479,10 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("<tr>\n");
           strHtml.append("<TD class=\"TextBox_ContentCell\">\n");
           strHtml.append("<input dojoType=\"openbravo:DateTextbox\" type=\"text\" class=\"TextBox_btn_OneCell_width\" ");
-          strHtml.append("displayFormat=\"").append(FormatUtilities.replace(vars.getSessionValue("#AD_SqlDateFormat"))).append("\" ");
-          strHtml.append("saveFormat=\"").append(FormatUtilities.replace(vars.getSessionValue("#AD_SqlDateFormat"))).append("\" ");
+          strHtml.append("displayFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append("\" ");
+          strHtml.append("saveFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append("\" ");
           strHtml.append("name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f\" ");
-          strHtml.append("maxlength=\"").append(fields[i].fieldlength).append("\" ");
+          strHtml.append("maxlength=\"").append(vars.getSessionValue("#AD_SqlDateFormat").length()).append("\" ");
           strHtml.append("value=\"").append(value).append("\" ");
           strHtml.append("id=\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f\" ");
           strHtml.append("onkeyup=\"auto_complete_date(this.textbox);\"></input> ");
@@ -490,7 +490,7 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("</td>\n");
           strHtml.append("<td class=\"FieldButton_ContentCell\">");
           strHtml.append("<a href=\"#\" class=\"FieldButtonLink\" onclick=\"showCalendar('frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f', ");
-          strHtml.append("document.frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f.value, false, '").append(FormatUtilities.replace(vars.getSessionValue("#AD_SqlDateFormat"))).append("');");
+          strHtml.append("document.frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f.value, false, '").append(vars.getSessionValue("#AD_SqlDateFormat")).append("');");
           strHtml.append("return false;\" onfocus=\"setWindowElementFocus(this); window.status='Calendar'; return true;\" onblur=\"window.status=''; return true;\" onkeypress=\"this.className='FieldButtonLink_active'; return true;\" onkeyup=\"this.className='FieldButtonLink_focus'; return true;\">\n");
           strHtml.append("<table class=\"FieldButton\" onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Show calendar';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n");
           strHtml.append("<tr>\n");
