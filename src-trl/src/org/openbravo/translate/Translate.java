@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,6 +89,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     parser.setContentHandler(this);
     fromLanguage = TranslateData.baseLanguage(pool);
     toLanguage = TranslateData.systemLanguage(pool);
+    if (toLanguage.length==0) log4j.warn("No system languages defined, translation will parse all files.");
   }
 
   /**
@@ -193,6 +194,10 @@ public class Translate extends DefaultHandler implements LexicalHandler {
             actualLanguage = toLanguage[h].name;
             parseFile(list[i], fileFin, relativePath);
           }
+          if (toLanguage.length==0) {
+            actualLanguage="";
+            parseFile(list[i], fileFin, relativePath);
+          }
         } catch (IOException e) {
           log4j.error("IOException: " + e);
         }
@@ -218,29 +223,33 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     String strFileWithoutTermination = strFileName.substring(0, pos);
     if (log4j.isDebugEnabled()) log4j.debug("File without termination: " + strFileWithoutTermination);
     actualFile = relativePath + "/" + strFileName;
+    FileOutputStream resultsFile = null;
     try {
-      if (log4j.isDebugEnabled()) log4j.debug("Relative path: " + actualLanguage + "/" + relativePath);
-      File dirHTML = new File(fileFin, actualLanguage + "/" + relativePath);
-      if (log4j.isDebugEnabled()) log4j.debug(" dirHTML: " + dirHTML);
-      dirHTML.mkdirs();
-      File fileHTML = new File(dirHTML, strFileWithoutTermination + fileTermination);
-      if (log4j.isDebugEnabled()) log4j.debug(" fileHTML: " + fileHTML);
-      if (log4j.isDebugEnabled()) log4j.debug(" time file parsed: " + fileParsing.lastModified() + " time file HTML new: " + fileHTML.lastModified());
-      if (fileHTML.exists()) {
-        /*java.util.Date lastModified = new java.util.Date(fileHTML.lastModified());
-        java.util.Calendar modificationReference = java.util.Calendar.getInstance();
-        modificationReference.add(java.util.Calendar.MINUTE, -10);
-        if (lastModified.compareTo(modificationReference.getTime()) < 0) return;*/
-        java.util.Date newFileModified = new java.util.Date(fileHTML.lastModified());
-        java.util.Date oldFileModified = new java.util.Date(fileParsing.lastModified());
-        //if (count == 0) System.out.println("******************** " + newFileModified.compareTo(oldFileModified) + " - " + newFileModified + " - " + oldFileModified);
-        //if (newFileModified.compareTo(oldFileModified) > 0) return;
-        if (/*!fileTermination.equalsIgnoreCase("jrxml") && */newFileModified.compareTo(oldFileModified) > 0) return;
-        //if (fileHTML.lastModified()>= fileParsing.lastModified()) return;
+      
+      File dirHTML = null;
+      File fileHTML = null;
+      if (!actualLanguage.equals("")) { //actualLangue == "" when no system languages in DB
+        dirHTML = new File(fileFin, actualLanguage + "/" + relativePath);
+        dirHTML.mkdirs();
+        fileHTML = new File(dirHTML, strFileWithoutTermination + fileTermination);
+        if (log4j.isDebugEnabled()) {
+          log4j.debug("Relative path: " + actualLanguage + "/" + relativePath);
+          log4j.debug(" dirHTML: " + dirHTML);
+          log4j.debug(" fileHTML: " + fileHTML);
+          log4j.debug(" time file parsed: " + fileParsing.lastModified() + " time file HTML new: " + fileHTML.lastModified());
+        }
+        if (fileHTML.exists()) {
+          java.util.Date newFileModified = new java.util.Date(fileHTML.lastModified());
+          java.util.Date oldFileModified = new java.util.Date(fileParsing.lastModified());
+          if (newFileModified.compareTo(oldFileModified) > 0) return;
+        }
+        resultsFile = new FileOutputStream(fileHTML);
+        out  = new OutputStreamWriter(resultsFile, "UTF-8");
       }
+      
+      
       count++;
-      FileOutputStream resultsFile = new FileOutputStream(fileHTML);
-      out  = new OutputStreamWriter(resultsFile, "UTF-8");
+      
 
       strBuffer = new StringBuffer();
       log4j.info("F " + fileParsing);
@@ -248,7 +257,6 @@ public class Translate extends DefaultHandler implements LexicalHandler {
       if (log4j.isDebugEnabled()) log4j.debug("Hour: " + date.getTime());
       error = false;
       try {
-//          parser.parse(fileParsing.getAbsolutePath());
         parser.parse(new InputSource(new FileReader(fileParsing)));
       } catch (IOException e) {
         log4j.error("file: " + actualFile);
@@ -257,9 +265,11 @@ public class Translate extends DefaultHandler implements LexicalHandler {
         log4j.error("file: " + actualFile);
         e.printStackTrace();
       }
-      out.write(strBuffer.toString());
-      out.flush();
-      resultsFile.close();
+      if (!actualLanguage.equals("")) {
+        out.write(strBuffer.toString());
+        out.flush();
+        resultsFile.close();
+      }
       if (error) {
 //          fileHTML.delete();
       }

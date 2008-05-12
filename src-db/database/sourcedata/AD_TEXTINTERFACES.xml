@@ -19651,7 +19651,7 @@
 <!--807023 TEXT-->
 <!--807023-->              <TEXT><![CDATA[Amount From ]]></TEXT>
 <!--807023 ISUSED-->
-<!--807023-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--807023-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--807023**************--></AD_TEXTINTERFACES>
 
 <!--807025**************--><AD_TEXTINTERFACES>
@@ -35371,6 +35371,156 @@
 <!--1000100012-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--1000100012**************--></AD_TEXTINTERFACES>
 
+<!--1000100013**************--><AD_TEXTINTERFACES>
+<!--1000100013 AD_TEXTINTERFACES_ID-->
+<!--1000100013-->              <AD_TEXTINTERFACES_ID><![CDATA[1000100013]]></AD_TEXTINTERFACES_ID>
+<!--1000100013 AD_CLIENT_ID-->
+<!--1000100013-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000100013 AD_ORG_ID-->
+<!--1000100013-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000100013 ISACTIVE-->
+<!--1000100013-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000100013 CREATED-->
+<!--1000100013-->              <CREATED><![CDATA[2008-05-12 11:16:20.0]]></CREATED>
+<!--1000100013 CREATEDBY-->
+<!--1000100013-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000100013 UPDATED-->
+<!--1000100013-->              <UPDATED><![CDATA[2008-05-12 11:16:20.0]]></UPDATED>
+<!--1000100013 UPDATEDBY-->
+<!--1000100013-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000100013 TEXT-->
+<!--1000100013-->              <TEXT><![CDATA[Create Vat Register Process]]></TEXT>
+<!--1000100013 FILENAME-->
+<!--1000100013-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateVatRegisters.html]]></FILENAME>
+<!--1000100013 ISUSED-->
+<!--1000100013-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000100013**************--></AD_TEXTINTERFACES>
+
+<!--1000100014**************--><AD_TEXTINTERFACES>
+<!--1000100014 AD_TEXTINTERFACES_ID-->
+<!--1000100014-->              <AD_TEXTINTERFACES_ID><![CDATA[1000100014]]></AD_TEXTINTERFACES_ID>
+<!--1000100014 AD_CLIENT_ID-->
+<!--1000100014-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000100014 AD_ORG_ID-->
+<!--1000100014-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000100014 ISACTIVE-->
+<!--1000100014-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000100014 CREATED-->
+<!--1000100014-->              <CREATED><![CDATA[2008-05-12 11:16:20.0]]></CREATED>
+<!--1000100014 CREATEDBY-->
+<!--1000100014-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000100014 UPDATED-->
+<!--1000100014-->              <UPDATED><![CDATA[2008-05-12 11:16:20.0]]></UPDATED>
+<!--1000100014 UPDATEDBY-->
+<!--1000100014-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000100014 TEXT-->
+<!--1000100014-->              <TEXT><![CDATA[From Date]]></TEXT>
+<!--1000100014 FILENAME-->
+<!--1000100014-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateVatRegisters.html]]></FILENAME>
+<!--1000100014 ISUSED-->
+<!--1000100014-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000100014**************--></AD_TEXTINTERFACES>
+
+<!--1000100015**************--><AD_TEXTINTERFACES>
+<!--1000100015 AD_TEXTINTERFACES_ID-->
+<!--1000100015-->              <AD_TEXTINTERFACES_ID><![CDATA[1000100015]]></AD_TEXTINTERFACES_ID>
+<!--1000100015 AD_CLIENT_ID-->
+<!--1000100015-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000100015 AD_ORG_ID-->
+<!--1000100015-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000100015 ISACTIVE-->
+<!--1000100015-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000100015 CREATED-->
+<!--1000100015-->              <CREATED><![CDATA[2008-05-12 11:16:20.0]]></CREATED>
+<!--1000100015 CREATEDBY-->
+<!--1000100015-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000100015 UPDATED-->
+<!--1000100015-->              <UPDATED><![CDATA[2008-05-12 11:16:20.0]]></UPDATED>
+<!--1000100015 UPDATEDBY-->
+<!--1000100015-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000100015 TEXT-->
+<!--1000100015-->              <TEXT><![CDATA[To Date]]></TEXT>
+<!--1000100015 FILENAME-->
+<!--1000100015-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateVatRegisters.html]]></FILENAME>
+<!--1000100015 ISUSED-->
+<!--1000100015-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000100015**************--></AD_TEXTINTERFACES>
+
+<!--1000100016**************--><AD_TEXTINTERFACES>
+<!--1000100016 AD_TEXTINTERFACES_ID-->
+<!--1000100016-->              <AD_TEXTINTERFACES_ID><![CDATA[1000100016]]></AD_TEXTINTERFACES_ID>
+<!--1000100016 AD_CLIENT_ID-->
+<!--1000100016-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000100016 AD_ORG_ID-->
+<!--1000100016-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000100016 ISACTIVE-->
+<!--1000100016-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000100016 CREATED-->
+<!--1000100016-->              <CREATED><![CDATA[2008-05-12 11:16:27.0]]></CREATED>
+<!--1000100016 CREATEDBY-->
+<!--1000100016-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000100016 UPDATED-->
+<!--1000100016-->              <UPDATED><![CDATA[2008-05-12 11:16:27.0]]></UPDATED>
+<!--1000100016 UPDATEDBY-->
+<!--1000100016-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000100016 TEXT-->
+<!--1000100016-->              <TEXT><![CDATA[class="TitleCell">]]></TEXT>
+<!--1000100016 FILENAME-->
+<!--1000100016-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/Invoice.html]]></FILENAME>
+<!--1000100016 ISUSED-->
+<!--1000100016-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000100016**************--></AD_TEXTINTERFACES>
+
+<!--1000100017**************--><AD_TEXTINTERFACES>
+<!--1000100017 AD_TEXTINTERFACES_ID-->
+<!--1000100017-->              <AD_TEXTINTERFACES_ID><![CDATA[1000100017]]></AD_TEXTINTERFACES_ID>
+<!--1000100017 AD_CLIENT_ID-->
+<!--1000100017-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000100017 AD_ORG_ID-->
+<!--1000100017-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000100017 ISACTIVE-->
+<!--1000100017-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000100017 CREATED-->
+<!--1000100017-->              <CREATED><![CDATA[2008-05-12 11:17:56.0]]></CREATED>
+<!--1000100017 CREATEDBY-->
+<!--1000100017-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000100017 UPDATED-->
+<!--1000100017-->              <UPDATED><![CDATA[2008-05-12 11:17:56.0]]></UPDATED>
+<!--1000100017 UPDATEDBY-->
+<!--1000100017-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000100017 TEXT-->
+<!--1000100017-->              <TEXT><![CDATA[Oggetto : certificazione dei compensi assoggettati a ritenuta d'acconto (art. DPR 29 Settembre 1973 n° 600)]]></TEXT>
+<!--1000100017 FILENAME-->
+<!--1000100017-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportAnnualCertification.jrxml]]></FILENAME>
+<!--1000100017 ISUSED-->
+<!--1000100017-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000100017**************--></AD_TEXTINTERFACES>
+
+<!--1000100018**************--><AD_TEXTINTERFACES>
+<!--1000100018 AD_TEXTINTERFACES_ID-->
+<!--1000100018-->              <AD_TEXTINTERFACES_ID><![CDATA[1000100018]]></AD_TEXTINTERFACES_ID>
+<!--1000100018 AD_CLIENT_ID-->
+<!--1000100018-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000100018 AD_ORG_ID-->
+<!--1000100018-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000100018 ISACTIVE-->
+<!--1000100018-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000100018 CREATED-->
+<!--1000100018-->              <CREATED><![CDATA[2008-05-12 11:17:56.0]]></CREATED>
+<!--1000100018 CREATEDBY-->
+<!--1000100018-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000100018 UPDATED-->
+<!--1000100018-->              <UPDATED><![CDATA[2008-05-12 11:17:56.0]]></UPDATED>
+<!--1000100018 UPDATEDBY-->
+<!--1000100018-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000100018 TEXT-->
+<!--1000100018-->              <TEXT><![CDATA[e l'importo della ritenuta d'acconto operata è di Euro]]></TEXT>
+<!--1000100018 FILENAME-->
+<!--1000100018-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportAnnualCertification.jrxml]]></FILENAME>
+<!--1000100018 ISUSED-->
+<!--1000100018-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000100018**************--></AD_TEXTINTERFACES>
+
 <!--1000200000**************--><AD_TEXTINTERFACES>
 <!--1000200000 AD_TEXTINTERFACES_ID-->
 <!--1000200000-->              <AD_TEXTINTERFACES_ID><![CDATA[1000200000]]></AD_TEXTINTERFACES_ID>
@@ -35818,7 +35968,7 @@
 <!--1000500008 FILENAME-->
 <!--1000500008-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportTrialBalance.html]]></FILENAME>
 <!--1000500008 ISUSED-->
-<!--1000500008-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500008-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--1000500008**************--></AD_TEXTINTERFACES>
 
 <!--1000500009**************--><AD_TEXTINTERFACES>

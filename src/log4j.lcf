@@ -26,4 +26,4 @@ log4j.appender.A1.layout.ConversionPattern=%-4r [%t] %-5p %c - %m%n
 
 log4j.category.org.openbravo.data.Sqlc=INFO
 log4j.category.org.openbravo.wad=INFO
-#log4j.category.org.openbravo.translate=DEBUG
+#log4j.category.org.openbravo.translate=INFO
