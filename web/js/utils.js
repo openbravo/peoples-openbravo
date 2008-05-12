@@ -1939,7 +1939,7 @@ function getMenuExpandCollapse_status() {
 }
 
 function menuUserOptions() {
-  openServletNewWindow('DEFAULT', false, '../ad_forms/Role.html', 'ROLE', null, null, '460', '775');
+  openServletNewWindow('DEFAULT', false, '../ad_forms/Role.html', 'ROLE', null, null, '460', '800');
   return true;
 }
 
