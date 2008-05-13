@@ -36,9 +36,9 @@ new Array (0,31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31) //Leap year
 );
 
 /**
-* Esta librer�a JavaScript contiene las funciones y procedimientos b�sicos que se utilizan en
-* todas las p�ginas html. Son elementos b�sicos como el posicionamiento del foco en un control
-* de la p�gina, control de campos num�ricos...
+* Esta librería JavaScript contiene las funciones y procedimientos básicos que se utilizan en
+* todas las páginas html. Son elementos básicos como el posicionamiento del foco en un control
+* de la página, control de campos numéricos...
 */
 
 var gByDefaultAction;
@@ -973,7 +973,7 @@ function keyControl(pushedKey) {
                 }
               }
               if (!keyArray[i].propagateKey) 
-                document.onkeypress = stopKeyPressEvent;
+                //document.onkeypress = stopKeyPressEvent;
               if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
                 var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
                 try {
@@ -991,8 +991,9 @@ function keyControl(pushedKey) {
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-            if (!keyArray[i].propagateKey) document.onkeypress = stopKeyPressEvent;
+            //if (!keyArray[i].propagateKey) document.onkeypress = stopKeyPressEvent;
             if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
+              if (!keyArray[i].propagateKey) document.onkeypress = stopKeyPressEvent;
               try {
                 eval(evalfuncTrl);
                 document.onkeypress = startKeyPressEvent;
@@ -1006,6 +1007,7 @@ function keyControl(pushedKey) {
               document.onkeypress = startKeyPressEvent;
               return true;
             } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
+              if (!keyArray[i].propagateKey) document.onkeypress = stopKeyPressEvent;
               try {
                 eval(evalfuncTrl);
                 document.onkeypress = startKeyPressEvent;
@@ -1066,7 +1068,7 @@ function keyControl(pushedKey) {
                 }
               }
               if (!keyArray[i].propagateKey) 
-                document.onkeypress = stopKeyPressEvent;
+                //document.onkeypress = stopKeyPressEvent;
               if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
                 var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
                 try {
@@ -1084,7 +1086,7 @@ function keyControl(pushedKey) {
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
             var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
-            if (!keyArray[i].propagateKey) document.onkeypress = stopKeyPressEvent;
+            //if (!keyArray[i].propagateKey) document.onkeypress = stopKeyPressEvent;
             if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
@@ -2800,7 +2802,7 @@ function auto_complete_number(obj, bolDecimal, bolNegativo, evt) {
   if (document.layers) { number = evt.which; }
   if (document.all)    { number = evt.keyCode;}
   if (number != obtainKeyCode("ENTER") && number != obtainKeyCode("LEFTARROW") && number != obtainKeyCode("RIGHTARROW") && number != obtainKeyCode("UPARROW") && number != obtainKeyCode("DOWNARROW") && number != obtainKeyCode("DELETE") && number != obtainKeyCode("BACKSPACE") && number != obtainKeyCode("END") && number != obtainKeyCode("HOME") && !evt["ctrlKey"]) {
-    if (number>95 && number <106) { //Teclado numérico
+    if (number>95 && number <106) { //Teclado numÃ©rico
       number = number - 96;
       if(isNaN(number)) {
         if (document.all) evt.returnValue = false;
@@ -3016,14 +3018,14 @@ function xx()
 /**
 * @name menuContextual
 * @format function menuContextual()
-* @comment Se trata de un función manejadora de eventos que sirve para el control del click con el 
-*          botón derecho sobre la página. Esta función no permite dicho evento, presentando un mensaje 
+* @comment Se trata de un funciÃ³n manejadora de eventos que sirve para el control del click con el 
+*          botÃ³n derecho sobre la pÃ¡gina. Esta funciÃ³n no permite dicho evento, presentando un mensaje 
 *          en tal caso.
 */
 function menuContextual(evt) {
   var boton = (evt==null)?event.button:evt.which;
   if (boton == 3 || boton == 2) {
-    if (document.all) alert('El boton derecho está deshabilitado por pruebas');
+    if (document.all) alert('El boton derecho estÃ¡ deshabilitado por pruebas');
     return false;
   }
   return true;
@@ -3683,7 +3685,7 @@ function auto_completar_numero(obj, bolDecimal, bolNegativo, evt) {
   if (document.layers) { numero = evt.which; }
   if (document.all)    { numero = evt.keyCode;}
   if (numero != obtenerCodigoTecla("ENTER") && numero != obtenerCodigoTecla("LEFTARROW") && numero != obtenerCodigoTecla("RIGHTARROW") && numero != obtenerCodigoTecla("UPARROW") && numero != obtenerCodigoTecla("DOWNARROW") && numero != obtenerCodigoTecla("DELETE") && numero != obtenerCodigoTecla("BACKSPACE") && numero != obtenerCodigoTecla("END") && numero != obtenerCodigoTecla("HOME") && !evt["ctrlKey"]) {
-    if (numero>95 && numero <106) { //Teclado num�rico
+    if (numero>95 && numero <106) { //Teclado numérico
       numero = numero - 96;
       if(isNaN(numero)) {
         if (document.all) evt.returnValue = false;
