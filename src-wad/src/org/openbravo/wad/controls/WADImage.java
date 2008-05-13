@@ -52,7 +52,7 @@ public class WADImage extends WADControl {
 
   public String editMode() {
     String[] discard = {"buttonxx"};
-    if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y") && !getData("IsUpdateable").equals("N")) discard[0] = "";
+    if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y") && !getData("IsUpdateable").equals("N")) discard[0] = "paramInactive";
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADImage", discard).createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
@@ -66,7 +66,7 @@ public class WADImage extends WADControl {
 
   public String newMode() {
     String[] discard = {"buttonxx"};
-    if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y")) discard[0] = "";
+    if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y")) discard[0] = "paramInactive";
     XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADImage", discard).createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
