@@ -224,7 +224,7 @@ public class ImportTax extends ImportProcess {
            if (log4j.isDebugEnabled()) log4j.debug("Tax:"+data[i].tName);
            
            if (!data[i].parentName.equals("")) { //Parent tax
-             ParentTax_ID = ImportTaxData.selectTaxId(conn, data[i].parentName, getAD_Client_ID()); //Check if parent tax is created, if not create with default values
+             ParentTax_ID = ImportTaxData.selectTaxId(conn, "", data[i].parentName, getAD_Client_ID()); //Check if parent tax is created, if not create with default values
              if ((ParentTax_ID == "") || (ParentTax_ID==null)) {  //Insert parent tax
                try {
                  ParentTax_ID = SequenceIdData.getSequence(conn, "C_Tax", vars.getClient());
@@ -243,7 +243,7 @@ public class ImportTax extends ImportProcess {
              }
            }
            
-           if (newTax) C_Tax_ID = ImportTaxData.selectTaxId(conn, data[i].tName, getAD_Client_ID());
+           if (newTax) C_Tax_ID = ImportTaxData.selectTaxId(conn, data[i].parentName, data[i].tName, getAD_Client_ID()); //look for existing taxes (a tax is unique by name and parent) 
            newTax = ((C_Tax_ID == "")||(C_Tax_ID==null));
            if (log4j.isDebugEnabled()) log4j.debug("Tax:"+data[i].tName+" - new:"+newTax);
            if (newTax) {	//	Insert new Tax

@@ -62,17 +62,22 @@
     <Parameter name="ad_client_id"/>
   </SqlMethod> 
   
-      <SqlMethod name="selectTaxId" type="preparedStatement" return="string">
+  <SqlMethod name="selectTaxId" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_Tax_ID
-			  FROM C_Tax
-			  WHERE Name = ?
-        AND AD_Client_ID = TO_NUMBER(?)
+        select t.c_tax_id
+         from c_tax t left join c_tax t1 
+                             on t.parent_tax_id = t1.c_tax_id 
+                            and t1.name = ? 
+        where t.name = ?
+          and coalesce(to_char(t1.name),'.')=coalesce(to_char(?),'.')
+          and t.ad_client_id = to_number(?)
       ]]>
     </Sql>
+    <Parameter name="parentName"/> 
     <Parameter name="name"/>
+    <Parameter name="parentName"/> 
     <Parameter name="ad_client_id"/>
   </SqlMethod>
   
