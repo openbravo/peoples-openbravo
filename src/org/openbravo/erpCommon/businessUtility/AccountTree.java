@@ -259,6 +259,8 @@ public class AccountTree {
     }
     double total = Double.valueOf((String) vecTotal.elementAt(0)).doubleValue();
     double totalRef = Double.valueOf((String) vecTotal.elementAt(1)).doubleValue();
+    if (indice.equals("1000741")) 
+      log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + indice + " - total: " + total + " - totalRef: " + totalRef);
     boolean encontrado=false;
     for (int i=0;i<forms.length;i++) {
       if (forms[i].id.equals(indice)) {
@@ -370,7 +372,7 @@ public class AccountTree {
     double totalRef = Double.valueOf((String) vecTotal.elementAt(1)).doubleValue();
 
     for (int i=0;i<resultantAccounts.length;i++) {
-      if ((isExactValue && nodeIn(resultantAccounts[i].nodeId, indice)) || nodeIn(resultantAccounts[i].parentId, indice)) {  
+      if ((isExactValue && nodeIn(resultantAccounts[i].nodeId, indice)) || (!isExactValue && nodeIn(resultantAccounts[i].parentId, indice))) {  // modified by Eduardo Argal. For operands calculation
       AccountTreeData[] dataChilds = null;
       if (resultantAccounts[i].calculated.equals("N"))  //this would work if it only passed here once, but it's passing more times... why????
       {
@@ -406,7 +408,8 @@ public class AccountTree {
             for (int j=0;j<dataChilds.length;j++) vec.addElement(dataChilds[j]);
           }
         // } This was for the culculated="N"
-
+        if (resultantAccounts[i].nodeId.equals("1000506")) 
+          log4j.debug("AccountTree.calculateTree() - account: " + resultantAccounts[i].nodeId + " - total: " + Double.toString(total));
         if (applysign) {
           total += Double.valueOf(resultantAccounts[i].qty).doubleValue();
           totalRef += Double.valueOf(resultantAccounts[i].qtyRef).doubleValue();
@@ -416,6 +419,7 @@ public class AccountTree {
         }
       }
     }
+    log4j.debug("AccountTree.calculateTree()2 - total: " + Double.toString(total));
     vecTotal.set(0, Double.toString(total));
     vecTotal.set(1, Double.toString(totalRef));
     result = new AccountTreeData[vec.size()];
