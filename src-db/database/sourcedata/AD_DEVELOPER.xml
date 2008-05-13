@@ -2116,6 +2116,151 @@
 <!--10073-->              <SVNUSER><![CDATA[gorka_gil]]></SVNUSER>
 <!--10073**************--></AD_DEVELOPER>
 
+<!--10074**************--><AD_DEVELOPER>
+<!--10074 AD_DEVELOPER_ID-->
+<!--10074-->              <AD_DEVELOPER_ID><![CDATA[10074]]></AD_DEVELOPER_ID>
+<!--10074 AD_CLIENT_ID-->
+<!--10074-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10074 AD_ORG_ID-->
+<!--10074-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10074 ISACTIVE-->
+<!--10074-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10074 CREATED-->
+<!--10074-->              <CREATED><![CDATA[2008-05-13 12:16:57.0]]></CREATED>
+<!--10074 CREATEDBY-->
+<!--10074-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10074 UPDATED-->
+<!--10074-->              <UPDATED><![CDATA[2008-05-13 12:16:57.0]]></UPDATED>
+<!--10074 UPDATEDBY-->
+<!--10074-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10074 NAME-->
+<!--10074-->              <NAME><![CDATA[Eduardo Argal]]></NAME>
+<!--10074 NICKNAME-->
+<!--10074-->              <NICKNAME><![CDATA[eduardoargal]]></NICKNAME>
+<!--10074 EMAIL-->
+<!--10074-->              <EMAIL><![CDATA[ear at openbravo dot com]]></EMAIL>
+<!--10074 COMPANY-->
+<!--10074-->              <COMPANY><![CDATA[Openbravo]]></COMPANY>
+<!--10074 SVNUSER-->
+<!--10074-->              <SVNUSER><![CDATA[eduardoargal]]></SVNUSER>
+<!--10074**************--></AD_DEVELOPER>
+
+<!--10075**************--><AD_DEVELOPER>
+<!--10075 AD_DEVELOPER_ID-->
+<!--10075-->              <AD_DEVELOPER_ID><![CDATA[10075]]></AD_DEVELOPER_ID>
+<!--10075 AD_CLIENT_ID-->
+<!--10075-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10075 AD_ORG_ID-->
+<!--10075-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10075 ISACTIVE-->
+<!--10075-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10075 CREATED-->
+<!--10075-->              <CREATED><![CDATA[2008-05-13 12:16:57.0]]></CREATED>
+<!--10075 CREATEDBY-->
+<!--10075-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10075 UPDATED-->
+<!--10075-->              <UPDATED><![CDATA[2008-05-13 12:16:57.0]]></UPDATED>
+<!--10075 UPDATEDBY-->
+<!--10075-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10075 NAME-->
+<!--10075-->              <NAME><![CDATA[Eduardo Argal]]></NAME>
+<!--10075 NICKNAME-->
+<!--10075-->              <NICKNAME><![CDATA[eduardoargal]]></NICKNAME>
+<!--10075 EMAIL-->
+<!--10075-->              <EMAIL><![CDATA[ear at openbravo dot com]]></EMAIL>
+<!--10075 COMPANY-->
+<!--10075-->              <COMPANY><![CDATA[Openbravo]]></COMPANY>
+<!--10075 SVNUSER-->
+<!--10075-->              <SVNUSER><![CDATA[eduardoargal]]></SVNUSER>
+<!--10075**************--></AD_DEVELOPER>
+
+<!--10076**************--><AD_DEVELOPER>
+<!--10076 AD_DEVELOPER_ID-->
+<!--10076-->              <AD_DEVELOPER_ID><![CDATA[10076]]></AD_DEVELOPER_ID>
+<!--10076 AD_CLIENT_ID-->
+<!--10076-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10076 AD_ORG_ID-->
+<!--10076-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10076 ISACTIVE-->
+<!--10076-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10076 CREATED-->
+<!--10076-->              <CREATED><![CDATA[2008-05-13 09:40:00.0]]></CREATED>
+<!--10076 CREATEDBY-->
+<!--10076-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10076 UPDATED-->
+<!--10076-->              <UPDATED><![CDATA[2008-05-13 09:40:00.0]]></UPDATED>
+<!--10076 UPDATEDBY-->
+<!--10076-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10076 NAME-->
+<!--10076-->              <NAME><![CDATA[David Alsasua Egea]]></NAME>
+<!--10076 NICKNAME-->
+<!--10076-->              <NICKNAME><![CDATA[davidalsasua]]></NICKNAME>
+<!--10076 EMAIL-->
+<!--10076-->              <EMAIL><![CDATA[david.alsasua at openbravo dot com]]></EMAIL>
+<!--10076 COMPANY-->
+<!--10076-->              <COMPANY><![CDATA[Openbravo]]></COMPANY>
+<!--10076 SVNUSER-->
+<!--10076-->              <SVNUSER><![CDATA[davidalsasua]]></SVNUSER>
+<!--10076**************--></AD_DEVELOPER>
+
+<!--10077**************--><AD_DEVELOPER>
+<!--10077 AD_DEVELOPER_ID-->
+<!--10077-->              <AD_DEVELOPER_ID><![CDATA[10077]]></AD_DEVELOPER_ID>
+<!--10077 AD_CLIENT_ID-->
+<!--10077-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10077 AD_ORG_ID-->
+<!--10077-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10077 ISACTIVE-->
+<!--10077-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10077 CREATED-->
+<!--10077-->              <CREATED><![CDATA[2008-05-13 09:40:00.0]]></CREATED>
+<!--10077 CREATEDBY-->
+<!--10077-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10077 UPDATED-->
+<!--10077-->              <UPDATED><![CDATA[2008-05-13 09:40:00.0]]></UPDATED>
+<!--10077 UPDATEDBY-->
+<!--10077-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10077 NAME-->
+<!--10077-->              <NAME><![CDATA[Gorka Garay]]></NAME>
+<!--10077 NICKNAME-->
+<!--10077-->              <NICKNAME><![CDATA[gorka.garay]]></NICKNAME>
+<!--10077 EMAIL-->
+<!--10077-->              <EMAIL><![CDATA[ggaray at theinit dot com]]></EMAIL>
+<!--10077 COMPANY-->
+<!--10077-->              <COMPANY><![CDATA[theinit]]></COMPANY>
+<!--10077 SVNUSER-->
+<!--10077-->              <SVNUSER><![CDATA[gorka.garay]]></SVNUSER>
+<!--10077**************--></AD_DEVELOPER>
+
+<!--10078**************--><AD_DEVELOPER>
+<!--10078 AD_DEVELOPER_ID-->
+<!--10078-->              <AD_DEVELOPER_ID><![CDATA[10078]]></AD_DEVELOPER_ID>
+<!--10078 AD_CLIENT_ID-->
+<!--10078-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10078 AD_ORG_ID-->
+<!--10078-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10078 ISACTIVE-->
+<!--10078-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10078 CREATED-->
+<!--10078-->              <CREATED><![CDATA[2008-05-13 09:40:00.0]]></CREATED>
+<!--10078 CREATEDBY-->
+<!--10078-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10078 UPDATED-->
+<!--10078-->              <UPDATED><![CDATA[2008-05-13 09:40:00.0]]></UPDATED>
+<!--10078 UPDATEDBY-->
+<!--10078-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10078 NAME-->
+<!--10078-->              <NAME><![CDATA[Rafael de Miguel]]></NAME>
+<!--10078 NICKNAME-->
+<!--10078-->              <NICKNAME><![CDATA[rafaeldemiguel]]></NICKNAME>
+<!--10078 EMAIL-->
+<!--10078-->              <EMAIL><![CDATA[rdm at openbravo dot com]]></EMAIL>
+<!--10078 COMPANY-->
+<!--10078-->              <COMPANY><![CDATA[Openbravo]]></COMPANY>
+<!--10078 SVNUSER-->
+<!--10078-->              <SVNUSER><![CDATA[rafaeldemiguel]]></SVNUSER>
+<!--10078**************--></AD_DEVELOPER>
+
 <!--
 ************************
 0. End of Core Range.
