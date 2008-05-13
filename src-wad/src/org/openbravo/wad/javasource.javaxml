@@ -940,7 +940,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="package">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.editionTemplate(boolNew));
+      xmlDocument.setParameter("leftTabs", lBar.editionTemplate(strCommand.equals("NEW")));
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
