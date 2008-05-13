@@ -122,7 +122,7 @@ String strProductRMailTextID = "";
 
          //strPricelistId = ExpenseAPInvoiceData.pricelistId(this, data[i].cBpartnerId);
 
-         ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, data[i].cCurrencyId, strSalesrepId, "N", "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
+         ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, data[i].cCurrencyId, strSalesrepId, "N", "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
         }
         else strcInvoiceId = strcInvoiceIdOld;
        }
@@ -154,7 +154,7 @@ String strProductRMailTextID = "";
          line+=Integer.valueOf(strLine);
 	 
        if (log4j.isDebugEnabled()) log4j.debug("*****************+client: "+ (data[i].invoiceprice.equals("")?dataPrice[0].pricestd:data[i].invoiceprice));
-         ExpenseAPInvoiceData.insertLine(conn, this, data[i].adClientId, data[i].adOrgId, strcInvoiceId, "", String.valueOf(line), "", data[i].mProductId, "", data[i].description, "", strmProductUomId, String.valueOf(qty), data[i].cUomId, strPricestd, strPricelist, strcTaxID, String.valueOf(Float.valueOf(strPricestd)*qty), "", strPricestd, strPricelimit, "", "", "", "Y", "0", "", "", strcInvoiceLineId, "", "N", vars.getUser(), vars.getUser());
+         ExpenseAPInvoiceData.insertLine(conn, this, data[i].adClientId, data[i].adOrgId, strcInvoiceId, "", String.valueOf(line), "", data[i].mProductId, "", data[i].description, "", strmProductUomId, String.valueOf(qty), data[i].cUomId, strPricestd, strPricelist, strcTaxID, String.valueOf(Float.valueOf(strPricestd)*qty), "", strPricestd, strPricelimit, "", "", "", "Y", "0", "", "", strcInvoiceLineId, "N", vars.getUser(), vars.getUser());
 
 
        } else {

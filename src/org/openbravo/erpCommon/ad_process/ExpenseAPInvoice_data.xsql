@@ -288,11 +288,9 @@ C_Invoice_ID
 , DatePrinted
 , IsPrinted
 , Processed
-, SendEMail
 , IsSOTrx
 , IsSelfService
 , IsTaxIncluded
-, IsTransferred
 , AD_Client_ID
 , AD_Org_ID
 , C_Order_ID
@@ -336,8 +334,6 @@ C_Invoice_ID
 TO_NUMBER(?)
 , (?)
 , TO_DATE(?)
-, (?)
-, (?)
 , (?)
 , (?)
 , (?)
@@ -389,11 +385,9 @@ TO_NUMBER(?)
 <Parameter name="dateprinted"/>
 <Parameter name="isprinted"/>
 <Parameter name="processed"/>
-<Parameter name="sendemail"/>
 <Parameter name="issotrx"/>
 <Parameter name="isselfservice"/>
 <Parameter name="istaxincluded"/>
-<Parameter name="istransferred"/>
 <Parameter name="adClientId"/>
 <Parameter name="adOrgId"/>
 <Parameter name="cOrderId"/>
@@ -467,7 +461,6 @@ AD_Client_ID
 , C_Projectline_ID
 , C_Invoice_Discount_ID
 , C_InvoiceLine_ID
-, A_Asset_ID
 , IsDescription
 , created, createdby, updated, updatedBy)
 VALUES (
@@ -499,7 +492,6 @@ TO_NUMBER(?)
 , TO_NUMBER(?)
 , TO_NUMBER(?)
  , TO_NUMBER(?)
-, TO_NUMBER(?)
 , (?)
 , now(), to_number(?), now(), to_number(?))
 ]]></Sql>
@@ -531,7 +523,6 @@ TO_NUMBER(?)
 <Parameter name="cProjectlineId"></Parameter>
 <Parameter name="cInvoiceDiscountId"></Parameter>
 <Parameter name="cInvoicelineId"></Parameter>
-<Parameter name="aAssetId"></Parameter>
 <Parameter name="isdescription"></Parameter>
 <Parameter name="createdby"></Parameter>
 <Parameter name="updatedby"></Parameter>
