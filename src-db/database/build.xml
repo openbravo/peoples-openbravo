@@ -350,7 +350,7 @@ compare.database.structure: Generates a diff script.
 
   <target name="import.database.data">
       <antcall target="database.preimport.${bbdd.rdbms}" />
-      <antcall target="import.database.data" />
+      <antcall target="import.database.data.int" />
       <antcall target="database.postimport.${bbdd.rdbms}" />
       <antcall target="database.postcreate.${bbdd.rdbms}" />
   </target>
