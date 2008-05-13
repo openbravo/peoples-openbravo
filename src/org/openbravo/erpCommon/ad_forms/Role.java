@@ -83,7 +83,7 @@ public class Role extends HttpSecureAppServlet {
             vars = new VariablesSecureApp(request); // refresh
             printPage(response, vars, true);
         } else {
-            pageError(response);
+          bdErrorGeneralPopUp(response, Utility.messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this, "LoginError", vars.getLanguage()));
         }
     } 
     else pageErrorPopUp(response);
@@ -113,6 +113,7 @@ public class Role extends HttpSecureAppServlet {
         if (strSetDefault.equals("Y"))
           DefaultOptionsData.saveDefaultOptions(this, strLanguage, strRol, strClient, strOrg, strWarehouse, strUserAuth); 
         
+        if (strClient.equals("") || strOrg.equals("") || strRol.equals("")) return false;
         return LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strRol, strClient, strOrg, strWarehouse);
   }
     
