@@ -583,7 +583,7 @@
 <!--800009 CREATEDBY-->
 <!--800009-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800009 UPDATED-->
-<!--800009-->              <UPDATED><![CDATA[2007-02-23 11:41:28.0]]></UPDATED>
+<!--800009-->              <UPDATED><![CDATA[2008-05-13 11:23:38.0]]></UPDATED>
 <!--800009 UPDATEDBY-->
 <!--800009-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800009 AD_IMPFORMAT_ID-->
@@ -593,7 +593,7 @@
 <!--800009 NAME-->
 <!--800009-->              <NAME><![CDATA[Code Country From]]></NAME>
 <!--800009 AD_COLUMN_ID-->
-<!--800009-->              <AD_COLUMN_ID><![CDATA[803717]]></AD_COLUMN_ID>
+<!--800009-->              <AD_COLUMN_ID><![CDATA[803753]]></AD_COLUMN_ID>
 <!--800009 DATATYPE-->
 <!--800009-->              <DATATYPE><![CDATA[S]]></DATATYPE>
 <!--800009 DECIMALPOINT-->
@@ -616,7 +616,7 @@
 <!--800010 CREATEDBY-->
 <!--800010-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800010 UPDATED-->
-<!--800010-->              <UPDATED><![CDATA[2007-02-23 11:41:40.0]]></UPDATED>
+<!--800010-->              <UPDATED><![CDATA[2008-05-13 11:23:53.0]]></UPDATED>
 <!--800010 UPDATEDBY-->
 <!--800010-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800010 AD_IMPFORMAT_ID-->
@@ -626,7 +626,7 @@
 <!--800010 NAME-->
 <!--800010-->              <NAME><![CDATA[Code Region From]]></NAME>
 <!--800010 AD_COLUMN_ID-->
-<!--800010-->              <AD_COLUMN_ID><![CDATA[803717]]></AD_COLUMN_ID>
+<!--800010-->              <AD_COLUMN_ID><![CDATA[803755]]></AD_COLUMN_ID>
 <!--800010 DATATYPE-->
 <!--800010-->              <DATATYPE><![CDATA[S]]></DATATYPE>
 <!--800010 DECIMALPOINT-->
@@ -649,7 +649,7 @@
 <!--800011 CREATEDBY-->
 <!--800011-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800011 UPDATED-->
-<!--800011-->              <UPDATED><![CDATA[2007-02-23 11:41:55.0]]></UPDATED>
+<!--800011-->              <UPDATED><![CDATA[2008-05-13 11:24:05.0]]></UPDATED>
 <!--800011 UPDATEDBY-->
 <!--800011-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800011 AD_IMPFORMAT_ID-->
@@ -659,7 +659,7 @@
 <!--800011 NAME-->
 <!--800011-->              <NAME><![CDATA[Code Country To]]></NAME>
 <!--800011 AD_COLUMN_ID-->
-<!--800011-->              <AD_COLUMN_ID><![CDATA[803717]]></AD_COLUMN_ID>
+<!--800011-->              <AD_COLUMN_ID><![CDATA[803754]]></AD_COLUMN_ID>
 <!--800011 DATATYPE-->
 <!--800011-->              <DATATYPE><![CDATA[S]]></DATATYPE>
 <!--800011 DECIMALPOINT-->
@@ -682,7 +682,7 @@
 <!--800012 CREATEDBY-->
 <!--800012-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800012 UPDATED-->
-<!--800012-->              <UPDATED><![CDATA[2007-02-23 11:42:03.0]]></UPDATED>
+<!--800012-->              <UPDATED><![CDATA[2008-05-13 11:24:12.0]]></UPDATED>
 <!--800012 UPDATEDBY-->
 <!--800012-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800012 AD_IMPFORMAT_ID-->
@@ -692,7 +692,7 @@
 <!--800012 NAME-->
 <!--800012-->              <NAME><![CDATA[Code Region To]]></NAME>
 <!--800012 AD_COLUMN_ID-->
-<!--800012-->              <AD_COLUMN_ID><![CDATA[803717]]></AD_COLUMN_ID>
+<!--800012-->              <AD_COLUMN_ID><![CDATA[803756]]></AD_COLUMN_ID>
 <!--800012 DATATYPE-->
 <!--800012-->              <DATATYPE><![CDATA[S]]></DATATYPE>
 <!--800012 DECIMALPOINT-->
