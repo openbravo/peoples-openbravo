@@ -1173,7 +1173,7 @@ public class Wad extends DefaultHandler {
           if (fieldsData[i].name.equalsIgnoreCase("DocAction")) {
             strWhere.append(" AND (CASE " + tableName + "." + fieldsData[i].name + " WHEN '--' THEN 'CL' ELSE TO_CHAR(" + tableName + "." + fieldsData[i].name + ") END) = " + "list" + ilist + ".value");
           } else {
-            strWhere.append(" AND " + tableName + "." + fieldsData[i].name + " = " + "list" + ilist + ".value");
+            strWhere.append(" AND " + tableName + "." + fieldsData[i].name + " = TO_CHAR(list" + ilist + ".value)");
           }
           vecTables.addElement("left join ad_ref_list_v list" + ilist + " on (" + "list" + ilist + ".ad_reference_id = " + fieldsData[i].referencevalue + " and list" + ilist + ".ad_language = ? " + strWhere.toString() + ")");
           vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
