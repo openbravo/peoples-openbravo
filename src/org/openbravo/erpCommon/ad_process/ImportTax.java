@@ -188,7 +188,7 @@ public class ImportTax extends ImportProcess {
         if (!data[i].bptcName.equals("") || !newBPTaxCategory){
           if (newBPTaxCategory) C_BPTaxCategory_ID = ImportTaxData.selectBPTaxCategoryId(conn, data[i].bptcName, getAD_Client_ID());
           newBPTaxCategory = ((C_BPTaxCategory_ID == "") || (C_BPTaxCategory_ID==null));
-          if (newTaxCategory) {	//	Insert new BPTaxCategory
+          if (newBPTaxCategory) {	//	Insert new BPTaxCategory
             C_BPTaxCategory_ID = SequenceIdData.getSequence(conn, "C_BP_TaxCategory", vars.getClient());
             try {
               no = ImportTaxData.insertBPTaxCategory(con, conn, C_BPTaxCategory_ID, I_Tax_ID);
