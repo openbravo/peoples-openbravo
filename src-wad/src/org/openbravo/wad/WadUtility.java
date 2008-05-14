@@ -1807,6 +1807,9 @@ public class WadUtility {
   }
 
   public static WADControl getControl(ConnectionProvider conn, FieldProvider field, boolean isreadonly, String tabName, String adLanguage, XmlEngine xmlEngine, boolean isDisplayLogic, boolean isReloadObject, boolean isReadOnlyLogic) throws Exception {
+    return getControl(conn, field, isreadonly, tabName, adLanguage, xmlEngine, isDisplayLogic, isReloadObject, isReadOnlyLogic, false);
+  }
+  public static WADControl getControl(ConnectionProvider conn, FieldProvider field, boolean isreadonly, String tabName, String adLanguage, XmlEngine xmlEngine, boolean isDisplayLogic, boolean isReloadObject, boolean isReadOnlyLogic, boolean isReadOnlyDefinedTab) throws Exception {
     if (field == null) return null;
     Properties prop = new Properties();
     setPropertyValue(prop, field, "ColumnName", "columnname", null);
@@ -1848,6 +1851,7 @@ public class WadUtility {
     prop.setProperty("IsDisplayLogic", (isDisplayLogic?"Y":"N"));
     prop.setProperty("IsReadOnlyLogic", (isReadOnlyLogic?"Y":"N"));
     prop.setProperty("IsComboReload", (isReloadObject?"Y":"N"));
+    prop.setProperty("isReadOnlyDefinedTab", (isReadOnlyDefinedTab?"Y":"N"));
 
     String classname = "org.openbravo.wad.controls.WAD" + FormatUtilities.replace(field.getField("referenceName"));
     WADControl _myClass = null;

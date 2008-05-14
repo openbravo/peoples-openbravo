@@ -2863,7 +2863,8 @@ public class Wad extends DefaultHandler {
   private void processTabHtmlEdition(FieldProvider[] efd, FieldProvider[] efdauxiliar, File fileDir, String strTab, String tabName, String keyColumnName, String tabNamePresentation, String windowId, FieldsData[] parentsFieldsData, Vector<Object> vecFields, boolean isreadonly, String isSOTrx, String strTable, double pixelSize, String strLanguage, boolean editable, boolean isSecondaryKey) throws ServletException, IOException {
     if (log4j.isDebugEnabled()) log4j.debug("Procesig edition html" + (strLanguage.equals("")?"":" translated") + ": " + strTab + ", " + tabName);
     
-    if (!editable) isreadonly = true;
+    boolean isReadOnlyDefinedTab = (isreadonly && editable);  //isReadOnlyDefinedTab: the tab is defined as read-only but not for security
+    if (!editable) isreadonly = true;           //isreadonly: because it is not editable (for security reasons) or because it is defined as read-only
     
     HashMap<String, String> shortcuts = new HashMap<String, String>();
     
@@ -2946,7 +2947,7 @@ public class Wad extends DefaultHandler {
       WADControl auxControl = null;
       
       try {
-        auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, strLanguage, xmlEngine, (WadUtility.isInVector(vecDisplayLogic, efd[i].getField("columnname"))), WadUtility.isInVector(vecReloads, efd[i].getField("columnname")), WadUtility.isInVector(vecReadOnlyLogic, efd[i].getField("columnname")));
+        auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, strLanguage, xmlEngine, (WadUtility.isInVector(vecDisplayLogic, efd[i].getField("columnname"))), WadUtility.isInVector(vecReloads, efd[i].getField("columnname")), WadUtility.isInVector(vecReadOnlyLogic, efd[i].getField("columnname")), isReadOnlyDefinedTab);
         
       } catch (Exception ex) {
         throw new ServletException(ex);

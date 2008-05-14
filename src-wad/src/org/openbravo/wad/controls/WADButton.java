@@ -80,7 +80,7 @@ public class WADButton extends WADControl {
 
   private StringBuffer getAction(){
     StringBuffer text = new StringBuffer();
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N"))|| getData("IsUpdateable").equals("N"));
     if (isDisabled) {
       text.append("return true;");
     } else {
@@ -112,7 +112,7 @@ public class WADButton extends WADControl {
     
     xmlDocument.setParameter("action", getAction().toString());
     
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N"))|| getData("IsUpdateable").equals("N"));
     if (isDisabled) {
       xmlDocument.setParameter("disabled", "_disabled");
       xmlDocument.setParameter("keypress", "ButtonLink_disabled");
@@ -137,7 +137,8 @@ public class WADButton extends WADControl {
     xmlDocument.setParameter("callout", getOnChangeCode());
     
     xmlDocument.setParameter("action", getAction().toString());
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N"))|| getData("IsUpdateable").equals("N"));
+    
     if (isDisabled) {
       xmlDocument.setParameter("disabled", "_disabled");
       xmlDocument.setParameter("keypress", "ButtonLink_disabled");
