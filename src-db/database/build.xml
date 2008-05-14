@@ -345,7 +345,8 @@ compare.database.structure: Generates a diff script.
                         password="${bbdd.password}"
                         excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
                         model="model"
-                        verbosity="${bbdd.verbosity}" />
+                        verbosity="${bbdd.verbosity}" 
+			  			codeRevision="${code.revision}"/>
     </target>
 
   <target name="import.database.data">
@@ -375,7 +376,8 @@ compare.database.structure: Generates a diff script.
                   excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
                   filter="com.openbravo.db.OpenbravoMetadataFilter"   
                   output="sourcedata"
-                  verbosity="${bbdd.verbosity}" />
+                  verbosity="${bbdd.verbosity}" 
+      			  codeRevision="${code.revision}"/>
   </target> 
 
 	  <target name="import.database.sampledata">
@@ -403,7 +405,8 @@ compare.database.structure: Generates a diff script.
 	                  excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
 	                  filter="com.openbravo.db.OpenbravoDataFilter"   
 	                  output="sampledata"
-	                  verbosity="${bbdd.verbosity}" />
+	                  verbosity="${bbdd.verbosity}" 
+			  		  codeRevision="${code.revision}"/>
 	  </target> 
 
 	  <target name="import.database.masterdata">
@@ -431,7 +434,8 @@ compare.database.structure: Generates a diff script.
 	                  excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
 	                  filter="com.openbravo.db.OpenbravoMasterdataFilter"   
 	                  output="masterdata"
-	                  verbosity="${bbdd.verbosity}" />
+	                  verbosity="${bbdd.verbosity}" 
+			  		  codeRevision="${code.revision}"/>
 	  </target> 
 
   <target name="save.database.model">

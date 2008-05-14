@@ -136,8 +136,15 @@ compare.database.structure: refer to compare.database.structure target of databa
         <param name="lines" value="1"/>
       </filterreader>
     </filterchain>
+  	<filterchain>
+      <filterreader classname="org.apache.tools.ant.filters.StripLineBreaks" />
+    </filterchain>
   </loadfile>
-  <property name="code.revision" value="${svn.entries}" />
+  <condition property="code.revision" value="${svn.entries}" else ="0">
+  	<and>
+      <isset property="svn.entries" />
+  	</and>
+  </condition>    
  </target>
 
 
@@ -287,16 +294,16 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.db}" target="update.database.script" inheritAll="true" inheritRefs="true"/>
   </target>
 
-  <target name="export.database" depends="init">
+  <target name="export.database" depends="init,code.rev">
     <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true"/>
     <ant dir="${base.db}" target="export.database.data" inheritAll="true" inheritRefs="true"/>
   </target>
 
-  <target name="export.database.structure" depends="init">
+  <target name="export.database.structure" depends="init,code.rev">
     <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true"/>
   </target>
 
-  <target name="export.database.data" depends="init">
+  <target name="export.database.data" depends="init,code.rev">
     <ant dir="${base.db}" target="export.database.data" inheritAll="true" inheritRefs="true"/>
   </target>
 
@@ -304,7 +311,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.db}" target="import.database.data" inheritAll="true" inheritRefs="true"/>
   </target>
 
-  <target name="export.database.sampledata" depends="init">
+  <target name="export.database.sampledata" depends="init,code.rev">
     <ant dir="${base.db}" target="export.database.sampledata" inheritAll="true" inheritRefs="true"/>
   </target>
 
@@ -312,7 +319,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.db}" target="import.database.sampledata" inheritAll="true" inheritRefs="true"/>
   </target>
 
-  <target name="export.database.masterdata" depends="init">
+  <target name="export.database.masterdata" depends="init,code.rev">
     <ant dir="${base.db}" target="export.database.masterdata" inheritAll="true" inheritRefs="true"/>
   </target>
 
