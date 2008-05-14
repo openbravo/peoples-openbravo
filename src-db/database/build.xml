@@ -122,6 +122,7 @@ compare.database.structure: Generates a diff script.
                        object="${bbdd.object}"
                        failonerror="false"
                        verbosity="${bbdd.verbosity}" />  
+	      <antcall target="database.postcreate.${bbdd.rdbms}" />
     </target>
 
   <target name="clean.database.ORACLE">
