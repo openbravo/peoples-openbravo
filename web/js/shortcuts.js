@@ -53,7 +53,7 @@ function getShortcuts(type) {
         new keyArrayItem("I", "executeWindowButton('buttonAbout');", null, "ctrlKey", false, 'onkeydown'),
         new keyArrayItem("H", "executeWindowButton('buttonHelp');", null, "ctrlKey", false, 'onkeydown'),
         new keyArrayItem("R", "executeWindowButton('buttonRefresh');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("BACKSPACE", "executeWindowButton('buttonBack');", null, "ctrlKey", false, 'onkeydown')
+        new keyArrayItem("BACKSPACE", "executeWindowButton('buttonBack');", null, "ctrlKey+shiftKey", false, 'onkeydown')
       );
   } else if (type=='menuSpecificKeys') {
       this.keyArray.splice(keyArray.length-1, 0,
