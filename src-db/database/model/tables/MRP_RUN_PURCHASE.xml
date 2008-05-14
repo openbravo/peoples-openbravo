@@ -69,11 +69,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TIMEHORIZON" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+      <column name="TIMEHORIZON" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SECURITYMARGIN" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+      <column name="SECURITYMARGIN" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
