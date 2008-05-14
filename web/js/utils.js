@@ -56,8 +56,20 @@ var isPopupLoadingWindowLoaded=false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function returnVersionControl() {
-  var number = 4241;
+  var number = '4242';
   return number;
+}
+
+
+/**
+* Checks if the version is the correct one
+*/
+function versionControl(current) {
+    var utils = returnVersionControl();
+    if (current != utils) {
+      alert('You have an old cached images and javascript code. Please clean your browser cache and reload');
+    }
+    return true;
 }
 
 
