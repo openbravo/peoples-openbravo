@@ -347,13 +347,17 @@ public class Utility {
     if (columnname == null || columnname.equals("")) return "";
     String defStr = getPreference(vars, columnname, window);
     if (!defStr.equals("")) return defStr;
-    StringTokenizer st = new StringTokenizer(context, ",;", false);
-    
-    while (st.hasMoreTokens()) {
-      String token = st.nextToken().trim();
-      if (token.indexOf("@")==-1) defStr = token;
-      else defStr = parseContext(conn, vars, token, window);
-      if (!defStr.equals("")) return defStr;
+
+    if (context.indexOf("@")==-1) //Tokenize just when contains @ 
+      defStr = context;
+    else {
+      StringTokenizer st = new StringTokenizer(context, ",;", false);
+      while (st.hasMoreTokens()) {
+        String token = st.nextToken().trim();
+        if (token.indexOf("@")==-1) defStr = token;
+        else defStr = parseContext(conn, vars, token, window);
+        if (!defStr.equals("")) return defStr;
+      }
     }
     if (defStr.equals("")) defStr = vars.getSessionValue("#" + columnname);
     if (defStr.equals("")) defStr = vars.getSessionValue("$" + columnname);
