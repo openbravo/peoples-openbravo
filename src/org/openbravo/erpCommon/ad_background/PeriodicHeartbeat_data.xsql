@@ -119,7 +119,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        update AD_SYSTEM_INFO set POSTPONE_DATE = ?
+        update AD_SYSTEM_INFO set POSTPONE_DATE = TO_TIMESTAMP(?, 'DD/MM/YYYY')
      ]]>
      </Sql>
      <Parameter name="postponeDate"/>
