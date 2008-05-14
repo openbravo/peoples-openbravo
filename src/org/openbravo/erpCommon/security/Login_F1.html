@@ -47,6 +47,15 @@ function buttonOK_click() {
     return false;
 }
 
+function versionControl() {
+    var current = '4241';
+    var utils = returnVersionControl();
+    if (current != utils) {
+      alert('You have an old cached images and javascript code. Please clean your browser cache and reload');
+    }
+    return true;
+}
+
 </SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
   function onLoadDo() {
@@ -61,6 +70,7 @@ function buttonOK_click() {
       limpiar();
     } catch (e) {}
     setWindowElementFocus('firstElement');
+    versionControl();
   }
 
   function onResizeDo() {

@@ -53,6 +53,15 @@ var isPopupLoadingWindowLoaded=false;
 
 
 /**
+* Return a number that would be checked at the Login screen to know if the file is cached with the correct version
+*/
+function returnVersionControl() {
+  var number = 4241;
+  return number;
+}
+
+
+/**
 * Set the focus on the first visible control in the form
 * @param {Form} form Optional- Defines the form containing the field, where we want to set the focus. If is not present, the first form of the page will be used.
 * @param {String} field Optional - Name of the control where we want to set the focus. If is not present the first field will be used.
