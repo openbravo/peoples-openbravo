@@ -51,7 +51,7 @@ public class WindowTree extends HttpSecureAppServlet {
       String key=WindowTreeData.selectKey(this, strTabId);
       {
         String TreeType = WindowTreeUtility.getTreeType(key);
-        WindowTreeData[] data = WindowTreeData.selectTreeID(this, vars.getClient(), TreeType);
+        WindowTreeData[] data = WindowTreeData.selectTreeID(this, Utility.getContext(this, vars, "#User_Client", ""), TreeType);
         if (data!=null && data.length>0) strTreeID = data[0].id;
       }
       WindowTreeData[] data = WindowTreeData.selectTabName(this, strTabId);
@@ -103,7 +103,7 @@ public class WindowTree extends HttpSecureAppServlet {
     String TreeID="";
     String TreeName="";
     String TreeDescription="";
-    WindowTreeData[] data = WindowTreeData.selectTreeID(this, vars.getClient(), TreeType);
+    WindowTreeData[] data = WindowTreeData.selectTreeID(this, Utility.getContext(this, vars, "#User_Client", ""), TreeType);
     StringBuffer menu = new StringBuffer();
     if (data==null || data.length==0) {
       log4j.error("WindowTree.loadNodes() - Unknown TreeNode: TreeType " + TreeType + " - TreeKey " + key);
@@ -143,7 +143,7 @@ public class WindowTree extends HttpSecureAppServlet {
     if (!script.equals("")) {
       String TreeName="", TreeDescription="";
       WindowTreeData[] data=null;
-      if (strParentID.equals("0")) data = WindowTreeData.selectTreeID(this, vars.getClient(), TreeType);
+      if (strParentID.equals("0")) data = WindowTreeData.selectTreeID(this, Utility.getContext(this, vars, "#User_Client", ""), TreeType);
       else data = WindowTreeUtility.getTree(this, vars, TreeType, strTreeID, editable, "", strParentID, strTabId);
       if (data==null || data.length==0) {
         log4j.error("WindowTree.loadNodes() - Unknown TreeNode");
@@ -215,7 +215,7 @@ public class WindowTree extends HttpSecureAppServlet {
     String key=WindowTreeData.selectKey(this, TabId);
     {
       String TreeType = WindowTreeUtility.getTreeType(key);
-      WindowTreeData[] data = WindowTreeData.selectTreeID(this, vars.getClient(), TreeType);
+      WindowTreeData[] data = WindowTreeData.selectTreeID(this, Utility.getContext(this, vars, "#User_Client", ""), TreeType);
       if (data!=null && data.length>0) strTreeID = data[0].id;
     }
     WindowTreeData[] data = WindowTreeData.selectTabName(this, TabId);
@@ -266,7 +266,7 @@ public class WindowTree extends HttpSecureAppServlet {
     boolean editable = WindowTreeData.selectEditable(this, strTabId).equals("Y");
     //Calculating the TreeID
     {
-      WindowTreeData[] data = WindowTreeData.selectTreeID(this, vars.getClient(), TreeType);
+      WindowTreeData[] data = WindowTreeData.selectTreeID(this, Utility.getContext(this, vars, "#User_Client", ""), TreeType);
       if (data==null || data.length==0) {
         log4j.error("WindowTree.loadNodes() - Unknown TreeNode");
         throw new ServletException("WindowTree.loadNodes() - Unknown TreeNode");

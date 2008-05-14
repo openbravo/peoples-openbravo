@@ -289,11 +289,12 @@
       <Sql>
         SELECT AD_Client_ID as Node_ID, AD_Tree_ID AS ID, NAME 
         FROM AD_Tree 
-        WHERE AD_Client_ID = TO_NUMBER(?) 
+        WHERE AD_Client_ID IN ('1') 
         AND TreeType = ? 
         AND IsActive = 'Y'
+        order by ad_client_id desc
       </Sql>
-        <Parameter name="adClientId"/>
+        <Parameter name="adClientId" optional="true" type="replace" after="AD_Client_ID IN (" text="'1'"/>
         <Parameter name="treetype"/>
    </SqlMethod>
    <SqlMethod name="TreeName" type="preparedStatement" return="multiple">
