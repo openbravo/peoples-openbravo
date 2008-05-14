@@ -10,7 +10,7 @@
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
   * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+  * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
   ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -86,8 +86,9 @@ public class Translation extends HttpSecureAppServlet
        printPageDataSheet(response, vars);
     }
     else if (vars.commandIn("EXPORT"))  {
-      String strLang = vars.getStringParameter("language","");
-      String strClient = vars.getStringParameter("client","");
+      
+      String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
+      String strClient = vars.getRequestGlobalVariable("client", "translation.client");
       if (log4j.isDebugEnabled()) log4j.debug("Lang "+strLang+" Client "+strClient);
      
       //New message system
@@ -100,8 +101,8 @@ public class Translation extends HttpSecureAppServlet
       
      }
      else  {
-      String strLang = vars.getStringParameter("language","");
-      String strClient = vars.getStringParameter("client","");
+       String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
+       String strClient = vars.getRequestGlobalVariable("client", "translation.client");
       if (log4j.isDebugEnabled()) log4j.debug("Lang "+strLang+" Client "+strClient);
 
 
@@ -472,7 +473,8 @@ private  TranslationData[] getTrlColumns (String Base_Table)
 
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("paramSystem", "0");
+    xmlDocument.setParameter("paramSelLanguage", vars.getSessionValue("translation.lang"));
+    xmlDocument.setParameter("paramSystem", vars.getSessionValue("translation.client"));
     xmlDocument.setData("structure1", LanguageComboData.select(this));
  
     xmlDocument.setData("structureClient", ClientComboData.selectAllClients(this));
