@@ -194,10 +194,12 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       conn = this.getTransactionConnection();
       if (InitialClientSetupData.updateUser2(conn, this,strClienteUsuario)!=0){
         m_info.append("Duplicate UserClient").append(SALTO_LINEA);
+        strError = Utility.messageBD(this, "Duplicate UserClient", vars.getLanguage());
         releaseRollbackConnection(conn);
         return m_info.toString();
       } else if (InitialClientSetupData.updateUser2(conn, this,strOrganizacionUsuario)!=0){
         m_info.append("Duplicate UserOrg").append(SALTO_LINEA);
+        strError = Utility.messageBD(this, "Duplicate UserOrg", vars.getLanguage());
         releaseRollbackConnection(conn);
         return m_info.toString();
       }
