@@ -5702,6 +5702,33 @@
 <!--395-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--395**************--></C_REGION>
 
+<!--396**************--><C_REGION>
+<!--396 C_REGION_ID-->
+<!--396-->              <C_REGION_ID><![CDATA[396]]></C_REGION_ID>
+<!--396 AD_CLIENT_ID-->
+<!--396-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--396 AD_ORG_ID-->
+<!--396-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--396 ISACTIVE-->
+<!--396-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--396 CREATED-->
+<!--396-->              <CREATED><![CDATA[2008-05-15 11:42:57.0]]></CREATED>
+<!--396 CREATEDBY-->
+<!--396-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--396 UPDATED-->
+<!--396-->              <UPDATED><![CDATA[2008-05-15 11:42:57.0]]></UPDATED>
+<!--396 UPDATEDBY-->
+<!--396-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--396 NAME-->
+<!--396-->              <NAME><![CDATA[MELILLA]]></NAME>
+<!--396 DESCRIPTION-->
+<!--396-->              <DESCRIPTION><![CDATA[Melilla]]></DESCRIPTION>
+<!--396 C_COUNTRY_ID-->
+<!--396-->              <C_COUNTRY_ID><![CDATA[106]]></C_COUNTRY_ID>
+<!--396 ISDEFAULT-->
+<!--396-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+<!--396**************--></C_REGION>
+
 <!--
 ************************
 0. End of Core Range.
