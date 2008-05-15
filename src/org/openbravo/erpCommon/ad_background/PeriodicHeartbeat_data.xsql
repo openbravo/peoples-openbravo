@@ -134,6 +134,16 @@
      <Parameter name="webserver"/>
      <Parameter name="webserverVersion"/>
    </SqlMethod>
+   <SqlMethod name="updateServletContainer" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update AD_SYSTEM_INFO set SERVLET_CONTAINER = ?, SERVLET_CONTAINER_VERSION = ?
+     ]]>
+     </Sql>
+     <Parameter name="servletContainer"/>
+     <Parameter name="servletContainerVersion"/>
+   </SqlMethod>
    <SqlMethod name="insertHeartbeatLog" type="preparedStatement" return="rowcount">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

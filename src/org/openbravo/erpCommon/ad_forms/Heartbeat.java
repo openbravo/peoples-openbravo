@@ -40,6 +40,23 @@ public class Heartbeat extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
+    PeriodicHeartbeatData[] data = PeriodicHeartbeatData.selectSystemProperties(this);
+    if (data.length > 0) {
+    	String servletContainer = data[0].servletContainer;
+    	String servletContainerVersion = data[0].servletContainerVersion;
+    	if ((servletContainer == null || servletContainer.equals("")) && 
+    			(servletContainerVersion == null || servletContainerVersion.equals(""))) {
+    		String serverInfo = request.getSession().getServletContext().getServerInfo();
+    		if (serverInfo != null && serverInfo.contains("/")) {
+    			servletContainer = serverInfo.split("/")[0];
+    			servletContainerVersion = serverInfo.split("/")[1];
+    			
+    			PeriodicHeartbeatData.updateServletContainer(this, 
+    					servletContainer, servletContainerVersion);
+    		}
+    	}
+    }
+    
     if (vars.commandIn("DEFAULT")) {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("DISABLE")) {
