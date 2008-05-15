@@ -98,7 +98,7 @@
         UPDATE C_DEBT_PAYMENT
           SET UPDATED=now(),
           UPDATEDBY=v_AD_User_ID,
-          ISPAID=v_IsPaid,
+          -- ISPAID=v_IsPaid,
           WRITEOFFAMT=v_WriteOffAmt
         WHERE C_Debt_Payment_ID=v_Record_ID;
       END IF;

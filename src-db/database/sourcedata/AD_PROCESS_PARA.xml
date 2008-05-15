@@ -8973,51 +8973,6 @@
 <!--800004-->              <AD_ELEMENT_ID><![CDATA[800072]]></AD_ELEMENT_ID>
 <!--800004**************--></AD_PROCESS_PARA>
 
-<!--800005**************--><AD_PROCESS_PARA>
-<!--800005 AD_PROCESS_PARA_ID-->
-<!--800005-->              <AD_PROCESS_PARA_ID><![CDATA[800005]]></AD_PROCESS_PARA_ID>
-<!--800005 AD_CLIENT_ID-->
-<!--800005-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800005 AD_ORG_ID-->
-<!--800005-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800005 ISACTIVE-->
-<!--800005-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800005 CREATED-->
-<!--800005-->              <CREATED><![CDATA[2004-03-28 18:52:37.0]]></CREATED>
-<!--800005 CREATEDBY-->
-<!--800005-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800005 UPDATED-->
-<!--800005-->              <UPDATED><![CDATA[2007-07-20 11:37:50.0]]></UPDATED>
-<!--800005 UPDATEDBY-->
-<!--800005-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800005 NAME-->
-<!--800005-->              <NAME><![CDATA[Payment Complete]]></NAME>
-<!--800005 DESCRIPTION-->
-<!--800005-->              <DESCRIPTION><![CDATA[A confirmation stating whether the request has been closed through a monetary transaction.]]></DESCRIPTION>
-<!--800005 HELP-->
-<!--800005-->              <HELP><![CDATA[The document is paid]]></HELP>
-<!--800005 AD_PROCESS_ID-->
-<!--800005-->              <AD_PROCESS_ID><![CDATA[800024]]></AD_PROCESS_ID>
-<!--800005 SEQNO-->
-<!--800005-->              <SEQNO><![CDATA[20]]></SEQNO>
-<!--800005 AD_REFERENCE_ID-->
-<!--800005-->              <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
-<!--800005 COLUMNNAME-->
-<!--800005-->              <COLUMNNAME><![CDATA[CheckIsPaid]]></COLUMNNAME>
-<!--800005 ISCENTRALLYMAINTAINED-->
-<!--800005-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--800005 FIELDLENGTH-->
-<!--800005-->              <FIELDLENGTH><![CDATA[1]]></FIELDLENGTH>
-<!--800005 ISMANDATORY-->
-<!--800005-->              <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--800005 ISRANGE-->
-<!--800005-->              <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--800005 DEFAULTVALUE-->
-<!--800005-->              <DEFAULTVALUE><![CDATA[@IsPaid@]]></DEFAULTVALUE>
-<!--800005 AD_ELEMENT_ID-->
-<!--800005-->              <AD_ELEMENT_ID><![CDATA[1402]]></AD_ELEMENT_ID>
-<!--800005**************--></AD_PROCESS_PARA>
-
 <!--800006**************--><AD_PROCESS_PARA>
 <!--800006 AD_PROCESS_PARA_ID-->
 <!--800006-->              <AD_PROCESS_PARA_ID><![CDATA[800006]]></AD_PROCESS_PARA_ID>
