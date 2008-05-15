@@ -82,7 +82,7 @@
    <SqlMethod name="selectNumRegisteredUsers" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	select count(distinct u.ad_user_id)
+      	select count(distinct u.ad_user_id) AS count
       	from ad_user_roles ur, ad_user u
       	where ur.ad_user_id = u.ad_user_id
       	and ur.isActive = 'Y'
