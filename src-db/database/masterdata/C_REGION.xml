@@ -2759,33 +2759,6 @@
 <!--240-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--240**************--></C_REGION>
 
-<!--241**************--><C_REGION>
-<!--241 C_REGION_ID-->
-<!--241-->              <C_REGION_ID><![CDATA[241]]></C_REGION_ID>
-<!--241 AD_CLIENT_ID-->
-<!--241-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--241 AD_ORG_ID-->
-<!--241-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--241 ISACTIVE-->
-<!--241-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--241 CREATED-->
-<!--241-->              <CREATED><![CDATA[2003-06-01 00:00:00.0]]></CREATED>
-<!--241 CREATEDBY-->
-<!--241-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--241 UPDATED-->
-<!--241-->              <UPDATED><![CDATA[2003-06-01 00:00:00.0]]></UPDATED>
-<!--241 UPDATEDBY-->
-<!--241-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--241 NAME-->
-<!--241-->              <NAME><![CDATA[PORTUGAL]]></NAME>
-<!--241 DESCRIPTION-->
-<!--241-->              <DESCRIPTION><![CDATA[Portugal]]></DESCRIPTION>
-<!--241 C_COUNTRY_ID-->
-<!--241-->              <C_COUNTRY_ID><![CDATA[106]]></C_COUNTRY_ID>
-<!--241 ISDEFAULT-->
-<!--241-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--241**************--></C_REGION>
-
 <!--243**************--><C_REGION>
 <!--243 C_REGION_ID-->
 <!--243-->              <C_REGION_ID><![CDATA[243]]></C_REGION_ID>
