@@ -404,11 +404,11 @@ public class FactLine {
       DateAcct = m_docLine.m_DateAcct;
     if (DateAcct == null || DateAcct.equals(""))
       DateAcct = m_docVO.DateAcct;
-    log4jFactLine.debug("FactLine - save - antes de Record_ID2 " + m_Record_ID);
+    log4jFactLine.debug("FactLine - save - before Record_ID2 " + m_Record_ID);
     String  Record_ID2 = "";
     if (m_docLine != null)
       Record_ID2 = m_docLine.m_Record_Id2;
-    log4jFactLine.debug("FactLine - save - despues de Record_ID2 = " + Record_ID2);
+    log4jFactLine.debug("FactLine - save - after Record_ID2 = " + Record_ID2);
     String C_Period_ID = "";
     if (m_docLine != null)
       C_Period_ID = setC_Period_ID(m_docVO,m_docLine.m_DateAcct, conn);
@@ -424,7 +424,7 @@ public class FactLine {
       Qty = m_docLine.m_qty;
       C_Tax_ID = m_docLine.m_C_Tax_ID;
     }
-    log4jFactLine.debug("FactLine - save - despues de line optional info");
+    log4jFactLine.debug("FactLine - save - after line optional info");
     //  Set Account Info
     String M_Product_ID = "";
     if (m_docLine != null)

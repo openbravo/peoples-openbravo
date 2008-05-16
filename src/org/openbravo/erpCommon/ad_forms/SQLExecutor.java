@@ -199,8 +199,7 @@ public class SQLExecutor extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strSQL, SQLExecutor_Query[] data, String strInitRecord, int initRecordNumber, int intRecordRange) throws IOException, ServletException{
     log4j.info("print page");
     if (log4j.isDebugEnabled()) log4j.debug("printPage - Reading xml\n");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/SQLExecutor").createXmlDocument();
-    log4j.debug("prueba");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/SQLExecutor").createXmlDocument();    
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
     
@@ -211,7 +210,6 @@ public class SQLExecutor extends HttpSecureAppServlet {
     //xmlDocument.setParameter("buscador", strMessage);
     //
     
-    log4j.debug("prueba");
     xmlDocument.setParameter("sql", strSQL);
     log4j.debug("sql");
     SQLExecutorData[] dataHeader = null;
