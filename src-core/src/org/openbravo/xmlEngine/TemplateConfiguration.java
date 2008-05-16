@@ -106,7 +106,7 @@ class TemplateConfiguration extends DefaultHandler {
           if (formatCouple == null) {
             log4jTemplateConfiguration.warn("  format " + amap.getValue(i) + " not found");
           }
-        } else if (amap.getQName(i).equals("replaceCharacters")) {
+        } else if (amap.getQName(i).equalsIgnoreCase("replaceCharacters")) {
           vecReplace = xmlEngine.replaceHashtable.get(amap.getValue(i));
           if (vecReplace == null) {
             log4jTemplateConfiguration.warn("  replaceCharacters " + amap.getValue(i) + " not found");
