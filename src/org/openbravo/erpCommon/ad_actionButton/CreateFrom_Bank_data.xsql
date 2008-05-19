@@ -76,7 +76,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT COUNT(*) 
+        SELECT COUNT(*) AS COUNT
         FROM C_DEBT_Payment_v p 
         WHERE p.C_Debt_Payment_ID = TO_NUMBER(?) 
         AND C_DEBT_PAYMENT_STATUS(p.C_Settlement_Cancel_ID, p.Cancel_Processed, p.Generate_Processed, 
@@ -101,7 +101,7 @@
             (C_BankStatementLine_ID, AD_Client_ID,AD_Org_ID,
             IsActive,Created,CreatedBy,
             Updated,UpdatedBy, C_BankStatement_ID,
-            DateAcct,ValutaDate,
+            DateAcct,ValutaDate, Line,
             C_Debt_Payment_ID, Description, 
             TrxAmt,
             ChargeAmt, 
@@ -110,7 +110,7 @@
         SELECT TO_NUMBER(?),TO_NUMBER(?),p.AD_ORG_ID, 
                'Y', now(), TO_NUMBER(?), 
                now(), TO_NUMBER(?), TO_NUMBER(?), 
-               TO_DATE(?), TO_DATE(?), (SELECT (COALESCE(Max(Line),0))+10 FROM C_BankStatementLine WHERE C_BankStatement_ID = TO_NUMBER(?)), 'N', 
+               TO_DATE(?), TO_DATE(?), (SELECT (COALESCE(Max(Line),0))+10 FROM C_BankStatementLine WHERE C_BankStatement_ID = TO_NUMBER(?)), 
                p.C_Debt_Payment_ID, Description, 
                C_Currency_Convert(p.Amount,p.C_Currency_ID, (SELECT A.C_CURRENCY_ID
                                                               FROM C_BANKSTATEMENT S, C_BANKACCOUNT A 
