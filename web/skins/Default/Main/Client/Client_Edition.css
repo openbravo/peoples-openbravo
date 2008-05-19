@@ -32,6 +32,7 @@
 @import url(./List/List.css);
 @import url(./Selector/Selector.css);
 @import url(./RelationInfo/RelationInfo.css);
+@import url(./Image/Image.css);
 
 body {
   margin-top: 0px;

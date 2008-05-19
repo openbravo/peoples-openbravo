@@ -56,7 +56,7 @@ var isPopupLoadingWindowLoaded=false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function returnVersionControl() {
-  var number = '4242';
+  var number = '4330';
   return number;
 }
 
