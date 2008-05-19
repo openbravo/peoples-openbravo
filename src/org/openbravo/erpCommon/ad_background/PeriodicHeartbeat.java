@@ -176,6 +176,7 @@ public class PeriodicHeartbeat implements BackgroundProcess {
       systemInfo.put("antVersion", getVersion(data[0].antVersion));
       systemInfo.put("obVersion", data[0].obVersion);
       systemInfo.put("obInstallMode", data[0].obInstallmode);
+      systemInfo.put("codeRevision", data[0].codeRevision);
       systemInfo.put("webserver", data[0].webserver);
       systemInfo.put("webserverVersion", data[0].webserverVersion);
       systemInfo.put("numRegisteredUsers", PeriodicHeartbeatData.selectNumRegisteredUsers(conn));
@@ -272,6 +273,7 @@ public class PeriodicHeartbeat implements BackgroundProcess {
     String antVersion = systemInfo.getProperty("antVersion");
     String obVersion = systemInfo.getProperty("obVersion");
     String obInstallMode = systemInfo.getProperty("obInstallMode");
+    String codeRevision = systemInfo.getProperty("codeRevision");
     String webserver = systemInfo.getProperty("webserver");
     String webserverVersion = systemInfo.getProperty("webserverVersion");
     String os = systemInfo.getProperty("os");
@@ -287,7 +289,7 @@ public class PeriodicHeartbeat implements BackgroundProcess {
     String proxyPort = systemInfo.getProperty("proxyPort");
     String numRegisteredUsers = systemInfo.getProperty("numRegisteredUsers");
     
-    PeriodicHeartbeatData.insertHeartbeatLog(conn, "0", "0", systemIdentifier, isHeartbeatActive, isProxyRequired, proxyServer, proxyPort, activityRate, complexityRate, os, osVersion, db, dbVersion, servletContainer, servletContainerVersion, webserver, webserverVersion, obVersion, obInstallMode, numRegisteredUsers, javaVersion, antVersion);
+    PeriodicHeartbeatData.insertHeartbeatLog(conn, "0", "0", systemIdentifier, isHeartbeatActive, isProxyRequired, proxyServer, proxyPort, activityRate, complexityRate, os, osVersion, db, dbVersion, servletContainer, servletContainerVersion, webserver, webserverVersion, obVersion, obInstallMode, codeRevision, numRegisteredUsers, javaVersion, antVersion);
   }
   
   /**

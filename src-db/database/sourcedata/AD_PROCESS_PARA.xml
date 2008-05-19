@@ -11303,11 +11303,11 @@
 <!--1000500000 CREATEDBY-->
 <!--1000500000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1000500000 UPDATED-->
-<!--1000500000-->              <UPDATED><![CDATA[2008-04-22 22:15:57.0]]></UPDATED>
+<!--1000500000-->              <UPDATED><![CDATA[2008-05-19 01:56:25.0]]></UPDATED>
 <!--1000500000 UPDATEDBY-->
 <!--1000500000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1000500000 NAME-->
-<!--1000500000-->              <NAME><![CDATA[ABC]]></NAME>
+<!--1000500000-->              <NAME><![CDATA[Abc]]></NAME>
 <!--1000500000 DESCRIPTION-->
 <!--1000500000-->              <DESCRIPTION><![CDATA[ABC classification according to a Pareto distribution]]></DESCRIPTION>
 <!--1000500000 HELP-->
@@ -11348,11 +11348,11 @@
 <!--1000600000 CREATEDBY-->
 <!--1000600000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1000600000 UPDATED-->
-<!--1000600000-->              <UPDATED><![CDATA[2008-04-22 22:15:57.0]]></UPDATED>
+<!--1000600000-->              <UPDATED><![CDATA[2008-05-19 01:56:25.0]]></UPDATED>
 <!--1000600000 UPDATEDBY-->
 <!--1000600000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1000600000 NAME-->
-<!--1000600000-->              <NAME><![CDATA[Accounting schema]]></NAME>
+<!--1000600000-->              <NAME><![CDATA[Accounting Schema]]></NAME>
 <!--1000600000 DESCRIPTION-->
 <!--1000600000-->              <DESCRIPTION><![CDATA[The structure used in accounting including costing methods, currencies, and the calendar.]]></DESCRIPTION>
 <!--1000600000 HELP-->

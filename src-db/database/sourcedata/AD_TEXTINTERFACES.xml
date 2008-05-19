@@ -35264,7 +35264,7 @@
 <!--1000100008 UPDATEDBY-->
 <!--1000100008-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1000100008 TEXT-->
-<!--1000100008-->              <TEXT><![CDATA[Price (€/m2)]]></TEXT>
+<!--1000100008-->              <TEXT><![CDATA[Price (/m2)]]></TEXT>
 <!--1000100008 FILENAME-->
 <!--1000100008-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_ProposalLines.fo]]></FILENAME>
 <!--1000100008 ISUSED-->
@@ -38414,7 +38414,7 @@
 <!--1002100008 UPDATEDBY-->
 <!--1002100008-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1002100008 TEXT-->
-<!--1002100008-->              <TEXT><![CDATA[Price (€/m2)]]></TEXT>
+<!--1002100008-->              <TEXT><![CDATA[Price (/m2)]]></TEXT>
 <!--1002100008 FILENAME-->
 <!--1002100008-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_ProposalLines.fo]]></FILENAME>
 <!--1002100008 ISUSED-->
@@ -38439,7 +38439,7 @@
 <!--1002100009 UPDATEDBY-->
 <!--1002100009-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1002100009 TEXT-->
-<!--1002100009-->              <TEXT><![CDATA[POL. IND. DE BUÃ‘UEL S/N]]></TEXT>
+<!--1002100009-->              <TEXT><![CDATA[POL. IND. DE BUÃUEL S/N]]></TEXT>
 <!--1002100009 FILENAME-->
 <!--1002100009-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptPromissoryNote.fo]]></FILENAME>
 <!--1002100009 ISUSED-->
@@ -38464,7 +38464,7 @@
 <!--1002100010 UPDATEDBY-->
 <!--1002100010-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1002100010 TEXT-->
-<!--1002100010-->              <TEXT><![CDATA[31540 BUÃ‘UEL]]></TEXT>
+<!--1002100010-->              <TEXT><![CDATA[31540 BUÃUEL]]></TEXT>
 <!--1002100010 FILENAME-->
 <!--1002100010-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptPromissoryNote.fo]]></FILENAME>
 <!--1002100010 ISUSED-->

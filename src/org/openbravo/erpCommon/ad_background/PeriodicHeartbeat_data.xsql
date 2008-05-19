@@ -24,7 +24,7 @@
       <Sql><![CDATA[
       	SELECT System_Identifier, Isheartbeatactive, Isproxyrequired, Proxy_Server, Proxy_Port, 
       	Servlet_Container, Servlet_Container_Version, Webserver, Webserver_Version, 
-      	Ant_Version, OB_Version, OB_InstallMode, Postpone_Date
+      	Ant_Version, OB_Version, OB_InstallMode, Code_Revision, Postpone_Date
       	FROM AD_System_Info
     ]]></Sql>
    </SqlMethod>
@@ -150,10 +150,10 @@
       	INSERT INTO AD_HEARTBEAT_LOG(AD_HEARTBEAT_LOG_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
                           UPDATED, UPDATEDBY, SYSTEM_IDENTIFIER, ISHEARTBEATACTIVE, ISPROXYREQUIRED, PROXY_SERVER, PROXY_PORT,
                           ACTIVITY_RATE, COMPLEXITY_RATE, OS, OS_VERSION, DB, DB_VERSION, SERVLET_CONTAINER,
-                          SERVLET_CONTAINER_VERSION, WEBSERVER, WEBSERVER_VERSION, OB_VERSION, OB_INSTALLMODE, NUM_REGISTERED_USERS,
+                          SERVLET_CONTAINER_VERSION, WEBSERVER, WEBSERVER_VERSION, OB_VERSION, OB_INSTALLMODE, CODE_REVISION, NUM_REGISTERED_USERS,
                           JAVA_VERSION, ANT_VERSION) 
       		VALUES (AD_GET_NEXT_SEQUENCE('AD_Heartbeat_Log', 0), TO_NUMBER(?), TO_NUMBER(?), 'Y', NOW(), 0, NOW(), 0, ?, ?, ?, ?, TO_NUMBER(?), TO_NUMBER(?), 
-      		TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_NUMBER(?), ?, ?)
+      		TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_NUMBER(?), ?, ?)
     ]]></Sql>
     <Parameter name="adClientId"/>null
     <Parameter name="adOrgId"/>
@@ -174,6 +174,7 @@
     <Parameter name="webserverVersion"/>
     <Parameter name="obVersion"/>
     <Parameter name="obInstallMode"/>
+    <Parameter name="codeRevision" />
     <Parameter name="numRegisteredUsers"/>
     <Parameter name="javaVersion"/>
     <Parameter name="antVersion"/>

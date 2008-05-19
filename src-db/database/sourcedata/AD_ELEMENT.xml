@@ -3149,35 +3149,6 @@
 <!--234-->              <HELP><![CDATA[The Conversion Rate Type indicates the type of conversion rate.  This allows you to enter multiple rates for the same currency pair.  For example, one rate may be used for Spot conversions and a different rate for Revaluations.]]></HELP>
 <!--234**************--></AD_ELEMENT>
 
-<!--236**************--><AD_ELEMENT>
-<!--236 AD_ELEMENT_ID-->
-<!--236-->              <AD_ELEMENT_ID><![CDATA[236]]></AD_ELEMENT_ID>
-<!--236 AD_CLIENT_ID-->
-<!--236-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--236 AD_ORG_ID-->
-<!--236-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--236 ISACTIVE-->
-<!--236-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--236 CREATED-->
-<!--236-->              <CREATED><![CDATA[1999-11-19 10:07:43.0]]></CREATED>
-<!--236 CREATEDBY-->
-<!--236-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--236 UPDATED-->
-<!--236-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--236 UPDATEDBY-->
-<!--236-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--236 COLUMNNAME-->
-<!--236-->              <COLUMNNAME><![CDATA[CostAverage]]></COLUMNNAME>
-<!--236 NAME-->
-<!--236-->              <NAME><![CDATA[Average Cost]]></NAME>
-<!--236 PRINTNAME-->
-<!--236-->              <PRINTNAME><![CDATA[Average Cost]]></PRINTNAME>
-<!--236 DESCRIPTION-->
-<!--236-->              <DESCRIPTION><![CDATA[Weighted average costs]]></DESCRIPTION>
-<!--236 HELP-->
-<!--236-->              <HELP><![CDATA[Weighted average (actual) costs]]></HELP>
-<!--236**************--></AD_ELEMENT>
-
 <!--240**************--><AD_ELEMENT>
 <!--240 AD_ELEMENT_ID-->
 <!--240-->              <AD_ELEMENT_ID><![CDATA[240]]></AD_ELEMENT_ID>
@@ -6398,35 +6369,6 @@
 <!--418 HELP-->
 <!--418-->              <HELP><![CDATA[The Used for Record ID checkbox indicates if the document id will be used as the key to the record]]></HELP>
 <!--418**************--></AD_ELEMENT>
-
-<!--419**************--><AD_ELEMENT>
-<!--419 AD_ELEMENT_ID-->
-<!--419-->              <AD_ELEMENT_ID><![CDATA[419]]></AD_ELEMENT_ID>
-<!--419 AD_CLIENT_ID-->
-<!--419-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--419 AD_ORG_ID-->
-<!--419-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--419 ISACTIVE-->
-<!--419-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--419 CREATED-->
-<!--419-->              <CREATED><![CDATA[1999-11-19 10:07:43.0]]></CREATED>
-<!--419 CREATEDBY-->
-<!--419-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--419 UPDATED-->
-<!--419-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--419 UPDATEDBY-->
-<!--419-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--419 COLUMNNAME-->
-<!--419-->              <COLUMNNAME><![CDATA[IsTransferred]]></COLUMNNAME>
-<!--419 NAME-->
-<!--419-->              <NAME><![CDATA[Transferred]]></NAME>
-<!--419 PRINTNAME-->
-<!--419-->              <PRINTNAME><![CDATA[Transferred]]></PRINTNAME>
-<!--419 DESCRIPTION-->
-<!--419-->              <DESCRIPTION><![CDATA[Transferred to General Ledger (i.e. accounted)]]></DESCRIPTION>
-<!--419 HELP-->
-<!--419-->              <HELP><![CDATA[The transferred checkbox indicates if the transactions associated with this document should be transferred to the General Ledger.]]></HELP>
-<!--419**************--></AD_ELEMENT>
 
 <!--420**************--><AD_ELEMENT>
 <!--420 AD_ELEMENT_ID-->
@@ -18242,35 +18184,6 @@
 <!--1390-->              <PRINTNAME><![CDATA[Contact]]></PRINTNAME>
 <!--1390**************--></AD_ELEMENT>
 
-<!--1394**************--><AD_ELEMENT>
-<!--1394 AD_ELEMENT_ID-->
-<!--1394-->              <AD_ELEMENT_ID><![CDATA[1394]]></AD_ELEMENT_ID>
-<!--1394 AD_CLIENT_ID-->
-<!--1394-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1394 AD_ORG_ID-->
-<!--1394-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1394 ISACTIVE-->
-<!--1394-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1394 CREATED-->
-<!--1394-->              <CREATED><![CDATA[2000-12-17 16:23:13.0]]></CREATED>
-<!--1394 CREATEDBY-->
-<!--1394-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1394 UPDATED-->
-<!--1394-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1394 UPDATEDBY-->
-<!--1394-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1394 COLUMNNAME-->
-<!--1394-->              <COLUMNNAME><![CDATA[CurrentCostPrice]]></COLUMNNAME>
-<!--1394 NAME-->
-<!--1394-->              <NAME><![CDATA[Current Cost Price]]></NAME>
-<!--1394 PRINTNAME-->
-<!--1394-->              <PRINTNAME><![CDATA[Current Cost Price]]></PRINTNAME>
-<!--1394 DESCRIPTION-->
-<!--1394-->              <DESCRIPTION><![CDATA[The currently used cost price]]></DESCRIPTION>
-<!--1394 HELP-->
-<!--1394-->              <HELP><![CDATA[The currently used cost price]]></HELP>
-<!--1394**************--></AD_ELEMENT>
-
 <!--1395**************--><AD_ELEMENT>
 <!--1395 AD_ELEMENT_ID-->
 <!--1395-->              <AD_ELEMENT_ID><![CDATA[1395]]></AD_ELEMENT_ID>
@@ -18328,31 +18241,6 @@
 <!--1396 HELP-->
 <!--1396-->              <HELP><![CDATA[The Ending Balance is the result of adjusting the Beginning Balance by any payments or disbursements.]]></HELP>
 <!--1396**************--></AD_ELEMENT>
-
-<!--1397**************--><AD_ELEMENT>
-<!--1397 AD_ELEMENT_ID-->
-<!--1397-->              <AD_ELEMENT_ID><![CDATA[1397]]></AD_ELEMENT_ID>
-<!--1397 AD_CLIENT_ID-->
-<!--1397-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1397 AD_ORG_ID-->
-<!--1397-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1397 ISACTIVE-->
-<!--1397-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1397 CREATED-->
-<!--1397-->              <CREATED><![CDATA[2000-12-17 16:23:13.0]]></CREATED>
-<!--1397 CREATEDBY-->
-<!--1397-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1397 UPDATED-->
-<!--1397-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1397 UPDATEDBY-->
-<!--1397-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1397 COLUMNNAME-->
-<!--1397-->              <COLUMNNAME><![CDATA[FutureCostPrice]]></COLUMNNAME>
-<!--1397 NAME-->
-<!--1397-->              <NAME><![CDATA[Future Cost Price]]></NAME>
-<!--1397 PRINTNAME-->
-<!--1397-->              <PRINTNAME><![CDATA[Future Cost price]]></PRINTNAME>
-<!--1397**************--></AD_ELEMENT>
 
 <!--1402**************--><AD_ELEMENT>
 <!--1402 AD_ELEMENT_ID-->
@@ -18581,35 +18469,6 @@
 <!--1424 HELP-->
 <!--1424-->              <HELP><![CDATA[The Zip Verified indicates if the zip code has been verified by the Credit Card Company.]]></HELP>
 <!--1424**************--></AD_ELEMENT>
-
-<!--1429**************--><AD_ELEMENT>
-<!--1429 AD_ELEMENT_ID-->
-<!--1429-->              <AD_ELEMENT_ID><![CDATA[1429]]></AD_ELEMENT_ID>
-<!--1429 AD_CLIENT_ID-->
-<!--1429-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1429 AD_ORG_ID-->
-<!--1429-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1429 ISACTIVE-->
-<!--1429-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1429 CREATED-->
-<!--1429-->              <CREATED><![CDATA[2000-12-17 16:23:13.0]]></CREATED>
-<!--1429 CREATEDBY-->
-<!--1429-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1429 UPDATED-->
-<!--1429-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1429 UPDATEDBY-->
-<!--1429-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1429 COLUMNNAME-->
-<!--1429-->              <COLUMNNAME><![CDATA[Referrer]]></COLUMNNAME>
-<!--1429 NAME-->
-<!--1429-->              <NAME><![CDATA[Reference URL]]></NAME>
-<!--1429 PRINTNAME-->
-<!--1429-->              <PRINTNAME><![CDATA[Referrer]]></PRINTNAME>
-<!--1429 DESCRIPTION-->
-<!--1429-->              <DESCRIPTION><![CDATA[An address which can be accessed via internet and used to provide additional information.]]></DESCRIPTION>
-<!--1429 HELP-->
-<!--1429-->              <HELP><![CDATA[An address which can be accessed via internet and used to provide additional information.]]></HELP>
-<!--1429**************--></AD_ELEMENT>
 
 <!--1430**************--><AD_ELEMENT>
 <!--1430 AD_ELEMENT_ID-->
@@ -20428,35 +20287,6 @@
 <!--1550-->              <HELP><![CDATA[Identifies a Project Cycle which can be made up of one or more cycle steps and cycle phases.]]></HELP>
 <!--1550**************--></AD_ELEMENT>
 
-<!--1551**************--><AD_ELEMENT>
-<!--1551 AD_ELEMENT_ID-->
-<!--1551-->              <AD_ELEMENT_ID><![CDATA[1551]]></AD_ELEMENT_ID>
-<!--1551 AD_CLIENT_ID-->
-<!--1551-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1551 AD_ORG_ID-->
-<!--1551-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1551 ISACTIVE-->
-<!--1551-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1551 CREATED-->
-<!--1551-->              <CREATED><![CDATA[2001-03-11 17:37:01.0]]></CREATED>
-<!--1551 CREATEDBY-->
-<!--1551-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1551 UPDATED-->
-<!--1551-->              <UPDATED><![CDATA[2003-06-03 01:25:22.0]]></UPDATED>
-<!--1551 UPDATEDBY-->
-<!--1551-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1551 COLUMNNAME-->
-<!--1551-->              <COLUMNNAME><![CDATA[C_CycleStep_ID]]></COLUMNNAME>
-<!--1551 NAME-->
-<!--1551-->              <NAME><![CDATA[Cycle Step]]></NAME>
-<!--1551 PRINTNAME-->
-<!--1551-->              <PRINTNAME><![CDATA[Cycle Step]]></PRINTNAME>
-<!--1551 DESCRIPTION-->
-<!--1551-->              <DESCRIPTION><![CDATA[The step for this Cycle]]></DESCRIPTION>
-<!--1551 HELP-->
-<!--1551-->              <HELP><![CDATA[Identifies one or more steps within a Project Cycle. A cycle Step has multiple Phases]]></HELP>
-<!--1551**************--></AD_ELEMENT>
-
 <!--1552**************--><AD_ELEMENT>
 <!--1552 AD_ELEMENT_ID-->
 <!--1552-->              <AD_ELEMENT_ID><![CDATA[1552]]></AD_ELEMENT_ID>
@@ -20891,35 +20721,6 @@
 <!--1570 HELP-->
 <!--1570-->              <HELP><![CDATA[The Quantity Subtract identifies the quantity to be subtracted before multiplication]]></HELP>
 <!--1570**************--></AD_ELEMENT>
-
-<!--1571**************--><AD_ELEMENT>
-<!--1571 AD_ELEMENT_ID-->
-<!--1571-->              <AD_ELEMENT_ID><![CDATA[1571]]></AD_ELEMENT_ID>
-<!--1571 AD_CLIENT_ID-->
-<!--1571-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1571 AD_ORG_ID-->
-<!--1571-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1571 ISACTIVE-->
-<!--1571-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1571 CREATED-->
-<!--1571-->              <CREATED><![CDATA[2001-03-11 17:37:02.0]]></CREATED>
-<!--1571 CREATEDBY-->
-<!--1571-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1571 UPDATED-->
-<!--1571-->              <UPDATED><![CDATA[2003-08-17 16:59:56.0]]></UPDATED>
-<!--1571 UPDATEDBY-->
-<!--1571-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1571 COLUMNNAME-->
-<!--1571-->              <COLUMNNAME><![CDATA[RelativeWeight]]></COLUMNNAME>
-<!--1571 NAME-->
-<!--1571-->              <NAME><![CDATA[Relative Weight]]></NAME>
-<!--1571 PRINTNAME-->
-<!--1571-->              <PRINTNAME><![CDATA[Relative Weight]]></PRINTNAME>
-<!--1571 DESCRIPTION-->
-<!--1571-->              <DESCRIPTION><![CDATA[Relative weight of this step (0 = ignored)]]></DESCRIPTION>
-<!--1571 HELP-->
-<!--1571-->              <HELP><![CDATA[The relative weight allows you to adjust the project cycle report based on probabilities.  For example, if you have a 1:10 chance in closing a contract when it is in the prospect stage and a 1:2 chance when it is in the contract stage, you may put a weight of 0.1 and 0.5 on those steps. This allows sales funnels or measures of completion of your project.]]></HELP>
-<!--1571**************--></AD_ELEMENT>
 
 <!--1572**************--><AD_ELEMENT>
 <!--1572 AD_ELEMENT_ID-->
@@ -22971,180 +22772,6 @@
 <!--1731-->              <HELP><![CDATA[Valuation with standard price]]></HELP>
 <!--1731**************--></AD_ELEMENT>
 
-<!--1732**************--><AD_ELEMENT>
-<!--1732 AD_ELEMENT_ID-->
-<!--1732-->              <AD_ELEMENT_ID><![CDATA[1732]]></AD_ELEMENT_ID>
-<!--1732 AD_CLIENT_ID-->
-<!--1732-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1732 AD_ORG_ID-->
-<!--1732-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1732 ISACTIVE-->
-<!--1732-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1732 CREATED-->
-<!--1732-->              <CREATED><![CDATA[2002-02-14 15:41:43.0]]></CREATED>
-<!--1732 CREATEDBY-->
-<!--1732-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1732 UPDATED-->
-<!--1732-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1732 UPDATEDBY-->
-<!--1732-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1732 COLUMNNAME-->
-<!--1732-->              <COLUMNNAME><![CDATA[CostAverageCumAmt]]></COLUMNNAME>
-<!--1732 NAME-->
-<!--1732-->              <NAME><![CDATA[Average Cost Amount Sum]]></NAME>
-<!--1732 PRINTNAME-->
-<!--1732-->              <PRINTNAME><![CDATA[Average Cost Amount Sum]]></PRINTNAME>
-<!--1732 DESCRIPTION-->
-<!--1732-->              <DESCRIPTION><![CDATA[Cumulative average cost amounts (internal)]]></DESCRIPTION>
-<!--1732 HELP-->
-<!--1732-->              <HELP><![CDATA[Current cumulative costs for calculating the average costs]]></HELP>
-<!--1732**************--></AD_ELEMENT>
-
-<!--1733**************--><AD_ELEMENT>
-<!--1733 AD_ELEMENT_ID-->
-<!--1733-->              <AD_ELEMENT_ID><![CDATA[1733]]></AD_ELEMENT_ID>
-<!--1733 AD_CLIENT_ID-->
-<!--1733-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1733 AD_ORG_ID-->
-<!--1733-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1733 ISACTIVE-->
-<!--1733-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1733 CREATED-->
-<!--1733-->              <CREATED><![CDATA[2002-02-14 15:41:43.0]]></CREATED>
-<!--1733 CREATEDBY-->
-<!--1733-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1733 UPDATED-->
-<!--1733-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1733 UPDATEDBY-->
-<!--1733-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1733 COLUMNNAME-->
-<!--1733-->              <COLUMNNAME><![CDATA[CostAverageCumQty]]></COLUMNNAME>
-<!--1733 NAME-->
-<!--1733-->              <NAME><![CDATA[Average Cost Quantity Sum]]></NAME>
-<!--1733 PRINTNAME-->
-<!--1733-->              <PRINTNAME><![CDATA[Average Cost Quantity Sum]]></PRINTNAME>
-<!--1733 DESCRIPTION-->
-<!--1733-->              <DESCRIPTION><![CDATA[Cumulative average cost quantities (internal)]]></DESCRIPTION>
-<!--1733 HELP-->
-<!--1733-->              <HELP><![CDATA[Current cumulative quantity for calculating the average costs]]></HELP>
-<!--1733**************--></AD_ELEMENT>
-
-<!--1734**************--><AD_ELEMENT>
-<!--1734 AD_ELEMENT_ID-->
-<!--1734-->              <AD_ELEMENT_ID><![CDATA[1734]]></AD_ELEMENT_ID>
-<!--1734 AD_CLIENT_ID-->
-<!--1734-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1734 AD_ORG_ID-->
-<!--1734-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1734 ISACTIVE-->
-<!--1734-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1734 CREATED-->
-<!--1734-->              <CREATED><![CDATA[2002-02-14 15:41:43.0]]></CREATED>
-<!--1734 CREATEDBY-->
-<!--1734-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1734 UPDATED-->
-<!--1734-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1734 UPDATEDBY-->
-<!--1734-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1734 COLUMNNAME-->
-<!--1734-->              <COLUMNNAME><![CDATA[CostStandardCumAmt]]></COLUMNNAME>
-<!--1734 NAME-->
-<!--1734-->              <NAME><![CDATA[Std. Cost Amount Sum]]></NAME>
-<!--1734 PRINTNAME-->
-<!--1734-->              <PRINTNAME><![CDATA[Std Cost Amount Sum]]></PRINTNAME>
-<!--1734 DESCRIPTION-->
-<!--1734-->              <DESCRIPTION><![CDATA[Standard Cost Invoice Amount Sum (internal)]]></DESCRIPTION>
-<!--1734 HELP-->
-<!--1734-->              <HELP><![CDATA[Current cumulative amount for calculating the standard cost difference based on (actual) invoice price]]></HELP>
-<!--1734**************--></AD_ELEMENT>
-
-<!--1735**************--><AD_ELEMENT>
-<!--1735 AD_ELEMENT_ID-->
-<!--1735-->              <AD_ELEMENT_ID><![CDATA[1735]]></AD_ELEMENT_ID>
-<!--1735 AD_CLIENT_ID-->
-<!--1735-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1735 AD_ORG_ID-->
-<!--1735-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1735 ISACTIVE-->
-<!--1735-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1735 CREATED-->
-<!--1735-->              <CREATED><![CDATA[2002-02-14 15:41:43.0]]></CREATED>
-<!--1735 CREATEDBY-->
-<!--1735-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1735 UPDATED-->
-<!--1735-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1735 UPDATEDBY-->
-<!--1735-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1735 COLUMNNAME-->
-<!--1735-->              <COLUMNNAME><![CDATA[CostStandardCumQty]]></COLUMNNAME>
-<!--1735 NAME-->
-<!--1735-->              <NAME><![CDATA[Std. Cost Quantity Sum]]></NAME>
-<!--1735 PRINTNAME-->
-<!--1735-->              <PRINTNAME><![CDATA[Std Cost Quantity Sum]]></PRINTNAME>
-<!--1735 DESCRIPTION-->
-<!--1735-->              <DESCRIPTION><![CDATA[Standard Cost Invoice Quantity Sum (internal)]]></DESCRIPTION>
-<!--1735 HELP-->
-<!--1735-->              <HELP><![CDATA[Current cumulative quantity for calculating the standard cost difference based on (actual) invoice price]]></HELP>
-<!--1735**************--></AD_ELEMENT>
-
-<!--1736**************--><AD_ELEMENT>
-<!--1736 AD_ELEMENT_ID-->
-<!--1736-->              <AD_ELEMENT_ID><![CDATA[1736]]></AD_ELEMENT_ID>
-<!--1736 AD_CLIENT_ID-->
-<!--1736-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1736 AD_ORG_ID-->
-<!--1736-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1736 ISACTIVE-->
-<!--1736-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1736 CREATED-->
-<!--1736-->              <CREATED><![CDATA[2002-02-14 15:41:43.0]]></CREATED>
-<!--1736 CREATEDBY-->
-<!--1736-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1736 UPDATED-->
-<!--1736-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1736 UPDATEDBY-->
-<!--1736-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1736 COLUMNNAME-->
-<!--1736-->              <COLUMNNAME><![CDATA[CostStandardPOAmt]]></COLUMNNAME>
-<!--1736 NAME-->
-<!--1736-->              <NAME><![CDATA[Std. PO Cost Amount Sum]]></NAME>
-<!--1736 PRINTNAME-->
-<!--1736-->              <PRINTNAME><![CDATA[Std PO Cost Amount Sum]]></PRINTNAME>
-<!--1736 DESCRIPTION-->
-<!--1736-->              <DESCRIPTION><![CDATA[Standard Cost Purchase Order Amount Sum (internal)]]></DESCRIPTION>
-<!--1736 HELP-->
-<!--1736-->              <HELP><![CDATA[Current cumulative amount for calculating the standard cost difference based on (planned) purchase order price]]></HELP>
-<!--1736**************--></AD_ELEMENT>
-
-<!--1737**************--><AD_ELEMENT>
-<!--1737 AD_ELEMENT_ID-->
-<!--1737-->              <AD_ELEMENT_ID><![CDATA[1737]]></AD_ELEMENT_ID>
-<!--1737 AD_CLIENT_ID-->
-<!--1737-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1737 AD_ORG_ID-->
-<!--1737-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1737 ISACTIVE-->
-<!--1737-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1737 CREATED-->
-<!--1737-->              <CREATED><![CDATA[2002-02-14 15:41:43.0]]></CREATED>
-<!--1737 CREATEDBY-->
-<!--1737-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1737 UPDATED-->
-<!--1737-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1737 UPDATEDBY-->
-<!--1737-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1737 COLUMNNAME-->
-<!--1737-->              <COLUMNNAME><![CDATA[CostStandardPOQty]]></COLUMNNAME>
-<!--1737 NAME-->
-<!--1737-->              <NAME><![CDATA[Std. PO Cost Quantity Sum]]></NAME>
-<!--1737 PRINTNAME-->
-<!--1737-->              <PRINTNAME><![CDATA[Std PO Cost Quantity Sum]]></PRINTNAME>
-<!--1737 DESCRIPTION-->
-<!--1737-->              <DESCRIPTION><![CDATA[Standard Cost Purchase Order Quantity Sum (internal)]]></DESCRIPTION>
-<!--1737 HELP-->
-<!--1737-->              <HELP><![CDATA[Current cumulative quantity for calculating the standard cost difference based on (planned) purchase order price]]></HELP>
-<!--1737**************--></AD_ELEMENT>
-
 <!--1738**************--><AD_ELEMENT>
 <!--1738 AD_ELEMENT_ID-->
 <!--1738-->              <AD_ELEMENT_ID><![CDATA[1738]]></AD_ELEMENT_ID>
@@ -23231,64 +22858,6 @@
 <!--1740 HELP-->
 <!--1740-->              <HELP><![CDATA[The Last Invoice Price indicates the last price paid (per the invoice) for this product.]]></HELP>
 <!--1740**************--></AD_ELEMENT>
-
-<!--1741**************--><AD_ELEMENT>
-<!--1741 AD_ELEMENT_ID-->
-<!--1741-->              <AD_ELEMENT_ID><![CDATA[1741]]></AD_ELEMENT_ID>
-<!--1741 AD_CLIENT_ID-->
-<!--1741-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1741 AD_ORG_ID-->
-<!--1741-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1741 ISACTIVE-->
-<!--1741-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1741 CREATED-->
-<!--1741-->              <CREATED><![CDATA[2002-02-14 15:41:43.0]]></CREATED>
-<!--1741 CREATEDBY-->
-<!--1741-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1741 UPDATED-->
-<!--1741-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1741 UPDATEDBY-->
-<!--1741-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1741 COLUMNNAME-->
-<!--1741-->              <COLUMNNAME><![CDATA[TotalInvAmt]]></COLUMNNAME>
-<!--1741 NAME-->
-<!--1741-->              <NAME><![CDATA[Total Invoice Amount]]></NAME>
-<!--1741 PRINTNAME-->
-<!--1741-->              <PRINTNAME><![CDATA[Total Invoice Amount]]></PRINTNAME>
-<!--1741 DESCRIPTION-->
-<!--1741-->              <DESCRIPTION><![CDATA[Cumulative total lifetime invoice amount]]></DESCRIPTION>
-<!--1741 HELP-->
-<!--1741-->              <HELP><![CDATA[The cumulative total lifetime invoice amount is used to calculate the total average price]]></HELP>
-<!--1741**************--></AD_ELEMENT>
-
-<!--1742**************--><AD_ELEMENT>
-<!--1742 AD_ELEMENT_ID-->
-<!--1742-->              <AD_ELEMENT_ID><![CDATA[1742]]></AD_ELEMENT_ID>
-<!--1742 AD_CLIENT_ID-->
-<!--1742-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1742 AD_ORG_ID-->
-<!--1742-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1742 ISACTIVE-->
-<!--1742-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1742 CREATED-->
-<!--1742-->              <CREATED><![CDATA[2002-02-14 15:41:43.0]]></CREATED>
-<!--1742 CREATEDBY-->
-<!--1742-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1742 UPDATED-->
-<!--1742-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1742 UPDATEDBY-->
-<!--1742-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1742 COLUMNNAME-->
-<!--1742-->              <COLUMNNAME><![CDATA[TotalInvQty]]></COLUMNNAME>
-<!--1742 NAME-->
-<!--1742-->              <NAME><![CDATA[Total Invoice Quantity]]></NAME>
-<!--1742 PRINTNAME-->
-<!--1742-->              <PRINTNAME><![CDATA[Total Invoice Quantity]]></PRINTNAME>
-<!--1742 DESCRIPTION-->
-<!--1742-->              <DESCRIPTION><![CDATA[Cumulative total lifetime invoice quantity]]></DESCRIPTION>
-<!--1742 HELP-->
-<!--1742-->              <HELP><![CDATA[The cumulative total lifetime invoice quantity is used to calculate the total average price]]></HELP>
-<!--1742**************--></AD_ELEMENT>
 
 <!--1743**************--><AD_ELEMENT>
 <!--1743 AD_ELEMENT_ID-->
@@ -23463,93 +23032,6 @@
 <!--1748 HELP-->
 <!--1748-->              <HELP><![CDATA[Set new Standard Costs from Future Costs]]></HELP>
 <!--1748**************--></AD_ELEMENT>
-
-<!--1749**************--><AD_ELEMENT>
-<!--1749 AD_ELEMENT_ID-->
-<!--1749-->              <AD_ELEMENT_ID><![CDATA[1749]]></AD_ELEMENT_ID>
-<!--1749 AD_CLIENT_ID-->
-<!--1749-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1749 AD_ORG_ID-->
-<!--1749-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1749 ISACTIVE-->
-<!--1749-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1749 CREATED-->
-<!--1749-->              <CREATED><![CDATA[2002-02-23 19:03:21.0]]></CREATED>
-<!--1749 CREATEDBY-->
-<!--1749-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1749 UPDATED-->
-<!--1749-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1749 UPDATEDBY-->
-<!--1749-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1749 COLUMNNAME-->
-<!--1749-->              <COLUMNNAME><![CDATA[CostStandardInvDiff]]></COLUMNNAME>
-<!--1749 NAME-->
-<!--1749-->              <NAME><![CDATA[Standard Cost Invoice Difference]]></NAME>
-<!--1749 PRINTNAME-->
-<!--1749-->              <PRINTNAME><![CDATA[Standard Cost Invoice Diff]]></PRINTNAME>
-<!--1749 DESCRIPTION-->
-<!--1749-->              <DESCRIPTION><![CDATA[Standard Cost Invoice Difference]]></DESCRIPTION>
-<!--1749 HELP-->
-<!--1749-->              <HELP><![CDATA[Accumulated difference of Invoice Costs to Standard Costs]]></HELP>
-<!--1749**************--></AD_ELEMENT>
-
-<!--1750**************--><AD_ELEMENT>
-<!--1750 AD_ELEMENT_ID-->
-<!--1750-->              <AD_ELEMENT_ID><![CDATA[1750]]></AD_ELEMENT_ID>
-<!--1750 AD_CLIENT_ID-->
-<!--1750-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1750 AD_ORG_ID-->
-<!--1750-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1750 ISACTIVE-->
-<!--1750-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1750 CREATED-->
-<!--1750-->              <CREATED><![CDATA[2002-02-23 19:03:21.0]]></CREATED>
-<!--1750 CREATEDBY-->
-<!--1750-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1750 UPDATED-->
-<!--1750-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1750 UPDATEDBY-->
-<!--1750-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1750 COLUMNNAME-->
-<!--1750-->              <COLUMNNAME><![CDATA[CostStandardPODiff]]></COLUMNNAME>
-<!--1750 NAME-->
-<!--1750-->              <NAME><![CDATA[Standard Cost PO Difference]]></NAME>
-<!--1750 PRINTNAME-->
-<!--1750-->              <PRINTNAME><![CDATA[Standard Cost PO Diff]]></PRINTNAME>
-<!--1750 DESCRIPTION-->
-<!--1750-->              <DESCRIPTION><![CDATA[Standard Cost Purchase Order Difference]]></DESCRIPTION>
-<!--1750 HELP-->
-<!--1750-->              <HELP><![CDATA[Accumulated difference of Purchase Order Costs to Standard Costs]]></HELP>
-<!--1750**************--></AD_ELEMENT>
-
-<!--1751**************--><AD_ELEMENT>
-<!--1751 AD_ELEMENT_ID-->
-<!--1751-->              <AD_ELEMENT_ID><![CDATA[1751]]></AD_ELEMENT_ID>
-<!--1751 AD_CLIENT_ID-->
-<!--1751-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1751 AD_ORG_ID-->
-<!--1751-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1751 ISACTIVE-->
-<!--1751-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1751 CREATED-->
-<!--1751-->              <CREATED><![CDATA[2002-02-23 19:03:21.0]]></CREATED>
-<!--1751 CREATEDBY-->
-<!--1751-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1751 UPDATED-->
-<!--1751-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1751 UPDATEDBY-->
-<!--1751-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1751 COLUMNNAME-->
-<!--1751-->              <COLUMNNAME><![CDATA[TotalInvCost]]></COLUMNNAME>
-<!--1751 NAME-->
-<!--1751-->              <NAME><![CDATA[Total Invoice Cost]]></NAME>
-<!--1751 PRINTNAME-->
-<!--1751-->              <PRINTNAME><![CDATA[Total Invoice Cost]]></PRINTNAME>
-<!--1751 DESCRIPTION-->
-<!--1751-->              <DESCRIPTION><![CDATA[Total lifetime invoice costs]]></DESCRIPTION>
-<!--1751 HELP-->
-<!--1751-->              <HELP><![CDATA[Total lifetime invoice costs]]></HELP>
-<!--1751**************--></AD_ELEMENT>
 
 <!--1752**************--><AD_ELEMENT>
 <!--1752 AD_ELEMENT_ID-->
@@ -26497,35 +25979,6 @@
 <!--1949-->              <HELP><![CDATA[Version Number]]></HELP>
 <!--1949**************--></AD_ELEMENT>
 
-<!--1950**************--><AD_ELEMENT>
-<!--1950 AD_ELEMENT_ID-->
-<!--1950-->              <AD_ELEMENT_ID><![CDATA[1950]]></AD_ELEMENT_ID>
-<!--1950 AD_CLIENT_ID-->
-<!--1950-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1950 AD_ORG_ID-->
-<!--1950-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1950 ISACTIVE-->
-<!--1950-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1950 CREATED-->
-<!--1950-->              <CREATED><![CDATA[2003-01-29 20:43:53.0]]></CREATED>
-<!--1950 CREATEDBY-->
-<!--1950-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1950 UPDATED-->
-<!--1950-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1950 UPDATEDBY-->
-<!--1950-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1950 COLUMNNAME-->
-<!--1950-->              <COLUMNNAME><![CDATA[DeliveryConfirmation]]></COLUMNNAME>
-<!--1950 NAME-->
-<!--1950-->              <NAME><![CDATA[Delivery Confirmation]]></NAME>
-<!--1950 PRINTNAME-->
-<!--1950-->              <PRINTNAME><![CDATA[Delivery Confirmation]]></PRINTNAME>
-<!--1950 DESCRIPTION-->
-<!--1950-->              <DESCRIPTION><![CDATA[EMail Delivery confirmation]]></DESCRIPTION>
-<!--1950 HELP-->
-<!--1950-->              <HELP><![CDATA[EMail Delivery confirmation]]></HELP>
-<!--1950**************--></AD_ELEMENT>
-
 <!--1951**************--><AD_ELEMENT>
 <!--1951 AD_ELEMENT_ID-->
 <!--1951-->              <AD_ELEMENT_ID><![CDATA[1951]]></AD_ELEMENT_ID>
@@ -26554,35 +26007,6 @@
 <!--1951 HELP-->
 <!--1951-->              <HELP><![CDATA[The asset costs are fully amortized.]]></HELP>
 <!--1951**************--></AD_ELEMENT>
-
-<!--1952**************--><AD_ELEMENT>
-<!--1952 AD_ELEMENT_ID-->
-<!--1952-->              <AD_ELEMENT_ID><![CDATA[1952]]></AD_ELEMENT_ID>
-<!--1952 AD_CLIENT_ID-->
-<!--1952-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1952 AD_ORG_ID-->
-<!--1952-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1952 ISACTIVE-->
-<!--1952-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1952 CREATED-->
-<!--1952-->              <CREATED><![CDATA[2003-01-29 20:43:53.0]]></CREATED>
-<!--1952 CREATEDBY-->
-<!--1952-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1952 UPDATED-->
-<!--1952-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
-<!--1952 UPDATEDBY-->
-<!--1952-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1952 COLUMNNAME-->
-<!--1952-->              <COLUMNNAME><![CDATA[MessageID]]></COLUMNNAME>
-<!--1952 NAME-->
-<!--1952-->              <NAME><![CDATA[Message ID]]></NAME>
-<!--1952 PRINTNAME-->
-<!--1952-->              <PRINTNAME><![CDATA[Message ID]]></PRINTNAME>
-<!--1952 DESCRIPTION-->
-<!--1952-->              <DESCRIPTION><![CDATA[EMail Message ID]]></DESCRIPTION>
-<!--1952 HELP-->
-<!--1952-->              <HELP><![CDATA[SMTP Message ID for tracking purposes]]></HELP>
-<!--1952**************--></AD_ELEMENT>
 
 <!--1953**************--><AD_ELEMENT>
 <!--1953 AD_ELEMENT_ID-->
@@ -29989,64 +29413,6 @@
 <!--2163-->              <HELP><![CDATA[Name of the Project Type]]></HELP>
 <!--2163**************--></AD_ELEMENT>
 
-<!--2164**************--><AD_ELEMENT>
-<!--2164 AD_ELEMENT_ID-->
-<!--2164-->              <AD_ELEMENT_ID><![CDATA[2164]]></AD_ELEMENT_ID>
-<!--2164 AD_CLIENT_ID-->
-<!--2164-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2164 AD_ORG_ID-->
-<!--2164-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2164 ISACTIVE-->
-<!--2164-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2164 CREATED-->
-<!--2164-->              <CREATED><![CDATA[2003-08-17 16:48:09.0]]></CREATED>
-<!--2164 CREATEDBY-->
-<!--2164-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--2164 UPDATED-->
-<!--2164-->              <UPDATED><![CDATA[2003-08-17 16:49:42.0]]></UPDATED>
-<!--2164 UPDATEDBY-->
-<!--2164-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--2164 COLUMNNAME-->
-<!--2164-->              <COLUMNNAME><![CDATA[CycleName]]></COLUMNNAME>
-<!--2164 NAME-->
-<!--2164-->              <NAME><![CDATA[Cycle Name]]></NAME>
-<!--2164 PRINTNAME-->
-<!--2164-->              <PRINTNAME><![CDATA[Cycle]]></PRINTNAME>
-<!--2164 DESCRIPTION-->
-<!--2164-->              <DESCRIPTION><![CDATA[Name of the Project Cycle]]></DESCRIPTION>
-<!--2164 HELP-->
-<!--2164-->              <HELP><![CDATA[Name of the Project Cycle]]></HELP>
-<!--2164**************--></AD_ELEMENT>
-
-<!--2165**************--><AD_ELEMENT>
-<!--2165 AD_ELEMENT_ID-->
-<!--2165-->              <AD_ELEMENT_ID><![CDATA[2165]]></AD_ELEMENT_ID>
-<!--2165 AD_CLIENT_ID-->
-<!--2165-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2165 AD_ORG_ID-->
-<!--2165-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2165 ISACTIVE-->
-<!--2165-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2165 CREATED-->
-<!--2165-->              <CREATED><![CDATA[2003-08-17 16:48:09.0]]></CREATED>
-<!--2165 CREATEDBY-->
-<!--2165-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--2165 UPDATED-->
-<!--2165-->              <UPDATED><![CDATA[2003-08-17 16:49:54.0]]></UPDATED>
-<!--2165 UPDATEDBY-->
-<!--2165-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--2165 COLUMNNAME-->
-<!--2165-->              <COLUMNNAME><![CDATA[CycleStepName]]></COLUMNNAME>
-<!--2165 NAME-->
-<!--2165-->              <NAME><![CDATA[Cycle Step Name]]></NAME>
-<!--2165 PRINTNAME-->
-<!--2165-->              <PRINTNAME><![CDATA[Cycle Step]]></PRINTNAME>
-<!--2165 DESCRIPTION-->
-<!--2165-->              <DESCRIPTION><![CDATA[Name of the Prohect Cycle Step]]></DESCRIPTION>
-<!--2165 HELP-->
-<!--2165-->              <HELP><![CDATA[Name of the Prohect Cycle Step]]></HELP>
-<!--2165**************--></AD_ELEMENT>
-
 <!--2167**************--><AD_ELEMENT>
 <!--2167 AD_ELEMENT_ID-->
 <!--2167-->              <AD_ELEMENT_ID><![CDATA[2167]]></AD_ELEMENT_ID>
@@ -30191,35 +29557,6 @@
 <!--2171 HELP-->
 <!--2171-->              <HELP><![CDATA[Document number of the Journal]]></HELP>
 <!--2171**************--></AD_ELEMENT>
-
-<!--2173**************--><AD_ELEMENT>
-<!--2173 AD_ELEMENT_ID-->
-<!--2173-->              <AD_ELEMENT_ID><![CDATA[2173]]></AD_ELEMENT_ID>
-<!--2173 AD_CLIENT_ID-->
-<!--2173-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2173 AD_ORG_ID-->
-<!--2173-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2173 ISACTIVE-->
-<!--2173-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2173 CREATED-->
-<!--2173-->              <CREATED><![CDATA[2003-08-28 16:48:01.0]]></CREATED>
-<!--2173 CREATEDBY-->
-<!--2173-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--2173 UPDATED-->
-<!--2173-->              <UPDATED><![CDATA[2003-08-28 16:49:13.0]]></UPDATED>
-<!--2173 UPDATEDBY-->
-<!--2173-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--2173 COLUMNNAME-->
-<!--2173-->              <COLUMNNAME><![CDATA[DeliveryCount]]></COLUMNNAME>
-<!--2173 NAME-->
-<!--2173-->              <NAME><![CDATA[Delivery Count]]></NAME>
-<!--2173 PRINTNAME-->
-<!--2173-->              <PRINTNAME><![CDATA[Delivery Count]]></PRINTNAME>
-<!--2173 DESCRIPTION-->
-<!--2173-->              <DESCRIPTION><![CDATA[Number of Deliveries]]></DESCRIPTION>
-<!--2173 HELP-->
-<!--2173-->              <HELP><![CDATA[Number of Deliveries]]></HELP>
-<!--2173**************--></AD_ELEMENT>
 
 <!--2178**************--><AD_ELEMENT>
 <!--2178 AD_ELEMENT_ID-->
@@ -49675,6 +49012,35 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1005400042 HELP-->
 <!--1005400042-->              <HELP><![CDATA[Number of registered users]]></HELP>
 <!--1005400042**************--></AD_ELEMENT>
+
+<!--1005400043**************--><AD_ELEMENT>
+<!--1005400043 AD_ELEMENT_ID-->
+<!--1005400043-->              <AD_ELEMENT_ID><![CDATA[1005400043]]></AD_ELEMENT_ID>
+<!--1005400043 AD_CLIENT_ID-->
+<!--1005400043-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005400043 AD_ORG_ID-->
+<!--1005400043-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005400043 ISACTIVE-->
+<!--1005400043-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005400043 CREATED-->
+<!--1005400043-->              <CREATED><![CDATA[2008-05-19 01:56:21.0]]></CREATED>
+<!--1005400043 CREATEDBY-->
+<!--1005400043-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1005400043 UPDATED-->
+<!--1005400043-->              <UPDATED><![CDATA[2008-05-19 01:56:58.0]]></UPDATED>
+<!--1005400043 UPDATEDBY-->
+<!--1005400043-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1005400043 COLUMNNAME-->
+<!--1005400043-->              <COLUMNNAME><![CDATA[Code_Revision]]></COLUMNNAME>
+<!--1005400043 NAME-->
+<!--1005400043-->              <NAME><![CDATA[Code Revision]]></NAME>
+<!--1005400043 PRINTNAME-->
+<!--1005400043-->              <PRINTNAME><![CDATA[Code Revision]]></PRINTNAME>
+<!--1005400043 DESCRIPTION-->
+<!--1005400043-->              <DESCRIPTION><![CDATA[The code revision of the installed system]]></DESCRIPTION>
+<!--1005400043 HELP-->
+<!--1005400043-->              <HELP><![CDATA[The code revision of the installed system]]></HELP>
+<!--1005400043**************--></AD_ELEMENT>
 
 <!--1005500000**************--><AD_ELEMENT>
 <!--1005500000 AD_ELEMENT_ID-->
