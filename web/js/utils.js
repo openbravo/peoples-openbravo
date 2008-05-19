@@ -232,6 +232,10 @@ function reloadFunction(text) {
 function setChangedField(campo, Formulario) {
   if (Formulario==null || !Formulario) Formulario = document.forms[0];
   if (Formulario.inpLastFieldChanged==null) return false;
+  if (campo.type.toUpperCase().indexOf("SELECT")!=-1) {
+    if(campo.options[campo.selectedIndex].defaultSelected || campo.options[campo.selectedIndex].value == "")
+      return false;
+  }
   Formulario.inpLastFieldChanged.value = campo.name;
   return true;
 }
