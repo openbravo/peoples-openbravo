@@ -152,7 +152,10 @@ public class WADList extends WADControl {
       if (getData("ColumnName").equalsIgnoreCase("AD_Org_ID")) {
         text.append("String userOrgList = \"\";\n");
         text.append("if (editableTab) \n");
-        text.append("  userOrgList=Utility.getContext(this, vars, \"#User_Org\", windowId, accesslevel); //editable record \n");
+        if (getData("hasParentsFields").equals("N")) 
+          text.append("  userOrgList=Utility.getContext(this, vars, \"#User_Org\", windowId, accesslevel); //editable record \n");
+        else
+          text.append("  userOrgList= Utility.getReferenceableOrg(vars, currentPOrg);//referenceable from parent org\n");
         text.append("else \n");
         text.append("  userOrgList=currentOrg;\n");
       } else if (getData("ColumnName").equalsIgnoreCase("AD_Client_ID")) {

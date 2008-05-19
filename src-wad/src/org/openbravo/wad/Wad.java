@@ -1862,7 +1862,7 @@ public class Wad extends DefaultHandler {
     for (int i=0;i<allfields.length;i++) {
       WADControl auxControl = null;
       try {
-        auxControl = WadUtility.getControl(pool, allfields[i], strReadOnly, tabName, "", xmlEngine, false, false, false);
+        auxControl = WadUtility.getControl(pool, allfields[i], strReadOnly, tabName, "", xmlEngine, false, false, false, hasParentsFields);
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
@@ -2823,7 +2823,7 @@ public class Wad extends DefaultHandler {
     for (int i=0;i< efd.length; i++) {
       WADControl auxControl = null;
       try {
-        auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, "", xmlEngine, false, false, false);
+        auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, "", xmlEngine, false, false, false, false, false);
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
@@ -2947,7 +2947,7 @@ public class Wad extends DefaultHandler {
       WADControl auxControl = null;
       
       try {
-        auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, strLanguage, xmlEngine, (WadUtility.isInVector(vecDisplayLogic, efd[i].getField("columnname"))), WadUtility.isInVector(vecReloads, efd[i].getField("columnname")), WadUtility.isInVector(vecReadOnlyLogic, efd[i].getField("columnname")), isReadOnlyDefinedTab);
+        auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, strLanguage, xmlEngine, (WadUtility.isInVector(vecDisplayLogic, efd[i].getField("columnname"))), WadUtility.isInVector(vecReloads, efd[i].getField("columnname")), WadUtility.isInVector(vecReadOnlyLogic, efd[i].getField("columnname")), false, isReadOnlyDefinedTab);
         
       } catch (Exception ex) {
         throw new ServletException(ex);

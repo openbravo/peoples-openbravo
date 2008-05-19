@@ -918,6 +918,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         <LISTS_TMP id="sectionDetailDocuments">     data[0].<LIST_TMP id="fieldNameDoc">dd</LIST_TMP> = "&#60;" + <LIST_TMP id="fieldValueDoc">dd</LIST_TMP> + "&#62;";</LISTS_TMP>
       }
     }
+    <PARAMETER_TMP id="parent">String currentPOrg=<PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectOrg(this, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
     String currentOrg = (boolNew?"":(dataField!=null?dataField.getField("adOrgId"):data[0].getField("adOrgId")));
     String currentClient = (boolNew?"":(dataField!=null?dataField.getField("adClientId"):data[0].getField("adClientId")));
     

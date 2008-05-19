@@ -1806,10 +1806,10 @@ public class WadUtility {
     if (aux!=null) _prop.setProperty(_name, aux);
   }
 
-  public static WADControl getControl(ConnectionProvider conn, FieldProvider field, boolean isreadonly, String tabName, String adLanguage, XmlEngine xmlEngine, boolean isDisplayLogic, boolean isReloadObject, boolean isReadOnlyLogic) throws Exception {
-    return getControl(conn, field, isreadonly, tabName, adLanguage, xmlEngine, isDisplayLogic, isReloadObject, isReadOnlyLogic, false);
+  public static WADControl getControl(ConnectionProvider conn, FieldProvider field, boolean isreadonly, String tabName, String adLanguage, XmlEngine xmlEngine, boolean isDisplayLogic, boolean isReloadObject, boolean isReadOnlyLogic, boolean hasParentsFields) throws Exception {
+    return getControl(conn, field, isreadonly, tabName, adLanguage, xmlEngine, isDisplayLogic, isReloadObject, isReadOnlyLogic, hasParentsFields, false);
   }
-  public static WADControl getControl(ConnectionProvider conn, FieldProvider field, boolean isreadonly, String tabName, String adLanguage, XmlEngine xmlEngine, boolean isDisplayLogic, boolean isReloadObject, boolean isReadOnlyLogic, boolean isReadOnlyDefinedTab) throws Exception {
+  public static WADControl getControl(ConnectionProvider conn, FieldProvider field, boolean isreadonly, String tabName, String adLanguage, XmlEngine xmlEngine, boolean isDisplayLogic, boolean isReloadObject, boolean isReadOnlyLogic, boolean hasParentsFields,  boolean isReadOnlyDefinedTab) throws Exception {
     if (field == null) return null;
     Properties prop = new Properties();
     setPropertyValue(prop, field, "ColumnName", "columnname", null);
@@ -1852,6 +1852,7 @@ public class WadUtility {
     prop.setProperty("IsReadOnlyLogic", (isReadOnlyLogic?"Y":"N"));
     prop.setProperty("IsComboReload", (isReloadObject?"Y":"N"));
     prop.setProperty("isReadOnlyDefinedTab", (isReadOnlyDefinedTab?"Y":"N"));
+    prop.setProperty("hasParentsFields", (hasParentsFields?"Y":"N"));
 
     String classname = "org.openbravo.wad.controls.WAD" + FormatUtilities.replace(field.getField("referenceName"));
     WADControl _myClass = null;
