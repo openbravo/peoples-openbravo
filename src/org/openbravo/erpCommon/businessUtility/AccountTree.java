@@ -45,6 +45,7 @@ public class AccountTree {
    * @param _elements: Array of account's elements.
    * @param _accounts: Array of accounts.
    * @param _elementValueParent: String with the value of the parent element to evaluate.
+   * @var forms: Array of accounts with its operands.
    * @throws ServletException
    */
   public AccountTree(VariablesSecureApp _vars, ConnectionProvider _conn, AccountTreeData[] _elements, AccountTreeData[] _accounts, String _elementValueParent) throws ServletException {
@@ -68,9 +69,10 @@ public class AccountTree {
    * 
    * @param _vars: VariablesSecureApp object with the session methods.
    * @param _conn: ConnectionProvider object with the connection methods.
-   * @param _elements: Array of account's elements.
-   * @param _accounts: Array of accounts.
-   * @param _elementValueParent: Array with the value of the parent elements to evaluate.
+   * @param _elements: Array of account's elements (elementValues).
+   * @param _accounts: Array of all the fact accts.
+   * @param _elementValueParent: Array with the value of the parent elements to evaluate (For example, first expenses then revenues) Objective tree.
+   * @var forms: Array of accounts with its operands.
    * @throws ServletException
    */
   public AccountTree(VariablesSecureApp _vars, ConnectionProvider _conn, AccountTreeData[] _elements, AccountTreeData[] _accounts, String[] _elementValueParent) throws ServletException {
@@ -80,15 +82,13 @@ public class AccountTree {
     elements = _elements;
     accounts = _accounts;
     elementValueParent = _elementValueParent;
- 
+    // Loading tree with new amounts, applying signs (Debit or Credit) and setting the account level (1, 2, 3,...)
     resultantAccounts = updateTreeQuantitiesSign(null, 0, "D");
-    
+
     if (resultantAccounts!=null && resultantAccounts.length>0) {
+      //Calculating forms for every elements 
       AccountTreeData[] forms = AccountTreeData.selectForms(conn, Utility.getContext(conn, vars, "#User_Org", "AccountTree"), Utility.getContext(conn, vars, "#User_Client", "AccountTree"));
-      //resultantAccounts = calculateTree(forms, elementValueParent, new Vector<Object>());
-      
-      
-      
+  
       Vector<Object> vec = new Vector<Object>();
       AccountTreeData[] r;
       
@@ -101,31 +101,6 @@ public class AccountTree {
       resultantAccounts = new AccountTreeData[vec.size()];
       vec.copyInto(resultantAccounts);
     }
-    
-  
-    /*//Calculating forms for every elements
-    if (resultantAccounts!=null && resultantAccounts.length>0) {
-      AccountTreeData[] forms = AccountTreeData.selectForms(conn, Utility.getContext(conn, vars, "#User_Org", "AccountTree"), Utility.getContext(conn, vars, "#User_Client", "AccountTree"));
-      
-      int totalAcct = 0;
-      AccountTreeData[][] accounts = new AccountTreeData[elementValueParent.length][];
-      for (int i=0; i<_elementValueParent.length; i++) {
-        //resultantAccounts = calculateTree(forms, elementValueParent, new Vector<Object>());
-        if (log4j.isDebugEnabled()) log4j.debug("calculating node: "+i+":"+elementValueParent[i]+" update quantities...");
-        accounts[i] = updateTreeQuantitiesSign(null, 0, "D"); 
-        if (log4j.isDebugEnabled()) log4j.debug("calculating node: "+i+":"+elementValueParent[i]+" calculate tree...");
-        accounts[i] = calculateTree(forms, elementValueParent[i], new Vector<Object>());
-        totalAcct += accounts[i].length;
-      }
-      
-      // Join all the trees
-      resultantAccounts = new AccountTreeData[totalAcct]; 
-      int k=0;
-      for (int i=0; i<elementValueParent.length; i++) 
-        for (int j=0; i<accounts[i].length; j++) 
-          resultantAccounts[k++] = accounts[i][j];
-      if (log4j.isDebugEnabled()) log4j.debug("AcctTree Created - Resultant Accounts " + totalAcct);
-    }*/
   }
 
   /**
@@ -187,7 +162,7 @@ public class AccountTree {
 
   /**
    * This method updates al the Quantitie's signs of the tree. Is used by the 
-   * constructor to initializa the element's quantities.
+   * constructor to initializa the element's quantities. Also initializes the level of each account
    * 
    * @param indice: String with the index from which to start updating.
    * @param level: Integer with the level of the elements.
@@ -198,13 +173,11 @@ public class AccountTree {
     if (elements==null || elements.length==0) return elements;
     AccountTreeData[] result = null;
     Vector<Object> vec = new Vector<Object>();
-    if (log4j.isDebugEnabled()) log4j.debug("AccountTree.updateTreeQuantitiesSign() - elements: " + elements.length);
+   // if (log4j.isDebugEnabled()) log4j.debug("AccountTree.updateTreeQuantitiesSign() - elements: " + elements.length);
     if (indice == null) indice="0";
     for (int i=0;i<elements.length;i++) {
       if (elements[i].parentId.equals(indice)) {
-        //if (level==0) 
-    	  isDebitCredit = elements[i].accountsign;
-        //else if (isDebitCredit.equals("") || isDebitCredit.equalsIgnoreCase("N")) isDebitCredit = elements[i].accountsign;
+        isDebitCredit = elements[i].accountsign;
         AccountTreeData[] dataChilds = updateTreeQuantitiesSign(elements[i].nodeId, (level+1), isDebitCredit);
         elements[i].elementLevel = Integer.toString(level);
         elements[i] = setDataQty(elements[i], isDebitCredit);
@@ -259,8 +232,6 @@ public class AccountTree {
     }
     double total = Double.valueOf((String) vecTotal.elementAt(0)).doubleValue();
     double totalRef = Double.valueOf((String) vecTotal.elementAt(1)).doubleValue();
-    if (indice.equals("1000741")) 
-      log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + indice + " - total: " + total + " - totalRef: " + totalRef);
     boolean encontrado=false;
     for (int i=0;i<forms.length;i++) {
       if (forms[i].id.equals(indice)) {
@@ -270,8 +241,20 @@ public class AccountTree {
           log4j.debug("AccountTree.formsCalculate - actual.nodeId: " + actual.nodeId + " - forms[i].nodeId: " + forms[i].nodeId);
           if (actual.nodeId.equals(forms[i].nodeId)) {
             encontrado=true;
-            total += (Double.valueOf(actual.qtyOperation).doubleValue() * Double.valueOf(forms[i].accountsign).doubleValue());
-            totalRef += (Double.valueOf(actual.qtyOperationRef).doubleValue() * Double.valueOf(forms[i].accountsign).doubleValue());
+            /*
+             * 
+             * 
+             */
+            actual.qty = Double.toString(applySign(Double.valueOf(actual.qtyOperation).doubleValue(), actual.showvaluecond, actual.issummary.equals("Y")));
+            actual.qtyRef = Double.toString(applySign(Double.valueOf(actual.qtyOperationRef).doubleValue(), actual.showvaluecond, actual.issummary.equals("Y")));
+            total += (Double.valueOf(actual.qty).doubleValue() * Double.valueOf(forms[i].accountsign).doubleValue());
+            totalRef += (Double.valueOf(actual.qtyRef).doubleValue() * Double.valueOf(forms[i].accountsign).doubleValue());
+            /*total += (Double.valueOf(actual.qtyOperation).doubleValue() * Double.valueOf(forms[i].accountsign).doubleValue());
+            totalRef += (Double.valueOf(actual.qtyOperationRef).doubleValue() * Double.valueOf(forms[i].accountsign).doubleValue());*/
+            /*
+             * 
+             * 
+             */
             if (log4j.isDebugEnabled()) log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + actual.nodeId + " - total: " + total + " - actual.qtyOperation: " + actual.qtyOperation + " - forms[i].accountsign: " + forms[i].accountsign + " - forms.length:" + forms.length);
             break;
           }
@@ -407,9 +390,6 @@ public class AccountTree {
           if (dataChilds!=null && dataChilds.length>0) {
             for (int j=0;j<dataChilds.length;j++) vec.addElement(dataChilds[j]);
           }
-        // } This was for the culculated="N"
-        if (resultantAccounts[i].nodeId.equals("1000506")) 
-          log4j.debug("AccountTree.calculateTree() - account: " + resultantAccounts[i].nodeId + " - total: " + Double.toString(total));
         if (applysign) {
           total += Double.valueOf(resultantAccounts[i].qty).doubleValue();
           totalRef += Double.valueOf(resultantAccounts[i].qtyRef).doubleValue();
@@ -419,7 +399,6 @@ public class AccountTree {
         }
       }
     }
-    log4j.debug("AccountTree.calculateTree()2 - total: " + Double.toString(total));
     vecTotal.set(0, Double.toString(total));
     vecTotal.set(1, Double.toString(totalRef));
     result = new AccountTreeData[vec.size()];
@@ -495,9 +474,7 @@ public class AccountTree {
     AccountTreeData[] r = levelFilter(indice, false, strLevel);
 
     for (int i=0;i<r.length;i++) {
-      if (r[i].nodeId.equals("1000510")) log4j.debug("filterStructure qty:" + r[i].qty+" - qtyRef:"+r[i].qtyRef+" - show:"+r[i].showelement);
       if (r[i].showelement.equals("Y")) {
-        if (r[i].nodeId.equals("1000510")) log4j.debug("Encontrado!!! qty:" + r[i].qty+" - qtyRef:"+r[i].qtyRef+" - show:"+r[i].showelement);
         r[i].qty = Double.toString(applySign(Double.valueOf(r[i].qty).doubleValue(), r[i].showvaluecond, true));
         r[i].qtyRef = Double.toString(applySign(Double.valueOf(r[i].qtyRef).doubleValue(), r[i].showvaluecond, true));
         if (!notEmptyLines || (Double.valueOf(r[i].qty).doubleValue()!=ZERO || Double.valueOf(r[i].qtyRef).doubleValue()!=ZERO)) {
@@ -509,26 +486,7 @@ public class AccountTree {
     vec.copyInto(result);
     return result;
   }
-  
-  /*
-  public AccountTreeData[] filterStructure(String[] parents, boolean notEmptyLines, String strLevel, boolean isLevel) {
-    if (log4j.isDebugEnabled()) log4j.debug("parents.length:" + parents.length+" - resultantAccounts"+resultantAccounts);
-    AccountTreeData[][] accounts = new AccountTreeData[parents.length][];
-    int totalAcct = 0;
-    for (int i=0;i<parents.length;i++) {
-      accounts[i] = filterStructure(parents[i], notEmptyLines, strLevel, isLevel);
-      totalAcct += accounts[i].length;
-    }
-    if (log4j.isDebugEnabled()) log4j.debug("totalAcct:" + totalAcct);
-    AccountTreeData[] r = new AccountTreeData[totalAcct];
-    int k =0;
-    for (int i=0; i<parents.length; i++) 
-      for (int j=0; j<accounts[i].length; j++) { 
-        if (log4j.isDebugEnabled()) log4j.debug("k:" + k+" - accounts["+i+"].length:"+accounts[i].length);  
-        r[k++] = accounts[i][j];
-      }
-    return r;
-}*/
+
 
   /**
    * Not used
