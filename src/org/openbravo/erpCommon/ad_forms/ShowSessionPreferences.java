@@ -74,6 +74,13 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
         strPreference = SequenceIdData.getSequence(this, "AD_Preference", vars.getClient());
         ShowSessionPreferencesData.insert(this, strPreference, vars.getClient(), vars.getOrg(), vars.getUser(), "ShowTest", strTest);
       }
+      vars.setSessionValue("#ShowAudit", strAudit);
+      strPreference = ShowSessionPreferencesData.selectPreference(this, Utility.getContext(this, vars, "#User_Client", "ShowSessionPreferences"), Utility.getContext(this, vars, "#User_Org", "ShowSessionPreferences"), vars.getUser(), "ShowAuditDefault");
+      if (!strPreference.equals("")) ShowSessionPreferencesData.update(this, vars.getUser(), strAudit, strPreference);
+      else {
+        strPreference = SequenceIdData.getSequence(this, "AD_Preference", vars.getClient());
+        ShowSessionPreferencesData.insert(this, strPreference, vars.getClient(), vars.getOrg(), vars.getUser(), "ShowAuditDefault", strAudit);
+      }
       response.sendRedirect(strDireccion + request.getServletPath());
     } else {
       printPagePreferences(response, vars);
