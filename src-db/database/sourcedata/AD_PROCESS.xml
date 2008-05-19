@@ -9389,17 +9389,17 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800159 CREATEDBY-->
 <!--800159-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800159 UPDATED-->
-<!--800159-->              <UPDATED><![CDATA[2007-01-22 20:25:20.0]]></UPDATED>
+<!--800159-->              <UPDATED><![CDATA[2008-05-19 11:37:41.0]]></UPDATED>
 <!--800159 UPDATEDBY-->
 <!--800159-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800159 VALUE-->
 <!--800159-->              <VALUE><![CDATA[MRP_Requisition]]></VALUE>
 <!--800159 NAME-->
-<!--800159-->              <NAME><![CDATA[Create Materials Requirement]]></NAME>
+<!--800159-->              <NAME><![CDATA[Generate Material Requisitions]]></NAME>
 <!--800159 DESCRIPTION-->
-<!--800159-->              <DESCRIPTION><![CDATA[Create Materials Requirement]]></DESCRIPTION>
+<!--800159-->              <DESCRIPTION><![CDATA[Generate Material Requisitions]]></DESCRIPTION>
 <!--800159 HELP-->
-<!--800159-->              <HELP><![CDATA[Create Materials Requirement]]></HELP>
+<!--800159-->              <HELP><![CDATA[Generate Material Requisitions]]></HELP>
 <!--800159 ACCESSLEVEL-->
 <!--800159-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800159 ISUSERSTARTABLE-->
@@ -9430,17 +9430,17 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800160 CREATEDBY-->
 <!--800160-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800160 UPDATED-->
-<!--800160-->              <UPDATED><![CDATA[2007-01-22 20:28:37.0]]></UPDATED>
+<!--800160-->              <UPDATED><![CDATA[2008-05-19 11:41:16.0]]></UPDATED>
 <!--800160 UPDATEDBY-->
 <!--800160-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800160 VALUE-->
 <!--800160-->              <VALUE><![CDATA[MRP_WorkRequirement]]></VALUE>
 <!--800160 NAME-->
-<!--800160-->              <NAME><![CDATA[Create Work Requirement]]></NAME>
+<!--800160-->              <NAME><![CDATA[Generate Work Requirements]]></NAME>
 <!--800160 DESCRIPTION-->
-<!--800160-->              <DESCRIPTION><![CDATA[Create Work Requirement]]></DESCRIPTION>
+<!--800160-->              <DESCRIPTION><![CDATA[Generate Work Requirements]]></DESCRIPTION>
 <!--800160 HELP-->
-<!--800160-->              <HELP><![CDATA[Create Work Requirement]]></HELP>
+<!--800160-->              <HELP><![CDATA[Generate Work Requirements]]></HELP>
 <!--800160 ACCESSLEVEL-->
 <!--800160-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800160 ISUSERSTARTABLE-->
