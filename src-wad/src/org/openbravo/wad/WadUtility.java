@@ -1969,4 +1969,13 @@ public class WadUtility {
     printWriterData.flush();
     fileWriterData.close();
   }
+  
+  /**
+   * Replaces special characters in str to make it a valid java string
+   * @param str
+   * @return
+   */
+  public static String toJavaString(String str){
+    return (str.replace("\n", "\\n").replace("\"","\\\""));
+  }
 }
