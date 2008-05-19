@@ -2751,47 +2751,6 @@
 <!--180-->              <ISJASPER><![CDATA[N]]></ISJASPER>
 <!--180**************--></AD_PROCESS>
 
-<!--181**************--><AD_PROCESS>
-<!--181 AD_PROCESS_ID-->
-<!--181-->              <AD_PROCESS_ID><![CDATA[181]]></AD_PROCESS_ID>
-<!--181 AD_CLIENT_ID-->
-<!--181-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--181 AD_ORG_ID-->
-<!--181-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--181 ISACTIVE-->
-<!--181-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--181 CREATED-->
-<!--181-->              <CREATED><![CDATA[2002-01-25 20:01:33.0]]></CREATED>
-<!--181 CREATEDBY-->
-<!--181-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--181 UPDATED-->
-<!--181-->              <UPDATED><![CDATA[2003-02-22 02:19:53.0]]></UPDATED>
-<!--181 UPDATEDBY-->
-<!--181-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--181 VALUE-->
-<!--181-->              <VALUE><![CDATA[AD_Column_Sync]]></VALUE>
-<!--181 NAME-->
-<!--181-->              <NAME><![CDATA[Synchronize Column]]></NAME>
-<!--181 DESCRIPTION-->
-<!--181-->              <DESCRIPTION><![CDATA[Change database table definition from application dictionary]]></DESCRIPTION>
-<!--181 HELP-->
-<!--181-->              <HELP><![CDATA[When selected, the database column definition is updated based on your entries in the Column definition of the Application Dictionary. Note that not all changes are supported by the database and may result in an error.]]></HELP>
-<!--181 ACCESSLEVEL-->
-<!--181-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--181 ISUSERSTARTABLE-->
-<!--181-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--181 PROCEDURENAME-->
-<!--181-->              <PROCEDURENAME><![CDATA[AD_Column_Sync]]></PROCEDURENAME>
-<!--181 ISREPORT-->
-<!--181-->              <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--181 ISDIRECTPRINT-->
-<!--181-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--181 ISBACKGROUND-->
-<!--181-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--181 ISJASPER-->
-<!--181-->              <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--181**************--></AD_PROCESS>
-
 <!--182**************--><AD_PROCESS>
 <!--182 AD_PROCESS_ID-->
 <!--182-->              <AD_PROCESS_ID><![CDATA[182]]></AD_PROCESS_ID>
