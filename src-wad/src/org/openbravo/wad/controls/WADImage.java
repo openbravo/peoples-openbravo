@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -88,5 +88,17 @@ public class WADImage extends WADControl {
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     return replaceHTML(xmlDocument.print());
+  }
+  
+  public String toJava() {
+    StringBuffer text = new StringBuffer();
+    text.append("String strCurrentImageURL = (dataField==null?data[0].getField(\"");
+    text.append(getData("ColumnNameInp")).append("\"):dataField.getField(\"");
+    text.append(getData("ColumnNameInp")).append("\"));\n");
+    text.append("if (strCurrentImageURL==null || strCurrentImageURL.equals(\"\")){\n");
+    text.append("  xmlDocument.setParameter(\"").append(getData("ColumnName")).append("Class\", \"Image_NotAvailable_medium\");\n");
+    text.append("  if (dataField==null) data[0].adImageIdr=\"blank.gif\";\n");
+    text.append("}\n");
+    return text.toString();		
   }
 }
