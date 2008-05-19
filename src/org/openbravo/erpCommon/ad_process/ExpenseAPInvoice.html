@@ -286,7 +286,7 @@ function depurar() {
               <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                 <TR>
                   <TD class="TextBox_ContentCell">
-                    <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true"  type="text" name="inpReportDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateFrom");</SCRIPT>
+                    <INPUT dojotype="openbravo:DateTextbox" lowerthan="paramDateTo" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true"  type="text" name="inpReportDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateFrom");</SCRIPT>
                   </TD>
                   <TD class="FieldButton_ContentCell">
                     <a class="FieldButtonLink" href="#"
@@ -315,7 +315,7 @@ function depurar() {
              <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                <TR>
                  <TD class="TextBox_ContentCell">
-                   <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpReportDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateTo");</SCRIPT>
+                   <INPUT dojotype="openbravo:DateTextbox" greaterthan="paramDateFrom" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true" type="text" name="inpReportDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateTo");</SCRIPT>
                       </TD>
                       <TD class="FieldButton_ContentCell">
                         <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='xx'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;">
