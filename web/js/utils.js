@@ -16,9 +16,10 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
 /**
-* @fileoverview This JavaScript library contains basic functionality used on all HTML pages
-* Basic functions like positioning the focus control, numeric field validation, etc
+* @fileoverview Contains core Javascript functions used on all pages to set focus,
+*  clear forms, pop up confirmation messages, submit the form, etc.
 */
 
 <!--
@@ -34,12 +35,6 @@ daysOfMonth = new Array(
 new Array(0,31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31), //No leap year
 new Array (0,31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31) //Leap year
 );
-
-/**
-* Esta librería JavaScript contiene las funciones y procedimientos básicos que se utilizan en
-* todas las páginas html. Son elementos básicos como el posicionamiento del foco en un control
-* de la página, control de campos numéricos...
-*/
 
 var gByDefaultAction;
 var gEnviado=false;
