@@ -124,6 +124,10 @@ function getDataBaseMessage(value, responseFunction) {
   submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (getUrl() + "/businessUtility/MessageJS.html?inpvalue=JS" + escape(value)), false)
 }
 
+function getDataBaseStandardMessage(value, responseFunction) {
+  submitXmlHttpRequestUrl(((responseFunction==null)?messageResponse:responseFunction), (getUrl() + "/businessUtility/MessageJS.html?inpvalue=" + escape(value)), false)
+}
+
 function messageResponse(paramArray) {
    var obj;
    if (getReadyStateHandler(xmlreq)) {

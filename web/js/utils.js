@@ -3444,11 +3444,29 @@ function changeAuditIcon(newStatus) {
   obj = document.getElementById("linkButtonAudit");
   if (obj == null) return false;
   obj.className="Main_ToolBar_Button"+(newStatus=="Y"?"_Selected":"");
-  obj.title=""; //TODO: get the correct title depending on the language
+  alert(getDataBaseStandardMessage("NotFound", changeAuditIconTitle));
 }
-/*if (!document.all)
-  document.captureEvents(Event.MOUSEDOWN);
-document.onmousedown=menuContextual;*/
+
+ function changeAuditIconTitle() {
+   var obj;
+   object = document.getElementById("buttonAudit");
+   if (getReadyStateHandler(xmlreq)) {
+    try {
+      if (xmlreq.responseXML) obj = xmlreq.responseXML.documentElement;
+    } catch (e) {
+    }
+    
+    
+    if (obj && object) {
+      var status = obj.getElementsByTagName('status');
+      if (status.length>0) {
+        object.title = status[0].getElementsByTagName('title')[0].firstChild.nodeValue;
+        alert(object.title);
+      }
+    }
+   }
+   return false;
+ }
 
 //-->
 
