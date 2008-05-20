@@ -3444,7 +3444,10 @@ function changeAuditIcon(newStatus) {
   obj = document.getElementById("linkButtonAudit");
   if (obj == null) return false;
   obj.className="Main_ToolBar_Button"+(newStatus=="Y"?"_Selected":"");
-  alert(getDataBaseStandardMessage("NotFound", changeAuditIconTitle));
+  if (newStatus=="Y")
+    setTimeout("getDataBaseStandardMessage('hideAudit', changeAuditIconTitle)",100);
+  else
+    setTimeout("getDataBaseStandardMessage('showAudit', changeAuditIconTitle)",100);
 }
 
  function changeAuditIconTitle() {
