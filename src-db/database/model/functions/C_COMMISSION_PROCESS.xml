@@ -295,7 +295,7 @@
         -- DBMS_OUTPUT.PUT_LINE(SUBSTR(v_Cmd, 400));
         --
         v_ResultStr:='OpenDynCursor';
-        SELECT REPLACE(REPLACE(REPLACE(v_Cmd, ':1', v_AD_Client_ID), ':2', v_StartDate), ':3', v_EndDate) INTO v_Cmd FROM DUAL;
+        SELECT REPLACE(REPLACE(REPLACE(v_Cmd, ':1', to_char(v_AD_Client_ID)), ':2', to_char(v_StartDate)), ':3', to_char(v_EndDate)) INTO v_Cmd FROM DUAL;
         OPEN v_rc FOR v_Cmd;
         LOOP
           v_ResultStr:='FetchingData';
