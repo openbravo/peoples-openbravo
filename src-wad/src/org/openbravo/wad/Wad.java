@@ -321,6 +321,7 @@ public class Wad extends DefaultHandler {
             if (!fileDirTrlBase.exists()) {
               fileDirTrlBase.mkdirs();
             }
+            FileUtility.copy(fileActionButton, fileDirTrlBase,new DirFilter(".xml"), true, true); //copy xml for translated actionbuttons
             calendarDescriptionTrl = WadUtilityData.getTranslatedText(wad.pool, calendarDescription, dataLang[pos].adLanguage);
             clockDescriptionTrl = WadUtilityData.getTranslatedText(wad.pool, clockDescription, dataLang[pos].adLanguage);
             calculatorDescriptionTrl = WadUtilityData.getTranslatedText(wad.pool, calculatorDescription, dataLang[pos].adLanguage);
