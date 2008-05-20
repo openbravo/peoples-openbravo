@@ -16,6 +16,14 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+/**
+* @fileoverview Main functions for displaying preloaded critical messages in
+* corresponding languages (save changes, number out of range, invalid value, 
+* etc.). This library works hand in hand with the MessagesJS.java (mapped 
+* to utility/MessagesJS.js) servlet found in the erpCommon/utility folder.
+*/
+
 //Valores por defecto
 //var LNG_POR_DEFECTO = "en_US";
 var TIPO_POR_DEFECTO = 0;

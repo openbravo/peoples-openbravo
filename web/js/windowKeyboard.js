@@ -17,6 +17,12 @@
  ************************************************************************
 */
 
+/**
+* @fileoverview This Javascript library supports keyboard navigation within
+* the editing windows (tab navigation, focus highlight, sequence of elements,
+* etc.).
+*/
+
 var focusedWindowElement = null;
 var focusedWindowElement_tmp = null;
 var focusedWindowElement_tmp2 = null;

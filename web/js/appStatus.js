@@ -17,6 +17,11 @@
  ************************************************************************
 */
 
+/**
+* @fileoverview Code used for displaying various UI elements indicating the 
+* status of the application (data changed - save button enabled, rotating
+* OB logo indicating data processing, etc.).
+*/
 
 function disableToolBarButton(id) {
   var link = null;

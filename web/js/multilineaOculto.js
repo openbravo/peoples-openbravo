@@ -16,6 +16,13 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+/**
+* @fileoverview Used only in FrameOcultoMultilinea.html as part of the 
+* master-detail window that enables rapid data entry without the 
+* Header-Lines window structure.
+*/
+
 function submitArray(parametros, frmFormulario, strAccion, strTarget)
 {
 	var formulario = document.forms[0];

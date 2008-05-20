@@ -6,6 +6,12 @@
 //    header lines are left unchanged.
 // Note: Script consists of two files: calculator.js and calculator.html
 
+/**
+* @fileoverview Popup Javascript calculator that assists with entering numeric
+* fields. Usually called by a little calculator icon on the right side of 
+* a numeric input field (such as amount, integer, price, etc.).
+*/
+
 var TCR = new Tcalculator();
 
 function Tcalculator() {

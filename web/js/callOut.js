@@ -16,6 +16,13 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+/**
+* @fileoverview Contains a function returnReponse that is called upon load 
+* of a callout template (eg. CallOut.html) and fills specified form fields
+* with specified values.
+*/
+
 var frameDefault = "frameAplicacion";
 
 function displayLogic() {

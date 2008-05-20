@@ -1,3 +1,8 @@
+/**
+* @fileoverview Defines basic Dojo variables and is referenced every time there
+* is a Dojo object on an HTML page. 
+*/
+
 // Dojo configuration
   //var tic = new Date();
   var djConfig = {

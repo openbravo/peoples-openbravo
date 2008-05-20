@@ -96,6 +96,14 @@ Public Methods:
 ********
 
 ***************************************************/
+
+/**
+* @fileoverview Deprecated library of functions that supported list box searches
+* (as you positioned yourself on a listbox, you could start typing in the first 
+* letter of the item you were looking for). Deprecated because new browsers 
+* already support this functionality out of the box.
+*/
+
 function TypeAheadCombo(anElement,acceptNewValue, identifierID, _autoload) {
 	// DEGRADE UNSUPPORTED
 	if (document.layers) {

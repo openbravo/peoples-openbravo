@@ -16,6 +16,12 @@ Atlanta, GA, US
 Current Version: 2.3
 Last Update: 11 September 2003
 **************************************************/
+
+/**
+* @fileoverview This is an auxiliary library to TypeAheadCombo.js that is
+* deprecated.
+*/
+
 String.fromKeyCode = function(keyCode,evtType) {
 	if (!evtType || !evtType.length)
 		evtType = "keyDown";

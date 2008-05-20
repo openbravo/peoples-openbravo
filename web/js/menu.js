@@ -16,6 +16,12 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+/**
+* @fileoverview Deprecated. (used in 2.2x and earlier versions to support 
+* the dynamic tree menu on the left)
+*/
+
 <!-- Codigo JavaScript
 
 var strImagenDesplegado = baseDirection + "images/CarpetaAbierta.gif";

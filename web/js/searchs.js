@@ -16,6 +16,12 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+/**
+* @fileoverview Contains Javascript functions used by the selectors 
+* (eg. selecting a business partner or a product within a sales order).
+*/
+
 var winSelector=null;
 
 var gForm=null;

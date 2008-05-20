@@ -14,6 +14,13 @@
 
 // $Id: calendar.js,v 1.51 2005/03/07 16:44:31 mishoo Exp $
 
+/**
+* @fileoverview Implements the Javascript calendar popup window used for choosing
+* a date or date-time for a date/date-time field. Uses corresponding auxiliary
+* calendar-{langcode}.js library (located in the lang subfolder) according to 
+* the language that is selected by the user.
+*/
+
 /** The Calendar object constructor. */
 Calendar = function (firstDayOfWeek, dateStr, onSelected, onClose) {
 	// member variables

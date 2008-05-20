@@ -16,6 +16,12 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+/**
+* @fileoverview Contains methods for asynchronous ajax calls. (eg. used by some
+* HTML reports to display/hide a subreport)
+*/
+
 var xmlreq = false;
 var paramXMLRequest = null;
 

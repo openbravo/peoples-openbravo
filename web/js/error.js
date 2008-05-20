@@ -16,6 +16,13 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+/**
+* @fileoverview Contains the definition for an error handler that captures all
+* Javascript errors within any HTML document (DOM) and pops an alert message 
+* (variable showErrors must be set to true for that to happen though).
+*/
+
 var showErrors = false;
 
 function HandleErrors(aMessage, aURL, aLine, evt) {

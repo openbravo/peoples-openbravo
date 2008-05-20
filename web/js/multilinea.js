@@ -16,6 +16,13 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+/**
+* @fileoverview Used only in InvoiceVendorMultiline_Lines.html form as part of 
+* the master-detail window that enables rapid data entry without the 
+* Header-Lines window structure.
+*/
+
 var gId="name"; //Atributo para identificar los elementos
 var gBoton = "Editable"; //Valor del atributo para el Div del Botón
 var gFila = "Fila"; //Valor del atributo para el Tag que marca la fila

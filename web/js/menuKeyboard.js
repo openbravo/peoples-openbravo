@@ -16,6 +16,14 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
+/**
+* @fileoverview Support for the dynamic tree menu Openbravo always uses on the
+* left side. Also contains support for keyboard operation of the menu. This
+* Javascript library replaced and upgraded the functionality previously supported
+* by menuWindows.js.
+*/
+
 <!-- Codigo JavaScript
 
 var classOpened = "Icon_folderOpened";

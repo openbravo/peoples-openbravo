@@ -16,8 +16,11 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
+
 /**
-* @fileoverview This JavaScript library contains the shortcuts definition of openbravo
+* @fileoverview This JavaScript defines keyboard operation shortcuts for common
+* actions within the application (eg. save record, show/hide menu, bring up 
+* help, tab navigation, etc.).
 */
 
 /**
