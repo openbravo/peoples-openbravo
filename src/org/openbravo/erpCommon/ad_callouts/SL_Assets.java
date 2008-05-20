@@ -22,6 +22,8 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+import java.math.BigDecimal;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -66,23 +68,26 @@ public class SL_Assets extends HttpSecureAppServlet {
     if (strResidualvalue.equals("")) strResidualvalue = "0";
     if (strAmortizationvalue.equals("")) strAmortizationvalue = "0";
 
-    Float fAssetvalue = Float.valueOf(strAssetvalue);
-    Float fResidualvalue = Float.valueOf(strResidualvalue);
-    Float fAmortizationvalue = Float.valueOf(strAmortizationvalue);
+    BigDecimal fAssetvalue = new BigDecimal(strAssetvalue);
+    BigDecimal fResidualvalue = new BigDecimal(strResidualvalue);
+    BigDecimal fAmortizationvalue = new BigDecimal(strAmortizationvalue);
+    //Float fAssetvalue = Float.valueOf(strAssetvalue);
+    //Float fResidualvalue = Float.valueOf(strResidualvalue);
+    //Float fAmortizationvalue = Float.valueOf(strAmortizationvalue);
     
     if (strLastChanged.equals("inpassetvalueamt")) {
-      if (fAmortizationvalue != 0) fResidualvalue = fAssetvalue - fAmortizationvalue;
-      fAmortizationvalue = fAssetvalue - fResidualvalue;
+      if (!fAmortizationvalue.equals(0)) fResidualvalue = fAssetvalue.subtract(fAmortizationvalue);
+      fAmortizationvalue = fAssetvalue.subtract(fResidualvalue);
     }
 
     if (strLastChanged.equals("inpresidualassetvalueamt")) {
     //  if (fAmortizationvalue != 0) fAssetvalue =  fResidualvalue + fAmortizationvalue;
-      fAmortizationvalue = fAssetvalue - fResidualvalue;
+      fAmortizationvalue = fAssetvalue.subtract(fResidualvalue);
     }
 
     if (strLastChanged.equals("inpamortizationvalueamt"))  {
       // if (fResidualvalue != 0 ) fAssetvalue =  fResidualvalue + fAmortizationvalue;
-       fResidualvalue = fAssetvalue - fAmortizationvalue;
+       fResidualvalue = fAssetvalue.subtract(fAmortizationvalue);
     }
  
     strAssetvalue        = fAssetvalue.toString();
