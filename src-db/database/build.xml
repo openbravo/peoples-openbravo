@@ -103,9 +103,14 @@ compare.database.structure: Generates a diff script.
     <antcall target="prepare.database"/>
     <antcall target="create.database.structure"/>
     <antcall target="database.preimport.${bbdd.rdbms}" />
-    <antcall target="import.database.data.int" />
-    <antcall target="import.database.masterdata.int" />
-    <antcall target="import.database.sampledata.int" />
+    <importdata driver="${bbdd.driver}"
+                url="${bbdd.owner.url}"
+                user="${bbdd.user}"
+                filter="com.openbravo.db.OpenbravoMetadataFilter"   
+                password="${bbdd.password}"
+                excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
+                input="${basedir}/sourcedata,${basedir}/masterdata,${basedir}/sampledata"
+                verbosity="${bbdd.verbosity}" />
     <antcall target="database.postimport.${bbdd.rdbms}" />
     <antcall target="database.postcreate.${bbdd.rdbms}" />
   </target>
@@ -352,22 +357,18 @@ compare.database.structure: Generates a diff script.
 
   <target name="import.database.data">
       <antcall target="database.preimport.${bbdd.rdbms}" />
-      <antcall target="import.database.data.int" />
+    <importdata driver="${bbdd.driver}"
+                url="${bbdd.owner.url}"
+                user="${bbdd.user}"
+                filter="com.openbravo.db.OpenbravoMetadataFilter"   
+                password="${bbdd.password}"
+                excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
+                input="${basedir}/sourcedata"
+                verbosity="${bbdd.verbosity}" />
       <antcall target="database.postimport.${bbdd.rdbms}" />
       <antcall target="database.postcreate.${bbdd.rdbms}" />
   </target>
 	
-
-	<target name="import.database.data.int">
-	      <importdata driver="${bbdd.driver}"
-	                  url="${bbdd.owner.url}"
-	                  user="${bbdd.user}"
-	                  filter="com.openbravo.db.OpenbravoMetadataFilter"   
-	                  password="${bbdd.password}"
-	                  excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
-	                  input="sourcedata"
-	                  verbosity="${bbdd.verbosity}" />
-	 </target>
 
   <target name="export.database.data">
       <exportdata driver="${bbdd.driver}"
@@ -383,19 +384,15 @@ compare.database.structure: Generates a diff script.
 
 	  <target name="import.database.sampledata">
 	      <antcall target="database.preimport.${bbdd.rdbms}" />
-	      <antcall target="import.database.sampledata.int" />
-	      <antcall target="database.postimport.${bbdd.rdbms}" />
-	      <antcall target="database.postcreate.${bbdd.rdbms}" />
-	  </target>
-
-	  <target name="import.database.sampledata.int">
 	      <importdata driver="${bbdd.driver}"
 	                  url="${bbdd.owner.url}"
 	                  user="${bbdd.user}"
 	                  password="${bbdd.password}"
 	                  excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
-	                  input="sampledata"
+	                  input="${basedir}/sampledata"
 	                  verbosity="${bbdd.verbosity}" />
+	      <antcall target="database.postimport.${bbdd.rdbms}" />
+	      <antcall target="database.postcreate.${bbdd.rdbms}" />
 	  </target>
 
 	  <target name="export.database.sampledata">
@@ -412,20 +409,17 @@ compare.database.structure: Generates a diff script.
 
 	  <target name="import.database.masterdata">
 	      <antcall target="database.preimport.${bbdd.rdbms}" />
-	      <antcall target="import.database.masterdata.int" />
-	      <antcall target="database.postimport.${bbdd.rdbms}" />
-	      <antcall target="database.postcreate.${bbdd.rdbms}" />
-	  </target>
-
-	  <target name="import.database.masterdata.int">
 	      <importdata driver="${bbdd.driver}"
 	                  url="${bbdd.owner.url}"
 	                  user="${bbdd.user}"
 	                  password="${bbdd.password}"
 	                  excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
-	                  input="masterdata"
+	                  input="${basedir}/masterdata"
 	                  verbosity="${bbdd.verbosity}" />
+	      <antcall target="database.postimport.${bbdd.rdbms}" />
+	      <antcall target="database.postcreate.${bbdd.rdbms}" />
 	  </target>
+
 
 	  <target name="export.database.masterdata">
 	      <exportdata driver="${bbdd.driver}"
