@@ -56,7 +56,7 @@ var isPopupLoadingWindowLoaded=false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function returnVersionControl() {
-  var number = '4330';
+  var number = '4381';
   return number;
 }
 
@@ -2869,8 +2869,8 @@ function auto_complete_number(obj, bolDecimal, bolNegativo, evt) {
 * @see #setChangedField
 */
 function logChanges(campo) {
+  changeToEditingMode();
   if (campo==null || !campo) return false;
-  changeToEditingMode()
   return setChangedField(campo, campo.form);
 }
 

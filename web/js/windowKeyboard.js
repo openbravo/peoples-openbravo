@@ -144,8 +144,12 @@ function cursorFocus(evt, obj) {
   if(obj.tagName == 'OPTION'){
   	while(obj.tagName != 'SELECT') obj = obj.parentNode;
   }
+  
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && obj.getAttribute('type') == 'checkbox' && (obj.getAttribute('readonly') == 'true' || obj.readOnly)) {
+    return false;
+  }
   if (obj == focusedWindowElement) return true;
-  if (navigator.userAgent.indexOf("NT") == -1 && (navigator.userAgent.toUpperCase().indexOf("FIREFOX/2") != -1 || navigator.userAgent.toUpperCase().indexOf("ICEWEASEL/2") != -1) && (obj.className.indexOf('Radio_Check_ContentCell') != -1 || obj.className.indexOf('DataGrid_Body_LineNoCell') != -1)) {
+  /*if (navigator.userAgent.indexOf("NT") == -1 && (navigator.userAgent.toUpperCase().indexOf("FIREFOX/2") != -1 || navigator.userAgent.toUpperCase().indexOf("ICEWEASEL/2") != -1) && (obj.className.indexOf('Radio_Check_ContentCell') != -1 || obj.className.indexOf('DataGrid_Body_LineNoCell') != -1)) {
     //Go to the SPAN element
     for (;;) {
       obj = obj.firstChild;
@@ -173,7 +177,7 @@ function cursorFocus(evt, obj) {
       if (obj.getAttribute('onclick')) obj.onclick();
       if (obj.getAttribute('onchange')) obj.onchange();
     }
-  }
+  }*/
   if(!isClickOnGrid==true) blurGrid();
   isClickOnGrid=false;
   //setSelectedArea('window');
