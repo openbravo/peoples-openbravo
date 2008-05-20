@@ -836,8 +836,8 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
     v_ResultStr:='InsertNewTaxes';
     FOR Cur_Tax IN
       (SELECT l.C_Tax_ID, o.IsTaxIncluded,
-        SUM(l.LineNetAmt) + SUM(l.FreightAmt) + SUM(l.ChargeAmt) AS LineNet,
-        SUM(o.FreightAmt) + SUM(o.ChargeAmt) AS HeaderNet,
+        SUM(l.LineNetAmt) + SUM(l.FreightAmt) + SUM(coalesce(l.ChargeAmt,0)) AS LineNet,
+        SUM(o.FreightAmt) + SUM(coalesce(o.ChargeAmt,0)) AS HeaderNet,
         t.Rate, t.IsSummary, c.StdPrecision
       FROM C_ORDER o,  C_ORDERLINE l,
            C_TAX t, C_CURRENCY c
