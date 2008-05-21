@@ -60,7 +60,7 @@ public class ReportNotPosted extends HttpSecureAppServlet {
       data = ReportNotPostedData.set();
     } else {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportNotPosted").createXmlDocument();
-      data = ReportNotPostedData.select(this, strDateFrom,strDateTo, vars.getClient());
+      data = ReportNotPostedData.select(this, vars.getLanguage(), strDateFrom,strDateTo, vars.getClient());
     }//DateTimeData.nDaysAfter
 
 
