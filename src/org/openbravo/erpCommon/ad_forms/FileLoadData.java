@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,9 +64,8 @@ import org.openbravo.base.VariablesBase;
         }
         try
         {
-          String textAux = new String(texto.getBytes(System.getProperty("file.encoding")),"UTF-8");
-          if (log4j.isDebugEnabled()) log4j.debug("FileLoadData - setFieldProvider - text = " + textAux);
-          fileLoadData.addField(textAux);
+          if (log4j.isDebugEnabled()) log4j.debug("FileLoadData - setFieldProvider - text = " + texto);
+          fileLoadData.addField(texto);
         } catch(Exception e) {
             log4j.warn("File.load: " + e);
         }
