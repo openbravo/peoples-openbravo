@@ -2418,6 +2418,31 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800024-->              <CODE><![CDATA[M_Warehouse.AD_Client_ID = @Default_AD_Client_ID@]]></CODE>
 <!--800024**************--></AD_VAL_RULE>
 
+<!--1000100000**************--><AD_VAL_RULE>
+<!--1000100000 AD_VAL_RULE_ID-->
+<!--1000100000-->              <AD_VAL_RULE_ID><![CDATA[1000100000]]></AD_VAL_RULE_ID>
+<!--1000100000 AD_CLIENT_ID-->
+<!--1000100000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000100000 AD_ORG_ID-->
+<!--1000100000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000100000 ISACTIVE-->
+<!--1000100000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000100000 CREATED-->
+<!--1000100000-->              <CREATED><![CDATA[2008-05-21 10:09:50.0]]></CREATED>
+<!--1000100000 CREATEDBY-->
+<!--1000100000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000100000 UPDATED-->
+<!--1000100000-->              <UPDATED><![CDATA[2008-05-21 10:09:50.0]]></UPDATED>
+<!--1000100000 UPDATEDBY-->
+<!--1000100000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000100000 NAME-->
+<!--1000100000-->              <NAME><![CDATA[C_Tax - No parent tax]]></NAME>
+<!--1000100000 TYPE-->
+<!--1000100000-->              <TYPE><![CDATA[S]]></TYPE>
+<!--1000100000 CODE-->
+<!--1000100000-->              <CODE><![CDATA[C_Tax.Parent_Tax_ID IS NULL]]></CODE>
+<!--1000100000**************--></AD_VAL_RULE>
+
 <!--1000200000**************--><AD_VAL_RULE>
 <!--1000200000 AD_VAL_RULE_ID-->
 <!--1000200000-->              <AD_VAL_RULE_ID><![CDATA[1000200000]]></AD_VAL_RULE_ID>
