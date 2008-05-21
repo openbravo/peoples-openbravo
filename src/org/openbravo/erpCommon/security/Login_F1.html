@@ -60,7 +60,7 @@ function buttonOK_click() {
       limpiar();
     } catch (e) {}
     setWindowElementFocus('firstElement');
-    versionControl('4381');
+    if (!revisionControl('4429')) alert('You have an old cached images and javascript code. Please clean your browser cache and reload');
   }
 
   function onResizeDo() {
