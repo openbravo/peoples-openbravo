@@ -13,6 +13,8 @@
 package org.openbravo.authentication.basic;
 
 import java.io.IOException;
+
+import org.apache.log4j.Logger;
 import org.openbravo.authentication.AuthenticationException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,6 +35,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
   private ConnectionProvider conn = null;
   private String strServletSinIdentificar = null;
+  public Logger log4j = Logger.getLogger(DefaultAuthenticationManager.class);
 
   /** Creates a new instance of DefaultAuthenticationManager */
   public DefaultAuthenticationManager() {
@@ -99,7 +102,11 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
   }
 
   public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    request.getSession(true).removeAttribute("#Authenticated_user");
-    response.sendRedirect(HttpBaseUtils.getLocalAddress(request) + "/security/Menu.html");
+    if (request.getSession().getAttribute("#Authenticated_user") != "" || request.getSession().getAttribute("#Authenticated_user") != null) {
+      request.getSession(true).removeAttribute("#Authenticated_user");
+    }
+    if (log4j.isDebugEnabled()) log4j.debug("target is : " + target);
+    response.sendRedirect(HttpBaseUtils.getLocalAddress(request));
   }
+
 }

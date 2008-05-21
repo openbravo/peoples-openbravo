@@ -11,6 +11,7 @@
 */
 package org.openbravo.base.secureApp;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.*;
@@ -47,6 +48,7 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.PeriodicBackgroundContextListener;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.ad_background.PeriodicBackground;
@@ -85,6 +87,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
   String myTheme = "";
   public ClassInfoData classInfo;
   protected AuthenticationManager m_AuthManager = null;
+  public Logger log4j = Logger.getLogger(HttpSecureAppServlet.class);
 
   String servletClass = this.getClass().getName();
 
@@ -191,7 +194,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
           if(strRole == null)
         	  strRole = DefaultOptionsData.getDefaultRole(this, strUserAuth);
           validateDefault(strRole, strUserAuth, "Role");
-
+          
           strOrg = DefaultOptionsData.defaultOrg(this, strUserAuth);
           if(strOrg == null )
         	  strOrg = DefaultOptionsData.getDefaultOrg(this, strRole);
@@ -231,8 +234,22 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
         } else variables.updateHistory(request);
       }
       log4j.info("Call to HttpBaseServlet.service");
+    } catch (DefaultValidationException d) {
+      // Added DefaultValidationException class to catch user login without a valid role
+      if (d.getDefaultField().equals("Role")) {
+        OBError roleError = new OBError();
+        roleError.setTitle("Invalid Role");
+        roleError.setType("Error");
+        roleError.setMessage("No valid role identified. Please contact your system administrator for acccess.");
+        invalidLogin(request, response, roleError);
+      } else {
+        log4j.error(d);
+        logout(request, response);
+      }
+      return;
     } catch (Exception e) {
       // Re-login
+      if (log4j.isDebugEnabled()) log4j.debug("HTTPSecureAppServlet.service() - exception caught: " + e.getMessage());
       log4j.error(e);
       logout(request, response);
       return;
@@ -336,17 +353,46 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
    * */
   private void validateDefault(String strValue, String strKey, String strError) throws Exception {
 	  if(strValue == null || strValue.equals(""))
-		  throw new Exception("Unable to read default "+ strError +" for:" + strKey);
+		  throw new DefaultValidationException("Unable to read default "+ strError +" for:" + strKey, strError);
   }
 
   public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
+    String user = vars.getUser();
+    String dbSession = vars.getDBSession();
+    
     vars.clearSession(true);
-    if (log4j.isDebugEnabled()) log4j.debug("Cerrando session");
-    if (!vars.getDBSession().equals("")) SessionLoginData.saveProcessed(this, vars.getUser(), vars.getDBSession());
+    if (log4j.isDebugEnabled()) log4j.debug("Clearing session");
+    if (!dbSession.equals("")) SessionLoginData.saveProcessed(this, user, dbSession);
 
     m_AuthManager.logout(request, response);
+  }
+  
+  /**
+   * Logs the user out of the application, clears the session and returns the HTMLErrorLogin page with the relevant 
+   * error message passed into the method.
+   * @param request
+   * @param response
+   * @param error
+   * @throws IOException
+   * @throws ServletException
+   */
+  public void invalidLogin(HttpServletRequest request, HttpServletResponse response, OBError error) throws IOException, ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    vars.clearSession(true);
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
+
+    xmlDocument.setParameter("messageType", error.getType());
+    xmlDocument.setParameter("messageTitle", error.getTitle());
+    xmlDocument.setParameter("messageMessage", error.getMessage());
+    
+    response.setContentType("text/html");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+    
   }
 
   public void setHistoryCommand(HttpServletRequest request, String strCommand) {

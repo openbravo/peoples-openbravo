@@ -12,4 +12,7 @@
 -->
 <REPORT>
 	<template file="HtmlErrorLogin.html"/>
+	<PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
+	<PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
+	<PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
 </REPORT>

@@ -69,6 +69,12 @@ public class LoginHandler extends HttpBaseServlet{
   private void goToRetry(HttpServletResponse res) throws IOException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
 
+    //pass relevant mesasge to show inside the error page
+    xmlDocument.setParameter("messageType", "Error");
+    xmlDocument.setParameter("messageTitle", "Identification failure. Try again.");
+    xmlDocument.setParameter("messageMessage", "Please enter your username and password. " +
+    		"<br>You must also ensure that your browser accepts cookies.<br>Press back to return.");
+    
     res.setContentType("text/html");
     PrintWriter out = res.getWriter();
     out.println(xmlDocument.print());
