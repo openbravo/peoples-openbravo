@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2007 Openbravo SL 
+ * All portions are Copyright (C) 2007-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,20 +45,29 @@ td.List_Button_Separator {
 
 
 
-a.List_Button_TopLink, a.List_Button_TopLink:active, a.List_Button_TopLink:hover, a.List_Button_TopLink:visited, a.List_Button_TopLink:link {
+a.List_Button_TopLink, a.List_Button_TopLink:active, a.List_Button_TopLink:hover, a.List_Button_TopLink:visited, a.List_Button_TopLink:link, a.List_Button_TopLink:focus {
   text-decoration: none;
+  outline: none;
 }
 
-a.List_Button_TopLink_hover, a.List_Button_TopLink_hover:active, a.List_Button_TopLink_hover:hover, a.List_Button_TopLink_hover:visited, a.List_Button_TopLink_hover:link {
+a.List_Button_TopLink_hover, a.List_Button_TopLink_hover:active, a.List_Button_TopLink_hover:hover, a.List_Button_TopLink_hover:visited, a.List_Button_TopLink_hover:link, a.List_Button_TopLink_hover:focus {
   text-decoration: none;
+  outline: none;
 }
 
-a.List_Button_TopLink_active, a.List_Button_TopLink_active:active, a.List_Button_TopLink_active:hover, a.List_Button_TopLink_active:visited, a.List_Button_TopLink_active:link {
+a.List_Button_TopLink_active, a.List_Button_TopLink_active:active, a.List_Button_TopLink_active:hover, a.List_Button_TopLink_active:visited, a.List_Button_TopLink_active:link, a.List_Button_TopLink_active:focus {
   text-decoration: none;
+  outline: none;
+}
+
+a.List_Button_TopLink_focus, a.List_Button_TopLink_focus:active, a.List_Button_TopLink_focus:hover, a.List_Button_TopLink_focus:visited, a.List_Button_TopLink_focus:link, a.List_Button_TopLink_focus:focus {
+  text-decoration: none;
+  outline: none;
 }
 
 a.List_Button_TopLink .List_Button_Top, .List_Button_Top {
   border-collapse: collapse;
+  outline: none;
   CURSOR: pointer;
 }
 
@@ -99,20 +108,29 @@ a.List_Button_TopLink_focus table.List_Button_Top .List_Button_Top_bg, table.Lis
 
 
 
-a.List_Button_MiddleLink, a.List_Button_MiddleLink:active, a.List_Button_MiddleLink:hover, a.List_Button_MiddleLink:visited, a.List_Button_MiddleLink:link {
+a.List_Button_MiddleLink, a.List_Button_MiddleLink:active, a.List_Button_MiddleLink:hover, a.List_Button_MiddleLink:visited, a.List_Button_MiddleLink:link, a.List_Button_MiddleLink:focus {
   text-decoration: none;
+  outline: none;
 }
 
-a.List_Button_MiddleLink_hover, a.List_Button_MiddleLink_hover:active, a.List_Button_MiddleLink_hover:hover, a.List_Button_MiddleLink_hover:visited, a.List_Button_MiddleLink_hover:link {
+a.List_Button_MiddleLink_hover, a.List_Button_MiddleLink_hover:active, a.List_Button_MiddleLink_hover:hover, a.List_Button_MiddleLink_hover:visited, a.List_Button_MiddleLink_hover:link, a.List_Button_MiddleLink_hover:focus {
   text-decoration: none;
+  outline: none;
 }
 
-a.List_Button_MiddleLink_active, a.List_Button_MiddleLink_active:active, a.List_Button_MiddleLink_active:hover, a.List_Button_MiddleLink_active:visited, a.List_Button_MiddleLink_active:link {
+a.List_Button_MiddleLink_active, a.List_Button_MiddleLink_active:active, a.List_Button_MiddleLink_active:hover, a.List_Button_MiddleLink_active:visited, a.List_Button_MiddleLink_active:link, a.List_Button_MiddleLink_active:focus {
   text-decoration: none;
+  outline: none;
+}
+
+a.List_Button_MiddleLink_focus, a.List_Button_MiddleLink_focus:active, a.List_Button_MiddleLink_focus:hover, a.List_Button_MiddleLink_focus:visited, a.List_Button_MiddleLink_focus:link, a.List_Button_MiddleLink_focus:focus {
+  text-decoration: none;
+  outline: none;
 }
 
 a.List_Button_MiddleLink .List_Button_Middle, .List_Button_Middle {
   border-collapse: collapse;
+  outline: none;
   CURSOR: pointer;
 }
 
@@ -154,20 +172,29 @@ a.List_Button_MiddleLink_focus table.List_Button_Middle .List_Button_Middle_bg, 
 
 
 
-a.List_Button_BottomLink, a.List_Button_BottomLink:active, a.List_Button_BottomLink:hover, a.List_Button_BottomLink:visited, a.List_Button_BottomLink:link {
+a.List_Button_BottomLink, a.List_Button_BottomLink:active, a.List_Button_BottomLink:hover, a.List_Button_BottomLink:visited, a.List_Button_BottomLink:link, a.List_Button_BottomLink:focus {
   text-decoration: none;
+  outline: none;
 }
 
-a.List_Button_BottomLink_hover, a.List_Button_BottomLink_hover:active, a.List_Button_BottomLink_hover:hover, a.List_Button_BottomLink_hover:visited, a.List_Button_BottomLink_hover:link {
+a.List_Button_BottomLink_hover, a.List_Button_BottomLink_hover:active, a.List_Button_BottomLink_hover:hover, a.List_Button_BottomLink_hover:visited, a.List_Button_BottomLink_hover:link, a.List_Button_BottomLink_hover:focus {
   text-decoration: none;
+  outline: none;
 }
 
-a.List_Button_BottomLink_active, a.List_Button_BottomLink_active:active, a.List_Button_BottomLink_active:hover, a.List_Button_BottomLink_active:visited, a.List_Button_BottomLink_active:link {
+a.List_Button_BottomLink_active, a.List_Button_BottomLink_active:active, a.List_Button_BottomLink_active:hover, a.List_Button_BottomLink_active:visited, a.List_Button_BottomLink_active:link, a.List_Button_BottomLink_active:focus {
   text-decoration: none;
+  outline: none;
+}
+
+a.List_Button_BottomLink_focus, a.List_Button_BottomLink_focus:active, a.List_Button_BottomLink_focus:hover, a.List_Button_BottomLink_focus:visited, a.List_Button_BottomLink_focus:link, a.List_Button_BottomLink_focus:focus {
+  text-decoration: none;
+  outline: none;
 }
 
 a.List_Button_BottomLink .List_Button_Bottom, .List_Button_Bottom {
   border-collapse: collapse;
+  outline: none;
   CURSOR: pointer;
 }
 

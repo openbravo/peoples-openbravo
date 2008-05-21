@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2007 Openbravo SL 
+ * All portions are Copyright (C) 2007-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,18 +25,22 @@
 
 a.ButtonLink, a.ButtonLink:active, a.ButtonLink:hover, a.ButtonLink:visited, a.ButtonLink:link, a.ButtonLink:focus {
   text-decoration: none;
+  outline: none;
 }
 
 a.ButtonLink_hover, a.ButtonLink_hover:active, a.ButtonLink_hover:hover, a.ButtonLink_hover:visited, a.ButtonLink_hover:link, a.ButtonLink_hover:focus {
   text-decoration: none;
+  outline: none;
 }
 
 a.ButtonLink_active, a.ButtonLink_active:active, a.ButtonLink_active:hover, a.ButtonLink_active:visited, a.ButtonLink_active:link, a.ButtonLink_active:focus {
   text-decoration: none;
+  outline: none;
 }
 
 a.ButtonLink_focus, a.ButtonLink_focus:active, a.ButtonLink_focus:hover, a.ButtonLink_focus:visited, a.ButtonLink_focus:link, a.ButtonLink_focus:focus {
   text-decoration: none;
+  outline: none;
 }
 
 a.ButtonLink .Button, .Button {
