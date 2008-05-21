@@ -38,22 +38,30 @@
 
 
 <script language="JavaScript" type="text/javascript">
-function cargarDatos(text, position) {
+    function loadData(text, position) {
+      document.frmSelector.inpLastKeySelected.value = position;
+      document.frmSelector.inpTexto.value=text;
+      return true;
+    }
 
-	document.frmSelector.inpLastKeySelected.value = position;
-	document.frmSelector.inpTexto.value=text;
-	return true;
-}
+    var selectedRow = "";
+    function selectActual(obj) {
+      if (selectedRow != "") {
+        selectedRow.className = selectedRow.className.replace(' DataGrid_Body_Row_selected', '');
+      }
+      selectedRow = obj;
+      selectedRow.className += " DataGrid_Body_Row_selected";
+      selectedCheck = selectedRow.id.toString().replace('funcEvenOddRow', 'CheckNum');
+      document.getElementById(selectedCheck).checked = true;
+    }
 
-var selectedRadio = "";
-        function selectActual(obj) {
-          if (selectedRadio != "") {
-            changeClass("funcEvenOddRow" + selectedRadio, " Popup_Client_Selector_SelectedRow_bg", "", true);
-          }
-          selectedRadio = obj.getAttribute("pos");
-          document.getElementById("funcEvenOddRow" + selectedRadio).className += " Popup_Client_Selector_SelectedRow_bg";
-         }
-         
+    function HoverCell(cell) {
+      cell.className = cell.className + ' DataGrid_Body_Cell_hover';
+    }
+
+    function unHoverCell(cell) {
+      cell.className = cell.className.replace(' DataGrid_Body_Cell_hover', '');
+    }
 </script>
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
@@ -64,9 +72,11 @@ var selectedRadio = "";
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
+    resizeArea();
 	}
 
 	function onResizeDo(){
+    resizeArea();
 	}
 	</SCRIPT>
 </HEAD>
@@ -75,248 +85,79 @@ var selectedRadio = "";
   <input type="hidden" name="inpTexto"></input>
   <input type="hidden" name="inpLastKeySelected"></input>
 <INPUT type="hidden" name="IsPopUpCall" value="1">
-  
-  
-  <table cellspacing="0" cellpadding="0" width="100%" style="text-align:-moz-center;_text-align:center;border-collapse:collapse;">
-   <div class="Popup_ContentPane_Client" style="overflow: auto;">
-    <tr class="Popup_Client_Selector_DataGrid_HeaderRow"> 
-      <th width="3%" class="datagridLineNoHeaderCell">&nbsp;</th>
-      <th width="3%" class="datagridCell Popup_Client_Selector_HeaderRow_bg">&nbsp;</th>
-      <th width="36%"class="datagridCell Popup_Client_Selector_HeaderRow_bg">Name</th>
-      <th width="58%"class="datagridCell Popup_Client_Selector_HeaderRow_bg">URL</th>
-    </tr>
-  
-    <div id="sectionDetail"> 
-      <tr class="Popup_Client_Selector_DataGrid_Row Popup_Client_Selector_yyRow_bg" id="funcEvenOddRowxx"> 
-        <td class="datagridLineNoCell"> 
-          <input type="radio" name="inpClave" value="xx" onclick="cargarDatos('xx', 'hh'); selectActual(this); return true;" ondblclick="parent.inferior.depurarSelector('SAVE');return true;" id="fieldClave" class="CheckBox" pos="pp">
-        </td>
-        
-        <td > 
-          <img src="../../../../../web/images/xx" alt="Image" title="Image" border="0" height="20" width="24" id="fieldImageTD"/>
-        </td>
-        <td class="cell" id="fieldNombreTD">xx</td>
-        <td class="cell" id="fieldImageURLTD">xx</td>
-      </tr>
-    </div>
-    
-    
-    
-    <div class="discard"> 
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-      <tr > 
-        <td width="3%"> <input type="radio" name="radiobutton" value="radiobutton"></input>
-        </td>
-        <td width="3%" >&nbsp;</td>
-        <td width="36%" >&nbsp;</td>
-        <td width="58%" >&nbsp;</td>
-      </tr>
-    </div>
-    </div>
-    
-  </table>
-  <table cellspacing="0" cellpadding="0" width="100%" style="text-align:-moz-center;_text-align:center;border-collapse:collapse;">
+
+  <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
-      <td align=left width=50% style="padding-left: 7px;">
-        <table cellspacing="0" cellpadding="0" id="hasPrevious">
-          <tr>
-            <td class="Main_ToolBar_textlabel_bg_left">
-              <a href="#" onClick="return false;" class="Main_ToolBar_Button" onMouseOver="window.status='Reference';return true;" onMouseOut="window.status='';return true;" onclick="this.hideFocus=true" onblur="this.hideFocus=false" id="linkButtonRelatedInfo"><img class="Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Previous" src="../../../../../web/images/blank.gif" title="Reference" border="0" id="buttonRelatedInfo"></a>
-            </td>
-            <td class="Main_ToolBar_textlabel_bg_body" width=65px align="center"><a href="#" class="Main_ToolBar_text_relatedinfo">Previous</a></td>
-            <td width="1"><img src="../../../../../web/images/blank.gif" class="Main_ToolBar_textlabel_bg_right" border="0"></img></td>
-          </tr>
+      <td valign="top" class="Popup_Client_Selector_DataGrid_LeftMargin">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" id="tdleftSeparator">
+          <tr><td class="Popup_Client_Selector_DataGrid_LeftMargin"></td></tr>
         </table>
-        <span id="withoutPrevious"></span>
       </td>
-      <td align=right width=50% style="padding-right: 7px;">
-        <table cellspacing="0" cellpadding="0" id="hasNext">
-          <tr>
-            <td width="1"><img src="../../../../../web/images/blank.gif" class="Main_ToolBar_textlabel_bg_left" border="0"></img></td>
-            <td class="Main_ToolBar_textlabel_bg_body" width=65px align=center><a href="#" class="Main_ToolBar_text_relatedinfo">Next</a></td>
-            <td class="Main_ToolBar_textlabel_bg_right">
-              <a href="#" onClick="return false;" class="Main_ToolBar_Button" onMouseOver="window.status='Reference';return true;" onMouseOut="window.status='';return true;" onclick="this.hideFocus=true" onblur="this.hideFocus=false" id="linkButtonRelatedInfo"><img class="Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Next" src="../../../../../web/images/blank.gif" title="Reference" border="0" id="buttonRelatedInfo"></a>
-            </td>
-          </tr>
+      <td valign="top">
+
+        <div style="overflow: auto; display: none;" id="client">
+
+          <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
+            <tr class="DataGrid_Body_Row"> 
+              <th width="3%"  class="DataGrid_Header_LineNoCell">&nbsp;</th>
+              <th width="3%"  class="DataGrid_Header_Cell">&nbsp;</th>
+              <th width="36%" class="DataGrid_Header_Cell">Name</th>
+              <th width="58%" class="DataGrid_Header_Cell">URL</th>
+            </tr>
+
+            <div id="sectionDetail"> 
+              <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" onclick="selectActual(this); loadData('xx', 'hh'); return true;"  ondblclick="parent.inferior.depurarSelector('SAVE'); return true;" id="funcEvenOddRowxx">
+                <td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_RadioButton">
+                  <input type="radio" name="inpClave" value="xx" id="CheckNumxx" class="DataGrid_RadioButton">
+                </td>
+                <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><img src="../../../../../web/images/xx" alt="Image" title="Image" border="0" height="20" width="24" id="fieldImageTD"/></td>
+                <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldNombreTD">xx</td>
+                <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldImageURLTD">xx</td>
+              </tr>
+            </div>
+          </table>
+
+          <table cellspacing="0" cellpadding="0" width="100%" style="text-align:-moz-center;_text-align:center;border-collapse:collapse;">
+            <tr>
+              <td align=left width=50% style="padding-left: 7px;">
+                <table cellspacing="0" cellpadding="0" id="hasPrevious">
+                  <tr>
+                    <td class="Main_ToolBar_textlabel_bg_left">
+                      <a href="#" onClick="return false;" class="Main_ToolBar_Button" onMouseOver="window.status='Reference';return true;" onMouseOut="window.status='';return true;" onclick="this.hideFocus=true" onblur="this.hideFocus=false" id="linkButtonRelatedInfo"><img class="Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Previous" src="../../../../../web/images/blank.gif" title="Reference" border="0" id="buttonRelatedInfo"></a>
+                    </td>
+                    <td class="Main_ToolBar_textlabel_bg_body" width=65px align="center"><a href="#" class="Main_ToolBar_text_relatedinfo">Previous</a></td>
+                    <td width="1"><img src="../../../../../web/images/blank.gif" class="Main_ToolBar_textlabel_bg_right" border="0"></img></td>
+                  </tr>
+                </table>
+                <span id="withoutPrevious"></span>
+              </td>
+              <td align=right width=50% style="padding-right: 7px;">
+                <table cellspacing="0" cellpadding="0" id="hasNext">
+                  <tr>
+                    <td width="1"><img src="../../../../../web/images/blank.gif" class="Main_ToolBar_textlabel_bg_left" border="0"></img></td>
+                    <td class="Main_ToolBar_textlabel_bg_body" width=65px align=center><a href="#" class="Main_ToolBar_text_relatedinfo">Next</a></td>
+                    <td class="Main_ToolBar_textlabel_bg_right">
+                      <a href="#" onClick="return false;" class="Main_ToolBar_Button" onMouseOver="window.status='Reference';return true;" onMouseOut="window.status='';return true;" onclick="this.hideFocus=true" onblur="this.hideFocus=false" id="linkButtonRelatedInfo"><img class="Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Next" src="../../../../../web/images/blank.gif" title="Reference" border="0" id="buttonRelatedInfo"></a>
+                    </td>
+                  </tr>
+                </table>
+                <span id="withoutNext"></span>
+              </td>
+            </tr>
+          </table>
+
+        </div>
+
+      </td>
+
+      <td valign="top" class="Popup_Client_Selector_DataGrid_RightMargin">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" id="tdrightSeparator">
+          <tr><td class="Popup_Client_Selector_DataGrid_RightMargin"></td></tr>
         </table>
-        <span id="withoutNext"></span>
       </td>
     </tr>
   </table>
+
 </form>
 </body>
 </html>

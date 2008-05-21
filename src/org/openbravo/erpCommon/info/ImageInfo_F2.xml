@@ -26,13 +26,14 @@
 	<structure name="structure1">
 		<FIELD id="fieldRownum">position</FIELD>
     <FUNCTION id="funcEvenOddRowxx" name="MODULE" arg1="fieldRownum" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
-  
+    <FIELD id="CheckNumxx" attribute="id" replace="xx">position</FIELD>
+    <FIELD id="CheckNumxx" attribute="value">adImageId</FIELD>
     <FIELD id="funcEvenOddRowxx" attribute="id" replace="xx">position</FIELD>
     <FIELD id="fieldClave" attribute="pos" replace="pp">position</FIELD>  
     
 		<FIELD id="fieldClave" attribute="value">adImageId</FIELD>
-		<FIELD id="fieldClave" attribute="onclick" replace="xx" replaceCharacters="htmlJavaScript">imageurlSrc</FIELD>
-		<FIELD id="fieldClave" attribute="onclick" replace="hh" replaceCharacters="htmlJavaScript">position</FIELD>
+    <FIELD id="funcEvenOddRowxx" attribute="onclick" replace="xx" replaceCharacters="htmlJavaScript">imageurlSrc</FIELD>
+    <FIELD id="funcEvenOddRowxx" attribute="onclick" replace="hh" replaceCharacters="htmlJavaScript">position</FIELD>
 		<FIELD id="fieldNombreTD">name</FIELD>
 		<FIELD id="fieldImageTD" attribute="src" replace="xx">imageurlSrc</FIELD>
 		<FIELD id="fieldImageURLTD">imageurl</FIELD>
