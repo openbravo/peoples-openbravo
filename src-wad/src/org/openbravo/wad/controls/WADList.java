@@ -33,7 +33,6 @@ public class WADList extends WADControl {
   }
 
   public void initialize() {
-    addImport("String", "../../../../../web/js/String.js");
     generateJSCode();
   }
 

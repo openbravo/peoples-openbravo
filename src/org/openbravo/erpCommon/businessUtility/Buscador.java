@@ -548,7 +548,6 @@ public class Buscador extends HttpSecureAppServlet {
       scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/searchs.js\" type=\"text/javascript\"></SCRIPT>");
     }
     if (scriptSelect) {
-      scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/String.js\" type=\"text/javascript\"></SCRIPT>");
     }
     vecScript.addElement(scrScr);
     return strHtml.toString();
