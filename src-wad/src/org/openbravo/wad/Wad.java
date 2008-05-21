@@ -2881,6 +2881,8 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("tabId", strTab);
     xmlDocument.setParameter("tableId", strTable);
     
+    if (parentsFieldsData!= null && parentsFieldsData.length>0) xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
+    
     Vector<Object> vecDisplayLogic = new Vector<Object>();
     EditionFieldsData efdDl[] = EditionFieldsData.selectDisplayLogic(pool, strTab);
     if (efdDl!=null) {
