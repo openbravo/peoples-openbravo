@@ -68,8 +68,8 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       vars.setSessionValue("AttributeSetInstance.productInstance", strProductInstance);
       vars.setSessionValue("AttributeSetInstance.close", "N");
       if (strAttributeSet.equals("") || strAttributeSet.equals("0")) advisePopUp(response, "Info", Utility.messageBD(this, "PAttributeNoSelection", vars.getLanguage()));
-      else printPageFS(response, vars);
-    } else if (vars.commandIn("FRAME1")) {
+      else response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DISPLAY");
+    } else if (vars.commandIn("DISPLAY")) {
       String strNameValue = vars.getGlobalVariable("inpInstance", "AttributeSetInstance.instance", "");
       String strAttributeSet = vars.getGlobalVariable("inpAttribute", "AttributeSetInstance.attribute");
       String strProductInstance = vars.getGlobalVariable("inpProductInstance", "AttributeSetInstance.productInstance", "");
@@ -79,10 +79,8 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strProduct = vars.getGlobalVariable("inpProduct", "AttributeSetInstance.product", "");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       if (log4j.isDebugEnabled()) log4j.debug("strNameValue: " + strNameValue);
-      if (!strAttributeSet.equals("")) printPageFrame1(response, vars, strNameValue, strAttributeSet, strProductInstance, strWindowId, strTabId, strLocator, strIsSOTrx, strProduct);
+      if (!strAttributeSet.equals("")) printPage(response, vars, strNameValue, strAttributeSet, strProductInstance, strWindowId, strTabId, strLocator, strIsSOTrx, strProduct);
       else advisePopUp(response, "Info", Utility.messageBD(this, "PAttributeNoSelection", vars.getLanguage()));
-    } else if (vars.commandIn("FRAME2")) {
-      printPageFrame2(response, vars);
     } else if (vars.commandIn("SAVE")) {
       String strAttributeSet = vars.getRequiredStringParameter("inpAttribute");
       String strInstance = vars.getStringParameter("inpInstance");
@@ -95,7 +93,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       vars.setSessionValue("AttributeSetInstance.close", "Y");
       vars.setMessage(strTabId,myMessage);
       //vars.setSessionValue("AttributeSetInstance.message", strMessage);      
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME1");
+      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DISPLAY");
     } else pageErrorPopUp(response);
   }
 
@@ -242,19 +240,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     return myMessage;
   }
 
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame Set del buscador de atributos");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/AttributeSetInstance_FS").createXmlDocument();
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strInstance, String strAttributeSet, String strProductInstance, String strWindowId, String strTabId, String strLocator, String strIsSOTrx, String strProduct) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strInstance, String strAttributeSet, String strProductInstance, String strWindowId, String strTabId, String strLocator, String strIsSOTrx, String strProduct) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the attributes seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/AttributeSetInstance_F1").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/AttributeSetInstance").createXmlDocument();
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
@@ -479,18 +467,6 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
   String replace(String strIni) {
     //delete characters: " ","&",","
     return Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace.replace(Replace.replace(strIni, "#", "")," ",""),"&",""),",",""),"(",""),")","");
-  }
-
-  void printPageFrame2(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 3 of the attributes seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/AttributeSetInstance_F2").createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 
   public String getServletInfo() {

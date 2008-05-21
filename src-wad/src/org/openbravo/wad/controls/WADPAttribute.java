@@ -59,7 +59,7 @@ public class WADPAttribute extends WADSearch {
     if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y")) {
       StringBuffer commandScript = new StringBuffer();
       StringBuffer text = new StringBuffer();
-      commandScript.append("openPAttribute(null, null, '../info/AttributeSetInstance_FS.html', ");
+      commandScript.append("openPAttribute(null, null, '../info/AttributeSetInstance.html', ");
       commandScript.append("null, true, 'frmMain', 'inp").append(getData("ColumnNameInp")).append("', ");
       commandScript.append("'inp").append(getData("ColumnNameInp")).append("_R', ");
       commandScript.append("inputValue(document.frmMain.inp").append(getData("ColumnNameInp")).append("_R), ");

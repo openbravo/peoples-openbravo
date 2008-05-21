@@ -3694,66 +3694,16 @@
 <!--801044 CREATEDBY-->
 <!--801044-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--801044 UPDATED-->
-<!--801044-->              <UPDATED><![CDATA[2006-05-22 17:34:27.0]]></UPDATED>
+<!--801044-->              <UPDATED><![CDATA[2008-05-21 17:34:27.0]]></UPDATED>
 <!--801044 UPDATEDBY-->
 <!--801044-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801044 AD_MODEL_OBJECT_ID-->
 <!--801044-->              <AD_MODEL_OBJECT_ID><![CDATA[800785]]></AD_MODEL_OBJECT_ID>
 <!--801044 MAPPINGNAME-->
-<!--801044-->              <MAPPINGNAME><![CDATA[/info/AttributeSetInstance_FS.html]]></MAPPINGNAME>
+<!--801044-->              <MAPPINGNAME><![CDATA[/info/AttributeSetInstance.html]]></MAPPINGNAME>
 <!--801044 ISDEFAULT-->
 <!--801044-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--801044**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801045**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801045 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801045-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801045]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801045 AD_CLIENT_ID-->
-<!--801045-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801045 AD_ORG_ID-->
-<!--801045-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801045 ISACTIVE-->
-<!--801045-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801045 CREATED-->
-<!--801045-->              <CREATED><![CDATA[2006-05-22 17:34:29.0]]></CREATED>
-<!--801045 CREATEDBY-->
-<!--801045-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801045 UPDATED-->
-<!--801045-->              <UPDATED><![CDATA[2006-05-22 17:34:29.0]]></UPDATED>
-<!--801045 UPDATEDBY-->
-<!--801045-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801045 AD_MODEL_OBJECT_ID-->
-<!--801045-->              <AD_MODEL_OBJECT_ID><![CDATA[800785]]></AD_MODEL_OBJECT_ID>
-<!--801045 MAPPINGNAME-->
-<!--801045-->              <MAPPINGNAME><![CDATA[/info/AttributeSetInstance_F1.html]]></MAPPINGNAME>
-<!--801045 ISDEFAULT-->
-<!--801045-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801045**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801046**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801046 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801046-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801046]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801046 AD_CLIENT_ID-->
-<!--801046-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801046 AD_ORG_ID-->
-<!--801046-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801046 ISACTIVE-->
-<!--801046-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801046 CREATED-->
-<!--801046-->              <CREATED><![CDATA[2006-05-22 17:34:32.0]]></CREATED>
-<!--801046 CREATEDBY-->
-<!--801046-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801046 UPDATED-->
-<!--801046-->              <UPDATED><![CDATA[2006-05-22 17:34:32.0]]></UPDATED>
-<!--801046 UPDATEDBY-->
-<!--801046-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801046 AD_MODEL_OBJECT_ID-->
-<!--801046-->              <AD_MODEL_OBJECT_ID><![CDATA[800785]]></AD_MODEL_OBJECT_ID>
-<!--801046 MAPPINGNAME-->
-<!--801046-->              <MAPPINGNAME><![CDATA[/info/AttributeSetInstance_F2.html]]></MAPPINGNAME>
-<!--801046 ISDEFAULT-->
-<!--801046-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801046**************--></AD_MODEL_OBJECT_MAPPING>
 
 <!--801047**************--><AD_MODEL_OBJECT_MAPPING>
 <!--801047 AD_MODEL_OBJECT_MAPPING_ID-->

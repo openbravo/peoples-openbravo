@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 <REPORT>
-	<template file="AttributeSetInstance_F1.html"/>
+	<template file="AttributeSetInstance.html"/>
 	<PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
 	<PARAMETER id="paramDirection" name="direction" default=""/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
