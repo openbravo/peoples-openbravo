@@ -156,17 +156,7 @@
       v_count:=v_count + 1;
       -- Added by Pablo Sarobe
       v_LastColumnName:=Cur_Column.Columnname;
-      IF(p_PInstance_ID IS NOT NULL) THEN
-        INSERT
-        INTO AD_PInstance_Log
-          (
-            AD_PInstance_ID, Log_ID, P_Msg
-          )
-          VALUES
-          (p_PInstance_ID, v_PInstance_Log_ID, '@Created@ @AD_Field_ID@ ' || Cur_Column.Name) ;
-      ELSE
-        DBMS_OUTPUT.PUT_LINE(' adding ' || Cur_Column.Name) ;
-      END IF;
+
     END LOOP; --  for all columns
     -- Summary info
     v_Message:='@Created@ = ' || v_count;
