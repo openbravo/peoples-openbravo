@@ -3459,7 +3459,6 @@ function changeAuditIcon(newStatus) {
       var status = obj.getElementsByTagName('status');
       if (status.length>0) {
         object.title = status[0].getElementsByTagName('title')[0].firstChild.nodeValue;
-        alert(object.title);
       }
     }
    }
