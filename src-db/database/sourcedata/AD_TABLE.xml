@@ -10264,9 +10264,9 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--532 CREATEDBY-->
 <!--532-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--532 UPDATED-->
-<!--532-->              <UPDATED><![CDATA[2003-01-11 16:32:39.0]]></UPDATED>
+<!--532-->              <UPDATED><![CDATA[2008-05-21 14:10:56.0]]></UPDATED>
 <!--532 UPDATEDBY-->
-<!--532-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--532-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--532 NAME-->
 <!--532-->              <NAME><![CDATA[I_Product]]></NAME>
 <!--532 DESCRIPTION-->
@@ -10278,7 +10278,7 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--532 ISVIEW-->
 <!--532-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--532 ACCESSLEVEL-->
-<!--532-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--532-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--532 AD_WINDOW_ID-->
 <!--532-->              <AD_WINDOW_ID><![CDATA[247]]></AD_WINDOW_ID>
 <!--532 ISSECURITYENABLED-->
@@ -10311,7 +10311,7 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--533 CREATEDBY-->
 <!--533-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--533 UPDATED-->
-<!--533-->              <UPDATED><![CDATA[2007-05-10 19:33:47.0]]></UPDATED>
+<!--533-->              <UPDATED><![CDATA[2008-05-21 14:10:16.0]]></UPDATED>
 <!--533 UPDATEDBY-->
 <!--533-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--533 NAME-->
@@ -10323,7 +10323,7 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--533 ISVIEW-->
 <!--533-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--533 ACCESSLEVEL-->
-<!--533-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--533-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--533 AD_WINDOW_ID-->
 <!--533-->              <AD_WINDOW_ID><![CDATA[172]]></AD_WINDOW_ID>
 <!--533 ISSECURITYENABLED-->
@@ -10356,9 +10356,9 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--534 CREATEDBY-->
 <!--534-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--534 UPDATED-->
-<!--534-->              <UPDATED><![CDATA[2003-01-11 16:31:37.0]]></UPDATED>
+<!--534-->              <UPDATED><![CDATA[2008-05-21 14:10:37.0]]></UPDATED>
 <!--534 UPDATEDBY-->
-<!--534-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--534-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--534 NAME-->
 <!--534-->              <NAME><![CDATA[I_ElementValue]]></NAME>
 <!--534 DESCRIPTION-->
@@ -10370,7 +10370,7 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--534 ISVIEW-->
 <!--534-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--534 ACCESSLEVEL-->
-<!--534-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--534-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--534 AD_WINDOW_ID-->
 <!--534-->              <AD_WINDOW_ID><![CDATA[248]]></AD_WINDOW_ID>
 <!--534 ISSECURITYENABLED-->
@@ -11270,9 +11270,9 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--572 CREATEDBY-->
 <!--572-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--572 UPDATED-->
-<!--572-->              <UPDATED><![CDATA[2003-06-07 21:06:42.0]]></UPDATED>
+<!--572-->              <UPDATED><![CDATA[2008-05-21 14:10:45.0]]></UPDATED>
 <!--572 UPDATEDBY-->
-<!--572-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--572-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--572 NAME-->
 <!--572-->              <NAME><![CDATA[I_Inventory]]></NAME>
 <!--572 DESCRIPTION-->
@@ -11284,7 +11284,7 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--572 ISVIEW-->
 <!--572-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--572 ACCESSLEVEL-->
-<!--572-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--572-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--572 AD_WINDOW_ID-->
 <!--572-->              <AD_WINDOW_ID><![CDATA[267]]></AD_WINDOW_ID>
 <!--572 ISSECURITYENABLED-->
@@ -11781,9 +11781,9 @@ Log of data changes]]></HELP>
 <!--591 CREATEDBY-->
 <!--591-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--591 UPDATED-->
-<!--591-->              <UPDATED><![CDATA[2003-06-07 21:31:12.0]]></UPDATED>
+<!--591-->              <UPDATED><![CDATA[2008-05-21 14:10:53.0]]></UPDATED>
 <!--591 UPDATEDBY-->
-<!--591-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--591-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--591 NAME-->
 <!--591-->              <NAME><![CDATA[I_Order]]></NAME>
 <!--591 DESCRIPTION-->
@@ -11795,7 +11795,7 @@ Log of data changes]]></HELP>
 <!--591 ISVIEW-->
 <!--591-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--591 ACCESSLEVEL-->
-<!--591-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--591-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--591 AD_WINDOW_ID-->
 <!--591-->              <AD_WINDOW_ID><![CDATA[281]]></AD_WINDOW_ID>
 <!--591 ISSECURITYENABLED-->
@@ -12063,9 +12063,9 @@ Log of data changes]]></HELP>
 <!--598 CREATEDBY-->
 <!--598-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--598 UPDATED-->
-<!--598-->              <UPDATED><![CDATA[2003-06-07 21:08:38.0]]></UPDATED>
+<!--598-->              <UPDATED><![CDATA[2008-05-21 14:10:49.0]]></UPDATED>
 <!--598 UPDATEDBY-->
-<!--598-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--598-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--598 NAME-->
 <!--598-->              <NAME><![CDATA[I_Invoice]]></NAME>
 <!--598 DESCRIPTION-->
@@ -12077,7 +12077,7 @@ Log of data changes]]></HELP>
 <!--598 ISVIEW-->
 <!--598-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--598 ACCESSLEVEL-->
-<!--598-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--598-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--598 AD_WINDOW_ID-->
 <!--598-->              <AD_WINDOW_ID><![CDATA[279]]></AD_WINDOW_ID>
 <!--598 ISSECURITYENABLED-->
@@ -12110,9 +12110,9 @@ Log of data changes]]></HELP>
 <!--599 CREATEDBY-->
 <!--599-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--599 UPDATED-->
-<!--599-->              <UPDATED><![CDATA[2003-06-07 20:53:01.0]]></UPDATED>
+<!--599-->              <UPDATED><![CDATA[2008-05-21 14:10:41.0]]></UPDATED>
 <!--599 UPDATEDBY-->
-<!--599-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--599-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--599 NAME-->
 <!--599-->              <NAME><![CDATA[I_GLJournal]]></NAME>
 <!--599 DESCRIPTION-->
@@ -12124,7 +12124,7 @@ Log of data changes]]></HELP>
 <!--599 ISVIEW-->
 <!--599-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--599 ACCESSLEVEL-->
-<!--599-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--599-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--599 AD_WINDOW_ID-->
 <!--599-->              <AD_WINDOW_ID><![CDATA[278]]></AD_WINDOW_ID>
 <!--599 ISSECURITYENABLED-->
@@ -12157,7 +12157,7 @@ Log of data changes]]></HELP>
 <!--600 CREATEDBY-->
 <!--600-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--600 UPDATED-->
-<!--600-->              <UPDATED><![CDATA[2007-05-14 12:34:51.0]]></UPDATED>
+<!--600-->              <UPDATED><![CDATA[2008-05-21 14:10:12.0]]></UPDATED>
 <!--600 UPDATEDBY-->
 <!--600-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--600 NAME-->
@@ -12169,7 +12169,7 @@ Log of data changes]]></HELP>
 <!--600 ISVIEW-->
 <!--600-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--600 ACCESSLEVEL-->
-<!--600-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--600-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--600 AD_WINDOW_ID-->
 <!--600-->              <AD_WINDOW_ID><![CDATA[277]]></AD_WINDOW_ID>
 <!--600 ISSECURITYENABLED-->
@@ -18010,7 +18010,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800175 CREATEDBY-->
 <!--800175-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800175 UPDATED-->
-<!--800175-->              <UPDATED><![CDATA[2007-05-10 19:35:41.0]]></UPDATED>
+<!--800175-->              <UPDATED><![CDATA[2008-05-21 14:10:21.0]]></UPDATED>
 <!--800175 UPDATEDBY-->
 <!--800175-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800175 NAME-->
@@ -18022,7 +18022,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800175 ISVIEW-->
 <!--800175-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800175 ACCESSLEVEL-->
-<!--800175-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--800175-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--800175 AD_WINDOW_ID-->
 <!--800175-->              <AD_WINDOW_ID><![CDATA[800079]]></AD_WINDOW_ID>
 <!--800175 ISSECURITYENABLED-->
@@ -20047,7 +20047,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800222 CREATEDBY-->
 <!--800222-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800222 UPDATED-->
-<!--800222-->              <UPDATED><![CDATA[2007-02-20 17:24:22.0]]></UPDATED>
+<!--800222-->              <UPDATED><![CDATA[2008-05-21 14:11:00.0]]></UPDATED>
 <!--800222 UPDATEDBY-->
 <!--800222-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800222 NAME-->
@@ -20057,7 +20057,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800222 ISVIEW-->
 <!--800222-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800222 ACCESSLEVEL-->
-<!--800222-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--800222-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--800222 AD_WINDOW_ID-->
 <!--800222-->              <AD_WINDOW_ID><![CDATA[800098]]></AD_WINDOW_ID>
 <!--800222 ISSECURITYENABLED-->
