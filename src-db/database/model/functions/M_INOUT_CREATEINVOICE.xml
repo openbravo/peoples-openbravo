@@ -126,6 +126,7 @@
           -- Shipment must be complete
         ELSIF(CUR_Shipment.DocStatus NOT IN('CO', 'CL')) THEN
           v_Message:='@ShipmentCreateDocNotCompleted@';
+          RAISE_APPLICATION_ERROR(-20000, v_Message);
           -- Create Invoice from Shipment
         ELSE
           v_ResultStr:='GetBPartnerInfo'; -- P=OnCredit
