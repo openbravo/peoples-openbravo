@@ -94,8 +94,19 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     if (log4j.isDebugEnabled()) log4j.debug("strAll:"+strAll+" - strLevel:"+strLevel+" - strOnly:"+strOnly);
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    String discard[]={"sectionDiscard","sectionBP"};
+    PrintWriter out = response.getWriter();    
+    String discard[] = new String[3];
+    if(strLevel.equalsIgnoreCase("C")) {
+      discard[0] = "sectionDiscard";
+      discard[1] = "sectionBP";
+      discard[2] = "fieldId";
+    }
+    else {
+      discard[0] = "sectionDiscard";
+      discard[1] = "sectionBP";
+      discard[2] = "fieldSpanAccount";
+    }
+      
     XmlDocument xmlDocument=null;
     String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
