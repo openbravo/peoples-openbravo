@@ -161,7 +161,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="VENDORPRODUCTNO" primaryKey="false" required="false" type="NVARCHAR" size="30" autoIncrement="false">
+      <column name="VENDORPRODUCTNO" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
