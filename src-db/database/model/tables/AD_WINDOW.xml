@@ -78,6 +78,9 @@
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="AD_WINDOW_NAME_CHECK"><![CDATA[
+INSTR(NAME,'_')=0
+]]></check>
       <check name="ADWINDOW_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="ADWINDOW_ISSOTRX_CHECK"><![CDATA[ISSOTRX IN ('Y', 'N')]]></check>
     </table>
