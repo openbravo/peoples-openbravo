@@ -42,19 +42,30 @@
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
       <script type="text/javascript">
-      var selectedRadio = "";
+        var selectedRow = "";
         function selectActual(obj) {
-          if (selectedRadio != "") {
-            changeClass("funcEvenOddRow" + selectedRadio, " Popup_Client_Selector_SelectedRow_bg", "", true);
+          if (selectedRow != "") {
+            selectedRow.className = selectedRow.className.replace(' DataGrid_Body_Row_selected', '');
           }
-          selectedRadio = obj.getAttribute("pos");
-          document.getElementById("funcEvenOddRow" + selectedRadio).className += " Popup_Client_Selector_SelectedRow_bg";
-         }
+          selectedRow = obj;
+          selectedRow.className += " DataGrid_Body_Row_selected";
+          selectedCheck = selectedRow.id.toString().replace('funcEvenOddRow', 'CheckNum');
+          document.getElementById(selectedCheck).checked = true;
+          setWindowElementFocus(document.getElementById(selectedCheck));
+        }
+
+        function HoverCell(cell) {
+          cell.className = cell.className + ' DataGrid_Body_Cell_hover';
+        }
+
+        function unHoverCell(cell) {
+          cell.className = cell.className.replace(' DataGrid_Body_Cell_hover', '');
+        }
          </script>
   	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client')
+		  new windowTableId('client', null, 'buttonAdd')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -220,32 +231,30 @@
             <td>
             <td/>
           </tr>
+          <tr><td height="20px"></td></tr>
           <tr id="widthData">
             <td colspan="4">
-              <table class="Border" border="1" cellspacing="0" cellpadding="0" width="100%"> <!--style="text-align:-moz-center;_text-align:center;"-->
-                <div class="Popup_ContentPane_Client" style="overflow: auto;">
-                  <TR class="Popup_Client_Selector_DataGrid_HeaderRow"> 
-                  
-                    <TH width="3%"  class="datagridLineNoHeaderCell">&nbsp;</TH>
-                    <TH width="33%" class="datagridCell Popup_Client_Selector_HeaderRow_bg">File name</TH>
-                    <TH width="52%" class="datagridCell Popup_Client_Selector_HeaderRow_bg">Text</TH>
-                    <TH width="12%" class="datagridCell Popup_Client_Selector_HeaderRow_bg">type</TH>
-                  </TR>
-                  
-                  
-                  
-                  <DIV id="sectionDetail"> 
-                    <TR class="Popup_Client_Selector_DataGrid_Row Popup_Client_Selector_yyRow_bg" id="funcEvenOddRowxx">
-                      <TD class="datagridLineNoCell"> 
-                        <SPAN class="Radio_container_NOT_Focused"><INPUT type="radio" name="inpcFileId" onclick="selectActual(this); return true;"value="xx" id="fieldC_File_ID" class="CheckBox" pos="pp"></INPUT></SPAN>
-                      </TD>
-                      <TD id="fieldName">xx</TD>
-                      <TD id="fieldText">xx</TD>
-                      <TD id="fieldDataType">xx</TD>
-                    </TR>
-                  </DIV>
+
+              <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
+                <tr class="DataGrid_Body_Row"> 
+                  <th width="3%"  class="DataGrid_Header_LineNoCell">&nbsp;</th>
+                  <th width="3%"  class="DataGrid_Header_Cell">File name</th>
+                  <th width="36%" class="DataGrid_Header_Cell">Text</th>
+                  <th width="58%" class="DataGrid_Header_Cell">type</th>
+                </tr>
+
+                <div id="sectionDetail"> 
+                  <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" onclick="selectActual(this); return true;" id="funcEvenOddRowxx">
+                    <td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_RadioButton">
+                      <input type="radio" name="inpcFileId" value="xx" id="CheckNumxx" class="DataGrid_RadioButton" pos="pp">
+                    </td>
+                    <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldName">xx</td>
+                    <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldText">xx</td>
+                    <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldDataType">xx</td>
+                  </tr>
                 </div>
               </table>
+
              </td>
           </tr>
           <tr><td height="20px"></td></tr>
@@ -253,7 +262,7 @@
           <tr>
             <td class="Button_RightAlign_ContentCell">
               <div id="editable">
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Add'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('NEW', false, null, 'TabAttachments_F1.html', '_self');return false;">
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Add'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('NEW', false, null, 'TabAttachments_F1.html', '_self');return false;" id="buttonAdd">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Add';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
                       <td class="Button_left"></td>

@@ -37,11 +37,10 @@
 	<structure name="structure1">
     <FIELD id="fieldRownum">position</FIELD>
     <FUNCTION id="funcEvenOddRowxx" name="MODULE" arg1="fieldRownum" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
-  
     <FIELD id="funcEvenOddRowxx" attribute="id" replace="xx">position</FIELD>
-    <FIELD id="fieldC_File_ID" attribute="pos" replace="pp">position</FIELD>
-  
-		<FIELD id="fieldC_File_ID" attribute="value">cFileId</FIELD>
+    <FIELD id="CheckNumxx" attribute="value">cFileId</FIELD>
+    <FIELD id="CheckNumxx" attribute="pos" replace="pp">position</FIELD>
+    <FIELD id="CheckNumxx" attribute="id" replace="xx">position</FIELD>
 		<FIELD id="fieldText">text</FIELD>
 		<FIELD id="fieldName">name</FIELD>
 		<FIELD id="fieldDataType">datatype</FIELD>
