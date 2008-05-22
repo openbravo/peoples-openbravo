@@ -54,15 +54,12 @@
 function depurar()
 {
 	var frm = document.frmMain;
-	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
-		frm.inpDateFrom.focus();
-		mensaje(7);
-		return false;
-	} else if (frm.inpDateTo.value == null || frm.inpDateTo.value == ""){
-		frm.inpDateTo.focus();
-		mensaje(7);
-		return false;
-	}
+	if (inputValue(document.frmMain.inpOrg) == null || inputValue(document.frmMain.inpOrg) == "") {
+      document.frmMain.inpOrg.focus();
+      mensaje(7);
+      return false;
+    }
+
 	return true;
 }
 function onloadFunctions() {
@@ -238,7 +235,7 @@ function onloadFunctions() {
                 </td>
                 </TR>
                 <TR>
-                  <TD class="TitleCell"><SPAN class="LabelText">From Date</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">From Project Contract Date</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
@@ -246,7 +243,53 @@ function onloadFunctions() {
                           <INPUT dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFrom");</script>
                         </TD>
                         <TD class="FieldButton_bg">
-                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.paramDateFrom', document.frmMain.paramDateFrom.value, false);return false;" >
+                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.paramDateFrom', document.frmMain.paramDateFrom.value, false);return false;" >
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <TR>
+                              <TD class="FieldButton_bg">
+                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+                              </TD>
+                            </TR>
+                          </TABLE>
+                          </a>
+                        </TD>
+                      </TR>
+                    </TABLE>
+                 </TD>
+                  <TD class="TitleCell"></TD>
+                  <TD class="TitleCell"> <SPAN class="LabelText">To Project Contract Date</SPAN></TD>
+                  <TD class="TextBox_btn_ContentCell">
+                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <TR>
+                        <TD class="TextBox_ContentCell">
+                          <INPUT dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateTo");</script>
+                        </TD>
+                        <TD class="FieldButton_bg">
+                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" >
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <TR>
+                              <TD class="FieldButton_bg">
+                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+                              </TD>
+                            </TR>
+                          </TABLE>
+                          </a>
+                        </TD>
+                      </TR>
+                    </TABLE>
+                  </TD>
+                  <TD class="ContentCell"> </TD>
+                </TR>
+                <TR>
+                  <TD class="TitleCell"><SPAN class="LabelText">From Date</SPAN></TD>
+                  <TD class="TextBox_btn_ContentCell">
+                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <TR>
+                        <TD class="TextBox_ContentCell">
+                          <INPUT dojoType="openbravo:DateTextbox" lowerThan="paramDateTo2" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom2" id="paramDateFrom2" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFrom2");</script>
+                        </TD>
+                        <TD class="FieldButton_bg">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.paramDateFrom2', document.frmMain.paramDateFrom2.value, false);return false;" >
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <TR>
                               <TD class="FieldButton_bg">
@@ -265,10 +308,10 @@ function onloadFunctions() {
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
                         <TD class="TextBox_ContentCell">
-                          <INPUT dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateTo");</script>
+                          <INPUT dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom2" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo2" id="paramDateTo2" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateTo2");</script>
                         </TD>
                         <TD class="FieldButton_bg">
-                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" >
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateTo2', document.frmMain.inpDateTo2.value, false);return false;" >
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                             <TR>
                               <TD class="FieldButton_bg">
@@ -331,7 +374,7 @@ function onloadFunctions() {
                 </TR>
                   <TR>
                   <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>
-                  <TD class="Combo_ContentCell" colspan="2"> <SELECT  name="inpOrg" id="inpOrg" class="Combo Combo_TwoCells_width">
+                  <TD class="Combo_ContentCell" colspan="2"><SELECT name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width" required="true">
                       <OPTION value=""> <DIV id="reportAD_Org_ID"></DIV></OPTION>
                     </SELECT></TD>
                   <TD class="TitleCell"><SPAN class="LabelText">Project Type</SPAN></TD>
@@ -340,7 +383,7 @@ function onloadFunctions() {
                     </SELECT></TD>
                 </TR>
               <tr>
-                  <TD class="TitleCell"><SPAN class="LabelText">Responsible</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Person in Charge</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT  name="inpResponsible" id="inpResponsible" class="Combo Combo_TwoCells_width">
                       <OPTION value=""> <DIV id="reportResponsible"></DIV></OPTION>
                     </SELECT></TD>
@@ -369,7 +412,7 @@ function onloadFunctions() {
                     <TD class="TitleCell"></TD>
                     <TD class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('FIND', false, 'ReportProjectProfitabilityJR.html', 'ReportProjectProfitabilityJR', null, false, '700', '1000', true);return false;" id="buttonHTML">
+                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('FIND', true, 'ReportProjectProfitabilityJR.html', 'ReportProjectProfitabilityJR', null, false, '700', '1000', true);return false;" id="buttonHTML">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                           <tr>
                             <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -380,7 +423,7 @@ function onloadFunctions() {
                         </a>
                       </div>
                     </TD>
-                    <TD class="ContentCell"></INPUT>
+                    <TD class="ContentCell">
                     </TD>
                     <TD class="TitleCell"></TD>
                     <TD class="ContentCell"></TD>

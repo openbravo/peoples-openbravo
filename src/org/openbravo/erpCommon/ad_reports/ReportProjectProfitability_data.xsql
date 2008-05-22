@@ -40,7 +40,8 @@
            FROM S_TimeExpenseLine , S_TimeExpense, C_BPartner
            WHERE S_TimeExpense.S_TimeExpense_ID = S_TimeExpenseLine.S_TimeExpense_ID
            AND S_TimeExpense.C_BPartner_ID = C_BPartner.C_BPartner_ID
-           AND S_TimeExpense.Processed = 'Y'             
+           AND S_TimeExpense.Processed = 'Y'
+           AND 1=1            
            GROUP BY S_TimeExpenseLine.C_Project_ID) cost ON p.C_Project_ID = cost.C_Project_ID
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
@@ -52,6 +53,7 @@
              AND il.M_Product_ID = p.M_Product_ID
              AND i.issotrx = 'Y'
              AND i.docStatus IN ('CO', 'CL')
+	         AND 2=2
              AND p.producttype = 'S') AAA
            GROUP BY c_Project) serrev ON p.C_Project_ID = serrev.C_Project
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
@@ -64,6 +66,7 @@
              AND il.M_Product_ID = p.M_Product_ID
              AND i.issotrx = 'Y'
              AND i.docStatus IN ('CO', 'CL')
+	         AND 3=3
              AND p.producttype <> 'S') BBB
            GROUP BY c_Project) exprei ON p.C_Project_ID = exprei.C_Project
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
@@ -75,7 +78,8 @@
            WHERE i.C_Invoice_ID = il.C_Invoice_ID
            AND il.M_Product_ID = p.M_Product_ID
            AND i.docStatus IN ('CO', 'CL')
-             AND i.issotrx = 'N') CCC
+	   	   AND 4=4
+           AND i.issotrx = 'N') CCC
            GROUP BY c_Project) expexp ON p.C_Project_ID = expexp.C_Project
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
@@ -86,24 +90,35 @@
            WHERE i.C_Invoice_ID = il.C_Invoice_ID
            AND il.M_Product_ID = p.M_Product_ID
            AND i.docStatus IN ('CO', 'CL')
+	   	   AND 5=5
              AND i.issotrx = 'Y') DDD
            GROUP BY c_Project) collected ON p.C_Project_ID = collected.C_Project
         WHERE p.C_BPartner_ID = bpclient.C_BPartner_ID
           AND p.AD_Org_ID = org.AD_Org_ID
           AND p.AD_Org_ID IN ('1')
           AND p.AD_Client_ID IN ('1')
-          AND 1=1
+          AND 6=6
         ORDER BY orgname, partner, initdate
       ]]>
     </Sql>
+    <Parameter name="datefrom2" optional="true" after="AND 1=1"><![CDATA[ AND s_timeexpense.DATEREPORT >= to_date(?) ]]></Parameter>
+    <Parameter name="dateto2" optional="true" after="AND 1=1"><![CDATA[ AND s_timeexpense.DATEREPORT  <= to_date(?) ]]></Parameter>
+    <Parameter name="datefrom2" optional="true" after="AND 2=2"><![CDATA[ AND i.dateinvoiced >= to_date(?) ]]></Parameter>
+    <Parameter name="dateto2" optional="true" after="AND 2=2"><![CDATA[ AND i.dateinvoiced  <= to_date(?) ]]></Parameter>
+    <Parameter name="datefrom2" optional="true" after="AND 3=3"><![CDATA[ AND i.dateinvoiced >= to_date(?) ]]></Parameter>
+    <Parameter name="dateto2" optional="true" after="AND 3=3"><![CDATA[ AND i.dateinvoiced  <= to_date(?) ]]></Parameter>
+    <Parameter name="datefrom2" optional="true" after="AND 4=4"><![CDATA[ AND i.dateinvoiced >= to_date(?) ]]></Parameter>
+    <Parameter name="dateto2" optional="true" after="AND 4=4"><![CDATA[ AND i.dateinvoiced  <= to_date(?) ]]></Parameter>
+    <Parameter name="datefrom2" optional="true" after="AND 5=5"><![CDATA[ AND i.dateinvoiced >= to_date(?) ]]></Parameter>
+    <Parameter name="dateto2" optional="true" after="AND 5=5"><![CDATA[ AND i.dateinvoiced  <= to_date(?) ]]></Parameter>
     <Parameter name="org" optional="true" type="replace" after="AND p.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="client" optional="true" type="replace" after="AND p.AD_Client_ID IN (" text="'1'"/>
-    <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND p.Datecontract > to_date(?) ]]></Parameter>
-    <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND p.Datecontract < to_date(?) ]]></Parameter>
-    <Parameter name="projecttype" optional="true" after="AND 1=1"><![CDATA[ AND p.C_Projecttype_ID = TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="project" optional="true" after="AND 1=1"><![CDATA[ AND p.C_Project_ID = TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="Responsible" optional="true" after="AND 1=1"><![CDATA[ AND p.Responsible_ID = TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="Partner" optional="true" after="AND 1=1"><![CDATA[ AND p.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="dateFrom" optional="true" after="AND 6=6"><![CDATA[ AND p.Datecontract > to_date(?) ]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="AND 6=6"><![CDATA[ AND p.Datecontract < to_date(?) ]]></Parameter>
+    <Parameter name="projecttype" optional="true" after="AND 6=6"><![CDATA[ AND p.C_Projecttype_ID = TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="project" optional="true" after="AND 6=6"><![CDATA[ AND p.C_Project_ID = TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="Responsible" optional="true" after="AND 6=6"><![CDATA[ AND p.Responsible_ID = TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="Partner" optional="true" after="AND 6=6"><![CDATA[ AND p.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
     <SqlMethodComment></SqlMethodComment>

@@ -37,7 +37,6 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-
     if (vars.commandIn("DEFAULT")) {
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportProjectProfitabilityJR|Org", vars.getOrg());
       String strProject = vars.getGlobalVariable("inpcProjectId", "ReportProjectProfitabilityJR|Project", "");
@@ -45,9 +44,11 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       String strResponsible = vars.getGlobalVariable("inpResponsible", "ReportProjectProfitabilityJR|Responsible", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportProjectProfitabilityJR|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportProjectProfitabilityJR|DateTo", "");
+	  String strDateFrom2 = vars.getGlobalVariable("inpDateFrom2", "ReportProjectProfitabilityJR|DateFrom2", "");
+      String strDateTo2 = vars.getGlobalVariable("inpDateTo2", "ReportProjectProfitabilityJR|DateTo2", "");
       String strExpand = vars.getGlobalVariable("inpExpand", "ReportProjectProfitabilityJR|Expand", "Y");
       String strPartner = vars.getGlobalVariable("inpcBPartnerId", "ReportProjectProfitabilityJR|Partner", "");
-      printPageDataSheet(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner);
+      printPageDataSheet(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2);
     } else if (vars.commandIn("FIND")) {
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportProjectProfitabilityJR|Org");
       String strProject = vars.getRequestGlobalVariable("inpcProjectId", "ReportProjectProfitabilityJR|Project");
@@ -55,21 +56,23 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       String strResponsible = vars.getRequestGlobalVariable("inpResponsible", "ReportProjectProfitabilityJR|Responsible");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportProjectProfitabilityJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportProjectProfitabilityJR|DateTo");
+	  String strDateFrom2 = vars.getRequestGlobalVariable("inpDateFrom2", "ReportProjectProfitabilityJR|DateFrom2");
+      String strDateTo2 = vars.getRequestGlobalVariable("inpDateTo2", "ReportProjectProfitabilityJR|DateTo2");
       String strExpand = vars.getRequestGlobalVariable("inpExpand", "ReportProjectProfitabilityJR|Expand");
       String strPartner = vars.getRequestGlobalVariable("inpcBPartnerId", "ReportProjectProfitabilityJR|Partner");
-      printPageDataHtml(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner);
+      printPageDataHtml(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2);
     } else pageError(response);
   }
 
   
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner)
+  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     
     String discard[]={"discard"};
     strTreeOrg = strOrg;
     if (strExpand.equals("Y")) treeOrg(vars, strOrg);
-    ReportProjectProfitabilityData[] data= ReportProjectProfitabilityData.select(this, strTreeOrg, Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), strDateFrom , DateTimeData.nDaysAfter(this, strDateTo,"1"), strProjectType, strProject, strResponsible, strPartner);
+    ReportProjectProfitabilityData[] data= ReportProjectProfitabilityData.select(this, strDateFrom2, strDateTo2, strTreeOrg, Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), strDateFrom , DateTimeData.nDaysAfter(this, strDateTo,"1"), strProjectType, strProject, strResponsible, strPartner);
 
     if (data == null || data.length == 0) {
       data = ReportProjectProfitabilityData.set("1","1","1","1","1","1","1","1","1","1","1");
@@ -90,7 +93,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
   }
 
   
-   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner)
+   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -140,8 +143,12 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTo", strDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    
-
+	xmlDocument.setParameter("dateFrom2", strDateFrom2);
+    xmlDocument.setParameter("dateFromdisplayFormat2", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromsaveFormat2", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTo2", strDateTo2);
+    xmlDocument.setParameter("dateTodisplayFormat2", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTosaveFormat2", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("orgid", strOrg);
     xmlDocument.setParameter("project", strProject);
     xmlDocument.setParameter("projecttype", strProjectType);

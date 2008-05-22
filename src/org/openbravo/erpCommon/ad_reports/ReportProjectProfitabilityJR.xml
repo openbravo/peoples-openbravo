@@ -32,12 +32,19 @@
   <PARAMETER id="paramExpand" name="expand" boolean="checked" withId="parameterDetalle"/>
 
 
-	<PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
-	<PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
+
+  <PARAMETER id="paramDateFrom2" name="dateFromdisplayFormat2" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateFrom2" name="dateFromsaveFormat2" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateTo2" name="dateTo2" attribute="value"/>
+  <PARAMETER id="paramDateTo2" name="dateTodisplayFormat2" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateTo2" name="dateTosaveFormat2" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateFrom2" name="dateFrom2" attribute="value"/>
   
   <PARAMETER id="paramLanguage" name="paramLanguage"/>
   <PARAMETER id="paramDirection" name="direction" default=""/>
