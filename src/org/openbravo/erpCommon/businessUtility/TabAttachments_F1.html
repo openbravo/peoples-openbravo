@@ -65,7 +65,7 @@
   	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client', null, 'buttonAdd')
+		  new windowTableId('client', null, 'buttonDownload')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -244,7 +244,7 @@
                 </tr>
 
                 <div id="sectionDetail"> 
-                  <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" onclick="selectActual(this); return true;" id="funcEvenOddRowxx">
+                  <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" onclick="selectActual(this); return true;" ondblclick="executeWindowButton('buttonDownload'); return true;" id="funcEvenOddRowxx">
                     <td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_RadioButton">
                       <input type="radio" name="inpcFileId" value="xx" id="CheckNumxx" class="DataGrid_RadioButton" pos="pp">
                     </td>
@@ -262,7 +262,7 @@
           <tr>
             <td class="Button_RightAlign_ContentCell">
               <div id="editable">
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Add'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('NEW', false, null, 'TabAttachments_F1.html', '_self');return false;" id="buttonAdd">
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Add'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('NEW', false, null, 'TabAttachments_F1.html', '_self');return false;">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Add';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
                       <td class="Button_left"></td>
@@ -290,7 +290,7 @@
             </td>
             <td class="Button_LeftAlign_ContentCell">
               <div id="widthData">
-                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Download'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('DISPLAY_DATA', false, null, 'TabAttachments_F1.html', '_self');return false;">
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Download'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('DISPLAY_DATA', false, null, 'TabAttachments_F1.html', '_self');return false;" id="buttonDownload">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Download';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
                       <td class="Button_left"></td>
