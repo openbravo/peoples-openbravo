@@ -68,7 +68,7 @@ public class SL_IsDefault extends HttpSecureAppServlet {
     if (strValue.equals("Y")) {
       String strTableId = vars.getStringParameter("inpTableId");
       String strOrg     = vars.getStringParameter("inpadOrgId");     
-      String parentColumn = vars.getStringParameter("inpParentKey");
+      String parentColumn = vars.getStringParameter("inpParentKeyColumn");
       String parentValue = vars.getStringParameter("inp"+Sqlc.TransformaNombreColumna(parentColumn));
       String currentColumnKey = vars.getStringParameter("inpkeyColumnId");
       String currentKeyValue = vars.getStringParameter(vars.getStringParameter("inpKeyName"));
