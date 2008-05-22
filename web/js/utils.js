@@ -318,7 +318,10 @@ function dispatchEventChange(target) {
 */
 function submitCommandForm(accion, bolDepurar, Formulario, newAction, newTarget, bolComprobar, bolComprobarCambios, isCallOut, controlEvt, evt) {
   if (Formulario == null) Formulario = document.forms[0];
-  if (bolDepurar!=null && bolDepurar==true) if (!depurar(accion, Formulario, "")) return false;
+  if (bolDepurar!=null && bolDepurar==true){
+  	try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
+  	if (!depurar(accion, Formulario, "")) return false;
+  } 
   if (bolComprobarCambios==null) bolComprobarCambios = false;
   if (isCallOut==null) isCallOut = false;
   if (controlEvt==null) controlEvt = false;
@@ -361,7 +364,10 @@ function submitCommandForm(accion, bolDepurar, Formulario, newAction, newTarget,
 */
 function submitCommandFormParameter(accion, campo, valor, bolDepurar, Formulario, formAction, newTarget, bolComprobar, bolComprobarCambios, isCallOut, controlEvt, evt) {
   if (Formulario == null) Formulario = document.forms[0];
-  if (bolDepurar!=null && bolDepurar==true) if (!depurar(accion, Formulario, valor)) return false;
+  if (bolDepurar!=null && bolDepurar==true){
+  	try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
+	if (!depurar(accion, Formulario, valor)) return false;
+  }
   if (bolComprobarCambios==null) bolComprobarCambios = false;
   if (isCallOut==null) isCallOut = false;
   if (controlEvt==null) controlEvt = false;
