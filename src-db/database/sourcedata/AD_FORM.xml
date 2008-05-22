@@ -88,33 +88,6 @@
 <!--102-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.InitialClientSetup]]></CLASSNAME>
 <!--102**************--></AD_FORM>
 
-<!--103**************--><AD_FORM>
-<!--103 AD_FORM_ID-->
-<!--103-->              <AD_FORM_ID><![CDATA[103]]></AD_FORM_ID>
-<!--103 AD_CLIENT_ID-->
-<!--103-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--103 AD_ORG_ID-->
-<!--103-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--103 ISACTIVE-->
-<!--103-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--103 CREATED-->
-<!--103-->              <CREATED><![CDATA[2000-10-31 22:19:31.0]]></CREATED>
-<!--103 CREATEDBY-->
-<!--103-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--103 UPDATED-->
-<!--103-->              <UPDATED><![CDATA[2007-07-23 11:23:11.0]]></UPDATED>
-<!--103 UPDATEDBY-->
-<!--103-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--103 NAME-->
-<!--103-->              <NAME><![CDATA[Material Transaction]]></NAME>
-<!--103 DESCRIPTION-->
-<!--103-->              <DESCRIPTION><![CDATA[Material Transactions]]></DESCRIPTION>
-<!--103 ACCESSLEVEL-->
-<!--103-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--103 CLASSNAME-->
-<!--103-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.MaterialTransactions]]></CLASSNAME>
-<!--103**************--></AD_FORM>
-
 <!--105**************--><AD_FORM>
 <!--105 AD_FORM_ID-->
 <!--105-->              <AD_FORM_ID><![CDATA[105]]></AD_FORM_ID>

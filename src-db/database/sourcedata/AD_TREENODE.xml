@@ -2678,31 +2678,6 @@
 <!--10 228-->              <SEQNO><![CDATA[30]]></SEQNO>
 <!--10 228**************--></AD_TREENODE>
 
-<!--10 229**************--><AD_TREENODE>
-<!--10 229 AD_TREE_ID-->
-<!--10 229-->              <AD_TREE_ID><![CDATA[10]]></AD_TREE_ID>
-<!--10 229 NODE_ID-->
-<!--10 229-->              <NODE_ID><![CDATA[229]]></NODE_ID>
-<!--10 229 AD_CLIENT_ID-->
-<!--10 229-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--10 229 AD_ORG_ID-->
-<!--10 229-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--10 229 ISACTIVE-->
-<!--10 229-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--10 229 CREATED-->
-<!--10 229-->              <CREATED><![CDATA[2000-10-31 22:25:09.0]]></CREATED>
-<!--10 229 CREATEDBY-->
-<!--10 229-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--10 229 UPDATED-->
-<!--10 229-->              <UPDATED><![CDATA[2007-06-21 11:11:57.0]]></UPDATED>
-<!--10 229 UPDATEDBY-->
-<!--10 229-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--10 229 PARENT_ID-->
-<!--10 229-->              <PARENT_ID><![CDATA[800244]]></PARENT_ID>
-<!--10 229 SEQNO-->
-<!--10 229-->              <SEQNO><![CDATA[90]]></SEQNO>
-<!--10 229**************--></AD_TREENODE>
-
 <!--10 230**************--><AD_TREENODE>
 <!--10 230 AD_TREE_ID-->
 <!--10 230-->              <AD_TREE_ID><![CDATA[10]]></AD_TREE_ID>
