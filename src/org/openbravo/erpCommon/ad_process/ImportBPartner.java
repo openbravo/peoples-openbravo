@@ -59,10 +59,6 @@ public class ImportBPartner extends ImportProcess {
 		try {
             conn = getConnection();
 			con = conn.getTransactionConnection();
-			if(m_deleteOldImported) {
-				no = ImportBPartnerData.deleteOld(con, conn, getAD_Client_ID());
-				if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
-			}
 			//  Set Client, Org, IaActive, Created/Updated, ProductType
 			no = ImportBPartnerData.updateRecords(con, conn, getAD_Client_ID());
 			if (log4j.isDebugEnabled()) log4j.debug("ImportBPartner Reset = " + no);
@@ -124,6 +120,7 @@ public class ImportBPartner extends ImportProcess {
 
     int noInsert = 0;
     int noUpdate = 0;
+    int noBPartnerError = 0;
 
 		try {
 			//  Go through Records
@@ -225,7 +222,7 @@ public class ImportBPartner extends ImportProcess {
 					}
 				}
 
-				//	Update I_Product
+				//	Update I_BPARTNER
 				try {
 					no = ImportBPartnerData.setImported(con, conn, C_BPartner_ID, (Integer.valueOf(C_BPartner_Location_ID).intValue() == 0)?"":C_BPartner_Location_ID, (Integer.valueOf(AD_User_ID).intValue() == 0)?"":AD_User_ID, I_BPartner_ID);
 					conn.releaseCommitConnection(con);
@@ -239,13 +236,18 @@ public class ImportBPartner extends ImportProcess {
 			}
 
 			//  Set Error to indicator to not imported
-			no=ImportBPartnerData.updateNotImported(conn, getAD_Client_ID());
+			noBPartnerError = ImportBPartnerData.updateNotImported(conn, getAD_Client_ID());
+			// Delete imported 
+			if(m_deleteOldImported) {
+				no = ImportBPartnerData.deleteOld(conn, getAD_Client_ID());
+				if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
+			}
 		} catch (Exception se) {
 			se.printStackTrace();
 			addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
 			return false;
 		}
-    addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + no + "; ");
+    addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noBPartnerError + "; ");
     addLog("BPartner inserted: " + noInsert + "; ");
     addLog("BPartner updated: " + noUpdate);
     return true;

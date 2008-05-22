@@ -69,10 +69,6 @@ public class ImportOrder extends ImportProcess {
       int no = 0;
       conn = getConnection();
       con = conn.getTransactionConnection();
-      if(m_deleteOldImported) {
-        no = ImportOrderData.deleteOld(con, conn, getAD_Client_ID());
-        if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
-      }
       // Set Client, Org, IsActive, Created/Updated
       no = ImportOrderData.updateRecords(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("ImportOrder updated = " + no);
@@ -272,6 +268,8 @@ public class ImportOrder extends ImportProcess {
       // New Order
       int noInsert = 0;
       int noInsertLine = 0;
+      int noOrderError = 0;
+      
       data = ImportOrderData.selectNotImported(conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("Going through " + data.length + " records");
       COrderData corder = null;
@@ -531,10 +529,15 @@ public class ImportOrder extends ImportProcess {
           conn.releaseCommitConnection(con);
       }
       con = conn.getTransactionConnection();
-      no = ImportOrderData.updateNotImported(con, conn, getAD_Client_ID());
-      addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + no + "\\n");
-      addLog("Pedidos importados: " + noInsert + "\\n");
-      addLog("Líneas importadas: " + noInsertLine);
+      noOrderError = ImportOrderData.updateNotImported(con, conn, getAD_Client_ID());
+      //Delete imported
+      if(m_deleteOldImported) {
+    	  no = ImportOrderData.deleteOld(con, conn, getAD_Client_ID());
+          if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
+        }
+      addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noOrderError + "\\n");
+      addLog("Order inserted: " + noInsert + "\\n");
+      addLog("Order line inserted: " + noInsertLine);
       addLog("Procesados: " + strPostMessage);
       conn.releaseCommitConnection(con);
     } catch (NoConnectionAvailableException ex) {

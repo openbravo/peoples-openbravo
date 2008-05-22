@@ -57,12 +57,8 @@ public class ImportProduct extends ImportProcess {
 		Connection con = null;
 		String strcTaxcategoryId = null;
 		try {
-      conn = getConnection();
+			conn = getConnection();
 			con = conn.getTransactionConnection();
-			if(m_deleteOldImported) {
-				no = ImportProductData.deleteOld(con, conn, getAD_Client_ID());
-				if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
-			}
 			//  Set Client, Org, IaActive, Created/Updated, ProductType
 			no = ImportProductData.updateRecords(con, conn, getAD_Client_ID());
 			if (log4j.isDebugEnabled()) log4j.debug("ImportProduct Reset = " + no);
@@ -186,6 +182,7 @@ public class ImportProduct extends ImportProcess {
       int noUpdate = 0;
       int noInsertPO = 0;
       int noUpdatePO = 0;
+      int noProductError = 0;
 
 			try {
 				//  Go through Records
@@ -269,9 +266,14 @@ public class ImportProduct extends ImportProcess {
 			}
 
       //  Set Error to indicator to not imported
-      no = ImportProductData.updateNotImported(conn, getAD_Client_ID());
-      if (log4j.isDebugEnabled()) log4j.debug("Errors = " + no);
-			addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + no + "\\n");
+      noProductError = ImportProductData.updateNotImported(conn, getAD_Client_ID());
+      // Delete imported 
+      if(m_deleteOldImported) {
+			no = ImportProductData.deleteOld(conn, getAD_Client_ID());
+			if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
+      }
+      if (log4j.isDebugEnabled()) log4j.debug("Errors = " + noProductError);
+			addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noProductError + "\\n");
 			addLog("Product inserted: " + noInsert + "\\n");
 			addLog("Product updated: " + noUpdate + "\\n");
 			addLog("ProductPO inserted: " + noInsertPO + "\\n");

@@ -60,14 +60,10 @@ public class ImportTax extends ImportProcess {
     Connection con = null;
 		try {
       conn = getConnection();
-			con = conn.getTransactionConnection();
-			if(m_deleteOldImported) {
-				no = ImportTaxData.deleteOld(con, conn, getAD_Client_ID());
-				if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
-			}
-			//  Set Client, Org, IaActive, Created/Updated
-			no = ImportTaxData.updateRecords(con, conn, getAD_Client_ID());
-			if (log4j.isDebugEnabled()) log4j.debug("Reset = " + no);
+      con = conn.getTransactionConnection();
+      //  Set Client, Org, IaActive, Created/Updated
+      no = ImportTaxData.updateRecords(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("Reset = " + no);
 
       /* This cannot be done like this, because it can be referred by data inside the file, it has to be done line per line
 			//  Tax Category ID
@@ -131,6 +127,7 @@ public class ImportTax extends ImportProcess {
     int noTCUpdate = 0;
     int noBPTCInsert = 0;
     int noBPTCUpdate = 0;
+    int noTaxError =0;
 
 		try {
 			//  Go through Records
@@ -327,13 +324,17 @@ public class ImportTax extends ImportProcess {
 			}
 
 			//  Set Error to indicator to not imported
-			no=ImportTaxData.updateNotImported(conn, getAD_Client_ID());
+			noTaxError = ImportTaxData.updateNotImported(conn, getAD_Client_ID());
+			if(m_deleteOldImported) {
+				no = ImportTaxData.deleteOld(conn, getAD_Client_ID());
+				if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
+			}
 		} catch (Exception se) {
 			se.printStackTrace();
 			addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
 			return false;
 		}
-    addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + no + "; ");
+    addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noTaxError + "; ");
     addLog("Tax inserted: " + noTaxInsert + "; ");
     addLog("Tax updated: " + noTaxUpdate);
     addLog("Tax Cat inserted: " + noTCInsert);

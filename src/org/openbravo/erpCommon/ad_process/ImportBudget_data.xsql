@@ -45,7 +45,7 @@
   </SqlMethod>
 
 
-  <SqlMethod name="deleteOld" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="deleteOld" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
