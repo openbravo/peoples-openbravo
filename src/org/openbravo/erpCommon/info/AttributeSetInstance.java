@@ -316,8 +316,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     if (!fields[0].elementname.equals("")) {
       for (int i=0;i<fields.length;i++) {
         strHtml.append("<tr><td class=\"TitleCell\"><span class=\"LabelText\">");
-        String strName = Utility.messageBD(this, fields[i].elementname, vars.getLanguage());
-        strHtml.append(strName.equals("")?fields[i].elementname:strName);
+        //String strName = Utility.messageBD(this, fields[i].elementname, vars.getLanguage());
+        //strHtml.append(strName.equals("")?fields[i].elementname:strName);
+        strHtml.append(fields[i].elementname);
         strHtml.append("</span></td>\n");
         strHtml.append("<td class=\"LabelText\">");
         String strValue = instanceValue(instanceData, fields[i].mAttributeId, fields[i].islist.equals("Y"));
