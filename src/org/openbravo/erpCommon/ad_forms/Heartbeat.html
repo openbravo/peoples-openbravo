@@ -23,7 +23,9 @@
   <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
   <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
   <script language="JavaScript" type="text/javascript" id="paramLanguage">var LNG_POR_DEFECTO = "en_US";</script>
-  <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></SCRIPT> 
+  <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT> 
+  <SCRIPT language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></SCRIPT>
   <script language="JavaScript" type="text/javascript">
   
   function configure() {
@@ -39,8 +41,23 @@
   	window.close();
   }
   </script>
+
+  <script language="JavaScript" type="text/javascript">
+  function onLoadDo(){
+    this.windowTables = new Array(
+      new windowTableId('client', null, 'buttonConfigure')
+    );
+    setWindowTableParentElement();
+    enableShortcuts('popup');
+    setWindowElementFocus('firstElement');
+  }
+
+  function onResizeDo(){
+  }
+  </script>
+
 </head>
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 
 <FORM method="POST" action="Heartbeat.html" name="frmMain">
 <INPUT type="hidden" name="Command">
@@ -92,8 +109,8 @@
     </td>
   </tr>
   <tr>
-  	<td>
-  		<div style="overflow: auto;" class="Popup_ContentPane_Client">
+    <td>
+      <div style="overflow: auto;" class="Popup_ContentPane_Client" id="client">
         <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
           <tbody><tr>
             <td class="TableEdition_OneCell_width"/>
@@ -107,35 +124,41 @@
             <td/>
             <td class="Button_RightAlign_ContentCell">
               <div>
-                <table id="linkButtonOk" onmouseup="this.className='Button';return true;" onmousedown="this.className='Button_active';return true;" onmouseover="this.className='Button_hover';window.status='OK';return true;" onmouseout="this.className='Button';window.status='';return true;" onclick="configure();return false;" class="Button">
-                  <tbody><tr>
-                    <td class="Button_left"><img border="0" id="buttonOk" src="../web/images/blank.gif" title="Register" alt="Register" class="Button_Icon Button_Icon_ok"/></td>
-                    <td id="tdButtonOk" class="Button_text Button_width">Configure</td>
-                    <td class="Button_right"/>
-                  </tr>
-                </tbody></table>
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Configure'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="configure();return false;" id="buttonConfigure" >
+                  <table class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Configure'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Configure" title="Configure" src="../../../../../web/images/blank.gif" border="0"></img></td>
+                      <td class="Button_text Button_width">Configure</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </a>
               </div>
             </td>
             <td class="Button_LeftAlign_ContentCell">
               <div>
-                <table id="linkButtonCancel" onmouseup="this.className='Button';return true;" onmousedown="this.className='Button_active';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmouseout="this.className='Button';window.status='';return true;" onclick="disable();return false;" class="Button">
-                  <tbody><tr>
-                    <td class="Button_left"><img border="0" id="buttonCancel" title="Decline" src="../web/images/blank.gif" alt="Decline" class="Button_Icon Button_Icon_cancel"/></td>
-                    <td id="tdButtonCancel" class="Button_text Button_width">Disable</td>
-                    <td class="Button_right"/>
-                  </tr>
-                </tbody></table>
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Disable'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="disable();return false;">
+                  <table class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Disable'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Disable" title="Disable" src="../../../../../web/images/blank.gif" border="0"></img></td>
+                      <td class="Button_text Button_width">Disable</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </a>
               </div>
             </td>
             <td class="Button_LeftAlign_ContentCell">
               <div>
-                <table id="linkButtonCancel" onmouseup="this.className='Button';return true;" onmousedown="this.className='Button_active';return true;" onmouseover="this.className='Button_hover';window.status='Later';return true;" onmouseout="this.className='Button';window.status='';return true;" onclick="postpone();return false;" class="Button">
-                  <tbody><tr>
-                    <td class="Button_left"><img border="0" id="buttonCancel" title="Later" src="../web/images/blank.gif" alt="Later" class="Button_Icon Button_Icon_process"/></td>
-                    <td id="tdButtonCancel" class="Button_text Button_width">Later</td>
-                    <td class="Button_right"/>
-                  </tr>
-                </tbody></table>
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Later'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="postpone();return false;">
+                  <table class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Later'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Later" title="Later" src="../../../../../web/images/blank.gif" border="0"></img></td>
+                      <td class="Button_text Button_width">Later</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </a>
               </div>
             </td>
             <td/>
