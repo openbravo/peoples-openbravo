@@ -116,7 +116,7 @@
             <TD class="TextBox_ContentCell" colspan="2"> 
               <INPUT type="file" size="40" name="inpname" value="" class="TextBox_TwoCells_width" id="editDiscard"></INPUT> 
               <SPAN id="newDiscard"> 
-                <INPUT type="text" class="TextBox_TwoCells_width" name="inpname" value="" disabled="" id="Name"></INPUT>
+                <INPUT type="text" class="dojoValidateValid TextBox_TwoCells_width" name="inpname" value="" disabled="" id="Name"></INPUT>
               </SPAN>
             </TD>
 	    
@@ -125,13 +125,13 @@
           <TR> 
             <TD class="TitleCell"><SPAN class="LabelText">Format</SPAN></TD>
             <TD class="Combo_ContentCell" colspan="2"> 
-                <SELECT name="inpadDatatypeId" id="reportAD_Datatype_ID_D">
+                <SELECT class="Combo Combo_TwoCells_width" name="inpadDatatypeId" id="reportAD_Datatype_ID_D">
                 </SELECT>
             </TD>
             <td/>
           <TR> 
             <TD class="TitleCell"><SPAN class="LabelText">Description</SPAN></TD>
-            <TD class="ContentCell" colspan="2"> <TEXTAREA class="TextArea_TwoCells_width" name="inptext"  class="TextBox_TwoCells_width" rows="3" id="Text"></TEXTAREA></TD>
+            <TD class="ContentCell" colspan="2"> <TEXTAREA class="dojoValidateValid TextArea_TwoCells_width" name="inptext"  class="TextBox_TwoCells_width" rows="3" id="Text"></TEXTAREA></TD>
 	    
 	          <td/>
           </TR>
@@ -143,29 +143,28 @@
             <td></td>
             <td class="Button_RightAlign_ContentCell">
               <div>
-                <table class="Button" 
-                onclick="submitCommandForm('SAVE_xx_RELATION', false, null, 'TabAttachments_Edition.html', '_self');return false;"
-                onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;"
-                id="linkButtonSaveRelation">
-                  <tr>
-                    <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Results" title="Results" src="../../../../../web/images/blank.gif" border=0/></td>
-                    <td class="Button_text Button_width">Save</td>
-                    <td class="Button_right"></td>
-                  </tr>
-                </table>
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Save'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('SAVE_xx_RELATION', false, null, 'TabAttachments_Edition.html', '_self');return false;" id="linkButtonSaveRelation">
+                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Save';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_save" alt="Save" title="Save" src="../../../../../web/images/blank.gif" border=0/></td>
+                      <td class="Button_text Button_width">Save</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </a>
               </div>
             </td>
             <td class="Button_LeftAlign_ContentCell">
               <div>
-                <table class="Button" 
-                onclick="submitCommandForm('DEFAULT', false, null, 'TabAttachments_F1.html', '_self');return false;"
-                onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='PDF_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                  <tr>
-                    <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="PDF_Report" title="PDF_Report" src="../../../../../web/images/blank.gif" border=0/></td>
-                    <td class="Button_text Button_width">Cancel</td>
-                    <td class="Button_right"></td>
-                  </tr>
-                </table>
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('DEFAULT', false, null, 'TabAttachments_F1.html', '_self');return false;">
+                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border=0/></td>
+                      <td class="Button_text Button_width">Cancel</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                </a>
               </div>
             </td>
             <td></td>
