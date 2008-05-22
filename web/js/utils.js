@@ -2007,7 +2007,11 @@ function executeWindowButton(id,focus) {
   var appWindow = top;
   if(top.frames['frameAplicacion'] || top.frames['frameMenu']) {
     appWindow = top.frames['frameAplicacion'];
-  } 
+  } else if (top.frames['superior']) {
+    appWindow = top.frames['superior'];
+  } else if (top.frames['frameSuperior']) {
+    appWindow = top.frames['frameSuperior'];
+  }
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     if (focus==true) appWindow.document.getElementById(id).focus();
     appWindow.document.getElementById(id).onclick();
