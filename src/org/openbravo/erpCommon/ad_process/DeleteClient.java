@@ -60,27 +60,35 @@ public class DeleteClient extends HttpSecureAppServlet {
 
   void processButton(VariablesSecureApp vars, String strClient) throws ServletException {
     String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
-    OBError myMessage;
+    OBError myMessage= null;
     try {
-	    PInstanceProcessData.insertPInstance(this, pinstance, "800147", strClient, "N", vars.getUser(), vars.getClient(), vars.getOrg());
-	    PInstanceProcessData.insertPInstanceParamNumber(this, pinstance, "10", "AD_Client_ID", strClient, vars.getClient(), vars.getOrg(), vars.getUser());
-	
-	    DeleteClientData.adDeleteClient(this, pinstance);
-	    
-	    PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
-	    myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
-	  } catch (Exception e) {
-	      myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
-	      e.printStackTrace();
-	      log4j.warn("Error");
-	    }
-	    if (myMessage==null) {
-	      myMessage = new OBError();
-	      myMessage.setType("Success");
-	      myMessage.setTitle("");
-	      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
-	    }
-	    vars.setMessage("DeleteClient", myMessage);
+      if(strClient.equals("")){
+        myMessage=new OBError();
+        myMessage.setType("Error");
+        myMessage.setTitle(Utility.parseTranslation(this, vars, vars.getLanguage(), "@DeleteClient_NoClientSelected@"));
+        myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), "@DeleteClient_SelectClient@")); 
+      }else{
+        PInstanceProcessData.insertPInstance(this, pinstance, "800147", strClient, "N", vars.getUser(), vars.getClient(), vars.getOrg());
+        PInstanceProcessData.insertPInstanceParamNumber(this, pinstance, "10", "AD_Client_ID", strClient, vars.getClient(), vars.getOrg(), vars.getUser());
+
+		    DeleteClientData.adDeleteClient(this, pinstance);
+		    
+		    PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
+		    myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
+    	}
+    } catch (Exception e) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+      e.printStackTrace();
+      log4j.warn("Error");
+    }
+    if (myMessage==null) {
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+    }
+    
+    vars.setMessage("DeleteClient", myMessage);
     
    
   }
