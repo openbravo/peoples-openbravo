@@ -31,13 +31,13 @@
         SELECT M_PRODUCT.M_PRODUCT_ID AS ID, COALESCE(M_PRODUCT_CUSTOMER.NAME, M_PRODUCT.NAME) AS NAME, 
         COALESCE(M_PRODUCT_CUSTOMER.DESCRIPTION, M_PRODUCT.DESCRIPTION) AS DESCRIPTION, COALESCE(M_PRODUCT_CUSTOMER.UPC, M_PRODUCT.UPC) AS UPC, 
         '' AS LOT, '' AS GUARANTEEDATE
-        FROM M_PRODUCT LEFT JOIN M_PRODUCT_CUSTOMER on M_PRODUCT.M_PRODUCT_ID = M_PRODUCT_CUSTOMER.M_PRODUCT_ID
+        FROM M_PRODUCT LEFT JOIN M_PRODUCT_CUSTOMER on M_PRODUCT.M_PRODUCT_ID = M_PRODUCT_CUSTOMER.M_PRODUCT_ID AND M_PRODUCT_CUSTOMER.C_BPARTNER_ID = TO_NUMBER(?)
         WHERE M_PRODUCT.M_PRODUCT_ID = TO_NUMBER(?)
-        AND M_PRODUCT_CUSTOMER.C_BPARTNER_ID = TO_NUMBER(?)
+        
         ]]>
         </Sql>
-        <Parameter name="mProductId"/>
         <Parameter name="cBpartnerId"/>
+        <Parameter name="mProductId"/>
    </SqlMethod>
    <SqlMethod name="selectProduct" type="preparedStatement" return="String" default="">
       <SqlMethodComment>Devuelve las lineas de albaran</SqlMethodComment>

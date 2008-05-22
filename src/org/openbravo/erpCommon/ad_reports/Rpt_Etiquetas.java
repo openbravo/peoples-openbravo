@@ -118,7 +118,7 @@ public class Rpt_Etiquetas extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas").createXmlDocument();
-    RptEtiquetasData[] data = RptEtiquetasData.select(this, strProduct, strBpartner);
+    RptEtiquetasData[] data = RptEtiquetasData.select(this, strBpartner, strProduct);
 
     xmlDocument.setParameter("bPartnerName", RptEtiquetasData.selectBPartner(this, strBpartner));
     if (data!=null && data.length>0) {
