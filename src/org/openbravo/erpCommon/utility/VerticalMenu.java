@@ -97,36 +97,10 @@ public class VerticalMenu extends HttpSecureAppServlet {
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     StringBuffer menu = new StringBuffer();
     menu.append(generarMenuVertical(dataMenu, strDireccion, "0", open));
-    menu.append("<tr>\n");
-    menu.append("  <td>\n");
-    menu.append("    <table cellspacing=\"0\" cellpadding=\"0\" onmouseover=\"window.status='");
-    menu.append(Utility.messageBD(this, "Information", vars.getLanguage()));
-    menu.append("';return true;\"");
-    menu.append(" onmouseout=\"window.status='';return true;\"");
-    menu.append(" id=\"folderInformation\">\n");
-    menu.append("      <tr class=\"Normal ");
-    if (!open) menu.append("NOT_");
-    menu.append("Opened NOT_Hover NOT_Selected NOT_Pressed NOT_Focused");
-    menu.append("\" id=\"childInformation\" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
-    menu.append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");
-    menu.append("        <td width=\"5px\" id=\"folderCell1_Information\"><img src=\"").append(strReplaceWith).append("/images/blank.gif\" class=\"Menu_Client_Button_BigIcon Menu_Client_Button_BigIcon_folder");
-    menu.append((open?"Opened":"Closed"));
-    menu.append("\" id=\"folderImgInformation\"></td>\n");
-    menu.append("        <td nowrap=\"\" id=\"folderCell2_Information\">");
-    menu.append(Utility.messageBD(this, "Information", vars.getLanguage()));
-    menu.append("        </td>\n");
-    menu.append("      </tr>\n");
-    menu.append("    </table>\n");
-    menu.append("  </td>\n");
-    menu.append("</tr>\n");
-    menu.append("<tr>\n");
-    menu.append("  <td");
-    menu.append(" style=\"").append((!open?"display: none;":"")).append("\" id=\"parentInformation\">\n");
-    menu.append("    <table cellspacing=\"0\" cellpadding=\"0\">\n");
-    menu.append(generarMenuSearchs(vars, strDireccion, open));
-    menu.append("    </table>\n");
-    menu.append("  </td>\n");
-    menu.append("</tr>\n");
+    menu.append(generateMenuSearchs(vars, open));
+    
+    
+    
     xmlDocument.setParameter("menu", menu.toString());
     xmlDocument.setParameter("userName", MenuData.getUserName(this, vars.getUser()));
 
@@ -291,10 +265,68 @@ public class VerticalMenu extends HttpSecureAppServlet {
     }
     return strResultado.toString();
   }
-
-  public String generarMenuSearchs(VariablesSecureApp vars, String direccion, boolean open) throws ServletException {
-    StringBuffer result = new StringBuffer();
+  
+  /**
+   * Generates Search folder and entries in case there is at least one accessible entrie,
+   * other case it returns an empty string
+   * 
+   * @param vars
+   * @param open
+   * @return
+   * @throws ServletException
+   */
+  public String generateMenuSearchs(VariablesSecureApp vars, boolean open) throws ServletException {
+    StringBuffer menu=new StringBuffer();
     MenuData[] data = MenuData.selectSearchs(this, vars.getLanguage());
+    if (data!=null && data.length>0) {
+      String entries = generateMenuSearchEntries(vars, strDireccion, open, data);
+      if (entries.length()>0) {
+        menu.append("<tr>\n");
+        menu.append("  <td>\n");
+        menu.append("    <table cellspacing=\"0\" cellpadding=\"0\" onmouseover=\"window.status='");
+        menu.append(Utility.messageBD(this, "Information", vars.getLanguage()));
+        menu.append("';return true;\"");
+        menu.append(" onmouseout=\"window.status='';return true;\"");
+        menu.append(" id=\"folderInformation\">\n");
+        menu.append("      <tr class=\"Normal ");
+        if (!open) menu.append("NOT_");
+        menu.append("Opened NOT_Hover NOT_Selected NOT_Pressed NOT_Focused");
+        menu.append("\" id=\"childInformation\" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
+        menu.append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");
+        menu.append("        <td width=\"5px\" id=\"folderCell1_Information\"><img src=\"").append(strReplaceWith).append("/images/blank.gif\" class=\"Menu_Client_Button_BigIcon Menu_Client_Button_BigIcon_folder");
+        menu.append((open?"Opened":"Closed"));
+        menu.append("\" id=\"folderImgInformation\"></td>\n");
+        menu.append("        <td nowrap=\"\" id=\"folderCell2_Information\">");
+        menu.append(Utility.messageBD(this, "Information", vars.getLanguage()));
+        menu.append("        </td>\n");
+        menu.append("      </tr>\n");
+        menu.append("    </table>\n");
+        menu.append("  </td>\n");
+        menu.append("</tr>\n");
+        menu.append("<tr>\n");
+        menu.append("  <td");
+        menu.append(" style=\"").append((!open?"display: none;":"")).append("\" id=\"parentInformation\">\n");
+        menu.append("    <table cellspacing=\"0\" cellpadding=\"0\">\n");
+        menu.append(entries);
+        menu.append("    </table>\n");
+        menu.append("  </td>\n");
+        menu.append("</tr>\n");
+      }
+    }
+    return menu.toString();
+  }
+  /**
+   * Generates a table of entries for all the accessible search entries
+   *   
+   * @param vars
+   * @param direccion
+   * @param open
+   * @param data
+   * @return
+   * @throws ServletException
+   */
+  public String generateMenuSearchEntries(VariablesSecureApp vars, String direccion, boolean open, MenuData[] data) throws ServletException {
+    StringBuffer result = new StringBuffer();
     if (data==null || data.length==0) return "";
     for (int i=0;i<data.length;i++) {
       if (!AccessData.selectAccessSearch(this, vars.getRole(), data[i].nodeId).equals("0")) {
