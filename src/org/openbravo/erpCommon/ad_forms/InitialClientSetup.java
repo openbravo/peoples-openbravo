@@ -1260,12 +1260,9 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
      *  Warehouse
      */
     //  Location (Company)
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_Location: ");
-    String C_Location_ID = SequenceIdData.getSequence(this, "C_Location", client);
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - THE SEQUENCE -C_Location_ID: " + C_Location_ID);
-    InitialClientSetupData.insertLocation(conn ,this,C_Location_ID,AD_Client_ID,City ,C_Country_ID, C_Region_ID);
-    if (InitialClientSetupData.updateOrgInfo(conn ,this,C_Location_ID,AD_Org_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - Location NOT inserted");
+    String org_C_Location_ID = createLocation(C_Country_ID, City, C_Region_ID, conn);
+    if (InitialClientSetupData.updateOrgInfo(conn ,this,org_C_Location_ID,AD_Org_ID) != 1)
+      log4j.warn("InitialClientSetup - createEntities - Location NOT inserted for Organisation");
   
     //*******************************************************************************************
     //*******************************************************************************************
@@ -1275,7 +1272,9 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_Warehouse: ");
     String M_Warehouse_ID = SequenceIdData.getSequence(this, "M_Warehouse", client);
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - THE SEQUENCE -M_Warehouse_ID: " + M_Warehouse_ID);
-    if (InitialClientSetupData.insertWarehouse(conn ,this,M_Warehouse_ID,AD_Client_ID,AD_Org_ID, defaultName, C_Location_ID) != 1)
+    //create warehouse location
+    String whse_C_Location_ID = createLocation(C_Country_ID, City, C_Region_ID, conn);
+    if (InitialClientSetupData.insertWarehouse(conn ,this,M_Warehouse_ID,AD_Client_ID,AD_Org_ID, defaultName, whse_C_Location_ID) != 1)
       log4j.warn("InitialClientSetup - createEntities - Warehouse NOT inserted");
   
     //   Locator
@@ -1323,14 +1322,15 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
   
     //  Location for Standard BP
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_Location: ");
-    C_Location_ID = SequenceIdData.getSequence(this, "C_Location", client);
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_Location_ID: " + C_Location_ID);
-    InitialClientSetupData.insertLocation(conn ,this,C_Location_ID, AD_Client_ID,City, C_Country_ID, C_Region_ID);
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_Location_ID: " + C_Location_ID);
+    String bPartner_C_Location_ID = createLocation(C_Country_ID, City, C_Region_ID, conn);
+    //C_Location_ID = SequenceIdData.getSequence(this, "C_Location", client);
+    //if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_Location_ID: " + C_Location_ID);
+    //InitialClientSetupData.insertLocation(conn ,this,C_Location_ID, AD_Client_ID,City, C_Country_ID, C_Region_ID);
+    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_Location_ID: " + bPartner_C_Location_ID);
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_BPartner_Location: ");
     String C_BPartner_Location_ID = SequenceIdData.getSequence(this, "C_BPartner_Location", client);
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_BPartner_Location_ID: " + C_BPartner_Location_ID);
-    if (InitialClientSetupData.insertBPartnerLocation(conn ,this,C_BPartner_Location_ID, AD_Client_ID,City, C_BPartner_ID, C_Location_ID) != 1)
+    if (InitialClientSetupData.insertBPartnerLocation(conn ,this,C_BPartner_Location_ID, AD_Client_ID,City, C_BPartner_ID, bPartner_C_Location_ID) != 1)
       log4j.warn("InitialClientSetup - createEntities - BP_Location NOT inserted");
   
     //    Create Sales Rep for User
@@ -1421,21 +1421,29 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
   return true;
 }
 
-    private String getAcct(Connection conn, AccountingValueData [] data, String key) throws ServletException {
-        if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - getAcct - " + key);
-        String C_ElementValue_ID = getC_ElementValue_ID(data, key);
-         if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - getAcct - C_ElementValue_ID: " + C_ElementValue_ID);
-        Account vc = Account.getDefault(m_AcctSchema, true);
-        vc.Account_ID=C_ElementValue_ID;
-        vc.save(conn, this, AD_Client_ID, "");// BEFORE, HERE IT WAS 0
-        String C_ValidCombination_ID = vc.C_ValidCombination_ID;
-        if(C_ValidCombination_ID.equals("")) {
-          log4j.warn("InitialClientSetup - getAcct - C_ElementValue_ID: " + C_ElementValue_ID);
-          log4j.warn("InitialClientSetup - getAcct - no account for " + key);
-          C_ValidCombination_ID = "";// HERE IT WAS 0
-        }
-        if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - getAcct - "+ key + "-- valid combination:" + C_ValidCombination_ID);
-        return C_ValidCombination_ID;
-    }
-
- }
+  private String createLocation(String C_Country_ID, String City, String C_Region_ID, Connection conn) throws ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_Location: ");
+    String C_Location_ID = SequenceIdData.getSequence(this, "C_Location", client);
+    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - THE SEQUENCE -C_Location_ID: " + C_Location_ID);
+    InitialClientSetupData.insertLocation(conn ,this,C_Location_ID,AD_Client_ID,City ,C_Country_ID, C_Region_ID);
+    return C_Location_ID;
+  }
+  
+  private String getAcct(Connection conn, AccountingValueData [] data, String key) throws ServletException {
+      if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - getAcct - " + key);
+      String C_ElementValue_ID = getC_ElementValue_ID(data, key);
+       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - getAcct - C_ElementValue_ID: " + C_ElementValue_ID);
+      Account vc = Account.getDefault(m_AcctSchema, true);
+      vc.Account_ID=C_ElementValue_ID;
+      vc.save(conn, this, AD_Client_ID, "");// BEFORE, HERE IT WAS 0
+      String C_ValidCombination_ID = vc.C_ValidCombination_ID;
+      if(C_ValidCombination_ID.equals("")) {
+        log4j.warn("InitialClientSetup - getAcct - C_ElementValue_ID: " + C_ElementValue_ID);
+        log4j.warn("InitialClientSetup - getAcct - no account for " + key);
+        C_ValidCombination_ID = "";// HERE IT WAS 0
+      }
+          if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - getAcct - "+ key + "-- valid combination:" + C_ValidCombination_ID);
+          return C_ValidCombination_ID;
+      }
+  
+   }
