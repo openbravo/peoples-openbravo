@@ -67,14 +67,20 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
         if (tab[0].help.equals("Y")) strWindowPath="../utility/WindowTree_FS.html?inpTabId=" + strTab;
         else strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
-      String messageResult = processButton(vars, strKey, strOrder, strWindow);
-      vars.setSessionValue(strWindow + "|" + strTabName + ".message", messageResult);
+      OBError myError = processButton(vars, strKey, strOrder, strWindow);
+      if (log4j.isDebugEnabled()) log4j.debug(myError.getMessage());
+      vars.setMessage(strTab,myError);
+      log4j.warn("********** strWindowPath - " + strWindowPath);
+      //vars.setSessionValue(strWindow + "|" + strTabName + ".message", messageResult);
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
 
 
-  String processButton(VariablesSecureApp vars, String strKey, String strOrder, String windowId) {
+ OBError processButton(VariablesSecureApp vars, String strKey, String strOrder, String windowId) {
+    OBError myError = new OBError();
+    myError.setTitle("");
+    int i=0;
     String priceactual = "";
     String pricelist = "";
     String pricelimit = "";
@@ -86,7 +92,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       conn = getTransactionConnection();
       CopyFromPOOrderData[] data = CopyFromPOOrderData.selectLines(this, strOrder);
       CopyFromPOOrderData[] order = CopyFromPOOrderData.select(this, strKey);
-      for (int i=0;data!=null && i<data.length;i++){
+      for (i=0;data!=null && i<data.length;i++){
           SEExpenseProductData[] data3 = SEExpenseProductData.select(this, data[i].mProductId, order[0].mPricelistId.equals("")?CopyFromPOOrderData.defaultPriceList(this):order[0].mPricelistId);
           for (int j=0;data3!=null && j<data3.length;j++) {
             if (data3[j].validfrom == null  || data3[j].validfrom.equals("") || !DateTimeData.compare(this, DateTimeData.today(this), data3[j].validfrom).equals("-1")){
@@ -128,14 +134,21 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
           data[i].cCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline);
       }
       releaseCommitConnection(conn);
-      return Utility.messageBD(this, "ProcessOK", vars.getLanguage());
+
     } catch (Exception e) {
-      log4j.warn(e);
+
       try {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
-      return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+      e.printStackTrace();
+      log4j.warn("Rollback in transaction");
+      myError.setType("Error");
+      myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+      return myError;
     }
+    myError.setType("Info");
+    myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + i);
+    return myError;
   }
 
 
@@ -172,4 +185,3 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
     return "Servlet Copy from order";
   } // end of the getServletInfo() method
 }
-
