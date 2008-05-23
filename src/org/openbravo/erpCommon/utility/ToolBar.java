@@ -238,6 +238,12 @@ public class ToolBar {
     if (!isTest) removeAllTests();
   }
 
+  public void prepareEditionTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest, boolean isReadOnly, boolean isAuditEnabled){
+    removeElement("SEARCH");
+    removeElement("SEARCH_FILTERED");
+    prepareEditionTemplate(hasTree, isFiltered, isTest, isReadOnly, isAuditEnabled);
+  }
+  
   public void prepareEditionTemplate(boolean hasTree, boolean isFiltered, boolean isTest, boolean isReadOnly, boolean isAuditEnabled) {
     removeElement("EDIT");
     removeElement("RELATION");
@@ -271,6 +277,11 @@ public class ToolBar {
     if (isReadOnly) removeReadOnly();
   }
 
+  public void prepareRelationTemplateNoSearch(boolean hasTree, boolean isFiltered, boolean isTest, boolean isReadOnly, boolean isAuditEnabled) {
+    removeElement("SEARCH");
+    removeElement("SEARCH_FILTERED");
+    prepareRelationTemplate(hasTree, isFiltered, isTest, isReadOnly, isAuditEnabled);    
+  }
   public void prepareRelationTemplate(boolean hasTree, boolean isFiltered, boolean isTest, boolean isReadOnly, boolean isAuditEnabled) {
     isRelation = true;
     removeElement("EDIT");
