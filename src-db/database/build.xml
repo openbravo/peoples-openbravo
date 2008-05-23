@@ -243,7 +243,13 @@ compare.database.structure: Generates a diff script.
         TEMPORARY TABLESPACE TEMP;
 
         --GRANTING USER
-        GRANT DBA TO ${bbdd.user};
+      	grant create session     to ${bbdd.user};
+      	grant alter  session     to ${bbdd.user};
+      	grant create table       to ${bbdd.user};
+      	grant create procedure   to ${bbdd.user};
+      	grant create trigger     to ${bbdd.user};
+      	grant create view        to ${bbdd.user};
+      	alter user ${bbdd.user} quota unlimited on users;
       </transaction>
     </sql>
   </target>
