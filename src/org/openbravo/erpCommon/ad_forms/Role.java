@@ -79,7 +79,7 @@ public class Role extends HttpSecureAppServlet {
     } else if (vars.commandIn("SAVE")) {
         String strSetDefault = vars.getStringParameter("setasdefault");
       
-        if (saveDefaultOptions(vars, strSetDefault)) {
+        if (saveDefaultOptions(vars, strSetDefault, request)) {
             vars = new VariablesSecureApp(request); // refresh
             printPage(response, vars, true);
         } else {
@@ -101,7 +101,7 @@ public class Role extends HttpSecureAppServlet {
     if (RoleData.update(this, FormatUtilities.sha1Base64(strClaveNew), vars.getUser()) == 0) throw new ServletException("@CODE=ProcessError");
   }
 
-  private boolean saveDefaultOptions(VariablesSecureApp vars, String strSetDefault) throws ServletException {
+  private boolean saveDefaultOptions(VariablesSecureApp vars, String strSetDefault,  HttpServletRequest req) throws ServletException {
         
         String strUserAuth = vars.getUser();
         String strLanguage = vars.getStringParameter("language");
@@ -114,6 +114,14 @@ public class Role extends HttpSecureAppServlet {
           DefaultOptionsData.saveDefaultOptions(this, strLanguage, strRol, strClient, strOrg, strWarehouse, strUserAuth); 
         
         if (strClient.equals("") || strOrg.equals("") || strRol.equals("")) return false;
+        
+        //Clear session variables maintaining session and user
+        String sessionID = vars.getSessionValue("#AD_Session_ID"); 
+        String sessionUser = (String) req.getSession(true).getAttribute("#Authenticated_user");
+        vars.clearSession(false);
+        vars.setSessionValue("#AD_Session_ID",sessionID);
+        req.getSession(true).setAttribute("#Authenticated_user", sessionUser);
+        
         return LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strRol, strClient, strOrg, strWarehouse);
   }
     
