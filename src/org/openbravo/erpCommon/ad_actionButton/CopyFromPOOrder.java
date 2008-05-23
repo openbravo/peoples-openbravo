@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,8 +70,6 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       OBError myError = processButton(vars, strKey, strOrder, strWindow);
       if (log4j.isDebugEnabled()) log4j.debug(myError.getMessage());
       vars.setMessage(strTab,myError);
-      log4j.warn("********** strWindowPath - " + strWindowPath);
-      //vars.setSessionValue(strWindow + "|" + strTabName + ".message", messageResult);
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
@@ -80,7 +78,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
  OBError processButton(VariablesSecureApp vars, String strKey, String strOrder, String windowId) {
     OBError myError = new OBError();
     myError.setTitle("");
-    int i=0;
+    int i = 0;
     String priceactual = "";
     String pricelist = "";
     String pricelimit = "";
@@ -134,19 +132,19 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
           data[i].cCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline);
       }
       releaseCommitConnection(conn);
-
     } catch (Exception e) {
-
       try {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myError.setType("Error");
+      myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
       return myError;
     }
-    myError.setType("Info");
+    myError.setType("Success");  
+    myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
     myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + i);
     return myError;
   }
