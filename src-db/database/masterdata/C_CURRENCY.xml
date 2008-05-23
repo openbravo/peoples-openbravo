@@ -33,7 +33,7 @@
 <!--100 COSTINGPRECISION-->
 <!--100-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--100 PRICEPRECISION-->
-<!--100-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--100-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--100**************--></C_CURRENCY>
 
 <!--102**************--><C_CURRENCY>
@@ -95,7 +95,7 @@
 <!--103 COSTINGPRECISION-->
 <!--103-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--103 PRICEPRECISION-->
-<!--103-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--103-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--103**************--></C_CURRENCY>
 
 <!--104**************--><C_CURRENCY>
@@ -126,7 +126,7 @@
 <!--104 COSTINGPRECISION-->
 <!--104-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--104 PRICEPRECISION-->
-<!--104-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--104-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--104**************--></C_CURRENCY>
 
 <!--105**************--><C_CURRENCY>
@@ -188,7 +188,7 @@
 <!--106 COSTINGPRECISION-->
 <!--106-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--106 PRICEPRECISION-->
-<!--106-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--106-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--106**************--></C_CURRENCY>
 
 <!--107**************--><C_CURRENCY>
@@ -219,7 +219,7 @@
 <!--107 COSTINGPRECISION-->
 <!--107-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--107 PRICEPRECISION-->
-<!--107-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--107-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--107**************--></C_CURRENCY>
 
 <!--108**************--><C_CURRENCY>
@@ -281,7 +281,7 @@
 <!--109 COSTINGPRECISION-->
 <!--109-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--109 PRICEPRECISION-->
-<!--109-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--109-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--109**************--></C_CURRENCY>
 
 <!--110**************--><C_CURRENCY>
@@ -374,7 +374,7 @@
 <!--112 COSTINGPRECISION-->
 <!--112-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--112 PRICEPRECISION-->
-<!--112-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--112-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--112**************--></C_CURRENCY>
 
 <!--113**************--><C_CURRENCY>
@@ -436,7 +436,7 @@
 <!--114 COSTINGPRECISION-->
 <!--114-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--114 PRICEPRECISION-->
-<!--114-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--114-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--114**************--></C_CURRENCY>
 
 <!--115**************--><C_CURRENCY>
@@ -467,7 +467,7 @@
 <!--115 COSTINGPRECISION-->
 <!--115-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--115 PRICEPRECISION-->
-<!--115-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--115-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--115**************--></C_CURRENCY>
 
 <!--116**************--><C_CURRENCY>
@@ -498,7 +498,7 @@
 <!--116 COSTINGPRECISION-->
 <!--116-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--116 PRICEPRECISION-->
-<!--116-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--116-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--116**************--></C_CURRENCY>
 
 <!--118**************--><C_CURRENCY>
@@ -529,7 +529,7 @@
 <!--118 COSTINGPRECISION-->
 <!--118-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--118 PRICEPRECISION-->
-<!--118-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--118-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--118**************--></C_CURRENCY>
 
 <!--120**************--><C_CURRENCY>
@@ -560,7 +560,7 @@
 <!--120 COSTINGPRECISION-->
 <!--120-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--120 PRICEPRECISION-->
-<!--120-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--120-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--120**************--></C_CURRENCY>
 
 <!--121**************--><C_CURRENCY>
@@ -591,7 +591,7 @@
 <!--121 COSTINGPRECISION-->
 <!--121-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--121 PRICEPRECISION-->
-<!--121-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--121-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--121**************--></C_CURRENCY>
 
 <!--127**************--><C_CURRENCY>
@@ -622,7 +622,7 @@
 <!--127 COSTINGPRECISION-->
 <!--127-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--127 PRICEPRECISION-->
-<!--127-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--127-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--127**************--></C_CURRENCY>
 
 <!--130**************--><C_CURRENCY>
@@ -653,7 +653,7 @@
 <!--130 COSTINGPRECISION-->
 <!--130-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--130 PRICEPRECISION-->
-<!--130-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--130-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--130**************--></C_CURRENCY>
 
 <!--142**************--><C_CURRENCY>
@@ -684,7 +684,7 @@
 <!--142 COSTINGPRECISION-->
 <!--142-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--142 PRICEPRECISION-->
-<!--142-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--142-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--142**************--></C_CURRENCY>
 
 <!--143**************--><C_CURRENCY>
@@ -713,7 +713,7 @@
 <!--143 COSTINGPRECISION-->
 <!--143-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--143 PRICEPRECISION-->
-<!--143-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--143-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--143**************--></C_CURRENCY>
 
 <!--144**************--><C_CURRENCY>
@@ -742,7 +742,7 @@
 <!--144 COSTINGPRECISION-->
 <!--144-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--144 PRICEPRECISION-->
-<!--144-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--144-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--144**************--></C_CURRENCY>
 
 <!--145**************--><C_CURRENCY>
@@ -771,7 +771,7 @@
 <!--145 COSTINGPRECISION-->
 <!--145-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--145 PRICEPRECISION-->
-<!--145-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--145-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--145**************--></C_CURRENCY>
 
 <!--146**************--><C_CURRENCY>
@@ -800,7 +800,7 @@
 <!--146 COSTINGPRECISION-->
 <!--146-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--146 PRICEPRECISION-->
-<!--146-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--146-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--146**************--></C_CURRENCY>
 
 <!--147**************--><C_CURRENCY>
@@ -829,7 +829,7 @@
 <!--147 COSTINGPRECISION-->
 <!--147-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--147 PRICEPRECISION-->
-<!--147-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--147-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--147**************--></C_CURRENCY>
 
 <!--148**************--><C_CURRENCY>
@@ -858,7 +858,7 @@
 <!--148 COSTINGPRECISION-->
 <!--148-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--148 PRICEPRECISION-->
-<!--148-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--148-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--148**************--></C_CURRENCY>
 
 <!--149**************--><C_CURRENCY>
@@ -887,7 +887,7 @@
 <!--149 COSTINGPRECISION-->
 <!--149-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--149 PRICEPRECISION-->
-<!--149-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--149-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--149**************--></C_CURRENCY>
 
 <!--150**************--><C_CURRENCY>
@@ -916,7 +916,7 @@
 <!--150 COSTINGPRECISION-->
 <!--150-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--150 PRICEPRECISION-->
-<!--150-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--150-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--150**************--></C_CURRENCY>
 
 <!--151**************--><C_CURRENCY>
@@ -945,7 +945,7 @@
 <!--151 COSTINGPRECISION-->
 <!--151-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--151 PRICEPRECISION-->
-<!--151-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--151-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--151**************--></C_CURRENCY>
 
 <!--152**************--><C_CURRENCY>
@@ -974,7 +974,7 @@
 <!--152 COSTINGPRECISION-->
 <!--152-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--152 PRICEPRECISION-->
-<!--152-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--152-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--152**************--></C_CURRENCY>
 
 <!--153**************--><C_CURRENCY>
@@ -1003,7 +1003,7 @@
 <!--153 COSTINGPRECISION-->
 <!--153-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--153 PRICEPRECISION-->
-<!--153-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--153-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--153**************--></C_CURRENCY>
 
 <!--154**************--><C_CURRENCY>
@@ -1032,7 +1032,7 @@
 <!--154 COSTINGPRECISION-->
 <!--154-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--154 PRICEPRECISION-->
-<!--154-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--154-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--154**************--></C_CURRENCY>
 
 <!--155**************--><C_CURRENCY>
@@ -1061,7 +1061,7 @@
 <!--155 COSTINGPRECISION-->
 <!--155-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--155 PRICEPRECISION-->
-<!--155-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--155-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--155**************--></C_CURRENCY>
 
 <!--156**************--><C_CURRENCY>
@@ -1090,7 +1090,7 @@
 <!--156 COSTINGPRECISION-->
 <!--156-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--156 PRICEPRECISION-->
-<!--156-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--156-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--156**************--></C_CURRENCY>
 
 <!--157**************--><C_CURRENCY>
@@ -1119,7 +1119,7 @@
 <!--157 COSTINGPRECISION-->
 <!--157-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--157 PRICEPRECISION-->
-<!--157-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--157-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--157**************--></C_CURRENCY>
 
 <!--158**************--><C_CURRENCY>
@@ -1148,7 +1148,7 @@
 <!--158 COSTINGPRECISION-->
 <!--158-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--158 PRICEPRECISION-->
-<!--158-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--158-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--158**************--></C_CURRENCY>
 
 <!--159**************--><C_CURRENCY>
@@ -1177,7 +1177,7 @@
 <!--159 COSTINGPRECISION-->
 <!--159-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--159 PRICEPRECISION-->
-<!--159-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--159-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--159**************--></C_CURRENCY>
 
 <!--160**************--><C_CURRENCY>
@@ -1206,7 +1206,7 @@
 <!--160 COSTINGPRECISION-->
 <!--160-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--160 PRICEPRECISION-->
-<!--160-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--160-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--160**************--></C_CURRENCY>
 
 <!--161**************--><C_CURRENCY>
@@ -1235,7 +1235,7 @@
 <!--161 COSTINGPRECISION-->
 <!--161-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--161 PRICEPRECISION-->
-<!--161-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--161-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--161**************--></C_CURRENCY>
 
 <!--163**************--><C_CURRENCY>
@@ -1266,7 +1266,7 @@
 <!--163 COSTINGPRECISION-->
 <!--163-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--163 PRICEPRECISION-->
-<!--163-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--163-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--163**************--></C_CURRENCY>
 
 <!--164**************--><C_CURRENCY>
@@ -1297,7 +1297,7 @@
 <!--164 COSTINGPRECISION-->
 <!--164-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--164 PRICEPRECISION-->
-<!--164-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--164-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--164**************--></C_CURRENCY>
 
 <!--165**************--><C_CURRENCY>
@@ -1328,7 +1328,7 @@
 <!--165 COSTINGPRECISION-->
 <!--165-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--165 PRICEPRECISION-->
-<!--165-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--165-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--165**************--></C_CURRENCY>
 
 <!--166**************--><C_CURRENCY>
@@ -1359,7 +1359,7 @@
 <!--166 COSTINGPRECISION-->
 <!--166-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--166 PRICEPRECISION-->
-<!--166-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--166-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--166**************--></C_CURRENCY>
 
 <!--167**************--><C_CURRENCY>
@@ -1390,7 +1390,7 @@
 <!--167 COSTINGPRECISION-->
 <!--167-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--167 PRICEPRECISION-->
-<!--167-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--167-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--167**************--></C_CURRENCY>
 
 <!--168**************--><C_CURRENCY>
@@ -1421,7 +1421,7 @@
 <!--168 COSTINGPRECISION-->
 <!--168-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--168 PRICEPRECISION-->
-<!--168-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--168-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--168**************--></C_CURRENCY>
 
 <!--170**************--><C_CURRENCY>
@@ -1452,7 +1452,7 @@
 <!--170 COSTINGPRECISION-->
 <!--170-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--170 PRICEPRECISION-->
-<!--170-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--170-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--170**************--></C_CURRENCY>
 
 <!--171**************--><C_CURRENCY>
@@ -1483,7 +1483,7 @@
 <!--171 COSTINGPRECISION-->
 <!--171-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--171 PRICEPRECISION-->
-<!--171-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--171-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--171**************--></C_CURRENCY>
 
 <!--195**************--><C_CURRENCY>
@@ -1514,7 +1514,7 @@
 <!--195 COSTINGPRECISION-->
 <!--195-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--195 PRICEPRECISION-->
-<!--195-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--195-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--195**************--></C_CURRENCY>
 
 <!--196**************--><C_CURRENCY>
@@ -1545,7 +1545,7 @@
 <!--196 COSTINGPRECISION-->
 <!--196-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--196 PRICEPRECISION-->
-<!--196-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--196-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--196**************--></C_CURRENCY>
 
 <!--197**************--><C_CURRENCY>
@@ -1576,7 +1576,7 @@
 <!--197 COSTINGPRECISION-->
 <!--197-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--197 PRICEPRECISION-->
-<!--197-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--197-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--197**************--></C_CURRENCY>
 
 <!--198**************--><C_CURRENCY>
@@ -1607,7 +1607,7 @@
 <!--198 COSTINGPRECISION-->
 <!--198-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--198 PRICEPRECISION-->
-<!--198-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--198-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--198**************--></C_CURRENCY>
 
 <!--199**************--><C_CURRENCY>
@@ -1638,7 +1638,7 @@
 <!--199 COSTINGPRECISION-->
 <!--199-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--199 PRICEPRECISION-->
-<!--199-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--199-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--199**************--></C_CURRENCY>
 
 <!--200**************--><C_CURRENCY>
@@ -1669,7 +1669,7 @@
 <!--200 COSTINGPRECISION-->
 <!--200-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
 <!--200 PRICEPRECISION-->
-<!--200-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--200-->              <PRICEPRECISION><![CDATA[5]]></PRICEPRECISION>
 <!--200**************--></C_CURRENCY>
 
 <!--201**************--><C_CURRENCY>
@@ -1700,7 +1700,7 @@
 <!--201 COSTINGPRECISION-->
 <!--201-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--201 PRICEPRECISION-->
-<!--201-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--201-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--201**************--></C_CURRENCY>
 
 <!--202**************--><C_CURRENCY>
@@ -1731,7 +1731,7 @@
 <!--202 COSTINGPRECISION-->
 <!--202-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--202 PRICEPRECISION-->
-<!--202-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--202-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--202**************--></C_CURRENCY>
 
 <!--203**************--><C_CURRENCY>
@@ -1762,7 +1762,7 @@
 <!--203 COSTINGPRECISION-->
 <!--203-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--203 PRICEPRECISION-->
-<!--203-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--203-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--203**************--></C_CURRENCY>
 
 <!--204**************--><C_CURRENCY>
@@ -1793,7 +1793,7 @@
 <!--204 COSTINGPRECISION-->
 <!--204-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--204 PRICEPRECISION-->
-<!--204-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--204-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--204**************--></C_CURRENCY>
 
 <!--205**************--><C_CURRENCY>
@@ -1824,7 +1824,7 @@
 <!--205 COSTINGPRECISION-->
 <!--205-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--205 PRICEPRECISION-->
-<!--205-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--205-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--205**************--></C_CURRENCY>
 
 <!--206**************--><C_CURRENCY>
@@ -1855,7 +1855,7 @@
 <!--206 COSTINGPRECISION-->
 <!--206-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--206 PRICEPRECISION-->
-<!--206-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--206-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--206**************--></C_CURRENCY>
 
 <!--207**************--><C_CURRENCY>
@@ -1886,7 +1886,7 @@
 <!--207 COSTINGPRECISION-->
 <!--207-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--207 PRICEPRECISION-->
-<!--207-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--207-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--207**************--></C_CURRENCY>
 
 <!--209**************--><C_CURRENCY>
@@ -1917,7 +1917,7 @@
 <!--209 COSTINGPRECISION-->
 <!--209-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--209 PRICEPRECISION-->
-<!--209-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--209-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--209**************--></C_CURRENCY>
 
 <!--210**************--><C_CURRENCY>
@@ -1948,7 +1948,7 @@
 <!--210 COSTINGPRECISION-->
 <!--210-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--210 PRICEPRECISION-->
-<!--210-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--210-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--210**************--></C_CURRENCY>
 
 <!--211**************--><C_CURRENCY>
@@ -1979,7 +1979,7 @@
 <!--211 COSTINGPRECISION-->
 <!--211-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--211 PRICEPRECISION-->
-<!--211-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--211-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--211**************--></C_CURRENCY>
 
 <!--212**************--><C_CURRENCY>
@@ -2010,7 +2010,7 @@
 <!--212 COSTINGPRECISION-->
 <!--212-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--212 PRICEPRECISION-->
-<!--212-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--212-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--212**************--></C_CURRENCY>
 
 <!--214**************--><C_CURRENCY>
@@ -2041,7 +2041,7 @@
 <!--214 COSTINGPRECISION-->
 <!--214-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--214 PRICEPRECISION-->
-<!--214-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--214-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--214**************--></C_CURRENCY>
 
 <!--225**************--><C_CURRENCY>
@@ -2072,7 +2072,7 @@
 <!--225 COSTINGPRECISION-->
 <!--225-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--225 PRICEPRECISION-->
-<!--225-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--225-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--225**************--></C_CURRENCY>
 
 <!--228**************--><C_CURRENCY>
@@ -2103,7 +2103,7 @@
 <!--228 COSTINGPRECISION-->
 <!--228-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--228 PRICEPRECISION-->
-<!--228-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--228-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--228**************--></C_CURRENCY>
 
 <!--229**************--><C_CURRENCY>
@@ -2134,7 +2134,7 @@
 <!--229 COSTINGPRECISION-->
 <!--229-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--229 PRICEPRECISION-->
-<!--229-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--229-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--229**************--></C_CURRENCY>
 
 <!--230**************--><C_CURRENCY>
@@ -2165,7 +2165,7 @@
 <!--230 COSTINGPRECISION-->
 <!--230-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--230 PRICEPRECISION-->
-<!--230-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--230-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--230**************--></C_CURRENCY>
 
 <!--231**************--><C_CURRENCY>
@@ -2196,7 +2196,7 @@
 <!--231 COSTINGPRECISION-->
 <!--231-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--231 PRICEPRECISION-->
-<!--231-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--231-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--231**************--></C_CURRENCY>
 
 <!--232**************--><C_CURRENCY>
@@ -2227,7 +2227,7 @@
 <!--232 COSTINGPRECISION-->
 <!--232-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--232 PRICEPRECISION-->
-<!--232-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--232-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--232**************--></C_CURRENCY>
 
 <!--233**************--><C_CURRENCY>
@@ -2258,7 +2258,7 @@
 <!--233 COSTINGPRECISION-->
 <!--233-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--233 PRICEPRECISION-->
-<!--233-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--233-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--233**************--></C_CURRENCY>
 
 <!--234**************--><C_CURRENCY>
@@ -2289,7 +2289,7 @@
 <!--234 COSTINGPRECISION-->
 <!--234-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--234 PRICEPRECISION-->
-<!--234-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--234-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--234**************--></C_CURRENCY>
 
 <!--235**************--><C_CURRENCY>
@@ -2320,7 +2320,7 @@
 <!--235 COSTINGPRECISION-->
 <!--235-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--235 PRICEPRECISION-->
-<!--235-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--235-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--235**************--></C_CURRENCY>
 
 <!--236**************--><C_CURRENCY>
@@ -2351,7 +2351,7 @@
 <!--236 COSTINGPRECISION-->
 <!--236-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--236 PRICEPRECISION-->
-<!--236-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--236-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--236**************--></C_CURRENCY>
 
 <!--237**************--><C_CURRENCY>
@@ -2382,7 +2382,7 @@
 <!--237 COSTINGPRECISION-->
 <!--237-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--237 PRICEPRECISION-->
-<!--237-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--237-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--237**************--></C_CURRENCY>
 
 <!--238**************--><C_CURRENCY>
@@ -2413,7 +2413,7 @@
 <!--238 COSTINGPRECISION-->
 <!--238-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--238 PRICEPRECISION-->
-<!--238-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--238-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--238**************--></C_CURRENCY>
 
 <!--239**************--><C_CURRENCY>
@@ -2444,7 +2444,7 @@
 <!--239 COSTINGPRECISION-->
 <!--239-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--239 PRICEPRECISION-->
-<!--239-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--239-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--239**************--></C_CURRENCY>
 
 <!--240**************--><C_CURRENCY>
@@ -2475,7 +2475,7 @@
 <!--240 COSTINGPRECISION-->
 <!--240-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--240 PRICEPRECISION-->
-<!--240-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--240-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--240**************--></C_CURRENCY>
 
 <!--241**************--><C_CURRENCY>
@@ -2506,7 +2506,7 @@
 <!--241 COSTINGPRECISION-->
 <!--241-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--241 PRICEPRECISION-->
-<!--241-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--241-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--241**************--></C_CURRENCY>
 
 <!--244**************--><C_CURRENCY>
@@ -2537,7 +2537,7 @@
 <!--244 COSTINGPRECISION-->
 <!--244-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--244 PRICEPRECISION-->
-<!--244-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--244-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--244**************--></C_CURRENCY>
 
 <!--252**************--><C_CURRENCY>
@@ -2568,7 +2568,7 @@
 <!--252 COSTINGPRECISION-->
 <!--252-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--252 PRICEPRECISION-->
-<!--252-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--252-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--252**************--></C_CURRENCY>
 
 <!--253**************--><C_CURRENCY>
@@ -2599,7 +2599,7 @@
 <!--253 COSTINGPRECISION-->
 <!--253-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--253 PRICEPRECISION-->
-<!--253-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--253-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--253**************--></C_CURRENCY>
 
 <!--254**************--><C_CURRENCY>
@@ -2630,7 +2630,7 @@
 <!--254 COSTINGPRECISION-->
 <!--254-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--254 PRICEPRECISION-->
-<!--254-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--254-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--254**************--></C_CURRENCY>
 
 <!--255**************--><C_CURRENCY>
@@ -2661,7 +2661,7 @@
 <!--255 COSTINGPRECISION-->
 <!--255-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--255 PRICEPRECISION-->
-<!--255-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--255-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--255**************--></C_CURRENCY>
 
 <!--256**************--><C_CURRENCY>
@@ -2692,7 +2692,7 @@
 <!--256 COSTINGPRECISION-->
 <!--256-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--256 PRICEPRECISION-->
-<!--256-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--256-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--256**************--></C_CURRENCY>
 
 <!--257**************--><C_CURRENCY>
@@ -2723,7 +2723,7 @@
 <!--257 COSTINGPRECISION-->
 <!--257-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--257 PRICEPRECISION-->
-<!--257-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--257-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--257**************--></C_CURRENCY>
 
 <!--258**************--><C_CURRENCY>
@@ -2754,7 +2754,7 @@
 <!--258 COSTINGPRECISION-->
 <!--258-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--258 PRICEPRECISION-->
-<!--258-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--258-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--258**************--></C_CURRENCY>
 
 <!--259**************--><C_CURRENCY>
@@ -2785,7 +2785,7 @@
 <!--259 COSTINGPRECISION-->
 <!--259-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--259 PRICEPRECISION-->
-<!--259-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--259-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--259**************--></C_CURRENCY>
 
 <!--260**************--><C_CURRENCY>
@@ -2816,7 +2816,7 @@
 <!--260 COSTINGPRECISION-->
 <!--260-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
 <!--260 PRICEPRECISION-->
-<!--260-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--260-->              <PRICEPRECISION><![CDATA[5]]></PRICEPRECISION>
 <!--260**************--></C_CURRENCY>
 
 <!--261**************--><C_CURRENCY>
@@ -2847,7 +2847,7 @@
 <!--261 COSTINGPRECISION-->
 <!--261-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--261 PRICEPRECISION-->
-<!--261-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--261-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--261**************--></C_CURRENCY>
 
 <!--262**************--><C_CURRENCY>
@@ -2878,7 +2878,7 @@
 <!--262 COSTINGPRECISION-->
 <!--262-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--262 PRICEPRECISION-->
-<!--262-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--262-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--262**************--></C_CURRENCY>
 
 <!--263**************--><C_CURRENCY>
@@ -2909,7 +2909,7 @@
 <!--263 COSTINGPRECISION-->
 <!--263-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
 <!--263 PRICEPRECISION-->
-<!--263-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--263-->              <PRICEPRECISION><![CDATA[5]]></PRICEPRECISION>
 <!--263**************--></C_CURRENCY>
 
 <!--264**************--><C_CURRENCY>
@@ -2940,7 +2940,7 @@
 <!--264 COSTINGPRECISION-->
 <!--264-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--264 PRICEPRECISION-->
-<!--264-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--264-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--264**************--></C_CURRENCY>
 
 <!--265**************--><C_CURRENCY>
@@ -2971,7 +2971,7 @@
 <!--265 COSTINGPRECISION-->
 <!--265-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--265 PRICEPRECISION-->
-<!--265-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--265-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--265**************--></C_CURRENCY>
 
 <!--266**************--><C_CURRENCY>
@@ -3002,7 +3002,7 @@
 <!--266 COSTINGPRECISION-->
 <!--266-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--266 PRICEPRECISION-->
-<!--266-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--266-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--266**************--></C_CURRENCY>
 
 <!--267**************--><C_CURRENCY>
@@ -3033,7 +3033,7 @@
 <!--267 COSTINGPRECISION-->
 <!--267-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
 <!--267 PRICEPRECISION-->
-<!--267-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--267-->              <PRICEPRECISION><![CDATA[5]]></PRICEPRECISION>
 <!--267**************--></C_CURRENCY>
 
 <!--268**************--><C_CURRENCY>
@@ -3064,7 +3064,7 @@
 <!--268 COSTINGPRECISION-->
 <!--268-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--268 PRICEPRECISION-->
-<!--268-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--268-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--268**************--></C_CURRENCY>
 
 <!--269**************--><C_CURRENCY>
@@ -3095,7 +3095,7 @@
 <!--269 COSTINGPRECISION-->
 <!--269-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--269 PRICEPRECISION-->
-<!--269-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--269-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--269**************--></C_CURRENCY>
 
 <!--270**************--><C_CURRENCY>
@@ -3126,7 +3126,7 @@
 <!--270 COSTINGPRECISION-->
 <!--270-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--270 PRICEPRECISION-->
-<!--270-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--270-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--270**************--></C_CURRENCY>
 
 <!--271**************--><C_CURRENCY>
@@ -3157,7 +3157,7 @@
 <!--271 COSTINGPRECISION-->
 <!--271-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--271 PRICEPRECISION-->
-<!--271-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--271-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--271**************--></C_CURRENCY>
 
 <!--272**************--><C_CURRENCY>
@@ -3188,7 +3188,7 @@
 <!--272 COSTINGPRECISION-->
 <!--272-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--272 PRICEPRECISION-->
-<!--272-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--272-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--272**************--></C_CURRENCY>
 
 <!--273**************--><C_CURRENCY>
@@ -3219,7 +3219,7 @@
 <!--273 COSTINGPRECISION-->
 <!--273-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--273 PRICEPRECISION-->
-<!--273-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--273-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--273**************--></C_CURRENCY>
 
 <!--274**************--><C_CURRENCY>
@@ -3250,7 +3250,7 @@
 <!--274 COSTINGPRECISION-->
 <!--274-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--274 PRICEPRECISION-->
-<!--274-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--274-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--274**************--></C_CURRENCY>
 
 <!--275**************--><C_CURRENCY>
@@ -3281,7 +3281,7 @@
 <!--275 COSTINGPRECISION-->
 <!--275-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
 <!--275 PRICEPRECISION-->
-<!--275-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--275-->              <PRICEPRECISION><![CDATA[5]]></PRICEPRECISION>
 <!--275**************--></C_CURRENCY>
 
 <!--276**************--><C_CURRENCY>
@@ -3312,7 +3312,7 @@
 <!--276 COSTINGPRECISION-->
 <!--276-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--276 PRICEPRECISION-->
-<!--276-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--276-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--276**************--></C_CURRENCY>
 
 <!--277**************--><C_CURRENCY>
@@ -3343,7 +3343,7 @@
 <!--277 COSTINGPRECISION-->
 <!--277-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--277 PRICEPRECISION-->
-<!--277-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--277-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--277**************--></C_CURRENCY>
 
 <!--278**************--><C_CURRENCY>
@@ -3374,7 +3374,7 @@
 <!--278 COSTINGPRECISION-->
 <!--278-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--278 PRICEPRECISION-->
-<!--278-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--278-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--278**************--></C_CURRENCY>
 
 <!--279**************--><C_CURRENCY>
@@ -3405,7 +3405,7 @@
 <!--279 COSTINGPRECISION-->
 <!--279-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--279 PRICEPRECISION-->
-<!--279-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--279-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--279**************--></C_CURRENCY>
 
 <!--280**************--><C_CURRENCY>
@@ -3436,7 +3436,7 @@
 <!--280 COSTINGPRECISION-->
 <!--280-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--280 PRICEPRECISION-->
-<!--280-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--280-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--280**************--></C_CURRENCY>
 
 <!--281**************--><C_CURRENCY>
@@ -3467,7 +3467,7 @@
 <!--281 COSTINGPRECISION-->
 <!--281-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--281 PRICEPRECISION-->
-<!--281-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--281-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--281**************--></C_CURRENCY>
 
 <!--282**************--><C_CURRENCY>
@@ -3498,7 +3498,7 @@
 <!--282 COSTINGPRECISION-->
 <!--282-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--282 PRICEPRECISION-->
-<!--282-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--282-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--282**************--></C_CURRENCY>
 
 <!--283**************--><C_CURRENCY>
@@ -3529,7 +3529,7 @@
 <!--283 COSTINGPRECISION-->
 <!--283-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--283 PRICEPRECISION-->
-<!--283-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--283-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--283**************--></C_CURRENCY>
 
 <!--284**************--><C_CURRENCY>
@@ -3560,7 +3560,7 @@
 <!--284 COSTINGPRECISION-->
 <!--284-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--284 PRICEPRECISION-->
-<!--284-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--284-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--284**************--></C_CURRENCY>
 
 <!--285**************--><C_CURRENCY>
@@ -3591,7 +3591,7 @@
 <!--285 COSTINGPRECISION-->
 <!--285-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--285 PRICEPRECISION-->
-<!--285-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--285-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--285**************--></C_CURRENCY>
 
 <!--286**************--><C_CURRENCY>
@@ -3622,7 +3622,7 @@
 <!--286 COSTINGPRECISION-->
 <!--286-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--286 PRICEPRECISION-->
-<!--286-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--286-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--286**************--></C_CURRENCY>
 
 <!--287**************--><C_CURRENCY>
@@ -3653,7 +3653,7 @@
 <!--287 COSTINGPRECISION-->
 <!--287-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--287 PRICEPRECISION-->
-<!--287-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--287-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--287**************--></C_CURRENCY>
 
 <!--288**************--><C_CURRENCY>
@@ -3684,7 +3684,7 @@
 <!--288 COSTINGPRECISION-->
 <!--288-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--288 PRICEPRECISION-->
-<!--288-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--288-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--288**************--></C_CURRENCY>
 
 <!--289**************--><C_CURRENCY>
@@ -3715,7 +3715,7 @@
 <!--289 COSTINGPRECISION-->
 <!--289-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--289 PRICEPRECISION-->
-<!--289-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--289-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--289**************--></C_CURRENCY>
 
 <!--290**************--><C_CURRENCY>
@@ -3746,7 +3746,7 @@
 <!--290 COSTINGPRECISION-->
 <!--290-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--290 PRICEPRECISION-->
-<!--290-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--290-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--290**************--></C_CURRENCY>
 
 <!--291**************--><C_CURRENCY>
@@ -3777,7 +3777,7 @@
 <!--291 COSTINGPRECISION-->
 <!--291-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--291 PRICEPRECISION-->
-<!--291-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--291-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--291**************--></C_CURRENCY>
 
 <!--292**************--><C_CURRENCY>
@@ -3808,7 +3808,7 @@
 <!--292 COSTINGPRECISION-->
 <!--292-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--292 PRICEPRECISION-->
-<!--292-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--292-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--292**************--></C_CURRENCY>
 
 <!--293**************--><C_CURRENCY>
@@ -3839,7 +3839,7 @@
 <!--293 COSTINGPRECISION-->
 <!--293-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--293 PRICEPRECISION-->
-<!--293-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--293-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--293**************--></C_CURRENCY>
 
 <!--294**************--><C_CURRENCY>
@@ -3870,7 +3870,7 @@
 <!--294 COSTINGPRECISION-->
 <!--294-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--294 PRICEPRECISION-->
-<!--294-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--294-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--294**************--></C_CURRENCY>
 
 <!--297**************--><C_CURRENCY>
@@ -3901,7 +3901,7 @@
 <!--297 COSTINGPRECISION-->
 <!--297-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--297 PRICEPRECISION-->
-<!--297-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--297-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--297**************--></C_CURRENCY>
 
 <!--298**************--><C_CURRENCY>
@@ -3932,7 +3932,7 @@
 <!--298 COSTINGPRECISION-->
 <!--298-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--298 PRICEPRECISION-->
-<!--298-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--298-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--298**************--></C_CURRENCY>
 
 <!--299**************--><C_CURRENCY>
@@ -3963,7 +3963,7 @@
 <!--299 COSTINGPRECISION-->
 <!--299-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--299 PRICEPRECISION-->
-<!--299-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--299-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--299**************--></C_CURRENCY>
 
 <!--300**************--><C_CURRENCY>
@@ -3994,7 +3994,7 @@
 <!--300 COSTINGPRECISION-->
 <!--300-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--300 PRICEPRECISION-->
-<!--300-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--300-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--300**************--></C_CURRENCY>
 
 <!--301**************--><C_CURRENCY>
@@ -4025,7 +4025,7 @@
 <!--301 COSTINGPRECISION-->
 <!--301-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--301 PRICEPRECISION-->
-<!--301-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--301-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--301**************--></C_CURRENCY>
 
 <!--302**************--><C_CURRENCY>
@@ -4056,7 +4056,7 @@
 <!--302 COSTINGPRECISION-->
 <!--302-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
 <!--302 PRICEPRECISION-->
-<!--302-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--302-->              <PRICEPRECISION><![CDATA[5]]></PRICEPRECISION>
 <!--302**************--></C_CURRENCY>
 
 <!--303**************--><C_CURRENCY>
@@ -4087,7 +4087,7 @@
 <!--303 COSTINGPRECISION-->
 <!--303-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--303 PRICEPRECISION-->
-<!--303-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--303-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--303**************--></C_CURRENCY>
 
 <!--304**************--><C_CURRENCY>
@@ -4118,7 +4118,7 @@
 <!--304 COSTINGPRECISION-->
 <!--304-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--304 PRICEPRECISION-->
-<!--304-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--304-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--304**************--></C_CURRENCY>
 
 <!--306**************--><C_CURRENCY>
@@ -4149,7 +4149,7 @@
 <!--306 COSTINGPRECISION-->
 <!--306-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--306 PRICEPRECISION-->
-<!--306-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--306-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--306**************--></C_CURRENCY>
 
 <!--307**************--><C_CURRENCY>
@@ -4180,7 +4180,7 @@
 <!--307 COSTINGPRECISION-->
 <!--307-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--307 PRICEPRECISION-->
-<!--307-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--307-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--307**************--></C_CURRENCY>
 
 <!--308**************--><C_CURRENCY>
@@ -4211,7 +4211,7 @@
 <!--308 COSTINGPRECISION-->
 <!--308-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--308 PRICEPRECISION-->
-<!--308-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--308-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--308**************--></C_CURRENCY>
 
 <!--309**************--><C_CURRENCY>
@@ -4242,7 +4242,7 @@
 <!--309 COSTINGPRECISION-->
 <!--309-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--309 PRICEPRECISION-->
-<!--309-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--309-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--309**************--></C_CURRENCY>
 
 <!--310**************--><C_CURRENCY>
@@ -4273,7 +4273,7 @@
 <!--310 COSTINGPRECISION-->
 <!--310-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--310 PRICEPRECISION-->
-<!--310-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--310-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--310**************--></C_CURRENCY>
 
 <!--311**************--><C_CURRENCY>
@@ -4304,7 +4304,7 @@
 <!--311 COSTINGPRECISION-->
 <!--311-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--311 PRICEPRECISION-->
-<!--311-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--311-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--311**************--></C_CURRENCY>
 
 <!--312**************--><C_CURRENCY>
@@ -4335,7 +4335,7 @@
 <!--312 COSTINGPRECISION-->
 <!--312-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--312 PRICEPRECISION-->
-<!--312-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--312-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--312**************--></C_CURRENCY>
 
 <!--313**************--><C_CURRENCY>
@@ -4366,7 +4366,7 @@
 <!--313 COSTINGPRECISION-->
 <!--313-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--313 PRICEPRECISION-->
-<!--313-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--313-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--313**************--></C_CURRENCY>
 
 <!--315**************--><C_CURRENCY>
@@ -4397,7 +4397,7 @@
 <!--315 COSTINGPRECISION-->
 <!--315-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--315 PRICEPRECISION-->
-<!--315-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--315-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--315**************--></C_CURRENCY>
 
 <!--316**************--><C_CURRENCY>
@@ -4428,7 +4428,7 @@
 <!--316 COSTINGPRECISION-->
 <!--316-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--316 PRICEPRECISION-->
-<!--316-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--316-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--316**************--></C_CURRENCY>
 
 <!--317**************--><C_CURRENCY>
@@ -4459,7 +4459,7 @@
 <!--317 COSTINGPRECISION-->
 <!--317-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--317 PRICEPRECISION-->
-<!--317-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--317-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--317**************--></C_CURRENCY>
 
 <!--318**************--><C_CURRENCY>
@@ -4490,7 +4490,7 @@
 <!--318 COSTINGPRECISION-->
 <!--318-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--318 PRICEPRECISION-->
-<!--318-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--318-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--318**************--></C_CURRENCY>
 
 <!--320**************--><C_CURRENCY>
@@ -4521,7 +4521,7 @@
 <!--320 COSTINGPRECISION-->
 <!--320-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--320 PRICEPRECISION-->
-<!--320-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--320-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--320**************--></C_CURRENCY>
 
 <!--321**************--><C_CURRENCY>
@@ -4552,7 +4552,7 @@
 <!--321 COSTINGPRECISION-->
 <!--321-->              <COSTINGPRECISION><![CDATA[5]]></COSTINGPRECISION>
 <!--321 PRICEPRECISION-->
-<!--321-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--321-->              <PRICEPRECISION><![CDATA[5]]></PRICEPRECISION>
 <!--321**************--></C_CURRENCY>
 
 <!--322**************--><C_CURRENCY>
@@ -4583,7 +4583,7 @@
 <!--322 COSTINGPRECISION-->
 <!--322-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--322 PRICEPRECISION-->
-<!--322-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--322-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--322**************--></C_CURRENCY>
 
 <!--323**************--><C_CURRENCY>
@@ -4614,7 +4614,7 @@
 <!--323 COSTINGPRECISION-->
 <!--323-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--323 PRICEPRECISION-->
-<!--323-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--323-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--323**************--></C_CURRENCY>
 
 <!--324**************--><C_CURRENCY>
@@ -4645,7 +4645,7 @@
 <!--324 COSTINGPRECISION-->
 <!--324-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--324 PRICEPRECISION-->
-<!--324-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--324-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--324**************--></C_CURRENCY>
 
 <!--325**************--><C_CURRENCY>
@@ -4676,7 +4676,7 @@
 <!--325 COSTINGPRECISION-->
 <!--325-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--325 PRICEPRECISION-->
-<!--325-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--325-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--325**************--></C_CURRENCY>
 
 <!--326**************--><C_CURRENCY>
@@ -4707,7 +4707,7 @@
 <!--326 COSTINGPRECISION-->
 <!--326-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--326 PRICEPRECISION-->
-<!--326-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--326-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--326**************--></C_CURRENCY>
 
 <!--327**************--><C_CURRENCY>
@@ -4738,7 +4738,7 @@
 <!--327 COSTINGPRECISION-->
 <!--327-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--327 PRICEPRECISION-->
-<!--327-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--327-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--327**************--></C_CURRENCY>
 
 <!--328**************--><C_CURRENCY>
@@ -4769,7 +4769,7 @@
 <!--328 COSTINGPRECISION-->
 <!--328-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--328 PRICEPRECISION-->
-<!--328-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--328-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--328**************--></C_CURRENCY>
 
 <!--329**************--><C_CURRENCY>
@@ -4800,7 +4800,7 @@
 <!--329 COSTINGPRECISION-->
 <!--329-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--329 PRICEPRECISION-->
-<!--329-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--329-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--329**************--></C_CURRENCY>
 
 <!--330**************--><C_CURRENCY>
@@ -4831,7 +4831,7 @@
 <!--330 COSTINGPRECISION-->
 <!--330-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--330 PRICEPRECISION-->
-<!--330-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--330-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--330**************--></C_CURRENCY>
 
 <!--331**************--><C_CURRENCY>
@@ -4862,7 +4862,7 @@
 <!--331 COSTINGPRECISION-->
 <!--331-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--331 PRICEPRECISION-->
-<!--331-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--331-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--331**************--></C_CURRENCY>
 
 <!--332**************--><C_CURRENCY>
@@ -4893,7 +4893,7 @@
 <!--332 COSTINGPRECISION-->
 <!--332-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--332 PRICEPRECISION-->
-<!--332-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--332-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--332**************--></C_CURRENCY>
 
 <!--333**************--><C_CURRENCY>
@@ -4924,7 +4924,7 @@
 <!--333 COSTINGPRECISION-->
 <!--333-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--333 PRICEPRECISION-->
-<!--333-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--333-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--333**************--></C_CURRENCY>
 
 <!--334**************--><C_CURRENCY>
@@ -4955,7 +4955,7 @@
 <!--334 COSTINGPRECISION-->
 <!--334-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--334 PRICEPRECISION-->
-<!--334-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--334-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--334**************--></C_CURRENCY>
 
 <!--335**************--><C_CURRENCY>
@@ -4986,7 +4986,7 @@
 <!--335 COSTINGPRECISION-->
 <!--335-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--335 PRICEPRECISION-->
-<!--335-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--335-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--335**************--></C_CURRENCY>
 
 <!--336**************--><C_CURRENCY>
@@ -5015,7 +5015,7 @@
 <!--336 COSTINGPRECISION-->
 <!--336-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--336 PRICEPRECISION-->
-<!--336-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--336-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--336**************--></C_CURRENCY>
 
 <!--337**************--><C_CURRENCY>
@@ -5044,7 +5044,7 @@
 <!--337 COSTINGPRECISION-->
 <!--337-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--337 PRICEPRECISION-->
-<!--337-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--337-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--337**************--></C_CURRENCY>
 
 <!--338**************--><C_CURRENCY>
@@ -5073,7 +5073,7 @@
 <!--338 COSTINGPRECISION-->
 <!--338-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--338 PRICEPRECISION-->
-<!--338-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--338-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--338**************--></C_CURRENCY>
 
 <!--339**************--><C_CURRENCY>
@@ -5102,7 +5102,7 @@
 <!--339 COSTINGPRECISION-->
 <!--339-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--339 PRICEPRECISION-->
-<!--339-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--339-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--339**************--></C_CURRENCY>
 
 <!--340**************--><C_CURRENCY>
@@ -5131,7 +5131,7 @@
 <!--340 COSTINGPRECISION-->
 <!--340-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--340 PRICEPRECISION-->
-<!--340-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--340-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--340**************--></C_CURRENCY>
 
 <!--341**************--><C_CURRENCY>
@@ -5160,7 +5160,7 @@
 <!--341 COSTINGPRECISION-->
 <!--341-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--341 PRICEPRECISION-->
-<!--341-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--341-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--341**************--></C_CURRENCY>
 
 <!--342**************--><C_CURRENCY>
@@ -5189,7 +5189,7 @@
 <!--342 COSTINGPRECISION-->
 <!--342-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--342 PRICEPRECISION-->
-<!--342-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--342-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--342**************--></C_CURRENCY>
 
 <!--343**************--><C_CURRENCY>
@@ -5218,7 +5218,7 @@
 <!--343 COSTINGPRECISION-->
 <!--343-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--343 PRICEPRECISION-->
-<!--343-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--343-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--343**************--></C_CURRENCY>
 
 <!--344**************--><C_CURRENCY>
@@ -5247,7 +5247,7 @@
 <!--344 COSTINGPRECISION-->
 <!--344-->              <COSTINGPRECISION><![CDATA[2]]></COSTINGPRECISION>
 <!--344 PRICEPRECISION-->
-<!--344-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--344-->              <PRICEPRECISION><![CDATA[2]]></PRICEPRECISION>
 <!--344**************--></C_CURRENCY>
 
 <!--345**************--><C_CURRENCY>
@@ -5276,7 +5276,7 @@
 <!--345 COSTINGPRECISION-->
 <!--345-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--345 PRICEPRECISION-->
-<!--345-->              <PRICEPRECISION><![CDATA[0]]></PRICEPRECISION>
+<!--345-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--345**************--></C_CURRENCY>
 
 <!--
