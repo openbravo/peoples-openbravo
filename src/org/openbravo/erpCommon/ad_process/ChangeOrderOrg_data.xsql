@@ -55,7 +55,6 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="cBpartnerId" optional="true" after="AND o.IsSOTrx='Y' " text=" AND o.C_BPartner_ID = TO_NUMBER(?) "/>
     <Parameter name="adOrgId" optional="true" after="AND o.IsSOTrx='Y' " text=" AND o.AD_Org_ID = TO_NUMBER(?) "/>
-    <Parameter name="adForcedOrgId" optional="true" after="AND o.IsSOTrx='Y' " text=" AND bp.AD_Forced_Org_ID = TO_NUMBER(?) "/>
     <Parameter name="paymentrule" optional="true" after="AND o.IsSOTrx='Y' " text=" AND o.PaymentRule = ? "/>
     <Parameter name="adwarehouseid" optional="true" after="AND o.IsSOTrx='Y' " text=" AND o.m_warehouse_ID = TO_NUMBER(?) "/>
   </SqlMethod>

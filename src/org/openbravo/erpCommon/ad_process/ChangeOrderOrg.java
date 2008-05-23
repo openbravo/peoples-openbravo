@@ -49,20 +49,18 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
       String strBPartner = vars.getGlobalVariable("inpcBpartnerId", "ChangeOrderOrg.cBpartnerId", "");
       String strOrg = vars.getGlobalVariable("inpadOrgId", "ChangeOrderOrg.adOrgId", "");
       vars.getGlobalVariable("inpadShipperpathId", "ChangeOrderOrg.adShipperpathId", "");
-      String strForcedOrg = vars.getGlobalVariable("inpadForcedOrgId", "ChangeOrderOrg.adForcedOrgId", "");
       String strPayment = vars.getGlobalVariable("inppaymentrule", "ChangeOrderOrg.paymentrule", "");
       /*String strNewOrg = vars.getGlobalVariable("inpadOrgIdNew", "ChangeOrderOrg.adOrgIdNew", "");
       String strTax = vars.getGlobalVariable("inpcTaxId", "ChangeOrderOrg.cTaxId", "");*/
-      printPage(response, vars, strBPartner, strOrg, strForcedOrg, "", strPayment, "", "");
+      printPage(response, vars, strBPartner, strOrg, "", strPayment, "", "");
     } else if (vars.commandIn("FIND")) {
       String strBPartner = vars.getRequestGlobalVariable("inpcBpartnerId", "ChangeOrderOrg.cBpartnerId");
       String strOrg = vars.getRequestGlobalVariable("inpadOrgId", "ChangeOrderOrg.adOrgId");
       String strShipperpath = vars.getRequestGlobalVariable("inpadShipperpathId", "ChangeOrderOrg.adShipperpathId");
-      String strForcedOrg = vars.getRequestGlobalVariable("inpadForcedOrgId", "ChangeOrderOrg.adForcedOrgId");
       String strPayment = vars.getRequestGlobalVariable("inppaymentrule", "ChangeOrderOrg.paymentrule");
       String strNewOrg = vars.getStringParameter("inpadOrgIdNew");
       String strTax = vars.getStringParameter("inpcTaxId");
-      printPage(response, vars, strBPartner, strOrg, strForcedOrg, strShipperpath, strPayment, strNewOrg, strTax);
+      printPage(response, vars, strBPartner, strOrg, strShipperpath, strPayment, strNewOrg, strTax);
     } else if (vars.commandIn("SAVE")) {
       String strNewOrg = vars.getRequiredStringParameter("inpadOrgIdNew");
       String strTax = vars.getStringParameter("inpcTaxId");
@@ -156,7 +154,7 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
     //return Utility.messageBD(this, "Success", vars.getLanguage());
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner, String strOrg, String strForcedOrg, String strShipperpath, String strPayment, String strNewOrg, String strTax) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner, String strOrg, String strShipperpath, String strPayment, String strNewOrg, String strTax) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: process ChangeOrderOrg");
 
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/ChangeOrderOrg").createXmlDocument();
@@ -193,7 +191,6 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("bpartner", strBPartner);
       xmlDocument.setParameter("organization", strOrg);
-      xmlDocument.setParameter("forcedOrg", strForcedOrg);
       xmlDocument.setParameter("paymentRule", strPayment);
       xmlDocument.setParameter("organizationNew", strNewOrg);
       xmlDocument.setParameter("shipperpath", strShipperpath);
@@ -214,16 +211,6 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
           ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Tax_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ChangeOrderOrg"), Utility.getContext(this, vars, "#User_Client", "ChangeOrderOrg"), 0);
           Utility.fillSQLParameters(this, vars, null, comboTableData, "ChangeOrderOrg", strTax);
           xmlDocument.setData("reportC_TAX_ID", "liststructure", comboTableData.select(false));
-          comboTableData = null;
-        } catch (Exception ex) {
-          throw new ServletException(ex);
-        }
-
-
-        try {
-          ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ChangeOrderOrg"), Utility.getContext(this, vars, "#User_Client", "ChangeOrderOrg"), 0);
-          Utility.fillSQLParameters(this, vars, null, comboTableData, "ChangeOrderOrg", strForcedOrg);
-          xmlDocument.setData("reportAD_Forced_Org_ID", "liststructure", comboTableData.select(false));
           comboTableData = null;
         } catch (Exception ex) {
           throw new ServletException(ex);
@@ -252,7 +239,7 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
       if (vars.commandIn("DEFAULT") && strBPartner.equals("") && strOrg.equals("")) {
         xmlDocument.setData("structure1", new ChangeOrderOrgData[0]);
       } else {
-        xmlDocument.setData("structure1", ChangeOrderOrgData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ChangeOrderOrg"), Utility.getContext(this, vars, "#User_Org", "ChangeOrderOrg"), strBPartner, strOrg, strForcedOrg, strPayment, strShipperpath));
+        xmlDocument.setData("structure1", ChangeOrderOrgData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ChangeOrderOrg"), Utility.getContext(this, vars, "#User_Org", "ChangeOrderOrg"), strBPartner, strOrg, strPayment, strShipperpath));
       }
       
       response.setContentType("text/html; charset=UTF-8");

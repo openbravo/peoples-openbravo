@@ -59,7 +59,7 @@
 			return false;			
 			} 
 	 		if (frm.inpadOrgIdNew.value==null || frm.inpadOrgIdNew.value=="") {
-            frm.inpadOrgIdNew.focus();
+            setWindowElementFocus(inpadOrgIdNew);
             mensaje(7);
             return false;
             }
@@ -279,20 +279,16 @@
                 <OPTION value=""></OPTION><DIV id="reportAD_Org_ID"></DIV>
               </SELECT>
             </TD>
-            <TD class="TitleCell"><SPAN class="LabelText">Forced organization</SPAN></TD>
-            <TD class="Combo_ContentCell">
-              <SELECT name="inpadForcedOrgId" id="inpadForcedOrgId" class="Combo Combo_OneCell_width">
-                <OPTION value=""></OPTION><DIV id="reportAD_Forced_Org_ID"></DIV>
+            <TD class="TitleCell"><SPAN class="LabelText">Warehouse</SPAN></TD>
+            <TD class="Combo_ContentCell" colspan="3">
+              <SELECT name="inpadShipperpathId" id="inpadShipperpathId" class="Combo Combo_OneCell_width">
+                <OPTION value=""></OPTION><DIV id="reportM_Warehouse_ID"></DIV>
               </SELECT>
             </TD>
-            <TD class="TitleCell"><SPAN class="LabelText">Destiny organization</SPAN></TD>
+            <TD class="TitleCell"></TD>
             <TD class="Combo_ContentCell">
-              <SELECT name="inpadOrgIdNew" id="inpadOrgIdNew" class="Combo Combo_OneCell_width">
-                <OPTION value=""></OPTION><DIV id="reportAD_Org_IDNew"></DIV>
-              </SELECT>
             </TD>
           </TR>
-
           <TR>
             <TD class="TitleCell"><SPAN class="LabelText">Payment rule</SPAN></TD>
             <TD class="Combo_ContentCell">
@@ -304,14 +300,6 @@
             <TD class="Combo_ContentCell" colspan="3">
               <SELECT name="inpcTaxId" id="inpcTaxId" class="Combo Combo_ThreeCells_width">
                 <OPTION value=""></OPTION><DIV id="reportC_TAX_ID"></DIV>
-              </SELECT>
-            </TD>
-          </TR>
-          <TR>
-            <TD class="TitleCell"><SPAN class="LabelText">Warehouse</SPAN></TD>
-            <TD class="Combo_ContentCell" colspan="3">
-              <SELECT name="inpadShipperpathId" id="inpadShipperpathId" class="Combo Combo_OneCell_width">
-                <OPTION value=""></OPTION><DIV id="reportM_Warehouse_ID"></DIV>
               </SELECT>
             </TD>
           </TR>
@@ -334,6 +322,32 @@
             <TD colspan="4"></TD>
           </TR>
 <!-- Search button end-->
+<!-- Results caption-->
+          <TR>
+            <td colspan="6">
+              <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+              <tbody>
+                <tr class="FieldGroup_TopMargin"/>
+                <tr>
+                  <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                  <TD class="FieldGroupTitle">View Results</TD>
+                  <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                  <td class="FieldGroupContent"/>
+                </tr>
+                <tr class="FieldGroup_BottomMargin"/>
+              </tbody>
+              </table>
+            </td>
+          </TR>
+<!-- Results caption end-->
+          <TR>
+            <TD class="TitleCell"><SPAN class="LabelText">Destiny organization</SPAN></TD>
+            <TD class="Combo_ContentCell">
+              <SELECT name="inpadOrgIdNew" id="inpadOrgIdNew" class="ComboKey Combo_OneCell_width" required="true">
+                <OPTION value=""></OPTION><DIV id="reportAD_Org_IDNew"></DIV>
+              </SELECT>
+            </TD>
+          </TR>
         </TABLE>
 <!-- filter box  end-->
         <BR></BR>
@@ -347,8 +361,7 @@
                 <TH class="DataGrid_Header_Cell" width="93">Document No.</TH>
                 <TH class="DataGrid_Header_Cell" width="93">Organization</TH>
                 <TH class="DataGrid_Header_Cell" width="281">Business Partner</TH>
-                <TH class="DataGrid_Header_Cell" width="114">Payment rule</TH>
-                <TH class="DataGrid_Header_Cell" width="112">Forced organization</TH>
+                <TH class="DataGrid_Header_Cell" width="112">Payment rule</TH>
                 <TH class="DataGrid_Header_Cell" width="82">Date</TH>
                 <TH class="DataGrid_Header_Cell" width="82">Amount</TH>
               </TR>
@@ -360,7 +373,6 @@
                   <TD class="DataGrid_Body_Cell" id="fieldOrganization">xx</TD>
                   <TD class="DataGrid_Body_Cell" id="fieldBPartner">xxUOM</TD>
                   <TD class="DataGrid_Body_Cell" id="fieldPaymentRule">xx</TD>
-                  <TD class="DataGrid_Body_Cell" id="fieldForcedOrg">xx</TD>
                   <TD class="DataGrid_Body_Cell" id="fieldDateOrdered">xxProduct</TD>
                   <TD class="DataGrid_Body_Cell" id="fieldGrandTotal">xx</TD>
                 </TR>
