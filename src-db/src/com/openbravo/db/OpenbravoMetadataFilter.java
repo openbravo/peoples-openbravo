@@ -34,7 +34,7 @@ public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
         addTable("AD_ROLE", "AD_CLIENT_ID = 0");
         addTable("AD_ROLE_ORGACCESS", "AD_CLIENT_ID = 0");
         addTable("AD_USER", "AD_USER_ID IN (0,100)");
-        addTable("AD_USER_ROLES", "AD_USER_ID IN (0,100)");
+        addTable("AD_USER_ROLES", "AD_CLIENT_ID = 0");
         addTable("AD_DEVELOPER");
     
         //addTable("AD_WORKBENCH", "AD_CLIENT_ID = 0");
