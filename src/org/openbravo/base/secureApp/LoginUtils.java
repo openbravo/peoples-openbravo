@@ -46,10 +46,7 @@ public class LoginUtils {
           log4j.error("Login organization is not in role organizations list");
           return false;
         }
-        if (!strAlmacen.equals("") && !WarehouseComboData.isRoleClientWarehouse(conn, strRol, strCliente, strAlmacen)) {
-          log4j.error("Login warehouse is not in role warehouses list");
-          return false;
-        }
+
 
         // Set session vars     
         vars.setSessionValue("#AD_User_ID", strUserAuth);

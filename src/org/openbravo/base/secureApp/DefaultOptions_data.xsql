@@ -140,8 +140,10 @@
           FROM M_WAREHOUSE
          WHERE AD_CLIENT_ID = TO_NUMBER(?)
           AND ISACTIVE = 'Y'
+          AND AD_Org_ID IN('1') 
            ]]></Sql>
       <Parameter name="adclientid"/>
+      <Parameter name="adOrgClient" type="replace" optional="true" after="AD_Org_ID IN(" text="'1'"/>
    </SqlMethod>
    
    <SqlMethod name="getDefaultOrg" type="preparedStatement" return="string">

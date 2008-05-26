@@ -208,7 +208,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
           strWarehouse = DefaultOptionsData.defaultWarehouse(this, strUserAuth);
           if(strWarehouse == null) {
         	  if(!strRole.equals("0")) {
-        		  strWarehouse = DefaultOptionsData.getDefaultWarehouse(this, strClient);
+        		  strWarehouse = DefaultOptionsData.getDefaultWarehouse(this, strClient, new OrgTree(this, strClient).getAccessibleTree(this, strRole).toString());
         		  validateDefault(strWarehouse, strClient, "Warehouse");
         	  }
         	  else
