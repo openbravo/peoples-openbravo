@@ -397,22 +397,7 @@
             --
             v_Lines:=v_Lines + 1;
           END LOOP; -- For all SO Lines
-          -- Log info - Log_ID must be unique in instance
-          AD_SEQUENCE_NEXT('AD_PInstance_Log', v_Client_ID, v_PInstance_Log_ID);
-          INSERT
-          INTO AD_PINSTANCE_LOG
-            (
-              AD_PInstance_ID, Log_ID,
-              P_ID, P_Number,
-              P_Msg
-            )
-            VALUES
-            (
-              p_PInstance_ID,v_PInstance_Log_ID,
-              v_PO_Order_ID, v_Lines,
-              Cur_SO.DocumentNo || ': @Created@ ' || v_DocumentNo
-            )
-            ;
+          
           v_Created:=v_Created + 1;
         END LOOP; -- For all SO
       END;

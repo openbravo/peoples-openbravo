@@ -150,11 +150,10 @@
     FINISH_PROCESS BOOLEAN:=false;
     Cur_Storage_ISOPEN BOOLEAN:=false;
     Cur_OrderLine_ISOPEN BOOLEAN:=false;
-    v_PInstance_Log_ID NUMBER;
   BEGIN
     -- Process Parameters
     IF(p_PInstance_ID IS NOT NULL) THEN
-      --  Check for serial execution
+      --  Chec  k for serial execution
       DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
       SELECT COUNT(*)
       INTO v_count
@@ -531,22 +530,7 @@
               ROLLBACK TO SAVEPOINT sp_new_shipment;
             ELSE
               v_Message:=v_Message || '@OrderDocumentno@ ' || Cur_Order.DocumentNo || ' -> @InoutDocumentno@ ' || v_DocumentNo || '; ';
-              AD_SEQUENCE_NEXT('AD_PInstance_Log', v_AD_Client_ID, v_PInstance_Log_ID);
-              IF(p_PInstance_ID IS NOT NULL) THEN
-                v_ResultStr:='InsertLog';
-                INSERT INTO AD_PINSTANCE_LOG
-                  (AD_PInstance_ID,
-                  Log_ID,
-                  P_ID,
-                  P_Msg
-                  )
-                VALUES
-                  (p_PInstance_ID,
-                  v_PInstance_Log_ID,
-                  p_InOut_ID,
-                  v_DocumentNo
-                  );
-              END IF;
+              
               -- Post Shipment
               M_INOUT_POST(NULL, p_InOut_ID) ;
             END IF;
@@ -629,20 +613,7 @@
               'DR', 'CO', 'N', 'N'
               );
             --
-            IF(p_PInstance_ID IS NOT NULL AND v_Selection='Y') THEN
-              INSERT INTO AD_PINSTANCE_LOG
-                (AD_PInstance_ID,
-                Log_ID,
-                P_ID,
-                P_Msg
-                )
-              VALUES
-                (p_PInstance_ID,
-                Cur_Invoice.C_Invoice_ID,
-                p_InOut_ID,
-                '@Created@ @Shipment@ ' || v_DocumentNo
-                );
-            END IF;
+           
             -- Lines
             FOR Cur_Lines IN
               (SELECT *

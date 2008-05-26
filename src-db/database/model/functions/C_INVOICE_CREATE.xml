@@ -415,20 +415,7 @@
                 )
                 ;
               --
-              IF(p_PInstance_ID IS NOT NULL) THEN
-                INSERT
-                INTO AD_PINSTANCE_LOG
-                  (
-                    AD_PInstance_ID, Log_ID,
-                    P_ID, P_Msg
-                  )
-                  VALUES
-                  (
-                    p_PInstance_ID, Cur_Order.C_Order_ID,
-                    p_Invoice_ID, '@Created@ @Invoice@ ' || v_DocumentNo
-                  )
-                  ;
-              END IF;
+             
               v_NoRecords:=v_NoRecords + 1;
               v_LineNo:=0;
               -- Insert Reference/Comment to Shipment for Warehouse Order/Pickup
@@ -941,20 +928,7 @@
                     )
                     ;
                   --
-                  IF(p_PInstance_ID IS NOT NULL) THEN
-                    INSERT
-                    INTO AD_PINSTANCE_LOG
-                      (
-                        AD_PInstance_ID, Log_ID,
-                        P_ID, P_Msg
-                      )
-                      VALUES
-                      (
-                        p_PInstance_ID, Cur_InvoiceSchedule.M_InOut_ID,
-                        p_Invoice_ID, '@Created@ @Invoice@ ' || v_DocumentNo
-                      )
-                      ;
-                  END IF;
+                  
                   v_NoRecords:=v_NoRecords + 1;
                   v_LineNo:=0;
                   v_InOut_ID:=-1;

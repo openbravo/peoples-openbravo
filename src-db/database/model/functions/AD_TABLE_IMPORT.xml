@@ -238,18 +238,8 @@
       v_SeqNo:=v_SeqNo + 10;
       v_LastColumnName:=Cur_Column.Column_Name;
       -- Falta: insert de AD_Element
-      IF(p_PInstance_ID IS NOT NULL) THEN
-        AD_SEQUENCE_NEXT('AD_PInstance_Log', v_Client_ID, v_PInstance_Log_ID);
-        INSERT
-        INTO AD_PInstance_Log
-          (
-            AD_PInstance_ID, Log_ID, P_Msg
-          )
-          VALUES
-          (p_PInstance_ID, v_PInstance_Log_ID, '@Created@ @AD_Column_ID@ ' || InitCap(Cur_Column.Table_Name) || '.' || InitCap(Cur_Column.Column_Name)) ;
-      ELSE
-        DBMS_OUTPUT.PUT_LINE('adding Table ' || InitCap(Cur_Column.Table_Name) || ' Column ' || InitCap(Cur_Column.Column_Name)) ;
-      END IF;
+       DBMS_OUTPUT.PUT_LINE('adding Table ' || InitCap(Cur_Column.Table_Name) || ' Column ' || InitCap(Cur_Column.Column_Name)) ;
+      
     END LOOP; --  All new columns
     -- Summary info
     v_Message:='@Created@ = ' || v_count;

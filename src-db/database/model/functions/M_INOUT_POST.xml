@@ -382,21 +382,8 @@
             Updated=now()
           WHERE M_INOUT.M_INOUT_ID=Cur_InOut.M_INOUT_ID;
           --
-          v_ResultStr:='LogEntry';
-          IF(p_PInstance_ID IS NOT NULL) THEN
-            INSERT
-            INTO AD_PINSTANCE_LOG
-              (
-                AD_PInstance_ID, Log_ID,
-                P_ID, P_Msg
-              )
-              VALUES
-              (
-                p_PInstance_ID, Cur_InOut.M_InOut_ID,
-                Cur_InOut.M_InOut_ID, Cur_InOut.DocAction || ': ' || Cur_InOut.DocumentNo
-              )
-              ;
-          END IF;
+          
+         
           -- Not Processed + Complete --
           /**
           * Reverse Correction
@@ -490,21 +477,7 @@
             Updated=now(),
             UpdatedBy=v_User
           WHERE M_INOUT.M_INOUT_ID=Cur_InOut.M_INOUT_ID;
-          v_ResultStr:='LogEntry';
-          IF(p_PInstance_ID IS NOT NULL) THEN
-            INSERT
-            INTO AD_PINSTANCE_LOG
-              (
-                AD_PInstance_ID, Log_ID,
-                P_ID, P_Msg
-              )
-              VALUES
-              (
-                p_PInstance_ID, Cur_InOut.M_InOut_ID,
-                Cur_InOut.M_InOut_ID, Cur_InOut.DocAction || ': ' || Cur_InOut.DocumentNo
-              )
-              ;
-          END IF;
+         
           -- Post Reversal
           v_ResultStr:='PostReversal';
           M_INOUT_POST(NULL, v_RInOut_ID) ;

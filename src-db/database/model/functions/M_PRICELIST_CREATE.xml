@@ -456,21 +456,6 @@
           WHERE s.T_Selection_ID=M_ProductPrice.M_Product_ID
           )
           ;
-        -- Log Info
-        INSERT
-        INTO AD_PInstance_Log
-          (
-            AD_PInstance_ID, Log_ID,
-            P_ID, P_NUMBER,
-            P_MSG
-          )
-          VALUES
-          (
-            PInstance_ID, v_NextNo,
-            null, Cur_DiscountLine.SeqNo,
-            v_Message
-          )
-          ;
         --
         v_NextNo:=v_NextNo + 1;
         v_Message:='';
