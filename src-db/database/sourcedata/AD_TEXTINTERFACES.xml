@@ -16632,7 +16632,7 @@
 <!--806240 TEXT-->
 <!--806240-->              <TEXT><![CDATA[Copy From Settlement]]></TEXT>
 <!--806240 FILENAME-->
-<!--806240-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement_F1.html]]></FILENAME>
+<!--806240-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement.html]]></FILENAME>
 <!--806240 ISUSED-->
 <!--806240-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--806240**************--></AD_TEXTINTERFACES>
@@ -16686,31 +16686,6 @@
 <!--806259 ISUSED-->
 <!--806259-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--806259**************--></AD_TEXTINTERFACES>
-
-<!--806265**************--><AD_TEXTINTERFACES>
-<!--806265 AD_TEXTINTERFACES_ID-->
-<!--806265-->              <AD_TEXTINTERFACES_ID><![CDATA[806265]]></AD_TEXTINTERFACES_ID>
-<!--806265 AD_CLIENT_ID-->
-<!--806265-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--806265 AD_ORG_ID-->
-<!--806265-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--806265 ISACTIVE-->
-<!--806265-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--806265 CREATED-->
-<!--806265-->              <CREATED><![CDATA[2007-06-02 02:01:57.0]]></CREATED>
-<!--806265 CREATEDBY-->
-<!--806265-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--806265 UPDATED-->
-<!--806265-->              <UPDATED><![CDATA[2007-11-27 11:20:51.0]]></UPDATED>
-<!--806265 UPDATEDBY-->
-<!--806265-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--806265 TEXT-->
-<!--806265-->              <TEXT><![CDATA[MovementDate]]></TEXT>
-<!--806265 FILENAME-->
-<!--806265-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement_F2.html]]></FILENAME>
-<!--806265 ISUSED-->
-<!--806265-->              <ISUSED><![CDATA[Y]]></ISUSED>
-<!--806265**************--></AD_TEXTINTERFACES>
 
 <!--806268**************--><AD_TEXTINTERFACES>
 <!--806268 AD_TEXTINTERFACES_ID-->
@@ -35016,7 +34991,7 @@
 <!--810099 TEXT-->
 <!--810099-->              <TEXT><![CDATA[Movement Date]]></TEXT>
 <!--810099 FILENAME-->
-<!--810099-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement_F1.html]]></FILENAME>
+<!--810099-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement.html]]></FILENAME>
 <!--810099 ISUSED-->
 <!--810099-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--810099**************--></AD_TEXTINTERFACES>
