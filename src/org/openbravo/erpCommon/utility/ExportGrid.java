@@ -113,8 +113,8 @@ public class ExportGrid extends HttpSecureAppServlet {
         if (log4j.isDebugEnabled()) log4j.debug("Add column: " + columnname + " width: " + headers[i].getField("width") + " reference: " + headers[i].getField("adReferenceId"));
         totalWidth += Integer.valueOf(headers[i].getField("width"));
         Class<?> fieldClass = String.class;
-       /* if (headers[i].getField("adReferenceId").equals("11")) fieldClass = Integer.class;
-        else*/ if (headers[i].getField("adReferenceId").equals("11") || headers[i].getField("adReferenceId").equals("12") || headers[i].getField("adReferenceId").equals("800008") || headers[i].getField("adReferenceId").equals("800019")) fieldClass = Double.class;
+        if (headers[i].getField("adReferenceId").equals("11")) fieldClass = Double.class;
+        else if (headers[i].getField("adReferenceId").equals("22") || headers[i].getField("adReferenceId").equals("12") || headers[i].getField("adReferenceId").equals("800008") || headers[i].getField("adReferenceId").equals("800019")) fieldClass = java.math.BigDecimal.class;
 
         columns.add(new GridColumnVO(headers[i].getField("name"), columnname, Integer.valueOf(headers[i].getField("width")), fieldClass));
       }
