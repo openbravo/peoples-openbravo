@@ -11,163 +11,180 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<HTML>
-<HEAD>
-<TITLE>Create from Bank</TITLE>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
+<html>
+<head>
+  <title>Create from Bank</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+  <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></link>
   <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
-  <SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
-  <SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
-<script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
-<script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/calculator.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
- <script type="text/javascript">
+  <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
+  <script language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</script>
+  <script language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</script>
+  <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
+  <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/calculator.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+  <script type="text/javascript">
     dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
   </script>
-<SCRIPT language="JavaScript" type="text/javascript">
+  <script language="JavaScript" type="text/javascript">
+    function closeThisPage() {
+      top.close();
+      return true;
+    }
 
+    function submitThisPage(strCommand) {
+      if (depurar(strCommand)) {
+        submitCommandForm(strCommand, false, null, null, '_top');
+        return true;
+      }
+      return true;
+    }
+  </script>
+  <script language="JavaScript" type="text/javascript">
+    function enableLocalShortcuts() {
+      keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null");
+    }
 
-function enableLocalShortcuts() {
-  keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null");
-}
+    function depurar(action) {
+      var frm=document.frmMain;
+      if (action=="FIND_BANK") {
+        if (frm.inpplanneddateFrom.value!=null && frm.inpplanneddateFrom.value!="" && !isValidDate(frm.inpplanneddateFrom.value, frm.inpplanneddateFrom.displayFormat)) {
+          setWindowElementFocus(frm.inpplanneddateFrom);
+          frm.inpplanneddateFrom.select();
+          mensaje(5);
+          setTimeout('resizeAreaCreateFrom()',100);
+          return false;
+        } else if (frm.inpplanneddateTo.value!=null && frm.inpplanneddateTo.value!="" && !isValidDate(frm.inpplanneddateTo.value, frm.inpplanneddateTo.displayFormat)) {
+          setWindowElementFocus(frm.inpplanneddateTo);
+          frm.inpplanneddateTo.select();
+          mensaje(5);
+          setTimeout('resizeAreaCreateFrom()',100);
+          return false;
+        } 
+      } else if (radioValue(frm.inpcPaymentId)==null) {
+        mensaje(1);
+        setTimeout('resizeAreaCreateFrom()',100);
+        return false;
+      }
+      return true;
+    }
 
-function depurar(action) {
-  var frm=document.frmMain;
-	if (action=="FIND_BANK") {
-		if (frm.inpplanneddateFrom.value!=null && frm.inpplanneddateFrom.value!="" && !isValidDate(frm.inpplanneddateFrom.value, frm.inpplanneddateFrom.displayFormat)) {
-			setWindowElementFocus(frm.inpplanneddateFrom);
-			frm.inpplanneddateFrom.select();
-			mensaje(5);
-			return false;
-		} else if (frm.inpplanneddateTo.value!=null && frm.inpplanneddateTo.value!="" && !isValidDate(frm.inpplanneddateTo.value, frm.inpplanneddateTo.displayFormat)) {
-			setWindowElementFocus(frm.inpplanneddateTo);
-			frm.inpplanneddateTo.select();
-			mensaje(5);
-			return false;
-		} 
-	} else if (radioValue(frm.inpcPaymentId)==null) {
-		mensaje(1);
-		return false;
-	}
-  return true;
-}
+    function updatePrice(obj) {
+      if (obj==null) return false;
+      var price = document.frmMain.inpTotalPrice;
+      var actualValue = Number(eval("document.frmMain.inpPrice" + obj.value + ".value"));
+      if (obj.checked) price.value = Number(price.value) + actualValue;
+      else price.value = Number(price.value) - actualValue;
+      if (isNaN(price.value)) price.value = 0;
+      layer("paramTotalPrice", price.value, true);
+      return true;
+    }
 
-function updatePrice(obj) {
-  if (obj==null) return false;
-  var price = document.frmMain.inpTotalPrice;
-  var actualValue = Number(eval("document.frmMain.inpPrice" + obj.value + ".value"));
-  if (obj.checked) price.value = Number(price.value) + actualValue;
-  else price.value = Number(price.value) - actualValue;
-  if (isNaN(price.value)) price.value = 0;
-  layer("paramTotalPrice", price.value, true);
-  return true;
-}
+    function marcarTodosPersonal(chk, bolMarcar) {
+      var updateValues=true;
+      if (bolMarcar==null) bolMarcar = false;
+      if (!chk) return false;
+      else if (!chk.length) {
+        updateValues = (chk.checked!=bolMarcar);
+        chk.checked = bolMarcar;
+        if (updateValues) updatePrice(chk);
+        } else {
+          var total = chk.length;
+          for (var i=0;i<total;i++) {
+            updateValues = (chk[i].checked!=bolMarcar);
+          chk[i].checked = bolMarcar;
+          if (updateValues) updatePrice(chk[i]);
+        }
+      }
+      return true;
+    }
 
-function marcarTodosPersonal(chk, bolMarcar) {
-  var updateValues=true;
-  if (bolMarcar==null) bolMarcar = false;
-  if (!chk) return false;
-  else if (!chk.length) {
-  	updateValues = (chk.checked!=bolMarcar);
-	chk.checked = bolMarcar;
-	if (updateValues) updatePrice(chk);
-  } else {
-    var total = chk.length;
-    for (var i=0;i<total;i++) {
-	    updateValues = (chk[i].checked!=bolMarcar);
-		chk[i].checked = bolMarcar;
-		if (updateValues) updatePrice(chk[i]);
-	}
-  }
-	return true;
-}
+    function actualizarDatos(clave, marcar) {
+      if (marcar==null) marcar=false;
+      var frm = document.frmMain;
+      frm.elements["inpplanneddate" + clave].disabled=!marcar;
+      return true;
+    }
 
-function actualizarDatos(clave, marcar) {
-	if (marcar==null) marcar=false;
-	var frm = document.frmMain;
-	frm.elements["inpplanneddate" + clave].disabled=!marcar;
-	return true;
-}
+    function cargarDatos(marcar) {
+      var radio=document.frmMain.inpcPaymentId;
+      if (marcar==null) marcar=false;
+        var frm = document.frmMain;
+      if (!radio) return false;
+      else if (!radio.length) {
+          radio.checked = marcar;
+          frm.elements["inpplanneddate" + radio.value].disabled=!marcar;
+      } else if (radio.length > 20) {
+        return submitCommandForm('FIND_SETTLEMENT', true);
+      } else {
+          var total = radio.length;
+        for (var i=0;i<total;i++) {
+              radio[i].checked=marcar;
+          frm.elements["inpplanneddate" + radio[i].value].disabled=!marcar;
+        }
+      }
+      return true;
+    }
 
-function cargarDatos(marcar) {
-	var radio=document.frmMain.inpcPaymentId;
-	if (marcar==null) marcar=false;
-  	var frm = document.frmMain;
-	if (!radio) return false;
-	else if (!radio.length) {
-    	radio.checked = marcar;
-    	frm.elements["inpplanneddate" + radio.value].disabled=!marcar;
-	} else if (radio.length > 20) {
-		return submitCommandForm('FIND_SETTLEMENT', true);
-	} else {
-    	var total = radio.length;
-		for (var i=0;i<total;i++) {
-      		radio[i].checked=marcar;
-			frm.elements["inpplanneddate" + radio[i].value].disabled=!marcar;
-		}
-	}
-	return true;
-}
+    function onloadFunctions() {
+      enableLocalShortcuts();
+    }
+  </script>
+  <script language="JavaScript" type="text/javascript">
+    function onLoadDo(){
+      this.windowTables = new Array(
+        new windowTableId('client_top', null, 'buttonSearch', null),
+        new windowTableId('client_middle', null, 'buttonOK', null),
+        new windowTableId('client_bottom', null, 'buttonOK', null)
+      );
+      setWindowTableParentElement();
+      enableShortcuts('popup');
 
-function onloadFunctions() {
-  enableLocalShortcuts();
-}
-</SCRIPT>	
-<SCRIPT language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client', 'frameButton', 'buttonSearch', 'frameButton'),
-		  new windowTableId('client2', 'frameButton', 'buttonOK', 'frameButton2'),
-		  new windowTableId('tdbottomButtons', 'frameButton2', 'buttonOK', 'frameButton2')
-		);
-		setWindowTableParentElement();
-		enableShortcuts('popup');
-		
-		try {
-		  onloadFunctions();
-		} catch (e) {}
+      try {
+        onloadFunctions();
+      } catch (e) {}
 
-		setWindowElementFocus('firstElement');
-	}
+      setWindowElementFocus('firstElement');
+      resizeAreaCreateFrom();
+    }
 
-	function onResizeDo(){
-	}
-	</SCRIPT>
-</HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-<FORM id="form" method="POST" action="../ad_actionButton/CreateFrom.html" name="frmMain">
-<INPUT type="hidden" name="Command">
-<INPUT type="hidden" name="IsPopUpCall" value="1">
-<INPUT type="hidden" name="inpKey" value="" id="paramKey">
-<INPUT type="hidden" name="inpTableId" value="" id="paramTableId">
-<INPUT type="hidden" name="inpProcessId" value="" id="paramProcessId">
-<INPUT type="hidden" name="inpPath" value="" id="paramPath">
-<INPUT type="hidden" name="inpWindowId" value="" id="paramWindowId">
-<INPUT type="hidden" name="inpTabName" value="" id="paramTabName">
-<INPUT type="hidden" name="inpstatementdate" value="" id="paramStatementDate">
+    function onResizeDo(){
+     resizeAreaCreateFrom();
+    }
+  </script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+<form id="form" method="POST" action="../ad_actionButton/CreateFrom.html" name="frmMain">
+<input type="hidden" name="Command">
+<input type="hidden" name="IsPopUpCall" value="1">
+<input type="hidden" name="inpKey" value="" id="paramKey">
+<input type="hidden" name="inpTableId" value="" id="paramTableId">
+<input type="hidden" name="inpProcessId" value="" id="paramProcessId">
+<input type="hidden" name="inpPath" value="" id="paramPath">
+<input type="hidden" name="inpWindowId" value="" id="paramWindowId">
+<input type="hidden" name="inpTabName" value="" id="paramTabName">
+<input type="hidden" name="inpstatementdate" value="" id="paramStatementDate">
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
       <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
     </div>
   </div>
 
-  <table cellspacing="0" cellpadding="0" width="100%">
+  <table id="table_header" cellspacing="0" cellpadding="0" width="100%">
 
     <tr>
       <td>
@@ -175,7 +192,7 @@ function onloadFunctions() {
           <tr class="Popup_NavBar_bg"><td></td>
             <td class="Popup_NavBar_separator_cell"></td>
             <td class="Popup_NavBar_bg_logo_left"></td>
-            <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+            <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
             <td class="Popup_NavBar_Popup_title_cell"><span>Create from Bank</span></td>
             <td class="Popup_NavBar_separator_cell"></td>
@@ -194,94 +211,105 @@ function onloadFunctions() {
       </td>
     </tr>
 
+  </table>
+
+  <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
       <td>
-        <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
+        <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client_messagebox">
 
-           <!-- MessageBox -->
-                <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
-  <TBODY>
-  <tr class="MessageBox_TopMargin">
-    <td class="MessageBox_LeftMargin"></td>
-    <td></td>
-    <td class="MessageBox_RightMargin"></td>
-  </tr>
-  <tr>
-    <td class="MessageBox_LeftMargin"></td>
-    <td>
-
-      <table cellpadding="0" cellspacing="0" style="width: 100%;">
-        <TBODY>
-        <tr>
-          <td>
-            <div class="MessageBox_TopLeft"></div>
-            <div class="MessageBox_Left"></div>
-          </td>
-          <td class="MessageBox_bg">
-
-            <table class="MessageBox_Top">
-            <TBODY>
+        <!-- MessageBox -->
+          <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
+            <tbody>
+              <tr class="MessageBox_TopMargin">
+                <td class="MessageBox_LeftMargin"></td>
+                <td></td>
+                <td class="MessageBox_RightMargin"></td>
+              </tr>
               <tr>
+                <td class="MessageBox_LeftMargin"></td>
                 <td>
-                  <span>
-                  <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
-                    <TBODY>
+
+                  <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                    <tbody>
                     <tr>
-                      <td class="MessageBox_Icon_ContentCell">
-                        <div class="MessageBox_Icon"></div>
+                      <td>
+                        <div class="MessageBox_TopLeft"></div>
+                        <div class="MessageBox_Left"></div>
                       </td>
-                      <td style="vertical-align: top;" id="messageBoxIDContent">
-                        <span>
-                          <div class="MessageBox_TextTitle" id="messageBoxIDTitle">
-                            xxInfo: AccessTableWithNoView
-                          </div>
-                          <div class="MessageBox_TextDescription" id="messageBoxIDMessage">
-                            xxThe current information is empty.
-                          </div>
-                          <div class="MessageBox_TextSeparator"></div>
-                        </span>
+                      <td class="MessageBox_bg">
+
+                        <table class="MessageBox_Top">
+                        <tbody>
+                          <tr>
+                            <td>
+                              <span>
+                              <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
+                                <tbody>
+                                <tr>
+                                  <td class="MessageBox_Icon_ContentCell">
+                                    <div class="MessageBox_Icon"></div>
+                                  </td>
+                                  <td style="vertical-align: top;" id="messageBoxIDContent">
+                                    <span>
+                                      <div class="MessageBox_TextTitle" id="messageBoxIDTitle">
+                                        xxInfo: AccessTableWithNoView
+                                      </div>
+                                      <div class="MessageBox_TextDescription" id="messageBoxIDMessage">
+                                        xxThe current information is empty.
+                                      </div>
+                                      <div class="MessageBox_TextSeparator"></div>
+                                    </span>
+                                  </td>
+                                </tr>
+                                </tbody>
+                              </table>
+                              </span>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+
+                      </td>
+                      <td class="MessageBox_RightTrans">
+                        <div class="MessageBox_TopRight"></div>
+                        <div class="MessageBox_Right"></div>
                       </td>
                     </tr>
-                    </TBODY>
+                    <tr>
+                      <td rowspan="2" class="MessageBox_BottomLeft">
+                      </td>
+                      <td class="MessageBox_BottomTrans MessageBox_bg">
+                      </td>
+                      <td rowspan="2" class="MessageBox_BottomRight">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="MessageBox_Bottom">
+                      </td>
+                    </tr>
+                    </tbody>
                   </table>
-                  </span>
                 </td>
+                <td class="MessageBox_RightMargin"></td>
               </tr>
-              </TBODY>
-            </table>
-
-          </td>
-          <td class="MessageBox_RightTrans">
-            <div class="MessageBox_TopRight"></div>
-            <div class="MessageBox_Right"></div>
-          </td>
-        </tr>
-        <tr>
-          <td rowspan="2" class="MessageBox_BottomLeft">
-          </td>
-          <td class="MessageBox_BottomTrans MessageBox_bg">
-          </td>
-          <td rowspan="2" class="MessageBox_BottomRight">
-          </td>
-        </tr>
-        <tr>
-          <td class="MessageBox_Bottom">
-          </td>
-        </tr>
-        </TBODY>
-      </table>
-
+              <tr class="MessageBox_BottomMargin">
+                <td class="MessageBox_LeftMargin"></td>
+                <td></td>
+                <td class="MessageBox_RightMargin"></td>
+              </tr>
+            </tbody>
+          </table>
+        <!-- MessageBox END -->
+        </div>
+      </tr>
     </td>
-    <td class="MessageBox_RightMargin"></td>
-  </tr>
-  <tr class="MessageBox_BottomMargin">
-    <td class="MessageBox_LeftMargin"></td>
-    <td></td>
-    <td class="MessageBox_RightMargin"></td>
-  </tr>
-  </TBODY>
-</table>
-    <!-- MessageBox END -->
+  </table>
+
+  <table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td>
+        <div class="Popup_ContentPane_Client" style="overflow: auto; height: 260px;" id="client_top">
 
           <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector">
             <tr>
@@ -292,7 +320,7 @@ function onloadFunctions() {
               <td class="TableEdition_OneCell_width"></td>
               <td class="TableEdition_OneCell_width"></td>
             </tr>
-            <TR>
+            <tr>
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                 <tbody>
@@ -307,19 +335,19 @@ function onloadFunctions() {
                 </tbody>
                 </table>
               </td>
-            </TR>
+            </tr>
 
             <tr>
 
               <td class="TitleCell">
-                <SPAN class="LabelText">Business Partner</SPAN>
+                <span class="LabelText">Business Partner</span>
               </td>
-              <TD class="TextBox_ContentCell" colspan="2">
-                <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
-                  <TR>
+              <td class="TextBox_ContentCell" colspan="2">
+                <table border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
+                  <tr>
                     <td class="TextBox_btn_OneCell">
-                      <INPUT type="hidden" name="inpcBpartnerId" id="fieldCBPartnerID" value="">
-                      <INPUT type="text" dojoType="openbravo:ValidationTextBox" class="TextBox_btn_TwoCells_width" maxlength="22" name="inpcBpartnerId_DES" id="inpCBPartnerID_DES" value="" ></INPUT><SCRIPT>djConfig.searchIds.push("inpCBPartnerID_DES");</SCRIPT>
+                      <input type="hidden" name="inpcBpartnerId" id="fieldCBPartnerID" value="">
+                      <input type="text" dojoType="openbravo:ValidationTextBox" class="TextBox_btn_TwoCells_width" maxlength="22" name="inpcBpartnerId_DES" id="inpCBPartnerID_DES" value="" ></input><script>djConfig.searchIds.push("inpCBPartnerID_DES");</script>
                     </td>
                   <td class="TextBox_btn_OneCell">
                     <a onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value);return false;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onblur="window.status=''; return true;" onfocus="setWindowElementFocus(this); window.status='Business Partner '; return true;" href="#" class="FieldButtonLink" id="C_Bpartner_IDlinkBusinessPartner">
@@ -334,40 +362,40 @@ function onloadFunctions() {
                       </table>
                     </a>
                   </td>
-                  </TR>
-                </TABLE>
-              </TD>
-              <TD class="TitleCell"></TD>
-              <TD class="TitleCell"><SPAN class="LabelText">Payment Rule</SPAN></TD>
-              <TD class="Combo_ContentCell">
-                <SELECT name="inppaymentrule" class="Combo Combo_OneCell_width" id="inppaymentrule">
-                  <OPTION value=""></OPTION><DIV id="reportPaymentRule"></DIV>
-                </SELECT>
-              </TD>
+                  </tr>
+                </table>
+              </td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"><span class="LabelText">Payment Rule</span></td>
+              <td class="Combo_ContentCell">
+                <select name="inppaymentrule" class="Combo Combo_OneCell_width" id="inppaymentrule">
+                  <option value=""></option><div id="reportPaymentRule"></div>
+                </select>
+              </td>
             </tr>
 
             <tr>
-              <TD class="TitleCell"><SPAN class="LabelText">Receipt type</SPAN></TD>
-              <TD class="Combo_ContentCell">
-                <SELECT name="inpisreceipt" id="inpisreceipt" class="Combo Combo_OneCell_width">
-                <OPTION value="">All</OPTION>
-                <OPTION value="N" id="fieldIsReceiptPago">Payment</OPTION>
-                <OPTION value="Y" id="fieldIsReceiptCobro">Collection</OPTION></SELECT>
-              </TD>
+              <td class="TitleCell"><span class="LabelText">Receipt type</span></td>
+              <td class="Combo_ContentCell">
+                <select name="inpisreceipt" id="inpisreceipt" class="Combo Combo_OneCell_width">
+                <option value="">All</option>
+                <option value="N" id="fieldIsReceiptPago">Payment</option>
+                <option value="Y" id="fieldIsReceiptCobro">Collection</option></select>
+              </td>
 
-              <td class="TitleCell"><SPAN class="LabelText">From Date planned</SPAN></td>
+              <td class="TitleCell"><span class="LabelText">From Date planned</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpplanneddateFrom" id="inpPlannedDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("inpPlannedDateFrom");</script>
+                      <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpplanneddateFrom" id="inpPlannedDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("inpPlannedDateFrom");</script>
                     </td>
                     <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpplanneddateFrom', document.frmMain.inpplanneddateFrom.value, false);return false;" >
                       <table class="FieldButton"onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <tr>
                           <td class="FieldButton_bg">
-                            <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0" id="buttonCalendar"></IMG>
+                            <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0" id="buttonCalendar"></img>
                           </td>
                         </tr>
                       </table>
@@ -376,19 +404,19 @@ function onloadFunctions() {
                   </tr>
                 </table>
               </td>
-              <td class="TitleCell"><SPAN class="LabelText">To Date planned</SPAN></td>
+              <td class="TitleCell"><span class="LabelText">To Date planned</span></td>
               <td class="TextBox_btn_ContentCell">
                 <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                   <tr>
                     <td class="TextBox_ContentCell">
-                      <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpplanneddateTo" id="inpPlannedDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("inpPlannedDateTo");</script>
+                      <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpplanneddateTo" id="inpPlannedDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("inpPlannedDateTo");</script>
                     </td>
                     <td class="FieldButton_ContentCell">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpplanneddateTo', document.frmMain.inpplanneddateTo.value, false);return false;">
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <tr>
                           <td class="FieldButton_bg">
-                            <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0" id="buttonCalendar"></IMG>
+                            <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0" id="buttonCalendar"></img>
                           </td>
                         </tr>
                       </table>
@@ -401,84 +429,84 @@ function onloadFunctions() {
 
             <tr>
 
-              <TD class="TitleCell"><SPAN class="LabelText">Account</SPAN></TD>
-              <TD class="Combo_ContentCell" colspan="2">
-                <SELECT name="inpcBankaccountId" id="inpcBankaccountId" class="Combo Combo_TwoCells_width">
-                  <OPTION value=""></OPTION>
-                  <DIV id="reportC_BankAccount_ID"></DIV></SELECT></TD>
-              </TD>
-              <TD class="TitleCell"></TD>
-              <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>
-              <TD class="Combo_ContentCell">
-                <SELECT name="inpadOrgId" id="inpadOrgId" class="Combo Combo_OneCell_width">
-                <OPTION value=""></OPTION>
-                <DIV id="reportAD_Org_ID"></DIV></SELECT>
-              </TD>
-            </tr>
-
-            <TR>
-              <TD class="TitleCell"><SPAN class="LabelText">Invoice No.</SPAN></TD>
-              <TD class="TextBox_ContentCell">
-                <INPUT type="text" dojotype="openbravo:ValidationTextBox" class="TextBox_OneCell_width" name="inpDocumentNo" id="inpDocumentNo" value="" ><script>djConfig.searchIds.push("inpDocumentNo");</script>
-              </TD>
-              <TD class="TitleCell"><SPAN class="LabelText">Amount From </SPAN> </TD>
-              <TD class="TextBox_btn_ContentCell">
-                  <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                    <TR>
-                      <TD class="Textbox_ContentCell">
-                        <INPUT type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountFrom" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountFrom" onkeyup="" onchange="logChanges(this);return true;"></INPUT><script>djConfig.searchIds.push("paramAmountFrom");</script>
-                      </TD>
-                      <TD class="FieldButton_ContentCell">
-                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpamountFrom', document.frmMain.inpamountFrom.value, false);return false;">
-                      <TABLE class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
-                          <TR>
-                            <TD class="FieldButton_bg">
-                              <IMG alt="Calculator" class="FieldButton_Icon FieldButton_Icon_Calc" title="Amount From" src="../../../../../web/images/blank.gif" border="0" id="buttonCalc"></IMG>
-                            </TD>
-                          </TR>
-                        </TABLE>
-                      </a>
-                      </TD>
-                    </TR>
-                  </TABLE>
-              </TD>
-
-
-              <TD class="TitleCell"><SPAN class="LabelText">Amount To</SPAN> </TD>
-              <TD class="TextBox_btn_ContentCell">
-                <TABLE border="0" cellspacing="0" cellpadding="0" summary="" class="">
-                  <TR>
-                    <TD class="Textbox_ContentCell">
-                        <INPUT type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountTo" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountTo" onkeyup="" onchange="logChanges(this);return true;"></INPUT><script>djConfig.searchIds.push("paramAmountTo");</script>
-                    </TD>
-
-                    <TD class="FieldButton_ContentCell">
-                    <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="calculator('frmMain.inpamountTo', document.frmMain.inpamountTo.value, false);return false;">
-                    <TABLE class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
-                        <TR>
-                          <TD class="FieldButton_bg">
-                            <IMG alt="Calculator" class="FieldButton_Icon FieldButton_Icon_Calc" title="Amount to" src="../../../../../web/images/blank.gif" border="0" id="buttonCalc"></IMG>
-                          </TD>
-                        </TR>
-                      </TABLE>
-                    </a>
-                    </TD>
-                  </TR>
-                </TABLE>
-              </TD>
+              <td class="TitleCell"><span class="LabelText">Account</span></td>
+              <td class="Combo_ContentCell" colspan="2">
+                <select name="inpcBankaccountId" id="inpcBankaccountId" class="Combo Combo_TwoCells_width">
+                  <option value=""></option>
+                  <div id="reportC_BankAccount_ID"></div></select></td>
+              </td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"><span class="LabelText">Organization</span></td>
+              <td class="Combo_ContentCell">
+                <select name="inpadOrgId" id="inpadOrgId" class="Combo Combo_OneCell_width">
+                <option value=""></option>
+                <div id="reportAD_Org_ID"></div></select>
+              </td>
             </tr>
 
             <tr>
-              <TD class="TitleCell"><SPAN class="LabelText">Only Applied</SPAN> </TD>
-              <TD class="Radio_Check_ContentCell"> 
-                <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpCharge" value="Y" id="paramCharge"></INPUT></SPAN></TD>
-              <TD class="TitleCell"></TD>
-              <TD class="TitleCell"></TD>
-              <TD class="TitleCell"></TD>
-              <TD class="TitleCell"></TD>
+              <td class="TitleCell"><span class="LabelText">Invoice No.</span></td>
+              <td class="TextBox_ContentCell">
+                <input type="text" dojotype="openbravo:ValidationTextBox" class="TextBox_OneCell_width" name="inpDocumentNo" id="inpDocumentNo" value="" ><script>djConfig.searchIds.push("inpDocumentNo");</script>
+              </td>
+              <td class="TitleCell"><span class="LabelText">Amount From </span> </td>
+              <td class="TextBox_btn_ContentCell">
+                  <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                    <tr>
+                      <td class="Textbox_ContentCell">
+                        <input type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountFrom" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountFrom" onkeyup="" onchange="logChanges(this);return true;"></input><script>djConfig.searchIds.push("paramAmountFrom");</script>
+                      </td>
+                      <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpamountFrom', document.frmMain.inpamountFrom.value, false);return false;">
+                      <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
+                          <tr>
+                            <td class="FieldButton_bg">
+                              <img alt="Calculator" class="FieldButton_Icon FieldButton_Icon_Calc" title="Amount From" src="../../../../../web/images/blank.gif" border="0" id="buttonCalc"></img>
+                            </td>
+                          </tr>
+                        </table>
+                      </a>
+                      </td>
+                    </tr>
+                  </table>
+              </td>
+
+
+              <td class="TitleCell"><span class="LabelText">Amount To</span> </td>
+              <td class="TextBox_btn_ContentCell">
+                <table border="0" cellspacing="0" cellpadding="0" summary="" class="">
+                  <tr>
+                    <td class="Textbox_ContentCell">
+                        <input type="text" dojoType="openbravo:RealNumberTextbox" id="paramAmountTo" class="dojoValidateValid TextBox_btn_OneCell_width"  value="" maxlength="10" name="inpamountTo" onkeyup="" onchange="logChanges(this);return true;"></input><script>djConfig.searchIds.push("paramAmountTo");</script>
+                    </td>
+
+                    <td class="FieldButton_ContentCell">
+                    <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="calculator('frmMain.inpamountTo', document.frmMain.inpamountTo.value, false);return false;">
+                    <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
+                        <tr>
+                          <td class="FieldButton_bg">
+                            <img alt="Calculator" class="FieldButton_Icon FieldButton_Icon_Calc" title="Amount to" src="../../../../../web/images/blank.gif" border="0" id="buttonCalc"></img>
+                          </td>
+                        </tr>
+                      </table>
+                    </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
             </tr>
 
-            <tr><td height="20px"></tr>
+            <tr>
+              <td class="TitleCell"><span class="LabelText">Only Applied</span> </td>
+              <td class="Radio_Check_ContentCell"> 
+                <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpCharge" value="Y" id="paramCharge"></input></span></td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"></td>
+            </tr>
+
+            <tr><td height="15px"></tr>
 
             <tr>
               <td class="TitleCell"></td>
@@ -497,109 +525,145 @@ function onloadFunctions() {
               </td>
               <td class="Button_LeftAlign_ContentCell">
               </td>
-              <TD class="TitleCell"></TD>
-              <TD class="TitleCell"></TD>
-              <TD class="TitleCell"></TD>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"></td>
+              <td class="TitleCell"></td>
+            </tr>
+            <tr><td height="15px"></tr>
+            <tr>
+              <td class="TitleCell"><span class="LabelText">Total amount</span></td>
+              <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="paramTotalPrice">0</span>
+                <input type="hidden" name="inpTotalPrice" value="0">
+              </td>
+              <td class="TitleCell"><span class="LabelText">Proposal date</span></td>
+              <td class="TextBox_btn_ContentCell">
+                <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                  <tr>
+                    <td class="Textbox_ContentCell">
+                    <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpplanneddate" id="inpterplanneddate" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("inpterplanneddate");</script>
+                    </td>
+                    <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Amount From'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpplanneddate', document.frmMain.inpplanneddate.value, false);return false;">
+                        <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                          <tr>
+                            <td class="FieldButton_bg">
+                              <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                            </td>
+                          </tr>
+                        </table>
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+
+          </table>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <div class="Popup_ContentPane_Client" style="overflow: auto; display: none;" id="client_middle">
+          <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
+
+            <tr class="DataGrid_Body_Row">
+              <th width="3%" class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpTodos" onclick="marcarTodosPersonal(document.frmMain.inpcPaymentId, this.checked);return true;"></input></span></th>
+              <th width="10%" colspan="3" class="DataGrid_Header_Cell">Payment</th>
+              <th width="10%" class="DataGrid_Header_Cell">Invoice</th>
+              <th width="23%" colspan="4" class="DataGrid_Header_Cell">Account</th>
+            </tr>
+
+            <tr class="DataGrid_Body_Row">
+              <th class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox"></td>
+              <th width="8%" class="DataGrid_Header_Cell">Date</th>
+              <th width="12%" class="DataGrid_Header_Cell">Organization</th>
+              <th width="12%" class="DataGrid_Header_Cell">Currency</th>
+              <th width="12%" class="DataGrid_Header_Cell">Amount</th>
+              <th width="6%" class="DataGrid_Header_Cell">Conversion</th>
+              <th width="8%" class="DataGrid_Header_Cell">Proposal date</th>
+              <th width="6%" colspan="2" class="DataGrid_Header_Cell">Cost</th>
+            </tr>
+
+            <div id="sectionDetail">
+
+              <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRowxx">
+                <td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox" style="border-bottom-width:0px; border-bottom: none;"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpcPaymentId" value="" id="fieldCPaymentId" onclick="updatePrice(this);return true;"></input></span><input type="hidden" name="inpPricexx" value="" id="fieldPrice"></td>
+                <td class="DataGrid_Body_Cell" id="fieldPayment" colspan="3">xxUOM</td>
+                <td class="DataGrid_Body_Cell" id="fieldInvoice">xxInvoice</td>
+                <td class="DataGrid_Body_Cell" id="fieldBank" colspan="4">xx</td>
+              </tr>
+
+              <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy">
+                <td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox" style="border-bottom-width:3px"></td>
+                <td class="DataGrid_Body_Cell" id="fieldDate" style="border-bottom-width:3px">xxQuantity</td>
+                <td class="DataGrid_Body_Cell" id="fieldOrg" style="border-bottom-width:3px">xx</td>
+                <td class="DataGrid_Body_Cell" id="fieldCurrency" style="border-bottom-width:3px">xxProduct</td>
+                <td class="DataGrid_Body_Cell" id="fieldAmount" style="border-bottom-width:3px">xx</td>
+                <td class="DataGrid_Body_Cell" id="fieldConverted" style="border-bottom-width:3px">xx</td>
+                <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpplanneddatexx" type="text" id="inpterplanneddate" maxlength="10" size="9" value="" onkeyup="auto_complete_date(this);return true;"></td>
+                <td class="DataGrid_Body_Cell" style="border-bottom-width:3px"><input class="dojoValidateValid" name="inpcostxx" type="text" id="parameterCost" maxlength="8" value=""></td>
+              </tr>
+
+            </div>
+          </table>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <div class="Popup_ContentPane_Client" style="overflow: auto; height: 75px;" id="client_bottom">
+
+          <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
+
+            <tr>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+            </tr>
+
+
+            <tr>
+              <td></td>
+              <td class="Button_RightAlign_ContentCell">
+                <div>
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitThisPage('SAVE');return false;" id="buttonOK">
+                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='OK';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border=0/></td>
+                      <td class="Button_text Button_width">OK</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                  </a>
+                </div>
+              </td>
+              <td class="Button_LeftAlign_ContentCell">
+                <div>
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="closeThisPage();return false;">
+                  <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                    <tr>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border=0/></td>
+                      <td class="Button_text Button_width">Cancel</td>
+                      <td class="Button_right"></td>
+                    </tr>
+                  </table>
+                  </a>
+              </td>
+              <td></td>
             </tr>
           </table>
         </div>
-      </tr>
-    </td>
+      </td>
+    </tr>
   </table>
-<div style="height:15px;"></div>
-<table cellspacing="0" cellpadding="0" width="100%" style="text-align:-moz-center;_text-align:center;">
-  <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client2">
-    <TABLE cellspacing="0" cellpadding="0" border="0">
-      <tr>
-
-        <td class="TitleCell">
-          <SPAN class="LabelText">Total amount</SPAN>
-        </td>
-        <td style="width: 10px;"></td>
-        <td class="TitleCell">
-          <SPAN class="Label_ReadOnly_Text" id="paramTotalPrice">0</SPAN>
-          <INPUT type="hidden" name="inpTotalPrice" value="0">
-        </TD>
-
-        <td style="width: 20px;"></td>
-
-        <td class="TitleCell">
-          <SPAN class="LabelText">Proposal date</SPAN>
-        <TD class="TextBox_btn_ContentCell" colspan="6">
-          <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-            <TR>
-              <TD class="TextBox_ContentCell">
-                <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpplanneddate" id="inpterplanneddate" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("inpterplanneddate");</SCRIPT>
-              </TD>
-              <TD class="FieldButton_ContentCell">
-                <TABLE class="FieldButton" onclick="showCalendar('frmMain.inpplanneddate', document.frmMain.inpplanneddate.value, false);return false;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                  <TR>
-                    <TD class="FieldButton_bg">
-                      <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                    </TD>
-                  </TR>
-                </TABLE>
-              </TD>
-            </TR>
-          </TABLE>
-        </TD>
-      </tr>
-    </table>
-  </div>
-
-  <div class="Popup_ContentPane_Client" style="overflow: auto; width:895px; height:215px;">
-    <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-
-      <TR class="DataGrid_Body_Row">
-        <TH width="3%" class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpTodos" onclick="marcarTodosPersonal(document.frmMain.inpcPaymentId, this.checked);return true;"></INPUT></SPAN></TH>
-        <TH width="10%" colspan="3" class="DataGrid_Header_Cell">Payment</TH>
-        <TH width="10%" class="DataGrid_Header_Cell">Invoice</TH>
-        <TH width="23%" colspan="4" class="DataGrid_Header_Cell">Account</TH>
-      </TR>
-
-      <TR class="DataGrid_Body_Row">
-        <TH class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox"></TD>
-        <TH width="8%" class="DataGrid_Header_Cell">Date</TH>
-        <TH width="12%" class="DataGrid_Header_Cell">Organization</TH>
-        <TH width="12%" class="DataGrid_Header_Cell">Currency</TH>
-        <TH width="12%" class="DataGrid_Header_Cell">Amount</TH>
-        <TH width="6%" class="DataGrid_Header_Cell">Conversion</TH>
-        <TH width="8%" class="DataGrid_Header_Cell">Proposal date</TH>
-        <TH width="6%" colspan="2" class="DataGrid_Header_Cell">Cost</TH>
-      </TR>
-
-      <DIV id="sectionDetail">
-
-        <TR class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRowxx">
-          <TD class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox" style="border-bottom-width:0px; border-bottom: none;"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpcPaymentId" value="" id="fieldCPaymentId" onclick="updatePrice(this);return true;"></INPUT></SPAN><INPUT type="hidden" name="inpPricexx" value="" id="fieldPrice"></TD>
-          <TD class="DataGrid_Body_Cell" id="fieldPayment" colspan="3">xxUOM</TD>
-          <TD class="DataGrid_Body_Cell" id="fieldInvoice">xxInvoice</TD>
-          <TD class="DataGrid_Body_Cell" id="fieldBank" colspan="4">xx</TD>
-        </TR>
-
-        <TR class="DataGrid_Body_Row DataGrid_Body_Row_yy">
-          <TD class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox" style="border-bottom-width:3px"></TD>
-          <TD class="DataGrid_Body_Cell" id="fieldDate" style="border-bottom-width:3px">xxQuantity</TD>
-          <TD class="DataGrid_Body_Cell" id="fieldOrg" style="border-bottom-width:3px">xx</TD>
-          <TD class="DataGrid_Body_Cell" id="fieldCurrency" style="border-bottom-width:3px">xxProduct</TD>
-          <TD class="DataGrid_Body_Cell" id="fieldAmount" style="border-bottom-width:3px">xx</TD>
-          <TD class="DataGrid_Body_Cell" id="fieldConverted" style="border-bottom-width:3px">xx</TD>
-          <TD class="DataGrid_Body_Cell" style="border-bottom-width:3px"><INPUT class="dojoValidateValid" name="inpplanneddatexx" type="text" id="inpterplanneddate" maxlength="10" size="9" value="" onkeyup="auto_complete_date(this);return true;"></TD>
-          <TD class="DataGrid_Body_Cell" style="border-bottom-width:3px"><INPUT class="dojoValidateValid" name="inpcostxx" type="text" id="parameterCost" maxlength="8" value=""></TD>
-        </TR>
-
-      </DIV>
-    </TABLE>
-  </div>
-
-
-  </td>
-</tr>
-</table>
 </div>
 </table>
-
-
-</FORM>
-</BODY>
-</HTML>
+</form>
+</body>
+</html>

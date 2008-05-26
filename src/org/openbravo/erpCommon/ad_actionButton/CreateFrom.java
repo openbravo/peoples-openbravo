@@ -85,8 +85,6 @@ public class CreateFrom extends HttpSecureAppServlet {
       vars.setSessionValue("CreateFrom|default","1");
 
       printPage_FS(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId, strTabName, strDateInvoiced, strBPartnerLocation, strMPriceList, strBPartner, strStatementDate, strBankAccount, strOrg, strIsreceipt);
-    } else if (vars.commandIn("FRAME2")) {
-      printPage_F2(response, vars);
     } else if (vars.commandIn("FRAME1")) {
       String strTableId = vars.getGlobalVariable("inpTableId", "CreateFrom|tableId");
       String strType = pageType(strTableId);
@@ -177,18 +175,6 @@ public class CreateFrom extends HttpSecureAppServlet {
     vars.setSessionValue("CreateFrom" + strType + "|bankAccount", strBankAccount);
     vars.setSessionValue("CreateFrom" + strType + "|adOrgId", strOrg);
     vars.setSessionValue("CreateFrom" + strType + "|isreceipt", strIsreceipt);
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  void printPage_F2(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame2");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_F2").createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

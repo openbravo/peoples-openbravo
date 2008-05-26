@@ -51,7 +51,7 @@ var isPopupLoadingWindowLoaded=false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '4432';
+  var number = '4567';
   return number;
 }
 
@@ -2011,6 +2011,8 @@ function executeWindowButton(id,focus) {
     appWindow = top.frames['superior'];
   } else if (top.frames['frameSuperior']) {
     appWindow = top.frames['frameSuperior'];
+  } else if (top.frames['frameButton']) {
+    appWindow = top.frames['frameButton'];
   }
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
     if (focus==true) appWindow.document.getElementById(id).focus();
@@ -3395,6 +3397,29 @@ function resizeAreaInfo(isOnResize) {
   var w = body[0].clientWidth;
   var name = window.navigator.appName;
   client_middle.style.height = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+
+  try {
+    if (isOnResize) dojo.widget.byId('grid').onResize();
+  } catch (e) {}
+}
+
+/**
+* Function Description
+*/
+function resizeAreaCreateFrom(isOnResize) {
+  if (isOnResize==null) isOnResize = false;
+  var table_header = document.getElementById("table_header");
+  var client_messagebox = document.getElementById("client_messagebox");
+  var client_top = document.getElementById("client_top");
+  var client_middle = document.getElementById("client_middle");
+  var client_bottom = document.getElementById("client_bottom");
+  var body = document.getElementsByTagName("BODY");
+  var h = body[0].clientHeight;
+  var w = body[0].clientWidth;
+  var name = window.navigator.appName;
+  client_middle.style.height = h -((table_header?table_header.clientHeight:0) + (client_messagebox?client_messagebox.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+  client_middle.style.width = w - 0;
+  client_middle.style.display = "";
 
   try {
     if (isOnResize) dojo.widget.byId('grid').onResize();
