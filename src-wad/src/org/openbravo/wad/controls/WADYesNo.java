@@ -50,12 +50,18 @@ public class WADYesNo extends WADControl {
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
 
-    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N")) {xmlDocument.setParameter("disabled", "Y");xmlDocument.setParameter("disabledFalse", "false");}
-    else xmlDocument.setParameter("disabled", "N");
+    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N")) {
+      xmlDocument.setParameter("disabled", "Y");
+      xmlDocument.setParameter("logChanges", "");
+      xmlDocument.setParameter("disabledFalse", "return false;");
+    } else {
+      xmlDocument.setParameter("disabled", "N");
+      xmlDocument.setParameter("callout", getOnChangeCode());
+    }
     if (getData("IsMandatory").equals("Y")) xmlDocument.setParameter("required", "true");
     else xmlDocument.setParameter("required", "false");
 
-    xmlDocument.setParameter("callout", getOnChangeCode());
+    
 
     return replaceHTML(xmlDocument.print());
   }
@@ -66,12 +72,16 @@ public class WADYesNo extends WADControl {
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
 
-    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")) {xmlDocument.setParameter("disabled", "Y");xmlDocument.setParameter("disabledFalse", "false");}
-    else xmlDocument.setParameter("disabled", "N");
+    if (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")) {
+      xmlDocument.setParameter("disabled", "Y");
+      xmlDocument.setParameter("logChanges", "");
+      xmlDocument.setParameter("disabledFalse", "return false;");
+    } else{
+      xmlDocument.setParameter("disabled", "N");
+      xmlDocument.setParameter("callout", getOnChangeCode());
+    }
     if (getData("IsMandatory").equals("Y")) xmlDocument.setParameter("required", "true");
     else xmlDocument.setParameter("required", "false");
-
-    xmlDocument.setParameter("callout", getOnChangeCode());
 
     return replaceHTML(xmlDocument.print());
   }

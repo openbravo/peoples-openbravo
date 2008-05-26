@@ -24,10 +24,11 @@
   <PARAMETER id="xx_inp" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xx" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xx" name="columnNameInp" attribute="name" replace="xx"/>
-  <PARAMETER id="xx" name="callout" attribute="onclick" replace="xx();"/>
+  <PARAMETER id="xx" name="callout" attribute="onclick" replace="xx();" default=""/>
   <PARAMETER id="xx" name="required" attribute="required"/>
   <PARAMETER id="xx" name="disabled" boolean=" onclick='return false;' readonly=true" withId="paramChecked"/>
-  <PARAMETER id="xx" name="disabledFalse" attribute="onclick" replace="true" default="true"/>
+  <PARAMETER id="xx" name="logChanges" attribute="onclick" replace="logChanges(this.inputNode);" default="logChanges(this.inputNode);"/>
+  <PARAMETER id="xx" name="disabledFalse" attribute="onclick" replace="return true;" default="return true;"/>
 
   <DISCARD id="discard"/>
 </REPORT>
