@@ -117,10 +117,15 @@ public class Posted extends HttpSecureAppServlet {
     try {
       con = getTransactionConnection();
       AcctServer acct = AcctServer.get(strTableId, vars.getClient(), this.myPool);
-      if (!acct.post(strKey,false, vars,this,con)) {
-          releaseRollbackConnection(con);
-         // return (Utility.messageBD(this, "ProcessRunError", vars.getLanguage()) + "\\n" + acct.getInfo(vars));
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError"+ "\\n" + acct.getInfo(vars));
+      if (acct==null) {
+    	  releaseRollbackConnection(con);
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");          
+          return myMessage;
+      }else if (!acct.post(strKey,false, vars,this,con)) {          
+    	  releaseRollbackConnection(con);
+         // return (Utility.messageBD(this, "ProcessRunError", vars.getLanguage()) + "\\n" + acct.getInfo(vars));          
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError"+ "\\n" + acct.getInfo(vars));          
+          return myMessage;
       }
       //  Create Automatic Matching
       //acct.match (vars, this,con);
