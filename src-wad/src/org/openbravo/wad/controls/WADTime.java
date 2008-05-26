@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,7 +41,7 @@ public class WADTime extends WADControl {
     StringBuffer validation = new StringBuffer();
     if (getData("IsMandatory").equals("Y")) {
       validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==\"\") {\n");
-      if (getData("IsDisplayed").equals("Y")) validation.append("    frm.inp").append(getData("ColumnNameInp")).append(".focus();\n");
+      if (getData("IsDisplayed").equals("Y")) validation.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp")).append(");\n");
       validation.append("    mensaje(1);\n");
       validation.append("    return false;\n");
       validation.append("  }\n");
@@ -59,7 +59,7 @@ public class WADTime extends WADControl {
         validation.append("timecmp(frm.inp").append(getData("ColumnNameInp")).append(".value, '").append(getData("ValueMax")).append("')>0");
       }
       validation.append(")) {\n");
-      if (getData("IsDisplayed").equals("Y")) validation.append("    frm.inp").append(getData("ColumnNameInp")).append(".focus();\n");
+      if (getData("IsDisplayed").equals("Y")) validation.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp")).append(");\n");
       validation.append("    mensaje(9);\n");
       validation.append("    return false;\n");
       validation.append("  }\n");

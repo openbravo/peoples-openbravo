@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -76,13 +76,7 @@ public class WADGrid extends WADControl {
       text.append("  if (selectedRow==null) return true;\n");
       text.append("  if (selectedRow<=0) dojo.widget.byId('").append(getData("id")).append("').goToFirstRow();\n");
       text.append("  else dojo.widget.byId('").append(getData("id")).append("').goToRow(selectedRow);\n");
-      /*text.append("  if (orderByPositions!=null && orderByPositions.length>0) {\n");
-      text.append("    var total = orderByPositions.length;\n");
-      text.append("    for (var i=0;i<total;i++) {\n");
-      text.append("      dojo.widget.byId('").append(getData("id")).append("').setSortedColumns(orderByPositions[i], orderByDirections[i]);\n");
-      text.append("    }\n");
-      text.append("  }\n");*/
-      //text.append("  dojo.widget.byId('").append(getData("id")).append("').setFocus();\n");
+      
       text.append("  return true;\n");
       text.append('}');
       addJSCode("onGridLoadDo", text.toString());

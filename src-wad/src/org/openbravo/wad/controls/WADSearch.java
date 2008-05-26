@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,7 +51,7 @@ public class WADSearch extends WADControl {
     StringBuffer validation = new StringBuffer();
     if (getData("IsMandatory").equals("Y")) {
       validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==\"\") {\n");
-      if (getData("IsDisplayed").equals("Y")) validation.append("    frm.inp").append(getData("ColumnNameInp")).append("_R.focus();\n");
+      if (getData("IsDisplayed").equals("Y")) validation.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp")).append("_R);\n");
       validation.append("    mensaje(1);\n");
       validation.append("    return false;\n");
       validation.append("  }\n");

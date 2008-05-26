@@ -43,7 +43,7 @@ public class WADList extends WADControl {
       text.append(")==null || inputValue(frm.inp");
       text.append(getData("ColumnNameInp"));
       text.append(")==\"\") {\n");
-      text.append("    setFocus(frm.inp").append(getData("ColumnNameInp")).append(");\n");
+      text.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp")).append(");\n");
       text.append("    mensaje(1);\n");
       text.append("    return false;\n");
       text.append("  }");

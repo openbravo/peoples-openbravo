@@ -42,7 +42,7 @@ public class WADString extends WADControl {
     StringBuffer validation = new StringBuffer();
     if (getData("IsMandatory").equals("Y")) {
       validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==\"\") {\n");
-      if (getData("IsDisplayed").equals("Y")) validation.append("    frm.inp").append(getData("ColumnNameInp")).append(".focus();\n");
+      if (getData("IsDisplayed").equals("Y")) validation.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp")).append(");\n");
       validation.append("    mensaje(1);\n");
       validation.append("    return false;\n");
       validation.append("  }\n");
