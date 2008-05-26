@@ -55,7 +55,7 @@ function depurar()
 {
 	var frm = document.frmMain;
 	if (inputValue(document.frmMain.inpOrg) == null || inputValue(document.frmMain.inpOrg) == "") {
-      document.frmMain.inpOrg.focus();
+      setWindowElementFocus(document.frmMain.inpOrg);
       mensaje(7);
       return false;
     }

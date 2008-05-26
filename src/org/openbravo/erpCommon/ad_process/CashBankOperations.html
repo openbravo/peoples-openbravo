@@ -54,47 +54,47 @@ var baseDirection = "../../../../../web/";
 function depurar() {
 	var frm = document.frmMain;
 	if ((frm.inpCBankAccountFromID.value==null || frm.inpCBankAccountFromID.value=="") && (frm.inpCCashFromID.value==null || frm.inpCCashFromID.value=="")) {
-		frm.inpCBankAccountFromID.focus();
+		setWindowElementFocus(frm.inpCBankAccountFromID);
 		mensaje(1);
 		return false;
 	}
 	if ((frm.inpCBankAccountFromID.value!=null && frm.inpCBankAccountFromID.value!="") && (frm.inpCCashFromID.value!=null && frm.inpCCashFromID.value!="")) {
-		frm.inpCBankAccountFromID.focus();
+		setWindowElementFocus(frm.inpCBankAccountFromID);
 		mensaje(14);
 		return false;
 	}
 	if ((frm.inpCBankAccountToID.value==null || frm.inpCBankAccountToID.value=="") && (frm.inpCCashToID.value==null || frm.inpCCashToID.value=="")) {
-		frm.inpCBankAccountToID.focus();
+		setWindowElementFocus(frm.inpCBankAccountToID);
 		mensaje(1);
 		return false;
 	}
 	if ((frm.inpCBankAccountToID.value!=null && frm.inpCBankAccountToID.value!="") && (frm.inpCCashToID.value!=null && frm.inpCCashToID.value!="")) {
-		frm.inpCBankAccountToID.focus();
+		setWindowElementFocus(frm.inpCBankAccountToID);
 		mensaje(15);
 		return false;
 	}
 	if ((frm.inpAmount.value <= 0)) {
-		frm.inpAmount.focus();
+		setWindowElementFocus(frm.inpAmount);
 		mensaje(9);
 		return false;
 	}
 	if ((frm.inppaymentruleFrom.value==null || frm.inppaymentruleFrom.value=="")) {
-		frm.inppaymentruleFrom.focus();
+		setWindowElementFocus(frm.inppaymentruleFrom);
 		mensaje(1);
 		return false;
 	}
 	if ((frm.inppaymentruleTo.value==null || frm.inppaymentruleTo.value=="")) {
-		frm.inppaymentruleTo.focus();
+		setWindowElementFocus(frm.inppaymentruleTo);
 		mensaje(1);
 		return false;
 	}
 	if ((frm.inpAmount.value==null || frm.inpAmount.value=="")) {
-		frm.inpAmount.focus();
+		setWindowElementFocus(frm.inpAmount);
 		mensaje(1);
 		return false;
 	}
 	if ((frm.inpmovementdate.value==null || frm.inpmovementdate.value=="")) {
-		frm.inpmovementdate.focus();
+		setWindowElementFocus(frm.inpmovementdate);
 		mensaje(1);
 		return false;
 	}

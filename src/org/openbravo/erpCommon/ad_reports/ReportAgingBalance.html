@@ -73,47 +73,47 @@ function columnChange() {
   function depurar() {
 	seleccionarListCompleto(document.frmMain.inpcBPartnerId_IN);
     if (!esNumero(document.frmMain.paramColumn1.value,false,true) || document.frmMain.paramColumn1.value==""){
-  	  document.frmMain.paramColumn1.focus();
+  	  setWindowElementFocus(document.frmMain.paramColumn1);
   	  mensaje(4);
   	  return false;
     }
     if (!esNumero(document.frmMain.paramColumn2.value,false,true) || document.frmMain.paramColumn2.value==""){
-  	  document.frmMain.paramColumn2.focus();
+  	  setWindowElementFocus(document.frmMain.paramColumn2);
   	  mensaje(4);
   	  return false;
     }
     if (!esNumero(document.frmMain.paramColumn3.value,false,true) || document.frmMain.paramColumn3.value=="") {
-	  document.frmMain.paramColumn3.focus();
+	  setWindowElementFocus(document.frmMain.paramColumn3);
   	  mensaje(4);
   	  return false;
     }
     if (!esNumero(document.frmMain.paramColumn4.value,false,true) || document.frmMain.paramColumn4.value=="") {
-  	  document.frmMain.paramColumn4.focus();
+  	  setWindowElementFocus(document.frmMain.paramColumn4);
   	  mensaje(4);
   	  return false;
     }
     if (Number(document.frmMain.paramColumn1.value)<0) {
-  	  document.frmMain.paramColumn1.focus();
+  	  setWindowElementFocus(document.frmMain.paramColumn1);
 	  mensaje(9);
 	  return false;
     }
     if (Number(document.frmMain.paramColumn2.value)<=Number(document.frmMain.paramColumn1.value)) {
-  	  document.frmMain.paramColumn2.focus();
+  	  setWindowElementFocus(document.frmMain.paramColumn2);
 	  mensaje(9);
 	  return false;
     }
     if (Number(document.frmMain.paramColumn3.value)<=Number(document.frmMain.paramColumn2.value)) {
-  	  document.frmMain.paramColumn3.focus();
+  	  setWindowElementFocus(document.frmMain.paramColumn3);
 	  mensaje(9);
 	  return false;
     }
     if (Number(document.frmMain.paramColumn4.value)<=Number(document.frmMain.paramColumn3.value)) {
-  	  document.frmMain.paramColumn4.focus();
+  	  setWindowElementFocus(document.frmMain.paramColumn4);
 	  mensaje(9);
 	  return false;
     }
     if (inputValue(document.frmMain.inpOrg) == null || inputValue(document.frmMain.inpOrg) == "") {
-      document.frmMain.inpOrg.focus();
+      setWindowElementFocus(document.frmMain.inpOrg);
       mensaje(7);
       return false;
     }

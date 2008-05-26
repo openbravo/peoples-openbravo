@@ -48,7 +48,7 @@ function depurar(action) {
 		mensaje(1);
 		return false;
 	} else if (frm.inpmLocatorId.value==null || frm.inpmLocatorId.value=="") {
-		frm.inpmLocatorId_DES.focus();
+		setWindowElementFocus(frm.inpmLocatorId_DES);
 		mensaje(7);
 		return false;
 	}

@@ -37,19 +37,19 @@
 function depurar() {
   var frm = document.frmMain;
   if (frm.inpClaveOld.value==null || frm.inpClaveOld.value=="") {
-    frm.inpClaveOld.focus();
+    setWindowElementFocus(frm.inpClaveOld);
     mensaje(7);
     return false;
     } else if (frm.inpClaveNew.value==null || frm.inpClaveNew.value=="") {
-    frm.inpClaveNew.focus();
+    setWindowElementFocus(frm.inpClaveNew);
     mensaje(7);
     return false;
     } else if (frm.inpClaveNew2.value==null || frm.inpClaveNew2.value=="") {
-    frm.inpClaveNew2.focus();
+    setWindowElementFocus(frm.inpClaveNew2);
     mensaje(7);
     return false;
     } else if (frm.inpClaveNew.value != frm.inpClaveNew2.value) {
-    frm.inpClaveNew.focus();
+    setWindowElementFocus(frm.inpClaveNew);
     mensaje(20);
     return false;
   }

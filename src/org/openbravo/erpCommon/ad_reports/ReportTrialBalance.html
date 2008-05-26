@@ -91,19 +91,19 @@ function onloadFunctions() {
 function depurar() {
   var frm=document.frmMain;
     if (inputValue(frm.inpDateFrom)==null || inputValue(frm.inpDateFrom)=="") {
-      frm.inpDateFrom.focus();
+      setWindowElementFocus(frm.inpDateFrom);
       mensaje(7);
       return false;
     }  else if (inputValue(frm.inpOrg)==null || inputValue(frm.inpOrg)=="") {
-      frm.inpOrg.focus();
+      setWindowElementFocus(frm.inpOrg);
       mensaje(7);
       return false;
     }  else if (inputValue(frm.inpLevel)==null || inputValue(frm.inpLevel)=="") {
-      frm.inpLevel.focus();
+      setWindowElementFocus(frm.inpLevel);
       mensaje(7);
       return false;
     }  else if (inputValue(frm.inpcAcctSchemaId)==null || inputValue(frm.inpcAcctSchemaId)=="") {
-      frm.inpcAcctSchemaId.focus();
+      setWindowElementFocus(frm.inpcAcctSchemaId);
       mensaje(7);
       return false;
     }

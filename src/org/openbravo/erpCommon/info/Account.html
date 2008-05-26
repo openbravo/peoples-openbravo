@@ -41,12 +41,12 @@
 function depurar() {
 	var frm = document.forms[0];
 	if ((frm.inpAlias.value==null || frm.inpAlias.value=="") && (frm.inpCombination.value==null || frm.inpCombination.value=="") && frm.inpOrganization.selectedIndex==-1 && frm.inpAccount.selectedIndex==-1 && frm.inpProduct.selectedIndex==-1 && frm.inpBPartner.selectedIndex==-1 && frm.inpProject.selectedIndex==-1 && frm.inpCampaign.selectedIndex==-1) {
-		frm.inpAlias.focus();
+		setWindowElementFocus(frm.inpAlias);
 		// mensaje(7);
 		return false;
 	}
   if (frm.inpOrganization.value==null || frm.inpOrganization.value=="") {
-    frm.inpOrganization.focus();
+    setWindowElementFocus(frm.inpOrganization);
     // mensaje(7);
     return false;    
   }

@@ -80,7 +80,7 @@ function depurarCombo(){
 function depurar(command) {
 	var frm = document.frmMain;
 	if (frm.inpTaxReportId.value == ""){
-		frm.inpTaxReportId.focus();
+		setWindowElementFocus(frm.inpTaxReportId);
 		mensaje(7);
 		return false;
 	}

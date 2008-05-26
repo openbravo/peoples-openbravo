@@ -53,11 +53,11 @@
             function depurar() {
                 var frm = document.frmMain;
                 if (frm.inpMailTemplate.value==null || frm.inpMailTemplate.value=="") {
-                    frm.inpMailTemplate.focus();
+                    setWindowElementFocus(frm.inpMailTemplate);
                     mensaje(7);
                     return false;
                 } else if (frm.inpInterestArea.value==null || frm.inpInterestArea.value=="") {
-                    frm.inpInterestArea.focus();
+                    setWindowElementFocus(frm.inpInterestArea);
                     mensaje(1);
                     return false;
                 }

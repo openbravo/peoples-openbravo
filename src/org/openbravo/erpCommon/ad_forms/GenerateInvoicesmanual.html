@@ -68,7 +68,7 @@ function depurar(action) {
     setProcessingMode('window',true);
   } else if (action=="FIND") {
     if (frm.inpadOrgId.value==null || frm.inpadOrgId.value=="") {
-    frm.inpadOrgId.focus();
+    setWindowElementFocus(frm.inpadOrgId);
     mensaje(7);
     return false;
     }

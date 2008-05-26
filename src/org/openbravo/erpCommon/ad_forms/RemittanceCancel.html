@@ -88,11 +88,11 @@ function cargarDatos(marcar) {
 
 function depurar() {
   if (document.forms[0].inpDateAcct.value==null || document.forms[0].inpDateAcct.value=="") {
-    document.forms[0].inpDateAcct.focus();
+    setWindowElementFocus(document.forms[0].inpDateAcct);
     mensaje(7);
     return false;
   } /*else if (!validateDate(document.forms[0].inpDateAcct.value)) {
-    document.forms[0].inpDateAcct.focus();
+    setWindowElementFocus(document.forms[0].inpDateAcct);
     document.forms[0].inpDateAcct.select();
     return false;
   }*/

@@ -56,27 +56,27 @@
       function depurar(action) {
         var frm=document.frmMain;
         if (frm.inpOrderDate.value==null || frm.inpOrderDate.value=="") {
-            frm.inpOrderDate.focus();
+            setWindowElementFocus(frm.inpOrderDate);
             mensaje(7);
             return false;
         }
         if (frm.inpOrderVendorId.value==null || frm.inpOrderVendorId.value=="") {
-            frm.inpOrderVendorId_DES.focus();
+            setWindowElementFocus(frm.inpOrderVendorId_DES);
             mensaje(7);
             return false;
         }
         if (frm.inpPriceListId.value==null || frm.inpPriceListId.value=="") {
-            frm.inpPriceListId.focus();
+            setWindowElementFocus(frm.inpPriceListId);
             mensaje(7);
             return false;
         }
         if (frm.inpOrderOrg.value==null || frm.inpOrderOrg.value=="") {
-            frm.inpOrderOrg.focus();
+            setWindowElementFocus(frm.inpOrderOrg);
             mensaje(7);
             return false;
         }
         if (frm.inpWarehouse.value==null || frm.inpWarehouse.value=="") {
-            frm.inpWarehouse.focus();
+            setWindowElementFocus(frm.inpWarehouse);
             mensaje(7);
             return false;
         }

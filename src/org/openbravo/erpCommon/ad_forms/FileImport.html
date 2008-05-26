@@ -53,12 +53,12 @@ var baseDirection = "../../../../../web/";
 function depurar() {
 	var frm = document.frmSelector;
 	if ((frm.inpFile.value==null || frm.inpFile.value=="")){
-		frm.inpFile.focus();
+		setWindowElementFocus(frm.inpFile);
 		mensaje(7);
 		return false;
 	}
 	if ((frm.inpadImpformatId.value==null || frm.inpadImpformatId.value=="")){
-		frm.inpadImpformatId.focus();
+		setWindowElementFocus(frm.inpadImpformatId);
 		mensaje(7);
 		return false;
 	}

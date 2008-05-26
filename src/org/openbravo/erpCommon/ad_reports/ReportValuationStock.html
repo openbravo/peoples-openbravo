@@ -58,7 +58,7 @@ function onloadFunctions() {
 function depurar() {
 	  var frm=document.frmMain;
 	  if (inputValue(frm.inpmWarehouseId)==null || inputValue(frm.inpmWarehouseId)=="") {
-	      frm.inpmWarehouseId.focus();
+	      setWindowElementFocus(frm.inpmWarehouseId);
 	      mensaje(7);
 	      return false;
 	  }

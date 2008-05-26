@@ -54,27 +54,27 @@
 function depurar(command) {
 	var frm = document.frmMain;
 	if (frm.inpAgno.value == null || frm.inpAgno.value == "") {
-		frm.inpAgno.focus();
+		setWindowElementFocus(frm.inpAgno);
 		mensaje(7);
 		return false;
 	} else if (frm.inpAgnoRef.value == null || frm.inpAgnoRef.value == "") {
-		frm.inpAgnoRef.focus();
+		setWindowElementFocus(frm.inpAgnoRef);
 		mensaje(7);
 		return false;
 	} else if (frm.inpOrganizacion.value == ""){
-		frm.inpOrganizacion.focus();
+		setWindowElementFocus(frm.inpOrganizacion);
 		mensaje(1);
 		return false;
 	} else if (frm.inpcAcctSchemaId.value == ""){
-		frm.inpcAcctSchemaId.focus();
+		setWindowElementFocus(frm.inpcAcctSchemaId);
 		mensaje(1);
 		return false;
 	} else if (frm.inpcElementvalueId.value == ""){
-		frm.inpcElementvalueId.focus();
+		setWindowElementFocus(frm.inpcElementvalueId);
 		mensaje(1);
 		return false;
 	} else if (frm.inpLevel.value == ""){
-		frm.inpLevel.focus();
+		setWindowElementFocus(frm.inpLevel);
 		mensaje(1);
 		return false;
 	}

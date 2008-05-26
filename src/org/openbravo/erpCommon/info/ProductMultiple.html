@@ -41,7 +41,7 @@
 function depurar() {
 	var frm = document.frmSelector;
 	if ((frm.inpKey.value==null || frm.inpKey.value=="") && (frm.inpName.value==null || frm.inpName.value=="") && (frm.inpProductCategory.value==null || frm.inpProductCategory.value=="")) {
-		frm.inpKey.focus();
+		setWindowElementFocus(frm.inpKey);
 		mensaje(7);
 		return false;
 	}

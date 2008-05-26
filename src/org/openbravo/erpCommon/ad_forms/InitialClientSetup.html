@@ -59,13 +59,13 @@ function actualizarDatos(combo) {
 <SCRIPT language="JavaScript" type="text/javascript">
 function depurar(accion) {
 	var frm = document.frmMain;
-  if (frm.inpCliente.value==null || frm.inpCliente.value=="") {frm.inpCliente.focus();  mensaje(7); return false; }
-  if (frm.inpMoneda.value==null || frm.inpMoneda.value=="") {frm.inpMoneda.focus();  mensaje(7); return false; }
-  if (frm.inpPais.value==null || frm.inpPais.value=="") {frm.inpPais.focus();  mensaje(7); return false; }
-  if (frm.inpOrganizacion.value==null || frm.inpOrganizacion.value=="") {frm.inpOrganizacion.focus(); mensaje(7); return false; }
-  if (frm.inpClienteUsuario.value==null || frm.inpClienteUsuario.value=="") {frm.inpClienteUsuario.focus(); mensaje(7); return false; }
-  if (frm.inpOrganizacionUsuario.value==null || frm.inpOrganizacionUsuario.value=="") {frm.inpOrganizacionUsuario.focus();  mensaje(7); return false; }
-  if (frm.inpCiudad.value==null || frm.inpCiudad.value=="") {frm.inpCiudad.focus(); mensaje(7); return false; }
+  if (frm.inpCliente.value==null || frm.inpCliente.value=="") {setWindowElementFocus(frm.inpCliente);  mensaje(7); return false; }
+  if (frm.inpMoneda.value==null || frm.inpMoneda.value=="") {setWindowElementFocus(frm.inpMoneda);  mensaje(7); return false; }
+  if (frm.inpPais.value==null || frm.inpPais.value=="") {setWindowElementFocus(frm.inpPais);  mensaje(7); return false; }
+  if (frm.inpOrganizacion.value==null || frm.inpOrganizacion.value=="") {setWindowElementFocus(frm.inpOrganizacion); mensaje(7); return false; }
+  if (frm.inpClienteUsuario.value==null || frm.inpClienteUsuario.value=="") {setWindowElementFocus(frm.inpClienteUsuario); mensaje(7); return false; }
+  if (frm.inpOrganizacionUsuario.value==null || frm.inpOrganizacionUsuario.value=="") {setWindowElementFocus(frm.inpOrganizacionUsuario);  mensaje(7); return false; }
+  if (frm.inpCiudad.value==null || frm.inpCiudad.value=="") {setWindowElementFocus(frm.inpCiudad); mensaje(7); return false; }
 	return true;
 }
 

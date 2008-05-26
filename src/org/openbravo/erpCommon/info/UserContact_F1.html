@@ -48,7 +48,7 @@ function onloadFunctions() {
 function depurar() {
 	var frm = document.frmSelector;
 	if ((frm.inpKey.value==null || frm.inpKey.value=="") && (frm.inpLastResult.value==null || frm.inpLastResult.value=="") && (frm.inpFax.value==null || frm.inpFax.value=="") && (frm.inpTelephone.value==null || frm.inpTelephone.value=="")) {
-		frm.inpKey.focus();
+		setWindowElementFocus(frm.inpKey);
 		mensaje(7);
 		return false;
 	}

@@ -56,12 +56,12 @@ function onloadFunctions() {
 function depurar(command) {
 	var frm = document.frmMain;
 	if (frm.inpFrom.value==null || frm.inpFrom.value=="") {
-		frm.inpFrom.focus();
+		setWindowElementFocus(frm.inpFrom);
 		mensaje(1);
 		return false;
 	} 
 	if (frm.inpTo.value==null || frm.inpTo.value=="") {
-		frm.inpTo.focus();
+		setWindowElementFocus(frm.inpTo);
 		mensaje(1);
 		return false;
 	} 	

@@ -48,23 +48,23 @@ function depurar(action) {
   	var frm=document.frmMain;
 	if (action=="FIND_SETTLEMENT") {
 		if (frm.inpplanneddateFrom.value!=null && frm.inpplanneddateFrom.value!="" && !isValidDate(frm.inpplanneddateFrom.value, frm.inpplanneddateFrom.displayFormat)) {
-			frm.inpplanneddateFrom.focus();
+			setWindowElementFocus(frm.inpplanneddateFrom);
 			frm.inpplanneddateFrom.select();
 			mensaje(5);
 			return false;
 		} else if (frm.inpplanneddateTo.value!=null && frm.inpplanneddateTo.value!="" && !isValidDate(frm.inpplanneddateTo.value, frm.inpplanneddateTo.displayFormat)) {
-			frm.inpplanneddateTo.focus();
+			setWindowElementFocus(frm.inpplanneddateTo);
 			frm.inpplanneddateTo.select();
 			mensaje(5);
 			return false;
 		} else if (frm.inpamountFrom.value!=null && frm.inpamountFrom.value!="" && !campoNumerico(frm.inpamountFrom, true, true)) {
-			frm.inpamountFrom.focus();
+			setWindowElementFocus(frm.inpamountFrom);
 			return false;
 		} else if (frm.inpamountTo.value!=null && frm.inpamountTo.value!="" && !campoNumerico(frm.inpamountTo, true, true)) {
-			frm.inpamountTo.focus();
+			setWindowElementFocus(frm.inpamountTo);
 			return false;
 		} else if (frm.inpamount.value!=null && frm.inpamount.value!="" && !campoNumerico(frm.inpamount, true, true)) {
-			frm.inpamount.focus();
+			setWindowElementFocus(frm.inpamount);
 			return false;
 		}
 	} else if (radioValue(frm.inpcDebtPaymentId)==null) {

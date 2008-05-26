@@ -61,7 +61,7 @@ function imprimir()
 function depurar() {
 	var frm = document.frmMain;
 	if (frm.inpmPricelistVersion.value == ""){
-		frm.inpmPricelistVersion.focus();
+		setWindowElementFocus(frm.inpmPricelistVersion);
 		mensaje(1);
 		return false;
 	}

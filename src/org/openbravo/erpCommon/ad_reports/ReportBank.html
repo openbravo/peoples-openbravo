@@ -56,7 +56,7 @@ function onloadFunctions() {
 function depurar() {
   var frm=document.frmMain;
     if (inputValue(frm.inpDateFrom)==null || inputValue(frm.inpDateFrom)=="") {
-      frm.inpDateFrom.focus();
+      setWindowElementFocus(frm.inpDateFrom);
       mensaje(7);
       return false;
     }

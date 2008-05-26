@@ -64,11 +64,11 @@ function refreshAccountingReports() {
 function depurar() {
   var frm=document.frmMain;
     if (inputValue(frm.paramAccountSelect)==null || inputValue(frm.paramAccountSelect)=="") {
-      frm.paramAccountSelect.focus();
+      setWindowElementFocus(frm.paramAccountSelect);
       mensaje(7);
       return false;
     }  else if (inputValue(frm.inpcAcctSchemaId)==null || inputValue(frm.inpcAcctSchemaId)=="") {
-      frm.inpcAcctSchemaId.focus();
+      setWindowElementFocus(frm.inpcAcctSchemaId);
       mensaje(7);
       return false;
     }

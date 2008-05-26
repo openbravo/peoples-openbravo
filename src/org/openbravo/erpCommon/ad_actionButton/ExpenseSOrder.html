@@ -67,17 +67,17 @@ function enableLocalShortcuts() {
 function depurar() {
 	var frm = document.frmMain;
 	if (frm.inpDateFrom.value!=null && frm.inpDateFrom.value!="" && !isValidDate(frm.inpDateFrom.value, frm.inpDateFrom.displayFormat)) {
-			frm.inpDateFrom.focus();
+			setWindowElementFocus(frm.inpDateFrom);
 			frm.inpDateFrom.select();
 			mensaje(5);
 			return false;
 	} else if (frm.inpDateTo.value!=null && frm.inpDateTo.value!="" && !isValidDate(frm.inpDateTo.value, frm.inpDateTo.displayFormat)) {
-			frm.inpDateTo.focus();
+			setWindowElementFocus(frm.inpDateTo);
 			frm.inpDateTo.select();
 			mensaje(5);
 			return false;
 	} else if (frm.inpDateordered.value!=null && frm.inpDateordered.value!="" && !isValidDate(frm.inpDateordered.value, frm.inpDateordered.displayFormat)) {
-			frm.inpDateordered.focus();
+			setWindowElementFocus(frm.inpDateordered);
 			frm.inpDateordered.select();
 			mensaje(5);
 			return false;

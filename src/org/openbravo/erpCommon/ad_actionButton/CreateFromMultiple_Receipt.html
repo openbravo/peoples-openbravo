@@ -68,15 +68,15 @@ function displayLogic() {
 function depurar(action) {
   var frm=document.frmMain;
   if (frm.inpmProductId.value==null || frm.inpmProductId.value=="") {
-    frm.inpmProductId_DES.focus();
+    setWindowElementFocus(frm.inpmProductId_DES);
   mensaje(7);
   return false;
   } else if (frm.inpmovementqty.value==null || frm.inpmovementqty.value=="") {
-    frm.inpmovementqty.focus();
+    setWindowElementFocus(frm.inpmovementqty);
   mensaje(7);
   return false;
   } else if (frm.inpnumerolineas.value==null || frm.inpnumerolineas.value=="") {
-    frm.inpnumerolineas.focus();
+    setWindowElementFocus(frm.inpnumerolineas);
   mensaje(7);
   return false;
   }

@@ -56,12 +56,12 @@
 function depurar(action, Formulario, valor) {
   var frm=document.frmMain;
   if (frm.inpDateFrom.value!=null && frm.inpDateFrom.value!="" && !validateDate(frm.inpDateFrom.value)) {
-      frm.inpDateFrom.focus();
+      setWindowElementFocus(frm.inpDateFrom);
       frm.inpDateFrom.select();
       return false;
     }
   if (frm.inpDateTo.value!=null && frm.inpDateTo.value!="" && !validateDate(frm.inpDateTo.value)) {
-      frm.inpDateTo.focus();
+      setWindowElementFocus(frm.inpDateTo);
       frm.inpDateTo.select();
       return false;
     }

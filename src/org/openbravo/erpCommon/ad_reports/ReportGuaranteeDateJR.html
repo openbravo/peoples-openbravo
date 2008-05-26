@@ -55,7 +55,7 @@
 function depurar() {
   var frm=document.frmMain;
     if (inputValue(frm.inpDate)==null || inputValue(frm.inpDate)=="") {
-      frm.inpDate.focus();
+      setWindowElementFocus(frm.inpDate);
       mensaje(7);
       return false;
     }

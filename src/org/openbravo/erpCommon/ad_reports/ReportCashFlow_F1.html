@@ -71,7 +71,7 @@ function depurarCombo(){
   }
   rellenarCombo(frm.inpPeriodId, arrayCombo, false, false);
 	if (frm.inpcAcctSchemaId.value == null || frm.inpcAcctSchemaId.value == "") {
-		frm.inpcAcctSchemaId.focus();
+		setWindowElementFocus(frm.inpcAcctSchemaId);
 		mensaje(7);
 		return false;
 	}

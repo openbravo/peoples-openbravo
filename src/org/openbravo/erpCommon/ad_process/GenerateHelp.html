@@ -52,7 +52,7 @@ var baseDirection = "../../../../../web/";
 function depurar() {
 	var frm = document.frmMain;
 	if (frm.inpPath.value==null || frm.inpPath.value=="") {
-		frm.inpPath.focus();
+		setWindowElementFocus(frm.inpPath);
 		mensaje(1);
 		return false;
 	}

@@ -56,7 +56,7 @@ function depurar() {
 	var frm = document.frmMain;
 	seleccionarListCompleto(frm.inpmProductId_IN);
 	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
-		frm.inpDateFrom.focus();
+		setWindowElementFocus(frm.inpDateFrom);
 		mensaje(7);
 		return false;
 	}

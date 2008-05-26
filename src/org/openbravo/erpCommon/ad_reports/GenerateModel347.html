@@ -54,13 +54,13 @@
 function depurar()
 {
 	if(document.forms[0].inpDateFrom.value==null || document.forms[0].inpDateTo.value==null || document.forms[0].inpDateFrom.value=="" || document.forms[0].inpDateTo.value==""){
-			document.forms[0].inpDateFrom.focus();
+			setWindowElementFocus(document.forms[0].inpDateFrom);
 			mensaje(7);
 			return false;
 	} 
 	if (document.forms[0].inpReportType=="Sustitutive"){
 		if (document.forms[0].inpComplementar==null || document.forms[0].inpComplementar==""){
-			document.forms[0].inpComplementar.focus();
+			setWindowElementFocus(document.forms[0].inpComplementar);
 			mensaje(7);
 			return false;
 		}

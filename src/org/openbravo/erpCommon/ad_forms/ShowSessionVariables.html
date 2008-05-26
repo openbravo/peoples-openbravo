@@ -55,7 +55,7 @@ var baseDirection = "../../../../../web/";
                 var frm=document.frmMain;
                 if (action=="SAVE_NEW") {
                     if (frm.inpNombreVariable.value==null || frm.inpNombreVariable.value=="") {
-			            frm.inpNombreVariable.focus();
+			            setWindowElementFocus(frm.inpNombreVariable);
 			            mensaje(7);
 			            return false;
                     } 

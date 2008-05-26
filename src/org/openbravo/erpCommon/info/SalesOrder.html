@@ -52,7 +52,7 @@
   function depurar() {
     var frm = document.frmSelector;
     if ((frm.inpKey.value==null || frm.inpKey.value=="") && (frm.inpName.value==null || frm.inpName.value=="") && (frm.inpContact.value==null || frm.inpContact.value=="") && (frm.inpZIP.value==null || frm.inpZIP.value=="") && (frm.inpPhone.value==null || frm.inpPhone.value=="") && !frm.inpClients.checked) {
-      frm.inpKey.focus();
+      setWindowElementFocus(frm.inpKey);
       mensaje(7);
       return false;
     }

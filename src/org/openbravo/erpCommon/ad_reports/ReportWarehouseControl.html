@@ -54,12 +54,12 @@
 <SCRIPT language="JavaScript" type="text/javascript">
 function depurar(){
   if (frmMain.inpDateFrom.value==null || frmMain.inpDateFrom.value==""){
-    frmMain.inpDateFrom.focus();
+    setWindowElementFocus(frmMain.inpDateFrom);
     mensaje(7);
     return false;
   }
   if (frmMain.inpDateTo.value==null || frmMain.inpDateTo.value==""){
-    frmMain.inpDateTo.focus();
+    setWindowElementFocus(frmMain.inpDateTo);
     mensaje(7);
     return false;
   }

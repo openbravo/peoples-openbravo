@@ -53,7 +53,7 @@
 function depurar(command) {
 	var frm = document.frmMain;
 	if (frm.inpmProductId.value==null || frm.inpmProductId.value=="") {
-		frm.inpmProductId_D.focus();
+		setWindowElementFocus(frm.inpmProductId_D);
 		mensaje(1);
 		return false;
 	} 

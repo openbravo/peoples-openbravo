@@ -55,35 +55,35 @@ keyArray[0] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/Busines
 function depurar() {
 	var frm = document.frmMain;
 	if (frm.inpReportDateFrom.value!=null && frm.inpReportDateFrom.value!="" && !isValidDate(frm.inpReportDateFrom.value, frm.inpReportDateFrom.displayFormat)) {
-			frm.inpReportDateFrom.focus();
+			setWindowElementFocus(frm.inpReportDateFrom);
 			frm.inpReportDateFrom.select();
 			mensaje(5);
 			return false;
 	} else if (frm.inpReportDateTo.value!=null && frm.inpReportDateTo.value!="" && !isValidDate(frm.inpReportDateTo.value, frm.inpReportDateTo.displayFormat)) {
-			frm.inpReportDateTo.focus();
+			setWindowElementFocus(frm.inpReportDateTo);
 			frm.inpReportDateTo.select();
 			mensaje(5);
 			return false;
 	} else if (frm.inpDateinvoiced.value!=null && frm.inpDateinvoiced.value!="" && !isValidDate(frm.inpDateinvoiced.value, frm.inpDateinvoiced.displayFormat)) {
-			frm.inpDateinvoiced.focus();
+			setWindowElementFocus(frm.inpDateinvoiced);
 			frm.inpDateinvoiced.select();
 			mensaje(5);
 			return false;
 	}
   if ((frm.inpReportDateFrom.value==null || frm.inpReportDateFrom.value=="")) {
-    frm.inpReportDateFrom.focus();
+    	setWindowElementFocus(frm.inpReportDateFrom);
 		frm.inpReportDateFrom.select();
 		mensaje(1);
 		return false;
 	}
   if ((frm.inpReportDateTo.value==null || frm.inpReportDateTo.value=="")) {
-    frm.inpReportDateTo.focus();
+    	setWindowElementFocus(frm.inpReportDateTo);
 		frm.inpReportDateTo.select();
 		mensaje(1);
 		return false;
 	}
   if ((frm.inpDateinvoiced.value == null || frm.inpDateinvoiced.value == "")) {
-    frm.inpDateinvoiced.focus();
+    	setWindowElementFocus(frm.inpDateinvoiced);
 		frm.inpDateinvoiced.select();
 		mensaje(1);
 		return false;

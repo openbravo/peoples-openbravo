@@ -74,15 +74,15 @@ function CALLOUT_ELEMENTVALUE() {
 function depurar(){
 	var frm = document.frmMain;
 	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
-		frm.inpDateFrom.focus();
+		setWindowElementFocus(frm.inpDateFrom);
 		mensaje(7);
 		return false;
 	} else if (frm.inpDateTo.value == null || frm.inpDateTo.value == ""){
-		frm.inpDateTo.focus();
+		setWindowElementFocus(frm.inpDateTo);
 		mensaje(7);
 		return false;
 	} else if (frm.inpcAcctSchemaId.value == null || frm.inpcAcctSchemaId.value == ""){
-		frm.inpcAcctSchemaId.focus();
+		setWindowElementFocus(frm.inpcAcctSchemaId);
 		mensaje(7);
 		return false;
 	}

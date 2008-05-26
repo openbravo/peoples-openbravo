@@ -53,21 +53,21 @@ function depurar(action)
 {
 	var frm = document.frmMain;
 	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
-		frm.inpDateFrom.focus();
+		setWindowElementFocus(frm.inpDateFrom);
 		mensaje(7);
 		return false;
 	} else if (frm.inpDateTo.value == null || frm.inpDateTo.value == ""){
-		frm.inpDateTo.focus();
+		setWindowElementFocus(frm.inpDateTo);
 		mensaje(7);
 		return false;
 	}
 	if (action == "EDIT_HTML_COMPARATIVE" || action == "EDIT_PDF_COMPARATIVE") {
 		if (frm.inpDateFromRef.value == null || frm.inpDateFromRef.value == "") {
-			frm.inpDateFromRef.focus();
+			setWindowElementFocus(frm.inpDateFromRef);
 			mensaje(7);
 			return false;
 		} else if (frm.inpDateToRef.value == null || frm.inpDateToRef.value == ""){
-			frm.inpDateToRef.focus();
+			setWindowElementFocus(frm.inpDateToRef);
 			mensaje(7);
 			return false;
 		}

@@ -51,12 +51,12 @@ function depurar(action) {
   var frm=document.frmMain;
 	if (action=="FIND_BANK") {
 		if (frm.inpplanneddateFrom.value!=null && frm.inpplanneddateFrom.value!="" && !isValidDate(frm.inpplanneddateFrom.value, frm.inpplanneddateFrom.displayFormat)) {
-			frm.inpplanneddateFrom.focus();
+			setWindowElementFocus(frm.inpplanneddateFrom);
 			frm.inpplanneddateFrom.select();
 			mensaje(5);
 			return false;
 		} else if (frm.inpplanneddateTo.value!=null && frm.inpplanneddateTo.value!="" && !isValidDate(frm.inpplanneddateTo.value, frm.inpplanneddateTo.displayFormat)) {
-			frm.inpplanneddateTo.focus();
+			setWindowElementFocus(frm.inpplanneddateTo);
 			frm.inpplanneddateTo.select();
 			mensaje(5);
 			return false;

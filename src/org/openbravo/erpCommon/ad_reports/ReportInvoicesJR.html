@@ -55,11 +55,11 @@ function depurar()
 {
 	var frm = document.frmMain;
 	if (frm.inpDateInvoiceFrom.value == null || frm.inpDateInvoiceFrom.value == "") {
-		frm.inpDateInvoiceFrom.focus();
+		setWindowElementFocus(frm.inpDateInvoiceFrom);
 		mensaje(7);
 		return false;
 	} else if (frm.inpDateInvoiceTo.value == null || frm.inpDateInvoiceTo.value == ""){
-		frm.inpDateInvoiceTo.focus();
+		setWindowElementFocus(frm.inpDateInvoiceTo);
 		mensaje(7);
 		return false;
 	}

@@ -55,29 +55,29 @@ function depurar()
 {
 	var frm = document.frmMain;
 	if (frm.inpLaunchDateFrom.value == null || frm.inpLaunchDateFrom.value == "") {
-		frm.inpDateFrom.focus();
+		setWindowElementFocus(frm.inpDateFrom);
 		mensaje(7);
 		return false;
 	} else if (frm.inpLaunchDateTo.value == null || frm.inpLaunchDateTo.value == ""){
-		frm.inpDateTo.focus();
+		setWindowElementFocus(frm.inpDateTo);
 		mensaje(7);
 		return false;
 	}
 	if (frm.inpStartDateFrom.value == null || frm.inpStartDateFrom.value == "") {
-		frm.inpDateFrom.focus();
+		setWindowElementFocus(frm.inpDateFrom);
 		mensaje(7);
 		return false;
 	} else if (frm.inpStartDateTo.value == null || frm.inpStartDateTo.value == ""){
-		frm.inpDateTo.focus();
+		setWindowElementFocus(frm.inpDateTo);
 		mensaje(7);
 		return false;
 	}
 	if (frm.inpEndDateFrom.value == null || frm.inpEndDateFrom.value == "") {
-		frm.inpDateFrom.focus();
+		setWindowElementFocus(frm.inpDateFrom);
 		mensaje(7);
 		return false;
 	} else if (frm.inpEndDateTo.value == null || frm.inpEndDateTo.value == ""){
-		frm.inpDateTo.focus();
+		setWindowElementFocus(frm.inpDateTo);
 		mensaje(7);
 		return false;
 	}

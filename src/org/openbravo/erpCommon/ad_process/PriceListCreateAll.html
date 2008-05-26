@@ -53,7 +53,7 @@ var baseDirection = "../../../../../web/";
 <SCRIPT language="JavaScript" type="text/javascript">
 function depurar(strCommand) {
 	if (document.forms[0].inpmPricelistVersionId.selectedIndex<1) {
-		document.forms[0].inpmPricelistVersionId.focus();
+		setWindowElementFocus(document.forms[0].inpmPricelistVersionId);
 		mensaje(1);
 		return false;
 	}

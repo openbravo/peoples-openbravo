@@ -46,12 +46,12 @@
         var frm=document.frmMain;
       if (action=="FIND") {
         if (frm.inpDateFrom.value==null || frm.inpDateFrom.value=="") {
-          frm.inpDateFrom.focus();
+          setWindowElementFocus(frm.inpDateFrom);
           frm.inpDateFrom.select();
           mensaje(5);
           return false;
         } else if (frm.inpDateTo.value==null || frm.inpDateTo.value=="") {
-          frm.inpDateTo.focus();
+          setWindowElementFocus(frm.inpDateTo);
           frm.inpDateTo.select();
           mensaje(5);
           return false;
