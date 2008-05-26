@@ -588,7 +588,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     PeriodicBackgroundContextListener.updateBackgroundProcess(this.getServletContext(), id, object);
   }
 
-  private void readProperties(VariablesSecureApp vars, String strFileProperties) {
+  public void readProperties(VariablesSecureApp vars, String strFileProperties) {
     //  Read properties file.
     Properties properties = new Properties();
     try {
@@ -612,7 +612,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     }
  }
 
- private void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {
+ public void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {
     String strNumberFormat = "###,##0.00"; // Default number format
     String strGroupingSeparator = ","; // Default grouping separator
     String strDecimalSeparator = "."; // Default decimal separator

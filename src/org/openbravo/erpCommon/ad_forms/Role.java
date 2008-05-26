@@ -122,7 +122,11 @@ public class Role extends HttpSecureAppServlet {
         vars.setSessionValue("#AD_Session_ID",sessionID);
         req.getSession(true).setAttribute("#Authenticated_user", sessionUser);
         
-        return LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strRol, strClient, strOrg, strWarehouse);
+        boolean result = LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strRol, strClient, strOrg, strWarehouse);
+        if (!result) return false;
+        readProperties(vars, globalParameters.getOpenbravoPropertiesPath());
+        readNumberFormat(vars, globalParameters.getFormatPath());
+        return true;
   }
     
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, boolean bSaveOK) throws IOException, ServletException{
