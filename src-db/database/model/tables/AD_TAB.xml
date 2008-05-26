@@ -186,8 +186,6 @@
       <check name="ADTAB_ISREADONLY_CHECK"><![CDATA[ISREADONLY IN ('Y', 'N')]]></check>
       <check name="ADTAB_ISSINGLEROW_CHECK"><![CDATA[ISSINGLEROW IN ('Y', 'N')]]></check>
       <check name="ADTAB_ISTRANSLATIONTAB_CHECK"><![CDATA[ISTRANSLATIONTAB IN ('Y', 'N')]]></check>
-      <check name="ADTAB_NAME_CHECK"><![CDATA[
-INSTR(NAME,'_')=0
-]]></check>
+      <check name="ADTAB_NAME_CHECK"><![CDATA[INSTR(NAME, '_'::CHARACTER VARYING) = 0]]></check>
     </table>
   </database>
