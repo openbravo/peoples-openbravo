@@ -121,7 +121,8 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
       myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
       return myError;
     }
-    myError.setType("Info");
+    myError.setType("Success");
+    myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
     myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + i);
     return myError;
   }
