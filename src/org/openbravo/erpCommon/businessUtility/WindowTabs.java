@@ -86,6 +86,47 @@ public class WindowTabs {
   }
 
   /**
+   * Constructor
+   * Used by processes without javaclass.
+   * 
+   * @param _conn: Object with the database connection methods.
+   * @param _vars: Object with the session information.
+   * @param _className: String with the form's classname.
+   * @throws Exception
+   */
+  public WindowTabs(ConnectionProvider _conn, VariablesSecureApp _vars, int adProcessId) throws Exception {
+    if (_conn==null || _vars==null) throw new Exception("Missing parameters");
+    this.conn = _conn;
+    this.vars = _vars;
+    this.className = "";
+    getProcessInfo(new Integer(adProcessId).toString());
+    getTabs();
+  }
+  /**
+   * Obtains the information for the process
+   * (For processes not in menu)
+   * 
+   * @throws Exception
+   */
+  private void getProcessInfo(String adProcessId) throws Exception {
+     WindowTabsData[] processInfo = WindowTabsData.selectProcessInfo(this.conn, adProcessId);
+     if (processInfo==null || processInfo.length==0) {
+       log4j.warn("Error while trying to obtain window info for process: " + adProcessId);
+       return;
+     }
+     this.TabID = processInfo[0].adTabId;
+     this.action = processInfo[0].action;
+     this.WindowID = processInfo[0].tabname;
+     
+     processInfo = WindowTabsData.selectMenuInfo(this.conn, this.vars.getLanguage(), this.action, this.TabID);
+     if (processInfo==null || processInfo.length==0) {
+       log4j.warn("Error while trying to obtain window info for process: " + adProcessId);
+       return;
+     }
+     this.ID = processInfo[0].id;
+     this.Title = processInfo[0].name;
+  }
+  /**
    * Obtains all the window information from database.
    * (For manual windows)
    * 

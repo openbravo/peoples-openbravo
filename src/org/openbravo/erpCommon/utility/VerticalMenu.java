@@ -181,10 +181,10 @@ public class VerticalMenu extends HttpSecureAppServlet {
             strText.append(" onclick=\"checkSelected('child").append(strID).append("');openLink('");
             if (menuData[i].action.equals("L") || menuData[i].action.equals("I")) strText.append(menuData[i].url);
             else {
-              strText.append(getUrlString(strDireccion, menuData[i].name, menuData[i].action, menuData[i].classname, menuData[i].mappingname, menuData[i].adWorkflowId, menuData[i].adTaskId, menuData[i].adProcessId));
+              strText.append(getUrlString(strDireccion, menuData[i].name, menuData[i].action, menuData[i].classname, menuData[i].mappingname, menuData[i].adWorkflowId, menuData[i].adTaskId, menuData[i].adProcessId, menuData[i].isexternalservice, menuData[i].serviceType));
             }
             strText.append("', '");
-            if (menuData[i].action.equals("F") || menuData[i].action.equals("T") || (menuData[i].action.equals("P") && menuData[i].mappingname.equals(""))) strText.append("frameOculto");
+            if (menuData[i].action.equals("F") || menuData[i].action.equals("T") || (menuData[i].action.equals("P") && menuData[i].mappingname.equals("") && !(menuData[i].isexternalservice.equals("Y") && menuData[i].serviceType.equals("PS")) )) strText.append("frameOculto");
             else if (menuData[i].action.equals("L")) strText.append("_blank");
             else strText.append(target);
             strText.append("'");
@@ -245,7 +245,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
     return (strText.toString());
   }
 
-  public static String getUrlString(String strDireccionBase, String name, String action, String classname, String mappingname, String adWorkflowId, String adTaskId, String adProcessId) {
+  public static String getUrlString(String strDireccionBase, String name, String action, String classname, String mappingname, String adWorkflowId, String adTaskId, String adProcessId, String isExternalService, String externalType) {
     StringBuffer strResultado = new StringBuffer();
     strResultado.append(strDireccionBase);
     if (mappingname.equals("")) {
@@ -254,7 +254,10 @@ public class VerticalMenu extends HttpSecureAppServlet {
       } else if (action.equals("T")) {
         strResultado.append("/utility/ExecuteTask.html?inpadTaskId=").append(adTaskId);
       } else if (action.equals("P")) {
-        strResultado.append("/ad_actionButton/ActionButton_Responser.html?inpadProcessId=").append(adProcessId);
+        if (isExternalService.equals("Y") && externalType.equals("PS")) 
+        	strResultado.append("/utility/OpenPentaho.html?inpadProcessId=").append(adProcessId);
+        else
+    	  strResultado.append("/ad_actionButton/ActionButton_Responser.html?inpadProcessId=").append(adProcessId);
       } else if (action.equals("X")) {
         strResultado.append("/ad_forms/").append(FormatUtilities.replace(name)).append(".html");
       } else if (action.equals("R")) {

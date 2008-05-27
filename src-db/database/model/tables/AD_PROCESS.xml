@@ -85,12 +85,25 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SERVICE_TYPE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISEXTERNALSERVICE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="SERVICE_SOURCE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPROCESS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADPROCESS">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="ADPROC_EXTERNALSERVICE_CHECK"><![CDATA[ISEXTERNALSERVICE IN ('Y', 'N')]]></check>
       <check name="ADPROCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="ADPROCESS_ISBACKGROUND_CHECK"><![CDATA[ISBACKGROUND IN ('Y', 'N')]]></check>
       <check name="ADPROCESS_ISDIRECTPRINT_CHECK"><![CDATA[ISDIRECTPRINT IN ('Y', 'N')]]></check>

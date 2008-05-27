@@ -300,8 +300,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
             && !AccessData.selectAccess(this, vars.getRole(), type, id).equals("0");
       } else if (type.equals("S")) {
         return !AccessData.selectAccessSearch(this, vars.getRole(), id).equals("0");
-      }
-      else if (type.equals("S")||type.equals("C")||type.equals("P"))
+      } else if (type.equals("C"))
         return true;
       else
         return hasLevelAccess(vars, accessLevel)
@@ -606,6 +605,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       String sqlDateFormat = properties.getProperty("dateFormat.sql");
       log4j.info("sqlDateFormat: " + sqlDateFormat);
       vars.setSessionValue("#AD_SqlDateFormat", sqlDateFormat);
+      String pentahoServer = properties.getProperty("pentahoServer");
+      log4j.info("pentahoServer: " + pentahoServer);
+      vars.setSessionValue("#pentahoServer", pentahoServer);
     } catch (IOException e) {
      // catch possible io errors from readLine()
      e.printStackTrace();

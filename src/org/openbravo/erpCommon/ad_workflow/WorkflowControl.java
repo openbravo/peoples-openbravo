@@ -98,7 +98,7 @@ public class WorkflowControl extends HttpSecureAppServlet {
     MenuData[] menuData = MenuData.selectData(this, language, strWindow, strProcess, strForm, strTask, strWorkflow);
     if (menuData==null || menuData.length==0) throw new ServletException("WorkflowControl.getUrlPath() - Error while getting data");
 
-    return VerticalMenu.getUrlString(strDireccion, menuData[0].name, menuData[0].action, menuData[0].classname, menuData[0].mappingname, menuData[0].adWorkflowId, menuData[0].adTaskId, menuData[0].adProcessId);
+    return VerticalMenu.getUrlString(strDireccion, menuData[0].name, menuData[0].action, menuData[0].classname, menuData[0].mappingname, menuData[0].adWorkflowId, menuData[0].adTaskId, menuData[0].adProcessId, "N", "");
   }
 
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAD_Workflow_ID) throws IOException, ServletException {

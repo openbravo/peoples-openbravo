@@ -121,7 +121,24 @@
                WHERE AD_Role_ID = TO_NUMBER(?)
                  AND TO_CHAR('F') = TO_CHAR(?) 
                  AND AD_Workflow_ID = TO_NUMBER(?) 
-                 AND IsActive = 'Y' ) TOTAL
+                 AND IsActive = 'Y'
+                 UNION
+               SELECT COUNT(*) AS TOTAL 
+                FROM AD_Process_Access A,
+                     AD_Process P
+               WHERE AD_Role_ID = TO_NUMBER(?) 
+                 AND TO_CHAR('P') = TO_CHAR(?)
+                 AND A.AD_Process_ID = TO_NUMBER(?)
+                 AND P.AD_Process_ID = A.AD_Process_ID
+                 AND A.IsActive = 'Y'
+                 AND P.IsExternalService = 'Y' 
+                   UNION
+               SELECT 1 AS TOTAL
+                FROM AD_Process
+                WHERE  TO_CHAR('P') = TO_CHAR(?)
+                AND AD_Process_ID = TO_NUMBER(?) 
+                 AND IsActive = 'Y'
+                 AND IsExternalService != 'Y') TOTAL
        
       ]]></Sql>
       <Parameter name="role"/>
@@ -149,6 +166,13 @@
       <Parameter name="id"/>
       
       <Parameter name="role"/>
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+      
+      <Parameter name="role"/>
+      <Parameter name="type"/>
+      <Parameter name="id"/>
+      
       <Parameter name="type"/>
       <Parameter name="id"/>
    </SqlMethod>

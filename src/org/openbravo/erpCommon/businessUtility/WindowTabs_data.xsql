@@ -123,6 +123,17 @@
       </Sql>
       <Parameter name="className"/>
   </SqlMethod>
+  <SqlMethod name="selectProcessInfo" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        select ad_process_id as ad_tab_id, 'P' as action
+          from ad_process
+          where ad_process_id = to_number(?)
+       ]]>
+      </Sql>
+      <Parameter name="processId"/>
+  </SqlMethod>
+  
   <SqlMethod name="selectWindowInfo" type="preparedStatement" return="String" deafult="">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

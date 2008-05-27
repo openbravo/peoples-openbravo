@@ -43,7 +43,9 @@
         menuData.AD_Process_ID, 
         menuData.AD_Task_ID, 
         menuData.AD_Workflow_ID, 
-        menuData.url 
+        menuData.url,
+        P.IsExternalService,
+        P.Service_Type
         FROM AD_TREENODE tn,
         (SELECT m.AD_Menu_ID, COALESCE(m_t.NAME, m.NAME) AS NAME, COALESCE(m_t.DESCRIPTION, m.Description) AS DESCRIPTION, 
         m.IsSummary,m.Action, m.AD_Window_ID, m.AD_Process_ID, 
@@ -62,6 +64,7 @@
                     AND wa.AD_Role_ID = TO_NUMBER(?))
         )) menuData left join AD_WINDOW W on menuData.AD_Window_ID = W.AD_Window_ID
                     left join AD_TAB T on W.AD_Window_ID = T.AD_WINDOW_ID
+                    left join AD_PROCESS P on P.AD_Process_ID = menuData.AD_Process_ID 
                     left join AD_MODEL_OBJECT MOW on T.AD_TAB_ID = MOW.AD_TAB_ID
                                                   AND MOW.ACTION    = 'W' 
                                                   AND MOW.ISACTIVE = 'Y'
