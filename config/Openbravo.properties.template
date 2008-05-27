@@ -43,3 +43,10 @@ bbdd.outputscript=databasescript.sql
 bbdd.verbosity=INFO
 application.version=2.40
 development.environment.id=1
+
+# External Services
+pentahoServer=
+
+# Login Handler
+# To login using a lam server use:  org.openbravo.authentication.lam.LamAuthenticationManager
+authentication.class=
