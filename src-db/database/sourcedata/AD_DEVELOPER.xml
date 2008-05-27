@@ -2377,6 +2377,35 @@
 <!--10082-->              <SVNUSER><![CDATA[rafaeldemiguel]]></SVNUSER>
 <!--10082**************--></AD_DEVELOPER>
 
+<!--10083**************--><AD_DEVELOPER>
+<!--10083 AD_DEVELOPER_ID-->
+<!--10083-->              <AD_DEVELOPER_ID><![CDATA[10083]]></AD_DEVELOPER_ID>
+<!--10083 AD_CLIENT_ID-->
+<!--10083-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10083 AD_ORG_ID-->
+<!--10083-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10083 ISACTIVE-->
+<!--10083-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10083 CREATED-->
+<!--10083-->              <CREATED><![CDATA[2008-05-27 19:53:00.0]]></CREATED>
+<!--10083 CREATEDBY-->
+<!--10083-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10083 UPDATED-->
+<!--10083-->              <UPDATED><![CDATA[2008-05-27 19:53:00.0]]></UPDATED>
+<!--10083 UPDATEDBY-->
+<!--10083-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10083 NAME-->
+<!--10083-->              <NAME><![CDATA[Gaetano Cafiero]]></NAME>
+<!--10083 NICKNAME-->
+<!--10083-->              <NICKNAME><![CDATA[gaetano.cafiero]]></NICKNAME>
+<!--10083 EMAIL-->
+<!--10083-->              <EMAIL><![CDATA[gaetano.cafiero at kelyon dot it]]></EMAIL>
+<!--10083 COMPANY-->
+<!--10083-->              <COMPANY><![CDATA[Kelyon]]></COMPANY>
+<!--10083 SVNUSER-->
+<!--10083-->              <SVNUSER><![CDATA[gaetano.cafiero]]></SVNUSER>
+<!--10083**************--></AD_DEVELOPER>
+
 <!--
 ************************
 0. End of Core Range.
