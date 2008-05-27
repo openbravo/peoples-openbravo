@@ -129,10 +129,10 @@ function swichSelectedArea() {
   }
 }
 
-function windowTableId(tableId, frameName, defaultActionButtonId, defaultActionButtonIdFrame) {
+function windowTableId(tableId, defaultActionButtonId, frameName, defaultActionButtonIdFrame) {
   this.tableId = tableId;
-  this.frameName = frameName;
   this.defaultActionButtonId = defaultActionButtonId;
+  this.frameName = frameName;
   this.defaultActionButtonIdFrame = defaultActionButtonIdFrame;
 }
 

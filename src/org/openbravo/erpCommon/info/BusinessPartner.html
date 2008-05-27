@@ -80,9 +80,9 @@
   
   function onLoadDo(){
     this.windowTables = new Array(
-      new windowTableId('client_top', null, 'buttonSearch', null),
-      new windowTableId('client_middle', null, 'buttonOK', null),
-      new windowTableId('client_bottom', null, 'buttonOK', null)
+      new windowTableId('client_top', 'buttonSearch'),
+      new windowTableId('client_middle', 'buttonOK'),
+      new windowTableId('client_bottom', 'buttonOK')
     );
     setWindowTableParentElement();
     enableShortcuts('popup');

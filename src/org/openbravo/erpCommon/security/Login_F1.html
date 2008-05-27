@@ -50,7 +50,7 @@ function buttonOK_click() {
 <SCRIPT language="JavaScript" type="text/javascript">
   function onLoadDo() {
     this.windowTables = new Array(
-      new windowTableId('client', null, 'buttonOK')
+      new windowTableId('client', 'buttonOK')
     );
     setWindowTableParentElement();
     enableShortcuts('edition');
@@ -60,7 +60,7 @@ function buttonOK_click() {
       limpiar();
     } catch (e) {}
     setWindowElementFocus('firstElement');
-    if (!revisionControl('4567')) alert("Your browser's cache has outdated files. Please clean it and reload the page.");
+    if (!revisionControl('4588')) alert("Your browser's cache has outdated files. Please clean it and reload the page.");
   }
 
   function onResizeDo() {

@@ -79,7 +79,7 @@ function closeThisPage() {
 	function onLoadDo(){
 	    setProcessingMode('popup', false);
 		this.windowTables = new Array(
-		  new windowTableId('client', null, 'linkButtonOk', null)
+		  new windowTableId('client', 'linkButtonOk')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
