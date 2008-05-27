@@ -169,7 +169,7 @@ public class DataGrid extends HttpSecureAppServlet {
    * 
    * @param response: Handler for the response Object.
    * @param vars: Handler for the session info.
-   * @param tableSQL: Object hanler of tab's query.
+   * @param tableSQL: Object handler of tab's query.
    * @throws IOException
    * @throws ServletException
    */
@@ -184,9 +184,12 @@ public class DataGrid extends HttpSecureAppServlet {
     String description = "";
     if (tableSQL!=null && headers!=null) {
       try{
+        //Prepare SQL adding the user filter parameters
         String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "", new Vector<String>(), new Vector<String>());
         if (log4j.isDebugEnabled()) log4j.debug("offset: " + offset + " - SQL: " + strSQL);
         vars.removeSessionValue(tableSQL.getTabID() + "|newOrder");
+        
+        //Wrap query to fetch only the required rows and execute it passing params
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
         data = execquery.select(offset,pageSize);
       } catch (ServletException e) {

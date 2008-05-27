@@ -1079,7 +1079,7 @@ public class TableSQLData {
   }
 
   /**
-   * Generates the sql with the given information.
+   * Generates the sql with the given information. 
    * 
    * @throws Exception
    */
@@ -1112,10 +1112,12 @@ public class TableSQLData {
 
   /**
    * Auxiliar method to build the query with the recursive process to build the foreigns to the
-   * references.
+   * references. It adds fields to the select clause and, if needed, to the from clause.
+   *
+   * This method is called from TableSQLData.generateSQL()
    * 
    * @param parentTableName: String with the name of the parent table.
-   * @param field: String with the field name.
+   * @param field: String with the list of properties of the field to prepare identifier.
    * @param identifierName: String with the identifier name.
    * @throws Exception
    */
@@ -1689,7 +1691,7 @@ public class TableSQLData {
   }
 
   /**
-   * Gets the sql generated.
+   * Gets the sql generated removing all filters
    * 
    * @return String with the sql.
    */
@@ -1698,7 +1700,7 @@ public class TableSQLData {
   }
 
   /**
-   * Gets the sql generated.
+   * Gets the sql generated adding the filters
    * 
    * @param _FilterFields: Vector with specific filter fields.
    * @param _FilterParams: Vector with parameters for the specific filter fields.

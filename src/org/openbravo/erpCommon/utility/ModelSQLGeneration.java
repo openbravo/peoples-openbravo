@@ -228,7 +228,9 @@ public class ModelSQLGeneration {
   }
 
   /**
-   * Generates the query for this tab.
+   * Generates the query for this tab. 
+   * This method adds to the standard query defined in the TableSQLData (from dictionary)
+   * the user filter parameters defined by UI 
    * 
    * @param conn: Handler for the database connection.
    * @param vars: Handler for the session info.
