@@ -236,16 +236,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       log4j.info("Call to HttpBaseServlet.service");
     } catch (DefaultValidationException d) {
       // Added DefaultValidationException class to catch user login without a valid role
-      if (d.getDefaultField().equals("Role")) {
-        OBError roleError = new OBError();
-        roleError.setTitle("Invalid Role");
-        roleError.setType("Error");
-        roleError.setMessage("No valid role identified. Please contact your system administrator for acccess.");
-        invalidLogin(request, response, roleError);
-      } else {
-        log4j.error(d);
-        logout(request, response);
-      }
+      OBError roleError = new OBError();
+      roleError.setTitle("Invalid " + d.getDefaultField());
+      roleError.setType("Error");
+      roleError.setMessage("No valid " + d.getDefaultField() + " identified. Please contact your system administrator for acccess.");
+      invalidLogin(request, response, roleError);
+      
       return;
     } catch (Exception e) {
       // Re-login
