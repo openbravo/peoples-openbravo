@@ -5556,17 +5556,17 @@
 <!--800030 CREATEDBY-->
 <!--800030-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800030 UPDATED-->
-<!--800030-->              <UPDATED><![CDATA[2004-04-02 18:49:01.0]]></UPDATED>
+<!--800030-->              <UPDATED><![CDATA[2008-05-27 12:35:19.0]]></UPDATED>
 <!--800030 UPDATEDBY-->
 <!--800030-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800030 VALUE-->
 <!--800030-->              <VALUE><![CDATA[RV_ReportProjectBuildingSite]]></VALUE>
 <!--800030 NAME-->
-<!--800030-->              <NAME><![CDATA[Project Building Site Report]]></NAME>
+<!--800030-->              <NAME><![CDATA[Service Project Report]]></NAME>
 <!--800030 DESCRIPTION-->
-<!--800030-->              <DESCRIPTION><![CDATA[Report project building site]]></DESCRIPTION>
+<!--800030-->              <DESCRIPTION><![CDATA[Service Project Report]]></DESCRIPTION>
 <!--800030 HELP-->
-<!--800030-->              <HELP><![CDATA[Report project building site]]></HELP>
+<!--800030-->              <HELP><![CDATA[Service Project Report]]></HELP>
 <!--800030 ACCESSLEVEL-->
 <!--800030-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800030 ISUSERSTARTABLE-->

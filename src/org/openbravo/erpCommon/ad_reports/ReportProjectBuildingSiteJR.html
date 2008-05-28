@@ -21,7 +21,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<TITLE>Building site report</TITLE>
+<TITLE>Service Project Report</TITLE>
     <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS" />
      
@@ -292,6 +292,7 @@ new Array(2,4,'F4')
                     </TABLE>
                   </TD>
                     <TD class="ContentCell"></TD>
+                    </TR>
                       <TR>
                   <TD class="TitleCell"><SPAN class="LabelText">Project</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell" colspan="2">
@@ -320,14 +321,14 @@ new Array(2,4,'F4')
                     <TD class="ContentCell"></TD>
                 </TR>
                 <TR>
-                  <TD class="TitleCell"><SPAN class="LabelText">Initiative type</SPAN></TD>
-                  <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpProjectpublic" id="inpProjectpublic" class="Combo Combo_TwoCells_width">
-                      <OPTION value=""> <DIV id="reportC_PROJECTPUBLIC"></DIV></OPTION>
-                    </SELECT></TD>
-                  <TD class="TitleCell"><SPAN class="LabelText">Responsible</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Sales Representative</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpSalesRepId" id="inpSalesRepId" class="Combo Combo_TwoCells_width">
                       <OPTION value=""> <DIV id="reportSALESREP"></DIV></OPTION>
                     </SELECT></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Initiative type</SPAN></TD>
+                  <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpProjectpublic" id="inpProjectpublic" class="Combo Combo_TwoCells_width">
+                      <OPTION value=""> <DIV id="reportC_PROJECTPUBLIC"></DIV></OPTION>
+                    </SELECT></TD>                  
                 </TR>
                 <TR>
                   <TD class="TitleCell"><SPAN class="LabelText">Business Partner</SPAN></TD>
@@ -421,7 +422,38 @@ new Array(2,4,'F4')
 
                   </TD>
 
-                  <TD class="TitleCell"><SPAN class="LabelText">Product</SPAN></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Work Type</SPAN></TD>
+                    <TD class="Dimension_ContentCell" colspan="2">
+                      <SELECT name="inpProjectkind" multiple="" id="reportC_PROJECTKIND" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
+		</SELECT>
+                    </TD>
+                  
+                </TR>
+
+          	  <TR> 
+		<TD class="TitleCell"><SPAN class="LabelText">Phase</SPAN></TD>
+                    <TD class="Dimension_ContentCell" colspan="2">
+                      <SELECT name="inpProjectphase" multiple="" id="reportC_PROJECTPHASE" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
+                    </TD>
+		<TD class="TitleCell"><SPAN class="LabelText">Project Status</SPAN></TD>
+
+                    <TD class="Dimension_ContentCell" colspan="2">
+                      <SELECT name="inpProjectstatus" multiple="" id="reportC_PROJECTSTATUS" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
+		</SELECT>
+                    </TD>
+                  </TR>
+
+		<TR>
+                    <TD class="TitleCell"><SPAN class="LabelText">Product Category</SPAN></TD>
+
+                    <TD class="Dimension_ContentCell" colspan="2">
+                      <SELECT name="inpmProductCategoryId" multiple="" id="reportC_PRODUCTCATREGORY" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
+		</SELECT>
+                    </TD>
+
+
+
+                    <TD class="TitleCell"><SPAN class="LabelText">Product</SPAN></TD>
                   <TD class="List_ContentCell" colspan="2">
 
                     <TABLE border="0" cellspacing="0" cellpadding="0">
@@ -511,60 +543,9 @@ new Array(2,4,'F4')
                     </TABLE>
 
                   </TD>
-                </TR>
-
-          	  <TR> 
-		<TD class="TitleCell"><SPAN class="LabelText">Building site type</SPAN></TD>
-                    <TD class="Dimension_ContentCell" colspan="2">
-                      <SELECT name="inpProjectkind" multiple="" id="reportC_PROJECTKIND" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
-		</SELECT>
-                    </TD>
-		<TD class="TitleCell"><SPAN class="LabelText">Situation</SPAN></TD>
-
-                    <TD class="Dimension_ContentCell" colspan="2">
-                      <SELECT name="inpProjectstatus" multiple="" id="reportC_PROJECTSTATUS" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
-		</SELECT>
-                    </TD>
-
-
-
-
-
-
-
-
-
-
 
                   </TR>
-
-		<TR>
-                    <TD class="TitleCell"><SPAN class="LabelText">Product cat.</SPAN></TD>
-
-                    <TD class="Dimension_ContentCell" colspan="2">
-                      <SELECT name="inpmProductCategoryId" multiple="" id="reportC_PRODUCTCATREGORY" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
-		</SELECT>
-                    </TD>
-
-
-
-                    <TD class="TitleCell"><SPAN class="LabelText">Province</SPAN></TD>
-                    <TD class="Dimension_ContentCell" colspan="2">
-                      <SELECT name="inpcRegionId" multiple="" id="reportC_REGIONID" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
-		</SELECT>
-                    </TD>
-
-                  </TR>
-
-		<TR>
-                    <TD class="TitleCell"><SPAN class="LabelText">Phase</SPAN></TD>
-                    <TD class="Dimension_ContentCell" colspan="2">
-                      <SELECT name="inpProjectphase" multiple="" id="reportC_PROJECTPHASE" class="Dimension_LeftSelect_width Dimension_LeftSelect_height">
-                    </TD>
-                    <TD class="ContentCell"></TD>
-                    <TD class="ContentCell"></TD>
-                    <TD class="ContentCell"></TD>
-                  </TR><TR>
+					<TR>
                     <TD colspan="6">
 
                       <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
@@ -600,10 +581,25 @@ new Array(2,4,'F4')
                         </a>
                       </DIV>
                     </TD>
+                    
+                    <TD class="Button_CenterAlign_ContentCell">
+                    <DIV>
+                      <A class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Export Results to PDF Format'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('PDF', true, 'ReportProjectBuildingSiteJR.pdf', 'ReportProjectBuildingSiteJR', null, false, '700', '1024', true);return false;">
+                      <TABLE class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='PDF_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                        <TR>
+
+                          <TD class="Button_left"><IMG class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../web/images/blank.gif" border="0/"></IMG></TD>
+                          <TD class="Button_text">PDF Format</TD>
+                          <TD class="Button_right"></TD>
+                        </TR>
+                      </TABLE>
+                      </A>
+                    </DIV>
+                  </TD>                    
+                    
                     <TD class="ContentCell">
                     </TD>
                     <TD class="TitleCell"></TD>
-                    <TD class="ContentCell"></TD>
                     <TD class="ContentCell"></TD>
                   </TR>
 

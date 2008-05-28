@@ -34145,7 +34145,7 @@
 <!--810013 FILENAME-->
 <!--810013-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.html]]></FILENAME>
 <!--810013 ISUSED-->
-<!--810013-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--810013-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--810013**************--></AD_TEXTINTERFACES>
 
 <!--810014**************--><AD_TEXTINTERFACES>
@@ -34170,7 +34170,7 @@
 <!--810014 FILENAME-->
 <!--810014-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.html]]></FILENAME>
 <!--810014 ISUSED-->
-<!--810014-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--810014-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--810014**************--></AD_TEXTINTERFACES>
 
 <!--810015**************--><AD_TEXTINTERFACES>
@@ -34220,7 +34220,7 @@
 <!--810016 FILENAME-->
 <!--810016-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.jrxml]]></FILENAME>
 <!--810016 ISUSED-->
-<!--810016-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--810016-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--810016**************--></AD_TEXTINTERFACES>
 
 <!--810017**************--><AD_TEXTINTERFACES>
@@ -34245,7 +34245,7 @@
 <!--810017 FILENAME-->
 <!--810017-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.jrxml]]></FILENAME>
 <!--810017 ISUSED-->
-<!--810017-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--810017-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--810017**************--></AD_TEXTINTERFACES>
 
 <!--810018**************--><AD_TEXTINTERFACES>
@@ -34270,7 +34270,7 @@
 <!--810018 FILENAME-->
 <!--810018-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.jrxml]]></FILENAME>
 <!--810018 ISUSED-->
-<!--810018-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--810018-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--810018**************--></AD_TEXTINTERFACES>
 
 <!--810019**************--><AD_TEXTINTERFACES>
@@ -35845,6 +35845,156 @@
 <!--1000400006 ISUSED-->
 <!--1000400006-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--1000400006**************--></AD_TEXTINTERFACES>
+
+<!--1000400009**************--><AD_TEXTINTERFACES>
+<!--1000400009 AD_TEXTINTERFACES_ID-->
+<!--1000400009-->              <AD_TEXTINTERFACES_ID><![CDATA[1000400009]]></AD_TEXTINTERFACES_ID>
+<!--1000400009 AD_CLIENT_ID-->
+<!--1000400009-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000400009 AD_ORG_ID-->
+<!--1000400009-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000400009 ISACTIVE-->
+<!--1000400009-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000400009 CREATED-->
+<!--1000400009-->              <CREATED><![CDATA[2008-05-28 09:33:20.0]]></CREATED>
+<!--1000400009 CREATEDBY-->
+<!--1000400009-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000400009 UPDATED-->
+<!--1000400009-->              <UPDATED><![CDATA[2008-05-28 09:33:20.0]]></UPDATED>
+<!--1000400009 UPDATEDBY-->
+<!--1000400009-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000400009 TEXT-->
+<!--1000400009-->              <TEXT><![CDATA[Service Project Report]]></TEXT>
+<!--1000400009 FILENAME-->
+<!--1000400009-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.html]]></FILENAME>
+<!--1000400009 ISUSED-->
+<!--1000400009-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000400009**************--></AD_TEXTINTERFACES>
+
+<!--1000400010**************--><AD_TEXTINTERFACES>
+<!--1000400010 AD_TEXTINTERFACES_ID-->
+<!--1000400010-->              <AD_TEXTINTERFACES_ID><![CDATA[1000400010]]></AD_TEXTINTERFACES_ID>
+<!--1000400010 AD_CLIENT_ID-->
+<!--1000400010-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000400010 AD_ORG_ID-->
+<!--1000400010-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000400010 ISACTIVE-->
+<!--1000400010-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000400010 CREATED-->
+<!--1000400010-->              <CREATED><![CDATA[2008-05-28 09:33:20.0]]></CREATED>
+<!--1000400010 CREATEDBY-->
+<!--1000400010-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000400010 UPDATED-->
+<!--1000400010-->              <UPDATED><![CDATA[2008-05-28 09:33:20.0]]></UPDATED>
+<!--1000400010 UPDATEDBY-->
+<!--1000400010-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000400010 TEXT-->
+<!--1000400010-->              <TEXT><![CDATA[Sales Representative]]></TEXT>
+<!--1000400010 FILENAME-->
+<!--1000400010-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.html]]></FILENAME>
+<!--1000400010 ISUSED-->
+<!--1000400010-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000400010**************--></AD_TEXTINTERFACES>
+
+<!--1000400011**************--><AD_TEXTINTERFACES>
+<!--1000400011 AD_TEXTINTERFACES_ID-->
+<!--1000400011-->              <AD_TEXTINTERFACES_ID><![CDATA[1000400011]]></AD_TEXTINTERFACES_ID>
+<!--1000400011 AD_CLIENT_ID-->
+<!--1000400011-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000400011 AD_ORG_ID-->
+<!--1000400011-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000400011 ISACTIVE-->
+<!--1000400011-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000400011 CREATED-->
+<!--1000400011-->              <CREATED><![CDATA[2008-05-28 09:33:20.0]]></CREATED>
+<!--1000400011 CREATEDBY-->
+<!--1000400011-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000400011 UPDATED-->
+<!--1000400011-->              <UPDATED><![CDATA[2008-05-28 09:33:20.0]]></UPDATED>
+<!--1000400011 UPDATEDBY-->
+<!--1000400011-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000400011 TEXT-->
+<!--1000400011-->              <TEXT><![CDATA[Work Type]]></TEXT>
+<!--1000400011 FILENAME-->
+<!--1000400011-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.html]]></FILENAME>
+<!--1000400011 ISUSED-->
+<!--1000400011-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000400011**************--></AD_TEXTINTERFACES>
+
+<!--1000400012**************--><AD_TEXTINTERFACES>
+<!--1000400012 AD_TEXTINTERFACES_ID-->
+<!--1000400012-->              <AD_TEXTINTERFACES_ID><![CDATA[1000400012]]></AD_TEXTINTERFACES_ID>
+<!--1000400012 AD_CLIENT_ID-->
+<!--1000400012-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000400012 AD_ORG_ID-->
+<!--1000400012-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000400012 ISACTIVE-->
+<!--1000400012-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000400012 CREATED-->
+<!--1000400012-->              <CREATED><![CDATA[2008-05-28 09:33:20.0]]></CREATED>
+<!--1000400012 CREATEDBY-->
+<!--1000400012-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000400012 UPDATED-->
+<!--1000400012-->              <UPDATED><![CDATA[2008-05-28 09:33:20.0]]></UPDATED>
+<!--1000400012 UPDATEDBY-->
+<!--1000400012-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000400012 TEXT-->
+<!--1000400012-->              <TEXT><![CDATA[Project Status]]></TEXT>
+<!--1000400012 FILENAME-->
+<!--1000400012-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.html]]></FILENAME>
+<!--1000400012 ISUSED-->
+<!--1000400012-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000400012**************--></AD_TEXTINTERFACES>
+
+<!--1000400022**************--><AD_TEXTINTERFACES>
+<!--1000400022 AD_TEXTINTERFACES_ID-->
+<!--1000400022-->              <AD_TEXTINTERFACES_ID><![CDATA[1000400022]]></AD_TEXTINTERFACES_ID>
+<!--1000400022 AD_CLIENT_ID-->
+<!--1000400022-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000400022 AD_ORG_ID-->
+<!--1000400022-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000400022 ISACTIVE-->
+<!--1000400022-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000400022 CREATED-->
+<!--1000400022-->              <CREATED><![CDATA[2008-05-28 09:33:46.0]]></CREATED>
+<!--1000400022 CREATEDBY-->
+<!--1000400022-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000400022 UPDATED-->
+<!--1000400022-->              <UPDATED><![CDATA[2008-05-28 09:33:46.0]]></UPDATED>
+<!--1000400022 UPDATEDBY-->
+<!--1000400022-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000400022 TEXT-->
+<!--1000400022-->              <TEXT><![CDATA[Business Partner Total:]]></TEXT>
+<!--1000400022 FILENAME-->
+<!--1000400022-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.jrxml]]></FILENAME>
+<!--1000400022 ISUSED-->
+<!--1000400022-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000400022**************--></AD_TEXTINTERFACES>
+
+<!--1000400023**************--><AD_TEXTINTERFACES>
+<!--1000400023 AD_TEXTINTERFACES_ID-->
+<!--1000400023-->              <AD_TEXTINTERFACES_ID><![CDATA[1000400023]]></AD_TEXTINTERFACES_ID>
+<!--1000400023 AD_CLIENT_ID-->
+<!--1000400023-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000400023 AD_ORG_ID-->
+<!--1000400023-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000400023 ISACTIVE-->
+<!--1000400023-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000400023 CREATED-->
+<!--1000400023-->              <CREATED><![CDATA[2008-05-28 09:33:46.0]]></CREATED>
+<!--1000400023 CREATEDBY-->
+<!--1000400023-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000400023 UPDATED-->
+<!--1000400023-->              <UPDATED><![CDATA[2008-05-28 09:33:46.0]]></UPDATED>
+<!--1000400023 UPDATEDBY-->
+<!--1000400023-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000400023 TEXT-->
+<!--1000400023-->              <TEXT><![CDATA[Projects Total:]]></TEXT>
+<!--1000400023 FILENAME-->
+<!--1000400023-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.jrxml]]></FILENAME>
+<!--1000400023 ISUSED-->
+<!--1000400023-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000400023**************--></AD_TEXTINTERFACES>
 
 <!--1000500000**************--><AD_TEXTINTERFACES>
 <!--1000500000 AD_TEXTINTERFACES_ID-->

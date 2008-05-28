@@ -95,7 +95,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")){
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR").createXmlDocument();
 
-     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportProjectBuildingSiteJR", false, "", "", "openServletNewWindow('PDF', false, 'ReportProjectBuildingSiteJR.pdf', 'ReportProjectBuildingSiteJR', null, false, '750', '1024', true);return false;",false, "ad_reports",  strReplaceWith, false,  true);
+     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportProjectBuildingSiteJR", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
 	  toolbar.prepareSimpleToolBarTemplate();
       xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -169,7 +169,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       }
 
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Project_public", "ProjectPrivate", "", Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
+        ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "C_Project_publicprivate", "PublicPrivate", "", Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR", strProjectpublic);
         xmlDocument.setData("reportC_PROJECTPUBLIC","liststructure", comboTableData.select(false));
         comboTableData = null;

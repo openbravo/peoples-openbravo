@@ -11603,19 +11603,19 @@
 <!--800001 AD_ORG_ID-->
 <!--800001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800001 ISACTIVE-->
-<!--800001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800001-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800001 CREATED-->
 <!--800001-->              <CREATED><![CDATA[2003-11-09 16:58:51.0]]></CREATED>
 <!--800001 CREATEDBY-->
 <!--800001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800001 UPDATED-->
-<!--800001-->              <UPDATED><![CDATA[2003-11-09 16:58:51.0]]></UPDATED>
+<!--800001-->              <UPDATED><![CDATA[2008-05-27 15:14:51.0]]></UPDATED>
 <!--800001 UPDATEDBY-->
 <!--800001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800001 VALUE-->
 <!--800001-->              <VALUE><![CDATA[OU]]></VALUE>
 <!--800001 NAME-->
-<!--800001-->              <NAME><![CDATA[Out (Losted)]]></NAME>
+<!--800001-->              <NAME><![CDATA[Out (Lost)]]></NAME>
 <!--800001 AD_REFERENCE_ID-->
 <!--800001-->              <AD_REFERENCE_ID><![CDATA[800002]]></AD_REFERENCE_ID>
 <!--800001**************--></AD_REF_LIST>
@@ -11628,13 +11628,13 @@
 <!--800002 AD_ORG_ID-->
 <!--800002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800002 ISACTIVE-->
-<!--800002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800002-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800002 CREATED-->
 <!--800002-->              <CREATED><![CDATA[2003-11-09 17:00:03.0]]></CREATED>
 <!--800002 CREATEDBY-->
 <!--800002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800002 UPDATED-->
-<!--800002-->              <UPDATED><![CDATA[2003-11-09 17:00:03.0]]></UPDATED>
+<!--800002-->              <UPDATED><![CDATA[2008-05-27 15:14:56.0]]></UPDATED>
 <!--800002 UPDATEDBY-->
 <!--800002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800002 VALUE-->

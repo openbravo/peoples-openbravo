@@ -154,12 +154,12 @@
 		<variableExpression><![CDATA[$F{PLANNEDPOPRICE}]]></variableExpression>
 	</variable>
 	<variable name="totalQty" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$V{totalQtyBP}]]></variableExpression>
+		<variableExpression><![CDATA[$F{PLANNEDQTY}]]></variableExpression>
 	</variable>
 	<variable name="totalAmount" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[($V{totalAmountBP}!=null)? $V{totalAmountBP}: new BigDecimal("0")]]></variableExpression>
+		<variableExpression><![CDATA[($F{PLANNEDPOPRICE}!=null)? $F{PLANNEDPOPRICE}: new BigDecimal("0")]]></variableExpression>
 	</variable>
-	<variable name="totalProjects" class="java.lang.Integer" resetType="Report" calculation="Count">
+	<variable name="totalProjects" class="java.lang.Integer" resetType="Report" incrementType="Group" incrementGroup="PROJECTNAME" calculation="Count">
 		<variableExpression><![CDATA[$F{PROJECTNAME}]]></variableExpression>
 	</variable>
 
@@ -172,21 +172,21 @@
 						style="GroupHeader_DarkGray"
 						x="0"
 						y="0"
-						width="120"
+						width="130"
 						height="23"
 						key="staticText"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica"/>
 					</textElement>
-				<text><![CDATA[B.Partner]]></text>
+				<text><![CDATA[Business Partner]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="GroupHeader_DarkGray"
-						x="120"
+						x="130"
 						y="0"
-						width="415"
+						width="405"
 						height="23"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -258,14 +258,14 @@
 						style="default"
 						x="21"
 						y="9"
-						width="127"
+						width="123"
 						height="16"
 						key="staticText-5"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
-				<text><![CDATA[Total:]]></text>
+				<text><![CDATA[Business Partner Total:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -391,7 +391,7 @@
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
-				<text><![CDATA[Quantity(m2)]]></text>
+				<text><![CDATA[Quantity]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -405,7 +405,7 @@
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
-				<text><![CDATA[Price(/m2)]]></text>
+				<text><![CDATA[Price]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -419,7 +419,7 @@
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
-				<text><![CDATA[Amount()]]></text>
+				<text><![CDATA[Amount]]></text>
 				</staticText>
 			</band>
 			</groupHeader>
@@ -719,14 +719,14 @@
 					<textElement textAlignment="Right">
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
-				<text><![CDATA[Total Projects:]]></text>
+				<text><![CDATA[Projects Total:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Gray"
-						x="75"
+						x="82"
 						y="0"
-						width="74"
+						width="67"
 						height="16"
 						key="textField-7"
 						stretchType="RelativeToBandHeight"/>
