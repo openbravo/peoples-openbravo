@@ -46663,6 +46663,35 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1000600004-->              <PRINTNAME><![CDATA[Operands]]></PRINTNAME>
 <!--1000600004**************--></AD_ELEMENT>
 
+<!--1001300000**************--><AD_ELEMENT>
+<!--1001300000 AD_ELEMENT_ID-->
+<!--1001300000-->              <AD_ELEMENT_ID><![CDATA[1001300000]]></AD_ELEMENT_ID>
+<!--1001300000 AD_CLIENT_ID-->
+<!--1001300000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1001300000 AD_ORG_ID-->
+<!--1001300000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1001300000 ISACTIVE-->
+<!--1001300000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1001300000 CREATED-->
+<!--1001300000-->              <CREATED><![CDATA[2008-05-27 17:14:35.0]]></CREATED>
+<!--1001300000 CREATEDBY-->
+<!--1001300000-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1001300000 UPDATED-->
+<!--1001300000-->              <UPDATED><![CDATA[2008-05-27 17:16:51.0]]></UPDATED>
+<!--1001300000 UPDATEDBY-->
+<!--1001300000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1001300000 COLUMNNAME-->
+<!--1001300000-->              <COLUMNNAME><![CDATA[Enableincash]]></COLUMNNAME>
+<!--1001300000 NAME-->
+<!--1001300000-->              <NAME><![CDATA[Enable in Cash]]></NAME>
+<!--1001300000 PRINTNAME-->
+<!--1001300000-->              <PRINTNAME><![CDATA[Enable in Cash]]></PRINTNAME>
+<!--1001300000 DESCRIPTION-->
+<!--1001300000-->              <DESCRIPTION><![CDATA[Enable In Cash]]></DESCRIPTION>
+<!--1001300000 HELP-->
+<!--1001300000-->              <HELP><![CDATA[If this flag active, this element will be suitable to be included in a cash journal line.]]></HELP>
+<!--1001300000**************--></AD_ELEMENT>
+
 <!--1002100000**************--><AD_ELEMENT>
 <!--1002100000 AD_ELEMENT_ID-->
 <!--1002100000-->              <AD_ELEMENT_ID><![CDATA[1002100000]]></AD_ELEMENT_ID>

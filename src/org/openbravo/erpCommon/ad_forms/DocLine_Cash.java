@@ -16,6 +16,8 @@
 */
 package org.openbravo.erpCommon.ad_forms;
 
+import java.math.BigDecimal;
+
 import javax.servlet.*;
 import org.apache.log4j.Logger ;
 // imports for transactions
@@ -34,6 +36,7 @@ public class DocLine_Cash extends DocLine {
     public String  m_CashType = "";
 
     //  AD_Reference_ID=217
+    public static final String  CASHTYPE_GLITEM = "G";
     public static final String  CASHTYPE_CHARGE = "C";
     public static final String  CASHTYPE_DIFFERENCE = "D";
     public static final String  CASHTYPE_EXPENSE = "E";
@@ -57,6 +60,7 @@ public class DocLine_Cash extends DocLine {
     public String      m_Amount = ZERO.toString();
     public String      m_DiscountAmt = ZERO.toString();
     public String      m_WriteOffAmt = ZERO.toString();
+    public String      m_C_Glitem_ID = "";
 
     public String      Line_ID = "";
 
@@ -137,6 +141,38 @@ public class DocLine_Cash extends DocLine {
     public String getAmount(){
         return m_Amount;
     }
+    
+    /**
+     *  Get GL Item Account
+     *  @param as account schema
+     *  @param amount amount for expense(+)/revenue(-)
+     *  @return Charge Account or null
+     */
+    public Account getGlitemAccount (AcctSchema as, BigDecimal amount, ConnectionProvider conn){
+        if (m_C_Glitem_ID.equals(""))
+            return null;
+        String Account_ID = "";
+        DocLineCashData [] data = null;
+        Account acct =null;
+        try{
+            data = DocLineCashData.selectGlitem(conn, m_C_Glitem_ID, as.getC_AcctSchema_ID());
+            if (data.length>0){
+                Account_ID = data[0].glitemDebitAcct;  
+                if (amount != null && amount.signum() < 0)
+                    Account_ID = data[0].glitemCreditAcct; 
+            }
+            //  No account
+            if (Account_ID.equals("")){
+                log4jDocLine.warn ("getChargeAccount - NO account for m_C_Glitem_ID=" + m_C_Glitem_ID);
+                return null;
+            }
+            //  Return Account
+            acct = Account.getAccount (conn,Account_ID);
+        }catch(ServletException e){
+            log4jDocLine.warn(e);
+        }
+        return acct;
+    }   //  getGlitemAccount
 
     /**
      *  Get Currency of invoice or bank

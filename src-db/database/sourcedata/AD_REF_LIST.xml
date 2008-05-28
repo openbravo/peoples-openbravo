@@ -7391,15 +7391,15 @@
 <!--415 AD_ORG_ID-->
 <!--415-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--415 ISACTIVE-->
-<!--415-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--415-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--415 CREATED-->
 <!--415-->              <CREATED><![CDATA[2000-12-22 23:07:49.0]]></CREATED>
 <!--415 CREATEDBY-->
 <!--415-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--415 UPDATED-->
-<!--415-->              <UPDATED><![CDATA[2003-02-22 02:20:03.0]]></UPDATED>
+<!--415-->              <UPDATED><![CDATA[2008-05-27 12:44:20.0]]></UPDATED>
 <!--415 UPDATEDBY-->
-<!--415-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--415-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--415 VALUE-->
 <!--415-->              <VALUE><![CDATA[C]]></VALUE>
 <!--415 NAME-->
@@ -17454,6 +17454,31 @@
 <!--1000500002 AD_REFERENCE_ID-->
 <!--1000500002-->              <AD_REFERENCE_ID><![CDATA[1000500000]]></AD_REFERENCE_ID>
 <!--1000500002**************--></AD_REF_LIST>
+
+<!--1001300000**************--><AD_REF_LIST>
+<!--1001300000 AD_REF_LIST_ID-->
+<!--1001300000-->              <AD_REF_LIST_ID><![CDATA[1001300000]]></AD_REF_LIST_ID>
+<!--1001300000 AD_CLIENT_ID-->
+<!--1001300000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1001300000 AD_ORG_ID-->
+<!--1001300000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1001300000 ISACTIVE-->
+<!--1001300000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1001300000 CREATED-->
+<!--1001300000-->              <CREATED><![CDATA[2008-05-27 12:45:46.0]]></CREATED>
+<!--1001300000 CREATEDBY-->
+<!--1001300000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1001300000 UPDATED-->
+<!--1001300000-->              <UPDATED><![CDATA[2008-05-27 12:45:46.0]]></UPDATED>
+<!--1001300000 UPDATEDBY-->
+<!--1001300000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1001300000 VALUE-->
+<!--1001300000-->              <VALUE><![CDATA[G]]></VALUE>
+<!--1001300000 NAME-->
+<!--1001300000-->              <NAME><![CDATA[G/L Item]]></NAME>
+<!--1001300000 AD_REFERENCE_ID-->
+<!--1001300000-->              <AD_REFERENCE_ID><![CDATA[217]]></AD_REFERENCE_ID>
+<!--1001300000**************--></AD_REF_LIST>
 
 <!--1002100000**************--><AD_REF_LIST>
 <!--1002100000 AD_REF_LIST_ID-->

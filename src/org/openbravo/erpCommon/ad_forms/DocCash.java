@@ -115,6 +115,7 @@ private DocLine[] loadLines(ConnectionProvider conn){
             docLine.m_C_Debt_Payment_Id = data[i].cDebtPaymentId;
             docLine.m_Record_Id2 = data[i].cDebtPaymentId;
             docLine.m_C_BPartner_ID = DocLineCashData.selectDebtBPartner(connectionProvider, docLine.m_C_Debt_Payment_Id);
+            docLine.m_C_Glitem_ID = data[i].cGlitemId;
             docLine.setReference(data[i].cOrderId, data[i].cDebtPaymentId, conn);
             docLine.setAmount (data[i].amount,data[i].discountamt, data[i].writeoffamt);
             list.add(docLine);
@@ -162,6 +163,10 @@ private DocLine[] loadLines(ConnectionProvider conn){
      *          CashAsset       DR
      *          CashReceipt             CR
      *  Charge
+     *          Charge          DR
+     *          CashAsset               CR
+jarenor
+     *  G/L Item
      *          Charge          DR
      *          CashAsset               CR
      *  Difference
@@ -215,14 +220,21 @@ private DocLine[] loadLines(ConnectionProvider conn){
                 log4jDocCash.debug("********** DocCash - factAcct - account - " + getAccount(AcctServer.ACCTTYPE_CashReceipt, as, conn).C_ValidCombination_ID);
                 fact.createLine(line, getAccount(AcctServer.ACCTTYPE_CashReceipt, as, conn),C_Currency_ID, "", amount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
             }else if (CashType.equals(DocLine_Cash.CASHTYPE_CHARGE)){
-                //  amount is negative
-                //  Charge          DR
-                //  CashAsset               CR
-                log4jDocCash.debug("********** DocCash - factAcct - account - " + line.getChargeAccount(as,new BigDecimal(getAmount()), conn).C_ValidCombination_ID);
-                fact.createLine(line, line.getChargeAccount(as,new BigDecimal(getAmount()), conn),C_Currency_ID, amount.negate().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
-            //  fact.createLine(line, getAccount(Doc.ACCTTYPE_CashAsset, as),
-            //      p_vo.C_Currency_ID, null, line.getAmount().negate());
-                assetAmt = assetAmt.subtract(amount.negate());
+              //  amount is negative
+              //  Charge          DR
+              //  CashAsset               CR
+              log4jDocCash.debug("********** DocCash - factAcct - account - " + line.getChargeAccount(as,new BigDecimal(getAmount()), conn).C_ValidCombination_ID);
+              fact.createLine(line, line.getChargeAccount(as,new BigDecimal(getAmount()), conn),C_Currency_ID, amount.negate().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+          //  fact.createLine(line, getAccount(Doc.ACCTTYPE_CashAsset, as),
+          //      p_vo.C_Currency_ID, null, line.getAmount().negate());
+              assetAmt = assetAmt.subtract(amount.negate());
+            }else if (CashType.equals(DocLine_Cash.CASHTYPE_GLITEM)){
+              //  amount is negative
+              //  Charge          DR
+              //  CashAsset               CR
+              log4jDocCash.debug("********** DocCash - factAcct - account - " + line.getGlitemAccount(as,new BigDecimal(getAmount()), conn).C_ValidCombination_ID);
+              fact.createLine(line, line.getGlitemAccount(as,new BigDecimal(getAmount()), conn),C_Currency_ID, amount.negate().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+              assetAmt = assetAmt.subtract(amount.negate());
             }else if (CashType.equals(DocLine_Cash.CASHTYPE_DIFFERENCE)){
                 //  amount is pos/neg
                 //  CashDifference  DR

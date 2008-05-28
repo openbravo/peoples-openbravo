@@ -29,7 +29,8 @@
       SELECT C.C_CASHLINE_ID, C.AD_ORG_ID, C.LINE, C.DESCRIPTION, C.C_CHARGE_ID,
       c.C_ORDER_ID, C.C_DEBT_PAYMENT_ID, 
       C.AMOUNT,C.WRITEOFFAMT,C.CASHTYPE, C.DISCOUNTAMT,CB.C_CURRENCY_ID AS C_Currency_ID, 
-      (CASE WHEN DP.C_BPARTNER_ID IS NULL THEN O.C_BPARTNER_ID ELSE DP.C_BPARTNER_ID END) AS C_BPARTNER_ID
+      (CASE WHEN DP.C_BPARTNER_ID IS NULL THEN O.C_BPARTNER_ID ELSE DP.C_BPARTNER_ID END) AS C_BPARTNER_ID,
+      C.C_GLITEM_ID, '' AS glitem_credit_acct, '' AS glitem_debit_acct
       FROM C_CashLine C left join C_DEBT_PAYMENT DP on C.C_DEBT_PAYMENT_ID = DP.C_DEBT_PAYMENT_ID
                         left join C_ORDER O on C.C_ORDER_ID = O.C_ORDER_ID,   
            C_CASHBOOK CB, C_CASH CA
@@ -85,5 +86,18 @@
      ]]>
      </Sql>
      <Parameter name="C_DEBT_PAYMENT_ID"/>
+   </SqlMethod>
+  <SqlMethod name="selectGlitem" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+		SELECT GLITEM_DEBIT_ACCT, GLITEM_CREDIT_ACCT
+		FROM C_GLITEM_ACCT 
+		WHERE C_GLITEM_ID=TO_NUMBER(?)
+		AND C_ACCTSCHEMA_ID=TO_NUMBER(?)
+     ]]>
+     </Sql>
+     <Parameter name="C_Glitem_ID"/>
+     <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
   </SqlClass>
