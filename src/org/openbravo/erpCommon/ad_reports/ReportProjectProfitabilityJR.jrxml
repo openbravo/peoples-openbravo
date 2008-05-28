@@ -303,9 +303,9 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="GroupHeader_DarkGray"
-						x="112"
+						x="99"
 						y="0"
-						width="423"
+						width="436"
 						height="24"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -341,7 +341,7 @@
 						style="GroupHeader_DarkGray"
 						x="0"
 						y="0"
-						width="112"
+						width="99"
 						height="24"
 						key="staticText-54"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -396,9 +396,9 @@
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="GroupHeader_DarkGray"
-						x="122"
+						x="140"
 						y="0"
-						width="412"
+						width="394"
 						height="22"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -445,14 +445,14 @@
 						style="GroupHeader_DarkGray"
 						x="10"
 						y="0"
-						width="112"
+						width="130"
 						height="22"
 						key="staticText-55"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Bitstream Vera Sans" size="14"/>
 					</textElement>
-				<text><![CDATA[Partner]]></text>
+				<text><![CDATA[Business Partner]]></text>
 				</staticText>
 			</band>
 			</groupHeader>
@@ -513,7 +513,7 @@
 			</band>
 		</title>
 		<pageHeader>
-			<band height="49"  isSplitAllowed="true" >
+			<band height="30"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Title"

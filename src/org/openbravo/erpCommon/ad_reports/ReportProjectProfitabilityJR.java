@@ -60,34 +60,47 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       String strDateTo2 = vars.getRequestGlobalVariable("inpDateTo2", "ReportProjectProfitabilityJR|DateTo2");
       String strExpand = vars.getRequestGlobalVariable("inpExpand", "ReportProjectProfitabilityJR|Expand");
       String strPartner = vars.getRequestGlobalVariable("inpcBPartnerId", "ReportProjectProfitabilityJR|Partner");
-      printPageDataHtml(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2);
+      String strOutput="html";
+      printPageDataHtml(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strOutput);
+    } else if (vars.commandIn("PDF")){
+		String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportProjectProfitabilityJR|Org");
+		String strProject = vars.getRequestGlobalVariable("inpcProjectId", "ReportProjectProfitabilityJR|Project");
+		String strProjectType = vars.getRequestGlobalVariable("inpProjectType", "ReportProjectProfitabilityJR|ProjectType");
+		String strResponsible = vars.getRequestGlobalVariable("inpResponsible", "ReportProjectProfitabilityJR|Responsible");
+		String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportProjectProfitabilityJR|DateFrom");
+		String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportProjectProfitabilityJR|DateTo");
+		String strDateFrom2 = vars.getRequestGlobalVariable("inpDateFrom2", "ReportProjectProfitabilityJR|DateFrom2");
+		String strDateTo2 = vars.getRequestGlobalVariable("inpDateTo2", "ReportProjectProfitabilityJR|DateTo2");
+		String strExpand = vars.getRequestGlobalVariable("inpExpand", "ReportProjectProfitabilityJR|Expand");
+		String strPartner = vars.getRequestGlobalVariable("inpcBPartnerId", "ReportProjectProfitabilityJR|Partner");
+		String strOutput="pdf";
+		printPageDataHtml(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strOutput);
     } else pageError(response);
   }
 
   
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2)
+  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2, String strOutput)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     
     String discard[]={"discard"};
     strTreeOrg = strOrg;
     if (strExpand.equals("Y")) treeOrg(vars, strOrg);
-    ReportProjectProfitabilityData[] data= ReportProjectProfitabilityData.select(this, strDateFrom2, strDateTo2, strTreeOrg, Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), strDateFrom , DateTimeData.nDaysAfter(this, strDateTo,"1"), strProjectType, strProject, strResponsible, strPartner);
+    ReportProjectProfitabilityData[] data = null;
+    data = ReportProjectProfitabilityData.select(this, strDateFrom2, DateTimeData.nDaysAfter(this, strDateTo2,"1"), strTreeOrg, Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), strDateFrom , DateTimeData.nDaysAfter(this, strDateTo,"1"), strProjectType, strProject, strResponsible, strPartner);
 
     if (data == null || data.length == 0) {
-      data = ReportProjectProfitabilityData.set("1","1","1","1","1","1","1","1","1","1","1");
+      data = ReportProjectProfitabilityData.set();
       discard[0] = "discardAll";
     }
     
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportProjectProfitabilityJR.jrxml";
-      String strOutput="html";
+      
       if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportProjectProfitabilityJR.pdf");
 
        
 		HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("Title", "Project profitability");
-		parameters.put("REPORT_TITLE", "Project profitability");
-		parameters.put("REPORT_SUBTITLE", "Filters: "+strDateFrom+" to "+strDateTo);
+		parameters.put("REPORT_TITLE", classInfo.name);
 	
 	renderJR(vars, response, strReportName, strOutput, parameters, data, null );
   }

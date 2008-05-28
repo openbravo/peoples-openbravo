@@ -120,20 +120,9 @@
     <Parameter name="Responsible" optional="true" after="AND 6=6"><![CDATA[ AND p.Responsible_ID = TO_NUMBER(?) ]]></Parameter>
     <Parameter name="Partner" optional="true" after="AND 6=6"><![CDATA[ AND p.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql></Sql>
-    <Parameter name="planrevenue"/>
-    <Parameter name="plancost"/>
-    <Parameter name="planreinvoicing"/>
-    <Parameter name="planexpenses"/>
-    <Parameter name="realrevenue"/>
-    <Parameter name="realcost"/>
-    <Parameter name="realreinvoiced"/>
-    <Parameter name="realexpenses"/>
-    <Parameter name="collected"/>
-    <Parameter name="org"/>
-    <Parameter name="partner"/>
+   <SqlMethod name="set" type="constant" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql></Sql>
   </SqlMethod>
     <SqlMethod name="selectOrg" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
