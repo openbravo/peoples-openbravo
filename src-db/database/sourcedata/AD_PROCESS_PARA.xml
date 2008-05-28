@@ -1130,9 +1130,9 @@
 <!--153 CREATEDBY-->
 <!--153-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--153 UPDATED-->
-<!--153-->              <UPDATED><![CDATA[2000-09-26 22:29:39.0]]></UPDATED>
+<!--153-->              <UPDATED><![CDATA[2008-05-28 17:07:08.0]]></UPDATED>
 <!--153 UPDATEDBY-->
-<!--153-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--153-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--153 NAME-->
 <!--153-->              <NAME><![CDATA[Import Format]]></NAME>
 <!--153 HELP-->
@@ -1148,7 +1148,7 @@
 <!--153 ISCENTRALLYMAINTAINED-->
 <!--153-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--153 FIELDLENGTH-->
-<!--153-->              <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
+<!--153-->              <FIELDLENGTH><![CDATA[50]]></FIELDLENGTH>
 <!--153 ISMANDATORY-->
 <!--153-->              <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
 <!--153 ISRANGE-->
