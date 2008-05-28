@@ -57,6 +57,11 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
       String strSettlement = vars.getGlobalVariable("inpcSettlementId", "CopyFromSettlement|C_Settlement_ID");
       String strWindow = vars.getStringParameter("inpwindowId");
       printPage(response, vars, strDescription, strDocumentNo, strDateFrom, strDateTo, strSettlement, strWindow);
+    } else if (vars.commandIn("FIND2")) {
+      String strSettlement = vars.getGlobalVariable("inpcSettlementId", "CopyFromSettlement|C_Settlement_ID");
+      String strSettlementFrom = vars.getStringParameter("inpcSettlementFromFrame4");
+      String strWindow = vars.getStringParameter("inpwindowId");
+      printPage(response, vars, strSettlement, strSettlementFrom, strWindow);
     } else if (vars.commandIn("SAVE")) {
       vars.getGlobalVariable("inpProcessId", "CopyFromSettlement|AD_Process_ID");
       vars.getGlobalVariable("inpwindowId", "CopyFromSettlement|Window_ID");
@@ -176,6 +181,47 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramSettlement", strSettlement);
     xmlDocument.setData("structure", data);
     response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
+  }
+  
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strSettlement, String strSettlementFrom, String strWindow) throws IOException, ServletException {
+    
+    String strDateFrom = vars.getStringParameter("inpDateFrom");
+    String strDateTo = vars.getStringParameter("inpDateTo");
+    String strDocumentNo = vars.getStringParameter("inpDocumentNo");
+    String strDescription = vars.getStringParameter("inpDescription");
+    String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
+    
+    String[] discard = {"",""};
+    
+    CopyFromSettlementData [] data = CopyFromSettlementData.selectRelation(this, "%"+strDescription+"%","%"+strDocumentNo+"%", Utility.getContext(this, vars, "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow), strDateFrom, strDateTo);
+    
+    if(data == null || data.length == 0) discard[0] = new String("sectionDetail");    
+    
+    CopyFromSettlementData [] data2 = CopyFromSettlementData.selectDebtPaymentBalancingF4(this, strDateFormat, strSettlementFrom);
+    
+    if(data2 == null || data2.length == 0) discard[1] = new String("sectionDetail2");
+    
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement",discard).createXmlDocument();
+    
+    xmlDocument.setParameter("dateFrom", strDateFrom);     
+    xmlDocument.setParameter("dateFromdisplayFormat", strDateFormat);
+    xmlDocument.setParameter("dateFromsaveFormat", strDateFormat);
+    xmlDocument.setParameter("dateTo", strDateTo);    
+    xmlDocument.setParameter("dateTodisplayFormat", strDateFormat);
+    xmlDocument.setParameter("dateTosaveFormat", strDateFormat);
+    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
+    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("paramSettlement", strSettlement);
+    xmlDocument.setParameter("paramSettlementId", strSettlement);
+    xmlDocument.setParameter("paramSettlementFromId", strSettlementFrom);
+    xmlDocument.setData("structure", data);
+    xmlDocument.setData("structure2", data2);
+    response.setContentType("text/html");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
