@@ -34,6 +34,8 @@
 <!--1000000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1000000 NAME-->
 <!--1000000-->              <NAME><![CDATA[Sueldos y salarios]]></NAME>
+<!--1000000 ENABLEINCASH-->
+<!--1000000-->              <ENABLEINCASH><![CDATA[N]]></ENABLEINCASH>
 <!--1000000**************--></C_GLITEM>
 
 <!--1000001**************--><C_GLITEM>
@@ -55,6 +57,8 @@
 <!--1000001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1000001 NAME-->
 <!--1000001-->              <NAME><![CDATA[Seguridad social acreedora]]></NAME>
+<!--1000001 ENABLEINCASH-->
+<!--1000001-->              <ENABLEINCASH><![CDATA[N]]></ENABLEINCASH>
 <!--1000001**************--></C_GLITEM>
 
 <!--1000002**************--><C_GLITEM>
@@ -76,6 +80,8 @@
 <!--1000002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1000002 NAME-->
 <!--1000002-->              <NAME><![CDATA[Retención IRPF]]></NAME>
+<!--1000002 ENABLEINCASH-->
+<!--1000002-->              <ENABLEINCASH><![CDATA[N]]></ENABLEINCASH>
 <!--1000002**************--></C_GLITEM>
 
 <!--1000003**************--><C_GLITEM>
@@ -97,6 +103,8 @@
 <!--1000003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1000003 NAME-->
 <!--1000003-->              <NAME><![CDATA[Remuneraciones pendientes de pago]]></NAME>
+<!--1000003 ENABLEINCASH-->
+<!--1000003-->              <ENABLEINCASH><![CDATA[N]]></ENABLEINCASH>
 <!--1000003**************--></C_GLITEM>
 
 <!--
