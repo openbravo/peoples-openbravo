@@ -145,6 +145,20 @@
 	-- Get the name of the org of the Order. Added by P.Sarobe
 	SELECT name INTO v_Org_Name FROM AD_ORG WHERE ad_org_id = v_Org_ID;
     DBMS_OUTPUT.PUT_LINE('DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus || ', DocType_ID=' || v_DocType_ID || ', DocTypeTarget_ID=' || v_DocTypeTarget_ID || ', DocSubTypeSO=' || v_DocSubTypeSO) ;
+    
+    /**
+    * Check if order has lines
+    */
+    IF (v_DocAction = 'CO') THEN
+      SELECT COUNT(*)
+        INTO v_Aux
+       FROM C_ORDERLINE
+       WHERE C_ORDER_ID = v_Record_ID;
+       IF v_Aux=0 THEN
+         RAISE_APPLICATION_ERROR(-20000, '@OrderWithoutLines@');
+       END IF;
+    END IF;
+    
     /**
     * Order Closed, Voided or Reversed - No action possible
     */
