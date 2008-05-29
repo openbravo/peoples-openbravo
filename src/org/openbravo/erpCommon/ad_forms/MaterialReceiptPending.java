@@ -180,9 +180,10 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
         strcOrderLineId = Replace.replace(strcOrderLineId, "'", "");
         StringTokenizer st = new StringTokenizer(strcOrderLineId, ",", false);
         String strmInoutId = "";
+        String docTargetType = "";
+        String docType = "";
         String strDocumentno = "";
         String strDateReceipt = "";
-        String docTargetType = MaterialReceiptPendingData.cDoctypeTarget(this, Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), Utility.getContext(this, vars, "#User_Org", "MaterialReceiptPending"));
         String strLastBpartnerId = "";
         String strLastOrgId = "";
         int line = 0;
@@ -198,7 +199,9 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
             }
             line = 10;
             strmInoutId = SequenceIdData.getSequence(this, "M_InOut", vars.getClient());
-            strDocumentno = Utility.getDocumentNo(this, vars, "", "M_InOut", Utility.getContext(this, vars, "C_DocTypeTarget_ID", docTargetType), Utility.getContext(this, vars, "C_DocType_ID", docTargetType), false, true);
+            docTargetType = MaterialReceiptPendingData.cDoctypeTarget(this, vars.getClient(), data[0].adOrgId);
+            docType = MaterialReceiptPendingData.cDoctypeId(this, docTargetType);
+            strDocumentno = Utility.getDocumentNo(this, vars, "", "M_InOut", docTargetType, docType, false, true);
             strDateReceipt = vars.getStringParameter("inpDateReceipt" + data[0].cBpartnerId);
 
             if (strDateReceipt.equals("")){

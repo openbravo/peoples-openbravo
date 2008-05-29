@@ -140,15 +140,11 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_DOCTYPE_ID 
-        FROM C_DOCTYPE
-        WHERE DOCBASETYPE = 'MMR' 
-        AND AD_CLIENT_ID IN ('1') 
-        AND AD_ORG_ID IN ('1')
+        SELECT AD_GET_DOCTYPE(TO_NUMBER(?), TO_NUMBER(?), 'MMR', null) FROM DUAL 
       ]]>
     </Sql>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
   </SqlMethod>
   <SqlMethod name="cDoctypeId" type="preparedStatement" return="string" default="">
     <SqlMethodComment></SqlMethodComment>
