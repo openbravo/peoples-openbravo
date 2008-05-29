@@ -78,8 +78,10 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
     //if (strIsSOTrx.equals("Y")) {
     if (strLocator.startsWith("\"")) strLocator=strLocator.substring(1,strLocator.length()-1);    
     if (strLocator==null || strLocator.equals("")) {
-      resultado.append("new Array(\"inpmLocatorId\", \"\"),");
-      resultado.append("new Array(\"inpmLocatorId_R\", \"\"),");
+      if (strIsSOTrx.equals("Y")) {
+        resultado.append("new Array(\"inpmLocatorId\", \"\"),");
+        resultado.append("new Array(\"inpmLocatorId_R\", \"\"),");
+      }
     }
     else {
       resultado.append("new Array(\"inpmLocatorId\", \""+ strLocator +"\"),");
