@@ -250,7 +250,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <copy file="${base.lib}/${context.name}.war" todir="${jakarta.base}/webapps"/>
   </target>
 
-  <target name="install.source" depends="init">
+  <target name="install.source" depends="init,code.rev">
     <antcall target="database.lib"/>
     <ant dir="${base.db}" target="create.database" inheritAll="true" inheritRefs="true"/>
     <antcall target="core.lib"/>
@@ -260,7 +260,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="war"/>
   </target>
 
-  <target name="eclipse.install.source" depends="init">
+  <target name="eclipse.install.source" depends="init,code.rev">
     <antcall target="database.lib"/>
     <ant dir="${base.db}" target="create.database" inheritAll="true" inheritRefs="true"/>
     <antcall target="core.lib"/>
