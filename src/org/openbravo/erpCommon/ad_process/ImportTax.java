@@ -54,10 +54,12 @@ public class ImportTax extends ImportProcess {
     if (log4j.isDebugEnabled()) log4j.debug("Creating parameters");
   }
 
-  protected boolean doIt(VariablesSecureApp vars) throws ServletException {
+  protected OBError doIt(VariablesSecureApp vars) throws ServletException {
     int no = 0;
     ConnectionProvider conn = null;
     Connection con = null;
+    OBError myError = new OBError();    
+    
 		try {
       conn = getConnection();
       con = conn.getTransactionConnection();
@@ -115,7 +117,10 @@ public class ImportTax extends ImportProcess {
       } catch (Exception ignored) {}
 			se.printStackTrace();
 			addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
-			return false;
+			myError.setType("Error");
+			myError.setTitle(Utility.messageBD(conn, "Error", vars.getLanguage()));
+			myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+			return myError;
 		}
 
     // till here, the edition of the I_ImportBPartner table
@@ -332,16 +337,21 @@ public class ImportTax extends ImportProcess {
 		} catch (Exception se) {
 			se.printStackTrace();
 			addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
-			return false;
+			myError.setType("Error");
+			myError.setTitle(Utility.messageBD(conn, "Error", vars.getLanguage()));
+			myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+			return myError;
 		}
     addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noTaxError + "; ");
     addLog("Tax inserted: " + noTaxInsert + "; ");
-    addLog("Tax updated: " + noTaxUpdate);
-    addLog("Tax Cat inserted: " + noTCInsert);
+    addLog("Tax updated: " + noTaxUpdate + "; ");
+    addLog("Tax Cat inserted: " + noTCInsert + "; ");
     addLog("Tax Cat updated: " + noTCUpdate + "; ");
-    addLog("BP Tax Cat inserted: " + noBPTCInsert);
-    addLog("BP Tax Cat updated: " + noBPTCUpdate + "; ");
-    return true;
-
+    addLog("BP Tax Cat inserted: " + noBPTCInsert + "; ");
+    addLog("BP Tax Cat updated: " + noBPTCUpdate);
+    myError.setType("Success");  
+    myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
+    return myError;
   } // doIt
 }

@@ -58,8 +58,9 @@ public class ImportBudget extends ImportProcess {
     addParameterNumber("C_Budget_ID", "10", m_Budget_ID);
   }
 
-  protected boolean doIt(VariablesSecureApp vars) throws ServletException {
+  protected OBError doIt(VariablesSecureApp vars) throws ServletException {
     int no = 0;
+    OBError myError = new OBError();
     ConnectionProvider conn = null;
     Connection con = null;
     try {
@@ -159,7 +160,10 @@ public class ImportBudget extends ImportProcess {
       } catch (Exception ignored) {}
       se.printStackTrace();
       addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
-      return false;
+      myError.setType("Error");
+      myError.setTitle(Utility.messageBD(conn, "Error", vars.getLanguage()));
+      myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+      return myError;
     }
 
     // till here, the edition of the I_ImportBudget table
@@ -233,12 +237,18 @@ public class ImportBudget extends ImportProcess {
     } catch (Exception se) {
       se.printStackTrace();
       addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
-      return false;
+      myError.setType("Error");
+      myError.setTitle(Utility.messageBD(conn, "Error", vars.getLanguage()));
+      myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+      return myError;
     }
     addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noBudgetError + "; ");
     addLog("BudgetLine inserted: " + noInsert + "; ");
     addLog("BudgetLine updated: " + noUpdate);
-    return true;
+    myError.setType("Success");  
+    myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
+    return myError;
 
   } // doIt
 }

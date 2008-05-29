@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_process;
 
 import org.openbravo.erpCommon.ad_actionButton.*;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -64,8 +65,10 @@ public class ImportTaxServlet extends HttpSecureAppServlet {
 
 		  ImportTax tax = new ImportTax(this, process, strRecord, strDeleteOld.equals("Y"));
       tax.startProcess(vars);
-      String strMessage = tax.getLog();
-      if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
+      //String strMessage = tax.getLog();
+      //if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
+      OBError myError = tax.getError();      
+      vars.setMessage(strTabId, myError);
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }

@@ -31,7 +31,7 @@ public abstract class ImportProcess {
   static Logger log4j = Logger.getLogger(ImportProcess.class);
 
   private String m_AD_PInstance_ID = "";
-  private boolean m_error = false;
+  private OBError m_error = new OBError();
   private StringBuffer m_msg = new StringBuffer();
   private String m_AD_User_ID = "";
   private String m_AD_Client_ID = "";
@@ -46,7 +46,7 @@ public abstract class ImportProcess {
     m_conn = conn;
   }
 
-  public final boolean startProcess(VariablesSecureApp vars) throws ServletException {
+  public final OBError startProcess(VariablesSecureApp vars) throws ServletException {
     createInstance(vars);
     createInstanceParams(vars);
     lock();
@@ -65,11 +65,13 @@ public abstract class ImportProcess {
       if(msg == null) msg = e.toString();
       if(e.getCause() != null) log4j.error("process - " + msg, e.getCause());
       else log4j.error("process - " + msg);
-      m_error = true;
+      m_error.setType("Error");
+      m_error.setTitle(Utility.messageBD(m_conn, "Error", vars.getLanguage()));
+      m_error.setMessage(Utility.messageBD(m_conn, "ProcessRunError", vars.getLanguage()));
     }
   }
 
-  protected abstract boolean doIt(VariablesSecureApp vars) throws ServletException;
+  protected abstract OBError doIt(VariablesSecureApp vars) throws ServletException;
   protected abstract void createInstanceParams(VariablesSecureApp vars) throws ServletException;
   protected abstract String getAD_Process_ID();
   protected abstract String getRecord_ID();
@@ -114,10 +116,10 @@ public abstract class ImportProcess {
     return m_msg.toString();
   }
 
-  public boolean isError() {
+  public OBError getError() {
     return m_error;
   }
-
+  
   public String getParamValue(String paramName) {
     return getParamData(paramName, 1);
   }
@@ -177,12 +179,12 @@ public abstract class ImportProcess {
 
   private void unlock() throws ServletException {
     try {
-      ImportProcessData.unlockInstance(getConnection(), (m_error?"0":"1"), m_msg.toString(), getAD_PInstance_ID());
+      ImportProcessData.unlockInstance(getConnection(), (m_error.getType().equals("Error")?"0":"1"), m_msg.toString(), getAD_PInstance_ID());
     } catch (ServletException ex) {
       log4j.error("Unable to unlock instance - " + ex);
       throw new ServletException("Unable to unlock instance - " + ex.getMessage());
     }
-    if (log4j.isDebugEnabled()) log4j.debug("unlock - Error=" + m_error + " - " + m_msg.toString());
+    if (log4j.isDebugEnabled()) log4j.debug("unlock - Error=" + m_error.toString() + " - " + m_msg.toString());
   }
 
   private void fillInstanceParams() throws ServletException {

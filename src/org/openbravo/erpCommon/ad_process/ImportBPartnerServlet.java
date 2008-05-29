@@ -17,6 +17,7 @@
 package org.openbravo.erpCommon.ad_process;
 
 import org.openbravo.erpCommon.ad_actionButton.*;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -61,10 +62,12 @@ public class ImportBPartnerServlet extends HttpSecureAppServlet {
         else strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
 
-				ImportBPartner bp = new ImportBPartner(this, process, strRecord, strDeleteOld.equals("Y"));
+      ImportBPartner bp = new ImportBPartner(this, process, strRecord, strDeleteOld.equals("Y"));
       bp.startProcess(vars);
-      String strMessage = bp.getLog();
-      if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
+      //String strMessage = bp.getLog();
+      //if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
+      OBError myError = bp.getError();      
+      vars.setMessage(strTabId, myError);
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }

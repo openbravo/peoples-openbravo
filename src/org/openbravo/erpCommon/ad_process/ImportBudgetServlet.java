@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_process;
 
 import org.openbravo.erpCommon.ad_actionButton.*;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.utils.FormatUtilities;
@@ -67,8 +68,10 @@ public class ImportBudgetServlet extends HttpSecureAppServlet {
 
       ImportBudget b = new ImportBudget(this, process, strRecord, strBudget, strDeleteOld.equals("Y"));
       b.startProcess(vars);
-      String strMessage = b.getLog();
-      if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
+      //String strMessage = b.getLog();
+      //if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
+      OBError myError = b.getError();      
+      vars.setMessage(strTabId, myError);
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }

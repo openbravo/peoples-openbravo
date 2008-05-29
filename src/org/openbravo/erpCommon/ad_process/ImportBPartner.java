@@ -52,10 +52,12 @@ public class ImportBPartner extends ImportProcess {
     if (log4j.isDebugEnabled()) log4j.debug("Creating parameters");
   }
 
-  protected boolean doIt(VariablesSecureApp vars) throws ServletException {
+  protected OBError doIt(VariablesSecureApp vars) throws ServletException {
     int no = 0;
     ConnectionProvider conn = null;
     Connection con = null;
+    OBError myError = new OBError();
+    
 		try {
             conn = getConnection();
 			con = conn.getTransactionConnection();
@@ -112,7 +114,10 @@ public class ImportBPartner extends ImportProcess {
       } catch (Exception ignored) {}
 			se.printStackTrace();
 			addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
-			return false;
+			myError.setType("Error");
+			myError.setTitle(Utility.messageBD(conn, "Error", vars.getLanguage()));
+			myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+			return myError;
 		}
 
     // till here, the edition of the I_ImportBPartner table
@@ -245,12 +250,18 @@ public class ImportBPartner extends ImportProcess {
 		} catch (Exception se) {
 			se.printStackTrace();
 			addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
-			return false;
+			myError.setType("Error");
+			myError.setTitle(Utility.messageBD(conn, "Error", vars.getLanguage()));
+			myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+			return myError;
 		}
     addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noBPartnerError + "; ");
     addLog("BPartner inserted: " + noInsert + "; ");
     addLog("BPartner updated: " + noUpdate);
-    return true;
+    myError.setType("Success");  
+    myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
+    return myError;
 
   } // doIt
   

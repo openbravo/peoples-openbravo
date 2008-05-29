@@ -62,7 +62,9 @@ public class ImportOrder extends ImportProcess {
     if (log4j.isDebugEnabled()) log4j.debug("Creating parameters");
   }
 
-  protected boolean doIt(VariablesSecureApp vars) throws ServletException {
+  protected OBError doIt(VariablesSecureApp vars) throws ServletException {
+	OBError myError = new OBError();
+	
     ConnectionProvider conn = null;
     Connection con = null;
     try {
@@ -535,9 +537,9 @@ public class ImportOrder extends ImportProcess {
     	  no = ImportOrderData.deleteOld(con, conn, getAD_Client_ID());
           if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
         }
-      addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noOrderError + "\\n");
-      addLog("Order inserted: " + noInsert + "\\n");
-      addLog("Order line inserted: " + noInsertLine);
+      addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noOrderError + "; ");
+      addLog("Order inserted: " + noInsert + "; ");
+      addLog("Order line inserted: " + noInsertLine + "; ");
       addLog("Procesados: " + strPostMessage);
       conn.releaseCommitConnection(con);
     } catch (NoConnectionAvailableException ex) {
@@ -553,7 +555,10 @@ public class ImportOrder extends ImportProcess {
       } catch (Exception ignored) {}
       throw new ServletException("@CODE=@" + ex3.getMessage());
     }
-    return true;
+	myError.setType("Success");  
+    myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
+    return myError;
   }
 
   String cOrderPost(Connection con, ConnectionProvider conn, VariablesSecureApp vars, String strcOrderId, String order_documentno)

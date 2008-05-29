@@ -51,8 +51,10 @@ public class ImportProduct extends ImportProcess {
     if (log4j.isDebugEnabled()) log4j.debug("Creating parameters");
   }
 
-  protected boolean doIt(VariablesSecureApp vars) throws ServletException {
+  protected OBError doIt(VariablesSecureApp vars) throws ServletException {
     int no = 0;
+    OBError myError = new OBError();
+        
     ConnectionProvider conn = null;
 		Connection con = null;
 		String strcTaxcategoryId = null;
@@ -173,7 +175,10 @@ public class ImportProduct extends ImportProcess {
       } catch (Exception ignored) {}
 			se.printStackTrace();
 			addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
-			return false;
+			myError.setType("Error");
+			myError.setTitle(Utility.messageBD(conn, "Error", vars.getLanguage()));
+			myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+			return myError;
 		}
     // till here, the edition of the I_ImportProduct table
     // now, the insertion from I_ImportProduct table in M_Product, M_Product_PO...
@@ -262,7 +267,10 @@ public class ImportProduct extends ImportProcess {
 			} catch (Exception se) {
 				se.printStackTrace();
 				addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
-				return false;
+				myError.setType("Error");
+				myError.setTitle(Utility.messageBD(conn, "Error", vars.getLanguage()));
+				myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+				return myError;
 			}
 
       //  Set Error to indicator to not imported
@@ -273,11 +281,14 @@ public class ImportProduct extends ImportProcess {
 			if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
       }
       if (log4j.isDebugEnabled()) log4j.debug("Errors = " + noProductError);
-			addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noProductError + "\\n");
-			addLog("Product inserted: " + noInsert + "\\n");
-			addLog("Product updated: " + noUpdate + "\\n");
-			addLog("ProductPO inserted: " + noInsertPO + "\\n");
+			addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noProductError + "; ");
+			addLog("Product inserted: " + noInsert + "; ");
+			addLog("Product updated: " + noUpdate + "; ");
+			addLog("ProductPO inserted: " + noInsertPO + "; ");
 			addLog("ProductPO updated: " + noUpdatePO);
-      return true;
+			myError.setType("Success");  
+		    myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+		    myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
+		    return myError;
   }
 }
