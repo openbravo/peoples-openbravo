@@ -138,7 +138,7 @@
           v_ResultStr:='Reversed';
           UPDATE C_CASH
             SET PROCESSED='N',
-            ENDINGBALANCE=0,
+            --ENDINGBALANCE=0,
             STATEMENTDIFFERENCE=NULL
           WHERE C_CASH_ID=v_Record_ID;
 
