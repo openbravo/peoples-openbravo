@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_PRODUCT_CATEGORY_TRG">
-    <trigger name="M_PRODUCT_CATEGORY_TRG" table="M_PRODUCT_CATEGORY" fires="after" insert="true" update="false" delete="false" foreach="row">
+    <trigger name="M_PRODUCT_CATEGORY_TRG" table="M_PRODUCT_CATEGORY" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
     /*************************************************************************
     * The contents of this file are subject to the Compiere Public
@@ -27,40 +27,45 @@
    TYPE RECORD IS REF CURSOR;
   Cur_Defaults RECORD;
 BEGIN
-  FOR Cur_Defaults IN
-    (
-    SELECT *
-    FROM C_AcctSchema_Default d
-    WHERE EXISTS
+  IF (INSERTING) THEN
+    FOR Cur_Defaults IN
       (
       SELECT *
-      FROM AD_ClientInfo c
-      WHERE d.C_AcctSchema_ID IN(c.C_AcctSchema1_ID, c.C_AcctSchema2_ID, c.C_AcctSchema3_ID)
-        AND AD_Client_ID=:new.AD_Client_ID
+      FROM C_AcctSchema_Default d
+      WHERE EXISTS
+        (
+        SELECT *
+        FROM AD_ClientInfo c
+        WHERE d.C_AcctSchema_ID IN(c.C_AcctSchema1_ID, c.C_AcctSchema2_ID, c.C_AcctSchema3_ID)
+          AND AD_Client_ID=:new.AD_Client_ID
+        )
       )
-    )
-  LOOP
-    INSERT
-    INTO M_Product_Category_Acct
-      (
-        M_Product_Category_ID, C_AcctSchema_ID, AD_Client_ID,
-        AD_Org_ID, IsActive, Created,
-        CreatedBy, Updated, UpdatedBy,
-        P_Revenue_Acct, P_Expense_Acct, P_Asset_Acct,
-        P_COGS_Acct, P_PurchasePriceVariance_Acct, P_InvoicePriceVariance_Acct,
-        P_TradeDiscountRec_Acct, P_TradeDiscountGrant_Acct
-      )
-      VALUES
-      (
-        :new.M_Product_Category_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-        :new.AD_ORG_ID,  'Y', now(),
-        :new.CreatedBy, now(), :new.UpdatedBy,
-        Cur_Defaults.P_Revenue_Acct, Cur_Defaults.P_Expense_Acct, Cur_Defaults.P_Asset_Acct,
-        Cur_Defaults.P_COGS_Acct, Cur_Defaults.P_PurchasePriceVariance_Acct, Cur_Defaults.P_InvoicePriceVariance_Acct,
-        Cur_Defaults.P_TradeDiscountRec_Acct, Cur_Defaults.P_TradeDiscountGrant_Acct
-      )
-      ;
-  END LOOP;
+    LOOP
+      INSERT
+      INTO M_Product_Category_Acct
+        (
+          M_Product_Category_ID, C_AcctSchema_ID, AD_Client_ID,
+          AD_Org_ID, IsActive, Created,
+          CreatedBy, Updated, UpdatedBy,
+          P_Revenue_Acct, P_Expense_Acct, P_Asset_Acct,
+          P_COGS_Acct, P_PurchasePriceVariance_Acct, P_InvoicePriceVariance_Acct,
+          P_TradeDiscountRec_Acct, P_TradeDiscountGrant_Acct
+        )
+        VALUES
+        (
+          :new.M_Product_Category_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
+          :new.AD_ORG_ID,  'Y', now(),
+          :new.CreatedBy, now(), :new.UpdatedBy,
+          Cur_Defaults.P_Revenue_Acct, Cur_Defaults.P_Expense_Acct, Cur_Defaults.P_Asset_Acct,
+          Cur_Defaults.P_COGS_Acct, Cur_Defaults.P_PurchasePriceVariance_Acct, Cur_Defaults.P_InvoicePriceVariance_Acct,
+          Cur_Defaults.P_TradeDiscountRec_Acct, Cur_Defaults.P_TradeDiscountGrant_Acct
+        )
+        ;
+    END LOOP;
+  ELSIF (UPDATING) THEN
+    UPDATE M_PRODUCT_CATEGORY_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
+    WHERE M_PRODUCT_CATEGORY_ID = :new.M_PRODUCT_CATEGORY_ID;
+  END IF;
 END M_PRODUCT_CATEGORY_TRG
 ]]></body>
     </trigger>

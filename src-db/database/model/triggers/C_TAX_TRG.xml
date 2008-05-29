@@ -87,6 +87,8 @@ BEGIN
   END IF;
   -- Inserting
   IF(UPDATING) THEN
+    UPDATE C_TAX_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
+    WHERE C_TAX_ID = :new.C_TAX_ID;
     IF((COALESCE(:old.TaxIndicator, '.') <> COALESCE(:NEW.TaxIndicator, '.')
    OR COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
    OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')))

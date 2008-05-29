@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_WITHHOLDING_TRG">
-    <trigger name="C_WITHHOLDING_TRG" table="C_WITHHOLDING" fires="after" insert="true" update="false" delete="false" foreach="row">
+    <trigger name="C_WITHHOLDING_TRG" table="C_WITHHOLDING" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
     /*************************************************************************
     * The contents of this file are subject to the Compiere Public
@@ -27,36 +27,42 @@
    TYPE RECORD IS REF CURSOR;
   Cur_Defaults RECORD;
 BEGIN
-  FOR Cur_Defaults IN
-    (
-    SELECT *
-    FROM C_AcctSchema_Default d
-    WHERE EXISTS
+  IF(INSERTING)THEN
+    FOR Cur_Defaults IN
       (
       SELECT *
-      FROM AD_ClientInfo c
-      WHERE d.C_AcctSchema_ID IN(c.C_AcctSchema1_ID, c.C_AcctSchema2_ID, c.C_AcctSchema3_ID)
-        AND AD_Client_ID=:new.AD_Client_ID
+      FROM C_AcctSchema_Default d
+      WHERE EXISTS
+        (
+        SELECT *
+        FROM AD_ClientInfo c
+        WHERE d.C_AcctSchema_ID IN(c.C_AcctSchema1_ID, c.C_AcctSchema2_ID, c.C_AcctSchema3_ID)
+          AND AD_Client_ID=:new.AD_Client_ID
+        )
       )
-    )
-  LOOP
-    INSERT
-    INTO C_Withholding_Acct
-      (
-        C_Withholding_ID, C_AcctSchema_ID, AD_Client_ID,
-        AD_Org_ID, IsActive, Created,
-        CreatedBy, Updated, UpdatedBy,
-        Withholding_Acct
-      )
-      VALUES
-      (
-        :new.C_Withholding_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-        :new.AD_ORG_ID,  'Y', now(),
-        :new.CreatedBy, now(), :new.UpdatedBy,
-        Cur_Defaults.Withholding_Acct
-      )
-      ;
-  END LOOP;
+    LOOP
+      INSERT
+      INTO C_Withholding_Acct
+        (
+          C_Withholding_ID, C_AcctSchema_ID, AD_Client_ID,
+          AD_Org_ID, IsActive, Created,
+          CreatedBy, Updated, UpdatedBy,
+          Withholding_Acct
+        )
+        VALUES
+        (
+          :new.C_Withholding_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
+          :new.AD_ORG_ID,  'Y', now(),
+          :new.CreatedBy, now(), :new.UpdatedBy,
+          Cur_Defaults.Withholding_Acct
+        )
+        ;
+    END LOOP;
+  END IF;
+  IF(UPDATING) THEN
+    UPDATE C_Withholding_Acct set AD_Org_ID = :new.AD_Org_ID
+    WHERE c_withholding_id = :new.C_WithHolding_ID;
+  END IF;
 END C_WITHHOLDING_TRG
 ]]></body>
     </trigger>

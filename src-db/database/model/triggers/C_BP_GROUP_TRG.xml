@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_BP_GROUP_TRG">
-    <trigger name="C_BP_GROUP_TRG" table="C_BP_GROUP" fires="after" insert="true" update="false" delete="false" foreach="row">
+    <trigger name="C_BP_GROUP_TRG" table="C_BP_GROUP" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
     /*************************************************************************
     * The contents of this file are subject to the Compiere Public
@@ -31,47 +31,52 @@
   Cur_Defaults RECORD;
   v_acc_id NUMBER(10) ;
 BEGIN
-  FOR Cur_Defaults IN
-    (
-    SELECT *
-    FROM C_AcctSchema_Default d
-    WHERE EXISTS
+  IF(INSERTING) THEN
+    FOR Cur_Defaults IN
       (
       SELECT *
-      FROM AD_ClientInfo c
-      WHERE d.C_AcctSchema_ID IN(c.C_AcctSchema1_ID, c.C_AcctSchema2_ID, c.C_AcctSchema3_ID)
-        AND AD_Client_ID=:new.AD_Client_ID
+      FROM C_AcctSchema_Default d
+      WHERE EXISTS
+        (
+        SELECT *
+        FROM AD_ClientInfo c
+        WHERE d.C_AcctSchema_ID IN(c.C_AcctSchema1_ID, c.C_AcctSchema2_ID, c.C_AcctSchema3_ID)
+          AND AD_Client_ID=:new.AD_Client_ID
+        )
       )
-    )
-  LOOP
-    Ad_Sequence_Next('C_BP_Group_Acct', Cur_Defaults.AD_Org_Id, v_acc_id) ;
-    INSERT
-    INTO C_BP_Group_Acct
-      (
-        C_BP_Group_Acct_ID, C_BP_Group_ID, C_AcctSchema_ID,
-        AD_Client_ID, AD_Org_ID, IsActive,
-        Created, CreatedBy, Updated,
-        UpdatedBy, C_Receivable_Acct, C_PrePayment_Acct,
-        V_Liability_Acct, V_Liability_Services_Acct, V_PrePayment_Acct,
-        PayDiscount_Exp_Acct, PayDiscount_Rev_Acct, WriteOff_Acct,
-        UnRealizedGain_Acct, UnRealizedLoss_Acct, RealizedGain_Acct,
-        RealizedLoss_Acct, NotInvoicedReceipts_Acct, UnEarnedRevenue_Acct,
-        NotInvoicedRevenue_Acct, NotInvoicedReceivables_Acct
-      )
-      VALUES
-      (
-        v_acc_id, :new.C_BP_Group_ID, Cur_Defaults.C_AcctSchema_ID,
-        :new.AD_Client_ID, :new.AD_ORG_ID, 'Y',
-        now(), :new.CreatedBy, now(),
-        :new.UpdatedBy, Cur_Defaults.C_Receivable_Acct, Cur_Defaults.C_PrePayment_Acct,
-        Cur_Defaults.V_Liability_Acct, Cur_Defaults.V_Liability_Services_Acct, Cur_Defaults.V_PrePayment_Acct,
-        Cur_Defaults.PayDiscount_Exp_Acct, Cur_Defaults.PayDiscount_Rev_Acct, Cur_Defaults.WriteOff_Acct,
-        Cur_Defaults.UnRealizedGain_Acct, Cur_Defaults.UnRealizedLoss_Acct, Cur_Defaults.RealizedGain_Acct,
-        Cur_Defaults.RealizedLoss_Acct, Cur_Defaults.NotInvoicedReceipts_Acct, Cur_Defaults.UnEarnedRevenue_Acct,
-        Cur_Defaults.NotInvoicedRevenue_Acct, Cur_Defaults.NotInvoicedReceivables_Acct
-      )
-      ;
-  END LOOP;
+    LOOP
+      Ad_Sequence_Next('C_BP_Group_Acct', Cur_Defaults.AD_Org_Id, v_acc_id) ;
+      INSERT
+      INTO C_BP_Group_Acct
+        (
+          C_BP_Group_Acct_ID, C_BP_Group_ID, C_AcctSchema_ID,
+          AD_Client_ID, AD_Org_ID, IsActive,
+          Created, CreatedBy, Updated,
+          UpdatedBy, C_Receivable_Acct, C_PrePayment_Acct,
+          V_Liability_Acct, V_Liability_Services_Acct, V_PrePayment_Acct,
+          PayDiscount_Exp_Acct, PayDiscount_Rev_Acct, WriteOff_Acct,
+          UnRealizedGain_Acct, UnRealizedLoss_Acct, RealizedGain_Acct,
+          RealizedLoss_Acct, NotInvoicedReceipts_Acct, UnEarnedRevenue_Acct,
+          NotInvoicedRevenue_Acct, NotInvoicedReceivables_Acct
+        )
+        VALUES
+        (
+          v_acc_id, :new.C_BP_Group_ID, Cur_Defaults.C_AcctSchema_ID,
+          :new.AD_Client_ID, :new.AD_ORG_ID, 'Y',
+          now(), :new.CreatedBy, now(),
+          :new.UpdatedBy, Cur_Defaults.C_Receivable_Acct, Cur_Defaults.C_PrePayment_Acct,
+          Cur_Defaults.V_Liability_Acct, Cur_Defaults.V_Liability_Services_Acct, Cur_Defaults.V_PrePayment_Acct,
+          Cur_Defaults.PayDiscount_Exp_Acct, Cur_Defaults.PayDiscount_Rev_Acct, Cur_Defaults.WriteOff_Acct,
+          Cur_Defaults.UnRealizedGain_Acct, Cur_Defaults.UnRealizedLoss_Acct, Cur_Defaults.RealizedGain_Acct,
+          Cur_Defaults.RealizedLoss_Acct, Cur_Defaults.NotInvoicedReceipts_Acct, Cur_Defaults.UnEarnedRevenue_Acct,
+          Cur_Defaults.NotInvoicedRevenue_Acct, Cur_Defaults.NotInvoicedReceivables_Acct
+        )
+        ;
+    END LOOP;
+  ELSIF (UPDATING) THEN
+    UPDATE C_BP_GROUP_ACCT SET AD_ORG_ID = :new.AD_ORG_ID  
+    WHERE C_BP_GROUP_ID = :new.C_BP_GROUP_ID;
+  END IF;
 END C_BP_GROUP_TRG
 ]]></body>
     </trigger>

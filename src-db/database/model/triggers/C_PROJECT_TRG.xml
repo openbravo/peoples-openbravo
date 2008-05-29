@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_PROJECT_TRG">
-    <trigger name="C_PROJECT_TRG" table="C_PROJECT" fires="after" insert="true" update="false" delete="false" foreach="row">
+    <trigger name="C_PROJECT_TRG" table="C_PROJECT" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
     /*************************************************************************
     * The contents of this file are subject to the Compiere Public
@@ -34,7 +34,8 @@
   --
   TYPE RECORD IS REF CURSOR;
     Cur_Defaults RECORD;
-  BEGIN
+BEGIN
+  IF (INSERTING) THEN
     FOR Cur_Defaults IN
       (
       SELECT *
@@ -101,6 +102,10 @@
         )
       )
       ;
+    ELSIF (UPDATING) THEN
+     UPDATE C_PROJECT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
+     WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
+    END IF;
     -- Summary Nodes first
 EXCEPTION
   WHEN NO_DATA_FOUND THEN

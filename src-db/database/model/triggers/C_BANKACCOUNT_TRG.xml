@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_BANKACCOUNT_TRG">
-    <trigger name="C_BANKACCOUNT_TRG" table="C_BANKACCOUNT" fires="after" insert="true" update="false" delete="false" foreach="row">
+    <trigger name="C_BANKACCOUNT_TRG" table="C_BANKACCOUNT" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
     /*************************************************************************
     * The contents of this file are subject to the Compiere Public
@@ -30,42 +30,47 @@
     TYPE RECORD IS REF CURSOR;
   Cur_Defaults RECORD;
 BEGIN
-  FOR Cur_Defaults IN
-    (
-    SELECT *
-    FROM C_AcctSchema_Default d
-    WHERE EXISTS
+  IF(INSERTING) THEN
+    FOR Cur_Defaults IN
       (
       SELECT *
-      FROM AD_ClientInfo c
-      WHERE d.C_AcctSchema_ID IN(c.C_AcctSchema1_ID, c.C_AcctSchema2_ID, c.C_AcctSchema3_ID)
-        AND AD_Client_ID=:new.AD_Client_ID
+      FROM C_AcctSchema_Default d
+      WHERE EXISTS
+        (
+        SELECT *
+        FROM AD_ClientInfo c
+        WHERE d.C_AcctSchema_ID IN(c.C_AcctSchema1_ID, c.C_AcctSchema2_ID, c.C_AcctSchema3_ID)
+          AND AD_Client_ID=:new.AD_Client_ID
+        )
       )
-    )
-  LOOP
-    INSERT
-    INTO C_BankAccount_Acct
-      (
-        C_BankAccount_ID, C_AcctSchema_ID, AD_Client_ID,
-        AD_Org_ID, IsActive, Created,
-        CreatedBy, Updated, UpdatedBy,
-        B_InTransit_Acct, B_Asset_Acct, B_Expense_Acct,
-        B_InterestRev_Acct, B_InterestExp_Acct, B_UnIdentified_Acct,
-        B_SettlementGain_Acct, B_SettlementLoss_Acct, B_RevaluationGain_Acct,
-        B_RevaluationLoss_Acct, B_PaymentSelect_Acct, B_UnallocatedCash_Acct
-      )
-      VALUES
-      (
-        :new.C_BankAccount_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-        :new.AD_ORG_ID,  'Y', now(),
-        :new.CreatedBy, now(), :new.UpdatedBy,
-        Cur_Defaults.B_InTransit_Acct, Cur_Defaults.B_Asset_Acct, Cur_Defaults.B_Expense_Acct,
-        Cur_Defaults.B_InterestRev_Acct, Cur_Defaults.B_InterestExp_Acct, Cur_Defaults.B_UnIdentified_Acct,
-        Cur_Defaults.B_SettlementGain_Acct, Cur_Defaults.B_SettlementLoss_Acct, Cur_Defaults.B_RevaluationGain_Acct,
-        Cur_Defaults.B_RevaluationLoss_Acct, Cur_Defaults.B_PaymentSelect_Acct, Cur_Defaults.B_UnallocatedCash_Acct
-      )
-      ;
-  END LOOP;
+    LOOP
+      INSERT
+      INTO C_BankAccount_Acct
+        (
+          C_BankAccount_ID, C_AcctSchema_ID, AD_Client_ID,
+          AD_Org_ID, IsActive, Created,
+          CreatedBy, Updated, UpdatedBy,
+          B_InTransit_Acct, B_Asset_Acct, B_Expense_Acct,
+          B_InterestRev_Acct, B_InterestExp_Acct, B_UnIdentified_Acct,
+          B_SettlementGain_Acct, B_SettlementLoss_Acct, B_RevaluationGain_Acct,
+          B_RevaluationLoss_Acct, B_PaymentSelect_Acct, B_UnallocatedCash_Acct
+        )
+        VALUES
+        (
+          :new.C_BankAccount_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
+          :new.AD_ORG_ID,  'Y', now(),
+          :new.CreatedBy, now(), :new.UpdatedBy,
+          Cur_Defaults.B_InTransit_Acct, Cur_Defaults.B_Asset_Acct, Cur_Defaults.B_Expense_Acct,
+          Cur_Defaults.B_InterestRev_Acct, Cur_Defaults.B_InterestExp_Acct, Cur_Defaults.B_UnIdentified_Acct,
+          Cur_Defaults.B_SettlementGain_Acct, Cur_Defaults.B_SettlementLoss_Acct, Cur_Defaults.B_RevaluationGain_Acct,
+          Cur_Defaults.B_RevaluationLoss_Acct, Cur_Defaults.B_PaymentSelect_Acct, Cur_Defaults.B_UnallocatedCash_Acct
+        )
+        ;
+    END LOOP;
+  ELSIF (UPDATING) THEN
+    UPDATE C_BANKACCOUNT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
+    WHERE C_BANKACCOUNT_ID = :new.C_BANKACCOUNT_ID;
+  END IF;
 END C_BANKACCOUNT_TRG
 ]]></body>
     </trigger>

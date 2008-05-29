@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER A_ASSET_TRG">
-    <trigger name="A_ASSET_TRG" table="A_ASSET" fires="after" insert="true" update="false" delete="true" foreach="row">
+    <trigger name="A_ASSET_TRG" table="A_ASSET" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -29,7 +29,6 @@ BEGIN
       FROM A_Asset_Group_Acct d1
       WHERE d1.A_Asset_Group_ID=:new.A_Asset_Group_ID;
 
-      --  Customer
       Ad_Sequence_Next('A_Asset_Acct', Cur_Defaults.AD_Client_ID, v_Acct_ID) ;
       INSERT
       INTO A_ASSET_ACCT
@@ -49,7 +48,10 @@ BEGIN
           Cur_Defaults.A_DISPOSAL_LOSS
         )
         ;
-      --  Vendor
+
+  ELSIF (UPDATING) THEN
+    UPDATE A_ASSET_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
+    WHERE A_ASSET_ID = :new.A_ASSET_ID;
   END IF;
 EXCEPTION
 WHEN NO_DATA_FOUND THEN

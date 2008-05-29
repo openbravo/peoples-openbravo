@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_BPARTNER_TRG">
-    <trigger name="C_BPARTNER_TRG" table="C_BPARTNER" fires="after" insert="true" update="false" delete="true" foreach="row">
+    <trigger name="C_BPARTNER_TRG" table="C_BPARTNER" fires="after" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
   /*************************************************************************
   * The contents of this file are subject to the Compiere Public
@@ -103,7 +103,14 @@ BEGIN
          :new.IsActive, :new.Created, :new.CreatedBy, :new.Updated, :new.UpdatedBy,
          v_xTree_ID, :new.C_BPartner_ID,
          v_xParent_ID, (CASE :new.IsSummary WHEN 'Y' THEN 100 ELSE 999 END));     -- Summary Nodes first
-     ELSIF (DELETING) THEN
+  ELSIF (UPDATING) THEN
+     UPDATE C_BP_CUSTOMER_ACCT SET AD_ORG_ID = :new.AD_Org_ID
+     WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
+     UPDATE C_BP_VENDOR_ACCT SET AD_ORG_ID = :new.AD_Org_ID
+     WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
+     UPDATE C_BP_EMPLOYEE_ACCT SET AD_ORG_ID = :new.AD_Org_ID
+     WHERE C_BPARTNER_ID = :new.C_BPartner_ID;
+  ELSIF (DELETING) THEN
      DELETE FROM AD_TreeNodeBP WHERE AD_Client_ID = :old.AD_Client_ID AND Node_ID = :old.C_BPartner_ID;
   END IF;
 EXCEPTION

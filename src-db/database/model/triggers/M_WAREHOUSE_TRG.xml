@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_WAREHOUSE_TRG">
-    <trigger name="M_WAREHOUSE_TRG" table="M_WAREHOUSE" fires="after" insert="true" update="false" delete="false" foreach="row">
+    <trigger name="M_WAREHOUSE_TRG" table="M_WAREHOUSE" fires="after" insert="true" update="true" delete="false" foreach="row">
       <body><![CDATA[
     /*************************************************************************
     * The contents of this file are subject to the Compiere Public
@@ -29,38 +29,43 @@
   TYPE RECORD IS REF CURSOR;
   Cur_Defaults RECORD;
 BEGIN
-  FOR Cur_Defaults IN
-    (
-    SELECT *
-    FROM C_AcctSchema_Default d
-    WHERE EXISTS
+  IF(INSERTING) THEN
+    FOR Cur_Defaults IN
       (
       SELECT *
-      FROM AD_ClientInfo c
-      WHERE d.C_AcctSchema_ID IN(c.C_AcctSchema1_ID, c.C_AcctSchema2_ID, c.C_AcctSchema3_ID)
-        AND AD_Client_ID=:new.AD_Client_ID
+      FROM C_AcctSchema_Default d
+      WHERE EXISTS
+        (
+        SELECT *
+        FROM AD_ClientInfo c
+        WHERE d.C_AcctSchema_ID IN(c.C_AcctSchema1_ID, c.C_AcctSchema2_ID, c.C_AcctSchema3_ID)
+          AND AD_Client_ID=:new.AD_Client_ID
+        )
       )
-    )
-  LOOP
-    INSERT
-    INTO M_Warehouse_Acct
-      (
-        M_Warehouse_ID, C_AcctSchema_ID, AD_Client_ID,
-        AD_Org_ID, IsActive, Created,
-        CreatedBy, Updated, UpdatedBy,
-        W_Inventory_Acct, W_Differences_Acct, W_Revaluation_Acct,
-        W_InvActualAdjust_Acct
-      )
-      VALUES
-      (
-        :new.M_Warehouse_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
-        :new.AD_ORG_ID,  'Y', now(),
-        :new.CreatedBy, now(), :new.UpdatedBy,
-        Cur_Defaults.W_Inventory_Acct, Cur_Defaults.W_Differences_Acct, Cur_Defaults.W_Revaluation_Acct,
-        Cur_Defaults.W_InvActualAdjust_Acct
-      )
-      ;
-  END LOOP;
+    LOOP
+      INSERT
+      INTO M_Warehouse_Acct
+        (
+          M_Warehouse_ID, C_AcctSchema_ID, AD_Client_ID,
+          AD_Org_ID, IsActive, Created,
+          CreatedBy, Updated, UpdatedBy,
+          W_Inventory_Acct, W_Differences_Acct, W_Revaluation_Acct,
+          W_InvActualAdjust_Acct
+        )
+        VALUES
+        (
+          :new.M_Warehouse_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
+          :new.AD_ORG_ID,  'Y', now(),
+          :new.CreatedBy, now(), :new.UpdatedBy,
+          Cur_Defaults.W_Inventory_Acct, Cur_Defaults.W_Differences_Acct, Cur_Defaults.W_Revaluation_Acct,
+          Cur_Defaults.W_InvActualAdjust_Acct
+        )
+        ;
+    END LOOP;
+  ELSIF (UPDATING) THEN
+    UPDATE M_WAREHOUSE_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
+    WHERE M_WAREHOUSE_ID = :new.M_WAREHOUSE_ID;
+  END IF;
 END M_WAREHOUSE_TRG
 ]]></body>
     </trigger>
