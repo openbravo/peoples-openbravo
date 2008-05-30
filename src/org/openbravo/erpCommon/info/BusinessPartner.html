@@ -62,8 +62,8 @@
 	    clave = keys[0];
 	    texto = keys[3];
 	    parameter = new Array(
-		    new SearchElements("_LOC", keys[2]),
-		    new SearchElements("_CON", keys[1])
+		    new SearchElements("_LOC", true, keys[2]),
+		    new SearchElements("_CON", true, keys[1])
 		);
     }    
   	parent.opener.closeSearch(action, clave, texto, parameter);
