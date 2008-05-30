@@ -120,7 +120,7 @@ public class DataGrid extends HttpSecureAppServlet {
     FieldProvider[] data = null;
     try {
       ExecuteQuery execquery = new ExecuteQuery(this, tableSQL.getTotalSQL(), tableSQL.getParameterValuesTotalSQL());
-      data = execquery.select(0,0);
+      data = execquery.select();
     } catch (Exception ex) {
       ex.printStackTrace();
     }
@@ -185,13 +185,13 @@ public class DataGrid extends HttpSecureAppServlet {
     if (tableSQL!=null && headers!=null) {
       try{
         //Prepare SQL adding the user filter parameters
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "", new Vector<String>(), new Vector<String>());
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "", new Vector<String>(), new Vector<String>(), offset, pageSize);
         if (log4j.isDebugEnabled()) log4j.debug("offset: " + offset + " - SQL: " + strSQL);
         vars.removeSessionValue(tableSQL.getTabID() + "|newOrder");
         
         //Wrap query to fetch only the required rows and execute it passing params
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select(offset,pageSize);
+        data = execquery.select();
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
         e.printStackTrace();
@@ -224,6 +224,8 @@ public class DataGrid extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
+    //FIXME: testing... strRowsData.append("  <rows numRows=\"").append("10\">\n");
+    
     strRowsData.append("  <rows numRows=\"").append(getTotalRows(tableSQL)).append("\">\n");
     if (data!=null && data.length>0) {
       for (int j=0;j<data.length;j++) {
@@ -282,9 +284,9 @@ public class DataGrid extends HttpSecureAppServlet {
     FieldProvider[] data = null;
     if (tableSQL!=null) {
       try{
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, tableSQL.getKeyColumn() + " AS ID", new Vector<String>(), new Vector<String>());
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, tableSQL.getKeyColumn() + " AS ID", new Vector<String>(), new Vector<String>(), minOffset, maxOffset-minOffset);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select(minOffset,maxOffset-minOffset);
+        data = execquery.select();
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
         e.printStackTrace();
@@ -325,9 +327,9 @@ public class DataGrid extends HttpSecureAppServlet {
       try{
         Vector<String> filter = new Vector<String>();
         filter.addElement(tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " IN " + rows);
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "SUM(" + columnname + ") AS TOTAL", filter, new Vector<String>());
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "SUM(" + columnname + ") AS TOTAL", filter, new Vector<String>(), 0,0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select(0,0);
+        data = execquery.select();
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
         e.printStackTrace();

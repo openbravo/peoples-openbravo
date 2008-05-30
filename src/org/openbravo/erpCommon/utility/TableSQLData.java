@@ -44,15 +44,18 @@ public class TableSQLData {
   private Vector<Properties> structure = new Vector<Properties>();
   private Vector<QueryParameterStructure> paramSelect = new Vector<QueryParameterStructure>();
   private Vector<QueryParameterStructure> paramFrom = new Vector<QueryParameterStructure>();
+  private Vector<QueryParameterStructure> paramSubquery = new Vector<QueryParameterStructure>();
   private Vector<QueryParameterStructure> paramWhere = new Vector<QueryParameterStructure>();
   private Vector<QueryParameterStructure> paramOrderBy = new Vector<QueryParameterStructure>();
   private Vector<QueryParameterStructure> paramFilter = new Vector<QueryParameterStructure>();
+  private Vector<QueryParameterStructure> paramWrapper = new Vector<QueryParameterStructure>();  
   private Vector<QueryParameterStructure> paramInternalFilter = new Vector<QueryParameterStructure>();
   private Vector<QueryParameterStructure> paramInternalOrderBy = new Vector<QueryParameterStructure>();
   private Vector<QueryFieldStructure> select = new Vector<QueryFieldStructure>();
   private Vector<QueryFieldStructure> from = new Vector<QueryFieldStructure>();
   private Vector<QueryFieldStructure> where = new Vector<QueryFieldStructure>();
   private Vector<QueryFieldStructure> orderBy = new Vector<QueryFieldStructure>();
+  private Vector<QueryFieldStructure> orderBySimple = new Vector<QueryFieldStructure>();
   private Vector<QueryFieldStructure> filter = new Vector<QueryFieldStructure>();
   private Vector<QueryFieldStructure> internalFilter = new Vector<QueryFieldStructure>();
   private Vector<QueryFieldStructure> internalOrderBy = new Vector<QueryFieldStructure>();
@@ -144,6 +147,15 @@ public class TableSQLData {
       }
     }
     if (log4j.isDebugEnabled()) log4j.debug("From parameters obtained");
+    vAux = getSubqueryParameters();
+    if (vAux!=null) {
+      for (int i=0;i<vAux.size();i++) {
+        QueryParameterStructure aux = vAux.elementAt(i);
+        String strAux = getParameter(aux.getName());
+        if (strAux==null || strAux.equals("")) result.addElement(aux.getName());
+      }
+    }
+    if (log4j.isDebugEnabled()) log4j.debug("SubQuery parameters obtained");
     vAux = getWhereParameters();
     if (vAux!=null) {
       for (int i=0;i<vAux.size();i++) {
@@ -162,6 +174,15 @@ public class TableSQLData {
       }
     }
     if (log4j.isDebugEnabled()) log4j.debug("Filter parameters obtained");
+    vAux = getWrapperParameters();
+    if (vAux!=null) {
+      for (int i=0;i<vAux.size();i++) {
+        QueryParameterStructure aux = vAux.elementAt(i);
+        String strAux = getParameter(aux.getName());
+        if (strAux==null || strAux.equals("")) result.addElement(aux.getName());
+      }
+      if (log4j.isDebugEnabled()) log4j.debug("Wrapper parameters obtained");
+    }
     vAux = getOrderByParameters();
     if (vAux!=null) {
       for (int i=0;i<vAux.size();i++) {
@@ -199,6 +220,14 @@ public class TableSQLData {
       }
     }
     if (log4j.isDebugEnabled()) log4j.debug("From parameters obtained");
+    vAux = getSubqueryParameters();
+    if (vAux!=null) {
+      for (int i=0;i<vAux.size();i++) {
+        QueryParameterStructure aux = vAux.elementAt(i);
+        result.addElement(getParameter(aux.getName()));
+      }
+    }
+    if (log4j.isDebugEnabled()) log4j.debug("Subquery parameters obtained");
     vAux = getWhereParameters();
     if (vAux!=null) {
       for (int i=0;i<vAux.size();i++) {
@@ -215,6 +244,13 @@ public class TableSQLData {
       }
     }
     if (log4j.isDebugEnabled()) log4j.debug("Filter parameters obtained");
+    vAux = getWrapperParameters();
+    if (vAux!=null) {
+      for (int i=0;i<vAux.size();i++) {
+        QueryParameterStructure aux = vAux.elementAt(i);
+        result.addElement(getParameter(aux.getName()));
+      }
+    }
     vAux = getOrderByParameters();
     if (vAux!=null) {
       for (int i=0;i<vAux.size();i++) {
@@ -391,7 +427,27 @@ public class TableSQLData {
   public String getKeyColumn() {
     return getParameter(internalPrefix + "KeyColumn");
   }
-
+  
+  /**
+   * Gets all the key columns including the secondary key ones
+   * @param tableName: tableName
+   * @return a comma separated string with the list of key columns
+   */
+  public String getKeyColumns(String tableName){
+    String result="";
+    Vector<Properties> headers = getStructure();
+    if (headers==null || headers.size()==0) return null;
+    for (int i=0; i<headers.size(); i++){
+      Properties element = headers.elementAt(i);
+      if (element.getProperty("IsSecondaryKey").equals("Y") || element.getProperty("IsKey").equals("Y")) {
+         if (result.length()>0) result +=", ";
+         if (!tableName.equals("")) result += tableName+".";
+         result += element.getProperty("ColumnName");
+      }
+    }
+    return result;
+  }
+  
   /**
    * Gets the table id.
    * 
@@ -685,8 +741,8 @@ public class TableSQLData {
    * @param _field: String with the field.
    * @param _alias: String with the alias.
    */
-  public void addFromField(String _field, String _alias) {
-    QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM");
+  public void addFromField(String _field, String _alias, String _realName) {
+    QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM", _realName);
     if (this.from == null) this.from = new Vector<QueryFieldStructure>();
     from.addElement(p);
   }
@@ -776,6 +832,16 @@ public class TableSQLData {
   }
 
   /**
+   * Adds a field to the order by clause.
+   * 
+   * @param _field: String with the field.
+   */
+  public void addOrderByFieldSimple(String _field) {
+    QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
+    if (this.orderBySimple == null) this.orderBySimple = new Vector<QueryFieldStructure>();
+    this.orderBySimple.addElement(p);
+  }
+  /**
    * Gets the list of fields of the order by clause.
    * 
    * @return Vector with the list of fields.
@@ -783,7 +849,44 @@ public class TableSQLData {
   public Vector<QueryFieldStructure> getOrderByFields() {
     return this.orderBy;
   }
+  /**
+   * Gets the list of fields of the order by clause.
+   * 
+   * @return Vector with the list of fields.
+   */
+  public Vector<QueryFieldStructure> getOrderBySimpleFields() {
+    return this.orderBySimple;
+  }
+  
+  /**
+   * Gets the list of fields of the order by clause.
+   * 
+   * @return Vector with the list of fields.
+   */
+  public Vector<String> getOrderBySimpleFieldsString() {
+    Vector<String> vOrderBy = new Vector<String>();
+    if (this.orderBySimple!=null) {
+      for (int i= 0; i<this.orderBySimple.size(); i++) {
+        vOrderBy.add(this.orderBySimple.elementAt(i).getField());
+      }
+    }
+    return vOrderBy;
+  }
 
+  /**
+   * Removes duplicates from vector
+   * @param v
+   * @return
+   */
+  public Vector<String> cleanVector(Vector<String> v){
+    Vector <String> result = new Vector<String>();
+    if (v!=null){
+      for (int i= 0; i<v.size(); i++) {
+        if (result.indexOf(v.elementAt(i))==-1) result.add(v.elementAt(i));
+      }
+    }
+    return result;
+  }
   /**
    * Adds new field to the internal order by clause. The internal order by clause is
    * the one defined in the application dictionary for the tab.
@@ -832,12 +935,23 @@ public class TableSQLData {
    * @param _parameter: String with the parameter.
    * @param _fieldName: String with the field of this parameter.
    */
-  public void addFromParameter(String _parameter, String _fieldName) {
+  public void addFromParameter(String _parameter, String _fieldName, String _realName) {
     if (this.paramFrom == null) this.paramFrom = new Vector<QueryParameterStructure>();
-    QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "FROM");
+    QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "FROM", _realName);
     this.paramFrom.addElement(aux);
   }
-
+  /**
+   * Adds new parameter to the subquery clause.
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the field of this parameter.
+   */
+  public void addSubQueryParameter(String _parameter, String _fieldName, String _realName) {
+    if (this.paramSubquery == null) this.paramSubquery = new Vector<QueryParameterStructure>();
+    QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "SUB", _realName);
+    this.paramSubquery.addElement(aux);
+  }
+  
   /**
    * Gets the list of parameters for the from clause.
    * 
@@ -845,6 +959,14 @@ public class TableSQLData {
    */
   public Vector<QueryParameterStructure> getFromParameters() {
     return this.paramFrom;
+  }
+  /**
+   * Gets the list of parameters for the from clause.
+   * 
+   * @return Vector with the list of parameters
+   */
+  public Vector<QueryParameterStructure> getSubqueryParameters() {
+    return this.paramSubquery;
   }
 
   /**
@@ -882,6 +1004,19 @@ public class TableSQLData {
     this.paramFilter.addElement(aux);
   }
 
+  /**
+   * Adds new parameter to the wrapper clause.
+   * 
+   * @param _parameter: String with the parameter.
+   * @param _fieldName: String with the field for the parameter.
+   * @param _type: String with the type of parameter.
+   */
+  public void addWrapperParameter(String _parameter, String _fieldName, String _type) {
+    if (this.paramWrapper == null) this.paramWrapper = new Vector<QueryParameterStructure>();
+    QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, _type);
+    this.paramWrapper.addElement(aux);
+  }
+  
   /**
    * Gets the list of parameters for the filter clause.
    * 
@@ -932,6 +1067,15 @@ public class TableSQLData {
    */
   public Vector<QueryParameterStructure> getOrderByParameters() {
     return this.paramOrderBy;
+  }
+  
+  /**
+   * Gets the list of parameters for the wrapper.
+   * 
+   * @return Vector with the list of parameters
+   */
+  public Vector<QueryParameterStructure> getWrapperParameters() {
+    return this.paramWrapper;
   }
 
   /**
@@ -1087,7 +1231,7 @@ public class TableSQLData {
     if (getPool()==null) throw new Exception("No pool defined for database connection");
     Vector<Properties> headers = getStructure();
     if (headers==null || headers.size()==0) throw new Exception("No structure defined");
-    addFromField(getTableName(), getTableName());
+    addFromField(getTableName(), getTableName(), getTableName());
     for (Enumeration<Properties> e = headers.elements();e.hasMoreElements();) {
       Properties prop = e.nextElement();
       switch (Integer.valueOf(prop.getProperty("AD_Reference_ID")).intValue()) {
@@ -1100,10 +1244,10 @@ public class TableSQLData {
         case 25: //Account
         case 800011: //Product Search
           addSelectField(getTableName() + "." + prop.getProperty("ColumnName"), prop.getProperty("ColumnName"));
-          identifier(getTableName(), prop, prop.getProperty("ColumnName") + "_R");
+          identifier(getTableName(), prop, prop.getProperty("ColumnName") + "_R", getTableName()+"."+prop.getProperty("ColumnName"));
           break;
         default:
-          identifier(getTableName(), prop, prop.getProperty("ColumnName"));
+          identifier(getTableName(), prop, prop.getProperty("ColumnName"), getTableName()+"."+prop.getProperty("ColumnName"));
           break;
       }
     }
@@ -1119,36 +1263,37 @@ public class TableSQLData {
    * @param parentTableName: String with the name of the parent table.
    * @param field: String with the list of properties of the field to prepare identifier.
    * @param identifierName: String with the identifier name.
+   * @param realName: String identifying tableName.fieldName, this is maintained through recursivity
    * @throws Exception
    */
-  public void identifier(String parentTableName, Properties field, String identifierName) throws Exception {
+  public void identifier(String parentTableName, Properties field, String identifierName, String realName) throws Exception {
     String reference;
     if (field==null) return;
     else reference = field.getProperty("AD_Reference_ID");
     switch (Integer.valueOf(reference).intValue()) {
       case 17: //List
-        setListQuery(parentTableName, field.getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName);
+        setListQuery(parentTableName, field.getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName, realName);
         break;
       case 18: //Table
-        setTableQuery(parentTableName, field.getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName);
+        setTableQuery(parentTableName, field.getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName, realName);
         break;
       case 19: //TableDir
-        setTableDirQuery(parentTableName, field.getProperty("ColumnNameSearch"), field.getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName);
+        setTableDirQuery(parentTableName, field.getProperty("ColumnNameSearch"), field.getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName, realName);
         break;
       case 35: //PAttribute
       case 30: //Search
-        setTableDirQuery(parentTableName, field.getProperty("ColumnNameSearch"), field.getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName);
+        setTableDirQuery(parentTableName, field.getProperty("ColumnNameSearch"), field.getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName, realName);
         break;
       case 32: //Image
-        setImageQuery(parentTableName, field.getProperty("ColumnNameSearch"), identifierName);
+        setImageQuery(parentTableName, field.getProperty("ColumnNameSearch"), identifierName, realName);
         break;
       case 28: //Button
         if (field.getProperty("AD_Reference_Value_ID")!=null && !field.getProperty("AD_Reference_Value_ID").equals("")) {
-          setListQuery(parentTableName, field.getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName);
+          setListQuery(parentTableName, field.getProperty("ColumnName"), field.getProperty("AD_Reference_Value_ID"), identifierName, realName);
         } else addSelectField(formatField((parentTableName + "." + field.getProperty("ColumnName")), reference), identifierName);
         break;
       default:
-        if (!checkTableTranslation(parentTableName, field, reference, identifierName)) {
+        if (!checkTableTranslation(parentTableName, field, reference, identifierName, realName)) {
           addSelectField(formatField((parentTableName + "." + field.getProperty("ColumnName")), reference), identifierName);
         }
         break;
@@ -1165,14 +1310,14 @@ public class TableSQLData {
    * @return Boolean to know if the translation were found.
    * @throws Exception
    */
-  private boolean checkTableTranslation(String tableName, Properties field, String reference, String identifierName) throws Exception {
+  private boolean checkTableTranslation(String tableName, Properties field, String reference, String identifierName, String realName) throws Exception {
     if (tableName==null || tableName.equals("") || field==null) return false;
     ComboTableQueryData[] data = ComboTableQueryData.selectTranslatedColumn(getPool(), field.getProperty("TableName"), field.getProperty("ColumnName"));
     if (data==null || data.length==0) return false;
     int myIndex = this.index++;
     addSelectField("(CASE WHEN td_trl" + myIndex + "." + data[0].columnname + " IS NULL THEN " + formatField((tableName + "." + field.getProperty("ColumnName")), reference) + " ELSE " + formatField(("td_trl" + myIndex + "." + data[0].columnname), reference) + " END)", identifierName);
-    addFromField("(SELECT AD_Language, " + data[0].reference + ", " + data[0].columnname + " FROM " + data[0].tablename + ") td_trl" + myIndex + " on " + tableName + "." + data[0].reference + " = td_trl" + myIndex + "." + data[0].reference + " AND td_trl" + myIndex + ".AD_Language = ?", "td_trl" + myIndex);
-    addFromParameter("#AD_LANGUAGE", "LANGUAGE");
+    addFromField("(SELECT AD_Language, " + data[0].reference + ", " + data[0].columnname + " FROM " + data[0].tablename + ") td_trl" + myIndex + " on " + tableName + "." + data[0].reference + " = td_trl" + myIndex + "." + data[0].reference + " AND td_trl" + myIndex + ".AD_Language = ?", "td_trl" + myIndex, realName);
+    addFromParameter("#AD_LANGUAGE", "LANGUAGE", realName);
     return true;
   }
   
@@ -1249,13 +1394,13 @@ public class TableSQLData {
    * @param identifierName: String with the identifier name.
    * @throws Exception
    */
-  private void setImageQuery(String tableName, String fieldName, String identifierName) throws Exception {
+  private void setImageQuery(String tableName, String fieldName, String identifierName, String realName) throws Exception {
     int myIndex = this.index++;
     addSelectField("((CASE td" + myIndex + ".isActive WHEN 'N' THEN '" + INACTIVE_DATA + "' ELSE '' END) || td" + myIndex + ".imageURL)", identifierName);
     String tables = "(select IsActive, AD_Image_ID, ImageURL from AD_Image) td" + myIndex;
     tables += " on " + tableName + "." + fieldName;
     tables += " = td" + myIndex + ".AD_Image_ID";
-    addFromField(tables, "td" + myIndex);
+    addFromField(tables, "td" + myIndex, realName);
   }
 
   /**
@@ -1267,7 +1412,7 @@ public class TableSQLData {
    * @param identifierName: String with the identifier name.
    * @throws Exception
    */
-  private void setListQuery(String tableName, String fieldName, String referenceValue, String identifierName) throws Exception {
+  private void setListQuery(String tableName, String fieldName, String referenceValue, String identifierName, String realName) throws Exception {
     int myIndex = this.index++;
     addSelectField("((CASE td" + myIndex + ".isActive WHEN 'N' THEN '" + INACTIVE_DATA + "' ELSE '' END) || (CASE WHEN td_trl" + myIndex + ".name IS NULL THEN td" + myIndex + ".name ELSE td_trl" + myIndex + ".name END))", identifierName);
     String tables = "(select IsActive, ad_ref_list_id, ad_reference_id, value, name from ad_ref_list) td" + myIndex;
@@ -1275,11 +1420,11 @@ public class TableSQLData {
     if (fieldName.equalsIgnoreCase("DocAction")) tables += "(CASE " + tableName + "." + fieldName + " WHEN '--' THEN 'CL' ELSE TO_CHAR(" + tableName + "." + fieldName + ") END)";
     else tables += tableName + "." + fieldName;
     tables += " = td" + myIndex + ".value AND td" + myIndex + ".ad_reference_id = ?";
-    addFromField(tables, "td" + myIndex);
-    addFromParameter("TD" + myIndex + ".AD_REFERENCE_ID", "KEY");
+    addFromField(tables, "td" + myIndex, realName);
+    addFromParameter("TD" + myIndex + ".AD_REFERENCE_ID", "KEY", realName);
     setParameter("TD" + myIndex + ".AD_REFERENCE_ID", referenceValue);
-    addFromField("(SELECT ad_language, name, ad_ref_list_id from ad_ref_list_trl) td_trl" + myIndex + " on td" + myIndex + ".ad_ref_list_id = td_trl" + myIndex + ".ad_ref_list_id AND td_trl" + myIndex + ".ad_language = ?", "td_trl" + myIndex);
-    addFromParameter("#AD_LANGUAGE", "LANGUAGE");
+    addFromField("(SELECT ad_language, name, ad_ref_list_id from ad_ref_list_trl) td_trl" + myIndex + " on td" + myIndex + ".ad_ref_list_id = td_trl" + myIndex + ".ad_ref_list_id AND td_trl" + myIndex + ".ad_language = ?", "td_trl" + myIndex, realName);
+    addFromParameter("#AD_LANGUAGE", "LANGUAGE", realName);
   }
 
   /**
@@ -1289,9 +1434,10 @@ public class TableSQLData {
    * @param fieldName: String with the field name.
    * @param referenceValue: String with the reference value.
    * @param identifierName: String with the identifier name.
+   * @param realName: String identifying field, used for recursive call 
    * @throws Exception
    */
-  private void setTableQuery(String tableName, String fieldName, String referenceValue, String identifierName) throws Exception {
+  private void setTableQuery(String tableName, String fieldName, String referenceValue, String identifierName, String realName) throws Exception {
     int myIndex = this.index++;
     ComboTableQueryData trd[] = ComboTableQueryData.selectRefTable(getPool(), referenceValue);
     if (trd==null || trd.length==0) return;
@@ -1304,8 +1450,8 @@ public class TableSQLData {
     Properties fieldsAux = fieldToProperties(trd[0]);
     tables += trd[0].tablename + ") td" + myIndex;
     tables += " on " + tableName + "." + fieldName + " = td" + myIndex + "." + trd[0].keyname;
-    addFromField(tables, "td" + myIndex);
-    identifier("td" + myIndex, fieldsAux, identifierName);
+    addFromField(tables, "td" + myIndex, realName);
+    identifier("td" + myIndex, fieldsAux, identifierName, realName);
   }
 
   /**
@@ -1318,7 +1464,7 @@ public class TableSQLData {
    * @param identifierName: String with the identifier name.
    * @throws Exception
    */
-  private void setTableDirQuery(String tableName, String fieldName, String parentFieldName, String referenceValue, String identifierName) throws Exception {
+  private void setTableDirQuery(String tableName, String fieldName, String parentFieldName, String referenceValue, String identifierName, String realName) throws Exception {
     int myIndex = this.index++;
     String name = fieldName;
     String tableDirName = name.substring(0,name.length()-3);
@@ -1335,8 +1481,8 @@ public class TableSQLData {
     tables += " FROM ";
     tables += tableDirName + ") td" + myIndex;
     tables += " on " + tableName + "." + parentFieldName + " = td" + myIndex + "." + name + "\n";
-    addFromField(tables, "td" + myIndex);
-    for (int i=0;i<trd.length;i++) identifier("td" + myIndex, fieldToProperties(trd[i]), identifierName);
+    addFromField(tables, "td" + myIndex, realName);
+    for (int i=0;i<trd.length;i++) identifier("td" + myIndex, fieldToProperties(trd[i]), identifierName, realName);
   }
 
   /**
@@ -1640,6 +1786,7 @@ public class TableSQLData {
         for (int i=0;i<this.internalOrderBy.size();i++) {
           QueryFieldStructure aux = this.internalOrderBy.elementAt(i);
           addOrderByField(getRealOrderByColumn(aux.getField()));
+          addOrderByFieldSimple(aux.getField());
         }
         if (this.paramInternalOrderBy!=null) {
           for (int i=0;i<this.paramInternalOrderBy.size();i++) {
@@ -1696,7 +1843,7 @@ public class TableSQLData {
    * @return String with the sql.
    */
   public String getSQL() {
-    return getSQL(null, null, null, null, null);
+    return getSQL(null, null, null, null, null, null, 0, 0);
   }
 
   /**
@@ -1704,12 +1851,15 @@ public class TableSQLData {
    * 
    * @param _FilterFields: Vector with specific filter fields.
    * @param _FilterParams: Vector with parameters for the specific filter fields.
-   * @param _OrderFields: Vector with specific order by fields.
+   * @param _OrderFields: Vector with specific order by fields. It can contain tablename.field or SQL clause
    * @param _OrderParams: Vector with parameters for the specific orfer by fields.
    * @param selectFields: String with the fields for the select clause.
+   * @param _OrderSimple: Vector with specific order by fields. It always contains tablename.field, never SQL clause
+   * @param startPosition: int with the firs row to be shown
+   * @param rangeLength: int with the number of rows to be shown
    * @return String with the generated sql.
    */
-  public String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams, Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields) {
+  public String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams, Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields, Vector<String>_OrderSimple, int startPosition, int rangeLength) {
     StringBuffer text = new StringBuffer();
     boolean hasWhere = false;
     Vector<QueryFieldStructure> aux = null;
@@ -1740,41 +1890,143 @@ public class TableSQLData {
       text.append(txtAux.toString());
     }
     
-    aux = getWhereFields();
+    boolean hasRange = !(startPosition==0 && rangeLength==0);
+    boolean hasRangeLimit = !(rangeLength==0);
+  
     StringBuffer txtAuxWhere = new StringBuffer();
+    hasWhere = true;
+    
+    String keyColumns = getKeyColumns(getPool().getRDBMS().equalsIgnoreCase("ORACLE")?"":getTableName()); 
+    String keyColumnsTable = getKeyColumns(getTableName());
+    txtAuxWhere.append("(").append(keyColumnsTable).append(") IN (SELECT ").append(keyColumns).append("\n");
+    
+    
+    if (hasRange && getPool().getRDBMS().equalsIgnoreCase("ORACLE")) { //range wrapper
+      txtAuxWhere.append(" FROM (SELECT ROWNUM AS rn1, A.* FROM (\n");
+      txtAuxWhere.append(" SELECT ").append(keyColumnsTable).append("\n");
+    }
+    txtAuxWhere.append(" FROM ").append(getTableName()).append("\n");
+    
+    Vector<QueryFieldStructure> auxFrom = getFromFields();
+    Vector<QueryParameterStructure> auxParam = getFromParameters();
+
+    if ((_OrderSimple.size()==0) && (_OrderFields.size()==0)) {//Order by defined as internal, not as param
+      setOrderBy(null, null); 
+      _OrderSimple = getOrderBySimpleFieldsString();
+    }
+    _OrderSimple = cleanVector(_OrderSimple);
+    
+    if (_OrderSimple!=null) {
+      //where clause for order by fields 
+      for (int i=0;i<_OrderSimple.size();i++) {
+        String auxStructure = _OrderSimple.elementAt(i);
+        String orderField = auxStructure;
+        if (auxStructure.indexOf(" ")!=-1) orderField = auxStructure.substring(0, auxStructure.indexOf(" ")); //tablename.fieldname
+        if (auxFrom != null) {
+          for (int j=0; j<auxFrom.size(); j++) {
+            QueryFieldStructure auxStructureFrom = auxFrom.elementAt(j);
+            if ((!auxStructureFrom.getRealName().equals(getTableName())) && (auxStructureFrom.getRealName().equals(orderField) || (keyColumnsTable.indexOf(auxStructureFrom.getRealName()) != -1))) {
+              txtAuxWhere.append("left join ");
+              txtAuxWhere.append(auxStructureFrom.toString()).append(" \n");
+            }
+          }
+        }
+        if (auxParam != null) {
+          for (int j=0; j<auxParam.size(); j++) {
+            QueryParameterStructure auxParamFrom = auxParam.elementAt(j);
+            if ((!auxParamFrom.getRealName().equals(getTableName())) &&  (auxParamFrom.getRealName().equals(orderField) || (keyColumnsTable.indexOf(auxParamFrom.getRealName()) != -1))) {
+              addSubQueryParameter(auxParamFrom.getName(), auxParamFrom.getField(), "JOIN2"+auxParamFrom.getName());
+            }
+          }
+        }
+      }
+    }
+    //Standard where
+    aux = getWhereFields();
+    boolean hasStandardWhere = false;
     if (aux!=null) {
       for (int i=0;i<aux.size();i++) {
         QueryFieldStructure auxStructure = aux.elementAt(i);
-        hasWhere=true;
-        if (!txtAuxWhere.toString().equals("")) txtAuxWhere.append("AND ");
+        if (!hasStandardWhere) txtAuxWhere.append(" WHERE ");
+        else txtAuxWhere.append(" AND ");
+        hasStandardWhere=true;
         txtAuxWhere.append(auxStructure.toString()).append(" \n");
       }
     }
+    
+    //filters where
     setFilter(_FilterFields, _FilterParams);
     aux = getFilterFields();
     if (aux!=null) {
       for (int i=0;i<aux.size();i++) {
         QueryFieldStructure auxStructure = aux.elementAt(i);
-        hasWhere=true;
-        if (!txtAuxWhere.toString().equals("")) txtAuxWhere.append("AND ");
+        if (!hasStandardWhere) txtAuxWhere.append(" WHERE ");
+        else txtAuxWhere.append(" AND ");
+        hasStandardWhere=true;
         txtAuxWhere.append(auxStructure.toString()).append(" \n");
       }
     }
-    if (hasWhere) text.append("WHERE ").append(txtAuxWhere.toString());
+    
+    
+    //Order by
     setOrderBy(_OrderFields, _OrderParams);
     aux = getOrderByFields();
+    boolean hasOrder = false;
+    StringBuffer txtAuxOrderBy = new StringBuffer();
     if (aux!=null) {
-      StringBuffer txtAux = new StringBuffer();
-      text.append("ORDER BY ");
       for (int i=0;i<aux.size();i++) {
         QueryFieldStructure auxStructure = aux.elementAt(i);
-        if (!txtAux.toString().equals("")) txtAux.append(", ");
-        txtAux.append(auxStructure.toString());
+        if (!hasOrder) txtAuxOrderBy.append("ORDER BY ");
+        else txtAuxOrderBy.append(", ");
+        hasOrder=true;
+        txtAuxOrderBy.append(auxStructure.toString());
       }
-      if (!txtAux.toString().equals("")) txtAux.append(", ");
-      txtAux.append(getTableName()).append(".").append(getKeyColumn());
-      text.append(txtAux.toString());
+      if (!hasOrder) txtAuxOrderBy.append("ORDER BY ");
+      else txtAuxOrderBy.append(", ");
+      hasOrder=true;
+      txtAuxOrderBy.append(getTableName()).append(".").append(getKeyColumn());
     }
+
+    if (hasWhere) {
+      if (hasRange) txtAuxWhere.append(txtAuxOrderBy.toString()); //Internal order by only for ranges
+      if ((!hasRange)||(getPool().getRDBMS().equalsIgnoreCase("ORACLE"))) txtAuxWhere.append(")\n");
+      if (hasRange) {
+        //wrap end SQL
+        if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
+          txtAuxWhere.append("A)\n");
+          txtAuxWhere.append("  WHERE rn1 ");
+          if (hasRangeLimit) txtAuxWhere.append("BETWEEN ? AND ?");
+          else txtAuxWhere.append(">= ?");
+          txtAuxWhere.append(")\n");
+        } else {
+          if (hasRangeLimit) txtAuxWhere.append(" LIMIT TO_NUMBER(?)");
+          txtAuxWhere.append(" OFFSET TO_NUMBER(?))\n");
+        }
+        //wrap parameters
+        try {
+          if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
+            addWrapperParameter("ORAstartPosition", "RANGE", ""); 
+            setParameter("ORAstartPosition", Integer.toString(startPosition));
+            if (hasRangeLimit) {
+              addWrapperParameter("ORArangeLimit", "RANGE", ""); 
+              setParameter("ORArangeLimit", Integer.toString(startPosition+rangeLength));
+            }
+          } else {
+            if (hasRangeLimit) {
+              addWrapperParameter("PGrangeLength", "RANGE", ""); 
+              setParameter("PGrangeLength", Integer.toString(rangeLength)); 
+              addWrapperParameter("PGstart", "RANGE", "");
+              setParameter("PGstart", Integer.toString(startPosition));
+            }
+          }
+        } catch(Exception e) {e.printStackTrace();}
+      } 
+      text.append("WHERE ").append(txtAuxWhere.toString());
+    }
+    
+  
+    
+    text.append(txtAuxOrderBy.toString());
     return text.toString();
   }
 

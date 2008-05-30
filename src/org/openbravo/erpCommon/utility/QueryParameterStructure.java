@@ -27,9 +27,13 @@ public class QueryParameterStructure {
   }
 
   public QueryParameterStructure(String _name, String _fieldName, String _type) {
+    this(_name,  _fieldName, _type,  "");
+  }
+  public QueryParameterStructure(String _name, String _fieldName, String _type, String _realName) {
     setData("name", _name);
     setData("fieldName", _fieldName);
     setData("type", _type);
+    setData("realName", _realName);
   }
 
   public void setData(String name, String value) {
@@ -53,6 +57,10 @@ public class QueryParameterStructure {
 
   public String getName() {
     return getData("name");
+  }
+  
+  public String getRealName() {
+    return getData("realName");
   }
 
   public String toString() {

@@ -94,11 +94,11 @@ public class ExportGrid extends HttpSecureAppServlet {
     if (tableSQL!=null && headers!=null) {
       try{
         if (log4j.isDebugEnabled()) log4j.debug("Geting the grid data.");
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "", new Vector<String>(), new Vector<String>());
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "", new Vector<String>(), new Vector<String>(), 0, 0);
         //if (log4j.isDebugEnabled()) log4j.debug("SQL: " + strSQL);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
         st = this.getPreparedStatement(strSQL);
-        data = execquery.select(0,0);
+        data = execquery.select();
       } catch (Exception e) {
         if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
         e.printStackTrace();

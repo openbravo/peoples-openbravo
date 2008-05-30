@@ -641,9 +641,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     if (tableSQL!=null) {
       FieldProvider[] data = null;
       try{
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;());
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(), 0, 0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select(0,0);
+        data = execquery.select();
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting next element");
         e.printStackTrace();
@@ -664,9 +664,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     if (tableSQL!=null) {
       FieldProvider[] data = null;
       try{
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;());
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select(0,0);
+        data = execquery.select();
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting key position");
         e.printStackTrace();
@@ -686,9 +686,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     if (tableSQL!=null) {
       FieldProvider[] data = null;
       try{
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;());
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select(0,0);
+        data = execquery.select();
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting previous element");
         e.printStackTrace();
@@ -708,9 +708,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     if (tableSQL!=null) {
       FieldProvider[] data = null;
       try{
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;());
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,1);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select(0,1);
+        data = execquery.select();
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting first element");
         e.printStackTrace();
@@ -724,9 +724,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     if (tableSQL!=null) {
       FieldProvider[] data = null;
       try{
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;());
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select(0,0);
+        data = execquery.select();
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting last element");
         e.printStackTrace();

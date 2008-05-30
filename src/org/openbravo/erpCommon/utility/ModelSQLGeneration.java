@@ -77,7 +77,8 @@ public class ModelSQLGeneration {
         }
       }
     }
-    vars.setSessionValue(tableSQL.getTabID() + "|orderby", orderBy.toString());
+    vars.setSessionValue(tableSQL.getTabID() + "|orderby", orderBy.toString());    
+    vars.setSessionValue(tableSQL.getTabID() + "|orderbySimple", sortCols);
     return vOrderBy;
   }
 
@@ -202,7 +203,18 @@ public class ModelSQLGeneration {
       }
     }
     vars.setSessionValue(tableSQL.getTabID() + "|orderby", txtAux.toString());
-
+    
+    vOrderBy = tableSQL.getOrderBySimpleFields();
+    StringBuffer txtAuxSimple = new StringBuffer();
+    if (vOrderBy!=null) {
+      for (int i=0;i<vOrderBy.size();i++) {
+        QueryFieldStructure auxStructure = vOrderBy.elementAt(i);
+        if (!txtAuxSimple.toString().equals("")) txtAuxSimple.append(", ");
+        txtAuxSimple.append(auxStructure.toString());
+      }
+    }
+    if (txtAuxSimple.toString().equals("")) vars.setSessionValue(tableSQL.getTabID() + "|orderbySimple", txtAux.toString());
+    
     Vector<String> positions = tableSQL.getOrderByPosition();
     txtAux = new StringBuffer();
     if (positions!=null) {
@@ -227,10 +239,11 @@ public class ModelSQLGeneration {
     vars.setSessionValue(tableSQL.getTabID() + "|orderbyDirections", txtAux.toString());
   }
 
+ 
   /**
    * Generates the query for this tab. 
    * This method adds to the standard query defined in the TableSQLData (from dictionary)
-   * the user filter parameters defined by UI 
+   * the user filter parameters and order by defined by UI 
    * 
    * @param conn: Handler for the database connection.
    * @param vars: Handler for the session info.
@@ -238,16 +251,24 @@ public class ModelSQLGeneration {
    * @param selectFields: String with the fields of the select clause.
    * @param filter: Vector with the specific filter fields.
    * @param filterParams: Vector with the parameters for the specific filter fields.
+   * @param offset: int, offset of rows to be displayed
+   * @param pageSize: int, number of rows to be displayed
    * @return String with the sql.
    * @throws Exception
    */
-  public static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars, TableSQLData tableSQL, String selectFields, Vector<String> filter, Vector<String> filterParams) throws Exception {
-    Vector<String> orderBy = new Vector<String>();
+  public static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars, TableSQLData tableSQL, String selectFields, Vector<String> filter, Vector<String> filterParams, int offset, int pageSize) throws Exception {
+    Vector<String> orderBy = new Vector<String>();       //Maintains orderby clause with SQL clause
+    Vector<String> orderBySimple = new Vector<String>(); //Maintains orderby clause just with column names
     String loadSessionOrder = vars.getSessionValue(tableSQL.getTabID() + "|newOrder");
-    if (loadSessionOrder==null || loadSessionOrder.equals("")) orderBy = getOrderBy(vars, tableSQL);
+    if (loadSessionOrder==null || loadSessionOrder.equals("") || vars.getSessionValue(tableSQL.getTabID() + "|orderbySimple").equals("")) {
+      orderBy = getOrderBy(vars, tableSQL);
+      orderBySimple =  (Vector<String>) orderBy.clone();
+    }
     else {
       String auxOrder = vars.getSessionValue(tableSQL.getTabID() + "|orderby");
+      String auxOrderSimple = vars.getSessionValue(tableSQL.getTabID() + "|orderbySimple");
       if (!auxOrder.equals("")) orderBy.addElement(auxOrder);
+      if (!auxOrderSimple.equals("")) orderBySimple.addElement(auxOrderSimple);
     }
     if (filter==null) filter = new Vector<String>();
     if (filterParams==null) filterParams = new Vector<String>();
@@ -260,7 +281,7 @@ public class ModelSQLGeneration {
         parametersData.setData("PARENT", aux);
       }
     }
-    String strSQL = tableSQL.getSQL(filter, filterParams, orderBy, null, selectFields);
+    String strSQL = tableSQL.getSQL(filter, filterParams, orderBy, null, selectFields, orderBySimple, offset, pageSize);
     setSessionOrderBy(vars, tableSQL);
     Utility.fillTableSQLParameters(conn, vars, parametersData, tableSQL, tableSQL.getWindowID());
    return strSQL;

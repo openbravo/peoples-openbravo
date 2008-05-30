@@ -142,45 +142,19 @@ public class ExecuteQuery {
   /**
    * Executes the query.
    * 
-   * @param startPosition: Initial position for the first element to return.
-   * @param rangeLength: size of range of elements to return.
    * @return Array of FieldProviders with the result of the query.
    * @throws ServletException
    */
-  public FieldProvider[] select(int startPosition, int rangeLength) throws ServletException {
+  public FieldProvider[] select() throws ServletException {
     PreparedStatement st = null ;
     ResultSet result;
     Vector<SQLReturnObject> vector = new Vector<SQLReturnObject>(0);
-    boolean hasRange = !(startPosition==0 && rangeLength==0);
-    boolean hasRangeLimit = !(rangeLength==0);
-    if (hasRange) {
-      if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
-        addParameter(Integer.toString(startPosition+1));
-        if (hasRangeLimit) addParameter(Integer.toString(startPosition+rangeLength));
-      } else {
-        if (hasRangeLimit) addParameter(Integer.toString(rangeLength));
-        addParameter(Integer.toString(startPosition));
-      }
-    }  
-    StringBuffer strSQL = new StringBuffer();
-    if (hasRange) {
-      strSQL.append(" SELECT * FROM (\n");
-      if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) strSQL.append("SELECT ROWNUM AS rn1, A.* FROM (\n");
-      strSQL.append(getSQL());
-      strSQL.append(") A\n");
-      if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
-        strSQL.append(")  WHERE rn1 ");
-        if (hasRangeLimit) strSQL.append("BETWEEN ? AND ?");
-        else strSQL.append(">= ?");
-      } else {
-        if (hasRangeLimit) strSQL.append(" LIMIT TO_NUMBER(?)");
-        strSQL.append(" OFFSET TO_NUMBER(?)");
-      }
-    } else strSQL.append(getSQL());
-    if (log4j.isDebugEnabled()) log4j.debug("SQL: " + strSQL.toString());
+ 
+    String strSQL = getSQL();
+    if (log4j.isDebugEnabled()) log4j.debug("SQL: " + strSQL);
 
     try {
-      st = getPool().getPreparedStatement(strSQL.toString());
+      st = getPool().getPreparedStatement(strSQL);
       Vector<String> params = getParameters();
       if (params!=null) {
         for (int iParameter=0;iParameter<params.size();iParameter++) {

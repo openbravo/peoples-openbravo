@@ -27,10 +27,14 @@ public class QueryFieldStructure {
   }
 
   public QueryFieldStructure(String _field, String _aliasJoin, String _alias, String _type) {
+    this(_field, _aliasJoin, _alias, _type, _field);
+  }
+  public QueryFieldStructure(String _field, String _aliasJoin, String _alias, String _type, String _realName) {
     setData("field", _field);
     setData("aliasJoin", _aliasJoin);
     setData("alias", _alias);
     setData("type", _type);
+    setData("realName", _realName);
   }
 
   public void setData(String name, String value) {
@@ -60,6 +64,9 @@ public class QueryFieldStructure {
     return getData("type");
   }
 
+  public String getRealName(){
+    return getData("realName");
+  }
   public String toString() {
     return toString(false);
   }
