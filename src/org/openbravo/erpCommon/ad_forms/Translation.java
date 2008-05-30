@@ -329,15 +329,16 @@ public class Translation extends HttpSecureAppServlet
 			TransformerFactory tFactory = TransformerFactory.newInstance();
       		tFactory.setAttribute("indent-number", new Integer(2));
 			Transformer transformer = tFactory.newTransformer();
-      		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			//	Output
 			out.createNewFile();
 			//	Transform
 			//transformer.transform (source, result);
-            OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream (out), "utf-8");
-            transformer.transform (source, new StreamResult(osw));
-                // FIXME: We should be closing the file (out and its related classes) here to make sure that is closed
-                // and that is does not really get closed when the GC claims the object (indeterministic)
+      OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream (out));//, "ISO-8859-1");
+      transformer.transform (source, new StreamResult(osw));
+      // FIXME: We should be closing the file (out and its related classes) here to make sure that is closed
+      // and that is does not really get closed when the GC claims the object (indeterministic)
 		}
 		catch (Exception e)
 		{
