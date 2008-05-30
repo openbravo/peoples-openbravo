@@ -80,6 +80,19 @@
     </Sql>
     <Parameter name="User"/>
   </SqlMethod>
+  
+  <SqlMethod name="updateClient2" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      UPDATE AD_Client 
+      SET CreatedBy = 0 
+      WHERE VALUE = ?
+      ]]>
+    </Sql>
+    <Parameter name="Client"/>
+  </SqlMethod>
+  
   <SqlMethod name="updateClientInfo" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
