@@ -11335,7 +11335,7 @@
 <!--893 CREATEDBY-->
 <!--893-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--893 UPDATED-->
-<!--893-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--893-->              <UPDATED><![CDATA[2008-05-30 12:19:10.0]]></UPDATED>
 <!--893 UPDATEDBY-->
 <!--893-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--893 COLUMNNAME-->
@@ -11347,7 +11347,7 @@
 <!--893 DESCRIPTION-->
 <!--893-->              <DESCRIPTION><![CDATA[Number of months (0=same, 1=following)]]></DESCRIPTION>
 <!--893 HELP-->
-<!--893-->              <HELP><![CDATA[The Fixed Month Offset indicates the number of months from the current month to indicate an invoice is due.  A 0 indicates the same month, a 1 the following month.  This field will only display if the fixed due date checkbox is selected.]]></HELP>
+<!--893-->              <HELP><![CDATA[The Offset Month Due indicates the number of months from the current month to indicate an invoice is due.  A 0 indicates the same month, a 1 the following month. ]]></HELP>
 <!--893**************--></AD_ELEMENT>
 
 <!--912**************--><AD_ELEMENT>
