@@ -158,7 +158,9 @@ var arrWare=null;
 
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
-	  window.opener.setMenuLoading(false);
+    if (document.getElementById('messageBoxID').className.indexOf('MessageBoxERROR') != -1) {
+      window.opener.setMenuLoading(false);
+    }
 		this.windowTables = new Array(
 		  new windowTableId('clientIndex'),
 		  new windowTableId('sessionOptions', 'buttonOK'),
