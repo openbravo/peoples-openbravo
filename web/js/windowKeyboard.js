@@ -713,22 +713,29 @@ function getPreviousWindowElement() {
 }
 
 function goToNextWindowTable() {
-
-  var oldFrameName = windowTables[focusedWindowTable].frameName;
-  if (focusedWindowTable < windowTables.length-1) {
-    focusedWindowTable = focusedWindowTable + 1;
-  } else {
-    focusedWindowTable = 0;
+  for(;;) {
+    if (focusedWindowTable < windowTables.length-1) {
+      focusedWindowTable = focusedWindowTable + 1;
+    } else {
+      focusedWindowTable = 0;
+    }
+    if (document.getElementById(windowTables[focusedWindowTable].tableId).style.display != 'none') {
+      break;
+    }
   }
   setWindowTableParentElement();
 }
 
 function goToPreviousWindowTable() {
-  var oldFrameName = windowTables[focusedWindowTable].frameName;
-  if (focusedWindowTable > 0) {
-    focusedWindowTable = focusedWindowTable - 1;
-  } else {
-    focusedWindowTable = windowTables.length-1;
+  for(;;) {
+    if (focusedWindowTable > 0) {
+      focusedWindowTable = focusedWindowTable - 1;
+    } else {
+      focusedWindowTable = windowTables.length-1;
+    }
+    if (document.getElementById(windowTables[focusedWindowTable].tableId).style.display != 'none') {
+      break;
+    }
   }
   setWindowTableParentElement();
 
