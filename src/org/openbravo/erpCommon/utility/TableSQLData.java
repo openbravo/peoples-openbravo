@@ -22,6 +22,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Properties;
 import java.util.Enumeration;
@@ -874,15 +875,25 @@ public class TableSQLData {
   }
 
   /**
-   * Removes duplicates from vector
+   * Tokenizes vector elements and inserts it as new vector elements and removes duplicates from vector
    * @param v
    * @return
    */
   public Vector<String> cleanVector(Vector<String> v){
     Vector <String> result = new Vector<String>();
+    Vector <String> aux = new Vector<String>();
     if (v!=null){
       for (int i= 0; i<v.size(); i++) {
-        if (result.indexOf(v.elementAt(i))==-1) result.add(v.elementAt(i));
+        StringTokenizer element = new StringTokenizer(v.elementAt(i), ",", false);
+        while (element.hasMoreTokens()) {
+          String token = element.nextToken().trim();
+          aux.add(token);
+        }
+      }
+    }
+    if (aux!=null){    
+      for (int i= 0; i<aux.size(); i++) {
+        if (result.indexOf(aux.elementAt(i))==-1) result.add(aux.elementAt(i));
       }
     }
     return result;
@@ -1800,8 +1811,14 @@ public class TableSQLData {
         String strOrderByClause = _fields.elementAt(i);
         Vector<String> vecOrdersAux = getOrdeByIntoFields(strOrderByClause);
         if (vecOrdersAux!=null && vecOrdersAux.size()>0) {
-          for (int j=0;j<vecOrdersAux.size();j++) addOrderByField(getRealOrderByColumn(vecOrdersAux.elementAt(j)));
-        } else addOrderByField(getRealOrderByColumn(strOrderByClause));
+          for (int j=0;j<vecOrdersAux.size();j++) {
+            addOrderByField(getRealOrderByColumn(vecOrdersAux.elementAt(j)));
+            addOrderByFieldSimple(vecOrdersAux.elementAt(j));
+          }
+        } else {
+          addOrderByField(getRealOrderByColumn(strOrderByClause));
+          addOrderByFieldSimple(strOrderByClause);
+        }
       }
       if (_params!=null)
         for (int i=0;i<_params.size();i++) addOrderByParameter(_params.elementAt(i), _params.elementAt(i));

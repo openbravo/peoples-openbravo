@@ -78,7 +78,7 @@ public class ModelSQLGeneration {
       }
     }
     vars.setSessionValue(tableSQL.getTabID() + "|orderby", orderBy.toString());    
-    vars.setSessionValue(tableSQL.getTabID() + "|orderbySimple", sortCols);
+    vars.setSessionValue(tableSQL.getTabID() + "|orderbySimple", orderBy.toString());
     return vOrderBy;
   }
 
@@ -213,7 +213,7 @@ public class ModelSQLGeneration {
         txtAuxSimple.append(auxStructure.toString());
       }
     }
-    if (txtAuxSimple.toString().equals("")) vars.setSessionValue(tableSQL.getTabID() + "|orderbySimple", txtAux.toString());
+    if (txtAuxSimple.toString().equals("")) vars.setSessionValue(tableSQL.getTabID() + "|orderbySimple", txtAuxSimple.toString());
     
     Vector<String> positions = tableSQL.getOrderByPosition();
     txtAux = new StringBuffer();

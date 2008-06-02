@@ -224,8 +224,6 @@ public class DataGrid extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    //FIXME: testing... strRowsData.append("  <rows numRows=\"").append("10\">\n");
-    
     strRowsData.append("  <rows numRows=\"").append(getTotalRows(tableSQL)).append("\">\n");
     if (data!=null && data.length>0) {
       for (int j=0;j<data.length;j++) {
