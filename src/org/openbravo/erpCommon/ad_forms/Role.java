@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,7 +83,12 @@ public class Role extends HttpSecureAppServlet {
             vars = new VariablesSecureApp(request); // refresh
             printPage(response, vars, true);
         } else {
-          bdErrorGeneralPopUp(response, Utility.messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this, "LoginError", vars.getLanguage()));
+          OBError myMessage = new OBError();
+          myMessage.setType("Error");
+          myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+          myMessage.setMessage(Utility.messageBD(this, "LoginError", vars.getLanguage()));
+          vars.setMessage("Role", myMessage);
+          response.sendRedirect(strDireccion + request.getServletPath());
         }
     } 
     else pageErrorPopUp(response);
