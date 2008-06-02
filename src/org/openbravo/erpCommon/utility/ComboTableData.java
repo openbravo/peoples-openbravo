@@ -576,6 +576,7 @@ public class ComboTableData {
       setParameter("TD" + myIndex + ".AD_REFERENCE_ID", referenceValue);
     }
     if (tableName==null || tableName.length()==0) {
+      parseValidation();
       addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + ".Value = ? )", "ISACTIVE");
       addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
     }

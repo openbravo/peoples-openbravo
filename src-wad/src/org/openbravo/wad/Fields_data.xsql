@@ -640,7 +640,7 @@
         AND f.ad_tab_id = to_number(?) 
         AND (t.whereclause IS NOT NULL
             OR v.code IS NOT NULL
-            OR c.ad_reference_id in (19,18))
+            OR c.ad_reference_id in (19,18,17))
       ]]>
     </Sql>
     <Parameter name="tab"/>
