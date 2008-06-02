@@ -173,6 +173,9 @@
 	</parameter>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.NumberFormat"/>
+	<parameter name="CURRENCY_ISO_CODE" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["EUR"]]></defaultValueExpression>
+	</parameter>
 	<queryString><![CDATA[SELECT M_PRODUCT.VALUE, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.NAME, SUM(C_ORDERLINE.QTYORDERED) AS QTYORDERED, 
        C_UOM.UOMSYMBOL AS UOMSYMBOL, C_ORDERLINE.LINENETAMT AS PRICEACTUAL, 
           (CASE WHEN M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESET_ID IS NULL THEN '' 
@@ -325,20 +328,19 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 						positionType="FixRelativeToBottom"/>
 					<graphicElement stretchType="NoStretch" pen="Thin"/>
 				</line>
-				<staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						style="Report_Data_Label"
-						x="295"
+						x="235"
 						y="1"
-						width="46"
+						width="106"
 						height="16"
-						key="staticText-2"/>
+						key="textField-8"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
+					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-				<text><![CDATA[Total:]]></text>
-				</staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Total (" + $P{CURRENCY_ISO_CODE} + "): "]]></textFieldExpression>
+				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Gray"

@@ -184,13 +184,37 @@
 	</parameter>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
+	<parameter name="LANGUAGE" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["en_US"]]></defaultValueExpression>
+	</parameter>
 	<queryString><![CDATA[SELECT C_ORDER.C_ORDER_ID, C_ORDER.DATEORDERED, C_ORDER.DOCUMENTNO, C_BPARTNER.NAME, 
        C_BPARTNER_LOCATION.FAX, C_BPARTNER_LOCATION.PHONE,
-REPLACE(C_ORDER.DESCRIPTION, CHR(10), '') AS DESCRIPTION, 
-REPLACE(C_ORDER.DELIVERYNOTES, CHR(10), '') AS DELIVERYNOTES
-FROM C_ORDER left join C_BPARTNER_LOCATION on C_ORDER.BILLTO_ID = C_BPARTNER_LOCATION.C_BPARTNER_ID, C_BPARTNER
+       REPLACE(C_ORDER.DESCRIPTION, CHR(10), '') AS DESCRIPTION, 
+       REPLACE(C_ORDER.DELIVERYNOTES, CHR(10), '') AS DELIVERYNOTES,
+       AD_CLIENT.DESCRIPTION AS ENTITY,
+       C_LOCATION_DESCRIPTION(AD_ORGINFO.C_LOCATION_ID) AS LOCATION, FREIGHTCOSTRULE.NAME AS DELIVERYEXPENSE,
+       DELIVERYRULE.NAME AS DELIVERYTERM, C_CURRENCY.ISO_CODE, PAYMENTTERM.TERM AS PAYMENTTERM
+FROM   C_ORDER left join C_BPARTNER_LOCATION on C_ORDER.BILLTO_ID = C_BPARTNER_LOCATION.C_BPARTNER_ID, 
+       C_BPARTNER, AD_ORGINFO, AD_CLIENT, C_CURRENCY,
+       (SELECT VALUE, NAME
+  FROM AD_REF_LIST_V
+WHERE AD_REFERENCE_ID = 153
+  AND AD_LANGUAGE = $P{LANGUAGE}) FREIGHTCOSTRULE,
+  (SELECT VALUE, NAME
+  FROM AD_REF_LIST_V
+WHERE AD_REFERENCE_ID = 151
+  AND AD_LANGUAGE = $P{LANGUAGE}) DELIVERYRULE,
+  (SELECT C_PAYMENTTERM.C_PAYMENTTERM_ID, COALESCE( C_PAYMENTTERM_TRL.NAME, C_PAYMENTTERM.NAME) AS TERM
+  FROM C_PAYMENTTERM LEFT JOIN C_PAYMENTTERM_TRL ON C_PAYMENTTERM.C_PAYMENTTERM_ID = C_PAYMENTTERM_TRL.C_PAYMENTTERM_ID
+   AND C_PAYMENTTERM_TRL.AD_LANGUAGE= $P{LANGUAGE}) PAYMENTTERM
 WHERE C_ORDER.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
 AND C_ORDER.ISSOTRX = 'N'
+AND C_ORDER.ad_org_id = AD_ORGINFO.ad_org_id
+AND C_ORDER.AD_CLIENT_ID = AD_CLIENT.AD_CLIENT_ID
+AND C_ORDER.FREIGHTCOSTRULE = FREIGHTCOSTRULE.VALUE
+AND C_ORDER.DELIVERYRULE = DELIVERYRULE.VALUE
+AND C_ORDER.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
+AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID
 AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
 
 	<field name="C_ORDER_ID" class="java.math.BigDecimal"/>
@@ -201,6 +225,12 @@ AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
 	<field name="PHONE" class="java.lang.String"/>
 	<field name="DESCRIPTION" class="java.lang.String"/>
 	<field name="DELIVERYNOTES" class="java.lang.String"/>
+	<field name="ENTITY" class="java.lang.String"/>
+	<field name="LOCATION" class="java.lang.String"/>
+	<field name="DELIVERYEXPENSE" class="java.lang.String"/>
+	<field name="DELIVERYTERM" class="java.lang.String"/>
+	<field name="ISO_CODE" class="java.lang.String"/>
+	<field name="PAYMENTTERM" class="java.lang.String"/>
 
 
 		<group  name="C_ORDER_ID" isStartNewPage="true" isResetPageNumber="true" isReprintHeaderOnEachPage="true" >
@@ -218,25 +248,21 @@ AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
 					<graphicElement stretchType="NoStretch"/>
 					<imageExpression class="java.lang.String"><![CDATA[$P{BASE_WEB}+"/images/CompanyLogo_big.png"]]></imageExpression>
 				</image>
-				<staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						style="default"
 						mode="Transparent"
 						x="15"
 						y="88"
 						width="181"
 						height="50"
-						key="staticText-15"
+						key="textField-11"
 						stretchType="RelativeToBandHeight"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
-						<font/>
+						<font size="8"/>
 					</textElement>
-				<text><![CDATA[FAX no.: xx(948) 326 581 
-Phone no.: xx(948) 326 580
-xxYour Address
-xx1111 Your Town (Country)]]></text>
-				</staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ENTITY}+"\n"+$F{LOCATION}]]></textFieldExpression>
+				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
@@ -418,6 +444,9 @@ xx1111 Your Town (Country)]]></text>
 					<subreportParameter  name="NUMBERFORMAT">
 						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter  name="CURRENCY_ISO_CODE">
+						<subreportParameterExpression><![CDATA[$F{ISO_CODE}]]></subreportParameterExpression>
+					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES}]]></subreportExpression>
 				</subreport>
@@ -425,20 +454,6 @@ xx1111 Your Town (Country)]]></text>
 		</detail>
 		<columnFooter>
 			<band height="36"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Group_Data_Field"
-						x="57"
-						y="0"
-						width="369"
-						height="18"
-						key="textField-5"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="24" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Group_Data_Field"
@@ -514,55 +529,21 @@ xx1111 Your Town (Country)]]></text>
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
 				</textField>
-				<staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						style="default"
 						x="1"
 						y="79"
 						width="482"
-						height="18"
+						height="40"
 						forecolor="#000000"
-						key="staticText-18"
+						key="textField-12"
 						positionType="FixRelativeToBottom"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
-					<textElement>
-						<font/>
+					<textElement verticalAlignment="Top">
+						<font fontName="Bitstream Vera Sans" size="8"/>
 					</textElement>
-				<text><![CDATA[If there is no reply within 48 hours the order will be considered as accepted.]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="default"
-						x="90"
-						y="30"
-						width="106"
-						height="18"
-						forecolor="#000000"
-						key="staticText-23"
-						stretchType="RelativeToBandHeight"
-						positionType="FixRelativeToBottom"/>
-					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<text><![CDATA[from 9:00 to 13:00]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="default"
-						x="1"
-						y="97"
-						width="482"
-						height="18"
-						forecolor="#000000"
-						key="staticText-25"
-						positionType="FixRelativeToBottom"/>
-					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[Include order No. in shipment and invoice]]></text>
-				</staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+				</textField>
 				<staticText>
 					<reportElement
 						style="default"
@@ -576,7 +557,7 @@ xx1111 Your Town (Country)]]></text>
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Delivery Term]]></text>
+				<text><![CDATA[Invoice Rule]]></text>
 				</staticText>
 				<line direction="TopDown">
 					<reportElement
@@ -590,22 +571,7 @@ xx1111 Your Town (Country)]]></text>
 				<staticText>
 					<reportElement
 						style="default"
-						x="90"
-						y="7"
-						width="106"
-						height="18"
-						forecolor="#999999"
-						key="staticText-33"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[Delivery]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="default"
-						x="204"
+						x="94"
 						y="7"
 						width="96"
 						height="18"
@@ -620,7 +586,7 @@ xx1111 Your Town (Country)]]></text>
 				<staticText>
 					<reportElement
 						style="default"
-						x="312"
+						x="198"
 						y="7"
 						width="89"
 						height="18"
@@ -632,53 +598,50 @@ xx1111 Your Town (Country)]]></text>
 					</textElement>
 				<text><![CDATA[Payment Terms]]></text>
 				</staticText>
-				<staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						style="default"
 						x="1"
 						y="30"
 						width="79"
 						height="18"
 						forecolor="#000000"
-						key="staticText-36"/>
+						key="textField-9"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
-						<font/>
+						<font fontName="Bitstream Vera Sans" size="8"/>
 					</textElement>
-				<text><![CDATA[Immediate]]></text>
-				</staticText>
-				<staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DELIVERYTERM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						style="default"
-						x="204"
+						x="94"
 						y="30"
 						width="96"
 						height="18"
 						forecolor="#000000"
-						key="staticText-37"
+						key="textField-10"
 						positionType="FixRelativeToBottom"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
 					<textElement verticalAlignment="Middle">
-						<font/>
+						<font fontName="Bitstream Vera Sans" size="8"/>
 					</textElement>
-				<text><![CDATA[Included]]></text>
-				</staticText>
-				<staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DELIVERYEXPENSE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						style="default"
-						x="312"
+						x="198"
 						y="30"
 						width="89"
 						height="18"
 						forecolor="#000000"
-						key="staticText-38"
+						key="textField-13"
 						positionType="FixRelativeToBottom"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000" bottomPadding="2"/>
 					<textElement verticalAlignment="Middle">
-						<font/>
+						<font fontName="Bitstream Vera Sans" size="8"/>
 					</textElement>
-				<text><![CDATA[90 days]]></text>
-				</staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PAYMENTTERM}]]></textFieldExpression>
+				</textField>
 				<staticText>
 					<reportElement
 						style="default"
