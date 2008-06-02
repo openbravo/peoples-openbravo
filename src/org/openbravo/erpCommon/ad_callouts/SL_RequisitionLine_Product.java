@@ -129,10 +129,10 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       resultado.append("),\n");
     }
 
+    //To set the cursor focus in the amount field
+    resultado.append("new Array(\"CURSOR_FIELD\", \"inpqty\"),\n");
     if (!strMessage.equals("")) resultado.append("new Array('MESSAGE', \"" + FormatUtilities.replaceJS(Utility.messageBD(this, strMessage, vars.getLanguage())) + "\"),\n");
     resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
-    //To set the cursor focus in the amount field
-//    resultado.append("new Array(\"CURSOR_FIELD\", \"inpqty\")\n");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "frameAplicacion");
