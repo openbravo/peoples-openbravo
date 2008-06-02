@@ -201,7 +201,13 @@ public class Utility {
       
       String userLevel = vars.getSessionValue("#User_Level");
       
-      if (context.equalsIgnoreCase("#AccessibleOrgTree") || context.equalsIgnoreCase("#User_Org") ) {
+      if (context.equalsIgnoreCase("#AccessibleOrgTree")) {
+        if (!retValue.equals("0") && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {// add *
+          retValue = "0" + (retValue.equals("")?"":",") + retValue;
+        }
+      }
+          
+      if (context.equalsIgnoreCase("#User_Org")) {
         if (userLevel.contains("S")||userLevel.equals(" C ")) return "0"; //force org *
         
         if (userLevel.equals("  O")) { // remove *
@@ -260,7 +266,12 @@ public class Utility {
       retValue = vars.getSessionValue(context);
       
       String userLevel = vars.getSessionValue("#User_Level");
-      if (context.equalsIgnoreCase("#AccessibleOrgTree") || context.equalsIgnoreCase("#User_Org") ) {
+      if (context.equalsIgnoreCase("#AccessibleOrgTree")) {
+        if (!retValue.equals("0") && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {// add *
+          retValue = "0" + (retValue.equals("")?"":",") + retValue;
+        }
+      }
+      if (context.equalsIgnoreCase("#User_Org") ) {
         if (accessLevel==4||accessLevel==6) return "0"; //force to be org *
       
         if ((accessLevel==1) || (userLevel.equals("  O"))) { //No *: remove 0 from current list
