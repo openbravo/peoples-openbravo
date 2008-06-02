@@ -252,11 +252,11 @@ var arrWare=null;
                     </tr>
 
                     <tr>
-                      <td class="TitleCell" style="text-align:left;"><span class="LabelText"><a class="Popup_Client_UserOps_LabelLink_Selected" href="#" onmouseover="window.status='Session options';return true;" onmouseout="window.status='';return true;" onClick="unfold('sessionOptions');return false;" id="sessionOptions_MenuItem">Session options</a></span></td>
+                      <td class="TitleCell" style="text-align:left;"><span class="LabelText"><a class="Popup_Client_UserOps_LabelLink_Selected" href="#" onmouseover="window.status='Session options';return true;" onmouseout="window.status='';return true;" onClick="unfold('sessionOptions');setTimeout('setWindowElementFocus(\'sectionRol\',\'id\')',50);return false;" id="sessionOptions_MenuItem">Session options</a></span></td>
                     </tr>
                   
                     <tr>
-                      <td class="TitleCell" style="text-align:left;"><span class="LabelText"><a class="Popup_Client_UserOps_LabelLink" href="#" onmouseover="window.status='Change password';return true;" onmouseout="window.status='';return true;" onClick="unfold('changePassword');return false;" id="changePassword_MenuItem">Change password</a></span></td>
+                      <td class="TitleCell" style="text-align:left;"><span class="LabelText"><a class="Popup_Client_UserOps_LabelLink" href="#" onmouseover="window.status='Change password';return true;" onmouseout="window.status='';return true;" onClick="unfold('changePassword');setTimeout('setWindowElementFocus(\'sectionActual\',\'id\')',50);return false;" id="changePassword_MenuItem">Change password</a></span></td>
                     </tr>
 
                   </table>
@@ -513,7 +513,7 @@ var arrWare=null;
                         <td></td>
                         <td class="TitleCell"><span class="LabelText">Actual password</span></td>
                         <td class="TextBox_ContentCell">
-                          <input class="dojoValidateValid TextBox_TwoCells_width" type="password" name="inpClaveOld" size="40" maxlength="40" value=""></input>
+                          <input class="dojoValidateValid TextBox_TwoCells_width" type="password" name="inpClaveOld" size="40" maxlength="40" value="" id="sectionActual"></input>
                         </td>
                         <td></td>
                       </tr>

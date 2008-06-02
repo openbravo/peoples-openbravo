@@ -99,13 +99,6 @@ function enableDefaultAction() {
   activateDefaultAction();
 }
 
-function fixButton(fixFocusObj , fixFocusObjTableId, fixFocusObjFrameName) {
-  this.fixFocusObj = fixFocusObj;
-  this.fixFocusObjTableId = fixFocusObjTableId;
-  this.fixFocusObjFrameName = fixFocusObjFrameName;  
-}
-
-
 function activeElementFocus() {
   if (focusedWindowElement && selectedArea=='window') putWindowElementFocus(focusedWindowElement);
 }
@@ -129,11 +122,9 @@ function swichSelectedArea() {
   }
 }
 
-function windowTableId(tableId, defaultActionButtonId, frameName, defaultActionButtonIdFrame) {
+function windowTableId(tableId, defaultActionButtonId) {
   this.tableId = tableId;
   this.defaultActionButtonId = defaultActionButtonId;
-  this.frameName = frameName;
-  this.defaultActionButtonIdFrame = defaultActionButtonIdFrame;
 }
 
 
@@ -729,18 +720,7 @@ function goToNextWindowTable() {
   } else {
     focusedWindowTable = 0;
   }
-  var newFrameName = windowTables[focusedWindowTable].frameName;
-  if (oldFrameName != newFrameName) {
-    top.frames[oldFrameName].frameLocked = true;
-    top.frames[newFrameName].frameLocked = false;
-    top.frames[oldFrameName].focusedWindowTable = focusedWindowTable;
-    top.frames[newFrameName].focusedWindowTable = focusedWindowTable;
-    top.frames[newFrameName].setWindowTableParentElement();
-    //alert(newFrameName + ' ' + top.frames[newFrameName].windowTableParentElement + ' ' + top.frames[newFrameName].focusedWindowTable + ' ' + top.frames[newFrameName].frameLocked);
-    top.frames[newFrameName].setCurrentWindowTableFirstElementFocus();
-  } else {
-    setWindowTableParentElement();
-  }
+  setWindowTableParentElement();
 }
 
 function goToPreviousWindowTable() {
@@ -750,17 +730,8 @@ function goToPreviousWindowTable() {
   } else {
     focusedWindowTable = windowTables.length-1;
   }
-  var newFrameName = windowTables[focusedWindowTable].frameName;  
-  if (oldFrameName != newFrameName) {
-    top.frames[oldFrameName].frameLocked = true;
-    top.frames[newFrameName].frameLocked = false;
-    top.frames[oldFrameName].focusedWindowTable = focusedWindowTable;
-    top.frames[newFrameName].focusedWindowTable = focusedWindowTable;
-    top.frames[newFrameName].setWindowTableParentElement();
-    top.frames[newFrameName].setCurrentWindowTableLastElementFocus();
-  } else {
-    setWindowTableParentElement();
-  }
+  setWindowTableParentElement();
+
 }
 
 function getCurrentWindowTableFirstElement() {
