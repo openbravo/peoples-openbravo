@@ -28,15 +28,25 @@
   <SCRIPT language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></SCRIPT>
   <script language="JavaScript" type="text/javascript">
   
+  function openRegistration() {
+  	var w = window.opener;
+  	if(w) {
+  		w.openRegistration();
+  	}
+  	return true;
+  }
+  
   function configure() {
   	openLink('../HeartbeatConfiguration/HeartbeatConfiguration_Relation.html', 'frameAplicacion');
   	self.close();
   }
   function disable() {
+  	openRegistration();
   	submitCommandForm('DISABLE', false, null);
   	window.close();
   }
   function postpone() {
+    openRegistration();
   	submitCommandForm('POSTPONE', false, null);
   	window.close();
   }
