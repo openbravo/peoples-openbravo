@@ -1339,9 +1339,9 @@
 <!--146 CREATEDBY-->
 <!--146-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--146 UPDATED-->
-<!--146-->              <UPDATED><![CDATA[2003-02-22 02:20:11.0]]></UPDATED>
+<!--146-->              <UPDATED><![CDATA[2008-06-02 10:17:28.0]]></UPDATED>
 <!--146 UPDATEDBY-->
-<!--146-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--146-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--146 NAME-->
 <!--146-->              <NAME><![CDATA[Price List]]></NAME>
 <!--146 DESCRIPTION-->
@@ -1351,7 +1351,7 @@
 <!--146 WINDOWTYPE-->
 <!--146-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--146 ISSOTRX-->
-<!--146-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
+<!--146-->              <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--146 PROCESSING-->
 <!--146-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--146 ISDEFAULT-->
