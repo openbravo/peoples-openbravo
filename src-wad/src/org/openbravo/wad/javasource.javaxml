@@ -1024,13 +1024,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       xmlDocument.setParameter("cancel", Utility.messageBD(this, "Cancel", vars.getLanguage()));
       xmlDocument.setParameter("ok", Utility.messageBD(this, "OK", vars.getLanguage()));
       
-      try {
-        KeyMap key = new KeyMap(this, vars, tabId, windowId);
-        xmlDocument.setParameter("keyMap", key.getActionButtonKeyMaps());
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-      
       {
         OBError myMessage = vars.getMessage("<FIELD_TMP id="ProcessID2">xx</FIELD_TMP>");
         vars.removeMessage("<FIELD_TMP id="ProcessID2">xx</FIELD_TMP>");
