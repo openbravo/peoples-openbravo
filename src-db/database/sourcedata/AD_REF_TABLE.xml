@@ -291,8 +291,6 @@
 <!--112-->              <AD_DISPLAY><![CDATA[458]]></AD_DISPLAY>
 <!--112 ISVALUEDISPLAYED-->
 <!--112-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--112 WHERECLAUSE-->
-<!--112-->              <WHERECLAUSE><![CDATA[C_Currency.IsEMUMember='N']]></WHERECLAUSE>
 <!--112 ORDERBYCLAUSE-->
 <!--112-->              <ORDERBYCLAUSE><![CDATA[C_Currency.ISO_Code]]></ORDERBYCLAUSE>
 <!--112**************--></AD_REF_TABLE>
