@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_actionButton;
 
 import org.openbravo.erpCommon.ad_combos.*;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.Replace;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -45,7 +46,7 @@ public class CreateFile extends HttpSecureAppServlet {
       String strWindow = vars.getStringParameter("inpwindowId");
       String strKey = vars.getStringParameter("inpcRemittanceId");
       String strMessage = "";
-      printPage(response, vars, strKey, strWindow, strProcessId, strMessage);
+      printPage(response, vars, strKey, strWindow, strProcessId, strMessage, true);
     } else if(vars.commandIn("GENERATE")){
       String strKey = vars.getStringParameter("inpcRemittanceId");
       getPrintPage(response, vars, strKey);
@@ -53,7 +54,7 @@ public class CreateFile extends HttpSecureAppServlet {
   }
 
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey, String windowId, String strProcessId, String strMessage)
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey, String windowId, String strProcessId, String strMessage, boolean isDefault)
     throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: Button create file msg:"+strMessage);
 
@@ -77,8 +78,31 @@ public class CreateFile extends HttpSecureAppServlet {
       xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
-      xmlDocument.setParameter("message",strMessage.equals("")?"":"alert('" + strMessage + "');");
-
+      
+      if(isDefault){
+        xmlDocument.setParameter("messageType", "");
+        xmlDocument.setParameter("messageTitle", "");
+        xmlDocument.setParameter("messageMessage", "");
+      }else{
+        OBError myMessage = new OBError();
+        myMessage.setTitle("");
+        if(log4j.isDebugEnabled()) log4j.debug("CreateFile - before setMessage");
+        if(strMessage==null || strMessage.equals("")) myMessage.setType("Success");
+        else myMessage.setType("Error");
+        if(strMessage!=null && !strMessage.equals("")) {
+          myMessage.setMessage(strMessage);
+        } else Utility.translateError(this, vars, vars.getLanguage(), "Success");
+        if(log4j.isDebugEnabled()) log4j.debug("CreateFile - Message Type: " + myMessage.getType());
+        vars.setMessage("CreateFile", myMessage);
+        if(log4j.isDebugEnabled()) log4j.debug("CreateFile - after setMessage");
+        if (myMessage!=null) {
+          xmlDocument.setParameter("messageType", myMessage.getType());
+          xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+          xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+        }
+      }
+      
+      
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       out.println(xmlDocument.print());
@@ -114,13 +138,13 @@ public class CreateFile extends HttpSecureAppServlet {
 
     if(comprobacion1 != 0 || comprobacion2 == 0 || comprobacion3 !=1 || comprobacion4 == 0){
     strMessage = Utility.messageBD(this, "CreateFileError", vars.getLanguage());
-    printPage(response, vars, strKey, "", "", strMessage);
+    printPage(response, vars, strKey, "", "", strMessage, false);
     }
     int contador = 2;
     // dubugging headers
     if (Principio == null || Principio.length == 0){
         strMessage = Utility.messageBD(this, "DefaultAccountError", vars.getLanguage());
-        printPage(response, vars, strKey, "", "", strMessage);
+        printPage(response, vars, strKey, "", "", strMessage, false);
 		return;
     }
     if (Lineas == null || Total == null)return;
@@ -192,7 +216,7 @@ public class CreateFile extends HttpSecureAppServlet {
     strBuf = strBuf.append("5970").append(Principio[0].nif).append(strContract);
     strBuf = strBuf.append(NLineas[0].ordenantes).append(Total[0].payamt).append(Total[0].nFactura).append(NLineas[0].lineas);
     if (!strMessage.equals("")){
-      printPage(response, vars, strKey, "", "", strMessage);
+      printPage(response, vars, strKey, "", "", strMessage, false);
     }else{
       response.setContentType("application/rtf");
       response.setHeader("Content-Disposition","attachment; filename=BANK.DAT");
@@ -218,14 +242,14 @@ public class CreateFile extends HttpSecureAppServlet {
     if(comprobacion1 != 0 || comprobacion2 == 0 || comprobacion3 !=1 || comprobacion4 == 0){
       if (log4j.isDebugEnabled()) log4j.debug("Error: c1:"+comprobacion1+" c2:"+comprobacion2+" c3:"+comprobacion3+" c4:"+comprobacion4);
       strMessage = Utility.messageBD(this, "CreateFileError", vars.getLanguage());
-      printPage(response, vars, strKey, "", "", strMessage);
+      printPage(response, vars, strKey, "", "", strMessage, false);
     }
     if (log4j.isDebugEnabled()) log4j.debug("check1 ok");
     int contador = 2;
     //debugging headers
     if (Principio == null || Principio.length == 0){
         strMessage = Utility.messageBD(this, "DefaultAccountError", vars.getLanguage());
-        printPage(response, vars, strKey, "", "", strMessage);
+        printPage(response, vars, strKey, "", "", strMessage, false);
 		return;
     }
     if (Lineas == null || Total == null)return;
@@ -308,7 +332,7 @@ public class CreateFile extends HttpSecureAppServlet {
     strBuf = strBuf.append("5980").append(Principio[0].nif).append(strContract);
     strBuf = strBuf.append(NLineas[0].ordenantes).append(Total[0].payamt).append(Total[0].nFactura).append(NLineas[0].lineas);
     if (!strMessage.equals("")){
-      printPage(response, vars, strKey, "", "", strMessage);
+      printPage(response, vars, strKey, "", "", strMessage, false);
     }else{
       response.setContentType("application/rtf");
       response.setHeader("Content-Disposition","attachment; filename=BANK.DAT");
@@ -377,7 +401,7 @@ public class CreateFile extends HttpSecureAppServlet {
     if(comprobacion1 != 0 || comprobacion2 == 0 || comprobacion3 !=1 || comprobacion4 == 0){
       if (log4j.isDebugEnabled()) log4j.debug("Error: c1:"+comprobacion1+" c2:"+comprobacion2+" c3:"+comprobacion3+" c4:"+comprobacion4);
       strMessage = Utility.messageBD(this, "CreateFileError", vars.getLanguage());
-      printPage(response, vars, strKey, "", "", strMessage);
+      printPage(response, vars, strKey, "", "", strMessage, false);
     }
 
     if (log4j.isDebugEnabled()) log4j.debug("Principio[0].taxid = " + Principio[0].taxid);
@@ -388,20 +412,20 @@ public class CreateFile extends HttpSecureAppServlet {
     //debugging headers
     if (Principio == null || Principio.length == 0){
         strMessage = Utility.messageBD(this, "DefaultAccountError", vars.getLanguage());
-        printPage(response, vars, strKey, "", "", strMessage);
+        printPage(response, vars, strKey, "", "", strMessage, false);
 		    return;
     }
     if (Lineas == null || Total == null) return;
     if (Principio[0].taxid == null || Principio[0].taxid.length()!=9){
         strMessage = Utility.messageBD(this, "NIFError", vars.getLanguage());
         if (log4j.isDebugEnabled()) log4j.debug("VAT number");
-        printPage(response, vars, strKey, "", "", strMessage);
+        printPage(response, vars, strKey, "", "", strMessage, false);
         return;
     }
     if (Principio[0].acct == null || Principio[0].acct.length()!=18){
         strMessage = Utility.messageBD(this, "BankAccountError", vars.getLanguage());
         if (log4j.isDebugEnabled()) log4j.debug("bankaccount");
-        printPage(response, vars, strKey, "", "", strMessage);
+        printPage(response, vars, strKey, "", "", strMessage, false);
         return;
     }
 
@@ -409,7 +433,7 @@ public class CreateFile extends HttpSecureAppServlet {
     {
        strMessage = Utility.messageBD(this, "TodayHigherDueData", vars.getLanguage());
        if (log4j.isDebugEnabled()) log4j.debug("TodayHigherDueData");
-       printPage(response, vars, strKey, "", "", strMessage);
+       printPage(response, vars, strKey, "", "", strMessage, false);
        return;
     }*/
 
@@ -447,37 +471,37 @@ public class CreateFile extends HttpSecureAppServlet {
         if (Lineas[i].nom == null || Lineas[i].nom.length()<1){
           if (log4j.isDebugEnabled()) log4j.debug("NameError");
             strMessage = Utility.messageBD(this, "NameError", vars.getLanguage()) + Lineas[i].nif;
-            printPage(response, vars, strKey, "", "", strMessage);
+            printPage(response, vars, strKey, "", "", strMessage, false);
             return;
         }
         if (Lineas[i].taxid == null || Lineas[i].taxid.length()!=9){
             if (log4j.isDebugEnabled()) log4j.debug("NIFError");
             strMessage = Utility.messageBD(this, "NIFBPartnerError", vars.getLanguage()) + Lineas[i].nombre;
-            printPage(response, vars, strKey, "", "", strMessage);
+            printPage(response, vars, strKey, "", "", strMessage, false);
             return;
         }
         if (Lineas[i].acct == null || Lineas[i].acct.length()!=20){
             if (log4j.isDebugEnabled()) log4j.debug("CodeBankBPError");
             strMessage = Utility.messageBD(this, "CodeBankBPError", vars.getLanguage()) + Lineas[i].nombre;
-            printPage(response, vars, strKey, "", "", strMessage);
+            printPage(response, vars, strKey, "", "", strMessage, false);
             return;
         }
         if (Lineas[i].dom == null || Lineas[i].dom.length()<1){
           if (log4j.isDebugEnabled()) log4j.debug("AddressError");
             strMessage = Utility.messageBD(this, "AddressError", vars.getLanguage()) + Lineas[i].nombre;
-            printPage(response, vars, strKey, "", "", strMessage);
+            printPage(response, vars, strKey, "", "", strMessage, false);
             return;
         }
         if (Lineas[i].pla == null || Lineas[i].pla.length()<1){
           if (log4j.isDebugEnabled()) log4j.debug("SquareError");
             strMessage = Utility.messageBD(this, "SquareError", vars.getLanguage()) + Lineas[i].nombre;
-            printPage(response, vars, strKey, "", "", strMessage);
+            printPage(response, vars, strKey, "", "", strMessage, false);
             return;
         }
         if (Lineas[i].prov == null || Lineas[i].prov.length()<1){
           if (log4j.isDebugEnabled()) log4j.debug("AddressError");
             strMessage = Utility.messageBD(this, "AddressError", vars.getLanguage()) + Lineas[i].nombre;
-            printPage(response, vars, strKey, "", "", strMessage);
+            printPage(response, vars, strKey, "", "", strMessage, false);
             return;
         }
         //010
@@ -514,7 +538,7 @@ public class CreateFile extends HttpSecureAppServlet {
    strBuf = strBuf.append(NLineas[0].ordenantes).append(NLineas[0].lineas).append(NLineas[0].hueco).append("\r\n");
 
     if (!strMessage.equals("")){
-      printPage(response, vars, strKey, "", "", strMessage);
+      printPage(response, vars, strKey, "", "", strMessage, false);
     }else{
       response.setContentType("application/rtf");
       response.setHeader("Content-Disposition","attachment; filename=BANK.DAT");

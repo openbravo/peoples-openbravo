@@ -47,25 +47,24 @@
     return true;
   }
   </SCRIPT>
-	<SCRIPT language="JavaScript" type="text/javascript">
+  	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonOK')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
-		
-		xx();
 
 		setWindowElementFocus('firstElement');
 	}
 
 	function onResizeDo(){
 	}
-	</SCRIPT>
+	</SCRIPT>  
+
 </HEAD>
 
-<BODY id="paramMessage" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <FORM id="form" method="POST" action="CreateFile.html" name="frmMain">
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
@@ -126,6 +125,91 @@
     <tr>
       <td>
         <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
+        <!-- MessageBox -->
+
+                            <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
+                              <TBODY>
+                              <tr class="MessageBox_TopMargin">
+                                <td class="MessageBox_LeftMargin"></td>
+                                <td></td>
+                                <td class="MessageBox_RightMargin"></td>
+                              </tr>
+                              <tr>
+                                <td class="MessageBox_LeftMargin"></td>
+                                <td>
+
+                                  <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                                    <TBODY>
+                                    <tr>
+                                      <td>
+                                        <div class="MessageBox_TopLeft"></div>
+                                        <div class="MessageBox_Left"></div>
+                                      </td>
+                                      <td class="MessageBox_bg">
+
+                                        <table class="MessageBox_Top">
+                                        <TBODY>
+                                          <tr>
+                                            <td>
+                                              <span>
+                                              <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
+                                                <TBODY>
+                                                <tr>
+                                                  <td class="MessageBox_Icon_ContentCell">
+                                                    <div class="MessageBox_Icon"></div>
+                                                  </td>
+                                                  <td style="vertical-align: top;" id="messageBoxIDContent">
+                                                    <span>
+                                                      <div class="MessageBox_TextTitle" id="messageBoxIDTitle">
+                                                        xxInfo: AccessTableWithNoView
+                                                      </div>
+                                                      <div class="MessageBox_TextDescription" id="messageBoxIDMessage">
+                                                        xxThe current information is empty.
+                                                      </div>
+                                                      <div class="MessageBox_TextSeparator"></div>
+                                                    </span>
+                                                  </td>
+                                                </tr>
+                                                </TBODY>
+                                              </table>
+                                              </span>
+                                            </td>
+                                          </tr>
+                                          </TBODY>
+                                        </table>
+
+                                      </td>
+                                      <td class="MessageBox_RightTrans">
+                                        <div class="MessageBox_TopRight"></div>
+                                        <div class="MessageBox_Right"></div>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td rowspan="2" class="MessageBox_BottomLeft">
+                                      </td>
+                                      <td class="MessageBox_BottomTrans MessageBox_bg">
+                                      </td>
+                                      <td rowspan="2" class="MessageBox_BottomRight">
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="MessageBox_Bottom">
+                                      </td>
+                                    </tr>
+                                    </TBODY>
+                                  </table>
+
+                                </td>
+                                <td class="MessageBox_RightMargin"></td>
+                              </tr>
+                              <tr class="MessageBox_BottomMargin">
+                                <td class="MessageBox_LeftMargin"></td>
+                                <td></td>
+                                <td class="MessageBox_RightMargin"></td>
+                              </tr>
+                              </TBODY>
+                            </table>              <!-- USER CONTROLS -->
+        
           <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
 
             <tr>
