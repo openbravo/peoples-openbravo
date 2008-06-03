@@ -296,43 +296,48 @@ function onloadFunctions() {
                     <TD class="ContentCell"></TD>
                   </TR>
     </TABLE>
-   <div align="center"> 
-    <TABLE  border="1" cellspacing="0" cellpadding="0" width="60%"><!--RESUMEN DE TODAS LAS CUENTAS AUNQUE ELIGAN UNA EN CONCRETO/-->
-      <TR class="TableHeaderLevel1"> 
-          <td  width="12%">&nbsp;</Td>
-      <td  width="12%">On the bank</Td>
-      <td  colspan="2" width="12%">Forecast</Td>
-      <td  width="12%">Final</Td>
+	
+	<br>
+	
+	<table class="Main_Client_TableEdition">
+	  <tr>
+		<td colspan="6">
+
+    <TABLE cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" ><!--RESUMEN DE TODAS LAS CUENTAS AUNQUE ELIGAN UNA EN CONCRETO/-->
+      <TR class="DataGrid_Body_Row"> 
+         <TH class="DataGrid_Header_Cell"  >&nbsp;</TH>
+      	<TH class="DataGrid_Header_Cell"  width="12%">On the bank</TH>
+      	<TH class="DataGrid_Header_Cell"  colspan="2" width="12%">Forecast</TH>
+      	<TH class="DataGrid_Header_Cell"  width="12%">Final</TH>
       </TR>
-        <TR class="TableHeaderLevel2"> 
-            <TD width="12%">Account No.</TD>
-      <TD width="12%"> <SPAN id="fieldDate">xx12/01/2000</SPAN></TD>
-      <TD width="12%">Income</TD>
-      <TD width="12%">Payment</TD>
-      <TD width="12%"> <SPAN id="fieldFinalDate">XX12/01/2005</SPAN></TD>
+        <TR class="DataGrid_Body_Row"> 
+            <TH class="DataGrid_Header_Cell"  width="12%">Account No.</TH>
+      		<TH class="DataGrid_Header_Cell" width="12%"> <SPAN id="fieldDate">xx12/01/2000</SPAN></TH>
+      		<TH class="DataGrid_Header_Cell" width="12%">Income</TH>
+      		<TH class="DataGrid_Header_Cell" width="12%">Payment</TH>
+     		 <TH class="DataGrid_Header_Cell" width="12%"> <SPAN id="fieldFinalDate">XX12/01/2005</SPAN></TH>
         </TR>
       <div id="sectionAccountSummary">
-    <tr class="Border TableDetailRowEven">
-      <TD id="fieldAcctSumary">xx11111111111111111</TD>
-      <TD id="fieldBalanceSumary">xx100000</TD>
-      <TD id="fieldIncomeSummary">xx3456</TD>
-      <TD id="fieldPaymentSummary">xx70000</TD>
-      <TD id="fieldFinalSummary">xx130945</SPAN></TD>
-    </tr>
+    	<TR class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
+      		<TD class="DataGrid_Body_Cell" id="fieldAcctSumary">xx11111111111111111</TD>
+      		<TD class="DataGrid_Body_Cell" id="fieldBalanceSumary">xx100000</TD>
+      		<TD class="DataGrid_Body_Cell" id="fieldIncomeSummary">xx3456</TD>
+      		<TD class="DataGrid_Body_Cell" id="fieldPaymentSummary">xx70000</TD>
+      		<TD class="DataGrid_Body_Cell" id="fieldFinalSummary">xx130945</TD>
+    	</TR>
     </div>
   </table>
-  </div>
+
 <br>
 
-
 <div id="sectionAccount"><!-- ROTURA POR Nº DE CUENTAS. SI NO ELIGEN UNA EN CONCRETO PUES VERAS EL DETALLE DE CADA UNA DE ELLAS/-->
-   <TABLE width="100%" border="1">
-      <TR class="TableHeaderLevel1"> 
-          <TD width="50%">Account No&nbsp;<span id="fieldAccount">xx1111111111111111</span></TD> 
-          <TD width="25%">On the bank (<span id="fieldSysdate">xx12/12/2006</span>) <span id="fieldAmountInitial" >xx12345</span></TD> 
-          <TD width="25%" >Final<span>&nbsp;</span><span id="fieldAmountfinal" >xx4567</span></TD> 
+   <TABLE cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;border-bottom: 0px none;">
+      <TR> 
+          <TH class="DataGrid_Header_Cell"  width="50%">Account No&nbsp;<span id="fieldAccount">xx1111111111111111</span></TH> 
+          <TH class="DataGrid_Header_Cell"  width="25%">On the bank (<span id="fieldSysdate">xx12/12/2006</span>) <span id="fieldAmountInitial" >xx12345</span></TH> 
+          <TH class="DataGrid_Header_Cell"  width="25%" >Final<span>&nbsp;</span><span id="fieldAmountfinal" >xx4567</span></TH>
         </TR>
-  </table>
+</TABLE>
 
   <div id="subrpt">
     <div id="reportAccountDate"/>
@@ -340,15 +345,18 @@ function onloadFunctions() {
   </div>
    
     
-    <table width="30%"><!--UN TOTAL AL FINAL DE LOS INGRESOS MENOS LOS GASTOS/-->
-      <TR class="TableHeaderLevel2"> 
-          <TD colspan="2" > <SPAN >Total amount incoming-payments</SPAN></TD>
-          <TD colspan="2" > <SPAN id="fieldSumAmount">xx23455.56</SPAN></TD>
+    <TABLE cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;border-top: 0px none;">
+      <TR class="DataGrid_Body_Row"> 
+          <TH class="DataGrid_Header_Cell"  colspan="2" > <SPAN >Total amount incoming-payments</SPAN></TH>
+          <TH class="DataGrid_Header_Cell"  colspan="2" > <SPAN id="fieldSumAmount">xx23455.56</SPAN></TH>
         </TR>
       </TABLE>
-      <BR>
-  </DIV><!--sectionAccount/-->
 
+  </DIV><!--sectionAccount/-->
+				
+			</td>
+		</tr>
+	</table>
                       <!-- USER CONTROLS -->
                 </TD>
               </TR>

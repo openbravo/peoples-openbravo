@@ -20,38 +20,38 @@
 <DIV id="sectionTotal">
 <INPUT type="hidden" id="fieldSumAmount" value=""/>
  <DIV id="sectionDatePlanned">
-   <div align="right"> 
-     <table width="99%" >
-        <TR class="TableHeaderLevel2"> 
-      <TD>
+   <div> 
+     <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;border-top: 0px none;border-bottom: 0px none;" >
+       <TR class="DataGrid_Body_Row"> 
+      <TH class="DataGrid_Header_Cell">
         <span >Date planned: </span><span  id="fieldDatePlanned">xx23/10/1900</span>
       <span >Tot inc-paym: </span><span id="fieldAmtDatePlanned">xx12345</span>
       <span >Balance:</span><span id="fieldBalanceDatePlanned">xx12345</span>
       <input type="hidden" id="fieldInitialBalanceHidden" value=""/>
       <!--<input type="hidden" id="fieldAccumAmtHidden" value=""/>-->
-      </TD>
+      </TH>
      </TR>
         </table>
 
-     <table width="98%" >
-        <TR > 
-          <TD width="10%">Date Invoiced</TD>
-          <TD width="10%">Invoice No.</TD>
-          <TD width="35%">B.Partner</TD>
-          <TD width="35%">Debt Payment</TD>
-          <TD width="10%">Amount</TD>
+     <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;border-top: 0px none;border-bottom: 0px none;">
+        <TR class="DataGrid_Body_Row"> 
+          <TH class="DataGrid_Header_Cell" width="10%">Date Invoiced</TH>
+          <TH class="DataGrid_Header_Cell" width="10%">Invoice No.</TH>
+          <TH class="DataGrid_Header_Cell" width="35%">B.Partner</TH>
+          <TH class="DataGrid_Header_Cell" width="35%">Debt Payment</TH>
+          <TH class="DataGrid_Header_Cell" width="10%">Amount</TH>
         </TR>   
         <DIV id="sectionTypePayment"> <!--ROTURA SI SON INGRESO O BIEN SI SON PAGOS/-->
-        <tr>
-          <td colspan="5"  id="fieldClassType"><span  id="fieldTypePayment">xxINGRESOS</span></td>
-        </tr>
+        <TR class="DataGrid_Body_Row">
+          <TH class="DataGrid_Header_Cell" colspan="5"  id="fieldClassType"><span  id="fieldTypePayment">xxINGRESOS</span></TH>
+        </TR>
         <DIV id="sectionDetail">
-          <TR class="Border TableDetailRowEven"> 
-            <TD id="fieldDateInvoiced">xx23/10/1900</TD>
-            <TD id="fieldInvoiceNo" >xx5555</TD>
-            <TD ><SPAN  id="fieldBP">xxCONSTRUCCIONES GANCEDO-GONZALEZ, S.A </SPAN></TD>
-            <TD id="fieldDescription" >xxFACTURA</TD>
-            <TD> 
+          <TR class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
+            <TD class="DataGrid_Body_Cell" id="fieldDateInvoiced">xx23/10/1900</TD>
+            <TD class="DataGrid_Body_Cell" id="fieldInvoiceNo" >xx5555</TD>
+            <TD class="DataGrid_Body_Cell" ><SPAN  id="fieldBP">xxCONSTRUCCIONES GANCEDO-GONZALEZ, S.A </SPAN></TD>
+            <TD class="DataGrid_Body_Cell" id="fieldDescription" >xxFACTURA</TD>
+            <TD class="DataGrid_Body_Cell" > 
               <A href="#" onClick="submitCommandFormParameter('DIRECT', document.frmMain.inpcDebtPaymentId, xx, false, document.frmMain, '../yy', null, false, true);return false;" onmouseover="window.status='DebtPayment';return true;" onmouseout="window.status='';return true;" class="Link" id="fieldCDebtPaymentId">
                 <SPAN id="fieldAmountLine" >xx3456</SPAN>
               </A>

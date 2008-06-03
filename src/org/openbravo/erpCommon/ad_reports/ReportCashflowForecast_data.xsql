@@ -113,6 +113,7 @@
        ) AAA  
        ORDER BY 1
      ]]></Sql>
+    <Field name="rownum" value="count"/>
     <Parameter name="dateMax" optional="true" after="AND 1=1"><![CDATA[ AND DP.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
     <Parameter name="dateMax" optional="true" after="AND 2=2"><![CDATA[ AND DP.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
     <Parameter name="bankaccount" optional="true" after="AND 3=3"><![CDATA[ AND BA.C_BANKACCOUNT_ID = TO_NUMBER(?) ]]></Parameter>
@@ -181,6 +182,7 @@
          AND 1=1
        ORDER BY 1,2 DESC
     ]]></Sql>
+    <Field name="rownum" value="count"/>
     <Parameter name="dateFormat"/>
     <Parameter name="language"/>
     <Parameter name="bankaccount"/>
