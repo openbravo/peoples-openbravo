@@ -182,7 +182,7 @@
 	>
 
 		<conditionalStyle>
-			<conditionExpression><![CDATA[new Boolean($F{NEEDED}.floatValue()>$F{STOCK}.add($F{INPROCESS}).floatValue())]]></conditionExpression>
+			<conditionExpression><![CDATA[new Boolean($F{NEEDED}.compareTo($F{STOCK}.add($F{INPROCESS}))>1)]]></conditionExpression>
 			<style 
 				isDefault="false"
 				forecolor="#FF0000"
