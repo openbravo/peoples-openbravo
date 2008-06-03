@@ -146,8 +146,10 @@ public class ToolBar {
     buttons.put("SAVE_EDIT", new ToolBar_Button(base_direction, "Save", Utility.messageBD(conn, "SaveEdit", language), getButtonScript("SAVE_EDIT")));
     buttons.put("SAVE_NEXT", new ToolBar_Button(base_direction, "Save_Next", Utility.messageBD(conn, "SaveNext", language), getButtonScript("SAVE_NEXT")));
     buttons.put("SEPARATOR3", new ToolBar_Space(base_direction));
-    buttons.put("DELETE", new ToolBar_Button(base_direction, "Delete", Utility.messageBD(conn, "Delete", language), getButtonScript("DELETE")));
-    buttons.put("DELETE_RELATION", new ToolBar_Button(base_direction, "Delete", Utility.messageBD(conn, "Delete", language), getButtonScript("DELETE_RELATION")));
+    if (isEditable) {
+      buttons.put("DELETE", new ToolBar_Button(base_direction, "Delete", Utility.messageBD(conn, "Delete", language), getButtonScript("DELETE")));
+      buttons.put("DELETE_RELATION", new ToolBar_Button(base_direction, "Delete", Utility.messageBD(conn, "Delete", language), getButtonScript("DELETE_RELATION")));
+    }
     buttons.put("SEPARATOR4", new ToolBar_Space(base_direction));
     //buttons.put("REFRESH", new ToolBar_Button(base_direction, "Refresh", Utility.messageBD(conn, "Refresh", language), getButtonScript("REFRESH")));
     buttons.put("UNDO", new ToolBar_Button(base_direction, "Undo", Utility.messageBD(conn, "Undo", language), getButtonScript("UNDO")));
