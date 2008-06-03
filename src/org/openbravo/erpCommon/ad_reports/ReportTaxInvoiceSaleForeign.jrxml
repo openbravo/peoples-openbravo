@@ -182,11 +182,11 @@
 	<field name="TAXAMT" class="java.math.BigDecimal"/>
 	<field name="ADTREEID" class="java.lang.String"/>
 
-	<variable name="sumTaxBaseAmt" class="java.lang.Float" resetType="Group" resetGroup="TAXNAME" calculation="Sum">
-		<variableExpression><![CDATA[new Float($F{TAXBASEAMT}.floatValue())]]></variableExpression>
+	<variable name="sumTaxBaseAmt" class="java.math.BigDecimal" resetType="Group" resetGroup="TAXNAME" calculation="Sum">
+		<variableExpression><![CDATA[$F{TAXBASEAMT}]]></variableExpression>
 	</variable>
-	<variable name="sumImport" class="java.lang.Float" resetType="Group" resetGroup="TAXNAME" calculation="Sum">
-		<variableExpression><![CDATA[new Float($F{TAXAMT}.floatValue())]]></variableExpression>
+	<variable name="sumImport" class="java.math.BigDecimal" resetType="Group" resetGroup="TAXNAME" calculation="Sum">
+		<variableExpression><![CDATA[$F{TAXAMT}]]></variableExpression>
 	</variable>
 
 		<group  name="TAXNAME" >
@@ -395,7 +395,7 @@
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Float"><![CDATA[$V{sumTaxBaseAmt}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{sumTaxBaseAmt}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -409,7 +409,7 @@
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Float"><![CDATA[$V{sumImport}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$V{sumImport}]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">
 					<reportElement
@@ -533,8 +533,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{TAXBASEAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXBASEAMT}):new String(" ")
-]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{TAXBASEAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXBASEAMT}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -548,8 +547,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{TAXAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXAMT}):new String(" ")
-]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{TAXAMT}!=null)?$P{NUMBERFORMAT}.format($F{TAXAMT}):new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
