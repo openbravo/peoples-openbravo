@@ -25,6 +25,8 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.Utility;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.servlet.*;
@@ -51,9 +53,8 @@ public class DebtPayment extends HttpSecureAppServlet {
       printGridStructure(response, vars);
     } else if(vars.commandIn("DATA")) {
       
-      if(vars.getStringParameter("newFilter").equals("1") ||
-         vars.getStringParameter("newFilter").equals("")) {
-        cleanSessionValue(vars);
+      if(vars.getStringParameter("newFilter").equals("1")) {
+        cleanSessionValue(vars);                
       }
       
       String strBpartnerId = vars.getGlobalVariable("inpBpartnerId", "DebtPayment.inpBpartnerId", "");
@@ -103,6 +104,17 @@ public class DebtPayment extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
+    
+    // Set default filter values due to heavy load. From date = To Date = Today
+    String strDateFormat = vars.getJavaDateFormat();
+    SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+    Date today = new Date();
+    xmlDocument.setParameter("dateFromValue", dateFormat.format(today));
+    xmlDocument.setParameter("dateToValue", dateFormat.format(today));    
+    
+    vars.setSessionValue("DebtPayment.inpDateFrom", dateFormat.format(today));
+    vars.setSessionValue("DebtPayment.inpDateTo", dateFormat.format(today));
+    
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
