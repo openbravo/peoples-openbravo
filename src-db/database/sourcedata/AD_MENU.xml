@@ -7160,13 +7160,13 @@
 <!--800060 CREATEDBY-->
 <!--800060-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800060 UPDATED-->
-<!--800060-->              <UPDATED><![CDATA[2007-07-27 16:29:35.0]]></UPDATED>
+<!--800060-->              <UPDATED><![CDATA[2008-06-03 18:03:53.0]]></UPDATED>
 <!--800060 NAME-->
-<!--800060-->              <NAME><![CDATA[Invoice (customer) Dimensional Report]]></NAME>
+<!--800060-->              <NAME><![CDATA[Sales Invoice Dimensional Report]]></NAME>
 <!--800060 UPDATEDBY-->
 <!--800060-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800060 DESCRIPTION-->
-<!--800060-->              <DESCRIPTION><![CDATA[Invoice customer dimensional analyses]]></DESCRIPTION>
+<!--800060-->              <DESCRIPTION><![CDATA[Sales Invoice Dimensional Report]]></DESCRIPTION>
 <!--800060 ISSUMMARY-->
 <!--800060-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800060 ACTION-->
@@ -11171,13 +11171,13 @@
 <!--800260 CREATEDBY-->
 <!--800260-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800260 UPDATED-->
-<!--800260-->              <UPDATED><![CDATA[2007-07-06 12:56:23.0]]></UPDATED>
+<!--800260-->              <UPDATED><![CDATA[2008-06-03 18:08:45.0]]></UPDATED>
 <!--800260 NAME-->
-<!--800260-->              <NAME><![CDATA[Invoice Customer Report]]></NAME>
+<!--800260-->              <NAME><![CDATA[Customer Invoice Report]]></NAME>
 <!--800260 UPDATEDBY-->
 <!--800260-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800260 DESCRIPTION-->
-<!--800260-->              <DESCRIPTION><![CDATA[Invoice Customer Report]]></DESCRIPTION>
+<!--800260-->              <DESCRIPTION><![CDATA[Customer Invoice Report]]></DESCRIPTION>
 <!--800260 ISSUMMARY-->
 <!--800260-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800260 ACTION-->

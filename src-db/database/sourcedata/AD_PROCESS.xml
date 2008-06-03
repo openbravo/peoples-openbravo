@@ -9957,17 +9957,17 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800175 CREATEDBY-->
 <!--800175-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800175 UPDATED-->
-<!--800175-->              <UPDATED><![CDATA[2007-07-23 11:13:35.0]]></UPDATED>
+<!--800175-->              <UPDATED><![CDATA[2008-06-03 18:08:58.0]]></UPDATED>
 <!--800175 UPDATEDBY-->
 <!--800175-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800175 VALUE-->
 <!--800175-->              <VALUE><![CDATA[ReportInvoiceCustomerJR]]></VALUE>
 <!--800175 NAME-->
-<!--800175-->              <NAME><![CDATA[Invoice Customer Report]]></NAME>
+<!--800175-->              <NAME><![CDATA[Customer Invoice Report]]></NAME>
 <!--800175 DESCRIPTION-->
-<!--800175-->              <DESCRIPTION><![CDATA[Invoice Customer Report]]></DESCRIPTION>
+<!--800175-->              <DESCRIPTION><![CDATA[Customer Invoice Report]]></DESCRIPTION>
 <!--800175 HELP-->
-<!--800175-->              <HELP><![CDATA[Invoice Customer Report JR]]></HELP>
+<!--800175-->              <HELP><![CDATA[Customer Invoice Report JR]]></HELP>
 <!--800175 ACCESSLEVEL-->
 <!--800175-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
 <!--800175 ISUSERSTARTABLE-->
@@ -9980,6 +9980,8 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800175-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800175 ISJASPER-->
 <!--800175-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800175 ISEXTERNALSERVICE-->
+<!--800175-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800175**************--></AD_PROCESS>
 
 <!--800176**************--><AD_PROCESS>
@@ -11010,17 +11012,17 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800205 CREATEDBY-->
 <!--800205-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800205 UPDATED-->
-<!--800205-->              <UPDATED><![CDATA[2007-07-24 18:58:48.0]]></UPDATED>
+<!--800205-->              <UPDATED><![CDATA[2008-06-03 18:09:31.0]]></UPDATED>
 <!--800205 UPDATEDBY-->
 <!--800205-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800205 VALUE-->
 <!--800205-->              <VALUE><![CDATA[ReportSalesDimensionalAnalyzeJR]]></VALUE>
 <!--800205 NAME-->
-<!--800205-->              <NAME><![CDATA[Invoice (customer) Dimensional Report]]></NAME>
+<!--800205-->              <NAME><![CDATA[Sales Invoice Dimensional Report]]></NAME>
 <!--800205 DESCRIPTION-->
-<!--800205-->              <DESCRIPTION><![CDATA[Invoice customer dimensional analyses]]></DESCRIPTION>
+<!--800205-->              <DESCRIPTION><![CDATA[Sales Invoice Dimensional Report]]></DESCRIPTION>
 <!--800205 HELP-->
-<!--800205-->              <HELP><![CDATA[Invoice customer dimensional analyses JR]]></HELP>
+<!--800205-->              <HELP><![CDATA[Sales Invoice Dimensional Report JR]]></HELP>
 <!--800205 ACCESSLEVEL-->
 <!--800205-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800205 ISUSERSTARTABLE-->
@@ -11033,6 +11035,8 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800205-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800205 ISJASPER-->
 <!--800205-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800205 ISEXTERNALSERVICE-->
+<!--800205-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800205**************--></AD_PROCESS>
 
 <!--800206**************--><AD_PROCESS>
