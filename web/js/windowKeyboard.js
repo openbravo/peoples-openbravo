@@ -44,10 +44,16 @@ var isFirstTime = true;
 var isGoingDown = null;
 var isGoingUp = null;
 
+var selectedCombo = null;
+var isSelectedComboOpened = null;
+
+document.onmousedown=mouseDownLogic;
 document.onclick=cursorFocus;
 //document.onfocus=activeElementFocus;
 
 if (document.layers) {
+  window.captureEvents(Event.ONMOUSEDOWN);
+  window.onmousedown=mouseDownLogic;
   window.captureEvents(Event.ONCLICK);
   window.onclick=cursorFocus;
   //window.captureEvents(Event.FOCUS);
@@ -56,8 +62,12 @@ if (document.layers) {
 
 function activateDefaultAction(){
   if (defaultActionElement != null || defaultActionElement != 'null' || defaultActionElement != '') {
-    keyArray[defaultActionElementArrayPosition] = new keyArrayItem("ENTER", "executeWindowButton(defaultActionElement.getAttribute('id'));", null, null, false, 'onkeydown');
-    drawWindowElementDefaultAction(defaultActionElement);
+    if (isSelectedComboOpened != true) {
+      keyArray[defaultActionElementArrayPosition] = new keyArrayItem("ENTER", "executeWindowButton(defaultActionElement.getAttribute('id'));", null, null, false, 'onkeydown');
+      drawWindowElementDefaultAction(defaultActionElement);
+    } else {
+      comboDefaultAction();
+    }
   }
 }
 
@@ -71,7 +81,7 @@ function disableDefaultAction() {
 function comboDefaultAction() {
   if (defaultActionElement != null || defaultActionElement != 'null' || defaultActionElement != '') {
     eraseWindowElementDefaultAction(defaultActionElement);
-    keyArray[defaultActionElementArrayPosition] = new keyArrayItem("ENTER", "activateDefaultAction();", null, null, false, 'onkeydown');
+    keyArray[defaultActionElementArrayPosition] = new keyArrayItem("ENTER", "isSelectedComboOpened=false; activateDefaultAction();", null, null, false, 'onkeydown');
   }
 }
 
@@ -139,16 +149,44 @@ function setWindowTableParentElement() {
   windowTableParentElement = windowTables[focusedWindowTable].tableId;
 }
 
+var isOnMouseDown = null;
 
+function mouseDownLogic(evt, obj) {
+  if(obj == null) {
+    obj = (!document.all) ? evt.target : event.srcElement;
+  }
+  isOnMouseDown = true
+
+  if(obj.tagName == 'SELECT' && isSelectedComboOpened == true && selectedCombo == obj) {
+    selectedCombo = obj;
+    isSelectedComboOpened = false;
+    activateDefaultAction();
+  } else {
+    if(obj.tagName == 'SELECT') {
+      selectedCombo = obj;
+      isSelectedComboOpened = true;
+      comboDefaultAction();
+    } else if (focusedWindowElement.tagName == 'SELECT') {
+      selectedCombo = obj;
+      isSelectedComboOpened = false;
+      activateDefaultAction();
+    }
+  }
+}
 
 function cursorFocus(evt, obj) {
   if(obj == null) {
     obj = (!document.all) ? evt.target : event.srcElement;
   }
-  if(obj.tagName == 'OPTION'){
-  	while(obj.tagName != 'SELECT') obj = obj.parentNode;
+  if (obj.tagName == 'OPTION') {
+    while(obj.tagName != 'SELECT') obj = obj.parentNode;
   }
-  
+  if (obj.tagName == 'SELECT' && isOnMouseDown!=true) {
+    selectedCombo = obj;
+    isSelectedComboOpened = false;
+    activateDefaultAction();
+  }
+  isOnMouseDown = false;
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && obj.getAttribute('type') == 'checkbox' && (obj.getAttribute('readonly') == 'true' || obj.readOnly)) {
     return false;
   }
@@ -778,6 +816,7 @@ function getLastWindowElement() {
 function windowTabKey(state) {
   if (state==true) {
     isTabPressed = true;
+    isSelectedComboOpened = false;
     if (selectedArea == 'window') {
       var obj = getNextWindowElement();
       setWindowElementFocus(obj);
@@ -794,6 +833,7 @@ function windowTabKey(state) {
 function windowShiftTabKey(state) {
   if (state==true) {
     isTabPressed = true;
+    isSelectedComboOpened = false;
     if (selectedArea == 'window') {
       var obj = getPreviousWindowElement();
       setWindowElementFocus(obj);
@@ -1500,7 +1540,7 @@ function windowUpKey() {
     dojo.widget.byId('grid').goToPreviousRow();
   } else {
     if (focusedWindowElement.tagName == 'SELECT') {
-      comboDefaultAction();
+      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) focusedWindowElement.onchange();
     }
   }
 }
@@ -1510,7 +1550,7 @@ function windowDownKey() {
     dojo.widget.byId('grid').goToNextRow();
   } else {
     if (focusedWindowElement.tagName == 'SELECT') {
-      comboDefaultAction();
+      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) focusedWindowElement.onchange();
     }
   }
 }
@@ -1519,7 +1559,7 @@ function windowLeftKey() {
   if (isGridFocused) {
   } else {
     if (focusedWindowElement.tagName == 'SELECT') {
-      comboDefaultAction();
+      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) focusedWindowElement.onchange();
     }
   }
 }
@@ -1528,7 +1568,7 @@ function windowRightKey() {
   if (isGridFocused) {
   } else {
     if (focusedWindowElement.tagName == 'SELECT') {
-      comboDefaultAction();
+      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) focusedWindowElement.onchange();
     }
   }
 }
