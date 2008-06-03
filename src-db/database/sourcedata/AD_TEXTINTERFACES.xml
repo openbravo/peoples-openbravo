@@ -27475,7 +27475,7 @@
 <!--807414 FILENAME-->
 <!--807414-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/ImportProduct.html]]></FILENAME>
 <!--807414 ISUSED-->
-<!--807414-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--807414-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--807414**************--></AD_TEXTINTERFACES>
 
 <!--807416**************--><AD_TEXTINTERFACES>
@@ -35418,7 +35418,7 @@
 <!--1000100016 FILENAME-->
 <!--1000100016-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/Invoice.html]]></FILENAME>
 <!--1000100016 ISUSED-->
-<!--1000100016-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000100016-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1000100016**************--></AD_TEXTINTERFACES>
 
 <!--1000100017**************--><AD_TEXTINTERFACES>
@@ -38468,7 +38468,7 @@
 <!--1001300000 FILENAME-->
 <!--1001300000-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_ProposalLines.fo]]></FILENAME>
 <!--1001300000 ISUSED-->
-<!--1001300000-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1001300000-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1001300000**************--></AD_TEXTINTERFACES>
 
 <!--1002100000**************--><AD_TEXTINTERFACES>
@@ -43066,7 +43066,7 @@
 <!--1003900009 FILENAME-->
 <!--1003900009-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/ImportProduct.html]]></FILENAME>
 <!--1003900009 ISUSED-->
-<!--1003900009-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1003900009-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1003900009**************--></AD_TEXTINTERFACES>
 
 <!--1003900010**************--><AD_TEXTINTERFACES>

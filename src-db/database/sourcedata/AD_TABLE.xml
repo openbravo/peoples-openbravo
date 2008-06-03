@@ -5866,7 +5866,7 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--323 ISDEFAULTACCT-->
 <!--323-->              <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--323 SQL_RECORD_IDENTIFIER-->
-<!--323-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Name),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_Movement T WHERE M_Movement_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
+<!--323-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.Name),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_Movement T WHERE M_Movement_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
 <!--323 DEVELOPMENTSTATUS-->
 <!--323-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--323**************--></AD_TABLE>
@@ -5913,7 +5913,7 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--324 ISDEFAULTACCT-->
 <!--324-->              <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--324 SQL_RECORD_IDENTIFIER-->
-<!--324-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Line),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.MovementQty),''))||' - '||(SELECT TO_CHAR(COALESCE(TO_CHAR(TT.Name),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(TT.DocumentNo),'')) FROM M_Movement TT WHERE TT.M_Movement_ID=T.M_Movement_ID)  AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_MovementLine T WHERE M_MovementLine_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
+<!--324-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Line),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.MovementQty),''))||' - '||(SELECT TO_CHAR(COALESCE(TO_CHAR(TT.DocumentNo),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(TT.Name),'')) FROM M_Movement TT WHERE TT.M_Movement_ID=T.M_Movement_ID)  AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_MovementLine T WHERE M_MovementLine_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
 <!--324 DEVELOPMENTSTATUS-->
 <!--324-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--324**************--></AD_TABLE>
@@ -7231,7 +7231,7 @@ Available Quantity:
 <!--383 ISDEFAULTACCT-->
 <!--383-->              <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--383 SQL_RECORD_IDENTIFIER-->
-<!--383-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT --No key found||' - '||TO_CHAR(COALESCE(TO_CHAR(T.Line),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_Product_BOM T WHERE M_Product_BOM_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
+<!--383-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Line),''))||' - '||--No key found AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_Product_BOM T WHERE M_Product_BOM_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
 <!--383 DEVELOPMENTSTATUS-->
 <!--383-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--383**************--></AD_TABLE>
@@ -8067,7 +8067,7 @@ Available Quantity:
 <!--410 ISDEFAULTACCT-->
 <!--410-->              <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--410 SQL_RECORD_IDENTIFIER-->
-<!--410-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT (SELECT TO_CHAR(COALESCE(TO_CHAR(TT.Name),'')) FROM C_Cash TT WHERE TT.C_Cash_ID=T.C_Cash_ID) ||' - '||TO_CHAR(COALESCE(TO_CHAR(T.Line),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.Amount),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, C_CashLine T WHERE C_CashLine_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
+<!--410-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT (SELECT TO_CHAR(COALESCE(TO_CHAR(TT.Name),'')) FROM C_Cash TT WHERE TT.C_Cash_ID=T.C_Cash_ID) ||' - '||TO_CHAR(COALESCE(TO_CHAR(T.Amount),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.Line),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, C_CashLine T WHERE C_CashLine_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
 <!--410 DEVELOPMENTSTATUS-->
 <!--410-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--410**************--></AD_TABLE>
@@ -16898,7 +16898,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800147 ISDEFAULTACCT-->
 <!--800147-->              <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--800147 SQL_RECORD_IDENTIFIER-->
-<!--800147-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Text),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, AD_TextInterfaces_Trl T WHERE AD_Language=:c_ID]]></SQL_RECORD_IDENTIFIER>
+<!--800147-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Text),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, AD_TextInterfaces_Trl T WHERE AD_Textinterfaces_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
 <!--800147 DEVELOPMENTSTATUS-->
 <!--800147-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800147**************--></AD_TABLE>
@@ -19669,7 +19669,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800212 CREATEDBY-->
 <!--800212-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800212 UPDATED-->
-<!--800212-->              <UPDATED><![CDATA[2008-01-25 18:16:54.0]]></UPDATED>
+<!--800212-->              <UPDATED><![CDATA[2008-05-30 18:16:58.0]]></UPDATED>
 <!--800212 UPDATEDBY-->
 <!--800212-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800212 NAME-->
@@ -19677,7 +19677,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800212 DESCRIPTION-->
 <!--800212-->              <DESCRIPTION><![CDATA[Requisition material]]></DESCRIPTION>
 <!--800212 HELP-->
-<!--800212-->              <HELP><![CDATA[Contains the requirements for the materials. This requirements have a date and it's possible to assign a vendor]]></HELP>
+<!--800212-->              <HELP><![CDATA[Contains the headers of material demands. In the header it can be set a preferred vendor and/or price list. The requisitions are owned by an user of the ERP and have different statuses, each of them allowing different actions.]]></HELP>
 <!--800212 TABLENAME-->
 <!--800212-->              <TABLENAME><![CDATA[M_Requisition]]></TABLENAME>
 <!--800212 ISVIEW-->
@@ -19718,13 +19718,13 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800214 CREATEDBY-->
 <!--800214-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800214 UPDATED-->
-<!--800214-->              <UPDATED><![CDATA[2008-01-25 18:16:45.0]]></UPDATED>
+<!--800214-->              <UPDATED><![CDATA[2008-05-30 18:44:49.0]]></UPDATED>
 <!--800214 UPDATEDBY-->
 <!--800214-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800214 NAME-->
 <!--800214-->              <NAME><![CDATA[M_RequisitionLine]]></NAME>
 <!--800214 HELP-->
-<!--800214-->              <HELP><![CDATA[The table defines the individual line that comprise a requisition]]></HELP>
+<!--800214-->              <HELP><![CDATA[This table contains each product demand of a requisition. The demand is defined by a product, the date when is needed to have and the quantity. It is also possible to define a preferred vendor, price list and the correspondent prices. The demands are locked when are being used to generate the purchase orders so there are not created duplicate purchase orders for the same demand.]]></HELP>
 <!--800214 TABLENAME-->
 <!--800214-->              <TABLENAME><![CDATA[M_RequisitionLine]]></TABLENAME>
 <!--800214 ISVIEW-->
@@ -20605,13 +20605,15 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--1004400000 CREATEDBY-->
 <!--1004400000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1004400000 UPDATED-->
-<!--1004400000-->              <UPDATED><![CDATA[2008-01-25 17:25:48.0]]></UPDATED>
+<!--1004400000-->              <UPDATED><![CDATA[2008-05-30 19:13:17.0]]></UPDATED>
 <!--1004400000 UPDATEDBY-->
 <!--1004400000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400000 NAME-->
 <!--1004400000-->              <NAME><![CDATA[M_RequisitionOrder]]></NAME>
 <!--1004400000 DESCRIPTION-->
 <!--1004400000-->              <DESCRIPTION><![CDATA[This table matches the Requisition lines with the Purchase Orders that satisfy them.]]></DESCRIPTION>
+<!--1004400000 HELP-->
+<!--1004400000-->              <HELP><![CDATA[This table matches the Requisition lines with the Purchase Orders that satisfy them.]]></HELP>
 <!--1004400000 TABLENAME-->
 <!--1004400000-->              <TABLENAME><![CDATA[M_RequisitionOrder]]></TABLENAME>
 <!--1004400000 ISVIEW-->

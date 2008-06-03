@@ -50,7 +50,6 @@
 ************************************************************************/
   -- Currency From variables
   v_cf_IsEuro      char(1);
-  v_cf_IsEMUMember char(1);
   -- Triangle
   v_CurrencyFrom NUMBER;
   v_CurrencyTo   NUMBER;

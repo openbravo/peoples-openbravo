@@ -44509,7 +44509,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800740 CREATEDBY-->
 <!--800740-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800740 UPDATED-->
-<!--800740-->              <UPDATED><![CDATA[2007-05-09 18:22:16.0]]></UPDATED>
+<!--800740-->              <UPDATED><![CDATA[2008-05-30 19:01:39.0]]></UPDATED>
 <!--800740 UPDATEDBY-->
 <!--800740-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800740 COLUMNNAME-->
@@ -44519,7 +44519,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800740 PRINTNAME-->
 <!--800740-->              <PRINTNAME><![CDATA[Requisition line]]></PRINTNAME>
 <!--800740 HELP-->
-<!--800740-->              <HELP><![CDATA[Identifies each product required to purchase in a requisition]]></HELP>
+<!--800740-->              <HELP><![CDATA[Identifies each product demand of a requisition.]]></HELP>
 <!--800740**************--></AD_ELEMENT>
 
 <!--800741**************--><AD_ELEMENT>
@@ -47560,15 +47560,21 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400001 CREATEDBY-->
 <!--1004400001-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400001 UPDATED-->
-<!--1004400001-->              <UPDATED><![CDATA[2008-01-22 17:00:10.0]]></UPDATED>
+<!--1004400001-->              <UPDATED><![CDATA[2008-05-30 19:11:01.0]]></UPDATED>
 <!--1004400001 UPDATEDBY-->
 <!--1004400001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400001 COLUMNNAME-->
 <!--1004400001-->              <COLUMNNAME><![CDATA[Reqstatus]]></COLUMNNAME>
 <!--1004400001 NAME-->
-<!--1004400001-->              <NAME><![CDATA[Requisition status]]></NAME>
+<!--1004400001-->              <NAME><![CDATA[Requisition line status]]></NAME>
 <!--1004400001 PRINTNAME-->
-<!--1004400001-->              <PRINTNAME><![CDATA[Requisition status]]></PRINTNAME>
+<!--1004400001-->              <PRINTNAME><![CDATA[Requisition line status]]></PRINTNAME>
+<!--1004400001 HELP-->
+<!--1004400001-->              <HELP><![CDATA[Each product demand has its own status different than the status of the requisition. The statuses of the demands are:
+Open: The demand hasn't been yet fulfilled.
+Closed: Has been ordered enough products.
+Cancelled: The demand has been closed without ordering any product.
+Planned: The demand has been included in a Purchase Plan of the MRP module.]]></HELP>
 <!--1004400001**************--></AD_ELEMENT>
 
 <!--1004400002**************--><AD_ELEMENT>
@@ -47610,15 +47616,17 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400004 CREATEDBY-->
 <!--1004400004-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400004 UPDATED-->
-<!--1004400004-->              <UPDATED><![CDATA[2008-01-28 13:55:51.0]]></UPDATED>
+<!--1004400004-->              <UPDATED><![CDATA[2008-05-30 18:24:08.0]]></UPDATED>
 <!--1004400004 UPDATEDBY-->
-<!--1004400004-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1004400004-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400004 COLUMNNAME-->
 <!--1004400004-->              <COLUMNNAME><![CDATA[Createpo]]></COLUMNNAME>
 <!--1004400004 NAME-->
-<!--1004400004-->              <NAME><![CDATA[Createpo]]></NAME>
+<!--1004400004-->              <NAME><![CDATA[Create PO]]></NAME>
 <!--1004400004 PRINTNAME-->
-<!--1004400004-->              <PRINTNAME><![CDATA[Createpo]]></PRINTNAME>
+<!--1004400004-->              <PRINTNAME><![CDATA[Create PO]]></PRINTNAME>
+<!--1004400004 HELP-->
+<!--1004400004-->              <HELP><![CDATA[Button to generate the correspondent purchase orders to fulfill the product demands.]]></HELP>
 <!--1004400004**************--></AD_ELEMENT>
 
 <!--1004400005**************--><AD_ELEMENT>
@@ -47635,7 +47643,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400005 CREATEDBY-->
 <!--1004400005-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400005 UPDATED-->
-<!--1004400005-->              <UPDATED><![CDATA[2008-02-04 17:38:20.0]]></UPDATED>
+<!--1004400005-->              <UPDATED><![CDATA[2008-05-30 19:05:08.0]]></UPDATED>
 <!--1004400005 UPDATEDBY-->
 <!--1004400005-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400005 COLUMNNAME-->
@@ -47644,6 +47652,8 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400005-->              <NAME><![CDATA[Matched PO Qty]]></NAME>
 <!--1004400005 PRINTNAME-->
 <!--1004400005-->              <PRINTNAME><![CDATA[Matched PO Qty]]></PRINTNAME>
+<!--1004400005 HELP-->
+<!--1004400005-->              <HELP><![CDATA[Indicates the already ordered quantity to fulfill the demand.]]></HELP>
 <!--1004400005**************--></AD_ELEMENT>
 
 <!--1004400006**************--><AD_ELEMENT>
@@ -47660,15 +47670,17 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400006 CREATEDBY-->
 <!--1004400006-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400006 UPDATED-->
-<!--1004400006-->              <UPDATED><![CDATA[2008-02-01 18:07:04.0]]></UPDATED>
+<!--1004400006-->              <UPDATED><![CDATA[2008-05-30 19:10:05.0]]></UPDATED>
 <!--1004400006 UPDATEDBY-->
-<!--1004400006-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1004400006-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400006 COLUMNNAME-->
 <!--1004400006-->              <COLUMNNAME><![CDATA[Changestatus]]></COLUMNNAME>
 <!--1004400006 NAME-->
-<!--1004400006-->              <NAME><![CDATA[Changestatus]]></NAME>
+<!--1004400006-->              <NAME><![CDATA[Change Status]]></NAME>
 <!--1004400006 PRINTNAME-->
-<!--1004400006-->              <PRINTNAME><![CDATA[Changestatus]]></PRINTNAME>
+<!--1004400006-->              <PRINTNAME><![CDATA[ChangeStatus]]></PRINTNAME>
+<!--1004400006 HELP-->
+<!--1004400006-->              <HELP><![CDATA[Button to change the status of the record.]]></HELP>
 <!--1004400006**************--></AD_ELEMENT>
 
 <!--1004400007**************--><AD_ELEMENT>
@@ -47685,7 +47697,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400007 CREATEDBY-->
 <!--1004400007-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400007 UPDATED-->
-<!--1004400007-->              <UPDATED><![CDATA[2008-02-04 17:56:12.0]]></UPDATED>
+<!--1004400007-->              <UPDATED><![CDATA[2008-05-30 18:54:16.0]]></UPDATED>
 <!--1004400007 UPDATEDBY-->
 <!--1004400007-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400007 COLUMNNAME-->
@@ -47694,6 +47706,8 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400007-->              <NAME><![CDATA[Internal notes]]></NAME>
 <!--1004400007 PRINTNAME-->
 <!--1004400007-->              <PRINTNAME><![CDATA[Internal notes]]></PRINTNAME>
+<!--1004400007 HELP-->
+<!--1004400007-->              <HELP><![CDATA[Notes that can be set with the aim to be seen only by users with access to the record.]]></HELP>
 <!--1004400007**************--></AD_ELEMENT>
 
 <!--1004400008**************--><AD_ELEMENT>
@@ -47710,7 +47724,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400008 CREATEDBY-->
 <!--1004400008-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400008 UPDATED-->
-<!--1004400008-->              <UPDATED><![CDATA[2008-02-04 17:55:33.0]]></UPDATED>
+<!--1004400008-->              <UPDATED><![CDATA[2008-05-30 19:12:33.0]]></UPDATED>
 <!--1004400008 UPDATEDBY-->
 <!--1004400008-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400008 COLUMNNAME-->
@@ -47719,6 +47733,8 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400008-->              <NAME><![CDATA[Notes for supplier]]></NAME>
 <!--1004400008 PRINTNAME-->
 <!--1004400008-->              <PRINTNAME><![CDATA[Notes for supplier]]></PRINTNAME>
+<!--1004400008 HELP-->
+<!--1004400008-->              <HELP><![CDATA[Notes set to include in the Purchase Orders with indications to the vendor.]]></HELP>
 <!--1004400008**************--></AD_ELEMENT>
 
 <!--1004400009**************--><AD_ELEMENT>
@@ -47735,7 +47751,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400009 CREATEDBY-->
 <!--1004400009-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400009 UPDATED-->
-<!--1004400009-->              <UPDATED><![CDATA[2008-02-04 17:53:59.0]]></UPDATED>
+<!--1004400009-->              <UPDATED><![CDATA[2008-05-30 19:04:24.0]]></UPDATED>
 <!--1004400009 UPDATEDBY-->
 <!--1004400009-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400009 COLUMNNAME-->
@@ -47744,6 +47760,8 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400009-->              <NAME><![CDATA[Need by date]]></NAME>
 <!--1004400009 PRINTNAME-->
 <!--1004400009-->              <PRINTNAME><![CDATA[Need by date]]></PRINTNAME>
+<!--1004400009 HELP-->
+<!--1004400009-->              <HELP><![CDATA[Indicates the date when is needed to have enough stock of the product.]]></HELP>
 <!--1004400009**************--></AD_ELEMENT>
 
 <!--1004400010**************--><AD_ELEMENT>
@@ -47787,7 +47805,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400011 CREATEDBY-->
 <!--1004400011-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400011 UPDATED-->
-<!--1004400011-->              <UPDATED><![CDATA[2008-03-13 11:40:19.0]]></UPDATED>
+<!--1004400011-->              <UPDATED><![CDATA[2008-05-30 19:02:54.0]]></UPDATED>
 <!--1004400011 UPDATEDBY-->
 <!--1004400011-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400011 COLUMNNAME-->
@@ -47797,7 +47815,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400011 PRINTNAME-->
 <!--1004400011-->              <PRINTNAME><![CDATA[Locked by]]></PRINTNAME>
 <!--1004400011 HELP-->
-<!--1004400011-->              <HELP><![CDATA[User that is locking the record.]]></HELP>
+<!--1004400011-->              <HELP><![CDATA[Indicates the user that is locking the record.]]></HELP>
 <!--1004400011**************--></AD_ELEMENT>
 
 <!--1004400012**************--><AD_ELEMENT>
@@ -47841,7 +47859,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400013 CREATEDBY-->
 <!--1004400013-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400013 UPDATED-->
-<!--1004400013-->              <UPDATED><![CDATA[2008-03-13 11:39:12.0]]></UPDATED>
+<!--1004400013-->              <UPDATED><![CDATA[2008-05-30 19:02:37.0]]></UPDATED>
 <!--1004400013 UPDATEDBY-->
 <!--1004400013-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400013 COLUMNNAME-->
@@ -47851,7 +47869,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400013 PRINTNAME-->
 <!--1004400013-->              <PRINTNAME><![CDATA[Lock date]]></PRINTNAME>
 <!--1004400013 HELP-->
-<!--1004400013-->              <HELP><![CDATA[When the lock is more than 3 days old it is considered as unlocked.]]></HELP>
+<!--1004400013-->              <HELP><![CDATA[Indicates the date when the record was locked. Id the lock it is more than 3 days old it is considered as unlocked.]]></HELP>
 <!--1004400013**************--></AD_ELEMENT>
 
 <!--1004400014**************--><AD_ELEMENT>
@@ -47868,7 +47886,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400014 CREATEDBY-->
 <!--1004400014-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400014 UPDATED-->
-<!--1004400014-->              <UPDATED><![CDATA[2008-04-01 18:04:01.0]]></UPDATED>
+<!--1004400014-->              <UPDATED><![CDATA[2008-05-30 18:59:00.0]]></UPDATED>
 <!--1004400014 UPDATEDBY-->
 <!--1004400014-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400014 COLUMNNAME-->
@@ -47877,6 +47895,9 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--1004400014-->              <NAME><![CDATA[Lock cause]]></NAME>
 <!--1004400014 PRINTNAME-->
 <!--1004400014-->              <PRINTNAME><![CDATA[Lock cause]]></PRINTNAME>
+<!--1004400014 HELP-->
+<!--1004400014-->              <HELP><![CDATA[Indicate the reason to be locked the requisition line. The demands are locked when are being used in processes that will generate Purchase Orders to fulfill the demand. The lock is removed when those processes finish or if the lock is 3 days old.
+The causes are The Requisition to Order window or the inclusion of the demand in a MRP process. ]]></HELP>
 <!--1004400014**************--></AD_ELEMENT>
 
 <!--1004400015**************--><AD_ELEMENT>
