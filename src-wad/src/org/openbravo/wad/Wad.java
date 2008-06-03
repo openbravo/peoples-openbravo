@@ -2506,15 +2506,15 @@ public class Wad extends DefaultHandler {
       data[i].whereclause=WadUtility.getComboReloadText(code, vecFields, parentsFieldsData, vecReloads, "inp");
       if (data[i].whereclause.equals("") && data[i].type.equals("R")) 
         data[i].whereclause="\"inpadOrgId\"";
-      
-      if (data[i].isdisplayed.equals("Y") && (data[i].reference.equals("17") || data[i].reference.equals("18") || data[i].reference.equals("19"))) {
+      if (data[i].reference.equals("17") && data[i].whereclause.equals("")) 
+        data[i].whereclause =  "\"inp"+data[i].columnname+"\"";
+      if (!data[i].whereclause.equals("") && data[i].isdisplayed.equals("Y") && (data[i].reference.equals("17") || data[i].reference.equals("18") || data[i].reference.equals("19"))) {
         if (data[i].name.equalsIgnoreCase("AD_Org_ID"))
           data[i].orgcode = "Utility.getContext(this, vars, \"#AccessibleOrgTree\", windowId, "+accesslevel+")";
         else
           data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
         
         if (data[i].reference.equals("17")) { //List
-          if (data[i].whereclause.equals("")) data[i].whereclause =  "\"inp"+data[i].columnname+"\"";
           data[i].tablename = "List";
           data[i].tablenametrl = "List";
           data[i].htmltext = "select";
