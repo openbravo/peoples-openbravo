@@ -385,7 +385,7 @@
 <!--136 DESCRIPTION-->
 <!--136-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--136 HELP-->
-<!--136-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--136-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--136 AD_PROCESS_ID-->
 <!--136-->              <AD_PROCESS_ID><![CDATA[125]]></AD_PROCESS_ID>
 <!--136 SEQNO-->
@@ -430,7 +430,7 @@
 <!--137 DESCRIPTION-->
 <!--137-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order.]]></DESCRIPTION>
 <!--137 HELP-->
-<!--137-->              <HELP><![CDATA[The Sales Order ID is a unique identifier of a Sales Order.  This is controlled by the document sequence for this document type.]]></HELP>
+<!--137-->              <HELP><![CDATA[Unique identifier of a Sales Order originating from the document sequence defined for this document type.]]></HELP>
 <!--137 AD_PROCESS_ID-->
 <!--137-->              <AD_PROCESS_ID><![CDATA[126]]></AD_PROCESS_ID>
 <!--137 SEQNO-->
@@ -696,7 +696,7 @@
 <!--143 DESCRIPTION-->
 <!--143-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order.]]></DESCRIPTION>
 <!--143 HELP-->
-<!--143-->              <HELP><![CDATA[The Sales Order ID is a unique identifier of a Sales Order.  This is controlled by the document sequence for this document type.]]></HELP>
+<!--143-->              <HELP><![CDATA[Unique identifier of a Sales Order originating from the document sequence defined for this document type.]]></HELP>
 <!--143 AD_PROCESS_ID-->
 <!--143-->              <AD_PROCESS_ID><![CDATA[119]]></AD_PROCESS_ID>
 <!--143 SEQNO-->
@@ -741,7 +741,7 @@
 <!--144 DESCRIPTION-->
 <!--144-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--144 HELP-->
-<!--144-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--144-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--144 AD_PROCESS_ID-->
 <!--144-->              <AD_PROCESS_ID><![CDATA[119]]></AD_PROCESS_ID>
 <!--144 SEQNO-->
@@ -1402,7 +1402,7 @@
 <!--161 DESCRIPTION-->
 <!--161-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--161 HELP-->
-<!--161-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--161-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--161 AD_PROCESS_ID-->
 <!--161-->              <AD_PROCESS_ID><![CDATA[138]]></AD_PROCESS_ID>
 <!--161 SEQNO-->
@@ -1490,7 +1490,7 @@
 <!--163 DESCRIPTION-->
 <!--163-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--163 HELP-->
-<!--163-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--163-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--163 AD_PROCESS_ID-->
 <!--163-->              <AD_PROCESS_ID><![CDATA[139]]></AD_PROCESS_ID>
 <!--163 SEQNO-->
@@ -1580,7 +1580,7 @@
 <!--165 DESCRIPTION-->
 <!--165-->              <DESCRIPTION><![CDATA[A classification of business partners based on defined similarities.]]></DESCRIPTION>
 <!--165 HELP-->
-<!--165-->              <HELP><![CDATA[The Business Partner Group ID provides a method of defining defaults to be used for individual Business Partners.]]></HELP>
+<!--165-->              <HELP><![CDATA[A way of grouping business partners together for classification and reporting purposes. Provides a method of defining certain defaults to be used when opening new business partners.]]></HELP>
 <!--165 AD_PROCESS_ID-->
 <!--165-->              <AD_PROCESS_ID><![CDATA[112]]></AD_PROCESS_ID>
 <!--165 SEQNO-->
@@ -1715,7 +1715,7 @@
 <!--175 DESCRIPTION-->
 <!--175-->              <DESCRIPTION><![CDATA[A classification of business partners based on defined similarities.]]></DESCRIPTION>
 <!--175 HELP-->
-<!--175-->              <HELP><![CDATA[The Business Partner Group ID provides a method of defining defaults to be used for individual Business Partners.]]></HELP>
+<!--175-->              <HELP><![CDATA[A way of grouping business partners together for classification and reporting purposes. Provides a method of defining certain defaults to be used when opening new business partners.]]></HELP>
 <!--175 AD_PROCESS_ID-->
 <!--175-->              <AD_PROCESS_ID><![CDATA[151]]></AD_PROCESS_ID>
 <!--175 SEQNO-->
@@ -1758,7 +1758,7 @@
 <!--176 DESCRIPTION-->
 <!--176-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--176 HELP-->
-<!--176-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--176-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--176 AD_PROCESS_ID-->
 <!--176-->              <AD_PROCESS_ID><![CDATA[151]]></AD_PROCESS_ID>
 <!--176 SEQNO-->
@@ -1803,7 +1803,7 @@
 <!--177 DESCRIPTION-->
 <!--177-->              <DESCRIPTION><![CDATA[A classification of business partners based on defined similarities.]]></DESCRIPTION>
 <!--177 HELP-->
-<!--177-->              <HELP><![CDATA[The Business Partner Group ID provides a method of defining defaults to be used for individual Business Partners.]]></HELP>
+<!--177-->              <HELP><![CDATA[A way of grouping business partners together for classification and reporting purposes. Provides a method of defining certain defaults to be used when opening new business partners.]]></HELP>
 <!--177 AD_PROCESS_ID-->
 <!--177-->              <AD_PROCESS_ID><![CDATA[152]]></AD_PROCESS_ID>
 <!--177 SEQNO-->
@@ -1846,7 +1846,7 @@
 <!--178 DESCRIPTION-->
 <!--178-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--178 HELP-->
-<!--178-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--178-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--178 AD_PROCESS_ID-->
 <!--178-->              <AD_PROCESS_ID><![CDATA[152]]></AD_PROCESS_ID>
 <!--178 SEQNO-->
@@ -2196,7 +2196,7 @@
 <!--190 DESCRIPTION-->
 <!--190-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--190 HELP-->
-<!--190-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--190-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--190 AD_PROCESS_ID-->
 <!--190-->              <AD_PROCESS_ID><![CDATA[161]]></AD_PROCESS_ID>
 <!--190 SEQNO-->
@@ -2370,7 +2370,7 @@
 <!--194 DESCRIPTION-->
 <!--194-->              <DESCRIPTION><![CDATA[A classification of business partners based on defined similarities.]]></DESCRIPTION>
 <!--194 HELP-->
-<!--194-->              <HELP><![CDATA[The Business Partner Group ID provides a method of defining defaults to be used for individual Business Partners.]]></HELP>
+<!--194-->              <HELP><![CDATA[A way of grouping business partners together for classification and reporting purposes. Provides a method of defining certain defaults to be used when opening new business partners.]]></HELP>
 <!--194 AD_PROCESS_ID-->
 <!--194-->              <AD_PROCESS_ID><![CDATA[162]]></AD_PROCESS_ID>
 <!--194 SEQNO-->
@@ -2413,7 +2413,7 @@
 <!--195 DESCRIPTION-->
 <!--195-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--195 HELP-->
-<!--195-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--195-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--195 AD_PROCESS_ID-->
 <!--195-->              <AD_PROCESS_ID><![CDATA[162]]></AD_PROCESS_ID>
 <!--195 SEQNO-->
@@ -3500,7 +3500,7 @@
 <!--231 DESCRIPTION-->
 <!--231-->              <DESCRIPTION><![CDATA[An accepted medium of monetary exchange that may vary across countries.]]></DESCRIPTION>
 <!--231 HELP-->
-<!--231-->              <HELP><![CDATA[Indicates the Currency to be used when processing or reporting on this record]]></HELP>
+<!--231-->              <HELP><![CDATA[Indicates the currency to be used when processing this document.]]></HELP>
 <!--231 AD_PROCESS_ID-->
 <!--231-->              <AD_PROCESS_ID><![CDATA[180]]></AD_PROCESS_ID>
 <!--231 SEQNO-->
@@ -3758,7 +3758,7 @@
 <!--240 DESCRIPTION-->
 <!--240-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--240 HELP-->
-<!--240-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--240-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--240 AD_PROCESS_ID-->
 <!--240-->              <AD_PROCESS_ID><![CDATA[121]]></AD_PROCESS_ID>
 <!--240 SEQNO-->
@@ -3938,7 +3938,7 @@
 <!--245 DESCRIPTION-->
 <!--245-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--245 HELP-->
-<!--245-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--245-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--245 AD_PROCESS_ID-->
 <!--245-->              <AD_PROCESS_ID><![CDATA[186]]></AD_PROCESS_ID>
 <!--245 SEQNO-->
@@ -4026,7 +4026,7 @@
 <!--247 DESCRIPTION-->
 <!--247-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--247 HELP-->
-<!--247-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--247-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--247 AD_PROCESS_ID-->
 <!--247-->              <AD_PROCESS_ID><![CDATA[187]]></AD_PROCESS_ID>
 <!--247 SEQNO-->
@@ -4286,7 +4286,7 @@
 <!--255 DESCRIPTION-->
 <!--255-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--255 HELP-->
-<!--255-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--255-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--255 AD_PROCESS_ID-->
 <!--255-->              <AD_PROCESS_ID><![CDATA[193]]></AD_PROCESS_ID>
 <!--255 SEQNO-->
@@ -4376,7 +4376,7 @@
 <!--257 DESCRIPTION-->
 <!--257-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order.]]></DESCRIPTION>
 <!--257 HELP-->
-<!--257-->              <HELP><![CDATA[The Sales Order ID is a unique identifier of a Sales Order.  This is controlled by the document sequence for this document type.]]></HELP>
+<!--257-->              <HELP><![CDATA[Unique identifier of a Sales Order originating from the document sequence defined for this document type.]]></HELP>
 <!--257 AD_PROCESS_ID-->
 <!--257-->              <AD_PROCESS_ID><![CDATA[193]]></AD_PROCESS_ID>
 <!--257 SEQNO-->
@@ -5068,7 +5068,7 @@
 <!--277 DESCRIPTION-->
 <!--277-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--277 HELP-->
-<!--277-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--277-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--277 AD_PROCESS_ID-->
 <!--277-->              <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
 <!--277 SEQNO-->
@@ -5375,7 +5375,7 @@
 <!--287 DESCRIPTION-->
 <!--287-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--287 HELP-->
-<!--287-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--287-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--287 AD_PROCESS_ID-->
 <!--287-->              <AD_PROCESS_ID><![CDATA[202]]></AD_PROCESS_ID>
 <!--287 SEQNO-->
@@ -5463,9 +5463,9 @@
 <!--289 NAME-->
 <!--289-->              <NAME><![CDATA[Project]]></NAME>
 <!--289 DESCRIPTION-->
-<!--289-->              <DESCRIPTION><![CDATA[A defined task or undertaking]]></DESCRIPTION>
+<!--289-->              <DESCRIPTION><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></DESCRIPTION>
 <!--289 HELP-->
-<!--289-->              <HELP><![CDATA[Project ID is a user defined identifier for a Project]]></HELP>
+<!--289-->              <HELP><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></HELP>
 <!--289 AD_PROCESS_ID-->
 <!--289-->              <AD_PROCESS_ID><![CDATA[202]]></AD_PROCESS_ID>
 <!--289 SEQNO-->
@@ -5772,7 +5772,7 @@
 <!--296 DESCRIPTION-->
 <!--296-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--296 HELP-->
-<!--296-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--296-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--296 AD_PROCESS_ID-->
 <!--296-->              <AD_PROCESS_ID><![CDATA[204]]></AD_PROCESS_ID>
 <!--296 SEQNO-->
@@ -5901,9 +5901,9 @@
 <!--299 NAME-->
 <!--299-->              <NAME><![CDATA[Project]]></NAME>
 <!--299 DESCRIPTION-->
-<!--299-->              <DESCRIPTION><![CDATA[A defined task or undertaking]]></DESCRIPTION>
+<!--299-->              <DESCRIPTION><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></DESCRIPTION>
 <!--299 HELP-->
-<!--299-->              <HELP><![CDATA[Project ID is a user defined identifier for a Project]]></HELP>
+<!--299-->              <HELP><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></HELP>
 <!--299 AD_PROCESS_ID-->
 <!--299-->              <AD_PROCESS_ID><![CDATA[204]]></AD_PROCESS_ID>
 <!--299 SEQNO-->
@@ -5987,7 +5987,7 @@
 <!--301 DESCRIPTION-->
 <!--301-->              <DESCRIPTION><![CDATA[An often automatically generated identifier for all documents.]]></DESCRIPTION>
 <!--301 HELP-->
-<!--301-->              <HELP><![CDATA[The document number is usually automatically generated by the system and determined by the document type of the document. If the document is not saved, the preliminary number is displayed in "<>".If the document type of your document has no automatic document sequence defined, the field is empty if you create a new document. This is for documents which usually have an external number (like vendor invoice).  If you leave the field empty, the system will generate a document number for you. The document sequence used for this fallback number is defined in the "Maintain Sequence" window with the name "DocumentNo_<TableName>", where TableName is the actual name of the table (e.g. C_Order).]]></HELP>
+<!--301-->              <HELP><![CDATA[The document number is usually automatically generated by the system and determined by the document type of the document. If the document is not saved, the preliminary number is displayed in "<>". If the document type of your document has no automatic document sequence defined, the field will be empty when creating a new document. This is for documents which usually have an external number (like vendor invoice).  If you leave the field empty, the system will generate a document number for you. The document sequence used for this fallback number is defined in the "Document Sequence" window with the name "DocumentNo_<TableName>", where TableName is the actual name of the table inside the database (e.g. C_Order).]]></HELP>
 <!--301 AD_PROCESS_ID-->
 <!--301-->              <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
 <!--301 SEQNO-->
@@ -6611,7 +6611,7 @@
 <!--316 DESCRIPTION-->
 <!--316-->              <DESCRIPTION><![CDATA[A classification of business partners based on defined similarities.]]></DESCRIPTION>
 <!--316 HELP-->
-<!--316-->              <HELP><![CDATA[The Business Partner Group ID provides a method of defining defaults to be used for individual Business Partners.]]></HELP>
+<!--316-->              <HELP><![CDATA[A way of grouping business partners together for classification and reporting purposes. Provides a method of defining certain defaults to be used when opening new business partners.]]></HELP>
 <!--316 AD_PROCESS_ID-->
 <!--316-->              <AD_PROCESS_ID><![CDATA[209]]></AD_PROCESS_ID>
 <!--316 SEQNO-->
@@ -6699,7 +6699,7 @@
 <!--318 DESCRIPTION-->
 <!--318-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order.]]></DESCRIPTION>
 <!--318 HELP-->
-<!--318-->              <HELP><![CDATA[The Sales Order ID is a unique identifier of a Sales Order.  This is controlled by the document sequence for this document type.]]></HELP>
+<!--318-->              <HELP><![CDATA[Unique identifier of a Sales Order originating from the document sequence defined for this document type.]]></HELP>
 <!--318 AD_PROCESS_ID-->
 <!--318-->              <AD_PROCESS_ID><![CDATA[211]]></AD_PROCESS_ID>
 <!--318 SEQNO-->
@@ -6740,9 +6740,9 @@
 <!--319 NAME-->
 <!--319-->              <NAME><![CDATA[Project]]></NAME>
 <!--319 DESCRIPTION-->
-<!--319-->              <DESCRIPTION><![CDATA[A defined task or undertaking]]></DESCRIPTION>
+<!--319-->              <DESCRIPTION><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></DESCRIPTION>
 <!--319 HELP-->
-<!--319-->              <HELP><![CDATA[Project ID is a user defined identifier for a Project]]></HELP>
+<!--319-->              <HELP><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></HELP>
 <!--319 AD_PROCESS_ID-->
 <!--319-->              <AD_PROCESS_ID><![CDATA[212]]></AD_PROCESS_ID>
 <!--319 SEQNO-->
@@ -6828,9 +6828,9 @@
 <!--321 NAME-->
 <!--321-->              <NAME><![CDATA[Project Type]]></NAME>
 <!--321 DESCRIPTION-->
-<!--321-->              <DESCRIPTION><![CDATA[A distinct project characteristic used for processes and sometimes grouped within a category.]]></DESCRIPTION>
+<!--321-->              <DESCRIPTION><![CDATA[Project Type is a template of a common project. ]]></DESCRIPTION>
 <!--321 HELP-->
-<!--321-->              <HELP><![CDATA[Type of the project with optional phases of the project with standard performance information]]></HELP>
+<!--321-->              <HELP><![CDATA[Project Type is a template of a common project. Standard phases and tasks can be entered into this template and then quickly reused on new projects.]]></HELP>
 <!--321 AD_PROCESS_ID-->
 <!--321-->              <AD_PROCESS_ID><![CDATA[215]]></AD_PROCESS_ID>
 <!--321 SEQNO-->
@@ -7669,7 +7669,7 @@
 <!--342 DESCRIPTION-->
 <!--342-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--342 HELP-->
-<!--342-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--342-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--342 AD_PROCESS_ID-->
 <!--342-->              <AD_PROCESS_ID><![CDATA[222]]></AD_PROCESS_ID>
 <!--342 SEQNO-->
@@ -7974,7 +7974,7 @@
 <!--349 DESCRIPTION-->
 <!--349-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--349 HELP-->
-<!--349-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--349-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--349 AD_PROCESS_ID-->
 <!--349-->              <AD_PROCESS_ID><![CDATA[223]]></AD_PROCESS_ID>
 <!--349 SEQNO-->
@@ -8148,9 +8148,9 @@
 <!--353 NAME-->
 <!--353-->              <NAME><![CDATA[Project]]></NAME>
 <!--353 DESCRIPTION-->
-<!--353-->              <DESCRIPTION><![CDATA[A defined task or undertaking]]></DESCRIPTION>
+<!--353-->              <DESCRIPTION><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></DESCRIPTION>
 <!--353 HELP-->
-<!--353-->              <HELP><![CDATA[Project ID is a user defined identifier for a Project]]></HELP>
+<!--353-->              <HELP><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></HELP>
 <!--353 AD_PROCESS_ID-->
 <!--353-->              <AD_PROCESS_ID><![CDATA[225]]></AD_PROCESS_ID>
 <!--353 SEQNO-->
@@ -8504,9 +8504,9 @@
 <!--361 NAME-->
 <!--361-->              <NAME><![CDATA[Project]]></NAME>
 <!--361 DESCRIPTION-->
-<!--361-->              <DESCRIPTION><![CDATA[A defined task or undertaking]]></DESCRIPTION>
+<!--361-->              <DESCRIPTION><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></DESCRIPTION>
 <!--361 HELP-->
-<!--361-->              <HELP><![CDATA[Project ID is a user defined identifier for a Project]]></HELP>
+<!--361-->              <HELP><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></HELP>
 <!--361 AD_PROCESS_ID-->
 <!--361-->              <AD_PROCESS_ID><![CDATA[224]]></AD_PROCESS_ID>
 <!--361 SEQNO-->
@@ -8592,9 +8592,9 @@
 <!--363 NAME-->
 <!--363-->              <NAME><![CDATA[Project]]></NAME>
 <!--363 DESCRIPTION-->
-<!--363-->              <DESCRIPTION><![CDATA[A defined task or undertaking]]></DESCRIPTION>
+<!--363-->              <DESCRIPTION><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></DESCRIPTION>
 <!--363 HELP-->
-<!--363-->              <HELP><![CDATA[Project ID is a user defined identifier for a Project]]></HELP>
+<!--363-->              <HELP><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></HELP>
 <!--363 AD_PROCESS_ID-->
 <!--363-->              <AD_PROCESS_ID><![CDATA[226]]></AD_PROCESS_ID>
 <!--363 SEQNO-->
@@ -8813,9 +8813,9 @@
 <!--368 NAME-->
 <!--368-->              <NAME><![CDATA[Project]]></NAME>
 <!--368 DESCRIPTION-->
-<!--368-->              <DESCRIPTION><![CDATA[A defined task or undertaking]]></DESCRIPTION>
+<!--368-->              <DESCRIPTION><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></DESCRIPTION>
 <!--368 HELP-->
-<!--368-->              <HELP><![CDATA[Project ID is a user defined identifier for a Project]]></HELP>
+<!--368-->              <HELP><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></HELP>
 <!--368 AD_PROCESS_ID-->
 <!--368-->              <AD_PROCESS_ID><![CDATA[228]]></AD_PROCESS_ID>
 <!--368 SEQNO-->
@@ -8858,9 +8858,9 @@
 <!--369 NAME-->
 <!--369-->              <NAME><![CDATA[Project]]></NAME>
 <!--369 DESCRIPTION-->
-<!--369-->              <DESCRIPTION><![CDATA[A defined task or undertaking]]></DESCRIPTION>
+<!--369-->              <DESCRIPTION><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></DESCRIPTION>
 <!--369 HELP-->
-<!--369-->              <HELP><![CDATA[Project ID is a user defined identifier for a Project]]></HELP>
+<!--369-->              <HELP><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></HELP>
 <!--369 AD_PROCESS_ID-->
 <!--369-->              <AD_PROCESS_ID><![CDATA[229]]></AD_PROCESS_ID>
 <!--369 SEQNO-->
@@ -9251,7 +9251,7 @@
 <!--800012 DESCRIPTION-->
 <!--800012-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800012 HELP-->
-<!--800012-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--800012-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--800012 AD_PROCESS_ID-->
 <!--800012-->              <AD_PROCESS_ID><![CDATA[800049]]></AD_PROCESS_ID>
 <!--800012 SEQNO-->
@@ -9757,7 +9757,7 @@
 <!--800025 CREATEDBY-->
 <!--800025-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800025 UPDATED-->
-<!--800025-->              <UPDATED><![CDATA[2007-07-11 18:52:39.0]]></UPDATED>
+<!--800025-->              <UPDATED><![CDATA[2008-06-03 11:42:49.0]]></UPDATED>
 <!--800025 UPDATEDBY-->
 <!--800025-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800025 NAME-->
@@ -9802,7 +9802,7 @@
 <!--800026 CREATEDBY-->
 <!--800026-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800026 UPDATED-->
-<!--800026-->              <UPDATED><![CDATA[2007-07-11 18:52:39.0]]></UPDATED>
+<!--800026-->              <UPDATED><![CDATA[2008-06-03 11:42:49.0]]></UPDATED>
 <!--800026 UPDATEDBY-->
 <!--800026-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800026 NAME-->
@@ -9810,7 +9810,7 @@
 <!--800026 DESCRIPTION-->
 <!--800026-->              <DESCRIPTION><![CDATA[A reference or document order number as listed in business partner application.]]></DESCRIPTION>
 <!--800026 HELP-->
-<!--800026-->              <HELP><![CDATA[The business partner order reference is the order reference for this specific transaction; Often Purchase Order numbers are given to print on Invoices for easier reference.  A standard number can be defined in the Business Partner (Customer) window.]]></HELP>
+<!--800026-->              <HELP><![CDATA[This can be used to input a reference for this specific transaction. For example, a Purchase Order number can be input on a Sales Order for easier reference.]]></HELP>
 <!--800026 AD_PROCESS_ID-->
 <!--800026-->              <AD_PROCESS_ID><![CDATA[800075]]></AD_PROCESS_ID>
 <!--800026 SEQNO-->
@@ -9982,7 +9982,7 @@
 <!--800030 DESCRIPTION-->
 <!--800030-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800030 HELP-->
-<!--800030-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--800030-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--800030 AD_PROCESS_ID-->
 <!--800030-->              <AD_PROCESS_ID><![CDATA[800078]]></AD_PROCESS_ID>
 <!--800030 SEQNO-->
@@ -10068,7 +10068,7 @@
 <!--800032 DESCRIPTION-->
 <!--800032-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800032 HELP-->
-<!--800032-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--800032-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--800032 AD_PROCESS_ID-->
 <!--800032-->              <AD_PROCESS_ID><![CDATA[800126]]></AD_PROCESS_ID>
 <!--800032 SEQNO-->
@@ -10156,7 +10156,7 @@
 <!--800034 DESCRIPTION-->
 <!--800034-->              <DESCRIPTION><![CDATA[An accepted medium of monetary exchange that may vary across countries.]]></DESCRIPTION>
 <!--800034 HELP-->
-<!--800034-->              <HELP><![CDATA[Indicates the Currency to be used when processing or reporting on this record]]></HELP>
+<!--800034-->              <HELP><![CDATA[Indicates the currency to be used when processing this document.]]></HELP>
 <!--800034 AD_PROCESS_ID-->
 <!--800034-->              <AD_PROCESS_ID><![CDATA[800126]]></AD_PROCESS_ID>
 <!--800034 SEQNO-->
@@ -10199,9 +10199,9 @@
 <!--800035 NAME-->
 <!--800035-->              <NAME><![CDATA[Form of Payment]]></NAME>
 <!--800035 DESCRIPTION-->
-<!--800035-->              <DESCRIPTION><![CDATA[The method used to pay the request.]]></DESCRIPTION>
+<!--800035-->              <DESCRIPTION><![CDATA[The method used for payment of this transaction.]]></DESCRIPTION>
 <!--800035 HELP-->
-<!--800035-->              <HELP><![CDATA[The Payment Rule indicates the method of invoice payment.]]></HELP>
+<!--800035-->              <HELP><![CDATA[Form of Payment indicates the method of payment used for this transaction (eg. cash, wire transfer, etc.)]]></HELP>
 <!--800035 AD_PROCESS_ID-->
 <!--800035-->              <AD_PROCESS_ID><![CDATA[800126]]></AD_PROCESS_ID>
 <!--800035 SEQNO-->
@@ -10246,7 +10246,7 @@
 <!--800036 DESCRIPTION-->
 <!--800036-->              <DESCRIPTION><![CDATA[The date when a specified request must be carried out by.]]></DESCRIPTION>
 <!--800036 HELP-->
-<!--800036-->              <HELP><![CDATA[Refers to the due date in which payment must be done.]]></HELP>
+<!--800036-->              <HELP><![CDATA[Refers to a date by which the payment must be completed.]]></HELP>
 <!--800036 AD_PROCESS_ID-->
 <!--800036-->              <AD_PROCESS_ID><![CDATA[800126]]></AD_PROCESS_ID>
 <!--800036 SEQNO-->
@@ -10287,9 +10287,9 @@
 <!--800037 NAME-->
 <!--800037-->              <NAME><![CDATA[Receipt]]></NAME>
 <!--800037 DESCRIPTION-->
-<!--800037-->              <DESCRIPTION><![CDATA[A confirmation stating whether the request has been closed through receipt of a monetary transaction.]]></DESCRIPTION>
+<!--800037-->              <DESCRIPTION><![CDATA[Indicates a sales or purchase transaction.]]></DESCRIPTION>
 <!--800037 HELP-->
-<!--800037-->              <HELP><![CDATA[This is a sales transaction (receipt)]]></HELP>
+<!--800037-->              <HELP><![CDATA[Indicated a sales transaction (Accounts Receivable if Receipt=Y) or a purchase transaction (Accounts Payable if Receipt=N).]]></HELP>
 <!--800037 AD_PROCESS_ID-->
 <!--800037-->              <AD_PROCESS_ID><![CDATA[800126]]></AD_PROCESS_ID>
 <!--800037 SEQNO-->
@@ -11006,7 +11006,7 @@
 <!--800054 DESCRIPTION-->
 <!--800054-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800054 HELP-->
-<!--800054-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--800054-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--800054 AD_PROCESS_ID-->
 <!--800054-->              <AD_PROCESS_ID><![CDATA[800171]]></AD_PROCESS_ID>
 <!--800054 SEQNO-->
@@ -11221,9 +11221,9 @@
 <!--800059 NAME-->
 <!--800059-->              <NAME><![CDATA[Project]]></NAME>
 <!--800059 DESCRIPTION-->
-<!--800059-->              <DESCRIPTION><![CDATA[A defined task or undertaking]]></DESCRIPTION>
+<!--800059-->              <DESCRIPTION><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></DESCRIPTION>
 <!--800059 HELP-->
-<!--800059-->              <HELP><![CDATA[Project ID is a user defined identifier for a Project]]></HELP>
+<!--800059-->              <HELP><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></HELP>
 <!--800059 AD_PROCESS_ID-->
 <!--800059-->              <AD_PROCESS_ID><![CDATA[800171]]></AD_PROCESS_ID>
 <!--800059 SEQNO-->
@@ -11489,7 +11489,7 @@
 <!--1004400001 DESCRIPTION-->
 <!--1004400001-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--1004400001 HELP-->
-<!--1004400001-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--1004400001-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--1004400001 AD_PROCESS_ID-->
 <!--1004400001-->              <AD_PROCESS_ID><![CDATA[1004400000]]></AD_PROCESS_ID>
 <!--1004400001 SEQNO-->

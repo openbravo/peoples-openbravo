@@ -1908,9 +1908,9 @@
 <!--187 CREATEDBY-->
 <!--187-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--187 UPDATED-->
-<!--187-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--187-->              <UPDATED><![CDATA[2008-06-03 11:16:19.0]]></UPDATED>
 <!--187 UPDATEDBY-->
-<!--187-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--187-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--187 COLUMNNAME-->
 <!--187-->              <COLUMNNAME><![CDATA[C_BPartner_ID]]></COLUMNNAME>
 <!--187 NAME-->
@@ -1920,7 +1920,7 @@
 <!--187 DESCRIPTION-->
 <!--187-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--187 HELP-->
-<!--187-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include Vendor, Customer, Employee or Salesperson]]></HELP>
+<!--187-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
 <!--187**************--></AD_ELEMENT>
 
 <!--189**************--><AD_ELEMENT>
@@ -2061,9 +2061,9 @@
 <!--193 CREATEDBY-->
 <!--193-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--193 UPDATED-->
-<!--193-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--193-->              <UPDATED><![CDATA[2008-06-03 10:47:46.0]]></UPDATED>
 <!--193 UPDATEDBY-->
-<!--193-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--193-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--193 COLUMNNAME-->
 <!--193-->              <COLUMNNAME><![CDATA[C_Currency_ID]]></COLUMNNAME>
 <!--193 NAME-->
@@ -2073,7 +2073,7 @@
 <!--193 DESCRIPTION-->
 <!--193-->              <DESCRIPTION><![CDATA[An accepted medium of monetary exchange that may vary across countries.]]></DESCRIPTION>
 <!--193 HELP-->
-<!--193-->              <HELP><![CDATA[Indicates the Currency to be used when processing or reporting on this record]]></HELP>
+<!--193-->              <HELP><![CDATA[Indicates the currency to be used when processing this document.]]></HELP>
 <!--193**************--></AD_ELEMENT>
 
 <!--195**************--><AD_ELEMENT>
@@ -2148,9 +2148,9 @@
 <!--197 CREATEDBY-->
 <!--197-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--197 UPDATED-->
-<!--197-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--197-->              <UPDATED><![CDATA[2008-06-03 10:44:23.0]]></UPDATED>
 <!--197 UPDATEDBY-->
-<!--197-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--197-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--197 COLUMNNAME-->
 <!--197-->              <COLUMNNAME><![CDATA[C_DocTypeTarget_ID]]></COLUMNNAME>
 <!--197 NAME-->
@@ -2158,9 +2158,9 @@
 <!--197 PRINTNAME-->
 <!--197-->              <PRINTNAME><![CDATA[Target Doc Type]]></PRINTNAME>
 <!--197 DESCRIPTION-->
-<!--197-->              <DESCRIPTION><![CDATA[The specific document type which should be used for a specified transaction.]]></DESCRIPTION>
+<!--197-->              <DESCRIPTION><![CDATA[The specific document type which should be used for the document.]]></DESCRIPTION>
 <!--197 HELP-->
-<!--197-->              <HELP><![CDATA[You can convert document types (e.g. from Offer to Order or Invoice).  The conversion is then reflected in the current type.  This processing is initiated by selecting the appropriate Document Action.]]></HELP>
+<!--197-->              <HELP><![CDATA[Specifies document subtype (eg. POS Order, Return Material, etc.) that each document (such as Sales Invoice, Purchase Order, etc.). Various document subtypes usually differ on the consequences they have. You can convert document types (e.g. from Offer to Order).  The conversion is then reflected in the current type.]]></HELP>
 <!--197**************--></AD_ELEMENT>
 
 <!--198**************--><AD_ELEMENT>
@@ -2438,9 +2438,9 @@
 <!--208 CREATEDBY-->
 <!--208-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--208 UPDATED-->
-<!--208-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--208-->              <UPDATED><![CDATA[2008-06-03 11:02:18.0]]></UPDATED>
 <!--208 UPDATEDBY-->
-<!--208-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--208-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--208 COLUMNNAME-->
 <!--208-->              <COLUMNNAME><![CDATA[C_Project_ID]]></COLUMNNAME>
 <!--208 NAME-->
@@ -2448,9 +2448,9 @@
 <!--208 PRINTNAME-->
 <!--208-->              <PRINTNAME><![CDATA[Project]]></PRINTNAME>
 <!--208 DESCRIPTION-->
-<!--208-->              <DESCRIPTION><![CDATA[A defined task or undertaking]]></DESCRIPTION>
+<!--208-->              <DESCRIPTION><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></DESCRIPTION>
 <!--208 HELP-->
-<!--208-->              <HELP><![CDATA[Project ID is a user defined identifier for a Project]]></HELP>
+<!--208-->              <HELP><![CDATA[Identifier of a project defined within the Project & Service Management module.]]></HELP>
 <!--208**************--></AD_ELEMENT>
 
 <!--209**************--><AD_ELEMENT>
@@ -3743,19 +3743,19 @@
 <!--269 CREATEDBY-->
 <!--269-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--269 UPDATED-->
-<!--269-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--269-->              <UPDATED><![CDATA[2008-06-03 10:45:26.0]]></UPDATED>
 <!--269 UPDATEDBY-->
-<!--269-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--269-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--269 COLUMNNAME-->
 <!--269-->              <COLUMNNAME><![CDATA[DatePromised]]></COLUMNNAME>
 <!--269 NAME-->
 <!--269-->              <NAME><![CDATA[Scheduled Delivery Date]]></NAME>
 <!--269 PRINTNAME-->
-<!--269-->              <PRINTNAME><![CDATA[Date Promised]]></PRINTNAME>
+<!--269-->              <PRINTNAME><![CDATA[Delivery Date]]></PRINTNAME>
 <!--269 DESCRIPTION-->
 <!--269-->              <DESCRIPTION><![CDATA[The date that a task, process, or action is to be completed or delivered by.]]></DESCRIPTION>
 <!--269 HELP-->
-<!--269-->              <HELP><![CDATA[The Date Promised indicates the date, if any, that an Order was promised for.]]></HELP>
+<!--269-->              <HELP><![CDATA[Scheduled Delivery Date indicates the date, if any, that an order was promised by.]]></HELP>
 <!--269**************--></AD_ELEMENT>
 
 <!--272**************--><AD_ELEMENT>
@@ -4149,9 +4149,9 @@
 <!--289 CREATEDBY-->
 <!--289-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--289 UPDATED-->
-<!--289-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--289-->              <UPDATED><![CDATA[2008-06-03 11:04:26.0]]></UPDATED>
 <!--289 UPDATEDBY-->
-<!--289-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--289-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--289 COLUMNNAME-->
 <!--289-->              <COLUMNNAME><![CDATA[DocStatus]]></COLUMNNAME>
 <!--289 NAME-->
@@ -4159,9 +4159,9 @@
 <!--289 PRINTNAME-->
 <!--289-->              <PRINTNAME><![CDATA[Doc Status]]></PRINTNAME>
 <!--289 DESCRIPTION-->
-<!--289-->              <DESCRIPTION><![CDATA[A specified position resulting from processes which have/have not been executed.]]></DESCRIPTION>
+<!--289-->              <DESCRIPTION><![CDATA[The Document Status indicates the status of a document at this time.]]></DESCRIPTION>
 <!--289 HELP-->
-<!--289-->              <HELP><![CDATA[The Document Status indicates the status of a document at this time.  If you want to change the document status, use the Document Action field]]></HELP>
+<!--289-->              <HELP><![CDATA[The Document Status indicates the status of a document at this time.  To change the status of a document, use one of the buttons usually located at the bottom of the document window.]]></HELP>
 <!--289**************--></AD_ELEMENT>
 
 <!--290**************--><AD_ELEMENT>
@@ -4178,9 +4178,9 @@
 <!--290 CREATEDBY-->
 <!--290-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--290 UPDATED-->
-<!--290-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--290-->              <UPDATED><![CDATA[2008-06-03 10:32:15.0]]></UPDATED>
 <!--290 UPDATEDBY-->
-<!--290-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--290-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--290 COLUMNNAME-->
 <!--290-->              <COLUMNNAME><![CDATA[DocumentNo]]></COLUMNNAME>
 <!--290 NAME-->
@@ -4190,7 +4190,7 @@
 <!--290 DESCRIPTION-->
 <!--290-->              <DESCRIPTION><![CDATA[An often automatically generated identifier for all documents.]]></DESCRIPTION>
 <!--290 HELP-->
-<!--290-->              <HELP><![CDATA[The document number is usually automatically generated by the system and determined by the document type of the document. If the document is not saved, the preliminary number is displayed in "<>".If the document type of your document has no automatic document sequence defined, the field is empty if you create a new document. This is for documents which usually have an external number (like vendor invoice).  If you leave the field empty, the system will generate a document number for you. The document sequence used for this fallback number is defined in the "Maintain Sequence" window with the name "DocumentNo_<TableName>", where TableName is the actual name of the table (e.g. C_Order).]]></HELP>
+<!--290-->              <HELP><![CDATA[The document number is usually automatically generated by the system and determined by the document type of the document. If the document is not saved, the preliminary number is displayed in "<>". If the document type of your document has no automatic document sequence defined, the field will be empty when creating a new document. This is for documents which usually have an external number (like vendor invoice).  If you leave the field empty, the system will generate a document number for you. The document sequence used for this fallback number is defined in the "Document Sequence" window with the name "DocumentNo_<TableName>", where TableName is the actual name of the table inside the database (e.g. C_Order).]]></HELP>
 <!--290**************--></AD_ELEMENT>
 
 <!--293**************--><AD_ELEMENT>
@@ -5106,9 +5106,9 @@
 <!--348 CREATEDBY-->
 <!--348-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--348 UPDATED-->
-<!--348-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--348-->              <UPDATED><![CDATA[2008-06-03 11:31:47.0]]></UPDATED>
 <!--348 UPDATEDBY-->
-<!--348-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--348-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--348 COLUMNNAME-->
 <!--348-->              <COLUMNNAME><![CDATA[IsActive]]></COLUMNNAME>
 <!--348 NAME-->
@@ -5118,7 +5118,9 @@
 <!--348 DESCRIPTION-->
 <!--348-->              <DESCRIPTION><![CDATA[A flag indicating whether this record is available for use or de-activated.]]></DESCRIPTION>
 <!--348 HELP-->
-<!--348-->              <HELP><![CDATA[There are two methods of making records unavailable in the system: One is to delete the record, the other is to de-activate the record. A de-activated record is not available for selection, but available for reports.There are two reasons for de-activating and not deleting records:(1) The system requires the record for audit purposes.(2) The record is referenced by other records. E.g., you cannot delete a Business Partner, if there are invoices for this partner record existing. You de-activate the Business Partner and prevent that this record is used for future entries.]]></HELP>
+<!--348-->              <HELP><![CDATA[There are two methods of making records unavailable in the system: One is to delete the record, the other is to de-activate the record. A de-activated record is not available for selection, but available for reporting. There are two reasons for de-activating and not deleting records: 
+(1) The system requires the record for auditing purposes.
+(2) The record is referenced by other records. E.g., you cannot delete a Business Partner, if there are existing invoices for it. By de-activating the Business Partner you prevent it from being used in future transactions.]]></HELP>
 <!--348**************--></AD_ELEMENT>
 
 <!--349**************--><AD_ELEMENT>
@@ -8037,9 +8039,9 @@
 <!--520 CREATEDBY-->
 <!--520-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--520 UPDATED-->
-<!--520-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--520-->              <UPDATED><![CDATA[2008-06-03 11:27:42.0]]></UPDATED>
 <!--520 UPDATEDBY-->
-<!--520-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--520-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--520 COLUMNNAME-->
 <!--520-->              <COLUMNNAME><![CDATA[PriceList]]></COLUMNNAME>
 <!--520 NAME-->
@@ -8049,7 +8051,7 @@
 <!--520 DESCRIPTION-->
 <!--520-->              <DESCRIPTION><![CDATA[The official price of a product in a specified currency.]]></DESCRIPTION>
 <!--520 HELP-->
-<!--520-->              <HELP><![CDATA[The List Price is the official List Price in the document currency.]]></HELP>
+<!--520-->              <HELP><![CDATA[The List Price is the official price stated by the selected pricelist and the currency of the document.]]></HELP>
 <!--520**************--></AD_ELEMENT>
 
 <!--522**************--><AD_ELEMENT>
@@ -8153,9 +8155,9 @@
 <!--528 CREATEDBY-->
 <!--528-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--528 UPDATED-->
-<!--528-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--528-->              <UPDATED><![CDATA[2008-06-03 11:23:25.0]]></UPDATED>
 <!--528 UPDATEDBY-->
-<!--528-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--528-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--528 COLUMNNAME-->
 <!--528-->              <COLUMNNAME><![CDATA[QtyDelivered]]></COLUMNNAME>
 <!--528 NAME-->
@@ -8165,7 +8167,7 @@
 <!--528 DESCRIPTION-->
 <!--528-->              <DESCRIPTION><![CDATA[Delivered Quantity]]></DESCRIPTION>
 <!--528 HELP-->
-<!--528-->              <HELP><![CDATA[The Delivered Quantity indicates the quantity of a product that has been delivered.]]></HELP>
+<!--528-->              <HELP><![CDATA[The Delivered Quantity indicates the quantity of a product that has already been delivered.]]></HELP>
 <!--528**************--></AD_ELEMENT>
 
 <!--529**************--><AD_ELEMENT>
@@ -8762,9 +8764,9 @@
 <!--558 CREATEDBY-->
 <!--558-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--558 UPDATED-->
-<!--558-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--558-->              <UPDATED><![CDATA[2008-06-03 11:09:18.0]]></UPDATED>
 <!--558 UPDATEDBY-->
-<!--558-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--558-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--558 COLUMNNAME-->
 <!--558-->              <COLUMNNAME><![CDATA[C_Order_ID]]></COLUMNNAME>
 <!--558 NAME-->
@@ -8774,15 +8776,15 @@
 <!--558 DESCRIPTION-->
 <!--558-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order.]]></DESCRIPTION>
 <!--558 HELP-->
-<!--558-->              <HELP><![CDATA[The Sales Order ID is a unique identifier of a Sales Order.  This is controlled by the document sequence for this document type.]]></HELP>
+<!--558-->              <HELP><![CDATA[Unique identifier of a Sales Order originating from the document sequence defined for this document type.]]></HELP>
 <!--558 PO_NAME-->
 <!--558-->              <PO_NAME><![CDATA[Purchase Order]]></PO_NAME>
 <!--558 PO_PRINTNAME-->
 <!--558-->              <PO_PRINTNAME><![CDATA[Purchase Order]]></PO_PRINTNAME>
 <!--558 PO_DESCRIPTION-->
-<!--558-->              <PO_DESCRIPTION><![CDATA[Purchase Order]]></PO_DESCRIPTION>
+<!--558-->              <PO_DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a purchase order.]]></PO_DESCRIPTION>
 <!--558 PO_HELP-->
-<!--558-->              <PO_HELP><![CDATA[The Purchase Order ID is a unique identifier of a Purchase Order.  This is controlled by the document sequence for this document type.]]></PO_HELP>
+<!--558-->              <PO_HELP><![CDATA[Unique identifier of a Purchase Order originating from the document sequence defined for this document type.]]></PO_HELP>
 <!--558**************--></AD_ELEMENT>
 
 <!--559**************--><AD_ELEMENT>
@@ -8857,9 +8859,9 @@
 <!--561 CREATEDBY-->
 <!--561-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--561 UPDATED-->
-<!--561-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--561-->              <UPDATED><![CDATA[2008-06-03 11:06:21.0]]></UPDATED>
 <!--561 UPDATEDBY-->
-<!--561-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--561-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--561 COLUMNNAME-->
 <!--561-->              <COLUMNNAME><![CDATA[C_OrderLine_ID]]></COLUMNNAME>
 <!--561 NAME-->
@@ -8869,15 +8871,15 @@
 <!--561 DESCRIPTION-->
 <!--561-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order line.]]></DESCRIPTION>
 <!--561 HELP-->
-<!--561-->              <HELP><![CDATA[The Sales Order Line is a unique identifier for a line in an order.]]></HELP>
+<!--561-->              <HELP><![CDATA[A unique identifier for a line (product) in an order.]]></HELP>
 <!--561 PO_NAME-->
 <!--561-->              <PO_NAME><![CDATA[Purchase Order Line]]></PO_NAME>
 <!--561 PO_PRINTNAME-->
 <!--561-->              <PO_PRINTNAME><![CDATA[Order Line]]></PO_PRINTNAME>
 <!--561 PO_DESCRIPTION-->
-<!--561-->              <PO_DESCRIPTION><![CDATA[Purchase Order Line]]></PO_DESCRIPTION>
+<!--561-->              <PO_DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a purchase order line.]]></PO_DESCRIPTION>
 <!--561 PO_HELP-->
-<!--561-->              <PO_HELP><![CDATA[The Purchase Order Line is a unique identifier for a line in an order.]]></PO_HELP>
+<!--561-->              <PO_HELP><![CDATA[A unique identifier for a line (product) in an order.]]></PO_HELP>
 <!--561**************--></AD_ELEMENT>
 
 <!--563**************--><AD_ELEMENT>
@@ -11020,9 +11022,9 @@
 <!--862 CREATEDBY-->
 <!--862-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--862 UPDATED-->
-<!--862-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--862-->              <UPDATED><![CDATA[2008-06-03 11:16:57.0]]></UPDATED>
 <!--862 UPDATEDBY-->
-<!--862-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--862-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--862 COLUMNNAME-->
 <!--862-->              <COLUMNNAME><![CDATA[DirectShip]]></COLUMNNAME>
 <!--862 NAME-->
@@ -11032,7 +11034,7 @@
 <!--862 DESCRIPTION-->
 <!--862-->              <DESCRIPTION><![CDATA[Ship direct from Vendor to Customer]]></DESCRIPTION>
 <!--862 HELP-->
-<!--862-->              <HELP><![CDATA[Direct Shipment indicates if this line will ship direct from the vendor to the customer]]></HELP>
+<!--862-->              <HELP><![CDATA[Direct Shipment indicates if this line will ship directly from the vendor to the customer]]></HELP>
 <!--862**************--></AD_ELEMENT>
 
 <!--865**************--><AD_ELEMENT>
@@ -12056,9 +12058,9 @@
 <!--952 CREATEDBY-->
 <!--952-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--952 UPDATED-->
-<!--952-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--952-->              <UPDATED><![CDATA[2008-06-03 10:34:56.0]]></UPDATED>
 <!--952 UPDATEDBY-->
-<!--952-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--952-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--952 COLUMNNAME-->
 <!--952-->              <COLUMNNAME><![CDATA[POReference]]></COLUMNNAME>
 <!--952 NAME-->
@@ -12068,7 +12070,7 @@
 <!--952 DESCRIPTION-->
 <!--952-->              <DESCRIPTION><![CDATA[A reference or document order number as listed in business partner application.]]></DESCRIPTION>
 <!--952 HELP-->
-<!--952-->              <HELP><![CDATA[The business partner order reference is the order reference for this specific transaction; Often Purchase Order numbers are given to print on Invoices for easier reference.  A standard number can be defined in the Business Partner (Customer) window.]]></HELP>
+<!--952-->              <HELP><![CDATA[This can be used to input a reference for this specific transaction. For example, a Purchase Order number can be input on a Sales Order for easier reference.]]></HELP>
 <!--952**************--></AD_ELEMENT>
 
 <!--954**************--><AD_ELEMENT>
@@ -15259,9 +15261,9 @@
 <!--1143 CREATEDBY-->
 <!--1143-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1143 UPDATED-->
-<!--1143-->              <UPDATED><![CDATA[2003-03-30 23:05:54.0]]></UPDATED>
+<!--1143-->              <UPDATED><![CDATA[2008-06-03 10:52:06.0]]></UPDATED>
 <!--1143 UPDATEDBY-->
-<!--1143-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1143-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1143 COLUMNNAME-->
 <!--1143-->              <COLUMNNAME><![CDATA[PaymentRule]]></COLUMNNAME>
 <!--1143 NAME-->
@@ -15269,9 +15271,9 @@
 <!--1143 PRINTNAME-->
 <!--1143-->              <PRINTNAME><![CDATA[Payment Rule]]></PRINTNAME>
 <!--1143 DESCRIPTION-->
-<!--1143-->              <DESCRIPTION><![CDATA[The method used to pay the request.]]></DESCRIPTION>
+<!--1143-->              <DESCRIPTION><![CDATA[The method used for payment of this transaction.]]></DESCRIPTION>
 <!--1143 HELP-->
-<!--1143-->              <HELP><![CDATA[The Payment Rule indicates the method of invoice payment.]]></HELP>
+<!--1143-->              <HELP><![CDATA[Form of Payment indicates the method of payment used for this transaction (eg. cash, wire transfer, etc.)]]></HELP>
 <!--1143**************--></AD_ELEMENT>
 
 <!--1145**************--><AD_ELEMENT>
@@ -18086,9 +18088,9 @@
 <!--1383 CREATEDBY-->
 <!--1383-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1383 UPDATED-->
-<!--1383-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--1383-->              <UPDATED><![CDATA[2008-06-03 11:15:03.0]]></UPDATED>
 <!--1383 UPDATEDBY-->
-<!--1383-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1383-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1383 COLUMNNAME-->
 <!--1383-->              <COLUMNNAME><![CDATA[C_BP_Group_ID]]></COLUMNNAME>
 <!--1383 NAME-->
@@ -18098,7 +18100,7 @@
 <!--1383 DESCRIPTION-->
 <!--1383-->              <DESCRIPTION><![CDATA[A classification of business partners based on defined similarities.]]></DESCRIPTION>
 <!--1383 HELP-->
-<!--1383-->              <HELP><![CDATA[The Business Partner Group ID provides a method of defining defaults to be used for individual Business Partners.]]></HELP>
+<!--1383-->              <HELP><![CDATA[A way of grouping business partners together for classification and reporting purposes. Provides a method of defining certain defaults to be used when opening new business partners.]]></HELP>
 <!--1383**************--></AD_ELEMENT>
 
 <!--1387**************--><AD_ELEMENT>
@@ -18256,7 +18258,7 @@
 <!--1402 CREATEDBY-->
 <!--1402-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1402 UPDATED-->
-<!--1402-->              <UPDATED><![CDATA[2007-05-07 17:14:08.0]]></UPDATED>
+<!--1402-->              <UPDATED><![CDATA[2008-06-03 11:42:09.0]]></UPDATED>
 <!--1402 UPDATEDBY-->
 <!--1402-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1402 COLUMNNAME-->
@@ -18268,7 +18270,7 @@
 <!--1402 DESCRIPTION-->
 <!--1402-->              <DESCRIPTION><![CDATA[A confirmation stating whether the request has been closed through a monetary transaction.]]></DESCRIPTION>
 <!--1402 HELP-->
-<!--1402-->              <HELP><![CDATA[The document is paid]]></HELP>
+<!--1402-->              <HELP><![CDATA[The document is paid for.]]></HELP>
 <!--1402**************--></AD_ELEMENT>
 
 <!--1403**************--><AD_ELEMENT>
@@ -21306,7 +21308,7 @@
 <!--1634 CREATEDBY-->
 <!--1634-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1634 UPDATED-->
-<!--1634-->              <UPDATED><![CDATA[2007-05-07 17:01:17.0]]></UPDATED>
+<!--1634-->              <UPDATED><![CDATA[2008-06-03 11:41:43.0]]></UPDATED>
 <!--1634 UPDATEDBY-->
 <!--1634-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1634 COLUMNNAME-->
@@ -21316,9 +21318,9 @@
 <!--1634 PRINTNAME-->
 <!--1634-->              <PRINTNAME><![CDATA[Receipt]]></PRINTNAME>
 <!--1634 DESCRIPTION-->
-<!--1634-->              <DESCRIPTION><![CDATA[A confirmation stating whether the request has been closed through receipt of a monetary transaction.]]></DESCRIPTION>
+<!--1634-->              <DESCRIPTION><![CDATA[Indicates a sales or purchase transaction.]]></DESCRIPTION>
 <!--1634 HELP-->
-<!--1634-->              <HELP><![CDATA[This is a sales transaction (receipt)]]></HELP>
+<!--1634-->              <HELP><![CDATA[Indicated a sales transaction (Accounts Receivable if Receipt=Y) or a purchase transaction (Accounts Payable if Receipt=N).]]></HELP>
 <!--1634**************--></AD_ELEMENT>
 
 <!--1639**************--><AD_ELEMENT>
@@ -24982,7 +24984,7 @@
 <!--1906 CREATEDBY-->
 <!--1906-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1906 UPDATED-->
-<!--1906-->              <UPDATED><![CDATA[2007-05-09 13:24:41.0]]></UPDATED>
+<!--1906-->              <UPDATED><![CDATA[2008-06-03 11:11:23.0]]></UPDATED>
 <!--1906 UPDATEDBY-->
 <!--1906-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1906 COLUMNNAME-->
@@ -24992,9 +24994,9 @@
 <!--1906 PRINTNAME-->
 <!--1906-->              <PRINTNAME><![CDATA[Partner Key]]></PRINTNAME>
 <!--1906 DESCRIPTION-->
-<!--1906-->              <DESCRIPTION><![CDATA[An abbreviated name to help find a business partner.]]></DESCRIPTION>
+<!--1906-->              <DESCRIPTION><![CDATA[An abbreviated name (or a code) to help find a business partner.]]></DESCRIPTION>
 <!--1906 HELP-->
-<!--1906-->              <HELP><![CDATA[The value or short name for the business partner. This value goes rigth to the field "Search key" on the window Business partner]]></HELP>
+<!--1906-->              <HELP><![CDATA[An abbreviated name (or a code) to help find a business partner. Usually, a company's internal idenfitier is used here.]]></HELP>
 <!--1906**************--></AD_ELEMENT>
 
 <!--1907**************--><AD_ELEMENT>
@@ -27289,9 +27291,9 @@
 <!--2033 CREATEDBY-->
 <!--2033-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--2033 UPDATED-->
-<!--2033-->              <UPDATED><![CDATA[2003-05-28 22:11:36.0]]></UPDATED>
+<!--2033-->              <UPDATED><![CDATA[2008-06-03 11:01:45.0]]></UPDATED>
 <!--2033 UPDATEDBY-->
-<!--2033-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--2033-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--2033 COLUMNNAME-->
 <!--2033-->              <COLUMNNAME><![CDATA[C_ProjectType_ID]]></COLUMNNAME>
 <!--2033 NAME-->
@@ -27299,9 +27301,9 @@
 <!--2033 PRINTNAME-->
 <!--2033-->              <PRINTNAME><![CDATA[Project Type]]></PRINTNAME>
 <!--2033 DESCRIPTION-->
-<!--2033-->              <DESCRIPTION><![CDATA[A distinct project characteristic used for processes and sometimes grouped within a category.]]></DESCRIPTION>
+<!--2033-->              <DESCRIPTION><![CDATA[Project Type is a template of a common project. ]]></DESCRIPTION>
 <!--2033 HELP-->
-<!--2033-->              <HELP><![CDATA[Type of the project with optional phases of the project with standard performance information]]></HELP>
+<!--2033-->              <HELP><![CDATA[Project Type is a template of a common project. Standard phases and tasks can be entered into this template and then quickly reused on new projects.]]></HELP>
 <!--2033**************--></AD_ELEMENT>
 
 <!--2036**************--><AD_ELEMENT>
@@ -28043,7 +28045,7 @@
 <!--2073 CREATEDBY-->
 <!--2073-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--2073 UPDATED-->
-<!--2073-->              <UPDATED><![CDATA[2007-05-10 13:33:01.0]]></UPDATED>
+<!--2073-->              <UPDATED><![CDATA[2008-06-03 10:54:08.0]]></UPDATED>
 <!--2073 UPDATEDBY-->
 <!--2073-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--2073 COLUMNNAME-->
@@ -28053,9 +28055,9 @@
 <!--2073 PRINTNAME-->
 <!--2073-->              <PRINTNAME><![CDATA[Project Phase]]></PRINTNAME>
 <!--2073 DESCRIPTION-->
-<!--2073-->              <DESCRIPTION><![CDATA[A defined section of a project, sometimes made up of one or many phases.]]></DESCRIPTION>
+<!--2073-->              <DESCRIPTION><![CDATA[A defined section of a project.]]></DESCRIPTION>
 <!--2073 HELP-->
-<!--2073-->              <HELP><![CDATA[The ID identifies a unique phase for the project]]></HELP>
+<!--2073-->              <HELP><![CDATA[Identifies a phase for a particular project.]]></HELP>
 <!--2073**************--></AD_ELEMENT>
 
 <!--2074**************--><AD_ELEMENT>
@@ -28503,9 +28505,9 @@
 <!--2094 CREATEDBY-->
 <!--2094-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--2094 UPDATED-->
-<!--2094-->              <UPDATED><![CDATA[2003-06-07 20:24:34.0]]></UPDATED>
+<!--2094-->              <UPDATED><![CDATA[2008-06-03 11:10:32.0]]></UPDATED>
 <!--2094 UPDATEDBY-->
-<!--2094-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--2094-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--2094 COLUMNNAME-->
 <!--2094-->              <COLUMNNAME><![CDATA[BPartnerValue]]></COLUMNNAME>
 <!--2094 NAME-->
@@ -28513,9 +28515,9 @@
 <!--2094 PRINTNAME-->
 <!--2094-->              <PRINTNAME><![CDATA[Business Partner Key]]></PRINTNAME>
 <!--2094 DESCRIPTION-->
-<!--2094-->              <DESCRIPTION><![CDATA[An abbreviated name to help find a business partner.]]></DESCRIPTION>
+<!--2094-->              <DESCRIPTION><![CDATA[An abbreviated name (or a code) to help find a business partner.]]></DESCRIPTION>
 <!--2094 HELP-->
-<!--2094-->              <HELP><![CDATA[An abbreviated name to help find a business partner.]]></HELP>
+<!--2094-->              <HELP><![CDATA[An abbreviated name (or a code) to help find a business partner. Usually, a company's internal identifier is entered here.]]></HELP>
 <!--2094**************--></AD_ELEMENT>
 
 <!--2095**************--><AD_ELEMENT>
@@ -31308,7 +31310,7 @@
 <!--800061 CREATEDBY-->
 <!--800061-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800061 UPDATED-->
-<!--800061-->              <UPDATED><![CDATA[2007-05-07 17:03:47.0]]></UPDATED>
+<!--800061-->              <UPDATED><![CDATA[2008-06-03 11:34:44.0]]></UPDATED>
 <!--800061 UPDATEDBY-->
 <!--800061-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800061 COLUMNNAME-->
@@ -31320,7 +31322,7 @@
 <!--800061 DESCRIPTION-->
 <!--800061-->              <DESCRIPTION><![CDATA[The settlement used to cancel the corresponding payment.]]></DESCRIPTION>
 <!--800061 HELP-->
-<!--800061-->              <HELP><![CDATA[Refers to the settlement in which this Debt/Payment has been cancelled.]]></HELP>
+<!--800061-->              <HELP><![CDATA[Identifier of a settlement in which this Payment has been cancelled.]]></HELP>
 <!--800061**************--></AD_ELEMENT>
 
 <!--800062**************--><AD_ELEMENT>
@@ -31366,7 +31368,7 @@
 <!--800063 CREATEDBY-->
 <!--800063-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800063 UPDATED-->
-<!--800063-->              <UPDATED><![CDATA[2007-05-07 17:00:42.0]]></UPDATED>
+<!--800063-->              <UPDATED><![CDATA[2008-06-03 11:37:46.0]]></UPDATED>
 <!--800063 UPDATEDBY-->
 <!--800063-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800063 COLUMNNAME-->
@@ -31378,7 +31380,7 @@
 <!--800063 DESCRIPTION-->
 <!--800063-->              <DESCRIPTION><![CDATA[The date when a specified request must be carried out by.]]></DESCRIPTION>
 <!--800063 HELP-->
-<!--800063-->              <HELP><![CDATA[Refers to the due date in which payment must be done.]]></HELP>
+<!--800063-->              <HELP><![CDATA[Refers to a date by which the payment must be completed.]]></HELP>
 <!--800063**************--></AD_ELEMENT>
 
 <!--800064**************--><AD_ELEMENT>
@@ -36115,7 +36117,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800273 CREATEDBY-->
 <!--800273-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800273 UPDATED-->
-<!--800273-->              <UPDATED><![CDATA[2007-05-11 11:10:59.0]]></UPDATED>
+<!--800273-->              <UPDATED><![CDATA[2008-06-03 11:33:28.0]]></UPDATED>
 <!--800273 UPDATEDBY-->
 <!--800273-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800273 COLUMNNAME-->
@@ -36127,7 +36129,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800273 DESCRIPTION-->
 <!--800273-->              <DESCRIPTION><![CDATA[The ability to raise or lower prices.]]></DESCRIPTION>
 <!--800273 HELP-->
-<!--800273-->              <HELP><![CDATA[Price Adjustment]]></HELP>
+<!--800273-->              <HELP><![CDATA[Price Adjustment applied to a particular line (product) automatically by the system.]]></HELP>
 <!--800273**************--></AD_ELEMENT>
 
 <!--800274**************--><AD_ELEMENT>
@@ -42716,19 +42718,19 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800666 CREATEDBY-->
 <!--800666-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800666 UPDATED-->
-<!--800666-->              <UPDATED><![CDATA[2007-05-07 17:25:05.0]]></UPDATED>
+<!--800666-->              <UPDATED><![CDATA[2008-06-03 11:38:56.0]]></UPDATED>
 <!--800666 UPDATEDBY-->
 <!--800666-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800666 COLUMNNAME-->
 <!--800666-->              <COLUMNNAME><![CDATA[Status_Initial]]></COLUMNNAME>
 <!--800666 NAME-->
-<!--800666-->              <NAME><![CDATA[Status_Initial]]></NAME>
+<!--800666-->              <NAME><![CDATA[Initial Status]]></NAME>
 <!--800666 PRINTNAME-->
-<!--800666-->              <PRINTNAME><![CDATA[Status_Initial]]></PRINTNAME>
+<!--800666-->              <PRINTNAME><![CDATA[Initial Status]]></PRINTNAME>
 <!--800666 DESCRIPTION-->
-<!--800666-->              <DESCRIPTION><![CDATA[Initial Status.]]></DESCRIPTION>
+<!--800666-->              <DESCRIPTION><![CDATA[Status of a payment upon creation.]]></DESCRIPTION>
 <!--800666 HELP-->
-<!--800666-->              <HELP><![CDATA[Status of a debt/payment when it is created.]]></HELP>
+<!--800666-->              <HELP><![CDATA[Status of a payment upon creation.]]></HELP>
 <!--800666**************--></AD_ELEMENT>
 
 <!--800667**************--><AD_ELEMENT>
@@ -46177,7 +46179,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800809 CREATEDBY-->
 <!--800809-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800809 UPDATED-->
-<!--800809-->              <UPDATED><![CDATA[2007-08-30 18:14:34.0]]></UPDATED>
+<!--800809-->              <UPDATED><![CDATA[2008-06-03 11:15:44.0]]></UPDATED>
 <!--800809 UPDATEDBY-->
 <!--800809-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800809 COLUMNNAME-->
@@ -46189,7 +46191,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800809 DESCRIPTION-->
 <!--800809-->              <DESCRIPTION><![CDATA[Bussines Partner Tax Category as a Vendor]]></DESCRIPTION>
 <!--800809 HELP-->
-<!--800809-->              <HELP><![CDATA[Bussines Partner Tax Category is a category defined for apply default taxes for procurement transactions.]]></HELP>
+<!--800809-->              <HELP><![CDATA[Bussines Partner Tax Category is a category defined for applying default taxes to procurement transactions.]]></HELP>
 <!--800809**************--></AD_ELEMENT>
 
 <!--800810**************--><AD_ELEMENT>
