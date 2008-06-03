@@ -68,6 +68,13 @@ function disableDefaultAction() {
   }
 }
 
+function comboDefaultAction() {
+  if (defaultActionElement != null || defaultActionElement != 'null' || defaultActionElement != '') {
+    eraseWindowElementDefaultAction(defaultActionElement);
+    keyArray[defaultActionElementArrayPosition] = new keyArrayItem("ENTER", "activateDefaultAction();", null, null, false, 'onkeydown');
+  }
+}
+
 
 function defaultActionLogic(obj) {
   disableDefaultAction();
@@ -1491,12 +1498,38 @@ function blurGrid() {
 function windowUpKey() {
   if (isGridFocused) {
     dojo.widget.byId('grid').goToPreviousRow();
+  } else {
+    if (focusedWindowElement.tagName == 'SELECT') {
+      comboDefaultAction();
+    }
   }
 }
 
 function windowDownKey() {
   if (isGridFocused) {
     dojo.widget.byId('grid').goToNextRow();
+  } else {
+    if (focusedWindowElement.tagName == 'SELECT') {
+      comboDefaultAction();
+    }
+  }
+}
+
+function windowLeftKey() {
+  if (isGridFocused) {
+  } else {
+    if (focusedWindowElement.tagName == 'SELECT') {
+      comboDefaultAction();
+    }
+  }
+}
+
+function windowRightKey() {
+  if (isGridFocused) {
+  } else {
+    if (focusedWindowElement.tagName == 'SELECT') {
+      comboDefaultAction();
+    }
   }
 }
 
