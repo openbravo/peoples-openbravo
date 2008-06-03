@@ -1059,9 +1059,9 @@
 <!--145 CREATEDBY-->
 <!--145-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--145 UPDATED-->
-<!--145-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--145-->              <UPDATED><![CDATA[2008-06-03 17:34:39.0]]></UPDATED>
 <!--145 UPDATEDBY-->
-<!--145-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--145-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--145 COLUMNNAME-->
 <!--145-->              <COLUMNNAME><![CDATA[AccessLevel]]></COLUMNNAME>
 <!--145 NAME-->
@@ -1069,9 +1069,15 @@
 <!--145 PRINTNAME-->
 <!--145-->              <PRINTNAME><![CDATA[Data Access Level]]></PRINTNAME>
 <!--145 DESCRIPTION-->
-<!--145-->              <DESCRIPTION><![CDATA[A privilege required to make adjustments to an object.]]></DESCRIPTION>
+<!--145-->              <DESCRIPTION><![CDATA[Indicates what type of data (in terms of AD_CLIENT and AD_ORG data columns) can be entered or viewed.]]></DESCRIPTION>
 <!--145 HELP-->
-<!--145-->              <HELP><![CDATA[Indicates the access level required for this record or process.]]></HELP>
+<!--145-->              <HELP><![CDATA[Indicates what type of data (in terms of AD_CLIENT and AD_ORG data columns) can be entered or viewed. We can classify data in 4 major categories:
+- System (AD_CLIENT_ID=0, AD_ORG_ID=0) - system data (such as metadata for window, tab and field definition)
+- Organization (AD_CLIENT<>0, AD_ORG_ID<>0) - data particular to an organization (such as sales orders)
+- Client/Organization (AD_CLIENT<>0, AD_ORG_ID=anything) - data particular to an organization or shared among all organizations within one client
+- Client (AD_CLIENT<>0, AD_ORG_ID=0) - data that is specific to a client but can be used by all organizations within that client
+
+or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--145**************--></AD_ELEMENT>
 
 <!--146**************--><AD_ELEMENT>
@@ -1639,7 +1645,7 @@
 <!--167 CREATEDBY-->
 <!--167-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--167 UPDATED-->
-<!--167-->              <UPDATED><![CDATA[2007-05-03 13:11:31.0]]></UPDATED>
+<!--167-->              <UPDATED><![CDATA[2008-06-03 12:36:22.0]]></UPDATED>
 <!--167 UPDATEDBY-->
 <!--167-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--167 COLUMNNAME-->
@@ -1651,7 +1657,7 @@
 <!--167 DESCRIPTION-->
 <!--167-->              <DESCRIPTION><![CDATA[A defined characteristic of a specific product.]]></DESCRIPTION>
 <!--167 HELP-->
-<!--167-->              <HELP><![CDATA[Attribute name that will take the value.]]></HELP>
+<!--167-->              <HELP><![CDATA[A defined characteristic of a specific product.]]></HELP>
 <!--167**************--></AD_ELEMENT>
 
 <!--168**************--><AD_ELEMENT>
@@ -3192,9 +3198,9 @@
 <!--241 CREATEDBY-->
 <!--241-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--241 UPDATED-->
-<!--241-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--241-->              <UPDATED><![CDATA[2008-06-03 17:14:57.0]]></UPDATED>
 <!--241 UPDATEDBY-->
-<!--241-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--241-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--241 COLUMNNAME-->
 <!--241-->              <COLUMNNAME><![CDATA[CostingMethod]]></COLUMNNAME>
 <!--241 NAME-->
@@ -3202,9 +3208,9 @@
 <!--241 PRINTNAME-->
 <!--241-->              <PRINTNAME><![CDATA[Costing Method]]></PRINTNAME>
 <!--241 DESCRIPTION-->
-<!--241-->              <DESCRIPTION><![CDATA[Indicates how Costs will be calculated]]></DESCRIPTION>
+<!--241-->              <DESCRIPTION><![CDATA[Indicates how costs will be calculated]]></DESCRIPTION>
 <!--241 HELP-->
-<!--241-->              <HELP><![CDATA[The Costing Method indicates how costs will be calculated (Standard, Average)]]></HELP>
+<!--241-->              <HELP><![CDATA[Indicates how costs will be calculated (Standard, Average) for valuation and accounting purposes.]]></HELP>
 <!--241**************--></AD_ELEMENT>
 
 <!--242**************--><AD_ELEMENT>
@@ -3598,9 +3604,9 @@
 <!--263 CREATEDBY-->
 <!--263-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--263 UPDATED-->
-<!--263-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--263-->              <UPDATED><![CDATA[2008-06-03 12:34:48.0]]></UPDATED>
 <!--263 UPDATEDBY-->
-<!--263-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--263-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--263 COLUMNNAME-->
 <!--263-->              <COLUMNNAME><![CDATA[DateAcct]]></COLUMNNAME>
 <!--263 NAME-->
@@ -3608,9 +3614,9 @@
 <!--263 PRINTNAME-->
 <!--263-->              <PRINTNAME><![CDATA[Acct Date]]></PRINTNAME>
 <!--263 DESCRIPTION-->
-<!--263-->              <DESCRIPTION><![CDATA[The date this transaction is recorded in the general ledger.]]></DESCRIPTION>
+<!--263-->              <DESCRIPTION><![CDATA[The date this transaction is recorded for in the general ledger.]]></DESCRIPTION>
 <!--263 HELP-->
-<!--263-->              <HELP><![CDATA[The Accounting Date indicates the date to be used on the General Ledger account entries generated from this document]]></HELP>
+<!--263-->              <HELP><![CDATA[The date this transaction is recorded on in the general ledger. This date also indicates which accounting period within the fiscal year this transaction will be part of.]]></HELP>
 <!--263**************--></AD_ELEMENT>
 
 <!--264**************--><AD_ELEMENT>
@@ -3975,9 +3981,9 @@
 <!--283 CREATEDBY-->
 <!--283-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--283 UPDATED-->
-<!--283-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--283-->              <UPDATED><![CDATA[2008-06-03 17:40:45.0]]></UPDATED>
 <!--283 UPDATEDBY-->
-<!--283-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--283-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--283 COLUMNNAME-->
 <!--283-->              <COLUMNNAME><![CDATA[DisplayLogic]]></COLUMNNAME>
 <!--283 NAME-->
@@ -3985,9 +3991,9 @@
 <!--283 PRINTNAME-->
 <!--283-->              <PRINTNAME><![CDATA[Display Logic]]></PRINTNAME>
 <!--283 DESCRIPTION-->
-<!--283-->              <DESCRIPTION><![CDATA[A specification of statements which, when evaluated as false, are required to  hide the field.]]></DESCRIPTION>
+<!--283-->              <DESCRIPTION><![CDATA[A specification of statements which, when evaluated as false, cause the the field to appear hidden.]]></DESCRIPTION>
 <!--283 HELP-->
-<!--283-->              <HELP><![CDATA[A specification of statements which, when evaluated as false, are required to  hide the field.]]></HELP>
+<!--283-->              <HELP><![CDATA[A specification of statements which, when evaluated as false, cause the the field to appear hidden.]]></HELP>
 <!--283**************--></AD_ELEMENT>
 
 <!--284**************--><AD_ELEMENT>
@@ -5369,9 +5375,9 @@
 <!--364 CREATEDBY-->
 <!--364-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--364 UPDATED-->
-<!--364-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--364-->              <UPDATED><![CDATA[2008-06-03 17:22:02.0]]></UPDATED>
 <!--364 UPDATEDBY-->
-<!--364-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--364-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--364 COLUMNNAME-->
 <!--364-->              <COLUMNNAME><![CDATA[IsCustomer]]></COLUMNNAME>
 <!--364 NAME-->
@@ -5379,9 +5385,9 @@
 <!--364 PRINTNAME-->
 <!--364-->              <PRINTNAME><![CDATA[Customer]]></PRINTNAME>
 <!--364 DESCRIPTION-->
-<!--364-->              <DESCRIPTION><![CDATA[A business partner who will be making purchases.]]></DESCRIPTION>
+<!--364-->              <DESCRIPTION><![CDATA[Indicates a business partner that is your customer, ie. that will be making purchases from you.]]></DESCRIPTION>
 <!--364 HELP-->
-<!--364-->              <HELP><![CDATA[The Customer checkbox indicates if this Business Partner is a customer.  If it is select additional fields will display which further define this customer.]]></HELP>
+<!--364-->              <HELP><![CDATA[Indicates a business partner that is your customer, ie. that will be making purchases from you. If selected, additional fields will display further details that need to be entered for a customer.]]></HELP>
 <!--364**************--></AD_ELEMENT>
 
 <!--366**************--><AD_ELEMENT>
@@ -6154,9 +6160,9 @@
 <!--410 CREATEDBY-->
 <!--410-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--410 UPDATED-->
-<!--410-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--410-->              <UPDATED><![CDATA[2008-06-03 17:41:32.0]]></UPDATED>
 <!--410 UPDATEDBY-->
-<!--410-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--410-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--410 COLUMNNAME-->
 <!--410-->              <COLUMNNAME><![CDATA[IsSameLine]]></COLUMNNAME>
 <!--410 NAME-->
@@ -6164,9 +6170,9 @@
 <!--410 PRINTNAME-->
 <!--410-->              <PRINTNAME><![CDATA[Same Line]]></PRINTNAME>
 <!--410 DESCRIPTION-->
-<!--410-->              <DESCRIPTION><![CDATA[An indication that this field will be displayed on the same line as the previous one.]]></DESCRIPTION>
+<!--410-->              <DESCRIPTION><![CDATA[An indication that the field will display on the same line as the previous one.]]></DESCRIPTION>
 <!--410 HELP-->
-<!--410-->              <HELP><![CDATA[The Same Line checkbox indicates that the field will display on the same line as the previous field.]]></HELP>
+<!--410-->              <HELP><![CDATA[An indication that the field will display on the same line as the previous one.]]></HELP>
 <!--410**************--></AD_ELEMENT>
 
 <!--411**************--><AD_ELEMENT>
@@ -7053,9 +7059,9 @@
 <!--469 CREATEDBY-->
 <!--469-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--469 UPDATED-->
-<!--469-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--469-->              <UPDATED><![CDATA[2008-06-03 17:52:19.0]]></UPDATED>
 <!--469 UPDATEDBY-->
-<!--469-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--469-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--469 COLUMNNAME-->
 <!--469-->              <COLUMNNAME><![CDATA[Name]]></COLUMNNAME>
 <!--469 NAME-->
@@ -7063,9 +7069,9 @@
 <!--469 PRINTNAME-->
 <!--469-->              <PRINTNAME><![CDATA[Name]]></PRINTNAME>
 <!--469 DESCRIPTION-->
-<!--469-->              <DESCRIPTION><![CDATA[A identifier for a document which can be used as a search tool.]]></DESCRIPTION>
+<!--469-->              <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
 <!--469 HELP-->
-<!--469-->              <HELP><![CDATA[The name of an entity (record) is used as an default search option in addition to the search key. The name is up to 60 characters in lenght.]]></HELP>
+<!--469-->              <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
 <!--469**************--></AD_ELEMENT>
 
 <!--470**************--><AD_ELEMENT>
@@ -8764,7 +8770,7 @@
 <!--558 CREATEDBY-->
 <!--558-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--558 UPDATED-->
-<!--558-->              <UPDATED><![CDATA[2008-06-03 11:09:18.0]]></UPDATED>
+<!--558-->              <UPDATED><![CDATA[2008-06-03 16:20:00.0]]></UPDATED>
 <!--558 UPDATEDBY-->
 <!--558-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--558 COLUMNNAME-->
@@ -8776,7 +8782,7 @@
 <!--558 DESCRIPTION-->
 <!--558-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order.]]></DESCRIPTION>
 <!--558 HELP-->
-<!--558-->              <HELP><![CDATA[Unique identifier of a Sales Order originating from the document sequence defined for this document type.]]></HELP>
+<!--558-->              <HELP><![CDATA[Unique identifier and a reference to a Sales Order originating from the document sequence defined for this document type.]]></HELP>
 <!--558 PO_NAME-->
 <!--558-->              <PO_NAME><![CDATA[Purchase Order]]></PO_NAME>
 <!--558 PO_PRINTNAME-->
@@ -8784,7 +8790,7 @@
 <!--558 PO_DESCRIPTION-->
 <!--558-->              <PO_DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a purchase order.]]></PO_DESCRIPTION>
 <!--558 PO_HELP-->
-<!--558-->              <PO_HELP><![CDATA[Unique identifier of a Purchase Order originating from the document sequence defined for this document type.]]></PO_HELP>
+<!--558-->              <PO_HELP><![CDATA[Unique identifier and a reference to a Purchase Order originating from the document sequence defined for this document type.]]></PO_HELP>
 <!--558**************--></AD_ELEMENT>
 
 <!--559**************--><AD_ELEMENT>
@@ -8859,7 +8865,7 @@
 <!--561 CREATEDBY-->
 <!--561-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--561 UPDATED-->
-<!--561-->              <UPDATED><![CDATA[2008-06-03 11:06:21.0]]></UPDATED>
+<!--561-->              <UPDATED><![CDATA[2008-06-03 16:19:27.0]]></UPDATED>
 <!--561 UPDATEDBY-->
 <!--561-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--561 COLUMNNAME-->
@@ -8871,7 +8877,7 @@
 <!--561 DESCRIPTION-->
 <!--561-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order line.]]></DESCRIPTION>
 <!--561 HELP-->
-<!--561-->              <HELP><![CDATA[A unique identifier for a line (product) in an order.]]></HELP>
+<!--561-->              <HELP><![CDATA[A unique identifier and a reference to a sales order line (product).]]></HELP>
 <!--561 PO_NAME-->
 <!--561-->              <PO_NAME><![CDATA[Purchase Order Line]]></PO_NAME>
 <!--561 PO_PRINTNAME-->
@@ -8879,7 +8885,7 @@
 <!--561 PO_DESCRIPTION-->
 <!--561-->              <PO_DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a purchase order line.]]></PO_DESCRIPTION>
 <!--561 PO_HELP-->
-<!--561-->              <PO_HELP><![CDATA[A unique identifier for a line (product) in an order.]]></PO_HELP>
+<!--561-->              <PO_HELP><![CDATA[A unique identifier and a reference to a purchase order line (product).]]></PO_HELP>
 <!--561**************--></AD_ELEMENT>
 
 <!--563**************--><AD_ELEMENT>
@@ -9157,9 +9163,9 @@
 <!--574 CREATEDBY-->
 <!--574-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--574 UPDATED-->
-<!--574-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--574-->              <UPDATED><![CDATA[2008-06-03 12:24:27.0]]></UPDATED>
 <!--574 UPDATEDBY-->
-<!--574-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--574-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--574 COLUMNNAME-->
 <!--574-->              <COLUMNNAME><![CDATA[StartDate]]></COLUMNNAME>
 <!--574 NAME-->
@@ -9169,7 +9175,7 @@
 <!--574 DESCRIPTION-->
 <!--574-->              <DESCRIPTION><![CDATA[A parameter stating when a specified request will begin.]]></DESCRIPTION>
 <!--574 HELP-->
-<!--574-->              <HELP><![CDATA[The Start Date indicates the first or starting date of a range.]]></HELP>
+<!--574-->              <HELP><![CDATA[A parameter stating when a specified request will begin.]]></HELP>
 <!--574**************--></AD_ELEMENT>
 
 <!--575**************--><AD_ELEMENT>
@@ -10326,7 +10332,7 @@
 <!--620 CREATEDBY-->
 <!--620-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--620 UPDATED-->
-<!--620-->              <UPDATED><![CDATA[2007-05-11 11:59:22.0]]></UPDATED>
+<!--620-->              <UPDATED><![CDATA[2008-06-03 12:42:44.0]]></UPDATED>
 <!--620 UPDATEDBY-->
 <!--620-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--620 COLUMNNAME-->
@@ -10338,7 +10344,9 @@
 <!--620 DESCRIPTION-->
 <!--620-->              <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
 <!--620 HELP-->
-<!--620-->              <HELP><![CDATA[A search key allows you a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number.  The document sequence used for this fallback number is defined in the "Maintain Sequence" window with the name "DocumentNo_TableName", where TableName is the actual name of the table (e.g. C_Order).]]></HELP>
+<!--620-->              <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--620**************--></AD_ELEMENT>
 
 <!--622**************--><AD_ELEMENT>
@@ -13622,9 +13630,9 @@
 <!--1063 CREATEDBY-->
 <!--1063-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1063 UPDATED-->
-<!--1063-->              <UPDATED><![CDATA[2003-07-05 00:14:57.0]]></UPDATED>
+<!--1063-->              <UPDATED><![CDATA[2008-06-03 18:38:56.0]]></UPDATED>
 <!--1063 UPDATEDBY-->
-<!--1063-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1063-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1063 COLUMNNAME-->
 <!--1063-->              <COLUMNNAME><![CDATA[SalesRep_ID]]></COLUMNNAME>
 <!--1063 NAME-->
@@ -13632,9 +13640,9 @@
 <!--1063 PRINTNAME-->
 <!--1063-->              <PRINTNAME><![CDATA[Sales Rep]]></PRINTNAME>
 <!--1063 DESCRIPTION-->
-<!--1063-->              <DESCRIPTION><![CDATA[The person in charge of carry out an order.]]></DESCRIPTION>
+<!--1063-->              <DESCRIPTION><![CDATA[The person in charge of a document.]]></DESCRIPTION>
 <!--1063 HELP-->
-<!--1063-->              <HELP><![CDATA[The Sales Representative indicates the Sales Rep for this Region.  Any Sales Rep must be a valid internal user.]]></HELP>
+<!--1063-->              <HELP><![CDATA[Indicates the sales representative responsible for the transaction that  the document specifies . A valid sales representative is a business partner marked as an employee and a sales representative.]]></HELP>
 <!--1063 PO_NAME-->
 <!--1063-->              <PO_NAME><![CDATA[Company Agent]]></PO_NAME>
 <!--1063 PO_PRINTNAME-->
@@ -15522,9 +15530,9 @@
 <!--1177 CREATEDBY-->
 <!--1177-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1177 UPDATED-->
-<!--1177-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--1177-->              <UPDATED><![CDATA[2008-06-03 12:39:48.0]]></UPDATED>
 <!--1177 UPDATEDBY-->
-<!--1177-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1177-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1177 COLUMNNAME-->
 <!--1177-->              <COLUMNNAME><![CDATA[IsVerified]]></COLUMNNAME>
 <!--1177 NAME-->
@@ -15532,9 +15540,9 @@
 <!--1177 PRINTNAME-->
 <!--1177-->              <PRINTNAME><![CDATA[Verified]]></PRINTNAME>
 <!--1177 DESCRIPTION-->
-<!--1177-->              <DESCRIPTION><![CDATA[The BOM configuration has been verified]]></DESCRIPTION>
+<!--1177-->              <DESCRIPTION><![CDATA[The BOM tree has been verified]]></DESCRIPTION>
 <!--1177 HELP-->
-<!--1177-->              <HELP><![CDATA[The Verified check box indicates if the configuration of this product has been verified.  This is used for products that consist of a bill of materials]]></HELP>
+<!--1177-->              <HELP><![CDATA[Indicates if the bill of materials tree of this product has been verified. Verification involves a test for cycles within a tree so that there are no infinite loops.]]></HELP>
 <!--1177**************--></AD_ELEMENT>
 
 <!--1188**************--><AD_ELEMENT>
@@ -16440,19 +16448,19 @@
 <!--1256 CREATEDBY-->
 <!--1256-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1256 UPDATED-->
-<!--1256-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--1256-->              <UPDATED><![CDATA[2008-06-03 19:26:03.0]]></UPDATED>
 <!--1256 UPDATEDBY-->
-<!--1256-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1256-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1256 COLUMNNAME-->
 <!--1256-->              <COLUMNNAME><![CDATA[DeliveryTime_Promised]]></COLUMNNAME>
 <!--1256 NAME-->
-<!--1256-->              <NAME><![CDATA[Promised Delivery Time]]></NAME>
+<!--1256-->              <NAME><![CDATA[Stocking Lead Time]]></NAME>
 <!--1256 PRINTNAME-->
-<!--1256-->              <PRINTNAME><![CDATA[Promised Delivery Time]]></PRINTNAME>
+<!--1256-->              <PRINTNAME><![CDATA[Stocking Lead Time]]></PRINTNAME>
 <!--1256 DESCRIPTION-->
-<!--1256-->              <DESCRIPTION><![CDATA[The date that a task, process, or action is to be completed or delivered by.]]></DESCRIPTION>
+<!--1256-->              <DESCRIPTION><![CDATA[Number of days between placing an order and the actual delivery as promised by the vendor.]]></DESCRIPTION>
 <!--1256 HELP-->
-<!--1256-->              <HELP><![CDATA[The Promised Delivery Time indicates the number of days between the order date and the date that delivery was promised.]]></HELP>
+<!--1256-->              <HELP><![CDATA[Indicates the number of days between placing an order and the actual delivery as promised by the vendor.]]></HELP>
 <!--1256**************--></AD_ELEMENT>
 
 <!--1257**************--><AD_ELEMENT>
@@ -19327,9 +19335,9 @@
 <!--1490 CREATEDBY-->
 <!--1490-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1490 UPDATED-->
-<!--1490-->              <UPDATED><![CDATA[2003-08-11 12:21:59.0]]></UPDATED>
+<!--1490-->              <UPDATED><![CDATA[2008-06-03 17:19:40.0]]></UPDATED>
 <!--1490 UPDATEDBY-->
-<!--1490-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1490-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1490 COLUMNNAME-->
 <!--1490-->              <COLUMNNAME><![CDATA[CreateFrom]]></COLUMNNAME>
 <!--1490 NAME-->
@@ -19339,7 +19347,7 @@
 <!--1490 DESCRIPTION-->
 <!--1490-->              <DESCRIPTION><![CDATA[An addition of statements from pre-existing documents.]]></DESCRIPTION>
 <!--1490 HELP-->
-<!--1490-->              <HELP><![CDATA[The Create From process will create a new document based on information in an existing document selected by the user.]]></HELP>
+<!--1490-->              <HELP><![CDATA[A process that allows the user to copy lines (products) from an existing document different from the one being copied into. For example, in case of entering a new Goods Shipment, the user can copy lines (products) from an existing Sales Order or Sales Invoice.]]></HELP>
 <!--1490**************--></AD_ELEMENT>
 
 <!--1491**************--><AD_ELEMENT>
@@ -26943,9 +26951,9 @@
 <!--2015 CREATEDBY-->
 <!--2015-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--2015 UPDATED-->
-<!--2015-->              <UPDATED><![CDATA[2003-05-05 20:53:37.0]]></UPDATED>
+<!--2015-->              <UPDATED><![CDATA[2008-06-03 12:36:54.0]]></UPDATED>
 <!--2015 UPDATEDBY-->
-<!--2015-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--2015-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--2015 COLUMNNAME-->
 <!--2015-->              <COLUMNNAME><![CDATA[M_Attribute_ID]]></COLUMNNAME>
 <!--2015 NAME-->
@@ -26955,7 +26963,7 @@
 <!--2015 DESCRIPTION-->
 <!--2015-->              <DESCRIPTION><![CDATA[A defined characteristic of a specific product.]]></DESCRIPTION>
 <!--2015 HELP-->
-<!--2015-->              <HELP><![CDATA[Product Attribute like Color, Size]]></HELP>
+<!--2015-->              <HELP><![CDATA[A defined characteristic of a specific product such as color, size, etc.]]></HELP>
 <!--2015**************--></AD_ELEMENT>
 
 <!--2017**************--><AD_ELEMENT>
@@ -27349,7 +27357,7 @@
 <!--2037 CREATEDBY-->
 <!--2037-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--2037 UPDATED-->
-<!--2037-->              <UPDATED><![CDATA[2003-11-28 10:00:03.0]]></UPDATED>
+<!--2037-->              <UPDATED><![CDATA[2008-06-03 17:01:50.0]]></UPDATED>
 <!--2037 UPDATEDBY-->
 <!--2037-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--2037 COLUMNNAME-->
@@ -27361,7 +27369,7 @@
 <!--2037 DESCRIPTION-->
 <!--2037-->              <DESCRIPTION><![CDATA[An addition of statements from pre-existing documents.]]></DESCRIPTION>
 <!--2037 HELP-->
-<!--2037-->              <HELP><![CDATA[Copy record lines]]></HELP>
+<!--2037-->              <HELP><![CDATA[Copy lines (products) from another document of the same type.]]></HELP>
 <!--2037**************--></AD_ELEMENT>
 
 <!--2038**************--><AD_ELEMENT>
@@ -30294,7 +30302,7 @@
 <!--800021 CREATEDBY-->
 <!--800021-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800021 UPDATED-->
-<!--800021-->              <UPDATED><![CDATA[2007-05-10 12:43:30.0]]></UPDATED>
+<!--800021-->              <UPDATED><![CDATA[2008-06-03 17:57:58.0]]></UPDATED>
 <!--800021 UPDATEDBY-->
 <!--800021-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800021 COLUMNNAME-->
@@ -30304,7 +30312,10 @@
 <!--800021 PRINTNAME-->
 <!--800021-->              <PRINTNAME><![CDATA[Project status]]></PRINTNAME>
 <!--800021 HELP-->
-<!--800021-->              <HELP><![CDATA[<P>Indicates the current status of the project. Usually&nbsp;there can be 5 the status of the project:<BR>Open: The budget is sent. The project has already not been won.<BR>Lost: The project has been won by a partner who has not been sent the budgetal or our budget has not been selected.<BR>No following up: No follow up the project<BR>Order: The project has been won by a partner we have sent a budget<BR>Order closed: All the products have been delivered]]></HELP>
+<!--800021-->              <HELP><![CDATA[Indicates the current status of the project. There are normally three:
+Open: The budget is sent. The project has not been won yet.
+Order: The project has been won by a partner we have sent a budget.
+Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800021**************--></AD_ELEMENT>
 
 <!--800022**************--><AD_ELEMENT>
@@ -34346,9 +34357,9 @@ For example, if you want to create different invoices for each ship location for
 <!--800203 CREATEDBY-->
 <!--800203-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800203 UPDATED-->
-<!--800203-->              <UPDATED><![CDATA[2005-12-01 11:23:47.0]]></UPDATED>
+<!--800203-->              <UPDATED><![CDATA[2008-06-03 12:44:24.0]]></UPDATED>
 <!--800203 UPDATEDBY-->
-<!--800203-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--800203-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800203 COLUMNNAME-->
 <!--800203-->              <COLUMNNAME><![CDATA[IsBackground]]></COLUMNNAME>
 <!--800203 NAME-->
@@ -34358,7 +34369,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800203 DESCRIPTION-->
 <!--800203-->              <DESCRIPTION><![CDATA[Is background process]]></DESCRIPTION>
 <!--800203 HELP-->
-<!--800203-->              <HELP><![CDATA[The background process run with the application in a planned time]]></HELP>
+<!--800203-->              <HELP><![CDATA[This identifies a background process that will be run without any user interaction and needs to be scheduled properly before it will be run using the "Process Scheduling" window.]]></HELP>
 <!--800203**************--></AD_ELEMENT>
 
 <!--800204**************--><AD_ELEMENT>
@@ -35032,15 +35043,19 @@ For example, if you want to create different invoices for each ship location for
 <!--800229 CREATEDBY-->
 <!--800229-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800229 UPDATED-->
-<!--800229-->              <UPDATED><![CDATA[2005-12-13 17:27:20.0]]></UPDATED>
+<!--800229-->              <UPDATED><![CDATA[2008-06-03 16:58:41.0]]></UPDATED>
 <!--800229 UPDATEDBY-->
-<!--800229-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--800229-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800229 COLUMNNAME-->
 <!--800229-->              <COLUMNNAME><![CDATA[Copylines]]></COLUMNNAME>
 <!--800229 NAME-->
 <!--800229-->              <NAME><![CDATA[Copy Lines]]></NAME>
 <!--800229 PRINTNAME-->
 <!--800229-->              <PRINTNAME><![CDATA[Copylines]]></PRINTNAME>
+<!--800229 DESCRIPTION-->
+<!--800229-->              <DESCRIPTION><![CDATA[Copy lines (products) from another document of the same type.]]></DESCRIPTION>
+<!--800229 HELP-->
+<!--800229-->              <HELP><![CDATA[Copy lines (products) from another document of the same type.]]></HELP>
 <!--800229**************--></AD_ELEMENT>
 
 <!--800230**************--><AD_ELEMENT>
@@ -37129,7 +37144,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800348 CREATEDBY-->
 <!--800348-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800348 UPDATED-->
-<!--800348-->              <UPDATED><![CDATA[2007-01-31 10:32:41.0]]></UPDATED>
+<!--800348-->              <UPDATED><![CDATA[2008-06-03 12:23:42.0]]></UPDATED>
 <!--800348 UPDATEDBY-->
 <!--800348-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800348 COLUMNNAME-->
@@ -37137,9 +37152,9 @@ For example, if you want to create different invoices for each ship location for
 <!--800348 NAME-->
 <!--800348-->              <NAME><![CDATA[WR Creation Date]]></NAME>
 <!--800348 PRINTNAME-->
-<!--800348-->              <PRINTNAME><![CDATA[Launch Date]]></PRINTNAME>
+<!--800348-->              <PRINTNAME><![CDATA[WR Creation Date]]></PRINTNAME>
 <!--800348 HELP-->
-<!--800348-->              <HELP><![CDATA[The Launch Date indicates the date that the work requiremente was made.]]></HELP>
+<!--800348-->              <HELP><![CDATA[Indicates the date that the work requirement came in.]]></HELP>
 <!--800348**************--></AD_ELEMENT>
 
 <!--800349**************--><AD_ELEMENT>
@@ -37869,7 +37884,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800469 CREATEDBY-->
 <!--800469-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800469 UPDATED-->
-<!--800469-->              <UPDATED><![CDATA[2007-05-07 18:10:34.0]]></UPDATED>
+<!--800469-->              <UPDATED><![CDATA[2008-06-03 12:08:42.0]]></UPDATED>
 <!--800469 UPDATEDBY-->
 <!--800469-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800469 COLUMNNAME-->
@@ -37879,11 +37894,11 @@ For example, if you want to create different invoices for each ship location for
 <!--800469 PRINTNAME-->
 <!--800469-->              <PRINTNAME><![CDATA[Conversion Rate]]></PRINTNAME>
 <!--800469 DESCRIPTION-->
-<!--800469-->              <DESCRIPTION><![CDATA[The amount or quantity at which one unit of measure is changed to another.]]></DESCRIPTION>
+<!--800469-->              <DESCRIPTION><![CDATA[Defines the conversion between Quantity and Process Quantity]]></DESCRIPTION>
 <!--800469 HELP-->
-<!--800469-->              <HELP><![CDATA[It is the rate between primary unit and secondary unit. 
+<!--800469-->              <HELP><![CDATA[Defines how many final products each run of a process plan produces. See the following formula to understand the relation between the three elements:
 
-Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
+Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800469**************--></AD_ELEMENT>
 
 <!--800470**************--><AD_ELEMENT>
@@ -37900,19 +37915,19 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800470 CREATEDBY-->
 <!--800470-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800470 UPDATED-->
-<!--800470-->              <UPDATED><![CDATA[2007-05-07 18:46:39.0]]></UPDATED>
+<!--800470-->              <UPDATED><![CDATA[2008-06-03 12:14:43.0]]></UPDATED>
 <!--800470 UPDATEDBY-->
 <!--800470-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800470 COLUMNNAME-->
 <!--800470-->              <COLUMNNAME><![CDATA[Secondaryqty]]></COLUMNNAME>
 <!--800470 NAME-->
-<!--800470-->              <NAME><![CDATA[Process Quanity]]></NAME>
+<!--800470-->              <NAME><![CDATA[Process Quantity]]></NAME>
 <!--800470 PRINTNAME-->
-<!--800470-->              <PRINTNAME><![CDATA[Secondary Qty]]></PRINTNAME>
+<!--800470-->              <PRINTNAME><![CDATA[Process Quantity]]></PRINTNAME>
 <!--800470 DESCRIPTION-->
-<!--800470-->              <DESCRIPTION><![CDATA[Secondary Quantity]]></DESCRIPTION>
+<!--800470-->              <DESCRIPTION><![CDATA[The number of Process Units required to be produced.]]></DESCRIPTION>
 <!--800470 HELP-->
-<!--800470-->              <HELP><![CDATA[Secondary quantity.]]></HELP>
+<!--800470-->              <HELP><![CDATA[The number of Process Units required to be produced. Usually when it comes to production, our requirements are specified by a number of final products (Process Units). To avoid the need for calculating the number of process plan runs, the system allows for entering this number and then automatically calculating the required process plan runs.]]></HELP>
 <!--800470**************--></AD_ELEMENT>
 
 <!--800471**************--><AD_ELEMENT>
@@ -37929,7 +37944,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800471 CREATEDBY-->
 <!--800471-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800471 UPDATED-->
-<!--800471-->              <UPDATED><![CDATA[2007-05-07 18:05:15.0]]></UPDATED>
+<!--800471-->              <UPDATED><![CDATA[2008-06-03 12:21:01.0]]></UPDATED>
 <!--800471 UPDATEDBY-->
 <!--800471-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800471 COLUMNNAME-->
@@ -37937,11 +37952,11 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800471 NAME-->
 <!--800471-->              <NAME><![CDATA[Process Unit]]></NAME>
 <!--800471 PRINTNAME-->
-<!--800471-->              <PRINTNAME><![CDATA[Secondary Unit]]></PRINTNAME>
+<!--800471-->              <PRINTNAME><![CDATA[Process Unit]]></PRINTNAME>
 <!--800471 DESCRIPTION-->
-<!--800471-->              <DESCRIPTION><![CDATA[The number of process units obtained by executing a process plan one time.]]></DESCRIPTION>
+<!--800471-->              <DESCRIPTION><![CDATA[The name of the main final product obtained by executing a process plan.]]></DESCRIPTION>
 <!--800471 HELP-->
-<!--800471-->              <HELP><![CDATA[Is an optional unit to define the number of times that is desired to perform the process.]]></HELP>
+<!--800471-->              <HELP><![CDATA[The name of the main final product obtained by executing a process plan.]]></HELP>
 <!--800471**************--></AD_ELEMENT>
 
 <!--800472**************--><AD_ELEMENT>
@@ -38313,7 +38328,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800485 CREATEDBY-->
 <!--800485-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800485 UPDATED-->
-<!--800485-->              <UPDATED><![CDATA[2007-05-07 18:11:51.0]]></UPDATED>
+<!--800485-->              <UPDATED><![CDATA[2008-06-03 17:14:02.0]]></UPDATED>
 <!--800485 UPDATEDBY-->
 <!--800485-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800485 COLUMNNAME-->
@@ -38323,7 +38338,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800485 PRINTNAME-->
 <!--800485-->              <PRINTNAME><![CDATA[Copy Version]]></PRINTNAME>
 <!--800485 HELP-->
-<!--800485-->              <HELP><![CDATA[Process which from a selected reference version copies it into a new one changing the correspondent time periods.]]></HELP>
+<!--800485-->              <HELP><![CDATA[A process that copies a selected reference version a new one and changing the corresponding time periods at the same time.]]></HELP>
 <!--800485**************--></AD_ELEMENT>
 
 <!--800490**************--><AD_ELEMENT>
@@ -42067,15 +42082,15 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800642 CREATEDBY-->
 <!--800642-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800642 UPDATED-->
-<!--800642-->              <UPDATED><![CDATA[2006-06-12 18:40:28.0]]></UPDATED>
+<!--800642-->              <UPDATED><![CDATA[2008-06-03 19:33:46.0]]></UPDATED>
 <!--800642 UPDATEDBY-->
-<!--800642-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--800642-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800642 COLUMNNAME-->
 <!--800642-->              <COLUMNNAME><![CDATA[cheaper]]></COLUMNNAME>
 <!--800642 NAME-->
-<!--800642-->              <NAME><![CDATA[cheaper shipper]]></NAME>
+<!--800642-->              <NAME><![CDATA[Cheaper Shipper]]></NAME>
 <!--800642 PRINTNAME-->
-<!--800642-->              <PRINTNAME><![CDATA[cheaper shipper]]></PRINTNAME>
+<!--800642-->              <PRINTNAME><![CDATA[Cheaper Shipper]]></PRINTNAME>
 <!--800642**************--></AD_ELEMENT>
 
 <!--800643**************--><AD_ELEMENT>
@@ -43338,7 +43353,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800693 CREATEDBY-->
 <!--800693-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800693 UPDATED-->
-<!--800693-->              <UPDATED><![CDATA[2007-05-10 12:57:31.0]]></UPDATED>
+<!--800693-->              <UPDATED><![CDATA[2008-06-03 18:39:27.0]]></UPDATED>
 <!--800693 UPDATEDBY-->
 <!--800693-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800693 COLUMNNAME-->
@@ -43347,8 +43362,10 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800693-->              <NAME><![CDATA[Person in Charge]]></NAME>
 <!--800693 PRINTNAME-->
 <!--800693-->              <PRINTNAME><![CDATA[Responsible]]></PRINTNAME>
+<!--800693 DESCRIPTION-->
+<!--800693-->              <DESCRIPTION><![CDATA[An employee that is responsible for the project.]]></DESCRIPTION>
 <!--800693 HELP-->
-<!--800693-->              <HELP><![CDATA[An employee that is the responsible of the project.]]></HELP>
+<!--800693-->              <HELP><![CDATA[An employee that is responsible for the project.]]></HELP>
 <!--800693**************--></AD_ELEMENT>
 
 <!--800694**************--><AD_ELEMENT>
@@ -43365,7 +43382,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800694 CREATEDBY-->
 <!--800694-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800694 UPDATED-->
-<!--800694-->              <UPDATED><![CDATA[2007-05-10 12:59:36.0]]></UPDATED>
+<!--800694-->              <UPDATED><![CDATA[2008-06-03 19:02:02.0]]></UPDATED>
 <!--800694 UPDATEDBY-->
 <!--800694-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800694 COLUMNNAME-->
@@ -43375,7 +43392,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800694 PRINTNAME-->
 <!--800694-->              <PRINTNAME><![CDATA[Reinvoicing]]></PRINTNAME>
 <!--800694 HELP-->
-<!--800694-->              <HELP><![CDATA[Reinvoicing Expenses]]></HELP>
+<!--800694-->              <HELP><![CDATA[Amount of expenses we plan to invoice back to the client. Real number will originate from sales invoices for this particular client and project that include products of type "expense" (such as telephone, electricity, etc)]]></HELP>
 <!--800694**************--></AD_ELEMENT>
 
 <!--800695**************--><AD_ELEMENT>
@@ -43392,7 +43409,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800695 CREATEDBY-->
 <!--800695-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800695 UPDATED-->
-<!--800695-->              <UPDATED><![CDATA[2007-05-10 13:01:29.0]]></UPDATED>
+<!--800695-->              <UPDATED><![CDATA[2008-06-03 18:34:03.0]]></UPDATED>
 <!--800695 UPDATEDBY-->
 <!--800695-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800695 COLUMNNAME-->
@@ -43402,7 +43419,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800695 PRINTNAME-->
 <!--800695-->              <PRINTNAME><![CDATA[Set project type]]></PRINTNAME>
 <!--800695 HELP-->
-<!--800695-->              <HELP><![CDATA[Set Project Type and for Service Projects copy Phases and Tasks of Project Type into Project]]></HELP>
+<!--800695-->              <HELP><![CDATA[A process that copies the selected project type's (template's) phases and tasks into the current project.]]></HELP>
 <!--800695**************--></AD_ELEMENT>
 
 <!--800696**************--><AD_ELEMENT>
@@ -43419,7 +43436,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800696 CREATEDBY-->
 <!--800696-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800696 UPDATED-->
-<!--800696-->              <UPDATED><![CDATA[2007-05-10 13:00:35.0]]></UPDATED>
+<!--800696-->              <UPDATED><![CDATA[2008-06-03 19:05:28.0]]></UPDATED>
 <!--800696 UPDATEDBY-->
 <!--800696-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800696 COLUMNNAME-->
@@ -43429,7 +43446,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800696 PRINTNAME-->
 <!--800696-->              <PRINTNAME><![CDATA[Expected margin]]></PRINTNAME>
 <!--800696 HELP-->
-<!--800696-->              <HELP><![CDATA[Expected margin]]></HELP>
+<!--800696-->              <HELP><![CDATA[Expected margin for expenses.]]></HELP>
 <!--800696**************--></AD_ELEMENT>
 
 <!--800697**************--><AD_ELEMENT>
@@ -43446,7 +43463,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800697 CREATEDBY-->
 <!--800697-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800697 UPDATED-->
-<!--800697-->              <UPDATED><![CDATA[2007-05-10 12:58:53.0]]></UPDATED>
+<!--800697-->              <UPDATED><![CDATA[2008-06-03 18:57:43.0]]></UPDATED>
 <!--800697 UPDATEDBY-->
 <!--800697-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800697 COLUMNNAME-->
@@ -43456,7 +43473,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800697 PRINTNAME-->
 <!--800697-->              <PRINTNAME><![CDATA[Service cost]]></PRINTNAME>
 <!--800697 HELP-->
-<!--800697-->              <HELP><![CDATA[Service cost]]></HELP>
+<!--800697-->              <HELP><![CDATA[Expected cost of services provided. The real number will originate from all expense sheets (lines marked as Time Sheet) related to this project.]]></HELP>
 <!--800697**************--></AD_ELEMENT>
 
 <!--800698**************--><AD_ELEMENT>
@@ -43473,7 +43490,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800698 CREATEDBY-->
 <!--800698-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800698 UPDATED-->
-<!--800698-->              <UPDATED><![CDATA[2007-05-10 13:00:14.0]]></UPDATED>
+<!--800698-->              <UPDATED><![CDATA[2008-06-03 19:00:15.0]]></UPDATED>
 <!--800698 UPDATEDBY-->
 <!--800698-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800698 COLUMNNAME-->
@@ -43483,7 +43500,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800698 PRINTNAME-->
 <!--800698-->              <PRINTNAME><![CDATA[Expenses]]></PRINTNAME>
 <!--800698 HELP-->
-<!--800698-->              <HELP><![CDATA[Expected expenses]]></HELP>
+<!--800698-->              <HELP><![CDATA[Expected expenses related to this project. Real number will originate from lines of the expense sheets, marked with Time Sheet=N.]]></HELP>
 <!--800698**************--></AD_ELEMENT>
 
 <!--800699**************--><AD_ELEMENT>
@@ -43500,7 +43517,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800699 CREATEDBY-->
 <!--800699-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800699 UPDATED-->
-<!--800699-->              <UPDATED><![CDATA[2007-05-10 12:59:11.0]]></UPDATED>
+<!--800699-->              <UPDATED><![CDATA[2008-06-03 18:58:12.0]]></UPDATED>
 <!--800699 UPDATEDBY-->
 <!--800699-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800699 COLUMNNAME-->
@@ -43510,7 +43527,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800699 PRINTNAME-->
 <!--800699-->              <PRINTNAME><![CDATA[Service margin]]></PRINTNAME>
 <!--800699 HELP-->
-<!--800699-->              <HELP><![CDATA[Service margin]]></HELP>
+<!--800699-->              <HELP><![CDATA[Expected service margin. Real number will be calculated from actual service revenue and costs.]]></HELP>
 <!--800699**************--></AD_ELEMENT>
 
 <!--800700**************--><AD_ELEMENT>
@@ -43527,7 +43544,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800700 CREATEDBY-->
 <!--800700-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800700 UPDATED-->
-<!--800700-->              <UPDATED><![CDATA[2007-05-10 12:58:12.0]]></UPDATED>
+<!--800700-->              <UPDATED><![CDATA[2008-06-03 18:57:16.0]]></UPDATED>
 <!--800700 UPDATEDBY-->
 <!--800700-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800700 COLUMNNAME-->
@@ -43537,7 +43554,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800700 PRINTNAME-->
 <!--800700-->              <PRINTNAME><![CDATA[Service revenue]]></PRINTNAME>
 <!--800700 HELP-->
-<!--800700-->              <HELP><![CDATA[Revenue services]]></HELP>
+<!--800700-->              <HELP><![CDATA[Expected revenue of services provided to the client. Real numbers will originate from invoices of services (products of type "service") sent out to the client.]]></HELP>
 <!--800700**************--></AD_ELEMENT>
 
 <!--800701**************--><AD_ELEMENT>
@@ -45065,7 +45082,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800761 CREATEDBY-->
 <!--800761-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800761 UPDATED-->
-<!--800761-->              <UPDATED><![CDATA[2007-05-09 18:06:49.0]]></UPDATED>
+<!--800761-->              <UPDATED><![CDATA[2008-06-03 19:30:25.0]]></UPDATED>
 <!--800761 UPDATEDBY-->
 <!--800761-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800761 COLUMNNAME-->
@@ -45073,9 +45090,9 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800761 NAME-->
 <!--800761-->              <NAME><![CDATA[Lead Time]]></NAME>
 <!--800761 PRINTNAME-->
-<!--800761-->              <PRINTNAME><![CDATA[Security margin]]></PRINTNAME>
+<!--800761-->              <PRINTNAME><![CDATA[Lead Time]]></PRINTNAME>
 <!--800761 HELP-->
-<!--800761-->              <HELP><![CDATA[Margin in days between the different transactions.]]></HELP>
+<!--800761-->              <HELP><![CDATA[Safety margin in days for the production of ordered goods and availability of raw materials. For example, if there is a sales order for product A to be delivered on date X, MRP will plan to have the product A produced by date X minus the Lead Time number of days. In a similar way, MRP will make sure that the raw materials required for making product X will be available Lead Time number of days before the production must comence.]]></HELP>
 <!--800761**************--></AD_ELEMENT>
 
 <!--800762**************--><AD_ELEMENT>
@@ -46289,7 +46306,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800813 CREATEDBY-->
 <!--800813-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800813 UPDATED-->
-<!--800813-->              <UPDATED><![CDATA[2007-06-19 13:11:40.0]]></UPDATED>
+<!--800813-->              <UPDATED><![CDATA[2008-06-03 17:38:43.0]]></UPDATED>
 <!--800813 UPDATEDBY-->
 <!--800813-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800813 COLUMNNAME-->
@@ -46301,7 +46318,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800813 DESCRIPTION-->
 <!--800813-->              <DESCRIPTION><![CDATA[Default Language]]></DESCRIPTION>
 <!--800813 HELP-->
-<!--800813-->              <HELP><![CDATA[Default language when the user is logged]]></HELP>
+<!--800813-->              <HELP><![CDATA[Default language of the user interface upon log in of the current user.]]></HELP>
 <!--800813**************--></AD_ELEMENT>
 
 <!--800814**************--><AD_ELEMENT>
@@ -46347,7 +46364,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800815 CREATEDBY-->
 <!--800815-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800815 UPDATED-->
-<!--800815-->              <UPDATED><![CDATA[2007-06-19 13:18:39.0]]></UPDATED>
+<!--800815-->              <UPDATED><![CDATA[2008-06-03 17:37:22.0]]></UPDATED>
 <!--800815 UPDATEDBY-->
 <!--800815-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800815 COLUMNNAME-->
@@ -46359,7 +46376,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800815 DESCRIPTION-->
 <!--800815-->              <DESCRIPTION><![CDATA[Defautl Role]]></DESCRIPTION>
 <!--800815 HELP-->
-<!--800815-->              <HELP><![CDATA[Default role when the user is logged]]></HELP>
+<!--800815-->              <HELP><![CDATA[Default role applied when this user logs in (only the ones applicable to the user are shown).]]></HELP>
 <!--800815**************--></AD_ELEMENT>
 
 <!--800816**************--><AD_ELEMENT>
@@ -46376,7 +46393,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800816 CREATEDBY-->
 <!--800816-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800816 UPDATED-->
-<!--800816-->              <UPDATED><![CDATA[2007-06-19 13:20:37.0]]></UPDATED>
+<!--800816-->              <UPDATED><![CDATA[2008-06-03 17:37:59.0]]></UPDATED>
 <!--800816 UPDATEDBY-->
 <!--800816-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800816 COLUMNNAME-->
@@ -46388,7 +46405,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800816 DESCRIPTION-->
 <!--800816-->              <DESCRIPTION><![CDATA[Default Warehouse]]></DESCRIPTION>
 <!--800816 HELP-->
-<!--800816-->              <HELP><![CDATA[Default warehouse when the user is logged]]></HELP>
+<!--800816-->              <HELP><![CDATA[Default warehouse that will be used within transactions that require warehouse movements.]]></HELP>
 <!--800816**************--></AD_ELEMENT>
 
 <!--800817**************--><AD_ELEMENT>
@@ -46405,7 +46422,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800817 CREATEDBY-->
 <!--800817-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800817 UPDATED-->
-<!--800817-->              <UPDATED><![CDATA[2007-06-19 13:16:41.0]]></UPDATED>
+<!--800817-->              <UPDATED><![CDATA[2008-06-03 17:39:24.0]]></UPDATED>
 <!--800817 UPDATEDBY-->
 <!--800817-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800817 COLUMNNAME-->
@@ -46417,7 +46434,7 @@ Primary quantity = (secondary quantity)/(conversion rate)]]></HELP>
 <!--800817 DESCRIPTION-->
 <!--800817-->              <DESCRIPTION><![CDATA[Default Organization]]></DESCRIPTION>
 <!--800817 HELP-->
-<!--800817-->              <HELP><![CDATA[Default organization when the user login]]></HELP>
+<!--800817-->              <HELP><![CDATA[Default organization that will be used when entering new transactions (eg. creating a new sales order).]]></HELP>
 <!--800817**************--></AD_ELEMENT>
 
 <!--800818**************--><AD_ELEMENT>

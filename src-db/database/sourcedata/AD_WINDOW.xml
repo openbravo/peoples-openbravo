@@ -5126,15 +5126,15 @@
 <!--800052 CREATEDBY-->
 <!--800052-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800052 UPDATED-->
-<!--800052-->              <UPDATED><![CDATA[2006-03-01 09:46:05.0]]></UPDATED>
+<!--800052-->              <UPDATED><![CDATA[2008-06-03 12:02:21.0]]></UPDATED>
 <!--800052 UPDATEDBY-->
 <!--800052-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800052 NAME-->
 <!--800052-->              <NAME><![CDATA[Work Requirement]]></NAME>
 <!--800052 DESCRIPTION-->
-<!--800052-->              <DESCRIPTION><![CDATA[Create an order to execute the selected process plan.]]></DESCRIPTION>
+<!--800052-->              <DESCRIPTION><![CDATA[Create and manage an order for a process plan to be executed a certain number of times to satisfy the production requirements.]]></DESCRIPTION>
 <!--800052 HELP-->
-<!--800052-->              <HELP><![CDATA[Create an order to execute the selected process plan.]]></HELP>
+<!--800052-->              <HELP><![CDATA[Create and manage an order for a process plan to be executed a certain number of times to satisfy the production requirements.]]></HELP>
 <!--800052 WINDOWTYPE-->
 <!--800052-->              <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
 <!--800052 ISSOTRX-->

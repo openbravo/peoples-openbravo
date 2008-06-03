@@ -3872,7 +3872,7 @@
 <!--212 CREATEDBY-->
 <!--212-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--212 UPDATED-->
-<!--212-->              <UPDATED><![CDATA[2004-05-24 16:43:57.0]]></UPDATED>
+<!--212-->              <UPDATED><![CDATA[2008-06-03 19:16:02.0]]></UPDATED>
 <!--212 UPDATEDBY-->
 <!--212-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--212 VALUE-->
@@ -3880,9 +3880,9 @@
 <!--212 NAME-->
 <!--212-->              <NAME><![CDATA[Copy Details]]></NAME>
 <!--212 DESCRIPTION-->
-<!--212-->              <DESCRIPTION><![CDATA[Copy Lines/Phases/Tasks from other Project]]></DESCRIPTION>
+<!--212-->              <DESCRIPTION><![CDATA[Copy Lines/Phases/Tasks from another existing project]]></DESCRIPTION>
 <!--212 HELP-->
-<!--212-->              <HELP><![CDATA[Copy Lines/Phases/Tasks from other Project]]></HELP>
+<!--212-->              <HELP><![CDATA[Copy Lines/Phases/Tasks from another existing project]]></HELP>
 <!--212 ACCESSLEVEL-->
 <!--212-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--212 ISUSERSTARTABLE-->

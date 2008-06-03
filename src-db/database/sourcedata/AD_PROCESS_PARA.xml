@@ -19,7 +19,7 @@
 <!--123 CREATEDBY-->
 <!--123-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--123 UPDATED-->
-<!--123-->              <UPDATED><![CDATA[2007-07-20 11:37:50.0]]></UPDATED>
+<!--123-->              <UPDATED><![CDATA[2008-06-03 16:58:51.0]]></UPDATED>
 <!--123 UPDATEDBY-->
 <!--123-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--123 NAME-->
@@ -27,7 +27,9 @@
 <!--123 DESCRIPTION-->
 <!--123-->              <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
 <!--123 HELP-->
-<!--123-->              <HELP><![CDATA[A search key allows you a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number.  The document sequence used for this fallback number is defined in the "Maintain Sequence" window with the name "DocumentNo_TableName", where TableName is the actual name of the table (e.g. C_Order).]]></HELP>
+<!--123-->              <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--123 AD_PROCESS_ID-->
 <!--123-->              <AD_PROCESS_ID><![CDATA[105]]></AD_PROCESS_ID>
 <!--123 SEQNO-->
@@ -430,7 +432,7 @@
 <!--137 DESCRIPTION-->
 <!--137-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order.]]></DESCRIPTION>
 <!--137 HELP-->
-<!--137-->              <HELP><![CDATA[Unique identifier of a Sales Order originating from the document sequence defined for this document type.]]></HELP>
+<!--137-->              <HELP><![CDATA[Unique identifier and a reference to a Sales Order originating from the document sequence defined for this document type.]]></HELP>
 <!--137 AD_PROCESS_ID-->
 <!--137-->              <AD_PROCESS_ID><![CDATA[126]]></AD_PROCESS_ID>
 <!--137 SEQNO-->
@@ -473,9 +475,9 @@
 <!--138 NAME-->
 <!--138-->              <NAME><![CDATA[Accounting Date]]></NAME>
 <!--138 DESCRIPTION-->
-<!--138-->              <DESCRIPTION><![CDATA[The date this transaction is recorded in the general ledger.]]></DESCRIPTION>
+<!--138-->              <DESCRIPTION><![CDATA[The date this transaction is recorded for in the general ledger.]]></DESCRIPTION>
 <!--138 HELP-->
-<!--138-->              <HELP><![CDATA[The Accounting Date indicates the date to be used on the General Ledger account entries generated from this document]]></HELP>
+<!--138-->              <HELP><![CDATA[The date this transaction is recorded on in the general ledger. This date also indicates which accounting period within the fiscal year this transaction will be part of.]]></HELP>
 <!--138 AD_PROCESS_ID-->
 <!--138-->              <AD_PROCESS_ID><![CDATA[127]]></AD_PROCESS_ID>
 <!--138 SEQNO-->
@@ -696,7 +698,7 @@
 <!--143 DESCRIPTION-->
 <!--143-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order.]]></DESCRIPTION>
 <!--143 HELP-->
-<!--143-->              <HELP><![CDATA[Unique identifier of a Sales Order originating from the document sequence defined for this document type.]]></HELP>
+<!--143-->              <HELP><![CDATA[Unique identifier and a reference to a Sales Order originating from the document sequence defined for this document type.]]></HELP>
 <!--143 AD_PROCESS_ID-->
 <!--143-->              <AD_PROCESS_ID><![CDATA[119]]></AD_PROCESS_ID>
 <!--143 SEQNO-->
@@ -2241,7 +2243,9 @@
 <!--191 DESCRIPTION-->
 <!--191-->              <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
 <!--191 HELP-->
-<!--191-->              <HELP><![CDATA[A search key allows you a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number.  The document sequence used for this fallback number is defined in the "Maintain Sequence" window with the name "DocumentNo_TableName", where TableName is the actual name of the table (e.g. C_Order).]]></HELP>
+<!--191-->              <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--191 AD_PROCESS_ID-->
 <!--191-->              <AD_PROCESS_ID><![CDATA[161]]></AD_PROCESS_ID>
 <!--191 SEQNO-->
@@ -2921,7 +2925,7 @@
 <!--209 DESCRIPTION-->
 <!--209-->              <DESCRIPTION><![CDATA[A parameter stating when a specified request will begin.]]></DESCRIPTION>
 <!--209 HELP-->
-<!--209-->              <HELP><![CDATA[The Start Date indicates the first or starting date of a range.]]></HELP>
+<!--209-->              <HELP><![CDATA[A parameter stating when a specified request will begin.]]></HELP>
 <!--209 AD_PROCESS_ID-->
 <!--209-->              <AD_PROCESS_ID><![CDATA[123]]></AD_PROCESS_ID>
 <!--209 SEQNO-->
@@ -3011,9 +3015,9 @@
 <!--213 NAME-->
 <!--213-->              <NAME><![CDATA[Accounting Date]]></NAME>
 <!--213 DESCRIPTION-->
-<!--213-->              <DESCRIPTION><![CDATA[The date this transaction is recorded in the general ledger.]]></DESCRIPTION>
+<!--213-->              <DESCRIPTION><![CDATA[The date this transaction is recorded for in the general ledger.]]></DESCRIPTION>
 <!--213 HELP-->
-<!--213-->              <HELP><![CDATA[The Accounting Date indicates the date to be used on the General Ledger account entries generated from this document]]></HELP>
+<!--213-->              <HELP><![CDATA[The date this transaction is recorded on in the general ledger. This date also indicates which accounting period within the fiscal year this transaction will be part of.]]></HELP>
 <!--213 AD_PROCESS_ID-->
 <!--213-->              <AD_PROCESS_ID><![CDATA[170]]></AD_PROCESS_ID>
 <!--213 SEQNO-->
@@ -4376,7 +4380,7 @@
 <!--257 DESCRIPTION-->
 <!--257-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order.]]></DESCRIPTION>
 <!--257 HELP-->
-<!--257-->              <HELP><![CDATA[Unique identifier of a Sales Order originating from the document sequence defined for this document type.]]></HELP>
+<!--257-->              <HELP><![CDATA[Unique identifier and a reference to a Sales Order originating from the document sequence defined for this document type.]]></HELP>
 <!--257 AD_PROCESS_ID-->
 <!--257-->              <AD_PROCESS_ID><![CDATA[193]]></AD_PROCESS_ID>
 <!--257 SEQNO-->
@@ -5815,9 +5819,9 @@
 <!--297 NAME-->
 <!--297-->              <NAME><![CDATA[Accounting Date]]></NAME>
 <!--297 DESCRIPTION-->
-<!--297-->              <DESCRIPTION><![CDATA[The date this transaction is recorded in the general ledger.]]></DESCRIPTION>
+<!--297-->              <DESCRIPTION><![CDATA[The date this transaction is recorded for in the general ledger.]]></DESCRIPTION>
 <!--297 HELP-->
-<!--297-->              <HELP><![CDATA[The Accounting Date indicates the date to be used on the General Ledger account entries generated from this document]]></HELP>
+<!--297-->              <HELP><![CDATA[The date this transaction is recorded on in the general ledger. This date also indicates which accounting period within the fiscal year this transaction will be part of.]]></HELP>
 <!--297 AD_PROCESS_ID-->
 <!--297-->              <AD_PROCESS_ID><![CDATA[204]]></AD_PROCESS_ID>
 <!--297 SEQNO-->
@@ -6699,7 +6703,7 @@
 <!--318 DESCRIPTION-->
 <!--318-->              <DESCRIPTION><![CDATA[A unique and often automatically generated identifier for a sales order.]]></DESCRIPTION>
 <!--318 HELP-->
-<!--318-->              <HELP><![CDATA[Unique identifier of a Sales Order originating from the document sequence defined for this document type.]]></HELP>
+<!--318-->              <HELP><![CDATA[Unique identifier and a reference to a Sales Order originating from the document sequence defined for this document type.]]></HELP>
 <!--318 AD_PROCESS_ID-->
 <!--318-->              <AD_PROCESS_ID><![CDATA[211]]></AD_PROCESS_ID>
 <!--318 SEQNO-->
@@ -7225,9 +7229,9 @@
 <!--331 NAME-->
 <!--331-->              <NAME><![CDATA[Accounting Date]]></NAME>
 <!--331 DESCRIPTION-->
-<!--331-->              <DESCRIPTION><![CDATA[The date this transaction is recorded in the general ledger.]]></DESCRIPTION>
+<!--331-->              <DESCRIPTION><![CDATA[The date this transaction is recorded for in the general ledger.]]></DESCRIPTION>
 <!--331 HELP-->
-<!--331-->              <HELP><![CDATA[The Accounting Date indicates the date to be used on the General Ledger account entries generated from this document]]></HELP>
+<!--331-->              <HELP><![CDATA[The date this transaction is recorded on in the general ledger. This date also indicates which accounting period within the fiscal year this transaction will be part of.]]></HELP>
 <!--331 AD_PROCESS_ID-->
 <!--331-->              <AD_PROCESS_ID><![CDATA[220]]></AD_PROCESS_ID>
 <!--331 SEQNO-->
@@ -10670,7 +10674,7 @@
 <!--800046 UPDATEDBY-->
 <!--800046-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800046 NAME-->
-<!--800046-->              <NAME><![CDATA[cheaper shipper]]></NAME>
+<!--800046-->              <NAME><![CDATA[Cheaper Shipper]]></NAME>
 <!--800046 AD_PROCESS_ID-->
 <!--800046-->              <AD_PROCESS_ID><![CDATA[800141]]></AD_PROCESS_ID>
 <!--800046 SEQNO-->

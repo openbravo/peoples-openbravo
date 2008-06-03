@@ -8839,7 +8839,7 @@
 <!--800138 UPDATEDBY-->
 <!--800138-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800138 DESCRIPTION-->
-<!--800138-->              <DESCRIPTION><![CDATA[Create an order to execute the selected process plan.]]></DESCRIPTION>
+<!--800138-->              <DESCRIPTION><![CDATA[Create and manage an order for a process plan to be executed a certain number of times to satisfy the production requirements.]]></DESCRIPTION>
 <!--800138 ISSUMMARY-->
 <!--800138-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800138 ACTION-->
