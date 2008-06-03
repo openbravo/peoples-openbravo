@@ -30,7 +30,8 @@
       <![CDATA[
         SELECT L.C_LOCATION_ID, L.AD_CLIENT_ID, L.AD_ORG_ID, L.CREATEDBY, L.UPDATEDBY, L.C_COUNTRY_ID, L.C_REGION_ID,
         AD_COLUMN_IDENTIFIER(TO_CHAR('C_Location'), TO_CHAR(L.C_LOCATION_ID), ?) AS NAME,
-        L.ADDRESS1, L.ADDRESS2, L.POSTAL, L.CITY, R.DESCRIPTION AS REGION, C.NAME AS COUNTRY
+        L.ADDRESS1, L.ADDRESS2, L.POSTAL, L.CITY, R.DESCRIPTION AS REGION, C.NAME AS COUNTRY,
+		L.POSTAL_ADD, L.REGIONNAME
         FROM C_LOCATION L left join C_REGION R on  L.C_REGION_ID = R.C_REGION_ID, 
              C_COUNTRY C 
         WHERE L.C_COUNTRY_ID = C.C_COUNTRY_ID
@@ -64,7 +65,7 @@
    <SqlMethod name="update" type="preparedStatement" return="rowCount" static="false">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-      UPDATE C_LOCATION SET UPDATED = now(), UPDATEDBY = TO_NUMBER(?), ADDRESS1 = ?, ADDRESS2 = ?, CITY = ?, POSTAL = ?, C_COUNTRY_ID = TO_NUMBER(?), C_REGION_ID = TO_NUMBER(?)
+      UPDATE C_LOCATION SET UPDATED = now(), UPDATEDBY = TO_NUMBER(?), ADDRESS1 = ?, ADDRESS2 = ?, CITY = ?, POSTAL = ?, C_COUNTRY_ID = TO_NUMBER(?), C_REGION_ID = TO_NUMBER(?), POSTAL_ADD = ?, REGIONNAME = ?
       WHERE C_LOCATION_ID = TO_NUMBER(?)
       </Sql>
       <Parameter name="updatedby"/>
@@ -74,12 +75,14 @@
       <Parameter name="postal"/>
       <Parameter name="cCountryId"/>
       <Parameter name="cRegionId"/>
+	  <Parameter name="postalAdd"/>
+      <Parameter name="regionname"/>
       <Parameter name="cLocationId"/>
    </SqlMethod>
    <SqlMethod name="insert" type="preparedStatement" return="rowCount" static="false">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-      INSERT INTO C_LOCATION (C_LOCATION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ADDRESS1, ADDRESS2, CITY, POSTAL, C_COUNTRY_ID, C_REGION_ID) VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), ?, ?, ?, ?, TO_NUMBER(?), TO_NUMBER(?))
+      INSERT INTO C_LOCATION (C_LOCATION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ADDRESS1, ADDRESS2, CITY, POSTAL, C_COUNTRY_ID, C_REGION_ID, POSTAL_ADD, REGIONNAME) VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), ?, ?, ?, ?, TO_NUMBER(?), TO_NUMBER(?), ?, ?)
       </Sql>
       <Parameter name="cLocationId"/>
       <Parameter name="adClientId"/>
@@ -92,5 +95,7 @@
       <Parameter name="postal"/>
       <Parameter name="cCountryId"/>
       <Parameter name="cRegionId"/>
+	  <Parameter name="postalAdd"/>
+      <Parameter name="regionname"/>
    </SqlMethod>
 </SqlClass>

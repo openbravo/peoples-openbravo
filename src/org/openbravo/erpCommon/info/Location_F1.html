@@ -113,29 +113,24 @@ function onloadFunctions() {
             <td class="TableEdition_OneCell_width"></td>
             <td class="TableEdition_OneCell_width"></td>
             <td class="TableEdition_OneCell_width"></td>
+			<td class="TableEdition_OneCell_width"></td>
           </tr>
 
           <tr>
-            <td class="TitleCell"><SPAN class="LabelText">1st line</SPAN></td>
+            <td class="TitleCell"><SPAN class="LabelText">Address Line 1</SPAN></td>
             <td class="TextBox_ContentCell" colspan="2">
               <INPUT class="dojoValidateValid TextBox_TwoCells_width" type="text" name="inpAddress1" id="fieldAddress1" value="xx"/>
             </td>
             <td/>
+			<td/>
           </tr>
           <tr>
-            <td class="TitleCell"><SPAN class="LabelText">2nd line</SPAN></td>
+            <td class="TitleCell"><SPAN class="LabelText">Address Line 2</SPAN></td>
             <td class="TextBox_ContentCell" colspan="2">
               <INPUT class="dojoValidateValid TextBox_TwoCells_width" type="text" name="inpAddress2" id="fieldAddress2" value="xx"/>
             </td>
             <td/>
-          </tr>
-          <tr>
-            <td class="TitleCell"><SPAN class="LabelText">Postal code</SPAN></td>
-            <td class="TextBox_ContentCell" colspan="2">
-              <INPUT class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPostal" id="fieldPostal" value="xx"/>
-            </td>
-            <td/>
-            <td/>
+			<td/>
           </tr>
           <tr>
             <td class="TitleCell"><SPAN class="LabelText">City</SPAN></td>
@@ -144,6 +139,17 @@ function onloadFunctions() {
             </td>
             <td/>
             <td/>
+			<td/>
+          </tr>
+          <tr>
+            <td class="TitleCell"><SPAN class="LabelText">Postal Code</SPAN></td>
+            <td class="TextBox_ContentCell" colspan="2">
+              <INPUT class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpPostal" id="fieldPostal" value="xx"/>
+            </td>
+            <td class="TitleCell"><SPAN class="LabelText">-</SPAN></td>
+            <td class="TextBox_ContentCell">
+              <INPUT class="dojoValidateValid TextBox_OneCell_width" type="text" maxlength="10" name="inpPostalAdd" id="fieldPostalAdd" value="xx"/>
+            </td>
           </tr>
           <tr>
             <td class="TitleCell"><SPAN class="LabelText">Region</SPAN></td>
@@ -155,7 +161,10 @@ function onloadFunctions() {
                  </DIV>
                </SELECT>
             </td>
-            <td/>
+            <td class="TitleCell"><SPAN class="LabelText">Region Name</SPAN></td>
+            <td class="TextBox_ContentCell">
+              <INPUT class="dojoValidateValid TextBox_OneCell_width" type="text" maxlength="40" name="inpRegionname" id="fieldRegionname" value="xx"/>
+            </td>
           </tr>
           <tr>
             <td class="TitleCell"><SPAN class="LabelText">Country</SPAN></td>
@@ -168,6 +177,7 @@ function onloadFunctions() {
               </SELECT>
             </td>
             <td/>
+			<td/>
           </tr>
           <tr><td height="20px"></td></tr>
 
