@@ -50,7 +50,7 @@ public class WindowTreeUtility {
     else if(keyColumnName.equals("C_BPartner_ID")) TreeType = "BP";
     else if(keyColumnName.equals("AD_Org_ID")) TreeType = "OO";
     else if(keyColumnName.equals("C_Project_ID")) TreeType = "PJ";
-    else if(keyColumnName.equals("M_ProductCategory_ID")) TreeType = "PC";
+    else if(keyColumnName.equals("M_Product_Category_ID")) TreeType = "PC";
     else if(keyColumnName.equals("M_BOM_ID")) TreeType = "BB";
     else if(keyColumnName.equals("C_SalesRegion_ID")) TreeType = "SR";
     else if(keyColumnName.equals("C_Campaign_ID")) TreeType = "MC";
