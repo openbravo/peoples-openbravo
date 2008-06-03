@@ -18,7 +18,7 @@
         <onCreateDefault/>
       </column>
       <column name="CREATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default/>
+        <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
       <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
@@ -26,7 +26,7 @@
         <onCreateDefault/>
       </column>
       <column name="UPDATED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default/>
+        <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
       <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
