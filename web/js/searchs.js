@@ -186,87 +186,92 @@ function getField(fieldName) {
   }
 }
 
-function closeSearch(action, strClave, strTexto, parametros) {
-  if (winSelector==null) return true;
-  if (gForm!=null && gCampoClave!=null && gCampoTexto!=null) {
-    var clave = getField(gCampoClave);
-    if (clave!=null) {
-      if (action=="SAVE") {
-        if (strClave==null || strClave=="") {
-          mensaje(31);
-          winSelector.focus();
-          return false;
-        }
-        
-        clave.value = strClave;
-        var text = getField(gCampoTexto);
-        //if (text!=null) text.value = ReplaceText(strTexto, "\"", "\\\"");
-        if (text!=null) text.value = strTexto;
-        if (parametros!=null && parametros.length>0) {
-          var total = parametros.length;
-          for (var i=0;i<total;i++) {
-            //var obj = eval("document." + gForm + "." + ((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
-            var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
-            if (obj!=null && obj.type) obj.value=parametros[i].valor;
+function closeSearch(action, strClave, strTexto, parametros, wait) {
+  if (wait!=false) {
+    setTimeout(function() {closeSearch(action, strClave, strTexto, parametros, false);},100);
+    return;
+  } else {
+    if (winSelector==null) return true;
+    if (gForm!=null && gCampoClave!=null && gCampoTexto!=null) {
+      var clave = getField(gCampoClave);
+      if (clave!=null) {
+        if (action=="SAVE") {
+          if (strClave==null || strClave=="") {
+            mensaje(31);
+            winSelector.focus();
+            return false;
           }
-        }
-        if (clave.onchange) clave.onchange();
-      } else if (action=="CLEAR") {
-        strClave="";
-        strTexto="";
-        clave.value= "";
-        var text = getField(gCampoTexto);
-        text.value="";
-        if (parametros!=null && parametros.length>0) {
-          var total = parametros.length;
-          for (var i=0;i<total;i++) {
-            var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
-            if (obj!=null && obj.type) obj.value="";
+          
+          clave.value = strClave;
+          var text = getField(gCampoTexto);
+          //if (text!=null) text.value = ReplaceText(strTexto, "\"", "\\\"");
+          if (text!=null) text.value = strTexto;
+          if (parametros!=null && parametros.length>0) {
+            var total = parametros.length;
+            for (var i=0;i<total;i++) {
+              //var obj = eval("document." + gForm + "." + ((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
+              var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
+              if (obj!=null && obj.type) obj.value=parametros[i].valor;
+            }
           }
-        }
-        if (clave.onchange) clave.onchange();
-      } else if (action=="SAVE_IMAGE") {
-        if (strClave==null || strClave=="") {
-          mensaje(31);
-          winSelector.focus();
-          return false;
-        }
-        
-        clave.value=strClave;
-        eval("document.images['" + gCampoTexto + "'].src=\"" + baseDirection + "images/" + strTexto + "\"");
-        if (parametros!=null && parametros.length>0) {
-          var total = parametros.length;
-          for (var i=0;i<total;i++) {
-            var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
-            if (obj!=null && obj.type) obj.value=parametros[i].valor;
+          if (clave.onchange) clave.onchange();
+        } else if (action=="CLEAR") {
+          strClave="";
+          strTexto="";
+          clave.value= "";
+          var text = getField(gCampoTexto);
+          text.value="";
+          if (parametros!=null && parametros.length>0) {
+            var total = parametros.length;
+            for (var i=0;i<total;i++) {
+              var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
+              if (obj!=null && obj.type) obj.value="";
+            }
           }
-        }
-        if (clave.onchange) clave.onchange();
-      } else if (action=="CLEAR_IMAGE") {
-        strClave="";
-        strTexto="";
-        clave.value="";
-        var text = getField(gCampoTexto);
-        text.src= baseDirection + "images/" + baseImage ;
-        if (parametros!=null && parametros.length>0) {
-          var total = parametros.length;
-          for (var i=0;i<total;i++) {
-            var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
-            if (obj!=null && obj.type) obj.value="";
+          if (clave.onchange) clave.onchange();
+        } else if (action=="SAVE_IMAGE") {
+          if (strClave==null || strClave=="") {
+            mensaje(31);
+            winSelector.focus();
+            return false;
           }
+          
+          clave.value=strClave;
+          eval("document.images['" + gCampoTexto + "'].src=\"" + baseDirection + "images/" + strTexto + "\"");
+          if (parametros!=null && parametros.length>0) {
+            var total = parametros.length;
+            for (var i=0;i<total;i++) {
+              var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
+              if (obj!=null && obj.type) obj.value=parametros[i].valor;
+            }
+          }
+          if (clave.onchange) clave.onchange();
+        } else if (action=="CLEAR_IMAGE") {
+          strClave="";
+          strTexto="";
+          clave.value="";
+          var text = getField(gCampoTexto);
+          text.src= baseDirection + "images/" + baseImage ;
+          if (parametros!=null && parametros.length>0) {
+            var total = parametros.length;
+            for (var i=0;i<total;i++) {
+              var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
+              if (obj!=null && obj.type) obj.value="";
+            }
+          }
+          if (clave.onchange) clave.onchange();
         }
-        if (clave.onchange) clave.onchange();
       }
     }
-  }
-  closeWindowSearch();
-  if (gDepurar) {
-    if (!debugSearch(strClave, strTexto, gCampoClave, parametros)) {
-      return false;
+    closeWindowSearch();
+    if (gDepurar) {
+      if (!debugSearch(strClave, strTexto, gCampoClave, parametros)) {
+        return false;
+      }
     }
+    window.focus();
+    return true;
   }
-  window.focus();
-  return true;
 }
 
 function closeMultiSearch(action, data, parametros) {
