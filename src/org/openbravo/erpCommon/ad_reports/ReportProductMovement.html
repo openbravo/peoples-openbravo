@@ -250,7 +250,7 @@ function onloadFunctions(){
                     </TD>
                     <TD class="FieldButton_bg">
                       <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
-                      <table class="FieldButton" " onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                      <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                         <TR>
                           <TD class="FieldButton_bg">
                             <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
@@ -370,7 +370,7 @@ function onloadFunctions(){
               <TD class="TitleCell"></TD>
               <TD class="Button_CenterAlign_ContentCell">
                 <div>
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;"onclick="submitCommandForm('FIND', false, null, 'ReportProductMovement.html', '_self', null, true);return false;" id="buttonHTML">
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;"onclick="submitCommandForm('FIND', true, null, 'ReportProductMovement.html', '_self', null, true);return false;" id="buttonHTML">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
                       <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -381,8 +381,7 @@ function onloadFunctions(){
                   </a>
                 </div>
               </TD>
-              <TD class="ContentCell"></INPUT>
-              </TD>
+              <TD class="ContentCell"></TD>
               <TD class="TitleCell"></TD>
               <TD class="ContentCell"></TD>
               <TD class="ContentCell"></TD>
