@@ -212,7 +212,7 @@
       <![CDATA[
         SELECT (AD_WINDOW_ID) AS ID, (AD_COLUMN_IDENTIFIER(TO_CHAR(?),TO_CHAR(AD_WINDOW_ID),TO_CHAR(?))) AS NAME 
         FROM AD_WINDOW 
-        WHERE AD_WINDOW_ID = TO_NUMBER(?) 
+        WHERE TO_CHAR(AD_WINDOW_ID) = TO_CHAR(?) 
         AND 1=1 
         ORDER BY 2
       ]]>
@@ -222,7 +222,7 @@
     <Parameter name="keyColumn" optional="true" type="replace" after="AD_COLUMN_IDENTIFIER(TO_CHAR(?),TO_CHAR(" text="AD_WINDOW_ID"/>
     <Parameter name="adLanguage"/>
     <Parameter name="tablename" optional="true" type="replace" after="FROM " text="AD_WINDOW"/>
-    <Parameter name="columnname" optional="true" type="replace" after="WHERE " text="AD_WINDOW_ID"/>
+    <Parameter name="columnname" optional="true" type="replace" after="WHERE TO_CHAR(" text="AD_WINDOW_ID"/>
     <Parameter name="keyId"/>
     <Parameter name="whereclause" optional="true" type="replace" after="AND 1=1 " text=""/>
   </SqlMethod>
@@ -232,13 +232,13 @@
       <![CDATA[
         SELECT COUNT(*) AS ID
         FROM AD_WINDOW 
-        WHERE AD_WINDOW_ID = TO_NUMBER(?) AND 1=1 
+        WHERE TO_CHAR(AD_WINDOW_ID) = TO_CHAR(?) AND 1=1 
       ]]>
     </Sql>
     <Parameter name="tablename" optional="true" type="replace" after="FROM " text="AD_WINDOW"/>
-    <Parameter name="columnname" optional="true" type="replace" after="WHERE " text="AD_WINDOW_ID"/>
+    <Parameter name="columnname" optional="true" type="replace" after="WHERE TO_CHAR(" text="AD_WINDOW_ID"/>
     <Parameter name="keyId"/>
-    <Parameter name="whereclause" optional="true" type="replace" after="TO_NUMBER(?) " text="AND 1=1"/>
+    <Parameter name="whereclause" optional="true" type="replace" after="TO_CHAR(?) " text="AND 1=1"/>
   </SqlMethod>
   <SqlMethod name="parentTabTableName" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
