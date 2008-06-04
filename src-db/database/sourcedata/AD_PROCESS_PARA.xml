@@ -252,7 +252,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--133 UPDATEDBY-->
 <!--133-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--133 NAME-->
-<!--133-->              <NAME><![CDATA[Service Point]]></NAME>
+<!--133-->              <NAME><![CDATA[Warehouse]]></NAME>
 <!--133 DESCRIPTION-->
 <!--133-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--133 HELP-->
@@ -340,7 +340,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--135 UPDATEDBY-->
 <!--135-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--135 NAME-->
-<!--135-->              <NAME><![CDATA[Service Point]]></NAME>
+<!--135-->              <NAME><![CDATA[Warehouse]]></NAME>
 <!--135 DESCRIPTION-->
 <!--135-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--135 HELP-->
@@ -1312,7 +1312,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--158 UPDATEDBY-->
 <!--158-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--158 NAME-->
-<!--158-->              <NAME><![CDATA[Service Point]]></NAME>
+<!--158-->              <NAME><![CDATA[Warehouse]]></NAME>
 <!--158 DESCRIPTION-->
 <!--158-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--158 HELP-->
@@ -3457,7 +3457,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--230 UPDATEDBY-->
 <!--230-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--230 NAME-->
-<!--230-->              <NAME><![CDATA[Service Point]]></NAME>
+<!--230-->              <NAME><![CDATA[Warehouse]]></NAME>
 <!--230 DESCRIPTION-->
 <!--230-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--230 HELP-->
@@ -9720,7 +9720,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--800024 UPDATEDBY-->
 <!--800024-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800024 NAME-->
-<!--800024-->              <NAME><![CDATA[Service Point]]></NAME>
+<!--800024-->              <NAME><![CDATA[Warehouse]]></NAME>
 <!--800024 DESCRIPTION-->
 <!--800024-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--800024 HELP-->
@@ -10963,7 +10963,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--800053 UPDATEDBY-->
 <!--800053-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800053 NAME-->
-<!--800053-->              <NAME><![CDATA[Service Point]]></NAME>
+<!--800053-->              <NAME><![CDATA[Warehouse]]></NAME>
 <!--800053 DESCRIPTION-->
 <!--800053-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--800053 HELP-->
@@ -11268,7 +11268,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--800060 UPDATEDBY-->
 <!--800060-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800060 NAME-->
-<!--800060-->              <NAME><![CDATA[Service Point]]></NAME>
+<!--800060-->              <NAME><![CDATA[Warehouse]]></NAME>
 <!--800060 DESCRIPTION-->
 <!--800060-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--800060 HELP-->
@@ -11624,7 +11624,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1004400004 UPDATEDBY-->
 <!--1004400004-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400004 NAME-->
-<!--1004400004-->              <NAME><![CDATA[Service Point]]></NAME>
+<!--1004400004-->              <NAME><![CDATA[Warehouse]]></NAME>
 <!--1004400004 DESCRIPTION-->
 <!--1004400004-->              <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
 <!--1004400004 HELP-->
