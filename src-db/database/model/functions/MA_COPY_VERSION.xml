@@ -38,7 +38,9 @@
     v_DocumentNo NUMBER;
     v_Sequence_ID NUMBER;
     v_Product_ID NUMBER;
-    v_Date DATE;
+    v_DateFrom DATE :=now();
+    v_DateTo DATE :=TO_DATE('31-12-9999', 'DD-MM-YYYY');
+    v_Count NUMBER;
     --  v_Processing        CHAR;
     --  v_Processed         CHAR;
     Cur_Sequence RECORD;
@@ -74,12 +76,28 @@
     END LOOP; --  Get Parameter
     DBMS_OUTPUT.PUT_LINE('  v_Record_ID=' || v_Record_ID) ;
     v_ResultStr:='UpdateCurrentVersion';
-    v_Date:=now() ;
-    UPDATE MA_Processplan_Version
-      SET dateto=v_Date
-    WHERE MA_Processplan_ID=v_Record_ID
-      AND dateto>=v_Date
-      AND datefrom<=v_Date;
+    SELECT count(*) INTO v_Count
+    FROM MA_ProcessPlan_Version
+    WHERE MA_Processplan_ID = v_Record_ID
+      AND dateto>=v_DateFrom
+      AND datefrom<=v_DateFrom;
+    IF (v_count >= 0) THEN
+      UPDATE MA_Processplan_Version
+        SET dateto=v_DateFrom
+      WHERE MA_Processplan_ID=v_Record_ID
+        AND dateto>=v_DateFrom
+        AND datefrom<=v_DateFrom;
+    END IF;
+    SELECT count(*) INTO v_Count
+    FROM MA_Processplan_Version
+    WHERE MA_Processplan_ID = v_Record_ID
+      AND datefrom > v_dateFrom;
+    IF (v_Count > 0) THEN
+      SELECT min(datefrom) INTO v_DateTo
+      FROM MA_Processplan_version
+      WHERE MA_Processplan_ID = v_Record_ID
+        AND datefrom > v_DateFrom;
+    END IF;
     v_ResultStr:='InsertVersion';
     Ad_Sequence_Next('MA_ProcessPlan_Version', v_Client_ID, v_ProcessPlanVersion_ID) ;
     Ad_Sequence_Doc('DocumentNo_MA_ProcessPlan_Version', v_Client_ID, 'Y', v_DocumentNo) ;
@@ -94,7 +112,7 @@
       (
         v_ProcessPlanVersion_ID, v_Client_ID, v_Org_ID, 'Y',
         now(), COALESCE(v_User_ID, 0), now(), COALESCE(v_User_ID, 0),
-        v_Record_ID, v_DocumentNo, v_Date, TO_DATE('31-12-9999', 'DD-MM-YYYY')
+        v_Record_ID, v_DocumentNo, v_DateFrom, v_DateTo
       )
       ;
     FOR Cur_Sequence IN
