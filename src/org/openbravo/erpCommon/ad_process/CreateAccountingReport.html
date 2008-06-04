@@ -87,12 +87,27 @@ function depurarCombo(){
   rellenarCombo(frm.inpYearId, arrayCombo2, false, false);
   return true;
 }
-function depurar(){
-	if (frm.inpcAcctSchemaId.value == null || frm.inpcAcctSchemaId.value == "") {
+
+function depurar(command) {
+	var frm = document.frmMain;
+	if (frm.inpcAcctSchemaId.value == ""){
 		setWindowElementFocus(frm.inpcAcctSchemaId);
 		mensaje(7);
+		return false;	
+	} else if (frm.inpAccountingReportId.value == "") {
+		setWindowElementFocus(frm.inpAccountingReportId);
+		mensaje(7);
 		return false;
-	} return true;
+	} else if (frm.inpPeriodId.value == "") {
+		setWindowElementFocus(frm.inpPeriodId);
+		mensaje(7);
+		return false;
+	} else if (frm.inpYearId.value == "") {
+		setWindowElementFocus(frm.inpYearId);
+		mensaje(7);
+		return false;
+	}
+	return true;
 }
 function displayCombos(){
 	var frm = document.frmMain;
@@ -356,7 +371,7 @@ var arrAccount=null;
                   onblur="window.status=''; return true;"
                   onkeypress="this.className='ButtonLink_active'; return true;"
                   onkeyup="this.className='ButtonLink_focus'; return true;"
-                  onclick="openServletNewWindow('FIND', false, 'CreateAccountingReport.html', 'CreateAccountingReport', null, false, '700', '1000', true)"
+                  onclick="openServletNewWindow('FIND', true, 'CreateAccountingReport.html', 'CreateAccountingReport', null, false, '700', '1000', true);return false;"
                   id ="buttonOK">
                   <table class="Button"
                     onmousedown="this.className='Button_active'; return true;"

@@ -99,6 +99,23 @@ function refreshAccounts() {
   cambiarListaCombo(cmbAccount, arrAccount, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);  
   return true;
 }
+function depurar(command) {
+	var frm = document.frmMain;
+	if (frm.inpAccountingReportId.value == ""){
+		setWindowElementFocus(frm.inpAccountingReportId);
+		mensaje(7);
+		return false;
+	} else if (frm.inpcAcctSchemaId.value == ""){
+		setWindowElementFocus(frm.inpcAcctSchemaId);
+		mensaje(7);
+		return false;
+	} else if (frm.inpPeriodId.value == ""){
+		setWindowElementFocus(frm.inpPeriodId);
+		mensaje(7);
+		return false;
+	}
+	return true;
+}
 </SCRIPT>
 
 	<SCRIPT language="JavaScript" type="text/javascript">
@@ -336,7 +353,7 @@ var arrAccount=null;
                   onblur="window.status=''; return true;"
                   onkeypress="this.className='ButtonLink_active'; return true;"
                   onkeyup="this.className='ButtonLink_focus'; return true;"
-                  onclick="submitCommandForm('DEPURAR', false, null, null, 'frameOcultoButton');"
+                  onclick="submitCommandForm('DEPURAR', true, null, null, 'frameOcultoButton');return false;"
                   id="buttonOK">
                   <table class="Button"
                     onmousedown="this.className='Button_active'; return true;"
