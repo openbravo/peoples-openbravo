@@ -29,7 +29,6 @@
   <PARAMETER id="fieldKeyId" name="keyId" attribute="value"/>
   <PARAMETER id="fieldTableId" name="tableId" attribute="value"/>
   <PARAMETER id="fieldRecordIdentifier" name="recordIdentifier"/>
-  <PARAMETER id="fieldMessage" name="fieldMessage" default=""/>
   
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"></PARAMETER>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""></PARAMETER>
