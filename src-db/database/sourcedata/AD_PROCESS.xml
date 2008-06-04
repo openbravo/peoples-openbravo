@@ -5755,17 +5755,17 @@
 <!--800039 CREATEDBY-->
 <!--800039-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800039 UPDATED-->
-<!--800039-->              <UPDATED><![CDATA[2007-07-23 10:43:41.0]]></UPDATED>
+<!--800039-->              <UPDATED><![CDATA[2008-06-04 11:26:36.0]]></UPDATED>
 <!--800039 UPDATEDBY-->
 <!--800039-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800039 VALUE-->
 <!--800039-->              <VALUE><![CDATA[ReportTrialBalance]]></VALUE>
 <!--800039 NAME-->
-<!--800039-->              <NAME><![CDATA[Balance Sheet]]></NAME>
+<!--800039-->              <NAME><![CDATA[Trial Balance Report]]></NAME>
 <!--800039 DESCRIPTION-->
-<!--800039-->              <DESCRIPTION><![CDATA[Balance Sheet]]></DESCRIPTION>
+<!--800039-->              <DESCRIPTION><![CDATA[Trial Balance Report]]></DESCRIPTION>
 <!--800039 HELP-->
-<!--800039-->              <HELP><![CDATA[Balance Sheet]]></HELP>
+<!--800039-->              <HELP><![CDATA[Trial Balance Report]]></HELP>
 <!--800039 ACCESSLEVEL-->
 <!--800039-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--800039 ISUSERSTARTABLE-->
@@ -5778,6 +5778,8 @@
 <!--800039-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800039 ISJASPER-->
 <!--800039-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800039 ISEXTERNALSERVICE-->
+<!--800039-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800039**************--></AD_PROCESS>
 
 <!--800040**************--><AD_PROCESS>
