@@ -103,7 +103,91 @@
       </TABLE>
     </TD>
   </TR>
-
+<!-- Message box -->
+    <TR>
+    <TD>
+      
+       <TABLE cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
+            <TBODY>
+            <TR class="MessageBox_TopMargin">
+              <TD class="MessageBox_LeftMargin"></TD>
+              <TD></TD>
+              <TD class="MessageBox_RightMargin"></TD>
+            </TR>
+            <TR>
+              <TD class="MessageBox_LeftMargin"></TD>
+              <TD>
+                <TABLE cellpadding="0" cellspacing="0" style="width: 100%;">
+                  <TBODY>
+                  <TR>
+                    <TD>
+                      <DIV class="MessageBox_TopLeft"></DIV>
+                      <DIV class="MessageBox_Left"></DIV>
+                    </TD>
+                    <TD class="MessageBox_bg">
+                      <TABLE class="MessageBox_Top">
+                      <TBODY>
+                        <TR>
+                          <TD>
+                            <SPAN>
+                            <TABLE cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
+                              <TBODY>
+                              <TR>
+                                <TD class="MessageBox_Icon_ContentCell">
+                                  <DIV class="MessageBox_Icon"></DIV>
+                                </TD>
+                                <TD style="vertical-align: top;" id="messageBoxIDContent">
+                                  <SPAN>
+                                    <DIV class="MessageBox_TextTitle" id="messageBoxIDTitle">
+                                      xxInfo: AccessTableWithNoView
+                                    </DIV>
+                                    <DIV class="MessageBox_TextDescription" id="messageBoxIDMessage">
+                                      xxThe current information is empty.
+                                    </DIV>
+                                    <DIV class="MessageBox_TextSeparator"></DIV>
+                                  </SPAN>
+                                </TD>
+                              </TR>
+                              </TBODY>
+                            </TABLE>
+                            </SPAN>
+                          </TD>
+                        </TR>
+                        </TBODY>
+                      </TABLE>
+                    </TD>
+                    <TD class="MessageBox_RightTrans">
+                      <DIV class="MessageBox_TopRight"></DIV>
+                      <DIV class="MessageBox_Right"></DIV>
+                    </TD>
+                  </TR>
+                  <TR>
+                    <TD rowspan="2" class="MessageBox_BottomLeft">
+                    </TD>
+                    <TD class="MessageBox_BottomTrans MessageBox_bg">
+                    </TD>
+                    <TD rowspan="2" class="MessageBox_BottomRight">
+                    </TD>
+                  </TR>
+                  <TR>
+                    <TD class="MessageBox_Bottom">
+                    </TD>
+                  </TR>
+                  </TBODY>
+                </TABLE>
+              </TD>
+              <TD class="MessageBox_RightMargin"></TD>
+            </TR>
+            <TR class="MessageBox_BottomMargin">
+              <TD class="MessageBox_LeftMargin"></TD>
+              <TD></TD>
+              <TD class="MessageBox_RightMargin"></TD>
+            </TR>
+            </TBODY>
+          </TABLE> 
+    </TD>
+  </TR>
+  <!-- Message box -->
 <FORM method="POST" action="UsedByLink_Detail.html" name="frmMain">
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
@@ -119,24 +203,17 @@
     <TD>
       <DIV class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
         <TABLE cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
-
+  
           <TR>
             <TD class="TableEdition_OneCell_width"></TD>
             <TD class="TableEdition_OneCell_width"></TD>
             <TD class="TableEdition_OneCell_width"></TD>
             <TD class="TableEdition_OneCell_width"></TD>
           </TR>
-
+ 
           <TR>
             <TD class="TitleCell"><SPAN class="LabelText">Items linked to</SPAN></TD>
             <TD class="ReadOnly_Text_ContentCell" colspan=3 style="text-align:left;"><SPAN class="Label_ReadOnly_Text" id="fieldRecordIdentifier">xxSales Order - Order - 70003 - 01-04-2006 -43.85</SPAN></TD>
-
-          </TR>
-          <TR>
-            <TD/>
-            <TD class="ReadOnly_Text_ContentCell" colspan=3 style="text-align:left;">
-              <SPAN class="Label_ReadOnly_Text" id="fieldMessage">xxMsg</SPAN>
-            </TD>
 
           </TR>
           <DIV id="fieldElementGroup">
