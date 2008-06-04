@@ -93,7 +93,7 @@
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="MATTRSETINST_MINVENTORYLINE">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_INVENTORY" name="MINVENTORY_MINVENTORYLINE" onDelete="cascade">
+      <foreign-key foreignTable="M_INVENTORY" name="MINVENTORY_MINVENTORYLINE">
         <reference local="M_INVENTORY_ID" foreign="M_INVENTORY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_LOCATOR" name="MLOCATOR_MINVENTORYLINE">
