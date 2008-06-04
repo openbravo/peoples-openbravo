@@ -27,6 +27,7 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.util.HashMap;
+import java.math.BigDecimal;
 
 import org.openbravo.erpCommon.ad_combos.AccountNumberComboData;
 
@@ -112,6 +113,7 @@ public class ReportBankJR extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
     String strMessage="";
+//    BigDecimal initialBalance= new BigDecimal(0);
     ReportBankJRData[] data=null;
     if (strDateFrom.equals("") && strDateTo.equals("")) {
     String discard[]={"sectionAmount"};
@@ -135,12 +137,16 @@ public class ReportBankJR extends HttpSecureAppServlet {
         xmlDocument.setParameter("paramMessage", (strMessage.equals("")?"":"alert('" + strMessage + "');"));
         xmlDocument.setData("reportC_ACCOUNTNUMBER","liststructure",AccountNumberComboData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#User_Org", "ReportBankJR")));
     } else {
-     data = ReportBankJRData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#User_Org", "ReportBankJR"),strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strcbankaccount);
+//      initialBalance = new BigDecimal( ReportBankJRData.BeginningBalance(this, Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#User_Org", "ReportBankJR"),strDateFrom, strcbankaccount));
+      data = ReportBankJRData.select(this,Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#User_Org", "ReportBankJR"),strDateFrom,DateTimeData.nDaysAfter(this, strDateTo,"1"), strcbankaccount);
 //     xmlDocument.setParameter("sumAmount", ReportBankJRData.BeginningBalance(this, Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#User_Org", "ReportBankJR"),strDateFrom, strcbankaccount));
     }
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("REPORT_TITLE", classInfo.name);
+    parameters.put("DATE_FROM", strDateFrom);
+    parameters.put("USER_ORG", Utility.getContext(this, vars, "#User_Org", "ReportBankJR"));
+    parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client", "ReportBankJR"));
     String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportBankJR.jrxml";
     renderJR(vars, response, strReportPath, "html", parameters, data, null);
   }

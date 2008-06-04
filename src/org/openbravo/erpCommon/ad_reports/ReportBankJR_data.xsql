@@ -14,7 +14,8 @@
  * The Initial Developer of the Original Code is Openbravo SL 
  * All portions are Copyright (C) 2001-2006 Openbravo SL 
  * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
+ * Contributor(s):       
+  ______________________________________.
  ************************************************************************
 -->
 
@@ -28,24 +29,46 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT C_BANK.NAME AS NAME, C_BANKSTATEMENT.NAME AS NAME2, 
-      (C_BANK.CODEBANK || '/' || C_BANK.CODEBRANCH || C_BANK.DIGITCONTROL || C_BANKACCOUNT.CODEACCOUNT || '.' || C_BANKACCOUNT.DIGITCONTROL) AS bankaccount, 
+      SELECT C_BANK.NAME AS NAME, C_BANKSTATEMENT.NAME AS NAME2, C_BANKSTATEMENT.C_BANKACCOUNT_ID AS C_BANKACCOUNT_ID, 
+      AD_COLUMN_IDENTIFIER('C_BANKACCOUNT',C_BANKACCOUNT.C_BANKACCOUNT_ID,'es_ES') AS bankaccount, 
       C_BANKSTATEMENTLINE.STMTAMT AS TRXAMT, C_DEBT_PAYMENT.AMOUNT AS PAYAMT, C_BANKSTATEMENT.C_BANKSTATEMENT_ID AS BANKSTATEMENT_ID,
-      C_BANKSTATEMENTLINE.DATEACCT AS STATEMENTDATE, C_BANKSTATEMENT.BEGINNINGBALANCE AS BEGINING, C_BANKSTATEMENT.ENDINGBALANCE AS ENDING, C_CURRENCY.DESCRIPTION AS CURRENCY, C_BANKSTATEMENTLINE.LINE AS LINE, C_BANKSTATEMENTLINE.DESCRIPTION AS DESCRIPTION 
+      C_BANKSTATEMENTLINE.DATEACCT AS STATEMENTDATE, C_BANKSTATEMENT.BEGINNINGBALANCE AS BEGINING, C_BANKSTATEMENT.ENDINGBALANCE AS ENDING, 
+      C_CURRENCY.DESCRIPTION AS CURRENCY, C_BANKSTATEMENTLINE.LINE AS LINE, C_BANKSTATEMENTLINE.DESCRIPTION AS DESCRIPTION, 
+      INITIALBALANCE.TOTAL_AMT AS INITIALBALANCE
       FROM C_BANKSTATEMENTLINE left join C_DEBT_PAYMENT on C_BANKSTATEMENTLINE.C_DEBT_PAYMENT_ID = C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID,
-      C_BANK, C_BANKACCOUNT, C_BANKSTATEMENT,   C_CURRENCY
+      C_BANK, C_BANKACCOUNT, C_BANKSTATEMENT,   C_CURRENCY, (
+        SELECT SUM(TOTAL_AMT) AS TOTAL_AMT, C_BANKACCOUNT_ID FROM     
+	        (SELECT COALESCE(SUM(C_BANKSTATEMENTLINE.STMTAMT),0) AS TOTAL_AMT, C_BANKACCOUNT.C_BANKACCOUNT_ID
+	        FROM C_BANK, C_BANKACCOUNT, C_BANKSTATEMENT, C_BANKSTATEMENTLINE
+	        WHERE C_BANK.C_BANK_ID = C_BANKACCOUNT.C_BANK_ID 
+	        AND C_BANKACCOUNT.C_BANKACCOUNT_ID = C_BANKSTATEMENT.C_BANKACCOUNT_ID 
+	        AND C_BANKSTATEMENT.C_BANKSTATEMENT_ID = C_BANKSTATEMENTLINE.C_BANKSTATEMENT_ID 
+        	AND 3=3 AND C_BANK.AD_CLIENT_ID IN ('2')
+        	AND 3=3 AND C_BANK.AD_ORG_ID IN ('2')
+	        AND C_BANKSTATEMENTLINE.DATEACCT < TO_DATE(?)
+	        AND C_BANKSTATEMENT.PROCESSED='Y'
+	        GROUP BY C_BANKACCOUNT.C_BANKACCOUNT_ID
+	        UNION ALL
+	        SELECT 0 AS TOTAL_AMT, C_BANKACCOUNT_ID
+	        FROM C_BANKACCOUNT)
+        GROUP BY C_BANKACCOUNT_ID
+      ) INITIALBALANCE
       WHERE C_BANK.c_bank_id = C_BANKACCOUNT.C_BANK_ID 
       AND C_BANKACCOUNT.C_BANKACCOUNT_ID = C_BANKSTATEMENT.C_BANKACCOUNT_ID 
       AND C_BANKSTATEMENT.C_BANKSTATEMENT_ID = C_BANKSTATEMENTLINE.C_BANKSTATEMENT_ID 
       AND C_BANKACCOUNT.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
-      AND C_BANK.AD_CLIENT_ID IN ('1')
-      AND C_BANK.AD_ORG_ID IN ('1')
+      AND C_BANKACCOUNT.C_BANKACCOUNT_ID = INITIALBALANCE.C_BANKACCOUNT_ID
+      AND 4=4 AND C_BANK.AD_CLIENT_ID IN ('1')
+      AND 4=4 AND C_BANK.AD_ORG_ID IN ('1')
       AND 1=1
       AND C_BANKSTATEMENT.PROCESSED='Y'
-      ORDER BY STATEMENTDATE, LINE
+      ORDER BY C_BANK.NAME, STATEMENTDATE, LINE
      ]]></Sql>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_BANK.AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_BANK.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND 3=3 AND C_BANK.AD_CLIENT_ID IN (" text="'2'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AND 3=3 AND C_BANK.AD_ORG_ID IN (" text="'2'"/>
+    <Parameter name="parDateFrom"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND 4=4 AND C_BANK.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AND 4=4 AND C_BANK.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_BANKSTATEMENTLINE.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND C_BANKSTATEMENTLINE.DATEACCT < TO_DATE(?)]]></Parameter>
     <Parameter name="parBankaccount" optional="true" after="AND 1=1"><![CDATA[AND c_bankaccount.c_bankaccount_ID = TO_NUMBER(?)]]></Parameter>
@@ -53,25 +76,5 @@
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
-  </SqlMethod>
-  <SqlMethod name="BeginningBalance" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT COALESCE(SUM(C_BANKSTATEMENTLINE.STMTAMT),0) AS TOTAL_AMT
-      FROM C_BANK, C_BANKACCOUNT, C_BANKSTATEMENT, C_BANKSTATEMENTLINE
-      WHERE C_BANK.c_bank_id = C_BANKACCOUNT.C_BANK_ID 
-      AND C_BANKACCOUNT.C_BANKACCOUNT_ID = C_BANKSTATEMENT.C_BANKACCOUNT_ID 
-      AND C_BANKSTATEMENT.C_BANKSTATEMENT_ID = C_BANKSTATEMENTLINE.C_BANKSTATEMENT_ID 
-      AND C_BANK.AD_CLIENT_ID IN ('1')
-      AND C_BANK.AD_ORG_ID IN ('1')
-      AND C_BANKSTATEMENTLINE.DATEACCT < TO_DATE(?)
-      AND c_bankaccount.c_bankaccount_ID = TO_NUMBER(?)
-      AND C_BANKSTATEMENT.PROCESSED='Y'
-      ]]></Sql>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND C_BANK.AD_CLIENT_ID IN (" text="'1'"/>
-    <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_BANK.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="acctDate"/>
-    <Parameter name="cBankaccountId"/>
   </SqlMethod>
 </SqlClass>
