@@ -1529,6 +1529,7 @@ public class TableSQLData {
    */
   private Vector<String> getOrdeByIntoFields(String text) {
     Vector<String> result = new Vector<String>();
+    if (log4j.isDebugEnabled()) log4j.debug("Parsing text: "+text);
     if (text!=null && !text.equals("")) {
       int lastPos = 0;
       int openPos = text.indexOf("(");
@@ -1536,10 +1537,11 @@ public class TableSQLData {
       while (actualPos!=-1) {
         if (actualPos>openPos) openPos = findCloseTarget(text, openPos+1, "(", ")");
         if (openPos == -1) {
-          log4j.error("Parsing failed on orderby clause: " + text + " - pos: " + Integer.toString(actualPos));
-          result.addElement(text.substring(lastPos));
-          lastPos=-1;
-          actualPos=-1;
+          Vector<String> vAux = new Vector<String>();
+          vAux.add(text);
+          //Vector seems not to be correct, let's try to clean it
+          if (log4j.isDebugEnabled()) log4j.debug("Clean vector:"+vAux.toString());
+          return cleanVector(vAux);
         } else {
           result.addElement(text.substring(lastPos, actualPos));
           lastPos = actualPos+1;
