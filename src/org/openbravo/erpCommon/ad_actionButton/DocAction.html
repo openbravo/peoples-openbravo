@@ -11,7 +11,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SL 
-* All portions are Copyright (C) 2001-2006 Openbravo SL 
+* All portions are Copyright (C) 2001-2008 Openbravo SL 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -25,11 +25,13 @@
     <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
     <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
     <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+    <SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
     <script language="JavaScript" type="text/javascript" id="paramLanguage">LNG_POR_DEFECTO = "en_US";</script>
     <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
     <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
     <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-    <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>   
+    <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
+    <SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>   
     <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
     <script type="text/javascript">
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
@@ -59,8 +61,10 @@
       }
 
       function submitThisPage(strCommand) {
-        setProcessingMode('popup', true);
-        submitCommandForm(strCommand, false, null, null, '_top');
+        if (depurar()){
+          setProcessingMode('popup', true);
+          submitCommandForm(strCommand, false, null, null, '_top');
+        }
         return true;
       }
     </script>
@@ -79,6 +83,17 @@
 
 	function onResizeDo(){
 	}
+	
+	function depurar(action, Formulario, valor) {
+  var frm=document.frmMain;
+  if (inputValue(frm.inpdocaction)==null || inputValue(frm.inpdocaction)=="") {
+    setWindowElementFocus(frm.inpdocaction);
+    mensaje(1);
+    return false;
+  }
+  setProcessingMode('popup', true);
+  return true;
+}
 	</SCRIPT>
 </head>
 
@@ -142,6 +157,92 @@
         </td>
       </tr>
 
+<!-- message box -->
+<TR>
+    <TD>
+      
+       <TABLE cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxHIDDEN">
+            <TBODY>
+            <TR class="MessageBox_TopMargin">
+              <TD class="MessageBox_LeftMargin"></TD>
+              <TD></TD>
+              <TD class="MessageBox_RightMargin"></TD>
+            </TR>
+            <TR>
+              <TD class="MessageBox_LeftMargin"></TD>
+              <TD>
+                <TABLE cellpadding="0" cellspacing="0" style="width: 100%;">
+                  <TBODY>
+                  <TR>
+                    <TD>
+                      <DIV class="MessageBox_TopLeft"></DIV>
+                      <DIV class="MessageBox_Left"></DIV>
+                    </TD>
+                    <TD class="MessageBox_bg">
+                      <TABLE class="MessageBox_Top">
+                      <TBODY>
+                        <TR>
+                          <TD>
+                            <SPAN>
+                            <TABLE cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
+                              <TBODY>
+                              <TR>
+                                <TD class="MessageBox_Icon_ContentCell">
+                                  <DIV class="MessageBox_Icon"></DIV>
+                                </TD>
+                                <TD style="vertical-align: top;" id="messageBoxIDContent">
+                                  <SPAN>
+                                    <DIV class="MessageBox_TextTitle" id="messageBoxIDTitle">
+                                      xxInfo: AccessTableWithNoView
+                                    </DIV>
+                                    <DIV class="MessageBox_TextDescription" id="messageBoxIDMessage">
+                                      xxThe current information is empty.
+                                    </DIV>
+                                    <DIV class="MessageBox_TextSeparator"></DIV>
+                                  </SPAN>
+                                </TD>
+                              </TR>
+                              </TBODY>
+                            </TABLE>
+                            </SPAN>
+                          </TD>
+                        </TR>
+                        </TBODY>
+                      </TABLE>
+                    </TD>
+                    <TD class="MessageBox_RightTrans">
+                      <DIV class="MessageBox_TopRight"></DIV>
+                      <DIV class="MessageBox_Right"></DIV>
+                    </TD>
+                  </TR>
+                  <TR>
+                    <TD rowspan="2" class="MessageBox_BottomLeft">
+                    </TD>
+                    <TD class="MessageBox_BottomTrans MessageBox_bg">
+                    </TD>
+                    <TD rowspan="2" class="MessageBox_BottomRight">
+                    </TD>
+                  </TR>
+                  <TR>
+                    <TD class="MessageBox_Bottom">
+                    </TD>
+                  </TR>
+                  </TBODY>
+                </TABLE>
+              </TD>
+              <TD class="MessageBox_RightMargin"></TD>
+            </TR>
+            <TR class="MessageBox_BottomMargin">
+              <TD class="MessageBox_LeftMargin"></TD>
+              <TD></TD>
+              <TD class="MessageBox_RightMargin"></TD>
+            </TR>
+            </TBODY>
+          </TABLE> 
+    </TD>
+  </TR>
+  <!-- message box --> 
+
       <tr>
         <td>
           <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
@@ -157,8 +258,7 @@
               <tr>
                 <td class="TitleCell"><SPAN class="LabelText">Action regarding document</SPAN></td>
                 <td class="Combo_ContentCell" colspan="2">
-                  <select name="inpdocaction" id="reportdocaction" onchange="actualizarDescripcion();return true;" class="Combo Combo_TwoCells_width">
-                    <option value=""></option>
+                  <select name="inpdocaction" id="reportdocaction" onchange="actualizarDescripcion();return true;" class="ComboKey Combo_TwoCells_width">
                   </select>
                 </td>
                 <td></td>
