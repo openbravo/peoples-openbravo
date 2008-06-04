@@ -156,6 +156,7 @@ public class WadUtility {
     if (isDateField(reference)) return "TO_CHAR(" + text + ", '"+sqlDateFormat+"')";
     else if (isTimeField(reference)) return "TO_CHAR(" + text + ", 'HH24:MM:SS')";
     else if (isDateTimeField(reference)) return "TO_CHAR(" + text + ", '"+sqlDateFormat+" HH24:MM:SS')";
+    else text = "TO_CHAR(COALESCE(TO_CHAR("+text+"), ''))";
     return text;
   }
 
