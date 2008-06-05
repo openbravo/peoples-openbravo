@@ -6341,13 +6341,15 @@
 <!--1005400002 CREATEDBY-->
 <!--1005400002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005400002 UPDATED-->
-<!--1005400002-->              <UPDATED><![CDATA[2008-04-07 18:05:52.0]]></UPDATED>
+<!--1005400002-->              <UPDATED><![CDATA[2008-06-05 04:17:32.0]]></UPDATED>
 <!--1005400002 UPDATEDBY-->
 <!--1005400002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400002 NAME-->
 <!--1005400002-->              <NAME><![CDATA[Heartbeat Configuration]]></NAME>
 <!--1005400002 DESCRIPTION-->
-<!--1005400002-->              <DESCRIPTION><![CDATA[Heartbeat Configuration]]></DESCRIPTION>
+<!--1005400002-->              <DESCRIPTION><![CDATA[Enable or disable the heartbeat process and configure internet connection proxy information ]]></DESCRIPTION>
+<!--1005400002 HELP-->
+<!--1005400002-->              <HELP><![CDATA[Enable or disable the heartbeat process and configure internet connection proxy information]]></HELP>
 <!--1005400002 WINDOWTYPE-->
 <!--1005400002-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1005400002 ISSOTRX-->
@@ -6372,13 +6374,15 @@
 <!--1005400003 CREATEDBY-->
 <!--1005400003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005400003 UPDATED-->
-<!--1005400003-->              <UPDATED><![CDATA[2008-04-08 12:19:03.0]]></UPDATED>
+<!--1005400003-->              <UPDATED><![CDATA[2008-06-05 04:22:23.0]]></UPDATED>
 <!--1005400003 UPDATEDBY-->
 <!--1005400003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400003 NAME-->
 <!--1005400003-->              <NAME><![CDATA[Register]]></NAME>
 <!--1005400003 DESCRIPTION-->
-<!--1005400003-->              <DESCRIPTION><![CDATA[Register]]></DESCRIPTION>
+<!--1005400003-->              <DESCRIPTION><![CDATA[Register your installation of Openbravo ERP in order to receive development and commercial updates and information]]></DESCRIPTION>
+<!--1005400003 HELP-->
+<!--1005400003-->              <HELP><![CDATA[Register your installation of Openbravo ERP in order to receive development and commercial updates and information]]></HELP>
 <!--1005400003 WINDOWTYPE-->
 <!--1005400003-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1005400003 ISSOTRX-->

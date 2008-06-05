@@ -12124,7 +12124,7 @@
 <!--1005400001 UPDATEDBY-->
 <!--1005400001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400001 DESCRIPTION-->
-<!--1005400001-->              <DESCRIPTION><![CDATA[Heartbeat Configuration]]></DESCRIPTION>
+<!--1005400001-->              <DESCRIPTION><![CDATA[Enable or disable the heartbeat process and configure internet connection proxy information ]]></DESCRIPTION>
 <!--1005400001 ISSUMMARY-->
 <!--1005400001-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--1005400001 ACTION-->
@@ -12153,7 +12153,7 @@
 <!--1005400002 UPDATEDBY-->
 <!--1005400002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400002 DESCRIPTION-->
-<!--1005400002-->              <DESCRIPTION><![CDATA[Register]]></DESCRIPTION>
+<!--1005400002-->              <DESCRIPTION><![CDATA[Register your installation of Openbravo ERP in order to receive development and commercial updates and information]]></DESCRIPTION>
 <!--1005400002 ISSUMMARY-->
 <!--1005400002-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--1005400002 ACTION-->

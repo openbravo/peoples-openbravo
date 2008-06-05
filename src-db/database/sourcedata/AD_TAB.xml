@@ -25028,13 +25028,15 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1005400005 CREATEDBY-->
 <!--1005400005-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005400005 UPDATED-->
-<!--1005400005-->              <UPDATED><![CDATA[2008-04-07 18:07:44.0]]></UPDATED>
+<!--1005400005-->              <UPDATED><![CDATA[2008-06-05 04:19:04.0]]></UPDATED>
 <!--1005400005 UPDATEDBY-->
 <!--1005400005-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400005 NAME-->
 <!--1005400005-->              <NAME><![CDATA[Heartbeat Configuration]]></NAME>
 <!--1005400005 DESCRIPTION-->
-<!--1005400005-->              <DESCRIPTION><![CDATA[Heartbeat Configuration]]></DESCRIPTION>
+<!--1005400005-->              <DESCRIPTION><![CDATA[Enable or disable the heartbeat process and configure internet connection proxy information]]></DESCRIPTION>
+<!--1005400005 HELP-->
+<!--1005400005-->              <HELP><![CDATA[Enable or disable the heartbeat process and configure internet connection proxy information]]></HELP>
 <!--1005400005 AD_TABLE_ID-->
 <!--1005400005-->              <AD_TABLE_ID><![CDATA[1005400005]]></AD_TABLE_ID>
 <!--1005400005 AD_WINDOW_ID-->
@@ -25075,13 +25077,15 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1005400006 CREATEDBY-->
 <!--1005400006-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005400006 UPDATED-->
-<!--1005400006-->              <UPDATED><![CDATA[2008-04-08 11:19:02.0]]></UPDATED>
+<!--1005400006-->              <UPDATED><![CDATA[2008-06-05 04:19:55.0]]></UPDATED>
 <!--1005400006 UPDATEDBY-->
 <!--1005400006-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400006 NAME-->
 <!--1005400006-->              <NAME><![CDATA[Heartbeat Log]]></NAME>
 <!--1005400006 DESCRIPTION-->
-<!--1005400006-->              <DESCRIPTION><![CDATA[Heartbeat Log]]></DESCRIPTION>
+<!--1005400006-->              <DESCRIPTION><![CDATA[View a log of information sent to Openbravo by the heartbeat]]></DESCRIPTION>
+<!--1005400006 HELP-->
+<!--1005400006-->              <HELP><![CDATA[View a log of information sent to Openbravo by the heartbeat]]></HELP>
 <!--1005400006 AD_TABLE_ID-->
 <!--1005400006-->              <AD_TABLE_ID><![CDATA[1005400006]]></AD_TABLE_ID>
 <!--1005400006 AD_WINDOW_ID-->
@@ -25122,13 +25126,15 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1005400007 CREATEDBY-->
 <!--1005400007-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005400007 UPDATED-->
-<!--1005400007-->              <UPDATED><![CDATA[2008-04-09 10:41:25.0]]></UPDATED>
+<!--1005400007-->              <UPDATED><![CDATA[2008-06-05 04:22:37.0]]></UPDATED>
 <!--1005400007 UPDATEDBY-->
 <!--1005400007-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400007 NAME-->
 <!--1005400007-->              <NAME><![CDATA[Register]]></NAME>
 <!--1005400007 DESCRIPTION-->
 <!--1005400007-->              <DESCRIPTION><![CDATA[Register your installation of Openbravo]]></DESCRIPTION>
+<!--1005400007 HELP-->
+<!--1005400007-->              <HELP><![CDATA[Register your installation of Openbravo ERP in order to receive development and commercial updates and information]]></HELP>
 <!--1005400007 AD_TABLE_ID-->
 <!--1005400007-->              <AD_TABLE_ID><![CDATA[1005400007]]></AD_TABLE_ID>
 <!--1005400007 AD_WINDOW_ID-->

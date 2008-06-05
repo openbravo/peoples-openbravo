@@ -48362,7 +48362,7 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400012 CREATEDBY-->
 <!--1005400012-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1005400012 UPDATED-->
-<!--1005400012-->              <UPDATED><![CDATA[2008-04-08 12:19:25.0]]></UPDATED>
+<!--1005400012-->              <UPDATED><![CDATA[2008-06-05 04:37:58.0]]></UPDATED>
 <!--1005400012 UPDATEDBY-->
 <!--1005400012-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400012 COLUMNNAME-->
@@ -48373,6 +48373,8 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400012-->              <PRINTNAME><![CDATA[Commercial Contact]]></PRINTNAME>
 <!--1005400012 DESCRIPTION-->
 <!--1005400012-->              <DESCRIPTION><![CDATA[Commercial Contact]]></DESCRIPTION>
+<!--1005400012 HELP-->
+<!--1005400012-->              <HELP><![CDATA[Is contact commercial.]]></HELP>
 <!--1005400012**************--></AD_ELEMENT>
 
 <!--1005400013**************--><AD_ELEMENT>
@@ -48679,15 +48681,19 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400023 CREATEDBY-->
 <!--1005400023-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1005400023 UPDATED-->
-<!--1005400023-->              <UPDATED><![CDATA[2008-02-29 13:24:46.0]]></UPDATED>
+<!--1005400023-->              <UPDATED><![CDATA[2008-06-05 04:35:57.0]]></UPDATED>
 <!--1005400023 UPDATEDBY-->
-<!--1005400023-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1005400023-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400023 COLUMNNAME-->
 <!--1005400023-->              <COLUMNNAME><![CDATA[Postpone_Date]]></COLUMNNAME>
 <!--1005400023 NAME-->
 <!--1005400023-->              <NAME><![CDATA[Postpone_Date]]></NAME>
 <!--1005400023 PRINTNAME-->
-<!--1005400023-->              <PRINTNAME><![CDATA[Postpone_Date]]></PRINTNAME>
+<!--1005400023-->              <PRINTNAME><![CDATA[Postpone Date]]></PRINTNAME>
+<!--1005400023 DESCRIPTION-->
+<!--1005400023-->              <DESCRIPTION><![CDATA[Date set when user selects 'Later']]></DESCRIPTION>
+<!--1005400023 HELP-->
+<!--1005400023-->              <HELP><![CDATA[Date set when user selects 'Later']]></HELP>
 <!--1005400023**************--></AD_ELEMENT>
 
 <!--1005400025**************--><AD_ELEMENT>
@@ -48733,7 +48739,7 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400026 CREATEDBY-->
 <!--1005400026-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1005400026 UPDATED-->
-<!--1005400026-->              <UPDATED><![CDATA[2008-04-08 11:31:55.0]]></UPDATED>
+<!--1005400026-->              <UPDATED><![CDATA[2008-06-05 04:34:02.0]]></UPDATED>
 <!--1005400026 UPDATEDBY-->
 <!--1005400026-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400026 COLUMNNAME-->
@@ -48744,6 +48750,8 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400026-->              <PRINTNAME><![CDATA[Openbravo Version]]></PRINTNAME>
 <!--1005400026 DESCRIPTION-->
 <!--1005400026-->              <DESCRIPTION><![CDATA[The version of Openbravo.]]></DESCRIPTION>
+<!--1005400026 HELP-->
+<!--1005400026-->              <HELP><![CDATA[The version of this installed Openbravo instance]]></HELP>
 <!--1005400026**************--></AD_ELEMENT>
 
 <!--1005400027**************--><AD_ELEMENT>
