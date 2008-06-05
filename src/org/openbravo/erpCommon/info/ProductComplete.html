@@ -79,7 +79,12 @@
   var orderByPositions = new Array("1");
   var orderByDirections = new Array("ASC");
 </script>
-
+<script language="JavaScript" type="text/javascript" id="jsFocusOnField">
+function focusOnField() {
+	setWindowElementFocus('tad_id', 'id');
+	return true;
+}
+</script>
 <script language="JavaScript" type="text/javascript">
 
 function onloadFunctions() {
@@ -100,7 +105,7 @@ function onloadFunctions() {
       onloadFunctions();
     } catch (e) {}
 
-    setWindowElementFocus('firstElement');
+    focusOnField();
     resizeAreaInfo();
   }
 
@@ -185,13 +190,13 @@ function onloadFunctions() {
 
 		        <tr>
 		         <td class="TitleCell"><span class="LabelText">Key</span></td>
-		         <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpKey" value="" id="fieldKey"/></td>
+		         <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpKey" value="" id="paramKey"/></td>
 		         
 		         <td></td>
 		
 		         
 		         <td class="TitleCell"><span class="LabelText">Name</span></td>
-		         <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" name="inpName" value="" id="fieldName" type="text"/></td>
+		         <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" name="inpName" value="" id="paramName" type="text"/></td>
 		         <td></td>
 		                  
 		       </tr>

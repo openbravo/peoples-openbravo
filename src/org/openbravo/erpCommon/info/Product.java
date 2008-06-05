@@ -84,7 +84,7 @@ public class Product extends HttpSecureAppServlet {
       String strPriceListVersion = getPriceListVersion(vars, strPriceList, strDate);
       vars.setSessionValue("Product.priceListVersion", strPriceListVersion);
 
-      printPage(response, vars, "", strNameValue, strWarehouse, strPriceList, strPriceListVersion, windowId);
+      printPage(response, vars, "", strNameValue, strWarehouse, strPriceList, strPriceListVersion, windowId, "paramName");
     } else if (vars.commandIn("KEY")) {
       removePageSessionVariables(vars);
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Product.key");
@@ -122,7 +122,7 @@ public class Product extends HttpSecureAppServlet {
       vars.setSessionValue("Product.priceListVersion", strPriceListVersion);
       ProductData[] data = ProductData.select(this, "1", vars.getLanguage(), strWarehouse, strKeyValue + "%", "", strPriceListVersion, Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars, "#User_Org", "Product"), "1", "", "");
       if (data!=null && data.length==1) printPageKey(response, vars, data, strWarehouse, strPriceListVersion);
-      else printPage(response, vars, strKeyValue, "", strWarehouse, strPriceList, strPriceListVersion, windowId);
+      else printPage(response, vars, strKeyValue, "", strWarehouse, strPriceList, strPriceListVersion, windowId, "paramKey");
     } else if(vars.commandIn("STRUCTURE")) {
     	printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
@@ -160,7 +160,7 @@ public class Product extends HttpSecureAppServlet {
     return data[0].mPricelistVersionId;
   }
   
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strWarehouse, String strPriceList, String strPriceListVersion, String windowId) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strWarehouse, String strPriceList, String strPriceListVersion, String windowId, String focusedId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the products seeker");
     String[] discard=new String[1];
     if (windowId.equals("800004")) {
@@ -184,13 +184,15 @@ public class Product extends HttpSecureAppServlet {
     
     //xmlDocument.setParameter("orgs", vars.getStringParameter("inpAD_Org_ID"));
     
+    xmlDocument.setParameter("jsFocusOnField", Utility.focusFieldJS(focusedId));
+    
     xmlDocument.setParameter("grid", "20");
     xmlDocument.setParameter("grid_Offset", "");
     xmlDocument.setParameter("grid_SortCols", "1");
     xmlDocument.setParameter("grid_SortDirs", "ASC");
     xmlDocument.setParameter("grid_Default", "0");
     
-	xmlDocument.setData("structure1", WarehouseComboData.selectFilter(this, Utility.getContext(this, vars, "#User_Client", "Product")));
+	  xmlDocument.setData("structure1", WarehouseComboData.selectFilter(this, Utility.getContext(this, vars, "#User_Client", "Product")));
     xmlDocument.setData("structure2", PriceListVersionComboData.select(this, strPriceList, Utility.getContext(this, vars, "#User_Client", "Product")));
 
     response.setContentType("text/html; charset=UTF-8");

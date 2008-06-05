@@ -61,7 +61,7 @@ public class Project extends HttpSecureAppServlet {
         }
         vars.setSessionValue("Project.name", strNameValue + "%");
       }
-      printPage(response, vars, strKey, strNameValue + "%", strBpartner, strWindow);
+      printPage(response, vars, strKey, strNameValue + "%", strBpartner, strWindow, "paramName");
     } else if (vars.commandIn("KEY")) {
       removePageSessionVariables(vars);
       String strWindow = vars.getGlobalVariable("WindowID", "Project.windowId", "");
@@ -71,7 +71,7 @@ public class Project extends HttpSecureAppServlet {
       ProjectData[] data = ProjectData.selectKey(this, Utility.getContext(this, vars, "#User_Client", "Project"), Utility.getContext(this, vars, "#User_Org", "Project"), strBpartner, strKeyValue + "%");
       if (data!=null && data.length==1) {
         printPageKey(response, vars, data);
-      } else printPage(response, vars, strKeyValue + "%", "", strBpartner, strWindow);
+      } else printPage(response, vars, strKeyValue + "%", "", strBpartner, strWindow, "paramKey");
     }   else if(vars.commandIn("STRUCTURE")) {
     	printGridStructure(response, vars);
     } else if(vars.commandIn("DATA")) {
@@ -99,7 +99,7 @@ public class Project extends HttpSecureAppServlet {
     vars.removeSessionValue("Project.bpartner");
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strBpartners, String strWindow) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strBpartners, String strWindow, String focusedId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the projects seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Project").createXmlDocument();
     if (strKeyValue.equals("") && strNameValue.equals("")) {
@@ -115,12 +115,14 @@ public class Project extends HttpSecureAppServlet {
     xmlDocument.setParameter("claveTercero", strBpartners);
     xmlDocument.setParameter("tercero", ProjectData.selectTercero(this, strBpartners));
 
-	    xmlDocument.setParameter("grid", "20");
-	    xmlDocument.setParameter("grid_Offset", "");
-	    xmlDocument.setParameter("grid_SortCols", "1");
-	    xmlDocument.setParameter("grid_SortDirs", "ASC");
-	    xmlDocument.setParameter("grid_Default", "0");
+    xmlDocument.setParameter("grid", "20");
+    xmlDocument.setParameter("grid_Offset", "");
+    xmlDocument.setParameter("grid_SortCols", "1");
+    xmlDocument.setParameter("grid_SortDirs", "ASC");
+    xmlDocument.setParameter("grid_Default", "0");
 
+	  xmlDocument.setParameter("jsFocusOnField", Utility.focusFieldJS(focusedId));
+	  
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

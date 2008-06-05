@@ -974,6 +974,20 @@ public class Utility {
     }
     return false;
   }
+ 
+  /**
+   * Returns a JavaScript function to be used on selectors
+   * Depending on what element you want to focus, you pass the id
+   * @param id the html tag id to focus on
+   * @return a String JavaScript function
+   */
+  public static String focusFieldJS(String id) {
+    String r = "\n function focusOnField() { \n" + 
+               " setWindowElementFocus('" + id + "', 'id'); \n" +
+               " return true; \n" +
+               "} \n";
+    return r;
+  }
   
   @Deprecated
   public static boolean hasFormAccess (ConnectionProvider conn, VariablesSecureApp vars, String process) {

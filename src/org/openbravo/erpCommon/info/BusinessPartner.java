@@ -70,7 +70,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       else strSelected = "all";
       vars.setSessionValue("BusinessPartner.bpartner", strSelected);
       if (!strNameValue.equals("")) vars.setSessionValue("BusinessPartner.name", strNameValue + "%");
-      printPage(response, vars, strKeyValue, strNameValue.concat("%"), strSelected);
+      printPage(response, vars, strKeyValue, strNameValue.concat("%"), strSelected, "paramName");
     } else if (vars.commandIn("KEY")) {
       String strWindowId = vars.getStringParameter("WindowID");
       String strIsSOTrxTab = vars.getStringParameter("inpisSOTrxTab");
@@ -93,7 +93,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       BusinessPartnerData[] data = BusinessPartnerData.selectKey(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strSelected.equals("costumer")?"clients":""), (strSelected.equals("vendor")?"vendors":""), strKeyValue + "%");
       if (data!=null && data.length==1) {
         printPageKey(response, vars, data);
-      } else printPage(response, vars, strKeyValue + "%","", strSelected);
+      } else printPage(response, vars, strKeyValue + "%","", strSelected, "paramKey");
     } else if(vars.commandIn("STRUCTURE")) {
     	printGridStructure(response, vars);
     } else if(vars.commandIn("DATA")) {
@@ -117,7 +117,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
     } else pageError(response);
   }
   
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strBpartners) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strBpartners, String focusedId) throws IOException, ServletException {
    	  
 	  if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of business partners seeker");
 	    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartner").createXmlDocument();
@@ -140,6 +140,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
 	    xmlDocument.setParameter("grid_SortCols", "1");
 	    xmlDocument.setParameter("grid_SortDirs", "ASC");
 	    xmlDocument.setParameter("grid_Default", "0");
+	    
+	    xmlDocument.setParameter("jsFocusOnField", Utility.focusFieldJS(focusedId));
 	    
 	    response.setContentType("text/html; charset=UTF-8");
 	    PrintWriter out = response.getWriter();

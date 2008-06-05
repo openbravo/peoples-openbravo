@@ -22,8 +22,8 @@
 	<PARAMETER id="paramDirection" name="direction" default=""/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-	<PARAMETER id="fieldKey" name="key" attribute="value"/>
-	<PARAMETER id="fieldName" name="name" attribute="value"/>
+	<PARAMETER id="paramKey" name="key" attribute="value"/>
+	<PARAMETER id="paramName" name="name" attribute="value"/>
 	<PARAMETER id="paramWarehouse" name="warehouse" attribute="value" default=""/>
 	<PARAMETER id="paramPriceListVersion" name="priceListVersion" attribute="value" default=""/>
   
@@ -33,6 +33,8 @@
   <PARAMETER id="grid" name="grid_SortDirs" attribute="sortdirs" />
   <PARAMETER id="grid" name="grid_Default" attribute="defaultrow" />
 
+  <PARAMETER id="jsFocusOnField" name="jsFocusOnField" />
+  
   <structure name="structure1">
     <FIELD id="fieldWarehouse" attribute="value" boolean="selected" withId="paramWarehouse">mWarehouseId</FIELD>
     <FIELD id="fieldWarehouse">name</FIELD>

@@ -72,7 +72,7 @@ public class ProductComplete extends HttpSecureAppServlet {
         String strStore = vars.getStringParameter("inpWithStoreLines", isSOTrx);
         vars.setSessionValue("ProductComplete.withstorelines", strStore);
 
-      printPage(response, vars, "", strNameValue, strWarehouse, strStore, strBpartner, "", "");
+      printPage(response, vars, "", strNameValue, strWarehouse, strStore, strBpartner, "", "", "paramName");
     } else if (vars.commandIn("KEY")) {
         removePageSessionVariables(vars);
         String windowId = vars.getRequestGlobalVariable("WindowID", "ProductComplete.windowId");
@@ -107,7 +107,7 @@ public class ProductComplete extends HttpSecureAppServlet {
           else data = ProductCompleteData.selectNotStoredtrl(this, "1", vars.getLanguage(), strKeyValue, "", strBpartner, strClients, strOrgs, "1", "", "");
         }
         if (data!=null && data.length==1) printPageKey(response, vars, data, strWarehouse);
-        else printPage(response, vars, strKeyValue, "", strWarehouse, strStore, strBpartner, strClients, strOrgs);
+        else printPage(response, vars, strKeyValue, "", strWarehouse, strStore, strBpartner, strClients, strOrgs, "paramKey");
     } else if(vars.commandIn("STRUCTURE")) {
     	printGridStructure(response, vars);
     } else if(vars.commandIn("DATA")) {
@@ -139,7 +139,7 @@ public class ProductComplete extends HttpSecureAppServlet {
     vars.removeSessionValue("ProductComplete.withstorelines");
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strWarehouse, String strStore, String strBpartner, String strClients, String strOrgs) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue, String strNameValue, String strWarehouse, String strStore, String strBpartner, String strClients, String strOrgs, String focusedId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the product seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ProductComplete").createXmlDocument();
 
@@ -161,6 +161,8 @@ public class ProductComplete extends HttpSecureAppServlet {
     xmlDocument.setParameter("grid_SortCols", "1");
     xmlDocument.setParameter("grid_SortDirs", "ASC");
     xmlDocument.setParameter("grid_Default", "0");
+    
+    xmlDocument.setParameter("jsFocusOnField", Utility.focusFieldJS(focusedId));
     
     xmlDocument.setData("structure1", WarehouseComboData.select(this, vars.getRole(), vars.getClient()));
 

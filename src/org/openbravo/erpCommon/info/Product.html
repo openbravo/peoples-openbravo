@@ -78,33 +78,37 @@
   var orderByPositions = new Array("1");
   var orderByDirections = new Array("ASC");
 </script>
-<script language="JavaScript" type="text/javascript">
-
-function onloadFunctions() {
+<script language="JavaScript" type="text/javascript" id="jsFocusOnField">
+function focusOnField() {
+	setWindowElementFocus('tag_id', 'id');
+	return true;
 }
 </script>
-	<script language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-      new windowTableId('client_top', 'buttonSearch'),
-      new windowTableId('client_middle', 'buttonOK'),
-      new windowTableId('client_bottom', 'buttonOK')
-		);
-		setWindowTableParentElement();
-		enableShortcuts('popup');
+<script language="JavaScript" type="text/javascript">
+function onloadFunctions() {}
+</script>
+<script language="JavaScript" type="text/javascript">
+function onLoadDo(){
+	this.windowTables = new Array(
+     new windowTableId('client_top', 'buttonSearch'),
+     new windowTableId('client_middle', 'buttonOK'),
+     new windowTableId('client_bottom', 'buttonOK')
+	);
+	setWindowTableParentElement();
+	enableShortcuts('popup');
 
-		try {
-		  onloadFunctions();
-		} catch (e) {}
+	try {
+	  onloadFunctions();
+	} catch (e) {}
 
-		setWindowElementFocus('firstElement');
-    resizeAreaInfo();
-	}
+	focusOnField();
+   	resizeAreaInfo();
+}
 
-	function onResizeDo(){
-     resizeAreaInfo(true);
-	}
-	</script>
+function onResizeDo(){
+    resizeAreaInfo(true);
+}
+</script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <form name="frmProducto" method="POST" action="Product.html">
@@ -186,13 +190,13 @@ function onloadFunctions() {
   
        <tr>
          <td class="TitleCell"><span class="LabelText">Key</span></td>
-         <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpKey" value="" id="fieldKey"/></td>
+         <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpKey" value="" id="paramKey"/></td>
          
          <td></td>
 
          
          <td class="TitleCell"><span class="LabelText">Name</span></td>
-         <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" name="inpName" value="" id="fieldName" type="text"/></td>
+         <td class="TextBox_ContentCell"> <input class="dojoValidateValid TextBox_OneCell_width" name="inpName" value="" id="paramName" type="text"/></td>
 
          <td></td>
                   
