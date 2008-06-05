@@ -100,7 +100,7 @@ public class ToolBar {
     } else if (name.equals("TREE")) {
       return "openServletNewWindow('DEFAULT', false, '../utility/WindowTree.html', 'TREE', null, null,625, 750, true, false, false);";
     } else if (name.equals("ATTACHMENT")) {
-      return "openServletNewWindow('DEFAULT', false, '../businessUtility/TabAttachments_FS.html?inpKey=' + " + ((grid_id==null || grid_id.equals(""))?keyfield + ".value":"dojo.widget.byId('" + grid_id + "').getSelectedRows()") + "+'&inpEditable="+ (isEditable?"Y":"N") +"', 'ATTACHMENT', null, true, 600, 700, true);";
+      return  ((grid_id==null || grid_id.equals(""))?"":"if (dojo.widget.byId('" + grid_id + "').getSelectedRows()=='') {mensaje(23);resizeArea(true);calculateMsgBoxWidth();return false;} ") + " openServletNewWindow('DEFAULT', false, '../businessUtility/TabAttachments_FS.html?inpKey=' + " + ((grid_id==null || grid_id.equals(""))?keyfield + ".value":"dojo.widget.byId('" + grid_id + "').getSelectedRows()") + "+'&inpEditable="+ (isEditable?"Y":"N") +"', 'ATTACHMENT', null, true, 600, 700, true);";
     } else if (name.equals("EXCEL")) {
       return "abrirExcel('" + servlet_action + "_Excel.xls?Command=RELATION_XLS', '_blank');";
     } else if (name.equals("GRIDEXCEL")) {
