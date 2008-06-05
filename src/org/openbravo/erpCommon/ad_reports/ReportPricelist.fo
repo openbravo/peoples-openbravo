@@ -26,7 +26,7 @@
 	<fo:page-sequence master-reference="first">
 		<fo:flow font-size="10pt" flow-name="xsl-region-body" font-family="Helvetica">
 			<fo:block text-align="center" font-weight="bold" font-size="11pt">&#160;</fo:block>
-			<fo:block text-align="center" font-weight="bold" id="fieldVersionName" font-size="20pt">SALE ORDER REPORT</fo:block>
+			<fo:block text-align="center" font-weight="bold" font-size="20pt">SALE ORDER REPORT</fo:block>
 			<fo:block text-align="center" font-weight="bold" font-size="11pt" id="fieldValid"/>
 			<fo:table space-before.optimum="20pt">
 				<fo:table-column column-width="24mm"/>
@@ -35,6 +35,19 @@
 				<fo:table-column column-width="27mm"/>
 				<fo:table-column column-width="20mm"/>
 				<fo:table-body>
+					<DIVFO id="sectionVersion">
+						<fo:table-row>
+							<fo:table-cell>
+								<fo:block>&#160;</fo:block>
+							</fo:table-cell>
+							<fo:table-cell number-columns-spanned="3" border-width="0.5pt" border-style="solid">
+								<fo:block padding-top="2pt" padding-bottom="2pt" font-weight="bold" text-align="left" id="fieldVersionName" start-indent="3pt" font-size="15pt"/>
+							</fo:table-cell>
+							<fo:table-cell>
+								<fo:block>&#160;</fo:block>
+							</fo:table-cell>
+						</fo:table-row>
+						
 					<DIVFO id="sectionCategory">
 						<fo:table-row>
 							<fo:table-cell>
@@ -83,6 +96,12 @@
 								</fo:table-cell>
 							</fo:table-row>
 						</DIVFO>
+						<fo:table-row>
+							<fo:table-cell number-columns-spanned="5">
+								<fo:block>&#160;</fo:block>
+							</fo:table-cell>
+						</fo:table-row>
+					</DIVFO>
 						<fo:table-row>
 							<fo:table-cell number-columns-spanned="5">
 								<fo:block>&#160;</fo:block>

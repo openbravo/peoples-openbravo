@@ -62,8 +62,6 @@ function depurar() {
 	var frm = document.frmMain;
 	if (frm.inpmPricelistVersion.value == ""){
 		setWindowElementFocus(frm.inpmPricelistVersion);
-		mensaje(1);
-		return false;
 	}
 	else{
 		seleccionarListCompleto(frm.inpmProductId_IN);
@@ -237,7 +235,7 @@ function onloadFunctions() {
             </TR>
             <TR>
               <TD class="TitleCell"><SPAN class="LabelText">Price list</SPAN></TD>
-              <TD class="Combo_ContentCell" colspan="2"><SELECT name="inpmPricelistVersion" id="inpmPricelistVersion" class="Combo Combo_TwoCells_width required" required="true">
+              <TD class="Combo_ContentCell" colspan="2"><SELECT name="inpmPricelistVersion" id="inpmPricelistVersion" class="Combo Combo_TwoCells_width">
                   <OPTION value=""><DIV id="reportM_PRICELIST_VERSIONID"></DIV></OPTION>
                 </SELECT></TD>
               <TD class="TitleCell"><SPAN class="LabelText">Product Category</SPAN></TD>
