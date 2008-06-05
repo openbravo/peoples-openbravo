@@ -47,17 +47,23 @@ var isGoingUp = null;
 var selectedCombo = null;
 var isSelectedComboOpened = null;
 
-document.onmousedown=mouseDownLogic;
-document.onclick=cursorFocus;
-//document.onfocus=activeElementFocus;
+var hasCloseWindowSearch = null;
 
-if (document.layers) {
-  window.captureEvents(Event.ONMOUSEDOWN);
-  window.onmousedown=mouseDownLogic;
-  window.captureEvents(Event.ONCLICK);
-  window.onclick=cursorFocus;
-  //window.captureEvents(Event.FOCUS);
-  //window.onfocus=activeElementFocus;
+
+windowKeyboardCaptureEvents();
+function windowKeyboardCaptureEvents() {
+  document.onmousedown=mouseDownLogic;
+  document.onclick=cursorFocus;
+  //document.onfocus=activeElementFocus;
+
+  if (document.layers) {
+    window.captureEvents(Event.ONMOUSEDOWN);
+    window.onmousedown=mouseDownLogic;
+    window.captureEvents(Event.ONCLICK);
+    window.onclick=cursorFocus;
+    //window.captureEvents(Event.FOCUS);
+    //window.onfocus=activeElementFocus;
+  }
 }
 
 function activateDefaultAction(){
@@ -171,6 +177,10 @@ function mouseDownLogic(evt, obj) {
       isSelectedComboOpened = false;
       activateDefaultAction();
     }
+  }
+  if (hasCloseWindowSearch) {
+    closeWindowSearch();
+    hasCloseWindowSearch = false;
   }
 }
 

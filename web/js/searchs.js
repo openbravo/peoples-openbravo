@@ -346,22 +346,21 @@ function toLayer(strHtml, strLayer) {
   }
 }
 
+
 function activarEventos() {
 if (document.layers) {
-    document.captureEvents(Event.MOUSEDOWN);
     document.captureEvents(Event.UNLOAD);
   }
   window.onunload = function(){closeSearch();};
-  document.onmousedown=function(){closeWindowSearch();};
+  hasCloseWindowSearch = true;
 }
 
 function desactivarEventos() {
   if (document.layers) {
-    document.releaseEvents(Event.MOUSEDOWN);
     window.releaseEvents(Event.UNLOAD);
   }
-  document.onmousedown=function(){};
   window.onunload=function(){};
+  hasCloseWindowSearch = false;
 }
 
 function infoSelectFilters(params) {
