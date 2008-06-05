@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2008 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -999,7 +999,10 @@ public class Sqlc extends DefaultHandler {
         if (sql.sqlReturn.equalsIgnoreCase("STRING")) {
           out2.append("        strReturn = UtilSql.getValue(result, \"" + rsmd.getColumnLabel(1) +"\");\n");
         } else if (sql.sqlReturn.equalsIgnoreCase("BOOLEAN")) {
-          out2.append("        boolReturn = result.getBoolean(\"" + rsmd.getColumnLabel(1) +"\");\n");
+          // getBoolean works different in ORACLE and PostgreSQL (2 is true for Oracle and false for PostgreSQL), 
+          // so we make the comparation here as strings with true if the result is different of 0. 
+          //out2.append("        boolReturn = result.getBoolean(\"" + rsmd.getColumnLabel(1) +"\");\n");
+          out2.append("        boolReturn = !UtilSql.getValue(result, \"" + rsmd.getColumnLabel(1) +"\").equals(\"0\");\n");
         } else if (sql.sqlReturn.equalsIgnoreCase("DATE")) {
           out2.append("        dateReturn = UtilSql.getDateValue(result, \"" + rsmd.getColumnLabel(1) +"\", \""+javaDateFormat+"\");\n");
         } else {
