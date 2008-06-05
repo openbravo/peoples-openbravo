@@ -30302,15 +30302,17 @@ Usually, company's internal identifiers for various records (products, customers
 <!--800021 CREATEDBY-->
 <!--800021-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800021 UPDATED-->
-<!--800021-->              <UPDATED><![CDATA[2008-06-03 17:57:58.0]]></UPDATED>
+<!--800021-->              <UPDATED><![CDATA[2008-06-05 14:32:09.0]]></UPDATED>
 <!--800021 UPDATEDBY-->
 <!--800021-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800021 COLUMNNAME-->
 <!--800021-->              <COLUMNNAME><![CDATA[Projectstatus]]></COLUMNNAME>
 <!--800021 NAME-->
-<!--800021-->              <NAME><![CDATA[Project status]]></NAME>
+<!--800021-->              <NAME><![CDATA[Project Status]]></NAME>
 <!--800021 PRINTNAME-->
-<!--800021-->              <PRINTNAME><![CDATA[Project status]]></PRINTNAME>
+<!--800021-->              <PRINTNAME><![CDATA[Project Status]]></PRINTNAME>
+<!--800021 DESCRIPTION-->
+<!--800021-->              <DESCRIPTION><![CDATA[Indicates the current status of the project.]]></DESCRIPTION>
 <!--800021 HELP-->
 <!--800021-->              <HELP><![CDATA[Indicates the current status of the project. There are normally three:
 Open: The budget is sent. The project has not been won yet.
