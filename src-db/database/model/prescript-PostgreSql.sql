@@ -2,7 +2,7 @@
 CREATE OR REPLACE FUNCTION exist_language(varchar)
 RETURNS bigint AS ' 
   SELECT count(*) from pg_language where lanname = $1;
-' LANGUAGE 'sql'
+' LANGUAGE 'sql' STABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION insert_pg_language()
@@ -142,7 +142,7 @@ EXCEPTION
   WHEN OTHERS THEN 
     RETURN NULL;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION to_number
@@ -156,7 +156,7 @@ EXCEPTION
   WHEN OTHERS THEN 
     RETURN NULL;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
  
 CREATE OR REPLACE FUNCTION to_number
@@ -170,7 +170,7 @@ EXCEPTION
   WHEN OTHERS THEN 
     RETURN NULL;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION to_number(integer)
@@ -183,7 +183,7 @@ EXCEPTION
     RETURN NULL;
 END;
 $BODY$
-  LANGUAGE 'plpgsql' VOLATILE;
+  LANGUAGE 'plpgsql' IMMUTABLE;
 /-- END
 
 CREATE OR REPLACE FUNCTION to_number(bigint)
@@ -193,7 +193,7 @@ BEGIN
 RETURN cast($1 as numeric);
 END;
 $BODY$
-  LANGUAGE 'plpgsql' VOLATILE;
+  LANGUAGE 'plpgsql' IMMUTABLE;
 /-- END
 
 
@@ -207,7 +207,7 @@ EXCEPTION
     RETURN NULL;
 END;
 $BODY$
-  LANGUAGE 'plpgsql' VOLATILE;
+  LANGUAGE 'plpgsql' IMMUTABLE;
 /-- END
 
 CREATE OR REPLACE FUNCTION to_date
@@ -218,7 +218,7 @@ RETURNS timestamp AS '
 BEGIN
 RETURN to_timestamp($1, dateFormat());
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION to_date
@@ -229,7 +229,7 @@ CREATE OR REPLACE FUNCTION to_date
 BEGIN
   RETURN to_timestamp(to_char($1, dateFormat()||'' HH24:MI:SS''), dateFormat()||'' HH24:MI:SS'');
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION to_date
@@ -240,7 +240,7 @@ RETURNS timestamp AS '
 BEGIN
 RETURN to_timestamp($1, $2);
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION to_timestamp
@@ -251,7 +251,7 @@ CREATE OR REPLACE FUNCTION to_timestamp
 BEGIN
 RETURN to_timestamp(to_char($1, dateFormat()), dateFormat());
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION to_char
@@ -262,7 +262,7 @@ RETURNS  VARCHAR AS '
 BEGIN
 RETURN to_char($1, ''999999999999D'');
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION to_char
@@ -273,7 +273,7 @@ RETURNS  VARCHAR AS '
 BEGIN
 RETURN cast($1 as VARCHAR);
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 
@@ -285,7 +285,7 @@ RETURNS  VARCHAR AS '
 BEGIN
 RETURN to_char($1, dateFormat());
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION to_char
@@ -296,7 +296,7 @@ RETURNS  VARCHAR AS '
 BEGIN
 RETURN to_char(to_date($1), dateFormat());
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION to_char
@@ -307,7 +307,7 @@ RETURNS  VARCHAR AS '
 BEGIN
 RETURN $1;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION to_char
@@ -318,7 +318,7 @@ RETURNS  VARCHAR AS '
 BEGIN
 RETURN ''''||$1;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION to_char
@@ -329,7 +329,7 @@ RETURNS  VARCHAR AS '
 BEGIN
 RETURN $1;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION round
@@ -341,7 +341,7 @@ RETURNS  NUMERIC AS '
 BEGIN
 RETURN round($1,CAST($2 AS INTEGER));
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION rpad
@@ -354,7 +354,7 @@ RETURNS VARCHAR AS '
 BEGIN
 return to_char(rpad($1::text,CAST($2 AS INTEGER), $3::text));
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION substr
@@ -367,7 +367,7 @@ RETURNS VARCHAR AS '
 BEGIN
 return substr($1,CAST((CASE $2 WHEN 0 THEN 1 ELSE $2 END) AS INTEGER), CAST($3 AS INTEGER));
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 create or replace function to_interval (
@@ -385,7 +385,7 @@ begin
     return ('''''''' || interval__number || '' '' || interval__units || '''''''')::interval;
 
 END;
-' language 'plpgsql'
+' language 'plpgsql' IMMUTABLE
 /-- END
 
 create or replace function add_months (
@@ -397,7 +397,7 @@ begin
     return $1 + to_interval($2,to_char(''months''));
 
 END;
-' language 'plpgsql'
+' language 'plpgsql' IMMUTABLE
 /-- END
 
 
@@ -410,7 +410,7 @@ RETURNS timestamptz AS '
 BEGIN
     return $1 + to_interval($2::INTEGER,to_char(''months''));
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION add_months
@@ -422,7 +422,7 @@ RETURNS timestamptz AS '
 BEGIN
     return $1 + to_interval($2,to_char(''months''));
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION add_months
@@ -434,7 +434,7 @@ RETURNS timestamptz AS '
 BEGIN
     return $1 + to_interval($2::INTEGER,to_char(''months''));
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION add_days
@@ -446,7 +446,7 @@ RETURNS DATE AS '
 BEGIN
 RETURN cast($1 AS date) + $2 ;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION add_days
@@ -458,7 +458,7 @@ RETURNS DATE AS '
 BEGIN
 RETURN $1 + cast($2 AS INTEGER) ;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION add_days(timestamptz, numeric)
@@ -467,7 +467,7 @@ AS '
 BEGIN
 RETURN cast($1 AS date) + cast($2 AS integer) ;
 END;
-'  LANGUAGE 'plpgsql'
+'  LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION months_between (init_date timestamptz, end_date timestamptz) 
@@ -484,13 +484,13 @@ begin
   v_months_total=abs((v_years*12) + v_months);
   return v_months_total;
 end
-'  LANGUAGE 'plpgsql';
+'  LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION type_oid(varchar)
 RETURNS oid AS ' 
   SELECT pg_type.oid from pg_type WHERE pg_type.typname = $1;
-' LANGUAGE 'sql'
+' LANGUAGE 'sql' STABLE
 /-- END
 
 -- Creating auxiliar functions for operator dropping
@@ -547,7 +547,7 @@ AS '
 BEGIN
 RETURN cast($1 AS date) - cast($2 AS int4) ;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION substract_days
@@ -559,7 +559,7 @@ RETURNS DATE AS '
 BEGIN
 RETURN cast($1 AS date) - $2 ;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION substract_days
@@ -571,7 +571,7 @@ RETURNS DATE AS '
 BEGIN
 RETURN $1 - cast($2 AS INTEGER) ;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 --DROP OPERATOR - (timestamptz, integer)/-- END
@@ -600,7 +600,7 @@ CREATE OR REPLACE FUNCTION negation(boolean)
 BEGIN
 RETURN NOT $1 ;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 --DROP OPERATOR ! (NONE, boolean);
@@ -615,7 +615,7 @@ CREATE OR REPLACE FUNCTION equal(numeric, varchar)
 BEGIN
 RETURN $1 = TO_NUMBER($2);
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 --DROP OPERATOR = (numeric, varchar);
@@ -633,7 +633,7 @@ CREATE OR REPLACE FUNCTION lowerequalnumeric(numeric, varchar)
 BEGIN
 RETURN $1 <= TO_NUMBER($2);
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 --DROP OPERATOR <= (numeric, varchar);
@@ -651,7 +651,7 @@ CREATE OR REPLACE FUNCTION lowerequaltimestamp(timestamp, varchar)
 BEGIN
 RETURN $1 <= TO_DATE($2);
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 --DROP OPERATOR <= (timestamp, varchar);
@@ -669,7 +669,7 @@ CREATE OR REPLACE FUNCTION greaterequal(timestamp, varchar)
 BEGIN
 RETURN $1 >= TO_DATE($2);
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 --DROP OPERATOR >= (timestamp, varchar);
@@ -702,7 +702,7 @@ ELSE
 END IF;
 RETURN date_trunc( p_transformation , $1) ;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION trunc
@@ -723,7 +723,7 @@ ELSE
 END IF;
 RETURN date_trunc( p_transformation , $1) ;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION trunc
@@ -734,7 +734,7 @@ RETURNS DATE AS '
 BEGIN
 RETURN to_timestamp(to_char($1, dateFormat()), dateFormat());
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION trunc
@@ -745,7 +745,7 @@ RETURNS DATE AS '
 BEGIN
 RETURN to_timestamp(to_char($1, dateFormat()), dateFormat());
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION instr(varchar, varchar)
@@ -756,7 +756,7 @@ BEGIN
     pos:= instr($1, $2, 1);
     RETURN pos;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION instr(string varchar, string_to_search varchar, beg_index int4)
@@ -792,7 +792,7 @@ BEGIN
       RETURN 0;
     END IF;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 CREATE OR REPLACE FUNCTION instr(string varchar, string_to_search varchar, beg_index int4, occur_index int4)
@@ -842,7 +842,7 @@ ELSE
      RETURN 0;
 END IF; 
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql'IMMUTABLE
 /-- END
 
 create or replace function last_day(date) returns date as 'select
@@ -897,7 +897,7 @@ RETURNS float AS '
 BEGIN
 RETURN extract(epoch from ($1 - $2)) / 86400.0::float;
 END;
-' LANGUAGE 'plpgsql'
+' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
 --DROP OPERATOR - (timestamp, timestamp)/-- END
@@ -942,7 +942,7 @@ WHEN OTHERS THEN
   SELECT (UPPER(tgenabled)<>'D') INTO v_isEnabled FROM pg_trigger WHERE tgname = tg_name;
   RETURN v_isEnabled;
 END;   $BODY$
-  LANGUAGE 'plpgsql' VOLATILE;
+  LANGUAGE 'plpgsql' STABLE;
 /-- END
 
 -- Creating auxiliar functions for view dropping
