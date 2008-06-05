@@ -1,4 +1,4 @@
-/*
+ /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,20 +52,17 @@ public class FileImport extends HttpSecureAppServlet {
     FileLoadData fieldsData = null;
 
     if (vars.commandIn("DEFAULT")) {
-      String strAdImpformatId = vars.getStringParameter("inpadImpformatId");
-      String texto = procesarFichero(vars, null, request, response, strAdImpformatId);
-      printPage(response, vars, strFirstLineHeader, vars.getCommand(), texto, strAdImpformatId);
+      String strAdImpformatId = vars.getStringParameter("inpadImpformatId");     
+      printPage(response, vars, strFirstLineHeader, vars.getCommand(), "", strAdImpformatId);
     } else if (vars.commandIn("FIND")) {
-      //String strFirstLineHeader = vars.getStringParameter("inpFirstLineHeader");
-      String strAdImpformatId = vars.getStringParameter("inpadImpformatId");
-      //MultipartRequest multi = new MultipartRequest(vars, "", fieldsData, firstRowHeaders);
+      String strAdImpformatId = vars.getStringParameter("inpadImpformatId");      
       FieldProvider[] rows = null;
       String strSeparator = FileImportData.selectSeparator(this, strAdImpformatId);
       if (log4j.isDebugEnabled()) log4j.debug("First Row Header: "+firstRowHeaders);
       if (strSeparator.equalsIgnoreCase("F")) rows = FileImportData.select(this, strAdImpformatId);
       fieldsData = new FileLoadData(vars, "inpFile", firstRowHeaders, strSeparator, rows);
-      String texto = procesarFichero(vars, fieldsData.getFieldProvider(), request, response, strAdImpformatId);
-      printPage(response, vars, strFirstLineHeader, vars.getCommand(), texto, strAdImpformatId);
+      String texto = procesarFichero(vars, fieldsData.getFieldProvider(), request, response, strAdImpformatId, strFirstLineHeader);
+      printPageResult(response, vars, texto, "FIND");
     } else if (vars.commandIn("SAVE")) {
       String strAdImpformatId = vars.getStringParameter("inpadImpformatId");
       FieldProvider[] rows = null;
@@ -73,32 +70,44 @@ public class FileImport extends HttpSecureAppServlet {
       if (strSeparator.equalsIgnoreCase("F")) rows = FileImportData.select(this, strAdImpformatId);
       fieldsData = new FileLoadData(vars, "inpFile", firstRowHeaders, strSeparator, rows);      
       OBError myMessage = importarFichero(vars, fieldsData.getFieldProvider(), request, response, strAdImpformatId);               
-      vars.setMessage("FileImport", myMessage);      
-      response.sendRedirect(strDireccion + request.getServletPath());
+      vars.setMessage("FileImport", myMessage);
+      printPageResult(response, vars, "", "SAVE");
     } else pageError(response);
   }
 
-  public String procesarFichero(VariablesSecureApp vars, FieldProvider[] data2, HttpServletRequest request, HttpServletResponse response, String strAdImpformatId) throws ServletException, IOException {
+  public String procesarFichero(VariablesSecureApp vars, FieldProvider[] data2, HttpServletRequest request, HttpServletResponse response, String strAdImpformatId, String strFirstLineHeader) throws ServletException, IOException {
     if (data2==null) return "";
     StringBuffer texto = new StringBuffer("");
     FileImportData [] data = FileImportData.select(this, strAdImpformatId);
     if (data==null) return "";
     int constant = 0;
+    texto.append("<TABLE cellspacing=\"0\" cellpadding=\"0\" width=\"99%\" class=\"DataGrid_Header_Table DataGrid_Body_Table\" style=\"table-layout: auto;\">" +
+                 "<TR class=\"DataGrid_Body_Row\">  " + 
+                 "<TD>");
     if (log4j.isDebugEnabled()) log4j.debug("data2.length: "+data2.length);
     for (int i=0;i<data2.length;i++){
-      if (log4j.isDebugEnabled()) log4j.debug("i:"+i+" - data.length"+data.length);
-      texto.append("<tr>");
+      if (log4j.isDebugEnabled()) log4j.debug("i:"+i+" - data.length"+data.length);      
+      texto.append("<TR class=\"DataGrid_Body_Row DataGrid_Body_Row_"+(i%2==0?"0":"1")+"\">");
       for (int j=0;j<data.length;j++){
-        texto.append("<td>");
+        if(i==0 && strFirstLineHeader.equalsIgnoreCase("Y"))
+          texto.append("<TH class=\"DataGrid_Header_Cell\">");
+        else
+          texto.append("<TD class=\"DataGrid_Body_Cell\">");
         if (!data[j].constantvalue.equals("")){
           texto.append(data[j].constantvalue);
           constant = constant + 1;
-        } else texto.append(parseField(data2[i].getField(String.valueOf(j-constant)), data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint));
-        texto.append("<td\\>");
+        } 
+        else
+          texto.append(parseField(data2[i].getField(String.valueOf(j-constant)), data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint));
+        if(i==0 && strFirstLineHeader.equalsIgnoreCase("Y"))
+          texto.append("</TH>");
+        else
+          texto.append("</TD>");
       }
       constant = 0;
-      texto.append("<tr\\>");
+      texto.append("</TR>");
     }
+    texto.append("</TD></TABLE>");
     return texto.toString();
   }
 
@@ -179,28 +188,10 @@ public class FileImport extends HttpSecureAppServlet {
     }
   }
 
-
-  /*void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: file importing Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/FileImport_FS").createXmlDocument();
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());  
-    out.close();
-  }*/
-
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strFirstLineHeader, String strCommand, String texto, String strAdImpformatId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: file importing Frame 1");
     XmlDocument xmlDocument = null;
-
-    String[] discard = {""};
-    FileImportData[] data = null;
-    if (strCommand.equals("DEFAULT") && texto.equals("") && strAdImpformatId.equals("")) {
-    	discard[0] = "sectionDetail";
-      data = FileImportData.set();
-    } else data = FileImportData.select(this, strAdImpformatId);
-    if (log4j.isDebugEnabled()) log4j.debug("1");
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/FileImport", discard).createXmlDocument();
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/FileImport").createXmlDocument();
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "FileImport", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
 
@@ -248,12 +239,7 @@ if (log4j.isDebugEnabled()) log4j.debug("3");
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    if (log4j.isDebugEnabled()) log4j.debug("5");
-    data = FileImportData.set();
-    xmlDocument.setParameter("data", texto);
-    xmlDocument.setData("structure1", data);
-    if (log4j.isDebugEnabled()) log4j.debug("6");
-
+    
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -261,26 +247,25 @@ if (log4j.isDebugEnabled()) log4j.debug("3");
   }
 
 
-/*  void printPageFrame2(HttpServletResponse response, VariablesSecureApp vars, String strCommand, String texto, String strAdImpformatId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: file importing Frame 2");
-    XmlDocument xmlDocument;
-    FileImportData[] data = null;
-    if (strCommand.equals("FRAME2") && texto.equals("") && strAdImpformatId.equals("")) {
-      String[] discard = {"sectionDetail"};
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/FileImport_F2", discard).createXmlDocument();
-      xmlDocument.setData("structure1", FileImportData.set());
-    } else {
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/FileImport_F2").createXmlDocument();
-      data = FileImportData.select(this, strAdImpformatId);
-    }
-    xmlDocument.setData("structure1", data);
-    xmlDocument.setParameter("data", texto);
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+ void printPageResult(HttpServletResponse response, VariablesSecureApp vars, String text, String command) throws IOException, ServletException {    
+    XmlDocument xmlDocument = null;
+    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/FileImport_Result").createXmlDocument();
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
+    String strJS = "";
+    if(command.equalsIgnoreCase("FIND")) {
+      strJS = "\n var r = '" + text + "'; \n" +
+          "top.frames['frameAplicacion'].setResult(r); \n " +
+          "top.frames['frameAplicacion'].setProcessingMode('window', false); \n";
+    }
+    else if(command.equalsIgnoreCase("SAVE")) {
+      strJS = "\n top.frames['frameAplicacion'].setProcessingMode('window', false); \n" + 
+              "top.frames['frameAplicacion'].document.getElementById('buttonRefresh').onclick();\n";    
+    }    
+    xmlDocument.setParameter("result", strJS);
+    PrintWriter out = response.getWriter();    
     out.println(xmlDocument.print());
     out.close();
-  }*/
+  }
 
   public String getServletInfo() {
     return "Servlet that presents the files-importing process";

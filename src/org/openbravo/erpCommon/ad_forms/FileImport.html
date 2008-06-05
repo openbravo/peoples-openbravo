@@ -13,7 +13,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ var baseDirection = "../../../../../web/";
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
@@ -51,7 +52,7 @@ var baseDirection = "../../../../../web/";
 </script> 
 <SCRIPT language="JavaScript" type="text/javascript">
 function depurar() {
-	var frm = document.frmSelector;
+	var frm = document.frmImport;
 	if ((frm.inpFile.value==null || frm.inpFile.value=="")){
 		setWindowElementFocus(frm.inpFile);
 		mensaje(7);
@@ -62,15 +63,20 @@ function depurar() {
 		mensaje(7);
 		return false;
 	}
-
+    setProcessingMode('window', true);
 	return true;
 }
 
-function onloadFunctions() {
+function setResult(r) {
+  var t = document.getElementById('paramData');
+  t.innerHTML = r;
+  return true;
 }
+
 </SCRIPT>
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
+		setProcessingMode('window', false);
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonOK')
 		);
@@ -98,7 +104,7 @@ function onloadFunctions() {
 	</SCRIPT>
 </HEAD>
 <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" id="paramMensaje">
-<FORM name="frmSelector" method="POST" action="FileImport.html" enctype="multipart/form-data">
+<FORM name="frmImport" method="POST" action="FileImport.html" enctype="multipart/form-data" target="frameOculto">
 <INPUT type="hidden" name="Command"></INPUT>
   <input type="hidden" name="inpLastFieldChanged" value="">
 <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
@@ -276,20 +282,7 @@ function onloadFunctions() {
                 </TR>
               </TABLE>
 				<BR></BR>
-
-        <TABLE class="Border" border="1" cellspacing="0" cellpadding="0" width="100%">
-          
-
-      <TR class="TableHeaderDetail" id="sectionDetail"> 
-        	<TD id="fieldColumn">xxxxxxxxxxxxxxxxxx&nbsp;</TD>
-    	  </TR>
-    	  <TR id="paramData"> 
-      <TD id="discard">xxxxxxxxxxxxxxxxxxxxxx&nbsp;</TD>
-    	  </TR>
-
-        </TABLE>
-
-
+				<div id="paramData"></div>
                       <!-- USER CONTROLS -->
                 </TD>
               </TR>
