@@ -57,9 +57,12 @@ public class ReportDesignBO {
 
   private void addFieldHeader(GridColumnVO columnVO) {
     JRDesignBand bHeader = (JRDesignBand) jasperDesign.getColumnHeader();
-    JRDesignStaticText text = new JRDesignStaticText();    
+    JRDesignStaticText text = new JRDesignStaticText();
+    int w = columnVO.getWidth();
+    if(columnVO.getTitle().length()*15 > w)
+    	columnVO.setWidth(columnVO.getTitle().length()*15);
     text.setText(columnVO.getTitle());
-    text.setWidth(calcPorc(columnVO.getWidth()));
+    text.setWidth(columnVO.getWidth());
     text.setHeight(bHeader.getHeight());
     text.setX(px);
     // Set syle
