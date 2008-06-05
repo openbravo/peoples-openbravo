@@ -12560,7 +12560,7 @@
 <!--800038 VALUE-->
 <!--800038-->              <VALUE><![CDATA[P]]></VALUE>
 <!--800038 NAME-->
-<!--800038-->              <NAME><![CDATA[Positive]]></NAME>
+<!--800038-->              <NAME><![CDATA[Positive ONLY]]></NAME>
 <!--800038 AD_REFERENCE_ID-->
 <!--800038-->              <AD_REFERENCE_ID><![CDATA[800014]]></AD_REFERENCE_ID>
 <!--800038**************--></AD_REF_LIST>
@@ -12585,7 +12585,7 @@
 <!--800039 VALUE-->
 <!--800039-->              <VALUE><![CDATA[N]]></VALUE>
 <!--800039 NAME-->
-<!--800039-->              <NAME><![CDATA[Negative]]></NAME>
+<!--800039-->              <NAME><![CDATA[Negative ONLY]]></NAME>
 <!--800039 AD_REFERENCE_ID-->
 <!--800039-->              <AD_REFERENCE_ID><![CDATA[800014]]></AD_REFERENCE_ID>
 <!--800039**************--></AD_REF_LIST>
@@ -12610,7 +12610,7 @@
 <!--800040 VALUE-->
 <!--800040-->              <VALUE><![CDATA[A]]></VALUE>
 <!--800040 NAME-->
-<!--800040-->              <NAME><![CDATA[Algebraico]]></NAME>
+<!--800040-->              <NAME><![CDATA[Algebraic]]></NAME>
 <!--800040 AD_REFERENCE_ID-->
 <!--800040-->              <AD_REFERENCE_ID><![CDATA[800014]]></AD_REFERENCE_ID>
 <!--800040**************--></AD_REF_LIST>
