@@ -87,22 +87,21 @@ function depurarCombo(){
   rellenarCombo(frm.inpYearId, arrayCombo2, false, false);
   return true;
 }
-
-function depurar(command) {
+function depurar(){
 	var frm = document.frmMain;
-	if (frm.inpcAcctSchemaId.value == ""){
-		setWindowElementFocus(frm.inpcAcctSchemaId);
-		mensaje(7);
-		return false;	
-	} else if (frm.inpAccountingReportId.value == "") {
+	if (frm.inpAccountingReportId.value == null || frm.inpAccountingReportId.value == "") {
 		setWindowElementFocus(frm.inpAccountingReportId);
 		mensaje(7);
 		return false;
-	} else if (frm.inpPeriodId.value == "") {
+	} else if (frm.inpcAcctSchemaId.value == null || frm.inpcAcctSchemaId.value == "") {
+		setWindowElementFocus(frm.inpcAcctSchemaId);
+		mensaje(7);
+		return false;
+	} else if (frm.inpPeriodId.value == null || frm.inpPeriodId.value == "") {
 		setWindowElementFocus(frm.inpPeriodId);
 		mensaje(7);
 		return false;
-	} else if (frm.inpYearId.value == "") {
+	} else if (document.getElementById('selEliminarYear').style.display != "none" && (frm.inpYearId.value == null || frm.inpYearId.value == "")) {
 		setWindowElementFocus(frm.inpYearId);
 		mensaje(7);
 		return false;
@@ -113,6 +112,8 @@ function displayCombos(){
 	var frm = document.frmMain;
 	var id = frm.inpAccountingReportId.value;
 	//alert(id);
+
+	if(array == null) return false;
 
 	for (i = 0; i<array.length; i++) {
 		if (array[i][0] == id){
@@ -313,7 +314,7 @@ var arrAccount=null;
 	<tr id="selEliminarOrg" style="display:none;">
 		<td class="TitleCell"><span class="LabelText">Organization&nbsp;</span></td>
 		<td class="Combo_ContentCell" colspan="2">
-			<select class="ComboKey Combo_TwoCells_width" name="inpadOrgId" id="inpadOrgId">
+			<select class="Combo Combo_TwoCells_width" name="inpadOrgId" id="inpadOrgId">
 				<option value=""></option>
 				<DIV id="reportAD_ORG"></DIV>
 			</select>
@@ -322,7 +323,7 @@ var arrAccount=null;
 	<tr>
 		<td class="TitleCell"><span class="LabelText">Account schema&nbsp;</span></td>
 		<td class="Combo_ContentCell" colspan="2">
-			<select class="ComboKey Combo_TwoCells_width" name="inpcAcctSchemaId" id="inpcAcctSchemaId" onChange="refreshAccounts();return false;">
+			<select class="Combo Combo_TwoCells_width" name="inpcAcctSchemaId" id="inpcAcctSchemaId" onChange="refreshAccounts();return false;">
 				<option value=""></option>
 				<DIV id="reportC_ACCTSCHEMA_ID"></DIV>
 			</select>
