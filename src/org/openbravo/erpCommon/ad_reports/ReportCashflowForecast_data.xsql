@@ -150,8 +150,7 @@
                  WHERE BS.C_BANKSTATEMENT_ID = BL.C_BANKSTATEMENT_ID
                    AND BS.PROCESSED='Y'  
                    AND BS.STATEMENTDATE <= NOW()
-                   AND BS.C_BANKACCOUNT_ID = DP.C_BANKACCOUNT_ID ) as initialbalance,
-              (case when DP.AMOUNT>0 then 'BordesVerdeClaro' else 'BordesRojoClaro' end) AS CLASSTYPE
+                   AND BS.C_BANKACCOUNT_ID = DP.C_BANKACCOUNT_ID ) as initialbalance
         FROM C_DEBT_PAYMENT_V DP LEFT JOIN C_INVOICE I ON DP.C_INVOICE_ID = I.C_INVOICE_ID,
              AD_MESSAGE M        LEFT JOIN AD_MESSAGE_TRL MT ON m.ad_message_id = mt.ad_message_id         
                                                             and mt.ad_language = ?,
