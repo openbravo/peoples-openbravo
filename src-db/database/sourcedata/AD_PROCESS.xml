@@ -3790,7 +3790,7 @@
 <!--210 CREATEDBY-->
 <!--210-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--210 UPDATED-->
-<!--210-->              <UPDATED><![CDATA[2004-03-29 18:25:34.0]]></UPDATED>
+<!--210-->              <UPDATED><![CDATA[2008-06-06 16:21:41.0]]></UPDATED>
 <!--210 UPDATEDBY-->
 <!--210-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--210 VALUE-->
@@ -3798,9 +3798,9 @@
 <!--210 NAME-->
 <!--210-->              <NAME><![CDATA[Copy Lines]]></NAME>
 <!--210 DESCRIPTION-->
-<!--210-->              <DESCRIPTION><![CDATA[Copy Lines from other Invoice]]></DESCRIPTION>
+<!--210-->              <DESCRIPTION><![CDATA[Copy lines (products) from an existing Invoice.]]></DESCRIPTION>
 <!--210 HELP-->
-<!--210-->              <HELP><![CDATA[Copy Lines from other Invoice]]></HELP>
+<!--210-->              <HELP><![CDATA[Copy lines (products) from an existing Invoice. By selecting any existing past  invoice, the process will copy all lines (products) from it to the one currently  being edited. This process can be used repetitively to copy lines (products) from several invoices into a new one.]]></HELP>
 <!--210 ACCESSLEVEL-->
 <!--210-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--210 ISUSERSTARTABLE-->
@@ -3815,6 +3815,8 @@
 <!--210-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--210 ISJASPER-->
 <!--210-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--210 ISEXTERNALSERVICE-->
+<!--210-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--210**************--></AD_PROCESS>
 
 <!--211**************--><AD_PROCESS>
@@ -3831,7 +3833,7 @@
 <!--211 CREATEDBY-->
 <!--211-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--211 UPDATED-->
-<!--211-->              <UPDATED><![CDATA[2006-06-16 19:32:34.0]]></UPDATED>
+<!--211-->              <UPDATED><![CDATA[2008-06-06 16:06:39.0]]></UPDATED>
 <!--211 UPDATEDBY-->
 <!--211-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--211 VALUE-->
@@ -3839,9 +3841,9 @@
 <!--211 NAME-->
 <!--211-->              <NAME><![CDATA[Copy Lines]]></NAME>
 <!--211 DESCRIPTION-->
-<!--211-->              <DESCRIPTION><![CDATA[Copy Lines from other Order]]></DESCRIPTION>
+<!--211-->              <DESCRIPTION><![CDATA[Browse history of this particular document type for the selected business partner to be able to select lines (products) from these.]]></DESCRIPTION>
 <!--211 HELP-->
-<!--211-->              <HELP><![CDATA[Copy Lines from other Order]]></HELP>
+<!--211-->              <HELP><![CDATA[Browse history of this particular document type for the selected business partner to be able to select lines (products) from these. For example, if you are creating a new sales order for business partner A, Copy Lines window will give you the history of products ordered and the prices given to business partner A within the last X days. X can be set within the business partner window. Consider this as a tiny CRM window.]]></HELP>
 <!--211 ACCESSLEVEL-->
 <!--211-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--211 ISUSERSTARTABLE-->
@@ -3856,6 +3858,8 @@
 <!--211-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--211 ISJASPER-->
 <!--211-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--211 ISEXTERNALSERVICE-->
+<!--211-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--211**************--></AD_PROCESS>
 
 <!--212**************--><AD_PROCESS>

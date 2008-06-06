@@ -16863,9 +16863,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1308 CREATEDBY-->
 <!--1308-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1308 UPDATED-->
-<!--1308-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--1308-->              <UPDATED><![CDATA[2008-06-06 16:13:19.0]]></UPDATED>
 <!--1308 UPDATEDBY-->
-<!--1308-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1308-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1308 COLUMNNAME-->
 <!--1308-->              <COLUMNNAME><![CDATA[Posted]]></COLUMNNAME>
 <!--1308 NAME-->
@@ -16873,9 +16873,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1308 PRINTNAME-->
 <!--1308-->              <PRINTNAME><![CDATA[Posted]]></PRINTNAME>
 <!--1308 DESCRIPTION-->
-<!--1308-->              <DESCRIPTION><![CDATA[An accounting status noting if a specified transaction was added to the general ledger.]]></DESCRIPTION>
+<!--1308-->              <DESCRIPTION><![CDATA[An accounting status button that indicates if the transaction has already been posted to the general ledger or not.]]></DESCRIPTION>
 <!--1308 HELP-->
-<!--1308-->              <HELP><![CDATA[The Posted field indicates the status of the Generation of General Ledger Accounting Lines]]></HELP>
+<!--1308-->              <HELP><![CDATA[An accounting status button that indicates if the transaction has already been posted to the general ledger or not. When doing the accounting manually this button can be used to post or unpost the transaction from the general ledger by hand.]]></HELP>
 <!--1308**************--></AD_ELEMENT>
 
 <!--1309**************--><AD_ELEMENT>
@@ -45084,17 +45084,17 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800761 CREATEDBY-->
 <!--800761-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800761 UPDATED-->
-<!--800761-->              <UPDATED><![CDATA[2008-06-03 19:30:25.0]]></UPDATED>
+<!--800761-->              <UPDATED><![CDATA[2008-06-06 11:07:46.0]]></UPDATED>
 <!--800761 UPDATEDBY-->
 <!--800761-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800761 COLUMNNAME-->
 <!--800761-->              <COLUMNNAME><![CDATA[Securitymargin]]></COLUMNNAME>
 <!--800761 NAME-->
-<!--800761-->              <NAME><![CDATA[Lead Time]]></NAME>
+<!--800761-->              <NAME><![CDATA[Safety Lead Time]]></NAME>
 <!--800761 PRINTNAME-->
-<!--800761-->              <PRINTNAME><![CDATA[Lead Time]]></PRINTNAME>
+<!--800761-->              <PRINTNAME><![CDATA[Safety Lead Time]]></PRINTNAME>
 <!--800761 HELP-->
-<!--800761-->              <HELP><![CDATA[Safety margin in days for the production of ordered goods and availability of raw materials. For example, if there is a sales order for product A to be delivered on date X, MRP will plan to have the product A produced by date X minus the Lead Time number of days. In a similar way, MRP will make sure that the raw materials required for making product X will be available Lead Time number of days before the production must comence.]]></HELP>
+<!--800761-->              <HELP><![CDATA[Safety margin in days for the production of ordered goods and availability of raw materials. For example, if there is a sales order for product A to be delivered on date X, MRP will plan to have the product A produced by date X minus the Lead Time number of days. In a similar way, MRP will make sure that the raw materials required for making product X will be available Lead Time number of days before the production must commence.]]></HELP>
 <!--800761**************--></AD_ELEMENT>
 
 <!--800762**************--><AD_ELEMENT>
