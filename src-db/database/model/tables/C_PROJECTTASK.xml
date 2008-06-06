@@ -75,7 +75,7 @@
       </column>
       <column name="ISCOMPLETE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA[SELECT 'N' FROM DUAL]]></onCreateDefault>
       </column>
       <column name="PRICEACTUAL" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
@@ -87,7 +87,7 @@
       </column>
       <column name="ISCOMMITCEILING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA[SELECT 'N' FROM DUAL]]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CPROJECTTASK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

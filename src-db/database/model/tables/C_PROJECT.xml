@@ -79,7 +79,7 @@
       </column>
       <column name="CREATETEMPPRICELIST" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA[SELECT 'Y' FROM DUAL]]></onCreateDefault>
       </column>
       <column name="M_PRICELIST_VERSION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
