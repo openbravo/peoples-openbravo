@@ -23,7 +23,7 @@
 <!--100 UPDATEDBY-->
 <!--100-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--100 NAME-->
-<!--100-->              <NAME><![CDATA[Texto]]></NAME>
+<!--100-->              <NAME><![CDATA[Text]]></NAME>
 <!--100 FORMAT-->
 <!--100-->              <FORMAT><![CDATA[application/txt]]></FORMAT>
 <!--100**************--></AD_DATATYPE>
@@ -59,7 +59,7 @@
 <!--102 AD_ORG_ID-->
 <!--102-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--102 ISACTIVE-->
-<!--102-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--102-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--102 CREATED-->
 <!--102-->              <CREATED><![CDATA[2004-11-10 18:46:58.0]]></CREATED>
 <!--102 CREATEDBY-->
@@ -161,7 +161,7 @@
 <!--106 UPDATEDBY-->
 <!--106-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--106 NAME-->
-<!--106-->              <NAME><![CDATA[Fichero comprimido]]></NAME>
+<!--106-->              <NAME><![CDATA[Compressed file]]></NAME>
 <!--106 FORMAT-->
 <!--106-->              <FORMAT><![CDATA[application/x-compress]]></FORMAT>
 <!--106**************--></AD_DATATYPE>
@@ -207,7 +207,7 @@
 <!--108 UPDATEDBY-->
 <!--108-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--108 NAME-->
-<!--108-->              <NAME><![CDATA[Imagen jpg]]></NAME>
+<!--108-->              <NAME><![CDATA[jpg image]]></NAME>
 <!--108 FORMAT-->
 <!--108-->              <FORMAT><![CDATA[image/jpeg]]></FORMAT>
 <!--108**************--></AD_DATATYPE>
@@ -230,7 +230,7 @@
 <!--109 UPDATEDBY-->
 <!--109-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--109 NAME-->
-<!--109-->              <NAME><![CDATA[Imagen gif]]></NAME>
+<!--109-->              <NAME><![CDATA[gif image]]></NAME>
 <!--109 FORMAT-->
 <!--109-->              <FORMAT><![CDATA[image/gif]]></FORMAT>
 <!--109**************--></AD_DATATYPE>
@@ -253,7 +253,7 @@
 <!--800000 UPDATEDBY-->
 <!--800000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800000 NAME-->
-<!--800000-->              <NAME><![CDATA[Imagen tif]]></NAME>
+<!--800000-->              <NAME><![CDATA[tif image]]></NAME>
 <!--800000 FORMAT-->
 <!--800000-->              <FORMAT><![CDATA[image/tiff]]></FORMAT>
 <!--800000**************--></AD_DATATYPE>
@@ -276,7 +276,7 @@
 <!--800001 UPDATEDBY-->
 <!--800001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800001 NAME-->
-<!--800001-->              <NAME><![CDATA[Imagen tiff]]></NAME>
+<!--800001-->              <NAME><![CDATA[tiff image]]></NAME>
 <!--800001 FORMAT-->
 <!--800001-->              <FORMAT><![CDATA[image/tiff]]></FORMAT>
 <!--800001**************--></AD_DATATYPE>
@@ -299,7 +299,7 @@
 <!--800002 UPDATEDBY-->
 <!--800002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800002 NAME-->
-<!--800002-->              <NAME><![CDATA[Imagen Bmp]]></NAME>
+<!--800002-->              <NAME><![CDATA[bmp image]]></NAME>
 <!--800002 FORMAT-->
 <!--800002-->              <FORMAT><![CDATA[image/bmp]]></FORMAT>
 <!--800002**************--></AD_DATATYPE>
@@ -322,7 +322,7 @@
 <!--800003 UPDATEDBY-->
 <!--800003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800003 NAME-->
-<!--800003-->              <NAME><![CDATA[Documento Rtf]]></NAME>
+<!--800003-->              <NAME><![CDATA[rtf document]]></NAME>
 <!--800003 FORMAT-->
 <!--800003-->              <FORMAT><![CDATA[application/rtf]]></FORMAT>
 <!--800003**************--></AD_DATATYPE>
