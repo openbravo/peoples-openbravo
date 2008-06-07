@@ -153,7 +153,7 @@
                           SERVLET_CONTAINER_VERSION, WEBSERVER, WEBSERVER_VERSION, OB_VERSION, OB_INSTALLMODE, CODE_REVISION, NUM_REGISTERED_USERS,
                           JAVA_VERSION, ANT_VERSION) 
       		VALUES (AD_GET_NEXT_SEQUENCE('AD_Heartbeat_Log', 0), TO_NUMBER(?), TO_NUMBER(?), 'Y', NOW(), 0, NOW(), 0, ?, ?, ?, ?, TO_NUMBER(?), TO_NUMBER(?), 
-      		TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_NUMBER(?), ?, ?)
+      		TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_NUMBER(?), TO_NUMBER(?), ?, ?)
     ]]></Sql>
     <Parameter name="adClientId"/>null
     <Parameter name="adOrgId"/>
