@@ -364,54 +364,58 @@ public class VerticalMenu extends HttpSecureAppServlet {
 
 void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars) throws ServletException {
     
-    // Check if the heartbeat popup needs to be displayed
-    PeriodicHeartbeatData[] hbData = PeriodicHeartbeatData.selectSystemProperties(myPool);
-    if (hbData.length > 0) {
-      String isheartbeatactive = hbData[0].isheartbeatactive;
-      String postponeDate = hbData[0].postponeDate;
-      if (isheartbeatactive == null || isheartbeatactive.equals("")) {
-        if (postponeDate == null || postponeDate.equals("")) {
-          xmlDocument.setParameter("popup", "openHeartbeat();");
-          return;
-        } else {
-          Date date = null;
-          try {
-            date = new SimpleDateFormat("dd-MM-yyyy").parse(postponeDate);
-            if (date.before(new Date())) {
-              xmlDocument.setParameter("popup", "openHeartbeat();");
-              return;
-            }
-          } catch (ParseException e) {
-            e.printStackTrace();
-          }
-        }
-      } 
-    }
+	if (vars.getRole() != null && vars.getRole().equals("0")) {
+		// Check if the heartbeat popup needs to be displayed
+	    PeriodicHeartbeatData[] hbData = PeriodicHeartbeatData.selectSystemProperties(myPool);
+	    if (hbData.length > 0) {
+	      String isheartbeatactive = hbData[0].isheartbeatactive;
+	      String postponeDate = hbData[0].postponeDate;
+	      if (isheartbeatactive == null || isheartbeatactive.equals("")) {
+	        if (postponeDate == null || postponeDate.equals("")) {
+	          xmlDocument.setParameter("popup", "openHeartbeat();");
+	          return;
+	        } else {
+	          Date date = null;
+	          try {
+	            date = new SimpleDateFormat("dd-MM-yyyy").parse(postponeDate);
+	            if (date.before(new Date())) {
+	              xmlDocument.setParameter("popup", "openHeartbeat();");
+	              return;
+	            }
+	          } catch (ParseException e) {
+	            e.printStackTrace();
+	          }
+	        }
+	      } 
+	    }
+	    
+	    // If the heartbeat doesn't need to be displayed, check the registration popup
+	    RegisterData[] rData = RegisterData.select(myPool);
+	    if (rData.length > 0) {
+	      String isregistrationactive = rData[0].isregistrationactive;
+	      String rPostponeDate = rData[0].postponeDate;
+	      if (isregistrationactive == null || isregistrationactive.equals("")) {
+	        if (rPostponeDate == null || rPostponeDate.equals("")) {
+	          xmlDocument.setParameter("popup", "openRegistration();");
+	          return;
+	        } else {
+	          Date date = null;
+	          try {
+	            date = new SimpleDateFormat("dd-MM-yyyy").parse(rPostponeDate);
+	            if (date.before(new Date())) {
+	              xmlDocument.setParameter("popup", "openRegistration();");
+	              return;
+	            }
+	          } catch (ParseException e) {
+	            e.printStackTrace();
+	          }
+	        }
+	      } 
+	    }
+	}
+	// neither of the popups need to be popped-up
+	xmlDocument.setParameter("popup", "");
     
-    // If the heartbeat doesn't need to be displayed, check the registration popup
-    RegisterData[] rData = RegisterData.select(myPool);
-    if (rData.length > 0) {
-      String isregistrationactive = rData[0].isregistrationactive;
-      String rPostponeDate = rData[0].postponeDate;
-      if (isregistrationactive == null || isregistrationactive.equals("")) {
-        if (rPostponeDate == null || rPostponeDate.equals("")) {
-          xmlDocument.setParameter("popup", "openRegistration();");
-          return;
-        } else {
-          Date date = null;
-          try {
-            date = new SimpleDateFormat("dd-MM-yyyy").parse(rPostponeDate);
-            if (date.before(new Date())) {
-              xmlDocument.setParameter("popup", "openRegistration();");
-              return;
-            }
-          } catch (ParseException e) {
-            e.printStackTrace();
-          }
-        }
-      } 
-    }
-    xmlDocument.setParameter("popup", "");
   }
   
   public String getServletInfo() {
