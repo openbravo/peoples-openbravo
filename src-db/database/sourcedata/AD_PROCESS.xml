@@ -11577,49 +11577,6 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--1004400004-->              <JRNAME><![CDATA[@basedesign@/org/openbravo/erpReports/RptM_Requisition.jrxml]]></JRNAME>
 <!--1004400004**************--></AD_PROCESS>
 
-<!--1004400006**************--><AD_PROCESS>
-<!--1004400006 AD_PROCESS_ID-->
-<!--1004400006-->              <AD_PROCESS_ID><![CDATA[1004400006]]></AD_PROCESS_ID>
-<!--1004400006 AD_CLIENT_ID-->
-<!--1004400006-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1004400006 AD_ORG_ID-->
-<!--1004400006-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1004400006 ISACTIVE-->
-<!--1004400006-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1004400006 CREATED-->
-<!--1004400006-->              <CREATED><![CDATA[2008-04-22 17:16:39.0]]></CREATED>
-<!--1004400006 CREATEDBY-->
-<!--1004400006-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--1004400006 UPDATED-->
-<!--1004400006-->              <UPDATED><![CDATA[2008-05-26 13:58:59.0]]></UPDATED>
-<!--1004400006 UPDATEDBY-->
-<!--1004400006-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1004400006 VALUE-->
-<!--1004400006-->              <VALUE><![CDATA[FinantialCube]]></VALUE>
-<!--1004400006 NAME-->
-<!--1004400006-->              <NAME><![CDATA[Finantial Cube]]></NAME>
-<!--1004400006 DESCRIPTION-->
-<!--1004400006-->              <DESCRIPTION><![CDATA[Finantial Cube]]></DESCRIPTION>
-<!--1004400006 ACCESSLEVEL-->
-<!--1004400006-->              <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--1004400006 ISUSERSTARTABLE-->
-<!--1004400006-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--1004400006 ISREPORT-->
-<!--1004400006-->              <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--1004400006 ISDIRECTPRINT-->
-<!--1004400006-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--1004400006 ISBACKGROUND-->
-<!--1004400006-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--1004400006 ISJASPER-->
-<!--1004400006-->              <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--1004400006 SERVICE_TYPE-->
-<!--1004400006-->              <SERVICE_TYPE><![CDATA[PS]]></SERVICE_TYPE>
-<!--1004400006 ISEXTERNALSERVICE-->
-<!--1004400006-->              <ISEXTERNALSERVICE><![CDATA[Y]]></ISEXTERNALSERVICE>
-<!--1004400006 SERVICE_SOURCE-->
-<!--1004400006-->              <SERVICE_SOURCE><![CDATA[/Pivot?solution=samples&path=analysis_ob&action=openbravo-pivot.xaction]]></SERVICE_SOURCE>
-<!--1004400006**************--></AD_PROCESS>
-
 <!--1004400007**************--><AD_PROCESS>
 <!--1004400007 AD_PROCESS_ID-->
 <!--1004400007-->              <AD_PROCESS_ID><![CDATA[1004400007]]></AD_PROCESS_ID>
@@ -11628,13 +11585,13 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--1004400007 AD_ORG_ID-->
 <!--1004400007-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400007 ISACTIVE-->
-<!--1004400007-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1004400007-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--1004400007 CREATED-->
 <!--1004400007-->              <CREATED><![CDATA[2008-05-15 18:24:17.0]]></CREATED>
 <!--1004400007 CREATEDBY-->
 <!--1004400007-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1004400007 UPDATED-->
-<!--1004400007-->              <UPDATED><![CDATA[2008-05-28 13:48:55.0]]></UPDATED>
+<!--1004400007-->              <UPDATED><![CDATA[2008-06-09 16:43:07.0]]></UPDATED>
 <!--1004400007 UPDATEDBY-->
 <!--1004400007-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400007 VALUE-->
