@@ -186,7 +186,7 @@ public class Account extends HttpSecureAppServlet {
 
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "Account_ID", "C_ElementValue (Accounts)", "", Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "Account_ID", "C_ElementValue (Accounts)", "C_Accounts", Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "Account", "");
       xmlDocument.setData("reportAccount_ID","liststructure", comboTableData.select(false));
       comboTableData = null;
