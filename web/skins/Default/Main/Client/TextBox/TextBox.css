@@ -120,6 +120,15 @@
   border: 1px solid #888888;
 }
 
+.readonly_required {
+  color: #606060;
+  background: none !important;
+  background-color: #B2B2B2 !important;
+  font-weight: bold;
+  border: 1px solid #888888;
+  background: url(textField.required.readonly.background.png) repeat-x top !important;
+}
+
 .invalid {
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
