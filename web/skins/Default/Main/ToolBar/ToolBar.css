@@ -295,7 +295,19 @@ a.Main_ToolBar_Button_Selected:active {
   background: url(iconRelatedInfo.png) no-repeat center center;
 }
 
+.Main_ToolBar_Button_Icon_Audit {
+  background: url(iconAudit.png) no-repeat center center;
+}
 
+
+
+.Main_ToolBar_Button_Icon_New_disabled {
+  background: url(iconNew.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Find_disabled {
+  background: url(iconSearch.disabled.png) no-repeat center center;
+}
 
 .Main_ToolBar_Button_Icon_Save_Relation_disabled {
   background: url(iconSaveAndRelation.disabled.png) no-repeat center center;
@@ -313,8 +325,52 @@ a.Main_ToolBar_Button_Selected:active {
   background: url(iconSaveAndNext.disabled.png) no-repeat center center;
 }
 
+.Main_ToolBar_Button_Icon_Delete_disabled {
+  background: url(iconErase.disabled.png) no-repeat center center;
+}
+
 .Main_ToolBar_Button_Icon_Undo_disabled {
   background: url(iconUndo.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Tree_disabled {
+  background: url(iconOrganzieMenu.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Attachment_disabled {
+  background: url(iconAttach.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Excel_disabled {
+  background: url(iconExportExcel.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_ExportExcel_disabled {
+  background: url(iconExportExcel.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_ExportForm_disabled {
+  background: url(iconExport.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_ExportCsv_disabled {
+  background: url(iconExport.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_ExportPDF_disabled {
+  background: url(iconExportPdf.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Print_disabled {
+  background: url(iconPrint.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_Search_disabled {
+  background: url(iconSearch.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_SearchFiltered_disabled {
+  background: url(iconSearchFilter.disabled.png) no-repeat center center;
 }
 
 .Main_ToolBar_Button_Icon_First_disabled {
@@ -333,8 +389,10 @@ a.Main_ToolBar_Button_Selected:active {
   background: url(iconLast.disabled.png) no-repeat center center;
 }
 
+.Main_ToolBar_Button_Icon_RelatedInfo_disabled {
+  background: url(iconRelatedInfo.disabled.png) no-repeat center center;
+}
 
-
-.Main_ToolBar_Button_Icon_Audit {
-  background: url(iconAudit.png) no-repeat center center;
+.Main_ToolBar_Button_Icon_Audit_disabled {
+  background: url(iconAudit.disabled.png) no-repeat center center;
 }
