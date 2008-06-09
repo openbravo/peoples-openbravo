@@ -125,7 +125,7 @@
                        FROM C_CURRENCY C,
                             C_INVOICE  I 
                       WHERE C.C_CURRENCY_ID = I.C_CURRENCY_ID
-                        AND I.C_INVOICE_ID    = ?)) as TOTAL FROM DUAL
+                        AND I.C_INVOICE_ID    = TO_NUMBER(?))) as TOTAL FROM DUAL
 	 </Sql>
     <Parameter name="cBpartnerId"/>
 	<Parameter name="pricestd"/>
