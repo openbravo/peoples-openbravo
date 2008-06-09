@@ -54,6 +54,9 @@ public class Account extends HttpSecureAppServlet {
         strAcctSchema = Utility.getContext(this, vars, "$C_AcctSchema_ID", "Account");
         vars.setSessionValue("Account.cAcctschemaId", strAcctSchema);
       }
+      else
+         vars.setSessionValue("$C_AcctSchema_ID", strAcctSchema);
+      
       vars.removeSessionValue("Account.alias");
       if (!strNameValue.equals("")) vars.setSessionValue("Account.combination", strNameValue + "%");
       
