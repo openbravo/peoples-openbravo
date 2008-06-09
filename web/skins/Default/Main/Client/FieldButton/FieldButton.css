@@ -171,3 +171,7 @@ a.FieldButtonLink_focus table.FieldButton .FieldButton_bg, table.FieldButton_foc
 .FieldButton_Icon_Clock {
     background: url(iconTime.png) no-repeat center center;
 }
+
+.FieldButton_Icon_InputTypeFile {
+    background: url(iconInputTypeFile.png) no-repeat center center;
+}
