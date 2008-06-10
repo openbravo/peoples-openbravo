@@ -11911,15 +11911,15 @@
 <!--800013 CREATEDBY-->
 <!--800013-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800013 UPDATED-->
-<!--800013-->              <UPDATED><![CDATA[2007-02-22 11:14:56.0]]></UPDATED>
+<!--800013-->              <UPDATED><![CDATA[2008-06-09 18:37:08.0]]></UPDATED>
 <!--800013 UPDATEDBY-->
 <!--800013-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800013 VALUE-->
 <!--800013-->              <VALUE><![CDATA[1]]></VALUE>
 <!--800013 NAME-->
-<!--800013-->              <NAME><![CDATA[Wire transfer]]></NAME>
+<!--800013-->              <NAME><![CDATA[Wire Transfer]]></NAME>
 <!--800013 DESCRIPTION-->
-<!--800013-->              <DESCRIPTION><![CDATA[Wire transfer]]></DESCRIPTION>
+<!--800013-->              <DESCRIPTION><![CDATA[Wire Transfer]]></DESCRIPTION>
 <!--800013 AD_REFERENCE_ID-->
 <!--800013-->              <AD_REFERENCE_ID><![CDATA[195]]></AD_REFERENCE_ID>
 <!--800013**************--></AD_REF_LIST>
@@ -11965,15 +11965,15 @@
 <!--800015 CREATEDBY-->
 <!--800015-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800015 UPDATED-->
-<!--800015-->              <UPDATED><![CDATA[2004-03-15 13:12:00.0]]></UPDATED>
+<!--800015-->              <UPDATED><![CDATA[2008-06-09 18:37:17.0]]></UPDATED>
 <!--800015 UPDATEDBY-->
 <!--800015-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800015 VALUE-->
 <!--800015-->              <VALUE><![CDATA[3]]></VALUE>
 <!--800015 NAME-->
-<!--800015-->              <NAME><![CDATA[Promissory note]]></NAME>
+<!--800015-->              <NAME><![CDATA[Promissory Note]]></NAME>
 <!--800015 DESCRIPTION-->
-<!--800015-->              <DESCRIPTION><![CDATA[Promissory note]]></DESCRIPTION>
+<!--800015-->              <DESCRIPTION><![CDATA[Promissory Note]]></DESCRIPTION>
 <!--800015 AD_REFERENCE_ID-->
 <!--800015-->              <AD_REFERENCE_ID><![CDATA[195]]></AD_REFERENCE_ID>
 <!--800015**************--></AD_REF_LIST>
@@ -12098,15 +12098,15 @@
 <!--800020 CREATEDBY-->
 <!--800020-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800020 UPDATED-->
-<!--800020-->              <UPDATED><![CDATA[2008-01-16 15:45:39.0]]></UPDATED>
+<!--800020-->              <UPDATED><![CDATA[2008-06-09 18:37:48.0]]></UPDATED>
 <!--800020 UPDATEDBY-->
 <!--800020-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800020 VALUE-->
 <!--800020-->              <VALUE><![CDATA[C]]></VALUE>
 <!--800020 NAME-->
-<!--800020-->              <NAME><![CDATA[Cash on delivery]]></NAME>
+<!--800020-->              <NAME><![CDATA[Cash on Delivery]]></NAME>
 <!--800020 DESCRIPTION-->
-<!--800020-->              <DESCRIPTION><![CDATA[Cash on delivery]]></DESCRIPTION>
+<!--800020-->              <DESCRIPTION><![CDATA[Cash on Delivery]]></DESCRIPTION>
 <!--800020 AD_REFERENCE_ID-->
 <!--800020-->              <AD_REFERENCE_ID><![CDATA[195]]></AD_REFERENCE_ID>
 <!--800020**************--></AD_REF_LIST>
@@ -12125,13 +12125,13 @@
 <!--800021 CREATEDBY-->
 <!--800021-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800021 UPDATED-->
-<!--800021-->              <UPDATED><![CDATA[2004-03-15 13:12:34.0]]></UPDATED>
+<!--800021-->              <UPDATED><![CDATA[2008-06-09 18:37:22.0]]></UPDATED>
 <!--800021 UPDATEDBY-->
 <!--800021-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800021 VALUE-->
 <!--800021-->              <VALUE><![CDATA[4]]></VALUE>
 <!--800021 NAME-->
-<!--800021-->              <NAME><![CDATA[Money order]]></NAME>
+<!--800021-->              <NAME><![CDATA[Money Order]]></NAME>
 <!--800021 AD_REFERENCE_ID-->
 <!--800021-->              <AD_REFERENCE_ID><![CDATA[195]]></AD_REFERENCE_ID>
 <!--800021**************--></AD_REF_LIST>
@@ -12150,13 +12150,13 @@
 <!--800022 CREATEDBY-->
 <!--800022-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800022 UPDATED-->
-<!--800022-->              <UPDATED><![CDATA[2004-03-15 13:13:07.0]]></UPDATED>
+<!--800022-->              <UPDATED><![CDATA[2008-06-09 18:37:26.0]]></UPDATED>
 <!--800022 UPDATEDBY-->
 <!--800022-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800022 VALUE-->
 <!--800022-->              <VALUE><![CDATA[5]]></VALUE>
 <!--800022 NAME-->
-<!--800022-->              <NAME><![CDATA[Bank deposit]]></NAME>
+<!--800022-->              <NAME><![CDATA[Bank Deposit]]></NAME>
 <!--800022 AD_REFERENCE_ID-->
 <!--800022-->              <AD_REFERENCE_ID><![CDATA[195]]></AD_REFERENCE_ID>
 <!--800022**************--></AD_REF_LIST>
@@ -12479,13 +12479,13 @@
 <!--800035 CREATEDBY-->
 <!--800035-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800035 UPDATED-->
-<!--800035-->              <UPDATED><![CDATA[2004-04-06 17:13:08.0]]></UPDATED>
+<!--800035-->              <UPDATED><![CDATA[2008-06-09 18:37:37.0]]></UPDATED>
 <!--800035 UPDATEDBY-->
 <!--800035-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800035 VALUE-->
 <!--800035-->              <VALUE><![CDATA[R]]></VALUE>
 <!--800035 NAME-->
-<!--800035-->              <NAME><![CDATA[Remittance bank]]></NAME>
+<!--800035-->              <NAME><![CDATA[Bank Remittance]]></NAME>
 <!--800035 AD_REFERENCE_ID-->
 <!--800035-->              <AD_REFERENCE_ID><![CDATA[195]]></AD_REFERENCE_ID>
 <!--800035**************--></AD_REF_LIST>
