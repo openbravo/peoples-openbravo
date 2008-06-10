@@ -102,10 +102,6 @@ function getShortcuts(type) {
         new keyArrayItem("TAB", "windowShiftTabKey(false);", null, "shiftKey", false, 'onkeyup'),
         new keyArrayItem("ENTER", "windowCtrlShiftEnterKey();", null, "ctrlKey+shiftKey", false, 'onkeydown'),
         new keyArrayItem("ENTER", "windowCtrlEnterKey();", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("UPARROW", "windowUpKey(true);", null, null, false, 'onkeydown'),
-        new keyArrayItem("DOWNARROW", "windowDownKey(true);", null, null, false, 'onkeydown'),
-        new keyArrayItem("LEFTARROW", "windowLeftKey();", null, null, false, 'onkeydown'),
-        new keyArrayItem("RIGHTARROW", "windowRightKey();", null, null, false, 'onkeydown'),
         new keyArrayItem("G", "executeWindowButton('buttonRelation');", null, "ctrlKey", false, 'onkeydown')
       );
   } else if (type=='relationSpecificKeys') {

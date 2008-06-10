@@ -978,6 +978,7 @@ function keyControl(pushedKey) {
     return true;
   }
   if (!pushedKey) pushedKey = window.event;
+  var thereIsShortcut = false;
   isCtrlPressed = false;
   isAltPressed = false;
   if (pushedKey.ctrlKey) isCtrlPressed = true;
@@ -1013,6 +1014,7 @@ function keyControl(pushedKey) {
                 var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
                 try {
                   eval(evalfuncTrl);
+                  thereIsShortcut = true;
                   if (!keyArray[i].propagateKey) 
                     return false; else 
                     return true;
@@ -1031,6 +1033,7 @@ function keyControl(pushedKey) {
               if (!keyArray[i].propagateKey) document.onkeypress = stopKeyPressEvent;
               try {
                 eval(evalfuncTrl);
+                thereIsShortcut = true;
                 document.onkeypress = startKeyPressEvent;
                 if (!keyArray[i].propagateKey) 
                   return false; else 
@@ -1045,6 +1048,7 @@ function keyControl(pushedKey) {
               if (!keyArray[i].propagateKey) document.onkeypress = stopKeyPressEvent;
               try {
                 eval(evalfuncTrl);
+                thereIsShortcut = true;
                 document.onkeypress = startKeyPressEvent;
                 if (!keyArray[i].propagateKey) 
                   return false; else 
@@ -1058,6 +1062,7 @@ function keyControl(pushedKey) {
             } else if (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
+                thereIsShortcut = true;
                 document.onkeypress = startKeyPressEvent;
                 if (!keyArray[i].propagateKey) 
                   return false; else 
@@ -1071,6 +1076,7 @@ function keyControl(pushedKey) {
             } else if (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
+                thereIsShortcut = true;
                 document.onkeypress = startKeyPressEvent;
                 if (!keyArray[i].propagateKey) 
                   return false; else 
@@ -1108,6 +1114,7 @@ function keyControl(pushedKey) {
                 var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
                 try {
                   eval(evalfuncTrl);
+                  thereIsShortcut = true;
                   if (!keyArray[i].propagateKey) 
                     return false; else 
                     return true;
@@ -1125,6 +1132,7 @@ function keyControl(pushedKey) {
             if (keyArray[i].auxKey == "ctrlKey" && pushedKey.ctrlKey && !pushedKey.altKey && !pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
+                thereIsShortcut = true;
                 document.onkeypress = startKeyPressEvent;
                 if (!keyArray[i].propagateKey) 
                   return false; else 
@@ -1138,6 +1146,7 @@ function keyControl(pushedKey) {
             } else if (keyArray[i].auxKey == "altKey" && !pushedKey.ctrlKey && pushedKey.altKey && !pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
+                thereIsShortcut = true;
                 document.onkeypress = startKeyPressEvent;
                 if (!keyArray[i].propagateKey) 
                   return false; else 
@@ -1151,6 +1160,7 @@ function keyControl(pushedKey) {
             } else if (keyArray[i].auxKey == "shiftKey" && !pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
+                thereIsShortcut = true;
                 document.onkeypress = startKeyPressEvent;
                 if (!keyArray[i].propagateKey) 
                   return false; else 
@@ -1164,6 +1174,7 @@ function keyControl(pushedKey) {
             } else if (keyArray[i].auxKey == "ctrlKey+shiftKey" && pushedKey.ctrlKey && !pushedKey.altKey && pushedKey.shiftKey) {
               try {
                 eval(evalfuncTrl);
+                thereIsShortcut = true;
                 document.onkeypress = startKeyPressEvent;
                 if (!keyArray[i].propagateKey) 
                   return false; else 
@@ -1181,6 +1192,11 @@ function keyControl(pushedKey) {
     }
   } else {
     return false;
+  }
+  if (isKeyboardLocked==false && thereIsShortcut==false && !isCtrlPressed && !isAltPressed && pushedKey.type=='keydown') {
+    if (focusedWindowElement.tagName == 'SELECT') {
+      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) setTimeout("focusedWindowElement.onchange();",50);
+    }
   }
   return true;
 }
