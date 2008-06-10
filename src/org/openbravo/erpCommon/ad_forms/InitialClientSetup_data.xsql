@@ -182,8 +182,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      INSERT INTO AD_User(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_User_ID,Name,UserName,Description,Password)
-      VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),?,?,?,?)
+      INSERT INTO AD_User(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_User_ID,Name,UserName,Description,Password, DEFAULT_AD_LANGUAGE)
+      VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),?,?,?,?,?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -192,6 +192,7 @@
     <Parameter name="name"/>
     <Parameter name="name"/>
     <Parameter name="password"/>
+	<Parameter name="DEFAULT_AD_LANGUAGE"/>
   </SqlMethod>
       <SqlMethod name="insertUserRoles" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

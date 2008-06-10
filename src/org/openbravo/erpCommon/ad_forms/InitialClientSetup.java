@@ -518,7 +518,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       AD_User_ID = SequenceIdData.getSequence(this, "AD_User", client);
       AD_User_Name = name;
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - AD_User_Name : " + AD_User_Name);
-      if (InitialClientSetupData.insertUser(conn ,this, AD_Client_ID,AD_User_ID , name, FormatUtilities.sha1Base64(name)) != 1) {
+      if (InitialClientSetupData.insertUser(conn ,this, AD_Client_ID,AD_User_ID , name, FormatUtilities.sha1Base64(name), vars.getLanguage()) != 1) {
         String err = "InitialClientSetup - createClient - Admin User A NOT inserted";
         log4j.warn(err);
         m_info.append(err).append(SALTO_LINEA);
@@ -537,7 +537,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       AD_User_U_ID = SequenceIdData.getSequence(this, "AD_User", client);
       AD_User_U_Name = name;
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - AD_User_U_Name : " + AD_User_U_Name);
-      if (InitialClientSetupData.insertUser(conn ,this, AD_Client_ID,AD_User_U_ID , name, FormatUtilities.sha1Base64(name)) != 1) {
+      if (InitialClientSetupData.insertUser(conn ,this, AD_Client_ID,AD_User_U_ID , name, FormatUtilities.sha1Base64(name), vars.getLanguage()) != 1) {
         String err = "InitialClientSetup - createClient - Org User A NOT inserted";
         log4j.warn(err);
         m_info.append(err).append(SALTO_LINEA);
