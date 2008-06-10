@@ -88,10 +88,10 @@ function getShortcuts(type) {
         new keyArrayItem("Z", "executeWindowButton('linkButtonUndo');", null, "ctrlKey", false, 'onkeydown'),
         new keyArrayItem("A", "executeWindowButton('linkButtonAttachment');", null, "ctrlKey", false, 'onkeydown'),
         new keyArrayItem("F", "executeWindowButton('linkButtonSearch');executeWindowButton('linkButtonSearchFiltered');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("HOME", "executeWindowButton('linkButtonFirst');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("END", "executeWindowButton('linkButtonLast');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("LEFTARROW", "executeWindowButton('linkButtonPrevious');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("RIGHTARROW", "executeWindowButton('linkButtonNext');", null, "ctrlKey", false, 'onkeydown'),
+        new keyArrayItem("HOME", "executeWindowButton('linkButtonFirst',true);", null, "ctrlKey", false, 'onkeydown'),
+        new keyArrayItem("END", "executeWindowButton('linkButtonLast',true);", null, "ctrlKey", false, 'onkeydown'),
+        new keyArrayItem("LEFTARROW", "executeWindowButton('linkButtonPrevious',true);", null, "ctrlKey", false, 'onkeydown'),
+        new keyArrayItem("RIGHTARROW", "executeWindowButton('linkButtonNext',true);", null, "ctrlKey", false, 'onkeydown'),
         new keyArrayItem("L", "executeWindowButton('linkButtonRelatedInfo');", null, "ctrlKey", false, 'onkeydown')
       );
   } else if (type=='editionSpecificKeys') {
