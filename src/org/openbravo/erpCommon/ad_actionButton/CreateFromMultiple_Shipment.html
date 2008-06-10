@@ -11,25 +11,47 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<HTML>
-<HEAD>
-<TITLE>Create from.. (massive)</TITLE>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META> 
-<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://openbravo/web/";</SCRIPT>
+<html>
+<head>
+<title>Create from Multiple Shipment</title>
+
+<link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></link>
+<link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></link> 
+<script language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://yourSite/web/";</script>
+<script language="JavaScript" type="text/javascript" id="paramLanguage">  LNG_POR_DEFECTO = "en_US";</script>
+<script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+<script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript">
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/openbravo/core.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/openbravo/widget/DataGrid.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+<SCRIPT language="JavaScript" src="../../../../../web/js/default/ValidationTextBox.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/default/ValidationNumberBox.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/default/ValidationIntegerBox.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/calculator.js" type="text/javascript"></script>
 
 
+<script type="text/javascript">
+  dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+</script>
+
+<link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></link> 
+<script language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://yourSite/web/";</script>
+<script language="JavaScript" type="text/javascript" id="paramLanguage">  LNG_POR_DEFECTO = "en_US";</script>
+
+<script language="JavaScript" type="text/javascript">
 function displayLogic() {
 	if (inputValue(document.frmMain.inphasseconduom) == 1) {
 		displayLogicElement('paramUOMOrder', true);
@@ -64,21 +86,19 @@ function cargarDatos(value, enable) {
 
 function depurar(action) {
   var frm=document.frmMain;
-  
   return true;
 }
 
 function onloadFunctions() {
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value, 'Command', 'KEY');", "inpcBpartnerId_DES", "null"); 
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value, 'Command', 'KEY');", "inpmProductId_DES", "null");
-  
 }
-</SCRIPT>
+</script>
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
-		  new windowTableId('client'),
-		  new windowTableId('tdbottomButtons')
+		  new windowTableId('client', null, 'buttonSearch'),
+		  new windowTableId('tdbottomButtons', null, 'buttonOK')
 		);
 		setWindowTableParentElement();
 		enableShortcuts('popup');
@@ -92,9 +112,9 @@ function onloadFunctions() {
 
 	function onResizeDo(){
 	}
-	</SCRIPT>
-</HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="onLoadDo();" onresize="onResizeDo();" id="client">
+	</script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="onLoadDo();" onresize="onResizeDo();" >
 <FORM id="form" method="POST" action="../ad_actionButton/CreateFromMultiple_F1.html" name="frmMain">
   <INPUT type="hidden" name="Command"></INPUT>
   <INPUT type="hidden" name="inpLastFieldChanged"></INPUT>
@@ -103,77 +123,464 @@ function onloadFunctions() {
   <INPUT type="hidden" name="inpWindowId" value="" id="paramWindowId"></INPUT> 
   <INPUT type="hidden" name="inpTabId" value="" id="paramTabId"></INPUT>
   <INPUT type="hidden" name="inpissotrx" value="" id="paramisSOTrx"></INPUT>
-  <BR></BR>
-  <TABLE border="0" cellspacing="0" cellpadding="0">
-    <TR> 
-      <TD > <SPAN >Business Partner</SPAN></TD>
-      <TD colspan="3" > <INPUT type="hidden" name="inpcBpartnerId" value="" id="fieldBPartnerID"></INPUT> 
-        <TABLE border="0" cellspacing="0" cellpadding="0" summary="">
-          <TR> 
-            <TD > <INPUT type="text" name="inpcBpartnerId_DES" size="40" value="" id="fieldBPartnerID_DES"></INPUT>
-            </TD>
-            <TD > <A href="#" onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
-              <img width="16" height="16"  alt="Business Partner" title="Business Partner" border="0" src="../../../../../web/images/BPartner.jpg"></IMG></A></TD>
-          </TR>
-        </TABLE></TD>
-      <TD > <SPAN >Product:</SPAN></TD>
-      <TD colspan="3" > <INPUT type="hidden" name="inpmProductId" value="" id="fieldProductID"></INPUT> 
-        <TABLE border="0" cellspacing="0" cellpadding="0" summary="">
-          <TR> 
-            <TD > <INPUT type="text" name="inpmProductId_DES" size="40" value="" id="fieldProductID_DES"></INPUT>
-            </TD>
-            <TD > <A href="#" onclick="openSearch(null, null, '../info/ProductComplete.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
-              <img width="16" height="16"  alt="Product" title="Product" border="0" src="../../../../../web/images/Product.jpg" id="buttonProduct"></IMG></A></TD>
-          </TR>
-        </TABLE></TD>
-      <TD rowspan="2" > <A href="#" onclick="submitCommandForm('FIND', true);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" > 
-        <img width="16" height="16"  alt="Search" title="Search" border="0" src="../../../../../web/images/Find.jpg" id="buttonResults"></IMG></A></TD>
-    </TR>
+
+  <div class="Popup_ContentPane_CircleLogo">
+    <div class="Popup_WindowLogo">
+      <IMG class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border="0/"></IMG>
+    </div>
+  </div>
+
+  <table cellspacing="0" cellpadding="0" width="100%" id="table_header">
+    <tr>
+      <td>
+        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
+          <tr class="Popup_NavBar_bg"><td></td>
+            <td class="Popup_NavBar_separator_cell"></td>
+            <td class="Popup_NavBar_bg_logo_left"></td>
+            <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+            <td class="Popup_NavBar_bg_logo_right"></td>
+            <td class="Popup_NavBar_Popup_title_cell"><span>Create from Multiple Shipment</span></td>
+            <td class="Popup_NavBar_separator_cell"></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar">
+          <tr>
+            <td class="Popup_SeparatorBar_bg"></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+  </table>
+
+  <TABLE cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxHIDDEN">
+  <TBODY>
+  <TR class="MessageBox_TopMargin">
+    <TD class="MessageBox_LeftMargin"></TD>
+
+    <TD></TD>
+    <TD class="MessageBox_RightMargin"></TD>
+  </TR>
+  <TR>
+    <TD class="MessageBox_LeftMargin"></TD>
+    <TD>
+
+      <TABLE cellpadding="0" cellspacing="0" style="width: 100%;">
+        <TBODY>
+
+        <TR>
+          <TD>
+            <DIV class="MessageBox_TopLeft"></DIV>
+            <DIV class="MessageBox_Left"></DIV>
+          </TD>
+          <TD class="MessageBox_bg">
+
+            <TABLE class="MessageBox_Top">
+            <TBODY>
+
+              <TR>
+                <TD>
+                  <SPAN>
+                  <TABLE cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
+                    <TBODY>
+                    <TR>
+                      <TD class="MessageBox_Icon_ContentCell">
+                        <DIV class="MessageBox_Icon"></DIV>
+                      </TD>
+
+                      <TD style="vertical-align: top;" id="messageBoxIDContent">
+                        <SPAN>
+                          <DIV class="MessageBox_TextTitle" id="messageBoxIDTitle"></DIV>
+                          <DIV class="MessageBox_TextDescription" id="messageBoxIDMessage"></DIV>
+                          <DIV class="MessageBox_TextSeparator"></DIV>
+                        </SPAN>
+                      </TD>
+                    </TR>
+                    </TBODY>
+
+                  </TABLE>
+                  </SPAN>
+                </TD>
+              </TR>
+              </TBODY>
+            </TABLE>
+
+          </TD>
+          <TD class="MessageBox_RightTrans">
+
+            <DIV class="MessageBox_TopRight"></DIV>
+            <DIV class="MessageBox_Right"></DIV>
+          </TD>
+        </TR>
+        <TR>
+          <TD rowspan="2" class="MessageBox_BottomLeft">
+          </TD>
+          <TD class="MessageBox_BottomTrans MessageBox_bg">
+          </TD>
+
+          <TD rowspan="2" class="MessageBox_BottomRight">
+          </TD>
+        </TR>
+        <TR>
+          <TD class="MessageBox_Bottom">
+          </TD>
+        </TR>
+        </TBODY>
+      </TABLE>
+
+    </TD>
+    <TD class="MessageBox_RightMargin"></TD>
+  </TR>
+  <TR class="MessageBox_BottomMargin">
+    <TD class="MessageBox_LeftMargin"></TD>
+    <TD></TD>
+    <TD class="MessageBox_RightMargin"></TD>
+  </TR>
+
+  </TBODY>
   </TABLE>
-  <BR></BR>
-  <TABLE width="55%" border="0" cellpadding="0" cellspacing="0">
+
+  <table cellspacing="0" cellpadding="0" width="100%">
+
+    <tr>
+      <td>
+      <div class="Popup_ContentPane_Client" style="overflow: auto; auto; height:450px;" id="client">
+          <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector">
+
+            <tr>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
+            </tr>
+
+          <tr>
+          <td colspan="6">
+            <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+              <tr class="FieldGroup_TopMargin"></tr>
+              <tr>
+                <td class="FieldGroupTitle_Left"><IMG class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></td>
+                <td class="FieldGroupTitle">Primary Filters</td>
+                <td class="FieldGroupTitle_Right"><IMG class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></td>
+                <td class="FieldGroupContent"></td>
+
+              </tr>
+              <tr class="FieldGroup_BottomMargin"></tr>
+            </table>
+          </td>
+          </tr>
+
     <TR> 
-      <TD width="106" > <SPAN >Warehouse:</SPAN></TD>
-      <TD width="84" > <SELECT name="inpmWarehouseId" id="inpmWarehouseId">
-          <OPTION value=""></OPTION><DIV id="reportM_WAREHOUSE_ID"></DIV>
-        </SELECT></TD>
-      <TD width="100" > <SPAN >Corridor</SPAN></TD>
-      <TD width="86" > <INPUT name="inpx" type="text" id="fieldx" size="5" maxlength="10" value=""></INPUT>
-      </TD>
-      <TD width="108" > <SPAN >Height:</SPAN></TD>
-      <TD width="96" > <INPUT name="inpy" type="text" id="fieldy" size="5" maxlength="10" value=""></INPUT>
-      </TD>
-      <TD width="105" > <SPAN >Location:</SPAN></TD>
-      <TD width="82" > <INPUT name="inpz" type="text" id="fieldz" size="5" maxlength="10" value=""></INPUT>
-      </TD>
+        <TD class="TitleCell"><SPAN class="LabelText">Business Partner</SPAN></TD>
+        <TD class="TextBox_btn_ContentCell" colspan="2">
+
+          <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
+            <TR>
+              <TD class="TextBox_ContentCell">
+                <INPUT type="hidden" name="inpcBpartnerId" id="fieldBPartnerID" value="">
+                <INPUT class="dojoValidateValid TextBox_btn_TwoCells_width" type="text" name="inpcBpartnerId_DES" id="fieldBPartnerID_DES" maxlength="20" value=""></INPUT>
+              </TD>
+              <TD class="FieldButton_ContentCell">
+                <a class="FieldButtonLink" href="#"
+                  onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;"
+                  onblur="window.status=''; return true;"
+                  onkeypress="this.className='FieldButtonLink_active'; return true;"
+                  onkeyup="this.className='FieldButtonLink_focus'; return true;"
+                  onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_DES', document.frmMain.inpcBpartnerId_DES.value);return false;">
+                  <table class="FieldButton"
+                    onmousedown="this.className='FieldButton_active'; return true;"
+                    onmouseup="this.className='FieldButton'; return true;"
+                    onmouseover="this.className='FieldButton_hover'; window.status='Business Partner'; return true;"
+                    onmouseout="this.className='FieldButton'; window.status=''; return true;">
+                    <tr>
+                      <td class="FieldButton_bg">
+                        <img alt="Business Partner" class="FieldButton_Icon FieldButton_Icon_BusinessPartner" title="Business Partner" src="../../../../../web/images/blank.gif" border="0""/>
+                      </td>
+                    </tr>
+                  </table>
+                </a>
+              </TD>
+            </TR>
+          </TABLE>
+        </TD>
+
+        <TD class="TitleCell"><SPAN class="LabelText">Product</SPAN></TD>
+        <TD class="TextBox_btn_ContentCell" colspan="2">
+
+          <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
+            <TR>
+              <TD class="TextBox_ContentCell">
+                <INPUT class="dojoValidateValid TextBox_btn_TwoCells_width" type="text" name="inpmProductId_DES" id="fieldProductID_DES" maxlength="20" value=""/>
+                <INPUT type="hidden" name="inpmProductId" value="" id="fieldProductID"/>
+              </TD>
+              <TD class="FieldButton_ContentCell">
+                <a class="FieldButtonLink" href="#"
+                  onfocus="setWindowElementFocus(this); window.status='Product'; return true;"
+                  onblur="window.status=''; return true;"
+                  onkeypress="this.className='FieldButtonLink_active'; return true;"
+                  onkeyup="this.className='FieldButtonLink_focus'; return true;"
+                  onclick="openSearch(null, null, '../info/Product.html', 'SELECTOR_PRODUCT', false, 'frmMain', 'inpmProductId', 'inpmProductId_DES', document.frmMain.inpmProductId_DES.value);return false;">
+                  <table class="FieldButton"
+                    onmousedown="this.className='FieldButton_active'; return true;"
+                    onmouseup="this.className='FieldButton'; return true;"
+                    onmouseover="this.className='FieldButton_hover'; window.status='Product'; return true;"
+                    onmouseout="this.className='FieldButton'; window.status=''; return true;">
+                    <tr>
+                      <td class="FieldButton_bg">
+                        <img alt="Product" class="FieldButton_Icon FieldButton_Icon_Product" title="Product" src="../../../../../web/images/blank.gif" border="0""/>
+                      </td>
+                    </tr>
+                  </table>
+                </a>
+              </TD>
+            </TR>
+          </TABLE>
+        </TD>
+	</tr>
+
+    <TR> 
+          <td class="TitleCell"><span class="LabelText">Warehouse</span></td>
+          <td class="Combo_ContentCell" colspan="5">
+            <select class="Combo Combo_OneCell_width" name="inpmWarehouseId"  id="inpmWarehouseId">
+    			<option value=""></option>
+    			<DIV id="reportM_WAREHOUSE_ID" />
+            </select>
+          </td>
+	</TR>
+	<TR>
+		<TD class="TitleCell" id="fieldx_lbl_td"><SPAN class="LabelText" id="fieldx_lbl">Corridor</SPAN></TD>
+		<TD class="TextBox_btn_ContentCell" id="fieldx_inp_td"><DIV id="editDiscard">
+		<DIV id="fieldx_inp">
+		  <TABLE border="0" cellpadding="0" cellspacing="0">
+		    <TR>
+		      <TD class="TextBox_ContentCell">
+		
+		      <TABLE style="border:0px;border-collapse:collapse;">
+		        <TR>
+		          <TD style="padding-top: 0px;">
+		            <INPUT type="text" id="fieldx" class="dojoValidateValid TextBox_OneCell_width" required="false" value="" size="5" maxlength="10" name="inpx" onkeyup="" onkeypress="changeToEditingMode();" onchange="validateTextBox(this.id);logChanges(this);return true;"></INPUT>
+		          </TD>
+		        </TR>
+		      </TABLE>
+		
+		  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="fieldxinvalidSpan">
+		    <TABLE class="TextBox_MsgContainer_table">
+		      <TR class="TextBox_MsgContainer_tr">
+		        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
+		      </TR>
+		      <TR>
+		        <TD colspan="2" class="invalid"><DIV class="TextBox_MsgContainer_div2" id="fieldxinvalidSpanText">* The value entered is not valid.</DIV></TD>
+		      </TR>
+		    </TABLE>
+		  </SPAN>
+		
+		  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="fieldxmissingSpan">
+		    <TABLE class="TextBox_MsgContainer_table">
+		      <TR class="TextBox_MsgContainer_tr">
+		        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
+		      </TR>
+		      <TR>
+		        <TD colspan="2" class="missing"><DIV class="TextBox_MsgContainer_div2" id="fieldxmissingSpanText">* This value is required.</DIV></TD>
+		      </TR>
+		    </TABLE>
+		  </SPAN>
+		
+		  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="fieldxrangeSpan">
+		    <TABLE class="TextBox_MsgContainer_table">
+		      <TR class="TextBox_MsgContainer_tr">
+		        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
+		      </TR>
+		      <TR>
+		        <TD colspan="2" class="range"><DIV class="TextBox_MsgContainer_div2" id="fieldxrangeSpanText">* This value is out of range.</DIV></TD>
+		      </TR>
+		    </TABLE>
+		  </SPAN>
+		
+		      </TD>
+		    </TR>
+		  </TABLE>
+		</DIV>
+		</DIV>
+		</TD>
+		
+		
+		
+		<TD class="TitleCell" id="fieldy_lbl_td"><SPAN class="LabelText" id="fieldy_lbl">Height</SPAN></TD>
+		<TD class="TextBox_btn_ContentCell" id="fieldy_inp_td"><DIV id="editDiscard">
+		<DIV id="fieldy_inp">
+		  <TABLE border="0" cellpadding="0" cellspacing="0">
+		    <TR>
+		      <TD class="TextBox_ContentCell">
+		
+		      <TABLE style="border:0px;border-collapse:collapse;">
+		        <TR>
+		          <TD style="padding-top: 0px;">
+		            <INPUT type="text" id="fieldy" class="dojoValidateValid TextBox_OneCell_width" required="false" value="" size="5" maxlength="10" name="inpy" onkeyup="" onkeypress="changeToEditingMode();" onchange="validateTextBox(this.id);logChanges(this);return true;"></INPUT>
+		          </TD>
+		        </TR>
+		      </TABLE>
+		
+		  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="fieldyinvalidSpan">
+		    <TABLE class="TextBox_MsgContainer_table">
+		      <TR class="TextBox_MsgContainer_tr">
+		        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
+		      </TR>
+		      <TR>
+		        <TD colspan="2" class="invalid"><DIV class="TextBox_MsgContainer_div2" id="fieldyinvalidSpanText">* The value entered is not valid.</DIV></TD>
+		      </TR>
+		    </TABLE>
+		  </SPAN>
+		
+		  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="fieldymissingSpan">
+		    <TABLE class="TextBox_MsgContainer_table">
+		      <TR class="TextBox_MsgContainer_tr">
+		        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
+		      </TR>
+		      <TR>
+		        <TD colspan="2" class="missing"><DIV class="TextBox_MsgContainer_div2" id="fieldymissingSpanText">* This value is required.</DIV></TD>
+		      </TR>
+		    </TABLE>
+		  </SPAN>
+		
+		  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="fieldyrangeSpan">
+		    <TABLE class="TextBox_MsgContainer_table">
+		      <TR class="TextBox_MsgContainer_tr">
+		        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
+		      </TR>
+		      <TR>
+		        <TD colspan="2" class="range"><DIV class="TextBox_MsgContainer_div2" id="fieldyrangeSpanText">* This value is out of range.</DIV></TD>
+		      </TR>
+		    </TABLE>
+		  </SPAN>
+		
+		      </TD>
+		    </TR>
+		  </TABLE>
+		</DIV>
+		</DIV>
+		</TD>
+
+		<TD class="TitleCell" id="fieldz_lbl_td"><SPAN class="LabelText" id="fieldz_lbl">Location</SPAN></TD>
+		<TD class="TextBox_btn_ContentCell" id="fieldy_inp_td"><DIV id="editDiscard">
+		<DIV id="fieldy_inp">
+		  <TABLE border="0" cellpadding="0" cellspacing="0">
+		    <TR>
+		      <TD class="TextBox_ContentCell">
+		
+		      <TABLE style="border:0px;border-collapse:collapse;">
+		        <TR>
+		          <TD style="padding-top: 0px;">
+		            <INPUT type="text" id="fieldz" class="dojoValidateValid TextBox_OneCell_width" required="false" value="" size="5" maxlength="10" name="inpz" onkeyup="" onkeypress="changeToEditingMode();" onchange="validateTextBox(this.id);logChanges(this);return true;"></INPUT>
+		          </TD>
+		        </TR>
+		      </TABLE>
+		
+		  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="fieldzinvalidSpan">
+		    <TABLE class="TextBox_MsgContainer_table">
+		      <TR class="TextBox_MsgContainer_tr">
+		        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
+		      </TR>
+		      <TR>
+		        <TD colspan="2" class="invalid"><DIV class="TextBox_MsgContainer_div2" id="fieldzinvalidSpanText">* The value entered is not valid.</DIV></TD>
+		      </TR>
+		    </TABLE>
+		  </SPAN>
+		
+		  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="fieldzmissingSpan">
+		    <TABLE class="TextBox_MsgContainer_table">
+		      <TR class="TextBox_MsgContainer_tr">
+		        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
+		      </TR>
+		      <TR>
+		        <TD colspan="2" class="missing"><DIV class="TextBox_MsgContainer_div2" id="fieldzmissingSpanText">* This value is required.</DIV></TD>
+		      </TR>
+		    </TABLE>
+		  </SPAN>
+		
+		  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="fieldzrangeSpan">
+		    <TABLE class="TextBox_MsgContainer_table">
+		      <TR class="TextBox_MsgContainer_tr">
+		        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
+		      </TR>
+		      <TR>
+		        <TD colspan="2" class="range"><DIV class="TextBox_MsgContainer_div2" id="fieldzrangeSpanText">* This value is out of range.</DIV></TD>
+		      </TR>
+		    </TABLE>
+		  </SPAN>
+		
+		      </TD>
+		    </TR>
+		  </TABLE>
+		</DIV>
+		</DIV>
+		</TD>
+
     </TR>
+	
+	<tr>
+        <td></td>
+        <td class="Button_LeftAlign_ContentCell">
+          <div>
+              <a class="ButtonLink" href="#"
+                onfocus="setWindowElementFocus(this); window.status='Search'; return true;"
+                onblur="window.status=''; return true;"
+                onkeypress="this.className='ButtonLink_active'; return true;"
+                onkeyup="this.className='ButtonLink_focus'; return true;"
+                onclick="submitCommandForm('FIND', true);return false;"
+                id="buttonSearch">
+                <table class="Button"
+                  onmousedown="this.className='Button_active'; return true;"
+                  onmouseup="this.className='Button'; return true;"
+                  onmouseover="this.className='Button_hover'; window.status='Search'; return true;"
+                  onmouseout="this.className='Button'; window.status=''; return true;">
+                  <tr>
+                    <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="Search" title="Search" src="../../../../../web/images/blank.gif" border=0/></td>
+                    <td class="Button_text Button_width">Search</td>
+                    <td class="Button_right"></td>
+                  </tr>
+                </table>
+              </a>
+          </div>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+	
   </TABLE>
-  <HR></HR>
-  <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" >
-    <TR> 
-      <TH width="2%" > <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpTodos" onclick="marcarTodosDatos(document.frmMain.inpmStorageDetailId, this.checked);return true;"></INPUT></SPAN>
+  
+  <BR>
+  
+  <TABLE cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;"  >
+    <TR class="DataGrid_Body_Row"> 
+      <TH class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox" width="2%" > <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpTodos" onclick="marcarTodosDatos(document.frmMain.inpmStorageDetailId, this.checked);return true;"></INPUT></SPAN>
       </TH>
-      <TH width="35%">Product</TH>
-      <TH width="5%">Locator</th>
-      <TH width="19%">Attribute</TH>
-      <TH width="12%">Quantity</TH>
-      <TH width="8%">Unit</TH>
-      <TH width="11%">Quant. of order</TH>
-      <TH width="8%">Order No.</TH>
+      <TH class="DataGrid_Header_Cell" width="35%">Product</TH>
+      <TH class="DataGrid_Header_Cell" width="5%">Locator</th>
+      <TH class="DataGrid_Header_Cell" width="19%">Attribute</TH>
+      <TH class="DataGrid_Header_Cell" width="12%">Quantity</TH>
+      <TH class="DataGrid_Header_Cell" width="8%">Unit</TH>
+      <TH class="DataGrid_Header_Cell" width="11%">Quant. of order</TH>
+      <TH class="DataGrid_Header_Cell" width="8%">Order No.</TH>
     </TR>
     <DIV id="sectionDetail"> 
-      <TR> 
-        <TD > <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpmStorageDetailId" value="" id="fieldmStorageDetailId" onclick="cargarDatos(this.value, this.checked);return true;"></INPUT></SPAN>
-        </TD>
-        <TD id="fieldProduct">xx</TD>
-    <td  id="fieldLocator">xx</td>
-        <TD id="fieldAttribute">xx</TD>
-        <TD > <INPUT name="inpmovementqtyxx" type="text" id="fieldMovementQty" size="8" value="0" onkeyup="auto_complete_number(this, true, true);return true;" disabled="" ></INPUT>
-        </TD>
-        <TD id="fieldUOM">xx</TD>
-        <TD > <INPUT name="inpquantityorderxx" type="text" id="fieldQuantityOrder" size="8" value="0" onkeyup="auto_complete_number(this, true, true);return true;" disabled="" ></INPUT>
-        </TD>
-        <TD id="fieldProductUOM">xx</TD>
+      <TR id="funcEvenOddRowxx" class="DataGrid_Body_Row DataGrid_Body_Row_yy"> 
+        <TD class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox"> <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpmStorageDetailId" value="" id="fieldmStorageDetailId" onclick="cargarDatos(this.value, this.checked);return true;"></INPUT></SPAN></TD>
+        <TD class="DataGrid_Body_Cell" id="fieldProduct">xx</TD>
+    	<td class="DataGrid_Body_Cell" id="fieldLocator">xx</td>
+        <TD class="DataGrid_Body_Cell" id="fieldAttribute">xx</TD>
+        <TD class="DataGrid_Body_Cell"> <INPUT name="inpmovementqtyxx" type="text" id="fieldMovementQty" size="8" value="0" onkeyup="auto_complete_number(this, true, true);return true;" disabled="" ></INPUT></TD>
+        <TD class="DataGrid_Body_Cell" id="fieldUOM">xx</TD>
+        <TD class="DataGrid_Body_Cell"> <INPUT name="inpquantityorderxx" type="text" id="fieldQuantityOrder" size="8" value="0" onkeyup="auto_complete_number(this, true, true);return true;" disabled="" ></INPUT></TD>
+        <TD class="DataGrid_Body_Cell" id="fieldProductUOM">xx</TD>
       </TR>
     </DIV>
   </TABLE>

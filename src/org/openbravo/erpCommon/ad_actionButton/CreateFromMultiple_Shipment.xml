@@ -25,7 +25,7 @@
 	<PARAMETER id="paramWindowId" name="windowId" attribute="value"/>
 	<PARAMETER id="paramTabId" name="tabId" attribute="value"/>
 	<PARAMETER id="paramisSOTrx" name="sotrx" attribute="value"/>
-<PARAMETER id="paramM_Warehouse_ID" name="mWarehouseId" default=""/>
+	<PARAMETER id="paramM_Warehouse_ID" name="mWarehouseId" default=""/>
 	<PARAMETER id="paramVacio" name="vacio" default=""/>
 	<PARAMETER id="fieldBPartnerID" name="bpartnerId" attribute="value"/>
 	<PARAMETER id="fieldBPartnerID_DES" name="bpartnerId_DES" attribute="value"/>
@@ -34,10 +34,16 @@
 	<PARAMETER id="fieldx" name="x" attribute="value"/>
 	<PARAMETER id="fieldy" name="y" attribute="value"/>
 	<PARAMETER id="fieldz" name="z" attribute="value"/>
+	<PARAMETER id="param2" name="param2" default="2"/>
+	
 	<SUBREPORT id="reportM_WAREHOUSE_ID" name="reportM_WAREHOUSE_ID" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected" withId="paramM_Warehouse_ID"/>
 	</SUBREPORT>
+	
 	<structure name="structure1">
+		<FIELD id="fieldRownum1">rownum</FIELD>
+    	<FUNCTION id="funcEvenOddRowxx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
+		<FIELD id="funcEvenOddRowxx" attribute="id" replace="xx">rownum</FIELD>
 		<FIELD id="fieldmStorageDetailId" attribute="value">mStorageDetailId</FIELD>
 		<FIELD id="fieldProduct">name</FIELD>
 		<FIELD id="fieldLocator">mLocatorId</FIELD>

@@ -1344,7 +1344,7 @@
 <!--800313 TEXT-->
 <!--800313-->              <TEXT><![CDATA[Product:]]></TEXT>
 <!--800313 ISUSED-->
-<!--800313-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--800313-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--800313**************--></AD_TEXTINTERFACES>
 
 <!--800318**************--><AD_TEXTINTERFACES>
@@ -27525,7 +27525,7 @@
 <!--807418 FILENAME-->
 <!--807418-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment.html]]></FILENAME>
 <!--807418 ISUSED-->
-<!--807418-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--807418-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--807418**************--></AD_TEXTINTERFACES>
 
 <!--807422**************--><AD_TEXTINTERFACES>
@@ -27575,7 +27575,7 @@
 <!--807423 FILENAME-->
 <!--807423-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
 <!--807423 ISUSED-->
-<!--807423-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--807423-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--807423**************--></AD_TEXTINTERFACES>
 
 <!--807426**************--><AD_TEXTINTERFACES>
@@ -27600,7 +27600,7 @@
 <!--807426 FILENAME-->
 <!--807426-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
 <!--807426 ISUSED-->
-<!--807426-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--807426-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--807426**************--></AD_TEXTINTERFACES>
 
 <!--807427**************--><AD_TEXTINTERFACES>
@@ -27675,7 +27675,7 @@
 <!--807430 FILENAME-->
 <!--807430-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
 <!--807430 ISUSED-->
-<!--807430-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--807430-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--807430**************--></AD_TEXTINTERFACES>
 
 <!--807431**************--><AD_TEXTINTERFACES>
@@ -27700,7 +27700,7 @@
 <!--807431 FILENAME-->
 <!--807431-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
 <!--807431 ISUSED-->
-<!--807431-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--807431-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--807431**************--></AD_TEXTINTERFACES>
 
 <!--807441**************--><AD_TEXTINTERFACES>
@@ -28221,7 +28221,7 @@
 <!--807510 FILENAME-->
 <!--807510-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
 <!--807510 ISUSED-->
-<!--807510-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--807510-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--807510**************--></AD_TEXTINTERFACES>
 
 <!--807511**************--><AD_TEXTINTERFACES>
@@ -43091,7 +43091,7 @@
 <!--1003900003 FILENAME-->
 <!--1003900003-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
 <!--1003900003 ISUSED-->
-<!--1003900003-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1003900003-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1003900003**************--></AD_TEXTINTERFACES>
 
 <!--1003900004**************--><AD_TEXTINTERFACES>
@@ -43116,7 +43116,7 @@
 <!--1003900004 FILENAME-->
 <!--1003900004-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
 <!--1003900004 ISUSED-->
-<!--1003900004-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1003900004-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1003900004**************--></AD_TEXTINTERFACES>
 
 <!--1003900005**************--><AD_TEXTINTERFACES>
@@ -43141,7 +43141,7 @@
 <!--1003900005 FILENAME-->
 <!--1003900005-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
 <!--1003900005 ISUSED-->
-<!--1003900005-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1003900005-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1003900005**************--></AD_TEXTINTERFACES>
 
 <!--1003900006**************--><AD_TEXTINTERFACES>
@@ -43166,7 +43166,7 @@
 <!--1003900006 FILENAME-->
 <!--1003900006-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment.html]]></FILENAME>
 <!--1003900006 ISUSED-->
-<!--1003900006-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1003900006-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1003900006**************--></AD_TEXTINTERFACES>
 
 <!--1003900007**************--><AD_TEXTINTERFACES>
@@ -43191,7 +43191,7 @@
 <!--1003900007 FILENAME-->
 <!--1003900007-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment.html]]></FILENAME>
 <!--1003900007 ISUSED-->
-<!--1003900007-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1003900007-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1003900007**************--></AD_TEXTINTERFACES>
 
 <!--1003900008**************--><AD_TEXTINTERFACES>
@@ -44768,6 +44768,231 @@
 <!--1005300010 ISUSED-->
 <!--1005300010-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--1005300010**************--></AD_TEXTINTERFACES>
+
+<!--1005300011**************--><AD_TEXTINTERFACES>
+<!--1005300011 AD_TEXTINTERFACES_ID-->
+<!--1005300011-->              <AD_TEXTINTERFACES_ID><![CDATA[1005300011]]></AD_TEXTINTERFACES_ID>
+<!--1005300011 AD_CLIENT_ID-->
+<!--1005300011-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005300011 AD_ORG_ID-->
+<!--1005300011-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005300011 ISACTIVE-->
+<!--1005300011-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005300011 CREATED-->
+<!--1005300011-->              <CREATED><![CDATA[2008-06-10 18:30:28.0]]></CREATED>
+<!--1005300011 CREATEDBY-->
+<!--1005300011-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1005300011 UPDATED-->
+<!--1005300011-->              <UPDATED><![CDATA[2008-06-10 18:30:28.0]]></UPDATED>
+<!--1005300011 UPDATEDBY-->
+<!--1005300011-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1005300011 TEXT-->
+<!--1005300011-->              <TEXT><![CDATA[Create from Multiple Receipt]]></TEXT>
+<!--1005300011 FILENAME-->
+<!--1005300011-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
+<!--1005300011 ISUSED-->
+<!--1005300011-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005300011**************--></AD_TEXTINTERFACES>
+
+<!--1005300012**************--><AD_TEXTINTERFACES>
+<!--1005300012 AD_TEXTINTERFACES_ID-->
+<!--1005300012-->              <AD_TEXTINTERFACES_ID><![CDATA[1005300012]]></AD_TEXTINTERFACES_ID>
+<!--1005300012 AD_CLIENT_ID-->
+<!--1005300012-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005300012 AD_ORG_ID-->
+<!--1005300012-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005300012 ISACTIVE-->
+<!--1005300012-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005300012 CREATED-->
+<!--1005300012-->              <CREATED><![CDATA[2008-06-10 18:30:28.0]]></CREATED>
+<!--1005300012 CREATEDBY-->
+<!--1005300012-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1005300012 UPDATED-->
+<!--1005300012-->              <UPDATED><![CDATA[2008-06-10 18:30:28.0]]></UPDATED>
+<!--1005300012 UPDATEDBY-->
+<!--1005300012-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1005300012 TEXT-->
+<!--1005300012-->              <TEXT><![CDATA[Attribute value]]></TEXT>
+<!--1005300012 FILENAME-->
+<!--1005300012-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
+<!--1005300012 ISUSED-->
+<!--1005300012-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005300012**************--></AD_TEXTINTERFACES>
+
+<!--1005300013**************--><AD_TEXTINTERFACES>
+<!--1005300013 AD_TEXTINTERFACES_ID-->
+<!--1005300013-->              <AD_TEXTINTERFACES_ID><![CDATA[1005300013]]></AD_TEXTINTERFACES_ID>
+<!--1005300013 AD_CLIENT_ID-->
+<!--1005300013-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005300013 AD_ORG_ID-->
+<!--1005300013-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005300013 ISACTIVE-->
+<!--1005300013-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005300013 CREATED-->
+<!--1005300013-->              <CREATED><![CDATA[2008-06-10 18:30:28.0]]></CREATED>
+<!--1005300013 CREATEDBY-->
+<!--1005300013-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1005300013 UPDATED-->
+<!--1005300013-->              <UPDATED><![CDATA[2008-06-10 18:30:28.0]]></UPDATED>
+<!--1005300013 UPDATEDBY-->
+<!--1005300013-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1005300013 TEXT-->
+<!--1005300013-->              <TEXT><![CDATA[Attribute Set Value]]></TEXT>
+<!--1005300013 FILENAME-->
+<!--1005300013-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
+<!--1005300013 ISUSED-->
+<!--1005300013-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005300013**************--></AD_TEXTINTERFACES>
+
+<!--1005300014**************--><AD_TEXTINTERFACES>
+<!--1005300014 AD_TEXTINTERFACES_ID-->
+<!--1005300014-->              <AD_TEXTINTERFACES_ID><![CDATA[1005300014]]></AD_TEXTINTERFACES_ID>
+<!--1005300014 AD_CLIENT_ID-->
+<!--1005300014-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005300014 AD_ORG_ID-->
+<!--1005300014-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005300014 ISACTIVE-->
+<!--1005300014-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005300014 CREATED-->
+<!--1005300014-->              <CREATED><![CDATA[2008-06-10 18:30:28.0]]></CREATED>
+<!--1005300014 CREATEDBY-->
+<!--1005300014-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1005300014 UPDATED-->
+<!--1005300014-->              <UPDATED><![CDATA[2008-06-10 18:30:28.0]]></UPDATED>
+<!--1005300014 UPDATEDBY-->
+<!--1005300014-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1005300014 TEXT-->
+<!--1005300014-->              <TEXT><![CDATA[Cal1 No.]]></TEXT>
+<!--1005300014 FILENAME-->
+<!--1005300014-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
+<!--1005300014 ISUSED-->
+<!--1005300014-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005300014**************--></AD_TEXTINTERFACES>
+
+<!--1005300015**************--><AD_TEXTINTERFACES>
+<!--1005300015 AD_TEXTINTERFACES_ID-->
+<!--1005300015-->              <AD_TEXTINTERFACES_ID><![CDATA[1005300015]]></AD_TEXTINTERFACES_ID>
+<!--1005300015 AD_CLIENT_ID-->
+<!--1005300015-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005300015 AD_ORG_ID-->
+<!--1005300015-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005300015 ISACTIVE-->
+<!--1005300015-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005300015 CREATED-->
+<!--1005300015-->              <CREATED><![CDATA[2008-06-10 18:30:28.0]]></CREATED>
+<!--1005300015 CREATEDBY-->
+<!--1005300015-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1005300015 UPDATED-->
+<!--1005300015-->              <UPDATED><![CDATA[2008-06-10 18:30:28.0]]></UPDATED>
+<!--1005300015 UPDATEDBY-->
+<!--1005300015-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1005300015 TEXT-->
+<!--1005300015-->              <TEXT><![CDATA[Order unit]]></TEXT>
+<!--1005300015 FILENAME-->
+<!--1005300015-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
+<!--1005300015 ISUSED-->
+<!--1005300015-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005300015**************--></AD_TEXTINTERFACES>
+
+<!--1005300016**************--><AD_TEXTINTERFACES>
+<!--1005300016 AD_TEXTINTERFACES_ID-->
+<!--1005300016-->              <AD_TEXTINTERFACES_ID><![CDATA[1005300016]]></AD_TEXTINTERFACES_ID>
+<!--1005300016 AD_CLIENT_ID-->
+<!--1005300016-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005300016 AD_ORG_ID-->
+<!--1005300016-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005300016 ISACTIVE-->
+<!--1005300016-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005300016 CREATED-->
+<!--1005300016-->              <CREATED><![CDATA[2008-06-10 18:30:28.0]]></CREATED>
+<!--1005300016 CREATEDBY-->
+<!--1005300016-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1005300016 UPDATED-->
+<!--1005300016-->              <UPDATED><![CDATA[2008-06-10 18:30:28.0]]></UPDATED>
+<!--1005300016 UPDATEDBY-->
+<!--1005300016-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1005300016 TEXT-->
+<!--1005300016-->              <TEXT><![CDATA[Locator type]]></TEXT>
+<!--1005300016 FILENAME-->
+<!--1005300016-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
+<!--1005300016 ISUSED-->
+<!--1005300016-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005300016**************--></AD_TEXTINTERFACES>
+
+<!--1005300017**************--><AD_TEXTINTERFACES>
+<!--1005300017 AD_TEXTINTERFACES_ID-->
+<!--1005300017-->              <AD_TEXTINTERFACES_ID><![CDATA[1005300017]]></AD_TEXTINTERFACES_ID>
+<!--1005300017 AD_CLIENT_ID-->
+<!--1005300017-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005300017 AD_ORG_ID-->
+<!--1005300017-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005300017 ISACTIVE-->
+<!--1005300017-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005300017 CREATED-->
+<!--1005300017-->              <CREATED><![CDATA[2008-06-10 18:30:28.0]]></CREATED>
+<!--1005300017 CREATEDBY-->
+<!--1005300017-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1005300017 UPDATED-->
+<!--1005300017-->              <UPDATED><![CDATA[2008-06-10 18:30:28.0]]></UPDATED>
+<!--1005300017 UPDATEDBY-->
+<!--1005300017-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1005300017 TEXT-->
+<!--1005300017-->              <TEXT><![CDATA[No. lines]]></TEXT>
+<!--1005300017 FILENAME-->
+<!--1005300017-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt.html]]></FILENAME>
+<!--1005300017 ISUSED-->
+<!--1005300017-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005300017**************--></AD_TEXTINTERFACES>
+
+<!--1005300018**************--><AD_TEXTINTERFACES>
+<!--1005300018 AD_TEXTINTERFACES_ID-->
+<!--1005300018-->              <AD_TEXTINTERFACES_ID><![CDATA[1005300018]]></AD_TEXTINTERFACES_ID>
+<!--1005300018 AD_CLIENT_ID-->
+<!--1005300018-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005300018 AD_ORG_ID-->
+<!--1005300018-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005300018 ISACTIVE-->
+<!--1005300018-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005300018 CREATED-->
+<!--1005300018-->              <CREATED><![CDATA[2008-06-10 18:30:29.0]]></CREATED>
+<!--1005300018 CREATEDBY-->
+<!--1005300018-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1005300018 UPDATED-->
+<!--1005300018-->              <UPDATED><![CDATA[2008-06-10 18:30:29.0]]></UPDATED>
+<!--1005300018 UPDATEDBY-->
+<!--1005300018-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1005300018 TEXT-->
+<!--1005300018-->              <TEXT><![CDATA[Create from Multiple Shipment]]></TEXT>
+<!--1005300018 FILENAME-->
+<!--1005300018-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment.html]]></FILENAME>
+<!--1005300018 ISUSED-->
+<!--1005300018-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005300018**************--></AD_TEXTINTERFACES>
+
+<!--1005300019**************--><AD_TEXTINTERFACES>
+<!--1005300019 AD_TEXTINTERFACES_ID-->
+<!--1005300019-->              <AD_TEXTINTERFACES_ID><![CDATA[1005300019]]></AD_TEXTINTERFACES_ID>
+<!--1005300019 AD_CLIENT_ID-->
+<!--1005300019-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005300019 AD_ORG_ID-->
+<!--1005300019-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005300019 ISACTIVE-->
+<!--1005300019-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005300019 CREATED-->
+<!--1005300019-->              <CREATED><![CDATA[2008-06-10 18:30:29.0]]></CREATED>
+<!--1005300019 CREATEDBY-->
+<!--1005300019-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1005300019 UPDATED-->
+<!--1005300019-->              <UPDATED><![CDATA[2008-06-10 18:30:29.0]]></UPDATED>
+<!--1005300019 UPDATEDBY-->
+<!--1005300019-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1005300019 TEXT-->
+<!--1005300019-->              <TEXT><![CDATA[Height]]></TEXT>
+<!--1005300019 FILENAME-->
+<!--1005300019-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment.html]]></FILENAME>
+<!--1005300019 ISUSED-->
+<!--1005300019-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1005300019**************--></AD_TEXTINTERFACES>
 
 <!--1005400000**************--><AD_TEXTINTERFACES>
 <!--1005400000 AD_TEXTINTERFACES_ID-->
