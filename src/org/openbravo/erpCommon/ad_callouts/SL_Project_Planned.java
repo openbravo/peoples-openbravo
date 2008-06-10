@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,19 +39,22 @@ public class SL_Project_Planned extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
+      String strChanged = vars.getStringParameter("inpLastFieldChanged");
       String strcProjectLineId = vars.getStringParameter("inpcProjectlineId");
-      String strPlannedQty = vars.getStringParameter("inpplannedqty", "1");
+      String strPlannedQty = vars.getStringParameter("inpplannedqty", "0");
       String strPlannedPrice = vars.getStringParameter("inpplannedprice", "0");
+      String strPlannedPurchasePrice = vars.getStringParameter("inpplannedpoprice", "0");
+      String strPlannedMargin = vars.getStringParameter("inpplannedmarginamt", "0");
       String strTabId = vars.getStringParameter("inpTabId");
       try {
-        printPage(response, vars, strPlannedQty, strPlannedPrice, strcProjectLineId, strTabId);
+        printPage(response, vars, strPlannedQty, strPlannedPrice, strPlannedPurchasePrice, strPlannedMargin, strcProjectLineId, strTabId, strChanged);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
     } else pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strPlannedQty, String strPlannedPrice, String strcProjectLineId, String strTabId) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strPlannedQty, String strPlannedPrice, String strPlannedPurchasePrice, String strPlannedMargin, String strcProjectLineId, String strTabId, String strChanged) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     SLProjectPlannedAmtData[] data = SLProjectPlannedAmtData.select(this, strcProjectLineId);
@@ -61,19 +64,38 @@ public class SL_Project_Planned extends HttpSecureAppServlet {
     }
     int StdPrecision = Integer.valueOf(strPrecision).intValue();
 
-    BigDecimal plannedAmt, plannedQty, plannedPrice;
+    BigDecimal plannedAmt, plannedQty, plannedPrice, plannedPurchasePrice, plannedMargin;
     plannedQty = new BigDecimal(strPlannedQty);
-    plannedPrice = (new BigDecimal(strPlannedPrice));//.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-
-    plannedAmt = plannedQty.multiply(plannedPrice);
-
-    if (plannedAmt.scale() > StdPrecision)
-      plannedAmt = plannedAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-
+    plannedPrice = (new BigDecimal(strPlannedPrice));
+    plannedPurchasePrice = new BigDecimal(strPlannedPurchasePrice);
+    plannedMargin = (new BigDecimal(strPlannedMargin));
+    
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Project_Planned';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpplannedamt\", " + plannedAmt.toString() + ")");
+    
+    if (strChanged.equals("inpplannedqty") || strChanged.equals("inpplannedprice")){
+        plannedAmt = plannedQty.multiply(plannedPrice);
+        if (plannedAmt.scale() > StdPrecision)
+            plannedAmt = plannedAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+        resultado.append("\n new Array(\"inpplannedamt\", " + plannedAmt.toString() + ")");
+    }
+    
+    if (strChanged.equals("inpplannedprice") || strChanged.equals("inpplannedpoprice")){
+    	plannedMargin = new BigDecimal ((plannedPrice.doubleValue()-plannedPurchasePrice.doubleValue()) / plannedPrice.doubleValue() * 100.0).setScale(2, BigDecimal.ROUND_HALF_UP);
+    	if (strChanged.equals("inpplannedprice")){
+    		resultado.append(",");
+    	}
+    	resultado.append("\n new Array(\"inpplannedmarginamt\", " + plannedMargin.toString() + ")");
+    }
+    
+    if (strChanged.equals("inpplannedmarginamt")){
+    	plannedPurchasePrice = new BigDecimal ((plannedPrice.doubleValue()) * (1 - (plannedMargin.doubleValue() / 100.0)));
+    	if (plannedPurchasePrice.scale() > StdPrecision)
+    		plannedPurchasePrice = plannedPurchasePrice.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+    	resultado.append("\n new Array(\"inpplannedpoprice\", " + plannedPurchasePrice.toString() + ")\n");
+    }
+    
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "frameAplicacion");
