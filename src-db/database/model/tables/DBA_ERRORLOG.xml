@@ -9,7 +9,7 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="CODE" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="CODE" primaryKey="false" required="true" type="VARCHAR" size="10" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

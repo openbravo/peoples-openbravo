@@ -545,7 +545,7 @@ EXCEPTION
     DBMS_OUTPUT.PUT_LINE(v_ResultStr);*/
     RAISE;
     DECLARE
-        v_Code NUMBER:= SQLCODE;
+        v_Code VARCHAR:= SQLCODE;
     BEGIN
         AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_Client_ID, v_DBA_ErrorLog_ID);
         INSERT INTO DBA_ERRORLOG (DBA_ErrorLog_ID,Created,Code,Msg,Info)

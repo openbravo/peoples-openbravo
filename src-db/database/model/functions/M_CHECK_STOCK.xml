@@ -70,7 +70,7 @@ WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;
   DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
   DECLARE
-    v_Code NUMBER:=SQLCODE;
+    v_Code VARCHAR(10):=SQLCODE;
   BEGIN
     AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_AD_Client_ID, v_DBA_ErrorLog_ID);
     INSERT

@@ -532,7 +532,14 @@
               v_Message:=v_Message || '@OrderDocumentno@ ' || Cur_Order.DocumentNo || ' -> @InoutDocumentno@ ' || v_DocumentNo || '; ';
               
               -- Post Shipment
-              M_INOUT_POST(NULL, p_InOut_ID) ;
+              DECLARE
+              BEGIN
+                M_INOUT_POST(NULL, p_InOut_ID) ;
+              EXCEPTION
+              WHEN OTHERS THEN
+                v_ResultStr:= SQLERRM;
+                RAISE_APPLICATION_ERROR(-20000,v_ResultStr) ;
+              END;
             END IF;
           END IF;--Next_Order
           --<<Next_Order>>
@@ -647,7 +654,14 @@
             END LOOP; -- InvoiceLines
           END LOOP; -- Invoices
           -- Post Shipment
-          M_INOUT_POST(NULL, p_InOut_ID) ;
+          DECLARE
+          BEGIN
+            M_INOUT_POST(NULL, p_InOut_ID) ;
+          EXCEPTION
+          WHEN OTHERS THEN
+            v_ResultStr:= SQLERRM;
+            RAISE_APPLICATION_ERROR(-20000,v_ResultStr) ;
+          END;
 		  --ADDED BY P.SAROBE
 		  SELECT documentno
 		  INTO v_DocumentNo
@@ -677,7 +691,7 @@ WHEN OTHERS THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   ELSE
     DECLARE
-      v_Code NUMBER:=SQLCODE;
+      v_Code VARCHAR(10):=SQLCODE;
     BEGIN
     AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_AD_Client_ID, v_DBA_ErrorLog_ID);
     INSERT
