@@ -1459,7 +1459,7 @@ public class Wad extends DefaultHandler {
       }
     }
     
-    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", "", "", "", "", "hasOrgKey"};
+    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey"};
     
     
     if (parentsFieldsData==null || parentsFieldsData.length == 0) {
@@ -1498,8 +1498,9 @@ public class Wad extends DefaultHandler {
     if (FieldsData.hasButtonList(pool, strTab).equals("0")) discard[25]="buttonList";
     if (FieldsData.hasButtonFixed(pool, strTab).equals("0")) discard[26]="buttonFixed";
     if (strWindow.equals("110")) discard[27]="sectionOrganizationCheck";
-    if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) discard[28] = "";
-    
+    discard[28]="sameParent";
+    if (!(parentsFieldsData==null || parentsFieldsData.length == 0)&&(keyColumnName.equals(parentsFieldsData[0].name))) discard[28]="";
+    if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) discard[29] = "";
     
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard).createXmlDocument();
     
