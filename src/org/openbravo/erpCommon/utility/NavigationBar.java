@@ -77,7 +77,7 @@ public class NavigationBar {
     toolbar.append("    <a class=\"Main_NavBar_RightButton\" href=\"#\" onclick=\"openHelp(");
     if (window_type.equalsIgnoreCase("W")) toolbar.append("document.frmMain.inpwindowId.value");
     else toolbar.append("null");
-    toolbar.append(", '../ad_help/DisplayHelp.html', 'HELP', true, null, null, '");
+    toolbar.append(", '../ad_help/DisplayHelp.html', 'HELP', false, null, null, '");
     toolbar.append(window_type).append("', '").append(window_name);
     toolbar.append("');return false;\" border=\"0\" onmouseover=\"window.status='");
     auxText = Utility.messageBD(conn, "Help", language);
