@@ -20,13 +20,15 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.businessUtility.Tax;
+import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.utils.FormatUtilities;
 import java.io.*;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
-
-
 
 public class SE_ProjectLine_Value extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -42,29 +44,72 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       String strmProductId = vars.getStringParameter("inpmProductId");
       String strTabId = vars.getStringParameter("inpTabId");
+      String strProjectId = vars.getStringParameter("inpcProjectId");
+      String strPhaseId = vars.getStringParameter("inpcProjectphaseId");
+      String strADOrgID = vars.getStringParameter("inpadOrgId");
       try {
-        printPage(response, vars, strmProductId, strTabId);
+        printPage(response, vars, strmProductId, strTabId, strProjectId, strPhaseId, strADOrgID);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
     } else pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strmProductId, String strTabId) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strmProductId, String strTabId, String strProjectId, String strPhaseId, String strADOrgID) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    SEProjectLineValueData[] data = null;
-    if (strmProductId != null && !strmProductId.equals("")){
-       data = SEProjectLineValueData.select(this, strmProductId);
-    } else{
-      data = SEProjectLineValueData.set();
-    }
+    
+    String strMessage = "";    
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SE_ProjectLine_Value';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpproductValue\", \"" + data[0].value + "\"),\n");
-    resultado.append("new Array(\"inpproductName\", \"" + FormatUtilities.replaceJS(data[0].name) + "\"),\n");
-    resultado.append("new Array(\"inpproductDescription\", \"" + FormatUtilities.replaceJS(data[0].description) + "\")");
+    resultado.append("var respuesta = new Array(\n");    
+    
+    SEProjectLineValueData[] data = null;    
+    SEProjectLineValueData[] data1 = null; 
+    
+    if (strmProductId != null && !strmProductId.equals("")){
+       data = SEProjectLineValueData.select(this, strmProductId);       
+       String strDate = DateTimeData.today(this);
+       if (strPhaseId!=null && !strPhaseId.equals("")){
+    	   if (strProjectId==null || strProjectId.equals("")){
+    		   strProjectId = SEProjectLineValueData.selectPhaseProject(this, strPhaseId);
+    	   }
+       }
+       data1 = SEProjectLineValueData.selectProject(this, strProjectId);
+       String strPriceListId = data1[0].pricelist;
+       String strCBPartnerLocationID = data1[0].bplocation;
+       String strMWarehouseID = data1[0].warehouse;
+       String strProjCat = data1[0].projcat;
+ 
+       if (!strPriceListId.equals("")) {
+         String strPriceListVersion = SEProjectLineValueData.selectPriceListVersion(this, strPriceListId, strDate);
+         if (!strPriceListVersion.equals("")) {
+           String plannedprice = SEProjectLineValueData.selectPlannedPrice(this, strPriceListVersion, strmProductId, strProjectId);
+           if (plannedprice!=null && !plannedprice.equals("")){	
+        	   if (!strProjCat.equals("S")){
+        		   resultado.append("new Array(\"inpplannedprice\", " + (plannedprice.equals("")?"\"\"":plannedprice) + "),\n");
+        	   } else {
+        		   resultado.append("new Array(\"inppriceactual\", " + (plannedprice.equals("")?"\"\"":plannedprice) + ")\n");
+        	   }
+           } else strMessage = "PriceNotFound";
+         } else strMessage = "PriceListVersionNotFound";
+       }       
+       if (!strProjCat.equals("S")){
+    	   if (strCBPartnerLocationID != null && !strCBPartnerLocationID.equals("") && strMWarehouseID != null && !strMWarehouseID.equals("")) {
+        	   String strIsSOTrx = "Y";
+        	   String strCTaxID = Tax.get(this, strmProductId, strDate, strADOrgID, strMWarehouseID, strCBPartnerLocationID, strCBPartnerLocationID, strProjectId, strIsSOTrx.equals("Y"));
+        	   if (strCTaxID!=null && !strCTaxID.equals("")){			 
+    	    	   resultado.append("new Array(\"inpcTaxId\", " + (strCTaxID.equals("")?"\"\"":strCTaxID) + "),\n");
+    	       } else strMessage = "TaxNotFound";
+           }
+    	   resultado.append("new Array(\"inpproductValue\", \"" + data[0].value + "\"),\n");
+           resultado.append("new Array(\"inpproductName\", \"" + FormatUtilities.replaceJS(data[0].name) + "\"),\n");
+           resultado.append("new Array(\"inpproductDescription\", \"" + FormatUtilities.replaceJS(data[0].description) + "\")\n");
+       }
+    } else{
+      data = SEProjectLineValueData.set();
+    }    
+    if (!strMessage.equals("")) resultado.append(", new Array('MESSAGE', \"" + FormatUtilities.replaceJS(Utility.messageBD(this, strMessage, vars.getLanguage())) + "\")\n");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "frameAplicacion");
