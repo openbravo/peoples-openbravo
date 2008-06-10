@@ -46,6 +46,9 @@ var isKeyboardLocked=false;
 
 var isPopupLoadingWindowLoaded=false;
 
+var isCtrlPressed = null;
+var isAltPressed = null;
+var pressedKeyCode = null;
 
 /**
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
@@ -975,7 +978,12 @@ function keyControl(pushedKey) {
     return true;
   }
   if (!pushedKey) pushedKey = window.event;
- // alert(pushedKey.type);
+  isCtrlPressed = false;
+  isAltPressed = false;
+  if (pushedKey.ctrlKey) isCtrlPressed = true;
+  if (pushedKey.altKey) isAltPressed = true;
+  pressedKeyCode = pushedKey.keyCode;
+
   var keyCode = pushedKey.keyCode ? pushedKey.keyCode : pushedKey.which ? pushedKey.which : pushedKey.charCode;
   if (isKeyboardLocked==false) {
     var keyTarget = pushedKey.target ? pushedKey.target: pushedKey.srcElement;
@@ -2887,7 +2895,9 @@ function logChanges(campo) {
 */
 function changeToEditingMode() {
   try {
-    if (!isTabPressed && isKeyboardLocked==false) {
+    if (!isTabPressed && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false) {
+      setWindowEditing(true);
+    } else if (isCtrlPressed && pressedKeyCode=='86' && isKeyboardLocked==false) {
       setWindowEditing(true);
     }
   } catch (e) {}
