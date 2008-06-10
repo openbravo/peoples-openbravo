@@ -17,35 +17,34 @@
  ************************************************************************
 */
 
-@import url(../Main/ToolBar/ToolBar.css);
-@import url(../Menu/Client/Client.css);
-@import url(./ContentPane/ContentPane.css);
-@import url(./WindowLogo/WindowLogo.css);
-@import url(./NavBar/NavBar.css);
-@import url(./SeparatorBar/SeparatorBar.css);
-@import url(./InfoBar/InfoBar.css);
-@import url(./Client/Client.css);
-@import url(./Calendar/Calendar.css);
-@import url(./Status/Status.css);
-@import url(./Wallpaper/Wallpaper.css);
 
-
-
-* {margin: 0px; padding: 0px;}
-
-body {
-  margin-top: 0px;
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: normal;
-  color: #000000;
-  background-color: #E8E8E8;
+.Popup_Wallpaper_Background {
+  height: 240px;
+  width: 100%;
+  position: absolute;
+  text-align: center;
+  overflow:  hidden;
+  bottom: 0;
 }
 
-#main {
-  height: 100%;
-  width: 100%;
-  left: 0%;
-  top: 0%;
-  position: relative;
+.Popup_Wallpaper_Background_Heartbeat {
+  background: url(wallpaperHeartbeat_bg.png) repeat;
+}
+
+.Popup_Wallpaper_Background_Registration {
+  background: url(wallpaperRegistration_bg.png) repeat;
+}
+
+
+.Popup_Wallpaper_Image {
+  height: 240px;
+  width: 440px; 
+}
+
+.Popup_Wallpaper_Image_Heartbeat {
+  background: url(wallpaperHeartbeat.png) repeat;
+}
+
+.Popup_Wallpaper_Image_Registration {
+  background: url(wallpaperRegistration.png) repeat;
 }

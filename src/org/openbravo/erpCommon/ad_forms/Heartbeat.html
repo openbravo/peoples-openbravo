@@ -69,13 +69,17 @@
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 
-<FORM method="POST" action="Heartbeat.html" name="frmMain">
+<div class="Popup_Wallpaper_Background Popup_Wallpaper_Background_Heartbeat">
+  <img src="../../../../../web/images/blank.gif" class="Popup_Wallpaper_Image Popup_Wallpaper_Image_Heartbeat"></img>
+</div>
+
+<FORM method="POST" action="Heartbeat.html" name="frmMain" style="position: relative;">
 <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
 
 <div class="Popup_ContentPane_CircleLogo">
   <div class="Popup_WindowLogo">
-    <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_info" src="../../../../../web/images/blank.gif" border=0/></img>
+    <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_heartbeat" src="../../../../../web/images/blank.gif" border=0/></img>
   </div>
 </div>
 
@@ -106,8 +110,8 @@
   </tr>
   <tr>
     <td>
-      <div class="Popup_ContentPane_Client" style="overflow: auto;">
-        <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
+      <div class="Popup_ContentPane_Client" style="overflow: auto; background: none !important;">
+        <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup" style="background: none !important;">
 
           <tr>
             <td>
@@ -120,8 +124,8 @@
   </tr>
   <tr>
     <td>
-      <div style="overflow: auto;" class="Popup_ContentPane_Client" id="client">
-        <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
+      <div class="Popup_ContentPane_Client" style="overflow: auto; background: none !important;" id="client">
+        <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup" style="background: none !important;">
           <tbody><tr>
             <td class="TableEdition_OneCell_width"/>
             <td class="TableEdition_OneCell_width"/>

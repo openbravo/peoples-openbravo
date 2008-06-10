@@ -154,3 +154,11 @@
 .Popup_WindowLogo_Icon_error {
   background: url(iconError.png) no-repeat center center;
 }
+
+.Popup_WindowLogo_Icon_heartbeat {
+  background: url(iconHeartbeat.png) no-repeat center center;
+}
+
+.Popup_WindowLogo_Icon_registration {
+  background: url(iconRegistration.png) no-repeat center center;
+}
