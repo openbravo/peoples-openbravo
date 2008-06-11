@@ -1459,7 +1459,7 @@ public class Wad extends DefaultHandler {
       }
     }
     
-    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey"};
+    String[] discard = {"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "hasReference", "", "", "", "", "", "", "", "hasOrgKey", ""};
     
     
     if (parentsFieldsData==null || parentsFieldsData.length == 0) {
@@ -1501,6 +1501,7 @@ public class Wad extends DefaultHandler {
     discard[28]="sameParent";
     if (!(parentsFieldsData==null || parentsFieldsData.length == 0)&&(keyColumnName.equals(parentsFieldsData[0].name))) discard[28]="";
     if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) discard[29] = "";
+    if (strWindow.equals("250")) discard[30]="refreshTabParentSession"; //TODO: This fixes [1879633] and shoudn't be necessary in r2.5x because of new PKs
     
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard).createXmlDocument();
     
