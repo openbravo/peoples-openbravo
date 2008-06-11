@@ -2219,7 +2219,7 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800017 TYPE-->
 <!--800017-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800017 CODE-->
-<!--800017-->              <CODE><![CDATA[NOT EXISTS (SELECT 1 FROM M_Product_UOM pu WHERE pu.M_Product_ID = @M_Product_ID@ AND pu.C_UOM_ID = td0.C_UOM_ID AND pu.M_Product_UOM_ID <>@M_Product_UOM_ID@)]]></CODE>
+<!--800017-->              <CODE><![CDATA[NOT EXISTS (SELECT 1 FROM M_Product_UOM pu WHERE pu.M_Product_ID = @M_Product_ID@ AND pu.C_UOM_ID = td0.C_UOM_ID AND pu.M_Product_UOM_ID <> TO_NUMBER(@M_Product_UOM_ID@))]]></CODE>
 <!--800017**************--></AD_VAL_RULE>
 
 <!--800018**************--><AD_VAL_RULE>
