@@ -2911,6 +2911,7 @@ function logChanges(campo) {
 */
 function changeToEditingMode() {
   try {
+    if (mustBeIgnored(focusedWindowElement)) return false;
     if (!isTabPressed && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false) {
       setWindowEditing(true);
     } else if (isCtrlPressed && pressedKeyCode=='86' && isKeyboardLocked==false) {
