@@ -2909,8 +2909,11 @@ function logChanges(campo) {
 /**
 * Used on the onKeyDown event for isEditing status.
 */
-function changeToEditingMode() {
+function changeToEditingMode(force) {
   try {
+    if (force==true) {
+      setWindowEditing(true);
+    }
     if (mustBeIgnored(focusedWindowElement)) return false;
     if (!isTabPressed && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false) {
       setWindowEditing(true);
