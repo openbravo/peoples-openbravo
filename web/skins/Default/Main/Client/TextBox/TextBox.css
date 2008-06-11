@@ -129,6 +129,11 @@
   background: url(textField.required.readonly.background.png) repeat-x top !important;
 }
 
+.readonly_focus_required_focus {
+  background: url(textField.required.background.focused.png) repeat-x top !important;
+  background-color: #EAEED0 !important;
+}
+
 .invalid {
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
