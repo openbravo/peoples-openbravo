@@ -191,12 +191,6 @@ function closeSearch(action, strClave, strTexto, parametros, wait) {
     setTimeout(function() {closeSearch(action, strClave, strTexto, parametros, false);},100);
     return;
   } else {
-    try {
-      if (strTexto != "" && strTexto != null) {
-        changeToEditingMode(true);
-      }
-    }
-    catch (e) {}
     if (winSelector==null) return true;
     if (gForm!=null && gCampoClave!=null && gCampoTexto!=null) {
       var clave = getField(gCampoClave);
@@ -221,6 +215,7 @@ function closeSearch(action, strClave, strTexto, parametros, wait) {
             }
           }
           if (clave.onchange) clave.onchange();
+          try { changeToEditingMode(true); } catch (e) {}
         } else if (action=="CLEAR") {
           strClave="";
           strTexto="";
@@ -235,6 +230,7 @@ function closeSearch(action, strClave, strTexto, parametros, wait) {
             }
           }
           if (clave.onchange) clave.onchange();
+          try { changeToEditingMode(true); } catch (e) {}
         } else if (action=="SAVE_IMAGE") {
           if (strClave==null || strClave=="") {
             mensaje(31);
@@ -252,6 +248,7 @@ function closeSearch(action, strClave, strTexto, parametros, wait) {
             }
           }
           if (clave.onchange) clave.onchange();
+          try { changeToEditingMode(true); } catch (e) {}
         } else if (action=="CLEAR_IMAGE") {
           strClave="";
           strTexto="";
@@ -266,6 +263,7 @@ function closeSearch(action, strClave, strTexto, parametros, wait) {
             }
           }
           if (clave.onchange) clave.onchange();
+          try { changeToEditingMode(true); } catch (e) {}
         }
       }
     }
