@@ -538,7 +538,7 @@
               EXCEPTION
               WHEN OTHERS THEN
                 v_ResultStr:= SQLERRM;
-                RAISE_APPLICATION_ERROR(-20000,v_ResultStr) ;
+                RAISE_APPLICATION_ERROR(-20000, SUBSTR(SQLERRM,12,2000)) ;
               END;
             END IF;
           END IF;--Next_Order
@@ -660,7 +660,7 @@
           EXCEPTION
           WHEN OTHERS THEN
             v_ResultStr:= SQLERRM;
-            RAISE_APPLICATION_ERROR(-20000,v_ResultStr) ;
+            RAISE_APPLICATION_ERROR(-20000, SUBSTR(SQLERRM,12,2000)) ;
           END;
 		  --ADDED BY P.SAROBE
 		  SELECT documentno
