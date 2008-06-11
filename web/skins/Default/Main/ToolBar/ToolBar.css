@@ -243,6 +243,10 @@ a.Main_ToolBar_Button_Selected:active {
   background: url(iconAttach.png) no-repeat center center;
 }
 
+.Main_ToolBar_Button_Icon_AttachedDocuments {
+  background: url(iconAttachedDocuments.png) no-repeat center center;
+}
+
 .Main_ToolBar_Button_Icon_Excel {
   background: url(iconExportExcel.png) no-repeat center center;
 }
@@ -339,6 +343,10 @@ a.Main_ToolBar_Button_Selected:active {
 
 .Main_ToolBar_Button_Icon_Attachment_disabled {
   background: url(iconAttach.disabled.png) no-repeat center center;
+}
+
+.Main_ToolBar_Button_Icon_AttachedDocuments_disabled {
+  background: url(iconAttachedDocuments.disabled.png) no-repeat center center;
 }
 
 .Main_ToolBar_Button_Icon_Excel_disabled {
