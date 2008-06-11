@@ -1370,6 +1370,27 @@
 <!--800005-->              <NAME><![CDATA[SL_Budget_Product]]></NAME>
 <!--800005**************--></AD_CALLOUT>
 
+<!--800007**************--><AD_CALLOUT>
+<!--800007 AD_CALLOUT_ID-->
+<!--800007-->              <AD_CALLOUT_ID><![CDATA[800007]]></AD_CALLOUT_ID>
+<!--800007 AD_CLIENT_ID-->
+<!--800007-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--800007 AD_ORG_ID-->
+<!--800007-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--800007 ISACTIVE-->
+<!--800007-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800007 CREATED-->
+<!--800007-->              <CREATED><![CDATA[2006-07-14 18:57:20.0]]></CREATED>
+<!--800007 CREATEDBY-->
+<!--800007-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--800007 UPDATED-->
+<!--800007-->              <UPDATED><![CDATA[2006-07-14 18:57:20.0]]></UPDATED>
+<!--800007 UPDATEDBY-->
+<!--800007-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--800007 NAME-->
+<!--800007-->              <NAME><![CDATA[SL_MInOutTraceReports]]></NAME>
+<!--800007**************--></AD_CALLOUT>
+
 <!--800009**************--><AD_CALLOUT>
 <!--800009 AD_CALLOUT_ID-->
 <!--800009-->              <AD_CALLOUT_ID><![CDATA[800009]]></AD_CALLOUT_ID>
