@@ -275,6 +275,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="update.database" depends="init,code.rev">
+    <antcall target="database.lib"/>
     <ant dir="${base.db}" target="update.database" inheritAll="true" inheritRefs="true"/>
   </target>
 
@@ -295,6 +296,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="export.database" depends="init,code.rev">
+    <antcall target="database.lib"/>
     <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true"/>
     <ant dir="${base.db}" target="export.database.data" inheritAll="true" inheritRefs="true"/>
   </target>
