@@ -23617,7 +23617,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800249 DESCRIPTION-->
 <!--800249-->              <DESCRIPTION><![CDATA[Create a requisition for procurement.]]></DESCRIPTION>
 <!--800249 HELP-->
-<!--800249-->              <HELP><![CDATA[Create a requisition for procurement.]]></HELP>
+<!--800249-->              <HELP><![CDATA[Any ERP user can enter its requisitions. Requisitions are created in Draft status and have to be Completed to confirm them.]]></HELP>
 <!--800249 AD_TABLE_ID-->
 <!--800249-->              <AD_TABLE_ID><![CDATA[800212]]></AD_TABLE_ID>
 <!--800249 AD_WINDOW_ID-->
@@ -23670,7 +23670,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800251 DESCRIPTION-->
 <!--800251-->              <DESCRIPTION><![CDATA[Add products to be included in your requisition.  Each product is added by creating a line.]]></DESCRIPTION>
 <!--800251 HELP-->
-<!--800251-->              <HELP><![CDATA[Add products to be included in your requisition.  Each product is added by creating a line.]]></HELP>
+<!--800251-->              <HELP><![CDATA[
+Each line is a product demand for a specific date.  It is also possible to define a preferred vendor, price list and the correspondent prices. The demands are locked when are being used to generate the purchase orders so there are not created duplicate purchase orders for the same demand.  ]]></HELP>
 <!--800251 AD_TABLE_ID-->
 <!--800251-->              <AD_TABLE_ID><![CDATA[800214]]></AD_TABLE_ID>
 <!--800251 AD_WINDOW_ID-->
@@ -24800,6 +24801,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1004400000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400000 NAME-->
 <!--1004400000-->              <NAME><![CDATA[Matched PO Lines]]></NAME>
+<!--1004400000 HELP-->
+<!--1004400000-->              <HELP><![CDATA[
+Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1004400000 AD_TABLE_ID-->
 <!--1004400000-->              <AD_TABLE_ID><![CDATA[1004400000]]></AD_TABLE_ID>
 <!--1004400000 AD_WINDOW_ID-->
@@ -24848,7 +24852,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1004400001 DESCRIPTION-->
 <!--1004400001-->              <DESCRIPTION><![CDATA[Create a requisition for procurement.]]></DESCRIPTION>
 <!--1004400001 HELP-->
-<!--1004400001-->              <HELP><![CDATA[Create a requisition for procurement.]]></HELP>
+<!--1004400001-->              <HELP><![CDATA[By default appears all the completed requisitions. It is possible to create Purchase Orders automatically and close them when all the demand has been fulfilled. ]]></HELP>
 <!--1004400001 AD_TABLE_ID-->
 <!--1004400001-->              <AD_TABLE_ID><![CDATA[800212]]></AD_TABLE_ID>
 <!--1004400001 AD_WINDOW_ID-->
@@ -24897,7 +24901,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1004400002 DESCRIPTION-->
 <!--1004400002-->              <DESCRIPTION><![CDATA[Add products to be included in your requisition.  Each product is added by creating a line.]]></DESCRIPTION>
 <!--1004400002 HELP-->
-<!--1004400002-->              <HELP><![CDATA[Add products to be included in your requisition.  Each product is added by creating a line.]]></HELP>
+<!--1004400002-->              <HELP><![CDATA[Each line is a product demand for a specific date.&nbsp; It is also possible to define a preferred vendor, price list and the correspondent prices. If the&nbsp; line is locked it is possible to view in this tab the user and the cause of the lock.]]></HELP>
 <!--1004400002 AD_TABLE_ID-->
 <!--1004400002-->              <AD_TABLE_ID><![CDATA[800214]]></AD_TABLE_ID>
 <!--1004400002 AD_WINDOW_ID-->
@@ -24941,6 +24945,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--1004400003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400003 NAME-->
 <!--1004400003-->              <NAME><![CDATA[Matched PO Lines]]></NAME>
+<!--1004400003 HELP-->
+<!--1004400003-->              <HELP><![CDATA[Purchase Order lines created to fulfill the product demand. They can be inserted manually or automatically with the process to generate the purchase orders.]]></HELP>
 <!--1004400003 AD_TABLE_ID-->
 <!--1004400003-->              <AD_TABLE_ID><![CDATA[1004400000]]></AD_TABLE_ID>
 <!--1004400003 AD_WINDOW_ID-->

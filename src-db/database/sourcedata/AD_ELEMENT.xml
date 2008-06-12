@@ -4109,7 +4109,8 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--287 DESCRIPTION-->
 <!--287-->              <DESCRIPTION><![CDATA[A means of changing the transaction status of the document.]]></DESCRIPTION>
 <!--287 HELP-->
-<!--287-->              <HELP><![CDATA[You find the current status in the Document Status field. The options are listed in a popup]]></HELP>
+<!--287-->              <HELP><![CDATA[
+You find the current status in the Document Status field. The options are listed in a popup]]></HELP>
 <!--287**************--></AD_ELEMENT>
 
 <!--288**************--><AD_ELEMENT>
@@ -6752,7 +6753,8 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--449 DESCRIPTION-->
 <!--449-->              <DESCRIPTION><![CDATA[A catalog of selected items with prices defined generally or for a specific partner.]]></DESCRIPTION>
 <!--449 HELP-->
-<!--449-->              <HELP><![CDATA[Price Lists are used to determine the pricing, margin and cost of items purchased or sold.]]></HELP>
+<!--449-->              <HELP><![CDATA[
+Price Lists are used to determine the pricing, margin and cost of items purchased or sold.]]></HELP>
 <!--449**************--></AD_ELEMENT>
 
 <!--450**************--><AD_ELEMENT>
@@ -17325,7 +17327,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1342 DESCRIPTION-->
 <!--1342-->              <DESCRIPTION><![CDATA[The proposal for a how production will be carried out.]]></DESCRIPTION>
 <!--1342 HELP-->
-<!--1342-->              <HELP><![CDATA[The Production Plan identifies the items and steps in generating a product.<hints id="hah_hints" />]]></HELP>
+<!--1342-->              <HELP><![CDATA[The Production Plan identifies the items and steps in generating a product.]]></HELP>
 <!--1342**************--></AD_ELEMENT>
 
 <!--1343**************--><AD_ELEMENT>
@@ -27021,7 +27023,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--2019 DESCRIPTION-->
 <!--2019-->              <DESCRIPTION><![CDATA[An attribute associated with a product as part of an attribute set.]]></DESCRIPTION>
 <!--2019 HELP-->
-<!--2019-->              <HELP><![CDATA[The values of the actual Product Attributes]]></HELP>
+<!--2019-->              <HELP><![CDATA[
+The values of the actual Product Attributes]]></HELP>
 <!--2019**************--></AD_ELEMENT>
 
 <!--2020**************--><AD_ELEMENT>
@@ -29822,7 +29825,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--800002 DESCRIPTION-->
 <!--800002-->              <DESCRIPTION><![CDATA[The number of a certain item involved in the transaction, shown in units which differ from the standard UOM.]]></DESCRIPTION>
 <!--800002 HELP-->
-<!--800002-->              <HELP><![CDATA[Product quantity in the order uom.]]></HELP>
+<!--800002-->              <HELP><![CDATA[
+Product quantity in the order uom.]]></HELP>
 <!--800002**************--></AD_ELEMENT>
 
 <!--800003**************--><AD_ELEMENT>
@@ -29851,7 +29855,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--800003 DESCRIPTION-->
 <!--800003-->              <DESCRIPTION><![CDATA[The unit of measure being used for the request.]]></DESCRIPTION>
 <!--800003 HELP-->
-<!--800003-->              <HELP><![CDATA[Alternative order uom for the product.]]></HELP>
+<!--800003-->              <HELP><![CDATA[
+Alternative order uom for the product.]]></HELP>
 <!--800003**************--></AD_ELEMENT>
 
 <!--800004**************--><AD_ELEMENT>
@@ -47807,7 +47812,8 @@ Planned: The demand has been included in a Purchase Plan of the MRP module.]]></
 <!--1004400010 PRINTNAME-->
 <!--1004400010-->              <PRINTNAME><![CDATA[Lock qty]]></PRINTNAME>
 <!--1004400010 HELP-->
-<!--1004400010-->              <HELP><![CDATA[Quantity set to be used when the record is processed.]]></HELP>
+<!--1004400010-->              <HELP><![CDATA[
+Quantity set to be used when the record is processed.]]></HELP>
 <!--1004400010**************--></AD_ELEMENT>
 
 <!--1004400011**************--><AD_ELEMENT>
@@ -47861,7 +47867,8 @@ Planned: The demand has been included in a Purchase Plan of the MRP module.]]></
 <!--1004400012 PRINTNAME-->
 <!--1004400012-->              <PRINTNAME><![CDATA[Lock price]]></PRINTNAME>
 <!--1004400012 HELP-->
-<!--1004400012-->              <HELP><![CDATA[Price set to be used when the record is processed.]]></HELP>
+<!--1004400012-->              <HELP><![CDATA[
+Price set to be used when the record is processed.]]></HELP>
 <!--1004400012**************--></AD_ELEMENT>
 
 <!--1004400013**************--><AD_ELEMENT>

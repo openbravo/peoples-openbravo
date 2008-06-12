@@ -6296,7 +6296,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--308 CREATEDBY-->
 <!--308-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--308 UPDATED-->
-<!--308-->              <UPDATED><![CDATA[2003-07-14 00:17:36.0]]></UPDATED>
+<!--308-->              <UPDATED><![CDATA[2008-06-12 18:59:50.0]]></UPDATED>
 <!--308 UPDATEDBY-->
 <!--308-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--308 NAME-->
@@ -6304,7 +6304,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--308 DESCRIPTION-->
 <!--308-->              <DESCRIPTION><![CDATA[A means of changing the transaction status of the document.]]></DESCRIPTION>
 <!--308 HELP-->
-<!--308-->              <HELP><![CDATA[You find the current status in the Document Status field. The options are listed in a popup]]></HELP>
+<!--308-->              <HELP><![CDATA[
+You find the current status in the Document Status field. The options are listed in a popup]]></HELP>
 <!--308 AD_PROCESS_ID-->
 <!--308-->              <AD_PROCESS_ID><![CDATA[206]]></AD_PROCESS_ID>
 <!--308 SEQNO-->
@@ -6388,7 +6389,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--310 CREATEDBY-->
 <!--310-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--310 UPDATED-->
-<!--310-->              <UPDATED><![CDATA[2003-07-14 00:17:22.0]]></UPDATED>
+<!--310-->              <UPDATED><![CDATA[2008-06-12 18:59:50.0]]></UPDATED>
 <!--310 UPDATEDBY-->
 <!--310-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--310 NAME-->
@@ -6396,7 +6397,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--310 DESCRIPTION-->
 <!--310-->              <DESCRIPTION><![CDATA[A means of changing the transaction status of the document.]]></DESCRIPTION>
 <!--310 HELP-->
-<!--310-->              <HELP><![CDATA[You find the current status in the Document Status field. The options are listed in a popup]]></HELP>
+<!--310-->              <HELP><![CDATA[
+You find the current status in the Document Status field. The options are listed in a popup]]></HELP>
 <!--310 AD_PROCESS_ID-->
 <!--310-->              <AD_PROCESS_ID><![CDATA[207]]></AD_PROCESS_ID>
 <!--310 SEQNO-->
@@ -8328,7 +8330,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--357 CREATEDBY-->
 <!--357-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--357 UPDATED-->
-<!--357-->              <UPDATED><![CDATA[2003-09-03 11:37:30.0]]></UPDATED>
+<!--357-->              <UPDATED><![CDATA[2008-06-12 18:59:50.0]]></UPDATED>
 <!--357 UPDATEDBY-->
 <!--357-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--357 NAME-->
@@ -8336,7 +8338,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--357 DESCRIPTION-->
 <!--357-->              <DESCRIPTION><![CDATA[An attribute associated with a product as part of an attribute set.]]></DESCRIPTION>
 <!--357 HELP-->
-<!--357-->              <HELP><![CDATA[The values of the actual Product Attributes]]></HELP>
+<!--357-->              <HELP><![CDATA[
+The values of the actual Product Attributes]]></HELP>
 <!--357 AD_PROCESS_ID-->
 <!--357-->              <AD_PROCESS_ID><![CDATA[224]]></AD_PROCESS_ID>
 <!--357 SEQNO-->
@@ -11532,7 +11535,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1004400002 CREATEDBY-->
 <!--1004400002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1004400002 UPDATED-->
-<!--1004400002-->              <UPDATED><![CDATA[2008-03-27 12:19:44.0]]></UPDATED>
+<!--1004400002-->              <UPDATED><![CDATA[2008-06-12 18:59:50.0]]></UPDATED>
 <!--1004400002 UPDATEDBY-->
 <!--1004400002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400002 NAME-->
@@ -11540,7 +11543,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1004400002 DESCRIPTION-->
 <!--1004400002-->              <DESCRIPTION><![CDATA[A catalog of selected items with prices defined generally or for a specific partner.]]></DESCRIPTION>
 <!--1004400002 HELP-->
-<!--1004400002-->              <HELP><![CDATA[Price Lists are used to determine the pricing, margin and cost of items purchased or sold.]]></HELP>
+<!--1004400002-->              <HELP><![CDATA[
+Price Lists are used to determine the pricing, margin and cost of items purchased or sold.]]></HELP>
 <!--1004400002 AD_PROCESS_ID-->
 <!--1004400002-->              <AD_PROCESS_ID><![CDATA[1004400000]]></AD_PROCESS_ID>
 <!--1004400002 SEQNO-->

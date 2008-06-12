@@ -5992,7 +5992,7 @@
 <!--800092 DESCRIPTION-->
 <!--800092-->              <DESCRIPTION><![CDATA[Create requests for the procurement department to buy necessities items based on your defined plan.]]></DESCRIPTION>
 <!--800092 HELP-->
-<!--800092-->              <HELP><![CDATA[Create requests for the procurement department to buy necessities items based on your defined plan.]]></HELP>
+<!--800092-->              <HELP><![CDATA[Users create Requisitions in this window. Each requisition can have a preferred vendor and/or Price List. The requisitions are owned by an user of the ERP and have different statuses, each of them allowing different actions.]]></HELP>
 <!--800092 WINDOWTYPE-->
 <!--800092-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800092 ISSOTRX-->
@@ -6317,6 +6317,8 @@
 <!--1004400000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400000 NAME-->
 <!--1004400000-->              <NAME><![CDATA[Manage Requisitions]]></NAME>
+<!--1004400000 HELP-->
+<!--1004400000-->              <HELP><![CDATA[The Purchase Manager manages the completed requisitions in this window. It is possible to create the purchase orders automatically or assign the Purchase Order Lines to the correspondent product demand manually.]]></HELP>
 <!--1004400000 WINDOWTYPE-->
 <!--1004400000-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--1004400000 ISSOTRX-->
