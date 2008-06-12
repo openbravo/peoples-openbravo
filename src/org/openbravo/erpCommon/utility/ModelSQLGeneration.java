@@ -176,7 +176,7 @@ public class ModelSQLGeneration {
       text.append(tablename).append(".").append(columnname).append(" ");
       if (first) text.append(">= ");
       else text.append("<= ");
-      text.append("?");
+      text.append("TO_NUMBER(?)");
     } else if (reference.equals("10") || reference.equals("14") || reference.equals("34")) {
       String aux = "";
       if (!columnname.equalsIgnoreCase("Value") && !columnname.equalsIgnoreCase("DocumentNo")) aux="C_IGNORE_ACCENT";
