@@ -1132,7 +1132,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--153 CREATEDBY-->
 <!--153-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--153 UPDATED-->
-<!--153-->              <UPDATED><![CDATA[2008-05-28 17:07:08.0]]></UPDATED>
+<!--153-->              <UPDATED><![CDATA[2008-06-12 16:58:47.0]]></UPDATED>
 <!--153 UPDATEDBY-->
 <!--153-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--153 NAME-->
@@ -1145,6 +1145,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--153-->              <SEQNO><![CDATA[10]]></SEQNO>
 <!--153 AD_REFERENCE_ID-->
 <!--153-->              <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
+<!--153 AD_VAL_RULE_ID-->
+<!--153-->              <AD_VAL_RULE_ID><![CDATA[1001100000]]></AD_VAL_RULE_ID>
 <!--153 COLUMNNAME-->
 <!--153-->              <COLUMNNAME><![CDATA[AD_ImpFormat_ID]]></COLUMNNAME>
 <!--153 ISCENTRALLYMAINTAINED-->
