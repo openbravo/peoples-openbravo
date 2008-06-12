@@ -145,7 +145,8 @@ public class WADSearch extends WADControl {
     xmlDocument.setParameter("button", textButton);
     String className = "";
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
-    if (isDisabled || !this.isFieldEditable) className += " readonly";
+    if (!isDisabled && !this.isFieldEditable && getData("IsMandatory").equals("Y")) className += " readonly_required";
+    else if (isDisabled || !this.isFieldEditable) className += " readonly";
     else if (getData("IsMandatory").equals("Y")) className += " required";
     xmlDocument.setParameter("className", className);
 
