@@ -143,9 +143,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("companyName", GeneralAccountingReportsData.companyName(this, vars.getClient()));
     xmlDocument.setParameter("date", DateTimeData.today(this));
     if (strDateFrom.equals("")) strDateFrom = "01/01/"+strAgno;
-    if (strDateTo.equals("")) strDateTo = GeneralAccountingReportsData.date(this, strAgno, vars.getSqlDateFormat());
+    if (strDateTo.equals("")) strDateTo = "31/12/"+strAgno;
     if (strDateFromRef.equals("")) strDateFromRef = "01/01/"+strAgnoRef;
-    if (strDateToRef.equals("")) strDateToRef = GeneralAccountingReportsData.date(this, strAgnoRef, vars.getSqlDateFormat());
+    if (strDateToRef.equals("")) strDateToRef = "31/12/"+strAgnoRef;
     xmlDocument.setParameter("period", strDateFrom + " - " + strDateTo);
     xmlDocument.setParameter("periodRef", strDateFromRef + " - " + strDateToRef);
     xmlDocument.setParameter("agnoInitial", strAgno);
