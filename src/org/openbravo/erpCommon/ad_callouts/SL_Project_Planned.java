@@ -65,24 +65,31 @@ public class SL_Project_Planned extends HttpSecureAppServlet {
     int StdPrecision = Integer.valueOf(strPrecision).intValue();
 
     BigDecimal plannedAmt, plannedQty, plannedPrice, plannedPurchasePrice, plannedMargin;
-    plannedQty = new BigDecimal(strPlannedQty);
-    plannedPrice = (new BigDecimal(strPlannedPrice));
-    plannedPurchasePrice = new BigDecimal(strPlannedPurchasePrice);
-    plannedMargin = (new BigDecimal(strPlannedMargin));
+    plannedQty = new BigDecimal(strPlannedQty);						// PQ
+    plannedPrice = (new BigDecimal(strPlannedPrice));				// PP
+    plannedPurchasePrice = new BigDecimal(strPlannedPurchasePrice);	// PPP
+    plannedMargin = (new BigDecimal(strPlannedMargin));				// PM
+    plannedAmt = new BigDecimal(0.0);								// PA
     
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Project_Planned';\n\n");
     resultado.append("var respuesta = new Array(");
     
     if (strChanged.equals("inpplannedqty") || strChanged.equals("inpplannedprice")){
-        plannedAmt = plannedQty.multiply(plannedPrice);
+        // PA = PQ*PP
+    	plannedAmt = plannedQty.multiply(plannedPrice);
         if (plannedAmt.scale() > StdPrecision)
             plannedAmt = plannedAmt.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
         resultado.append("\n new Array(\"inpplannedamt\", " + plannedAmt.toString() + ")");
     }
     
     if (strChanged.equals("inpplannedprice") || strChanged.equals("inpplannedpoprice")){
-    	plannedMargin = new BigDecimal ((plannedPrice.doubleValue()-plannedPurchasePrice.doubleValue()) / plannedPrice.doubleValue() * 100.0).setScale(2, BigDecimal.ROUND_HALF_UP);
+    	// PM = (PP - PPP)*100/PP
+    	if (plannedPrice.doubleValue() != 0.0) {
+        	plannedMargin = new BigDecimal ((plannedPrice.doubleValue()-plannedPurchasePrice.doubleValue()) / plannedPrice.doubleValue() * 100.0).setScale(2, BigDecimal.ROUND_HALF_UP);
+    	} else {
+    		plannedMargin = new BigDecimal(0.0);
+    	}
     	if (strChanged.equals("inpplannedprice")){
     		resultado.append(",");
     	}
@@ -90,6 +97,7 @@ public class SL_Project_Planned extends HttpSecureAppServlet {
     }
     
     if (strChanged.equals("inpplannedmarginamt")){
+    	// PPP = PP*(1-PM/100)
     	plannedPurchasePrice = new BigDecimal ((plannedPrice.doubleValue()) * (1 - (plannedMargin.doubleValue() / 100.0)));
     	if (plannedPurchasePrice.scale() > StdPrecision)
     		plannedPurchasePrice = plannedPurchasePrice.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
