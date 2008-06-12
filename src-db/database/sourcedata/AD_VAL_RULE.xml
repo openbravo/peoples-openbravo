@@ -2468,6 +2468,34 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--1000200000-->              <CODE><![CDATA[AD_Ref_List.Value IN ('MF', 'PO', 'SF', 'SO', 'WR')]]></CODE>
 <!--1000200000**************--></AD_VAL_RULE>
 
+<!--1000200001**************--><AD_VAL_RULE>
+<!--1000200001 AD_VAL_RULE_ID-->
+<!--1000200001-->              <AD_VAL_RULE_ID><![CDATA[1000200001]]></AD_VAL_RULE_ID>
+<!--1000200001 AD_CLIENT_ID-->
+<!--1000200001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000200001 AD_ORG_ID-->
+<!--1000200001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000200001 ISACTIVE-->
+<!--1000200001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000200001 CREATED-->
+<!--1000200001-->              <CREATED><![CDATA[2008-06-12 12:21:21.0]]></CREATED>
+<!--1000200001 CREATEDBY-->
+<!--1000200001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000200001 UPDATED-->
+<!--1000200001-->              <UPDATED><![CDATA[2008-06-12 12:21:21.0]]></UPDATED>
+<!--1000200001 UPDATEDBY-->
+<!--1000200001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000200001 NAME-->
+<!--1000200001-->              <NAME><![CDATA[Not discarded toolsets in Work Effort]]></NAME>
+<!--1000200001 DESCRIPTION-->
+<!--1000200001-->              <DESCRIPTION><![CDATA[Validation to filter the toolset by their type and status]]></DESCRIPTION>
+<!--1000200001 TYPE-->
+<!--1000200001-->              <TYPE><![CDATA[S]]></TYPE>
+<!--1000200001 CODE-->
+<!--1000200001-->              <CODE><![CDATA[MA_Toolset.Discarded = 'N'
+AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetProcess, MA_WRPhase, M_ProductionPlan WHERE M_ProductionPlan.M_ProductionPlan_ID = @M_ProductionPlan_ID@ AND M_ProductionPlan.MA_WRPhase_ID = MA_WRPhase.MA_WRPhase_ID AND MA_WRPhase.MA_Process_ID =  MA_ToolsetProcess.MA_Process_ID)]]></CODE>
+<!--1000200001**************--></AD_VAL_RULE>
+
 <!--1000600000**************--><AD_VAL_RULE>
 <!--1000600000 AD_VAL_RULE_ID-->
 <!--1000600000-->              <AD_VAL_RULE_ID><![CDATA[1000600000]]></AD_VAL_RULE_ID>
