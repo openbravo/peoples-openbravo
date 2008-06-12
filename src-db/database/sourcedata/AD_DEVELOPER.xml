@@ -2435,6 +2435,35 @@
 <!--10084-->              <SVNUSER><![CDATA[kenzo.repole]]></SVNUSER>
 <!--10084**************--></AD_DEVELOPER>
 
+<!--10085**************--><AD_DEVELOPER>
+<!--10085 AD_DEVELOPER_ID-->
+<!--10085-->              <AD_DEVELOPER_ID><![CDATA[10085]]></AD_DEVELOPER_ID>
+<!--10085 AD_CLIENT_ID-->
+<!--10085-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10085 AD_ORG_ID-->
+<!--10085-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10085 ISACTIVE-->
+<!--10085-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10085 CREATED-->
+<!--10085-->              <CREATED><![CDATA[2008-06-12 17:05:00.0]]></CREATED>
+<!--10085 CREATEDBY-->
+<!--10085-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10085 UPDATED-->
+<!--10085-->              <UPDATED><![CDATA[2008-06-12 17:05:00.0]]></UPDATED>
+<!--10085 UPDATEDBY-->
+<!--10085-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10085 NAME-->
+<!--10085-->              <NAME><![CDATA[Muhammad Haider]]></NAME>
+<!--10085 NICKNAME-->
+<!--10085-->              <NICKNAME><![CDATA[shah.d.gr]]></NICKNAME>
+<!--10085 EMAIL-->
+<!--10085-->              <EMAIL><![CDATA[shah.d.gr8 dot gmail dot com]]></EMAIL>
+<!--10085 COMPANY-->
+<!--10085-->              <COMPANY><![CDATA[Agile Technologies]]></COMPANY>
+<!--10085 SVNUSER-->
+<!--10085-->              <SVNUSER><![CDATA[shah.d.gr]]></SVNUSER>
+<!--10085**************--></AD_DEVELOPER>
+
 <!--
 ************************
 0. End of Core Range.
