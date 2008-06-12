@@ -18302,15 +18302,15 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800089 CREATEDBY-->
 <!--800089-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800089 UPDATED-->
-<!--800089-->              <UPDATED><![CDATA[2005-11-07 18:20:20.0]]></UPDATED>
+<!--800089-->              <UPDATED><![CDATA[2008-06-12 11:25:11.0]]></UPDATED>
 <!--800089 UPDATEDBY-->
-<!--800089-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--800089-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800089 NAME-->
-<!--800089-->              <NAME><![CDATA[Process]]></NAME>
+<!--800089-->              <NAME><![CDATA[Activity]]></NAME>
 <!--800089 DESCRIPTION-->
-<!--800089-->              <DESCRIPTION><![CDATA[View the process related to a selected work center.]]></DESCRIPTION>
+<!--800089-->              <DESCRIPTION><![CDATA[View the activity related to a selected work center.]]></DESCRIPTION>
 <!--800089 HELP-->
-<!--800089-->              <HELP><![CDATA[View the process related to a selected work center.]]></HELP>
+<!--800089-->              <HELP><![CDATA[View the activity related to a selected work center.]]></HELP>
 <!--800089 AD_TABLE_ID-->
 <!--800089-->              <AD_TABLE_ID><![CDATA[800072]]></AD_TABLE_ID>
 <!--800089 AD_WINDOW_ID-->
@@ -18449,11 +18449,11 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800098 CREATEDBY-->
 <!--800098-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800098 UPDATED-->
-<!--800098-->              <UPDATED><![CDATA[2005-11-07 18:20:20.0]]></UPDATED>
+<!--800098-->              <UPDATED><![CDATA[2008-06-12 11:25:17.0]]></UPDATED>
 <!--800098 UPDATEDBY-->
-<!--800098-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--800098-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800098 NAME-->
-<!--800098-->              <NAME><![CDATA[Toolset Process]]></NAME>
+<!--800098-->              <NAME><![CDATA[Toolset]]></NAME>
 <!--800098 DESCRIPTION-->
 <!--800098-->              <DESCRIPTION><![CDATA[View the toolsets of a selected process.]]></DESCRIPTION>
 <!--800098 HELP-->
