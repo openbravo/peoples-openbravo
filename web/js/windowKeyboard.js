@@ -1548,38 +1548,22 @@ function blurGrid() {
 function windowUpKey() {
   if (isGridFocused) {
     dojo.widget.byId('grid').goToPreviousRow();
-  } else {
-    if (focusedWindowElement.tagName == 'SELECT') {
-      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) focusedWindowElement.onchange();
-    }
   }
 }
 
 function windowDownKey() {
   if (isGridFocused) {
     dojo.widget.byId('grid').goToNextRow();
-  } else {
-    if (focusedWindowElement.tagName == 'SELECT') {
-      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) focusedWindowElement.onchange();
-    }
   }
 }
 
 function windowLeftKey() {
   if (isGridFocused) {
-  } else {
-    if (focusedWindowElement.tagName == 'SELECT') {
-      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) focusedWindowElement.onchange();
-    }
   }
 }
 
 function windowRightKey() {
   if (isGridFocused) {
-  } else {
-    if (focusedWindowElement.tagName == 'SELECT') {
-      if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) focusedWindowElement.onchange();
-    }
   }
 }
 

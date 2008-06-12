@@ -111,19 +111,19 @@ function getShortcuts(type) {
         new keyArrayItem("TAB", "windowShiftTabKey(true);", null, "shiftKey", false, 'onkeydown'),
         new keyArrayItem("TAB", "windowShiftTabKey(false);", null, "shiftKey", false, 'onkeyup'),
         new keyArrayItem("G", "executeWindowButton('buttonEdition');", null, "ctrlKey", false, 'onkeydown'),
-        new keyArrayItem("DELETE", "executeWindowButton('linkButtonDelete');", null, null, false, 'onkeydown'),		
+        new keyArrayItem("DELETE", "executeWindowButton('linkButtonDelete');", null, null, false, 'onkeydown'),
         new keyArrayItem("ENTER", "windowEnterKey();", null, null, false, 'onkeydown')
       );
   } else if (type=='gridKeys') {
       this.keyArray.splice(keyArray.length-1, 0,
-        new keyArrayItem("UPARROW", "windowUpKey();", null, null, false, 'onkeydown'),
-        new keyArrayItem("RIGHTARROW", "windowRightKey();", null, null, false, 'onkeydown'),
-        new keyArrayItem("DOWNARROW", "windowDownKey();", null, null, false, 'onkeydown'),
-        new keyArrayItem("LEFTARROW", "windowLeftKey();", null, null, false, 'onkeydown'),
-        new keyArrayItem("HOME", "windowHomeKey();", null, null, false, 'onkeydown'),
-        new keyArrayItem("END", "windowEndKey();", null, null, false, 'onkeydown'),
-        new keyArrayItem("REPAGE", "windowRepageKey();", null, null, false, 'onkeydown'),
-        new keyArrayItem("AVPAGE", "windowAvpageKey();", null, null, false, 'onkeydown')
+        new keyArrayItem("UPARROW", "windowUpKey();", null, null, true, 'onkeydown'),
+        new keyArrayItem("RIGHTARROW", "windowRightKey();", null, null, true, 'onkeydown'),
+        new keyArrayItem("DOWNARROW", "windowDownKey();", null, null, true, 'onkeydown'),
+        new keyArrayItem("LEFTARROW", "windowLeftKey();", null, null, true, 'onkeydown'),
+        new keyArrayItem("HOME", "windowHomeKey();", null, null, true, 'onkeydown'),
+        new keyArrayItem("END", "windowEndKey();", null, null, true, 'onkeydown'),
+        new keyArrayItem("REPAGE", "windowRepageKey();", null, null, true, 'onkeydown'),
+        new keyArrayItem("AVPAGE", "windowAvpageKey();", null, null, true, 'onkeydown')
       );
   } else if (type=='popupSpecificKeys') {
       this.keyArray.splice(keyArray.length-1, 0,
