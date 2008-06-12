@@ -60,7 +60,7 @@ public class ActionButtonUtility {
       } else if (strDocStatus.equals("DR") || strDocStatus.equals("IP")) {
         data1.setData("ID", "CO");
         v.addElement(data1);
-        if (!strTable.equals("319")) {
+        if (!strTable.equals("319") && !strTable.equals("800212")) {
           data1 = new SQLReturnObject();
           data1.setData("ID", "VO");
           v.addElement(data1);
