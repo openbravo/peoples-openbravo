@@ -784,7 +784,7 @@ public abstract class AcctServer  {
         if (MultiCurrency)
             return true;
         //
-        boolean retValue = getBalance().equals("0");
+        boolean retValue = (getBalance().compareTo(new BigDecimal("0.00"))==0);
         if (retValue)   if (log4j.isDebugEnabled()) log4j.debug("AcctServer - isBalanced - " + DocumentNo);
         else log4j.warn("AcctServer - is not Balanced - " + DocumentNo);
         return retValue;
@@ -806,7 +806,8 @@ public abstract class AcctServer  {
         set.addElement(C_Currency_ID);
         for (int i = 0; p_lines != null && i < p_lines.length; i++){
             String currency = p_lines[i].m_C_Currency_ID;
-            set.addElement(currency);
+            if(currency!=null && !currency.equals("")) 
+              set.addElement(currency);
         }
 
         //  just one and the same
