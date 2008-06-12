@@ -18,7 +18,6 @@
  */
 package org.openbravo.erpCommon.ad_reports;
 
-import org.openbravo.erpCommon.security.WarehouseData;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.erpCommon.ad_forms.AcctServerData;
 import org.openbravo.erpCommon.businessUtility.*;
