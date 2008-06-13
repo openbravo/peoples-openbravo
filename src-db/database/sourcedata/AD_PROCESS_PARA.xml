@@ -11138,7 +11138,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800057 CREATEDBY-->
 <!--800057-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800057 UPDATED-->
-<!--800057-->              <UPDATED><![CDATA[2007-06-13 18:36:47.0]]></UPDATED>
+<!--800057-->              <UPDATED><![CDATA[2008-06-13 18:20:40.0]]></UPDATED>
 <!--800057 UPDATEDBY-->
 <!--800057-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800057 NAME-->
@@ -11153,6 +11153,8 @@ The values of the actual Product Attributes]]></HELP>
 <!--800057-->              <AD_REFERENCE_ID><![CDATA[17]]></AD_REFERENCE_ID>
 <!--800057 AD_REFERENCE_VALUE_ID-->
 <!--800057-->              <AD_REFERENCE_VALUE_ID><![CDATA[800104]]></AD_REFERENCE_VALUE_ID>
+<!--800057 AD_VAL_RULE_ID-->
+<!--800057-->              <AD_VAL_RULE_ID><![CDATA[1000200002]]></AD_VAL_RULE_ID>
 <!--800057 COLUMNNAME-->
 <!--800057-->              <COLUMNNAME><![CDATA[outputType]]></COLUMNNAME>
 <!--800057 ISCENTRALLYMAINTAINED-->

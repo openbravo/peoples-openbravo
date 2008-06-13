@@ -2496,6 +2496,31 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetProcess, MA_WRPhase, M_ProductionPlan WHERE M_ProductionPlan.M_ProductionPlan_ID = @M_ProductionPlan_ID@ AND M_ProductionPlan.MA_WRPhase_ID = MA_WRPhase.MA_WRPhase_ID AND MA_WRPhase.MA_Process_ID =  MA_ToolsetProcess.MA_Process_ID)]]></CODE>
 <!--1000200001**************--></AD_VAL_RULE>
 
+<!--1000200002**************--><AD_VAL_RULE>
+<!--1000200002 AD_VAL_RULE_ID-->
+<!--1000200002-->              <AD_VAL_RULE_ID><![CDATA[1000200002]]></AD_VAL_RULE_ID>
+<!--1000200002 AD_CLIENT_ID-->
+<!--1000200002-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000200002 AD_ORG_ID-->
+<!--1000200002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000200002 ISACTIVE-->
+<!--1000200002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000200002 CREATED-->
+<!--1000200002-->              <CREATED><![CDATA[2008-06-13 18:19:22.0]]></CREATED>
+<!--1000200002 CREATEDBY-->
+<!--1000200002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000200002 UPDATED-->
+<!--1000200002-->              <UPDATED><![CDATA[2008-06-13 18:19:22.0]]></UPDATED>
+<!--1000200002 UPDATEDBY-->
+<!--1000200002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000200002 NAME-->
+<!--1000200002-->              <NAME><![CDATA[Output Format: not html]]></NAME>
+<!--1000200002 TYPE-->
+<!--1000200002-->              <TYPE><![CDATA[S]]></TYPE>
+<!--1000200002 CODE-->
+<!--1000200002-->              <CODE><![CDATA[AD_Ref_List.value NOT IN ('html')]]></CODE>
+<!--1000200002**************--></AD_VAL_RULE>
+
 <!--1000600000**************--><AD_VAL_RULE>
 <!--1000600000 AD_VAL_RULE_ID-->
 <!--1000600000-->              <AD_VAL_RULE_ID><![CDATA[1000600000]]></AD_VAL_RULE_ID>
