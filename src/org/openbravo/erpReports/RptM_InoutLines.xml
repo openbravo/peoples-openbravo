@@ -20,14 +20,12 @@
 <REPORT>
 	<template file="RptM_InoutLines.fo"/>
 	<structure name="structure2">
-		<FIELD id="fieldDocumentno" replaceCharacters="fo">documentno</FIELD>
 		<FIELD id="fieldValue" replaceCharacters="fo">value</FIELD>
 		<FIELD id="fieldName" replaceCharacters="fo">name</FIELD>
 		<FIELD id="fieldLot" replaceCharacters="fo">lot</FIELD>
 		<FIELD id="fieldDescription" replaceCharacters="fo">description</FIELD>
 		<FIELD id="fieldMovementqty" replaceCharacters="fo" format="euroInform">movementqty</FIELD>
     <!-- <FIELD id="fieldUPC" replaceCharacters="fo" attribute="message" replace="xxx">upc</FIELD> -->
-		<SECTION id="sectionOrder" field="documentno"/>
 		<SECTION id="sectionDetailLines"/>
 	</structure>
 	<DISCARD id="discard"/>
