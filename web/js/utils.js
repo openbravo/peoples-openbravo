@@ -2920,7 +2920,10 @@ function changeToEditingMode(force) {
       setWindowEditing(true);
     }
     if (mustBeIgnored(focusedWindowElement)) return false;
-    if (!isTabPressed && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false) {
+    if (!isTabPressed && focusedWindowElement.tagName.toUpperCase().indexOf("SELECT")!=-1 && focusedWindowElement && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false) {
+      setWindowEditing(true);
+    } else if (!isTabPressed && focusedWindowElement.tagName.toUpperCase().indexOf("SELECT")==-1 && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false && pressedKeyCode!='33' && pressedKeyCode!='34'
+     && pressedKeyCode!='35' && pressedKeyCode!='36' && pressedKeyCode!='37' && pressedKeyCode!='38' && pressedKeyCode!='39' && pressedKeyCode!='40') {
       setWindowEditing(true);
     } else if (isCtrlPressed && pressedKeyCode=='86' && isKeyboardLocked==false) {
       setWindowEditing(true);
