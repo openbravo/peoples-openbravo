@@ -1213,6 +1213,7 @@ function putFocusOnMenu(){
 * Put the focus on the Window frame
 */
 function putFocusOnWindow(){
+  parent.frameMenu.onBlurMenu();
   parent.frameAplicacion.selectedArea = 'window'
   parent.frameAplicacion.focus();
   parent.frameAplicacion.setWindowElementFocus(parent.frameAplicacion.focusedWindowElement);
@@ -1932,6 +1933,10 @@ function menuShowHide(id) {
     } else {
       frameset.cols = "0%,0%,*";
       top.isMenuHide = true;
+      try {
+        putFocusOnWindow();
+      } catch(e) {
+      }
     }
       //}
     try {
