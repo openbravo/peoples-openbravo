@@ -132,6 +132,8 @@ function setSelectedArea(area) {
 
 function swichSelectedArea() {
   if (selectedArea=='window' && tabsTables[0].tabTableId) {
+    previousWindowElementType=currentWindowElementType;
+    currentWindowElementType='tab';
     focusedWindowElement_tmp2 = focusedWindowElement;
     selectedArea = 'tabs';
     removeWindowElementFocus(focusedWindowElement);
@@ -139,6 +141,7 @@ function swichSelectedArea() {
   } else if (selectedArea=='tabs') {
     selectedArea = 'window';
     removeTabFocus(focusedTab);
+    currentWindowElementType=previousWindowElementType;
     setWindowElementFocus(focusedWindowElement_tmp2);
   } else {
     return false;
@@ -425,6 +428,7 @@ function putWindowElementFocus(obj) {
   defaultActionLogic(obj);
   try {
     if (currentWindowElementType == 'grid') {
+      obj.focus();
       focusGrid();
     } else {
       obj.focus();
@@ -538,6 +542,13 @@ function canHaveFocus(obj) {
 }
 
 function couldHaveFocus(obj) {
+  try {
+    if (obj.tagName == 'INPUT' && obj.getAttribute('id') == 'grid_table_dummy_input') {
+      currentWindowElementType = 'grid';
+      return true;
+    }
+  } catch(e) {
+  }
   if (obj.tagName == 'INPUT') {
     currentWindowElementType='input';
     return true;
@@ -553,13 +564,6 @@ function couldHaveFocus(obj) {
   if (obj.tagName == 'TEXTAREA') {
     currentWindowElementType = 'textarea';
     return true;
-  }
-  try {
-    if (obj.tagName == 'TABLE' && obj.getAttribute('id') == 'grid_table') {
-      currentWindowElementType = 'grid';
-      return true;
-    }
-  } catch(e) {
   }
   return false;
 }
@@ -645,12 +649,12 @@ function getNextWindowElement() {
           }
           if (success) {
             //alert('con hermano - id del hermano: ' + nextElement.getAttribute('id'));
-            if(canHaveFocus(nextElement)) return nextElement;            
+            if(canHaveFocus(nextElement)) return nextElement;
             break;
           } else {
             //alert('sin hermano, vamos a un nivel superior')
             nextElement = nextElement.parentNode
-            //alert('id del hermano: ' + nextElement.getAttribute('id'));            
+            //alert('id del hermano: ' + nextElement.getAttribute('id'));
             if (nextElement==document.getElementById(windowTableParentElement) || nextElement==document.getElementsByTagName('BODY')[0]) {
               //alert('hemos llegado al padre!')
               goToNextWindowTable();

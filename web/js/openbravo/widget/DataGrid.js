@@ -507,6 +507,8 @@ dojo.widget.defineWidget(
 		cellDoubleClicked: function(evt) {
       isClickOnGrid=true;
       focusGrid();
+      currentWindowElementType = 'grid';
+      setWindowElementFocus('grid_table_dummy_input','id');
 			var node = evt.target;
 			var isCell = node.nodeName.toLowerCase() == "td";
 			if (!isCell) {
@@ -528,6 +530,8 @@ dojo.widget.defineWidget(
 		cellClicked: function(evt) {
       isClickOnGrid=true;
       focusGrid();
+      currentWindowElementType = 'grid';
+      setWindowElementFocus('grid_table_dummy_input','id');
 			if (this.locked) return;
 			this.lastHoveredColumn = null;
 			var isCell = (evt.target.nodeName.toLowerCase() == "td");

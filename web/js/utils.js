@@ -55,7 +55,7 @@ var pressedKeyCode = null;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '4984';
+  var number = '5055';
   return number;
 }
 
@@ -1205,7 +1205,8 @@ function keyControl(pushedKey) {
 /**
 * Put the focus on the Menu frame
 */
-function putFocusOnMenu(){
+function putFocusOnMenu() {
+  if (parent.frameAplicacion.selectedArea == 'tabs') parent.frameAplicacion.swichSelectedArea();
   parent.frameMenu.focus();
   return true;
 }
@@ -1213,7 +1214,7 @@ function putFocusOnMenu(){
 /**
 * Put the focus on the Window frame
 */
-function putFocusOnWindow(){
+function putFocusOnWindow() {
   parent.frameMenu.onBlurMenu();
   parent.frameAplicacion.selectedArea = 'window'
   parent.frameAplicacion.focus();
