@@ -1287,6 +1287,7 @@ Calendar.prototype.callHandler = function () {
 /** Calls the second user handler (closeHandler). */
 Calendar.prototype.callCloseHandler = function () {
 	if (this.onClose) {
+    isTabBlocked = false;
 		this.onClose(this);
 	}
 	this.hideShowCovered();

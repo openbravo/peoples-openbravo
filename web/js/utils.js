@@ -48,6 +48,7 @@ var isPopupLoadingWindowLoaded=false;
 
 var isCtrlPressed = null;
 var isAltPressed = null;
+var isTabBlocked = false;
 var pressedKeyCode = null;
 
 /**
@@ -3192,6 +3193,7 @@ function getDateFormat(str_format) {
 * @type Boolean
 */
 function showCalendar(id, value, debug, format, showsTime, showsOtherMonths) {
+  isTabBlocked = true;
   //var el = document.getElementById(id);
   var el = eval("document." + id);
   if (showsTime==null) showsTime = "";

@@ -825,14 +825,16 @@ function getLastWindowElement() {
 
 function windowTabKey(state) {
   if (state==true) {
-    isTabPressed = true;
-    isSelectedComboOpened = false;
-    if (selectedArea == 'window') {
-      var obj = getNextWindowElement();
-      setWindowElementFocus(obj);
-    } else if (selectedArea == 'tabs') {
-      var obj = getNextTab();
-      setTabFocus(obj);
+    if (isTabBlocked == false) {
+      isTabPressed = true;
+      isSelectedComboOpened = false;
+      if (selectedArea == 'window') {
+        var obj = getNextWindowElement();
+        setWindowElementFocus(obj);
+      } else if (selectedArea == 'tabs') {
+        var obj = getNextTab();
+        setTabFocus(obj);
+      }
     }
   } else {
     isTabPressed = false;
@@ -842,14 +844,16 @@ function windowTabKey(state) {
 
 function windowShiftTabKey(state) {
   if (state==true) {
-    isTabPressed = true;
-    isSelectedComboOpened = false;
-    if (selectedArea == 'window') {
-      var obj = getPreviousWindowElement();
-      setWindowElementFocus(obj);
-    } else if (selectedArea == 'tabs') {
-      var obj = getPreviousTab();
-      setTabFocus(obj);
+    if (isTabBlocked == false) {
+      isTabPressed = true;
+      isSelectedComboOpened = false;
+      if (selectedArea == 'window') {
+        var obj = getPreviousWindowElement();
+        setWindowElementFocus(obj);
+      } else if (selectedArea == 'tabs') {
+        var obj = getPreviousTab();
+        setTabFocus(obj);
+      }
     }
   } else {
     isTabPressed = false;
