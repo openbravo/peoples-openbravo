@@ -50,6 +50,7 @@ var isCtrlPressed = null;
 var isAltPressed = null;
 var isTabBlocked = false;
 var pressedKeyCode = null;
+var isInputFile = false;
 
 /**
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
@@ -985,6 +986,9 @@ function keyControl(pushedKey) {
   if (pushedKey.ctrlKey) isCtrlPressed = true;
   if (pushedKey.altKey) isAltPressed = true;
   pressedKeyCode = pushedKey.keyCode;
+  if (isTabPressed == true && isInputFile == true) {
+    return true;
+  }
 
   var keyCode = pushedKey.keyCode ? pushedKey.keyCode : pushedKey.which ? pushedKey.which : pushedKey.charCode;
   if (isKeyboardLocked==false) {
