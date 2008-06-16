@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_background;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.businessUtility.EMail;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.utils.FormatUtilities;
 
 
 public class PeriodicAlert implements BackgroundProcess {
@@ -57,7 +58,7 @@ public class PeriodicAlert implements BackgroundProcess {
          msg += "\n\nAlert: "+alert[i].description+"\nRecord: "+alert[i].recordId;
         }
       }
-      periodicBG.addLog("inserted alerts "+insertions);
+     
       if (insertions>0) {
        //sendmail
         PeriodicAlertData[] mail =PeriodicAlertData.prepareMails(periodicBG.conn, alertRule.adAlertruleId);
@@ -65,7 +66,8 @@ public class PeriodicAlert implements BackgroundProcess {
           for (int i=0; i<mail.length; i++) {
             String head = Utility.messageBD(periodicBG.conn, "AlertMailHead", mail[i].adLanguage)+"\n";
             EMail email = new EMail(null, mail[i].smtphost, mail[i].mailfrom, mail[i].mailto, "[OB Alert] "+alertRule.name, head+msg);
-            email.setEMailUser(mail[i].requestuser, mail[i].requestuserpw);
+            String pwd = FormatUtilities.encryptDecrypt(mail[i].requestuserpw, false);
+            email.setEMailUser(mail[i].requestuser, pwd);
             if("OK".equals(email.send())) periodicBG.addLog("mail sent ok");
             else periodicBG.addLog("error sending mail");
           }
