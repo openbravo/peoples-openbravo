@@ -36591,15 +36591,15 @@ For example, if you want to create different invoices for each ship location for
 <!--800296 CREATEDBY-->
 <!--800296-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800296 UPDATED-->
-<!--800296-->              <UPDATED><![CDATA[2005-11-07 18:48:38.0]]></UPDATED>
+<!--800296-->              <UPDATED><![CDATA[2008-06-16 13:59:36.0]]></UPDATED>
 <!--800296 UPDATEDBY-->
-<!--800296-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--800296-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800296 COLUMNNAME-->
 <!--800296-->              <COLUMNNAME><![CDATA[MA_Process_ID]]></COLUMNNAME>
 <!--800296 NAME-->
-<!--800296-->              <NAME><![CDATA[Process]]></NAME>
+<!--800296-->              <NAME><![CDATA[Activity]]></NAME>
 <!--800296 PRINTNAME-->
-<!--800296-->              <PRINTNAME><![CDATA[Process]]></PRINTNAME>
+<!--800296-->              <PRINTNAME><![CDATA[Activity]]></PRINTNAME>
 <!--800296 DESCRIPTION-->
 <!--800296-->              <DESCRIPTION><![CDATA[A series of actions carried out in sequential order.]]></DESCRIPTION>
 <!--800296 HELP-->
