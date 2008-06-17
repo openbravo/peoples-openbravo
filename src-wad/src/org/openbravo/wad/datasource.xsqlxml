@@ -188,7 +188,7 @@ package="org.openbravo.wad.Window">
 
 <FIELDS_TMP id="sectionActionSearchs">
    &#60;SqlMethod name="selectActDef<PARAMETER_TMP id="params12">table</PARAMETER_TMP>" type="preparedStatement" return="String" default=""&#62;
-    &#60;SqlMethodComment&#62;Select for auxiliar field&#60;/SqlMethodComment&#62;
+    &#60;SqlMethodComment&#62;Select for action search&#60;/SqlMethodComment&#62;
     &#60;Sql&#62;&#60;&#33;[CDATA[
         <PARAMETER_TMP id="Select12">select</PARAMETER_TMP> 
     ]]&#62;&#60;/Sql&#62;

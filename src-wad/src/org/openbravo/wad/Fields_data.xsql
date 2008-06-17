@@ -367,7 +367,14 @@
         SELECT MAX(columnname) AS NAME FROM AD_COLUMN, AD_TABLE 
         WHERE AD_TABLE.NAME = ?
           AND AD_COLUMN.ad_table_id = AD_TABLE.ad_table_id
-          AND isidentifier = 'Y' AND SeqNo = (CASE TO_CHAR(AD_TABLE.NAME) WHEN 'C_PaySelectionCheck' THEN 2 ELSE 1 END)
+          AND isidentifier = 'Y' 
+          AND SeqNo = (CASE TO_CHAR(AD_TABLE.NAME) 
+                          WHEN 'C_PaySelectionCheck' THEN 2 
+                          ELSE (SELECT MIN(SeqNo) 
+                                  FROM AD_Column 
+                                 WHERE AD_Table_ID=AD_TABLE.AD_Table_ID 
+                                   AND IsIdentifier='Y')
+                           END)
       </Sql>
       <Parameter name="tableName"/>
   </SqlMethod>
