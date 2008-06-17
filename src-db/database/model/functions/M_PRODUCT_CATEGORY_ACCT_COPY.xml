@@ -78,9 +78,9 @@
       IF(Cur_Parameter.ParameterName='M_Product_Category_ID') THEN
         v_M_Product_Category_ID:=Cur_Parameter.P_Number;
         DBMS_OUTPUT.PUT_LINE('  M_Product_Category_ID=' || v_M_Product_Category_ID) ;
-      ELSIF(Cur_Parameter.ParameterName='C_Acctschema_ID') THEN
+      ELSIF(Cur_Parameter.ParameterName='C_AcctSchema_ID') THEN
         v_C_Acctschema_ID:=Cur_Parameter.P_Number;
-        DBMS_OUTPUT.PUT_LINE('  C_Acctschema_ID=' || v_C_Acctschema_ID) ;
+        DBMS_OUTPUT.PUT_LINE('  C_AcctSchema_ID=' || v_C_Acctschema_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
       END IF;
