@@ -40,6 +40,8 @@
     v_C_Currency_ID NUMBER;
     v_TotalPhases NUMBER;
     v_TotalLines NUMBER;
+    v_BPName VARCHAR2(2000):='';
+    v_SupplierName VARCHAR2(2000):='';
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance
@@ -139,18 +141,28 @@
           IF (Cur_SO.PROJECTCATEGORY<>'S' AND Cur_SO.CREATETEMPPRICELIST='Y') THEN
 
             Ad_Sequence_Next('M_PriceList', v_AD_Client_ID, v_PriceList) ;
+            
+            SELECT NAME 
+            INTO v_BPName
+            FROM C_BPARTNER 
+            WHERE C_BPARTNER_ID = Cur_SO.C_BPARTNER_ID; 
+                       
             INSERT
             INTO m_pricelist
               (
                 M_PRICELIST_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
                 CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-                NAME, DESCRIPTION, ISSOPRICELIST, C_Currency_ID
+                NAME, 
+				DESCRIPTION, 
+	        	ISSOPRICELIST, C_Currency_ID
               )
               VALUES
               (
                 v_PriceList, v_AD_Client_ID, v_AD_Org_ID, 'Y',
                 now(), v_AD_User_ID, now(), v_AD_User_ID,
-                'PR-' || Cur_SO.value || '-V', '* ' || Cur_SO.VALUE || ' - *' || '-V', 'Y', Cur_SO.C_Currency_ID
+                (Cur_SO.value || ' - ' || v_BPName), 
+				(Cur_SO.value || ' - ' || v_BPName), 
+				'Y', Cur_SO.C_Currency_ID
               )
               ;
             Ad_Sequence_Next('M_PriceList_Version', v_AD_Client_ID, v_PriceListVersion) ;
@@ -159,18 +171,18 @@
               (
                 M_PRICELIST_VERSION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
                 CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-                NAME, DESCRIPTION, M_PRICELIST_ID, M_DISCOUNTSCHEMA_ID,
+                NAME, 
+				DESCRIPTION, 
+				M_PRICELIST_ID, M_DISCOUNTSCHEMA_ID,
                 VALIDFROM
               )
               VALUES
               (
                 v_PriceListVersion, v_AD_Client_ID, v_AD_Org_ID, 'Y',
                 now(), v_AD_User_ID, now(), v_AD_User_ID,
-                ('PR-' || Cur_SO.VALUE || '-V'), ('PR-' || Cur_SO.VALUE || '-V'), v_PriceList, (SELECT MIN(M_DISCOUNTSCHEMA_ID) AS ID
-                FROM M_DISCOUNTSCHEMA
-                WHERE isactive='Y'
-                )
-                ,
+                (Cur_SO.value || ' - ' ||v_BPName|| ' - ' ||TRUNC(now(), 'DD')), 
+				(Cur_SO.value || ' - ' ||v_BPName|| ' - ' ||TRUNC(now(), 'DD')), 
+				v_PriceList, (SELECT MIN(M_DISCOUNTSCHEMA_ID) AS ID FROM M_DISCOUNTSCHEMA WHERE isactive='Y'),
                 TRUNC(now(), 'DD')
               )
               ;
@@ -187,7 +199,7 @@
                 VALUES
                 (
                   v_PriceListVersion, Cur_Lines.M_Product_ID, v_AD_Client_ID, v_AD_Org_ID,
-                   'Y', now(), v_AD_User_ID, now(), v_AD_User_ID,
+                  'Y', now(), v_AD_User_ID, now(), v_AD_User_ID,
                   Cur_Lines.PLANNEDPRICE, Cur_Lines.PLANNEDPRICE, Cur_Lines.PLANNEDPRICE
                 )
                 ;
@@ -199,18 +211,34 @@
               AND PLANNEDPOPRICE IS NOT NULL;
             IF v_TotalLines>0 THEN
               Ad_Sequence_Next('M_PriceList', v_AD_Client_ID, v_PriceListPO) ;
-              INSERT
+              
+              SELECT max(bp.name) 
+			  INTO v_SupplierName
+			  FROM c_project p, c_project_vendor pv, c_bpartner bp 
+			  WHERE p.c_project_id = v_Record_ID 
+			  AND p.c_project_id = pv.c_project_id 
+			  AND pv.c_bpartner_id = bp.c_bpartner_id 
+			  AND pv.isactive = 'Y';
+	      	  IF (v_SupplierName IS NULL) THEN
+			  v_SupplierName = '';
+	     	  END IF;
+              
+	      INSERT
               INTO m_pricelist
                 (
                   M_PRICELIST_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
                   CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-                  NAME, DESCRIPTION, ISSOPRICELIST, C_Currency_ID
+                  NAME, 
+	              DESCRIPTION, 
+		          ISSOPRICELIST, C_Currency_ID
                 )
                 VALUES
                 (
                   v_PriceListPO, v_AD_Client_ID, v_AD_Org_ID, 'Y',
                   now(), v_AD_User_ID, now(), v_AD_User_ID,
-                  'PR-' || Cur_SO.value || '-C', '* ' || Cur_SO.VALUE || ' - *' || '-C', 'N', Cur_SO.C_Currency_ID
+                  (Cur_SO.value || ' - ' ||v_SupplierName), 
+	              (Cur_SO.value || ' - ' ||v_SupplierName),
+		          'N', Cur_SO.C_Currency_ID
                 )
                 ;
               Ad_Sequence_Next('M_PriceList_Version', v_AD_Client_ID, v_PriceListVersionPO) ;
@@ -218,19 +246,19 @@
               INTO M_PRICELIST_VERSION
                 (
                   M_PRICELIST_VERSION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-                  CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME,
-                  DESCRIPTION, M_PRICELIST_ID, M_DISCOUNTSCHEMA_ID, VALIDFROM
+                  CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
+		  		  NAME,
+                  DESCRIPTION, 
+		  		  M_PRICELIST_ID, M_DISCOUNTSCHEMA_ID, 
+		  		  VALIDFROM
                 )
                 VALUES
                 (
                   v_PriceListVersionPO, v_AD_Client_ID, v_AD_Org_ID, 'Y',
                   now(), v_AD_User_ID, now(), v_AD_User_ID,
-                  ('PR-' || Cur_SO.VALUE || '-C'), ('PR-' || Cur_SO.VALUE || '-C'), v_PriceListPO,
-                  (SELECT MIN(M_DISCOUNTSCHEMA_ID) AS ID
-                  FROM M_DISCOUNTSCHEMA
-                  WHERE isactive='Y'
-                  )
-                  ,
+                  (Cur_SO.value || ' - ' ||v_SupplierName|| ' - ' ||TRUNC(now(), 'DD')), 
+		          (Cur_SO.value || ' - ' ||v_SupplierName||' - ' ||TRUNC(now(), 'DD')), 
+		          v_PriceListPO, (SELECT MIN(M_DISCOUNTSCHEMA_ID) AS ID FROM M_DISCOUNTSCHEMA WHERE isactive='Y'),
                   TRUNC(now(), 'DD')
                 )
                 ;

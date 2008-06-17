@@ -87,8 +87,8 @@
           SET ISACTIVE='N',
           updated=now(),
           updatedby=v_AD_User_ID
-        WHERE M_PRICELIST_VERSION_ID IN
-          (  SELECT M_PRICELIST_VERSION_ID FROM C_PROJECT WHERE C_PROJECT_ID=v_p_Record_ID)
+        WHERE M_PRICELIST_ID IN
+          (  SELECT M_PRICELIST_ID FROM C_PROJECT WHERE C_PROJECT_ID=v_p_Record_ID)
           ;
         UPDATE M_PRICELIST
           SET ISACTIVE='N',
@@ -101,11 +101,8 @@
           SET ISACTIVE='N',
           updated=now(),
           updatedby=v_AD_User_ID
-        WHERE M_PRICELIST_VERSION_ID IN
-          ( SELECT M_PRICELIST_VERSION_ID
-          FROM C_PROJECT_VENDOR
-          WHERE C_PROJECT_ID=v_p_Record_ID
-          )
+        WHERE M_PRICELIST_ID IN
+          ( SELECT M_PRICELIST_ID FROM C_PROJECT_VENDOR WHERE C_PROJECT_ID=v_p_Record_ID)
           ;
         UPDATE M_PRICELIST
           SET ISACTIVE='N',
