@@ -973,14 +973,12 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 <PARAMETER_TMP id="sectionIsHighVolume4">    xmlDocument.setParameter("paramSessionDate", strParamSessionDate);</PARAMETER_TMP>
 
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    {
-      OBError myMessage = vars.getMessage(tabId);
-      vars.removeMessage(tabId);
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
+    OBError myMessage = vars.getMessage(tabId);
+    vars.removeMessage(tabId);
+    if (myMessage!=null) {
+      xmlDocument.setParameter("messageType", myMessage.getType());
+      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
     }
     <FIELDS_TMP id="selDisplayLogic">xmlDocument.setParameter("displayLogic", getDisplayLogicContext(vars, boolNew));</FIELDS_TMP>
     <FIELDS_TMP id="encryptionsFields">
@@ -993,10 +991,20 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       xmlDocument.setData("structure1",data);
       <PARAMETER_TMP id="hasOrgKey">xmlDocument.setParameter("paramCurrentOrgId",data[0].getField("adOrgId"));</PARAMETER_TMP>
     } else {
-      FieldProvider[] dataAux = new FieldProvider[1];
-      dataAux[0] = dataField;
-      <PARAMETER_TMP id="hasOrgKey">xmlDocument.setParameter("paramCurrentOrgId",data[0].getField("adOrgId"));</PARAMETER_TMP>
-      xmlDocument.setData("structure1",dataAux);
+      <PARAMETER_TMP id="hasOrgKey">
+      try{
+      </PARAMETER_TMP>
+        FieldProvider[] dataAux = new FieldProvider[1];
+        dataAux[0] = dataField;
+        <PARAMETER_TMP id="hasOrgKey">xmlDocument.setParameter("paramCurrentOrgId",data[0].getField("adOrgId"));</PARAMETER_TMP>
+        xmlDocument.setData("structure1",dataAux);
+      <PARAMETER_TMP id="hasOrgKey">
+      }catch (Exception e){
+        if (myMessage!=null) {
+          bdErrorGeneral(response, myMessage.getTitle(), myMessage.getMessage());
+        } else throw new ServletException(e);
+      }
+      </PARAMETER_TMP>
     }
 <PARAMATER_TMP id="fieldControlsJavaCode"></PARAMATER_TMP>
     xmlDocument.setParameter("scriptOnLoad", getShortcutScript());
