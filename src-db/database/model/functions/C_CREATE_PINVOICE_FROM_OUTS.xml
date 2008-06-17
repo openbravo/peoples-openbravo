@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -197,7 +197,7 @@
             ISSOTRX, DOCUMENTNO, DOCSTATUS, DOCACTION,
             PROCESSING, PROCESSED, POSTED, C_DOCTYPE_ID,
             C_DOCTYPETARGET_ID, C_ORDER_ID, DESCRIPTION,
-            ISPRINTED, SALESREP_ID, DATEINVOICED,
+            ISPRINTED, SALESREP_ID, DATEINVOICED, TAXDATE,
             DATEPRINTED, DATEACCT, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID,
             POREFERENCE, ISDISCOUNTPRINTED, DATEORDERED, C_CURRENCY_ID,
             PAYMENTRULE, C_PAYMENTTERM_ID, C_CHARGE_ID, CHARGEAMT,
@@ -213,7 +213,7 @@
              'N', v_DocumentNo, 'DR', 'CO',
              'N', 'N', 'N', 0,
             v_DocType_ID, NULL, NULL,
-            'N', NULL, v_DateInvoiced,
+            'N', NULL, v_DateInvoiced, v_DateInvoiced,
             NULL, v_DateInvoiced, v_BPartner_ID, v_BPLocation_ID,
             v_ReferenceNo, 'Y', NULL, v_Currency_ID,
             v_PaymentRule, v_PaymentTerm_ID, NULL, 0,

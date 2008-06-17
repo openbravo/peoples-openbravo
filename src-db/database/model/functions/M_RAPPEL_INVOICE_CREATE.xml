@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -340,8 +340,8 @@
             ISSOTRX, DOCUMENTNO, DOCSTATUS, DOCACTION,
             PROCESSING, PROCESSED, POSTED, C_DOCTYPE_ID,
             C_DOCTYPETARGET_ID, C_ORDER_ID, DESCRIPTION,
-            ISPRINTED, SALESREP_ID, DATEINVOICED,
-            DATEPRINTED, DATEACCT, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID,
+            ISPRINTED, SALESREP_ID, DATEINVOICED, DATEPRINTED, 
+            TAXDATE, DATEACCT, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID,
             POREFERENCE, ISDISCOUNTPRINTED, DATEORDERED, C_CURRENCY_ID,
             PAYMENTRULE, C_PAYMENTTERM_ID, C_CHARGE_ID, CHARGEAMT,
             TOTALLINES, GRANDTOTAL, M_PRICELIST_ID, ISTAXINCLUDED,
@@ -357,8 +357,8 @@
             CUR_INVOICE.ISSOTRX, v_DocumentNo, 'DR', 'CO',
              'N', 'N', 'N', CUR_INVOICE.C_DOCTYPE_ID,
             CUR_INVOICE.C_DOCTYPETARGET_ID, NULL, NULL,
-            'N', NULL, now(),
-            NULL, now(), CUR_INVOICE.C_BPARTNER_ID, CUR_INVOICE.C_BPARTNER_LOCATION_ID,
+            'N', NULL, now(), NULL, 
+            now(), now(), CUR_INVOICE.C_BPARTNER_ID, CUR_INVOICE.C_BPARTNER_LOCATION_ID,
             NULL, 'N', NULL, CUR_INVOICE.C_CURRENCY_ID,
             v_paymentRule, v_paymenttermId, NULL, 0,
             0, 0, v_pricelistId, 'N',

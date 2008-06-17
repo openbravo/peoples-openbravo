@@ -390,7 +390,8 @@
                   Processing, Processed, C_DocType_ID, C_DocTypeTarget_ID,
                   Description, SalesRep_ID,
                   DateInvoiced,
-                  DatePrinted, IsPrinted, DateAcct, C_PaymentTerm_ID,
+                  DatePrinted, IsPrinted, DateAcct, TaxDate, 
+                  C_PaymentTerm_ID,
                   C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID, POReference,
                   DateOrdered, IsDiscountPrinted, C_Currency_ID, PaymentRule,
                   C_Charge_ID, ChargeAmt, IsSelfService, TotalLines,
@@ -400,12 +401,12 @@
                 VALUES
                 (
                   p_Invoice_ID, Cur_Order.C_Order_ID, Cur_Order.AD_Client_ID, Cur_Order.AD_Org_ID,
-                   'Y', now(), 0, now(),
-                  0, Cur_Order.IsSOTrx, v_DocumentNo, 'DR',
-                   'CO', 'N', 'N', v_DocType_ID,
-                  v_DocType_ID, Cur_Order.Description,
-                  Cur_Order.SalesRep_ID, v_DateInvoiced, NULL, 'N',
-                  v_DateInvoiced, -- DateInvoiced=DateAcct
+                  'Y', now(), 0, now(),0, 
+                  Cur_Order.IsSOTrx, v_DocumentNo, 'DR', 'CO', 
+                  'N', 'N', v_DocType_ID, v_DocType_ID, 
+                  Cur_Order.Description, Cur_Order.SalesRep_ID, 
+                  v_DateInvoiced, 
+                  NULL, 'N', v_DateInvoiced, v_DateInvoiced, -- DateInvoiced=DateAcct
                   Cur_Order.C_PaymentTerm_ID, Cur_Order.C_BPartner_ID, Cur_Order.BillTo_ID, Cur_Order.AD_User_ID,
                   Cur_Order.POReference, Cur_Order.DateOrdered, Cur_Order.IsDiscountPrinted, Cur_Order.C_Currency_ID,
                   Cur_Order.PaymentRule, Cur_Order.C_Charge_ID, Cur_Order.ChargeAmt, Cur_Order.IsSelfService,
@@ -902,7 +903,7 @@
                       DocAction, Processing, Processed, C_DocType_ID,
                       C_DocTypeTarget_ID, Description,
                       SalesRep_ID, DateInvoiced, DatePrinted, IsPrinted,
-                      DateAcct,
+                      DateAcct, TaxDate,
                       C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID,
                       POReference, DateOrdered, IsDiscountPrinted, C_Currency_ID,
                       PaymentRule, C_Charge_ID, ChargeAmt, IsSelfService,
@@ -918,7 +919,7 @@
                        'CO', 'N', 'N', v_DocType_ID,
                       v_DocType_ID, v_description,
                       Cur_InvoiceSchedule.SalesRep_ID, v_DateInvoiced, NULL, 'N',
-                      v_DateInvoiced, -- DateInvoiced=DateAcct
+                      v_DateInvoiced, v_DateInvoiced, -- DateInvoiced=DateAcct
                       Cur_InvoiceSchedule.C_PaymentTerm_ID, Cur_InvoiceSchedule.C_BPartner_ID, Cur_InvoiceSchedule.BillTo_ID, Cur_InvoiceSchedule.AD_User_ID,
                       Cur_InvoiceSchedule.POReference, Cur_InvoiceSchedule.DateOrdered, Cur_InvoiceSchedule.IsDiscountPrinted, Cur_InvoiceSchedule.C_Currency_ID,
                       Cur_InvoiceSchedule.PaymentRule, NULL, 0, 'N',
