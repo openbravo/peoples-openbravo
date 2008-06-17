@@ -537,10 +537,24 @@ public class ImportOrder extends ImportProcess {
     	  no = ImportOrderData.deleteOld(con, conn, getAD_Client_ID());
           if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
         }
-      addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noOrderError + "; ");
-      addLog("Order inserted: " + noInsert + "; ");
-      addLog("Order line inserted: " + noInsertLine + "; ");
-      addLog("Procesados: " + strPostMessage);
+            
+      addLog(Utility.messageBD(conn, "Orders not imported", vars.getLanguage()) + ": " + noOrderError + "; ");
+      addLog("Orders inserted: " + noInsert + "; ");
+      addLog("Orders line inserted: " + noInsertLine + "; ");
+      addLog("Processed: " + strPostMessage);
+      
+      if (noOrderError == 0){
+      	myError.setType("Success");
+      	myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+      }else if (noInsert > 0 || noInsertLine > 0){    	
+      		myError.setType("Warning");
+      		myError.setTitle(Utility.messageBD(conn, "Some orders could not be imported", vars.getLanguage()));
+      	}else {
+      		myError.setType("Error");
+      		myError.setTitle(Utility.messageBD(conn, " No orders could be imported", vars.getLanguage()));
+      }
+      myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
+      
       conn.releaseCommitConnection(con);
     } catch (NoConnectionAvailableException ex) {
       throw new ServletException("@CODE=NoConnectionAvailable");
@@ -555,9 +569,6 @@ public class ImportOrder extends ImportProcess {
       } catch (Exception ignored) {}
       throw new ServletException("@CODE=@" + ex3.getMessage());
     }
-	myError.setType("Success");  
-    myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
-    myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
     return myError;
   }
 

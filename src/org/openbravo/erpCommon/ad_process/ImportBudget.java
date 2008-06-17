@@ -242,11 +242,20 @@ public class ImportBudget extends ImportProcess {
       myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
       return myError;
     }
-    addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noBudgetError + "; ");
+    addLog(Utility.messageBD(conn, "Budgets not imported", vars.getLanguage()) + ": " + noBudgetError + "; ");
     addLog("BudgetLine inserted: " + noInsert + "; ");
     addLog("BudgetLine updated: " + noUpdate);
-    myError.setType("Success");  
-    myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    
+    if (noBudgetError == 0){
+    	myError.setType("Success");
+    	myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    }else if (noInsert > 0 || noUpdate > 0){    	
+    		myError.setType("Warning");
+    		myError.setTitle(Utility.messageBD(conn, "Some budgets could not be imported", vars.getLanguage()));
+    	}else {
+    		myError.setType("Error");
+    		myError.setTitle(Utility.messageBD(conn, " No budgets could be imported", vars.getLanguage()));
+    }
     myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
     return myError;
 

@@ -342,15 +342,24 @@ public class ImportTax extends ImportProcess {
 			myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
 			return myError;
 		}
-    addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noTaxError + "; ");
+    addLog(Utility.messageBD(conn, "Taxes not imported", vars.getLanguage()) + ": " + noTaxError + "; ");
     addLog("Tax inserted: " + noTaxInsert + "; ");
     addLog("Tax updated: " + noTaxUpdate + "; ");
-    addLog("Tax Cat inserted: " + noTCInsert + "; ");
-    addLog("Tax Cat updated: " + noTCUpdate + "; ");
-    addLog("BP Tax Cat inserted: " + noBPTCInsert + "; ");
-    addLog("BP Tax Cat updated: " + noBPTCUpdate);
-    myError.setType("Success");  
-    myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    addLog("Tax Category inserted: " + noTCInsert + "; ");
+    addLog("Tax Category updated: " + noTCUpdate + "; ");
+    addLog("BPartner Tax Category inserted: " + noBPTCInsert + "; ");
+    addLog("BPartner Tax Category updated: " + noBPTCUpdate);
+    
+    if (noTaxError == 0){
+    	myError.setType("Success");
+    	myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    }else if (noTaxInsert > 0 || noTaxUpdate > 0 || noTCInsert > 0 || noTCUpdate > 0 || noBPTCInsert > 0 || noBPTCUpdate > 0){    	
+    		myError.setType("Warning");
+    		myError.setTitle(Utility.messageBD(conn, "Some taxes could not be imported", vars.getLanguage()));
+    	}else {
+    		myError.setType("Error");
+    		myError.setTitle(Utility.messageBD(conn, " No taxes could be imported", vars.getLanguage()));
+    }
     myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
     return myError;
   } // doIt

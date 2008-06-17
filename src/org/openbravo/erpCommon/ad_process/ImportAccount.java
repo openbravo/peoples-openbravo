@@ -312,9 +312,21 @@ public class ImportAccount extends ImportProcess {
       if (log4j.isDebugEnabled()) log4j.debug("Errors: " + noAccountError);
       if (log4j.isDebugEnabled()) log4j.debug("Inserts: " + noInsert);
       if (log4j.isDebugEnabled()) log4j.debug("Updates: " + noUpdate);
-      addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noAccountError + "; ");
+      addLog(Utility.messageBD(conn, "Elements not imported", vars.getLanguage()) + ": " + noAccountError + "; ");
       addLog("Elements inserted: " + noInsert + "; ");
       addLog("Elements updated: " + noUpdate + "; ");
+      
+      if (noAccountError == 0){
+      	myError.setType("Success");
+      	myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+      }else if (noInsert > 0 || noUpdate > 0){    	
+      		myError.setType("Warning");
+      		myError.setTitle(Utility.messageBD(conn, "Some elements could not be imported", vars.getLanguage()));
+      	}else {
+      		myError.setType("Error");
+      		myError.setTitle(Utility.messageBD(conn, " No elements could be imported", vars.getLanguage()));
+      }
+      
       conn.releaseCommitConnection(con);
   
       con = conn.getTransactionConnection();
@@ -363,8 +375,7 @@ public class ImportAccount extends ImportProcess {
       } catch (Exception ignored) {}
       throw new ServletException("@CODE=@" + ex3.getMessage());
     }
-    myError.setType("Success");  
-    myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    
     myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
     return myError;
   }

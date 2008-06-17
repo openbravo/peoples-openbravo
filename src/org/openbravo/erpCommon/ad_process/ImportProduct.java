@@ -281,13 +281,22 @@ public class ImportProduct extends ImportProcess {
 			if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
       }
       if (log4j.isDebugEnabled()) log4j.debug("Errors = " + noProductError);
-			addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noProductError + "; ");
+			addLog(Utility.messageBD(conn, "Products not imported", vars.getLanguage()) + ": " + noProductError + "; ");
 			addLog("Product inserted: " + noInsert + "; ");
 			addLog("Product updated: " + noUpdate + "; ");
 			addLog("ProductPO inserted: " + noInsertPO + "; ");
 			addLog("ProductPO updated: " + noUpdatePO);
-			myError.setType("Success");  
-		    myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+			
+			if (noProductError == 0){
+			    	myError.setType("Success");
+			    	myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+			    }else if (noInsert > 0 || noUpdate > 0 || noInsertPO > 0 || noUpdatePO > 0){    	
+			    		myError.setType("Warning");
+			    		myError.setTitle(Utility.messageBD(conn, "Some products could not be imported", vars.getLanguage()));
+			    	}else {
+			    		myError.setType("Error");
+			    		myError.setTitle(Utility.messageBD(conn, " No products could be imported", vars.getLanguage()));
+			    }			
 		    myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
 		    return myError;
   }

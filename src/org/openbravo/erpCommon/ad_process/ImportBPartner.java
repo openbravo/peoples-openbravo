@@ -255,11 +255,20 @@ public class ImportBPartner extends ImportProcess {
 			myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
 			return myError;
 		}
-    addLog(Utility.messageBD(conn, "Errors", vars.getLanguage()) + ": " + noBPartnerError + "; ");
-    addLog("BPartner inserted: " + noInsert + "; ");
-    addLog("BPartner updated: " + noUpdate);
-    myError.setType("Success");  
-    myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    addLog(Utility.messageBD(conn, "Business partners not imported", vars.getLanguage()) + ": " + noBPartnerError + "; ");
+    addLog("Business partners inserted: " + noInsert + "; ");
+    addLog("Business partners updated: " + noUpdate);
+    
+    if (noBPartnerError == 0){
+    	myError.setType("Success");
+    	myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
+    }else if (noInsert > 0 || noUpdate > 0){    	
+    		myError.setType("Warning");
+    		myError.setTitle(Utility.messageBD(conn, "Some business partners could not be imported", vars.getLanguage()));
+    	}else {
+    		myError.setType("Error");
+    		myError.setTitle(Utility.messageBD(conn, " No business partners could be imported", vars.getLanguage()));
+    }    
     myError.setMessage(Utility.messageBD(conn, getLog(), vars.getLanguage()));
     return myError;
 
