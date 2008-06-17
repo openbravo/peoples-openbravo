@@ -173,11 +173,10 @@
             )
             ;
         END LOOP;
-        v_Message:='@Project@:' || v_value || ' @awarded@';
+        v_Message:='@Project@ ' || v_value || ' @awarded@';
       END IF;
     ELSE
-      v_Resultstr:='@Projectclose@';
-      v_Message:='@Projectclose@';
+		RAISE_APPLICATION_ERROR(-20000, '@Projectclose@');
     END IF;
     --<<FINISH_PROCESS>>
     --  Update AD_PInstance
