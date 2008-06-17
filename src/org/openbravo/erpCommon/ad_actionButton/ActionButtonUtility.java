@@ -65,7 +65,10 @@ public class ActionButtonUtility {
           data1.setData("ID", "VO");
           v.addElement(data1);
         }        
-      } else if (strDocStatus.equals("CO")) {
+      } else if ((strDocStatus.equals("CO")) && 
+                !(strTable.equals("318")) &&  //C_Invoice
+                !(strTable.equals("319"))) {  //M_InOut
+        //Exclude Close for tables C_Invoice and M_InOut because it has no sense for them
         data1.setData("ID", "CL");
         v.addElement(data1);
       }
