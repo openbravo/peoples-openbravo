@@ -90,6 +90,17 @@
     function unHoverCell(cell) {
       cell.className = cell.className.replace(' DataGrid_Body_Cell_hover', '');
     }
+	
+	function onloadFunctions() {
+		var listInputs = document.getElementsByTagName('input');
+		for(var i=0; i < listInputs.length; i++){
+			if(listInputs[i].id == 'BpartnerId'){
+				var name  = listInputs[i].name;
+				var id = name.substring("inpcBPartnerId".length, name.length);
+				keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId"+id+"', 'inpcBpartnerId_D"+id+"', document.frmMain.inpcBpartnerId_D"+id+".value, 'Command', 'KEY');", "inpcBpartnerId_D"+id+"", "null");
+			}
+		}
+	}
   </script>
 
   <script language="JavaScript" type="text/javascript">
@@ -407,11 +418,11 @@
                           <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                             <tr>
                               <td>
-                                <input type="hidden" name="inpcBpartnerIdxx" id="fieldBpartnerId" value=""></input> 
+                                <input type="hidden" name="inpcBpartnerIdxx" id="BpartnerId" value=""></input> 
                                 <input class="dojoValidateValid TextBox_btn_OneCell_width" type="text"  name="inpcBpartnerId_Dxx" size="13" maxlength="100" value="" id="fieldBpartnerdescription"></input>
                               </td>
                               <td class="FieldButton_ContentCell">
-                                <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerIdxx', 'inpcBpartnerId_Dyy', document.frmMain.inpcBpartnerId_Dzz.value);return false;" id="fieldRefButtonBPartner">
+                                <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerIdxx', 'inpcBpartnerId_Dyy', document.frmMain.inpcBpartnerId_Dzz.value);return false;" id="fieldRefButtonBPartner">
                                  <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Business Partner';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
                                    <tr>
                                       <td class="FieldButton_bg">
