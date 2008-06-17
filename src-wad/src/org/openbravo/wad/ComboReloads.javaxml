@@ -36,7 +36,7 @@ public class ComboReloads<PARAMETER_TMP id="paramTabId">xx</PARAMETER_TMP> exten
     log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     
-
+    <PARAMETER_TMP id="parent">String parentOrg=vars.getStringParameter("inpParentOrganization");</PARAMETER_TMP>
     StringBuffer resultado = new StringBuffer();
     boolean isFirst=true;
     ComboTableData comboTableData = null;

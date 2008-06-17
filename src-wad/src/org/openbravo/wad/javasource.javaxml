@@ -961,7 +961,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     
     <LISTS_TMP id="sectionDetailParams">    xmlDocument.setParameter("<LIST_TMP id="paramName">dd</LIST_TMP>", str<LIST_TMP id="paramName">dd</LIST_TMP>);
     </LISTS_TMP>
-
+    <PARAMETER_TMP id="parent">xmlDocument.setParameter("parentOrg", currentPOrg);</PARAMETER_TMP>
     xmlDocument.setParameter("commandType", strCommand);
     xmlDocument.setParameter("buscador",buscador);
     xmlDocument.setParameter("windowId", windowId);

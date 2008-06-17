@@ -2510,9 +2510,12 @@ public class Wad extends DefaultHandler {
       if (data[i].reference.equals("17") && data[i].whereclause.equals("")) 
         data[i].whereclause =  "\"inp"+data[i].columnname+"\"";
       if (!data[i].whereclause.equals("") && data[i].isdisplayed.equals("Y") && (data[i].reference.equals("17") || data[i].reference.equals("18") || data[i].reference.equals("19"))) {
-        if (data[i].name.equalsIgnoreCase("AD_Org_ID"))
-          data[i].orgcode = "Utility.getContext(this, vars, \"#User_Org\", windowId, "+accesslevel+")";
-        else
+        if (data[i].name.equalsIgnoreCase("AD_Org_ID")) {
+          if (parentsFieldsData==null || parentsFieldsData.length == 0) 
+            data[i].orgcode = "Utility.getContext(this, vars, \"#User_Org\", windowId, "+accesslevel+")";
+          else
+            data[i].orgcode = "Utility.getReferenceableOrg(this, vars, parentOrg, windowId, "+accesslevel+")";
+        } else
           data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
         
         if (data[i].reference.equals("17")) { //List
@@ -2872,9 +2875,10 @@ public class Wad extends DefaultHandler {
     
     HashMap<String, String> shortcuts = new HashMap<String, String>();
     
-    String[] discard = {"hasOrgKey"};
+    String[] discard = {"hasOrgKey", ""};
     
     if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) discard[0] = "";
+    if (parentsFieldsData == null || parentsFieldsData.length==0) discard[1] = "hasParent";
     
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/Template_Edition", discard).createXmlDocument();;
     xmlDocument.setParameter("tab", tabNamePresentation);
