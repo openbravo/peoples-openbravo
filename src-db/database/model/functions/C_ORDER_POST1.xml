@@ -244,6 +244,12 @@
               C_INVOICE_CANCEL(NULL, v_Record_ID);
             END IF;
           END IF;
+          -- Set reserved quantity to 0
+          UPDATE C_ORDERLINE
+          SET QtyReserved = 0
+          WHERE c_orderline_id IN (select c_orderline_id
+                                   from c_orderline
+                                   where c_order_id = v_Record_id);
           -- Update Order
           v_ResultStr:='ReActivate';
           UPDATE C_ORDER
