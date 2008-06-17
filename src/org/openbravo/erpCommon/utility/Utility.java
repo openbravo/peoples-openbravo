@@ -326,6 +326,24 @@ public class Utility {
   }
   
   /**
+   * Returns the list of referenceables organizations from the current one. 
+   * This includes all its ancestors and descendants. 
+   * This method takes into account accessLevel and user level: useful to calculate org list for child tabs
+   * @param conn
+   * @param vars
+   * @param currentOrg
+   * @param window
+   * @param accessLevel
+   * @return
+   */
+  public static String getReferenceableOrg(ConnectionProvider conn, VariablesSecureApp vars, String currentOrg,  String window, int accessLevel) {
+    if (accessLevel==4||accessLevel==6) return "0"; //force to be org *
+    Vector<String> vComplete = getStringVector(getReferenceableOrg(vars, currentOrg));
+    Vector<String> vAccessible = getStringVector(getContext(conn, vars, "#User_Org", window, accessLevel));
+    return getVectorToString(getIntersectionVector(vComplete, vAccessible));
+  }
+  
+  /**
    * Returns the organization list for selectors, two cases are possible: <br>
    *   <li>Organization is empty (null or ""): accessible list of organizations will be returned. 
    *   This case is used in calls from filters to selectors.
@@ -377,6 +395,49 @@ public class Utility {
     return defStr;
   }
 
+  /**
+   * Returns a Vector<String> composed by the comma separated elements in String s 
+   * @param s
+   * @return
+   */
+  public static Vector<String> getStringVector(String s){
+    Vector<String> v = new Vector<String>();
+    StringTokenizer st = new StringTokenizer(s, ",", false);
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken().trim();
+      if (!v.contains(token)) v.add(token);
+    }
+    return v;    
+  }
+  
+  /**
+   * Returns a Vector<String> with the elements that appear in both v1 and v2 Vectors
+   * @param v1
+   * @param v2
+   * @return
+   */
+  public static Vector<String> getIntersectionVector(Vector<String> v1,  Vector<String> v2){
+    Vector<String> v = new Vector<String>();
+    for (int i=0; i<v1.size(); i++){
+      if (v2.contains(v1.elementAt(i)) && !v.contains(v1.elementAt(i))) v.add(v1.elementAt(i));
+    }
+    return v;
+  }
+  
+  /**
+   * Returns the elements in Vector v as an String separating with commas the elements
+   * @param v
+   * @return
+   */
+  public static String getVectorToString(Vector<String> v){
+    StringBuffer s = new StringBuffer();
+    for (int i=0; i<v.size(); i++) {
+      if (s.length()!=0) s.append(", ");
+      s.append(v.elementAt(i));
+    }
+    return s.toString();
+  }
+  
   /**
    * Parse the given string searching the @ elements to translate with the correct values.
    * 
