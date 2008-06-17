@@ -35,6 +35,8 @@
   v_ID   NUMBER;
   v_Processed  CHAR(1);
   v_UOM_ID    NUMBER(10);
+  v_IsSOTrx CHAR(1);
+  v_Count NUMBER;
 BEGIN
 IF (UPDATING) THEN
   IF NOT(COALESCE(:old.M_Product_ID,0) <> COALESCE(:NEW.M_Product_ID,0)
@@ -59,14 +61,24 @@ IF (UPDATING) THEN
    RAISE_APPLICATION_ERROR(-20202, 'Changed Product was Invoiced=' || :old.QtyInvoiced);
   END IF;
  ELSIF (UPDATING) THEN
+   SELECT issotrx INTO v_IsSOTrx
+   FROM c_order
+   WHERE c_order_id = :old.c_order_id;
    IF (:old.M_Product_ID <> :NEW.M_Product_ID) THEN
-  IF (:old.QtyReserved <> 0) THEN
-   RAISE_APPLICATION_ERROR(-20203, 'Changed Product had Reservation=' || :old.QtyReserved);
-  ELSIF (:old.QtyDelivered <> 0) THEN
-   RAISE_APPLICATION_ERROR(-20204, 'Changed Product had Delieveries=' || :old.QtyDelivered);
-  ELSIF (:old.QtyInvoiced <> 0) THEN
-   RAISE_APPLICATION_ERROR(-20205, 'Changed Product was Invoiced=' || :old.QtyInvoiced);
-  END IF;
+     IF (:old.QtyReserved <> 0) THEN
+       RAISE_APPLICATION_ERROR(-20203, 'Changed Product had Reservation=' || :old.QtyReserved);
+     ELSIF (:old.QtyDelivered <> 0) THEN
+       RAISE_APPLICATION_ERROR(-20204, 'Changed Product had Delieveries=' || :old.QtyDelivered);
+     ELSIF (:old.QtyInvoiced <> 0) THEN
+       RAISE_APPLICATION_ERROR(-20205, 'Changed Product was Invoiced=' || :old.QtyInvoiced);
+     ELSIF (v_IsSOTrx = 'N') THEN
+       SELECT count(*) INTO v_Count
+       FROM m_inoutline
+       WHERE c_orderline_id = :old.c_orderline_id;
+       IF (v_count > 0) THEN
+         RAISE_APPLICATION_ERROR(-20206, 'Changed Product has good receipts');
+       END IF;
+     END IF;
    END IF;
  END IF;
 
