@@ -76,7 +76,6 @@ String strProductRMailTextID = "";
 
   void processExpense(VariablesSecureApp vars, String strcBpartnerId, String strDatereportFrom, String strDatereportTo, String strDateInvoiced) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Save: Expense AP Invoice");
-    String strMessageResult = "";
     int line = 0;
     ExpenseAPInvoiceData[] data = ExpenseAPInvoiceData.select(this, Utility.getContext(this, vars, "#User_Client", "ExpenseAPInvoice"), Utility.getContext(this, vars, "#User_Org", "ExpenseAPInvoice"), strDatereportFrom, DateTimeData.nDaysAfter(this, strDatereportTo, "1"), strcBpartnerId);
     String strcBpartnerIdOld = "";
@@ -90,13 +89,15 @@ String strProductRMailTextID = "";
     String strPricelist = "";
     float qty = 0;
     float amount = 0;
+    int total=0;
 
     OBError myMessage = null;
+	myMessage = new OBError();
+	myMessage.setTitle("");
 
     Connection conn = null;
     try{
       conn = this.getTransactionConnection();
-//      String docTargetType = ExpenseAPInvoiceData.cDoctypeTarget(this, Utility.getContext(this, vars, "#User_Client", "ExpenseAPInvoice"), Utility.getContext(this, vars, "#User_Org", "ExpenseAPInvoice"));
       for (int i = 0; i<data.length; i++){
        String docTargetType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId, data[i].adOrgId);
        if (strcBpartnerIdOld!=data[i].cBpartnerId){
@@ -104,25 +105,28 @@ String strProductRMailTextID = "";
        // checks if there are invoices not processed that full filled the requirements
         String strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(conn, this, data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId, data[i].cCurrencyId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
         strPricelistId = ExpenseAPInvoiceData.pricelistId(this, data[i].cBpartnerId);
+        if (strPricelistId.equals("")){
+       	 throw new Exception ("PricelistNotdefined");
+        }
         strcBpartnerLocationId = ExpenseAPInvoiceData.bPartnerLocation(this, data[i].cBpartnerId);
-
-
-        
+        if (strcBpartnerLocationId.equals("")){
+       	 throw new Exception ("ShiptoNotdefined");
+        }
 
         if (strcInvoiceIdOld.equals("")) {
          strcInvoiceId = SequenceIdData.getSequence(this, "C_Invoice", data[i].adClientId);
-         String strDocumentno = Utility.getDocumentNo(this, vars, "", "C_Invoice", Utility.getContext(this, vars, "C_DocTypeTarget_ID", docTargetType)        , Utility.getContext(this, vars, "C_DocType_ID", docTargetType), false, true);
-         //String strDocType = ExpenseAPInvoiceData.cDoctypeId(this, docTargetType);
+         String strDocumentno = Utility.getDocumentNo(this, vars, "", "C_Invoice", Utility.getContext(this, vars, "C_DocTypeTarget_ID", docTargetType), Utility.getContext(this, vars, "C_DocType_ID", docTargetType), false, true);
          String strDocType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId, data[i].adOrgId);
-         //strcBpartnerLocationId = ExpenseAPInvoiceData.bPartnerLocation(this, data[i].cBpartnerId);
-         //String strSalesrepId = ExpenseAPInvoiceData.salesrepId(this, data[i].cBpartnerId);
          String strSalesrepId = "";
          String strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
+         if (strPaymentRule.equals(""))
+        	 throw new Exception ("FormofPaymentNotdefined");
          String strPaymentterm = ExpenseAPInvoiceData.paymentterm(this, data[i].cBpartnerId);
-
-         //strPricelistId = ExpenseAPInvoiceData.pricelistId(this, data[i].cBpartnerId);
+         if (strPaymentterm.equals(""))
+        	 throw new Exception ("PaymenttermNotdefined");
 
          ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, data[i].cCurrencyId, strSalesrepId, "N", "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
+         total++;
         }
         else strcInvoiceId = strcInvoiceIdOld;
        }
@@ -131,17 +135,17 @@ String strProductRMailTextID = "";
 
        ExpenseAPInvoiceData[] dataPrice = ExpenseAPInvoiceData.selectPrice(this, data[i].mProductId, strPricelistId, strDateInvoiced);
 
-       //SLInvoiceTaxData[] dataTax = SLInvoiceTaxData.select(this, strcInvoiceId);
-       //if (data!=null && data.length!=0){
        strPricestd = data[i].invoiceprice.equals("")?dataPrice[0].pricestd:data[i].invoiceprice;
        strPricelimit = data[i].invoiceprice.equals("")?dataPrice[0].pricelimit:data[i].invoiceprice;
        strPricelist = data[i].invoiceprice.equals("")?dataPrice[0].pricelist:data[i].invoiceprice;
        String bpartnerLocationShip = ExpenseAPInvoiceData.shipto(this, data[i].cBpartnerId);
+       if (bpartnerLocationShip.equals("")){
+    	   throw new Exception ("ShiptoNotdefined");
+       }
 
        strcTaxID = Tax.get(this, data[i].mProductId, strDateInvoiced, data[i].adOrgId, vars.getWarehouse(), strcBpartnerLocationId, bpartnerLocationShip, data[i].cProjectId, false);
-       //}
-       //checks if there are lines with the same conditions in the current invoice
 
+       //checks if there are lines with the same conditions in the current invoice
        ExpenseAPInvoiceData[] dataInvoiceline = ExpenseAPInvoiceData.selectInvoiceLine(conn, this, strcInvoiceId, data[i].adClientId, data[i].adOrgId, data[i].mProductId, data[i].cUomId, strPricestd, strPricelist, strPricelimit, data[i].description, strcTaxID);
 
        if (log4j.isDebugEnabled()) log4j.debug("dataInvoiceline: "+dataInvoiceline.length);
@@ -180,27 +184,39 @@ String strProductRMailTextID = "";
        
       }
       releaseCommitConnection(conn);
+      
+      myMessage.setType("Success");
+      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+      myMessage.setMessage(Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));
     } catch (ArrayIndexOutOfBoundsException f){
       try {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
       f.printStackTrace();
       log4j.warn("Rollback in transaction");
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "PriceListVersionNotFound");
+      myMessage.setType("Error");
+      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      myMessage.setMessage(Utility.messageBD(this, "PriceListVersionNotFound", vars.getLanguage()));
     } catch (Exception e){
       try {
          releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-    }
-    if (myMessage==null) {
-      myMessage = new OBError();
-      myMessage.setType("Success");
-      myMessage.setTitle("");
-      myMessage.setMessage(strMessageResult.equals("")?Utility.messageBD(this, "Success", vars.getLanguage()):strMessageResult);
-    }
+      myMessage.setType("Error");
+      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      if (e.getMessage().equals("PricelistNotdefined")){
+         myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage()));
+      } else if (e.getMessage().equals("FormofPaymentNotdefined")){
+     	 myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()));
+      } else if (e.getMessage().equals("PaymenttermNotdefined")) {
+     	 myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + Utility.messageBD(this, "PaymenttermNotdefined", vars.getLanguage()));
+      } else if (e.getMessage().equals("ShiptoNotdefined")) {
+         myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + Utility.messageBD(this, "ShiptoNotdefined", vars.getLanguage()));
+      } else {
+    	  myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+      }
+    }      
     vars.setMessage("ExpenseAPInvoice", myMessage);
   }
 

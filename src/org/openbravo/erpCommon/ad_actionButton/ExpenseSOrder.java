@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_actionButton;
 
 import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
 
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.reference.*;
@@ -125,6 +126,12 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               strCCurrencyId = data[i].cCurrencyId.equals("")?Utility.getContext(this, vars, "$C_Currency_ID", "ExpenseSOrder"):data[i].cCurrencyId;
 
               SEOrderBPartnerData[] data1 = SEOrderBPartnerData.select(this, data[i].cBpartnerId);
+              if (data[i].mPricelistId.equals("")){
+            	  throw new Exception ("PricelistNotdefined");
+              }
+              if (data1[0].paymentrule.equals("")){
+             	 throw new Exception ("FormofPaymentNotdefined");
+              }
 
               ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data[i].adClientId, data[i].adOrgId, vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType, docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId).equals("")?ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId):ExpenseSOrderData.billto(this, data[i].cBpartnerId), strCCurrencyId, data1[0].paymentrule, data1[0].cPaymenttermId.equals("")?SEOrderBPartnerData.selectPaymentTerm(this, data[i].adClientId):data1[0].cPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].mPricelistId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
             }
@@ -182,9 +189,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               if (pricelist.equals("")) pricelist="0";
               if (pricelimit.equals("")) pricelimit="0";
             } else {
-            priceactual = data[i].invoiceprice;
-            pricelist = "0";
-            pricelimit = "0";
+	            priceactual = data[i].invoiceprice;
+	            pricelist = "0";
+	            pricelimit = "0";
             }
             String strCTaxID = Tax.get(this, data[i].mProductId, DateTimeData.today(this), data[i].adOrgId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), data[i].cProjectId, true);
 
@@ -197,10 +204,11 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
         // Automatically processes Sales Order
     	if (strCompleteAuto.equals("Y")) {
 	        String mensaje = processOrder(vars, strCOrderId);
-	        if (!mensaje.equals("")) textoMensaje.append(mensaje).append("\n");
+	        if (!mensaje.equals("")) textoMensaje.append(mensaje).append("<br>");
     	}
       }
       myMessage.setType("Success");
+      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
       myMessage.setMessage(textoMensaje.toString() + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));
       return myMessage;
       //return (textoMensaje.toString() + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));
@@ -214,10 +222,16 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      myMessage.setType("Error");
-      myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+	  myMessage.setType("Error");
+	  myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+	  if (e.getMessage().equals("PricelistNotdefined")){
+ 	 	 myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage()));
+      } else if (e.getMessage().equals("FormofPaymentNotdefined")){
+      	 myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' ' + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()));
+      } else {
+    	  myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+      }
       return myMessage;
-      //return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
     }
   }
     //processes the created order
