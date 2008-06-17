@@ -7650,17 +7650,20 @@
 <!--800105 CREATEDBY-->
 <!--800105-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800105 UPDATED-->
-<!--800105-->              <UPDATED><![CDATA[2005-11-07 18:20:22.0]]></UPDATED>
+<!--800105-->              <UPDATED><![CDATA[2008-06-17 12:15:58.0]]></UPDATED>
 <!--800105 UPDATEDBY-->
-<!--800105-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--800105-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800105 VALUE-->
 <!--800105-->              <VALUE><![CDATA[MA_ProductionRun_Standard]]></VALUE>
 <!--800105 NAME-->
 <!--800105-->              <NAME><![CDATA[Create Standards]]></NAME>
 <!--800105 DESCRIPTION-->
-<!--800105-->              <DESCRIPTION><![CDATA[Process to insert the products of the Production Run. If the phase is of GroupUse used productos will go to "Global Use" tab. Else if is of noqty all the quantities will be zero.]]></DESCRIPTION>
+<!--800105-->              <DESCRIPTION><![CDATA[Inserts the standard values for the selected Work Requirement Phase and Cost Center version]]></DESCRIPTION>
 <!--800105 HELP-->
-<!--800105-->              <HELP><![CDATA[With this process will be inserted the products involved on the work requirement phase selected. If the phase is of global use all the used products (P-) will go to global use tab and if is of no quantity all the quantities will be zero.]]></HELP>
+<!--800105-->              <HELP><![CDATA[With this process the products involved on the selected work requirement phase will be inserted. If the phase is of global use all the used products (P-) will go to the global use tab and if it is of no quantity all the quantities will be zero.
+This process also inserts the correspondent machines, salary categories and indirect costs of the selected Cost Center version.
+If the Activity of the Work Requirement Phase uses toolsets they are also inserted.
+Depending on the configuration of the Cost Center the process will also calculate the Cost Center use.]]></HELP>
 <!--800105 ACCESSLEVEL-->
 <!--800105-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800105 ISUSERSTARTABLE-->
@@ -7675,6 +7678,8 @@
 <!--800105-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800105 ISJASPER-->
 <!--800105-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800105 ISEXTERNALSERVICE-->
+<!--800105-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800105**************--></AD_PROCESS>
 
 <!--800106**************--><AD_PROCESS>
