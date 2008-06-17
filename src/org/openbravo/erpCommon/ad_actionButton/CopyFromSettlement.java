@@ -179,6 +179,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("paramSettlement", strSettlement);
+    xmlDocument.setParameter("documentNo", strDocumentNo);  
     xmlDocument.setData("structure", data);
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -219,6 +220,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramSettlement", strSettlement);
     xmlDocument.setParameter("paramSettlementId", strSettlement);
     xmlDocument.setParameter("paramSettlementFromId", strSettlementFrom);
+    xmlDocument.setParameter("documentNo", strDocumentNo); 
     xmlDocument.setData("structure", data);
     xmlDocument.setData("structure2", data2);
     response.setContentType("text/html");
