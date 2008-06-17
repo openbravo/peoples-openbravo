@@ -22,10 +22,11 @@
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	SELECT Registration_Id, Isregistrationactive, Postpone_Date, Registernow, Companyname, Companyaddress, 
-      	Contactname, Contacttitle, Contactemail, Contactphone, CompanyIndustry, Companyrevenue, 
-      	Companynum_Employees, Issubscribecommercial, Issubscribedevelopment, Iscommercialcontact 
-      	FROM Ad_Registration_Info
+      	SELECT Registration_Id, Isregistrationactive, Postpone_Date, Registernow, ContactFirstName, ContactLastName, ContactEmail, 
+      	       ContactPhone, ContactJobTitle, CompanyName, CompanyIndustry, CompanyNum_Employees, CompanyWebsite, CompanyCountry, 
+      	       WantToPartner, IsEvaluating, Comments, ContactMe, OB_Vision, OB_Development, OB_Development_Announce,
+      	       OB_Commits
+      	 FROM Ad_Registration_Info
     ]]></Sql>
    </SqlMethod>
    <SqlMethod name="updateRegistrationId" type="preparedStatement" return="rowCount">

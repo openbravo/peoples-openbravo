@@ -39,6 +39,7 @@ import org.openbravo.erpCommon.ad_forms.Registration;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.erpCommon.ad_combos.PaisComboData;
 
 public class Register extends HttpSecureAppServlet {
  
@@ -82,7 +83,13 @@ public class Register extends HttpSecureAppServlet {
           if (result == null || result.equals(rd.registrationId)) {
             // TODO Something went wrong. Handle.
           }
-          message = Utility.messageBD(myPool, "REG_SUCCESS", vars.getLanguage());
+          
+          if( (!rd.registrationId.equals("") && rd.registrationId != null) && 
+              (rd.isregistrationactive.equals("") || rd.isregistrationactive == null || rd.isregistrationactive.equals("N")))            
+            message = Utility.messageBD(myPool, "REG_UNREGISTER", vars.getLanguage());
+          else
+            message = Utility.messageBD(myPool, "REG_SUCCESS", vars.getLanguage());
+          
           adviseRegistrationConfirm(response, vars, "SUCCESS", "Registration", message);
         } catch (IOException e) {
           if (e instanceof SSLHandshakeException) {
@@ -134,34 +141,52 @@ public class Register extends HttpSecureAppServlet {
     
     String registrationId = data.registrationId;
     String isregistrationactive = data.isregistrationactive;
-    String companyname = data.companyname;
-    String companyaddress = data.companyaddress;
-    String contacttitle = data.contacttitle;
-    String contactname = data.contactname;
-    String contactemail = data.contactemail;
+    // Contact Details
+    String contactfirstname = data.contactfirstname;
+    String contactlastname = data.contactlastname;
+    String contactjobtitle = data.contactjobtitle;
     String contactphone = data.contactphone;
+    String contactemail = data.contactemail;
+    // Company Details
+    String companyname = data.companyname;
+    String companywebsite = data.companywebsite;
+    String companycountry = data.companycountry;
     String companyindustry = data.companyindustry;
-    String companyrevenue = data.companyrevenue;
-    String companynumEmployees = data.companynumEmployees;
-    String issubscribecommercial = data.issubscribecommercial;
-    String issubscribedevelopment = data.issubscribedevelopment;
-    String iscommercialcontact = data.iscommercialcontact;
+    String companynumEmployees = data.companynumEmployees;    
+    String comments = data.comments;
+    String contactme = data.contactme;
+    // Newsletter Subscription
+    String vision = data.obVision;
+    String development = data.obDevelopment;
+    String developmentAnnounce = data.obDevelopmentAnnounce;
+    String commits = data.obCommits;
     
+    // Building request
     StringBuilder sb = new StringBuilder();
     sb.append("registrationId=" + (registrationId == null ? "" : registrationId) + "&");
     sb.append("isregistrationactive=" + (isregistrationactive == null ? "" : isregistrationactive) + "&");
-    sb.append("companyname=" + (companyname == null ? "" : companyname) + "&");
-    sb.append("companyaddress=" + (companyaddress == null ? "" : companyaddress) + "&");
-    sb.append("contacttitle=" + (contacttitle == null ? "" : contacttitle) + "&");
-    sb.append("contactname=" + (contactname == null ? "" : contactname) + "&");
-    sb.append("contactemail=" + (contactemail == null ? "" : contactemail) + "&");
+    sb.append("contactfirstname=" + (contactfirstname == null ? "" : contactfirstname) + "&");
+    sb.append("contactlastname=" + (contactlastname == null ? "" : contactlastname) + "&");
+    sb.append("contactjobtitle=" + (contactjobtitle == null ? "" : contactjobtitle) + "&");    
     sb.append("contactphone=" + (contactphone == null ? "" : contactphone) + "&");
+    sb.append("contactemail=" + (contactemail == null ? "" : contactemail) + "&");
+    sb.append("companyname=" + (companyname == null ? "" : companyname) + "&");
+    sb.append("companywebsite=" + (companywebsite == null ? "" : companywebsite) + "&");
+    try {
+      sb.append("companycountry=" + (companycountry == null ? "" : PaisComboData.selectName(this, companycountry) + "&"));
+    }
+    catch(Exception e) {
+      log4j.error("Error building registration request: " + e.getMessage());
+      sb.append("companycountry=" + (companycountry == null ? "" : companycountry + "&"));
+    }
     sb.append("companyindustry=" + (companyindustry == null ? "" : companyindustry) + "&");
-    sb.append("companyrevenue=" + (companyrevenue == null ? "" : companyrevenue) + "&");
     sb.append("companynumEmployees=" + (companynumEmployees == null ? "" : companynumEmployees) + "&");
-    sb.append("issubscribecommercial=" + (issubscribecommercial == null ? "" : issubscribecommercial) + "&");
-    sb.append("issubscribedevelopment=" + (issubscribedevelopment == null ? "" : issubscribedevelopment) + "&");
-    sb.append("iscommercialcontact=" + (iscommercialcontact == null ? "" : iscommercialcontact) + "&");
+    sb.append("comments=" + (comments == null ? "" : comments) + "&");
+    sb.append("contactme=" + (contactme == null ? "" : contactme) + "&");
+    sb.append("vision=" + (vision == null ? "" : vision) + "&");
+    sb.append("development=" + (development == null ? "" : development) + "&");
+    sb.append("developmentannounce=" + (developmentAnnounce == null ? "" : developmentAnnounce) + "&");
+    sb.append("commits=" + (commits == null ? "" : commits));
     
     return sb.toString();
   }

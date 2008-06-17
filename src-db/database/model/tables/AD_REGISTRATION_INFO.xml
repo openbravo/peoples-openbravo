@@ -45,27 +45,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REGISTERNOW" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="REGISTERNOW" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="COMPANYNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="CONTACTFIRSTNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="COMPANYADDRESS" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
+      <column name="CONTACTLASTNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CONTACTNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="CONTACTTITLE" primaryKey="false" required="false" type="NVARCHAR" size="10" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="CONTACTEMAIL" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="CONTACTJOBTITLE" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -73,28 +65,60 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CONTACTEMAIL" primaryKey="false" required="false" type="NVARCHAR" size="80" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANYNAME" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANYWEBSITE" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="COMPANYINDUSTRY" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="COMPANYREVENUE" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false">
+      <column name="COMPANYCOUNTRY" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="COMPANYNUM_EMPLOYEES" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="COMPANYNUM_EMPLOYEES" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISSUBSCRIBECOMMERCIAL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="WANTTOPARTNER" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ISSUBSCRIBEDEVELOPMENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="ISEVALUATING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ISCOMMERCIALCONTACT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="COMMENTS" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CONTACTME" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="OB_VISION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="OB_DEVELOPMENT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="OB_DEVELOPMENT_ANNOUNCE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="OB_COMMITS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
     </table>

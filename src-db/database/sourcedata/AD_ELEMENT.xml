@@ -46556,6 +46556,306 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800821-->              <HELP><![CDATA[Account used in cash flow statement for entries related to orders, which have no entries in accounting.]]></HELP>
 <!--800821**************--></AD_ELEMENT>
 
+<!--1000300000**************--><AD_ELEMENT>
+<!--1000300000 AD_ELEMENT_ID-->
+<!--1000300000-->              <AD_ELEMENT_ID><![CDATA[1000300000]]></AD_ELEMENT_ID>
+<!--1000300000 AD_CLIENT_ID-->
+<!--1000300000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300000 AD_ORG_ID-->
+<!--1000300000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300000 ISACTIVE-->
+<!--1000300000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300000 CREATED-->
+<!--1000300000-->              <CREATED><![CDATA[2008-06-10 12:02:45.0]]></CREATED>
+<!--1000300000 CREATEDBY-->
+<!--1000300000-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300000 UPDATED-->
+<!--1000300000-->              <UPDATED><![CDATA[2008-06-13 13:58:30.0]]></UPDATED>
+<!--1000300000 UPDATEDBY-->
+<!--1000300000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000300000 COLUMNNAME-->
+<!--1000300000-->              <COLUMNNAME><![CDATA[Contactjobtitle]]></COLUMNNAME>
+<!--1000300000 NAME-->
+<!--1000300000-->              <NAME><![CDATA[Job Title]]></NAME>
+<!--1000300000 PRINTNAME-->
+<!--1000300000-->              <PRINTNAME><![CDATA[Job Title]]></PRINTNAME>
+<!--1000300000**************--></AD_ELEMENT>
+
+<!--1000300001**************--><AD_ELEMENT>
+<!--1000300001 AD_ELEMENT_ID-->
+<!--1000300001-->              <AD_ELEMENT_ID><![CDATA[1000300001]]></AD_ELEMENT_ID>
+<!--1000300001 AD_CLIENT_ID-->
+<!--1000300001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300001 AD_ORG_ID-->
+<!--1000300001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300001 ISACTIVE-->
+<!--1000300001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300001 CREATED-->
+<!--1000300001-->              <CREATED><![CDATA[2008-06-10 12:02:45.0]]></CREATED>
+<!--1000300001 CREATEDBY-->
+<!--1000300001-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300001 UPDATED-->
+<!--1000300001-->              <UPDATED><![CDATA[2008-06-10 12:02:45.0]]></UPDATED>
+<!--1000300001 UPDATEDBY-->
+<!--1000300001-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000300001 COLUMNNAME-->
+<!--1000300001-->              <COLUMNNAME><![CDATA[OB_Development]]></COLUMNNAME>
+<!--1000300001 NAME-->
+<!--1000300001-->              <NAME><![CDATA[Development]]></NAME>
+<!--1000300001 PRINTNAME-->
+<!--1000300001-->              <PRINTNAME><![CDATA[Development]]></PRINTNAME>
+<!--1000300001**************--></AD_ELEMENT>
+
+<!--1000300002**************--><AD_ELEMENT>
+<!--1000300002 AD_ELEMENT_ID-->
+<!--1000300002-->              <AD_ELEMENT_ID><![CDATA[1000300002]]></AD_ELEMENT_ID>
+<!--1000300002 AD_CLIENT_ID-->
+<!--1000300002-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300002 AD_ORG_ID-->
+<!--1000300002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300002 ISACTIVE-->
+<!--1000300002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300002 CREATED-->
+<!--1000300002-->              <CREATED><![CDATA[2008-06-10 12:02:45.0]]></CREATED>
+<!--1000300002 CREATEDBY-->
+<!--1000300002-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300002 UPDATED-->
+<!--1000300002-->              <UPDATED><![CDATA[2008-06-13 14:25:17.0]]></UPDATED>
+<!--1000300002 UPDATEDBY-->
+<!--1000300002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000300002 COLUMNNAME-->
+<!--1000300002-->              <COLUMNNAME><![CDATA[Isevaluating]]></COLUMNNAME>
+<!--1000300002 NAME-->
+<!--1000300002-->              <NAME><![CDATA[Is this an evaluation installation?]]></NAME>
+<!--1000300002 PRINTNAME-->
+<!--1000300002-->              <PRINTNAME><![CDATA[Is this an evaluation installation?]]></PRINTNAME>
+<!--1000300002**************--></AD_ELEMENT>
+
+<!--1000300003**************--><AD_ELEMENT>
+<!--1000300003 AD_ELEMENT_ID-->
+<!--1000300003-->              <AD_ELEMENT_ID><![CDATA[1000300003]]></AD_ELEMENT_ID>
+<!--1000300003 AD_CLIENT_ID-->
+<!--1000300003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300003 AD_ORG_ID-->
+<!--1000300003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300003 ISACTIVE-->
+<!--1000300003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300003 CREATED-->
+<!--1000300003-->              <CREATED><![CDATA[2008-06-10 12:02:45.0]]></CREATED>
+<!--1000300003 CREATEDBY-->
+<!--1000300003-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300003 UPDATED-->
+<!--1000300003-->              <UPDATED><![CDATA[2008-06-10 12:02:45.0]]></UPDATED>
+<!--1000300003 UPDATEDBY-->
+<!--1000300003-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000300003 COLUMNNAME-->
+<!--1000300003-->              <COLUMNNAME><![CDATA[OB_Vision]]></COLUMNNAME>
+<!--1000300003 NAME-->
+<!--1000300003-->              <NAME><![CDATA[Vision]]></NAME>
+<!--1000300003 PRINTNAME-->
+<!--1000300003-->              <PRINTNAME><![CDATA[Vision]]></PRINTNAME>
+<!--1000300003**************--></AD_ELEMENT>
+
+<!--1000300004**************--><AD_ELEMENT>
+<!--1000300004 AD_ELEMENT_ID-->
+<!--1000300004-->              <AD_ELEMENT_ID><![CDATA[1000300004]]></AD_ELEMENT_ID>
+<!--1000300004 AD_CLIENT_ID-->
+<!--1000300004-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300004 AD_ORG_ID-->
+<!--1000300004-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300004 ISACTIVE-->
+<!--1000300004-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300004 CREATED-->
+<!--1000300004-->              <CREATED><![CDATA[2008-06-10 12:02:45.0]]></CREATED>
+<!--1000300004 CREATEDBY-->
+<!--1000300004-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300004 UPDATED-->
+<!--1000300004-->              <UPDATED><![CDATA[2008-06-13 14:24:14.0]]></UPDATED>
+<!--1000300004 UPDATEDBY-->
+<!--1000300004-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000300004 COLUMNNAME-->
+<!--1000300004-->              <COLUMNNAME><![CDATA[Wanttopartner]]></COLUMNNAME>
+<!--1000300004 NAME-->
+<!--1000300004-->              <NAME><![CDATA[Do you want to Partner Openbravo?]]></NAME>
+<!--1000300004 PRINTNAME-->
+<!--1000300004-->              <PRINTNAME><![CDATA[Do you want to Partner Openbravo?]]></PRINTNAME>
+<!--1000300004**************--></AD_ELEMENT>
+
+<!--1000300005**************--><AD_ELEMENT>
+<!--1000300005 AD_ELEMENT_ID-->
+<!--1000300005-->              <AD_ELEMENT_ID><![CDATA[1000300005]]></AD_ELEMENT_ID>
+<!--1000300005 AD_CLIENT_ID-->
+<!--1000300005-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300005 AD_ORG_ID-->
+<!--1000300005-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300005 ISACTIVE-->
+<!--1000300005-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300005 CREATED-->
+<!--1000300005-->              <CREATED><![CDATA[2008-06-10 12:02:45.0]]></CREATED>
+<!--1000300005 CREATEDBY-->
+<!--1000300005-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300005 UPDATED-->
+<!--1000300005-->              <UPDATED><![CDATA[2008-06-10 12:02:45.0]]></UPDATED>
+<!--1000300005 UPDATEDBY-->
+<!--1000300005-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000300005 COLUMNNAME-->
+<!--1000300005-->              <COLUMNNAME><![CDATA[Contactme]]></COLUMNNAME>
+<!--1000300005 NAME-->
+<!--1000300005-->              <NAME><![CDATA[Contact Me]]></NAME>
+<!--1000300005 PRINTNAME-->
+<!--1000300005-->              <PRINTNAME><![CDATA[Contact Me]]></PRINTNAME>
+<!--1000300005**************--></AD_ELEMENT>
+
+<!--1000300006**************--><AD_ELEMENT>
+<!--1000300006 AD_ELEMENT_ID-->
+<!--1000300006-->              <AD_ELEMENT_ID><![CDATA[1000300006]]></AD_ELEMENT_ID>
+<!--1000300006 AD_CLIENT_ID-->
+<!--1000300006-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300006 AD_ORG_ID-->
+<!--1000300006-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300006 ISACTIVE-->
+<!--1000300006-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300006 CREATED-->
+<!--1000300006-->              <CREATED><![CDATA[2008-06-10 12:02:45.0]]></CREATED>
+<!--1000300006 CREATEDBY-->
+<!--1000300006-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300006 UPDATED-->
+<!--1000300006-->              <UPDATED><![CDATA[2008-06-10 12:02:45.0]]></UPDATED>
+<!--1000300006 UPDATEDBY-->
+<!--1000300006-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000300006 COLUMNNAME-->
+<!--1000300006-->              <COLUMNNAME><![CDATA[OB_Development_Announce]]></COLUMNNAME>
+<!--1000300006 NAME-->
+<!--1000300006-->              <NAME><![CDATA[Development Announce]]></NAME>
+<!--1000300006 PRINTNAME-->
+<!--1000300006-->              <PRINTNAME><![CDATA[Development Announce]]></PRINTNAME>
+<!--1000300006**************--></AD_ELEMENT>
+
+<!--1000300007**************--><AD_ELEMENT>
+<!--1000300007 AD_ELEMENT_ID-->
+<!--1000300007-->              <AD_ELEMENT_ID><![CDATA[1000300007]]></AD_ELEMENT_ID>
+<!--1000300007 AD_CLIENT_ID-->
+<!--1000300007-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300007 AD_ORG_ID-->
+<!--1000300007-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300007 ISACTIVE-->
+<!--1000300007-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300007 CREATED-->
+<!--1000300007-->              <CREATED><![CDATA[2008-06-10 12:02:45.0]]></CREATED>
+<!--1000300007 CREATEDBY-->
+<!--1000300007-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300007 UPDATED-->
+<!--1000300007-->              <UPDATED><![CDATA[2008-06-10 12:02:45.0]]></UPDATED>
+<!--1000300007 UPDATEDBY-->
+<!--1000300007-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000300007 COLUMNNAME-->
+<!--1000300007-->              <COLUMNNAME><![CDATA[OB_Commits]]></COLUMNNAME>
+<!--1000300007 NAME-->
+<!--1000300007-->              <NAME><![CDATA[Commits]]></NAME>
+<!--1000300007 PRINTNAME-->
+<!--1000300007-->              <PRINTNAME><![CDATA[Commits]]></PRINTNAME>
+<!--1000300007**************--></AD_ELEMENT>
+
+<!--1000300008**************--><AD_ELEMENT>
+<!--1000300008 AD_ELEMENT_ID-->
+<!--1000300008-->              <AD_ELEMENT_ID><![CDATA[1000300008]]></AD_ELEMENT_ID>
+<!--1000300008 AD_CLIENT_ID-->
+<!--1000300008-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300008 AD_ORG_ID-->
+<!--1000300008-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300008 ISACTIVE-->
+<!--1000300008-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300008 CREATED-->
+<!--1000300008-->              <CREATED><![CDATA[2008-06-10 12:02:45.0]]></CREATED>
+<!--1000300008 CREATEDBY-->
+<!--1000300008-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300008 UPDATED-->
+<!--1000300008-->              <UPDATED><![CDATA[2008-06-13 13:58:03.0]]></UPDATED>
+<!--1000300008 UPDATEDBY-->
+<!--1000300008-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000300008 COLUMNNAME-->
+<!--1000300008-->              <COLUMNNAME><![CDATA[Contactfirstname]]></COLUMNNAME>
+<!--1000300008 NAME-->
+<!--1000300008-->              <NAME><![CDATA[First Name]]></NAME>
+<!--1000300008 PRINTNAME-->
+<!--1000300008-->              <PRINTNAME><![CDATA[First Name]]></PRINTNAME>
+<!--1000300008**************--></AD_ELEMENT>
+
+<!--1000300009**************--><AD_ELEMENT>
+<!--1000300009 AD_ELEMENT_ID-->
+<!--1000300009-->              <AD_ELEMENT_ID><![CDATA[1000300009]]></AD_ELEMENT_ID>
+<!--1000300009 AD_CLIENT_ID-->
+<!--1000300009-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300009 AD_ORG_ID-->
+<!--1000300009-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300009 ISACTIVE-->
+<!--1000300009-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300009 CREATED-->
+<!--1000300009-->              <CREATED><![CDATA[2008-06-10 12:02:45.0]]></CREATED>
+<!--1000300009 CREATEDBY-->
+<!--1000300009-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300009 UPDATED-->
+<!--1000300009-->              <UPDATED><![CDATA[2008-06-13 14:01:06.0]]></UPDATED>
+<!--1000300009 UPDATEDBY-->
+<!--1000300009-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000300009 COLUMNNAME-->
+<!--1000300009-->              <COLUMNNAME><![CDATA[ContactLastName]]></COLUMNNAME>
+<!--1000300009 NAME-->
+<!--1000300009-->              <NAME><![CDATA[Last Name]]></NAME>
+<!--1000300009 PRINTNAME-->
+<!--1000300009-->              <PRINTNAME><![CDATA[Last Name]]></PRINTNAME>
+<!--1000300009**************--></AD_ELEMENT>
+
+<!--1000300010**************--><AD_ELEMENT>
+<!--1000300010 AD_ELEMENT_ID-->
+<!--1000300010-->              <AD_ELEMENT_ID><![CDATA[1000300010]]></AD_ELEMENT_ID>
+<!--1000300010 AD_CLIENT_ID-->
+<!--1000300010-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300010 AD_ORG_ID-->
+<!--1000300010-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300010 ISACTIVE-->
+<!--1000300010-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300010 CREATED-->
+<!--1000300010-->              <CREATED><![CDATA[2008-06-13 13:38:24.0]]></CREATED>
+<!--1000300010 CREATEDBY-->
+<!--1000300010-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300010 UPDATED-->
+<!--1000300010-->              <UPDATED><![CDATA[2008-06-13 14:07:41.0]]></UPDATED>
+<!--1000300010 UPDATEDBY-->
+<!--1000300010-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000300010 COLUMNNAME-->
+<!--1000300010-->              <COLUMNNAME><![CDATA[Companywebsite]]></COLUMNNAME>
+<!--1000300010 NAME-->
+<!--1000300010-->              <NAME><![CDATA[Website]]></NAME>
+<!--1000300010 PRINTNAME-->
+<!--1000300010-->              <PRINTNAME><![CDATA[Website]]></PRINTNAME>
+<!--1000300010**************--></AD_ELEMENT>
+
+<!--1000300011**************--><AD_ELEMENT>
+<!--1000300011 AD_ELEMENT_ID-->
+<!--1000300011-->              <AD_ELEMENT_ID><![CDATA[1000300011]]></AD_ELEMENT_ID>
+<!--1000300011 AD_CLIENT_ID-->
+<!--1000300011-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000300011 AD_ORG_ID-->
+<!--1000300011-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000300011 ISACTIVE-->
+<!--1000300011-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000300011 CREATED-->
+<!--1000300011-->              <CREATED><![CDATA[2008-06-13 13:38:24.0]]></CREATED>
+<!--1000300011 CREATEDBY-->
+<!--1000300011-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000300011 UPDATED-->
+<!--1000300011-->              <UPDATED><![CDATA[2008-06-13 14:04:10.0]]></UPDATED>
+<!--1000300011 UPDATEDBY-->
+<!--1000300011-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000300011 COLUMNNAME-->
+<!--1000300011-->              <COLUMNNAME><![CDATA[Companycountry]]></COLUMNNAME>
+<!--1000300011 NAME-->
+<!--1000300011-->              <NAME><![CDATA[Country]]></NAME>
+<!--1000300011 PRINTNAME-->
+<!--1000300011-->              <PRINTNAME><![CDATA[Country]]></PRINTNAME>
+<!--1000300011**************--></AD_ELEMENT>
+
 <!--1000500000**************--><AD_ELEMENT>
 <!--1000500000 AD_ELEMENT_ID-->
 <!--1000500000-->              <AD_ELEMENT_ID><![CDATA[1000500000]]></AD_ELEMENT_ID>
@@ -48052,15 +48352,15 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400000 CREATEDBY-->
 <!--1005400000-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1005400000 UPDATED-->
-<!--1005400000-->              <UPDATED><![CDATA[2008-03-03 10:47:20.0]]></UPDATED>
+<!--1005400000-->              <UPDATED><![CDATA[2008-06-13 14:08:15.0]]></UPDATED>
 <!--1005400000 UPDATEDBY-->
 <!--1005400000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400000 COLUMNNAME-->
 <!--1005400000-->              <COLUMNNAME><![CDATA[Contactemail]]></COLUMNNAME>
 <!--1005400000 NAME-->
-<!--1005400000-->              <NAME><![CDATA[Contact Email]]></NAME>
+<!--1005400000-->              <NAME><![CDATA[Email]]></NAME>
 <!--1005400000 PRINTNAME-->
-<!--1005400000-->              <PRINTNAME><![CDATA[Contact Email]]></PRINTNAME>
+<!--1005400000-->              <PRINTNAME><![CDATA[Email]]></PRINTNAME>
 <!--1005400000 DESCRIPTION-->
 <!--1005400000-->              <DESCRIPTION><![CDATA[The email of the contact person.]]></DESCRIPTION>
 <!--1005400000 HELP-->
@@ -48139,15 +48439,15 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400004 CREATEDBY-->
 <!--1005400004-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1005400004 UPDATED-->
-<!--1005400004-->              <UPDATED><![CDATA[2008-03-03 13:19:58.0]]></UPDATED>
+<!--1005400004-->              <UPDATED><![CDATA[2008-06-13 14:07:06.0]]></UPDATED>
 <!--1005400004 UPDATEDBY-->
 <!--1005400004-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400004 COLUMNNAME-->
 <!--1005400004-->              <COLUMNNAME><![CDATA[Companyname]]></COLUMNNAME>
 <!--1005400004 NAME-->
-<!--1005400004-->              <NAME><![CDATA[Company Name]]></NAME>
+<!--1005400004-->              <NAME><![CDATA[Name]]></NAME>
 <!--1005400004 PRINTNAME-->
-<!--1005400004-->              <PRINTNAME><![CDATA[Company Name]]></PRINTNAME>
+<!--1005400004-->              <PRINTNAME><![CDATA[Name]]></PRINTNAME>
 <!--1005400004 DESCRIPTION-->
 <!--1005400004-->              <DESCRIPTION><![CDATA[Name of the company.]]></DESCRIPTION>
 <!--1005400004 HELP-->
@@ -48182,35 +48482,6 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400005 HELP-->
 <!--1005400005-->              <HELP><![CDATA[Unique registration identifier for customer.]]></HELP>
 <!--1005400005**************--></AD_ELEMENT>
-
-<!--1005400006**************--><AD_ELEMENT>
-<!--1005400006 AD_ELEMENT_ID-->
-<!--1005400006-->              <AD_ELEMENT_ID><![CDATA[1005400006]]></AD_ELEMENT_ID>
-<!--1005400006 AD_CLIENT_ID-->
-<!--1005400006-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400006 AD_ORG_ID-->
-<!--1005400006-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400006 ISACTIVE-->
-<!--1005400006-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400006 CREATED-->
-<!--1005400006-->              <CREATED><![CDATA[2008-02-29 13:24:46.0]]></CREATED>
-<!--1005400006 CREATEDBY-->
-<!--1005400006-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1005400006 UPDATED-->
-<!--1005400006-->              <UPDATED><![CDATA[2008-03-03 13:18:02.0]]></UPDATED>
-<!--1005400006 UPDATEDBY-->
-<!--1005400006-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1005400006 COLUMNNAME-->
-<!--1005400006-->              <COLUMNNAME><![CDATA[Companyaddress]]></COLUMNNAME>
-<!--1005400006 NAME-->
-<!--1005400006-->              <NAME><![CDATA[Company Address]]></NAME>
-<!--1005400006 PRINTNAME-->
-<!--1005400006-->              <PRINTNAME><![CDATA[Company Address]]></PRINTNAME>
-<!--1005400006 DESCRIPTION-->
-<!--1005400006-->              <DESCRIPTION><![CDATA[Address of the company.]]></DESCRIPTION>
-<!--1005400006 HELP-->
-<!--1005400006-->              <HELP><![CDATA[Address of the company.]]></HELP>
-<!--1005400006**************--></AD_ELEMENT>
 
 <!--1005400007**************--><AD_ELEMENT>
 <!--1005400007 AD_ELEMENT_ID-->
@@ -48357,35 +48628,6 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400011-->              <HELP><![CDATA[The version of Operating System.]]></HELP>
 <!--1005400011**************--></AD_ELEMENT>
 
-<!--1005400012**************--><AD_ELEMENT>
-<!--1005400012 AD_ELEMENT_ID-->
-<!--1005400012-->              <AD_ELEMENT_ID><![CDATA[1005400012]]></AD_ELEMENT_ID>
-<!--1005400012 AD_CLIENT_ID-->
-<!--1005400012-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400012 AD_ORG_ID-->
-<!--1005400012-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400012 ISACTIVE-->
-<!--1005400012-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400012 CREATED-->
-<!--1005400012-->              <CREATED><![CDATA[2008-02-29 13:24:46.0]]></CREATED>
-<!--1005400012 CREATEDBY-->
-<!--1005400012-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1005400012 UPDATED-->
-<!--1005400012-->              <UPDATED><![CDATA[2008-06-05 04:37:58.0]]></UPDATED>
-<!--1005400012 UPDATEDBY-->
-<!--1005400012-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1005400012 COLUMNNAME-->
-<!--1005400012-->              <COLUMNNAME><![CDATA[Iscommercialcontact]]></COLUMNNAME>
-<!--1005400012 NAME-->
-<!--1005400012-->              <NAME><![CDATA[Commercial Contact]]></NAME>
-<!--1005400012 PRINTNAME-->
-<!--1005400012-->              <PRINTNAME><![CDATA[Commercial Contact]]></PRINTNAME>
-<!--1005400012 DESCRIPTION-->
-<!--1005400012-->              <DESCRIPTION><![CDATA[Commercial Contact]]></DESCRIPTION>
-<!--1005400012 HELP-->
-<!--1005400012-->              <HELP><![CDATA[Is contact commercial.]]></HELP>
-<!--1005400012**************--></AD_ELEMENT>
-
 <!--1005400013**************--><AD_ELEMENT>
 <!--1005400013 AD_ELEMENT_ID-->
 <!--1005400013-->              <AD_ELEMENT_ID><![CDATA[1005400013]]></AD_ELEMENT_ID>
@@ -48473,35 +48715,6 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400015-->              <HELP><![CDATA[Update your registration details.]]></HELP>
 <!--1005400015**************--></AD_ELEMENT>
 
-<!--1005400016**************--><AD_ELEMENT>
-<!--1005400016 AD_ELEMENT_ID-->
-<!--1005400016-->              <AD_ELEMENT_ID><![CDATA[1005400016]]></AD_ELEMENT_ID>
-<!--1005400016 AD_CLIENT_ID-->
-<!--1005400016-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400016 AD_ORG_ID-->
-<!--1005400016-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400016 ISACTIVE-->
-<!--1005400016-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400016 CREATED-->
-<!--1005400016-->              <CREATED><![CDATA[2008-02-29 13:24:46.0]]></CREATED>
-<!--1005400016 CREATEDBY-->
-<!--1005400016-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1005400016 UPDATED-->
-<!--1005400016-->              <UPDATED><![CDATA[2008-04-15 18:00:36.0]]></UPDATED>
-<!--1005400016 UPDATEDBY-->
-<!--1005400016-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1005400016 COLUMNNAME-->
-<!--1005400016-->              <COLUMNNAME><![CDATA[Issubscribedevelopment]]></COLUMNNAME>
-<!--1005400016 NAME-->
-<!--1005400016-->              <NAME><![CDATA[Subscribe to Development Mailing List]]></NAME>
-<!--1005400016 PRINTNAME-->
-<!--1005400016-->              <PRINTNAME><![CDATA[Subscribe to Development Mailing List]]></PRINTNAME>
-<!--1005400016 DESCRIPTION-->
-<!--1005400016-->              <DESCRIPTION><![CDATA[Enable subscription to Openbravo's development mailing list.]]></DESCRIPTION>
-<!--1005400016 HELP-->
-<!--1005400016-->              <HELP><![CDATA[Enable subscription to Openbravo's development mailing list.]]></HELP>
-<!--1005400016**************--></AD_ELEMENT>
-
 <!--1005400017**************--><AD_ELEMENT>
 <!--1005400017 AD_ELEMENT_ID-->
 <!--1005400017-->              <AD_ELEMENT_ID><![CDATA[1005400017]]></AD_ELEMENT_ID>
@@ -48574,49 +48787,20 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400019 CREATEDBY-->
 <!--1005400019-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1005400019 UPDATED-->
-<!--1005400019-->              <UPDATED><![CDATA[2008-04-16 12:26:25.0]]></UPDATED>
+<!--1005400019-->              <UPDATED><![CDATA[2008-06-13 13:59:05.0]]></UPDATED>
 <!--1005400019 UPDATEDBY-->
 <!--1005400019-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400019 COLUMNNAME-->
 <!--1005400019-->              <COLUMNNAME><![CDATA[Contactphone]]></COLUMNNAME>
 <!--1005400019 NAME-->
-<!--1005400019-->              <NAME><![CDATA[Contact Phone]]></NAME>
+<!--1005400019-->              <NAME><![CDATA[Phone]]></NAME>
 <!--1005400019 PRINTNAME-->
-<!--1005400019-->              <PRINTNAME><![CDATA[Contact Phone]]></PRINTNAME>
+<!--1005400019-->              <PRINTNAME><![CDATA[Phone]]></PRINTNAME>
 <!--1005400019 DESCRIPTION-->
 <!--1005400019-->              <DESCRIPTION><![CDATA[Telephone number of contact person.]]></DESCRIPTION>
 <!--1005400019 HELP-->
 <!--1005400019-->              <HELP><![CDATA[Telephone number of contact person.]]></HELP>
 <!--1005400019**************--></AD_ELEMENT>
-
-<!--1005400020**************--><AD_ELEMENT>
-<!--1005400020 AD_ELEMENT_ID-->
-<!--1005400020-->              <AD_ELEMENT_ID><![CDATA[1005400020]]></AD_ELEMENT_ID>
-<!--1005400020 AD_CLIENT_ID-->
-<!--1005400020-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400020 AD_ORG_ID-->
-<!--1005400020-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400020 ISACTIVE-->
-<!--1005400020-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400020 CREATED-->
-<!--1005400020-->              <CREATED><![CDATA[2008-02-29 13:24:46.0]]></CREATED>
-<!--1005400020 CREATEDBY-->
-<!--1005400020-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1005400020 UPDATED-->
-<!--1005400020-->              <UPDATED><![CDATA[2008-03-03 13:34:43.0]]></UPDATED>
-<!--1005400020 UPDATEDBY-->
-<!--1005400020-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1005400020 COLUMNNAME-->
-<!--1005400020-->              <COLUMNNAME><![CDATA[Contacttitle]]></COLUMNNAME>
-<!--1005400020 NAME-->
-<!--1005400020-->              <NAME><![CDATA[Contact Title]]></NAME>
-<!--1005400020 PRINTNAME-->
-<!--1005400020-->              <PRINTNAME><![CDATA[Contact Title]]></PRINTNAME>
-<!--1005400020 DESCRIPTION-->
-<!--1005400020-->              <DESCRIPTION><![CDATA[Title of the contact person.]]></DESCRIPTION>
-<!--1005400020 HELP-->
-<!--1005400020-->              <HELP><![CDATA[Title of the contact person.]]></HELP>
-<!--1005400020**************--></AD_ELEMENT>
 
 <!--1005400021**************--><AD_ELEMENT>
 <!--1005400021 AD_ELEMENT_ID-->
@@ -48835,15 +49019,15 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400029 CREATEDBY-->
 <!--1005400029-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1005400029 UPDATED-->
-<!--1005400029-->              <UPDATED><![CDATA[2008-03-03 13:34:03.0]]></UPDATED>
+<!--1005400029-->              <UPDATED><![CDATA[2008-06-13 14:08:59.0]]></UPDATED>
 <!--1005400029 UPDATEDBY-->
 <!--1005400029-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400029 COLUMNNAME-->
 <!--1005400029-->              <COLUMNNAME><![CDATA[Companyindustry]]></COLUMNNAME>
 <!--1005400029 NAME-->
-<!--1005400029-->              <NAME><![CDATA[Industry]]></NAME>
+<!--1005400029-->              <NAME><![CDATA[Type of Business]]></NAME>
 <!--1005400029 PRINTNAME-->
-<!--1005400029-->              <PRINTNAME><![CDATA[Industry]]></PRINTNAME>
+<!--1005400029-->              <PRINTNAME><![CDATA[Type of Business]]></PRINTNAME>
 <!--1005400029 DESCRIPTION-->
 <!--1005400029-->              <DESCRIPTION><![CDATA[Industry the company works in.]]></DESCRIPTION>
 <!--1005400029 HELP-->
@@ -48932,35 +49116,6 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400033 HELP-->
 <!--1005400033-->              <HELP><![CDATA[Proxy server name.]]></HELP>
 <!--1005400033**************--></AD_ELEMENT>
-
-<!--1005400034**************--><AD_ELEMENT>
-<!--1005400034 AD_ELEMENT_ID-->
-<!--1005400034-->              <AD_ELEMENT_ID><![CDATA[1005400034]]></AD_ELEMENT_ID>
-<!--1005400034 AD_CLIENT_ID-->
-<!--1005400034-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400034 AD_ORG_ID-->
-<!--1005400034-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400034 ISACTIVE-->
-<!--1005400034-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400034 CREATED-->
-<!--1005400034-->              <CREATED><![CDATA[2008-02-29 13:24:46.0]]></CREATED>
-<!--1005400034 CREATEDBY-->
-<!--1005400034-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1005400034 UPDATED-->
-<!--1005400034-->              <UPDATED><![CDATA[2008-03-03 15:47:13.0]]></UPDATED>
-<!--1005400034 UPDATEDBY-->
-<!--1005400034-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1005400034 COLUMNNAME-->
-<!--1005400034-->              <COLUMNNAME><![CDATA[Issubscribecommercial]]></COLUMNNAME>
-<!--1005400034 NAME-->
-<!--1005400034-->              <NAME><![CDATA[Subscribe to Commercial Mailing List]]></NAME>
-<!--1005400034 PRINTNAME-->
-<!--1005400034-->              <PRINTNAME><![CDATA[Subscribe to Commercial Mailing List]]></PRINTNAME>
-<!--1005400034 DESCRIPTION-->
-<!--1005400034-->              <DESCRIPTION><![CDATA[Enable or disable your subscription to Openbravo's commercial mailing list.]]></DESCRIPTION>
-<!--1005400034 HELP-->
-<!--1005400034-->              <HELP><![CDATA[Enable or disable your subscription to Openbravo's commercial mailing list.]]></HELP>
-<!--1005400034**************--></AD_ELEMENT>
 
 <!--1005400035**************--><AD_ELEMENT>
 <!--1005400035 AD_ELEMENT_ID-->
