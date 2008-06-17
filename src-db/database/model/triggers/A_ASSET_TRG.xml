@@ -24,10 +24,9 @@
 BEGIN
   --  Default Accounts for all AcctSchema
   IF(INSERTING) THEN
-      SELECT *
-      into cur_Defaults
-      FROM A_Asset_Group_Acct d1
-      WHERE d1.A_Asset_Group_ID=:new.A_Asset_Group_ID;
+     FOR Cur_Defaults IN (SELECT *
+                        FROM A_Asset_Group_Acct d1
+                        WHERE d1.A_Asset_Group_ID=:new.A_Asset_Group_ID) LOOP  
 
       Ad_Sequence_Next('A_Asset_Acct', Cur_Defaults.AD_Client_ID, v_Acct_ID) ;
       INSERT
@@ -48,7 +47,7 @@ BEGIN
           Cur_Defaults.A_DISPOSAL_LOSS
         )
         ;
-
+      END LOOP;
   ELSIF (UPDATING) THEN
     UPDATE A_ASSET_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
     WHERE A_ASSET_ID = :new.A_ASSET_ID;
