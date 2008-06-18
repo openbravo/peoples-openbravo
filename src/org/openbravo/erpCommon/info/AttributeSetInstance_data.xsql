@@ -31,9 +31,11 @@
         A_S.M_LOTCTL_ID, A_S.M_SERNOCTL_ID, A.ISLIST, A.NAME AS ELEMENTNAME, A.M_ATTRIBUTE_ID, 
         A_S.ISLOCKABLE, A.ISINSTANCEATTRIBUTE, '' AS M_ATTRIBUTESETINSTANCE_ID, '' as GUARANTEEDATE, '' as LOT, '' as SERNO, 
         '' as M_ATTRIBUTEVALUE_ID, '' as VALUE, A.ISMANDATORY, '' AS ISLOCKED, '' AS LOCK_DESCRIPTION 
-        FROM M_ATTRIBUTESET A_S left join M_ATTRIBUTEUSE A_U on a_s.M_ATTRIBUTESET_ID = a_u.M_ATTRIBUTESET_ID
-                                left join M_ATTRIBUTE A on A_U.M_ATTRIBUTE_ID = A.M_ATTRIBUTE_ID
-                                                        and A_U.ISACTIVE= 'Y'
+        FROM M_ATTRIBUTESET A_S left join (M_ATTRIBUTEUSE A_U 
+                                           join M_ATTRIBUTE A on A_U.M_ATTRIBUTE_ID = A.M_ATTRIBUTE_ID
+                                                                 and A_U.ISACTIVE= 'Y'
+                                                                 and A.ISACTIVE= 'Y')
+                                on a_s.M_ATTRIBUTESET_ID = a_u.M_ATTRIBUTESET_ID
         WHERE A_S.ISACTIVE = 'Y'
         AND A_S.M_ATTRIBUTESET_ID = TO_NUMBER(?) 
         ORDER BY A_U.SEQNO
