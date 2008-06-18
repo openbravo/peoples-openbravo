@@ -30,7 +30,6 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import java.util.Vector;
 
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -215,7 +214,8 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportRefundInvoiceCustomerDimensionalAnalysesData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerIdAux));
 
     xmlDocument.setParameter("accounFromArray", arrayDobleEntrada("arrAccountFrom", ReportTrialBalanceData.selectAccountDouble(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"),"")));
-    xmlDocument.setParameter("accounToArray", arrayDobleEntrada("arrAccountTo", ReportTrialBalanceData.selectAccountDouble(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"),"")));    
+    xmlDocument.setParameter("accounToArray", arrayDobleEntrada("arrAccountTo", ReportTrialBalanceData.selectAccountDouble(this, Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"),"")));
+    if(new_data==null || new_data.length==0) new_data = ReportTrialBalanceData.set();
     if (log4j.isDebugEnabled()) log4j.debug("filling structure, data.length:"+new_data.length);
     if (discard[1].equals("sectionNoBP")) { 
       if (log4j.isDebugEnabled()) log4j.debug("without BPs");
@@ -288,7 +288,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     if (log4j.isDebugEnabled()) log4j.debug("filling structure, data.length:"+new_data.length);
     if (log4j.isDebugEnabled()) log4j.debug("discard:"+discard[0]+","+discard[1]);
-
+    if(new_data==null || new_data.length==0) new_data = ReportTrialBalanceData.set();
     if (discard[1].equals("sectionNoBP"))
       xmlDocument.setData("structure2", new_data);
     else {
