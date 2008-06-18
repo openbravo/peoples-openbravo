@@ -19669,7 +19669,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800212 CREATEDBY-->
 <!--800212-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800212 UPDATED-->
-<!--800212-->              <UPDATED><![CDATA[2008-05-30 18:16:58.0]]></UPDATED>
+<!--800212-->              <UPDATED><![CDATA[2008-06-18 12:11:27.0]]></UPDATED>
 <!--800212 UPDATEDBY-->
 <!--800212-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800212 NAME-->
@@ -19677,7 +19677,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800212 DESCRIPTION-->
 <!--800212-->              <DESCRIPTION><![CDATA[Requisition material]]></DESCRIPTION>
 <!--800212 HELP-->
-<!--800212-->              <HELP><![CDATA[Contains the headers of material demands. In the header it can be set a preferred vendor and/or price list. The requisitions are owned by an user of the ERP and have different statuses, each of them allowing different actions.]]></HELP>
+<!--800212-->              <HELP><![CDATA[This table contains the headers of products demand. In the header it can be set a preferred vendor and/or price list. The requisitions are owned by an user of the ERP and have different statuses, each of them allowing different actions.]]></HELP>
 <!--800212 TABLENAME-->
 <!--800212-->              <TABLENAME><![CDATA[M_Requisition]]></TABLENAME>
 <!--800212 ISVIEW-->

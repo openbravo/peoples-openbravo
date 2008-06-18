@@ -387,7 +387,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--136 DESCRIPTION-->
 <!--136-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--136 HELP-->
-<!--136-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--136-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--136 AD_PROCESS_ID-->
 <!--136-->              <AD_PROCESS_ID><![CDATA[125]]></AD_PROCESS_ID>
 <!--136 SEQNO-->
@@ -743,7 +743,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--144 DESCRIPTION-->
 <!--144-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--144 HELP-->
-<!--144-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--144-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--144 AD_PROCESS_ID-->
 <!--144-->              <AD_PROCESS_ID><![CDATA[119]]></AD_PROCESS_ID>
 <!--144 SEQNO-->
@@ -1406,7 +1406,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--161 DESCRIPTION-->
 <!--161-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--161 HELP-->
-<!--161-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--161-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--161 AD_PROCESS_ID-->
 <!--161-->              <AD_PROCESS_ID><![CDATA[138]]></AD_PROCESS_ID>
 <!--161 SEQNO-->
@@ -1494,7 +1494,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--163 DESCRIPTION-->
 <!--163-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--163 HELP-->
-<!--163-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--163-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--163 AD_PROCESS_ID-->
 <!--163-->              <AD_PROCESS_ID><![CDATA[139]]></AD_PROCESS_ID>
 <!--163 SEQNO-->
@@ -1762,7 +1762,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--176 DESCRIPTION-->
 <!--176-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--176 HELP-->
-<!--176-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--176-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--176 AD_PROCESS_ID-->
 <!--176-->              <AD_PROCESS_ID><![CDATA[151]]></AD_PROCESS_ID>
 <!--176 SEQNO-->
@@ -1850,7 +1850,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--178 DESCRIPTION-->
 <!--178-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--178 HELP-->
-<!--178-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--178-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--178 AD_PROCESS_ID-->
 <!--178-->              <AD_PROCESS_ID><![CDATA[152]]></AD_PROCESS_ID>
 <!--178 SEQNO-->
@@ -2200,7 +2200,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--190 DESCRIPTION-->
 <!--190-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--190 HELP-->
-<!--190-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--190-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--190 AD_PROCESS_ID-->
 <!--190-->              <AD_PROCESS_ID><![CDATA[161]]></AD_PROCESS_ID>
 <!--190 SEQNO-->
@@ -2419,7 +2419,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--195 DESCRIPTION-->
 <!--195-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--195 HELP-->
-<!--195-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--195-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--195 AD_PROCESS_ID-->
 <!--195-->              <AD_PROCESS_ID><![CDATA[162]]></AD_PROCESS_ID>
 <!--195 SEQNO-->
@@ -3764,7 +3764,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--240 DESCRIPTION-->
 <!--240-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--240 HELP-->
-<!--240-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--240-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--240 AD_PROCESS_ID-->
 <!--240-->              <AD_PROCESS_ID><![CDATA[121]]></AD_PROCESS_ID>
 <!--240 SEQNO-->
@@ -3944,7 +3944,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--245 DESCRIPTION-->
 <!--245-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--245 HELP-->
-<!--245-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--245-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--245 AD_PROCESS_ID-->
 <!--245-->              <AD_PROCESS_ID><![CDATA[186]]></AD_PROCESS_ID>
 <!--245 SEQNO-->
@@ -4032,7 +4032,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--247 DESCRIPTION-->
 <!--247-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--247 HELP-->
-<!--247-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--247-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--247 AD_PROCESS_ID-->
 <!--247-->              <AD_PROCESS_ID><![CDATA[187]]></AD_PROCESS_ID>
 <!--247 SEQNO-->
@@ -4292,7 +4292,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--255 DESCRIPTION-->
 <!--255-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--255 HELP-->
-<!--255-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--255-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--255 AD_PROCESS_ID-->
 <!--255-->              <AD_PROCESS_ID><![CDATA[193]]></AD_PROCESS_ID>
 <!--255 SEQNO-->
@@ -5074,7 +5074,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--277 DESCRIPTION-->
 <!--277-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--277 HELP-->
-<!--277-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--277-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--277 AD_PROCESS_ID-->
 <!--277-->              <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
 <!--277 SEQNO-->
@@ -5381,7 +5381,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--287 DESCRIPTION-->
 <!--287-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--287 HELP-->
-<!--287-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--287-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--287 AD_PROCESS_ID-->
 <!--287-->              <AD_PROCESS_ID><![CDATA[202]]></AD_PROCESS_ID>
 <!--287 SEQNO-->
@@ -5778,7 +5778,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--296 DESCRIPTION-->
 <!--296-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--296 HELP-->
-<!--296-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--296-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--296 AD_PROCESS_ID-->
 <!--296-->              <AD_PROCESS_ID><![CDATA[204]]></AD_PROCESS_ID>
 <!--296 SEQNO-->
@@ -7677,7 +7677,7 @@ You find the current status in the Document Status field. The options are listed
 <!--342 DESCRIPTION-->
 <!--342-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--342 HELP-->
-<!--342-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--342-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--342 AD_PROCESS_ID-->
 <!--342-->              <AD_PROCESS_ID><![CDATA[222]]></AD_PROCESS_ID>
 <!--342 SEQNO-->
@@ -7982,7 +7982,7 @@ You find the current status in the Document Status field. The options are listed
 <!--349 DESCRIPTION-->
 <!--349-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--349 HELP-->
-<!--349-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--349-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--349 AD_PROCESS_ID-->
 <!--349-->              <AD_PROCESS_ID><![CDATA[223]]></AD_PROCESS_ID>
 <!--349 SEQNO-->
@@ -9260,7 +9260,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800012 DESCRIPTION-->
 <!--800012-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800012 HELP-->
-<!--800012-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--800012-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--800012 AD_PROCESS_ID-->
 <!--800012-->              <AD_PROCESS_ID><![CDATA[800049]]></AD_PROCESS_ID>
 <!--800012 SEQNO-->
@@ -9766,7 +9766,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800025 CREATEDBY-->
 <!--800025-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800025 UPDATED-->
-<!--800025-->              <UPDATED><![CDATA[2008-06-03 11:42:49.0]]></UPDATED>
+<!--800025-->              <UPDATED><![CDATA[2008-06-18 15:54:37.0]]></UPDATED>
 <!--800025 UPDATEDBY-->
 <!--800025-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800025 NAME-->
@@ -9991,7 +9991,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800030 DESCRIPTION-->
 <!--800030-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800030 HELP-->
-<!--800030-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--800030-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--800030 AD_PROCESS_ID-->
 <!--800030-->              <AD_PROCESS_ID><![CDATA[800078]]></AD_PROCESS_ID>
 <!--800030 SEQNO-->
@@ -10077,7 +10077,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800032 DESCRIPTION-->
 <!--800032-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800032 HELP-->
-<!--800032-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--800032-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--800032 AD_PROCESS_ID-->
 <!--800032-->              <AD_PROCESS_ID><![CDATA[800126]]></AD_PROCESS_ID>
 <!--800032 SEQNO-->
@@ -11015,7 +11015,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800054 DESCRIPTION-->
 <!--800054-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800054 HELP-->
-<!--800054-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--800054-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--800054 AD_PROCESS_ID-->
 <!--800054-->              <AD_PROCESS_ID><![CDATA[800171]]></AD_PROCESS_ID>
 <!--800054 SEQNO-->
@@ -11500,7 +11500,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--1004400001 DESCRIPTION-->
 <!--1004400001-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--1004400001 HELP-->
-<!--1004400001-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--1004400001-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--1004400001 AD_PROCESS_ID-->
 <!--1004400001-->              <AD_PROCESS_ID><![CDATA[1004400000]]></AD_PROCESS_ID>
 <!--1004400001 SEQNO-->

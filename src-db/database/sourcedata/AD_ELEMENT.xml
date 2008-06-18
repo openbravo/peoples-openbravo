@@ -1914,7 +1914,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--187 CREATEDBY-->
 <!--187-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--187 UPDATED-->
-<!--187-->              <UPDATED><![CDATA[2008-06-03 11:16:19.0]]></UPDATED>
+<!--187-->              <UPDATED><![CDATA[2008-06-18 12:28:16.0]]></UPDATED>
 <!--187 UPDATEDBY-->
 <!--187-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--187 COLUMNNAME-->
@@ -1926,7 +1926,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--187 DESCRIPTION-->
 <!--187-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--187 HELP-->
-<!--187-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a Customer, Vendor, Employee or any combination of these.]]></HELP>
+<!--187-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--187**************--></AD_ELEMENT>
 
 <!--189**************--><AD_ELEMENT>
@@ -2618,9 +2618,9 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--215 CREATEDBY-->
 <!--215-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--215 UPDATED-->
-<!--215-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--215-->              <UPDATED><![CDATA[2008-06-18 12:30:45.0]]></UPDATED>
 <!--215 UPDATEDBY-->
-<!--215-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--215-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--215 COLUMNNAME-->
 <!--215-->              <COLUMNNAME><![CDATA[C_UOM_ID]]></COLUMNNAME>
 <!--215 NAME-->
@@ -2630,7 +2630,7 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--215 DESCRIPTION-->
 <!--215-->              <DESCRIPTION><![CDATA[A non monetary unit of measure.]]></DESCRIPTION>
 <!--215 HELP-->
-<!--215-->              <HELP><![CDATA[The UOM defines a unique non monetary Unit of Measure]]></HELP>
+<!--215-->              <HELP><![CDATA[The UOM defines a unique non monetary unit of measure]]></HELP>
 <!--215**************--></AD_ELEMENT>
 
 <!--217**************--><AD_ELEMENT>
@@ -8018,9 +8018,9 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--519 CREATEDBY-->
 <!--519-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--519 UPDATED-->
-<!--519-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--519-->              <UPDATED><![CDATA[2008-06-18 12:34:20.0]]></UPDATED>
 <!--519 UPDATEDBY-->
-<!--519-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--519-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--519 COLUMNNAME-->
 <!--519-->              <COLUMNNAME><![CDATA[PriceActual]]></COLUMNNAME>
 <!--519 NAME-->
@@ -8030,7 +8030,7 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--519 DESCRIPTION-->
 <!--519-->              <DESCRIPTION><![CDATA[The price that will be paid for a specified item.]]></DESCRIPTION>
 <!--519 HELP-->
-<!--519-->              <HELP><![CDATA[The Actual or Unit Price indicates the Price for a product in source currency.]]></HELP>
+<!--519-->              <HELP><![CDATA[The actual price indicates the price for a product in source currency.]]></HELP>
 <!--519**************--></AD_ELEMENT>
 
 <!--520**************--><AD_ELEMENT>
@@ -29843,7 +29843,7 @@ Product quantity in the order uom.]]></HELP>
 <!--800003 CREATEDBY-->
 <!--800003-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800003 UPDATED-->
-<!--800003-->              <UPDATED><![CDATA[2007-05-11 10:39:08.0]]></UPDATED>
+<!--800003-->              <UPDATED><![CDATA[2008-06-18 12:31:22.0]]></UPDATED>
 <!--800003 UPDATEDBY-->
 <!--800003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800003 COLUMNNAME-->
@@ -29855,8 +29855,7 @@ Product quantity in the order uom.]]></HELP>
 <!--800003 DESCRIPTION-->
 <!--800003-->              <DESCRIPTION><![CDATA[The unit of measure being used for the request.]]></DESCRIPTION>
 <!--800003 HELP-->
-<!--800003-->              <HELP><![CDATA[
-Alternative order uom for the product.]]></HELP>
+<!--800003-->              <HELP><![CDATA[Alternative order UOM for the product.]]></HELP>
 <!--800003**************--></AD_ELEMENT>
 
 <!--800004**************--><AD_ELEMENT>
@@ -47940,7 +47939,7 @@ Planned: The demand has been included in a Purchase Plan of the MRP module.]]></
 <!--1004400004 CREATEDBY-->
 <!--1004400004-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400004 UPDATED-->
-<!--1004400004-->              <UPDATED><![CDATA[2008-05-30 18:24:08.0]]></UPDATED>
+<!--1004400004-->              <UPDATED><![CDATA[2008-06-18 12:20:22.0]]></UPDATED>
 <!--1004400004 UPDATEDBY-->
 <!--1004400004-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400004 COLUMNNAME-->
@@ -47950,7 +47949,7 @@ Planned: The demand has been included in a Purchase Plan of the MRP module.]]></
 <!--1004400004 PRINTNAME-->
 <!--1004400004-->              <PRINTNAME><![CDATA[Create PO]]></PRINTNAME>
 <!--1004400004 HELP-->
-<!--1004400004-->              <HELP><![CDATA[Button to generate the correspondent purchase orders to fulfill the product demands.]]></HELP>
+<!--1004400004-->              <HELP><![CDATA[Button to generate the corresponding purchase orders to fulfill the products demand.]]></HELP>
 <!--1004400004**************--></AD_ELEMENT>
 
 <!--1004400005**************--><AD_ELEMENT>
@@ -48075,7 +48074,7 @@ Planned: The demand has been included in a Purchase Plan of the MRP module.]]></
 <!--1004400009 CREATEDBY-->
 <!--1004400009-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1004400009 UPDATED-->
-<!--1004400009-->              <UPDATED><![CDATA[2008-05-30 19:04:24.0]]></UPDATED>
+<!--1004400009-->              <UPDATED><![CDATA[2008-06-18 12:33:23.0]]></UPDATED>
 <!--1004400009 UPDATEDBY-->
 <!--1004400009-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400009 COLUMNNAME-->
@@ -48085,7 +48084,7 @@ Planned: The demand has been included in a Purchase Plan of the MRP module.]]></
 <!--1004400009 PRINTNAME-->
 <!--1004400009-->              <PRINTNAME><![CDATA[Need by date]]></PRINTNAME>
 <!--1004400009 HELP-->
-<!--1004400009-->              <HELP><![CDATA[Indicates the date when is needed to have enough stock of the product.]]></HELP>
+<!--1004400009-->              <HELP><![CDATA[The date by when the demand needs to be fulfilled.]]></HELP>
 <!--1004400009**************--></AD_ELEMENT>
 
 <!--1004400010**************--><AD_ELEMENT>
