@@ -2456,8 +2456,7 @@ function formElementValue(Formulario, ElementName, Value) {
     if (bolReadOnly) {
       onChangeFunction = obj.onchange;
       obj.onchange = "";
-      obj.setAttribute("readonly", "false");
-      //obj.readOnly="false";
+      obj.readOnly = false;
     }
     if (obj.type.toUpperCase().indexOf("SELECT")!=-1) {
       if (Value!=null && typeof Value!="object") {
@@ -2507,7 +2506,7 @@ function formElementValue(Formulario, ElementName, Value) {
       if (onChangeFunction.toString().indexOf("function anonymous()")==-1) obj.onchange = new Function("", onChangeFunction.toString());
       else obj.onchange = onChangeFunction.toString();
       //obj.onchange = function anonymous() {selectCombo(this, Value);return true;};
-      obj.setAttribute("readonly", "true");
+      obj.readOnly = true;
     }
   }
   return true;
@@ -2564,10 +2563,10 @@ function formElementEvent(Formulario, ElementName, calloutName) {
         if (obj.onchange.toString().indexOf("callout")!=-1 || obj.onchange.toString().indexOf("reload")!=-1) isReload=true;
         if (obj.getAttribute("readonly")=="true") {
           bolReadOnly=true;
-          obj.removeAttribute("readonly");
+          obj.readOnly = false;
         }
         obj.onchange();
-        if (bolReadOnly) obj.setAttribute("readonly", "true");
+        if (bolReadOnly) obj.readOnly = true;
       }
     }
   }

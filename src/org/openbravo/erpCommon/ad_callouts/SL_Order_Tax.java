@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.Utility;
 import java.io.*;
@@ -67,13 +68,17 @@ public class SL_Order_Tax extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Order_Tax';\n\n");
     resultado.append("var respuesta = new Array(");
 
-    SLOrderTaxData [] data = SLOrderTaxData.select(this, strCOrderId);
-
-    String strCTaxID="";
-    if (data!=null && data.length>0){
-      strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID, strMWarehouseID, (data[0].billtoId.equals("")?strCBPartnerLocationID:data[0].billtoId), strCBPartnerLocationID, data[0].cProjectId, strIsSOTrx.equals("Y"));
+    String strCTaxID = null; 
+    String orgLocationID = SLOrderProductData.getOrgLocationId(this, Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), strADOrgID);
+    if(orgLocationID.equals("")){
+      resultado.append("new Array('MESSAGE', \"" + FormatUtilities.replaceJS(Utility.messageBD(this, "Tax can not be calculated, because the organization has not a location defined", vars.getLanguage())) + "\"),\n");
+    }else{
+      SLOrderTaxData [] data = SLOrderTaxData.select(this, strCOrderId);
+      if (data!=null && data.length>0){
+	      strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID, strMWarehouseID, (data[0].billtoId.equals("")?strCBPartnerLocationID:data[0].billtoId), strCBPartnerLocationID, data[0].cProjectId, strIsSOTrx.equals("Y"));
+	    }
     }
-    resultado.append("new Array(\"inpcTaxId\", " + (strCTaxID.equals("")?"\"\"":strCTaxID) + ")");
+    if(!strCTaxID.equals("")) resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\")\n");
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

@@ -128,11 +128,16 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
     resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
 
-    SLOrderTaxData [] data = SLOrderTaxData.select(this, strCOrderId);
+    String strCTaxID = ""; 
+    String orgLocationID = SLOrderProductData.getOrgLocationId(this, Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), strADOrgID);
+    if(orgLocationID.equals("")){
+      resultado.append("new Array('MESSAGE', \"" + FormatUtilities.replaceJS(Utility.messageBD(this, "Tax can not be calculated, because the organization has not a location defined", vars.getLanguage())) + "\"),\n");
+    }else{
+      SLOrderTaxData [] data = SLOrderTaxData.select(this, strCOrderId);
+      strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID, strMWarehouseID, (data[0].billtoId.equals("")?strCBPartnerLocationID:data[0].billtoId), strCBPartnerLocationID, data[0].cProjectId, strIsSOTrx.equals("Y"));
+    }
+    if(!strCTaxID.equals("")) resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\"),\n");
 
-    String strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID, strMWarehouseID, (data[0].billtoId.equals("")?strCBPartnerLocationID:data[0].billtoId), strCBPartnerLocationID, data[0].cProjectId, strIsSOTrx.equals("Y"));
-
-    resultado.append("new Array(\"inpcTaxId\", \"" + (strCTaxID.equals("")?"0":strCTaxID) + "\"),\n");
     resultado.append("new Array(\"inpmProductUomId\", ");
 //    if (strUOM.startsWith("\"")) strUOM=strUOM.substring(1,strUOM.length()-1);
 //    String strmProductUOMId = SLOrderProductData.strMProductUOMID(this,strMProductID,strUOM);

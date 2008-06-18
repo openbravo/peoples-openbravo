@@ -135,4 +135,16 @@
     <Parameter name="priclist"/>
     <Parameter name="invoiceid"/>
   </SqlMethod>
+  
+  <SqlMethod name="getOrgLocationId" type="preparedStatement" return="String" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+	  	SELECT C_LOCATION_ID 
+	  		FROM AD_ORGINFO 
+	  		WHERE AD_Client_ID IN ('1') 
+	  		AND AD_Org_ID IN ('1')
+	 </Sql>
+     <Parameter name="adUserClient" type="replace" optional="true" after="AD_Client_ID IN (" text="'1'"/>
+     <Parameter name="adUserOrg" type="replace" optional="true" after="AD_Org_ID IN (" text="'1'"/>
+  </SqlMethod>
 </SqlClass>
