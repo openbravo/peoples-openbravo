@@ -100,7 +100,7 @@
       WHERE c.AD_Column_ID=f.AD_Column_ID  AND c.AD_Table_ID=v_AD_Table_ID  AND f.AD_Tab_ID=v_Record_ID
       )
       AND c.AD_Table_ID=v_AD_Table_ID  AND c.AD_Table_ID=t.AD_Table_ID  -- added by Pablo Sarobe
-      AND NOT(UPPER(c.Name) LIKE 'CREATED%' OR UPPER(c.Name) LIKE 'UPDATED%') AND c.IsActive='Y')
+      AND UPPER(c.Columnname) NOT IN ('CREATED', 'UPDATED', 'CREATEDBY', 'UPDATEDBY') AND c.IsActive='Y')
     LOOP
       AD_Sequence_Next('AD_Field', 0, v_NextNo) ; -- get ID
       -- added by Pablo Sarobe
