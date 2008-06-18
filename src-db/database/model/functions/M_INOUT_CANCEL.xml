@@ -43,7 +43,6 @@
     --
     Cur_InOut RECORD;
     v_AD_Client_ID NUMBER;
-    v_DBA_ErrorLog_ID NUMBER;
     
   BEGIN
     --  Update AD_PInstance
@@ -107,25 +106,6 @@ WHEN OTHERS THEN
     ROLLBACK;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   ELSE
-    DECLARE
-      v_Code VARCHAR(10):=SQLCODE;
-    BEGIN
-      AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_AD_Client_ID, v_DBA_ErrorLog_ID);
-      INSERT
-      INTO DBA_ErrorLog
-        (
-          DBA_ErrorLog_ID, Created,
-          Code, Msg,
-          Info
-        )
-        VALUES
-        (
-          v_DBA_ErrorLog_ID, now(),
-          v_Code, v_ResultStr,
-           'M_InOut_Cancel'
-        )
-        ;
-    END;
     RAISE;
   END IF;
   RETURN;

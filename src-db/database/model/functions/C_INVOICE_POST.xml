@@ -134,7 +134,6 @@ cWithHoldId NUMBER;
     V_Aux NUMBER;
     v_TargetDocBaseType C_DOCTYPE.DocBaseType%TYPE;
     v_MultiplierARC NUMBER:=1;
-    v_DBA_ErrorLog_ID NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -1678,27 +1677,8 @@ WHEN OTHERS THEN
         ROLLBACK;
         AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
       ELSE
-        DECLARE
-          v_Code VARCHAR(10):=SQLCODE;
-        BEGIN
-          AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_Client_ID, v_DBA_ErrorLog_ID);
-          INSERT
-          INTO DBA_ERRORLOG
-            (
-              DBA_ErrorLog_ID, Created,
-              Code, Msg,
-              Info
-            )
-            VALUES
-            (
-              v_DBA_ErrorLog_ID, now(),
-              v_Code, v_ResultStr,
-               'C_Invoice_Post'
-            )
-            ;
-    END;
-    RAISE;
-  END IF;
+        RAISE;
+      END IF;
   -- Commented by cromero 19102006 RETURN;
 END C_INVOICE_POST
 ]]></body>

@@ -66,7 +66,6 @@
   Cur_IndirectCost RECORD;
   Cur_IndirectCostPorc RECORD;
   FINISH_PROCESS                        BOOLEAN := FALSE;
-  v_DBA_ErrorLog_ID                     NUMBER;
 BEGIN
   BEGIN --BODY
     v_ResultStr := 'Update productionline calculated';
@@ -544,13 +543,6 @@ EXCEPTION
     /*v_ResultStr:= '@ERROR=' || SQLERRM;
     DBMS_OUTPUT.PUT_LINE(v_ResultStr);*/
     RAISE;
-    DECLARE
-        v_Code VARCHAR(10):= SQLCODE;
-    BEGIN
-        AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_Client_ID, v_DBA_ErrorLog_ID);
-        INSERT INTO DBA_ERRORLOG (DBA_ErrorLog_ID,Created,Code,Msg,Info)
-        VALUES (v_DBA_ErrorLog_ID,now(),v_Code,v_ResultStr,'MA_Production_Cost');
-    END;
     RETURN;
 END MA_PRODUCTION_COST
 ]]></body>

@@ -84,7 +84,6 @@
     v_Currency_Pre NUMBER:= 0;
     v_Inserted NUMBER:= 0;
     finish boolean;
-    v_DBA_ErrorLog_ID NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -407,18 +406,6 @@ WHEN OTHERS THEN
     ROLLBACK;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   ELSE
-    DECLARE
-      v_Code VARCHAR(10):=SQLCODE;
-    BEGIN
-      AD_SEQUENCE_NEXT('DBA_ERRORLOG', v_AD_CLIENT_ID, v_DBA_ErrorLog_ID);
-      INSERT
-      INTO DBA_ERRORLOG
-        (
-          DBA_ErrorLog_ID, Created, Code, Msg, Info
-        )
-        VALUES
-        (v_DBA_ErrorLog_ID, now(), v_Code, v_ResultStr, 'A_Asset_Post') ;
-    END;
     RAISE;
   END IF;
   RAISE_APPLICATION_ERROR(-20100, v_ResultStr) ;
