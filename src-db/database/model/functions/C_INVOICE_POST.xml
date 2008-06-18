@@ -123,6 +123,7 @@ cWithHoldId NUMBER;
     v_C_Project_Id NUMBER;
  v_acctAmount NUMBER;
  v_realAmount NUMBER;
+ v_partialAmount NUMBER;
     Cur_InvoiceLine RECORD;
     Cur_Discount RECORD;
     Cur_CInvoiceDiscount RECORD;
@@ -1477,12 +1478,17 @@ cWithHoldId NUMBER;
                   v_cashBook:=NULL;
                 END IF;
                 v_plannedDate:=C_Paymentduedate(v_BPartner_ID, v_IsSOTrx, CUR_PAYMENTS.FixMonthDay, CUR_PAYMENTS.FixMonthDay2, CUR_PAYMENTS.FixMonthDay3, CUR_PAYMENTS.NetDays, CUR_PAYMENTS.FixMonthOffset, CUR_PAYMENTS.NetDay, CUR_PAYMENTS.IsNextbusinessday, v_DateInvoiced) ;
+                SELECT COALESCE(SUM(C_DEBT_PAYMENT_V.AMOUNT),0) INTO v_partialAmount
+                FROM C_DEBT_PAYMENT_V, C_DEBT_PAYMENT
+                WHERE C_DEBT_PAYMENT_V.C_INVOICE_ID = V_RECORD_ID
+                AND C_DEBT_PAYMENT_V.C_DEBT_PAYMENT_ID = C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID
+                AND ISAUTOMATICGENERATED='N';                
                 IF(CUR_PAYMENTS.EXCLUDETAX='Y') THEN
                   -- if excludeTax = 'Y', percentage is aplied on the TotalLines
-                  v_paymentAmount:=C_Currency_Round((v_TotalLines) *CUR_PAYMENTS.PERCENTAGE/100, v_Currency_ID, NULL) ;
+                  v_paymentAmount:=C_Currency_Round((v_TotalLines-v_partialAmount) *CUR_PAYMENTS.PERCENTAGE/100, v_Currency_ID, NULL) ;
                 ELSIF(CUR_PAYMENTS.ONREMAINDER='N') THEN
                   -- if onRemainder = 'N', percentage is aplied on the GrandTotal
-                  v_paymentAmount:=C_Currency_Round((v_GrandTotal) *CUR_PAYMENTS.PERCENTAGE/100, v_Currency_ID, NULL) ;
+                  v_paymentAmount:=C_Currency_Round((v_GrandTotal-v_partialAmount) *CUR_PAYMENTS.PERCENTAGE/100, v_Currency_ID, NULL) ;
                 ELSE
                   v_paymentAmount:=C_Currency_Round((v_pendingAmount) *CUR_PAYMENTS.PERCENTAGE/100, v_Currency_ID, NULL) ;
                 END IF;
