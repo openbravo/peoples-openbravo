@@ -49,8 +49,10 @@ public class Translation extends HttpSecureAppServlet
 	public static final String	XML_ATTRIBUTE_TABLE = "table";
 	/** XML Attribute Language		*/
 	public static final String	XML_ATTRIBUTE_LANGUAGE = "language";
-
+	/** XML Attribute Version   */
+	public static final String  XML_ATTRIBUTE_VERSION = "version";
 	/**	XML Row Tag					*/
+	
 	public static final String	XML_ROW_TAG = "row";
 	/** XML Row Attribute ID		*/
 	public static final String	XML_ROW_ATTRIBUTE_ID = "id";
@@ -253,7 +255,8 @@ public class Translation extends HttpSecureAppServlet
 			//	Root
 			Element root = document.createElement(XML_TAG);
 			root.setAttribute(XML_ATTRIBUTE_LANGUAGE, AD_Language);
-			root.setAttribute(XML_ATTRIBUTE_TABLE, Base_Table);
+      root.setAttribute(XML_ATTRIBUTE_TABLE, Base_Table);
+      root.setAttribute(XML_ATTRIBUTE_VERSION, TranslationData.version (this));
 			document.appendChild(root);
       log4j.info("exportTrl - kk ");
 			//

@@ -39,6 +39,13 @@
       <Parameter name="paramLanguage"/>
   </SqlMethod>
   
+  <SqlMethod name="version" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+          SELECT AD_SYSTEM_INFO.OB_VERSION FROM AD_SYSTEM_INFO
+      </Sql>
+  </SqlMethod>
+
   <SqlMethod name="baseLanguage" type="preparedStatement" return="string">     
       <Sql>
         select isBaseLanguage
