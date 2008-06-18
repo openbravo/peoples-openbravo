@@ -122,7 +122,7 @@
       AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, 0) = 0
       AND M.M_Inventory_ID=v_Record_ID;
     IF v_Count<>0 THEN
-      RAISE_APPLICATION_ERROR(-20000, 'Inline'||v_line||' '||'@productWithoutAttributeSet@') ;
+      RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_line||' '||'@productWithoutAttributeSet@') ;
     END IF;
   END IF;--PROCESS_ERROR
   IF(NOT PROCESS_ERROR AND NOT END_PROCESS AND NOT END_PROCESSING) THEN
