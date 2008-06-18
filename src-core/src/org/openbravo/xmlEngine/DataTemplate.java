@@ -59,19 +59,6 @@ class DataTemplate implements XmlComponentTemplate {
 
   public FieldTemplate addField(String name, DecimalFormat formatOutput, DecimalFormat formatSimple,
       Vector<ReplaceElement> vecReplace) {
-    for (Enumeration<Object> e = vecFieldTemplate.elements() ; e.hasMoreElements() ;) {
-      FieldTemplate field = (FieldTemplate)e.nextElement();
-      //      log4jDataTemplate.debug("Comparing: " + field.name() + " & " + name.trim().toUpperCase());
-      //      if (field.name().equals(name.trim().toUpperCase())) {
-      if (field.name().equals(name)) {  // XmlEngineNP
-        log4jDataTemplate.debug("VECTOR addField, already exists:" + name);
-        // set the atributes that nor are null
-        if (formatOutput != null) field.formatOutput = formatOutput;
-        if (formatSimple != null) field.formatSimple = formatSimple;
-        if (vecReplace != null) field.vecReplace = vecReplace;
-        return field;
-      }
-      }
     log4jDataTemplate.debug("(addField) Crear FieldTemplate:" + name);
     //    FieldComponent fieldComponent = new FieldComponent(name.trim().toUpperCase(), this);
     //    FieldTemplate field = new FieldTemplate(name.trim().toUpperCase(), format, vecReplace); //, this);  // XmlEngineNP: .trim().toUpperCase() has been used again
