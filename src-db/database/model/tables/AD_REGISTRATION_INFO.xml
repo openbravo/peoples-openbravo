@@ -81,7 +81,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="COMPANYCOUNTRY" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="COMPANYCOUNTRY" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
