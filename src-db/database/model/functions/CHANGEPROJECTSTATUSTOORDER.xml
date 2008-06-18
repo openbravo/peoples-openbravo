@@ -220,7 +220,7 @@
 			  AND pv.c_bpartner_id = bp.c_bpartner_id 
 			  AND pv.isactive = 'Y';
 	      	  IF (v_SupplierName IS NULL) THEN
-			  v_SupplierName = '';
+			  v_SupplierName := '';
 	     	  END IF;
               
 	      INSERT
