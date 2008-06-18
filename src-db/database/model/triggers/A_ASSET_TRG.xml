@@ -19,7 +19,6 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
-  Cur_Defaults A_Asset_Group_Acct%ROWTYPE;
   v_Acct_ID NUMBER;
 BEGIN
   --  Default Accounts for all AcctSchema
