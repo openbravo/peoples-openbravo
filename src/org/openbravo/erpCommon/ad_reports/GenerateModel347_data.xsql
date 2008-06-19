@@ -37,7 +37,7 @@
       '348000000'||to_number(TO_CHAR(now(), 'YYYY'))-1 AS NUMERO_JUSTIF, 
       (CASE (to_char(?)) WHEN 'New' THEN ' ' WHEN 'Sustitutive' THEN ' ' WHEN 'Complementary' THEN 'C' END) AS TIPO_DECLARACION, 
       (CASE (to_char(?)) WHEN 'New' THEN ' ' WHEN 'Sustitutive' THEN 'S' WHEN 'Complementary' THEN ' ' END) AS TIPO_DECLARACION2,
-      LPAD(TO_CHAR(CASE (to_char(?)) WHEN 'Sustitutive' THEN TO_NUMBER(?) ELSE 0 END), 13, '0') AS NUMERO_DEC, 
+      LPAD(TO_CHAR(CASE (to_char(?)) WHEN 'Sustitutive' THEN ? ELSE '0' END), 13, '0') AS NUMERO_DEC, 
       CASE WHEN SUM(C_INVOICE.GRANDTOTAL) IS NULL THEN '  ' ELSE TO_CHAR(
       ROUND(SUM(C_INVOICE.TOTALLINES+(SELECT SUM(IT.TAXAMT)
                                                      FROM C_INVOICETAX IT

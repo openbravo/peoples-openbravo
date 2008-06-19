@@ -110,25 +110,29 @@ public class GenerateModel347 extends HttpSecureAppServlet {
 
   void printPageGenerate(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strType, String strComplementar, String strOrg) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: pageFind");
-    response.setContentType("application/rtf");
-    response.setHeader("Content-Disposition","attachment; filename=MODEL347.DAT" );
-    PrintWriter out = response.getWriter();
-    StringBuffer strBuf = new StringBuffer();
-
-    String strLinea = "";
-    String strCabecera = "";
     GenerateModel347Data[] data = GenerateModel347Data.select(this, strType, strComplementar, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
-    strCabecera = data[0].constant1 + data[0].model + data[0].ejercicio + data[0].nifDeclarante + data[0].nombreDeclarante + data[0].soporte + data[0].persona + data[0].numeroJustif + data[0].tipoDeclaracion + data[0].tipoDeclaracion2 + data[0].numeroDec + data[0].numeroPersonas + data[0].importe + data[0].totalInmuebles + data[0].importeTotalInmuebles + data[0].blancos;
-    strBuf = strBuf.append(strCabecera);
+    if (data.length>0)
+    {
+      response.setContentType("application/rtf");
+      response.setHeader("Content-Disposition","attachment; filename=MODEL347.DAT" );
+      PrintWriter out = response.getWriter();
+      StringBuffer strBuf = new StringBuffer();
 
-    GenerateModel347Data[] dataLines = GenerateModel347Data.selectType2(this, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+      String strLinea = "";
+      String strCabecera = "";
+      strCabecera = data[0].constant1 + data[0].model + data[0].ejercicio + data[0].nifDeclarante + data[0].nombreDeclarante + data[0].soporte + data[0].persona + data[0].numeroJustif + data[0].tipoDeclaracion + data[0].tipoDeclaracion2 + data[0].numeroDec + data[0].numeroPersonas + data[0].importe + data[0].totalInmuebles + data[0].importeTotalInmuebles + data[0].blancos;
+      strBuf = strBuf.append(strCabecera);
 
-    for (int i=0; i<dataLines.length; i++){
-      strLinea = dataLines[i].constant1 + dataLines[i].model + dataLines[i].ejercicio + dataLines[i].nifDeclarante + dataLines[i].nifDeclarado + dataLines[i].nifRepresentante + dataLines[i].nombreSocial + dataLines[i].tipoDeclaracion + dataLines[i].codigoProvincia + dataLines[i].codigoPais + dataLines[i].claveCodigo + dataLines[i].importe + dataLines[i].operacionSeguro + dataLines[i].arrendamiento + dataLines[i].blancos;
-      strBuf = strBuf.append("\r\n").append(strLinea);
+      GenerateModel347Data[] dataLines = GenerateModel347Data.selectType2(this, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+
+      for (int i=0; i<dataLines.length; i++){
+        strLinea = dataLines[i].constant1 + dataLines[i].model + dataLines[i].ejercicio + dataLines[i].nifDeclarante + dataLines[i].nifDeclarado + dataLines[i].nifRepresentante + dataLines[i].nombreSocial + dataLines[i].tipoDeclaracion + dataLines[i].codigoProvincia + dataLines[i].codigoPais + dataLines[i].claveCodigo + dataLines[i].importe + dataLines[i].operacionSeguro + dataLines[i].arrendamiento + dataLines[i].blancos;
+        strBuf = strBuf.append("\r\n").append(strLinea);
+      }
+      out.print(strBuf.toString());
+      out.close();
     }
-    out.print(strBuf.toString());
-    out.close();
+    
   }
 
 
