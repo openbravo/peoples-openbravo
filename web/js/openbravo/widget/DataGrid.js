@@ -1671,7 +1671,7 @@ dojo.widget.defineWidget(
 	                tableClass:           this.tableNode.className,
 	                loadingClass:         this.tableNode.className,
 	                scrollerBorderRight:  '1px solid #ababab',
-	                bufferTimeout:        5000,
+	                bufferTimeout:        15000,
 	                blankImg:             dojo.uri.dojoUri("../openbravo/widget/templates/blank.gif"),
 	                sortAscendImg:        dojo.uri.dojoUri("../openbravo/widget/templates/sort_asc.gif"),
 	                sortDescendImg:       dojo.uri.dojoUri("../openbravo/widget/templates/sort_desc.gif"),
