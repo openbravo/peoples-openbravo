@@ -19,7 +19,9 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
+  TYPE RECORD IS REF CURSOR;
   v_Acct_ID NUMBER;
+  Cur_Defaults RECORD;
 BEGIN
   --  Default Accounts for all AcctSchema
   IF(INSERTING) THEN
