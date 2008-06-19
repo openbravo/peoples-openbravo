@@ -11289,19 +11289,19 @@ Usually, company's internal identifiers for various records (products, customers
 <!--891 CREATEDBY-->
 <!--891-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--891 UPDATED-->
-<!--891-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--891-->              <UPDATED><![CDATA[2008-06-19 16:07:49.0]]></UPDATED>
 <!--891 UPDATEDBY-->
-<!--891-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--891-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--891 COLUMNNAME-->
-<!--891-->              <COLUMNNAME><![CDATA[FixMonthCutoff]]></COLUMNNAME>
+<!--891-->              <COLUMNNAME><![CDATA[Last Day Cut-off]]></COLUMNNAME>
 <!--891 NAME-->
 <!--891-->              <NAME><![CDATA[Last Day Cut-off]]></NAME>
 <!--891 PRINTNAME-->
-<!--891-->              <PRINTNAME><![CDATA[Fix month cutoff]]></PRINTNAME>
+<!--891-->              <PRINTNAME><![CDATA[Last Day Cut-off]]></PRINTNAME>
 <!--891 DESCRIPTION-->
 <!--891-->              <DESCRIPTION><![CDATA[Last day to include for next due date]]></DESCRIPTION>
 <!--891 HELP-->
-<!--891-->              <HELP><![CDATA[The Fix Month Cutoff indicates the last day invoices can have to be included in the current due date.  This field only displays when the fixed due date checkbox has been selected.]]></HELP>
+<!--891-->              <HELP><![CDATA[The Last Day Cut-off indicates the last day invoices can have to be included in the current due date.]]></HELP>
 <!--891**************--></AD_ELEMENT>
 
 <!--892**************--><AD_ELEMENT>
