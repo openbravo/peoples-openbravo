@@ -1496,6 +1496,7 @@ public class WadUtility {
     else if (fd.referencevalue.equals("20")) return "N"; //YesNo
     else if (fd.required.equals("Y")) {
       if (isDecimalNumber(fd.referencevalue) || isPriceNumber(fd.referencevalue) || isIntegerNumber(fd.referencevalue) || isGeneralNumber(fd.referencevalue) || isQtyNumber(fd.referencevalue)) return "0";
+      // FIXME: It makes no sense that the default value for an ID or reference is zero 
     }
     return "";
   }

@@ -123,7 +123,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>");
 </PARAMETERS_TMP>
     } else if (vars.commandIn("TAB")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
+<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getRequiredGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
       vars.removeSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
       <PARAMETER_TMP id="refreshTabParentSession">refreshParentSession(vars, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
 </PARAMETER_TMP>
@@ -797,7 +797,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     xmlDocument.setParameter("theme", vars.getTheme());
     //xmlDocument.setParameter("buttonReference", Utility.messageBD(this, "Reference", vars.getLanguage()));
     try {
-      WindowTabs tabs = new WindowTabs(this, vars, tabId, windowId);
+      WindowTabs tabs = new WindowTabs(this, vars, tabId, windowId, false);
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
@@ -941,7 +941,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       WindowTabs tabs = new WindowTabs(this, vars, tabId, windowId);
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+      if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="package">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", strReplaceWith);

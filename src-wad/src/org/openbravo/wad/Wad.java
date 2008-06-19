@@ -1845,8 +1845,10 @@ public class Wad extends DefaultHandler {
           sfd[i].defaultvalue = "\"0\"";
         } else if (sfd[i].accesslevel.equals("6") && sfd[i].columnname.equalsIgnoreCase("AD_ORG_ID")) {
           sfd[i].defaultvalue = "\"0\"";
-        } else {
+        } else if (!sfd[i].referencevalue.equals("13")){
           sfd[i].defaultvalue = "Utility.getDefault(this, vars, \"" + sfd[i].columnname + "\", \"" + WadUtility.toJavaString(sfd[i].defaultvalue) + "\", \"" + strWindow + "\", \"" + WadUtility.getWadDefaultValue(sfd[i]) + "\")";
+        } else {
+          sfd[i].defaultvalue = "\"\"";
         }
         if (!strDefaultValues.toString().equals("") || hasParentsFields) strDefaultValues.append(", ");
         strDefaultValues.append(sfd[i].defaultvalue);
