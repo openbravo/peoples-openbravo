@@ -7902,15 +7902,15 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--513 CREATEDBY-->
 <!--513-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--513 UPDATED-->
-<!--513-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--513-->              <UPDATED><![CDATA[2008-06-19 16:45:32.0]]></UPDATED>
 <!--513 UPDATEDBY-->
-<!--513-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--513-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--513 COLUMNNAME-->
 <!--513-->              <COLUMNNAME><![CDATA[Postal_Add]]></COLUMNNAME>
 <!--513 NAME-->
-<!--513-->              <NAME><![CDATA[-]]></NAME>
+<!--513-->              <NAME><![CDATA[Postal add]]></NAME>
 <!--513 PRINTNAME-->
-<!--513-->              <PRINTNAME><![CDATA[-]]></PRINTNAME>
+<!--513-->              <PRINTNAME><![CDATA[Postal add]]></PRINTNAME>
 <!--513 DESCRIPTION-->
 <!--513-->              <DESCRIPTION><![CDATA[Additional ZIP or Postal code]]></DESCRIPTION>
 <!--513 HELP-->
