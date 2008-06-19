@@ -29926,17 +29926,17 @@ Product quantity in the order uom.]]></HELP>
 <!--800006 CREATEDBY-->
 <!--800006-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800006 UPDATED-->
-<!--800006-->              <UPDATED><![CDATA[2007-05-03 10:02:01.0]]></UPDATED>
+<!--800006-->              <UPDATED><![CDATA[2008-06-19 18:28:15.0]]></UPDATED>
 <!--800006 UPDATEDBY-->
 <!--800006-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800006 COLUMNNAME-->
 <!--800006-->              <COLUMNNAME><![CDATA[ShowInRelation]]></COLUMNNAME>
 <!--800006 NAME-->
-<!--800006-->              <NAME><![CDATA[Shown in Relation]]></NAME>
+<!--800006-->              <NAME><![CDATA[Show in List View]]></NAME>
 <!--800006 PRINTNAME-->
-<!--800006-->              <PRINTNAME><![CDATA[Show in relation]]></PRINTNAME>
+<!--800006-->              <PRINTNAME><![CDATA[Show in List View]]></PRINTNAME>
 <!--800006 DESCRIPTION-->
-<!--800006-->              <DESCRIPTION><![CDATA[Show in relation]]></DESCRIPTION>
+<!--800006-->              <DESCRIPTION><![CDATA[Show in List View]]></DESCRIPTION>
 <!--800006 HELP-->
 <!--800006-->              <HELP><![CDATA[When this field is set as 'Y' the field will be shown in the relation view (as well as in the edition view), otherwise it only will be displayed in the edition view.]]></HELP>
 <!--800006**************--></AD_ELEMENT>
