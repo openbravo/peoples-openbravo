@@ -155,6 +155,9 @@ public class Register extends HttpSecureAppServlet {
     String companynumEmployees = data.companynumEmployees;    
     String comments = data.comments;
     String contactme = data.contactme;
+    String wanttopartner = data.wanttopartner;
+    String isevaluating = data.isevaluating;
+    
     // Newsletter Subscription
     String vision = data.obVision;
     String development = data.obDevelopment;
@@ -183,6 +186,8 @@ public class Register extends HttpSecureAppServlet {
     sb.append("companynumEmployees=" + (companynumEmployees == null ? "" : companynumEmployees) + "&");
     sb.append("comments=" + (comments == null ? "" : comments) + "&");
     sb.append("contactme=" + (contactme == null ? "" : contactme) + "&");
+    sb.append("wanttopartner=" + (wanttopartner == null ? "" : wanttopartner) + "&");
+    sb.append("isevaluating=" + (isevaluating == null ? "" : isevaluating) + "&");
     sb.append("vision=" + (vision == null ? "" : vision) + "&");
     sb.append("development=" + (development == null ? "" : development) + "&");
     sb.append("developmentannounce=" + (developmentAnnounce == null ? "" : developmentAnnounce) + "&");

@@ -2421,6 +2421,7 @@ function formElementValue(Formulario, ElementName, Value) {
     if (Formulario==null) return false;
   } else if (ElementName==null) return false;
   if (ElementName=="MESSAGE") {
+    initialize_MessageBox("messageBoxID");
     try {
       setValues_MessageBox('messageBoxID', "INFO", "", Value);
     } catch (err) {

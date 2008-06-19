@@ -49130,15 +49130,15 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400035 CREATEDBY-->
 <!--1005400035-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1005400035 UPDATED-->
-<!--1005400035-->              <UPDATED><![CDATA[2008-03-05 16:44:53.0]]></UPDATED>
+<!--1005400035-->              <UPDATED><![CDATA[2008-06-19 10:22:21.0]]></UPDATED>
 <!--1005400035 UPDATEDBY-->
 <!--1005400035-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400035 COLUMNNAME-->
 <!--1005400035-->              <COLUMNNAME><![CDATA[Testproxy]]></COLUMNNAME>
 <!--1005400035 NAME-->
-<!--1005400035-->              <NAME><![CDATA[Test Configuration]]></NAME>
+<!--1005400035-->              <NAME><![CDATA[Test Heartbeat]]></NAME>
 <!--1005400035 PRINTNAME-->
-<!--1005400035-->              <PRINTNAME><![CDATA[Test Configuration]]></PRINTNAME>
+<!--1005400035-->              <PRINTNAME><![CDATA[Test Heartbeat]]></PRINTNAME>
 <!--1005400035 DESCRIPTION-->
 <!--1005400035-->              <DESCRIPTION><![CDATA[Test the current proxy configuration.]]></DESCRIPTION>
 <!--1005400035 HELP-->
