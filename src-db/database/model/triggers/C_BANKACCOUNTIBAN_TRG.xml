@@ -39,17 +39,13 @@ BEGIN
       END IF;
     END IF;
     IF (:NEW.IBAN IS NOT NULL) THEN
-        SELECT MOD(CONCAT(
-                 CONCAT(
-                   CONCAT(
-                     SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4),
-                     ASCII(SUBSTR(:NEW.IBAN,1,1))-55
-                   ),
-                   ASCII(SUBSTR(:NEW.IBAN,2,1))-55),
-                 SUBSTR(:NEW.IBAN,3,2)),97) AS DC
-                 INTO v_IBAN_check
-        FROM DUAL;
-        IF (v_IBAN_check <> 1) THEN
+        SELECT MOD(SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4)||
+           ASCII(SUBSTR(:NEW.IBAN,1,1))-55
+           ||ASCII(SUBSTR(:NEW.IBAN,2,1))-55||
+           SUBSTR(:NEW.IBAN,3,2),97) AS DC
+           INTO v_IBAN_check
+        FROM DUAL;        
+         IF (v_IBAN_check <> 1) THEN
           RAISE_APPLICATION_ERROR(-20257, 'Incorrect IBAN Code.');
         END IF;
         SELECT C_COUNTRY_ID
