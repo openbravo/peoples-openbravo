@@ -6343,7 +6343,7 @@
 <!--1005400002 CREATEDBY-->
 <!--1005400002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005400002 UPDATED-->
-<!--1005400002-->              <UPDATED><![CDATA[2008-06-19 09:17:51.0]]></UPDATED>
+<!--1005400002-->              <UPDATED><![CDATA[2008-06-19 11:21:10.0]]></UPDATED>
 <!--1005400002 UPDATEDBY-->
 <!--1005400002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400002 NAME-->
@@ -6356,7 +6356,7 @@
     * Heartbeat date
     * Activity and complexity rate
     * Number of registered users
-    * Operative System and version
+    * Operating System and version
     * Database and version
     * Application server and version
     * Web server and version
