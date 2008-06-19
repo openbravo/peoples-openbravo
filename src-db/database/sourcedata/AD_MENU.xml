@@ -6292,7 +6292,7 @@
 <!--800009 AD_ORG_ID-->
 <!--800009-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800009 ISACTIVE-->
-<!--800009-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800009-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800009 CREATED-->
 <!--800009-->              <CREATED><![CDATA[2003-11-26 12:06:58.0]]></CREATED>
 <!--800009 CREATEDBY-->
@@ -6300,7 +6300,7 @@
 <!--800009 UPDATED-->
 <!--800009-->              <UPDATED><![CDATA[2003-11-26 12:06:58.0]]></UPDATED>
 <!--800009 NAME-->
-<!--800009-->              <NAME><![CDATA[Stock Report]]></NAME>
+<!--800009-->              <NAME><![CDATA[Report inventory]]></NAME>
 <!--800009 UPDATEDBY-->
 <!--800009-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800009 DESCRIPTION-->
@@ -11463,7 +11463,7 @@
 <!--800270 UPDATED-->
 <!--800270-->              <UPDATED><![CDATA[2007-07-09 14:07:15.0]]></UPDATED>
 <!--800270 NAME-->
-<!--800270-->              <NAME><![CDATA[Customer Stock Report]]></NAME>
+<!--800270-->              <NAME><![CDATA[Stock Report]]></NAME>
 <!--800270 UPDATEDBY-->
 <!--800270-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800270 DESCRIPTION-->

@@ -4918,19 +4918,19 @@
 <!--800007 AD_ORG_ID-->
 <!--800007-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800007 ISACTIVE-->
-<!--800007-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800007-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800007 CREATED-->
 <!--800007-->              <CREATED><![CDATA[2003-11-21 17:37:39.0]]></CREATED>
 <!--800007 CREATEDBY-->
 <!--800007-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800007 UPDATED-->
-<!--800007-->              <UPDATED><![CDATA[2003-11-21 17:37:39.0]]></UPDATED>
+<!--800007-->              <UPDATED><![CDATA[2008-06-19 19:48:30.0]]></UPDATED>
 <!--800007 UPDATEDBY-->
 <!--800007-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800007 VALUE-->
 <!--800007-->              <VALUE><![CDATA[ReportInventory]]></VALUE>
 <!--800007 NAME-->
-<!--800007-->              <NAME><![CDATA[Stock Report]]></NAME>
+<!--800007-->              <NAME><![CDATA[Report inventory]]></NAME>
 <!--800007 DESCRIPTION-->
 <!--800007-->              <DESCRIPTION><![CDATA[Report inventory]]></DESCRIPTION>
 <!--800007 HELP-->
@@ -4947,6 +4947,8 @@
 <!--800007-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800007 ISJASPER-->
 <!--800007-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800007 ISEXTERNALSERVICE-->
+<!--800007-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800007**************--></AD_PROCESS>
 
 <!--800009**************--><AD_PROCESS>
@@ -10362,13 +10364,13 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800185 CREATEDBY-->
 <!--800185-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800185 UPDATED-->
-<!--800185-->              <UPDATED><![CDATA[2007-07-09 14:02:20.0]]></UPDATED>
+<!--800185-->              <UPDATED><![CDATA[2008-06-19 19:50:57.0]]></UPDATED>
 <!--800185 UPDATEDBY-->
 <!--800185-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800185 VALUE-->
 <!--800185-->              <VALUE><![CDATA[ReportWarehousePartnerJR]]></VALUE>
 <!--800185 NAME-->
-<!--800185-->              <NAME><![CDATA[Customer Stock Report]]></NAME>
+<!--800185-->              <NAME><![CDATA[Stock Report]]></NAME>
 <!--800185 DESCRIPTION-->
 <!--800185-->              <DESCRIPTION><![CDATA[Customer Stock Report]]></DESCRIPTION>
 <!--800185 HELP-->
@@ -10385,6 +10387,8 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800185-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800185 ISJASPER-->
 <!--800185-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800185 ISEXTERNALSERVICE-->
+<!--800185-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800185**************--></AD_PROCESS>
 
 <!--800187**************--><AD_PROCESS>
