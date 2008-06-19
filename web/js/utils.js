@@ -986,7 +986,7 @@ function keyControl(pushedKey) {
   if (pushedKey.ctrlKey) isCtrlPressed = true;
   if (pushedKey.altKey) isAltPressed = true;
   pressedKeyCode = pushedKey.keyCode;
-  if (isTabPressed == true && isInputFile == true) {
+  if (isInputFile == true) {
     return true;
   }
 
