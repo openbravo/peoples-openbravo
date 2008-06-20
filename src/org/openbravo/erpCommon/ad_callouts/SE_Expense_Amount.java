@@ -23,6 +23,8 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.Utility;
 import java.io.*;
+import java.math.BigDecimal;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -55,15 +57,41 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strExpenseAmt, String strDateexpense, String strcCurrencyId, String strTabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    
     String C_Currency_To_ID = Utility.getContext(this, vars, "$C_Currency_ID", "");
-    String convertedAmount = strExpenseAmt;
+    
+    BigDecimal Amount = new BigDecimal(strExpenseAmt);    
+    String strPrecision = "0";    
+    if (!strcCurrencyId.equals("")){
+      strPrecision = SEExpenseAmountData.selectPrecision(this, strcCurrencyId);
+    }
+    int StdPrecision = Integer.valueOf(strPrecision).intValue();
+    if (Amount.scale() > StdPrecision)
+      Amount = Amount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+    
+    String convertedAmount = strExpenseAmt;    
+    BigDecimal ConvAmount = Amount;    
+    
     if (!strcCurrencyId.equals(C_Currency_To_ID)){
-       convertedAmount = SEExpenseAmountData.selectConvertedAmt(this, strExpenseAmt, strcCurrencyId, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());
+      String strPrecisionConv = "0";    
+      if (!C_Currency_To_ID.equals("")){
+        strPrecisionConv = SEExpenseAmountData.selectPrecision(this, C_Currency_To_ID);
+      }
+      int StdPrecisionConv = Integer.valueOf(strPrecisionConv).intValue();
+      convertedAmount = SEExpenseAmountData.selectConvertedAmt(this, strExpenseAmt, strcCurrencyId, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());      
+      if (!convertedAmount.equals("")) {
+        ConvAmount = new BigDecimal(convertedAmount);
+      } else {
+        ConvAmount = new BigDecimal(0.0);
+      }
+      if (ConvAmount.scale() > StdPrecisionConv)
+        ConvAmount = ConvAmount.setScale(StdPrecisionConv, BigDecimal.ROUND_HALF_UP);      
     }
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SE_Expense_Amount';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpconvertedamt\", \"" + convertedAmount + "\")");
+    resultado.append("new Array(\"inpexpenseamt\", \"" + Amount.toString() + "\")");
+    resultado.append(", new Array(\"inpconvertedamt\", \"" + ConvAmount.toString() + "\")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "frameAplicacion");
