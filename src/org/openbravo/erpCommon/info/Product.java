@@ -116,6 +116,7 @@ public class Product extends HttpSecureAppServlet {
         strDate = Utility.getContext(this, vars, "DateInvoiced", windowId);
         if (log4j.isDebugEnabled()) log4j.debug("DateInvoiced:"+strDate);
       }
+      if (strDate.equals("")) strDate = DateTimeData.today(this);
       vars.setSessionValue("Product.date", strDate);
 
       String strPriceListVersion = getPriceListVersion(vars, strPriceList, strDate);
