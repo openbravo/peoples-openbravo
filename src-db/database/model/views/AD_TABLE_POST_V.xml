@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="VIEW AD_TABLE_POST_V">
-    <view name="AD_TABLE_POST_V"><![CDATA[SELECT ad_table.ad_table_id, (w2.name || 
+    <view name="AD_TABLE_POST_V"><![CDATA[SELECT ad_table.ad_table_id, (COALESCE(w2.name,'') || 
         CASE
             WHEN w2.name IS NULL THEN ''
             ELSE ' - '
@@ -12,7 +12,7 @@
    FROM ad_column c
   WHERE ad_table.ad_table_id = c.ad_table_id AND c.columnname = 'Posted')) AND w1.ad_language = COALESCE(w2.ad_language, w1.ad_language) AND ad_table.isactive = 'Y'
 UNION 
- SELECT ad_table.ad_table_id, (w2.name || 
+ SELECT ad_table.ad_table_id, (COALESCE(w2.name,'') || 
         CASE
             WHEN w2.name IS NULL THEN ''
             ELSE ' - '

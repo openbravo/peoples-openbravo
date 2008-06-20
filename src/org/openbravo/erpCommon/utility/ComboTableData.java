@@ -926,7 +926,7 @@ public class ComboTableData {
           } else {
             if (name.toString().equals("")) name.append("(");
             else name.append(FIELD_CONCAT);
-            name.append(auxStructure.toString());
+            name.append("COALESCE(TO_CHAR(").append(auxStructure.toString()).append("),'')");
           }
         }
       }
