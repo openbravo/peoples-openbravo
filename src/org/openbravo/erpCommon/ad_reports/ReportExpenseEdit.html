@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<TITLE>Services</TITLE>
+<TITLE>Expense Report</TITLE>
 
     <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Report.css" id="paramCSS" />
@@ -72,34 +72,59 @@
   
   <DIV id="sectionPartner"> 
     <BR></BR>
-    <TABLE width="80%" cellspacing="0" cellpadding="0" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar1">
+    <TABLE colspan="7" cellspacing="0" cellpadding="0" class="DataGrid_Header_Table DataGrid_Body_Table" id="selEliminar1" >
+
       <TR class="DataGrid_Body_Row"> 
-        <TH colspan="5" class="DataGrid_Header_Cell"><SPAN>Customer</SPAN>&nbsp;<SPAN id="fieldName">xxFrilac</SPAN></TH>
+        <TH class="DataGrid_Header_Cell" colspan="7" style="overflow: hidden;"><SPAN >Customer:</SPAN>&nbsp;<SPAN id="fieldName" >xxCustomer</SPAN></TH>
       </TR>
-      <DIV id="sectionProduct"> 
+<DIV id="sectionProject">
+	  <TR class="DataGrid_Body_Row"> 
+          <TH class="DataGrid_Header_Cell" ><div style="overflow: hidden;">Project:&nbsp;<span id="fieldDesc">xxFrilac</span></div></TH>
+		  <TH class="DataGrid_Header_Cell">Employees hours:&nbsp;<SPAN id="fieldTotalProduct3h">xx23.23</SPAN>&nbsp;(<SPAN id="fieldTotalProduct3c">xx23.23</SPAN>)</TH>
+		  <TH colspan="5" class="DataGrid_Header_Cell">Total amount:&nbsp;<SPAN id="fieldTotalPrice3">xx23.23</SPAN></TH>
+		 
+      </TR>
+
+
+	<DIV id="sectionEmployee" >
+	   <TR class="DataGrid_Body_Row"> 
+          <TH  class="DataGrid_Header_Cell"><div style="overflow: hidden;">Employee:&nbsp;<SPAN id="fieldEmp">xxFrilac</SPAN></div></TH>
+		  <TH  class="DataGrid_Header_Cell">Employee hours:&nbsp;<SPAN id="fieldTotalProduct2h">xx23.23</SPAN>&nbsp;(<SPAN id="fieldTotalProduct2c">xx23.23</SPAN>)</TH>
+		  <TH  colspan="5" class="DataGrid_Header_Cell">Total amount:&nbsp;<SPAN id="fieldTotalPrice2">xx23.23</SPAN></TH>
+		  
+      </TR>
+
+      <DIV id="sectionProduct" > 
         <TR class="DataGrid_Body_Row"> 
-          <TH colspan="2" class="DataGrid_Header_Cell"><SPAN>Product</SPAN>&nbsp;<SPAN id="fieldProductname">xxProducto</SPAN></TH>
-          <TH colspan="3" class="DataGrid_Header_Cell"><SPAN>Total Product</SPAN>&nbsp;<SPAN id="fieldTotalProduct">xx23.23</SPAN></TH>
+          <TH  class="DataGrid_Header_Cell"><div style="overflow: hidden;"><SPAN>Product:</SPAN>&nbsp;<SPAN id="fieldProductname">xxProducto</SPAN></div></TH>
+          <TH  class="DataGrid_Header_Cell">Product hours:&nbsp;<SPAN id="fieldTotalProduct">xx23.23</SPAN>&nbsp;(<SPAN id="fieldTotalProductc">xx23.23</SPAN>)</TH>
+          <TH colspan="5" class="DataGrid_Header_Cell"><SPAN>Total amount:</SPAN>&nbsp;<SPAN id="fieldTotalPrice">xx23.23</SPAN></TH>
         </TR>
         <TR class="DataGrid_Body_Row"> 
-          <TH width="11%" class="DataGrid_Header_Cell">Doc No.</TH>
-          <TH width="65%" class="DataGrid_Header_Cell">Description</TH>
-          <TH width="8%" class="DataGrid_Header_Cell">Date</TH>
-          <TH width="7%" class="DataGrid_Header_Cell">Quantity</TH>
-          <TH width="9%" class="DataGrid_Header_Cell">Processed</TH>
+          <TH width="37%" class="DataGrid_Header_Cell" >Doc No.</TH>
+          <TH width="31%" class="DataGrid_Header_Cell" >Description</TH>
+          <TH width="8%" class="DataGrid_Header_Cell" >Date</TH>
+          <TH width="5%" class="DataGrid_Header_Cell" >Hours</TH>
+          <TH width="7%" class="DataGrid_Header_Cell" >Quantity</TH>
+          <TH width="6%" class="DataGrid_Header_Cell" >Amount</TH>
+          <TH width="6%" class="DataGrid_Header_Cell" >Processed</TH>
         </TR>
         <DIV id="sectionDetail"> 
           <TR class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
-            <TD width="11%" class="DataGrid_Body_Cell"> <A href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpsTimeexpenselineId, xx, false, document.frmMain, '../ExpenseSheet/Lines_Relation.html', 'frameAplicacion', false, true);return false;" onmouseover="window.status='Expense lines';return true;" onmouseout="window.status='';return true;" class="LabelLink _LabelLink" id="fieldSTimeexpenselineId"> 
+            <TD class="DataGrid_Body_Cell"> <A href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpsTimeexpenselineId, xx, false, document.frmMain, '../ExpenseSheet/Lines_Relation.html', 'frameAplicacion', false, true);return false;" onmouseover="window.status='Expense lines';return true;" onmouseout="window.status='';return true;" class="LabelLink _LabelLink" id="fieldSTimeexpenselineId"> 
               <SPAN id="fieldDocumentno" style="overflow: hidden;">100000</SPAN></A></TD>
-            <TD width="65%" class="DataGrid_Body_Cell" id="fieldDescription">xxDescripcion</TD>
-            <TD width="8%" class="DataGrid_Body_Cell" id="fieldDateexpense">23/10/2004</TD>
-            <TD width="7%" class="DataGrid_Body_Cell"> <SPAN id="fieldQty">xx</SPAN>&nbsp;<SPAN id="fieldUomname">xxPalet</SPAN></TD>
-            <TD width="9%" class="DataGrid_Body_Cell" id="fieldProcessed">xxProcesado</TD>
+            <TD class="DataGrid_Body_Cell" > <div id="fieldDescription" style="overflow: hidden; word-wrap: break-word;">xxDescripcion</div></TD>
+            <TD class="DataGrid_Body_Cell" > <div id="fieldDateexpense" style="overflow: hidden;">23/10/2004</div></TD>
+            <TD class="DataGrid_Body_Cell"> <div id="fieldHoras" style="overflow: hidden;">xxHoras</div></TD>
+            <TD class="DataGrid_Body_Cell"> <SPAN id="fieldQty" style="overflow: hidden;">xx</SPAN>&nbsp;<SPAN id="fieldUomname" style="overflow: hidden;">xxPalet</SPAN></TD>
+            <TD class="DataGrid_Body_Cell" > <div id="fieldAmount" style="overflow: hidden;">xxPrice</div></TD>
+            <TD class="DataGrid_Body_Cell" > <div id="fieldProcessed" style="overflow: hidden; word-wrap: break-word;" >xxProcesado</div></TD>
           </TR>
         </DIV>
       </DIV>
-    </TABLE>
+    </DIV>
+    </DIV>
+  </TABLE>
   </DIV>
 
 </form>

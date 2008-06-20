@@ -12,15 +12,11 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-
-
-
-
 
 <SqlClass name="ReportExpenseData" package="org.openbravo.erpCommon.ad_reports">
   <SqlClassComment></SqlClassComment>
@@ -28,25 +24,35 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT C_BPARTNER.NAME, M_PRODUCT.NAME AS PRODUCTNAME, S_L.QTY, C_UOM.NAME AS UOMNAME, 
-      S_L.DATEEXPENSE, (CASE S.PROCESSED WHEN 'Y' THEN 'Si' ELSE 'No' END) AS PROCESSED, S_L.DESCRIPTION, S_L.S_TIMEEXPENSELINE_ID, S.DOCUMENTNO
-      FROM S_TIMEEXPENSE S, S_TIMEEXPENSELINE S_L, C_BPARTNER, M_PRODUCT, C_UOM
+      SELECT CBE.NAME AS EMPLOYEE, (CASE S_L.ISTIMEREPORT WHEN 'Y' THEN S_L.QTY ELSE 0 END) * C_CALCULATECOST_CATSALARY(C_CALCULATE_CATSALARY(s.c_bpartner_id,  (CASE WHEN S_L.DATEEXPENSE IS NULL THEN S.DATEREPORT ELSE S_L.DATEEXPENSE END)), (CASE WHEN S_L.DATEEXPENSE IS NULL THEN S.DATEREPORT ELSE S_L.DATEEXPENSE END)) AS COST, 
+	      CBC.NAME AS NAME, (P.VALUE || ' - ' ||P.NAME) AS DESCR, M_PRODUCT.NAME AS PRODUCTNAME, C_UOM.NAME AS UOMNAME,
+	      (CASE S_L.ISTIMEREPORT WHEN 'N' THEN S_L.QTY ELSE '0' END) AS QTY, (CASE S_L.ISTIMEREPORT WHEN 'Y' THEN S_L.QTY ELSE '0' END) AS HORAS, 
+	      (CASE WHEN S_L.DATEEXPENSE IS NULL THEN S.DATEREPORT ELSE S_L.DATEEXPENSE END) AS DATEEXPENSE, 
+	      (CASE WHEN S_L.ISTIMEREPORT ='N' THEN (CASE WHEN S_L.CONVERTEDAMT IS NOT NULL THEN S_L.CONVERTEDAMT ELSE COALESCE(S_L.EXPENSEAMT,0) END) ELSE 0 END) AS INVOICEPRICE, 
+	      AD_MESSAGE_GET2(S.PROCESSED,?) AS PROCESSED, (CASE WHEN S_L.DESCRIPTION IS NULL THEN S.DESCRIPTION ELSE S_L.DESCRIPTION END) AS DESCRIPTION, S_L.S_TIMEEXPENSELINE_ID, S.DOCUMENTNO
+      FROM S_TIMEEXPENSE S, C_BPARTNER CBE, M_PRODUCT, C_UOM, S_TIMEEXPENSELINE S_L
+      LEFT JOIN C_PROJECT P ON S_L.C_PROJECT_ID = P.C_PROJECT_ID
+      LEFT JOIN C_BPARTNER CBC ON S_L.C_BPARTNER_ID = CBC.C_BPARTNER_ID
       WHERE S.S_TIMEEXPENSE_ID = S_L.S_TIMEEXPENSE_ID
-      AND S_L.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-      AND S_L.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-      AND S_L.C_UOM_ID = C_UOM.C_UOM_ID
-      AND S.AD_CLIENT_ID IN ('1')
-      AND S.AD_ORG_ID IN ('1')
-      AND 1=1
-      ORDER BY C_BPARTNER.NAME, S_L.DATEEXPENSE
-     ]]></Sql>
+	      AND s.C_BPARTNER_ID=CBE.C_BPARTNER_ID
+	      AND S_L.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+	      AND S_L.C_UOM_ID = C_UOM.C_UOM_ID
+	      AND S.AD_CLIENT_ID IN ('1')
+	      AND S.AD_ORG_ID IN ('1')
+	      AND 1=1
+      ORDER BY NAME, DESCR, EMPLOYEE, PRODUCTNAME, DATEEXPENSE DESC
+  ]]></Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="adLanguage"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND S.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND S.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND S.DATEREPORT >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND S.DATEREPORT < TO_DATE(?)]]></Parameter>
-    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND S_L.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="partner" optional="true" after="AND 1=1"><![CDATA[ AND S.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="project" optional="true" after="AND 1=1"><![CDATA[ AND S_L.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="time" optional="true" after="AND 1=1"><![CDATA[ AND S_L.ISTIMEREPORT = ?]]></Parameter>
+    <Parameter name="expense" optional="true" after="AND 1=1"><![CDATA[ AND S_L.ISTIMEREPORT = ?]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectBpartner" type="preparedStatement" return="String" default="">
