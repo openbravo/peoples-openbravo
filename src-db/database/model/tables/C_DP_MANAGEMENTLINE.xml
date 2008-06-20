@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="STATUS_TO" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="STATUS_TO" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
