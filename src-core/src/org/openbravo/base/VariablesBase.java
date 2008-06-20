@@ -22,6 +22,7 @@ import org.apache.log4j.Logger ;
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.*;
 import org.apache.commons.fileupload.servlet.*;
+import org.openbravo.utils.FormatUtilities;
 
 public class VariablesBase {
   HttpSession session;
@@ -194,6 +195,9 @@ public VariablesBase(HttpServletRequest request) {
         auxStr = defaultValue;
       }
     }
+    
+    auxStr = FormatUtilities.sanitizeInput(auxStr);
+    
     if (log4j.isDebugEnabled()) log4j.debug("Request parameter: " + parameter + ":..." + auxStr);
     return auxStr;
   }
@@ -230,6 +234,9 @@ public VariablesBase(HttpServletRequest request) {
       }
       return strResultado.toString();
     }
+    
+    auxStr = FormatUtilities.sanitizeInput(auxStr);
+    
     if (auxStr!=null && auxStr.length>0) {
       for (int i=0;i<auxStr.length;i++) {
         if (auxStr[i].length()>0) {
@@ -286,6 +293,8 @@ public VariablesBase(HttpServletRequest request) {
       return strResultado.toString();
     }
 
+    auxStr = FormatUtilities.sanitizeInput(auxStr);
+    
     strResultado.append("('");
     for (int i=0;i<auxStr.length;i++) {
       if (i>0) {

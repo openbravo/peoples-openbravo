@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2007 Openbravo S.L.
+ * Copyright (C) 2001-2008 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -12,7 +12,7 @@
 package org.openbravo.utils;
 
 import javax.servlet.ServletException;
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 
 public class FormatUtilities {
   static Logger log4j = Logger.getLogger(FormatUtilities.class);
@@ -57,5 +57,20 @@ public class FormatUtilities {
     if (encrypt) result = CryptoUtility.encrypt(text);
     else result = CryptoUtility.decrypt(text);
     return result;
+  }
+  
+  public static String sanitizeInput(String text) {
+    String sanitized = text;
+    String[] tags = {"<[/]?applet>", "<[/]?body>", "<[/]?embed>", "<[/]?frame>", "<[/]?script>", "<[/]?frameset>", "<[/]?html>", "<[/]?iframe>", "<[/]?img>",
+                     "<[/]?style>", "<[/]?layer>", "<[/]?link>", "<[/]?ilayer>", "<[/]?meta>", "<[/]?object>"};    
+    for (int i=0; i < tags.length; i++)
+      sanitized  = sanitized.replaceAll("(?i)" + tags[i], "");
+    return sanitized;
+  }
+  
+  public static String[] sanitizeInput(String[] text) {
+    for(int i=0; i < text.length; i++)
+      text[i] = sanitizeInput(text[i]);
+    return text;
   }
 }
