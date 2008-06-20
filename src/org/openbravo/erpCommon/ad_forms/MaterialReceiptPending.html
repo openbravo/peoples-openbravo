@@ -360,67 +360,59 @@ function onloadFunctions() {
             <th class="DataGrid_Header_Cell">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                       <TR>
-					      <TD class="TextBox_ContentCell">
-					      <TABLE style="border:0px;border-collapse:collapse;">
-					        <TR>
-					          <TD style="padding-top: 0px;">
-                        		  <INPUT displayFormat="DD-MM-YYYY" saveFormat="DD-MM-YYYY"  class="dojoValidateValid TextBox_btn_OneCell_width" type="text" name="inpDateReceiptxx" id="paramDateReceiptxx" onchange="validateDateTextBox(this.id);logChanges(this);return true;" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);"></INPUT>
-                              </TD>			
-							</TR>
-					      </TABLE>
-					  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="paramDateReceiptxxinvalidSpan">
-					    <TABLE class="TextBox_MsgContainer_table">
-					      <TR class="TextBox_MsgContainer_tr">
-					
-					        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
-
-					      </TR>
-					      <TR>
-					        <TD colspan="2" class="invalid"><DIV class="TextBox_MsgContainer_div2" id="paramDateReceiptxxinvalidSpanText">* The value entered is not valid.</DIV></TD>
-					      </TR>
-					    </TABLE>
-					  </SPAN>
-					  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="paramDateReceiptxxmissingSpan">
-					
-					    <TABLE class="TextBox_MsgContainer_table">
-
-					      <TR class="TextBox_MsgContainer_tr">
-					        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
-					      </TR>
-					      <TR>
-					        <TD colspan="2" class="missing"><DIV class="TextBox_MsgContainer_div2" id="paramDateReceiptxxmissingSpanText">* This value is required.</DIV></TD>
-					      </TR>
-					    </TABLE>
-					
-					  </SPAN>
-
-					  <SPAN class="TextBox_MsgContainer_span" style="display: none;" id="paramDateReceiptxxrangeSpan">
-					    <TABLE class="TextBox_MsgContainer_table">
-					      <TR class="TextBox_MsgContainer_tr">
-					        <TD class="TextBox_MsgContainer_td"><DIV class="TextBox_MsgContainer_div"></DIV></TD><TD></TD>
-					      </TR>
-					      <TR>
-					        <TD colspan="2" class="range"><DIV class="TextBox_MsgContainer_div2" id="paramDateReceiptxxrangeSpanText">* This value is out of range.</DIV></TD>
-					
-					      </TR>
-
-					    </TABLE>
-					  </SPAN>
-					      </TD>
-					      <TD class="FieldButton_ContentCell"><A id="paramLinkDateReceipt" class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Date of First Sale'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateReceiptxx', document.frmMain.inpDateReceiptyy.value, false);return false;">
-					  <TABLE class="FieldButton" onmousedown="this.className='FieldButton_active'; return true;" onmouseup="this.className='FieldButton'; return true;" onmouseover="this.className='FieldButton_hover'; window.status='Date of First Sale'; return true;" onmouseout="this.className='FieldButton'; window.status=''; return true;" id="paramDateTolinkCalendar">
-					    <TR>
-					      <TD class="FieldButton_bg">
-					        <IMG alt="Date of First Sale" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Date of First Sale" src="../web/images/blank.gif" border="0" id="buttonCalendar"></IMG>
-					
-					      </TD>
-
-					    </TR>
-					  </TABLE>
-					</A>		
-					</TD>
-					</TR>
-				</TABLE>
+                        <TD class="TextBox_ContentCell">
+                          
+                          
+                          
+                          <!-- <INPUT class="dojoValidateValid TextBox_btn_OneCell_width" type="text" name="inpDateReceiptxx"  id="paramFieldcBpartnerId" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this, 'yy');return true;"></INPUT>
+                        </TD>
+                        <TD class="FieldButton_ContentCell">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateReceiptyy', document.frmMain.inpDateReceiptzz.value, false);return false;" id="fieldcBpartnerId2">
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <TR>
+                              <TD class="FieldButton_bg">
+                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+                              </TD>
+                            </TR>
+                          </TABLE>
+                          </a>-->
+                          
+                          
+                 
+                          <INPUT dojoType="openbravo:DateTextbox" displayFormat="DD-MM-YYYY" saveFormat="DD-MM-YYYY"  class="dojoValidateValid TextBox_btn_OneCell_width" type="text" name="inpDateReceiptxx" id="paramFieldcBpartnerId" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramFieldcBpartnerId");</script>
+                        </TD>
+                        <TD class="FieldButton_bg">
+                          <a id="dynamicDate" class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateReceiptxx', document.frmMain.inpDateReceiptyy.value, false);return false;">
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <TR>
+                              <TD class="FieldButton_bg">
+                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+                              </TD>
+                            </TR>
+                          </TABLE>
+                          </a>
+                        
+                          
+                          <!-- <INPUT dojotype="openbravo:DateTextbox" displayformat="DD-MM-YYYY" saveformat="DD-MM-YYYY" class="dojoValidateValid TextBox_btn_OneCell_width" type="text" name="inpDateReceiptxx"  id="paramFieldcBpartnerId" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramFieldcBpartnerId");</SCRIPT>                       
+			              </TD>
+			              <TD class="FieldButton_bg">
+                    		<a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='xx'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.paramFieldcBpartnerId', document.frmMain.paramFieldcBpartnerId.value, false);return false;" >
+			                <TABLE class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+			                  <TR>
+			                    <TD class="FieldButton_bg">
+			                      <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+			                    </TD>
+			                  </TR>
+			                </TABLE>
+			                </a>     -->                   
+                          
+                          
+                          
+                          
+                          
+                        </TD>
+                      </TR>
+                    </TABLE>
             </th>
           </TR>
 

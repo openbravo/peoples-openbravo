@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
 import java.math.BigDecimal;
@@ -62,9 +61,6 @@ public class SL_Project_Planned extends HttpSecureAppServlet {
     String strPrecision = "0";
     if (data!=null && data.length>0) {
       strPrecision = data[0].stdprecision;
-    } else {
-      String strcCurrencyId = Utility.getContext(this, vars, "$C_Currency_ID", "");
-      strPrecision = SLProjectPlannedAmtData.selectPrecision(this, strcCurrencyId);
     }
     int StdPrecision = Integer.valueOf(strPrecision).intValue();
 

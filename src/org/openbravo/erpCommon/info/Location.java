@@ -98,6 +98,8 @@ LocationSearchData getEditVariables(VariablesSecureApp vars) {
     data.address2 = vars.getStringParameter("inpAddress2");
     data.postal = vars.getStringParameter("inpPostal");
     data.city = vars.getStringParameter("inpCity");
+    data.postalAdd = vars.getStringParameter("inpPostalAdd");
+    data.regionname = vars.getStringParameter("inpRegionname");
     return data;
   }
 
