@@ -270,7 +270,7 @@ compare.database.structure: Generates a diff script.
       <transaction>
         --CREATING USER
         CREATE ROLE ${bbdd.user} LOGIN PASSWORD '${bbdd.password}'
-               SUPERUSER CREATEDB CREATEROLE
+               NOSUPERUSER CREATEDB CREATEROLE
                VALID UNTIL 'infinity';
         
         UPDATE pg_authid SET rolcatupdate=true WHERE rolname='${bbdd.user}';
