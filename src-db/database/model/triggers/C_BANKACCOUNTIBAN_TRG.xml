@@ -25,13 +25,14 @@
   v_DigitBank NVARCHAR2(1);
   v_Country NUMBER;
   v_CountryId NVARCHAR2(2);
+  v_BankName NVARCHAR2(60);
   v_Length NUMBER;
 BEGIN
   --  Default Accounts for all AcctSchema
   IF(INSERTING OR UPDATING) THEN
     IF (:NEW.CODEACCOUNT IS NOT NULL OR :NEW.DIGITCONTROL IS NOT NULL) THEN
-      SELECT CODEBANK, CODEBRANCH, DIGITCONTROL
-      INTO v_Bank, v_Branch, v_DigitBank
+      SELECT CODEBANK, CODEBRANCH, DIGITCONTROL, NAME
+      INTO v_Bank, v_Branch, v_DigitBank, v_BankName
       FROM C_BANK
       WHERE C_BANK_ID=:NEW.C_BANK_ID;
       IF (v_Bank IS NULL OR v_Branch IS NULL OR v_DigitBank IS NULL) THEN
@@ -72,11 +73,11 @@ BEGIN
       INTO v_Bank, v_Branch, v_DigitBank
       FROM C_BANK
       WHERE C_BANK_ID=:NEW.C_BANK_ID;
-      :NEW.DISPLAYEDACCOUNT:=v_Bank || '-' || v_Branch || '-' || v_DigitBank || :NEW.DIGITCONTROL || '-' || :NEW.CODEACCOUNT;
+      :NEW.DISPLAYEDACCOUNT:=v_BankName || '. ' || v_Bank || '-' || v_Branch || '-' || v_DigitBank || :NEW.DIGITCONTROL || '-' || :NEW.CODEACCOUNT;
     ELSIF (:NEW.SHOWIBAN='Y') THEN
-      :NEW.DISPLAYEDACCOUNT:=SUBSTR(:NEW.IBAN,1,4) || '-' || SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4);
+      :NEW.DISPLAYEDACCOUNT:=v_BankName || '. ' || SUBSTR(:NEW.IBAN,1,4) || '-' || SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4);
     ELSE
-      :NEW.DISPLAYEDACCOUNT:=:NEW.GENERICACCOUNT;
+      :NEW.DISPLAYEDACCOUNT:=v_BankName || '. ' || :NEW.GENERICACCOUNT;
     END IF;
   END IF;
 EXCEPTION
