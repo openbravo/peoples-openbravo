@@ -41,8 +41,8 @@ BEGIN
     END IF;
     IF (:NEW.IBAN IS NOT NULL) THEN
         SELECT MOD(SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4)||
-           ASCII(SUBSTR(:NEW.IBAN,1,1))-55
-           ||ASCII(SUBSTR(:NEW.IBAN,2,1))-55||
+           ASCII(SUBSTR(UPPER(:NEW.IBAN),1,1))-55
+           ||ASCII(SUBSTR(UPPER(:NEW.IBAN),2,1))-55||
            SUBSTR(:NEW.IBAN,3,2),97) AS DC
            INTO v_IBAN_check
         FROM DUAL;        
@@ -64,7 +64,7 @@ BEGIN
           FROM C_BANK
           WHERE C_BANK_ID=:NEW.C_BANK_ID
           );
-        IF ((v_CountryId IS NULL OR v_Length IS NULL) OR (v_CountryId <> SUBSTR(:NEW.IBAN,1,2) OR v_Length <> LENGTH(:NEW.IBAN))) THEN
+        IF ((v_CountryId IS NULL OR v_Length IS NULL) OR (v_CountryId <> SUBSTR(UPPER(:NEW.IBAN),1,2) OR v_Length <> LENGTH(:NEW.IBAN))) THEN
           RAISE_APPLICATION_ERROR(-20259, 'The IBAN number defined in the bank account tab, must fit the IBAN data of the country defined in the bank tab.');
         END IF;
       END IF;
@@ -75,7 +75,7 @@ BEGIN
       WHERE C_BANK_ID=:NEW.C_BANK_ID;
       :NEW.DISPLAYEDACCOUNT:=v_BankName || '. ' || v_Bank || '-' || v_Branch || '-' || v_DigitBank || :NEW.DIGITCONTROL || '-' || :NEW.CODEACCOUNT;
     ELSIF (:NEW.SHOWIBAN='Y') THEN
-      :NEW.DISPLAYEDACCOUNT:=v_BankName || '. ' || SUBSTR(:NEW.IBAN,1,4) || '-' || SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4);
+      :NEW.DISPLAYEDACCOUNT:=v_BankName || '. ' || SUBSTR(UPPER(:NEW.IBAN),1,4) || '-' || SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4);
     ELSE
       :NEW.DISPLAYEDACCOUNT:=v_BankName || '. ' || :NEW.GENERICACCOUNT;
     END IF;
