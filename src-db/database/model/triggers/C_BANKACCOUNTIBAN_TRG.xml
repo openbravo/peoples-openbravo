@@ -30,9 +30,13 @@
 BEGIN
   --  Default Accounts for all AcctSchema
   IF(INSERTING OR UPDATING) THEN
+    SELECT NAME
+    INTO v_BankName
+    FROM C_BANK
+    WHERE C_BANK_ID=:NEW.C_BANK_ID;
     IF (:NEW.CODEACCOUNT IS NOT NULL OR :NEW.DIGITCONTROL IS NOT NULL) THEN
-      SELECT CODEBANK, CODEBRANCH, DIGITCONTROL, NAME
-      INTO v_Bank, v_Branch, v_DigitBank, v_BankName
+      SELECT CODEBANK, CODEBRANCH, DIGITCONTROL
+      INTO v_Bank, v_Branch, v_DigitBank
       FROM C_BANK
       WHERE C_BANK_ID=:NEW.C_BANK_ID;
       IF (v_Bank IS NULL OR v_Branch IS NULL OR v_DigitBank IS NULL) THEN

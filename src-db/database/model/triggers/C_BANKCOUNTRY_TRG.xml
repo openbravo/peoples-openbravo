@@ -19,31 +19,33 @@
   * Contributor(s):  ______________________________________.
   ************************************************************************/
 
-  v_IBAN NUMBER;
+  v_Count NUMBER;
 
-  v_IBAN_check NUMBER;
-  v_Bank NVARCHAR2(4);
-  v_Branch NVARCHAR2(4);
-  v_DigitBank NVARCHAR2(1);
-  v_Country NUMBER;
-  v_CountryId NVARCHAR2(2);
-  v_Length NUMBER;
 BEGIN
   --  Default Accounts for all AcctSchema
   IF(UPDATING) THEN
-    IF (:NEW.C_COUNTRY_ID <> :OLD.C_COUNTRY_ID) THEN
+    IF (:NEW.C_COUNTRY_ID <> :OLD.C_COUNTRY_ID OR :NEW.C_COUNTRY_ID IS NULL) THEN
       SELECT COUNT(IBAN)
-      INTO v_IBAN
+      INTO v_Count
       FROM C_BANKACCOUNT
       WHERE C_BANK_ID=:NEW.C_BANK_ID;
-      IF (v_IBAN <> 0) THEN
-        RAISE_APPLICATION_ERROR(-20259, 'The IBAN number defined in the bank account tab, must fit the IBAN data of the country defined in the bank tab.');
+      IF (v_Count <> 0) THEN
+        RAISE_APPLICATION_ERROR(-20259, 'An IBAN account is defined for this bank. Country must not be changed.') ;
+      END IF;
+    END IF;
+    IF ((:NEW.CODEBANK IS NULL) OR (:NEW.CODEBRANCH IS NULL) OR (:NEW.DIGITCONTROL IS NULL)) THEN
+      SELECT COUNT(CODEACCOUNT)
+      INTO v_Count
+      FROM C_BANKACCOUNT
+      WHERE C_BANK_ID=:NEW.C_BANK_ID;
+      IF (v_Count <> 0) THEN
+        RAISE_APPLICATION_ERROR(-20265, 'An Spanish account is defined for this bank. Bank Code, Branch Code and Control Digit must be defined') ;
       END IF;
     END IF;
   END IF;
 EXCEPTION
  WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20257, 'Incorrect IBAN Code.') ;
+  RAISE_APPLICATION_ERROR(-20259, 'An IBAN account is defined for this bank. Country must not be changed.') ;
 END C_BANKCOUNTRY_TRG
 ]]></body>
     </trigger>

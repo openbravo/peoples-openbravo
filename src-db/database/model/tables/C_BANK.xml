@@ -94,5 +94,6 @@
       </foreign-key>
       <check name="CBANK_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="CBANK_ISOWNBANK_CHECK"><![CDATA[ISOWNBANK IN ('Y', 'N')]]></check>
+      <check name="CBANK_SPANISHACCOUNT_CHECK"><![CDATA[(((CODEBANK IS NULL) OR (LENGTH(CODEBANK)=4)) AND ((CODEBRANCH IS NULL) OR (LENGTH(CODEBRANCH)=4)) AND ((DIGITCONTROL IS NULL) OR (LENGTH(DIGITCONTROL)=1)))]]></check>
     </table>
   </database>
