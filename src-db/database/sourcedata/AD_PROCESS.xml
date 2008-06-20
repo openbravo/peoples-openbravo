@@ -306,13 +306,13 @@
 <!--108 CREATEDBY-->
 <!--108-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--108 UPDATED-->
-<!--108-->              <UPDATED><![CDATA[2003-02-22 02:19:53.0]]></UPDATED>
+<!--108-->              <UPDATED><![CDATA[2008-06-20 12:46:23.0]]></UPDATED>
 <!--108 UPDATEDBY-->
-<!--108-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--108-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--108 VALUE-->
 <!--108-->              <VALUE><![CDATA[C_AcctSchema_Default_Copy]]></VALUE>
 <!--108 NAME-->
-<!--108-->              <NAME><![CDATA[Copy Accounts]]></NAME>
+<!--108-->              <NAME><![CDATA[Copy Accounts - All system accounts]]></NAME>
 <!--108 DESCRIPTION-->
 <!--108-->              <DESCRIPTION><![CDATA[Copy and overwrite all accounts to system defaults (DANGEROUS!!!)]]></DESCRIPTION>
 <!--108 HELP-->
@@ -331,6 +331,8 @@
 <!--108-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--108 ISJASPER-->
 <!--108-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--108 ISEXTERNALSERVICE-->
+<!--108-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--108**************--></AD_PROCESS>
 
 <!--109**************--><AD_PROCESS>
@@ -468,13 +470,13 @@
 <!--112 CREATEDBY-->
 <!--112-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--112 UPDATED-->
-<!--112-->              <UPDATED><![CDATA[2003-02-22 02:19:53.0]]></UPDATED>
+<!--112-->              <UPDATED><![CDATA[2008-06-20 12:47:04.0]]></UPDATED>
 <!--112 UPDATEDBY-->
-<!--112-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--112-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--112 VALUE-->
 <!--112-->              <VALUE><![CDATA[C_BP_Group_Acct_Copy]]></VALUE>
 <!--112 NAME-->
-<!--112-->              <NAME><![CDATA[Copy Accounts]]></NAME>
+<!--112-->              <NAME><![CDATA[Copy Accounts - Business Partner Group's Memebers]]></NAME>
 <!--112 DESCRIPTION-->
 <!--112-->              <DESCRIPTION><![CDATA[Copy and overwrite Accounts to Business Partners of this group]]></DESCRIPTION>
 <!--112 HELP-->
@@ -493,6 +495,8 @@
 <!--112-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--112 ISJASPER-->
 <!--112-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--112 ISEXTERNALSERVICE-->
+<!--112-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--112**************--></AD_PROCESS>
 
 <!--113**************--><AD_PROCESS>
@@ -1385,13 +1389,13 @@
 <!--135 CREATEDBY-->
 <!--135-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--135 UPDATED-->
-<!--135-->              <UPDATED><![CDATA[2003-08-12 00:53:17.0]]></UPDATED>
+<!--135-->              <UPDATED><![CDATA[2008-06-20 12:48:44.0]]></UPDATED>
 <!--135 UPDATEDBY-->
-<!--135-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--135-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--135 VALUE-->
 <!--135-->              <VALUE><![CDATA[AD_ImpFormat Copy]]></VALUE>
 <!--135 NAME-->
-<!--135-->              <NAME><![CDATA[Copy Lines]]></NAME>
+<!--135-->              <NAME><![CDATA[Copy Lines From Import Format]]></NAME>
 <!--135 DESCRIPTION-->
 <!--135-->              <DESCRIPTION><![CDATA[Copy Lines from other Import Format]]></DESCRIPTION>
 <!--135 HELP-->
@@ -1410,6 +1414,8 @@
 <!--135-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--135 ISJASPER-->
 <!--135-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--135 ISEXTERNALSERVICE-->
+<!--135-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--135**************--></AD_PROCESS>
 
 <!--136**************--><AD_PROCESS>
@@ -1586,13 +1592,13 @@
 <!--140 CREATEDBY-->
 <!--140-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--140 UPDATED-->
-<!--140-->              <UPDATED><![CDATA[2003-02-22 02:19:53.0]]></UPDATED>
+<!--140-->              <UPDATED><![CDATA[2008-06-20 12:47:29.0]]></UPDATED>
 <!--140 UPDATEDBY-->
-<!--140-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--140-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--140 VALUE-->
 <!--140-->              <VALUE><![CDATA[M_Product_Category_Acct_Copy]]></VALUE>
 <!--140 NAME-->
-<!--140-->              <NAME><![CDATA[Copy Accounts]]></NAME>
+<!--140-->              <NAME><![CDATA[Copy Accounts - Product Group's Members]]></NAME>
 <!--140 DESCRIPTION-->
 <!--140-->              <DESCRIPTION><![CDATA[Copy and overwrite Accounts to Products of this category]]></DESCRIPTION>
 <!--140 HELP-->
@@ -1611,6 +1617,8 @@
 <!--140-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--140 ISJASPER-->
 <!--140-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--140 ISEXTERNALSERVICE-->
+<!--140-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--140**************--></AD_PROCESS>
 
 <!--142**************--><AD_PROCESS>
@@ -1910,13 +1918,13 @@
 <!--155 CREATEDBY-->
 <!--155-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--155 UPDATED-->
-<!--155-->              <UPDATED><![CDATA[2003-02-22 02:19:53.0]]></UPDATED>
+<!--155-->              <UPDATED><![CDATA[2008-06-20 12:52:16.0]]></UPDATED>
 <!--155 UPDATEDBY-->
-<!--155-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--155-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--155 VALUE-->
 <!--155-->              <VALUE><![CDATA[C_PaySelection_Post]]></VALUE>
 <!--155 NAME-->
-<!--155-->              <NAME><![CDATA[Create Payment]]></NAME>
+<!--155-->              <NAME><![CDATA[Create Payment (C_PaySelection_Post)]]></NAME>
 <!--155 DESCRIPTION-->
 <!--155-->              <DESCRIPTION><![CDATA[Create Payment]]></DESCRIPTION>
 <!--155 HELP-->
@@ -1935,6 +1943,8 @@
 <!--155-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--155 ISJASPER-->
 <!--155-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--155 ISEXTERNALSERVICE-->
+<!--155-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--155**************--></AD_PROCESS>
 
 <!--158**************--><AD_PROCESS>
@@ -2152,13 +2162,13 @@
 <!--164 CREATEDBY-->
 <!--164-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--164 UPDATED-->
-<!--164-->              <UPDATED><![CDATA[2004-06-04 17:34:39.0]]></UPDATED>
+<!--164-->              <UPDATED><![CDATA[2008-06-20 13:06:49.0]]></UPDATED>
 <!--164 UPDATEDBY-->
 <!--164-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--164 VALUE-->
 <!--164-->              <VALUE><![CDATA[C_Project_Generate]]></VALUE>
 <!--164 NAME-->
-<!--164-->              <NAME><![CDATA[Generate Order]]></NAME>
+<!--164-->              <NAME><![CDATA[Generate Order From Project]]></NAME>
 <!--164 DESCRIPTION-->
 <!--164-->              <DESCRIPTION><![CDATA[Generate Order from Project]]></DESCRIPTION>
 <!--164 HELP-->
@@ -2177,6 +2187,8 @@
 <!--164-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--164 ISJASPER-->
 <!--164-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--164 ISEXTERNALSERVICE-->
+<!--164-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--164**************--></AD_PROCESS>
 
 <!--165**************--><AD_PROCESS>
@@ -2193,13 +2205,13 @@
 <!--165 CREATEDBY-->
 <!--165-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--165 UPDATED-->
-<!--165-->              <UPDATED><![CDATA[2003-08-09 23:50:54.0]]></UPDATED>
+<!--165-->              <UPDATED><![CDATA[2008-06-20 12:49:04.0]]></UPDATED>
 <!--165 UPDATEDBY-->
-<!--165-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--165-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--165 VALUE-->
 <!--165-->              <VALUE><![CDATA[C_Commission_Copy]]></VALUE>
 <!--165 NAME-->
-<!--165-->              <NAME><![CDATA[Copy Lines]]></NAME>
+<!--165-->              <NAME><![CDATA[Copy Lines - Comission]]></NAME>
 <!--165 DESCRIPTION-->
 <!--165-->              <DESCRIPTION><![CDATA[Copy Commission Lines from other Commission]]></DESCRIPTION>
 <!--165 HELP-->
@@ -2218,6 +2230,8 @@
 <!--165-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--165 ISJASPER-->
 <!--165-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--165 ISEXTERNALSERVICE-->
+<!--165-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--165**************--></AD_PROCESS>
 
 <!--166**************--><AD_PROCESS>
@@ -2234,13 +2248,13 @@
 <!--166 CREATEDBY-->
 <!--166-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--166 UPDATED-->
-<!--166-->              <UPDATED><![CDATA[2003-02-22 02:19:53.0]]></UPDATED>
+<!--166-->              <UPDATED><![CDATA[2008-06-20 12:51:25.0]]></UPDATED>
 <!--166 UPDATEDBY-->
-<!--166-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--166-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--166 VALUE-->
 <!--166-->              <VALUE><![CDATA[C_CommissionRun_Process]]></VALUE>
 <!--166 NAME-->
-<!--166-->              <NAME><![CDATA[Create Invoice]]></NAME>
+<!--166-->              <NAME><![CDATA[Create Invoice From Comission Calculation]]></NAME>
 <!--166 DESCRIPTION-->
 <!--166-->              <DESCRIPTION><![CDATA[Create Invoice from Commission Calculation]]></DESCRIPTION>
 <!--166 HELP-->
@@ -2259,6 +2273,8 @@
 <!--166-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--166 ISJASPER-->
 <!--166-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--166 ISEXTERNALSERVICE-->
+<!--166-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--166**************--></AD_PROCESS>
 
 <!--167**************--><AD_PROCESS>
@@ -3052,13 +3068,13 @@
 <!--190 CREATEDBY-->
 <!--190-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--190 UPDATED-->
-<!--190-->              <UPDATED><![CDATA[2003-03-05 01:14:41.0]]></UPDATED>
+<!--190-->              <UPDATED><![CDATA[2008-06-20 12:49:21.0]]></UPDATED>
 <!--190 UPDATEDBY-->
-<!--190-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--190-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--190 VALUE-->
 <!--190-->              <VALUE><![CDATA[PA_ReportLineSet_Copy]]></VALUE>
 <!--190 NAME-->
-<!--190-->              <NAME><![CDATA[Copy Lines]]></NAME>
+<!--190-->              <NAME><![CDATA[Copy Lines - Report Line]]></NAME>
 <!--190 DESCRIPTION-->
 <!--190-->              <DESCRIPTION><![CDATA[Copy Report Lines from other Line Set]]></DESCRIPTION>
 <!--190 HELP-->
@@ -3077,6 +3093,8 @@
 <!--190-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--190 ISJASPER-->
 <!--190-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--190 ISEXTERNALSERVICE-->
+<!--190-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--190**************--></AD_PROCESS>
 
 <!--192**************--><AD_PROCESS>
@@ -3790,13 +3808,13 @@
 <!--210 CREATEDBY-->
 <!--210-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--210 UPDATED-->
-<!--210-->              <UPDATED><![CDATA[2008-06-06 16:21:41.0]]></UPDATED>
+<!--210-->              <UPDATED><![CDATA[2008-06-20 12:50:01.0]]></UPDATED>
 <!--210 UPDATEDBY-->
 <!--210-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--210 VALUE-->
 <!--210-->              <VALUE><![CDATA[C_Invoice CopyFrom]]></VALUE>
 <!--210 NAME-->
-<!--210-->              <NAME><![CDATA[Copy Lines]]></NAME>
+<!--210-->              <NAME><![CDATA[Copy Lines - Products From Invoices]]></NAME>
 <!--210 DESCRIPTION-->
 <!--210-->              <DESCRIPTION><![CDATA[Copy lines (products) from an existing Invoice.]]></DESCRIPTION>
 <!--210 HELP-->
@@ -3833,13 +3851,13 @@
 <!--211 CREATEDBY-->
 <!--211-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--211 UPDATED-->
-<!--211-->              <UPDATED><![CDATA[2008-06-06 16:06:39.0]]></UPDATED>
+<!--211-->              <UPDATED><![CDATA[2008-06-20 12:50:35.0]]></UPDATED>
 <!--211 UPDATEDBY-->
 <!--211-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--211 VALUE-->
 <!--211-->              <VALUE><![CDATA[C_Order CopyFrom]]></VALUE>
 <!--211 NAME-->
-<!--211-->              <NAME><![CDATA[Copy Lines]]></NAME>
+<!--211-->              <NAME><![CDATA[Copy Lines - Products From History of Document Type]]></NAME>
 <!--211 DESCRIPTION-->
 <!--211-->              <DESCRIPTION><![CDATA[Browse history of this particular document type for the selected business partner to be able to select lines (products) from these.]]></DESCRIPTION>
 <!--211 HELP-->
@@ -3876,13 +3894,13 @@
 <!--212 CREATEDBY-->
 <!--212-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--212 UPDATED-->
-<!--212-->              <UPDATED><![CDATA[2008-06-03 19:16:02.0]]></UPDATED>
+<!--212-->              <UPDATED><![CDATA[2008-06-20 12:48:18.0]]></UPDATED>
 <!--212 UPDATEDBY-->
 <!--212-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--212 VALUE-->
 <!--212-->              <VALUE><![CDATA[C_Project CopyFrom]]></VALUE>
 <!--212 NAME-->
-<!--212-->              <NAME><![CDATA[Copy Details]]></NAME>
+<!--212-->              <NAME><![CDATA[Copy Details From Existing Project]]></NAME>
 <!--212 DESCRIPTION-->
 <!--212-->              <DESCRIPTION><![CDATA[Copy Lines/Phases/Tasks from another existing project]]></DESCRIPTION>
 <!--212 HELP-->
@@ -3901,6 +3919,8 @@
 <!--212-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--212 ISJASPER-->
 <!--212-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--212 ISEXTERNALSERVICE-->
+<!--212-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--212**************--></AD_PROCESS>
 
 <!--213**************--><AD_PROCESS>
@@ -3958,13 +3978,13 @@
 <!--214 CREATEDBY-->
 <!--214-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--214 UPDATED-->
-<!--214-->              <UPDATED><![CDATA[2004-07-13 19:11:41.0]]></UPDATED>
+<!--214-->              <UPDATED><![CDATA[2008-06-20 12:48:32.0]]></UPDATED>
 <!--214 UPDATEDBY-->
 <!--214-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--214 VALUE-->
 <!--214-->              <VALUE><![CDATA[GL_JournalBatch CopyFrom]]></VALUE>
 <!--214 NAME-->
-<!--214-->              <NAME><![CDATA[Copy Details]]></NAME>
+<!--214-->              <NAME><![CDATA[Copy Details From Journal Batch]]></NAME>
 <!--214 DESCRIPTION-->
 <!--214-->              <DESCRIPTION><![CDATA[Copy Journal/Lines from other Journal Batch]]></DESCRIPTION>
 <!--214 HELP-->
@@ -3983,6 +4003,8 @@
 <!--214-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--214 ISJASPER-->
 <!--214-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--214 ISEXTERNALSERVICE-->
+<!--214-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--214**************--></AD_PROCESS>
 
 <!--215**************--><AD_PROCESS>
@@ -6204,13 +6226,13 @@
 <!--800065 CREATEDBY-->
 <!--800065-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800065 UPDATED-->
-<!--800065-->              <UPDATED><![CDATA[2005-01-25 12:57:17.0]]></UPDATED>
+<!--800065-->              <UPDATED><![CDATA[2008-06-20 12:52:35.0]]></UPDATED>
 <!--800065 UPDATEDBY-->
 <!--800065-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800065 VALUE-->
 <!--800065-->              <VALUE><![CDATA[Generate periods]]></VALUE>
 <!--800065 NAME-->
-<!--800065-->              <NAME><![CDATA[Create Periods]]></NAME>
+<!--800065-->              <NAME><![CDATA[Create Periods For Warehouse]]></NAME>
 <!--800065 DESCRIPTION-->
 <!--800065-->              <DESCRIPTION><![CDATA[Generate periods for a warehouse schedule]]></DESCRIPTION>
 <!--800065 HELP-->
@@ -6229,6 +6251,8 @@
 <!--800065-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800065 ISJASPER-->
 <!--800065-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800065 ISEXTERNALSERVICE-->
+<!--800065-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800065**************--></AD_PROCESS>
 
 <!--800066**************--><AD_PROCESS>
@@ -6407,13 +6431,13 @@
 <!--800070 CREATEDBY-->
 <!--800070-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800070 UPDATED-->
-<!--800070-->              <UPDATED><![CDATA[2005-02-01 10:39:21.0]]></UPDATED>
+<!--800070-->              <UPDATED><![CDATA[2008-06-20 13:11:45.0]]></UPDATED>
 <!--800070 UPDATEDBY-->
 <!--800070-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800070 VALUE-->
 <!--800070-->              <VALUE><![CDATA[Rpt C_Settlement]]></VALUE>
 <!--800070 NAME-->
-<!--800070-->              <NAME><![CDATA[Settlement printed]]></NAME>
+<!--800070-->              <NAME><![CDATA[Settlement printed **Special**]]></NAME>
 <!--800070 DESCRIPTION-->
 <!--800070-->              <DESCRIPTION><![CDATA[** special **]]></DESCRIPTION>
 <!--800070 HELP-->
@@ -6430,6 +6454,8 @@
 <!--800070-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800070 ISJASPER-->
 <!--800070-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800070 ISEXTERNALSERVICE-->
+<!--800070-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800070**************--></AD_PROCESS>
 
 <!--800071**************--><AD_PROCESS>
@@ -6846,13 +6872,13 @@
 <!--800081 CREATEDBY-->
 <!--800081-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800081 UPDATED-->
-<!--800081-->              <UPDATED><![CDATA[2005-04-14 19:48:27.0]]></UPDATED>
+<!--800081-->              <UPDATED><![CDATA[2008-06-20 12:45:37.0]]></UPDATED>
 <!--800081 UPDATEDBY-->
 <!--800081-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800081 VALUE-->
 <!--800081-->              <VALUE><![CDATA[RV_ReportPlanTreasure]]></VALUE>
 <!--800081 NAME-->
-<!--800081-->              <NAME><![CDATA[Cashflow Forecast]]></NAME>
+<!--800081-->              <NAME><![CDATA[Cashflow Forecast-Deprecated]]></NAME>
 <!--800081 DESCRIPTION-->
 <!--800081-->              <DESCRIPTION><![CDATA[Cashflow Forecast]]></DESCRIPTION>
 <!--800081 HELP-->
@@ -6869,6 +6895,8 @@
 <!--800081-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800081 ISJASPER-->
 <!--800081-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800081 ISEXTERNALSERVICE-->
+<!--800081-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800081**************--></AD_PROCESS>
 
 <!--800082**************--><AD_PROCESS>
@@ -8551,13 +8579,13 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800136 CREATEDBY-->
 <!--800136-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800136 UPDATED-->
-<!--800136-->              <UPDATED><![CDATA[2006-06-01 10:42:57.0]]></UPDATED>
+<!--800136-->              <UPDATED><![CDATA[2008-06-20 12:47:55.0]]></UPDATED>
 <!--800136 UPDATEDBY-->
 <!--800136-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800136 VALUE-->
 <!--800136-->              <VALUE><![CDATA[A_Asset_Group_Acct_Copy]]></VALUE>
 <!--800136 NAME-->
-<!--800136-->              <NAME><![CDATA[Copy Accounts]]></NAME>
+<!--800136-->              <NAME><![CDATA[Copy Accounts - Assets Group's Members]]></NAME>
 <!--800136 DESCRIPTION-->
 <!--800136-->              <DESCRIPTION><![CDATA[Copy and overwrite Accounts]]></DESCRIPTION>
 <!--800136 HELP-->
@@ -8576,6 +8604,8 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800136-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800136 ISJASPER-->
 <!--800136-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800136 ISEXTERNALSERVICE-->
+<!--800136-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800136**************--></AD_PROCESS>
 
 <!--800137**************--><AD_PROCESS>
@@ -8918,17 +8948,17 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800145 CREATEDBY-->
 <!--800145-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800145 UPDATED-->
-<!--800145-->              <UPDATED><![CDATA[2006-06-20 12:05:42.0]]></UPDATED>
+<!--800145-->              <UPDATED><![CDATA[2008-06-20 13:11:07.0]]></UPDATED>
 <!--800145 UPDATEDBY-->
 <!--800145-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800145 VALUE-->
 <!--800145-->              <VALUE><![CDATA[Rpt C_Settlement]]></VALUE>
 <!--800145 NAME-->
-<!--800145-->              <NAME><![CDATA[Remittance printed]]></NAME>
+<!--800145-->              <NAME><![CDATA[Settlement printed]]></NAME>
 <!--800145 DESCRIPTION-->
-<!--800145-->              <DESCRIPTION><![CDATA[Remittance printed]]></DESCRIPTION>
+<!--800145-->              <DESCRIPTION><![CDATA[Settlement printed]]></DESCRIPTION>
 <!--800145 HELP-->
-<!--800145-->              <HELP><![CDATA[Remittance printed]]></HELP>
+<!--800145-->              <HELP><![CDATA[Settlement printed]]></HELP>
 <!--800145 ACCESSLEVEL-->
 <!--800145-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800145 ISUSERSTARTABLE-->
@@ -8941,6 +8971,8 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800145-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800145 ISJASPER-->
 <!--800145-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800145 ISEXTERNALSERVICE-->
+<!--800145-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800145**************--></AD_PROCESS>
 
 <!--800146**************--><AD_PROCESS>
@@ -10561,13 +10593,13 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800191 CREATEDBY-->
 <!--800191-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800191 UPDATED-->
-<!--800191-->              <UPDATED><![CDATA[2007-07-09 21:33:53.0]]></UPDATED>
+<!--800191-->              <UPDATED><![CDATA[2008-06-20 12:42:59.0]]></UPDATED>
 <!--800191 UPDATEDBY-->
 <!--800191-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800191 VALUE-->
 <!--800191-->              <VALUE><![CDATA[ReportCashJR]]></VALUE>
 <!--800191 NAME-->
-<!--800191-->              <NAME><![CDATA[Cash Report]]></NAME>
+<!--800191-->              <NAME><![CDATA[Jasper Cash Report]]></NAME>
 <!--800191 DESCRIPTION-->
 <!--800191-->              <DESCRIPTION><![CDATA[Report cash]]></DESCRIPTION>
 <!--800191 HELP-->
@@ -10584,6 +10616,8 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800191-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800191 ISJASPER-->
 <!--800191-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800191 ISEXTERNALSERVICE-->
+<!--800191-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800191**************--></AD_PROCESS>
 
 <!--800192**************--><AD_PROCESS>
@@ -10912,13 +10946,13 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800200 CREATEDBY-->
 <!--800200-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800200 UPDATED-->
-<!--800200-->              <UPDATED><![CDATA[2007-09-17 11:04:04.0]]></UPDATED>
+<!--800200-->              <UPDATED><![CDATA[2008-06-20 12:42:39.0]]></UPDATED>
 <!--800200 UPDATEDBY-->
 <!--800200-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800200 VALUE-->
 <!--800200-->              <VALUE><![CDATA[ReportBankJR]]></VALUE>
 <!--800200 NAME-->
-<!--800200-->              <NAME><![CDATA[Bank Report]]></NAME>
+<!--800200-->              <NAME><![CDATA[Jasper Bank Report]]></NAME>
 <!--800200 DESCRIPTION-->
 <!--800200-->              <DESCRIPTION><![CDATA[Report bank]]></DESCRIPTION>
 <!--800200 HELP-->
@@ -10934,7 +10968,9 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800200 ISBACKGROUND-->
 <!--800200-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800200 ISJASPER-->
-<!--800200-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800200-->              <ISJASPER><![CDATA[Y]]></ISJASPER>
+<!--800200 ISEXTERNALSERVICE-->
+<!--800200-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800200**************--></AD_PROCESS>
 
 <!--800201**************--><AD_PROCESS>
@@ -10951,13 +10987,13 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800201 CREATEDBY-->
 <!--800201-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800201 UPDATED-->
-<!--800201-->              <UPDATED><![CDATA[2007-07-11 13:09:37.0]]></UPDATED>
+<!--800201-->              <UPDATED><![CDATA[2008-06-20 13:07:36.0]]></UPDATED>
 <!--800201 UPDATEDBY-->
 <!--800201-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800201 VALUE-->
 <!--800201-->              <VALUE><![CDATA[ReportInvoiceDetailJasper]]></VALUE>
 <!--800201 NAME-->
-<!--800201-->              <NAME><![CDATA[Invoice Detail]]></NAME>
+<!--800201-->              <NAME><![CDATA[Invoice Detail - Jasper]]></NAME>
 <!--800201 DESCRIPTION-->
 <!--800201-->              <DESCRIPTION><![CDATA[Invoice Detail]]></DESCRIPTION>
 <!--800201 HELP-->
@@ -10974,6 +11010,8 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800201-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800201 ISJASPER-->
 <!--800201-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800201 ISEXTERNALSERVICE-->
+<!--800201-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800201**************--></AD_PROCESS>
 
 <!--800204**************--><AD_PROCESS>
@@ -11445,13 +11483,13 @@ The second one is to update one property in the product organization specific ta
 <!--1004400000 CREATEDBY-->
 <!--1004400000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1004400000 UPDATED-->
-<!--1004400000-->              <UPDATED><![CDATA[2008-03-25 16:52:15.0]]></UPDATED>
+<!--1004400000-->              <UPDATED><![CDATA[2008-06-20 12:52:56.0]]></UPDATED>
 <!--1004400000 UPDATEDBY-->
 <!--1004400000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400000 VALUE-->
 <!--1004400000-->              <VALUE><![CDATA[M_Requisition_CreatePO]]></VALUE>
 <!--1004400000 NAME-->
-<!--1004400000-->              <NAME><![CDATA[Create Purchase Order]]></NAME>
+<!--1004400000-->              <NAME><![CDATA[Create Purchase Order (Requisitions)]]></NAME>
 <!--1004400000 HELP-->
 <!--1004400000-->              <HELP><![CDATA[This process will create several Purchase Orders to complete all the requisition lines. One order line is created for each requisition line with the necessary quantity to fulfill the requested quantity. The process closes the requisition when it finishes successfully.
 The Order Date is used for the necessary dates of the Purchase Orders.
@@ -11473,6 +11511,8 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--1004400000-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--1004400000 ISJASPER-->
 <!--1004400000-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--1004400000 ISEXTERNALSERVICE-->
+<!--1004400000-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--1004400000**************--></AD_PROCESS>
 
 <!--1004400002**************--><AD_PROCESS>
