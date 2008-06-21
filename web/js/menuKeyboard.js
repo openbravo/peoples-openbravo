@@ -33,6 +33,7 @@ var focusedMenuElement = null;
 var selectedMenuElement = null;
 var isGoingDown = null;
 var isGoingUp = null;
+var isTabPressed = null;
 var isMenuFocused = null;
 
 
