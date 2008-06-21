@@ -29,9 +29,7 @@
 		<FIELD id="fieldAddress2" attribute="value">address2</FIELD>
 		<FIELD id="fieldCCountryId">cCountryId</FIELD>
 		<FIELD id="fieldCRegionId">cRegionId</FIELD>
-		<FIELD id="fieldRegionname" attribute="value">regionname</FIELD>
 		<FIELD id="fieldPostal" attribute="value">postal</FIELD>
-		<FIELD id="fieldPostalAdd" attribute="value">postalAdd</FIELD>
 		<FIELD id="fieldCity" attribute="value">city</FIELD>
 		<FIELD id="fieldRegion">region</FIELD>
 		<FIELD id="fieldCountry">country</FIELD>

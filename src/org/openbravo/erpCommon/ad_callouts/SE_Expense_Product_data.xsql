@@ -86,4 +86,15 @@
     </Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>
+  <SqlMethod name="selectPrecision" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT PRICEPRECISION 
+        FROM C_CURRENCY C
+        WHERE C.C_CURRENCY_ID = TO_NUMBER(?)
+      ]]>
+    </Sql>
+    <Parameter name="cCurrencyId"/>
+  </SqlMethod>
 </SqlClass>

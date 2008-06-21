@@ -43,6 +43,7 @@ public class WindowTabs {
   private String ID = "";
   private String action = "";
   private int level = 0;
+  boolean editView = true;
   private Hashtable<String, Stack<WindowTabsData>> tabs = new Hashtable<String, Stack<WindowTabsData>>();
   private Stack<WindowTabsData> breadcrumb = new Stack<WindowTabsData>();
 
@@ -56,6 +57,11 @@ public class WindowTabs {
    * @param _windowId: String with the id of the window.
    * @throws Exception
    */
+  public WindowTabs(ConnectionProvider _conn, VariablesSecureApp _vars, String _tabId, String _windowId,  boolean _editView) throws Exception {
+    this(_conn, _vars, _tabId, _windowId);  
+    this.editView = _editView;
+  }  
+  
   public WindowTabs(ConnectionProvider _conn, VariablesSecureApp _vars, String _tabId, String _windowId) throws Exception {
     if (_conn==null || _vars==null || _tabId==null || _tabId.equals("") || _windowId==null || _windowId.equals("")) throw new Exception("Missing parameters");
     this.conn = _conn;
@@ -472,7 +478,7 @@ public class WindowTabs {
     StringBuffer text = new StringBuffer();
     if (!_tabId.equals(this.TabID) && this.level+1>=_level) {
       text.append("submitCommandForm('").append(((this.level>_level)?"DEFAULT":"TAB")).append("', ");
-      text.append("false").append(", null, '");
+      text.append((editView?"false":"true")).append(", null, '");
       text.append(FormatUtilities.replace(_tabName)).append("_Relation.html', '_self', null, true);");
     }
     text.append("return false;");
