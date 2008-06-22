@@ -59,12 +59,15 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(4000):='';
+  result_String VARCHAR2(40):='';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Record Info
     v_AD_Org_ID NUMBER;
     v_AD_Client_ID NUMBER;
+    v_Ordered_Total NUMBER;
+    v_Delivered_Total NUMBER;
     v_Record_ID NUMBER:=NULL;
     v_Selection VARCHAR2(1):='N';
     -- Orders to process  - one per warehouse
@@ -252,6 +255,7 @@
              o.DELIVERY_LOCATION_ID -- Added by Rafa Roda to include delivery location
            ORDER BY o.PriorityRule
           ) LOOP
+          v_DocumentNo:='';
           DBMS_OUTPUT.PUT_LINE('Order ' || Cur_Order.DocumentNo || '/' || Cur_Order.C_Order_ID || ', Wh=' || Cur_Order.M_Warehouse_ID || ', Force=' || p_ForceDelivery || ', Delivery=' || Cur_Order.DeliveryRule) ;
           -- Delivery Rules
           --  (A)vailability
@@ -528,8 +532,6 @@
               DBMS_OUTPUT.PUT_LINE('v_lines!!!!!!!!!!!!!!!!!' || v_lines) ;
               ROLLBACK TO SAVEPOINT sp_new_shipment;
             ELSE
-              v_Message:=v_Message || '@OrderDocumentno@ ' || Cur_Order.DocumentNo || ' -> @InoutDocumentno@ ' || v_DocumentNo || '; ';
-              
               -- Post Shipment
               DECLARE
               BEGIN
@@ -551,6 +553,27 @@
             CLOSE Cur_OrderLine;
             Cur_OrderLine_ISOPEN:=false;
           END IF;
+          -- Validate result message for user
+          SELECT SUM(QTYORDERED) INTO v_Ordered_Total
+            FROM C_ORDERLINE
+            WHERE C_ORDER_ID = Cur_Order.C_Order_ID
+            GROUP BY C_ORDER_ID;
+          SELECT SUM(QTYDELIVERED) INTO v_Delivered_Total
+            FROM C_ORDERLINE
+            WHERE C_ORDER_ID = Cur_Order.C_Order_ID
+            GROUP BY C_ORDER_ID;
+          IF (v_DocumentNo='') THEN
+            result_String:='NO SHIPMENT CREATED';
+          ELSIF (v_DocumentNo IS NULL) THEN
+            result_String:='NO SHIPMENT CREATED';
+          ELSIF (v_Delivered_Total=0) THEN
+            result_String:='NO SHIPMENT CREATED';
+          ELSIF (v_Delivered_Total<v_Ordered_Total) THEN
+            result_String:='PARTIAL SHIPMENT CREATED';
+          ELSE 
+            result_String:='COMPLETE SHIPMENT CREATED';
+          END IF;
+          v_Message:=v_Message || '@OrderDocumentno@ ' || Cur_Order.DocumentNo || ' -> @InoutDocumentno@ ' || v_DocumentNo || '- ' || result_String || '; <br>';    
         END LOOP; -- Order Header Loop
         FINISH_PROCESS:=true;
       END IF;--CREATE_FROM_INVOICE
