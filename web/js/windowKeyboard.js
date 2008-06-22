@@ -26,6 +26,7 @@
 var focusedWindowElement = null;
 var focusedWindowElement_tmp = null;
 var focusedWindowElement_tmp2 = null;
+var drawnWindowElement = null;
 var windowTableParentElement = null;
 var focusedWindowTable = 0;
 var frameLocked = false;
@@ -203,7 +204,7 @@ function cursorFocus(evt, obj) {
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && obj.getAttribute('type') == 'checkbox' && (obj.getAttribute('readonly') == 'true' || obj.readOnly)) {
     return false;
   }
-  if (obj == focusedWindowElement) return true;
+  if (obj == drawnWindowElement) return true;
   /*if (navigator.userAgent.indexOf("NT") == -1 && (navigator.userAgent.toUpperCase().indexOf("FIREFOX/2") != -1 || navigator.userAgent.toUpperCase().indexOf("ICEWEASEL/2") != -1) && (obj.className.indexOf('Radio_Check_ContentCell') != -1 || obj.className.indexOf('DataGrid_Body_LineNoCell') != -1)) {
     //Go to the SPAN element
     for (;;) {
@@ -314,6 +315,11 @@ function eraseWindowElementDefaultAction(obj) {
 }
 
 function drawWindowElementFocus(obj) {
+  drawnWindowElement = obj;
+  try {
+    if (top.frames['frameMenu']) top.frames['frameMenu'].onBlurMenu();
+  } catch (e) {
+  }
   try {
     if(obj.tagName == 'A') {
       if (obj.className.indexOf(' Popup_Client_Help_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_Help_LabelLink') != -1) {
@@ -438,6 +444,7 @@ function putWindowElementFocus(obj) {
 }
 
 function eraseWindowElementFocus(obj) {
+  drawnWindowElement = null;
   try {
     if(obj.tagName == 'A') {
       obj.className = obj.className.replace(' Popup_Client_UserOps_LabelLink_focus','');
