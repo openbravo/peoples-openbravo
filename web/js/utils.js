@@ -1279,6 +1279,20 @@ function unlockKeyboard(){
 }
 
 /**
+* Enable or disable the default browser autocomplete feature. By default enable.
+* @param {Boolean} state true or false to enable o disable the default browser autocomplete feature
+* @returns
+* @type Boolean
+*/
+function setBrowserAutoComplete(state) {
+  if (state != false && state != true && state != 'false' && state != 'true') state=true;
+  for(var i=0;i<document.forms.length; i++) {
+    document.forms[i].setAttribute('autocomplete','off');
+  }
+  return true;
+}
+
+/**
 * Validates the name of a Field
 * @param {String} nombreArray Name of the field to verify
 * @param {String} nombreActual Name of the field to verify
