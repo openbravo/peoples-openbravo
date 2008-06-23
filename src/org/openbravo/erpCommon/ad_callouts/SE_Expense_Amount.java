@@ -60,7 +60,13 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
     
     String C_Currency_To_ID = Utility.getContext(this, vars, "$C_Currency_ID", "");
     
-    BigDecimal Amount = new BigDecimal(strExpenseAmt);    
+    BigDecimal Amount = null;
+    if (!strExpenseAmt.equals("")) {
+      Amount = new BigDecimal(strExpenseAmt);    
+    }
+    else {
+      Amount = new BigDecimal(0.0);
+    }
     String strPrecision = "0";    
     if (!strcCurrencyId.equals("")){
       strPrecision = SEExpenseAmountData.selectPrecision(this, strcCurrencyId);
