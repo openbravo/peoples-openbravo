@@ -6329,7 +6329,7 @@
 <!--800010 UPDATED-->
 <!--800010-->              <UPDATED><![CDATA[2007-07-24 19:35:11.0]]></UPDATED>
 <!--800010 NAME-->
-<!--800010-->              <NAME><![CDATA[Bank Report]]></NAME>
+<!--800010-->              <NAME><![CDATA[Jasper Bank Report]]></NAME>
 <!--800010 UPDATEDBY-->
 <!--800010-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800010 DESCRIPTION-->
@@ -6358,7 +6358,7 @@
 <!--800011 UPDATED-->
 <!--800011-->              <UPDATED><![CDATA[2007-07-24 19:36:03.0]]></UPDATED>
 <!--800011 NAME-->
-<!--800011-->              <NAME><![CDATA[Cash Report]]></NAME>
+<!--800011-->              <NAME><![CDATA[Jasper Cash Report]]></NAME>
 <!--800011 UPDATEDBY-->
 <!--800011-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800011 DESCRIPTION-->
@@ -7915,7 +7915,7 @@
 <!--800091 UPDATED-->
 <!--800091-->              <UPDATED><![CDATA[2006-04-06 08:38:58.0]]></UPDATED>
 <!--800091 NAME-->
-<!--800091-->              <NAME><![CDATA[Cashflow Forecast]]></NAME>
+<!--800091-->              <NAME><![CDATA[Cashflow Forecast-Deprecated]]></NAME>
 <!--800091 UPDATEDBY-->
 <!--800091-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800091 DESCRIPTION-->
@@ -11608,7 +11608,7 @@
 <!--800285 UPDATED-->
 <!--800285-->              <UPDATED><![CDATA[2007-07-11 13:09:26.0]]></UPDATED>
 <!--800285 NAME-->
-<!--800285-->              <NAME><![CDATA[Invoice Detail]]></NAME>
+<!--800285-->              <NAME><![CDATA[Invoice Detail - Jasper]]></NAME>
 <!--800285 UPDATEDBY-->
 <!--800285-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800285 DESCRIPTION-->
