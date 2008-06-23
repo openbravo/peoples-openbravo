@@ -274,9 +274,19 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.db}" target="create.database" inheritAll="true" inheritRefs="true"/>
   </target>
 
+  <target name="create.original.database" depends="init,code.rev">
+    <antcall target="database.lib"/>
+    <ant dir="${base.db}" target="create.original.database" inheritAll="true" inheritRefs="true"/>
+  </target>
+
   <target name="update.database" depends="init,code.rev">
     <antcall target="database.lib"/>
     <ant dir="${base.db}" target="update.database" inheritAll="true" inheritRefs="true"/>
+  </target>
+
+  <target name="update.customized.database" depends="init,code.rev">
+    <antcall target="database.lib"/>
+    <ant dir="${base.db}" target="update.customized.database" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="create.database.structure" depends="init">
@@ -335,6 +345,10 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="compare.database.structure" depends="init">
     <ant dir="${base.db}" target="compare.database.structure" inheritAll="true" inheritRefs="true"/>
+  </target>
+
+  <target name="compare.database.data" depends="init">
+    <ant dir="${base.db}" target="compare.database.data" inheritAll="true" inheritRefs="true"/>
   </target>
 
 </project>
