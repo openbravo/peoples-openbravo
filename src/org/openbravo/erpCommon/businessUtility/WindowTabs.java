@@ -478,7 +478,7 @@ public class WindowTabs {
     StringBuffer text = new StringBuffer();
     if (!_tabId.equals(this.TabID) && this.level+1>=_level) {
       text.append("submitCommandForm('").append(((this.level>_level)?"DEFAULT":"TAB")).append("', ");
-      text.append((editView?"false":"true")).append(", null, '");
+      text.append((this.level<_level && !editView)?"true":"false").append(", null, '");
       text.append(FormatUtilities.replace(_tabName)).append("_Relation.html', '_self', null, true);");
     }
     text.append("return false;");
