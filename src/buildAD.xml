@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,7 @@
   
   <target name="buildAD">
 	<java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}">
-      <arg line="${base.config}/Openbravo.properties .xsql ../srcAD ${build.sqlc}/src"/>
+      <arg line="'${base.config}'/Openbravo.properties .xsql ../srcAD '${build.sqlc}'/src"/>
       <classpath refid="project.class.path"/>
     </java>
 
