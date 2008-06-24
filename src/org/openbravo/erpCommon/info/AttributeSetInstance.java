@@ -46,7 +46,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("DEFAULT")) {
+    if (vars.commandIn("DEFAULT") || vars.commandIn("KEY")) {
       String strNameValue = vars.getRequestGlobalVariable("inpKeyValue", "AttributeSetInstance.instance");
       String strProduct = vars.getRequestGlobalVariable("inpProduct", "AttributeSetInstance.product");
       vars.getRequestGlobalVariable("inpwindowId", "AttributeSetInstance.windowId");
