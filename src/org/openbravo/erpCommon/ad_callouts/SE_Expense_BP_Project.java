@@ -58,34 +58,54 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
     resultado.append("var calloutName='SE_Expense_BP_Project';\n\n");
     resultado.append("var respuesta = new Array(");
     
-    if (strChanged.equals("inpcProjectId") && strProjectId != null && strProjectId != "") {
-    	String strBPartnerName = "";
-    	String strBPartner = SEExpenseBPProjectData.selectBPId(this, strProjectId) ;
-		if (strBPartner != null && strBPartner != "") {
-			strBPartnerId = strBPartner;
-			strBPartnerName = SEExpenseBPProjectData.selectBPName(this, strProjectId) ;
-		}
-		resultado.append("new Array(\"inpcBpartnerId\", \"" + strBPartnerId + "\")\n");
-	    resultado.append(", new Array(\"inpcBpartnerId_R\", \"" + strBPartnerName + "\")\n");
-    } else if (strChanged.equals("inpcBpartnerId") && strBPartnerId != null && strBPartnerId != "") {
-    	String strProject = "";
-    	if (strProjectId == null || strProjectId == "") {
-    		strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId) ;
-    		if (strProject != null && strProject != "") {
-    			strProjectId = strProject;
-    		}
-    	} else {
-    		String strBPartnerProject = SEExpenseBPProjectData.selectBPProject(this, strBPartnerId, strProjectId);
-    		if (strBPartnerProject == null || strBPartnerProject == "") {
-    			strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId) ;
-        		if (strProject != null && strProject != "") {
-        			strProjectId = strProject;
-        		} else {
-        			strProjectId = "";
-        		}
-    		}
-    	}
-    	resultado.append("new Array(\"inpcProjectId\", \"" + strProjectId + "\")\n");
+    if (strChanged.equals("inpcProjectId")) {
+      // Reset Project Phase and Project Task fields
+      resultado.append("new Array(\"inpcProjectphaseId\", \"\"),\n");
+      resultado.append("new Array(\"inpcProjecttaskId\", \"\")\n");
+    	// If project changed, select project's business partner (if any).
+      if (strProjectId != null && strProjectId != ""){
+        String strBPartnerName = "";
+        String strBPartner = SEExpenseBPProjectData.selectBPId(this, strProjectId) ;
+        if (strBPartner != null && strBPartner != "") {
+          strBPartnerId = strBPartner;
+          strBPartnerName = SEExpenseBPProjectData.selectBPName(this, strProjectId) ;
+        }
+        resultado.append(", new Array(\"inpcBpartnerId\", \"" + strBPartnerId + "\")\n");
+        resultado.append(", new Array(\"inpcBpartnerId_R\", \"" + strBPartnerName + "\")\n");        
+      }      
+    } else if (strChanged.equals("inpcBpartnerId")) {
+    	// If business partner changed...
+      String strReset = "0";
+      if (strBPartnerId != null && strBPartnerId != ""){
+        String strProject = "";        
+      	if (strProjectId != null && strProjectId != "") {
+      	  // ...if project is not null, check if it corresponds with the business partner
+          String strBPartnerProject = SEExpenseBPProjectData.selectBPProject(this, strBPartnerId, strProjectId);
+          // ...if there is no relationship between project and business partner, take the last project of that business partner (if any).
+          if (strBPartnerProject == null || strBPartnerProject == "") {
+            strReset = "1";
+            strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId) ;
+            if (strProject != null && strProject != "") {
+                strProjectId = strProject;
+            } else {
+                strProjectId = "";
+            }            
+          }
+      	} else {
+      	  // ...if project is null, take the last project of that business partner (if any).
+      	  strReset = "1";
+          strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId) ;
+          if (strProject != null && strProject != "") {
+            strProjectId = strProject;
+          }
+      	}
+      	if (strReset.equals("1")){
+      	  // Reset Project Phase and Project Task fields
+      	  resultado.append("new Array(\"inpcProjectphaseId\", \"\"),\n");
+          resultado.append("new Array(\"inpcProjecttaskId\", \"\"),\n");
+      	}        
+      	resultado.append("new Array(\"inpcProjectId\", \"" + strProjectId + "\")\n");
+      }
     }
     
     resultado.append(");");
