@@ -31,6 +31,16 @@
     </Sql>
     <Parameter name="adPinstanceId"/>
   </SqlMethod>
+  <SqlMethod name="selectConnection" type="preparedStatement" connection="true" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      SELECT P.RESULT, REPLACE(REPLACE(P.ERRORMSG, CHR(10), CHR(92) || CHR(92) || 'n'), CHR(13), CHR(92) || CHR(92) || 'n') AS ERRORMSG, 
+      REPLACE(REPLACE(L.P_MSG, CHR(10), CHR(92) || CHR(92) || 'n'), CHR(13), CHR(92) || CHR(92) || 'n') AS P_MSG 
+      FROM AD_PINSTANCE P left join AD_PINSTANCE_LOG L on P.AD_PINSTANCE_ID = L.AD_PINSTANCE_ID 
+      WHERE P.AD_PINSTANCE_ID = TO_NUMBER(?)
+    </Sql>
+    <Parameter name="adPinstanceId"/>
+  </SqlMethod>
   <SqlMethod name="insertPInstance" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

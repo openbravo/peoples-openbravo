@@ -254,7 +254,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     //PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y", vars.getClient(), vars.getOrg(), vars.getUser());
     MaterialReceiptPendingData.mInoutPost0(conn, this, pinstance);
 
-    PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
+    PInstanceProcessData[] pinstanceData = PInstanceProcessData.selectConnection(conn, this, pinstance);
     OBError myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
     return myMessage;
   }
