@@ -1556,7 +1556,7 @@
 <!--10054 NAME-->
 <!--10054-->              <NAME><![CDATA[Anthony Wolski]]></NAME>
 <!--10054 NICKNAME-->
-<!--10054-->              <NICKNAME><![CDATA[anthony.wolski]]></NICKNAME>
+<!--10054-->              <NICKNAME><![CDATA[awolski]]></NICKNAME>
 <!--10054 EMAIL-->
 <!--10054-->              <EMAIL><![CDATA[awo at openbravo dot com]]></EMAIL>
 <!--10054 COMPANY-->
@@ -2463,6 +2463,35 @@
 <!--10085 SVNUSER-->
 <!--10085-->              <SVNUSER><![CDATA[shah.d.gr]]></SVNUSER>
 <!--10085**************--></AD_DEVELOPER>
+
+<!--10086**************--><AD_DEVELOPER>
+<!--10086 AD_DEVELOPER_ID-->
+<!--10086-->              <AD_DEVELOPER_ID><![CDATA[10086]]></AD_DEVELOPER_ID>
+<!--10086 AD_CLIENT_ID-->
+<!--10086-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10086 AD_ORG_ID-->
+<!--10086-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10086 ISACTIVE-->
+<!--10086-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10086 CREATED-->
+<!--10086-->              <CREATED><![CDATA[2008-06-24 11:35:00.0]]></CREATED>
+<!--10086 CREATEDBY-->
+<!--10086-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10086 UPDATED-->
+<!--10086-->              <UPDATED><![CDATA[2008-06-24 11:35:00.0]]></UPDATED>
+<!--10086 UPDATEDBY-->
+<!--10086-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10086 NAME-->
+<!--10086-->              <NAME><![CDATA[Anthony Wolski]]></NAME>
+<!--10086 NICKNAME-->
+<!--10086-->              <NICKNAME><![CDATA[awolski]]></NICKNAME>
+<!--10086 EMAIL-->
+<!--10086-->              <EMAIL><![CDATA[awo at openbravo dot com]]></EMAIL>
+<!--10086 COMPANY-->
+<!--10086-->              <COMPANY><![CDATA[Openbravo]]></COMPANY>
+<!--10086 SVNUSER-->
+<!--10086-->              <SVNUSER><![CDATA[anthony.wolski]]></SVNUSER>
+<!--10086**************--></AD_DEVELOPER>
 
 <!--
 ************************
