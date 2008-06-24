@@ -32148,7 +32148,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800103 CREATEDBY-->
 <!--800103-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800103 UPDATED-->
-<!--800103-->              <UPDATED><![CDATA[2007-05-08 16:25:42.0]]></UPDATED>
+<!--800103-->              <UPDATED><![CDATA[2008-06-24 10:24:25.0]]></UPDATED>
 <!--800103 UPDATEDBY-->
 <!--800103-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800103 COLUMNNAME-->
@@ -32160,7 +32160,7 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800103 DESCRIPTION-->
 <!--800103-->              <DESCRIPTION><![CDATA[Show Value Condition]]></DESCRIPTION>
 <!--800103 HELP-->
-<!--800103-->              <HELP><![CDATA[Condition to show value. when algebraic it is always dilplayed, when positive it is shown only if the amount is positive and when negative it is shown only if the amount is negative.]]></HELP>
+<!--800103-->              <HELP><![CDATA[Condition to show value. when algebraic it is always displayed, when positive it is shown only if the amount is positive and when negative it is shown only if the amount is negative.]]></HELP>
 <!--800103**************--></AD_ELEMENT>
 
 <!--800104**************--><AD_ELEMENT>
