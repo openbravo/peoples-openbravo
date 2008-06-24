@@ -32,7 +32,7 @@ public class PeriodicAcctServer implements BackgroundProcess {
   public void processPL(PeriodicBackground periodicBG, boolean directProcess) throws Exception {
     String adNoteId = "";
     if(periodicBG.isDirectProcess())
-    	periodicBG.addLog("@DL_STARTING@", false);
+      periodicBG.addLog("@DL_STARTING@", false);
     else
     	periodicBG.addLog("Starting background process.");
     if (periodicBG.vars==null || periodicBG.adClientId.equals("")) {
@@ -75,24 +75,26 @@ public class PeriodicAcctServer implements BackgroundProcess {
       tables = new String[1];
       tables[0] = new String(strTable);
     } else tables = TableIds;
+    String strTableDesc;
     for (int i=0;i<tables.length;i++){
       periodicBG.doPause();
       AcctServer acct = AcctServer.get(tables[i], periodicBG.adClientId, periodicBG.conn);
       acct.setBatchSize(batchSize);
+      strTableDesc = PeriodicAcctServerData.selectDescription(periodicBG.conn, periodicBG.vars.getLanguage(), acct.AD_Table_ID);
       int total = 0;
       while (acct.checkDocuments()) {
         periodicBG.doPause();
         if (total==0) {
         	if(periodicBG.isDirectProcess())
-        		periodicBG.addLog("@DL_ACCOUNTING@ - "+ acct.tableName, false);
+        	  periodicBG.addLog("@DL_ACCOUNTING@ - "+ strTableDesc, false);
         	else
-        		periodicBG.addLog("Accounting - " + acct.tableName, false);
+        		periodicBG.addLog("Accounting - " + strTableDesc, false);
         }
         else {
         	if(periodicBG.isDirectProcess())
-        		periodicBG.addLog("@DL_COUNTED@ " + total + " - " + acct.tableName, false);
+            periodicBG.addLog("@DL_COUNTED@ " + total + " - " + strTableDesc, false);
         	else
-        		periodicBG.addLog("Counted " + total + " - " + acct.tableName, false);
+            periodicBG.addLog("Counted " + total + " - " + strTableDesc, false);
         }
         try {
           acct.run(periodicBG.vars);
@@ -105,18 +107,18 @@ public class PeriodicAcctServer implements BackgroundProcess {
         }
         if (!periodicBG.canContinue(directProcess, periodicBG.adClientId)) {
         	if(periodicBG.isDirectProcess())
-        		periodicBG.addLog("@DL_TABLE@ = "+acct.tableName + " - "  +acct.getInfo(periodicBG.vars), false);
+            periodicBG.addLog("@DL_TABLE@ = "+strTableDesc + " - "  +acct.getInfo(periodicBG.vars), false);
         	else
-        		periodicBG.addLog("Table = " + acct.tableName + " - "  +acct.getInfo(periodicBG.vars));
-          adNoteId = periodicBG.saveLog(adNoteId, periodicBG.adClientId);
+            periodicBG.addLog("Table = " + strTableDesc + " - "  +acct.getInfo(periodicBG.vars));
+            adNoteId = periodicBG.saveLog(adNoteId, periodicBG.adClientId);
           return;
         }
         total += Integer.valueOf(batchSize).intValue();
       }
       if(periodicBG.isDirectProcess())
-    	  periodicBG.addLog("@DL_TABLE@ = " + acct.tableName + " - " + acct.getInfo(periodicBG.vars), false);
+        periodicBG.addLog("@DL_TABLE@ = " + strTableDesc + " - " + acct.getInfo(periodicBG.vars), false);
       else
-    	  periodicBG.addLog("Table = " + acct.tableName + " - " + acct.getInfo(periodicBG.vars));
+        periodicBG.addLog("Table = " + strTableDesc + " - " + acct.getInfo(periodicBG.vars));
       adNoteId = periodicBG.saveLog(adNoteId, periodicBG.adClientId);
     }
   }

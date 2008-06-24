@@ -48,4 +48,17 @@
       ORDER BY ad_table_id
     ]]></Sql>
    </SqlMethod>
+   <SqlMethod name="selectDescription" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+		SELECT (case when ad_table.po_window_id is null then '' else ad_column_identifier('AD_Window',TO_CHAR(ad_table.po_window_id),?) end)||
+		  (case when ad_table.po_window_id is null then '' else ' - ' end)||
+		  ad_column_identifier('AD_Window',TO_CHAR(ad_table.ad_window_id),?)
+		FROM AD_TABLE 
+		WHERE AD_TABLE_ID = ?
+    ]]></Sql>
+    <Parameter name="language"/>
+    <Parameter name="language"/>
+    <Parameter name="adTableId"/>
+   </SqlMethod>
 </SqlClass>
