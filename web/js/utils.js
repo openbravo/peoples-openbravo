@@ -23,7 +23,7 @@
 */
 
 <!--
-var baseFrameServlet = "http://localhost:8880/openbravo/security/Login_FS.html";
+var baseFrameServlet = "../security/Login_FS.html";
 var gColorSelected = "#c0c0c0";
 var gWhiteColor = "#F2EEEE";
 var arrGeneralChange=new Array();
