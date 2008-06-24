@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <data>
 <!--
 ************************
@@ -11293,7 +11293,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--891 UPDATEDBY-->
 <!--891-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--891 COLUMNNAME-->
-<!--891-->              <COLUMNNAME><![CDATA[FixMonthCutoff]]></COLUMNNAME>
+<!--891-->              <COLUMNNAME><![CDATA[Last Day Cut-off]]></COLUMNNAME>
 <!--891 NAME-->
 <!--891-->              <NAME><![CDATA[Last Day Cut-off]]></NAME>
 <!--891 PRINTNAME-->

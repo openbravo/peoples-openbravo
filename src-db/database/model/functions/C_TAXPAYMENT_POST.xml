@@ -46,6 +46,7 @@ v_paymentcreditamt NUMBER;
 v_paymentdebitamt NUMBER;
 v_isreceipt VARCHAR2(1);
 v_ispayment VARCHAR2(1);
+v_posted VARCHAR2(1);
 
 v_taxamtfromreglines NUMBER;
 
@@ -86,6 +87,9 @@ v_gl_category_id NUMBER;
 v_period_id NUMBER;
 
 v_name NVARCHAR2(255);
+v_TRTcountY  NUMBER;
+v_TRTcountN  NUMBER;
+v_DBA_ErrorLog_ID NUMBER;
 
 
 
@@ -123,7 +127,7 @@ BEGIN
         from c_taxpayment
         where c_taxpayment_id=v_record_id;
 
-      select gl_category_id
+      select max(gl_category_id)
       into v_gl_category_id
       from gl_category where name='Standard';
 
@@ -150,6 +154,10 @@ BEGIN
       where tp.C_TAXPAYMENT_ID = v_record_id;
 
       update gl_journal set docaction='RE' where gl_journal_id=v_gl_journalid;
+      select posted into v_posted from gl_journal where gl_journal_id=v_gl_journalid;
+      if v_posted = 'Y' then
+       RAISE_APPLICATION_ERROR(-20000, '@GLJournalDocumentPosted@') ;
+       end if;
       GL_JOURNAL_POST(null, v_gl_journalid);
         update c_taxpayment set gl_journal_id=null where c_taxpayment.C_TAXPAYMENT_ID = v_record_id;
         delete from gl_journalline where gl_journal_id=v_gl_journalid;
@@ -242,7 +250,19 @@ BEGIN
       v_totalcredit := v_totalcredit+v_debit;
 
       end loop;
-
+      
+      select count(*) 
+      into v_TRTcountY
+      from c_taxregister_type tt where tt.issotrx='Y';
+      
+      select count(*) 
+      into v_TRTcountN
+      from c_taxregister_type tt where tt.issotrx='N';
+      
+      if v_TRTcountY=0 or v_TRTcountN=0 then
+      RAISE_APPLICATION_ERROR(-20100, '@TwoRegisterTypesNeeded@');
+      end if;
+      
       select case when tt.issotrx='Y' then max(glitem_debit_acct) else max(glitem_credit_acct) end, max(tt.c_glitem_id)
       into v_glitem_acct, v_glitem_id
       from c_taxregister_type tt
@@ -389,7 +409,18 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('--<<C_TaxPayment_Post finished>> ' || v_message);
     END IF;
 
-     RETURN;
+    EXCEPTION
+WHEN OTHERS THEN
+  v_ResultStr:= '@ERROR=' || SQLERRM;
+  DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
+  IF(p_PInstance_ID IS NOT NULL) THEN
+    ROLLBACK;
+    AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  ELSE
+    ROLLBACK;
+    RAISE;
+  END IF;
+  RETURN;
 END C_TAXPAYMENT_POST
 ]]></body>
     </function>

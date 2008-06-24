@@ -60,6 +60,11 @@
     v_CanceledNotChargeAmt NUMBER:=0;
     v_GeneratedAmt NUMBER:=0;
     v_ChargedAmt NUMBER:=0;
+    -- For WithHolding 
+    v_CanceledNotChargeAmt_WH NUMBER:=0;
+    v_GeneratedAmt_WH NUMBER:=0;
+    v_ChargedAmt_WH NUMBER:=0;
+    --
     v_ForcedOrg NUMBER;
     v_ManualAmt NUMBER:=0;
     FINISH_PROCESS BOOLEAN:=false;
@@ -297,22 +302,25 @@
     IF(NOT FINISH_PROCESS) THEN
       v_ResultStr:='CheckingAmounts';
       --Calculating the non-paid amount to cancel
-      SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((Amount-WriteOffAmt), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
-      INTO v_CanceledNotChargeAmt
+      SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((Amount-WriteOffAmt), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0),
+      COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((coalesce(WithHoldingAmount,0)), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
+      INTO v_CanceledNotChargeAmt,v_CanceledNotChargeAmt_WH
       FROM C_Debt_Payment_V
       WHERE C_Settlement_Cancel_ID=v_Record_ID
         AND isActive='Y'
         AND isPaid='N';
       --Calculating the generated amount
-      SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(Amount, C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
-      INTO v_GeneratedAmt
+      SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(Amount, C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0),
+      COALESCE(SUM(C_Currency_Round(  C_Currency_Convert(coalesce(WithHoldingAmount,0), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0) 
+      INTO v_GeneratedAmt,v_GeneratedAmt_WH
       FROM C_Debt_Payment_V
       WHERE C_Settlement_Generate_ID=v_Record_ID
         AND isActive='Y'
         AND isManual='N';
       --Calculating the applied amount
-      SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((Amount - WriteOffAmt), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
-      INTO v_ChargedAmt
+      SELECT COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((Amount - WriteOffAmt), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0),
+      COALESCE(SUM(C_Currency_Round(  C_Currency_Convert((coalesce(WithHoldingAmount,0) ), C_Currency_ID, v_Currency, v_Date, NULL, v_AD_Client_ID, v_AD_Org_ID), v_Currency, NULL)), 0)
+      INTO v_ChargedAmt,v_ChargedAmt_WH
       FROM C_Debt_Payment_V
       WHERE(C_Settlement_Cancel_ID=v_Record_ID
         OR C_Settlement_Generate_ID=v_Record_ID)
@@ -328,6 +336,9 @@
       WHERE C_Settlement_ID=v_Record_ID;
       IF(v_CanceledNotChargeAmt<>v_GeneratedAmt) THEN
         RAISE_APPLICATION_ERROR(-20000, '@SettlementNotMatch@') ;
+      END IF;
+      IF(v_CanceledNotChargeAmt_WH<>v_GeneratedAmt_WH) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@SettlementWH_NotMatch@') ;
       END IF;
     END IF;--FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN

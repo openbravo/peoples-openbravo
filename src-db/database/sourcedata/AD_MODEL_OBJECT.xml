@@ -35107,7 +35107,7 @@
 <!--1002100040 ACTION-->
 <!--1002100040-->              <ACTION><![CDATA[P]]></ACTION>
 <!--1002100040 CLASSNAME-->
-<!--1002100040-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_actionButton.CreateVatRegistersData]]></CLASSNAME>
+<!--1002100040-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_actionButton.CreateVatRegisters]]></CLASSNAME>
 <!--1002100040 ISDEFAULT-->
 <!--1002100040-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1002100040 AD_PROCESS_ID-->
@@ -35128,13 +35128,13 @@
 <!--1002100041 CREATEDBY-->
 <!--1002100041-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1002100041 UPDATED-->
-<!--1002100041-->              <UPDATED><![CDATA[2008-02-18 18:20:31.0]]></UPDATED>
+<!--1002100041-->              <UPDATED><![CDATA[2008-06-20 19:14:29.0]]></UPDATED>
 <!--1002100041 UPDATEDBY-->
 <!--1002100041-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100041 ACTION-->
 <!--1002100041-->              <ACTION><![CDATA[P]]></ACTION>
 <!--1002100041 CLASSNAME-->
-<!--1002100041-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportVatRegisterJR]]></CLASSNAME>
+<!--1002100041-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.ReportVatRegisterJR]]></CLASSNAME>
 <!--1002100041 ISDEFAULT-->
 <!--1002100041-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1002100041 AD_PROCESS_ID-->
@@ -35155,13 +35155,13 @@
 <!--1002100042 CREATEDBY-->
 <!--1002100042-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1002100042 UPDATED-->
-<!--1002100042-->              <UPDATED><![CDATA[2008-02-25 17:23:38.0]]></UPDATED>
+<!--1002100042-->              <UPDATED><![CDATA[2008-06-20 19:13:52.0]]></UPDATED>
 <!--1002100042 UPDATEDBY-->
 <!--1002100042-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100042 ACTION-->
 <!--1002100042-->              <ACTION><![CDATA[P]]></ACTION>
 <!--1002100042 CLASSNAME-->
-<!--1002100042-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportTaxPaymentJR]]></CLASSNAME>
+<!--1002100042-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.ReportTaxPaymentJR]]></CLASSNAME>
 <!--1002100042 ISDEFAULT-->
 <!--1002100042-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1002100042 AD_PROCESS_ID-->

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <data>
 <!--
 ************************
@@ -60175,7 +60175,7 @@
 <!--1002100080 AD_MODEL_OBJECT_ID-->
 <!--1002100080-->              <AD_MODEL_OBJECT_ID><![CDATA[1002100040]]></AD_MODEL_OBJECT_ID>
 <!--1002100080 MAPPINGNAME-->
-<!--1002100080-->              <MAPPINGNAME><![CDATA[/ad_actionButton/CreateVatRegistersData.html]]></MAPPINGNAME>
+<!--1002100080-->              <MAPPINGNAME><![CDATA[/ad_actionButton/CreateVatRegisters.html]]></MAPPINGNAME>
 <!--1002100080 ISDEFAULT-->
 <!--1002100080-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1002100080**************--></AD_MODEL_OBJECT_MAPPING>
