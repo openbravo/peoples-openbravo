@@ -120,8 +120,8 @@ public class ImportBPartner extends ImportProcess {
 			return myError;
 		}
 
-    // till here, the edition of the I_ImportBPartner table
-    // now, the insertion from I_ImportBPartner table in C_BPartner...
+    // till here, the edition of the  I_BPARTNER table
+    // now, the insertion from  I_BPARTNER table in C_BPartner...
 
     int noInsert = 0;
     int noUpdate = 0;
@@ -139,6 +139,7 @@ public class ImportBPartner extends ImportProcess {
 				boolean newLocation = data[i].addr != null;
 				String AD_User_ID = data[i].adUserId;
 				boolean newContact =  data[i].contactname != null;
+				
 				con = conn.getTransactionConnection();
 
 				//	create/update BPartner
@@ -150,8 +151,8 @@ public class ImportBPartner extends ImportProcess {
 						noInsert++;
 					} catch (ServletException ex)	{
 						if (log4j.isDebugEnabled()) log4j.debug("Insert BPartner - " + ex.toString());
-						no = ImportBPartnerData.insertBPartnerError(con, conn, I_BPartner_ID);
 						conn.releaseRollbackConnection(con);
+						no = ImportBPartnerData.insertBPartnerError(conn, ex.toString(), I_BPartner_ID);						
 						continue;
 					}
 				} else {			//	Update existing BPartner
@@ -161,8 +162,8 @@ public class ImportBPartner extends ImportProcess {
 						noUpdate++;
 					}	catch (ServletException ex)	{
 						if (log4j.isDebugEnabled()) log4j.debug("Update BPartner - " + ex.toString());
-						no = ImportBPartnerData.updateBPartnerError(con, conn, I_BPartner_ID);
 						conn.releaseRollbackConnection(con);
+						no = ImportBPartnerData.updateBPartnerError(conn, ex.toString(), I_BPartner_ID);						
 						continue;
 					}
 				}
@@ -177,8 +178,8 @@ public class ImportBPartner extends ImportProcess {
 					} catch (ServletException ex) {
 						if (log4j.isDebugEnabled()) log4j.debug("Insert Location - " + ex.toString());
 						noInsert--;
-						no = ImportBPartnerData.insertLocationError(con, conn, I_BPartner_ID);
 						conn.releaseRollbackConnection(con);
+						no = ImportBPartnerData.insertLocationError(conn, ex.toString(), I_BPartner_ID);						
 						continue;
 					}
 					C_BPartner_Location_ID = SequenceIdData.getSequence(conn, "C_BPartner_Location", vars.getClient());
@@ -190,8 +191,8 @@ public class ImportBPartner extends ImportProcess {
 					}	catch (ServletException ex)	{
 						if (log4j.isDebugEnabled()) log4j.debug("Insert BP Location - " + ex.toString());
 						noInsert--;
-						no = ImportBPartnerData.insertBPLocationError(con, conn, I_BPartner_ID);
 						conn.releaseRollbackConnection(con);
+						no = ImportBPartnerData.insertBPLocationError(conn, ex.toString(), I_BPartner_ID);					
 						continue;
 					}
 				}
@@ -199,13 +200,14 @@ public class ImportBPartner extends ImportProcess {
 				//	Create/Update Contact
 				if (AD_User_ID != "") {
 					try	{
+						//Update existing contact
 						no = ImportBPartnerData.updateBPContact(con, conn, I_BPartner_ID, AD_User_ID);
 						if (log4j.isDebugEnabled()) log4j.debug("Update BP Contact = " + no);
 					}	catch (ServletException ex)	{
 						if (log4j.isDebugEnabled()) log4j.debug("Update BP Contact - " + ex.toString());
-						noInsert--;
-						no = ImportBPartnerData.updateBPContactError(con, conn, I_BPartner_ID);
+						noUpdate--;
 						conn.releaseRollbackConnection(con);
+						no = ImportBPartnerData.updateBPContactError(conn, ex.toString(), I_BPartner_ID);						
 						continue;
 					}
 				}	else if (newContact)	{				//	New Contact
@@ -221,8 +223,8 @@ public class ImportBPartner extends ImportProcess {
 					} catch (ServletException ex)	{
 						if (log4j.isDebugEnabled()) log4j.debug("Insert BP Contact - " + ex.toString());
 						noInsert--;
-						no = ImportBPartnerData.insertBPContactError(con, conn, I_BPartner_ID);
 						conn.releaseRollbackConnection(con);
+						no = ImportBPartnerData.insertBPContactError(conn, ex.toString(), I_BPartner_ID);						
 						continue;
 					}
 				}
@@ -234,8 +236,8 @@ public class ImportBPartner extends ImportProcess {
 				} catch (ServletException ex) {
 					if (log4j.isDebugEnabled()) log4j.debug("Update Imported - " + ex.toString());
 					noInsert--;
-					no = ImportBPartnerData.updateSetImportedError(con, conn, I_BPartner_ID);
 					conn.releaseRollbackConnection(con);
+					no = ImportBPartnerData.updateSetImportedError(conn, ex.toString(), I_BPartner_ID);					
 					continue;
 				}
 			}

@@ -343,15 +343,16 @@
     <Parameter name="IBPartnerID"/>
   </SqlMethod>
 
-  <SqlMethod name="insertBPartnerError" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="insertBPartnerError" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         UPDATE I_BPartner
-			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Insert BPartner, '
+			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Insert BPartner error: ' || ? 
 				WHERE I_BPartner_ID = TO_NUMBER(?)
       ]]>
     </Sql>
+	<Parameter name="error"/>
     <Parameter name="i_bpartner_id"/>
   </SqlMethod>
 
@@ -423,15 +424,16 @@
     <Parameter name="CBPartnerID"/>
   </SqlMethod>
 
-  <SqlMethod name="updateBPartnerError" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="updateBPartnerError" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         UPDATE I_BPartner
-			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Update BPartner, '
+			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Update BPartner error: ' || ? 
 				WHERE I_BPartner_ID = TO_NUMBER(?)
       ]]>
     </Sql>
+	<Parameter name="error"/>
     <Parameter name="i_bpartner_id"/>
   </SqlMethod>
 
@@ -453,15 +455,16 @@
     <Parameter name="IBPartnerID"/>
   </SqlMethod>
 
-  <SqlMethod name="insertLocationError" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="insertLocationError" type="preparedStatement"  return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         UPDATE I_BPartner
-			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Insert Location, '
+			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Insert location error: ' || ? 
 				WHERE I_BPartner_ID = TO_NUMBER(?)
       ]]>
     </Sql>
+	<Parameter name="error"/>
     <Parameter name="i_bpartner_id"/>
   </SqlMethod>
 
@@ -488,15 +491,16 @@
     <Parameter name="IBPartnerID"/>
   </SqlMethod>
 
-  <SqlMethod name="insertBPLocationError" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="insertBPLocationError" type="preparedStatement"  return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         UPDATE I_BPartner
-			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Insert BPartnerLocation, '
+			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Insert BPartner location error: ' || ?
 				WHERE I_BPartner_ID = TO_NUMBER(?)
       ]]>
     </Sql>
+	<Parameter name="error"/>
     <Parameter name="i_bpartner_id"/>
   </SqlMethod>
 
@@ -520,15 +524,16 @@
     <Parameter name="IBPartnerID"/>
   </SqlMethod>
 
-  <SqlMethod name="insertBPContactError" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="insertBPContactError" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         UPDATE I_BPartner
-			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Insert BPContact, '
+			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Insert BPartner contact error: ' || ?
 				WHERE I_BPartner_ID = TO_NUMBER(?)
       ]]>
     </Sql>
+	<Parameter name="error"/>
     <Parameter name="i_bpartner_id"/>
   </SqlMethod>
 
@@ -599,30 +604,42 @@
       ]]>
     </Sql>
     <Parameter name="IBPartnerID"/>
+	<Parameter name="IBPartnerID"/>
+	<Parameter name="IBPartnerID"/>
+	<Parameter name="IBPartnerID"/>
+	<Parameter name="IBPartnerID"/>
+	<Parameter name="IBPartnerID"/>
+	<Parameter name="IBPartnerID"/>
+	<Parameter name="IBPartnerID"/>
+	<Parameter name="IBPartnerID"/>
+	<Parameter name="IBPartnerID"/>
+	<Parameter name="IBPartnerID"/>
     <Parameter name="ADUserID"/>
   </SqlMethod>
 
-  <SqlMethod name="updateBPContactError" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="updateBPContactError" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         UPDATE I_BPartner
-			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Update BPContact, '
+			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Update BPartner contact error: ' || ?
 				WHERE I_BPartner_ID = TO_NUMBER(?)
       ]]>
     </Sql>
+	<Parameter name="error"/>
     <Parameter name="i_bpartner_id"/>
   </SqlMethod>
 
-	<SqlMethod name="updateSetImportedError" type="preparedStatement" connection="true" return="rowCount">
+	<SqlMethod name="updateSetImportedError" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         UPDATE I_BPartner
-			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Set Imported, '
+			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Set Imported error: ' || ? 
 				WHERE I_BPartner_ID = TO_NUMBER(?)
       ]]>
     </Sql>
+	<Parameter name="error"/>
     <Parameter name="i_bpartner_id"/>
   </SqlMethod>
 
