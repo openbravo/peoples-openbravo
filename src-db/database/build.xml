@@ -579,6 +579,7 @@ compare.database.structure: Generates a diff script.
 			            data="${basedir}/sourcedata"
 			            orgData="${basedir}/../originalDatabase/sourcedata"
                         verbosity="${bbdd.verbosity}" />
+	      <antcall target="database.postcreate.${bbdd.rdbms}" />
     </target>
 	
   <target name="database.preimport.ORACLE">
