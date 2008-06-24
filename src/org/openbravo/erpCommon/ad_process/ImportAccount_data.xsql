@@ -362,11 +362,11 @@
     <Parameter name="client"/>
   </SqlMethod>
 
-  <SqlMethod name="selectDefaultsRecord" type="preparedStatement" connection="true" return="rowcount">
+  <SqlMethod name="selectDefaultsRecord" type="preparedStatement" connection="true" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT 1
+        SELECT COUNT(1) AS COUNT
         FROM c_acctschema_default
         WHERE c_acctschema_ID = TO_NUMBER(?)
       ]]>
@@ -374,11 +374,11 @@
     <Parameter name="value"/>
   </SqlMethod>
 
-  <SqlMethod name="selectGLRecord" type="preparedStatement" connection="true" return="rowcount">
+  <SqlMethod name="selectGLRecord" type="preparedStatement" connection="true" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT 1
+        SELECT COUNT(1) AS COUNT
         FROM c_acctschema_gl
         WHERE c_acctschema_ID = TO_NUMBER(?)
       ]]>
