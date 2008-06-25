@@ -82,6 +82,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     myMessage.setTitle("");
+    String strCust = "";
     
     try {
       conn = getTransactionConnection();
@@ -127,6 +128,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               strCCurrencyId = data[i].cCurrencyId.equals("")?Utility.getContext(this, vars, "$C_Currency_ID", "ExpenseSOrder"):data[i].cCurrencyId;
 
               SEOrderBPartnerData[] data1 = SEOrderBPartnerData.select(this, data[i].cBpartnerId);
+              
+              strCust = data[i].bpname;
               if (data[i].mPricelistId.equals("")){
             	  throw new Exception ("PricelistNotdefined");
               }
@@ -196,8 +199,12 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 	            pricelist = "0";
 	            pricelimit = "0";
             }
+            
             String strCTaxID = Tax.get(this, data[i].mProductId, DateTimeData.today(this), data[i].adOrgId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), data[i].cProjectId, true);
-
+            if (strCTaxID.equals("")){
+              throw new Exception ("TaxNotFound");              
+            }            
+            
             ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data[i].adClientId, strOrganization.equals("")?data[i].adOrgId:strOrganization, vars.getUser(), strCOrderId, Integer.toString(line), data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), DateTimeData.today(this), DateTimeData.today(this), data[i].description, data[i].mProductId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].cUomId.equals("")?Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder"):data[i].cUomId, data[i].qty, strCCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, data[i].sResourceassignmentId, strDiscount);
 
             ExpenseSOrderData.updateTimeExpenseLine(conn, this, strCOrderlineID, data[i].sTimeexpenselineId);
@@ -215,7 +222,6 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
       myMessage.setMessage(textoMensaje.toString() + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));
       return myMessage;
-      //return (textoMensaje.toString() + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));
       /*String [] allOrder = new String[order.size()];
       order.toArray(allOrder);
       if (processOrderPost(vars, allOrder)) return Utility.messageBD(this, "ProcessOK", vars.getLanguage());
@@ -226,12 +232,14 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-	  myMessage.setType("Error");
-	  myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-	  if (e.getMessage().equals("PricelistNotdefined")){
- 	 	 myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage()));
+  	  myMessage.setType("Error");
+  	  myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));  	  
+  	  if (e.getMessage().equals("PricelistNotdefined")){
+   	 	 myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' ' + strCust + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage()));
       } else if (e.getMessage().equals("FormofPaymentNotdefined")){
-      	 myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' ' + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()));
+      	 myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' ' + strCust + ' ' + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()));
+      } else if (e.getMessage().equals("TaxNotFound")){
+         myMessage.setMessage(Utility.messageBD(this, "TaxNotFound", vars.getLanguage()));
       } else {
     	  myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
       }

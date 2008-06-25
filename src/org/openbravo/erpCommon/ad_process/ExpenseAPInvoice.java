@@ -94,7 +94,9 @@ String strProductRMailTextID = "";
     StringBuffer textoMensaje = new StringBuffer();
     OBError myMessage = null;
     myMessage = new OBError();
-    myMessage.setTitle("");    
+    myMessage.setTitle(""); 
+    String strProd = "";
+    String strEmpl = "";
 
     Connection conn = null;
     try{
@@ -105,6 +107,8 @@ String strProductRMailTextID = "";
        //insert invoice customer header
        // checks if there are invoices not processed that full filled the requirements
         String strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(conn, this, data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId, data[i].cCurrencyId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
+        
+        strEmpl = data[i].bpname;
         strPricelistId = ExpenseAPInvoiceData.pricelistId(this, data[i].cBpartnerId);
         if (strPricelistId.equals("")){
        	 throw new Exception ("PricelistNotdefined");
@@ -147,7 +151,10 @@ String strProductRMailTextID = "";
        }
 
        strcTaxID = Tax.get(this, data[i].mProductId, strDateInvoiced, data[i].adOrgId, vars.getWarehouse(), strcBpartnerLocationId, bpartnerLocationShip, data[i].cProjectId, false);
-
+       if (strcTaxID.equals("")){
+         throw new Exception ("TaxNotFound");              
+       }
+       
        //checks if there are lines with the same conditions in the current invoice
        ExpenseAPInvoiceData[] dataInvoiceline = ExpenseAPInvoiceData.selectInvoiceLine(conn, this, strcInvoiceId, data[i].adClientId, data[i].adOrgId, data[i].mProductId, data[i].cUomId, strPricestd, strPricelist, strPricelimit, data[i].description, strcTaxID);
 
@@ -199,7 +206,7 @@ String strProductRMailTextID = "";
       log4j.warn("Rollback in transaction");
       myMessage.setType("Error");
       myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-      myMessage.setMessage(Utility.messageBD(this, "PriceListVersionNotFound", vars.getLanguage()));
+      myMessage.setMessage(Utility.messageBD(this, "PriceListVersionNotFound", vars.getLanguage()) + ' ' + Utility.messageBD(this, "ForProduct", vars.getLanguage()) + ' ' + strProd + ' ' + Utility.messageBD(this, "And", vars.getLanguage()) + ' ' + Utility.messageBD(this, "Employee", vars.getLanguage()) + ' ' + strEmpl);
     } catch (Exception e){
       try {
          releaseRollbackConnection(conn);
@@ -209,13 +216,15 @@ String strProductRMailTextID = "";
       myMessage.setType("Error");
       myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       if (e.getMessage().equals("PricelistNotdefined")){
-         myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage()));
+         myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + strEmpl + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage()));
       } else if (e.getMessage().equals("FormofPaymentNotdefined")){
-     	 myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()));
+     	 myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + strEmpl + ' ' + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()));
       } else if (e.getMessage().equals("PaymenttermNotdefined")) {
-     	 myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + Utility.messageBD(this, "PaymenttermNotdefined", vars.getLanguage()));
+     	 myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + strEmpl + ' ' + Utility.messageBD(this, "PaymenttermNotdefined", vars.getLanguage()));
       } else if (e.getMessage().equals("ShiptoNotdefined")) {
-         myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + Utility.messageBD(this, "ShiptoNotdefined", vars.getLanguage()));
+         myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + strEmpl + ' ' + Utility.messageBD(this, "ShiptoNotdefined", vars.getLanguage()));
+      } else if (e.getMessage().equals("TaxNotFound")){
+         myMessage.setMessage(Utility.messageBD(this, "TaxNotFound", vars.getLanguage()));
       } else {
     	  myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
       }

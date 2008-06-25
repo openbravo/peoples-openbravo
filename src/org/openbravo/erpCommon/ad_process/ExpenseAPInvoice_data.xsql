@@ -23,9 +23,11 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql><![CDATA[
-      SELECT  st.AD_Client_ID, st.AD_Org_ID, st.C_BPartner_ID, stl.C_Project_ID, stl.C_Activity_ID, stl.C_Campaign_ID, stl.M_Product_ID, stl.S_ResourceAssignment_ID, stl.C_UOM_ID, stl.Qty, stl.Description, stl.Note, stl.ExpenseAmt, stl.C_Currency_ID, stl.ConvertedAmt, st.DocumentNo, stl.S_TimeExpenseLine_ID, stl.invoiceprice, '' AS Pricestd, '' AS Pricelimit, '' AS Pricelist, '' AS C_INVOICELINE_ID, '' AS QTYINVOICED, '' AS C_INVOICELINE_ACCTDIMENSION_ID, '' AS AMT
-        FROM S_TimeExpense st, S_TimeExpenseLine stl
+       SELECT  st.AD_Client_ID, st.AD_Org_ID, st.C_BPartner_ID, bp.name as bpname, stl.C_Project_ID, stl.C_Activity_ID, stl.C_Campaign_ID, stl.M_Product_ID, p.name as prodname, stl.S_ResourceAssignment_ID, stl.C_UOM_ID, stl.Qty, stl.Description, stl.Note, stl.ExpenseAmt, stl.C_Currency_ID, stl.ConvertedAmt, st.DocumentNo, stl.S_TimeExpenseLine_ID, stl.invoiceprice, '' AS Pricestd, '' AS Pricelimit, '' AS Pricelist, '' AS C_INVOICELINE_ID, '' AS QTYINVOICED, '' AS C_INVOICELINE_ACCTDIMENSION_ID, '' AS AMT
+        FROM S_TimeExpense st, S_TimeExpenseLine stl, C_BPartner bp, M_Product p
         WHERE st.S_TimeExpense_Id = stl.S_TimeExpense_Id
+        AND st.C_BPartner_ID = bp.C_BPartner_ID
+        AND stl.M_Product_ID = p.M_Product_ID
         AND st.AD_Client_ID IN ('1')
         AND st.AD_Org_ID IN ('1')
         AND st.DateReport >= TO_DATE(?)
