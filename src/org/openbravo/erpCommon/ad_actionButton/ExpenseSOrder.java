@@ -80,8 +80,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     Connection conn=null;
     
     OBError myMessage = null;
-	myMessage = new OBError();
-	myMessage.setTitle("");
+    myMessage = new OBError();
+    myMessage.setTitle("");
     
     try {
       conn = getTransactionConnection();
@@ -103,18 +103,19 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       int total=0;
       //ArrayList order = new ArrayList();
       for (int i=0;data!=null && i<data.length;i++) {
-	    docTargetType = ExpenseSOrderData.cDoctypeTarget(conn, this, data[i].adClientId, data[i].adOrgId);
+            docTargetType = ExpenseSOrderData.cDoctypeTarget(conn, this, data[i].adClientId, data[i].adOrgId);
             if ((!data[i].cBpartnerId.equals(strOldBPartner) || !data[i].cProjectId.equals(strOldProject)|| !data[i].adOrgId.equals(strOldOrganization)) && !strCOrderId.equals("")) {
               releaseCommitConnection(conn);
               // Automatically processes Sales Order
               if (strCompleteAuto.equals("Y")) {
 	              String mensaje = processOrder(vars, strCOrderId);
-	              if (!mensaje.equals("")) textoMensaje.append(mensaje).append("\n");
+	              if (!mensaje.equals("")) textoMensaje.append(" -> ").append(mensaje);
               }
               conn = getTransactionConnection();
             }
             if (!data[i].cBpartnerId.equals(strOldBPartner) || !data[i].cProjectId.equals(strOldProject) || !data[i].adOrgId.equals(strOldOrganization)) {
               line = 0;
+              if (total != 0) textoMensaje.append("<br>");
               total++;
               strCOrderId = SequenceIdData.getSequence(this, "C_Order", vars.getClient());
               //order.add(strCOrderId);
@@ -134,6 +135,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               }
 
               ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data[i].adClientId, data[i].adOrgId, vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType, docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId).equals("")?ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId):ExpenseSOrderData.billto(this, data[i].cBpartnerId), strCCurrencyId, data1[0].paymentrule, data1[0].cPaymenttermId.equals("")?SEOrderBPartnerData.selectPaymentTerm(this, data[i].adClientId):data1[0].cPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].mPricelistId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
+              
+              textoMensaje.append(Utility.messageBD(this, "SalesOrderDocumentno", vars.getLanguage())).append(" ").append(strDocumentNo).append(" ").append(Utility.messageBD(this, "beenCreated", vars.getLanguage()));
             }
 
             String strCOrderlineID = SequenceIdData.getSequence(this, "C_OrderLine", vars.getClient());
@@ -202,11 +205,12 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       releaseCommitConnection(conn);
       if (!strCOrderId.equals("")) {
         // Automatically processes Sales Order
-    	if (strCompleteAuto.equals("Y")) {
-	        String mensaje = processOrder(vars, strCOrderId);
-	        if (!mensaje.equals("")) textoMensaje.append(mensaje).append("<br>");
-    	}
+      	if (strCompleteAuto.equals("Y")) {
+  	        String mensaje = processOrder(vars, strCOrderId);
+  	        if (!mensaje.equals("")) textoMensaje.append(" -> ").append(mensaje);
+  	    }
       }
+      if (total != 0) textoMensaje.append("<br>");
       myMessage.setType("Success");
       myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
       myMessage.setMessage(textoMensaje.toString() + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));

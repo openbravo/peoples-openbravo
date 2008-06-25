@@ -91,9 +91,10 @@ String strProductRMailTextID = "";
     float amount = 0;
     int total=0;
 
+    StringBuffer textoMensaje = new StringBuffer();
     OBError myMessage = null;
-	myMessage = new OBError();
-	myMessage.setTitle("");
+    myMessage = new OBError();
+    myMessage.setTitle("");    
 
     Connection conn = null;
     try{
@@ -126,6 +127,8 @@ String strProductRMailTextID = "";
         	 throw new Exception ("PaymenttermNotdefined");
 
          ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, data[i].cCurrencyId, strSalesrepId, "N", "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
+         
+         textoMensaje.append(Utility.messageBD(this, "PurchaseInvoiceDocumentno", vars.getLanguage())).append(" ").append(strDocumentno).append(" ").append(Utility.messageBD(this, "beenCreated", vars.getLanguage())).append("<br>");
          total++;
         }
         else strcInvoiceId = strcInvoiceIdOld;
@@ -187,7 +190,7 @@ String strProductRMailTextID = "";
       
       myMessage.setType("Success");
       myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-      myMessage.setMessage(Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));
+      myMessage.setMessage(textoMensaje.toString() + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));
     } catch (ArrayIndexOutOfBoundsException f){
       try {
         releaseRollbackConnection(conn);
