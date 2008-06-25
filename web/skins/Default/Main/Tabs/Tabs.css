@@ -37,7 +37,7 @@
   padding-left: 1px;
   padding-right: 1px;
   background: url(titleLeft.png) no-repeat left top;
-  cursor: none;
+  cursor: default;
   white-space: nowrap;
   z-index: 5;
   height: 18px;
@@ -107,7 +107,7 @@
   /*padding-left: 1px;
   padding-right: 1px;*/
   background: url(roundItemLeft.selected.png) no-repeat left top;
-  cursor: none;
+  cursor: default;
   white-space: nowrap;
   z-index: 5;
   height: 31px;
@@ -144,7 +144,7 @@
   /*padding-left: 1px;
   padding-right: 1px;*/
   background: url(roundItemLeft.normal.png) no-repeat left top;
-  cursor: none;
+  cursor: default;
   white-space: nowrap;
   z-index: 4;
   height: 34px;
@@ -185,7 +185,7 @@
   /*padding-left: 1px;
   padding-right: 1px;*/
   background: url(roundItemLeft.selected.png) no-repeat left top;
-  cursor: none;
+  cursor: default;
   white-space: nowrap;
   z-index: 5;
   height: 31px;
@@ -222,7 +222,7 @@
   /*padding-left: 1px;
   padding-right: 1px;*/
   background: url(roundItemLeft.normal.png) no-repeat left top;
-  cursor: none;
+  cursor: default;
   white-space: nowrap;
   z-index: 4;
   height: 34px;
@@ -264,7 +264,7 @@
   /*padding-left: 1px;
   padding-right: 1px;*/
   background: url(roundItemLeft.selected.focused.png) no-repeat left top;
-  cursor: none;
+  cursor: default;
   white-space: nowrap;
   z-index: 5;
   height: 31px;
@@ -301,7 +301,7 @@
   /*padding-left: 1px;
   padding-right: 1px;*/
   background: url(roundItemLeft.normal.focused.png) no-repeat left top;
-  cursor: none;
+  cursor: default;
   white-space: nowrap;
   z-index: 4;
   height: 34px;
@@ -342,7 +342,7 @@
   /*padding-left: 1px;
   padding-right: 1px;*/
   background: url(roundItemLeft.selected.focused.png) no-repeat left top;
-  cursor: none;
+  cursor: default;
   white-space: nowrap;
   z-index: 5;
   height: 31px;
@@ -379,7 +379,7 @@
   /*padding-left: 1px;
   padding-right: 1px;*/
   background: url(roundItemLeft.normal.focused.png) no-repeat left top;
-  cursor: none;
+  cursor: default;
   white-space: nowrap;
   z-index: 4;
   height: 34px;
@@ -419,7 +419,7 @@
   padding-left: 1px;
   padding-right: 1px;
   background: url(inlayLeft.png) no-repeat left top;
-  cursor: none;
+  cursor: default;
   white-space: nowrap;
   z-index: 5;
 }
