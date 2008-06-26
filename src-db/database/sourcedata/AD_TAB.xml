@@ -6285,9 +6285,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--276 CREATEDBY-->
 <!--276-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--276 UPDATED-->
-<!--276-->              <UPDATED><![CDATA[2003-02-22 02:20:07.0]]></UPDATED>
+<!--276-->              <UPDATED><![CDATA[2008-06-26 13:40:24.0]]></UPDATED>
 <!--276 UPDATEDBY-->
-<!--276-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--276-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--276 NAME-->
 <!--276-->              <NAME><![CDATA[Vendor]]></NAME>
 <!--276 DESCRIPTION-->
@@ -6309,7 +6309,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--276 ISTRANSLATIONTAB-->
 <!--276-->              <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--276 ISREADONLY-->
-<!--276-->              <ISREADONLY><![CDATA[N]]></ISREADONLY>
+<!--276-->              <ISREADONLY><![CDATA[Y]]></ISREADONLY>
 <!--276 HASTREE-->
 <!--276-->              <HASTREE><![CDATA[N]]></HASTREE>
 <!--276 WHERECLAUSE-->
