@@ -252,6 +252,8 @@ void printPageDepurar (HttpServletResponse response, VariablesSecureApp vars, St
       if (log4j.isDebugEnabled()) log4j.debug("period");
       xmlDocument.setParameter("report", strAccountingReportId);
       if (log4j.isDebugEnabled()) log4j.debug("report");
+      xmlDocument.setParameter("acctschema", strcAcctSchemaId);
+      if (log4j.isDebugEnabled()) log4j.debug("acctschema");
       response.setContentType("text/html; charset=UTF-8");
       if (log4j.isDebugEnabled()) log4j.debug("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();

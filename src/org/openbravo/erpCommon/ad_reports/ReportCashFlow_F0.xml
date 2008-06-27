@@ -24,4 +24,5 @@
 	<PARAMETER id="paramOrg" name="org" attribute="value"/>
 	<PARAMETER id="paramPeriod" name="period" attribute="value"/>
 	<PARAMETER id="paramReport" name="report" attribute="value"/>
+	<PARAMETER id="paramAcctSchema" name="acctschema" attribute="value"/>
 </REPORT>
