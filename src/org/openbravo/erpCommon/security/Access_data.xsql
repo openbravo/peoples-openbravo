@@ -88,8 +88,9 @@
                UNION
                SELECT COUNT(*) AS TOTAL 
                 FROM DUAL 
-                WHERE TO_NUMBER('800017') = TO_NUMBER(?) 
-                   OR TO_NUMBER('800018') = TO_NUMBER(?) 
+                WHERE (TO_NUMBER('800017') = TO_NUMBER(?) 
+                   OR TO_NUMBER('800018') = TO_NUMBER(?)) 
+                   AND TO_CHAR('TABLE') <> TO_CHAR(?)
                UNION
                SELECT COUNT(*) AS TOTAL 
                  FROM AD_Window_Access 
@@ -152,6 +153,7 @@
       
       <Parameter name="id"/>
       <Parameter name="id"/>
+      <Parameter name="type"/>
       
       <Parameter name="role"/>
       <Parameter name="type"/>
