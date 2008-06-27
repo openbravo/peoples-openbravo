@@ -414,9 +414,14 @@
           0, NULL, 'N',
           NULL, NULL, 0, NULL
         )
-        ;
+        ;	
     END LOOP;
+    IF v_Message IS NOT NULL THEN
+          v_Message:=v_Message || ', ';
+    END IF;
+    v_Message:=v_Message || v_DocumentNo;	
   END IF;
+  v_Message:='@DocumentNo@: ' || v_Message;
  END IF;--FINISH_PROCESS
  --<<FINISH_PROCESS>>
  --  UPDATE AD_PINSTANCE
