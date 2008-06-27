@@ -16450,15 +16450,15 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1256 CREATEDBY-->
 <!--1256-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1256 UPDATED-->
-<!--1256-->              <UPDATED><![CDATA[2008-06-03 19:26:03.0]]></UPDATED>
+<!--1256-->              <UPDATED><![CDATA[2008-06-27 14:14:33.0]]></UPDATED>
 <!--1256 UPDATEDBY-->
 <!--1256-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1256 COLUMNNAME-->
 <!--1256-->              <COLUMNNAME><![CDATA[DeliveryTime_Promised]]></COLUMNNAME>
 <!--1256 NAME-->
-<!--1256-->              <NAME><![CDATA[Stocking Lead Time]]></NAME>
+<!--1256-->              <NAME><![CDATA[Purchasing Lead Time]]></NAME>
 <!--1256 PRINTNAME-->
-<!--1256-->              <PRINTNAME><![CDATA[Stocking Lead Time]]></PRINTNAME>
+<!--1256-->              <PRINTNAME><![CDATA[Purchasing Lead Time]]></PRINTNAME>
 <!--1256 DESCRIPTION-->
 <!--1256-->              <DESCRIPTION><![CDATA[Number of days between placing an order and the actual delivery as promised by the vendor.]]></DESCRIPTION>
 <!--1256 HELP-->
